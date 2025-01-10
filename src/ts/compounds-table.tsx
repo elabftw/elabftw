@@ -67,7 +67,7 @@ if (document.getElementById('compounds-table')) {
     const fetchData = async () => {
       let searchString = '';
       if (document.getElementById('substructureSearchInput')) {
-        const subInput = document.getElementById('substructureSearchInput');
+        const subInput = document.getElementById('substructureSearchInput') as HTMLInputElement;
         if (subInput.value) {
           searchString = `&search_fp_smi=${encodeURIComponent(subInput.value)}`;
         }

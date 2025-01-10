@@ -7,6 +7,7 @@
  */
 import { Editor } from 'ketcher-react';
 import 'ketcher-react/dist/index.css';
+import React from 'react';
 //import { useEffect } from 'react';
 //import { Ketcher, ketcherProvider } from 'ketcher-core';
 
@@ -16,7 +17,7 @@ import 'ketcher-react/dist/index.css';
  * or webpack has issue with including a working wasm or something. So for now the best approach is to require a separate Indigo service
  * but eventually, using the wasm standalone could be a good solution.
 */
-import { RemoteStructServiceProvider } from 'ketcher-core';
+import { RemoteStructServiceProvider, Ketcher } from 'ketcher-core';
 const structServiceProvider = new RemoteStructServiceProvider(
   '/indigo/v2',
 );
@@ -25,20 +26,21 @@ import { StandaloneStructServiceProvider } from 'ketcher-standalone';
 const standalone = new StandaloneStructServiceProvider();
 */
 
+declare global {
+  interface Window {
+    ketcher: Ketcher;
+  }
+}
+
 const KetcherEditor = () => {
-/*
-  useEffect(() => {
-    console.log('yep');
-  const ketcher = ketcherProvider.getKetcher();
-  window.ketcher = ketcher;
-  }, []);
-*/
   return (
     <div className="ketcher-editor-container">
       <Editor
         staticResourcesUrl={JSON.stringify('/')}
         structServiceProvider={structServiceProvider}
-        onInit={(ketcher) => {window.ketcher = ketcher;}}
+
+        onInit={(ketcher: Ketcher) => {window.ketcher = ketcher;}}
+        errorHandler={(message) => {console.error(message);}}
       />
     </div>
   );

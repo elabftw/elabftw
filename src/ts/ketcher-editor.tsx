@@ -8,6 +8,7 @@
 import { createRoot } from 'react-dom/client';
 import KetcherEditor from './ketcher';
 import {notifError} from './misc';
+import React from 'react';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('ketcher-root')) {
@@ -17,14 +18,14 @@ document.addEventListener('DOMContentLoaded', () => {
       <KetcherEditor />,
     );
     document.getElementById('ketcher-actions').addEventListener('click', async (event) => {
-      const el = event.target;
+      const el = event.target as HTMLElement;
       if (el.matches('[data-action="search-from-editor"]')) {
         window.ketcher.getSmiles().then(s => {
           if (!s) {
             notifError(new Error('No structure found!'));
             return;
           }
-          const smilesInput = document.getElementById('substructureSearchInput');
+          const smilesInput = document.getElementById('substructureSearchInput') as HTMLInputElement;
           smilesInput.value = s;
           const resultsParentDiv = document.getElementById('searchFpResultsDiv');
           resultsParentDiv.removeAttribute('hidden');

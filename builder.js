@@ -135,13 +135,9 @@ module.exports = (env) => {
           ],
         },
         {
-          test: /\.jsx?$/,
+          test: /\.(jsx|tsx)?$/,
           use: ["babel-loader"]
         },
-        // {
-        //   test: /\.tsx?$/,
-        //   use: ["ts-loader"],
-        // },
         { // SASS loader
           test: /\.scss$/,
           type: 'asset/resource',

@@ -1474,6 +1474,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@deltablot/ketcher-core@npm:^2.26.1, ketcher-core@npm:@deltablot/ketcher-core@2.26.1":
+  version: 2.26.1
+  resolution: "@deltablot/ketcher-core@npm:2.26.1"
+  dependencies:
+    "@babel/runtime": "npm:^7.17.9"
+    assert: "npm:^2.0.0"
+    d3: "npm:^7.8.5"
+    file-saver: "npm:^2.0.5"
+    lodash: "npm:^4.17.21"
+    raphael: "npm:^2.3.0"
+    react-device-detect: "npm:^2.2.2"
+    svgpath: "npm:^2.3.1"
+  checksum: 10c0/1b53da53239ac0873ba6c0856328babb52491019a1138e0b00c890bd1e4d1b24384a03c56ecf987d6296ce598f3c7148f755b173b97b676aa90cdb25eca64efc
+  languageName: node
+  linkType: hard
+
 "@deltablot/malle@npm:^2.6.1":
   version: 2.6.2
   resolution: "@deltablot/malle@npm:2.6.2"
@@ -5746,6 +5762,7 @@ __metadata:
     "@babel/preset-react": "npm:^7.24.7"
     "@deltablot/chemdoodle-web-mini": "npm:^9.5.1"
     "@deltablot/dropzone": "npm:^7.1.5"
+    "@deltablot/ketcher-core": "npm:^2.26.1"
     "@deltablot/malle": "npm:^2.6.1"
     "@fancyapps/fancybox": "npm:^3.5.7"
     "@fullcalendar/bootstrap": "npm:^6.1.15"
@@ -5786,8 +5803,7 @@ __metadata:
     jquery: "npm:^3.7.1"
     jquery-ui: "npm:^1.14.0"
     jsoneditor: "npm:^10.1.0"
-    ketcher-core: "npm:^2.24.0"
-    ketcher-react: "npm:^2.24.0"
+    ketcher-react: "npm:^2.26.0"
     lodash-es: "npm:^4.17.21"
     luxon: "npm:^3.4.4"
     marked: "npm:^14.0.0"
@@ -7809,24 +7825,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ketcher-core@npm:*, ketcher-core@npm:^2.24.0":
-  version: 2.26.0
-  resolution: "ketcher-core@npm:2.26.0"
-  dependencies:
-    "@babel/runtime": "npm:^7.17.9"
-    ajv: "npm:^8.10.0"
-    assert: "npm:^2.0.0"
-    d3: "npm:^7.8.5"
-    file-saver: "npm:^2.0.5"
-    lodash: "npm:^4.17.21"
-    raphael: "npm:^2.3.0"
-    react-device-detect: "npm:^2.2.2"
-    svgpath: "npm:^2.3.1"
-  checksum: 10c0/711483a3862b036798c8ce1b49bd411a99bfd70e1992a692d1a62757a219c7435c9c4058415ae85bbd6f5352e5d4c0fa06afa6dcbd37c78ee07bc9cddd721a58
-  languageName: node
-  linkType: hard
-
-"ketcher-react@npm:^2.24.0":
+"ketcher-react@npm:^2.26.0":
   version: 2.26.0
   resolution: "ketcher-react@npm:2.26.0"
   dependencies:

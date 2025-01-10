@@ -14,6 +14,7 @@
     "@ag-grid-community/styles": "^32.3.2",
     "@deltablot/chemdoodle-web-mini": "^9.5.1",
     "@deltablot/dropzone": "^7.1.5",
+    "@deltablot/ketcher-core": "^2.26.1",
     "@deltablot/malle": "^2.6.1",
     "@fancyapps/fancybox": "^3.5.7",
     "@fullcalendar/bootstrap": "^6.1.15",
@@ -40,8 +41,7 @@
     "jquery": "^3.7.1",
     "jquery-ui": "^1.14.0",
     "jsoneditor": "^10.1.0",
-    "ketcher-core": "^2.24.0",
-    "ketcher-react": "^2.24.0",
+    "ketcher-react": "^2.26.0",
     "lodash-es": "^4.17.21",
     "luxon": "^3.4.4",
     "marked": "^14.0.0",
@@ -66,6 +66,7 @@
   },
   "resolutions": {
     "fast-xml-parser": "^4.4.1",
+    "ketcher-core": "npm:@deltablot/ketcher-core@2.26.1",
     "micromatch": "^4.0.8",
     "path-to-regexp": "^1.9.0",
     "cross-spawn": "^7.0.5"

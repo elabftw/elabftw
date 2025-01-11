@@ -199,39 +199,6 @@ class StorageUnits extends AbstractRest
         return $groupedItems;
     }
 
-    public function readAllForCsv(): array
-    {
-        $sql = 'SELECT su.id, su.name, su.parent_id, data.qty_stored, data.qty_unit, data.item_id, data.created_at, data.modified_at, data.title
-            FROM storage_units AS su
-            LEFT JOIN (
-                SELECT
-                    c2e.storage_id,
-                    c2e.item_id,
-                    c2e.qty_stored,
-                    c2e.qty_unit,
-                    c2e.created_at,
-                    c2e.modified_at,
-                    experiments.title
-                FROM containers2experiments AS c2e
-                LEFT JOIN experiments ON item_id = experiments.id
-                UNION ALL
-                SELECT
-                    c2i.storage_id,
-                    c2i.item_id,
-                    c2i.qty_stored,
-                    c2i.qty_unit,
-                    c2i.created_at,
-                    c2i.modified_at,
-                    items.title
-                FROM containers2items AS c2i
-                LEFT JOIN items ON item_id = items.id
-            ) AS data ON su.id = data.storage_id ORDER BY su.id ASC';
-        $req = $this->Db->prepare($sql);
-        $this->Db->execute($req);
-
-        return $req->fetchAll();
-    }
-
     #[Override]
     public function patch(Action $action, array $params): array
     {
@@ -288,6 +255,7 @@ class StorageUnits extends AbstractRest
             "WITH RECURSIVE storage_hierarchy AS (
                 SELECT
                     su.id AS storage_id,
+                    su.name AS storage_name,
                     su.parent_id,
                     su.name AS full_path
                 FROM storage_units AS su
@@ -297,6 +265,7 @@ class StorageUnits extends AbstractRest
 
                 SELECT
                     su.id AS storage_id,
+                    su.name AS storage_name,
                     su.parent_id,
                     CONCAT(parent.full_path, ' > ', su.name) AS full_path
                 FROM storage_units AS su
@@ -309,7 +278,10 @@ class StorageUnits extends AbstractRest
                     'database' AS page,
                     c2i.qty_stored,
                     c2i.qty_unit,
+                    c2i.created_at,
+                    c2i.modified_at,
                     sh.storage_id AS storage_id,
+                    sh.storage_name,
                     sh.full_path
                 FROM
                     containers2items AS c2i
@@ -330,7 +302,10 @@ class StorageUnits extends AbstractRest
                     'experiments' AS page,
                     c2e.qty_stored,
                     c2e.qty_unit,
+                    c2e.created_at,
+                    c2e.modified_at,
                     sh.storage_id AS storage_id,
+                    sh.storage_name,
                     sh.full_path
                 FROM
                     containers2experiments AS c2e

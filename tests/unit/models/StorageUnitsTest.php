@@ -58,7 +58,6 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->StorageUnits->readAllRecursive());
         $this->assertIsArray($this->StorageUnits->readAllFromStorage(1));
         $this->assertIsArray($this->StorageUnits->readCount());
-        $this->assertIsArray($this->StorageUnits->readAllForCsv());
     }
 
     public function testGetApiPath(): void

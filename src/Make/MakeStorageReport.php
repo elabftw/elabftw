@@ -27,7 +27,7 @@ class MakeStorageReport extends AbstractMakeCsv
     public function __construct(StorageUnits $storageUnits)
     {
         parent::__construct();
-        $this->rows = $storageUnits->readAllForCsv();
+        $this->rows = $storageUnits->readAll();
         if (empty($this->rows)) {
             throw new ImproperActionException(_('Nothing to export!'));
         }

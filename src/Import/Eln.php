@@ -272,7 +272,12 @@ class Eln extends AbstractZip
         // keep a reference between the `@id` and the fresh id to resolve links later
         $this->insertedEntities[] = array('item_@id' => $dataset['@id'], 'id' => $this->Entity->id, 'entity_type' => $this->Entity->entityType);
         // here we use "text" or "description" attribute as main text
-        $this->Entity->patch(Action::Update, array('title' => $title, 'bodyappend' => ($dataset['text'] ?? '') . ($dataset['description'] ?? '')));
+        $this->Entity->patch(Action::Update, array(
+            'title' => $title,
+            'bodyappend' => ($dataset['text'] ?? '') . ($dataset['description'] ?? ''),
+            'canread' => $this->canread,
+            'canwrite' => $this->canwrite,
+        ));
 
         // now we import all the remaining attributes as text/links in the main text
         // we still have an allowlist of attributes imported, which also allows to switch between the kind of values expected

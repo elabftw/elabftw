@@ -15,6 +15,7 @@ namespace Elabftw\Models;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\AuditEvent\ConfigModified;
+use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\TwigFilters;
 use Elabftw\Elabftw\Update;
 use Elabftw\Enums\Action;

@@ -121,7 +121,7 @@ class Steps implements RestInterface
     {
         $table = $this->Entity->entityType->value;
         if ($fromTpl) {
-            $table = $this->Entity instanceof Templates ? 'experiments_templates' : 'items_types';
+            $table = ($this->Entity instanceof Experiments || $this->Entity instanceof Templates) ? 'experiments_templates' : 'items_types';
         }
         $stepsql = 'SELECT body, ordering FROM ' . $table . '_steps WHERE item_id = :id';
         $stepreq = $this->Db->prepare($stepsql);

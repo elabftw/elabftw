@@ -33,7 +33,7 @@ class EntityParams extends ContentParams implements ContentParamsInterface
             'color' => Check::color($this->content),
             'is_bookable', 'book_can_overlap', 'book_users_can_in_past', 'book_max_minutes', 'book_max_slots', 'book_is_cancellable', 'book_cancel_minutes', 'content_type', 'is_procurable', 'proc_pack_qty', 'rating', 'userid' => $this->getInt(),
             'state' => $this->getEnum(State::class, (int) $this->content)->value,
-            'custom_id', 'status', 'category', 'storage', 'qty_stored' => $this->getIntOrNull(),
+            'custom_id', 'status', 'category', 'storage', 'qty_stored' => $this->getPositiveIntOrNull(),
             'qty_unit' => Check::unit($this->content),
             default => throw new ImproperActionException('Invalid update target.'),
         };

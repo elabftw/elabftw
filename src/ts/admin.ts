@@ -24,7 +24,7 @@ import { EntityType, Model, Action, Selected } from './interfaces';
 import tinymce from 'tinymce/tinymce';
 import Tab from './Tab.class';
 
-function collectSelectable(name: string) {
+function collectSelectable(name: string): number[] {
   const collected = [];
   document.querySelectorAll(`#batchActions input[name=${name}]`).forEach(input => {
     const box = input as HTMLInputElement;
@@ -59,14 +59,17 @@ function getSelected(): Selected {
   return {
     items_types: collectSelectable('items_types'),
     items_status: collectSelectable('items_status'),
+    items_tags: collectSelectable('items_tags'),
     experiments_status: collectSelectable('experiments_status'),
     experiments_categories: collectSelectable('experiments_categories'),
+    experiments_tags: collectSelectable('experiments_tags'),
     tags: collectSelectable('tags'),
     users: collectSelectable('users'),
     target_owner: collectTargetOwner(),
     can: collectCan(),
   };
 }
+
 // UPDATE
 function itemsTypesUpdate(id: number): Promise<Response> {
   const nameInput = (document.getElementById('itemsTypesName') as HTMLInputElement);

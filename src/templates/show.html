@@ -236,6 +236,7 @@
             <option selected disabled value=''>
               {{ 'Change category'|trans }}
             </option>
+            <option value='0'>{{ 'Not set'|trans }}</option>
             {% for category in categoryArr %}
                 <option value='{{ category.id }}'>{{ category.title }}</option>
             {% endfor %}
@@ -245,6 +246,7 @@
             <option selected disabled value=''>
               {{ 'Change status'|trans }}
             </option>
+            <option value='0'>{{ 'Not set'|trans }}</option>
             {% for status in statusArr %}
                 <option value='{{ status.id }}'>{{ status.title }}</option>
             {% endfor %}

@@ -34,9 +34,11 @@
 
 {# Exclusive edit mode notification #}
 <div id='exclusiveEditModeInfo'>
+  {#
   {% if App.Users.userData.enforce_exclusive_edit_mode == 1 and not Entity.ExclusiveEditMode.dataArr %}
     <div id='enforceExclusiveEdit'></div>
   {% endif %}
+  #}
   {% if Entity.ExclusiveEditMode.isActive %}
     {% set writeLockNotice = 'You opened this entry in exclusive edit mode at %s.'|trans|format(
         Entity.ExclusiveEditMode.dataArr.locked_at,

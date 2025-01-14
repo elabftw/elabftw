@@ -124,7 +124,7 @@ class ExclusiveEditMode
     public function manage(): void
     {
         if ($this->isActive) {
-            $this->releasedExpiredLock();
+            $this->releaseExpiredLock();
             $this->extendLockTime();
         }
     }
@@ -169,9 +169,9 @@ class ExclusiveEditMode
     }
 
     /**
-     * remove lock after EDIT_MODE_TIMEOUT
+     * remove lock after LOCK_TIMEOUT
      */
-    private function releasedExpiredLock(): void
+    private function releaseExpiredLock(): void
     {
         $lockedAt = new DateTime($this->dataArr['locked_at']);
         $lockedUntil = $lockedAt->add(new DateInterval(sprintf('PT%sM', self::LOCK_TIMEOUT)));

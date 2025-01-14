@@ -32,7 +32,7 @@ class ExclusiveEditMode
 {
     /** timeout in minutes after which the lock is automatically released */
     // ToDo?: make it a configuration on team/instance level
-    public const LOCK_TIMEOUT = 60;
+    public const LOCK_TIMEOUT = 30;
 
     public array $dataArr = array();
 
@@ -62,6 +62,7 @@ class ExclusiveEditMode
         $this->dataArr = $req->fetch() ?: array();
         if (!empty($this->dataArr)) {
             $this->isActive = true;
+            $this->addLockTimeout($this->dataArr['locked_at']);
         }
         return $this->dataArr;
     }
@@ -112,9 +113,10 @@ class ExclusiveEditMode
                 return;
             }
             throw new ImproperActionException(sprintf(
-                _('This entry is opened in exclusive edit mode by %s since %s. You cannot edit it now.'),
+                _('This entry is opened in exclusive edit mode by %s since %s. You cannot edit it before %s.'),
                 $this->dataArr['fullname'],
                 $this->dataArr['locked_at'],
+                $this->dataArr['locked_until'],
             ));
         }
     }
@@ -172,8 +174,8 @@ class ExclusiveEditMode
     private function releasedExpiredLock(): void
     {
         $lockedAt = new DateTime($this->dataArr['locked_at']);
-        $lockedAt->add(new DateInterval(sprintf('PT%sM', self::LOCK_TIMEOUT)));
-        if ($lockedAt <= new DateTime()) {
+        $lockedUntil = $lockedAt->add(new DateInterval(sprintf('PT%sM', self::LOCK_TIMEOUT)));
+        if ($lockedUntil <= new DateTime()) {
             $this->destroy();
         }
     }
@@ -201,5 +203,15 @@ class ExclusiveEditMode
                 $this->dataArr['locked_at'] = $now;
             }
         }
+    }
+
+    /**
+     * add lock timeout to dataArr for clarity, indicating until when the entity remains locked.
+     */
+    private function addLockTimeout(string $lockedAt): void
+    {
+        $this->dataArr['locked_until'] = (new DateTime($lockedAt))
+            ->add(new DateInterval(sprintf('PT%sM', self::LOCK_TIMEOUT)))
+            ->format('Y-m-d H:i:s');
     }
 }

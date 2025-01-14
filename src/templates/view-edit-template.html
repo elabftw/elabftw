@@ -39,9 +39,10 @@
         Entity.ExclusiveEditMode.dataArr.locked_at,
       )|msg('warning', false) %}
     {% if Entity.ExclusiveEditMode.dataArr.locked_by != Entity.Users.userid %}
-      {% set writeLockNotice = 'This entry is opened by %s in exclusive edit mode since %s. You cannot edit it now. %sRequest exclusive edit mode removal%s'|trans|format(
+      {% set writeLockNotice = 'This entry is opened by %s in exclusive edit mode since %s. You cannot edit it before %s. %sRequest exclusive edit mode removal%s'|trans|format(
           Entity.ExclusiveEditMode.dataArr.fullname,
           Entity.ExclusiveEditMode.dataArr.locked_at,
+          Entity.ExclusiveEditMode.dataArr.locked_until,
           '<button type="button" class="btn btn-sm btn-secondary ml-2" data-action="request-exclusive-edit-mode-removal" data-target-user="%s">'|format(Entity.ExclusiveEditMode.dataArr.locked_by),
           '</button>'
       )|msg('warning', false) %}

@@ -34,8 +34,9 @@
 {# Exclusive edit mode notification #}
 <div id='exclusiveEditModeInfo'>
   {% if Entity.ExclusiveEditMode.isActive %}
-    {% set writeLockNotice = 'You opened this entry in exclusive edit mode at %s.'|trans|format(
+    {% set writeLockNotice = 'You opened this entry in exclusive edit mode at %s and it will stay active until %s, unless deactivated manually.'|trans|format(
         Entity.ExclusiveEditMode.dataArr.locked_at,
+        Entity.ExclusiveEditMode.dataArr.locked_until,
       )|msg('warning', false) %}
     {% if Entity.ExclusiveEditMode.dataArr.locked_by != Entity.Users.userid %}
       {# here user can only be (sys)admin of user who locked entry all others are redirected to view mode in controller #}

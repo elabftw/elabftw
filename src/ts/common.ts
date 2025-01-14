@@ -709,6 +709,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // prevent the form from being submitted
         event.preventDefault();
       }
+    // REMOVE COMPOUND LINK
+    } else if (el.matches('[data-action="delete-compoundlink"]')) {
+      const entity = getEntity();
+      ApiC.delete(`${entity.type}/${entity.id}/compounds/${el.dataset.id}`).then(() => reloadElements(['compoundDiv']));
     // CLICK the NOW button of a time or date extra field
     } else if (el.matches('[data-action="update-to-now"]')) {
       const input = el.closest('.input-group').querySelector('input');

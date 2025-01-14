@@ -16,8 +16,11 @@
         {% for fp in Entity.entityData.compounds %}
         <div class='col-md-12 mt-3 countable'>
         <details>
-          <summary><h5 class='d-inline togglable-section-title'>{{ fp.name|default('Name unset'|trans) }}</h5></summary>
-          <ul class='list-group'>
+          <summary>
+              <h5 class='d-inline togglable-section-title'>{{ fp.name|default('Name unset'|trans) }}</h5>
+          </summary>
+          <span data-action='delete-compoundlink' data-id='{{ fp.id }}' title='{{ 'Remove compound'|trans }}' class='float-right hover-danger p-2 rounded'><i class='fas fa-trash-alt'></i></span>
+          <ul class='mt-2 list-group'>
           {{ _self.fpList('cas' ~ fp.id, 'CAS', fp.cas_number) }}
           {{ _self.fpList('iupac_name_' ~ fp.id, 'IUPAC Name', fp.iupac_name) }}
           {{ _self.fpList('inchi_' ~ fp.id, 'InChI', fp.inchi) }}

@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use DateTime;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\ImproperActionException;
@@ -53,10 +54,25 @@ class ExclusiveEditModeTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(1, $this->ExperimentAdmin->ExclusiveEditMode->dataArr['locked_by']);
         $this->assertEquals('Toto Le sysadmin', $this->ExperimentAdmin->ExclusiveEditMode->dataArr['fullname']);
         $this->assertIsString($this->ExperimentAdmin->ExclusiveEditMode->dataArr['locked_at']);
+        $this->assertIsString($this->ExperimentAdmin->ExclusiveEditMode->dataArr['locked_until']);
         $this->assertEquals(19, strlen($this->ExperimentAdmin->ExclusiveEditMode->dataArr['locked_at']));
+        $this->assertEquals(19, strlen($this->ExperimentAdmin->ExclusiveEditMode->dataArr['locked_until']));
         $this->ExperimentAdmin->patch(Action::Update, array('title' => $this->ExperimentAdmin->entityData['title']));
         $this->ExperimentAdmin->patch(Action::ExclusiveEditMode, array());
         $this->assertFalse($this->ExperimentAdmin->ExclusiveEditMode->isActive);
+    }
+
+    public function testLockedUntilTimeMatchesExpectedTimeout(): void
+    {
+        $this->ExperimentAdmin->patch(Action::ExclusiveEditMode, array());
+        $lockedAt = new DateTime($this->ExperimentAdmin->ExclusiveEditMode->dataArr['locked_at']);
+        $lockedUntil = new DateTime($this->ExperimentAdmin->ExclusiveEditMode->dataArr['locked_until']);
+        $expectedInterval = ExclusiveEditMode::LOCK_TIMEOUT;
+        $interval = $lockedAt->diff($lockedUntil);
+        $this->assertEquals(0, $interval->h, 'Difference in hours should be 0');
+        $this->assertEquals($expectedInterval, $interval->i, sprintf('Difference in minutes should be %d', $expectedInterval));
+        $this->assertEquals(0, $interval->s, 'Difference in seconds should be 0');
+        $this->ExperimentAdmin->patch(Action::ExclusiveEditMode, array());
     }
 
     public function testLockItems(): void

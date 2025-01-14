@@ -217,8 +217,12 @@ document.addEventListener('DOMContentLoaded', () => {
       || el.parentElement?.matches('[data-action="toggle-exclusive-edit-mode"]')
     ) {
       EntityC.patchAction(entity.id, Action.ExclusiveEditMode)
-        .then(() => reloadElements(['exclusiveEditModeBtn', 'exclusiveEditModeInfo', 'requestActionsDiv']))
-        .then(() => toggleGrayClasses(document.getElementById('exclusiveEditModeBtn').classList));
+        .then(() => reloadElements(['exclusiveEditModeInfo', 'requestActionsDiv', 'exclusiveEditModeBtn']))
+        .then(() => {
+          if (document.getElementById('exclusiveEditModeBtn')) {
+            toggleGrayClasses(document.getElementById('exclusiveEditModeBtn').classList);
+          }
+        });
     }
   });
 });

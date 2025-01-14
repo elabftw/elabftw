@@ -259,7 +259,7 @@
     {% endif %}
 
     {# EXCLUSIVE EDIT MODE #}
-    {% if mode == 'edit' %}
+    {% if mode == 'edit' and App.Users.userData.enforce_exclusive_edit_mode != 1 %}
       {% set lockIcon = 'fa-lock-open' %}
       {% set alt = 'Enable/Disable exclusive edit mode'|trans %}
       {% if Entity.ExclusiveEditMode.isActive %}

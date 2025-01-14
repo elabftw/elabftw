@@ -40,7 +40,7 @@
   {% endif %}
   #}
   {% if Entity.ExclusiveEditMode.isActive %}
-    {% set writeLockNotice = 'You opened this entry in exclusive edit mode at %s and it will stay active until %s, unless deactivated manually.'|trans|format(
+    {% set writeLockNotice = 'You opened this entry in exclusive edit mode at %s and it will stay active until %s, unless deactivated manually in view mode.'|trans|format(
         Entity.ExclusiveEditMode.dataArr.locked_at,
         Entity.ExclusiveEditMode.dataArr.locked_until,
       )|msg('warning', false) %}

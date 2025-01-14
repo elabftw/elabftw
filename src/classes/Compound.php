@@ -26,8 +26,15 @@ class Compound
         public ?string $iupacName = null,
         public ?string $molecularFormula = null,
         public ?string $name = null,
-        public ?array $safetyIcons = array(),
         public ?string $smiles = null,
+        public bool $isCorrosive = false,
+        public bool $isExplosive = false,
+        public bool $isFlammable = false,
+        public bool $isGasUnderPressure = false,
+        public bool $isHazardous2env = false,
+        public bool $isHazardous2health = false,
+        public bool $isOxidising = false,
+        public bool $isToxic = false,
     ) {}
 
     public function toArray(): array
@@ -41,7 +48,6 @@ class Compound
             'iupacName' => $this->iupacName,
             'molecularFormula' => $this->molecularFormula,
             'name' => $this->name,
-            'safetyIcons' => $this->safetyIcons,
             'smiles' => $this->smiles,
         );
     }
@@ -52,14 +58,35 @@ class Compound
         $compound = new self();
 
         foreach ($all['Section'] as $section) {
+            // Grab the hazard symbols
             if ($section['TOCHeading'] === 'Chemical Safety') {
                 foreach ($section['Information'] as $subSection) {
                     if ($subSection['Name'] === 'Chemical Safety') {
-                        foreach ($subSection['Value'][0]['Markup'] as $ghs) {
-                            $compound->safetyIcons[] = array(
-                                'src' => self::getLastPartOfUrl($ghs['URL']),
-                                'alt' => $ghs['Extra'],
-                            );
+                        foreach ($subSection['Value']['StringWithMarkup'][0]['Markup'] as $ghs) {
+                            if ($ghs['Extra'] === 'Corrosive') {
+                                $compound->isCorrosive = true;
+                            }
+                            if ($ghs['Extra'] === 'Explosive') {
+                                $compound->isExplosive = true;
+                            }
+                            if ($ghs['Extra'] === 'Flammable') {
+                                $compound->isFlammable = true;
+                            }
+                            if ($ghs['Extra'] === 'Compressed Gas') {
+                                $compound->isGasUnderPressure = true;
+                            }
+                            if ($ghs['Extra'] === 'Environmental Hazard') {
+                                $compound->isHazardous2env = true;
+                            }
+                            if ($ghs['Extra'] === 'Health Hazard') {
+                                $compound->isHazardous2health = true;
+                            }
+                            if ($ghs['Extra'] === 'Oxidizer') {
+                                $compound->isOxidising = true;
+                            }
+                            if ($ghs['Extra'] === 'Acute Toxic') {
+                                $compound->isToxic = true;
+                            }
                         }
                     }
                 }
@@ -132,14 +159,5 @@ class Compound
             name: 'CID' . $cid,
             smiles: $smiles,
         );
-    }
-
-    private static function getLastPartOfUrl(string $url): string
-    {
-        $path = parse_url($url, PHP_URL_PATH);
-        if (!is_string($path)) {
-            return '';
-        }
-        return basename(rtrim($path, '/'));
     }
 }

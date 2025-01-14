@@ -48,12 +48,10 @@ if (document.getElementById('compounds-table')) {
           { field: 'molecular_formula' },
           { field: 'cas_number' },
           { field: 'pubchem_cid' },
-          { field: 'has_fingerprint', headerName: 'Has fingerprint' },
-          { field: 'created_by', headerName: 'Created by' },
-          { field: 'modified_at', headerName: 'Modified at' },
-          { field: 'modified_by', headerName: 'Modified by' },
           { field: 'userid_human', headerName: 'Owner' },
-          { field: 'team' },
+          { field: 'team_name', headerName: 'Team' },
+          { field: 'modified_at', headerName: 'Modified at' },
+          { field: 'has_fingerprint', headerName: 'Has fingerprint' },
       ]);
 
     // Load data on component mount

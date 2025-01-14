@@ -72,9 +72,11 @@ class Compounds extends AbstractRest
                 TO_BASE64(fp28), TO_BASE64(fp29), TO_BASE64(fp30), TO_BASE64(fp31)
             ) AS fp2_base64,
             CONCAT(users.firstname, " ", users.lastname) AS userid_human,
+            teams.name AS team_name,
             CASE WHEN compounds_fingerprints.id IS NOT NULL THEN 1 ELSE 0 END AS has_fingerprint
             FROM compounds AS entity
             LEFT JOIN compounds_fingerprints ON (compounds_fingerprints.id = entity.id)
+            LEFT JOIN teams ON (entity.team = teams.id)
             LEFT JOIN users
             ON (users.userid = entity.userid)
             LEFT JOIN users2teams
@@ -183,6 +185,14 @@ class Compounds extends AbstractRest
                 casNumber: $reqBody['cas_number'] ?? null,
                 iupacName: $reqBody['iupac_name'] ?? null,
                 pubchemCid: $reqBody['pubchem_cid'] ?? null,
+                isCorrosive: $reqBody['is_corrosive'] ?? false,
+                isExplosive: $reqBody['is_explosive'] ?? false,
+                isFlammable: $reqBody['is_flammable'] ?? false,
+                isGasUnderPressure: $reqBody['is_gas_under_pressure'] ?? false,
+                isHazardous2env: $reqBody['is_hazardous2env'] ?? false,
+                isHazardous2health: $reqBody['is_hazardous2health'] ?? false,
+                isOxidising: $reqBody['is_oxidising'] ?? false,
+                isToxic: $reqBody['is_toxic'] ?? false,
             ),
         };
     }
@@ -209,6 +219,14 @@ class Compounds extends AbstractRest
         ?string $casNumber = null,
         ?string $iupacName = null,
         ?int $pubchemCid = null,
+        bool $isCorrosive = false,
+        bool $isExplosive = false,
+        bool $isFlammable = false,
+        bool $isGasUnderPressure = false,
+        bool $isHazardous2env = false,
+        bool $isHazardous2health = false,
+        bool $isOxidising = false,
+        bool $isToxic = false,
         bool $withFingerprint = true,
     ): int {
         $canread ??= BasePermissions::Team->toJson();
@@ -218,12 +236,14 @@ class Compounds extends AbstractRest
             created_by, modified_by, name, canread, canwrite,
             inchi, inchi_key,
             smiles, molecular_formula,
-            cas_number, iupac_name, pubchem_cid, userid, team
+            cas_number, iupac_name, pubchem_cid, userid, team,
+            is_corrosive, is_explosive, is_flammable, is_gas_under_pressure, is_hazardous2env, is_hazardous2health, is_oxidising, is_toxic
             ) VALUES (
             :requester, :requester, :name, :canread, :canwrite,
             :inchi, :inchi_key,
             :smiles, :molecular_formula,
-            :cas_number, :iupac_name, :pubchem_cid, :requester, :team)';
+            :cas_number, :iupac_name, :pubchem_cid, :requester, :team,
+            :is_corrosive, :is_explosive, :is_flammable, :is_gas_under_pressure, :is_hazardous2env, :is_hazardous2health, :is_oxidising, :is_toxic)';
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':requester', $this->requester->userid);
@@ -238,6 +258,14 @@ class Compounds extends AbstractRest
         $req->bindParam(':cas_number', $casNumber);
         $req->bindParam(':iupac_name', $iupacName);
         $req->bindParam(':pubchem_cid', $pubchemCid);
+        $req->bindParam(':is_corrosive', $isCorrosive, PDO::PARAM_INT);
+        $req->bindParam(':is_explosive', $isExplosive, PDO::PARAM_INT);
+        $req->bindParam(':is_flammable', $isFlammable, PDO::PARAM_INT);
+        $req->bindParam(':is_gas_under_pressure', $isGasUnderPressure, PDO::PARAM_INT);
+        $req->bindParam(':is_hazardous2env', $isHazardous2env, PDO::PARAM_INT);
+        $req->bindParam(':is_hazardous2health', $isHazardous2health, PDO::PARAM_INT);
+        $req->bindParam(':is_oxidising', $isOxidising, PDO::PARAM_INT);
+        $req->bindParam(':is_toxic', $isToxic, PDO::PARAM_INT);
 
         $this->Db->execute($req);
 
@@ -328,6 +356,14 @@ class Compounds extends AbstractRest
             iupacName: $compound->iupacName,
             pubchemCid: $compound->cid,
             molecularFormula: $compound->molecularFormula,
+            isCorrosive: $compound->isCorrosive,
+            isExplosive: $compound->isExplosive,
+            isFlammable: $compound->isFlammable,
+            isGasUnderPressure: $compound->isGasUnderPressure,
+            isHazardous2env: $compound->isHazardous2env,
+            isHazardous2health: $compound->isHazardous2health,
+            isOxidising: $compound->isOxidising,
+            isToxic: $compound->isToxic,
         );
     }
 }

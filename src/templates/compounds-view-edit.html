@@ -13,13 +13,29 @@
           </div>
         </li>
       {% endmacro %}
-        {% for fp in Entity.entityData.compounds %}
+      {% macro compoundPicto(compound) %}
+         {% set hazards = {
+          'is_corrosive': {'code': '05', 'alt': 'Corrosive'},
+          'is_explosive': {'code': '01', 'alt': 'Explosive'},
+          'is_flammable': {'code': '02', 'alt': 'Flammable'},
+          'is_gas_under_pressure': {'code': '04', 'alt': 'Gas under pressure'},
+          'is_hazardous2env': {'code': '09', 'alt': 'Hazardous to environment'},
+          'is_hazardous2health': {'code': '08', 'alt': 'Hazardous to health'},
+          'is_oxidising': {'code': '03', 'alt': 'Oxidising'},
+          'is_toxic': {'code': '06', 'alt': 'Toxic'}
+        } %}
+        {% for property, data in hazards %}
+          {% if attribute(compound, property) %}
+            <img src='assets/images/ghs/GHS{{ data.code }}.svg' alt='{{ data.alt }}' title='{{ data.alt }}' />
+          {% endif %}
+        {% endfor %}
+      {% endmacro %}
+      {% for fp in Entity.entityData.compounds %}
         <div class='col-md-12 mt-3 countable'>
         <details>
           <summary>
-              <h5 class='d-inline togglable-section-title'>{{ fp.name|default('Name unset'|trans) }}</h5>
+            <h5 class='d-inline togglable-section-title'>{{ fp.name|default('Name unset'|trans) }} {{ _self.compoundPicto(fp) }}</h5>
           </summary>
-          <span data-action='delete-compoundlink' data-id='{{ fp.id }}' title='{{ 'Remove compound'|trans }}' class='float-right hover-danger p-2 rounded'><i class='fas fa-trash-alt'></i></span>
           <ul class='mt-2 list-group'>
           {{ _self.fpList('cas' ~ fp.id, 'CAS', fp.cas_number) }}
           {{ _self.fpList('iupac_name_' ~ fp.id, 'IUPAC Name', fp.iupac_name) }}
@@ -27,11 +43,22 @@
           {{ _self.fpList('inchi_key' ~ fp.id, 'InChIKey', fp.inchi_key) }}
           {{ _self.fpList('smiles' ~ fp.id, 'SMILES', fp.smiles) }}
           {{ _self.fpList('molecular_formula' ~ fp.id, 'Molecular formula'|trans, fp.molecular_formula) }}
-          {% if fp.pubchem_cid %}
           <li class='list-group-item'>
-            <button class='btn btn-ghost' type='button'><a target='_blank' class='external-link' rel='noopener' href='https://pubchem.ncbi.nlm.nih.gov/compound/{{ fp.pubchem_cid }}'>{{ 'View on PubChem'|trans }}</a></button>
+            <div class='d-flex justify-content-between'>
+              {% if fp.smiles %}
+                <a target='_blank' class='btn btn-ghost mr-1' rel='noopener' href='/compounds.php?search_fp_smi={{ fp.smiles|url_encode }}'>
+                  {{ 'Search similar compounds'|trans }}
+                </a>
+              {% endif %}
+              <a target='_blank' class='btn btn-ghost mr-1' rel='noopener' href='/api/v2/compounds/{{ fp.id }}'>{{ 'View in JSON'|trans }}</a>
+              {% if fp.pubchem_cid %}
+                <a target='_blank' class='btn btn-ghost mr-1 external-link' rel='noopener' href='https://pubchem.ncbi.nlm.nih.gov/compound/{{ fp.pubchem_cid }}'>
+                  {{ 'View on PubChem'|trans }}
+                </a>
+              {% endif %}
+              <button class='btn btn-danger ml-auto' type='button' data-action='delete-compoundlink' data-id='{{ fp.id }}'>{{ 'Remove compound'|trans }}</button>
+            </div>
           </li>
-          {% endif %}
           </ul>
         </details>
         </div>

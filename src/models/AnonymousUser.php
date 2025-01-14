@@ -49,5 +49,6 @@ final class AnonymousUser extends Users
         $this->userData['entrypoint'] = 1;
         $this->userData['initials'] = '웃';
         $this->userData['show_weekends'] = 0;
+        $this->userData['enforce_exclusive_edit_mode'] = 0;
     }
 }

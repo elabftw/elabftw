@@ -1223,6 +1223,7 @@ CREATE TABLE `users` (
   `entrypoint` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `always_show_owned` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `show_weekends` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `enforce_exclusive_edit_mode` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 

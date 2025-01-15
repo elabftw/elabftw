@@ -62,7 +62,9 @@ class ExclusiveEditMode
         $this->dataArr = $req->fetch() ?: array();
         if (!empty($this->dataArr)) {
             $this->isActive = true;
-            $this->addLockTimeout($this->dataArr['locked_at']);
+            $this->dataArr['locked_until'] = (new DateTime($this->dataArr['locked_at']))
+                ->add(new DateInterval(sprintf('PT%sM', self::LOCK_TIMEOUT)))
+                ->format('Y-m-d H:i:s');
         }
         return $this->dataArr;
     }
@@ -219,15 +221,5 @@ class ExclusiveEditMode
                 $this->dataArr['locked_at'] = $now;
             }
         }
-    }
-
-    /**
-     * add lock timeout to dataArr for clarity, indicating until when the entity remains locked.
-     */
-    private function addLockTimeout(string $lockedAt): void
-    {
-        $this->dataArr['locked_until'] = (new DateTime($lockedAt))
-            ->add(new DateInterval(sprintf('PT%sM', self::LOCK_TIMEOUT)))
-            ->format('Y-m-d H:i:s');
     }
 }

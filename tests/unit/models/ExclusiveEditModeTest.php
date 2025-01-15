@@ -75,6 +75,20 @@ class ExclusiveEditModeTest extends \PHPUnit\Framework\TestCase
         $this->ExperimentAdmin->patch(Action::ExclusiveEditMode, array());
     }
 
+    public function testEnforceExclusiveModeBasedOnUserSetting(): void
+    {
+        $this->assertFalse($this->ExperimentAdmin->ExclusiveEditMode->isActive);
+        $this->ExperimentAdmin->Users->userData['enforce_exclusive_edit_mode'] = 1;
+        $this->ExperimentAdmin->ExclusiveEditMode->enforceExclusiveModeBasedOnUserSetting();
+        $this->assertTrue($this->ExperimentAdmin->ExclusiveEditMode->isActive, 'Exclusive edit mode is enforced and now activated');
+        $this->assertEquals(
+            $this->ExperimentAdmin->ExclusiveEditMode->dataArr,
+            $this->ExperimentAdmin->entityData['exclusive_edit_mode'],
+            'Entity data should reflect the lock'
+        );
+        $this->ExperimentAdmin->patch(Action::ExclusiveEditMode, array());
+    }
+
     public function testLockItems(): void
     {
         $this->assertFalse($this->ItemAdmin->ExclusiveEditMode->isActive);

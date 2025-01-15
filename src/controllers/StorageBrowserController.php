@@ -33,7 +33,6 @@ class StorageBrowserController extends AbstractHtmlController
             $containersArr = $StorageUnits->readAllFromStorage($this->app->Request->query->getInt('storage_unit'));
         }
         return array(
-            'containersCount' => $StorageUnits->readCount(),
             'containersArr' => $containersArr,
             'storageUnitsArr' => $StorageUnits->readAllRecursive(),
         );

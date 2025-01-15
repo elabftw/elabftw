@@ -22,15 +22,12 @@ use function date;
  */
 class MakeStorageReport extends AbstractMakeCsv
 {
-    private array $rows;
+    protected array $rows;
 
-    public function __construct(StorageUnits $storageUnits)
+    public function __construct(protected StorageUnits $storageUnits)
     {
         parent::__construct();
-        $this->rows = $storageUnits->readAll();
-        if (empty($this->rows)) {
-            throw new ImproperActionException(_('Nothing to export!'));
-        }
+        $this->rows = $this->getRows();
     }
 
     /**
@@ -49,11 +46,20 @@ class MakeStorageReport extends AbstractMakeCsv
         return array_keys($this->rows[0]);
     }
 
+    protected function getData(): array
+    {
+        return $this->storageUnits->readAll();
+    }
+
     /**
      * Generate an array for the requested data
      */
     protected function getRows(): array
     {
-        return $this->rows;
+        $rows = $this->getData();
+        if (empty($rows)) {
+            throw new ImproperActionException(_('Nothing to export!'));
+        }
+        return $rows;
     }
 }

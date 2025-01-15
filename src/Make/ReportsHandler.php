@@ -33,6 +33,7 @@ class ReportsHandler extends AbstractRest
             ReportScopes::Instance => (new MakeReport($this->requester)),
             ReportScopes::Team => (new MakeTeamReport($this->requester)),
             ReportScopes::Storage => (new MakeStorageReport(new StorageUnits($this->requester))),
+            ReportScopes::StoredCompounds => (new MakeStoredCompoundsReport(new StorageUnits($this->requester))),
         };
         return $Reporter->getResponse();
 

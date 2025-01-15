@@ -20,7 +20,6 @@
         <button class='btn btn-primary' type='submit' data-action='search-storage'>{{ 'Search'|trans }}</button>
       </div>
     </form>
-    {{ 'Stored containers: %d bound to experiments and %d bound to resources'|trans|format(containersCount.experiments, containersCount.items) }}
 
     {% if containersArr|length == 0 and App.Request.query.has('q') %}
       {{ 'No results found'|trans|msg('warning', false) }}

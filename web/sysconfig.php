@@ -135,10 +135,12 @@ try {
         $event['category'] = AuditCategory::from($event['category'])->name;
     });
     $passwordComplexity = PasswordComplexity::from((int) $App->Config->configArr['password_complexity_requirement']);
+    $StorageUnits = new StorageUnits($App->Users);
     $template = 'sysconfig.html';
     $renderArr = array(
         'Request' => $App->Request,
         'auditLogsArr' => $auditLogsArr,
+        'containersCount' => $StorageUnits->readCount(),
         'nologinUsersCount' => $AuthFail->getLockedUsersCount(),
         'lockoutDevicesCount' => $AuthFail->getLockoutDevicesCount(),
         'elabimgVersion' => $elabimgVersion,
@@ -153,7 +155,7 @@ try {
         'Teams' => $Teams,
         'teamsArr' => $teamsArr,
         'info' => (new Info())->readAll(),
-        'storageUnitsArr' => (new StorageUnits($App->Users))->readAllRecursive(),
+        'storageUnitsArr' => $StorageUnits->readAllRecursive(),
         'timestampLastMonth' => $Experiments->getTimestampLastMonth(),
         'uploadsStats' => $UploadsChecker->getStats(),
         'usersArr' => $usersArr,

@@ -142,6 +142,65 @@ class StorageUnits extends AbstractRest
         return $req->fetchAll();
     }
 
+    public function readEverythingWithNoLimit(): array
+    {
+
+        $sql = '
+
+        SELECT
+            storage_units.id AS storage_id,
+            storage_units.name AS storage_name,
+            items.id AS entity_id,
+            items.title AS entity_title,
+            c2i.qty_stored,
+            c2i.qty_unit,
+            compounds.cas_number,
+            compounds.pubchem_cid,
+            compounds.is_corrosive,
+            compounds.is_explosive,
+            compounds.is_flammable,
+            compounds.is_gas_under_pressure,
+            compounds.is_hazardous2env,
+            compounds.is_hazardous2health,
+            compounds.is_oxidising,
+            compounds.is_toxic
+        FROM
+            containers2items AS c2i
+        LEFT JOIN storage_units ON c2i.storage_id = storage_units.id
+        LEFT JOIN items ON c2i.item_id = items.id
+        LEFT JOIN compounds2items ON items.id = compounds2items.entity_id
+        LEFT JOIN compounds ON compounds2items.compound_id = compounds.id
+
+        UNION ALL
+
+        SELECT
+            storage_units.id AS storage_id,
+            storage_units.name AS storage_name,
+            experiments.id AS entity_id,
+            experiments.title AS entity_title,
+            c2e.qty_stored,
+            c2e.qty_unit,
+            compounds.cas_number,
+            compounds.pubchem_cid,
+            compounds.is_corrosive,
+            compounds.is_explosive,
+            compounds.is_flammable,
+            compounds.is_gas_under_pressure,
+            compounds.is_hazardous2env,
+            compounds.is_hazardous2health,
+            compounds.is_oxidising,
+            compounds.is_toxic
+        FROM
+            containers2experiments AS c2e
+        LEFT JOIN storage_units ON c2e.storage_id = storage_units.id
+        LEFT JOIN experiments ON c2e.item_id = experiments.id
+        LEFT JOIN compounds2experiments ON experiments.id = c2e.item_id
+        LEFT JOIN compounds ON compounds2experiments.compound_id = compounds.id;';
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+        return $req->fetchAll();
+    }
+
     public function readAllRecursive(): array
     {
         $sql = "WITH RECURSIVE storage_hierarchy AS (

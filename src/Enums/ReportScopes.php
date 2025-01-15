@@ -20,5 +20,6 @@ enum ReportScopes: string
 
     case Instance = 'instance';
     case Storage = 'storage';
+    case StoredCompounds = 'stored_compounds';
     case Team = 'team';
 }

@@ -250,7 +250,7 @@ class LoginController implements ControllerInterface
                 }
                 $ldapConfig = array(
                     'protocol' => $c['ldap_scheme'] . '://',
-                    'hosts' => array($c['ldap_host']),
+                    'hosts' => explode(',', $c['ldap_host']),
                     'port' => (int) $c['ldap_port'],
                     'base_dn' => $c['ldap_base_dn'],
                     'username' => $c['ldap_username'],

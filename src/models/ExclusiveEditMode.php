@@ -67,8 +67,24 @@ class ExclusiveEditMode
         return $this->dataArr;
     }
 
+    /**
+     * enforce exclusive edit mode depending on user setting
+     */
+    public function enforceExclusiveModeBasedOnUserSetting(): void
+    {
+        if (!$this->isActive
+            && $this->Entity->Users->userData['enforce_exclusive_edit_mode'] === 1
+        ) {
+            $this->create();
+            // update the entity data to reflect the lock
+            $this->Entity->entityData['exclusive_edit_mode'] = $this->dataArr;
+        }
+    }
+
     public function gatekeeper(): ?RedirectResponse
     {
+        $this->enforceExclusiveModeBasedOnUserSetting();
+
         if ($this->isActive
             && $this->Entity->Users->userid !== $this->dataArr['locked_by']
             && !$this->Entity->Users->isAdminOf($this->dataArr['locked_by'])
@@ -124,7 +140,7 @@ class ExclusiveEditMode
     public function manage(): void
     {
         if ($this->isActive) {
-            $this->releasedExpiredLock();
+            $this->releaseExpiredLock();
             $this->extendLockTime();
         }
     }
@@ -169,9 +185,9 @@ class ExclusiveEditMode
     }
 
     /**
-     * remove lock after EDIT_MODE_TIMEOUT
+     * remove lock after LOCK_TIMEOUT
      */
-    private function releasedExpiredLock(): void
+    private function releaseExpiredLock(): void
     {
         $lockedAt = new DateTime($this->dataArr['locked_at']);
         $lockedUntil = $lockedAt->add(new DateInterval(sprintf('PT%sM', self::LOCK_TIMEOUT)));

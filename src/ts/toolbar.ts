@@ -38,14 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const EntityC = new EntityClass(entity.type);
   const ApiC = new Api();
 
-  // enforce exclusive edit mode if activated in ucp
-  const enforceExclusiveEditDiv = document.getElementById('enforceExclusiveEdit');
-  if (enforceExclusiveEditDiv) {
-    EntityC.patchAction(entity.id, Action.ExclusiveEditMode)
-      .then(() => reloadElements(['exclusiveEditModeBtn', 'exclusiveEditModeInfo', 'requestActionsDiv']))
-      .then(() => toggleGrayClasses(document.getElementById('exclusiveEditModeBtn').classList));
-  }
-
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
@@ -217,8 +209,12 @@ document.addEventListener('DOMContentLoaded', () => {
       || el.parentElement?.matches('[data-action="toggle-exclusive-edit-mode"]')
     ) {
       EntityC.patchAction(entity.id, Action.ExclusiveEditMode)
-        .then(() => reloadElements(['exclusiveEditModeBtn', 'exclusiveEditModeInfo', 'requestActionsDiv']))
-        .then(() => toggleGrayClasses(document.getElementById('exclusiveEditModeBtn').classList));
+        .then(() => reloadElements(['exclusiveEditModeInfo', 'requestActionsDiv', 'exclusiveEditModeBtn']))
+        .then(() => {
+          if (document.getElementById('exclusiveEditModeBtn')) {
+            toggleGrayClasses(document.getElementById('exclusiveEditModeBtn').classList);
+          }
+        });
     }
   });
 });

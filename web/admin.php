@@ -64,6 +64,7 @@ try {
     if ($App->Request->query->has('templateid')) {
         $ItemsTypes->setId($App->Request->query->getInt('templateid'));
         $ItemsTypes->canOrExplode('write');
+        $ItemsTypes->ExclusiveEditMode->enforceExclusiveModeBasedOnUserSetting();
     }
     $statusArr = $Status->readAll();
     $teamGroupsArr = $TeamGroups->readAll();

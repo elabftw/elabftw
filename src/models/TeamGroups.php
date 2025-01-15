@@ -64,7 +64,7 @@ class TeamGroups implements RestInterface
         $sql = "SELECT team_groups.id,
                 team_groups.name,
                 GROUP_CONCAT(users.userid ORDER BY users.firstname, users.lastname) AS userids,
-                GROUP_CONCAT(CONCAT(users.firstname, ' ', users.lastname) ORDER BY users.firstname, users.lastname) AS fullnames
+                GROUP_CONCAT(CONCAT(users.firstname, ' ', users.lastname) ORDER BY users.firstname, users.lastname SEPARATOR '|') AS fullnames
             FROM team_groups
             LEFT JOIN users2team_groups ON (
                 users2team_groups.groupid = team_groups.id
@@ -90,7 +90,7 @@ class TeamGroups implements RestInterface
                             'fullname' => $fullname,
                         ),
                         explode(',', $group['userids']),
-                        explode(',', $group['fullnames'])
+                        explode('|', $group['fullnames'])
                     )
                     : array(),
             );

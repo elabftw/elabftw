@@ -558,7 +558,7 @@ export function escapeExtendedQuery(searchTerm: string): string {
   });
 
   // 2) mask special characters of extended search query by single character wildcard
-  ['!', '|', '&', '(', ')', '"', '\''].forEach(specialChar => {
+  ['!', '|', '&', '(', ')', '"', '\'', ':'].forEach(specialChar => {
     searchTerm = searchTerm.replaceAll(specialChar, '_');
   });
 

@@ -43,7 +43,7 @@ final class Db
         // throw exception if error
         $pdoOptions[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
         // use persistent mode for connection to MySQL
-        $pdoOptions[PDO::ATTR_PERSISTENT] = true;
+        $pdoOptions[PDO::ATTR_PERSISTENT] = Config::boolFromEnv('USE_PERSISTENT_MYSQL_CONN');
         // only return a named array
         $pdoOptions[PDO::ATTR_DEFAULT_FETCH_MODE] = PDO::FETCH_ASSOC;
         if (!empty(Config::fromEnv('DB_CERT_PATH'))) {

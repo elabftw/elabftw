@@ -226,6 +226,11 @@ final class Config implements RestInterface
         return $this->readAll();
     }
 
+    public static function boolFromEnv(string $confName): bool
+    {
+        return getenv($confName) !== 'false';
+    }
+
     public function decrementTsBalance(): array
     {
         $tsBalance = (int) $this->configArr['ts_balance'];

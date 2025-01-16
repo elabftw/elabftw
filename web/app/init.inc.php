@@ -93,6 +93,7 @@ try {
     $nologinArr = array(
         // the api can be access with session or token (or only token for v1) so we skip auth here to do it later with custom logic
         'ApiController.php',
+        'calendar.php',
         'change-pass.php',
         'index.php',
         'login.php',

@@ -58,9 +58,10 @@ class UnfinishedSteps implements RestInterface
 
     public function readAll(): array
     {
-        $experimentsSteps = $this->cleanUpResult($this->getSteps(EntityType::Experiments));
-        $itemsSteps = $this->cleanUpResult($this->getSteps(EntityType::Items));
-        return array('experiments' => $experimentsSteps, 'items' => $itemsSteps);
+        return array(
+            EntityType::Experiments->value => $this->cleanUpResult($this->getSteps(EntityType::Experiments)),
+            EntityType::Items->value => $this->cleanUpResult($this->getSteps(EntityType::Items)),
+        );
     }
 
     public function destroy(): bool

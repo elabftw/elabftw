@@ -178,6 +178,19 @@ class ItemsTypes extends AbstractTemplateEntity
         }
     }
 
+    /**
+     * Get the bookable items_types
+     * @param array $bookableItemsArr the items that are bookable as provided by Items->readBookable()
+     */
+    public function readBookable(array $bookableItemsArr): array
+    {
+        return array_filter($this->readAll(), fn(array $category): bool => in_array(
+            $category['id'],
+            array_column($bookableItemsArr, 'category'),
+            true,
+        ));
+    }
+
     private function isAdminOrExplode(): void
     {
         if ($this->bypassWritePermission === false && !$this->Users->isAdmin) {

@@ -7,7 +7,7 @@
  */
 import $ from 'jquery';
 import { Api } from './Apiv2.class';
-import { Malle } from '@deltablot/malle';
+import { Malle, InputType } from '@deltablot/malle';
 import 'bootstrap/js/src/modal.js';
 import {
   adjustHiddenState,
@@ -180,6 +180,34 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(json => json[original.dataset.target]);
     },
     listenOn: '.malleableColumn',
+    returnedValueIsTrustedHtml: false,
+    submit : i18next.t('save'),
+    submitClasses: ['btn', 'btn-primary', 'mt-2'],
+    tooltip: i18next.t('click-to-edit'),
+  }).listen();
+
+  // Listen for malleable qty_unit - we need a specific code to add the select options
+  new Malle({
+    cancel : i18next.t('cancel'),
+    cancelClasses: ['btn', 'btn-danger', 'mt-2', 'ml-1'],
+    inputClasses: ['form-control'],
+    inputType: InputType.Select,
+    selectOptions: [
+      {selected: false, text: '•', value: '•'},
+      {selected: false, text: 'μL', value: 'μL'},
+      {selected: false, text: 'mL', value: 'mL'},
+      {selected: false, text: 'L', value: 'L'},
+      {selected: false, text: 'μg', value: 'μg'},
+      {selected: false, text: 'mg', value: 'mg'},
+      {selected: false, text: 'g', value: 'g'},
+      {selected: false, text: 'kg', value: 'kg'},
+    ],
+    fun: (value, original) => {
+      return ApiC.patch(`${original.dataset.endpoint}/${original.dataset.id}`, {qty_unit: value})
+        .then(res => res.json())
+        .then(json => json['qty_unit']);
+    },
+    listenOn: '.malleableQtyUnit',
     returnedValueIsTrustedHtml: false,
     submit : i18next.t('save'),
     submitClasses: ['btn', 'btn-primary', 'mt-2'],

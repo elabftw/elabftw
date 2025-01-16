@@ -7,7 +7,7 @@
 <p>{{ 'Compounds are chemical entities associated with properties such as a PubChem CID, a CAS number, InChI or SMART representations, etc... This page allows you to manage your compounds database. Resources or Experiments can be linked to compounds.'|trans }}</p>
   <div class='my-3'>
     <button type='button' data-action='toggle-modal' data-target='importFromPubChemModal' class='btn btn-secondary'>{{ 'Add from PubChem'|trans }}</button>
-    <button type='button' data-action='add-compound' data-target='addCompoundManuallyModal' class='btn btn-secondary'>{{ 'Add compound'|trans }}</button>
+    <button type='button' data-action='toggle-modal' data-target='addCompoundManuallyModal' class='btn btn-secondary'>{{ 'Add compound'|trans }}</button>
   </div>
   <form method='GET' action='/compounds.php'>
   <div class='input-group my-2'>

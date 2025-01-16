@@ -7,7 +7,9 @@
           {% for container in Entity.entityData.containers %}
             <li class='list-group-item countable'>
               <div class='d-flex flex align-items-center'>
-                <span class='mr-2'>{{ container.qty_stored }} {{ container.qty_unit }} {{ 'in'|trans }} {{ container.full_path }}</span>
+                <div>
+                  <span class='mr-2'><span class='malleableColumn hl-hover-gray p-1 rounded' data-ma-type='number' data-endpoint='{{ Entity.entityType.value }}/{{ Entity.id }}/containers' data-id='{{ container.id }}' data-target='qty_stored'>{{ container.qty_stored }}</span> <span class='mr-2'><span class='malleableQtyUnit hl-hover-gray p-1 rounded' data-endpoint='{{ Entity.entityType.value }}/{{ Entity.id }}/containers' data-id='{{ container.id }}'>{{ container.qty_unit }}</span> {{ 'in'|trans }} {{ container.full_path }}</span>
+                </div>
                 <span data-action='destroy-container' data-id='{{ container.storage_id }}' class='hl-hover-gray rounded p-1 ml-auto'><i class='fas fa-trash-alt'></i></span>
               </div>
             </li>

@@ -41,6 +41,7 @@ abstract class AbstractContainersLinks extends AbstractLinks
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = 'SELECT
+            main.id,
             main.qty_stored,
             main.qty_unit,
             main.storage_id,
@@ -75,6 +76,7 @@ abstract class AbstractContainersLinks extends AbstractLinks
     public function readRelated(): array
     {
         $sql = 'SELECT
+            main.id,
             main.qty_stored,
             main.qty_unit,
             main.storage_id,
@@ -130,6 +132,55 @@ abstract class AbstractContainersLinks extends AbstractLinks
             Action::Duplicate => $this->import(),
             default => throw new ImproperActionException('Invalid action for links create.'),
         };
+    }
+
+    public function patch(Action $action, array $params): array
+    {
+        //$this->canOrExplode(AccessType::Write);
+        if ($params['qty_stored']) {
+            $this->update('qty_stored', $params['qty_stored']);
+        }
+        if ($params['qty_unit']) {
+            $this->update('qty_unit', $params['qty_unit']);
+        }
+        return $this->readOne();
+    }
+
+    public function readOne(): array
+    {
+        $sql = 'SELECT
+            main.id,
+            main.qty_stored,
+            main.qty_unit,
+            main.storage_id,
+            main.item_id,
+            main.created_at,
+            main.modified_at
+            FROM ' . $this->getTable() . ' AS main
+            WHERE main.id = :id;';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return $this->Db->fetch($req);
+    }
+
+    public function update(
+        string $column,
+        int|string $value,
+    ): bool {
+        if ($column !== 'qty_stored' && $column !== 'qty_unit') {
+            throw new ImproperActionException('Invalid update target');
+        }
+        $sql = sprintf(
+            'UPDATE %s SET %s = :value WHERE id = :id',
+            $this->getTable(),
+            $column,
+        );
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':value', $value);
+
+        return $this->Db->execute($req);
     }
 
     #[Override]

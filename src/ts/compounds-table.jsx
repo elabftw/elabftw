@@ -95,6 +95,14 @@ if (document.getElementById('compounds-table')) {
       btn.removeAttribute('disabled');
       const selectedRows = event.api.getSelectedRows();
       btn.dataset.target = selectedRows.map(c => c.id).join(',');
+      // edit
+      const editBtn = document.getElementById('editCompoundBtn');
+      if (selectedRows.length === 1) {
+        editBtn.removeAttribute('disabled');
+        editBtn.dataset.target = selectedRows.map(c => c.id).join(',');
+      } else {
+        editBtn.setAttribute('disabled', 'disabled');
+      }
     };
 
     const cellDoubleClicked = (event) => {

@@ -8,6 +8,7 @@ const t = {
     "custom-id-in-use": "Custom ID is already used! Try another one.",
     "dropzone-upload-area": "Tu vložte súbory, ktoré chcete priložiť",
     "dropzone-filesize-limit": "File size limit:",
+    "edit-compound": "Edit compound",
     "editing-metadata": "You are currently editing the metadata attached to this entry.",
     "entity-default-title": "Bez mena",
     "entity-delete-warning": "Vybraté položky a všetky súvisiace údaje sa natrvalo odstránia. To nie je možné vrátiť späť. Si si istý?",

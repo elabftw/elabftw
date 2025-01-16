@@ -8,6 +8,7 @@ const t = {
     "custom-id-in-use": "Custom ID is already used! Try another one.",
     "dropzone-upload-area": "Arrossega els fitxers fins aquí per a adjuntar-los",
     "dropzone-filesize-limit": "File size limit:",
+    "edit-compound": "Edit compound",
     "editing-metadata": "You are currently editing the metadata attached to this entry.",
     "entity-default-title": "Sense títol",
     "entity-delete-warning": "L’element o els elements seleccionats i totes les dades associades s’eliminaran definitivament. Això no es pot desfer. Estàs segur?",

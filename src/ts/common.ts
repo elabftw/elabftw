@@ -588,12 +588,36 @@ document.addEventListener('DOMContentLoaded', () => {
         const importBtn = document.querySelector('[data-action="import-cid"]');
         importBtn.setAttribute('disabled', 'disabled');
       });
-    // CREATE COMPOUND MANUALLY
-    } else if (el.matches('[data-action="create-compound"]')) {
-      const params = collectForm(document.getElementById('createCompoundInputs'));
-      ApiC.post('compounds', params).then(() => {
-        document.dispatchEvent(new CustomEvent('dataReload'));
+    // CREATE/EDIT COMPOUND MANUALLY
+    } else if (el.matches('[data-action="save-compound"]')) {
+      const params = collectForm(document.getElementById('createCompoundInputs'), true);
+      if (el.dataset.compoundId) { // edit
+        ApiC.patch(`compounds/${el.dataset.compoundId}`, params).then(() => {
+          document.dispatchEvent(new CustomEvent('dataReload'));
+        });
+      } else { // create
+        ApiC.post('compounds', params).then(() => {
+          document.dispatchEvent(new CustomEvent('dataReload'));
+        });
+      }
+    // EDIT SELECTED COMPOUND
+    } else if (el.matches('[data-action="edit-compound"]')) {
+      const btn = document.getElementById('editCompoundBtn');
+      const compoundId = btn.dataset.target;
+      // add the compoundId to the save button dataset so we can edit existing instead of creating a new one
+      const saveBtn = document.getElementById('addCompoundManuallyModalSaveBtn');
+      saveBtn.dataset.compoundId = compoundId;
+      ApiC.getJson(`compounds/${compoundId}`).then(json => {
+        (document.getElementById('addCompoundNameInput') as HTMLInputElement).value = json.name;
+        (document.getElementById('addCompoundSMILESInput') as HTMLInputElement).value = json.smiles;
+        (document.getElementById('addCompoundInChIInput') as HTMLInputElement).value = json.inchi;
+        (document.getElementById('addCompoundInChIKeyInput') as HTMLInputElement).value = json.inchi_key;
+        (document.getElementById('addCompoundMolFormInput') as HTMLInputElement).value = json.molecular_formula;
+        (document.getElementById('addCompoundCASInput') as HTMLInputElement).value = json.cas_number;
       });
+      document.getElementById('addCompoundManuallyModalTitle').textContent = i18next.t('edit-compound');
+      $('#addCompoundManuallyModal').modal('toggle');
+      //document.dispatchEvent(new CustomEvent('dataReload'));
     // DELETE SELECTED COMPOUNDS
     } else if (el.matches('[data-action="delete-compounds"]')) {
       const btn = document.getElementById('deleteCompoundsBtn');

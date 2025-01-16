@@ -154,17 +154,45 @@ class Compounds extends AbstractRest
     public function patch(Action $action, array $params): array
     {
         $this->canOrExplode(AccessType::Write);
-        $this->update(name: $params['name'] ?? null);
+        $this->update(
+            name: $params['name'] ?? null,
+            inchi: $params['inchi'] ?? null,
+            inchiKey: $params['inchi_key'] ?? null,
+            smiles: $params['smiles'] ?? null,
+            molecularFormula: $params['molecular_formula'] ?? null,
+            casNumber: $params['cas_number'] ?? null,
+            iupacName: $params['iupac_name'] ?? null,
+        );
         return $this->readOne();
     }
 
     public function update(
         ?string $name = null,
+        ?string $inchi = null,
+        ?string $inchiKey = null,
+        ?string $smiles = null,
+        ?string $molecularFormula = null,
+        ?string $casNumber = null,
+        ?string $iupacName = null,
     ): bool {
-        $sql = 'UPDATE compounds SET name = :name WHERE id = :id';
+        $sql = 'UPDATE compounds SET
+            name = :name,
+            inchi = :inchi,
+            inchi_key = :inchi_key,
+            smiles = :smiles,
+            molecular_formula = :molecular_formula,
+            cas_number = :cas_number,
+            iupac_name = :iupac_name
+            WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':name', $name);
+        $req->bindParam(':inchi', $inchi);
+        $req->bindParam(':inchi_key', $inchiKey);
+        $req->bindParam(':smiles', $smiles);
+        $req->bindParam(':molecular_formula', $molecularFormula);
+        $req->bindParam(':cas_number', $casNumber);
+        $req->bindParam(':iupac_name', $iupacName);
 
         return $this->Db->execute($req);
     }

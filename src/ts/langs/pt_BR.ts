@@ -8,6 +8,7 @@ const t = {
     "custom-id-in-use": "A ID personalizada já foi usada! Tente outra.",
     "dropzone-upload-area": "Arraste aqui os arquivos que quiser anexar ao experimento",
     "dropzone-filesize-limit": "Limite de tamanho do arquivo:",
+    "edit-compound": "Edit compound",
     "editing-metadata": "No momento, você está editando os metadados anexados a este registro.",
     "entity-default-title": "Sem título",
     "entity-delete-warning": "Os items selecionados e todos os dados associados a eles serão permanentemente deletados. Não vai ter jeito de voltar atrás. Tem certeza?",

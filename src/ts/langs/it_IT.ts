@@ -8,6 +8,7 @@ const t = {
     "custom-id-in-use": "Custom ID is already used! Try another one.",
     "dropzone-upload-area": "Trascina qui i file da allegare",
     "dropzone-filesize-limit": "File size limit:",
+    "edit-compound": "Edit compound",
     "editing-metadata": "You are currently editing the metadata attached to this entry.",
     "entity-default-title": "Senza titolo",
     "entity-delete-warning": "Quanto è stato selezionato (nonché i dati associati) sarà definitivamente cancellato. Il processo è irreversibile. Si è veramente sicuri?",

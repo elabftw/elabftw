@@ -21,7 +21,6 @@ use Elabftw\Enums\PdfFormat;
 use Elabftw\Enums\Scope;
 use Elabftw\Enums\Sort;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Models\Config;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
@@ -29,7 +28,7 @@ use Elabftw\Services\PasswordValidator;
 
 use function trim;
 
-final class UserParams extends ContentParams implements ContentParamsInterface
+final class UserParams extends ContentParams
 {
     public function getContent(): string
     {

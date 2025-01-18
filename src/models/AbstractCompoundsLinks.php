@@ -47,7 +47,7 @@ abstract class AbstractCompoundsLinks extends AbstractRest
         $sql = 'SELECT compound_id AS id, compounds.*
             FROM ' . $this->getTable() . ' AS main
             LEFT JOIN compounds ON compounds.id = main.compound_id
-            WHERE main.entity_id = :entity_id';
+            WHERE main.entity_id = :entity_id AND compounds.state IN (1,2)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);

@@ -121,36 +121,40 @@ export function listenTrigger(elementId: string = ''): void {
  * Returns an object with name => value
  * Add data-ignore='1' to elements that should not be considered
  */
-export function collectForm(form: HTMLElement, blank = true): object {
-  let params = {};
+export function collectForm(form: HTMLElement): object {
+  const inputs = [];
   ['input', 'select', 'textarea'].forEach(inp => {
     form.querySelectorAll(inp).forEach((input: HTMLInputElement) => {
-      const el = input;
-      if (el.reportValidity() === false) {
-        throw new Error('Invalid input found! Aborting.');
-      }
-      let value = el.value;
-      if (el.type === 'checkbox') {
-        value = el.checked ? 'on' : 'off';
-      }
-      if (el.dataset.ignore !== '1' && el.disabled === false) {
-        params = Object.assign(params, {[input.name]: value});
-      }
-      // allow escaping blank if data-no-blank is present
-      if (blank && el.dataset.noBlank !== '1') {
-        el.value = '';
-      }
+      inputs.push(input);
     });
   });
+
+  let params = {};
+  inputs.forEach(input => {
+    const el = input;
+    if (el.reportValidity() === false) {
+      throw new Error('Invalid input found! Aborting.');
+    }
+    let value = el.value;
+    if (el.type === 'checkbox') {
+      value = el.checked ? 'on' : 'off';
+    }
+    if (el.dataset.ignore !== '1' && el.disabled === false) {
+      params = Object.assign(params, {[input.name]: value});
+    }
+  });
+
   return removeEmpty(params);
 }
 
 export function clearForm(form: HTMLElement): void {
   ['input', 'select', 'textarea'].forEach(inp => {
     form.querySelectorAll(inp).forEach((input: HTMLInputElement) => {
-      input.value = '';
-      if (input.type === 'checkbox') {
-        input.checked = false;
+      if (input.dataset.noBlank !== '1') {
+        input.value = '';
+        if (input.type === 'checkbox') {
+          input.checked = false;
+        }
       }
     });
   });
@@ -717,7 +721,9 @@ export function toggleEditCompound(json: object): void {
     'smiles',
     'inchi',
     'inchi_key',
+    'iupac_name',
     'molecular_formula',
+    'molecular_weight',
     'cas_number',
     'ec_number',
   ];
@@ -742,9 +748,8 @@ export function toggleEditCompound(json: object): void {
     'is_cmr',
   ];
   binaryParams.forEach(param => {
-    if (json[param] === 1) {
-      (document.getElementById(`addCompound${param}`) as HTMLInputElement).checked = true;
-    }
+    const input = (document.getElementById(`addCompound${param}`) as HTMLInputElement);
+    input.checked = json[param] === 1;
   });
   document.getElementById('editCompoundModalSaveBtn').dataset.compoundId = json['id'];
   $('#editCompoundModal').modal('toggle');

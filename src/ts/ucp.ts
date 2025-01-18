@@ -90,7 +90,7 @@ if (window.location.pathname === '/ucp.php') {
       }
 
     } else if (el.matches('[data-action="patch-account"]')) {
-      const params = collectForm(document.getElementById('ucp-account-form'), false);
+      const params = collectForm(document.getElementById('ucp-account-form'));
       // Allow clearing the field when sending empty orcid param
       if (!params['orcid']) {
         params['orcid'] = null;

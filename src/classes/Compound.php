@@ -45,9 +45,9 @@ class Compound
             'inChI' => $this->inChI,
             'inChIKey' => $this->inChIKey,
             'isPublic' => $this->isPublic,
-            'iupacName' => $this->iupacName,
+            'iupacName' => $this->iupacName ?? $this->name,
             'molecularFormula' => $this->molecularFormula,
-            'name' => $this->name,
+            'name' => $this->name ?? $this->iupacName,
             'smiles' => $this->smiles,
         );
     }

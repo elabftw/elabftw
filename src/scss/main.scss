@@ -1487,6 +1487,10 @@ input:focus + .slider {
   box-shadow: 0 0 8px $elabblue;
 }
 
+input:invalid {
+  border: 1px solid $dangerred;
+}
+
 input:checked + .slider::before {
   transform: translateX(20px);
 }
@@ -1595,8 +1599,4 @@ input:checked + .slider::before {
   font-weight: bold;
   color: $secondlevel;
   font-size: 1.5rem;
-}
-
-input:invalid {
-  border: 1px solid $dangerred;
 }

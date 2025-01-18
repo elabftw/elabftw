@@ -1,6 +1,6 @@
 {% macro binaryParam(target, label) %}
   <div class='d-flex justify-content-between'>
-    <label for='addCompound{{ target }}' class='col-form-label'>{{ label|trans }}</label>
+    <label for='addCompound{{ target }}' class='col-form-label'>{{ label }}</label>
     <label class='switch ucp-align'>
       <input name='{{ target }}' type='checkbox' autocomplete='off' id='addCompound{{ target }}'>
       <span class='slider'></span>
@@ -8,13 +8,13 @@
   </div>
 {% endmacro %}
 
-{% macro textParam(target, label, required='') %}
-  <label for='compoundInput-{{ target }}'>{{ label|trans }}</label>
+{% macro textParam(target, label, required='', type='', placeholder='', pattern='', title='') %}
+  <label for='compoundInput-{{ target }}'>{{ label }}</label>
   <div class='input-group mb-2'>
     <div class='input-group-prepend'>
       <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-outline-secondary' type='button' data-action='copy-to-clipboard' data-target='compoundInput-{{ target }}'><i class='fas fa-clone'></i></button>
     </div>
-    <input name='{{ target }}' {{ required }} class='form-control' id='compoundInput-{{ target }}' />
+    <input name='{{ target }}' {{ type == 'number' ? "type='number' step='0.1'" }} {{ pattern }} {{ title ? "title='#{title}'" }} placeholder='{{ placeholder }}' {{ required }} class='form-control' id='compoundInput-{{ target }}' />
   </div>
 {% endmacro %}
 
@@ -23,7 +23,7 @@
   <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
-        <h5 class='modal-title' id='editCompoundModalTitle'><i class='fas fa-fw fa-plus'></i> {{ 'Edit compound'|trans }}</h5>
+        <h5 class='modal-title' id='editCompoundModalTitle'><i class='fas fa-fw fa-pencil'></i> {{ 'Edit compound'|trans }}</h5>
         {# the clear-form action is repeated on the x icon or it would only work when clicking just next to the x, on the button element #}
         <button type='button' class='close' data-dismiss='modal' data-action='clear-form' data-target='editCompoundInputs' aria-label='{{ 'Close'|trans }}'>
           <span aria-hidden='true' data-action='clear-form' data-target='editCompoundInputs'>&times;</span>
@@ -31,14 +31,28 @@
       </div>
       <div class='modal-body'>
         <div class='mb-2' id='editCompoundInputs'>
-          {{ _self.textParam('name', 'Name', 'required') }}
-          {{ _self.textParam('smiles', 'SMILES') }}
-          {{ _self.textParam('inchi', 'InChI') }}
-          {{ _self.textParam('inchi_key', 'InChI Key') }}
-          {{ _self.textParam('molecular_formula', 'Molecular formula') }}
-          {{ _self.textParam('molecular_weight', 'Molecular weight') }}
-          {{ _self.textParam('cas_number', 'CAS number') }}
-          {{ _self.textParam('ec_number', 'EC number') }}
+          {{ _self.textParam('name', 'Name'|trans, 'required') }}
+          {{ _self.textParam('iupac_name', 'IUPAC Name'|trans) }}
+          {{ _self.textParam('smiles', 'SMILES', '', '', 'CN1C=NC2=C1C(=O)N(C(=O)N2C)C') }}
+          {{ _self.textParam('inchi', 'InChI', '', '', 'InChI=1S/C8H10N4O2/c1-10-4-9-6-5(10)7(13)12(3)8(14)11(6)2/h4H,1-3H3') }}
+          {{ _self.textParam('inchi_key', 'InChI Key', '', '', 'RYYVLZVUVIJVGH-UHFFFAOYSA-N') }}
+          {{ _self.textParam('molecular_formula', 'Molecular formula'|trans, '', '', 'C8H10N4O2') }}
+          {{ _self.textParam('molecular_weight', 'Molecular weight'|trans, '', 'number', '194.19') }}
+          {# special case for CAS and EC numbers, too many specifics to use the macro #}
+          <label for='compoundInput-cas_number'>{{ 'CAS number'|trans }}</label>
+          <div class='input-group mb-2'>
+            <div class='input-group-prepend'>
+              <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-outline-secondary' type='button' data-action='copy-to-clipboard' data-target='compoundInput-cas_number'><i class='fas fa-clone'></i></button>
+            </div>
+            <input name='cas_number' pattern='^\d{2,7}-\d{2}-\d$' title='{{ 'Please enter a valid CAS number (e.g., 58-08-2)'|trans }}' placeholder='58-08-2' class='form-control' id='compoundInput-cas_number' />
+          </div>
+          <label for='compoundInput-ec_number'>{{ 'EC number'|trans }}</label>
+          <div class='input-group mb-2'>
+            <div class='input-group-prepend'>
+              <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-outline-secondary' type='button' data-action='copy-to-clipboard' data-target='compoundInput-ec_number'><i class='fas fa-clone'></i></button>
+            </div>
+            <input name='ec_number' pattern='^\d{1,7}-\d{2}-\d$' title='{{ 'Please enter a valid EC number (e.g., 200-362-1)'|trans }}' placeholder='200-362-1' class='form-control' id='compoundInput-ec_number' />
+          </div>
           <hr>
           <details>
             <summary><h5 class='d-inline'>{{ 'Safety information'|trans }}</h5></summary>

@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { collectForm, notif, notifError, reloadElements } from './misc';
+import { clearForm, collectForm, notif, notifError, reloadElements } from './misc';
 import { Action, Model } from './interfaces';
 import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
@@ -246,7 +246,9 @@ document.addEventListener('DOMContentLoaded', () => {
       // prevent form submission
       event.preventDefault();
       try {
-        const params = collectForm(document.getElementById('idpForm'));
+        const form = document.getElementById('idpForm');
+        const params = collectForm(form);
+        clearForm(form);
         if (el.dataset.id) { // PATCH IDP
           // remove the id from the modal so clicking "Add new" won't edit the previously edited IDP
           ApiC.patch(`${Model.Idp}/${el.dataset.id}`, params).then(() => {

@@ -11,6 +11,7 @@ import { Malle, InputType } from '@deltablot/malle';
 import 'bootstrap/js/src/modal.js';
 import {
   adjustHiddenState,
+  clearForm,
   collectForm,
   escapeExtendedQuery,
   generateMetadataLink,
@@ -628,13 +629,17 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="save-compound"]')) {
       try {
         if (el.dataset.compoundId) { // edit
-          const params = collectForm(document.getElementById('editCompoundInputs'), true);
+          const compoundForm = document.getElementById('editCompoundInputs');
+          const params = collectForm(compoundForm);
+          clearForm(compoundForm);
           ApiC.patch(`compounds/${el.dataset.compoundId}`, params).then(() => {
             document.dispatchEvent(new CustomEvent('dataReload'));
             $('#editCompoundModal').modal('hide');
           });
         } else { // create
-          const params = collectForm(document.getElementById('createCompoundInputs'), true);
+          const compoundForm = document.getElementById('createCompoundInputs');
+          const params = collectForm(compoundForm);
+          clearForm(compoundForm);
           ApiC.post2location('compounds', params).then(id => {
             ApiC.getJson(`compounds/${id}`).then((json) => {
               setTimeout(() => {

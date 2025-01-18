@@ -631,10 +631,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (el.dataset.compoundId) { // edit
           const compoundForm = document.getElementById('editCompoundInputs');
           const params = collectForm(compoundForm);
-          clearForm(compoundForm);
           ApiC.patch(`compounds/${el.dataset.compoundId}`, params).then(() => {
             document.dispatchEvent(new CustomEvent('dataReload'));
             $('#editCompoundModal').modal('hide');
+            clearForm(compoundForm);
           });
         } else { // create
           const compoundForm = document.getElementById('createCompoundInputs');

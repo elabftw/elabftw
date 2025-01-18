@@ -34,7 +34,6 @@ if (document.getElementById('compounds-table')) {
       const [rowData, setRowData] = useState([]);
 
       const [columnDefs] = useState([
-          { field: 'id', type: 'numericColumn' },
           {
             field: 'name',
             pinned: 'left',
@@ -51,6 +50,7 @@ if (document.getElementById('compounds-table')) {
           { field: 'team_name', headerName: 'Team' },
           { field: 'modified_at', headerName: 'Modified at' },
           { field: 'has_fingerprint', headerName: 'Has fingerprint' },
+          { field: 'id', type: 'numericColumn' },
       ]);
 
     // Load data on component mount

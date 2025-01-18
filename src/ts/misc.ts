@@ -717,6 +717,7 @@ export function sizeToMb(size: string): number {
 
 export function toggleEditCompound(json: object): void {
   const textParams = [
+    'id',
     'name',
     'smiles',
     'inchi',
@@ -724,6 +725,9 @@ export function toggleEditCompound(json: object): void {
     'iupac_name',
     'molecular_formula',
     'molecular_weight',
+    'pubchem_cid',
+    'userid_human',
+    'team_name',
     'cas_number',
     'ec_number',
   ];

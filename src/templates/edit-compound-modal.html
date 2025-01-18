@@ -33,11 +33,6 @@
         <div class='mb-2' id='editCompoundInputs'>
           {{ _self.textParam('name', 'Name'|trans, 'required') }}
           {{ _self.textParam('iupac_name', 'IUPAC Name'|trans) }}
-          {{ _self.textParam('smiles', 'SMILES', '', '', 'CN1C=NC2=C1C(=O)N(C(=O)N2C)C') }}
-          {{ _self.textParam('inchi', 'InChI', '', '', 'InChI=1S/C8H10N4O2/c1-10-4-9-6-5(10)7(13)12(3)8(14)11(6)2/h4H,1-3H3') }}
-          {{ _self.textParam('inchi_key', 'InChI Key', '', '', 'RYYVLZVUVIJVGH-UHFFFAOYSA-N') }}
-          {{ _self.textParam('molecular_formula', 'Molecular formula'|trans, '', '', 'C8H10N4O2') }}
-          {{ _self.textParam('molecular_weight', 'Molecular weight'|trans, '', 'number', '194.19') }}
           {# special case for CAS and EC numbers, too many specifics to use the macro #}
           <label for='compoundInput-cas_number'>{{ 'CAS number'|trans }}</label>
           <div class='input-group mb-2'>
@@ -53,6 +48,11 @@
             </div>
             <input name='ec_number' pattern='^\d{1,7}-\d{2}-\d$' title='{{ 'Please enter a valid EC number (e.g., 200-362-1)'|trans }}' placeholder='200-362-1' class='form-control' id='compoundInput-ec_number' />
           </div>
+          {{ _self.textParam('molecular_formula', 'Molecular formula'|trans, '', '', 'C8H10N4O2') }}
+          {{ _self.textParam('molecular_weight', 'Molecular weight'|trans, '', 'number', '194.19') }}
+          {{ _self.textParam('smiles', 'SMILES', '', '', 'CN1C=NC2=C1C(=O)N(C(=O)N2C)C') }}
+          {{ _self.textParam('inchi', 'InChI', '', '', 'InChI=1S/C8H10N4O2/c1-10-4-9-6-5(10)7(13)12(3)8(14)11(6)2/h4H,1-3H3') }}
+          {{ _self.textParam('inchi_key', 'InChI Key', '', '', 'RYYVLZVUVIJVGH-UHFFFAOYSA-N') }}
           <hr>
           <details>
             <summary><h5 class='d-inline'>{{ 'Safety information'|trans }}</h5></summary>

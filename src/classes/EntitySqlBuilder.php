@@ -46,6 +46,7 @@ class EntitySqlBuilder
         ?EntityType $relatedOrigin = null,
     ): string {
         $this->entitySelect($fullSelect);
+        $this->compounds();
         $this->status();
         $this->category();
         $this->comments();
@@ -145,6 +146,12 @@ class EntitySqlBuilder
                 ? 'experiments_categories'
                 : 'items_types',
         );
+    }
+
+    protected function compounds(): void
+    {
+        $this->joinsSql[] = 'LEFT JOIN compounds2%1$s AS compoundslinks ON compoundslinks.entity_id = entity.id
+            LEFT JOIN compounds ON compoundslinks.compound_id = compounds.id';
     }
 
     protected function status(): void

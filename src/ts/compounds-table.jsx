@@ -17,7 +17,6 @@ import '@ag-grid-community/styles/ag-theme-quartz.css';
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Api } from './Apiv2.class';
-import i18next from 'i18next';
 import {toggleEditCompound} from './misc';
 
 const ApiC = new Api();
@@ -34,19 +33,20 @@ if (document.getElementById('compounds-table')) {
   const GridExample = () => {
       const [rowData, setRowData] = useState([]);
 
-      const [columnDefs, setColumnDefs] = useState([
+      const [columnDefs] = useState([
           { field: 'id', type: 'numericColumn' },
           {
             field: 'name',
             pinned: 'left',
           },
-          { field: 'iupac_name' },
-          { field: 'smiles' },
-          { field: 'inchi' },
-          { field: 'inchi_key' },
-          { field: 'molecular_formula' },
-          { field: 'cas_number' },
-          { field: 'pubchem_cid' },
+          { field: 'cas_number', headerName: 'CAS Number' },
+          { field: 'iupac_name', headerName: 'IUPAC Name' },
+          { field: 'smiles', headerName: 'SMILES' },
+          { field: 'inchi', headerName: 'InChI' },
+          { field: 'inchi_key', headerName: 'InChI Key' },
+          { field: 'molecular_formula', headerName: 'Molecular formula' },
+          { field: 'ec_number', headerName: 'EC Number' },
+          { field: 'pubchem_cid', headerName: 'PubChem CID' },
           { field: 'userid_human', headerName: 'Owner' },
           { field: 'team_name', headerName: 'Team' },
           { field: 'modified_at', headerName: 'Modified at' },

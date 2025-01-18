@@ -58,8 +58,6 @@ final class Config extends AbstractRest
      */
     public function create(): bool
     {
-        $schema = Update::getRequiredSchema();
-
         $sql = "INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
             ('admin_validate', '1'),
             ('autologout_time', '0'),
@@ -192,7 +190,7 @@ final class Config extends AbstractRest
             ('allow_users_change_identity', '0')";
 
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':schema', $schema);
+        $req->bindValue(':schema', Update::REQUIRED_SCHEMA);
 
         return $this->Db->execute($req);
     }

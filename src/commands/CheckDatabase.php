@@ -42,15 +42,13 @@ class CheckDatabase extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $requiredSchema = Update::getRequiredSchema();
-
         $output->writeln(array(
             'Database check',
             '==============',
             sprintf('Current version: %d', $this->currentSchema),
-            sprintf('Required version: %d', $requiredSchema),
+            sprintf('Required version: %d', Update::REQUIRED_SCHEMA),
         ));
-        if ($this->currentSchema === $requiredSchema) {
+        if ($this->currentSchema === Update::REQUIRED_SCHEMA) {
             $output->writeln('No upgrade required.');
             return Command::SUCCESS;
         }

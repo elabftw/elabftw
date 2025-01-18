@@ -43,14 +43,6 @@ class Update
     }
 
     /**
-     * Get the current required schema
-     */
-    public static function getRequiredSchema(): int
-    {
-        return self::REQUIRED_SCHEMA;
-    }
-
-    /**
      * Check if the Db structure needs updating
      */
     public function checkSchema(): void

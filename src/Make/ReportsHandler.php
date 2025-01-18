@@ -15,8 +15,11 @@ namespace Elabftw\Make;
 use Elabftw\Enums\ReportScopes;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\AbstractRest;
+use Elabftw\Models\Compounds;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Users;
+use Elabftw\Services\HttpGetter;
+use GuzzleHttp\Client;
 use Override;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -29,7 +32,9 @@ class ReportsHandler extends AbstractRest
 
     public function getResponse(ReportScopes $scope): Response
     {
+        $httpGetter = new HttpGetter(new Client(), verifyTls: false);
         $Reporter = match ($scope) {
+            ReportScopes::Compounds => (new MakeCompoundsReport(new Compounds($httpGetter, $this->requester))),
             ReportScopes::Instance => (new MakeReport($this->requester)),
             ReportScopes::Team => (new MakeTeamReport($this->requester)),
             ReportScopes::Storage => (new MakeStorageReport(new StorageUnits($this->requester))),

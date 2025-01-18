@@ -7,36 +7,33 @@ CREATE TABLE IF NOT EXISTS compounds (
   `modified_by` INT UNSIGNED NOT NULL,
   `userid` INT UNSIGNED NOT NULL,
   `team` INT UNSIGNED NOT NULL,
-  `canread` JSON NOT NULL,
-  `canwrite` JSON NOT NULL,
   `state` TINYINT UNSIGNED NOT NULL DEFAULT 1,
   `name` VARCHAR(255) NULL DEFAULT NULL,
-  `metadata` JSON NULL DEFAULT NULL,
   `molecular_formula` VARCHAR(255) NULL DEFAULT NULL,
-  `cas_number` VARCHAR(20) NULL DEFAULT NULL,
-  `ec_number` VARCHAR(20) NULL DEFAULT NULL,
-  `chebi_id` VARCHAR(20) NULL DEFAULT NULL,
-  `chembl_id` VARCHAR(20) NULL DEFAULT NULL,
-  `dea_number` VARCHAR(20) NULL DEFAULT NULL,
-  `drugbank_id` VARCHAR(20) NULL DEFAULT NULL,
-  `dsstox_id` VARCHAR(20) NULL DEFAULT NULL,
-  `hmdb_id` VARCHAR(20) NULL DEFAULT NULL,
+  `cas_number` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
+  `ec_number` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
+  `chebi_id` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
+  `chembl_id` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
+  `dea_number` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
+  `drugbank_id` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
+  `dsstox_id` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
+  `hmdb_id` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
   `inchi` MEDIUMTEXT NULL DEFAULT NULL,
-  `inchi_key` CHAR(27) NULL DEFAULT NULL,
+  `inchi_key` CHAR(27) NULL DEFAULT NULL UNIQUE,
   `iupac_name` TEXT NULL DEFAULT NULL,
-  `kegg_id` VARCHAR(20) NULL DEFAULT NULL,
-  `metabolomics_wb_id` VARCHAR(20) NULL DEFAULT NULL,
+  `kegg_id` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
+  `metabolomics_wb_id` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
   `molecular_weight` DECIMAL(10, 2) UNSIGNED NOT NULL DEFAULT 0.00,
-  `nci_code` VARCHAR(20) NULL DEFAULT NULL,
-  `nikkaji_number` VARCHAR(20) NULL DEFAULT NULL,
-  `pharmgkb_id` VARCHAR(20) NULL DEFAULT NULL,
-  `pharos_ligand_id` VARCHAR(20) NULL DEFAULT NULL,
-  `pubchem_cid` INT UNSIGNED NULL DEFAULT NULL,
-  `rxcui` VARCHAR(20) NULL DEFAULT NULL,
+  `nci_code` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
+  `nikkaji_number` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
+  `pharmgkb_id` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
+  `pharos_ligand_id` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
+  `pubchem_cid` INT UNSIGNED NULL DEFAULT NULL UNIQUE,
+  `rxcui` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
   `smiles` MEDIUMTEXT NULL DEFAULT NULL,
-  `unii` VARCHAR(20) NULL DEFAULT NULL,
-  `wikidata` VARCHAR(20) NULL DEFAULT NULL,
-  `wikipedia` VARCHAR(20) NULL DEFAULT NULL,
+  `unii` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
+  `wikidata` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
+  `wikipedia` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
   `is_corrosive` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `is_explosive` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `is_flammable` TINYINT UNSIGNED NOT NULL DEFAULT 0,
@@ -45,6 +42,12 @@ CREATE TABLE IF NOT EXISTS compounds (
   `is_hazardous2health` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `is_oxidising` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `is_toxic` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_radioactive` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_antibiotic_precursor` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_drug_precursor` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_explosive_precursor` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_cmr` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_controlled` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   primary key(`id`)
 );
 
@@ -53,28 +56,36 @@ CREATE TABLE `compounds2experiments` (
   `entity_id` int(10) UNSIGNED NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`compound_id`, `entity_id`)
+  PRIMARY KEY (`compound_id`, `entity_id`),
+  CONSTRAINT `fk_c2e_compound_id_compounds_id` FOREIGN KEY (`compound_id`) REFERENCES `compounds`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_c2e_entity_id_experiments_id` FOREIGN KEY (`entity_id`) REFERENCES `experiments`(`id`) ON DELETE CASCADE
 );
 CREATE TABLE `compounds2experiments_templates` (
   `compound_id` int(10) UNSIGNED NOT NULL,
   `entity_id` int(10) UNSIGNED NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`compound_id`, `entity_id`)
+  PRIMARY KEY (`compound_id`, `entity_id`),
+  CONSTRAINT `fk_c2et_templates_compound_id_compounds_id` FOREIGN KEY (`compound_id`) REFERENCES `compounds`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_c2et_templates_entity_id_experiments_templates_id` FOREIGN KEY (`entity_id`) REFERENCES `experiments_templates`(`id`) ON DELETE CASCADE
 );
 CREATE TABLE `compounds2items` (
   `compound_id` int(10) UNSIGNED NOT NULL,
   `entity_id` int(10) UNSIGNED NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`compound_id`, `entity_id`)
+  PRIMARY KEY (`compound_id`, `entity_id`),
+  CONSTRAINT `fk_c2i_compound_id_compounds_id` FOREIGN KEY (`compound_id`) REFERENCES `compounds`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_c2i_entity_id_items_id` FOREIGN KEY (`entity_id`) REFERENCES `items`(`id`) ON DELETE CASCADE
 );
 CREATE TABLE `compounds2items_types` (
   `compound_id` int(10) UNSIGNED NOT NULL,
   `entity_id` int(10) UNSIGNED NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`compound_id`, `entity_id`)
+  PRIMARY KEY (`compound_id`, `entity_id`),
+  CONSTRAINT `fk_c2it_compound_id_compounds_id` FOREIGN KEY (`compound_id`) REFERENCES `compounds`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_c2it_entity_id_items_types_id` FOREIGN KEY (`entity_id`) REFERENCES `items_types`(`id`) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS compounds_fingerprints (

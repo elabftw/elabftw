@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Params;
 
 use Elabftw\Enums\Currency;
-use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Services\Check;
@@ -24,17 +23,17 @@ class EntityParams extends ContentParams implements ContentParamsInterface
     public function getContent(): mixed
     {
         return match ($this->target) {
-            'title' => Filter::title($this->content),
+            'title' => Filter::title($this->asString()),
             // MySQL with throw an error if this param is incorrect
             'date', 'metadata', 'proc_price_notax', 'proc_price_tax' => $this->getUnfilteredContent(),
-            'proc_currency' => Currency::from((int) $this->content)->value,
+            'proc_currency' => Currency::from($this->asInt())->value,
             'body', 'bodyappend' => $this->getBody(),
-            'canread', 'canwrite', 'canbook', 'canread_target', 'canwrite_target' => Check::visibility($this->content),
-            'color' => Check::color($this->content),
-            'is_bookable', 'book_can_overlap', 'book_users_can_in_past', 'book_max_minutes', 'book_max_slots', 'book_is_cancellable', 'book_cancel_minutes', 'content_type', 'is_procurable', 'proc_pack_qty', 'rating', 'userid' => $this->getInt(),
-            'state' => $this->getEnum(State::class, (int) $this->content)->value,
+            'canread', 'canwrite', 'canbook', 'canread_target', 'canwrite_target' => $this->getCanJson(),
+            'color' => Check::color($this->asString()),
+            'is_bookable', 'book_can_overlap', 'book_users_can_in_past', 'book_max_minutes', 'book_max_slots', 'book_is_cancellable', 'book_cancel_minutes', 'content_type', 'is_procurable', 'proc_pack_qty', 'rating', 'userid' => $this->asInt(),
+            'state' => $this->getState(),
             'custom_id', 'status', 'category', 'storage', 'qty_stored' => $this->getPositiveIntOrNull(),
-            'qty_unit' => Check::unit($this->content),
+            'qty_unit' => Check::unit($this->asString()),
             default => throw new ImproperActionException('Invalid update target.'),
         };
     }

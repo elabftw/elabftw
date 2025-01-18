@@ -25,7 +25,7 @@ final class ProcurementRequestParams extends ContentParams
             // TODO getComment()?
             'body' => $this->getBody(),
             'state' => $this->getEnum(ProcurementState::class, (int) $this->content)->value,
-            'qty_received' => $this->getInt(),
+            'qty_received' => $this->asInt(),
             default => throw new ImproperActionException('Incorrect target parameter.'),
         };
     }

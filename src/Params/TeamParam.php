@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Params;
 
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 
 final class TeamParam extends ContentParams
@@ -32,10 +31,10 @@ final class TeamParam extends ContentParams
             'do_force_canwrite',
             'visible',
             'newcomer_banner_active',
-            'onboarding_email_active' => parent::getBinary(),
-            'newcomer_threshold' => parent::getInt(),
+            'onboarding_email_active' => $this->getBinary(),
+            'newcomer_threshold' => $this->asInt(),
             'link_href' => $this->getUrl(),
-            'force_canread', 'force_canwrite' => Check::visibility($this->content),
+            'force_canread', 'force_canwrite' => $this->getCanJson(),
             default => throw new ImproperActionException('Incorrect parameter for team.' . $this->target),
         };
     }

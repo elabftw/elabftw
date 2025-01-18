@@ -514,7 +514,7 @@ class Users extends AbstractRest
             if (($this->requester->userData['userid'] !== $this->userData['userid']) && ($this->requester->userData['is_sysadmin'] !== 1)) {
                 throw new IllegalActionException('User tried to edit email of another user but is not sysadmin.');
             }
-            Filter::email($params->getContent());
+            Filter::email($params->getStringContent());
         }
         // special case for is_sysadmin: only a sysadmin can affect this column
         if ($params->getTarget() === 'is_sysadmin') {
@@ -546,7 +546,7 @@ class Users extends AbstractRest
                 $this->userid ?? 0,
                 $params->getTarget(),
                 (string) $this->userData[$params->getTarget()],
-                $params->getContent(),
+                $params->getStringContent(),
             ));
         }
         return $res;

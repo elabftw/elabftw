@@ -2,12 +2,13 @@
 {% block body %}
 {# IMPORT FROM PUBCHEM #}
 {% include('import-pubchem-modal.html') %}
-{% include('add-compound-modal.html') %}
-{% include('add-compound-manually-modal.html') %}
+{% include('add-compound-from-cid-modal.html') %}
+{% include('create-compound-modal.html') %}
+{% include('edit-compound-modal.html') %}
 <p>{{ 'Compounds are chemical entities associated with properties such as a PubChem CID, a CAS number, InChI or SMART representations, etc... This page allows you to manage your compounds database. Resources or Experiments can be linked to compounds.'|trans }}</p>
   <div class='my-3'>
     <button type='button' data-action='toggle-modal' data-target='importFromPubChemModal' class='btn btn-secondary'>{{ 'Add from PubChem'|trans }}</button>
-    <button type='button' data-action='toggle-modal' data-target='addCompoundManuallyModal' class='btn btn-secondary'>{{ 'Add compound'|trans }}</button>
+    <button type='button' data-action='toggle-modal' data-target='createCompoundModal' class='btn btn-secondary'>{{ 'Add compound'|trans }}</button>
   </div>
   <form method='GET' action='/compounds.php'>
   <div class='input-group my-2'>
@@ -20,9 +21,9 @@
     </div>
   </div>
   </form>
+  <p class='smallgray'>{{ 'Double-click a row in the table below to edit compound.'|trans }}</p>
   <div id='compounds-table'></div>
   <div class='my-2'>
-    <button type='button' id='editCompoundBtn' disabled data-action='edit-compound' class='btn btn-primary btn-sm'>{{ 'Edit selected compound'|trans }}</button>
     <button type='button' id='deleteCompoundsBtn' disabled data-action='delete-compounds' class='btn btn-danger btn-sm'>{{ 'Delete selected compounds'|trans }}</button>
   </div>
 {% endblock body %}

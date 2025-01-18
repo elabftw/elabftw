@@ -1596,3 +1596,7 @@ input:checked + .slider::before {
   color: $secondlevel;
   font-size: 1.5rem;
 }
+
+input:invalid {
+  border: 1px solid $dangerred;
+}

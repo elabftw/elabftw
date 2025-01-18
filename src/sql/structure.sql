@@ -1876,11 +1876,8 @@ CREATE TABLE IF NOT EXISTS compounds (
   `modified_by` INT UNSIGNED NOT NULL,
   `userid` INT UNSIGNED NOT NULL,
   `team` INT UNSIGNED NOT NULL,
-  `canread` JSON NOT NULL,
-  `canwrite` JSON NOT NULL,
   `state` TINYINT UNSIGNED NOT NULL DEFAULT 1,
   `name` VARCHAR(255) NULL DEFAULT NULL,
-  `metadata` JSON NULL DEFAULT NULL,
   `molecular_formula` VARCHAR(255) NULL DEFAULT NULL,
   `cas_number` VARCHAR(20) NULL DEFAULT NULL,
   `ec_number` VARCHAR(20) NULL DEFAULT NULL,
@@ -1914,6 +1911,12 @@ CREATE TABLE IF NOT EXISTS compounds (
   `is_hazardous2health` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `is_oxidising` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `is_toxic` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_radioactive` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_antibiotic_precursor` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_drug_precursor` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_explosive_precursor` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_cmr` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_controlled` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   primary key(`id`)
 );
 
@@ -1922,28 +1925,36 @@ CREATE TABLE `compounds2experiments` (
   `entity_id` int(10) UNSIGNED NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`compound_id`, `entity_id`)
+  PRIMARY KEY (`compound_id`, `entity_id`),
+  CONSTRAINT `fk_c2e_compound_id_compounds_id` FOREIGN KEY (`compound_id`) REFERENCES `compounds`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_c2e_entity_id_experiments_id` FOREIGN KEY (`entity_id`) REFERENCES `experiments`(`id`) ON DELETE CASCADE
 );
 CREATE TABLE `compounds2experiments_templates` (
   `compound_id` int(10) UNSIGNED NOT NULL,
   `entity_id` int(10) UNSIGNED NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`compound_id`, `entity_id`)
+  PRIMARY KEY (`compound_id`, `entity_id`),
+  CONSTRAINT `fk_c2et_templates_compound_id_compounds_id` FOREIGN KEY (`compound_id`) REFERENCES `compounds`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_c2et_templates_entity_id_experiments_templates_id` FOREIGN KEY (`entity_id`) REFERENCES `experiments_templates`(`id`) ON DELETE CASCADE
 );
 CREATE TABLE `compounds2items` (
   `compound_id` int(10) UNSIGNED NOT NULL,
   `entity_id` int(10) UNSIGNED NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`compound_id`, `entity_id`)
+  PRIMARY KEY (`compound_id`, `entity_id`),
+  CONSTRAINT `fk_c2i_compound_id_compounds_id` FOREIGN KEY (`compound_id`) REFERENCES `compounds`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_c2i_entity_id_items_id` FOREIGN KEY (`entity_id`) REFERENCES `items`(`id`) ON DELETE CASCADE
 );
 CREATE TABLE `compounds2items_types` (
   `compound_id` int(10) UNSIGNED NOT NULL,
   `entity_id` int(10) UNSIGNED NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`compound_id`, `entity_id`)
+  PRIMARY KEY (`compound_id`, `entity_id`),
+  CONSTRAINT `fk_c2it_compound_id_compounds_id` FOREIGN KEY (`compound_id`) REFERENCES `compounds`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_c2it_entity_id_items_types_id` FOREIGN KEY (`entity_id`) REFERENCES `items_types`(`id`) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS compounds_fingerprints (

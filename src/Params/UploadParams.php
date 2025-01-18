@@ -23,8 +23,8 @@ final class UploadParams extends ContentParams
     {
         return match ($this->target) {
             'real_name' => $this->getRealName(),
-            'comment' => Filter::title($this->content),
-            'state' => $this->getEnum(State::class, (int) $this->content)->value,
+            'comment' => Filter::title($this->asString()),
+            'state' => $this->getEnum(State::class, $this->asInt())->value,
             default => throw new ImproperActionException('Incorrect upload parameter.'),
         };
     }
@@ -32,10 +32,10 @@ final class UploadParams extends ContentParams
     private function getRealName(): string
     {
         // don't allow php extension
-        $ext = Tools::getExt($this->content);
+        $ext = Tools::getExt($this->asString());
         if ($ext === 'php') {
             throw new ImproperActionException('No php extension allowed!');
         }
-        return Filter::forFilesystem($this->content);
+        return Filter::forFilesystem($this->asString());
     }
 }

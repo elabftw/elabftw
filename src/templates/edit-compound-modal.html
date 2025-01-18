@@ -1,0 +1,70 @@
+{% macro binaryParam(target, label) %}
+  <div class='d-flex justify-content-between'>
+    <label for='addCompound{{ target }}' class='col-form-label'>{{ label|trans }}</label>
+    <label class='switch ucp-align'>
+      <input name='{{ target }}' type='checkbox' autocomplete='off' id='addCompound{{ target }}'>
+      <span class='slider'></span>
+    </label>
+  </div>
+{% endmacro %}
+
+{% macro textParam(target, label, required='') %}
+  <label for='compoundInput-{{ target }}'>{{ label|trans }}</label>
+  <div class='input-group mb-2'>
+    <div class='input-group-prepend'>
+      <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-outline-secondary' type='button' data-action='copy-to-clipboard' data-target='compoundInput-{{ target }}'><i class='fas fa-clone'></i></button>
+    </div>
+    <input name='{{ target }}' {{ required }} class='form-control' id='compoundInput-{{ target }}' />
+  </div>
+{% endmacro %}
+
+{# Modal for manual creation/edition of a compound #}
+<div class='modal fade' id='editCompoundModal' tabindex='-1' role='dialog' aria-labelledby='editCompoundModalTitle'>
+  <div class='modal-dialog modal-lg' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='editCompoundModalTitle'><i class='fas fa-fw fa-plus'></i> {{ 'Edit compound'|trans }}</h5>
+        {# the clear-form action is repeated on the x icon or it would only work when clicking just next to the x, on the button element #}
+        <button type='button' class='close' data-dismiss='modal' data-action='clear-form' data-target='editCompoundInputs' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true' data-action='clear-form' data-target='editCompoundInputs'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        <div class='mb-2' id='editCompoundInputs'>
+          {{ _self.textParam('name', 'Name', 'required') }}
+          {{ _self.textParam('smiles', 'SMILES') }}
+          {{ _self.textParam('inchi', 'InChI') }}
+          {{ _self.textParam('inchi_key', 'InChI Key') }}
+          {{ _self.textParam('molecular_formula', 'Molecular formula') }}
+          {{ _self.textParam('molecular_weight', 'Molecular weight') }}
+          {{ _self.textParam('cas_number', 'CAS number') }}
+          {{ _self.textParam('ec_number', 'EC number') }}
+          <hr>
+          <details>
+            <summary><h5 class='d-inline'>{{ 'Safety information'|trans }}</h5></summary>
+            {{ _self.binaryParam('is_corrosive', 'Corrosive') }}
+            {{ _self.binaryParam('is_explosive', 'Explosive') }}
+            {{ _self.binaryParam('is_flammable', 'Flammable') }}
+            {{ _self.binaryParam('is_gas_under_pressure', 'Gas under pressure') }}
+            {{ _self.binaryParam('is_hazardous2env', 'Hazardous to environment') }}
+            {{ _self.binaryParam('is_hazardous2health', 'Hazardous to health') }}
+            {{ _self.binaryParam('is_oxidising', 'Oxidising') }}
+            {{ _self.binaryParam('is_toxic', 'Toxic') }}
+            {{ _self.binaryParam('is_radioactive', 'Radioactive') }}
+            {{ _self.binaryParam('is_controlled', 'Controlled substance') }}
+            {{ _self.binaryParam('is_antibiotic_precursor', 'Antibiotic precursor') }}
+            {{ _self.binaryParam('is_explosive_precursor', 'Explosive precursor') }}
+            {{ _self.binaryParam('is_drug_precursor', 'Drug precursor') }}
+            {{ _self.binaryParam('is_cmr', 'Carcinogenic, mutagenic and reprotoxic (CMR)') }}
+          </details>
+
+        </div>
+      </div>
+
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='button' class='btn btn-primary' id='editCompoundModalSaveBtn' data-action='save-compound'>{{ 'Save'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -710,3 +710,42 @@ export function sizeToMb(size: string): number {
 
   return value * units[unit];
 }
+
+export function toggleEditCompound(json: object): void {
+  const textParams = [
+    'name',
+    'smiles',
+    'inchi',
+    'inchi_key',
+    'molecular_formula',
+    'cas_number',
+    'ec_number',
+  ];
+  textParams.forEach(param => {
+    (document.getElementById(`compoundInput-${param}`) as HTMLInputElement).value = json[param];
+  });
+
+  const binaryParams = [
+    'is_corrosive',
+    'is_explosive',
+    'is_flammable',
+    'is_gas_under_pressure',
+    'is_hazardous2env',
+    'is_hazardous2health',
+    'is_oxidising',
+    'is_toxic',
+    'is_radioactive',
+    'is_controlled',
+    'is_antibiotic_precursor',
+    'is_explosive_precursor',
+    'is_drug_precursor',
+    'is_cmr',
+  ];
+  binaryParams.forEach(param => {
+    if (json[param] === 1) {
+      (document.getElementById(`addCompound${param}`) as HTMLInputElement).checked = true;
+    }
+  });
+  document.getElementById('editCompoundModalSaveBtn').dataset.compoundId = json['id'];
+  $('#editCompoundModal').modal('toggle');
+}

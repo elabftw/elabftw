@@ -17,7 +17,8 @@ import '@ag-grid-community/styles/ag-theme-quartz.css';
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Api } from './Apiv2.class';
-import { notif } from './misc';
+import i18next from 'i18next';
+import {toggleEditCompound} from './misc';
 
 const ApiC = new Api();
 
@@ -37,8 +38,6 @@ if (document.getElementById('compounds-table')) {
           { field: 'id', type: 'numericColumn' },
           {
             field: 'name',
-            editable: true,
-            cellEditor: 'agTextCellEditor',
             pinned: 'left',
           },
           { field: 'iupac_name' },
@@ -84,10 +83,6 @@ if (document.getElementById('compounds-table')) {
           };
       }, []);
 
-    const rowClicked = (event) => {
-      console.log(event.data);
-    };
-
     // when a row is selected with the checkbox
     const selectionChanged = (event) => {
       // we store the selected rows as data-target string on the delete button
@@ -95,21 +90,12 @@ if (document.getElementById('compounds-table')) {
       btn.removeAttribute('disabled');
       const selectedRows = event.api.getSelectedRows();
       btn.dataset.target = selectedRows.map(c => c.id).join(',');
-      // edit
-      const editBtn = document.getElementById('editCompoundBtn');
-      if (selectedRows.length === 1) {
-        editBtn.removeAttribute('disabled');
-        editBtn.dataset.target = selectedRows.map(c => c.id).join(',');
-      } else {
-        editBtn.setAttribute('disabled', 'disabled');
-      }
     };
 
     const cellDoubleClicked = (event) => {
-      if (event.value && event.column.colId !== 'name') {
-        navigator.clipboard.writeText(event.value);
-        notif({res:true, msg:'Copied to clipboard'});
-      }
+      ApiC.getJson(`compounds/${event.data.id}`).then(json => {
+        toggleEditCompound(json);
+      });
     };
 
     return (
@@ -123,7 +109,6 @@ if (document.getElementById('compounds-table')) {
         defaultColDef={defaultColDef}
         rowSelection={rowSelection}
         onCellDoubleClicked={cellDoubleClicked}
-        onRowClicked={rowClicked}
         onSelectionChanged={selectionChanged}
         pagination={true}
         paginationPageSize={15}

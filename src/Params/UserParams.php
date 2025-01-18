@@ -30,11 +30,11 @@ use function trim;
 
 final class UserParams extends ContentParams
 {
-    public function getContent(): string
+    public function getContent(): string | int
     {
         return match ($this->target) {
             // checked in update
-            'email' => trim($this->content),
+            'email' => trim($this->asString()),
             'firstname', 'lastname', 'orgid' => $this->content,
             'valid_until' => (
                 function () {
@@ -46,56 +46,55 @@ final class UserParams extends ContentParams
                 }
             )(),
             // return the hash of the password
-            'password' => $this->validateAndHashPassword(),
-            'orcid' => $this->getOrcid(),
-            'limit_nb' => (string) Check::limit((int) $this->content),
+            'password' => $this->validateAndHashPassword($this->asString()),
+            'orcid' => $this->filterOrcid($this->asString()),
+            'limit_nb' => (string) Check::limit($this->asInt()),
             'display_mode' => (DisplayMode::tryFrom($this->content) ?? DisplayMode::Normal)->value,
             'sort' => (Sort::tryFrom($this->content) ?? Sort::Desc)->value,
             'orderby' => (Orderby::tryFrom($this->content) ?? Orderby::Date)->value,
-            'scope_experiments', 'scope_items', 'scope_experiments_templates', 'scope_teamgroups' => (string) (Scope::tryFrom((int) $this->content) ?? Scope::Team)->value,
-            'sc_create', 'sc_favorite', 'sc_todo', 'sc_edit', 'sc_search' => Filter::firstLetter($this->content),
-            'is_sysadmin', 'uploads_layout', 'cjk_fonts', 'pdf_sig', 'use_markdown', 'use_isodate', 'inc_files_pdf', 'append_pdfs', 'disable_shortcuts', 'validated', 'notif_comment_created', 'notif_comment_created_email', 'notif_step_deadline', 'notif_step_deadline_email', 'notif_user_created', 'notif_user_created_email', 'notif_user_need_validation', 'notif_user_need_validation_email', 'notif_event_deleted', 'notif_event_deleted_email', 'always_show_owned', 'show_weekends' => (string) Filter::toBinary($this->content),
+            'scope_experiments', 'scope_items', 'scope_experiments_templates', 'scope_teamgroups' => (string) (Scope::tryFrom($this->asInt()) ?? Scope::Team)->value,
+            'sc_create', 'sc_favorite', 'sc_todo', 'sc_edit', 'sc_search' => Filter::firstLetter($this->asString()),
+            'is_sysadmin', 'uploads_layout', 'cjk_fonts', 'pdf_sig', 'use_markdown', 'use_isodate', 'inc_files_pdf', 'append_pdfs', 'disable_shortcuts', 'validated', 'notif_comment_created', 'notif_comment_created_email', 'notif_step_deadline', 'notif_step_deadline_email', 'notif_user_created', 'notif_user_created_email', 'notif_user_need_validation', 'notif_user_need_validation_email', 'notif_event_deleted', 'notif_event_deleted_email', 'always_show_owned', 'show_weekends' => Filter::toBinary($this->content),
             'lang' => (Language::tryFrom($this->content) ?? Language::EnglishGB)->value,
-            'entrypoint' => (string) (Entrypoint::tryFrom((int) $this->content) ?? Entrypoint::Dashboard)->value,
-            'default_read', 'default_write' => Check::visibility($this->content),
+            'entrypoint' => (Entrypoint::tryFrom($this->asInt()) ?? Entrypoint::Dashboard)->value,
+            'default_read', 'default_write' => $this->getCanJson(),
             'pdf_format' => (PdfFormat::tryFrom($this->content) ?? PdfFormat::A4)->value,
             default => throw new ImproperActionException('Invalid target for user update.'),
         };
     }
 
-    private function validateAndHashPassword(): string
+    public function getStringContent(): string
+    {
+        return (string) $this->getContent();
+    }
+
+    private function validateAndHashPassword(string $password): string
     {
         $Config = Config::getConfig();
         $min = (int) $Config->configArr['min_password_length'];
         $passwordComplexity = PasswordComplexity::from((int) $Config->configArr['password_complexity_requirement']);
         $PasswordValidator = new PasswordValidator($min, $passwordComplexity);
-        $PasswordValidator->validate($this->content);
+        $PasswordValidator->validate($password);
 
-        return password_hash($this->content, PASSWORD_DEFAULT);
+        return password_hash($password, PASSWORD_DEFAULT);
     }
 
-    private function getOrcid(): string
+    private function filterOrcid(string $input): string
     {
-        if (empty($this->content)) {
+        if (empty($input)) {
             return '';
         }
-
-        return $this->filterOrcid();
-    }
-
-    private function filterOrcid(): string
-    {
         // first check basic structure
         // note: the input field should prevent any incorrect value from being submitted in the first place
-        if (preg_match('/\d{4}-\d{4}-\d{4}-\d{3}[0-9X]/', $this->content) === 0) {
+        if (preg_match('/\d{4}-\d{4}-\d{4}-\d{3}[0-9X]/', $input) === 0) {
             throw new ImproperActionException('Incorrect orcid: invalid format.');
         }
         // now check the sum
-        $baseNumbers = str_replace('-', '', substr($this->content, 0, -1));
-        if (Check::digit($baseNumbers, $this->getChecksumFromOrcid($this->content)) === false) {
+        $baseNumbers = str_replace('-', '', substr($input, 0, -1));
+        if (Check::digit($baseNumbers, $this->getChecksumFromOrcid($input)) === false) {
             throw new ImproperActionException('Invalid orcid: checksum failed.');
         }
-        return $this->content;
+        return $input;
     }
 
     private function getChecksumFromOrcid(string $orcid): int

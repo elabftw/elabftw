@@ -36,6 +36,7 @@ class i18n4Js
     private function getTerms(): array
     {
         return array(
+            'add-compound' => _('Add compound'),
             'click-to-edit' => _('Click to edit'),
             'cancel' => _('Cancel'),
             'comment-add' => _('Add a comment'),

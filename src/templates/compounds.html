@@ -17,7 +17,7 @@
 {% include('create-compound-modal.html') %}
 {% include('create-resource-from-compound-modal.html') %}
 {% include('edit-compound-modal.html') %}
-<p>{{ 'Compounds are chemical entities associated with properties such as a PubChem CID, a CAS number, InChI or SMART representations, etc... This page allows you to manage your compounds database. Resources or Experiments can be linked to compounds.'|trans }}</p>
+<p>{{ 'Compounds are chemical entities associated with properties such as a CAS number, a molecular formula, SMILES or InChI representations, hazardous properties, etc... This page allows you to manage your compounds database, which is shared to everyone on the instance. Once created, a compound can be associated with a Resource (or Experiment).'|trans }}</p>
   <div class='my-3'>
     <button type='button' data-action='toggle-modal' data-target='importFromPubChemModal' class='btn btn-secondary'>{{ 'Add from PubChem'|trans }}</button>
     <button type='button' data-action='toggle-modal' data-target='createCompoundModal' class='btn btn-secondary'>{{ 'Add compound'|trans }}</button>

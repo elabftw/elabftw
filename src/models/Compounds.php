@@ -168,6 +168,7 @@ class Compounds extends AbstractRest
                 isHazardous2health: (bool) ($reqBody['is_hazardous2health'] ?? false),
                 isOxidising: (bool) ($reqBody['is_oxidising'] ?? false),
                 isToxic: (bool) ($reqBody['is_toxic'] ?? false),
+                withFingerprint: Config::boolFromEnv('USE_FINGERPRINTER'),
             ),
         };
     }
@@ -184,7 +185,7 @@ class Compounds extends AbstractRest
         ?string $name = null,
         ?string $smiles = null,
         ?string $molecularFormula = null,
-        ?float $molecularWeight = null,
+        ?float $molecularWeight = 0.00,
         ?string $casNumber = null,
         ?string $iupacName = null,
         ?int $pubchemCid = null,
@@ -324,13 +325,14 @@ class Compounds extends AbstractRest
 
     private function getFingerprintFromSmiles(string $smiles): array
     {
-        $Fingerprinter = new Fingerprinter($this->httpGetter);
+        $Fingerprinter = new Fingerprinter($this->httpGetter, Config::boolFromEnv('USE_FINGERPRINTER'));
         return $Fingerprinter->calculate('smi', $smiles);
     }
 
     private function fingerprintCompound(string $smiles, int $compoundId): int
     {
         $fp = $this->getFingerprintFromSmiles($smiles);
+        // if fingerprinter is not configured, no data will exist in the response
         $Fingerprints = new Fingerprints($compoundId);
         return $Fingerprints->create($fp['data']);
     }
@@ -355,6 +357,7 @@ class Compounds extends AbstractRest
             isHazardous2health: $compound->isHazardous2health,
             isOxidising: $compound->isOxidising,
             isToxic: $compound->isToxic,
+            withFingerprint: Config::boolFromEnv('USE_FINGERPRINTER'),
         );
     }
 }

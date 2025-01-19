@@ -12,10 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
-use Elabftw\Models\Compounds;
-use Elabftw\Models\Config;
-use Elabftw\Services\HttpGetter;
-use GuzzleHttp\Client;
+use Elabftw\Models\ItemsTypes;
 
 class CompoundsController extends AbstractHtmlController
 {
@@ -26,11 +23,8 @@ class CompoundsController extends AbstractHtmlController
 
     protected function getData(): array
     {
-        $Config = Config::getConfig();
-        $httpGetter = new HttpGetter(new Client(), $Config->configArr['proxy'], $Config->configArr['debug'] === '0');
-        $Compounds = new Compounds($httpGetter, $this->app->Users);
         return array(
-            'compoundsArr' => $Compounds->readAll($Compounds->getQueryParams($this->app->Request->query)),
+            'resourceCategoriesArr' => (new ItemsTypes($this->app->Users))->readAll(),
         );
     }
 }

@@ -30,6 +30,9 @@
         </button>
       </div>
       <div class='modal-body'>
+        <div class='d-flex justify-content-between'>
+          <button type='button' class='btn btn-secondary btn-sm ml-auto' data-action='toggle-modal' data-dismiss='modal' data-target='createResourceFromCompoundModal'>{{ 'Create resource from compound'|trans }}</button>
+        </div>
         <div class='mb-2' id='editCompoundInputs'>
           {{ _self.textParam('name', 'Name'|trans, 'required') }}
           {{ _self.textParam('iupac_name', 'IUPAC Name'|trans) }}

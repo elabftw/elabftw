@@ -569,7 +569,22 @@ document.addEventListener('DOMContentLoaded', () => {
       const entity = getEntity();
       const qty_stored = (document.getElementById('containerQtyStoredInput') as HTMLInputElement).value;
       const qty_unit = (document.getElementById('containerQtyUnitSelect') as HTMLSelectElement).value;
-      ApiC.post(`${entity.type}/${entity.id}/containers/${el.dataset.id}`, {qty_stored: qty_stored, qty_unit: qty_unit}).then(() => reloadElements(['storageDivContent']));
+      let multiplier = parseInt((document.getElementById('containerMultiplierInput') as HTMLInputElement).value, 10);
+      if (isNaN(multiplier) || multiplier <= 0) {
+        multiplier = 1;
+      }
+
+      const postCalls = Array.from({ length: multiplier }, () =>
+        ApiC.post(`${entity.type}/${entity.id}/containers/${el.dataset.id}`, {
+          qty_stored: qty_stored,
+          qty_unit: qty_unit,
+        }),
+      );
+      // Execute all POST calls and reload elements after all are resolved
+      Promise.all(postCalls)
+        .then(() => reloadElements(['storageDivContent']))
+        .catch((error) => notifError(error));
+
     } else if (el.matches('[data-action="destroy-container"]')) {
       const entity = getEntity();
       ApiC.delete(`${entity.type}/${entity.id}/containers/${el.dataset.id}`).then(() => reloadElements(['storageDivContent']));

@@ -189,9 +189,9 @@ abstract class AbstractContainersLinks extends AbstractLinks
         $this->Entity->canOrExplode('write');
         $this->Entity->touch();
 
-        $sql = 'DELETE FROM ' . $this->getTable() . ' WHERE storage_id = :storage_id AND item_id = :item_id';
+        $sql = 'DELETE FROM ' . $this->getTable() . ' WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':storage_id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }

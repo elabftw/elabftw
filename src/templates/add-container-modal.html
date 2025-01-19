@@ -1,4 +1,4 @@
-{# Modal for storage #}
+{# Add a container modal #}
 <div class='modal fade' id='storageModal' tabindex='-1' role='dialog' aria-labelledby='storageModalLabel'>
   <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content'>
@@ -11,8 +11,8 @@
       <div class='modal-body'>
         {# STORAGE #}
         <div class='mb-2'>
-          <h5><label for='containerQtyStoredInput'>{{ 'Adjust quantity and unit'|trans }}</label></h5>
-          <div class='input-group'>
+          <h5><label for='containerQtyStoredInput'>{{ 'Adjust container capacity and unit'|trans }}</label></h5>
+          <div class='input-group mb-2'>
             {# set default value to 1 instead of 0 as we probably want to add at least one thing #}
             <input type='number' value='1' min='1' id='containerQtyStoredInput' autocomplete='off' class='form-control' />
             <div class='input-group-append'>
@@ -28,6 +28,8 @@
               </select>
             </div>
           </div>
+          <h5><label for='containerMultiplierInput'>{{ 'Adjust number of containers stored'|trans }}</label></h5>
+          <input type='number' value='1' min='1' id='containerMultiplierInput' autocomplete='off' class='form-control' />
           <h5 class='mt-2'>{{ 'Select a storage location below'|trans }}</h5>
           {% include 'storage-list.html' with {'storage_editable': false} %}
         </div>

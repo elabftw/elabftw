@@ -184,6 +184,7 @@ class Compounds extends AbstractRest
         ?string $name = null,
         ?string $smiles = null,
         ?string $molecularFormula = null,
+        ?float $molecularWeight = null,
         ?string $casNumber = null,
         ?string $iupacName = null,
         ?int $pubchemCid = null,
@@ -201,13 +202,13 @@ class Compounds extends AbstractRest
         $sql = 'INSERT INTO compounds (
             created_by, modified_by, name,
             inchi, inchi_key,
-            smiles, molecular_formula,
+            smiles, molecular_formula, molecular_weight,
             cas_number, iupac_name, pubchem_cid, userid, team,
             is_corrosive, is_explosive, is_flammable, is_gas_under_pressure, is_hazardous2env, is_hazardous2health, is_oxidising, is_toxic
             ) VALUES (
             :requester, :requester, :name,
             :inchi, :inchi_key,
-            :smiles, :molecular_formula,
+            :smiles, :molecular_formula, :molecular_weight,
             :cas_number, :iupac_name, :pubchem_cid, :requester, :team,
             :is_corrosive, :is_explosive, :is_flammable, :is_gas_under_pressure, :is_hazardous2env, :is_hazardous2health, :is_oxidising, :is_toxic)';
 
@@ -219,6 +220,7 @@ class Compounds extends AbstractRest
         $req->bindParam(':inchi_key', $inchiKey);
         $req->bindParam(':smiles', $smiles);
         $req->bindParam(':molecular_formula', $molecularFormula);
+        $req->bindParam(':molecular_weight', $molecularWeight);
         $req->bindParam(':cas_number', $casNumber);
         $req->bindParam(':iupac_name', $iupacName);
         $req->bindParam(':pubchem_cid', $pubchemCid);
@@ -344,6 +346,7 @@ class Compounds extends AbstractRest
             iupacName: $compound->iupacName,
             pubchemCid: $compound->cid,
             molecularFormula: $compound->molecularFormula,
+            molecularWeight: $compound->molecularWeight,
             isCorrosive: $compound->isCorrosive,
             isExplosive: $compound->isExplosive,
             isFlammable: $compound->isFlammable,

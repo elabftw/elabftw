@@ -14,7 +14,7 @@
     <div class='input-group-prepend'>
       <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-outline-secondary' type='button' data-action='copy-to-clipboard' data-target='compoundInput-{{ target }}'><i class='fas fa-clone'></i></button>
     </div>
-    <input name='{{ target }}' {{ type == 'number' ? "type='number' step='0.1'" }} {{ pattern }} {{ title ? "title='#{title}'" }} placeholder='{{ placeholder }}' {{ required }} class='form-control' id='compoundInput-{{ target }}' />
+    <input name='{{ target }}' {{ type == 'number' ? "type='number' step='0.01'" }} {{ pattern }} {{ title ? "title='#{title}'" }} placeholder='{{ placeholder }}' {{ required }} class='form-control' id='compoundInput-{{ target }}' />
   </div>
 {% endmacro %}
 

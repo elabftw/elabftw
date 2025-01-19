@@ -644,11 +644,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const compoundId = (document.getElementById('compoundInput-id') as HTMLInputElement).value;
       ApiC.post2location('items', {template: el.dataset.tplid}).then(id => {
         // now create a link with that compound
-        ApiC.post(`items/${id}/compounds/${compoundId}`);
-        // also change the title
-        const compoundName = (document.getElementById('compoundInput-name') as HTMLInputElement).value;
-        ApiC.patch(`items/${id}`, {title: compoundName}).then(() => {
-          window.location.href = `/database.php?mode=edit&id=${id}`;
+        ApiC.post(`items/${id}/compounds/${compoundId}`).then(() => {
+          // also change the title
+          const compoundName = (document.getElementById('compoundInput-name') as HTMLInputElement).value;
+          ApiC.patch(`items/${id}`, {title: compoundName}).then(() => {
+            window.location.href = `/database.php?mode=edit&id=${id}`;
+          });
         });
       });
 

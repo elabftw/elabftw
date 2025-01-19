@@ -25,6 +25,7 @@ class Compound
         public ?int $isPublic = 1,
         public ?string $iupacName = null,
         public ?string $molecularFormula = null,
+        public ?float $molecularWeight = null,
         public ?string $name = null,
         public ?string $smiles = null,
         public bool $isCorrosive = false,
@@ -47,6 +48,7 @@ class Compound
             'isPublic' => $this->isPublic,
             'iupacName' => $this->iupacName ?? $this->name,
             'molecularFormula' => $this->molecularFormula,
+            'molecularWeight' => $this->molecularWeight,
             'name' => $this->name ?? $this->iupacName,
             'smiles' => $this->smiles,
         );
@@ -91,6 +93,20 @@ class Compound
                     }
                 }
             }
+
+            // Molecular Weight
+            if ($section['TOCHeading'] === 'Chemical and Physical Properties') {
+                foreach ($section['Section'] as $subSection) {
+                    if ($subSection['TOCHeading'] === 'Computed Properties') {
+                        foreach ($subSection['Section'] as $subSubSection) {
+                            if ($subSubSection['TOCHeading'] === 'Molecular Weight') {
+                                $compound->molecularWeight = (float) $subSubSection['Information'][0]['Value']['StringWithMarkup'][0]['String'];
+                            }
+                        }
+                    }
+                }
+            }
+
             if ($section['TOCHeading'] === 'Names and Identifiers') {
                 foreach ($section['Section'] as $subSection) {
                     if ($subSection['TOCHeading'] === 'Computed Descriptors') {

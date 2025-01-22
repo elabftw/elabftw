@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Interfaces;
 
 use Elabftw\Enums\Action;
+use Symfony\Component\HttpFoundation\InputBag;
 
 /**
  * For models that are called by api v2
@@ -21,7 +22,9 @@ interface RestInterface
 {
     public function readOne(): array;
 
-    public function readAll(): array;
+    public function getQueryParams(?InputBag $query = null): QueryParamsInterface;
+
+    public function readAll(?QueryParamsInterface $queryParams = null): array;
 
     public function postAction(Action $action, array $reqBody): int;
 

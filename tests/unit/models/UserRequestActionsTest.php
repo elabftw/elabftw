@@ -11,9 +11,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Enums\Action;
-use Elabftw\Exceptions\ImproperActionException;
-
 class UserRequestActionsTest extends \PHPUnit\Framework\TestCase
 {
     private UserRequestActions $ura;
@@ -30,32 +27,8 @@ class UserRequestActionsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->ura->readAllFull());
     }
 
-    public function testReadOne(): void
-    {
-        $this->expectException(ImproperActionException::class);
-        $this->ura->readOne();
-    }
-
-    public function testPostAction(): void
-    {
-        $this->expectException(ImproperActionException::class);
-        $this->ura->postAction(Action::Create, array());
-    }
-
-    public function testPatch(): void
-    {
-        $this->expectException(ImproperActionException::class);
-        $this->ura->patch(Action::Update, array());
-    }
-
     public function testGetApiPath(): void
     {
         $this->assertEquals('api/v2/users/me/request_actions/', $this->ura->getApiPath());
-    }
-
-    public function testDestroy(): void
-    {
-        $this->expectException(ImproperActionException::class);
-        $this->ura->destroy();
     }
 }

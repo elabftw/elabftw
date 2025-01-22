@@ -118,7 +118,6 @@ This project is backed by [Deltablot](https://www.deltablot.com) company.
 ## API libraries
 
 * [elabftw/elabapi-python](https://github.com/elabftw/elabapi-python/): python library for interacting with APIv2
-* [elabftw/elabapy](https://github.com/elabftw/elabapy): python library for interacting with APIv1 (deprecated)
 * [elabftw/elabapi-javascript-example](https://github.com/elabftw/elabapi-javascript-example#readme): example code for interacting with APIv2 through JavaScript
 
 ## Communities
@@ -130,14 +129,16 @@ This project is backed by [Deltablot](https://www.deltablot.com) company.
 These projects were created by users of eLabFTW, check them out if interested!
 
 * [elAPI](https://github.com/uhd-urz/elAPI/): a powerful, extensible API client for eLabFTW developed at the University Computing Centre of University of Heidelberg
+* [pyelabdata](https://github.com/FAU-PHYSIK-EP/pyelabdata): provides functions for simple one-line access to data stored in eLabFTW via Python
+* [elabftw-teamupload](https://github.com/HeFDI-DE/elabftw-teamupload/): Synchronize teamgroups and teams with users from Excel
+
+### Deprecated projects using retired api v1
 * [din14970/elabftwqrprint](https://github.com/din14970/elabftwqrprint): python library to print QR codes from database objects
 * [shabihsherjeel/nionswift_elabftw_plugin](https://github.com/shabihsherjeel/nionswift_elabftw_plugin): python plugin for [Nionswift](https://github.com/nion-software/nionswift)
 * [iam-cms/elabapy-cli](https://gitlab.com/iam-cms/workflows/extra-nodes/elabapy-cli): command line interface for eLabFTW API
-* [pyelabdata](https://github.com/FAU-PHYSIK-EP/pyelabdata): provides functions for simple one-line access to data stored in eLabFTW via Python
 * [Elab::Client](https://metacpan.org/pod/ELab::Client): perl module for eLab API by Andreas K. Hüttel
 * [LabView client](https://www.vipm.io/package/plasmapper_lib_pl_elabftw_client/): LabView client library by @plasmapper
 * [Matlab client](https://github.com/baillon/eLabAPI): Matlab package to facilitate working with eLabFTW API
-* [elabftw-teamupload](https://github.com/HeFDI-DE/elabftw-teamupload/): Synchronize teamgroups and teams with users from Excel
 
 ## Unofficial documentation
 

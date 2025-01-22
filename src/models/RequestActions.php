@@ -12,32 +12,31 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\RestInterface;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Notifications\ActionRequested;
 use Elabftw\Traits\SetIdTrait;
+use Override;
 use PDO;
 
 /**
  * Request action for users
  */
-class RequestActions implements RestInterface
+class RequestActions extends AbstractRest
 {
     use SetIdTrait;
 
-    protected Db $Db;
-
     public function __construct(protected Users $requester, protected AbstractEntity $entity, ?int $id = null)
     {
+        parent::__construct();
         $this->setId($id);
-        $this->Db = Db::getConnection();
     }
 
-    public function readAll(): array
+    #[Override]
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = sprintf(
             'SELECT "%s" AS entity_page, id, created_at, requester_userid, target_userid, entity_id, action
@@ -72,6 +71,7 @@ class RequestActions implements RestInterface
         }, $this->readAll());
     }
 
+    #[Override]
     public function readOne(): array
     {
         $sql = sprintf(
@@ -87,6 +87,7 @@ class RequestActions implements RestInterface
         return $this->Db->fetch($req);
     }
 
+    #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
         $sql = sprintf(
@@ -133,11 +134,6 @@ class RequestActions implements RestInterface
         return $actionId;
     }
 
-    public function patch(Action $action, array $params): array
-    {
-        throw new ImproperActionException('No patch action for this endpoint.');
-    }
-
     public function getApiPath(): string
     {
         return sprintf('%s%d/request_actions/', $this->entity->getApiPath(), $this->entity->id ?? '');
@@ -161,6 +157,7 @@ class RequestActions implements RestInterface
         return $this->Db->execute($req);
     }
 
+    #[Override]
     public function destroy(): bool
     {
         $sql = sprintf(

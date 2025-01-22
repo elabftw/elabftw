@@ -24,10 +24,76 @@ import { EntityType, Model, Action, Selected } from './interfaces';
 import tinymce from 'tinymce/tinymce';
 import Tab from './Tab.class';
 
-document.addEventListener('DOMContentLoaded', () => {
-  if (window.location.pathname !== '/admin.php') {
+function collectSelectable(name: string): number[] {
+  const collected = [];
+  document.querySelectorAll(`#batchActions input[name=${name}]`).forEach(input => {
+    const box = input as HTMLInputElement;
+    if (box.checked) {
+      collected.push(parseInt((input as HTMLInputElement).value, 10));
+    }
+  });
+  return collected;
+}
+
+function collectTargetOwner(): number {
+  const collected = document.getElementById('target_owner') as HTMLInputElement;
+  // Convert element to an int
+  return collected ? parseInt(collected.value, 10) || 0 : 0;
+}
+
+function collectCan(): string {
+  // Warning: copy pasta from common.ts save-permissions action
+  // collect existing users listed in ul->li, and store them in a string[] with user:<userid>
+  const existingUsers = Array.from(document.getElementById('masscan_list_users').children)
+    .map(u => `user:${(u as HTMLElement).dataset.id}`);
+
+  return permissionsToJson(
+    parseInt(((document.getElementById('masscan_select_base') as HTMLSelectElement).value), 10),
+    Array.from((document.getElementById('masscan_select_teams') as HTMLSelectElement).selectedOptions).map(v=>v.value)
+      .concat(Array.from((document.getElementById('masscan_select_teamgroups') as HTMLSelectElement).selectedOptions).map(v=>v.value))
+      .concat(existingUsers),
+  );
+
+}
+function getSelected(): Selected {
+  return {
+    items_types: collectSelectable('items_types'),
+    items_status: collectSelectable('items_status'),
+    items_tags: collectSelectable('items_tags'),
+    experiments_status: collectSelectable('experiments_status'),
+    experiments_categories: collectSelectable('experiments_categories'),
+    experiments_tags: collectSelectable('experiments_tags'),
+    tags: collectSelectable('tags'),
+    users: collectSelectable('users'),
+    target_owner: collectTargetOwner(),
+    can: collectCan(),
+  };
+}
+
+// UPDATE
+function itemsTypesUpdate(id: number): Promise<Response> {
+  const nameInput = (document.getElementById('itemsTypesName') as HTMLInputElement);
+  const name = nameInput.value;
+  if (name === '') {
+    notif({'res': false, 'msg': 'Name cannot be empty'});
+    nameInput.style.borderColor = 'red';
+    nameInput.focus();
     return;
   }
+  const color = (document.getElementById('itemsTypesColor') as HTMLInputElement).value;
+  const body = getEditor().getContent();
+  const ApiC = new Api();
+  const params = {'title': name, 'color': color, 'body': body};
+  return ApiC.patch(`${EntityType.ItemType}/${id}`, params);
+}
+// END ITEMS TYPES
+
+function getRandomColor(): string {
+  return `#${Math.floor(Math.random()*16777215).toString(16)}`;
+}
+
+
+if (window.location.pathname === '/admin.php') {
 
   const ApiC = new Api();
 
@@ -36,51 +102,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const editor = getEditor();
   editor.init('admin');
-
-  function collectSelectable(name: string) {
-    const collected = [];
-    document.querySelectorAll(`#batchActions input[name=${name}]`).forEach(input => {
-      const box = input as HTMLInputElement;
-      if (box.checked) {
-        collected.push(parseInt((input as HTMLInputElement).value, 10));
-      }
-    });
-    return collected;
-  }
-
-  function collectTargetOwner(): number {
-    const collected = document.getElementById('target_owner') as HTMLInputElement;
-    // Convert element to an int
-    return collected ? parseInt(collected.value, 10) || 0 : 0;
-  }
-
-  function collectCan(): string {
-    // Warning: copy pasta from common.ts save-permissions action
-    // collect existing users listed in ul->li, and store them in a string[] with user:<userid>
-    const existingUsers = Array.from(document.getElementById('masscan_list_users').children)
-      .map(u => `user:${(u as HTMLElement).dataset.id}`);
-
-    return permissionsToJson(
-      parseInt(((document.getElementById('masscan_select_base') as HTMLSelectElement).value), 10),
-      Array.from((document.getElementById('masscan_select_teams') as HTMLSelectElement).selectedOptions).map(v=>v.value)
-        .concat(Array.from((document.getElementById('masscan_select_teamgroups') as HTMLSelectElement).selectedOptions).map(v=>v.value))
-        .concat(existingUsers),
-    );
-
-  }
-  function getSelected(): Selected {
-    return {
-      items_types: collectSelectable('items_types'),
-      items_status: collectSelectable('items_status'),
-      items_tags: collectSelectable('items_tags'),
-      experiments_status: collectSelectable('experiments_status'),
-      experiments_categories: collectSelectable('experiments_categories'),
-      experiments_tags: collectSelectable('experiments_tags'),
-      users: collectSelectable('users'),
-      target_owner: collectTargetOwner(),
-      can: collectCan(),
-    };
-  }
 
   // edit the team group name
   const malleableGroupname = new Malle({
@@ -103,27 +124,6 @@ document.addEventListener('DOMContentLoaded', () => {
   new MutationObserver(() => {
     malleableGroupname.listen();
   }).observe(document.getElementById('team_groups_div'), {childList: true});
-
-  // UPDATE
-  function itemsTypesUpdate(id: number): Promise<Response> {
-    const nameInput = (document.getElementById('itemsTypesName') as HTMLInputElement);
-    const name = nameInput.value;
-    if (name === '') {
-      notif({'res': false, 'msg': 'Name cannot be empty'});
-      nameInput.style.borderColor = 'red';
-      nameInput.focus();
-      return;
-    }
-    const color = (document.getElementById('itemsTypesColor') as HTMLInputElement).value;
-    const body = editor.getContent();
-    const params = {'title': name, 'color': color, 'body': body};
-    return ApiC.patch(`${EntityType.ItemType}/${id}`, params);
-  }
-  // END ITEMS TYPES
-
-  function getRandomColor(): string {
-    return `#${Math.floor(Math.random()*16777215).toString(16)}`;
-  }
 
   // set a random color to all the "create new" statuslike modals
   // from https://www.paulirish.com/2009/random-hex-color-code-snippets/
@@ -324,4 +324,4 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   });
-});
+}

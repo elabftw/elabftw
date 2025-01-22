@@ -26,7 +26,9 @@ use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Factories\LinksFactory;
 use Elabftw\Interfaces\MakeTrustedTimestampInterface;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Make\MakeBloxberg;
 use Elabftw\Make\MakeCustomTimestamp;
 use Elabftw\Make\MakeDfnTimestamp;
@@ -43,6 +45,7 @@ use Elabftw\Services\SignatureHelper;
 use Elabftw\Services\TimestampUtils;
 use GuzzleHttp\Client;
 use PDO;
+use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 use ZipArchive;
 
@@ -65,16 +68,22 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         // convert to int only if not empty, otherwise send null: we don't want to convert a null to int, as it would send 0
         $category = !empty($reqBody['category']) ? (int) $reqBody['category'] : null;
         $status = !empty($reqBody['status']) ? (int) $reqBody['status'] : null;
+        $metadata = null;
+        if (!empty($reqBody['metadata'])) {
+            $metadata = json_encode($reqBody['metadata'], JSON_THROW_ON_ERROR);
+        }
         return match ($action) {
             Action::Create => $this->create(
                 // the category_id is there for backward compatibility (changed in 5.1)
                 template: (int) ($reqBody['template'] ?? $reqBody['category_id'] ?? -1),
+                body: $reqBody['body'] ?? null,
                 title: $reqBody['title'] ?? null,
                 canread: $canread,
                 canwrite: $canwrite,
                 tags: $reqBody['tags'] ?? array(),
                 category: $category,
                 status: $status,
+                metadata: $metadata,
                 forceExpTpl: (bool) $teamConfigArr['force_exp_tpl'],
                 defaultTemplateHtml: $teamConfigArr['common_template'] ?? '',
                 defaultTemplateMd: $teamConfigArr['common_template_md'] ?? '',
@@ -125,6 +134,10 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         $this->entityData['uploads'] = $this->Uploads->readAll();
         $this->entityData['comments'] = $this->Comments->readAll();
         $this->entityData['page'] = substr($this->entityType->toPage(), 0, -4);
+        $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
+        $this->entityData['compounds'] = $CompoundsLinks->readAll();
+        $ContainersLinks = LinksFactory::getContainersLinks($this);
+        $this->entityData['containers'] = $ContainersLinks->readAll();
         $this->entityData['sharelink'] = sprintf(
             '%s/%s?mode=view&id=%d%s',
             Config::fromEnv('SITE_URL'),
@@ -149,9 +162,18 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         return $this->entityData;
     }
 
-    public function readAll(): array
+    public function getQueryParams(?InputBag $query = null): DisplayParams
     {
-        return $this->readShow(new DisplayParams($this->Users, Request::createFromGlobals(), $this->entityType), true);
+        return new DisplayParams($this->Users, $this->entityType, $query);
+    }
+
+    public function readAll(?QueryParamsInterface $queryParams = null): array
+    {
+        if (!$queryParams instanceof DisplayParams) {
+            $Request = Request::createFromGlobals();
+            $queryParams = $this->getQueryParams($Request->query);
+        }
+        return $this->readShow($queryParams, true);
     }
 
     public function destroy(): bool

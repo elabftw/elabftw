@@ -12,17 +12,17 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\RestInterface;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Params\TeamGroupParams;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SetIdTrait;
+use Override;
 use PDO;
 
 use function array_map;
@@ -32,18 +32,17 @@ use function json_decode;
 /**
  * Everything related to the team groups
  */
-class TeamGroups implements RestInterface
+class TeamGroups extends AbstractRest
 {
     use SetIdTrait;
 
-    private Db $Db;
-
     public function __construct(private Users $Users, ?int $id = null)
     {
-        $this->Db = Db::getConnection();
+        parent::__construct();
         $this->setId($id);
     }
 
+    #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
         return $this->create($reqBody['name'] ?? _('Untitled'));
@@ -59,7 +58,8 @@ class TeamGroups implements RestInterface
      *
      * @return array all team groups with users in group as array
      */
-    public function readAll(): array
+    #[Override]
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = "SELECT team_groups.id,
                 team_groups.name,
@@ -144,6 +144,7 @@ class TeamGroups implements RestInterface
     /**
      * Get info about a team group
      */
+    #[Override]
     public function readOne(): array
     {
         $sql = 'SELECT * FROM team_groups WHERE id = :id';
@@ -166,6 +167,7 @@ class TeamGroups implements RestInterface
         return $req->fetchAll();
     }
 
+    #[Override]
     public function patch(Action $action, array $params): array
     {
         $this->canWriteOrExplode();
@@ -185,6 +187,7 @@ class TeamGroups implements RestInterface
         return $this->readOne();
     }
 
+    #[Override]
     public function destroy(): bool
     {
         $this->canWriteOrExplode();

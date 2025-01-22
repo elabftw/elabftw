@@ -15,12 +15,10 @@ namespace Elabftw\Models;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\AuditEvent\ConfigModified;
-use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\TwigFilters;
 use Elabftw\Elabftw\Update;
 use Elabftw\Enums\Action;
-use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\RestInterface;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Services\Filter;
 use PDO;
 
@@ -30,12 +28,10 @@ use function urlencode;
 /**
  * The general config table
  */
-final class Config implements RestInterface
+final class Config extends AbstractRest
 {
     // the array with all config
     public array $configArr = array();
-
-    protected Db $Db;
 
     // store the single instance of the class
     private static ?Config $instance = null;
@@ -47,7 +43,7 @@ final class Config implements RestInterface
      */
     private function __construct()
     {
-        $this->Db = Db::getConnection();
+        parent::__construct();
         $this->configArr = $this->readAll();
         // this should only run once: just after a fresh install
         if (empty($this->configArr)) {
@@ -62,8 +58,6 @@ final class Config implements RestInterface
      */
     public function create(): bool
     {
-        $schema = Update::getRequiredSchema();
-
         $sql = "INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
             ('admin_validate', '1'),
             ('autologout_time', '0'),
@@ -196,7 +190,7 @@ final class Config implements RestInterface
             ('allow_users_change_identity', '0')";
 
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':schema', $schema);
+        $req->bindValue(':schema', Update::REQUIRED_SCHEMA);
 
         return $this->Db->execute($req);
     }
@@ -221,11 +215,6 @@ final class Config implements RestInterface
         return (string) getenv($confName);
     }
 
-    public function readOne(): array
-    {
-        return $this->readAll();
-    }
-
     public static function boolFromEnv(string $confName): bool
     {
         return getenv($confName) !== 'false';
@@ -240,7 +229,7 @@ final class Config implements RestInterface
         return $this->readOne();
     }
 
-    public function readAll(): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = 'SELECT * FROM config';
         $req = $this->Db->prepare($sql);
@@ -324,11 +313,6 @@ final class Config implements RestInterface
             $this->configArr['smtp_port'],
             $this->configArr['smtp_verify_cert'],
         );
-    }
-
-    public function postAction(Action $action, array $reqBody): int
-    {
-        throw new ImproperActionException('No POST action for Config endpoint.');
     }
 
     /**

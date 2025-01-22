@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Enums\Action;
-
 class ExtraFieldsKeysTest extends \PHPUnit\Framework\TestCase
 {
     private Users $Users;
@@ -37,9 +35,6 @@ class ExtraFieldsKeysTest extends \PHPUnit\Framework\TestCase
     {
         $ExtraFieldsKeys = new ExtraFieldsKeys($this->Users, '');
         $this->assertIsArray($ExtraFieldsKeys->readOne());
-        $this->assertIsArray($ExtraFieldsKeys->patch(Action::Update, array()));
-        $this->assertEquals(0, $ExtraFieldsKeys->postAction(Action::Create, array()));
         $this->assertEquals('api/v2/extra_fields_keys', $ExtraFieldsKeys->getApiPath());
-        $this->assertFalse($ExtraFieldsKeys->destroy());
     }
 }

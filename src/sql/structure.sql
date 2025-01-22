@@ -1787,7 +1787,8 @@ ALTER TABLE `sig_keys`
 -- Constraints for table `tags`
 --
 ALTER TABLE `tags`
-  ADD CONSTRAINT `fk_tags_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_tags_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD UNIQUE `unique_tags_team_tag` (`team`, `tag`);
 
 --
 -- Constraints for table `team_events`
@@ -1866,6 +1867,198 @@ CREATE TABLE `experiments_templates2items` (
     CONSTRAINT `fk_experiments_templates2items_items_id` FOREIGN KEY (`link_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
+-- schema 167
+CREATE TABLE IF NOT EXISTS compounds (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_by` INT UNSIGNED NOT NULL,
+  `modified_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `modified_by` INT UNSIGNED NOT NULL,
+  `userid` INT UNSIGNED NOT NULL,
+  `team` INT UNSIGNED NOT NULL,
+  `state` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  `name` VARCHAR(255) NULL DEFAULT NULL,
+  `molecular_formula` VARCHAR(255) NULL DEFAULT NULL,
+  `cas_number` VARCHAR(20) NULL DEFAULT NULL,
+  `ec_number` VARCHAR(20) NULL DEFAULT NULL,
+  `chebi_id` VARCHAR(20) NULL DEFAULT NULL,
+  `chembl_id` VARCHAR(20) NULL DEFAULT NULL,
+  `dea_number` VARCHAR(20) NULL DEFAULT NULL,
+  `drugbank_id` VARCHAR(20) NULL DEFAULT NULL,
+  `dsstox_id` VARCHAR(20) NULL DEFAULT NULL,
+  `hmdb_id` VARCHAR(20) NULL DEFAULT NULL,
+  `inchi` MEDIUMTEXT NULL DEFAULT NULL,
+  `inchi_key` CHAR(27) NULL DEFAULT NULL,
+  `iupac_name` TEXT NULL DEFAULT NULL,
+  `kegg_id` VARCHAR(20) NULL DEFAULT NULL,
+  `metabolomics_wb_id` VARCHAR(20) NULL DEFAULT NULL,
+  `molecular_weight` DECIMAL(10, 2) UNSIGNED NOT NULL DEFAULT 0.00,
+  `nci_code` VARCHAR(20) NULL DEFAULT NULL,
+  `nikkaji_number` VARCHAR(20) NULL DEFAULT NULL,
+  `pharmgkb_id` VARCHAR(20) NULL DEFAULT NULL,
+  `pharos_ligand_id` VARCHAR(20) NULL DEFAULT NULL,
+  `pubchem_cid` INT UNSIGNED NULL DEFAULT NULL,
+  `rxcui` VARCHAR(20) NULL DEFAULT NULL,
+  `smiles` MEDIUMTEXT NULL DEFAULT NULL,
+  `unii` VARCHAR(20) NULL DEFAULT NULL,
+  `wikidata` VARCHAR(20) NULL DEFAULT NULL,
+  `wikipedia` VARCHAR(20) NULL DEFAULT NULL,
+  `is_corrosive` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_explosive` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_flammable` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_gas_under_pressure` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_hazardous2env` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_hazardous2health` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_oxidising` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_toxic` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_radioactive` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_antibiotic_precursor` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_drug_precursor` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_explosive_precursor` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_cmr` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_controlled` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  primary key(`id`)
+);
+
+CREATE TABLE `compounds2experiments` (
+  `compound_id` int(10) UNSIGNED NOT NULL,
+  `entity_id` int(10) UNSIGNED NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`compound_id`, `entity_id`),
+  CONSTRAINT `fk_c2e_compound_id_compounds_id` FOREIGN KEY (`compound_id`) REFERENCES `compounds`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_c2e_entity_id_experiments_id` FOREIGN KEY (`entity_id`) REFERENCES `experiments`(`id`) ON DELETE CASCADE
+);
+CREATE TABLE `compounds2experiments_templates` (
+  `compound_id` int(10) UNSIGNED NOT NULL,
+  `entity_id` int(10) UNSIGNED NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`compound_id`, `entity_id`),
+  CONSTRAINT `fk_c2et_templates_compound_id_compounds_id` FOREIGN KEY (`compound_id`) REFERENCES `compounds`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_c2et_templates_entity_id_experiments_templates_id` FOREIGN KEY (`entity_id`) REFERENCES `experiments_templates`(`id`) ON DELETE CASCADE
+);
+CREATE TABLE `compounds2items` (
+  `compound_id` int(10) UNSIGNED NOT NULL,
+  `entity_id` int(10) UNSIGNED NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`compound_id`, `entity_id`),
+  CONSTRAINT `fk_c2i_compound_id_compounds_id` FOREIGN KEY (`compound_id`) REFERENCES `compounds`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_c2i_entity_id_items_id` FOREIGN KEY (`entity_id`) REFERENCES `items`(`id`) ON DELETE CASCADE
+);
+CREATE TABLE `compounds2items_types` (
+  `compound_id` int(10) UNSIGNED NOT NULL,
+  `entity_id` int(10) UNSIGNED NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`compound_id`, `entity_id`),
+  CONSTRAINT `fk_c2it_compound_id_compounds_id` FOREIGN KEY (`compound_id`) REFERENCES `compounds`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_c2it_entity_id_items_types_id` FOREIGN KEY (`entity_id`) REFERENCES `items_types`(`id`) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS compounds_fingerprints (
+  id   INT UNSIGNED NOT NULL,
+  fp0  INT UNSIGNED NOT NULL,
+  fp1  INT UNSIGNED NOT NULL,
+  fp2  INT UNSIGNED NOT NULL,
+  fp3  INT UNSIGNED NOT NULL,
+  fp4  INT UNSIGNED NOT NULL,
+  fp5  INT UNSIGNED NOT NULL,
+  fp6  INT UNSIGNED NOT NULL,
+  fp7  INT UNSIGNED NOT NULL,
+  fp8  INT UNSIGNED NOT NULL,
+  fp9  INT UNSIGNED NOT NULL,
+  fp10 INT UNSIGNED NOT NULL,
+  fp11 INT UNSIGNED NOT NULL,
+  fp12 INT UNSIGNED NOT NULL,
+  fp13 INT UNSIGNED NOT NULL,
+  fp14 INT UNSIGNED NOT NULL,
+  fp15 INT UNSIGNED NOT NULL,
+  fp16 INT UNSIGNED NOT NULL,
+  fp17 INT UNSIGNED NOT NULL,
+  fp18 INT UNSIGNED NOT NULL,
+  fp19 INT UNSIGNED NOT NULL,
+  fp20 INT UNSIGNED NOT NULL,
+  fp21 INT UNSIGNED NOT NULL,
+  fp22 INT UNSIGNED NOT NULL,
+  fp23 INT UNSIGNED NOT NULL,
+  fp24 INT UNSIGNED NOT NULL,
+  fp25 INT UNSIGNED NOT NULL,
+  fp26 INT UNSIGNED NOT NULL,
+  fp27 INT UNSIGNED NOT NULL,
+  fp28 INT UNSIGNED NOT NULL,
+  fp29 INT UNSIGNED NOT NULL,
+  fp30 INT UNSIGNED NOT NULL,
+  fp31 INT UNSIGNED NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  primary key(`id`),
+  FOREIGN KEY (id) REFERENCES compounds(id) ON DELETE CASCADE
+);
+
+-- STORAGE UNITS
+CREATE TABLE IF NOT EXISTS storage_units (
+    id INT unsigned NOT NULL AUTO_INCREMENT,
+    name VARCHAR(255),
+    parent_id INT unsigned,
+    FOREIGN KEY (parent_id) REFERENCES storage_units(id) ON DELETE CASCADE,
+    PRIMARY KEY(`id`)
+);
+
+-- CONTAINERS TO EXPERIMENTS
+CREATE TABLE containers2experiments (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    storage_id INT UNSIGNED NOT NULL,
+    item_id INT UNSIGNED NOT NULL,
+    qty_stored DECIMAL(10, 2) UNSIGNED NOT NULL DEFAULT 0.00,
+    qty_unit VARCHAR(10) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (storage_id) REFERENCES storage_units(id) ON DELETE CASCADE,
+    FOREIGN KEY (item_id) REFERENCES experiments(id) ON DELETE CASCADE,
+    PRIMARY KEY(`id`)
+);
+-- CONTAINERS TO experiments_templates
+CREATE TABLE containers2experiments_templates (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    storage_id INT UNSIGNED NOT NULL,
+    item_id INT UNSIGNED NOT NULL,
+    qty_stored DECIMAL(10, 2) UNSIGNED NOT NULL DEFAULT 0.00,
+    qty_unit VARCHAR(10) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (storage_id) REFERENCES storage_units(id) ON DELETE CASCADE,
+    FOREIGN KEY (item_id) REFERENCES experiments_templates(id) ON DELETE CASCADE,
+    PRIMARY KEY(`id`)
+);
+-- CONTAINERS TO items
+CREATE TABLE containers2items (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    storage_id INT UNSIGNED NOT NULL,
+    item_id INT UNSIGNED NOT NULL,
+    qty_stored DECIMAL(10, 2) UNSIGNED NOT NULL DEFAULT 0.00,
+    qty_unit VARCHAR(10) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (storage_id) REFERENCES storage_units(id) ON DELETE CASCADE,
+    FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE CASCADE,
+    PRIMARY KEY(`id`)
+);
+-- CONTAINERS TO ITEMS_TYPES
+CREATE TABLE containers2items_types (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    storage_id INT UNSIGNED NOT NULL,
+    item_id INT UNSIGNED NOT NULL,
+    qty_stored DECIMAL(10, 2) UNSIGNED NOT NULL DEFAULT 0.00,
+    qty_unit VARCHAR(10) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (storage_id) REFERENCES storage_units(id) ON DELETE CASCADE,
+    FOREIGN KEY (item_id) REFERENCES items_types(id) ON DELETE CASCADE,
+    PRIMARY KEY(`id`)
+);
+-- end schema 167
 
 --
 -- Indexes and Constraints for table `experiments_templates_edit_mode`

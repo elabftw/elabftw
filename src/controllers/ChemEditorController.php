@@ -12,10 +12,19 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
+use Elabftw\Models\ItemsTypes;
+
 class ChemEditorController extends AbstractHtmlController
 {
     protected function getTemplate(): string
     {
         return 'chem-editor.html';
+    }
+
+    protected function getData(): array
+    {
+        return array(
+            'resourceCategoriesArr' => (new ItemsTypes($this->app->Users))->readAll(),
+        );
     }
 }

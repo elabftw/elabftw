@@ -625,6 +625,15 @@ document.addEventListener('DOMContentLoaded', () => {
         importBtn.removeAttribute('disabled');
       });
 
+    } else if (el.matches('[data-action="search-resources-from-compound"]')) {
+      // try and grab the CAS for the search
+      let query = (document.getElementById('compoundInput-cas_number') as HTMLInputElement).value;
+      // if no cas, use the name
+      if (!query) {
+        query = (document.getElementById('compoundInput-name') as HTMLInputElement).value;
+      }
+      window.location.href = `database.php?q="${encodeURIComponent(query)}"`;
+
     // IMPORT FROM PUBCHEM
     } else if (el.matches('[data-action="import-cid"]')) {
       const inputEl = document.getElementById('pubchem-cid') as HTMLInputElement;

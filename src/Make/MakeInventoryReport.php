@@ -18,9 +18,9 @@ use Elabftw\Models\StorageUnits;
 use function date;
 
 /**
- * Make a CSV file with all the storage
+ * Make a CSV file with all the inventory
  */
-class MakeStorageReport extends AbstractMakeCsv
+class MakeInventoryReport extends AbstractMakeCsv
 {
     protected array $rows;
 

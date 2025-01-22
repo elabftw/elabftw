@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Controllers\StorageBrowserController;
+use Elabftw\Controllers\InventoryController;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -24,7 +24,7 @@ use Symfony\Component\HttpFoundation\Response;
  * Storage browser
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = _('Storage browser');
+$App->pageTitle = _('Inventory');
 
 // default response is error page with general error message
 $Response = new Response();
@@ -32,7 +32,7 @@ $Response->prepare($Request);
 $template = 'error.html';
 
 try {
-    $Controller = new StorageBrowserController($App);
+    $Controller = new InventoryController($App);
     $Response = $Controller->getResponse();
 } catch (ImproperActionException $e) {
     // show message to user

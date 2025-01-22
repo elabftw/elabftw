@@ -36,8 +36,8 @@ class ReportsHandler extends AbstractRest
         $Reporter = match ($scope) {
             ReportScopes::Compounds => (new MakeCompoundsReport(new Compounds($httpGetter, $this->requester))),
             ReportScopes::Instance => (new MakeReport($this->requester)),
+            ReportScopes::Inventory => (new MakeInventoryReport(new StorageUnits($this->requester))),
             ReportScopes::Team => (new MakeTeamReport($this->requester)),
-            ReportScopes::Storage => (new MakeStorageReport(new StorageUnits($this->requester))),
             ReportScopes::StoredCompounds => (new MakeStoredCompoundsReport(new StorageUnits($this->requester))),
         };
         return $Reporter->getResponse();

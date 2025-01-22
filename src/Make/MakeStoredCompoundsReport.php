@@ -15,7 +15,7 @@ namespace Elabftw\Make;
 /**
  * Make a CSV file with all the stored containers / compounds
  */
-class MakeStoredCompoundsReport extends MakeStorageReport
+class MakeStoredCompoundsReport extends MakeInventoryReport
 {
     protected function getData(): array
     {

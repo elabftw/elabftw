@@ -279,7 +279,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ApiC.patch(`${Model.IdpsSources}/${el.dataset.id}`, {action: Action.Finish}).then(() => reloadElements(['idpsSourcesDiv', 'idpsDiv']));
     } else if (el.matches('[data-action="delete-idps-source"]')) {
       ApiC.delete(`${Model.IdpsSources}/${el.dataset.id}`).then(() => reloadElements(['idpsSourcesDiv', 'idpsDiv']));
-    } else if (el.matches('[data-action="get-storage-csv"]')) {
+    } else if (el.matches('[data-action="get-inventory-csv"]')) {
       ApiC.getBlob('storage_units?format=csv', 'storage-export.csv');
     }
   });

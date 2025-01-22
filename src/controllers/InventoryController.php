@@ -14,11 +14,11 @@ namespace Elabftw\Controllers;
 
 use Elabftw\Models\StorageUnits;
 
-class StorageBrowserController extends AbstractHtmlController
+class InventoryController extends AbstractHtmlController
 {
     protected function getTemplate(): string
     {
-        return 'storage.html';
+        return 'inventory.html';
     }
 
     protected function getData(): array

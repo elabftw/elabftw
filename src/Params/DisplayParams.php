@@ -18,12 +18,14 @@ use Elabftw\Enums\FilterableColumn;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\Scope;
 use Elabftw\Enums\Sort;
+use Elabftw\Enums\State;
 use Elabftw\Models\Tags2Entity;
 use Elabftw\Models\Users;
 use Elabftw\Services\Check;
 use Override;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\InputBag;
 
+use function explode;
 use function sprintf;
 use function trim;
 
@@ -36,21 +38,25 @@ class DisplayParams extends BaseQueryParams
     public string $filterSql = '';
 
     // the search from the top right search bar on experiments/database
-    public string $query = '';
+    public string $queryString = '';
 
     // the extended search query
     public string $extendedQuery = '';
 
     public ?EntityType $relatedOrigin = null;
 
-    public function __construct(private Users $Users, Request $Request, public EntityType $entityType)
-    {
-        // load user's preferences first
-        $this->limit = $Users->userData['limit_nb'] ?? $this->limit;
-        $this->orderby = Orderby::tryFrom($Users->userData['orderby'] ?? $this->orderby->value) ?? $this->orderby;
-        $this->sort = Sort::tryFrom($Users->userData['sort'] ?? $this->sort->value) ?? $this->sort;
-        // then load from query
-        parent::__construct($Request);
+    public function __construct(
+        private Users $requester,
+        public EntityType $entityType,
+        protected ?InputBag $query = null,
+        public Orderby $orderby = Orderby::Lastchange,
+        public Sort $sort = Sort::Desc,
+        public int $limit = 15,
+        public int $offset = 0,
+        public array $states = array(State::Normal),
+    ) {
+        // query parameters will override user defaults
+        parent::__construct($query, $orderby, $sort, $limit, $offset, $states);
         $this->adjust();
     }
 
@@ -77,55 +83,75 @@ class DisplayParams extends BaseQueryParams
      */
     private function adjust(): void
     {
-        if (!empty($this->Request->query->get('q'))) {
-            $this->query = trim($this->Request->query->getString('q'));
+        $query = $this->getQuery();
+        if (!empty($query->get('q'))) {
+            $this->queryString = trim($query->getString('q'));
         }
-        if (!empty($this->Request->query->get('extended'))) {
-            $this->extendedQuery = trim($this->Request->query->getString('extended'));
+        if (!empty($query->get('extended'))) {
+            $this->extendedQuery = trim($query->getString('extended'));
         }
 
         // SCOPE FILTER
         // default scope is the user setting, but can be overridden by query param
-        $scope = $this->Users->userData['scope_' . $this->entityType->value];
-        if (Check::id($this->Request->query->getInt('scope')) !== false) {
-            $scope = $this->Request->query->getInt('scope');
+        $scope = $this->requester->userData['scope_' . $this->entityType->value];
+        if (Check::id($query->getInt('scope')) !== false) {
+            $scope = $query->getInt('scope');
         }
 
         // filter by user if we don't want to show the rest of the team, only for experiments
         // looking for an owner will bypass the user preference
         // same with an extended search: we show all
-        if ($scope === Scope::User->value && empty($this->Request->query->get('owner')) && empty($this->Request->query->get('extended'))) {
-            $this->appendFilterSql(FilterableColumn::Owner, $this->Users->userData['userid']);
+        if ($scope === Scope::User->value && empty($query->get('owner')) && empty($query->get('extended'))) {
+            // Note: the cast to int is necessary here (not sure why)
+            $this->appendFilterSql(FilterableColumn::Owner, $this->requester->userData['userid']);
         }
-        if ($this->Users->userData['scope_' . $this->entityType->value] === Scope::Team->value) {
-            $this->appendFilterSql(FilterableColumn::Team, $this->Users->team ?? 0);
+        if ($this->requester->userData['scope_' . $this->entityType->value] === Scope::Team->value) {
+            $this->appendFilterSql(FilterableColumn::Team, $this->requester->team ?? 0);
         }
         // TAGS SEARCH
-        if (!empty(($this->Request->query->all('tags'))[0])) {
+        if (!empty(($query->all('tags'))[0])) {
             // get all the ids with that tag
-            $tags = $this->Request->query->all('tags');
+            $tags = $query->all('tags');
             $Tags2Entity = new Tags2Entity($this->entityType);
             $this->filterSql = Tools::getIdFilterSql($Tags2Entity->getEntitiesIdFromTags('tag', $tags));
         }
 
         // RELATED FILTER
-        if (Check::id($this->Request->query->getInt('related')) !== false) {
-            $this->appendFilterSql(FilterableColumn::Related, $this->Request->query->getInt('related'));
-            $this->relatedOrigin = EntityType::tryFrom($this->Request->query->getAlpha('related_origin')) ?? $this->entityType;
+        if (Check::id($query->getInt('related')) !== false) {
+            $this->appendFilterSql(FilterableColumn::Related, $query->getInt('related'));
+            $this->relatedOrigin = EntityType::tryFrom($query->getAlpha('related_origin')) ?? $this->entityType;
         }
         // CATEGORY FILTER
-        if (Check::id($this->Request->query->getInt('cat')) !== false) {
-            $this->appendFilterSql(FilterableColumn::Category, $this->Request->query->getInt('cat'));
-        }
+        $this->filterSql .= $this->getSqlIn('entity.category', $query->getString('cat'));
         // STATUS FILTER
-        if (Check::id($this->Request->query->getInt('status')) !== false) {
-            $this->appendFilterSql(FilterableColumn::Status, $this->Request->query->getInt('status'));
-        }
-
+        $this->filterSql .= $this->getSqlIn('entity.status', $query->getString('status'));
         // OWNER (USERID) FILTER
-        if (Check::id($this->Request->query->getInt('owner')) !== false) {
-            $this->appendFilterSql(FilterableColumn::Owner, $this->Request->query->getInt('owner'));
-        }
+        $this->filterSql .= $this->getSqlIn('entity.userid', $query->getString('owner'));
+    }
 
+    /**
+     * Create an SQL string to add a filter from a comma separated list of int
+     * possibly including null value. Ugly but works.
+     */
+    private function getSqlIn(string $column, string $input): string
+    {
+        if (empty($input)) {
+            return '';
+        }
+        $exploded = explode(',', $input);
+        $numbers = array();
+        $sql = ' AND';
+        foreach ($exploded as $value) {
+            // we need to treat null specially, it cannot be part of the IN()
+            if (strtolower($value) === 'null') {
+                $sql = sprintf(' AND %s IS NULL OR', $column);
+                continue;
+            }
+            $numbers[] = (int) $value;
+        }
+        if ($numbers) {
+            return $sql . sprintf(' %s IN (%s)', $column, implode(', ', $numbers));
+        }
+        return rtrim($sql, ' OR');
     }
 }

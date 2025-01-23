@@ -52,11 +52,11 @@ try {
 
     // Create user
     $App->Users->createOne(
-        (new UserParams('email', $App->Request->request->getString('email')))->getContent(),
+        (new UserParams('email', $App->Request->request->getString('email')))->getStringContent(),
         array($App->Request->request->getInt('team')),
-        (new UserParams('firstname', $App->Request->request->getString('firstname')))->getContent(),
-        (new UserParams('lastname', $App->Request->request->getString('lastname')))->getContent(),
-        (new UserParams('password', $App->Request->request->getString('password')))->getContent(),
+        (new UserParams('firstname', $App->Request->request->getString('firstname')))->getStringContent(),
+        (new UserParams('lastname', $App->Request->request->getString('lastname')))->getStringContent(),
+        (new UserParams('password', $App->Request->request->getString('password')))->getStringContent(),
     );
 
     if ($App->Users->needValidation) {

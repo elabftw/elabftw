@@ -50,6 +50,7 @@ interface Selected {
   items_tags: number[];
   experiments_tags: number[];
   users: number[];
+  tags: number[];
   target_owner: number;
   can: string;
 }
@@ -80,7 +81,6 @@ enum Action {
   Add = 'add',
   Archive = 'archive',
   Bloxberg = 'bloxberg',
-  Deduplicate = 'deduplicate',
   Disable2fa = 'disable2fa',
   Duplicate = 'duplicate',
   ExclusiveEditMode = 'exclusiveeditmode',
@@ -109,6 +109,7 @@ enum Action {
 enum Model {
   Apikey = 'apikeys',
   Comment = 'comments',
+  Compounds = 'compounds',
   Config = 'config',
   FavTag = 'favtags',
   Idp = 'idps',

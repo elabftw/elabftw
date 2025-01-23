@@ -18,6 +18,7 @@ enum ApiEndpoint: string
 {
     case ApiKeys = 'apikeys';
     case Batch = 'batch';
+    case Compounds = 'compounds';
     case Config = 'config';
     case Idps = 'idps';
     case IdpsSources = 'idps_sources';
@@ -32,6 +33,8 @@ enum ApiEndpoint: string
     case Events = 'events';
     case ExtraFieldsKeys = 'extra_fields_keys';
     case FavTags = 'favtags';
+    case Reports = 'reports';
+    case StorageUnits = 'storage_units';
 
     // @deprecated
     case TeamTags = 'team_tags';

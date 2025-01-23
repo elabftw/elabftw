@@ -24,6 +24,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Logger\ConsoleLogger;
+use Symfony\Component\Console\Output\Output;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -61,9 +62,11 @@ class ImportEln extends Command
         $UploadedFile = new UploadedFile($filePath, 'input.eln', test: true);
         $user = new UltraAdmin(team: $teamid);
         $infoTrailer = '';
+        $requesterIsAuthor = false;
         if ($input->getOption('userid')) {
             $user = new Users((int) $input->getOption('userid'), $teamid);
             $infoTrailer = sprintf(' and User with ID %s', $input->getOption('userid'));
+            $requesterIsAuthor = true;
         }
         $entityType = null;
         if ($input->getOption('type')) {
@@ -81,10 +84,16 @@ class ImportEln extends Command
             $this->Fs->getFs(),
             $logger,
             $entityType,
-            $input->getOption('dry-run'),
             category: $defaultCategory,
             verifyChecksum: (bool) $input->getOption('checksum'),
         );
+        if ($input->getOption('dry-run')) {
+            // this is necessary so -vv isn't required to get dry run info
+            $output->setVerbosity(Output::VERBOSITY_VERY_VERBOSE);
+            $logger->info(sprintf('%d records found', $Importer->getCount()));
+            return Command::SUCCESS;
+        }
+        $Importer->requesterIsAuthor = $requesterIsAuthor;
         $Importer->import();
         $logger->info(sprintf('Import finished for Team with ID %d%s', $teamid, $infoTrailer));
         $helper = $this->getHelper('question');

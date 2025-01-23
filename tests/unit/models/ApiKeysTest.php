@@ -33,18 +33,6 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($this->ApiKeys->destroy());
     }
 
-    public function testPatchInvalidUpdate(): void
-    {
-        $this->expectException(ImproperActionException::class);
-        $this->ApiKeys->patch(Action::Update, array());
-    }
-
-    public function testPatchInvalidArchive(): void
-    {
-        $this->expectException(ImproperActionException::class);
-        $this->ApiKeys->patch(Action::Archive, array());
-    }
-
     public function testReadOne(): void
     {
         $this->assertIsArray($this->ApiKeys->readOne());

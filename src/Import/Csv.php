@@ -16,24 +16,14 @@ use DateTimeImmutable;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users;
-use League\Csv\Info as CsvInfo;
-use League\Csv\Reader;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Import entries from a csv file.
  */
-class Csv extends AbstractImport
+class Csv extends AbstractCsv
 {
-    protected array $allowedMimes = array(
-        'application/csv',
-        'application/vnd.ms-excel',
-        'text/plain',
-        'text/csv',
-        'text/tsv',
-    );
-
     public function __construct(
         protected Users $requester,
         protected string $canread,
@@ -41,16 +31,12 @@ class Csv extends AbstractImport
         protected UploadedFile $UploadedFile,
         protected LoggerInterface $logger,
         protected EntityType $entityType = EntityType::Items,
-        private bool $dryRun = false,
         protected ?int $category = null,
     ) {
         parent::__construct(
             $requester,
             $UploadedFile,
         );
-        if ($dryRun) {
-            $this->logger->info('Running in dry-mode: nothing will be imported.');
-        }
         // we might have been forced to cast to int a null value, so bring it back to null
         if ($this->category === 0) {
             $this->category = null;
@@ -64,17 +50,12 @@ class Csv extends AbstractImport
      */
     public function import(): int
     {
-        $reader = $this->preProcess();
-        if ($this->dryRun) {
-            return $reader->count();
-        }
-        // now loop the rows and do the import
-        foreach ($reader->getRecords() as $row) {
+        $entity = $this->entityType->toInstance($this->requester);
+        foreach ($this->reader->getRecords() as $row) {
             // fail hard if no title column can be found, or we end up with a bunch of Untitled entries
             if (empty($row['title'])) {
                 throw new ImproperActionException('Could not find the title column!');
             }
-            $entity = $this->entityType->toInstance($this->requester);
             $body = $this->getBodyFromRow($row);
             $date = empty($row['date']) ? null : new DateTimeImmutable($row['date']);
             $category = $this->category;
@@ -107,23 +88,6 @@ class Csv extends AbstractImport
             $this->inserted++;
         }
         return $this->getInserted();
-    }
-
-    /**
-     * @return Reader<array>
-     */
-    private function preProcess(): Reader
-    {
-        // we directly read from temporary uploaded file location and do not need to use the cache folder as no extraction is necessary for a .csv
-        $csv = Reader::createFromPath($this->UploadedFile->getPathname(), 'r');
-        // get stats about the most likely delimiter
-        $delimitersCount = CsvInfo::getDelimiterStats($csv, array(',', '|', "\t", ';'), -1);
-        // reverse sort the array by value to get the delimiter with highest probability
-        arsort($delimitersCount, SORT_NUMERIC);
-        // set the delimiter from the first value
-        $csv->setDelimiter((string) key($delimitersCount));
-        $csv->setHeaderOffset(0);
-        return $csv;
     }
 
     /**

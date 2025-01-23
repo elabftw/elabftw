@@ -16,7 +16,7 @@ import EntityClass from './Entity.class';
 import $ from 'jquery';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
-import { ChemDoodle } from '@deltablot/chemdoodle-web-mini/dist/chemdoodle.min.js';
+//import { ChemDoodle } from '@deltablot/chemdoodle-web-mini/dist/chemdoodle.min.js';
 import { getEditor } from './Editor.class';
 import TomSelect from 'tom-select/dist/esm/tom-select';
 import TomSelectCheckboxOptions from 'tom-select/dist/esm/plugins/checkbox_options/plugin';
@@ -121,35 +121,40 @@ export function listenTrigger(elementId: string = ''): void {
  * Returns an object with name => value
  * Add data-ignore='1' to elements that should not be considered
  */
-export function collectForm(form: HTMLElement, blank = true): object {
-  let params = {};
+export function collectForm(form: HTMLElement): object {
+  const inputs = [];
   ['input', 'select', 'textarea'].forEach(inp => {
     form.querySelectorAll(inp).forEach((input: HTMLInputElement) => {
-      const el = input;
-      if (el.reportValidity() === false) {
-        throw new Error('Invalid input found! Aborting.');
-      }
-      let value = el.value;
-      if (el.type === 'checkbox') {
-        value = el.checked ? 'on' : 'off';
-      }
-      if (el.dataset.ignore !== '1' && el.disabled === false) {
-        params = Object.assign(params, {[input.name]: value});
-      }
-      if (blank) {
-        el.value = '';
-      }
+      inputs.push(input);
     });
   });
+
+  let params = {};
+  inputs.forEach(input => {
+    const el = input;
+    if (el.reportValidity() === false) {
+      throw new Error('Invalid input found! Aborting.');
+    }
+    let value = el.value;
+    if (el.type === 'checkbox') {
+      value = el.checked ? 'on' : 'off';
+    }
+    if (el.dataset.ignore !== '1' && el.disabled === false) {
+      params = Object.assign(params, {[input.name]: value});
+    }
+  });
+
   return removeEmpty(params);
 }
 
 export function clearForm(form: HTMLElement): void {
   ['input', 'select', 'textarea'].forEach(inp => {
     form.querySelectorAll(inp).forEach((input: HTMLInputElement) => {
-      input.value = '';
-      if (input.type === 'checkbox') {
-        input.checked = false;
+      if (input.dataset.noBlank !== '1') {
+        input.value = '';
+        if (input.type === 'checkbox') {
+          input.checked = false;
+        }
       }
     });
   });
@@ -223,6 +228,9 @@ export function notif(info: ResponseMsg): void {
 
 // DISPLAY 2D MOL FILES
 export function displayMolFiles(): void {
+  return;
+}
+/*
   // loop all the mol files and display the molecule with ChemDoodle
   $.each($('.molFile'), function() {
     // id of the canvas to attach the viewer to
@@ -236,6 +244,7 @@ export function displayMolFiles(): void {
     });
   });
 }
+*/
 
 // insert a get param in the url and reload the page
 export function insertParamAndReload(key: string, value: string): void {
@@ -454,6 +463,21 @@ export function addAutocompleteToTagInputs(): void {
   });
 }
 
+export function addAutocompleteToCompoundsInputs(): void {
+  const ApiC = new Api();
+  $('[data-autocomplete="compounds"]').autocomplete({
+    source: function(request: Record<string, string>, response: (data) => void): void {
+      ApiC.getJson(`${Model.Compounds}?q=${request.term}`).then(json => {
+        const res = [];
+        json.forEach(cpd => {
+          res.push(`${cpd.id} - ${cpd.name}`);
+        });
+        response(res);
+      });
+    },
+  });
+}
+
 export function addAutocompleteToExtraFieldsKeyInputs(): void {
   const ApiC = new Api();
   $('[data-autocomplete="extraFieldsKeys"]').autocomplete({
@@ -563,7 +587,7 @@ export function escapeExtendedQuery(searchTerm: string): string {
   });
 
   // 2) mask special characters of extended search query by single character wildcard
-  ['!', '|', '&', '(', ')', '"', '\''].forEach(specialChar => {
+  ['!', '|', '&', '(', ')', '"', '\'', ':'].forEach(specialChar => {
     searchTerm = searchTerm.replaceAll(specialChar, '_');
   });
 
@@ -694,4 +718,48 @@ export function sizeToMb(size: string): number {
   }
 
   return value * units[unit];
+}
+
+export function toggleEditCompound(json: object): void {
+  const textParams = [
+    'id',
+    'name',
+    'smiles',
+    'inchi',
+    'inchi_key',
+    'iupac_name',
+    'molecular_formula',
+    'molecular_weight',
+    'pubchem_cid',
+    'userid_human',
+    'team_name',
+    'cas_number',
+    'ec_number',
+  ];
+  textParams.forEach(param => {
+    (document.getElementById(`compoundInput-${param}`) as HTMLInputElement).value = json[param];
+  });
+
+  const binaryParams = [
+    'is_corrosive',
+    'is_explosive',
+    'is_flammable',
+    'is_gas_under_pressure',
+    'is_hazardous2env',
+    'is_hazardous2health',
+    'is_oxidising',
+    'is_toxic',
+    'is_radioactive',
+    'is_controlled',
+    'is_antibiotic_precursor',
+    'is_explosive_precursor',
+    'is_drug_precursor',
+    'is_cmr',
+  ];
+  binaryParams.forEach(param => {
+    const input = (document.getElementById(`addCompound${param}`) as HTMLInputElement);
+    input.checked = json[param] === 1;
+  });
+  document.getElementById('editCompoundModalSaveBtn').dataset.compoundId = json['id'];
+  $('#editCompoundModal').modal('toggle');
 }

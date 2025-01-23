@@ -263,7 +263,7 @@
       {# TEAM #}
       <div class='col-md-6'>
         <label for='create-user-team' class='col-form-label'>{{ 'Team'|trans }}</label>
-        <select {{ App.Request.getScriptName|split('/')|last == 'admin.php' ? 'disabled' }} class='form-control custom-control-inline' name='team' id='create-user-team'>
+        <select {{ App.Request.getScriptName|split('/')|last == 'admin.php' ? 'disabled' }} class='form-control custom-control-inline' name='team' id='create-user-team' data-no-blank='1'>
           {% for team in teamsArr %}
             <option value='{{ team.id }}' {{ App.Users.userData.team == team.id ? " selected='selected'" }}>{{ team.name }}</option>
           {% endfor %}
@@ -273,7 +273,7 @@
       {# GROUP #}
       <div class='col-md-6'>
         <label for='create-user-group' class='col-form-label'>{{ 'Permission group'|trans }}</label>
-        <select class='form-control custom-control-inline' name='usergroup' id='create-user-group'>
+        <select class='form-control custom-control-inline' name='usergroup' id='create-user-group' data-no-blank='1'>
           {% if App.Users.userData.is_sysadmin %}
             <option value='1'>Sysadmins</option>
           {% endif %}

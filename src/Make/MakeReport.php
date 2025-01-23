@@ -13,6 +13,8 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 use Elabftw\Elabftw\Tools;
+use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Models\Users;
 use Elabftw\Services\UsersHelper;
 use PDO;
 
@@ -23,9 +25,12 @@ use function date;
  */
 class MakeReport extends AbstractMakeCsv
 {
-    public function __construct(private array $users)
+    protected array $users;
+
+    public function __construct(protected Users $requester)
     {
         parent::__construct();
+        $this->canReadOrExplode();
     }
 
     /**
@@ -34,6 +39,18 @@ class MakeReport extends AbstractMakeCsv
     public function getFileName(): string
     {
         return date('Y-m-d') . '-report.elabftw.csv';
+    }
+
+    protected function canReadOrExplode(): void
+    {
+        if (!$this->requester->userData['is_sysadmin']) {
+            throw new IllegalActionException('Non sysadmin user tried to generate report.');
+        }
+    }
+
+    protected function readUsers(): array
+    {
+        return $this->requester->readFromQuery('', includeArchived: true);
     }
 
     /**
@@ -68,7 +85,8 @@ class MakeReport extends AbstractMakeCsv
      */
     protected function getRows(): array
     {
-        foreach ($this->users as $key => $user) {
+        $users = $this->readUsers();
+        foreach ($users as $key => $user) {
             $UsersHelper = new UsersHelper($user['userid']);
             // get the teams of user
             $teams = implode(',', $UsersHelper->getTeamsNameFromUserid());
@@ -86,19 +104,19 @@ class MakeReport extends AbstractMakeCsv
                 'sig_pubkey',
             );
             foreach ($unusedColumns as $column) {
-                unset($this->users[$key][$column]);
+                unset($users[$key][$column]);
             }
 
-            $this->users[$key]['team(s)'] = $teams;
-            $this->users[$key]['diskusage_in_bytes'] = $diskUsage;
-            $this->users[$key]['diskusage_formatted'] = Tools::formatBytes($diskUsage);
-            $this->users[$key]['exp_total'] = $UsersHelper->countExperiments();
-            $this->users[$key]['exp_timestamped_total'] = $UsersHelper->countTimestampedExperiments();
+            $users[$key]['team(s)'] = $teams;
+            $users[$key]['diskusage_in_bytes'] = $diskUsage;
+            $users[$key]['diskusage_formatted'] = Tools::formatBytes($diskUsage);
+            $users[$key]['exp_total'] = $UsersHelper->countExperiments();
+            $users[$key]['exp_timestamped_total'] = $UsersHelper->countTimestampedExperiments();
         }
-        return $this->users;
+        return $users;
     }
 
-    private function getDiskUsage(int $userid): int
+    protected function getDiskUsage(int $userid): int
     {
         $sql = 'SELECT SUM(filesize) FROM uploads WHERE userid = :userid';
         $req = $this->Db->prepare($sql);

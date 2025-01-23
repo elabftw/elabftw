@@ -16,8 +16,10 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Items;
 use Elabftw\Models\Users;
+use Elabftw\Params\DisplayParams;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\InputBag;
 
 use const UPLOAD_ERR_OK;
 
@@ -128,7 +130,7 @@ class CsvTest extends \PHPUnit\Framework\TestCase
     {
         $uploadedFile = new UploadedFile(
             dirname(__DIR__, 2) . '/_data/importable-chem.csv',
-            'importable.csv',
+            'importable-chem.csv',
             null,
             UPLOAD_ERR_OK,
             true,
@@ -151,7 +153,9 @@ class CsvTest extends \PHPUnit\Framework\TestCase
         $Import->import();
         $this->assertEquals(13, $Import->getInserted());
         $Items = new Items($requester);
-        $last = $Items->readAll()[0];
+        // filter on our user
+        $query = new InputBag(array('owner' => $requester->userid));
+        $last = $Items->readAll(new DisplayParams($requester, EntityType::Items, $query))[0];
         $this->assertEquals($requester->userid, $last['userid']);
         $this->assertEquals('Nitric Acid', $last['title']);
         // only look at base because the order of keys is not guaranteed

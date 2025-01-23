@@ -23,23 +23,15 @@ class StepParams extends ContentParams
     {
         return match ($this->target) {
             'body' => $this->getStep(),
-            'deadline', 'finished_time' => $this->getDatetime(),
+            'deadline', 'finished_time' => $this->getNullableString(),
             default => throw new ImproperActionException('Incorrect parameter for steps.'),
         };
-    }
-
-    private function getDatetime(): ?string
-    {
-        if (empty($this->content)) {
-            return null;
-        }
-        return $this->content;
     }
 
     private function getStep(): string
     {
         // remove any | as they are used in the group_concat
-        $content = str_replace('|', '', $this->content);
+        $content = str_replace('|', '', $this->asString());
         // check for length
         if (mb_strlen($content) < self::MIN_CONTENT_SIZE) {
             throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), self::MIN_CONTENT_SIZE));

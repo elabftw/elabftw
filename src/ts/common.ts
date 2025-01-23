@@ -7,10 +7,12 @@
  */
 import $ from 'jquery';
 import { Api } from './Apiv2.class';
-import { Malle } from '@deltablot/malle';
+import { Malle, InputType } from '@deltablot/malle';
 import 'bootstrap/js/src/modal.js';
 import {
   adjustHiddenState,
+  clearForm,
+  collectForm,
   escapeExtendedQuery,
   generateMetadataLink,
   getEntity,
@@ -22,6 +24,7 @@ import {
   relativeMoment,
   reloadElements,
   replaceWithTitle,
+  toggleEditCompound,
   togglePlusIcon,
   TomSelect,
 } from './misc';
@@ -50,7 +53,7 @@ import TableSorting from './TableSorting.class';
 import { KeyboardShortcuts } from './KeyboardShortcuts.class';
 import JsonEditorHelper from './JsonEditorHelper.class';
 import { Counter } from './Counter.class';
-import {getEditor} from './Editor.class';
+import { getEditor } from './Editor.class';
 
 document.addEventListener('DOMContentLoaded', () => {
   // HEARTBEAT
@@ -185,6 +188,34 @@ document.addEventListener('DOMContentLoaded', () => {
     tooltip: i18next.t('click-to-edit'),
   }).listen();
 
+  // Listen for malleable qty_unit - we need a specific code to add the select options
+  new Malle({
+    cancel : i18next.t('cancel'),
+    cancelClasses: ['btn', 'btn-danger', 'mt-2', 'ml-1'],
+    inputClasses: ['form-control'],
+    inputType: InputType.Select,
+    selectOptions: [
+      {selected: false, text: '•', value: '•'},
+      {selected: false, text: 'μL', value: 'μL'},
+      {selected: false, text: 'mL', value: 'mL'},
+      {selected: false, text: 'L', value: 'L'},
+      {selected: false, text: 'μg', value: 'μg'},
+      {selected: false, text: 'mg', value: 'mg'},
+      {selected: false, text: 'g', value: 'g'},
+      {selected: false, text: 'kg', value: 'kg'},
+    ],
+    fun: (value, original) => {
+      return ApiC.patch(`${original.dataset.endpoint}/${original.dataset.id}`, {qty_unit: value})
+        .then(res => res.json())
+        .then(json => json['qty_unit']);
+    },
+    listenOn: '.malleableQtyUnit',
+    returnedValueIsTrustedHtml: false,
+    submit : i18next.t('save'),
+    submitClasses: ['btn', 'btn-primary', 'mt-2'],
+    tooltip: i18next.t('click-to-edit'),
+  }).listen();
+
   // tom-select for team selection on login and register page, and idp selection
   ['init_team_select', 'team', 'idp_login_select'].forEach(id =>{
     if (document.getElementById(id)) {
@@ -241,6 +272,26 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   });
+
+  function generateTable(data: Record<string, string | null>) {
+    const table = document.createElement('table');
+    table.classList.add('table');
+    const tbody = document.createElement('tbody');
+
+    for (const [key, value] of Object.entries(data)) {
+      const row = document.createElement('tr');
+      const cellKey = document.createElement('td');
+      cellKey.textContent = key;
+      row.appendChild(cellKey);
+      const cellValue: HTMLTableCellElement = document.createElement('td');
+      cellValue.textContent = value !== null ? value : 'N/A';
+      row.appendChild(cellValue);
+      tbody.appendChild(row);
+    }
+
+    table.appendChild(tbody);
+    return table;
+  }
 
   /**
   * Add an event listener on wheel event to prevent scrolling down with a number input selected.
@@ -405,6 +456,12 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="remove-parent"]')) {
       el.parentElement.remove();
 
+    // CLEAR FORM
+    } else if (el.matches('[data-action="clear-form"]')) {
+      const target = document.getElementById(el.dataset.target);
+      const inputs = target.querySelectorAll('input');
+      inputs.forEach(input => input.value = '');
+
     // REMOVE A QUERY PARAMETER AND RELOAD PAGE
     } else if (el.matches('[data-action="remove-param-reload"]')) {
       const params = new URLSearchParams(document.location.search.slice(1));
@@ -484,6 +541,56 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem(targetKey, value);
       }
 
+    } else if (el.matches('[data-action="expand-all-storage"]')) {
+      const root = document.getElementById('storageDiv');
+      if (root) {
+        const detailsElements = root.querySelectorAll('details');
+        detailsElements.forEach((details: HTMLDetailsElement) => {
+          details.open = true;
+        });
+      }
+    } else if (el.matches('[data-action="add-storage"]')) {
+      const name = prompt('Name');
+      const params = {};
+      params['parent_id'] = el.dataset.parentId;
+      params['name'] = name;
+      ApiC.post('storage_units', params).then(() => reloadElements(['storageDiv']));
+
+    } else if (el.matches('[data-action="add-storage-children"]')) {
+      const unitName = prompt('Unit Name');
+      if (!unitName.length) {
+        return;
+      }
+      const params = {};
+      params['parent_id'] = el.dataset.parentId;
+      params['name'] = unitName;
+      ApiC.post('storage_units', params).then(() => reloadElements(['storageDiv']));
+    } else if (el.matches('[data-action="create-container"]')) {
+      const entity = getEntity();
+      const qty_stored = (document.getElementById('containerQtyStoredInput') as HTMLInputElement).value;
+      const qty_unit = (document.getElementById('containerQtyUnitSelect') as HTMLSelectElement).value;
+      let multiplier = parseInt((document.getElementById('containerMultiplierInput') as HTMLInputElement).value, 10);
+      if (isNaN(multiplier) || multiplier <= 0) {
+        multiplier = 1;
+      }
+
+      const postCalls = Array.from({ length: multiplier }, () =>
+        ApiC.post(`${entity.type}/${entity.id}/containers/${el.dataset.id}`, {
+          qty_stored: qty_stored,
+          qty_unit: qty_unit,
+        }),
+      );
+      // Execute all POST calls and reload elements after all are resolved
+      Promise.all(postCalls)
+        .then(() => reloadElements(['storageDivContent']))
+        .catch((error) => notifError(error));
+
+    } else if (el.matches('[data-action="destroy-container"]')) {
+      const entity = getEntity();
+      ApiC.delete(`${entity.type}/${entity.id}/containers/${el.dataset.id}`).then(() => reloadElements(['storageDivContent']));
+    } else if (el.matches('[data-action="destroy-storage"]')) {
+      ApiC.delete(`storage_units/${el.dataset.id}`).then(() => reloadElements(['storageDiv']));
+
     // REPLACE WITH NEXT ACTION
     } else if (el.matches('[data-action="replace-with-next"]')) {
       const targetEl = el.nextElementSibling as HTMLElement;
@@ -496,6 +603,104 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="toggle-modal"]')) {
       // TODO this requires jquery for now. Not in BS5.
       $('#' + el.dataset.target).modal('toggle');
+
+    // SEARCH PUBCHEM
+    } else if (el.matches('[data-action="search-cid"]')) {
+      const inputEl = el.parentElement.parentElement.querySelector('input') as HTMLInputElement;
+      if (!inputEl.checkValidity()) {
+        inputEl.reportValidity();
+        return;
+      }
+      const resultDiv = document.getElementById('pubChemSearchResultDiv');
+      const resultTableDiv = document.getElementById('pubChemSearchResultTableDiv');
+      const viewOnPubChemLink = document.getElementById('viewOnPubChemLink') as HTMLLinkElement;
+      ApiC.getJson(`compounds?search_pubchem_cid=${inputEl.value}`).then(json => {
+        const table = generateTable(json);
+        resultDiv.removeAttribute('hidden');
+        viewOnPubChemLink.href = viewOnPubChemLink.href + json.cid;
+        // clear any previous result
+        resultTableDiv.innerHTML = '';
+        resultTableDiv.appendChild(table);
+        const importBtn = document.querySelector('[data-action="import-cid"]');
+        importBtn.removeAttribute('disabled');
+      });
+
+    } else if (el.matches('[data-action="search-resources-from-compound"]')) {
+      // try and grab the CAS for the search
+      let query = (document.getElementById('compoundInput-cas_number') as HTMLInputElement).value;
+      // if no cas, use the name
+      if (!query) {
+        query = (document.getElementById('compoundInput-name') as HTMLInputElement).value;
+      }
+      window.location.href = `database.php?q="${encodeURIComponent(query)}"`;
+
+    // IMPORT FROM PUBCHEM
+    } else if (el.matches('[data-action="import-cid"]')) {
+      const inputEl = document.getElementById('pubchem-cid') as HTMLInputElement;
+      const params = {cid: parseInt(inputEl.value, 10), action: Action.Duplicate};
+      ApiC.post2location('compounds', params).then(() => {
+        document.dispatchEvent(new CustomEvent('dataReload'));
+        inputEl.value = '';
+        const resultDiv = document.getElementById('pubChemSearchResultDiv');
+        resultDiv.setAttribute('hidden', 'hidden');
+        const resultTableDiv = document.getElementById('pubChemSearchResultTableDiv');
+        resultTableDiv.innerHTML = '';
+        const importBtn = document.querySelector('[data-action="import-cid"]');
+        importBtn.setAttribute('disabled', 'disabled');
+      });
+
+    } else if (el.matches('[data-action="create-resource-from-compound"]')) {
+      const compoundId = (document.getElementById('compoundInput-id') as HTMLInputElement).value;
+      ApiC.post2location('items', {template: el.dataset.tplid}).then(id => {
+        // now create a link with that compound
+        ApiC.post(`items/${id}/compounds/${compoundId}`).then(() => {
+          // also change the title
+          const compoundName = (document.getElementById('compoundInput-name') as HTMLInputElement).value;
+          ApiC.patch(`items/${id}`, {title: compoundName}).then(() => {
+            window.location.href = `/database.php?mode=edit&id=${id}`;
+          });
+        });
+      });
+
+    // CREATE/EDIT COMPOUND MANUALLY
+    } else if (el.matches('[data-action="save-compound"]')) {
+      try {
+        if (el.dataset.compoundId) { // edit
+          const compoundForm = document.getElementById('editCompoundInputs');
+          const params = collectForm(compoundForm);
+          ApiC.patch(`compounds/${el.dataset.compoundId}`, params).then(() => {
+            document.dispatchEvent(new CustomEvent('dataReload'));
+            $('#editCompoundModal').modal('hide');
+            clearForm(compoundForm);
+          });
+        } else { // create
+          const compoundForm = document.getElementById('createCompoundInputs');
+          const params = collectForm(compoundForm);
+          clearForm(compoundForm);
+          ApiC.post2location('compounds', params).then(id => {
+            ApiC.getJson(`compounds/${id}`).then((json) => {
+              setTimeout(() => {
+                toggleEditCompound(json);
+              }, 500);
+              document.dispatchEvent(new CustomEvent('dataReload'));
+            });
+          });
+        }
+      } catch (err) {
+        notifError(err);
+        return;
+      }
+    // DELETE SELECTED COMPOUNDS
+    } else if (el.matches('[data-action="delete-compounds"]')) {
+      const btn = document.getElementById('deleteCompoundsBtn');
+      const idList = btn.dataset.target.split(',');
+      if (!confirm(`Delete ${idList.length} compound(s)?`)) {
+        return;
+      }
+      idList.forEach(id => {
+        ApiC.delete(`compounds/${id}`);
+      });
+      document.dispatchEvent(new CustomEvent('dataReload'));
 
     // PASSWORD VISIBILITY TOGGLE
     } else if (el.matches('[data-action="toggle-password"]')) {
@@ -603,6 +808,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // prevent the form from being submitted
         event.preventDefault();
       }
+    // REMOVE COMPOUND LINK
+    } else if (el.matches('[data-action="delete-compoundlink"]')) {
+      const entity = getEntity();
+      ApiC.delete(`${entity.type}/${entity.id}/compounds/${el.dataset.id}`).then(() => reloadElements(['compoundDiv']));
     // CLICK the NOW button of a time or date extra field
     } else if (el.matches('[data-action="update-to-now"]')) {
       const input = el.closest('.input-group').querySelector('input');
@@ -620,6 +829,7 @@ document.addEventListener('DOMContentLoaded', () => {
       input.value = now.toFormat(format);
       // trigger change event so it is saved
       input.dispatchEvent(new Event('change'));
+
     // TOGGLE BODY
     } else if (el.matches('[data-action="toggle-body"]')) {
       const randId = el.dataset.randid;

@@ -13,41 +13,41 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DOMDocument;
-use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\RestInterface;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Services\HttpGetter;
 use Elabftw\Services\Url2Xml;
 use Elabftw\Services\Xml2Idps;
 use Elabftw\Traits\SetIdTrait;
 use GuzzleHttp\Client;
+use Override;
 use PDO;
 
 /**
  * For IDPS sources: .xml urls
  */
-class IdpsSources implements RestInterface
+class IdpsSources extends AbstractRest
 {
     use SetIdTrait;
 
-    private Db $Db;
-
     public function __construct(private Users $requester, ?int $id = null)
     {
+        parent::__construct();
         if ($this->requester->userData['is_sysadmin'] !== 1) {
             throw new IllegalActionException('Only a Sysadmin can access this!');
         }
-        $this->Db = Db::getConnection();
         $this->setId($id);
     }
 
+    #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
         return $this->create($reqBody['url']);
     }
 
+    #[Override]
     public function patch(Action $action, array $params): array
     {
         if ($this->id === null) {
@@ -74,12 +74,14 @@ class IdpsSources implements RestInterface
         };
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return sprintf('api/v2/idps_sources/%s', $this->id ?? '');
     }
 
-    public function readAll(): array
+    #[Override]
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = 'SELECT idps_sources.id, idps_sources.url, idps_sources.auto_refresh,
             idps_sources.last_fetched_at, COALESCE(COUNT(idps.id), 0) AS idps_count,
@@ -99,6 +101,7 @@ class IdpsSources implements RestInterface
         return $req->fetchAll();
     }
 
+    #[Override]
     public function readOne(): array
     {
         $sql = 'SELECT idps_sources.id, idps_sources.url, idps_sources.auto_refresh,
@@ -112,6 +115,7 @@ class IdpsSources implements RestInterface
         return $this->Db->fetch($req);
     }
 
+    #[Override]
     public function destroy(): bool
     {
         $sql = 'DELETE FROM idps_sources WHERE id = :id';

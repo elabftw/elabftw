@@ -15,6 +15,7 @@ namespace Elabftw\Models\Notifications;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Notifications;
 use Elabftw\Models\Users;
+use Elabftw\Traits\QueryParamsTrait;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 
@@ -24,6 +25,7 @@ use PDO;
 abstract class AbstractNotifications
 {
     use SetIdTrait;
+    use QueryParamsTrait;
 
     /** @var non-empty-string */
     protected const PREF = 'not set';

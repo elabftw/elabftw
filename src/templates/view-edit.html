@@ -6,8 +6,12 @@
 
 {# BOOKING PARAMS #}
 {% include('booking-params-modal.html') %}
+{# IMPORT FROM PUBCHEM #}
+{% include('import-pubchem-modal.html') %}
 {# PROCUREMENT PARAMS #}
 {% include('procurement-params-modal.html') %}
+{# MODAL TO ADD CONTAINERS #}
+{% include('add-container-modal.html') %}
 
 <div id='isArchivedDiv'>
 {% if Entity.entityData.state == constant('Elabftw\\Enums\\State::Archived').value %}

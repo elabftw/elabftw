@@ -16,19 +16,19 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\FilterableColumn;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\RestInterface;
 use Elabftw\Params\DisplayParams;
-use Symfony\Component\HttpFoundation\Request;
+use Override;
 
 /**
  * Process a single request targeting multiple entities
  */
-class Batch implements RestInterface
+class Batch extends AbstractRest
 {
     private int $processed = 0;
 
     public function __construct(private Users $requester) {}
 
+    #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
         $action = Action::from($reqBody['action']);
@@ -62,29 +62,9 @@ class Batch implements RestInterface
         return $this->processed;
     }
 
-    public function patch(Action $action, array $params): array
-    {
-        throw new ImproperActionException('No PATCH action for batch.');
-    }
-
     public function getApiPath(): string
     {
-        return 'api/v2/';
-    }
-
-    public function readAll(): array
-    {
-        throw new ImproperActionException('No GET action for batch.');
-    }
-
-    public function readOne(): array
-    {
-        return $this->readAll();
-    }
-
-    public function destroy(): bool
-    {
-        throw new ImproperActionException('No DELETE action for batch.');
+        return 'api/v2/batch';
     }
 
     private function processEntities(array $idArr, AbstractConcreteEntity $model, FilterableColumn $column, Action $action, array $params): void
@@ -106,8 +86,13 @@ class Batch implements RestInterface
     {
         $allEntries = array();
         foreach ($idArr as $id) {
-            $DisplayParams = new DisplayParams($this->requester, Request::createFromGlobals(), $model->entityType);
-            $DisplayParams->limit = 100000;
+            $DisplayParams = new DisplayParams(
+                requester: $this->requester,
+                // this is needed so psalm is happy (might be a bug in psalm)
+                query: null,
+                entityType: $model->entityType,
+                limit: 100000,
+            );
             $DisplayParams->appendFilterSql($column, $id);
             $entries = $model->readShow($DisplayParams, false);
             $allEntries = array_merge($allEntries, $entries);

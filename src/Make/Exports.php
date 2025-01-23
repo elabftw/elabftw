@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 use Elabftw\Controllers\DownloadController;
-use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\EntitySlugsSqlBuilder;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Invoker;
@@ -22,8 +21,9 @@ use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\RestInterface;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\StorageInterface;
+use Elabftw\Models\AbstractRest;
 use Elabftw\Models\Users;
 use Elabftw\Services\Filter;
 use Elabftw\Services\MpdfProvider;
@@ -32,6 +32,7 @@ use Exception;
 use League\Flysystem\Filesystem;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
+use Override;
 use PDO;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Response;
@@ -43,7 +44,7 @@ use function hash_file;
 /**
  * Handle data exports
  */
-class Exports implements RestInterface
+class Exports extends AbstractRest
 {
     use SetIdTrait;
 
@@ -52,18 +53,17 @@ class Exports implements RestInterface
     // a given user cannot have more than this number of export requests
     private const int MAX_EXPORT = 6;
 
-    protected Db $Db;
-
     private Filesystem $fs;
 
     public function __construct(private Users $requester, private StorageInterface $storage, public ?int $id = null)
     {
-        $this->Db = Db::getConnection();
+        parent::__construct();
         $this->fs = $storage->getFs();
         $this->setId($id);
     }
 
-    public function readAll(): array
+    #[Override]
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = 'SELECT * FROM exports
             WHERE requester_userid = :requester_userid
@@ -74,6 +74,7 @@ class Exports implements RestInterface
         return $req->fetchAll();
     }
 
+    #[Override]
     public function readOne(): array
     {
         $sql = 'SELECT * FROM exports WHERE id = :id AND requester_userid = :requester_userid';
@@ -169,16 +170,12 @@ class Exports implements RestInterface
         return 0;
     }
 
-    public function patch(Action $action, array $params): array
-    {
-        throw new ImproperActionException('No PATCH action for this endpoint.');
-    }
-
     public function getApiPath(): string
     {
-        return 'api/v2/export/';
+        return 'api/v2/exports/';
     }
 
+    #[Override]
     public function destroy(): bool
     {
         $request = $this->readOne();

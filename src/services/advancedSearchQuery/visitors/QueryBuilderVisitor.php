@@ -51,6 +51,12 @@ class QueryBuilderVisitor implements Visitor
             '(entity.title LIKE %1$s
                 OR entity.date LIKE %1$s
                 OR entity.elabid LIKE %1$s
+                OR compounds.cas_number LIKE %1$s
+                OR compounds.ec_number LIKE %1$s
+                OR compounds.name LIKE %1$s
+                OR compounds.iupac_name LIKE %1$s
+                OR compounds.inchi_key LIKE %1$s
+                OR compounds.molecular_formula LIKE %1$s
                 OR entity.body LIKE %2$s
                 OR entity.custom_id = %3$s)',
             $param,

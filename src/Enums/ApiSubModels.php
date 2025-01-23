@@ -20,6 +20,8 @@ use function array_map;
 enum ApiSubModels: string
 {
     case Comments = 'comments';
+    case Compounds = 'compounds';
+    case Containers = 'containers';
     case ExperimentsCategories = 'experiments_categories';
     case ExperimentsLinks = 'experiments_links';
     case ExperimentsStatus = 'experiments_status';
@@ -58,10 +60,12 @@ enum ApiSubModels: string
             array(
                 self::Comments,
                 self::ExperimentsLinks,
+                self::Compounds,
                 self::ItemsLinks,
                 self::RequestActions,
                 self::Revisions,
                 self::Steps,
+                self::Containers,
                 self::Tags,
                 self::Uploads,
             ),

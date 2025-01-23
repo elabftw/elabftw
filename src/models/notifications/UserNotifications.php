@@ -12,12 +12,13 @@ declare(strict_types=1);
 
 namespace Elabftw\Models\Notifications;
 
-use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\Notifications;
-use Elabftw\Interfaces\RestInterface;
+use Elabftw\Interfaces\QueryParamsInterface;
+use Elabftw\Models\AbstractRest;
 use Elabftw\Models\Users;
 use Elabftw\Traits\SetIdTrait;
+use Override;
 use PDO;
 
 use function json_decode;
@@ -25,22 +26,21 @@ use function json_decode;
 /**
  * Notifications for a user
  */
-class UserNotifications implements RestInterface
+class UserNotifications extends AbstractRest
 {
     use SetIdTrait;
-
-    protected Db $Db;
 
     private int $userid;
 
     public function __construct(private Users $users, public ?int $id = null)
     {
-        $this->Db = Db::getConnection();
+        parent::__construct();
         $this->userid = $this->users->userData['userid'];
         $this->setId($id);
     }
 
-    public function readAll(): array
+    #[Override]
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = 'SELECT id, category, body, is_ack, created_at, userid
             FROM notifications
@@ -69,6 +69,7 @@ class UserNotifications implements RestInterface
         return $notifs;
     }
 
+    #[Override]
     public function readOne(): array
     {
         $sql = 'SELECT * FROM notifications WHERE userid = :userid AND id = :id';
@@ -80,11 +81,7 @@ class UserNotifications implements RestInterface
         return $this->Db->fetch($req);
     }
 
-    public function postAction(Action $action, array $reqBody): int
-    {
-        return 1;
-    }
-
+    #[Override]
     public function patch(Action $action, array $params): array
     {
         // currently the only update action is to ack it, so no need to check for anything else
@@ -105,6 +102,7 @@ class UserNotifications implements RestInterface
     /**
      * Delete all notifications for that user
      */
+    #[Override]
     public function destroy(): bool
     {
         $sql = 'DELETE FROM notifications WHERE userid = :userid';

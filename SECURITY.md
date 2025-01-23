@@ -32,9 +32,11 @@ GitHub/Dependabot as well as Snyk.io are regularly scanning the dependencies and
 
 ### Docker image
 
-The Docker image is built by a GitHub Action, so the build process is transparent, as logs are public.
+The Docker image is built by a GitHub Action, so the build process is transparent, as logs are public. [Ci/mon](https://cycode.com/cimon-build-hardening/) is configured to prevent supply chain attacks during build: a pre-defined list of allowed external domain names is controlling the build process.
 
-After the main step of the build, a full scan of the Alpine Linux container is done with [Trivy](https://github.com/aquasecurity/trivy-action) vulnerability scanner. [Ci/mon](https://cycode.com/cimon-build-hardening/) is used to prevent supply chain attacks during build.
+The build provenance can be verified thanks to an attestation, see: [Build attestations](https://github.com/elabftw/elabimg/attestations). [Learn more about In-Toto Attestations...](https://docs.sigstore.dev/cosign/verifying/attestation/).
+
+After the main step of the build, a full scan of the Alpine Linux container is done with [Trivy](https://github.com/aquasecurity/trivy-action) vulnerability scanner.
 
 ## Container security
 

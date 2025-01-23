@@ -45,7 +45,7 @@
             <option value='' selected disabled>{{ 'Select a team'|trans }}</option>
             {# on this page, only show the visible teams #}
             {% for team in teamsArr|filter(v => v.visible == 1) %}
-              <option value='{{ team.id }}'>{{ team.name }}</option>
+              <option value='{{ team.id }}' {{ App.Request.query.get('team') == team.id ? 'selected' }}>{{ team.name }}</option>
             {% endfor %}
           </select>
         </div>

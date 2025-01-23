@@ -13,42 +13,24 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\App;
-use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Enums\Action;
 use Elabftw\Enums\State;
-use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\RestInterface;
+use Elabftw\Interfaces\QueryParamsInterface;
+use Override;
 use PDO;
 
 /**
  * Display information about the instance
  */
-class Info implements RestInterface
+class Info extends AbstractRest
 {
-    private Db $Db;
-
-    public function __construct()
-    {
-        $this->Db = Db::getConnection();
-    }
-
-    public function postAction(Action $action, array $reqBody): int
-    {
-        throw new ImproperActionException('No POST action');
-    }
-
-    public function patch(Action $action, array $params): array
-    {
-        throw new ImproperActionException('No PATCH action.');
-    }
-
     public function getApiPath(): string
     {
         return 'api/v2/info/';
     }
 
-    public function readAll(): array
+    #[Override]
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $Config = Config::getConfig();
         $Uploads = new Uploads(new Experiments(new Users()));
@@ -62,16 +44,6 @@ class Info implements RestInterface
             'uploads_filesize_sum_formatted' => Tools::formatBytes($Uploads->readFilesizeSum()),
         );
         return array_merge($base, $this->getAllStats());
-    }
-
-    public function readOne(): array
-    {
-        return $this->readAll();
-    }
-
-    public function destroy(): bool
-    {
-        throw new ImproperActionException('No DELETE action.');
     }
 
     /**

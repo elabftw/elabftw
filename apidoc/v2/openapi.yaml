@@ -285,6 +285,7 @@ components:
         category:
           type: integer
           nullable: true
+          description: Cannot be negative nor empty string. Can be reset with "0" and null.
         category_color:
           type: string
           nullable: true
@@ -302,6 +303,7 @@ components:
           type: string
         custom_id:
           type: integer
+          description: Cannot be negative. Can be reset with "0", null or empty string.
         date:
           type: string
         elabid:
@@ -371,6 +373,7 @@ components:
         status:
           type: integer
           nullable: true
+          description: Cannot be negative nor empty string. Can be reset with "0" and null.
         status_color:
           type: string
           nullable: true
@@ -736,8 +739,14 @@ components:
       properties:
         id:
           type: integer
+        item_count:
+          type: integer
+        is_favorite:
+          type: integer
         tag:
           type: string
+        team:
+          type: integer
     team:
       type: object
       properties:
@@ -1059,12 +1068,32 @@ paths:
             schema:
               type: object
               properties:
-                category_id:
+                body:
+                  type: string
+                  description: The main text content (HTML or Markdown)
+                  default: null
+                category:
+                  type: integer
+                  description: The experiment category ID
+                  default: null
+                status:
+                  type: integer
+                  description: The experiment status ID
+                  default: null
+                metadata:
+                  type: string
+                  description: The experiment status ID
+                  default: null
+                template:
                   type: integer
                   description: |
                     The template id to use, or 0 to use the common team
                     template, or -1 to have an empty body.
                   default: -1
+                title:
+                  type: string
+                  description: The title of the entry
+                  default: Untitled
                 tags:
                   type: array
                   description: |
@@ -1096,7 +1125,7 @@ paths:
             Search for a term in title, body or elabid.
           examples:
             first:
-              summary: Search for all experiments with the word "test".
+              summary: Search for all results with the word "test".
               value: test
         - name: extended
           in: query
@@ -1135,9 +1164,29 @@ paths:
         - name: cat
           in: query
           schema:
-            type: integer
+            type: string
           description: |
-            The status id of the experiments.
+            Add a filter on the Category. Supports comma separated list of numbers, including "null".
+          examples:
+            first:
+              summary: Only display results with category ID 2
+              value: "2"
+            second:
+              summary: Display results with category ID 3 or 4 or not set (null)
+              value: "3,4,null"
+        - name: status
+          in: query
+          schema:
+            type: string
+          description: |
+            Add a filter on the Status. Supports comma separated list of numbers, including "null".
+          examples:
+            first:
+              summary: Only display results with status ID 2
+              value: "2"
+            second:
+              summary: Display results with status ID 3 or 4 or not set (null)
+              value: "3,4,null"
         - name: tags[]
           in: query
           schema:
@@ -1171,13 +1220,16 @@ paths:
         - name: owner
           in: query
           schema:
-            type: integer
+            type: string
           description: |
             Filter results by author (user id)
           examples:
             first:
               summary: Only display results from user with id 2
-              value: 2
+              value: "2"
+            second:
+              summary: Only display results from user with id 2 or 3
+              value: "2,3"
         - name: scope
           in: query
           schema:
@@ -1206,6 +1258,21 @@ paths:
             enum: ["asc", "desc"]
           description: |
             Change the sorting of results: ascending or descending.
+        - name: state
+          in: query
+          schema:
+            type: string
+            default: "1"
+          examples:
+            first:
+              summary: Display only archived entries
+              value: "2"
+            second:
+              summary: Display archived and deleted entries
+              value: "2,3"
+          description: |
+            Filter results based on their state: 1 (Normal), 2 (Archived), 3 (Deleted). Supports comma separated values.
+      # END need to copy part to items/
       responses:
         '200':
           description: A list of experiments
@@ -1516,7 +1583,7 @@ paths:
       tags: ['Items']
       summary: Read all items that are accessible
       operationId: read-items
-      # start duplicate from GET /experiments (except related)
+      # start duplicate from GET /experiments
       parameters:
         - name: q
           in: query
@@ -1526,7 +1593,7 @@ paths:
             Search for a term in title, body or elabid.
           examples:
             first:
-              summary: Search for all items with the word "test".
+              summary: Search for all results with the word "test".
               value: test
         - name: extended
           in: query
@@ -1562,13 +1629,32 @@ paths:
             experiments:
               summary: The related entry is an experiment.
               value: experiments
-        # This one is not exactly copy paste
         - name: cat
           in: query
           schema:
-            type: integer
+            type: string
           description: |
-            The category id of the items.
+            Add a filter on the Category. Supports comma separated list of numbers, including "null".
+          examples:
+            first:
+              summary: Only display results with category ID 2
+              value: "2"
+            second:
+              summary: Display results with category ID 3 or 4 or not set (null)
+              value: "3,4,null"
+        - name: status
+          in: query
+          schema:
+            type: string
+          description: |
+            Add a filter on the Status. Supports comma separated list of numbers, including "null".
+          examples:
+            first:
+              summary: Only display results with status ID 2
+              value: "2"
+            second:
+              summary: Display results with status ID 3 or 4 or not set (null)
+              value: "3,4,null"
         - name: tags[]
           in: query
           schema:
@@ -1602,13 +1688,16 @@ paths:
         - name: owner
           in: query
           schema:
-            type: integer
+            type: string
           description: |
             Filter results by author (user id)
           examples:
             first:
               summary: Only display results from user with id 2
-              value: 2
+              value: "2"
+            second:
+              summary: Only display results from user with id 2 or 3
+              value: "2,3"
         - name: scope
           in: query
           schema:
@@ -1637,6 +1726,20 @@ paths:
             enum: ["asc", "desc"]
           description: |
             Change the sorting of results: ascending or descending.
+        - name: state
+          in: query
+          schema:
+            type: string
+            default: "1"
+          examples:
+            first:
+              summary: Display only archived entries
+              value: "2"
+            second:
+              summary: Display archived and deleted entries
+              value: "2,3"
+          description: |
+            Filter results based on their state: 1 (Normal), 2 (Archived), 3 (Deleted). Supports comma separated values.
       # end duplicate from GET /experiments
       responses:
         '200':
@@ -2729,6 +2832,60 @@ paths:
         '204':
           description: The favorite tag was removed.
 
+  # REPORTS
+  /reports:
+    summary: Generate usage reports
+    get:
+      tags: ['Reports']
+      summary: Get usage reports
+      description: Get usage reports at the instance or team level.
+      operationId: get-reports
+      parameters:
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum: ['csv', 'json']
+            default: json
+          description: |
+            Select the output format
+          examples:
+            csv:
+              summary: Generate a CSV
+              value: csv
+        - name: scope
+          in: query
+          schema:
+            type: string
+            enum: ['instance', 'team']
+            default: json
+          description: |
+            Select the scope. Instance is for sysadmins only. Team will generate report for the current team.
+          examples:
+            instance:
+              summary: Get instance level report
+              value: instance
+            team:
+              summary: Get team level report
+              value: team
+      responses:
+        '200':
+          description: Get usage reports
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query_parameters:
+                    type: object
+                    properties:
+                      format:
+                        type: array
+                      scope:
+                        type: array
+            text/csv:
+              schema:
+                type: string
   # TEAM TAGS
   /teams/{id}/tags:
     summary: Manage tags at the team level.
@@ -2749,14 +2906,9 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  tag:
-                    type: string
-                  id:
-                    type: integer
-                  item_count:
-                    type: integer
+                type: array
+                items:
+                  $ref: '#/components/schemas/tag'
     post:
       tags: ['Team tags']
       summary: Create a tag in the team.
@@ -2779,31 +2931,6 @@ paths:
               description: An URL ending with 0 if the tag was already here, or an URL to the newly created tag.
               schema:
                 type: string
-    patch:
-      tags: ['Team tags']
-      summary: |
-        Actions on tags.
-      operationId: patch-tags
-      requestBody:
-        description: Parameters for modifying team tags.
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                action:
-                  type: string
-                  enum: ['deduplicate']
-              description: Find all duplicate tags and deduplicate them.
-      responses:
-        '200':
-          description: The team tag has been modified.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/tag'
   /teams/{id}/tags/{subid}:
     summary: Retrieve a tag from its id.
     parameters:
@@ -2829,12 +2956,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  tag:
-                    type: string
-                  id:
-                    type: integer
+                $ref: '#/components/schemas/tag'
     patch:
       tags: ['Team tags']
       summary: |

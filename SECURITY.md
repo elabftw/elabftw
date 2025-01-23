@@ -32,9 +32,11 @@ GitHub/Dependabot as well as Snyk.io are regularly scanning the dependencies and
 
 ### Docker image
 
-The Docker image is built by a GitHub Action, so the build process is transparent, as logs are public.
+The Docker image is built by a GitHub Action, so the build process is transparent, as logs are public. [Ci/mon](https://cycode.com/cimon-build-hardening/) is configured to prevent supply chain attacks during build: a pre-defined list of allowed external domain names is controlling the build process.
 
-After the main step of the build, a full scan of the Alpine Linux container is done with [Trivy](https://github.com/aquasecurity/trivy-action) vulnerability scanner. [Ci/mon](https://cycode.com/cimon-build-hardening/) is used to prevent supply chain attacks during build.
+The build provenance can be verified thanks to an attestation, see: [Build attestations](https://github.com/elabftw/elabimg/attestations). [Learn more about In-Toto Attestations...](https://docs.sigstore.dev/cosign/verifying/attestation/).
+
+After the main step of the build, a full scan of the Alpine Linux container is done with [Trivy](https://github.com/aquasecurity/trivy-action) vulnerability scanner.
 
 ## Container security
 
@@ -109,6 +111,10 @@ You can enforce multi factor authentication (with TOTP mechanism) for Sysadmins,
 ### Using single sign-on? Turn off local user (password) registration and login
 
 If eLabFTW is set up to use some external source of identity information (such as SAML auth or external auth), you can turn off the ability to log in or register using local accounts. This can be re-enabled by an administrator with direct database access, in case the IDP setup fails.
+
+### Prevent users from changing their identity
+
+Allowing users to change their email or name can be convenient, but can have implications when it comes to identity management or when interpreting changelogs. As of [version 5.1.0](https://www.deltablot.com/posts/release-50100/#new-sysconfig-setting-to-prevent-users-from-changing-their-identity), sysadmins can restrict these identity changes. Check if it is currently allowed on your system. Unless it is strictly required, consider disabling it.
 
 ### Turn on optional features only if required
 

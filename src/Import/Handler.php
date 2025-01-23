@@ -19,17 +19,19 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ImportInterface;
-use Elabftw\Interfaces\RestInterface;
+use Elabftw\Interfaces\QueryParamsInterface;
+use Elabftw\Models\AbstractRest;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
+use Override;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Handle import request
  */
-class Handler implements RestInterface
+class Handler extends AbstractRest
 {
     private const array ALLOWED_EXTENSIONS = array('.eln', '.csv');
 
@@ -37,7 +39,8 @@ class Handler implements RestInterface
 
     public function __construct(private Users $requester, private LoggerInterface $logger) {}
 
-    public function readOne(): array
+    #[Override]
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         return array(
             'allowed_extensions' => self::ALLOWED_EXTENSIONS,
@@ -47,11 +50,7 @@ class Handler implements RestInterface
         );
     }
 
-    public function readAll(): array
-    {
-        return $this->readOne();
-    }
-
+    #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
         $Importer = $this->getImporter($reqBody);
@@ -64,19 +63,9 @@ class Handler implements RestInterface
         return $inserted;
     }
 
-    public function patch(Action $action, array $params): array
-    {
-        throw new ImproperActionException('Error: only POST method allowed.');
-    }
-
     public function getApiPath(): string
     {
         return 'api/v2/import/';
-    }
-
-    public function destroy(): bool
-    {
-        throw new ImproperActionException('Error: only POST method allowed.');
     }
 
     private function getImporter(array $reqBody): ImportInterface

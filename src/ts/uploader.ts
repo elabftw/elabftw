@@ -21,8 +21,8 @@ export class Uploader
       maxFilesize: sizeInMb,
       timeout: importInfo.max_upload_time,
       init: function(): void {
-        // once upload is finished
-        this.on('complete', function() {
+        // once all files are uploaded
+        this.on('queuecomplete', function() {
           if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
             reloadElements(['uploadsDiv']);
           }

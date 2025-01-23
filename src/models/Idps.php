@@ -12,18 +12,18 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Interfaces\RestInterface;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Services\Xml2Idps;
 use Elabftw\Traits\SetIdTrait;
+use Override;
 use PDO;
 
 /**
  * An IDP is an Identity Provider. Used in SAML2 authentication context.
  */
-class Idps implements RestInterface
+class Idps extends AbstractRest
 {
     use SetIdTrait;
 
@@ -41,12 +41,10 @@ class Idps implements RestInterface
 
     private const string ORGID_ATTR = 'urn:oid:0.9.2342.19200300.100.1.1';
 
-    protected Db $Db;
-
     public function __construct(private Users $requester, ?int $id = null)
     {
-        $this->Db = Db::getConnection();
-        $this->id = $id;
+        parent::__construct();
+        $this->setId($id);
     }
 
     public function getApiPath(): string
@@ -54,6 +52,7 @@ class Idps implements RestInterface
         return 'api/v2/idps/';
     }
 
+    #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
         $this->canWriteOrExplode();
@@ -74,6 +73,7 @@ class Idps implements RestInterface
         );
     }
 
+    #[Override]
     public function readOne(): array
     {
         $sql = 'SELECT * FROM idps WHERE id = :id';
@@ -84,7 +84,8 @@ class Idps implements RestInterface
         return $this->Db->fetch($req);
     }
 
-    public function readAll(): array
+    #[Override]
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = 'SELECT idps.*, idps_sources.url AS source_url
             FROM idps LEFT JOIN idps_sources ON idps.source = idps_sources.id ORDER BY name';
@@ -119,6 +120,7 @@ class Idps implements RestInterface
         return $req->fetchAll();
     }
 
+    #[Override]
     public function patch(Action $action, array $params): array
     {
         $this->canWriteOrExplode();
@@ -188,6 +190,7 @@ class Idps implements RestInterface
         return $this->Db->fetch($req);
     }
 
+    #[Override]
     public function destroy(): bool
     {
         $this->canWriteOrExplode();

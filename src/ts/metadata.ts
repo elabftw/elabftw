@@ -93,7 +93,6 @@ document.addEventListener('DOMContentLoaded', () => {
     case ExtraFieldInputType.Experiments:
     case ExtraFieldInputType.Items:
     case ExtraFieldInputType.Users:
-    case ExtraFieldInputType.Number:
       valueInput.setAttribute('type', fieldType);
       toggleContentDiv('classic');
       break;
@@ -106,6 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
     case ExtraFieldInputType.Radio:
       toggleContentDiv('selectradio');
       break;
+    case ExtraFieldInputType.Number:
     case ExtraFieldInputType.Checkbox:
       toggleContentDiv(fieldType);
       break;

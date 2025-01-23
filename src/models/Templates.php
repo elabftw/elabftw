@@ -22,6 +22,7 @@ use Elabftw\Enums\Scope;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SortableTrait;
 use PDO;
@@ -194,7 +195,7 @@ class Templates extends AbstractTemplateEntity
      * Get a list of fullname + id + title of template
      * Use this to build a select of the readable templates
      */
-    public function readAll(): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $builder = new TemplatesSqlBuilder($this);
         $sql = $builder->getReadSqlBeforeWhere(getTags: false, fullSelect: false);

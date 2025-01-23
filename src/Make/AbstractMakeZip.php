@@ -38,6 +38,11 @@ abstract class AbstractMakeZip extends AbstractMake implements ZipMakerInterface
         parent::__construct();
     }
 
+    public function getFileContent(): string
+    {
+        return '';
+    }
+
     /**
      * Add attached files
      *

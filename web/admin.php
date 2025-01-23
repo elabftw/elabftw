@@ -115,8 +115,7 @@ try {
     $renderArr = array(
         'Entity' => $ItemsTypes,
         'allTeamUsersArr' => $allTeamUsersArr,
-        // all the tags for the team
-        'tagsArr' => $TeamTags->readFull(),
+        'tagsArr' => $TeamTags->readAll(),
         'isSearching' => $isSearching,
         'itemsCategoryArr' => $itemsCategoryArr,
         'metadataGroups' => $metadataGroups,

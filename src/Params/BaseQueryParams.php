@@ -14,46 +14,72 @@ namespace Elabftw\Params;
 
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\Sort;
+use Elabftw\Enums\State;
+use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Services\Check;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\InputBag;
 
 /**
  * This class holds the values for limit, offset, order and sort
  */
-class BaseQueryParams
+class BaseQueryParams implements QueryParamsInterface
 {
-    public Orderby $orderby = Orderby::Date;
+    public function __construct(
+        protected ?InputBag $query = null,
+        public Orderby $orderby = Orderby::Date,
+        public Sort $sort = Sort::Desc,
+        public int $limit = 15,
+        public int $offset = 0,
+        public array $states = array(State::Normal),
+    ) {
+        if ($query !== null) {
+            if ($query->has('limit')) {
 
-    public Sort $sort = Sort::Desc;
+                $this->limit = Check::limit($query->getInt('limit'));
+            }
+            if ($query->has('offset') && Check::id($query->getInt('offset')) !== false) {
+                $this->offset = $query->getInt('offset');
+            }
+            $this->sort = Sort::tryFrom($query->getAlpha('sort')) ?? $this->sort;
+            $this->orderby = Orderby::tryFrom($query->getAlpha('order')) ?? $this->orderby;
 
-    public int $limit = 15;
+            // STATE
+            // example: ?state=1,2 to include normal and archived
+            if ($query->get('state')) {
+                $states = array();
+                foreach (explode(',', $query->getString('state')) as $state) {
+                    $states[] = State::tryFrom((int) $state) ?? throw new ImproperActionException(sprintf('Invalid state parameter. Must be one of: %s', State::toCsListVerbose()));
+                }
+                $this->states = $states;
+            }
+        }
+    }
 
-    public int $offset = 0;
-
-    public bool $includeArchived = false;
-
-    public function __construct(protected Request $Request)
+    public function getQuery(): InputBag
     {
-        // we don't care about the value, so it can be 'on' from a checkbox or 1 or anything really
-        $this->includeArchived = $this->Request->query->has('archived');
-        if ($this->Request->query->has('limit')) {
-            $this->limit = Check::limit($this->Request->query->getInt('limit'));
-        }
-        if ($this->Request->query->has('offset') && Check::id($this->Request->query->getInt('offset')) !== false) {
-            $this->offset = $this->Request->query->getInt('offset');
-        }
-        $this->sort = Sort::tryFrom($this->Request->query->getAlpha('sort')) ?? $this->sort;
-        $this->orderby = Orderby::tryFrom($this->Request->query->getAlpha('order')) ?? $this->orderby;
+        return $this->query ?? new InputBag();
+    }
+
+    public function getLimit(): int
+    {
+        return $this->limit;
     }
 
     public function getSql(): string
     {
         return sprintf(
-            ' ORDER BY %s %s LIMIT %d OFFSET %d',
+            '%s ORDER BY %s %s LIMIT %d OFFSET %d',
+            $this->getStatesSql('entity'),
             $this->orderby->toSql(),
             $this->sort->value,
             $this->limit,
             $this->offset,
         );
+    }
+
+    public function getStatesSql(string $tableName): string
+    {
+        return sprintf(' AND %s.state IN (%s)', $tableName, implode(', ', array_map(fn($state) => $state->value, $this->states)));
     }
 }

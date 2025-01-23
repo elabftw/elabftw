@@ -189,7 +189,9 @@ document.addEventListener('DOMContentLoaded', () => {
       (el as HTMLButtonElement).disabled = true;
       ApiC.notifOnSaved = false;
       const ajaxs = [];
-      const params = collectForm(document.getElementById('multiChangesForm'));
+      const form = document.getElementById('multiChangesForm');
+      const params = collectForm(form);
+      clearForm(form);
       ['canread', 'canwrite'].forEach(can => {
         // TODO replace with hasOwn when https://github.com/microsoft/TypeScript/issues/44253 is closed
         if (Object.prototype.hasOwnProperty.call(params, can)) {

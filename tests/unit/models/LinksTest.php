@@ -63,11 +63,6 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         $this->assertIsInt($this->Experiments->ExperimentsLinks->postAction(Action::Duplicate, array()));
     }
 
-    public function testPatch(): void
-    {
-        $this->assertIsArray($this->Experiments->ItemsLinks->patch(Action::Duplicate, array()));
-    }
-
     public function testReadOne(): void
     {
         $this->assertIsArray($this->Experiments->ItemsLinks->readOne());

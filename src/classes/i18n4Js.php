@@ -36,12 +36,14 @@ class i18n4Js
     private function getTerms(): array
     {
         return array(
+            'add-compound' => _('Add compound'),
             'click-to-edit' => _('Click to edit'),
             'cancel' => _('Cancel'),
             'comment-add' => _('Add a comment'),
             'custom-id-in-use' => _('Custom ID is already used! Try another one.'),
             'dropzone-upload-area' => _('Drop files here to upload'),
             'dropzone-filesize-limit' => _('File size limit:'),
+            'edit-compound' => _('Edit compound'),
             'editing-metadata' => _('You are currently editing the metadata attached to this entry.'),
             'entity-default-title' => _('Untitled'),
             'entity-delete-warning' => _('The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?'),

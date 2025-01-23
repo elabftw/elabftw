@@ -16,6 +16,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Storage;
 use Elabftw\Models\Uploads;
 use PDO;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Check uploads for correct hash and filesize
@@ -45,7 +46,8 @@ class UploadsChecker
     public function getNullColumn(string $column): array
     {
         // don't use bindParam here for the column, it doesn't work.
-        $sql = sprintf('SELECT id, storage, long_name FROM uploads WHERE %s IS NULL', $column);
+        // TODO do it also for S3 storage
+        $sql = sprintf('SELECT id, storage, long_name FROM uploads WHERE %s IS NULL AND storage = 1', $column);
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
         return $req->fetchAll();
@@ -68,27 +70,53 @@ class UploadsChecker
         return $fixedCount;
     }
 
+    public function recomputeHash(OutputInterface $output, bool $dryRun): int
+    {
+        $sql = 'SELECT id, hash, storage, long_name FROM uploads ORDER BY uploads.created_at DESC';
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+        $uploads = $req->fetchAll();
+        foreach ($uploads as $upload) {
+            $hash = hash_file(Uploads::HASH_ALGORITHM, dirname(__DIR__, 2) . '/uploads/' . $upload['long_name']);
+            if (empty($hash)) {
+                continue;
+            }
+            if ($upload['hash'] !== $hash) {
+                $output->writeln(sprintf('Found hash mismatch for upload id: %d, stored at %s', $upload['id'], $upload['long_name']));
+                $output->writeln(sprintf('Expected: %s but calculated: %s', $upload['hash'], $hash));
+                if (!$dryRun) {
+                    $output->writeln('Replacing faulty hash in database...');
+                    $this->updateHash($upload['id'], $hash);
+                } else {
+                    $output->writeln('Not replacing faulty hash in database because dry-run mode enabled.');
+                }
+            }
+        }
+        return count($uploads);
+    }
+
     public function fixNullHash(): int
     {
         $toFix = $this->getNullColumn('hash');
         $fixedCount = 0;
         foreach ($toFix as $upload) {
-            // TODO implement it for S3 storage
-            if ($upload['storage'] === Storage::S3->value) {
-                continue;
-            }
             $hash = hash_file(Uploads::HASH_ALGORITHM, dirname(__DIR__, 2) . '/uploads/' . $upload['long_name']);
             if (empty($hash)) {
                 continue;
             }
-            $sql = 'UPDATE uploads SET hash = :hash, hash_algorithm = :hash_algorithm WHERE id = :id';
-            $req = $this->Db->prepare($sql);
-            $req->bindParam(':hash', $hash);
-            $req->bindValue(':hash_algorithm', Uploads::HASH_ALGORITHM);
-            $req->bindParam(':id', $upload['id'], PDO::PARAM_INT);
-            $this->Db->execute($req);
+            $this->updateHash($upload['id'], $hash);
             $fixedCount += 1;
         }
         return $fixedCount;
+    }
+
+    private function updateHash(int $id, string $hash): bool
+    {
+        $sql = 'UPDATE uploads SET hash = :hash, hash_algorithm = :hash_algorithm WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':hash', $hash);
+        $req->bindValue(':hash_algorithm', Uploads::HASH_ALGORITHM);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        return $this->Db->execute($req);
     }
 }

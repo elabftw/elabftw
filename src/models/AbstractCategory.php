@@ -12,9 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
-use Elabftw\Interfaces\RestInterface;
 use Elabftw\Traits\EntityTrait;
 use Elabftw\Traits\SortableTrait;
 use PDO;
@@ -22,25 +20,18 @@ use PDO;
 /**
  * A category is a status for experiments and item type for db item
  */
-abstract class AbstractCategory implements RestInterface
+abstract class AbstractCategory extends AbstractRest
 {
     use SortableTrait;
     use EntityTrait;
-
-    protected Db $Db;
 
     protected string $table;
 
     public function __construct(protected Teams $Teams, ?int $id = null)
     {
-        $this->Db = Db::getConnection();
+        parent::__construct();
         $this->setId($id);
     }
-
-    /**
-     * Get all the things
-     */
-    abstract public function readAll(): array;
 
     /**
      * Get an id of an existing one or create it and get its id

@@ -1,0 +1,43 @@
+{# Add a container modal #}
+<div class='modal fade' id='storageModal' tabindex='-1' role='dialog' aria-labelledby='storageModalLabel'>
+  <div class='modal-dialog modal-lg' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h4 class='modal-title' id='storageModalLabel'><i class='fas fa-fw fa-warehouse'></i> {{ 'Add container'|trans }}</h4>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        {# STORAGE #}
+        <div class='mb-2'>
+          <h5><label for='containerQtyStoredInput'>{{ 'Adjust container capacity and unit'|trans }}</label></h5>
+          <div class='input-group mb-2'>
+            {# set default value to 1 instead of 0 as we probably want to add at least one thing #}
+            <input type='number' value='1' min='1' id='containerQtyStoredInput' autocomplete='off' class='form-control' />
+            <div class='input-group-append'>
+              <select class='custom-select brl-none brr-none' id='containerQtyUnitSelect' aria-label='{{ 'Quantity unit'|trans }}'>
+                <option value='•'>•</option>
+                <option value='μL'>μL</option>
+                <option value='mL'>mL</option>
+                <option value='L'>L</option>
+                <option value='mg'>μg</option>
+                <option value='mg'>mg</option>
+                <option value='g'>g</option>
+                <option value='kg'>kg</option>
+              </select>
+            </div>
+          </div>
+          <h5><label for='containerMultiplierInput'>{{ 'Adjust number of containers stored'|trans }}</label></h5>
+          <input type='number' value='1' min='1' id='containerMultiplierInput' autocomplete='off' class='form-control' />
+          <h5 class='mt-2'>{{ 'Select a storage location below'|trans }}</h5>
+          {% include 'storage-list.html' with {'storage_editable': false} %}
+        </div>
+      </div>
+
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>

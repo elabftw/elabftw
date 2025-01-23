@@ -21,7 +21,6 @@ enum Action: string
     case Create = 'create';
     case CreateFromString = 'createfromstring';
     case CreateSigkeys = 'createsigkeys';
-    case Deduplicate = 'deduplicate';
     case Destroy = 'destroy';
     case Disable2fa = 'disable2fa';
     case Duplicate = 'duplicate';

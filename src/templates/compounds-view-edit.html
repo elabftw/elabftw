@@ -1,0 +1,82 @@
+{# COMPOUNDS #}
+<h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Compounds'|trans }} (<span id='compoundsCount'>{{ Entity.entityData.compounds|length }}</span>)</h3>
+<div data-save-hidden='compoundDiv' class='col-md-12 mt-4' data-count-for='compoundsCount'>
+  <div class='mt-3 row' id='compoundDiv'>
+    {% if Entity.entityData.compounds %}
+      {% macro fpList(key, label, value) %}
+        <li class='list-group-item'><label for='{{ key }}'>{{ label }}</label>
+          <div class='input-group'>
+            <div class='input-group-prepend'>
+              <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-outline-secondary' type='button' data-action='copy-to-clipboard' data-target='{{ key }}'><i class='fas fa-clone'></i></button>
+            </div>
+            <input readonly class='form-control' id='{{ key }}' value='{{ value }}' />
+          </div>
+        </li>
+      {% endmacro %}
+      {% macro compoundPicto(compound) %}
+         {% set hazards = {
+          'is_corrosive': {'code': '05', 'alt': 'Corrosive'},
+          'is_explosive': {'code': '01', 'alt': 'Explosive'},
+          'is_flammable': {'code': '02', 'alt': 'Flammable'},
+          'is_gas_under_pressure': {'code': '04', 'alt': 'Gas under pressure'},
+          'is_hazardous2env': {'code': '09', 'alt': 'Hazardous to environment'},
+          'is_hazardous2health': {'code': '08', 'alt': 'Hazardous to health'},
+          'is_oxidising': {'code': '03', 'alt': 'Oxidising'},
+          'is_toxic': {'code': '06', 'alt': 'Toxic'}
+        } %}
+        {% for property, data in hazards %}
+          {% if attribute(compound, property) %}
+            <img src='assets/images/ghs/GHS{{ data.code }}.svg' alt='{{ data.alt }}' title='{{ data.alt }}' />
+          {% endif %}
+        {% endfor %}
+      {% endmacro %}
+      {% for fp in Entity.entityData.compounds %}
+        <div class='col-md-12 mt-3 countable'>
+        <details>
+          <summary>
+            <h5 class='d-inline togglable-section-title'>{{ fp.name|default('Name unset'|trans) }} {{ _self.compoundPicto(fp) }}</h5>
+          </summary>
+          <ul class='mt-2 list-group'>
+          {{ _self.fpList('cas' ~ fp.id, 'CAS', fp.cas_number) }}
+          {{ _self.fpList('iupac_name_' ~ fp.id, 'IUPAC Name', fp.iupac_name) }}
+          {{ _self.fpList('inchi_' ~ fp.id, 'InChI', fp.inchi) }}
+          {{ _self.fpList('inchi_key' ~ fp.id, 'InChIKey', fp.inchi_key) }}
+          {{ _self.fpList('smiles' ~ fp.id, 'SMILES', fp.smiles) }}
+          {{ _self.fpList('molecular_formula' ~ fp.id, 'Molecular formula'|trans, fp.molecular_formula) }}
+          <li class='list-group-item'>
+            <div class='d-flex justify-content-between'>
+              {% if fp.smiles %}
+                <a target='_blank' class='btn btn-ghost mr-1' rel='noopener' href='/compounds.php?search_fp_smi={{ fp.smiles|url_encode }}'>
+                  {{ 'Search similar compounds'|trans }}
+                </a>
+              {% endif %}
+              <a target='_blank' class='btn btn-ghost mr-1' rel='noopener' href='/api/v2/compounds/{{ fp.id }}'>{{ 'View in JSON'|trans }}</a>
+              {% if fp.pubchem_cid %}
+                <a target='_blank' class='btn btn-ghost mr-1 external-link' rel='noopener' href='https://pubchem.ncbi.nlm.nih.gov/compound/{{ fp.pubchem_cid }}'>
+                  {{ 'View on PubChem'|trans }}
+                </a>
+              {% endif %}
+              <button class='btn btn-danger ml-auto' type='button' data-action='delete-compoundlink' data-id='{{ fp.id }}'>{{ 'Remove compound'|trans }}</button>
+            </div>
+          </li>
+          </ul>
+        </details>
+        </div>
+      {% endfor %}
+
+    {% endif %}
+  </div>
+  <div class='mt-3 row'>
+    {# ADD COMPOUND LINK #}
+    <div class='input-group mt-2'>
+      <div class='input-group-prepend'>
+        <span class='input-group-text'><i class='fas fa-magnifying-glass'></i></span>
+      </div>
+      <input aria-label='{{ 'Link with compound'|trans }}' type='text' data-endpoint='compounds' data-autocomplete='compounds' id='addCompoundInput' class='form-control linkinput' data-id='{{ Entity.id }}' placeholder='{{ 'Search in local compounds database'|trans }}' />
+      <div class='input-group-append'>
+        <button class='btn btn-primary' type='button'>{{ 'Add'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+<hr>

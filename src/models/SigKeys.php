@@ -13,33 +13,32 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\AuditEvent\SignatureKeysCreated;
-use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\MinisignKeys;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\RestInterface;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Traits\SetIdTrait;
+use Override;
 use PDO;
 
 /**
  * Signature keys CRUD class
  */
-class SigKeys implements RestInterface
+class SigKeys extends AbstractRest
 {
     use SetIdTrait;
-
-    private Db $Db;
 
     private int $userid;
 
     public function __construct(private Users $Users, public ?int $id = null)
     {
-        $this->Db = Db::getConnection();
+        parent::__construct();
         $this->userid = $this->Users->userData['userid'] ?? throw new ImproperActionException('Invalid userid!');
         $this->setId($id);
     }
 
+    #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
         $key = MinisignKeys::generate($reqBody['passphrase'] ?? throw new ImproperActionException(_('The mandatory "passphrase" parameter was not provided!')));
@@ -61,6 +60,7 @@ class SigKeys implements RestInterface
     /**
      * This is the regenerate action
      */
+    #[Override]
     public function patch(Action $action, array $params): array
     {
         $this->id = $this->postAction(Action::Create, $params);
@@ -75,7 +75,8 @@ class SigKeys implements RestInterface
     /**
      * Read all keys for current user, including the archived ones, with the active one first
      */
-    public function readAll(): array
+    #[Override]
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = 'SELECT id, pubkey, privkey, created_at, last_used_at, userid, state
             FROM sig_keys WHERE userid = :userid ORDER BY state ASC';
@@ -86,6 +87,7 @@ class SigKeys implements RestInterface
         return $req->fetchAll();
     }
 
+    #[Override]
     public function readOne(): array
     {
         $sql = 'SELECT id, pubkey, privkey, created_at, last_used_at, userid, state
@@ -100,6 +102,7 @@ class SigKeys implements RestInterface
     /**
      * Make all existing keys inactive (state:archived) for that user
      */
+    #[Override]
     public function destroy(): bool
     {
         $sql = 'UPDATE sig_keys SET state = :state WHERE userid = :userid';

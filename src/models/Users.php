@@ -28,7 +28,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\ResourceNotFoundException;
-use Elabftw\Interfaces\RestInterface;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Notifications\OnboardingEmail;
 use Elabftw\Models\Notifications\SelfIsValidated;
 use Elabftw\Models\Notifications\SelfNeedValidation;
@@ -50,7 +50,7 @@ use function trim;
 /**
  * Users
  */
-class Users implements RestInterface
+class Users extends AbstractRest
 {
     public bool $needValidation = false;
 
@@ -60,11 +60,9 @@ class Users implements RestInterface
 
     public bool $isAdmin = false;
 
-    protected Db $Db;
-
     public function __construct(public ?int $userid = null, public ?int $team = null, ?self $requester = null)
     {
-        $this->Db = Db::getConnection();
+        parent::__construct();
         if ($team !== null && $userid !== null) {
             $TeamsHelper = new TeamsHelper($this->team ?? 0);
             $this->isAdmin = $TeamsHelper->isAdmin($userid);
@@ -277,7 +275,7 @@ class Users implements RestInterface
     /**
      * This can be called from api and only contains "safe" values
      */
-    public function readAll(): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $Request = Request::createFromGlobals();
         return $this->readFromQuery(
@@ -516,7 +514,7 @@ class Users implements RestInterface
             if (($this->requester->userData['userid'] !== $this->userData['userid']) && ($this->requester->userData['is_sysadmin'] !== 1)) {
                 throw new IllegalActionException('User tried to edit email of another user but is not sysadmin.');
             }
-            Filter::email($params->getContent());
+            Filter::email($params->getStringContent());
         }
         // special case for is_sysadmin: only a sysadmin can affect this column
         if ($params->getTarget() === 'is_sysadmin') {
@@ -548,7 +546,7 @@ class Users implements RestInterface
                 $this->userid ?? 0,
                 $params->getTarget(),
                 (string) $this->userData[$params->getTarget()],
-                $params->getContent(),
+                $params->getStringContent(),
             ));
         }
         return $res;

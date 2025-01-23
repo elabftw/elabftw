@@ -79,7 +79,7 @@
     {% endif %}
       class='form-group form-inline mb-2' aria-label='{{ 'Query filters'|trans }}'>
       {% if not searchPage %}
-        <input type='hidden' name='q' value='{{ DisplayParams.query|e('html_attr') }}' />
+        <input type='hidden' name='q' value='{{ DisplayParams.queryString|e('html_attr') }}' />
       {% endif %}
       {% if App.Request.query.get('related') %}
         <input type='hidden' name='related' value='{{ App.Request.query.get('related')|number_format }}' />
@@ -162,6 +162,7 @@
       {%- endif %}
 
       {# ARCHIVED filter #}
+      {# TODO make this something where you can select any number of states #}
       <div class='input-group mr-1 mb-2'>
         <div class='input-group-text'>
           <input id='filterArchived' type='checkbox' {{ App.Request.query.get('archived') == 'on' ? 'checked' }} name='archived' class='mr-1'>
@@ -235,6 +236,7 @@
             <option selected disabled value=''>
               {{ 'Change category'|trans }}
             </option>
+            <option value='0'>{{ 'Not set'|trans }}</option>
             {% for category in categoryArr %}
                 <option value='{{ category.id }}'>{{ category.title }}</option>
             {% endfor %}
@@ -244,6 +246,7 @@
             <option selected disabled value=''>
               {{ 'Change status'|trans }}
             </option>
+            <option value='0'>{{ 'Not set'|trans }}</option>
             {% for status in statusArr %}
                 <option value='{{ status.id }}'>{{ status.title }}</option>
             {% endfor %}

@@ -283,12 +283,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // save the new group in metadata
         metadata.elabftw.extra_fields_groups.push({'id': groupId, 'name': nameInput.value});
         // Display new groups and allow editing/deleting them
-        const fieldsGroup = document.getElementById('fieldsGroup') as HTMLUListElement;
+        const fieldsGroup = document.getElementById('fieldsGroup') as HTMLElement;
         // don't use the update method because we don't need to refresh the inputs
         MetadataC.save(metadata).then(() => {
-          if (document.getElementById('noGroup')) {
-            document.getElementById('noGroup').remove();
-          }
           const newInputGroup: HTMLDivElement = document.createElement('div');
           newInputGroup.classList.add('input-group', 'mb-1');
           newInputGroup.setAttribute('data-target', 'group-item');
@@ -302,14 +299,17 @@ document.addEventListener('DOMContentLoaded', () => {
           const appendDiv = document.createElement('div');
           appendDiv.classList.add('input-group-append');
 
-          const deleteButton = createButton('remove-fields-group', 'btn-secondary', '-');
           const updateButton = createButton('update-fields-group', 'btn-primary');
+          const deleteButton = createButton('remove-fields-group', 'btn-secondary');
           const saveIcon = document.createElement('i');
           saveIcon.classList.add('fas', 'fa-save', 'text-white');
           updateButton.appendChild(saveIcon);
+          const deleteIcon = document.createElement('i');
+          deleteIcon.classList.add('fas', 'fa-trash-alt', 'text-white');
+          deleteButton.appendChild(deleteIcon);
           // Append buttons to the appendDiv
-          appendDiv.appendChild(deleteButton);
           appendDiv.appendChild(updateButton);
+          appendDiv.appendChild(deleteButton);
           // Append input and appendDiv to the main groupDiv
           newInputGroup.appendChild(inputEl);
           newInputGroup.appendChild(appendDiv);

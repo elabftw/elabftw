@@ -274,6 +274,10 @@ class MakeEln extends AbstractMakeEln
         }
         // now add one for all the extra fields
         foreach ($metadata[Metadata::ExtraFields->value] as $name => $props) {
+            // if the value is unset, skip it
+            if (empty($props['value'])) {
+                continue;
+            }
             // https://schema.org/PropertyValue
             $pv = array();
             $pv['@type'] = 'PropertyValue';

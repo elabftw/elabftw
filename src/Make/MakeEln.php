@@ -277,6 +277,7 @@ class MakeEln extends AbstractMakeEln
             // https://schema.org/PropertyValue
             $pv = array();
             $pv['@type'] = 'PropertyValue';
+            $pv['@id'] = 'pv://' . Tools::getUuidv4();
             $pv['propertyID'] = $name;
             $pv['valueReference'] = $props['type'];
             $pv['value'] = $props['value'] ?? '';

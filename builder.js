@@ -70,6 +70,7 @@ module.exports = (env) => {
         'prismjs/components/prism-python.js',
         'prismjs/components/prism-r.js',
         'prismjs/components/prism-ruby.js',
+        'prismjs/components/prism-rust.js',
         'prismjs/components/prism-sql.js',
         'prismjs/components/prism-tcl.js',
         'prismjs/components/prism-vhdl.js',

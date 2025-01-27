@@ -27,7 +27,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
-          version: docker23
+          version: docker24
           # docker_layer_caching: true # DLC will explicitly cache layers here and try to avoid rebuilding.
           # docker_layer_caching is behind a paywall
       - run:

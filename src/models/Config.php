@@ -24,12 +24,20 @@ use PDO;
 
 use function array_map;
 use function urlencode;
+use function apcu_fetch;
+use function apcu_store;
+use function apcu_exists;
+use function apcu_delete;
 
 /**
  * The general config table
  */
 final class Config extends AbstractRest
 {
+    private const string CACHE_KEY = 'config_table';
+
+    private const int CACHE_TTL_SECONDS = 9001;
+
     // the array with all config
     public array $configArr = array();
 
@@ -231,6 +239,12 @@ final class Config extends AbstractRest
 
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
+        // this select is executed every query, so we cache the result in memory
+        if (apcu_exists(self::CACHE_KEY)) {
+            return apcu_fetch(self::CACHE_KEY);
+        }
+
+        // cache miss, do sql query
         $sql = 'SELECT * FROM config';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
@@ -241,7 +255,10 @@ final class Config extends AbstractRest
             $config['remote_dir_config'][0] = TwigFilters::decrypt($config['remote_dir_config'][0]);
         }
 
-        return array_map(fn($v): mixed => $v[0], $config);
+        // we want key => value array
+        $result = array_map(fn($v): mixed => $v[0], $config);
+        apcu_store(self::CACHE_KEY, $result, self::CACHE_TTL_SECONDS);
+        return $result;
     }
 
     /**
@@ -285,6 +302,7 @@ final class Config extends AbstractRest
             }
         }
 
+        apcu_delete(self::CACHE_KEY);
         return $this->readAll();
     }
 

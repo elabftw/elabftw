@@ -59,7 +59,8 @@ class Compounds extends AbstractRest
             return $this->searchPubChem($queryParams->getQuery()->getInt('search_pubchem_cid'))->toArray();
         }
         if (!empty($queryParams->getQuery()->get('search_fp_smi'))) {
-            return $this->searchFingerprint($this->getFingerprintFromSmiles($queryParams->getQuery()->getString('search_fp_smi')));
+            $q = $queryParams->getQuery();
+            return $this->searchFingerprint($this->getFingerprintFromSmiles($q->getString('search_fp_smi')), $q->getBoolean('exact'));
         }
         $sql = $this->getSelectBeforeWhere() . ' WHERE 1=1';
         if ($queryParams->getQuery()->get('q')) {
@@ -283,7 +284,7 @@ class Compounds extends AbstractRest
             LEFT JOIN users ON (users.userid = entity.userid)';
     }
 
-    private function searchFingerprint(array $fp): array
+    private function searchFingerprint(array $fp, bool $exact = false): array
     {
         // if all values of FP are 0, we cannot check for it, so return early
         if (array_sum($fp['data']) === 0) {
@@ -308,7 +309,12 @@ class Compounds extends AbstractRest
             if ($value == 0) {
                 continue;
             }
-            $sql .= sprintf(' AND fp%d & %d = %d', $key, $value, $value);
+            // this will do an approximate substructure search
+            $exactModifier = sprintf(' & %d ', $value);
+            if ($exact) {
+                $exactModifier = '';
+            }
+            $sql .= sprintf(' AND fp%d %s = %d', $key, $exactModifier, $value);
         }
 
         $sql .= ' ORDER BY similarity_score, id DESC LIMIT 500';

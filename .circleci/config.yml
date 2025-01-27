@@ -32,7 +32,10 @@ jobs:
           # docker_layer_caching is behind a paywall
       - run:
           name: temporary for cache bust
-          command: docker system prune -af
+          command: "docker pull elabftw/elabimg@sha256:43eb798d8bc2e53455a02e1e1310f0f1214853ac3b9cbcb9f1e5b09ce7e5d6f5"
+      - run:
+          name: temporary for cache bust part 2
+          command: "docker tag elabftw/elabimg@sha256:43eb798d8bc2e53455a02e1e1310f0f1214853ac3b9cbcb9f1e5b09ce7e5d6f5 elabftw/elabimg:hypernext"
       - run:
           name: Prepare docker-compose.yml
           # Don't bind mount here, files are copied. See circleci.Dockerfile

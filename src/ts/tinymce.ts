@@ -340,7 +340,6 @@ export function getTinymceBaseConfig(page: string): object {
           if (rule instanceof CSSStyleRule) {
             const selectors = rule.selectorText.split(',');
             const modifiedSelectors = selectors.map((selector) => selector.trim() + ':not(.mce-preview-body *)').join(',');
-            console.log(modifiedSelectors);
             rule.selectorText = modifiedSelectors;
             skinCSS.deleteRule(index);
             skinCSS.insertRule(rule.cssText, index);

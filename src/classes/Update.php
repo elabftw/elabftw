@@ -14,6 +14,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidSchemaException;
+use Elabftw\Models\Config;
 use PDO;
 
 use function bin2hex;
@@ -86,6 +87,8 @@ class Update
             }
         }
 
+        $Config = Config::getConfig();
+        $Config->bustCache();
         return $warn;
     }
 

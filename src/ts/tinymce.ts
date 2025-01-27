@@ -330,8 +330,23 @@ export function getTinymceBaseConfig(page: string): object {
     setup: (editor: Editor): void => {
       // holds the timer setTimeout function
       let typingTimer;
-      // make the edges round
-      editor.on('init', () => editor.getContainer().className += ' rounded');
+      editor.on('init', () => {
+        // make the edges round
+        editor.getContainer().className += ' rounded';
+        // prevent skin.min.css from changing appearance of .mce-preview-body element
+        const skinNode = document.querySelector('[rel=stylesheet][href$="/skin.min.css"]') as HTMLLinkElement;
+        const skinCSS = skinNode.sheet;
+        Array.from(skinCSS.cssRules).forEach((rule, index) => {
+          if (rule instanceof CSSStyleRule) {
+            const selectors = rule.selectorText.split(',');
+            const modifiedSelectors = selectors.map((selector) => selector.trim() + ':not(.mce-preview-body *)').join(',');
+            console.log(modifiedSelectors);
+            rule.selectorText = modifiedSelectors;
+            skinCSS.deleteRule(index);
+            skinCSS.insertRule(rule.cssText, index);
+          }
+        });
+      });
       // Hook into the blur event - Finalize potential changes to images if user clicks outside of editor
       editor.on('blur', () => {
         // this will trigger the images_upload_handler event hook defined further above
@@ -476,11 +491,6 @@ export function getTinymceBaseConfig(page: string): object {
       },
     ],
     toolbar_sticky: true,
-    // specifying custom CSS for properly rendering MathJax in TinyMCE instance
-    // CSS properties obtained from inspecting the inline CSS for MathJax elements displayed in view mode (MathJax 3.2.2)
-    content_style: 'mjx-assistive-mml { position: absolute !important; top: 0px; left: 0px; clip: rect(1px, 1px, 1px, 1px); padding: 1px 0px 0px 0px !important; border: 0px !important; display: block !important; width: auto !important; overflow: hidden !important; user-select: none; }' +
-      'g[data-mml-node="merror"] > rect[data-background] { fill: yellow; stroke: none; }' +
-      'g[data-mml-node="merror"] > g { fill: red; stroke: red; }',
     // render MathJax for TinyMCE preview
     init_instance_callback: (editor) => {
       editor.on('ExecCommand', (e) => {
@@ -488,16 +498,15 @@ export function getTinymceBaseConfig(page: string): object {
           // declaration as iFrame element required to avoid errors with getting srcdoc property
           const iframe = (document.querySelector('iframe.tox-dialog__iframe') as HTMLIFrameElement);
           if (iframe) {
-            const htmlString = iframe.srcdoc;
-            // reload iFrame container text
-            iframe.srcdoc = '';
-            iframe.srcdoc = htmlString;
-            // parse text with MathJax once iFrame has been fully loaded
             iframe.onload = () => {
-              // parse text only when iFrame is finished being loaded
-              if (iframe.contentDocument && iframe.contentDocument.body) {
-                MathJax.typesetPromise([iframe.contentDocument.body]);
-              }
+              const tinyDiv = document.createElement('div');
+              tinyDiv.setAttribute('class', 'mce-content-body mce-preview-body');
+              iframe.contentDocument.body.childNodes.forEach((node) => {
+                tinyDiv.append(node);
+              });
+              // iframe replaced with div element because MathJax otherwise doesn't render menus properly; see #5295
+              iframe.replaceWith(tinyDiv);
+              MathJax.typesetPromise();
             };
           }
         }

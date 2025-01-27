@@ -229,8 +229,12 @@ document.addEventListener('DOMContentLoaded', () => {
           const form = (document.getElementById('newFieldForm') as HTMLFormElement);
           // remove all extra inputs (dropdown and radio)
           form.querySelectorAll('.is-extra-input').forEach(i => i.parentElement.remove());
+          // keep track of the selected group, so it stays the same and it's easy to add another input in the same group afterwards
+          const selectedGroup = grpSel.value;
           // clear all fields
           form.reset();
+          // restore original value
+          grpSel.value = selectedGroup;
         });
       });
     // ADD OPTION FOR SELECT OR RADIO

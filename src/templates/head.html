@@ -34,6 +34,8 @@
 </head>
 
 <body>
+{# skip link for accessibility: RGAA 4.0 12.7 link goes to content directly, skipping menu/header/nav #}
+<a class='sr-only' aria-label='{{ 'Skip to content'|trans }}' href='#content-start'></a>
 {# when this disappears from the viewport, scroll to top button appears #}
 <div id='scrollTopBtnAnchor'></div>
 

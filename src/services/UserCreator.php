@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\UserParams;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
+use Elabftw\Params\UserParams;
 
 class UserCreator
 {
@@ -46,22 +46,18 @@ class UserCreator
         $validUntil = $this->reqBody['valid_until'] ?? null;
         $orgid = null;
         if (isset($this->reqBody['orgid'])) {
-            $orgid = (new UserParams('orgid', $this->reqBody['orgid']))->getContent();
+            $orgid = (new UserParams('orgid', $this->reqBody['orgid']))->getStringContent();
         }
         return (new Users(null, null, $this->requester))->createOne(
-            (new UserParams('email', $this->reqBody['email']))->getContent(),
-            $teams,
-            (new UserParams('firstname', $this->reqBody['firstname']))->getContent(),
-            (new UserParams('lastname', $this->reqBody['lastname']))->getContent(),
-            // password is never set by admin/sysadmin
-            '',
-            Check::usergroup($this->requester, Usergroup::from((int) ($this->reqBody['usergroup'] ?? Usergroup::User->value))),
-            // automatically validate user
-            true,
-            // don't alert admin
-            false,
-            $validUntil,
-            $orgid,
+            email: (new UserParams('email', $this->reqBody['email']))->getStringContent(),
+            teams: $teams,
+            firstname: (new UserParams('firstname', $this->reqBody['firstname']))->getStringContent(),
+            lastname: (new UserParams('lastname', $this->reqBody['lastname']))->getStringContent(),
+            usergroup: Check::usergroup($this->requester, Usergroup::from((int) ($this->reqBody['usergroup'] ?? Usergroup::User->value))),
+            automaticValidationEnabled: true,
+            alertAdmin: false,
+            validUntil: $validUntil,
+            orgid: $orgid,
         );
     }
 }

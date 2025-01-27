@@ -12,19 +12,19 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\TeamParam;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\RestInterface;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Notifications\OnboardingEmail;
+use Elabftw\Params\TeamParam;
 use Elabftw\Services\Filter;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\SetIdTrait;
+use Override;
 use PDO;
 use RuntimeException;
 
@@ -34,7 +34,7 @@ use function trim;
 /**
  * All about the teams
  */
-class Teams implements RestInterface
+class Teams extends AbstractRest
 {
     use SetIdTrait;
 
@@ -42,11 +42,9 @@ class Teams implements RestInterface
 
     public bool $bypassReadPermission = false;
 
-    protected Db $Db;
-
     public function __construct(public Users $Users, ?int $id = null)
     {
-        $this->Db = Db::getConnection();
+        parent::__construct();
         if ($id === null && ($Users->userData['team'] ?? 0) !== 0) {
             $id = $Users->userData['team'];
         }
@@ -118,6 +116,7 @@ class Teams implements RestInterface
         return 'api/v2/teams/';
     }
 
+    #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
         $this->canWriteOrExplode();
@@ -130,6 +129,7 @@ class Teams implements RestInterface
     /**
      * Read one team
      */
+    #[Override]
     public function readOne(): array
     {
         $this->canReadOrExplode();
@@ -144,7 +144,8 @@ class Teams implements RestInterface
     /**
      * Read all teams (only for sysadmin via api, otherwise set overrideReadPermissions to true)
      */
-    public function readAll(): array
+    #[Override]
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $this->canReadOrExplode();
         $sql = 'SELECT * FROM teams ORDER BY name ASC';
@@ -166,6 +167,7 @@ class Teams implements RestInterface
         return $req->fetchAll();
     }
 
+    #[Override]
     public function patch(Action $action, array $params): array
     {
         $this->canWriteOrExplode();
@@ -188,6 +190,7 @@ class Teams implements RestInterface
     /**
      * Delete a team only if all the stats are at zero
      */
+    #[Override]
     public function destroy(): bool
     {
         // check for stats, should be 0

@@ -37,7 +37,7 @@ $text-muted: $medium;
 
 @import 'animations';
 @import 'autocomplete';
-@import 'chemdoodle';
+/** @import 'chemdoodle'; */
 @import 'footer';
 @import 'header';
 @import 'star-rating';
@@ -419,6 +419,16 @@ button:disabled {
     /* stylelint-disable-next-line selector-no-qualifying-type */
     &.bgnd-transparent {
       background-color: $mainbackground;
+    }
+  }
+
+  td {
+    width: fit-content;
+
+    img {
+      object-fit: contain;
+      max-width: 100%;
+      height: auto;
     }
   }
 
@@ -1477,6 +1487,10 @@ input:focus + .slider {
   box-shadow: 0 0 8px $elabblue;
 }
 
+input:invalid {
+  border: 1px solid $dangerred;
+}
+
 input:checked + .slider::before {
   transform: translateX(20px);
 }
@@ -1548,4 +1562,41 @@ input:checked + .slider::before {
       top: 4px;
     }
   }
+}
+
+#ketcher-root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;   /* Make the editor fill the entire width */
+}
+
+.ketcher-editor-container {
+  /*flex-grow: 1; /* Make the editor grow to fill available space */
+  flex: 0 1 620px;
+  display: flex;
+  flex-direction: column;
+}
+
+.ketcher-editor-container .editor {
+  /*flex-grow: 1; /* Allow the drawing area to take up all remaining space */
+  flex: 0 1 620px;
+  min-height: 500px; /* Ensure a minimum height */
+}
+
+.ketcher-editor-container .toolbar {
+  flex-shrink: 0; /* Ensure toolbars do not shrink */
+}
+
+#storageDiv {
+  details,
+  summary {
+    margin: 10px 0;
+  }
+}
+
+/* top right button */
+.initials {
+  font-weight: bold;
+  color: $secondlevel;
+  font-size: 1.5rem;
 }

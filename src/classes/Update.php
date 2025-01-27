@@ -33,21 +33,13 @@ use function sprintf;
 class Update
 {
     /** @var int REQUIRED_SCHEMA the current version of the database structure */
-    public const int REQUIRED_SCHEMA = 166;
+    public const int REQUIRED_SCHEMA = 169;
 
     private Db $Db;
 
     public function __construct(private int $currentSchema, private Sql $Sql)
     {
         $this->Db = Db::getConnection();
-    }
-
-    /**
-     * Get the current required schema
-     */
-    public static function getRequiredSchema(): int
-    {
-        return self::REQUIRED_SCHEMA;
     }
 
     /**

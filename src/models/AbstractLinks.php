@@ -12,14 +12,14 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\RestInterface;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Traits\SetIdTrait;
+use Override;
 use PDO;
 
 use function intval;
@@ -28,17 +28,15 @@ use function json_encode;
 /**
  * All about Links
  */
-abstract class AbstractLinks implements RestInterface
+abstract class AbstractLinks extends AbstractRest
 {
     use SetIdTrait;
 
-    protected Db $Db;
-
     public function __construct(public AbstractEntity $Entity, ?int $id = null)
     {
-        $this->Db = Db::getConnection();
+        parent::__construct();
         // this field corresponds to the target id (link_id)
-        $this->id = $id;
+        $this->setId($id);
     }
 
     public function getApiPath(): string
@@ -46,15 +44,11 @@ abstract class AbstractLinks implements RestInterface
         return sprintf('%s%d/%s/', $this->Entity->getApiPath(), $this->Entity->id ?? '', $this->getTable());
     }
 
-    public function patch(Action $action, array $params): array
-    {
-        return array();
-    }
-
     /**
      * Get links for an entity
      */
-    public function readAll(): array
+    #[Override]
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         // main category table
         $sql = 'SELECT entity.id AS entityid,
@@ -83,11 +77,6 @@ abstract class AbstractLinks implements RestInterface
         $this->Db->execute($req);
 
         return $req->fetchAll();
-    }
-
-    public function readOne(): array
-    {
-        return $this->readAll();
     }
 
     /**
@@ -144,6 +133,7 @@ abstract class AbstractLinks implements RestInterface
         return (int) $this->Db->execute($req);
     }
 
+    #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
         return match ($action) {
@@ -153,6 +143,7 @@ abstract class AbstractLinks implements RestInterface
         };
     }
 
+    #[Override]
     public function destroy(): bool
     {
         $this->Entity->canOrExplode('write');

@@ -98,6 +98,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // SCHEDULER
   const calendar = new Calendar(calendarEl, {
+    height: '70vh',
+    // Determines how far forward the scroll pane is initially scrolled.
+    scrollTime: '08:00:00',
+    weekends: calendarEl.dataset.weekends === '1',
     plugins: [ dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin, bootstrapPlugin ],
     headerToolbar: {
       left: 'prev,next today',

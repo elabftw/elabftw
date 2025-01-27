@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block body %}
+{% include('edit-compound-modal.html') %}
+{% include('create-resource-from-compound-modal.html') %}
+<div id='ketcher-root' class='my-2'></div>
+<div id='ketcher-actions'>
+  <button type='button' class='btn btn-primary' data-action='search-from-editor'>{{ 'Search similar structures'|trans }}</button>
+</div>
+<div id='searchFpResultsDiv' hidden>
+  <h3 class='mb-2'>{{ 'Compounds substructure search results'|trans }}</h3>
+  <input type='hidden' id='substructureSearchInput' />
+  <ul id='searchFpSmiList' class='list-group'></ul>
+  <div id='compounds-table'></div>
+</div>
+{% endblock body %}

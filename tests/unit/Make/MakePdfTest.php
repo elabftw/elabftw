@@ -76,4 +76,24 @@ class MakePdfTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertEquals('application/pdf', $this->MakePdf->getContentType());
     }
+
+    public function testEntityRenderContainsKeyDates(): void
+    {
+        $fresh = $this->getFreshExperiment();
+        // lock and timestamp it, before unlocking it
+        $fresh->lock();
+        $fresh->patch(Action::Timestamp, array());
+        $this->assertEquals(1, $fresh->entityData['locked']);
+        $this->assertEquals(1, $fresh->entityData['timestamped']);
+        $this->assertNotEquals('Unknown', $fresh->getLockerFullname());
+        $this->assertNotEquals('Unknown', $fresh->getTimestamperFullname());
+
+        $fresh->unlock();
+        $this->assertEquals(0, $fresh->entityData['locked']);
+        $this->assertEquals('Unknown', $fresh->getLockerFullname());
+
+        // Destroy fresh experiment to keep the timestamp count stable for other tests
+        // Refer to testGetTimestampThisMonth()
+        $fresh->destroy();
+    }
 }

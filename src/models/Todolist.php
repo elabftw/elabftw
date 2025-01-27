@@ -12,29 +12,27 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ContentParams;
-use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Interfaces\ContentParamsInterface;
-use Elabftw\Interfaces\RestInterface;
+use Elabftw\Interfaces\QueryParamsInterface;
+use Elabftw\Params\ContentParams;
 use Elabftw\Traits\SetIdTrait;
 use Elabftw\Traits\SortableTrait;
+use Override;
 use PDO;
 
 /**
  * All about the todolist
  */
-class Todolist implements RestInterface
+class Todolist extends AbstractRest
 {
     use SetIdTrait;
     use SortableTrait;
 
-    protected Db $Db;
-
     public function __construct(private int $userid, ?int $id = null)
     {
-        $this->Db = Db::getConnection();
-        $this->id = $id;
+        parent::__construct();
+        $this->setId($id);
     }
 
     public function getApiPath(): string
@@ -42,6 +40,7 @@ class Todolist implements RestInterface
         return 'api/v2/todolist/';
     }
 
+    #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
         $content = $reqBody['content'] ?? '';
@@ -58,7 +57,8 @@ class Todolist implements RestInterface
     /**
      * Select all the todoitems for a user
      */
-    public function readAll(): array
+    #[Override]
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = 'SELECT * FROM todolist WHERE userid = :userid ORDER BY ordering ASC, creation_time DESC';
         $req = $this->Db->prepare($sql);
@@ -68,6 +68,7 @@ class Todolist implements RestInterface
         return $req->fetchAll();
     }
 
+    #[Override]
     public function readOne(): array
     {
         $sql = 'SELECT * FROM todolist WHERE id = :id AND userid = :userid';
@@ -79,6 +80,7 @@ class Todolist implements RestInterface
         return $this->Db->fetch($req);
     }
 
+    #[Override]
     public function patch(Action $action, array $params): array
     {
         foreach ($params as $key => $value) {
@@ -87,6 +89,7 @@ class Todolist implements RestInterface
         return $this->readOne();
     }
 
+    #[Override]
     public function destroy(): bool
     {
         $sql = 'DELETE FROM todolist WHERE id = :id AND userid = :userid';

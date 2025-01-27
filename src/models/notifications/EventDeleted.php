@@ -16,6 +16,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\EmailTarget;
 use Elabftw\Enums\Notifications;
 use Elabftw\Interfaces\MailableInterface;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Models\Config;
 use Elabftw\Services\Email;
@@ -38,10 +39,10 @@ class EventDeleted extends AbstractNotifications implements MailableInterface, R
 
     public function readOne(): array
     {
-        return $this->readAll();
+        return array();
     }
 
-    public function readAll(): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         return array();
     }

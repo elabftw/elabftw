@@ -12,14 +12,18 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\OrderingParams;
-use Elabftw\Elabftw\StatusParams;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\Orderby;
 use Elabftw\Enums\State;
+use Elabftw\Params\BaseQueryParams;
+use Elabftw\Params\OrderingParams;
+use Elabftw\Params\StatusParams;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
+use Symfony\Component\HttpFoundation\InputBag;
 
 /**
  * Status for experiments or items
@@ -71,7 +75,7 @@ abstract class AbstractStatus extends AbstractCategory
 
     public function readOne(): array
     {
-        $sql = sprintf('SELECT id, title, color, is_default
+        $sql = sprintf('SELECT id, title, color, is_default, ordering, state, team
             FROM %s WHERE id = :id', $this->table);
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -79,16 +83,23 @@ abstract class AbstractStatus extends AbstractCategory
         return $this->Db->fetch($req);
     }
 
+    public function getQueryParams(InputBag $query = null): QueryParamsInterface
+    {
+        return new BaseQueryParams(query: $query, orderby: Orderby::Ordering);
+    }
+
     /**
      * Get all status from team
      */
-    public function readAll(): array
+    public function readAll(QueryParamsInterface $queryParams = null): array
     {
-        $sql = sprintf('SELECT id, title, color, is_default
-            FROM %s WHERE team = :team AND state = :state ORDER BY ordering ASC', $this->table);
+        $sql = sprintf('SELECT id, title, color, is_default, ordering, state, team
+            FROM %s AS entity WHERE team = :team', $this->table);
+        $queryParams ??= $this->getQueryParams();
+        $sql .= $queryParams->getSql();
+
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Teams->id, PDO::PARAM_INT);
-        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
         $this->Db->execute($req);
         return $req->fetchAll();
     }

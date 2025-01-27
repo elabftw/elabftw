@@ -274,9 +274,14 @@ class MakeEln extends AbstractMakeEln
         }
         // now add one for all the extra fields
         foreach ($metadata[Metadata::ExtraFields->value] as $name => $props) {
+            // if the value is unset, skip it
+            if (empty($props['value'])) {
+                continue;
+            }
             // https://schema.org/PropertyValue
             $pv = array();
             $pv['@type'] = 'PropertyValue';
+            $pv['@id'] = 'pv://' . Tools::getUuidv4();
             $pv['propertyID'] = $name;
             $pv['valueReference'] = $props['type'];
             $pv['value'] = $props['value'] ?? '';
@@ -310,7 +315,7 @@ class MakeEln extends AbstractMakeEln
             'email' => $author->userData['email'],
         );
         // only add an identifier property if there is an orcid
-        if ($author->userData['orcid'] !== null) {
+        if (!empty($author->userData['orcid'])) {
             $node['identifier'] = 'https://orcid.org/' . $author->userData['orcid'];
         }
         // only add it if it doesn't exist yet in our list of authors

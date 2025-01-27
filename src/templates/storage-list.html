@@ -1,0 +1,38 @@
+{# var: storage_editable bool #}
+{# var: storageUnitsArr array #}
+<div class='mb-2'>
+  <a href='#' data-action='expand-all-storage'>{{ 'Expand all'|trans }}</a>
+</div>
+<div id='storageDiv'>
+  {% macro render_items(items, groupedItems, storage_editable) %}
+    <ul class='list-group'>
+      {% for item in items %}
+        <li class='list-group-item py-2'>
+          <details {% if item.children_count == 0 %}open{% endif %}>
+            <summary>{{ item.name }} {% if item.children_count > 0 %}({{ item.children_count }}){% endif %}</summary>
+            {% if groupedItems[item.id] is defined %}
+              {# Recursively render the children #}
+              {{ _self.render_items(groupedItems[item.id], groupedItems, storage_editable) }}
+            {% endif %}
+            <div>
+              {% if storage_editable %}
+                <button type='button' class='btn btn-secondary btn-sm' data-parent-id='{{ item.id }}' data-action='add-storage-children'><i class='fas fa-plus-circle mr-1 color-white'></i>{{ 'Add children to %s'|trans|format(item.name) }}</button>
+                <button type='button' class='btn btn-danger btn-sm' data-id='{{ item.id }}' data-action='destroy-storage'><i class='fas fa-minus-circle mr-1 color-white'></i>{{ 'Delete %s and its children'|trans|format(item.name) }}</button>
+              {% else %}
+              <button type='button' class='btn btn-primary btn-sm' data-id='{{ item.id }}' data-dismiss='modal' data-action='create-container'><i class='fas fa-location-dot mr-1 color-white'></i>{{ 'Store in %s'|trans|format(item.name) }}</button>
+              {% endif %}
+              <a class='btn btn-secondary btn-sm' href='?storage_unit={{ item.id }}'><i class='fas fa-magnifying-glass mr-1 color-white'></i>{{ 'Display content'|trans }}</a>
+            </div>
+          </details>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endmacro %}
+  {# Start rendering from the root level, which has parent_id = null #}
+  {{ _self.render_items(storageUnitsArr[null], storageUnitsArr, storage_editable) }}
+  <div>
+    {% if storage_editable %}
+      <button type='button' class='btn btn-secondary btn-sm' data-parent-id='' data-action='add-storage-children'><i class='fas fa-plus-circle mr-1 color-white'></i>{{ 'Add root element'|trans }}</button>
+    {% endif %}
+  </div>
+</div>

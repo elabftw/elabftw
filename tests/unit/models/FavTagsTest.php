@@ -53,11 +53,6 @@ class FavTagsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->FavTags->readOne());
     }
 
-    public function testPatch(): void
-    {
-        $this->assertIsArray($this->FavTags->patch(Action::Update, array()));
-    }
-
     public function testDestroy(): void
     {
         $this->FavTags->setId(1);

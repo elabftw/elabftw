@@ -25,6 +25,9 @@ module.exports = (env) => {
         './src/ts/common.ts',
         './src/ts/i18n.ts',
         './src/ts/steps-links.ts',
+        './src/ts/ketcher.jsx',
+        './src/ts/ketcher-editor.jsx',
+        './src/ts/compounds-table.jsx',
         './src/ts/tags.ts',
         './src/ts/admin.ts',
         './src/ts/profile.ts',
@@ -67,6 +70,7 @@ module.exports = (env) => {
         'prismjs/components/prism-python.js',
         'prismjs/components/prism-r.js',
         'prismjs/components/prism-ruby.js',
+        'prismjs/components/prism-rust.js',
         'prismjs/components/prism-sql.js',
         'prismjs/components/prism-tcl.js',
         'prismjs/components/prism-vhdl.js',
@@ -99,9 +103,18 @@ module.exports = (env) => {
           filename: 'vendor.min.css',
         }
       ),
+      // required to make process work in the browser
+      new webpack.ProvidePlugin({
+        process: 'process/browser',
+      }),
     ],
     resolve: {
-      extensions: ['.ts', '.js'],
+      extensions: ['.ts', '.js', '.jsx'],
+      fallback: {
+        // required by react 18
+        process: require.resolve('process/browser'),
+        util: require.resolve('util/'),
+      },
     },
     module: {
       rules:[
@@ -121,6 +134,10 @@ module.exports = (env) => {
             MiniCssExtractPlugin.loader,
             'css-loader',
           ],
+        },
+        {
+        test: /\.jsx?$/,
+        use: ["babel-loader"]
         },
         { // SASS loader
           test: /\.scss$/,

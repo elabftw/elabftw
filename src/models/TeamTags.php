@@ -12,72 +12,74 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\TagParam;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\RestInterface;
+use Elabftw\Interfaces\QueryParamsInterface;
+use Elabftw\Params\TagParam;
 use Elabftw\Traits\SetIdTrait;
+use Override;
 use PDO;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * All about the tag but seen from a team perspective, not an entity
  */
-class TeamTags implements RestInterface
+class TeamTags extends AbstractRest
 {
     use SetIdTrait;
 
-    protected Db $Db;
-
     public function __construct(public Users $Users, ?int $id = null)
     {
-        $this->Db = Db::getConnection();
+        parent::__construct();
         $this->setId($id);
     }
 
     public function getApiPath(): string
     {
-        return sprintf('api/v2/teams/%d/tags/%d', $this->Users->userData['team'], $this->id ?? '');
+        return sprintf('api/v2/teams/%d/tags/', $this->Users->userData['team']);
+    }
+
+    // look if the tag exists already
+    public function exists(TagParam $params): bool
+    {
+        return (bool) $this->getTagIdFromTag($params);
+    }
+
+    /**
+     * This will return the id of an existing tag in the team if it exists already
+     */
+    public function create(TagParam $params): int
+    {
+        $sql = 'INSERT INTO tags (tag, team) VALUES(:tag, :team) ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id)';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindValue(':tag', $params->getContent());
+        $this->Db->execute($req);
+        return $this->Db->lastInsertId();
     }
 
     /**
      * Create a new tag in that team
      */
+    #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
-        if ($action !== Action::Create) {
-            throw new ImproperActionException('Invalid action');
+        if (!$this->Users->isAdmin) {
+            throw new IllegalActionException('Only an admin can do this!');
         }
         $tag = $reqBody['tag'] ?? throw new ImproperActionException('Missing required tag key!');
-
-        // look if the tag exists already
-        $sql = 'SELECT id FROM tags WHERE tag = :tag AND team = :team';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindValue(':tag', $tag);
-        $this->Db->execute($req);
-        $res = $req->fetch();
-        // insert the tag if it doesn't exist
-        if ($res === false) {
-            $sql = 'INSERT INTO tags (tag, team) VALUES(:tag, :team)';
-            $req = $this->Db->prepare($sql);
-            $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-            $req->bindValue(':tag', $tag);
-            $this->Db->execute($req);
-            return $this->Db->lastInsertId();
-        }
-        return 0;
+        return $this->create(new TagParam($tag));
     }
 
+    #[Override]
     public function readOne(): array
     {
-        $sql = 'SELECT tag, id
-            FROM tags
-            WHERE team = :team
-            AND id = :id';
+        $sql = 'SELECT tags.id, (tags_id IS NOT NULL) AS is_favorite, COUNT(tags2entity.id) AS item_count, tags.tag, tags.team
+            FROM tags LEFT JOIN tags2entity ON tags2entity.tag_id = tags.id
+            LEFT JOIN favtags2users ON (favtags2users.users_id = :userid AND favtags2users.tags_id = tags.id)
+            WHERE team = :team AND tags.id = :id HAVING tags.id IS NOT NULL';
         $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -88,11 +90,12 @@ class TeamTags implements RestInterface
     /**
      * Read all the tags from team. This one can be called from api and will filter based on q param in query
      */
-    public function readAll(): array
+    #[Override]
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        // TODO move this out of here
-        $query = (Request::createFromGlobals())->query->getString('q');
-        $sql = 'SELECT tag, tags.id, COUNT(tags2entity.id) AS item_count, (tags_id IS NOT NULL) AS is_favorite
+        $queryParams ??= $this->getQueryParams();
+        $query = $queryParams->getQuery()->getString('q');
+        $sql = 'SELECT tags.id, (tags_id IS NOT NULL) AS is_favorite, COUNT(tags2entity.id) AS item_count, tags.tag, tags.team
             FROM tags LEFT JOIN tags2entity ON tags2entity.tag_id = tags.id
             LEFT JOIN favtags2users ON (favtags2users.users_id = :userid AND favtags2users.tags_id = tags.id)
             WHERE team = :team AND tags.tag LIKE :query GROUP BY tags.id ORDER BY tag';
@@ -105,28 +108,13 @@ class TeamTags implements RestInterface
         return $req->fetchAll();
     }
 
-    /**
-     * This is to get the full list of the tags in the team no matter what
-     */
-    public function readFull(): array
-    {
-        $sql = 'SELECT tag, tags.id, COUNT(tags2entity.id) AS item_count
-            FROM tags LEFT JOIN tags2entity ON tags2entity.tag_id = tags.id
-            WHERE team = :team GROUP BY tags.id ORDER BY item_count DESC';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        return $req->fetchAll();
-    }
-
+    #[Override]
     public function patch(Action $action, array $params): array
     {
         if (!$this->Users->isAdmin) {
             throw new IllegalActionException('Only an admin can do this!');
         }
         return match ($action) {
-            Action::Deduplicate => $this->deduplicate(),
             Action::UpdateTag => $this->updateTag(new TagParam($params['tag'])),
             default => throw new ImproperActionException('Invalid action for tags.'),
         };
@@ -135,6 +123,7 @@ class TeamTags implements RestInterface
     /**
      * Destroy a tag completely. Unreference it from everywhere and then delete it
      */
+    #[Override]
     public function destroy(): bool
     {
         if (!$this->Users->isAdmin) {
@@ -153,27 +142,14 @@ class TeamTags implements RestInterface
         return $this->Db->execute($req);
     }
 
-    /**
-     * If we have the same tag (after correcting a typo),
-     * remove the tags that are the same and reference only one
-     */
-    private function deduplicate(): array
+    private function getTagIdFromTag(TagParam $params): int
     {
-        // first get the ids of all the tags that are duplicated in the team
-        $sql = 'SELECT GROUP_CONCAT(id) AS id_list FROM tags WHERE tag in (
-            SELECT tag FROM tags WHERE team = :team GROUP BY tag HAVING COUNT(*) > 1
-        ) AND team = :team GROUP BY tag;';
+        $sql = 'SELECT id FROM tags WHERE tag = :tag AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindValue(':tag', $params->getContent());
         $this->Db->execute($req);
-
-        $idsToDelete = $req->fetchAll();
-        // loop on each tag that needs to be deduplicated and do the work
-        foreach ($idsToDelete as $idsList) {
-            $this->deduplicateFromIdsList($idsList['id_list']);
-        }
-
-        return $this->readAll();
+        return (int) $req->fetchColumn();
     }
 
     /**
@@ -208,6 +184,14 @@ class TeamTags implements RestInterface
 
     private function updateTag(TagParam $params): array
     {
+        // if the tag exists already the SQL Update statement will throw an error because of the unique key tag/team
+        // what we want to do is to assign entries with the old tag to the new tag id, and then delete the old tag
+        $id = $this->getTagIdFromTag($params);
+        if ($id > 0) {
+            $this->deduplicateFromIdsList(sprintf('%d,%d', $this->id ?? throw new ImproperActionException('Missing id for tag'), $id));
+            return $this->readAll();
+        }
+
         // use the team in the sql query to prevent one admin from editing tags from another team
         $sql = 'UPDATE tags SET tag = :tag WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);

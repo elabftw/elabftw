@@ -12,28 +12,26 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\TagParam;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\RestInterface;
+use Elabftw\Interfaces\QueryParamsInterface;
+use Elabftw\Params\TagParam;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\SetIdTrait;
+use Override;
 use PDO;
 
 /**
  * All about the tag
  */
-class Tags implements RestInterface
+class Tags extends AbstractRest
 {
     use SetIdTrait;
 
-    protected Db $Db;
-
     public function __construct(public AbstractEntity $Entity, ?int $id = null)
     {
-        $this->Db = Db::getConnection();
+        parent::__construct();
         $this->setId($id);
     }
 
@@ -42,6 +40,7 @@ class Tags implements RestInterface
         return sprintf('%s%d/tags/', $this->Entity->getApiPath(), $this->Entity->id ?? 0);
     }
 
+    #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
         // check if we can actually create tags (for non-admins)
@@ -51,12 +50,14 @@ class Tags implements RestInterface
         return $this->create(new TagParam($reqBody['tag'] ?? ''), $canCreate);
     }
 
+    #[Override]
     public function readOne(): array
     {
         return (new TeamTags($this->Entity->Users, $this->id))->readOne();
     }
 
-    public function readAll(): array
+    #[Override]
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = 'SELECT DISTINCT tag, tags2entity.tag_id, (tags_id IS NOT NULL) AS is_favorite FROM tags2entity LEFT JOIN tags ON (tags2entity.tag_id = tags.id) LEFT JOIN favtags2users ON (favtags2users.users_id = :userid AND favtags2users.tags_id = tags.id)
             WHERE item_id = :item_id AND item_type = :item_type ORDER BY tag';
@@ -93,6 +94,7 @@ class Tags implements RestInterface
         }
     }
 
+    #[Override]
     public function patch(Action $action, array $params): array
     {
         return match ($action) {
@@ -106,6 +108,7 @@ class Tags implements RestInterface
      * Here the tag are not destroyed because it might be nice to keep the tags in memory
      * even when nothing is referencing it. Admin can manage tags anyway if it needs to be destroyed.
      */
+    #[Override]
     public function destroy(): bool
     {
         $sql = 'DELETE FROM tags2entity WHERE item_id = :id AND item_type = :type';
@@ -122,35 +125,20 @@ class Tags implements RestInterface
     {
         $this->Entity->canOrExplode('write');
 
-        $insertSql2 = 'INSERT INTO tags2entity (item_id, item_type, tag_id) VALUES (:item_id, :item_type, :tag_id)';
-        $insertReq2 = $this->Db->prepare($insertSql2);
-        // check if the tag doesn't exist already for the team
-        $sql = 'SELECT id FROM tags WHERE tag = :tag AND team = :team';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':tag', $params->getContent());
-        $req->bindParam(':team', $this->Entity->Users->userData['team'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $tagId = $req->fetchColumn();
+        $TeamTags = new TeamTags($this->Entity->Users);
 
-        // tag doesn't exist already
-        if (!$tagId) {
-            // throw an Exception if we cannot create a tag
-            if ($canCreate === false) {
-                throw new ImproperActionException(_('Users cannot create tags.'));
-            }
-
-            $insertSql = 'INSERT INTO tags (team, tag) VALUES (:team, :tag)';
-            $insertReq = $this->Db->prepare($insertSql);
-            $insertReq->bindValue(':tag', $params->getContent());
-            $insertReq->bindParam(':team', $this->Entity->Users->team, PDO::PARAM_INT);
-            $this->Db->execute($insertReq);
-            $tagId = $this->Db->lastInsertId();
+        // make sure we can create a new tag in this team
+        if ($TeamTags->exists($params) === false && $canCreate === false) {
+            throw new ImproperActionException(_('Users cannot create tags.'));
         }
-        // now reference it
-        $insertReq2->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $insertReq2->bindValue(':item_type', $this->Entity->entityType->value);
-        $insertReq2->bindParam(':tag_id', $tagId, PDO::PARAM_INT);
-        $this->Db->execute($insertReq2);
+        $tagId = $TeamTags->create($params);
+        // now link the tag with the entity
+        $sql = 'INSERT INTO tags2entity (item_id, item_type, tag_id) VALUES (:item_id, :item_type, :tag_id)';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindValue(':item_type', $this->Entity->entityType->value);
+        $req->bindParam(':tag_id', $tagId, PDO::PARAM_INT);
+        $this->Db->execute($req);
 
         return $tagId;
     }
@@ -166,12 +154,6 @@ class Tags implements RestInterface
         $req = $this->Db->prepare($sql);
         $req->bindParam(':tag_id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        // tag is removed from tags table if no other entity is referencing it
-        $sql = 'DELETE FROM tags WHERE id = :tag_id AND id NOT IN (SELECT tag_id FROM tags2entity)';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':tag_id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $this->Entity->readOne();

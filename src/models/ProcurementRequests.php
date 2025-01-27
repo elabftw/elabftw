@@ -12,34 +12,33 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\ProcurementRequestParams;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\Currency;
 use Elabftw\Enums\ProcurementState;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\RestInterface;
+use Elabftw\Interfaces\QueryParamsInterface;
+use Elabftw\Params\ProcurementRequestParams;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\SetIdTrait;
+use Override;
 use PDO;
 use RuntimeException;
 
 /**
  * Procurement requests are purchase orders in a team
  */
-class ProcurementRequests implements RestInterface
+class ProcurementRequests extends AbstractRest
 {
     use SetIdTrait;
 
-    protected Db $Db;
-
     public function __construct(protected Teams $Teams, ?int $id = null)
     {
-        $this->Db = Db::getConnection();
+        parent::__construct();
         $this->setId($id);
     }
 
-    public function readAll(): array
+    #[Override]
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = "SELECT
             CONCAT(users.firstname, ' ', users.lastname) AS requester_fullname,
@@ -65,6 +64,7 @@ class ProcurementRequests implements RestInterface
         }, $req->fetchAll());
     }
 
+    #[Override]
     public function readOne(): array
     {
         $sql = 'SELECT id, created_at, team, requester_userid, entity_id, qty_ordered, qty_received, body, quote, email_sent, state
@@ -89,6 +89,7 @@ class ProcurementRequests implements RestInterface
         return $req->fetchAll();
     }
 
+    #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
         $sql = 'INSERT INTO procurement_requests (team, requester_userid, entity_id, qty_ordered, body, quote, state)
@@ -106,6 +107,7 @@ class ProcurementRequests implements RestInterface
         return $this->Db->lastInsertId();
     }
 
+    #[Override]
     public function patch(Action $action, array $params): array
     {
         $this->canWriteOrExplode();
@@ -123,6 +125,7 @@ class ProcurementRequests implements RestInterface
     }
 
     // destroy is soft delete to prevent destructive actions on procurement requests so we can trust its log
+    #[Override]
     public function destroy(): bool
     {
         $this->canWriteOrExplode();

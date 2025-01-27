@@ -12,27 +12,25 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\TagParam;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\RestInterface;
+use Elabftw\Interfaces\QueryParamsInterface;
+use Elabftw\Params\TagParam;
 use Elabftw\Traits\SetIdTrait;
+use Override;
 use PDO;
 
 /**
  * The favorite tags of a user
  */
-class FavTags implements RestInterface
+class FavTags extends AbstractRest
 {
     use SetIdTrait;
 
-    protected Db $Db;
-
     public function __construct(private Users $Users, ?int $id = null)
     {
+        parent::__construct();
         $this->setId($id);
-        $this->Db = Db::getConnection();
     }
 
     public function getApiPath(): string
@@ -40,17 +38,14 @@ class FavTags implements RestInterface
         return 'api/v2/favtags/';
     }
 
+    #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
         return $this->create(new TagParam($reqBody['tag']));
     }
 
-    public function patch(Action $action, array $params): array
-    {
-        return array();
-    }
-
-    public function readAll(): array
+    #[Override]
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = 'SELECT users_id, tags_id, tag FROM favtags2users
            LEFT JOIN tags ON (tags.id = favtags2users.tags_id) WHERE users_id = :userid
@@ -62,11 +57,7 @@ class FavTags implements RestInterface
         return $req->fetchAll();
     }
 
-    public function readOne(): array
-    {
-        return $this->readAll();
-    }
-
+    #[Override]
     public function destroy(): bool
     {
         $sql = 'DELETE FROM favtags2users WHERE users_id = :userid AND tags_id = :tagId';

@@ -31,7 +31,7 @@ class TeamTagsTest extends \PHPUnit\Framework\TestCase
 
     public function testGetApiPath(): void
     {
-        $this->assertEquals('api/v2/teams/1/tags/1', $this->TeamTags->getApiPath());
+        $this->assertEquals('api/v2/teams/1/tags/', $this->TeamTags->getApiPath());
     }
 
     public function testCreate(): void
@@ -45,17 +45,12 @@ class TeamTagsTest extends \PHPUnit\Framework\TestCase
         // TODO test with query
     }
 
-    public function testReadFull(): void
-    {
-        $this->assertIsArray($this->TeamTags->readFull());
-    }
-
     public function testNoAdmin(): void
     {
         $Users = new Users(2, 1);
         $TeamTags = new TeamTags($Users);
         $this->expectException(IllegalActionException::class);
-        $TeamTags->patch(Action::Deduplicate, array());
+        $TeamTags->patch(Action::UpdateTag, array());
     }
 
     public function testNoAdminDestroy(): void
@@ -68,15 +63,13 @@ class TeamTagsTest extends \PHPUnit\Framework\TestCase
 
     public function testDeduplicate(): void
     {
-        // start with a deduplicate action first
-        $this->TeamTags->patch(Action::Deduplicate, array());
         // we can't directly create two of the same, it needs to be edited from one with a typo first
         $this->Tags->postAction(Action::Create, array('tag' => 'duplicated'));
         $this->TeamTags->setId($this->Tags->postAction(Action::Create, array('tag' => 'duplikated')));
-        $this->TeamTags->patch(Action::UpdateTag, array('tag' => 'duplicated'));
         $beforeCnt = count($this->TeamTags->readAll());
-        $after = $this->TeamTags->patch(Action::Deduplicate, array());
-        $this->assertEquals($beforeCnt - 1, count($after));
+        $this->TeamTags->patch(Action::UpdateTag, array('tag' => 'duplicated'));
+        $afterCnt = count($this->TeamTags->readAll());
+        $this->assertEquals($beforeCnt - 1, $afterCnt);
     }
 
     public function testUpdateTag(): void

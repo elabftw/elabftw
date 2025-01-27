@@ -34,6 +34,8 @@
 </head>
 
 <body>
+{# skip link for accessibility: RGAA 4.0 12.7 link goes to content directly, skipping menu/header/nav #}
+<a class='sr-only' aria-label='{{ 'Skip to content'|trans }}' href='#content-start'></a>
 {# when this disappears from the viewport, scroll to top button appears #}
 <div id='scrollTopBtnAnchor'></div>
 
@@ -56,6 +58,8 @@
     {# everything in there will be part of the burger #}
     <div class='collapse navbar-collapse' id='main-nav'>
         <div class='navbar-nav'>
+            <a aria-label='{{ 'Go to dashboard'|trans }}' class='btn nav-item nav-link {{ scriptName == 'dashboard.php' ? 'active' }}'
+                href='dashboard.php' title='{{ 'Go to dashboard'|trans }}'><i class='fas fa-house'></i></a>
             <a class='nav-item nav-link {{ scriptName == 'experiments.php' ? 'active' }}'
                 href='experiments.php'>{% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}</a>
             <a class='nav-item nav-link {{ scriptName == 'database.php' ? 'active' }}'
@@ -68,8 +72,20 @@
 
             <a class='nav-item nav-link {{ scriptName == 'search.php' ? 'active' }}'
                 href='search.php'>{{ 'Search'|trans }}</a>
-            <a class='nav-item nav-link' href='{{ App.teamArr.link_href }}' target='_blank' rel='noopener'>{{ App.teamArr.link_name }}</a>
-
+            <div class='nav-item dropdown'>
+              {% if App.Config.configArr.debug -%}
+                <!-- [html-validate-disable-next prefer-native-element: using a button here will mess up the navbar] -->
+              {%- endif %}
+              <div class='nav-link dropdown-toggle' role='button' data-toggle='dropdown' aria-expanded='false'>
+              {{ 'Tools'|trans }}
+              </div>
+              <div class='dropdown-menu'>
+                <a class='dropdown-item' href='compounds.php'><i class='fas fa-flask fa-fw'></i>{{ 'Compounds'|trans }}</a>
+                <a class='dropdown-item' href='chem-editor.php'><i class='fas fa-pen-to-square fa-fw'></i> {{ 'Chemical Structure Editor'|trans }}</a>
+                <a class='dropdown-item' href='syc.php'><i class='fas fa-dna fa-fw'></i> {{ 'DNA Cloning'|trans }}</a>
+                <a class='dropdown-item' href='inventory.php'><i class='fas fa-warehouse fa-fw'></i> {{ 'Inventory'|trans }}</a>
+              </div>
+            </div>
         </div>
 
         {# SEARCH BAR #}
@@ -122,7 +138,7 @@
 
         {# User dropdown #}
         <div class='nav-item dropdown'>
-          <button class='btn nav-link border-0' id='navbarDropdown' type='button' aria-label='{{ 'User menu'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fas fa-user fa-2x'></i></button>
+          <button class='btn nav-link border-0' id='navbarDropdown' type='button' aria-label='{{ 'User menu'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><span class='initials'>{{ App.Users.userData.initials }}</span></button>
           <div class='dropdown-menu dropdown-menu-right' aria-labelledby='navbarDropdown'><h6 class='dropdown-header'>{{ 'Logged in as %s in:'|trans|format(App.Users.userData.firstname|default('Anonymous')) }}<br>{{ App.teamArr.name }}</h6>
             {% if App.Users.userData.teams|length > 1 %}
               <a href='login.php?switch_team=1' class='dropdown-item'><i class='fas fa-repeat fa-fw'></i> {{ 'Switch team'|trans }}</a>

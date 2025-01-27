@@ -22,7 +22,7 @@ import $ from 'jquery';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
 import { Api } from './Apiv2.class';
-import { ChemDoodle } from '@deltablot/chemdoodle-web-mini/dist/chemdoodle.min.js';
+//import { ChemDoodle } from '@deltablot/chemdoodle-web-mini/dist/chemdoodle.min.js';
 import { Uploader } from './uploader';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -115,9 +115,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // DRAW THE MOLECULE SKETCHER
   // documentation: https://web.chemdoodle.com/tutorial/2d-structure-canvases/sketcher-canvas#options
+  /*
   const sketcher = new ChemDoodle.SketcherCanvas('sketcher', 750, 300, {
     oneMolecule: false,
   });
+ */
 
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', event => {
@@ -157,7 +159,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         button.disabled = false;
       });
 
-    // SAVE CHEM CANVAS AS FILE: chemjson or png
+      // SAVE CHEM CANVAS AS FILE: chemjson or png
+      /*
     } else if (el.matches('[data-action="save-chem-as-file"]')) {
       const realName = prompt(i18next.t('request-filename'));
       if (realName === null || realName === '') {
@@ -184,6 +187,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         'content': content,
       };
       ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}`, params).then(() => reloadElements(['uploadsDiv']));
+     */
 
     // ANNOTATE IMAGE
     } else if (el.matches('[data-action="annotate-image"]')) {

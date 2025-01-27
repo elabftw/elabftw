@@ -13,12 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DateTimeImmutable;
-use Elabftw\Elabftw\ContentParams;
-use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\DisplayParams;
-use Elabftw\Elabftw\EntityParams;
 use Elabftw\Elabftw\EntitySqlBuilder;
-use Elabftw\Elabftw\ExtraFieldsOrderingParams;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
@@ -32,7 +27,10 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Interfaces\ContentParamsInterface;
-use Elabftw\Interfaces\RestInterface;
+use Elabftw\Params\ContentParams;
+use Elabftw\Params\DisplayParams;
+use Elabftw\Params\EntityParams;
+use Elabftw\Params\ExtraFieldsOrderingParams;
 use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
@@ -55,7 +53,7 @@ use const JSON_THROW_ON_ERROR;
 /**
  * The mother class of Experiments, Items, Templates and ItemsTypes
  */
-abstract class AbstractEntity implements RestInterface
+abstract class AbstractEntity extends AbstractRest
 {
     use EntityTrait;
 
@@ -105,7 +103,7 @@ abstract class AbstractEntity implements RestInterface
      */
     public function __construct(public Users $Users, ?int $id = null, public ?bool $bypassReadPermission = false, public ?bool $bypassWritePermission = false)
     {
-        $this->Db = Db::getConnection();
+        parent::__construct();
 
         $this->ExperimentsLinks = LinksFactory::getExperimentsLinks($this);
         $this->ItemsLinks = LinksFactory::getItemsLinks($this);
@@ -144,11 +142,7 @@ abstract class AbstractEntity implements RestInterface
      *
      * @return int the new item id
      */
-    abstract public function duplicate(bool $copyFiles = false): int;
-
-    abstract public function readOne(): array;
-
-    abstract public function readAll(): array;
+    abstract public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int;
 
     public function getApiPath(): string
     {
@@ -246,8 +240,8 @@ abstract class AbstractEntity implements RestInterface
     public function readShow(DisplayParams $displayParams, bool $extended = false, string $can = 'canread'): array
     {
         // (extended) search (block must be before the call to getReadSqlBeforeWhere so extendedValues is filled)
-        if (!empty($displayParams->query) || !empty($displayParams->extendedQuery)) {
-            $this->processExtendedQuery(trim($displayParams->query . ' ' . $displayParams->extendedQuery));
+        if (!empty($displayParams->queryString) || !empty($displayParams->extendedQuery)) {
+            $this->processExtendedQuery(trim($displayParams->queryString . ' ' . $displayParams->extendedQuery));
         }
 
         $EntitySqlBuilder = new EntitySqlBuilder($this);
@@ -257,12 +251,7 @@ abstract class AbstractEntity implements RestInterface
             $displayParams->relatedOrigin,
         );
 
-        // first WHERE is the state, possibly including archived
-        $stateSql = 'entity.state = :normal';
-        if ($displayParams->includeArchived) {
-            $stateSql = '(entity.state = :normal OR entity.state = :archived)';
-        }
-        $sql .= ' WHERE ' . $stateSql;
+        $sql .= ' WHERE 1=1 ';
 
         // add externally added filters
         $sql .= $this->filterSql;
@@ -276,6 +265,7 @@ abstract class AbstractEntity implements RestInterface
         $sqlArr = array(
             $this->extendedFilter,
             $this->idFilter,
+            $displayParams->getStatesSql('entity'),
             'GROUP BY id',
             $displayParams->getSql(),
         );
@@ -284,10 +274,6 @@ abstract class AbstractEntity implements RestInterface
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindValue(':normal', State::Normal->value, PDO::PARAM_INT);
-        if ($displayParams->includeArchived) {
-            $req->bindValue(':archived', State::Archived->value, PDO::PARAM_INT);
-        }
 
         $this->bindExtendedValues($req);
         $this->Db->execute($req);

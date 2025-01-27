@@ -13,13 +13,14 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
-use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\PermissionsHelper;
 use Elabftw\Enums\Classification;
 use Elabftw\Enums\Currency;
 use Elabftw\Enums\Meaning;
+use Elabftw\Enums\Orderby;
 use Elabftw\Enums\RequestableAction;
+use Elabftw\Enums\Sort;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractConcreteEntity;
@@ -29,12 +30,15 @@ use Elabftw\Models\FavTags;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\ProcurementRequests;
 use Elabftw\Models\RequestActions;
+use Elabftw\Models\StorageUnits;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\TeamTags;
 use Elabftw\Models\Templates;
 use Elabftw\Models\UserRequestActions;
 use Elabftw\Models\Users;
+use Elabftw\Params\DisplayParams;
+use Elabftw\Params\BaseQueryParams;
 use Elabftw\Services\AccessKeyHelper;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -104,8 +108,6 @@ abstract class AbstractEntityController implements ControllerInterface
      */
     public function show(bool $isSearchPage = false): Response
     {
-        // create the DisplayParams object from the query
-        $DisplayParams = new DisplayParams($this->App->Users, $this->App->Request, $this->Entity->entityType);
         // used to get all tags for top page tag filter
         $TeamTags = new TeamTags($this->App->Users, $this->App->Users->userData['team']);
 
@@ -114,20 +116,21 @@ abstract class AbstractEntityController implements ControllerInterface
             $this->Entity->isAnon = true;
         }
 
-        // must be before the call to getItemsArr
+        // must be before the call to readShow
         if ($this->App->Users->userData['always_show_owned'] === 1) {
             $this->Entity->alwaysShowOwned = true;
         }
 
-        $itemsArr = $this->getItemsArr();
-        // if there is only one result, redirect to the entry directly
-        if ($isSearchPage && count($itemsArr) === 1) {
-            return new RedirectResponse(sprintf(
-                '%s?mode=view&id=%d',
-                $this->Entity->entityType->toPage(),
-                $itemsArr[0]['id']
-            ));
-        }
+        // read all based on query parameters or user defaults
+        $DisplayParams = new DisplayParams(
+            requester: $this->App->Users,
+            query: $this->App->Request->query,
+            entityType: $this->Entity->entityType,
+            limit: $this->App->Users->userData['limit_nb'],
+            orderby: Orderby::tryFrom($this->App->Users->userData['orderby']) ?? Orderby::Lastchange,
+            sort: Sort::tryFrom($this->App->Users->userData['sort']) ?? Sort::Desc,
+        );
+        $itemsArr = $this->Entity->readShow($DisplayParams);
 
         // get tags separately
         $tagsArr = array();
@@ -164,7 +167,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'searchPage' => $isSearchPage,
             'tagsArr' => $tagsArr,
             // get all the tags for the top search bar
-            'tagsArrForSelect' => $TeamTags->readFull(),
+            'tagsArrForSelect' => $TeamTags->readAll(),
             'templatesArr' => $this->templatesArr,
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,
@@ -174,14 +177,6 @@ abstract class AbstractEntityController implements ControllerInterface
         $Response->setContent($this->App->render($template, $renderArr));
 
         return $Response;
-    }
-
-    /**
-     * Get the items
-     */
-    protected function getItemsArr(): array
-    {
-        return $this->Entity->readShow(new DisplayParams($this->App->Users, $this->App->Request, $this->Entity->entityType));
     }
 
     /**
@@ -232,6 +227,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'lockerFullname' => $this->Entity->getLockerFullname(),
             'meaningArr' => $this->meaningArr,
             'requestableActionArr' => $this->requestableActionArr,
+            'storageUnitsArr' => (new StorageUnits($this->App->Users))->readAllRecursive(),
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,
         );
@@ -280,6 +276,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $ProcurementRequests = new ProcurementRequests($Teams);
 
         $Metadata = new Metadata($this->Entity->entityData['metadata']);
+        $baseQueryParams = new BaseQueryParams($this->App->Request->query);
         $renderArr = array(
             'categoryArr' => $this->categoryArr,
             'classificationArr' => $this->classificationArr,
@@ -296,11 +293,12 @@ abstract class AbstractEntityController implements ControllerInterface
             'metadataGroups' => $Metadata->getGroups(),
             'mode' => 'edit',
             'statusArr' => $this->statusArr,
-            'teamsArr' => $Teams->readAll(),
-            'teamTagsArr' => $TeamTags->readAll(),
+            'teamsArr' => $Teams->readAll($baseQueryParams),
+            'teamTagsArr' => $TeamTags->readAll($baseQueryParams),
             'scopedTeamgroupsArr' => $this->scopedTeamgroupsArr,
             'meaningArr' => $this->meaningArr,
             'requestableActionArr' => $this->requestableActionArr,
+            'storageUnitsArr' => (new StorageUnits($this->App->Users))->readAllRecursive(),
             'templatesArr' => $this->templatesArr,
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,

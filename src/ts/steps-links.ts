@@ -10,7 +10,7 @@ import 'jquery-ui/ui/widgets/autocomplete';
 import { Malle } from '@deltablot/malle';
 import Step from './Step.class';
 import i18next from 'i18next';
-import { relativeMoment, makeSortableGreatAgain, reloadElements, addAutocompleteToLinkInputs, getEntity, adjustHiddenState } from './misc';
+import { relativeMoment, makeSortableGreatAgain, reloadElements, addAutocompleteToLinkInputs, addAutocompleteToCompoundsInputs, getEntity, adjustHiddenState } from './misc';
 import { Action, Target } from './interfaces';
 import { Api } from './Apiv2.class';
 
@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       ApiC.post(`${entity.type}/${entity.id}/${$(this).data('endpoint')}/${target}`).then(() => {
-        reloadElements(['linksDiv', 'linksExpDiv']).then(() => {
+        reloadElements(['linksDiv', 'linksExpDiv', 'compoundDiv']).then(() => {
           // clear input field
           $(this).val('');
           addAutocompleteToLinkInputs();
@@ -175,4 +175,5 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   // AUTOCOMPLETE
   addAutocompleteToLinkInputs();
+  addAutocompleteToCompoundsInputs();
 });

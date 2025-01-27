@@ -12,37 +12,19 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\UserUploadsQueryParams;
-use Elabftw\Enums\Action;
+use Elabftw\Enums\Orderby;
 use Elabftw\Enums\State;
-use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\RestInterface;
+use Elabftw\Interfaces\QueryParamsInterface;
+use Elabftw\Params\BaseQueryParams;
+use Override;
 use PDO;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\InputBag;
 
-class UserUploads implements RestInterface
+class UserUploads extends AbstractRest
 {
-    protected Db $Db;
-
     public function __construct(private Users $owner, private ?int $id = null)
     {
-        $this->Db = Db::getConnection();
-    }
-
-    public function readOne(): array
-    {
-        return $this->readAll();
-    }
-
-    public function postAction(Action $action, array $reqBody): int
-    {
-        throw new ImproperActionException('No POST action for this endpoint');
-    }
-
-    public function patch(Action $action, array $params): array
-    {
-        throw new ImproperActionException('No PATCH action for this endpoint');
+        parent::__construct();
     }
 
     public function getApiPath(): string
@@ -50,37 +32,37 @@ class UserUploads implements RestInterface
         return sprintf('api/v2/user/%d/uploads/', $this->owner->userid ?? 'me');
     }
 
-    public function destroy(): bool
+    public function getQueryParams(?InputBag $query = null): QueryParamsInterface
     {
-        throw new ImproperActionException('No DELETE action for this endpoint');
+        return new BaseQueryParams(query: $query, orderby: Orderby::CreatedAt, limit: 42);
     }
 
-    public function readAll(): array
+    #[Override]
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        $queryParams = new UserUploadsQueryParams(Request::createFromGlobals());
+        $queryParams ??= $this->getQueryParams();
         $idFilter = '';
         if ($this->id) {
-            $idFilter = sprintf('AND uploads.id = %d', $this->id);
+            $idFilter = sprintf(' AND entity.id = %d', $this->id);
         }
-        $sql = 'SELECT uploads.id, uploads.real_name, uploads.long_name, uploads.created_at, uploads.filesize, uploads.type, uploads.comment,
+        $sql = 'SELECT entity.id, entity.real_name, entity.long_name, entity.created_at, entity.filesize, entity.type, entity.comment, entity.state,
+            entity.hash, entity.hash_algorithm, entity.storage, entity.immutable,
             COALESCE(experiments.id, items.id, experiments_templates.id) AS entity_id,
             COALESCE(experiments.title, items.title, experiments_templates.title) AS entity_title,
             CASE
-                WHEN uploads.type = "experiments" THEN "experiments"
-                WHEN uploads.type = "items" THEN "database"
-                WHEN uploads.type = "experiments_templates" THEN "ucp"
+                WHEN entity.type = "experiments" THEN "experiments"
+                WHEN entity.type = "items" THEN "database"
+                WHEN entity.type = "experiments_templates" THEN "ucp"
                 ELSE ""
             END AS page
-            FROM uploads
-            LEFT JOIN experiments ON (uploads.item_id = experiments.id AND uploads.type = "experiments")
-            LEFT JOIN items ON (uploads.item_id = items.id AND uploads.type = "items")
-            LEFT JOIN experiments_templates ON (uploads.item_id = experiments_templates.id AND uploads.type = "experiments_templates")
-            WHERE uploads.userid = :userid AND (uploads.state = :state_normal OR uploads.state = :state_archived) '
+            FROM uploads As entity
+            LEFT JOIN experiments ON (entity.item_id = experiments.id AND entity.type = "experiments")
+            LEFT JOIN items ON (entity.item_id = items.id AND entity.type = "items")
+            LEFT JOIN experiments_templates ON (entity.item_id = experiments_templates.id AND entity.type = "experiments_templates")
+            WHERE entity.userid = :userid'
             . $idFilter . $queryParams->getSql();
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->owner->userid, PDO::PARAM_INT);
-        $req->bindValue(':state_normal', State::Normal->value, PDO::PARAM_INT);
-        $req->bindValue(':state_archived', State::Archived->value, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $req->fetchAll();

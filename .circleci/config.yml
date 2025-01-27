@@ -27,9 +27,12 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
-          version: docker24
+          version: docker27
           # docker_layer_caching: true # DLC will explicitly cache layers here and try to avoid rebuilding.
           # docker_layer_caching is behind a paywall
+      - run:
+          name: temporary for cache bust
+          command: docker system prune -af
       - run:
           name: Prepare docker-compose.yml
           # Don't bind mount here, files are copied. See circleci.Dockerfile

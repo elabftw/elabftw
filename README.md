@@ -138,6 +138,7 @@ These projects were created by users of eLabFTW, check them out if interested!
 * [LabView client](https://www.vipm.io/package/plasmapper_lib_pl_elabftw_client/): LabView client library by @plasmapper
 * [Matlab client](https://github.com/baillon/eLabAPI): Matlab package to facilitate working with eLabFTW API
 * [elabftw-teamupload](https://github.com/HeFDI-DE/elabftw-teamupload/): Synchronize teamgroups and teams with users from Excel
+* [Reporting Dashboard](https://git.rwth-aachen.de/eln-rwth/reporting-scripts-public): Collection of scripts to create a reporting dashabord for eLabFTW SysAdmins 
 
 ## Unofficial documentation
 

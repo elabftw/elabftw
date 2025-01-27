@@ -278,6 +278,7 @@ export function getTinymceBaseConfig(page: string): object {
       {text: 'Python', value: 'python'},
       {text: 'R', value: 'r'},
       {text: 'Ruby', value: 'ruby'},
+      {text: 'Rust', value: 'rust'},
       {text: 'SQL', value: 'sql'},
       {text: 'Tcl', value: 'tcl'},
       {text: 'VHDL', value: 'vhdl'},

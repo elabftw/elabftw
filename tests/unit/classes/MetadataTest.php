@@ -42,7 +42,10 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
     public function testGetGroups(): void
     {
         $metadata = new Metadata('{"elabftw": {"extra_fields_groups": [ { "id": 1, "name": "my group"} ] }}');
-        $this->assertEquals(1, count($metadata->getGroups()));
+        // count default group as well cf. src/classes/Metadata.php -> getGroups()
+        $this->assertEquals(2, count($metadata->getGroups()));
+        $this->assertEquals('-1', $metadata->getGroups()[0]['id'], 'The default group id should be -1.');
+        $this->assertEquals('Default group', $metadata->getGroups()[0]['name'], "First group name should be 'Default group'.");
         // now with missing id (#5369)
         $metadata = new Metadata('{"elabftw": {"extra_fields_groups": [ { "iiid": 1, "name": "my group"}, { "name": "group2"}, { "id": 1, "name": "group3"} ] }}');
         $this->assertEquals(1, count($metadata->getGroups()));
@@ -51,7 +54,8 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
     public function testGetGroupedExtraFields(): void
     {
         $metadata = new Metadata('{"elabftw": {"extra_fields_groups": [ { "id": 1, "name": "my group"} ] }, "extra_fields":{"foo":{"group_id": 1,"value":"bar"}, "nogroup": {"value": ""}}}');
-        $this->assertEquals(2, count($metadata->getGroupedExtraFields()));
+        // count default group as well from getGroups().
+        $this->assertEquals(3, count($metadata->getGroupedExtraFields()));
     }
 
     public function testBlankValueOnDuplicate(): void

@@ -77,16 +77,18 @@ class Metadata
 
     public function getGroups(): array
     {
+        // we always have a Default group
+        $allGroups = array(-1 => array('id' => -1, 'name' => _('Default group')));
         if (isset($this->metadata[MetadataEnum::Elabftw->value][MetadataEnum::Groups->value])) {
             $groups = $this->metadata[MetadataEnum::Elabftw->value][MetadataEnum::Groups->value];
             // if a group definition is missing the 'id' key, the array_combine will not work because arrays must be the same size
             // so only combine them if they are the same size, see #5369
             $withId = array_column($groups, 'id');
             if (count($groups) === count($withId)) {
-                return array_combine($withId, $groups);
+                return array_merge($allGroups, array_combine($withId, $groups));
             }
         }
-        return array(-1 => array('id' => -1, 'name' => _('Undefined group')));
+        return $allGroups;
     }
 
     public function getGroupedExtraFields(): array

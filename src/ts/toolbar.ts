@@ -189,7 +189,9 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="export-to-qrpng"]')) {
       const size = (document.getElementById('qrpng_exportSize') as HTMLInputElement).value;
       const title = (document.getElementById('qrpng_exportTitle') as HTMLInputElement).checked ? 1: 0;
-      window.open(`/api/v2/${el.dataset.type}/${el.dataset.id}?format=qrpng&size=${size}&withTitle=${title}`, '_blank');
+      const titleLines = (document.getElementById('qrpng_exportTitleLines') as HTMLInputElement).value;
+      const titleChars = (document.getElementById('qrpng_exportTitleChars') as HTMLInputElement).value;
+      window.open(`/api/v2/${el.dataset.type}/${el.dataset.id}?format=qrpng&size=${size}&withTitle=${title}&titleLines=${titleLines}&titleChars=${titleChars}`, '_blank');
     // CANCEL REQUEST ACTION
     } else if (el.matches('[data-action="cancel-requestable-action"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {

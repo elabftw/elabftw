@@ -27,7 +27,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
-          version: docker23
+          version: docker27
           # docker_layer_caching: true # DLC will explicitly cache layers here and try to avoid rebuilding.
           # docker_layer_caching is behind a paywall
       - run:
@@ -55,42 +55,9 @@ jobs:
             docker build -q --no-cache -t elab-cypress -f tests/elab-cypress.Dockerfile .
             printf "ELABFTW_USER=nginx\nELABFTW_GROUP=nginx\nELABFTW_USERID=101\nELABFTW_GROUPID=101\n" > tests/elabftw-user.env
             docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
-      # Restore dependency cache
-      #- restore_cache:
-      #    keys:
-      #      # This branch if available
-      #      - v1-yarn-dep-{{ .Branch }}-{{ checksum "yarn.lock" }}
-      #      # Default branch if not
-      #      - v1-yarn-dep-master-
-      #      # Any branch if there are none on the default branch
-      #      - v1-yarn-dep-
-      #- run:
-      #    name: Copy dependency cache into container
-      #    command: |
-      #      echo 'export HAS_CACHE="false"' >> $BASH_ENV
-      #      if [ -d ./node_modules ]; then
-      #        docker cp ./node_modules elabtmp:/elabftw/node_modules
-      #      fi
-      #      if [ -d ./yarn.cache ]; then
-      #        docker cp ./yarn.cache elabtmp:/usr/local/share/.cache/yarn/
-      #        echo 'export HAS_CACHE="true"' >> $BASH_ENV
-      #      fi
       - run:
           name: Install JS dependencies
           command: docker exec -it elabtmp yarn install --silent --immutable
-          #- run:
-          #    name: Extract dependency cache from container
-          #    command: |
-          #      if [ "${HAS_CACHE}" == "false" ]; then
-          #        docker cp elabtmp:/elabftw/node_modules/ ./node_modules
-          #        docker cp elabtmp:/usr/local/share/.cache/yarn/ ./yarn.cache
-          #      fi
-      # Save dependency cache
-      #- save_cache:
-      #    key: v1-yarn-dep-{{ .Branch }}-{{ checksum "yarn.lock" }}
-      #    paths:
-      #      - ./node_modules
-      #      - ./yarn.cache
       - run:
           name: Build all
           command: docker exec -it elabtmp yarn buildall:dev

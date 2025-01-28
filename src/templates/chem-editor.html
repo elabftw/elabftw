@@ -5,6 +5,11 @@
 <div id='ketcher-root' class='my-2'></div>
 <div id='ketcher-actions'>
   <button type='button' class='btn btn-primary' data-action='search-from-editor'>{{ 'Search similar structures'|trans }}</button>
+  <label for='search-fp-exact' class='col-form-label'>{{ 'Exact structure'|trans }}</label>
+  <label class='switch ucp-align'>
+    <input type='checkbox' id='search-fp-exact'>
+    <span class='slider'></span>
+  </label>
 </div>
 <div id='searchFpResultsDiv' hidden>
   <h3 class='mb-2'>{{ 'Compounds substructure search results'|trans }}</h3>

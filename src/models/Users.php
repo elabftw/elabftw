@@ -370,7 +370,7 @@ class Users extends AbstractRest
                     $Config = Config::getConfig();
                     foreach ($params as $target => $content) {
                         // prevent modification of identity fields if we are not sysadmin
-                        if (in_array($target, array('email', 'firstname', 'lastname'), true)
+                        if (in_array($target, array('email', 'firstname', 'lastname', 'orgid'), true)
                             && $Config->configArr['allow_users_change_identity'] === '0'
                             && $this->requester->userData['is_sysadmin'] === 0
                         ) {
@@ -516,6 +516,7 @@ class Users extends AbstractRest
             }
             Filter::email($params->getStringContent());
         }
+
         // special case for is_sysadmin: only a sysadmin can affect this column
         if ($params->getTarget() === 'is_sysadmin') {
             if ($this->requester->userData['is_sysadmin'] === 0) {

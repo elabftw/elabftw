@@ -367,6 +367,10 @@ class Users extends AbstractRest
             Action::UpdatePassword => $this->updatePassword($params),
             Action::Update => (
                 function () use ($params) {
+                    // only a sysadmin can edit anything about another sysadmin
+                    if ($this->requester->userData['is_sysadmin'] === 0 && $this->userid !== $this->requester->userid) {
+                        throw new IllegalActionException('A sysadmin level account is required to edit another sysadmin account.');
+                    }
                     $Config = Config::getConfig();
                     foreach ($params as $target => $content) {
                         // prevent modification of identity fields if we are not sysadmin

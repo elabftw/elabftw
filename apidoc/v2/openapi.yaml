@@ -304,6 +304,7 @@ components:
         custom_id:
           type: integer
           description: Cannot be negative. Can be reset with "0", null or empty string.
+          nullable: true
         date:
           type: string
         elabid:
@@ -330,6 +331,7 @@ components:
             $ref: '#/components/schemas/link'
         lastchangeby:
           type: integer
+          nullable: true
         lastname:
           type: string
         locked:
@@ -1542,6 +1544,7 @@ paths:
                     type: integer
                     description: Sum of stored filesize in MySQL for all uploads of the instance.
                     example: 25681672
+                    format: int64
                   uploads_filesize_sum_formatted:
                     type: string
                     description: Sum of stored filesize in MySQL for all uploads of the instance, formatted
@@ -2091,6 +2094,14 @@ paths:
                   type: string
                   example: "on"
                   description: Set to "on" to create PDF files with the PDF/A specification
+      responses:
+        '201':
+          description: The export request was successful
+          headers:
+            location:
+              description: API URL for export record
+              schema:
+                type: string
   /exports/{id}:
     summary: An export request
     parameters:

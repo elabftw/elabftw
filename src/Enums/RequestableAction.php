@@ -12,9 +12,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Enums;
 
+use Elabftw\Traits\EnumsTrait;
+
 enum RequestableAction: int
 {
-    use \Elabftw\Traits\EnumsTrait;
+    use EnumsTrait;
 
     case Archive = 10;
     case Lock = 20;

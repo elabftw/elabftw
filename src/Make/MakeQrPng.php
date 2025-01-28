@@ -37,6 +37,8 @@ class MakeQrPng extends AbstractMake implements StringMakerInterface
 
     private const int DEFAULT_MAX_LINES = 2;
 
+    private const int SPACE_UNDER_QR = 15;
+
     protected string $contentType = 'image/png';
 
     private int $fontSize = 16;
@@ -78,16 +80,14 @@ class MakeQrPng extends AbstractMake implements StringMakerInterface
         // Create a new image to hold the qrcode + text
         $newImage = new Imagick();
         $qrCodeWidth = $qrCode->getImageWidth();
-        //$title = mb_substr($this->entity->entityData['title'], 0, $this->maxLineChars);
-        //$titleLength = mb_strlen($title);
 
-        //$splitTitle = mb_str_split($this->entity->entityData['title'], $this->getTitleSplitSize());
-        $splitTitle = $this->splitTitle($this->entity->entityData['title']);
-        if (!$this->withTitle) {
-            $splitTitle = array();
+        $splitTitle = array();
+        $titleWidth = 0;
+        if ($this->withTitle) {
+            $splitTitle = $this->splitTitle($this->entity->entityData['title']);
+            $titleWidth =  mb_strlen($splitTitle[0]) * self::CHAR_WIDTH_PX;
         }
 
-        $titleWidth =  mb_strlen($splitTitle[0]) * self::CHAR_WIDTH_PX;
         if ($titleWidth < $qrCodeWidth) {
             $titleWidth = $qrCodeWidth;
         }
@@ -97,14 +97,12 @@ class MakeQrPng extends AbstractMake implements StringMakerInterface
         // Copy the original image to the new image
         $newImage->compositeImage($qrCode, Imagick::COMPOSITE_OVER, 0, 0);
         // Draw the text on the new image
-        $spaceUnderQr = 10;
         $titleMarginLeft = 10;
         if ($this->size < 100) {
-            $spaceUnderQr = 15;
             $titleMarginLeft = 5;
         }
         foreach ($splitTitle as $key => $line) {
-            $newImage->annotateImage($draw, $titleMarginLeft, $qrCode->getImageHeight() + (((int) $key + 1) * $spaceUnderQr), 0, $line);
+            $newImage->annotateImage($draw, $titleMarginLeft, $qrCode->getImageHeight() + (((int) $key + 1) * self::SPACE_UNDER_QR), 0, $line);
         }
         $newImage->setImageFormat('png');
 

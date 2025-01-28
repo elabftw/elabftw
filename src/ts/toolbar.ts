@@ -170,18 +170,30 @@ document.addEventListener('DOMContentLoaded', () => {
         $('#addSignatureModal').modal('toggle');
         break;
       case Action.RemoveExclusiveEditMode:
+        // // if Enforce exclusive edit mode is active, ask confirmation before redirecting to view mode.
+        // ApiC.getJson(`${Model.User}/me`).then(json => {
+        //   if (json['enforce_exclusive_edit_mode'] === 1) {
+        //     if (confirm('You have enabled "Enforce exclusive edit mode".\nYou are unlocking this entry and will be redirected to view mode. If you open it in edit mode again, exclusive edit will be reactivated.\nYou can change this setting in your profile.')) {
+        //       EntityC.patchAction(entity.id, Action.ExclusiveEditMode)
+        //         .then(() => window.location.replace('?mode=view&id=' + entity.id));
+        //     }
+        //   }
+        // EntityC.patchAction(entity.id, Action.ExclusiveEditMode)
+        //   .then(() => reloadElements(['exclusiveEditModeBtn', 'exclusiveEditModeInfo', 'requestActionsDiv']))
+        //   .then(() => toggleGrayClasses(document.getElementById('exclusiveEditModeBtn').classList));
+        // });
         // if Enforce exclusive edit mode is active, ask confirmation before redirecting to view mode.
         ApiC.getJson(`${Model.User}/me`).then(json => {
           if (json['enforce_exclusive_edit_mode'] === 1) {
-            if (confirm('You have enabled "Enforce exclusive edit mode".\nYou are unlocking this entry and will be redirected to view mode. If you open it in edit mode again, exclusive edit will be reactivated.\nYou can change this setting in your profile.')) {
-              EntityC.patchAction(entity.id, Action.ExclusiveEditMode)
-                .then(() => window.location.replace('?mode=view&id=' + entity.id));
-            }
+            const userValidatesRequest = confirm('You have enabled "Enforce exclusive edit mode".\nYou are unlocking this entry and will be redirected to view mode. If you open it in edit mode again, exclusive edit will be reactivated.\nYou can change this setting in your profile.');
+            if (!userValidatesRequest) return;
+            return EntityC.patchAction(entity.id, Action.ExclusiveEditMode)
+              .then(() => window.location.replace('?mode=view&id=' + entity.id));
           }
+          EntityC.patchAction(entity.id, Action.ExclusiveEditMode)
+            .then(() => reloadElements(['exclusiveEditModeBtn', 'exclusiveEditModeInfo', 'requestActionsDiv']))
+            .then(() => toggleGrayClasses(document.getElementById('exclusiveEditModeBtn').classList));
         });
-        EntityC.patchAction(entity.id, Action.ExclusiveEditMode)
-          .then(() => reloadElements(['exclusiveEditModeBtn', 'exclusiveEditModeInfo', 'requestActionsDiv']))
-          .then(() => toggleGrayClasses(document.getElementById('exclusiveEditModeBtn').classList));
         break;
       }
     // EXPORT TO (PDF/ZIP)

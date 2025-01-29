@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidSchemaException;
 use Elabftw\Models\Config;
@@ -77,9 +78,12 @@ class Update
         }
 
         // new style with SQL files instead of functions
+        $Config = Config::getConfig();
         while ($this->currentSchema < self::REQUIRED_SCHEMA) {
             ++$this->currentSchema;
             $this->Sql->execFile(sprintf('schema%d.sql', $this->currentSchema), $force);
+            // this will bust cache
+            $Config->patch(Action::Update, array('schema' => $this->currentSchema));
             // schema57: add an elabid to existing database items
             if ($this->currentSchema === 57) {
                 $this->addElabidToItems();
@@ -87,8 +91,6 @@ class Update
             }
         }
 
-        $Config = Config::getConfig();
-        $Config->bustCache();
         return $warn;
     }
 

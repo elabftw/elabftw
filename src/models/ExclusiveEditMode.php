@@ -89,7 +89,6 @@ class ExclusiveEditMode
 
         if ($this->isActive
             && $this->Entity->Users->userid !== $this->dataArr['locked_by']
-            && !$this->Entity->Users->isAdminOf($this->dataArr['locked_by'])
         ) {
             /** @psalm-suppress PossiblyNullArgument */
             return new RedirectResponse(sprintf(

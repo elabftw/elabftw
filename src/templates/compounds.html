@@ -30,6 +30,9 @@
     <input name='search_fp_smi' value='{{ App.Request.query.get('search_fp_smi') }}' class='form-control' id='substructureSearchInput' placeholder='O=N(=O)C=1C(F)=CC(F)=CC1Br' title='{{ 'Substructure search from SMILES'|trans }}' autocomplete='off' />
     <div class='input-group-append'>
       <button type='submit' data-action='substructure-search' class='btn btn-primary'>{{ 'Search similar compounds'|trans }}</button>
+      <div class='input-group-text'>
+        <input type='checkbox' name='exact' id='search-fp-exact' {{ App.Request.query.get('exact') == 'on' ? 'checked="checked"' }} aria-label='{{ 'Search exact structure'|trans }}'><span class='ml-1'>{{ 'Exact'|trans }}</span>
+      </div>
     </div>
   </div>
   </form>

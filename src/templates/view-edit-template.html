@@ -1,6 +1,7 @@
 {% set mode = App.Request.query.get('mode')|default('view') %}
 {% include('ownership-transfer-modal.html') %}
 {% include 'duplicate-modal.html' %}
+{% include('remove-exclusive-edit-mode-modal.html') %}
 
 {# REQUEST ACTIONS #}
 <div id='requestActionsDiv'>

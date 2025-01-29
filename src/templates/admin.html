@@ -335,47 +335,8 @@
     {# templateData will be loaded with content from an item type if templateid is present is url #}
     {% if Entity.entityData %}
       <div class='float-right'>
-        {% if App.Users.userData.enforce_exclusive_edit_mode != 1 %}
-          {% set lockIcon = 'fa-lock-open' %}
-          {% set alt = 'Enable/Disable exclusive edit mode'|trans %}
-          {% if Entity.ExclusiveEditMode.isActive %}
-              {% set lockIcon = 'fa-lock' %}
-          {% endif %}
-          <button
-            aria-label='{{ alt }}'
-            class='btn {{ Entity.ExclusiveEditMode.isActive ? 'bgnd-gray' : 'hl-hover-gray' }} p-2 mr-2 lh-normal border-0'
-            data-action='toggle-exclusive-edit-mode'
-            id='exclusiveEditModeBtn'
-            title='{{ alt }}'
-            type='button'
-          >
-            <span class='fa-stack'>
-              <i class='fas {{ lockIcon }} fa-stack-1x fa-fw'></i>
-              <i class='fas fa-pen-nib fa-stack-1x fa-fw fa-rotate-by'></i>
-            </span>
-          </button>
-        {% endif %}
         <button type='button' class='btn btn-danger' data-id='{{ Entity.id }}' data-action='itemstypes-destroy'>{{ 'Delete'|trans }}</button>
       </div>
-
-      {# Exclusive edit mode notification #}
-      <div id='exclusiveEditModeInfo'>
-        {% if Entity.ExclusiveEditMode.isActive %}
-          {% set writeLockNotice = 'You opened this entry in exclusive edit mode at %s.'|trans|format(
-              Entity.ExclusiveEditMode.dataArr.locked_at,
-            )|msg('warning', false) %}
-          {% if Entity.ExclusiveEditMode.dataArr.locked_by != Entity.Users.userid %}
-            {% set writeLockNotice = 'This entry is opened by %s in exclusive edit mode since %s. You cannot edit it now but remove the lock or %sRequest exclusive edit mode removal%s.'|trans|format(
-              Entity.ExclusiveEditMode.dataArr.fullname,
-              Entity.ExclusiveEditMode.dataArr.locked_at,
-              '<button type="button" class="btn btn-sm btn-secondary ml-2" data-action="request-exclusive-edit-mode-removal" data-id="%d" data-target-user="%s">'|format(Entity.id, Entity.ExclusiveEditMode.dataArr.locked_by),
-              '</button>'
-            )|msg('ko', false) %}
-          {% endif %}
-          {{ writeLockNotice|raw }}
-        {% endif %}
-      </div>
-
       <div class='d-flex my-2 align-items-center'>
         <div class='edit-mode-label'>
           <i aria-hidden='true' class='fas fa-fw fa-users mr-1'></i>{{ 'Team'|trans }}<span class='ml-2'>{{ Entity.entityData.team_name }}</span>
@@ -391,8 +352,8 @@
           <label for='itemsTypesColor'>{{ 'Color'|trans }}</label>
           <input class='form-control' type='color' id='itemsTypesColor' value='#{{ Entity.entityData.color }}' />
         </li>
-
       </ul>
+
       {% include('catstat-edit.html') %}
       {# PERMISSIONS #}
       <hr>

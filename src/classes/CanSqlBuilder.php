@@ -20,6 +20,7 @@ use Elabftw\Services\UsersHelper;
 
 use function array_column;
 use function implode;
+use function sprintf;
 
 class CanSqlBuilder
 {
@@ -94,7 +95,7 @@ class CanSqlBuilder
     {
         return sprintf(
             "(entity.%s->'$.base' = %d
-                AND entity.userid = %s
+                AND entity.userid = %d
                 AND users2teams.teams_id = entity.team)",
             $this->accessType->value,
             BasePermissions::User->value,

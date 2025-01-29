@@ -154,7 +154,7 @@
                 </td>
 
                 <td data-label='{{ 'Internal ID'|trans }}'>
-                  <span class='hl-hover-gray p-1 rounded malleableColumn {{ not user.orgid ? 'font-italic' }}' data-endpoint='users' data-id='{{ user.userid }}' data-target='orgid'>{{ user.orgid|default('unset') }}</span>
+                  <span class='p-1 rounded {{ App.Users.userData.is_sysadmin ? 'malleableColumn hl-hover-gray' }} {{ not user.orgid ? 'font-italic' }}' data-endpoint='users' data-id='{{ user.userid }}' data-target='orgid'>{{ user.orgid|default('unset') }}</span>
                 </td>
                 <td data-label='{{ 'Is Sysadmin'|trans }}'>
                   <div class='d-flex justify-content-between'>

@@ -13,11 +13,11 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
+import '@ag-grid-community/styles/ag-theme-alpine.css';
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Api } from './Apiv2.class';
-import {toggleEditCompound} from './misc';
+import { toggleEditCompound } from './misc';
 
 const ApiC = new Api();
 
@@ -34,10 +34,7 @@ if (document.getElementById('compounds-table')) {
       const [rowData, setRowData] = useState([]);
 
       const [columnDefs] = useState([
-          {
-            field: 'name',
-            pinned: 'left',
-          },
+          { field: 'name', pinned: 'left' },
           { field: 'cas_number', headerName: 'CAS Number' },
           { field: 'iupac_name', headerName: 'IUPAC Name' },
           { field: 'smiles', headerName: 'SMILES' },
@@ -117,20 +114,20 @@ if (document.getElementById('compounds-table')) {
 
     return (
       <div
-        className={'ag-theme-quartz-dark'}
+        className={'ag-theme-alpine'}
         style={{ height: 650 }}
       >
-      <AgGridReact
-        rowData={rowData}
-        columnDefs={columnDefs}
-        defaultColDef={defaultColDef}
-        rowSelection={rowSelection}
-        onCellDoubleClicked={cellDoubleClicked}
-        onSelectionChanged={selectionChanged}
-        pagination={true}
-        paginationPageSize={15}
-        paginationPageSizeSelector={[15, 50, 100, 500]}
-      />
+        <AgGridReact
+          rowData={rowData}
+          columnDefs={columnDefs}
+          defaultColDef={defaultColDef}
+          rowSelection={rowSelection}
+          onCellDoubleClicked={cellDoubleClicked}
+          onSelectionChanged={selectionChanged}
+          pagination={true}
+          paginationPageSize={15}
+          paginationPageSizeSelector={[15, 50, 100, 500]}
+        />
       </div>
     );
   };

@@ -24,6 +24,7 @@ use Elabftw\Services\UsersHelper;
 use function array_column;
 use function array_unique;
 use function implode;
+use function sprintf;
 
 class EntitySqlBuilder
 {

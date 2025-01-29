@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use function json_decode;
+
 /**
  * Representation of a chemical compound
  */

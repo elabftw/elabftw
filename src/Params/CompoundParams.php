@@ -71,7 +71,7 @@ final class CompoundParams extends ContentParams
 
     private function isValidEcOrExplode(string $ecNumber): string
     {
-        if (!$this->isValidec($ecNumber)) {
+        if (!$this->isValidEc($ecNumber)) {
             throw new ImproperActionException('Invalid EC number format!');
         }
         return $ecNumber;

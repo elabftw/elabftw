@@ -11,7 +11,7 @@ import { getTinymceBaseConfig } from './tinymce';
 import { marked } from 'marked';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 import { Entity, Target } from './interfaces';
-import {Api} from './Apiv2.class';
+import { Api } from './Apiv2.class';
 declare const MathJax: MathJaxObject;
 
 interface EditorInterface {

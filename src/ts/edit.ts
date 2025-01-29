@@ -22,7 +22,6 @@ import $ from 'jquery';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
 import { Api } from './Apiv2.class';
-//import { ChemDoodle } from '@deltablot/chemdoodle-web-mini/dist/chemdoodle.min.js';
 import { Uploader } from './uploader';
 
 document.addEventListener('DOMContentLoaded', async () => {

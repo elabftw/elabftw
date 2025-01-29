@@ -279,11 +279,6 @@
               {% if file.pdfa %}<span class='p-1 rounded smallgray border'>{{ 'PDF/A'|trans }}</span>{% endif %}
               {% if file.json %}<span class='p-1 rounded smallgray border'>{{ 'JSON'|trans|upper }}</span>{% endif %}
               </span>
-              {% if file.filepath %}
-                <a href='/api/v2/export/{{ file.id }}?format=binary' class='btn hl-hover-gray lh-normal border-0 p-2 m-0 my-n2' title='{{ 'Download'|trans }}' aria-label='{{ 'Download'|trans }}'>
-                  <i class='fas fa-download fa-fw'></i>
-                </a>
-              {% endif %}
             </span>
           <button type='button' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2 ml-auto' data-action='destroy-export' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}' data-id='{{ file.id }}'><i class='fas fa-trash-alt fa-fw'></i></button>
           </span>

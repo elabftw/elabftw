@@ -27,6 +27,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
+use function sprintf;
+
 /**
  * Import a CSV into compounds
  */

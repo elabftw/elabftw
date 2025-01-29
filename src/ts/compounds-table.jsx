@@ -74,8 +74,11 @@ if (document.getElementById('compounds-table')) {
       let searchString = '';
       if (document.getElementById('substructureSearchInput')) {
         const subInput = document.getElementById('substructureSearchInput');
+        const urlParams = new URLSearchParams(window.location.search);
+        const exact = (document.getElementById('search-fp-exact').checked || Boolean(urlParams.get('exact'))) ? '&exact=1' : '';
+        console.log(exact);
         if (subInput.value) {
-          searchString = `&search_fp_smi=${encodeURIComponent(subInput.value)}`;
+          searchString = `&search_fp_smi=${encodeURIComponent(subInput.value)}${exact}`;
         }
       }
       const compounds = await ApiC.getJson(`compounds?limit=999999${searchString}`);

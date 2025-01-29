@@ -37,6 +37,16 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   const MetadataC = new Metadata(entity, JsonEditorHelperC);
   MetadataC.display('edit');
+
+  function createButton(action: string, btnType: string, content?: string): HTMLButtonElement {
+    const btn: HTMLButtonElement = document.createElement('button');
+    btn.setAttribute('type', 'button');
+    btn.dataset.action = action;
+    btn.classList.add('btn', btnType);
+    btn.textContent = content ?? '';
+    return btn;
+  }
+
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
@@ -219,8 +229,12 @@ document.addEventListener('DOMContentLoaded', () => {
           const form = (document.getElementById('newFieldForm') as HTMLFormElement);
           // remove all extra inputs (dropdown and radio)
           form.querySelectorAll('.is-extra-input').forEach(i => i.parentElement.remove());
+          // keep track of the selected group, so it stays the same and it's easy to add another input in the same group afterwards
+          const selectedGroup = grpSel.value;
           // clear all fields
           form.reset();
+          // restore original value
+          grpSel.value = selectedGroup;
         });
       });
     // ADD OPTION FOR SELECT OR RADIO
@@ -232,11 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
       newInput.classList.add('form-control', 'is-extra-input');
       const appendDiv = document.createElement('div');
       appendDiv.classList.add('input-group-append');
-      const btn = document.createElement('button');
-      btn.setAttribute('type', 'button');
-      btn.dataset.action = 'remove-self';
-      btn.classList.add('btn', 'btn-secondary');
-      btn.textContent = '−';
+      const btn = createButton('remove-self','btn-secondary','-');
       appendDiv.appendChild(btn);
 
       newGroup.appendChild(newInput);
@@ -276,10 +286,99 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // save the new group in metadata
         metadata.elabftw.extra_fields_groups.push({'id': groupId, 'name': nameInput.value});
+        // Display new groups and allow editing/deleting them
+        const fieldsGroup = document.getElementById('fieldsGroup') as HTMLElement;
         // don't use the update method because we don't need to refresh the inputs
-        MetadataC.save(metadata);
+        MetadataC.save(metadata).then(() => {
+          const newInputGroup: HTMLDivElement = document.createElement('div');
+          newInputGroup.classList.add('input-group', 'mb-1');
+          newInputGroup.setAttribute('data-target', 'group-item');
+          newInputGroup.setAttribute('data-group-id', String(groupId));
+
+          const inputEl: HTMLInputElement = document.createElement('input');
+          inputEl.classList.add('form-control', 'group-name-input');
+          inputEl.setAttribute('value', grpOption.text);
+          inputEl.setAttribute('data-target', 'group-item');
+
+          const appendDiv = document.createElement('div');
+          appendDiv.classList.add('input-group-append');
+
+          const updateButton = createButton('update-fields-group', 'btn-primary');
+          const deleteButton = createButton('remove-fields-group', 'btn-secondary');
+          const saveIcon = document.createElement('i');
+          saveIcon.classList.add('fas', 'fa-save', 'text-white');
+          updateButton.appendChild(saveIcon);
+          const deleteIcon = document.createElement('i');
+          deleteIcon.classList.add('fas', 'fa-trash-alt', 'text-white');
+          deleteButton.appendChild(deleteIcon);
+          // Append buttons to the appendDiv
+          appendDiv.appendChild(updateButton);
+          appendDiv.appendChild(deleteButton);
+          // Append input and appendDiv to the main groupDiv
+          newInputGroup.appendChild(inputEl);
+          newInputGroup.appendChild(appendDiv);
+          // Append the groupDiv to the parent container
+          fieldsGroup.appendChild(newInputGroup);
+        });
         // clear input value
         nameInput.value = '';
+      });
+      // EDIT GROUP
+    } else if (el.matches('[data-action="update-fields-group"]')) {
+      const groupDiv: HTMLDivElement = el.closest('[data-target="group-item"]');
+      const groupId: number = parseInt(groupDiv.dataset.groupId, 10);
+      const nameInput = groupDiv.querySelector('.group-name-input') as HTMLInputElement;
+      const updatedGroupName = nameInput.value.trim();
+
+      MetadataC.read().then((metadata: ValidMetadata) => {
+        const group = metadata.elabftw.extra_fields_groups.find(group => group.id === groupId);
+        group.name = updatedGroupName;
+
+        // Update the group in the <select> dropdown
+        const optionToUpdate = grpSel.querySelector(`option[value="${groupId}"]`);
+        if (optionToUpdate) {
+          optionToUpdate.textContent = updatedGroupName;
+        }
+
+        MetadataC.update(metadata as ValidMetadata);
+      });
+      // DELETE GROUP
+    } else if (el.matches('[data-action="remove-fields-group"]')) {
+      if (!confirm(i18next.t('generic-delete-warning'))) return;
+
+      MetadataC.read().then((metadata: ValidMetadata) => {
+        const groupDiv: HTMLDivElement = el.closest('[data-target="group-item"]');
+        const groupId: number = parseInt(groupDiv.dataset.groupId, 10);
+
+        // Check if group exists in metadata
+        const groupIndex: number = metadata.elabftw.extra_fields_groups.findIndex(group => group.id === groupId);
+        if (groupIndex === -1) {
+          notifError(new Error(i18next.t('Group not found')));
+          return;
+        }
+
+        // Remove the group from `extra_fields_groups`
+        metadata.elabftw.extra_fields_groups.splice(groupIndex, 1);
+        // Remove the group from the <select> dropdown
+        const optionToRemove = grpSel.querySelector(`option[value="${groupId}"]`);
+        if (optionToRemove) {
+          optionToRemove.remove();
+        }
+
+        // Update extra fields from deleted group by moving them to 'Undefined group'
+        for (const key in metadata.extra_fields) {
+          if (metadata.extra_fields[key].group_id === groupId) {
+            delete metadata.extra_fields[key].group_id;
+          }
+        }
+
+        // Remove the elabftw property if no groups remain
+        if (metadata.elabftw.extra_fields_groups.length === 0) {
+          delete metadata.elabftw;
+        }
+
+        MetadataC.update(metadata as ValidMetadata);
+        groupDiv.remove();
       });
     }
   });

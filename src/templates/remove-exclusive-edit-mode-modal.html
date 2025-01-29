@@ -1,8 +1,7 @@
 {# Modal for confirming the removal of exclusive edit mode when enforced #}
+{% set label = 'You have enabled "Enforce exclusive edit mode". If you enter edit mode, exclusive edit will be reactivated.'|trans %}
 {% if mode == 'edit' %}
-  {% set label = 'You have enabled "Enforce exclusive edit mode". Unlocking this entry will redirect you to view mode. If you enter edit mode, exclusive edit will be reactivated.'|trans %}
-{% else %}
-  {% set label = 'You have enabled "Enforce exclusive edit mode". If you enter edit mode, exclusive edit will be reactivated.'|trans %}
+  {% set label = label ~ ' Unlocking this entry will redirect you to view mode.'|trans %}
 {% endif %}
 <div class='modal fade' id='removeExclusiveEditModal' tabindex='-1' role='dialog' aria-labelledby='removeExclusiveEditLabel'>
   <div class='modal-dialog' role='document'>
@@ -19,7 +18,12 @@
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
-        <button type='button' class='btn btn-primary' data-action='remove-exclusive-edit' data-dismiss='modal'>{{ 'Confirm removal'|trans }}</button>
+          {% set action = entityRequestActionsArr|first %}
+          {% if action and action.target_userid == App.Users.userData.userid %}
+            <button type='button' class='btn btn-primary' data-action='remove-exclusive-edit' data-dismiss='modal'>
+              {{ action.action }}
+            </button>
+          {% endif %}
       </div>
     </div>
   </div>

@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ApiC.getJson(`${Model.User}/me`).then(json => {
           if (json['enforce_exclusive_edit_mode'] === 1) {
             $('#removeExclusiveEditModal').modal('toggle');
-            const modal = document.querySelector('#removeExclusiveEditModal');
+            const modal = document.getElementById('removeExclusiveEditModal');
             modal.addEventListener('click', async (event) => {
               const actionTarget = (event.target as HTMLElement);
               if (actionTarget.matches('[data-action="remove-exclusive-edit"]')) {

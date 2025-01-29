@@ -14,16 +14,11 @@
       </div>
       <div class='modal-body'>
         <label>{{ label }}</label>
-        <label>{{ 'You can change this setting in your %sprofile%s.'|trans|format("<a href='ucp.php'>", "</a>")|raw }}</label>
+        <label>{{ 'You can change this in your %ssettings%s.'|trans|format("<a href='ucp.php'>", "</a>")|raw }}</label>
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
-          {% set action = entityRequestActionsArr|first %}
-          {% if action and action.target_userid == App.Users.userData.userid %}
-            <button type='button' class='btn btn-primary' data-action='remove-exclusive-edit' data-dismiss='modal'>
-              {{ action.action }}
-            </button>
-          {% endif %}
+        <button type='button' class='btn btn-primary' data-action='remove-exclusive-edit' data-dismiss='modal'>{{ 'Confirm'|trans }}</button>
       </div>
     </div>
   </div>

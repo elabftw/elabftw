@@ -334,6 +334,9 @@
 
     {# templateData will be loaded with content from an item type if templateid is present is url #}
     {% if Entity.entityData %}
+      <div class='float-right'>
+        <button type='button' class='btn btn-danger' data-id='{{ Entity.id }}' data-action='itemstypes-destroy'>{{ 'Delete'|trans }}</button>
+      </div>
       <div class='d-flex my-2 align-items-center'>
         <div class='edit-mode-label'>
           <i aria-hidden='true' class='fas fa-fw fa-users mr-1'></i>{{ 'Team'|trans }}<span class='ml-2'>{{ Entity.entityData.team_name }}</span>

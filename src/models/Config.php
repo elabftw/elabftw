@@ -60,6 +60,12 @@ final class Config extends AbstractRest
         }
     }
 
+    public function bustCache(): void
+    {
+        apcu_delete(self::CACHE_KEY);
+        $this->configArr = $this->readAll();
+    }
+
     /**
      * Insert the default values in the sql config table
      * Only run once of first ever page load
@@ -302,7 +308,7 @@ final class Config extends AbstractRest
             }
         }
 
-        apcu_delete(self::CACHE_KEY);
+        $this->bustCache();
         return $this->readAll();
     }
 

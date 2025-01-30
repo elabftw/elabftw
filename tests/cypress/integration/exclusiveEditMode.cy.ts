@@ -52,7 +52,7 @@ describe('Exclusive edit mode', () => {
     cy.url().should('include', 'mode=view').should('include', 'openedInExclusiveEditMode');
     cy.get('[class="alert alert-warning"]')
       .should('contain', 'This entry is opened by Toto Le sysadmin in exclusive edit mode since')
-      .should('contain', 'You cannot edit it now.')
+      .should('contain', 'You cannot edit it before') // rephrased as "before 'locked_until' time"
       .should('contain', 'Request exclusive edit mode removal')
       .get('[data-action="request-exclusive-edit-mode-removal"]')
       .click();

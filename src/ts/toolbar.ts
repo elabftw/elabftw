@@ -170,9 +170,28 @@ document.addEventListener('DOMContentLoaded', () => {
         $('#addSignatureModal').modal('toggle');
         break;
       case Action.RemoveExclusiveEditMode:
-        EntityC.patchAction(entity.id, Action.ExclusiveEditMode)
-          .then(() => reloadElements(['exclusiveEditModeBtn', 'exclusiveEditModeInfo', 'requestActionsDiv']))
-          .then(() => toggleGrayClasses(document.getElementById('exclusiveEditModeBtn').classList));
+        // if Enforce exclusive edit mode is active, ask confirmation before redirecting to view mode.
+        ApiC.getJson(`${Model.User}/me`).then(json => {
+          if (json['enforce_exclusive_edit_mode'] === 1) {
+            $('#removeExclusiveEditModal').modal('toggle');
+            const modal = document.getElementById('removeExclusiveEditModal');
+            modal.addEventListener('click', async (event) => {
+              const actionTarget = (event.target as HTMLElement);
+              if (actionTarget.matches('[data-action="remove-exclusive-edit"]')) {
+                await EntityC.patchAction(entity.id, Action.ExclusiveEditMode);
+                if (about.page.startsWith('template-')) {
+                  return window.location.replace('?tab=3&mode=view&templateid=' + entity.id);
+                }
+                return window.location.replace('?mode=view&id=' + entity.id);
+              }
+            });
+            return;
+          }
+          // if no Enforce setting, just patch and reload elements.
+          EntityC.patchAction(entity.id, Action.ExclusiveEditMode)
+            .then(() => reloadElements(['exclusiveEditModeBtn', 'exclusiveEditModeInfo', 'requestActionsDiv']))
+            .then(() => toggleGrayClasses(document.getElementById('exclusiveEditModeBtn').classList));
+        });
         break;
       }
     // EXPORT TO (PDF/ZIP)
@@ -209,8 +228,12 @@ document.addEventListener('DOMContentLoaded', () => {
       || el.parentElement?.matches('[data-action="toggle-exclusive-edit-mode"]')
     ) {
       EntityC.patchAction(entity.id, Action.ExclusiveEditMode)
-        .then(() => reloadElements(['exclusiveEditModeBtn', 'exclusiveEditModeInfo', 'requestActionsDiv']))
-        .then(() => toggleGrayClasses(document.getElementById('exclusiveEditModeBtn').classList));
+        .then(() => reloadElements(['exclusiveEditModeInfo', 'requestActionsDiv', 'exclusiveEditModeBtn']))
+        .then(() => {
+          if (document.getElementById('exclusiveEditModeBtn')) {
+            toggleGrayClasses(document.getElementById('exclusiveEditModeBtn').classList);
+          }
+        });
     }
   });
 });

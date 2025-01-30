@@ -344,6 +344,11 @@ export async function reloadElements(elementIds: string[]): Promise<void> {
 
   const html = await fetchCurrentPage();
   elementIds.forEach(elementId => {
+    if (!html.getElementById(elementId)) {
+      console.warn(`Could not find element with id ${elementId} anymore, removing it`);
+      document.getElementById(elementId).remove();
+      return;
+    }
     document.getElementById(elementId).innerHTML = html.getElementById(elementId).innerHTML;
     listenTrigger(elementId);
   });

@@ -109,7 +109,14 @@ class MakeController extends AbstractController
                 if (count($this->entityArr) !== 1) {
                     throw new ImproperActionException('QR PNG format is only suitable for one ID.');
                 }
-                return (new MakeQrPng(new MpdfQrProvider(), $this->entityArr[0], $this->Request->query->getInt('size'), $withTitle))->getResponse();
+                return (new MakeQrPng(
+                    new MpdfQrProvider(),
+                    $this->entityArr[0],
+                    $this->Request->query->getInt('size'),
+                    $withTitle,
+                    $this->Request->query->getInt('titleLines'),
+                    $this->Request->query->getInt('titleChars'),
+                ))->getResponse();
 
             case ExportFormat::SchedulerReport:
                 return $this->makeSchedulerReport();

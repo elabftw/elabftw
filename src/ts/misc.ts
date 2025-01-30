@@ -16,7 +16,6 @@ import EntityClass from './Entity.class';
 import $ from 'jquery';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
-//import { ChemDoodle } from '@deltablot/chemdoodle-web-mini/dist/chemdoodle.min.js';
 import { getEditor } from './Editor.class';
 import TomSelect from 'tom-select/dist/esm/tom-select';
 import TomSelectCheckboxOptions from 'tom-select/dist/esm/plugins/checkbox_options/plugin';

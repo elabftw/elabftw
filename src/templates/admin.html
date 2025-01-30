@@ -332,7 +332,7 @@
     {% endif %}
   {% endif %}
 
-    {# templateData will be loaded with content from an item type if templateid is present is url #}
+    {# Entity.entityData will be loaded with content from an item type if templateid is present is url #}
     {% if Entity.entityData %}
       <div class='float-right'>
         <button type='button' class='btn btn-danger' data-id='{{ Entity.id }}' data-action='itemstypes-destroy'>{{ 'Delete'|trans }}</button>
@@ -345,12 +345,12 @@
       <ul class='list-inline'>
         <li class='list-inline-item'>
           <label for='itemsTypesName'>{{ 'Name'|trans }}</label>
-          <input type='text' class='form-control' id='itemsTypesName' value='{{ Entity.entityData.title|e('html_attr') }}' />
+          <input type='text' data-trigger='blur' data-model='items_types/{{ Entity.id }}' data-target='title' class='form-control' id='itemsTypesName' value='{{ Entity.entityData.title|e('html_attr') }}' />
         </li>
 
         <li class='list-inline-item col-1 align-top'>
           <label for='itemsTypesColor'>{{ 'Color'|trans }}</label>
-          <input class='form-control' type='color' id='itemsTypesColor' value='#{{ Entity.entityData.color }}' />
+          <input class='form-control' data-trigger='change' data-model='items_types/{{ Entity.id }}' data-target='color' type='color' id='itemsTypesColor' value='#{{ Entity.entityData.color }}' />
         </li>
       </ul>
 
@@ -386,7 +386,8 @@
           <button type='button' class='btn btn-sm hl-hover-gray p-1 mt-1 rounded' data-action='switch-editor'><i class='fas fa-pencil-alt fa-fw'></i> {{ 'Switch editor'|trans }}</button>
         </div>
         <div class='text-center mt-3'>
-          <button type='button' class='btn btn-primary' data-id='{{ Entity.id }}' data-action='itemstypes-update'>{{ 'Save'|trans }}</button>
+          {# Save button only acts on body, other fields are saved on blur or change events #}
+          <button type='button' class='btn btn-primary' data-id='{{ Entity.id }}' data-action='update-entity-body'>{{ 'Save'|trans }}</button>
         </div>
       </div>
 

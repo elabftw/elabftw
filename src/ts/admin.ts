@@ -70,24 +70,6 @@ function getSelected(): Selected {
   };
 }
 
-// UPDATE
-function itemsTypesUpdate(id: number): Promise<Response> {
-  const nameInput = (document.getElementById('itemsTypesName') as HTMLInputElement);
-  const name = nameInput.value;
-  if (name === '') {
-    notif({'res': false, 'msg': 'Name cannot be empty'});
-    nameInput.style.borderColor = 'red';
-    nameInput.focus();
-    return;
-  }
-  const color = (document.getElementById('itemsTypesColor') as HTMLInputElement).value;
-  const body = getEditor().getContent();
-  const ApiC = new Api();
-  const params = {'title': name, 'color': color, 'body': body};
-  return ApiC.patch(`${EntityType.ItemType}/${id}`, params);
-}
-// END ITEMS TYPES
-
 function getRandomColor(): string {
   return `#${Math.floor(Math.random()*16777215).toString(16)}`;
 }
@@ -180,7 +162,7 @@ if (window.location.pathname === '/admin.php') {
       counterValue.textContent = String(count);
     // UPDATE ITEMS TYPES
     } else if (el.matches('[data-action="itemstypes-update"]')) {
-      itemsTypesUpdate(parseInt(el.dataset.id, 10));
+      return ApiC.patch(`${EntityType.ItemType}/${el.dataset.id}`, {'body': getEditor().getContent()});
     // DESTROY ITEMS TYPES
     } else if (el.matches('[data-action="itemstypes-destroy"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {

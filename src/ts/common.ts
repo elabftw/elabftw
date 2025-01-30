@@ -27,6 +27,7 @@ import {
   toggleEditCompound,
   togglePlusIcon,
   TomSelect,
+  updateEntityBody,
 } from './misc';
 import i18next from 'i18next';
 import EntityClass from './Entity.class';
@@ -603,6 +604,17 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="toggle-modal"]')) {
       // TODO this requires jquery for now. Not in BS5.
       $('#' + el.dataset.target).modal('toggle');
+
+    // UPDATE ENTITY BODY (SAVE BUTTON)
+    } else if (el.matches('[data-action="update-entity-body"]')) {
+      updateEntityBody().then(() => {
+        // SAVE AND GO BACK BUTTON
+        if (el.matches('[data-redirect="view"]')) {
+          const entity = getEntity();
+          window.location.replace('?mode=view&id=' + entity.id);
+        }
+      });
+
 
     // SEARCH PUBCHEM
     } else if (el.matches('[data-action="search-cid"]')) {

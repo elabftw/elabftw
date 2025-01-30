@@ -9,13 +9,12 @@ import {
   escapeRegExp,
   getEntity,
   getNewIdFromPostRequest,
-  notif,
   notifError,
   reloadElements,
   updateCatStat,
   updateEntityBody,
 } from './misc';
-import { Target, Upload, Model, Action } from './interfaces';
+import { Target, Model, Action } from './interfaces';
 import './doodle';
 import { getEditor } from './Editor.class';
 import $ from 'jquery';
@@ -72,68 +71,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   // END DATA RECOVERY
   ////////////////////
 
-  // GET MOL FILES
-  function getListFromMolFiles(): void {
-    const mols = [];
-    ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}`).then(json => {
-      for (const upload of json as Array<Upload>) {
-        const extension = upload.real_name.split('.').pop();
-        // unfortunately, loading .rxn files here doesn't work as it expects json or mol only
-        if (['mol', 'chemjson'].includes(extension)) {
-          mols.push([upload.real_name, upload.long_name]);
-        }
-      }
-      if (mols.length === 0) {
-        notif({res: false, msg: 'No mol files found.'});
-        return;
-      }
-      let listHtml = '<ul class="text-left">';
-      mols.forEach(function(mol: [string, string], index: number) {
-        listHtml += '<li style="color:#29aeb9" class="clickable loadableMolLink" data-target="app/download.php?f=' + mols[index][1] + '">' + mols[index][0] + '</li>';
-      });
-      $('.getMolButton').text('Refresh list');
-      $('.getMolDiv').html(listHtml + '</ul>');
-    });
-  }
-
-  $(document).on('click', '.getMolButton', function() {
-    getListFromMolFiles();
-  });
-
-  // Load the content of a mol file from the list in the mol editor
-  $(document).on('click', '.loadableMolLink', function() {
-    $.get($(this).data('target')).done(function(molContent) {
-      // a .chemjson file will be an object but we want a string
-      if (typeof molContent === 'object') {
-        molContent = JSON.stringify(molContent);
-      }
-      $('#sketcher_open_text').val(molContent);
-    });
-  });
-  // END GET MOL FILES
-
-  // DRAW THE MOLECULE SKETCHER
-  // documentation: https://web.chemdoodle.com/tutorial/2d-structure-canvases/sketcher-canvas#options
-  /*
-  const sketcher = new ChemDoodle.SketcherCanvas('sketcher', 750, 300, {
-    oneMolecule: false,
-  });
- */
-
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
-    // UPDATE ENTITY BODY (SAVE BUTTON)
-    if (el.matches('[data-action="update-entity-body"]')) {
-      updateEntityBody().then(() => {
-        // SAVE AND GO BACK BUTTON
-        if (el.matches('[data-redirect="view"]')) {
-          window.location.replace('?mode=view&id=' + entity.id);
-        }
-      });
-
     // GET NEXT CUSTOM ID
-    } else if (el.matches('[data-action="get-next-custom-id"]')) {
+    if (el.matches('[data-action="get-next-custom-id"]')) {
       // fetch the category from the current value of select, as it might be different from the one on page load
       const category = (document.getElementById('category_select') as HTMLSelectElement).value;
       if (category === '0') {
@@ -157,36 +99,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         // unlock the button
         button.disabled = false;
       });
-
-      // SAVE CHEM CANVAS AS FILE: chemjson or png
-      /*
-    } else if (el.matches('[data-action="save-chem-as-file"]')) {
-      const realName = prompt(i18next.t('request-filename'));
-      if (realName === null || realName === '') {
-        return;
-      }
-      let content: string;
-      switch (el.dataset.filetype) {
-      case 'chemjson':
-        content = JSON.stringify(new ChemDoodle.io.JSONInterpreter().contentTo(sketcher.molecules, sketcher.shapes));
-        break;
-      case 'png':
-        // note: this is the same as ChemDoodle.io.png.string(sketcher)
-        content = (document.getElementById('sketcher') as HTMLCanvasElement).toDataURL();
-        break;
-      case 'rxn':
-        content = new ChemDoodle.io.RXNInterpreter().write(sketcher.molecules, sketcher.shapes);
-        break;
-      }
-
-      const params = {
-        'action': Action.CreateFromString,
-        'file_type': el.dataset.filetype,
-        'real_name': realName,
-        'content': content,
-      };
-      ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}`, params).then(() => reloadElements(['uploadsDiv']));
-     */
 
     // ANNOTATE IMAGE
     } else if (el.matches('[data-action="annotate-image"]')) {

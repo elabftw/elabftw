@@ -12,7 +12,6 @@
     "@ag-grid-community/infinite-row-model": "^32.3.2",
     "@ag-grid-community/react": "^32.3.2",
     "@ag-grid-community/styles": "^32.3.2",
-    "@deltablot/chemdoodle-web-mini": "^9.5.1",
     "@deltablot/dropzone": "^7.1.5",
     "@deltablot/ketcher-core": "^2.26.1",
     "@deltablot/malle": "^2.6.1",

@@ -23,7 +23,7 @@ use RobThree\Auth\Providers\Qr\IQRCodeProvider;
 use function strlen;
 
 /**
- * Generate a PNG image with a QR Code pointing to the URL of the Entity, and possibly the title below it
+ * Generate a PNG image with a QR Code pointing to the URL of the Entity, and optionally include the title
  */
 class MakeQrPng extends AbstractMake implements StringMakerInterface
 {

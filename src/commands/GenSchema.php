@@ -41,7 +41,7 @@ class GenSchema extends Command
         $schemaNumber = Update::REQUIRED_SCHEMA + 1;
         $output->writeln(sprintf('Generating schema %d', $schemaNumber));
         $filename = sprintf('schema%d.sql', $schemaNumber);
-        $content = sprintf("-- schema %1\$s\n\nUPDATE config SET conf_value = %1\$s WHERE conf_name = 'schema';\n", $schemaNumber);
+        $content = sprintf("-- schema %d\n\n", $schemaNumber);
         $this->fs->write($filename, $content);
         $output->writeln('Created file: ' . $filename);
         // now generate the down file

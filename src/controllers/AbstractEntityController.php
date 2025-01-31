@@ -86,7 +86,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $this->currencyArr = Currency::getAssociativeArray();
         $this->scopedTeamgroupsArr = $TeamGroups->readScopedTeamgroups();
         $Templates = new Templates($this->Entity->Users);
-        $this->templatesArr = $Templates->Pins->readAllSimple();
+        $this->templatesArr = $Templates->Pins->readAll();
         if ($App->Request->query->has('archived') && $Entity instanceof AbstractConcreteEntity) {
             $Entity->Uploads->includeArchived = true;
         }
@@ -159,7 +159,6 @@ abstract class AbstractEntityController implements ControllerInterface
             'statusArr' => $this->statusArr,
             'itemsCategoryArr' => $itemsCategoryArr,
             'favTagsArr' => $favTagsArr,
-            'pinnedArr' => $this->Entity->Pins->readAll(),
             'itemsArr' => $itemsArr,
             'requestActionsArr' => $UserRequestActions->readAllFull(),
             'scopedTeamgroupsArr' => $this->scopedTeamgroupsArr,

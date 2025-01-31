@@ -19,7 +19,6 @@ import './doodle';
 import { getEditor } from './Editor.class';
 import $ from 'jquery';
 import i18next from 'i18next';
-import EntityClass from './Entity.class';
 import { Api } from './Apiv2.class';
 import { Uploader } from './uploader';
 
@@ -32,7 +31,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const ApiC = new Api();
 
   const entity = getEntity();
-  const EntityC = new EntityClass(entity.type);
 
   // Which editor are we using? md or tiny
   const editor = getEditor();
@@ -55,7 +53,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // RECOVER YES
   $(document).on('click', '.recover-yes', function() {
-    EntityC.update(entity.id, Target.Body, localStorage.getItem('body')).then(() => {
+    const params = {};
+    params[Target.Body] = localStorage.getItem('body');
+    ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => {
       editor.replaceContent(localStorage.getItem('body'));
       localStorage.clear();
       document.getElementById('recoveryDiv').remove();
@@ -88,13 +88,17 @@ document.addEventListener('DOMContentLoaded', async () => {
       const button = el as HTMLButtonElement;
       button.disabled = true;
       // make sure the current id is null or it will increment this one
-      EntityC.update(entity.id, Target.Customid, null).then(() => {
+      const params = {};
+      params[Target.Customid] = null;
+      ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => {
         // get the entity with highest custom_id
         return ApiC.getJson(`${el.dataset.endpoint}/?cat=${category}&order=customid&limit=1&sort=desc`);
       }).then(json => {
         const nextId = json[0].custom_id + 1;
         inputEl.value = nextId;
-        return EntityC.update(entity.id, Target.Customid, nextId);
+        const params = {};
+        params[Target.Customid] = nextId;
+        return ApiC.patch(`${entity.type}/${entity.id}`, params);
       }).finally(() => {
         // unlock the button
         button.disabled = false;

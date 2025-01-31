@@ -695,6 +695,14 @@ tr:nth-child(odd) {
       color: $medium;
     }
 
+    &.bgnd-blue {
+      background-color: $elabblue;
+
+      &:hover {
+        background-color: $secondlevel;
+      }
+    }
+
     &.bgnd-dark {
       background-color: $medium;
 
@@ -704,6 +712,11 @@ tr:nth-child(odd) {
     }
   }
 }
+
+.entity-template {
+  border: 1px dashed $firstlevel;
+}
+
 
 .bgnd-gray {
   background-color: $firstlevel;

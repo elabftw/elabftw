@@ -5,6 +5,7 @@
 {% set icon = 'eye' %}
 {% set label = 'Visibility'|trans %}
 {% set modalTitle = 'Select who can see this entry'|trans %}
+{% set immutableVar = rw ~ '_is_immutable' %}
 {% if rw == 'canwrite' or rw == 'canwrite_target' %}
   {% set icon = 'pencil-alt' %}
   {% set label = 'Can write'|trans %}
@@ -18,7 +19,7 @@
 
 {% include('permissions-edit-modal.html') %}
 <label class='col-form-label mr-3 edit-mode-label'><i class='fas fa-fw fa-{{ icon }} mr-1' title='{{ label }}'></i>{{ label }}</label>
-{% if not Entity.isReadOnly %}
+{% if not Entity.isReadOnly and not Entity.entityData[immutableVar] %}
   <button type='button' title='{{ modalTitle }}' aria-label='{{ modalTitle }}' class='btn border-0 lh-normal hl-hover-gray' data-action='toggle-modal' data-target='permModal-{{ rw }}'>
     <i class='fas fa-fw fa-square-plus fa-2x'></i>
   </button>

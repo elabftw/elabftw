@@ -15,6 +15,7 @@ namespace Elabftw\Models;
 use DateTimeImmutable;
 use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Elabftw\Permissions;
+use Elabftw\Elabftw\TemplatesSqlBuilder;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
@@ -125,6 +126,8 @@ abstract class AbstractEntity extends AbstractRest
         ?DateTimeImmutable $date = null,
         ?string $canread = null,
         ?string $canwrite = null,
+        ?bool $canreadIsImmutable = false,
+        ?bool $canwriteIsImmutable = false,
         array $tags = array(),
         ?int $category = null,
         ?int $status = null,
@@ -244,7 +247,12 @@ abstract class AbstractEntity extends AbstractRest
             $this->processExtendedQuery(trim($displayParams->queryString . ' ' . $displayParams->extendedQuery));
         }
 
-        $EntitySqlBuilder = new EntitySqlBuilder($this);
+        // TODO inject
+        if ($this instanceof Templates) {
+            $EntitySqlBuilder = new TemplatesSqlBuilder($this);
+        } else {
+            $EntitySqlBuilder = new EntitySqlBuilder($this);
+        }
         $sql = $EntitySqlBuilder->getReadSqlBeforeWhere(
             $extended,
             $extended,

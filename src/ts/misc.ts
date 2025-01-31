@@ -12,7 +12,6 @@ import { MathJaxObject } from 'mathjax-full/js/components/startup';
 import tinymce from 'tinymce/tinymce';
 import TableSorting from './TableSorting.class';
 declare const MathJax: MathJaxObject;
-import EntityClass from './Entity.class';
 import $ from 'jquery';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
@@ -650,8 +649,8 @@ export async function saveStringAsFile(filename: string, content: string|Promise
 export async function updateEntityBody(): Promise<void> {
   const editor = getEditor();
   const entity = getEntity();
-  const EntityC = new EntityClass(entity.type);
-  return EntityC.update(entity.id, Target.Body, editor.getContent()).then(response => response.json()).then(json => {
+  const ApiC = new Api();
+  return ApiC.patch(`${entity.type}/${entity.id}`, {body: editor.getContent()}).then(response => response.json()).then(json => {
     if (editor.type === 'tiny') {
       // set the editor as non dirty so we can navigate out without a warning to clear
       tinymce.activeEditor.setDirty(false);

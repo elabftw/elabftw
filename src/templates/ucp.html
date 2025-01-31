@@ -3,7 +3,6 @@
 <ul class='tabbed-menu'>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='1'>{{ 'General'|trans }}</button></li>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='2'>{{ 'Account'|trans }}</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='3'>{{ 'Templates'|trans }}</button></li>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='4'>{{ 'API keys'|trans }}</button></li>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='5'>{{ 'Notifications'|trans }}</button></li>
 </ul>
@@ -437,17 +436,6 @@
     {% endif %}
 
   </div>
-</div>
-
-{# TAB 3 - USER TEMPLATES #}
-<div data-tabcontent='3' hidden>
-  <h2 class='p-2 pl-3 section-title'><i class='fas fa-layer-group'></i> {{ 'Experiments Templates'|trans }}</h2>
-
-  {% if App.Request.query.has('templateid') %}
-    {% include 'view-edit-template.html' %}
-  {% else %}
-    {% include 'show-templates-select.html' %}
-  {% endif %}
 </div>
 
 {# TAB 4 - API KEYS #}

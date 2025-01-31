@@ -69,7 +69,7 @@ class DisplayParams extends BaseQueryParams
     public function getSql(): string
     {
         return sprintf(
-            'ORDER BY %s %s, entity.id %s LIMIT %d OFFSET %d',
+            'ORDER BY is_pinned DESC, %s %s, entity.id %s LIMIT %d OFFSET %d',
             $this->orderby->toSql(),
             $this->sort->value,
             $this->sort->value,

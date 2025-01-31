@@ -65,9 +65,11 @@
   {# DATE and RATING #}
   <div class='d-flex mb-1'>
     {# DATE #}
-    <div class='color-medium'>
-      {{ 'Started on'|trans }} {{ Entity.entityData.date|date('Y-m-d') }}
-    </div>
+    {% if Entity.entityType.value != 'experiments_templates' %}
+      <div class='color-medium'>
+        {{ 'Started on'|trans }} {{ Entity.entityData.date|date('Y-m-d') }}
+      </div>
+    {% endif %}
     {# RATING #}
     <div class='ml-auto'>
       {% if Entity.entityData.rating > 0 %}
@@ -144,8 +146,10 @@
   <div>{{ 'Owner:'|trans }} {{ Entity.entityData.fullname }}</div>
   {# SHOW LAST MOD #}
   <div>{{ 'Last modified on %s'|trans|format(Entity.entityData.modified_at) }}</div>
-  {# eLabID #}
-  <div class='elabid'>{{ 'Unique eLabID:'|trans }} {{ Entity.entityData.elabid }}</div>
+  {# eLabID: add an if because templates don't have one #}
+  {% if Entity.entityData.elabid %}
+    <div class='elabid'>{{ 'Unique eLabID:'|trans }} {{ Entity.entityData.elabid }}</div>
+  {% endif %}
 </div>
 
 <hr>

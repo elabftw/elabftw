@@ -52,7 +52,7 @@ enum EntityType: string
         return match ($this) {
             $this::Experiments => 'experiments.php',
             $this::Items => 'database.php',
-            $this::Templates => 'ucp.php?tab=3',
+            $this::Templates => 'templates.php',
             $this::ItemsTypes => 'admin.php?tab=4',
         };
     }

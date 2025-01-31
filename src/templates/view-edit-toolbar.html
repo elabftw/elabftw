@@ -164,6 +164,12 @@
   <a title='{{ 'Back to listing'|trans }}' aria-label='{{ 'Back to listing'|trans }}' href='?{{ lastquery }}' class='btn hl-hover-gray p-2 lh-normal border-0'>
     <i class='fas fa-arrow-left fa-fw'></i>
   </a>
+  {# for templates: create from button #}
+  {% if Entity.entityType.value == 'experiments_templates' %}
+    <a data-action='create-entity' data-type='experiments' data-tplid='{{ Entity.id }}' href='#' class='btn hl-hover-gray p-2 lh-normal border-0' title='{{ 'Create experiment from template'|trans }}' aria-label='{{ 'Create experiment from template'|trans }}'>
+      <i class='color-blue fas fa-splotch fa-fw'></i>
+    </a>
+  {% endif %}
 
   <div class='vertical-separator'></div>
 
@@ -242,9 +248,7 @@
     {% if not App.Session.has('is_anon') %}
 
       {# TOGGLE PIN #}
-      <button type='button' title='{{ 'Toggle pin'|trans }}' aria-label='{{ 'Toggle pin'|trans }}' data-action='toggle-pin' class='btn {{ Entity.Pins.isPinned ? 'bgnd-gray' : 'hl-hover-gray' }} p-2 mr-2 lh-normal border-0'>
-        <i class='fas fa-thumbtack {{ not Entity.Pins.isPinned ? 'color-weak' }} fa-fw'></i>
-      </button>
+      {% include 'toggle-pin.html' %}
 
       {# LOCK #}
       {% set lockIcon = 'fa-lock-open' %}

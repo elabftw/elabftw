@@ -20,7 +20,6 @@ import {
 import { Action, Model } from './interfaces';
 import 'bootstrap/js/src/modal.js';
 import i18next from 'i18next';
-import EntityClass from './Entity.class';
 import FavTag from './FavTag.class';
 import { Api } from './Apiv2.class';
 
@@ -36,7 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const entity = getEntity();
-  const EntityC = new EntityClass(entity.type);
   const FavTagC = new FavTag();
   const ApiC = new Api();
 
@@ -254,10 +252,6 @@ document.addEventListener('DOMContentLoaded', () => {
       el.classList.add('selected');
       reloadEntitiesShow(el.dataset.tag);
 
-    // TOGGLE PIN
-    } else if (el.matches('[data-action="toggle-pin"]')) {
-      ApiC.patch(`${entity.type}/${parseInt(el.dataset.id, 10)}`, {'action': Action.Pin}).then(() => el.closest('.entity').remove());
-
     // remove a favtag
     } else if (el.matches('[data-action="destroy-favtags"]')) {
       FavTagC.destroy(parseInt(el.dataset.id, 10)).then(() => reloadElements(['favtagsTagsDiv']));
@@ -361,7 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // loop over it and patch with selected action
       const results = [];
       checked.forEach(chk => {
-        results.push(EntityC.patchAction(chk.id, action));
+        results.push(ApiC.patch(`${entity.type}/${chk.id}`, action));
       });
       Promise.all(results).then(() => reloadEntitiesShow());
 
@@ -378,7 +372,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       // loop on it and delete stuff (use curly braces to avoid implicit return)
-      checked.forEach(chk => {EntityC.destroy(chk.id).then(() => document.getElementById(`parent_${chk.randomid}`).remove());});
+      checked.forEach(chk => {ApiC.delete(`${entity.type}/${chk.id}`).then(() => document.getElementById(`parent_${chk.randomid}`).remove());});
     }
   });
 

@@ -17,16 +17,14 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\Teams;
+use Elabftw\Models\Templates;
 
 /**
  * For experiments.php
  */
 class ExperimentsController extends AbstractEntityController
 {
-    /**
-     * Constructor
-     */
-    public function __construct(App $app, Experiments $entity)
+    public function __construct(App $app, Experiments | Templates $entity)
     {
         parent::__construct($app, $entity);
 

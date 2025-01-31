@@ -16,7 +16,6 @@ import {
   escapeExtendedQuery,
   generateMetadataLink,
   getEntity,
-  getNewIdFromPostRequest,
   listenTrigger,
   makeSortableGreatAgain,
   notifError,
@@ -25,12 +24,12 @@ import {
   reloadElements,
   replaceWithTitle,
   toggleEditCompound,
+  toggleGrayClasses,
   togglePlusIcon,
   TomSelect,
   updateEntityBody,
 } from './misc';
 import i18next from 'i18next';
-import EntityClass from './Entity.class';
 import { Metadata } from './Metadata.class';
 import { DateTime } from 'luxon';
 import { Action, EntityType, Model, Target } from './interfaces';
@@ -372,6 +371,21 @@ document.addEventListener('DOMContentLoaded', () => {
         top: 0,
         behavior: 'smooth',
       });
+
+    // TOGGLE PINNED
+    } else if (el.matches('[data-action="toggle-pin"]')) {
+      const entity = getEntity();
+      let id = entity.id;
+      if (isNaN(id) || id === null) {
+        id = parseInt(el.dataset.id, 10);
+      }
+
+      ApiC.patch(`${entity.type}/${id}`, {'action': Action.Pin}).then(() => {
+        // toggle appearance of button and icon
+        toggleGrayClasses(el.classList);
+        el.querySelector('i').classList.toggle('color-weak');
+      });
+
 
     // AUTOCOMPLETE
     } else if (el.matches('[data-complete-target]')) {
@@ -774,14 +788,31 @@ document.addEventListener('DOMContentLoaded', () => {
       url.searchParams.set('sort', query[1]);
       window.location.href = url.href;
 
-    // CREATE EXPERIMENT or DATABASE item: main create button in top right
+    // CREATE EXPERIMENT, TEMPLATE or DATABASE item: main create button in top right
     } else if (el.matches('[data-action="create-entity"]')) {
+      let params = {};
+      if (el.dataset.hasTitle) {
+        params = collectForm(document.getElementById('createNewForm'));
+      }
+      if (el.dataset.tplid) {
+        params['category_id'] = el.dataset.tplid;
+      }
       // look for any tag present in the url, we will create the experiment with these tags
       const urlParams = new URLSearchParams(document.location.search);
-      const entityC = new EntityClass(el.dataset.type as EntityType);
-      entityC.create(el.dataset.tplid, urlParams.getAll('tags[]')).then(resp => {
-        const newId = getNewIdFromPostRequest(resp);
-        window.location.href = `${entityC.getPage()}.php?mode=edit&id=${newId}`;
+      const tags = urlParams.getAll('tags[]');
+      if (tags) {
+        params['tags'] = tags;
+      }
+      const entity = getEntity();
+      let page = 'experiments.php';
+      if (el.dataset.type === 'experiments_templates') {
+        page = 'templates.php';
+      }
+      if (el.dataset.type === 'items') {
+        page = 'database.php';
+      }
+      ApiC.post2location(`${entity.type}`, params).then(id => {
+        window.location.href = `${page}?mode=edit&id=${id}`;
       });
 
     } else if (el.matches('[data-action="report-bug"]')) {

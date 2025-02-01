@@ -87,11 +87,11 @@
   <div class='col-md-4 mt-2 mt-md-0'>
     <div class='d-flex justify-content-between'>
       <h4>{{ 'Scheduled bookings'|trans }}</h4>
-      <a href='team.php?tab=1' class='btn btn-secondary'>{{ 'Scheduler'|trans }}</a>
+      <a href='scheduler.php' class='btn btn-secondary'>{{ 'Scheduler'|trans }}</a>
     </div>
     <div class='list-group mt-1'>
       {% for booking in bookingsArr %}
-        <a href='team.php?tab=1&amp;item={{ booking.items_id }}&amp;start={{ booking.start|url_encode }}' class='list-group-item hl-hover-gray'><span style='color: {{ booking.color }}'>{{ booking.title }}</span> <span title='{{ booking.start|date('Y-m-d H:i:s') }}' class='relative-moment text-nowrap smallgray'></span></a>
+        <a href='scheduler.php?item={{ booking.items_id }}&amp;start={{ booking.start|url_encode }}' class='list-group-item hl-hover-gray'><span style='color: {{ booking.color }}'>{{ booking.title }}</span> <span title='{{ booking.start|date('Y-m-d H:i:s') }}' class='relative-moment text-nowrap smallgray'></span></a>
       {% endfor %}
     </div>
   </div>

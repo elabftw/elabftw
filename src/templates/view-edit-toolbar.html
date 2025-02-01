@@ -195,7 +195,7 @@
     </button>
 
     {% if Entity.entityType.value == 'items' and Entity.canBook and Entity.entityData.is_bookable %}
-      <a class='btn mr-2 hl-hover-gray p-2 lh-normal border-0' title='{{ 'Book item'|trans }}' aria-label='{{ 'Book item'|trans }}' href='team.php?tab=1&amp;item={{ Entity.id }}'>
+      <a class='btn mr-2 hl-hover-gray p-2 lh-normal border-0' title='{{ 'Book item'|trans }}' aria-label='{{ 'Book item'|trans }}' href='scheduler.php?item={{ Entity.id }}'>
         <i class='fas fa-calendar-plus fa-fw'></i>
       </a>
     {% endif %}

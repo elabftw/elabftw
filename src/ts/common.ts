@@ -484,6 +484,9 @@ document.addEventListener('DOMContentLoaded', () => {
       // reload the page
       document.location.search = params.toString();
 
+    } else if (el.matches('[data-action="reload-page"]')) {
+      location.reload();
+
     // SAVE PERMISSIONS
     } else if (el.matches('[data-action="save-permissions"]')) {
       const params = {};

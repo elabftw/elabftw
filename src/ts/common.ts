@@ -795,23 +795,23 @@ document.addEventListener('DOMContentLoaded', () => {
         params = collectForm(document.getElementById('createNewForm'));
       }
       if (el.dataset.tplid) {
-        params['category_id'] = el.dataset.tplid;
+        params['template'] = el.dataset.tplid;
       }
-      // look for any tag present in the url, we will create the experiment with these tags
+      // look for any tag present in the url, we will create the entry with these tags
       const urlParams = new URLSearchParams(document.location.search);
       const tags = urlParams.getAll('tags[]');
       if (tags) {
         params['tags'] = tags;
       }
-      const entity = getEntity();
       let page = 'experiments.php';
       if (el.dataset.type === 'experiments_templates') {
         page = 'templates.php';
       }
-      if (el.dataset.type === 'items') {
+      if (el.dataset.type === 'database') {
+        el.dataset.type = 'items';
         page = 'database.php';
       }
-      ApiC.post2location(`${entity.type}`, params).then(id => {
+      ApiC.post2location(`${el.dataset.type}`, params).then(id => {
         window.location.href = `${page}?mode=edit&id=${id}`;
       });
 

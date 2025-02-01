@@ -549,11 +549,6 @@ tr:nth-child(odd) {
 /* required labels/input for extra fields */
 #metadataDiv,
 .new-field-form {
-  /* any invalid field will get this red border */
-  :invalid {
-    border: 1px solid $lightred;
-  }
-
   .required-label::after {
     color: $dangerred;
     content: ' *';
@@ -1526,12 +1521,16 @@ input:focus + .slider {
   box-shadow: 0 0 8px $elabblue;
 }
 
-input:invalid {
-  border: 1px solid $dangerred;
-}
-
 input:checked + .slider::before {
   transform: translateX(20px);
+}
+
+/* :user-invalid only activates after the user interacted with an input
+ * https://developer.mozilla.org/en-US/docs/Web/CSS/:user-invalid
+ */
+input:user-invalid {
+  border: 1px solid $dangerred;
+  box-shadow: 0 0 8px $dangerred;
 }
 
 .section-title {

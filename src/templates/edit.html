@@ -85,7 +85,42 @@
   {% include('edit-tags.html') %}
   {# PERMISSIONS #}
   <hr>
+  {% if Entity.entityData.canread_target %}
+    <h5>{{ 'Permissions for the template'|trans }}</h5>
+  {% endif %}
   {% include('edit-permissions.html') %}
+  {# templates also have a read/write target #}
+  {% if Entity.entityData.canread_target %}
+   {# TARGET PERMISSIONS #}
+    <h5>{{ 'Permissions for the derived experiment'|trans }}</h5>
+    <div class='d-flex mb-2 align-items-center'>
+      {# CANREAD #}
+      {% set rw = 'canread_target' %}
+      {% set can = Entity.entityData.canread_target|canToHuman %}
+      {% include('view-permissions.html') %}
+    </div>
+    <div class='d-flex'>
+      <label for='canread_is_immutable' class='col-form-label mr-2'>{{ 'Lock down read permissions'|trans }}</label>
+      <label class='switch ucp-align'>
+        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='{{ Entity.entityType.value ~ '/' ~ Entity.id }}' data-target='canread_is_immutable' {{ Entity.entityData.canread_is_immutable ? 'checked="checked"' }} id='canread_is_immutable'>
+        <span class='slider'></span>
+      </label>
+    </div>
+    <div class='d-flex mb-2 align-items-center'>
+      {# CANWRITE #}
+      {% set rw = 'canwrite_target' %}
+      {% set can = Entity.entityData.canwrite_target|canToHuman %}
+      {% include('view-permissions.html') %}
+    </div>
+    <div class='d-flex'>
+      <label for='canwrite_is_immutable' class='col-form-label mr-2'>{{ 'Lock down write permissions'|trans }}</label>
+      <label class='switch ucp-align'>
+        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='{{ Entity.entityType.value ~ '/' ~ Entity.id }}' data-target='canwrite_is_immutable' {{ Entity.entityData.canwrite_is_immutable ? 'checked="checked"' }} id='canwrite_is_immutable'>
+        <span class='slider'></span>
+      </label>
+    </div>
+  <hr>
+  {% endif %}
 
   {# BODY #}
   <div {{ not displayMainText ? 'hidden' }}>

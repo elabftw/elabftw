@@ -76,60 +76,6 @@
       'label': 'Force experiment template use'|trans,
       'help': 'Remove Default Template and Blank Experiment choices from Create menu, and force usage of existing Templates.'|trans} %}
   </div>
-  <h3 class='p-2 pl-3 section-title'>{{ 'Menu link'|trans }}</h3>
-
-  <div class='pl-3 mt-2'>
-    <div class='d-flex justify-content-between'>
-      <label for='link_name' class='col-form-label'>{{ 'Name of the link in the top menu'|trans }}</label>
-      <input class='form-control col-md-4' data-trigger='blur' data-model='teams/current' data-target='link_name' type='text' value='{{ App.teamArr.link_name|e('html_attr') }}' name='link_name' id='link_name' />
-    </div>
-    <hr>
-
-    <div class='d-flex justify-content-between'>
-      <label for='link_href' class='col-form-label'>{{ 'Address where this link should point'|trans }}</label>
-      <input class='form-control col-md-4' type='url' data-trigger='blur' data-model='teams/current' data-target='link_href' value='{{ App.teamArr.link_href|e('html_attr') }}' name='link_href' id='link_href' />
-    </div>
-    <hr>
-
-  </div>
-  <h3 class='p-2 pl-3 section-title'>{{ 'Permissions'|trans }}</h3>
-
-  <div class='pl-3 mt-2'>
-    {{ 'This feature is deprecated and will be removed in the next version. Use templates permissions instead.'|msg('warning', false) }}
-
-    {% include 'binary-setting.html' with {'model': model, 'src': src,
-      'slug': 'do_force_canread',
-      'label': 'Enforce read permissions?'|trans,
-      'help': 'Select if you want to enforce read permissions on experiments'|trans} %}
-
-    <div class='d-flex justify-content-between'>
-      <label for='force_canread' class='col-form-label'>{{ 'Enforced read permissions on experiments'|trans }}</label>
-      <select class='form-control col-md-4' data-trigger='change' data-transform='permissionsToJson' data-model='teams/current' data-target='force_canread' id='force_canread'>
-        {% for key, value in visibilityArr %}
-          <option value='{{ key }}' {{ App.teamArr.force_canread|extractJson('base') == key ? " selected='selected'" }}>{{ value|trans }}</option>
-        {% endfor %}
-      </select>
-    </div>
-    <p class='smallgray'>{{ 'Enforce the read permission for all experiments of users in this team.'|trans }}</p>
-    <hr>
-
-    {% include 'binary-setting.html' with {'model': model, 'src': src,
-      'slug': 'do_force_canwrite',
-      'label': 'Enforce write permissions?'|trans,
-      'help': 'Select if you want to enforce write permissions on experiments'|trans} %}
-
-    <div class='d-flex justify-content-between'>
-      <label for='force_canwrite' class='col-form-label'>{{ 'Enforced write permissions on experiments'|trans }}</label>
-      <select class='form-control col-md-4' data-trigger='change' data-transform='permissionsToJson' data-model='teams/current' data-target='force_canwrite' id='force_canwrite'>
-        {% for key, value in visibilityArr %}
-          <option value='{{ key }}' {{ App.teamArr.force_canwrite|extractJson('base') == key ? " selected='selected'" }}>{{ value|trans }}</option>
-        {% endfor %}
-      </select>
-    </div>
-    <p class='smallgray'>{{ 'Enforce the write permission for all experiments of users in this team.'|trans }}</p>
-    <hr>
-
-  </div>
   <h3 class='p-2 pl-3 section-title'>{{ 'Default Template main text'|trans }}</h3>
 
   <div class='pl-3 mt-2'>

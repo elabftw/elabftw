@@ -770,22 +770,10 @@ components:
           type: integer
         force_exp_tpl:
           type: integer
-        link_name:
-          type: string
-        link_href:
-          type: string
         created_at:
           type: string
         orgid:
           type: string
-        force_canread:
-          type: string
-        force_canwrite:
-          type: string
-        do_force_canread:
-          type: integer
-        do_force_canwrite:
-          type: integer
         visible:
           type: integer
         announcement:

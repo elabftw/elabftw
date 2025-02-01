@@ -7,3 +7,10 @@ ALTER TABLE `items` ADD `canread_is_immutable` TINYINT UNSIGNED NOT NULL DEFAULT
 ALTER TABLE `items` ADD `canwrite_is_immutable` TINYINT UNSIGNED NOT NULL DEFAULT 0;
 ALTER TABLE `items_types` ADD `canread_is_immutable` TINYINT UNSIGNED NOT NULL DEFAULT 0;
 ALTER TABLE `items_types` ADD `canwrite_is_immutable` TINYINT UNSIGNED NOT NULL DEFAULT 0;
+ALTER TABLE `teams`
+  DROP `force_canread`,
+  DROP `force_canwrite`,
+  DROP `do_force_canread`,
+  DROP `do_force_canwrite`,
+  DROP `link_name`,
+  DROP `link_href`;

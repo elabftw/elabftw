@@ -20,21 +20,17 @@ final class TeamParam extends ContentParams
     public function getContent(): mixed
     {
         return match ($this->target) {
-            'name', 'orgid', 'link_name' => parent::getContent(),
+            'name', 'orgid' => parent::getContent(),
             'announcement', 'newcomer_banner',
             'onboarding_email_subject',
             'onboarding_email_body' => $this->getNullableContent(),
             'common_template', 'common_template_md' => $this->getBody(),
             'user_create_tag',
             'force_exp_tpl',
-            'do_force_canread',
-            'do_force_canwrite',
             'visible',
             'newcomer_banner_active',
             'onboarding_email_active' => $this->getBinary(),
             'newcomer_threshold' => $this->asInt(),
-            'link_href' => $this->getUrl(),
-            'force_canread', 'force_canwrite' => $this->getCanJson(),
             default => throw new ImproperActionException('Incorrect parameter for team.' . $this->target),
         };
     }

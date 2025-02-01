@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
-use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -281,15 +280,11 @@ class Teams extends AbstractRest
     {
         $name = Filter::title($name);
 
-        $sql = 'INSERT INTO teams (name, common_template, common_template_md, link_name, link_href, force_canread, force_canwrite) VALUES (:name, :common_template, :common_template_md, :link_name, :link_href, :force_canread, :force_canwrite)';
+        $sql = 'INSERT INTO teams (name, common_template, common_template_md) VALUES (:name, :common_template, :common_template_md)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindValue(':common_template', Templates::defaultBody);
         $req->bindValue(':common_template_md', Templates::defaultBodyMd);
-        $req->bindValue(':link_name', 'Documentation');
-        $req->bindValue(':link_href', 'https://doc.elabftw.net');
-        $req->bindValue(':force_canread', BasePermissions::Team->toJson());
-        $req->bindValue(':force_canwrite', BasePermissions::Team->toJson());
         $this->Db->execute($req);
         // grab the team ID
         $newId = $this->Db->lastInsertId();

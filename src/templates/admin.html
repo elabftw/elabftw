@@ -164,6 +164,9 @@
   <div id='team_groups_div'>
     <h3 class='p-2 pl-3 section-title'>{{ 'Existing user groups'|trans }}</h3>
     <div class='pl-3'>
+      {% if not teamGroupsArr %}
+        <p class='mt-3'>{{ 'No user group created yet.'|trans }}</p>
+      {% endif %}
       {% for teamGroup in teamGroupsArr %}
         <div class='box'>
           <button class='btn float-right border-0 hl-hover-gray rounded p-2 lh-normal m-0' data-action='destroy-teamgroup' data-id='{{ teamGroup.id }}' title='{{ 'Delete'|trans }}'>

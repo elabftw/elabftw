@@ -122,19 +122,28 @@ class DisplayParams extends BaseQueryParams
             $this->relatedOrigin = EntityType::tryFrom($query->getAlpha('related_origin')) ?? $this->entityType;
         }
         // CATEGORY FILTER
+        // cat is for backward compatibility
         $this->filterSql .= $this->getSqlIn('entity.category', $query->getString('cat'));
+        $this->filterSql .= $this->getSqlIn('entity.category', $query->getString('category'));
         // STATUS FILTER
         $this->filterSql .= $this->getSqlIn('entity.status', $query->getString('status'));
         // OWNER (USERID) FILTER
         $this->filterSql .= $this->getSqlIn('entity.userid', $query->getString('owner'));
+        // LOCK FILTER
+        $this->filterSql .= $this->getSqlIn('entity.locked', $query->getInt('locked'));
+        // TIMESTAMPED FILTER
+        $this->filterSql .= $this->getSqlIn('entity.timestamped', $query->getInt('timestamped'));
+        // RATING FILTER
+        $this->filterSql .= $this->getSqlIn('entity.rating', $query->getInt('rating'));
     }
 
     /**
      * Create an SQL string to add a filter from a comma separated list of int
      * possibly including null value. Ugly but works.
      */
-    private function getSqlIn(string $column, string $input): string
+    private function getSqlIn(string $column, string|int $input): string
     {
+        $input = (string) $input;
         if (empty($input)) {
             return '';
         }

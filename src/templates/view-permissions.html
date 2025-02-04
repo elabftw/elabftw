@@ -19,7 +19,7 @@
 
 {% include('permissions-edit-modal.html') %}
 <label class='col-form-label mr-3 edit-mode-label'><i class='fas fa-fw fa-{{ icon }} mr-1' title='{{ label }}'></i>{{ label }}</label>
-{% if not Entity.isReadOnly and not (Entity.entityData[immutableVar] or Entity.entityType.value != 'experiments_templates') %}
+{% if not Entity.isReadOnly and not (Entity.entityData[immutableVar] and Entity.entityType.value != 'experiments_templates') %}
   <button type='button' title='{{ modalTitle }}' aria-label='{{ modalTitle }}' class='btn border-0 lh-normal hl-hover-gray' data-action='toggle-modal' data-target='permModal-{{ rw }}'>
     <i class='fas fa-fw fa-square-plus fa-2x'></i>
   </button>

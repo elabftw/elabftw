@@ -53,7 +53,6 @@
     {# logo #}
     <a href='dashboard.php' title='{{ 'Go to dashboard'|trans }}'><img class='navbar-brand d-xs-none d-sm-none d-lg-none d-xl-block' src='assets/images/logo-header.svg' width='110' height='40' alt='elabftw logo' /></a>
 
-    {% set scriptName = App.Request.getScriptName|split('/')|last %}
     {% if App.Session.has('is_auth') %}
     {# everything in there will be part of the burger #}
     <div class='collapse navbar-collapse' id='main-nav'>
@@ -66,14 +65,14 @@
                 href='templates.php'>{% trans %}Template{% plural 2 %}Templates{% endtrans %}</a>
             <a class='nav-item nav-link {{ scriptName == 'database.php' ? 'active' }}'
                 href='database.php'>{{ 'Resources'|trans }}</a>
+            <a class='nav-item nav-link {{ scriptName == 'scheduler.php' ? 'active' }}'
+                href='scheduler.php'>{{ 'Scheduler'|trans }}</a>
 
             {% if not App.Session.has('is_anon') %}
             <a class='nav-item nav-link {{ scriptName == 'team.php' ? 'active' }}'
                 href='team.php'>{{ 'Team'|trans }}</a>
             {% endif %}
 
-            <a class='nav-item nav-link {{ scriptName == 'search.php' ? 'active' }}'
-                href='search.php'>{{ 'Search'|trans }}</a>
             <div class='nav-item dropdown'>
               {% if App.Config.configArr.debug -%}
                 <!-- [html-validate-disable-next prefer-native-element: using a button here will mess up the navbar] -->
@@ -82,7 +81,6 @@
               {{ 'Tools'|trans }}
               </div>
               <div class='dropdown-menu'>
-                <a class='dropdown-item' href='scheduler.php'><i class='fas fa-calendar-days fa-fw'></i>{{ 'Scheduler'|trans }}</a>
                 <a class='dropdown-item' href='compounds.php'><i class='fas fa-flask fa-fw'></i>{{ 'Compounds'|trans }}</a>
                 <a class='dropdown-item' href='chem-editor.php'><i class='fas fa-pen-to-square fa-fw'></i> {{ 'Chemical Structure Editor'|trans }}</a>
                 <a class='dropdown-item' href='syc.php'><i class='fas fa-dna fa-fw'></i> {{ 'DNA Cloning'|trans }}</a>
@@ -91,20 +89,9 @@
             </div>
         </div>
 
-        {# SEARCH BAR #}
-        {# search in experiments everywhere, or in database on database page #}
-        {% set actionPage = (scriptName == 'experiments.php' or scriptName == 'database.php') ? scriptName : 'experiments.php' %}
-        {% if App.Config.configArr.debug -%}
-          <!-- [html-validate-disable-next wcag/h32: no submit button for navbar search field] -->
-        {%- endif %}
-        <form aria-label='{{ 'Quicksearch'|trans }}' class='nav-item form-inline ml-auto' method='get' action='{{ actionPage }}'>
-          {# the id is for making it easy to find the element when focusing it with the keyboard shortcut #}
-          <input id='quicksearchInput' class='form-control big-search' type='search' name='q' aria-label='{{ 'Search'|trans }}' size='20' value='{{ App.Request.query.get('q')|trim|e('html_attr') }}' />
-        </form>
-
         {# Notification bell #}
         {% if App.Session.has('is_auth') and not App.Session.has('is_anon') %}
-        <div class='nav-item dropdown ml-2' id='navbarNotifDiv'>
+        <div class='nav-item dropdown ml-auto' id='navbarNotifDiv'>
           <button class='btn nav-link' id='navbarNotifDropdown' type='button' aria-label='{{ 'Notifications'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='far fa-bell fa-2x {{ App.notifsArr|filter(n => n.is_ack == 0)|length ? 'active' }}'></i></button>
           <div class='dropdown-menu dropdown-menu-right' id='navbar-notif-dropdown' aria-labelledby='navbarNotifDropdown'><span class='dropdown-header'>{{ 'Notifications'|trans }}</span>
             {% if App.notifsArr %}

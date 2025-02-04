@@ -71,7 +71,7 @@ Fields
 
 Field
   = field:('author'i / 'body'i / 'category'i / 'elabid'i
-      / 'group'i / 'status'i / 'title'i / 'visibility'i
+      / 'group'i / 'owner'i / 'status'i / 'title'i / 'visibility'i
     ) ':' strict:StrictOperator term:(List / LiteralInField)
   {
     return new Field(strtolower($field), $term, $strict);

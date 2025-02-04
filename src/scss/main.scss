@@ -1088,6 +1088,10 @@ the form-control fails to do that so we do the border ourselves */
   background-color: $secondlevel;
 }
 
+.border-secondlevel {
+  border-color: $secondlevel;
+}
+
 .bg-firstlevel {
   background-color: $firstlevel;
 }

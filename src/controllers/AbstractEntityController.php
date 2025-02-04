@@ -26,6 +26,7 @@ use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Changelog;
+use Elabftw\Models\ExtraFieldsKeys;
 use Elabftw\Models\FavTags;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\ProcurementRequests;
@@ -106,10 +107,11 @@ abstract class AbstractEntityController implements ControllerInterface
     /**
      * Show mode (several items displayed). Default view.
      */
-    public function show(bool $isSearchPage = false): Response
+    public function show(): Response
     {
         // used to get all tags for top page tag filter
         $TeamTags = new TeamTags($this->App->Users, $this->App->Users->userData['team']);
+        $ExtraFieldsKeys = new ExtraFieldsKeys($this->App->Users, '', -1);
 
         // only show public to anon
         if ($this->App->Session->get('is_anon')) {
@@ -122,12 +124,13 @@ abstract class AbstractEntityController implements ControllerInterface
         }
 
         // read all based on query parameters or user defaults
+        $orderBy = Orderby::tryFrom($this->App->Users->userData['orderby']) ?? Orderby::Lastchange;
         $DisplayParams = new DisplayParams(
             requester: $this->App->Users,
             query: $this->App->Request->query,
             entityType: $this->Entity->entityType,
             limit: $this->App->Users->userData['limit_nb'],
-            orderby: Orderby::tryFrom($this->App->Users->userData['orderby']) ?? Orderby::Lastchange,
+            orderby: $orderBy,
             sort: Sort::tryFrom($this->App->Users->userData['sort']) ?? Sort::Desc,
         );
         $itemsArr = $this->Entity->readShow($DisplayParams);
@@ -160,10 +163,10 @@ abstract class AbstractEntityController implements ControllerInterface
             'itemsCategoryArr' => $itemsCategoryArr,
             'favTagsArr' => $favTagsArr,
             'itemsArr' => $itemsArr,
+            'metakeyArrForSelect' => array_column($ExtraFieldsKeys->readAll(), 'extra_fields_key'),
             'requestActionsArr' => $UserRequestActions->readAllFull(),
             'scopedTeamgroupsArr' => $this->scopedTeamgroupsArr,
             // generate light show page
-            'searchPage' => $isSearchPage,
             'tagsArr' => $tagsArr,
             // get all the tags for the top search bar
             'tagsArrForSelect' => $TeamTags->readAll(),

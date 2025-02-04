@@ -42,7 +42,6 @@ module.exports = (env) => {
         './src/ts/revisions.ts',
         './src/ts/toolbar.ts',
         './src/ts/editusers.ts',
-        './src/ts/search.ts',
         './src/ts/show.ts',
         './src/ts/sysconfig.ts',
         'bootstrap/js/src/alert.js',

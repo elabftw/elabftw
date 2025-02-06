@@ -5,6 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+import $ from 'jquery';
 import {
   getEntity,
   notifError,
@@ -50,6 +51,29 @@ document.addEventListener('DOMContentLoaded', () => {
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
+    if (el.matches('[data-action="metadata-edit-field"]')) {
+      $('#' + el.dataset.target).modal('toggle');
+      MetadataC.read().then(metadata => {
+        const fieldName = el.parentElement.parentElement.closest('div').querySelector('label').innerText;
+        // once modal is up, check fields to update
+        const fieldGroupSelect = document.getElementById('newFieldGroupSelect') as HTMLSelectElement;
+        const fieldTypeSelect = document.getElementById('newFieldTypeSelect') as HTMLSelectElement;
+        const fieldNameInput = document.getElementById('newFieldKeyInput') as HTMLInputElement;
+        const fieldDescriptionInput = document.getElementById('newFieldDescriptionInput') as HTMLInputElement;
+        const currentValueInput = document.getElementById('newFieldValueInput') as HTMLInputElement;
+
+        if (fieldTypeSelect) fieldTypeSelect.value = metadata.extra_fields[fieldName].type;
+        if (fieldNameInput) fieldNameInput.value = fieldName;
+        if (fieldGroupSelect) fieldGroupSelect.value = metadata.extra_fields[fieldName].group_id ?? '-1';
+        if (fieldDescriptionInput) fieldDescriptionInput.value = metadata.extra_fields[fieldName].description ?? '';
+        if (currentValueInput) currentValueInput.value = metadata.extra_fields[fieldName].value ?? '';
+
+        const label = document.querySelector('label[for="newFieldValueInput"]') as HTMLLabelElement;
+        if (label) label.textContent = 'Current value';
+
+        // update extrafield && reset fields && reset "current value" to default value for add field input
+      });
+    }
     // DELETE EXTRA FIELD
     if (el.matches('[data-action="metadata-rm-field"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {

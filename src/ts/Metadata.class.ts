@@ -558,7 +558,7 @@ export class Metadata {
             label.classList.add('py-2');
 
             // div to hold the drag and delete buttons
-            const handleDeleteDiv = document.createElement('div');
+            const fieldActionsDiv = document.createElement('div');
 
             // add a button to set the position of the field
             const handle = document.createElement('div');
@@ -571,6 +571,17 @@ export class Metadata {
             handleIconSpan.appendChild(handleIcon);
             handle.appendChild(handleIconSpan);
 
+            // button to edit the field
+            const editBtn = document.createElement('button');
+            editBtn.dataset.action = 'metadata-edit-field';
+            editBtn.dataset.target = 'fieldBuilderModal';
+            editBtn.classList.add('btn', 'p-2', 'mr-2', 'hl-hover-gray', 'border-0', 'lh-normal');
+            editBtn.type = 'button';
+            editBtn.setAttribute('aria-label', i18next.t('edit'));
+            const editIcon = document.createElement('i');
+            editIcon.classList.add('fas', 'fa-pencil-alt');
+            editBtn.appendChild(editIcon);
+
             // add a button to delete the field
             const deleteBtn = document.createElement('button');
             deleteBtn.dataset.action = 'metadata-rm-field';
@@ -581,11 +592,9 @@ export class Metadata {
             deleteIcon.classList.add('fas', 'fa-trash-alt');
             deleteBtn.appendChild(deleteIcon);
 
-            handleDeleteDiv.appendChild(handle);
-            handleDeleteDiv.appendChild(deleteBtn);
+            fieldActionsDiv.append(handle, editBtn, deleteBtn);
 
-            labelDiv.append(label);
-            labelDiv.append(handleDeleteDiv);
+            labelDiv.append(label, fieldActionsDiv);
 
             // for checkboxes the label comes second
             if (element.element.type === 'checkbox') {

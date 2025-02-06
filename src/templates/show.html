@@ -34,10 +34,11 @@
           class='form-control'
           placeholder="{{ 'Search %s'|trans|format(searchTarget) }}"
           spellcheck='false'
+          aria-label="{{ 'Search %s'|trans|format(searchTarget) }}"
           value='{{ App.Request.query.get('q') ? App.Request.query.get('q')|trim|e('html_attr') }}' />
         <pre id='search-highlighting' class='form-control d-none' aria-hidden='true'><code></code></pre>
         <div class='input-group-append'>
-          <button class='btn btn-secondary' type='submit'><i class='color-white fas fa-magnifying-glass'></i></button>
+          <button class='btn btn-secondary' type='submit' aria-label='{{ 'Search'|trans }}' title='{{ 'Search'|trans }}'><i class='color-white fas fa-magnifying-glass'></i></button>
         </div>
       </div>
     </form>
@@ -102,6 +103,7 @@
             multiple
             name='tags[]'
             class='form-control'
+            aria-label='{{ 'Tags'|trans }}'
             placeholder='{{ 'Tags'|trans }}'
           >
             {% for tag in tagsArrForSelect %}

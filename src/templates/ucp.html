@@ -3,8 +3,8 @@
 <ul class='tabbed-menu'>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='1'>{{ 'General'|trans }}</button></li>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='2'>{{ 'Account'|trans }}</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='4'>{{ 'API keys'|trans }}</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='5'>{{ 'Notifications'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='3'>{{ 'API keys'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='4'>{{ 'Notifications'|trans }}</button></li>
 </ul>
 
 {# loading spinner #}
@@ -433,7 +433,7 @@
 </div>
 
 {# TAB 4 - API KEYS #}
-<div data-tabcontent='4' hidden>
+<div data-tabcontent='3' hidden>
   <p><a target='_blank' rel='noopener' class='external-link' href='https://doc.elabftw.net/api.html'>{{ 'Link to documentation'|trans }}</a></p>
   <h2 class='p-2 pl-3 section-title'>{{ 'Create new key'|trans }}</h2>
 
@@ -499,7 +499,7 @@
 </div>
 
 {# TAB 5 - NOTIFICATIONS SETTINGS #}
-<div data-tabcontent='5' hidden>
+<div data-tabcontent='4' hidden>
   <h2 class='p-2 pl-3 section-title mb-3' id='notificationsSettings'>{{ 'Notifications settings'|trans }}</h2>
   <div class='pl-3'>
   {% for notif in notificationsSettings %}

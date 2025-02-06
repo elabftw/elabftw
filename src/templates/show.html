@@ -93,11 +93,11 @@
           </select>
 
           {# SEARCH WITH TAG #}
+          {# select is hidden to avoid showing the raw list and a layout change, it shows up with TomSelect #}
+          <input placeholder='{{ 'Tags'|trans }}' id='tagFilterPlaceholder' class='form-control' aria-hidden='true' aria-label='placeholder for tags input' />
           {% if App.Config.configArr.debug -%}
             <!-- [html-validate-disable prefer-native-element: suppress error from tom-select] -->
           {%- endif %}
-          {# select is hidden to avoid showing the raw list and a layout change, it shows up with TomSelect #}
-          <input placeholder='{{ 'Tags'|trans }}' id='tagFilterPlaceholder' class='form-control' />
           <select hidden
             id='tagFilter'
             multiple

@@ -94,9 +94,9 @@
 
           {# SEARCH WITH TAG #}
           {# select is hidden to avoid showing the raw list and a layout change, it shows up with TomSelect #}
-          <input placeholder='{{ 'Tags'|trans }}' id='tagFilterPlaceholder' class='form-control' aria-hidden='true' aria-label='placeholder for tags input' />
+          <input placeholder='{{ 'Tags'|trans }}' id='tagFilterPlaceholder' class='form-control' aria-label='placeholder for tags input' />
           {% if App.Config.configArr.debug -%}
-            <!-- [html-validate-disable prefer-native-element: suppress error from tom-select] -->
+            <!-- [html-validate-disable-block input-missing-label, prefer-native-element: suppress error from tom-select] -->
           {%- endif %}
           <select hidden
             id='tagFilter'
@@ -110,9 +110,6 @@
               <option value='{{ tag.tag|e('html_attr') }}' {{- tag.tag in App.Request.query.all('tags') ? ' selected' }}>{{ tag.tag }}</option>
             {% endfor %}
           </select>
-          {% if App.Config.configArr.debug -%}
-            <!-- [html-validate-enable prefer-native-element: end suppress error from tom-select] -->
-          {%- endif %}
           {# END SEARCH WITH TAG #}
         </div>
       </form>

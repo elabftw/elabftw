@@ -62,30 +62,22 @@ document.addEventListener('DOMContentLoaded', () => {
         saveButton.dataset.action="edit-extra-field";
         saveButton.textContent = i18next.t('Edit');
       }
-      // convert "default value" to current value to edit
-      const label = document.querySelector('label[for="newFieldValueInput"]') as HTMLLabelElement;
-      if (label) label.textContent = i18next.t('Current value');
+
+      // once modal is up, check fields to update
+      const fieldGroupSelect = document.getElementById('newFieldGroupSelect') as HTMLSelectElement;
+      const fieldTypeSelect = document.getElementById('newFieldTypeSelect') as HTMLSelectElement;
+      const fieldNameInput = document.getElementById('newFieldKeyInput') as HTMLInputElement;
+      const fieldDescriptionInput = document.getElementById('newFieldDescriptionInput') as HTMLInputElement;
 
       MetadataC.read().then(metadata => {
-        const extraField = el.parentElement.parentElement.closest('div').querySelector('label');
+        const extraField = el.parentElement.parentElement.closest('div');
         if (!extraField) {
-          notifError(new Error(i18next.t('Field label not found')));
+          notifError(new Error(i18next.t('Extra field not found')));
           return;
         }
         // store current field for update
-        const fieldName = extraField.innerText.trim();
+        const fieldName = extraField.querySelector('label').innerText.trim();
 
-        // MetadataC.read().then(metadata => {
-        //   delete metadata.extra_fields[fieldName];
-        //   MetadataC.save(metadata as ValidMetadata);
-        // });
-
-        // once modal is up, check fields to update
-        const fieldGroupSelect = document.getElementById('newFieldGroupSelect') as HTMLSelectElement;
-        const fieldTypeSelect = document.getElementById('newFieldTypeSelect') as HTMLSelectElement;
-        const fieldNameInput = document.getElementById('newFieldKeyInput') as HTMLInputElement;
-        const fieldDescriptionInput = document.getElementById('newFieldDescriptionInput') as HTMLInputElement;
-        const fieldValueInput = document.getElementById('newFieldValueInput') as HTMLInputElement;
         // prefill modal with current extraField values
         const fieldData = metadata.extra_fields[fieldName];
         if (!fieldData) {
@@ -96,7 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
         fieldTypeSelect.value = fieldData.type;
         fieldNameInput.value = fieldName;
         fieldDescriptionInput.value = fieldData.description ?? '';
-        fieldValueInput.value = fieldData.value ?? '';
 
         // delete current metadata before sending new one
         delete metadata.extra_fields[fieldName];
@@ -282,7 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const form = (document.getElementById('newFieldForm') as HTMLFormElement);
           // remove all extra inputs (dropdown and radio)
           form.querySelectorAll('.is-extra-input').forEach(i => i.parentElement.remove());
-          // keep track of the selected group, so it stays the same and it's easy to add another input in the same group afterwards
+          // store the currently selected group to maintain selection when adding a new input
           const selectedGroup = grpSel.value;
           // clear all fields
           form.reset();
@@ -295,101 +286,32 @@ document.addEventListener('DOMContentLoaded', () => {
       let json = {};
       MetadataC.read().then(metadata => {
         const fieldNameInput = document.getElementById('newFieldKeyInput') as HTMLInputElement;
-        const fieldKey = (document.getElementById('newFieldKeyInput') as HTMLInputElement).value.trim();
-        const fieldTypeSelect = document.getElementById('newFieldTypeSelect') as HTMLSelectElement;
-        const fieldGroupSelect = document.getElementById('newFieldGroupSelect') as HTMLSelectElement;
-        const fieldDescriptionInput = document.getElementById('newFieldDescriptionInput') as HTMLInputElement;
-        const currentValueInput = document.getElementById('newFieldValueInput') as HTMLInputElement;
-
-        // console.log('metadata before', metadata);
-        console.log("fieldnameinput",fieldNameInput);
-        console.log("fieldnameinput value",fieldNameInput.value);
+        // delete actual extra field to send updated one
         delete metadata.extra_fields[fieldNameInput.value];
-        // console.log('metadata after', metadata);
-
         MetadataC.save(metadata as ValidMetadata);
 
-        if (metadata) {
-          json = metadata;
-        }
-        // if (!Object.prototype.hasOwnProperty.call(json, 'extra_fields')) {
-        //   json['extra_fields'] = {};
-        // }
+        const fieldKey = fieldNameInput.value.trim();
+        const fieldTypeSelect = (document.getElementById('newFieldTypeSelect') as HTMLSelectElement).value;
+        const fieldDescriptionInput = (document.getElementById('newFieldDescriptionInput') as HTMLInputElement).value;
+        const fieldValueInput = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();
 
-        const object = {
-          type: fieldTypeSelect.value,
-          group_id: fieldGroupSelect.value !== '-1' ? parseInt(fieldGroupSelect.value) : '-1',
-          description: fieldDescriptionInput.value,
-          value: currentValueInput.value
+        json = metadata;
+        json['extra_fields'][fieldKey] = {
+          type: fieldTypeSelect,
+          group_id: grpSel.value != '-1' ? parseInt(grpSel.value) : '-1',
+          description: fieldDescriptionInput,
+          value: fieldValueInput
         };
-
-        json['extra_fields'][fieldKey] = object;
-        // console.log(json, metadata);
         MetadataC.update(json as ValidMetadata).then(() => {
+          // clear all form fields
           const form = (document.getElementById('newFieldForm') as HTMLFormElement);
-          // remove all extra inputs (dropdown and radio)
           form.querySelectorAll('.is-extra-input').forEach(i => i.parentElement.remove());
-          // keep track of the selected group, so it stays the same and it's easy to add another input in the same group afterwards
-          const selectedGroup = grpSel.value;
-          // clear all fields
           form.reset();
-          // restore original value
-          grpSel.value = selectedGroup;
+          // reset button back from "edit" to "save"
+          const saveButton = document.querySelector('[data-action="edit-extra-field"]') as HTMLButtonElement;
+          saveButton.dataset.action="save-new-field";
+          saveButton.textContent = i18next.t('Save');
         });
-        //
-        // MetadataC.update(metadata as ValidMetadata).then(() => {
-        //   const form = (document.getElementById('newFieldForm') as HTMLFormElement);
-        //   // remove all extra inputs (dropdown and radio)
-        //   form.querySelectorAll('.is-extra-input').forEach(i => i.parentElement.remove());
-        //   // keep track of the selected group, so it stays the same and it's easy to add another input in the same group afterwards
-        //   const selectedGroup = grpSel.value;
-        //   // clear all fields
-        //   form.reset();
-        //   // restore original value
-        //   grpSel.value = selectedGroup;
-        // });
-        //
-        // // new field select inputs
-        // const fieldGroupSelect = document.getElementById('newFieldGroupSelect') as HTMLSelectElement;
-        // const fieldTypeSelect = document.getElementById('newFieldTypeSelect') as HTMLSelectElement;
-        // const fieldNameInput = document.getElementById('newFieldKeyInput') as HTMLInputElement;
-        // const fieldDescriptionInput = document.getElementById('newFieldDescriptionInput') as HTMLInputElement;
-        // const fieldValueInput = document.getElementById('newFieldValueInput') as HTMLInputElement;
-        //
-        // fieldNameInput.dataset.name = fieldNameInput.value;
-        //
-        // const originalValue = fieldNameInput.value;
-        // console.log(fieldNameInput.dataset.name, fieldValueInput.value);
-        //
-        // // console.log(originalValue, fieldNameInput.value);
-        // return;
-        // // const updatedFieldName = fieldNameInput.value.trim();
-        // // const originalFieldName = fieldNameInput.dataset.originalName ?? updatedFieldName; // get original name if available
-        // //
-        // // console.log(updatedFieldName, originalFieldName);
-        // //
-        // // if (!metadata.extra_fields[originalFieldName]) {
-        // //   notifError(new Error(i18next.t('Field not found in metadata')));
-        // //   return;
-        // // }
-        // //
-        // // console.log("before:", updatedFieldName, originalFieldName);
-        // // if (updatedFieldName !== originalFieldName) {
-        // //   console.log("after", updatedFieldName, originalFieldName);
-        // //   return;
-        // //   // Rename key: Copy old data to new key, then delete old key
-        // //   metadata.extra_fields[updatedFieldName] = { ...metadata.extra_fields[originalFieldName] };
-        // //   delete metadata.extra_fields[originalFieldName];
-        // // }
-        // //
-        // // // Update metadata with new values
-        // // metadata.extra_fields[updatedFieldName].type = fieldTypeSelect.value;
-        // // metadata.extra_fields[updatedFieldName].group_id = fieldGroupSelect.value !== '-1' ? parseInt(fieldGroupSelect.value) : undefined;
-        // // metadata.extra_fields[updatedFieldName].description = fieldDescriptionInput.value;
-        // // metadata.extra_fields[updatedFieldName].value = currentValueInput.value;
-        // //
-        // // // Save the updated metadata
-        // // MetadataC.update(metadata as ValidMetadata);
       })
     // ADD OPTION FOR SELECT OR RADIO
     } else if (el.matches('[data-action="new-field-add-option"]')) {

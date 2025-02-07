@@ -12,10 +12,9 @@
         <p>{{ 'When searching a term in the search bar, results will contain this term in the title, main text, date or elabid.'|trans }}</p>
         <h3>{{ 'Advanced search'|trans }}</h3>
         {% set fieldValue = "<code><span class='token keyword'>%s</span><span class='token punctuation'>:</span><span class='token string'>%s</span></code>"|format('field'|trans, 'value'|trans) %}
-        <p>{{ 'The search bar supports specific search such as "title:Something" and "catogory:Tests" (%s), that you can combine with logical expressions (AND, OR, NOT...) and group with parenthesis.'|trans|format(fieldValue)|raw }}</p>
+        <p>{{ 'The search bar supports searching with specific constraints such as "title:Something" and "category:Tests" (%s). You can combine them with logical expressions (AND, OR, NOT...) and group with parenthesis.'|trans|format(fieldValue)|raw }}</p>
         <p>{{ 'To search in extra fields (metadata), use the dedicated helper to build your query. For example, to search all entries where "Temperature" is 37, you would use: "extrafield:Temperature:37" in the search bar.'|trans }}</p>
-        <h3>{{ 'Search terms'|trans }}</h3>
-        <p>{{ 'Allowed Fields'|trans }} :</p>
+        <h4>{{ 'Available fields'|trans }}</h4>
         <div class='row'>
           <div class='col-md-6'>
             <ul class='list-unstyled'>
@@ -113,7 +112,7 @@
           is equivalent to
           <em><code><span class='token punctuation'>(</span><span class='token simple-term string'>termA</span> <span class='token operator'>AND</span> <span class='token simple-term string'>termB</span><span class='token punctuation'>)</span> <span class='token operator'>OR</span> <span class='token simple-term string'>termC</span></code></em>.
           To give priority to
-          <code><span class='token operator'>OR</span></code>
+          <code><span class='token operator'>OR</span></code>,
           use parenthesis:
           <em><code><span class='token simple-term string'>termA</span> <span class='token operator'>AND</span> <span class='token punctuation'>(</span><span class='token simple-term string'>termB</span> <span class='token operator'>OR</span> <span class='token simple-term string'>termC</span><span class='token punctuation'>)</span></code></em>.
         </p>
@@ -130,11 +129,6 @@
               search entries with/out attachments<br>
               Term or Quoted term:<br>
               search in filenames and comments of attachments</dd>
-          <dt><span class='token keyword'>author</span></dt>
-          <dd>
-            Term or Quoted term<br>
-            Without any author the entire team will be searched.
-          </dd>
           <dt><span class='token keyword'>body</span></dt>
           <dd>Term or Quoted term</dd>
           <dt><span class='token keyword'>category</span></dt>
@@ -173,6 +167,11 @@
               <span class='token number'>5</span>,
               <span class='token constant'>unrated</span> or
               <span class='token number'>0</span>
+          </dd>
+          <dt><span class='token keyword'>owner</span></dt>
+          <dd>
+            Term or Quoted term<br>
+            Without any owner the entire team will be searched.
           </dd>
           <dt><span class='token keyword'>status</span></dt>
           <dd>Term or Quoted term; Only if Experiment is selected.</dd>

@@ -540,6 +540,7 @@ class Users extends AbstractRest
         $res = $this->Db->execute($req);
 
         $auditLoggableTargets = array(
+            'archived',
             'valid_until',
             'email',
             'orgid',

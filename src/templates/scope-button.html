@@ -8,6 +8,7 @@
 <div id='{{ btnId|default('scopeBtn') }}' class='btn-group'>
   <button class='btn {{ isSecondary ? 'btn-secondary' : 'hl-hover-gray' }} {{ isSmall ? 'btn-sm' }} dropdown-toggle' type='button' data-toggle='dropdown' aria-haspopup='true' aria-label='{{ 'Scope'|trans }}' title='{{ 'Scope'|trans }}' aria-expanded='false'><i class='fas fa-{{ App.Users.userData[target]|toIcon }} fa-fw mr-1 {{ isSecondary == 1 ? 'color-white' }}'></i></button>
   <div class='dropdown-menu'>
+    <h6 class='dropdown-header'>{{ 'Scope'|trans }}</h6>
     <button type='button' data-trigger='click' data-model='users/me' data-target='{{ target }}' data-reload='{{ reload }}' value='1' class='btn btn-dropdown-item dropdown-item {{ App.Users.userData.scope == 1 ? 'active' }}'>
       <i class='fas fa-user fa-fw mr-1 {{ App.Users.userData.scope == 1 and not isSecondary ? 'color-white' }}'></i>{{ 'Self'|trans }}
     </button>

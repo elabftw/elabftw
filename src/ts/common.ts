@@ -22,6 +22,7 @@ import {
   permissionsToJson,
   relativeMoment,
   reloadElements,
+  reloadEntitiesShow,
   replaceWithTitle,
   toggleEditCompound,
   toggleGrayClasses,
@@ -357,6 +358,11 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="switch-editor"]')) {
       getEditor().switch(getEntity()).then(() => window.location.reload());
 
+    } else if (el.matches('[data-action="insert-param-and-reload-show"]')) {
+      const params = new URLSearchParams(document.location.search.slice(1));
+      params.set(el.dataset.key, el.dataset.value);
+      window.history.replaceState({}, '', `?${params.toString()}`);
+      reloadEntitiesShow();
 
     } else if (el.matches('[data-action="add-query-filter"]')) {
       const params = new URLSearchParams(document.location.search.substring(1));

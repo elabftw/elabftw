@@ -118,13 +118,6 @@ document.addEventListener('DOMContentLoaded', () => {
     el.addEventListener('change', event => {
       const elem = event.currentTarget as HTMLElement;
       const curVal = (document.getElementById('extendedArea') as HTMLInputElement).value;
-      //let elemValue: string;
-      /*
-      if (elem instanceof HTMLSelectElement) {
-        elemValue = elem.options[elem.selectedIndex].value;
-      }
-     */
-
       const hasInput = curVal.length != 0;
       const hasSpace = curVal.endsWith(' ');
       const addSpace = hasInput ? (hasSpace ? '' : ' ') : '';
@@ -188,15 +181,9 @@ document.addEventListener('DOMContentLoaded', () => {
         searchInput.value = searchInput.value + addSpace + filter;
       }
       SearchSyntaxHighlighting.update(searchInput.value);
-      /*
-      const url = new URL(window.location.href);
-      url.searchParams.set((elem as HTMLInputElement).name, elemValue);
-      window.history.replaceState({}, '', url.toString());
-      reloadEntitiesShow();
-     */
     });
   });
-  document.querySelectorAll('.filterHelper.filterAuto').forEach(el => {
+  document.querySelectorAll('.filterAuto').forEach(el => {
     el.addEventListener('change', event => {
       const url = new URL(window.location.href);
       const elem = event.target as HTMLSelectElement;

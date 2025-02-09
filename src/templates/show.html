@@ -164,13 +164,13 @@
           <p class='mt-1 text-muted'>{{ "Tip: you can use '%' as wildcard in value"|trans }}</p-->
           {# METADATA SEARCH END #}
 
-      {# GROUPS filter #}
-      <select name='group' class='mx-1 form-control filterHelper filterAuto' aria-label='{{ 'Filter group'|trans }}'>
+      {# GROUPS filter: disabled because not working FIXME #}
+      <!--select name='group' class='mx-1 form-control filterHelper filterAuto' aria-label='{{ 'Filter group'|trans }}'>
         <option value='' data-action='clear'>{{ 'Select group'|trans }}</option>
         {% for group in scopedTeamgroupsArr %}
           <option value='{{ group.name|e('html_attr') }}' {{- Request.query.get('searchonly') == 'group:' ~ group ? ' selected' }}>{{ group.name }}</option>
         {% endfor %}
-      </select>
+      </select-->
 
       {# VISIBILITY filter #}
       <select name='visibility' class='mx-1 form-control filterHelper filterAuto' aria-label='{{ 'Filter visibility'|trans }}'>
@@ -183,28 +183,18 @@
 
       <input type='hidden' name='mode' value='show' />
 
-      {# LIMIT if there is nothing in the query params, take the user configured one #}
-      {% set thelimit = App.Request.query.get('limit') %}
-      {% if thelimit is empty %}
-        {% set thelimit = App.Users.userData.limit_nb %}
-      {% endif %}
-      <select autocomplete='off' name='limit' id='select-limit' class='autosubmit mx-1 form-control' aria-label='{{ 'Results per page'|trans }}'>
-        <option value=''>{{ 'Results per page'|trans }}</option>
-        {% for option in limitOptions(DisplayParams.limit) %}
-          <option{{ option == thelimit ? ' selected' }} value='{{ option }}'>{{ option }}</option>
-        {% endfor %}
-      </select>
+      <div>
+        {# STATE #}
+        <select name='state' aria-label='{{ 'State'|trans }}' class='form-control filterAuto'>
+          <option value='' data-action='clear'>{{ 'Select state'|trans }}</option>
+          <option value='1' {{- Request.query.get('state') == '1' ? ' selected' }}>{{ 'Normal'|trans }}</option>
+          <option value='2' {{- Request.query.get('state') == '2' ? ' selected' }}>{{ 'Archived'|trans }}</option>
+          <option value='3' {{- Request.query.get('state') == '3' ? ' selected' }}>{{ 'Deleted'|trans }}</option>
+          <option value='1,2' {{- Request.query.get('state') == '1,2' ? ' selected' }}>{{ 'Normal or Archived'|trans }}</option>
+          <option value='1,2,3' {{- Request.query.get('state') == '1,2,3' ? ' selected' }}>{{ 'Any'|trans }}</option>
+        </select>
+        {# END STATE #}
 
-      {# ARCHIVED filter #}
-      {# TODO make this something where you can select any number of states #}
-      <div class='input-group mx-1'>
-        <div class='input-group-text'>
-          <input id='filterArchived' type='checkbox' {{ App.Request.query.get('archived') == 'on' ? 'checked' }} name='archived' class='mr-1'>
-          <label for='filterArchived' class='mb-0'>{{ 'Show archived'|trans }}</label>
-        </div>
-      </div>
-
-      <div class='mt-1'>
         {# LOCK #}
         <select name='locked' aria-label='{{ 'Select lock status'|trans }}' class='form-control filterHelper'>
           <option value='' data-action='clear'>{{ 'Select lock status'|trans }}</option>
@@ -233,9 +223,9 @@
         {# END RATING #}
       </div>
 
-      <div class='d-flex'>
+      <div class='d-flex mt-2'>
         {# SEARCH DATE #}
-          <label class='ml-2 mr-1 align-self-center' for='date'>{{ 'Date from'|trans }}</label>
+          <label class='mr-1 align-self-center' for='date'>{{ 'Date from'|trans }}</label>
           <div class='input-group'>
             <div class='input-group-prepend'>
               <select id='dateOperator' aria-label='{{ 'Date operator'|trans }}' name='dateOperator' style='min-width: 50px' class='brr-none form-control filterHelper' data-filter='date'>
@@ -316,17 +306,20 @@
           <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'rating' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-query='rating-asc'>{{ 'Lowest rating'|trans }}</button>
         </div>
       </div>
+      {# LIMIT if there is nothing in the query params, take the user configured one #}
+      <div class='btn-group'>
+        <button class='btn btn-sm dropdown-toggle hl-hover-gray' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Results per page'|trans }}' title='{{ 'Results per page'|trans }}'><i class='fas fa-list-ol fa-fw mr-1'></i></button>
+        <div class='dropdown-menu dropdown-menu-right'>
+          <button type='button' class='btn btn-dropdown-item dropdown-item' disabled >{{ 'Results per page'|trans }}</button>
+        {% for option in limitOptions(DisplayParams.limit) %}
+          <button type='button' class='btn btn-dropdown-item dropdown-item' data-action='insert-param-and-reload-show' data-key='limit' data-value='{{ option }}'>{{ option }}</button>
+        {% endfor %}
+        </div>
+      </div>
     </div>
   </div>
   </div>
   <hr>
-
-  <div class='d-flex align-items-center'>
-    <div class='ml-auto d-flex align-items-center'>
-    </div>
-  </div>
-
-
 
   {% set count = itemsArr|length %}
 

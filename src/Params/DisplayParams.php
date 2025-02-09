@@ -98,14 +98,14 @@ class DisplayParams extends BaseQueryParams
             $scope = $query->getInt('scope');
         }
 
-        // filter by user if we don't want to show the rest of the team, only for experiments
+        // filter by user if we don't want to show the rest of the team
         // looking for an owner will bypass the user preference
         // same with an extended search: we show all
         if ($scope === Scope::User->value && empty($query->get('owner')) && empty($query->get('extended'))) {
-            // Note: the cast to int is necessary here (not sure why)
             $this->appendFilterSql(FilterableColumn::Owner, $this->requester->userData['userid']);
         }
-        if ($this->requester->userData['scope_' . $this->entityType->value] === Scope::Team->value) {
+        // add filter on team only if scope is not set to everything
+        if ($this->requester->userData['scope_' . $this->entityType->value] === Scope::Team->value && $scope !== Scope::Everything->value) {
             $this->appendFilterSql(FilterableColumn::Team, $this->requester->team ?? 0);
         }
         // TAGS SEARCH

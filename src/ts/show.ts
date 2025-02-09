@@ -189,11 +189,27 @@ document.addEventListener('DOMContentLoaded', () => {
       const elem = event.target as HTMLSelectElement;
       const elemValue = elem.options[elem.selectedIndex].value;
       url.searchParams.set(elem.name, elemValue);
+      // also add it to the main input form
+      addHiddenInputToMainSearchForm(elem.name, elemValue);
+
       window.history.replaceState({}, '', url.toString());
       reloadEntitiesShow();
     });
   });
   // END SEARCH RELATED CODE
+
+  function addHiddenInputToMainSearchForm(name: string, value: string): void
+  {
+    const form = document.getElementById('mainSearchForm');
+    const hiddenInputId = `${name}_hiddenInput`;
+    document.getElementById(hiddenInputId)?.remove();
+    const input = document.createElement('input');
+    input.hidden = true;
+    input.name = name;
+    input.value = value;
+    input.id = hiddenInputId;
+    form.appendChild(input);
+  }
 
   const entity = getEntity();
   const FavTagC = new FavTag();
@@ -565,14 +581,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (value.length === 0) {
         url.searchParams.delete('tags[]');
       }
-      const form = document.getElementById('mainSearchForm');
-      document.getElementById('hiddenTagsInput')?.remove();
-      const input = document.createElement('input');
-      input.hidden = true;
-      input.name = 'tags[]';
-      input.value = value.toString();
-      input.id = 'hiddenTagsInput';
-      form.appendChild(input);
+      addHiddenInputToMainSearchForm('tags[]', value.toString());
 
       window.history.replaceState({}, '', url.toString());
       reloadEntitiesShow();

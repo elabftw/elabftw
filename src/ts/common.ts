@@ -25,7 +25,7 @@ import {
   replaceWithTitle,
   toggleEditCompound,
   toggleGrayClasses,
-  togglePlusIcon,
+  toggleIcon,
   TomSelect,
   updateEntityBody,
 } from './misc';
@@ -529,35 +529,21 @@ document.addEventListener('DOMContentLoaded', () => {
       if (el.dataset.toggleTarget) {
         targetEl = document.getElementById(el.dataset.toggleTarget);
       }
-      targetEl.toggleAttribute('hidden');
+      const isHidden = targetEl.toggleAttribute('hidden');
+      el.setAttribute('aria-expanded', String(!isHidden));
 
+      // might want to toggle another element with toggle-extra
       if (el.dataset.toggleTargetExtra) {
         document.getElementById(el.dataset.toggleTargetExtra).toggleAttribute('hidden');
       }
-      const iconEl = el.querySelector('i');
-      if (iconEl) {
-        if (el.dataset.togglePlusIcon) {
-          togglePlusIcon(iconEl);
-        } else {
-          if (targetEl.hasAttribute('hidden')) {
-            iconEl.classList.remove('fa-caret-down');
-            if (el.dataset.toggleTarget !== 'filtersDiv') {
-              iconEl.classList.add('fa-caret-right');
-            }
-            el.setAttribute('aria-expanded', 'false');
-          } else {
-            iconEl.classList.add('fa-caret-down');
-            iconEl.classList.remove('fa-caret-right');
-            el.setAttribute('aria-expanded', 'true');
-          }
-        }
-      }
+
       // save the hidden state of the target element in localStorage
       if (targetEl.dataset.saveHidden) {
-        const targetKey = targetEl.dataset.saveHidden + '-isHidden';
-        const value = targetEl.hasAttribute('hidden') ? '1' : '0';
-        localStorage.setItem(targetKey, value);
+        localStorage.setItem(`${targetEl.dataset.saveHidden}-isHidden`, isHidden ? '1' : '0');
       }
+
+      // now deal with icon of executor element
+      toggleIcon(el, isHidden);
 
     } else if (el.matches('[data-action="expand-all-storage"]')) {
       const root = document.getElementById('storageDiv');
@@ -879,15 +865,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // TOGGLE BODY
     } else if (el.matches('[data-action="toggle-body"]')) {
       const randId = el.dataset.randid;
-      if (el.dataset.togglePlusIcon) {
-        togglePlusIcon(el.querySelector('.fas'));
-      }
       const bodyDiv = document.getElementById(randId);
       let action = 'hide';
       // transform the + in - and vice versa
       if (bodyDiv.hasAttribute('hidden')) {
         action = 'show';
       }
+      toggleIcon(el, !bodyDiv.hasAttribute('hidden'));
       // don't reload body if it is already loaded for show action
       // and the hide action is just toggle hidden attribute and do nothing else
       if ((action === 'show' && bodyDiv.dataset.bodyLoaded) || action === 'hide') {

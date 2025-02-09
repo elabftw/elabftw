@@ -359,31 +359,23 @@ export async function reloadElements(elementIds: string[]): Promise<void> {
  */
 export function adjustHiddenState(): void {
   document.querySelectorAll('[data-save-hidden]').forEach((el: HTMLElement) => {
-    const targetElement = el.dataset.saveHidden;
-    // failsafe
-    if (!targetElement) {
-      return;
-    }
-    const localStorageKey = targetElement + '-isHidden';
-    const button = document.querySelector(`[data-toggle-target="${targetElement}"]`) || el.previousElementSibling;
+    const localStorageKey = el.dataset.saveHidden + '-isHidden';
+    const localStorageValue = localStorage.getItem(localStorageKey);
+    const button = document.querySelector(`[data-toggle-target="${el.dataset.saveHidden}"]`) || el.previousElementSibling;
     if (!button) {
       return;
     }
-    const caretIcon =  button.querySelector('i');
-    if (localStorage.getItem(localStorageKey) === '1') {
+    if (localStorageValue === '1') {
       el.hidden = true;
-      caretIcon?.classList.remove('fa-caret-down');
-      if (targetElement !== 'filtersDiv') {
-        caretIcon?.classList.add('fa-caret-right');
-      }
       button.setAttribute('aria-expanded', 'false');
     // make sure to explicitly check for the value, because the key might not exist!
-    } else if (localStorage.getItem(localStorageKey) === '0') {
+    } else if (localStorageValue === '0') {
       el.removeAttribute('hidden');
-      caretIcon?.classList.remove('fa-caret-right');
-      caretIcon?.classList.add('fa-caret-down');
       button.setAttribute('aria-expanded', 'true');
     }
+    // now make the button icon match the new state
+    const isHidden = el.hasAttribute('hidden');
+    toggleIcon((button as HTMLElement), isHidden);
   });
 }
 
@@ -553,14 +545,19 @@ export function generateMetadataLink(): void {
   });
 }
 
-// transform the + icon in - and vice versa
-export function togglePlusIcon(plusMinusIcon: HTMLElement): void {
-  if (plusMinusIcon.classList.contains('fa-square-plus')) {
-    plusMinusIcon.classList.remove('fa-square-plus');
-    plusMinusIcon.classList.add('fa-square-minus');
+export function toggleIcon(el: HTMLElement, isHidden: boolean): void
+{
+  const iconEl = el.querySelector('i');
+  // we assume that if element has closed-icon, it also has opened-icon
+  if (!iconEl || !el.dataset.closedIcon) {
+    return;
+  }
+  if (isHidden) {
+    iconEl.classList.add(el.dataset.closedIcon);
+    iconEl.classList.remove(el.dataset.openedIcon);
   } else {
-    plusMinusIcon.classList.add('fa-square-plus');
-    plusMinusIcon.classList.remove('fa-square-minus');
+    iconEl.classList.remove(el.dataset.closedIcon);
+    iconEl.classList.add(el.dataset.openedIcon);
   }
 }
 

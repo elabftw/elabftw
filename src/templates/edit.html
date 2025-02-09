@@ -123,39 +123,54 @@
   {% endif %}
 
   {# BODY #}
-  <div {{ not displayMainText ? 'hidden' }}>
-    <h3 data-action='toggle-next' data-toggle-target='mainTextDiv' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3><span class='ml-4 smallgray'>{{ 'Last saved:'|trans }}</span><span id='lastSavedAt' class='ml-2 relative-moment smallgray' title='{{ Entity.entityData.modified_at }}'></span>
-    <div data-save-hidden='mainTextDiv' id='mainTextDiv'>
-      <div class='mt-4' id='entityBodyEditorDiv' data-content-type='{{ Entity.entityData.content_type }}'>{# << this div is important around the textarea to fix an issue on mobile editor. See #3107 #}
-        {# tinymce or markdown? #}
-        {% if Entity.entityData.content_type == '2' %}
-          <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' data-language='{{ App.getJsLang }}' name='body'>{{ Entity.entityData.body }}</textarea>
-        {% else %}
-        {# do not display body if set in metadata, done via css to avoid delayed disappearance after JS is executed #}
-          {% if App.Config.configArr.debug -%}
-            <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element: suppress errors from tinymce] -->
-          {%- endif %}
-          <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='mceditable invisible' name='body'>{{ Entity.entityData.body }}</textarea>
-        {% endif %}
-      </div>
-      {# SWITCH EDITOR #}
-      <div class='float-right'>
-        <button type='button' class='btn btn-sm hl-hover-gray p-1 mt-1 rounded' data-action='switch-editor'><i class='fas fa-pencil-alt fa-fw'></i> {{ 'Switch editor'|trans }}</button>
-      </div>
-
-      <div class='mt-4 text-center'>
-        <button type='button' {{ not displayMainText ? 'hidden' }} data-action='update-entity-body' class='btn btn-primary'>{{ 'Save'|trans }}</button>
-        <button type='button' data-action='update-entity-body' data-redirect='view' class='btn btn-secondary'>{{ 'Save and go back'|trans }}</button>
+  <h3 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-toggle-target='mainTextDiv' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-{{ displayMainText ? 'down' : 'right' }} fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
+  <div data-save-hidden='mainTextDiv' {{ not displayMainText ? 'hidden' }} id='mainTextDiv'>
+    <div class='d-flex ml-4'>
+      {# Display main text switch #}
+      <div class='ml-auto'>
+        <label class='mr-1 smallgray' for='displayMainTextSliderInput'>{{ 'Display main text'|trans }}</label>
+        <label class='switch'>
+          <input type='checkbox' {{ entityData.metadata|extractDisplayMainText() ? 'checked="checked"' }} id='displayMainTextSliderInput'>
+          <span class='slider'></span>
+        </label>
       </div>
     </div>
-    <hr>
-  </div>
 
+    <div class='mt-2' id='entityBodyEditorDiv' data-content-type='{{ Entity.entityData.content_type }}'>{# << this div is important around the textarea to fix an issue on mobile editor. See #3107 #}
+      {# tinymce or markdown? #}
+      {% if Entity.entityData.content_type == '2' %}
+        <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' data-language='{{ App.getJsLang }}' name='body'>{{ Entity.entityData.body }}</textarea>
+      {% else %}
+      {# do not display body if set in metadata, done via css to avoid delayed disappearance after JS is executed #}
+        {% if App.Config.configArr.debug -%}
+          <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element: suppress errors from tinymce] -->
+        {%- endif %}
+        <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='mceditable invisible' name='body'>{{ Entity.entityData.body }}</textarea>
+      {% endif %}
+    </div>
+    <div class='d-flex ml-1'>
+      {# LAST SAVED #}
+      <div>
+        <span class='smallgray'>{{ 'Last saved:'|trans }}</span>
+        <span id='lastSavedAt' class='ml-1 relative-moment smallgray' title='{{ Entity.entityData.modified_at }}'></span>
+      </div>
+      {# SWITCH EDITOR #}
+      <div class='ml-auto'>
+        <button type='button' class='btn btn-sm hl-hover-gray p-1 mt-1 rounded' data-action='switch-editor'><i class='fas fa-pencil-alt fa-fw'></i> {{ 'Switch editor'|trans }}</button>
+      </div>
+    </div>
+
+    <div class='mt-1 text-center'>
+      <button type='button' {{ not displayMainText ? 'hidden' }} data-action='update-entity-body' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+      <button type='button' data-action='update-entity-body' data-redirect='view' class='btn btn-secondary'>{{ 'Save and go back'|trans }}</button>
+    </div>
+  </div>
+  <hr>
 </section>
 
 
 {# EXTRA FIELDS #}
-<h3 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Extra fields'|trans }}</h3>
+<h3 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Extra fields'|trans }}</h3>
 <div data-save-hidden='metadataDiv' class='col-md-6 mt-4'>
   {# this div is filled in JS by Metadata.class.ts edit() #}
   <div id='metadataDiv'></div>
@@ -176,7 +191,7 @@
 
 {# DOODLE #}
 {# id for the i is needed by the annotate-image action #}
-<h3 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='false' aria-controls='doodleDiv'><i id='doodleDivIcon' class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Draw something'|trans }}</h3>
+<h3 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='false' aria-controls='doodleDiv'><i id='doodleDivIcon' class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Draw something'|trans }}</h3>
 <div id='doodleDiv' hidden class='mt-2' data-save-hidden='doodleDiv'>
   <div class='d-flex'>
     {# do not use w-100 here as it will break the canvas #}

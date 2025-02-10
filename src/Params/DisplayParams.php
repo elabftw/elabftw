@@ -121,6 +121,8 @@ class DisplayParams extends BaseQueryParams
             $this->appendFilterSql(FilterableColumn::Related, $query->getInt('related'));
             $this->relatedOrigin = EntityType::tryFrom($query->getAlpha('related_origin')) ?? $this->entityType;
         }
+
+        // Note: we use getString() and not getInt() because values can be string separated (1,5)
         // CATEGORY FILTER
         // cat is for backward compatibility
         $this->filterSql .= $this->getSqlIn('entity.category', $query->getString('cat'));
@@ -129,12 +131,12 @@ class DisplayParams extends BaseQueryParams
         $this->filterSql .= $this->getSqlIn('entity.status', $query->getString('status'));
         // OWNER (USERID) FILTER
         $this->filterSql .= $this->getSqlIn('entity.userid', $query->getString('owner'));
-        // LOCK FILTER
-        $this->filterSql .= $this->getSqlIn('entity.locked', $query->getInt('locked'));
-        // TIMESTAMPED FILTER
-        $this->filterSql .= $this->getSqlIn('entity.timestamped', $query->getInt('timestamped'));
+        // LOCK FILTER: 0 or 1, use getInt()
+        $this->filterSql .= $this->getSqlIn('entity.locked', $query->getString('locked'));
+        // TIMESTAMPED FILTER, same as lock
+        $this->filterSql .= $this->getSqlIn('entity.timestamped', $query->getString('timestamped'));
         // RATING FILTER
-        $this->filterSql .= $this->getSqlIn('entity.rating', $query->getInt('rating'));
+        $this->filterSql .= $this->getSqlIn('entity.rating', $query->getString('rating'));
     }
 
     /**

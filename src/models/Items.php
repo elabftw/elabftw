@@ -42,6 +42,8 @@ class Items extends AbstractConcreteEntity
         ?DateTimeImmutable $date = null,
         ?string $canread = null,
         ?string $canwrite = null,
+        ?bool $canreadIsImmutable = false,
+        ?bool $canwriteIsImmutable = false,
         array $tags = array(),
         ?int $category = null,
         ?int $status = null,

@@ -527,6 +527,8 @@ export class Metadata {
           groupWrapperDiv.classList.add('mt-4');
           const groupHeader = document.createElement('h4');
           groupHeader.dataset.action='toggle-next';
+          groupHeader.dataset.openedIcon='fa-caret-down';
+          groupHeader.dataset.closedIcon='fa-caret-right';
           groupHeader.classList.add('d-inline', 'togglable-section-title');
           const groupHeaderIcon = document.createElement('i');
           groupHeaderIcon.classList.add('fas', 'fa-caret-down', 'fa-fw', 'mr-2');

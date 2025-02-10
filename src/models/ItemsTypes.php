@@ -24,6 +24,7 @@ use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Params\BaseQueryParams;
 use Elabftw\Params\OrderingParams;
 use Elabftw\Services\Filter;
+use Elabftw\Traits\RandomColorTrait;
 use Override;
 use PDO;
 use Symfony\Component\HttpFoundation\InputBag;
@@ -33,6 +34,8 @@ use Symfony\Component\HttpFoundation\InputBag;
  */
 class ItemsTypes extends AbstractTemplateEntity
 {
+    use RandomColorTrait;
+
     public EntityType $entityType = EntityType::ItemsTypes;
 
     public function create(
@@ -42,6 +45,8 @@ class ItemsTypes extends AbstractTemplateEntity
         ?DateTimeImmutable $date = null,
         ?string $canread = null,
         ?string $canwrite = null,
+        ?bool $canreadIsImmutable = false,
+        ?bool $canwriteIsImmutable = false,
         array $tags = array(),
         ?int $category = null,
         ?int $status = null,
@@ -55,14 +60,15 @@ class ItemsTypes extends AbstractTemplateEntity
         // specific to items_types
         ?string $color = null,
     ): int {
-        $title = Filter::title($title ?? _('Default'));
         $this->isAdminOrExplode();
-        $defaultPermissions = BasePermissions::Team->toJson();
-        // TODO have a function for a random cool color? like in status
-        $color ??= '29AEB9';
 
-        $sql = 'INSERT INTO items_types(userid, title, body, team, canread, canwrite, canread_target, canwrite_target, color, rating)
-            VALUES(:userid, :title, :body, :team, :canread, :canwrite, :canread_target, :canwrite_target, :color, :rating)';
+        $title = Filter::title($title ?? _('Default'));
+        $defaultPermissions = BasePermissions::Team->toJson();
+        $color ??= $this->getSomeColor();
+        $contentType ??= $this->Users->userData['use_markdown'] === 1 ? AbstractEntity::CONTENT_MD : AbstractEntity::CONTENT_HTML;
+
+        $sql = 'INSERT INTO items_types(userid, title, body, team, canread, canwrite, canread_target, canwrite_target, color, content_type, status, rating)
+            VALUES(:userid, :title, :body, :team, :canread, :canwrite, :canread_target, :canwrite_target, :color, :content_type, :status, :rating)';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':userid', $this->Users->userid, PDO::PARAM_INT);
         $req->bindValue(':title', $title);
@@ -73,6 +79,8 @@ class ItemsTypes extends AbstractTemplateEntity
         $req->bindParam(':canread_target', $defaultPermissions);
         $req->bindParam(':canwrite_target', $defaultPermissions);
         $req->bindParam(':color', $color);
+        $req->bindParam(':content_type', $contentType, PDO::PARAM_INT);
+        $req->bindParam(':status', $status);
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
         $this->Db->execute($req);
 

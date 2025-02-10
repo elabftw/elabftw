@@ -21,7 +21,7 @@ use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Share Your Cloning tool page
+ * OpenCloning tool page
  */
 require_once 'app/init.inc.php';
 $App->pageTitle = _('Cloning tool');

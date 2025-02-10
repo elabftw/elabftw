@@ -133,6 +133,10 @@ class EntitySqlBuilder
                 $this->selectSql[] = implode(', ', array_unique(array_column($this->entity->extendedValues, 'additional_columns')));
             }
         }
+        $this->selectSql[] = sprintf('(pin_%s2users.entity_id IS NOT NULL) AS is_pinned', $this->entity->entityType->value);
+        $this->joinsSql[] = sprintf('LEFT JOIN pin_%1$s2users
+            ON (entity.id = pin_%1$s2users.entity_id
+                AND pin_%1$s2users.users_id = %2$d)', $this->entity->entityType->value, $this->entity->Users->userData['userid']);
     }
 
     protected function category(): void

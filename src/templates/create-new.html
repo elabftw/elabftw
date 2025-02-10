@@ -1,39 +1,6 @@
 {# RIGHT MENU: CREATE NEW BUTTON #}
-{% set entityPage = entityPage|default(App.Request.getScriptName|split('/')|last) %}
-{% set entityType = entityPage == 'experiments.php' ? 'experiments' : 'items' %}
+{% set entityPage = entityPage|default(App.Request.getScriptName|split('/')|last|replace({'.php': ''})) %}
 {% if not App.Session.get('is_anon') %}
-  <div class='btn-group'>
-    <div class='btn-group dropleft' role='group'>
-      <button type='button' class='btn btn-primary dropdown-toggle dropdown-toggle-split' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-        <span class='sr-only'>{{ 'Toggle create new menu'|trans }}</span>
-      </button>
-      <div class='dropdown-menu'>
-        {% if entityPage == 'experiments.php' %}
-          {% if templatesArr|length > 0 %}
-            <h6 class='dropdown-header'>{{ 'Experiments templates'|trans }}</h6>
-            {% for tpl in templatesArr %}
-              <button type='button' data-action='create-entity' data-type='experiments' data-tplid='{{ tpl.id }}' class='btn btn-dropdown-item dropdown-item wrap'>
-                {{ tpl.title }}
-              </button>
-            {% endfor %}
-          {% else %}
-            <h6 class='dropdown-header'>{{ 'No pinned templates found'|trans }}</h6>
-          {% endif %}
-          <div class='dropdown-divider'></div>
-          <a href='ucp.php?tab=3' class='dropdown-item'><i class='fas fa-layer-group' aria-hidden='true'></i> {{ 'Manage templates'|trans }}</a>
-        {% else %}
-          {% for category in itemsCategoryArr %}
-            <button type='button' data-action='create-entity' data-type='items' data-tplid='{{ category.id }}' class='btn btn-dropdown-item dropdown-item' style='color:#{{ category.color }}'>
-              {{ category.title }}
-            </button>
-          {% endfor %}
-        {% endif %}
-        <div class='dropdown-divider'></div>
-        <a href='profile.php?tab=3' class='dropdown-item'>
-          <i class='fas fa-upload'></i> {{ 'Import from file'|trans }}
-        </a>
-      </div>
-    </div>
-    <button type='button' data-action='toggle-modal' data-target='createModal_{{ entityType }}' class='btn btn-primary'>{{ 'Create'|trans }}</button>
-  </div>
+  <button type='button' data-action='toggle-modal' data-target='createModal_{{ entityPage }}' class='btn btn-primary'>{{ 'Create'|trans }}</button>
 {% endif %}
+{% include 'create-new-item-modal.html' %}

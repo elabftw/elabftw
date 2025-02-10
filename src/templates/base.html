@@ -1,35 +1,34 @@
-{%- if not searchPage -%}
-  {# HEAD (but when we load show.html from searchpage we don't want it #}
-  {%- include 'head.html' -%}
-  {# TITLE #}
-  {%- block title -%}
-    {# this can be overridden by child templates #}
-    <h1 id='pageTitle' {%- if hideTitle %} hidden {%- endif %}>{{ App.pageTitle }}</h1>
-  {%- endblock -%}
+{% set scriptName = App.Request.getScriptName|split('/')|last %}
+{# HEAD (but when we load show.html from searchpage we don't want it #}
+{%- include 'head.html' -%}
+{# TITLE #}
+{%- block title -%}
+  {# this can be overridden by child templates #}
+  <h1 id='pageTitle' {%- if hideTitle %} hidden {%- endif %}>{{ App.pageTitle }}</h1>
+{%- endblock -%}
 
 
-  {# INFO BOX (FLASH MESSAGES) #}
-  {%- for ok in App.ok -%}
-    {{ ok|msg('ok') }}
-  {%- endfor -%}
-  {%- for ko in App.ko -%}
-    {{ ko|msg('ko') }}
-  {%- endfor -%}
-  {%- for warning in App.warning -%}
-    {{ warning|msg('warning') }}
-  {%- endfor -%}
-  {# ANNOUNCEMENTS #}
-  {# general sysconfig announcement #}
-  {%- if App.Config.configArr.announcement -%}
-    {{ App.Config.configArr.announcement|msg('warning', false) }}
-  {%- endif -%}
-
-  {# team level announcement #}
-  {%- if App.teamArr.announcement -%}
-    {{ App.teamArr.announcement|msg('warning', false) }}
-  {%- endif -%}
-  <div id='output'></div>
+{# INFO BOX (FLASH MESSAGES) #}
+{%- for ok in App.ok -%}
+  {{ ok|msg('ok') }}
+{%- endfor -%}
+{%- for ko in App.ko -%}
+  {{ ko|msg('ko') }}
+{%- endfor -%}
+{%- for warning in App.warning -%}
+  {{ warning|msg('warning') }}
+{%- endfor -%}
+{# ANNOUNCEMENTS #}
+{# general sysconfig announcement #}
+{%- if App.Config.configArr.announcement -%}
+  {{ App.Config.configArr.announcement|msg('warning', false) }}
 {%- endif -%}
+
+{# team level announcement #}
+{%- if App.teamArr.announcement -%}
+  {{ App.teamArr.announcement|msg('warning', false) }}
+{%- endif -%}
+<div id='output'></div>
 
 {# BODY #}
 {# target for skip link #}

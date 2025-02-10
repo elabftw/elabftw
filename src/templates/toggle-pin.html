@@ -1,0 +1,8 @@
+{# TOGGLE PIN #}
+{% set padding = padding|default(2) %}
+{% set is_pinned = is_pinned|default(Entity.entityData.is_pinned) %}
+{% set id = id|default(Entity.id) %}
+
+<button type='button' title='{{ 'Toggle pin'|trans }}' aria-label='{{ 'Toggle pin'|trans }}' data-action='toggle-pin' data-id='{{ id }}' class='btn {{ is_pinned ? 'bgnd-gray' : 'hl-hover-gray' }} p-{{ padding }} mr-{{ padding }} lh-normal border-0'>
+  <i class='fas fa-thumbtack {{ not is_pinned ? 'color-weak' }} fa-fw'></i>
+</button>

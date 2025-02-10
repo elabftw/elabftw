@@ -812,7 +812,7 @@
       <ul class='list-group' id='idpsDiv'>
         {% for idp in idpsArr %}
           <li class='list-group-item'>
-            <h4 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button'>
+            <h4 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button'>
               <i class='fas fa-caret-right fa-fw mr-2'></i>
               <label class='switch ucp-align'>
                 <input type='checkbox' autocomplete='off' data-trigger='change' data-model='idps/{{ idp.id }}' data-target='enabled' {{ idp.enabled ? 'checked="checked"' }} id='enabled_{{ idp.id }}'>

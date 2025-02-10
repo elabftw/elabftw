@@ -87,7 +87,7 @@
                   {% set addableToTeams = teamsArr|filter(v => v.id not in user.teams|column('id')) %}
                   {% if addableToTeams %}
                     <hr>
-                    <span class='px-2 py-1 rounded mr-2 mt-2 btn btn-primary' data-action='toggle-next'><i class='text-light fas fa-plus-circle'></i> {{ 'Add team'|trans }}</span>
+                    <span class='px-2 py-1 rounded mr-2 mt-2 btn btn-primary' data-action='toggle-next' data-opened-icon='fa-minus-circle' data-closed-icon='fa-plus-circle'><i class='text-light fas fa-plus-circle'></i> {{ 'Add team'|trans }}</span>
                     <span class='form-group form-inline mt-2' hidden>
                       <select class='form-control'>
                         {% for team in addableToTeams %}
@@ -126,6 +126,10 @@
           {# this is the element to reload after a change, don't use the full div so we keep the js working in table headers #}
           <tbody id='editUsersBox'>
             {% for user in usersArr %}
+              {% if App.Users.userData.is_sysadmin == '1' %}
+                {% include 'reset-user-password-modal.html' with {'userid': user.userid} %}
+              {% endif %}
+
               <tr {{ user.archived ? "class='bg-medium'" }}>
                 <td data-label='{{ 'User ID'|trans }}'><span title='{{ 'User ID'|trans }}' class='badge badge-secondary {{ user.archived ? 'alert-danger' }}'>{{ user.userid }}</span></td>
                 <td data-label='{{ 'Team(s)'|trans }}' style='max-width: 270px'>
@@ -166,27 +170,18 @@
                 </td>
                 <td data-label='2FA'>{% if user.has_mfa_enabled %}<span title='{{ '2FA enabled'|trans }}'><i title='{{ '2FA enabled'|trans }}' class='fas fa-user-shield'></i></span>{% endif %}</td>
                 <td data-label='{{ 'Actions'|trans }}'>
-                  {% if App.Users.userData.is_sysadmin == '1' %}
-                    {# TODO have a modal window for this #}
-                    <button class='btn p-2 hl-hover-gray text-center mr-1' title='{{ 'Reset user password'|trans }}' data-action='toggle-next'>
-                      <i class='fas fa-fw fa-key'></i>
-                    </button>
-                    <div hidden class='input-group'>
-                      <input class='form-control' minlength='{{ App.Config.configArr.min_password_length }}' title='{{ 'Minimum password length: %d.'|trans|format(App.Config.configArr.min_password_length) }}' placeholder='{{ 'Set new password'|trans }}' type='password' id='resetUserPasswordInput_{{ user.userid }}' autocomplete='new-password' pattern='{{ passwordInputPattern|e('html_attr') }}' />
-                      <div class='input-group-append'>
-                        <span class='btn btn-light input-border' tabindex='-1' data-action='toggle-password' data-target='resetUserPasswordInput_{{ user.userid }}'><i class='fas fa-eye' aria-hidden='true'></i></span>
-                      </div>
-                      <div class='input-group-append'>
-                        <button type='button' data-action='reset-user-password' data-userid='{{ user.userid }}' class='btn btn-primary'>{{ 'Save'|trans }}</button>
-                      </div>
-                    </div>
-                  {% endif %}
                   {# MORE OPTIONS MENU #}
                   <div class='dropdown'>
                     <button class='btn p-2 hl-hover-gray text-center ' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' type='button'>
                       <i class='fas fa-ellipsis-v fa-fw'></i>
                     </button>
                     <div class='dropdown-menu dropdown-menu-right'>
+                      {# RESET USER PASSWORD (SYSADMIN ONLY) #}
+                      {% if App.Users.userData.is_sysadmin == '1' %}
+                        <button type='button' class='btn btn-dropdown-item dropdown-item' data-action='toggle-modal' data-target='resetUserPasswordModal'>
+                          <i class='mr-1 fas fa-fw fa-key'></i>{{ 'Reset user password'|trans }}
+                        </button>
+                      {% endif %}
                       {# MANAGE TEAMS #}
                       {% if App.Users.userData.is_sysadmin and (App.Request.getScriptName|split('/')|last == 'sysconfig.php') %}
                         <button type='button' class='btn btn-dropdown-item dropdown-item' data-action='toggle-modal' data-target='manageUsers2teamsModal_{{ user.userid }}'>

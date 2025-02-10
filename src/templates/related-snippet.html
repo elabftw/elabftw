@@ -3,7 +3,7 @@
 
   {# RELATED EXPERIMENTS #}
   {% if Entity.entityData.related_experiments_links %}
-  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='relatedExperimentsDiv'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Related experiments'|trans }} (<span id='relatedExperimentsDivCount'>{{ Entity.entityData.related_experiments_links|length }}</span>)</h3>
+  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='relatedExperimentsDiv'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Related experiments'|trans }} (<span id='relatedExperimentsDivCount'>{{ Entity.entityData.related_experiments_links|length }}</span>)</h3>
     <div class='row mt-2' id='relatedExperimentsDiv' data-count-for='relatedExperimentsDivCount' data-save-hidden='relatedExperimentsDiv'>
     <!--div class='row mt-2' id='relatedExperimentsDiv' data-count-class='link-view-one' data-counter='relatedExperimentsDivCounter' data-save-hidden='relatedExperimentsDiv'-->
       {% for link in Entity.entityData.related_experiments_links %}
@@ -20,7 +20,7 @@
 
   {# RELATED ITEMS #}
   {% if Entity.entityData.related_items_links %}
-  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='relatedItemsDiv'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Related resources'|trans }} (<span id='relatedItemsDivCount'>{{ Entity.entityData.related_items_links|length }}</span>)</h3>
+  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='relatedItemsDiv'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Related resources'|trans }} (<span id='relatedItemsDivCount'>{{ Entity.entityData.related_items_links|length }}</span>)</h3>
     <div class='row mt-2' id='relatedItemsDiv' data-count-for='relatedItemsDivCount' data-save-hidden='relatedItemsDiv'>
       {% for link in Entity.entityData.related_items_links %}
         {% include 'link-view-one.html' with {'isRelated': true} %}

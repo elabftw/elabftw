@@ -76,60 +76,6 @@
       'label': 'Force experiment template use'|trans,
       'help': 'Remove Default Template and Blank Experiment choices from Create menu, and force usage of existing Templates.'|trans} %}
   </div>
-  <h3 class='p-2 pl-3 section-title'>{{ 'Menu link'|trans }}</h3>
-
-  <div class='pl-3 mt-2'>
-    <div class='d-flex justify-content-between'>
-      <label for='link_name' class='col-form-label'>{{ 'Name of the link in the top menu'|trans }}</label>
-      <input class='form-control col-md-4' data-trigger='blur' data-model='teams/current' data-target='link_name' type='text' value='{{ App.teamArr.link_name|e('html_attr') }}' name='link_name' id='link_name' />
-    </div>
-    <hr>
-
-    <div class='d-flex justify-content-between'>
-      <label for='link_href' class='col-form-label'>{{ 'Address where this link should point'|trans }}</label>
-      <input class='form-control col-md-4' type='url' data-trigger='blur' data-model='teams/current' data-target='link_href' value='{{ App.teamArr.link_href|e('html_attr') }}' name='link_href' id='link_href' />
-    </div>
-    <hr>
-
-  </div>
-  <h3 class='p-2 pl-3 section-title'>{{ 'Permissions'|trans }}</h3>
-
-  <div class='pl-3 mt-2'>
-    {{ 'This feature is deprecated and will be removed in the next version. Use templates permissions instead.'|msg('warning', false) }}
-
-    {% include 'binary-setting.html' with {'model': model, 'src': src,
-      'slug': 'do_force_canread',
-      'label': 'Enforce read permissions?'|trans,
-      'help': 'Select if you want to enforce read permissions on experiments'|trans} %}
-
-    <div class='d-flex justify-content-between'>
-      <label for='force_canread' class='col-form-label'>{{ 'Enforced read permissions on experiments'|trans }}</label>
-      <select class='form-control col-md-4' data-trigger='change' data-transform='permissionsToJson' data-model='teams/current' data-target='force_canread' id='force_canread'>
-        {% for key, value in visibilityArr %}
-          <option value='{{ key }}' {{ App.teamArr.force_canread|extractJson('base') == key ? " selected='selected'" }}>{{ value|trans }}</option>
-        {% endfor %}
-      </select>
-    </div>
-    <p class='smallgray'>{{ 'Enforce the read permission for all experiments of users in this team.'|trans }}</p>
-    <hr>
-
-    {% include 'binary-setting.html' with {'model': model, 'src': src,
-      'slug': 'do_force_canwrite',
-      'label': 'Enforce write permissions?'|trans,
-      'help': 'Select if you want to enforce write permissions on experiments'|trans} %}
-
-    <div class='d-flex justify-content-between'>
-      <label for='force_canwrite' class='col-form-label'>{{ 'Enforced write permissions on experiments'|trans }}</label>
-      <select class='form-control col-md-4' data-trigger='change' data-transform='permissionsToJson' data-model='teams/current' data-target='force_canwrite' id='force_canwrite'>
-        {% for key, value in visibilityArr %}
-          <option value='{{ key }}' {{ App.teamArr.force_canwrite|extractJson('base') == key ? " selected='selected'" }}>{{ value|trans }}</option>
-        {% endfor %}
-      </select>
-    </div>
-    <p class='smallgray'>{{ 'Enforce the write permission for all experiments of users in this team.'|trans }}</p>
-    <hr>
-
-  </div>
   <h3 class='p-2 pl-3 section-title'>{{ 'Default Template main text'|trans }}</h3>
 
   <div class='pl-3 mt-2'>
@@ -218,6 +164,9 @@
   <div id='team_groups_div'>
     <h3 class='p-2 pl-3 section-title'>{{ 'Existing user groups'|trans }}</h3>
     <div class='pl-3'>
+      {% if not teamGroupsArr %}
+        <p class='mt-3'>{{ 'No user group created yet.'|trans }}</p>
+      {% endif %}
       {% for teamGroup in teamGroupsArr %}
         <div class='box'>
           <button class='btn float-right border-0 hl-hover-gray rounded p-2 lh-normal m-0' data-action='destroy-teamgroup' data-id='{{ teamGroup.id }}' title='{{ 'Delete'|trans }}'>
@@ -375,6 +324,16 @@
       </div>
       <hr>
 
+      <div class='d-flex ml-4'>
+        {# Display main text switch #}
+        <div class='ml-auto'>
+          <label class='mr-1 smallgray' for='displayMainTextSliderInput'>{{ 'Display main text'|trans }}</label>
+          <label class='switch'>
+            <input type='checkbox' {{ entityData.metadata|extractDisplayMainText() ? 'checked="checked"' }} id='displayMainTextSliderInput'>
+            <span class='slider'></span>
+          </label>
+        </div>
+      </div>
       <div id='entityBodyEditorDiv' data-content-type='{{ Entity.entityData.content_type }}'>
         {% if Entity.entityData.content_type == '2' %}
           <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' data-language='{{ App.getJsLang }}' name='body'>{{ Entity.entityData.body }}</textarea>
@@ -391,11 +350,17 @@
         </div>
       </div>
 
-      <div id='metadataDiv' class='col-md-6'></div>
-      <div class='mt-3'>
-        <button type='button' data-action='toggle-modal' data-target='fieldBuilderModal' class='btn btn-secondary'>{{ 'Add field'|trans }}</button>
-        <button type='button' data-action='toggle-modal' data-target='fieldLoaderModal' class='ml-3 btn hl-hover-gray'>{{ 'Load fields'|trans }}</button>
+      {# EXTRA FIELDS #}
+      <h3 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Extra fields'|trans }}</h3>
+      <div data-save-hidden='metadataDiv' class='col-md-6 mt-4'>
+        {# this div is filled in JS by Metadata.class.ts edit() #}
+        <div id='metadataDiv'></div>
+        <div class='mt-3 row'>
+          <button type='button' data-action='toggle-modal' data-target='fieldBuilderModal' class='btn btn-secondary'>{{ 'Add field'|trans }}</button>
+          <button type='button' data-action='toggle-modal' data-target='fieldLoaderModal' class='ml-3 btn hl-hover-gray'>{{ 'Load fields'|trans }}</button>
+        </div>
       </div>
+      <hr>
       {% set mode = 'edit-template' %}
       {% include 'steps-links-edit.html' %}
       {# METADATA editor for items types #}
@@ -658,7 +623,7 @@
 <div data-tabcontent='8' id='batchActions' hidden>
   <p>{{ 'From here you can perform actions on entire group of entries at once.'|trans }}</p>
   <hr>
-  <button type='button' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-toggle-plus-icon='1' data-action='toggle-next' data-keep-icon='1' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Resources categories'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <button type='button' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Resources categories'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
   <div hidden class='mt-2'>
   {% for itemsCategory in itemsCategoryArr %}
     <div class='d-flex justify-content-between p-1 rounded hl-hover-gray'>
@@ -672,7 +637,7 @@
     </div>
     <hr>
 
-  <button type='button' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-toggle-plus-icon='1' data-action='toggle-next' data-keep-icon='1' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Resources status'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <button type='button' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Resources status'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
   <div hidden class='mt-2'>
   {% for status in itemsStatusArr %}
     <div class='d-flex justify-content-between p-1 rounded hl-hover-gray'>
@@ -686,7 +651,7 @@
     </div>
 
   <hr>
-  <button type='button' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-toggle-plus-icon='1' data-action='toggle-next' data-keep-icon='1' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Resources tags'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <button type='button' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Resources tags'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
   <div hidden class='mt-2'>
     {# for this tab, sort the tags in alphabetical order, case-insensitive #}
     {% for tag in tagsArr|sort((a, b) => a.tag|lower <=> b.tag|lower) %}
@@ -701,7 +666,7 @@
   </div>
 
   <hr>
-  <button type='button' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-toggle-plus-icon='1' data-action='toggle-next' data-keep-icon='1' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Experiments categories'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <button type='button' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Experiments categories'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
   <div hidden class='mt-2'>
   {% for experimentsCategory in experimentsCategoriesArr %}
     <div class='d-flex justify-content-between p-1 rounded hl-hover-gray'>
@@ -715,7 +680,7 @@
     </div>
     <hr>
 
-  <button type='button' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-toggle-plus-icon='1' data-action='toggle-next' data-keep-icon='1' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Experiments status'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <button type='button' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Experiments status'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
   <div hidden class='mt-2'>
   {% for status in statusArr %}
     <div class='d-flex justify-content-between p-1 rounded hl-hover-gray'>
@@ -729,7 +694,7 @@
     </div>
 
   <hr>
-  <button type='button' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-toggle-plus-icon='1' data-action='toggle-next' data-keep-icon='1' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Experiments tags'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <button type='button' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Experiments tags'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
   <div hidden class='mt-2'>
     {% for tag in tagsArr|sort((a, b) => a.tag|lower <=> b.tag|lower) %}
     <div class='d-flex justify-content-between p-1 rounded hl-hover-gray'>
@@ -743,7 +708,7 @@
   </div>
   <hr>
 
-  <button type='button' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-toggle-plus-icon='1' data-action='toggle-next' data-keep-icon='1' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Owner'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <button type='button' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Owner'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
   <div hidden class='mt-2'>
     {% for user in allTeamUsersArr %}
       <div class='d-flex justify-content-between p-1 rounded hl-hover-gray'>

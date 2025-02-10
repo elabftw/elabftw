@@ -76,7 +76,7 @@ class DashboardController extends AbstractHtmlController
             'experimentsStatusArr' => $ExperimentsStatus->readAll(),
             'itemsArr' => $Items->readShow($DisplayParamsItems),
             'requestActionsArr' => $UserRequestActions->readAllFull(),
-            'templatesArr' => $Templates->Pins->readAllSimple(),
+            'templatesArr' => $Templates->Pins->readAll(),
             'usersArr' => $this->app->Users->readAllActiveFromTeam(),
             'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
         );

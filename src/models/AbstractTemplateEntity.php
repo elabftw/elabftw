@@ -23,7 +23,21 @@ abstract class AbstractTemplateEntity extends AbstractEntity
     public function postAction(Action $action, array $reqBody): int
     {
         return match ($action) {
-            Action::Create => $this->create(title: $reqBody['title'] ?? null),
+            Action::Create => $this->create(
+                title: $reqBody['title'] ?? null,
+                template: $reqBody['template'] ?? -1,
+                body: $reqBody['body'] ?? null,
+                canread: $reqBody['canread'] ?? null,
+                canreadIsImmutable: (bool) $reqBody['canread_is_immutable'],
+                canwrite: $reqBody['canwrite'] ?? null,
+                canwriteIsImmutable: (bool) $reqBody['canwrite_is_immutable'],
+                tags: $reqBody['tags'] ?? array(),
+                category: $reqBody['category'] ?? null,
+                status: $reqBody['status'] ?? null,
+                metadata: $reqBody['metadata'] ?? null,
+                rating: $reqBody['rating'] ?? 0,
+                contentType: $reqBody['content_type'] ?? null,
+            ),
             Action::Duplicate => $this->duplicate((bool) ($reqBody['copyFiles'] ?? false), (bool) ($reqBody['linkToOriginal'] ?? false)),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };

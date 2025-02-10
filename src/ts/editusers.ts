@@ -6,10 +6,11 @@
  * @package elabftw
  */
 import i18next from 'i18next';
-import { collectForm, reloadElements } from './misc';
+import { clearForm, collectForm, reloadElements } from './misc';
 import { InputType, Malle } from '@deltablot/malle';
 import { Api } from './Apiv2.class';
 import { Action, Model } from './interfaces';
+import $ from 'jquery';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!['/sysconfig.php', '/admin.php'].includes(window.location.pathname)) {
@@ -82,9 +83,14 @@ document.addEventListener('DOMContentLoaded', () => {
       ApiC.patch(`users/${el.dataset.userid}`, {action: Action.Validate}).then(() => reloadElements(['unvalidatedUsersBox', 'editUsersBox']));
     // SET PASSWORD (from sysadmin page)
     } else if (el.matches('[data-action="reset-user-password"]')) {
-      const password = (document.getElementById(`resetUserPasswordInput_${el.dataset.userid}`) as HTMLInputElement).value;
+      //const password = (document.getElementById(`resetUserPasswordInput_${el.dataset.userid}`) as HTMLInputElement).value;
+      const form = document.getElementById(`resetUserPasswordForm_${el.dataset.userid}`);
+      const params = collectForm(form);
       // because we're sysadmin, we don't need to provide the current_password parameter
-      ApiC.patch(`users/${el.dataset.userid}`, {action: Action.UpdatePassword, password: password});
+      ApiC.patch(`users/${el.dataset.userid}`, {action: Action.UpdatePassword, password: params['resetPassword']}).then(() => {
+        $('#resetUserPasswordModal').modal('hide');
+        clearForm(form);
+      });
 
     // DESTROY USER
     } else if (el.matches('[data-action="destroy-user"]')) {

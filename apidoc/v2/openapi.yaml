@@ -464,6 +464,8 @@ components:
         category_color:
           type: string
           nullable: true
+        content_type:
+          type: integer
         exclusive_edit_mode:
           $ref: '#/components/schemas/exclusive_edit_mode'
         userid:
@@ -472,6 +474,10 @@ components:
           type: string
         canwrite:
           type: string
+        canread_is_immutable:
+          type: integer
+        canwrite_is_immutable:
+          type: integer
         locked:
           type: integer
         lockedby:
@@ -764,22 +770,10 @@ components:
           type: integer
         force_exp_tpl:
           type: integer
-        link_name:
-          type: string
-        link_href:
-          type: string
         created_at:
           type: string
         orgid:
           type: string
-        force_canread:
-          type: string
-        force_canwrite:
-          type: string
-        do_force_canread:
-          type: integer
-        do_force_canwrite:
-          type: integer
         visible:
           type: integer
         announcement:
@@ -1072,37 +1066,70 @@ paths:
               properties:
                 body:
                   type: string
+                  nullable: true
                   description: The main text content (HTML or Markdown)
                   default: null
+                  example: "<h1>Section title</h1><p>Main text of resource</p>"
+                canread:
+                  type: string
+                  nullable: true
+                  description: JSON permissions for reading the entry
+                  default: '{"base": 20, "teams": [], "users": [1], "teamgroups": [1]}'
+                canwrite:
+                  type: string
+                  nullable: true
+                  description: JSON permissions for writing the entry
+                  default: '{"base": 20, "teams": [], "users": [1], "teamgroups": [1]}'
                 category:
                   type: integer
+                  nullable: true
                   description: The experiment category ID
                   default: null
-                status:
+                  example: 3
+                content_type:
                   type: integer
-                  description: The experiment status ID
-                  default: null
+                  nullable: true
+                  description: |
+                    Set the content type for main text: 1 for HTML (default) and 2 for Markdown
+                  example: 1
                 metadata:
                   type: string
+                  nullable: true
                   description: The metadata in JSON format
                   default: null
+                  example: '{ "extra_fields": { "For example": { "type": "text", "value": "With a value", "required": true, "description": "An extra field of type text" } } }'
+                rating:
+                  type: integer
+                  nullable: true
+                  description: Rating value from 0 to 5
+                  default: 0
+                status:
+                  type: integer
+                  nullable: true
+                  description: The experiment status ID
+                  default: null
+                  example: 1
+                tags:
+                  type: array
+                  nullable: true
+                  description: |
+                    An array of tags to assign to the created entry.
+                  items:
+                    type: string
+                  default: []
+                  example: ["test", "confidential", "replication"]
+                title:
+                  type: string
+                  nullable: true
+                  description: The title of the entry
+                  default: Untitled
+                  example: "Test replicating the results of Naomi"
                 template:
                   type: integer
                   description: |
                     The template id to use, or 0 to use the common team
                     template, or -1 to have an empty body.
                   default: -1
-                title:
-                  type: string
-                  description: The title of the entry
-                  default: Untitled
-                tags:
-                  type: array
-                  description: |
-                    An array of tags to assign to the created entry.
-                  items:
-                    type: string
-                  default: []
 
       responses:
         '201':
@@ -1564,15 +1591,65 @@ paths:
             schema:
               type: object
               properties:
-                category_id:
+                body:
+                  type: string
+                  nullable: true
+                  description: The main text content (HTML or Markdown)
+                  default: null
+                  example: "<h1>Section title</h1><p>Main text of resource</p>"
+                canread:
+                  type: string
+                  nullable: true
+                  description: JSON permissions for reading the entry
+                  default: '{"base": 30, "teams": [], "users": [], "teamgroups": []}'
+                canwrite:
+                  type: string
+                  nullable: true
+                  description: JSON permissions for writing the entry
+                  default: '{"base": 20, "teams": [], "users": [], "teamgroups": []}'
+                content_type:
+                  type: integer
+                  nullable: true
+                  description: |
+                    Set the content type for main text: 1 for HTML (default) and 2 for Markdown
+                  example: 1
+                metadata:
+                  type: string
+                  nullable: true
+                  description: The metadata in JSON format
+                  default: null
+                  example: '{ "extra_fields": { "For example": { "type": "text", "value": "With a value", "required": true, "description": "An extra field of type text" } } }'
+                rating:
+                  type: integer
+                  nullable: true
+                  description: Rating value from 0 to 5
+                  default: 0
+                status:
+                  type: integer
+                  nullable: true
+                  description: The experiment status ID
+                  default: null
+                  example: 1
+                template:
                   type: integer
                   description: |
                     Mandatory parameter, an ID corresponding to an items_types in the team.
+                  example: 1
                 tags:
                   type: array
+                  nullable: true
+                  description: |
+                    An array of tags to assign to the created entry.
                   items:
                     type: string
                   default: []
+                  example: ["TIRF", "Nikon", "mandatory booking"]
+                title:
+                  type: string
+                  nullable: true
+                  description: The title of the entry
+                  default: Untitled
+                  example: "TIRF microscope"
 
       responses:
         '201':
@@ -2428,6 +2505,7 @@ paths:
   # EXPERIMENTS_TEMPLATES
   /experiments_templates:
     summary: Actions on experiments_templates
+    # POST EXPERIMENTS TEMPLATES
     post:
       tags: ['Experiments templates']
       summary: Create an experiment template
@@ -2439,10 +2517,83 @@ paths:
             schema:
               type: object
               properties:
+                body:
+                  type: string
+                  nullable: true
+                  description: The main text content (HTML or Markdown)
+                  default: null
+                  example: "<h1>Section title</h1><p>Main text of template</p>"
+                canread:
+                  type: string
+                  nullable: true
+                  description: JSON permissions for reading the entry
+                  default: '{"base": 30, "teams": [], "users": [], "teamgroups": []}'
+                canwrite:
+                  type: string
+                  nullable: true
+                  description: JSON permissions for writing the entry
+                  default: '{"base": 20, "teams": [], "users": [], "teamgroups": []}'
+                canread_is_immutable:
+                  type: integer
+                  nullable: true
+                  description: Set to 1 to prevent further changes to the permissions setting for read access
+                  default: 0
+                canwrite_is_immutable:
+                  type: integer
+                  nullable: true
+                  description: Set to 1 to prevent further changes to the permissions setting for write access
+                  default: 0
+                category:
+                  type: integer
+                  nullable: true
+                  description: The experiment category ID
+                  default: null
+                  example: 3
+                content_type:
+                  type: integer
+                  nullable: true
+                  description: |
+                    Set the content type for main text: 1 for HTML (default) and 2 for Markdown
+                  example: 1
+                metadata:
+                  type: string
+                  nullable: true
+                  description: The metadata in JSON format
+                  default: null
+                  example: '{ "extra_fields": { "For example": { "type": "text", "value": "With a value", "required": true, "description": "An extra field of type text" } } }'
+                rating:
+                  type: integer
+                  nullable: true
+                  description: Rating value from 0 to 5
+                  default: 0
+                status:
+                  type: integer
+                  nullable: true
+                  description: The experiment status ID
+                  default: null
+                  example: 1
+                template:
+                  type: integer
+                  nullable: true
+                  description: |
+                    The template id to use, or 0 to use the common team
+                    template, or -1 to have an empty body.
+                  default: -1
+                tags:
+                  type: array
+                  nullable: true
+                  description: |
+                    An array of tags to assign to the created entry.
+                  items:
+                    type: string
+                  default: []
+                  example: ["Project OSCARS", "Austria", "FAIR"]
                 title:
                   type: string
-                  description: A title for the template.
+                  nullable: true
+                  description: The title of the entry
                   default: Untitled
+                  example: "Protocol for extraction of DNA from Xenopus oocytes"
       responses:
         '201':
           description: The experiment template has been created.
@@ -2451,6 +2602,9 @@ paths:
               description: An URL to the experiment template that was created.
               schema:
                 type: string
+    # END POST EXPERIMENTS TEMPLATES
+
+    # GET EXPERIMENTS TEMPLATES
     get:
       tags: ['Experiments templates']
       summary: Read all experiments_templates that are accessible
@@ -2569,10 +2723,67 @@ paths:
             schema:
               type: object
               properties:
+                body:
+                  type: string
+                  nullable: true
+                  description: The main text content (HTML or Markdown)
+                  default: null
+                  example: "<h1>Section title</h1><p>Main text of resource category</p>"
+                canread:
+                  type: string
+                  nullable: true
+                  description: JSON permissions for reading the entry
+                  default: '{"base": 30, "teams": [], "users": [], "teamgroups": []}'
+                canwrite:
+                  type: string
+                  nullable: true
+                  description: JSON permissions for writing the entry
+                  default: '{"base": 20, "teams": [], "users": [], "teamgroups": []}'
+                canread_is_immutable:
+                  type: integer
+                  nullable: true
+                  description: Set to 1 to prevent further changes to the permissions setting for read access
+                  default: 0
+                canwrite_is_immutable:
+                  type: integer
+                  nullable: true
+                  description: Set to 1 to prevent further changes to the permissions setting for write access
+                  default: 0
+                color:
+                  type: string
+                  description: Hexadecimal color code for the category
+                  nullable: true
+                  default: A random suitable color
+                  example: 29AEB9
+                content_type:
+                  type: integer
+                  nullable: true
+                  description: |
+                    Set the content type for main text: 1 for HTML (default) and 2 for Markdown
+                  example: 1
+                metadata:
+                  type: string
+                  nullable: true
+                  description: The metadata in JSON format
+                  default: null
+                  example: '{ "extra_fields": { "For example": { "type": "text", "value": "With a value", "required": true, "description": "An extra field of type text" } } }'
+                rating:
+                  type: integer
+                  nullable: true
+                  description: Rating value from 0 to 5
+                  default: 0
+                status:
+                  type: integer
+                  nullable: true
+                  description: Status of the created resource from that category
+                  default: null
+                  example: 1
                 title:
                   type: string
-                  description: A name for this items type.
-                  default: Untitled
+                  nullable: true
+                  description: Name of the category
+                  default: Default
+                  example: "Microscope"
       responses:
         '201':
           description: The items type has been created.

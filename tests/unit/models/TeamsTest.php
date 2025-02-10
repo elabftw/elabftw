@@ -44,12 +44,18 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
     {
         $params = array(
             'announcement' => '',
+            'common_template_md' => '# yep',
+            'newcomer_threshold' => '12',
+            'orgid' => 'Something',
         );
         $this->assertIsArray($this->Teams->patch(Action::Update, $params));
+        $new = 'yep';
         $params = array(
-            'announcement' => 'yep',
+            'announcement' => $new,
         );
-        $this->assertIsArray($this->Teams->patch(Action::Update, $params));
+        $patched = $this->Teams->patch(Action::Update, $params);
+        $this->assertIsArray($patched);
+        $this->assertEquals($new, $patched['announcement']);
     }
 
     public function testReadNamesFromIds(): void

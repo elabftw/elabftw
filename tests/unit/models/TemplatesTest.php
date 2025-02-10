@@ -52,4 +52,9 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
         $this->Templates->setId(1);
         $this->assertTrue($this->Templates->destroy());
     }
+
+    public function testGetTimestamperFullname(): void
+    {
+        $this->assertEquals('', $this->Templates->getTimestamperFullname());
+    }
 }

@@ -3,7 +3,7 @@
 
 <section id='json-editor' aria-label='json editor'>
   {# id for icon is used when focusing after loading from file #}
-  <h3 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='false' aria-controls='jsonEditorDiv'><i id='jsonEditorIcon' class='fas fa-caret-right fa-fw mr-2'></i>{{ 'JSON Editor'|trans }}</h3>
+  <h3 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='false' aria-controls='jsonEditorDiv'><i id='jsonEditorIcon' class='fas fa-caret-right fa-fw mr-2'></i>{{ 'JSON Editor'|trans }}</h3>
 
   <div id='jsonEditorDiv' class='m-2' hidden data-save-hidden='jsonEditorDiv'>
     <hr>
@@ -52,15 +52,6 @@
     </div>
 
     <hr>
-
-    {# Display main text switch #}
-    <div class='d-inline-flex p-1'>
-      <label class='mr-1' for='displayMainTextSliderInput'>{{ 'Display main text'|trans }}</label>
-      <label class='switch'>
-        <input type='checkbox' {{ entityData.metadata|extractDisplayMainText() ? 'checked="checked"' }} id='displayMainTextSliderInput'>
-        <span class='slider'></span>
-      </label>
-    </div>
 
     <button class='btn lh-normal border-0 px-0' type='button' data-action='toggle-next' aria-expanded='false' title='{{ 'Information'|trans }}' aria-label='{{ 'Information'|trans }}'><i class='fas fa-fw fa-info-circle'></i></button><span hidden><a target='_blank' class='external-link' rel='noopener' href='https://doc.elabftw.net/metadata.html'>{{ 'See documentation about extra fields.'|trans }}</a></span>
     <h6 id='jsonEditorTitle'></h6>

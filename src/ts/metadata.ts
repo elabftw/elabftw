@@ -17,6 +17,7 @@ import { JsonEditorActions } from './JsonEditorActions.class';
 import { Api } from './Apiv2.class';
 import i18next from 'i18next';
 import { merge } from 'lodash-es';
+import $ from 'jquery';
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -235,6 +236,8 @@ document.addEventListener('DOMContentLoaded', () => {
           form.reset();
           // restore original value
           grpSel.value = selectedGroup;
+          // and finally close the modal
+          $('#fieldBuilderModal').modal('toggle');
         });
       });
     // ADD OPTION FOR SELECT OR RADIO

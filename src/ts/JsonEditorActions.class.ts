@@ -23,7 +23,7 @@ export class JsonEditorActions {
     JsonEditorHelperC.init(editable);
 
     const displayMainTextSliderInput = document.getElementById('displayMainTextSliderInput') as HTMLInputElement;
-    displayMainTextSliderInput.addEventListener('change', () => {
+    displayMainTextSliderInput?.addEventListener('change', () => {
       JsonEditorHelperC.toggleDisplayMainText();
     });
 

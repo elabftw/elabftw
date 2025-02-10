@@ -11,7 +11,7 @@ import Prism from 'prismjs';
 (function(Prism) {
   const date = '\\d{4}[.,/-]?(?:0[1-9]|1[012])[.,/-]?(?:0[1-9]|[12]\\d|3[01])';
   const bool = '\\b(?:false|true|yes|no|on|off|1|0)\\b';
-  const fieldKeywords = /\b(?:attachment|author|body|category|elabid|group|rating|status|title|visibility)\b/i;
+  const fieldKeywords = /\b(?:attachment|author|body|category|elabid|group|owner|rating|status|title|visibility)\b/i;
   const quotedTerm = {
     alias: 'string',
     greedy: true,

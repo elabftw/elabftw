@@ -2,7 +2,7 @@
 
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
- * @copyright 2012 Nicolas CARPi
+ * @copyright 2025 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
@@ -12,63 +12,56 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Controllers\ExperimentsController;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\ProcurementRequests;
-use Elabftw\Models\TeamGroups;
-use Elabftw\Models\Teams;
+use Elabftw\Models\Templates;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * The TEAM page
+ * Experiments templates main page
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = _('Team');
+$App->pageTitle = _('Experiment templates');
+
 // default response is error page with general error message
-/** @psalm-suppress UncaughtThrowInGlobalScope */
 $Response = new Response();
-$Response->prepare($App->Request);
+$Response->prepare($Request);
+$template = 'error.html';
 
 try {
-    $Teams = new Teams($App->Users);
-    $TeamGroups = new TeamGroups($App->Users);
-    $ProcurementRequests = new ProcurementRequests($Teams);
-
-    $template = 'team.html';
-    $renderArr = array(
-        'teamArr' => $Teams->readOne(),
-        'teamGroupsArr' => $TeamGroups->readAll(),
-        'teamProcurementRequestsArr' => $ProcurementRequests->readAll(),
-        'teamsStats' => $Teams->getStats($App->Users->userData['team']),
-    );
-
-    $Response->setContent($App->render($template, $renderArr));
+    $Controller = new ExperimentsController($App, new Templates($App->Users));
+    $Response = $Controller->getResponse();
 } catch (ImproperActionException $e) {
     // show message to user
-    $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
     $Response->setContent($App->render($template, $renderArr));
 } catch (IllegalActionException $e) {
     // log notice and show message
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
-    $template = 'error.html';
     $renderArr = array('error' => Tools::error(true));
     $Response->setContent($App->render($template, $renderArr));
 } catch (DatabaseErrorException | FilesystemErrorException $e) {
     // log error and show message
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
-    $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
     $Response->setContent($App->render($template, $renderArr));
 } catch (Exception $e) {
     // log error and show general error message
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
-    $template = 'error.html';
     $renderArr = array('error' => Tools::error());
     $Response->setContent($App->render($template, $renderArr));
 } finally {
+    // autologout if there is elabid in view mode
+    // so we don't stay logged in as anon
+    if ($App->Request->query->has('elabid')
+        && $App->Request->query->get('mode') === 'view'
+        && !$App->Request->getSession()->has('is_auth')) {
+        $App->Session->invalidate();
+    }
+
     $Response->send();
 }

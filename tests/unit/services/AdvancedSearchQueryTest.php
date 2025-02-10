@@ -67,6 +67,7 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
             'locked_at:<20221209',
             'id:1',
             'custom_id:123',
+            'owner:1',
         ));
 
         $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(

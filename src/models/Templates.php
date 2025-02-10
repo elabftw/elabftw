@@ -25,6 +25,7 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SortableTrait;
+use Override;
 use PDO;
 
 /**
@@ -43,8 +44,6 @@ class Templates extends AbstractTemplateEntity
 
     public const string defaultBodyMd = "# Goal\n\n# Procedure\n\n# Results\n\n";
 
-    public string $page = 'ucp';
-
     public EntityType $entityType = EntityType::Templates;
 
     public function create(
@@ -54,6 +53,8 @@ class Templates extends AbstractTemplateEntity
         ?DateTimeImmutable $date = null,
         ?string $canread = null,
         ?string $canwrite = null,
+        ?bool $canreadIsImmutable = false,
+        ?bool $canwriteIsImmutable = false,
         array $tags = array(),
         ?int $category = null,
         ?int $status = null,
@@ -66,19 +67,21 @@ class Templates extends AbstractTemplateEntity
         string $defaultTemplateMd = '',
     ): int {
         $title = Filter::title($title ?? _('Untitled'));
-        $canread = BasePermissions::Team->toJson();
-        $canwrite = BasePermissions::User->toJson();
 
-        if (isset($this->Users->userData['default_read'])) {
+        // CANREAD/CANWRITE
+        if (isset($this->Users->userData['default_read']) && $canread === null) {
             $canread = $this->Users->userData['default_read'];
         }
-        if (isset($this->Users->userData['default_write'])) {
+        if (isset($this->Users->userData['default_write']) && $canwrite === null) {
             $canwrite = $this->Users->userData['default_write'];
         }
+        $canread ??= BasePermissions::Team->toJson();
+        $canwrite ??= BasePermissions::User->toJson();
+
         $contentType ??= $this->Users->userData['use_markdown'] === 1 ? AbstractEntity::CONTENT_MD : AbstractEntity::CONTENT_HTML;
 
-        $sql = 'INSERT INTO experiments_templates(team, title, body, userid, category, status, metadata, canread, canwrite, canread_target, canwrite_target, content_type, rating)
-            VALUES(:team, :title, :body, :userid, :category, :status, :metadata, :canread, :canwrite, :canread_target, :canwrite_target, :content_type, :rating)';
+        $sql = 'INSERT INTO experiments_templates(team, title, body, userid, category, status, metadata, canread, canwrite, canread_target, canwrite_target, content_type, rating, canread_is_immutable, canwrite_is_immutable)
+            VALUES(:team, :title, :body, :userid, :category, :status, :metadata, :canread, :canwrite, :canread_target, :canwrite_target, :content_type, :rating, :canread_is_immutable, :canwrite_is_immutable)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindParam(':title', $title);
@@ -89,6 +92,8 @@ class Templates extends AbstractTemplateEntity
         $req->bindParam(':metadata', $metadata);
         $req->bindParam(':canread', $canread);
         $req->bindParam(':canwrite', $canwrite);
+        $req->bindParam(':canread_is_immutable', $canreadIsImmutable, PDO::PARAM_INT);
+        $req->bindParam(':canwrite_is_immutable', $canwriteIsImmutable, PDO::PARAM_INT);
         $req->bindParam(':canread_target', $canread);
         $req->bindParam(':canwrite_target', $canwrite);
         $req->bindParam(':content_type', $contentType, PDO::PARAM_INT);
@@ -226,5 +231,11 @@ class Templates extends AbstractTemplateEntity
     {
         // delete from pinned too
         return parent::destroy() && $this->Pins->cleanup();
+    }
+
+    #[Override]
+    public function getTimestamperFullname(): string
+    {
+        return '';
     }
 }

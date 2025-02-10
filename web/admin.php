@@ -17,10 +17,12 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Factories\LinksFactory;
 use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\StorageUnits;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\TeamTags;
@@ -65,6 +67,8 @@ try {
         $ItemsTypes->setId($App->Request->query->getInt('templateid'));
         $ItemsTypes->canOrExplode('write');
         $ItemsTypes->ExclusiveEditMode->enforceExclusiveModeBasedOnUserSetting();
+        $ContainersLinks = LinksFactory::getContainersLinks($ItemsTypes);
+        $ItemsTypes->entityData['containers'] = $ContainersLinks->readAll();
     }
     $statusArr = $Status->readAll();
     $teamGroupsArr = $TeamGroups->readAll();
@@ -130,6 +134,7 @@ try {
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
         'remoteDirectoryUsersArr' => $remoteDirectoryUsersArr,
         'scopedTeamgroupsArr' => $TeamGroups->readScopedTeamgroups(),
+        'storageUnitsArr' => (new StorageUnits($App->Users))->readAllRecursive(),
         'teamsArr' => $teamsArr,
         'teamStats' => $teamStats,
         'unvalidatedUsersArr' => $unvalidatedUsersArr,

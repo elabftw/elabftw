@@ -84,6 +84,8 @@ class App
 
         $this->Users = new Users();
         // Show helpful screen if database schema needs update
+        // FIXME ok just leaving this here for now but the cache of Config is still buggy
+        $this->Config->bustCache();
         $Update = new Update((int) $this->Config->configArr['schema'], new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql'))));
         // throws InvalidSchemaException if schema is incorrect
         $Update->checkSchema();

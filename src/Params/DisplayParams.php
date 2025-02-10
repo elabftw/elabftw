@@ -69,7 +69,7 @@ class DisplayParams extends BaseQueryParams
     public function getSql(): string
     {
         return sprintf(
-            'ORDER BY %s %s, entity.id %s LIMIT %d OFFSET %d',
+            'ORDER BY is_pinned DESC, %s %s, entity.id %s LIMIT %d OFFSET %d',
             $this->orderby->toSql(),
             $this->sort->value,
             $this->sort->value,
@@ -98,14 +98,14 @@ class DisplayParams extends BaseQueryParams
             $scope = $query->getInt('scope');
         }
 
-        // filter by user if we don't want to show the rest of the team, only for experiments
+        // filter by user if we don't want to show the rest of the team
         // looking for an owner will bypass the user preference
         // same with an extended search: we show all
         if ($scope === Scope::User->value && empty($query->get('owner')) && empty($query->get('extended'))) {
-            // Note: the cast to int is necessary here (not sure why)
             $this->appendFilterSql(FilterableColumn::Owner, $this->requester->userData['userid']);
         }
-        if ($this->requester->userData['scope_' . $this->entityType->value] === Scope::Team->value) {
+        // add filter on team only if scope is not set to everything
+        if ($this->requester->userData['scope_' . $this->entityType->value] === Scope::Team->value && $scope !== Scope::Everything->value) {
             $this->appendFilterSql(FilterableColumn::Team, $this->requester->team ?? 0);
         }
         // TAGS SEARCH
@@ -121,20 +121,31 @@ class DisplayParams extends BaseQueryParams
             $this->appendFilterSql(FilterableColumn::Related, $query->getInt('related'));
             $this->relatedOrigin = EntityType::tryFrom($query->getAlpha('related_origin')) ?? $this->entityType;
         }
+
+        // Note: we use getString() and not getInt() because values can be string separated (1,5)
         // CATEGORY FILTER
+        // cat is for backward compatibility
         $this->filterSql .= $this->getSqlIn('entity.category', $query->getString('cat'));
+        $this->filterSql .= $this->getSqlIn('entity.category', $query->getString('category'));
         // STATUS FILTER
         $this->filterSql .= $this->getSqlIn('entity.status', $query->getString('status'));
         // OWNER (USERID) FILTER
         $this->filterSql .= $this->getSqlIn('entity.userid', $query->getString('owner'));
+        // LOCK FILTER: 0 or 1, use getInt()
+        $this->filterSql .= $this->getSqlIn('entity.locked', $query->getString('locked'));
+        // TIMESTAMPED FILTER, same as lock
+        $this->filterSql .= $this->getSqlIn('entity.timestamped', $query->getString('timestamped'));
+        // RATING FILTER
+        $this->filterSql .= $this->getSqlIn('entity.rating', $query->getString('rating'));
     }
 
     /**
      * Create an SQL string to add a filter from a comma separated list of int
      * possibly including null value. Ugly but works.
      */
-    private function getSqlIn(string $column, string $input): string
+    private function getSqlIn(string $column, string|int $input): string
     {
+        $input = (string) $input;
         if (empty($input)) {
             return '';
         }

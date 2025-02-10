@@ -9,7 +9,7 @@ The parser will build an abstract syntax tree AST with the grammar elements (PHP
 After the AST is build successfully (syntax errors are reported to the user) it can be visited. Here the visitor pattern is used and there are tree visitors located in `src/services/advancedSearchQuery/visitors`: `DepthValidatorVisitor`, `FieldValidatorVisitor`, and `QueryBuilderVisitor`.
 
 1. `DepthValidatorVisitor` checks the complexity of the query. How deep it the AST? (Not used currently.)
-2. `FieldValidatorVisitor` checks if fields/values are allowed, e.g., the `timestamped` field is only meaningful for experiments. Feedback is given for illegal fields/values.
+2. `FieldValidatorVisitor` checks if fields/values are allowed, e.g., the `timestamped` field is only meaningful for experiments or items. Feedback is given for illegal fields/values.
 3. `QueryBuilderVisitor` is the workhorse and builds the SQL where clause.
 
 The `FieldValidatorVisitor` and `QueryBuilderVisitor` use collectors (`src/services/advancedSearchQuery/collectors`) to collect all the invalid fields and the where clause, respectively.
@@ -28,6 +28,6 @@ The `FieldValidatorVisitor` and `QueryBuilderVisitor` use collectors (`src/servi
   - add a class method named `visitFieldNew_field` to visitor `src/services/advancedSearchQuery/visitors/QueryBuilderVisitor.php` and add the necessary SQL `WHERE` fragment to it
 - reflect the changes of the grammar also in the highlighter `src/ts/prism-elabftwquery.ts`
 - add a user query fragment to the unit test `tests/unit/services/AdvancedSearchQueryTest.php`, e.g.: `new_field:"test query"`
-- update the search syntax documentation `src/templates/search-syntax-doc-modal.html` and perhaps the shortened field list in `src/templates/search.html`
+- update the search syntax documentation `src/templates/search-help-modal.html`
 
 This is not a comprehensive set of instructions that will work for all fields. There can be more complex code changes like for example for the date or timestamp fields. In this cases the new grammar classes (`src/services/advancedSearchQuery/grammar`) and interfaces (`src/services/advancedSearchQuery/interfaces/`) also need to be added/extended.

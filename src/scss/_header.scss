@@ -52,16 +52,6 @@
   }
 }
 
-/* search bar in head.php ; nav */
-.big-search {
-  background: #555 url('images/search.png') no-repeat scroll right 10px center;
-  border: 1px solid $medium;
-  border-radius: 5px;
-  color: #fff;
-  height: 2em;
-  margin-right: 0 !important;
-}
-
 /* make the notification dropdown larger so english version fits in one line */
 #navbar-notif-dropdown {
   min-width: 15vw;

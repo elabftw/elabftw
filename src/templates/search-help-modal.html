@@ -2,15 +2,45 @@
   <div class='modal-dialog modal-xl' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
-        <h5 class='modal-title' id='advancedSearchModalLabel'>{{ 'Search Syntax'|trans }}</h5>
+        <h5 class='modal-title' id='advancedSearchModalLabel'>{{ 'Search help'|trans }}</h5>
         <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
       <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
-        <h3>Search terms</h3>
-        <p>The search is performed against title, body, date, and elabid.<br>
-            The entire team will be searched unless there is an author field.</p>
+        <h3>{{ 'Simple search'|trans }}</h3>
+        <p>{{ 'When searching a term in the search bar, results will contain this term in the title, main text, date or elabid.'|trans }}</p>
+        <h3>{{ 'Advanced search'|trans }}</h3>
+        {% set fieldValue = "<code><span class='token keyword'>%s</span><span class='token punctuation'>:</span><span class='token string'>%s</span></code>"|format('field'|trans, 'value'|trans) %}
+        <p>{{ 'The search bar supports searching with specific constraints such as "title:Something" and "category:Tests" (%s). You can combine them with logical expressions (AND, OR, NOT...) and group with parenthesis.'|trans|format(fieldValue)|raw }}</p>
+        <p>{{ 'To search in extra fields (metadata), use the dedicated helper to build your query. For example, to search all entries where "Temperature" is 37, you would use: "extrafield:Temperature:37" in the search bar.'|trans }}</p>
+        <h4>{{ 'Available fields'|trans }}</h4>
+        <div class='row'>
+          <div class='col-md-6'>
+            <ul class='list-unstyled'>
+              <li class='mb-2'><kbd>attachment:</kbd> {{ 'yes, no, simple or quoted term'|trans }}</li>
+              <li class='mb-2'><kbd>body:</kbd> {{ 'simple or quoted term'|trans }}</li>
+              <li class='mb-2'><kbd>category:</kbd> {{ 'simple or quoted term'|trans }}</li>
+              <li class='mb-2'><kbd>custom_id:</kbd> {{ 'number'|trans }}</li>
+              <li class='mb-2'><kbd>date:</kbd> {{ 'see date format'|trans }}</li>
+              <li class='mb-2'><kbd>elabid:</kbd> {{ 'simple or quoted term'|trans }}</li>
+              <li class='mb-2'><kbd>extrafield:key:value</kbd> {{ 'simple or quoted term'|trans }}</li>
+            </ul>
+          </div>
+
+          <div class='col-md-6'>
+            <ul class='list-unstyled'>
+              <li class='mb-2'><kbd>group:</kbd> {{ 'simple or quoted term'|trans }}</li>
+              <li class='mb-2'><kbd>locked:</kbd> {{ 'yes or no'|trans }}</li>
+              <li class='mb-2'><kbd>owner:</kbd> {{ 'simple or quoted term'|trans }}</li>
+              <li class='mb-2'><kbd>rating:</kbd> {{ '1, 2, 3, 4, 5, or unrated or 0'|trans }}</li>
+              <li class='mb-2'><kbd>status:</kbd> {{ 'simple or quoted term'|trans }}</li>
+              <li class='mb-2'><kbd>timestamped:</kbd> {{ 'yes or no'|trans }}</li>
+              <li class='mb-2'><kbd>title:</kbd> {{ 'simple or quoted term'|trans }}</li>
+              <li class='mb-2'><kbd>visibility:</kbd> {{ 'simple or quoted term'|trans }}</li>
+            </ul>
+          </div>
+        </div>
         <dl>
           <dt>Term</dt>
           <dd>A sequence of characters without space (<code>&blank;</code>),
@@ -82,7 +112,7 @@
           is equivalent to
           <em><code><span class='token punctuation'>(</span><span class='token simple-term string'>termA</span> <span class='token operator'>AND</span> <span class='token simple-term string'>termB</span><span class='token punctuation'>)</span> <span class='token operator'>OR</span> <span class='token simple-term string'>termC</span></code></em>.
           To give priority to
-          <code><span class='token operator'>OR</span></code>
+          <code><span class='token operator'>OR</span></code>,
           use parenthesis:
           <em><code><span class='token simple-term string'>termA</span> <span class='token operator'>AND</span> <span class='token punctuation'>(</span><span class='token simple-term string'>termB</span> <span class='token operator'>OR</span> <span class='token simple-term string'>termC</span><span class='token punctuation'>)</span></code></em>.
         </p>
@@ -99,11 +129,6 @@
               search entries with/out attachments<br>
               Term or Quoted term:<br>
               search in filenames and comments of attachments</dd>
-          <dt><span class='token keyword'>author</span></dt>
-          <dd>
-            Term or Quoted term<br>
-            Without any author the entire team will be searched.
-          </dd>
           <dt><span class='token keyword'>body</span></dt>
           <dd>Term or Quoted term</dd>
           <dt><span class='token keyword'>category</span></dt>
@@ -142,6 +167,11 @@
               <span class='token number'>5</span>,
               <span class='token constant'>unrated</span> or
               <span class='token number'>0</span>
+          </dd>
+          <dt><span class='token keyword'>owner</span></dt>
+          <dd>
+            Term or Quoted term<br>
+            Without any owner the entire team will be searched.
           </dd>
           <dt><span class='token keyword'>status</span></dt>
           <dd>Term or Quoted term; Only if Experiment is selected.</dd>

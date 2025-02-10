@@ -68,7 +68,7 @@ class FieldValidatorVisitor implements Visitor
     {
         $messages = array();
 
-        if ($parameters->getEntityType() !== 'experiments'
+        if (!in_array($parameters->getEntityType(), array('experiments', 'items'), true)
             && $timestampField->getFieldType() === TimestampFields::TimestampedAt
         ) {
             $messages[] = sprintf(

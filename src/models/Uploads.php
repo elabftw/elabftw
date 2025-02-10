@@ -348,7 +348,6 @@ class Uploads extends AbstractRest
 
     /**
      * Create an upload from a string (binary png data or json string or mol file)
-     * For mol file the code is actually in chemdoodle-uis-unpacked.js from chemdoodle-web-mini repository
      */
     public function createFromString(FileFromString $fileType, string $realName, string $content, State $state = State::Normal): int
     {

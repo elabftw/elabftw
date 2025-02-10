@@ -3,48 +3,289 @@
 {% block title %}
 <div class='d-flex align-content-center'>
   <h1 id='pageTitle' {% if hideTitle %}hidden{% endif %}>{{ App.pageTitle }}</h1>
-  {% if not searchPage %}
-    <div class='ml-auto'>
-      {% include 'create-new.html' %}
-    </div>
-  {% endif %}
+  <div class='ml-auto'>
+    {% include 'create-new.html' %}
+  </div>
 </div>
 {% endblock %}
 
 {% block body %}
-
-  {% if not searchPage %}
-    {% include 'show-view-edit.html' %}
-    {% include 'request-actions-show.html' %}
-  {% endif %}
+  {% include 'search-help-modal.html' %}
+  {% include 'show-view-edit.html' %}
+  {% include 'request-actions-show.html' %}
 
   <hr>
-  <div class='d-flex align-items-center'>
-    <p class='smallgray mr-auto'>
-      <a href='#' data-action='expand-all-entities' data-status='closed' data-expand='{{ 'Expand all'|trans }}' data-collapse='{{ 'Collapse all'|trans }}'>{{ 'Expand all'|trans }}</a>
-      - <a href='#' data-action='select-all-entities'>{{ 'Select all'|trans }}</a>
-      <span id='advancedSelectOptions' class='d-none'>
-        - <a href='#' data-action='unselect-all-entities'>{{ 'Clear selection'|trans }}</a>
-        - <a href='#' data-action='invert-entities-selection'>{{ 'Invert selection'|trans }}</a>
-      </span>
-    </p>
 
-    <div class='d-flex align-items-center'>
+  <div class='d-flex'>
+    {# SEARCH BAR #}
+    {% set pageName = scriptName|replace({'.php': ''}) %}
+    {% set searchTarget = pageName %}
+    {% if pageName == 'database' %}
+      {% set searchTarget = 'resources'|trans %}
+    {% endif %}
+    <form id='mainSearchForm' aria-label='{{ 'Search %s'|trans|format(searchTarget) }}' class='mb-2 flex-fill' method='get'>
+      {# next div is wrapper to position pre below textarea #}
+      <div class='input-group' style='position:relative;'>
+        <input
+          id='extendedArea'
+          name='q'
+          type='text'
+          class='form-control'
+          placeholder="{{ 'Search %s'|trans|format(searchTarget) }}"
+          spellcheck='false'
+          aria-label="{{ 'Search %s'|trans|format(searchTarget) }}"
+          value='{{ App.Request.query.get('q') ? App.Request.query.get('q')|trim|e('html_attr') }}' />
+        <pre id='search-highlighting' class='form-control d-none' aria-hidden='true'><code></code></pre>
+        <div class='input-group-append'>
+          <button class='btn btn-secondary' type='submit' aria-label='{{ 'Search'|trans }}' title='{{ 'Search'|trans }}'><i class='color-white fas fa-magnifying-glass'></i></button>
+        </div>
+      </div>
+    </form>
+    {# wrap button into a div or it appears too tall #}
+    <div>
+      <button type='button' class='btn btn-secondary bg-medium border-secondlevel ml-2' aria-label='{{ 'Show full syntax'|trans }}' title='{{ 'Show full syntax'|trans }}' data-action='toggle-modal' data-target='advancedSearchModal'><i class='color-white fas fa-circle-question'></i></button>
+    </div>
+  </div>
+  {# END SEARCH BAR #}
+
+  {# QUERY FILTERS #}
+  <div class='d-flex flex-column'>
+
+  {# FIRST LINE: ALWAYS ON FILTERS: CATEGORY, STATUS, OWNER, TAGS #}
+    <div class='d-flex form-group form-inline'>
+      <form id='queryForm' aria-label='{{ 'Query filters'|trans }}'>
+        <input type='hidden' name='q' value='{{ DisplayParams.queryString|e('html_attr') }}' />
+        {% if App.Request.query.get('related') %}
+          <input type='hidden' name='related' value='{{ App.Request.query.get('related')|number_format }}' />
+          <input type='hidden' name='related_origin' value='{{ App.Request.query.getAlpha('related_origin') }}' />
+        {% endif %}
+
+        <div id='visibleFiltersDiv' class='mt-1 flex-fill'>
+          {# CATEGORY #}
+          <select name='category' class='mr-1 form-control filterHelper filterAuto' aria-label='{{ 'Filter category'|trans }}'>
+            <option value='' class='dropdown-header' data-action='clear'>{{ 'Filter category'|trans }}</option>
+            {% for category in categoryArr %}
+              <option value='{{ category.id }}'
+                {{- App.Request.query.get('category') == category.id ? ' selected' -}}
+              >
+              {{ category.title }}</option>
+            {% endfor %}
+          </select>
+
+          {# STATUS #}
+          <select name='status' class='mr-1 form-control filterHelper filterAuto' aria-label='{{ 'Filter status'|trans }}'>
+            <option value='' data-action='clear'>{{ 'Filter status'|trans }}</option>
+            {% for status in statusArr %}
+              <option value='{{ status.id }}'
+                {{- App.Request.query.get('status') == status.id ? ' selected' -}}
+              >
+              {{ status.title }}</option>
+            {% endfor %}
+          </select>
+
+          {# OWNER filter #}
+          <select name='owner' class='form-control filterHelper filterAuto' aria-label='{{ 'Filter owner'|trans }}'>
+            <option value='' data-action='clear'>{{ 'Filter owner'|trans }}</option>
+            {% for user in usersArr %}
+              <option value='{{ user.userid }}' {{- App.Request.query.get('owner') == user.userid ? ' selected' }}>{{ user.fullname }}</option>
+            {% endfor %}
+          </select>
+
+          {# SEARCH WITH TAG #}
+          {# select is hidden to avoid showing the raw list and a layout change, it shows up with TomSelect #}
+          <input placeholder='{{ 'Tags'|trans }}' id='tagFilterPlaceholder' class='form-control' aria-label='placeholder for tags input' />
+          {% if App.Config.configArr.debug -%}
+            <!-- [html-validate-disable-block input-missing-label, prefer-native-element: suppress error from tom-select] -->
+          {%- endif %}
+          <select hidden
+            id='tagFilter'
+            multiple
+            name='tags[]'
+            class='form-control'
+            aria-label='{{ 'Tags'|trans }}'
+            placeholder='{{ 'Tags'|trans }}'
+          >
+            {% for tag in tagsArrForSelect %}
+              <option value='{{ tag.tag|e('html_attr') }}' {{- tag.tag in App.Request.query.all('tags') ? ' selected' }}>{{ tag.tag }}</option>
+            {% endfor %}
+          </select>
+          {# END SEARCH WITH TAG #}
+        </div>
+      </form>
+
+      {# TOGGLE MORE FILTERS BUTTON #}
+      <div class='ml-auto'>
+        <button class='btn btn-secondary btn' type='button' data-action='toggle-next' data-toggle-target='filtersDiv' data-closed-icon='fa-sliders' data-opened-icon='fa-xmark' aria-label='{{ 'Toggle filters'|trans }}' aria-expanded='false' aria-controls='filtersDiv'>
+          <i class='fas fa-sliders color-white'></i>
+        </button>
+      </div>
+    {# END ALWAYS VISIBLE FILTERS #}
+    </div>
+
+    {# START HIDDEN FILTERS #}
+    <div id='filtersDiv' hidden data-save-hidden='filtersDiv' class='form-group form-inline'>
+      {# METADATA SEARCH #}
+      <div class='d-flex'>
+        <div class='input-group d-flex flex-nowrap'>
+          {% if App.Config.configArr.debug -%}
+            <!-- [html-validate-disable input-missing-label, prefer-native-element: suppress errors from tom-select] -->
+          {%- endif %}
+          <select
+            aria-label='{{ 'Name of field'|trans }}'
+            class='form-control filterHelper'
+            data-filter='extrafield'
+            id='metakey'
+            name='metakey'
+          >
+            <option value='' disabled>{{ 'Name of field'|trans }}</option>
+            <option value='**' {{- '**' == App.Request.query.get('metakey') ? ' selected' }}>{{ 'All fields'|trans }}</option>
+            {% for metakey in metakeyArrForSelect %}
+              <option value='{{ metakey }}' {{- metakey == App.Request.query.get('metakey') ? ' selected' }}>{{ metakey|raw }}</option>
+            {% endfor %}
+          </select>
+          {% if App.Config.configArr.debug -%}
+            <!-- [html-validate-enable input-missing-label, prefer-native-element: suppress errors from tom-select] -->
+          {%- endif %}
+          <div class='input-group-text px-1 brl-none brr-none' style='margin-left:-1px;margin-right:-1px;'>:</div>
+          <input
+            aria-label='{{ 'Value'|trans }}'
+            class='form-control filterHelper'
+            data-filter='extrafield'
+            id='metavalue'
+            name='metavalue'
+            placeholder='{{ 'Value'|trans }}'
+            type='text'
+            value='{{ Request.query.get('metavalue') != '' ? Request.query.get('metavalue') }}'
+          />
+        </div>
+        <div id='autocompleteAnchorDiv_extra_fields_keys'></div>
+      </div>
+          <!-- TODO add to help modal >
+          <p class='mt-1 text-muted'>{{ "Tip: you can use '%' as wildcard in value"|trans }}</p-->
+          {# METADATA SEARCH END #}
+
+      {# GROUPS filter: disabled because not working FIXME #}
+      <!--select name='group' class='mx-1 form-control filterHelper filterAuto' aria-label='{{ 'Filter group'|trans }}'>
+        <option value='' data-action='clear'>{{ 'Select group'|trans }}</option>
+        {% for group in scopedTeamgroupsArr %}
+          <option value='{{ group.name|e('html_attr') }}' {{- Request.query.get('searchonly') == 'group:' ~ group ? ' selected' }}>{{ group.name }}</option>
+        {% endfor %}
+      </select-->
+
+      {# VISIBILITY filter #}
+      <select name='visibility' class='mx-1 form-control filterHelper filterAuto' aria-label='{{ 'Filter visibility'|trans }}'>
+        <option value=''>{{ 'Filter visibility'|trans }}</option>
+        {% for vis in visibilityArr %}
+        <option value='visibility:"{{ vis|e('html_attr') }}"'{{ App.Request.query.get('extended') == 'visibility:"' ~ vis|raw ~ '"' ? ' selected' }}>
+          {{ vis }}</option>
+        {% endfor %}
+      </select>
+
+      <input type='hidden' name='mode' value='show' />
+
+      <div>
+        {# STATE #}
+        <select name='state' aria-label='{{ 'State'|trans }}' class='form-control filterAuto'>
+          <option value='' data-action='clear'>{{ 'Select state'|trans }}</option>
+          <option value='1' {{- Request.query.get('state') == '1' ? ' selected' }}>{{ 'Normal'|trans }}</option>
+          <option value='2' {{- Request.query.get('state') == '2' ? ' selected' }}>{{ 'Archived'|trans }}</option>
+          <option value='3' {{- Request.query.get('state') == '3' ? ' selected' }}>{{ 'Deleted'|trans }}</option>
+          <option value='1,2' {{- Request.query.get('state') == '1,2' ? ' selected' }}>{{ 'Normal or Archived'|trans }}</option>
+          <option value='1,2,3' {{- Request.query.get('state') == '1,2,3' ? ' selected' }}>{{ 'Any'|trans }}</option>
+        </select>
+        {# END STATE #}
+
+        {# LOCK #}
+        <select name='locked' aria-label='{{ 'Select lock status'|trans }}' class='form-control filterHelper'>
+          <option value='' data-action='clear'>{{ 'Select lock status'|trans }}</option>
+          <option value='1' {{- Request.query.get('locked') == 'yes' ? ' selected' }}>{{ 'Yes'|trans|lower }}</option>
+          <option value='0' {{- Request.query.get('locked') == 'no' ? ' selected' }}>{{ 'No'|trans|lower }}</option>
+        </select>
+        {# END LOCK #}
+
+        {# TIMESTAMPED #}
+        <select aria-label='{{ 'Timestamped'|trans }}' name='timestamped' class='form-control filterHelper' data-filter='timestamped'>
+          <option value='' data-action='clear'>{{ 'Select timestamp status'|trans }}</option>
+          <option value='1' {{- Request.query.get('timestamped') == 'yes' ? ' selected' }}>{{ 'Yes'|trans|lower }}</option>
+          <option value='0' {{- Request.query.get('timestamped') == 'no' ? ' selected' }}>{{ 'No'|trans|lower }}</option>
+        </select>
+        {# END TIMESTAMPED #}
+
+        {# RATING #}
+        <select id='rating' name='rating' data-filter='rating' class='form-control filterHelper'>
+          <option value='' data-action='clear'>{{ 'Select number of stars'|trans }}</option>
+          <option value='unrated' {{- Request.query.get('rating') == 'unrated' ? ' selected' }}>{{ 'Unrated'|trans }}</option>
+          {% for i in range(1, 5) %}
+            <option value='{{ i }}' {{- Request.query.get('rating') == i ? ' selected' }}>{{ i }}</option>
+
+          {% endfor %}
+        </select>
+        {# END RATING #}
+      </div>
+
+      <div class='d-flex mt-2'>
+        {# SEARCH DATE #}
+          <label class='mr-1 align-self-center' for='date'>{{ 'Date from'|trans }}</label>
+          <div class='input-group'>
+            <div class='input-group-prepend'>
+              <select id='dateOperator' aria-label='{{ 'Date operator'|trans }}' name='dateOperator' style='min-width: 50px' class='brr-none form-control filterHelper' data-filter='date'>
+                <option value='<' title='{{ 'less than'|trans }}' {{- Request.query.get('dateOperator') == '<' ? ' selected' }}>&lt;</option>
+                <option value='<=' title='{{ 'less than or equal to'|trans }}' {{- Request.query.get('dateOperator') == '<=' ? ' selected' }}>&le;</option>
+                <option value='=' title='{{ 'equal to'|trans }}' {{- Request.query.get('dateOperator') == '=' or Request.query.get('dateOperator') is null ? ' selected' }}>=</option>
+                <option value='>=' title='{{ 'greater than or equal to'|trans }}' {{- Request.query.get('dateOperator') == '>=' ? ' selected' }}>&ge;</option>
+                <option value='>' title='{{ 'greater than'|trans }}' {{- Request.query.get('dateOperator') == '>' ? ' selected' }}>&gt;</option>
+                <option value='!=' title='{{ 'not equal to'|trans }}' {{- Request.query.get('dateOperator') == '!=' ? ' selected' }}>&ne;</option>
+              </select>
+            </div>
+            <input id='date' name='date' type='date' class='form-control filterHelper' data-filter='date' value='{{ Request.query.get('date') != '' ? Request.query.get('date') }}'/>
+          </div>
+          <label class='ml-2 mr-1' for='dateTo'>{{ 'Date to (optional)'|trans }}</label>
+          <input id='dateTo' name='dateTo' type='date' class='form-control filterHelper' data-filter='date' value='{{ Request.query.get('dateTo') != '' ? Request.query.get('dateTo') }}'/>
+        </div>
+        {# END SEARCH DATE #}
+      </div>
+
+    </form>
+  </div>
+
+  <hr>
+  {# BUTTONS TOOLBAR #}
+  <div class='d-flex'>
+    {# LEFT #}
+    <div class='d-flex'>
+      <a title='{{ 'Select all'|trans }}' aria-label='{{ 'Select all'|trans }}' data-action='toggle-select-all-entities' data-target='select' href='#' class='btn hl-hover-gray p-2 lh-normal border-0'>
+        <i class='far fa-square'></i>
+      </a>
+      <a hidden title='{{ 'Invert selection'|trans }}' aria-label='{{ 'Invert selection'|trans }}' data-action='invert-entities-selection' href='#' class='ml-2 btn hl-hover-gray p-2 lh-normal border-0'>
+        <i class='fas fa-arrows-turn-to-dots'></i>
+      </a>
+      <div class='vertical-separator'></div>
+      <a title='{{ 'Toggle main text'|trans }}' aria-label='{{ 'Toggle main text'|trans }}' data-action='expand-all-entities' data-status='closed' href='#' class='btn hl-hover-gray p-2 lh-normal border-0'>
+        <i class='fas fa-maximize'></i>
+      </a>
+    </div>
+
+    {# RIGHT #}
+    <div class='ml-auto'>
+      {# SCOPE FILTER #}
+      {% include 'scope-button.html' with {'reload': 'reloadEntitiesShow,scopeBtn', 'target': 'scope_' ~ Entity.entityType.value, 'isSmall': 0, 'isSecondary': 0} %}
+    </div>
+
+    <div class='vertical-separator'></div>
+    <div class='d-flex'>
+      {# SWITCH LAYOUT #}
       <button title='{{ 'Switch layout'|trans }}' aria-label='{{ 'Switch layout'|trans }}' type='button' class='btn hl-hover-gray p-1 mr-1' data-action='toggle-items-layout'>
         <i class='fas fa-fw fa-list'></i>
         <i class='fas fa-fw fa-table'></i>
       </button>
+    <div class='vertical-separator'></div>
 
-      {% include 'scope-button.html' with {'reload': 'reloadEntitiesShow,scopeBtn', 'target': 'scope_' ~ Entity.entityType.value} %}
-
-      <button class='btn btn-secondary btn-sm ml-2 mr-2' type='button' data-action='toggle-next' data-toggle-target='filtersDiv' aria-label='{{ 'Toggle filters'|trans }}' aria-expanded='false' aria-controls='filtersDiv'>
-        <i class='fas fa-filter fa-fw mr-1 color-white'></i>{{ 'Filters'|trans }}
-      </button>
-
+    <div class='d-flex'>
       {# ORDER (Sort) #}
       <div class='btn-group'>
-        <button class='btn btn-secondary btn-sm dropdown-toggle' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fas fa-arrow-down-wide-short fa-fw mr-1 color-white'></i>{{ 'Sort'|trans }}</button>
+        <button class='btn btn-sm dropdown-toggle hl-hover-gray' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Sort'|trans }}' title='{{ 'Sort'|trans }}'><i class='fas fa-arrow-down-wide-short fa-fw mr-1'></i></button>
         <div class='dropdown-menu dropdown-menu-right'>
+          <h6 class='dropdown-header'>{{ 'Sort'|trans }}</h6>
           <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'date' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-query='date-desc'>{{ 'Newest'|trans }}</button>
           <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'date' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-query='date-asc'>{{ 'Oldest'|trans }}</button>
           <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'lastchange' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-query='lastchange-desc'>{{ 'Recently modified'|trans }}</button>
@@ -66,123 +307,20 @@
           <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'rating' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-query='rating-asc'>{{ 'Lowest rating'|trans }}</button>
         </div>
       </div>
-    </div>
-  </div>
-
-  {# LEFT MENU: FILTER/ORDER/SORT/LIMIT #}
-  <div id='filtersDiv' hidden data-save-hidden='filtersDiv' class='{{ searchPage ? 'mt-2' : 'mt-1' }}'>
-    {# on search page we use its form everywhere else we need an independent form #}
-    {% if searchPage %}
-      <div
-    {% else %}
-      <form
-    {% endif %}
-      class='form-group form-inline mb-2' aria-label='{{ 'Query filters'|trans }}'>
-      {% if not searchPage %}
-        <input type='hidden' name='q' value='{{ DisplayParams.queryString|e('html_attr') }}' />
-      {% endif %}
-      {% if App.Request.query.get('related') %}
-        <input type='hidden' name='related' value='{{ App.Request.query.get('related')|number_format }}' />
-        <input type='hidden' name='related_origin' value='{{ App.Request.query.getAlpha('related_origin') }}' />
-      {% endif %}
-
-      {# CATEGORY #}
-      <select name='cat' class='autosubmit mr-1 mb-2 form-control' aria-label='{{ 'Filter category'|trans }}'>
-        <option value=''>{{ 'Filter category'|trans }}</option>
-        {% for category in categoryArr %}
-          <option value='{{ category.id }}'
-            {{- App.Request.query.get('cat') == category.id or (searchPage and (App.Request.query.get('expCatHelper') == category.title or App.Request.query.get('resCatHelper') == category.title)) ? ' selected' -}}
-          >
-          {{ category.title }}</option>
-        {% endfor %}
-      </select>
-
-      {# STATUS #}
-      <select name='status' class='autosubmit mr-1 mb-2 form-control' aria-label='{{ 'Filter status'|trans }}'>
-        <option value=''>{{ 'Filter status'|trans }}</option>
-        {% for status in statusArr %}
-          <option value='{{ status.id }}'
-            {{- App.Request.query.get('status') == status.id or (searchPage and (App.Request.query.get('expStatusHelper') == status.title or App.Request.query.get('resStatusHelper') == status.title)) ? ' selected' -}}
-          >
-          {{ status.title }}</option>
-        {% endfor %}
-      </select>
-
-      {# OWNER filter #}
-      <select name='owner' class='autosubmit mr-1 mb-2 form-control' aria-label='{{ 'Filter owner'|trans }}'>
-        <option value=''>{{ 'Filter owner'|trans }}</option>
-        {% for user in usersArr %}
-          <option value='{{ user.userid }}'{{ App.Request.query.get('owner') == user.userid ? ' selected' }}>
-          {{ user.fullname }}</option>
-        {% endfor %}
-      </select>
-
-      {% if not searchPage %}
-        {# VISIBILITY filter #}
-        <select name='extended' class='autosubmit mr-1 mb-2 form-control' aria-label='{{ 'Filter visibility'|trans }}'>
-          <option value=''>{{ 'Filter visibility'|trans }}</option>
-          {% for vis in visibilityArr %}
-          <option value='visibility:"{{ vis|e('html_attr') }}"'{{ App.Request.query.get('extended') == 'visibility:"' ~ vis|raw ~ '"' ? ' selected' }}>
-            {{ vis }}</option>
-          {% endfor %}
-        </select>
-
-      {% endif %}
-      <input type='hidden' name='mode' value='show' />
-
       {# LIMIT if there is nothing in the query params, take the user configured one #}
-      {% set thelimit = App.Request.query.get('limit') %}
-      {% if thelimit is empty %}
-        {% set thelimit = App.Users.userData.limit_nb %}
-      {% endif %}
-      <select autocomplete='off' name='limit' id='select-limit' class='autosubmit mr-1 mb-2 form-control' aria-label='{{ 'Results per page'|trans }}'>
-        <option value=''>{{ 'Results per page'|trans }}</option>
+      <div class='btn-group'>
+        <button class='btn btn-sm dropdown-toggle hl-hover-gray' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Results per page'|trans }}' title='{{ 'Results per page'|trans }}'><i class='fas fa-list-ol fa-fw mr-1'></i></button>
+        <div class='dropdown-menu dropdown-menu-right'>
+          <h6 class='dropdown-header'>{{ 'Results per page'|trans }}</h6>
         {% for option in limitOptions(DisplayParams.limit) %}
-          <option{{ option == thelimit ? ' selected' }} value='{{ option }}'>{{ option }}</option>
+          <button type='button' class='btn btn-dropdown-item dropdown-item' data-action='insert-param-and-reload-show' data-key='limit' data-value='{{ option }}'>{{ option }}</button>
         {% endfor %}
-      </select>
-
-      {# SEARCH WITH TAG #}
-      {% if App.Config.configArr.debug -%}
-        <!-- [html-validate-disable prefer-native-element: suppress error from tom-select] -->
-      {%- endif %}
-      <select
-        id='tagFilter'
-        multiple
-        name='tags[]'
-        class='form-control mr-1 mb-2'
-        placeholder='{{ 'Tags'|trans }}'
-      >
-        {% for tag in tagsArrForSelect %}
-          <option value='{{ tag.tag|e('html_attr') }}' {{- tag.tag in App.Request.query.all('tags') ? ' selected' }}>{{ tag.tag }}</option>
-        {% endfor %}
-      </select>
-      {% if App.Config.configArr.debug -%}
-        <!-- [html-validate-enable prefer-native-element: end suppress error from tom-select] -->
-      {%- endif %}
-
-      {# ARCHIVED filter #}
-      {# TODO make this something where you can select any number of states #}
-      <div class='input-group mr-1 mb-2'>
-        <div class='input-group-text'>
-          <input id='filterArchived' type='checkbox' {{ App.Request.query.get('archived') == 'on' ? 'checked' }} name='archived' class='mr-1'>
-          <label for='filterArchived' class='mb-0'>{{ 'Show archived'|trans }}</label>
         </div>
       </div>
-
-      {# onBlur cannot work on bootstrap multiselect see https://stackoverflow.com/questions/42673800/bootstrap-multiselect-blur-event-not-triggering so add a button #}
-      <button class='btn btn-primary mb-2' type='submit'>{{ 'Go'|trans }}</button>
-      {# on search page we use its form everywhere else we need an independent form #}
-      {% if searchPage %}
-        </div>
-      {% else %}
-        </form>
-      {% endif %}
+    </div>
   </div>
-{# close form of search page with correct nesting #}
-{% if searchPage %}
-  </form>
-{% endif %}
+  </div>
+  <hr>
 
   {% set count = itemsArr|length %}
 
@@ -296,18 +434,6 @@
           <button data-action='clear-form' data-target='multiChangesForm' type='reset' class='btn btn-ghost mb-2'>{{ 'Reset'|trans }}</button>
         </form>
       </div>
-
-      {# PINNED ENTITIES #}
-      {% if pinnedArr and not searchPage %}
-        <div id='pinned-entities' class='d-flex flex-column'>
-          {% set isPinned = true %}
-          {% for item in pinnedArr|slice(0, DisplayParams.limit) %}
-            {% include 'show-item.html' %}
-          {% endfor %}
-          {% set isPinned = false %}
-        </div>
-        <hr>
-      {% endif %}
 
       {% if App.Users.userData.display_mode == 'it' %}
         <div class='d-flex flex-column' id='itemList'>

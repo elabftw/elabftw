@@ -551,7 +551,8 @@ experiments:
 items_types:
   - name: Microscope
     color: '#54AA08'
-    metadata: '{"extra_fields":{"Location":{"type":"select","value":"Microscopy room 3rd floor","options":["Microscopy room 3rd floor","Nikon imaging center","-2 microscopy room A","That building that is way too far away"]},"Availability":{"type":"select","value":"Works great","options":["Works great","Works most of the time, make sure to reboot the computer","Half broken, do not use","Completely useless"],"description":"Is it broken?"},"Person in charge":{"type":"text","value":"Paolo"},"Available wavelengths":{"type":"select","value":"405 nm","options":["405 nm","488 nm","561 nm","640 nm"],"allow_multi_values":true}}}'
+    body: '<h1>Switch on procedure</h1><p>&nbsp;</p><h1>Switch off procedure</h1>'
+    metadata: '{"extra_fields": {"Location": {"type": "select","value": "Microscopy room 3rd floor","options": ["Microscopy room 3rd floor","Nikon imaging center","-2 microscopy room A","That building that is way too far away"]},"Available wavelengths": {"type": "select","value": "405 nm","options": ["405 nm","488 nm","561 nm","640 nm"],"allow_multi_values": true},"Person in charge": {"type": "users","value": 2,"description": "Select the person responsible for this microscope"},"Available objectives": {"type": "select","value": "4X","options": ["4X","10X","40X","63X","100X"],"allow_multi_values": true}}}'
 
   - name: Chemical compound
     color: '#29AEB9'
@@ -562,10 +563,12 @@ items_types:
 
   - name: Antibody
     color: '#C24F3D'
-    metadata: '{"extra_fields":{"Host":{"type":"select","value":"Rabbit","options":["Rabbit","Mouse","Goat","Chicken"]},"Storage temperature":{"type":"select","value":"+4 °C","options":["+4 °C","-20 °C","-80 °C"]},"Dilution to use for IF":{"type":"text","value":""},"Dilution to use for WB":{"type":"text","value":""},"Number of aliquots left":{"type":"number","value":"","description":"Make sure to decrement this when using one!"}}}'
+    metadata: '{"extra_fields":{"Host":{"type":"select","value":"Rabbit","options":["Rabbit","Mouse","Goat","Chicken"]},"Storage temperature":{"type":"select","value":"+4 °C","options":["+4 °C","-20 °C","-80 °C"]},"Dilution to use for IF":{"type":"text","value":""},"Dilution to use for WB":{"type":"text","value":""}}}'
 
   - name: Yeast
     color: '#ED9913'
+    metadata: '{"extra_fields":{"Strain name":{"type":"text","value":""},"Genotype":{"type":"text","value":""},"Selection marker":{"type":"select","value":"URA3","options":["URA3","LEU2","HIS3","TRP1","KanMX","NatMX"]},"Growth temperature":{"type":"number","value":"","description":"in °C"},"Mating type":{"type":"select","value":"haploid a","options":["haploid a","haploid α","diploid"]},"Storage condition":{"type":"select","value":"-80 °C","options":["-80 °C","4 °C","on plate","in liquid culture"]},"Person in charge":{"type":"users","value":"","description":"Select the person responsible for this strain"}}}'
+
 
 items:
   - title: Spinning Disk 2

@@ -245,6 +245,7 @@ class QueryBuilderVisitor implements Visitor
         // ELabID:       entity.elabid
         // Id:           entity.id
         // Locked:       entity.locked
+        // Owner:        CONCAT(users.firstname, ' ', users.lastname)
         // Rating:       entity.rating
         // Status:       statust.title
         // Timestamped:  entity.timestamped, if entity == experiment
@@ -381,6 +382,14 @@ class QueryBuilderVisitor implements Visitor
     }
 
     private function visitFieldAuthor(string $searchTerm, string $affix, VisitorParameters $parameters): WhereCollector
+    {
+        return $this->getWhereCollector(
+            "CONCAT(users.firstname, ' ', users.lastname) LIKE ",
+            $affix . $searchTerm . $affix,
+        );
+    }
+
+    private function visitFieldOwner(string $searchTerm, string $affix, VisitorParameters $parameters): WhereCollector
     {
         return $this->getWhereCollector(
             "CONCAT(users.firstname, ' ', users.lastname) LIKE ",

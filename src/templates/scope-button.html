@@ -3,19 +3,22 @@
 - target: scope_experiments, scope_items, etc...
 - optional btnId: to change the id attr of main div
 #}
+{% set isSmall = isSmall|default(1) %}
+{% set isSecondary = isSecondary|default(1) %}
 <div id='{{ btnId|default('scopeBtn') }}' class='btn-group'>
-  <button class='btn btn-secondary btn-sm dropdown-toggle' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fas fa-{{ App.Users.userData[target]|toIcon }} fa-fw mr-1 color-white'></i>{{ 'Scope'|trans }}</button>
+  <button class='btn {{ isSecondary ? 'btn-secondary' : 'hl-hover-gray' }} {{ isSmall ? 'btn-sm' }} dropdown-toggle' type='button' data-toggle='dropdown' aria-haspopup='true' aria-label='{{ 'Scope'|trans }}' title='{{ 'Scope'|trans }}' aria-expanded='false'><i class='fas fa-{{ App.Users.userData[target]|toIcon }} fa-fw mr-1 {{ isSecondary == 1 ? 'color-white' }}'></i></button>
   <div class='dropdown-menu'>
+    <h6 class='dropdown-header'>{{ 'Scope'|trans }}</h6>
     <button type='button' data-trigger='click' data-model='users/me' data-target='{{ target }}' data-reload='{{ reload }}' value='1' class='btn btn-dropdown-item dropdown-item {{ App.Users.userData.scope == 1 ? 'active' }}'>
-      <i class='fas fa-user fa-fw mr-1 {{ App.Users.userData.scope == 1 ? 'color-white' }}'></i>{{ 'Self'|trans }}
+      <i class='fas fa-user fa-fw mr-1 {{ App.Users.userData.scope == 1 and not isSecondary ? 'color-white' }}'></i>{{ 'Self'|trans }}
     </button>
 
     <button type='button' data-trigger='click' data-model='users/me' data-target='{{ target }}' data-reload='{{ reload }}' value='2' class='btn btn-dropdown-item dropdown-item {{ App.Users.userData.scope == 2 ? 'active' }}'>
-      <i class='fas fa-users fa-fw mr-1 {{ App.Users.userData.scope == 2 ? 'color-white' }}'></i>{{ 'Team'|trans }}
+      <i class='fas fa-users fa-fw mr-1 {{ App.Users.userData.scope == 2 and not isSecondary ? 'color-white' }}'></i>{{ 'Team'|trans }}
     </button>
 
     <button type='button' data-trigger='click' data-model='users/me' data-target='{{ target }}' data-reload='{{ reload }}' value='3' class='btn btn-dropdown-item dropdown-item {{ App.Users.userData.scope == 3 ? 'active' }}'>
-      <i class='fas fa-globe fa-fw mr-1 {{ App.Users.userData.scope == 3 ? 'color-white' }}'></i>{{ 'Everything'|trans }}
+      <i class='fas fa-globe fa-fw mr-1 {{ App.Users.userData.scope == 3 and not isSecondary ? 'color-white' }}'></i>{{ 'Everything'|trans }}
     </button>
   </div>
 </div>

@@ -1458,13 +1458,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@deltablot/chemdoodle-web-mini@npm:^9.5.1":
-  version: 9.5.1
-  resolution: "@deltablot/chemdoodle-web-mini@npm:9.5.1"
-  checksum: 10c0/05fbd3fb4a1c719565015ba178a74e1fdddbc9ab16cdd78c2a7ebe0616d7597b0d21b45f6d72c7c01891a50d95ad3998c3b691ec663921c21b398b50c337f326
-  languageName: node
-  linkType: hard
-
 "@deltablot/dropzone@npm:^7.1.5":
   version: 7.2.0
   resolution: "@deltablot/dropzone@npm:7.2.0"
@@ -5760,7 +5753,6 @@ __metadata:
     "@babel/core": "npm:^7.25.2"
     "@babel/preset-env": "npm:^7.25.4"
     "@babel/preset-react": "npm:^7.24.7"
-    "@deltablot/chemdoodle-web-mini": "npm:^9.5.1"
     "@deltablot/dropzone": "npm:^7.1.5"
     "@deltablot/ketcher-core": "npm:^2.26.1"
     "@deltablot/malle": "npm:^2.6.1"

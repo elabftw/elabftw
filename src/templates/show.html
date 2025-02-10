@@ -63,7 +63,7 @@
         <div id='visibleFiltersDiv' class='mt-1 flex-fill'>
           {# CATEGORY #}
           <select name='category' class='mr-1 form-control filterHelper filterAuto' aria-label='{{ 'Filter category'|trans }}'>
-            <option value='' data-action='clear'>{{ 'Filter category'|trans }}</option>
+            <option value='' class='dropdown-header' data-action='clear'>{{ 'Filter category'|trans }}</option>
             {% for category in categoryArr %}
               <option value='{{ category.id }}'
                 {{- App.Request.query.get('category') == category.id ? ' selected' -}}

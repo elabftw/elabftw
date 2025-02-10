@@ -49,7 +49,7 @@
       <i class='far fa-calendar-check mr-1'></i>
     {% endif %}
     {% if item.category %}
-      <button type='button' data-action='add-query-filter' data-key='cat' data-value='{{ item.category|e('html_attr') }}' class='btn catstat-btn category-btn lh-normal border-0' style='--bg:#{{ item.category_color }}'>{{ item.category_title }}</button>
+      <button type='button' data-action='add-query-filter' data-key='category' data-value='{{ item.category|e('html_attr') }}' class='btn catstat-btn category-btn lh-normal border-0' style='--bg:#{{ item.category_color }}'>{{ item.category_title }}</button>
     {% endif %}
   </td>
 

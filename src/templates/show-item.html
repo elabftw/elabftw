@@ -55,7 +55,7 @@
       {# category #}
       {% if item.category %}
       {# Note: there might be something to do with mix-blend-mode: difference to get white text on dark bg et vice-versa #}
-        <button class='btn catstat-btn category-btn mr-2' type='button' style='--bg: #{{ item.category_color|default('bdbdbd') }};line-height:normal;' data-action='add-query-filter' data-key='cat' data-value='{{ item.category|e('html_attr') }}'>{{ item.category_title }}</button>
+        <button class='btn catstat-btn category-btn mr-2' type='button' style='--bg: #{{ item.category_color|default('bdbdbd') }};line-height:normal;' data-action='add-query-filter' data-key='category' data-value='{{ item.category|e('html_attr') }}'>{{ item.category_title }}</button>
       {% endif %}
       {# status #}
       {% if item.status %}

@@ -1,6 +1,6 @@
 {% include 'storage-view-edit.html' %}
 {% include 'compounds-view-edit.html' %}
-<div class='row mt-4'>
+<div class='row mt-2'>
   {# STEPS #}
   <div class='col-md-12'>
     <h4 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='stepsDiv'><i class='fas fa-caret-down mr-2 fa-fw'></i> {{ 'Steps'|trans }} (<span id='stepsCount'>{{ Entity.entityData.steps|length }}</span>)</h4>
@@ -82,12 +82,12 @@
           </div>
         {% endfor %}
       </div>
-    </div>
-    {# Add step input #}
-    <div class='input-group mt-4'>
-      <input aria-label='{{ 'Add a step'|trans }}' type='text' size='60' class='form-control stepinput' data-id='{{ Entity.id }}' />
-      <div class='input-group-append'>
-        <button class='btn btn-primary' data-action='create-step' type='submit'>{{ 'Add a step'|trans }}</button>
+      {# Add step input #}
+      <div class='input-group mt-4'>
+        <input aria-label='{{ 'Add a step'|trans }}' type='text' size='60' class='form-control stepinput' data-id='{{ Entity.id }}' />
+        <div class='input-group-append'>
+          <button class='btn btn-primary' data-action='create-step' type='submit'>{{ 'Add a step'|trans }}</button>
+        </div>
       </div>
     </div>
     <hr>
@@ -109,23 +109,23 @@
           {% include 'link-view-one.html' %}
         {% endfor %}
       {% endif %}
-    </div>
-    {# ADD LINK #}
-    <div class='input-group mt-2'>
-      <div class='input-group-prepend'>
-        <span class='input-group-text'><i class='fas fa-magnifying-glass'></i></span>
-      </div>
-      <div class='input-group-prepend' style='max-width:33%;'>
-        <select id='addLinkOwnerFilter' class='brl-none brr-none form-control' aria-label='Limit author'>
-          <option selected value=''>{{ 'Any author'|trans }}</option>
-          {% for user in usersArr %}
-            <option value='{{ user.userid }}'>{{ user.fullname }}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <input aria-label='{{ 'Add a link'|trans }}' type='text' data-endpoint='experiments_links' id='addLinkExpInput' class='form-control linkinput' data-id='{{ Entity.id }}' placeholder='{{ 'Search in experiments'|trans }}' />
-      <div class='input-group-append'>
-        <button class='btn btn-primary' type='button'>{{ 'Add'|trans }}</button>
+      {# ADD LINK #}
+      <div class='ml-3 input-group mt-2'>
+        <div class='input-group-prepend'>
+          <span class='input-group-text'><i class='fas fa-magnifying-glass'></i></span>
+        </div>
+        <div class='input-group-prepend' style='max-width:33%;'>
+          <select id='addLinkOwnerFilter' class='brl-none brr-none form-control' aria-label='Limit author'>
+            <option selected value=''>{{ 'Any author'|trans }}</option>
+            {% for user in usersArr %}
+              <option value='{{ user.userid }}'>{{ user.fullname }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <input aria-label='{{ 'Add a link'|trans }}' type='text' data-endpoint='experiments_links' id='addLinkExpInput' class='form-control linkinput' data-id='{{ Entity.id }}' placeholder='{{ 'Search in experiments'|trans }}' />
+        <div class='input-group-append'>
+          <button class='btn btn-primary' type='button'>{{ 'Add'|trans }}</button>
+        </div>
       </div>
     </div>
     <hr>
@@ -141,23 +141,23 @@
           {% include 'link-view-one.html' %}
         {% endfor %}
       {% endif %}
-    </div>
-    {# ADD LINK #}
-    <div class='input-group mt-2'>
-      <div class='input-group-prepend'>
-        <span class='input-group-text'><i class='fas fa-magnifying-glass'></i></span>
-      </div>
-      <div class='input-group-prepend' style='min-width: 10%;max-width:33%;'>
-        <select id='addLinkCatFilter' class='brr-none brl-none form-control' aria-label='{{ 'Limit category'|trans }}'>
-          <option selected value=''>{{ 'Any category'|trans }}</option>
-          {% for cat in itemsCategoryArr %}
-            <option value='{{ cat.id }}'>{{ cat.title }}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <input aria-label='{{ 'Add a link'|trans }}' type='text' data-endpoint='items_links' id='addLinkItemsInput' class='form-control linkinput' data-id='{{ Entity.id }}' placeholder='{{ 'Search in resources'|trans }}' />
-      <div class='input-group-append'>
-        <button class='btn btn-primary' type='button'>{{ 'Add'|trans }}</button>
+      {# ADD LINK #}
+      <div class='ml-3 input-group mt-2'>
+        <div class='input-group-prepend'>
+          <span class='input-group-text'><i class='fas fa-magnifying-glass'></i></span>
+        </div>
+        <div class='input-group-prepend' style='min-width: 10%;max-width:33%;'>
+          <select id='addLinkCatFilter' class='brr-none brl-none form-control' aria-label='{{ 'Limit category'|trans }}'>
+            <option selected value=''>{{ 'Any category'|trans }}</option>
+            {% for cat in itemsCategoryArr %}
+              <option value='{{ cat.id }}'>{{ cat.title }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <input aria-label='{{ 'Add a link'|trans }}' type='text' data-endpoint='items_links' id='addLinkItemsInput' class='form-control linkinput' data-id='{{ Entity.id }}' placeholder='{{ 'Search in resources'|trans }}' />
+        <div class='input-group-append'>
+          <button class='btn btn-primary' type='button'>{{ 'Add'|trans }}</button>
+        </div>
       </div>
     </div>
     <hr>

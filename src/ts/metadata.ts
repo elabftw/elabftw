@@ -68,6 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const fieldTypeSelect = document.getElementById('newFieldTypeSelect') as HTMLSelectElement;
       const fieldNameInput = document.getElementById('newFieldKeyInput') as HTMLInputElement;
       const fieldDescriptionInput = document.getElementById('newFieldDescriptionInput') as HTMLInputElement;
+      const fieldValueInput = document.getElementById('newFieldValueInput') as HTMLInputElement;
 
       MetadataC.read().then(metadata => {
         const extraField = el.parentElement.parentElement.closest('div');
@@ -88,10 +89,8 @@ document.addEventListener('DOMContentLoaded', () => {
         fieldTypeSelect.value = fieldData.type;
         fieldNameInput.value = fieldName;
         fieldDescriptionInput.value = fieldData.description ?? '';
-
-        // delete current metadata before sending new one
-        delete metadata.extra_fields[fieldName];
-        MetadataC.save(metadata as ValidMetadata);
+        fieldValueInput.value = fieldData.value; // later adapt to dropdowns/checkboxes etc
+        console.log("metadata to edit", metadata.extra_fields);
       });
     }
     // DELETE EXTRA FIELD
@@ -284,34 +283,41 @@ document.addEventListener('DOMContentLoaded', () => {
     // EDIT EXTRA FIELD
     } else if(el.matches('[data-action="edit-extra-field"]')) {
       let json = {};
+      const fieldNameInput = document.getElementById('newFieldKeyInput') as HTMLInputElement;
+      const fieldTypeSelect = (document.getElementById('newFieldTypeSelect') as HTMLSelectElement).value;
+      const fieldDescriptionInput = (document.getElementById('newFieldDescriptionInput') as HTMLInputElement).value;
+      const fieldValueInput = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();
+
+      const currentKey = fieldNameInput.value;
+      console.log('current key',currentKey);
       MetadataC.read().then(metadata => {
-        const fieldNameInput = document.getElementById('newFieldKeyInput') as HTMLInputElement;
-        // delete actual extra field to send updated one
-        delete metadata.extra_fields[fieldNameInput.value];
-        MetadataC.save(metadata as ValidMetadata);
-
         const fieldKey = fieldNameInput.value.trim();
-        const fieldTypeSelect = (document.getElementById('newFieldTypeSelect') as HTMLSelectElement).value;
-        const fieldDescriptionInput = (document.getElementById('newFieldDescriptionInput') as HTMLInputElement).value;
-        const fieldValueInput = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();
-
         json = metadata;
+        // data random id
+        console.log(json['extra_fields']);
+        // console.log('fieldkey', json['extra_fields'][fieldKey]);
         json['extra_fields'][fieldKey] = {
           type: fieldTypeSelect,
           group_id: grpSel.value != '-1' ? parseInt(grpSel.value) : '-1',
           description: fieldDescriptionInput,
           value: fieldValueInput
         };
-        MetadataC.update(json as ValidMetadata).then(() => {
-          // clear all form fields
-          const form = (document.getElementById('newFieldForm') as HTMLFormElement);
-          form.querySelectorAll('.is-extra-input').forEach(i => i.parentElement.remove());
-          form.reset();
-          // reset button back from "edit" to "save"
-          const saveButton = document.querySelector('[data-action="edit-extra-field"]') as HTMLButtonElement;
-          saveButton.dataset.action="save-new-field";
-          saveButton.textContent = i18next.t('Save');
-        });
+        console.log("current key & fieldkey", currentKey, fieldKey);
+
+        // // delete actual extra field to send updated one
+        // delete metadata.extra_fields[fieldNameInput.value];
+        // MetadataC.save(metadata as ValidMetadata);
+
+        // MetadataC.update(json as ValidMetadata).then(() => {
+        //   // clear all form fields
+        //   const form = (document.getElementById('newFieldForm') as HTMLFormElement);
+        //   form.querySelectorAll('.is-extra-input').forEach(i => i.parentElement.remove());
+        //   form.reset();
+        //   // reset button back from "edit" to "save"
+        //   const saveButton = document.querySelector('[data-action="edit-extra-field"]') as HTMLButtonElement;
+        //   saveButton.dataset.action="save-new-field";
+        //   saveButton.textContent = i18next.t('Save');
+        // });
       })
     // ADD OPTION FOR SELECT OR RADIO
     } else if (el.matches('[data-action="new-field-add-option"]')) {

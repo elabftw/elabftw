@@ -66,23 +66,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const fieldDescriptionInput = document.getElementById('newFieldDescriptionInput') as HTMLInputElement;
       const fieldValueInput = document.getElementById('newFieldValueInput') as HTMLInputElement;
 
+      const extraField = el.parentElement.parentElement.closest('div');
+      if (!extraField) {
+        notifError(new Error(i18next.t('Extra field not found')));
+        return;
+      }
+      // store current name as attribute, to use as field's key and update
+      const fieldName = extraField.querySelector('label').innerText.trim();
+      fieldNameInput.dataset.name = fieldName;
+
       MetadataC.read().then(metadata => {
-        const extraField = el.parentElement.parentElement.closest('div');
-        if (!extraField) {
-          notifError(new Error(i18next.t('Extra field not found')));
-          return;
-        }
-        // store current field for update
-        const fieldName = extraField.querySelector('label').innerText.trim();
-
-        // create temporary field for update
-        const fieldToUpdate = document.createElement('div');
-        fieldToUpdate.dataset.name = fieldName;
-        fieldToUpdate.setAttribute('id', 'fieldToUpdate');
-        fieldToUpdate.setAttribute('hidden', 'hidden');
-        document.body.appendChild(fieldToUpdate);
-
-        // prefill modal with current extraField values
+        // populate modal with current extraField values
         const fieldData = metadata.extra_fields[fieldName];
         if (!fieldData) {
           notifError(new Error(i18next.t('Field not found in metadata')));
@@ -92,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fieldTypeSelect.value = fieldData.type;
         fieldNameInput.value = fieldName;
         fieldDescriptionInput.value = fieldData.description ?? '';
-        fieldValueInput.value = fieldData.value; // later adapt to dropdowns/checkboxes etc
+        fieldValueInput.value = fieldData.value; // TODO: adapt to dropdowns/checkboxes etc
       });
     }
     // DELETE EXTRA FIELD
@@ -287,14 +281,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // EDIT EXTRA FIELD
     } else if (el.matches('[data-action="edit-extra-field"]')) {
       let json = {};
-      const fieldNameInput = document.getElementById('newFieldKeyInput') as HTMLInputElement;
-      const fieldTypeSelect = (document.getElementById('newFieldTypeSelect') as HTMLSelectElement).value;
-      const fieldDescriptionInput = (document.getElementById('newFieldDescriptionInput') as HTMLInputElement).value;
-      const fieldValueInput = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();
 
       // get field to update's current value
-      const fieldToUpdate = document.getElementById('fieldToUpdate') as HTMLDivElement;
-      const originalFieldKey = fieldToUpdate.dataset.name; // store previous key
+      const fieldNameInput = document.getElementById('newFieldKeyInput') as HTMLInputElement;
+      const originalFieldKey = fieldNameInput.dataset.name; // store previous key
       const newFieldKey = fieldNameInput.value.trim(); // new key from input
 
       MetadataC.read().then(metadata => {
@@ -304,16 +294,14 @@ document.addEventListener('DOMContentLoaded', () => {
           delete json['extra_fields'][originalFieldKey];
         }
         json['extra_fields'][newFieldKey] = {
-          type: fieldTypeSelect,
+          type: (document.getElementById('newFieldTypeSelect') as HTMLSelectElement).value,
           group_id: grpSel.value != '-1' ? parseInt(grpSel.value) : '-1',
-          description: fieldDescriptionInput,
-          value: fieldValueInput,
+          description: (document.getElementById('newFieldDescriptionInput') as HTMLInputElement).value,
+          value: (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim(),
         };
         MetadataC.update(json as ValidMetadata).then(() => {
           // clear all form fields
           const form = (document.getElementById('newFieldForm') as HTMLFormElement);
-          // remove from dom
-          fieldToUpdate.remove();
           form.querySelectorAll('.is-extra-input').forEach(i => i.parentElement.remove());
           form.reset();
           el.setAttribute('hidden', 'hidden');

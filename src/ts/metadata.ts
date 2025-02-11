@@ -5,7 +5,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import $ from 'jquery';
 import {
   getEntity,
   notifError,
@@ -54,15 +53,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const el = (event.target as HTMLElement);
     if (el.matches('[data-action="metadata-edit-field"]')) {
       $('#' + el.dataset.target).modal('toggle');
-      if (!document.getElementById('fieldBuilderModal')) {
-        return;
-      }
-      // convert save button from modal to edit button
+      // toggle buttons for edit modal
       const saveButton = document.querySelector('[data-action="save-new-field"]') as HTMLButtonElement;
-      if (saveButton) {
-        saveButton.dataset.action="edit-extra-field";
-        saveButton.textContent = i18next.t('Edit');
-      }
+      const editButton = document.querySelector('[data-action="edit-extra-field"]') as HTMLButtonElement;
+      saveButton.setAttribute('hidden', 'hidden');
+      editButton.removeAttribute('hidden');
 
       // once modal is up, check fields to update
       const fieldGroupSelect = document.getElementById('newFieldGroupSelect') as HTMLSelectElement;
@@ -80,6 +75,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // store current field for update
         const fieldName = extraField.querySelector('label').innerText.trim();
 
+        // create temporary field for update
+        const fieldToUpdate = document.createElement('div');
+        fieldToUpdate.dataset.name = fieldName;
+        fieldToUpdate.setAttribute('id', 'fieldToUpdate');
+        fieldToUpdate.setAttribute('hidden', 'hidden');
+        document.body.appendChild(fieldToUpdate);
+
         // prefill modal with current extraField values
         const fieldData = metadata.extra_fields[fieldName];
         if (!fieldData) {
@@ -91,7 +93,6 @@ document.addEventListener('DOMContentLoaded', () => {
         fieldNameInput.value = fieldName;
         fieldDescriptionInput.value = fieldData.description ?? '';
         fieldValueInput.value = fieldData.value; // later adapt to dropdowns/checkboxes etc
-        console.log("metadata to edit", metadata.extra_fields);
       });
     }
     // DELETE EXTRA FIELD
@@ -291,36 +292,35 @@ document.addEventListener('DOMContentLoaded', () => {
       const fieldDescriptionInput = (document.getElementById('newFieldDescriptionInput') as HTMLInputElement).value;
       const fieldValueInput = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();
 
-      const currentKey = fieldNameInput.value;
-      console.log('current key',currentKey);
+      // get field to update's current value
+      const fieldToUpdate = document.getElementById('fieldToUpdate') as HTMLDivElement;
+      const originalFieldKey = fieldToUpdate.dataset.name; // store previous key
+      const newFieldKey = fieldNameInput.value.trim(); // new key from input
+
       MetadataC.read().then(metadata => {
-        const fieldKey = fieldNameInput.value.trim();
         json = metadata;
-        // data random id
-        console.log(json['extra_fields']);
-        // console.log('fieldkey', json['extra_fields'][fieldKey]);
-        json['extra_fields'][fieldKey] = {
+        // If the key was changed, delete the old extra field
+        if (originalFieldKey && originalFieldKey !== newFieldKey) {
+          delete json['extra_fields'][originalFieldKey];
+        }
+        json['extra_fields'][newFieldKey] = {
           type: fieldTypeSelect,
           group_id: grpSel.value != '-1' ? parseInt(grpSel.value) : '-1',
           description: fieldDescriptionInput,
           value: fieldValueInput
         };
-        console.log("current key & fieldkey", currentKey, fieldKey);
-
-        // // delete actual extra field to send updated one
-        // delete metadata.extra_fields[fieldNameInput.value];
-        // MetadataC.save(metadata as ValidMetadata);
-
-        // MetadataC.update(json as ValidMetadata).then(() => {
-        //   // clear all form fields
-        //   const form = (document.getElementById('newFieldForm') as HTMLFormElement);
-        //   form.querySelectorAll('.is-extra-input').forEach(i => i.parentElement.remove());
-        //   form.reset();
-        //   // reset button back from "edit" to "save"
-        //   const saveButton = document.querySelector('[data-action="edit-extra-field"]') as HTMLButtonElement;
-        //   saveButton.dataset.action="save-new-field";
-        //   saveButton.textContent = i18next.t('Save');
-        // });
+        MetadataC.update(json as ValidMetadata).then(() => {
+          // clear all form fields
+          const form = (document.getElementById('newFieldForm') as HTMLFormElement);
+          // remove from dom
+          fieldToUpdate.remove();
+          form.querySelectorAll('.is-extra-input').forEach(i => i.parentElement.remove());
+          form.reset();
+          el.setAttribute('hidden', 'hidden')
+          const saveButton = document.querySelector('[data-action="save-new-field"]') as HTMLButtonElement;
+          saveButton.removeAttribute('hidden');
+          $('#fieldBuilderModal').modal('toggle');
+        });
       })
     // ADD OPTION FOR SELECT OR RADIO
     } else if (el.matches('[data-action="new-field-add-option"]')) {

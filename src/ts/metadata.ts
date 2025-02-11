@@ -285,7 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       });
     // EDIT EXTRA FIELD
-    } else if(el.matches('[data-action="edit-extra-field"]')) {
+    } else if (el.matches('[data-action="edit-extra-field"]')) {
       let json = {};
       const fieldNameInput = document.getElementById('newFieldKeyInput') as HTMLInputElement;
       const fieldTypeSelect = (document.getElementById('newFieldTypeSelect') as HTMLSelectElement).value;
@@ -307,7 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
           type: fieldTypeSelect,
           group_id: grpSel.value != '-1' ? parseInt(grpSel.value) : '-1',
           description: fieldDescriptionInput,
-          value: fieldValueInput
+          value: fieldValueInput,
         };
         MetadataC.update(json as ValidMetadata).then(() => {
           // clear all form fields
@@ -316,12 +316,12 @@ document.addEventListener('DOMContentLoaded', () => {
           fieldToUpdate.remove();
           form.querySelectorAll('.is-extra-input').forEach(i => i.parentElement.remove());
           form.reset();
-          el.setAttribute('hidden', 'hidden')
+          el.setAttribute('hidden', 'hidden');
           const saveButton = document.querySelector('[data-action="save-new-field"]') as HTMLButtonElement;
           saveButton.removeAttribute('hidden');
           $('#fieldBuilderModal').modal('toggle');
         });
-      })
+      });
     // ADD OPTION FOR SELECT OR RADIO
     } else if (el.matches('[data-action="new-field-add-option"]')) {
       const newGroup = document.createElement('div');

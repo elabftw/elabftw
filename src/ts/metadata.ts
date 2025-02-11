@@ -48,14 +48,15 @@ document.addEventListener('DOMContentLoaded', () => {
     return btn;
   }
 
+  const saveButton = document.querySelector('[data-action="save-new-field"]') as HTMLButtonElement;
+  const editButton = document.querySelector('[data-action="edit-extra-field"]') as HTMLButtonElement;
+
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
     if (el.matches('[data-action="metadata-edit-field"]')) {
       $('#' + el.dataset.target).modal('toggle');
       // toggle buttons for edit modal
-      const saveButton = document.querySelector('[data-action="save-new-field"]') as HTMLButtonElement;
-      const editButton = document.querySelector('[data-action="edit-extra-field"]') as HTMLButtonElement;
       saveButton.setAttribute('hidden', 'hidden');
       editButton.removeAttribute('hidden');
 
@@ -85,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fieldGroupSelect.value = fieldData.group_id ?? '-1';
         fieldTypeSelect.value = fieldData.type;
         fieldNameInput.value = fieldName;
-        fieldDescriptionInput.value = fieldData.description ?? '';
+        fieldDescriptionInput.value = fieldData.description ?? null;
         fieldValueInput.value = fieldData.value; // TODO: adapt to dropdowns/checkboxes etc
       });
     }
@@ -105,6 +106,14 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('fieldBuilderModal')) {
     return;
   }
+
+  $('#fieldBuilderModal').on('hidden.bs.modal', function () {
+    // reset to default state on close
+    if (!editButton.hasAttribute('hidden') && saveButton.hasAttribute('hidden')) {
+      editButton.setAttribute('hidden', 'hidden');
+      saveButton.removeAttribute('hidden');
+    }
+  });
 
   addAutocompleteToExtraFieldsKeyInputs();
 
@@ -280,33 +289,35 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     // EDIT EXTRA FIELD
     } else if (el.matches('[data-action="edit-extra-field"]')) {
-      let json = {};
-
       // get field to update's current value
       const fieldNameInput = document.getElementById('newFieldKeyInput') as HTMLInputElement;
       const originalFieldKey = fieldNameInput.dataset.name; // store previous key
       const newFieldKey = fieldNameInput.value.trim(); // new key from input
 
+      let json = {};
       MetadataC.read().then(metadata => {
-        json = metadata;
-        // If the key was changed, delete the old extra field
+        if (metadata) json = metadata;
+        // If the key (name) is being changed, remove previous field else it will create two separate ones
         if (originalFieldKey && originalFieldKey !== newFieldKey) {
           delete json['extra_fields'][originalFieldKey];
         }
-        json['extra_fields'][newFieldKey] = {
-          type: (document.getElementById('newFieldTypeSelect') as HTMLSelectElement).value,
-          group_id: grpSel.value != '-1' ? parseInt(grpSel.value) : '-1',
-          description: (document.getElementById('newFieldDescriptionInput') as HTMLInputElement).value,
-          value: (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim(),
-        };
+        const field = {};
+        // add the new field
+        field['type'] = (document.getElementById('newFieldTypeSelect') as HTMLSelectElement).value;
+        if (grpSel.value !== '-1') {
+          field['group_id'] = parseInt(grpSel.value);
+        }
+        // can be non existent, we don't want to add the key to the "field" object
+        if ((document.getElementById('newFieldDescriptionInput') as HTMLInputElement).value) {
+          field['description'] = (document.getElementById('newFieldDescriptionInput') as HTMLInputElement).value.trim();
+        }
+        field['value'] = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();
+        json['extra_fields'][newFieldKey] = field;
         MetadataC.update(json as ValidMetadata).then(() => {
-          // clear all form fields
+          // clear form
           const form = (document.getElementById('newFieldForm') as HTMLFormElement);
           form.querySelectorAll('.is-extra-input').forEach(i => i.parentElement.remove());
           form.reset();
-          el.setAttribute('hidden', 'hidden');
-          const saveButton = document.querySelector('[data-action="save-new-field"]') as HTMLButtonElement;
-          saveButton.removeAttribute('hidden');
           $('#fieldBuilderModal').modal('toggle');
         });
       });

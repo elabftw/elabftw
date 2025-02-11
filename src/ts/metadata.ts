@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  $('#fieldBuilderModal').on('hidden.bs.modal', function () {
+  $('#fieldBuilderModal').on('hidden.bs.modal', () => {
     // reset to default state on close
     if (!editButton.hasAttribute('hidden') && saveButton.hasAttribute('hidden')) {
       editButton.setAttribute('hidden', 'hidden');

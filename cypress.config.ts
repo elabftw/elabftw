@@ -32,7 +32,6 @@ export default defineConfig({
         },
         {
           exclude: [
-            '#sketcher_search_dialog', // chemdoodle 2d-sketcher
             '#scheduler', // scheduler on the team page has several violations
             'h3[data-action="toggle-next"]', // these get the attribute role='button' ...
             'h4[data-action="toggle-next"]', // ... hence, trigger prefer-native-element

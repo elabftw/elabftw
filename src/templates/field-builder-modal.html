@@ -32,7 +32,7 @@
               {% endfor %}
             </div>
             {# ADD GROUP #}
-            <button type='button' class='btn btn-secondary btn-sm' id='newFieldsGroupKeyInputLabel' data-action='toggle-next'><i class='fas fa-square-plus fa-fw color-white mr-1'></i>{{ 'Add group'|trans }}</button>
+            <button type='button' class='btn btn-secondary btn-sm' id='newFieldsGroupKeyInputLabel' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus'><i class='fas fa-square-plus fa-fw color-white mr-1'></i>{{ 'Add group'|trans }}</button>
             <div hidden class='mb-3'>
               <div class='input-group mt-1'>
                 <input type='text' autocomplete='off' placeholder='{{ 'New group name'|trans }}' id='newFieldsGroupKeyInput' class='form-control' aria-labelledby='newFieldsGroupKeyInputLabel'>
@@ -155,7 +155,7 @@
         </div>
         <div class='modal-footer'>
           <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
-          <button type='button' class='btn btn-primary' data-dismiss='modal' data-action='save-new-field'>{{ 'Save'|trans }}</button>
+          <button type='button' class='btn btn-primary' data-action='save-new-field'>{{ 'Save'|trans }}</button>
         </div>
       </div>
     </form>

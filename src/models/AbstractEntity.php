@@ -15,6 +15,7 @@ namespace Elabftw\Models;
 use DateTimeImmutable;
 use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Elabftw\Permissions;
+use Elabftw\Elabftw\TemplatesSqlBuilder;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
@@ -125,6 +126,8 @@ abstract class AbstractEntity extends AbstractRest
         ?DateTimeImmutable $date = null,
         ?string $canread = null,
         ?string $canwrite = null,
+        ?bool $canreadIsImmutable = false,
+        ?bool $canwriteIsImmutable = false,
         array $tags = array(),
         ?int $category = null,
         ?int $status = null,
@@ -244,7 +247,12 @@ abstract class AbstractEntity extends AbstractRest
             $this->processExtendedQuery(trim($displayParams->queryString . ' ' . $displayParams->extendedQuery));
         }
 
-        $EntitySqlBuilder = new EntitySqlBuilder($this);
+        // TODO inject
+        if ($this instanceof Templates) {
+            $EntitySqlBuilder = new TemplatesSqlBuilder($this);
+        } else {
+            $EntitySqlBuilder = new EntitySqlBuilder($this);
+        }
         $sql = $EntitySqlBuilder->getReadSqlBeforeWhere(
             $extended,
             $extended,
@@ -543,16 +551,8 @@ abstract class AbstractEntity extends AbstractRest
     public function update(ContentParamsInterface $params): bool
     {
         $content = $params->getContent();
-        switch ($params->getTarget()) {
-            case 'bodyappend':
-                $content = $this->readOne()['body'] . $content;
-                break;
-            case 'canread':
-            case 'canwrite':
-                if ($this->bypassWritePermission === false) {
-                    $this->checkTeamPermissionsEnforced($params->getTarget());
-                }
-                break;
+        if ($params->getTarget() === 'bodyappend') {
+            $content = $this->readOne()['body'] . $content;
         }
 
         // save a revision for body target
@@ -685,27 +685,6 @@ abstract class AbstractEntity extends AbstractRest
         $req->bindValue(':value', $value);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
-    }
-
-    /**
-     * Update read or write permissions for an entity
-     *
-     * @param string $rw read or write
-     */
-    private function checkTeamPermissionsEnforced(string $rw): void
-    {
-        // check if the permissions are enforced
-        $Teams = new Teams($this->Users);
-        $teamConfigArr = $Teams->readOne();
-        if ($rw === 'canread') {
-            if ($teamConfigArr['do_force_canread'] === 1 && !$this->Users->isAdmin) {
-                throw new ImproperActionException(_('Read permissions enforced by admin. Aborting change.'));
-            }
-        } else {
-            if ($teamConfigArr['do_force_canwrite'] === 1 && !$this->Users->isAdmin) {
-                throw new ImproperActionException(_('Write permissions enforced by admin. Aborting change.'));
-            }
-        }
     }
 
     private function bindExtendedValues(PDOStatement $req): void

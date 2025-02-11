@@ -30,7 +30,7 @@ use function dirname;
  */
 require_once dirname(__DIR__) . '/init.inc.php';
 
-$Response = new RedirectResponse('/team.php?tab=4');
+$Response = new RedirectResponse('/team.php?tab=2');
 try {
     // NOT FOR ANON
     if ($App->Session->get('is_anon')) {

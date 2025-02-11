@@ -62,9 +62,6 @@ abstract class AbstractConcreteEntity extends AbstractEntity
     {
         $Teams = new Teams($this->Users, $this->Users->team);
         $teamConfigArr = $Teams->readOne();
-        // enforce the permissions if the admin has set them
-        $canread = $teamConfigArr['do_force_canread'] === 1 ? $teamConfigArr['force_canread'] : null;
-        $canwrite = $teamConfigArr['do_force_canwrite'] === 1 ? $teamConfigArr['force_canwrite'] : null;
         // convert to int only if not empty, otherwise send null: we don't want to convert a null to int, as it would send 0
         $category = !empty($reqBody['category']) ? (int) $reqBody['category'] : null;
         $status = !empty($reqBody['status']) ? (int) $reqBody['status'] : null;
@@ -78,8 +75,8 @@ abstract class AbstractConcreteEntity extends AbstractEntity
                 template: (int) ($reqBody['template'] ?? $reqBody['category_id'] ?? -1),
                 body: $reqBody['body'] ?? null,
                 title: $reqBody['title'] ?? null,
-                canread: $canread,
-                canwrite: $canwrite,
+                canread: $reqBody['canread'] ?? null,
+                canwrite: $reqBody['canwrite'] ?? null,
                 tags: $reqBody['tags'] ?? array(),
                 category: $category,
                 status: $status,

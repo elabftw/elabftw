@@ -54,7 +54,7 @@ class Pins
     /**
      * Only read id and title to show in the create-new menu
      */
-    public function readAllSimple(): array
+    public function readAll(): array
     {
         $sql = sprintf(
             'SELECT %1$s.id FROM pin_%1$s2users LEFT JOIN %1$s ON (entity_id = %1$s.id) WHERE users_id = :users_id',
@@ -68,23 +68,6 @@ class Pins
         $entity = clone $this->Entity;
         $entity->alwaysShowOwned = false;
         $entity->idFilter = Tools::getIdFilterSql(array_column($req->fetchAll(), 'id'));
-        return $entity->readAll();
-    }
-
-    /**
-     * Get the items pinned by current users to display in show mode
-     */
-    public function readAll(): array
-    {
-        $sql = 'SELECT entity_id FROM pin_' . $this->Entity->entityType->value . '2users WHERE users_id = :users_id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':users_id', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
-
-        $this->Db->execute($req);
-
-        $entity = clone $this->Entity;
-        $entity->alwaysShowOwned = false;
-        $entity->idFilter = Tools::getIdFilterSql(array_column($req->fetchAll(), 'entity_id'));
         return $entity->readAll();
     }
 

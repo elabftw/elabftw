@@ -40,6 +40,7 @@ abstract class AbstractContainersLinks extends AbstractLinks
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
+        // do not ORDER BY entity.date as items_types don't have date column
         $sql = 'SELECT
             main.id,
             main.qty_stored,
@@ -54,7 +55,8 @@ abstract class AbstractContainersLinks extends AbstractLinks
             LEFT JOIN ' . $this->getTargetType()->value . ' AS entity ON (main.item_id = entity.id)
             LEFT JOIN storage_units ON (main.storage_id = storage_units.id)
             WHERE main.item_id = :item_id AND entity.state IN (1,2)
-            ORDER by main.created_at, entity.date ASC, entity.title ASC';
+            ORDER by main.created_at ASC, entity.title ASC';
+
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);

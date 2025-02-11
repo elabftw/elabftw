@@ -16,20 +16,21 @@ import {
   escapeExtendedQuery,
   generateMetadataLink,
   getEntity,
-  getNewIdFromPostRequest,
   listenTrigger,
   makeSortableGreatAgain,
   notifError,
   permissionsToJson,
   relativeMoment,
   reloadElements,
+  reloadEntitiesShow,
   replaceWithTitle,
   toggleEditCompound,
-  togglePlusIcon,
+  toggleGrayClasses,
+  toggleIcon,
   TomSelect,
+  updateEntityBody,
 } from './misc';
 import i18next from 'i18next';
-import EntityClass from './Entity.class';
 import { Metadata } from './Metadata.class';
 import { DateTime } from 'luxon';
 import { Action, EntityType, Model, Target } from './interfaces';
@@ -357,6 +358,11 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="switch-editor"]')) {
       getEditor().switch(getEntity()).then(() => window.location.reload());
 
+    } else if (el.matches('[data-action="insert-param-and-reload-show"]')) {
+      const params = new URLSearchParams(document.location.search.slice(1));
+      params.set(el.dataset.key, el.dataset.value);
+      window.history.replaceState({}, '', `?${params.toString()}`);
+      reloadEntitiesShow();
 
     } else if (el.matches('[data-action="add-query-filter"]')) {
       const params = new URLSearchParams(document.location.search.substring(1));
@@ -371,6 +377,21 @@ document.addEventListener('DOMContentLoaded', () => {
         top: 0,
         behavior: 'smooth',
       });
+
+    // TOGGLE PINNED
+    } else if (el.matches('[data-action="toggle-pin"]')) {
+      const entity = getEntity();
+      let id = entity.id;
+      if (isNaN(id) || id === null) {
+        id = parseInt(el.dataset.id, 10);
+      }
+
+      ApiC.patch(`${entity.type}/${id}`, {'action': Action.Pin}).then(() => {
+        // toggle appearance of button and icon
+        toggleGrayClasses(el.classList);
+        el.querySelector('i').classList.toggle('color-weak');
+      });
+
 
     // AUTOCOMPLETE
     } else if (el.matches('[data-complete-target]')) {
@@ -469,6 +490,9 @@ document.addEventListener('DOMContentLoaded', () => {
       // reload the page
       document.location.search = params.toString();
 
+    } else if (el.matches('[data-action="reload-page"]')) {
+      location.reload();
+
     // SAVE PERMISSIONS
     } else if (el.matches('[data-action="save-permissions"]')) {
       const params = {};
@@ -511,35 +535,21 @@ document.addEventListener('DOMContentLoaded', () => {
       if (el.dataset.toggleTarget) {
         targetEl = document.getElementById(el.dataset.toggleTarget);
       }
-      targetEl.toggleAttribute('hidden');
+      const isHidden = targetEl.toggleAttribute('hidden');
+      el.setAttribute('aria-expanded', String(!isHidden));
 
+      // might want to toggle another element with toggle-extra
       if (el.dataset.toggleTargetExtra) {
         document.getElementById(el.dataset.toggleTargetExtra).toggleAttribute('hidden');
       }
-      const iconEl = el.querySelector('i');
-      if (iconEl) {
-        if (el.dataset.togglePlusIcon) {
-          togglePlusIcon(iconEl);
-        } else {
-          if (targetEl.hasAttribute('hidden')) {
-            iconEl.classList.remove('fa-caret-down');
-            if (el.dataset.toggleTarget !== 'filtersDiv') {
-              iconEl.classList.add('fa-caret-right');
-            }
-            el.setAttribute('aria-expanded', 'false');
-          } else {
-            iconEl.classList.add('fa-caret-down');
-            iconEl.classList.remove('fa-caret-right');
-            el.setAttribute('aria-expanded', 'true');
-          }
-        }
-      }
+
       // save the hidden state of the target element in localStorage
       if (targetEl.dataset.saveHidden) {
-        const targetKey = targetEl.dataset.saveHidden + '-isHidden';
-        const value = targetEl.hasAttribute('hidden') ? '1' : '0';
-        localStorage.setItem(targetKey, value);
+        localStorage.setItem(`${targetEl.dataset.saveHidden}-isHidden`, isHidden ? '1' : '0');
       }
+
+      // now deal with icon of executor element
+      toggleIcon(el, isHidden);
 
     } else if (el.matches('[data-action="expand-all-storage"]')) {
       const root = document.getElementById('storageDiv');
@@ -603,6 +613,17 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="toggle-modal"]')) {
       // TODO this requires jquery for now. Not in BS5.
       $('#' + el.dataset.target).modal('toggle');
+
+    // UPDATE ENTITY BODY (SAVE BUTTON)
+    } else if (el.matches('[data-action="update-entity-body"]')) {
+      updateEntityBody().then(() => {
+        // SAVE AND GO BACK BUTTON
+        if (el.matches('[data-redirect="view"]')) {
+          const entity = getEntity();
+          window.location.replace('?mode=view&id=' + entity.id);
+        }
+      });
+
 
     // SEARCH PUBCHEM
     } else if (el.matches('[data-action="search-cid"]')) {
@@ -762,14 +783,31 @@ document.addEventListener('DOMContentLoaded', () => {
       url.searchParams.set('sort', query[1]);
       window.location.href = url.href;
 
-    // CREATE EXPERIMENT or DATABASE item: main create button in top right
+    // CREATE EXPERIMENT, TEMPLATE or DATABASE item: main create button in top right
     } else if (el.matches('[data-action="create-entity"]')) {
-      // look for any tag present in the url, we will create the experiment with these tags
+      let params = {};
+      if (el.dataset.hasTitle) {
+        params = collectForm(document.getElementById('createNewForm'));
+      }
+      if (el.dataset.tplid) {
+        params['template'] = el.dataset.tplid;
+      }
+      // look for any tag present in the url, we will create the entry with these tags
       const urlParams = new URLSearchParams(document.location.search);
-      const entityC = new EntityClass(el.dataset.type as EntityType);
-      entityC.create(el.dataset.tplid, urlParams.getAll('tags[]')).then(resp => {
-        const newId = getNewIdFromPostRequest(resp);
-        window.location.href = `${entityC.getPage()}.php?mode=edit&id=${newId}`;
+      const tags = urlParams.getAll('tags[]');
+      if (tags) {
+        params['tags'] = tags;
+      }
+      let page = 'experiments.php';
+      if (el.dataset.type === 'experiments_templates') {
+        page = 'templates.php';
+      }
+      if (el.dataset.type === 'database') {
+        el.dataset.type = 'items';
+        page = 'database.php';
+      }
+      ApiC.post2location(`${el.dataset.type}`, params).then(id => {
+        window.location.href = `${page}?mode=edit&id=${id}`;
       });
 
     } else if (el.matches('[data-action="report-bug"]')) {
@@ -833,15 +871,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // TOGGLE BODY
     } else if (el.matches('[data-action="toggle-body"]')) {
       const randId = el.dataset.randid;
-      if (el.dataset.togglePlusIcon) {
-        togglePlusIcon(el.querySelector('.fas'));
-      }
       const bodyDiv = document.getElementById(randId);
       let action = 'hide';
       // transform the + in - and vice versa
       if (bodyDiv.hasAttribute('hidden')) {
         action = 'show';
       }
+      toggleIcon(el, !bodyDiv.hasAttribute('hidden'));
       // don't reload body if it is already loaded for show action
       // and the hide action is just toggle hidden attribute and do nothing else
       if ((action === 'show' && bodyDiv.dataset.bodyLoaded) || action === 'hide') {

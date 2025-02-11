@@ -3,9 +3,8 @@
 <ul class='tabbed-menu'>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='1'>{{ 'General'|trans }}</button></li>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='2'>{{ 'Account'|trans }}</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='3'>{{ 'Templates'|trans }}</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='4'>{{ 'API keys'|trans }}</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='5'>{{ 'Notifications'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='3'>{{ 'API keys'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='4'>{{ 'Notifications'|trans }}</button></li>
 </ul>
 
 {# loading spinner #}
@@ -116,14 +115,8 @@
   <h2 id='schedulerSettings' class='p-2 pl-3 section-title'>{{ 'Scheduler'|trans }}</h2>
 
   <div class='pl-3 mt-2 mb-5'>
-    <div class='d-flex justify-content-between'>
-      {# setting to toggle the display of week-ends on teams scheduler tab https://fullcalendar.io/docs/weekends #}
-      <label for='showWeekends' class='col-form-label'>{{ 'Show week ends'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input id='showWeekends' type='checkbox' data-trigger='change' data-model='users/me' data-target='show_weekends' {{ App.Users.userData.show_weekends == 1 ? 'checked="checked"' }}>
-        <span class='slider'></span>
-      </label>
-    </div>
+    {# setting to toggle the display of week-ends on teams scheduler tab https://fullcalendar.io/docs/weekends #}
+    {% include 'binary-setting.html' with {'label': 'Show week ends'|trans, 'model': 'users/me', 'slug': 'show_weekends', 'src': App.Users.userData} %}
   </div>
 
   {# KEYBOARD SHORTCUTS #}
@@ -439,19 +432,8 @@
   </div>
 </div>
 
-{# TAB 3 - USER TEMPLATES #}
-<div data-tabcontent='3' hidden>
-  <h2 class='p-2 pl-3 section-title'><i class='fas fa-layer-group'></i> {{ 'Experiments Templates'|trans }}</h2>
-
-  {% if App.Request.query.has('templateid') %}
-    {% include 'view-edit-template.html' %}
-  {% else %}
-    {% include 'show-templates-select.html' %}
-  {% endif %}
-</div>
-
 {# TAB 4 - API KEYS #}
-<div data-tabcontent='4' hidden>
+<div data-tabcontent='3' hidden>
   <p><a target='_blank' rel='noopener' class='external-link' href='https://doc.elabftw.net/api.html'>{{ 'Link to documentation'|trans }}</a></p>
   <h2 class='p-2 pl-3 section-title'>{{ 'Create new key'|trans }}</h2>
 
@@ -517,7 +499,7 @@
 </div>
 
 {# TAB 5 - NOTIFICATIONS SETTINGS #}
-<div data-tabcontent='5' hidden>
+<div data-tabcontent='4' hidden>
   <h2 class='p-2 pl-3 section-title mb-3' id='notificationsSettings'>{{ 'Notifications settings'|trans }}</h2>
   <div class='pl-3'>
   {% for notif in notificationsSettings %}

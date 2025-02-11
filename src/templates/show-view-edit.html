@@ -1,11 +1,9 @@
-{% include 'create-new-item-modal.html' with {'entityType': 'experiments'} %}
-{% include 'create-new-item-modal.html' with {'entityType': 'items'} %}
 {# newcomer banner #}
 {%- if App.teamArr.newcomer_banner_active and App.teamArr.newcomer_banner -%}
   {% set current_date = date() %}
   {% set threshold_date = current_date|date_modify('-' ~ App.teamArr.newcomer_threshold ~ ' days') %}
   {% if App.Users.userData.created_at|date('Y-m-d H:i:s') > threshold_date|date('Y-m-d H:i:s') %}
-  <h3 data-action='toggle-next' data-toggle-target='newcomer_banner' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='newcomer_banner'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Newcomer banner'|trans }}</h3><abbr title='{{ 'You are seeing this because your account is less than %d days old.'|trans|format(App.teamArr.newcomer_threshold) }}'><i class='fas fa-question-circle ml-2'></i></abbr>
+  <h3 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-toggle-target='newcomer_banner' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='newcomer_banner'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Newcomer banner'|trans }}</h3><abbr title='{{ 'You are seeing this because your account is less than %d days old.'|trans|format(App.teamArr.newcomer_threshold) }}'><i class='fas fa-question-circle ml-2'></i></abbr>
     <div class='my-2' id='newcomer_banner' data-save-hidden='newcomer_banner'>
       {{ App.teamArr.newcomer_banner|raw }}
     </div>

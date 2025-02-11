@@ -83,11 +83,27 @@ document.addEventListener('DOMContentLoaded', () => {
           notifError(new Error(i18next.t('Field not found in metadata')));
           return;
         }
+        // TODO: populate value with adapted inputs (select, checkboxes etc.)
+        /*
+        output for a dropdown (select) extra field
+        "dropdown name": {
+          "type": "select",
+          "value": "ch1",
+          "options": [
+            "ch1",
+            "ch2",
+            "ch3"
+          ],
+          "description": "desc dd"
+        }
+
+         */
+        console.log(fieldData);
         fieldGroupSelect.value = fieldData.group_id ?? '-1';
         fieldTypeSelect.value = fieldData.type;
         fieldNameInput.value = fieldName;
         fieldDescriptionInput.value = fieldData.description ?? null;
-        fieldValueInput.value = fieldData.value; // TODO: adapt to dropdowns/checkboxes etc
+        fieldValueInput.value = fieldData.value;
       });
     }
     // DELETE EXTRA FIELD
@@ -107,12 +123,28 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
+  function clearForm() {
+    // remove all extra inputs (dropdown and radio)
+    const form = (document.getElementById('newFieldForm') as HTMLFormElement);
+    form.querySelectorAll('.is-extra-input').forEach(i => i.parentElement.remove());
+    form.reset();
+  }
+
   $('#fieldBuilderModal').on('hidden.bs.modal', () => {
     // reset to default state on close
     if (!editButton.hasAttribute('hidden') && saveButton.hasAttribute('hidden')) {
       editButton.setAttribute('hidden', 'hidden');
       saveButton.removeAttribute('hidden');
     }
+    // remove select/radio inputs if left on modal
+    // const selectradioDiv = document.getElementById('newFieldContentDiv_selectradio') as HTMLDivElement;
+    // if (selectradioDiv) selectradioDiv.setAttribute('hidden', 'hidden');
+    // reset all input  fields except classic text (default)
+    document.querySelectorAll('[id^="newFieldContentDiv_"]:not([id="newFieldContentDiv_classic"])')
+      .forEach(div => {
+        (div as HTMLDivElement).hidden = true;
+      });
+    clearForm();
   });
 
   addAutocompleteToExtraFieldsKeyInputs();
@@ -274,13 +306,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // jQuery selector required for .modal()
         MetadataC.update(json as ValidMetadata).then(() => {
-          const form = (document.getElementById('newFieldForm') as HTMLFormElement);
-          // remove all extra inputs (dropdown and radio)
-          form.querySelectorAll('.is-extra-input').forEach(i => i.parentElement.remove());
-          // store the currently selected group to maintain selection when adding a new input
+          // store the currently selected group before reset, to maintain selection when adding a new input
           const selectedGroup = grpSel.value;
-          // clear all fields
-          form.reset();
+          clearForm();
           // restore original value
           grpSel.value = selectedGroup;
           // and finally close the modal
@@ -314,10 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
         field['value'] = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();
         json['extra_fields'][newFieldKey] = field;
         MetadataC.update(json as ValidMetadata).then(() => {
-          // clear form
-          const form = (document.getElementById('newFieldForm') as HTMLFormElement);
-          form.querySelectorAll('.is-extra-input').forEach(i => i.parentElement.remove());
-          form.reset();
+          clearForm();
           $('#fieldBuilderModal').modal('toggle');
         });
       });

@@ -63,7 +63,7 @@ class IdpsSources implements RestInterface
                     $getter = new HttpGetter(new Client(), $Config->configArr['proxy']);
                     $Url2Xml = new Url2Xml($getter, $source['url'], new DOMDocument());
                     $dom = $Url2Xml->getXmlDocument();
-                    $Xml2Idps = new Xml2Idps($dom, Idps::SSO_BINDING, Idps::SLO_BINDING);
+                    $Xml2Idps = new Xml2Idps($dom);
                     $Idps = new Idps($this->requester);
                     return $this->refresh($Xml2Idps, $Idps);
                 }

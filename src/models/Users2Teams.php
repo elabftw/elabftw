@@ -120,6 +120,10 @@ class Users2Teams
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
         $req->bindValue(':team', $teamid, PDO::PARAM_INT);
         $res = $this->Db->execute($req);
+        // also remove any api key for that user in that team
+        $ApiKeys = new ApiKeys(new Users($userid, $teamid));
+        $ApiKeys->destroyInTeam($teamid);
+
         AuditLogs::create(new TeamRemoval($teamid, 0, $userid));
         return $res;
     }

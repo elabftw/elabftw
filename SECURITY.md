@@ -131,3 +131,4 @@ These users reported vulnerabilities responsibly:
 - @xskullboyx
 - Harinder Singh
 - Mahadi Xion
+- Bryan Lynch

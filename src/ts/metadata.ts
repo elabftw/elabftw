@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       // store current name as attribute, to use as field's key and update
       const fieldNameInput = document.getElementById('newFieldKeyInput') as HTMLInputElement;
-      const fieldName = extraField.querySelector('label').innerText.trim();
+      const fieldName = extraField.querySelector('label').innerText;
       fieldNameInput.dataset.name = fieldName;
 
       // populate modal with current extraField values
@@ -94,10 +94,43 @@ document.addEventListener('DOMContentLoaded', () => {
             input.value = option;
             fieldValueInputDiv.appendChild(input);
           });
-        } else {
-          // for other types, show normal single input
+        }  else if (fieldData.type === 'number') {
+          toggleContentDiv('number');
           const fieldValueInput = document.getElementById('newFieldValueInput') as HTMLInputElement;
-          fieldValueInput.value = fieldData.value;
+          fieldValueInput.value = fieldData.value || '';
+
+          // Populate unit choices
+          const unitInputDiv = document.getElementById('unitChoicesInputDiv');
+          unitInputDiv.innerHTML = '';
+          if (fieldData.units) {
+            fieldData.units.forEach(unit => {
+              const newGroup = document.createElement('div');
+              newGroup.classList.add('input-group', 'mb-1');
+              const unitInput = document.createElement('input');
+              unitInput.classList.add('form-control', 'is-extra-input');
+              unitInput.type = 'text';
+              unitInput.value = unit;
+
+              const appendDiv = document.createElement('div');
+              appendDiv.classList.add('input-group-append');
+              const btn = createButton('remove-self','btn-secondary','-');
+              appendDiv.appendChild(btn);
+
+              newGroup.append(unitInput, appendDiv);
+
+              unitInputDiv.append(newGroup);
+            });
+          }
+
+        } else if (fieldData.type === 'checkbox') {
+          toggleContentDiv('checkbox');
+          const checkboxSelect = document.getElementById('newFieldCheckboxDefaultSelect') as HTMLSelectElement;
+          checkboxSelect.value = fieldData.value === 'on' ? 'checked' : 'unchecked';
+        } else {
+          // Default handling for simple text-based inputs
+          const fieldValueInput = document.getElementById('newFieldValueInput') as HTMLInputElement;
+          fieldValueInput.value = fieldData.value || '';
+          fieldValueInput.type = fieldData.type;
         }
 
         fieldGroupSelect.value = fieldData.group_id ?? '-1';

@@ -32,6 +32,7 @@ use Elabftw\Params\ContentParams;
 use Elabftw\Params\DisplayParams;
 use Elabftw\Params\EntityParams;
 use Elabftw\Params\ExtraFieldsOrderingParams;
+use Elabftw\Params\MetadataParams;
 use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
@@ -668,7 +669,7 @@ abstract class AbstractEntity extends AbstractRest
             throw new ImproperActionException(_('Linking an item to itself is not allowed. Please select a different target.'));
         }
 
-        $Changelog->create(new ContentParams('metadata_' . $key, $valueAsString));
+        $Changelog->create(new MetadataParams('metadata_' . $key, $valueAsString));
         $value = json_encode($value, JSON_HEX_APOS | JSON_THROW_ON_ERROR);
 
         // build jsonPath to field

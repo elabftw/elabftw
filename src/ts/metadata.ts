@@ -333,17 +333,42 @@ document.addEventListener('DOMContentLoaded', () => {
           delete json['extra_fields'][originalFieldKey];
         }
         const field = {};
-        // add the new field
+        // handle field inputs : type, desc, and different type values
         field['type'] = (document.getElementById('newFieldTypeSelect') as HTMLSelectElement).value;
         if (grpSel.value !== '-1') {
           field['group_id'] = parseInt(grpSel.value);
         }
-        // can be non existent, we don't want to add the key to the "field" object
-        if ((document.getElementById('newFieldDescriptionInput') as HTMLInputElement).value) {
-          field['description'] = (document.getElementById('newFieldDescriptionInput') as HTMLInputElement).value.trim();
+        const fieldDescriptionInput = document.getElementById('newFieldDescriptionInput') as HTMLInputElement;
+        if (fieldDescriptionInput.value) {
+          field['description'] = fieldDescriptionInput.value.trim();
         }
-        field['value'] = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();
+        // handle values depending on type
+        if (['text', 'date', 'datetime-local', 'email', 'time', 'url'].includes(field['type'])) {
+          field['value'] = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();
+        } else if (['select', 'radio'].includes(field['type'])) {
+          field['options'] = [];
+          document.getElementById('choicesInputDiv').querySelectorAll('input').forEach(opt => {
+            if (opt.value.trim()) {
+              field['options'].push(opt.value.trim());
+            }
+          });
+          // make sure at least one value is set
+          field['value'] = field['options'][0] || '';
+        } else if (field['type'] === 'number') {
+          field['value'] = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();
+          field['units'] = [];
+          document.getElementById('unitChoicesInputDiv').querySelectorAll('input').forEach(opt => {
+            if (opt.value.trim()) {
+              field['units'].push(opt.value.trim());
+            }
+          });
+          field['unit'] = field['units'].length > 0 ? field['units'][0] : '';
+        } else if (field['type'] === 'checkbox') {
+          field['value'] = (document.getElementById('newFieldCheckboxDefaultSelect') as HTMLSelectElement).value === 'checked' ? 'on' : '';
+        }
+
         json['extra_fields'][newFieldKey] = field;
+
         MetadataC.update(json as ValidMetadata).then(() => {
           clearForm();
           $('#fieldBuilderModal').modal('toggle');

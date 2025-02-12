@@ -159,7 +159,8 @@ class TeamGroups implements RestInterface
         if (empty($idArr)) {
             return array();
         }
-        $sql = 'SELECT team_groups.name FROM team_groups WHERE id IN (' . implode(',', $idArr) . ') ORDER BY name ASC';
+        $onlyIds = array_map('intval', $idArr);
+        $sql = 'SELECT team_groups.name FROM team_groups WHERE id IN (' . implode(',', $onlyIds) . ') ORDER BY name ASC';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
 

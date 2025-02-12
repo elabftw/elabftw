@@ -274,12 +274,11 @@ class TeamGroups implements RestInterface
         return $fullGroups;
     }
 
-    /**
-     * Create a team group
-     */
     private function create(string $name): int
     {
-        $this->canWriteOrExplode();
+        if (!$this->Users->isAdmin) {
+            throw new IllegalActionException(Tools::error(true));
+        }
         $name = Filter::title($name);
         $sql = 'INSERT INTO team_groups(name, team) VALUES(:content, :team)';
         $req = $this->Db->prepare($sql);
@@ -328,7 +327,8 @@ class TeamGroups implements RestInterface
      */
     private function canWriteOrExplode(): void
     {
-        if (!$this->Users->isAdmin) {
+        $teamgroup = $this->readOne();
+        if (!($this->Users->isAdmin && $this->Users->userData['team'] === $teamgroup['team'])) {
             throw new IllegalActionException(Tools::error(true));
         }
     }

@@ -62,10 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // once modal is up, check fields to update
       const fieldGroupSelect = document.getElementById('newFieldGroupSelect') as HTMLSelectElement;
-      const fieldTypeSelect = document.getElementById('newFieldTypeSelect') as HTMLSelectElement;
-      const fieldNameInput = document.getElementById('newFieldKeyInput') as HTMLInputElement;
       const fieldDescriptionInput = document.getElementById('newFieldDescriptionInput') as HTMLInputElement;
-      const fieldValueInput = document.getElementById('newFieldValueInput') as HTMLInputElement;
 
       const extraField = el.parentElement.parentElement.closest('div');
       if (!extraField) {
@@ -73,37 +70,40 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       // store current name as attribute, to use as field's key and update
+      const fieldNameInput = document.getElementById('newFieldKeyInput') as HTMLInputElement;
       const fieldName = extraField.querySelector('label').innerText.trim();
       fieldNameInput.dataset.name = fieldName;
 
+      // populate modal with current extraField values
       MetadataC.read().then(metadata => {
-        // populate modal with current extraField values
         const fieldData = metadata.extra_fields[fieldName];
-        if (!fieldData) {
-          notifError(new Error(i18next.t('Field not found in metadata')));
-          return;
-        }
-        // TODO: populate value with adapted inputs (select, checkboxes etc.)
-        /*
-        output for a dropdown (select) extra field
-        "dropdown name": {
-          "type": "select",
-          "value": "ch1",
-          "options": [
-            "ch1",
-            "ch2",
-            "ch3"
-          ],
-          "description": "desc dd"
+        // set field type
+        const fieldTypeSelect = document.getElementById('newFieldTypeSelect') as HTMLSelectElement;
+        fieldTypeSelect.value = fieldData.type;
+        // check type and adapt "value" input field accordingly
+        if (['select', 'radio'].includes(fieldData.type)) {
+          toggleContentDiv('selectradio');
+          // populate with fieldData current choices
+          const fieldValueInputDiv = document.getElementById('choicesInputDiv');
+          fieldValueInputDiv.innerHTML = '';
+          // create inputs for each option
+          fieldData.options.forEach(option => {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.classList.add('form-control', 'mb-2');
+            input.value = option;
+            fieldValueInputDiv.appendChild(input);
+          });
+        } else {
+          // for other types, show normal single input
+          const fieldValueInput = document.getElementById('newFieldValueInput') as HTMLInputElement;
+          fieldValueInput.value = fieldData.value;
         }
 
-         */
-        console.log(fieldData);
         fieldGroupSelect.value = fieldData.group_id ?? '-1';
         fieldTypeSelect.value = fieldData.type;
         fieldNameInput.value = fieldName;
         fieldDescriptionInput.value = fieldData.description ?? null;
-        fieldValueInput.value = fieldData.value;
       });
     }
     // DELETE EXTRA FIELD
@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
         MetadataC.read().then(metadata => {
           const name = el.parentElement.parentElement.closest('div').querySelector('label').innerText;
           delete metadata.extra_fields[name];
-          MetadataC.update(metadata as ValidMetadata);
+          MetadataC.update(metadata as ValidMetadata).then(() => document.getElementById('metadataDiv').scrollIntoView());
         });
       }
     }
@@ -136,14 +136,12 @@ document.addEventListener('DOMContentLoaded', () => {
       editButton.setAttribute('hidden', 'hidden');
       saveButton.removeAttribute('hidden');
     }
-    // remove select/radio inputs if left on modal
-    // const selectradioDiv = document.getElementById('newFieldContentDiv_selectradio') as HTMLDivElement;
-    // if (selectradioDiv) selectradioDiv.setAttribute('hidden', 'hidden');
-    // reset all input  fields except classic text (default)
+    // reset all input fields except classic text (default)
     document.querySelectorAll('[id^="newFieldContentDiv_"]:not([id="newFieldContentDiv_classic"])')
       .forEach(div => {
         (div as HTMLDivElement).hidden = true;
       });
+    document.getElementById('newFieldContentDiv_classic').hidden = false;
     clearForm();
   });
 
@@ -317,6 +315,11 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     // EDIT EXTRA FIELD
     } else if (el.matches('[data-action="edit-extra-field"]')) {
+      // prevent form invalid data
+      if ((document.getElementById('newFieldForm') as HTMLFormElement).reportValidity() === false) {
+        notifError(new Error('Error validating the form.'));
+        return;
+      }
       // get field to update's current value
       const fieldNameInput = document.getElementById('newFieldKeyInput') as HTMLInputElement;
       const originalFieldKey = fieldNameInput.dataset.name; // store previous key

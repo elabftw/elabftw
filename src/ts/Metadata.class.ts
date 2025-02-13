@@ -452,11 +452,20 @@ export class Metadata {
   // build a description element
   getDescription(properties: ExtraFieldProperties): HTMLSpanElement {
     const descriptionWrapper = document.createElement('div');
+    descriptionWrapper.classList.add('d-flex', 'justify-content-between');
     if (properties.description) {
       const descriptionEl = document.createElement('p');
       descriptionEl.classList.add('smallgray');
       descriptionEl.innerText = properties.description;
       descriptionWrapper.append(descriptionEl);
+    }
+
+    const inputType = (properties.element as HTMLInputElement).type;
+    if (inputType === ExtraFieldInputType.Url || inputType === ExtraFieldInputType.Email) {
+      const descriptionType = document.createElement('p');
+      descriptionType.classList.add('smallgray', 'text-end');
+      descriptionType.innerText = inputType;
+      descriptionWrapper.append(descriptionType);
     }
     return descriptionWrapper;
   }

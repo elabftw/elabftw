@@ -44,6 +44,7 @@ export interface ExtraFieldProperties {
   unit?: string;
   units?: string[];
   readonly?: boolean;
+  element?: HTMLElement;
 }
 
 export interface MetadataElabftw {

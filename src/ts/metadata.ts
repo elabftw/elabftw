@@ -86,38 +86,48 @@ document.addEventListener('DOMContentLoaded', () => {
           // populate with fieldData current choices
           const fieldValueInputDiv = document.getElementById('choicesInputDiv');
           fieldValueInputDiv.innerHTML = '';
-          // create inputs for each option
-          fieldData.options.forEach(option => {
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.classList.add('form-control', 'mb-2');
-            input.value = option;
-            fieldValueInputDiv.appendChild(input);
-          });
+          if (fieldData.options) {
+            fieldData.options.forEach(option => {
+              // create group
+              const newGroup = document.createElement('div');
+              newGroup.classList.add('input-group', 'mb-1');
+              // create input
+              const input = document.createElement('input');
+              input.classList.add('form-control', 'is-extra-input');
+              input.type = 'text';
+              input.value = option;
+              // create group div for inpt
+              const appendDiv = document.createElement('div');
+              appendDiv.classList.add('input-group-append');
+              // create self remove btn
+              const btn = createButton('remove-self','btn-secondary','-');
+              appendDiv.appendChild(btn);
+              newGroup.append(input, appendDiv);
+              fieldValueInputDiv.append(newGroup);
+            });
+          }
         }  else if (fieldData.type === 'number') {
           toggleContentDiv('number');
-          const fieldValueInput = document.getElementById('newFieldValueInput') as HTMLInputElement;
-          fieldValueInput.value = fieldData.value || '';
-
+          // populate with fieldData current choices
           // Populate unit choices
           const unitInputDiv = document.getElementById('unitChoicesInputDiv');
           unitInputDiv.innerHTML = '';
           if (fieldData.units) {
             fieldData.units.forEach(unit => {
+              // create group
               const newGroup = document.createElement('div');
               newGroup.classList.add('input-group', 'mb-1');
-              const unitInput = document.createElement('input');
-              unitInput.classList.add('form-control', 'is-extra-input');
-              unitInput.type = 'text';
-              unitInput.value = unit;
-
+              // create input
+              const input = document.createElement('input');
+              input.classList.add('form-control', 'is-extra-input');
+              input.type = 'text';
+              input.value = unit;
               const appendDiv = document.createElement('div');
               appendDiv.classList.add('input-group-append');
+              // create self remove btn
               const btn = createButton('remove-self','btn-secondary','-');
               appendDiv.appendChild(btn);
-
-              newGroup.append(unitInput, appendDiv);
-
+              newGroup.append(input, appendDiv);
               unitInputDiv.append(newGroup);
             });
           }

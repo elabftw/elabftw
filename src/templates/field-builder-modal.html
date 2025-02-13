@@ -91,14 +91,6 @@
                 <input type='text' class='form-control mb-1' autocomplete='off'>
               </div>
               <button type='button' class='btn btn-secondary btn-sm' data-action='new-field-add-option'>{{ 'Add another choice'|trans }}</button>
-              {# this is only shown for select type #}
-              <div id='newFieldContentDiv_select' hidden>
-                <hr>
-                <div class='custom-control custom-checkbox'>
-                  <input type='checkbox' class='custom-control-input' id='newFieldAllowMultiSelect'>
-                  <label class='custom-control-label' for='newFieldAllowMultiSelect'>{{ 'Allow selection of multiple values?'|trans }}</label>
-                </div>
-              </div>
             </div>
 
             {# UNITS for NUMBER #}
@@ -121,36 +113,42 @@
             </div>
 
             <div class='separator'></div>
+          <div class="d-flex flex-column gap-3">
             {# Blank value on duplicate switch #}
-            <div>
-              <div class='d-inline-flex flex-row'>
-                <label class='d-inline mr-1' for='blankValueOnDuplicateSwitch'>{{ 'Blank value on duplicate'|trans }}</label>
-                <label class='switch'>
-                  <input type='checkbox' autocomplete='off' id='blankValueOnDuplicateSwitch'>
-                  <span class='slider'></span>
+              <div class="d-flex justify-content-between align-items-center py-1">
+                <label class="mr-3" for="blankValueOnDuplicateSwitch">{{ 'Blank value on duplicate'|trans }}</label>
+                <label class="switch mb-0">
+                  <input type="checkbox" autocomplete="off" id="blankValueOnDuplicateSwitch">
+                  <span class="slider"></span>
                 </label>
               </div>
-            </div>
             {# required switch #}
-            <div>
-              <div class='d-inline-flex flex-row'>
-                <label class='d-inline mr-1' for='requiredSwitch'>{{ 'Required'|trans }}</label>
+              <div class="d-flex justify-content-between align-items-center">
+                <label for='requiredSwitch'>{{ 'Required'|trans }}</label>
                 <label class='switch'>
                   <input type='checkbox' autocomplete='off' id='requiredSwitch'>
                   <span class='slider'></span>
                 </label>
               </div>
-            </div>
             {# readonly switch #}
-            <div>
-              <div class='d-inline-flex flex-row'>
-                <label class='d-inline mr-1' for='readonlySwitch'>{{ 'Read-only'|trans }}</label>
+              <div class="d-flex justify-content-between align-items-center">
+                <label for='readonlySwitch'>{{ 'Read-only'|trans }}</label>
                 <label class='switch'>
                   <input type='checkbox' autocomplete='off' id='readonlySwitch'>
                   <span class='slider'></span>
                 </label>
               </div>
-            </div>
+            {# only shown for select type #}
+              <div id='newFieldContentDiv_select' hidden>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <label for='newFieldAllowMultiSelect'>{{ 'Allow selection of multiple values?'|trans }}</label>
+                    <label class='switch'>
+                      <input type='checkbox' autocomplete='off' id='newFieldAllowMultiSelect'>
+                      <span class='slider'></span>
+                    </label>
+                  </div>
+              </div>
+          </div>
 
         </div>
         <div class='modal-footer'>

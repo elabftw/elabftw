@@ -35,10 +35,10 @@ class Changelog
             return false;
         }
         // we don't store the full body, let the revisions system handle that
-        $content = $params->getContent();
+        $content = $params->getUnfilteredContent();
         if ($params->getTarget() === 'body' || $params->getTarget() === 'bodyappend') {
             // skip creation if the new body is the same as old body
-            if ($this->entity->entityData['body'] === (string) $content) {
+            if ($this->entity->entityData['body'] === $content) {
                 return false;
             }
             /** @psalm-suppress PossiblyNullArgument */

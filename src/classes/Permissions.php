@@ -16,8 +16,8 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Models\AnonymousUser;
 use Elabftw\Models\AuthenticatedUser;
 use Elabftw\Models\TeamGroups;
-use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
+use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\UsersHelper;
 
 /**
@@ -26,8 +26,6 @@ use Elabftw\Services\UsersHelper;
  */
 class Permissions
 {
-    private Teams $Teams;
-
     private TeamGroups $TeamGroups;
 
     private array $canread;
@@ -41,7 +39,6 @@ class Permissions
      */
     public function __construct(private Users $Users, private array $item)
     {
-        $this->Teams = new Teams($this->Users);
         $this->TeamGroups = new TeamGroups($this->Users);
         $this->canread = json_decode($item['canread'], true, 512, JSON_THROW_ON_ERROR);
         $this->canwrite = json_decode($item['canwrite'], true, 512, JSON_THROW_ON_ERROR);
@@ -84,9 +81,10 @@ class Permissions
             }
         }
 
-        // if the setting is 'user' (meaning user + admin(s)) check we are admin
+        // if the setting is 'user' (meaning user + admin(s)) check we are admin in the same team as the entity team column
         if ($can['base'] === BasePermissions::User->value) {
-            if ($this->Users->isAdmin && $this->Teams->hasCommonTeamWithCurrent($this->item['userid'], $this->Users->userData['team'])) {
+            $TeamsHelper = new TeamsHelper($this->item['team']);
+            if ($this->Users->isAdmin && $TeamsHelper->isAdminInTeam($this->Users->userData['userid'])) {
                 return true;
             }
         }
@@ -121,21 +119,6 @@ class Permissions
             return true;
         }
 
-        // it's not our entity, our last chance is to be admin in the same team as owner
-        // also make sure that it's not in "useronly" mode
-        if ($this->Users->isAdmin && ($can['base'] ?? 0) !== BasePermissions::UserOnly->value) {
-            // if it's an item (has team attribute), we need to be logged in in same team
-            if (isset($this->item['team'])) {
-                if ($this->item['team'] === $this->Users->userData['team']) {
-                    return true;
-                }
-            } else { // experiment
-                $Owner = new Users($this->item['userid']);
-                if ($this->Teams->hasCommonTeamWithCurrent($Owner->userData['userid'], $this->Users->userData['team'])) {
-                    return true;
-                }
-            }
-        }
         return false;
     }
 

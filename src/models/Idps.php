@@ -27,9 +27,13 @@ class Idps implements RestInterface
 {
     use SetIdTrait;
 
-    public const string SSO_BINDING = 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST';
+    public const string SSO_BINDING_POST = 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST';
 
-    public const string SLO_BINDING = 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect';
+    public const string SSO_BINDING_REDIRECT = 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect';
+
+    public const string SLO_BINDING_POST = 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST';
+
+    public const string SLO_BINDING_REDIRECT = 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect';
 
     private const string EMAIL_ATTR = 'urn:oid:0.9.2342.19200300.100.1.3';
 
@@ -205,8 +209,8 @@ class Idps implements RestInterface
         string $x509,
         string $x509_new = '',
         ?string $slo_url = '',
-        string $sso_binding = self::SSO_BINDING,
-        string $slo_binding = self::SLO_BINDING,
+        string $sso_binding = self::SSO_BINDING_POST,
+        string $slo_binding = self::SLO_BINDING_REDIRECT,
         string $email_attr = self::EMAIL_ATTR,
         ?string $team_attr = self::TEAM_ATTR,
         string $fname_attr = self::FNAME_ATTR,

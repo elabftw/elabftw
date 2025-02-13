@@ -14,7 +14,6 @@ namespace Elabftw\Services;
 
 use DOMDocument;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Idps;
 
 class Xml2IdpsTest extends \PHPUnit\Framework\TestCase
 {
@@ -23,7 +22,7 @@ class Xml2IdpsTest extends \PHPUnit\Framework\TestCase
         $content = '<?xml version="1.0" encoding="UTF-8"?><elab:Ftw></elab:Ftw>';
         $dom = new DOMDocument();
         $dom->loadXML($content);
-        $Xml2Idps = new Xml2Idps($dom, Idps::SSO_BINDING, Idps::SLO_BINDING);
+        $Xml2Idps = new Xml2Idps($dom);
         $this->expectException(ImproperActionException::class);
         $Xml2Idps->getIdpsFromDom();
     }
@@ -33,7 +32,7 @@ class Xml2IdpsTest extends \PHPUnit\Framework\TestCase
         $content = (string) file_get_contents(dirname(__DIR__, 2) . '/_data/idp-metadata.xml');
         $dom = new DOMDocument();
         $dom->loadXML($content);
-        $Xml2Idps = new Xml2Idps($dom, Idps::SSO_BINDING, Idps::SLO_BINDING);
+        $Xml2Idps = new Xml2Idps($dom);
         $idps = $Xml2Idps->getIdpsFromDom();
         $this->assertIsArray($idps);
         $this->assertEquals(2, count($idps));

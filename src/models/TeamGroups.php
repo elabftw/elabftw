@@ -159,7 +159,8 @@ class TeamGroups implements RestInterface
         if (empty($idArr)) {
             return array();
         }
-        $sql = 'SELECT team_groups.name FROM team_groups WHERE id IN (' . implode(',', $idArr) . ') ORDER BY name ASC';
+        $onlyIds = array_map('intval', $idArr);
+        $sql = 'SELECT team_groups.name FROM team_groups WHERE id IN (' . implode(',', $onlyIds) . ') ORDER BY name ASC';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
 
@@ -273,12 +274,11 @@ class TeamGroups implements RestInterface
         return $fullGroups;
     }
 
-    /**
-     * Create a team group
-     */
     private function create(string $name): int
     {
-        $this->canWriteOrExplode();
+        if (!$this->Users->isAdmin) {
+            throw new IllegalActionException(Tools::error(true));
+        }
         $name = Filter::title($name);
         $sql = 'INSERT INTO team_groups(name, team) VALUES(:content, :team)';
         $req = $this->Db->prepare($sql);
@@ -327,7 +327,8 @@ class TeamGroups implements RestInterface
      */
     private function canWriteOrExplode(): void
     {
-        if (!$this->Users->isAdmin) {
+        $teamgroup = $this->readOne();
+        if (!($this->Users->isAdmin && $this->Users->userData['team'] === $teamgroup['team'])) {
             throw new IllegalActionException(Tools::error(true));
         }
     }

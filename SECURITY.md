@@ -130,3 +130,5 @@ These users reported vulnerabilities responsibly:
 - Piyush Patil (@xoffense).
 - @xskullboyx
 - Harinder Singh
+- Mahadi Xion
+- Bryan Lynch

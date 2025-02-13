@@ -80,58 +80,46 @@ document.addEventListener('DOMContentLoaded', () => {
         // set field type
         const fieldTypeSelect = document.getElementById('newFieldTypeSelect') as HTMLSelectElement;
         fieldTypeSelect.value = fieldData.type;
-        // check type and adapt "value" input field accordingly
+
+        let containerId, sourceArray, toggleDiv;
+        // same behaviour is applied for select, radio and number. Only div name is different
         if (['select', 'radio'].includes(fieldData.type)) {
-          toggleContentDiv('selectradio');
-          // populate with fieldData current choices
-          const fieldValueInputDiv = document.getElementById('choicesInputDiv');
+          containerId = 'choicesInputDiv';
+          sourceArray = fieldData.options;
+          toggleDiv = 'selectradio';
+        } else if (fieldData.type === 'number') {
+          containerId = 'unitChoicesInputDiv';
+          sourceArray = fieldData.units;
+          toggleDiv = 'number';
+        }
+
+        if (toggleDiv) {
+          toggleContentDiv(toggleDiv);
+          const fieldValueInputDiv = document.getElementById(containerId);
           fieldValueInputDiv.innerHTML = '';
-          if (fieldData.options) {
-            fieldData.options.forEach(option => {
-              // create group
+
+          // populate the corresponding container
+          if (sourceArray) {
+            sourceArray.forEach(item => {
+              // Create group
               const newGroup = document.createElement('div');
               newGroup.classList.add('input-group', 'mb-1');
-              // create input
+              // Create input
               const input = document.createElement('input');
               input.classList.add('form-control', 'is-extra-input');
               input.type = 'text';
-              input.value = option;
-              // create group div for inpt
+              input.value = item;
+              // Create button append div
               const appendDiv = document.createElement('div');
               appendDiv.classList.add('input-group-append');
-              // create self remove btn
-              const btn = createButton('remove-self','btn-secondary','-');
+              // Create self-remove button
+              const btn = createButton('remove-self', 'btn-secondary', '-');
               appendDiv.appendChild(btn);
+              // Assemble elements
               newGroup.append(input, appendDiv);
               fieldValueInputDiv.append(newGroup);
             });
           }
-        }  else if (fieldData.type === 'number') {
-          toggleContentDiv('number');
-          // populate with fieldData current choices
-          // Populate unit choices
-          const unitInputDiv = document.getElementById('unitChoicesInputDiv');
-          unitInputDiv.innerHTML = '';
-          if (fieldData.units) {
-            fieldData.units.forEach(unit => {
-              // create group
-              const newGroup = document.createElement('div');
-              newGroup.classList.add('input-group', 'mb-1');
-              // create input
-              const input = document.createElement('input');
-              input.classList.add('form-control', 'is-extra-input');
-              input.type = 'text';
-              input.value = unit;
-              const appendDiv = document.createElement('div');
-              appendDiv.classList.add('input-group-append');
-              // create self remove btn
-              const btn = createButton('remove-self','btn-secondary','-');
-              appendDiv.appendChild(btn);
-              newGroup.append(input, appendDiv);
-              unitInputDiv.append(newGroup);
-            });
-          }
-
         } else if (fieldData.type === 'checkbox') {
           toggleContentDiv('checkbox');
           const checkboxSelect = document.getElementById('newFieldCheckboxDefaultSelect') as HTMLSelectElement;

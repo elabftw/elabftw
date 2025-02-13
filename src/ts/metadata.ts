@@ -81,6 +81,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const fieldTypeSelect = document.getElementById('newFieldTypeSelect') as HTMLSelectElement;
         fieldTypeSelect.value = fieldData.type;
 
+        // prefill switches
+        (document.getElementById('blankValueOnDuplicateSwitch') as HTMLInputElement).checked = !!fieldData.blank_value_on_duplicate;
+        (document.getElementById('requiredSwitch') as HTMLInputElement).checked = !!fieldData.required;
+        (document.getElementById('readonlySwitch') as HTMLInputElement).checked = !!fieldData.readonly;
+        (document.getElementById('newFieldAllowMultiSelect') as HTMLInputElement).checked = !!fieldData.allow_multi_values;
+
         let containerId, sourceArray, toggleDiv;
         // same behaviour is applied for select, radio and number. Only div name is different
         if (['select', 'radio'].includes(fieldData.type)) {
@@ -315,15 +321,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if ((document.getElementById('blankValueOnDuplicateSwitch') as HTMLInputElement).checked) {
           field['blank_value_on_duplicate'] = true;
         }
-        // deal with the required attribute
         if ((document.getElementById('requiredSwitch') as HTMLInputElement).checked) {
           field['required'] = true;
         }
-        // deal with the readonly attribute
         if ((document.getElementById('readonlySwitch') as HTMLInputElement).checked) {
           field['readonly'] = true;
         }
-        // deal with the multi select
         if ((document.getElementById('newFieldAllowMultiSelect') as HTMLInputElement).checked) {
           field['allow_multi_values'] = true;
         }
@@ -396,6 +399,23 @@ document.addEventListener('DOMContentLoaded', () => {
           field['unit'] = field['units'].length > 0 ? field['units'][0] : '';
         } else if (field['type'] === 'checkbox') {
           field['value'] = (document.getElementById('newFieldCheckboxDefaultSelect') as HTMLSelectElement).value === 'checked' ? 'on' : '';
+        }
+
+        // deal with the blank_on_value
+        if ((document.getElementById('blankValueOnDuplicateSwitch') as HTMLInputElement).checked) {
+          field['blank_value_on_duplicate'] = true;
+        }
+        // deal with the required attribute
+        if ((document.getElementById('requiredSwitch') as HTMLInputElement).checked) {
+          field['required'] = true;
+        }
+        // deal with the readonly attribute
+        if ((document.getElementById('readonlySwitch') as HTMLInputElement).checked) {
+          field['readonly'] = true;
+        }
+        // deal with the multi select
+        if ((document.getElementById('newFieldAllowMultiSelect') as HTMLInputElement).checked) {
+          field['allow_multi_values'] = true;
         }
 
         json['extra_fields'][newFieldKey] = field;

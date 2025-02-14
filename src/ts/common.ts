@@ -335,16 +335,16 @@ document.addEventListener('DOMContentLoaded', () => {
         // TODO i18n
         switch (el.dataset.policy) {
         case 'tos':
-          title = 'Terms of Service';
+          title = json.tos_name;
           break;
         case 'a11y':
-          title = 'Accessibility Statement';
+          title = json.a11y_name;
           break;
         case 'legal':
-          title = 'Legal notice';
+          title = json.legal_name;
           break;
         default:
-          title = 'Privacy Policy';
+          title = json.privacy_name;
         }
         (document.getElementById('policiesModalLabel') as HTMLHeadElement).innerText = title;
         (document.getElementById('policiesModalBody') as HTMLDivElement).innerHTML = policy;

@@ -310,7 +310,8 @@ class Users extends AbstractRest
         if (empty($idArr)) {
             return array();
         }
-        $sql = "SELECT CONCAT(users.firstname, ' ', users.lastname) AS fullname, userid, email FROM users WHERE userid IN (" . implode(',', $idArr) . ') ORDER BY fullname ASC';
+        $onlyIds = array_map('intval', $idArr);
+        $sql = "SELECT CONCAT(users.firstname, ' ', users.lastname) AS fullname, userid, email FROM users WHERE userid IN (" . implode(',', $onlyIds) . ') ORDER BY fullname ASC';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
 

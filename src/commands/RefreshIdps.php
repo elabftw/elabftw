@@ -53,7 +53,7 @@ class RefreshIdps extends Command
             $IdpsSources->setId($source['id']);
             $Url2Xml = new Url2Xml($getter, $source['url'], new DOMDocument());
             $dom = $Url2Xml->getXmlDocument();
-            $Xml2Idps = new Xml2Idps($dom, Idps::SSO_BINDING, Idps::SLO_BINDING);
+            $Xml2Idps = new Xml2Idps($dom);
             $IdpsSources->refresh($Xml2Idps, $Idps);
         }
         return Command::SUCCESS;

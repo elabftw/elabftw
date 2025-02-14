@@ -32,19 +32,20 @@ It is accessed _via_ the browser. Several research teams can be hosted on the sa
 ## Features
 
 * Lab notebook for experiments
-* Database for lab reagents, equipment, storage, cell lines, etc...
+* Database for resources (lab reagents, equipment, storage, cell lines, chemical products, etc...)
 * Trusted timestamping
 * Blockchain timestamping
 * Import and export in various formats
 * Calendar to manage booking of equipment
 * Support for various scientific file formats
-* Molecule/equation editor
+* Molecule editor
 * LaTeX support
 * Todolist
 * Public REST API
-* Available in 17 languages
+* Available in 21 languages
 * Advanced permissions system
 * Audited, secure codebase suitable for sensitive research results
+* Self contained service that doesn't leak data to third party
 
 ## How it works
 

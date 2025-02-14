@@ -101,7 +101,7 @@ class Users2Teams
     public function rmUserFromTeams(int $userid, array $teamIdArr): void
     {
         foreach ($teamIdArr as $teamId) {
-            $this->destroy($userid, $teamId);
+            $this->removeUserFromTeam($userid, $teamId);
         }
     }
 
@@ -109,6 +109,16 @@ class Users2Teams
      * Remove one user from a team
      */
     public function destroy(int $userid, int $teamid): bool
+    {
+        // make sure we are Admin in the team that we are removing the user from
+        $TeamsHelper = new TeamsHelper($teamid);
+        if (!$this->requester->userData['is_sysadmin'] || $TeamsHelper->isAdminInTeam($this->requester->userData['userid'])) {
+            throw new ImproperActionException('Cannot remove user from team if not admin of said user in that team');
+        }
+        return $this->removeUserFromTeam($userid, $teamid);
+    }
+
+    private function removeUserFromTeam(int $userid, int $teamid): bool
     {
         // make sure that the user is in more than one team before removing the team
         $UsersHelper = new UsersHelper($userid);
@@ -120,6 +130,10 @@ class Users2Teams
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
         $req->bindValue(':team', $teamid, PDO::PARAM_INT);
         $res = $this->Db->execute($req);
+        // also remove any api key for that user in that team
+        $ApiKeys = new ApiKeys(new Users($userid, $teamid));
+        $ApiKeys->destroyInTeam($teamid);
+
         AuditLogs::create(new TeamRemoval($teamid, 0, $userid));
         return $res;
     }

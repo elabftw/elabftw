@@ -33,6 +33,16 @@ class Users2TeamsTest extends \PHPUnit\Framework\TestCase
         $this->Users2Teams->rmUserFromTeams(4, array(2));
     }
 
+    public function testRmUserFromTeamButNotAdminInTeam(): void
+    {
+        // tata in bravo
+        $Users2Teams = new Users2Teams(new Users(5, 2));
+        // user in bravo, adding them to alpha
+        $Users2Teams->addUserToTeams(6, array(1));
+        $this->expectException(ImproperActionException::class);
+        $Users2Teams->destroy(6, 1);
+    }
+
     public function testPatchUser2TeamGroup(): void
     {
         $params = array(

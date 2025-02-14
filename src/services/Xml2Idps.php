@@ -14,16 +14,20 @@ namespace Elabftw\Services;
 
 use DOMDocument;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Idps;
 
 /**
  * Convert XML metadata about IDPs into eLabFTW's IDP
  */
 class Xml2Idps
 {
-    public function __construct(private DOMDocument $dom, private string $ssoBinding, private string $sloBinding) {}
+    public function __construct(private DOMDocument $dom) {}
 
     public function getIdpsFromDom(): array
     {
+        $ssoBindings = array(Idps::SSO_BINDING_POST, Idps::SSO_BINDING_REDIRECT);
+        $sloBindings = array(Idps::SLO_BINDING_POST, Idps::SSO_BINDING_REDIRECT);
+
         $res = array();
         $entities = $this->dom->getElementsByTagNameNS('*', 'EntityDescriptor');
         if (count($entities) === 0) {
@@ -59,7 +63,7 @@ class Xml2Idps
             // SSO
             $ssoServiceNodes = $entity->getElementsByTagNameNS('*', 'SingleSignOnService');
             foreach ($ssoServiceNodes as $node) {
-                if ($node->getAttribute('Binding') === $this->ssoBinding) {
+                if (in_array($node->getAttribute('Binding'), $ssoBindings, true)) {
                     $idp['sso_url'] = $node->getAttribute('Location');
                 }
             }
@@ -70,7 +74,7 @@ class Xml2Idps
             // SLO
             $sloServiceNodes = $entity->getElementsByTagNameNS('*', 'SingleLogoutService');
             foreach ($sloServiceNodes as $node) {
-                if ($node->getAttribute('Binding') === $this->sloBinding) {
+                if (in_array($node->getAttribute('Binding'), $sloBindings, true)) {
                     $idp['slo_url'] = $node->getAttribute('Location');
                 }
             }

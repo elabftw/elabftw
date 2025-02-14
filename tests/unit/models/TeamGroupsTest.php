@@ -12,15 +12,19 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\IllegalActionException;
 
 class TeamGroupsTest extends \PHPUnit\Framework\TestCase
 {
     private TeamGroups $TeamGroups;
 
+    private Users $Users;
+
     protected function setUp(): void
     {
-        $this->TeamGroups = new TeamGroups(new Users(1, 1));
+        $this->Users = new Users(1, 1);
+        $this->TeamGroups = new TeamGroups($this->Users);
     }
 
     public function testCreate(): void
@@ -38,6 +42,25 @@ class TeamGroupsTest extends \PHPUnit\Framework\TestCase
         $id = $this->TeamGroups->postAction(Action::Create, array('name' => 'Group Name'));
         $this->TeamGroups->setId($id);
         $this->assertEquals('Group Name', $this->TeamGroups->readOne()['name']);
+    }
+
+    public function testReadNamesFromId(): void
+    {
+        $id = $this->TeamGroups->postAction(Action::Create, array('name' => 'yep'));
+        $id2 = $this->TeamGroups->postAction(Action::Create, array('name' => 'yop'));
+        $res = $this->TeamGroups->readNamesFromIds(array($id, $id2));
+        $this->assertEquals('yep', $res[0]['name']);
+        $this->assertEquals('yop', $res[1]['name']);
+    }
+
+    public function testReadScopedTeamgroups(): void
+    {
+        $this->Users->userData['scope_teamgroups'] = Scope::User->value;
+        $this->assertIsArray($this->TeamGroups->readScopedTeamgroups());
+        $this->Users->userData['scope_teamgroups'] = Scope::Team->value;
+        $this->assertIsArray($this->TeamGroups->readScopedTeamgroups());
+        $this->Users->userData['scope_teamgroups'] = Scope::Everything->value;
+        $this->assertIsArray($this->TeamGroups->readScopedTeamgroups());
     }
 
     public function testUpdate(): void

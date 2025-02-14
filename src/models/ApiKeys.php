@@ -129,6 +129,22 @@ class ApiKeys extends AbstractRest
         return $res;
     }
 
+    /**
+     * Remove keys of a user in a team
+     */
+    public function destroyInTeam(int $team): bool
+    {
+        $sql = 'DELETE FROM api_keys WHERE team = :team AND userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':team', $team, PDO::PARAM_INT);
+        $req->bindValue(':userid', $this->Users->requester->userid ?? 0, PDO::PARAM_INT);
+
+        if ($res = $this->Db->execute($req)) {
+            AuditLogs::create(new ApiKeyDeleted($this->Users->requester->userid ?? 0, $this->Users->userid ?? 0));
+        }
+        return $res;
+    }
+
     public function create(string $name, int $canwrite): int
     {
         $hash = password_hash($this->generateKey(), PASSWORD_BCRYPT);

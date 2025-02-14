@@ -78,10 +78,12 @@ document.addEventListener('DOMContentLoaded', () => {
       // populate modal with current extraField values
       MetadataC.read().then(metadata => {
         const fieldData = metadata.extra_fields[fieldName];
+        const fieldType = fieldData.type?.trim() || 'text';
         // set field type
         const fieldTypeSelect = document.getElementById('newFieldTypeSelect') as HTMLSelectElement;
-        fieldTypeSelect.value = fieldData.type;
-        if (fieldData.type === 'select' && multiSelectDiv.hidden) {
+        fieldTypeSelect.value = fieldType;
+        // type may be null due to json editing,if null return a default value
+        if (fieldType === ExtraFieldInputType.Select && multiSelectDiv.hidden) {
           multiSelectDiv.removeAttribute('hidden');
         }
         // prefill switches
@@ -92,11 +94,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let containerId, sourceArray, toggleDiv;
         // same behaviour is applied for select, radio and number. Only div name is different
-        if (fieldData.type === 'select' || fieldData.type === 'radio') {
+        if (fieldType === ExtraFieldInputType.Select || fieldType === ExtraFieldInputType.Radio) {
           containerId = 'choicesInputDiv';
           sourceArray = fieldData.options;
           toggleDiv = 'selectradio';
-        } else if (fieldData.type === 'number') {
+        } else if (fieldType === ExtraFieldInputType.Number) {
           containerId = 'unitChoicesInputDiv';
           sourceArray = fieldData.units;
           toggleDiv = 'number';
@@ -129,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
               fieldValueInputDiv.append(newGroup);
             });
           }
-        } else if (fieldData.type === 'checkbox') {
+        } else if (fieldType === ExtraFieldInputType.Checkbox) {
           toggleContentDiv('checkbox');
           const checkboxSelect = document.getElementById('newFieldCheckboxDefaultSelect') as HTMLSelectElement;
           checkboxSelect.value = fieldData.value === 'on' ? 'checked' : 'unchecked';
@@ -137,11 +139,11 @@ document.addEventListener('DOMContentLoaded', () => {
           // Default handling for simple text-based inputs
           const fieldValueInput = document.getElementById('newFieldValueInput') as HTMLInputElement;
           fieldValueInput.value = fieldData.value || '';
-          fieldValueInput.type = fieldData.type;
+          fieldValueInput.type = fieldType;
         }
 
         fieldGroupSelect.value = fieldData.group_id ?? '-1';
-        fieldTypeSelect.value = fieldData.type;
+        fieldTypeSelect.value = fieldType;
         fieldNameInput.value = fieldName;
         fieldDescriptionInput.value = fieldData.description ?? null;
       });
@@ -296,7 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
           document.getElementById('choicesInputDiv').querySelectorAll('input').forEach(opt => field['options'].push(opt.value));
           // just take the first one as selected value
           fieldValue = field['options'][0];
-        } else if (field['type'] === 'number') {
+        } else if (field['type'] === ExtraFieldInputType.Number) {
           fieldValue = (document.getElementById('newFieldValueInput') as HTMLInputElement).value;
           field['units'] = [];
           document.getElementById('unitChoicesInputDiv').querySelectorAll('input').forEach(opt => {
@@ -312,7 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
             field['unit'] = field['units'][0];
           }
 
-        } else if (field['type'] === 'checkbox') {
+        } else if (field['type'] === ExtraFieldInputType.Checkbox) {
           fieldValue = (document.getElementById('newFieldCheckboxDefaultSelect') as HTMLSelectElement).value === 'checked' ? 'on' : '';
         }
         field['value'] = fieldValue || '';
@@ -391,7 +393,7 @@ document.addEventListener('DOMContentLoaded', () => {
           });
           // make sure at least one value is set
           field['value'] = field['options'][0] || '';
-        } else if (field['type'] === 'number') {
+        } else if (field['type'] === ExtraFieldInputType.Number) {
           field['value'] = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();
           field['units'] = [];
           document.getElementById('unitChoicesInputDiv').querySelectorAll('input').forEach(opt => {
@@ -400,7 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
           });
           field['unit'] = field['units'].length > 0 ? field['units'][0] : '';
-        } else if (field['type'] === 'checkbox') {
+        } else if (field['type'] === ExtraFieldInputType.Checkbox) {
           field['value'] = (document.getElementById('newFieldCheckboxDefaultSelect') as HTMLSelectElement).value === 'checked' ? 'on' : '';
         }
 

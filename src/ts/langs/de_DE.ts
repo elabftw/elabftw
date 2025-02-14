@@ -9,6 +9,7 @@ const t = {
     "custom-id-in-use": "Benutzerdefinierte ID wird bereits verwendet! Bitte andere verwenden.",
     "dropzone-upload-area": "Dateien zum Hochladen hier fallen lassen",
     "dropzone-filesize-limit": "Begrenzung der Dateigröße:",
+    "edit": "Bearbeiten",
     "edit-compound": "Edit compound",
     "editing-metadata": "Sie bearbeiten gerade die Metadaten zu diesem Eintrag.",
     "entity-default-title": "Unbenannt",

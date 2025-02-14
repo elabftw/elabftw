@@ -560,7 +560,27 @@ export class Metadata {
             label.classList.add('py-2');
 
             // div to hold the drag and delete buttons
-            const handleDeleteDiv = document.createElement('div');
+            const fieldActionsDiv = document.createElement('div');
+            fieldActionsDiv.classList.add('d-flex', 'align-items-center');
+
+            // add a badge indicating the field's type
+            const badgeContainer = document.createElement('div');
+            const badge = document.createElement('span');
+            badge.classList.add('badge', 'badge-pill', 'badge-light', 'mr-3');
+            // define input type for badge (sometimes it's input (text, url) sometimes it's an input-group (datetime, search user/experiment etc.)
+            let inputType;
+            if (element.element.tagName === 'INPUT' || element.element.tagName === 'SELECT') {
+              inputType = element.element.type;
+            } else if (element.element.classList.contains('input-group')) {
+              // find the first input element within the input group
+              const input = element.element.querySelector('input');
+              inputType = input ? input.type : 'unknown';
+            } else {
+              // radio is only "special case" and too many conditions to identify it
+              inputType = 'radio';
+            }
+            badge.innerText = inputType;
+            badgeContainer.appendChild(badge);
 
             // add a button to set the position of the field
             const handle = document.createElement('div');
@@ -573,21 +593,32 @@ export class Metadata {
             handleIconSpan.appendChild(handleIcon);
             handle.appendChild(handleIconSpan);
 
+            // button to edit the field
+            const editBtn = document.createElement('button');
+            editBtn.dataset.action = 'metadata-edit-field';
+            editBtn.dataset.target = 'fieldBuilderModal';
+            editBtn.classList.add('btn', 'p-2', 'mr-2', 'hl-hover-gray', 'border-0', 'lh-normal');
+            editBtn.type = 'button';
+            editBtn.setAttribute('aria-label', i18next.t('edit'));
+            editBtn.setAttribute('title', i18next.t('edit'));
+            const editIcon = document.createElement('i');
+            editIcon.classList.add('fas', 'fa-pencil-alt');
+            editBtn.appendChild(editIcon);
+
             // add a button to delete the field
             const deleteBtn = document.createElement('button');
             deleteBtn.dataset.action = 'metadata-rm-field';
             deleteBtn.classList.add('btn', 'p-2', 'hl-hover-gray', 'border-0', 'lh-normal');
             deleteBtn.type = 'button';
             deleteBtn.setAttribute('aria-label', i18next.t('remove'));
+            deleteBtn.setAttribute('title', i18next.t('remove'));
             const deleteIcon = document.createElement('i');
             deleteIcon.classList.add('fas', 'fa-trash-alt');
             deleteBtn.appendChild(deleteIcon);
 
-            handleDeleteDiv.appendChild(handle);
-            handleDeleteDiv.appendChild(deleteBtn);
+            fieldActionsDiv.append(badgeContainer, handle, editBtn, deleteBtn);
 
-            labelDiv.append(label);
-            labelDiv.append(handleDeleteDiv);
+            labelDiv.append(label, fieldActionsDiv);
 
             // for checkboxes the label comes second
             if (element.element.type === 'checkbox') {

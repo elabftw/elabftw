@@ -9,6 +9,7 @@ const t = {
     "custom-id-in-use": "Custom ID is already used! Try another one.",
     "dropzone-upload-area": "ここにファイルをドロップしてアップロードします",
     "dropzone-filesize-limit": "File size limit:",
+    "edit": "編集",
     "edit-compound": "Edit compound",
     "editing-metadata": "You are currently editing the metadata attached to this entry.",
     "entity-default-title": "無題",

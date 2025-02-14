@@ -9,6 +9,7 @@ const t = {
     "custom-id-in-use": "Vlastní ID je již použito! Zkuste jiné.",
     "dropzone-upload-area": "Pro nahrání přetáhni soubory sem",
     "dropzone-filesize-limit": "Omezení velikosti souboru:",
+    "edit": "Upravit",
     "edit-compound": "Edit compound",
     "editing-metadata": "Právě upravujete metadata připojená k tomuto záznamu.",
     "entity-default-title": "Bez názvu",

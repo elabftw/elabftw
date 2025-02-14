@@ -48,16 +48,113 @@ document.addEventListener('DOMContentLoaded', () => {
     return btn;
   }
 
+  const saveButton = document.querySelector('[data-action="save-new-field"]') as HTMLButtonElement;
+  const editButton = document.querySelector('[data-action="edit-extra-field"]') as HTMLButtonElement;
+  const multiSelectDiv = document.getElementById('allowMultiSelectDiv');
+
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
+    if (el.matches('[data-action="metadata-edit-field"]')) {
+      $('#' + el.dataset.target).modal('toggle');
+      // toggle buttons for edit modal
+      saveButton.setAttribute('hidden', 'hidden');
+      editButton.removeAttribute('hidden');
+
+      // once modal is up, check fields to update
+      const fieldGroupSelect = document.getElementById('newFieldGroupSelect') as HTMLSelectElement;
+      const fieldDescriptionInput = document.getElementById('newFieldDescriptionInput') as HTMLInputElement;
+
+      const extraField = el.parentElement.parentElement.closest('div');
+      if (!extraField) {
+        notifError(new Error(i18next.t('Extra field not found')));
+        return;
+      }
+      // store current name as attribute, to use as field's key and update
+      const fieldNameInput = document.getElementById('newFieldKeyInput') as HTMLInputElement;
+      const fieldName = extraField.querySelector('label').innerText;
+      fieldNameInput.dataset.name = fieldName;
+
+      // populate modal with current extraField values
+      MetadataC.read().then(metadata => {
+        const fieldData = metadata.extra_fields[fieldName];
+        const fieldType = fieldData.type?.trim() || 'text';
+        // set field type
+        const fieldTypeSelect = document.getElementById('newFieldTypeSelect') as HTMLSelectElement;
+        fieldTypeSelect.value = fieldType;
+        // type may be null due to json editing,if null return a default value
+        if (fieldType === ExtraFieldInputType.Select && multiSelectDiv.hidden) {
+          multiSelectDiv.removeAttribute('hidden');
+        }
+        // prefill switches
+        (document.getElementById('blankValueOnDuplicateSwitch') as HTMLInputElement).checked = !!fieldData.blank_value_on_duplicate;
+        (document.getElementById('requiredSwitch') as HTMLInputElement).checked = !!fieldData.required;
+        (document.getElementById('readonlySwitch') as HTMLInputElement).checked = !!fieldData.readonly;
+        (document.getElementById('newFieldAllowMultiSelect') as HTMLInputElement).checked = !!fieldData.allow_multi_values;
+
+        let containerId, sourceArray, toggleDiv;
+        // same behaviour is applied for select, radio and number. Only div name is different
+        if (fieldType === ExtraFieldInputType.Select || fieldType === ExtraFieldInputType.Radio) {
+          containerId = 'choicesInputDiv';
+          sourceArray = fieldData.options;
+          toggleDiv = 'selectradio';
+        } else if (fieldType === ExtraFieldInputType.Number) {
+          containerId = 'unitChoicesInputDiv';
+          sourceArray = fieldData.units;
+          toggleDiv = 'number';
+        }
+
+        if (toggleDiv) {
+          toggleContentDiv(toggleDiv);
+          const fieldValueInputDiv = document.getElementById(containerId);
+          fieldValueInputDiv.innerHTML = '';
+
+          // populate the corresponding container
+          if (sourceArray) {
+            sourceArray.forEach(item => {
+              // Create group
+              const newGroup = document.createElement('div');
+              newGroup.classList.add('input-group', 'mb-1');
+              // Create input
+              const input = document.createElement('input');
+              input.classList.add('form-control', 'is-extra-input');
+              input.type = 'text';
+              input.value = item;
+              // Create button append div
+              const appendDiv = document.createElement('div');
+              appendDiv.classList.add('input-group-append');
+              // Create self-remove button
+              const btn = createButton('remove-self', 'btn-secondary', '-');
+              appendDiv.appendChild(btn);
+              // Assemble elements
+              newGroup.append(input, appendDiv);
+              fieldValueInputDiv.append(newGroup);
+            });
+          }
+        } else if (fieldType === ExtraFieldInputType.Checkbox) {
+          toggleContentDiv('checkbox');
+          const checkboxSelect = document.getElementById('newFieldCheckboxDefaultSelect') as HTMLSelectElement;
+          checkboxSelect.value = fieldData.value === 'on' ? 'checked' : 'unchecked';
+        } else {
+          // Default handling for simple text-based inputs
+          const fieldValueInput = document.getElementById('newFieldValueInput') as HTMLInputElement;
+          fieldValueInput.value = fieldData.value || '';
+          fieldValueInput.type = fieldType;
+        }
+
+        fieldGroupSelect.value = fieldData.group_id ?? '-1';
+        fieldTypeSelect.value = fieldType;
+        fieldNameInput.value = fieldName;
+        fieldDescriptionInput.value = fieldData.description ?? null;
+      });
+    }
     // DELETE EXTRA FIELD
     if (el.matches('[data-action="metadata-rm-field"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {
         MetadataC.read().then(metadata => {
           const name = el.parentElement.parentElement.closest('div').querySelector('label').innerText;
           delete metadata.extra_fields[name];
-          MetadataC.update(metadata as ValidMetadata);
+          MetadataC.update(metadata as ValidMetadata).then(() => document.getElementById('metadataDiv').scrollIntoView());
         });
       }
     }
@@ -68,10 +165,33 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
+  function clearForm() {
+    // remove all extra inputs (dropdown and radio)
+    const form = (document.getElementById('newFieldForm') as HTMLFormElement);
+    form.querySelectorAll('.is-extra-input').forEach(i => i.parentElement.remove());
+    form.reset();
+  }
+
+  $('#fieldBuilderModal').on('hidden.bs.modal', () => {
+    // reset to default state on close
+    if (!editButton.hasAttribute('hidden') && saveButton.hasAttribute('hidden')) {
+      editButton.setAttribute('hidden', 'hidden');
+      saveButton.removeAttribute('hidden');
+    }
+    // reset all input fields except classic text (default)
+    document.querySelectorAll('[id^="newFieldContentDiv_"]:not([id="newFieldContentDiv_classic"])')
+      .forEach(div => {
+        (div as HTMLDivElement).hidden = true;
+      });
+    document.getElementById('newFieldContentDiv_classic').hidden = false;
+    multiSelectDiv.setAttribute('hidden', 'hidden');
+    clearForm();
+  });
+
   addAutocompleteToExtraFieldsKeyInputs();
 
   function toggleContentDiv(key: string) {
-    const keys = ['classic', 'select', 'selectradio', 'checkbox', 'number'];
+    const keys = ['classic', 'selectradio', 'checkbox', 'number'];
     document.getElementById('newFieldContentDiv_' + key).toggleAttribute('hidden', false);
     // remove the shown one from the list and hide all others
     keys.filter(k => k !== key).forEach(k => {
@@ -83,6 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('newFieldTypeSelect').addEventListener('change', event => {
     const fieldType = (event.target as HTMLSelectElement).value;
     const valueInput = document.getElementById('newFieldValueInput');
+    multiSelectDiv.setAttribute('hidden', 'hidden');
 
     switch (fieldType as ExtraFieldInputType) {
     case ExtraFieldInputType.Text:
@@ -98,10 +219,8 @@ document.addEventListener('DOMContentLoaded', () => {
       toggleContentDiv('classic');
       break;
     case ExtraFieldInputType.Select:
-      document.getElementById('newFieldContentDiv_select').removeAttribute('hidden');
+      multiSelectDiv.removeAttribute('hidden');
       toggleContentDiv('selectradio');
-      // special case for the select block to allow multiple values
-      document.getElementById('newFieldContentDiv_select').toggleAttribute('hidden', false);
       break;
     case ExtraFieldInputType.Radio:
       toggleContentDiv('selectradio');
@@ -179,7 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
           document.getElementById('choicesInputDiv').querySelectorAll('input').forEach(opt => field['options'].push(opt.value));
           // just take the first one as selected value
           fieldValue = field['options'][0];
-        } else if (field['type'] === 'number') {
+        } else if (field['type'] === ExtraFieldInputType.Number) {
           fieldValue = (document.getElementById('newFieldValueInput') as HTMLInputElement).value;
           field['units'] = [];
           document.getElementById('unitChoicesInputDiv').querySelectorAll('input').forEach(opt => {
@@ -195,7 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
             field['unit'] = field['units'][0];
           }
 
-        } else if (field['type'] === 'checkbox') {
+        } else if (field['type'] === ExtraFieldInputType.Checkbox) {
           fieldValue = (document.getElementById('newFieldCheckboxDefaultSelect') as HTMLSelectElement).value === 'checked' ? 'on' : '';
         }
         field['value'] = fieldValue || '';
@@ -203,6 +322,90 @@ document.addEventListener('DOMContentLoaded', () => {
         if ((document.getElementById('newFieldDescriptionInput') as HTMLInputElement).value) {
           field['description'] = (document.getElementById('newFieldDescriptionInput') as HTMLInputElement).value.trim();
         }
+        // deal with the blank_on_value
+        if ((document.getElementById('blankValueOnDuplicateSwitch') as HTMLInputElement).checked) {
+          field['blank_value_on_duplicate'] = true;
+        }
+        if ((document.getElementById('requiredSwitch') as HTMLInputElement).checked) {
+          field['required'] = true;
+        }
+        if ((document.getElementById('readonlySwitch') as HTMLInputElement).checked) {
+          field['readonly'] = true;
+        }
+        if ((document.getElementById('newFieldAllowMultiSelect') as HTMLInputElement).checked) {
+          field['allow_multi_values'] = true;
+        }
+        if (grpSel.value !== '-1') {
+          field['group_id'] = parseInt(grpSel.value);
+        }
+
+        json['extra_fields'][fieldKey] = field;
+
+        // jQuery selector required for .modal()
+        MetadataC.update(json as ValidMetadata).then(() => {
+          // store the currently selected group before reset, to maintain selection when adding a new input
+          const selectedGroup = grpSel.value;
+          clearForm();
+          // restore original value
+          grpSel.value = selectedGroup;
+          // and finally close the modal
+          $('#fieldBuilderModal').modal('toggle');
+        });
+      });
+    // EDIT EXTRA FIELD
+    } else if (el.matches('[data-action="edit-extra-field"]')) {
+      // prevent form invalid data
+      if ((document.getElementById('newFieldForm') as HTMLFormElement).reportValidity() === false) {
+        notifError(new Error('Error validating the form.'));
+        return;
+      }
+      // get field to update's current value
+      const fieldNameInput = document.getElementById('newFieldKeyInput') as HTMLInputElement;
+      const originalFieldKey = fieldNameInput.dataset.name; // store previous key
+      const newFieldKey = fieldNameInput.value.trim(); // new key from input
+
+      let json = {};
+      MetadataC.read().then(metadata => {
+        if (metadata) json = metadata;
+        // If the key (name) is being changed, remove previous field else it will create two separate ones
+        if (originalFieldKey && originalFieldKey !== newFieldKey) {
+          delete json['extra_fields'][originalFieldKey];
+        }
+        const field = {};
+        // handle field inputs : type, desc, and different type values
+        field['type'] = (document.getElementById('newFieldTypeSelect') as HTMLSelectElement).value;
+        if (grpSel.value !== '-1') {
+          field['group_id'] = parseInt(grpSel.value);
+        }
+        const fieldDescriptionInput = document.getElementById('newFieldDescriptionInput') as HTMLInputElement;
+        if (fieldDescriptionInput.value) {
+          field['description'] = fieldDescriptionInput.value.trim();
+        }
+        // handle values depending on type
+        if (['text', 'date', 'datetime-local', 'email', 'time', 'url'].includes(field['type'])) {
+          field['value'] = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();
+        } else if (['select', 'radio'].includes(field['type'])) {
+          field['options'] = [];
+          document.getElementById('choicesInputDiv').querySelectorAll('input').forEach(opt => {
+            if (opt.value.trim()) {
+              field['options'].push(opt.value.trim());
+            }
+          });
+          // make sure at least one value is set
+          field['value'] = field['options'][0] || '';
+        } else if (field['type'] === ExtraFieldInputType.Number) {
+          field['value'] = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();
+          field['units'] = [];
+          document.getElementById('unitChoicesInputDiv').querySelectorAll('input').forEach(opt => {
+            if (opt.value.trim()) {
+              field['units'].push(opt.value.trim());
+            }
+          });
+          field['unit'] = field['units'].length > 0 ? field['units'][0] : '';
+        } else if (field['type'] === ExtraFieldInputType.Checkbox) {
+          field['value'] = (document.getElementById('newFieldCheckboxDefaultSelect') as HTMLSelectElement).value === 'checked' ? 'on' : '';
+        }
+
         // deal with the blank_on_value
         if ((document.getElementById('blankValueOnDuplicateSwitch') as HTMLInputElement).checked) {
           field['blank_value_on_duplicate'] = true;
@@ -219,24 +422,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if ((document.getElementById('newFieldAllowMultiSelect') as HTMLInputElement).checked) {
           field['allow_multi_values'] = true;
         }
-        if (grpSel.value !== '-1') {
-          field['group_id'] = parseInt(grpSel.value);
-        }
 
-        json['extra_fields'][fieldKey] = field;
+        json['extra_fields'][newFieldKey] = field;
 
-        // jQuery selector required for .modal()
         MetadataC.update(json as ValidMetadata).then(() => {
-          const form = (document.getElementById('newFieldForm') as HTMLFormElement);
-          // remove all extra inputs (dropdown and radio)
-          form.querySelectorAll('.is-extra-input').forEach(i => i.parentElement.remove());
-          // keep track of the selected group, so it stays the same and it's easy to add another input in the same group afterwards
-          const selectedGroup = grpSel.value;
-          // clear all fields
-          form.reset();
-          // restore original value
-          grpSel.value = selectedGroup;
-          // and finally close the modal
+          clearForm();
           $('#fieldBuilderModal').modal('toggle');
         });
       });

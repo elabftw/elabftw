@@ -9,6 +9,7 @@ const t = {
     "custom-id-in-use": "ID on jo käytössä! Kokeile toista.",
     "dropzone-upload-area": "Pudota tiedostot tähän ladattavaksi",
     "dropzone-filesize-limit": "Tiedoston kokorajoitus:",
+    "edit": "Muokkaa",
     "edit-compound": "Edit compound",
     "editing-metadata": "Muokkaat tällä hetkellä tähän merkintään liitettyjä metatietoja.",
     "entity-default-title": "Nimetön",

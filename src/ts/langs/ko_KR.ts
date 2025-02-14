@@ -9,6 +9,7 @@ const t = {
     "custom-id-in-use": "Custom ID is already used! Try another one.",
     "dropzone-upload-area": "업로드 하려는 파일을 여기에 드롭하세요",
     "dropzone-filesize-limit": "File size limit:",
+    "edit": "수정",
     "edit-compound": "Edit compound",
     "editing-metadata": "You are currently editing the metadata attached to this entry.",
     "entity-default-title": "제목없음",

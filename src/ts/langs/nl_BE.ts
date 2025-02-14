@@ -9,6 +9,7 @@ const t = {
     "custom-id-in-use": "Aangepaste ID wordt al gebruikt! Probeer een andere.",
     "dropzone-upload-area": "Sleep bestanden om te uploaden hierheen",
     "dropzone-filesize-limit": "Limiet bestandsgrootte:",
+    "edit": "Wijzig",
     "edit-compound": "Edit compound",
     "editing-metadata": "U bewerkt momenteel de metadata die aan dit item gekoppeld zijn.",
     "entity-default-title": "Geen titel",

@@ -9,6 +9,7 @@ const t = {
     "custom-id-in-use": "ID kustom sudah digunakan! Coba yang lain.",
     "dropzone-upload-area": "Taruh berkas di sini untuk mengunggah",
     "dropzone-filesize-limit": "Batas ukuran berkas:",
+    "edit": "Sunting",
     "edit-compound": "Edit compound",
     "editing-metadata": "Anda sedang menyunting metadata yang dilampirkan ke entri ini.",
     "entity-default-title": "Tanpa Judul",

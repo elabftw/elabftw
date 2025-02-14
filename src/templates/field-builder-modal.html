@@ -51,105 +51,104 @@
           </select>
           <hr>
           <h5>{{ 'Add an extra field'|trans }}</h5>
-            <label for='newFieldTypeSelect'>{{ 'Field type'|trans }}</label>
-            <select id='newFieldTypeSelect' class='form-control' autocomplete='off'>
-              <option value='text'>{{ 'Text'|trans }}</option>
-              <option value='select'>{{ 'Dropdown menu'|trans }}</option>
-              <option value='radio'>{{ 'Radio buttons'|trans }}</option>
-              <option value='date'>{{ 'Date'|trans }}</option>
-              <option value='datetime-local'>{{ 'Date and time'|trans }}</option>
-              <option value='email'>{{ 'Email'|trans }}</option>
-              <option value='time'>{{ 'Time'|trans }}</option>
-              <option value='checkbox'>{{ 'Checkbox'|trans }}</option>
-              <option value='number'>{{ 'Number'|trans }}</option>
-              <option value='experiments'>{{ 'Experiment'|trans }}</option>
-              <option value='items'>{{ 'Resource'|trans }}</option>
-              <option value='users'>{{ 'User'|trans }}</option>
-              <option value='url'>URL</option>
-            </select>
+          <label for='newFieldTypeSelect'>{{ 'Field type'|trans }}</label>
+          <select id='newFieldTypeSelect' class='form-control' autocomplete='off'>
+            <option value='text'>{{ 'Text'|trans }}</option>
+            <option value='select'>{{ 'Dropdown menu'|trans }}</option>
+            <option value='radio'>{{ 'Radio buttons'|trans }}</option>
+            <option value='date'>{{ 'Date'|trans }}</option>
+            <option value='datetime-local'>{{ 'Date and time'|trans }}</option>
+            <option value='email'>{{ 'Email'|trans }}</option>
+            <option value='time'>{{ 'Time'|trans }}</option>
+            <option value='checkbox'>{{ 'Checkbox'|trans }}</option>
+            <option value='number'>{{ 'Number'|trans }}</option>
+            <option value='experiments'>{{ 'Experiment'|trans }}</option>
+            <option value='items'>{{ 'Resource'|trans }}</option>
+            <option value='users'>{{ 'User'|trans }}</option>
+            <option value='url'>URL</option>
+          </select>
 
-            {# NAME #}
-            <label for='newFieldKeyInput' class='required-label'>{{ 'Name'|trans }} <span class='smallgray'>({{ 'required'|trans }})</span></label>
-            <input type='text' autocomplete='off' data-autocomplete='extraFieldsKeys' required placeholder='{{ 'Name'|trans }}' id='newFieldKeyInput' class='form-control'>
-            <div id='autocompleteAnchorDiv_extra_fields_keys'></div>
+          {# NAME #}
+          <label for='newFieldKeyInput' class='required-label'>{{ 'Name'|trans }} <span class='smallgray'>({{ 'required'|trans }})</span></label>
+          <input type='text' autocomplete='off' data-autocomplete='extraFieldsKeys' required placeholder='{{ 'Name'|trans }}' id='newFieldKeyInput' class='form-control'>
+          <div id='autocompleteAnchorDiv_extra_fields_keys'></div>
 
-            {# DESCRIPTION #}
-            <label for='newFieldDescriptionInput'>{{ 'Description'|trans }}</label>
-            <input type='text' autocomplete='off' placeholder='{{ 'Enter a description for this field'|trans }}' id='newFieldDescriptionInput' class='form-control'>
-            {# TEXT, URL, NUMBER, DATE #}
-            <div id='newFieldContentDiv_classic'>
-              <label for='newFieldValueInput'>{{ 'Default value'|trans }}</label>
-              <input type='text' autocomplete='off' placeholder='{{ 'Enter a default value'|trans }}' id='newFieldValueInput' class='form-control'>
-            </div>
-
-            {# SELECT, RADIO #}
-            <div id='newFieldContentDiv_selectradio' hidden>
-              <label>{{ 'Choices'|trans }}</label>
-              <div id='choicesInputDiv'>
-                {# show two inputs at first #}
-                <input type='text' class='form-control mb-1' autocomplete='off'>
-                <input type='text' class='form-control mb-1' autocomplete='off'>
-              </div>
-              <button type='button' class='btn btn-secondary btn-sm' data-action='new-field-add-option'>{{ 'Add another choice'|trans }}</button>
-            </div>
-
-            {# UNITS for NUMBER #}
-            <div id='newFieldContentDiv_number' hidden>
-              <label>{{ 'Available units'|trans }}</label>
-              <div id='unitChoicesInputDiv'>
-                <input type='text' class='form-control mb-1' autocomplete='off'>
-                <input type='text' class='form-control mb-1' autocomplete='off'>
-              </div>
-              <button type='button' class='btn btn-secondary btn-sm' data-action='new-field-add-option'>{{ 'Add another choice'|trans }}</button>
-            </div>
-
-            {# CHECKBOX #}
-            <div id='newFieldContentDiv_checkbox' hidden>
-              <label for='newFieldCheckboxDefaultSelect'>{{ 'Default value'|trans }}</label>
-              <select autocomplete='off' id='newFieldCheckboxDefaultSelect' class='form-control'>
-                <option value='unchecked'>{{ 'Unchecked'|trans }}</option>
-                <option value='checked'>{{ 'Checked'|trans }}</option>
-              </select>
-            </div>
-
-            <div class='separator'></div>
-              <div class='d-flex flex-column gap-3'>
-                {# Blank value on duplicate switch #}
-                <div class='d-flex justify-content-between align-items-center py-1'>
-                  <label class="mr-3" for="blankValueOnDuplicateSwitch">{{ 'Blank value on duplicate'|trans }}</label>
-                  <label class="switch mb-0">
-                    <input type="checkbox" autocomplete="off" id="blankValueOnDuplicateSwitch">
-                    <span class="slider"></span>
-                  </label>
-                </div>
-                {# required switch #}
-                <div class='d-flex justify-content-between align-items-center'>
-                  <label for='requiredSwitch'>{{ 'Required'|trans }}</label>
-                  <label class='switch'>
-                    <input type='checkbox' autocomplete='off' id='requiredSwitch'>
-                    <span class='slider'></span>
-                  </label>
-                </div>
-                {# readonly switch #}
-                <div class='d-flex justify-content-between align-items-center'>
-                  <label for='readonlySwitch'>{{ 'Read-only'|trans }}</label>
-                  <label class='switch'>
-                    <input type='checkbox' autocomplete='off' id='readonlySwitch'>
-                    <span class='slider'></span>
-                  </label>
-                </div>
-                {# only shown for select type #}
-                <div id='allowMultiSelectDiv' hidden>
-                    <div class="d-flex justify-content-between align-items-center">
-                      <label for='newFieldAllowMultiSelect'>{{ 'Allow selection of multiple values?'|trans }}</label>
-                      <label class='switch'>
-                        <input type='checkbox' autocomplete='off' id='newFieldAllowMultiSelect'>
-                        <span class='slider'></span>
-                      </label>
-                    </div>
-                </div>
+          {# DESCRIPTION #}
+          <label for='newFieldDescriptionInput'>{{ 'Description'|trans }}</label>
+          <input type='text' autocomplete='off' placeholder='{{ 'Enter a description for this field'|trans }}' id='newFieldDescriptionInput' class='form-control'>
+          {# TEXT, URL, NUMBER, DATE #}
+          <div id='newFieldContentDiv_classic'>
+            <label for='newFieldValueInput'>{{ 'Default value'|trans }}</label>
+            <input type='text' autocomplete='off' placeholder='{{ 'Enter a default value'|trans }}' id='newFieldValueInput' class='form-control'>
           </div>
 
+          {# SELECT, RADIO #}
+          <div id='newFieldContentDiv_selectradio' hidden>
+            <label>{{ 'Choices'|trans }}</label>
+            <div id='choicesInputDiv'>
+              {# show two inputs at first #}
+              <input type='text' class='form-control mb-1' autocomplete='off'>
+              <input type='text' class='form-control mb-1' autocomplete='off'>
+            </div>
+            <button type='button' class='btn btn-secondary btn-sm' data-action='new-field-add-option'>{{ 'Add another choice'|trans }}</button>
+          </div>
+
+          {# UNITS for NUMBER #}
+          <div id='newFieldContentDiv_number' hidden>
+            <label>{{ 'Available units'|trans }}</label>
+            <div id='unitChoicesInputDiv'>
+              <input type='text' class='form-control mb-1' autocomplete='off'>
+              <input type='text' class='form-control mb-1' autocomplete='off'>
+            </div>
+            <button type='button' class='btn btn-secondary btn-sm' data-action='new-field-add-option'>{{ 'Add another choice'|trans }}</button>
+          </div>
+
+          {# CHECKBOX #}
+          <div id='newFieldContentDiv_checkbox' hidden>
+            <label for='newFieldCheckboxDefaultSelect'>{{ 'Default value'|trans }}</label>
+            <select autocomplete='off' id='newFieldCheckboxDefaultSelect' class='form-control'>
+              <option value='unchecked'>{{ 'Unchecked'|trans }}</option>
+              <option value='checked'>{{ 'Checked'|trans }}</option>
+            </select>
+          </div>
+
+          <div class='separator'></div>
+          <div class='d-flex flex-column gap-3'>
+            {# Blank value on duplicate switch #}
+            <div class='d-flex justify-content-between align-items-center py-1'>
+              <label class="mr-3" for="blankValueOnDuplicateSwitch">{{ 'Blank value on duplicate'|trans }}</label>
+              <label class="switch mb-0">
+                <input type="checkbox" autocomplete="off" id="blankValueOnDuplicateSwitch">
+                <span class="slider"></span>
+              </label>
+            </div>
+            {# required switch #}
+            <div class='d-flex justify-content-between align-items-center'>
+              <label for='requiredSwitch'>{{ 'Required'|trans }}</label>
+              <label class='switch'>
+                <input type='checkbox' autocomplete='off' id='requiredSwitch'>
+                <span class='slider'></span>
+              </label>
+            </div>
+            {# readonly switch #}
+            <div class='d-flex justify-content-between align-items-center'>
+              <label for='readonlySwitch'>{{ 'Read-only'|trans }}</label>
+              <label class='switch'>
+                <input type='checkbox' autocomplete='off' id='readonlySwitch'>
+                <span class='slider'></span>
+              </label>
+            </div>
+            {# only shown for select type #}
+            <div id='allowMultiSelectDiv' hidden>
+              <div class="d-flex justify-content-between align-items-center">
+                <label for='newFieldAllowMultiSelect'>{{ 'Allow selection of multiple values?'|trans }}</label>
+                <label class='switch'>
+                  <input type='checkbox' autocomplete='off' id='newFieldAllowMultiSelect'>
+                  <span class='slider'></span>
+                </label>
+              </div>
+            </div>
+          </div>
         </div>
         <div class='modal-footer'>
           <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>

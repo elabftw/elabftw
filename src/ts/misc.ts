@@ -330,7 +330,7 @@ export async function reloadEntitiesShow(tag = ''): Promise<void | Response> {
 export async function reloadElements(elementIds: string[]): Promise<void> {
   elementIds = elementIds.filter((elementId: string): boolean => {
     if (!document.getElementById(elementId)) {
-      console.error(`Could not find element with id ${elementId} to reload!`);
+      console.warn(`Could not find element with id ${elementId} to reload!`);
       return false;
     }
     return true;

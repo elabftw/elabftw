@@ -452,20 +452,11 @@ export class Metadata {
   // build a description element
   getDescription(properties: ExtraFieldProperties): HTMLSpanElement {
     const descriptionWrapper = document.createElement('div');
-    descriptionWrapper.classList.add('d-flex', 'justify-content-between');
     if (properties.description) {
       const descriptionEl = document.createElement('p');
       descriptionEl.classList.add('smallgray');
       descriptionEl.innerText = properties.description;
       descriptionWrapper.append(descriptionEl);
-    }
-
-    const inputType = (properties.element as HTMLInputElement).type;
-    if (inputType === ExtraFieldInputType.Url || inputType === ExtraFieldInputType.Email) {
-      const descriptionType = document.createElement('p');
-      descriptionType.classList.add('smallgray', 'text-end');
-      descriptionType.innerText = inputType;
-      descriptionWrapper.append(descriptionType);
     }
     return descriptionWrapper;
   }
@@ -570,6 +561,26 @@ export class Metadata {
 
             // div to hold the drag and delete buttons
             const fieldActionsDiv = document.createElement('div');
+            fieldActionsDiv.classList.add('d-flex', 'align-items-center');
+
+            // add a badge indicating the field's type
+            const badgeContainer = document.createElement('div');
+            const badge = document.createElement('span');
+            badge.classList.add('badge','badge-pill','badge-light', 'mr-3');
+            // define input type for badge (sometimes it's input (text, url) sometimes it's an input-group (datetime, search user/experiment etc.)
+            let inputType;
+            if (element.element.tagName === 'INPUT' || element.element.tagName === 'SELECT') {
+              inputType = element.element.type;
+            } else if (element.element.classList.contains('input-group')) {
+              // find the first input element within the input group
+              const input = element.element.querySelector('input');
+              inputType = input ? input.type : 'unknown';
+            } else {
+              // radio is only "special case" and too much conditions to identify it
+              inputType = 'radio';
+            }
+            badge.innerText = inputType;
+            badgeContainer.appendChild(badge);
 
             // add a button to set the position of the field
             const handle = document.createElement('div');
@@ -603,7 +614,7 @@ export class Metadata {
             deleteIcon.classList.add('fas', 'fa-trash-alt');
             deleteBtn.appendChild(deleteIcon);
 
-            fieldActionsDiv.append(handle, editBtn, deleteBtn);
+            fieldActionsDiv.append(badgeContainer, handle, editBtn, deleteBtn);
 
             labelDiv.append(label, fieldActionsDiv);
 

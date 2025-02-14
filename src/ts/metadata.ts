@@ -50,6 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const saveButton = document.querySelector('[data-action="save-new-field"]') as HTMLButtonElement;
   const editButton = document.querySelector('[data-action="edit-extra-field"]') as HTMLButtonElement;
+  const multiSelectDiv = document.getElementById('allowMultiSelectDiv');
 
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', event => {
@@ -80,7 +81,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // set field type
         const fieldTypeSelect = document.getElementById('newFieldTypeSelect') as HTMLSelectElement;
         fieldTypeSelect.value = fieldData.type;
-
+        if (fieldData.type === 'select' && multiSelectDiv.hidden) {
+          multiSelectDiv.removeAttribute('hidden');
+        }
         // prefill switches
         (document.getElementById('blankValueOnDuplicateSwitch') as HTMLInputElement).checked = !!fieldData.blank_value_on_duplicate;
         (document.getElementById('requiredSwitch') as HTMLInputElement).checked = !!fieldData.required;
@@ -89,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let containerId, sourceArray, toggleDiv;
         // same behaviour is applied for select, radio and number. Only div name is different
-        if (['select', 'radio'].includes(fieldData.type)) {
+        if (fieldData.type === 'select' || fieldData.type === 'radio') {
           containerId = 'choicesInputDiv';
           sourceArray = fieldData.options;
           toggleDiv = 'selectradio';
@@ -179,13 +182,14 @@ document.addEventListener('DOMContentLoaded', () => {
         (div as HTMLDivElement).hidden = true;
       });
     document.getElementById('newFieldContentDiv_classic').hidden = false;
+    multiSelectDiv.setAttribute('hidden', 'hidden');
     clearForm();
   });
 
   addAutocompleteToExtraFieldsKeyInputs();
 
   function toggleContentDiv(key: string) {
-    const keys = ['classic', 'select', 'selectradio', 'checkbox', 'number'];
+    const keys = ['classic', 'selectradio', 'checkbox', 'number'];
     document.getElementById('newFieldContentDiv_' + key).toggleAttribute('hidden', false);
     // remove the shown one from the list and hide all others
     keys.filter(k => k !== key).forEach(k => {
@@ -197,6 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('newFieldTypeSelect').addEventListener('change', event => {
     const fieldType = (event.target as HTMLSelectElement).value;
     const valueInput = document.getElementById('newFieldValueInput');
+    multiSelectDiv.setAttribute('hidden', 'hidden');
 
     switch (fieldType as ExtraFieldInputType) {
     case ExtraFieldInputType.Text:
@@ -212,10 +217,8 @@ document.addEventListener('DOMContentLoaded', () => {
       toggleContentDiv('classic');
       break;
     case ExtraFieldInputType.Select:
-      document.getElementById('newFieldContentDiv_select').removeAttribute('hidden');
+      multiSelectDiv.removeAttribute('hidden');
       toggleContentDiv('selectradio');
-      // special case for the select block to allow multiple values
-      document.getElementById('newFieldContentDiv_select').toggleAttribute('hidden', false);
       break;
     case ExtraFieldInputType.Radio:
       toggleContentDiv('selectradio');

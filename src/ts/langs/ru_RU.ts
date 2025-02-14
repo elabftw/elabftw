@@ -9,6 +9,7 @@ const t = {
     "custom-id-in-use": "Custom ID is already used! Try another one.",
     "dropzone-upload-area": "Перетащите сюда файлы для загрузки",
     "dropzone-filesize-limit": "File size limit:",
+    "edit": "Редактировать",
     "edit-compound": "Edit compound",
     "editing-metadata": "You are currently editing the metadata attached to this entry.",
     "entity-default-title": "Без имени",

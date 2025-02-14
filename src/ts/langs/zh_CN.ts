@@ -9,6 +9,7 @@ const t = {
     "custom-id-in-use": "自定义 ID 已被使用！请尝试另一个。",
     "dropzone-upload-area": "拖动文件到此处进行上传",
     "dropzone-filesize-limit": "文件大小限制：",
+    "edit": "编辑",
     "edit-compound": "Edit compound",
     "editing-metadata": "当前正在编辑附加到此项的元数据。",
     "entity-default-title": "未命名",

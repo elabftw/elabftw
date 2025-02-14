@@ -566,7 +566,7 @@ export class Metadata {
             // add a badge indicating the field's type
             const badgeContainer = document.createElement('div');
             const badge = document.createElement('span');
-            badge.classList.add('badge','badge-pill','badge-light', 'mr-3');
+            badge.classList.add('badge', 'badge-pill', 'badge-light', 'mr-3');
             // define input type for badge (sometimes it's input (text, url) sometimes it's an input-group (datetime, search user/experiment etc.)
             let inputType;
             if (element.element.tagName === 'INPUT' || element.element.tagName === 'SELECT') {
@@ -576,7 +576,7 @@ export class Metadata {
               const input = element.element.querySelector('input');
               inputType = input ? input.type : 'unknown';
             } else {
-              // radio is only "special case" and too much conditions to identify it
+              // radio is only "special case" and too many conditions to identify it
               inputType = 'radio';
             }
             badge.innerText = inputType;
@@ -600,6 +600,7 @@ export class Metadata {
             editBtn.classList.add('btn', 'p-2', 'mr-2', 'hl-hover-gray', 'border-0', 'lh-normal');
             editBtn.type = 'button';
             editBtn.setAttribute('aria-label', i18next.t('edit'));
+            editBtn.setAttribute('title', i18next.t('edit'));
             const editIcon = document.createElement('i');
             editIcon.classList.add('fas', 'fa-pencil-alt');
             editBtn.appendChild(editIcon);
@@ -610,6 +611,7 @@ export class Metadata {
             deleteBtn.classList.add('btn', 'p-2', 'hl-hover-gray', 'border-0', 'lh-normal');
             deleteBtn.type = 'button';
             deleteBtn.setAttribute('aria-label', i18next.t('remove'));
+            deleteBtn.setAttribute('title', i18next.t('remove'));
             const deleteIcon = document.createElement('i');
             deleteIcon.classList.add('fas', 'fa-trash-alt');
             deleteBtn.appendChild(deleteIcon);

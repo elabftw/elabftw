@@ -75,7 +75,7 @@ class IdpsSourcesTest extends \PHPUnit\Framework\TestCase
         $source = $this->IdpsSources->readOne();
         $Url2Xml = new Url2Xml($getterStub, $source['url'], new DOMDocument());
         $dom = $Url2Xml->getXmlDocument();
-        $Xml2Idps = new Xml2Idps($dom, Idps::SSO_BINDING, Idps::SLO_BINDING);
+        $Xml2Idps = new Xml2Idps($dom);
         $this->IdpsSources->refresh($Xml2Idps, $Idps);
         // now test toggleenable
         $this->IdpsSources->patch(Action::Validate, array());

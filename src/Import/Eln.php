@@ -109,20 +109,35 @@ class Eln extends AbstractZip
         foreach ($this->linksToCreate as $link) {
             foreach ($this->insertedEntities as $entity) {
                 if ($link['link_@id'] === $entity['item_@id']) {
-                    $result[] = array('origin_entity_type' => $link['origin_entity_type'], 'origin_id' => $link['origin_id'], 'link_id' => $entity['id'], 'link_entity_type' => $entity['entity_type']);
+                    // grab the link node so we can get its url
+                    $linkNode = $this->getNodeFromId($link['link_@id']);
+                    $result[] = array(
+                        'origin_entity_type' => $link['origin_entity_type'],
+                        'origin_id' => $link['origin_id'],
+                        'link_id' => $entity['id'],
+                        'link_previous_url' => $linkNode['url'],
+                        'link_entity_type' => $entity['entity_type'],
+                        'link_original_id' => $link['link_@id'],
+                    );
                     break;
                 }
             }
         }
 
         foreach ($result as $linkToCreate) {
-            $entity = $linkToCreate['origin_entity_type']->toInstance($this->Entity->Users, $linkToCreate['origin_id'], true);
+            $entity = $linkToCreate['origin_entity_type']->toInstance($this->Entity->Users, $linkToCreate['origin_id'], true, true);
             if ($linkToCreate['link_entity_type'] === EntityType::Experiments) {
                 $entity->ExperimentsLinks->setId($linkToCreate['link_id']);
                 $entity->ExperimentsLinks->postAction(Action::Create, array());
             } else {
                 $entity->ItemsLinks->setId($linkToCreate['link_id']);
                 $entity->ItemsLinks->postAction(Action::Create, array());
+            }
+            // now update the body with links to old id that should now point to the new id
+            $linkPreviousId = $this->grabIdFromUrl($linkToCreate['link_previous_url'] ?? '');
+            if ($linkPreviousId) {
+                $body = preg_replace(sprintf('/(?:experiments|database)\.php\?mode=view&amp;id=(%d)/', $linkPreviousId), $linkToCreate['link_entity_type']->toPage() . '?mode=view&amp;id=' . $linkToCreate['link_id'], $entity->entityData['body'] ?? '');
+                $entity->update(new EntityParams('body', (string) $body));
             }
         }
         return $this->getInserted();
@@ -163,6 +178,23 @@ class Eln extends AbstractZip
         $this->logger->notice('Could not find entity type (genre), falling back to Resource');
         return EntityType::Items;
 
+    }
+
+    private function grabIdFromUrl(string $url): ?int
+    {
+        if (!filter_var($url, FILTER_VALIDATE_URL)) {
+            return null;
+        }
+        $parsedUrl = parse_url($url);
+        if (!isset($parsedUrl['query'])) {
+            return null;
+        }
+        $queryParams = array();
+        parse_str($parsedUrl['query'], $queryParams);
+        if ($queryParams['id']) {
+            return (int) $queryParams['id'];
+        }
+        return null;
     }
 
     private function preProcess(): int
@@ -334,7 +366,11 @@ class Eln extends AbstractZip
                         // after 5.1 the "mention" will point to a Dataset contained in the .eln
                         if (count($mention) === 1) {
                             // store a reference for the link to create. We cannot create it now as link might or might not exist yet.
-                            $this->linksToCreate[] = array('origin_entity_type' => $this->Entity->entityType, 'origin_id' => $this->Entity->id, 'link_@id' => $mention['@id']);
+                            $this->linksToCreate[] = array(
+                                'origin_entity_type' => $this->Entity->entityType,
+                                'origin_id' => $this->Entity->id,
+                                'link_@id' => $mention['@id'],
+                            );
                         }
                     }
                     break;

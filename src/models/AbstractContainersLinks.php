@@ -16,6 +16,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\State;
+use Elabftw\Enums\Units;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Override;
@@ -130,7 +131,7 @@ abstract class AbstractContainersLinks extends AbstractLinks
     public function postAction(Action $action, array $reqBody): int
     {
         return match ($action) {
-            Action::Create => $this->createWithQuantity((float) $reqBody['qty_stored'], $reqBody['qty_unit']),
+            Action::Create => $this->createWithQuantity((float) $reqBody['qty_stored'], $reqBody['qty_unit'] ?? Units::Unit->value),
             Action::Duplicate => $this->import(),
             default => throw new ImproperActionException('Invalid action for links create.'),
         };

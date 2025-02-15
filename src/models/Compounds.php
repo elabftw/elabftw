@@ -58,6 +58,9 @@ class Compounds extends AbstractRest
         if (!empty($queryParams->getQuery()->get('search_pubchem_cid'))) {
             return $this->searchPubChem($queryParams->getQuery()->getInt('search_pubchem_cid'))->toArray();
         }
+        if (!empty($queryParams->getQuery()->get('search_pubchem_cas'))) {
+            return $this->searchPubChemCas($queryParams->getQuery()->getString('search_pubchem_cas'))->toArray();
+        }
         if (!empty($queryParams->getQuery()->get('search_fp_smi'))) {
             $q = $queryParams->getQuery();
             return $this->searchFingerprint($this->getFingerprintFromSmiles($q->getString('search_fp_smi')), $q->getBoolean('exact'));
@@ -151,7 +154,7 @@ class Compounds extends AbstractRest
         // TODO add action fromCid or fromSmiles
         // and use fingerprinter
         return match ($action) {
-            Action::Duplicate => $this->createFromCompound($this->searchPubChem((int) $reqBody['cid'])),
+            Action::Duplicate => $this->createCompoundFromIdentifier($reqBody),
             default => $this->create(
                 name: $reqBody['name'] ?? null,
                 inchi: $reqBody['inchi'] ?? null,
@@ -262,6 +265,14 @@ class Compounds extends AbstractRest
         return $perms[str_replace('can', '', $accessType->value)] || throw new IllegalActionException(Tools::error(true));
     }
 
+    private function createCompoundFromIdentifier(array $reqBody): int
+    {
+        if (!empty($reqBody['cid'])) {
+            return $this->createFromCompound($this->searchPubChem((int) $reqBody['cid']));
+        }
+        return $this->createFromCompound($this->searchPubChemCas($reqBody['cas']));
+    }
+
     private function getSelectBeforeWhere(): string
     {
         return 'SELECT entity.*,
@@ -327,6 +338,13 @@ class Compounds extends AbstractRest
     {
         $Importer = new PubChemImporter($this->httpGetter);
         return $Importer->fromPugView($cid);
+    }
+
+    private function searchPubChemCas(string $cas): Compound
+    {
+        $Importer = new PubChemImporter($this->httpGetter);
+        $cid = $Importer->getCidFromCas($cas);
+        return $this->searchPubChem($cid);
     }
 
     private function getFingerprintFromSmiles(string $smiles): array

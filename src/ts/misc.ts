@@ -758,3 +758,20 @@ export function toggleEditCompound(json: object): void {
   document.getElementById('editCompoundModalSaveBtn').dataset.compoundId = json['id'];
   $('#editCompoundModal').modal('toggle');
 }
+
+export function mkSpin(el: HTMLElement): string {
+  // we want the button to keep the same size, so store width/height as style attribute
+  const { width, height } = el.getBoundingClientRect();
+  el.style.width = `${width}px`;
+  el.style.height = `${height}px`;
+  // keep the old html around so we can restore it
+  const elOldHTML = el.innerHTML;
+  el.setAttribute('disabled', 'disabled');
+  el.innerHTML = '<span class="spinner"></span>';
+  return elOldHTML;
+}
+
+export function mkSpinStop(el: HTMLElement, oldHTML: string): void {
+  el.innerHTML = oldHTML;
+  el.removeAttribute('disabled');
+}

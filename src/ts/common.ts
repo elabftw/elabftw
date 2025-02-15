@@ -18,6 +18,8 @@ import {
   getEntity,
   listenTrigger,
   makeSortableGreatAgain,
+  mkSpin,
+  mkSpinStop,
   notifError,
   permissionsToJson,
   relativeMoment,
@@ -626,24 +628,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // SEARCH PUBCHEM
-    } else if (el.matches('[data-action="search-cid"]')) {
+    } else if (el.matches('[data-action="search-pubchem"]')) {
       const inputEl = el.parentElement.parentElement.querySelector('input') as HTMLInputElement;
       if (!inputEl.checkValidity()) {
         inputEl.reportValidity();
         return;
       }
+      const elOldHTML = mkSpin(el);
       const resultDiv = document.getElementById('pubChemSearchResultDiv');
       const resultTableDiv = document.getElementById('pubChemSearchResultTableDiv');
       const viewOnPubChemLink = document.getElementById('viewOnPubChemLink') as HTMLLinkElement;
-      ApiC.getJson(`compounds?search_pubchem_cid=${inputEl.value}`).then(json => {
+      ApiC.getJson(`compounds?search_pubchem_${el.dataset.from}=${inputEl.value}`).then(json => {
+        mkSpinStop(el, elOldHTML);
         const table = generateTable(json);
         resultDiv.removeAttribute('hidden');
-        viewOnPubChemLink.href = viewOnPubChemLink.href + json.cid;
+        viewOnPubChemLink.href = `https://pubchem.ncbi.nlm.nih.gov/compound/${json.cid}`;
         // clear any previous result
         resultTableDiv.innerHTML = '';
         resultTableDiv.appendChild(table);
-        const importBtn = document.querySelector('[data-action="import-cid"]');
+        const importBtn = document.querySelector('[data-action="import-compound"]') as HTMLButtonElement;
         importBtn.removeAttribute('disabled');
+        importBtn.dataset.cid = json.cid;
       });
 
     } else if (el.matches('[data-action="search-resources-from-compound"]')) {
@@ -656,12 +661,11 @@ document.addEventListener('DOMContentLoaded', () => {
       window.location.href = `database.php?q="${encodeURIComponent(query)}"`;
 
     // IMPORT FROM PUBCHEM
-    } else if (el.matches('[data-action="import-cid"]')) {
-      const inputEl = document.getElementById('pubchem-cid') as HTMLInputElement;
-      const params = {cid: parseInt(inputEl.value, 10), action: Action.Duplicate};
+    } else if (el.matches('[data-action="import-compound"]')) {
+      const params = {cid: parseInt(el.dataset.cid, 10), action: Action.Duplicate};
       ApiC.post2location('compounds', params).then(() => {
         document.dispatchEvent(new CustomEvent('dataReload'));
-        inputEl.value = '';
+        clearForm(document.getElementById('importFromPubChemModal'));
         const resultDiv = document.getElementById('pubChemSearchResultDiv');
         resultDiv.setAttribute('hidden', 'hidden');
         const resultTableDiv = document.getElementById('pubChemSearchResultTableDiv');

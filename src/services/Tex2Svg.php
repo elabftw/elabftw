@@ -171,7 +171,7 @@ class Tex2Svg
         $image->stripImage();
         $img = sprintf(
             '<img src="data:image/png;base64,%s" width="%d" height="%d" class="mathjax-svg">',
-            base64_encode($image->getImageBlob()),
+            base64_encode($image->getImageBlob() ?? ''),
             $width,
             $height
         );

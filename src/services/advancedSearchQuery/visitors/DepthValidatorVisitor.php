@@ -93,7 +93,7 @@ class DepthValidatorVisitor implements Visitor
         return $this->visitOperand($orOperand, $parameters);
     }
 
-    private function visitTail(OrExpression | AndExpression | OrOperand | AndOperand $tail = null, VisitorParameters $parameters): int
+    private function visitTail(VisitorParameters $parameters, OrExpression | AndExpression | OrOperand | AndOperand | null $tail = null): int
     {
         if ($tail) {
             return $tail->accept($this, $parameters);
@@ -104,7 +104,7 @@ class DepthValidatorVisitor implements Visitor
     private function visitOperand(OrOperand | AndOperand $operand, VisitorParameters $parameters): int
     {
         $left = $operand->getOperand()->accept($this, $parameters);
-        $right = $this->visitTail($operand->getTail(), $parameters);
+        $right = $this->visitTail($parameters, $operand->getTail());
 
         $depth = $left > $right ? $left + 1 : $right + 1;
         if ($this->isDepthExceed($depth)) {
@@ -117,7 +117,7 @@ class DepthValidatorVisitor implements Visitor
     private function visitExpression(OrExpression | AndExpression $expression, VisitorParameters $parameters): int
     {
         $left = $expression->getExpression()->accept($this, $parameters);
-        $right = $this->visitTail($expression->getTail(), $parameters);
+        $right = $this->visitTail($parameters, $expression->getTail());
 
         $depth = $left > $right ? $left + 1 : $right + 1;
         if ($this->isDepthExceed($depth)) {

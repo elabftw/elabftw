@@ -105,6 +105,7 @@ class Filter
     public static function sanitizeEmail(string $input): string
     {
         $output = filter_var($input, FILTER_SANITIZE_EMAIL);
+        /** @psalm-suppress TypeDoesNotContainType see https://github.com/vimeo/psalm/issues/10561 */
         if ($output === false) {
             return '';
         }

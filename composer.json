@@ -66,7 +66,7 @@
     "codeception/c3": "^2.9",
     "friendsoftwig/twigcs": "^6.2",
     "phpstan/phpstan": "^1.10",
-    "vimeo/psalm": "5.18.0"
+    "vimeo/psalm": "^6.5.1"
   },
   "autoload": {
     "psr-4": {

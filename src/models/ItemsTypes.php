@@ -101,12 +101,12 @@ class ItemsTypes extends AbstractTemplateEntity
         return (int) $req->fetchColumn();
     }
 
-    public function getQueryParams(InputBag $query = null, int $limit = 128): QueryParamsInterface
+    public function getQueryParams(?InputBag $query = null, int $limit = 128): QueryParamsInterface
     {
         return new BaseQueryParams(query: $query, orderby: Orderby::Ordering, limit: $limit);
     }
 
-    public function readAll(QueryParamsInterface $queryParams = null): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $queryParams ??= $this->getQueryParams();
         $builder = new ItemsTypesSqlBuilder($this);

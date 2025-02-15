@@ -19,7 +19,7 @@ use Exception;
  */
 final class ResourceNotFoundException extends ImproperActionException
 {
-    public function __construct(string $message = null, int $code = 404, Exception $previous = null)
+    public function __construct(?string $message = null, int $code = 404, ?Exception $previous = null)
     {
         if ($message === null) {
             $message = _('Nothing to show with this id');

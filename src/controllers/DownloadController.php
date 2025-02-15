@@ -41,7 +41,7 @@ class DownloadController implements ControllerInterface
 
     private string $longName;
 
-    public function __construct(private Filesystem $fs, string $longName, string $realName = null, private bool $forceDownload = false)
+    public function __construct(private Filesystem $fs, string $longName, ?string $realName = null, private bool $forceDownload = false)
     {
         // Remove any path info to avoid hacking by adding relative path, etc.
         $this->longName = Filter::forFilesystem(basename($longName));

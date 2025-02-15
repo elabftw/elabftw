@@ -77,7 +77,7 @@ abstract class AbstractStatus extends AbstractCategory
         return $this->Db->fetch($req);
     }
 
-    public function getQueryParams(InputBag $query = null): QueryParamsInterface
+    public function getQueryParams(?InputBag $query = null): QueryParamsInterface
     {
         return new BaseQueryParams(query: $query, orderby: Orderby::Ordering);
     }
@@ -85,7 +85,7 @@ abstract class AbstractStatus extends AbstractCategory
     /**
      * Get all status from team
      */
-    public function readAll(QueryParamsInterface $queryParams = null): array
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = sprintf('SELECT id, title, color, is_default, ordering, state, team
             FROM %s AS entity WHERE team = :team', $this->table);

@@ -39,10 +39,10 @@ enum Language: string
 
     public static function getAllHuman(): array
     {
-        // we use alternative syntax instead of 'self::from' here because
-        // https://github.com/phpstan/phpstan/issues/4376
-        $all = array_map(array(__CLASS__, 'from'), self::getAssociativeArray());
-        return array_map(array(__CLASS__, 'toHuman'), $all);
+        return array_combine(
+            array_map(fn($case) => $case->value, self::cases()),
+            array_map(fn($case) => $case->toHuman(), self::cases())
+        );
     }
 
     public function toCalendar(): string
@@ -71,39 +71,29 @@ enum Language: string
         };
     }
 
-    private static function toHuman(self $value): string
+    public function toHuman(): string
     {
-        return match ($value) {
-            Language::Catalan => 'Spanish (Catalan)',
-            Language::Czech => 'Czech ',
-            Language::German => 'German',
-            Language::EnglishGB => 'English (UK/GB)',
-            Language::EnglishUS => 'English (US)',
-            Language::Spanish => 'Spanish',
-            Language::Finnish => 'Finnish',
-            Language::French => 'French',
-            Language::Indonesian => 'Indonesian',
-            Language::Italian => 'Italian',
-            Language::Japanese => 'Japanese',
-            Language::Korean => 'Korean',
-            Language::Dutch => 'Dutch',
-            Language::Polish => 'Polish',
-            Language::PortugueseBrazilian => 'Portuguese (Brazilian)',
-            Language::Portuguese => 'Portuguese',
-            Language::Russian => 'Russian',
-            Language::Slovenian => 'Slovenian',
-            Language::Slovak => 'Slovak',
-            Language::Chinese => 'Chinese Simplified',
+        return match ($this) {
+            self::Catalan => 'Spanish (Catalan)',
+            self::Czech => 'Czech ',
+            self::German => 'German',
+            self::EnglishGB => 'English (UK/GB)',
+            self::EnglishUS => 'English (US)',
+            self::Spanish => 'Spanish',
+            self::Finnish => 'Finnish',
+            self::French => 'French',
+            self::Indonesian => 'Indonesian',
+            self::Italian => 'Italian',
+            self::Japanese => 'Japanese',
+            self::Korean => 'Korean',
+            self::Dutch => 'Dutch',
+            self::Polish => 'Polish',
+            self::PortugueseBrazilian => 'Portuguese (Brazilian)',
+            self::Portuguese => 'Portuguese',
+            self::Russian => 'Russian',
+            self::Slovenian => 'Slovenian',
+            self::Slovak => 'Slovak',
+            self::Chinese => 'Chinese Simplified',
         };
-    }
-
-    private static function getAssociativeArray(): array
-    {
-        return array_combine(self::values(), self::values());
-    }
-
-    private static function values(): array
-    {
-        return array_column(self::cases(), 'value');
     }
 }

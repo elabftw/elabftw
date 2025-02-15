@@ -14,6 +14,8 @@ import {
   updateCatStat,
   notifNothingSelected,
   permissionsToJson,
+  mkSpin,
+  mkSpinStop,
 } from './misc';
 import $ from 'jquery';
 import { Malle } from '@deltablot/malle';
@@ -135,12 +137,12 @@ if (window.location.pathname === '/admin.php') {
     // RUN ACTION ON SELECTED (BATCH)
     } else if (el.matches('[data-action="run-action-selected"]')) {
       const btn = el as HTMLButtonElement;
-      btn.disabled = true;
       const selected = getSelected();
       if (!Object.values(selected).some(array => array.length > 0)) {
         notifNothingSelected();
         return;
       }
+      const oldHTML = mkSpin(btn);
       selected['action'] = btn.dataset.what;
       // we use a custom notif message, so disable the native one
       ApiC.notifOnSaved = false;
@@ -148,7 +150,7 @@ if (window.location.pathname === '/admin.php') {
         const processed = res.headers.get('location').split('/').pop();
         notif({res: true, msg: `${processed} entries processed`});
       }).finally(() => {
-        btn.disabled = false;
+        mkSpinStop(btn, oldHTML);
       });
     } else if (el.matches('[data-action="update-counter-value"]')) {
       const counterValue = el.parentElement.parentElement.parentElement.previousElementSibling.querySelector('.counterValue');

@@ -64,7 +64,7 @@ class Batch extends AbstractRest
 
     public function getApiPath(): string
     {
-        return 'api/v2/batch';
+        return 'api/v2/batch/';
     }
 
     private function processEntities(array $idArr, AbstractConcreteEntity $model, FilterableColumn $column, Action $action, array $params): void

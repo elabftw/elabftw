@@ -203,6 +203,9 @@ class ExclusiveEditMode
      */
     private function extendLockTime(): void
     {
+        if (!array_key_exists('locked_by', $this->dataArr)) {
+            return;
+        }
         if ($this->dataArr['locked_by'] === $this->Entity->Users->userid) {
             $sql = sprintf(
                 'UPDATE %1$s_edit_mode

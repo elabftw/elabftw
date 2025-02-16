@@ -1,6 +1,15 @@
-{% macro binaryParam(target, label) %}
+{% macro binaryParam(target, label, code, icon) %}
   <div class='d-flex justify-content-between'>
-    <label for='addCompound{{ target }}' class='col-form-label'>{{ label }}</label>
+    <div>
+      <label for='addCompound{{ target }}' class='col-form-label'>
+      {% if code %}
+        <img width='32' height='32' src='assets/images/ghs/GHS{{ code }}.svg' alt='{{ label|trans }}' title='{{ label|trans }}' />
+      {% endif %}
+      {% if icon %}
+        <i title='{{ label|trans }}' class='ml-2 mr-1 fas fa-{{ icon }}'></i>
+      {% endif %}
+      {{ label|trans }}</label>
+    </div>
     <label class='switch ucp-align'>
       <input name='{{ target }}' type='checkbox' autocomplete='off' id='addCompound{{ target }}'>
       <span class='slider'></span>
@@ -60,21 +69,21 @@
           <hr>
           <details>
             <summary><h5 class='d-inline'>{{ 'Safety information'|trans }}</h5></summary>
-            {{ _self.binaryParam('is_corrosive', 'Corrosive') }}
-            {{ _self.binaryParam('is_explosive', 'Explosive') }}
-            {{ _self.binaryParam('is_flammable', 'Flammable') }}
-            {{ _self.binaryParam('is_gas_under_pressure', 'Gas under pressure') }}
-            {{ _self.binaryParam('is_hazardous2env', 'Hazardous to environment') }}
-            {{ _self.binaryParam('is_hazardous2health', 'Hazardous to health') }}
-            {{ _self.binaryParam('is_oxidising', 'Oxidising') }}
-            {{ _self.binaryParam('is_toxic', 'Toxic') }}
-            {{ _self.binaryParam('is_radioactive', 'Radioactive') }}
-            {{ _self.binaryParam('is_controlled', 'Controlled substance') }}
-            {{ _self.binaryParam('is_antibiotic_precursor', 'Antibiotic precursor') }}
-            {{ _self.binaryParam('is_explosive_precursor', 'Explosive precursor') }}
-            {{ _self.binaryParam('is_drug_precursor', 'Drug precursor') }}
-            {{ _self.binaryParam('is_cmr', 'Carcinogenic, mutagenic and reprotoxic (CMR)') }}
-            {{ _self.binaryParam('is_nano', 'Nanomaterial') }}
+            {{ _self.binaryParam('is_corrosive', 'Corrosive', '05') }}
+            {{ _self.binaryParam('is_explosive', 'Explosive', '01') }}
+            {{ _self.binaryParam('is_flammable', 'Flammable', '02') }}
+            {{ _self.binaryParam('is_gas_under_pressure', 'Gas under pressure', '04') }}
+            {{ _self.binaryParam('is_hazardous2env', 'Hazardous to environment', '09') }}
+            {{ _self.binaryParam('is_hazardous2health', 'Hazardous to health', '08') }}
+            {{ _self.binaryParam('is_oxidising', 'Oxidising', '03') }}
+            {{ _self.binaryParam('is_toxic', 'Toxic', '06') }}
+            {{ _self.binaryParam('is_radioactive', 'Radioactive', '', 'radiation') }}
+            {{ _self.binaryParam('is_controlled', 'Controlled substance', '', 'shield') }}
+            {{ _self.binaryParam('is_antibiotic_precursor', 'Antibiotic precursor', '', 'bacterium') }}
+            {{ _self.binaryParam('is_explosive_precursor', 'Explosive precursor', '', 'explosion') }}
+            {{ _self.binaryParam('is_drug_precursor', 'Drug precursor', '', 'pills') }}
+            {{ _self.binaryParam('is_cmr', 'Carcinogenic, mutagenic and reprotoxic (CMR)', '', 'skull-crossbones') }}
+            {{ _self.binaryParam('is_nano', 'Nanomaterial', '', 'atom') }}
           </details>
 
           <hr>

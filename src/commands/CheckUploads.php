@@ -40,11 +40,11 @@ class CheckUploads extends Command
             'Checking uploads',
             '================',
         ));
-        $checker = new UploadsChecker();
+        $checker = new UploadsChecker($output);
 
         if ($input->getOption('recompute-hash')) {
             $output->writeln('Recomputing hash value for all uploads... This can take a very long time!');
-            $checker->recomputeHash($output, $input->getOption('dry-run'));
+            $checker->recomputeHash($input->getOption('dry-run'));
             return Command::SUCCESS;
         }
 

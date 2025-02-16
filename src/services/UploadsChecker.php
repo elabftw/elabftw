@@ -15,6 +15,7 @@ namespace Elabftw\Services;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Storage;
 use Elabftw\Models\Uploads;
+use League\Flysystem\UnableToRetrieveMetadata;
 use PDO;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -25,21 +26,22 @@ class UploadsChecker
 {
     private Db $Db;
 
-    public function __construct()
+    public function __construct(private OutputInterface $output)
     {
         $this->Db = Db::getConnection();
     }
 
-    public function getStats(): array
+    public static function getStats(): array
     {
+        $Db = Db::getConnection();
         $sql = 'SELECT
             COUNT(id) AS count_all,
             SUM(filesize) AS filesize_all,
             COUNT(CASE WHEN hash IS NULL THEN 1 END) AS count_null_hash,
             COUNT(CASE WHEN filesize IS NULL THEN 1 END) AS count_null_filesize
             FROM uploads';
-        $req = $this->Db->prepare($sql);
-        $this->Db->execute($req);
+        $req = $Db->prepare($sql);
+        $Db->execute($req);
         return $req->fetch();
     }
 
@@ -59,7 +61,12 @@ class UploadsChecker
         $fixedCount = 0;
         foreach ($toFix as $upload) {
             $storageFs = Storage::from($upload['storage'])->getStorage()->getFs();
-            $filesize = $storageFs->fileSize($upload['long_name']);
+            try {
+                $filesize = $storageFs->fileSize($upload['long_name']);
+            } catch (UnableToRetrieveMetadata $e) {
+                $this->output->writeln(sprintf('Error: %s', $e->getMessage()));
+                continue;
+            }
             $sql = 'UPDATE uploads SET filesize = :filesize WHERE id = :id';
             $req = $this->Db->prepare($sql);
             $req->bindParam(':filesize', $filesize, PDO::PARAM_INT);
@@ -70,7 +77,7 @@ class UploadsChecker
         return $fixedCount;
     }
 
-    public function recomputeHash(OutputInterface $output, bool $dryRun): int
+    public function recomputeHash(bool $dryRun): int
     {
         $sql = 'SELECT id, hash, storage, long_name FROM uploads ORDER BY uploads.created_at DESC';
         $req = $this->Db->prepare($sql);
@@ -82,13 +89,13 @@ class UploadsChecker
                 continue;
             }
             if ($upload['hash'] !== $hash) {
-                $output->writeln(sprintf('Found hash mismatch for upload id: %d, stored at %s', $upload['id'], $upload['long_name']));
-                $output->writeln(sprintf('Expected: %s but calculated: %s', $upload['hash'], $hash));
+                $this->output->writeln(sprintf('Found hash mismatch for upload id: %d, stored at %s', $upload['id'], $upload['long_name']));
+                $this->output->writeln(sprintf('Expected: %s but calculated: %s', $upload['hash'], $hash));
                 if (!$dryRun) {
-                    $output->writeln('Replacing faulty hash in database...');
+                    $this->output->writeln('Replacing faulty hash in database...');
                     $this->updateHash($upload['id'], $hash);
                 } else {
-                    $output->writeln('Not replacing faulty hash in database because dry-run mode enabled.');
+                    $this->output->writeln('Not replacing faulty hash in database because dry-run mode enabled.');
                 }
             }
         }

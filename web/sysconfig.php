@@ -127,8 +127,6 @@ try {
         Db::getConnection()->getAttribute(PDO::ATTR_SERVER_VERSION),
     );
 
-    $UploadsChecker = new UploadsChecker();
-
     $elabimgVersion = getenv('ELABIMG_VERSION') ?: 'Not in Docker';
     $auditLogsArr = AuditLogs::read($App->Request->query->getInt('limit', AuditLogs::DEFAULT_LIMIT), $App->Request->query->getInt('offset'));
     array_walk($auditLogsArr, function (array &$event) {
@@ -157,7 +155,7 @@ try {
         'info' => (new Info())->readAll(),
         'storageUnitsArr' => $StorageUnits->readAllRecursive(),
         'timestampLastMonth' => $Experiments->getTimestampLastMonth(),
-        'uploadsStats' => $UploadsChecker->getStats(),
+        'uploadsStats' => UploadsChecker::getStats(),
         'usersArr' => $usersArr,
         'enforceMfaArr' => EnforceMfa::getAssociativeArray(),
         'passwordComplexityArr' => PasswordComplexity::getAssociativeArray(),

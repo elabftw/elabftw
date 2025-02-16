@@ -38,6 +38,7 @@ const t = {
     "tag-delete-warning": "이 태그를 삭제할까요?",
     "template-title": "Template title",
     "today": "Today",
+    "type-3-chars": "At least 3 characters are required to search",
     "undefined-group": "Undefined group",
     "upload-file-comment": "파일 코멘트",
   },

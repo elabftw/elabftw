@@ -38,6 +38,7 @@ const t = {
     "tag-delete-warning": "Si vuol eliminare questo tag?",
     "template-title": "Titolo del Modello",
     "today": "Today",
+    "type-3-chars": "At least 3 characters are required to search",
     "undefined-group": "Undefined group",
     "upload-file-comment": "Commento sul file",
   },

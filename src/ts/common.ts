@@ -414,6 +414,8 @@ document.addEventListener('DOMContentLoaded', () => {
         appendTo: el.dataset.identifier ? `#autocompleteAnchorDiv_${el.dataset.identifier}` : '',
         source: function(request: Record<string, string>, response: (data: Array<string>) => void): void {
           if (request.term.length < 3) {
+            // TODO make it unselectable/grayed out or something, maybe once we use homegrown autocomplete
+            response([i18next.t('type-3-chars')]);
             return;
           }
           if (['experiments', 'items'].includes(el.dataset.completeTarget)) {

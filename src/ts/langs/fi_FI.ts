@@ -38,6 +38,7 @@ const t = {
     "tag-delete-warning": "Poistetaanko tämä tunniste?",
     "template-title": "Malliotsikko",
     "today": "Tänään",
+    "type-3-chars": "At least 3 characters are required to search",
     "undefined-group": "Määrittelemätön ryhmä",
     "upload-file-comment": "Tiedoston kommentti",
   },

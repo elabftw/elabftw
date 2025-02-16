@@ -73,6 +73,7 @@ class i18n4Js
             'tag-delete-warning' => _('Delete this tag?'),
             'template-title' => _('Template title'),
             'today' => _('Today'),
+            'type-3-chars' => _('At least 3 characters are required to search'),
             'undefined-group' => _('Undefined group'),
             'upload-file-comment' => _('File comment'),
         );

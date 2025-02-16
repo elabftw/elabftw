@@ -3437,7 +3437,7 @@ msgstr "Supprimer le mode d'édition exclusif pour cette entrée"
 
 #: src/templates/remove-exclusive-edit-mode-modal.html:17
 msgid "You can change this in your %ssettings%s."
-msgstr "Vous pouvez modifier cela dans vos %ssettings%."
+msgstr "Vous pouvez modifier cela dans vos %ssettings%s."
 
 #: src/templates/remove-exclusive-edit-mode-modal.html:21
 msgid "Confirm"

@@ -38,6 +38,7 @@ const t = {
     "tag-delete-warning": "Hapus label ini?",
     "template-title": "Judul templat",
     "today": "Hari ini",
+    "type-3-chars": "At least 3 characters are required to search",
     "undefined-group": "Kelompok yang tidak terdefinisi",
     "upload-file-comment": "File komentar",
   },

@@ -38,6 +38,7 @@ const t = {
     "tag-delete-warning": "Smazat tento štítek?",
     "template-title": "Název šablony",
     "today": "Dnes",
+    "type-3-chars": "At least 3 characters are required to search",
     "undefined-group": "Nedefinovaná skupina",
     "upload-file-comment": "Komentář k souboru",
   },

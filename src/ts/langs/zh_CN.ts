@@ -38,6 +38,7 @@ const t = {
     "tag-delete-warning": "删除这个标签？",
     "template-title": "模板标题",
     "today": "今天",
+    "type-3-chars": "At least 3 characters are required to search",
     "undefined-group": "默认分组",
     "upload-file-comment": "档案评论",
   },

@@ -38,6 +38,7 @@ const t = {
     "tag-delete-warning": "Dit label verwijderen?",
     "template-title": "Sjabloon titel",
     "today": "Vandaag",
+    "type-3-chars": "At least 3 characters are required to search",
     "undefined-group": "Ongedefinieerde groep",
     "upload-file-comment": "Bestandscommentaar",
   },

@@ -38,6 +38,7 @@ const t = {
     "tag-delete-warning": "Želite izbrisati to oznako?",
     "template-title": "Template title",
     "today": "Today",
+    "type-3-chars": "At least 3 characters are required to search",
     "undefined-group": "Undefined group",
     "upload-file-comment": "Komentar datoteke",
   },

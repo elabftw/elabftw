@@ -62,6 +62,7 @@ final class CompoundParams extends ContentParams
             'is_drug_precursor',
             'is_explosive_precursor',
             'is_cmr',
+            'is_nano',
             'is_controlled' => Filter::onToBinary($this->content),
             'molecular_weight' => (float) $this->content,
             'state' => $this->getState(),

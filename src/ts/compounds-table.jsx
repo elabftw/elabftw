@@ -60,6 +60,7 @@ if (document.getElementById('compounds-table')) {
           { field: 'is_drug_precursor', headerName: 'Drug precursor' },
           { field: 'is_explosive_precursor', headerName: 'Explosive precursor' },
           { field: 'is_cmr', headerName: 'CMR' },
+          { field: 'is_nano', headerName: 'Nanomaterial' },
           { field: 'is_controlled', headerName: 'Controlled substance' },
           { field: 'id', type: 'numericColumn' },
       ]);

@@ -750,6 +750,7 @@ export function toggleEditCompound(json: object): void {
     'is_explosive_precursor',
     'is_drug_precursor',
     'is_cmr',
+    'is_nano',
   ];
   binaryParams.forEach(param => {
     const input = (document.getElementById(`addCompound${param}`) as HTMLInputElement);

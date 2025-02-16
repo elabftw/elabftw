@@ -1923,6 +1923,7 @@ CREATE TABLE IF NOT EXISTS compounds (
   `is_drug_precursor` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `is_explosive_precursor` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `is_cmr` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_nano` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `is_controlled` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   primary key(`id`)
 );

@@ -25,6 +25,7 @@ module.exports = (env) => {
         './src/ts/common.ts',
         './src/ts/i18n.ts',
         './src/ts/steps-links.ts',
+        './src/ts/chem-editor.ts',
         './src/ts/ketcher.jsx',
         './src/ts/ketcher-editor.jsx',
         './src/ts/compounds-table.jsx',

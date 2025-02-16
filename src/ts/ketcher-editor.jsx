@@ -7,7 +7,6 @@
  */
 import { createRoot } from 'react-dom/client'
 import KetcherEditor from './ketcher';
-import {notifError} from './misc';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('ketcher-root')) {
@@ -16,22 +15,5 @@ document.addEventListener('DOMContentLoaded', () => {
     root.render(
       <KetcherEditor />
     );
-    document.getElementById('ketcher-actions').addEventListener('click', async (event) => {
-      const el = event.target;
-      if (el.matches('[data-action="search-from-editor"]')) {
-        window.ketcher.getSmiles().then(s => {
-          if (!s) {
-            notifError(new Error('No structure found!'));
-            return;
-          }
-          const smilesInput = document.getElementById('substructureSearchInput');
-          smilesInput.value = s;
-          const resultsParentDiv = document.getElementById('searchFpResultsDiv');
-          resultsParentDiv.removeAttribute('hidden');
-          // reload the table
-          document.dispatchEvent(new CustomEvent('dataReload'));
-        });
-      }
-    });
   }
 });

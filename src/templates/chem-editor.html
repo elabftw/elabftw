@@ -1,9 +1,15 @@
 {% extends 'base.html' %}
 {% block body %}
+{% include('create-compound-modal.html') %}
 {% include('edit-compound-modal.html') %}
 {% include('create-resource-from-compound-modal.html') %}
+{# loading spinner #}
+<div class='d-flex justify-content-center' id='loading-spinner'>
+  <div class='lds-dual-ring'></div>
+</div>
 <div id='ketcher-root' class='my-2'></div>
 <div id='ketcher-actions'>
+  <button type='button' class='btn btn-primary' data-action='create-compound-from-editor'>{{ 'Add to compounds database'|trans }}</button>
   <button type='button' class='btn btn-primary' data-action='search-from-editor'>{{ 'Search similar structures'|trans }}</button>
   <label for='search-fp-exact' class='col-form-label'>{{ 'Exact structure'|trans }}</label>
   <label class='switch ucp-align'>

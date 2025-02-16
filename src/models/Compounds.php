@@ -65,7 +65,7 @@ class Compounds extends AbstractRest
             $q = $queryParams->getQuery();
             return $this->searchFingerprint($this->getFingerprintFromSmiles($q->getString('search_fp_smi')), $q->getBoolean('exact'));
         }
-        $sql = $this->getSelectBeforeWhere() . ' WHERE 1=1';
+        $sql = $this->getSelectBeforeWhere() . ' WHERE 1=1 AND entity.state IN (1,2)';
         if ($queryParams->getQuery()->get('q')) {
             $sql .= ' AND (
                 entity.cas_number LIKE :query OR
@@ -315,7 +315,7 @@ class Compounds extends AbstractRest
 
         $sql .= 'FROM compounds_fingerprints AS cf
             LEFT JOIN compounds AS c ON cf.id = c.id';
-        $sql .= ' WHERE 1=1';
+        $sql .= ' WHERE 1=1 AND c.state IN (1,2)';
         foreach ($fp['data'] as $key => $value) {
             if ($value == 0) {
                 continue;

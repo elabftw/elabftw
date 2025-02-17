@@ -2,7 +2,7 @@
 
 {% block title %}
 <div class='d-flex'>
-  <h1 id='pageTitle'>{{ App.pageTitle }}</h1>
+  <h1 id='pageTitle'>{{ pageTitle }}</h1>
   <a class='ml-auto' href='/api/v2/reports?scope=compounds&format=csv'>
     <button class='btn btn-secondary' data-action='get-compounds-csv'>{{ 'Export to CSV'|trans }}</button>
   </a>

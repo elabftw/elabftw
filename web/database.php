@@ -26,7 +26,6 @@ use Symfony\Component\HttpFoundation\Response;
  *
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = ngettext('Resource', 'Resources', 2);
 
 // default response is error page with general error message
 $Response = new Response();

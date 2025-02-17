@@ -129,9 +129,7 @@
     <a id='attachementsEnd'></a>
     {% if currentLimit < uploadsTotal %}
       <div class='text-center page-buttons mt-2'>
-        <button class='btn btn-primary' type='button'>
-          <a href='?tab=2&limit={{ currentLimit * 2 }}#attachementsEnd' class='color-white'>{{ 'Load more'|trans }}</a>
-        </button>
+        <a class='btn btn-primary' href='?tab=2&limit={{ currentLimit * 2 }}#attachementsEnd' class='color-white'>{{ 'Load more'|trans }}</a>
       </div>
     {% endif %}
   </div>

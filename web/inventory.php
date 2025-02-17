@@ -24,7 +24,6 @@ use Symfony\Component\HttpFoundation\Response;
  * Storage browser
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = _('Inventory');
 
 // default response is error page with general error message
 $Response = new Response();

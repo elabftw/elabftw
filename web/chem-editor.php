@@ -24,7 +24,6 @@ use Symfony\Component\HttpFoundation\Response;
  * Chemistry editor
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = _('Chemical Structure Editor');
 
 // default response is error page with general error message
 $Response = new Response();

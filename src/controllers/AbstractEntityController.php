@@ -163,6 +163,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'itemsCategoryArr' => $itemsCategoryArr,
             'favTagsArr' => $favTagsArr,
             'itemsArr' => $itemsArr,
+            'pageTitle' => $this->getPageTitle(),
             'metakeyArrForSelect' => array_column($ExtraFieldsKeys->readAll(), 'extra_fields_key'),
             'requestActionsArr' => $UserRequestActions->readAllFull(),
             'scopedTeamgroupsArr' => $this->scopedTeamgroupsArr,
@@ -180,6 +181,8 @@ abstract class AbstractEntityController implements ControllerInterface
 
         return $Response;
     }
+
+    abstract protected function getPageTitle(): string;
 
     /**
      * View mode (one item displayed)
@@ -218,6 +221,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'entityProcurementRequestsArr' => $ProcurementRequests->readActiveForEntity($this->Entity->id ?? 0),
             'entityRequestActionsArr' => $RequestActions->readAllFull(),
             'itemsCategoryArr' => $itemsCategoryArr,
+            'pageTitle' => $this->getPageTitle(),
             'mode' => 'view',
             'hideTitle' => true,
             'teamsArr' => $Teams->readAll(),
@@ -294,6 +298,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'lastModifierFullname' => $lastModifierFullname,
             'metadataGroups' => $Metadata->getGroups(),
             'mode' => 'edit',
+            'pageTitle' => $this->getPageTitle(),
             'statusArr' => $this->statusArr,
             'teamsArr' => $Teams->readAll($baseQueryParams),
             'teamTagsArr' => $TeamTags->readAll($baseQueryParams),

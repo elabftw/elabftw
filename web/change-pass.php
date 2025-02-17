@@ -26,7 +26,6 @@ use function time;
  * Form to reset the password
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = _('Reset password');
 
 $Response = new Response();
 $Response->prepare($Request);
@@ -50,6 +49,7 @@ try {
     $passwordComplexity = PasswordComplexity::from((int) $App->Config->configArr['password_complexity_requirement']);
     $renderArr = array(
         'key' => $App->Request->query->getAlnum('key'),
+        'pageTitle' => _('Reset password'),
         'passwordInputHelp' => $passwordComplexity->toHuman(),
         'passwordInputPattern' => $passwordComplexity->toPattern(),
     );

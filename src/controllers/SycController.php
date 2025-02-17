@@ -18,4 +18,9 @@ class SycController extends AbstractHtmlController
     {
         return 'syc.html';
     }
+
+    protected function getPageTitle(): string
+    {
+        return _('OpenCloning');
+    }
 }

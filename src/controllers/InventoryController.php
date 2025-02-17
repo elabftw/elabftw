@@ -14,11 +14,18 @@ namespace Elabftw\Controllers;
 
 use Elabftw\Models\StorageUnits;
 
+use function array_merge;
+
 class InventoryController extends AbstractHtmlController
 {
     protected function getTemplate(): string
     {
         return 'inventory.html';
+    }
+
+    protected function getPageTitle(): string
+    {
+        return _('Inventory');
     }
 
     protected function getData(): array
@@ -32,9 +39,12 @@ class InventoryController extends AbstractHtmlController
         if ($this->app->Request->query->has('storage_unit')) {
             $containersArr = $StorageUnits->readAllFromStorage($this->app->Request->query->getInt('storage_unit'));
         }
-        return array(
-            'containersArr' => $containersArr,
-            'storageUnitsArr' => $StorageUnits->readAllRecursive(),
+        return array_merge(
+            parent::getData(),
+            array(
+                'containersArr' => $containersArr,
+                'storageUnitsArr' => $StorageUnits->readAllRecursive(),
+            ),
         );
     }
 }

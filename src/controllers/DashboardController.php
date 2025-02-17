@@ -28,6 +28,8 @@ use Elabftw\Models\Templates;
 use Elabftw\Models\UserRequestActions;
 use Elabftw\Params\DisplayParams;
 
+use function array_merge;
+
 /**
  * For dashboard.php
  */
@@ -38,6 +40,11 @@ class DashboardController extends AbstractHtmlController
     protected function getTemplate(): string
     {
         return 'dashboard.html';
+    }
+
+    protected function getPageTitle(): string
+    {
+        return _('Dashboard');
     }
 
     protected function getData(): array
@@ -67,18 +74,21 @@ class DashboardController extends AbstractHtmlController
         $ItemsStatus = new ItemsStatus(new Teams($this->app->Users));
         $UserRequestActions = new UserRequestActions($this->app->Users);
 
-        return array(
-            'bookingsArr' => $Scheduler->readAll(),
-            'itemsCategoryArr' => $ItemsTypes->readAll(),
-            'itemsStatusArr' => $ItemsStatus->readAll(),
-            'experimentsArr' => $Experiments->readShow($DisplayParamsExp),
-            'experimentsCategoryArr' => $ExperimentsCategory->readAll(),
-            'experimentsStatusArr' => $ExperimentsStatus->readAll(),
-            'itemsArr' => $Items->readShow($DisplayParamsItems),
-            'requestActionsArr' => $UserRequestActions->readAllFull(),
-            'templatesArr' => $Templates->Pins->readAll(),
-            'usersArr' => $this->app->Users->readAllActiveFromTeam(),
-            'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
+        return array_merge(
+            parent::getData(),
+            array(
+                'bookingsArr' => $Scheduler->readAll(),
+                'itemsCategoryArr' => $ItemsTypes->readAll(),
+                'itemsStatusArr' => $ItemsStatus->readAll(),
+                'experimentsArr' => $Experiments->readShow($DisplayParamsExp),
+                'experimentsCategoryArr' => $ExperimentsCategory->readAll(),
+                'experimentsStatusArr' => $ExperimentsStatus->readAll(),
+                'itemsArr' => $Items->readShow($DisplayParamsItems),
+                'requestActionsArr' => $UserRequestActions->readAllFull(),
+                'templatesArr' => $Templates->Pins->readAll(),
+                'usersArr' => $this->app->Users->readAllActiveFromTeam(),
+                'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
+            ),
         );
     }
 }

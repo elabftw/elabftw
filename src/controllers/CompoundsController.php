@@ -14,6 +14,8 @@ namespace Elabftw\Controllers;
 
 use Elabftw\Models\ItemsTypes;
 
+use function array_merge;
+
 class CompoundsController extends AbstractHtmlController
 {
     protected function getTemplate(): string
@@ -21,10 +23,18 @@ class CompoundsController extends AbstractHtmlController
         return 'compounds.html';
     }
 
+    protected function getPageTitle(): string
+    {
+        return _('Compounds');
+    }
+
     protected function getData(): array
     {
-        return array(
-            'resourceCategoriesArr' => (new ItemsTypes($this->app->Users))->readAll(),
+        return array_merge(
+            parent::getData(),
+            array(
+                'resourceCategoriesArr' => (new ItemsTypes($this->app->Users))->readAll(),
+            ),
         );
     }
 }

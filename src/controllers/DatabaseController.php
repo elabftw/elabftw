@@ -32,4 +32,9 @@ class DatabaseController extends AbstractEntityController
         $Status = new ItemsStatus(new Teams($this->App->Users, $this->App->Users->team));
         $this->statusArr = $Status->readAll();
     }
+
+    protected function getPageTitle(): string
+    {
+        return ngettext('Resource', 'Resources', 2);
+    }
 }

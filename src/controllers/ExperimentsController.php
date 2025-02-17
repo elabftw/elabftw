@@ -34,4 +34,12 @@ class ExperimentsController extends AbstractEntityController
         $Status = new ExperimentsStatus($Teams);
         $this->statusArr = $Status->readAll();
     }
+
+    protected function getPageTitle(): string
+    {
+        if ($this->Entity instanceof Experiments) {
+            return ngettext('Experiment', 'Experiments', 2);
+        }
+        return _('Experiment templates');
+    }
 }

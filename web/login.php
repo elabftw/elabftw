@@ -33,7 +33,6 @@ use function str_split;
  *
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = _('Login');
 
 $Response = new Response();
 $Response->prepare($App->Request);
@@ -54,9 +53,9 @@ try {
 
     // Show MFA if necessary
     if ($App->Session->has('mfa_auth_required')) {
-        $App->pageTitle = _('Two Factor Authentication');
         $template = 'mfa.html';
-        $renderArr = array('hideTitle' => true);
+        // the title is hidden in the page, but give it nonetheless for the document.title
+        $renderArr = array('hideTitle' => true, 'pageTitle' => _('Two Factor Authentication'));
 
         // If one enables 2FA we need to provide the secret.
         // For user convenience it is provide as QR code and as plain text.
@@ -110,6 +109,7 @@ try {
     $template = 'login.html';
     $renderArr = array(
         'idpsArr' => $idpsArr,
+        'pageTitle' => _('Login'),
         'teamsArr' => $teamsArr,
         'showLocal' => $showLocal,
         'hideTitle' => true,

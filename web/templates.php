@@ -25,7 +25,6 @@ use Symfony\Component\HttpFoundation\Response;
  * Experiments templates main page
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = _('Experiment templates');
 
 // default response is error page with general error message
 $Response = new Response();

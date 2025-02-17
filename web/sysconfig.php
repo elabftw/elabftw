@@ -40,7 +40,6 @@ use function array_walk;
  *
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = _('eLabFTW Configuration');
 /** @psalm-suppress UncaughtThrowInGlobalScope */
 $Response = new Response();
 $Response->prepare($App->Request);
@@ -145,6 +144,7 @@ try {
         'idpsArr' => $idpsArr,
         'idpsSources' => $idpsSources,
         'isSearching' => $isSearching,
+        'pageTitle' => _('Instance settings'),
         'passwordInputHelp' => $passwordComplexity->toHuman(),
         'passwordInputPattern' => $passwordComplexity->toPattern(),
         'phpInfos' => $phpInfos,

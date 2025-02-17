@@ -24,7 +24,6 @@ use Symfony\Component\HttpFoundation\Response;
  * Compounds database web interface
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = _('Compounds');
 
 // default response is error page with general error message
 $Response = new Response();

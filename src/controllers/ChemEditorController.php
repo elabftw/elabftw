@@ -14,6 +14,8 @@ namespace Elabftw\Controllers;
 
 use Elabftw\Models\ItemsTypes;
 
+use function array_merge;
+
 class ChemEditorController extends AbstractHtmlController
 {
     protected function getTemplate(): string
@@ -21,10 +23,18 @@ class ChemEditorController extends AbstractHtmlController
         return 'chem-editor.html';
     }
 
+    protected function getPageTitle(): string
+    {
+        return _('Chemical Structure Editor');
+    }
+
     protected function getData(): array
     {
-        return array(
-            'resourceCategoriesArr' => (new ItemsTypes($this->app->Users))->readAll(),
+        return array_merge(
+            parent::getData(),
+            array(
+                'resourceCategoriesArr' => (new ItemsTypes($this->app->Users))->readAll(),
+            ),
         );
     }
 }

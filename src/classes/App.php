@@ -55,9 +55,6 @@ class App
 
     public Users $Users;
 
-    /** @psalm-suppress PossiblyUnusedProperty this property is used in twig templates */
-    public string $pageTitle = 'Lab manager';
-
     public array $teamArr = array();
 
     /** @psalm-suppress PossiblyUnusedProperty this property is used in twig templates */

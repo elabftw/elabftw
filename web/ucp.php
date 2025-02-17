@@ -33,7 +33,6 @@ use Symfony\Component\HttpFoundation\Response;
  * Settings for user
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = _('Settings');
 
 /** @psalm-suppress UncaughtThrowInGlobalScope */
 $Response = new Response();
@@ -109,6 +108,7 @@ try {
         'metadataGroups' => $metadataGroups,
         'scopedTeamgroupsArr' => $TeamGroups->readScopedTeamgroups(),
         'notificationsSettings' => $notificationsSettings,
+        'pageTitle' => _('Settings'),
         'passwordInputHelp' => $passwordComplexity->toHuman(),
         'passwordInputPattern' => $passwordComplexity->toPattern(),
         'statusArr' => $Status->readAll(),

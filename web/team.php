@@ -26,7 +26,6 @@ use Symfony\Component\HttpFoundation\Response;
  * The TEAM page
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = _('Team');
 // default response is error page with general error message
 /** @psalm-suppress UncaughtThrowInGlobalScope */
 $Response = new Response();
@@ -39,6 +38,7 @@ try {
 
     $template = 'team.html';
     $renderArr = array(
+        'pageTitle' => _('Team'),
         'teamArr' => $Teams->readOne(),
         'teamGroupsArr' => $TeamGroups->readAll(),
         'teamProcurementRequestsArr' => $ProcurementRequests->readAll(),

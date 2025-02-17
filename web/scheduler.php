@@ -26,7 +26,6 @@ use Symfony\Component\HttpFoundation\Response;
  * Scheduler to book resources
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = _('Scheduler');
 
 // default response is error page with general error message
 $Response = new Response();
@@ -55,6 +54,7 @@ try {
         'bookableItemData' => $bookableItemData,
         'bookableItemsTypes' => $bookableItemsTypes,
         'itemsArr' => $bookableItemsArr,
+        'pageTitle' => _('Scheduler'),
     );
 
     $Response->setContent($App->render($template, $renderArr));

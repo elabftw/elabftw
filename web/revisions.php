@@ -26,7 +26,6 @@ use Symfony\Component\HttpFoundation\Response;
  *
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = _('Revisions');
 // default response is error page with general error message
 /** @psalm-suppress UncaughtThrowInGlobalScope */
 $Response = new Response();
@@ -48,6 +47,7 @@ try {
     $template = 'revisions.html';
     $renderArr = array(
         'Entity' => $Entity,
+        'pageTitle' => _('Revisions'),
         'revisionsArr' => $revisionsArr,
     );
 

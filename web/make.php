@@ -25,7 +25,6 @@ use Symfony\Component\HttpFoundation\Response;
  * Create a csv, zip or pdf file
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = _('Export');
 
 // default response is error page with general error message
 $Response = new Response();

@@ -25,7 +25,6 @@ use Symfony\Component\HttpFoundation\Response;
  * Entry point for all experiment stuff
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = ngettext('Experiment', 'Experiments', 2);
 
 // default response is error page with general error message
 $Response = new Response();

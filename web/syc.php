@@ -24,7 +24,6 @@ use Symfony\Component\HttpFoundation\Response;
  * OpenCloning tool page
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = _('Cloning tool');
 
 // default response is error page with general error message
 $Response = new Response();

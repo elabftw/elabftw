@@ -29,10 +29,14 @@ abstract class AbstractHtmlController implements ControllerInterface
         return $Response;
     }
 
+    abstract protected function getPageTitle(): string;
+
     abstract protected function getTemplate(): string;
 
     protected function getData(): array
     {
-        return array();
+        return array(
+            'pageTitle' => $this->getPageTitle(),
+        );
     }
 }

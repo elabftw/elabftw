@@ -30,7 +30,6 @@ use Symfony\Component\HttpFoundation\Response;
  * Display profile of current user
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = _('Profile');
 
 /** @psalm-suppress UncaughtThrowInGlobalScope */
 $Response = new Response();
@@ -65,6 +64,7 @@ try {
         'exportedFiles' => $Export->readAll(),
         'experimentsCategoryArr' => $ExperimentsCategories->readAll(),
         'maxUploadSizeRaw' => ini_get('post_max_size'),
+        'pageTitle' => _('Profile'),
         'pieData' => $UserStats->getPieData(),
         'pieDataCss' => $UserStats->getFormattedPieData(),
         'teamGroupsArr' => $teamGroupsArr,

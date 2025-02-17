@@ -39,7 +39,6 @@ use function array_filter;
  * Administration panel of a team
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = _('Admin panel');
 $Response = new Response();
 $Response->prepare($App->Request);
 
@@ -128,6 +127,7 @@ try {
         'statusArr' => $statusArr,
         'experimentsCategoriesArr' => $experimentsCategoriesArr,
         'itemsStatusArr' => $ItemsStatus->readAll(),
+        'pageTitle' => _('Admin panel'),
         'passwordInputHelp' => $passwordComplexity->toHuman(),
         'passwordInputPattern' => $passwordComplexity->toPattern(),
         'teamGroupsArr' => $teamGroupsArr,

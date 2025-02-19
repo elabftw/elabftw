@@ -322,7 +322,7 @@ export function getTinymceBaseConfig(page: string): object {
       },
     },
     mobile: {
-      plugins: [ 'autolink', 'image', 'link', 'lists', 'save' ],
+      plugins: [ 'autolink', 'image', 'link', 'lists', 'save', 'mention' ],
     },
     // use a custom function for the save button in toolbar
     save_onsavecallback: (): Promise<void> => updateEntityBody(),

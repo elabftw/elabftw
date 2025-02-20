@@ -1093,11 +1093,11 @@ paths:
                     Set the content type for main text: 1 for HTML (default) and 2 for Markdown
                   example: 1
                 metadata:
-                  type: string
+                  type: object
                   nullable: true
                   description: The metadata in JSON format
                   default: null
-                  example: '{ "extra_fields": { "For example": { "type": "text", "value": "With a value", "required": true, "description": "An extra field of type text" } } }'
+                  example: { "extra_fields": { "For example": { "type": "text", "value": "With a value", "required": true, "description": "An extra field of type text" } } }
                 rating:
                   type: integer
                   nullable: true

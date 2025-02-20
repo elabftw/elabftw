@@ -447,7 +447,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // CHECK AN ENTITY BOX
     } else if (el.matches('[data-action="checkbox-entity"]')) {
-      ['advancedSelectOptions', 'withSelected'].forEach(id => {
+      ['withSelected'].forEach(id => {
         const el = document.getElementById(id);
         const scroll = el.classList.contains('d-none');
         el.classList.remove('d-none');
@@ -459,6 +459,11 @@ document.addEventListener('DOMContentLoaded', () => {
         (el.closest('.entity') as HTMLElement).style.backgroundColor = bgColor;
       } else {
         (el.closest('.entity') as HTMLElement).style.backgroundColor = '';
+      }
+      // Remove withSelected actions if there are no more checked checkboxes
+      const anyChecked = document.querySelectorAll('[data-action="checkbox-entity"]:checked').length > 0;
+      if (!anyChecked) {
+        document.getElementById('withSelected')?.classList.add('d-none');
       }
 
     // EXPAND ALL

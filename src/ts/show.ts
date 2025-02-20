@@ -451,7 +451,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const el = document.getElementById(id);
         const scroll = el.classList.contains('d-none');
         el.classList.remove('d-none');
-        if (id === 'withSelected' && scroll && el.getBoundingClientRect().bottom > 0) {
+        if (scroll && el.getBoundingClientRect().bottom > 0) {
           window.scrollBy({top: el.offsetHeight, behavior: 'instant'});
         }
       });
@@ -460,9 +460,14 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         (el.closest('.entity') as HTMLElement).style.backgroundColor = '';
       }
-      // Remove withSelected actions if there are no more checked checkboxes
+      // show invert select if any checkbox is selected
       const anyChecked = document.querySelectorAll('[data-action="checkbox-entity"]:checked').length > 0;
-      if (!anyChecked) {
+      const invertSelections = document.querySelector('a[data-action="invert-entities-selection"]') as HTMLAnchorElement;
+      if (anyChecked) {
+        invertSelections?.removeAttribute('hidden');
+      } else {
+        invertSelections?.setAttribute('hidden', 'hidden');
+        // Remove withSelected actions if there are no more checked checkboxes
         document.getElementById('withSelected')?.classList.add('d-none');
       }
 
@@ -499,9 +504,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         document.getElementById('withSelected').classList.remove('d-none');
         el.dataset.target = 'unselect';
-
       } else {
-
         document.querySelectorAll('.entity input[type=checkbox]').forEach(box => {
           (box as HTMLInputElement).checked = false;
           (box.closest('.entity') as HTMLElement).style.backgroundColor = '';
@@ -525,6 +528,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         (box.closest('.entity') as HTMLElement).style.backgroundColor = newBgColor;
       });
+      // Remove withSelected actions if there are no more checked checkboxes
+      const anyChecked = document.querySelectorAll('[data-action="checkbox-entity"]:checked').length > 0;
+      const withSelected = document.getElementById('withSelected') as HTMLDivElement;
+      anyChecked ? withSelected.classList.remove('d-none') : withSelected.classList.add('d-none');
 
     // PATCH ACTIONS FOR CHECKED BOXES : lock, unlock, timestamp, archive
     } else if (el.matches('[data-action="patch-selected-entities"]')) {

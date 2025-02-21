@@ -50,6 +50,7 @@ class App
     // we should be pretty safe from ever reaching 100 as a minor or patch version!
     public const int INSTALLED_VERSION_INT = 50200;
 
+    // stores the configuration of the current team
     public array $teamArr = array();
 
     /** @psalm-suppress PossiblyUnusedProperty this property is used in twig templates */
@@ -99,7 +100,6 @@ class App
                 'index.php',
                 'logout.php',
                 'make.php',
-                'search.php',
             );
             if (!in_array(basename($this->Request->getScriptName()), $allowedPages, true)) {
                 throw new UnauthorizedException();

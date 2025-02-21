@@ -95,7 +95,6 @@ class Auth implements AuthInterface
                 $autoAnon = array(
                     Entrypoint::Experiments->toPage(),
                     Entrypoint::Database->toPage(),
-                    'search.php',
                 );
                 if (in_array(basename($this->Request->getScriptName()), $autoAnon, true)) {
                     return new Anon($this->Config->configArr, (int) ($this->Config->configArr['open_team'] ?? 1));

@@ -85,7 +85,7 @@ try {
     // Show helpful screen if database schema needs update
     // FIXME ok just leaving this here for now but the cache of Config is still buggy
     $Config->bustCache();
-    $Update = new Update((int) $Config->configArr['schema'], new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql'))));
+    $Update = new Update((int) $Config->configArr['schema'], new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__, 2) . '/src/sql'))));
     // throws InvalidSchemaException if schema is incorrect
     $Update->checkSchema();
 

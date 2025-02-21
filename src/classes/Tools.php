@@ -154,6 +154,11 @@ class Tools
         return sprintf('<ul>%s</ul>', $html);
     }
 
+    /**
+     * @param (int|string) $string
+     *
+     * @psalm-param array-key $string
+     */
     public static function eLabHtmlspecialchars(mixed $string): string
     {
         return htmlspecialchars((string) $string, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8', false);

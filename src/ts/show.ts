@@ -531,7 +531,11 @@ document.addEventListener('DOMContentLoaded', () => {
       // Remove withSelected actions if there are no more checked checkboxes
       const anyChecked = document.querySelectorAll('[data-action="checkbox-entity"]:checked').length > 0;
       const withSelected = document.getElementById('withSelected') as HTMLDivElement;
-      anyChecked ? withSelected.classList.remove('d-none') : withSelected.classList.add('d-none');
+      if (anyChecked) {
+        withSelected.classList.remove('d-none');
+      } else {
+        withSelected.classList.add('d-none');
+      }
 
     // PATCH ACTIONS FOR CHECKED BOXES : lock, unlock, timestamp, archive
     } else if (el.matches('[data-action="patch-selected-entities"]')) {

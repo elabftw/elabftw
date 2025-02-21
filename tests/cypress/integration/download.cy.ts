@@ -41,14 +41,14 @@ describe('download.php', () => {
         },
       }).then(resp => {
         expect(resp.status).to.eq(201);
-        expect(resp.headers.location).to.exist;
+        expect(resp.headers.location).to.exist; // eslint-disable-line
         expect(resp.headers.location).to.be.a('string');
         //
         const url = new URL(resp.headers.location.toString());
         cy.request(url.pathname).then(resp1 => {
           expect(resp1.status).to.eq(200);
           expect(resp1.headers['content-type']).to.eq('application/json');
-          expect(resp1.body).to.exist;
+          expect(resp1.body).to.exist; // eslint-disable-line
           const url = `/app/download.php?f=${resp1.body.long_name}&name=${resp1.body.real_name}`;
           cy.request(url).then(resp => {
             expect(resp.status).to.eq(200);

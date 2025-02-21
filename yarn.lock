@@ -1523,12 +1523,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@deltablot/dropzone@npm:^7.1.5":
-  version: 7.2.0
-  resolution: "@deltablot/dropzone@npm:7.2.0"
+"@deltablot/dropzone@npm:^7.2.1":
+  version: 7.2.1
+  resolution: "@deltablot/dropzone@npm:7.2.1"
   dependencies:
     "@swc/helpers": "npm:^0.5.13"
-  checksum: 10c0/e8189e3f5c37d827719212d1d77d160f846553f46684d9f30633957a7419af455602806aad4615d9ced262cf25d1a7f63eaa1278509d5ce5a36bd239b6180638
+  checksum: 10c0/d14337ece927dfeaf21e63b4166156a747a39cbbf96f698bb9f4bc7c02f79ce2a0b820fbc00d567ceb30d1d9ac8aa721826b42875a93233bfcc4a6d0df542870
   languageName: node
   linkType: hard
 
@@ -1548,7 +1548,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@deltablot/malle@npm:^2.6.1":
+"@deltablot/malle@npm:^2.6.2":
   version: 2.6.2
   resolution: "@deltablot/malle@npm:2.6.2"
   checksum: 10c0/54031640ea6fd699be28ad6c39f4c70d2b4894e076e7078c02f70a45fbf283fc3191d5580f075889913b217e4be99f2140cd08bb4d6e568ae35c3e34887f0cfc
@@ -5839,9 +5839,9 @@ __metadata:
     "@babel/core": "npm:^7.26.9"
     "@babel/preset-env": "npm:^7.26.9"
     "@babel/preset-react": "npm:^7.26.3"
-    "@deltablot/dropzone": "npm:^7.1.5"
+    "@deltablot/dropzone": "npm:^7.2.1"
     "@deltablot/ketcher-core": "npm:^2.26.1"
-    "@deltablot/malle": "npm:^2.6.1"
+    "@deltablot/malle": "npm:^2.6.2"
     "@fancyapps/fancybox": "npm:^3.5.7"
     "@fullcalendar/bootstrap": "npm:^6.1.15"
     "@fullcalendar/core": "npm:^6.1.15"

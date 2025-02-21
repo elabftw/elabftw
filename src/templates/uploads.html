@@ -160,7 +160,7 @@
               {% else %}
                 <i class='fas {{ ext2icon(ext) }} thumb rounded mx-auto d-block text-center'></i>
               {% endif %}
-              {% if upload.real_name matches '/\.(jpg|jpeg|png|gif|pdf|eps|svg|heic)$/i' %}
+              {% if upload.real_name matches '/.(jpg|jpeg|png|gif|pdf|eps|svg|heic)$/i' %}
                   </a>
                 </div>
               {% endif %}

@@ -17,7 +17,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ag-grid-community/client-side-row-model@npm:^32.3.2":
+"@ag-grid-community/client-side-row-model@npm:^32.3.3":
   version: 32.3.3
   resolution: "@ag-grid-community/client-side-row-model@npm:32.3.3"
   dependencies:
@@ -27,7 +27,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ag-grid-community/core@npm:32.3.3, @ag-grid-community/core@npm:^32.3.2":
+"@ag-grid-community/core@npm:32.3.3, @ag-grid-community/core@npm:^32.3.3":
   version: 32.3.3
   resolution: "@ag-grid-community/core@npm:32.3.3"
   dependencies:
@@ -37,7 +37,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ag-grid-community/infinite-row-model@npm:^32.3.2":
+"@ag-grid-community/infinite-row-model@npm:^32.3.3":
   version: 32.3.3
   resolution: "@ag-grid-community/infinite-row-model@npm:32.3.3"
   dependencies:
@@ -47,7 +47,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ag-grid-community/react@npm:^32.3.2":
+"@ag-grid-community/react@npm:^32.3.3":
   version: 32.3.3
   resolution: "@ag-grid-community/react@npm:32.3.3"
   dependencies:
@@ -60,7 +60,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ag-grid-community/styles@npm:^32.3.2":
+"@ag-grid-community/styles@npm:^32.3.3":
   version: 32.3.3
   resolution: "@ag-grid-community/styles@npm:32.3.3"
   checksum: 10c0/33d714f2fa2263de07f11e4650fd59bbd6009cf34fe7274876ae40f52799c6c01f516946e48978c9b4d537f595160c9fbbb6e1ffa481f34c6347c7ec7ad36ae5
@@ -5745,11 +5745,11 @@ __metadata:
   resolution: "elabftw@workspace:."
   dependencies:
     3dmol: "npm:^2.4.2"
-    "@ag-grid-community/client-side-row-model": "npm:^32.3.2"
-    "@ag-grid-community/core": "npm:^32.3.2"
-    "@ag-grid-community/infinite-row-model": "npm:^32.3.2"
-    "@ag-grid-community/react": "npm:^32.3.2"
-    "@ag-grid-community/styles": "npm:^32.3.2"
+    "@ag-grid-community/client-side-row-model": "npm:^32.3.3"
+    "@ag-grid-community/core": "npm:^32.3.3"
+    "@ag-grid-community/infinite-row-model": "npm:^32.3.3"
+    "@ag-grid-community/react": "npm:^32.3.3"
+    "@ag-grid-community/styles": "npm:^32.3.3"
     "@babel/core": "npm:^7.25.2"
     "@babel/preset-env": "npm:^7.25.4"
     "@babel/preset-react": "npm:^7.24.7"

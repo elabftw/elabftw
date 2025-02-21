@@ -2836,7 +2836,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/dropzone@npm:^5.7.8":
+"@types/dropzone@npm:^5.7.9":
   version: 5.7.9
   resolution: "@types/dropzone@npm:5.7.9"
   dependencies:
@@ -2939,7 +2939,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jquery@npm:*, @types/jquery@npm:^3.5.30":
+"@types/jquery@npm:*, @types/jquery@npm:^3.5.32":
   version: 3.5.32
   resolution: "@types/jquery@npm:3.5.32"
   dependencies:
@@ -5852,9 +5852,9 @@ __metadata:
     "@teselagen/bio-parsers": "npm:^0.4.22"
     "@teselagen/ove": "npm:^0.4.12"
     "@types/bootstrap": "npm:^5.2.10"
-    "@types/dropzone": "npm:^5.7.8"
+    "@types/dropzone": "npm:^5.7.9"
     "@types/fancybox": "npm:^3.5.7"
-    "@types/jquery": "npm:^3.5.30"
+    "@types/jquery": "npm:^3.5.32"
     "@types/jqueryui": "npm:^1.12.23"
     "@types/luxon": "npm:^3.4.2"
     "@types/marked": "npm:^6.0.0"

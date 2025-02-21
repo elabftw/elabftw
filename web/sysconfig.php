@@ -95,7 +95,7 @@ try {
         }
         $remoteDirectoryUsersArr = $RemoteDirectory->search($App->Request->query->getString('remote_dir_query'));
         if (empty($remoteDirectoryUsersArr)) {
-            $App->warning[] = _('No users found. Try another search.');
+            $App->Session->getFlashBag()->add('warning', _('No users found. Try another search.'));
         }
     }
 

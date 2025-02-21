@@ -82,7 +82,6 @@ try {
     }
     // END CSRF
 
-
     // Show helpful screen if database schema needs update
     // FIXME ok just leaving this here for now but the cache of Config is still buggy
     $Config->bustCache();

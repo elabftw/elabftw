@@ -25,7 +25,6 @@ use Elabftw\Traits\TwigTrait;
 use Monolog\Logger;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 
 use function basename;
@@ -54,16 +53,7 @@ class App
     public array $teamArr = array();
 
     /** @psalm-suppress PossiblyUnusedProperty this property is used in twig templates */
-    public array $ok = array();
-
-    /** @psalm-suppress PossiblyUnusedProperty this property is used in twig templates */
-    public array $ko = array();
-
-    /** @psalm-suppress PossiblyUnusedProperty this property is used in twig templates */
     public array $notifsArr = array();
-
-    /** @psalm-suppress PossiblyUnusedProperty this property is used in twig templates */
-    public array $warning = array();
 
     public function __construct(
         public Request $Request,
@@ -71,15 +61,7 @@ class App
         public Config $Config,
         public Logger $Log,
         public Users $Users,
-    ) {
-        $flashBag = $this->Session->getBag('flashes');
-        // add type check because SessionBagInterface doesn't have get(), only FlashBag has it
-        if ($flashBag instanceof FlashBag) {
-            $this->ok = $flashBag->get('ok');
-            $this->ko = $flashBag->get('ko');
-            $this->warning = $flashBag->get('warning');
-        }
-    }
+    ) {}
 
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-//
     //     _                 _      //

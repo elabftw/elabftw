@@ -103,7 +103,7 @@ try {
 
     if ($App->Request->cookies->has('kickreason')) {
         // at the moment there is only one reason
-        $App->ko[] = _('Your session expired.');
+        $App->Session->getFlashBag()->add('ko', _('Your session expired.'));
     }
 
     $template = 'login.html';

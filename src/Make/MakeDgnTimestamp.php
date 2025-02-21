@@ -16,6 +16,7 @@ use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
+use Override;
 
 /**
  * RFC3161 timestamping with DGN service
@@ -32,6 +33,7 @@ class MakeDgnTimestamp extends AbstractMakeTrustedTimestamp
      *
      * @return array<string,string>
      */
+    #[Override]
     public function getTimestampParameters(): array
     {
         $config = $this->configArr;

@@ -23,6 +23,7 @@ use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Override;
 
 /**
  * Import data from a file
@@ -55,6 +56,7 @@ abstract class AbstractImport implements ImportInterface
         $this->checkMimeType();
     }
 
+    #[Override]
     public function getInserted(): int
     {
         return $this->inserted;

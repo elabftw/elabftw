@@ -23,6 +23,7 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Override;
 
 /**
  * Update the database schema
@@ -30,6 +31,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 #[AsCommand(name: 'db:update')]
 class UpdateDatabase extends Command
 {
+    #[Override]
     protected function configure(): void
     {
         $this->setDescription('Update the database structure')
@@ -37,6 +39,7 @@ class UpdateDatabase extends Command
             ->setHelp('This command allows you to update the structure of the database to the latest version.');
     }
 
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         /** @psalm-suppress PossiblyNullReference */

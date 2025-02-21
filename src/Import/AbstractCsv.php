@@ -16,6 +16,7 @@ use Elabftw\Models\Users;
 use League\Csv\Reader;
 use League\Csv\Info as CsvInfo;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Override;
 
 use function arsort;
 
@@ -45,6 +46,7 @@ abstract class AbstractCsv extends AbstractImport
         $this->reader = $this->preProcess();
     }
 
+    #[Override]
     public function getCount(): int
     {
         return $this->reader->count();

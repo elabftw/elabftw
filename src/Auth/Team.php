@@ -17,6 +17,7 @@ use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Models\Users;
 use Elabftw\Services\TeamsHelper;
+use Override;
 
 /**
  * Team auth service: for when you are already auth but you had to select a team
@@ -34,6 +35,7 @@ class Team implements AuthInterface
         $this->AuthResponse->selectedTeam = $team;
     }
 
+    #[Override]
     public function tryAuth(): AuthResponse
     {
         // we cannot trust the team sent by POST

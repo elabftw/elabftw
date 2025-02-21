@@ -12,13 +12,17 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
+use Override;
+
 class SycController extends AbstractHtmlController
 {
+    #[Override]
     protected function getTemplate(): string
     {
         return 'syc.html';
     }
 
+    #[Override]
     protected function getPageTitle(): string
     {
         return _('OpenCloning');

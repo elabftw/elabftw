@@ -32,6 +32,7 @@ class UnfinishedSteps extends AbstractRest
         parent::__construct();
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return 'api/v2/unfinished_steps';

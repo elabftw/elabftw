@@ -14,11 +14,13 @@ namespace Elabftw\Params;
 
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ParamInterface;
+use Override;
 
 final class CommentParam implements ParamInterface
 {
     public function __construct(private string $content) {}
 
+    #[Override]
     public function getContent(): string
     {
         if ($this->content === '') {

@@ -39,6 +39,7 @@ use Elabftw\Services\Filter;
 use Elabftw\Traits\EntityTrait;
 use PDO;
 use PDOStatement;
+use Override;
 
 use function array_column;
 use function array_merge;
@@ -147,6 +148,7 @@ abstract class AbstractEntity extends AbstractRest
      */
     abstract public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int;
 
+    #[Override]
     public function getApiPath(): string
     {
         return sprintf('api/v2/%s/', $this->entityType->value);
@@ -320,6 +322,7 @@ abstract class AbstractEntity extends AbstractRest
         return $allTags;
     }
 
+    #[Override]
     public function patch(Action $action, array $params): array
     {
         // a Review action doesn't do anything
@@ -515,6 +518,7 @@ abstract class AbstractEntity extends AbstractRest
         return array_column($req->fetchAll(), 'id');
     }
 
+    #[Override]
     public function destroy(): bool
     {
         $this->canOrExplode('write');

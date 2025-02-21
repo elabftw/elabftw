@@ -23,6 +23,7 @@ use Elabftw\Models\Users;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
 use ZipStream\ZipStream;
+use Override;
 
 use function json_encode;
 
@@ -46,6 +47,7 @@ class MakeStreamZip extends AbstractMakeZip
     /**
      * Get the name of the generated file
      */
+    #[Override]
     public function getFileName(): string
     {
         return 'export.elabftw' . $this->extension;
@@ -55,6 +57,7 @@ class MakeStreamZip extends AbstractMakeZip
      * Loop on each id and add it to our zip archive
      * This could be called the main function.
      */
+    #[Override]
     public function getStreamZip(): void
     {
         foreach ($this->entityArr as $entity) {

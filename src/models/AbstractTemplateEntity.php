@@ -14,12 +14,14 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
+use Override;
 
 /**
  * An entity like Templates or ItemsTypes. Template as opposed to Concrete: Experiments and Items
  */
 abstract class AbstractTemplateEntity extends AbstractEntity
 {
+    #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
         return match ($action) {

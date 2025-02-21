@@ -25,11 +25,13 @@ use Elabftw\Models\Config;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 use Elabftw\Services\PasswordValidator;
+use Override;
 
 use function trim;
 
 final class UserParams extends ContentParams
 {
+    #[Override]
     public function getContent(): string | int
     {
         return match ($this->target) {

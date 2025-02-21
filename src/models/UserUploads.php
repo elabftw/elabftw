@@ -27,11 +27,13 @@ class UserUploads extends AbstractRest
         parent::__construct();
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return sprintf('api/v2/user/%d/uploads/', $this->owner->userid ?? 'me');
     }
 
+    #[Override]
     public function getQueryParams(?InputBag $query = null): QueryParamsInterface
     {
         return new BaseQueryParams(query: $query, orderby: Orderby::CreatedAt, limit: 42);

@@ -16,6 +16,7 @@ use Elabftw\Elabftw\FsTools;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Mpdf\Config\ConfigVariables;
 use Mpdf\Mpdf;
+use Override;
 
 use function dirname;
 
@@ -26,11 +27,13 @@ class MpdfProvider implements MpdfProviderInterface
 {
     public function __construct(private string $author, private string $format = 'A4', private bool $pdfa = false) {}
 
+    #[Override]
     public function isPdfa(): bool
     {
         return $this->pdfa;
     }
 
+    #[Override]
     public function getInstance(): Mpdf
     {
         $defaultConfig = (new ConfigVariables())->getDefaults();

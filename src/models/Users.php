@@ -44,6 +44,7 @@ use Elabftw\Services\UserCreator;
 use Elabftw\Services\UsersHelper;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
+use Override;
 
 use function trim;
 
@@ -275,6 +276,7 @@ class Users extends AbstractRest
     /**
      * This can be called from api and only contains "safe" values
      */
+    #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $Request = Request::createFromGlobals();
@@ -289,6 +291,7 @@ class Users extends AbstractRest
     /**
      * This can be called from api and only contains "safe" values
      */
+    #[Override]
     public function readOne(): array
     {
         $this->canReadOrExplode();
@@ -330,12 +333,14 @@ class Users extends AbstractRest
         return $req->rowCount() >= 1;
     }
 
+    #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
         $Creator = new UserCreator($this->requester, $reqBody);
         return $Creator->create();
     }
 
+    #[Override]
     public function patch(Action $action, array $params): array
     {
         $this->canWriteOrExplode($action);
@@ -391,6 +396,7 @@ class Users extends AbstractRest
         return $this->readOne();
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return 'api/v2/users/';
@@ -425,6 +431,7 @@ class Users extends AbstractRest
     /**
      * Destroy user. Will completely remove everything from the user.
      */
+    #[Override]
     public function destroy(): bool
     {
         $this->canWriteOrExplode();

@@ -35,6 +35,7 @@ class Todolist extends AbstractRest
         $this->setId($id);
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return 'api/v2/todolist/';

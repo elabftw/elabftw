@@ -46,6 +46,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use ValueError;
 use ZipStream\ZipStream;
+use Override;
 
 use function array_map;
 use function count;
@@ -62,6 +63,7 @@ class MakeController extends AbstractController
     // @var array<AbstractEntity>
     private array $entityArr = array();
 
+    #[Override]
     public function getResponse(): Response
     {
         $this->populateSlugs();

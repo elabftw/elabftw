@@ -20,6 +20,7 @@ use League\Flysystem\UnableToRetrieveMetadata;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Override;
 
 use function fopen;
 use function in_array;
@@ -63,6 +64,7 @@ class DownloadController implements ControllerInterface
         return $this->filePath;
     }
 
+    #[Override]
     public function getResponse(): Response
     {
         // this will disable output buffering and prevent issues when downloading big files

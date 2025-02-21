@@ -14,9 +14,11 @@ namespace Elabftw\Params;
 
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Filter;
+use Override;
 
 final class TeamParam extends ContentParams
 {
+    #[Override]
     public function getContent(): mixed
     {
         return match ($this->target) {

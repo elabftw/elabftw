@@ -20,6 +20,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Override;
 
 /**
  * Use this to revert a specific schema
@@ -32,6 +33,7 @@ class RevertSchema extends Command
         parent::__construct();
     }
 
+    #[Override]
     protected function configure(): void
     {
         $this->setDescription('Allow reverting a specific schema upgrade.')
@@ -40,6 +42,7 @@ class RevertSchema extends Command
             ->addArgument('number', InputArgument::REQUIRED, 'Schema number to revert');
     }
 
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $Sql = new Sql($this->fs, $output);

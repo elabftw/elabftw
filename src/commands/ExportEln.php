@@ -22,6 +22,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use ZipStream\ZipStream;
+use Override;
 
 /**
  * Export data in .eln format
@@ -34,6 +35,7 @@ class ExportEln extends Command
         parent::__construct();
     }
 
+    #[Override]
     protected function configure(): void
     {
         $this->setDescription('Export data in ELN file format')
@@ -43,6 +45,7 @@ class ExportEln extends Command
             ->addOption('rcat', 'r', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Only include these categories of resources', array());
     }
 
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $teamid = (int) $input->getArgument('teamid');

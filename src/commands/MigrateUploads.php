@@ -18,6 +18,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Override;
 
 /**
  * To move local filesystem uploads to S3 storage
@@ -25,12 +26,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 #[AsCommand(name: 'uploads:migrate')]
 class MigrateUploads extends Command
 {
+    #[Override]
     protected function configure(): void
     {
         $this->setDescription('Move uploads to S3 storage')
             ->setHelp('Upload all local filesystem user uploaded files to S3 bucket storage');
     }
 
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln(array(

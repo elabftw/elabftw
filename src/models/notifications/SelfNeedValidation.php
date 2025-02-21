@@ -14,6 +14,7 @@ namespace Elabftw\Models\Notifications;
 
 use Elabftw\Enums\Notifications;
 use Elabftw\Interfaces\MailableInterface;
+use Override;
 
 /**
  * Send an email to a new user to notify that admin validation is required.
@@ -25,6 +26,7 @@ class SelfNeedValidation extends AbstractNotifications implements MailableInterf
     protected Notifications $category = Notifications::SelfNeedValidation;
 
     // Note: here the actor fullname is directly fed to the instance, instead of fetching it from a new Users() like others.
+    #[Override]
     public function getEmail(): array
     {
         $subject = _('Your account has been created');

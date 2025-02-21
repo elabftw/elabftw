@@ -134,6 +134,7 @@ class RequestActions extends AbstractRest
         return $actionId;
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return sprintf('%s%d/request_actions/', $this->entity->getApiPath(), $this->entity->id ?? '');

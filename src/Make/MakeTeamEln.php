@@ -15,6 +15,7 @@ namespace Elabftw\Make;
 use Elabftw\Models\UltraAdmin;
 use PDO;
 use ZipStream\ZipStream;
+use Override;
 
 /**
  * Make an ELN archive for a full team. Only accessible from command line.
@@ -29,6 +30,7 @@ class MakeTeamEln extends AbstractMakeEln
     /**
      * Loop on each id and add it to our eln archive
      */
+    #[Override]
     public function getStreamZip(): void
     {
         $targets = array_map('\Elabftw\Elabftw\EntitySlug::fromString', $this->gatherSlugs());

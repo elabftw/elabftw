@@ -109,6 +109,7 @@ class Teams extends AbstractRest
         $Users2Teams->rmUserFromTeams($userid, $rmFromTeams);
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return 'api/v2/teams/';

@@ -15,6 +15,7 @@ namespace Elabftw\Make;
 use DateTimeImmutable;
 use Elabftw\Elabftw\App;
 use ZipStream\ZipStream;
+use Override;
 
 /**
  * Abstract class for creating an ELN archive
@@ -83,6 +84,7 @@ abstract class AbstractMakeEln extends AbstractMakeZip
         );
     }
 
+    #[Override]
     public function getFileName(): string
     {
         return $this->root . $this->extension;

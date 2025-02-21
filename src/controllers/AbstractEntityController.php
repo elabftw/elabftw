@@ -43,6 +43,7 @@ use Elabftw\Params\BaseQueryParams;
 use Elabftw\Services\AccessKeyHelper;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Override;
 
 use function array_filter;
 
@@ -94,6 +95,7 @@ abstract class AbstractEntityController implements ControllerInterface
 
     }
 
+    #[Override]
     public function getResponse(): Response
     {
         return match ($this->App->Request->query->getAlpha('mode')) {

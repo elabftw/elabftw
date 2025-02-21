@@ -25,6 +25,7 @@ use Elabftw\Services\Filter;
 use Elabftw\Traits\InsertTagsTrait;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
+use Override;
 
 /**
  * All about the database items
@@ -35,6 +36,7 @@ class Items extends AbstractConcreteEntity
 
     public EntityType $entityType = EntityType::Items;
 
+    #[Override]
     public function create(
         ?int $template = -1,
         ?string $title = null,
@@ -131,6 +133,7 @@ class Items extends AbstractConcreteEntity
         return $this->Users->isAdmin || (bool) $this->entityData['book_users_can_in_past'];
     }
 
+    #[Override]
     public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int
     {
         $this->canOrExplode('read');
@@ -168,6 +171,7 @@ class Items extends AbstractConcreteEntity
         return $newId;
     }
 
+    #[Override]
     public function destroy(): bool
     {
         parent::destroy();

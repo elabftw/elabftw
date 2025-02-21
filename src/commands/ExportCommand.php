@@ -20,6 +20,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Override;
 
 /**
  * Trigger the process of export requests
@@ -32,6 +33,7 @@ class ExportCommand extends Command
         parent::__construct();
     }
 
+    #[Override]
     protected function configure(): void
     {
         $this->setDescription('Process export requests')
@@ -39,6 +41,7 @@ class ExportCommand extends Command
             ->addArgument('id', InputArgument::OPTIONAL, 'The export id to process');
     }
 
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $Exports = new Exports(new UltraAdmin(), $this->fs);

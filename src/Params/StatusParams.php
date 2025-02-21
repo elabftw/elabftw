@@ -14,9 +14,11 @@ namespace Elabftw\Params;
 
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Check;
+use Override;
 
 final class StatusParams extends ContentParams
 {
+    #[Override]
     public function getContent(): mixed
     {
         return match ($this->target) {

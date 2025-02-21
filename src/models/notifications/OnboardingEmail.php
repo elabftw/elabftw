@@ -18,6 +18,7 @@ use Elabftw\Interfaces\MailableInterface;
 use Elabftw\Models\Config;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
+use Override;
 
 /**
  * When a new user joins
@@ -34,6 +35,7 @@ class OnboardingEmail extends EmailOnlyNotifications implements MailableInterfac
         parent::__construct();
     }
 
+    #[Override]
     public function getEmail(): array
     {
         $dataArr = array(
@@ -64,6 +66,7 @@ class OnboardingEmail extends EmailOnlyNotifications implements MailableInterfac
         );
     }
 
+    #[Override]
     protected function getBody(): array
     {
         return array(

@@ -20,6 +20,7 @@ use ImagickDraw;
 use ImagickPixel;
 use RobThree\Auth\Providers\Qr\IQRCodeProvider;
 use RuntimeException;
+use Override;
 
 use function strlen;
 
@@ -58,6 +59,7 @@ class MakeQrPng extends AbstractMake implements StringMakerInterface
         $this->maxLines = $this->maxLines > 0 ? $this->maxLines : self::DEFAULT_MAX_LINES;
     }
 
+    #[Override]
     public function getFileName(): string
     {
         return sprintf(
@@ -66,6 +68,7 @@ class MakeQrPng extends AbstractMake implements StringMakerInterface
         );
     }
 
+    #[Override]
     public function getFileContent(): string
     {
         $qrCode = new Imagick();

@@ -17,6 +17,7 @@ use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
+use Override;
 
 /**
  * RFC3161 timestamping with Universign service
@@ -33,6 +34,7 @@ class MakeUniversignTimestamp extends AbstractMakeTrustedTimestamp
      *
      * @return array<string,string>
      */
+    #[Override]
     public function getTimestampParameters(): array
     {
         $config = $this->configArr;
@@ -61,6 +63,7 @@ class MakeUniversignTimestamp extends AbstractMakeTrustedTimestamp
     /**
      * Convert the time found in the response file to the correct format for sql insertion
      */
+    #[Override]
     protected function formatResponseTime(string $timestamp): string
     {
         $date = DateTime::createFromFormat('M j H:i:s.u Y T', $timestamp);

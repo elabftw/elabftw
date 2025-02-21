@@ -15,6 +15,7 @@ namespace Elabftw\Models\Notifications;
 use Elabftw\Enums\Notifications;
 use Elabftw\Interfaces\MailableInterface;
 use Elabftw\Models\Users;
+use Override;
 
 class UserCreated extends AbstractNotifications implements MailableInterface
 {
@@ -27,6 +28,7 @@ class UserCreated extends AbstractNotifications implements MailableInterface
         parent::__construct();
     }
 
+    #[Override]
     public function getEmail(): array
     {
         $user = new Users($this->userid);
@@ -41,6 +43,7 @@ class UserCreated extends AbstractNotifications implements MailableInterface
         );
     }
 
+    #[Override]
     protected function getBody(): array
     {
         return array(

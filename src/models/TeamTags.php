@@ -34,6 +34,7 @@ class TeamTags extends AbstractRest
         $this->setId($id);
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return sprintf('api/v2/teams/%d/tags/', $this->Users->userData['team']);

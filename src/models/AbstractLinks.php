@@ -39,6 +39,7 @@ abstract class AbstractLinks extends AbstractRest
         $this->setId($id);
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return sprintf('%s%d/%s/', $this->Entity->getApiPath(), $this->Entity->id ?? '', $this->getTable());

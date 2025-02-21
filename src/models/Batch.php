@@ -62,6 +62,7 @@ class Batch extends AbstractRest
         return $this->processed;
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return 'api/v2/batch/';

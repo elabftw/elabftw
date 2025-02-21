@@ -14,6 +14,7 @@ namespace Elabftw\AuditEvent;
 
 use Elabftw\Enums\AuditCategory;
 use Elabftw\Enums\EntityType;
+use Override;
 
 class SignatureCreated extends AbstractAuditEvent
 {
@@ -22,11 +23,13 @@ class SignatureCreated extends AbstractAuditEvent
         parent::__construct($requesterUserid, 0);
     }
 
+    #[Override]
     public function getBody(): string
     {
         return 'An entry has been signed.';
     }
 
+    #[Override]
     public function getJsonBody(): string
     {
         $info = array_merge($this->getBaseInfo(), array(
@@ -36,6 +39,7 @@ class SignatureCreated extends AbstractAuditEvent
         return json_encode($info, JSON_THROW_ON_ERROR);
     }
 
+    #[Override]
     public function getCategory(): AuditCategory
     {
         return AuditCategory::SignatureCreated;

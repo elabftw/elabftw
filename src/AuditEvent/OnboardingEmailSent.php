@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Elabftw\AuditEvent;
 
 use Elabftw\Enums\AuditCategory;
+use Override;
 
 class OnboardingEmailSent extends AbstractAuditEvent
 {
@@ -22,6 +23,7 @@ class OnboardingEmailSent extends AbstractAuditEvent
         parent::__construct(0, $targetUserid);
     }
 
+    #[Override]
     public function getBody(): string
     {
         $msg = 'Onboarding email for %s sent to %s with id %d.';
@@ -45,6 +47,7 @@ class OnboardingEmailSent extends AbstractAuditEvent
         );
     }
 
+    #[Override]
     public function getCategory(): AuditCategory
     {
         return AuditCategory::OnboardingEmailSent;

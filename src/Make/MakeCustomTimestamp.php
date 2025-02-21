@@ -15,6 +15,7 @@ namespace Elabftw\Make;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Models\Config;
+use Override;
 
 /**
  * RFC3161 timestamping with a custom TSA
@@ -29,6 +30,7 @@ class MakeCustomTimestamp extends AbstractMakeTrustedTimestamp
      *
      * @return array<string,string>
      */
+    #[Override]
     public function getTimestampParameters(): array
     {
         $config = $this->configArr;

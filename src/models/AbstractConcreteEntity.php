@@ -48,6 +48,7 @@ use PDO;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 use ZipArchive;
+use Override;
 
 use function json_decode;
 use function ksort;
@@ -58,6 +59,7 @@ use function sprintf;
  */
 abstract class AbstractConcreteEntity extends AbstractEntity
 {
+    #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
         $Teams = new Teams($this->Users, $this->Users->team);
@@ -90,6 +92,7 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         };
     }
 
+    #[Override]
     public function patch(Action $action, array $params): array
     {
         // was "write" previously, but let's make timestamping/signing only require read access
@@ -105,6 +108,7 @@ abstract class AbstractConcreteEntity extends AbstractEntity
     /**
      * Read all from one entity
      */
+    #[Override]
     public function readOne(): array
     {
         if ($this->id === null) {
@@ -159,11 +163,13 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         return $this->entityData;
     }
 
+    #[Override]
     public function getQueryParams(?InputBag $query = null): DisplayParams
     {
         return new DisplayParams($this->Users, $this->entityType, $query);
     }
 
+    #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         if (!$queryParams instanceof DisplayParams) {
@@ -173,6 +179,7 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         return $this->readShow($queryParams, true);
     }
 
+    #[Override]
     public function destroy(): bool
     {
         $this->canOrExplode('write');
@@ -201,6 +208,7 @@ abstract class AbstractConcreteEntity extends AbstractEntity
     /**
      * Get timestamper full name for display in view mode
      */
+    #[Override]
     public function getTimestamperFullname(): string
     {
         if ($this->entityData['timestamped'] === 0) {

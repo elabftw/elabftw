@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
+use Override;
+
 use function dirname;
 
 /**
@@ -33,6 +35,7 @@ class MakeDfnTimestamp extends AbstractMakeTrustedTimestamp
      *
      * @return array<string,string>
      */
+    #[Override]
     public function getTimestampParameters(): array
     {
         return array(

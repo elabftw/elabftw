@@ -27,6 +27,7 @@ use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\UserRequestActions;
 use Elabftw\Params\DisplayParams;
+use Override;
 
 use function array_merge;
 
@@ -37,16 +38,19 @@ class DashboardController extends AbstractHtmlController
 {
     private const int SHOWN_NUMBER = 5;
 
+    #[Override]
     protected function getTemplate(): string
     {
         return 'dashboard.html';
     }
 
+    #[Override]
     protected function getPageTitle(): string
     {
         return _('Dashboard');
     }
 
+    #[Override]
     protected function getData(): array
     {
         $DisplayParamsExp = new DisplayParams(

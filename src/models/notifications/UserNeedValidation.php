@@ -16,6 +16,7 @@ use Elabftw\Enums\Notifications;
 use Elabftw\Interfaces\MailableInterface;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
+use Override;
 
 class UserNeedValidation extends UserCreated implements MailableInterface
 {
@@ -28,6 +29,7 @@ class UserNeedValidation extends UserCreated implements MailableInterface
         parent::__construct($this->userid, $this->team);
     }
 
+    #[Override]
     public function getEmail(): array
     {
         $subject = sprintf(_('[ACTION REQUIRED]') . ' ' . _('New user added to team: %s'), $this->team);

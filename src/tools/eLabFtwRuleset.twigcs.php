@@ -18,6 +18,7 @@ use FriendsOfTwig\Twigcs\Rule;
 use FriendsOfTwig\Twigcs\TemplateResolver\NullResolver;
 use FriendsOfTwig\Twigcs\TemplateResolver\TemplateResolverInterface;
 use FriendsOfTwig\Twigcs\Validator\Violation;
+use Override;
 
 /**
  * eLabFTW ruleset for twigcs
@@ -31,6 +32,7 @@ class ELabFtwRuleset implements RulesetInterface, TemplateResolverAwareInterface
         $this->resolver = new NullResolver();
     }
 
+    #[Override]
     public function getRules()
     {
         $configurator = new RulesetConfigurator();
@@ -48,6 +50,7 @@ class ELabFtwRuleset implements RulesetInterface, TemplateResolverAwareInterface
         );
     }
 
+    #[Override]
     public function setTemplateResolver(TemplateResolverInterface $resolver): void
     {
         $this->resolver = $resolver;

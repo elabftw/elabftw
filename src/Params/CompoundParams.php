@@ -14,6 +14,7 @@ namespace Elabftw\Params;
 
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Filter;
+use Override;
 
 use function array_map;
 use function str_split;
@@ -21,6 +22,7 @@ use function trim;
 
 final class CompoundParams extends ContentParams
 {
+    #[Override]
     public function getContent(): string | int | float
     {
         return match ($this->target) {

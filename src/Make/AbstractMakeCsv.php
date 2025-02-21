@@ -15,6 +15,7 @@ namespace Elabftw\Make;
 use Elabftw\Interfaces\StringMakerInterface;
 use League\Csv\Reader;
 use League\Csv\Writer;
+use Override;
 
 use function strlen;
 
@@ -28,6 +29,7 @@ abstract class AbstractMakeCsv extends AbstractMake implements StringMakerInterf
     /**
      * Create a CSV file from header and rows
      */
+    #[Override]
     public function getFileContent(): string
     {
         // load the CSV document from a string

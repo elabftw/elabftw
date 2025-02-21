@@ -99,6 +99,7 @@ class Exports extends AbstractRest
         return $DownloadController->getResponse();
     }
 
+    #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
         if (count($this->readAll()) >= self::MAX_EXPORT) {
@@ -170,6 +171,7 @@ class Exports extends AbstractRest
         return 0;
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return 'api/v2/exports/';

@@ -38,6 +38,7 @@ class ItemsTypes extends AbstractTemplateEntity
 
     public EntityType $entityType = EntityType::ItemsTypes;
 
+    #[Override]
     public function create(
         ?int $template = -1,
         ?string $title = null,
@@ -101,11 +102,13 @@ class ItemsTypes extends AbstractTemplateEntity
         return (int) $req->fetchColumn();
     }
 
+    #[Override]
     public function getQueryParams(?InputBag $query = null, int $limit = 128): QueryParamsInterface
     {
         return new BaseQueryParams(query: $query, orderby: Orderby::Ordering, limit: $limit);
     }
 
+    #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $queryParams ??= $this->getQueryParams();
@@ -123,6 +126,7 @@ class ItemsTypes extends AbstractTemplateEntity
         return $req->fetchAll();
     }
 
+    #[Override]
     public function readOne(): array
     {
         if ($this->id === null) {
@@ -145,6 +149,7 @@ class ItemsTypes extends AbstractTemplateEntity
         return $this->entityData;
     }
 
+    #[Override]
     public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int
     {
         // TODO: implement

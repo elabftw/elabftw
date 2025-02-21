@@ -18,6 +18,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Override;
 
 /**
  * To remove deleted files completely
@@ -25,12 +26,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 #[AsCommand(name: 'prune:experiments')]
 class PruneExperiments extends Command
 {
+    #[Override]
     protected function configure(): void
     {
         $this->setDescription('Remove deleted experiments definitively')
             ->setHelp('Remove experiments marked as deleted from the database');
     }
 
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln(array(

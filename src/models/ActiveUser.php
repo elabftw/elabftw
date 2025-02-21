@@ -13,12 +13,14 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Exceptions\ImproperActionException;
+use Override;
 
 /**
  * A user that is not archived
  */
 final class ActiveUser extends Users
 {
+    #[Override]
     protected function readOneFull(): array
     {
         parent::readOneFull();

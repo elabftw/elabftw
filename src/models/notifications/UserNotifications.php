@@ -94,6 +94,7 @@ class UserNotifications extends AbstractRest
         return $this->readOne();
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return sprintf('api/v2/users/%d/notifications/', $this->userid);

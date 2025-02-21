@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
+use Override;
+
 /**
  * RFC3161 timestamping with GlobalSign timestamping service
  * https://www.globalsign.com/en/timestamp-service
@@ -27,6 +29,7 @@ class MakeGlobalSignTimestamp extends AbstractMakeTrustedTimestamp
      *
      * @return array<string,string>
      */
+    #[Override]
     public function getTimestampParameters(): array
     {
         return array(

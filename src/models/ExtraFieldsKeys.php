@@ -30,6 +30,7 @@ class ExtraFieldsKeys extends AbstractRest
         $this->limit = $this->limit < -1 || $this->limit === 0 ? $this->Users->userData['limit_nb'] : $this->limit;
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return 'api/v2/extra_fields_keys';

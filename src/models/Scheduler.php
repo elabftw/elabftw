@@ -62,6 +62,7 @@ class Scheduler extends AbstractRest
         }
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         // We don't use team.php?item= because the id will be the id of the event upon creation

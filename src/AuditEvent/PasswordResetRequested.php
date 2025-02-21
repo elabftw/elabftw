@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\AuditEvent;
 
 use Elabftw\Enums\AuditCategory;
+use Override;
 
 class PasswordResetRequested extends AbstractAuditEvent
 {
@@ -21,11 +22,13 @@ class PasswordResetRequested extends AbstractAuditEvent
         parent::__construct();
     }
 
+    #[Override]
     public function getBody(): string
     {
         return sprintf('Password reset was requested for account associated with: %s', $this->email);
     }
 
+    #[Override]
     public function getCategory(): AuditCategory
     {
         return AuditCategory::PasswordResetRequested;

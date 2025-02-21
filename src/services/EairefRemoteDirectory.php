@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Models\Config;
+use Override;
 
 use function in_array;
 use function strtolower;
@@ -22,6 +23,7 @@ use function strtolower;
  */
 class EairefRemoteDirectory extends AbstractRemoteDirectory
 {
+    #[Override]
     public function search(string $term): array
     {
         $results = array();

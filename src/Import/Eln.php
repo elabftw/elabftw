@@ -33,6 +33,7 @@ use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToReadFile;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Override;
 
 use function basename;
 use function hash_file;
@@ -87,11 +88,13 @@ class Eln extends AbstractZip
         }
     }
 
+    #[Override]
     public function getCount(): int
     {
         return $this->count;
     }
 
+    #[Override]
     public function import(): int
     {
         // loop over each hasPart of the root node

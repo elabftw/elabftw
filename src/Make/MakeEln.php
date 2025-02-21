@@ -24,6 +24,7 @@ use Elabftw\Models\Users;
 use Elabftw\Services\Filter;
 use League\Flysystem\UnableToReadFile;
 use ZipStream\ZipStream;
+use Override;
 
 /**
  * Make an ELN archive
@@ -38,6 +39,7 @@ class MakeEln extends AbstractMakeEln
     /**
      * Loop on each id and add it to our eln archive
      */
+    #[Override]
     public function getStreamZip(): void
     {
         foreach ($this->entityArr as $entity) {

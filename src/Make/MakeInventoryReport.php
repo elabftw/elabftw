@@ -14,6 +14,7 @@ namespace Elabftw\Make;
 
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\StorageUnits;
+use Override;
 
 use function date;
 
@@ -33,6 +34,7 @@ class MakeInventoryReport extends AbstractMakeCsv
     /**
      * Return a nice name for the file
      */
+    #[Override]
     public function getFileName(): string
     {
         return date('Y-m-d') . '-storage.elabftw.csv';
@@ -41,6 +43,7 @@ class MakeInventoryReport extends AbstractMakeCsv
     /**
      * Here we populate the first row: it will be the column names
      */
+    #[Override]
     protected function getHeader(): array
     {
         return array_keys($this->rows[0]);
@@ -54,6 +57,7 @@ class MakeInventoryReport extends AbstractMakeCsv
     /**
      * Generate an array for the requested data
      */
+    #[Override]
     protected function getRows(): array
     {
         $rows = $this->getData();

@@ -17,6 +17,7 @@ use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Services\Filter;
 use League\Flysystem\Filesystem;
 use League\Flysystem\Local\LocalFilesystemAdapter;
+use Override;
 
 class CreateUpload implements CreateUploadParamsInterface
 {
@@ -28,21 +29,25 @@ class CreateUpload implements CreateUploadParamsInterface
         private readonly State $state = State::Normal,
     ) {}
 
+    #[Override]
     public function getFilename(): string
     {
         return Filter::forFilesystem($this->realName);
     }
 
+    #[Override]
     public function getFilePath(): string
     {
         return $this->filePath;
     }
 
+    #[Override]
     public function getTmpFilePath(): string
     {
         return basename($this->filePath);
     }
 
+    #[Override]
     public function getComment(): ?string
     {
         if ($this->comment !== null && $this->comment !== '') {
@@ -51,21 +56,25 @@ class CreateUpload implements CreateUploadParamsInterface
         return null;
     }
 
+    #[Override]
     public function getSourceFs(): Filesystem
     {
         return new Filesystem(new LocalFilesystemAdapter($this->getSourcePath()));
     }
 
+    #[Override]
     public function getSourcePath(): string
     {
         return dirname($this->filePath) . '/';
     }
 
+    #[Override]
     public function getImmutable(): int
     {
         return $this->immutable;
     }
 
+    #[Override]
     public function getState(): State
     {
         return $this->state;

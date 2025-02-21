@@ -17,6 +17,7 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\State;
 use Elabftw\Interfaces\CleanerInterface;
 use PDO;
+use Override;
 
 /**
  * Remove deleted experiments/items
@@ -34,6 +35,7 @@ class EntityPruner implements CleanerInterface
      * Remove entity with deleted state from database
      * This is a global function and should only be called by prune:items|experiments command
      */
+    #[Override]
     public function cleanup(): int
     {
         $sql = 'DELETE FROM ' . $this->entityType->value . ' WHERE state = :state';

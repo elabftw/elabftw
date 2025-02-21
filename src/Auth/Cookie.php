@@ -18,6 +18,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Services\TeamsHelper;
+use Override;
 
 /**
  * Authenticate with the cookie
@@ -34,6 +35,7 @@ class Cookie implements AuthInterface
         $this->AuthResponse = new AuthResponse();
     }
 
+    #[Override]
     public function tryAuth(): AuthResponse
     {
         // compare the provided token with the token saved in SQL database

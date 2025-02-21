@@ -14,6 +14,7 @@ namespace Elabftw\Services;
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\CleanerInterface;
 use League\Flysystem\FilesystemOperator;
+use Override;
 
 use function basename;
 use function count;
@@ -32,6 +33,7 @@ class UploadsCleaner implements CleanerInterface
      *
      * @return int number of orphan files
      */
+    #[Override]
     public function cleanup(): int
     {
         $orphans = $this->findOrphans();

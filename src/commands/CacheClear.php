@@ -17,6 +17,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Override;
 
 /**
  * Clear the cache folder
@@ -24,12 +25,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 #[AsCommand(name: 'cache:clear')]
 class CacheClear extends Command
 {
+    #[Override]
     protected function configure(): void
     {
         $this->setDescription('Remove files in cache folder')
             ->setHelp('Temporary files can be stored in the cache folder. This command will remove its contents.');
     }
 
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln(array(

@@ -292,6 +292,7 @@ class Uploads extends AbstractRest
         };
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return sprintf('%s%d/uploads/', $this->Entity->getApiPath(), $this->Entity->id ?? 0);

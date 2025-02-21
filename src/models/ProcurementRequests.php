@@ -119,6 +119,7 @@ class ProcurementRequests extends AbstractRest
         return $this->readOne();
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return 'api/v2/teams/current/procurement_requests/';

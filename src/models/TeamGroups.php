@@ -48,6 +48,7 @@ class TeamGroups extends AbstractRest
         return $this->create($reqBody['name'] ?? _('Untitled'));
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return sprintf('api/v2/teams/%d/teamgroups/', $this->Users->userData['team']);

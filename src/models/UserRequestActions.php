@@ -75,6 +75,7 @@ class UserRequestActions extends AbstractRest
         }, $this->readAll());
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return 'api/v2/users/me/request_actions/';

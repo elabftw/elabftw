@@ -22,6 +22,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Override;
 
 /**
  * Synchronize tags between teams
@@ -29,6 +30,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 #[AsCommand(name: 'tags:teamssync')]
 class TagsTeamsSync extends Command
 {
+    #[Override]
     protected function configure(): void
     {
         $this->setDescription('Synchronize tags between teams')
@@ -36,6 +38,7 @@ class TagsTeamsSync extends Command
             ->setHelp('Synchronize tags between teams.');
     }
 
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $teams = $input->getArgument('teams');

@@ -13,32 +13,38 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\EntityType;
+use Override;
 
 /**
  * For links pointing to experiments
  */
 abstract class AbstractExperimentsLinks extends AbstractLinks
 {
+    #[Override]
     protected function getTargetType(): EntityType
     {
         return EntityType::Experiments;
     }
 
+    #[Override]
     protected function getCatTable(): string
     {
         return 'experiments_categories';
     }
 
+    #[Override]
     protected function getStatusTable(): string
     {
         return 'experiments_status';
     }
 
+    #[Override]
     protected function getImportTargetTable(): string
     {
         return 'experiments2experiments';
     }
 
+    #[Override]
     protected function getTemplateTable(): string
     {
         if ($this->Entity instanceof Items || $this->Entity instanceof ItemsTypes) {
@@ -47,6 +53,7 @@ abstract class AbstractExperimentsLinks extends AbstractLinks
         return 'experiments_templates2experiments';
     }
 
+    #[Override]
     protected function getRelatedTable(): string
     {
         if ($this->Entity instanceof Experiments) {

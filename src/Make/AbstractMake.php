@@ -15,6 +15,7 @@ namespace Elabftw\Make;
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\FileMakerInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Override;
 
 /**
  * Mother class of the Make* services
@@ -38,18 +39,22 @@ abstract class AbstractMake implements FileMakerInterface
     /**
      * The filename for what we are making
      */
+    #[Override]
     abstract public function getFileName(): string;
 
+    #[Override]
     public function getContentSize(): int
     {
         return $this->contentSize;
     }
 
+    #[Override]
     public function getContentType(): string
     {
         return $this->contentType;
     }
 
+    #[Override]
     public function getResponse(): Response
     {
         return new Response(

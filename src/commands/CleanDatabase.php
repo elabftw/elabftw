@@ -17,6 +17,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Override;
 
 /**
  * Cleanup the database: look for orphans leftover from past bugs
@@ -24,12 +25,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 #[AsCommand(name: 'db:clean')]
 class CleanDatabase extends Command
 {
+    #[Override]
     protected function configure(): void
     {
         $this->setDescription('Clean the database from orphans')
             ->setHelp('Some bugs in the past version might have left some things behind. To allow for a smooth upgrade, it is best to run this command before updating.');
     }
 
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln(array(

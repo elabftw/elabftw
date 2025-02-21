@@ -38,6 +38,7 @@ class Steps extends AbstractRest
         $this->setId($id);
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return sprintf('%s%d/steps/', $this->Entity->getApiPath(), $this->Entity->id ?? 0);

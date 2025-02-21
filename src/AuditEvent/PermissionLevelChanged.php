@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\AuditEvent;
 
 use Elabftw\Enums\Usergroup;
+use Override;
 
 class PermissionLevelChanged extends AbstractUsers2TeamsModifiedEvent
 {
@@ -21,6 +22,7 @@ class PermissionLevelChanged extends AbstractUsers2TeamsModifiedEvent
         parent::__construct($requesterUserid, $userid);
     }
 
+    #[Override]
     public function getBody(): string
     {
         return sprintf(

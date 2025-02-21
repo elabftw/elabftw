@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\AuditEvent;
 
 use Elabftw\Enums\AuditCategory;
+use Override;
 
 class Export extends AbstractAuditEvent
 {
@@ -21,11 +22,13 @@ class Export extends AbstractAuditEvent
         parent::__construct($requesterUserid, 0);
     }
 
+    #[Override]
     public function getBody(): string
     {
         return sprintf('User exported %d entries', $this->count);
     }
 
+    #[Override]
     public function getCategory(): AuditCategory
     {
         return AuditCategory::Export;

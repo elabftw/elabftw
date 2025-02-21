@@ -13,6 +13,7 @@ namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\CleanerInterface;
+use Override;
 
 use function count;
 use function sprintf;
@@ -32,6 +33,7 @@ class DatabaseCleaner implements CleanerInterface
     /**
      * Check all the things
      */
+    #[Override]
     public function cleanup(): int
     {
         $this->findOrphans('experiments_templates', 'teams', 'team');

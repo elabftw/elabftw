@@ -18,6 +18,7 @@ use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Models\Users;
 use Elabftw\Services\MfaHelper;
 use Elabftw\Services\UsersHelper;
+use Override;
 
 /**
  * Multi Factor Auth service
@@ -31,6 +32,7 @@ class Mfa implements AuthInterface
         $this->AuthResponse = new AuthResponse();
     }
 
+    #[Override]
     public function tryAuth(): AuthResponse
     {
         $Users = new Users($this->MfaHelper->userid);

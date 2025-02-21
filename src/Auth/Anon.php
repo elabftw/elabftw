@@ -15,6 +15,7 @@ namespace Elabftw\Auth;
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\AuthInterface;
+use Override;
 
 /**
  * Anonymous auth service
@@ -38,6 +39,7 @@ class Anon implements AuthInterface
     /**
      * Nothing to do here because anonymous user can't be authenticated!
      */
+    #[Override]
     public function tryAuth(): AuthResponse
     {
         return $this->AuthResponse;

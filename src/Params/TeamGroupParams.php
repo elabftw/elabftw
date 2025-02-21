@@ -13,9 +13,11 @@ declare(strict_types=1);
 namespace Elabftw\Params;
 
 use Elabftw\Exceptions\ImproperActionException;
+use Override;
 
 final class TeamGroupParams extends ContentParams
 {
+    #[Override]
     public function getContent(): string|int
     {
         return match ($this->target) {

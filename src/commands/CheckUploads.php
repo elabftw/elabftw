@@ -19,6 +19,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Override;
 
 /**
  * Check uploaded files
@@ -26,6 +27,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 #[AsCommand(name: 'uploads:check')]
 class CheckUploads extends Command
 {
+    #[Override]
     protected function configure(): void
     {
         $this->setDescription('Check uploaded files')
@@ -34,6 +36,7 @@ class CheckUploads extends Command
             ->addOption('recompute-hash', 'r', InputOption::VALUE_NONE, 'Recompute ALL uploads hash and replace value in database if a mismatch is found. Run with dry run flag (-d) to prevent database change');
     }
 
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln(array(

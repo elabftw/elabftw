@@ -63,6 +63,7 @@ class Handler extends AbstractRest
         return $inserted;
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return 'api/v2/import/';

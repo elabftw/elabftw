@@ -17,6 +17,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Override;
 
 /**
  * Check the the current schema version versus the required one
@@ -29,6 +30,7 @@ class CheckDatabase extends Command
         parent::__construct();
     }
 
+    #[Override]
     protected function configure(): void
     {
         $this->setDescription('Check the database version')
@@ -40,6 +42,7 @@ class CheckDatabase extends Command
      *
      * @return int 0 if no need to upgrade, 1 if need to upgrade
      */
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln(array(

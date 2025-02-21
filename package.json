@@ -6,7 +6,7 @@
     "test": "tests"
   },
   "dependencies": {
-    "3dmol": "^2.3.0",
+    "3dmol": "^2.4.2",
     "@ag-grid-community/client-side-row-model": "^32.3.2",
     "@ag-grid-community/core": "^32.3.2",
     "@ag-grid-community/infinite-row-model": "^32.3.2",

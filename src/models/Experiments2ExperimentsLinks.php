@@ -17,7 +17,7 @@ use Override;
 /**
  * All about Experiments Links in Experiments
  */
-class Experiments2ExperimentsLinks extends AbstractExperimentsLinks
+final class Experiments2ExperimentsLinks extends AbstractExperimentsLinks
 {
     #[Override]
     protected function getTable(): string

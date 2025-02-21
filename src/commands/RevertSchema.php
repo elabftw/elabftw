@@ -26,7 +26,7 @@ use Override;
  * Use this to revert a specific schema
  */
 #[AsCommand(name: 'db:revert')]
-class RevertSchema extends Command
+final class RevertSchema extends Command
 {
     public function __construct(private FilesystemOperator $fs)
     {

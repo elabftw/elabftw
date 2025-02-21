@@ -15,7 +15,7 @@ namespace Elabftw\AuditEvent;
 use Elabftw\Enums\AuditCategory;
 use Override;
 
-class ApiKeyCreated extends AbstractAuditEvent
+final class ApiKeyCreated extends AbstractAuditEvent
 {
     #[Override]
     public function getBody(): string

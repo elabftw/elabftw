@@ -15,7 +15,7 @@ namespace Elabftw\AuditEvent;
 use Elabftw\Enums\Usergroup;
 use Override;
 
-class TeamAddition extends AbstractUsers2TeamsModifiedEvent
+final class TeamAddition extends AbstractUsers2TeamsModifiedEvent
 {
     public function __construct(private int $teamid, private int $group, int $requester, int $userid)
     {

@@ -32,7 +32,7 @@ use Elabftw\Models\Users;
 /**
  * Get a Notification instance based on data from sql row
  */
-class NotificationsFactory
+final class NotificationsFactory
 {
     private array $body;
 

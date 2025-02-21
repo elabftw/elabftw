@@ -28,7 +28,7 @@ use Override;
  * Export data in .eln format
  */
 #[AsCommand(name: 'export:eln')]
-class ExportEln extends Command
+final class ExportEln extends Command
 {
     public function __construct(private StorageInterface $Fs)
     {

@@ -15,7 +15,7 @@ namespace Elabftw\Elabftw;
 use Elabftw\Models\Config;
 use RuntimeException;
 
-class Invoker
+final class Invoker
 {
     private const string SOCKET_PATH = 'unix:///run/invoker/invoker.sock';
 

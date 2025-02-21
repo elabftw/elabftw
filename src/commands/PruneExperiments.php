@@ -24,7 +24,7 @@ use Override;
  * To remove deleted files completely
  */
 #[AsCommand(name: 'prune:experiments')]
-class PruneExperiments extends Command
+final class PruneExperiments extends Command
 {
     #[Override]
     protected function configure(): void

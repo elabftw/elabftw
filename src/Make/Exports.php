@@ -44,7 +44,7 @@ use function hash_file;
 /**
  * Handle data exports
  */
-class Exports extends AbstractRest
+final class Exports extends AbstractRest
 {
     use SetIdTrait;
 

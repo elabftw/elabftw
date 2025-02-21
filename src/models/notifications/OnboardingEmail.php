@@ -23,7 +23,7 @@ use Override;
 /**
  * When a new user joins
  */
-class OnboardingEmail extends EmailOnlyNotifications implements MailableInterface
+final class OnboardingEmail extends EmailOnlyNotifications implements MailableInterface
 {
     protected Notifications $category = Notifications::OnboardingEmail;
 

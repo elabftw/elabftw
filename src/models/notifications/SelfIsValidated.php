@@ -20,7 +20,7 @@ use Override;
 /**
  * When our account has been validated
  */
-class SelfIsValidated extends AbstractNotifications implements MailableInterface
+final class SelfIsValidated extends AbstractNotifications implements MailableInterface
 {
     protected Notifications $category = Notifications::SelfIsValidated;
 

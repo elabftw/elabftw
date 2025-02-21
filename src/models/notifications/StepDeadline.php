@@ -18,7 +18,7 @@ use Elabftw\Models\Config;
 use PDO;
 use Override;
 
-class StepDeadline extends AbstractNotifications implements MailableInterface
+final class StepDeadline extends AbstractNotifications implements MailableInterface
 {
     /**
      * Time in minutes before the deadline to send/show notifications

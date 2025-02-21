@@ -25,7 +25,7 @@ use PDO;
 /**
  * All about the tag
  */
-class Tags extends AbstractRest
+final class Tags extends AbstractRest
 {
     use SetIdTrait;
 

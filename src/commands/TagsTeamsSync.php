@@ -28,7 +28,7 @@ use Override;
  * Synchronize tags between teams
  */
 #[AsCommand(name: 'tags:teamssync')]
-class TagsTeamsSync extends Command
+final class TagsTeamsSync extends Command
 {
     #[Override]
     protected function configure(): void

@@ -22,7 +22,7 @@ use Override;
  * Delete this after a few releases with the new command
  */
 #[AsCommand(name: 'db:install')]
-class InstallRedir extends Command
+final class InstallRedir extends Command
 {
     #[Override]
     protected function configure(): void

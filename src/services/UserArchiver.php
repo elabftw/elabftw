@@ -24,7 +24,7 @@ use PDO;
 /**
  * Archive/Unarchive a user
  */
-class UserArchiver
+final class UserArchiver
 {
     protected Db $Db;
 

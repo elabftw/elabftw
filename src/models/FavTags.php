@@ -23,7 +23,7 @@ use PDO;
 /**
  * The favorite tags of a user
  */
-class FavTags extends AbstractRest
+final class FavTags extends AbstractRest
 {
     use SetIdTrait;
 

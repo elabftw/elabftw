@@ -22,7 +22,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Check uploads for correct hash and filesize
  */
-class UploadsChecker
+final class UploadsChecker
 {
     private Db $Db;
 

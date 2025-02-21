@@ -19,7 +19,7 @@ use Override;
 /**
  * For in memory filesystem operations
  */
-class Memory extends AbstractStorage
+final class Memory extends AbstractStorage
 {
     #[Override]
     public function getPath(string $relativePath = ''): string

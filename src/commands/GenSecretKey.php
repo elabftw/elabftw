@@ -23,7 +23,7 @@ use Override;
  * Generate secret key locally
  */
 #[AsCommand(name: 'tools:genkey')]
-class GenSecretKey extends Command
+final class GenSecretKey extends Command
 {
     #[Override]
     protected function configure(): void

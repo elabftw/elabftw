@@ -25,7 +25,7 @@ use Override;
  * For dev purposes: force the schema to a particular version
  */
 #[AsCommand(name: 'dev:forceschema')]
-class ForceSchema extends Command
+final class ForceSchema extends Command
 {
     #[Override]
     protected function configure(): void

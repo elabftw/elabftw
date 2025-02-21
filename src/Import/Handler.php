@@ -31,7 +31,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 /**
  * Handle import request
  */
-class Handler extends AbstractRest
+final class Handler extends AbstractRest
 {
     private const array ALLOWED_EXTENSIONS = array('.eln', '.csv');
 

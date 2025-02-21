@@ -22,7 +22,7 @@ use Override;
  * RFC3161 timestamping with DGN service
  * https://www.dgn.de/dgn-zeitstempeldienst/
  */
-class MakeDgnTimestamp extends AbstractMakeTrustedTimestamp
+final class MakeDgnTimestamp extends AbstractMakeTrustedTimestamp
 {
     protected const string TS_URL = 'https://zeitstempel.dgn.de/tss';
 

@@ -30,7 +30,7 @@ use Override;
 /**
  * All about the database items
  */
-class Items extends AbstractConcreteEntity
+final class Items extends AbstractConcreteEntity
 {
     use InsertTagsTrait;
 

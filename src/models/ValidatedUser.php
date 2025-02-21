@@ -19,7 +19,7 @@ use Override;
 /**
  * A user that exists in the db, so we have a userid but not necessarily a team
  */
-class ValidatedUser extends ExistingUser
+final class ValidatedUser extends ExistingUser
 {
     #[Override]
     public static function fromEmail(string $email): Users

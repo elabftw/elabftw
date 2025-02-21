@@ -24,7 +24,7 @@ use Override;
  * To move local filesystem uploads to S3 storage
  */
 #[AsCommand(name: 'uploads:migrate')]
-class MigrateUploads extends Command
+final class MigrateUploads extends Command
 {
     #[Override]
     protected function configure(): void

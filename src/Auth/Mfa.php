@@ -23,7 +23,7 @@ use Override;
 /**
  * Multi Factor Auth service
  */
-class Mfa implements AuthInterface
+final class Mfa implements AuthInterface
 {
     private AuthResponse $AuthResponse;
 

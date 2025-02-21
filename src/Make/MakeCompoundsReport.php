@@ -21,7 +21,7 @@ use function date;
 /**
  * Make a CSV file with all the compounds
  */
-class MakeCompoundsReport extends AbstractMakeCsv
+final class MakeCompoundsReport extends AbstractMakeCsv
 {
     protected array $rows;
 

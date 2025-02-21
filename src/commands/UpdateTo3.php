@@ -26,7 +26,7 @@ use Override;
  * Prepare the database for the 3.0 update
  */
 #[AsCommand(name: 'db:updateto3')]
-class UpdateTo3 extends Command
+final class UpdateTo3 extends Command
 {
     #[Override]
     protected function configure(): void

@@ -16,7 +16,7 @@ use Elabftw\Enums\Notifications;
 use PDO;
 use Override;
 
-class NewVersionInstalled extends AbstractNotifications
+final class NewVersionInstalled extends AbstractNotifications
 {
     protected Notifications $category = Notifications::NewVersionInstalled;
 

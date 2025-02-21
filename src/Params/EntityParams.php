@@ -19,7 +19,7 @@ use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 use Override;
 
-class EntityParams extends ContentParams implements ContentParamsInterface
+final class EntityParams extends ContentParams implements ContentParamsInterface
 {
     #[Override]
     public function getContent(): mixed

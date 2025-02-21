@@ -25,7 +25,7 @@ use Override;
 /**
  * Authenticate with server provided values
  */
-class External implements AuthInterface
+final class External implements AuthInterface
 {
     private AuthResponse $AuthResponse;
 

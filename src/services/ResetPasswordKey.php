@@ -26,7 +26,7 @@ use function sprintf;
 /**
  * Generator and validator for key in reset password feature
  */
-class ResetPasswordKey
+final class ResetPasswordKey
 {
     // time in minutes after which the reset link is expired
     public const LINK_LIFETIME = 15;

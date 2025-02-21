@@ -20,7 +20,7 @@ use Override;
 /**
  * Anonymous auth service
  */
-class Anon implements AuthInterface
+final class Anon implements AuthInterface
 {
     private AuthResponse $AuthResponse;
 

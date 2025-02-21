@@ -26,7 +26,7 @@ use PDO;
 /**
  * All about storage_units
  */
-class StorageUnits extends AbstractRest
+final class StorageUnits extends AbstractRest
 {
     use SetIdTrait;
 

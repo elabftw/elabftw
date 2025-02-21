@@ -19,7 +19,7 @@ use PDO;
 /**
  * A utility class to deal with access key stuff
  */
-class AccessKeyHelper
+final class AccessKeyHelper
 {
     private Db $Db;
 

@@ -19,7 +19,7 @@ use function date;
 /**
  * Make a CSV file from a list of id and a type
  */
-class MakeCsv extends AbstractMakeCsv
+final class MakeCsv extends AbstractMakeCsv
 {
     public function __construct(private array $entityArr)
     {

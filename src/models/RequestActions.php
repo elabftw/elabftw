@@ -25,7 +25,7 @@ use PDO;
 /**
  * Request action for users
  */
-class RequestActions extends AbstractRest
+final class RequestActions extends AbstractRest
 {
     use SetIdTrait;
 

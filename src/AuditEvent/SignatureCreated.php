@@ -16,7 +16,7 @@ use Elabftw\Enums\AuditCategory;
 use Elabftw\Enums\EntityType;
 use Override;
 
-class SignatureCreated extends AbstractAuditEvent
+final class SignatureCreated extends AbstractAuditEvent
 {
     public function __construct(int $requesterUserid, private int $entityId, private EntityType $entityType)
     {

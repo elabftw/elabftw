@@ -14,7 +14,7 @@ namespace Elabftw\AuditEvent;
 
 use Override;
 
-class TeamRemoval extends AbstractUsers2TeamsModifiedEvent
+final class TeamRemoval extends AbstractUsers2TeamsModifiedEvent
 {
     public function __construct(private int $teamid, int $requester, int $userid)
     {

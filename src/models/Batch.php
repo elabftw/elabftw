@@ -22,7 +22,7 @@ use Override;
 /**
  * Process a single request targeting multiple entities
  */
-class Batch extends AbstractRest
+final class Batch extends AbstractRest
 {
     private int $processed = 0;
 

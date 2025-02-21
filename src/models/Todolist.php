@@ -24,7 +24,7 @@ use PDO;
 /**
  * All about the todolist
  */
-class Todolist extends AbstractRest
+final class Todolist extends AbstractRest
 {
     use SetIdTrait;
     use SortableTrait;

@@ -17,7 +17,7 @@ use Override;
 
 use function array_merge;
 
-class ChemEditorController extends AbstractHtmlController
+final class ChemEditorController extends AbstractHtmlController
 {
     #[Override]
     protected function getTemplate(): string

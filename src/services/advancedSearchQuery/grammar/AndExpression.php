@@ -18,7 +18,7 @@ use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitor;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 use Override;
 
-class AndExpression implements Visitable
+final class AndExpression implements Visitable
 {
     public function __construct(private SimpleValueWrapper | DateField | TimestampField | MetadataField | Field | NotExpression | OrExpression $expression, private ?AndOperand $tail = null) {}
 

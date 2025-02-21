@@ -34,7 +34,7 @@ use function sprintf;
 use function ucfirst;
 
 /** @psalm-suppress UnusedParam */
-class FieldValidatorVisitor implements Visitor
+final class FieldValidatorVisitor implements Visitor
 {
     public function check(Visitable $parsedQuery, VisitorParameters $parameters): array
     {

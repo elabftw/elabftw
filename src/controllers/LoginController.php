@@ -53,7 +53,7 @@ use function setcookie;
 /**
  * For all your authentication/login needs
  */
-class LoginController implements ControllerInterface
+final class LoginController implements ControllerInterface
 {
     public const int AUTH_LOCAL = 10;
 

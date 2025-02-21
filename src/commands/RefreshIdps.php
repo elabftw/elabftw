@@ -30,7 +30,7 @@ use Override;
  * Refresh Idps sources and refresh associated Idps
  */
 #[AsCommand(name: 'idps:refresh')]
-class RefreshIdps extends Command
+final class RefreshIdps extends Command
 {
     public function __construct(private string $proxy)
     {

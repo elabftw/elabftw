@@ -28,7 +28,7 @@ use function trim;
 /**
  * Toolbelt full of useful functions
  */
-class Tools
+final class Tools
 {
     public static function getUuidv4(): string
     {

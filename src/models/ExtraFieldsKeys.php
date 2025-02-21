@@ -22,7 +22,7 @@ use PDO;
 /**
  * Get extra fields keys of items and experiments used for autocomplete on search page.
  */
-class ExtraFieldsKeys extends AbstractRest
+final class ExtraFieldsKeys extends AbstractRest
 {
     public function __construct(private Users $Users, private string $searchTerm, private int $limit = 0)
     {

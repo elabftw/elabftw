@@ -15,7 +15,7 @@ namespace Elabftw\AuditEvent;
 use Elabftw\Enums\AuditCategory;
 use Override;
 
-class PasswordChanged extends UserAttributeChanged
+final class PasswordChanged extends UserAttributeChanged
 {
     #[Override]
     public function getCategory(): AuditCategory

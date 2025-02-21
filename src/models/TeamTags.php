@@ -24,7 +24,7 @@ use PDO;
 /**
  * All about the tag but seen from a team perspective, not an entity
  */
-class TeamTags extends AbstractRest
+final class TeamTags extends AbstractRest
 {
     use SetIdTrait;
 

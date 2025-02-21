@@ -23,7 +23,7 @@ use RuntimeException;
 /**
  * Provide methods for multi/two-factor authentication
  */
-class MfaHelper
+final class MfaHelper
 {
     /** @var string ISSUER will be displayed in the app as issuer name */
     private const ISSUER = 'eLabFTW';

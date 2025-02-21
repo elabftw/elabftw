@@ -25,7 +25,7 @@ use Override;
  * Command line tool to emulate a 2FA phone app. It returns a 2FA code calculated from the provided secret.
  */
 #[AsCommand(name: 'dev:2fa')]
-class MfaCode extends Command
+final class MfaCode extends Command
 {
     #[Override]
     protected function configure(): void

@@ -19,7 +19,7 @@ use Override;
 /**
  * Parameters passed for ordering extra fields
  */
-class ExtraFieldsOrderingParams extends OrderingParams
+final class ExtraFieldsOrderingParams extends OrderingParams
 {
     public readonly int $id;
 

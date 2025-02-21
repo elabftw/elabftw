@@ -17,7 +17,7 @@ use Override;
 
 use function array_merge;
 
-class SignatureKeysCreated extends AbstractAuditEvent
+final class SignatureKeysCreated extends AbstractAuditEvent
 {
     public function __construct(private string $keyId, private int $requesterUserid = 0, private int $targetUserid = 0)
     {

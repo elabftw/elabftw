@@ -21,7 +21,7 @@ use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitor;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 use Override;
 
-class Field implements Term, Visitable, FieldType
+final class Field implements Term, Visitable, FieldType
 {
     public function __construct(private string $field, private SimpleValueWrapper $valueWrapper, private ?bool $strict = null) {}
 

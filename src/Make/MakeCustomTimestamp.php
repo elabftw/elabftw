@@ -20,7 +20,7 @@ use Override;
 /**
  * RFC3161 timestamping with a custom TSA
  */
-class MakeCustomTimestamp extends AbstractMakeTrustedTimestamp
+final class MakeCustomTimestamp extends AbstractMakeTrustedTimestamp
 {
     /** default hash algo for file */
     private const string TS_HASH = 'sha256';

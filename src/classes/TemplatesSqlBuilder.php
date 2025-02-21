@@ -14,7 +14,7 @@ namespace Elabftw\Elabftw;
 
 use Override;
 
-class TemplatesSqlBuilder extends EntitySqlBuilder
+final class TemplatesSqlBuilder extends EntitySqlBuilder
 {
     #[Override]
     protected function entitySelect(bool $fullSelect): void

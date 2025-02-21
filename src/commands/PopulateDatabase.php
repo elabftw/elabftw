@@ -52,7 +52,7 @@ use function str_repeat;
  * For dev purposes, should not be used by normal users.
  */
 #[AsCommand(name: 'db:populate')]
-class PopulateDatabase extends Command
+final class PopulateDatabase extends Command
 {
     // number of things to create
     private const int DEFAULT_ITERATIONS = 50;

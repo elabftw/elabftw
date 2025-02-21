@@ -17,7 +17,7 @@ use Exception;
 /**
  * Throw this if the device token is not valid
  */
-class InvalidDeviceTokenException extends Exception
+final class InvalidDeviceTokenException extends Exception
 {
     public function __construct()
     {

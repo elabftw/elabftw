@@ -15,7 +15,7 @@ namespace Elabftw\AuditEvent;
 use Elabftw\Enums\AuditCategory;
 use Override;
 
-class UserLogin extends AbstractAuditEvent
+final class UserLogin extends AbstractAuditEvent
 {
     #[Override]
     public function getBody(): string

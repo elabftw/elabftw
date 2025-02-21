@@ -34,7 +34,7 @@ use function sprintf;
  * Import a CSV into compounds
  */
 #[AsCommand(name: 'import:compounds')]
-class ImportCompoundsCsv extends Command
+final class ImportCompoundsCsv extends Command
 {
     public function __construct(private StorageInterface $Fs)
     {

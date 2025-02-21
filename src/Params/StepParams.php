@@ -18,7 +18,7 @@ use Override;
 use function mb_strlen;
 use function str_replace;
 
-class StepParams extends ContentParams
+final class StepParams extends ContentParams
 {
     #[Override]
     public function getContent(): ?string

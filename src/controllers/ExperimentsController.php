@@ -23,7 +23,7 @@ use Override;
 /**
  * For experiments.php
  */
-class ExperimentsController extends AbstractEntityController
+final class ExperimentsController extends AbstractEntityController
 {
     public function __construct(App $app, Experiments | Templates $entity)
     {

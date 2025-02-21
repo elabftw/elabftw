@@ -24,7 +24,7 @@ use Override;
  * For dev purposes: generate a new empty schema file
  */
 #[AsCommand(name: 'dev:genschema')]
-class GenSchema extends Command
+final class GenSchema extends Command
 {
     public function __construct(private FilesystemOperator $fs)
     {

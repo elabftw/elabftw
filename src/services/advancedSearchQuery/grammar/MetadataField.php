@@ -19,7 +19,7 @@ use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitor;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 use Override;
 
-class MetadataField implements Term, Visitable
+final class MetadataField implements Term, Visitable
 {
     public function __construct(private SimpleValueWrapper $keyWrapper, private SimpleValueWrapper $valueWrapper, private ?bool $strict = null) {}
 

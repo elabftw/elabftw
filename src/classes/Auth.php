@@ -29,7 +29,7 @@ use function in_array;
 /**
  * Provide methods to authenticate a user
  */
-class Auth implements AuthInterface
+final class Auth implements AuthInterface
 {
     public function __construct(private Config $Config, private Request $Request) {}
 

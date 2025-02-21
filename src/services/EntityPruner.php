@@ -22,7 +22,7 @@ use Override;
 /**
  * Remove deleted experiments/items
  */
-class EntityPruner implements CleanerInterface
+final class EntityPruner implements CleanerInterface
 {
     private Db $Db;
 

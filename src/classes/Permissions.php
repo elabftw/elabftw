@@ -24,7 +24,7 @@ use Elabftw\Services\UsersHelper;
  * Determine read and write access for a user and an entity
  * Here be dragons! Cognitive load > 9000
  */
-class Permissions
+final class Permissions
 {
     private TeamGroups $TeamGroups;
 

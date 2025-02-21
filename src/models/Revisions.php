@@ -26,7 +26,7 @@ use function mb_strlen;
 /**
  * All about the revisions
  */
-class Revisions extends AbstractRest
+final class Revisions extends AbstractRest
 {
     use SetIdTrait;
 

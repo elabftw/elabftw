@@ -24,7 +24,7 @@ use Override;
  * To remove deleted items completely
  */
 #[AsCommand(name: 'prune:items')]
-class PruneItems extends Command
+final class PruneItems extends Command
 {
     #[Override]
     protected function configure(): void

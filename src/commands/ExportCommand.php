@@ -26,7 +26,7 @@ use Override;
  * Trigger the process of export requests
  */
 #[AsCommand(name: 'export:process')]
-class ExportCommand extends Command
+final class ExportCommand extends Command
 {
     public function __construct(private StorageInterface $fs)
     {

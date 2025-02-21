@@ -34,7 +34,7 @@ use Override;
  * Import an ELN archive
  */
 #[AsCommand(name: 'import:eln')]
-class ImportEln extends Command
+final class ImportEln extends Command
 {
     public function __construct(private StorageInterface $Fs)
     {

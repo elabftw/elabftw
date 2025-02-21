@@ -17,7 +17,7 @@ use Exception;
  * Throw this if you don't want to disclose if a resource exists
  * Prevent enumeration and information leakage by having an exception that can be both error and success
  */
-class QuantumException extends Exception
+final class QuantumException extends Exception
 {
     public function __construct(string $message, int $code = 42, ?Exception $previous = null)
     {

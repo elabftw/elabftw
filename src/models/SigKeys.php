@@ -25,7 +25,7 @@ use PDO;
 /**
  * Signature keys CRUD class
  */
-class SigKeys extends AbstractRest
+final class SigKeys extends AbstractRest
 {
     use SetIdTrait;
 

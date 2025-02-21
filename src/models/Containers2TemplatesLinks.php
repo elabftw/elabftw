@@ -18,7 +18,7 @@ use Override;
 /**
  * Container <-> template link
  */
-class Containers2TemplatesLinks extends AbstractContainersLinks
+final class Containers2TemplatesLinks extends AbstractContainersLinks
 {
     #[Override]
     protected function getTable(): string

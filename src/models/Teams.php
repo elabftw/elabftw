@@ -32,7 +32,7 @@ use function trim;
 /**
  * All about the teams
  */
-class Teams extends AbstractRest
+final class Teams extends AbstractRest
 {
     use SetIdTrait;
 

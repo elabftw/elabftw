@@ -27,7 +27,7 @@ use RuntimeException;
 /**
  * Procurement requests are purchase orders in a team
  */
-class ProcurementRequests extends AbstractRest
+final class ProcurementRequests extends AbstractRest
 {
     use SetIdTrait;
 

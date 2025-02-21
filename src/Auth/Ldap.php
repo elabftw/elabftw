@@ -34,7 +34,7 @@ use function is_array;
 /**
  * LDAP auth service
  */
-class Ldap implements AuthInterface
+final class Ldap implements AuthInterface
 {
     private AuthResponse $AuthResponse;
 

@@ -27,7 +27,7 @@ use Override;
 /**
  * All about the experiments
  */
-class Experiments extends AbstractConcreteEntity
+final class Experiments extends AbstractConcreteEntity
 {
     use InsertTagsTrait;
 

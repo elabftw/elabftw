@@ -32,7 +32,7 @@ use Symfony\Component\HttpFoundation\InputBag;
 /**
  * The kind of items you can have in the database for a team
  */
-class ItemsTypes extends AbstractTemplateEntity
+final class ItemsTypes extends AbstractTemplateEntity
 {
     use RandomColorTrait;
 

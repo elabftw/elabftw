@@ -15,7 +15,7 @@ namespace Elabftw\AuditEvent;
 use Elabftw\Enums\AuditCategory;
 use Override;
 
-class Import extends AbstractAuditEvent
+final class Import extends AbstractAuditEvent
 {
     public function __construct(int $requesterUserid, private int $count)
     {

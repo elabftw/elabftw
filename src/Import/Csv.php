@@ -23,7 +23,7 @@ use Override;
 /**
  * Import entries from a csv file.
  */
-class Csv extends AbstractCsv
+final class Csv extends AbstractCsv
 {
     public function __construct(
         protected Users $requester,

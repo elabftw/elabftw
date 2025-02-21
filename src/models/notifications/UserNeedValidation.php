@@ -18,7 +18,7 @@ use Elabftw\Models\Config;
 use Elabftw\Models\Users;
 use Override;
 
-class UserNeedValidation extends UserCreated implements MailableInterface
+final class UserNeedValidation extends UserCreated implements MailableInterface
 {
     protected const PREF = 'notif_user_need_validation';
 

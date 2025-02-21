@@ -23,7 +23,7 @@ use Override;
  * To remove deleted files completely
  */
 #[AsCommand(name: 'prune:uploads')]
-class PruneUploads extends Command
+final class PruneUploads extends Command
 {
     #[Override]
     protected function configure(): void

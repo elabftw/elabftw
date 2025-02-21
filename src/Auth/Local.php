@@ -36,7 +36,7 @@ use function password_verify;
 /**
  * Local auth service
  */
-class Local implements AuthInterface
+final class Local implements AuthInterface
 {
     private Db $Db;
 

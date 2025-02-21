@@ -28,7 +28,7 @@ use function sprintf;
 /**
  * Twig filters
  */
-class TwigFilters
+final class TwigFilters
 {
     /**
      * For displaying messages using bootstrap alerts

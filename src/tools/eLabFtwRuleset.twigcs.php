@@ -23,7 +23,7 @@ use Override;
 /**
  * eLabFTW ruleset for twigcs
  */
-class ELabFtwRuleset implements RulesetInterface, TemplateResolverAwareInterface
+final class ELabFtwRuleset implements RulesetInterface, TemplateResolverAwareInterface
 {
     private TemplateResolverInterface $resolver;
 

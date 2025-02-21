@@ -29,7 +29,7 @@ use Override;
 /**
  * Make an ELN archive
  */
-class MakeEln extends AbstractMakeEln
+final class MakeEln extends AbstractMakeEln
 {
     public function __construct(protected ZipStream $Zip, protected Users $requester, protected array $entityArr)
     {

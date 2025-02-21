@@ -28,7 +28,7 @@ use function mb_strlen;
 /**
  * When values need to be checked
  */
-class Check
+final class Check
 {
     /** the minimum password length */
     public const MIN_PASSWORD_LENGTH = 8;

@@ -19,7 +19,7 @@ use Override;
 /**
  * Remove half of the stored revisions
  */
-class RevisionsCleaner implements CleanerInterface
+final class RevisionsCleaner implements CleanerInterface
 {
     private Db $Db;
 

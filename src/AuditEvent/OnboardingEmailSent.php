@@ -16,7 +16,7 @@ namespace Elabftw\AuditEvent;
 use Elabftw\Enums\AuditCategory;
 use Override;
 
-class OnboardingEmailSent extends AbstractAuditEvent
+final class OnboardingEmailSent extends AbstractAuditEvent
 {
     public function __construct(private int $teamId = 0, private int $targetUserid = 0, private bool $forAdmin = false)
     {

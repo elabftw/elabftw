@@ -17,7 +17,7 @@ use Override;
 
 use function array_merge;
 
-class InventoryController extends AbstractHtmlController
+final class InventoryController extends AbstractHtmlController
 {
     #[Override]
     protected function getTemplate(): string

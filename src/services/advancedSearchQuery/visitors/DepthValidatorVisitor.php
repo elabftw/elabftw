@@ -28,7 +28,7 @@ use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitable;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitor;
 use Override;
 
-class DepthValidatorVisitor implements Visitor
+final class DepthValidatorVisitor implements Visitor
 {
     public function __construct(private ?int $limit = null) {}
 

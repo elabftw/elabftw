@@ -24,7 +24,7 @@ use Override;
  * Send the notifications emails
  */
 #[AsCommand(name: 'notifications:send')]
-class SendNotifications extends Command
+final class SendNotifications extends Command
 {
     public function __construct(private Email $Email)
     {

@@ -26,7 +26,7 @@ use function json_decode;
 /**
  * Notifications for a user
  */
-class UserNotifications extends AbstractRest
+final class UserNotifications extends AbstractRest
 {
     use SetIdTrait;
 

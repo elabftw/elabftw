@@ -17,7 +17,7 @@ use Elabftw\Elabftw\Compound;
 /**
  * Import a compound from PubChem
  */
-class PubChemImporter
+final class PubChemImporter
 {
     private const string PUG_URL = 'https://pubchem.ncbi.nlm.nih.gov/rest/pug';
 

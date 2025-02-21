@@ -18,7 +18,7 @@ use PDO;
 /**
  * Fingerprints for compounds
  */
-class Fingerprints
+final class Fingerprints
 {
     protected Db $Db;
 

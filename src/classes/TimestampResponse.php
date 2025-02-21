@@ -17,6 +17,7 @@ use Elabftw\Traits\ProcessTrait;
 
 /**
  * Trusted Timestamping (RFC3161) response object
+ * @final mocked in tests
  */
 class TimestampResponse
 {

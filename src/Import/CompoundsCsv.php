@@ -25,7 +25,7 @@ use Override;
 /**
  * Import a CSV into compounds
  */
-class CompoundsCsv extends AbstractCsv
+final class CompoundsCsv extends AbstractCsv
 {
     public function __construct(
         protected Users $requester,

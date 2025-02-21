@@ -24,7 +24,7 @@ use function implode;
 /**
  * Create a report of scheduler bookings
  */
-class MakeSchedulerReport extends AbstractMakeCsv
+final class MakeSchedulerReport extends AbstractMakeCsv
 {
     protected Db $Db;
 

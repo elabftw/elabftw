@@ -23,7 +23,7 @@ use Override;
  * Generate the cached Twig files
  */
 #[AsCommand(name: 'dev:gencache')]
-class GenCache extends Command
+final class GenCache extends Command
 {
     #[Override]
     protected function configure(): void

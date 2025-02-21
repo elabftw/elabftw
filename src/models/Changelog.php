@@ -19,7 +19,7 @@ use PDO;
 /**
  * All about changelog tables
  */
-class Changelog
+final class Changelog
 {
     private Db $Db;
 

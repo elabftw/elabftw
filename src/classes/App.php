@@ -39,7 +39,7 @@ use function textdomain;
 /**
  * This is a super class holding various global objects
  */
-class App
+final class App
 {
     use TwigTrait;
 

@@ -29,7 +29,7 @@ use function sprintf;
 /**
  * For dealing with exclusive edit mode aka write lock
  */
-class ExclusiveEditMode
+final class ExclusiveEditMode
 {
     /** timeout in minutes after which the lock is automatically released */
     // ToDo?: make it a configuration on team/instance level

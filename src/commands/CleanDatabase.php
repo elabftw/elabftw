@@ -23,7 +23,7 @@ use Override;
  * Cleanup the database: look for orphans leftover from past bugs
  */
 #[AsCommand(name: 'db:clean')]
-class CleanDatabase extends Command
+final class CleanDatabase extends Command
 {
     #[Override]
     protected function configure(): void

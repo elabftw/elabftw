@@ -30,7 +30,7 @@ use Override;
  * Timestamp experiments in bulk
  */
 #[AsCommand(name: 'experiments:timestamp')]
-class ExperimentsTimestamp extends Command
+final class ExperimentsTimestamp extends Command
 {
     #[Override]
     protected function configure(): void

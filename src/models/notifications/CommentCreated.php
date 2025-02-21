@@ -18,7 +18,7 @@ use Elabftw\Models\Config;
 use Elabftw\Models\Users;
 use Override;
 
-class CommentCreated extends AbstractNotifications implements MailableInterface
+final class CommentCreated extends AbstractNotifications implements MailableInterface
 {
     protected const PREF = 'notif_comment_created';
 

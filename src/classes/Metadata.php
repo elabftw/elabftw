@@ -21,7 +21,7 @@ use function count;
 use function json_decode;
 use function json_encode;
 
-class Metadata
+final class Metadata
 {
     private const int JSON_MAX_DEPTH = 42;
 

@@ -18,7 +18,7 @@ use Override;
  * RFC3161 timestamping with GlobalSign timestamping service
  * https://www.globalsign.com/en/timestamp-service
  */
-class MakeGlobalSignTimestamp extends AbstractMakeTrustedTimestamp
+final class MakeGlobalSignTimestamp extends AbstractMakeTrustedTimestamp
 {
     protected const string TS_URL = 'http://timestamp.globalsign.com/tsa/r6advanced1';
 

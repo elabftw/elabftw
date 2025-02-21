@@ -22,7 +22,7 @@ use PDO;
 /**
  * Request action for users
  */
-class UserRequestActions extends AbstractRest
+final class UserRequestActions extends AbstractRest
 {
     public function __construct(protected Users $requester)
     {

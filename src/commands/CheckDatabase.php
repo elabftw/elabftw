@@ -23,7 +23,7 @@ use Override;
  * Check the the current schema version versus the required one
  */
 #[AsCommand(name: 'db:check')]
-class CheckDatabase extends Command
+final class CheckDatabase extends Command
 {
     public function __construct(private int $currentSchema)
     {

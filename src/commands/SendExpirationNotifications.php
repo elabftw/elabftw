@@ -24,7 +24,7 @@ use Override;
  * Send the notifications emails for accounts close to expiration
  */
 #[AsCommand(name: 'notifications:send-expiration')]
-class SendExpirationNotifications extends Command
+final class SendExpirationNotifications extends Command
 {
     public function __construct(private Email $Email)
     {

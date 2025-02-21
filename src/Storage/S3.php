@@ -25,7 +25,7 @@ use Override;
 /**
  * Provide a League\Filesystem adapter for S3 buckets file uploads
  */
-class S3 extends AbstractStorage
+final class S3 extends AbstractStorage
 {
     private const string S3_VERSION = '2006-03-01';
 

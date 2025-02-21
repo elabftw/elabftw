@@ -33,7 +33,7 @@ use function substr;
 /**
  * All about the team's scheduler
  */
-class Scheduler extends AbstractRest
+final class Scheduler extends AbstractRest
 {
     use EntityTrait;
 

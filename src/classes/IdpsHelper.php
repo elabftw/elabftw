@@ -20,7 +20,7 @@ use function rtrim;
 /**
  * Helper class for Idps, mostly to get settings
  */
-class IdpsHelper
+final class IdpsHelper
 {
     public function __construct(public Config $Config, private Idps $Idps) {}
 

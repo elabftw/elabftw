@@ -17,7 +17,7 @@ use Override;
 /**
  * All about Items Links in Items Types
  */
-class ItemsTypes2ItemsLinks extends AbstractItemsLinks
+final class ItemsTypes2ItemsLinks extends AbstractItemsLinks
 {
     #[Override]
     protected function getTable(): string

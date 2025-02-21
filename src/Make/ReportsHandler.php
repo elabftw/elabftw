@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Handle reports request
  */
-class ReportsHandler extends AbstractRest
+final class ReportsHandler extends AbstractRest
 {
     public function __construct(private Users $requester) {}
 

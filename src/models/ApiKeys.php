@@ -30,7 +30,7 @@ use function random_bytes;
 /**
  * Api keys CRUD class
  */
-class ApiKeys extends AbstractRest
+final class ApiKeys extends AbstractRest
 {
     use SetIdTrait;
 

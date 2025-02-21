@@ -27,7 +27,7 @@ use PDO;
 /**
  * All about the steps
  */
-class Steps extends AbstractRest
+final class Steps extends AbstractRest
 {
     use SortableTrait;
     use SetIdTrait;

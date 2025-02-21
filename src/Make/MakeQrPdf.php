@@ -21,7 +21,7 @@ use Override;
 /**
  * Make a PDF from several experiments or db items showing only minimal info with QR codes
  */
-class MakeQrPdf extends AbstractMakePdf
+final class MakeQrPdf extends AbstractMakePdf
 {
     use TwigTrait;
 

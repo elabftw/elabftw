@@ -23,7 +23,7 @@ use Override;
 /**
  * Authenticate with the cookie
  */
-class Cookie implements AuthInterface
+final class Cookie implements AuthInterface
 {
     private Db $Db;
 

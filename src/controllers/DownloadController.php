@@ -30,7 +30,7 @@ use function substr;
 /**
  * To download uploaded files
  */
-class DownloadController implements ControllerInterface
+final class DownloadController implements ControllerInterface
 {
     // the human-friendly name that we will give to the downloaded file */
     private string $realName = 'unnamed_file';

@@ -31,7 +31,7 @@ use Elabftw\Params\UserParams;
 /**
  * This is used to generate data for dev purposes
  */
-class Populate
+final class Populate
 {
     // the password to use if none are provided
     private const string DEFAULT_PASSWORD = 'totototototo';

@@ -45,7 +45,7 @@ use function is_string;
 /**
  * SAML auth service
  */
-class Saml implements AuthInterface
+final class Saml implements AuthInterface
 {
     private const int TEAM_SELECTION_REQUIRED = 1;
 

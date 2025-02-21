@@ -22,7 +22,7 @@ use Override;
 /**
  * Team auth service: for when you are already auth but you had to select a team
  */
-class Team implements AuthInterface
+final class Team implements AuthInterface
 {
     private AuthResponse $AuthResponse;
 

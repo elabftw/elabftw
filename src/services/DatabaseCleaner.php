@@ -21,7 +21,7 @@ use function sprintf;
 /**
  * Make sure the database is consistent with no leftover things
  */
-class DatabaseCleaner implements CleanerInterface
+final class DatabaseCleaner implements CleanerInterface
 {
     private Db $Db;
 

@@ -19,7 +19,7 @@ use Override;
 /**
  * For API v1 requests (removed)
  */
-class Apiv1Controller extends AbstractApiController
+final class Apiv1Controller extends AbstractApiController
 {
     #[Override]
     public function getResponse(): Response

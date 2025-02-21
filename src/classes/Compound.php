@@ -17,7 +17,7 @@ use function json_decode;
 /**
  * Representation of a chemical compound
  */
-class Compound
+final class Compound
 {
     public function __construct(
         public ?string $cas = null,

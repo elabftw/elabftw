@@ -54,7 +54,7 @@ use function count;
 /**
  * Create zip, csv, pdf or report
  */
-class MakeController extends AbstractController
+final class MakeController extends AbstractController
 {
     private const int AUDIT_THRESHOLD = 12;
 

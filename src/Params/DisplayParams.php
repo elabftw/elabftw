@@ -33,7 +33,7 @@ use function trim;
  * This class holds the values for limit, offset, order and sort
  * It is based on user preferences, overridden by request parameters
  */
-class DisplayParams extends BaseQueryParams
+final class DisplayParams extends BaseQueryParams
 {
     public string $filterSql = '';
 

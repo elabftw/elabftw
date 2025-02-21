@@ -18,7 +18,7 @@ use Elabftw\Models\Config;
 /**
  * Calculate fingerprint from a compound
  */
-class Fingerprinter
+final class Fingerprinter
 {
     private const string FINGERPRINTER_URL = '/fingerprinter';
 

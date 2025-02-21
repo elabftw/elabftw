@@ -36,7 +36,7 @@ use Symfony\Component\HttpFoundation\InputBag;
 /**
  * Compounds are chemical entities stored in the `compounds` SQL table
  */
-class Compounds extends AbstractRest
+final class Compounds extends AbstractRest
 {
     use SetIdTrait;
 

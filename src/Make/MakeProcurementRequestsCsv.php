@@ -21,7 +21,7 @@ use function date;
 /**
  * Make a CSV file from the team's procurement requests
  */
-class MakeProcurementRequestsCsv extends AbstractMakeCsv
+final class MakeProcurementRequestsCsv extends AbstractMakeCsv
 {
     private array $rows;
 

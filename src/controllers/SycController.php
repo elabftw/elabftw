@@ -14,7 +14,7 @@ namespace Elabftw\Controllers;
 
 use Override;
 
-class SycController extends AbstractHtmlController
+final class SycController extends AbstractHtmlController
 {
     #[Override]
     protected function getTemplate(): string

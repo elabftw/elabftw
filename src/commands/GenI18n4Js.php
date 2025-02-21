@@ -24,7 +24,7 @@ use Override;
  * Generate the translation files for typescript/javascript
  */
 #[AsCommand(name: 'dev:i18n4js')]
-class GenI18n4Js extends Command
+final class GenI18n4Js extends Command
 {
     #[Override]
     protected function configure(): void

@@ -34,7 +34,7 @@ use function array_merge;
 /**
  * For dashboard.php
  */
-class DashboardController extends AbstractHtmlController
+final class DashboardController extends AbstractHtmlController
 {
     private const int SHOWN_NUMBER = 5;
 

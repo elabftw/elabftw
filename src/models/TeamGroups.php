@@ -32,7 +32,7 @@ use function json_decode;
 /**
  * Everything related to the team groups
  */
-class TeamGroups extends AbstractRest
+final class TeamGroups extends AbstractRest
 {
     use SetIdTrait;
 

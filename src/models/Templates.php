@@ -31,7 +31,7 @@ use PDO;
 /**
  * All about the templates
  */
-class Templates extends AbstractTemplateEntity
+final class Templates extends AbstractTemplateEntity
 {
     use SortableTrait;
 

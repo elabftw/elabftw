@@ -18,7 +18,7 @@ use Override;
 /**
  * When an attached PDF file cannot be appended during PDF export
  */
-class PdfAppendmentFailed extends WebOnlyNotifications
+final class PdfAppendmentFailed extends WebOnlyNotifications
 {
     protected Notifications $category = Notifications::PdfAppendmentFailed;
 

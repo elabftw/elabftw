@@ -18,7 +18,7 @@ use Override;
 /**
  * Create a pdf from several Entities
  */
-class MakeMultiPdf extends MakePdf
+final class MakeMultiPdf extends MakePdf
 {
     #[Override]
     public function getFileName(): string

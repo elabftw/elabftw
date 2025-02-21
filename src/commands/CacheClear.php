@@ -23,7 +23,7 @@ use Override;
  * Clear the cache folder
  */
 #[AsCommand(name: 'cache:clear')]
-class CacheClear extends Command
+final class CacheClear extends Command
 {
     #[Override]
     protected function configure(): void

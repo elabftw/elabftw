@@ -23,7 +23,7 @@ use Override;
  * Look at the timestamp balance and notify sysadmin if it's too low
  */
 #[AsCommand(name: 'notifications:tsbalance')]
-class CheckTsBalance extends Command
+final class CheckTsBalance extends Command
 {
     private const int THRESHOLD = 20;
 

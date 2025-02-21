@@ -16,7 +16,7 @@ namespace Elabftw\Storage;
 /**
  * For local export folder, used to store user exports of experiments and resources
  */
-class Exports extends Local
+final class Exports extends Local
 {
     protected const string FOLDER = 'exports';
 }

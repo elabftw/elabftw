@@ -22,7 +22,7 @@ use Override;
 /**
  * Remove deleted uploads
  */
-class UploadsPruner implements CleanerInterface
+final class UploadsPruner implements CleanerInterface
 {
     private Db $Db;
 

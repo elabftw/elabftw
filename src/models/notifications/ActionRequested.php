@@ -20,7 +20,7 @@ use Elabftw\Models\Users;
 use Elabftw\Models\Config;
 use Override;
 
-class ActionRequested extends AbstractNotifications implements MailableInterface
+final class ActionRequested extends AbstractNotifications implements MailableInterface
 {
     protected const PREF = 'notif_action_requested';
 

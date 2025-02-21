@@ -18,7 +18,7 @@ use Elabftw\Services\UsersHelper;
 /**
  * Response object sent by an Auth service
  */
-class AuthResponse
+final class AuthResponse
 {
     public int $userid;
 

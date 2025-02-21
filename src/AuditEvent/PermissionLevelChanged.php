@@ -15,7 +15,7 @@ namespace Elabftw\AuditEvent;
 use Elabftw\Enums\Usergroup;
 use Override;
 
-class PermissionLevelChanged extends AbstractUsers2TeamsModifiedEvent
+final class PermissionLevelChanged extends AbstractUsers2TeamsModifiedEvent
 {
     public function __construct(int $requesterUserid, private int $group, int $userid, private int $teamid)
     {

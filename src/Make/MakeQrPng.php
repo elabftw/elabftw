@@ -27,7 +27,7 @@ use function strlen;
 /**
  * Generate a PNG image with a QR Code pointing to the URL of the Entity, and optionally include the title
  */
-class MakeQrPng extends AbstractMake implements StringMakerInterface
+final class MakeQrPng extends AbstractMake implements StringMakerInterface
 {
     private const int DEFAULT_IMAGE_SIZE_PX = 250;
 

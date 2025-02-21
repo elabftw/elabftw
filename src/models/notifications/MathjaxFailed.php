@@ -18,7 +18,7 @@ use Override;
 /**
  * When there was an error during pdf generation because of MathJax
  */
-class MathjaxFailed extends WebOnlyNotifications
+final class MathjaxFailed extends WebOnlyNotifications
 {
     protected Notifications $category = Notifications::MathjaxFailed;
 

@@ -21,7 +21,7 @@ use function strtolower;
 /**
  * Implements requests to EAIREF directory
  */
-class EairefRemoteDirectory extends AbstractRemoteDirectory
+final class EairefRemoteDirectory extends AbstractRemoteDirectory
 {
     #[Override]
     public function search(string $term): array

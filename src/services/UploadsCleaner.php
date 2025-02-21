@@ -24,7 +24,7 @@ use function substr;
  * This is used to find out if there are untracked files that should have been deleted
  * but were not deleted because of a bug fixed in 2.0.7
  */
-class UploadsCleaner implements CleanerInterface
+final class UploadsCleaner implements CleanerInterface
 {
     public function __construct(private FilesystemOperator $filesystem) {}
 

@@ -15,7 +15,7 @@ namespace Elabftw\AuditEvent;
 use Elabftw\Enums\AuditCategory;
 use Override;
 
-class ConfigModified extends AbstractAuditEvent
+final class ConfigModified extends AbstractAuditEvent
 {
     public function __construct(private string $name, private string $old, private string $new)
     {

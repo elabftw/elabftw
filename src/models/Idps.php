@@ -23,7 +23,7 @@ use PDO;
 /**
  * An IDP is an Identity Provider. Used in SAML2 authentication context.
  */
-class Idps extends AbstractRest
+final class Idps extends AbstractRest
 {
     use SetIdTrait;
 

@@ -18,7 +18,7 @@ use Override;
 /**
  * Container <-> items link
  */
-class Containers2ItemsLinks extends AbstractContainersLinks
+final class Containers2ItemsLinks extends AbstractContainersLinks
 {
     #[Override]
     protected function getTable(): string

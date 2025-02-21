@@ -28,7 +28,7 @@ use Override;
  * Issue: for old databases, the FK fk_users_teams_id will not exist and cause error
  */
 #[AsCommand(name: 'db:updateto34')]
-class UpdateTo34 extends Command
+final class UpdateTo34 extends Command
 {
     #[Override]
     protected function configure(): void

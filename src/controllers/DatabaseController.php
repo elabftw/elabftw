@@ -22,7 +22,7 @@ use Override;
 /**
  * For database.php
  */
-class DatabaseController extends AbstractEntityController
+final class DatabaseController extends AbstractEntityController
 {
     public function __construct(App $app, Items $entity)
     {

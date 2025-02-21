@@ -20,7 +20,7 @@ use function dirname;
  * RFC3161 timestamping with Digicert timestamping service
  * https://knowledge.digicert.com/generalinformation/INFO4231.html
  */
-class MakeDigicertTimestamp extends AbstractMakeTrustedTimestamp
+final class MakeDigicertTimestamp extends AbstractMakeTrustedTimestamp
 {
     protected const string TS_URL = 'http://timestamp.digicert.com';
 

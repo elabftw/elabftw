@@ -20,7 +20,7 @@ use League\Flysystem\FilesystemOperator;
  * This class is used to generate the translations files for i18next (javascript)
  * Use it with: bin/console dev:i18n4js
  */
-class i18n4Js
+final class i18n4Js
 {
     use TwigTrait;
 

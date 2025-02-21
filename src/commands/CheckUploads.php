@@ -25,7 +25,7 @@ use Override;
  * Check uploaded files
  */
 #[AsCommand(name: 'uploads:check')]
-class CheckUploads extends Command
+final class CheckUploads extends Command
 {
     #[Override]
     protected function configure(): void

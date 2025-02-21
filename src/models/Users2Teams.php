@@ -28,7 +28,7 @@ use PDO;
 /**
  * Manage the link between users and teams
  */
-class Users2Teams
+final class Users2Teams
 {
     // are onboarding emails sent in general?
     // setting for each team is checked additionally

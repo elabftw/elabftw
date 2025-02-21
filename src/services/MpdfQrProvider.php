@@ -22,7 +22,7 @@ use Override;
  * Implements the IQRCodeProvider necessary for Two Factor Authentication.
  * It uses mpdf/qrcode to generate the QR code locally without external dependencies.
  */
-class MpdfQrProvider implements IQRCodeProvider
+final class MpdfQrProvider implements IQRCodeProvider
 {
     /**
      * Constructor

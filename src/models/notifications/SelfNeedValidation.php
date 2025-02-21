@@ -21,7 +21,7 @@ use Override;
  * This exists because experience shows that users don't read the notification and expect
  * their account to work right away.
  */
-class SelfNeedValidation extends AbstractNotifications implements MailableInterface
+final class SelfNeedValidation extends AbstractNotifications implements MailableInterface
 {
     protected Notifications $category = Notifications::SelfNeedValidation;
 

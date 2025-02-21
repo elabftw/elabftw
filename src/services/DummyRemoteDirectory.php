@@ -17,7 +17,7 @@ use Override;
 /**
  * Implements requests to a fake directory service
  */
-class DummyRemoteDirectory extends AbstractRemoteDirectory
+final class DummyRemoteDirectory extends AbstractRemoteDirectory
 {
     #[Override]
     public function search(string $term): array

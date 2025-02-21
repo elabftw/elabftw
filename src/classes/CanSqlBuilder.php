@@ -22,7 +22,7 @@ use function array_column;
 use function implode;
 use function sprintf;
 
-class CanSqlBuilder
+final class CanSqlBuilder
 {
     public function __construct(
         private readonly Users $requester,

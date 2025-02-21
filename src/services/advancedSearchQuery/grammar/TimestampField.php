@@ -21,7 +21,7 @@ use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitor;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 use Override;
 
-class TimestampField implements Term, Visitable, TimestampFieldType
+final class TimestampField implements Term, Visitable, TimestampFieldType
 {
     public function __construct(private string $field, private array $dateArr) {}
 

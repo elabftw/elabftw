@@ -32,7 +32,7 @@ use function dirname;
  * Import database structure
  */
 #[AsCommand(name: 'db:install')]
-class Install extends Command
+final class Install extends Command
 {
     #[Override]
     protected function configure(): void

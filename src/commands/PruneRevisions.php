@@ -23,7 +23,7 @@ use Override;
  * Cleanup the database: look for orphans leftover from past bugs
  */
 #[AsCommand(name: 'prune:revisions')]
-class PruneRevisions extends Command
+final class PruneRevisions extends Command
 {
     #[Override]
     protected function configure(): void

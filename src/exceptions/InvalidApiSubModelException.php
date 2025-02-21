@@ -22,7 +22,7 @@ use function sprintf;
 /**
  * For invalid api sub models
  */
-class InvalidApiSubModelException extends ImproperActionException
+final class InvalidApiSubModelException extends ImproperActionException
 {
     public function __construct(ApiEndpoint $apiEndpoint)
     {

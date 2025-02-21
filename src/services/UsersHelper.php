@@ -21,6 +21,7 @@ use function array_column;
 
 /**
  * When we want to check for something.
+ * @final mocked in tests
  */
 class UsersHelper
 {

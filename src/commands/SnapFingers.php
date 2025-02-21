@@ -25,7 +25,7 @@ use Override;
  * lead to a revision creation. See #623
  */
 #[AsCommand(name: 'thanos:snap')]
-class SnapFingers extends Command
+final class SnapFingers extends Command
 {
     #[Override]
     protected function configure(): void

@@ -29,7 +29,7 @@ use Override;
  * Update the database schema
  */
 #[AsCommand(name: 'db:update')]
-class UpdateDatabase extends Command
+final class UpdateDatabase extends Command
 {
     #[Override]
     protected function configure(): void

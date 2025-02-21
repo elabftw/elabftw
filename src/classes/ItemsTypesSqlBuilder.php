@@ -15,7 +15,7 @@ namespace Elabftw\Elabftw;
 use Elabftw\Enums\EntityType;
 use Override;
 
-class ItemsTypesSqlBuilder extends EntitySqlBuilder
+final class ItemsTypesSqlBuilder extends EntitySqlBuilder
 {
     #[Override]
     protected function entitySelect(bool $fullSelect): void

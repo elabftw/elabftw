@@ -15,7 +15,7 @@
 {# TAB 1 MEMBERS #}
 <div data-tabcontent='1' hidden>
   <div class='alert alert-success'><i class='fas fa-info-circle fa-fw color-success'></i>
-  {{ 'You belong to the %s team.'|trans|format(teamArr.name) }}
+  {{ 'You belong to the %s team.'|trans|format(App.teamArr.name) }}
   {{ 'Members'|trans }}: {{ teamsStats.totusers }} &ndash; {% trans %}Experiment{% plural teamStats.totxp %}Experiments{% endtrans %}: {{ teamsStats.totxp }} ({{ teamsStats.totxpts }} timestamped) &ndash; {{ 'Resources'|trans }}: {{ teamsStats.totdb }}
   </div>
 

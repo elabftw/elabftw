@@ -39,7 +39,6 @@ try {
     $template = 'team.html';
     $renderArr = array(
         'pageTitle' => _('Team'),
-        'teamArr' => $Teams->readOne(),
         'teamGroupsArr' => $TeamGroups->readAll(),
         'teamProcurementRequestsArr' => $ProcurementRequests->readAll(),
         'teamsStats' => $Teams->getStats($App->Users->userData['team']),

@@ -115,11 +115,8 @@ class App
     }
 
     /**
-     * Generate HTML from a twig template. The App object is injected into every template as well as langsArr from the footer
-     *
-     * @param string $template template located in app/tpl/
-     * @param array<string, mixed> $variables the variables injected in the template
-     * @return string html
+     * Generate HTML from a twig template (in src/templates).
+     * The App object is injected into every template as well as langsArr
      */
     public function render(string $template, array $variables): string
     {

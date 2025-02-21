@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 use Elabftw\Interfaces\StringMakerInterface;
-use League\Csv\Reader;
+use League\Csv\Bom;
 use League\Csv\Writer;
 use Override;
 
@@ -43,7 +43,7 @@ abstract class AbstractMakeCsv extends AbstractMake implements StringMakerInterf
         $csv->insertAll($this->getRows());
 
         // add UTF8 BOM
-        $csv->setOutputBOM(Reader::BOM_UTF8);
+        $csv->setOutputBOM(Bom::Utf8);
 
         $content = $csv->toString();
         // mb_strlen doesn't give correct size

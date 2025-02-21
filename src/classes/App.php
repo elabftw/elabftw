@@ -22,8 +22,6 @@ use Elabftw\Models\Notifications\UserNotifications;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use Elabftw\Traits\TwigTrait;
-use League\Flysystem\Filesystem as Fs;
-use League\Flysystem\Local\LocalFilesystemAdapter;
 use Monolog\Logger;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
@@ -53,8 +51,6 @@ class App
     // we should be pretty safe from ever reaching 100 as a minor or patch version!
     public const int INSTALLED_VERSION_INT = 50200;
 
-    public Users $Users;
-
     public array $teamArr = array();
 
     /** @psalm-suppress PossiblyUnusedProperty this property is used in twig templates */
@@ -69,8 +65,13 @@ class App
     /** @psalm-suppress PossiblyUnusedProperty this property is used in twig templates */
     public array $warning = array();
 
-    public function __construct(public Request $Request, public FlashBagAwareSessionInterface $Session, public Config $Config, public Logger $Log)
-    {
+    public function __construct(
+        public Request $Request,
+        public FlashBagAwareSessionInterface $Session,
+        public Config $Config,
+        public Logger $Log,
+        public Users $Users,
+    ) {
         $flashBag = $this->Session->getBag('flashes');
         // add type check because SessionBagInterface doesn't have get(), only FlashBag has it
         if ($flashBag instanceof FlashBag) {
@@ -78,14 +79,6 @@ class App
             $this->ko = $flashBag->get('ko');
             $this->warning = $flashBag->get('warning');
         }
-
-        $this->Users = new Users();
-        // Show helpful screen if database schema needs update
-        // FIXME ok just leaving this here for now but the cache of Config is still buggy
-        $this->Config->bustCache();
-        $Update = new Update((int) $this->Config->configArr['schema'], new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql'))));
-        // throws InvalidSchemaException if schema is incorrect
-        $Update->checkSchema();
     }
 
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-//

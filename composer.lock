@@ -1239,12 +1239,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/JBlond/twig-trans.git",
-                "reference": "a8a5f89f9ac1ec8cdf2f0c5ac91d30b65e912ecf"
+                "reference": "0f9973d3f3825ee45daf994b626c02bd46985609"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JBlond/twig-trans/zipball/a8a5f89f9ac1ec8cdf2f0c5ac91d30b65e912ecf",
-                "reference": "a8a5f89f9ac1ec8cdf2f0c5ac91d30b65e912ecf",
+                "url": "https://api.github.com/repos/JBlond/twig-trans/zipball/0f9973d3f3825ee45daf994b626c02bd46985609",
+                "reference": "0f9973d3f3825ee45daf994b626c02bd46985609",
                 "shasum": ""
             },
             "require": {
@@ -1287,7 +1287,7 @@
                 "issues": "https://github.com/JBlond/twig-trans/issues",
                 "source": "https://github.com/JBlond/twig-trans/tree/twig-trans-11"
             },
-            "time": "2025-02-22T19:13:58+00:00"
+            "time": "2025-02-22T19:51:31+00:00"
         },
         {
             "name": "lcobucci/jwt",

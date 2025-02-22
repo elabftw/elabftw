@@ -7,7 +7,7 @@
  */
 
 import { notifError } from './misc';
-import { Ketcher } from '@deltablot/ketcher-core';
+import { Ketcher } from 'ketcher-core';
 import $ from 'jquery';
 
 // we add ketcher to window with onInit param during ketcher initialization

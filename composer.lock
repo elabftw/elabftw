@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8e77c0c52d804670024ff55da7698e5f",
+    "content-hash": "0adf0f47546830d3a02e05928162185f",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -1235,16 +1235,16 @@
         },
         {
             "name": "jblond/twig-trans",
-            "version": "v1.1.2",
+            "version": "dev-twig-trans-11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JBlond/twig-trans.git",
-                "reference": "2209ec346110a05df86e9be3625f552b8a6f2d4c"
+                "reference": "a8a5f89f9ac1ec8cdf2f0c5ac91d30b65e912ecf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JBlond/twig-trans/zipball/2209ec346110a05df86e9be3625f552b8a6f2d4c",
-                "reference": "2209ec346110a05df86e9be3625f552b8a6f2d4c",
+                "url": "https://api.github.com/repos/JBlond/twig-trans/zipball/a8a5f89f9ac1ec8cdf2f0c5ac91d30b65e912ecf",
+                "reference": "a8a5f89f9ac1ec8cdf2f0c5ac91d30b65e912ecf",
                 "shasum": ""
             },
             "require": {
@@ -1285,9 +1285,9 @@
             ],
             "support": {
                 "issues": "https://github.com/JBlond/twig-trans/issues",
-                "source": "https://github.com/JBlond/twig-trans/tree/v1.1.2"
+                "source": "https://github.com/JBlond/twig-trans/tree/twig-trans-11"
             },
-            "time": "2024-11-18T12:15:42+00:00"
+            "time": "2025-02-22T19:13:58+00:00"
         },
         {
             "name": "lcobucci/jwt",
@@ -12841,6 +12841,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "jblond/twig-trans": 20,
         "roave/security-advisories": 20
     },
     "prefer-stable": false,

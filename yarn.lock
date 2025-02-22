@@ -60,10 +60,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ag-grid-community/styles@npm:^32.3.3":
-  version: 32.3.3
-  resolution: "@ag-grid-community/styles@npm:32.3.3"
-  checksum: 10c0/33d714f2fa2263de07f11e4650fd59bbd6009cf34fe7274876ae40f52799c6c01f516946e48978c9b4d537f595160c9fbbb6e1ffa481f34c6347c7ec7ad36ae5
+"@ag-grid-community/styles@npm:^33.0.3":
+  version: 33.0.3
+  resolution: "@ag-grid-community/styles@npm:33.0.3"
+  checksum: 10c0/7a6b2d47ed74fa9f8d25c1b5d7c86cdec1715fa6875674253c87580f91608219d9b16a041a5ebe39a0b29b754a6eed29cf95f070c5a6dca6e63db68466ca9d43
   languageName: node
   linkType: hard
 
@@ -1786,10 +1786,34 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/js@npm:9.20.0, @eslint/js@npm:^9.20.0":
+"@eslint/eslintrc@npm:^3.3.0":
+  version: 3.3.0
+  resolution: "@eslint/eslintrc@npm:3.3.0"
+  dependencies:
+    ajv: "npm:^6.12.4"
+    debug: "npm:^4.3.2"
+    espree: "npm:^10.0.1"
+    globals: "npm:^14.0.0"
+    ignore: "npm:^5.2.0"
+    import-fresh: "npm:^3.2.1"
+    js-yaml: "npm:^4.1.0"
+    minimatch: "npm:^3.1.2"
+    strip-json-comments: "npm:^3.1.1"
+  checksum: 10c0/215de990231b31e2fe6458f225d8cea0f5c781d3ecb0b7920703501f8cd21b3101fc5ef2f0d4f9a38865d36647b983e0e8ce8bf12fd2bcdd227fc48a5b1a43be
+  languageName: node
+  linkType: hard
+
+"@eslint/js@npm:9.20.0":
   version: 9.20.0
   resolution: "@eslint/js@npm:9.20.0"
   checksum: 10c0/10e7b5b9e628b5192e8fc6b0ecd27cf48322947e83e999ff60f9f9e44ac8d499138bcb9383cbfa6e51e780d53b4e76ccc2d1753b108b7173b8404fd484d37328
+  languageName: node
+  linkType: hard
+
+"@eslint/js@npm:^9.21.0":
+  version: 9.21.0
+  resolution: "@eslint/js@npm:9.21.0"
+  checksum: 10c0/86c24a2668808995037e3f40c758335df2ae277c553ac0cf84381a1a8698f3099d8a22dd9c388947e6b7f93fcc1142f62406072faaa2b83c43ca79993fc01bb3
   languageName: node
   linkType: hard
 
@@ -3668,25 +3692,32 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ag-grid-community@npm:32.3.3, ag-grid-community@npm:^32.3.3":
-  version: 32.3.3
-  resolution: "ag-grid-community@npm:32.3.3"
-  dependencies:
-    ag-charts-types: "npm:10.3.3"
-  checksum: 10c0/577de02acc08db73a3c1366b52792f7111b58d0115d93ba924f9ebbe1bde833e504b4385b93d258eff7393ff76693359ad8dd956a5ce79417d888172cf9a8019
+"ag-charts-types@npm:11.1.1":
+  version: 11.1.1
+  resolution: "ag-charts-types@npm:11.1.1"
+  checksum: 10c0/740cfb501db3b6a9d19333f7e92fa4fac4fbf4cba45921f9d040608a82a5382a61150d0c1231147aaf6ab0a554457fda09957719da777f1c93b3e6e4afa8229f
   languageName: node
   linkType: hard
 
-"ag-grid-react@npm:^32.3.3":
-  version: 32.3.3
-  resolution: "ag-grid-react@npm:32.3.3"
+"ag-grid-community@npm:33.1.1, ag-grid-community@npm:^33.1.1":
+  version: 33.1.1
+  resolution: "ag-grid-community@npm:33.1.1"
   dependencies:
-    ag-grid-community: "npm:32.3.3"
+    ag-charts-types: "npm:11.1.1"
+  checksum: 10c0/cff694ede89e6ed4d577ee86df1a3b468f345a8cdf9404122e3ef632af8084133cf88f2a5b66f039183e955861070ba010b9b9ba1b64dd80faeb6c55b447b839
+  languageName: node
+  linkType: hard
+
+"ag-grid-react@npm:^33.1.1":
+  version: 33.1.1
+  resolution: "ag-grid-react@npm:33.1.1"
+  dependencies:
+    ag-grid-community: "npm:33.1.1"
     prop-types: "npm:^15.8.1"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
     react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: 10c0/d0e5cb2f1c788b6c9709df87e5c034996ccbf802117caf242d09aef2a30c056d76775784e31ff6285a4754f14dabb2c3ca0dec29a2bf44041b529b48354897ed
+  checksum: 10c0/c0537b03e8bfa45e39834071e6a5f95e0cd0d5043b82d2fc747c0f03589bbfaa0f3918611f9def312e14d8f349db90b7df3f334b591275b2c59087f5446f3a59
   languageName: node
   linkType: hard
 
@@ -5881,15 +5912,15 @@ __metadata:
     "@ag-grid-community/core": "npm:^32.3.3"
     "@ag-grid-community/infinite-row-model": "npm:^32.3.3"
     "@ag-grid-community/react": "npm:^32.3.3"
-    "@ag-grid-community/styles": "npm:^32.3.3"
+    "@ag-grid-community/styles": "npm:^33.0.3"
     "@babel/core": "npm:^7.26.9"
     "@babel/preset-env": "npm:^7.26.9"
     "@babel/preset-react": "npm:^7.26.3"
     "@deltablot/dropzone": "npm:^7.2.1"
     "@deltablot/ketcher-core": "npm:^2.26.1"
     "@deltablot/malle": "npm:^2.6.2"
-    "@eslint/eslintrc": "npm:^3.2.0"
-    "@eslint/js": "npm:^9.20.0"
+    "@eslint/eslintrc": "npm:^3.3.0"
+    "@eslint/js": "npm:^9.21.0"
     "@fancyapps/fancybox": "npm:^3.5.7"
     "@fullcalendar/bootstrap": "npm:^6.1.15"
     "@fullcalendar/core": "npm:^6.1.15"
@@ -5911,8 +5942,8 @@ __metadata:
     "@yarnpkg/core": "npm:^4.2.0"
     "@yarnpkg/fslib": "npm:^3.1.1"
     "@yarnpkg/libzip": "npm:^3.1.0"
-    ag-grid-community: "npm:^32.3.3"
-    ag-grid-react: "npm:^32.3.3"
+    ag-grid-community: "npm:^33.1.1"
+    ag-grid-react: "npm:^33.1.1"
     babel-loader: "npm:^9.2.1"
     bootstrap: "npm:^4.6.2"
     bootstrap-markdown-fa5: "npm:^2.10.2"

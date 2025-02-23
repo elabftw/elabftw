@@ -1235,16 +1235,16 @@
         },
         {
             "name": "jblond/twig-trans",
-            "version": "v1.1.3",
+            "version": "v1.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JBlond/twig-trans.git",
-                "reference": "3883295e55c5f93ca809d33888765c83c63973cb"
+                "reference": "b921ff1c36a545e2fe85ac21d23bdf21f7b43f75"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JBlond/twig-trans/zipball/3883295e55c5f93ca809d33888765c83c63973cb",
-                "reference": "3883295e55c5f93ca809d33888765c83c63973cb",
+                "url": "https://api.github.com/repos/JBlond/twig-trans/zipball/b921ff1c36a545e2fe85ac21d23bdf21f7b43f75",
+                "reference": "b921ff1c36a545e2fe85ac21d23bdf21f7b43f75",
                 "shasum": ""
             },
             "require": {
@@ -1285,9 +1285,9 @@
             ],
             "support": {
                 "issues": "https://github.com/JBlond/twig-trans/issues",
-                "source": "https://github.com/JBlond/twig-trans/tree/v.1.2.3"
+                "source": "https://github.com/JBlond/twig-trans/tree/v1.1.5"
             },
-            "time": "2025-02-23T14:56:44+00:00"
+            "time": "2025-02-23T18:10:55+00:00"
         },
         {
             "name": "lcobucci/jwt",

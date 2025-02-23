@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "974e63273b7b3f8cf4ebc9a8dd60ddbf",
+    "content-hash": "c0cbc0d5957cc3950f0a94a4e51d5651",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -1235,16 +1235,16 @@
         },
         {
             "name": "jblond/twig-trans",
-            "version": "v1.1.4",
+            "version": "v1.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JBlond/twig-trans.git",
-                "reference": "ba1ec2c2de35462ac3e12ff5d92ef6fa45c2f0e5"
+                "reference": "665c56e3d40340ab542fd6deb048395d8ea54219"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JBlond/twig-trans/zipball/ba1ec2c2de35462ac3e12ff5d92ef6fa45c2f0e5",
-                "reference": "ba1ec2c2de35462ac3e12ff5d92ef6fa45c2f0e5",
+                "url": "https://api.github.com/repos/JBlond/twig-trans/zipball/665c56e3d40340ab542fd6deb048395d8ea54219",
+                "reference": "665c56e3d40340ab542fd6deb048395d8ea54219",
                 "shasum": ""
             },
             "require": {
@@ -1285,9 +1285,9 @@
             ],
             "support": {
                 "issues": "https://github.com/JBlond/twig-trans/issues",
-                "source": "https://github.com/JBlond/twig-trans/tree/v1.1.4"
+                "source": "https://github.com/JBlond/twig-trans/tree/v1.1.6"
             },
-            "time": "2025-02-23T17:20:09+00:00"
+            "time": "2025-02-23T22:11:15+00:00"
         },
         {
             "name": "lcobucci/jwt",

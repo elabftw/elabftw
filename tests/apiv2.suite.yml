@@ -13,3 +13,4 @@ modules:
         - REST:
             url: https://elabtmp/api/v2/
             depends: PhpBrowser
+            timeout: 60

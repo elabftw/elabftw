@@ -112,7 +112,7 @@ final class Users2Teams
     {
         // make sure we are Admin in the team that we are removing the user from
         $TeamsHelper = new TeamsHelper($teamid);
-        if (!$this->requester->userData['is_sysadmin'] || $TeamsHelper->isAdminInTeam($this->requester->userData['userid'])) {
+        if (!($this->requester->userData['is_sysadmin'] || $TeamsHelper->isAdminInTeam($this->requester->userData['userid']))) {
             throw new ImproperActionException('Cannot remove user from team if not admin of said user in that team');
         }
         return $this->removeUserFromTeam($userid, $teamid);

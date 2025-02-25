@@ -43,6 +43,16 @@ class Users2TeamsTest extends \PHPUnit\Framework\TestCase
         $Users2Teams->destroy(6, 1);
     }
 
+    public function testRmAdminFromTeamAsSysadmin(): void
+    {
+        // add tata to team alpha
+        $this->Users2Teams->addUserToTeams(5, array(1));
+        // make tata Admin in Alpha
+        $this->Users2Teams->patchUser2Team(array('userid' => 5, 'team' => 1, 'target' => 'group', 'content' => 2));
+        // and remove tata from team alpha
+        $this->Users2Teams->destroy(5, 1);
+    }
+
     public function testPatchUser2TeamGroup(): void
     {
         $params = array(

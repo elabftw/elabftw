@@ -14,6 +14,7 @@ namespace Elabftw\Make;
 
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Compounds;
+use Symfony\Component\HttpFoundation\InputBag;
 use Override;
 
 use function date;
@@ -51,7 +52,8 @@ final class MakeCompoundsReport extends AbstractMakeCsv
 
     protected function getData(): array
     {
-        return $this->compounds->readAll();
+        $params = $this->compounds->getQueryParams(new InputBag(array('limit' => 999999)));
+        return $this->compounds->readAll($params);
     }
 
     /**

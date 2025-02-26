@@ -79,6 +79,8 @@ final class Experiments extends AbstractConcreteEntity
             $body = $templateArr['body'];
             $canread = $templateArr['canread_target'];
             $canwrite = $templateArr['canwrite_target'];
+            $canreadIsImmutable = $templateArr['canread_is_immutable'];
+            $canwriteIsImmutable = $templateArr['canwrite_is_immutable'];
             $metadata = $templateArr['metadata'];
             $contentType = $templateArr['content_type'];
         }

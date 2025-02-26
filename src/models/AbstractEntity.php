@@ -141,11 +141,7 @@ abstract class AbstractEntity extends AbstractRest
         string $defaultTemplateMd = '',
     ): int;
 
-    /**
-     * Duplicate an item
-     *
-     * @return int the new item id
-     */
+    // Duplicate an item
     abstract public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int;
 
     #[Override]
@@ -180,9 +176,7 @@ abstract class AbstractEntity extends AbstractRest
         return $this->toggleLock(0);
     }
 
-    /**
-     * Lock/unlock
-     */
+    // Lock / Unlock an entity
     public function toggleLock(?int $targetLockState = null): array
     {
         $this->checkToggleLockPermissions();

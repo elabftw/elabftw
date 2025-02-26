@@ -23,10 +23,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const el = (event.target as HTMLElement);
     // CREATE USER
     if (el.matches('[data-action="create-user"]')) {
-      ApiC.post('users', collectForm(el.closest('div.form-group'))).then(() => {
-        el.closest('div.form-group').querySelectorAll('input').forEach(input => {
-          input.value = '';
-        });
+      event.preventDefault();
+      const form = el.closest('form.form-group') as HTMLFormElement;
+      ApiC.post('users', collectForm(form)).then(() => {
+        // use form.reset() so user-invalid pseudo-class isn't present
+        form.reset();
         reloadElements(['editUsersBox']);
       });
 

@@ -253,7 +253,7 @@
 <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Add account'|trans }}</h3>
 <div class='pl-3'>
   <p class='smallgray'>{{ 'Note: new user will need to use the "Forgot password" button on the login page to set a password.'|trans }}</p>
-  <div class='form-group'>
+  <form class='form-group'>
     <div class='row mb-2'>
       {# TEAM #}
       <div class='col-md-6'>
@@ -301,9 +301,9 @@
 
     {# SUBMIT #}
     <div class='col-md-12 text-center mt-2'>
-      <button type='button' data-action='create-user' class='btn btn-primary'>{{ 'Create'|trans }}</button>
+      <button type='submit' data-action='create-user' class='btn btn-primary'>{{ 'Create'|trans }}</button>
     </div>
-  </div>
+  </form>
 </div>
 {% endif %}
 

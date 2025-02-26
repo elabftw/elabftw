@@ -129,6 +129,7 @@
               {% if App.Users.userData.is_sysadmin == '1' %}
                 {% include 'reset-user-password-modal.html' with {'userid': user.userid} %}
               {% endif %}
+              {% include 'rm-user-from-team-modal.html' %}
 
               <tr {{ user.archived ? "class='bg-medium'" }}>
                 <td data-label='{{ 'User ID'|trans }}'><span title='{{ 'User ID'|trans }}' class='badge badge-secondary {{ user.archived ? 'alert-danger' }}'>{{ user.userid }}</span></td>
@@ -207,6 +208,11 @@
                         {% if user.teams|filter(t => t.id == App.Users.userData.team) is empty %}
                           <div class='dropdown-item {{ App.Config.configArr.admins_import_users == '0' ? 'disabled' }}' data-action='add-user-to-team' data-team='{{ App.Users.userData.team }}' data-userid='{{ user.userid }}'>
                               <i class='fas fa-fw fa-user-plus mr-1 {{ App.Config.configArr.admins_import_users == '0' ? 'color-weak' }}'></i>{{ 'Add to team'|trans }}
+                          </div>
+                        {% else %}
+                        {# Remove from team #}
+                          <div class='dropdown-item' data-action='toggle-modal' data-target='rmUserFromTeamModal_{{ user.userid }}'>
+                              <i class='fas fa-fw fa-user-minus mr-1'></i>{{ 'Remove from team'|trans }}
                           </div>
                         {% endif %}
                       {% endif %}

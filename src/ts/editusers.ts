@@ -70,6 +70,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // ADD TO TEAM
     } else if (el.matches('[data-action="add-user-to-team"]')) {
       ApiC.patch(`${Model.User}/${el.dataset.userid}`, {'action': Action.Add, 'team': el.dataset.team}).then(() => reloadElements(['editUsersBox']));
+    // REMOVE FROM TEAM
+    } else if (el.matches('[data-action="rm-user-from-team"]')) {
+      ApiC.patch(`${Model.User}/${el.dataset.userid}`, {action: Action.Unreference, team: el.dataset.team}).then(() => reloadElements(['editUsersBox']));
 
     // ARCHIVE USER TOGGLE
     } else if (el.matches('[data-action="toggle-archive-user"]')) {

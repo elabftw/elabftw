@@ -367,7 +367,7 @@ class Users extends AbstractRest
                 }
             )(),
             Action::Disable2fa => $this->disable2fa(),
-            Action::PatchUser2Team => (new Users2Teams($this->requester))->PatchUser2Team($params),
+            Action::PatchUser2Team => (new Users2Teams($this->requester))->patchUser2Team($params),
             Action::Unreference => (new Users2Teams($this->requester))->destroy($this->userData['userid'], (int) $params['team']),
             Action::Lock, Action::Archive => (new UserArchiver($this->requester, $this))->toggleArchive((bool) ($params['with_exp'] ?? false)),
             Action::UpdatePassword => $this->updatePassword($params),
@@ -393,7 +393,11 @@ class Users extends AbstractRest
             Action::Validate => $this->validate(),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
-        return $this->readOne();
+        // if we remove a user from our team, then we cannot read it anymore, and it makes an error, so skip the readOne in that case
+        if ($action !== Action::Unreference) {
+            return $this->readOne();
+        }
+        return array();
     }
 
     #[Override]

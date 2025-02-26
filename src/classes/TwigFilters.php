@@ -112,6 +112,13 @@ final class TwigFilters
                         $newTab,
                     );
                 }
+                // type:email is another special case
+                elseif ($metadataType === 'email') {
+                    $value = sprintf(
+                        '<a href="mailto:%1$s">%1$s</a>',
+                        Tools::eLabHtmlspecialchars($value),
+                    );
+                }
                 // type:exp/items is another special case
                 elseif (in_array($metadataType, array(EntityType::Experiments->value, EntityType::Items->value), true)) {
                     $id = isset($field[MetadataEnum::Value->value]) ? (int) $field[MetadataEnum::Value->value] : 0;

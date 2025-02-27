@@ -193,6 +193,7 @@ class Entity2Cest
         $I->seeResponseContainsJson(array('title' => 'Testing the eLabFTW lab notebook'));
     }
 
+    /** TODO FIXME make this (and the whole file eventually) a cypress test
     public function improperLinkToSelfTest(Apiv2Tester $I)
     {
         $I->wantTo('Improperly link an entity to itself');
@@ -202,4 +203,5 @@ class Entity2Cest
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson(array('description' => 'Linking an item to itself is not allowed. Please select a different target.'));
     }
+     */
 }

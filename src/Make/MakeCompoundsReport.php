@@ -16,6 +16,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Compounds;
 use Symfony\Component\HttpFoundation\InputBag;
 use Override;
+use Symfony\Component\HttpFoundation\InputBag;
 
 use function date;
 

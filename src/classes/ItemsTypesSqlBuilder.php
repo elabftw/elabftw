@@ -34,6 +34,8 @@ final class ItemsTypesSqlBuilder extends EntitySqlBuilder
             entity.ordering,
             entity.canread,
             entity.canwrite,
+            entity.canread_is_immutable,
+            entity.canwrite_is_immutable,
             entity.canread_target,
             entity.canwrite_target,
             entity.content_type,

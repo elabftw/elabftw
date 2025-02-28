@@ -16,7 +16,6 @@
   {% set modalTitle = 'Select who can book this entry'|trans %}
 {% endif %}
 
-
 {% include('permissions-edit-modal.html') %}
 <label class='col-form-label mr-3 edit-mode-label'><i class='fas fa-fw fa-{{ icon }} mr-1' title='{{ label }}'></i>{{ label }}</label>
 {% if not Entity.isReadOnly %}

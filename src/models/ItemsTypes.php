@@ -68,8 +68,8 @@ final class ItemsTypes extends AbstractTemplateEntity
         $color ??= $this->getSomeColor();
         $contentType ??= $this->Users->userData['use_markdown'] === 1 ? AbstractEntity::CONTENT_MD : AbstractEntity::CONTENT_HTML;
 
-        $sql = 'INSERT INTO items_types(userid, title, body, team, canread, canwrite, canread_target, canwrite_target, color, content_type, status, rating)
-            VALUES(:userid, :title, :body, :team, :canread, :canwrite, :canread_target, :canwrite_target, :color, :content_type, :status, :rating)';
+        $sql = 'INSERT INTO items_types(userid, title, body, team, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canread_target, canwrite_target, color, content_type, status, rating)
+            VALUES(:userid, :title, :body, :team, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canread_target, :canwrite_target, :color, :content_type, :status, :rating)';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':userid', $this->Users->userid, PDO::PARAM_INT);
         $req->bindValue(':title', $title);
@@ -77,6 +77,8 @@ final class ItemsTypes extends AbstractTemplateEntity
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindParam(':canread', $defaultPermissions);
         $req->bindParam(':canwrite', $defaultPermissions);
+        $req->bindParam(':canread_is_immutable', $canreadIsImmutable, PDO::PARAM_INT);
+        $req->bindParam(':canwrite_is_immutable', $canwriteIsImmutable, PDO::PARAM_INT);
         $req->bindParam(':canread_target', $defaultPermissions);
         $req->bindParam(':canwrite_target', $defaultPermissions);
         $req->bindParam(':color', $color);

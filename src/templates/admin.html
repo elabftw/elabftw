@@ -273,7 +273,18 @@
 
     <ul class='list-group form-group sortable mb-2' data-axis='y' data-table='items_types'>
       {% for itemType in itemsCategoryArr %}
-      <li class='list-group-item' id='itemstypes_{{ itemType.id }}'><div class='d-flex'><span class='sortableHandle draggable p-2 mr-2'><i class='fas fa-grip-vertical'></i></span><a href='?tab=4&amp;templateid={{ itemType.id }}#itemsCategoriesAnchor' aria-label='{{ 'Edit'|trans }} {{ itemType.title|e('html_attr') }}' title='{{ 'Edit'|trans }}' class='p-2 mx-2 rounded hl-hover-gray'><i class='fas fa-pencil-alt'></i></a><span class='p-2' style='color: #{{ itemType.color }}'>{{ itemType.title }}</span><span class='user-badge ml-auto'>{{ itemType.team_name }}</span></div></li>
+      <li class='list-group-item' id='itemstypes_{{ itemType.id }}'>
+        <div class='d-flex'>
+          <span class='sortableHandle draggable p-2 mr-2'>
+            <i class='fas fa-grip-vertical'></i>
+          </span>
+          <a href='?tab=4&amp;templateid={{ itemType.id }}#itemsCategoriesAnchor' aria-label='{{ 'Edit'|trans }} {{ itemType.title|e('html_attr') }}' title='{{ 'Edit'|trans }}' class='p-2 mx-2 rounded hl-hover-gray'>
+            <i class='fas fa-pencil-alt'></i>
+          </a>
+          <span class='p-2' style='color: #{{ itemType.color }}'>{{ itemType.title }}</span>
+          <span class='user-badge ml-auto'>{{ itemType.team_name }}</span>
+        </div>
+      </li>
       {% endfor %}
     </ul>
     {% if itemsCategoryArr %}

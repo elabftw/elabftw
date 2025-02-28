@@ -166,6 +166,7 @@ final class Compounds extends AbstractRest
                 iupacName: $reqBody['iupac_name'] ?? null,
                 pubchemCid: $reqBody['pubchem_cid'] ?? null,
                 isCorrosive: (bool) ($reqBody['is_corrosive'] ?? false),
+                isSeriousHealthHazard: (bool) ($reqBody['is_serious_health_hazard'] ?? false),
                 isExplosive: (bool) ($reqBody['is_explosive'] ?? false),
                 isFlammable: (bool) ($reqBody['is_flammable'] ?? false),
                 isGasUnderPressure: (bool) ($reqBody['is_gas_under_pressure'] ?? false),
@@ -195,6 +196,7 @@ final class Compounds extends AbstractRest
         ?string $iupacName = null,
         ?int $pubchemCid = null,
         bool $isCorrosive = false,
+        bool $isSeriousHealthHazard = false,
         bool $isExplosive = false,
         bool $isFlammable = false,
         bool $isGasUnderPressure = false,
@@ -210,13 +212,13 @@ final class Compounds extends AbstractRest
             inchi, inchi_key,
             smiles, molecular_formula, molecular_weight,
             cas_number, iupac_name, pubchem_cid, userid, team,
-            is_corrosive, is_explosive, is_flammable, is_gas_under_pressure, is_hazardous2env, is_hazardous2health, is_oxidising, is_toxic
+            is_corrosive, is_serious_health_hazard, is_explosive, is_flammable, is_gas_under_pressure, is_hazardous2env, is_hazardous2health, is_oxidising, is_toxic
             ) VALUES (
             :requester, :requester, :name,
             :inchi, :inchi_key,
             :smiles, :molecular_formula, :molecular_weight,
             :cas_number, :iupac_name, :pubchem_cid, :requester, :team,
-            :is_corrosive, :is_explosive, :is_flammable, :is_gas_under_pressure, :is_hazardous2env, :is_hazardous2health, :is_oxidising, :is_toxic)';
+            :is_corrosive, :is_serious_health_hazard, :is_explosive, :is_flammable, :is_gas_under_pressure, :is_hazardous2env, :is_hazardous2health, :is_oxidising, :is_toxic)';
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':requester', $this->requester->userid);
@@ -231,6 +233,7 @@ final class Compounds extends AbstractRest
         $req->bindParam(':iupac_name', $iupacName);
         $req->bindParam(':pubchem_cid', $pubchemCid);
         $req->bindParam(':is_corrosive', $isCorrosive, PDO::PARAM_INT);
+        $req->bindParam(':is_serious_health_hazard', $isSeriousHealthHazard, PDO::PARAM_INT);
         $req->bindParam(':is_explosive', $isExplosive, PDO::PARAM_INT);
         $req->bindParam(':is_flammable', $isFlammable, PDO::PARAM_INT);
         $req->bindParam(':is_gas_under_pressure', $isGasUnderPressure, PDO::PARAM_INT);

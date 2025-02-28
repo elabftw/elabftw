@@ -19,7 +19,7 @@
 {% include('permissions-edit-modal.html') %}
 <label class='col-form-label mr-3 edit-mode-label'><i class='fas fa-fw fa-{{ icon }} mr-1' title='{{ label }}'></i>{{ label }}</label>
 {% if not Entity.isReadOnly %}
-  {% if Entity.entityData[immutableVar] and Entity.entityType.value != 'experiments_templates' %}
+  {% if Entity.entityData[immutableVar] and Entity.entityType.value != 'experiments_templates' and Entity.entityType.value != 'items_types' %}
     {# show the button as disabled and without any action related #}
     <button type='button' title='{{ modalTitle }}' aria-label='{{ modalTitle }}' class='btn border-0 lh-normal hl-hover-gray' disabled>
       <i class='fas fa-fw fa-square-plus fa-2x'></i>

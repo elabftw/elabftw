@@ -22,7 +22,7 @@ final class Fingerprinter
     private const string FINGERPRINTER_URL = '/fingerprinter';
 
     // idea: second argument is Compound
-    public function __construct(private readonly HttpGetter $httpGetter, bool $isEnabled)
+    public function __construct(private HttpGetter $httpGetter, bool $isEnabled)
     {
         if (!$isEnabled) {
             throw new ImproperActionException('Fingerprinting service is not enabled! Please refer to the documentation to enable it.');

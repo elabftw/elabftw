@@ -71,12 +71,13 @@
           <hr>
           <details>
             <summary><h5 class='d-inline'>{{ 'Safety information'|trans }}</h5></summary>
+            {{ _self.binaryParam('is_hazardous2health', 'Hazardous to health', '07') }}
             {{ _self.binaryParam('is_corrosive', 'Corrosive', '05') }}
             {{ _self.binaryParam('is_explosive', 'Explosive', '01') }}
             {{ _self.binaryParam('is_flammable', 'Flammable', '02') }}
             {{ _self.binaryParam('is_gas_under_pressure', 'Gas under pressure', '04') }}
             {{ _self.binaryParam('is_hazardous2env', 'Hazardous to environment', '09') }}
-            {{ _self.binaryParam('is_hazardous2health', 'Hazardous to health', '08') }}
+            {{ _self.binaryParam('is_serious_health_hazard', 'Serious health hazard', '08') }}
             {{ _self.binaryParam('is_oxidising', 'Oxidising', '03') }}
             {{ _self.binaryParam('is_toxic', 'Toxic', '06') }}
             {{ _self.binaryParam('is_radioactive', 'Radioactive', '', 'radiation') }}

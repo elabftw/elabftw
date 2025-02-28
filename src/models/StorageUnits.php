@@ -158,13 +158,21 @@ final class StorageUnits extends AbstractRest
             compounds.cas_number,
             compounds.pubchem_cid,
             compounds.is_corrosive,
+            compounds.is_serious_health_hazard,
             compounds.is_explosive,
             compounds.is_flammable,
             compounds.is_gas_under_pressure,
             compounds.is_hazardous2env,
             compounds.is_hazardous2health,
             compounds.is_oxidising,
-            compounds.is_toxic
+            compounds.is_toxic,
+            compounds.is_radioactive,
+            compounds.is_antibiotic_precursor,
+            compounds.is_drug_precursor,
+            compounds.is_explosive_precursor,
+            compounds.is_cmr,
+            compounds.is_nano,
+            compounds.is_controlled
         FROM
             containers2items AS c2i
         LEFT JOIN storage_units ON c2i.storage_id = storage_units.id
@@ -184,13 +192,21 @@ final class StorageUnits extends AbstractRest
             compounds.cas_number,
             compounds.pubchem_cid,
             compounds.is_corrosive,
+            compounds.is_serious_health_hazard,
             compounds.is_explosive,
             compounds.is_flammable,
             compounds.is_gas_under_pressure,
             compounds.is_hazardous2env,
             compounds.is_hazardous2health,
             compounds.is_oxidising,
-            compounds.is_toxic
+            compounds.is_toxic,
+            compounds.is_radioactive,
+            compounds.is_antibiotic_precursor,
+            compounds.is_drug_precursor,
+            compounds.is_explosive_precursor,
+            compounds.is_cmr,
+            compounds.is_nano,
+            compounds.is_controlled
         FROM
             containers2experiments AS c2e
         LEFT JOIN storage_units ON c2e.storage_id = storage_units.id
@@ -342,13 +358,35 @@ final class StorageUnits extends AbstractRest
                     c2i.modified_at,
                     sh.storage_id AS storage_id,
                     sh.storage_name,
-                    sh.full_path
+                    sh.full_path,
+                    compounds.cas_number,
+                    compounds.pubchem_cid,
+                    compounds.is_corrosive,
+                    compounds.is_serious_health_hazard,
+                    compounds.is_explosive,
+                    compounds.is_flammable,
+                    compounds.is_gas_under_pressure,
+                    compounds.is_hazardous2env,
+                    compounds.is_hazardous2health,
+                    compounds.is_oxidising,
+                    compounds.is_toxic,
+                    compounds.is_radioactive,
+                    compounds.is_antibiotic_precursor,
+                    compounds.is_drug_precursor,
+                    compounds.is_explosive_precursor,
+                    compounds.is_cmr,
+                    compounds.is_nano,
+                    compounds.is_controlled
                 FROM
                     containers2items AS c2i
                 LEFT JOIN
                     storage_hierarchy AS sh ON c2i.storage_id = sh.storage_id
                 LEFT JOIN
                     items AS entity ON c2i.item_id = entity.id
+                LEFT JOIN
+                    compounds2items ON entity.id = compounds2items.entity_id
+                LEFT JOIN
+                    compounds ON compounds2items.compound_id = compounds.id
                 LEFT JOIN
                     users2teams ON (users2teams.users_id = %d AND users2teams.teams_id = %d)
                 WHERE
@@ -366,13 +404,35 @@ final class StorageUnits extends AbstractRest
                     c2e.modified_at,
                     sh.storage_id AS storage_id,
                     sh.storage_name,
-                    sh.full_path
+                    sh.full_path,
+                    compounds.cas_number,
+                    compounds.pubchem_cid,
+                    compounds.is_corrosive,
+                    compounds.is_serious_health_hazard,
+                    compounds.is_explosive,
+                    compounds.is_flammable,
+                    compounds.is_gas_under_pressure,
+                    compounds.is_hazardous2env,
+                    compounds.is_hazardous2health,
+                    compounds.is_oxidising,
+                    compounds.is_toxic,
+                    compounds.is_radioactive,
+                    compounds.is_antibiotic_precursor,
+                    compounds.is_drug_precursor,
+                    compounds.is_explosive_precursor,
+                    compounds.is_cmr,
+                    compounds.is_nano,
+                    compounds.is_controlled
                 FROM
                     containers2experiments AS c2e
                 LEFT JOIN
                     storage_hierarchy AS sh ON c2e.storage_id = sh.storage_id
                 LEFT JOIN
                     experiments AS entity ON c2e.item_id = entity.id
+                LEFT JOIN
+                    compounds2experiments ON entity.id = c2e.item_id
+                LEFT JOIN
+                    compounds ON compounds2experiments.compound_id = compounds.id
                 LEFT JOIN
                     users2teams ON (users2teams.users_id = %d AND users2teams.teams_id = %d)
                 WHERE

@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       params[Target.Customid] = null;
       ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => {
         // get the entity with highest custom_id
-        return ApiC.getJson(`${el.dataset.endpoint}/?cat=${category}&order=customid&limit=1&sort=desc`);
+        return ApiC.getJson(`${el.dataset.endpoint}/?cat=${category}&order=customid&limit=1&sort=desc&scope=3`);
       }).then(json => {
         const nextId = json[0].custom_id + 1;
         inputEl.value = nextId;

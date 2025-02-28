@@ -16,11 +16,12 @@
       {% macro compoundPicto(compound) %}
          {% set hazards = {
           'is_corrosive': {'code': '05', 'alt': 'Corrosive'},
+          'is_serious_health_hazard': {'code': '08', 'alt': 'Serious Health Hazard'},
           'is_explosive': {'code': '01', 'alt': 'Explosive'},
           'is_flammable': {'code': '02', 'alt': 'Flammable'},
           'is_gas_under_pressure': {'code': '04', 'alt': 'Gas under pressure'},
           'is_hazardous2env': {'code': '09', 'alt': 'Hazardous to environment'},
-          'is_hazardous2health': {'code': '08', 'alt': 'Hazardous to health'},
+          'is_hazardous2health': {'code': '07', 'alt': 'Hazardous to health'},
           'is_oxidising': {'code': '03', 'alt': 'Oxidising'},
           'is_toxic': {'code': '06', 'alt': 'Toxic'}
         } %}

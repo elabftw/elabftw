@@ -57,6 +57,7 @@ final class CompoundParams extends ContentParams
             'is_gas_under_pressure',
             'is_hazardous2env',
             'is_hazardous2health',
+            'is_serious_health_hazard',
             'is_oxidising',
             'is_toxic',
             'is_radioactive',

@@ -33,7 +33,7 @@ final class ExtraFieldsKeys extends AbstractRest
     #[Override]
     public function getApiPath(): string
     {
-        return 'api/v2/extra_fields_keys';
+        return 'api/v2/extra_fields_keys/';
     }
 
     /**

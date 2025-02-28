@@ -16,11 +16,15 @@
   {% set modalTitle = 'Select who can book this entry'|trans %}
 {% endif %}
 
-
 {% include('permissions-edit-modal.html') %}
 <label class='col-form-label mr-3 edit-mode-label'><i class='fas fa-fw fa-{{ icon }} mr-1' title='{{ label }}'></i>{{ label }}</label>
-{% if not Entity.isReadOnly and not (Entity.entityData[immutableVar] and Entity.entityType.value != 'experiments_templates') %}
-  <button type='button' title='{{ modalTitle }}' aria-label='{{ modalTitle }}' class='btn border-0 lh-normal hl-hover-gray' data-action='toggle-modal' data-target='permModal-{{ rw }}'>
+{% if not Entity.isReadOnly %}
+  {% set permissionsIsDisabled = false %}
+  {% if Entity.entityData[immutableVar] and Entity.entityType.value != 'experiments_templates' and Entity.entityType.value != 'items_types' %}
+    {% set permissionsIsDisabled = true %}
+  {% endif %}
+  {# show the button as disabled and without any action related #}
+  <button type='button' title='{{ modalTitle }}' aria-label='{{ modalTitle }}' class='btn border-0 lh-normal {{ not permissionsIsDisabled ? 'hl-hover-gray' }}' data-action='{{ not permissionsIsDisabled ? 'toggle-modal' }}' data-target='permModal-{{ rw }}' {{ permissionsIsDisabled ? 'disabled' }}>
     <i class='fas fa-fw fa-square-plus fa-2x'></i>
   </button>
 {% endif %}

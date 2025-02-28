@@ -35,7 +35,7 @@ final class UnfinishedSteps extends AbstractRest
     #[Override]
     public function getApiPath(): string
     {
-        return 'api/v2/unfinished_steps';
+        return 'api/v2/unfinished_steps/';
     }
 
     #[Override]

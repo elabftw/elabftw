@@ -35,6 +35,6 @@ class ExtraFieldsKeysTest extends \PHPUnit\Framework\TestCase
     {
         $ExtraFieldsKeys = new ExtraFieldsKeys($this->Users, '');
         $this->assertIsArray($ExtraFieldsKeys->readOne());
-        $this->assertEquals('api/v2/extra_fields_keys', $ExtraFieldsKeys->getApiPath());
+        $this->assertEquals('api/v2/extra_fields_keys/', $ExtraFieldsKeys->getApiPath());
     }
 }

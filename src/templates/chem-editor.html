@@ -9,13 +9,15 @@
 </div>
 <div id='ketcher-root' class='my-2'></div>
 <div id='ketcher-actions'>
-  <button type='button' class='btn btn-primary' data-action='create-compound-from-editor'>{{ 'Add to compounds database'|trans }}</button>
-  <button type='button' class='btn btn-primary' data-action='search-from-editor'>{{ 'Search similar structures'|trans }}</button>
-  <label for='search-fp-exact' class='col-form-label'>{{ 'Exact structure'|trans }}</label>
-  <label class='switch ucp-align'>
-    <input type='checkbox' id='search-fp-exact'>
-    <span class='slider'></span>
-  </label>
+  <div class='input-group my-2'>
+    <button type='button' class='btn btn-primary mr-2' data-action='create-compound-from-editor'>{{ 'Add to compounds database'|trans }}</button>
+    <div class='input-group-append'>
+      <button type='button' class='btn btn-primary rounded-left' data-action='search-from-editor'>{{ 'Search similar structures'|trans }}</button>
+      <div class='input-group-text rounded-right'>
+        <input type='checkbox' name='exact' id='search-fp-exact' {{ App.Request.query.get('exact') == 'on' ? 'checked="checked"' }} aria-label='{{ 'Search exact structure'|trans }}'><span class='ml-1'>{{ 'Exact structure'|trans }}</span>
+      </div>
+    </div>
+  </div>
 </div>
 <div id='searchFpResultsDiv' hidden>
   <h3 class='mb-2'>{{ 'Compounds substructure search results'|trans }}</h3>

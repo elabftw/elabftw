@@ -6,7 +6,9 @@
         <img width='32' height='32' src='assets/images/ghs/GHS{{ code }}.svg' alt='{{ label|trans }}' title='{{ label|trans }}' />
       {% endif %}
       {% if icon %}
-        <i title='{{ label|trans }}' class='ml-2 mr-1 fas fa-{{ icon }}'></i>
+        <span title='{{ label|trans }}'>
+          <i class='ml-2 mr-1 fas fa-{{ icon }}'></i>
+        </span>
       {% endif %}
       {{ label|trans }}</label>
     </div>

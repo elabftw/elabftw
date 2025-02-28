@@ -205,7 +205,7 @@
 <div data-tabcontent='4' hidden>
   {# EXPERIMENTS CATEGORIES #}
   {# hide this part if we're EDITING a RESOURCE category #}
-  <div {% if App.Request.query.has('templateid') %} hidden {% endif %}>
+  <div {{ App.Request.query.has('templateid') ? 'hidden' }}>
   <h3 id='experimentsCategoriesAnchor' class='mb-3 p-2 pl-3 section-title'>{{ 'Experiments categories'|trans }}</h3>
   <div class='pl-3 mb-5' id='experiments_categoriesDiv'>
     <div class='mb-2 d-flex justify-content-between'>

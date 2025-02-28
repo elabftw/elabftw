@@ -77,6 +77,14 @@ abstract class AbstractCompoundsLinks extends AbstractRest
         return $this->Db->execute($req);
     }
 
+    public function destroyAll(): bool
+    {
+        $sql = 'DELETE FROM ' . $this->getTable() . ' WHERE entity_id = :entity_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
+        return $this->Db->execute($req);
+    }
+
     /**
      * Add a link to an entity
      * Links to Items are possible from all entities

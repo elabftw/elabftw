@@ -204,6 +204,14 @@ abstract class AbstractContainersLinks extends AbstractLinks
         return $this->Db->execute($req);
     }
 
+    public function destroyAll(): bool
+    {
+        $sql = 'DELETE FROM ' . $this->getTable() . ' WHERE item_id = :item_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        return $this->Db->execute($req);
+    }
+
     #[Override]
     public function isSelfLinkViaMetadata(string $extraFieldKey, string $targetId): bool
     {

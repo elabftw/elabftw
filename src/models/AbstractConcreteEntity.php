@@ -190,6 +190,13 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         $req->bindValue(':type', $this->entityType->value);
         $req->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
         $this->Db->execute($req);
+
+        // do same for compounds links and containers links
+        $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
+        $CompoundsLinks->destroyAll();
+        $ContainersLinks = LinksFactory::getContainersLinks($this);
+        $ContainersLinks->destroyAll();
+
         return parent::destroy();
     }
 

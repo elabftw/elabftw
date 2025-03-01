@@ -1289,6 +1289,12 @@ figure figcaption {
   text-align: center;
 }
 
+.image figure,
+figure {
+  display: block;
+  text-align: center;
+}
+
 /* make the markdown editor full width */
 .markdown-textarea {
   width: 100%;

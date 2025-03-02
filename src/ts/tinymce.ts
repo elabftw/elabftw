@@ -266,6 +266,7 @@ export function getTinymceBaseConfig(page: string): object {
       {text: 'Diff', value: 'diff'},
       {text: 'Fortran', value: 'fortran'},
       {text: 'Go', value: 'go'},
+      {text: 'Igor', value: 'igor'},
       {text: 'Java', value: 'java'},
       {text: 'JavaScript', value: 'javascript'},
       {text: 'Json', value: 'json'},

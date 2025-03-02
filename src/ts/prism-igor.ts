@@ -5,12 +5,23 @@
 
 import Prism from 'prismjs';
 (function(Prism) {
+    const str = {
+		    pattern: /"(?:\\(?:\r\n|[\s\S])|[^"\\\r\n])*"/,
+		    greedy: true
+	  };
+    const num = [
+		    /\b(?:[+-]?Inf|NaN)\b/i,
+		    /\b0x[\da-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?/i
+	  ];
+	  const op = /\$|c>>=?|<<=?|->|([-+&|:])\1|[?:~]|[-+*\/%&|^!=<>]=?/;
+    const punc = /[{}[\];(),.:]/;
+
     Prism.languages.igor = {
 	      'comment': /\/\/.*/,
-	      'string': {
-		        pattern: /"(?:\\(?:\r\n|[\s\S])|[^"\\\r\n])*"/,
-		        greedy: true
-	      },
+	      'string': str,
+	      'number': num,
+	      'operator': op,
+	      'punctuation': punc,
         'class-name': {
             pattern: /(\b(?:function|window|structure|macro)\s+)\w+/i,
 		        lookbehind: true
@@ -41,16 +52,15 @@ import Prism from 'prismjs';
         },
         'builtin-operations': {
             pattern: /\b(?:Abort|AddFIFOData|AddFIFOVectData|AddMovieAudio|AddMovieFrame|AddWavesToBoxPlot|AddWavesToViolinPlot|AdoptFiles|APMath|Append|AppendBoxPlot|AppendImage|AppendLayoutObject|AppendMatrixContour|AppendText|AppendToGizmo|AppendToGraph|AppendToLayout|AppendToTable|AppendViolinPlot|AppendXYZContour|AutoPositionWindow|BackgroundInfo|Beep|BezierToPolygon|BoundingBall|BoxSmooth|BrowseURL|BuildMenu|Button|cd|Chart|CheckBox|CheckDisplayed|ChooseColor|Close|CloseHelp|CloseMovie|CloseProc|ColorScale|ColorTab2Wave|Concatenate|ControlBar|ControlInfo|ControlUpdate|ConvertGlobalStringTextEncoding|ConvexHull|Convolve|CopyDimLabels|CopyFile|CopyFolder|CopyScales|Correlate|CreateAliasShortcut|CreateBrowser|Cross|CtrlBackground|CtrlFIFO|CtrlNamedBackground|Cursor|CurveFit|CustomControl|CWT|Debugger|DebuggerOptions|DefaultFont|DefaultGuiControls|DefaultGuiFont|DefaultTextEncoding|DefineGuide|DelayUpdate|DeleteAnnotations|DeleteFile|DeleteFolder|DeletePoints|Differentiate|dir|Display|DisplayHelpTopic|DisplayProcedure|DoAlert|DoIgorMenu|DoUpdate|DoWindow|DoXOPIdle|DPSS|DrawAction|DrawArc|DrawBezier|DrawLine|DrawOval|DrawPICT|DrawPoly|DrawRect|DrawRRect|DrawText|DrawUserShape|DSPDetrend|DSPPeriodogram|Duplicate|DuplicateDataFolder|DWT|EdgeStats|Edit|ErrorBars|EstimatePeakSizes|Execute|ExecuteScriptText|ExperimentInfo|ExperimentModified|ExportGizmo|Extract|FastGaussTransform|FastOp|FBinRead|FBinWrite|FFT|FGetPos|FIFO2Wave|FIFOStatus|FilterFIR|FilterIIR|FindAPeak|FindContour|FindDuplicates|FindLevel|FindLevels|FindPeak|FindPointsInPoly|FindRoots|FindSequence|FindValue|FMaxFlat|FPClustering|fprintf|FReadLine|FSetPos|FStatus|FTPCreateDirectory|FTPDelete|FTPDownload|FTPUpload|FuncFit|FuncFitMD|GBLoadWave|GetAxis|GetCamera|GetFileFolderInfo|GetGizmo|GetLastUserMenuInfo|GetMarquee|GetMouse|GetSelection|GetWindow|GraphNormal|GraphWaveDraw|GraphWaveEdit|Grep|GroupBox|Hanning|HCluster|HDF5CloseFile|HDF5CloseGroup|HDF5Control|HDF5CreateFile|HDF5CreateGroup|HDF5CreateLink|HDF5DimensionScale|HDF5Dump|HDF5DumpErrors|HDF5FlushFile|HDF5ListAttributes|HDF5ListGroup|HDF5LoadData|HDF5LoadGroup|HDF5LoadImage|HDF5OpenFile|HDF5OpenGroup|HDF5SaveData|HDF5SaveGroup|HDF5SaveImage|HDF5UnlinkObject|HideIgorMenus|HideInfo|HideProcedures|HideTools|HilbertTransform|Histogram|ICA|IFFT|ImageAnalyzeParticles|ImageBlend|ImageBoundaryToMask|ImageComposite|ImageEdgeDetection|ImageFileInfo|ImageFilter|ImageFocus|ImageFromXYZ|ImageGenerateROIMask|ImageGLCM|ImageHistModification|ImageHistogram|ImageInterpolate|ImageLineProfile|ImageLoad|ImageMorphology|ImageRegistration|ImageRemoveBackground|ImageRestore|ImageRotate|ImageSave|ImageSeedFill|ImageSkeleton3d|ImageSnake|ImageStats|ImageThreshold|ImageTransform|ImageUnwrapPhase|ImageWindow|IndexSort|InsertPoints|InstantFrequency|Integrate|Integrate2D|IntegrateODE|Interp3DPath|Interpolate2|Interpolate3D|JCAMPLoadWave|JointHistogram|JSONXOP_AddTree|JSONXOP_AddValue|JSONXOP_Dump|JSONXOP_GetArraySize|JSONXOP_GetKeys|JSONXOP_GetMaxArraySize|JSONXOP_GetType|JSONXOP_GetValue|JSONXOP_New|JSONXOP_Parse|JSONXOP_Release|JSONXOP_Remove|JSONXOP_Version|KillBackground|KillControl|KillDataFolder|KillFIFO|KillFreeAxis|KillPath|KillPICTs|KillStrings|KillVariables|KillWaves|KillWindow|KMeans|Label|Layout|LayoutPageAction|LayoutSlideShow|Legend|LinearFeedbackShiftRegister|ListBox|LoadData|LoadPackagePreferences|LoadPICT|LoadWave|Loess|LombPeriodogram|Make|MakeIndex|MarkPerfTestTime|MatrixBalance|MatrixConvolve|MatrixCorr|MatrixEigenV|MatrixFactor|MatrixFilter|MatrixGaussJ|MatrixGLM|MatrixInverse|MatrixLinearSolve|MatrixLinearSolveTD|MatrixLLS|MatrixLUBkSub|MatrixLUD|MatrixLUDTD|MatrixMultiply|MatrixMultiplyAdd|MatrixOP|MatrixReverseBalance|MatrixSchur|MatrixSolve|MatrixSparse|MatrixSVBkSub|MatrixSVD|MatrixTranspose|MeasureStyledText|MLLoadWave|Modify|ModifyBoxPlot|ModifyBrowser|ModifyCamera|ModifyContour|ModifyControl|ModifyControlList|ModifyFreeAxis|ModifyGizmo|ModifyGraph|ModifyImage|ModifyLayout|ModifyPanel|ModifyProcedure|ModifyTable|ModifyViolinPlot|ModifyWaterfall|MoveDataFolder|MoveFile|MoveFolder|MoveString|MoveSubwindow|MoveVariable|MoveWave|MoveWindow|MultiTaperPSD|MultiThreadingControl|NeuralNetworkRun|NeuralNetworkTrain|NewCamera|NewDataFolder|NewFIFO|NewFIFOChan|NewFreeAxis|NewGizmo|NewImage|NewLayout|NewMovie|NewNotebook|NewPanel|NewPath|NewWaterfall|Note|Notebook|NotebookAction|Open|OpenHelp|OpenNotebook|Optimize|ParseOperationTemplate|PathInfo|PauseForUser|PauseUpdate|PCA|PlayMovie|PlayMovieAction|PlaySound|PolygonOp|PopupContextualMenu|PopupMenu|Preferences|PrimeFactors|Print|printf|PrintGraphs|PrintLayout|PrintNotebook|PrintSettings|PrintTable|Project|PulseStats|PutScrapText|pwd|Quit|RatioFromNumber|Redimension|Remez|Remove|RemoveContour|RemoveFromGizmo|RemoveFromGraph|RemoveFromLayout|RemoveFromTable|RemoveImage|RemoveLayoutObjects|RemovePath|Rename|RenameDataFolder|RenamePath|RenamePICT|RenameWindow|ReorderImages|ReorderTraces|ReplaceText|ReplaceWave|Resample|ResumeUpdate|Reverse|Rotate|Save|SaveData|SaveExperiment|SaveGizmoCopy|SaveGraphCopy|SaveNotebook|SavePackagePreferences|SavePICT|SaveTableCopy|SetActiveSubwindow|SetAxis|SetBackground|SetDashPattern|SetDataFolder|SetDimLabel|SetDrawEnv|SetDrawLayer|SetFileFolderInfo|SetFormula|SetIdlePeriod|SetIgorHook|SetIgorMenuMode|SetIgorOption|SetMarquee|SetProcessSleep|SetRandomSeed|SetScale|SetVariable|SetWaveLock|SetWaveTextEncoding|SetWindow|ShowIgorMenus|ShowInfo|ShowTools|Silent|Sleep|Slider|Smooth|SmoothCustom|Sort|SortColumns|SoundInRecord|SoundInSet|SoundInStartChart|SoundInStatus|SoundInStopChart|SoundLoadWave|SoundSaveWave|SphericalInterpolate|SphericalTriangulate|SplitString|SplitWave|sprintf|sscanf|Stack|StackWindows|StatsAngularDistanceTest|StatsANOVA1Test|StatsANOVA2NRTest|StatsANOVA2RMTest|StatsANOVA2Test|StatsChiTest|StatsCircularCorrelationTest|StatsCircularMeans|StatsCircularMoments|StatsCircularTwoSampleTest|StatsCochranTest|StatsContingencyTable|StatsDIPTest|StatsDunnettTest|StatsFriedmanTest|StatsFTest|StatsHodgesAjneTest|StatsJBTest|StatsKDE|StatsKendallTauTest|StatsKSTest|StatsKWTest|StatsLinearCorrelationTest|StatsLinearRegression|StatsMultiCorrelationTest|StatsNPMCTest|StatsNPNominalSRTest|StatsQuantiles|StatsRankCorrelationTest|StatsResample|StatsSample|StatsScheffeTest|StatsShapiroWilkTest|StatsSignTest|StatsSRTest|StatsTTest|StatsTukeyTest|StatsVariancesTest|StatsWatsonUSquaredTest|StatsWatsonWilliamsTest|StatsWheelerWatsonTest|StatsWilcoxonRankTest|StatsWRCorrelationTest|STFT|String|StructFill|StructGet|StructPut|SumDimension|SumSeries|TabControl|Tag|Text2Bezier|TextBox|TextHistogram|ThreadGroupPutDF|ThreadStart|TickWavesFromAxis|Tile|TileWindows|TitleBox|ToCommandLine|ToolsGrid|Triangulate3d|Unwrap|UnzipFile|URLRequest|ValDisplay|Variable|WaveMeanStdv|WaveStats|WaveTracking|WaveTransform|wfprintf|WignerTransform|WindowFunction|XLLoadWave)(?:.*)/i,
+            greedy: true,
             inside: {
-                //regex: /\/[A-Za-z]\w*(?![^(]*\))/, //flag (not highlighted in Igor itself)
-                function: /^[A-Za-z]\w*/
+                'regex': /\/[A-Za-z]\w*(?![^(]*\))/, //flag (not highlighted in Igor itself)
+                'function': /^[A-Za-z]\w*/,
+                'string': str,
+                'number': num,
+                'operator': op,
+                'punctuation': punc,
             }
         },
-	      'number': [
-		        /\b(?:[+-]?Inf|NaN)\b/i,
-		        /\b0x[\da-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?/i
-	      ],
-	      'operator': /\$|c>>=?|<<=?|->|([-+&|:])\1|[?:~]|[-+*\/%&|^!=<>]=?/,
-	      'punctuation': /[{}[\];(),.:]/,
     };
 }(Prism));

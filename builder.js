@@ -51,6 +51,7 @@ module.exports = (env) => {
         'bootstrap/js/src/dropdown.js',
         './src/ts/mathjax.ts',
         'prismjs',
+        './src/ts/prism-igor.ts',
         // see list in tinymce.ts for codesample plugin settings
         'prismjs/components/prism-bash.js',
         'prismjs/components/prism-c.js',

@@ -219,8 +219,6 @@ export function getTinymceBaseConfig(page: string): object {
     // location of the skin directory
     skin_url: '/assets/tinymce_skins',
     content_css: '/assets/tinymce_content.min.css',
-    // Ensure that figures with captions are centered
-    content_style: '.image figure,figure {display: block; text-align: center;}',
     emoticons_database_url: 'assets/tinymce_emojis.js',
     // remove the "Upgrade" button
     promotion: false,

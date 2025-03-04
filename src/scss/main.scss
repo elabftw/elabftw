@@ -44,6 +44,7 @@ $text-muted: $medium;
 @import 'ove';
 @import 'search-syntax-highlighting';
 @import 'tom-select';
+@import 'tinymce-custom';
 
 /* Font is Lato */
 @font-face {
@@ -1286,12 +1287,6 @@ the form-control fails to do that so we do the border ourselves */
 .image figcaption,
 figure figcaption {
   margin: 6px 8px;
-  text-align: center;
-}
-
-.image figure,
-figure {
-  display: block;
   text-align: center;
 }
 

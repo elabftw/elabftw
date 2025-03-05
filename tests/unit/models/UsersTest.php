@@ -222,7 +222,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         // tata in bravo
         $Admin = new Users(5, 2);
         $Users = new Users(6, 2, $Admin);
-        $this->assertIsArray($Users->patch(Action::Lock, array()));
+        $this->assertIsArray($Users->patch(Action::Archive, array()));
     }
 
     public function testCreateUser(): void
@@ -235,7 +235,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $this->assertIsInt($this->Users->createOne('blahblah2@yop.fr', array('Bravo'), 'blah2', 'yop', 'somePassword!', Usergroup::Admin, true, false));
     }
 
-    public function testUnArchiveButAnotherUserExists(): void
+    public function testUnarchiveButAnotherUserExists(): void
     {
         // this user is archived already
         $Admin = new Users(5, 2);
@@ -244,7 +244,19 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         ExistingUser::fromScratch($Users->userData['email'], array('Alpha'), 'f', 'l', Usergroup::User, false, false);
         // try to unarchive
         $this->expectException(ImproperActionException::class);
-        $Users->patch(Action::Lock, array());
+        $Users->patch(Action::Archive, array());
+    }
+
+    public function testArchiveWithoutPermission(): void
+    {
+        $Admin = new Users(5, 2);
+        $Users = new Users(6, 2, $Admin);
+        $Config = Config::getConfig();
+        $Config->patch(Action::Update, array('admins_archive_users' => 0));
+        $this->expectException(ImproperActionException::class);
+        $Users->patch(Action::Archive, array());
+
+        $Config->patch(Action::Update, array('admins_archive_users' => 1));
     }
 
     public function testReadAllActiveFromTeam(): void

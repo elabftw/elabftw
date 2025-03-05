@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (document.getElementById(`lockSwitch_${el.dataset.userid}`)) {
         lockExp = (document.getElementById(`lockSwitch_${el.dataset.userid}`) as HTMLInputElement).checked;
       }
-      ApiC.patch(`users/${el.dataset.userid}`, {action: Action.Archive, with_exp: lockExp}).then(() => reloadElements(['editUsersBox']));
+      ApiC.patch(`users/${el.dataset.userid}`, {action: Action.Archive, with_exp: lockExp}).then(() => reloadElements(['editUsersBox', `archiveUserModal_${el.dataset.userid}`]));
 
     // VALIDATE USER
     } else if (el.matches('[data-action="validate-user"]')) {

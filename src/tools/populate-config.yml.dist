@@ -169,6 +169,8 @@ templates:
     category: 3
 
   - title: High-Speed Insect Flight Analysis
+    metadata: |
+        {"extra_fields": {"Distance": {"type": "number","unit": "m","units": ["m", "cm"],"value": ""}}}
     body: |
         <p>Objective: To analyze the flight characteristics and performance of a subject (e.g., bird, insect, drone) during high-speed flight.</p>
         <p>Materials:</p>

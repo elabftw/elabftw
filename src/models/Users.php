@@ -369,7 +369,7 @@ class Users extends AbstractRest
             Action::Disable2fa => $this->disable2fa(),
             Action::PatchUser2Team => (new Users2Teams($this->requester))->patchUser2Team($params),
             Action::Unreference => (new Users2Teams($this->requester))->destroy($this->userData['userid'], (int) $params['team']),
-            Action::Archive => (new UserArchiver($this->requester, $this))->toggleArchive((bool) ($params['with_exp'] ?? false)),
+            Action::Lock, Action::Archive => (new UserArchiver($this->requester, $this))->toggleArchive((bool) ($params['with_exp'] ?? false)),
             Action::UpdatePassword => $this->updatePassword($params),
             Action::Update => (
                 function () use ($params) {

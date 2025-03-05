@@ -14,6 +14,7 @@ namespace Elabftw\Services;
 
 use Elabftw\AuditEvent\UserAttributeChanged;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AuditLogs;
@@ -109,9 +110,7 @@ final class UserArchiver
     {
         if (Config::getConfig()->configArr['admins_archive_users'] === '0' &&
             $this->requester->userData['is_sysadmin'] !== 1) {
-            throw new ImproperActionException(
-                _('This instance configuration only permits Sysadmin users to archive/unarchive a user.')
-            );
+            throw new ImproperActionException(Tools::error(true));
         }
     }
 }

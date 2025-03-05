@@ -31,7 +31,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 /**
  * Handle import request
  */
-class Handler extends AbstractRest
+final class Handler extends AbstractRest
 {
     private const array ALLOWED_EXTENSIONS = array('.eln', '.csv');
 
@@ -63,6 +63,7 @@ class Handler extends AbstractRest
         return $inserted;
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return 'api/v2/import/';

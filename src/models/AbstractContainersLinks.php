@@ -30,6 +30,7 @@ use function json_encode;
  */
 abstract class AbstractContainersLinks extends AbstractLinks
 {
+    #[Override]
     public function getApiPath(): string
     {
         return sprintf('%s%d/%s/', $this->Entity->getApiPath(), $this->Entity->id ?? '', $this->getTable());
@@ -76,6 +77,7 @@ abstract class AbstractContainersLinks extends AbstractLinks
     /**
      * Get related entities
      */
+    #[Override]
     public function readRelated(): array
     {
         $sql = 'SELECT
@@ -110,6 +112,7 @@ abstract class AbstractContainersLinks extends AbstractLinks
      * @param int $newId The id of the new entity that will receive the links
      * @param bool $fromTpl do we duplicate from template?
      */
+    #[Override]
     public function duplicate(int $id, int $newId, $fromTpl = false): int
     {
         $table = $this->getTable();
@@ -137,6 +140,7 @@ abstract class AbstractContainersLinks extends AbstractLinks
         };
     }
 
+    #[Override]
     public function patch(Action $action, array $params): array
     {
         //$this->canOrExplode(AccessType::Write);
@@ -149,6 +153,7 @@ abstract class AbstractContainersLinks extends AbstractLinks
         return $this->readOne();
     }
 
+    #[Override]
     public function readOne(): array
     {
         $sql = 'SELECT
@@ -199,6 +204,15 @@ abstract class AbstractContainersLinks extends AbstractLinks
         return $this->Db->execute($req);
     }
 
+    public function destroyAll(): bool
+    {
+        $sql = 'DELETE FROM ' . $this->getTable() . ' WHERE item_id = :item_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        return $this->Db->execute($req);
+    }
+
+    #[Override]
     public function isSelfLinkViaMetadata(string $extraFieldKey, string $targetId): bool
     {
         // get the extra field type for the given key
@@ -222,16 +236,22 @@ abstract class AbstractContainersLinks extends AbstractLinks
             && $this->Entity->id === intval($targetId);
     }
 
+    #[Override]
     abstract protected function getTargetType(): EntityType;
 
+    #[Override]
     abstract protected function getCatTable(): string;
 
+    #[Override]
     abstract protected function getStatusTable(): string;
 
+    #[Override]
     abstract protected function getTable(): string;
 
+    #[Override]
     abstract protected function getImportTargetTable(): string;
 
+    #[Override]
     protected function getTemplateTable(): string
     {
         if ($this->Entity instanceof Items || $this->Entity instanceof ItemsTypes) {
@@ -240,6 +260,7 @@ abstract class AbstractContainersLinks extends AbstractLinks
         return 'containers2experiments_templates';
     }
 
+    #[Override]
     protected function getRelatedTable(): string
     {
         if ($this->Entity instanceof Experiments) {

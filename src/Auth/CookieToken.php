@@ -24,7 +24,7 @@ use function random_bytes;
 /**
  * The cookie "token" acts as a key to login back thanks to the cookie value and the value stored in database
  */
-class CookieToken
+final class CookieToken
 {
     /** cookie is a sha256 sum: 64 chars */
     private const int COOKIE_LENGTH = 64;

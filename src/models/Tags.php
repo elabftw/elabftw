@@ -25,7 +25,7 @@ use PDO;
 /**
  * All about the tag
  */
-class Tags extends AbstractRest
+final class Tags extends AbstractRest
 {
     use SetIdTrait;
 
@@ -35,6 +35,7 @@ class Tags extends AbstractRest
         $this->setId($id);
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return sprintf('%s%d/tags/', $this->Entity->getApiPath(), $this->Entity->id ?? 0);

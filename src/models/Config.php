@@ -21,6 +21,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Services\Filter;
 use PDO;
+use Override;
 
 use function array_map;
 use function urlencode;
@@ -243,6 +244,7 @@ final class Config extends AbstractRest
         return $this->readOne();
     }
 
+    #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         // this select is executed every query, so we cache the result in memory
@@ -274,6 +276,7 @@ final class Config extends AbstractRest
      *
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
      */
+    #[Override]
     public function patch(Action $action, array $params): array
     {
         $passwords = array('smtp_password', 'ldap_password', 'ts_password', 'remote_dir_config');
@@ -312,6 +315,7 @@ final class Config extends AbstractRest
         return $this->readAll();
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return 'api/v2/config/';
@@ -342,6 +346,7 @@ final class Config extends AbstractRest
     /**
      * Restore default values
      */
+    #[Override]
     public function destroy(): bool
     {
         $sql = 'DELETE FROM config';

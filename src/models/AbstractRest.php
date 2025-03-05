@@ -18,6 +18,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Traits\QueryParamsTrait;
+use Override;
 
 /**
  * Base class for all RestInterface classes
@@ -33,26 +34,31 @@ abstract class AbstractRest implements RestInterface
         $this->Db = Db::getConnection();
     }
 
+    #[Override]
     public function patch(Action $action, array $params): array
     {
         throw new ImproperActionException('No PATCH action for this endpoint!');
     }
 
+    #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         throw new ImproperActionException('No GET action for this endpoint!');
     }
 
+    #[Override]
     public function readOne(): array
     {
         return $this->readAll();
     }
 
+    #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
         throw new ImproperActionException('No POST action for this endpoint!');
     }
 
+    #[Override]
     public function destroy(): bool
     {
         throw new ImproperActionException('No DELETE action for this endpoint!');

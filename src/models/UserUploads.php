@@ -20,18 +20,20 @@ use Override;
 use PDO;
 use Symfony\Component\HttpFoundation\InputBag;
 
-class UserUploads extends AbstractRest
+final class UserUploads extends AbstractRest
 {
     public function __construct(private Users $owner, private ?int $id = null)
     {
         parent::__construct();
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return sprintf('api/v2/user/%d/uploads/', $this->owner->userid ?? 'me');
     }
 
+    #[Override]
     public function getQueryParams(?InputBag $query = null): QueryParamsInterface
     {
         return new BaseQueryParams(query: $query, orderby: Orderby::CreatedAt, limit: 42);

@@ -30,7 +30,7 @@ use function trim;
 /**
  * When values need to be filtered
  */
-class Filter
+final class Filter
 {
     /**
      * ~= max size of MEDIUMTEXT in MySQL for UTF-8

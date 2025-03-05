@@ -18,7 +18,7 @@ use Elabftw\Models\Config;
 use Elabftw\Models\Users;
 use Elabftw\Params\UserParams;
 
-class UserCreator
+final class UserCreator
 {
     public function __construct(private Users $requester, private array $reqBody) {}
 

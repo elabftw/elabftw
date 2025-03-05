@@ -15,7 +15,7 @@ namespace Elabftw\Storage;
 /**
  * The cache folder parent of all caches
  */
-class ParentCache extends Local
+final class ParentCache extends Local
 {
     protected const string FOLDER = 'cache';
 

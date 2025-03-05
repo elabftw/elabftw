@@ -20,19 +20,22 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Override;
 
 /**
  * Prepare the database for the 3.0 update
  */
 #[AsCommand(name: 'db:updateto3')]
-class UpdateTo3 extends Command
+final class UpdateTo3 extends Command
 {
+    #[Override]
     protected function configure(): void
     {
         $this->setDescription('Prepare the database for the update to 3.0')
             ->setHelp('This will rename some columns before the rest of the update can be applied.');
     }
 
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln(array(

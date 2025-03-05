@@ -17,12 +17,13 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Override;
 
 /**
  * Look at the timestamp balance and notify sysadmin if it's too low
  */
 #[AsCommand(name: 'notifications:tsbalance')]
-class CheckTsBalance extends Command
+final class CheckTsBalance extends Command
 {
     private const int THRESHOLD = 20;
 
@@ -31,12 +32,14 @@ class CheckTsBalance extends Command
         parent::__construct();
     }
 
+    #[Override]
     protected function configure(): void
     {
         $this->setDescription("Check the balance on timestamps left and create a notification if it's too low")
             ->setHelp("Look at the column ts_balance from Config table and create a notification to sysadmins if it's too low.");
     }
 
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         if ($this->currentBalance === 0) {

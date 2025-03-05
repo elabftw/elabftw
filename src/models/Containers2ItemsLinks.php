@@ -13,32 +13,38 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\EntityType;
+use Override;
 
 /**
  * Container <-> items link
  */
-class Containers2ItemsLinks extends AbstractContainersLinks
+final class Containers2ItemsLinks extends AbstractContainersLinks
 {
+    #[Override]
     protected function getTable(): string
     {
         return 'containers2items';
     }
 
+    #[Override]
     protected function getTargetType(): EntityType
     {
         return EntityType::Items;
     }
 
+    #[Override]
     protected function getCatTable(): string
     {
         return 'items_types';
     }
 
+    #[Override]
     protected function getStatusTable(): string
     {
         return 'items_status';
     }
 
+    #[Override]
     protected function getImportTargetTable(): string
     {
         return 'containers2items';

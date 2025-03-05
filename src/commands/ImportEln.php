@@ -28,18 +28,20 @@ use Symfony\Component\Console\Output\Output;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Override;
 
 /**
  * Import an ELN archive
  */
 #[AsCommand(name: 'import:eln')]
-class ImportEln extends Command
+final class ImportEln extends Command
 {
     public function __construct(private StorageInterface $Fs)
     {
         parent::__construct();
     }
 
+    #[Override]
     protected function configure(): void
     {
         $this->setDescription('Import everything from a .eln')
@@ -53,6 +55,7 @@ class ImportEln extends Command
             ->addOption('checksum', 'k', InputOption::VALUE_NEGATABLE, 'Verify file integrity before import', true);
     }
 
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $teamid = (int) $input->getArgument('teamid');

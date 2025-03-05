@@ -32,12 +32,13 @@ use Symfony\Component\HttpFoundation\InputBag;
 /**
  * The kind of items you can have in the database for a team
  */
-class ItemsTypes extends AbstractTemplateEntity
+final class ItemsTypes extends AbstractTemplateEntity
 {
     use RandomColorTrait;
 
     public EntityType $entityType = EntityType::ItemsTypes;
 
+    #[Override]
     public function create(
         ?int $template = -1,
         ?string $title = null,
@@ -67,8 +68,8 @@ class ItemsTypes extends AbstractTemplateEntity
         $color ??= $this->getSomeColor();
         $contentType ??= $this->Users->userData['use_markdown'] === 1 ? AbstractEntity::CONTENT_MD : AbstractEntity::CONTENT_HTML;
 
-        $sql = 'INSERT INTO items_types(userid, title, body, team, canread, canwrite, canread_target, canwrite_target, color, content_type, status, rating)
-            VALUES(:userid, :title, :body, :team, :canread, :canwrite, :canread_target, :canwrite_target, :color, :content_type, :status, :rating)';
+        $sql = 'INSERT INTO items_types(userid, title, body, team, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canread_target, canwrite_target, color, content_type, status, rating)
+            VALUES(:userid, :title, :body, :team, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canread_target, :canwrite_target, :color, :content_type, :status, :rating)';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':userid', $this->Users->userid, PDO::PARAM_INT);
         $req->bindValue(':title', $title);
@@ -76,6 +77,8 @@ class ItemsTypes extends AbstractTemplateEntity
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindParam(':canread', $defaultPermissions);
         $req->bindParam(':canwrite', $defaultPermissions);
+        $req->bindParam(':canread_is_immutable', $canreadIsImmutable, PDO::PARAM_INT);
+        $req->bindParam(':canwrite_is_immutable', $canwriteIsImmutable, PDO::PARAM_INT);
         $req->bindParam(':canread_target', $defaultPermissions);
         $req->bindParam(':canwrite_target', $defaultPermissions);
         $req->bindParam(':color', $color);
@@ -101,11 +104,13 @@ class ItemsTypes extends AbstractTemplateEntity
         return (int) $req->fetchColumn();
     }
 
+    #[Override]
     public function getQueryParams(?InputBag $query = null, int $limit = 128): QueryParamsInterface
     {
         return new BaseQueryParams(query: $query, orderby: Orderby::Ordering, limit: $limit);
     }
 
+    #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $queryParams ??= $this->getQueryParams();
@@ -123,6 +128,7 @@ class ItemsTypes extends AbstractTemplateEntity
         return $req->fetchAll();
     }
 
+    #[Override]
     public function readOne(): array
     {
         if ($this->id === null) {
@@ -145,6 +151,7 @@ class ItemsTypes extends AbstractTemplateEntity
         return $this->entityData;
     }
 
+    #[Override]
     public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int
     {
         // TODO: implement

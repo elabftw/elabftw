@@ -22,16 +22,18 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\InsertTagsTrait;
 use PDO;
+use Override;
 
 /**
  * All about the experiments
  */
-class Experiments extends AbstractConcreteEntity
+final class Experiments extends AbstractConcreteEntity
 {
     use InsertTagsTrait;
 
     public EntityType $entityType = EntityType::Experiments;
 
+    #[Override]
     public function create(
         ?int $template = -1,
         ?string $title = null,
@@ -77,6 +79,8 @@ class Experiments extends AbstractConcreteEntity
             $body = $templateArr['body'];
             $canread = $templateArr['canread_target'];
             $canwrite = $templateArr['canwrite_target'];
+            $canreadIsImmutable = $templateArr['canread_is_immutable'];
+            $canwriteIsImmutable = $templateArr['canwrite_is_immutable'];
             $metadata = $templateArr['metadata'];
             $contentType = $templateArr['content_type'];
         }
@@ -142,6 +146,7 @@ class Experiments extends AbstractConcreteEntity
      *
      * @return int the ID of the new item
      */
+    #[Override]
     public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int
     {
         $this->canOrExplode('read');
@@ -191,6 +196,7 @@ class Experiments extends AbstractConcreteEntity
     /**
      * Experiment is not actually deleted but the state is changed from normal to deleted
      */
+    #[Override]
     public function destroy(): bool
     {
         // delete from pinned too

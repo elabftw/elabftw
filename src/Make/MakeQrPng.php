@@ -20,13 +20,14 @@ use ImagickDraw;
 use ImagickPixel;
 use RobThree\Auth\Providers\Qr\IQRCodeProvider;
 use RuntimeException;
+use Override;
 
 use function strlen;
 
 /**
  * Generate a PNG image with a QR Code pointing to the URL of the Entity, and optionally include the title
  */
-class MakeQrPng extends AbstractMake implements StringMakerInterface
+final class MakeQrPng extends AbstractMake implements StringMakerInterface
 {
     private const int DEFAULT_IMAGE_SIZE_PX = 250;
 
@@ -58,6 +59,7 @@ class MakeQrPng extends AbstractMake implements StringMakerInterface
         $this->maxLines = $this->maxLines > 0 ? $this->maxLines : self::DEFAULT_MAX_LINES;
     }
 
+    #[Override]
     public function getFileName(): string
     {
         return sprintf(
@@ -66,6 +68,7 @@ class MakeQrPng extends AbstractMake implements StringMakerInterface
         );
     }
 
+    #[Override]
     public function getFileContent(): string
     {
         $qrCode = new Imagick();

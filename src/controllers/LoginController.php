@@ -46,13 +46,14 @@ use LdapRecord\Models\Entry;
 use OneLogin\Saml2\Auth as SamlAuthLib;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Override;
 
 use function setcookie;
 
 /**
  * For all your authentication/login needs
  */
-class LoginController implements ControllerInterface
+final class LoginController implements ControllerInterface
 {
     public const int AUTH_LOCAL = 10;
 
@@ -66,6 +67,7 @@ class LoginController implements ControllerInterface
 
     public function __construct(private App $App) {}
 
+    #[Override]
     public function getResponse(): Response
     {
         // ENABLE MFA FOR OUR USER

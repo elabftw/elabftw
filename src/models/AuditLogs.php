@@ -21,7 +21,7 @@ use PDO;
 /**
  * Deal with auditable events stored in audit_logs table
  */
-class AuditLogs
+final class AuditLogs
 {
     public const int DEFAULT_LIMIT = 50;
 

@@ -204,6 +204,8 @@
 {# TAB 4 CATEGORIES #}
 <div data-tabcontent='4' hidden>
   {# EXPERIMENTS CATEGORIES #}
+  {# hide this part if we're EDITING a RESOURCE category #}
+  <div {{ App.Request.query.has('templateid') ? 'hidden' }}>
   <h3 id='experimentsCategoriesAnchor' class='mb-3 p-2 pl-3 section-title'>{{ 'Experiments categories'|trans }}</h3>
   <div class='pl-3 mb-5' id='experiments_categoriesDiv'>
     <div class='mb-2 d-flex justify-content-between'>
@@ -250,7 +252,7 @@
       {% endfor %}
     </ul>
   </div>
-
+  </div>
   {# RESOURCES CATEGORIES #}
   <h3 id='itemsCategoriesAnchor' class='mb-3 p-2 pl-3 section-title'>{{ 'Resources categories'|trans }}</h3>
   <div class='pl-3' id='itemsCategoriesDiv'>
@@ -266,14 +268,27 @@
 
   {% if App.Request.query.has('templateid') %}
     <a href='?tab=4' class='btn hl-hover-gray'>
-      <i class='fas fa-chevron-left mr-1 fa-fw'></i>{{ 'Back to listing'|trans }}
+      <i class='fas fa-arrow-left mr-1 fa-fw'></i>{{ 'Back to listing'|trans }}
     </a>
 
   {% else %}
 
     <ul class='list-group form-group sortable mb-2' data-axis='y' data-table='items_types'>
       {% for itemType in itemsCategoryArr %}
-      <li class='list-group-item' id='itemstypes_{{ itemType.id }}'><div class='d-flex'><span class='sortableHandle draggable p-2 mr-2'><i class='fas fa-grip-vertical'></i></span><a href='?tab=4&amp;templateid={{ itemType.id }}#itemsCategoriesAnchor' aria-label='{{ 'Edit'|trans }} {{ itemType.title|e('html_attr') }}' title='{{ 'Edit'|trans }}' class='p-2 mx-2 rounded hl-hover-gray'><i class='fas fa-pencil-alt'></i></a><span class='p-2' style='color: #{{ itemType.color }}'>{{ itemType.title }}</span><span class='user-badge ml-auto'>{{ itemType.team_name }}</span></div></li>
+      <li class='list-group-item' id='itemstypes_{{ itemType.id }}'>
+        <div class='d-flex'>
+          <span class='sortableHandle draggable p-2 mr-2'>
+            <i class='fas fa-grip-vertical'></i>
+          </span>
+          {# edit resource category button #}
+          <a href='?tab=4&amp;templateid={{ itemType.id }}#itemsCategoriesAnchor' aria-label='{{ 'Edit'|trans }} {{ itemType.title|e('html_attr') }}' title='{{ 'Edit'|trans }}' class='p-2 mx-2 rounded hl-hover-gray'>
+            <i class='fas fa-pencil-alt'></i>
+          </a>
+          {# resource category title and team_name #}
+          <span class='p-2' style='color: #{{ itemType.color }}'>{{ itemType.title }}</span>
+          <span class='user-badge ml-auto'>{{ itemType.team_name }}</span>
+        </div>
+      </li>
       {% endfor %}
     </ul>
     {% if itemsCategoryArr %}
@@ -287,23 +302,22 @@
         <button type='button' class='btn btn-danger' data-id='{{ Entity.id }}' data-action='itemstypes-destroy'>{{ 'Delete'|trans }}</button>
       </div>
       <div class='d-flex my-2 align-items-center'>
-        <div class='edit-mode-label'>
-          <i aria-hidden='true' class='fas fa-fw fa-users mr-1'></i>{{ 'Team'|trans }}<span class='ml-2'>{{ Entity.entityData.team_name }}</span>
-        </div>
+        <label class="col-form-label mr-3 edit-mode-label">{{ 'Team'|trans }}</label>
+        <i aria-hidden='true' class='fas fa-fw fa-users mr-1'></i><span class='ml-2 font-weight-bold'>{{ Entity.entityData.team_name }}</span>
       </div>
-      <ul class='list-inline'>
-        <li class='list-inline-item'>
-          <label for='itemsTypesName'>{{ 'Name'|trans }}</label>
-          <input type='text' data-trigger='blur' data-model='items_types/{{ Entity.id }}' data-target='title' class='form-control' id='itemsTypesName' value='{{ Entity.entityData.title|e('html_attr') }}' />
-        </li>
-
-        <li class='list-inline-item col-1 align-top'>
-          <label for='itemsTypesColor'>{{ 'Color'|trans }}</label>
-          <input class='form-control' data-trigger='change' data-model='items_types/{{ Entity.id }}' data-target='color' type='color' id='itemsTypesColor' value='#{{ Entity.entityData.color }}' />
-        </li>
-      </ul>
+      {# Name label #}
+      <div class='d-flex mb-2 align-items-center'>
+        <label for='itemsTypesName' class="col-form-label mr-3 edit-mode-label">{{ 'Name'|trans }}</label>
+        <input type='text' data-trigger='blur' data-model='items_types/{{ Entity.id }}' data-target='title' class='form-control col-md-2 catstatSelect' id='itemsTypesName' value='{{ Entity.entityData.title|e('html_attr') }}' />
+      </div>
 
       {% include('catstat-edit.html') %}
+      {# Color input #}
+      <div class='d-flex mb-2 align-items-center'>
+        <label for='itemsTypesColor' class="col-form-label mr-3 edit-mode-label">{{ 'Color'|trans }}</label>
+        <input class='form-control col-1 catstatSelect' data-trigger='change' data-model='items_types/{{ Entity.id }}' data-target='color' type='color' id='itemsTypesColor' value='#{{ Entity.entityData.color }}' />
+      </div>
+
       {# PERMISSIONS #}
       <hr>
       <h5>{{ 'Permissions for the resource category'|trans }}</h5>
@@ -316,11 +330,25 @@
         {% set can = Entity.entityData.canread_target|canToHuman %}
         {% include('view-permissions.html') %}
       </div>
+      <div class='d-flex'>
+        <label for='canread_is_immutable' class='col-form-label mr-2'>{{ 'Lock down read permissions'|trans }}</label>
+        <label class='switch ucp-align'>
+          <input type='checkbox' autocomplete='off' data-trigger='change' data-model='{{ Entity.entityType.value ~ '/' ~ Entity.id }}' data-target='canread_is_immutable' {{ Entity.entityData.canread_is_immutable ? 'checked="checked"' }} id='canread_is_immutable'>
+          <span class='slider'></span>
+        </label>
+      </div>
       <div class='d-flex mb-2 align-items-center'>
         {# CANWRITE #}
         {% set rw = 'canwrite_target' %}
         {% set can = Entity.entityData.canwrite_target|canToHuman %}
         {% include('view-permissions.html') %}
+      </div>
+      <div class='d-flex'>
+        <label for='canwrite_is_immutable' class='col-form-label mr-2'>{{ 'Lock down write permissions'|trans }}</label>
+        <label class='switch ucp-align'>
+          <input type='checkbox' autocomplete='off' data-trigger='change' data-model='{{ Entity.entityType.value ~ '/' ~ Entity.id }}' data-target='canwrite_is_immutable' {{ Entity.entityData.canwrite_is_immutable ? 'checked="checked"' }} id='canwrite_is_immutable'>
+          <span class='slider'></span>
+        </label>
       </div>
       <hr>
 

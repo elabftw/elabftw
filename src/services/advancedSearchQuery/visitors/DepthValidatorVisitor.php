@@ -26,8 +26,9 @@ use Elabftw\Services\AdvancedSearchQuery\Grammar\SimpleValueWrapper;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\TimestampField;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitable;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitor;
+use Override;
 
-class DepthValidatorVisitor implements Visitor
+final class DepthValidatorVisitor implements Visitor
 {
     public function __construct(private ?int $limit = null) {}
 
@@ -36,31 +37,37 @@ class DepthValidatorVisitor implements Visitor
         $parsedQuery->accept($this, $parameters);
     }
 
+    #[Override]
     public function visitSimpleValueWrapper(SimpleValueWrapper $simpleValueWrapper, VisitorParameters $parameters): int
     {
         return 1;
     }
 
+    #[Override]
     public function visitMetadataField(MetadataField $metadataField, VisitorParameters $parameters): int
     {
         return 1;
     }
 
+    #[Override]
     public function visitDateField(DateField $dateField, VisitorParameters $parameters): int
     {
         return 1;
     }
 
+    #[Override]
     public function visitTimestampField(TimestampField $timestampField, VisitorParameters $parameters): int
     {
         return 1;
     }
 
+    #[Override]
     public function visitField(Field $field, VisitorParameters $parameters): int
     {
         return 1;
     }
 
+    #[Override]
     public function visitNotExpression(NotExpression $notExpression, VisitorParameters $parameters): int
     {
         $depth = $notExpression->getExpression()->accept($this, $parameters);
@@ -73,21 +80,25 @@ class DepthValidatorVisitor implements Visitor
         return $depth;
     }
 
+    #[Override]
     public function visitAndExpression(AndExpression $andExpression, VisitorParameters $parameters): int
     {
         return $this->visitExpression($andExpression, $parameters);
     }
 
+    #[Override]
     public function visitAndOperand(AndOperand $andOperand, VisitorParameters $parameters): int
     {
         return $this->visitOperand($andOperand, $parameters);
     }
 
+    #[Override]
     public function visitOrExpression(OrExpression $orExpression, VisitorParameters $parameters): int
     {
         return $this->visitExpression($orExpression, $parameters);
     }
 
+    #[Override]
     public function visitOrOperand(OrOperand $orOperand, VisitorParameters $parameters): int
     {
         return $this->visitOperand($orOperand, $parameters);

@@ -17,9 +17,11 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
+use Override;
 
-class EntityParams extends ContentParams implements ContentParamsInterface
+final class EntityParams extends ContentParams implements ContentParamsInterface
 {
+    #[Override]
     public function getContent(): mixed
     {
         return match ($this->target) {
@@ -39,6 +41,7 @@ class EntityParams extends ContentParams implements ContentParamsInterface
         };
     }
 
+    #[Override]
     public function getColumn(): string
     {
         if ($this->target === 'bodyappend') {

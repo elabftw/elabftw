@@ -19,7 +19,7 @@ use PDO;
 
 use function sprintf;
 
-class EntitySlugsSqlBuilder
+final class EntitySlugsSqlBuilder
 {
     protected Db $Db;
 

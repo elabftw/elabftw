@@ -17,6 +17,7 @@ use Elabftw\Interfaces\PdfMakerInterface;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Enums\Classification;
 use Mpdf\Mpdf;
+use Override;
 
 /**
  * Mother class of the Make*Pdf services
@@ -40,6 +41,7 @@ abstract class AbstractMakePdf extends AbstractMake implements PdfMakerInterface
         $this->mpdf = $mpdfProvider->getInstance();
     }
 
+    #[Override]
     public function setNotifications(bool $state): void
     {
         $this->notifications = $state;

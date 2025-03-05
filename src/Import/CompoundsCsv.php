@@ -20,11 +20,12 @@ use Elabftw\Models\Users;
 use Elabftw\Services\HttpGetter;
 use GuzzleHttp\Client;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Override;
 
 /**
  * Import a CSV into compounds
  */
-class CompoundsCsv extends AbstractCsv
+final class CompoundsCsv extends AbstractCsv
 {
     public function __construct(
         protected Users $requester,
@@ -34,6 +35,7 @@ class CompoundsCsv extends AbstractCsv
         parent::__construct($requester, $UploadedFile);
     }
 
+    #[Override]
     public function import(): int
     {
         // now loop the rows and do the import

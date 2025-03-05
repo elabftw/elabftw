@@ -37,6 +37,7 @@ class Comments extends AbstractRest
         $this->setId($id);
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return sprintf('%s%d/comments/', $this->Entity->getApiPath(), $this->Entity->id ?? 0);

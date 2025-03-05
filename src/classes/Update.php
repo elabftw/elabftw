@@ -32,10 +32,10 @@ use function sprintf;
  * 3. Run `bin/console db:update`
  * 4. reflect the changes in src/sql/structure.sql (or models/Config.php for the config table)
  */
-class Update
+final class Update
 {
     /** @var int REQUIRED_SCHEMA the current version of the database structure */
-    public const int REQUIRED_SCHEMA = 171;
+    public const int REQUIRED_SCHEMA = 172;
 
     private Db $Db;
 

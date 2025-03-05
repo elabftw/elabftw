@@ -16,11 +16,13 @@ namespace Elabftw\Services\AdvancedSearchQuery\Grammar;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitable;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitor;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
+use Override;
 
-class AndOperand implements Visitable
+final class AndOperand implements Visitable
 {
     public function __construct(private SimpleValueWrapper | DateField | TimestampField | MetadataField | Field | NotExpression | OrExpression $operand, private ?self $tail = null) {}
 
+    #[Override]
     public function accept(Visitor $visitor, VisitorParameters $parameters): mixed
     {
         return $visitor->visitAndOperand($this, $parameters);

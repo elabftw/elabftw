@@ -26,7 +26,7 @@ use function mb_strlen;
 /**
  * All about the revisions
  */
-class Revisions extends AbstractRest
+final class Revisions extends AbstractRest
 {
     use SetIdTrait;
 
@@ -36,6 +36,7 @@ class Revisions extends AbstractRest
         $this->setId($id);
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return sprintf('%s%d/revisions/', $this->Entity->getApiPath(), $this->Entity->id ?? 0);
@@ -121,6 +122,7 @@ class Revisions extends AbstractRest
         return $numberToRemove;
     }
 
+    #[Override]
     public function readOne(): array
     {
         $this->Entity->canOrExplode('read');

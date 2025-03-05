@@ -72,11 +72,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use ValueError;
+use Override;
 
 /**
  * For API V2 requests
  */
-class Apiv2Controller extends AbstractApiController
+final class Apiv2Controller extends AbstractApiController
 {
     private array $allowedMethods = array('GET', 'POST', 'DELETE', 'PATCH');
 
@@ -92,6 +93,7 @@ class Apiv2Controller extends AbstractApiController
 
     private Action $action = Action::Create;
 
+    #[Override]
     public function getResponse(): Response
     {
         try {
@@ -148,6 +150,7 @@ class Apiv2Controller extends AbstractApiController
     /**
      * Set the id and endpoints fields
      */
+    #[Override]
     protected function parseReq(): array
     {
         $req = parent::parseReq();

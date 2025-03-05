@@ -17,6 +17,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\Users;
 use Elabftw\Services\UsersHelper;
 use PDO;
+use Override;
 
 use function date;
 
@@ -36,6 +37,7 @@ class MakeReport extends AbstractMakeCsv
     /**
      * The human friendly name
      */
+    #[Override]
     public function getFileName(): string
     {
         return date('Y-m-d') . '-report.elabftw.csv';
@@ -56,6 +58,7 @@ class MakeReport extends AbstractMakeCsv
     /**
      * Columns of the CSV
      */
+    #[Override]
     protected function getHeader(): array
     {
         return array(
@@ -83,6 +86,7 @@ class MakeReport extends AbstractMakeCsv
     /**
      * Get the rows for each users
      */
+    #[Override]
     protected function getRows(): array
     {
         $users = $this->readUsers();

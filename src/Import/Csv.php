@@ -18,11 +18,12 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Override;
 
 /**
  * Import entries from a csv file.
  */
-class Csv extends AbstractCsv
+final class Csv extends AbstractCsv
 {
     public function __construct(
         protected Users $requester,
@@ -48,6 +49,7 @@ class Csv extends AbstractCsv
      *
      * @throws ImproperActionException
      */
+    #[Override]
     public function import(): int
     {
         $entity = $this->entityType->toInstance($this->requester);

@@ -14,13 +14,15 @@ namespace Elabftw\Make;
 
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Compounds;
+use Override;
+use Symfony\Component\HttpFoundation\InputBag;
 
 use function date;
 
 /**
  * Make a CSV file with all the compounds
  */
-class MakeCompoundsReport extends AbstractMakeCsv
+final class MakeCompoundsReport extends AbstractMakeCsv
 {
     protected array $rows;
 
@@ -30,17 +32,13 @@ class MakeCompoundsReport extends AbstractMakeCsv
         $this->rows = $this->getRows();
     }
 
-    /**
-     * Return a nice name for the file
-     */
+    #[Override]
     public function getFileName(): string
     {
         return date('Y-m-d') . '-compounds.elabftw.csv';
     }
 
-    /**
-     * Here we populate the first row: it will be the column names
-     */
+    #[Override]
     protected function getHeader(): array
     {
         return array_keys($this->rows[0]);
@@ -48,12 +46,11 @@ class MakeCompoundsReport extends AbstractMakeCsv
 
     protected function getData(): array
     {
-        return $this->compounds->readAll();
+        $params = $this->compounds->getQueryParams(new InputBag(array('limit' => 999999)));
+        return $this->compounds->readAll($params);
     }
 
-    /**
-     * Generate an array for the requested data
-     */
+    #[Override]
     protected function getRows(): array
     {
         $rows = $this->getData();

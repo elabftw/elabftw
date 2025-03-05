@@ -15,7 +15,7 @@ namespace Elabftw\Make;
 /**
  * Create a pdf from an Entity for timestamping purposes
  */
-class MakeTimestampPdf extends MakePdf
+final class MakeTimestampPdf extends MakePdf
 {
     protected bool $includeAttachments = true;
 }

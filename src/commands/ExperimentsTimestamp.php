@@ -24,13 +24,15 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Override;
 
 /**
  * Timestamp experiments in bulk
  */
 #[AsCommand(name: 'experiments:timestamp')]
-class ExperimentsTimestamp extends Command
+final class ExperimentsTimestamp extends Command
 {
+    #[Override]
     protected function configure(): void
     {
         $this->setDescription('Timestamp experiments in bulk')
@@ -41,6 +43,7 @@ class ExperimentsTimestamp extends Command
              ->addOption('teams', 't', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Only timestamp experiments from these teams', array());
     }
 
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $unixTimestamp = strtotime('-' . $input->getOption('modified-since'));

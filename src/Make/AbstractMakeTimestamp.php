@@ -26,6 +26,7 @@ use GuzzleHttp\Client;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
 use PDO;
+use Override;
 
 /**
  * Mother class for all timestamping actions (trusted or blockchain)
@@ -44,11 +45,13 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
         $this->checkMonthlyLimit();
     }
 
+    #[Override]
     public function getFileName(): string
     {
         return date('YmdHis') . '-timestamped.zip';
     }
 
+    #[Override]
     public function getFileContent(): string
     {
         return '';
@@ -57,6 +60,7 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
     /**
      * Get the data that will be timestamped and saved in the timestamp archive
      */
+    #[Override]
     public function generateData(): string
     {
         return match ($this->dataFormat) {

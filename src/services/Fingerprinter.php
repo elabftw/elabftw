@@ -13,12 +13,11 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Config;
 
 /**
  * Calculate fingerprint from a compound
  */
-class Fingerprinter
+final class Fingerprinter
 {
     private const string FINGERPRINTER_URL = '/fingerprinter';
 
@@ -32,7 +31,7 @@ class Fingerprinter
 
     public function calculate(string $fmt, string $data): array
     {
-        $res = $this->httpGetter->postJson(Config::fromEnv('SITE_URL') . self::FINGERPRINTER_URL, array('fmt' => $fmt, 'data' => $data));
+        $res = $this->httpGetter->postJson('https://127.1' . self::FINGERPRINTER_URL, array('fmt' => $fmt, 'data' => $data));
         return json_decode($res, true, 42);
     }
 }

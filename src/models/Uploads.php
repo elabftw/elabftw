@@ -40,7 +40,7 @@ use function hash_file;
 /**
  * All about the file uploads
  */
-class Uploads extends AbstractRest
+final class Uploads extends AbstractRest
 {
     public const string HASH_ALGORITHM = 'sha256';
 
@@ -292,6 +292,7 @@ class Uploads extends AbstractRest
         };
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return sprintf('%s%d/uploads/', $this->Entity->getApiPath(), $this->Entity->id ?? 0);

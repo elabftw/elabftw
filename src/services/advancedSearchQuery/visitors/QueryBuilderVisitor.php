@@ -28,6 +28,7 @@ use Elabftw\Services\AdvancedSearchQuery\Grammar\TimestampField;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitable;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitor;
 use PDO;
+use Override;
 
 use function array_merge;
 use function bin2hex;
@@ -35,13 +36,14 @@ use function random_bytes;
 use function ucfirst;
 
 /** @psalm-suppress UnusedParam */
-class QueryBuilderVisitor implements Visitor
+final class QueryBuilderVisitor implements Visitor
 {
     public function buildWhere(Visitable $parsedQuery, VisitorParameters $parameters): WhereCollector
     {
         return $parsedQuery->accept($this, $parameters);
     }
 
+    #[Override]
     public function visitSimpleValueWrapper(SimpleValueWrapper $simpleValueWrapper, VisitorParameters $parameters): WhereCollector
     {
         $param = $this->getUniqueID();
@@ -84,6 +86,7 @@ class QueryBuilderVisitor implements Visitor
         return new WhereCollector($query, $bindValues);
     }
 
+    #[Override]
     public function visitMetadataField(MetadataField $metadataField, VisitorParameters $parameters): WhereCollector
     {
         $pathParam = $this->getUniqueID();
@@ -122,6 +125,7 @@ class QueryBuilderVisitor implements Visitor
         return new WhereCollector($query, $bindValues);
     }
 
+    #[Override]
     public function visitDateField(DateField $dateField, VisitorParameters $parameters): WhereCollector
     {
         $query = '';
@@ -156,6 +160,7 @@ class QueryBuilderVisitor implements Visitor
         return new WhereCollector($query, $bindValues);
     }
 
+    #[Override]
     public function visitTimestampField(TimestampField $timestampField, VisitorParameters $parameters): WhereCollector
     {
         $query = '';
@@ -235,6 +240,7 @@ class QueryBuilderVisitor implements Visitor
         return new WhereCollector($query, $bindValues);
     }
 
+    #[Override]
     public function visitField(Field $field, VisitorParameters $parameters): WhereCollector
     {
         // Attachment:   uploads.has_attachment
@@ -261,6 +267,7 @@ class QueryBuilderVisitor implements Visitor
         return $this->$method($field->getValue(), $field->getAffix(), $parameters);
     }
 
+    #[Override]
     public function visitNotExpression(NotExpression $notExpression, VisitorParameters $parameters): WhereCollector
     {
         $WhereCollectorExpression = $notExpression->getExpression()->accept($this, $parameters);
@@ -271,6 +278,7 @@ class QueryBuilderVisitor implements Visitor
         );
     }
 
+    #[Override]
     public function visitAndExpression(AndExpression $andExpression, VisitorParameters $parameters): WhereCollector
     {
         $WhereCollectorExpression = $andExpression->getExpression()->accept($this, $parameters);
@@ -280,6 +288,7 @@ class QueryBuilderVisitor implements Visitor
         return $this->buildAndClause($tail, $WhereCollectorExpression, $parameters);
     }
 
+    #[Override]
     public function visitOrExpression(OrExpression $orExpression, VisitorParameters $parameters): WhereCollector
     {
         $WhereCollectorExpression = $orExpression->getExpression()->accept($this, $parameters);
@@ -289,6 +298,7 @@ class QueryBuilderVisitor implements Visitor
         return $this->buildOrClause($tail, $WhereCollectorExpression, $parameters);
     }
 
+    #[Override]
     public function visitOrOperand(OrOperand $orOperand, VisitorParameters $parameters): WhereCollector
     {
         $WhereCollectorExpression = $orOperand->getOperand()->accept($this, $parameters);
@@ -298,6 +308,7 @@ class QueryBuilderVisitor implements Visitor
         return $this->buildOrClause($tail, $WhereCollectorExpression, $parameters);
     }
 
+    #[Override]
     public function visitAndOperand(AndOperand $andOperand, VisitorParameters $parameters): WhereCollector
     {
         $WhereCollectorExpression = $andOperand->getOperand()->accept($this, $parameters);

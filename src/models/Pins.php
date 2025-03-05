@@ -19,7 +19,7 @@ use PDO;
 /**
  * For dealing with pinned items
  */
-class Pins
+final class Pins
 {
     private Db $Db;
 

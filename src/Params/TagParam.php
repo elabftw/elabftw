@@ -14,6 +14,7 @@ namespace Elabftw\Params;
 
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ParamInterface;
+use Override;
 
 final class TagParam implements ParamInterface
 {
@@ -25,6 +26,7 @@ final class TagParam implements ParamInterface
      * Sanitize tag, we remove '\' because it messes up the javascript if you have this in the tags
      * also remove | because we use this as separator for tags in SQL
      */
+    #[Override]
     public function getContent(): string
     {
         $tag = trim(str_replace(array('\\', '|'), array('', ' '), $this->content));

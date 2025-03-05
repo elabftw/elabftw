@@ -26,6 +26,7 @@ use Symfony\Component\Console\Output\Output;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Override;
 
 use function sprintf;
 
@@ -33,13 +34,14 @@ use function sprintf;
  * Import a CSV into compounds
  */
 #[AsCommand(name: 'import:compounds')]
-class ImportCompoundsCsv extends Command
+final class ImportCompoundsCsv extends Command
 {
     public function __construct(private StorageInterface $Fs)
     {
         parent::__construct();
     }
 
+    #[Override]
     protected function configure(): void
     {
         $this->setDescription('Import compounds from a CSV file')
@@ -51,6 +53,7 @@ class ImportCompoundsCsv extends Command
             ->addOption('create-resource', 'c', InputOption::VALUE_REQUIRED, 'Create a resource linked to that compound with the category ID provided');
     }
 
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $teamid = (int) $input->getArgument('teamid');

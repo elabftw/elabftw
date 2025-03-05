@@ -32,7 +32,7 @@ use function trim;
 /**
  * All about the teams
  */
-class Teams extends AbstractRest
+final class Teams extends AbstractRest
 {
     use SetIdTrait;
 
@@ -109,6 +109,7 @@ class Teams extends AbstractRest
         $Users2Teams->rmUserFromTeams($userid, $rmFromTeams);
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return 'api/v2/teams/';

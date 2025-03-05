@@ -7,7 +7,7 @@
  */
 import $ from 'jquery';
 import { Api } from './Apiv2.class';
-import { Malle, InputType } from '@deltablot/malle';
+import { Malle, InputType, Action as MalleAction } from '@deltablot/malle';
 import 'bootstrap/js/src/modal.js';
 import {
   adjustHiddenState,
@@ -156,13 +156,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Listen for malleable columns
   new Malle({
-    after: (original, _, value) => {
-      // special case for title: update the page title on update
-      if (original.id === 'documentTitle') {
-        document.title = value;
-      }
-      return true;
-    },
     onEdit: (original, _, input) => {
       if (original.innerText === 'unset') {
         input.value = '';
@@ -188,6 +181,36 @@ document.addEventListener('DOMContentLoaded', () => {
     returnedValueIsTrustedHtml: false,
     submit : i18next.t('save'),
     submitClasses: ['btn', 'btn-primary', 'mt-2'],
+    tooltip: i18next.t('click-to-edit'),
+  }).listen();
+
+  // Listen for malleable entity title
+  new Malle({
+    after: (original, _, value) => {
+      // special case for title: update the page title on update
+      if (original.id === 'documentTitle') {
+        document.title = value;
+      }
+      return true;
+    },
+    onEdit: (original, _, input) => {
+      if (original.innerText === 'unset') {
+        input.value = '';
+        original.classList.remove('font-italic');
+      }
+      return true;
+    },
+    inputClasses: ['form-control'],
+    fun: (value, original) => {
+      const params = {};
+      params[original.dataset.target] = value;
+      return ApiC.patch(`${original.dataset.endpoint}/${original.dataset.id}`, params)
+        .then(res => res.json())
+        .then(json => json[original.dataset.target]);
+    },
+    listenOn: '.malleableTitle',
+    returnedValueIsTrustedHtml: false,
+    onBlur: MalleAction.Submit,
     tooltip: i18next.t('click-to-edit'),
   }).listen();
 

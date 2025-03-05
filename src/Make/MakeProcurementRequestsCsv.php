@@ -14,13 +14,14 @@ namespace Elabftw\Make;
 
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\ProcurementRequests;
+use Override;
 
 use function date;
 
 /**
  * Make a CSV file from the team's procurement requests
  */
-class MakeProcurementRequestsCsv extends AbstractMakeCsv
+final class MakeProcurementRequestsCsv extends AbstractMakeCsv
 {
     private array $rows;
 
@@ -35,6 +36,7 @@ class MakeProcurementRequestsCsv extends AbstractMakeCsv
     /**
      * Return a nice name for the file
      */
+    #[Override]
     public function getFileName(): string
     {
         return date('Y-m-d') . '-procurement-requests.elabftw.csv';
@@ -43,6 +45,7 @@ class MakeProcurementRequestsCsv extends AbstractMakeCsv
     /**
      * Here we populate the first row: it will be the column names
      */
+    #[Override]
     protected function getHeader(): array
     {
         return array_keys($this->rows[0]);
@@ -51,6 +54,7 @@ class MakeProcurementRequestsCsv extends AbstractMakeCsv
     /**
      * Generate an array for the requested data
      */
+    #[Override]
     protected function getRows(): array
     {
         return $this->rows;

@@ -25,6 +25,7 @@ use Elabftw\Traits\RandomColorTrait;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 use Symfony\Component\HttpFoundation\InputBag;
+use Override;
 
 /**
  * Status for experiments or items
@@ -36,17 +37,20 @@ abstract class AbstractStatus extends AbstractCategory
 
     protected string $table;
 
+    #[Override]
     public function updateOrdering(OrderingParams $params): void
     {
         $this->Teams->canWriteOrExplode();
         parent::updateOrdering($params);
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return sprintf('api/v2/teams/%d/%s/', $this->Teams->id ?? 0, $this->table);
     }
 
+    #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
         return $this->create(
@@ -67,6 +71,7 @@ abstract class AbstractStatus extends AbstractCategory
         && $this->create(_('Fail'), '#' . self::DEFAULT_RED);
     }
 
+    #[Override]
     public function readOne(): array
     {
         $sql = sprintf('SELECT id, title, color, is_default, ordering, state, team
@@ -77,6 +82,7 @@ abstract class AbstractStatus extends AbstractCategory
         return $this->Db->fetch($req);
     }
 
+    #[Override]
     public function getQueryParams(?InputBag $query = null): QueryParamsInterface
     {
         return new BaseQueryParams(query: $query, orderby: Orderby::Ordering);
@@ -85,6 +91,7 @@ abstract class AbstractStatus extends AbstractCategory
     /**
      * Get all status from team
      */
+    #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = sprintf('SELECT id, title, color, is_default, ordering, state, team
@@ -111,6 +118,7 @@ abstract class AbstractStatus extends AbstractCategory
         return $req->fetchAll();
     }
 
+    #[Override]
     public function patch(Action $action, array $params): array
     {
         $this->Teams->canWriteOrExplode();
@@ -120,6 +128,7 @@ abstract class AbstractStatus extends AbstractCategory
         return $this->readOne();
     }
 
+    #[Override]
     public function destroy(): bool
     {
         $this->Teams->canWriteOrExplode();

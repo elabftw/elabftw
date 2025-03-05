@@ -22,7 +22,7 @@ use Override;
 /**
  * Process a single request targeting multiple entities
  */
-class Batch extends AbstractRest
+final class Batch extends AbstractRest
 {
     private int $processed = 0;
 
@@ -62,6 +62,7 @@ class Batch extends AbstractRest
         return $this->processed;
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return 'api/v2/batch/';

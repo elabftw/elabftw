@@ -22,7 +22,7 @@ use function count;
 /**
  * Migrate uploads to S3
  */
-class UploadsMigrator
+final class UploadsMigrator
 {
     private Db $Db;
 

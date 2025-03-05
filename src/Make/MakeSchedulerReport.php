@@ -16,6 +16,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Scheduler;
 use Elabftw\Services\UsersHelper;
+use Override;
 
 use function date;
 use function implode;
@@ -23,7 +24,7 @@ use function implode;
 /**
  * Create a report of scheduler bookings
  */
-class MakeSchedulerReport extends AbstractMakeCsv
+final class MakeSchedulerReport extends AbstractMakeCsv
 {
     protected Db $Db;
 
@@ -41,6 +42,7 @@ class MakeSchedulerReport extends AbstractMakeCsv
     /**
      * The human friendly name
      */
+    #[Override]
     public function getFileName(): string
     {
         return date('Y-m-d') . '-report.elabftw.csv';
@@ -49,6 +51,7 @@ class MakeSchedulerReport extends AbstractMakeCsv
     /**
      * Columns of the CSV
      */
+    #[Override]
     protected function getHeader(): array
     {
         $header = array_keys($this->rows[0]);
@@ -59,6 +62,7 @@ class MakeSchedulerReport extends AbstractMakeCsv
     /**
      * Get the rows for each users
      */
+    #[Override]
     protected function getRows(): array
     {
         foreach ($this->rows as $key => $entry) {

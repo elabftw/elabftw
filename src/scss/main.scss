@@ -113,7 +113,7 @@ body {
 /* TinyMCE selector for body in preview excluded to prevent flashing */
 body::before,
 .mce-preview-body::before {
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
   content: '';
   left: 0;
   top: -10px;

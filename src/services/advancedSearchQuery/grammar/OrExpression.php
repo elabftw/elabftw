@@ -16,11 +16,13 @@ namespace Elabftw\Services\AdvancedSearchQuery\Grammar;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitable;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitor;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
+use Override;
 
-class OrExpression implements Visitable
+final class OrExpression implements Visitable
 {
     public function __construct(private AndExpression $expression, private ?OrOperand $tail = null) {}
 
+    #[Override]
     public function accept(Visitor $visitor, VisitorParameters $parameters): mixed
     {
         return $visitor->visitOrExpression($this, $parameters);

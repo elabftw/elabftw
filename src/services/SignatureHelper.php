@@ -30,7 +30,7 @@ use const JSON_THROW_ON_ERROR;
  * minisign by Frank Denis: https://jedisct1.github.io/minisign/#secret-key-format
  * Inspired by the code from https://github.com/soatok/minisign-php by Soatok Dreamseeker
  */
-class SignatureHelper
+final class SignatureHelper
 {
     public const UNTRUSTED_COMMENT_PREFIX = 'untrusted comment: ';
 

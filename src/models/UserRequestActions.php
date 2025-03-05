@@ -22,7 +22,7 @@ use PDO;
 /**
  * Request action for users
  */
-class UserRequestActions extends AbstractRest
+final class UserRequestActions extends AbstractRest
 {
     public function __construct(protected Users $requester)
     {
@@ -75,6 +75,7 @@ class UserRequestActions extends AbstractRest
         }, $this->readAll());
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return 'api/v2/users/me/request_actions/';

@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services\AdvancedSearchQuery\Collectors;
 
-class WhereCollector
+final class WhereCollector
 {
     public function __construct(private string $where, private array $bindValues) {}
 

@@ -18,13 +18,15 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Override;
 
 /**
  * To remove deleted items completely
  */
 #[AsCommand(name: 'prune:items')]
-class PruneItems extends Command
+final class PruneItems extends Command
 {
+    #[Override]
     protected function configure(): void
     {
         $this
@@ -32,6 +34,7 @@ class PruneItems extends Command
             ->setHelp('Remove items from the database marked as deleted');
     }
 
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln(array(

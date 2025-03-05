@@ -14,11 +14,12 @@ namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\CleanerInterface;
+use Override;
 
 /**
  * Remove half of the stored revisions
  */
-class RevisionsCleaner implements CleanerInterface
+final class RevisionsCleaner implements CleanerInterface
 {
     private Db $Db;
 
@@ -30,6 +31,7 @@ class RevisionsCleaner implements CleanerInterface
     /**
      * Do the purge
      */
+    #[Override]
     public function cleanup(): int
     {
         $this->removeRows('experiments');

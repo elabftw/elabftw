@@ -28,7 +28,7 @@ use function trim;
 /**
  * For SQL operations from files
  */
-class Sql
+final class Sql
 {
     private Db $Db;
 

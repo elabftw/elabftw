@@ -19,7 +19,7 @@ use Override;
  * Create a report of usage for users in a team
  * We check that the user is Admin and use the current team to generate the list of users
  */
-class MakeTeamReport extends MakeReport
+final class MakeTeamReport extends MakeReport
 {
     #[Override]
     protected function canReadOrExplode(): void

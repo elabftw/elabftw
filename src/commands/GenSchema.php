@@ -18,24 +18,27 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Override;
 
 /**
  * For dev purposes: generate a new empty schema file
  */
 #[AsCommand(name: 'dev:genschema')]
-class GenSchema extends Command
+final class GenSchema extends Command
 {
     public function __construct(private FilesystemOperator $fs)
     {
         parent::__construct();
     }
 
+    #[Override]
     protected function configure(): void
     {
         $this->setDescription('Generate a new database schema migration file')
             ->setHelp('This command allows you to generate a new schemaNNN.sql for database schema migration');
     }
 
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $schemaNumber = Update::REQUIRED_SCHEMA + 1;

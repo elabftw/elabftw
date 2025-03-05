@@ -12,13 +12,15 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
+use Override;
+
 use function dirname;
 
 /**
  * RFC3161 timestamping with the free to use DFN timestamping service
  * https://www.pki.dfn.de/faqpki/faq-zeitstempel/
  */
-class MakeDfnTimestamp extends AbstractMakeTrustedTimestamp
+final class MakeDfnTimestamp extends AbstractMakeTrustedTimestamp
 {
     protected const string TS_URL = 'http://zeitstempel.dfn.de';
 
@@ -33,6 +35,7 @@ class MakeDfnTimestamp extends AbstractMakeTrustedTimestamp
      *
      * @return array<string,string>
      */
+    #[Override]
     public function getTimestampParameters(): array
     {
         return array(

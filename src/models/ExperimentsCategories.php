@@ -15,7 +15,7 @@ namespace Elabftw\Models;
 /**
  * Categories for experiments
  */
-class ExperimentsCategories extends AbstractStatus
+final class ExperimentsCategories extends AbstractStatus
 {
     protected string $table = 'experiments_categories';
 }

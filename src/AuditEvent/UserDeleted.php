@@ -13,14 +13,17 @@ declare(strict_types=1);
 namespace Elabftw\AuditEvent;
 
 use Elabftw\Enums\AuditCategory;
+use Override;
 
-class UserDeleted extends AbstractAuditEvent
+final class UserDeleted extends AbstractAuditEvent
 {
+    #[Override]
     public function getBody(): string
     {
         return 'Account deleted';
     }
 
+    #[Override]
     public function getCategory(): AuditCategory
     {
         return AuditCategory::AccountDeleted;

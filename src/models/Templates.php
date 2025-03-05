@@ -31,7 +31,7 @@ use PDO;
 /**
  * All about the templates
  */
-class Templates extends AbstractTemplateEntity
+final class Templates extends AbstractTemplateEntity
 {
     use SortableTrait;
 
@@ -46,6 +46,7 @@ class Templates extends AbstractTemplateEntity
 
     public EntityType $entityType = EntityType::Templates;
 
+    #[Override]
     public function create(
         ?int $template = -1,
         ?string $title = null,
@@ -111,6 +112,7 @@ class Templates extends AbstractTemplateEntity
     /**
      * Duplicate a template from someone else
      */
+    #[Override]
     public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int
     {
         $this->canOrExplode('read');
@@ -155,6 +157,7 @@ class Templates extends AbstractTemplateEntity
         return $newId;
     }
 
+    #[Override]
     public function readOne(): array
     {
         if ($this->id === null) {
@@ -200,6 +203,7 @@ class Templates extends AbstractTemplateEntity
      * Get a list of fullname + id + title of template
      * Use this to build a select of the readable templates
      */
+    #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $builder = new TemplatesSqlBuilder($this);
@@ -227,6 +231,7 @@ class Templates extends AbstractTemplateEntity
         return $req->fetchAll();
     }
 
+    #[Override]
     public function destroy(): bool
     {
         // delete from pinned too

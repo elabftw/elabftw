@@ -25,16 +25,17 @@ use PDO;
  * By default the unfinished steps of a user are returned.
  * $teamScoped provides a switch to return unfinished steps of the entire team.
  */
-class UnfinishedSteps extends AbstractRest
+final class UnfinishedSteps extends AbstractRest
 {
     public function __construct(private Users $Users, private bool $teamScoped = false)
     {
         parent::__construct();
     }
 
+    #[Override]
     public function getApiPath(): string
     {
-        return 'api/v2/unfinished_steps';
+        return 'api/v2/unfinished_steps/';
     }
 
     #[Override]

@@ -15,7 +15,7 @@ namespace Elabftw\Models;
 /**
  * Status for experiments
  */
-class ExperimentsStatus extends AbstractStatus
+final class ExperimentsStatus extends AbstractStatus
 {
     protected string $table = 'experiments_status';
 }

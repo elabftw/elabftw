@@ -46,6 +46,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use ValueError;
 use ZipStream\ZipStream;
+use Override;
 
 use function array_map;
 use function count;
@@ -53,7 +54,7 @@ use function count;
 /**
  * Create zip, csv, pdf or report
  */
-class MakeController extends AbstractController
+final class MakeController extends AbstractController
 {
     private const int AUDIT_THRESHOLD = 12;
 
@@ -62,6 +63,7 @@ class MakeController extends AbstractController
     // @var array<AbstractEntity>
     private array $entityArr = array();
 
+    #[Override]
     public function getResponse(): Response
     {
         $this->populateSlugs();

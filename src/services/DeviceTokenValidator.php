@@ -21,7 +21,7 @@ use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
 /**
  * Validate a device token
  */
-class DeviceTokenValidator
+final class DeviceTokenValidator
 {
     public function __construct(private Configuration $config, private string $deviceToken) {}
 

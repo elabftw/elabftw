@@ -30,6 +30,7 @@ use function count;
 
 /**
  * Email service
+ * @final mocked in tests
  */
 class Email
 {

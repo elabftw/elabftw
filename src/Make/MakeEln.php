@@ -14,6 +14,7 @@ namespace Elabftw\Make;
 
 use DateTimeImmutable;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Metadata;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AbstractEntity;
@@ -24,11 +25,12 @@ use Elabftw\Models\Users;
 use Elabftw\Services\Filter;
 use League\Flysystem\UnableToReadFile;
 use ZipStream\ZipStream;
+use Override;
 
 /**
  * Make an ELN archive
  */
-class MakeEln extends AbstractMakeEln
+final class MakeEln extends AbstractMakeEln
 {
     public function __construct(protected ZipStream $Zip, protected Users $requester, protected array $entityArr)
     {
@@ -38,6 +40,7 @@ class MakeEln extends AbstractMakeEln
     /**
      * Loop on each id and add it to our eln archive
      */
+    #[Override]
     public function getStreamZip(): void
     {
         foreach ($this->entityArr as $entity) {
@@ -175,7 +178,7 @@ class MakeEln extends AbstractMakeEln
             'temporal' => (new DateTimeImmutable($e['date'] ?? date('Y-m-d')))->format(DateTimeImmutable::ATOM),
             'name' => $e['title'],
             'encodingFormat' => ($e['content_type'] ?? 1) === 1 ? 'text/html' : 'text/markdown',
-            'url' => Config::fromEnv('SITE_URL') . '/' . $entity->entityType->toPage() . '.php?mode=view&id=' . $e['id'],
+            'url' => Config::fromEnv('SITE_URL') . '/' . $entity->entityType->toPage() . ($entity->entityType == EntityType::ItemsTypes ? '&' : '?') . 'mode=view&id=' . $e['id'],
             'genre' => $entity->entityType->toGenre(),
         );
         $datasetNode = self::addIfNotEmpty(

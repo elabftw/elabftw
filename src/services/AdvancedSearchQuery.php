@@ -23,7 +23,7 @@ use Elabftw\Services\AdvancedSearchQuery\Visitors\FieldValidatorVisitor;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\QueryBuilderVisitor;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 
-class AdvancedSearchQuery
+final class AdvancedSearchQuery
 {
     protected string $exception = '';
 

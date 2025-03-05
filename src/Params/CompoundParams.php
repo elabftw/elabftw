@@ -14,6 +14,7 @@ namespace Elabftw\Params;
 
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Filter;
+use Override;
 
 use function array_map;
 use function str_split;
@@ -21,6 +22,7 @@ use function trim;
 
 final class CompoundParams extends ContentParams
 {
+    #[Override]
     public function getContent(): string | int | float
     {
         return match ($this->target) {
@@ -55,6 +57,7 @@ final class CompoundParams extends ContentParams
             'is_gas_under_pressure',
             'is_hazardous2env',
             'is_hazardous2health',
+            'is_serious_health_hazard',
             'is_oxidising',
             'is_toxic',
             'is_radioactive',

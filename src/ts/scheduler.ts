@@ -296,11 +296,13 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   ['schedulerSelectCat', 'itemSelect'].forEach(id => {
-    new TomSelect(`#${id}`, {
-      plugins: [
-        'dropdown_input',
-        'remove_button',
-      ],
-    });
+    if (document.getElementById(id)) {
+      new TomSelect(`#${id}`, {
+        plugins: [
+          'dropdown_input',
+          'remove_button',
+        ],
+      });
+    }
   });
 });

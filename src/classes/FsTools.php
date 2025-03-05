@@ -25,7 +25,7 @@ use function random_bytes;
 /**
  * For filesystem related helpers
  */
-class FsTools
+final class FsTools
 {
     /**
      * Create a directory in the cache folder and return the full path

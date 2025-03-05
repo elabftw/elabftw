@@ -17,7 +17,7 @@ use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\IllegalActionException;
 use PDO;
 
-class TeamsHelper
+final class TeamsHelper
 {
     private Db $Db;
 

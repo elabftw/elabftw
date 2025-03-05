@@ -27,6 +27,7 @@ use Elabftw\Services\Filter;
 use Elabftw\Services\UsersHelper;
 use PDO;
 use SensitiveParameter;
+use Override;
 
 use function password_hash;
 use function password_needs_rehash;
@@ -35,7 +36,7 @@ use function password_verify;
 /**
  * Local auth service
  */
-class Local implements AuthInterface
+final class Local implements AuthInterface
 {
     private Db $Db;
 
@@ -56,6 +57,7 @@ class Local implements AuthInterface
         $this->AuthResponse = new AuthResponse();
     }
 
+    #[Override]
     public function tryAuth(): AuthResponse
     {
         $sql = 'SELECT password_hash, mfa_secret, validated, password_modified_at FROM users WHERE userid = :userid;';

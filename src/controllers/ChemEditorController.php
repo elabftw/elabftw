@@ -13,21 +13,25 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Models\ItemsTypes;
+use Override;
 
 use function array_merge;
 
-class ChemEditorController extends AbstractHtmlController
+final class ChemEditorController extends AbstractHtmlController
 {
+    #[Override]
     protected function getTemplate(): string
     {
         return 'chem-editor.html';
     }
 
+    #[Override]
     protected function getPageTitle(): string
     {
         return _('Chemical Structure Editor');
     }
 
+    #[Override]
     protected function getData(): array
     {
         return array_merge(

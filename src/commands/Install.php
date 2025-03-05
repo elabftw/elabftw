@@ -24,6 +24,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Override;
 
 use function dirname;
 
@@ -31,8 +32,9 @@ use function dirname;
  * Import database structure
  */
 #[AsCommand(name: 'db:install')]
-class Install extends Command
+final class Install extends Command
 {
+    #[Override]
     protected function configure(): void
     {
         $this->setDescription('Install the MySQL structure for eLabFTW in a MySQL database')
@@ -40,6 +42,7 @@ class Install extends Command
             ->addOption('reset', 'r', InputOption::VALUE_NONE, 'Delete and recreate the database before installing the structure.');
     }
 
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $Db = Db::getConnection();

@@ -7,7 +7,7 @@
   {% set action = 'Archive user'|trans %}
   {% set description = 'Archiving a user means their account will be disabled. This action is reversible.'|trans %}
 {% endif %}
-<div class='modal fade' id='archiveUserModal_{{ user.userid }}' tabindex='-1' role='dialog' aria-labelledby='archiveUserModalLabel'>
+<div class='modal fade' id='archiveUserModal_{{ user.userid }}' tabindex='-1' role='dialog' aria-labelledby='archiveUserModalLabel_{{ user.userid }}'>
   <div class='modal-dialog' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>

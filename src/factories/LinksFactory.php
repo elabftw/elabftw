@@ -35,7 +35,7 @@ use Elabftw\Models\Items2ItemsLinks;
 use Elabftw\Models\ItemsTypes2ExperimentsLinks;
 use Elabftw\Models\ItemsTypes2ItemsLinks;
 
-class LinksFactory
+final class LinksFactory
 {
     public static function getExperimentsLinks(AbstractEntity $entity, ?int $id = null): AbstractExperimentsLinks
     {

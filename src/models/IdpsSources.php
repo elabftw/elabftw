@@ -28,7 +28,7 @@ use PDO;
 /**
  * For IDPS sources: .xml urls
  */
-class IdpsSources extends AbstractRest
+final class IdpsSources extends AbstractRest
 {
     use SetIdTrait;
 

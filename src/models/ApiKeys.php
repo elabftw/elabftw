@@ -30,7 +30,7 @@ use function random_bytes;
 /**
  * Api keys CRUD class
  */
-class ApiKeys extends AbstractRest
+final class ApiKeys extends AbstractRest
 {
     use SetIdTrait;
 
@@ -50,6 +50,7 @@ class ApiKeys extends AbstractRest
         return $this->create($reqBody['name'] ?? 'RTFM', $reqBody['canwrite'] ?? 0);
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return sprintf('%d-%s', $this->keyId, $this->key);

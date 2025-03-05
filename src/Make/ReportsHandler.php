@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Handle reports request
  */
-class ReportsHandler extends AbstractRest
+final class ReportsHandler extends AbstractRest
 {
     public function __construct(private Users $requester) {}
 
@@ -50,6 +50,7 @@ class ReportsHandler extends AbstractRest
         return array('query_parameters' => array('format' => array('csv', 'json (not implemented)'), 'scope' => array('instance', 'team')));
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return 'api/v2/reports/';

@@ -13,14 +13,17 @@ declare(strict_types=1);
 namespace Elabftw\AuditEvent;
 
 use Elabftw\Enums\AuditCategory;
+use Override;
 
-class UserLogin extends AbstractAuditEvent
+final class UserLogin extends AbstractAuditEvent
 {
+    #[Override]
     public function getBody(): string
     {
         return 'User logged in';
     }
 
+    #[Override]
     public function getCategory(): AuditCategory
     {
         return AuditCategory::Login;

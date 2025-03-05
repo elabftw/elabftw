@@ -19,6 +19,7 @@ use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 use InvalidArgumentException;
+use Override;
 
 use function mb_strlen;
 
@@ -28,12 +29,14 @@ class ContentParams implements ContentParamsInterface
 
     public function __construct(protected string $target, protected mixed $content) {}
 
+    #[Override]
     public function getUnfilteredContent(): string
     {
         return $this->asString();
     }
 
     // maybe rename to something else, so we have getContent to get filtered content and this would be get nonemptystring
+    #[Override]
     public function getContent(): mixed
     {
         // check for length
@@ -43,6 +46,7 @@ class ContentParams implements ContentParamsInterface
         return $this->content;
     }
 
+    #[Override]
     public function getColumn(): string
     {
         return $this->target;
@@ -53,6 +57,7 @@ class ContentParams implements ContentParamsInterface
         return (string) $this->content;
     }
 
+    #[Override]
     public function getTarget(): string
     {
         return $this->target;

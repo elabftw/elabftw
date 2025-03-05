@@ -12,11 +12,14 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Override;
+
 /**
  * All about Experiments Links in Items
  */
-class Items2ExperimentsLinks extends AbstractExperimentsLinks
+final class Items2ExperimentsLinks extends AbstractExperimentsLinks
 {
+    #[Override]
     protected function getTable(): string
     {
         return 'items2experiments';

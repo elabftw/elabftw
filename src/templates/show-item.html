@@ -11,8 +11,8 @@
 
       {# for templates: create from button #}
       {% if Entity.entityType.value == 'experiments_templates' %}
-      <a data-action='create-entity' data-type='experiments' data-tplid='{{ item.id }}' href='#' class='left-icon rounded mr-2 hl-hover-gray my-1' title='{{ 'Create experiment from template'|trans }}' aria-label='{{ 'Create experiment from template'|trans }}'>
-        <i class='color-blue fas fa-splotch fa-fw'></i>
+      <a data-action='create-entity' data-type='experiments' data-tplid='{{ item.id }}' href='#' class='left-icon rounded mr-3 my-1 hl-hover-gray bgnd-blue' title='{{ 'Create experiment from template'|trans }}' aria-label='{{ 'Create experiment from template'|trans }}'>
+        <i class='fas fa-file-circle-plus fa-fw'></i>
       </a>
       {% endif %}
       {# lock icon #}

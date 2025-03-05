@@ -14,11 +14,12 @@ namespace Elabftw\Params;
 
 use Elabftw\Enums\EntityType;
 use ValueError;
+use Override;
 
 /**
  * Parameters passed for ordering extra fields
  */
-class ExtraFieldsOrderingParams extends OrderingParams
+final class ExtraFieldsOrderingParams extends OrderingParams
 {
     public readonly int $id;
 
@@ -34,6 +35,7 @@ class ExtraFieldsOrderingParams extends OrderingParams
     /**
      * Nothing to clean up here
      */
+    #[Override]
     protected function cleanup(array $ordering): array
     {
         return $ordering;

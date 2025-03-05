@@ -7,17 +7,14 @@
   <h1 id='pageTitle' {%- if hideTitle %} hidden {%- endif %}>{{ pageTitle|default('eLabFTW') }}</h1>
 {%- endblock -%}
 
-
 {# INFO BOX (FLASH MESSAGES) #}
-{%- for ok in App.ok -%}
-  {{ ok|msg('ok') }}
+{# https://symfony.com/doc/current/session.html#flash-messages #}
+{%- for label, messages in App.Session.getFlashBag().all() -%}
+  {%- for message in messages %}
+    {{ message|msg(label) }}
+  {%- endfor -%}
 {%- endfor -%}
-{%- for ko in App.ko -%}
-  {{ ko|msg('ko') }}
-{%- endfor -%}
-{%- for warning in App.warning -%}
-  {{ warning|msg('warning') }}
-{%- endfor -%}
+
 {# ANNOUNCEMENTS #}
 {# general sysconfig announcement #}
 {%- if App.Config.configArr.announcement -%}

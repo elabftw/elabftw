@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services\AdvancedSearchQuery\Visitors;
 
-class VisitorParameters
+final class VisitorParameters
 {
     public function __construct(private string $entityType, private array $teamGroups) {}
 

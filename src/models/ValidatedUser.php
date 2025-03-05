@@ -14,17 +14,20 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\ImproperActionException;
+use Override;
 
 /**
  * A user that exists in the db, so we have a userid but not necessarily a team
  */
-class ValidatedUser extends ExistingUser
+final class ValidatedUser extends ExistingUser
 {
+    #[Override]
     public static function fromEmail(string $email): Users
     {
         return self::search('email', $email, true);
     }
 
+    #[Override]
     public static function fromOrgid(string $orgid): Users
     {
         return self::search('orgid', $orgid, true);

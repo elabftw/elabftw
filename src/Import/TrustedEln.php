@@ -23,7 +23,7 @@ use function sprintf;
 /**
  * Import a trusted .eln file: the Author will be respected, and users created
  */
-class TrustedEln extends Eln
+final class TrustedEln extends Eln
 {
     public bool $requesterIsAuthor = false;
 

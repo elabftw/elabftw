@@ -27,7 +27,7 @@ use PDO;
 /**
  * All about the steps
  */
-class Steps extends AbstractRest
+final class Steps extends AbstractRest
 {
     use SortableTrait;
     use SetIdTrait;
@@ -38,6 +38,7 @@ class Steps extends AbstractRest
         $this->setId($id);
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return sprintf('%s%d/steps/', $this->Entity->getApiPath(), $this->Entity->id ?? 0);

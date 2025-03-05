@@ -13,21 +13,25 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Models\StorageUnits;
+use Override;
 
 use function array_merge;
 
-class InventoryController extends AbstractHtmlController
+final class InventoryController extends AbstractHtmlController
 {
+    #[Override]
     protected function getTemplate(): string
     {
         return 'inventory.html';
     }
 
+    #[Override]
     protected function getPageTitle(): string
     {
         return _('Inventory');
     }
 
+    #[Override]
     protected function getData(): array
     {
         $StorageUnits = new StorageUnits($this->app->Users);

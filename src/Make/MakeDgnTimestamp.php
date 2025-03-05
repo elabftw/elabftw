@@ -16,12 +16,13 @@ use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
+use Override;
 
 /**
  * RFC3161 timestamping with DGN service
  * https://www.dgn.de/dgn-zeitstempeldienst/
  */
-class MakeDgnTimestamp extends AbstractMakeTrustedTimestamp
+final class MakeDgnTimestamp extends AbstractMakeTrustedTimestamp
 {
     protected const string TS_URL = 'https://zeitstempel.dgn.de/tss';
 
@@ -32,6 +33,7 @@ class MakeDgnTimestamp extends AbstractMakeTrustedTimestamp
      *
      * @return array<string,string>
      */
+    #[Override]
     public function getTimestampParameters(): array
     {
         $config = $this->configArr;

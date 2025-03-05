@@ -19,13 +19,15 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Override;
 
 /**
  * Command line tool to emulate a 2FA phone app. It returns a 2FA code calculated from the provided secret.
  */
 #[AsCommand(name: 'dev:2fa')]
-class MfaCode extends Command
+final class MfaCode extends Command
 {
+    #[Override]
     protected function configure(): void
     {
         $this
@@ -34,6 +36,7 @@ class MfaCode extends Command
             ->addArgument('secret', InputArgument::REQUIRED, 'The 2FA secret provided as text.');
     }
 
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // remove spaces from input so we don't have to do it manually

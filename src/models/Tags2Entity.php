@@ -16,7 +16,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Enums\EntityType;
 use PDO;
 
-class Tags2Entity
+final class Tags2Entity
 {
     private Db $Db;
 

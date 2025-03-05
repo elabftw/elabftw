@@ -44,6 +44,7 @@ use Elabftw\Services\UserCreator;
 use Elabftw\Services\UsersHelper;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
+use Override;
 
 use function trim;
 
@@ -275,6 +276,7 @@ class Users extends AbstractRest
     /**
      * This can be called from api and only contains "safe" values
      */
+    #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $Request = Request::createFromGlobals();
@@ -289,6 +291,7 @@ class Users extends AbstractRest
     /**
      * This can be called from api and only contains "safe" values
      */
+    #[Override]
     public function readOne(): array
     {
         $this->canReadOrExplode();
@@ -330,12 +333,14 @@ class Users extends AbstractRest
         return $req->rowCount() >= 1;
     }
 
+    #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
         $Creator = new UserCreator($this->requester, $reqBody);
         return $Creator->create();
     }
 
+    #[Override]
     public function patch(Action $action, array $params): array
     {
         $this->canWriteOrExplode($action);
@@ -362,7 +367,7 @@ class Users extends AbstractRest
                 }
             )(),
             Action::Disable2fa => $this->disable2fa(),
-            Action::PatchUser2Team => (new Users2Teams($this->requester))->PatchUser2Team($params),
+            Action::PatchUser2Team => (new Users2Teams($this->requester))->patchUser2Team($params),
             Action::Unreference => (new Users2Teams($this->requester))->destroy($this->userData['userid'], (int) $params['team']),
             Action::Lock, Action::Archive => (new UserArchiver($this->requester, $this))->toggleArchive((bool) ($params['with_exp'] ?? false)),
             Action::UpdatePassword => $this->updatePassword($params),
@@ -388,9 +393,14 @@ class Users extends AbstractRest
             Action::Validate => $this->validate(),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
-        return $this->readOne();
+        // if we remove a user from our team, then we cannot read it anymore, and it makes an error, so skip the readOne in that case
+        if ($action !== Action::Unreference) {
+            return $this->readOne();
+        }
+        return array();
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return 'api/v2/users/';
@@ -425,6 +435,7 @@ class Users extends AbstractRest
     /**
      * Destroy user. Will completely remove everything from the user.
      */
+    #[Override]
     public function destroy(): bool
     {
         $this->canWriteOrExplode();

@@ -15,11 +15,13 @@ namespace Elabftw\Controllers;
 use Elabftw\Elabftw\App;
 use Elabftw\Interfaces\ControllerInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Override;
 
 abstract class AbstractHtmlController implements ControllerInterface
 {
     public function __construct(protected App $app) {}
 
+    #[Override]
     public function getResponse(): Response
     {
         $Response = new Response();

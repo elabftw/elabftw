@@ -122,7 +122,7 @@ export class Metadata {
   /**
    * For radio we need a special build workflow
    */
-  buildRadio(name: string, properties: ExtraFieldProperties): Element { // eslint-disable-line
+  buildRadio(name: string, properties: ExtraFieldProperties): Element {
     // a div to hold the different elements so we can return a single Element
     const element = document.createElement('div');
     element.dataset.purpose = 'radio-holder';

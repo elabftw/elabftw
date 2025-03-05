@@ -29,7 +29,7 @@ use function time;
 /**
  * Methods to login the user (once the authentication is done)
  */
-class LoginHelper
+final class LoginHelper
 {
     private Db $Db;
 

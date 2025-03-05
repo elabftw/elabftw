@@ -18,11 +18,12 @@ use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
+use Override;
 
 /**
  * For experiments.php
  */
-class ExperimentsController extends AbstractEntityController
+final class ExperimentsController extends AbstractEntityController
 {
     public function __construct(App $app, Experiments | Templates $entity)
     {
@@ -35,6 +36,7 @@ class ExperimentsController extends AbstractEntityController
         $this->statusArr = $Status->readAll();
     }
 
+    #[Override]
     protected function getPageTitle(): string
     {
         if ($this->Entity instanceof Experiments) {

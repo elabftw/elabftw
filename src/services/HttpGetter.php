@@ -18,6 +18,7 @@ use GuzzleHttp\Exception\ConnectException;
 
 /**
  * HTTP wrapper
+ * @final mocked in tests
  */
 class HttpGetter
 {

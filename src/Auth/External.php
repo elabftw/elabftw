@@ -20,11 +20,12 @@ use Elabftw\Models\ExistingUser;
 use Elabftw\Models\ValidatedUser;
 use Elabftw\Services\UsersHelper;
 use Monolog\Logger;
+use Override;
 
 /**
  * Authenticate with server provided values
  */
-class External implements AuthInterface
+final class External implements AuthInterface
 {
     private AuthResponse $AuthResponse;
 
@@ -33,6 +34,7 @@ class External implements AuthInterface
         $this->AuthResponse = new AuthResponse();
     }
 
+    #[Override]
     public function tryAuth(): AuthResponse
     {
         $firstname = $this->serverParams[$this->configArr['extauth_firstname']] ?? '?';

@@ -21,8 +21,9 @@ use Elabftw\Interfaces\RestInterface;
 use Elabftw\Models\Config;
 use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
+use Override;
 
-class EventDeleted extends AbstractNotifications implements MailableInterface, RestInterface
+final class EventDeleted extends AbstractNotifications implements MailableInterface, RestInterface
 {
     protected const PREF = 'notif_event_deleted';
 
@@ -37,16 +38,19 @@ class EventDeleted extends AbstractNotifications implements MailableInterface, R
         parent::__construct();
     }
 
+    #[Override]
     public function readOne(): array
     {
         return array();
     }
 
+    #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         return array();
     }
 
+    #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
         if (!empty($reqBody['msg'])) {
@@ -61,23 +65,27 @@ class EventDeleted extends AbstractNotifications implements MailableInterface, R
         return count($userids);
     }
 
+    #[Override]
     public function patch(Action $action, array $params): array
     {
         return array();
 
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return 'api/v2/nah';
     }
 
+    #[Override]
     public function destroy(): bool
     {
         return false;
     }
 
     // Note: here the actor fullname is directly fed to the instance, instead of fetching it from a new Users() like others.
+    #[Override]
     public function getEmail(): array
     {
         $info = _('A booked slot was deleted from the scheduler.');
@@ -93,6 +101,7 @@ class EventDeleted extends AbstractNotifications implements MailableInterface, R
         );
     }
 
+    #[Override]
     protected function getBody(): array
     {
         return array(

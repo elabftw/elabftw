@@ -25,7 +25,7 @@ use PDO;
 /**
  * Signature keys CRUD class
  */
-class SigKeys extends AbstractRest
+final class SigKeys extends AbstractRest
 {
     use SetIdTrait;
 
@@ -67,6 +67,7 @@ class SigKeys extends AbstractRest
         return $this->readOne();
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return sprintf('api/v2/users/%d/sig_keys/%d', $this->Users->userData['userid'], $this->id ?? '');

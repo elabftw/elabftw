@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services\AdvancedSearchQuery\Collectors;
 
-class InvalidFieldCollector
+final class InvalidFieldCollector
 {
     public function __construct(private array $fieldErrors = array()) {}
 

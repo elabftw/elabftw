@@ -21,7 +21,7 @@ use League\Flysystem\Filesystem;
 /**
  * Get a thumbnail maker depending on the mime type
  */
-class MakeThumbnailFactory
+final class MakeThumbnailFactory
 {
     /**
      * Do some sane white-listing. In theory, gmagick handles almost all image formats,

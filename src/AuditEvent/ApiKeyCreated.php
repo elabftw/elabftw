@@ -13,14 +13,17 @@ declare(strict_types=1);
 namespace Elabftw\AuditEvent;
 
 use Elabftw\Enums\AuditCategory;
+use Override;
 
-class ApiKeyCreated extends AbstractAuditEvent
+final class ApiKeyCreated extends AbstractAuditEvent
 {
+    #[Override]
     public function getBody(): string
     {
         return 'An API key was created';
     }
 
+    #[Override]
     public function getCategory(): AuditCategory
     {
         return AuditCategory::ApiKeyCreated;

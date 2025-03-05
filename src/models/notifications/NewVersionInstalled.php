@@ -14,11 +14,13 @@ namespace Elabftw\Models\Notifications;
 
 use Elabftw\Enums\Notifications;
 use PDO;
+use Override;
 
-class NewVersionInstalled extends AbstractNotifications
+final class NewVersionInstalled extends AbstractNotifications
 {
     protected Notifications $category = Notifications::NewVersionInstalled;
 
+    #[Override]
     public function create(int $userid): int
     {
         $sql = 'INSERT INTO notifications(userid, category, send_email, body, is_ack) VALUES(:userid, :category, 0, "{}", 0)';

@@ -28,7 +28,7 @@ use function sprintf;
 /**
  * Twig filters
  */
-class TwigFilters
+final class TwigFilters
 {
     /**
      * For displaying messages using bootstrap alerts
@@ -110,6 +110,13 @@ class TwigFilters
                         '<a href="%1$s"%2$s>%1$s</a>',
                         Tools::eLabHtmlspecialchars($value),
                         $newTab,
+                    );
+                }
+                // type:email is another special case
+                elseif ($metadataType === 'email') {
+                    $value = sprintf(
+                        '<a href="mailto:%1$s">%1$s</a>',
+                        Tools::eLabHtmlspecialchars($value),
                     );
                 }
                 // type:exp/items is another special case

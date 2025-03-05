@@ -20,7 +20,7 @@ use function file_get_contents;
 /**
  * When the database schema is wrong.
  */
-class InvalidSchemaException extends Exception
+final class InvalidSchemaException extends Exception
 {
     /**
      * The message will always be the same here

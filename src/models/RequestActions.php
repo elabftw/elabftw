@@ -25,7 +25,7 @@ use PDO;
 /**
  * Request action for users
  */
-class RequestActions extends AbstractRest
+final class RequestActions extends AbstractRest
 {
     use SetIdTrait;
 
@@ -134,6 +134,7 @@ class RequestActions extends AbstractRest
         return $actionId;
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return sprintf('%s%d/request_actions/', $this->entity->getApiPath(), $this->entity->id ?? '');

@@ -30,7 +30,7 @@ use function json_encode;
  * Send data to Bloxberg server
  * elabid is submitted as the 'author' attribute
  */
-class MakeBloxberg extends AbstractMakeTimestamp
+final class MakeBloxberg extends AbstractMakeTimestamp
 {
     /**
      * This pubkey is currently the same for everyone

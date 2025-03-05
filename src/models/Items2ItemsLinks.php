@@ -12,11 +12,14 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Override;
+
 /**
  * All about Items Links in Items
  */
-class Items2ItemsLinks extends AbstractItemsLinks
+final class Items2ItemsLinks extends AbstractItemsLinks
 {
+    #[Override]
     protected function getTable(): string
     {
         return 'items2items';

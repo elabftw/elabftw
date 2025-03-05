@@ -26,7 +26,7 @@ use function json_decode;
 /**
  * Notifications for a user
  */
-class UserNotifications extends AbstractRest
+final class UserNotifications extends AbstractRest
 {
     use SetIdTrait;
 
@@ -94,6 +94,7 @@ class UserNotifications extends AbstractRest
         return $this->readOne();
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return sprintf('api/v2/users/%d/notifications/', $this->userid);

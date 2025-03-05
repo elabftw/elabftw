@@ -12,8 +12,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-class Compounds2ItemsLinks extends AbstractCompoundsLinks
+use Override;
+
+final class Compounds2ItemsLinks extends AbstractCompoundsLinks
 {
+    #[Override]
     protected function getTable(): string
     {
         return 'compounds2items';

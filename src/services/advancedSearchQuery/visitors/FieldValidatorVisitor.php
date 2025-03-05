@@ -28,28 +28,32 @@ use Elabftw\Services\AdvancedSearchQuery\Grammar\SimpleValueWrapper;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\TimestampField;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitable;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitor;
+use Override;
 
 use function sprintf;
 use function ucfirst;
 
 /** @psalm-suppress UnusedParam */
-class FieldValidatorVisitor implements Visitor
+final class FieldValidatorVisitor implements Visitor
 {
     public function check(Visitable $parsedQuery, VisitorParameters $parameters): array
     {
         return $parsedQuery->accept($this, $parameters)->getfieldErrors();
     }
 
+    #[Override]
     public function visitSimpleValueWrapper(SimpleValueWrapper $simpleValueWrapper, VisitorParameters $parameters): InvalidFieldCollector
     {
         return new InvalidFieldCollector();
     }
 
+    #[Override]
     public function visitMetadataField(MetadataField $metadataField, VisitorParameters $parameters): InvalidFieldCollector
     {
         return new InvalidFieldCollector();
     }
 
+    #[Override]
     public function visitDateField(DateField $dateField, VisitorParameters $parameters): InvalidFieldCollector
     {
         if ($dateField->getDateType() === 'range' && $dateField->getValue() > $dateField->getDateTo()) {
@@ -64,6 +68,7 @@ class FieldValidatorVisitor implements Visitor
         return new InvalidFieldCollector();
     }
 
+    #[Override]
     public function visitTimestampField(TimestampField $timestampField, VisitorParameters $parameters): InvalidFieldCollector
     {
         $messages = array();
@@ -103,6 +108,7 @@ class FieldValidatorVisitor implements Visitor
         return new InvalidFieldCollector($messages);
     }
 
+    #[Override]
     public function visitField(Field $field, VisitorParameters $parameters): InvalidFieldCollector
     {
         // only add the class methods that are actually used
@@ -119,6 +125,7 @@ class FieldValidatorVisitor implements Visitor
         return new InvalidFieldCollector();
     }
 
+    #[Override]
     public function visitNotExpression(NotExpression $notExpression, VisitorParameters $parameters): InvalidFieldCollector
     {
         $invalidFieldCollectorExpression = $notExpression->getExpression()->accept($this, $parameters);
@@ -126,21 +133,25 @@ class FieldValidatorVisitor implements Visitor
         return new InvalidFieldCollector($invalidFieldCollectorExpression->getfieldErrors());
     }
 
+    #[Override]
     public function visitAndExpression(AndExpression $andExpression, VisitorParameters $parameters): InvalidFieldCollector
     {
         return $this->visitExpression($andExpression, $parameters);
     }
 
+    #[Override]
     public function visitOrExpression(OrExpression $orExpression, VisitorParameters $parameters): InvalidFieldCollector
     {
         return $this->visitExpression($orExpression, $parameters);
     }
 
+    #[Override]
     public function visitOrOperand(OrOperand $orOperand, VisitorParameters $parameters): InvalidFieldCollector
     {
         return $this->visitOperand($orOperand, $parameters);
     }
 
+    #[Override]
     public function visitAndOperand(AndOperand $andOperand, VisitorParameters $parameters): InvalidFieldCollector
     {
         return $this->visitOperand($andOperand, $parameters);

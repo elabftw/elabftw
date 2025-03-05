@@ -33,6 +33,7 @@ abstract class AbstractCompoundsLinks extends AbstractRest
         $this->setId($id);
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return sprintf('%s%d/%s/', $this->Entity->getApiPath(), $this->Entity->id ?? '', $this->getTable());
@@ -72,6 +73,14 @@ abstract class AbstractCompoundsLinks extends AbstractRest
         $sql = 'DELETE FROM ' . $this->getTable() . ' WHERE compound_id = :compound_id AND entity_id = :entity_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':compound_id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
+        return $this->Db->execute($req);
+    }
+
+    public function destroyAll(): bool
+    {
+        $sql = 'DELETE FROM ' . $this->getTable() . ' WHERE entity_id = :entity_id';
+        $req = $this->Db->prepare($sql);
         $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }

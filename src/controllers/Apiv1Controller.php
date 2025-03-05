@@ -14,12 +14,14 @@ namespace Elabftw\Controllers;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Override;
 
 /**
  * For API v1 requests (removed)
  */
-class Apiv1Controller extends AbstractApiController
+final class Apiv1Controller extends AbstractApiController
 {
+    #[Override]
     public function getResponse(): Response
     {
         return new JsonResponse(array('result' => 'error', 'message' => 'API v1 has been removed. Use API v2.'), Response::HTTP_BAD_REQUEST);

@@ -21,6 +21,7 @@ use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Models\Config;
 use Elabftw\Services\TeamFinder;
 use Symfony\Component\HttpFoundation\Request;
+use Override;
 
 use function basename;
 use function in_array;
@@ -28,7 +29,7 @@ use function in_array;
 /**
  * Provide methods to authenticate a user
  */
-class Auth implements AuthInterface
+final class Auth implements AuthInterface
 {
     public function __construct(private Config $Config, private Request $Request) {}
 
@@ -41,6 +42,7 @@ class Auth implements AuthInterface
      *    \____\___|_|  |_.__/ \___|_|   \__,_|___/
      *
      */
+    #[Override]
     public function tryAuth(): AuthResponse
     {
         $AuthService = $this->getAuthService($this->getAuthType());
@@ -95,7 +97,6 @@ class Auth implements AuthInterface
                 $autoAnon = array(
                     Entrypoint::Experiments->toPage(),
                     Entrypoint::Database->toPage(),
-                    'search.php',
                 );
                 if (in_array(basename($this->Request->getScriptName()), $autoAnon, true)) {
                     return new Anon($this->Config->configArr, (int) ($this->Config->configArr['open_team'] ?? 1));

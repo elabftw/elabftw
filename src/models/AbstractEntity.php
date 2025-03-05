@@ -39,6 +39,7 @@ use Elabftw\Services\Filter;
 use Elabftw\Traits\EntityTrait;
 use PDO;
 use PDOStatement;
+use Override;
 
 use function array_column;
 use function array_merge;
@@ -97,11 +98,6 @@ abstract class AbstractEntity extends AbstractRest
     // inserted in sql
     private string $extendedFilter = '';
 
-    /**
-     * Constructor
-     *
-     * @param int|null $id the id of the entity
-     */
     public function __construct(public Users $Users, ?int $id = null, public ?bool $bypassReadPermission = false, public ?bool $bypassWritePermission = false)
     {
         parent::__construct();
@@ -140,13 +136,9 @@ abstract class AbstractEntity extends AbstractRest
         string $defaultTemplateMd = '',
     ): int;
 
-    /**
-     * Duplicate an item
-     *
-     * @return int the new item id
-     */
     abstract public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int;
 
+    #[Override]
     public function getApiPath(): string
     {
         return sprintf('api/v2/%s/', $this->entityType->value);
@@ -178,9 +170,6 @@ abstract class AbstractEntity extends AbstractRest
         return $this->toggleLock(0);
     }
 
-    /**
-     * Lock/unlock
-     */
     public function toggleLock(?int $targetLockState = null): array
     {
         $this->checkToggleLockPermissions();
@@ -291,8 +280,7 @@ abstract class AbstractEntity extends AbstractRest
 
     /**
      * Read the tags of the entity
-     *
-     * @param array<array-key, mixed> $items the results of all items from readShow()
+     * $items the results of all items from readShow()
      */
     public function getTags(array $items): array
     {
@@ -320,6 +308,7 @@ abstract class AbstractEntity extends AbstractRest
         return $allTags;
     }
 
+    #[Override]
     public function patch(Action $action, array $params): array
     {
         // a Review action doesn't do anything
@@ -429,9 +418,7 @@ abstract class AbstractEntity extends AbstractRest
         }
     }
 
-    /**
-     * Get timestamper full name for display in view mode
-     */
+    // Get timestamper full name for display in view mode
     public function getTimestamperFullname(): string
     {
         if ($this->entityData['timestamped'] === 0) {
@@ -479,9 +466,7 @@ abstract class AbstractEntity extends AbstractRest
         return array_column($req->fetchAll(), 'id');
     }
 
-    /**
-     * Get locker full name for display in view mode
-     */
+    // Get locker full name for display in view mode
     public function getLockerFullname(): string
     {
         if ($this->entityData['locked'] === 0) {
@@ -515,6 +500,7 @@ abstract class AbstractEntity extends AbstractRest
         return array_column($req->fetchAll(), 'id');
     }
 
+    #[Override]
     public function destroy(): bool
     {
         $this->canOrExplode('write');
@@ -545,9 +531,7 @@ abstract class AbstractEntity extends AbstractRest
         return $this->readOne();
     }
 
-    /**
-     * Update an entity. The revision is saved before so it can easily compare old and new body.
-     */
+    // Update an entity. The revision is saved before so it can easily compare old and new body.
     public function update(ContentParamsInterface $params): bool
     {
         $content = $params->getContent();
@@ -615,9 +599,6 @@ abstract class AbstractEntity extends AbstractRest
         }
     }
 
-    /**
-     * @return array<string, bool>
-     */
     protected function getPermissions(): array
     {
         if ($this->bypassWritePermission) {
@@ -655,9 +636,7 @@ abstract class AbstractEntity extends AbstractRest
         $this->extendedValues = array_merge($this->extendedValues, $extendedValues);
     }
 
-    /**
-     * Update only one field in the metadata json
-     */
+    // Update only one field in the metadata json
     private function updateJsonField(string $key, string|array|int $value): bool
     {
         $Changelog = new Changelog($this);

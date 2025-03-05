@@ -13,21 +13,25 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Models\ItemsTypes;
+use Override;
 
 use function array_merge;
 
-class CompoundsController extends AbstractHtmlController
+final class CompoundsController extends AbstractHtmlController
 {
+    #[Override]
     protected function getTemplate(): string
     {
         return 'compounds.html';
     }
 
+    #[Override]
     protected function getPageTitle(): string
     {
         return _('Compounds');
     }
 
+    #[Override]
     protected function getData(): array
     {
         return array_merge(

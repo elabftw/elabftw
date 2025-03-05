@@ -20,11 +20,12 @@ use League\Flysystem\AwsS3V3\AwsS3V3Adapter;
 use League\Flysystem\AwsS3V3\PortableVisibilityConverter;
 use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\Visibility;
+use Override;
 
 /**
  * Provide a League\Filesystem adapter for S3 buckets file uploads
  */
-class S3 extends AbstractStorage
+final class S3 extends AbstractStorage
 {
     private const string S3_VERSION = '2006-03-01';
 
@@ -33,6 +34,7 @@ class S3 extends AbstractStorage
 
     public function __construct(private Config $config, private CredentialsInterface $credentials) {}
 
+    #[Override]
     protected function getAdapter(): FilesystemAdapter
     {
         return new AwsS3V3Adapter(

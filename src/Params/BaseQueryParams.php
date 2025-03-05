@@ -19,6 +19,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Services\Check;
 use Symfony\Component\HttpFoundation\InputBag;
+use Override;
 
 /**
  * This class holds the values for limit, offset, order and sort
@@ -35,7 +36,6 @@ class BaseQueryParams implements QueryParamsInterface
     ) {
         if ($query !== null) {
             if ($query->has('limit')) {
-
                 $this->limit = Check::limit($query->getInt('limit'));
             }
             if ($query->has('offset') && Check::id($query->getInt('offset')) !== false) {
@@ -56,16 +56,19 @@ class BaseQueryParams implements QueryParamsInterface
         }
     }
 
+    #[Override]
     public function getQuery(): InputBag
     {
         return $this->query ?? new InputBag();
     }
 
+    #[Override]
     public function getLimit(): int
     {
         return $this->limit;
     }
 
+    #[Override]
     public function getSql(): string
     {
         return sprintf(

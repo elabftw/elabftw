@@ -12,11 +12,14 @@ declare(strict_types=1);
 
 namespace Elabftw\Models\Notifications;
 
+use Override;
+
 /**
  * For notifications that only appear in web and email is not sent
  */
 class WebOnlyNotifications extends AbstractNotifications
 {
+    #[Override]
     protected function getPref(int $userid): array
     {
         // not mailable

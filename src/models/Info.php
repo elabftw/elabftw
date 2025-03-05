@@ -22,8 +22,9 @@ use PDO;
 /**
  * Display information about the instance
  */
-class Info extends AbstractRest
+final class Info extends AbstractRest
 {
+    #[Override]
     public function getApiPath(): string
     {
         return 'api/v2/info/';

@@ -24,7 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
  * When a POST/PATCH request is made, the sent token (in 'csrf' field or as header for Ajax requests) is checked against
  * the stored one and an exception is thrown if they don't match, preventing the request to go through.
  */
-class Csrf
+final class Csrf
 {
     private string $token = '';
 

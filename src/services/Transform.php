@@ -21,7 +21,7 @@ use function sprintf;
 /**
  * When values need to be transformed before display
  */
-class Transform
+final class Transform
 {
     /**
      * Create a hidden input element for injecting CSRF token

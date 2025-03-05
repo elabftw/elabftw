@@ -16,9 +16,11 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Filter;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\State;
+use Override;
 
 final class UploadParams extends ContentParams
 {
+    #[Override]
     public function getContent(): mixed
     {
         return match ($this->target) {

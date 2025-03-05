@@ -22,7 +22,7 @@ use function sprintf;
 /**
  * Validate a password against instance configuration for length and complexity
  */
-class PasswordValidator
+final class PasswordValidator
 {
     public function __construct(private readonly int $minLength, private readonly PasswordComplexity $passwordComplexity) {}
 

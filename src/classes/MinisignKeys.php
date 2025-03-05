@@ -36,7 +36,7 @@ use const SODIUM_CRYPTO_PWHASH_SCRYPTSALSA208SHA256_MEMLIMIT_INTERACTIVE;
  * minisign by Frank Denis: https://jedisct1.github.io/minisign/#secret-key-format
  * Inspired by the code from https://github.com/soatok/minisign-php by Soatok Dreamseeker
  */
-readonly class MinisignKeys
+final readonly class MinisignKeys
 {
     // ed25519
     private const string SIGNATURE_ALGO = 'Ed';

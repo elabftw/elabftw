@@ -15,8 +15,11 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Config;
+use Elabftw\Models\Users;
 use Elabftw\Services\LoginHelper;
 use Exception;
+use League\Flysystem\Filesystem as Fs;
+use League\Flysystem\Local\LocalFilesystemAdapter;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
 use PDOException;
@@ -79,7 +82,14 @@ try {
     }
     // END CSRF
 
-    $App = new App($Request, $Session, $Config, $Logger);
+    // Show helpful screen if database schema needs update
+    // FIXME ok just leaving this here for now but the cache of Config is still buggy
+    $Config->bustCache();
+    $Update = new Update((int) $Config->configArr['schema'], new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__, 2) . '/src/sql'))));
+    // throws InvalidSchemaException if schema is incorrect
+    $Update->checkSchema();
+
+    $App = new App($Request, $Session, $Config, $Logger, new Users());
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-//
     //     ____          _                            //
     //    / ___|___ _ __| |__   ___ _ __ _   _ ___    //

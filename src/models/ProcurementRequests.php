@@ -27,7 +27,7 @@ use RuntimeException;
 /**
  * Procurement requests are purchase orders in a team
  */
-class ProcurementRequests extends AbstractRest
+final class ProcurementRequests extends AbstractRest
 {
     use SetIdTrait;
 
@@ -119,6 +119,7 @@ class ProcurementRequests extends AbstractRest
         return $this->readOne();
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return 'api/v2/teams/current/procurement_requests/';

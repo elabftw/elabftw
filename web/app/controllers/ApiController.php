@@ -14,13 +14,13 @@ namespace Elabftw\Elabftw;
 use Elabftw\Controllers\Apiv1Controller;
 use Elabftw\Controllers\Apiv2Controller;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\InvalidApiKeyException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\ActiveUser;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Users;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 use function dirname;
 
@@ -57,13 +57,11 @@ try {
     }
     $Controller->canWrite = $canWrite;
     $Controller->getResponse()->send();
-} catch (ImproperActionException $e) {
-    (new Response($e->getMessage(), 400))->send();
-} catch (UnauthorizedException $e) {
+} catch (ImproperActionException | InvalidApiKeyException | UnauthorizedException $e) {
     $error = array(
-        'code' => 401,
-        'message' => 'Unauthorized',
-        'description' => $e->getMessage(),
+        'code' => $e->getCode(),
+        'message' => $e->getMessage(),
+        'description' => $e->getDescription(),
     );
     (new JsonResponse($error, $error['code']))->send();
 }

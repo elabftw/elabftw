@@ -3,7 +3,7 @@
 /**
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nico-git@deltablot.email>
- * @copyright 2012 Nicolas CARPi
+ * @copyright 2025 Nicolas CARPi
  * @license   https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
  * @see       https://www.elabftw.net Official website
  */
@@ -12,20 +12,21 @@ declare(strict_types=1);
 
 namespace Elabftw\Exceptions;
 
-use Exception;
+use Override;
 
 /**
- * Base class for exceptions with customizable message
+ * Throw this if the api key is not good
  */
-class WithMessageException extends Exception
+final class InvalidApiKeyException extends UnauthorizedException
 {
-    public function __construct(string $message, int $code = 0, ?Exception $previous = null)
+    public function __construct()
     {
-        parent::__construct($message, $code, $previous);
+        parent::__construct('Unauthorized', 401);
     }
 
+    #[Override]
     public function getDescription(): string
     {
-        return $this->getMessage();
+        return _('No corresponding API key found!');
     }
 }

@@ -15,7 +15,7 @@ namespace Elabftw\Models;
 use Elabftw\AuditEvent\ApiKeyCreated;
 use Elabftw\AuditEvent\ApiKeyDeleted;
 use Elabftw\Enums\Action;
-use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\InvalidApiKeyException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SetIdTrait;
@@ -113,7 +113,7 @@ final class ApiKeys extends AbstractRest
                 return $key;
             }
         }
-        throw new ImproperActionException('No corresponding API key found!');
+        throw new InvalidApiKeyException();
     }
 
     #[Override]

@@ -39,6 +39,7 @@ const t = {
     "template-title": "Judul templat",
     "today": "Hari ini",
     "type-3-chars": "At least 3 characters are required to search",
+    "unarchive-and-add-to-team": "Unarchive and add to team {{team, string}}",
     "undefined-group": "Kelompok yang tidak terdefinisi",
     "upload-file-comment": "File komentar",
   },

@@ -39,6 +39,7 @@ const t = {
     "template-title": "Sjabloon titel",
     "today": "Vandaag",
     "type-3-chars": "At least 3 characters are required to search",
+    "unarchive-and-add-to-team": "Unarchive and add to team {{team, string}}",
     "undefined-group": "Ongedefinieerde groep",
     "upload-file-comment": "Bestandscommentaar",
   },

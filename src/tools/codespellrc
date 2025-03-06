@@ -1,5 +1,5 @@
 [codespell]
 skip = ./vendor,./uploads,./cache,.*.map,*.bundle.js,*.min.js,.git,*.pdf,*.svg,langs,*-langs,*.lock,*.yml.dist,package.json,*.scss,run.sh,*.br,./_srcdoc,./.phpdoc,./tests/_output,*.LICENSE.txt,./tests/_data
 # ssee is due to %sSee
-ignore-words-list = wantto,searchin,optionel,crate,ssee
+ignore-words-list = wantto,searchin,optionel,crate,ssee,alog
 ignore-regex = \bprojet financé\b

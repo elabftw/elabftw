@@ -50,7 +50,7 @@ final class CompoundsCsv extends AbstractCsv
                 casNumber: $row['cas'] ?? null,
                 inchi: $row['inchi'] ?? null,
                 inchiKey: $row['inchikey'] ?? null,
-                pubchemCid: $row['pubmedcid'] ?? null,
+                pubchemCid: empty($row['pubchemcid']) ? null : (int) $row['pubchemcid'],
                 molecularFormula: $row['molecularformula'] ?? null,
                 iupacName: $row['iupacname'] ?? null,
                 withFingerprint: Config::boolFromEnv('USE_FINGERPRINTER'),

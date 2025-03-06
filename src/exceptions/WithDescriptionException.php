@@ -3,7 +3,7 @@
 /**
  * @package   Elabftw\Elabftw
  * @author    Nicolas CARPi <nico-git@deltablot.email>
- * @copyright 2012 Nicolas CARPi
+ * @copyright 2025 Nicolas CARPi
  * @license   https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
  * @see       https://www.elabftw.net Official website
  */
@@ -13,22 +13,21 @@ declare(strict_types=1);
 namespace Elabftw\Exceptions;
 
 use Exception;
+use Override;
 
 /**
- * If user is not authorized to access this resource
+ * This exception contains a description and is suitable for errors sent in JSON, where we provide a description, for instance through API response
  */
-final class UnauthorizedException extends Exception
+final class WithDescriptionException extends WithMessageException
 {
-    public function __construct(?string $message = null, int $code = 403, ?Exception $previous = null)
+    public function __construct(string $message, private string $description, int $code, ?Exception $previous = null)
     {
-        if ($message === null) {
-            $message = _('Authentication required');
-        }
         parent::__construct($message, $code, $previous);
     }
 
+    #[Override]
     public function getDescription(): string
     {
-        return $this->getMessage();
+        return $this->description;
     }
 }

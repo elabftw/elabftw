@@ -13,9 +13,8 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Controllers\Apiv1Controller;
 use Elabftw\Controllers\Apiv2Controller;
-use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\InvalidApiKeyException;
 use Elabftw\Exceptions\UnauthorizedException;
+use Elabftw\Exceptions\WithMessageException;
 use Elabftw\Models\ActiveUser;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Users;
@@ -57,7 +56,7 @@ try {
     }
     $Controller->canWrite = $canWrite;
     $Controller->getResponse()->send();
-} catch (ImproperActionException | InvalidApiKeyException | UnauthorizedException $e) {
+} catch (WithMessageException | UnauthorizedException $e) {
     $error = array(
         'code' => $e->getCode(),
         'message' => $e->getMessage(),

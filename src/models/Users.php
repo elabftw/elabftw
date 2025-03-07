@@ -358,7 +358,7 @@ class Users extends AbstractRest
                         throw new IllegalActionException('A non sysadmin user tried to import a user but admins_import_users is disabled in config.');
                     }
                     // need to be admin to "import" a user in a team
-                    $team = (int) $params['team'];
+                    $team  = (int) ($params['team'] ?? $this->requester->userData['team']);
                     $TeamsHelper = new TeamsHelper($team);
                     $isAdmin = $TeamsHelper->isAdmin($this->requester->userData['userid']);
                     if ($isAdmin === false && $this->requester->userData['is_sysadmin'] !== 1) {

@@ -46,8 +46,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const btn = document.createElement('button');
             btn.classList.add('btn', 'btn-secondary', 'ml-3');
             btn.dataset.action = 'unarchive-and-add-to-team';
-            btn.dataset.team = values['team'];
             btn.dataset.userid = user.userid;
+            // on admin panel, team select is disabled, so collectForm doesn't pickup the value
+            if (typeof(values['team']) !== 'undefined') {
+              btn.dataset.team = values['team'];
+            }
             const teamSelect = document.getElementById('create-user-team') as HTMLSelectElement;
             const team = teamSelect.options[teamSelect.selectedIndex].text;
             btn.textContent = i18next.t('unarchive-and-add-to-team', { team: team });
@@ -89,9 +92,14 @@ document.addEventListener('DOMContentLoaded', () => {
         ApiC.post('users', {...user});
       });
 
+    // UNARCHIVE AND ADD TO TEAM
     } else if (el.matches('[data-action="unarchive-and-add-to-team"]')) {
       ApiC.patch(`${Model.User}/${el.dataset.userid}`, {action: Action.Lock}).then(() => {
-        ApiC.patch(`${Model.User}/${el.dataset.userid}`, {action: Action.Add, team: el.dataset.team}).then(() => {
+        const params = {action: Action.Add};
+        if (el.dataset.team) {
+          params['team'] = el.dataset.team;
+        }
+        ApiC.patch(`${Model.User}/${el.dataset.userid}`, params).then(() => {
           document.getElementById('archivedUsersFound').remove();
           reloadElements(['editUsersBox']);
         });

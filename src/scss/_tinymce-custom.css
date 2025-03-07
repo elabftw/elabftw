@@ -1,0 +1,10 @@
+/**
+ * @author Johannes Stigler <stigler@genzentrum.lmu.de>
+ * @license AGPL-3.0
+ */
+
+.image figure,
+figure {
+  display: block;
+  text-align: center;
+}

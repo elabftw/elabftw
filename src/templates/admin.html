@@ -130,7 +130,7 @@
     <div>
       {% if App.Config.configArr.debug -%}
       {# set no-unused-disable and text-content because removing or leaving text-content brings up error #}
-        <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element, no-unused-disable, element-permitted-content, require-sri: suppress errors from tinymce] -->
+        <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element, no-unused-disable, element-permitted-content: suppress errors from tinymce] -->
       {%- endif %}
       <textarea style='height:400px' class='mceditable' name='newcomer_banner' id='newcomer_banner'>
         {{ src.newcomer_banner|raw }}

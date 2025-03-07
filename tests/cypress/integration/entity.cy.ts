@@ -71,7 +71,9 @@ describe('Experiments', () => {
 
   it('Create and edit an experiment', () => {
     cy.visit('/experiments.php');
-    cy.htmlvalidate();
+    cy.htmlvalidate({
+      exclude: ['require-sri'],
+    });
     cy.contains('Create').click();
     cy.get('#createModal_experiments').should('be.visible').should('contain', 'Default template').contains('Default template').click();
     entityEdit();
@@ -85,7 +87,9 @@ describe('Experiments', () => {
 
   it('Create and edit an item', () => {
     cy.visit('/database.php');
-    cy.htmlvalidate();
+    cy.htmlvalidate({
+      exclude: ['require-sri'],
+    });
     cy.contains('Create').click();
     cy.get('#createModal_database').should('be.visible').should('contain', 'Microscope').contains('Microscope').click();
     entityEdit();

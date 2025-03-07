@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Compound;
+use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\AccessType;
@@ -20,6 +21,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\State;
+use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
@@ -242,7 +244,14 @@ final class Compounds extends AbstractRest
         $req->bindParam(':is_oxidising', $isOxidising, PDO::PARAM_INT);
         $req->bindParam(':is_toxic', $isToxic, PDO::PARAM_INT);
 
-        $this->Db->execute($req);
+        try {
+            $this->Db->execute($req);
+            // catch the duplicate constraint error to display a better error message
+        } catch (DatabaseErrorException $e) {
+            if ($e->getErrorCode() === Db::DUPLICATE_CONSTRAINT_ERROR) {
+                throw new ImproperActionException(sprintf('Cannot add the same compound twice! %s', $e->getErrorMessage()));
+            }
+        }
 
         $compoundId = $this->Db->lastInsertId();
 

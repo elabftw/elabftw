@@ -29,6 +29,7 @@ final class DatabaseErrorException extends Exception
         $this->sqlstate = $errorInfo[0];
         $this->errorCode = (int) $errorInfo[1];
         $this->errorMessage = $errorInfo[2];
+        parent::__construct($this->errorMessage, $this->errorCode);
     }
 
     public function getSqlstate(): string

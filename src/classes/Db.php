@@ -15,7 +15,6 @@ namespace Elabftw\Elabftw;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\Config;
-use Exception;
 use PDO;
 use PDOException;
 use PDOStatement;

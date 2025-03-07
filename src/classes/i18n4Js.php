@@ -74,6 +74,7 @@ final class i18n4Js
             'template-title' => _('Template title'),
             'today' => _('Today'),
             'type-3-chars' => _('At least 3 characters are required to search'),
+            'unarchive-and-add-to-team' => _('Unarchive and add to team {{team, string}}'),
             'undefined-group' => _('Undefined group'),
             'upload-file-comment' => _('File comment'),
         );

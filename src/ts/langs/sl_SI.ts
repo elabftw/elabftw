@@ -39,6 +39,7 @@ const t = {
     "template-title": "Template title",
     "today": "Today",
     "type-3-chars": "At least 3 characters are required to search",
+    "unarchive-and-add-to-team": "Unarchive and add to team {{team, string}}",
     "undefined-group": "Undefined group",
     "upload-file-comment": "Komentar datoteke",
   },

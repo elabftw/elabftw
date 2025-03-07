@@ -204,6 +204,7 @@ class Users extends AbstractRest
         int $teamId = 0,
         bool $includeArchived = false,
         bool $onlyAdmins = false,
+        bool $onlyArchived = false,
     ): array {
         $teamFilterSql = '';
         if ($teamId > 0) {
@@ -219,9 +220,12 @@ class Users extends AbstractRest
             $tmpTable = '';
         }
 
-        $archived = '';
+        $archived = 'users.archived = 0';
         if ($includeArchived) {
-            $archived = ' OR users.archived = 1';
+            $archived .= ' OR users.archived = 1';
+        }
+        if ($onlyArchived) {
+            $archived = 'users.archived = 1';
         }
 
         $admins = '';
@@ -244,7 +248,7 @@ class Users extends AbstractRest
             LEFT JOIN sig_keys ON (sig_keys.userid = users.userid AND state = :state)
             CROSS JOIN" . $tmpTable . ' users2teams ON (users2teams.users_id = users.userid' . $teamFilterSql . $admins . ')
             WHERE (users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query)
-            AND (users.archived = 0' . $archived . ')
+            AND (' . $archived . ')
             ORDER BY users2teams.teams_id ASC, users.lastname ASC';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':query', '%' . $query . '%');
@@ -281,10 +285,11 @@ class Users extends AbstractRest
     {
         $Request = Request::createFromGlobals();
         return $this->readFromQuery(
-            $Request->query->getAlnum('q'),
+            $Request->query->getString('q'),
             0,
             $Request->query->getBoolean('includeArchived'),
             $Request->query->getBoolean('onlyAdmins'),
+            $Request->query->getBoolean('onlyArchived'),
         );
     }
 
@@ -353,7 +358,7 @@ class Users extends AbstractRest
                         throw new IllegalActionException('A non sysadmin user tried to import a user but admins_import_users is disabled in config.');
                     }
                     // need to be admin to "import" a user in a team
-                    $team = (int) $params['team'];
+                    $team = (int) ($params['team'] ?? $this->requester->userData['team']);
                     $TeamsHelper = new TeamsHelper($team);
                     $isAdmin = $TeamsHelper->isAdmin($this->requester->userData['userid']);
                     if ($isAdmin === false && $this->requester->userData['is_sysadmin'] !== 1) {

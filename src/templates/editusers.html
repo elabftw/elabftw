@@ -259,7 +259,7 @@
 <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Add account'|trans }}</h3>
 <div class='pl-3'>
   <p class='smallgray'>{{ 'Note: new user will need to use the "Forgot password" button on the login page to set a password.'|trans }}</p>
-  <form class='form-group'>
+  <form class='form-group' id='createUserForm'>
     <div class='row mb-2'>
       {# TEAM #}
       <div class='col-md-6'>
@@ -307,9 +307,17 @@
 
     {# SUBMIT #}
     <div class='col-md-12 text-center mt-2'>
-      <button type='submit' data-action='create-user' class='btn btn-primary'>{{ 'Create'|trans }}</button>
+      <button type='submit' data-action='create-user' data-check-archived='1' class='btn btn-primary'>{{ 'Create'|trans }}</button>
     </div>
   </form>
+  <div hidden class='box mb-3' id='archivedUsersFound'>
+    <i class='fas fa-warning mr-1'></i><h5 class='d-inline'>{{ 'Found archived users with same email address:'|trans }}</h5>
+    <ul id='archivedUsersFoundList' class='list-group mt-2'>
+    </ul>
+    <div class='text-center mt-2'>
+      <button type='submit' data-action='create-user' data-check-archived='0' class='btn btn-primary'>{{ 'Create a new account anyway'|trans }}</button>
+    </div>
+  </div>
 </div>
 {% endif %}
 

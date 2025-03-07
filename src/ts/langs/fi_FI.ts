@@ -39,6 +39,7 @@ const t = {
     "template-title": "Malliotsikko",
     "today": "Tänään",
     "type-3-chars": "At least 3 characters are required to search",
+    "unarchive-and-add-to-team": "Unarchive and add to team {{team, string}}",
     "undefined-group": "Määrittelemätön ryhmä",
     "upload-file-comment": "Tiedoston kommentti",
   },

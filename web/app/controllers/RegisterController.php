@@ -66,13 +66,13 @@ try {
     }
     // store the email here so we can put it in the login field
     $App->Session->set('email', $App->Request->request->getString('email'));
-} catch (ImproperActionException $e) {
-    // show message to user
-    $App->Session->getFlashBag()->add('ko', $e->getMessage());
-    $location = '/register.php';
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e->getMessage())));
     $App->Session->getFlashBag()->add('ko', Tools::error(true));
+    $location = '/register.php';
+} catch (ImproperActionException $e) {
+    // show message to user
+    $App->Session->getFlashBag()->add('ko', $e->getMessage());
     $location = '/register.php';
 } catch (Exception $e) {
     // log error and show general error message

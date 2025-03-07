@@ -15,4 +15,4 @@ namespace Elabftw\Exceptions;
 /**
  * For errors that are suspicious (request has been edited for instance)
  */
-final class IllegalActionException extends WithMessageException {}
+final class IllegalActionException extends ImproperActionException {}

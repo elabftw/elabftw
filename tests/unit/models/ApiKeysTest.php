@@ -13,7 +13,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\WithDescriptionException;
+use Elabftw\Exceptions\WithMessageException;
 
 class ApiKeysTest extends \PHPUnit\Framework\TestCase
 {
@@ -64,7 +64,7 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
 
     public function testInvalidKey(): void
     {
-        $this->expectException(WithDescriptionException::class);
+        $this->expectException(WithMessageException::class);
         $this->ApiKeys->readFromApiKey('666-unknown key');
     }
 
@@ -86,7 +86,7 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
         $ApiKeys->createKnown('in team 3');
         $Users2Teams->rmUserFromTeams($tataId, array(3,4));
         // Ensure apikey is removed as well
-        $this->expectException(WithDescriptionException::class);
+        $this->expectException(WithMessageException::class);
         $ApiKeys->readFromApiKey('in team 3');
     }
 }

@@ -12,8 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Exceptions\FilesystemErrorException;
+use Exception;
 use League\Flysystem\Filesystem;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 
@@ -30,6 +29,6 @@ try {
     $UploadsCleaner = new UploadsCleaner(new Filesystem(new LocalFilesystemAdapter($uploadsDir)));
     $deleted = $UploadsCleaner->cleanup();
     printf("Deleted %d files\n", $deleted);
-} catch (FilesystemErrorException | DatabaseErrorException $e) {
+} catch (Exception $e) {
     echo $e->getMessage();
 }

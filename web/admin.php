@@ -14,7 +14,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Factories\LinksFactory;
@@ -143,7 +142,7 @@ try {
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
     $renderArr['error'] = Tools::error(true);
-} catch (DatabaseErrorException | FilesystemErrorException | ImproperActionException $e) {
+} catch (DatabaseErrorException | ImproperActionException $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
     $renderArr['error'] = $e->getMessage();
 } catch (Exception $e) {

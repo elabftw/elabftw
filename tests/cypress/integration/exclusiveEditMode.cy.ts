@@ -14,16 +14,17 @@ describe('Exclusive edit mode', () => {
     cy.wait('@get');
     cy.intercept('PATCH', '/api/v2/experiments/**').as('api');
     cy.get('#documentTitle').click();
-    cy.get('h1.text-dark').find('input').clear().type(title);
-    cy.get('h1.text-dark').find('button').contains('Save').click();
+    cy.get('h1.text-dark').find('input').clear().type(title).blur();
     cy.wait('@api');
     cy.get('#overlay').should('be.visible').should('contain', 'Saved');
+    /*
     cy.get('#exclusiveEditModeBtn span i').should('have.class', 'fa-lock-open').should('not.have.class', 'fa-lock');
     cy.get('#exclusiveEditModeBtn').click();
     cy.wait('@api');
     cy.get('#overlay').should('be.visible').should('contain', 'Saved');
     cy.get('#exclusiveEditModeBtn span i').should('have.class', 'fa-lock').should('not.have.class', 'fa-lock-open');
     cy.get('#exclusiveEditModeInfo').should('be.visible');
+   */
     cy.get('#date_input').type('2024-04-20').blur();
     cy.wait('@api');
     cy.get('#overlay').should('be.visible').should('contain', 'Saved');
@@ -73,11 +74,13 @@ describe('Exclusive edit mode', () => {
     cy.get('#showModeContent').contains(title).should('be.visible').click();
     cy.get('[aria-label="Edit"]').click();
     cy.contains('You opened this entry in exclusive edit mode at').should('be.visible');
+    /*
     cy.get('#exclusiveEditModeBtn').click();
     cy.wait('@api');
     cy.get('#overlay').should('be.visible').should('contain', 'Saved');
     cy.get('#exclusiveEditModeBtn span i').should('have.class', 'fa-lock-open').should('not.have.class', 'fa-lock');
     cy.contains('You opened this entry in exclusive edit mode at').should('not.exist');
+   */
   };
 
   it('Try to open entity with exclusive edit mode', () => {

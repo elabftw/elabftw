@@ -18,8 +18,32 @@ use Exception;
  */
 final class DatabaseErrorException extends Exception
 {
-    public function __construct(?Exception $previous = null)
+    private readonly string $sqlstate;
+
+    private readonly int $errorCode;
+
+    private readonly string $errorMessage;
+
+    public function __construct(array $errorInfo)
     {
-        parent::__construct(_('Something went wrong! Try refreshing the page.'), 515, $previous);
+        $this->sqlstate = $errorInfo[0];
+        $this->errorCode = (int) $errorInfo[1];
+        $this->errorMessage = $errorInfo[2];
+        parent::__construct($this->errorMessage, $this->errorCode);
+    }
+
+    public function getSqlstate(): string
+    {
+        return $this->sqlstate;
+    }
+
+    public function getErrorCode(): int
+    {
+        return $this->errorCode;
+    }
+
+    public function getErrorMessage(): string
+    {
+        return $this->errorMessage;
     }
 }

@@ -24,6 +24,8 @@ use PDOStatement;
  */
 final class Db
 {
+    public const int DUPLICATE_CONSTRAINT_ERROR = 1062;
+
     private PDO $connection;
 
     // store the single instance of the class
@@ -104,10 +106,10 @@ final class Db
         try {
             $res = $req->execute();
         } catch (PDOException $e) {
-            throw new DatabaseErrorException($e);
+            throw new DatabaseErrorException($e->errorInfo ?? array('OOPS', 42, 'where error?'));
         }
         if (!$res) {
-            throw new DatabaseErrorException();
+            throw new DatabaseErrorException(array('OOPS', 42, 'Something went wrong :/'));
         }
         return $res;
     }
@@ -134,7 +136,7 @@ final class Db
     {
         $res = $this->connection->query($sql);
         if ($res === false) {
-            throw new DatabaseErrorException();
+            throw new DatabaseErrorException(array('OOPS', 42, 'Something went wrong :/'));
         }
 
         return $res;

@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DateTimeImmutable;
+use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\TemplatesSqlBuilder;
@@ -563,8 +564,7 @@ abstract class AbstractEntity extends AbstractRest
         try {
             return $this->Db->execute($req);
         } catch (DatabaseErrorException $e) {
-            $PdoException = $e->getPrevious();
-            if ($params->getColumn() === 'custom_id' && $PdoException !== null && $PdoException->getCode() === '23000') {
+            if ($params->getColumn() === 'custom_id' && $e->getErrorCode() === Db::DUPLICATE_CONSTRAINT_ERROR) {
                 throw new ImproperActionException(_('Custom ID is already used! Try another one.'));
             }
             throw $e;

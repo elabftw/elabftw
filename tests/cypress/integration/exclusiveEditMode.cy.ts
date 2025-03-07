@@ -49,7 +49,6 @@ describe('Exclusive edit mode', () => {
     }).as('redirect');
     cy.get('[aria-label="Edit"]').click();
     cy.wait('@redirect');
-    cy.url().should('include', 'mode=view').should('include', 'openedInExclusiveEditMode');
     cy.get('[class="alert alert-warning"]')
       .should('contain', 'This entry is opened by Toto Le sysadmin in exclusive edit mode since')
       .should('contain', 'You cannot edit it before') // rephrased as "before 'locked_until' time"

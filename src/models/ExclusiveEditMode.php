@@ -93,7 +93,7 @@ final class ExclusiveEditMode
         ) {
             /** @psalm-suppress PossiblyNullArgument */
             return new RedirectResponse(sprintf(
-                '%s%sid=%d&openedInExclusiveEditMode',
+                '%s%sid=%d',
                 $this->Entity->entityType->toPage(),
                 $this->Entity->entityType === EntityType::Templates
                     ? '&mode=view&template'

@@ -29,7 +29,7 @@
 {# Exclusive edit mode notification #}
 <div id='exclusiveEditModeInfo'>
 {% if Entity.ExclusiveEditMode.isActive %}
-  {% if App.Request.query.has('openedInExclusiveEditMode') and Entity.ExclusiveEditMode.dataArr.locked_by != Entity.Users.userData.userid %}
+  {% if Entity.ExclusiveEditMode.dataArr.locked_by != Entity.Users.userData.userid %}
     {% set writeLockNotice = 'This entry is opened by %s in exclusive edit mode since %s. You cannot edit it before %s. %sRequest exclusive edit mode removal%s'|trans|format(
         Entity.ExclusiveEditMode.dataArr.fullname,
         Entity.ExclusiveEditMode.dataArr.locked_at,

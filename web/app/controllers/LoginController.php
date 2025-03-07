@@ -13,7 +13,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Controllers\LoginController;
 use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
@@ -41,13 +40,13 @@ try {
     $AuthFail = new AuthFail($loginTries, $e->getCode(), $App->Request->cookies->getAlnum('devicetoken'));
     $AuthFail->register();
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
-} catch (ImproperActionException | InvalidDeviceTokenException $e) {
-    // show message to user
-    $App->Session->getFlashBag()->add('ko', $e->getMessage());
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('ip' => $App->Request->server->get('REMOTE_ADDR')), array('IllegalAction' => $e)));
     $App->Session->getFlashBag()->add('ko', Tools::error(true));
-} catch (DatabaseErrorException | FilesystemErrorException $e) {
+} catch (ImproperActionException | InvalidDeviceTokenException $e) {
+    // show message to user
+    $App->Session->getFlashBag()->add('ko', $e->getMessage());
+} catch (DatabaseErrorException $e) {
     $App->Log->error('', array(array('ip' => $App->Request->server->get('REMOTE_ADDR')), array('Error' => $e)));
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
 } catch (Exception $e) {

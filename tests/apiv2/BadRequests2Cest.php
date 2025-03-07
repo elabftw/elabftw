@@ -19,7 +19,7 @@ class BadRequests2Cest
         $I->wantTo('Send a request with a wrong key');
         $I->haveHttpHeader('Authorization', 'wrong_key');
         $I->sendGET('/experiments/1');
-        $I->seeResponseCodeIs(HttpCode::BAD_REQUEST); // 400
+        $I->seeResponseCodeIs(HttpCode::UNAUTHORIZED); // 401
     }
 
     public function badMethodTest(Apiv2Tester $I)

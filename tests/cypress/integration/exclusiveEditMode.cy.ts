@@ -45,7 +45,7 @@ describe('Exclusive edit mode', () => {
     cy.url().should('include', 'mode=view');
     cy.intercept('experiments.php?mode=edit&id=*', req => {
       req.on('response', resp => {
-        expect(resp.statusCode).to.equal(200);
+        expect(resp.statusCode).to.equal(303);
       });
     }).as('redirect');
     cy.get('[aria-label="Edit"]').click();

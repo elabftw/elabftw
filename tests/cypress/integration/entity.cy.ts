@@ -29,7 +29,11 @@ describe('Experiments', () => {
     cy.get('.stepbox').click();
     cy.get('.text-muted').should('contain', 'completed');
 
-    cy.htmlvalidate();
+    cy.htmlvalidate({
+      rules: {
+        'prefer-native-element': 'off',
+      },
+    });
 
     // delete step
     cy.get('[data-action="destroy-step"]').click();
@@ -44,7 +48,11 @@ describe('Experiments', () => {
     cy.get('#commentsDiv').contains('Toto Le sysadmin commented').should('be.visible');
     cy.get('[data-action="destroy-comment"]').click();
     cy.get('#commentsDiv').contains('Toto Le sysadmin commented').should('not.exist');
-    cy.htmlvalidate();
+    cy.htmlvalidate({
+      rules: {
+        'prefer-native-element': 'off',
+      },
+    });
     // go back in edit mode for destroy action
     cy.get('[title="Edit"]').click();
   };
@@ -72,7 +80,9 @@ describe('Experiments', () => {
   it('Create and edit an experiment', () => {
     cy.visit('/experiments.php');
     cy.htmlvalidate({
-      exclude: ['require-sri'],
+      rules: {
+        'prefer-native-element': 'off',
+      },
     });
     cy.contains('Create').click();
     cy.get('#createModal_experiments').should('be.visible').should('contain', 'Default template').contains('Default template').click();
@@ -88,7 +98,9 @@ describe('Experiments', () => {
   it('Create and edit an item', () => {
     cy.visit('/database.php');
     cy.htmlvalidate({
-      exclude: ['require-sri'],
+      rules: {
+        'prefer-native-element': 'off',
+      },
     });
     cy.contains('Create').click();
     cy.get('#createModal_database').should('be.visible').should('contain', 'Microscope').contains('Microscope').click();

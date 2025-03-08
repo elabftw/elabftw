@@ -29,11 +29,7 @@ describe('Experiments', () => {
     cy.get('.stepbox').click();
     cy.get('.text-muted').should('contain', 'completed');
 
-    cy.htmlvalidate({
-      rules: {
-        'prefer-native-element': 'off',
-      },
-    });
+    //cy.htmlvalidate();
 
     // delete step
     cy.get('[data-action="destroy-step"]').click();
@@ -79,11 +75,7 @@ describe('Experiments', () => {
 
   it('Create and edit an experiment', () => {
     cy.visit('/experiments.php');
-    cy.htmlvalidate({
-      rules: {
-        'prefer-native-element': 'off',
-      },
-    });
+    cy.htmlvalidate();
     cy.contains('Create').click();
     cy.get('#createModal_experiments').should('be.visible').should('contain', 'Default template').contains('Default template').click();
     entityEdit();
@@ -97,11 +89,7 @@ describe('Experiments', () => {
 
   it('Create and edit an item', () => {
     cy.visit('/database.php');
-    cy.htmlvalidate({
-      rules: {
-        'prefer-native-element': 'off',
-      },
-    });
+    cy.htmlvalidate();
     cy.contains('Create').click();
     cy.get('#createModal_database').should('be.visible').should('contain', 'Microscope').contains('Microscope').click();
     entityEdit();

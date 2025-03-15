@@ -18,7 +18,7 @@ use Override;
 /**
  * A user that is not archived
  */
-final class ActiveUser extends Users
+final class ActiveUser extends AuthenticatedUser
 {
     #[Override]
     protected function readOneFull(): array

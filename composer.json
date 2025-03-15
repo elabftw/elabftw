@@ -104,7 +104,8 @@
         "src/Make"
       ],
       "Elabftw\\Models\\": [
-        "src/models"
+        "src/models",
+        "src/models/users"
       ],
       "Elabftw\\Models\\Notifications\\": [
         "src/models/notifications"

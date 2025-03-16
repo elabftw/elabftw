@@ -47,7 +47,7 @@ final class EntitySlugsSqlBuilder
             $req->bindParam(':userid', $this->targetUser->userid, PDO::PARAM_INT);
         }
         if (str_contains($sql, ':team')) {
-            $req->bindValue(':team', $this->targetUser->team);
+            $req->bindParam(':team', $this->targetUser->team, PDO::PARAM_INT);
         }
         $req->bindValue(':start', $this->start->format('Y-m-d'));
         $req->bindValue(':end', $this->end->format('Y-m-d'));

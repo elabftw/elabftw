@@ -223,8 +223,8 @@ final class Compounds extends AbstractRest
             :is_corrosive, :is_serious_health_hazard, :is_explosive, :is_flammable, :is_gas_under_pressure, :is_hazardous2env, :is_hazardous2health, :is_oxidising, :is_toxic)';
 
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':requester', $this->requester->userid);
-        $req->bindParam(':team', $this->requester->team);
+        $req->bindParam(':requester', $this->requester->userid, PDO::PARAM_INT);
+        $req->bindParam(':team', $this->requester->team, PDO::PARAM_INT);
         $req->bindParam(':name', $name);
         $req->bindParam(':inchi', $inchi);
         $req->bindParam(':inchi_key', $inchiKey);

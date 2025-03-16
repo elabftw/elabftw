@@ -165,12 +165,14 @@
           {# METADATA SEARCH END #}
 
       {# GROUPS filter: disabled because not working FIXME #}
+      {#
       <!--select name='group' class='mx-1 form-control filterHelper filterAuto' aria-label='{{ 'Filter group'|trans }}'>
         <option value='' data-action='clear'>{{ 'Select group'|trans }}</option>
         {% for group in scopedTeamgroupsArr %}
           <option value='{{ group.name|e('html_attr') }}' {{- Request.query.get('searchonly') == 'group:' ~ group ? ' selected' }}>{{ group.name }}</option>
         {% endfor %}
       </select-->
+      #}
 
       {# VISIBILITY filter #}
       <select name='visibility' class='mx-1 form-control filterHelper filterAuto' aria-label='{{ 'Filter visibility'|trans }}'>

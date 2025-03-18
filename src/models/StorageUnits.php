@@ -130,7 +130,11 @@ final class StorageUnits extends AbstractRest
         $sql = $this->getRecursiveSql(
             (int) $this->requester->userData['userid'],
             (int) $this->requester->userData['team'],
-            '(entity.title LIKE :query OR sh.full_path LIKE :query)',
+            '(entity.title LIKE :query OR
+            compounds.cas_number LIKE :query OR
+            compounds.name LIKE :query OR
+            compounds.iupac_name LIKE :query OR
+            sh.full_path LIKE :query)',
         ) . sprintf(
             ' ORDER BY storage_id, entity_title LIMIT %d',
             $queryParams->getLimit(),

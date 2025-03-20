@@ -81,9 +81,9 @@ abstract class AbstractLinks implements RestInterface
                 LEFT JOIN users
                     ON (users.userid = entity.userid)
                 LEFT JOIN users2teams
-                    ON (users2teams.users_id = users.userid)
-                WHERE users2teams.teams_id = :team_id
-                    AND %4$s.item_id = :id
+                    ON (users2teams.users_id = users.userid
+                        AND users2teams.teams_id = :team_id)
+                WHERE %4$s.item_id = :id
                     AND entity.state IN (:state_normal, :state_archived)
                 %7$s
                 ORDER by categoryt.title ASC, entity.date ASC, entity.title ASC',
@@ -141,9 +141,9 @@ abstract class AbstractLinks implements RestInterface
                 LEFT JOIN users
                     ON (users.userid = entity.userid)
                 LEFT JOIN users2teams
-                    ON (users2teams.users_id = users.userid)
-                WHERE users2teams.teams_id = :team_id
-                    AND entity_links.link_id = :id
+                    ON (users2teams.users_id = users.userid
+                        AND users2teams.teams_id = :team_id)
+                WHERE entity_links.link_id = :id
                     AND entity.state IN (:state_normal, :state_archived)
                     %7$s
                 ORDER by categoryt.title ASC, entity.title ASC',

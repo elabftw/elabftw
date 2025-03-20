@@ -14,7 +14,7 @@
           <h5><label for='containerQtyStoredInput'>{{ 'Adjust container capacity and unit'|trans }}</label></h5>
           <div class='input-group mb-2'>
             {# set default value to 1 instead of 0 as we probably want to add at least one thing #}
-            <input type='number' value='1' min='1' id='containerQtyStoredInput' autocomplete='off' class='form-control' />
+            <input type='number' value='1' min='0' step='any' id='containerQtyStoredInput' autocomplete='off' class='form-control' />
             <div class='input-group-append'>
               <select class='custom-select brl-none brr-none' id='containerQtyUnitSelect' aria-label='{{ 'Quantity unit'|trans }}'>
                 <option value='•'>•</option>

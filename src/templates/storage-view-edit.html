@@ -1,4 +1,5 @@
-{# STORAGE #}
+{# STORAGE : only show for concrete entries #}
+{% if Entity.entityType.value == 'experiments' or Entity.entityType.value == 'items' %}
 {% include 'add-container-modal.html' %}
 <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='storageDivContent'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Containers'|trans }} (<span id='containersCount'>{{ Entity.entityData.containers|length }}</span>)</h3>
 <div class='row mt-2' id='storageDivContent' data-save-hidden='storageDivContent' data-count-for='containersCount'>
@@ -29,3 +30,4 @@
   </div>
 </div>
 <hr>
+{% endif %}

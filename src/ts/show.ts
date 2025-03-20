@@ -471,6 +471,10 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('withSelected')?.classList.add('d-none');
       }
 
+    // RESTORE ENTITY
+    } else if (el.matches('[data-action="restore-entity"]')) {
+      ApiC.patch(`${el.dataset.endpoint}/${el.dataset.id}`, {state: 1}).then(() => reloadEntitiesShow());
+
     // EXPAND ALL
     } else if (el.matches('[data-action="expand-all-entities"]')) {
       event.preventDefault();

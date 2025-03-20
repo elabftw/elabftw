@@ -611,10 +611,6 @@ abstract class AbstractEntity extends AbstractRest
         if (empty($this->entityData)) {
             $this->readOne();
         }
-        // if it has the deleted state, don't show it.
-        if ($this->entityData['state'] === State::Deleted->value) {
-            return array('read' => false, 'write' => false);
-        }
 
         return (new Permissions($this->Users, $this->entityData))->forEntity();
     }

@@ -26,4 +26,13 @@ enum Scope: int
             Scope::Everything => 'globe',
         };
     }
+
+    public static function toHuman(self $value): string
+    {
+        return match ($value) {
+            Scope::User => 'Self',
+            Scope::Team => 'Team',
+            Scope::Everything => 'Everything',
+        };
+    }
 }

@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Traits\SetIdTrait;
@@ -48,9 +49,11 @@ abstract class AbstractCompoundsLinks extends AbstractRest
         $sql = 'SELECT compound_id AS id, compounds.*
             FROM ' . $this->getTable() . ' AS main
             LEFT JOIN compounds ON compounds.id = main.compound_id
-            WHERE main.entity_id = :entity_id AND compounds.state IN (1,2)';
+            WHERE main.entity_id = :entity_id AND compounds.state IN (:state_normal, :state_archived)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindValue(':state_normal', State::Normal->value, PDO::PARAM_INT);
+        $req->bindValue(':state_archived', State::Archived->value, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $req->fetchAll();

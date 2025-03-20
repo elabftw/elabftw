@@ -360,6 +360,11 @@ final class StorageUnits extends AbstractRest
                     c2i.qty_unit,
                     c2i.created_at,
                     c2i.modified_at,
+                    u.firstname,
+                    u.lastname,
+                    CONCAT(u.firstname, ' ', u.lastname) AS fullname,
+                    teams.name AS team_name,
+                    teams.id AS team_id,
                     sh.storage_id AS storage_id,
                     sh.storage_name,
                     sh.full_path,
@@ -393,6 +398,10 @@ final class StorageUnits extends AbstractRest
                     compounds ON compounds2items.compound_id = compounds.id
                 LEFT JOIN
                     users2teams ON (users2teams.users_id = %d AND users2teams.teams_id = %d)
+                LEFT JOIN
+                    teams ON (entity.userid = teams.id)
+                LEFT JOIN
+                    users AS u ON (u.userid = entity.userid)
                 WHERE
                     -- can sql AND query or storage_id
                     1=1 %s AND %s
@@ -406,6 +415,11 @@ final class StorageUnits extends AbstractRest
                     c2e.qty_unit,
                     c2e.created_at,
                     c2e.modified_at,
+                    u.firstname,
+                    u.lastname,
+                    CONCAT(u.firstname, ' ', u.lastname) AS fullname,
+                    teams.name AS team_name,
+                    teams.id AS team_id,
                     sh.storage_id AS storage_id,
                     sh.storage_name,
                     sh.full_path,
@@ -439,6 +453,10 @@ final class StorageUnits extends AbstractRest
                     compounds ON compounds2experiments.compound_id = compounds.id
                 LEFT JOIN
                     users2teams ON (users2teams.users_id = %d AND users2teams.teams_id = %d)
+                LEFT JOIN
+                    teams ON (entity.team = teams.id)
+                LEFT JOIN
+                    users AS u ON (u.userid = entity.userid)
                 WHERE
                     -- can sql AND query or storage_id
                     1=1 %s AND %s",

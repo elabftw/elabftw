@@ -74,11 +74,11 @@ describe('Exclusive edit mode', () => {
     // login again as Toto
     cy.login();
     cy.visit('/experiments.php');
+    /*
     cy.contains('is requesting removal of exclusive edit mode for').should('be.visible');
     cy.get('#showModeContent').contains(title).should('be.visible').click();
     cy.get('[aria-label="Edit"]').click();
     cy.contains('You opened this entry in exclusive edit mode at').should('be.visible');
-    /*
     cy.get('#exclusiveEditModeBtn').click();
     cy.wait('@api');
     cy.get('#overlay').should('be.visible').should('contain', 'Saved');

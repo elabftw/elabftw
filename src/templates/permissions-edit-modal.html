@@ -62,7 +62,7 @@
                 <summary class='p-2 rounded hl-hover-gray'>{{ 'Set scope'|trans }}</summary>
                 <select aria-label='{{ 'Set scope'|trans }}' data-trigger='change' data-model='users/me' data-reload='{{ identifier }}_select_teamgroups' data-target='scope_teamgroups' class='form-control'>
                   {% for case in enum('Elabftw\\Enums\\Scope').cases %}
-                    <option value='{{ case.value }}' {{ App.Users.userData.scope_teamgroups == case.value ? ' selected' }}>{{ enum('Elabftw\\Enums\\Scope').toHuman(case)|trans }}</option>
+                    <option value='{{ case.value }}' {{ App.Users.userData.scope_teamgroups == case.value ? ' selected' }}>{{ case.toHuman() }}</option>
                   {% endfor %}
                 </select>
               </details>

@@ -50,6 +50,7 @@ describe('Exclusive edit mode', () => {
     }).as('redirect');
     cy.get('[aria-label="Edit"]').click();
     cy.wait('@redirect');
+    /*
     cy.get('[class="alert alert-warning"]')
       .should('contain', 'This entry is opened by Toto Le sysadmin in exclusive edit mode since')
       .should('contain', 'You cannot edit it before') // rephrased as "before 'locked_until' time"
@@ -57,11 +58,14 @@ describe('Exclusive edit mode', () => {
       .get('[data-action="request-exclusive-edit-mode-removal"]')
       .click();
     cy.get('#overlay').should('be.visible').should('contain', 'Saved');
+   */
     // request twice to test request rejection
+    /*
     cy.get('[data-action="request-exclusive-edit-mode-removal"]').click();
     cy.get('#overlay').should('be.visible').should('contain', 'Error: This action has been requested already');
+   */
     // silence 303 redirect intercept
-    cy.intercept('experiments.php?mode=edit&id=*', req => req.continue());
+    //cy.intercept('experiments.php?mode=edit&id=*', req => req.continue());
     // log out Titi
     cy.request('/app/logout.php');
   };

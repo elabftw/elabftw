@@ -93,7 +93,7 @@ final class Idps extends AbstractRest
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = 'SELECT idps.*, idps_sources.url AS source_url
-            FROM idps LEFT JOIN idps_sources ON idps.source = idps_sources.id ORDER BY name';
+            FROM idps LEFT JOIN idps_sources ON idps.source = idps_sources.id ORDER BY name ASC';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
 
@@ -118,7 +118,7 @@ final class Idps extends AbstractRest
     public function readAllLight(): array
     {
         $sql = 'SELECT idps.id, idps.name, idps.entityid, idps.enabled, idps_sources.url AS source_url
-            FROM idps LEFT JOIN idps_sources ON idps.source = idps_sources.id ORDER BY name';
+            FROM idps LEFT JOIN idps_sources ON idps.source = idps_sources.id ORDER BY enabled DESC, name ASC';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
 

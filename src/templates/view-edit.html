@@ -12,7 +12,7 @@
 {% include('procurement-params-modal.html') %}
 
 <div id='isArchivedDiv'>
-{% if Entity.entityData.state == constant('Elabftw\\Enums\\State::Archived').value %}
+{% if Entity.entityData.state == enum('Elabftw\\Enums\\State').Archived.value %}
   {{ 'This entry is archived: it will not appear in the listings by default.'|trans|msg('ok', false) }}
 {% endif %}
 </div>

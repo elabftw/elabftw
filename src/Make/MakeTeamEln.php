@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
+use Elabftw\Enums\State;
 use Elabftw\Models\UltraAdmin;
 use PDO;
 use ZipStream\ZipStream;
@@ -55,15 +56,36 @@ final class MakeTeamEln extends AbstractMakeEln
             $resourcesCategoriesAnd .= sprintf(' AND category IN (%s)', implode(',', $this->resourcesCategories));
         }
         // we don't grab the deleted ones
-        $sql = sprintf('SELECT CONCAT("experiments:", experiments.id) AS slug FROM experiments WHERE experiments.team = :teamid AND state IN (1, 2) %1$s
-            UNION All
-            SELECT CONCAT("items:", items.id) AS slug FROM items WHERE items.team = :teamid AND state IN (1, 2) %2$s
-            UNION All
-            SELECT CONCAT("experiments_templates:", experiments_templates.id) AS slug FROM experiments_templates WHERE experiments_templates.team = :teamid AND state IN (1, 2) %1$s
-            UNION All
-            SELECT CONCAT("items_types:", items_types.id) AS slug FROM items_types WHERE items_types.team = :teamid AND state IN (1, 2)', $usersAnd, $resourcesCategoriesAnd);
+        $sql = sprintf(
+            'SELECT CONCAT("experiments:", experiments.id) AS slug
+                FROM experiments
+                WHERE experiments.team = :teamid
+                    AND state IN (:state_normal, :state_archived)
+                    %1$s
+                UNION All
+                SELECT CONCAT("items:", items.id) AS slug
+                FROM items
+                WHERE items.team = :teamid
+                    AND state IN (:state_normal, :state_archived)
+                    %2$s
+                UNION All
+                SELECT CONCAT("experiments_templates:", experiments_templates.id) AS slug
+                FROM experiments_templates
+                WHERE experiments_templates.team = :teamid
+                    AND state IN (:state_normal, :state_archived)
+                    %1$s
+                UNION All
+                SELECT CONCAT("items_types:", items_types.id) AS slug
+                FROM items_types
+                WHERE items_types.team = :teamid
+                    AND state IN (:state_normal, :state_archived)',
+            $usersAnd,
+            $resourcesCategoriesAnd,
+        );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':teamid', $this->teamId, PDO::PARAM_INT);
+        $req->bindValue(':state_normal', State::Normal->value, PDO::PARAM_INT);
+        $req->bindValue(':state_archived', State::Archived->value, PDO::PARAM_INT);
         $this->Db->execute($req);
         return array_column($req->fetchAll(), 'slug');
     }

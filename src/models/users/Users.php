@@ -632,9 +632,7 @@ class Users extends AbstractRest
     private function canReadOrExplode(): void
     {
         // it's ourself or we are sysadmin
-
-        // FIXME To investigate: $this->requester->userid is a string here!!!
-        if ($this->requester->userData['userid'] === $this->userid || $this->requester->userData['is_sysadmin'] === 1) {
+        if ($this->requester->userid === $this->userid || $this->requester->userData['is_sysadmin'] === 1) {
             return;
         }
         if (!$this->requester->isAdmin && $this->userid !== $this->userData['userid']) {

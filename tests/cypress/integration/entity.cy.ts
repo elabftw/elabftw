@@ -44,11 +44,13 @@ describe('Experiments', () => {
     cy.get('#commentsDiv').contains('Toto Le sysadmin commented').should('be.visible');
     cy.get('[data-action="destroy-comment"]').click();
     cy.get('#commentsDiv').contains('Toto Le sysadmin commented').should('not.exist');
-    cy.htmlvalidate({
-      rules: {
-        'prefer-native-element': 'off',
-      },
-    });
+    cy.htmlvalidate(
+      // {
+      //   rules: {
+      //     'prefer-native-element': 'off',
+      //   },
+      // },
+    );
     // go back in edit mode for destroy action
     cy.get('[title="Edit"]').click();
   };

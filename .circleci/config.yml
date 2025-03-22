@@ -123,7 +123,7 @@ jobs:
           name: Run Cypress e2e tests and extract artifacts
           # have to save cypress exit code to first extract artifacts
           command: |
-            docker exec -it elab-cypress cypress run
+            docker exec -it elab-cypress cypress run --headed --browser electron
             cypressExitCode=$?
             docker cp elab-cypress:/home/node/tests/cypress/screenshots/. cypress/screenshots
             docker cp elab-cypress:/home/node/tests/cypress/videos/. cypress/videos

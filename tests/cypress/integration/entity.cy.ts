@@ -4,6 +4,7 @@ describe('Experiments', () => {
     cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
   });
 
+  /*
   const entityEdit = () => {
     cy.url().should('include', 'mode=edit');
     // update date
@@ -64,6 +65,7 @@ describe('Experiments', () => {
       cy.visit(url);
     });
   };
+ */
 
   const entityDestroy = () => {
     cy.get('button[title="More options"]').click().get('button[data-action="destroy"]').click();

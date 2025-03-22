@@ -13,6 +13,7 @@ describe('Items Types', () => {
       });
     }).as('create');
     cy.intercept('DELETE', '/api/v2/items_types/*').as('delete');
+    cy.intercept('GET', '/api/v2/items_types/*').as('apiGET');
     cy.window().then(win => {
       // create
       cy.stub(win, 'prompt').returns(newname);
@@ -20,14 +21,16 @@ describe('Items Types', () => {
       cy.wait('@create').then(() => {
         cy.url().should('include', 'templateid=');
         cy.get('#itemsTypesName').should('have.value', newname);
+        cy.wait('@apiGET');
+        cy.wait('@apiGET');
       });
 
       // delete
       cy.stub(win, 'confirm').returns(true);
       cy.get('[data-action="itemstypes-destroy"]').click();
       cy.wait('@delete').then(() => {
-        cy.contains(newname).should('not.exist');
         cy.url().should('not.include', 'templateid=');
+        cy.get('#itemsCategoriesDiv').scrollIntoView().contains(newname).should('not.exist');
       });
     });
   });

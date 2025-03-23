@@ -165,12 +165,14 @@
           {# METADATA SEARCH END #}
 
       {# GROUPS filter: disabled because not working FIXME #}
+      {#
       <!--select name='group' class='mx-1 form-control filterHelper filterAuto' aria-label='{{ 'Filter group'|trans }}'>
         <option value='' data-action='clear'>{{ 'Select group'|trans }}</option>
         {% for group in scopedTeamgroupsArr %}
           <option value='{{ group.name|e('html_attr') }}' {{- Request.query.get('searchonly') == 'group:' ~ group ? ' selected' }}>{{ group.name }}</option>
         {% endfor %}
       </select-->
+      #}
 
       {# VISIBILITY filter #}
       <select name='visibility' class='mx-1 form-control filterHelper filterAuto' aria-label='{{ 'Filter visibility'|trans }}'>
@@ -187,11 +189,16 @@
         {# STATE #}
         <select name='state' aria-label='{{ 'State'|trans }}' class='form-control filterAuto'>
           <option value='' data-action='clear'>{{ 'Select state'|trans }}</option>
-          <option value='1' {{- Request.query.get('state') == '1' ? ' selected' }}>{{ 'Normal'|trans }}</option>
-          <option value='2' {{- Request.query.get('state') == '2' ? ' selected' }}>{{ 'Archived'|trans }}</option>
-          <option value='3' {{- Request.query.get('state') == '3' ? ' selected' }}>{{ 'Deleted'|trans }}</option>
-          <option value='1,2' {{- Request.query.get('state') == '1,2' ? ' selected' }}>{{ 'Normal or Archived'|trans }}</option>
-          <option value='1,2,3' {{- Request.query.get('state') == '1,2,3' ? ' selected' }}>{{ 'Any'|trans }}</option>
+          {% set stateValue = enum('Elabftw\\Enums\\State').Normal.value %}
+          <option value='{{ stateValue }}' {{- Request.query.get('state') == stateValue ? ' selected' }}>{{ 'Normal'|trans }}</option>
+          {% set stateValue = enum('Elabftw\\Enums\\State').Archived.value %}
+          <option value='{{ stateValue }}' {{- Request.query.get('state') == stateValue ? ' selected' }}>{{ 'Archived'|trans }}</option>
+          {% set stateValue = enum('Elabftw\\Enums\\State').Deleted.value %}
+          <option value='{{ stateValue }}' {{- Request.query.get('state') == stateValue ? ' selected' }}>{{ 'Deleted'|trans }}</option>
+          {% set stateValue = enum('Elabftw\\Enums\\State').Normal.value ~ ',' ~ enum('Elabftw\\Enums\\State').Archived.value %}
+          <option value='{{ stateValue }}' {{- Request.query.get('state') == stateValue ? ' selected' }}>{{ 'Normal or Archived'|trans }}</option>
+          {% set stateValue = enum('Elabftw\\Enums\\State').Normal.value ~ ',' ~ enum('Elabftw\\Enums\\State').Archived.value ~ ',' ~ enum('Elabftw\\Enums\\State').Deleted.value %}
+          <option value='{{ stateValue }}' {{- Request.query.get('state') == stateValue ? ' selected' }}>{{ 'Any'|trans }}</option>
         </select>
         {# END STATE #}
 

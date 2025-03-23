@@ -126,8 +126,7 @@ final class CanSqlBuilder
      */
     protected function canTeams(): string
     {
-        // FIXME why is userid a string here sometimes??
-        $UsersHelper = new UsersHelper((int) $this->requester->userid);
+        $UsersHelper = new UsersHelper($this->requester->userid ?? 0);
         $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
         if (!empty($teamsOfUser)) {
             // JSON_OVERLAPS checks for the intersection of two arrays

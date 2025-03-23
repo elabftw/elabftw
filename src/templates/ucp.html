@@ -296,10 +296,9 @@
         <p class='smallgray'>{{ 'This setting controls which teamgroups will be listed in the permission settings window.'|trans }}</p>
       </div>
       <select id='scope_teamgroups' data-trigger='change' data-model='users/me' data-target='scope_teamgroups' class='form-control col-md-3'>
-        {# NOTE: it is currently not practical to use enums in twig. So we hardcode the value for now. FIXME. See: https://github.com/twigphp/Twig/issues/3681 #}
-        <option value='1' {{ App.Users.userData.scope_teamgroups == 1 ? ' selected' }}>{{ 'Self'|trans }}</option>
-        <option value='2' {{ App.Users.userData.scope_teamgroups == 2 ? ' selected' }}>{{ 'Team'|trans }}</option>
-        <option value='3' {{ App.Users.userData.scope_teamgroups == 3 ? ' selected' }}>{{ 'Everything'|trans }}</option>
+        {% for case in enum('Elabftw\\Enums\\Scope').cases %}
+          <option value='{{ case.value }}' {{ App.Users.userData.scope_teamgroups == case.value ? ' selected' }}>{{ case.toHuman() }}</option>
+        {% endfor %}
       </select>
     </div>
   </div>

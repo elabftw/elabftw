@@ -21,7 +21,7 @@
       <i class='fas fa-lock fa-fw' style='color:#29AEB9'></i>
     {% endif %}
     {# archived icon #}
-    {% if item.state == constant('Elabftw\\Enums\\State::Archived').value %}
+    {% if item.state == enum('Elabftw\\Enums\\State').Archived.value %}
       <i class='fas fa-box-archive fa-fw'></i>
     {% endif %}
     {# toggle body #}

@@ -75,7 +75,7 @@
                 <button type='button' class='btn lh-normal hl-hover-gray p-1 mr-1' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-toggle-target='moreinfoDiv_{{ upload.id }}' aria-expanded='false' title='{{ 'More information'|trans }}' aria-label='{{ 'More information'|trans }}'>
                   <i class='fas fa-caret-right fa-fw'></i>
                 </button>
-                {% if upload.state == constant('Elabftw\\Enums\\State::Archived').value %}
+                {% if upload.state == enum('Elabftw\\Enums\\State').Archived.value %}
                   {# use a span as title doesn't work directly on i element #}
                   <span title='{{ 'Archived'|trans }}'><i class='fas fa-box-archive mr-1'></i></span>
                 {% endif %}
@@ -135,9 +135,9 @@
           {% if loop.first %}
             <div id='last-uploaded-link' data-url='app/download.php?f={{ upload.long_name }}' hidden></div>
           {% endif %}
-          <div class='thumbnail box {{ upload.state == constant('Elabftw\\Enums\\State::Archived').value ? 'bg-light' }}' data-type='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}' style='overflow: visible'>
+          <div class='thumbnail box {{ upload.state == enum('Elabftw\\Enums\\State').Archived.value ? 'bg-light' }}' data-type='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}' style='overflow: visible'>
             {% include('upload-dropdown-menu.html') %}
-            {% if upload.state == constant('Elabftw\\Enums\\State::Archived').value %}
+            {% if upload.state == enum('Elabftw\\Enums\\State').Archived.value %}
             <p class='mb-0'><i class='fas fa-fw fa-box-archive mr-1'></i>{{ 'Archived'|trans }}</p>
             {% endif %}
 

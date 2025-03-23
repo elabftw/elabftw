@@ -65,11 +65,11 @@ describe('Experiments', () => {
       cy.visit(url);
     });
   };
- */
 
   const entityDestroy = () => {
     cy.get('button[title="More options"]').click().get('button[data-action="destroy"]').click();
   };
+ */
 
   it('Create and edit an experiment', () => {
     cy.visit('/experiments.php');

@@ -14,7 +14,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Controllers\DashboardController;
 use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Exception;
@@ -31,16 +30,16 @@ try {
     $Controller = new DashboardController($App);
     $Response = $Controller->getResponse();
 
-} catch (ImproperActionException $e) {
-    // show message to user
-    $renderArr = array('error' => $e->getMessage());
-    $Response->setContent($App->render($template, $renderArr));
 } catch (IllegalActionException $e) {
     // log notice and show message
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
     $renderArr = array('error' => Tools::error(true));
     $Response->setContent($App->render($template, $renderArr));
-} catch (DatabaseErrorException | FilesystemErrorException $e) {
+} catch (ImproperActionException $e) {
+    // show message to user
+    $renderArr = array('error' => $e->getMessage());
+    $Response->setContent($App->render($template, $renderArr));
+} catch (DatabaseErrorException $e) {
     // log error and show message
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
     $renderArr = array('error' => $e->getMessage());

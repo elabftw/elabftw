@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Compound;
+use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\AccessType;
@@ -20,6 +21,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\State;
+use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
@@ -66,7 +68,7 @@ final class Compounds extends AbstractRest
             $q = $queryParams->getQuery();
             return $this->searchFingerprint($this->getFingerprintFromSmiles($q->getString('search_fp_smi')), $q->getBoolean('exact'));
         }
-        $sql = $this->getSelectBeforeWhere() . ' WHERE 1=1 AND entity.state IN (1,2)';
+        $sql = $this->getSelectBeforeWhere() . ' WHERE 1=1 AND entity.state IN (:state_normal, :state_archived)';
         if ($queryParams->getQuery()->get('q')) {
             $sql .= ' AND (
                 entity.cas_number LIKE :query OR
@@ -106,6 +108,8 @@ final class Compounds extends AbstractRest
         if ($queryParams->getQuery()->get('q')) {
             $req->bindValue(':query', '%' . $queryParams->getQuery()->getString('q') . '%');
         }
+        $req->bindValue(':state_normal', State::Normal->value, PDO::PARAM_INT);
+        $req->bindValue(':state_archived', State::Archived->value, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $req->fetchAll();
@@ -221,8 +225,8 @@ final class Compounds extends AbstractRest
             :is_corrosive, :is_serious_health_hazard, :is_explosive, :is_flammable, :is_gas_under_pressure, :is_hazardous2env, :is_hazardous2health, :is_oxidising, :is_toxic)';
 
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':requester', $this->requester->userid);
-        $req->bindParam(':team', $this->requester->team);
+        $req->bindParam(':requester', $this->requester->userid, PDO::PARAM_INT);
+        $req->bindParam(':team', $this->requester->team, PDO::PARAM_INT);
         $req->bindParam(':name', $name);
         $req->bindParam(':inchi', $inchi);
         $req->bindParam(':inchi_key', $inchiKey);
@@ -242,7 +246,14 @@ final class Compounds extends AbstractRest
         $req->bindParam(':is_oxidising', $isOxidising, PDO::PARAM_INT);
         $req->bindParam(':is_toxic', $isToxic, PDO::PARAM_INT);
 
-        $this->Db->execute($req);
+        try {
+            $this->Db->execute($req);
+            // catch the duplicate constraint error to display a better error message
+        } catch (DatabaseErrorException $e) {
+            if ($e->getErrorCode() === Db::DUPLICATE_CONSTRAINT_ERROR) {
+                throw new ImproperActionException(sprintf('Cannot add the same compound twice! %s', $e->getErrorMessage()));
+            }
+        }
 
         $compoundId = $this->Db->lastInsertId();
 
@@ -319,7 +330,7 @@ final class Compounds extends AbstractRest
 
         $sql .= 'FROM compounds_fingerprints AS cf
             LEFT JOIN compounds AS c ON cf.id = c.id';
-        $sql .= ' WHERE 1=1 AND c.state IN (1,2)';
+        $sql .= ' WHERE 1=1 AND c.state IN (:state_normal, :state_archived)';
         foreach ($fp['data'] as $key => $value) {
             if ($value == 0) {
                 continue;
@@ -334,6 +345,8 @@ final class Compounds extends AbstractRest
 
         $sql .= ' ORDER BY similarity_score, id DESC LIMIT 500';
         $req = $this->Db->prepare($sql);
+        $req->bindValue(':state_normal', State::Normal->value, PDO::PARAM_INT);
+        $req->bindValue(':state_archived', State::Archived->value, PDO::PARAM_INT);
         $req->execute();
         return $req->fetchAll();
     }

@@ -19,8 +19,13 @@ use Exception;
  */
 class WithMessageException extends Exception
 {
-    public function __construct(string $message, int $code = 0, ?Exception $previous = null)
+    public function __construct(string $message, int $code, ?Exception $previous = null, private ?string $description = null)
     {
         parent::__construct($message, $code, $previous);
+    }
+
+    public function getDescription(): string
+    {
+        return $this->description ?? $this->getMessage();
     }
 }

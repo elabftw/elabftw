@@ -15,4 +15,4 @@ namespace Elabftw\Models;
 /**
  * An authenticated user
  */
-final class AuthenticatedUser extends ExistingUser {}
+class AuthenticatedUser extends ExistingUser {}

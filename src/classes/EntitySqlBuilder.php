@@ -328,8 +328,14 @@ class EntitySqlBuilder
      */
     protected function canTeams(string $can): string
     {
-        $UsersHelper = new UsersHelper($this->entity->Users->userData['userid']);
-        $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
+        // ultra admin has userid=null during cli eln export so we use the team id
+        $teamsOfUser = array($this->entity->Users->userData['team']);
+
+        if ($this->entity->Users->userData['userid'] !== null) {
+            $UsersHelper = new UsersHelper($this->entity->Users->userData['userid']);
+            $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
+        }
+
         if (!empty($teamsOfUser)) {
             // JSON_OVERLAPS checks for the intersection of two arrays
             // for instance [4,5,6] vs [2,6] has 6 in common -> 1 (true)

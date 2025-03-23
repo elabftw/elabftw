@@ -44,6 +44,7 @@ $text-muted: $medium;
 @import 'ove';
 @import 'search-syntax-highlighting';
 @import 'tom-select';
+@import 'tinymce-custom';
 
 /* Font is Lato */
 @font-face {
@@ -641,14 +642,19 @@ tr:nth-child(odd) {
 
 /* ENTITIES */
 .entity {
+  min-width: 100%;
+  max-width: 100%;
   background-color: $white;
   border: 1px solid $firstlevel;
   border-left: 6px solid var(--left-color);
   border-radius: 5px;
   margin: 5px auto;
-  min-width: 100%;
   opacity: var(--opacity);
   padding: 5px 10px 5px 5px;
+
+  img {
+    max-width: 100%;
+  }
 
   p {
     margin-bottom: 0;

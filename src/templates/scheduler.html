@@ -106,7 +106,8 @@
               {% endfor %}
               <div class='mt-2'>
                 <button type='button' data-action='cancel-event-with-message' data-dismiss='modal' data-id='' class='btn btn-danger cancelEventBtn'>{{ 'Send message and cancel'|trans }}</button>
-                <button type='button' data-action='cancel-event' data-dismiss='modal' data-id='' class='btn btn-danger cancelEventBtn'>{{ 'Cancel'|trans }}</button>
+                {# here we use Cancel booking instead of just Cancel so we can have a specific translated term in German #}
+                <button type='button' data-action='cancel-event' data-dismiss='modal' data-id='' class='btn btn-danger cancelEventBtn'>{{ 'Cancel booking'|trans }}</button>
             </div>
           </div>
         {% endif %}

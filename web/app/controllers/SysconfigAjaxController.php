@@ -13,7 +13,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\EmailTarget;
 use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
@@ -86,18 +85,18 @@ try {
         $Db = Db::getConnection();
         $Db->q('DELETE FROM lockout_devices');
     }
-} catch (ImproperActionException | UnauthorizedException $e) {
-    $Response->setData(array(
-        'res' => false,
-        'msg' => $e->getMessage(),
-    ));
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
     $Response->setData(array(
         'res' => false,
         'msg' => Tools::error(true),
     ));
-} catch (DatabaseErrorException | FilesystemErrorException $e) {
+} catch (ImproperActionException | UnauthorizedException $e) {
+    $Response->setData(array(
+        'res' => false,
+        'msg' => $e->getMessage(),
+    ));
+} catch (DatabaseErrorException $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
     $Response->setData(array(
         'res' => false,

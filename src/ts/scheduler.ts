@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
     headerToolbar: {
       left: 'prev,next today',
       center: 'title',
-      right: 'timeGridWeek,listWeek,dayGridMonth',
+      right: 'timeGridDay,timeGridWeek,listWeek,dayGridMonth',
     },
     themeSystem: 'bootstrap',
     // i18n

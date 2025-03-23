@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DateTimeImmutable;
+use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\TemplatesSqlBuilder;
@@ -154,7 +155,7 @@ abstract class AbstractEntity extends AbstractRest
         $sql = sprintf('UPDATE %s SET modified_at = NOW(), lastchangeby = :userid WHERE id = :id', $this->entityType->value);
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Users->requester->userid);
+        $req->bindParam(':userid', $this->Users->requester->userid, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 
@@ -563,8 +564,7 @@ abstract class AbstractEntity extends AbstractRest
         try {
             return $this->Db->execute($req);
         } catch (DatabaseErrorException $e) {
-            $PdoException = $e->getPrevious();
-            if ($params->getColumn() === 'custom_id' && $PdoException !== null && $PdoException->getCode() === '23000') {
+            if ($params->getColumn() === 'custom_id' && $e->getErrorCode() === Db::DUPLICATE_CONSTRAINT_ERROR) {
                 throw new ImproperActionException(_('Custom ID is already used! Try another one.'));
             }
             throw $e;
@@ -610,10 +610,6 @@ abstract class AbstractEntity extends AbstractRest
         // make sure entityData is filled
         if (empty($this->entityData)) {
             $this->readOne();
-        }
-        // if it has the deleted state, don't show it.
-        if ($this->entityData['state'] === State::Deleted->value) {
-            return array('read' => false, 'write' => false);
         }
 
         return (new Permissions($this->Users, $this->entityData))->forEntity();

@@ -77,7 +77,7 @@ final class Sql
                         $lineCount++;
                         continue;
                     }
-                    throw new DatabaseErrorException($e);
+                    throw new DatabaseErrorException($e->errorInfo ?? array('OOPS', 42, 'where error?'));
                 }
                 // Reset temp variable to empty
                 $queryline = '';

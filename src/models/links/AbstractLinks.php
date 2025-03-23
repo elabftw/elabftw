@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Metadata as MetadataEnum;
@@ -51,33 +52,7 @@ abstract class AbstractLinks extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        // main category table
-        $sql = 'SELECT entity.id AS entityid,
-            entity.title,
-            entity.custom_id,
-            entity.elabid,
-            "' . $this->getTargetType()->toPage() . '" AS page,
-            "' . $this->getTargetType()->value . '" AS type,
-            categoryt.title AS category_title,
-            categoryt.color AS category_color,
-            statust.title AS status_title,
-            statust.color AS status_color,
-            ' . ($this instanceof AbstractItemsLinks ? 'entity.is_bookable,' : '') . '
-            entity.state AS link_state
-            FROM ' . $this->getTable() . '
-            LEFT JOIN ' . $this->getTargetType()->value . ' AS entity ON (' . $this->getTable() . '.link_id = entity.id)
-            LEFT JOIN ' . $this->getCatTable() . ' AS categoryt ON (entity.category = categoryt.id)
-            LEFT JOIN ' . $this->getStatusTable() . ' AS statust ON (entity.status = statust.id)
-            WHERE ' . $this->getTable() . '.item_id = :id AND (entity.state = :state OR entity.state = :statearchived)
-            ORDER by categoryt.title ASC, entity.date ASC, entity.title ASC';
-
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
-        $req->bindValue(':statearchived', State::Archived->value, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        return $req->fetchAll();
+        return $this->prepareBindExecuteFetch($this->getSqlQuery());
     }
 
     /**
@@ -85,29 +60,7 @@ abstract class AbstractLinks extends AbstractRest
      */
     public function readRelated(): array
     {
-        $sql = 'SELECT entity.id AS entityid, entity.title, entity.custom_id,
-            "' . $this->getTargetType()->toPage() . '" AS page,
-            "' . $this->getTargetType()->value . '" AS type,
-            categoryt.title AS category_title, categoryt.color AS category_color,
-            statust.title AS status_title, statust.color AS status_color, entity.state AS link_state';
-
-        if ($this instanceof AbstractItemsLinks) {
-            $sql .= ', entity.is_bookable';
-        }
-
-        $sql .= ' FROM ' . $this->getRelatedTable() . ' as entity_links
-            LEFT JOIN ' . $this->getTargetType()->value . ' AS entity ON (entity_links.item_id = entity.id)
-            LEFT JOIN ' . $this->getCatTable() . ' AS categoryt ON (entity.category = categoryt.id)
-            LEFT JOIN ' . $this->getStatusTable() . ' AS statust ON (entity.status = statust.id)';
-
-        $sql .= sprintf('WHERE entity_links.link_id = :id AND (entity.state = %d OR entity.state = %d) ORDER by', State::Normal->value, State::Archived->value);
-
-        $sql .= ' categoryt.title ASC, entity.title ASC';
-
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        return $req->fetchAll();
+        return $this->prepareBindExecuteFetch($this->getSqlQuery(related: true));
     }
 
     /**
@@ -237,5 +190,73 @@ abstract class AbstractLinks extends AbstractRest
         $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
 
         return (int) $this->Db->execute($req);
+    }
+
+    // Yes, the boolean is code smell, but it avoids a lot of code duplication
+    private function getSqlQuery(bool $related = false): string
+    {
+        return sprintf(
+            'SELECT entity.id AS entityid,
+                    entity.title,
+                    entity.custom_id,
+                    %8$s
+                    entity.state AS link_state,
+                    %1$s
+                    "%2$s" AS page,
+                    "%3$s" AS type,
+                    categoryt.title AS category_title,
+                    categoryt.color AS category_color,
+                    statust.title AS status_title,
+                    statust.color AS status_color
+                FROM %4$s as entity_links
+                LEFT JOIN %3$s AS entity
+                    ON (entity_links.%9$s_id = entity.id)
+                LEFT JOIN %5$s AS categoryt
+                    ON (entity.category = categoryt.id)
+                LEFT JOIN %6$s AS statust
+                    ON (entity.status = statust.id)
+                LEFT JOIN users
+                    ON (users.userid = entity.userid)
+                LEFT JOIN users2teams
+                    ON (users2teams.users_id = users.userid
+                        AND users2teams.teams_id = :team_id)
+                WHERE entity_links.%10$s_id = :id
+                    AND entity.state IN (:state_normal, :state_archived)
+                %7$s
+                ORDER by categoryt.title ASC, entity.date ASC, entity.title ASC',
+            $this instanceof AbstractItemsLinks
+                ? 'entity.is_bookable,'
+                : '',
+            $this->getTargetType()->toPage(),
+            $this->getTargetType()->value,
+            $related
+                ? $this->getRelatedTable()
+                : $this->getTable(),
+            $this->getCatTable(),
+            $this->getStatusTable(),
+            (new EntitySqlBuilder($this->Entity))->getCanFilter('canread'),
+            $related
+                ? ''
+                : 'entity.elabid,',
+            $related
+                ? 'item'
+                : 'link',
+            $related
+                ? 'link'
+                : 'item',
+        );
+    }
+
+    private function prepareBindExecuteFetch(string $sql): array
+    {
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':team_id', $this->Entity->Users->team ?? 0, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindValue(':state_normal', State::Normal->value, PDO::PARAM_INT);
+        $req->bindValue(':state_archived', State::Archived->value, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        return $req->fetchAll();
     }
 }

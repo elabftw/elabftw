@@ -13,7 +13,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\AuditEvent\PasswordResetRequested;
 use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\QuantumException;
@@ -122,14 +121,14 @@ try {
     }
 } catch (QuantumException $e) {
     $App->Session->getFlashBag()->add('ok', $e->getMessage());
+} catch (IllegalActionException $e) {
+    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
+    $App->Session->getFlashBag()->add('ko', Tools::error(true));
 } catch (ImproperActionException $e) {
     // show message to user and redirect to the change pass page
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
     $Response = new RedirectResponse('/change-pass.php?key=' . $App->Request->request->getString('key'));
-} catch (IllegalActionException $e) {
-    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
-    $App->Session->getFlashBag()->add('ko', Tools::error(true));
-} catch (DatabaseErrorException | FilesystemErrorException $e) {
+} catch (DatabaseErrorException $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
 } catch (Exception $e) {

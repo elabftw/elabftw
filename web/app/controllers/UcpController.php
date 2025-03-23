@@ -15,7 +15,6 @@ use Elabftw\Auth\Local;
 use Elabftw\Controllers\LoginController;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Filter;
@@ -88,13 +87,13 @@ try {
 
     $App->Session->getFlashBag()->add('ok', _('Saved'));
     $Response = new RedirectResponse(sprintf('/ucp.php?tab=%d', $tab));
-} catch (ImproperActionException $e) {
-    // show message to user
-    $App->Session->getFlashBag()->add('ko', $e->getMessage());
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e->getMessage())));
     $App->Session->getFlashBag()->add('ko', Tools::error(true));
-} catch (DatabaseErrorException | FilesystemErrorException $e) {
+} catch (ImproperActionException $e) {
+    // show message to user
+    $App->Session->getFlashBag()->add('ko', $e->getMessage());
+} catch (DatabaseErrorException $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
 } catch (Exception $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));

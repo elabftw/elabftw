@@ -20,6 +20,11 @@
         <div class='left-icon rounded mr-3 my-1 bgnd-gray'>
           <i class='fas fa-lock fa-fw'></i>
         </div>
+      {# deleted entry: show restore icon #}
+      {% elseif item.state == 3 %}
+      <div class='left-icon rounded mr-3 my-1 bgnd-dark' data-action='restore-entity' title='{{ 'Restore entry'|trans }}' data-endpoint='{{ Entity.entityType.value }}' data-id='{{ item.id }}'>
+          <i class='fas fa-trash-can-arrow-up fa-fw'></i>
+        </div>
       {% else %}
         {# edit icon #}
         {% if (item.userid == App.Users.userData.userid or Entity.entityType.value == 'items' or App.Users.isAdmin) %}
@@ -45,11 +50,11 @@
         <i style='color:#{{ item.category_color|default('bdbdbd') }}' class='far fa-calendar-check fa-fw'></i>
       {% endif %}
       {# archived icon #}
-      {% if item.state == constant('Elabftw\\Enums\\State::Archived').value %}
+      {% if item.state == enum('Elabftw\\Enums\\State').Archived.value %}
         <i class='fas fa-box-archive fa-fw'></i>
       {% endif %}
       {# deleted icon #}
-      {% if item.state == constant('Elabftw\\Enums\\State::Deleted').value %}
+      {% if item.state == enum('Elabftw\\Enums\\State').Deleted.value %}
         <i class='fas fa-ban fa-fw color-danger'></i>
       {% endif %}
       {# category #}

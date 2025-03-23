@@ -19,11 +19,16 @@ use Exception;
  */
 final class UnauthorizedException extends Exception
 {
-    public function __construct(?string $message = null, int $code = 0, ?Exception $previous = null)
+    public function __construct(?string $message = null, int $code = 403, ?Exception $previous = null)
     {
         if ($message === null) {
             $message = _('Authentication required');
         }
         parent::__construct($message, $code, $previous);
+    }
+
+    public function getDescription(): string
+    {
+        return $this->getMessage();
     }
 }

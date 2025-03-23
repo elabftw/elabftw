@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\Storage;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\HttpGetter;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
@@ -23,6 +24,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 class CompoundsTest extends \PHPUnit\Framework\TestCase
 {
+    private const string CAFFEINE_CAS = '58-08-2';
+
     private Compounds $Compounds;
 
     private HttpGetter $httpGetter;
@@ -94,6 +97,10 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('PJMPHNIQZUBGLI-UHFFFAOYSA-N', $compound['inchi_key']);
         $this->assertEquals($this->smiles, $compound['smiles']);
         $this->assertEquals('437-38-7', $compound['cas_number']);
+
+        // now try to add the same compound again
+        $this->expectException(ImproperActionException::class);
+        $Compounds->create(casNumber: self::CAFFEINE_CAS);
     }
 
     public function testGetApiPath(): void

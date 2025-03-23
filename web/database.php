@@ -14,7 +14,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Controllers\DatabaseController;
 use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Items;
@@ -34,18 +33,18 @@ $Response->prepare($Request);
 try {
     $Controller = new DatabaseController($App, new Items($App->Users));
     $Response = $Controller->getResponse();
-} catch (ImproperActionException $e) {
-    // show message to user
-    $template = 'error.html';
-    $renderArr = array('error' => $e->getMessage());
-    $Response->setContent($App->render($template, $renderArr));
 } catch (IllegalActionException $e) {
     // log notice and show message
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
     $Response->setContent($App->render($template, $renderArr));
-} catch (DatabaseErrorException | FilesystemErrorException $e) {
+} catch (ImproperActionException $e) {
+    // show message to user
+    $template = 'error.html';
+    $renderArr = array('error' => $e->getMessage());
+    $Response->setContent($App->render($template, $renderArr));
+} catch (DatabaseErrorException $e) {
     // log error and show message
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
     $template = 'error.html';

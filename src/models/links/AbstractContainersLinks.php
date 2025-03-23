@@ -56,12 +56,14 @@ abstract class AbstractContainersLinks extends AbstractLinks
             FROM ' . $this->getTable() . ' AS main
             LEFT JOIN ' . $this->getTargetType()->value . ' AS entity ON (main.item_id = entity.id)
             LEFT JOIN storage_units ON (main.storage_id = storage_units.id)
-            WHERE main.item_id = :item_id AND entity.state IN (1,2)
+            WHERE main.item_id = :item_id AND entity.state IN (:state_normal, :state_archived)
             ORDER by main.created_at ASC, entity.title ASC';
 
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindValue(':state_normal', State::Normal->value, PDO::PARAM_INT);
+        $req->bindValue(':state_archived', State::Archived->value, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         $results = $req->fetchAll();

@@ -138,8 +138,8 @@ module.exports = (env) => {
           ],
         },
         {
-        test: /\.jsx?$/,
-        use: ["babel-loader"]
+          test: /\.jsx?$/,
+          use: ["babel-loader"]
         },
         { // SASS loader
           test: /\.scss$/,

@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 
 class LinksTest extends \PHPUnit\Framework\TestCase
 {
@@ -99,5 +100,105 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         $Templates->ExperimentsLinks->setId(1);
         $Templates->ExperimentsLinks->postAction(Action::Create, array());
         $this->assertEquals(1, count($Templates->ExperimentsLinks->readAll()));
+    }
+
+    public function testObeyReadPermissionAfterLinksImportWithinTeam(): void
+    {
+        // compare to #5523, #5524
+        // In the most simple case, we stay within a given team
+
+        // User 1 creates experiment A that is visible to the team
+        $Experiments = new Experiments(new Users(1, 1));
+        $ExperimentAId = $Experiments->create(
+            title: 'Experiment A',
+            canread: BasePermissions::Team->toJson(),
+        );
+
+        // User 1 creates experiment B that is visible only to themself
+        $secretTitle = 'Experiment B - This title shall not be visible to user 2 after importing links';
+        $ExperimentBId = $Experiments->create(
+            title: $secretTitle,
+            canread: BasePermissions::User->toJson(),
+        );
+
+        // Experiment A links to experiment B
+        $Experiments->setId($ExperimentAId);
+        $Experiments->ExperimentsLinks->setId($ExperimentBId);
+        $Experiments->ExperimentsLinks->postAction(Action::Create, array());
+
+        // User 2 creates experiment C and adds a link to experiment A
+        $Experiments = new Experiments(new Users(2, 1));
+        $ExperimentCId = $Experiments->create(
+            title: 'Experiment C',
+            canread: BasePermissions::Team->toJson(),
+        );
+        $Experiments->setId($ExperimentCId);
+        $Experiments->ExperimentsLinks->setId($ExperimentAId);
+        $Experiments->ExperimentsLinks->postAction(Action::Create, array());
+
+        // User 2 imports the links from experiment A to experiment C
+        $Experiments->ExperimentsLinks->postAction(Action::Duplicate, array());
+
+        // User 2 should only see the link to experiment A but not the imported link to experiment B
+        $titles = array_column($Experiments->ExperimentsLinks->readAll(), 'title');
+        $this->assertEquals(1, count($titles));
+        $this->assertNotContains($secretTitle, $titles);
+
+        // User 1 should see both links (i.e to experiments A and B) in experiment C
+        $Experiments = new Experiments(new Users(1, 1), $ExperimentCId);
+        $titles = array_column($Experiments->ExperimentsLinks->readAll(), 'title');
+        $this->assertEquals(2, count($titles));
+        $this->assertContains($secretTitle, $titles);
+        $this->assertContains('Experiment A', $titles);
+    }
+
+    public function testObeyReadPermissionAfterLinksImportAcrossTeams(): void
+    {
+        // But perhaps more importantly, we need to make sure that the permissions are obeyed when importing links across teams
+
+        // User 1 from team alpha creates experiment A that is visible to the organization
+        $Experiments = new Experiments(new Users(1, 1));
+        $ExperimentAId = $Experiments->create(
+            title: 'Experiment A',
+            canread: BasePermissions::Organization->toJson(),
+        );
+
+        // User 1 creates experiment B that is visible to their team
+        $secretTitle = 'Experiment B - This title shall not be visible to user 5 after importing links';
+        $ExperimentBId = $Experiments->create(
+            title: $secretTitle,
+            canread: BasePermissions::Team->toJson(),
+        );
+
+        // Experiment A links to experiment B
+        $Experiments->setId($ExperimentAId);
+        $Experiments->ExperimentsLinks->setId($ExperimentBId);
+        $Experiments->ExperimentsLinks->postAction(Action::Create, array());
+
+        // User 5 from team bravo creates experiment C and adds a link to experiment A
+        $Experiments = new Experiments(new Users(5, 2));
+        $ExperimentCId = $Experiments->create(
+            title: 'Experiment C',
+            canread: BasePermissions::Organization->toJson(),
+        );
+        $Experiments->setId($ExperimentCId);
+        $Experiments->ExperimentsLinks->setId($ExperimentAId);
+        $Experiments->ExperimentsLinks->postAction(Action::Create, array());
+
+        // User 2 imports the links from experiment A to experiment C
+        $Experiments->ExperimentsLinks->postAction(Action::Duplicate, array());
+
+        // User 2 should only see the link to experiment A but not the imported link to experiment B
+        $titles = array_column($Experiments->ExperimentsLinks->readAll(), 'title');
+        $this->assertEquals(1, count($titles));
+        $this->assertNotContains($secretTitle, $titles);
+
+        // User 1 should see both links (i.e to experiments A and B) in experiment C
+        // Need AuthenticatedUser to read across teams (see Permissions::getCan)
+        $Experiments = new Experiments(new AuthenticatedUser(1, 1), $ExperimentCId);
+        $titles = array_column($Experiments->ExperimentsLinks->readAll(), 'title');
+        $this->assertEquals(2, count($titles));
+        $this->assertContains($secretTitle, $titles);
+        $this->assertContains('Experiment A', $titles);
     }
 }

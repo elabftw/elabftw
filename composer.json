@@ -105,6 +105,7 @@
       ],
       "Elabftw\\Models\\": [
         "src/models",
+        "src/models/links",
         "src/models/users"
       ],
       "Elabftw\\Models\\Notifications\\": [

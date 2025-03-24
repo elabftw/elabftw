@@ -180,7 +180,7 @@ final class LoginController implements ControllerInterface
             $this->App->Session->set('teaminit_email', $AuthResponse->initTeamUserInfo['email']);
             $this->App->Session->set('teaminit_firstname', $AuthResponse->initTeamUserInfo['firstname']);
             $this->App->Session->set('teaminit_lastname', $AuthResponse->initTeamUserInfo['lastname']);
-            $this->App->Session->set('teaminit_orgid', $AuthResponse->initTeamUserInfo['orgid']);
+            $this->App->Session->set('teaminit_orgid', $AuthResponse->initTeamUserInfo['orgid'] ?? '');
             return new RedirectResponse('/login.php');
         }
 

@@ -87,6 +87,7 @@ try {
             $App->Request->query->getInt('teamFilter'),
             $App->Request->query->getBoolean('includeArchived'),
             $App->Request->query->getBoolean('onlyAdmins'),
+            $App->Request->query->getBoolean('onlyArchived'),
         );
         foreach ($usersArr as &$user) {
             $UsersHelper = new UsersHelper($user['userid']);

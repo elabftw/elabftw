@@ -19,15 +19,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const ApiC = new Api();
 
-  document.querySelector('.real-container').addEventListener('click', (event) => {
+  document.querySelector('.real-container').addEventListener('click', async (event) => {
     const el = (event.target as HTMLElement);
     // CREATE USER
     if (el.matches('[data-action="create-user"]')) {
       event.preventDefault();
-      const form = el.closest('form.form-group') as HTMLFormElement;
-      ApiC.post('users', collectForm(form)).then(() => {
+      el.setAttribute('disabled', 'disabled');
+
+      const form = document.getElementById('createUserForm') as HTMLFormElement;
+      const values = collectForm(form);
+      if (el.dataset.checkArchived === '1') {
+        // look for an archived user with the same email address
+        const matchedArchivedUsers = [];
+        const archivedUsers = await ApiC.getJson(`users?onlyArchived=1&q=${values['email']}`);
+        archivedUsers.forEach(user => {
+          if (user.email === values['email']) {
+            matchedArchivedUsers.push(user);
+          }
+        });
+        if (matchedArchivedUsers.length > 0) {
+          const archivedUsersFoundList = (document.getElementById('archivedUsersFoundList') as HTMLUListElement);
+          matchedArchivedUsers.forEach(user => {
+            const archivedUser = document.createElement('li');
+            archivedUser.textContent = `${user.fullname} (${user.email})`;
+            archivedUser.classList.add('list-group-item');
+            const btn = document.createElement('button');
+            btn.classList.add('btn', 'btn-secondary', 'ml-3');
+            btn.dataset.action = 'unarchive-and-add-to-team';
+            btn.dataset.userid = user.userid;
+            // on admin panel, team select is disabled, so collectForm doesn't pickup the value
+            if (typeof(values['team']) !== 'undefined') {
+              btn.dataset.team = values['team'];
+            }
+            const teamSelect = document.getElementById('create-user-team') as HTMLSelectElement;
+            const team = teamSelect.options[teamSelect.selectedIndex].text;
+            btn.textContent = i18next.t('unarchive-and-add-to-team', { team: team });
+            archivedUser.append(btn);
+            archivedUsersFoundList.append(archivedUser);
+          });
+          document.getElementById('archivedUsersFound').removeAttribute('hidden');
+          return;
+        }
+      }
+
+      ApiC.post('users', values).then(() => {
         // use form.reset() so user-invalid pseudo-class isn't present
         form.reset();
+        document.getElementById('archivedUsersFound').setAttribute('hidden', 'hidden');
+        document.getElementById('initialCreateUserBtn').removeAttribute('disabled');
         reloadElements(['editUsersBox']);
       });
 
@@ -52,6 +91,19 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       users.forEach(user => {
         ApiC.post('users', {...user});
+      });
+
+    // UNARCHIVE AND ADD TO TEAM
+    } else if (el.matches('[data-action="unarchive-and-add-to-team"]')) {
+      ApiC.patch(`${Model.User}/${el.dataset.userid}`, {action: Action.Lock}).then(() => {
+        const params = {action: Action.Add};
+        if (el.dataset.team) {
+          params['team'] = el.dataset.team;
+        }
+        ApiC.patch(`${Model.User}/${el.dataset.userid}`, params).then(() => {
+          document.getElementById('archivedUsersFound').remove();
+          reloadElements(['editUsersBox']);
+        });
       });
 
     // UPDATE USER

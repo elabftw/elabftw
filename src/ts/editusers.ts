@@ -66,6 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // use form.reset() so user-invalid pseudo-class isn't present
         form.reset();
         document.getElementById('archivedUsersFound').setAttribute('hidden', 'hidden');
+        document.getElementById('initialCreateUserBtn').removeAttribute('disabled');
         reloadElements(['editUsersBox']);
       });
 

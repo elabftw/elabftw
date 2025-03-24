@@ -58,6 +58,15 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->Users->readAllFromTeam());
     }
 
+    public function testReadFromQuery(): void
+    {
+        $this->assertIsArray($this->Users->readFromQuery('', 0, true, true, true));
+        $this->assertIsArray($this->Users->readFromQuery('', 0, true, true, false));
+        $this->assertIsArray($this->Users->readFromQuery('', 0, true, false, false));
+        $this->assertIsArray($this->Users->readFromQuery('', 0, false, false, false));
+        $this->assertIsArray($this->Users->readFromQuery('Toto', 1, false, false, false));
+    }
+
     public function testUpdateAccount(): void
     {
         // A user SHOULD NOT be able to update their own address (under default settings)

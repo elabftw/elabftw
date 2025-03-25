@@ -149,9 +149,9 @@ document.addEventListener('DOMContentLoaded', () => {
         end: info.endStr,
       };
       ApiC.post(`events/${itemid}`, postParams).then(()=> {
-        // note: here the event is shown empty (without title), until the user clicks somewhere. Still better than a full page reload.
-        // FIXME: this should be addressed eventually
         calendar.refetchEvents();
+        // refresh item with its title by triggering unselect (see #5265)
+        calendar.unselect();
       }).catch(() => {
         calendar.unselect();
         return;

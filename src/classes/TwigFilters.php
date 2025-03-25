@@ -68,6 +68,8 @@ final class TwigFilters
 
     /**
      * Process the metadata json string into html
+     * Todo: refactor into a standalone template file
+     *   and transfer some of the logic out of the template
      * @psalm-suppress PossiblyUnusedMethod this method is used in twig templates
      */
     public static function formatMetadata(string $json): string

@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\ImproperActionException;
+
 class MetadataTest extends \PHPUnit\Framework\TestCase
 {
     public function testNoMetadata(): void
@@ -68,5 +70,20 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($json, (new Metadata($json))->blankExtraFieldsValueOnDuplicate());
 
         $this->assertNull((new Metadata(null))->blankExtraFieldsValueOnDuplicate());
+    }
+
+    public function testExtrafieldWithOnlyStringValue(): void
+    {
+        $json =  <<<JSON
+            {
+                "extra_fields": {
+                    "foo": "invalid text here"
+                    }
+            }
+            JSON;
+        $metadata = new Metadata($json);
+        $this->expectException(ImproperActionException::class);
+        $metadata->getExtraFields();
+
     }
 }

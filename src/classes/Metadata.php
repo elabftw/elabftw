@@ -14,12 +14,14 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Metadata as MetadataEnum;
+use Elabftw\Exceptions\ImproperActionException;
 
 use function array_column;
 use function array_combine;
 use function count;
 use function json_decode;
 use function json_encode;
+use function uasort;
 
 final class Metadata
 {
@@ -60,6 +62,14 @@ final class Metadata
         }
         // sort the elements based on the position attribute. If not set, will be at the end.
         $extraFields = $this->metadata[MetadataEnum::ExtraFields->value];
+
+        // check if the extra fields are an array
+        foreach ($extraFields as $key => $fieldArray) {
+            if (!is_array($fieldArray)) {
+                throw new ImproperActionException('Extra field "' . $key . '" does not comply with the <a href="https://doc.elabftw.net/metadata.html#schema-description">expected format</a>.');
+            }
+        }
+
         uasort(
             $extraFields,
             fn(array $a, array $b): int => ($a['position'] ?? 9999) <=> ($b['position'] ?? 9999),

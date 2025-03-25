@@ -139,12 +139,11 @@ document.addEventListener('DOMContentLoaded', () => {
       ApiC.patch(`users/${el.dataset.userid}`, {action: Action.Validate}).then(() => reloadElements(['unvalidatedUsersBox', 'editUsersBox']));
     // SET PASSWORD (from sysadmin page)
     } else if (el.matches('[data-action="reset-user-password"]')) {
-      //const password = (document.getElementById(`resetUserPasswordInput_${el.dataset.userid}`) as HTMLInputElement).value;
       const form = document.getElementById(`resetUserPasswordForm_${el.dataset.userid}`);
       const params = collectForm(form);
       // because we're sysadmin, we don't need to provide the current_password parameter
       ApiC.patch(`users/${el.dataset.userid}`, {action: Action.UpdatePassword, password: params['resetPassword']}).then(() => {
-        $('#resetUserPasswordModal').modal('hide');
+        $(`#resetUserPasswordModal_${el.dataset.userid}`).modal('hide');
         clearForm(form);
       });
 

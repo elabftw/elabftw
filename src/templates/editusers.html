@@ -45,7 +45,12 @@
     <div class='pl-3'>
       {% if usersArr %}
         {% for user in usersArr %}
+          {% if App.Users.userData.is_sysadmin == '1' %}
+            {% include 'reset-user-password-modal.html' with {'userid': user.userid} %}
+          {% endif %}
+          {% include 'rm-user-from-team-modal.html' %}
           {% include('archive-user-modal.html') %}
+
           {# Modal for managing users to teams, generated for each user #}
           <div class='modal fade' id='manageUsers2teamsModal_{{ user.userid }}' tabindex='-1' role='dialog' aria-labelledby='manageTeamsForUser'>
             <div class='modal-dialog modal-xl' role='document'>
@@ -126,11 +131,6 @@
           {# this is the element to reload after a change, don't use the full div so we keep the js working in table headers #}
           <tbody id='editUsersBox'>
             {% for user in usersArr %}
-              {% if App.Users.userData.is_sysadmin == '1' %}
-                {% include 'reset-user-password-modal.html' with {'userid': user.userid} %}
-              {% endif %}
-              {% include 'rm-user-from-team-modal.html' %}
-
               <tr {{ user.archived ? "class='bg-medium'" }}>
                 <td data-label='{{ 'User ID'|trans }}'><span title='{{ 'User ID'|trans }}' class='badge badge-secondary {{ user.archived ? 'alert-danger' }}'>{{ user.userid }}</span></td>
                 <td data-label='{{ 'Team(s)'|trans }}' style='max-width: 270px'>
@@ -179,7 +179,7 @@
                     <div class='dropdown-menu dropdown-menu-right'>
                       {# RESET USER PASSWORD (SYSADMIN ONLY) #}
                       {% if App.Users.userData.is_sysadmin == '1' %}
-                        <button type='button' class='btn btn-dropdown-item dropdown-item' data-action='toggle-modal' data-target='resetUserPasswordModal'>
+                        <button type='button' class='btn btn-dropdown-item dropdown-item' data-action='toggle-modal' data-target='resetUserPasswordModal_{{ user.userid }}'>
                           <i class='mr-1 fas fa-fw fa-key'></i>{{ 'Reset user password'|trans }}
                         </button>
                       {% endif %}

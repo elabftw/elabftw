@@ -138,9 +138,9 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="do-requestable-action"]')) {
       switch (el.dataset.target) {
       case Action.Archive:
+        // reload the page to avoid further actions on the entity (in edit mode), also refreshing gets to "You cannot edit it!" page. (See #5552)
         ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.Archive})
-          .then(() => reloadElements(['isArchivedDiv', 'requestActionsDiv']))
-          .then(() => relativeMoment());
+          .then(() => window.location.href = `?mode=view&id=${entity.id}`);
         break;
       case Action.Lock:
         // reload the page to change the icon and make the edit button disappear (#1897)

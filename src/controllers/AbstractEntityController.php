@@ -238,6 +238,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'storageUnitsArr' => (new StorageUnits($this->App->Users))->readAllRecursive(),
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,
+            'metadata' => new Metadata($this->Entity->entityData['metadata'])->getRenderArray(),
         );
 
         $Response = new Response();

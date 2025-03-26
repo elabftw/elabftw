@@ -52,7 +52,6 @@ trait TwigTrait
         $mdFilter = new TwigFilter('md2html', '\Elabftw\Elabftw\Tools::md2html', $filterOptions);
         $bytesFilter = new TwigFilter('formatBytes', '\Elabftw\Elabftw\Tools::formatBytes', $filterOptions);
         $extFilter = new TwigFilter('getExt', '\Elabftw\Elabftw\Tools::getExt', $filterOptions);
-        $metadataFilter = new TwigFilter('formatMetadata', '\Elabftw\Elabftw\TwigFilters::formatMetadata', $filterOptions);
         $csrfFilter = new TwigFilter('csrf', '\Elabftw\Services\Transform::csrf', $filterOptions);
         $notifWebFilter = new TwigFilter('notifWeb', '\Elabftw\Services\Transform::notif', $filterOptions);
         $toIconFilter = new TwigFilter('toIcon', '\Elabftw\Elabftw\TwigFilters::toIcon', $filterOptions);
@@ -93,7 +92,6 @@ trait TwigTrait
         $TwigEnvironment->addFilter($mdFilter);
         $TwigEnvironment->addFilter($bytesFilter);
         $TwigEnvironment->addFilter($extFilter);
-        $TwigEnvironment->addFilter($metadataFilter);
         $TwigEnvironment->addFilter($csrfFilter);
         $TwigEnvironment->addFilter($notifWebFilter);
         $TwigEnvironment->addFilter($toIconFilter);

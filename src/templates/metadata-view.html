@@ -1,0 +1,63 @@
+{% if metadata.rawMetadata is defined %}
+
+  {{- metadata.rawMetadata|raw -}}
+
+{% elseif metadata.groupedMetadata is defined %}
+
+  {% set metadataEnum = enum('Elabftw\\Enums\\Metadata') %}
+  {% set entityTypeEnum = enum('Elabftw\\Enums\\EntityType') %}
+  {% for group in metadata.groupedMetadata %}
+    <div>
+      <h4 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='mt-4 d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ group.name }}</h4>
+      <ul class='list-group'>
+        {% for field in group.extra_fields %}
+          {% set newTab = (field.open_in_current_tab ?? false) ? '' : ' target="_blank" rel="noopener"' %}
+
+          {% set value = field.(metadataEnum.Value.value) ?? '' %}
+          {% set metadataType = field.(metadataEnum.Type.value) ?? 'text' %}
+
+          {# type:checkbox is a special case #}
+          {% if metadataType == 'checkbox' %}
+            {% set checkbox = field.(metadataEnum.Value.value) == 'on' ? ' checked="checked"' : '' %}
+            {% set value = '<input class="d-block" disabled type="checkbox"' ~ checkbox ~ '>' %}
+
+          {# type:url is another special case #}
+          {% elseif metadataType == 'url' %}
+            {% set value = '<a href="' ~ value ~ '"' ~ newTab ~ '>' ~ value ~ '</a>' %}
+
+          {# type:email is another special case #}
+          {% elseif metadataType == 'email' %}
+            {% set value = '<a href="mailto:' ~ value ~ '">' ~ value ~ '</a>' %}
+
+          {# type:exp/items is another special case #}
+          {% elseif metadataType in [entityTypeEnum.Experiments.value, entityTypeEnum.Items.value] %}
+            {% set id = field.(metadataEnum.Value.value) ?? 0 %}
+            {% set page = metadataType == entityTypeEnum.Items.value ? entityTypeEnum.Items.toPage() : entityTypeEnum.Experiments.toPage() %}
+            {% set dataReplace = id == 0 ? '' : ' data-replace-with-title="true"' %}
+            {% set value = '<a href="/' ~ page ~ '?mode=view&id=' ~ id ~ '"' ~ newTab ~ '><span' ~ dataReplace ~ ' data-id="' ~ id ~ '" data-endpoint="' ~ metadataType ~ '">' ~ value ~ '</span></a>' %}
+
+          {# multi select will be an array of options #}
+          {% elseif value is iterable %}
+            {% set html = '' %}
+            {% for option in value %}
+              {% set html = html ~ '<p>' ~ option ~ '</p>' %}
+            {% endfor %}
+            {% set value = html %}
+          {% endif %}
+
+          <li class="list-group-item">
+            <h5 class="mb-0">{{ field.name }}</h5>
+            {% if metadataEnum.Description.value is defined %}
+              <span class="smallgray">{{ field.(metadataEnum.Description.value) }}</span>
+            {% endif %}
+            <h6>{{ value }}{{ field.unit is defined ? ' ' ~ field.unit : '' }}</h6>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endfor %}
+{% endif %}
+
+{% if metadata.anyContent is defined %}
+  {{- metadata.anyContent|raw -}}
+{% endif %}

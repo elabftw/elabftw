@@ -52,7 +52,7 @@
 
 {% if entityData.metadata %}
 <section class='no-break no-list-style'>
-  {{ entityData.metadata|formatMetadata }}
+  {% include 'metadata-view.html' %}
 </section>
 {% endif %}
 

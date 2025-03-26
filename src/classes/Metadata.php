@@ -15,6 +15,8 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Models\Users;
 
 use function array_column;
 use function array_combine;
@@ -26,6 +28,11 @@ use function uasort;
 final class Metadata
 {
     private const int JSON_MAX_DEPTH = 42;
+
+    /**
+     * @var array<string> list of extra fields that are not in the expected format
+     */
+    public array $invalidExtraFields = array();
 
     private array $metadata = array();
 
@@ -94,23 +101,28 @@ final class Metadata
 
     public function getExtraFields(): array
     {
-        if (empty($this->metadata) || !isset($this->metadata[MetadataEnum::ExtraFields->value])) {
+        if (!$this->hasExtraFields()) {
             return array();
         }
-        // sort the elements based on the position attribute. If not set, will be at the end.
+
         $extraFields = $this->metadata[MetadataEnum::ExtraFields->value];
 
-        // check if the extra fields are an array
-        foreach ($extraFields as $key => $fieldArray) {
-            if (!is_array($fieldArray)) {
-                throw new ImproperActionException('Extra field "' . $key . '" does not comply with the <a href="https://doc.elabftw.net/metadata.html#schema-description">expected format</a>.');
+        // convert invalid extra fields to valid ones
+        foreach ($extraFields as $name => $properties) {
+            // if the properties array is missing, create it
+            if (!is_array($properties)) {
+                // at this point $properties can only be string, float, integer, bool, or null
+                $extraFields[$name] = array(MetadataEnum::Value->value => $properties);
+                $this->invalidExtraFields[] = $name;
             }
         }
 
+        // sort the elements based on the position attribute. If not set, will be at the end.
         uasort(
             $extraFields,
             fn(array $a, array $b): int => ($a['position'] ?? 9999) <=> ($b['position'] ?? 9999),
         );
+
         return $extraFields;
     }
 
@@ -145,10 +157,14 @@ final class Metadata
         // loop over the extra fields and assign their properties to a group's extra_fields array
         // the name being the key, we merge it into the properties with a "name" key
         foreach ($extraFields as $key => $properties) {
+            $properties = $this->replaceUserIdWithFullName($properties);
+
             // default group id for extra fields with invalid or no group_id
             $groupId = -1;
             // if the group_id of the extra field is not defined in groups, it will endup in the default group, with the ones that don't have group_id property
-            if (isset($properties[MetadataEnum::GroupId->value]) && in_array((int) $properties[MetadataEnum::GroupId->value], array_column($groups, 'id'), true)) {
+            if (isset($properties[MetadataEnum::GroupId->value])
+                && in_array((int) $properties[MetadataEnum::GroupId->value], array_column($groups, 'id'), true)
+            ) {
                 $groupId = (int) $properties[MetadataEnum::GroupId->value];
             } else {
                 // add it to the default group
@@ -184,5 +200,33 @@ final class Metadata
         $this->metadata[MetadataEnum::ExtraFields->value] = $extraFields;
 
         return json_encode($this->metadata, JSON_THROW_ON_ERROR);
+    }
+
+    public function getRenderArray(): array
+    {
+        if (!$this->hasExtraFields()) {
+            return array('rawMetadata' => $this->getRaw());
+        }
+
+        return array(
+            'groupedMetadata' => $this->getGroupedExtraFields(),
+            'anyContent' => $this->getAnyContent(),
+        );
+    }
+
+    private function replaceUserIdWithFullName(array $properties): array
+    {
+        if (isset($properties[MetadataEnum::Type->value], $properties[MetadataEnum::Value->value])
+            && $properties[MetadataEnum::Type->value] === 'users'
+            && !empty($properties[MetadataEnum::Value->value])
+        ) {
+            try {
+                $properties[MetadataEnum::Value->value] = new Users((int) $properties[MetadataEnum::Value->value])->userData['fullname'];
+            } catch (ResourceNotFoundException) {
+                $properties[MetadataEnum::Value->value] = _('User could not be found.');
+            }
+        }
+
+        return $properties;
     }
 }

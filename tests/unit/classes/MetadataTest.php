@@ -120,16 +120,28 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
 
     public function testExtrafieldWithOnlyStringValue(): void
     {
-        $json =  <<<JSON
+        $inputJson =  <<<JSON
             {
                 "extra_fields": {
                     "foo": "invalid text here"
                     }
             }
             JSON;
-        $metadata = new Metadata($json);
-        $this->expectException(ImproperActionException::class);
-        $metadata->getExtraFields();
+        $metadata = new Metadata($inputJson);
+        $correctedExtraFields = $metadata->getExtraFields();
 
+        $expectedJson =  <<<JSON
+            {
+                "extra_fields": {
+                    "foo": {
+                        "value": "invalid text here"
+                    }
+                }
+            }
+            JSON;
+        $metadata = new Metadata($expectedJson);
+        $expectedExtraFields = $metadata->getExtraFields();
+
+        $this->assertEquals($expectedExtraFields, $correctedExtraFields);
     }
 }

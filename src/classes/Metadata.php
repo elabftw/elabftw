@@ -15,11 +15,11 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\ResourceNotFoundException;
-use Elabftw\Models\Users;
+use Elabftw\Services\UsersHelper;
 
 use function array_column;
 use function array_combine;
+use function array_merge;
 use function count;
 use function json_decode;
 use function json_encode;
@@ -220,11 +220,7 @@ final class Metadata
             && $properties[MetadataEnum::Type->value] === 'users'
             && !empty($properties[MetadataEnum::Value->value])
         ) {
-            try {
-                $properties[MetadataEnum::Value->value] = new Users((int) $properties[MetadataEnum::Value->value])->userData['fullname'];
-            } catch (ResourceNotFoundException) {
-                $properties[MetadataEnum::Value->value] = _('User could not be found.');
-            }
+            $properties[MetadataEnum::Value->value] = new UsersHelper((int) $properties[MetadataEnum::Value->value])->getFullnameFromUserid();
         }
 
         return $properties;

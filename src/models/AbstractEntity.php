@@ -26,7 +26,6 @@ use Elabftw\Enums\State;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Params\ContentParams;
@@ -37,6 +36,7 @@ use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 use Elabftw\Services\Filter;
+use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\EntityTrait;
 use PDO;
 use PDOStatement;
@@ -419,13 +419,15 @@ abstract class AbstractEntity extends AbstractRest
         }
     }
 
-    // Get timestamper full name for display in view mode
+    /**
+     * Get timestamper full name for display in view mode
+     */
     public function getTimestamperFullname(): string
     {
         if ($this->entityData['timestamped'] === 0) {
             return 'Unknown';
         }
-        return $this->getFullnameFromUserid($this->entityData['timestampedby']);
+        return new UsersHelper($this->entityData['timestampedby'])->getFullnameFromUserid();
     }
 
     // generate a title useful for zip folder name for instance: shortened, with category and short elabid
@@ -473,7 +475,7 @@ abstract class AbstractEntity extends AbstractRest
         if ($this->entityData['locked'] === 0) {
             return 'Unknown';
         }
-        return $this->getFullnameFromUserid($this->entityData['lockedby']);
+        return new UsersHelper($this->entityData['lockedby'])->getFullnameFromUserid();
     }
 
     public function getIdFromCategory(int $category): array
@@ -613,17 +615,6 @@ abstract class AbstractEntity extends AbstractRest
         }
 
         return (new Permissions($this->Users, $this->entityData))->forEntity();
-    }
-
-    protected function getFullnameFromUserid(int $userid): string
-    {
-        // maybe user was deleted!
-        try {
-            $user = new Users($userid);
-        } catch (ResourceNotFoundException) {
-            return 'User not found!';
-        }
-        return $user->userData['fullname'];
     }
 
     private function addToExtendedFilter(string $extendedFilter, array $extendedValues = array()): void

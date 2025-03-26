@@ -15,6 +15,7 @@ namespace Elabftw\Services;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\State;
 use Elabftw\Models\Users;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use PDO;
 
 use function array_column;
@@ -104,6 +105,16 @@ class UsersHelper
     public function getTeamsNameFromUserid(): array
     {
         return array_column($this->getTeamsFromUserid(), 'name');
+    }
+
+    public function getFullnameFromUserid(): string
+    {
+        // maybe user was deleted!
+        try {
+            return  new Users($this->userid)->userData['fullname'];
+        } catch (ResourceNotFoundException) {
+            return _('User could not be found.');
+        }
     }
 
     private function countComments(): int

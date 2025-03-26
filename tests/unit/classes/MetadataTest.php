@@ -26,7 +26,7 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
     public function testGetRaw(): void
     {
         $metadata = new Metadata('{"answer": 42, "lucky numbers": [ 3, 10, 12, 21, 29, 42 ]}');
-        $this->assertIsString($metadata->getRaw());
+        $this->assertIsArray($metadata->getRaw());
     }
 
     public function testWithExtraFields(): void
@@ -74,26 +74,10 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
 
     public function testBasicExtraFieldsValidation(): void
     {
-        $validJson =  <<<JSON
-            {
-                "extra_fields": {
-                    "foo": {
-                        "value": "bar"
-                    }
-                }
-            }
-            JSON;
-
+        $validJson = '{"extra_fields":{"foo":{"value":"bar"}}}';
         new Metadata($validJson)->basicExtraFieldsValidation();
 
-        $invalidJson =  <<<JSON
-            {
-                "extra_fields": {
-                    "foo": "bar"
-                }
-            }
-            JSON;
-
+        $invalidJson = '{"extra_fields":{"foo":"bar"}}';
         $this->expectException(ImproperActionException::class);
         $this->expectExceptionMessage('Extra field "foo" does not comply with the expected format.');
 
@@ -102,45 +86,17 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
 
     public function testBasicExtraFieldsValidationMissingValueProperty(): void
     {
-        $invalidJson =  <<<JSON
-            {
-                "extra_fields": {
-                    "foo": {
-                        "type": "text"
-                    }
-                }
-            }
-            JSON;
-
         $this->expectException(ImproperActionException::class);
         $this->expectExceptionMessage('Extra field "foo" does not have the requiered property "value".');
 
+        $invalidJson = '{"extra_fields":{"foo":{"type":"text"}}}';
         new Metadata($invalidJson)->basicExtraFieldsValidation();
     }
 
     public function testExtrafieldWithOnlyStringValue(): void
     {
-        $inputJson =  <<<JSON
-            {
-                "extra_fields": {
-                    "foo": "invalid text here"
-                    }
-            }
-            JSON;
-        $metadata = new Metadata($inputJson);
-        $correctedExtraFields = $metadata->getExtraFields();
-
-        $expectedJson =  <<<JSON
-            {
-                "extra_fields": {
-                    "foo": {
-                        "value": "invalid text here"
-                    }
-                }
-            }
-            JSON;
-        $metadata = new Metadata($expectedJson);
-        $expectedExtraFields = $metadata->getExtraFields();
+        $correctedExtraFields = new Metadata('{"extra_fields":{"foo":"invalid text here"}}')->getExtraFields();
+        $expectedExtraFields = new Metadata('{"extra_fields":{"foo":{"value":"invalid text here"}}}')->getExtraFields();
 
         $this->assertEquals($expectedExtraFields, $correctedExtraFields);
     }

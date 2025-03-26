@@ -23,12 +23,6 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($metadata->getDisplayMainText());
     }
 
-    public function testGetRaw(): void
-    {
-        $metadata = new Metadata('{"answer": 42, "lucky numbers": [ 3, 10, 12, 21, 29, 42 ]}');
-        $this->assertIsArray($metadata->getRaw());
-    }
-
     public function testWithExtraFields(): void
     {
         $metadata = new Metadata('{"extra_fields":{"foo":{"type":"text","value":"bar"}}}');

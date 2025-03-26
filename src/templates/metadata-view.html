@@ -1,10 +1,11 @@
-{% if metadata.rawMetadata is defined %}
-  {{- include('metadata-view-array.html', {metadata: metadata.rawMetadata}, with_context: false) -}}
-{% elseif metadata.groupedMetadata is defined %}
+{% if metadata.raw is defined %}
+  {{- include('metadata-view-array.html', {metadata: metadata.raw}, with_context: false) -}}
+{% elseif metadata.groupedExtraFields is defined %}
 
   {% set metadataEnum = enum('Elabftw\\Enums\\Metadata') %}
   {% set entityTypeEnum = enum('Elabftw\\Enums\\EntityType') %}
-  {% for group in metadata.groupedMetadata %}
+
+  {% for group in metadata.groupedExtraFields %}
     <div>
       <h4 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='mt-4 d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ group.name }}</h4>
       <ul class='list-group'>
@@ -56,6 +57,6 @@
   {% endfor %}
 {% endif %}
 
-{% if metadata.anyContent is defined %}
-  {{- include('metadata-view-array.html', {metadata: metadata.anyContent}, with_context: false) -}}
+{% if metadata.allButExtraFields is defined %}
+  {{- include('metadata-view-array.html', {metadata: metadata.allButExtraFields}, with_context: false) -}}
 {% endif %}

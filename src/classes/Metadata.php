@@ -77,13 +77,8 @@ final class Metadata
         }
     }
 
-    public function getRaw(): array
-    {
-        return $this->metadata;
-    }
-
     // get anything that is not with an extra_fields or elabftw key
-    public function getAnyContent(): array
+    public function getAllButExtraFields(): array
     {
         // copy the array, as we will edit in place
         $res = $this->metadata;
@@ -205,12 +200,12 @@ final class Metadata
     public function getRenderArray(): array
     {
         if (!$this->hasExtraFields()) {
-            return array('rawMetadata' => $this->getRaw());
+            return array('raw' => $this->metadata);
         }
 
         return array(
-            'groupedMetadata' => $this->getGroupedExtraFields(),
-            'anyContent' => $this->getAnyContent(),
+            'groupedExtraFields' => $this->getGroupedExtraFields(),
+            'allButExtraFields' => $this->getAllButExtraFields(),
         );
     }
 

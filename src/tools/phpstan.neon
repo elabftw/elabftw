@@ -2,6 +2,10 @@ parameters:
   level: 7
   treatPhpDocTypesAsCertain: false
   ignoreErrors:
+    - identifier: function.alreadyNarrowedType
+      path: %currentWorkingDirectory%/tests
+    - identifier: method.alreadyNarrowedType
+      path: %currentWorkingDirectory%/tests
     - message: '#Variable \$App might not be defined.*#'
       path: %currentWorkingDirectory%/web
     - message: '#Variable \$Request might not be defined.*#'
@@ -15,4 +19,3 @@ parameters:
     - %currentWorkingDirectory%/src
     - %currentWorkingDirectory%/web
     - %currentWorkingDirectory%/tests/unit
-

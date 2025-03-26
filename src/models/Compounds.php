@@ -24,11 +24,13 @@ use Elabftw\Enums\State;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\FingerprinterInterface;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Params\BaseQueryParams;
 use Elabftw\Params\CompoundParams;
 use Elabftw\Services\Fingerprinter;
 use Elabftw\Services\HttpGetter;
+use Elabftw\Services\NullFingerprinter;
 use Elabftw\Services\PubChemImporter;
 use Elabftw\Traits\SetIdTrait;
 use Override;
@@ -42,7 +44,7 @@ final class Compounds extends AbstractRest
 {
     use SetIdTrait;
 
-    public function __construct(protected HttpGetter $httpGetter, private Users $requester, ?int $id = null)
+    public function __construct(protected HttpGetter $httpGetter, private Users $requester, protected FingerprinterInterface $fingerprinter, ?int $id = null)
     {
         parent::__construct();
         $this->setId($id);
@@ -66,7 +68,8 @@ final class Compounds extends AbstractRest
         }
         if (!empty($queryParams->getQuery()->get('search_fp_smi'))) {
             $q = $queryParams->getQuery();
-            return $this->searchFingerprint($this->getFingerprintFromSmiles($q->getString('search_fp_smi')), $q->getBoolean('exact'));
+            $fp = $this->fingerprinter->calculate('smi', $q->getString('search_fp_smi'));
+            return $this->searchFingerprint($fp, $q->getBoolean('exact'));
         }
         $sql = $this->getSelectBeforeWhere() . ' WHERE 1=1 AND entity.state IN (:state_normal, :state_archived)';
         if ($queryParams->getQuery()->get('q')) {
@@ -258,7 +261,9 @@ final class Compounds extends AbstractRest
         $compoundId = $this->Db->lastInsertId();
 
         if ($withFingerprint && !empty($smiles)) {
-            $this->fingerprintCompound($smiles, $compoundId);
+            $fp = $this->fingerprinter->calculate('smi', $smiles);
+            $Fingerprints = new Fingerprints($compoundId);
+            $Fingerprints->create($fp['data']);
         }
         return $compoundId;
     }
@@ -364,22 +369,9 @@ final class Compounds extends AbstractRest
         return $this->searchPubChem($cid);
     }
 
-    private function getFingerprintFromSmiles(string $smiles): array
-    {
-        $Fingerprinter = new Fingerprinter($this->httpGetter, Config::boolFromEnv('USE_FINGERPRINTER'));
-        return $Fingerprinter->calculate('smi', $smiles);
-    }
-
-    private function fingerprintCompound(string $smiles, int $compoundId): int
-    {
-        $fp = $this->getFingerprintFromSmiles($smiles);
-        // if fingerprinter is not configured, no data will exist in the response
-        $Fingerprints = new Fingerprints($compoundId);
-        return $Fingerprints->create($fp['data']);
-    }
-
     private function createFromCompound(Compound $compound): int
     {
+        $withFingerprint = !($this->fingerprinter instanceof NullFingerprinter);
         return $this->create(
             casNumber: $compound->cas,
             name: $compound->name,
@@ -398,7 +390,7 @@ final class Compounds extends AbstractRest
             isHazardous2health: $compound->isHazardous2health,
             isOxidising: $compound->isOxidising,
             isToxic: $compound->isToxic,
-            withFingerprint: Config::boolFromEnv('USE_FINGERPRINTER'),
+            withFingerprint: $withFingerprint,
         );
     }
 }

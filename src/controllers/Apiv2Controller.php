@@ -63,7 +63,9 @@ use Elabftw\Models\Uploads;
 use Elabftw\Models\UserRequestActions;
 use Elabftw\Models\Users;
 use Elabftw\Models\UserUploads;
+use Elabftw\Services\Fingerprinter;
 use Elabftw\Services\HttpGetter;
+use Elabftw\Services\NullFingerprinter;
 use Exception;
 use GuzzleHttp\Client;
 use JsonException;
@@ -263,20 +265,29 @@ final class Apiv2Controller extends AbstractApiController
 
     private function getModel(): RestInterface
     {
-        $logger = new Logger('elabftw');
-        $Config = Config::getConfig();
         return match ($this->endpoint) {
             ApiEndpoint::ApiKeys => new ApiKeys($this->requester, $this->id),
             ApiEndpoint::Batch => new Batch($this->requester),
-            ApiEndpoint::Compounds => new Compounds(
-                new HttpGetter(new Client(), $Config->configArr['proxy'], $Config->configArr['debug'] === '0'),
-                $this->requester,
-                $this->id,
-            ),
+            ApiEndpoint::Compounds => (
+                function () {
+                    $Config = Config::getConfig();
+                    $Fingerprinter = new NullFingerprinter();
+                    if (Config::boolFromEnv('USE_FINGERPRINTER')) {
+                        $httpGetter = new HttpGetter(new Client(), $Config->configArr['proxy'], $Config->configArr['debug'] === '0');
+                        $Fingerprinter = new Fingerprinter($httpGetter, Config::fromEnv('FINGERPRINTER_URL'));
+                    }
+                    return new Compounds(
+                        new HttpGetter(new Client(), $Config->configArr['proxy'], $Config->configArr['debug'] === '0'),
+                        $this->requester,
+                        $Fingerprinter,
+                        $this->id,
+                    );
+                }
+            )(),
             ApiEndpoint::Config => Config::getConfig(),
             ApiEndpoint::Idps => new Idps($this->requester, $this->id),
             ApiEndpoint::IdpsSources => new IdpsSources($this->requester, $this->id),
-            ApiEndpoint::Import => new ImportHandler($this->requester, $logger),
+            ApiEndpoint::Import => new ImportHandler($this->requester, new Logger('elabftw')),
             ApiEndpoint::Info => new Info(),
             ApiEndpoint::Export => new Exports($this->requester, Storage::EXPORTS->getStorage(), $this->id),
             ApiEndpoint::Experiments,

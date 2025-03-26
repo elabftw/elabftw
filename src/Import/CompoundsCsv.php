@@ -17,7 +17,9 @@ use Elabftw\Models\Compounds2ItemsLinks;
 use Elabftw\Models\Config;
 use Elabftw\Models\Items;
 use Elabftw\Models\Users;
+use Elabftw\Services\Fingerprinter;
 use Elabftw\Services\HttpGetter;
+use Elabftw\Services\NullFingerprinter;
 use GuzzleHttp\Client;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Override;
@@ -40,8 +42,12 @@ final class CompoundsCsv extends AbstractCsv
     {
         // now loop the rows and do the import
         $Config = Config::getConfig();
+        $Fingerprinter = new NullFingerprinter();
         $httpGetter = new HttpGetter(new Client(), $Config->configArr['proxy'], $Config->configArr['debug'] === '0');
-        $Compounds = new Compounds($httpGetter, $this->requester);
+        if (Config::boolFromEnv('USE_FINGERPRINTER')) {
+            $Fingerprinter = new Fingerprinter($httpGetter, Config::fromEnv('FINGERPRINTER_URL'));
+        }
+        $Compounds = new Compounds($httpGetter, $this->requester, $Fingerprinter);
         $Items = new Items($this->requester);
         foreach ($this->reader->getRecords() as $row) {
             $id = $Compounds->create(

@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DateTimeImmutable;
+use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\ItemsTypesSqlBuilder;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
@@ -67,6 +68,10 @@ final class ItemsTypes extends AbstractTemplateEntity
         $defaultPermissions = BasePermissions::Team->toJson();
         $color ??= $this->getSomeColor();
         $contentType ??= $this->Users->userData['use_markdown'] === 1 ? AbstractEntity::CONTENT_MD : AbstractEntity::CONTENT_HTML;
+
+        if ($metadata !== null) {
+            new Metadata($metadata)->basicExtraFieldsValidation();
+        }
 
         $sql = 'INSERT INTO items_types(userid, title, body, team, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canread_target, canwrite_target, color, content_type, status, rating, metadata)
             VALUES(:userid, :title, :body, :team, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canread_target, :canwrite_target, :color, :content_type, :status, :rating, :metadata)';

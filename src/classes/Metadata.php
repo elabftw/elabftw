@@ -40,6 +40,36 @@ final class Metadata
         }
     }
 
+    /**
+     * Ensure that each extra field has a properties object (or array after json_decode)
+     * and that it contains the requeired property "value".
+     *
+     * @throws ImproperActionException
+     */
+    public function basicExtraFieldsValidation(): void
+    {
+        if (!$this->hasExtraFields()) {
+            return;
+        }
+
+        foreach ($this->metadata[MetadataEnum::ExtraFields->value] as $key => $field) {
+            if (!is_array($field)) {
+                throw new ImproperActionException(sprintf(
+                    _('Extra field "%s" does not comply with the expected format.'),
+                    $key,
+                ));
+            }
+
+            if (!isset($field[MetadataEnum::Value->value])) {
+                throw new ImproperActionException(sprintf(
+                    _('Extra field "%s" does not have the requiered property "%s".'),
+                    $key,
+                    MetadataEnum::Value->value,
+                ));
+            }
+        }
+    }
+
     public function getRaw(): string
     {
         return Tools::printArr($this->metadata);
@@ -53,6 +83,13 @@ final class Metadata
         unset($res[MetadataEnum::ExtraFields->value]);
         unset($res[MetadataEnum::Elabftw->value]);
         return Tools::printArr($res);
+    }
+
+    public function hasExtraFields(): bool
+    {
+        return !empty($this->metadata)
+            && isset($this->metadata[MetadataEnum::ExtraFields->value])
+            && !empty($this->metadata[MetadataEnum::ExtraFields->value]);
     }
 
     public function getExtraFields(): array

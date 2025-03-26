@@ -67,6 +67,10 @@ final class Experiments extends AbstractConcreteEntity
         }
         $contentType ??= $this->Users->userData['use_markdown'] === 1 ? AbstractEntity::CONTENT_MD : AbstractEntity::CONTENT_HTML;
 
+        if ($metadata !== null) {
+            new Metadata($metadata)->basicExtraFieldsValidation();
+        }
+
         // do we want template ?
         // $templateId can be a template id, or 0: common template, or -1: null body
         // only look up the template if category has not been set. When importing a csv, we cannot discriminate between the template or category argument of create function, and use both. This will cause the following code to look up the category id as a template id

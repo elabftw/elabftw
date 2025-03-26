@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DateTimeImmutable;
+use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\TemplatesSqlBuilder;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
@@ -80,6 +81,10 @@ final class Templates extends AbstractTemplateEntity
         $canwrite ??= BasePermissions::User->toJson();
 
         $contentType ??= $this->Users->userData['use_markdown'] === 1 ? AbstractEntity::CONTENT_MD : AbstractEntity::CONTENT_HTML;
+
+        if ($metadata !== null) {
+            new Metadata($metadata)->basicExtraFieldsValidation();
+        }
 
         $sql = 'INSERT INTO experiments_templates(team, title, body, userid, category, status, metadata, canread, canwrite, canread_target, canwrite_target, content_type, rating, canread_is_immutable, canwrite_is_immutable)
             VALUES(:team, :title, :body, :userid, :category, :status, :metadata, :canread, :canwrite, :canread_target, :canwrite_target, :content_type, :rating, :canread_is_immutable, :canwrite_is_immutable)';

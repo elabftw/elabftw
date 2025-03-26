@@ -72,6 +72,52 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
         $this->assertNull((new Metadata(null))->blankExtraFieldsValueOnDuplicate());
     }
 
+    public function testBasicExtraFieldsValidation(): void
+    {
+        $validJson =  <<<JSON
+            {
+                "extra_fields": {
+                    "foo": {
+                        "value": "bar"
+                    }
+                }
+            }
+            JSON;
+
+        new Metadata($validJson)->basicExtraFieldsValidation();
+
+        $invalidJson =  <<<JSON
+            {
+                "extra_fields": {
+                    "foo": "bar"
+                }
+            }
+            JSON;
+
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage('Extra field "foo" does not comply with the expected format.');
+
+        new Metadata($invalidJson)->basicExtraFieldsValidation();
+    }
+
+    public function testBasicExtraFieldsValidationMissingValueProperty(): void
+    {
+        $invalidJson =  <<<JSON
+            {
+                "extra_fields": {
+                    "foo": {
+                        "type": "text"
+                    }
+                }
+            }
+            JSON;
+
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage('Extra field "foo" does not have the requiered property "value".');
+
+        new Metadata($invalidJson)->basicExtraFieldsValidation();
+    }
+
     public function testExtrafieldWithOnlyStringValue(): void
     {
         $json =  <<<JSON

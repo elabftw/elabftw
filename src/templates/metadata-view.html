@@ -1,7 +1,5 @@
 {% if metadata.rawMetadata is defined %}
-
-  {{- metadata.rawMetadata|raw -}}
-
+  {{- include('metadata-view-array.html', {metadata: metadata.rawMetadata}, with_context: false) -}}
 {% elseif metadata.groupedMetadata is defined %}
 
   {% set metadataEnum = enum('Elabftw\\Enums\\Metadata') %}
@@ -59,5 +57,5 @@
 {% endif %}
 
 {% if metadata.anyContent is defined %}
-  {{- metadata.anyContent|raw -}}
+  {{- include('metadata-view-array.html', {metadata: metadata.anyContent}, with_context: false) -}}
 {% endif %}

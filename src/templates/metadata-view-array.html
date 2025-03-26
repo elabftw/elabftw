@@ -1,0 +1,13 @@
+{% if metadata is iterable %}
+  <ul>
+    {% for key, val in metadata %}
+      {% if val is iterable %}
+        <li><span class="text-muted">{{ key }}</span> <span class="font-weight-bold">⇒</span>
+          {{ include('metadata-view-array.html', {arr: val}, with_context: false) }}
+        </li>
+      {% else %}
+        <li><span class="text-muted">{{ key }}</span> <span class="font-weight-bold">→</span> {{ value }}</li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+{% endif %}

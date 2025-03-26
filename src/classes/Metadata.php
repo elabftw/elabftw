@@ -77,19 +77,19 @@ final class Metadata
         }
     }
 
-    public function getRaw(): string
+    public function getRaw(): array
     {
-        return Tools::printArr($this->metadata);
+        return $this->metadata;
     }
 
     // get anything that is not with an extra_fields or elabftw key
-    public function getAnyContent(): string
+    public function getAnyContent(): array
     {
         // copy the array, as we will edit in place
         $res = $this->metadata;
         unset($res[MetadataEnum::ExtraFields->value]);
         unset($res[MetadataEnum::Elabftw->value]);
-        return Tools::printArr($res);
+        return $res;
     }
 
     public function hasExtraFields(): bool

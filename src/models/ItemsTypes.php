@@ -68,8 +68,8 @@ final class ItemsTypes extends AbstractTemplateEntity
         $color ??= $this->getSomeColor();
         $contentType ??= $this->Users->userData['use_markdown'] === 1 ? AbstractEntity::CONTENT_MD : AbstractEntity::CONTENT_HTML;
 
-        $sql = 'INSERT INTO items_types(userid, title, body, team, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canread_target, canwrite_target, color, content_type, status, rating)
-            VALUES(:userid, :title, :body, :team, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canread_target, :canwrite_target, :color, :content_type, :status, :rating)';
+        $sql = 'INSERT INTO items_types(userid, title, body, team, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canread_target, canwrite_target, color, content_type, status, rating, metadata)
+            VALUES(:userid, :title, :body, :team, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canread_target, :canwrite_target, :color, :content_type, :status, :rating, :metadata)';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':userid', $this->Users->userid, PDO::PARAM_INT);
         $req->bindValue(':title', $title);
@@ -85,6 +85,7 @@ final class ItemsTypes extends AbstractTemplateEntity
         $req->bindParam(':content_type', $contentType, PDO::PARAM_INT);
         $req->bindParam(':status', $status);
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
+        $req->bindParam(':metadata', $metadata);
         $this->Db->execute($req);
 
         return $this->Db->lastInsertId();

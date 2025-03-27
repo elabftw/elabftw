@@ -1,10 +1,10 @@
 {% macro renderAsList(metadata) %}
   {% if metadata is iterable %}
     <ul>
-      {% for key, val in metadata %}
-        {% if val is iterable %}
+      {% for key, value in metadata %}
+        {% if value is iterable %}
           <li><span class="text-muted">{{ key }}</span> <span class="font-weight-bold">⇒</span>
-            {{ _self.renderAsList(val) }}
+            {{ _self.renderAsList(value) }}
           </li>
         {% else %}
           <li><span class="text-muted">{{ key }}</span> <span class="font-weight-bold">→</span> {{ value }}</li>

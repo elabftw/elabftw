@@ -69,7 +69,7 @@ final class Metadata
 
             if (!isset($field[MetadataEnum::Value->value])) {
                 throw new ImproperActionException(sprintf(
-                    _('Extra field "%s" does not have the requiered property "%s".'),
+                    _('Extra field "%s" does not have the required property "%s".'),
                     $key,
                     MetadataEnum::Value->value,
                 ));

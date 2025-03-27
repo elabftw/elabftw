@@ -81,7 +81,7 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
     public function testBasicExtraFieldsValidationMissingValueProperty(): void
     {
         $this->expectException(ImproperActionException::class);
-        $this->expectExceptionMessage('Extra field "foo" does not have the requiered property "value".');
+        $this->expectExceptionMessage('Extra field "foo" does not have the required property "value".');
 
         $invalidJson = '{"extra_fields":{"foo":{"type":"text"}}}';
         new Metadata($invalidJson)->basicExtraFieldsValidation();

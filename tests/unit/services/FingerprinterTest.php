@@ -36,7 +36,6 @@ class FingerprinterTest extends \PHPUnit\Framework\TestCase
         $httpGetter = new HttpGetter($client);
         $fp = new Fingerprinter($httpGetter, 'http://mocked.fr');
         $this->assertIsArray($fp->calculate('smi', 'C'));
-
     }
 
     public function testCalculateWentWrong(): void

@@ -29,6 +29,10 @@ final class Fingerprints
 
     public function create(array $fp): int
     {
+        // it's fine to send us an empty fp, but we won't record it
+        if (array_sum($fp) === 0) {
+            return 0;
+        }
         $sql = 'INSERT INTO compounds_fingerprints (id, ';
         for ($i = 0; $i < 32; $i++) {
             $sql .= sprintf('fp%d,', $i);

@@ -57,7 +57,6 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
             casNumber: '58-08-2',
             pubchemCid: 2519,
             smiles: $this->smilesCaf,
-            withFingerprint: false,
         );
         $this->Compounds->setId($compoundId);
         $this->assertIsArray($this->Compounds->readAll());

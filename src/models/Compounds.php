@@ -28,9 +28,7 @@ use Elabftw\Interfaces\FingerprinterInterface;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Params\BaseQueryParams;
 use Elabftw\Params\CompoundParams;
-use Elabftw\Services\Fingerprinter;
 use Elabftw\Services\HttpGetter;
-use Elabftw\Services\NullFingerprinter;
 use Elabftw\Services\PubChemImporter;
 use Elabftw\Traits\SetIdTrait;
 use Override;
@@ -181,7 +179,6 @@ final class Compounds extends AbstractRest
                 isHazardous2health: (bool) ($reqBody['is_hazardous2health'] ?? false),
                 isOxidising: (bool) ($reqBody['is_oxidising'] ?? false),
                 isToxic: (bool) ($reqBody['is_toxic'] ?? false),
-                withFingerprint: Config::boolFromEnv('USE_FINGERPRINTER'),
             ),
         };
     }
@@ -211,7 +208,6 @@ final class Compounds extends AbstractRest
         bool $isHazardous2health = false,
         bool $isOxidising = false,
         bool $isToxic = false,
-        bool $withFingerprint = true,
     ): int {
 
         $sql = 'INSERT INTO compounds (
@@ -260,7 +256,7 @@ final class Compounds extends AbstractRest
 
         $compoundId = $this->Db->lastInsertId();
 
-        if ($withFingerprint && !empty($smiles)) {
+        if (!empty($smiles)) {
             $fp = $this->fingerprinter->calculate('smi', $smiles);
             $Fingerprints = new Fingerprints($compoundId);
             $Fingerprints->create($fp['data']);
@@ -371,7 +367,6 @@ final class Compounds extends AbstractRest
 
     private function createFromCompound(Compound $compound): int
     {
-        $withFingerprint = !($this->fingerprinter instanceof NullFingerprinter);
         return $this->create(
             casNumber: $compound->cas,
             name: $compound->name,
@@ -390,7 +385,6 @@ final class Compounds extends AbstractRest
             isHazardous2health: $compound->isHazardous2health,
             isOxidising: $compound->isOxidising,
             isToxic: $compound->isToxic,
-            withFingerprint: $withFingerprint,
         );
     }
 }

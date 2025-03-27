@@ -59,7 +59,6 @@ final class CompoundsCsv extends AbstractCsv
                 pubchemCid: empty($row['pubchemcid']) ? null : (int) $row['pubchemcid'],
                 molecularFormula: $row['molecularformula'] ?? null,
                 iupacName: $row['iupacname'] ?? null,
-                withFingerprint: Config::boolFromEnv('USE_FINGERPRINTER'),
             );
             if ($this->resourceCategory !== null) {
                 $resource = $Items->create(template: $this->resourceCategory, title: $row['name']);

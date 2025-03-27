@@ -7,7 +7,17 @@
             {{ _self.renderAsList(value) }}
           </li>
         {% else %}
-          <li><span class="text-muted">{{ key }}</span> <span class="font-weight-bold">→</span> {{ value }}</li>
+          <li><span class="text-muted">{{ key }}</span> <span class="font-weight-bold">→</span>
+            {% if value is null %}
+              <code>NULL</code>
+            {% elseif value is same as(true) %}
+              <code>true</code>
+            {% elseif value is same as(false) %}
+              <code>false</code>
+            {% else %}
+              {{ value }}
+            {% endif %}
+           </li>
         {% endif %}
       {% endfor %}
     </ul>

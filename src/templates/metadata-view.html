@@ -1,5 +1,6 @@
+{% import 'metadata-view-array.html' as metadataArr %}
 {% if metadata.raw is defined %}
-  {{- include('metadata-view-array.html', {metadata: metadata.raw}, with_context: false) -}}
+  {{- metadataArr.renderAsList(metadata.raw) -}}
 {% elseif metadata.groupedExtraFields is defined %}
 
   {% set metadataEnum = enum('Elabftw\\Enums\\Metadata') %}
@@ -59,5 +60,5 @@
 {% endif %}
 
 {% if metadata.allButExtraFields is defined %}
-  {{- include('metadata-view-array.html', {metadata: metadata.allButExtraFields}, with_context: false) -}}
+  {{- metadataArr.renderAsList(metadata.allButExtraFields) -}}
 {% endif %}

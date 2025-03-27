@@ -14,6 +14,7 @@ namespace Elabftw\Commands;
 
 use Elabftw\Import\CompoundsCsv;
 use Elabftw\Interfaces\StorageInterface;
+use Elabftw\Models\Compounds;
 use Elabftw\Models\UltraAdmin;
 use Elabftw\Models\Users;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -26,6 +27,12 @@ use Symfony\Component\Console\Output\Output;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Elabftw\Models\Config;
+use Elabftw\Models\Items;
+use Elabftw\Services\Fingerprinter;
+use Elabftw\Services\HttpGetter;
+use Elabftw\Services\NullFingerprinter;
+use GuzzleHttp\Client;
 use Override;
 
 use function sprintf;
@@ -71,9 +78,18 @@ final class ImportCompoundsCsv extends Command
         if ($input->getOption('create-resource')) {
             $resourceCategory = (int) $input->getOption('create-resource');
         }
+        $Config = Config::getConfig();
+        $Fingerprinter = new NullFingerprinter();
+        $httpGetter = new HttpGetter(new Client(), $Config->configArr['proxy'], $Config->configArr['debug'] === '0');
+        if (Config::boolFromEnv('USE_FINGERPRINTER')) {
+            $Fingerprinter = new Fingerprinter($httpGetter, Config::fromEnv('FINGERPRINTER_URL'));
+        }
+        $Items = new Items($user);
+        $Compounds = new Compounds($httpGetter, $user, $Fingerprinter);
         $Importer = new CompoundsCsv(
-            $user,
+            $Items,
             $UploadedFile,
+            $Compounds,
             $resourceCategory,
         );
         if ($input->getOption('dry-run')) {

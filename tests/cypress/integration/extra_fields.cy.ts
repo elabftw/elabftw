@@ -153,4 +153,16 @@ describe('Extra Fields', () => {
         .should('contain', metadata[11].toString());
     });
   });
+
+  it('Create resource category with invalid extra fileds', () => {
+    postRequest('items_types', {
+      metadata: {
+        extra_fields: {
+          'Field name': 'With a value',
+        },
+      },
+    }).then(resp => {
+      expect(resp.status).to.eq(400);
+    });
+  });
 });

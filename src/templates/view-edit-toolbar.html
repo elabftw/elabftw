@@ -181,7 +181,7 @@
   {% else %}
     {# EDIT #}
     {% if not (Entity.entityData.locked or Entity.isReadOnly) %}
-      <a title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}' href='?mode=edit&amp;id={{ Entity.id }}' class='btn hl-hover-gray p-2 mr-2 rounded main-action-button lh-normal border-0 {{ Entity.ExclusiveEditMode.isActive ? 'disabled pe-auto' }}'>
+      <a title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}' href='?mode=edit&amp;id={{ Entity.id }}' class='btn hl-hover-gray p-2 mr-2 rounded main-action-button lh-normal border-0 {{ Entity.ExclusiveEditMode.isActive ? 'disabled' }}'>
         <i class='fas fa-pencil fa-fw'></i>
       </a>
     {% endif %}

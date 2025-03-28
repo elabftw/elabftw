@@ -13,25 +13,30 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\FingerprinterInterface;
+use JsonException;
+use Override;
 
 /**
- * Calculate fingerprint from a compound
+ * Use an external fingerprinting service to calculate compounds fingerprints
  */
-final class Fingerprinter
+final class Fingerprinter implements FingerprinterInterface
 {
-    private const string FINGERPRINTER_URL = '/fingerprinter';
-
-    // idea: second argument is Compound
-    public function __construct(private HttpGetter $httpGetter, bool $isEnabled)
+    public function __construct(private HttpGetter $httpGetter, private string $url)
     {
-        if (!$isEnabled) {
-            throw new ImproperActionException('Fingerprinting service is not enabled! Please refer to the documentation to enable it.');
+        if (trim($this->url) === '') {
+            throw new ImproperActionException('Fingerprinting service url is empty − set FINGERPRINTER_URL in your environment configuration');
         }
     }
 
+    #[Override]
     public function calculate(string $fmt, string $data): array
     {
-        $res = $this->httpGetter->postJson('https://127.1' . self::FINGERPRINTER_URL, array('fmt' => $fmt, 'data' => $data));
-        return json_decode($res, true, 42);
+        $response = $this->httpGetter->postJson($this->url, array('fmt' => $fmt, 'data' => $data));
+        try {
+            return json_decode($response, true, 42, JSON_THROW_ON_ERROR);
+        } catch (JsonException $e) {
+            throw new ImproperActionException('Invalid JSON from fingerprinting service', 0, $e);
+        }
     }
 }

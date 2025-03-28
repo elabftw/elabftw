@@ -14,11 +14,7 @@ namespace Elabftw\Import;
 
 use Elabftw\Models\Compounds;
 use Elabftw\Models\Compounds2ItemsLinks;
-use Elabftw\Models\Config;
 use Elabftw\Models\Items;
-use Elabftw\Models\Users;
-use Elabftw\Services\HttpGetter;
-use GuzzleHttp\Client;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Override;
 
@@ -28,23 +24,19 @@ use Override;
 final class CompoundsCsv extends AbstractCsv
 {
     public function __construct(
-        protected Users $requester,
+        protected Items $Items,
         protected UploadedFile $UploadedFile,
+        protected Compounds $Compounds,
         protected ?int $resourceCategory = null,
     ) {
-        parent::__construct($requester, $UploadedFile);
+        parent::__construct($Items->Users, $UploadedFile);
     }
 
     #[Override]
     public function import(): int
     {
-        // now loop the rows and do the import
-        $Config = Config::getConfig();
-        $httpGetter = new HttpGetter(new Client(), $Config->configArr['proxy'], $Config->configArr['debug'] === '0');
-        $Compounds = new Compounds($httpGetter, $this->requester);
-        $Items = new Items($this->requester);
         foreach ($this->reader->getRecords() as $row) {
-            $id = $Compounds->create(
+            $id = $this->Compounds->create(
                 smiles: $row['smiles'] ?? null,
                 name: $row['name'] ?? null,
                 casNumber: $row['cas'] ?? null,
@@ -53,12 +45,11 @@ final class CompoundsCsv extends AbstractCsv
                 pubchemCid: empty($row['pubchemcid']) ? null : (int) $row['pubchemcid'],
                 molecularFormula: $row['molecularformula'] ?? null,
                 iupacName: $row['iupacname'] ?? null,
-                withFingerprint: Config::boolFromEnv('USE_FINGERPRINTER'),
             );
             if ($this->resourceCategory !== null) {
-                $resource = $Items->create(template: $this->resourceCategory, title: $row['name']);
-                $Items->setId($resource);
-                $Compounds2ItemsLinks = new Compounds2ItemsLinks($Items, $id);
+                $resource = $this->Items->create(template: $this->resourceCategory, title: $row['name']);
+                $this->Items->setId($resource);
+                $Compounds2ItemsLinks = new Compounds2ItemsLinks($this->Items, $id);
                 $Compounds2ItemsLinks->create();
             }
         }

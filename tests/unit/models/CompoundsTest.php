@@ -16,6 +16,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\HttpGetter;
+use Elabftw\Services\NullFingerprinter;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
@@ -47,7 +48,7 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(array('handler' => $handlerStack));
         $this->httpGetter = new HttpGetter($client);
-        $this->Compounds = new Compounds($this->httpGetter, new Users(1, 1));
+        $this->Compounds = new Compounds($this->httpGetter, new Users(1, 1), new NullFingerprinter());
     }
 
     public function testCreateSearchAndDestroy(): void
@@ -56,7 +57,6 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
             casNumber: '58-08-2',
             pubchemCid: 2519,
             smiles: $this->smilesCaf,
-            withFingerprint: false,
         );
         $this->Compounds->setId($compoundId);
         $this->assertIsArray($this->Compounds->readAll());
@@ -80,12 +80,11 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
         $testCompound = $fixturesFs->read('cid-3345.json');
         $mock = new MockHandler(array(
             new Response(200, array(), $testCompound),
-            new Response(200, array(), $this->fpResponse),
         ));
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(array('handler' => $handlerStack));
         $httpGetter = new HttpGetter($client);
-        $Compounds = new Compounds($httpGetter, new Users(1, 1));
+        $Compounds = new Compounds($httpGetter, new Users(1, 1), new NullFingerprinter());
         // https://pubchem.ncbi.nlm.nih.gov/compound/3345
         $cid = 3345;
         $compoundId = $Compounds->postAction(Action::Duplicate, array('cid' => $cid));
@@ -121,7 +120,7 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(array('handler' => $handlerStack));
         $httpGetter = new HttpGetter($client);
-        $Compounds = new Compounds($httpGetter, new Users(1, 1));
+        $Compounds = new Compounds($httpGetter, new Users(1, 1), new NullFingerprinter());
 
         $queryParams = array('search_fp_smi' => $this->smiles);
         $req = new Request($queryParams);

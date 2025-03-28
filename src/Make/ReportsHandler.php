@@ -19,6 +19,7 @@ use Elabftw\Models\Compounds;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Users;
 use Elabftw\Services\HttpGetter;
+use Elabftw\Services\NullFingerprinter;
 use GuzzleHttp\Client;
 use Override;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,7 +35,7 @@ final class ReportsHandler extends AbstractRest
     {
         $httpGetter = new HttpGetter(new Client(), verifyTls: false);
         $Reporter = match ($scope) {
-            ReportScopes::Compounds => (new MakeCompoundsReport(new Compounds($httpGetter, $this->requester))),
+            ReportScopes::Compounds => (new MakeCompoundsReport(new Compounds($httpGetter, $this->requester, new NullFingerprinter()))),
             ReportScopes::Instance => (new MakeReport($this->requester)),
             ReportScopes::Inventory => (new MakeInventoryReport(new StorageUnits($this->requester))),
             ReportScopes::Team => (new MakeTeamReport($this->requester)),

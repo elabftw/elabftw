@@ -15,7 +15,6 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
-use Elabftw\Enums\EntityType;
 use Elabftw\Enums\RequestableAction;
 use Elabftw\Exceptions\ImproperActionException;
 use PDO;
@@ -70,9 +69,7 @@ final class ExclusiveEditMode
             return new RedirectResponse(sprintf(
                 '%s%sid=%d',
                 $this->Entity->entityType->toPage(),
-                $this->Entity->entityType === EntityType::Templates
-                    ? '&mode=view&template'
-                    : '?mode=view&',
+                '?mode=view&',
                 $this->Entity->id,
             ), Response::HTTP_SEE_OTHER);
         }

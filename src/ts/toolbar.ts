@@ -157,30 +157,6 @@ document.addEventListener('DOMContentLoaded', () => {
       case Action.Sign:
         $('#addSignatureModal').modal('toggle');
         break;
-      case Action.RemoveExclusiveEditMode:
-        // if Enforce exclusive edit mode is active, ask confirmation before redirecting to view mode.
-        ApiC.getJson(`${Model.User}/me`).then(json => {
-          if (json['enforce_exclusive_edit_mode'] === 1) {
-            $('#removeExclusiveEditModal').modal('toggle');
-            const modal = document.getElementById('removeExclusiveEditModal');
-            modal.addEventListener('click', async (event) => {
-              const actionTarget = (event.target as HTMLElement);
-              if (actionTarget.matches('[data-action="remove-exclusive-edit"]')) {
-                await ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.ExclusiveEditMode});
-                if (about.page.startsWith('template-')) {
-                  return window.location.replace('?tab=3&mode=view&templateid=' + entity.id);
-                }
-                return window.location.replace('?mode=view&id=' + entity.id);
-              }
-            });
-            return;
-          }
-          // if no Enforce setting, just patch and reload elements.
-          ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.ExclusiveEditMode})
-            .then(() => reloadElements(['exclusiveEditModeBtn', 'exclusiveEditModeInfo', 'requestActionsDiv']))
-            .then(() => toggleGrayClasses(document.getElementById('exclusiveEditModeBtn').classList));
-        });
-        break;
       }
     // EXPORT TO (PDF/ZIP)
     } else if (el.matches('[data-action="export-to"]')) {

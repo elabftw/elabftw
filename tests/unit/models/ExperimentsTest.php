@@ -212,4 +212,14 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->expectException(ImproperActionException::class);
         $this->Experiments->patch(Action::Update, array('custom_id' => 99));
     }
+
+    public function testGetTimestamperFullname(): void
+    {
+        $this->assertEquals('Unknown, user could not be found.', $this->Experiments->getTimestamperFullname());
+    }
+
+    public function testGetLockerFullname(): void
+    {
+        $this->assertEquals('Unknown, user could not be found.', $this->Experiments->getLockerFullname());
+    }
 }

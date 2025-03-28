@@ -424,10 +424,7 @@ abstract class AbstractEntity extends AbstractRest
      */
     public function getTimestamperFullname(): string
     {
-        if ($this->entityData['timestamped'] === 0) {
-            return 'Unknown';
-        }
-        return new UsersHelper($this->entityData['timestampedby'])->getFullnameFromUserid();
+        return new UsersHelper($this->entityData['timestampedby'] ?? 0)->getFullnameFromUserid();
     }
 
     // generate a title useful for zip folder name for instance: shortened, with category and short elabid
@@ -472,10 +469,7 @@ abstract class AbstractEntity extends AbstractRest
     // Get locker full name for display in view mode
     public function getLockerFullname(): string
     {
-        if ($this->entityData['locked'] === 0) {
-            return 'Unknown';
-        }
-        return new UsersHelper($this->entityData['lockedby'])->getFullnameFromUserid();
+        return new UsersHelper($this->entityData['lockedby'] ?? 0)->getFullnameFromUserid();
     }
 
     public function getIdFromCategory(int $category): array

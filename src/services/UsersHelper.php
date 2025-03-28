@@ -111,9 +111,9 @@ class UsersHelper
     {
         // maybe user was deleted!
         try {
-            return  new Users($this->userid)->userData['fullname'];
+            return new Users($this->userid)->userData['fullname'];
         } catch (ResourceNotFoundException) {
-            return _('User could not be found.');
+            return _('Unknown, user could not be found.');
         }
     }
 

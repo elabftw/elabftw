@@ -30,7 +30,7 @@
 <div id='exclusiveEditModeInfo'>
 {% if Entity.ExclusiveEditMode.isActive %}
   {% if Entity.ExclusiveEditMode.dataArr.locked_by != Entity.Users.userData.userid %}
-    {% set writeLockNotice = 'This entry is opened by %s. %sRequest exclusive edit mode removal%s'|trans|format(
+    {% set writeLockNotice = 'This entry is being edited by %s. %sRequest exclusive edit mode removal%s'|trans|format(
         Entity.ExclusiveEditMode.dataArr.fullname,
         '<button type="button" class="btn btn-sm btn-secondary ml-2" data-action="request-exclusive-edit-mode-removal" data-target-user="%s">'|format(Entity.ExclusiveEditMode.dataArr.locked_by),
         '</button>'

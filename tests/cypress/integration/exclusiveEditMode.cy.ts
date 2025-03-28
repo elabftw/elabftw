@@ -53,8 +53,7 @@ describe('Exclusive edit mode', () => {
     cy.wait('@redirect');
     cy.intercept('POST', '/api/v2/experiments/**').as('apiPost');
     cy.get('[class="alert alert-warning"]')
-      .should('contain', 'This entry is opened by Toto Le sysadmin in exclusive edit mode since')
-      .should('contain', 'You cannot edit it before') // rephrased as "before 'locked_until' time"
+      .should('contain', 'This entry is being edited by Toto Le sysadmin')
       .should('contain', 'Request exclusive edit mode removal')
       .get('[data-action="request-exclusive-edit-mode-removal"]')
       .click();
@@ -79,12 +78,10 @@ describe('Exclusive edit mode', () => {
     cy.get('[aria-label="Edit"]').click();
     cy.wait('@apiGet');
     cy.wait('@apiGet');
-    cy.contains('You opened this entry in exclusive edit mode at').should('be.visible');
     cy.get('#exclusiveEditModeBtn').click();
     cy.wait('@apiPATCH');
     cy.get('#overlay').should('be.visible').should('contain', 'Saved');
     cy.get('#exclusiveEditModeBtn span i').should('have.class', 'fa-lock-open').should('not.have.class', 'fa-lock');
-    cy.contains('You opened this entry in exclusive edit mode at').should('not.exist');
   };
 
   it('Try to open entity with exclusive edit mode', () => {

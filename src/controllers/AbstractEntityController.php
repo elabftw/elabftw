@@ -26,6 +26,7 @@ use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Changelog;
+use Elabftw\Models\ExclusiveEditMode;
 use Elabftw\Models\ExtraFieldsKeys;
 use Elabftw\Models\FavTags;
 use Elabftw\Models\ItemsTypes;
@@ -261,6 +262,12 @@ abstract class AbstractEntityController implements ControllerInterface
         }
 
         // exclusive edit mode
+        // all entities are in exclusive edit mode as of march 2025. See #(TODO n° pr when done)
+        $exclusiveEditMode = new ExclusiveEditMode($this->Entity);
+        if (empty($this->Entity->entityData['exclusive_edit_mode'])) {
+            $exclusiveEditMode->setExclusiveMode();
+        }
+        // gatekeeper for exclusive editing
         $redirectResponse = $this->Entity->ExclusiveEditMode->gatekeeper();
         if ($redirectResponse instanceof RedirectResponse) {
             return ($redirectResponse);

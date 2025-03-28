@@ -86,8 +86,6 @@ final class ExclusiveEditMode
 
     public function gatekeeper(): ?RedirectResponse
     {
-        $this->enforceExclusiveModeBasedOnUserSetting();
-
         if ($this->isActive
             && $this->Entity->Users->userid !== $this->dataArr['locked_by']
         ) {
@@ -102,6 +100,11 @@ final class ExclusiveEditMode
             ), Response::HTTP_SEE_OTHER);
         }
         return null;
+    }
+
+    public function setExclusiveMode(): bool
+    {
+        return $this->create();
     }
 
     public function toggle(): bool

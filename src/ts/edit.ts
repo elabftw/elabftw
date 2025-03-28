@@ -32,6 +32,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const entity = getEntity();
 
+  // remove exclusive edit mode when leaving the page
+  window.onbeforeunload = function() {
+    ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.ExclusiveEditMode});
+  };
   // Which editor are we using? md or tiny
   const editor = getEditor();
   editor.init('edit');

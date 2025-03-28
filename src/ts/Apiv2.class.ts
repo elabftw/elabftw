@@ -73,6 +73,8 @@ export class Api {
         'X-CSRF-Token': csrfToken,
         'X-Requested-With': 'XMLHttpRequest',
       },
+      // keeps the request alive if the page that initiated it is unloaded before completion.
+      keepalive: true,
     };
     if ([Method.POST, Method.PATCH].includes(method)) {
       options['body'] = JSON.stringify(params);

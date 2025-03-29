@@ -16,6 +16,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Compounds;
 use Elabftw\Models\Compounds2ItemsLinks;
 use Elabftw\Models\Items;
+use Elabftw\Params\EntityParams;
 use Elabftw\Services\PubChemImporter;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -66,7 +67,7 @@ final class CompoundsCsv extends AbstractCsv
                         inchi: $row['inchi'] ?? null,
                         inchiKey: $row['inchikey'] ?? null,
                         iupacName: $row['iupacname'] ?? null,
-                        name: $row['name'] ?? null,
+                        name: $row['name'] ?? $row['title'] ?? null,
                         chebiId: $row['chebi_id'] ?? null,
                         chemblId: $row['chembl_id'] ?? null,
                         deaNumber: $row['dea_number'] ?? null,
@@ -110,6 +111,9 @@ final class CompoundsCsv extends AbstractCsv
                 if ($this->resourceCategory !== null) {
                     $resource = $this->Items->create(template: $this->resourceCategory, title: $row['name'] ?? $row['iupacname'] ?? 'Unnamed compound');
                     $this->Items->setId($resource);
+                    if (isset($row['comment'])) {
+                        $this->Items->update(new EntityParams('body', $row['comment']));
+                    }
                     $Compounds2ItemsLinks = new Compounds2ItemsLinks($this->Items, $id);
                     $Compounds2ItemsLinks->create();
                 }

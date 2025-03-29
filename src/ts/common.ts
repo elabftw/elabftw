@@ -676,14 +676,14 @@ document.addEventListener('DOMContentLoaded', () => {
         importBtn.dataset.cid = json.cid;
       });
 
-    } else if (el.matches('[data-action="search-resources-from-compound"]')) {
+    } else if (el.matches('[data-action="search-entity-from-compound"]')) {
       // try and grab the CAS for the search
       let query = (document.getElementById('compoundInput-cas_number') as HTMLInputElement).value;
       // if no cas, use the name
       if (!query) {
         query = (document.getElementById('compoundInput-name') as HTMLInputElement).value;
       }
-      window.location.href = `database.php?q="${encodeURIComponent(query)}"`;
+      window.location.href = `${el.dataset.page}.php?q="${encodeURIComponent(query)}"`;
 
     // IMPORT FROM PUBCHEM
     } else if (el.matches('[data-action="import-compound"]')) {

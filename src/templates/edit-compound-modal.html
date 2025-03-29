@@ -42,7 +42,8 @@
       </div>
       <div class='modal-body'>
         <div class='d-flex justify-content-between'>
-          <button type='button' class='btn btn-secondary btn-sm' data-action='search-resources-from-compound'>{{ 'Search associated resources'|trans }}</button>
+          <button type='button' class='btn btn-secondary btn-sm' data-action='search-entity-from-compound' data-page='database'>{{ 'Search associated resources'|trans }}</button>
+          <button type='button' class='ml-2 btn btn-secondary btn-sm' data-action='search-entity-from-compound' data-page='experiments'>{{ 'Search associated experiments'|trans }}</button>
           <button type='button' class='btn btn-primary btn-sm ml-auto' data-action='toggle-modal' data-dismiss='modal' data-target='createResourceFromCompoundModal'>{{ 'Create resource from compound'|trans }}</button>
         </div>
         <div class='mb-2' id='editCompoundInputs'>

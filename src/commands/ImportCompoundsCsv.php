@@ -32,6 +32,7 @@ use Elabftw\Models\Items;
 use Elabftw\Services\Fingerprinter;
 use Elabftw\Services\HttpGetter;
 use Elabftw\Services\NullFingerprinter;
+use Elabftw\Services\PubChemImporter;
 use GuzzleHttp\Client;
 use Override;
 
@@ -57,6 +58,7 @@ final class ImportCompoundsCsv extends Command
             ->addArgument('teamid', InputArgument::REQUIRED, 'Target team ID')
             ->addOption('userid', 'u', InputOption::VALUE_REQUIRED, 'Target user ID')
             ->addOption('dry-run', 'd', InputOption::VALUE_NONE, 'Process the file, but do not actually import things, display what would be done')
+            ->addOption('use-pubchem', 'p', InputOption::VALUE_NONE, 'Use PubChem to complete information. Use the CAS number or Pubchem CID to fetch data from PubChem and complement existing data.')
             ->addOption('create-resource', 'c', InputOption::VALUE_REQUIRED, 'Create a resource linked to that compound with the category ID provided');
     }
 
@@ -84,6 +86,13 @@ final class ImportCompoundsCsv extends Command
         if (Config::boolFromEnv('USE_FINGERPRINTER')) {
             $Fingerprinter = new Fingerprinter($httpGetter, Config::fromEnv('FINGERPRINTER_URL'));
         }
+
+        $usePubchem = (bool) $input->getOption('use-pubchem');
+        $pubChemImporter = null;
+        if ($usePubchem) {
+            $output->writeln('[info] Using Pubchem to complete data: this might take a long time.');
+            $pubChemImporter = new PubChemImporter($httpGetter);
+        }
         $Items = new Items($user);
         $Compounds = new Compounds($httpGetter, $user, $Fingerprinter);
         $Importer = new CompoundsCsv(
@@ -92,6 +101,7 @@ final class ImportCompoundsCsv extends Command
             $UploadedFile,
             $Compounds,
             $resourceCategory,
+            $pubChemImporter,
         );
         if ($input->getOption('dry-run')) {
             // this is necessary so -vv isn't required to get dry run info

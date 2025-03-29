@@ -312,6 +312,29 @@ final class Compounds extends AbstractRest
         return $compoundId;
     }
 
+    public function createFromCompound(Compound $compound): int
+    {
+        return $this->create(
+            casNumber: $compound->cas,
+            name: $compound->name,
+            inchi: $compound->inChI,
+            inchiKey: $compound->inChIKey,
+            smiles: $compound->smiles,
+            iupacName: $compound->iupacName,
+            pubchemCid: $compound->cid,
+            molecularFormula: $compound->molecularFormula,
+            molecularWeight: $compound->molecularWeight,
+            isCorrosive: $compound->isCorrosive,
+            isExplosive: $compound->isExplosive,
+            isFlammable: $compound->isFlammable,
+            isGasUnderPressure: $compound->isGasUnderPressure,
+            isHazardous2env: $compound->isHazardous2env,
+            isHazardous2health: $compound->isHazardous2health,
+            isOxidising: $compound->isOxidising,
+            isToxic: $compound->isToxic,
+        );
+    }
+
     protected function canOrExplode(AccessType $accessType): bool
     {
         if ($this->id === null) {
@@ -411,28 +434,5 @@ final class Compounds extends AbstractRest
         $Importer = new PubChemImporter($this->httpGetter);
         $cid = $Importer->getCidFromCas($cas);
         return $this->searchPubChem($cid);
-    }
-
-    private function createFromCompound(Compound $compound): int
-    {
-        return $this->create(
-            casNumber: $compound->cas,
-            name: $compound->name,
-            inchi: $compound->inChI,
-            inchiKey: $compound->inChIKey,
-            smiles: $compound->smiles,
-            iupacName: $compound->iupacName,
-            pubchemCid: $compound->cid,
-            molecularFormula: $compound->molecularFormula,
-            molecularWeight: $compound->molecularWeight,
-            isCorrosive: $compound->isCorrosive,
-            isExplosive: $compound->isExplosive,
-            isFlammable: $compound->isFlammable,
-            isGasUnderPressure: $compound->isGasUnderPressure,
-            isHazardous2env: $compound->isHazardous2env,
-            isHazardous2health: $compound->isHazardous2health,
-            isOxidising: $compound->isOxidising,
-            isToxic: $compound->isToxic,
-        );
     }
 }

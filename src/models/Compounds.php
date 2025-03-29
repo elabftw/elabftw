@@ -193,34 +193,58 @@ final class Compounds extends AbstractRest
         ?string $inchi = null,
         ?string $inchiKey = null,
         ?string $name = null,
-        ?string $smiles = null,
+        ?string $casNumber = null,
+        ?string $ecNumber = null,
+        ?string $iupacName = null,
+        ?string $chebiId = null,
+        ?string $chemblId = null,
+        ?string $deaNumber = null,
+        ?string $drugbankId = null,
+        ?string $dsstoxId = null,
+        ?string $hmdbId = null,
+        ?string $keggId = null,
+        ?string $metabolomicsWbId = null,
         ?string $molecularFormula = null,
         ?float $molecularWeight = 0.00,
-        ?string $casNumber = null,
-        ?string $iupacName = null,
+        ?string $nciCode = null,
+        ?string $nikkajiNumber = null,
+        ?string $pharmGkbId = null,
+        ?string $pharosLigandId = null,
         ?int $pubchemCid = null,
+        ?string $rxcui = null,
+        ?string $smiles = null,
+        ?string $unii = null,
+        ?string $wikidata = null,
+        ?string $wikipedia = null,
         bool $isCorrosive = false,
-        bool $isSeriousHealthHazard = false,
         bool $isExplosive = false,
         bool $isFlammable = false,
         bool $isGasUnderPressure = false,
         bool $isHazardous2env = false,
         bool $isHazardous2health = false,
         bool $isOxidising = false,
+        bool $isSeriousHealthHazard = false,
         bool $isToxic = false,
+        bool $isRadioactive = false,
+        bool $isAntibioticPrecursor = false,
+        bool $isDrugPrecursor = false,
+        bool $isExplosivePrecursor = false,
+        bool $isCmr = false,
+        bool $isNano = false,
+        bool $isControlled = false,
     ): int {
 
         $sql = 'INSERT INTO compounds (
             created_by, modified_by, name,
             inchi, inchi_key,
-            smiles, molecular_formula, molecular_weight,
-            cas_number, iupac_name, pubchem_cid, userid, team,
+            smiles, molecular_formula, molecular_weight, metabolomics_wb_id, nci_code, nikkaji_number, pharmgkb_id, pharos_ligand_id, rxcui, unii, wikidata, wikipedia, is_radioactive, is_antibiotic_precursor, is_drug_precursor, is_explosive_precursor, is_cmr, is_nano, is_controlled,
+            cas_number, ec_number, iupac_name, pubchem_cid, userid, team, chebi_id, chembl_id, dea_number, drugbank_id, dsstox_id, hmdb_id, kegg_id,
             is_corrosive, is_serious_health_hazard, is_explosive, is_flammable, is_gas_under_pressure, is_hazardous2env, is_hazardous2health, is_oxidising, is_toxic
             ) VALUES (
             :requester, :requester, :name,
             :inchi, :inchi_key,
-            :smiles, :molecular_formula, :molecular_weight,
-            :cas_number, :iupac_name, :pubchem_cid, :requester, :team,
+            :smiles, :molecular_formula, :molecular_weight, :metabolomics_wb_id, :nci_code, :nikkaji_number, :pharmgkb_id, :pharos_ligand_id, :rxcui, :unii, :wikidata, :wikipedia, :is_radioactive, :is_antibiotic_precursor, :is_drug_precursor, :is_explosive_precursor, :is_cmr, :is_nano, :is_controlled,
+            :cas_number, :ec_number, :iupac_name, :pubchem_cid, :requester, :team, :chebi_id, :chembl_id, :dea_number, :drugbank_id, :dsstox_id, :hmdb_id, :kegg_id,
             :is_corrosive, :is_serious_health_hazard, :is_explosive, :is_flammable, :is_gas_under_pressure, :is_hazardous2env, :is_hazardous2health, :is_oxidising, :is_toxic)';
 
         $req = $this->Db->prepare($sql);
@@ -233,8 +257,25 @@ final class Compounds extends AbstractRest
         $req->bindParam(':molecular_formula', $molecularFormula);
         $req->bindParam(':molecular_weight', $molecularWeight);
         $req->bindParam(':cas_number', $casNumber);
+        $req->bindParam(':ec_number', $ecNumber);
         $req->bindParam(':iupac_name', $iupacName);
         $req->bindParam(':pubchem_cid', $pubchemCid);
+        $req->bindParam(':chebi_id', $chebiId);
+        $req->bindParam(':chembl_id', $chemblId);
+        $req->bindParam(':dea_number', $deaNumber);
+        $req->bindParam(':drugbank_id', $drugbankId);
+        $req->bindParam(':dsstox_id', $dsstoxId);
+        $req->bindParam(':hmdb_id', $hmdbId);
+        $req->bindParam(':kegg_id', $keggId);
+        $req->bindParam(':metabolomics_wb_id', $metabolomicsWbId);
+        $req->bindParam(':nci_code', $nciCode);
+        $req->bindParam(':nikkaji_number', $nikkajiNumber);
+        $req->bindParam(':pharmgkb_id', $pharmGkbId);
+        $req->bindParam(':pharos_ligand_id', $pharosLigandId);
+        $req->bindParam(':rxcui', $rxcui);
+        $req->bindParam(':unii', $unii);
+        $req->bindParam(':wikidata', $wikidata);
+        $req->bindParam(':wikipedia', $wikipedia);
         $req->bindParam(':is_corrosive', $isCorrosive, PDO::PARAM_INT);
         $req->bindParam(':is_serious_health_hazard', $isSeriousHealthHazard, PDO::PARAM_INT);
         $req->bindParam(':is_explosive', $isExplosive, PDO::PARAM_INT);
@@ -243,7 +284,14 @@ final class Compounds extends AbstractRest
         $req->bindParam(':is_hazardous2env', $isHazardous2env, PDO::PARAM_INT);
         $req->bindParam(':is_hazardous2health', $isHazardous2health, PDO::PARAM_INT);
         $req->bindParam(':is_oxidising', $isOxidising, PDO::PARAM_INT);
+        $req->bindParam(':is_radioactive', $isRadioactive, PDO::PARAM_INT);
         $req->bindParam(':is_toxic', $isToxic, PDO::PARAM_INT);
+        $req->bindParam(':is_antibiotic_precursor', $isAntibioticPrecursor, PDO::PARAM_INT);
+        $req->bindParam(':is_drug_precursor', $isDrugPrecursor, PDO::PARAM_INT);
+        $req->bindParam(':is_explosive_precursor', $isExplosivePrecursor, PDO::PARAM_INT);
+        $req->bindParam(':is_cmr', $isCmr, PDO::PARAM_INT);
+        $req->bindParam(':is_nano', $isNano, PDO::PARAM_INT);
+        $req->bindParam(':is_controlled', $isControlled, PDO::PARAM_INT);
 
         try {
             $this->Db->execute($req);

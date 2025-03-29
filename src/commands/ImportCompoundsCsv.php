@@ -52,7 +52,7 @@ final class ImportCompoundsCsv extends Command
     protected function configure(): void
     {
         $this->setDescription('Import compounds from a CSV file')
-            ->setHelp('Column names that will match: name, smiles, inchi, inchikey, cas, pubchemcid, molecularformula, iupacname')
+            ->setHelp('Column names that will match: cas, chebi_id, chembl_id, dea_number, drugbank_id, dsstox_id, ec_number, hmdb_id, inchi, inchikey, iupacname, is_antibiotic_precursor, is_cmr, is_controlled, is_corrosive, is_drug_precursor, is_explosive, is_explosive_precursor, is_flammable, is_gas_under_pressure, is_hazardous2env, is_hazardous2health, is_nano, is_oxidising, is_radioactive, is_serious_health_hazard, is_toxic, kegg_id, metabolomics_wb_id, molecularformula, molecularweight, name, nci_code, nikkaji_number, pharmgkb_id, pharos_ligand_id, pubchemcid, rxcui, smiles, unii, wikidata, wikipedia')
             ->addArgument('file', InputArgument::REQUIRED, 'Name of the file to import. Must be present in /elabftw/exports folder in the container')
             ->addArgument('teamid', InputArgument::REQUIRED, 'Target team ID')
             ->addOption('userid', 'u', InputOption::VALUE_REQUIRED, 'Target user ID')
@@ -87,6 +87,7 @@ final class ImportCompoundsCsv extends Command
         $Items = new Items($user);
         $Compounds = new Compounds($httpGetter, $user, $Fingerprinter);
         $Importer = new CompoundsCsv(
+            $output,
             $Items,
             $UploadedFile,
             $Compounds,

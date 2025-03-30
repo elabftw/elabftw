@@ -12,7 +12,7 @@
 
 {% block body %}
   <div class='pl-3 mb-5'>
-    <h4><label for='storageSearchInput'>{{ 'Search containers or places'|trans }}</label></h4>
+    <h4><label for='storageSearchInput'>{{ 'Search containers or locations'|trans }}</label></h4>
     <form class='input-group' method='get'>
       {% set containerSearchPlaceholder = ['Sodium', 'Saccharose', 'Acetone', 'CK-666', 'Fibronectin'] %}
       <input class='form-control' name='q' id='storageSearchInput' placeholder='{{ random(containerSearchPlaceholder) }}' value='{{ App.Request.query.getString('q') }}' />
@@ -35,7 +35,12 @@
   </div>
 
   <div class='pl-3 mb-5'>
-    <h4>{{ 'Browse places'|trans }}</h4>
+    <div class='d-flex'>
+      <h4>{{ 'Browse inventory locations'|trans }}</h4>
+      <div class='ml-auto'>
+        <button type='button' class='btn btn-secondary btn-sm' data-parent-id='' data-action='add-storage-children'><i class='fas fa-plus-circle mr-1 color-white'></i>{{ 'Add root element'|trans }}</button>
+      </div>
+    </div>
     {% include 'storage-list.html' with {'storage_editable': true} %}
   </div>
 {% endblock body %}

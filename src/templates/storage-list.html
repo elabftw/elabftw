@@ -4,17 +4,14 @@
   <a href='#' data-action='expand-all-storage'>{{ 'Expand all'|trans }}</a>
 </div>
 <div id='storageDiv'>
-  {% macro render_items(items, groupedItems, storage_editable) %}
+  {% macro render_items(items, groupedItems, storage_editable, parent) %}
     <ul class='list-group'>
       {% for item in items %}
-        <li class='list-group-item py-2'>
-          <details {% if item.children_count == 0 %}open{% endif %}>
+        <li class='list-group-item py-1'>
+          {#<details {% if item.children_count == 0 %}open{% endif %}>#}
+          <details>
             <summary>{{ item.name }} {% if item.children_count > 0 %}({{ item.children_count }}){% endif %}</summary>
-            {% if groupedItems[item.id] is defined %}
-              {# Recursively render the children #}
-              {{ _self.render_items(groupedItems[item.id], groupedItems, storage_editable) }}
-            {% endif %}
-            <div>
+            <div class='mb-1'>
               {% if storage_editable %}
                 <button type='button' class='btn btn-secondary btn-sm' data-parent-id='{{ item.id }}' data-action='add-storage-children'><i class='fas fa-plus-circle mr-1 color-white'></i>{{ 'Add children to %s'|trans|format(item.name) }}</button>
                 <button type='button' class='btn btn-danger btn-sm' data-id='{{ item.id }}' data-action='destroy-storage'><i class='fas fa-minus-circle mr-1 color-white'></i>{{ 'Delete %s and its children'|trans|format(item.name) }}</button>
@@ -23,16 +20,33 @@
               {% endif %}
               <a class='btn btn-secondary btn-sm' href='?storage_unit={{ item.id }}'><i class='fas fa-magnifying-glass mr-1 color-white'></i>{{ 'Display content'|trans }}</a>
             </div>
+            {% if groupedItems[item.id] is defined %}
+              {# Recursively render the children #}
+              {{ _self.render_items(groupedItems[item.id], groupedItems, storage_editable) }}
+            {% endif %}
           </details>
         </li>
       {% endfor %}
     </ul>
   {% endmacro %}
+
   {# Start rendering from the root level, which has parent_id = null #}
-  {{ _self.render_items(storageUnitsArr[null], storageUnitsArr, storage_editable) }}
-  <div>
-    {% if storage_editable %}
-      <button type='button' class='btn btn-secondary btn-sm' data-parent-id='' data-action='add-storage-children'><i class='fas fa-plus-circle mr-1 color-white'></i>{{ 'Add root element'|trans }}</button>
-    {% endif %}
-  </div>
+  {% for root in storageUnitsArr[null] %}
+    <div class='box'>
+      <p class='smallgray'>{{ 'Inventory location'|trans }}</p>
+      <div class='d-flex'>
+        <div>
+          <i class='fas fa-location-dot mr-2'></i><span class='font-weight-bold'>{{ root.name }}</span>
+        </div>
+        <div class='ml-auto'>
+          <button type='button' class='btn btn-secondary btn-sm' title='{{ 'Add children to %s'|trans|format(root.name) }}' aria-label='{{ 'Add children to %s'|trans|format(root.name) }}' data-parent-id='{{ root.id }}' data-action='add-storage-children'><i class='fas fa-plus-circle color-white'></i></button>
+          {# search with name instead of id for parent #}
+          <a class='btn btn-secondary btn-sm' title='{{ 'Display content'|trans }}' href='?q={{ root.name }}'><i class='fas fa-magnifying-glass color-white'></i></a>
+        </div>
+      </div>
+      <hr>
+      {# now render the children of this root element #}
+      {{ _self.render_items(storageUnitsArr[root.id], storageUnitsArr, storage_editable, root) }}
+    </div>
+  {% endfor %}
 </div>

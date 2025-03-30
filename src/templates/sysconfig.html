@@ -52,7 +52,7 @@
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='12'>LDAP</button></li>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='13'>{{ 'External auth'|trans }}</button></li>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='14'>{{ 'Audit Logs'|trans }}</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='15'>{{ 'Storage'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='15'>{{ 'Inventory'|trans }}</button></li>
 </ul>
 
 {# loading spinner #}
@@ -1086,9 +1086,9 @@
   </div>
 </div>
 
-{# STORAGE #}
+{# INVENTORY #}
 <div data-tabcontent='15' hidden>
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Storage'|trans }}</h3>
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Inventory'|trans }}</h3>
   <div class='pl-3 mb-5'>
     <div><a href='/api/v2/reports?format=csv&scope=stored_compounds' class='btn btn-primary'>{{ 'Get inventory report'|trans }}</a></div>
     {% include 'storage-list.html' with {'storage_editable': true} %}

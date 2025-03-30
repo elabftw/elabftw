@@ -125,6 +125,8 @@
     </div>
   </div>
 </div>
+{# only show for items, if shown to experiments, it'll trigger an error with toSymbol not having an int value #}
+{% if Entity.entityType.value == 'items' %}
 {# Modal for procurement request #}
 <div class='modal fade' id='procurementRequestModal' tabindex='-1' role='dialog' aria-labelledby='procurementRequestModalLabel'>
   <div class='modal-dialog' role='document'>
@@ -147,6 +149,7 @@
     </div>
   </div>
 </div>
+{% endif %}
 
 <hr>
 

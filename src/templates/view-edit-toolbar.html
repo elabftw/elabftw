@@ -193,14 +193,14 @@
     </button>
 
     {# Calendar booking #}
-    {% if Entity.entityType.value == 'items' %}
+    {% if Entity.entityType.value == 'items' and (Entity.entityData.is_bookable or not Entity.isReadOnly) %}
       {% if Entity.entityData.is_bookable %}
         <a class='btn mr-2 hl-hover-gray p-2 lh-normal border-0' title='{{ 'Book item'|trans }}' aria-label='{{ 'Book item'|trans }}' href='scheduler.php?item={{ Entity.id }}'>
           <i class='fas fa-calendar-plus fa-fw'></i>
         </a>
       {% else %}
         <button type='button' class='btn mr-2 hl-hover-gray p-2 lh-normal border-0' aria-label='{{ 'Modify booking parameters'|trans }}' title='{{ 'Modify booking parameters'|trans }}' data-action='toggle-modal' data-target='bookingParamsModal'>
-          <i class='fas fa-calendar-plus fa-fw'></i>
+          <i class='fas fa-calendar-plus color-disabled fa-fw'></i>
         </button>
       {% endif %}
     {% endif %}
@@ -236,7 +236,7 @@
   {% endif %}
 
   {# PROCUREMENT REQUEST #}
-  {% if Entity.entityType.value == 'items' %}
+  {% if Entity.entityType.value == 'items' and (Entity.entityData.is_procurable or not Entity.isReadOnly) %}
   {% set proc_label = Entity.entityData.is_procurable ? 'Place order'|trans : 'Modify procurement parameters'|trans %}
     <button type='button' title='{{ proc_label }}' aria-label='{{ proc_label }}' data-action='toggle-modal' data-target='procurement{{ Entity.entityData.is_procurable ? 'Request' : 'Params' }}Modal' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0 {{ not Entity.entityData.is_procurable ? 'disabled' }}'>
       <i class='fas fa-cart-shopping fa-fw'></i>

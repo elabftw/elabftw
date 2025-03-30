@@ -960,6 +960,10 @@ the form-control fails to do that so we do the border ourselves */
   color: $secondlevel !important;
 }
 
+.color-disabled {
+  color: $disabled !important;
+}
+
 .color-medium {
   color: $medium;
 }

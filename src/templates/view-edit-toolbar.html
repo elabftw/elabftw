@@ -153,7 +153,7 @@
 <hr>
 
 {# TOP TOOLBAR #}
-<div class='d-flex align-items-center'>
+<div class='d-flex align-items-center' id='topToolbar'>
   {# BACK TO LINK #}
   {% if App.Session.has('lastquery') %}
     {% set lastquery = App.Session.get('lastquery') %}
@@ -194,8 +194,9 @@
       <i class='fas fa-copy fa-fw'></i>
     </button>
 
-    {% if Entity.entityType.value == 'items' and Entity.canBook and Entity.entityData.is_bookable %}
-      <a class='btn mr-2 hl-hover-gray p-2 lh-normal border-0' title='{{ 'Book item'|trans }}' aria-label='{{ 'Book item'|trans }}' href='scheduler.php?item={{ Entity.id }}'>
+    {# Calendar booking #}
+    {% if Entity.entityType.value == 'items' %}
+    <a class='btn mr-2 hl-hover-gray p-2 lh-normal border-0 {{ not Entity.entityData.is_bookable ? 'disabled' }}' title='{{ Entity.entityData.is_bookable ? 'Book item'|trans : 'This resource is not bookable'|trans }}' aria-label='{{ 'Book item'|trans }}' href='scheduler.php?item={{ Entity.id }}'>
         <i class='fas fa-calendar-plus fa-fw'></i>
       </a>
     {% endif %}

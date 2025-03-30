@@ -107,7 +107,7 @@ final class CompoundsCsv extends AbstractCsv
                     );
                 }
 
-                // optionnally create Resource
+                // optionally create Resource
                 if ($this->resourceCategory !== null) {
                     $resource = $this->Items->create(template: $this->resourceCategory, title: $row['name'] ?? $row['iupacname'] ?? 'Unnamed compound');
                     $this->Items->setId($resource);

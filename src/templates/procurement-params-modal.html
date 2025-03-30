@@ -13,7 +13,7 @@
         <div class='d-flex justify-content-between mb-2'>
           <label class='d-inline mr-1' for='isprocurableSwitch'>{{ 'Allow procurement of this resource'|trans }}</label>
           <label class='switch' title='{{ 'Allow procurement of this resource'|trans }}'>
-            <input type='checkbox' autocomplete='off' id='isprocurableSwitch' data-trigger='change' data-model='items/{{ Entity.id }}' data-target='is_procurable' {{ Entity.entityData.is_procurable == 1 ? 'checked="checked"' }}>
+            <input type='checkbox' autocomplete='off' id='isprocurableSwitch' data-reload='topToolbar' data-trigger='change' data-model='items/{{ Entity.id }}' data-target='is_procurable' {{ Entity.entityData.is_procurable == 1 ? 'checked="checked"' }}>
             <span class='slider'></span>
           </label>
         </div>

@@ -125,7 +125,6 @@
     </div>
   </div>
 </div>
-{% if Entity.entityData.is_procurable %}
 {# Modal for procurement request #}
 <div class='modal fade' id='procurementRequestModal' tabindex='-1' role='dialog' aria-labelledby='procurementRequestModalLabel'>
   <div class='modal-dialog' role='document'>
@@ -148,7 +147,6 @@
     </div>
   </div>
 </div>
-{% endif %}
 
 <hr>
 
@@ -196,9 +194,15 @@
 
     {# Calendar booking #}
     {% if Entity.entityType.value == 'items' %}
-    <a class='btn mr-2 hl-hover-gray p-2 lh-normal border-0 {{ not Entity.entityData.is_bookable ? 'disabled' }}' title='{{ Entity.entityData.is_bookable ? 'Book item'|trans : 'This resource is not bookable'|trans }}' aria-label='{{ 'Book item'|trans }}' href='scheduler.php?item={{ Entity.id }}'>
-        <i class='fas fa-calendar-plus fa-fw'></i>
-      </a>
+      {% if Entity.entityData.is_bookable %}
+        <a class='btn mr-2 hl-hover-gray p-2 lh-normal border-0' title='{{ 'Book item'|trans }}' aria-label='{{ 'Book item'|trans }}' href='scheduler.php?item={{ Entity.id }}'>
+          <i class='fas fa-calendar-plus fa-fw'></i>
+        </a>
+      {% else %}
+        <button type='button' class='btn mr-2 hl-hover-gray p-2 lh-normal border-0' aria-label='{{ 'Modify booking parameters'|trans }}' title='{{ 'Modify booking parameters'|trans }}' data-action='toggle-modal' data-target='bookingParamsModal'>
+          <i class='fas fa-calendar-plus fa-fw'></i>
+        </button>
+      {% endif %}
     {% endif %}
 
   {% endif %}
@@ -232,8 +236,9 @@
   {% endif %}
 
   {# PROCUREMENT REQUEST #}
-  {% if Entity.entityData.is_procurable %}
-    <button type='button' title='{{ 'Place order'|trans }}' aria-label='{{ 'Place order'|trans }}' data-action='toggle-modal' data-target='procurementRequestModal' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
+  {% if Entity.entityType.value == 'items' %}
+  {% set proc_label = Entity.entityData.is_procurable ? 'Place order'|trans : 'Modify procurement parameters'|trans %}
+    <button type='button' title='{{ proc_label }}' aria-label='{{ proc_label }}' data-action='toggle-modal' data-target='procurement{{ Entity.entityData.is_procurable ? 'Request' : 'Params' }}Modal' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0 {{ not Entity.entityData.is_procurable ? 'disabled' }}'>
       <i class='fas fa-cart-shopping fa-fw'></i>
     </button>
   {% endif %}

@@ -170,16 +170,6 @@ if (window.location.pathname === '/admin.php') {
       if (confirm(i18next.t('generic-delete-warning'))) {
         ApiC.delete(`${EntityType.ItemType}/${el.dataset.id}`).then(() => window.location.href = '?tab=4');
       }
-    // REQUEST EXCLUSIVE EDIT MODE REMOVAL
-    } else if (el.matches('[data-action="request-exclusive-edit-mode-removal"]')) {
-      ApiC.post(`${EntityType.ItemType}/${el.dataset.id}/request_actions`, {
-        action: Action.Create,
-        target_action: 60,
-        target_userid: el.dataset.targetUser,
-      }).then(() => reloadElements(['requestActionsDiv']))
-        // the request gets rejected if repeated
-        .catch(error => console.error(error.message));
-    // CREATE TEAM GROUP
     } else if (el.matches('[data-action="create-teamgroup"]')) {
       const input = (document.getElementById('teamGroupCreate') as HTMLInputElement);
       ApiC.post(`${Model.Team}/current/${Model.TeamGroup}`, {'name': input.value}).then(() => {

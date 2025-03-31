@@ -11,7 +11,6 @@ import {
   notifError,
   relativeMoment,
   reloadElements,
-  toggleGrayClasses,
 } from './misc';
 import { Api } from './Apiv2.class';
 import i18next from 'i18next';
@@ -194,12 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
       || el.parentElement?.matches('[data-action="toggle-exclusive-edit-mode"]')
     ) {
       ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.ExclusiveEditMode})
-        .then(() => reloadElements(['exclusiveEditModeInfo', 'requestActionsDiv', 'exclusiveEditModeBtn']))
-        .then(() => {
-          if (document.getElementById('exclusiveEditModeBtn')) {
-            toggleGrayClasses(document.getElementById('exclusiveEditModeBtn').classList);
-          }
-        });
+        .then(() => reloadElements(['exclusiveEditModeInfo']));
     }
   });
 });

@@ -27,8 +27,6 @@ use function sprintf;
  */
 final class ExclusiveEditMode
 {
-    // maybe re add lock timeout exceptionally for entities that stay locked too long.
-    // removing requestable actions so it might prove useful to unlock with timeout (30mins of inactivity)
     public array $dataArr = array();
 
     public bool $isActive = false;
@@ -148,9 +146,6 @@ final class ExclusiveEditMode
         if ($res) {
             $this->dataArr = array();
             $this->isActive = false;
-            //            // remove potential requests
-            //            (new RequestActions($this->Entity->Users, $this->Entity))
-            //                ->remove(RequestableAction::RemoveExclusiveEditMode);
         }
         return $res;
     }

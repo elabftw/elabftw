@@ -256,7 +256,7 @@ abstract class AbstractEntityController implements ControllerInterface
         if ($redirectResponse instanceof RedirectResponse) {
             return ($redirectResponse);
         }
-        // all entities are in exclusive edit mode as of march 2025. See #(TODO n° pr when done)
+        // all entities are in exclusive edit mode as of march 2025. See #5568
         if (empty($this->Entity->entityData['exclusive_edit_mode'])) {
             $this->Entity->ExclusiveEditMode->setExclusiveMode();
         }

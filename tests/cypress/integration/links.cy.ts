@@ -39,15 +39,16 @@ describe('Import links', () => {
 
     // link exp A to exp B and res b
     cy.visit('/experiments.php');
-    cy.get('#itemList').contains('Links test-A').click();
+    const targetA = 'Links test-A';
+    cy.get('#itemList').contains(targetA).click();
     cy.intercept('GET', /\/api\/v2\/experiments\/\?.+$/).as('getExpQueryApi');
     cy.get('#topToolbar').get('[title="Edit"]').click();
 
-    let target = 'Links test-B';
+    const targetB = 'Links test-B';
     cy.intercept('POST', '/api/v2/experiments/*/experiments_links/*').as('postExpLinkExpApi');
-    cy.get('#addLinkExpInput').type(target, {delay: 0});
+    cy.get('#addLinkExpInput').type(targetB, {delay: 0});
     cy.wait('@getExpQueryApi').then(() => {
-      cy.get('.ui-menu.ui-widget.ui-widget-content.ui-autocomplete.ui-front').contains(`- ${target}`).should('be.visible');
+      cy.get('.ui-menu.ui-widget.ui-widget-content.ui-autocomplete.ui-front').contains(`- ${targetB}`).should('be.visible');
       cy.get('#addLinkExpInput').type('{downArrow}', {delay: 500});
     });
 
@@ -55,52 +56,54 @@ describe('Import links', () => {
     cy.get('#linksExpDiv').contains('Add').click().then(() => {
       cy.wait('@postExpLinkExpApi');
       cy.wait('@getExpPage');
-      cy.get('#linksExpDiv').should('contain', target);
+      cy.get('#linksExpDiv').should('contain', targetB);
     });
 
+    const targetb = 'Links test-b';
     cy.intercept('GET', /api\/v2\/items\/\?.+$/).as('getResQueryApi');
     cy.intercept('POST', '/api/v2/experiments/*/items_links/*').as('postExpLinkResApi');
-    cy.get('#addLinkItemsInput').type(target, {delay: 0});
+    cy.get('#addLinkItemsInput').type(targetb, {delay: 0});
     cy.wait('@getResQueryApi').then(() => {
-      cy.get('.ui-menu.ui-widget.ui-widget-content.ui-autocomplete.ui-front').contains(`- ${target}`).should('be.visible');
+      cy.get('.ui-menu.ui-widget.ui-widget-content.ui-autocomplete.ui-front').contains(`- ${targetb}`).should('be.visible');
       cy.get('#addLinkItemsInput').type('{downArrow}', {delay: 500});
     });
     cy.get('#linksDiv').contains('Add').click().then(() => {
       cy.wait('@postExpLinkResApi');
       cy.wait('@getExpPage');
-      cy.get('#linksDiv').should('contain', target);
+      cy.get('#linksDiv').should('contain', targetb);
     });
 
     // link res a to exp D and res d
-    target = 'Links test-D';
+    const targetD = 'Links test-D';
     cy.visit('/database.php');
-    cy.get('#itemList').contains('Links test-a').click();
+    const targeta = 'Links test-a';
+    cy.get('#itemList').contains(targeta).click();
     cy.get('#topToolbar').get('[title="Edit"]').click();
 
     cy.intercept('GET', '/database.php?mode=edit*').as('getResPage');
     cy.intercept('POST', '/api/v2/items/*/experiments_links/*').as('postResLinkExpApi');
-    cy.get('#addLinkExpInput').type(target, {delay: 0});
+    cy.get('#addLinkExpInput').type(targetD, {delay: 0});
     cy.wait('@getExpQueryApi').then(() => {
-      cy.get('.ui-menu.ui-widget.ui-widget-content.ui-autocomplete.ui-front').contains(`- ${target}`).should('be.visible');
+      cy.get('.ui-menu.ui-widget.ui-widget-content.ui-autocomplete.ui-front').contains(`- ${targetD}`).should('be.visible');
       cy.get('#addLinkExpInput').type('{downArrow}', {delay: 500});
     });
     cy.get('#linksExpDiv').contains('Add').click().then(() => {
       cy.wait('@postResLinkExpApi');
       cy.wait('@getResPage');
-      cy.get('#linksExpDiv').should('contain', target);
+      cy.get('#linksExpDiv').should('contain', targetD);
     });
 
-    target = 'Links test-d';
+    const targetd = 'Links test-d';
     cy.intercept('POST', '/api/v2/items/*/items_links/*').as('postResLinkResApi');
-    cy.get('#addLinkItemsInput').type(target, {delay: 0});
+    cy.get('#addLinkItemsInput').type(targetd, {delay: 0});
     cy.wait('@getResQueryApi').then(() => {
-      cy.get('.ui-menu.ui-widget.ui-widget-content.ui-autocomplete.ui-front').contains(`- ${target}`).should('be.visible');
+      cy.get('.ui-menu.ui-widget.ui-widget-content.ui-autocomplete.ui-front').contains(`- ${targetd}`).should('be.visible');
       cy.get('#addLinkItemsInput').type('{downArrow}', {delay: 500});
     });
     cy.get('#linksDiv').contains('Add').click().then(() => {
       cy.wait('@postResLinkResApi');
       cy.wait('@getResPage');
-      cy.get('#linksDiv').should('contain', target);
+      cy.get('#linksDiv').should('contain', targetd);
     });
 
     // link exp C to exp A and res a
@@ -108,75 +111,81 @@ describe('Import links', () => {
     cy.get('#itemList').contains('Links test-C').click();
     cy.get('#topToolbar').get('[title="Edit"]').click();
 
-    target = 'Links test-A';
-    cy.get('#addLinkExpInput').type(target);
+    cy.get('#addLinkExpInput').type(targetA);
     cy.wait('@getExpQueryApi').then(() => {
-      cy.get('.ui-menu.ui-widget.ui-widget-content.ui-autocomplete.ui-front').contains(`- ${target}`).should('be.visible');
+      cy.get('.ui-menu.ui-widget.ui-widget-content.ui-autocomplete.ui-front').contains(`- ${targetA}`).should('be.visible');
       cy.get('#addLinkExpInput').type('{downArrow}', {delay: 500});
     });
     cy.get('#linksExpDiv').contains('Add').click().then(() => {
       cy.wait('@postExpLinkExpApi');
       cy.wait('@getExpPage');
-      cy.get('#linksExpDiv').should('contain', target);
+      cy.get('#linksExpDiv').should('contain', targetA);
     });
 
-    target = 'Links test-a';
-    cy.get('#addLinkItemsInput').type(target);
+    cy.get('#addLinkItemsInput').type(targeta);
     cy.wait('@getResQueryApi').then(() => {
-      cy.get('.ui-menu.ui-widget.ui-widget-content.ui-autocomplete.ui-front').contains(`- ${target}`).should('be.visible');
+      cy.get('.ui-menu.ui-widget.ui-widget-content.ui-autocomplete.ui-front').contains(`- ${targeta}`).should('be.visible');
       cy.get('#addLinkItemsInput').type('{downArrow}', {delay: 500});
     });
     cy.get('#linksDiv').contains('Add').click().then(() => {
       cy.wait('@postExpLinkResApi');
       cy.wait('@getExpPage');
-      cy.get('#linksDiv').should('contain', target);
+      cy.get('#linksDiv').should('contain', targeta);
     });
 
     // import links from exp A and res a
-    cy.get('#linksExpDiv [data-action="import-links"]').click();
-    cy.get('#linksExpDiv').should('contain', 'Links test-B');
-    cy.get('#linksDiv').should('contain', 'Links test-b');
-
-    cy.get('#linksDiv [data-action="import-links"]').click();
-    cy.get('#linksExpDiv').should('contain', 'Links test-D');
-    cy.get('#linksDiv').should('contain', 'Links test-d');
+    cy.get('#linksExpDiv [data-action="import-links"]').click().then(() => {
+      cy.wait(['@postExpLinkExpApi', '@getExpPage'], {timeout: 60000}).then(() => { //, '@getExpPage'
+        cy.get('#linksExpDiv').should('contain', targetB);
+        cy.get('#linksDiv').should('contain', targetb); // Todo: this is not working, the link is not imported
+      });
+    });
+    cy.get('#linksDiv [data-action="import-links"]').click().then(() => {
+      cy.wait(['@postExpLinkExpApi', '@getExpPage'], {timeout: 60000}).then(() => {
+        cy.get('#linksExpDiv').should('contain', targetD);
+        cy.get('#linksDiv').should('contain', targetd);
+      });
+    });
 
     // link res c to exp A and res a
     cy.visit('/database.php');
     cy.get('#itemList').contains('Links test-c').click();
     cy.get('#topToolbar').get('[title="Edit"]').click();
 
-    target = 'Links test-A';
-    cy.get('#addLinkExpInput').type(target);
+    cy.get('#addLinkExpInput').type(targetA);
     cy.wait('@getExpQueryApi').then(() => {
-      cy.get('.ui-menu.ui-widget.ui-widget-content.ui-autocomplete.ui-front').contains(`- ${target}`).should('be.visible');
+      cy.get('.ui-menu.ui-widget.ui-widget-content.ui-autocomplete.ui-front').contains(`- ${targetA}`).should('be.visible');
       cy.get('#addLinkExpInput').type('{downArrow}', {delay: 500});
     });
     cy.get('#linksExpDiv').contains('Add').click().then(() => {
       cy.wait('@postResLinkExpApi');
       cy.wait('@getResPage');
-      cy.get('#linksExpDiv').should('contain', target);
+      cy.get('#linksExpDiv').should('contain', targetA);
     });
 
-    target = 'Links test-a';
-    cy.get('#addLinkItemsInput').type(target);
+    cy.get('#addLinkItemsInput').type(targeta);
     cy.wait('@getResQueryApi').then(() => {
-      cy.get('.ui-menu.ui-widget.ui-widget-content.ui-autocomplete.ui-front').contains(`- ${target}`).should('be.visible');
+      cy.get('.ui-menu.ui-widget.ui-widget-content.ui-autocomplete.ui-front').contains(`- ${targeta}`).should('be.visible');
       cy.get('#addLinkItemsInput').type('{downArrow}', {delay: 500});
     });
     cy.get('#linksDiv').contains('Add').click().then(() => {
       cy.wait('@postResLinkResApi');
       cy.wait('@getResPage');
-      cy.get('#linksDiv').should('contain', target);
+      cy.get('#linksDiv').should('contain', targeta);
     });
 
     // import links from exp A and res a
-    cy.get('#linksExpDiv [data-action="import-links"]').click();
-    cy.get('#linksExpDiv').should('contain', 'Links test-B');
-    cy.get('#linksDiv').should('contain', 'Links test-b');
-
-    cy.get('#linksDiv [data-action="import-links"]').click();
-    cy.get('#linksExpDiv').should('contain', 'Links test-D');
-    cy.get('#linksDiv').should('contain', 'Links test-d');
+    cy.get('#linksExpDiv [data-action="import-links"]').click().then(() => {
+      cy.wait(['@postResLinkExpApi', '@getResPage'], {timeout: 60000}).then(() => {
+        cy.get('#linksExpDiv').should('contain', targetB);
+        cy.get('#linksDiv').should('contain', targetb);
+      });
+    });
+    cy.get('#linksDiv [data-action="import-links"]').click().then(() => {
+      cy.wait(['@postResLinkExpApi', '@getResPage'], {timeout: 60000}).then(() => {
+        cy.get('#linksExpDiv').should('contain', targetD);
+        cy.get('#linksDiv').should('contain', targetd);
+      });
+    });
   });
 });

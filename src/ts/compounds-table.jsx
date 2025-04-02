@@ -62,6 +62,12 @@ if (document.getElementById('compounds-table')) {
           { field: 'is_cmr', headerName: 'CMR' },
           { field: 'is_nano', headerName: 'Nanomaterial' },
           { field: 'is_controlled', headerName: 'Controlled substance' },
+          { field: 'is_ed2health', headerName: 'Endocrine disruptor for human health' },
+          { field: 'is_ed2env', headerName: 'Endocrine disruptor for the environment' },
+          { field: 'is_pbt', headerName: 'Persistent, bioaccumulative and toxic' },
+          { field: 'is_vpvb', headerName: 'Very persistent and very bioaccumulative' },
+          { field: 'is_pmt', headerName: 'Persistent, mobile and toxic' },
+          { field: 'is_vpvm', headerName: 'Very persistent and very mobile' },
           { field: 'id', type: 'numericColumn' },
       ]);
 

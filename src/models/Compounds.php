@@ -232,6 +232,12 @@ final class Compounds extends AbstractRest
         bool $isCmr = false,
         bool $isNano = false,
         bool $isControlled = false,
+		bool $isEd2health = false,
+		bool $isEd2env = false,
+		bool $isPBT = false,
+		bool $isvPvB = false,
+		bool $isPMT = false,
+		bool $isvPvM = false,
     ): int {
 
         $sql = 'INSERT INTO compounds (
@@ -239,13 +245,15 @@ final class Compounds extends AbstractRest
             inchi, inchi_key,
             smiles, molecular_formula, molecular_weight, metabolomics_wb_id, nci_code, nikkaji_number, pharmgkb_id, pharos_ligand_id, rxcui, unii, wikidata, wikipedia, is_radioactive, is_antibiotic_precursor, is_drug_precursor, is_explosive_precursor, is_cmr, is_nano, is_controlled,
             cas_number, ec_number, iupac_name, pubchem_cid, userid, team, chebi_id, chembl_id, dea_number, drugbank_id, dsstox_id, hmdb_id, kegg_id,
-            is_corrosive, is_serious_health_hazard, is_explosive, is_flammable, is_gas_under_pressure, is_hazardous2env, is_hazardous2health, is_oxidising, is_toxic
+            is_corrosive, is_serious_health_hazard, is_explosive, is_flammable, is_gas_under_pressure, is_hazardous2env, is_hazardous2health, is_oxidising, is_toxic,
+			is_ed2health, is_ed2env, is_pbt, is_vpvb, is_pmt, is_vpvm
             ) VALUES (
             :requester, :requester, :name,
             :inchi, :inchi_key,
             :smiles, :molecular_formula, :molecular_weight, :metabolomics_wb_id, :nci_code, :nikkaji_number, :pharmgkb_id, :pharos_ligand_id, :rxcui, :unii, :wikidata, :wikipedia, :is_radioactive, :is_antibiotic_precursor, :is_drug_precursor, :is_explosive_precursor, :is_cmr, :is_nano, :is_controlled,
             :cas_number, :ec_number, :iupac_name, :pubchem_cid, :requester, :team, :chebi_id, :chembl_id, :dea_number, :drugbank_id, :dsstox_id, :hmdb_id, :kegg_id,
-            :is_corrosive, :is_serious_health_hazard, :is_explosive, :is_flammable, :is_gas_under_pressure, :is_hazardous2env, :is_hazardous2health, :is_oxidising, :is_toxic)';
+            :is_corrosive, :is_serious_health_hazard, :is_explosive, :is_flammable, :is_gas_under_pressure, :is_hazardous2env, :is_hazardous2health, :is_oxidising, :is_toxic,
+			:is_ed2health, :is_ed2env, :is_pbt, :is_vpvb, :is_pmt, :is_vpvm)';
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':requester', $this->requester->userid, PDO::PARAM_INT);
@@ -292,6 +300,12 @@ final class Compounds extends AbstractRest
         $req->bindParam(':is_cmr', $isCmr, PDO::PARAM_INT);
         $req->bindParam(':is_nano', $isNano, PDO::PARAM_INT);
         $req->bindParam(':is_controlled', $isControlled, PDO::PARAM_INT);
+        $req->bindParam(':is_ed2health', $isEd2health, PDO::PARAM_INT);
+        $req->bindParam(':is_ed2env', $isEd2env, PDO::PARAM_INT);
+        $req->bindParam(':is_pbt', $isPBT, PDO::PARAM_INT);
+        $req->bindParam(':is_vpvb', $isvPvB, PDO::PARAM_INT);
+        $req->bindParam(':is_pmt', $isPMT, PDO::PARAM_INT);
+        $req->bindParam(':is_vpvm', $isvPvM, PDO::PARAM_INT);
 
         try {
             $this->Db->execute($req);

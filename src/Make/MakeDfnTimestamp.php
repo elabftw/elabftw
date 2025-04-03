@@ -22,7 +22,7 @@ use function dirname;
  */
 final class MakeDfnTimestamp extends AbstractMakeTrustedTimestamp
 {
-    protected const string TS_URL = 'http://zeitstempel.dfn.de';
+    protected const string TS_URL = 'https://zeitstempel.dfn.de';
 
     protected const string TS_CERT = 'dfn.pem';
 

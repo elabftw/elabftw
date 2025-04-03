@@ -72,16 +72,20 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       // store current name as attribute, to use as field's key and update
       const fieldNameInput = document.getElementById('newFieldKeyInput') as HTMLInputElement;
-      const fieldName = extraField.querySelector('label').innerText;
+      const fieldName = extraField.querySelector('label').innerText.trim();
       fieldNameInput.dataset.name = fieldName;
 
       // populate modal with current extraField values
       MetadataC.read().then(metadata => {
-        const fieldData = metadata.extra_fields[fieldName];
+        // handle keys with extra spaces (e.g. from manual json editor) by matching trimmed names
+        const realKey = Object.keys(metadata.extra_fields).find(
+          key => key.trim() === fieldName,
+        );
+        const fieldData = realKey ? metadata.extra_fields[realKey] : undefined;
         const fieldType = fieldData.type?.trim() || 'text';
         // set field type
         const fieldTypeSelect = document.getElementById('newFieldTypeSelect') as HTMLSelectElement;
-        fieldTypeSelect.value = fieldType;
+        fieldTypeSelect.value = fieldType as string;
         // type may be null due to json editing,if null return a default value
         if (fieldType === ExtraFieldInputType.Select && multiSelectDiv.hidden) {
           multiSelectDiv.removeAttribute('hidden');
@@ -152,7 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (el.matches('[data-action="metadata-rm-field"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {
         MetadataC.read().then(metadata => {
-          const name = el.parentElement.parentElement.closest('div').querySelector('label').innerText;
+          const name = el.parentElement.parentElement.closest('div').querySelector('label').innerText.trim();
           delete metadata.extra_fields[name];
           MetadataC.update(metadata as ValidMetadata).then(() => document.getElementById('metadataDiv').scrollIntoView());
         });

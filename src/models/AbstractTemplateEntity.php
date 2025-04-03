@@ -24,6 +24,10 @@ abstract class AbstractTemplateEntity extends AbstractEntity
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
+        $metadata = null;
+        if (!empty($reqBody['metadata'])) {
+            $metadata = json_encode($reqBody['metadata'], JSON_THROW_ON_ERROR);
+        }
         return match ($action) {
             Action::Create => $this->create(
                 title: $reqBody['title'] ?? null,
@@ -36,7 +40,7 @@ abstract class AbstractTemplateEntity extends AbstractEntity
                 tags: $reqBody['tags'] ?? array(),
                 category: $reqBody['category'] ?? null,
                 status: $reqBody['status'] ?? null,
-                metadata: $reqBody['metadata'] ?? null,
+                metadata: $metadata,
                 rating: $reqBody['rating'] ?? 0,
                 contentType: $reqBody['content_type'] ?? null,
             ),

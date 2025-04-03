@@ -54,4 +54,10 @@ class UsersHelperTest extends \PHPUnit\Framework\TestCase
         $expected = array('Alpha');
         $this->assertEquals($expected, $this->UsersHelper->getTeamsNameFromUserid());
     }
+
+    public function testGetFullnameFromUserid(): void
+    {
+        $this->assertEquals('Toto Le sysadmin', $this->UsersHelper->getFullnameFromUserid());
+        $this->assertEquals('Unknown, user could not be found.', new UsersHelper(666)->getFullnameFromUserid());
+    }
 }

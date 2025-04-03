@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Params;
 
 use Elabftw\Enums\Currency;
+use Elabftw\Elabftw\Metadata;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Services\Check;
@@ -26,8 +27,9 @@ final class EntityParams extends ContentParams implements ContentParamsInterface
     {
         return match ($this->target) {
             'title' => Filter::title($this->asString()),
-            // MySQL with throw an error if this param is incorrect
-            'date', 'metadata', 'proc_price_notax', 'proc_price_tax' => $this->getUnfilteredContent(),
+            // MySQL will throw an error if this param is incorrect
+            'date', 'proc_price_notax', 'proc_price_tax' => $this->getUnfilteredContent(),
+            'metadata' => $this->getMetadata($this->getUnfilteredContent()),
             'proc_currency' => Currency::from($this->asInt())->value,
             'body', 'bodyappend' => $this->getBody(),
             'canread', 'canwrite', 'canbook', 'canread_target', 'canwrite_target' => $this->getCanJson(),
@@ -48,5 +50,12 @@ final class EntityParams extends ContentParams implements ContentParamsInterface
             return 'body';
         }
         return parent::getColumn();
+    }
+
+    private function getMetadata(string $metadata): string
+    {
+        new Metadata($metadata)->basicExtraFieldsValidation();
+
+        return $metadata;
     }
 }

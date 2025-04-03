@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\ImproperActionException;
+
 class MetadataTest extends \PHPUnit\Framework\TestCase
 {
     public function testNoMetadata(): void
@@ -19,12 +21,6 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
         $metadata = new Metadata(null);
         $this->assertEmpty($metadata->getExtraFields());
         $this->assertTrue($metadata->getDisplayMainText());
-    }
-
-    public function testGetRaw(): void
-    {
-        $metadata = new Metadata('{"answer": 42, "lucky numbers": [ 3, 10, 12, 21, 29, 42 ]}');
-        $this->assertIsString($metadata->getRaw());
     }
 
     public function testWithExtraFields(): void
@@ -68,5 +64,34 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($json, (new Metadata($json))->blankExtraFieldsValueOnDuplicate());
 
         $this->assertNull((new Metadata(null))->blankExtraFieldsValueOnDuplicate());
+    }
+
+    public function testBasicExtraFieldsValidation(): void
+    {
+        $validJson = '{"extra_fields":{"foo":{"value":"bar"}}}';
+        new Metadata($validJson)->basicExtraFieldsValidation();
+
+        $invalidJson = '{"extra_fields":{"foo":"bar"}}';
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage('Extra field "foo" does not comply with the expected format.');
+
+        new Metadata($invalidJson)->basicExtraFieldsValidation();
+    }
+
+    public function testBasicExtraFieldsValidationMissingValueProperty(): void
+    {
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage('Extra field "foo" does not have the required property "value".');
+
+        $invalidJson = '{"extra_fields":{"foo":{"type":"text"}}}';
+        new Metadata($invalidJson)->basicExtraFieldsValidation();
+    }
+
+    public function testExtrafieldWithOnlyStringValue(): void
+    {
+        $correctedExtraFields = new Metadata('{"extra_fields":{"foo":"invalid text here"}}')->getExtraFields();
+        $expectedExtraFields = new Metadata('{"extra_fields":{"foo":{"value":"invalid text here"}}}')->getExtraFields();
+
+        $this->assertEquals($expectedExtraFields, $correctedExtraFields);
     }
 }

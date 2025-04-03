@@ -214,18 +214,6 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         return (int) $req->fetchColumn();
     }
 
-    /**
-     * Get timestamper full name for display in view mode
-     */
-    #[Override]
-    public function getTimestamperFullname(): string
-    {
-        if ($this->entityData['timestamped'] === 0) {
-            return 'Unknown';
-        }
-        return $this->getFullnameFromUserid($this->entityData['timestampedby']);
-    }
-
     public function timestamp(): array
     {
         $Config = Config::getConfig();

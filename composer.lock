@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c0cbc0d5957cc3950f0a94a4e51d5651",
+    "content-hash": "3d6f1da0d86819ea4685c768ff48987e",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -8713,20 +8713,20 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.12.19",
+            "version": "2.1.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "c42ba9bab7a940ed00092ecb1c77bad98896d789"
+                "reference": "8ca5f79a8f63c49b2359065832a654e1ec70ac30"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/c42ba9bab7a940ed00092ecb1c77bad98896d789",
-                "reference": "c42ba9bab7a940ed00092ecb1c77bad98896d789",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/8ca5f79a8f63c49b2359065832a654e1ec70ac30",
+                "reference": "8ca5f79a8f63c49b2359065832a654e1ec70ac30",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.2|^8.0"
+                "php": "^7.4|^8.0"
             },
             "conflict": {
                 "phpstan/phpstan-shim": "*"
@@ -8767,7 +8767,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-02-19T15:42:21+00:00"
+            "time": "2025-03-24T13:45:00+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -12545,16 +12545,16 @@
         },
         {
             "name": "vimeo/psalm",
-            "version": "6.8.6",
+            "version": "6.9.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vimeo/psalm.git",
-                "reference": "34ba9e1e5ea2e7396d3e2e644ee3e3a1d4336603"
+                "reference": "e052de4275fb6cdbfedfef1d883a7e90732ea609"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vimeo/psalm/zipball/34ba9e1e5ea2e7396d3e2e644ee3e3a1d4336603",
-                "reference": "34ba9e1e5ea2e7396d3e2e644ee3e3a1d4336603",
+                "url": "https://api.github.com/repos/vimeo/psalm/zipball/e052de4275fb6cdbfedfef1d883a7e90732ea609",
+                "reference": "e052de4275fb6cdbfedfef1d883a7e90732ea609",
                 "shasum": ""
             },
             "require": {
@@ -12582,7 +12582,7 @@
                 "spatie/array-to-xml": "^2.17.0 || ^3.0",
                 "symfony/console": "^6.0 || ^7.0",
                 "symfony/filesystem": "~6.3.12 || ~6.4.3 || ^7.0.3",
-                "symfony/polyfill-php84": "*"
+                "symfony/polyfill-php84": "^1.31.0"
             },
             "provide": {
                 "psalm/psalm": "self.version"
@@ -12659,7 +12659,7 @@
                 "issues": "https://github.com/vimeo/psalm/issues",
                 "source": "https://github.com/vimeo/psalm"
             },
-            "time": "2025-02-21T10:03:22+00:00"
+            "time": "2025-03-20T13:21:28+00:00"
         },
         {
             "name": "webmozart/assert",

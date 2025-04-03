@@ -130,30 +130,6 @@ final class Tools
         return substr(explode('-', $elabid)[1], 0, 8);
     }
 
-    public static function printArr(array $arr): string
-    {
-        $html = '';
-        if (empty($arr)) {
-            return $html;
-        }
-        foreach ($arr as $key => $val) {
-            if (is_array($val)) {
-                $html .= sprintf(
-                    '<li><span class="text-muted">%s</span> <span class="font-weight-bold">⇒</span><ul>%s</ul></li>',
-                    self::eLabHtmlspecialchars($key),
-                    self::printArr($val),
-                );
-            } else {
-                $html .= sprintf(
-                    '<li><span class="text-muted">%s</span> <span class="font-weight-bold">→</span> %s</li>',
-                    self::eLabHtmlspecialchars($key),
-                    self::eLabHtmlspecialchars($val),
-                );
-            }
-        }
-        return sprintf('<ul>%s</ul>', $html);
-    }
-
     /**
      * @param (int|string) $string
      *

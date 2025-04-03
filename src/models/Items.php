@@ -59,6 +59,10 @@ final class Items extends AbstractConcreteEntity
         // specific to Items
         ?string $canbook = '',
     ): int {
+        if ($metadata !== null) {
+            new Metadata($metadata)->basicExtraFieldsValidation();
+        }
+
         // TODO maybe allow creating an Item without any template, like for experiments
         $ItemsTypes = new ItemsTypes($this->Users);
         if ($template < 0 || $template === null) {

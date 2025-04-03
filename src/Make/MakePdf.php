@@ -14,6 +14,7 @@ namespace Elabftw\Make;
 
 use DateTimeImmutable;
 use Elabftw\Elabftw\FsTools;
+use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Classification;
 use Elabftw\Enums\EntityType;
@@ -253,6 +254,7 @@ class MakePdf extends AbstractMakePdf
             'linkBaseUrl' => $baseUrls,
             'url' => sprintf('%s/%s?mode=view&id=%d', $siteUrl, $this->Entity->entityType->toPage(), $this->Entity->id ?? 0),
             'useCjk' => $this->requester->userData['cjk_fonts'],
+            'metadata' => new Metadata($this->Entity->entityData['metadata'])->getRenderArray(),
         );
 
         $Config = Config::getConfig();

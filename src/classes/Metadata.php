@@ -14,16 +14,25 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Metadata as MetadataEnum;
+use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Services\UsersHelper;
 
 use function array_column;
 use function array_combine;
+use function array_merge;
 use function count;
 use function json_decode;
 use function json_encode;
+use function uasort;
 
 final class Metadata
 {
     private const int JSON_MAX_DEPTH = 42;
+
+    /**
+     * @var array<string> list of extra fields that are not in the expected format
+     */
+    public array $invalidExtraFields = array();
 
     private array $metadata = array();
 
@@ -38,32 +47,77 @@ final class Metadata
         }
     }
 
-    public function getRaw(): string
+    /**
+     * Ensure that each extra field has a properties object (or array after json_decode)
+     * and that it contains the requeired property "value".
+     *
+     * @throws ImproperActionException
+     */
+    public function basicExtraFieldsValidation(): void
     {
-        return Tools::printArr($this->metadata);
+        if (!$this->hasExtraFields()) {
+            return;
+        }
+
+        foreach ($this->metadata[MetadataEnum::ExtraFields->value] as $key => $field) {
+            if (!is_array($field)) {
+                throw new ImproperActionException(sprintf(
+                    _('Extra field "%s" does not comply with the expected format.'),
+                    $key,
+                ));
+            }
+
+            if (!isset($field[MetadataEnum::Value->value])) {
+                throw new ImproperActionException(sprintf(
+                    _('Extra field "%s" does not have the required property "%s".'),
+                    $key,
+                    MetadataEnum::Value->value,
+                ));
+            }
+        }
     }
 
     // get anything that is not with an extra_fields or elabftw key
-    public function getAnyContent(): string
+    public function getAllButExtraFields(): array
     {
         // copy the array, as we will edit in place
         $res = $this->metadata;
         unset($res[MetadataEnum::ExtraFields->value]);
         unset($res[MetadataEnum::Elabftw->value]);
-        return Tools::printArr($res);
+        return $res;
+    }
+
+    public function hasExtraFields(): bool
+    {
+        return !empty($this->metadata)
+            && isset($this->metadata[MetadataEnum::ExtraFields->value])
+            && !empty($this->metadata[MetadataEnum::ExtraFields->value]);
     }
 
     public function getExtraFields(): array
     {
-        if (empty($this->metadata) || !isset($this->metadata[MetadataEnum::ExtraFields->value])) {
+        if (!$this->hasExtraFields()) {
             return array();
         }
-        // sort the elements based on the position attribute. If not set, will be at the end.
+
         $extraFields = $this->metadata[MetadataEnum::ExtraFields->value];
+
+        // convert invalid extra fields to valid ones
+        foreach ($extraFields as $name => $properties) {
+            // if the properties array is missing, create it
+            if (!is_array($properties)) {
+                // at this point $properties can only be string, float, integer, bool, or null
+                $extraFields[$name] = array(MetadataEnum::Value->value => $properties);
+                $this->invalidExtraFields[] = $name;
+            }
+        }
+
+        // sort the elements based on the position attribute. If not set, will be at the end.
         uasort(
             $extraFields,
             fn(array $a, array $b): int => ($a['position'] ?? 9999) <=> ($b['position'] ?? 9999),
         );
+
         return $extraFields;
     }
 
@@ -98,10 +152,14 @@ final class Metadata
         // loop over the extra fields and assign their properties to a group's extra_fields array
         // the name being the key, we merge it into the properties with a "name" key
         foreach ($extraFields as $key => $properties) {
+            $properties = $this->replaceUserIdWithFullName($properties);
+
             // default group id for extra fields with invalid or no group_id
             $groupId = -1;
             // if the group_id of the extra field is not defined in groups, it will endup in the default group, with the ones that don't have group_id property
-            if (isset($properties[MetadataEnum::GroupId->value]) && in_array((int) $properties[MetadataEnum::GroupId->value], array_column($groups, 'id'), true)) {
+            if (isset($properties[MetadataEnum::GroupId->value])
+                && in_array((int) $properties[MetadataEnum::GroupId->value], array_column($groups, 'id'), true)
+            ) {
                 $groupId = (int) $properties[MetadataEnum::GroupId->value];
             } else {
                 // add it to the default group
@@ -137,5 +195,29 @@ final class Metadata
         $this->metadata[MetadataEnum::ExtraFields->value] = $extraFields;
 
         return json_encode($this->metadata, JSON_THROW_ON_ERROR);
+    }
+
+    public function getRenderArray(): array
+    {
+        if (!$this->hasExtraFields()) {
+            return array('raw' => $this->metadata);
+        }
+
+        return array(
+            'groupedExtraFields' => $this->getGroupedExtraFields(),
+            'allButExtraFields' => $this->getAllButExtraFields(),
+        );
+    }
+
+    private function replaceUserIdWithFullName(array $properties): array
+    {
+        if (isset($properties[MetadataEnum::Type->value], $properties[MetadataEnum::Value->value])
+            && $properties[MetadataEnum::Type->value] === 'users'
+            && !empty($properties[MetadataEnum::Value->value])
+        ) {
+            $properties[MetadataEnum::Value->value] = new UsersHelper((int) $properties[MetadataEnum::Value->value])->getFullnameFromUserid();
+        }
+
+        return $properties;
     }
 }

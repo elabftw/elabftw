@@ -330,6 +330,7 @@ final class Compounds extends AbstractRest
             isGasUnderPressure: $compound->isGasUnderPressure,
             isHazardous2env: $compound->isHazardous2env,
             isHazardous2health: $compound->isHazardous2health,
+            isSeriousHealthHazard: $compound->isSeriousHealthHazard,
             isOxidising: $compound->isOxidising,
             isToxic: $compound->isToxic,
         );

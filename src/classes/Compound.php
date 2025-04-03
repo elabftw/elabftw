@@ -36,6 +36,7 @@ final class Compound
         public bool $isGasUnderPressure = false,
         public bool $isHazardous2env = false,
         public bool $isHazardous2health = false,
+        public bool $isSeriousHealthHazard = false,
         public bool $isOxidising = false,
         public bool $isToxic = false,
     ) {}
@@ -82,8 +83,11 @@ final class Compound
                             if ($ghs['Extra'] === 'Environmental Hazard') {
                                 $compound->isHazardous2env = true;
                             }
-                            if ($ghs['Extra'] === 'Health Hazard') {
+                            if ($ghs['Extra'] === 'Irritant') {
                                 $compound->isHazardous2health = true;
+                            }
+                            if ($ghs['Extra'] === 'Health Hazard') {
+                                $compound->isSeriousHealthHazard = true;
                             }
                             if ($ghs['Extra'] === 'Oxidizer') {
                                 $compound->isOxidising = true;

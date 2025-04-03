@@ -53,6 +53,7 @@ if (document.getElementById('compounds-table')) {
           { field: 'is_gas_under_pressure', headerName: 'Gas under pressure' },
           { field: 'is_hazardous2env', headerName: 'Hazardous to environment' },
           { field: 'is_hazardous2health', headerName: 'Hazardous to health' },
+          { field: 'is_serious_health_hazard', headerName: 'Serious health hazard' },
           { field: 'is_oxidising', headerName: 'Oxidising' },
           { field: 'is_toxic', headerName: 'Toxic' },
           { field: 'is_radioactive', headerName: 'Radioactive' },

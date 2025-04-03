@@ -92,7 +92,6 @@ enum Action {
   NotifDestroy = 'notifdestroy',
   PatchUser2Team = 'patchuser2team',
   Pin = 'pin',
-  RemoveExclusiveEditMode = 'removeexclusiveeditmode',
   Replace = 'replace',
   RequestAction = 'requestaction',
   Review = 'review',

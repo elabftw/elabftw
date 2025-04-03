@@ -32,6 +32,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const entity = getEntity();
 
+  // remove exclusive edit mode when leaving the page
+  window.onbeforeunload = function() {
+    ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.ExclusiveEditMode});
+  };
   // Which editor are we using? md or tiny
   const editor = getEditor();
   editor.init('edit');
@@ -195,15 +199,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         // wrap in pre element to retain whitespace, html encode '<' and '>'
         editor.setContent('<pre>' + fileContent.replace(/[<>]/g, char => specialChars[char]) + '</pre>');
       });
-    // REQUEST EXCLUSIVE EDIT MODE REMOVAL
-    } else if (el.matches('[data-action="request-exclusive-edit-mode-removal"]')) {
-      ApiC.post(`${entity.type}/${entity.id}/request_actions`, {
-        action: Action.Create,
-        target_action: 60,
-        target_userid: el.dataset.targetUser,
-      }).then(() => reloadElements(['requestActionsDiv']))
-        // the request gets rejected if repeated
-        .catch(error => console.error(error.message));
     }
   });
 

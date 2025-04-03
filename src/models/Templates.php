@@ -180,7 +180,7 @@ final class Templates extends AbstractTemplateEntity
         $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll();
         $this->entityData['items_links'] = $this->ItemsLinks->readAll();
         $this->entityData['sharelink'] = sprintf(
-            '%s/%s&mode=view&templateid=%d',
+            '%s/%s?mode=view&id=%d',
             Config::fromEnv('SITE_URL'),
             EntityType::Templates->toPage(),
             $this->id

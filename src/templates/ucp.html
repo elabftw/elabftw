@@ -282,15 +282,6 @@
     <hr>
 
     <div class='d-flex justify-content-between'>
-      <label for='enforce_exclusive_edit_mode' class='col-form-label'>{{ 'Enforce exclusive edit mode: each entry you start editing will be in exclusive edit mode.'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' data-trigger='change' data-model='users/me' data-target='enforce_exclusive_edit_mode' {{ App.Users.userData.enforce_exclusive_edit_mode == 1 ? 'checked="checked"' }} id='enforce_exclusive_edit_mode'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <hr>
-
-    <div class='d-flex justify-content-between'>
       <div>
         <label for='scope_teamgroups' class='col-form-label'>{{ 'Select the scope for teamgroups'|trans }}</label>
         <p class='smallgray'>{{ 'This setting controls which teamgroups will be listed in the permission settings window.'|trans }}</p>

@@ -182,7 +182,7 @@
   {% else %}
     {# EDIT #}
     {% if not (Entity.entityData.locked or Entity.isReadOnly) %}
-      <a title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}' href='?mode=edit&amp;id={{ Entity.id }}' class='btn hl-hover-gray p-2 mr-2 rounded main-action-button lh-normal border-0'>
+      <a title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}' href='?mode=edit&amp;id={{ Entity.id }}' class='btn hl-hover-gray p-2 mr-2 rounded main-action-button lh-normal border-0 {{ Entity.ExclusiveEditMode.isActive ? 'disabled' }}'>
         <i class='fas fa-pencil fa-fw'></i>
       </a>
     {% endif %}
@@ -268,28 +268,6 @@
       {% endif %}
       <button type='button' title='{{ alt }}' aria-label='{{ alt }}' data-action='do-requestable-action' data-target='lock' class='btn {{ Entity.entityData.locked ? 'bgnd-gray' : 'hl-hover-gray' }} p-2 mr-2 lh-normal border-0'>
         <i class='fas {{ lockIcon }} fa-fw'></i>
-      </button>
-    {% endif %}
-
-    {# EXCLUSIVE EDIT MODE #}
-    {% if mode == 'edit' and App.Users.userData.enforce_exclusive_edit_mode != 1 or mode == 'view' and Entity.ExclusiveEditMode.isActive and App.Users.userData.enforce_exclusive_edit_mode == 1 %}
-      {% set lockIcon = 'fa-lock-open' %}
-      {% set alt = 'Enable/Disable exclusive edit mode'|trans %}
-      {% if Entity.ExclusiveEditMode.isActive %}
-          {% set lockIcon = 'fa-lock' %}
-      {% endif %}
-      <button
-        aria-label='{{ alt }}'
-        class='btn {{ Entity.ExclusiveEditMode.isActive ? 'bgnd-gray' : 'hl-hover-gray' }} p-2 mr-2 lh-normal border-0'
-        data-action='toggle-exclusive-edit-mode'
-        id='exclusiveEditModeBtn'
-        title='{{ alt }}'
-        type='button'
-      >
-        <span class='fa-stack'>
-          <i class='fas {{ lockIcon }} fa-stack-1x fa-fw'></i>
-          <i class='fas fa-pen-nib fa-stack-1x fa-fw fa-rotate-by'></i>
-        </span>
       </button>
     {% endif %}
 

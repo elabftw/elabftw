@@ -64,7 +64,7 @@ try {
     if ($App->Request->query->has('templateid')) {
         $ItemsTypes->setId($App->Request->query->getInt('templateid'));
         $ItemsTypes->canOrExplode('write');
-        $ItemsTypes->ExclusiveEditMode->enforceExclusiveModeBasedOnUserSetting();
+        $ItemsTypes->ExclusiveEditMode->setExclusiveMode();
         $ContainersLinks = LinksFactory::getContainersLinks($ItemsTypes);
         $ItemsTypes->entityData['containers'] = $ContainersLinks->readAll();
     }

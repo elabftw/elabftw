@@ -72,6 +72,9 @@ abstract class AbstractLinks extends AbstractRest
      */
     public function duplicate(int $id, int $newId, $fromTpl = false): int
     {
+        // Todo: Import across entity types, so far exp import exp and res imports res
+        //       but res has to also import exp and exp also has to import res
+        //       Research: How does it behave for exp_temps?
         $table = $this->getTable();
         if ($fromTpl) {
             $table = $this->getTemplateTable();

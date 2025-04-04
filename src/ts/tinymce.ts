@@ -331,9 +331,8 @@ export function getTinymceBaseConfig(page: string): object {
     setup: (editor: Editor): void => {
       // holds the timer setTimeout function
       let typingTimer;
-      editor.on('init', () => {
-        // make the edges round
-        editor.getContainer().className += ' rounded';
+      // use event SkinLoaded instead of init so we're sure skinNode is present
+      editor.on('SkinLoaded', () => {
         // prevent skin.min.css from changing appearance of .mce-preview-body element
         const skinNode = document.querySelector('[rel=stylesheet][href$="/skin.min.css"]') as HTMLLinkElement;
         const skinCSS = skinNode.sheet;

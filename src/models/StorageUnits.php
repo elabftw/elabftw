@@ -176,7 +176,13 @@ final class StorageUnits extends AbstractRest
             compounds.is_explosive_precursor,
             compounds.is_cmr,
             compounds.is_nano,
-            compounds.is_controlled
+            compounds.is_controlled,
+            compounds.is_ed2health,
+            compounds.is_ed2env,
+            compounds.is_pbt,
+            compounds.is_vpvb,
+            compounds.is_pmt,
+            compounds.is_vpvm,
         FROM
             containers2items AS c2i
         LEFT JOIN storage_units ON c2i.storage_id = storage_units.id
@@ -210,7 +216,13 @@ final class StorageUnits extends AbstractRest
             compounds.is_explosive_precursor,
             compounds.is_cmr,
             compounds.is_nano,
-            compounds.is_controlled
+            compounds.is_controlled,
+            compounds.is_ed2health,
+            compounds.is_ed2env,
+            compounds.is_pbt,
+            compounds.is_vpvb,
+            compounds.is_pmt,
+            compounds.is_vpvm
         FROM
             containers2experiments AS c2e
         LEFT JOIN storage_units ON c2e.storage_id = storage_units.id
@@ -386,6 +398,12 @@ final class StorageUnits extends AbstractRest
                     compounds.is_cmr,
                     compounds.is_nano,
                     compounds.is_controlled
+                    compounds.is_ed2health,
+                    compounds.is_ed2env,
+                    compounds.is_pbt,
+                    compounds.is_vpvb,
+                    compounds.is_pmt,
+                    compounds.is_vpvm
                 FROM
                     containers2items AS c2i
                 LEFT JOIN
@@ -440,7 +458,13 @@ final class StorageUnits extends AbstractRest
                     compounds.is_explosive_precursor,
                     compounds.is_cmr,
                     compounds.is_nano,
-                    compounds.is_controlled
+                    compounds.is_controlled,
+                    compounds.is_ed2health,
+                    compounds.is_ed2env,
+                    compounds.is_pbt,
+                    compounds.is_vpvb,
+                    compounds.is_pmt,
+                    compounds.is_vpvm
                 FROM
                     containers2experiments AS c2e
                 LEFT JOIN

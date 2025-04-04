@@ -103,6 +103,12 @@ final class CompoundsCsv extends AbstractCsv
                         isExplosivePrecursor: (bool) ($row['is_explosive_precursor'] ?? false),
                         isCmr: (bool) ($row['is_cmr'] ?? false),
                         isNano: (bool) ($row['is_nano'] ?? false),
+                        isEd2health: (bool) ($row['is_ed2health'] ?? false),
+                        isEd2env: (bool) ($row['is_ed2env'] ?? false),
+                        isPBT: (bool) ($row['is_pbt'] ?? false),
+                        isvPvB: (bool) ($row['is_vpvb'] ?? false),
+                        isPMT: (bool) ($row['is_pmt'] ?? false),
+                        isvPvM: (bool) ($row['is_vpvm'] ?? false),
                         isControlled: (bool) ($row['is_controlled'] ?? false)
                     );
                 }

@@ -17,6 +17,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Items;
+use Elabftw\Services\Filter;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -31,7 +32,7 @@ $Response = new Response();
 $Response->prepare($Request);
 
 try {
-    $Controller = new DatabaseController($App, new Items($App->Users));
+    $Controller = new DatabaseController($App, new Items($App->Users, Filter::intOrNull($Request->query->getInt('id'))));
     $Response = $Controller->getResponse();
 } catch (IllegalActionException $e) {
     // log notice and show message

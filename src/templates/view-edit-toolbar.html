@@ -175,17 +175,15 @@
   <div class='vertical-separator'></div>
 
   {% if mode == 'edit' %}
-    {# VIEW #}
+    {# VIEW button #}
     <a title='{{ 'View mode'|trans }}' aria-label='{{ 'View mode'|trans }}' href='?mode=view&amp;id={{ Entity.id }}' class='btn hl-hover-gray p-2 mr-2 main-action-button lh-normal border-0'>
       <i class='fas fa-eye fa-fw'></i>
     </a>
   {% else %}
-    {# EDIT #}
-    {% if not (Entity.entityData.locked or Entity.isReadOnly) %}
-      <a title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}' href='?mode=edit&amp;id={{ Entity.id }}' class='btn hl-hover-gray p-2 mr-2 rounded main-action-button lh-normal border-0 {{ Entity.ExclusiveEditMode.isActive ? 'disabled' }}'>
-        <i class='fas fa-pencil fa-fw'></i>
-      </a>
-    {% endif %}
+    {# EDIT button #}
+    <a title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}' href='?mode=edit&amp;id={{ Entity.id }}' class='btn hl-hover-gray p-2 mr-2 rounded main-action-button lh-normal border-0 {{ Entity.isReadOnly ? 'disabled' }}'>
+      <i class='fas fa-pencil fa-fw'></i>
+    </a>
   {% endif %}
 
   {% if not App.Session.has('is_anon') %}

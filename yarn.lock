@@ -17,53 +17,53 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ag-grid-community/client-side-row-model@npm:^32.3.3":
-  version: 32.3.3
-  resolution: "@ag-grid-community/client-side-row-model@npm:32.3.3"
+"@ag-grid-community/client-side-row-model@npm:^32.3.4":
+  version: 32.3.4
+  resolution: "@ag-grid-community/client-side-row-model@npm:32.3.4"
   dependencies:
-    "@ag-grid-community/core": "npm:32.3.3"
+    "@ag-grid-community/core": "npm:32.3.4"
     tslib: "npm:^2.3.0"
-  checksum: 10c0/c37684199f2b0af2d269c7e8f029097ad42a94f3eeb1e61db041d3cc174d5b0839621bbd7e4ffb6f5bc011b8e4a68368a24af5f160962d737fec39242be0e2ff
+  checksum: 10c0/749b10cb0e77650b6145d73da4983a1d668eafa009977610a8d57ff4df2910316b7bc7d700822b0d5901eaafe0b180f2db0c5a7af7964f3b837df55fb4ae6895
   languageName: node
   linkType: hard
 
-"@ag-grid-community/core@npm:32.3.3, @ag-grid-community/core@npm:^32.3.3":
-  version: 32.3.3
-  resolution: "@ag-grid-community/core@npm:32.3.3"
+"@ag-grid-community/core@npm:32.3.4, @ag-grid-community/core@npm:^32.3.4":
+  version: 32.3.4
+  resolution: "@ag-grid-community/core@npm:32.3.4"
   dependencies:
-    ag-charts-types: "npm:10.3.3"
+    ag-charts-types: "npm:10.3.4"
     tslib: "npm:^2.3.0"
-  checksum: 10c0/79825c999a6f0021a77fcfa3b749e93b84bc14f0e58df83d1193c0398bab12134eff10533864980d0e1ea22ac0d9753a57f3abbf8c0318b2dec0782948313314
+  checksum: 10c0/09ff7368d633b616354ca3abc725b70691428a076db2eb50010a0a39f6a42724e14556b665b41461fea6bc1ae46a7f85e6da1bcdf6b59de61b8ce3152e2855b3
   languageName: node
   linkType: hard
 
-"@ag-grid-community/infinite-row-model@npm:^32.3.3":
-  version: 32.3.3
-  resolution: "@ag-grid-community/infinite-row-model@npm:32.3.3"
+"@ag-grid-community/infinite-row-model@npm:^32.3.4":
+  version: 32.3.4
+  resolution: "@ag-grid-community/infinite-row-model@npm:32.3.4"
   dependencies:
-    "@ag-grid-community/core": "npm:32.3.3"
+    "@ag-grid-community/core": "npm:32.3.4"
     tslib: "npm:^2.3.0"
-  checksum: 10c0/efbb297b067b8ec54050b967d64f1eaa05c3931a1621ab2acd64cf05182841a0600eec9c5ecb3522604c41b33de1b9b8e1b8330c04ed48880afaaa063512fa9c
+  checksum: 10c0/baa0b4a1961dac96683b9d57e9e1e3de39c7a3f196a4cea174d7e0bceb1b8a2c555e333092f5d098add72770e9a5fd836d1c423b0785c903cba2a8ccf68f57dc
   languageName: node
   linkType: hard
 
-"@ag-grid-community/react@npm:^32.3.3":
-  version: 32.3.3
-  resolution: "@ag-grid-community/react@npm:32.3.3"
+"@ag-grid-community/react@npm:^32.3.4":
+  version: 32.3.4
+  resolution: "@ag-grid-community/react@npm:32.3.4"
   dependencies:
     prop-types: "npm:^15.8.1"
   peerDependencies:
-    "@ag-grid-community/core": 32.3.3
+    "@ag-grid-community/core": 32.3.4
     react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
     react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: 10c0/a4e7963a0f0fbd17f3d59d2219607a0fa79979d7967944524aedd16677b6efe46bef8f44f4b9b74e2e71777aa92007d19888b625cf5049e0cedbf1f6a49fde24
+  checksum: 10c0/bb1fbd6eee77ef8b2cef37ef2dc5b6cf9e10638bfabab06502407a4a2c3ff6d77852fcc704652b7ddc7736db47c3b53591ff1a9d33480dc7ab510261af0045a0
   languageName: node
   linkType: hard
 
-"@ag-grid-community/styles@npm:^33.0.3":
-  version: 33.0.3
-  resolution: "@ag-grid-community/styles@npm:33.0.3"
-  checksum: 10c0/7a6b2d47ed74fa9f8d25c1b5d7c86cdec1715fa6875674253c87580f91608219d9b16a041a5ebe39a0b29b754a6eed29cf95f070c5a6dca6e63db68466ca9d43
+"@ag-grid-community/styles@npm:^32.3.4":
+  version: 32.3.4
+  resolution: "@ag-grid-community/styles@npm:32.3.4"
+  checksum: 10c0/94f89f02675a3c078ae36ce55aa626ea61ec97ff7936307192110fd6f966a2baa1f6f43696152e805fddf810571b502ba88091aa7744da743345be41b3ead658
   languageName: node
   linkType: hard
 
@@ -3645,10 +3645,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ag-charts-types@npm:10.3.3":
-  version: 10.3.3
-  resolution: "ag-charts-types@npm:10.3.3"
-  checksum: 10c0/7105287e9b11bfc4c78e03a8da2d567486ba0611d223d27af1ac8ebfdcea7d792b0bc07182b90995c1c79c53349d06954b38e0c9ab9fae48b411d435937b2ad4
+"ag-charts-types@npm:10.3.4":
+  version: 10.3.4
+  resolution: "ag-charts-types@npm:10.3.4"
+  checksum: 10c0/4c107e754e8d03073194d9d5b9f82942ff357642eb2754e6cac9dc5c1e12c38e5c28b6176e0cfda1f54469488ea0f380b91f185371254bc5b2100032c92153cb
   languageName: node
   linkType: hard
 
@@ -5879,11 +5879,11 @@ __metadata:
   resolution: "elabftw@workspace:."
   dependencies:
     3dmol: "npm:^2.4.2"
-    "@ag-grid-community/client-side-row-model": "npm:^32.3.3"
-    "@ag-grid-community/core": "npm:^32.3.3"
-    "@ag-grid-community/infinite-row-model": "npm:^32.3.3"
-    "@ag-grid-community/react": "npm:^32.3.3"
-    "@ag-grid-community/styles": "npm:^33.0.3"
+    "@ag-grid-community/client-side-row-model": "npm:^32.3.4"
+    "@ag-grid-community/core": "npm:^32.3.4"
+    "@ag-grid-community/infinite-row-model": "npm:^32.3.4"
+    "@ag-grid-community/react": "npm:^32.3.4"
+    "@ag-grid-community/styles": "npm:^32.3.4"
     "@babel/core": "npm:^7.26.9"
     "@babel/preset-env": "npm:^7.26.9"
     "@babel/preset-react": "npm:^7.26.3"

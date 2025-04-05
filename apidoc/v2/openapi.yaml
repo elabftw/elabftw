@@ -12,9 +12,10 @@ servers:
 components:
   securitySchemes:
     token:
+      in: header
       type: apiKey
       name: Authorization
-      in: header
+      description: The Authorization header value must contain an API Key.
   schemas:
     apikey:
       type: object
@@ -264,157 +265,203 @@ components:
           type: string
         uploads_storage:
           type: string
+    # ENTITY COMPONENT: EXTENDS ENTITY_EDITABLE
     entity:
+      description: The complete representation of an entity
+      allOf:
+        - $ref: '#/components/schemas/entity_editable'
+        - type: object
+          properties:
+            access_key:
+              type: string
+              nullable: true
+            body_html:
+              type: string
+              nullable: true
+            category_color:
+              type: string
+              nullable: true
+            category_title:
+              type: string
+              nullable: true
+            comments:
+              type: array
+              items:
+                $ref: '#/components/schemas/comment'
+            created_at:
+              type: string
+            elabid:
+              type: string
+            exclusive_edit_mode:
+              $ref: '#/components/schemas/exclusive_edit_mode'
+            experiments_links:
+              type: array
+              items:
+                $ref: '#/components/schemas/link'
+            firstname:
+              type: string
+            fullname:
+              type: string
+            has_attachement:
+              type: integer
+            has_comment:
+              type: integer
+            id:
+              type: integer
+            items_links:
+              type: array
+              items:
+                $ref: '#/components/schemas/link'
+            lastchangeby:
+              type: integer
+              nullable: true
+            lastname:
+              type: string
+            locked:
+              type: integer
+            lockedby:
+              type: integer
+              nullable: true
+            locked_at:
+              type: string
+              nullable: true
+            modified_at:
+              type: string
+            next_step:
+              type: string
+              nullable: true
+            orcid:
+              type: string
+              nullable: true
+            page:
+              type: string
+            recent_comment:
+              type: string
+              nullable: true
+            related_experiments_links:
+              type: array
+              items:
+                $ref: '#/components/schemas/link'
+            related_items_links:
+              type: array
+              items:
+                $ref: '#/components/schemas/link'
+            sharelink:
+              type: string
+            status_color:
+              type: string
+              nullable: true
+            status_title:
+              type: string
+              nullable: true
+            steps:
+              type: array
+              items:
+                $ref: '#/components/schemas/step'
+            tags:
+              type: string
+              nullable: true
+            tags_id:
+              type: string
+              nullable: true
+            team:
+              type: integer
+            timestamped:
+              type: integer
+            timestampedby:
+              type: integer
+              nullable: true
+            timestamped_at:
+              type: string
+              nullable: true
+            type:
+              type: string
+            up_item_id:
+              type: integer
+              nullable: true
+            uploads:
+              type: array
+              items:
+                $ref: '#/components/schemas/upload'
+    # ENTITY EDITABLE
+    entity_editable:
       type: object
+      description: For columns that can be modified by POST or PATCH
       properties:
-        access_key:
-          type: string
-          nullable: true
         body:
           type: string
           nullable: true
-        body_html:
-          type: string
-          nullable: true
+          description: The main text content (HTML or Markdown)
+          default: null
+          example: "<h1>Section title</h1><p>Main text of resource</p>"
         canread:
           type: string
-          description: JSON string for read permissions.
+          nullable: true
+          description: JSON permissions for reading the entry
+          default: '{"base": 20, "teams": [], "users": [1], "teamgroups": [1]}'
         canwrite:
           type: string
-          description: JSON string for write permissions.
+          nullable: true
+          description: JSON permissions for writing the entry
+          default: '{"base": 20, "teams": [], "users": [1], "teamgroups": [1]}'
         category:
           type: integer
           nullable: true
-          description: Cannot be negative nor empty string. Can be reset with "0" and null.
-        category_color:
+          description: The experiment category ID
+          default: null
+          example: 3
+        date:
           type: string
-          nullable: true
-        category_title:
-          type: string
-          nullable: true
-        comments:
-          type: array
-          items:
-            $ref: '#/components/schemas/comment'
         content_type:
           type: integer
-          description: How the body is stored. 1 for HTML, 2 for Markdown. If you plan on creating an entity with markdown, make sure to set it to 2.
-        created_at:
-          type: string
+          nullable: true
+          description: |
+            Set the content type for main text: 1 for HTML (default) and 2 for Markdown
+          example: 1
         custom_id:
           type: integer
           description: Cannot be negative. Can be reset with "0", null or empty string.
           nullable: true
-        date:
-          type: string
-        elabid:
-          type: string
-        exclusive_edit_mode:
-          $ref: '#/components/schemas/exclusive_edit_mode'
-        experiments_links:
-          type: array
-          items:
-            $ref: '#/components/schemas/link'
-        firstname:
-          type: string
-        fullname:
-          type: string
-        has_attachement:
-          type: integer
-        has_comment:
-          type: integer
-        id:
-          type: integer
-        items_links:
-          type: array
-          items:
-            $ref: '#/components/schemas/link'
-        lastchangeby:
-          type: integer
-          nullable: true
-        lastname:
-          type: string
-        locked:
-          type: integer
-        lockedby:
-          type: integer
-          nullable: true
-        locked_at:
-          type: string
-          nullable: true
         metadata:
-          type: string
-          nullable: true
-        modified_at:
-          type: string
-        next_step:
-          type: string
-          nullable: true
-        orcid:
-          type: string
-          nullable: true
-        page:
-          type: string
+          $ref: '#/components/schemas/metadata'
         rating:
           type: integer
-        recent_comment:
-          type: string
           nullable: true
-        related_experiments_links:
-          type: array
-          items:
-            $ref: '#/components/schemas/link'
-        related_items_links:
-          type: array
-          items:
-            $ref: '#/components/schemas/link'
-        sharelink:
-          type: string
+          description: Rating value from 0 to 5
+          default: 0
         state:
           type: integer
         status:
           type: integer
           nullable: true
           description: Cannot be negative nor empty string. Can be reset with "0" and null.
-        status_color:
-          type: string
-          nullable: true
-        status_title:
-          type: string
-          nullable: true
-        steps:
-          type: array
-          items:
-            $ref: '#/components/schemas/step'
+          default: null
+          example: 1
         tags:
-          type: string
+          type: array
           nullable: true
-        tags_id:
-          type: string
-          nullable: true
-        team:
-          type: integer
-        timestamped:
-          type: integer
-        timestampedby:
-          type: integer
-          nullable: true
-        timestamped_at:
-          type: string
-          nullable: true
+          description: |
+            An array of tags to assign to the created entry.
+          items:
+            type: string
+          default: []
+          example: ["test", "confidential", "replication"]
         title:
           type: string
-        type:
-          type: string
-        up_item_id:
-          type: integer
           nullable: true
-        uploads:
-          type: array
-          items:
-            $ref: '#/components/schemas/upload'
+          description: The title of the entry
+          default: Untitled
+          example: "Test replicating the results of Naomi"
+        template:
+          type: integer
+          description: |
+            The template id to use, or 0 to use the common team
+            template, or -1 to have an empty body.
+          default: -1
         userid:
           type: integer
+          description: Userid of entity's owner
+    # EVENT
     event:
       type: object
       properties:
@@ -445,76 +492,27 @@ components:
     experiment:
       allOf:
         - $ref: '#/components/schemas/entity'
-    experiment_template:
-      type: object
-      properties:
-        id:
-          type: integer
-        title:
-          type: string
-        body:
-          type: string
-          nullable: true
-        category:
-          type: integer
-          nullable: true
-        category_title:
-          type: string
-          nullable: true
-        category_color:
-          type: string
-          nullable: true
-        content_type:
-          type: integer
-        exclusive_edit_mode:
-          $ref: '#/components/schemas/exclusive_edit_mode'
-        userid:
-          type: integer
-        canread:
-          type: string
-        canwrite:
-          type: string
-        canread_is_immutable:
-          type: integer
-        canwrite_is_immutable:
-          type: integer
-        locked:
-          type: integer
-        lockedby:
-          type: integer
-          nullable: true
-        locked_at:
-          type: string
-        fullname:
-          type: string
-        metadata:
-          type: string
-          nullable: true
-        teams_id:
-          type: integer
-        is_pinned:
-          type: integer
-        sharelink:
-          type: string
-        status:
-          type: integer
-          nullable: true
-        status_title:
-          type: string
-          nullable: true
-        status_color:
-          type: string
-          nullable: true
-        tags:
-          type: string
-          nullable: true
-        tags_id:
-          type: string
-          nullable: true
-        uploads:
-          type: array
-          items:
-            $ref: '#/components/schemas/upload'
+
+    # ENTITY TEMPLATE
+    entity_template_editable:
+      allOf:
+        - $ref: '#/components/schemas/entity_editable'
+        - type: object
+          properties:
+            canread_is_immutable:
+              type: integer
+              description: Set to 1 to prevent further changes to the permissions setting for read access
+              default: 0
+            canwrite_is_immutable:
+              type: integer
+              description: Set to 1 to prevent further changes to the permissions setting for write access
+              default: 0
+    entity_template:
+      description: For experiments templates and items types (resources categories)
+      allOf:
+        - $ref: '#/components/schemas/entity_template_editable'
+        - $ref: '#/components/schemas/entity'
+    # EXPORT
     export:
       type: object
       properties:
@@ -647,7 +645,7 @@ components:
         canwrite:
           type: string
         metadata:
-          type: string
+          $ref: '#/components/schemas/metadata'
     link:
       type: object
       properties:
@@ -673,6 +671,54 @@ components:
           type: string
         type:
           type: string
+    # METADATA COMPONENT
+    metadata:
+      type: object
+      nullable: true
+      description: The metadata is a JSON type attribute that is mainly used to hold the extra fields, but it can hold anything you want
+      properties:
+        elabftw:
+          type: object
+          nullable: true
+          properties:
+            display_main_text:
+              type: boolean
+              nullable: true
+              description: The main text will be hidden if set to false. Use it on templates to force the use of extra fields, and only them for the reports.
+              default: true
+            extra_fields_groups:
+              type: array
+              nullable: true
+              description: This array stores the extra fields groups
+              default: []
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+        extra_fields:
+          type: object
+          nullable: true
+          description: See https://doc.elabftw.net/metadata.html#extra-fields-objects
+          additionalProperties:
+            type: object
+            nullable: true
+            properties:
+              type:
+                nullable: true
+                type: string
+                enum: ['allow_multi_values', 'blank_value_on_duplicate', 'checkbox', 'date', 'datetime-local', 'description', 'email', 'group_id', 'number', 'options', 'position', 'radio', 'required', 'select', 'text', 'time', 'unit', 'url']
+              value:
+                nullable: true
+                type: string
+              group_id:
+                type: integer
+                nullable: true
+              description:
+                type: string
+                nullable: true
     notification:
       type: object
       properties:
@@ -709,8 +755,6 @@ components:
           type: string
         userid:
           type: integer
-        metadata:
-          type: string
     # experiments_status, experiments_categories and items_status are statuslike
     statuslike:
       type: object
@@ -970,7 +1014,7 @@ paths:
                 name:
                   type: string
                   description: A name for the API key.
-                  default: RTFM
+                  default: An API key
                 canwrite:
                   type: integer
                   description: Set to 1 to allow the key to do write actions.
@@ -999,24 +1043,22 @@ paths:
                   $ref: '#/components/schemas/apikey'
   /apikeys/{id}:
     summary: Actions on an api key
+    parameters:
+      - name: id
+        in: path
+        description: ID of the API key
+        required: true
+        schema:
+          type: integer
     delete:
       tags: ['Api keys']
       summary: Delete an API key.
       description: Delete an API key
       operationId: delete-apikey
-      requestBody:
-        content:
-          application/json: {}
-      parameters:
-        - name: id
-          in: path
-          description: ID of the API key
-          required: true
-          schema:
-            type: integer
       responses:
         '204':
           description: The key was deleted
+  # CONFIG
   /config:
     summary: The general instance configuration settings
     get:
@@ -1051,9 +1093,6 @@ paths:
       tags: ['Config']
       summary: Reset the config to default values
       operationId: delete-config
-      requestBody:
-        content:
-          application/json: {}
       responses:
         '204':
           description: The config was reset.
@@ -1099,11 +1138,7 @@ paths:
                     Set the content type for main text: 1 for HTML (default) and 2 for Markdown
                   example: 1
                 metadata:
-                  type: object
-                  nullable: true
-                  description: The metadata in JSON format
-                  default: null
-                  example: { "extra_fields": { "For example": { "type": "text", "value": "With a value", "required": true, "description": "An extra field of type text" } } }
+                  $ref: '#/components/schemas/metadata'
                 rating:
                   type: integer
                   nullable: true
@@ -1446,7 +1481,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/experiment'
+                $ref: '#/components/schemas/entity'
     patch:
       tags: ['Experiments']
       summary: Modify an experiment
@@ -1486,7 +1521,7 @@ paths:
                         - 40: Review
                         - 50: Safety
                       example: 40
-                - $ref: '#/components/schemas/experiment'
+                - $ref: '#/components/schemas/entity_editable'
             examples:
               signature:
                 summary: Sign an entry with meaning "Approval"
@@ -1513,9 +1548,6 @@ paths:
       tags: ['Experiments']
       summary: Delete an experiment.
       description: The experiment gets soft-deleted.
-      requestBody:
-        content:
-          application/json: {}
       operationId: delete-experiment
       responses:
         '204':
@@ -1595,68 +1627,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                body:
-                  type: string
-                  nullable: true
-                  description: The main text content (HTML or Markdown)
-                  default: null
-                  example: "<h1>Section title</h1><p>Main text of resource</p>"
-                canread:
-                  type: string
-                  nullable: true
-                  description: JSON permissions for reading the entry
-                  default: '{"base": 30, "teams": [], "users": [], "teamgroups": []}'
-                canwrite:
-                  type: string
-                  nullable: true
-                  description: JSON permissions for writing the entry
-                  default: '{"base": 20, "teams": [], "users": [], "teamgroups": []}'
-                content_type:
-                  type: integer
-                  nullable: true
-                  description: |
-                    Set the content type for main text: 1 for HTML (default) and 2 for Markdown
-                  example: 1
-                metadata:
-                  type: string
-                  nullable: true
-                  description: The metadata in JSON format
-                  default: null
-                  example: '{ "extra_fields": { "For example": { "type": "text", "value": "With a value", "required": true, "description": "An extra field of type text" } } }'
-                rating:
-                  type: integer
-                  nullable: true
-                  description: Rating value from 0 to 5
-                  default: 0
-                status:
-                  type: integer
-                  nullable: true
-                  description: The experiment status ID
-                  default: null
-                  example: 1
-                template:
-                  type: integer
-                  description: |
-                    Mandatory parameter, an ID corresponding to an items_types in the team.
-                  example: 1
-                tags:
-                  type: array
-                  nullable: true
-                  description: |
-                    An array of tags to assign to the created entry.
-                  items:
-                    type: string
-                  default: []
-                  example: ["TIRF", "Nikon", "mandatory booking"]
-                title:
-                  type: string
-                  nullable: true
-                  description: The title of the entry
-                  default: Untitled
-                  example: "TIRF microscope"
-
+              $ref: '#/components/schemas/entity_editable'
       responses:
         '201':
           description: The item has been created.
@@ -1967,7 +1938,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/item'
+                $ref: '#/components/schemas/entity'
     patch:
       tags: ['Items']
       summary: Modify an item
@@ -2007,7 +1978,7 @@ paths:
                         - 40: Review
                         - 50: Safety
                       example: 40
-                - $ref: '#/components/schemas/item'
+                - $ref: '#/components/schemas/entity_editable'
             examples:
               signature:
                 summary: Sign an entry with meaning "Approval"
@@ -2035,9 +2006,6 @@ paths:
       summary: Delete an item.
       description: The item gets soft-deleted.
       operationId: delete-item
-      requestBody:
-        content:
-          application/json: {}
       responses:
         '204':
           description: The key was deleted
@@ -2212,9 +2180,6 @@ paths:
       summary: Remove an export request and its associated file
       description: This method will remove the file from the server temporary storage and clear the export request.
       operationId: delete-export
-      requestBody:
-        content:
-          application/json: {}
       responses:
         '204':
           description: The file was deleted
@@ -2325,9 +2290,6 @@ paths:
       summary: Delete an entity comment.
       description: The comment gets deleted.
       operationId: delete-entity-comment
-      requestBody:
-        content:
-          application/json: {}
       responses:
         '204':
           description: The comment was deleted
@@ -2413,9 +2375,6 @@ paths:
       summary: Delete an item link.
       description: The link gets deleted.
       operationId: delete-entitiy-items-link
-      requestBody:
-        content:
-          application/json: {}
       responses:
         '204':
           description: The link was deleted.
@@ -2501,9 +2460,6 @@ paths:
       summary: Delete an experiment link.
       description: The link gets deleted.
       operationId: delete-entity-experiments-link
-      requestBody:
-        content:
-          application/json: {}
       responses:
         '204':
           description: The link was deleted.
@@ -2521,85 +2477,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                body:
-                  type: string
-                  nullable: true
-                  description: The main text content (HTML or Markdown)
-                  default: null
-                  example: "<h1>Section title</h1><p>Main text of template</p>"
-                canread:
-                  type: string
-                  nullable: true
-                  description: JSON permissions for reading the entry
-                  default: '{"base": 30, "teams": [], "users": [], "teamgroups": []}'
-                canwrite:
-                  type: string
-                  nullable: true
-                  description: JSON permissions for writing the entry
-                  default: '{"base": 20, "teams": [], "users": [], "teamgroups": []}'
-                canread_is_immutable:
-                  type: integer
-                  nullable: true
-                  description: Set to 1 to prevent further changes to the permissions setting for read access
-                  default: 0
-                canwrite_is_immutable:
-                  type: integer
-                  nullable: true
-                  description: Set to 1 to prevent further changes to the permissions setting for write access
-                  default: 0
-                category:
-                  type: integer
-                  nullable: true
-                  description: The experiment category ID
-                  default: null
-                  example: 3
-                content_type:
-                  type: integer
-                  nullable: true
-                  description: |
-                    Set the content type for main text: 1 for HTML (default) and 2 for Markdown
-                  example: 1
-                metadata:
-                  type: string
-                  nullable: true
-                  description: The metadata in JSON format
-                  default: null
-                  example: '{ "extra_fields": { "For example": { "type": "text", "value": "With a value", "required": true, "description": "An extra field of type text" } } }'
-                rating:
-                  type: integer
-                  nullable: true
-                  description: Rating value from 0 to 5
-                  default: 0
-                status:
-                  type: integer
-                  nullable: true
-                  description: The experiment status ID
-                  default: null
-                  example: 1
-                template:
-                  type: integer
-                  nullable: true
-                  description: |
-                    The template id to use, or 0 to use the common team
-                    template, or -1 to have an empty body.
-                  default: -1
-                tags:
-                  type: array
-                  nullable: true
-                  description: |
-                    An array of tags to assign to the created entry.
-                  items:
-                    type: string
-                  default: []
-                  example: ["Project OSCARS", "Austria", "FAIR"]
-                title:
-                  type: string
-                  nullable: true
-                  description: The title of the entry
-                  default: Untitled
-                  example: "Protocol for extraction of DNA from Xenopus oocytes"
+              $ref: '#/components/schemas/entity_template_editable'
       responses:
         '201':
           description: The experiment template has been created.
@@ -2623,7 +2501,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/experiment_template'
+                  $ref: '#/components/schemas/entity_template'
   /experiments_templates/{id}:
     summary: Actions on a specific experiment template
     parameters:
@@ -2679,7 +2557,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/experiment_template'
+                $ref: '#/components/schemas/entity_template'
     patch:
       tags: ['Experiments templates']
       summary: Modify an experiment template
@@ -2695,25 +2573,22 @@ paths:
                     action:
                       type: string
                       enum: ['lock', 'pin', 'update']
-                - $ref: '#/components/schemas/experiment_template'
+                - $ref: '#/components/schemas/entity_template_editable'
       responses:
         '200':
           description: The patched experiment template
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/experiment_template'
+                $ref: '#/components/schemas/entity_template'
     delete:
       tags: ['Experiments templates']
       summary: Delete an experiment template.
       description: The experiment template gets soft-deleted.
       operationId: delete-experiment_template
-      requestBody:
-        content:
-          application/json: {}
       responses:
         '204':
-          description: The key was deleted
+          description: The entry was deleted.
 
   # ITEMS_TYPES
   /items_types:
@@ -2727,69 +2602,16 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                body:
-                  type: string
-                  nullable: true
-                  description: The main text content (HTML or Markdown)
-                  default: null
-                  example: "<h1>Section title</h1><p>Main text of resource category</p>"
-                canread:
-                  type: string
-                  nullable: true
-                  description: JSON permissions for reading the entry
-                  default: '{"base": 30, "teams": [], "users": [], "teamgroups": []}'
-                canwrite:
-                  type: string
-                  nullable: true
-                  description: JSON permissions for writing the entry
-                  default: '{"base": 20, "teams": [], "users": [], "teamgroups": []}'
-                canread_is_immutable:
-                  type: integer
-                  nullable: true
-                  description: Set to 1 to prevent further changes to the permissions setting for read access
-                  default: 0
-                canwrite_is_immutable:
-                  type: integer
-                  nullable: true
-                  description: Set to 1 to prevent further changes to the permissions setting for write access
-                  default: 0
-                color:
-                  type: string
-                  description: Hexadecimal color code for the category
-                  nullable: true
-                  default: A random suitable color
-                  example: 29AEB9
-                content_type:
-                  type: integer
-                  nullable: true
-                  description: |
-                    Set the content type for main text: 1 for HTML (default) and 2 for Markdown
-                  example: 1
-                metadata:
-                  type: string
-                  nullable: true
-                  description: The metadata in JSON format
-                  default: null
-                  example: '{ "extra_fields": { "For example": { "type": "text", "value": "With a value", "required": true, "description": "An extra field of type text" } } }'
-                rating:
-                  type: integer
-                  nullable: true
-                  description: Rating value from 0 to 5
-                  default: 0
-                status:
-                  type: integer
-                  nullable: true
-                  description: Status of the created resource from that category
-                  default: null
-                  example: 1
-                title:
-                  type: string
-                  nullable: true
-                  description: Name of the category
-                  default: Default
-                  example: "Microscope"
+              allOf:
+                - $ref: '#/components/schemas/entity_template_editable'
+                - type: object
+                  properties:
+                    color:
+                      type: string
+                      description: Hexadecimal color code for the category
+                      nullable: true
+                      default: A random suitable color
+                      example: 29AEB9
       responses:
         '201':
           description: The items type has been created.
@@ -2852,9 +2674,6 @@ paths:
       summary: Delete a resource category.
       description: The resource category gets soft-deleted.
       operationId: delete-items_type
-      requestBody:
-        content:
-          application/json: {}
       responses:
         '204':
           description: The resource category was marked as deleted.
@@ -2989,9 +2808,6 @@ paths:
       tags: ['Events']
       summary: Delete a booking slot.
       operationId: delete-event
-      requestBody:
-        content:
-          application/json: {}
       responses:
         '204':
           description: The event was deleted.
@@ -3053,9 +2869,6 @@ paths:
       tags: ['Favorite tags']
       summary: Unfavorite a tag.
       operationId: delete-favtag
-      requestBody:
-        content:
-          application/json: {}
       responses:
         '204':
           description: The favorite tag was removed.
@@ -3109,8 +2922,12 @@ paths:
                     properties:
                       format:
                         type: array
+                        items:
+                          type: string
                       scope:
                         type: array
+                        items:
+                          type: string
             text/csv:
               schema:
                 type: string
@@ -3215,9 +3032,6 @@ paths:
       tags: ['Team tags']
       summary: Delete a tag.
       operationId: delete-team_tag
-      requestBody:
-        content:
-          application/json: {}
       responses:
         '204':
           description: The tag was removed.
@@ -3421,9 +3235,6 @@ paths:
       tags: ['Experiments categories']
       summary: Delete a category.
       operationId: delete-expcat
-      requestBody:
-        content:
-          application/json: {}
       responses:
         '204':
           description: The category was removed.
@@ -3526,9 +3337,6 @@ paths:
       tags: ['Experiments status']
       summary: Delete a status.
       operationId: delete-expstatus
-      requestBody:
-        content:
-          application/json: {}
       responses:
         '204':
           description: The status was removed.
@@ -3631,9 +3439,6 @@ paths:
       tags: ['Resources status']
       summary: Delete a status.
       operationId: delete-resstatus
-      requestBody:
-        content:
-          application/json: {}
       responses:
         '204':
           description: The status was removed.
@@ -3746,9 +3551,6 @@ paths:
       tags: ['Teamgroups']
       summary: Delete a teamgroup.
       operationId: delete-teamgroup
-      requestBody:
-        content:
-          application/json: {}
       responses:
         '204':
           description: The teamgroup was removed.
@@ -3837,9 +3639,6 @@ paths:
       tags: ['Todolist']
       summary: Delete a todoitem.
       operationId: delete-todoitem
-      requestBody:
-        content:
-          application/json: {}
       responses:
         '204':
           description: The todoitem was removed.
@@ -4205,9 +4004,6 @@ paths:
       summary: Delete all notifications of the user.
       description: All notifications for the user are deleted.
       operationId: delete-notifications
-      requestBody:
-        content:
-          application/json: {}
       responses:
         '204':
           description: The notifications were deleted.
@@ -4362,9 +4158,6 @@ paths:
       summary: Delete a step.
       description: The step gets deleted.
       operationId: delete-step
-      requestBody:
-        content:
-          application/json: {}
       responses:
         '204':
           description: The step was deleted.
@@ -4427,9 +4220,6 @@ paths:
       summary: Delete all tags.
       description: All the tags from that entity get removed.
       operationId: delete-tag
-      requestBody:
-        content:
-          application/json: {}
       responses:
         '204':
           description: The tags were deleted.
@@ -4670,9 +4460,6 @@ paths:
       summary: Delete an upload.
       description: The upload gets deleted.
       operationId: delete-upload
-      requestBody:
-        content:
-          application/json: {}
       responses:
         '204':
           description: The upload was deleted.
@@ -4797,9 +4584,6 @@ paths:
       summary: Delete an idp.
       description: The idp gets deleted.
       operationId: delete-idp
-      requestBody:
-        content:
-          application/json: {}
       responses:
         '204':
           description: The idp was deleted.

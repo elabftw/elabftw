@@ -394,8 +394,8 @@ final class Apiv2Controller extends AbstractApiController
             return;
         }
 
-        // only accept json content-type unless it's GET (also prevents csrf!)
-        if ($this->Request->getMethod() !== Request::METHOD_GET && $this->Request->headers->get('content-type') !== 'application/json') {
+        // only accept json content-type unless it's GET or DELETE (also prevents csrf!)
+        if (!in_array($this->Request->getMethod(), array(Request::METHOD_GET, Request::METHOD_DELETE), true) && $this->Request->headers->get('content-type') !== 'application/json') {
             throw new ImproperActionException('Incorrect content-type header.');
         }
     }

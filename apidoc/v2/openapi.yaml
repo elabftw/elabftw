@@ -487,8 +487,7 @@ components:
         fullname:
           type: string
         metadata:
-          type: string
-          nullable: true
+          $ref: '#/components/schemas/metadata'
         teams_id:
           type: integer
         is_pinned:
@@ -646,7 +645,7 @@ components:
         canwrite:
           type: string
         metadata:
-          type: string
+          $ref: '#/components/schemas/metadata'
     link:
       type: object
       properties:
@@ -756,8 +755,6 @@ components:
           type: string
         userid:
           type: integer
-        metadata:
-          type: string
     # experiments_status, experiments_categories and items_status are statuslike
     statuslike:
       type: object
@@ -1657,11 +1654,7 @@ paths:
                     Set the content type for main text: 1 for HTML (default) and 2 for Markdown
                   example: 1
                 metadata:
-                  type: string
-                  nullable: true
-                  description: The metadata in JSON format
-                  default: null
-                  example: '{ "extra_fields": { "For example": { "type": "text", "value": "With a value", "required": true, "description": "An extra field of type text" } } }'
+                  $ref: '#/components/schemas/metadata'
                 rating:
                   type: integer
                   nullable: true
@@ -2599,11 +2592,7 @@ paths:
                     Set the content type for main text: 1 for HTML (default) and 2 for Markdown
                   example: 1
                 metadata:
-                  type: string
-                  nullable: true
-                  description: The metadata in JSON format
-                  default: null
-                  example: '{ "extra_fields": { "For example": { "type": "text", "value": "With a value", "required": true, "description": "An extra field of type text" } } }'
+                  $ref: '#/components/schemas/metadata'
                 rating:
                   type: integer
                   nullable: true
@@ -2805,11 +2794,7 @@ paths:
                     Set the content type for main text: 1 for HTML (default) and 2 for Markdown
                   example: 1
                 metadata:
-                  type: string
-                  nullable: true
-                  description: The metadata in JSON format
-                  default: null
-                  example: '{ "extra_fields": { "For example": { "type": "text", "value": "With a value", "required": true, "description": "An extra field of type text" } } }'
+                  $ref: '#/components/schemas/metadata'
                 rating:
                   type: integer
                   nullable: true

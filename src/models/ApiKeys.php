@@ -47,7 +47,7 @@ final class ApiKeys extends AbstractRest
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
-        return $this->create($reqBody['name'] ?? 'RTFM', $reqBody['canwrite'] ?? 0);
+        return $this->create($reqBody['name'] ?? 'An API key', $reqBody['canwrite'] ?? 0);
     }
 
     #[Override]

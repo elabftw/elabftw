@@ -27,6 +27,7 @@ use Elabftw\Models\Teams;
 use Elabftw\Models\TeamTags;
 use Elabftw\Services\DummyRemoteDirectory;
 use Elabftw\Services\EairefRemoteDirectory;
+use Elabftw\Services\Filter;
 use Elabftw\Services\UsersHelper;
 use Exception;
 use GuzzleHttp\Client;
@@ -49,7 +50,7 @@ try {
         throw new IllegalActionException('Non admin user tried to access admin controller.');
     }
 
-    $ItemsTypes = new ItemsTypes($App->Users);
+    $ItemsTypes = new ItemsTypes($App->Users, Filter::intOrNull($Request->query->getInt('templateid')));
     $Teams = new Teams($App->Users, $App->Users->userData['team']);
     $Status = new ExperimentsStatus($Teams);
     $ItemsStatus = new ItemsStatus($Teams);
@@ -64,7 +65,6 @@ try {
     if ($App->Request->query->has('templateid')) {
         $ItemsTypes->setId($App->Request->query->getInt('templateid'));
         $ItemsTypes->canOrExplode('write');
-        $ItemsTypes->ExclusiveEditMode->setExclusiveMode();
         $ContainersLinks = LinksFactory::getContainersLinks($ItemsTypes);
         $ItemsTypes->entityData['containers'] = $ContainersLinks->readAll();
     }

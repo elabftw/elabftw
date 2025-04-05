@@ -935,10 +935,16 @@ components:
       properties:
         locked_by:
           type: integer
-        fullname:
+          description: Userid of the user having exclusive edition rights
+        locked_by_human:
           type: string
+          description: Full name of the user having exclusive edition rights
         locked_at:
           type: string
+          description: Time when the exclusive edit mode was created
+        is_stale:
+          type: integer
+          description: Is 1 when the exclusive edit lock is longer than ExclusiveEditMode::EXPIRATION_MINUTES
 
 security:
   - token:

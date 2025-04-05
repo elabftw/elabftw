@@ -187,13 +187,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const path = window.location.pathname;
         ApiC.delete(`${entity.type}/${entity.id}`).then(() => window.location.replace(path.split('/').pop()));
       }
-
-    // TOGGLE EXCLUSIVE EDIT MODE
-    } else if (el.matches('[data-action="toggle-exclusive-edit-mode"]')
-      || el.parentElement?.matches('[data-action="toggle-exclusive-edit-mode"]')
-    ) {
-      ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.ExclusiveEditMode})
-        .then(() => reloadElements(['exclusiveEditModeInfo']));
     }
   });
 });

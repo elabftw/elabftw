@@ -24,7 +24,6 @@ enum Action: string
     case Destroy = 'destroy';
     case Disable2fa = 'disable2fa';
     case Duplicate = 'duplicate';
-    case ExclusiveEditMode = 'exclusiveeditmode';
     case Finish = 'finish';
     case ForceLock = 'forcelock';
     case ForceUnlock = 'forceunlock';
@@ -33,6 +32,7 @@ enum Action: string
     case NotifDestroy = 'notifdestroy';
     case PatchUser2Team = 'patchuser2team';
     case Pin = 'pin';
+    case RemoveExclusiveEditMode = 'removeexclusiveeditmode';
     case Replace = 'replace';
     case Review = 'review';
     case SendOnboardingEmails = 'sendonboardingemails';

@@ -99,7 +99,7 @@ abstract class AbstractEntity extends AbstractRest
     // inserted in sql
     private string $extendedFilter = '';
 
-    public function __construct(public Users $Users, ?int $id = null, public ?bool $bypassReadPermission = false, public ?bool $bypassWritePermission = false)
+    public function __construct(public Users $Users, public ?int $id = null, public ?bool $bypassReadPermission = false, public ?bool $bypassWritePermission = false)
     {
         parent::__construct();
 
@@ -370,7 +370,7 @@ abstract class AbstractEntity extends AbstractRest
                     }
                 }
             )(),
-            Action::ExclusiveEditMode => $this->ExclusiveEditMode->toggle(),
+            Action::RemoveExclusiveEditMode => $this->ExclusiveEditMode->destroy(),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
         return $this->readOne();
@@ -409,7 +409,11 @@ abstract class AbstractEntity extends AbstractRest
         $permissions = $this->getPermissions();
 
         // READ ONLY?
-        if ($permissions['read'] && !$permissions['write']) {
+        if (
+            ($permissions['read'] && !$permissions['write'])
+            || $this->ExclusiveEditMode->isActive()
+            || array_key_exists('is_locked', $this->entityData)
+        ) {
             $this->isReadOnly = true;
         }
 

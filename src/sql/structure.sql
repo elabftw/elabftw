@@ -281,15 +281,15 @@ CREATE TABLE `experiments_steps` (
 --
 
 CREATE TABLE `experiments_edit_mode` (
-  `experiments_id` int UNSIGNED NOT NULL,
+  `entity_id` int UNSIGNED NOT NULL,
   `locked_by` int UNSIGNED NOT NULL,
-  `locked_at` timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`experiments_id`)
+  `locked_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- RELATIONSHIPS FOR TABLE `experiments_edit_mode`:
---   `experiments_id`
+--   `entity_id`
 --       `experiments` -> `id`
 --   `locked_by`
 --       `users` -> `userid`
@@ -412,15 +412,15 @@ CREATE TABLE `exports` (
 --
 
 CREATE TABLE `experiments_templates_edit_mode` (
-  `experiments_templates_id` int UNSIGNED NOT NULL,
+  `entity_id` int UNSIGNED NOT NULL,
   `locked_by` int UNSIGNED NOT NULL,
-  `locked_at` timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`experiments_templates_id`)
+  `locked_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- RELATIONSHIPS FOR TABLE `experiments_edit_mode`:
---   `experiments_templates_id`
+--   `entity_id`
 --       `experiments_templates` -> `id`
 --   `locked_by`
 --       `users` -> `userid`
@@ -699,15 +699,15 @@ CREATE TABLE `items_revisions` (
 --
 
 CREATE TABLE `items_edit_mode` (
-  `items_id` int UNSIGNED NOT NULL,
+  `entity_id` int UNSIGNED NOT NULL,
   `locked_by` int UNSIGNED NOT NULL,
-  `locked_at` timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`items_id`)
+  `locked_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- RELATIONSHIPS FOR TABLE `items_edit_mode`:
---   `items_id`
+--   `entity_id`
 --       `items` -> `id`
 --   `locked_by`
 --       `users` -> `userid`
@@ -808,15 +808,15 @@ CREATE TABLE `items_types_steps` (
 --
 
 CREATE TABLE `items_types_edit_mode` (
-  `items_types_id` int UNSIGNED NOT NULL,
+  `entity_id` int UNSIGNED NOT NULL,
   `locked_by` int UNSIGNED NOT NULL,
-  `locked_at` timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`items_types_id`)
+  `locked_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- RELATIONSHIPS FOR TABLE `items_edit_mode`:
---   `items_types_id`
+--   `entity_id`
 --       `items_types` -> `id`
 --   `locked_by`
 --       `users` -> `userid`
@@ -1229,7 +1229,6 @@ CREATE TABLE `users` (
   `entrypoint` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `always_show_owned` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `show_weekends` TINYINT UNSIGNED NOT NULL DEFAULT 0,
-  `enforce_exclusive_edit_mode` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
@@ -1389,12 +1388,6 @@ ALTER TABLE `experiments_steps`
   ADD KEY `fk_experiments_steps_experiments_id` (`item_id`);
 
 --
--- Indexes for table `experiments_edit_mode`
---
-ALTER TABLE `experiments_edit_mode`
-  ADD KEY `idx_experiments_edit_mode_all_columns` (`experiments_id`, `locked_by`, `locked_at`);
-
---
 -- Indexes for table `experiments_templates`
 --
 ALTER TABLE `experiments_templates`
@@ -1446,12 +1439,6 @@ ALTER TABLE `items_comments`
   ADD KEY `fk_items_comments_users_userid` (`userid`);
 
 --
--- Indexes for table `items_edit_mode`
---
-ALTER TABLE `items_edit_mode`
-  ADD KEY `idx_items_edit_mode_all_columns` (`items_id`, `locked_by`, `locked_at`);
-
---
 -- Indexes for table `items_types`
 --
 ALTER TABLE `items_types`
@@ -1481,11 +1468,6 @@ ALTER TABLE `items_types2items`
 ALTER TABLE `items_types_steps`
   ADD KEY `fk_items_types_steps_items_id` (`item_id`);
 
---
--- Indexes for table `items_types_edit_mode`
---
-ALTER TABLE `items_types_edit_mode`
-  ADD KEY `idx_items_types_edit_mode_all_columns` (`items_types_id`, `locked_by`, `locked_at`);
 --
 -- Indexes for table `notifications`
 --
@@ -1635,7 +1617,7 @@ ALTER TABLE `experiments_steps`
 --
 ALTER TABLE `experiments_edit_mode`
   ADD CONSTRAINT `fk_experiments_edit_mode_experiments_id`
-    FOREIGN KEY (`experiments_id`) REFERENCES `experiments` (`id`)
+    FOREIGN KEY (`entity_id`) REFERENCES `experiments` (`id`)
     ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_experiments_edit_mode_users_userid`
     FOREIGN KEY (`locked_by`) REFERENCES `users` (`userid`)
@@ -1721,7 +1703,7 @@ ALTER TABLE `items_revisions`
 --
 ALTER TABLE `items_edit_mode`
   ADD CONSTRAINT `fk_items_edit_mode_items_id`
-    FOREIGN KEY (`items_id`) REFERENCES `items` (`id`)
+    FOREIGN KEY (`entity_id`) REFERENCES `items` (`id`)
     ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_items_edit_mode_users_userid`
     FOREIGN KEY (`locked_by`) REFERENCES `users` (`userid`)
@@ -1751,7 +1733,7 @@ ALTER TABLE `items_types_steps`
 --
 ALTER TABLE `items_types_edit_mode`
   ADD CONSTRAINT `fk_items_types_edit_mode_items_types_id`
-    FOREIGN KEY (`items_types_id`) REFERENCES `items_types` (`id`)
+    FOREIGN KEY (`entity_id`) REFERENCES `items_types` (`id`)
     ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_items_types_edit_mode_users_userid`
     FOREIGN KEY (`locked_by`) REFERENCES `users` (`userid`)
@@ -2073,9 +2055,8 @@ CREATE TABLE containers2items_types (
 -- Indexes and Constraints for table `experiments_templates_edit_mode`
 --
 ALTER TABLE `experiments_templates_edit_mode`
-  ADD KEY `idx_experiments_templates_edit_mode_all_columns` (`experiments_templates_id`, `locked_by`, `locked_at`),
   ADD CONSTRAINT `fk_experiments_templates_edit_mode_experiments_templates_id`
-    FOREIGN KEY (`experiments_templates_id`) REFERENCES `experiments_templates` (`id`)
+    FOREIGN KEY (`entity_id`) REFERENCES `experiments_templates` (`id`)
     ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_experiments_templates_edit_mode_users_userid`
     FOREIGN KEY (`locked_by`) REFERENCES `users` (`userid`)

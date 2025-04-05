@@ -27,10 +27,10 @@
 
 {# Exclusive edit mode notification #}
 <div id='exclusiveEditModeInfo'>
-{% if Entity.ExclusiveEditMode.isActive %}
-  {% if Entity.ExclusiveEditMode.dataArr.locked_by != Entity.Users.userData.userid %}
+{% if Entity.entityData.exclusive_edit_mode.locked_by %}
+  {% if Entity.entityData.exclusive_edit_mode.locked_by != Entity.Users.userData.userid %}
     {% set writeLockNotice = 'This entry is being edited by %s.'|trans|format(
-        Entity.ExclusiveEditMode.dataArr.fullname,
+        Entity.entityData.exclusive_edit_mode.locked_by_human,
       )|msg('warning', false) %}
   {% endif %}
   {{ writeLockNotice|raw }}

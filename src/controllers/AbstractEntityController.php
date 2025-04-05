@@ -83,7 +83,6 @@ abstract class AbstractEntityController implements ControllerInterface
         if ($App->Request->query->has('archived') && $Entity instanceof AbstractConcreteEntity) {
             $Entity->Uploads->includeArchived = true;
         }
-
     }
 
     #[Override]
@@ -257,9 +256,7 @@ abstract class AbstractEntityController implements ControllerInterface
             return ($redirectResponse);
         }
         // all entities are in exclusive edit mode as of march 2025. See #5568
-        if (empty($this->Entity->entityData['exclusive_edit_mode'])) {
-            $this->Entity->ExclusiveEditMode->setExclusiveMode();
-        }
+        $this->Entity->ExclusiveEditMode->activate();
 
         // last modifier name
         $lastModifierFullname = '';

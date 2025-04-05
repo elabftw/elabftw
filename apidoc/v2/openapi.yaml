@@ -343,8 +343,7 @@ components:
           type: string
           nullable: true
         metadata:
-          type: string
-          nullable: true
+          $ref: '#/components/schemas/metadata'
         modified_at:
           type: string
         next_step:
@@ -673,6 +672,54 @@ components:
           type: string
         type:
           type: string
+    # METADATA COMPONENT
+    metadata:
+      type: object
+      nullable: true
+      description: The metadata is a JSON type attribute that is mainly used to hold the extra fields, but it can hold anything you want
+      properties:
+        elabftw:
+          type: object
+          nullable: true
+          properties:
+            display_main_text:
+              type: boolean
+              nullable: true
+              description: The main text will be hidden if set to false. Use it on templates to force the use of extra fields, and only them for the reports.
+              default: true
+            extra_fields_groups:
+              type: array
+              nullable: true
+              description: This array stores the extra fields groups
+              default: []
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+        extra_fields:
+          type: object
+          nullable: true
+          description: See https://doc.elabftw.net/metadata.html#extra-fields-objects
+          additionalProperties:
+            type: object
+            nullable: true
+            properties:
+              type:
+                nullable: true
+                type: string
+                enum: ['allow_multi_values', 'blank_value_on_duplicate', 'checkbox', 'date', 'datetime-local', 'description', 'email', 'group_id', 'number', 'options', 'position', 'radio', 'required', 'select', 'text', 'time', 'unit', 'url']
+              value:
+                nullable: true
+                type: string
+              group_id:
+                type: integer
+                nullable: true
+              description:
+                type: string
+                nullable: true
     notification:
       type: object
       properties:
@@ -1093,11 +1140,7 @@ paths:
                     Set the content type for main text: 1 for HTML (default) and 2 for Markdown
                   example: 1
                 metadata:
-                  type: object
-                  nullable: true
-                  description: The metadata in JSON format
-                  default: null
-                  example: { "extra_fields": { "For example": { "type": "text", "value": "With a value", "required": true, "description": "An extra field of type text" } } }
+                  $ref: '#/components/schemas/metadata'
                 rating:
                   type: integer
                   nullable: true
@@ -3103,8 +3146,12 @@ paths:
                     properties:
                       format:
                         type: array
+                        items:
+                          type: string
                       scope:
                         type: array
+                        items:
+                          type: string
             text/csv:
               schema:
                 type: string

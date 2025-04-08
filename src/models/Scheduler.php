@@ -51,6 +51,7 @@ final class Scheduler extends AbstractRest
         ?string $start = null,
         ?string $end = null,
         private ?int $category = null,
+        private ?int $ownerid = null,
     ) {
         parent::__construct();
         $this->setId($id);
@@ -165,17 +166,22 @@ final class Scheduler extends AbstractRest
                 -- events.start <= range.end and events.end >= range.start
                 AND team_events.start <= :end
                 AND team_events.end >= :start
+                %s
                 %s",
             $this->category > 0
                 ? 'AND items.category = :category'
-                : ''
+                : '',
+            $this->ownerid ? 'AND team_events.userid = :ownerid' : ''
         );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
         $req->bindValue(':start', $this->normalizeDate($this->start));
         $req->bindValue(':end', $this->normalizeDate($this->end, true));
         if ($this->category > 0) {
-            $req->bindParam(':category', $this->category);
+            $req->bindParam(':category', $this->category, PDO::PARAM_INT);
+        }
+        if ($this->ownerid !== null) {
+            $req->bindParam(':ownerid', $this->ownerid, PDO::PARAM_INT);
         }
         $this->Db->execute($req);
         return $req->fetchAll();

@@ -132,9 +132,6 @@
 </div>
 
 <div id='mainSchedulerContent'>
-  {% if itemsArr|length == 0 %}
-    {{ 'No bookable items.'|trans|msg('warning', false) }}
-  {% else %}
   <div class='row mb-3'>
     <div class='col-md-3'>
       {# CATEGORY #}
@@ -181,6 +178,26 @@
       </form>
     </div>
 
+    <div class='col-md-3'>
+      {# EVENT OWNERS LIST #}
+      <form aria-label='{{ 'Filter by owner'|trans }}'>
+        {% if App.Config.configArr.debug -%}
+          <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
+        {%- endif %}
+        <select
+          aria-label='{{ 'Filter by owner'|trans }}'
+          class='autosubmit mr-1 form-control'
+          id='eventOwnerSelect'
+          name='owner'
+        >
+          <option value=''>{{ 'Filter by owner'|trans }}</option>
+          {% for user in usersArr %}
+            <option value='{{ user.userid }}' {{- App.Request.query.get('owner') == user.userid ? ' selected' }}>{{ user.fullname }}</option>
+          {% endfor %}
+        </select>
+      </form>
+    </div>
+
     {% if bookableItemData %}
       <div class='col-md-3 ml-auto'>
         <div class='input-group justify-content-end flex-nowrap'>
@@ -192,14 +209,16 @@
       </div>
     {% endif %}
   </div>
-  {% endif %}
-</div>
-{# loading spinner #}
-<div class='d-flex justify-content-center' id='loading-spinner'>
-  <div class='lds-dual-ring'></div>
 </div>
 
-<div id='scheduler' data-lang='{{ App.getJsLang }}' data-render='{{ itemsArr|length > 0 ? 'true' : 'false' }}' data-weekends='{{ App.Users.userData.show_weekends }}'></div>
-
+{% if itemsArr|length == 0 %}
+  {{ 'No bookable items.'|trans|msg('warning', false) }}
+{% else %}
+  {# loading spinner #}
+  <div class='d-flex justify-content-center' id='loading-spinner'>
+    <div class='lds-dual-ring'></div>
+  </div>
+  <div id='scheduler' data-lang='{{ App.getJsLang }}' data-render='{{ itemsArr|length > 0 ? 'true' : 'false' }}' data-weekends='{{ App.Users.userData.show_weekends }}'></div>
+{% endif %}
 
 {% endblock body %}

@@ -54,6 +54,7 @@ try {
         'bookableItemsTypes' => $bookableItemsTypes,
         'itemsArr' => $bookableItemsArr,
         'pageTitle' => _('Scheduler'),
+        'usersArr' => $App->Users->readAllActiveFromTeam(),
     );
 
     $Response->setContent($App->render($template, $renderArr));

@@ -81,10 +81,17 @@ document.addEventListener('DOMContentLoaded', () => {
   if (params.has('item') && params.get('item') !== 'all') {
     selectedItem = params.get('item');
   }
-  // allow filtering the category of items in events
+  // allow filtering the category and owner of items in events
   let queryString = '';
-  if (params.get('cat')) {
-    queryString += '?cat=' + params.get('cat');
+  const cat = params.get('cat');
+  const owner = params.get('owner');
+
+  const queryParams = [];
+  if (cat) queryParams.push('cat=' + encodeURIComponent(cat));
+  if (owner) queryParams.push('owner=' + encodeURIComponent(owner));
+
+  if (queryParams.length > 0) {
+    queryString = '?' + queryParams.join('&');
   }
 
   let eventBackgroundColor = 'a9a9a9';
@@ -307,7 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  ['schedulerSelectCat', 'itemSelect'].forEach(id => {
+  ['schedulerSelectCat', 'itemSelect', 'eventOwnerSelect'].forEach(id => {
     if (document.getElementById(id)) {
       new TomSelect(`#${id}`, {
         plugins: [

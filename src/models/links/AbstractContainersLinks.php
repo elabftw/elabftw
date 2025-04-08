@@ -254,6 +254,18 @@ abstract class AbstractContainersLinks extends AbstractLinks
     abstract protected function getImportTargetTable(): string;
 
     #[Override]
+    protected function getOtherImportTypeTable(): string
+    {
+        return '';
+    }
+
+    #[Override]
+    protected function getOtherImportTargetTable(): string
+    {
+        return '';
+    }
+
+    #[Override]
     protected function getTemplateTable(): string
     {
         if ($this->Entity instanceof Items || $this->Entity instanceof ItemsTypes) {

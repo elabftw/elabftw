@@ -24,4 +24,10 @@ final class Items2ExperimentsLinks extends AbstractExperimentsLinks
     {
         return 'items2experiments';
     }
+
+    #[Override]
+    protected function getOtherImportTypeTable(): string
+    {
+        return 'items2items';
+    }
 }

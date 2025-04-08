@@ -45,6 +45,12 @@ abstract class AbstractItemsLinks extends AbstractLinks
     }
 
     #[Override]
+    protected function getOtherImportTargetTable(): string
+    {
+        return 'items2experiments';
+    }
+
+    #[Override]
     protected function getTemplateTable(): string
     {
         if ($this->Entity instanceof Experiments || $this->Entity instanceof Templates) {

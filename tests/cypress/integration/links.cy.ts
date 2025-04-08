@@ -37,7 +37,7 @@ describe('Import links', () => {
       }).then(res => expect(res.status).to.equal(201));
     });
 
-    // link exp A to exp B and res b
+    // link exp A to exp B
     cy.visit('/experiments.php');
     const targetA = 'Links test-A';
     cy.get('#itemList').contains(targetA).click();
@@ -59,6 +59,7 @@ describe('Import links', () => {
       cy.get('#linksExpDiv').should('contain', targetB);
     });
 
+    // link exp A to res b
     const targetb = 'Links test-b';
     cy.intercept('GET', /api\/v2\/items\/\?.+$/).as('getResQueryApi');
     cy.intercept('POST', '/api/v2/experiments/*/items_links/*').as('postExpLinkResApi');
@@ -73,7 +74,7 @@ describe('Import links', () => {
       cy.get('#linksDiv').should('contain', targetb);
     });
 
-    // link res a to exp D and res d
+    // link res a to exp D
     const targetD = 'Links test-D';
     cy.visit('/database.php');
     const targeta = 'Links test-a';
@@ -93,6 +94,7 @@ describe('Import links', () => {
       cy.get('#linksExpDiv').should('contain', targetD);
     });
 
+    // link res a to res d
     const targetd = 'Links test-d';
     cy.intercept('POST', '/api/v2/items/*/items_links/*').as('postResLinkResApi');
     cy.get('#addLinkItemsInput').type(targetd, {delay: 0});
@@ -106,7 +108,7 @@ describe('Import links', () => {
       cy.get('#linksDiv').should('contain', targetd);
     });
 
-    // link exp C to exp A and res a
+    // link exp C to exp A
     cy.visit('/experiments.php');
     cy.get('#itemList').contains('Links test-C').click();
     cy.get('#topToolbar').get('[title="Edit"]').click();
@@ -122,6 +124,7 @@ describe('Import links', () => {
       cy.get('#linksExpDiv').should('contain', targetA);
     });
 
+    // link exp C to res a
     cy.get('#addLinkItemsInput').type(targeta);
     cy.wait('@getResQueryApi').then(() => {
       cy.get('.ui-menu.ui-widget.ui-widget-content.ui-autocomplete.ui-front').contains(`- ${targeta}`).should('be.visible');
@@ -133,21 +136,23 @@ describe('Import links', () => {
       cy.get('#linksDiv').should('contain', targeta);
     });
 
-    // import links from exp A and res a
-    cy.get('#linksExpDiv [data-action="import-links"]').click().then(() => {
-      cy.wait(['@postExpLinkExpApi', '@getExpPage'], {timeout: 60000}).then(() => { //, '@getExpPage'
+    // import links from exp A
+    cy.get('#linksExpDiv > :first-child [data-action="import-links"]').click().then(() => {
+      cy.wait(['@postExpLinkExpApi', '@postExpLinkResApi', '@getExpPage'], {timeout: 60000}).then(() => {
         cy.get('#linksExpDiv').should('contain', targetB);
-        // cy.get('#linksDiv').should('contain', targetb); // Todo: this is not working, the link is not imported
+        cy.get('#linksDiv').should('contain', targetb);
       });
     });
-    cy.get('#linksDiv [data-action="import-links"]').click().then(() => {
-      cy.wait(['@postExpLinkExpApi', '@getExpPage'], {timeout: 60000}).then(() => {
-        // cy.get('#linksExpDiv').should('contain', targetD); // Todo: this is not working, the link is not imported
+
+    // import links from res a
+    cy.get('#linksDiv > :first-child [data-action="import-links"]').click().then(() => {
+      cy.wait(['@postExpLinkExpApi', '@postExpLinkResApi', '@getExpPage'], {timeout: 60000}).then(() => {
+        cy.get('#linksExpDiv').should('contain', targetD);
         cy.get('#linksDiv').should('contain', targetd);
       });
     });
 
-    // link res c to exp A and res a
+    // link res c to exp A
     cy.visit('/database.php');
     cy.get('#itemList').contains('Links test-c').click();
     cy.get('#topToolbar').get('[title="Edit"]').click();
@@ -163,6 +168,7 @@ describe('Import links', () => {
       cy.get('#linksExpDiv').should('contain', targetA);
     });
 
+    // link res c to res a
     cy.get('#addLinkItemsInput').type(targeta);
     cy.wait('@getResQueryApi').then(() => {
       cy.get('.ui-menu.ui-widget.ui-widget-content.ui-autocomplete.ui-front').contains(`- ${targeta}`).should('be.visible');
@@ -174,16 +180,18 @@ describe('Import links', () => {
       cy.get('#linksDiv').should('contain', targeta);
     });
 
-    // import links from exp A and res a
-    cy.get('#linksExpDiv [data-action="import-links"]').click().then(() => {
-      cy.wait(['@postResLinkExpApi', '@getResPage'], {timeout: 60000}).then(() => {
+    // import links from exp A
+    cy.get('#linksExpDiv > :first-child [data-action="import-links"]').click().then(() => {
+      cy.wait(['@postResLinkExpApi', '@postResLinkResApi', '@getResPage'], {timeout: 60000}).then(() => {
         cy.get('#linksExpDiv').should('contain', targetB);
-        // cy.get('#linksDiv').should('contain', targetb); // Todo: this is not working, the link is not imported
+        cy.get('#linksDiv').should('contain', targetb);
       });
     });
-    cy.get('#linksDiv [data-action="import-links"]').click().then(() => {
-      cy.wait(['@postResLinkExpApi', '@getResPage'], {timeout: 60000}).then(() => {
-        // cy.get('#linksExpDiv').should('contain', targetD); // Todo: this is not working, the link is not imported
+
+    // import links from res a
+    cy.get('#linksDiv > :first-child [data-action="import-links"]').click().then(() => {
+      cy.wait(['@postResLinkExpApi', '@postResLinkResApi', '@getResPage'], {timeout: 60000}).then(() => {
+        cy.get('#linksExpDiv').should('contain', targetD);
         cy.get('#linksDiv').should('contain', targetd);
       });
     });

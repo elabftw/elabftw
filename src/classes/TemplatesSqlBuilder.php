@@ -25,6 +25,7 @@ final class TemplatesSqlBuilder extends EntitySqlBuilder
             entity.userid,
             entity.created_at,
             entity.modified_at,
+            entity.lastchangeby,
             entity.team,
             entity.title,
             entity.status,

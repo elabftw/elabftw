@@ -77,6 +77,7 @@ final class UserParams extends ContentParams
             'notif_user_need_validation_email',
             'notif_user_need_validation',
             'pdf_sig',
+            'scheduler_layout',
             'show_weekends',
             'uploads_layout',
             'use_isodate',

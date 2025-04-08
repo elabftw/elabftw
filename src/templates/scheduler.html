@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 
+{% set src = App.Users.userData %}
 {% block body %}
 {# Settings modal #}
 <div class='modal fade' id='schedulerSettingsModal' tabindex='-1' role='dialog' aria-labelledby='schedulerSettingsModalLabel'>
@@ -14,7 +15,8 @@
       <div class='modal-body'>
         {# schedulerSettings #}
         <div class='mb-2'>
-          {% include 'binary-setting.html' with {'label': 'Show weekends'|trans, 'model': 'users/me', 'slug': 'show_weekends', 'src': App.Users.userData} %}
+          {% include 'binary-setting.html' with {'label': 'Show weekends'|trans, 'model': 'users/me', 'slug': 'show_weekends', 'src': src} %}
+          {% include 'binary-setting.html' with {'label': 'Layout : timeline'|trans, 'model': 'users/me', 'slug': 'scheduler_layout', 'src': src} %}
         </div>
       </div>
 

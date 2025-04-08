@@ -132,6 +132,7 @@ jobs:
             mkdir cypress-coverage-html && tar -xf cypress-coverage.tar -C cypress-coverage-html
             docker cp elabtmp:/elabftw/tests/_output/c3tmp/codecoverage.clover.xml cypress-coverage.clover.xml
             exit "$cypressExitCode"
+          no_output_timeout: 30m
       - run :
           name: Merge both coverage reports
           command: |

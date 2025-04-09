@@ -43,9 +43,9 @@ final class DisplayParams extends BaseQueryParams
     // the extended search query
     public string $extendedQuery = '';
 
-    protected string $orderIsPinnedSql = 'is_pinned DESC,';
-
     public ?EntityType $relatedOrigin = null;
+
+    protected string $orderIsPinnedSql = 'is_pinned DESC,';
 
     public function __construct(
         private Users $requester,

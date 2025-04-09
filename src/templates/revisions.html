@@ -27,7 +27,7 @@
         <div>
           <input autocomplete='off' type='checkbox' data-action='checkbox-revision' data-id='{{ Entity.id }}' data-revid='{{ revision.id }}' data-type='{{ Entity.entityType.value }}' aria-label='{{ 'Select'|trans }}' class='mr-2' />
           <span title='{{ 'Revision ID'|trans }}' class='badge badge-secondary mr-2'>{{ revision.id }}</span>
-          <span class='p-1 btn rounded hl-hover-gray' data-type='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}' data-revid={{ revision.id }} data-toggle-plus-icon='1' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}'>
+          <span class='p-1 btn rounded hl-hover-gray' data-type='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}' data-revid={{ revision.id }} data-randid={{ randomId }} data-action='toggle-body' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle content'|trans }}'>
             <i class='fas fa-square-plus fa-fw'></i>
           </span>
           <span class='relative-moment' title='{{ revision.created_at }}'></span> {{ 'by'|trans }} {{ revision.fullname }}

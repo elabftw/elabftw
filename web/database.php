@@ -14,10 +14,10 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Controllers\DatabaseController;
 use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Items;
+use Elabftw\Services\Filter;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -26,27 +26,26 @@ use Symfony\Component\HttpFoundation\Response;
  *
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = ngettext('Resource', 'Resources', 2);
 
 // default response is error page with general error message
 $Response = new Response();
 $Response->prepare($Request);
 
 try {
-    $Controller = new DatabaseController($App, new Items($App->Users));
+    $Controller = new DatabaseController($App, new Items($App->Users, Filter::intOrNull($Request->query->getInt('id'))));
     $Response = $Controller->getResponse();
-} catch (ImproperActionException $e) {
-    // show message to user
-    $template = 'error.html';
-    $renderArr = array('error' => $e->getMessage());
-    $Response->setContent($App->render($template, $renderArr));
 } catch (IllegalActionException $e) {
     // log notice and show message
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
     $Response->setContent($App->render($template, $renderArr));
-} catch (DatabaseErrorException | FilesystemErrorException $e) {
+} catch (ImproperActionException $e) {
+    // show message to user
+    $template = 'error.html';
+    $renderArr = array('error' => $e->getMessage());
+    $Response->setContent($App->render($template, $renderArr));
+} catch (DatabaseErrorException $e) {
     // log error and show message
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
     $template = 'error.html';

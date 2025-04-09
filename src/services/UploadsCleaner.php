@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -13,6 +14,7 @@ namespace Elabftw\Services;
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\CleanerInterface;
 use League\Flysystem\FilesystemOperator;
+use Override;
 
 use function basename;
 use function count;
@@ -22,7 +24,7 @@ use function substr;
  * This is used to find out if there are untracked files that should have been deleted
  * but were not deleted because of a bug fixed in 2.0.7
  */
-class UploadsCleaner implements CleanerInterface
+final class UploadsCleaner implements CleanerInterface
 {
     public function __construct(private FilesystemOperator $filesystem) {}
 
@@ -31,6 +33,7 @@ class UploadsCleaner implements CleanerInterface
      *
      * @return int number of orphan files
      */
+    #[Override]
     public function cleanup(): int
     {
         $orphans = $this->findOrphans();

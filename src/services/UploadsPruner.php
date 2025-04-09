@@ -17,11 +17,12 @@ use Elabftw\Enums\State;
 use Elabftw\Enums\Storage;
 use Elabftw\Interfaces\CleanerInterface;
 use PDO;
+use Override;
 
 /**
  * Remove deleted uploads
  */
-class UploadsPruner implements CleanerInterface
+final class UploadsPruner implements CleanerInterface
 {
     private Db $Db;
 
@@ -34,6 +35,7 @@ class UploadsPruner implements CleanerInterface
      * Remove uploads with deleted state from database and filesystem
      * This is a global function and should only be called by prune:uploads command
      */
+    #[Override]
     public function cleanup(): int
     {
         $sql = 'SELECT id, long_name, storage FROM uploads WHERE state = :state';

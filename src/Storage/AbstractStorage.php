@@ -15,6 +15,7 @@ namespace Elabftw\Storage;
 use Elabftw\Interfaces\StorageInterface;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemAdapter;
+use Override;
 
 /**
  * Storage providers extend this class
@@ -23,6 +24,7 @@ abstract class AbstractStorage implements StorageInterface
 {
     protected const string FOLDER = '';
 
+    #[Override]
     public function getFs(): Filesystem
     {
         return new Filesystem($this->getAdapter());
@@ -33,6 +35,7 @@ abstract class AbstractStorage implements StorageInterface
      * @param string $relativePath A relative path or filename. e.g. folder/file.txt or file.txt
      * @return string The absolute path of a resource
      */
+    #[Override]
     public function getPath(string $relativePath = ''): string
     {
         return '/elabftw/' . static::FOLDER . ($relativePath !== '' ? '/' . $relativePath : '');

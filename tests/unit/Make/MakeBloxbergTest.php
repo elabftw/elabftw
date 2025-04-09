@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 use Elabftw\Enums\Storage;
-use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
@@ -26,6 +25,7 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use League\Flysystem\Filesystem;
+use RuntimeException;
 
 class MakeBloxbergTest extends \PHPUnit\Framework\TestCase
 {
@@ -119,7 +119,7 @@ class MakeBloxbergTest extends \PHPUnit\Framework\TestCase
         $client = new Client(array('handler' => $handlerStack));
         $getter = new HttpGetter($client);
         $Make = new MakeBloxberg($this->requester, $this->getFreshExperiment(), Config::getConfig()->configArr, $getter);
-        $this->expectException(FilesystemErrorException::class);
+        $this->expectException(RuntimeException::class);
         $Make->timestamp();
     }
 }

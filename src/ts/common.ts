@@ -7,26 +7,32 @@
  */
 import $ from 'jquery';
 import { Api } from './Apiv2.class';
-import { Malle } from '@deltablot/malle';
+import { Malle, InputType, Action as MalleAction } from '@deltablot/malle';
 import 'bootstrap/js/src/modal.js';
 import {
   adjustHiddenState,
+  clearForm,
+  collectForm,
   escapeExtendedQuery,
   generateMetadataLink,
   getEntity,
-  getNewIdFromPostRequest,
   listenTrigger,
   makeSortableGreatAgain,
+  mkSpin,
+  mkSpinStop,
   notifError,
   permissionsToJson,
   relativeMoment,
   reloadElements,
+  reloadEntitiesShow,
   replaceWithTitle,
-  togglePlusIcon,
+  toggleEditCompound,
+  toggleGrayClasses,
+  toggleIcon,
   TomSelect,
+  updateEntityBody,
 } from './misc';
 import i18next from 'i18next';
-import EntityClass from './Entity.class';
 import { Metadata } from './Metadata.class';
 import { DateTime } from 'luxon';
 import { Action, EntityType, Model, Target } from './interfaces';
@@ -50,7 +56,7 @@ import TableSorting from './TableSorting.class';
 import { KeyboardShortcuts } from './KeyboardShortcuts.class';
 import JsonEditorHelper from './JsonEditorHelper.class';
 import { Counter } from './Counter.class';
-import {getEditor} from './Editor.class';
+import { getEditor } from './Editor.class';
 
 document.addEventListener('DOMContentLoaded', () => {
   // HEARTBEAT
@@ -150,13 +156,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Listen for malleable columns
   new Malle({
-    after: (original, _, value) => {
-      // special case for title: update the page title on update
-      if (original.id === 'documentTitle') {
-        document.title = value;
-      }
-      return true;
-    },
     onEdit: (original, _, input) => {
       if (original.innerText === 'unset') {
         input.value = '';
@@ -179,6 +178,64 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(json => json[original.dataset.target]);
     },
     listenOn: '.malleableColumn',
+    returnedValueIsTrustedHtml: false,
+    submit : i18next.t('save'),
+    submitClasses: ['btn', 'btn-primary', 'mt-2'],
+    tooltip: i18next.t('click-to-edit'),
+  }).listen();
+
+  // Listen for malleable entity title
+  new Malle({
+    after: (original, _, value) => {
+      // special case for title: update the page title on update
+      if (original.id === 'documentTitle') {
+        document.title = value;
+      }
+      return true;
+    },
+    onEdit: (original, _, input) => {
+      if (original.innerText === 'unset') {
+        input.value = '';
+        original.classList.remove('font-italic');
+      }
+      return true;
+    },
+    inputClasses: ['form-control'],
+    fun: (value, original) => {
+      const params = {};
+      params[original.dataset.target] = value;
+      return ApiC.patch(`${original.dataset.endpoint}/${original.dataset.id}`, params)
+        .then(res => res.json())
+        .then(json => json[original.dataset.target]);
+    },
+    listenOn: '.malleableTitle',
+    returnedValueIsTrustedHtml: false,
+    onBlur: MalleAction.Submit,
+    tooltip: i18next.t('click-to-edit'),
+  }).listen();
+
+  // Listen for malleable qty_unit - we need a specific code to add the select options
+  new Malle({
+    cancel : i18next.t('cancel'),
+    cancelClasses: ['btn', 'btn-danger', 'mt-2', 'ml-1'],
+    inputClasses: ['form-control'],
+    inputType: InputType.Select,
+    selectOptions: [
+      {selected: false, text: '•', value: '•'},
+      {selected: false, text: 'μL', value: 'μL'},
+      {selected: false, text: 'mL', value: 'mL'},
+      {selected: false, text: 'L', value: 'L'},
+      {selected: false, text: 'μg', value: 'μg'},
+      {selected: false, text: 'mg', value: 'mg'},
+      {selected: false, text: 'g', value: 'g'},
+      {selected: false, text: 'kg', value: 'kg'},
+    ],
+    fun: (value, original) => {
+      return ApiC.patch(`${original.dataset.endpoint}/${original.dataset.id}`, {qty_unit: value})
+        .then(res => res.json())
+        .then(json => json['qty_unit']);
+    },
+    listenOn: '.malleableQtyUnit',
     returnedValueIsTrustedHtml: false,
     submit : i18next.t('save'),
     submitClasses: ['btn', 'btn-primary', 'mt-2'],
@@ -242,6 +299,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  function generateTable(data: Record<string, string | null>) {
+    const table = document.createElement('table');
+    table.classList.add('table');
+    const tbody = document.createElement('tbody');
+
+    for (const [key, value] of Object.entries(data)) {
+      const row = document.createElement('tr');
+      const cellKey = document.createElement('td');
+      cellKey.textContent = key;
+      row.appendChild(cellKey);
+      const cellValue: HTMLTableCellElement = document.createElement('td');
+      cellValue.textContent = value !== null ? value : 'N/A';
+      row.appendChild(cellValue);
+      tbody.appendChild(row);
+    }
+
+    table.appendChild(tbody);
+    return table;
+  }
+
   /**
   * Add an event listener on wheel event to prevent scrolling down with a number input selected.
   * Without this, the number will change to the next integer and information entered is lost.
@@ -283,16 +360,16 @@ document.addEventListener('DOMContentLoaded', () => {
         // TODO i18n
         switch (el.dataset.policy) {
         case 'tos':
-          title = 'Terms of Service';
+          title = json.tos_name;
           break;
         case 'a11y':
-          title = 'Accessibility Statement';
+          title = json.a11y_name;
           break;
         case 'legal':
-          title = 'Legal notice';
+          title = json.legal_name;
           break;
         default:
-          title = 'Privacy Policy';
+          title = json.privacy_name;
         }
         (document.getElementById('policiesModalLabel') as HTMLHeadElement).innerText = title;
         (document.getElementById('policiesModalBody') as HTMLDivElement).innerHTML = policy;
@@ -306,6 +383,11 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="switch-editor"]')) {
       getEditor().switch(getEntity()).then(() => window.location.reload());
 
+    } else if (el.matches('[data-action="insert-param-and-reload-show"]')) {
+      const params = new URLSearchParams(document.location.search.slice(1));
+      params.set(el.dataset.key, el.dataset.value);
+      window.history.replaceState({}, '', `?${params.toString()}`);
+      reloadEntitiesShow();
 
     } else if (el.matches('[data-action="add-query-filter"]')) {
       const params = new URLSearchParams(document.location.search.substring(1));
@@ -320,6 +402,21 @@ document.addEventListener('DOMContentLoaded', () => {
         top: 0,
         behavior: 'smooth',
       });
+
+    // TOGGLE PINNED
+    } else if (el.matches('[data-action="toggle-pin"]')) {
+      const entity = getEntity();
+      let id = entity.id;
+      if (isNaN(id) || id === null) {
+        id = parseInt(el.dataset.id, 10);
+      }
+
+      ApiC.patch(`${entity.type}/${id}`, {'action': Action.Pin}).then(() => {
+        // toggle appearance of button and icon
+        toggleGrayClasses(el.classList);
+        el.querySelector('i').classList.toggle('color-weak');
+      });
+
 
     // AUTOCOMPLETE
     } else if (el.matches('[data-complete-target]')) {
@@ -340,6 +437,8 @@ document.addEventListener('DOMContentLoaded', () => {
         appendTo: el.dataset.identifier ? `#autocompleteAnchorDiv_${el.dataset.identifier}` : '',
         source: function(request: Record<string, string>, response: (data: Array<string>) => void): void {
           if (request.term.length < 3) {
+            // TODO make it unselectable/grayed out or something, maybe once we use homegrown autocomplete
+            response([i18next.t('type-3-chars')]);
             return;
           }
           if (['experiments', 'items'].includes(el.dataset.completeTarget)) {
@@ -353,7 +452,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // TRANSFER OWNERSHIP
     } else if (el.matches('[data-action="transfer-ownership"]')) {
-      const value = (document.getElementById('new_owner') as HTMLInputElement).value;
+      const value = (document.getElementById('target_owner') as HTMLInputElement).value;
       const entity = getEntity();
       const params = {};
       params[Target.UserId] = value;
@@ -405,12 +504,21 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="remove-parent"]')) {
       el.parentElement.remove();
 
+    // CLEAR FORM
+    } else if (el.matches('[data-action="clear-form"]')) {
+      const target = document.getElementById(el.dataset.target);
+      const inputs = target.querySelectorAll('input');
+      inputs.forEach(input => input.value = '');
+
     // REMOVE A QUERY PARAMETER AND RELOAD PAGE
     } else if (el.matches('[data-action="remove-param-reload"]')) {
       const params = new URLSearchParams(document.location.search.slice(1));
       params.delete(el.dataset.target);
       // reload the page
       document.location.search = params.toString();
+
+    } else if (el.matches('[data-action="reload-page"]')) {
+      location.reload();
 
     // SAVE PERMISSIONS
     } else if (el.matches('[data-action="save-permissions"]')) {
@@ -454,35 +562,71 @@ document.addEventListener('DOMContentLoaded', () => {
       if (el.dataset.toggleTarget) {
         targetEl = document.getElementById(el.dataset.toggleTarget);
       }
-      targetEl.toggleAttribute('hidden');
+      const isHidden = targetEl.toggleAttribute('hidden');
+      el.setAttribute('aria-expanded', String(!isHidden));
 
+      // might want to toggle another element with toggle-extra
       if (el.dataset.toggleTargetExtra) {
         document.getElementById(el.dataset.toggleTargetExtra).toggleAttribute('hidden');
       }
-      const iconEl = el.querySelector('i');
-      if (iconEl) {
-        if (el.dataset.togglePlusIcon) {
-          togglePlusIcon(iconEl);
-        } else {
-          if (targetEl.hasAttribute('hidden')) {
-            iconEl.classList.remove('fa-caret-down');
-            if (el.dataset.toggleTarget !== 'filtersDiv') {
-              iconEl.classList.add('fa-caret-right');
-            }
-            el.setAttribute('aria-expanded', 'false');
-          } else {
-            iconEl.classList.add('fa-caret-down');
-            iconEl.classList.remove('fa-caret-right');
-            el.setAttribute('aria-expanded', 'true');
-          }
-        }
-      }
+
       // save the hidden state of the target element in localStorage
       if (targetEl.dataset.saveHidden) {
-        const targetKey = targetEl.dataset.saveHidden + '-isHidden';
-        const value = targetEl.hasAttribute('hidden') ? '1' : '0';
-        localStorage.setItem(targetKey, value);
+        localStorage.setItem(`${targetEl.dataset.saveHidden}-isHidden`, isHidden ? '1' : '0');
       }
+
+      // now deal with icon of executor element
+      toggleIcon(el, isHidden);
+
+    } else if (el.matches('[data-action="expand-all-storage"]')) {
+      const root = document.getElementById('storageDiv');
+      if (root) {
+        const detailsElements = root.querySelectorAll('details');
+        detailsElements.forEach((details: HTMLDetailsElement) => {
+          details.open = true;
+        });
+      }
+    } else if (el.matches('[data-action="add-storage"]')) {
+      const name = prompt('Name');
+      const params = {};
+      params['parent_id'] = el.dataset.parentId;
+      params['name'] = name;
+      ApiC.post('storage_units', params).then(() => reloadElements(['storageDiv']));
+
+    } else if (el.matches('[data-action="add-storage-children"]')) {
+      const unitName = prompt('Unit Name');
+      if (!unitName.length) {
+        return;
+      }
+      const params = {};
+      params['parent_id'] = el.dataset.parentId;
+      params['name'] = unitName;
+      ApiC.post('storage_units', params).then(() => reloadElements(['storageDiv']));
+    } else if (el.matches('[data-action="create-container"]')) {
+      const entity = getEntity();
+      const qty_stored = (document.getElementById('containerQtyStoredInput') as HTMLInputElement).value;
+      const qty_unit = (document.getElementById('containerQtyUnitSelect') as HTMLSelectElement).value;
+      let multiplier = parseInt((document.getElementById('containerMultiplierInput') as HTMLInputElement).value, 10);
+      if (isNaN(multiplier) || multiplier <= 0) {
+        multiplier = 1;
+      }
+
+      const postCalls = Array.from({ length: multiplier }, () =>
+        ApiC.post(`${entity.type}/${entity.id}/containers/${el.dataset.id}`, {
+          qty_stored: qty_stored,
+          qty_unit: qty_unit,
+        }),
+      );
+      // Execute all POST calls and reload elements after all are resolved
+      Promise.all(postCalls)
+        .then(() => reloadElements(['storageDivContent']))
+        .catch((error) => notifError(error));
+
+    } else if (el.matches('[data-action="destroy-container"]')) {
+      const entity = getEntity();
+      ApiC.delete(`${entity.type}/${entity.id}/containers/${el.dataset.id}`).then(() => reloadElements(['storageDivContent']));
+    } else if (el.matches('[data-action="destroy-storage"]')) {
+      ApiC.delete(`storage_units/${el.dataset.id}`).then(() => reloadElements(['storageDiv']));
 
     // REPLACE WITH NEXT ACTION
     } else if (el.matches('[data-action="replace-with-next"]')) {
@@ -496,6 +640,117 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="toggle-modal"]')) {
       // TODO this requires jquery for now. Not in BS5.
       $('#' + el.dataset.target).modal('toggle');
+
+    // UPDATE ENTITY BODY (SAVE BUTTON)
+    } else if (el.matches('[data-action="update-entity-body"]')) {
+      updateEntityBody().then(() => {
+        // SAVE AND GO BACK BUTTON
+        if (el.matches('[data-redirect="view"]')) {
+          const entity = getEntity();
+          window.location.replace('?mode=view&id=' + entity.id);
+        }
+      });
+
+
+    // SEARCH PUBCHEM
+    } else if (el.matches('[data-action="search-pubchem"]')) {
+      const inputEl = el.parentElement.parentElement.querySelector('input') as HTMLInputElement;
+      if (!inputEl.checkValidity()) {
+        inputEl.reportValidity();
+        return;
+      }
+      const elOldHTML = mkSpin(el);
+      const resultDiv = document.getElementById('pubChemSearchResultDiv');
+      const resultTableDiv = document.getElementById('pubChemSearchResultTableDiv');
+      const viewOnPubChemLink = document.getElementById('viewOnPubChemLink') as HTMLLinkElement;
+      ApiC.getJson(`compounds?search_pubchem_${el.dataset.from}=${inputEl.value}`).then(json => {
+        mkSpinStop(el, elOldHTML);
+        const table = generateTable(json);
+        resultDiv.removeAttribute('hidden');
+        viewOnPubChemLink.href = `https://pubchem.ncbi.nlm.nih.gov/compound/${json.cid}`;
+        // clear any previous result
+        resultTableDiv.innerHTML = '';
+        resultTableDiv.appendChild(table);
+        const importBtn = document.querySelector('[data-action="import-compound"]') as HTMLButtonElement;
+        importBtn.removeAttribute('disabled');
+        importBtn.dataset.cid = json.cid;
+      });
+
+    } else if (el.matches('[data-action="search-entity-from-compound"]')) {
+      // try and grab the CAS for the search
+      let query = (document.getElementById('compoundInput-cas_number') as HTMLInputElement).value;
+      // if no cas, use the name
+      if (!query) {
+        query = (document.getElementById('compoundInput-name') as HTMLInputElement).value;
+      }
+      window.location.href = `${el.dataset.page}.php?q="${encodeURIComponent(query)}"`;
+
+    // IMPORT FROM PUBCHEM
+    } else if (el.matches('[data-action="import-compound"]')) {
+      const params = {cid: parseInt(el.dataset.cid, 10), action: Action.Duplicate};
+      ApiC.post2location('compounds', params).then(() => {
+        document.dispatchEvent(new CustomEvent('dataReload'));
+        clearForm(document.getElementById('importFromPubChemModal'));
+        const resultDiv = document.getElementById('pubChemSearchResultDiv');
+        resultDiv.setAttribute('hidden', 'hidden');
+        const resultTableDiv = document.getElementById('pubChemSearchResultTableDiv');
+        resultTableDiv.innerHTML = '';
+        const importBtn = document.querySelector('[data-action="import-cid"]');
+        importBtn.setAttribute('disabled', 'disabled');
+      });
+
+    } else if (el.matches('[data-action="create-resource-from-compound"]')) {
+      const compoundId = (document.getElementById('compoundInput-id') as HTMLInputElement).value;
+      ApiC.post2location('items', {template: el.dataset.tplid}).then(id => {
+        // now create a link with that compound
+        ApiC.post(`items/${id}/compounds/${compoundId}`).then(() => {
+          // also change the title
+          const compoundName = (document.getElementById('compoundInput-name') as HTMLInputElement).value;
+          ApiC.patch(`items/${id}`, {title: compoundName}).then(() => {
+            window.location.href = `/database.php?mode=edit&id=${id}`;
+          });
+        });
+      });
+
+    // CREATE/EDIT COMPOUND MANUALLY
+    } else if (el.matches('[data-action="save-compound"]')) {
+      try {
+        if (el.dataset.compoundId) { // edit
+          const compoundForm = document.getElementById('editCompoundInputs');
+          const params = collectForm(compoundForm);
+          ApiC.patch(`compounds/${el.dataset.compoundId}`, params).then(() => {
+            document.dispatchEvent(new CustomEvent('dataReload'));
+            $('#editCompoundModal').modal('hide');
+            clearForm(compoundForm);
+          });
+        } else { // create
+          const compoundForm = document.getElementById('createCompoundInputs');
+          const params = collectForm(compoundForm);
+          clearForm(compoundForm);
+          ApiC.post2location('compounds', params).then(id => {
+            ApiC.getJson(`compounds/${id}`).then((json) => {
+              setTimeout(() => {
+                toggleEditCompound(json);
+              }, 500);
+              document.dispatchEvent(new CustomEvent('dataReload'));
+            });
+          });
+        }
+      } catch (err) {
+        notifError(err);
+        return;
+      }
+    // DELETE SELECTED COMPOUNDS
+    } else if (el.matches('[data-action="delete-compounds"]')) {
+      const btn = document.getElementById('deleteCompoundsBtn');
+      const idList = btn.dataset.target.split(',');
+      if (!confirm(`Delete ${idList.length} compound(s)?`)) {
+        return;
+      }
+      idList.forEach(id => {
+        ApiC.delete(`compounds/${id}`);
+      });
+      document.dispatchEvent(new CustomEvent('dataReload'));
 
     // PASSWORD VISIBILITY TOGGLE
     } else if (el.matches('[data-action="toggle-password"]')) {
@@ -557,14 +812,31 @@ document.addEventListener('DOMContentLoaded', () => {
       url.searchParams.set('sort', query[1]);
       window.location.href = url.href;
 
-    // CREATE EXPERIMENT or DATABASE item: main create button in top right
+    // CREATE EXPERIMENT, TEMPLATE or DATABASE item: main create button in top right
     } else if (el.matches('[data-action="create-entity"]')) {
-      // look for any tag present in the url, we will create the experiment with these tags
+      let params = {};
+      if (el.dataset.hasTitle) {
+        params = collectForm(document.getElementById('createNewForm'));
+      }
+      if (el.dataset.tplid) {
+        params['template'] = el.dataset.tplid;
+      }
+      // look for any tag present in the url, we will create the entry with these tags
       const urlParams = new URLSearchParams(document.location.search);
-      const entityC = new EntityClass(el.dataset.type as EntityType);
-      entityC.create(el.dataset.tplid, urlParams.getAll('tags[]')).then(resp => {
-        const newId = getNewIdFromPostRequest(resp);
-        window.location.href = `${entityC.getPage()}.php?mode=edit&id=${newId}`;
+      const tags = urlParams.getAll('tags[]');
+      if (tags) {
+        params['tags'] = tags;
+      }
+      let page = 'experiments.php';
+      if (el.dataset.type === 'experiments_templates') {
+        page = 'templates.php';
+      }
+      if (el.dataset.type === 'database') {
+        el.dataset.type = 'items';
+        page = 'database.php';
+      }
+      ApiC.post2location(`${el.dataset.type}`, params).then(id => {
+        window.location.href = `${page}?mode=edit&id=${id}`;
       });
 
     } else if (el.matches('[data-action="report-bug"]')) {
@@ -603,6 +875,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // prevent the form from being submitted
         event.preventDefault();
       }
+    // REMOVE COMPOUND LINK
+    } else if (el.matches('[data-action="delete-compoundlink"]')) {
+      const entity = getEntity();
+      ApiC.delete(`${entity.type}/${entity.id}/compounds/${el.dataset.id}`).then(() => reloadElements(['compoundDiv']));
     // CLICK the NOW button of a time or date extra field
     } else if (el.matches('[data-action="update-to-now"]')) {
       const input = el.closest('.input-group').querySelector('input');
@@ -620,18 +896,17 @@ document.addEventListener('DOMContentLoaded', () => {
       input.value = now.toFormat(format);
       // trigger change event so it is saved
       input.dispatchEvent(new Event('change'));
+
     // TOGGLE BODY
     } else if (el.matches('[data-action="toggle-body"]')) {
       const randId = el.dataset.randid;
-      if (el.dataset.togglePlusIcon) {
-        togglePlusIcon(el.querySelector('.fas'));
-      }
       const bodyDiv = document.getElementById(randId);
       let action = 'hide';
       // transform the + in - and vice versa
       if (bodyDiv.hasAttribute('hidden')) {
         action = 'show';
       }
+      toggleIcon(el, !bodyDiv.hasAttribute('hidden'));
       // don't reload body if it is already loaded for show action
       // and the hide action is just toggle hidden attribute and do nothing else
       if ((action === 'show' && bodyDiv.dataset.bodyLoaded) || action === 'hide') {

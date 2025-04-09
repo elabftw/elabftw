@@ -13,7 +13,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\EmailTarget;
 use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Email;
@@ -30,7 +29,7 @@ use function dirname;
  */
 require_once dirname(__DIR__) . '/init.inc.php';
 
-$Response = new RedirectResponse('/team.php?tab=4');
+$Response = new RedirectResponse('/team.php?tab=2');
 try {
     // NOT FOR ANON
     if ($App->Session->get('is_anon')) {
@@ -63,13 +62,13 @@ try {
         );
         $App->Session->getFlashBag()->add('ok', sprintf(_('Email sent to %d users'), $sent));
     }
-} catch (ImproperActionException $e) {
-    // show message to user
-    $App->Session->getFlashBag()->add('ko', $e->getMessage());
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
     $App->Session->getFlashBag()->add('ko', Tools::error(true));
-} catch (DatabaseErrorException | FilesystemErrorException $e) {
+} catch (ImproperActionException $e) {
+    // show message to user
+    $App->Session->getFlashBag()->add('ko', $e->getMessage());
+} catch (DatabaseErrorException $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
 } catch (Exception $e) {

@@ -13,11 +13,12 @@ declare(strict_types=1);
 namespace Elabftw\Models\Notifications;
 
 use Elabftw\Enums\Notifications;
+use Override;
 
 /**
  * When an attached PDF file cannot be appended during PDF export
  */
-class PdfAppendmentFailed extends WebOnlyNotifications
+final class PdfAppendmentFailed extends WebOnlyNotifications
 {
     protected Notifications $category = Notifications::PdfAppendmentFailed;
 
@@ -26,6 +27,7 @@ class PdfAppendmentFailed extends WebOnlyNotifications
         parent::__construct();
     }
 
+    #[Override]
     protected function getBody(): array
     {
         return array(

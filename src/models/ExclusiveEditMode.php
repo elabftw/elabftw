@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @author Marcel Bolten <github@marcelbolten.de>
@@ -12,12 +13,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use DateInterval;
-use DateTime;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
-use Elabftw\Enums\EntityType;
-use Elabftw\Enums\RequestableAction;
 use Elabftw\Exceptions\ImproperActionException;
 use PDO;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -28,15 +25,10 @@ use function sprintf;
 /**
  * For dealing with exclusive edit mode aka write lock
  */
-class ExclusiveEditMode
+final class ExclusiveEditMode
 {
-    /** timeout in minutes after which the lock is automatically released */
-    // ToDo?: make it a configuration on team/instance level
-    public const LOCK_TIMEOUT = 60;
-
-    public array $dataArr = array();
-
-    public bool $isActive = false;
+    // time after which we consider the lock stale and ignore it
+    private const int EXPIRATION_MINUTES = 42;
 
     private Db $Db;
 
@@ -47,159 +39,97 @@ class ExclusiveEditMode
 
     public function readOne(): array
     {
+        // failsafe: is_stale is 1 if the entry is locked for longer than EXPIRATION_MINUTES
         $sql = sprintf(
             'SELECT locked_by,
-                CONCAT(users.firstname, " ", users.lastname) AS fullname,
-                locked_at
-                FROM %1$s_edit_mode as entity
+                CONCAT(users.firstname, " ", users.lastname) AS locked_by_human,
+                locked_at,
+                IF(locked_at IS NOT NULL AND locked_at < DATE_SUB(NOW(), INTERVAL %d MINUTE), 1, 0) AS is_stale
+                FROM %s_edit_mode as entity
                 LEFT JOIN users ON (entity.locked_by = users.userid)
-                WHERE %1$s_id = :id',
+                WHERE entity_id = :entity_id',
+            self::EXPIRATION_MINUTES,
             $this->Entity->entityType->value,
         );
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
-        $this->dataArr = $req->fetch() ?: array();
-        if (!empty($this->dataArr)) {
-            $this->isActive = true;
+        // don't use Db->fetch() because it's fine to return nothing
+        return $req->fetch() ?: array();
+    }
+
+    /**
+     * Add two failsafe if the entry stays locked for some reason (removal couldn't be fired on window unload)
+     * 1. if it's same user, let them in anyway
+     * 2. if the lock is older than 42 minutes, let them in too
+     */
+    public function isActive(): bool
+    {
+        $data = $this->readOne();
+        if (empty($data)
+            || $data['locked_by'] === $this->Entity->Users->userData['userid']
+            || $data['is_stale']
+        ) {
+            return false;
         }
-        return $this->dataArr;
+        return true;
     }
 
     public function gatekeeper(): ?RedirectResponse
     {
-        if ($this->isActive
-            && $this->Entity->Users->userid !== $this->dataArr['locked_by']
-            && !$this->Entity->Users->isAdminOf($this->dataArr['locked_by'])
-        ) {
+        if ($this->isActive()) {
             /** @psalm-suppress PossiblyNullArgument */
             return new RedirectResponse(sprintf(
-                '%s%sid=%d&openedInExclusiveEditMode',
+                '%s%sid=%d',
                 $this->Entity->entityType->toPage(),
-                $this->Entity->entityType === EntityType::Templates
-                    ? '&mode=view&template'
-                    : '?mode=view&',
+                '?mode=view&',
                 $this->Entity->id,
-            ), Response::HTTP_SEE_OTHER);
+            ), Response::HTTP_SEE_OTHER); // 303
         }
         return null;
     }
 
-    public function toggle(): bool
+    public function canPatchOrExplode(Action $action): null
     {
-        if ($this->isActive) {
-            return $this->destroy();
-        }
-        return $this->create();
-    }
-
-    public function canPatchOrExplode(Action $action): void
-    {
-        if ($this->isActive) {
-            // only user who locked can do everything
-            if ($this->Entity->Users->userid === $this->dataArr['locked_by']) {
-                return;
-            }
+        if ($this->isActive()) {
+            $data = $this->readOne();
             // everyone can ...
             if ($action === Action::Pin
                 || $action === Action::AccessKey
             ) {
-                return;
-            }
-            if ($action === Action::ExclusiveEditMode
-                && $this->Entity->Users->isAdminOf($this->dataArr['locked_by'])
-            ) {
-                return;
+                return null;
             }
             throw new ImproperActionException(sprintf(
-                _('This entry is opened in exclusive edit mode by %s since %s. You cannot edit it now.'),
-                $this->dataArr['fullname'],
-                $this->dataArr['locked_at'],
+                _('This entry is being edited by %s.'),
+                $data['locked_by_human'],
             ));
         }
+        return null;
     }
 
-    public function manage(): void
-    {
-        if ($this->isActive) {
-            $this->releasedExpiredLock();
-            $this->extendLockTime();
-        }
-    }
-
-    private function create(): bool
+    public function activate(): bool
     {
         $this->Entity->canOrExplode('write');
+        // destroy any leftover first: prevents inserting with same primary id (entity_id)
+        $this->destroy();
         $sql = sprintf(
-            'INSERT INTO %1$s_edit_mode (locked_by, %1$s_id, locked_at) VALUES (:userid, :entityId, NOW())',
+            'INSERT INTO %s_edit_mode (locked_by, entity_id) VALUES (:userid, :entity_id)',
             $this->Entity->entityType->value,
         );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindParam(':entityId', $this->Entity->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $res = $req->rowCount() === 1;
-        if ($res) {
-            $this->readOne();
-        }
-        return $res;
+        $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
+        return $this->Db->execute($req);
     }
 
-    private function destroy(): bool
+    public function destroy(): bool
     {
         $sql = sprintf(
-            'DELETE FROM %1$s_edit_mode
-                WHERE %1$s_id = :entityId',
+            'DELETE FROM %1$s_edit_mode WHERE entity_id = :entity_id',
             $this->Entity->entityType->value,
         );
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':entityId', $this->Entity->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $res = $req->rowCount() === 1;
-        if ($res) {
-            $this->dataArr = array();
-            $this->isActive = false;
-            // remove potential requests
-            (new RequestActions($this->Entity->Users, $this->Entity))
-                ->remove(RequestableAction::RemoveExclusiveEditMode);
-        }
-        return $res;
-    }
-
-    /**
-     * remove lock after EDIT_MODE_TIMEOUT
-     */
-    private function releasedExpiredLock(): void
-    {
-        $lockedAt = new DateTime($this->dataArr['locked_at']);
-        $lockedAt->add(new DateInterval(sprintf('PT%sM', self::LOCK_TIMEOUT)));
-        if ($lockedAt <= new DateTime()) {
-            $this->destroy();
-        }
-    }
-
-    /**
-     * set locked at time to now
-     */
-    private function extendLockTime(): void
-    {
-        if ($this->dataArr['locked_by'] === $this->Entity->Users->userid) {
-            $sql = sprintf(
-                'UPDATE %1$s_edit_mode
-                    SET locked_at = :now
-                    WHERE locked_by = :userid
-                        AND %1$s_id = :entityId',
-                $this->Entity->entityType->value,
-            );
-            $req = $this->Db->prepare($sql);
-            $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
-            $req->bindParam(':entityId', $this->Entity->id, PDO::PARAM_INT);
-            $now = (new DateTime())->format('Y-m-d H:i:s');
-            $req->bindParam(':now', $now);
-            $this->Db->execute($req);
-            if ($req->rowCount() === 1) {
-                $this->dataArr['locked_at'] = $now;
-            }
-        }
+        $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
+        return $this->Db->execute($req);
     }
 }

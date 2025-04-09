@@ -2,10 +2,9 @@
 
 {% block body %}
 <ul class='tabbed-menu'>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='1'>{{ 'Scheduler'|trans }}</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='2'>{{ 'Members'|trans }}</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='3'>{{ 'Email'|trans }}</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='4'>{{ 'Procurement requests'|trans }}</button><span class='beta'>beta</span></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='1'>{{ 'Members'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='2'>{{ 'Email'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='3'>{{ 'Procurement requests'|trans }}</button><span class='beta'>beta</span></li>
 </ul>
 
 {# loading spinner #}
@@ -13,180 +12,11 @@
   <div class='lds-dual-ring'></div>
 </div>
 
-{# Modal for event click #}
-<div class='modal fade' id='eventModal' tabindex='-1' role='dialog' aria-labelledby='eventModalLabel'>
-  <div class='modal-dialog modal-lg' role='document'>
-    <div class='modal-content'>
-      <div class='modal-header'>
-        <h5 class='modal-title' id='eventModalLabel'>{{ 'Edit event'|trans }}</h5>
-        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
-          <span aria-hidden='true'>&times;</span>
-        </button>
-      </div>
-      <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
-        {# "placeholder" will be replaced with real title by js #}
-        <label for='eventTitle'>{{ 'Comment'|trans }}</label>
-        <div class='input-group'>
-          {# a data-eventid will get added to this element by js #}
-          <input class='form-control' type='text' id='eventTitle' value='placeholder' />
-          <div class='input-group-append'>
-            <button class='btn btn-primary' data-action='save-event-title' type='button'>{{ 'Save'|trans }}</button>
-          </div>
-        </div>
-        <hr>
-        {# START AND END TIMES #}
-        <div class='mt-2'>
-          <label for='schedulerEventModalStart'>{{ 'Start time'|trans }}</label>
-          <input id='schedulerEventModalStart' class='form-control' type='datetime-local' data-what='start_epoch' value='' />
-          <label for='schedulerEventModalEnd'>{{ 'End time'|trans }}</label>
-          <input id='schedulerEventModalEnd' class='form-control' type='datetime-local' data-what='end_epoch' value='' />
-        </div>
-
-        {# BIND EXPERIMENT #}
-        <div class='mt-2'>
-          <i class='fas fa-link mr-1'></i><h5 class='d-inline' id='bindExpInputLabel'>{{ 'Bind an experiment'|trans }}</h5>
-          <div id='eventBoundExp'></div>
-          <button data-action='scheduler-rm-bind' data-type='experiment' data-eventid='' class='btn btn-sm btn-danger mb-2' type='button'>{{ 'Unbind'|trans }}</button>
-            <div class='input-group mb-3'>
-              <div class='input-group-prepend'>
-                <span class='input-group-text'>{{ 'Search'|trans }}</span>
-              </div>
-              <input type='text' data-complete-target='experiments' data-identifier='binddivexp' class='form-control bindInput' aria-labelledby='bindExpInputLabel' />
-              <div class='input-group-append'>
-                <button class='btn btn-primary' data-input='bindexpinput' data-action='scheduler-bind-entity' data-type='experiment' type='button'>{{ 'Attach'|trans }}</button>
-              </div>
-            </div>
-            <div id='autocompleteAnchorDiv_binddivexp'></div>
-        </div>
-        {# BIND ITEM #}
-        <div class='mt-2'>
-          <i class='fas fa-link mr-1'></i><h5 class='d-inline' id='bindItemInputLabel'>{{ 'Bind a resource'|trans }}</h5>
-          <div id='eventBoundDb'></div>
-          <button data-action='scheduler-rm-bind' data-type='item_link' data-eventid='' class='btn btn-sm btn-danger mb-2' type='button'>{{ 'Unbind'|trans }}</button>
-            <div class='input-group mb-3'>
-              <div class='input-group-prepend'>
-                <span class='input-group-text'>{{ 'Search'|trans }}</span>
-              </div>
-              <input type='text' data-complete-target='items' data-identifier='binddivdb' class='form-control bindInput' aria-labelledby='bindItemInputLabel' />
-              <div class='input-group-append'>
-                <button class='btn btn-primary' data-input='binddbinput' data-action='scheduler-bind-entity' data-type='item_link' type='button'>{{ 'Attach'|trans }}</button>
-              </div>
-            </div>
-            <div id='autocompleteAnchorDiv_binddivdb'></div>
-        </div>
-
-        {# only show the cancel block if item is cancellable or user is admin #}
-        {% if bookableItemData.book_is_cancellable == 1 or App.Users.isAdmin %}
-          <div>
-            <h5>{{ 'Cancel booking slot'|trans }}</h5>
-            <h6><label for='cancelEventTextarea'>{{ 'Add a custom message'|trans }}</label></h6>
-              <textarea id='cancelEventTextarea' class='form-control'></textarea>
-              <label>{{ 'Send to'|trans }}</label>
-              <div class='form-check'>
-                <input class='form-check-input' type='radio' name='targetCancelEvent' data-targetid='{{ App.Request.query.get('item') }}' value='bookable_item' id='targetCancelEventUsers' checked> <label class='form-check-label' for='targetCancelEventUsers'>{{ 'Past and future users who booked this resource'|trans }}</label>
-              </div>
-              <div class='form-check'>
-                <input class='form-check-input' type='radio' name='targetCancelEvent' data-targetid='{{ App.teamArr.id }}' value='team' id='targetCancelEventTeam'> <label class='form-check-label' for='targetCancelEventTeam'>{{ 'Members of team %s'|trans|format(App.teamArr.name) }}</label>
-              </div>
-              {% for teamgroup in teamGroupsArr %}
-                <div class='form-check'>
-                  <input class='form-check-input' type='radio' name='targetCancelEvent' data-targetid='{{ teamgroup.id }}' value='teamgroup' id='targetCancelEventTeamgroup_{{ teamgroup.id }}'> <label class='form-check-label' for='targetCancelEventTeamgroup_{{ teamgroup.id }}'>{{ 'Members of teamgroup %s'|trans|format(teamgroup.name) }}</label>
-                </div>
-              {% endfor %}
-              <div class='mt-2'>
-                <button type='button' data-action='cancel-event-with-message' data-dismiss='modal' data-id='' class='btn btn-danger cancelEventBtn'>{{ 'Send message and cancel'|trans }}</button>
-                <button type='button' data-action='cancel-event' data-dismiss='modal' data-id='' class='btn btn-danger cancelEventBtn'>{{ 'Cancel'|trans }}</button>
-            </div>
-          </div>
-        {% endif %}
-      </div>
-      <div class='modal-footer'>
-        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-{# TAB 1 SCHEDULER #}
+{# TAB 1 MEMBERS #}
 <div data-tabcontent='1' hidden>
-  <div class='d-flex mb-2'>
-    <div id='selectBookableWarningDiv' hidden>{{ 'Select a resource below in order to book it.'|trans }}</div>
-    <div class='ml-auto'>
-      {% include 'scope-button.html' with {'reload': 'page', 'target': 'scope_items'} %}
-    </div>
-  </div>
-
-  <div id='mainSchedulerContent'>
-    {% if itemsArr|length == 0 %}
-      {{ 'No bookable items.'|trans|msg('warning', false) }}
-    {% else %}
-    <div class='row mb-3'>
-      <div class='col-md-3'>
-        {# CATEGORY #}
-        <form aria-label='{{ 'Filter by category'|trans }}'>
-          {% if App.Config.configArr.debug -%}
-            <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
-          {%- endif %}
-          <select
-            aria-label='{{ 'Filter by category'|trans }}'
-            class='autosubmit mr-1 form-control'
-            id='schedulerSelectCat'
-            name='cat'
-          >
-            <option value=''>{{ 'Filter by category'|trans }}</option>
-            {% for category in bookableItemsTypes %}
-              <option value='{{ category.id }}'{{ App.Request.query.get('cat') == category.id ? ' selected' }}>
-                {{ category.title }}
-              </option>
-            {% endfor %}
-          </select>
-        </form>
-      </div>
-
-      <div class='col-md-3'>
-        {# ITEM LIST #}
-        <form aria-label='{{ 'Select a resource'|trans }}'>
-          {% if App.Config.configArr.debug -%}
-            <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
-          {%- endif %}
-          <select
-            aria-label='{{ 'Select a resource'|trans }}'
-            class='autosubmit mr-1 form-control'
-            id='itemSelect'
-            name='item'
-          >
-            <option value=''>{{ 'Select a resource'|trans }}</option>
-            {% for item in itemsArr %}
-              {# data-color is used to set the background during initial drag #}
-              <option data-color='{{ item.category_color }}' value='{{ item.id }}'{{ App.Request.query.get('item') == item.id ? ' selected' }}>
-                {{ item.category_title }} - {{ item.title }}
-              </option>
-            {% endfor %}
-          </select>
-        </form>
-      </div>
-
-      {% if bookableItemData %}
-        <div class='col-md-3 ml-auto'>
-          <div class='input-group justify-content-end flex-nowrap'>
-            <div class='input-group-prepend'>
-              <button class='btn btn-secondary' type='button' data-action='remove-param-reload' data-target='item'>X</button>
-            </div>
-            <a href='database.php?mode=view&amp;id={{ bookableItemData.id }}' class='list-group-item hl-hover-gray'><span style='--bg: #{{ bookableItemData.category_color }}' class='catstat-btn category-btn mr-2'>{{ bookableItemData.category_title }}</span>{{ bookableItemData.title }}</a>
-          </div>
-        </div>
-      {% endif %}
-    </div>
-    {% endif %}
-  </div>
-  <div id='scheduler' data-lang='{{ App.getJsLang }}' data-render={{ itemsArr|length > 0 ? 'true' : 'false' }}></div>
-</div>
-
-{# TAB 2 INFO #}
-<div data-tabcontent='2' hidden>
   <div class='alert alert-success'><i class='fas fa-info-circle fa-fw color-success'></i>
-  {{ 'You belong to the %s team.'|trans|format(teamArr.name) }}
-  {{ 'Members'|trans }}: {{ teamsStats.totusers }} &ndash; {% trans %}Experiment{% plural teamStats.totxp %}Experiments{% endtrans %}: {{ teamsStats.totxp }} ({{ teamsStats.totxpts }} timestamped) &ndash; {{ 'Resources'|trans }}: {{ teamsStats.totdb }}
+  {{ 'You belong to the %s team.'|trans|format(App.teamArr.name) }}
+  {{ 'Members'|trans }}: {{ teamsStats.totusers }} &ndash; {% trans %}Experiment{% plural teamsStats.totxp %}Experiments{% endtrans %}: {{ teamsStats.totxp }} ({{ teamsStats.totxpts }} timestamped) &ndash; {{ 'Resources'|trans }}: {{ teamsStats.totdb }}
   </div>
 
   <h3 class='p-2 pl-3 mb-3 section-title'>{{ 'Members'|trans }}</h3>
@@ -221,8 +51,8 @@
   </table>
 </div>
 
-{# TAB 3 EMAIL #}
-<div data-tabcontent='3' hidden>
+{# TAB 2 EMAIL #}
+<div data-tabcontent='2' hidden>
   <h3 class='p-2 pl-3 mb-3 section-title'>{{ 'Send an email to users'|trans }}</h3>
   <form class='pl-3' method='post' action='app/controllers/TeamController.php' aria-label='{{ 'Mass email form'|trans }}'>
     {{ App.Session.get('csrf')|csrf }}
@@ -248,8 +78,8 @@
   </form>
 </div>
 
-{# TAB 4 PROCUREMENT REQUESTS #}
-<div data-tabcontent='4' hidden>
+{# TAB 3 PROCUREMENT REQUESTS #}
+<div data-tabcontent='3' hidden>
   <h3 class='p-2 pl-3 section-title'>{{ 'Procurement requests'|trans }}</h3>
   <div class='pl-3 my-2'>
     {% if teamProcurementRequestsArr %}
@@ -303,8 +133,7 @@
               <td data-label='{{ 'State'|trans }}'><span class='hl-hover-gray p-1 rounded malleableState' data-id='{{ req.id }}'>{{ req.state_human }}</span></td>
               {# delete will actually cancel it #}
               <td data-label='{{ 'Actions'|trans }}'>
-                {# TODO hardcoded enum value #}
-                {% if req.state != 60 %}
+                {% if req.state != enum('Elabftw\\Enums\\ProcurementState').Cancelled.value %}
                   <button class='btn hl-hover-gray p-1 rounded hover-danger lh-normal' title='{{ 'Cancel order'|trans }}' data-action='cancel-procurement-request' aria-label='{{ 'Cancel order'|trans }}' type='button' data-id='{{ req.id }}'>
                     <i class='fas fa-trash-alt'></i>
                   </button>

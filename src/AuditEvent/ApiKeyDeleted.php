@@ -13,14 +13,17 @@ declare(strict_types=1);
 namespace Elabftw\AuditEvent;
 
 use Elabftw\Enums\AuditCategory;
+use Override;
 
-class ApiKeyDeleted extends AbstractAuditEvent
+final class ApiKeyDeleted extends AbstractAuditEvent
 {
+    #[Override]
     public function getBody(): string
     {
         return 'An API key was deleted';
     }
 
+    #[Override]
     public function getCategory(): AuditCategory
     {
         return AuditCategory::ApiKeyDeleted;

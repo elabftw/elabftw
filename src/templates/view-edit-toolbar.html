@@ -19,7 +19,7 @@
         {# SELECT USER #}
         <label for='requestActionUserSelect'>{{ 'Select collaborator'|trans }}</label>
         <select id='requestActionUserSelect' class='form-control'>
-          {% for user in Entity.Users.readAllFromTeam %}
+          {% for user in Entity.Users.readAllActiveFromTeam %}
             <option value='{{ user.userid }}'
             {{ Entity.entityData.userid == user.userid ? ' selected' }}
             >{{ user.fullname }}</option>
@@ -125,7 +125,8 @@
     </div>
   </div>
 </div>
-{% if Entity.entityData.is_procurable %}
+{# only show for items, if shown to experiments, it'll trigger an error with toSymbol not having an int value #}
+{% if Entity.entityType.value == 'items' %}
 {# Modal for procurement request #}
 <div class='modal fade' id='procurementRequestModal' tabindex='-1' role='dialog' aria-labelledby='procurementRequestModalLabel'>
   <div class='modal-dialog' role='document'>
@@ -153,7 +154,7 @@
 <hr>
 
 {# TOP TOOLBAR #}
-<div class='d-flex align-items-center'>
+<div class='d-flex align-items-center' id='topToolbar'>
   {# BACK TO LINK #}
   {% if App.Session.has('lastquery') %}
     {% set lastquery = App.Session.get('lastquery') %}
@@ -164,21 +165,25 @@
   <a title='{{ 'Back to listing'|trans }}' aria-label='{{ 'Back to listing'|trans }}' href='?{{ lastquery }}' class='btn hl-hover-gray p-2 lh-normal border-0'>
     <i class='fas fa-arrow-left fa-fw'></i>
   </a>
+  {# for templates: create from button #}
+  {% if Entity.entityType.value == 'experiments_templates' %}
+    <a data-action='create-entity' data-type='experiments' data-tplid='{{ Entity.id }}' href='#' class='btn hl-hover-gray p-2 lh-normal border-0' title='{{ 'Create experiment from template'|trans }}' aria-label='{{ 'Create experiment from template'|trans }}'>
+      <i class='color-blue fas fa-file-circle-plus fa-fw'></i>
+    </a>
+  {% endif %}
 
   <div class='vertical-separator'></div>
 
   {% if mode == 'edit' %}
-    {# VIEW #}
+    {# VIEW button #}
     <a title='{{ 'View mode'|trans }}' aria-label='{{ 'View mode'|trans }}' href='?mode=view&amp;id={{ Entity.id }}' class='btn hl-hover-gray p-2 mr-2 main-action-button lh-normal border-0'>
       <i class='fas fa-eye fa-fw'></i>
     </a>
   {% else %}
-    {# EDIT #}
-    {% if not (Entity.entityData.locked or Entity.isReadOnly) %}
-      <a title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}' href='?mode=edit&amp;id={{ Entity.id }}' class='btn hl-hover-gray p-2 mr-2 rounded main-action-button lh-normal border-0'>
-        <i class='fas fa-pencil fa-fw'></i>
-      </a>
-    {% endif %}
+    {# EDIT button #}
+    <a title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}' href='?mode=edit&amp;id={{ Entity.id }}' class='btn hl-hover-gray p-2 mr-2 rounded main-action-button lh-normal border-0 {{ Entity.isReadOnly ? 'disabled' }}'>
+      <i class='fas fa-pencil fa-fw'></i>
+    </a>
   {% endif %}
 
   {% if not App.Session.has('is_anon') %}
@@ -188,10 +193,17 @@
       <i class='fas fa-copy fa-fw'></i>
     </button>
 
-    {% if Entity.entityType.value == 'items' and Entity.canBook and Entity.entityData.is_bookable %}
-      <a class='btn mr-2 hl-hover-gray p-2 lh-normal border-0' title='{{ 'Book item'|trans }}' aria-label='{{ 'Book item'|trans }}' href='team.php?tab=1&amp;item={{ Entity.id }}'>
-        <i class='fas fa-calendar-plus fa-fw'></i>
-      </a>
+    {# Calendar booking #}
+    {% if Entity.entityType.value == 'items' and (Entity.entityData.is_bookable or not Entity.isReadOnly) %}
+      {% if Entity.entityData.is_bookable %}
+        <a class='btn mr-2 hl-hover-gray p-2 lh-normal border-0' title='{{ 'Book item'|trans }}' aria-label='{{ 'Book item'|trans }}' href='scheduler.php?item={{ Entity.id }}'>
+          <i class='fas fa-calendar-plus fa-fw'></i>
+        </a>
+      {% else %}
+        <button type='button' class='btn mr-2 hl-hover-gray p-2 lh-normal border-0' aria-label='{{ 'Modify booking parameters'|trans }}' title='{{ 'Modify booking parameters'|trans }}' data-action='toggle-modal' data-target='bookingParamsModal'>
+          <i class='fas fa-calendar-plus color-disabled fa-fw'></i>
+        </button>
+      {% endif %}
     {% endif %}
 
   {% endif %}
@@ -225,8 +237,9 @@
   {% endif %}
 
   {# PROCUREMENT REQUEST #}
-  {% if Entity.entityData.is_procurable %}
-    <button type='button' title='{{ 'Place order'|trans }}' aria-label='{{ 'Place order'|trans }}' data-action='toggle-modal' data-target='procurementRequestModal' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
+  {% if Entity.entityType.value == 'items' and (Entity.entityData.is_procurable or not Entity.isReadOnly) %}
+  {% set proc_label = Entity.entityData.is_procurable ? 'Place order'|trans : 'Modify procurement parameters'|trans %}
+    <button type='button' title='{{ proc_label }}' aria-label='{{ proc_label }}' data-action='toggle-modal' data-target='procurement{{ Entity.entityData.is_procurable ? 'Request' : 'Params' }}Modal' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0 {{ not Entity.entityData.is_procurable ? 'disabled' }}'>
       <i class='fas fa-cart-shopping fa-fw'></i>
     </button>
   {% endif %}
@@ -242,9 +255,7 @@
     {% if not App.Session.has('is_anon') %}
 
       {# TOGGLE PIN #}
-      <button type='button' title='{{ 'Toggle pin'|trans }}' aria-label='{{ 'Toggle pin'|trans }}' data-action='toggle-pin' class='btn {{ Entity.Pins.isPinned ? 'bgnd-gray' : 'hl-hover-gray' }} p-2 mr-2 lh-normal border-0'>
-        <i class='fas fa-thumbtack {{ not Entity.Pins.isPinned ? 'color-weak' }} fa-fw'></i>
-      </button>
+      {% include 'toggle-pin.html' %}
 
       {# LOCK #}
       {% set lockIcon = 'fa-lock-open' %}
@@ -255,28 +266,6 @@
       {% endif %}
       <button type='button' title='{{ alt }}' aria-label='{{ alt }}' data-action='do-requestable-action' data-target='lock' class='btn {{ Entity.entityData.locked ? 'bgnd-gray' : 'hl-hover-gray' }} p-2 mr-2 lh-normal border-0'>
         <i class='fas {{ lockIcon }} fa-fw'></i>
-      </button>
-    {% endif %}
-
-    {# EXCLUSIVE EDIT MODE #}
-    {% if mode == 'edit' %}
-      {% set lockIcon = 'fa-lock-open' %}
-      {% set alt = 'Enable/Disable exclusive edit mode'|trans %}
-      {% if Entity.ExclusiveEditMode.isActive %}
-          {% set lockIcon = 'fa-lock' %}
-      {% endif %}
-      <button
-        aria-label='{{ alt }}'
-        class='btn {{ Entity.ExclusiveEditMode.isActive ? 'bgnd-gray' : 'hl-hover-gray' }} p-2 mr-2 lh-normal border-0'
-        data-action='toggle-exclusive-edit-mode'
-        id='exclusiveEditModeBtn'
-        title='{{ alt }}'
-        type='button'
-      >
-        <span class='fa-stack'>
-          <i class='fas {{ lockIcon }} fa-stack-1x fa-fw'></i>
-          <i class='fas fa-pen-nib fa-stack-1x fa-fw fa-rotate-by'></i>
-        </span>
       </button>
     {% endif %}
 

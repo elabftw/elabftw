@@ -14,6 +14,7 @@ namespace Elabftw\Services;
 
 use Elabftw\AuditEvent\UserAttributeChanged;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AuditLogs;
@@ -24,7 +25,7 @@ use PDO;
 /**
  * Archive/Unarchive a user
  */
-class UserArchiver
+final class UserArchiver
 {
     protected Db $Db;
 
@@ -50,14 +51,12 @@ class UserArchiver
 
     private function archive(bool $lockExp = false): bool
     {
+        $this->checkArchivePermission();
         if ($this->target->userData['validated'] === 0) {
             throw new ImproperActionException(_('You are trying to archive an unvalidated user. Maybe you want to delete the account?'));
         }
         if ($this->target->userData['is_sysadmin'] === 1) {
             throw new ImproperActionException(_('A sysadmin account cannot be archived.'));
-        }
-        if (Config::getConfig()->configArr['admins_archive_users'] === '0' && $this->requester->userData['is_sysadmin'] !== 1) {
-            throw new ImproperActionException(_('This instance configuration only permits Sysadmin users to archive a user.'));
         }
         $this->target->invalidateToken();
         // if we are archiving a user, also lock all experiments (if asked)
@@ -66,6 +65,7 @@ class UserArchiver
 
     private function unarchive(): bool
     {
+        $this->checkArchivePermission();
         if ($this->getUnarchivedCount() > 0) {
             throw new ImproperActionException('Cannot unarchive this user because they have another active account with the same email!');
         }
@@ -103,5 +103,14 @@ class UserArchiver
         $req->bindParam(':lockedby', $this->requester->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':userid', $this->target->userData['userid'], PDO::PARAM_INT);
         return $this->Db->execute($req);
+    }
+
+    // check if the admin can archive/unarchive a user
+    private function checkArchivePermission(): void
+    {
+        if (Config::getConfig()->configArr['admins_archive_users'] === '0' &&
+            $this->requester->userData['is_sysadmin'] !== 1) {
+            throw new ImproperActionException(Tools::error(true));
+        }
     }
 }

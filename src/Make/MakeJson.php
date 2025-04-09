@@ -17,6 +17,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\StringMakerInterface;
 use Elabftw\Models\AbstractEntity;
+use Override;
 
 use function json_encode;
 use function ksort;
@@ -35,6 +36,7 @@ class MakeJson extends AbstractMake implements StringMakerInterface
     /**
      * Get the name of the generated file
      */
+    #[Override]
     public function getFileName(): string
     {
         return 'export-elabftw.json';
@@ -44,6 +46,7 @@ class MakeJson extends AbstractMake implements StringMakerInterface
      * Loop over each id and add it to the JSON
      * This could be called the main function.
      */
+    #[Override]
     public function getFileContent(): string
     {
         $json = json_encode($this->getJsonContent(), JSON_THROW_ON_ERROR);

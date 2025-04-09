@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block body %}
+{% include('create-compound-modal.html') %}
+{% include('edit-compound-modal.html') %}
+{% include('create-resource-from-compound-modal.html') %}
+{# loading spinner #}
+<div class='d-flex justify-content-center' id='loading-spinner'>
+  <div class='lds-dual-ring'></div>
+</div>
+<div id='ketcher-root' class='my-2'></div>
+<div id='ketcher-actions'>
+  <div class='input-group my-2'>
+    <button type='button' class='btn btn-primary mr-2' data-action='create-compound-from-editor'>{{ 'Add to compounds database'|trans }}</button>
+    <div class='input-group-append'>
+      <button type='button' class='btn btn-primary rounded-left' data-action='search-from-editor'>{{ 'Search similar structures'|trans }}</button>
+      <div class='input-group-text rounded-right'>
+        <input type='checkbox' name='exact' id='search-fp-exact' {{ App.Request.query.get('exact') == 'on' ? 'checked="checked"' }} aria-label='{{ 'Search exact structure'|trans }}'><span class='ml-1'>{{ 'Exact structure'|trans }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+<div id='searchFpResultsDiv' hidden>
+  <h3 class='mb-2'>{{ 'Compounds substructure search results'|trans }}</h3>
+  <input type='hidden' id='substructureSearchInput' />
+  <ul id='searchFpSmiList' class='list-group'></ul>
+  <div id='compounds-table'></div>
+</div>
+{% endblock body %}

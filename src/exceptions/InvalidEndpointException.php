@@ -17,7 +17,7 @@ use Elabftw\Enums\ApiEndpoint;
 /**
  * For invalid api endpoint
  */
-class InvalidEndpointException extends ImproperActionException
+final class InvalidEndpointException extends ImproperActionException
 {
     public function __construct()
     {

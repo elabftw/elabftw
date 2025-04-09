@@ -24,24 +24,27 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Override;
 
 /**
  * Refresh Idps sources and refresh associated Idps
  */
 #[AsCommand(name: 'idps:refresh')]
-class RefreshIdps extends Command
+final class RefreshIdps extends Command
 {
     public function __construct(private string $proxy)
     {
         parent::__construct();
     }
 
+    #[Override]
     protected function configure(): void
     {
         $this->setDescription('For each defined Idp source that is auto-refreshable, fetch the latest version and update metadata of associated Idps')
             ->setHelp('Refresh Idps associated with an URL source and auto-refreshable');
     }
 
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $requester = new UltraAdmin();

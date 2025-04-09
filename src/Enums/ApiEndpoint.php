@@ -18,20 +18,23 @@ enum ApiEndpoint: string
 {
     case ApiKeys = 'apikeys';
     case Batch = 'batch';
+    case Compounds = 'compounds';
     case Config = 'config';
+    case Experiments = 'experiments';
+    case ExperimentsTemplates = 'experiments_templates';
+    case Export = 'exports';
+    case ExtraFieldsKeys = 'extra_fields_keys';
+    case Event = 'event';
+    case Events = 'events';
+    case FavTags = 'favtags';
     case Idps = 'idps';
     case IdpsSources = 'idps_sources';
     case Import = 'import';
     case Info = 'info';
-    case Experiments = 'experiments';
-    case Export = 'exports';
     case Items = 'items';
-    case ExperimentsTemplates = 'experiments_templates';
     case ItemsTypes = 'items_types';
-    case Event = 'event';
-    case Events = 'events';
-    case ExtraFieldsKeys = 'extra_fields_keys';
-    case FavTags = 'favtags';
+    case Reports = 'reports';
+    case StorageUnits = 'storage_units';
 
     // @deprecated
     case TeamTags = 'team_tags';

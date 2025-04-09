@@ -13,7 +13,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Orderable;
 use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
@@ -26,6 +25,8 @@ use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Todolist;
+use Elabftw\Params\ExtraFieldsOrderingParams;
+use Elabftw\Params\OrderingParams;
 use Exception;
 use JsonException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -102,18 +103,18 @@ try {
             throw new IllegalActionException('Bad table for updateOrdering.');
     }
     $Entity->updateOrdering($OrderingParams);
-} catch (ImproperActionException | UnauthorizedException $e) {
-    $Response->setData(array(
-        'res' => false,
-        'msg' => $e->getMessage(),
-    ));
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e->getMessage())));
     $Response->setData(array(
         'res' => false,
         'msg' => Tools::error(true),
     ));
-} catch (DatabaseErrorException | FilesystemErrorException $e) {
+} catch (ImproperActionException | UnauthorizedException $e) {
+    $Response->setData(array(
+        'res' => false,
+        'msg' => $e->getMessage(),
+    ));
+} catch (DatabaseErrorException $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
     $Response->setData(array(
         'res' => false,

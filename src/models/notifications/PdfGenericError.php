@@ -17,7 +17,7 @@ use Elabftw\Enums\Notifications;
 /**
  * When there is a problem with the PDF creation
  */
-class PdfGenericError extends WebOnlyNotifications
+final class PdfGenericError extends WebOnlyNotifications
 {
     protected Notifications $category = Notifications::PdfGenericError;
 }

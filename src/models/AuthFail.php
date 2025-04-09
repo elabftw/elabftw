@@ -18,7 +18,7 @@ use PDO;
 /**
  * Keep track of authentication failures and lock devices or users
  */
-class AuthFail
+final class AuthFail
 {
     protected Db $Db;
 

@@ -17,6 +17,7 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Interfaces\MakeThumbnailInterface;
 use Imagick;
 use League\Flysystem\Filesystem;
+use Override;
 
 use function exif_read_data;
 use function in_array;
@@ -33,6 +34,7 @@ class MakeThumbnail implements MakeThumbnailInterface
 
     public function __construct(private string $mime, protected string $filePath, private string $longName, private Filesystem $storageFs) {}
 
+    #[Override]
     public function saveThumb(): void
     {
         $this->storageFs->write($this->getThumbFilename(), $this->getThumb());
@@ -70,7 +72,7 @@ class MakeThumbnail implements MakeThumbnailInterface
         }
         // make sure to set it as jpg (a pdf will stay a pdf otherwise)
         $image->setImageFormat('jpg');
-        return $image->getImageBlob();
+        return $image->getImageBlob() ?? '';
     }
 
     private function getRotationAngle(): int

@@ -1,7 +1,7 @@
 <div class='side-panel' id='todolistPanel' hidden>
   <button type='button' data-action='toggle-todolist' aria-label='{{ 'Close'|trans }}' title='{{ 'Close'|trans }}' class='btn float-right mr-3'><i class='fas fa-xmark fa-2x'></i></button>
   <div class='p-3'>
-    <h3 title='{{ 'Toggle visibility'|trans }}' tabindex='0' role='button' data-action='toggle-next' class='mb-3 py-2'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Todolist'|trans }}</h3>
+    <h3 title='{{ 'Toggle visibility'|trans }}' tabindex='0' role='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='mb-3 py-2'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Todolist'|trans }}</h3>
 
     <div data-save-hidden='todolistMainDiv'>
       <div class='input-group mt-2 mb-3'>
@@ -35,14 +35,14 @@
     </div>
 
     {# EXPERIMENT STEPS #}
-    <h3 title='{{ 'Toggle visibility'|trans }}' tabindex='0' role='button' data-action='toggle-next' class='py-2'><i class='fas fa-caret-down fa-fw mr-2'></i>{% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}</h3>
+    <h3 title='{{ 'Toggle visibility'|trans }}' tabindex='0' role='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='py-2'><i class='fas fa-caret-down fa-fw mr-2'></i>{% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}</h3>
     <div data-save-hidden='todoStepsExperiments'>{# this div is here as a target of the toggle-next, because for some reason 'hidden' doesn't work on a flex container #}
       {# id is needed to fill it from Todolist.class.ts #}
       <div id='todoStepsExperiments' class='d-flex flex-column'></div>
     </div>
 
     {# ITEMS STEPS #}
-    <h3 title='{{ 'Toggle visibility'|trans }}' tabindex='0' role='button' data-action='toggle-next' class='py-2'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Resources'|trans }}</h3>
+    <h3 title='{{ 'Toggle visibility'|trans }}' tabindex='0' role='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='py-2'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Resources'|trans }}</h3>
     <div data-save-hidden='todoStepsItem'>{# this div is here as a target of the toggle-next, because for some reason 'hidden' doesn't work on a flex container #}
       {# id is needed to fill it from Todolist.class.ts #}
       <div id='todoStepsItems' class='d-flex flex-column'></div>

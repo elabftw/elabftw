@@ -26,6 +26,7 @@ use LdapRecord\Models\Entry;
 use LdapRecord\Models\Model;
 use LdapRecord\Query\ObjectNotFoundException;
 use SensitiveParameter;
+use Override;
 
 use function explode;
 use function is_array;
@@ -33,7 +34,7 @@ use function is_array;
 /**
  * LDAP auth service
  */
-class Ldap implements AuthInterface
+final class Ldap implements AuthInterface
 {
     private AuthResponse $AuthResponse;
 
@@ -45,6 +46,7 @@ class Ldap implements AuthInterface
         $this->AuthResponse = new AuthResponse();
     }
 
+    #[Override]
     public function tryAuth(): AuthResponse
     {
         $record = $this->getRecord();

@@ -28,7 +28,7 @@ use PDO;
 /**
  * Manage the link between users and teams
  */
-class Users2Teams
+final class Users2Teams
 {
     // are onboarding emails sent in general?
     // setting for each team is checked additionally
@@ -112,7 +112,7 @@ class Users2Teams
     {
         // make sure we are Admin in the team that we are removing the user from
         $TeamsHelper = new TeamsHelper($teamid);
-        if (!$this->requester->userData['is_sysadmin'] || $TeamsHelper->isAdminInTeam($this->requester->userData['userid'])) {
+        if (!($this->requester->userData['is_sysadmin'] || $TeamsHelper->isAdminInTeam($this->requester->userData['userid']))) {
             throw new ImproperActionException('Cannot remove user from team if not admin of said user in that team');
         }
         return $this->removeUserFromTeam($userid, $teamid);

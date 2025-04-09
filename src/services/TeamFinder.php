@@ -20,7 +20,7 @@ use Elabftw\Exceptions\ImproperActionException;
 /**
  * Find a team from an access_key
  */
-class TeamFinder
+final class TeamFinder
 {
     private string $ak;
 

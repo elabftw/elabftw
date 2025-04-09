@@ -21,7 +21,7 @@ use function dirname;
 /**
  * Generate Twig cache
  */
-class CacheGenerator
+final class CacheGenerator
 {
     use TwigTrait;
 

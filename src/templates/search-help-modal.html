@@ -1,0 +1,231 @@
+<div class='modal fade' id='advancedSearchModal' tabindex='-1' role='dialog' aria-labelledby='advancedSearchModalLabel'>
+  <div class='modal-dialog modal-xl' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='advancedSearchModalLabel'>{{ 'Search help'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
+        <h3>{{ 'Simple search'|trans }}</h3>
+        <p>{{ 'When searching a term in the search bar, results will contain this term in the title, main text, date or elabid.'|trans }}</p>
+        <h3>{{ 'Advanced search'|trans }}</h3>
+        {% set fieldValue = "<code><span class='token keyword'>%s</span><span class='token punctuation'>:</span><span class='token string'>%s</span></code>"|format('field'|trans, 'value'|trans) %}
+        <p>{{ 'The search bar supports searching with specific constraints such as "title:Something" and "category:Tests" (%s). You can combine them with logical expressions (AND, OR, NOT...) and group with parenthesis.'|trans|format(fieldValue)|raw }}</p>
+        <p>{{ 'To search in extra fields (metadata), use the dedicated helper to build your query. For example, to search all entries where "Temperature" is 37, you would use: "extrafield:Temperature:37" in the search bar.'|trans }}</p>
+        <h4>{{ 'Available fields'|trans }}</h4>
+        <div class='row'>
+          <div class='col-md-6'>
+            <ul class='list-unstyled'>
+              <li class='mb-2'><kbd>attachment:</kbd> {{ 'yes, no, simple or quoted term'|trans }}</li>
+              <li class='mb-2'><kbd>body:</kbd> {{ 'simple or quoted term'|trans }}</li>
+              <li class='mb-2'><kbd>category:</kbd> {{ 'simple or quoted term'|trans }}</li>
+              <li class='mb-2'><kbd>custom_id:</kbd> {{ 'number'|trans }}</li>
+              <li class='mb-2'><kbd>date:</kbd> {{ 'see date format'|trans }}</li>
+              <li class='mb-2'><kbd>elabid:</kbd> {{ 'simple or quoted term'|trans }}</li>
+              <li class='mb-2'><kbd>extrafield:key:value</kbd> {{ 'simple or quoted term'|trans }}</li>
+            </ul>
+          </div>
+
+          <div class='col-md-6'>
+            <ul class='list-unstyled'>
+              <li class='mb-2'><kbd>group:</kbd> {{ 'simple or quoted term'|trans }}</li>
+              <li class='mb-2'><kbd>locked:</kbd> {{ 'yes or no'|trans }}</li>
+              <li class='mb-2'><kbd>owner:</kbd> {{ 'simple or quoted term'|trans }}</li>
+              <li class='mb-2'><kbd>rating:</kbd> {{ '1, 2, 3, 4, 5, or unrated or 0'|trans }}</li>
+              <li class='mb-2'><kbd>status:</kbd> {{ 'simple or quoted term'|trans }}</li>
+              <li class='mb-2'><kbd>timestamped:</kbd> {{ 'yes or no'|trans }}</li>
+              <li class='mb-2'><kbd>title:</kbd> {{ 'simple or quoted term'|trans }}</li>
+              <li class='mb-2'><kbd>visibility:</kbd> {{ 'simple or quoted term'|trans }}</li>
+            </ul>
+          </div>
+        </div>
+        <dl>
+          <dt>Term</dt>
+          <dd>A sequence of characters without space (<code>&blank;</code>),
+              <code><span class='token operator'>|</span></code>,
+              <code><span class='token operator'>&amp;</span></code>,
+              <code><span class='token operator'>!</span></code>,
+              <code><span class='token punctuation'>(</span></code>,
+              <code><span class='token punctuation'>)</span></code>,
+              <code><span class='token punctuation'>:</span></code>,
+              <code><span class='token string'>'</span></code> and
+              <code><span class='token string'>"</span></code>.<br>
+              <em><code><span class='token string'>termA</span></code></em> or
+              <em><code><span class='token string'>termB</span></code></em> or
+              <em><code><span class='token string'>456</span></code></em>
+          </dd>
+          <dt>Quoted term</dt>
+          <dd>A sequence of characters including space (<code>&blank;</code>)
+              enclosed in single (<code><span class='token string'>'</span></code>)
+              or double (<code><span class='token string'>"</span></code>) quotation marks.<br>
+              <em><code><span class='token string'>'Hello world'</span></code></em> or
+              <em><code><span class='token string'>"I love eLabFTW!"</span></code></em>
+          </dd>
+        </dl>
+        <p>Two wildcards are available. The percent sign
+          (<code><span class='token important'>%</span></code>)
+          matches zero or more characters while the underscore
+          (<code><span class='token important'>_</span></code>)
+          matches exactly one character. To search for literal
+          <code><span class='token important'>%</span></code> or
+          <code><span class='token important'>_</span></code>
+          the characters need to be escaped with a backslash
+          <code><span class='token important'>\%</span></code> or
+          <code><span class='token important'>\_</span></code>.</p>
+        <h3>Term concatenation and grouping</h3>
+        <p>Terms can be connected in different ways:</p>
+        <ul>
+          <li>
+            <code><span class='token operator'>OR</span></code> or
+            <code><span class='token operator'>|</span></code>:
+            <em><code><span class='token string'>termA</span> <span class='token operator'>OR</span> <span class='token string'>termB</span></code></em> or
+            <em><code><span class='token string'>termA</span><span class='token operator'>|</span><span class='token string'>termB</span></code></em>
+          </li>
+          <li>
+            <code><span class='token operator'>AND</span></code>,
+            <code><span class='token operator'>&amp;</span></code> or
+            space (<code>&blank;</code>):
+            <em><code><span class='token string'>termA</span> <span class='token operator'>AND</span> <span class='token string'>termB</span></code></em> or
+            <em><code><span class='token string'>termA</span><span class='token operator'>&amp;</span><span class='token string'>termB</span></code></em> or
+            <em><code><span class='token string'>termA</span>&nbsp;<span class='token string'>termB</span></code></em>
+          </li>
+          <li>
+            <code><span class='token operator'>NOT</span></code>,
+            <code><span class='token operator'>!</span></code>:
+            <em><code><span class='token operator'>NOT</span> <span class='token string'>termA</span></code></em> or
+            <em><code><span class='token operator'>!</span><span class='token string'>termA</span></code></em>
+          </li>
+          <li>Parenthesis <code><span class='token punctuation'>()</span></code>: <em><code><span class='token punctuation'>(</span><span class='token string'>termA</span> <span class='token operator'>OR</span> <span class='token string'>termB</span><span class='token punctuation'>)</span> <span class='token operator'>AND</span> <span class='token operator'>!</span><span class='token string'>termC</span></code></em></li>
+        </ul>
+        <p>The operators are listed in increasing order of precedence. Note the whitespace around the operators.
+          <code><span class='token operator'>OR</span></code>,
+          <code><span class='token operator'>AND</span></code> and
+          <code><span class='token operator'>NOT</span></code>
+          require to be surrounded by whitespace while
+          <code><span class='token operator'>|</span></code>,
+          <code><span class='token operator'>&amp;</span></code> and
+          <code><span class='token operator'>!</span></code>
+          don't.<br>
+          <em><code><span class='token string'>termA</span> <span class='token string'>termB</span> <span class='token operator'>OR</span> <span class='token string'>termC</span></code></em>
+          is equivalent to
+          <em><code><span class='token punctuation'>(</span><span class='token simple-term string'>termA</span> <span class='token operator'>AND</span> <span class='token simple-term string'>termB</span><span class='token punctuation'>)</span> <span class='token operator'>OR</span> <span class='token simple-term string'>termC</span></code></em>.
+          To give priority to
+          <code><span class='token operator'>OR</span></code>,
+          use parenthesis:
+          <em><code><span class='token simple-term string'>termA</span> <span class='token operator'>AND</span> <span class='token punctuation'>(</span><span class='token simple-term string'>termB</span> <span class='token operator'>OR</span> <span class='token simple-term string'>termC</span><span class='token punctuation'>)</span></code></em>.
+        </p>
+        <h3>Field/value pair searches</h3>
+        <p>Field/value pairs are also applicable in the quick search fields.</p>
+        <p>Basic syntax <code><span class='token keyword'>field</span><span class='token punctuation'>:</span><span class='token string'>value</span></code></p>
+        <p>By default wildcards are added to Terms and Quoted terms. The strict switch (<code><span class='token keyword'>field</span><span class='token punctuation'>:</span><span class='token keyword'>s</span><span class='token punctuation'>:</span><span class='token string'>value</span></code>) disables the wildcards.</p>
+        <dl>
+          <dt><span class='token keyword'>attachment</span></dt>
+          <dd><span class='token boolean'>yes</span> or <span class='token boolean'>no</span>,
+              <span class='token boolean'>true</span> or <span class='token boolean'>false</span>,
+              <span class='token number'>1</span> or <span class='token number'>0</span>,
+              <span class='token boolean'>on</span> or <span class='token boolean'>off</span>:<br>
+              search entries with/out attachments<br>
+              Term or Quoted term:<br>
+              search in filenames and comments of attachments</dd>
+          <dt><span class='token keyword'>body</span></dt>
+          <dd>Term or Quoted term</dd>
+          <dt><span class='token keyword'>category</span></dt>
+          <dd>Term or Quoted term; Only if Database is selected.</dd>
+          <dt><span class='token keyword'>created_at</span></dt>
+          <dd><a href='#dateFormats'>See accepted date formats below</a></dd>
+          <dt><span class='token keyword'>custom_id</span></dt>
+          <dd>Custom ID (integer) of an experiment or item</dd>
+          <dt><span class='token keyword'>date</span></dt>
+          <dd><a href='#dateFormats'>See accepted date formats below</a></dd>
+          <dt><span class='token keyword'>elabid</span></dt>
+          <dd>Term or Quoted term</dd>
+          <dt><span class='token keyword'>extrafield</span></dt>
+          <dd>Uses a different syntax: <span class='token keyword'>extrafield</span><span class='token punctuation'>:</span><span class='token keyword'>s</span><span class='token punctuation'>:</span><span class='token string'>key</span><span class='token punctuation'>:</span><span class='token string'>value</span> (<span class='token keyword'>s</span><span class='token punctuation'>:</span> is optional and only affects <span class='token string'>value</span>).
+            <br><span class='token string'>key</span> (Name of field) and <span class='token string'>value</span> (search term) can be a Term or Quoted term.
+            <br><span class='token string'>key</span> has to be an exact match, hence there are no wildcards. However, two asterisks (<span class='token string'>**</span>) can be use to search absolutely all fields.
+            <br><span class='token string'>value</span> can use wildcards as described above.
+          </dd>
+          <dt><span class='token keyword'>group</span></dt>
+          <dd>Term or Quoted term</dd>
+          <dt><span class='token keyword'>id</span></dt>
+          <dd>Id (integer) of an experiment or item</dd>
+          <dt><span class='token keyword'>locked</span></dt>
+          <dd><span class='token boolean'>yes</span> or <span class='token boolean'>no</span>,
+              <span class='token boolean'>true</span> or <span class='token boolean'>false</span>,
+              <span class='token number'>1</span> or <span class='token number'>0</span>,
+              <span class='token boolean'>on</span> or <span class='token boolean'>off</span>
+          </dd>
+          <dt><span class='token keyword'>locked_at</span></dt>
+          <dd><a href='#dateFormats'>See accepted date formats below</a></dd>
+          <dt><span class='token keyword'>rating</span></dt>
+          <dd><span class='token number'>1</span>,
+              <span class='token number'>2</span>,
+              <span class='token number'>3</span>,
+              <span class='token number'>4</span>,
+              <span class='token number'>5</span>,
+              <span class='token constant'>unrated</span> or
+              <span class='token number'>0</span>
+          </dd>
+          <dt><span class='token keyword'>owner</span></dt>
+          <dd>
+            Term or Quoted term<br>
+            Without any owner the entire team will be searched.
+          </dd>
+          <dt><span class='token keyword'>status</span></dt>
+          <dd>Term or Quoted term; Only if Experiment is selected.</dd>
+          <dt><span class='token keyword'>timestamped</span></dt>
+          <dd><span class='token boolean'>yes</span> or
+              <span class='token boolean'>no</span>,
+              <span class='token boolean'>true</span> or
+              <span class='token boolean'>false</span>,
+              <span class='token number'>1</span> or
+              <span class='token number'>0</span>,
+              <span class='token boolean'>on</span> or
+              <span class='token boolean'>off</span>
+          </dd>
+          <dt><span class='token keyword'>timestamped_at</span></dt>
+          <dd><a href='#dateFormats'>See accepted date formats below</a></dd>
+          <dt><span class='token keyword'>title</span></dt>
+          <dd>Term or Quoted term</dd>
+          <dt><span class='token keyword'>visibility</span></dt>
+          <dd>Term or Quoted term<br>
+              {# A group name (e.g., <span class='token string'>'Lab Heroes'</span>) or #}
+              <span class='token string'>public</span>,
+              <span class='token string'>organization</span>,
+              <span class='token string'>myteam</span>,
+              <span class='token string'>user</span>, or
+              <span class='token string'>useronly</span>.
+          </dd>
+        </dl>
+        <h3 id='dateFormats'>Date formats</h3>
+        <p>A date has to be provided in the following format: <code><span class='token number'>YYYYMMDD</span></code>,
+          i.e., four digit year, two digit month, and two digit day.
+          Year, month and day can&mdash;but don't have to&mdash;be separated by
+          hyphen (<code><span class='token operator'>-</span></code>),
+          slash (<code><span class='token operator'>/</span></code>),
+          period (<code><span class='token operator'>.</span></code>),
+          or comma (<code><span class='token operator'>,</span></code>).<br>
+          Either a <strong>single date</strong> or a <strong>date range</strong> can be used.</p>
+        <dl>
+          <dt>Single date: <span class='token operator'>operator</span><span class='token number'>date<span></dt>
+          <dd>operator: <code><span class='token operator'>&lt;</span></code>, <code><span class='token operator'>&lt;=</span></code>, <code><span class='token operator'>=</span></code>, <code><span class='token operator'>&gt;=</span></code>, <code><span class='token operator'>&gt;</span></code>, or <code><span class='token operator'>!=</span></code><br>
+            An operator is optional. default is <span class='token operator'>=</span><br>
+            e.g., <em><code><span class='token field-date keyword'>date<span class='token punctuation'>:</span><span class='token number'>17890714</span></span></code></em> or
+            <em><code><span class='token field-date keyword'>date<span class='token punctuation'>:</span><span class='token operator'>&gt;</span><span class='token number'>1909</span><span class='token punctuation'>-</span><span class='token number'>12</span><span class='token punctuation'>-</span><span class='token number'>12</span></span></code></em> or
+            <em><code><span class='token field-date keyword'>date<span class='token punctuation'>:</span><span class='token operator'>&gt;=</span><span class='token number'>1867</span><span class='token punctuation'>.</span><span class='token number'>11</span><span class='token punctuation'>.</span><span class='token number'>07</span></span></code></em>
+          </dd>
+          <dt>Date range: <span class='token number'>date</span><span class='token operator'>..</span><span class='token number'>date</span></dt>
+          <dd>Two dates separated by two periods (<code><span class='token operator'>..</span></code>)<br>
+            e.g., <em><code><span class='token field-date keyword'>date<span class='token punctuation'>:</span><span class='token number'>20200101</span><span class='token operator'>..</span><span class='token number'>20201231</span></span></code></em>
+          </dd>
+        </dl>
+        <p>Date fields ending with <span class='token keyword'>_at</span> only accept dates between <em><code><span class='token number'>1970</span><span class='token punctuation'>-</span><span class='token number'>01</span><span class='token punctuation'>-</span><span class='token number'>02</span></em></code> and <em><code><span class='token number'>2038</span><span class='token punctuation'>-</span><span class='token number'>01</span><span class='token punctuation'>-</span><span class='token number'>18</span></em></code>.</p>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>

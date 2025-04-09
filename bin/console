@@ -17,7 +17,7 @@ use Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Models\Config;
 use Elabftw\Services\Email;
-use Elabftw\Storage\Cache;
+use Elabftw\Storage\Exports;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
 use Symfony\Component\Console\Application;
@@ -54,7 +54,7 @@ try {
     exit;
 }
 
-$cacheFs = new Cache();
+$exportsFs = new Exports();
 $sqlFs = FsTools::getFs(dirname(__DIR__) . '/src/sql');
 
 $Application->add(new InstallRedir());
@@ -63,9 +63,10 @@ $Application->add(new CacheClear());
 $Application->add(new CheckDatabase((int) $Config->configArr['schema']));
 $Application->add(new CheckTsBalance((int) $Config->configArr['ts_balance'], $Email));
 $Application->add(new CleanDatabase());
-$Application->add(new ExportCommand($cacheFs));
-$Application->add(new ExportEln($cacheFs));
-$Application->add(new ImportEln($cacheFs));
+$Application->add(new ExportCommand($exportsFs));
+$Application->add(new ExportEln($exportsFs));
+$Application->add(new ImportEln($exportsFs));
+$Application->add(new ImportCompoundsCsv($exportsFs));
 $Application->add(new UpdateDatabase());
 $Application->add(new RevertSchema($sqlFs));
 $Application->add(new UpdateTo3());

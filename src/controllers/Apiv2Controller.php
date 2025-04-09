@@ -21,16 +21,18 @@ use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\InvalidApiSubModelException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Import\Handler as ImportHandler;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Make\ReportsHandler;
 use Elabftw\Make\Exports;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Batch;
 use Elabftw\Models\Comments;
+use Elabftw\Models\Compounds;
 use Elabftw\Models\Config;
 use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsStatus;
@@ -50,6 +52,7 @@ use Elabftw\Models\Revisions;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\SigKeys;
 use Elabftw\Models\Steps;
+use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
@@ -60,18 +63,23 @@ use Elabftw\Models\Uploads;
 use Elabftw\Models\UserRequestActions;
 use Elabftw\Models\Users;
 use Elabftw\Models\UserUploads;
+use Elabftw\Services\Fingerprinter;
+use Elabftw\Services\HttpGetter;
+use Elabftw\Services\NullFingerprinter;
 use Exception;
+use GuzzleHttp\Client;
 use JsonException;
 use Monolog\Logger;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use ValueError;
+use Override;
 
 /**
  * For API V2 requests
  */
-class Apiv2Controller extends AbstractApiController
+final class Apiv2Controller extends AbstractApiController
 {
     private array $allowedMethods = array('GET', 'POST', 'DELETE', 'PATCH');
 
@@ -87,6 +95,7 @@ class Apiv2Controller extends AbstractApiController
 
     private Action $action = Action::Create;
 
+    #[Override]
     public function getResponse(): Response
     {
         try {
@@ -143,6 +152,7 @@ class Apiv2Controller extends AbstractApiController
     /**
      * Set the id and endpoints fields
      */
+    #[Override]
     protected function parseReq(): array
     {
         $req = parent::parseReq();
@@ -216,7 +226,8 @@ class Apiv2Controller extends AbstractApiController
         if (($this->id !== null && !$this->hasSubmodel) || ($this->subId !== null && $this->hasSubmodel)) {
             return $this->Model->readOne();
         }
-        return $this->Model->readAll();
+        $queryParams = $this->Model->getQueryParams($this->Request->query);
+        return $this->Model->readAll($queryParams);
     }
 
     private function handleGet(): Response
@@ -254,16 +265,31 @@ class Apiv2Controller extends AbstractApiController
 
     private function getModel(): RestInterface
     {
-        $logger = new Logger('elabftw');
         return match ($this->endpoint) {
             ApiEndpoint::ApiKeys => new ApiKeys($this->requester, $this->id),
             ApiEndpoint::Batch => new Batch($this->requester),
+            ApiEndpoint::Compounds => (
+                function () {
+                    $Config = Config::getConfig();
+                    $Fingerprinter = new NullFingerprinter();
+                    if (Config::boolFromEnv('USE_FINGERPRINTER')) {
+                        $httpGetter = new HttpGetter(new Client(), $Config->configArr['proxy'], $Config->configArr['debug'] === '0');
+                        $Fingerprinter = new Fingerprinter($httpGetter, Config::fromEnv('FINGERPRINTER_URL'));
+                    }
+                    return new Compounds(
+                        new HttpGetter(new Client(), $Config->configArr['proxy'], $Config->configArr['debug'] === '0'),
+                        $this->requester,
+                        $Fingerprinter,
+                        $this->id,
+                    );
+                }
+            )(),
             ApiEndpoint::Config => Config::getConfig(),
             ApiEndpoint::Idps => new Idps($this->requester, $this->id),
             ApiEndpoint::IdpsSources => new IdpsSources($this->requester, $this->id),
-            ApiEndpoint::Import => new ImportHandler($this->requester, $logger),
+            ApiEndpoint::Import => new ImportHandler($this->requester, new Logger('elabftw')),
             ApiEndpoint::Info => new Info(),
-            ApiEndpoint::Export => new Exports($this->requester, Storage::CACHE->getStorage(), $this->id),
+            ApiEndpoint::Export => new Exports($this->requester, Storage::EXPORTS->getStorage(), $this->id),
             ApiEndpoint::Experiments,
             ApiEndpoint::Items,
             ApiEndpoint::ExperimentsTemplates,
@@ -284,6 +310,8 @@ class Apiv2Controller extends AbstractApiController
                 $this->Request->query->getInt('limit'),
             ),
             ApiEndpoint::FavTags => new FavTags($this->requester, $this->id),
+            ApiEndpoint::Reports => new ReportsHandler($this->requester),
+            ApiEndpoint::StorageUnits => new StorageUnits($this->requester, $this->id),
             // Temporary informational endpoint, can be removed in 5.2
             ApiEndpoint::TeamTags => throw new ImproperActionException('Use api/v2/teams/current/tags endpoint instead.'),
             ApiEndpoint::Teams => new Teams($this->requester, $this->id),
@@ -302,7 +330,9 @@ class Apiv2Controller extends AbstractApiController
             $Config = Config::getConfig();
             return match ($submodel) {
                 ApiSubModels::Comments => new Comments($this->Model, $this->subId),
+                ApiSubModels::Containers => LinksFactory::getContainersLinks($this->Model, $this->subId),
                 ApiSubModels::ExperimentsLinks => LinksFactory::getExperimentsLinks($this->Model, $this->subId),
+                ApiSubModels::Compounds => LinksFactory::getCompoundsLinks($this->Model, $this->subId),
                 ApiSubModels::ItemsLinks => LinksFactory::getItemsLinks($this->Model, $this->subId),
                 ApiSubModels::RequestActions => new RequestActions($this->requester, $this->Model, $this->subId),
                 ApiSubModels::Revisions => new Revisions(
@@ -364,8 +394,8 @@ class Apiv2Controller extends AbstractApiController
             return;
         }
 
-        // only accept json content-type unless it's GET (also prevents csrf!)
-        if ($this->Request->getMethod() !== Request::METHOD_GET && $this->Request->headers->get('content-type') !== 'application/json') {
+        // only accept json content-type unless it's GET or DELETE (also prevents csrf!)
+        if (!in_array($this->Request->getMethod(), array(Request::METHOD_GET, Request::METHOD_DELETE), true) && $this->Request->headers->get('content-type') !== 'application/json') {
             throw new ImproperActionException('Incorrect content-type header.');
         }
     }

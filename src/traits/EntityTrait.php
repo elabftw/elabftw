@@ -30,8 +30,6 @@ trait EntityTrait
 
     protected string $filterSql = '';
 
-    abstract public function readOne(): array;
-
     /**
      * Check and set id; populate the data object
      */

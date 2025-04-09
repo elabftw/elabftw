@@ -28,7 +28,7 @@ use function round;
 /**
  * Functions used by Twig in templates
  */
-class TwigFunctions
+final class TwigFunctions
 {
     /**
      * Get an array of integer with valid number of items per page based on the current limit

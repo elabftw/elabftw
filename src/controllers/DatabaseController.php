@@ -17,11 +17,12 @@ use Elabftw\Models\Items;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Teams;
+use Override;
 
 /**
  * For database.php
  */
-class DatabaseController extends AbstractEntityController
+final class DatabaseController extends AbstractEntityController
 {
     public function __construct(App $app, Items $entity)
     {
@@ -31,5 +32,11 @@ class DatabaseController extends AbstractEntityController
         $this->categoryArr = $Category->readAll();
         $Status = new ItemsStatus(new Teams($this->App->Users, $this->App->Users->team));
         $this->statusArr = $Status->readAll();
+    }
+
+    #[Override]
+    protected function getPageTitle(): string
+    {
+        return ngettext('Resource', 'Resources', 2);
     }
 }

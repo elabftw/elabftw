@@ -18,6 +18,7 @@ use GuzzleHttp\Exception\ConnectException;
 
 /**
  * HTTP wrapper
+ * @final mocked in tests
  */
 class HttpGetter
 {
@@ -25,7 +26,7 @@ class HttpGetter
 
     private const int SUCCESS = 200;
 
-    public function __construct(public Client $client, private string $proxy = '') {}
+    public function __construct(public Client $client, private string $proxy = '', private bool $verifyTls = true) {}
 
     public function get(string $url): string
     {
@@ -34,6 +35,7 @@ class HttpGetter
                 // add proxy if there is one
                 'proxy' => $this->proxy,
                 'timeout' => self::REQUEST_TIMEOUT,
+                'verify' => $this->verifyTls,
             ));
         } catch (ConnectException $e) {
             throw new ImproperActionException(sprintf('Error connecting to remote server: %s', $url), $e->getCode(), $e);
@@ -53,6 +55,7 @@ class HttpGetter
                 'timeout' => self::REQUEST_TIMEOUT,
                 'headers' => $headers,
                 'json' => $json,
+                'verify' => $this->verifyTls,
             ));
         } catch (ConnectException $e) {
             throw new ImproperActionException(sprintf('Error connecting to remote server: %s', $url), $e->getCode(), $e);

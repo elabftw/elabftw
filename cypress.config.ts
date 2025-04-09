@@ -32,7 +32,6 @@ export default defineConfig({
         },
         {
           exclude: [
-            '#sketcher_search_dialog', // chemdoodle 2d-sketcher
             '#scheduler', // scheduler on the team page has several violations
             'h3[data-action="toggle-next"]', // these get the attribute role='button' ...
             'h4[data-action="toggle-next"]', // ... hence, trigger prefer-native-element
@@ -46,7 +45,7 @@ export default defineConfig({
     supportFile: 'tests/cypress/support/index.ts',
   },
   // give more time because Xdebug slows down php a bit
-  defaultCommandTimeout: 8000,
+  defaultCommandTimeout: 15000,
   requestTimeout: 10000,
   responseTimeout: 130000,
   taskTimeout: 300000,

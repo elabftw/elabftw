@@ -46,13 +46,14 @@ use LdapRecord\Models\Entry;
 use OneLogin\Saml2\Auth as SamlAuthLib;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Override;
 
 use function setcookie;
 
 /**
  * For all your authentication/login needs
  */
-class LoginController implements ControllerInterface
+final class LoginController implements ControllerInterface
 {
     public const int AUTH_LOCAL = 10;
 
@@ -66,6 +67,7 @@ class LoginController implements ControllerInterface
 
     public function __construct(private App $App) {}
 
+    #[Override]
     public function getResponse(): Response
     {
         // ENABLE MFA FOR OUR USER
@@ -178,7 +180,7 @@ class LoginController implements ControllerInterface
             $this->App->Session->set('teaminit_email', $AuthResponse->initTeamUserInfo['email']);
             $this->App->Session->set('teaminit_firstname', $AuthResponse->initTeamUserInfo['firstname']);
             $this->App->Session->set('teaminit_lastname', $AuthResponse->initTeamUserInfo['lastname']);
-            $this->App->Session->set('teaminit_orgid', $AuthResponse->initTeamUserInfo['orgid']);
+            $this->App->Session->set('teaminit_orgid', $AuthResponse->initTeamUserInfo['orgid'] ?? '');
             return new RedirectResponse('/login.php');
         }
 
@@ -250,7 +252,7 @@ class LoginController implements ControllerInterface
                 }
                 $ldapConfig = array(
                     'protocol' => $c['ldap_scheme'] . '://',
-                    'hosts' => array($c['ldap_host']),
+                    'hosts' => explode(',', $c['ldap_host']),
                     'port' => (int) $c['ldap_port'],
                     'base_dn' => $c['ldap_base_dn'],
                     'username' => $c['ldap_username'],

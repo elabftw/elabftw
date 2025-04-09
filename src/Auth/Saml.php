@@ -16,7 +16,6 @@ use DateTimeImmutable;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Elabftw\UserParams;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
@@ -26,6 +25,7 @@ use Elabftw\Models\ExistingUser;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use Elabftw\Models\ValidatedUser;
+use Elabftw\Params\UserParams;
 use Elabftw\Services\UsersHelper;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Encoding\CannotDecodeContent;
@@ -37,6 +37,7 @@ use Lcobucci\JWT\Validation\Constraint\PermittedFor;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
 use OneLogin\Saml2\Auth as SamlAuthLib;
+use Override;
 
 use function is_array;
 use function is_string;
@@ -44,7 +45,7 @@ use function is_string;
 /**
  * SAML auth service
  */
-class Saml implements AuthInterface
+final class Saml implements AuthInterface
 {
     private const int TEAM_SELECTION_REQUIRED = 1;
 
@@ -122,6 +123,7 @@ class Saml implements AuthInterface
         }
     }
 
+    #[Override]
     public function tryAuth(): AuthResponse
     {
         $returnUrl = $this->settings['baseurl'] . '/index.php?acs';

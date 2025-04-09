@@ -17,18 +17,20 @@ use Elabftw\Models\Config;
 use Elabftw\Models\Users;
 use PDO;
 use Symfony\Component\Mime\Address;
+use Override;
 
 /**
  * Warn users and their Admins about account expiration
  * Note: this class structure isn't great, and full of nested foreach. While it is possible to do everything in one nice query (probably), it's difficult and error prone, so we adopt the pragmatic approach of doing inefficient code because this code runs from CLI once a week so we don't really care if it takes long
  */
-class ExpirationNotifier extends EmailNotifications
+final class ExpirationNotifier extends EmailNotifications
 {
     /** @var int NOTIF_PERIOD number of days before the validity date expiration when we start warning users */
     protected const NOTIF_PERIOD = 30;
 
     protected Db $Db;
 
+    #[Override]
     public function sendEmails(): int
     {
         return $this->sendAdminsEmails($this->sendUsersEmails());

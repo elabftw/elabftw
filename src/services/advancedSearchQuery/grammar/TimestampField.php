@@ -19,21 +19,25 @@ use Elabftw\Services\AdvancedSearchQuery\Interfaces\TimestampFieldType;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitable;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitor;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
+use Override;
 
-class TimestampField implements Term, Visitable, TimestampFieldType
+final class TimestampField implements Term, Visitable, TimestampFieldType
 {
     public function __construct(private string $field, private array $dateArr) {}
 
+    #[Override]
     public function accept(Visitor $visitor, VisitorParameters $parameters): mixed
     {
         return $visitor->visitTimestampField($this, $parameters);
     }
 
+    #[Override]
     public function getFieldType(): TimestampFields
     {
         return TimestampFields::from($this->field);
     }
 
+    #[Override]
     public function getValue(): string
     {
         return $this->dateArr['date'] ?: '';

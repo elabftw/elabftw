@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use DateTimeImmutable;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
@@ -29,7 +30,7 @@ use function trim;
 /**
  * When values need to be filtered
  */
-class Filter
+final class Filter
 {
     /**
      * ~= max size of MEDIUMTEXT in MySQL for UTF-8
@@ -77,11 +78,34 @@ class Filter
     }
 
     /**
+     * Return the date in a readable format
+     * example: 2014-01-12 -> "Sunday, January 12, 2014"
+     */
+    public static function formatLocalDate(DateTimeImmutable $input): string
+    {
+        return $input->format('l, F j, Y');
+    }
+
+    /**
+     * Returns an array (key => value) containing date and time
+     * example : "2024-10-16 17:12:47" -> ["date" => "2024-10-16", "time" => "17:12:47"]
+     */
+    public static function separateDateAndTime(string $input): array
+    {
+        $date = explode(' ', $input);
+        return array(
+            'date' => $date[0],
+            'time' => $date[1] ?? '',
+        );
+    }
+
+    /**
      * Simply sanitize email
      */
     public static function sanitizeEmail(string $input): string
     {
         $output = filter_var($input, FILTER_SANITIZE_EMAIL);
+        /** @psalm-suppress TypeDoesNotContainType see https://github.com/vimeo/psalm/issues/10561 */
         if ($output === false) {
             return '';
         }
@@ -137,6 +161,15 @@ class Filter
     {
         // mb_convert_encoding will replace invalid characters with ?, but we want _ instead
         return str_replace('?', '_', mb_convert_encoding(self::forFilesystem($input), 'ASCII', 'UTF-8'));
+    }
+
+    public static function intOrNull(string|int $input): ?int
+    {
+        $res = (int) $input;
+        if ($res === 0) {
+            return null;
+        }
+        return $res;
     }
 
     /**

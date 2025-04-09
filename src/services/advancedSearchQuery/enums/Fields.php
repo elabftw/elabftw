@@ -16,6 +16,8 @@ namespace Elabftw\Services\AdvancedSearchQuery\Enums;
 enum Fields: string
 {
     case Attachment = 'attachment';
+
+    // @deprecated use Owner
     case Author = 'author';
     case Body = 'body';
     case Category = 'category';
@@ -24,6 +26,7 @@ enum Fields: string
     case Group = 'group';
     case Id = 'id';
     case Locked = 'locked';
+    case Owner = 'owner';
     case Rating = 'rating';
     case Status = 'status';
     case Timestamped = 'timestamped';

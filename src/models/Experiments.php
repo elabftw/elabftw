@@ -22,16 +22,18 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\InsertTagsTrait;
 use PDO;
+use Override;
 
 /**
  * All about the experiments
  */
-class Experiments extends AbstractConcreteEntity
+final class Experiments extends AbstractConcreteEntity
 {
     use InsertTagsTrait;
 
     public EntityType $entityType = EntityType::Experiments;
 
+    #[Override]
     public function create(
         ?int $template = -1,
         ?string $title = null,
@@ -39,6 +41,8 @@ class Experiments extends AbstractConcreteEntity
         ?DateTimeImmutable $date = null,
         ?string $canread = null,
         ?string $canwrite = null,
+        ?bool $canreadIsImmutable = false,
+        ?bool $canwriteIsImmutable = false,
         array $tags = array(),
         ?int $category = null,
         ?int $status = null,
@@ -75,6 +79,8 @@ class Experiments extends AbstractConcreteEntity
             $body = $templateArr['body'];
             $canread = $templateArr['canread_target'];
             $canwrite = $templateArr['canwrite_target'];
+            $canreadIsImmutable = $templateArr['canread_is_immutable'];
+            $canwriteIsImmutable = $templateArr['canwrite_is_immutable'];
             $metadata = $templateArr['metadata'];
             $contentType = $templateArr['content_type'];
         }
@@ -97,8 +103,8 @@ class Experiments extends AbstractConcreteEntity
         $customId = $this->getNextCustomId($template);
 
         // SQL for create experiments
-        $sql = 'INSERT INTO experiments(team, title, date, body, category, status, elabid, canread, canwrite, metadata, custom_id, userid, content_type, rating)
-            VALUES(:team, :title, :date, :body, :category, :status, :elabid, :canread, :canwrite, :metadata, :custom_id, :userid, :content_type, :rating)';
+        $sql = 'INSERT INTO experiments(team, title, date, body, category, status, elabid, canread, canwrite, canread_is_immutable, canwrite_is_immutable, metadata, custom_id, userid, content_type, rating)
+            VALUES(:team, :title, :date, :body, :category, :status, :elabid, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :metadata, :custom_id, :userid, :content_type, :rating)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindParam(':title', $title);
@@ -109,6 +115,8 @@ class Experiments extends AbstractConcreteEntity
         $req->bindValue(':elabid', Tools::generateElabid());
         $req->bindParam(':canread', $canread);
         $req->bindParam(':canwrite', $canwrite);
+        $req->bindParam(':canread_is_immutable', $canreadIsImmutable, PDO::PARAM_INT);
+        $req->bindParam(':canwrite_is_immutable', $canwriteIsImmutable, PDO::PARAM_INT);
         $req->bindParam(':metadata', $metadata);
         $req->bindParam(':custom_id', $customId, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
@@ -138,7 +146,8 @@ class Experiments extends AbstractConcreteEntity
      *
      * @return int the ID of the new item
      */
-    public function duplicate(bool $copyFiles = false): int
+    #[Override]
+    public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int
     {
         $this->canOrExplode('read');
 
@@ -171,10 +180,12 @@ class Experiments extends AbstractConcreteEntity
         $this->ItemsLinks->duplicate($this->id, $newId);
         $this->Steps->duplicate($this->id, $newId);
         $this->Tags->copyTags($newId);
-        // also add a link to the previous experiment
-        $ExperimentsLinks = new Experiments2ExperimentsLinks($fresh);
-        $ExperimentsLinks->setId($this->id);
-        $ExperimentsLinks->postAction(Action::Create, array());
+        // also add a link to the original experiment if requested
+        if ($linkToOriginal) {
+            $ExperimentsLinks = new Experiments2ExperimentsLinks($fresh);
+            $ExperimentsLinks->setId($this->id);
+            $ExperimentsLinks->postAction(Action::Create, array());
+        }
         if ($copyFiles) {
             $this->Uploads->duplicate($fresh);
         }
@@ -185,6 +196,7 @@ class Experiments extends AbstractConcreteEntity
     /**
      * Experiment is not actually deleted but the state is changed from normal to deleted
      */
+    #[Override]
     public function destroy(): bool
     {
         // delete from pinned too

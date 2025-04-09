@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<div class='d-flex'>
+  <h1 id='pageTitle'>{{ pageTitle }}</h1>
+  <a class='ml-auto' href='/api/v2/reports?scope=inventory&format=csv'>
+    <button class='btn btn-secondary' data-action='get-inventory-csv'>{{ 'Export'|trans }}</button>
+  </a>
+</div>
+<hr>
+{% endblock title %}
+
+{% block body %}
+  <div class='pl-3 mb-5'>
+    <h4><label for='storageSearchInput'>{{ 'Search containers or locations'|trans }}</label></h4>
+    <form class='input-group' method='get'>
+      {% set containerSearchPlaceholder = ['Sodium', 'Saccharose', 'Acetone', 'CK-666', 'Fibronectin'] %}
+      <input class='form-control' name='q' id='storageSearchInput' placeholder='{{ random(containerSearchPlaceholder) }}' value='{{ App.Request.query.getString('q') }}' />
+      <div class='input-group-append'>
+        <button class='btn btn-primary' type='submit' data-action='search-storage'>{{ 'Search'|trans }}</button>
+      </div>
+    </form>
+
+    {% if containersArr|length == 0 and App.Request.query.has('q') %}
+      {{ 'No results found'|trans|msg('warning', false) }}
+    {% endif %}
+
+    <ul class='list-group mt-2'>
+    {% for container in containersArr %}
+      <li class='list-group-item'>
+        <a href='{{ container.page }}.php?mode=view&id={{ container.entity_id }}'>{{ container.entity_title }}</a> {{ container.qty_stored }} {{ container.qty_unit }} in {{ container.full_path }}
+      </li>
+    {% endfor %}
+    </ul>
+  </div>
+
+  <div class='pl-3 mb-5'>
+    <div class='d-flex'>
+      <h4>{{ 'Browse inventory locations'|trans }}</h4>
+      <div class='ml-auto'>
+        <button type='button' class='btn btn-secondary btn-sm' data-parent-id='' data-action='add-storage-children'><i class='fas fa-plus-circle mr-1 color-white'></i>{{ 'Add root element'|trans }}</button>
+      </div>
+    </div>
+    {% include 'storage-list.html' with {'storage_editable': true} %}
+  </div>
+{% endblock body %}

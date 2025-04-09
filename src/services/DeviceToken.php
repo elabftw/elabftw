@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -22,7 +23,7 @@ use Lcobucci\JWT\Validation\Constraint\SignedWith;
 /**
  * DeviceToken generator
  */
-class DeviceToken
+final class DeviceToken
 {
     public static function getToken(int $userid): string
     {

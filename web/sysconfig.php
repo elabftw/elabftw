@@ -22,6 +22,7 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\Idps;
 use Elabftw\Models\IdpsSources;
 use Elabftw\Models\Info;
+use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Teams;
 use Elabftw\Services\DummyRemoteDirectory;
 use Elabftw\Services\EairefRemoteDirectory;
@@ -39,7 +40,6 @@ use function array_walk;
  *
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = _('eLabFTW Configuration');
 /** @psalm-suppress UncaughtThrowInGlobalScope */
 $Response = new Response();
 $Response->prepare($App->Request);
@@ -95,7 +95,7 @@ try {
         }
         $remoteDirectoryUsersArr = $RemoteDirectory->search($App->Request->query->getString('remote_dir_query'));
         if (empty($remoteDirectoryUsersArr)) {
-            $App->warning[] = _('No users found. Try another search.');
+            $App->Session->getFlashBag()->add('warning', _('No users found. Try another search.'));
         }
     }
 
@@ -126,24 +126,25 @@ try {
         Db::getConnection()->getAttribute(PDO::ATTR_SERVER_VERSION),
     );
 
-    $UploadsChecker = new UploadsChecker();
-
     $elabimgVersion = getenv('ELABIMG_VERSION') ?: 'Not in Docker';
     $auditLogsArr = AuditLogs::read($App->Request->query->getInt('limit', AuditLogs::DEFAULT_LIMIT), $App->Request->query->getInt('offset'));
     array_walk($auditLogsArr, function (array &$event) {
         $event['category'] = AuditCategory::from($event['category'])->name;
     });
     $passwordComplexity = PasswordComplexity::from((int) $App->Config->configArr['password_complexity_requirement']);
+    $StorageUnits = new StorageUnits($App->Users);
     $template = 'sysconfig.html';
     $renderArr = array(
         'Request' => $App->Request,
         'auditLogsArr' => $auditLogsArr,
+        'containersCount' => $StorageUnits->readCount(),
         'nologinUsersCount' => $AuthFail->getLockedUsersCount(),
         'lockoutDevicesCount' => $AuthFail->getLockoutDevicesCount(),
         'elabimgVersion' => $elabimgVersion,
         'idpsArr' => $idpsArr,
         'idpsSources' => $idpsSources,
         'isSearching' => $isSearching,
+        'pageTitle' => _('Instance settings'),
         'passwordInputHelp' => $passwordComplexity->toHuman(),
         'passwordInputPattern' => $passwordComplexity->toPattern(),
         'phpInfos' => $phpInfos,
@@ -152,8 +153,9 @@ try {
         'Teams' => $Teams,
         'teamsArr' => $teamsArr,
         'info' => (new Info())->readAll(),
+        'storageUnitsArr' => $StorageUnits->readAllRecursive(),
         'timestampLastMonth' => $Experiments->getTimestampLastMonth(),
-        'uploadsStats' => $UploadsChecker->getStats(),
+        'uploadsStats' => UploadsChecker::getStats(),
         'usersArr' => $usersArr,
         'enforceMfaArr' => EnforceMfa::getAssociativeArray(),
         'passwordComplexityArr' => PasswordComplexity::getAssociativeArray(),

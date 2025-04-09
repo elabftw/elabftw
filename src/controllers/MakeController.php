@@ -16,10 +16,10 @@ use Elabftw\AuditEvent\Export;
 use Elabftw\Enums\Classification;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExportFormat;
+use Elabftw\Enums\ReportScopes;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\MpdfProviderInterface;
-use Elabftw\Interfaces\StringMakerInterface;
 use Elabftw\Interfaces\ZipMakerInterface;
 use Elabftw\Make\MakeCsv;
 use Elabftw\Make\MakeEln;
@@ -29,9 +29,9 @@ use Elabftw\Make\MakePdf;
 use Elabftw\Make\MakeProcurementRequestsCsv;
 use Elabftw\Make\MakeQrPdf;
 use Elabftw\Make\MakeQrPng;
-use Elabftw\Make\MakeReport;
 use Elabftw\Make\MakeSchedulerReport;
 use Elabftw\Make\MakeStreamZip;
+use Elabftw\Make\ReportsHandler;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Items;
 use Elabftw\Models\ProcurementRequests;
@@ -46,6 +46,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use ValueError;
 use ZipStream\ZipStream;
+use Override;
 
 use function array_map;
 use function count;
@@ -53,7 +54,7 @@ use function count;
 /**
  * Create zip, csv, pdf or report
  */
-class MakeController extends AbstractController
+final class MakeController extends AbstractController
 {
     private const int AUDIT_THRESHOLD = 12;
 
@@ -62,6 +63,7 @@ class MakeController extends AbstractController
     // @var array<AbstractEntity>
     private array $entityArr = array();
 
+    #[Override]
     public function getResponse(): Response
     {
         $this->populateSlugs();
@@ -74,15 +76,21 @@ class MakeController extends AbstractController
             case ExportFormat::Csv:
                 if (str_starts_with($this->Request->getPathInfo(), '/api/v2/teams/current/procurement_requests')) {
                     $ProcurementRequests = new ProcurementRequests(new Teams($this->requester), 1);
-                    return $this->getFileResponse(new MakeProcurementRequestsCsv($ProcurementRequests));
+                    return (new MakeProcurementRequestsCsv($ProcurementRequests))->getResponse();
                 }
-                return $this->getFileResponse(new MakeCsv($this->entityArr));
+                if (str_starts_with($this->Request->getPathInfo(), '/api/v2/reports')) {
+                    return (new ReportsHandler($this->requester))->getResponse(
+                        ReportScopes::tryFrom($this->Request->query->getString('scope')) ??
+                        throw new ImproperActionException(sprintf('Invalid scope query parameter. Possible values are: %s.', ReportScopes::toCsList()))
+                    );
+                }
+                return (new MakeCsv($this->entityArr))->getResponse();
 
             case ExportFormat::Eln:
                 return $this->makeStreamZip(new MakeEln($this->getZipStreamLib(), $this->requester, $this->entityArr));
 
             case ExportFormat::Json:
-                return $this->getFileResponse(new MakeJson($this->entityArr));
+                return (new MakeJson($this->entityArr))->getResponse();
 
             case ExportFormat::PdfA:
                 $this->pdfa = true;
@@ -91,7 +99,7 @@ class MakeController extends AbstractController
                 return $this->makePdf();
 
             case ExportFormat::QrPdf:
-                return $this->getFileResponse(new MakeQrPdf($this->getMpdfProvider(), $this->requester, $this->entityArr));
+                return (new MakeQrPdf($this->getMpdfProvider(), $this->requester, $this->entityArr))->getResponse();
 
             case ExportFormat::QrPng:
                 $withTitle = true;
@@ -103,19 +111,14 @@ class MakeController extends AbstractController
                 if (count($this->entityArr) !== 1) {
                     throw new ImproperActionException('QR PNG format is only suitable for one ID.');
                 }
-                return $this->getFileResponse(new MakeQrPng(new MpdfQrProvider(), $this->entityArr[0], $this->Request->query->getInt('size'), $withTitle));
-
-            case ExportFormat::SysadminReport:
-                if (!$this->requester->userData['is_sysadmin']) {
-                    throw new IllegalActionException('Non sysadmin user tried to generate report.');
-                }
-                return $this->getFileResponse(new MakeReport($this->requester->readFromQuery('', includeArchived: true)));
-
-            case ExportFormat::TeamReport:
-                if (!$this->requester->isAdmin) {
-                    throw new IllegalActionException('Non Admin user tried to generate report.');
-                }
-                return $this->getFileResponse(new MakeReport($this->requester->readFromQuery('', teamId: $this->requester->userData['team'])));
+                return (new MakeQrPng(
+                    new MpdfQrProvider(),
+                    $this->entityArr[0],
+                    $this->Request->query->getInt('size'),
+                    $withTitle,
+                    $this->Request->query->getInt('titleLines'),
+                    $this->Request->query->getInt('titleChars'),
+                ))->getResponse();
 
             case ExportFormat::SchedulerReport:
                 return $this->makeSchedulerReport();
@@ -192,23 +195,23 @@ class MakeController extends AbstractController
         $log = (new Logger('elabftw'))->pushHandler(new ErrorLogHandler());
         $classification = Classification::tryFrom($this->Request->query->getInt('classification', Classification::None->value)) ?? Classification::None;
         if (count($this->entityArr) === 1) {
-            return $this->getFileResponse(new MakePdf($log, $this->getMpdfProvider(), $this->requester, $this->entityArr, $this->shouldIncludeChangelog(), $classification));
+            return (new MakePdf($log, $this->getMpdfProvider(), $this->requester, $this->entityArr, $this->shouldIncludeChangelog(), $classification))->getResponse();
         }
-        return $this->getFileResponse(new MakeMultiPdf($log, $this->getMpdfProvider(), $this->requester, $this->entityArr, $this->shouldIncludeChangelog()));
+        return (new MakeMultiPdf($log, $this->getMpdfProvider(), $this->requester, $this->entityArr, $this->shouldIncludeChangelog()))->getResponse();
     }
 
     private function makeSchedulerReport(): Response
     {
         $defaultStart = '2018-12-23T00:00:00+01:00';
         $defaultEnd = '2119-12-23T00:00:00+01:00';
-        return $this->getFileResponse(new MakeSchedulerReport(
+        return (new MakeSchedulerReport(
             new Scheduler(
                 new Items($this->requester),
                 null,
                 $this->Request->query->getString('start', $defaultStart),
                 $this->Request->query->getString('end', $defaultEnd),
             ),
-        ));
+        ))->getResponse();
     }
 
     private function makeZip(): Response
@@ -246,21 +249,6 @@ class MakeController extends AbstractController
             $userData['fullname'],
             $userData['pdf_format'],
             $this->pdfa,
-        );
-    }
-
-    private function getFileResponse(StringMakerInterface $Maker): Response
-    {
-        return new Response(
-            $Maker->getFileContent(),
-            200,
-            array(
-                'Content-Type' => $Maker->getContentType(),
-                'Content-Size' => $Maker->getContentSize(),
-                'Content-disposition' => 'inline; filename="' . $Maker->getFileName() . '"',
-                'Cache-Control' => 'no-store',
-                'Last-Modified' => gmdate('D, d M Y H:i:s') . ' GMT',
-            )
         );
     }
 }

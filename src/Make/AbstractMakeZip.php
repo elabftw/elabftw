@@ -15,6 +15,7 @@ namespace Elabftw\Make;
 use Elabftw\Enums\Storage;
 use Elabftw\Interfaces\ZipMakerInterface;
 use ZipStream\ZipStream;
+use Override;
 
 /**
  * Mother class of the Make*Zip services
@@ -36,6 +37,12 @@ abstract class AbstractMakeZip extends AbstractMake implements ZipMakerInterface
     public function __construct(protected ZipStream $Zip)
     {
         parent::__construct();
+    }
+
+    #[Override]
+    public function getFileContent(): string
+    {
+        return '';
     }
 
     /**

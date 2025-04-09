@@ -18,7 +18,7 @@ use Elabftw\Exceptions\ImproperActionException;
 /**
  * Fetch XML data from an URL and convert to DOMDocument
  */
-class Url2Xml
+final class Url2Xml
 {
     public function __construct(private HttpGetter $getter, private string $url, private DOMDocument $dom) {}
 

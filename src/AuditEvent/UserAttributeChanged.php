@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\AuditEvent;
 
 use Elabftw\Enums\AuditCategory;
+use Override;
 
 class UserAttributeChanged extends AbstractAuditEvent
 {
@@ -26,6 +27,7 @@ class UserAttributeChanged extends AbstractAuditEvent
         parent::__construct($requesterUserid, $targetUserid);
     }
 
+    #[Override]
     public function getBody(): string
     {
         return sprintf(
@@ -36,6 +38,7 @@ class UserAttributeChanged extends AbstractAuditEvent
         );
     }
 
+    #[Override]
     public function getCategory(): AuditCategory
     {
         return AuditCategory::AccountModified;

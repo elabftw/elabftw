@@ -16,11 +16,11 @@ use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\State;
-use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Users;
 use Elabftw\Services\HttpGetter;
+use RuntimeException;
 use ZipArchive;
 
 use function json_decode;
@@ -30,7 +30,7 @@ use function json_encode;
  * Send data to Bloxberg server
  * elabid is submitted as the 'author' attribute
  */
-class MakeBloxberg extends AbstractMakeTimestamp
+final class MakeBloxberg extends AbstractMakeTimestamp
 {
     /**
      * This pubkey is currently the same for everyone
@@ -122,7 +122,7 @@ class MakeBloxberg extends AbstractMakeTimestamp
         $ZipArchive = new ZipArchive();
         $res = $ZipArchive->open($tmpFilePath);
         if ($res !== true) {
-            throw new FilesystemErrorException('Error opening the zip archive!');
+            throw new RuntimeException('Error opening the zip archive!');
         }
         $ZipArchive->addFromString('timestamped-data.json', $data);
         $ZipArchive->close();

@@ -14,6 +14,8 @@ import {
   updateCatStat,
   notifNothingSelected,
   permissionsToJson,
+  mkSpin,
+  mkSpinStop,
 } from './misc';
 import $ from 'jquery';
 import { Malle } from '@deltablot/malle';
@@ -24,10 +26,58 @@ import { EntityType, Model, Action, Selected } from './interfaces';
 import tinymce from 'tinymce/tinymce';
 import Tab from './Tab.class';
 
-document.addEventListener('DOMContentLoaded', () => {
-  if (window.location.pathname !== '/admin.php') {
-    return;
-  }
+function collectSelectable(name: string): number[] {
+  const collected = [];
+  document.querySelectorAll(`#batchActions input[name=${name}]`).forEach(input => {
+    const box = input as HTMLInputElement;
+    if (box.checked) {
+      collected.push(parseInt((input as HTMLInputElement).value, 10));
+    }
+  });
+  return collected;
+}
+
+function collectTargetOwner(): number {
+  const collected = document.getElementById('target_owner') as HTMLInputElement;
+  // Convert element to an int
+  return collected ? parseInt(collected.value, 10) || 0 : 0;
+}
+
+function collectCan(): string {
+  // Warning: copy pasta from common.ts save-permissions action
+  // collect existing users listed in ul->li, and store them in a string[] with user:<userid>
+  const existingUsers = Array.from(document.getElementById('masscan_list_users').children)
+    .map(u => `user:${(u as HTMLElement).dataset.id}`);
+
+  return permissionsToJson(
+    parseInt(((document.getElementById('masscan_select_base') as HTMLSelectElement).value), 10),
+    Array.from((document.getElementById('masscan_select_teams') as HTMLSelectElement).selectedOptions).map(v=>v.value)
+      .concat(Array.from((document.getElementById('masscan_select_teamgroups') as HTMLSelectElement).selectedOptions).map(v=>v.value))
+      .concat(existingUsers),
+  );
+
+}
+function getSelected(): Selected {
+  return {
+    items_types: collectSelectable('items_types'),
+    items_status: collectSelectable('items_status'),
+    items_tags: collectSelectable('items_tags'),
+    experiments_status: collectSelectable('experiments_status'),
+    experiments_categories: collectSelectable('experiments_categories'),
+    experiments_tags: collectSelectable('experiments_tags'),
+    tags: collectSelectable('tags'),
+    users: collectSelectable('users'),
+    target_owner: collectTargetOwner(),
+    can: collectCan(),
+  };
+}
+
+function getRandomColor(): string {
+  return `#${Math.floor(Math.random()*16777215).toString(16)}`;
+}
+
+
+if (window.location.pathname === '/admin.php') {
 
   const ApiC = new Api();
 
@@ -36,43 +86,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const editor = getEditor();
   editor.init('admin');
-
-  function collectSelectable(name: string) {
-    const collected = [];
-    document.querySelectorAll(`#batchActions input[name=${name}]`).forEach(input => {
-      const box = input as HTMLInputElement;
-      if (box.checked) {
-        collected.push(parseInt((input as HTMLInputElement).value, 10));
-      }
-    });
-    return collected;
-  }
-
-  function collectCan(): string {
-    // Warning: copy pasta from common.ts save-permissions action
-    // collect existing users listed in ul->li, and store them in a string[] with user:<userid>
-    const existingUsers = Array.from(document.getElementById('masscan_list_users').children)
-      .map(u => `user:${(u as HTMLElement).dataset.id}`);
-
-    return permissionsToJson(
-      parseInt(((document.getElementById('masscan_select_base') as HTMLSelectElement).value), 10),
-      Array.from((document.getElementById('masscan_select_teams') as HTMLSelectElement).selectedOptions).map(v=>v.value)
-        .concat(Array.from((document.getElementById('masscan_select_teamgroups') as HTMLSelectElement).selectedOptions).map(v=>v.value))
-        .concat(existingUsers),
-    );
-
-  }
-  function getSelected(): Selected {
-    return {
-      items_types: collectSelectable('items_types'),
-      items_status: collectSelectable('items_status'),
-      experiments_status: collectSelectable('experiments_status'),
-      experiments_categories: collectSelectable('experiments_categories'),
-      tags: collectSelectable('tags'),
-      users: collectSelectable('users'),
-      can: collectCan(),
-    };
-  }
 
   // edit the team group name
   const malleableGroupname = new Malle({
@@ -95,27 +108,6 @@ document.addEventListener('DOMContentLoaded', () => {
   new MutationObserver(() => {
     malleableGroupname.listen();
   }).observe(document.getElementById('team_groups_div'), {childList: true});
-
-  // UPDATE
-  function itemsTypesUpdate(id: number): Promise<Response> {
-    const nameInput = (document.getElementById('itemsTypesName') as HTMLInputElement);
-    const name = nameInput.value;
-    if (name === '') {
-      notif({'res': false, 'msg': 'Name cannot be empty'});
-      nameInput.style.borderColor = 'red';
-      nameInput.focus();
-      return;
-    }
-    const color = (document.getElementById('itemsTypesColor') as HTMLInputElement).value;
-    const body = editor.getContent();
-    const params = {'title': name, 'color': color, 'body': body};
-    return ApiC.patch(`${EntityType.ItemType}/${id}`, params);
-  }
-  // END ITEMS TYPES
-
-  function getRandomColor(): string {
-    return `#${Math.floor(Math.random()*16777215).toString(16)}`;
-  }
 
   // set a random color to all the "create new" statuslike modals
   // from https://www.paulirish.com/2009/random-hex-color-code-snippets/
@@ -145,12 +137,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // RUN ACTION ON SELECTED (BATCH)
     } else if (el.matches('[data-action="run-action-selected"]')) {
       const btn = el as HTMLButtonElement;
-      btn.disabled = true;
       const selected = getSelected();
       if (!Object.values(selected).some(array => array.length > 0)) {
         notifNothingSelected();
         return;
       }
+      const oldHTML = mkSpin(btn);
       selected['action'] = btn.dataset.what;
       // we use a custom notif message, so disable the native one
       ApiC.notifOnSaved = false;
@@ -158,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const processed = res.headers.get('location').split('/').pop();
         notif({res: true, msg: `${processed} entries processed`});
       }).finally(() => {
-        btn.disabled = false;
+        mkSpinStop(btn, oldHTML);
       });
     } else if (el.matches('[data-action="update-counter-value"]')) {
       const counterValue = el.parentElement.parentElement.parentElement.previousElementSibling.querySelector('.counterValue');
@@ -172,22 +164,12 @@ document.addEventListener('DOMContentLoaded', () => {
       counterValue.textContent = String(count);
     // UPDATE ITEMS TYPES
     } else if (el.matches('[data-action="itemstypes-update"]')) {
-      itemsTypesUpdate(parseInt(el.dataset.id, 10));
+      return ApiC.patch(`${EntityType.ItemType}/${el.dataset.id}`, {'body': getEditor().getContent()});
     // DESTROY ITEMS TYPES
     } else if (el.matches('[data-action="itemstypes-destroy"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {
         ApiC.delete(`${EntityType.ItemType}/${el.dataset.id}`).then(() => window.location.href = '?tab=4');
       }
-    // REQUEST EXCLUSIVE EDIT MODE REMOVAL
-    } else if (el.matches('[data-action="request-exclusive-edit-mode-removal"]')) {
-      ApiC.post(`${EntityType.ItemType}/${el.dataset.id}/request_actions`, {
-        action: Action.Create,
-        target_action: 60,
-        target_userid: el.dataset.targetUser,
-      }).then(() => reloadElements(['requestActionsDiv']))
-        // the request gets rejected if repeated
-        .catch(error => console.error(error.message));
-    // CREATE TEAM GROUP
     } else if (el.matches('[data-action="create-teamgroup"]')) {
       const input = (document.getElementById('teamGroupCreate') as HTMLInputElement);
       ApiC.post(`${Model.Team}/current/${Model.TeamGroup}`, {'name': input.value}).then(() => {
@@ -316,4 +298,4 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   });
-});
+}

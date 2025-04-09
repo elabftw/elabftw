@@ -13,20 +13,23 @@ declare(strict_types=1);
 namespace Elabftw\AuditEvent;
 
 use Elabftw\Enums\AuditCategory;
+use Override;
 
-class ConfigModified extends AbstractAuditEvent
+final class ConfigModified extends AbstractAuditEvent
 {
     public function __construct(private string $name, private string $old, private string $new)
     {
         parent::__construct();
     }
 
+    #[Override]
     public function getBody(): string
     {
         $this->filterSensitive();
         return sprintf('Instance configuration %s has been modified from %s to %s', $this->name, $this->old, $this->new);
     }
 
+    #[Override]
     public function getCategory(): AuditCategory
     {
         return AuditCategory::ConfigModified;

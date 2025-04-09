@@ -14,28 +14,34 @@ namespace Elabftw\AuditEvent;
 
 use Elabftw\Enums\AuditCategory;
 use Elabftw\Interfaces\AuditEventInterface;
+use Override;
 
 abstract class AbstractAuditEvent implements AuditEventInterface
 {
     public function __construct(private int $requesterUserid = 0, private int $targetUserid = 0) {}
 
+    #[Override]
     public function getTargetUserid(): int
     {
         return $this->targetUserid;
     }
 
+    #[Override]
     public function getRequesterUserid(): int
     {
         return $this->requesterUserid;
     }
 
+    #[Override]
     abstract public function getBody(): string;
 
+    #[Override]
     public function getJsonBody(): string
     {
         return json_encode($this->getBaseInfo(), JSON_THROW_ON_ERROR);
     }
 
+    #[Override]
     abstract public function getCategory(): AuditCategory;
 
     protected function getBaseInfo(): array

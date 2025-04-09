@@ -22,7 +22,7 @@ use GuzzleHttp\Psr7;
 /**
  * Keeex a file
  */
-class MakeKeeex
+final class MakeKeeex
 {
     private const int REQUEST_TIMEOUT_SECONDS = 5;
 

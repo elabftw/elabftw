@@ -15,15 +15,17 @@ namespace Elabftw\Models\Notifications;
 use Elabftw\Enums\Notifications;
 use Elabftw\Interfaces\MailableInterface;
 use Elabftw\Models\Config;
+use Override;
 
 /**
  * When our account has been validated
  */
-class SelfIsValidated extends AbstractNotifications implements MailableInterface
+final class SelfIsValidated extends AbstractNotifications implements MailableInterface
 {
     protected Notifications $category = Notifications::SelfIsValidated;
 
     // Note: here the actor fullname is directly fed to the instance, instead of fetching it from a new Users() like others.
+    #[Override]
     public function getEmail(): array
     {
         $subject = _('Account validated');

@@ -16,7 +16,7 @@ use Elabftw\Enums\Storage;
 use League\Flysystem\Filesystem;
 use Override;
 
-class CreateUploadFromS3 extends CreateUpload
+final class CreateUploadFromS3 extends CreateUpload
 {
     #[Override]
     public function getSourceFs(): Filesystem

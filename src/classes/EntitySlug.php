@@ -14,7 +14,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\EntityType;
 
-class EntitySlug
+final class EntitySlug
 {
     public function __construct(public readonly EntityType $type, public readonly int $id) {}
 

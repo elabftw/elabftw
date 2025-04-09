@@ -48,11 +48,18 @@ module.exports = {
               crossFs.writeFileSync(pathToAssets + targetName, fileContent, 'utf8');
             };
 
+            const appendFile = (sourceNameAndPath, targetName) => {
+              const targetFileAndPath = pathToAssets + targetName;
+              const sourceFileContent = crossFs.readFileSync(sourceNameAndPath);
+              crossFs.appendFileSync(targetFileAndPath, sourceFileContent);
+              };
+
             crossFs.mkdirSync(`${pathToAssets}tinymce_skins`, { recursive: true });
             extractFile('tinymce/skins/ui/oxide/', 'skin.min.css', 'tinymce_skins/skin.min.css');
             extractFile('tinymce/skins/content/default/', 'content.min.css', 'tinymce_skins/content.min.css');
             extractFile('tinymce/skins/ui/oxide/', 'content.min.css', 'tinymce_content.min.css');
             extractFile('tinymce/plugins/emoticons/js/', 'emojis.js', 'tinymce_emojis.js');
+            appendFile('src/scss/_tinymce-custom.css', 'tinymce_content.min.css');
           },
         },
       },

@@ -12,12 +12,14 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
+use Override;
+
 use function date;
 
 /**
  * Make a CSV file from a list of id and a type
  */
-class MakeCsv extends AbstractMakeCsv
+final class MakeCsv extends AbstractMakeCsv
 {
     public function __construct(private array $entityArr)
     {
@@ -27,6 +29,7 @@ class MakeCsv extends AbstractMakeCsv
     /**
      * Return a nice name for the file
      */
+    #[Override]
     public function getFileName(): string
     {
         return date('Y-m-d_H-i-s') . '-export.elabftw.csv';
@@ -35,14 +38,16 @@ class MakeCsv extends AbstractMakeCsv
     /**
      * Here we populate the first row: it will be the column names
      */
+    #[Override]
     protected function getHeader(): array
     {
-        return array('id', 'date', 'title', 'body', 'category', 'category_title', 'category_color', 'status', 'status_title', 'status_color', 'custom_id', 'elabid', 'rating', 'url', 'metadata', 'tags');
+        return array('id', 'date', 'title', 'userid', 'fullname', 'body', 'category', 'category_title', 'category_color', 'status', 'status_title', 'status_color', 'custom_id', 'elabid', 'rating', 'url', 'metadata', 'tags');
     }
 
     /**
      * Generate an array for the requested data
      */
+    #[Override]
     protected function getRows(): array
     {
         $rows = array();
@@ -51,6 +56,8 @@ class MakeCsv extends AbstractMakeCsv
                 $entity->entityData['id'],
                 $entity->entityData['date'],
                 htmlspecialchars_decode((string) $entity->entityData['title'], ENT_QUOTES | ENT_COMPAT),
+                $entity->entityData['userid'],
+                $entity->entityData['fullname'],
                 html_entity_decode(strip_tags(htmlspecialchars_decode((string) $entity->entityData['body'], ENT_QUOTES | ENT_COMPAT))),
                 (string) $entity->entityData['category'],
                 htmlspecialchars_decode((string) $entity->entityData['category_title'], ENT_QUOTES | ENT_COMPAT),

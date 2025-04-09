@@ -24,6 +24,7 @@ use Elabftw\Services\UsersHelper;
 use function array_column;
 use function array_unique;
 use function implode;
+use function sprintf;
 
 class EntitySqlBuilder
 {
@@ -46,6 +47,7 @@ class EntitySqlBuilder
         ?EntityType $relatedOrigin = null,
     ): string {
         $this->entitySelect($fullSelect);
+        $this->compounds();
         $this->status();
         $this->category();
         $this->comments();
@@ -124,6 +126,8 @@ class EntitySqlBuilder
                 entity.state,
                 entity.canread,
                 entity.canwrite,
+                entity.canread_is_immutable,
+                entity.canwrite_is_immutable,
                 entity.modified_at,
                 entity.timestamped';
             // only include columns (created_at, locked_at, timestamped_at, entity.metadata) if actually searching for it
@@ -131,6 +135,10 @@ class EntitySqlBuilder
                 $this->selectSql[] = implode(', ', array_unique(array_column($this->entity->extendedValues, 'additional_columns')));
             }
         }
+        $this->selectSql[] = sprintf('(pin_%s2users.entity_id IS NOT NULL) AS is_pinned', $this->entity->entityType->value);
+        $this->joinsSql[] = sprintf('LEFT JOIN pin_%1$s2users
+            ON (entity.id = pin_%1$s2users.entity_id
+                AND pin_%1$s2users.users_id = %2$d)', $this->entity->entityType->value, $this->entity->Users->userData['userid']);
     }
 
     protected function category(): void
@@ -145,6 +153,12 @@ class EntitySqlBuilder
                 ? 'experiments_categories'
                 : 'items_types',
         );
+    }
+
+    protected function compounds(): void
+    {
+        $this->joinsSql[] = 'LEFT JOIN compounds2%1$s AS compoundslinks ON compoundslinks.entity_id = entity.id
+            LEFT JOIN compounds ON compoundslinks.compound_id = compounds.id';
     }
 
     protected function status(): void
@@ -227,6 +241,139 @@ class EntitySqlBuilder
                 ON (commentst.item_id = entity.id)';
     }
 
+    /**
+     * anon filter
+     */
+    protected function canAnon(string $can): string
+    {
+        return sprintf(
+            "entity.%s->'$.base' = %s",
+            $can,
+            BasePermissions::Full->value,
+        );
+    }
+
+    /**
+     * base pub filter
+     */
+    protected function canBasePub(string $can): string
+    {
+        return sprintf(
+            "entity.%s->'$.base' = %d",
+            $can,
+            BasePermissions::Full->value,
+        );
+    }
+
+    /**
+     * base org filter
+     */
+    protected function canBaseOrg(string $can): string
+    {
+        return sprintf(
+            "entity.%s->'$.base' = %d",
+            $can,
+            BasePermissions::Organization->value,
+        );
+    }
+
+    /**
+     * base team filter
+     */
+    protected function canBaseTeam(string $can): string
+    {
+        return sprintf(
+            "(entity.%s->'$.base' = %d
+                AND users2teams.teams_id = entity.team)",
+            $can,
+            BasePermissions::Team->value,
+        );
+    }
+
+    /**
+     * base user filter
+     * entities are accessible for admins too
+     */
+    protected function canBaseUser(string $can): string
+    {
+        return sprintf(
+            "(entity.%s->'$.base' = %d
+                AND entity.userid = %s
+                AND users2teams.teams_id = entity.team)",
+            $can,
+            BasePermissions::User->value,
+            $this->entity->Users->isAdmin
+                ? 'users2teams.users_id'
+                : ':userid',
+        );
+    }
+
+    /**
+     * base user only filter
+     * entities are listed only if we own them
+     */
+    protected function canBaseUserOnly(string $can): string
+    {
+        return sprintf(
+            "(entity.%s->'$.base' = %d
+                AND entity.userid = :userid
+                AND users2teams.teams_id = entity.team)",
+            $can,
+            BasePermissions::UserOnly->value,
+        );
+    }
+
+    /**
+     * teams filter
+     */
+    protected function canTeams(string $can): string
+    {
+        // ultra admin has userid=null during cli eln export so we use the team id
+        $teamsOfUser = array($this->entity->Users->userData['team']);
+
+        if ($this->entity->Users->userData['userid'] !== null) {
+            $UsersHelper = new UsersHelper($this->entity->Users->userData['userid']);
+            $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
+        }
+
+        if (!empty($teamsOfUser)) {
+            // JSON_OVERLAPS checks for the intersection of two arrays
+            // for instance [4,5,6] vs [2,6] has 6 in common -> 1 (true)
+            return sprintf(
+                "JSON_OVERLAPS(entity.%s->'$.teams', CAST('[%s]' AS JSON))",
+                $can,
+                implode(', ', $teamsOfUser),
+            );
+        }
+        return '0';
+    }
+
+    /**
+     * teamgroups filter
+     */
+    protected function canTeamGroups(string $can): string
+    {
+        $teamgroupsOfUser = array_column($this->entity->TeamGroups->readGroupsFromUser(), 'id');
+        if (!empty($teamgroupsOfUser)) {
+            // JSON_OVERLAPS checks for the intersection of two arrays
+            // for instance [4,5,6] vs [2,6] has 6 in common -> 1 (true)
+            return sprintf(
+                "JSON_OVERLAPS(entity.%s->'$.teamgroups', CAST('[%s]' AS JSON))",
+                $can,
+                implode(', ', $teamgroupsOfUser),
+            );
+        }
+        return '0';
+    }
+
+    /**
+     * users filter
+     */
+    protected function canUsers(string $can): string
+    {
+        return ":userid MEMBER OF (entity.$can->>'$.users')";
+    }
+
     private function tags(): void
     {
         $this->selectSql[] = "GROUP_CONCAT(
@@ -288,132 +435,5 @@ class EntitySqlBuilder
             LEFT JOIN teams ON (entity.team = teams.id)',
             $this->entity->Users->team ?? 0,
         );
-    }
-
-    /**
-     * anon filter
-     */
-    private function canAnon(string $can): string
-    {
-        return sprintf(
-            "entity.%s->'$.base' = %s",
-            $can,
-            BasePermissions::Full->value,
-        );
-    }
-
-    /**
-     * base pub filter
-     */
-    private function canBasePub(string $can): string
-    {
-        return sprintf(
-            "entity.%s->'$.base' = %d",
-            $can,
-            BasePermissions::Full->value,
-        );
-    }
-
-    /**
-     * base org filter
-     */
-    private function canBaseOrg(string $can): string
-    {
-        return sprintf(
-            "entity.%s->'$.base' = %d",
-            $can,
-            BasePermissions::Organization->value,
-        );
-    }
-
-    /**
-     * base team filter
-     */
-    private function canBaseTeam(string $can): string
-    {
-        return sprintf(
-            "(entity.%s->'$.base' = %d
-                AND users2teams.teams_id = entity.team)",
-            $can,
-            BasePermissions::Team->value,
-        );
-    }
-
-    /**
-     * base user filter
-     * entities are accessible for admins too
-     */
-    private function canBaseUser(string $can): string
-    {
-        return sprintf(
-            "(entity.%s->'$.base' = %d
-                AND entity.userid = %s
-                AND users2teams.teams_id = entity.team)",
-            $can,
-            BasePermissions::User->value,
-            $this->entity->Users->isAdmin
-                ? 'users2teams.users_id'
-                : ':userid',
-        );
-    }
-
-    /**
-     * base user only filter
-     * entities are listed only if we own them
-     */
-    private function canBaseUserOnly(string $can): string
-    {
-        return sprintf(
-            "(entity.%s->'$.base' = %d
-                AND entity.userid = :userid
-                AND users2teams.teams_id = entity.team)",
-            $can,
-            BasePermissions::UserOnly->value,
-        );
-    }
-
-    /**
-     * teams filter
-     */
-    private function canTeams(string $can): string
-    {
-        $UsersHelper = new UsersHelper($this->entity->Users->userData['userid']);
-        $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
-        if (!empty($teamsOfUser)) {
-            // JSON_OVERLAPS checks for the intersection of two arrays
-            // for instance [4,5,6] vs [2,6] has 6 in common -> 1 (true)
-            return sprintf(
-                "JSON_OVERLAPS(entity.%s->'$.teams', CAST('[%s]' AS JSON))",
-                $can,
-                implode(', ', $teamsOfUser),
-            );
-        }
-        return '0';
-    }
-
-    /**
-     * teamgroups filter
-     */
-    private function canTeamGroups(string $can): string
-    {
-        $teamgroupsOfUser = array_column($this->entity->TeamGroups->readGroupsFromUser(), 'id');
-        if (!empty($teamgroupsOfUser)) {
-            // JSON_OVERLAPS checks for the intersection of two arrays
-            // for instance [4,5,6] vs [2,6] has 6 in common -> 1 (true)
-            return sprintf(
-                "JSON_OVERLAPS(entity.%s->'$.teamgroups', CAST('[%s]' AS JSON))",
-                $can,
-                implode(', ', $teamgroupsOfUser),
-            );
-        }
-        return '0';
-    }
-
-    /**
-     * users filter
-     */
-    private function canUsers(string $can): string
-    {
-        return ":userid MEMBER OF (entity.$can->>'$.users')";
     }
 }

@@ -24,10 +24,15 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('importFileInput')?.addEventListener('change', async function(event) {
     const importOptionsDiv = document.getElementById('importOptionsDiv') as HTMLElement;
     importOptionsDiv.removeAttribute('hidden');
+    const attachedFile = document.getElementById('attachedFile') as HTMLElement;
+    attachedFile.removeAttribute('hidden');
     const input = event.target as HTMLInputElement;
     const errorDivId = input.id + '_errorDiv';
     // make sure previous error message is removed first
     document.getElementById(errorDivId)?.remove();
+    // display the selected file name on screen
+    const fileName = input.files[0]?.name || '';
+    document.getElementById('fileName').textContent = fileName;
     const maxsize = await ApiC.getJson('import').then(json => json.max_filesize);
     if (input.files[0].size > maxsize) {
       const errorDiv = document.createElement('div');
@@ -118,9 +123,12 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
 
+    if (el.matches('[data-action="show-file-input"]')) {
+      document.getElementById('importFileInput').click();
+    }
     // CREATE EXPORT
     if (el.matches('[data-action="create-export"]')) {
-      const params = collectForm(document.getElementById('exportForm'), false);
+      const params = collectForm(document.getElementById('exportForm'));
       const urlParams = new URLSearchParams(params as URLSearchParams);
       ApiC.post('exports', {
         experiments: urlParams.get('experiments'),

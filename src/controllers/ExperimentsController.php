@@ -17,16 +17,15 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\Teams;
+use Elabftw\Models\Templates;
+use Override;
 
 /**
  * For experiments.php
  */
-class ExperimentsController extends AbstractEntityController
+final class ExperimentsController extends AbstractEntityController
 {
-    /**
-     * Constructor
-     */
-    public function __construct(App $app, Experiments $entity)
+    public function __construct(App $app, Experiments | Templates $entity)
     {
         parent::__construct($app, $entity);
 
@@ -35,5 +34,14 @@ class ExperimentsController extends AbstractEntityController
         $this->categoryArr = $Category->readAll();
         $Status = new ExperimentsStatus($Teams);
         $this->statusArr = $Status->readAll();
+    }
+
+    #[Override]
+    protected function getPageTitle(): string
+    {
+        if ($this->Entity instanceof Experiments) {
+            return ngettext('Experiment', 'Experiments', 2);
+        }
+        return _('Experiment templates');
     }
 }

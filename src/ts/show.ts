@@ -20,23 +20,198 @@ import {
 import { Action, Model } from './interfaces';
 import 'bootstrap/js/src/modal.js';
 import i18next from 'i18next';
-import EntityClass from './Entity.class';
 import FavTag from './FavTag.class';
 import { Api } from './Apiv2.class';
+import { SearchSyntaxHighlighting } from './SearchSyntaxHighlighting.class';
+declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('info')) {
     return;
   }
   const about = document.getElementById('info').dataset;
-  // only run in show mode or on search page (which is kinda show mode too)
-  const pages = ['show', 'search'];
-  if (!pages.includes(about.page)) {
+  // only run in show mode
+  if (about.page !== 'show') {
     return;
+  }
+  const params = new URLSearchParams(document.location.search.slice(1));
+
+  // SEARCH RELATED CODE
+  const searchInput = document.getElementById('extendedArea') as HTMLInputElement;
+  SearchSyntaxHighlighting.init(searchInput);
+
+  // TomSelect for extra fields search select
+  new TomSelect('#metakey', {
+    plugins: [
+      'dropdown_input',
+      'remove_button',
+    ],
+  });
+  // a filter helper can be a select or an input (for date and extrafield), so we need a function to get its value
+  function getFilterValueFromElement(element: HTMLElement): string {
+    const escapeDoubleQuotes = (string: string): string => {
+      // escape double quotes if not already escaped
+      return string.replace(/(?<!\\)"/g, '\\"');
+    };
+    const handleDate = (): string => {
+      const date = (document.getElementById('date') as HTMLInputElement).value;
+      const dateTo = (document.getElementById('dateTo') as HTMLInputElement).value;
+      const dateOperatorEl = document.getElementById('dateOperator') as HTMLSelectElement;
+      const dateOperator = dateOperatorEl.options[dateOperatorEl.selectedIndex].value;
+      if (date === '') {
+        return '';
+      }
+      if (dateTo === '') {
+        return dateOperator + date;
+      }
+      return date + '..' + dateTo;
+    };
+    const handleMetadata = (): string => {
+      const metakeyEl = document.getElementById('metakey') as HTMLSelectElement;
+      const metakey = metakeyEl.options[metakeyEl.selectedIndex].value;
+      const metavalue = (document.getElementById('metavalue') as HTMLInputElement).value;
+      if (metakey === '' || metavalue === '') {
+        return '';
+      }
+      const keyQuotes = getQuotes(metakey);
+      const valueQuotes = getQuotes(metavalue);
+      return keyQuotes + escapeDoubleQuotes(metakey) + keyQuotes + ':' + valueQuotes + escapeDoubleQuotes(metavalue) + valueQuotes;
+    };
+    if (element instanceof HTMLSelectElement) {
+      // clear action
+      if (element.options[element.selectedIndex].dataset.action === 'clear') {
+        return '';
+      }
+      if (element.id === 'dateOperator') {
+        return handleDate();
+      }
+      if (element.id === 'metakey') {
+        return handleMetadata();
+      }
+      return escapeDoubleQuotes(element.options[element.selectedIndex].text);
+    }
+    if (element instanceof HTMLInputElement) {
+      if (element.id === 'date') {
+        return handleDate();
+      }
+      if (element.id === 'dateTo') {
+        return handleDate();
+      }
+      if (element.id === 'metavalue') {
+        return handleMetadata();
+      }
+    }
+    return '😶';
+  }
+
+  // don't add quotes unless we need them (space or some special chars exist)
+  function getQuotes(filterValue: string): string {
+    let quotes = '';
+    if ([' ', '&', '|', '!', ':', '(', ')', '\'', '"'].some(value => filterValue.includes(value))) {
+      quotes = '"';
+    }
+    return quotes;
+  }
+
+  // add a change event listener to all elements that helps constructing the query string
+  document.querySelectorAll('.filterHelper').forEach(el => {
+    el.addEventListener('change', event => {
+      const elem = event.currentTarget as HTMLElement;
+      const curVal = (document.getElementById('extendedArea') as HTMLInputElement).value;
+      const hasInput = curVal.length != 0;
+      const hasSpace = curVal.endsWith(' ');
+      const addSpace = hasInput ? (hasSpace ? '' : ' ') : '';
+      let filterName = elem.dataset.filter ? elem.dataset.filter : (elem as HTMLInputElement).name;
+
+      // look if the filter key already exists in the search input
+      // paste the regex on regex101.com to understand it
+      const baseRegex = '(?:(?:"((?:\\\\"|(?:(?!")).)+)")|(?:\'((?:\\\\\'|(?:(?!\')).)+)\')|([^\\s:\'"()&|!]+))';
+      const operatorRegex = '(?:[<>]=?|!?=)?';
+      let valueRegex = baseRegex;
+
+      if (filterName === 'date') {
+        // date can use operator
+        valueRegex = operatorRegex + baseRegex;
+      }
+      if (filterName === 'extrafield') {
+        // extrafield has key and value so we need the regex above twice
+        valueRegex = baseRegex + ':' + baseRegex;
+      }
+      const regex = new RegExp(filterName + ':' + valueRegex + '\\s?');
+      const found = curVal.match(regex);
+      // default value is clearing everything
+      let filter = '';
+      let filterValue = getFilterValueFromElement(elem as HTMLElement);
+      let quotes = getQuotes(filterValue);
+      // but if we have a correct value, we add the filter
+      if (filterValue !== '') {
+        if (filterName === 'date') {
+          quotes = '';
+        }
+
+        if (filterName === '(?:author|group)') {
+          filterName = filterValue.split(':')[0];
+          filterValue = filterValue.substring(filterName.length + 1);
+        }
+
+        filter = filterName + ':' + quotes + filterValue + quotes;
+
+        if (filterName === 'extrafield') {
+          filter = `${filterName}:${filterValue}`;
+        }
+      }
+
+      // add additional filter at cursor position
+      if (key.ctrl || key.command) {
+        const pos = searchInput.selectionStart;
+        const val = searchInput.value;
+        const start = val.substring(0, pos);
+        const end = val.substring(pos, val.length);
+        const hasSpaceBefore = val.substring(pos - 1, pos) === ' ';
+        const hasSpaceAfter = val.substring(pos, pos + 1) === ' ';
+        const insert = (hasSpaceBefore ? '' : pos === 0 ? '' : ' ') + filter + (hasSpaceAfter ? '' : ' ');
+        searchInput.value = start + insert + end;
+        SearchSyntaxHighlighting.update(searchInput.value);
+        return;
+      }
+
+      if (found) {
+        searchInput.value = curVal.replace(regex, filter + (filter === '' ? '' : ' '));
+      } else {
+        searchInput.value = searchInput.value + addSpace + filter;
+      }
+      SearchSyntaxHighlighting.update(searchInput.value);
+    });
+  });
+  document.querySelectorAll('.filterAuto').forEach(el => {
+    el.addEventListener('change', event => {
+      const url = new URL(window.location.href);
+      const elem = event.target as HTMLSelectElement;
+      const elemValue = elem.options[elem.selectedIndex].value;
+      url.searchParams.set(elem.name, elemValue);
+      // also add it to the main input form
+      addHiddenInputToMainSearchForm(elem.name, elemValue);
+
+      window.history.replaceState({}, '', url.toString());
+      reloadEntitiesShow();
+    });
+  });
+  // END SEARCH RELATED CODE
+
+  function addHiddenInputToMainSearchForm(name: string, value: string): void
+  {
+    const form = document.getElementById('mainSearchForm');
+    const hiddenInputId = `${name}_hiddenInput`;
+    document.getElementById(hiddenInputId)?.remove();
+    const input = document.createElement('input');
+    input.hidden = true;
+    input.name = name;
+    input.value = value;
+    input.id = hiddenInputId;
+    form.appendChild(input);
   }
 
   const entity = getEntity();
-  const EntityC = new EntityClass(entity.type);
   const FavTagC = new FavTag();
   const ApiC = new Api();
 
@@ -114,7 +289,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (state.expanded) {
       const linkEl = document.querySelector('[data-action="expand-all-entities"]') as HTMLLinkElement;
       linkEl.dataset.status = 'opened';
-      linkEl.textContent = linkEl.dataset.collapse;
       document.querySelectorAll('[data-action="toggle-body"]').forEach((toggleButton: HTMLButtonElement) => {
         toggleButton.click();
       });
@@ -189,7 +363,9 @@ document.addEventListener('DOMContentLoaded', () => {
       (el as HTMLButtonElement).disabled = true;
       ApiC.notifOnSaved = false;
       const ajaxs = [];
-      const params = collectForm(document.getElementById('multiChangesForm'));
+      const form = document.getElementById('multiChangesForm');
+      const params = collectForm(form);
+      clearForm(form);
       ['canread', 'canwrite'].forEach(can => {
         // TODO replace with hasOwn when https://github.com/microsoft/TypeScript/issues/44253 is closed
         if (Object.prototype.hasOwnProperty.call(params, can)) {
@@ -252,10 +428,6 @@ document.addEventListener('DOMContentLoaded', () => {
       el.classList.add('selected');
       reloadEntitiesShow(el.dataset.tag);
 
-    // TOGGLE PIN
-    } else if (el.matches('[data-action="toggle-pin"]')) {
-      ApiC.patch(`${entity.type}/${parseInt(el.dataset.id, 10)}`, {'action': Action.Pin}).then(() => el.closest('.entity').remove());
-
     // remove a favtag
     } else if (el.matches('[data-action="destroy-favtags"]')) {
       FavTagC.destroy(parseInt(el.dataset.id, 10)).then(() => reloadElements(['favtagsTagsDiv']));
@@ -275,11 +447,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // CHECK AN ENTITY BOX
     } else if (el.matches('[data-action="checkbox-entity"]')) {
-      ['advancedSelectOptions', 'withSelected'].forEach(id => {
+      ['withSelected'].forEach(id => {
         const el = document.getElementById(id);
         const scroll = el.classList.contains('d-none');
         el.classList.remove('d-none');
-        if (id === 'withSelected' && scroll && el.getBoundingClientRect().bottom > 0) {
+        if (scroll && el.getBoundingClientRect().bottom > 0) {
           window.scrollBy({top: el.offsetHeight, behavior: 'instant'});
         }
       });
@@ -288,16 +460,28 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         (el.closest('.entity') as HTMLElement).style.backgroundColor = '';
       }
+      // show invert select if any checkbox is selected
+      const anyChecked = document.querySelectorAll('[data-action="checkbox-entity"]:checked').length > 0;
+      const invertSelections = document.querySelector('a[data-action="invert-entities-selection"]') as HTMLAnchorElement;
+      if (anyChecked) {
+        invertSelections?.removeAttribute('hidden');
+      } else {
+        invertSelections?.setAttribute('hidden', 'hidden');
+        // Remove withSelected actions if there are no more checked checkboxes
+        document.getElementById('withSelected')?.classList.add('d-none');
+      }
+
+    // RESTORE ENTITY
+    } else if (el.matches('[data-action="restore-entity"]')) {
+      ApiC.patch(`${el.dataset.endpoint}/${el.dataset.id}`, {state: 1}).then(() => reloadEntitiesShow());
 
     // EXPAND ALL
     } else if (el.matches('[data-action="expand-all-entities"]')) {
       event.preventDefault();
       if (el.dataset.status === 'closed') {
         el.dataset.status = 'opened';
-        el.innerText = el.dataset.collapse;
       } else {
         el.dataset.status = 'closed';
-        el.innerText = el.dataset.expand;
       }
       const status = el.dataset.status;
       document.querySelectorAll('[data-action="toggle-body"]').forEach((toggleButton: HTMLElement) => {
@@ -309,31 +493,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         toggleButton.click();
       });
+      const icon = el.querySelector('i');
+      icon.classList.toggle('fa-maximize');
+      icon.classList.toggle('fa-minimize');
 
     // SELECT ALL CHECKBOXES
-    } else if (el.matches('[data-action="select-all-entities"]')) {
+    } else if (el.matches('[data-action="toggle-select-all-entities"]')) {
       event.preventDefault();
-      // check all boxes and set background color
-      document.querySelectorAll('.entity input[type=checkbox]').forEach(box => {
-        (box as HTMLInputElement).checked = true;
-        (box.closest('.entity') as HTMLElement).style.backgroundColor = bgColor;
-      });
-      // show advanced options and withSelected menu
-      ['advancedSelectOptions', 'withSelected'].forEach(id => {
-        document.getElementById(id).classList.remove('d-none');
-      });
-
-    // UNSELECT ALL CHECKBOXES
-    } else if (el.matches('[data-action="unselect-all-entities"]')) {
-      event.preventDefault();
-      document.querySelectorAll('.entity input[type=checkbox]').forEach(box => {
-        (box as HTMLInputElement).checked = false;
-        (box.closest('.entity') as HTMLElement).style.backgroundColor = '';
-      });
-      // hide menu
-      ['advancedSelectOptions', 'withSelected'].forEach(id => {
-        document.getElementById(id).classList.add('d-none');
-      });
+      if (el.dataset.target === 'select') {
+        // check all boxes and set background color
+        document.querySelectorAll('.entity input[type=checkbox]').forEach(box => {
+          (box as HTMLInputElement).checked = true;
+          (box.closest('.entity') as HTMLElement).style.backgroundColor = bgColor;
+        });
+        document.getElementById('withSelected').classList.remove('d-none');
+        el.dataset.target = 'unselect';
+      } else {
+        document.querySelectorAll('.entity input[type=checkbox]').forEach(box => {
+          (box as HTMLInputElement).checked = false;
+          (box.closest('.entity') as HTMLElement).style.backgroundColor = '';
+        });
+        el.dataset.target = 'select';
+        document.getElementById('withSelected').classList.add('d-none');
+      }
+      const icon = el.querySelector('i');
+      icon.classList.toggle('fa-square');
+      icon.classList.toggle('fa-square-check');
+      el.nextElementSibling.removeAttribute('hidden');
 
     // INVERT SELECTION
     } else if (el.matches('[data-action="invert-entities-selection"]')) {
@@ -346,58 +532,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         (box.closest('.entity') as HTMLElement).style.backgroundColor = newBgColor;
       });
+      // Remove withSelected actions if there are no more checked checkboxes
+      const anyChecked = document.querySelectorAll('[data-action="checkbox-entity"]:checked').length > 0;
+      const withSelected = document.getElementById('withSelected') as HTMLDivElement;
+      if (anyChecked) {
+        withSelected.classList.remove('d-none');
+      } else {
+        withSelected.classList.add('d-none');
+      }
 
-
-    // THE LOCK BUTTON FOR CHECKED BOXES
-    } else if (el.matches('[data-action="lock-selected-entities"]')) {
+    // PATCH ACTIONS FOR CHECKED BOXES : lock, unlock, timestamp, archive
+    } else if (el.matches('[data-action="patch-selected-entities"]')) {
       // get the item id of all checked boxes
       const checked = getCheckedBoxes();
       if (checked.length === 0) {
         notifNothingSelected();
         return;
       }
-
-      // loop over it and lock entities
+      const action = <Action>el.dataset.what;
+      // loop over it and patch with selected action
       const results = [];
       checked.forEach(chk => {
-        results.push(EntityC.patchAction(chk.id, Action.Lock));
+        results.push(ApiC.patch(`${entity.type}/${chk.id}`, {action: action}));
       });
-
-      Promise.all(results).then(() => {
-        reloadEntitiesShow();
-      });
-
-
-    // THE TIMESTAMP BUTTON FOR CHECKED BOXES
-    } else if (el.matches('[data-action="timestamp-selected-entities"]')) {
-      const checked = getCheckedBoxes();
-      if (checked.length === 0) {
-        notifNothingSelected();
-        return;
-      }
-      // loop on it and timestamp it
-      checked.forEach(chk => {
-        EntityC.patchAction(chk.id, Action.Timestamp).then(() => reloadEntitiesShow());
-      });
-
-    // THE ARCHIVE BUTTON FOR CHECKED BOXES
-    } else if (el.matches('[data-action="archive-selected-entities"]')) {
-      // get the item id of all checked boxes
-      const checked = getCheckedBoxes();
-      if (checked.length === 0) {
-        notifNothingSelected();
-        return;
-      }
-
-      // loop over it and lock entities
-      const results = [];
-      checked.forEach(chk => {
-        results.push(EntityC.patchAction(chk.id, Action.Archive));
-      });
-
-      Promise.all(results).then(() => {
-        reloadEntitiesShow();
-      });
+      Promise.all(results).then(() => reloadEntitiesShow());
 
     // THE DELETE BUTTON FOR CHECKED BOXES
     } else if (el.matches('[data-action="destroy-selected-entities"]')) {
@@ -412,14 +570,13 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       // loop on it and delete stuff (use curly braces to avoid implicit return)
-      checked.forEach(chk => {EntityC.destroy(chk.id).then(() => document.getElementById(`parent_${chk.randomid}`).remove());});
+      checked.forEach(chk => {ApiC.delete(`${entity.type}/${chk.id}`).then(() => document.getElementById(`parent_${chk.randomid}`).remove());});
     }
   });
 
   // we don't want the favtags opener on search page
   // when a search is done, about.page will be show
   // so check for the type param in url that will be present on search page
-  const params = new URLSearchParams(document.location.search.slice(1));
   if (!params.get('type')) {
     document.getElementById('sidepanel-buttons').removeAttribute('hidden');
   }
@@ -430,6 +587,25 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   new TomSelect('#tagFilter', {
+    onInitialize: () => {
+      // remove the placeholder input once the select is ready
+      document.getElementById('tagFilterPlaceholder').remove();
+    },
+    onChange: value => {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('tags[]');
+      value.forEach(tag => {
+        params.append('tags[]', tag);
+        url.searchParams.append('tags[]', tag);
+      });
+      if (value.length === 0) {
+        url.searchParams.delete('tags[]');
+      }
+      addHiddenInputToMainSearchForm('tags[]', value.toString());
+
+      window.history.replaceState({}, '', url.toString());
+      reloadEntitiesShow();
+    },
     plugins: {
       checkbox_options: {
         checkedClassNames: ['ts-checked'],

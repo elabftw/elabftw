@@ -19,13 +19,15 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Override;
 
 /**
  * For dev purposes: force the schema to a particular version
  */
 #[AsCommand(name: 'dev:forceschema')]
-class ForceSchema extends Command
+final class ForceSchema extends Command
 {
+    #[Override]
     protected function configure(): void
     {
         $this->setDescription('Directly set a schema number in the general config')
@@ -33,6 +35,7 @@ class ForceSchema extends Command
             ->setHelp('This command allows you to directly set the value of the schema number in the config table.');
     }
 
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $schemaNumber = $input->getArgument('schema');

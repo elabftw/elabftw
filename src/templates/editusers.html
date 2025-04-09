@@ -45,7 +45,12 @@
     <div class='pl-3'>
       {% if usersArr %}
         {% for user in usersArr %}
+          {% if App.Users.userData.is_sysadmin == '1' %}
+            {% include 'reset-user-password-modal.html' with {'userid': user.userid} %}
+          {% endif %}
+          {% include 'rm-user-from-team-modal.html' %}
           {% include('archive-user-modal.html') %}
+
           {# Modal for managing users to teams, generated for each user #}
           <div class='modal fade' id='manageUsers2teamsModal_{{ user.userid }}' tabindex='-1' role='dialog' aria-labelledby='manageTeamsForUser'>
             <div class='modal-dialog modal-xl' role='document'>
@@ -87,7 +92,7 @@
                   {% set addableToTeams = teamsArr|filter(v => v.id not in user.teams|column('id')) %}
                   {% if addableToTeams %}
                     <hr>
-                    <span class='px-2 py-1 rounded mr-2 mt-2 btn btn-primary' data-action='toggle-next'><i class='text-light fas fa-plus-circle'></i> {{ 'Add team'|trans }}</span>
+                    <span class='px-2 py-1 rounded mr-2 mt-2 btn btn-primary' data-action='toggle-next' data-opened-icon='fa-minus-circle' data-closed-icon='fa-plus-circle'><i class='text-light fas fa-plus-circle'></i> {{ 'Add team'|trans }}</span>
                     <span class='form-group form-inline mt-2' hidden>
                       <select class='form-control'>
                         {% for team in addableToTeams %}
@@ -154,7 +159,7 @@
                 </td>
 
                 <td data-label='{{ 'Internal ID'|trans }}'>
-                  <span class='hl-hover-gray p-1 rounded malleableColumn {{ not user.orgid ? 'font-italic' }}' data-endpoint='users' data-id='{{ user.userid }}' data-target='orgid'>{{ user.orgid|default('unset') }}</span>
+                  <span class='p-1 rounded {{ App.Users.userData.is_sysadmin ? 'malleableColumn hl-hover-gray' }} {{ not user.orgid ? 'font-italic' }}' data-endpoint='users' data-id='{{ user.userid }}' data-target='orgid'>{{ user.orgid|default('unset') }}</span>
                 </td>
                 <td data-label='{{ 'Is Sysadmin'|trans }}'>
                   <div class='d-flex justify-content-between'>
@@ -164,29 +169,21 @@
                     </label>
                   </div>
                 </td>
-                <td data-label='2FA'>{% if user.has_mfa_enabled %}<span title='{{ '2FA enabled'|trans }}'><i title='{{ '2FA enabled'|trans }}' class='fas fa-user-shield'></i></span>{% endif %}</td>
+                {# the hidden span with 1 or 0 is here to allow sorting the column #}
+                <td data-label='2FA'>{% if user.has_mfa_enabled %}<span title='{{ '2FA enabled'|trans }}'><i title='{{ '2FA enabled'|trans }}' class='fas fa-user-shield'></i></span><span hidden>1</span>{% else %}<span hidden>0</span>{% endif %}</td>
                 <td data-label='{{ 'Actions'|trans }}'>
-                  {% if App.Users.userData.is_sysadmin == '1' %}
-                    {# TODO have a modal window for this #}
-                    <button class='btn p-2 hl-hover-gray text-center mr-1' title='{{ 'Reset user password'|trans }}' data-action='toggle-next'>
-                      <i class='fas fa-fw fa-key'></i>
-                    </button>
-                    <div hidden class='input-group'>
-                      <input class='form-control' minlength='{{ App.Config.configArr.min_password_length }}' title='{{ 'Minimum password length: %d.'|trans|format(App.Config.configArr.min_password_length) }}' placeholder='{{ 'Set new password'|trans }}' type='password' id='resetUserPasswordInput_{{ user.userid }}' autocomplete='new-password' pattern='{{ passwordInputPattern|e('html_attr') }}' />
-                      <div class='input-group-append'>
-                        <span class='btn btn-light input-border' tabindex='-1' data-action='toggle-password' data-target='resetUserPasswordInput_{{ user.userid }}'><i class='fas fa-eye' aria-hidden='true'></i></span>
-                      </div>
-                      <div class='input-group-append'>
-                        <button type='button' data-action='reset-user-password' data-userid='{{ user.userid }}' class='btn btn-primary'>{{ 'Save'|trans }}</button>
-                      </div>
-                    </div>
-                  {% endif %}
                   {# MORE OPTIONS MENU #}
                   <div class='dropdown'>
                     <button class='btn p-2 hl-hover-gray text-center ' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' type='button'>
                       <i class='fas fa-ellipsis-v fa-fw'></i>
                     </button>
                     <div class='dropdown-menu dropdown-menu-right'>
+                      {# RESET USER PASSWORD (SYSADMIN ONLY) #}
+                      {% if App.Users.userData.is_sysadmin == '1' %}
+                        <button type='button' class='btn btn-dropdown-item dropdown-item' data-action='toggle-modal' data-target='resetUserPasswordModal_{{ user.userid }}'>
+                          <i class='mr-1 fas fa-fw fa-key'></i>{{ 'Reset user password'|trans }}
+                        </button>
+                      {% endif %}
                       {# MANAGE TEAMS #}
                       {% if App.Users.userData.is_sysadmin and (App.Request.getScriptName|split('/')|last == 'sysconfig.php') %}
                         <button type='button' class='btn btn-dropdown-item dropdown-item' data-action='toggle-modal' data-target='manageUsers2teamsModal_{{ user.userid }}'>
@@ -212,6 +209,11 @@
                         {% if user.teams|filter(t => t.id == App.Users.userData.team) is empty %}
                           <div class='dropdown-item {{ App.Config.configArr.admins_import_users == '0' ? 'disabled' }}' data-action='add-user-to-team' data-team='{{ App.Users.userData.team }}' data-userid='{{ user.userid }}'>
                               <i class='fas fa-fw fa-user-plus mr-1 {{ App.Config.configArr.admins_import_users == '0' ? 'color-weak' }}'></i>{{ 'Add to team'|trans }}
+                          </div>
+                        {% else %}
+                        {# Remove from team #}
+                          <div class='dropdown-item' data-action='toggle-modal' data-target='rmUserFromTeamModal_{{ user.userid }}'>
+                              <i class='fas fa-fw fa-user-minus mr-1'></i>{{ 'Remove user from team'|trans }}
                           </div>
                         {% endif %}
                       {% endif %}
@@ -258,12 +260,12 @@
 <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Add account'|trans }}</h3>
 <div class='pl-3'>
   <p class='smallgray'>{{ 'Note: new user will need to use the "Forgot password" button on the login page to set a password.'|trans }}</p>
-  <div class='form-group'>
+  <form class='form-group' id='createUserForm'>
     <div class='row mb-2'>
       {# TEAM #}
       <div class='col-md-6'>
         <label for='create-user-team' class='col-form-label'>{{ 'Team'|trans }}</label>
-        <select {{ App.Request.getScriptName|split('/')|last == 'admin.php' ? 'disabled' }} class='form-control custom-control-inline' name='team' id='create-user-team'>
+        <select {{ App.Request.getScriptName|split('/')|last == 'admin.php' ? 'disabled' }} class='form-control custom-control-inline' name='team' id='create-user-team' data-no-blank='1'>
           {% for team in teamsArr %}
             <option value='{{ team.id }}' {{ App.Users.userData.team == team.id ? " selected='selected'" }}>{{ team.name }}</option>
           {% endfor %}
@@ -273,7 +275,7 @@
       {# GROUP #}
       <div class='col-md-6'>
         <label for='create-user-group' class='col-form-label'>{{ 'Permission group'|trans }}</label>
-        <select class='form-control custom-control-inline' name='usergroup' id='create-user-group'>
+        <select class='form-control custom-control-inline' name='usergroup' id='create-user-group' data-no-blank='1'>
           {% if App.Users.userData.is_sysadmin %}
             <option value='1'>Sysadmins</option>
           {% endif %}
@@ -306,7 +308,15 @@
 
     {# SUBMIT #}
     <div class='col-md-12 text-center mt-2'>
-      <button type='button' data-action='create-user' class='btn btn-primary'>{{ 'Create'|trans }}</button>
+      <button type='submit' data-action='create-user' id='initialCreateUserBtn' data-check-archived='1' class='btn btn-primary'>{{ 'Create'|trans }}</button>
+    </div>
+  </form>
+  <div hidden class='box mb-3' id='archivedUsersFound'>
+    <i class='fas fa-warning mr-1'></i><h5 class='d-inline'>{{ 'Found archived users with same email address:'|trans }}</h5>
+    <ul id='archivedUsersFoundList' class='list-group mt-2'>
+    </ul>
+    <div class='text-center mt-2'>
+      <button type='submit' data-action='create-user' data-check-archived='0' class='btn btn-primary'>{{ 'Create a new account anyway'|trans }}</button>
     </div>
   </div>
 </div>

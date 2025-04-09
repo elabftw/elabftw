@@ -16,8 +16,9 @@ use Elabftw\Enums\Notifications;
 use Elabftw\Interfaces\MailableInterface;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
+use Override;
 
-class CommentCreated extends AbstractNotifications implements MailableInterface
+final class CommentCreated extends AbstractNotifications implements MailableInterface
 {
     protected const PREF = 'notif_comment_created';
 
@@ -28,6 +29,7 @@ class CommentCreated extends AbstractNotifications implements MailableInterface
         parent::__construct();
     }
 
+    #[Override]
     public function getEmail(): array
     {
         $commenter = new Users($this->commenterId);
@@ -44,6 +46,7 @@ class CommentCreated extends AbstractNotifications implements MailableInterface
         );
     }
 
+    #[Override]
     protected function getBody(): array
     {
         return array(

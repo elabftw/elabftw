@@ -13,28 +13,30 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DateTimeImmutable;
-use Elabftw\Elabftw\ContentParams;
-use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FilterableColumn;
+use Elabftw\Params\ContentParams;
+use Elabftw\Params\DisplayParams;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\InsertTagsTrait;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
+use Override;
 
 /**
  * All about the database items
  */
-class Items extends AbstractConcreteEntity
+final class Items extends AbstractConcreteEntity
 {
     use InsertTagsTrait;
 
     public EntityType $entityType = EntityType::Items;
 
+    #[Override]
     public function create(
         ?int $template = -1,
         ?string $title = null,
@@ -42,6 +44,8 @@ class Items extends AbstractConcreteEntity
         ?DateTimeImmutable $date = null,
         ?string $canread = null,
         ?string $canwrite = null,
+        ?bool $canreadIsImmutable = false,
+        ?bool $canwriteIsImmutable = false,
         array $tags = array(),
         ?int $category = null,
         ?int $status = null,
@@ -52,6 +56,8 @@ class Items extends AbstractConcreteEntity
         bool $forceExpTpl = false,
         string $defaultTemplateHtml = '',
         string $defaultTemplateMd = '',
+        // specific to Items
+        ?string $canbook = '',
     ): int {
         // TODO maybe allow creating an Item without any template, like for experiments
         $ItemsTypes = new ItemsTypes($this->Users);
@@ -65,14 +71,17 @@ class Items extends AbstractConcreteEntity
         $body = Filter::body($body ?? $itemTemplate['body']);
         $canread ??= $itemTemplate['canread_target'];
         $canwrite ??= $itemTemplate['canwrite_target'];
+        $canreadIsImmutable = $itemTemplate['canread_is_immutable'];
+        $canwriteIsImmutable = $itemTemplate['canwrite_is_immutable'];
+        $canbook = $canread;
         $status ??= $itemTemplate['status'];
         $metadata ??= $itemTemplate['metadata'];
         // figure out the custom id
         $customId = $this->getNextCustomId($template);
         $contentType = $itemTemplate['content_type'];
 
-        $sql = 'INSERT INTO items(team, title, date, status, body, userid, category, elabid, canread, canwrite, canbook, metadata, custom_id, content_type, rating)
-            VALUES(:team, :title, :date, :status, :body, :userid, :category, :elabid, :canread, :canwrite, :canread, :metadata, :custom_id, :content_type, :rating)';
+        $sql = 'INSERT INTO items(team, title, date, status, body, userid, category, elabid, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canbook, metadata, custom_id, content_type, rating)
+            VALUES(:team, :title, :date, :status, :body, :userid, :category, :elabid, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canbook, :metadata, :custom_id, :content_type, :rating)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindParam(':title', $title);
@@ -84,6 +93,9 @@ class Items extends AbstractConcreteEntity
         $req->bindValue(':elabid', Tools::generateElabid());
         $req->bindParam(':canread', $canread);
         $req->bindParam(':canwrite', $canwrite);
+        $req->bindParam(':canread_is_immutable', $canreadIsImmutable, PDO::PARAM_INT);
+        $req->bindParam(':canwrite_is_immutable', $canwriteIsImmutable, PDO::PARAM_INT);
+        $req->bindParam(':canbook', $canbook);
         $req->bindParam(':metadata', $metadata);
         $req->bindParam(':custom_id', $customId, PDO::PARAM_INT);
         $req->bindParam(':content_type', $contentType, PDO::PARAM_INT);
@@ -105,7 +117,7 @@ class Items extends AbstractConcreteEntity
     public function readBookable(): array
     {
         $Request = Request::createFromGlobals();
-        $DisplayParams = new DisplayParams($this->Users, $Request, EntityType::Items);
+        $DisplayParams = new DisplayParams($this->Users, EntityType::Items, $Request->query);
         // we only want the bookable type of items
         $DisplayParams->appendFilterSql(FilterableColumn::Bookable, 1);
         // make limit very big because we want to see ALL the bookable items here
@@ -129,7 +141,8 @@ class Items extends AbstractConcreteEntity
         return $this->Users->isAdmin || (bool) $this->entityData['book_users_can_in_past'];
     }
 
-    public function duplicate(bool $copyFiles = false): int
+    #[Override]
+    public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int
     {
         $this->canOrExplode('read');
 
@@ -153,10 +166,12 @@ class Items extends AbstractConcreteEntity
         $this->ItemsLinks->duplicate($this->id, $newId);
         $this->Steps->duplicate($this->id, $newId);
         $this->Tags->copyTags($newId);
-        // also add a link to the previous resource
-        $ItemsLinks = new Items2ItemsLinks($fresh);
-        $ItemsLinks->setId($this->id);
-        $ItemsLinks->postAction(Action::Create, array());
+        // also add a link to the original resource
+        if ($linkToOriginal) {
+            $ItemsLinks = new Items2ItemsLinks($fresh);
+            $ItemsLinks->setId($this->id);
+            $ItemsLinks->postAction(Action::Create, array());
+        }
         if ($copyFiles) {
             $this->Uploads->duplicate($fresh);
         }
@@ -164,6 +179,7 @@ class Items extends AbstractConcreteEntity
         return $newId;
     }
 
+    #[Override]
     public function destroy(): bool
     {
         parent::destroy();

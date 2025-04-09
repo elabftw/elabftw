@@ -12,19 +12,18 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\TeamParam;
 use Elabftw\Enums\Action;
-use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\RestInterface;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Notifications\OnboardingEmail;
+use Elabftw\Params\TeamParam;
 use Elabftw\Services\Filter;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\SetIdTrait;
+use Override;
 use PDO;
 use RuntimeException;
 
@@ -34,7 +33,7 @@ use function trim;
 /**
  * All about the teams
  */
-class Teams implements RestInterface
+final class Teams extends AbstractRest
 {
     use SetIdTrait;
 
@@ -42,11 +41,9 @@ class Teams implements RestInterface
 
     public bool $bypassReadPermission = false;
 
-    protected Db $Db;
-
     public function __construct(public Users $Users, ?int $id = null)
     {
-        $this->Db = Db::getConnection();
+        parent::__construct();
         if ($id === null && ($Users->userData['team'] ?? 0) !== 0) {
             $id = $Users->userData['team'];
         }
@@ -113,11 +110,13 @@ class Teams implements RestInterface
         $Users2Teams->rmUserFromTeams($userid, $rmFromTeams);
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return 'api/v2/teams/';
     }
 
+    #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
         $this->canWriteOrExplode();
@@ -130,6 +129,7 @@ class Teams implements RestInterface
     /**
      * Read one team
      */
+    #[Override]
     public function readOne(): array
     {
         $this->canReadOrExplode();
@@ -144,7 +144,8 @@ class Teams implements RestInterface
     /**
      * Read all teams (only for sysadmin via api, otherwise set overrideReadPermissions to true)
      */
-    public function readAll(): array
+    #[Override]
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $this->canReadOrExplode();
         $sql = 'SELECT * FROM teams ORDER BY name ASC';
@@ -167,6 +168,7 @@ class Teams implements RestInterface
         return $req->fetchAll();
     }
 
+    #[Override]
     public function patch(Action $action, array $params): array
     {
         $this->canWriteOrExplode();
@@ -189,6 +191,7 @@ class Teams implements RestInterface
     /**
      * Delete a team only if all the stats are at zero
      */
+    #[Override]
     public function destroy(): bool
     {
         // check for stats, should be 0
@@ -229,13 +232,32 @@ class Teams implements RestInterface
     public function getStats(int $team): array
     {
         $sql = 'SELECT
-        (SELECT COUNT(users.userid) FROM users CROSS JOIN users2teams ON (users2teams.users_id = users.userid) WHERE users2teams.teams_id = :team) AS totusers,
-        (SELECT COUNT(items.id) FROM items WHERE items.team = :team AND items.state = :state) AS totdb,
-        (SELECT COUNT(experiments.id) FROM experiments LEFT JOIN users ON (experiments.userid = users.userid) CROSS JOIN users2teams ON (users2teams.users_id = users.userid) WHERE users2teams.teams_id = :team AND experiments.state = :state) AS totxp,
-        (SELECT COUNT(experiments.id) FROM experiments LEFT JOIN users ON (experiments.userid = users.userid) CROSS JOIN users2teams ON (users2teams.users_id = users.userid) WHERE users2teams.teams_id = :team AND experiments.state = :state AND experiments.timestamped = 1) AS totxpts';
+            (SELECT COUNT(users.userid)
+                FROM users
+                CROSS JOIN users2teams
+                    ON (users2teams.users_id = users.userid)
+                WHERE users2teams.teams_id = :team
+            ) AS totusers,
+            (SELECT COUNT(items.id)
+                FROM items
+                WHERE items.team = :team
+                    AND items.state IN (:state_normal, :state_archived)
+            ) AS totdb,
+            (SELECT COUNT(experiments.id)
+                FROM experiments
+                WHERE experiments.team = :team
+                    AND experiments.state IN (:state_normal, :state_archived)
+            ) AS totxp,
+            (SELECT COUNT(experiments.id)
+                FROM experiments
+                WHERE experiments.team = :team
+                    AND experiments.state IN (:state_normal, :state_archived)
+                    AND experiments.timestamped = 1
+            ) AS totxpts';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $team, PDO::PARAM_INT);
-        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
+        $req->bindValue(':state_normal', State::Normal->value, PDO::PARAM_INT);
+        $req->bindValue(':state_archived', State::Archived->value, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         $res = $req->fetch(PDO::FETCH_NAMED);
@@ -279,15 +301,11 @@ class Teams implements RestInterface
     {
         $name = Filter::title($name);
 
-        $sql = 'INSERT INTO teams (name, common_template, common_template_md, link_name, link_href, force_canread, force_canwrite) VALUES (:name, :common_template, :common_template_md, :link_name, :link_href, :force_canread, :force_canwrite)';
+        $sql = 'INSERT INTO teams (name, common_template, common_template_md) VALUES (:name, :common_template, :common_template_md)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindValue(':common_template', Templates::defaultBody);
         $req->bindValue(':common_template_md', Templates::defaultBodyMd);
-        $req->bindValue(':link_name', 'Documentation');
-        $req->bindValue(':link_href', 'https://doc.elabftw.net');
-        $req->bindValue(':force_canread', BasePermissions::Team->toJson());
-        $req->bindValue(':force_canwrite', BasePermissions::Team->toJson());
         $this->Db->execute($req);
         // grab the team ID
         $newId = $this->Db->lastInsertId();

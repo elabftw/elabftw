@@ -52,6 +52,7 @@
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='12'>LDAP</button></li>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='13'>{{ 'External auth'|trans }}</button></li>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='14'>{{ 'Audit Logs'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='15'>{{ 'Inventory'|trans }}</button></li>
 </ul>
 
 {# loading spinner #}
@@ -63,9 +64,16 @@
 <div data-tabcontent='1' hidden>
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Usage Statistics'|trans }}</h3>
   <div class='pl-3 mb-5'>
+    <h4>{{ 'Users'|trans }}</h4>
     <div class='d-flex justify-content-between'>
       <div>{{ 'Teams'|trans }}: {{ info.teams_count }} &ndash; {{ 'Members'|trans }}: {{ info.active_users_count }} &ndash; {% trans %}Experiment{% plural info.experiments_count %}Experiments{% endtrans %}: {{ info.experiments_count }} ({{ info.experiments_timestamped_count }} timestamped) &ndash; {{ 'Resources'|trans }}: {{ info.items_count }}</div>
-      <div><a href='make.php?format=report' class='btn btn-primary'>{{ 'Generate report'|trans }}</a></div>
+      <div><a href='/api/v2/reports?format=csv&scope=instance' class='btn btn-primary'>{{ 'Get users report'|trans }}</a></div>
+    </div>
+
+    <h4>{{ 'Stored containers'|trans }}</h4>
+    <div class='d-flex justify-content-between'>
+      <div>{{ 'Stored containers: %d bound to experiments and %d bound to resources'|trans|format(containersCount.experiments, containersCount.items) }}</div>
+      <div><a href='/api/v2/reports?format=csv&scope=stored_compounds' class='btn btn-primary'>{{ 'Get inventory report'|trans }}</a></div>
     </div>
   </div>
 
@@ -474,7 +482,7 @@
         {{ 'Note: the text below is a template and must be edited and saved.'|trans|msg('ok', false) }}
       {% endif %}
       {% if configArr.debug -%}
-        <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element, no-unused-disable: suppress errors from tinymce] -->
+        <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element, no-unused-disable, require-sri: suppress errors from tinymce] -->
       {%- endif %}
       <textarea id='{{ slug }}Input' class='mceditable'>
         {{ configArr[slug]|default('Set your text here.')|raw }}
@@ -804,7 +812,7 @@
       <ul class='list-group' id='idpsDiv'>
         {% for idp in idpsArr %}
           <li class='list-group-item'>
-            <h4 data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button'>
+            <h4 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button'>
               <i class='fas fa-caret-right fa-fw mr-2'></i>
               <label class='switch ucp-align'>
                 <input type='checkbox' autocomplete='off' data-trigger='change' data-model='idps/{{ idp.id }}' data-target='enabled' {{ idp.enabled ? 'checked="checked"' }} id='enabled_{{ idp.id }}'>
@@ -855,7 +863,7 @@
       <label for='ldap_host' class='col-form-label'>{{ 'LDAP Host'|trans }}</label>
       <input class='form-control col-md-3' type='text' data-trigger='blur' data-model='config' data-target='ldap_host' placeholder='ldap' value='{{ App.Config.configArr.ldap_host }}' id='ldap_host' />
     </div>
-    <p class='smallgray'>{{ 'Domain name or IP address'|trans }}</p>
+    <p class='smallgray'>{{ 'Domain name or IP address. You can specify multiple entries for redundancy, separated by commas.'|trans }}</p>
     <hr>
 
     <div class='d-flex justify-content-between'>
@@ -1075,6 +1083,15 @@
         {% endfor %}
       </tbody>
     </table>
+  </div>
+</div>
+
+{# INVENTORY #}
+<div data-tabcontent='15' hidden>
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Inventory'|trans }}</h3>
+  <div class='pl-3 mb-5'>
+    <div><a href='/api/v2/reports?format=csv&scope=stored_compounds' class='btn btn-primary'>{{ 'Get inventory report'|trans }}</a></div>
+    {% include 'storage-list.html' with {'storage_editable': true} %}
   </div>
 </div>
 

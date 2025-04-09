@@ -1,0 +1,55 @@
+{# Modal for importing from PubChem #}
+<div class='modal fade' id='importFromPubChemModal' tabindex='-1' role='dialog' aria-labelledby='importFromPubChemModalLabel'>
+  <div class='modal-dialog modal-lg' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='importFromPubChemModalLabel'><i class='fas fa-fw fa-cloud-arrow-down'></i> {{ 'Import from PubChem'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        <div class='mb-2'>
+          <p>{{ 'Import a chemical compound from %sPubChem online database%s: you can specify directly the CID of the compound you wish to import, or search from its CAS number.'|trans|format('<a href="https://pubchem.ncbi.nlm.nih.gov/" class="external-link" target="_blank" rel="noopener">', '</a>')|raw }}</p>
+
+          {# CID #}
+          <label for='pubchem-cid'>PubChem CID</label>
+          <div class='input-group'>
+            <div class='input-group-prepend'>
+              <span class='input-group-text' id='pubchem-cid-descriptor'>CID</span>
+            </div>
+            <input type='number' class='form-control' required placeholder='2519' min='1' id='pubchem-cid' aria-describedby='pubchem-cid-descriptor'>
+            <div class='input-group-append'>
+              <button type='button' class='btn btn-primary' data-action='search-pubchem' data-from='cid'>{{ 'Search'|trans }}</button>
+            </div>
+          </div>
+
+          {# CAS #}
+          <label class='mt-3' for='pubchem-cas'>{{ 'CAS number'|trans }}</label>
+          <div class='input-group'>
+            <div class='input-group-prepend'>
+              <span class='input-group-text' id='pubchem-cas-descriptor'>CAS</span>
+            </div>
+            <input pattern='^\d{2,7}-\d{2}-\d$' required title='{{ 'Please enter a valid CAS number (e.g., 58-08-2)'|trans }}' placeholder='58-08-2' class='form-control' id='pubchem-cas' aria-describedby='pubchem-cas-descriptor' />
+            <div class='input-group-append'>
+              <button type='button' class='btn btn-primary' data-action='search-pubchem' data-from='cas'>{{ 'Search'|trans }}</button>
+            </div>
+          </div>
+          <div id='pubChemSearchResultDiv' class='mt-3' hidden>
+            <div id='pubChemSearchResultTableDiv' class='mt-3 overflow-auto'></div>
+            {# href will get set by javascript #}
+            <a target='_blank' id='viewOnPubChemLink' class='btn btn-ghost external-link' rel='noopener' href='#'>
+              {{ 'View on PubChem'|trans }}
+            </a>
+
+          </div>
+        </div>
+      </div>
+
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='button' class='btn btn-primary' data-dismiss='modal' data-action='import-compound' disabled>{{ 'Import'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -11,13 +11,14 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\ExtraFieldsOrderingParams;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Meaning;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Params\EntityParams;
+use Elabftw\Params\ExtraFieldsOrderingParams;
 use Elabftw\Services\Check;
 
 class ExperimentsTest extends \PHPUnit\Framework\TestCase
@@ -80,6 +81,14 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('<p>Body</p>', $entityData['body']);
     }
 
+    public function testUpdateIncorrectState(): void
+    {
+        $new = $this->Experiments->create(template: 0);
+        $this->Experiments->setId($new);
+        $this->expectException(ImproperActionException::class);
+        $this->Experiments->update(new EntityParams('state', '42'));
+    }
+
     public function testUpdateVisibility(): void
     {
         $this->Experiments->setId(1);
@@ -97,6 +106,14 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
     {
         $this->Experiments->setId(1);
         $this->assertIsArray($this->Experiments->patch(Action::Update, array('category' => '3')));
+    }
+
+    public function testUpdateWithNegativeInt(): void
+    {
+        $this->Experiments->setId(1);
+        $this->assertIsArray($this->Experiments->patch(Action::Update, array('category' => '-3', 'custom_id' => '-5')));
+        $this->assertNull($this->Experiments->entityData['category']);
+        $this->assertNull($this->Experiments->entityData['custom_id']);
     }
 
     public function testSign(): void

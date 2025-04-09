@@ -15,30 +15,23 @@ namespace Elabftw\Elabftw;
 use Elabftw\Auth\Local;
 use Elabftw\Enums\Classification;
 use Elabftw\Enums\PasswordComplexity;
-use Elabftw\Enums\RequestableAction;
 use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\ApiKeys;
-use Elabftw\Models\Changelog;
 use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\ItemsTypes;
-use Elabftw\Models\RequestActions;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\TeamTags;
-use Elabftw\Models\Templates;
 use Exception;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Settings for user
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = _('Settings');
 
 /** @psalm-suppress UncaughtThrowInGlobalScope */
 $Response = new Response();
@@ -52,29 +45,11 @@ try {
     $TeamGroups = new TeamGroups($App->Users);
     $TeamTags = new TeamTags($App->Users);
 
-    $Templates = new Templates($App->Users);
     $Category = new ExperimentsCategories($Teams);
     $Status = new ExperimentsStatus($Teams);
     $entityData = array();
     $changelogData = array();
     $metadataGroups = array();
-    if ($App->Request->query->has('templateid')) {
-        $Templates->setId($App->Request->query->getInt('templateid'));
-        $entityData = $Templates->readOne();
-        $Metadata = new Metadata($Templates->entityData['metadata']);
-        $metadataGroups = $Metadata->getGroups();
-        $Changelog = new Changelog($Templates);
-        $changelogData = $Changelog->readAll();
-    }
-
-    if ($App->Request->query->get('mode') === 'edit') {
-        $Templates->canOrExplode('write');
-        // exclusive edit mode
-        $redirectResponse = $Templates->ExclusiveEditMode->gatekeeper();
-        if ($redirectResponse instanceof RedirectResponse) {
-            $redirectResponse->prepare($App->Request)->send();
-        }
-    }
 
     // TEAM GROUPS
     $PermissionsHelper = new PermissionsHelper();
@@ -122,7 +97,6 @@ try {
 
     $template = 'ucp.html';
     $renderArr = array(
-        'Entity' => $Templates,
         'apiKeysArr' => $apiKeysArr,
         'categoryArr' => $Category->readAll(),
         'changes' => $changelogData,
@@ -133,31 +107,27 @@ try {
         'metadataGroups' => $metadataGroups,
         'scopedTeamgroupsArr' => $TeamGroups->readScopedTeamgroups(),
         'notificationsSettings' => $notificationsSettings,
+        'pageTitle' => _('Settings'),
         'passwordInputHelp' => $passwordComplexity->toHuman(),
         'passwordInputPattern' => $passwordComplexity->toPattern(),
         'statusArr' => $Status->readAll(),
         'teamTagsArr' => $TeamTags->readAll(),
-        'templatesArr' => $Templates->readAll(),
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
         'showMFA' => $showMfa,
         'usersArr' => $App->Users->readAllActiveFromTeam(),
-        'entityRequestActionsArr' => array_filter(
-            (new RequestActions($App->Users, $Templates))->readAllFull(),
-            fn(array $action): bool => $action['target'] === strtolower(RequestableAction::RemoveExclusiveEditMode->name),
-        ),
     );
-} catch (ImproperActionException $e) {
-    // show message to user
-    $template = 'error.html';
-    $renderArr = array('error' => $e->getMessage());
-    $Response->setContent($App->render($template, $renderArr));
 } catch (IllegalActionException $e) {
     // log notice and show message
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
     $template = 'error.html';
     $renderArr = array('error' => $e->getMessage());
     $Response->setContent($App->render($template, $renderArr));
-} catch (DatabaseErrorException | FilesystemErrorException $e) {
+} catch (ImproperActionException $e) {
+    // show message to user
+    $template = 'error.html';
+    $renderArr = array('error' => $e->getMessage());
+    $Response->setContent($App->render($template, $renderArr));
+} catch (DatabaseErrorException $e) {
     // log error and show message
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
     $template = 'error.html';

@@ -47,11 +47,6 @@ class UserNotificationsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->UserNotifications->readOne());
     }
 
-    public function testPostAction(): void
-    {
-        $this->assertEquals(1, $this->UserNotifications->postAction(Action::Create, array()));
-    }
-
     public function testPatch(): void
     {
         $this->assertIsArray($this->UserNotifications->patch(Action::Update, array()));

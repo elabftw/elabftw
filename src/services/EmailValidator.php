@@ -22,7 +22,7 @@ use function in_array;
 /**
  * Validate an email address for several parameters
  */
-class EmailValidator
+final class EmailValidator
 {
     private ?string $emailDomain;
 

@@ -18,19 +18,22 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Override;
 
 /**
  * Generate the translation files for typescript/javascript
  */
 #[AsCommand(name: 'dev:i18n4js')]
-class GenI18n4Js extends Command
+final class GenI18n4Js extends Command
 {
+    #[Override]
     protected function configure(): void
     {
         $this->setDescription('Generate translation files for javascript')
             ->setHelp('Generate translation files for javascript (i18next library) in ts/langs folder');
     }
 
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $fs = FsTools::getFs(dirname(__DIR__) . '/ts/langs');

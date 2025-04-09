@@ -14,24 +14,31 @@ namespace Elabftw\Models;
 
 use DateTimeImmutable;
 use Elabftw\Elabftw\ItemsTypesSqlBuilder;
-use Elabftw\Elabftw\OrderingParams;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
-use Elabftw\Enums\State;
+use Elabftw\Enums\Orderby;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\QueryParamsInterface;
+use Elabftw\Params\BaseQueryParams;
+use Elabftw\Params\OrderingParams;
 use Elabftw\Services\Filter;
+use Elabftw\Traits\RandomColorTrait;
 use Override;
 use PDO;
+use Symfony\Component\HttpFoundation\InputBag;
 
 /**
  * The kind of items you can have in the database for a team
  */
-class ItemsTypes extends AbstractTemplateEntity
+final class ItemsTypes extends AbstractTemplateEntity
 {
+    use RandomColorTrait;
+
     public EntityType $entityType = EntityType::ItemsTypes;
 
+    #[Override]
     public function create(
         ?int $template = -1,
         ?string $title = null,
@@ -39,6 +46,8 @@ class ItemsTypes extends AbstractTemplateEntity
         ?DateTimeImmutable $date = null,
         ?string $canread = null,
         ?string $canwrite = null,
+        ?bool $canreadIsImmutable = false,
+        ?bool $canwriteIsImmutable = false,
         array $tags = array(),
         ?int $category = null,
         ?int $status = null,
@@ -52,14 +61,15 @@ class ItemsTypes extends AbstractTemplateEntity
         // specific to items_types
         ?string $color = null,
     ): int {
-        $title = Filter::title($title ?? _('Default'));
         $this->isAdminOrExplode();
-        $defaultPermissions = BasePermissions::Team->toJson();
-        // TODO have a function for a random cool color? like in status
-        $color ??= '29AEB9';
 
-        $sql = 'INSERT INTO items_types(userid, title, body, team, canread, canwrite, canread_target, canwrite_target, color, rating)
-            VALUES(:userid, :title, :body, :team, :canread, :canwrite, :canread_target, :canwrite_target, :color, :rating)';
+        $title = Filter::title($title ?? _('Default'));
+        $defaultPermissions = BasePermissions::Team->toJson();
+        $color ??= $this->getSomeColor();
+        $contentType ??= $this->Users->userData['use_markdown'] === 1 ? AbstractEntity::CONTENT_MD : AbstractEntity::CONTENT_HTML;
+
+        $sql = 'INSERT INTO items_types(userid, title, body, team, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canread_target, canwrite_target, color, content_type, status, rating, metadata)
+            VALUES(:userid, :title, :body, :team, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canread_target, :canwrite_target, :color, :content_type, :status, :rating, :metadata)';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':userid', $this->Users->userid, PDO::PARAM_INT);
         $req->bindValue(':title', $title);
@@ -67,10 +77,15 @@ class ItemsTypes extends AbstractTemplateEntity
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindParam(':canread', $defaultPermissions);
         $req->bindParam(':canwrite', $defaultPermissions);
+        $req->bindParam(':canread_is_immutable', $canreadIsImmutable, PDO::PARAM_INT);
+        $req->bindParam(':canwrite_is_immutable', $canwriteIsImmutable, PDO::PARAM_INT);
         $req->bindParam(':canread_target', $defaultPermissions);
         $req->bindParam(':canwrite_target', $defaultPermissions);
         $req->bindParam(':color', $color);
+        $req->bindParam(':content_type', $contentType, PDO::PARAM_INT);
+        $req->bindParam(':status', $status);
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
+        $req->bindParam(':metadata', $metadata);
         $this->Db->execute($req);
 
         return $this->Db->lastInsertId();
@@ -90,15 +105,22 @@ class ItemsTypes extends AbstractTemplateEntity
         return (int) $req->fetchColumn();
     }
 
-    public function readAll(): array
+    #[Override]
+    public function getQueryParams(?InputBag $query = null, int $limit = 128): QueryParamsInterface
     {
+        return new BaseQueryParams(query: $query, orderby: Orderby::Ordering, limit: $limit);
+    }
+
+    #[Override]
+    public function readAll(?QueryParamsInterface $queryParams = null): array
+    {
+        $queryParams ??= $this->getQueryParams();
         $builder = new ItemsTypesSqlBuilder($this);
         $sql = $builder->getReadSqlBeforeWhere(getTags: false);
-        // first WHERE is the state, possibly including archived
-        $sql .= sprintf(' WHERE entity.state = %d', State::Normal->value);
+        $sql .= ' WHERE 1=1';
         // add the json permissions
         $sql .= $builder->getCanFilter('canread');
-        $sql .= ' GROUP BY id ORDER BY ordering ASC';
+        $sql .= $queryParams->getSql();
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
@@ -107,6 +129,7 @@ class ItemsTypes extends AbstractTemplateEntity
         return $req->fetchAll();
     }
 
+    #[Override]
     public function readOne(): array
     {
         if ($this->id === null) {
@@ -129,7 +152,8 @@ class ItemsTypes extends AbstractTemplateEntity
         return $this->entityData;
     }
 
-    public function duplicate(bool $copyFiles = false): int
+    #[Override]
+    public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int
     {
         // TODO: implement
         throw new ImproperActionException('No duplicate action for resources categories.');

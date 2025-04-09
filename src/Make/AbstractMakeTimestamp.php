@@ -18,12 +18,15 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\MakeTimestampInterface;
 use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Changelog;
 use Elabftw\Models\Users;
+use Elabftw\Params\ContentParams;
 use Elabftw\Services\MpdfProvider;
 use GuzzleHttp\Client;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
 use PDO;
+use Override;
 
 /**
  * Mother class for all timestamping actions (trusted or blockchain)
@@ -42,14 +45,22 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
         $this->checkMonthlyLimit();
     }
 
+    #[Override]
     public function getFileName(): string
     {
         return date('YmdHis') . '-timestamped.zip';
     }
 
+    #[Override]
+    public function getFileContent(): string
+    {
+        return '';
+    }
+
     /**
      * Get the data that will be timestamped and saved in the timestamp archive
      */
+    #[Override]
     public function generateData(): string
     {
         return match ($this->dataFormat) {
@@ -76,6 +87,11 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
         $req->bindParam(':when', $responseTime);
         $req->bindParam(':userid', $this->requester->userid, PDO::PARAM_INT);
         $req->bindParam(':id', $this->entity->id, PDO::PARAM_INT);
+
+        // record the action in the changelog
+        $Changelog = new Changelog($this->entity);
+        $params = new ContentParams('timestamped_at', $responseTime);
+        $Changelog->create($params);
 
         return $this->Db->execute($req);
     }

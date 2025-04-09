@@ -1,7 +1,7 @@
 {# dim the experiment a bit if it's not yours #}
 {% set randomId = random() %}
 
-<section class='entity pl-3 d-flex' id='parent_{{ randomId }}' style='--left-color: #{{ item.category_color|default('bdbdbd') }};' aria-label='{{ 'Entry'|trans }}_{{ randomId }}'>
+<section class='entity {{ Entity.entityType.value == 'experiments_templates' ? 'entity-template' }} pl-3 d-flex' id='parent_{{ randomId }}' style='--left-color: #{{ item.category_color|default('bdbdbd') }};' aria-label='{{ 'Entry'|trans }}_{{ randomId }}'>
 
   {# left part, full height: checkbox #}
   <div class='d-flex align-items-center'>
@@ -9,10 +9,21 @@
     <input autocomplete='off' type='checkbox' data-action='checkbox-entity' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.entityType.value }}' aria-label='{{ 'Select'|trans }}' class='mr-3' />
     <div class='d-flex'>
 
+      {# for templates: create from button #}
+      {% if Entity.entityType.value == 'experiments_templates' %}
+      <a data-action='create-entity' data-type='experiments' data-tplid='{{ item.id }}' href='#' class='left-icon rounded mr-3 my-1 hl-hover-gray bgnd-blue' title='{{ 'Create experiment from template'|trans }}' aria-label='{{ 'Create experiment from template'|trans }}'>
+        <i class='fas fa-file-circle-plus fa-fw'></i>
+      </a>
+      {% endif %}
       {# lock icon #}
       {% if item.locked %}
         <div class='left-icon rounded mr-3 my-1 bgnd-gray'>
           <i class='fas fa-lock fa-fw'></i>
+        </div>
+      {# deleted entry: show restore icon #}
+      {% elseif item.state == 3 %}
+      <div class='left-icon rounded mr-3 my-1 bgnd-dark' data-action='restore-entity' title='{{ 'Restore entry'|trans }}' data-endpoint='{{ Entity.entityType.value }}' data-id='{{ item.id }}'>
+          <i class='fas fa-trash-can-arrow-up fa-fw'></i>
         </div>
       {% else %}
         {# edit icon #}
@@ -39,13 +50,17 @@
         <i style='color:#{{ item.category_color|default('bdbdbd') }}' class='far fa-calendar-check fa-fw'></i>
       {% endif %}
       {# archived icon #}
-      {% if item.state == constant('Elabftw\\Enums\\State::Archived').value %}
+      {% if item.state == enum('Elabftw\\Enums\\State').Archived.value %}
         <i class='fas fa-box-archive fa-fw'></i>
+      {% endif %}
+      {# deleted icon #}
+      {% if item.state == enum('Elabftw\\Enums\\State').Deleted.value %}
+        <i class='fas fa-ban fa-fw color-danger'></i>
       {% endif %}
       {# category #}
       {% if item.category %}
       {# Note: there might be something to do with mix-blend-mode: difference to get white text on dark bg et vice-versa #}
-        <button class='btn catstat-btn category-btn mr-2' type='button' style='--bg: #{{ item.category_color|default('bdbdbd') }};line-height:normal;' data-action='add-query-filter' data-key='cat' data-value='{{ item.category|e('html_attr') }}'>{{ item.category_title }}</button>
+        <button class='btn catstat-btn category-btn mr-2' type='button' style='--bg: #{{ item.category_color|default('bdbdbd') }};line-height:normal;' data-action='add-query-filter' data-key='category' data-value='{{ item.category|e('html_attr') }}'>{{ item.category_title }}</button>
       {% endif %}
       {# status #}
       {% if item.status %}
@@ -108,15 +123,11 @@
           <span class='rating-show rounded px-1 mr-1 font-weight-bold'><i class='fas fa-star mr-1' title='☻'></i>{{ item.rating }}</span>
         {% endif %}
         <span class='item-date color-medium'>{{ item.date|date('Y-m-d') }}</span>
-        {% if isPinned %}
-          <span title='{{ 'Toggle pin'|trans }}' data-id='{{ item.id }}' data-action='toggle-pin' class='hl-hover-gray p-1 rounded'>
-            <i class='fas fa-thumbtack fa-fw'></i>
-          </span>
-        {% endif %}
+        {% include 'toggle-pin.html' with {'padding': 1, 'is_pinned': item.is_pinned, 'id': item.id} %}
       </div>
       <div class='ml-auto'>
         {# toggle body #}
-        <button type='button' class=' btn p-1 hl-hover-gray' data-type='{{ Entity.entityType.value }}' data-id='{{ item.id }}' data-toggle-plus-icon='1' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}' aria-label='{{ 'Toggle content'|trans }}'>
+        <button type='button' class=' btn p-1 hl-hover-gray' data-type='{{ Entity.entityType.value }}' data-id='{{ item.id }}' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}' aria-label='{{ 'Toggle content'|trans }}'>
           <i class='fas fa-square-plus fa-fw'></i>
         </button>
       </div>

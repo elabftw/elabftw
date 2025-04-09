@@ -37,7 +37,6 @@ $text-muted: $medium;
 
 @import 'animations';
 @import 'autocomplete';
-@import 'chemdoodle';
 @import 'footer';
 @import 'header';
 @import 'star-rating';
@@ -45,6 +44,7 @@ $text-muted: $medium;
 @import 'ove';
 @import 'search-syntax-highlighting';
 @import 'tom-select';
+@import 'tinymce-custom';
 
 /* Font is Lato */
 @font-face {
@@ -111,15 +111,25 @@ body {
 }
 
 /* little shadow on top of the screen for no reasons */
-body::before {
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+/* TinyMCE selector for body in preview excluded to prevent flashing */
+body::before,
+.mce-preview-body::before {
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
   content: '';
-  height: 10px;
   left: 0;
-  position: fixed;
   top: -10px;
   width: 100%;
+}
+
+body::before {
+  height: 10px;
+  position: fixed;
   z-index: 100;
+}
+
+.mce-preview-body::before {
+  height: 4rem;
+  position: absolute;
 }
 
 /* this is the big white thing that holds everything */
@@ -422,6 +432,16 @@ button:disabled {
     }
   }
 
+  td {
+    width: fit-content;
+
+    img {
+      object-fit: contain;
+      max-width: 100%;
+      height: auto;
+    }
+  }
+
   th {
     border-top: 0;
     white-space: nowrap;
@@ -530,11 +550,6 @@ tr:nth-child(odd) {
 /* required labels/input for extra fields */
 #metadataDiv,
 .new-field-form {
-  /* any invalid field will get this red border */
-  :invalid {
-    border: 1px solid $lightred;
-  }
-
   .required-label::after {
     color: $dangerred;
     content: ' *';
@@ -627,14 +642,19 @@ tr:nth-child(odd) {
 
 /* ENTITIES */
 .entity {
+  min-width: 100%;
+  max-width: 100%;
   background-color: $white;
   border: 1px solid $firstlevel;
   border-left: 6px solid var(--left-color);
   border-radius: 5px;
   margin: 5px auto;
-  min-width: 100%;
   opacity: var(--opacity);
   padding: 5px 10px 5px 5px;
+
+  img {
+    max-width: 100%;
+  }
 
   p {
     margin-bottom: 0;
@@ -676,6 +696,14 @@ tr:nth-child(odd) {
       color: $medium;
     }
 
+    &.bgnd-blue {
+      background-color: $elabblue;
+
+      &:hover {
+        background-color: $secondlevel;
+      }
+    }
+
     &.bgnd-dark {
       background-color: $medium;
 
@@ -685,6 +713,11 @@ tr:nth-child(odd) {
     }
   }
 }
+
+.entity-template {
+  border: 1px dashed $firstlevel;
+}
+
 
 .bgnd-gray {
   background-color: $firstlevel;
@@ -927,6 +960,10 @@ the form-control fails to do that so we do the border ourselves */
   color: $secondlevel !important;
 }
 
+.color-disabled {
+  color: $disabled !important;
+}
+
 .color-medium {
   color: $medium;
 }
@@ -1059,6 +1096,10 @@ the form-control fails to do that so we do the border ourselves */
 /* background for archived users */
 .bg-medium {
   background-color: $secondlevel;
+}
+
+.border-secondlevel {
+  border-color: $secondlevel;
 }
 
 .bg-firstlevel {
@@ -1261,6 +1302,23 @@ figure figcaption {
 /* make the markdown editor full width */
 .markdown-textarea {
   width: 100%;
+}
+
+/* styling TinyMCE preview */
+/* stylelint-disable-next-line selector-class-pattern -- permit selecting classes with underscores */
+.tox-dialog__header:has(+ .tox-dialog__content-js .mce-preview-body) {
+  padding: 8px 16px 16px !important;
+}
+
+/* stylelint-disable-next-line selector-class-pattern -- permit selecting classes with underscores */
+.tox-dialog__body-content:has(.mce-preview-body) {
+  padding: 0 16px 16px !important;
+}
+
+/* setting the height as 'auto' results in the footer element being rendered below the preview popup */
+/* stylelint-disable-next-line selector-class-pattern -- permit selecting classes with underscores */
+.tox-dialog__content-js:has(.mce-preview-body) {
+  height: 0 !important;
 }
 
 /* stylelint-disable-next-line selector-no-qualifying-type */
@@ -1481,6 +1539,14 @@ input:checked + .slider::before {
   transform: translateX(20px);
 }
 
+/* :user-invalid only activates after the user interacted with an input
+ * https://developer.mozilla.org/en-US/docs/Web/CSS/:user-invalid
+ */
+input:user-invalid {
+  border: 1px solid $dangerred;
+  box-shadow: 0 0 8px $dangerred;
+}
+
 .section-title {
   background-color: $firstlevel;
   font-size: 120%;
@@ -1548,4 +1614,41 @@ input:checked + .slider::before {
       top: 4px;
     }
   }
+}
+
+#ketcher-root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;   /* Make the editor fill the entire width */
+}
+
+.ketcher-editor-container {
+  /*flex-grow: 1; /* Make the editor grow to fill available space */
+  flex: 0 1 620px;
+  display: flex;
+  flex-direction: column;
+}
+
+.ketcher-editor-container .editor {
+  /*flex-grow: 1; /* Allow the drawing area to take up all remaining space */
+  flex: 0 1 620px;
+  min-height: 500px; /* Ensure a minimum height */
+}
+
+.ketcher-editor-container .toolbar {
+  flex-shrink: 0; /* Ensure toolbars do not shrink */
+}
+
+#storageDiv {
+  details,
+  summary {
+    margin: 10px 0;
+  }
+}
+
+/* top right button */
+.initials {
+  font-weight: bold;
+  color: $secondlevel;
+  font-size: 1.5rem;
 }

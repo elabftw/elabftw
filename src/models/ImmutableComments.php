@@ -16,7 +16,7 @@ namespace Elabftw\Models;
  * ImmutableComments are used to convey information about timestamping or signature
  * They cannot be modified or removed
  */
-class ImmutableComments extends Comments
+final class ImmutableComments extends Comments
 {
     protected int $immutable = 1;
 }

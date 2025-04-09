@@ -17,16 +17,19 @@ use Elabftw\Services\AdvancedSearchQuery\Interfaces\Term;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitable;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitor;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
+use Override;
 
-class MetadataField implements Term, Visitable
+final class MetadataField implements Term, Visitable
 {
     public function __construct(private SimpleValueWrapper $keyWrapper, private SimpleValueWrapper $valueWrapper, private ?bool $strict = null) {}
 
+    #[Override]
     public function accept(Visitor $visitor, VisitorParameters $parameters): mixed
     {
         return $visitor->visitMetadataField($this, $parameters);
     }
 
+    #[Override]
     public function getValue(): string
     {
         return $this->valueWrapper->getValue();

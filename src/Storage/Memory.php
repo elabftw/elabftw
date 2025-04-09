@@ -14,12 +14,14 @@ namespace Elabftw\Storage;
 
 use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
+use Override;
 
 /**
  * For in memory filesystem operations
  */
-class Memory extends AbstractStorage
+final class Memory extends AbstractStorage
 {
+    #[Override]
     public function getPath(string $relativePath = ''): string
     {
         // $path is not actually used here because php://memory does not provide a full file system
@@ -27,6 +29,7 @@ class Memory extends AbstractStorage
         return 'php://memory';
     }
 
+    #[Override]
     protected function getAdapter(): FilesystemAdapter
     {
         return new InMemoryFilesystemAdapter();

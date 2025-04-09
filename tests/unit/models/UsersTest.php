@@ -58,15 +58,39 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->Users->readAllFromTeam());
     }
 
+    public function testReadFromQuery(): void
+    {
+        $this->assertIsArray($this->Users->readFromQuery('', 0, true, true, true));
+        $this->assertIsArray($this->Users->readFromQuery('', 0, true, true, false));
+        $this->assertIsArray($this->Users->readFromQuery('', 0, true, false, false));
+        $this->assertIsArray($this->Users->readFromQuery('', 0, false, false, false));
+        $this->assertIsArray($this->Users->readFromQuery('Toto', 1, false, false, false));
+    }
+
     public function testUpdateAccount(): void
     {
+        // A user SHOULD NOT be able to update their own address (under default settings)
         $params = array(
             'email' => 'tatabis@yopmail.com',
             'firstname' => 'Tata',
             'lastname' => 'Yep',
             'orcid' => '0000-0002-7494-5555',
         );
-        $result = (new Users(4, 2, new Users(4, 2)))->patch(Action::Update, $params);
+        $this->expectException(ImproperActionException::class);
+        (new Users(4, 2, new Users(4, 2)))->patch(Action::Update, $params);
+    }
+
+    public function testUpdateAccountAsSysadmin(): void
+    {
+        // A sysadmin SHOULD be able to update any email address.
+        $sysadminUser = new Users(1, 1);
+        $params = array(
+            'email' => 'tatabis@yopmail.com',
+            'firstname' => 'Tata',
+            'lastname' => 'Yep',
+            'orcid' => '0000-0002-7494-5555',
+        );
+        $result = (new Users(4, 2, $sysadminUser))->patch(Action::Update, $params);
         $this->assertEquals('tatabis@yopmail.com', $result['email']);
         $this->assertEquals('Yep', $result['lastname']);
     }
@@ -75,6 +99,18 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(ImproperActionException::class);
         (new Users(4, 2, new Users(4, 2)))->patch(Action::Update, array('orcid' => 'blah'));
+    }
+
+    public function testClearOrcid(): void
+    {
+        $this->Users->patch(Action::Update, array('orcid' => '0000-0002-7494-5555'));
+        $this->assertEquals('0000-0002-7494-5555', $this->Users->userData['orcid']);
+
+        $this->Users->patch(Action::Update, array('orcid' => null));
+        $this->assertEmpty($this->Users->userData['orcid'], message: 'Orcid is not empty.');
+
+        $this->Users->patch(Action::Update, array('orcid' => ''));
+        $this->assertEmpty($this->Users->userData['orcid'], message: 'Orcid is not empty.');
     }
 
     public function testUpdatePreferences(): void
@@ -195,7 +231,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         // tata in bravo
         $Admin = new Users(5, 2);
         $Users = new Users(6, 2, $Admin);
-        $this->assertIsArray($Users->patch(Action::Lock, array()));
+        $this->assertIsArray($Users->patch(Action::Archive, array()));
     }
 
     public function testCreateUser(): void
@@ -208,7 +244,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $this->assertIsInt($this->Users->createOne('blahblah2@yop.fr', array('Bravo'), 'blah2', 'yop', 'somePassword!', Usergroup::Admin, true, false));
     }
 
-    public function testUnArchiveButAnotherUserExists(): void
+    public function testUnarchiveButAnotherUserExists(): void
     {
         // this user is archived already
         $Admin = new Users(5, 2);
@@ -217,7 +253,19 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         ExistingUser::fromScratch($Users->userData['email'], array('Alpha'), 'f', 'l', Usergroup::User, false, false);
         // try to unarchive
         $this->expectException(ImproperActionException::class);
-        $Users->patch(Action::Lock, array());
+        $Users->patch(Action::Archive, array());
+    }
+
+    public function testArchiveWithoutPermission(): void
+    {
+        $Admin = new Users(5, 2);
+        $Users = new Users(6, 2, $Admin);
+        $Config = Config::getConfig();
+        $Config->patch(Action::Update, array('admins_archive_users' => 0));
+        $this->expectException(ImproperActionException::class);
+        $Users->patch(Action::Archive, array());
+
+        $Config->patch(Action::Update, array('admins_archive_users' => 1));
     }
 
     public function testReadAllActiveFromTeam(): void

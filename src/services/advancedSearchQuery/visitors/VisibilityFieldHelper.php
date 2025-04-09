@@ -24,7 +24,7 @@ use function preg_grep;
 use function preg_quote;
 use function str_replace;
 
-class VisibilityFieldHelper
+final class VisibilityFieldHelper
 {
     public string $possibleInput = '';
 

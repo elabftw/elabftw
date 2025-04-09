@@ -15,7 +15,7 @@ namespace Elabftw\Models;
 /**
  * Status for items/resources
  */
-class ItemsStatus extends AbstractStatus
+final class ItemsStatus extends AbstractStatus
 {
     protected string $table = 'items_status';
 }

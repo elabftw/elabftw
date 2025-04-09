@@ -12,11 +12,9 @@ import { MathJaxObject } from 'mathjax-full/js/components/startup';
 import tinymce from 'tinymce/tinymce';
 import TableSorting from './TableSorting.class';
 declare const MathJax: MathJaxObject;
-import EntityClass from './Entity.class';
 import $ from 'jquery';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
-import { ChemDoodle } from '@deltablot/chemdoodle-web-mini/dist/chemdoodle.min.js';
 import { getEditor } from './Editor.class';
 import TomSelect from 'tom-select/dist/esm/tom-select';
 import TomSelectCheckboxOptions from 'tom-select/dist/esm/plugins/checkbox_options/plugin';
@@ -121,35 +119,40 @@ export function listenTrigger(elementId: string = ''): void {
  * Returns an object with name => value
  * Add data-ignore='1' to elements that should not be considered
  */
-export function collectForm(form: HTMLElement, blank = true): object {
-  let params = {};
+export function collectForm(form: HTMLElement): object {
+  const inputs = [];
   ['input', 'select', 'textarea'].forEach(inp => {
     form.querySelectorAll(inp).forEach((input: HTMLInputElement) => {
-      const el = input;
-      if (el.reportValidity() === false) {
-        throw new Error('Invalid input found! Aborting.');
-      }
-      let value = el.value;
-      if (el.type === 'checkbox') {
-        value = el.checked ? 'on' : 'off';
-      }
-      if (el.dataset.ignore !== '1' && el.disabled === false) {
-        params = Object.assign(params, {[input.name]: value});
-      }
-      if (blank) {
-        el.value = '';
-      }
+      inputs.push(input);
     });
   });
+
+  let params = {};
+  inputs.forEach(input => {
+    const el = input;
+    if (el.reportValidity() === false) {
+      throw new Error('Invalid input found! Aborting.');
+    }
+    let value = el.value;
+    if (el.type === 'checkbox') {
+      value = el.checked ? 'on' : 'off';
+    }
+    if (el.dataset.ignore !== '1' && el.disabled === false) {
+      params = Object.assign(params, {[input.name]: value});
+    }
+  });
+
   return removeEmpty(params);
 }
 
 export function clearForm(form: HTMLElement): void {
   ['input', 'select', 'textarea'].forEach(inp => {
     form.querySelectorAll(inp).forEach((input: HTMLInputElement) => {
-      input.value = '';
-      if (input.type === 'checkbox') {
-        input.checked = false;
+      if (input.dataset.noBlank !== '1') {
+        input.value = '';
+        if (input.type === 'checkbox') {
+          input.checked = false;
+        }
       }
     });
   });
@@ -223,6 +226,9 @@ export function notif(info: ResponseMsg): void {
 
 // DISPLAY 2D MOL FILES
 export function displayMolFiles(): void {
+  return;
+}
+/*
   // loop all the mol files and display the molecule with ChemDoodle
   $.each($('.molFile'), function() {
     // id of the canvas to attach the viewer to
@@ -236,6 +242,7 @@ export function displayMolFiles(): void {
     });
   });
 }
+*/
 
 // insert a get param in the url and reload the page
 export function insertParamAndReload(key: string, value: string): void {
@@ -323,7 +330,7 @@ export async function reloadEntitiesShow(tag = ''): Promise<void | Response> {
 export async function reloadElements(elementIds: string[]): Promise<void> {
   elementIds = elementIds.filter((elementId: string): boolean => {
     if (!document.getElementById(elementId)) {
-      console.error(`Could not find element with id ${elementId} to reload!`);
+      console.warn(`Could not find element with id ${elementId} to reload!`);
       return false;
     }
     return true;
@@ -335,6 +342,11 @@ export async function reloadElements(elementIds: string[]): Promise<void> {
 
   const html = await fetchCurrentPage();
   elementIds.forEach(elementId => {
+    if (!html.getElementById(elementId)) {
+      console.warn(`Could not find element with id ${elementId} anymore, removing it`);
+      document.getElementById(elementId).remove();
+      return;
+    }
     document.getElementById(elementId).innerHTML = html.getElementById(elementId).innerHTML;
     listenTrigger(elementId);
   });
@@ -347,31 +359,23 @@ export async function reloadElements(elementIds: string[]): Promise<void> {
  */
 export function adjustHiddenState(): void {
   document.querySelectorAll('[data-save-hidden]').forEach((el: HTMLElement) => {
-    const targetElement = el.dataset.saveHidden;
-    // failsafe
-    if (!targetElement) {
-      return;
-    }
-    const localStorageKey = targetElement + '-isHidden';
-    const button = document.querySelector(`[data-toggle-target="${targetElement}"]`) || el.previousElementSibling;
+    const localStorageKey = el.dataset.saveHidden + '-isHidden';
+    const localStorageValue = localStorage.getItem(localStorageKey);
+    const button = document.querySelector(`[data-toggle-target="${el.dataset.saveHidden}"]`) || el.previousElementSibling;
     if (!button) {
       return;
     }
-    const caretIcon =  button.querySelector('i');
-    if (localStorage.getItem(localStorageKey) === '1') {
+    if (localStorageValue === '1') {
       el.hidden = true;
-      caretIcon?.classList.remove('fa-caret-down');
-      if (targetElement !== 'filtersDiv') {
-        caretIcon?.classList.add('fa-caret-right');
-      }
       button.setAttribute('aria-expanded', 'false');
     // make sure to explicitly check for the value, because the key might not exist!
-    } else if (localStorage.getItem(localStorageKey) === '0') {
+    } else if (localStorageValue === '0') {
       el.removeAttribute('hidden');
-      caretIcon?.classList.remove('fa-caret-right');
-      caretIcon?.classList.add('fa-caret-down');
       button.setAttribute('aria-expanded', 'true');
     }
+    // now make the button icon match the new state
+    const isHidden = el.hasAttribute('hidden');
+    toggleIcon((button as HTMLElement), isHidden);
   });
 }
 
@@ -442,6 +446,21 @@ export function addAutocompleteToTagInputs(): void {
         const res = [];
         json.forEach(tag => {
           res.push(tag.tag);
+        });
+        response(res);
+      });
+    },
+  });
+}
+
+export function addAutocompleteToCompoundsInputs(): void {
+  const ApiC = new Api();
+  $('[data-autocomplete="compounds"]').autocomplete({
+    source: function(request: Record<string, string>, response: (data) => void): void {
+      ApiC.getJson(`${Model.Compounds}?q=${request.term}`).then(json => {
+        const res = [];
+        json.forEach(cpd => {
+          res.push(`${cpd.id} - ${cpd.name}`);
         });
         response(res);
       });
@@ -526,14 +545,19 @@ export function generateMetadataLink(): void {
   });
 }
 
-// transform the + icon in - and vice versa
-export function togglePlusIcon(plusMinusIcon: HTMLElement): void {
-  if (plusMinusIcon.classList.contains('fa-square-plus')) {
-    plusMinusIcon.classList.remove('fa-square-plus');
-    plusMinusIcon.classList.add('fa-square-minus');
+export function toggleIcon(el: HTMLElement, isHidden: boolean): void
+{
+  const iconEl = el.querySelector('i');
+  // we assume that if element has closed-icon, it also has opened-icon
+  if (!iconEl || !el.dataset.closedIcon) {
+    return;
+  }
+  if (isHidden) {
+    iconEl.classList.add(el.dataset.closedIcon);
+    iconEl.classList.remove(el.dataset.openedIcon);
   } else {
-    plusMinusIcon.classList.add('fa-square-plus');
-    plusMinusIcon.classList.remove('fa-square-minus');
+    iconEl.classList.remove(el.dataset.closedIcon);
+    iconEl.classList.add(el.dataset.openedIcon);
   }
 }
 
@@ -622,8 +646,8 @@ export async function saveStringAsFile(filename: string, content: string|Promise
 export async function updateEntityBody(): Promise<void> {
   const editor = getEditor();
   const entity = getEntity();
-  const EntityC = new EntityClass(entity.type);
-  return EntityC.update(entity.id, Target.Body, editor.getContent()).then(response => response.json()).then(json => {
+  const ApiC = new Api();
+  return ApiC.patch(`${entity.type}/${entity.id}`, {body: editor.getContent()}).then(response => response.json()).then(json => {
     if (editor.type === 'tiny') {
       // set the editor as non dirty so we can navigate out without a warning to clear
       tinymce.activeEditor.setDirty(false);
@@ -689,4 +713,67 @@ export function sizeToMb(size: string): number {
   }
 
   return value * units[unit];
+}
+
+export function toggleEditCompound(json: object): void {
+  const textParams = [
+    'id',
+    'name',
+    'smiles',
+    'inchi',
+    'inchi_key',
+    'iupac_name',
+    'molecular_formula',
+    'molecular_weight',
+    'pubchem_cid',
+    'userid_human',
+    'team_name',
+    'cas_number',
+    'ec_number',
+  ];
+  textParams.forEach(param => {
+    (document.getElementById(`compoundInput-${param}`) as HTMLInputElement).value = json[param];
+  });
+
+  const binaryParams = [
+    'is_corrosive',
+    'is_explosive',
+    'is_flammable',
+    'is_gas_under_pressure',
+    'is_hazardous2env',
+    'is_hazardous2health',
+    'is_serious_health_hazard',
+    'is_oxidising',
+    'is_toxic',
+    'is_radioactive',
+    'is_controlled',
+    'is_antibiotic_precursor',
+    'is_explosive_precursor',
+    'is_drug_precursor',
+    'is_cmr',
+    'is_nano',
+  ];
+  binaryParams.forEach(param => {
+    const input = (document.getElementById(`addCompound${param}`) as HTMLInputElement);
+    input.checked = json[param] === 1;
+  });
+  document.getElementById('editCompoundModalSaveBtn').dataset.compoundId = json['id'];
+  $('#editCompoundModal').modal('toggle');
+}
+
+export function mkSpin(el: HTMLElement): string {
+  // we want the button to keep the same size, so store width/height as style attribute
+  const { width, height } = el.getBoundingClientRect();
+  el.style.width = `${width}px`;
+  el.style.height = `${height}px`;
+  // keep the old html around so we can restore it
+  const elOldHTML = el.innerHTML;
+  el.setAttribute('disabled', 'disabled');
+  el.innerHTML = '<span class="spinner"></span>';
+  return elOldHTML;
+}
+
+export function mkSpinStop(el: HTMLElement, oldHTML: string): void {
+  el.innerHTML = oldHTML;
+  el.removeAttribute('disabled');
 }

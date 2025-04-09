@@ -19,19 +19,27 @@ use Imagick;
 use ImagickDraw;
 use ImagickPixel;
 use RobThree\Auth\Providers\Qr\IQRCodeProvider;
+use RuntimeException;
+use Override;
 
 use function strlen;
 
 /**
- * Make a PNG from one or several experiments or db items showing only minimal info with QR codes
+ * Generate a PNG image with a QR Code pointing to the URL of the Entity, and optionally include the title
  */
-class MakeQrPng extends AbstractMake implements StringMakerInterface
+final class MakeQrPng extends AbstractMake implements StringMakerInterface
 {
     private const int DEFAULT_IMAGE_SIZE_PX = 250;
 
+    private const int CHAR_WIDTH_PX = 8;
+
     private const int LINE_HEIGHT_PX = 20;
 
-    private const int SPLIT_FACTOR = 8;
+    private const int DEFAULT_MAX_LINE_CHARS = 42;
+
+    private const int DEFAULT_MAX_LINES = 2;
+
+    private const int SPACE_UNDER_QR = 15;
 
     protected string $contentType = 'image/png';
 
@@ -42,14 +50,16 @@ class MakeQrPng extends AbstractMake implements StringMakerInterface
         private AbstractEntity $entity,
         private int $size,
         private bool $withTitle = true,
+        private int $maxLines = 0,
+        private int $maxLineChars = 0,
     ) {
         // 0 means no query parameter for size
         $this->size = $this->size > 0 ? $this->size : self::DEFAULT_IMAGE_SIZE_PX;
+        $this->maxLineChars = $this->maxLineChars > 0 ? $this->maxLineChars : self::DEFAULT_MAX_LINE_CHARS;
+        $this->maxLines = $this->maxLines > 0 ? $this->maxLines : self::DEFAULT_MAX_LINES;
     }
 
-    /**
-     * Get the name of the generated file
-     */
+    #[Override]
     public function getFileName(): string
     {
         return sprintf(
@@ -58,6 +68,7 @@ class MakeQrPng extends AbstractMake implements StringMakerInterface
         );
     }
 
+    #[Override]
     public function getFileContent(): string
     {
         $qrCode = new Imagick();
@@ -69,39 +80,56 @@ class MakeQrPng extends AbstractMake implements StringMakerInterface
         $draw->setFont(dirname(__DIR__, 2) . '/vendor/mpdf/mpdf/ttfonts/Sun-ExtA.ttf');
         $draw->setFontSize($this->fontSize);
 
-        $splitTitle = mb_str_split($this->entity->entityData['title'], $this->getTitleSplitSize());
-        if (!$this->withTitle) {
-            $splitTitle = array();
-        }
-        $fullHeight = $qrCode->getImageHeight() + (count($splitTitle) * self::LINE_HEIGHT_PX);
 
         // Create a new image to hold the qrcode + text
         $newImage = new Imagick();
-        $newImage->newImage($qrCode->getImageWidth(), $fullHeight, new ImagickPixel('white'));
+        $qrCodeWidth = $qrCode->getImageWidth();
+
+        $splitTitle = array();
+        $titleWidth = 0;
+        if ($this->withTitle) {
+            $splitTitle = $this->splitTitle($this->entity->entityData['title']);
+            $titleWidth =  mb_strlen($splitTitle[0]) * self::CHAR_WIDTH_PX;
+        }
+
+        if ($titleWidth < $qrCodeWidth) {
+            $titleWidth = $qrCodeWidth;
+        }
+        $qrCodeWidth += $titleWidth - $qrCodeWidth;
+        $height = $qrCode->getImageHeight() + (count($splitTitle) * self::LINE_HEIGHT_PX);
+        $newImage->newImage($qrCodeWidth, $height, new ImagickPixel('white'));
         // Copy the original image to the new image
         $newImage->compositeImage($qrCode, Imagick::COMPOSITE_OVER, 0, 0);
         // Draw the text on the new image
+        $titleMarginLeft = 10;
+        if ($this->size < 100) {
+            $titleMarginLeft = 5;
+        }
         foreach ($splitTitle as $key => $line) {
-            $newImage->annotateImage($draw, 10, $qrCode->getImageHeight() + ($key * 20), 0, $line);
+            $newImage->annotateImage($draw, $titleMarginLeft, $qrCode->getImageHeight() + (((int) $key + 1) * self::SPACE_UNDER_QR), 0, $line);
         }
         $newImage->setImageFormat('png');
 
         $blob = $newImage->getImageBlob();
+        if ($blob === null) {
+            throw new RuntimeException('Error generating the QR code image :/');
+        }
         // use strlen for binary data, not mb_strlen
         $this->contentSize = strlen($blob);
         return $blob;
     }
 
-    /**
-     * @return positive-int
-     */
-    private function getTitleSplitSize(): int
+    private function splitTitle(string $title): array
     {
-        $res = abs(intdiv($this->size, self::SPLIT_FACTOR));
-        if ($res <= 1) {
-            return 1;
+        $result = array();
+        $length = mb_strlen($title);
+
+        for ($i = 0; $i < $length; $i += $this->maxLineChars) {
+            $result[] = mb_substr($title, $i, $this->maxLineChars);
+            if (count($result) === $this->maxLines) {
+                break;
+            }
         }
-        // remove one to fix swallowed up characters
-        return $res - 1;
+        return $result;
     }
 }

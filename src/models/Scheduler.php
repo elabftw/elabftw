@@ -14,15 +14,15 @@ namespace Elabftw\Models;
 
 use DateTime;
 use DateTimeImmutable;
-use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\RestInterface;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Notifications\EventDeleted;
 use Elabftw\Services\Filter;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\EntityTrait;
+use Override;
 use PDO;
 
 use function array_walk;
@@ -33,7 +33,7 @@ use function substr;
 /**
  * All about the team's scheduler
  */
-class Scheduler implements RestInterface
+final class Scheduler extends AbstractRest
 {
     use EntityTrait;
 
@@ -52,7 +52,7 @@ class Scheduler implements RestInterface
         ?string $end = null,
         private ?int $category = null,
     ) {
-        $this->Db = Db::getConnection();
+        parent::__construct();
         $this->setId($id);
         if ($start !== null) {
             $this->start = $start;
@@ -62,6 +62,7 @@ class Scheduler implements RestInterface
         }
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         // We don't use team.php?item= because the id will be the id of the event upon creation
@@ -77,6 +78,7 @@ class Scheduler implements RestInterface
      * - start
      * - end
      */
+    #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
         if ($this->Items->id === null) {
@@ -115,6 +117,7 @@ class Scheduler implements RestInterface
      * Read info from an event id or read the events from an item
      * The api controller doesn't know what kind of read we want
      */
+    #[Override]
     public function readOne(): array
     {
         if ($this->id !== null) {
@@ -126,7 +129,8 @@ class Scheduler implements RestInterface
     /**
      * Return an array with events for all items of the team
      */
-    public function readAll(): array
+    #[Override]
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         // the title of the event is title + Firstname Lastname of the user who booked it
         $sql = sprintf(
@@ -177,6 +181,7 @@ class Scheduler implements RestInterface
         return $req->fetchAll();
     }
 
+    #[Override]
     public function patch(Action $action, array $params): array
     {
         $this->canWriteOrExplode();
@@ -197,6 +202,7 @@ class Scheduler implements RestInterface
     /**
      * Remove an event
      */
+    #[Override]
     public function destroy(): bool
     {
         $this->canWriteOrExplode();

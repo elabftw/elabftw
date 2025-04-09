@@ -22,14 +22,16 @@ use Elabftw\Enums\Scope;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SortableTrait;
+use Override;
 use PDO;
 
 /**
  * All about the templates
  */
-class Templates extends AbstractTemplateEntity
+final class Templates extends AbstractTemplateEntity
 {
     use SortableTrait;
 
@@ -42,10 +44,9 @@ class Templates extends AbstractTemplateEntity
 
     public const string defaultBodyMd = "# Goal\n\n# Procedure\n\n# Results\n\n";
 
-    public string $page = 'ucp';
-
     public EntityType $entityType = EntityType::Templates;
 
+    #[Override]
     public function create(
         ?int $template = -1,
         ?string $title = null,
@@ -53,6 +54,8 @@ class Templates extends AbstractTemplateEntity
         ?DateTimeImmutable $date = null,
         ?string $canread = null,
         ?string $canwrite = null,
+        ?bool $canreadIsImmutable = false,
+        ?bool $canwriteIsImmutable = false,
         array $tags = array(),
         ?int $category = null,
         ?int $status = null,
@@ -65,19 +68,21 @@ class Templates extends AbstractTemplateEntity
         string $defaultTemplateMd = '',
     ): int {
         $title = Filter::title($title ?? _('Untitled'));
-        $canread = BasePermissions::Team->toJson();
-        $canwrite = BasePermissions::User->toJson();
 
-        if (isset($this->Users->userData['default_read'])) {
+        // CANREAD/CANWRITE
+        if (isset($this->Users->userData['default_read']) && $canread === null) {
             $canread = $this->Users->userData['default_read'];
         }
-        if (isset($this->Users->userData['default_write'])) {
+        if (isset($this->Users->userData['default_write']) && $canwrite === null) {
             $canwrite = $this->Users->userData['default_write'];
         }
+        $canread ??= BasePermissions::Team->toJson();
+        $canwrite ??= BasePermissions::User->toJson();
+
         $contentType ??= $this->Users->userData['use_markdown'] === 1 ? AbstractEntity::CONTENT_MD : AbstractEntity::CONTENT_HTML;
 
-        $sql = 'INSERT INTO experiments_templates(team, title, body, userid, category, status, metadata, canread, canwrite, canread_target, canwrite_target, content_type, rating)
-            VALUES(:team, :title, :body, :userid, :category, :status, :metadata, :canread, :canwrite, :canread_target, :canwrite_target, :content_type, :rating)';
+        $sql = 'INSERT INTO experiments_templates(team, title, body, userid, category, status, metadata, canread, canwrite, canread_target, canwrite_target, content_type, rating, canread_is_immutable, canwrite_is_immutable)
+            VALUES(:team, :title, :body, :userid, :category, :status, :metadata, :canread, :canwrite, :canread_target, :canwrite_target, :content_type, :rating, :canread_is_immutable, :canwrite_is_immutable)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindParam(':title', $title);
@@ -88,6 +93,8 @@ class Templates extends AbstractTemplateEntity
         $req->bindParam(':metadata', $metadata);
         $req->bindParam(':canread', $canread);
         $req->bindParam(':canwrite', $canwrite);
+        $req->bindParam(':canread_is_immutable', $canreadIsImmutable, PDO::PARAM_INT);
+        $req->bindParam(':canwrite_is_immutable', $canwriteIsImmutable, PDO::PARAM_INT);
         $req->bindParam(':canread_target', $canread);
         $req->bindParam(':canwrite_target', $canwrite);
         $req->bindParam(':content_type', $contentType, PDO::PARAM_INT);
@@ -98,14 +105,15 @@ class Templates extends AbstractTemplateEntity
         // now pin the newly created template so it directly appears in Create menu
         $fresh = new self($this->Users, $id);
         $Pins = new Pins($fresh);
-        $Pins->togglePin();
+        $Pins->addToPinned();
         return $id;
     }
 
     /**
      * Duplicate a template from someone else
      */
-    public function duplicate(bool $copyFiles = false): int
+    #[Override]
+    public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int
     {
         $this->canOrExplode('read');
         $title = $this->entityData['title'] . ' I';
@@ -142,13 +150,14 @@ class Templates extends AbstractTemplateEntity
             $this->Uploads->duplicate($fresh);
         }
 
-        // now pin the newly created template so it directly appears in Create menu
+        // pin the newly created template so it directly appears in Create menu
         $Pins = new Pins($fresh);
-        $Pins->togglePin();
+        $Pins->addToPinned();
 
         return $newId;
     }
 
+    #[Override]
     public function readOne(): array
     {
         if ($this->id === null) {
@@ -171,7 +180,7 @@ class Templates extends AbstractTemplateEntity
         $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll();
         $this->entityData['items_links'] = $this->ItemsLinks->readAll();
         $this->entityData['sharelink'] = sprintf(
-            '%s/%s&mode=view&templateid=%d',
+            '%s/%s?mode=view&id=%d',
             Config::fromEnv('SITE_URL'),
             EntityType::Templates->toPage(),
             $this->id
@@ -194,7 +203,8 @@ class Templates extends AbstractTemplateEntity
      * Get a list of fullname + id + title of template
      * Use this to build a select of the readable templates
      */
-    public function readAll(): array
+    #[Override]
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $builder = new TemplatesSqlBuilder($this);
         $sql = $builder->getReadSqlBeforeWhere(getTags: false, fullSelect: false);
@@ -221,9 +231,16 @@ class Templates extends AbstractTemplateEntity
         return $req->fetchAll();
     }
 
+    #[Override]
     public function destroy(): bool
     {
         // delete from pinned too
         return parent::destroy() && $this->Pins->cleanup();
+    }
+
+    #[Override]
+    public function getTimestamperFullname(): string
+    {
+        return '';
     }
 }

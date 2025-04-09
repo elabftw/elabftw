@@ -20,7 +20,7 @@ use League\Flysystem\FilesystemOperator;
  * This class is used to generate the translations files for i18next (javascript)
  * Use it with: bin/console dev:i18n4js
  */
-class i18n4Js
+final class i18n4Js
 {
     use TwigTrait;
 
@@ -36,12 +36,15 @@ class i18n4Js
     private function getTerms(): array
     {
         return array(
+            'add-compound' => _('Add compound'),
             'click-to-edit' => _('Click to edit'),
             'cancel' => _('Cancel'),
             'comment-add' => _('Add a comment'),
             'custom-id-in-use' => _('Custom ID is already used! Try another one.'),
             'dropzone-upload-area' => _('Drop files here to upload'),
             'dropzone-filesize-limit' => _('File size limit:'),
+            'edit' => _('Edit'),
+            'edit-compound' => _('Edit compound'),
             'editing-metadata' => _('You are currently editing the metadata attached to this entry.'),
             'entity-default-title' => _('Untitled'),
             'entity-delete-warning' => _('The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?'),
@@ -70,6 +73,8 @@ class i18n4Js
             'tag-delete-warning' => _('Delete this tag?'),
             'template-title' => _('Template title'),
             'today' => _('Today'),
+            'type-3-chars' => _('At least 3 characters are required to search'),
+            'unarchive-and-add-to-team' => _('Unarchive and add to team {{team, string}}'),
             'undefined-group' => _('Undefined group'),
             'upload-file-comment' => _('File comment'),
         );

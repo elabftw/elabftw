@@ -1,7 +1,9 @@
+{% include 'storage-view-edit.html' %}
+{% include 'compounds-view-edit.html' %}
 {# STEPS #}
 <div id='stepsDiv'>
 {% if Entity.entityData.steps %}
-  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='stepsDivContent'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Steps'|trans }} ({{ Entity.entityData.steps|length }})</h3>
+  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='stepsDivContent'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Steps'|trans }} ({{ Entity.entityData.steps|length }})</h3>
   <div class='row mt-2' id='stepsDivContent' data-save-hidden='stepsDivContent'>
     <div class='ml-3 mt-3 col-md-12'>
       {% for step in Entity.entityData.steps %}
@@ -27,7 +29,7 @@
 
 {# EXPERIMENTS LINKS #}
 {% if Entity.entityData.experiments_links %}
-  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='linkExpDiv' id='linksExpDivTitle'><i class='fas fa-caret-down mr-2 fa-fw'></i>{% trans %}
+  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='linkExpDiv' id='linksExpDivTitle'><i class='fas fa-caret-down mr-2 fa-fw'></i>{% trans %}
     Linked experiment
     {% plural 2 %}
     Linked experiments
@@ -42,7 +44,7 @@
 
 {# ITEMS LINKS #}
 {% if Entity.entityData.items_links %}
-  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='linksDiv' id='linksDivTitle'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Linked resources'|trans }} ({{ Entity.entityData.items_links|length }})</h3>
+  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='linksDiv' id='linksDivTitle'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Linked resources'|trans }} ({{ Entity.entityData.items_links|length }})</h3>
   <div class='row mt-2' id='linksDiv' data-save-hidden='linksDiv'>
     {% for link in Entity.entityData.items_links %}
       {% include 'link-view-one.html' %}

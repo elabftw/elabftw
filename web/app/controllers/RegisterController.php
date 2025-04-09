@@ -13,6 +13,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Params\UserParams;
 use Elabftw\Services\Check;
 use Elabftw\Services\TeamsHelper;
 use Exception;
@@ -51,11 +52,11 @@ try {
 
     // Create user
     $App->Users->createOne(
-        (new UserParams('email', $App->Request->request->getString('email')))->getContent(),
+        (new UserParams('email', $App->Request->request->getString('email')))->getStringContent(),
         array($App->Request->request->getInt('team')),
-        (new UserParams('firstname', $App->Request->request->getString('firstname')))->getContent(),
-        (new UserParams('lastname', $App->Request->request->getString('lastname')))->getContent(),
-        (new UserParams('password', $App->Request->request->getString('password')))->getContent(),
+        (new UserParams('firstname', $App->Request->request->getString('firstname')))->getStringContent(),
+        (new UserParams('lastname', $App->Request->request->getString('lastname')))->getStringContent(),
+        (new UserParams('password', $App->Request->request->getString('password')))->getStringContent(),
     );
 
     if ($App->Users->needValidation) {
@@ -65,13 +66,13 @@ try {
     }
     // store the email here so we can put it in the login field
     $App->Session->set('email', $App->Request->request->getString('email'));
-} catch (ImproperActionException $e) {
-    // show message to user
-    $App->Session->getFlashBag()->add('ko', $e->getMessage());
-    $location = '/register.php';
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e->getMessage())));
     $App->Session->getFlashBag()->add('ko', Tools::error(true));
+    $location = '/register.php';
+} catch (ImproperActionException $e) {
+    // show message to user
+    $App->Session->getFlashBag()->add('ko', $e->getMessage());
     $location = '/register.php';
 } catch (Exception $e) {
     // log error and show general error message

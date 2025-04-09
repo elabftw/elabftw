@@ -14,6 +14,7 @@ namespace Elabftw\Storage;
 
 use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\Local\LocalFilesystemAdapter;
+use Override;
 
 /**
  * For locally stored uploads
@@ -22,6 +23,7 @@ class Local extends AbstractStorage
 {
     protected const string FOLDER = 'uploads';
 
+    #[Override]
     protected function getAdapter(): FilesystemAdapter
     {
         return new LocalFilesystemAdapter(dirname(__DIR__, 2) . '/' . static::FOLDER);

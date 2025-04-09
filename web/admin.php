@@ -14,18 +14,20 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Factories\LinksFactory;
 use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\StorageUnits;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\TeamTags;
 use Elabftw\Services\DummyRemoteDirectory;
 use Elabftw\Services\EairefRemoteDirectory;
+use Elabftw\Services\Filter;
 use Elabftw\Services\UsersHelper;
 use Exception;
 use GuzzleHttp\Client;
@@ -37,7 +39,6 @@ use function array_filter;
  * Administration panel of a team
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = _('Admin panel');
 $Response = new Response();
 $Response->prepare($App->Request);
 
@@ -49,7 +50,7 @@ try {
         throw new IllegalActionException('Non admin user tried to access admin controller.');
     }
 
-    $ItemsTypes = new ItemsTypes($App->Users);
+    $ItemsTypes = new ItemsTypes($App->Users, Filter::intOrNull($Request->query->getInt('templateid')));
     $Teams = new Teams($App->Users, $App->Users->userData['team']);
     $Status = new ExperimentsStatus($Teams);
     $ItemsStatus = new ItemsStatus($Teams);
@@ -64,6 +65,8 @@ try {
     if ($App->Request->query->has('templateid')) {
         $ItemsTypes->setId($App->Request->query->getInt('templateid'));
         $ItemsTypes->canOrExplode('write');
+        $ContainersLinks = LinksFactory::getContainersLinks($ItemsTypes);
+        $ItemsTypes->entityData['containers'] = $ContainersLinks->readAll();
     }
     $statusArr = $Status->readAll();
     $teamGroupsArr = $TeamGroups->readAll();
@@ -84,6 +87,7 @@ try {
             $App->Request->query->getInt('teamFilter'),
             $App->Request->query->getBoolean('includeArchived'),
             $App->Request->query->getBoolean('onlyAdmins'),
+            $App->Request->query->getBoolean('onlyArchived'),
         );
         foreach ($usersArr as &$user) {
             $UsersHelper = new UsersHelper($user['userid']);
@@ -101,7 +105,7 @@ try {
         }
         $remoteDirectoryUsersArr = $RemoteDirectory->search($App->Request->query->getString('remote_dir_query'));
         if (empty($remoteDirectoryUsersArr)) {
-            $App->warning[] = _('No users found. Try another search.');
+            $App->Session->getFlashBag()->add('warning', _('No users found. Try another search.'));
         }
     }
 
@@ -115,8 +119,7 @@ try {
     $renderArr = array(
         'Entity' => $ItemsTypes,
         'allTeamUsersArr' => $allTeamUsersArr,
-        // all the tags for the team
-        'tagsArr' => $TeamTags->readFull(),
+        'tagsArr' => $TeamTags->readAll(),
         'isSearching' => $isSearching,
         'itemsCategoryArr' => $itemsCategoryArr,
         'metadataGroups' => $metadataGroups,
@@ -124,12 +127,14 @@ try {
         'statusArr' => $statusArr,
         'experimentsCategoriesArr' => $experimentsCategoriesArr,
         'itemsStatusArr' => $ItemsStatus->readAll(),
+        'pageTitle' => _('Admin panel'),
         'passwordInputHelp' => $passwordComplexity->toHuman(),
         'passwordInputPattern' => $passwordComplexity->toPattern(),
         'teamGroupsArr' => $teamGroupsArr,
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
         'remoteDirectoryUsersArr' => $remoteDirectoryUsersArr,
         'scopedTeamgroupsArr' => $TeamGroups->readScopedTeamgroups(),
+        'storageUnitsArr' => (new StorageUnits($App->Users))->readAllRecursive(),
         'teamsArr' => $teamsArr,
         'teamStats' => $teamStats,
         'unvalidatedUsersArr' => $unvalidatedUsersArr,
@@ -138,7 +143,7 @@ try {
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
     $renderArr['error'] = Tools::error(true);
-} catch (DatabaseErrorException | FilesystemErrorException | ImproperActionException $e) {
+} catch (DatabaseErrorException | ImproperActionException $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
     $renderArr['error'] = $e->getMessage();
 } catch (Exception $e) {

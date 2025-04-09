@@ -16,10 +16,12 @@ use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\Users;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Override;
 
 abstract class AbstractController implements ControllerInterface
 {
     public function __construct(protected Users $requester, protected Request $Request) {}
 
+    #[Override]
     abstract public function getResponse(): Response;
 }

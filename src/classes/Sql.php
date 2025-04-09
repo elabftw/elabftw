@@ -28,7 +28,7 @@ use function trim;
 /**
  * For SQL operations from files
  */
-class Sql
+final class Sql
 {
     private Db $Db;
 
@@ -77,7 +77,7 @@ class Sql
                         $lineCount++;
                         continue;
                     }
-                    throw new DatabaseErrorException($e);
+                    throw new DatabaseErrorException($e->errorInfo ?? array('OOPS', 42, 'where error?'));
                 }
                 // Reset temp variable to empty
                 $queryline = '';

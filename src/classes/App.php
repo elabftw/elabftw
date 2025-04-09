@@ -22,12 +22,9 @@ use Elabftw\Models\Notifications\UserNotifications;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use Elabftw\Traits\TwigTrait;
-use League\Flysystem\Filesystem as Fs;
-use League\Flysystem\Local\LocalFilesystemAdapter;
 use Monolog\Logger;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 
 use function basename;
@@ -42,52 +39,30 @@ use function textdomain;
 /**
  * This is a super class holding various global objects
  */
-class App
+final class App
 {
     use TwigTrait;
 
-    public const string INSTALLED_VERSION = '5.1.15';
+    public const string INSTALLED_VERSION = '5.2.0-alpha5';
 
     // this version format is used to compare with last_seen_version of users
     // major is untouched, and minor and patch are padded with one 0 each
     // we should be pretty safe from ever reaching 100 as a minor or patch version!
-    public const int INSTALLED_VERSION_INT = 50115;
+    public const int INSTALLED_VERSION_INT = 50200;
 
-    public Users $Users;
-
-    /** @psalm-suppress PossiblyUnusedProperty this property is used in twig templates */
-    public string $pageTitle = 'Lab manager';
-
+    // stores the configuration of the current team
     public array $teamArr = array();
-
-    /** @psalm-suppress PossiblyUnusedProperty this property is used in twig templates */
-    public array $ok = array();
-
-    /** @psalm-suppress PossiblyUnusedProperty this property is used in twig templates */
-    public array $ko = array();
 
     /** @psalm-suppress PossiblyUnusedProperty this property is used in twig templates */
     public array $notifsArr = array();
 
-    /** @psalm-suppress PossiblyUnusedProperty this property is used in twig templates */
-    public array $warning = array();
-
-    public function __construct(public Request $Request, public FlashBagAwareSessionInterface $Session, public Config $Config, public Logger $Log)
-    {
-        $flashBag = $this->Session->getBag('flashes');
-        // add type check because SessionBagInterface doesn't have get(), only FlashBag has it
-        if ($flashBag instanceof FlashBag) {
-            $this->ok = $flashBag->get('ok');
-            $this->ko = $flashBag->get('ko');
-            $this->warning = $flashBag->get('warning');
-        }
-
-        $this->Users = new Users();
-        // Show helpful screen if database schema needs update
-        $Update = new Update((int) $this->Config->configArr['schema'], new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql'))));
-        // throws InvalidSchemaException if schema is incorrect
-        $Update->checkSchema();
-    }
+    public function __construct(
+        public Request $Request,
+        public FlashBagAwareSessionInterface $Session,
+        public Config $Config,
+        public Logger $Log,
+        public Users $Users,
+    ) {}
 
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-//
     //     _                 _      //
@@ -125,7 +100,6 @@ class App
                 'index.php',
                 'logout.php',
                 'make.php',
-                'search.php',
             );
             if (!in_array(basename($this->Request->getScriptName()), $allowedPages, true)) {
                 throw new UnauthorizedException();
@@ -141,11 +115,8 @@ class App
     }
 
     /**
-     * Generate HTML from a twig template. The App object is injected into every template as well as langsArr from the footer
-     *
-     * @param string $template template located in app/tpl/
-     * @param array<string, mixed> $variables the variables injected in the template
-     * @return string html
+     * Generate HTML from a twig template (in src/templates).
+     * The App object is injected into every template as well as langsArr
      */
     public function render(string $template, array $variables): string
     {

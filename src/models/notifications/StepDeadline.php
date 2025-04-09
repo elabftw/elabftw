@@ -16,8 +16,9 @@ use Elabftw\Enums\Notifications;
 use Elabftw\Interfaces\MailableInterface;
 use Elabftw\Models\Config;
 use PDO;
+use Override;
 
-class StepDeadline extends AbstractNotifications implements MailableInterface
+final class StepDeadline extends AbstractNotifications implements MailableInterface
 {
     /**
      * Time in minutes before the deadline to send/show notifications
@@ -37,6 +38,7 @@ class StepDeadline extends AbstractNotifications implements MailableInterface
         parent::__construct();
     }
 
+    #[Override]
     public function create(int $userid): int
     {
         // try to delete already existing notification for this step and return if there was one
@@ -48,6 +50,7 @@ class StepDeadline extends AbstractNotifications implements MailableInterface
         return parent::create($userid);
     }
 
+    #[Override]
     public function getEmail(): array
     {
         $body = sprintf(
@@ -81,6 +84,7 @@ class StepDeadline extends AbstractNotifications implements MailableInterface
         return (bool) $req->rowCount();
     }
 
+    #[Override]
     protected function getBody(): array
     {
         return array(

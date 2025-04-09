@@ -24,7 +24,7 @@ use Elabftw\Services\UsersHelper;
  * Determine read and write access for a user and an entity
  * Here be dragons! Cognitive load > 9000
  */
-class Permissions
+final class Permissions
 {
     private TeamGroups $TeamGroups;
 
@@ -129,7 +129,7 @@ class Permissions
     {
         // locked entity cannot be written to
         // only the locker can unlock an entity
-        if ($this->item['locked'] && ($this->item['lockedby'] !== $this->Users->userData['userid']) && !$this->Users->isAdmin) {
+        if (($this->item['locked'] ?? false) && ($this->item['lockedby'] !== $this->Users->userData['userid']) && !$this->Users->isAdmin) {
             return false;
         }
         return $this->getCan($this->canwrite);

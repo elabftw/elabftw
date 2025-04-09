@@ -18,7 +18,7 @@ use Override;
 /**
  * Make a full JSON export, including all information from one or several entities
  */
-class MakeFullJson extends MakeJson
+final class MakeFullJson extends MakeJson
 {
     #[Override]
     protected function getEntityData(AbstractEntity $entity): array

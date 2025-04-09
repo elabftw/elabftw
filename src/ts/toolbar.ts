@@ -11,10 +11,8 @@ import {
   notifError,
   relativeMoment,
   reloadElements,
-  toggleGrayClasses,
 } from './misc';
 import { Api } from './Apiv2.class';
-import EntityClass from './Entity.class';
 import i18next from 'i18next';
 import $ from 'jquery';
 import { Action, Model } from './interfaces';
@@ -35,7 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const entity = getEntity();
-  const EntityC = new EntityClass(entity.type);
   const ApiC = new Api();
 
   // Add click listener and do action based on which element is clicked
@@ -44,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // DUPLICATE
     if (el.matches('[data-action="duplicate-entity"]')) {
       const copyFiles = (document.getElementById('duplicateKeepFilesSelect') as HTMLInputElement);
+      const linkToOriginalExperiment = (document.getElementById('duplicateLinkToOriginal') as HTMLInputElement);
       let queryString = '';
       let page = '';
       if (about.page.startsWith('template-')) {
@@ -51,15 +49,19 @@ document.addEventListener('DOMContentLoaded', () => {
         page = '/ucp.php';
       }
 
-      EntityC.duplicate(entity.id, Boolean(copyFiles.checked))
-        .then(resp => {
-          const newId = getNewIdFromPostRequest(resp);
-          window.location.href = `${page}?mode=edit&${queryString}id=${newId}`;
-        });
+      // Ensure the link to original exists because this feature is not available for Template entities
+      ApiC.post(`${entity.type}/${entity.id}`, {
+        action: Action.Duplicate,
+        copyFiles: Boolean(copyFiles.checked),
+        linkToOriginal: Boolean(linkToOriginalExperiment?.checked ?? false)},
+      ).then(resp => {
+        const newId = getNewIdFromPostRequest(resp);
+        window.location.href = `${page}?mode=edit&${queryString}id=${newId}`;
+      });
 
     // SHARE
     } else if (el.matches('[data-action="share"]')) {
-      EntityC.read(entity.id).then(json => {
+      ApiC.getJson(`${entity.type}/${entity.id}`).then(json => {
         const link = (document.getElementById('shareLinkInput') as HTMLInputElement);
         link.value = json.sharelink;
         link.toggleAttribute('hidden');
@@ -67,22 +69,9 @@ document.addEventListener('DOMContentLoaded', () => {
         link.select();
       });
 
-    // TOGGLE PINNED
-    } else if (el.matches('[data-action="toggle-pin"]')) {
-      let id = entity.id;
-      if (isNaN(id) || id === null) {
-        id = parseInt(el.dataset.id, 10);
-      }
-
-      ApiC.patch(`${entity.type}/${id}`, {'action': Action.Pin}).then(() => {
-        // toggle appearance of button and icon
-        toggleGrayClasses(el.classList);
-        el.querySelector('i').classList.toggle('color-weak');
-      });
-
     // TIMESTAMP button in modal
     } else if (el.matches(`[data-action="${Action.Timestamp}"]`)) {
-      EntityC.patchAction(entity.id, Action.Timestamp).then(() => {
+      ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.Timestamp}).then(() => {
         reloadElements(['requestActionsDiv', 'isTimestampedByInfoDiv']);
       });
 
@@ -148,17 +137,17 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="do-requestable-action"]')) {
       switch (el.dataset.target) {
       case Action.Archive:
+        // reload the page to avoid further actions on the entity (in edit mode), also refreshing gets to "You cannot edit it!" page. (See #5552)
         ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.Archive})
-          .then(() => reloadElements(['isArchivedDiv', 'requestActionsDiv']))
-          .then(() => relativeMoment());
+          .then(() => window.location.href = `?mode=view&id=${entity.id}`);
         break;
       case Action.Lock:
         // reload the page to change the icon and make the edit button disappear (#1897)
-        EntityC.patchAction(entity.id, Action.Lock)
+        ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.Lock})
           .then(() => window.location.href = `?mode=view&id=${entity.id}`);
         break;
       case Action.Review:
-        EntityC.patchAction(entity.id, Action.Review)
+        ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.Review})
           .then(() => window.location.href = `?mode=view&id=${entity.id}`);
         break;
       case Action.Timestamp:
@@ -166,11 +155,6 @@ document.addEventListener('DOMContentLoaded', () => {
         break;
       case Action.Sign:
         $('#addSignatureModal').modal('toggle');
-        break;
-      case Action.RemoveExclusiveEditMode:
-        EntityC.patchAction(entity.id, Action.ExclusiveEditMode)
-          .then(() => reloadElements(['exclusiveEditModeBtn', 'exclusiveEditModeInfo', 'requestActionsDiv']))
-          .then(() => toggleGrayClasses(document.getElementById('exclusiveEditModeBtn').classList));
         break;
       }
     // EXPORT TO (PDF/ZIP)
@@ -187,7 +171,9 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="export-to-qrpng"]')) {
       const size = (document.getElementById('qrpng_exportSize') as HTMLInputElement).value;
       const title = (document.getElementById('qrpng_exportTitle') as HTMLInputElement).checked ? 1: 0;
-      window.open(`/api/v2/${el.dataset.type}/${el.dataset.id}?format=qrpng&size=${size}&withTitle=${title}`, '_blank');
+      const titleLines = (document.getElementById('qrpng_exportTitleLines') as HTMLInputElement).value;
+      const titleChars = (document.getElementById('qrpng_exportTitleChars') as HTMLInputElement).value;
+      window.open(`/api/v2/${el.dataset.type}/${el.dataset.id}?format=qrpng&size=${size}&withTitle=${title}&titleLines=${titleLines}&titleChars=${titleChars}`, '_blank');
     // CANCEL REQUEST ACTION
     } else if (el.matches('[data-action="cancel-requestable-action"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {
@@ -199,16 +185,8 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="destroy"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {
         const path = window.location.pathname;
-        EntityC.destroy(entity.id).then(() => window.location.replace(path.split('/').pop()));
+        ApiC.delete(`${entity.type}/${entity.id}`).then(() => window.location.replace(path.split('/').pop()));
       }
-
-    // TOGGLE EXCLUSIVE EDIT MODE
-    } else if (el.matches('[data-action="toggle-exclusive-edit-mode"]')
-      || el.parentElement?.matches('[data-action="toggle-exclusive-edit-mode"]')
-    ) {
-      EntityC.patchAction(entity.id, Action.ExclusiveEditMode)
-        .then(() => reloadElements(['exclusiveEditModeBtn', 'exclusiveEditModeInfo', 'requestActionsDiv']))
-        .then(() => toggleGrayClasses(document.getElementById('exclusiveEditModeBtn').classList));
     }
   });
 });

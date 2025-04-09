@@ -19,16 +19,19 @@ use Elabftw\Services\AdvancedSearchQuery\Interfaces\Term;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitable;
 use Elabftw\Services\AdvancedSearchQuery\Interfaces\Visitor;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
+use Override;
 
-class Field implements Term, Visitable, FieldType
+final class Field implements Term, Visitable, FieldType
 {
     public function __construct(private string $field, private SimpleValueWrapper $valueWrapper, private ?bool $strict = null) {}
 
+    #[Override]
     public function accept(Visitor $visitor, VisitorParameters $parameters): mixed
     {
         return $visitor->visitField($this, $parameters);
     }
 
+    #[Override]
     public function getValue(): string
     {
         // body is stored as html after htmlPurifier worked on it
@@ -39,6 +42,7 @@ class Field implements Term, Visitable, FieldType
         return $this->valueWrapper->getValue();
     }
 
+    #[Override]
     public function getFieldType(): Fields
     {
         return Fields::from($this->field);

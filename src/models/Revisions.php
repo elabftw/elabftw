@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -11,12 +12,12 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DateTimeImmutable;
-use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\RestInterface;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Traits\SetIdTrait;
+use Override;
 use PDO;
 
 use function count;
@@ -25,26 +26,20 @@ use function mb_strlen;
 /**
  * All about the revisions
  */
-class Revisions implements RestInterface
+final class Revisions extends AbstractRest
 {
     use SetIdTrait;
 
-    protected Db $Db;
-
     public function __construct(private AbstractEntity $Entity, private int $maxRevisions = 10, private int $minDelta = 100, private int $minDays = 23, ?int $id = null)
     {
-        $this->Db = Db::getConnection();
-        $this->id = $id;
+        parent::__construct();
+        $this->setId($id);
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return sprintf('%s%d/revisions/', $this->Entity->getApiPath(), $this->Entity->id ?? 0);
-    }
-
-    public function postAction(Action $action, array $reqBody): int
-    {
-        throw new ImproperActionException('Revision creation is not allowed through API.');
     }
 
     public function create(string $body): int
@@ -75,6 +70,7 @@ class Revisions implements RestInterface
     }
 
     // the Action should be Replace, but we have only one so we don't check for it
+    #[Override]
     public function patch(Action $action, array $params): array
     {
         $this->Entity->canOrExplode('write');
@@ -96,7 +92,8 @@ class Revisions implements RestInterface
     /**
      * Read all revisions for an item
      */
-    public function readAll(): array
+    #[Override]
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $this->Entity->canOrExplode('read');
         $sql = sprintf('SELECT %1$s_revisions.id, %1$s_revisions.content_type, %1$s_revisions.created_at,
@@ -109,11 +106,6 @@ class Revisions implements RestInterface
         $this->Db->execute($req);
 
         return $req->fetchAll();
-    }
-
-    public function destroy(): bool
-    {
-        throw new ImproperActionException(_('Revisions cannot be deleted.'));
     }
 
     /**
@@ -130,6 +122,7 @@ class Revisions implements RestInterface
         return $numberToRemove;
     }
 
+    #[Override]
     public function readOne(): array
     {
         $this->Entity->canOrExplode('read');

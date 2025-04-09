@@ -35,7 +35,7 @@ use function unlink;
  * Note: this shouldn't be needed with psalm running inside the container!
  * @psalm-suppress UndefinedClass
  */
-class Tex2Svg
+final class Tex2Svg
 {
     // mm per inch
     private const INCH_TO_MM_CONVERSION_FACTOR = 25.4;
@@ -171,7 +171,7 @@ class Tex2Svg
         $image->stripImage();
         $img = sprintf(
             '<img src="data:image/png;base64,%s" width="%d" height="%d" class="mathjax-svg">',
-            base64_encode($image->getImageBlob()),
+            base64_encode($image->getImageBlob() ?? ''),
             $width,
             $height
         );

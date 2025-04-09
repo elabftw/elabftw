@@ -14,7 +14,7 @@ namespace Elabftw\Elabftw;
 
 use Override;
 
-class TemplatesSqlBuilder extends EntitySqlBuilder
+final class TemplatesSqlBuilder extends EntitySqlBuilder
 {
     #[Override]
     protected function entitySelect(bool $fullSelect): void
@@ -25,6 +25,7 @@ class TemplatesSqlBuilder extends EntitySqlBuilder
             entity.userid,
             entity.created_at,
             entity.modified_at,
+            entity.lastchangeby,
             entity.team,
             entity.title,
             entity.status,
@@ -34,6 +35,8 @@ class TemplatesSqlBuilder extends EntitySqlBuilder
             entity.ordering,
             entity.canread,
             entity.canwrite,
+            entity.canread_is_immutable,
+            entity.canwrite_is_immutable,
             entity.canread_target,
             entity.canwrite_target,
             entity.content_type,

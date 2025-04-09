@@ -1,0 +1,29 @@
+{# Modal for manual creation of a compound #}
+<div class='modal fade' id='createCompoundModal' tabindex='-1' role='dialog' aria-labelledby='createCompoundModalTitle'>
+  <div class='modal-dialog modal-lg' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='createCompoundModalTitle'><i class='fas fa-fw fa-plus'></i> {{ 'Add compound'|trans }}</h5>
+        {# the clear-form action is repeated on the x icon or it would only work when clicking just next to the x, on the button element #}
+        <button type='button' class='close' data-dismiss='modal' data-action='clear-form' data-target='createCompoundInputs' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true' data-action='clear-form' data-target='createCompoundInputs'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        <div class='mb-2' id='createCompoundInputs'>
+          <label for='createCompound-name'>{{ 'Name'|trans }}</label>
+          <input name='name' required class='form-control' id='createCompound-name' />
+          <label for='createCompound-smiles'>SMILES</label>
+          <input name='smiles' class='form-control' id='createCompound-smiles' />
+          <label for='createCompound-inchi'>InChI</label>
+          <input name='inchi' class='form-control' id='createCompound-inchi' />
+        </div>
+      </div>
+
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-ghost' data-action='clear-form' data-target='createCompoundInputs' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='button' class='btn btn-primary' id='createCompoundModalSaveBtn' data-action='save-compound' data-dismiss='modal'>{{ 'Continue'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>

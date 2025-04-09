@@ -12,10 +12,13 @@ declare(strict_types=1);
 
 namespace Elabftw\Interfaces;
 
+use Override;
+
 /**
  * For classes that can make a file sent as string
  */
 interface StringMakerInterface extends FileMakerInterface
 {
+    #[Override]
     public function getFileContent(): string;
 }

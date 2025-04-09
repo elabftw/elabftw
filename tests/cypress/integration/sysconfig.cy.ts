@@ -6,7 +6,7 @@ describe('Sysconfig', () => {
 
   it('Show sysconfig page', () => {
     cy.visit('/sysconfig.php');
-    cy.get('h1#pageTitle').should('have.text', 'eLabFTW Configuration');
+    cy.get('h1#pageTitle').should('have.text', 'Instance settings');
     cy.get('#loading-spinner').should('not.exist');
     cy.htmlvalidate();
 

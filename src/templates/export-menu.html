@@ -85,6 +85,24 @@
           </label>
         </div>
 
+        {# MAX LINES #}
+        <div class='d-flex justify-content-between mb-2'>
+          <div>
+            <label class='d-inline mr-1' for='qrpng_exportTitleLines'>{{ 'Number of lines for title'|trans }}</label>
+            <p class='smallgray'>{{ 'Split the title into this many lines'|trans }}</p>
+          </div>
+          <input type='number' min='1' max='1337' class='form-control col-md-3' value='2' id='qrpng_exportTitleLines'>
+        </div>
+
+        {# MAX LINE SIZE #}
+        <div class='d-flex justify-content-between mb-2'>
+          <div>
+            <label class='d-inline mr-1' for='qrpng_exportTitleChars'>{{ 'Number of characters per line'|trans }}</label>
+            <p class='smallgray'>{{ 'Adjust how the title is displayed'|trans }}</p>
+          </div>
+          <input type='number' min='1' max='1337' class='form-control col-md-3' value='29' id='qrpng_exportTitleChars'>
+        </div>
+
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>

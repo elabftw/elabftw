@@ -19,12 +19,14 @@ class PinsTest extends \PHPUnit\Framework\TestCase
 
     private Templates $Templates;
 
+    private Users $Users;
+
     protected function setUp(): void
     {
-        $Users = new Users(1, 1);
-        $this->Experiments = new Experiments($Users, 1);
-        $this->Items = new Items($Users, 1);
-        $this->Templates = new Templates($Users, 1);
+        $this->Users = new Users(1, 1);
+        $this->Experiments = new Experiments($this->Users, 1);
+        $this->Items = new Items($this->Users, 1);
+        $this->Templates = new Templates($this->Users, 1);
     }
 
     public function testTogglePin(): void
@@ -34,7 +36,6 @@ class PinsTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(1, $this->Experiments->Pins->readAll());
         $this->Experiments->Pins->togglePin();
         $this->assertCount(0, $this->Experiments->Pins->readAll());
-        $this->assertCount(0, $this->Experiments->Pins->readAllSimple());
 
         $this->Items->Pins->togglePin();
         $this->assertTrue($this->Items->Pins->isPinned());
@@ -48,5 +49,32 @@ class PinsTest extends \PHPUnit\Framework\TestCase
         $this->Templates->Pins->togglePin();
         $this->assertTrue($this->Templates->Pins->isPinned());
         $this->assertTrue(count($this->Templates->Pins->readAll()) > 0);
+    }
+
+    public function testDuplicateIsNotPinned(): void
+    {
+        $this->checkDuplicateIsNotPinned($this->Experiments);
+        $this->checkDuplicateIsNotPinned($this->Items);
+    }
+
+    public function testTemplateIsAlwaysPinnedWhenCreated(): void
+    {
+        $fresh = $this->duplicateEntity($this->Templates);
+        $this->assertTrue($fresh->Pins->isPinned());
+    }
+
+    private function checkDuplicateIsNotPinned(Experiments | Items $entity): void
+    {
+        $fresh = $this->duplicateEntity($entity);
+        $this->assertFalse($fresh->Pins->isPinned());
+    }
+
+    private function duplicateEntity(AbstractEntity $entity): AbstractEntity
+    {
+        $newId = $entity->duplicate();
+        $fresh = clone $entity;
+        $fresh->setId($newId);
+
+        return $fresh;
     }
 }

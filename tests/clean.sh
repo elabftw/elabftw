@@ -19,3 +19,6 @@ docker rm elab-cypress
 # we keep mysql image because it's the official one
 docker image rm elabtmp
 docker image rm elab-cypress
+
+# Remove codecept files as they can cause errors between changes
+docker exec -it elabftw vendor/bin/codecept clean

@@ -28,7 +28,7 @@ use function is_readable;
 /**
  * Trusted Timestamping (RFC3161) utility class
  */
-class TimestampUtils
+final class TimestampUtils
 {
     use ProcessTrait;
 

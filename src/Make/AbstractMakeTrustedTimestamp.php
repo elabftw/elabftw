@@ -17,6 +17,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Interfaces\MakeTrustedTimestampInterface;
 use ZipArchive;
+use Override;
 
 /**
  * Timestamp an experiment with RFC 3161 protocol: https://www.ietf.org/rfc/rfc3161.txt
@@ -27,6 +28,7 @@ abstract class AbstractMakeTrustedTimestamp extends AbstractMakeTimestamp implem
     /**
      * Create a zip archive with the timestamped data and the asn1 token
      */
+    #[Override]
     public function saveTimestamp(TimestampResponse $tsResponse, CreateUploadParamsInterface $create): int
     {
         // e.g. 20220210171842-timestamp.zip
@@ -51,6 +53,7 @@ abstract class AbstractMakeTrustedTimestamp extends AbstractMakeTimestamp implem
      *
      * @return array<string,string>
      */
+    #[Override]
     abstract public function getTimestampParameters(): array;
 
     /**

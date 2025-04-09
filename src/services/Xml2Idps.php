@@ -19,7 +19,7 @@ use Elabftw\Models\Idps;
 /**
  * Convert XML metadata about IDPs into eLabFTW's IDP
  */
-class Xml2Idps
+final class Xml2Idps
 {
     public function __construct(private DOMDocument $dom) {}
 

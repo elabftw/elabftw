@@ -12,14 +12,20 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\OrderingParams;
-use Elabftw\Elabftw\StatusParams;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\Orderby;
 use Elabftw\Enums\State;
+use Elabftw\Params\BaseQueryParams;
+use Elabftw\Params\OrderingParams;
+use Elabftw\Params\StatusParams;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
+use Elabftw\Traits\RandomColorTrait;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
+use Symfony\Component\HttpFoundation\InputBag;
+use Override;
 
 /**
  * Status for experiments or items
@@ -27,28 +33,24 @@ use PDO;
 abstract class AbstractStatus extends AbstractCategory
 {
     use SetIdTrait;
-
-    private const string DEFAULT_BLUE = '29AEB9';
-
-    private const string DEFAULT_GREEN = '54AA08';
-
-    private const string DEFAULT_GRAY = 'C0C0C0';
-
-    private const string DEFAULT_RED = 'C24F3D';
+    use RandomColorTrait;
 
     protected string $table;
 
+    #[Override]
     public function updateOrdering(OrderingParams $params): void
     {
         $this->Teams->canWriteOrExplode();
         parent::updateOrdering($params);
     }
 
+    #[Override]
     public function getApiPath(): string
     {
         return sprintf('api/v2/teams/%d/%s/', $this->Teams->id ?? 0, $this->table);
     }
 
+    #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
         return $this->create(
@@ -69,9 +71,10 @@ abstract class AbstractStatus extends AbstractCategory
         && $this->create(_('Fail'), '#' . self::DEFAULT_RED);
     }
 
+    #[Override]
     public function readOne(): array
     {
-        $sql = sprintf('SELECT id, title, color, is_default
+        $sql = sprintf('SELECT id, title, color, is_default, ordering, state, team
             FROM %s WHERE id = :id', $this->table);
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -79,16 +82,25 @@ abstract class AbstractStatus extends AbstractCategory
         return $this->Db->fetch($req);
     }
 
+    #[Override]
+    public function getQueryParams(?InputBag $query = null): QueryParamsInterface
+    {
+        return new BaseQueryParams(query: $query, orderby: Orderby::Ordering);
+    }
+
     /**
      * Get all status from team
      */
-    public function readAll(): array
+    #[Override]
+    public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        $sql = sprintf('SELECT id, title, color, is_default
-            FROM %s WHERE team = :team AND state = :state ORDER BY ordering ASC', $this->table);
+        $sql = sprintf('SELECT id, title, color, is_default, ordering, state, team
+            FROM %s AS entity WHERE team = :team', $this->table);
+        $queryParams ??= $this->getQueryParams();
+        $sql .= $queryParams->getSql();
+
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Teams->id, PDO::PARAM_INT);
-        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
         $this->Db->execute($req);
         return $req->fetchAll();
     }
@@ -106,6 +118,7 @@ abstract class AbstractStatus extends AbstractCategory
         return $req->fetchAll();
     }
 
+    #[Override]
     public function patch(Action $action, array $params): array
     {
         $this->Teams->canWriteOrExplode();
@@ -115,39 +128,13 @@ abstract class AbstractStatus extends AbstractCategory
         return $this->readOne();
     }
 
+    #[Override]
     public function destroy(): bool
     {
         $this->Teams->canWriteOrExplode();
         // TODO fix FK constraints so it sets NULL instead of deleting entries
         // set state to deleted
         return $this->update(new StatusParams('state', (string) State::Deleted->value));
-    }
-
-    /**
-     * Get a color that is a good for background
-     */
-    protected function getSomeColor(): string
-    {
-        $colors = array(
-            self::DEFAULT_BLUE,
-            self::DEFAULT_GRAY,
-            self::DEFAULT_GREEN,
-            self::DEFAULT_RED,
-            '0A0A0A',
-            '0B3D91',
-            '4A3F35',
-            '3D0C02',
-            '253529',
-            '3B3C36',
-            '483C32',
-            '0F4C81',
-            '4B0082',
-            '2F4F4F',
-            '321414',
-            '3C1414',
-        );
-        $randomKey = array_rand($colors, 1);
-        return $colors[$randomKey];
     }
 
     private function create(string $title, string $color, int $isDefault = 0): int

@@ -116,6 +116,8 @@ CREATE TABLE `experiments` (
   `timestamped_at` timestamp NULL DEFAULT NULL,
   `canread` JSON NOT NULL,
   `canwrite` JSON NOT NULL,
+  `canread_is_immutable` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `canwrite_is_immutable` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `content_type` tinyint NOT NULL DEFAULT 1,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -279,15 +281,15 @@ CREATE TABLE `experiments_steps` (
 --
 
 CREATE TABLE `experiments_edit_mode` (
-  `experiments_id` int UNSIGNED NOT NULL,
+  `entity_id` int UNSIGNED NOT NULL,
   `locked_by` int UNSIGNED NOT NULL,
-  `locked_at` timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`experiments_id`)
+  `locked_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- RELATIONSHIPS FOR TABLE `experiments_edit_mode`:
---   `experiments_id`
+--   `entity_id`
 --       `experiments` -> `id`
 --   `locked_by`
 --       `users` -> `userid`
@@ -305,6 +307,8 @@ CREATE TABLE `experiments_templates` (
   `body` text,
   `category` INT UNSIGNED NULL DEFAULT NULL,
   `custom_id` INT UNSIGNED NULL DEFAULT NULL,
+  `date` date NULL DEFAULT NULL,
+  `elabid` varchar(255) NULL DEFAULT NULL,
   `title` varchar(255) NOT NULL,
   `userid` int(10) UNSIGNED DEFAULT NULL,
   `locked` tinyint UNSIGNED NOT NULL DEFAULT 0,
@@ -312,6 +316,8 @@ CREATE TABLE `experiments_templates` (
   `locked_at` timestamp NULL DEFAULT NULL,
   `canread` JSON NOT NULL,
   `canwrite` JSON NOT NULL,
+  `canread_is_immutable` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `canwrite_is_immutable` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `canread_target` JSON NOT NULL,
   `canwrite_target` JSON NOT NULL,
   `content_type` tinyint NOT NULL DEFAULT 1,
@@ -406,15 +412,15 @@ CREATE TABLE `exports` (
 --
 
 CREATE TABLE `experiments_templates_edit_mode` (
-  `experiments_templates_id` int UNSIGNED NOT NULL,
+  `entity_id` int UNSIGNED NOT NULL,
   `locked_by` int UNSIGNED NOT NULL,
-  `locked_at` timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`experiments_templates_id`)
+  `locked_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- RELATIONSHIPS FOR TABLE `experiments_edit_mode`:
---   `experiments_templates_id`
+--   `entity_id`
 --       `experiments_templates` -> `id`
 --   `locked_by`
 --       `users` -> `userid`
@@ -554,6 +560,8 @@ CREATE TABLE `items` (
   `userid` int(10) UNSIGNED NOT NULL,
   `canread` JSON NOT NULL,
   `canwrite` JSON NOT NULL,
+  `canread_is_immutable` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `canwrite_is_immutable` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `canbook` JSON NOT NULL,
   `content_type` tinyint NOT NULL DEFAULT 1,
   `available` tinyint UNSIGNED NOT NULL DEFAULT 1,
@@ -691,15 +699,15 @@ CREATE TABLE `items_revisions` (
 --
 
 CREATE TABLE `items_edit_mode` (
-  `items_id` int UNSIGNED NOT NULL,
+  `entity_id` int UNSIGNED NOT NULL,
   `locked_by` int UNSIGNED NOT NULL,
-  `locked_at` timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`items_id`)
+  `locked_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- RELATIONSHIPS FOR TABLE `items_edit_mode`:
---   `items_id`
+--   `entity_id`
 --       `items` -> `id`
 --   `locked_by`
 --       `users` -> `userid`
@@ -716,6 +724,8 @@ CREATE TABLE `items_types` (
   `userid` INT UNSIGNED NOT NULL,
   `team` int(10) UNSIGNED NOT NULL,
   `title` varchar(255) NOT NULL,
+  `date` date NULL DEFAULT NULL,
+  `elabid` varchar(255) NULL DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `color` varchar(6) DEFAULT '29aeb9',
   `custom_id` INT UNSIGNED NULL DEFAULT NULL,
@@ -724,6 +734,8 @@ CREATE TABLE `items_types` (
   `content_type` tinyint NOT NULL DEFAULT 1,
   `canread` JSON NOT NULL,
   `canwrite` JSON NOT NULL,
+  `canread_is_immutable` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `canwrite_is_immutable` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `canread_target` JSON NOT NULL,
   `canwrite_target` JSON NOT NULL,
   `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -796,15 +808,15 @@ CREATE TABLE `items_types_steps` (
 --
 
 CREATE TABLE `items_types_edit_mode` (
-  `items_types_id` int UNSIGNED NOT NULL,
+  `entity_id` int UNSIGNED NOT NULL,
   `locked_by` int UNSIGNED NOT NULL,
-  `locked_at` timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`items_types_id`)
+  `locked_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- RELATIONSHIPS FOR TABLE `items_edit_mode`:
---   `items_types_id`
+--   `entity_id`
 --       `items_types` -> `id`
 --   `locked_by`
 --       `users` -> `userid`
@@ -1037,14 +1049,8 @@ CREATE TABLE `teams` (
   `common_template_md` text,
   `user_create_tag` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `force_exp_tpl` tinyint UNSIGNED NOT NULL DEFAULT 0,
-  `link_name` varchar(255) NOT NULL,
-  `link_href` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `orgid` varchar(255) NULL DEFAULT NULL,
-  `force_canread` JSON NOT NULL,
-  `force_canwrite` JSON NOT NULL,
-  `do_force_canread` tinyint UNSIGNED NOT NULL DEFAULT 0,
-  `do_force_canwrite` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `visible` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `announcement` varchar(255) NULL DEFAULT NULL,
   `onboarding_email_active` TINYINT UNSIGNED NOT NULL DEFAULT 0,
@@ -1222,6 +1228,7 @@ CREATE TABLE `users` (
   `valid_until` date NULL DEFAULT NULL,
   `entrypoint` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `always_show_owned` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `show_weekends` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
@@ -1381,12 +1388,6 @@ ALTER TABLE `experiments_steps`
   ADD KEY `fk_experiments_steps_experiments_id` (`item_id`);
 
 --
--- Indexes for table `experiments_edit_mode`
---
-ALTER TABLE `experiments_edit_mode`
-  ADD KEY `idx_experiments_edit_mode_all_columns` (`experiments_id`, `locked_by`, `locked_at`);
-
---
 -- Indexes for table `experiments_templates`
 --
 ALTER TABLE `experiments_templates`
@@ -1438,12 +1439,6 @@ ALTER TABLE `items_comments`
   ADD KEY `fk_items_comments_users_userid` (`userid`);
 
 --
--- Indexes for table `items_edit_mode`
---
-ALTER TABLE `items_edit_mode`
-  ADD KEY `idx_items_edit_mode_all_columns` (`items_id`, `locked_by`, `locked_at`);
-
---
 -- Indexes for table `items_types`
 --
 ALTER TABLE `items_types`
@@ -1473,11 +1468,6 @@ ALTER TABLE `items_types2items`
 ALTER TABLE `items_types_steps`
   ADD KEY `fk_items_types_steps_items_id` (`item_id`);
 
---
--- Indexes for table `items_types_edit_mode`
---
-ALTER TABLE `items_types_edit_mode`
-  ADD KEY `idx_items_types_edit_mode_all_columns` (`items_types_id`, `locked_by`, `locked_at`);
 --
 -- Indexes for table `notifications`
 --
@@ -1565,8 +1555,8 @@ ALTER TABLE `items_types2experiments`
 --
 ALTER TABLE `api_keys`
   ADD CONSTRAINT `fk_api_keys_users_id` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_api_keys_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
+  ADD CONSTRAINT `fk_api_keys_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_api_keys_user_team` FOREIGN KEY (`userid`, `team`) REFERENCES `users2teams` (`users_id`, `teams_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 --
 -- Constraints for table `experiments`
 --
@@ -1627,7 +1617,7 @@ ALTER TABLE `experiments_steps`
 --
 ALTER TABLE `experiments_edit_mode`
   ADD CONSTRAINT `fk_experiments_edit_mode_experiments_id`
-    FOREIGN KEY (`experiments_id`) REFERENCES `experiments` (`id`)
+    FOREIGN KEY (`entity_id`) REFERENCES `experiments` (`id`)
     ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_experiments_edit_mode_users_userid`
     FOREIGN KEY (`locked_by`) REFERENCES `users` (`userid`)
@@ -1713,7 +1703,7 @@ ALTER TABLE `items_revisions`
 --
 ALTER TABLE `items_edit_mode`
   ADD CONSTRAINT `fk_items_edit_mode_items_id`
-    FOREIGN KEY (`items_id`) REFERENCES `items` (`id`)
+    FOREIGN KEY (`entity_id`) REFERENCES `items` (`id`)
     ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_items_edit_mode_users_userid`
     FOREIGN KEY (`locked_by`) REFERENCES `users` (`userid`)
@@ -1743,7 +1733,7 @@ ALTER TABLE `items_types_steps`
 --
 ALTER TABLE `items_types_edit_mode`
   ADD CONSTRAINT `fk_items_types_edit_mode_items_types_id`
-    FOREIGN KEY (`items_types_id`) REFERENCES `items_types` (`id`)
+    FOREIGN KEY (`entity_id`) REFERENCES `items_types` (`id`)
     ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_items_types_edit_mode_users_userid`
     FOREIGN KEY (`locked_by`) REFERENCES `users` (`userid`)
@@ -1786,7 +1776,8 @@ ALTER TABLE `sig_keys`
 -- Constraints for table `tags`
 --
 ALTER TABLE `tags`
-  ADD CONSTRAINT `fk_tags_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_tags_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD UNIQUE `unique_tags_team_tag` (`team`, `tag`);
 
 --
 -- Constraints for table `team_events`
@@ -1865,14 +1856,207 @@ CREATE TABLE `experiments_templates2items` (
     CONSTRAINT `fk_experiments_templates2items_items_id` FOREIGN KEY (`link_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
+-- schema 169
+CREATE TABLE IF NOT EXISTS compounds (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_by` INT UNSIGNED NOT NULL,
+  `modified_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `modified_by` INT UNSIGNED NOT NULL,
+  `userid` INT UNSIGNED NOT NULL,
+  `team` INT UNSIGNED NOT NULL,
+  `state` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  `name` VARCHAR(255) NULL DEFAULT NULL,
+  `molecular_formula` VARCHAR(255) NULL DEFAULT NULL,
+  `cas_number` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
+  `ec_number` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
+  `chebi_id` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
+  `chembl_id` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
+  `dea_number` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
+  `drugbank_id` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
+  `dsstox_id` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
+  `hmdb_id` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
+  `inchi` MEDIUMTEXT NULL DEFAULT NULL,
+  `inchi_key` CHAR(27) NULL DEFAULT NULL UNIQUE,
+  `iupac_name` TEXT NULL DEFAULT NULL,
+  `kegg_id` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
+  `metabolomics_wb_id` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
+  `molecular_weight` DECIMAL(10, 2) UNSIGNED NOT NULL DEFAULT 0.00,
+  `nci_code` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
+  `nikkaji_number` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
+  `pharmgkb_id` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
+  `pharos_ligand_id` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
+  `pubchem_cid` INT UNSIGNED NULL DEFAULT NULL UNIQUE,
+  `rxcui` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
+  `smiles` MEDIUMTEXT NULL DEFAULT NULL,
+  `unii` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
+  `wikidata` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
+  `wikipedia` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
+  `is_corrosive` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_explosive` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_flammable` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_gas_under_pressure` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_hazardous2env` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_hazardous2health` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_serious_health_hazard` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_oxidising` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_toxic` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_radioactive` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_antibiotic_precursor` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_drug_precursor` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_explosive_precursor` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_cmr` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_nano` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_controlled` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  primary key(`id`)
+);
+
+CREATE TABLE `compounds2experiments` (
+  `compound_id` int(10) UNSIGNED NOT NULL,
+  `entity_id` int(10) UNSIGNED NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`compound_id`, `entity_id`),
+  CONSTRAINT `fk_c2e_compound_id_compounds_id` FOREIGN KEY (`compound_id`) REFERENCES `compounds`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_c2e_entity_id_experiments_id` FOREIGN KEY (`entity_id`) REFERENCES `experiments`(`id`) ON DELETE CASCADE
+);
+CREATE TABLE `compounds2experiments_templates` (
+  `compound_id` int(10) UNSIGNED NOT NULL,
+  `entity_id` int(10) UNSIGNED NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`compound_id`, `entity_id`),
+  CONSTRAINT `fk_c2et_templates_compound_id_compounds_id` FOREIGN KEY (`compound_id`) REFERENCES `compounds`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_c2et_templates_entity_id_experiments_templates_id` FOREIGN KEY (`entity_id`) REFERENCES `experiments_templates`(`id`) ON DELETE CASCADE
+);
+CREATE TABLE `compounds2items` (
+  `compound_id` int(10) UNSIGNED NOT NULL,
+  `entity_id` int(10) UNSIGNED NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`compound_id`, `entity_id`),
+  CONSTRAINT `fk_c2i_compound_id_compounds_id` FOREIGN KEY (`compound_id`) REFERENCES `compounds`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_c2i_entity_id_items_id` FOREIGN KEY (`entity_id`) REFERENCES `items`(`id`) ON DELETE CASCADE
+);
+CREATE TABLE `compounds2items_types` (
+  `compound_id` int(10) UNSIGNED NOT NULL,
+  `entity_id` int(10) UNSIGNED NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`compound_id`, `entity_id`),
+  CONSTRAINT `fk_c2it_compound_id_compounds_id` FOREIGN KEY (`compound_id`) REFERENCES `compounds`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_c2it_entity_id_items_types_id` FOREIGN KEY (`entity_id`) REFERENCES `items_types`(`id`) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS compounds_fingerprints (
+  id   INT UNSIGNED NOT NULL,
+  fp0  INT UNSIGNED NOT NULL,
+  fp1  INT UNSIGNED NOT NULL,
+  fp2  INT UNSIGNED NOT NULL,
+  fp3  INT UNSIGNED NOT NULL,
+  fp4  INT UNSIGNED NOT NULL,
+  fp5  INT UNSIGNED NOT NULL,
+  fp6  INT UNSIGNED NOT NULL,
+  fp7  INT UNSIGNED NOT NULL,
+  fp8  INT UNSIGNED NOT NULL,
+  fp9  INT UNSIGNED NOT NULL,
+  fp10 INT UNSIGNED NOT NULL,
+  fp11 INT UNSIGNED NOT NULL,
+  fp12 INT UNSIGNED NOT NULL,
+  fp13 INT UNSIGNED NOT NULL,
+  fp14 INT UNSIGNED NOT NULL,
+  fp15 INT UNSIGNED NOT NULL,
+  fp16 INT UNSIGNED NOT NULL,
+  fp17 INT UNSIGNED NOT NULL,
+  fp18 INT UNSIGNED NOT NULL,
+  fp19 INT UNSIGNED NOT NULL,
+  fp20 INT UNSIGNED NOT NULL,
+  fp21 INT UNSIGNED NOT NULL,
+  fp22 INT UNSIGNED NOT NULL,
+  fp23 INT UNSIGNED NOT NULL,
+  fp24 INT UNSIGNED NOT NULL,
+  fp25 INT UNSIGNED NOT NULL,
+  fp26 INT UNSIGNED NOT NULL,
+  fp27 INT UNSIGNED NOT NULL,
+  fp28 INT UNSIGNED NOT NULL,
+  fp29 INT UNSIGNED NOT NULL,
+  fp30 INT UNSIGNED NOT NULL,
+  fp31 INT UNSIGNED NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  primary key(`id`),
+  FOREIGN KEY (id) REFERENCES compounds(id) ON DELETE CASCADE
+);
+
+-- STORAGE UNITS
+CREATE TABLE IF NOT EXISTS storage_units (
+    id INT unsigned NOT NULL AUTO_INCREMENT,
+    name VARCHAR(255),
+    parent_id INT unsigned,
+    FOREIGN KEY (parent_id) REFERENCES storage_units(id) ON DELETE CASCADE,
+    PRIMARY KEY(`id`)
+);
+
+-- CONTAINERS TO EXPERIMENTS
+CREATE TABLE containers2experiments (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    storage_id INT UNSIGNED NOT NULL,
+    item_id INT UNSIGNED NOT NULL,
+    qty_stored DECIMAL(10, 2) UNSIGNED NOT NULL DEFAULT 0.00,
+    qty_unit VARCHAR(10) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (storage_id) REFERENCES storage_units(id) ON DELETE CASCADE,
+    FOREIGN KEY (item_id) REFERENCES experiments(id) ON DELETE CASCADE,
+    PRIMARY KEY(`id`)
+);
+-- CONTAINERS TO experiments_templates
+CREATE TABLE containers2experiments_templates (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    storage_id INT UNSIGNED NOT NULL,
+    item_id INT UNSIGNED NOT NULL,
+    qty_stored DECIMAL(10, 2) UNSIGNED NOT NULL DEFAULT 0.00,
+    qty_unit VARCHAR(10) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (storage_id) REFERENCES storage_units(id) ON DELETE CASCADE,
+    FOREIGN KEY (item_id) REFERENCES experiments_templates(id) ON DELETE CASCADE,
+    PRIMARY KEY(`id`)
+);
+-- CONTAINERS TO items
+CREATE TABLE containers2items (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    storage_id INT UNSIGNED NOT NULL,
+    item_id INT UNSIGNED NOT NULL,
+    qty_stored DECIMAL(10, 2) UNSIGNED NOT NULL DEFAULT 0.00,
+    qty_unit VARCHAR(10) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (storage_id) REFERENCES storage_units(id) ON DELETE CASCADE,
+    FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE CASCADE,
+    PRIMARY KEY(`id`)
+);
+-- CONTAINERS TO ITEMS_TYPES
+CREATE TABLE containers2items_types (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    storage_id INT UNSIGNED NOT NULL,
+    item_id INT UNSIGNED NOT NULL,
+    qty_stored DECIMAL(10, 2) UNSIGNED NOT NULL DEFAULT 0.00,
+    qty_unit VARCHAR(10) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (storage_id) REFERENCES storage_units(id) ON DELETE CASCADE,
+    FOREIGN KEY (item_id) REFERENCES items_types(id) ON DELETE CASCADE,
+    PRIMARY KEY(`id`)
+);
+-- end schema 167
 
 --
 -- Indexes and Constraints for table `experiments_templates_edit_mode`
 --
 ALTER TABLE `experiments_templates_edit_mode`
-  ADD KEY `idx_experiments_templates_edit_mode_all_columns` (`experiments_templates_id`, `locked_by`, `locked_at`),
   ADD CONSTRAINT `fk_experiments_templates_edit_mode_experiments_templates_id`
-    FOREIGN KEY (`experiments_templates_id`) REFERENCES `experiments_templates` (`id`)
+    FOREIGN KEY (`entity_id`) REFERENCES `experiments_templates` (`id`)
     ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_experiments_templates_edit_mode_users_userid`
     FOREIGN KEY (`locked_by`) REFERENCES `users` (`userid`)

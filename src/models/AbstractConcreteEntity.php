@@ -14,7 +14,6 @@ namespace Elabftw\Models;
 
 use Elabftw\AuditEvent\SignatureCreated;
 use Elabftw\Elabftw\CreateUpload;
-use Elabftw\Elabftw\DisplayParams;
 use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\TimestampResponse;
@@ -27,7 +26,9 @@ use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Factories\LinksFactory;
 use Elabftw\Interfaces\MakeTrustedTimestampInterface;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Make\MakeBloxberg;
 use Elabftw\Make\MakeCustomTimestamp;
 use Elabftw\Make\MakeDfnTimestamp;
@@ -38,13 +39,16 @@ use Elabftw\Make\MakeGlobalSignTimestamp;
 use Elabftw\Make\MakeSectigoTimestamp;
 use Elabftw\Make\MakeUniversignTimestamp;
 use Elabftw\Make\MakeUniversignTimestampDev;
+use Elabftw\Params\DisplayParams;
 use Elabftw\Services\HttpGetter;
 use Elabftw\Services\SignatureHelper;
 use Elabftw\Services\TimestampUtils;
 use GuzzleHttp\Client;
 use PDO;
+use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 use ZipArchive;
+use Override;
 
 use function json_decode;
 use function ksort;
@@ -55,35 +59,42 @@ use function sprintf;
  */
 abstract class AbstractConcreteEntity extends AbstractEntity
 {
+    #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
         $Teams = new Teams($this->Users, $this->Users->team);
         $teamConfigArr = $Teams->readOne();
-        // enforce the permissions if the admin has set them
-        $canread = $teamConfigArr['do_force_canread'] === 1 ? $teamConfigArr['force_canread'] : null;
-        $canwrite = $teamConfigArr['do_force_canwrite'] === 1 ? $teamConfigArr['force_canwrite'] : null;
         // convert to int only if not empty, otherwise send null: we don't want to convert a null to int, as it would send 0
         $category = !empty($reqBody['category']) ? (int) $reqBody['category'] : null;
         $status = !empty($reqBody['status']) ? (int) $reqBody['status'] : null;
+        $metadata = null;
+        if (!empty($reqBody['metadata'])) {
+            $metadata = json_encode($reqBody['metadata'], JSON_THROW_ON_ERROR);
+        }
         return match ($action) {
             Action::Create => $this->create(
                 // the category_id is there for backward compatibility (changed in 5.1)
                 template: (int) ($reqBody['template'] ?? $reqBody['category_id'] ?? -1),
+                body: $reqBody['body'] ?? null,
                 title: $reqBody['title'] ?? null,
-                canread: $canread,
-                canwrite: $canwrite,
+                canread: $reqBody['canread'] ?? null,
+                canwrite: $reqBody['canwrite'] ?? null,
+                canreadIsImmutable: $reqBody['canread_is_immutable'] ?? false,
+                canwriteIsImmutable: $reqBody['canwrite_is_immutable'] ?? false,
                 tags: $reqBody['tags'] ?? array(),
                 category: $category,
                 status: $status,
+                metadata: $metadata,
                 forceExpTpl: (bool) $teamConfigArr['force_exp_tpl'],
                 defaultTemplateHtml: $teamConfigArr['common_template'] ?? '',
                 defaultTemplateMd: $teamConfigArr['common_template_md'] ?? '',
             ),
-            Action::Duplicate => $this->duplicate((bool) ($reqBody['copyFiles'] ?? '')),
+            Action::Duplicate => $this->duplicate((bool) ($reqBody['copyFiles'] ?? false), (bool) ($reqBody['linkToOriginal'] ?? false)),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
     }
 
+    #[Override]
     public function patch(Action $action, array $params): array
     {
         // was "write" previously, but let's make timestamping/signing only require read access
@@ -99,6 +110,7 @@ abstract class AbstractConcreteEntity extends AbstractEntity
     /**
      * Read all from one entity
      */
+    #[Override]
     public function readOne(): array
     {
         if ($this->id === null) {
@@ -125,6 +137,10 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         $this->entityData['uploads'] = $this->Uploads->readAll();
         $this->entityData['comments'] = $this->Comments->readAll();
         $this->entityData['page'] = substr($this->entityType->toPage(), 0, -4);
+        $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
+        $this->entityData['compounds'] = $CompoundsLinks->readAll();
+        $ContainersLinks = LinksFactory::getContainersLinks($this);
+        $this->entityData['containers'] = $ContainersLinks->readAll();
         $this->entityData['sharelink'] = sprintf(
             '%s/%s?mode=view&id=%d%s',
             Config::fromEnv('SITE_URL'),
@@ -149,11 +165,23 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         return $this->entityData;
     }
 
-    public function readAll(): array
+    #[Override]
+    public function getQueryParams(?InputBag $query = null): DisplayParams
     {
-        return $this->readShow(new DisplayParams($this->Users, Request::createFromGlobals(), $this->entityType), true);
+        return new DisplayParams($this->Users, $this->entityType, $query);
     }
 
+    #[Override]
+    public function readAll(?QueryParamsInterface $queryParams = null): array
+    {
+        if (!$queryParams instanceof DisplayParams) {
+            $Request = Request::createFromGlobals();
+            $queryParams = $this->getQueryParams($Request->query);
+        }
+        return $this->readShow($queryParams, true);
+    }
+
+    #[Override]
     public function destroy(): bool
     {
         $this->canOrExplode('write');
@@ -164,6 +192,13 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         $req->bindValue(':type', $this->entityType->value);
         $req->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
         $this->Db->execute($req);
+
+        // do same for compounds links and containers links
+        $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
+        $CompoundsLinks->destroyAll();
+        $ContainersLinks = LinksFactory::getContainersLinks($this);
+        $ContainersLinks->destroyAll();
+
         return parent::destroy();
     }
 
@@ -182,6 +217,7 @@ abstract class AbstractConcreteEntity extends AbstractEntity
     /**
      * Get timestamper full name for display in view mode
      */
+    #[Override]
     public function getTimestamperFullname(): string
     {
         if ($this->entityData['timestamped'] === 0) {

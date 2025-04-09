@@ -8,35 +8,28 @@
 import {
   collectForm,
   getEntity,
-  getNewIdFromPostRequest,
   notif,
   reloadElements,
   saveStringAsFile,
   updateCatStat,
 } from './misc';
 import i18next from 'i18next';
-import { Action, Model, Target, EntityType } from './interfaces';
-import Templates from './Templates.class';
+import { Action, Model } from './interfaces';
 import { getEditor } from './Editor.class';
 import Tab from './Tab.class';
-import EntityClass from './Entity.class';
 import { Api } from './Apiv2.class';
 import $ from 'jquery';
 import { Uploader } from './uploader';
 
-const ApiC = new Api();
-
-document.addEventListener('DOMContentLoaded', () => {
-  if (window.location.pathname !== '/ucp.php') {
-    return;
-  }
+// only run on ucp page
+if (window.location.pathname === '/ucp.php') {
+  const ApiC = new Api();
 
   // show the handles to reorder when the menu entry is clicked
   $('#toggleReorder').on('click', function() {
     $('.sortableHandle').toggle();
   });
 
-  const EntityC = new Templates();
   // initialize the file uploader
   (new Uploader()).init();
 
@@ -56,54 +49,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // MAIN LISTENER
   document.querySelector('.real-container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
-    const TemplateC = new EntityClass(EntityType.Template);
-    // CREATE TEMPLATE
-    if (el.matches('[data-action="create-template"]')) {
-      const title = prompt(i18next.t('template-title'));
-      if (title) {
-        // no body on template creation
-        EntityC.create(title).then(async resp => {
-          const newId = getNewIdFromPostRequest(resp);
-          window.location.href = `ucp.php?tab=3&mode=edit&templateid=${newId}`;
-        });
-      }
-    // LOCK TEMPLATE
-    } else if (el.matches('[data-action="toggle-lock"]')) {
-      EntityC.patchAction(parseInt(el.dataset.id), Action.Lock).then(() => reloadElements(['lockTemplateButton']));
-    // UPDATE TEMPLATE
-    } else if (el.matches('[data-action="update-template"]')) {
-      EntityC.update(entity.id, Target.Body, editor.getContent());
-    // INSERT IMAGE AT CURSOR POSITION IN TEXT FIXME TODO duplicated code from edit.ts
-    } else if (el.matches('[data-action="insert-image-in-body"]')) {
-      // link to the image
-      const url = `app/download.php?name=${el.dataset.name}&f=${el.dataset.link}&storage=${el.dataset.storage}`;
-      // switch for markdown or tinymce editor
-      let content: string;
-      if (editor.type === 'md') {
-        content = '\n![image](' + url + ')\n';
-      } else if (editor.type === 'tiny') {
-        content = '<img src="' + url + '" />';
-      }
-      editor.setContent(content);
-
-    // DESTROY TEMPLATE
-    } else if (el.matches('[data-action="destroy-template"]')) {
-      if (confirm(i18next.t('generic-delete-warning'))) {
-        EntityC.destroy(parseInt(el.dataset.id))
-          .then(() => window.location.replace('ucp.php?tab=3'))
-          .catch((e) => notif({'res': false, 'msg': e.message}));
-      }
-
-    } else if (el.matches('[data-action="patch-account"]')) {
-      const params = collectForm(document.getElementById('ucp-account-form'), false);
-      if (params['orcid'] === '') {
-        delete params['orcid'];
+    if (el.matches('[data-action="patch-account"]')) {
+      const params = collectForm(document.getElementById('ucp-account-form'));
+      // Allow clearing the field when sending empty orcid param
+      if (!params['orcid']) {
+        params['orcid'] = null;
       }
       ApiC.patch(`${Model.User}/me`, params);
-
-    // IMPORT TPL
-    } else if (el.matches('[data-action="import-template"]')) {
-      TemplateC.duplicate(parseInt(el.dataset.id), false);
 
     // GENERATE SIGKEY
     } else if (el.matches('[data-action="create-sigkeys"]')) {
@@ -149,4 +101,4 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   });
-});
+}

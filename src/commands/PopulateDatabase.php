@@ -40,6 +40,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
+use Override;
 
 use function array_key_exists;
 use function is_string;
@@ -51,11 +52,12 @@ use function str_repeat;
  * For dev purposes, should not be used by normal users.
  */
 #[AsCommand(name: 'db:populate')]
-class PopulateDatabase extends Command
+final class PopulateDatabase extends Command
 {
     // number of things to create
     private const int DEFAULT_ITERATIONS = 50;
 
+    #[Override]
     protected function configure(): void
     {
         $this->setDescription('Populate the database with fake data')
@@ -64,6 +66,7 @@ class PopulateDatabase extends Command
             ->setHelp('This command allows you to populate the database with fake users/experiments/items. The database will be dropped before populating it. The configuration is read from the yaml file passed as first argument.');
     }
 
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {

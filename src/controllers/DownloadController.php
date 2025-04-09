@@ -20,6 +20,7 @@ use League\Flysystem\UnableToRetrieveMetadata;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Override;
 
 use function fopen;
 use function in_array;
@@ -29,7 +30,7 @@ use function substr;
 /**
  * To download uploaded files
  */
-class DownloadController implements ControllerInterface
+final class DownloadController implements ControllerInterface
 {
     // the human-friendly name that we will give to the downloaded file */
     private string $realName = 'unnamed_file';
@@ -41,7 +42,7 @@ class DownloadController implements ControllerInterface
 
     private string $longName;
 
-    public function __construct(private Filesystem $fs, string $longName, string $realName = null, private bool $forceDownload = false)
+    public function __construct(private Filesystem $fs, string $longName, ?string $realName = null, private bool $forceDownload = false)
     {
         // Remove any path info to avoid hacking by adding relative path, etc.
         $this->longName = Filter::forFilesystem(basename($longName));
@@ -63,6 +64,7 @@ class DownloadController implements ControllerInterface
         return $this->filePath;
     }
 
+    #[Override]
     public function getResponse(): Response
     {
         // this will disable output buffering and prevent issues when downloading big files

@@ -17,19 +17,22 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Override;
 
 /**
  * To remove deleted files completely
  */
 #[AsCommand(name: 'prune:uploads')]
-class PruneUploads extends Command
+final class PruneUploads extends Command
 {
+    #[Override]
     protected function configure(): void
     {
         $this->setDescription('Remove deleted uploaded files')
             ->setHelp('Remove uploaded files marked as deleted from the filesystem and from the database');
     }
 
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln(array(

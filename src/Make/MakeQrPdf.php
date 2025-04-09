@@ -16,11 +16,12 @@ use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
 use Elabftw\Traits\TwigTrait;
+use Override;
 
 /**
  * Make a PDF from several experiments or db items showing only minimal info with QR codes
  */
-class MakeQrPdf extends AbstractMakePdf
+final class MakeQrPdf extends AbstractMakePdf
 {
     use TwigTrait;
 
@@ -35,11 +36,13 @@ class MakeQrPdf extends AbstractMakePdf
     /**
      * Get the name of the generated file
      */
+    #[Override]
     public function getFileName(): string
     {
         return 'qr-codes.elabftw.pdf';
     }
 
+    #[Override]
     public function getFileContent(): string
     {
         // add view URL to entities

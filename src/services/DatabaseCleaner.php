@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -12,6 +13,7 @@ namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\CleanerInterface;
+use Override;
 
 use function count;
 use function sprintf;
@@ -19,7 +21,7 @@ use function sprintf;
 /**
  * Make sure the database is consistent with no leftover things
  */
-class DatabaseCleaner implements CleanerInterface
+final class DatabaseCleaner implements CleanerInterface
 {
     private Db $Db;
 
@@ -31,6 +33,7 @@ class DatabaseCleaner implements CleanerInterface
     /**
      * Check all the things
      */
+    #[Override]
     public function cleanup(): int
     {
         $this->findOrphans('experiments_templates', 'teams', 'team');

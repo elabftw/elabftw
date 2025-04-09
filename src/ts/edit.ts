@@ -9,20 +9,17 @@ import {
   escapeRegExp,
   getEntity,
   getNewIdFromPostRequest,
-  notif,
   notifError,
   reloadElements,
   updateCatStat,
   updateEntityBody,
 } from './misc';
-import { Target, Upload, Model, Action } from './interfaces';
+import { Target, Model, Action } from './interfaces';
 import './doodle';
 import { getEditor } from './Editor.class';
 import $ from 'jquery';
 import i18next from 'i18next';
-import EntityClass from './Entity.class';
 import { Api } from './Apiv2.class';
-import { ChemDoodle } from '@deltablot/chemdoodle-web-mini/dist/chemdoodle.min.js';
 import { Uploader } from './uploader';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -34,8 +31,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   const ApiC = new Api();
 
   const entity = getEntity();
-  const EntityC = new EntityClass(entity.type);
 
+  // remove exclusive edit mode when leaving the page
+  window.onbeforeunload = function() {
+    ApiC.notifOnSaved = false;
+    ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.RemoveExclusiveEditMode});
+  };
   // Which editor are we using? md or tiny
   const editor = getEditor();
   editor.init('edit');
@@ -57,7 +58,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // RECOVER YES
   $(document).on('click', '.recover-yes', function() {
-    EntityC.update(entity.id, Target.Body, localStorage.getItem('body')).then(() => {
+    const params = {};
+    params[Target.Body] = localStorage.getItem('body');
+    ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => {
       editor.replaceContent(localStorage.getItem('body'));
       localStorage.clear();
       document.getElementById('recoveryDiv').remove();
@@ -73,66 +76,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   // END DATA RECOVERY
   ////////////////////
 
-  // GET MOL FILES
-  function getListFromMolFiles(): void {
-    const mols = [];
-    ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}`).then(json => {
-      for (const upload of json as Array<Upload>) {
-        const extension = upload.real_name.split('.').pop();
-        // unfortunately, loading .rxn files here doesn't work as it expects json or mol only
-        if (['mol', 'chemjson'].includes(extension)) {
-          mols.push([upload.real_name, upload.long_name]);
-        }
-      }
-      if (mols.length === 0) {
-        notif({res: false, msg: 'No mol files found.'});
-        return;
-      }
-      let listHtml = '<ul class="text-left">';
-      mols.forEach(function(mol: [string, string], index: number) {
-        listHtml += '<li style="color:#29aeb9" class="clickable loadableMolLink" data-target="app/download.php?f=' + mols[index][1] + '">' + mols[index][0] + '</li>';
-      });
-      $('.getMolButton').text('Refresh list');
-      $('.getMolDiv').html(listHtml + '</ul>');
-    });
-  }
-
-  $(document).on('click', '.getMolButton', function() {
-    getListFromMolFiles();
-  });
-
-  // Load the content of a mol file from the list in the mol editor
-  $(document).on('click', '.loadableMolLink', function() {
-    $.get($(this).data('target')).done(function(molContent) {
-      // a .chemjson file will be an object but we want a string
-      if (typeof molContent === 'object') {
-        molContent = JSON.stringify(molContent);
-      }
-      $('#sketcher_open_text').val(molContent);
-    });
-  });
-  // END GET MOL FILES
-
-  // DRAW THE MOLECULE SKETCHER
-  // documentation: https://web.chemdoodle.com/tutorial/2d-structure-canvases/sketcher-canvas#options
-  const sketcher = new ChemDoodle.SketcherCanvas('sketcher', 750, 300, {
-    oneMolecule: false,
-  });
-
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
-    // UPDATE ENTITY BODY (SAVE BUTTON)
-    if (el.matches('[data-action="update-entity-body"]')) {
-      updateEntityBody().then(() => {
-        // SAVE AND GO BACK BUTTON
-        if (el.matches('[data-redirect="view"]')) {
-          window.location.replace('?mode=view&id=' + entity.id);
-        }
-      });
-
     // GET NEXT CUSTOM ID
-    } else if (el.matches('[data-action="get-next-custom-id"]')) {
+    if (el.matches('[data-action="get-next-custom-id"]')) {
       // fetch the category from the current value of select, as it might be different from the one on page load
       const category = (document.getElementById('category_select') as HTMLSelectElement).value;
       if (category === '0') {
@@ -145,45 +93,21 @@ document.addEventListener('DOMContentLoaded', async () => {
       const button = el as HTMLButtonElement;
       button.disabled = true;
       // make sure the current id is null or it will increment this one
-      EntityC.update(entity.id, Target.Customid, null).then(() => {
+      const params = {};
+      params[Target.Customid] = null;
+      ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => {
         // get the entity with highest custom_id
-        return ApiC.getJson(`${el.dataset.endpoint}/?cat=${category}&order=customid&limit=1&sort=desc`);
+        return ApiC.getJson(`${el.dataset.endpoint}/?cat=${category}&order=customid&limit=1&sort=desc&scope=3&skip_pinned=1`);
       }).then(json => {
         const nextId = json[0].custom_id + 1;
         inputEl.value = nextId;
-        return EntityC.update(entity.id, Target.Customid, nextId);
+        const params = {};
+        params[Target.Customid] = nextId;
+        return ApiC.patch(`${entity.type}/${entity.id}`, params);
       }).finally(() => {
         // unlock the button
         button.disabled = false;
       });
-
-    // SAVE CHEM CANVAS AS FILE: chemjson or png
-    } else if (el.matches('[data-action="save-chem-as-file"]')) {
-      const realName = prompt(i18next.t('request-filename'));
-      if (realName === null || realName === '') {
-        return;
-      }
-      let content: string;
-      switch (el.dataset.filetype) {
-      case 'chemjson':
-        content = JSON.stringify(new ChemDoodle.io.JSONInterpreter().contentTo(sketcher.molecules, sketcher.shapes));
-        break;
-      case 'png':
-        // note: this is the same as ChemDoodle.io.png.string(sketcher)
-        content = (document.getElementById('sketcher') as HTMLCanvasElement).toDataURL();
-        break;
-      case 'rxn':
-        content = new ChemDoodle.io.RXNInterpreter().write(sketcher.molecules, sketcher.shapes);
-        break;
-      }
-
-      const params = {
-        'action': Action.CreateFromString,
-        'file_type': el.dataset.filetype,
-        'real_name': realName,
-        'content': content,
-      };
-      ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}`, params).then(() => reloadElements(['uploadsDiv']));
 
     // ANNOTATE IMAGE
     } else if (el.matches('[data-action="annotate-image"]')) {
@@ -276,15 +200,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         // wrap in pre element to retain whitespace, html encode '<' and '>'
         editor.setContent('<pre>' + fileContent.replace(/[<>]/g, char => specialChars[char]) + '</pre>');
       });
-    // REQUEST EXCLUSIVE EDIT MODE REMOVAL
-    } else if (el.matches('[data-action="request-exclusive-edit-mode-removal"]')) {
-      ApiC.post(`${entity.type}/${entity.id}/request_actions`, {
-        action: Action.Create,
-        target_action: 60,
-        target_userid: el.dataset.targetUser,
-      }).then(() => reloadElements(['requestActionsDiv']))
-        // the request gets rejected if repeated
-        .catch(error => console.error(error.message));
     }
   });
 

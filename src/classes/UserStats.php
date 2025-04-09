@@ -27,7 +27,7 @@ use function sprintf;
 /**
  * Generate experiments statistics for a user (shown on profile page)
  */
-class UserStats
+final class UserStats
 {
     private Db $Db;
 

@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
@@ -33,7 +32,6 @@ use function str_split;
  *
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = _('Login');
 
 $Response = new Response();
 $Response->prepare($App->Request);
@@ -54,9 +52,9 @@ try {
 
     // Show MFA if necessary
     if ($App->Session->has('mfa_auth_required')) {
-        $App->pageTitle = _('Two Factor Authentication');
         $template = 'mfa.html';
-        $renderArr = array('hideTitle' => true);
+        // the title is hidden in the page, but give it nonetheless for the document.title
+        $renderArr = array('hideTitle' => true, 'pageTitle' => _('Two Factor Authentication'));
 
         // If one enables 2FA we need to provide the secret.
         // For user convenience it is provide as QR code and as plain text.
@@ -104,21 +102,17 @@ try {
 
     if ($App->Request->cookies->has('kickreason')) {
         // at the moment there is only one reason
-        $App->ko[] = _('Your session expired.');
+        $App->Session->getFlashBag()->add('ko', _('Your session expired.'));
     }
 
     $template = 'login.html';
     $renderArr = array(
         'idpsArr' => $idpsArr,
+        'pageTitle' => _('Login'),
         'teamsArr' => $teamsArr,
         'showLocal' => $showLocal,
         'hideTitle' => true,
     );
-    $Response->setContent($App->render($template, $renderArr));
-} catch (ImproperActionException $e) {
-    // show message to user
-    $template = 'error.html';
-    $renderArr = array('error' => $e->getMessage());
     $Response->setContent($App->render($template, $renderArr));
 } catch (IllegalActionException $e) {
     // log notice and show message
@@ -126,7 +120,12 @@ try {
     $template = 'error.html';
     $renderArr = array('error' => Tools::error(true));
     $Response->setContent($App->render($template, $renderArr));
-} catch (DatabaseErrorException | FilesystemErrorException $e) {
+} catch (ImproperActionException $e) {
+    // show message to user
+    $template = 'error.html';
+    $renderArr = array('error' => $e->getMessage());
+    $Response->setContent($App->render($template, $renderArr));
+} catch (DatabaseErrorException $e) {
     // log error and show message
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
     $template = 'error.html';

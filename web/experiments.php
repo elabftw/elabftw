@@ -14,10 +14,10 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Controllers\ExperimentsController;
 use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Experiments;
+use Elabftw\Services\Filter;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -25,7 +25,6 @@ use Symfony\Component\HttpFoundation\Response;
  * Entry point for all experiment stuff
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = ngettext('Experiment', 'Experiments', 2);
 
 // default response is error page with general error message
 $Response = new Response();
@@ -33,18 +32,18 @@ $Response->prepare($Request);
 $template = 'error.html';
 
 try {
-    $Controller = new ExperimentsController($App, new Experiments($App->Users));
+    $Controller = new ExperimentsController($App, new Experiments($App->Users, Filter::intOrNull($Request->query->getInt('id'))));
     $Response = $Controller->getResponse();
-} catch (ImproperActionException $e) {
-    // show message to user
-    $renderArr = array('error' => $e->getMessage());
-    $Response->setContent($App->render($template, $renderArr));
 } catch (IllegalActionException $e) {
     // log notice and show message
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
     $renderArr = array('error' => Tools::error(true));
     $Response->setContent($App->render($template, $renderArr));
-} catch (DatabaseErrorException | FilesystemErrorException $e) {
+} catch (ImproperActionException $e) {
+    // show message to user
+    $renderArr = array('error' => $e->getMessage());
+    $Response->setContent($App->render($template, $renderArr));
+} catch (DatabaseErrorException $e) {
     // log error and show message
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
     $renderArr = array('error' => $e->getMessage());

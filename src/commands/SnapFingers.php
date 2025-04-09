@@ -17,6 +17,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Override;
 
 /**
  * Make the database lighter by removing half of the revisions
@@ -24,14 +25,16 @@ use Symfony\Component\Console\Output\OutputInterface;
  * lead to a revision creation. See #623
  */
 #[AsCommand(name: 'thanos:snap')]
-class SnapFingers extends Command
+final class SnapFingers extends Command
 {
+    #[Override]
     protected function configure(): void
     {
         $this->setDescription('Remove half of the stored revisions')
             ->setHelp('A bug fixed in version 1.8.3 would lead to the revisions tables to grow very fast. This is a method to reduce the size of those tables.');
     }
 
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln(array(

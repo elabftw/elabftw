@@ -12,11 +12,13 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
+use Override;
+
 /**
  * RFC3161 timestamping with Sectigo timestamping service
  * https://sectigo.com/resource-library/time-stamping-server
  */
-class MakeSectigoTimestamp extends AbstractMakeTrustedTimestamp
+final class MakeSectigoTimestamp extends AbstractMakeTrustedTimestamp
 {
     protected const string TS_URL = 'http://timestamp.sectigo.com/';
 
@@ -27,6 +29,7 @@ class MakeSectigoTimestamp extends AbstractMakeTrustedTimestamp
      *
      * @return array<string,string>
      */
+    #[Override]
     public function getTimestampParameters(): array
     {
         return array(

@@ -14,8 +14,6 @@ namespace Elabftw\Import;
 
 use DateTimeImmutable;
 use Elabftw\Elabftw\CreateUpload;
-use Elabftw\Elabftw\EntityParams;
-use Elabftw\Elabftw\TagParam;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FileFromString;
@@ -28,16 +26,20 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users;
+use Elabftw\Params\EntityParams;
+use Elabftw\Params\TagParam;
 use JsonException;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToReadFile;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Override;
 
 use function basename;
 use function hash_file;
 use function json_decode;
 use function sprintf;
+use function strtr;
 
 /**
  * Import a .eln file.
@@ -60,6 +62,8 @@ class Eln extends AbstractZip
 
     private AbstractEntity $Entity;
 
+    private int $count;
+
     public function __construct(
         protected Users $requester,
         // TODO nullable and have it in .eln export so it is not lost on import
@@ -69,7 +73,6 @@ class Eln extends AbstractZip
         protected FilesystemOperator $fs,
         protected LoggerInterface $logger,
         protected ?EntityType $entityType = null,
-        private bool $dryRun = false,
         protected ?int $category = null,
         private bool $verifyChecksum = true,
     ) {
@@ -78,28 +81,27 @@ class Eln extends AbstractZip
             $UploadedFile,
             $fs,
         );
-        if ($dryRun) {
-            $this->logger->info('Running in dry-mode: nothing will be imported.');
-        }
+        $this->count = $this->preProcess();
         // we might have been forced to cast to int a null value, so bring it back to null
         if ($this->category === 0) {
             $this->category = null;
         }
     }
 
+    #[Override]
+    public function getCount(): int
+    {
+        return $this->count;
+    }
+
+    #[Override]
     public function import(): int
     {
-        $count = $this->preProcess();
-        $this->logger->info(sprintf('Crate is composed of %d parts', $count));
-        if ($this->dryRun) {
-            return $count;
-        }
-
         // loop over each hasPart of the root node
         // this is the main import loop
         $current = 1;
         foreach ($this->crateNodeHasPart as $part) {
-            $this->logger->debug(sprintf('Processing Dataset %d/%d', $current, $count));
+            $this->logger->debug(sprintf('Processing Dataset %d/%d', $current, $this->count));
             $this->importRootDataset($this->getNodeFromId($part['@id']));
             $current++;
         }
@@ -481,6 +483,8 @@ class Eln extends AbstractZip
     {
         // note: path transversal vuln is detected and handled by flysystem
         $filepath = $this->tmpPath . '/' . basename($this->root) . '/' . $file['@id'];
+        // fix for bloxberg attachments containing : character
+        $filepath = strtr($filepath, ':', '_');
 
         // CHECKSUM
         if ($this->verifyChecksum) {

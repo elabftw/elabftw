@@ -18,30 +18,33 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Override;
 
 /**
  * For dev purposes: generate a new empty schema file
  */
 #[AsCommand(name: 'dev:genschema')]
-class GenSchema extends Command
+final class GenSchema extends Command
 {
     public function __construct(private FilesystemOperator $fs)
     {
         parent::__construct();
     }
 
+    #[Override]
     protected function configure(): void
     {
         $this->setDescription('Generate a new database schema migration file')
             ->setHelp('This command allows you to generate a new schemaNNN.sql for database schema migration');
     }
 
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $schemaNumber = Update::REQUIRED_SCHEMA + 1;
         $output->writeln(sprintf('Generating schema %d', $schemaNumber));
         $filename = sprintf('schema%d.sql', $schemaNumber);
-        $content = sprintf("-- schema %1\$s\n\nUPDATE config SET conf_value = %1\$s WHERE conf_name = 'schema';\n", $schemaNumber);
+        $content = sprintf("-- schema %d\n\n", $schemaNumber);
         $this->fs->write($filename, $content);
         $output->writeln('Created file: ' . $filename);
         // now generate the down file

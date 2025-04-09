@@ -28,7 +28,7 @@ use function sprintf;
 /**
  * Twig filters
  */
-class TwigFilters
+final class TwigFilters
 {
     /**
      * For displaying messages using bootstrap alerts
@@ -82,12 +82,12 @@ class TwigFilters
         $grouped = $Metadata->getGroupedExtraFields();
 
         foreach ($grouped as $group) {
-            // group list item contains another list with fields
-            $final .= sprintf("<div><h4 data-action='toggle-next' class='mt-4 d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>%s</h4>", Tools::eLabHtmlspecialchars($group['name']));
-            $final .= '<ul class="list-group">';
             if (!array_key_exists('extra_fields', $group)) {
                 continue;
             }
+            // group list item contains another list with fields
+            $final .= sprintf("<div><h4 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='mt-4 d-inline togglable-section-title'><i class='fas fa-caret-down fa-fw mr-2'></i>%s</h4>", Tools::eLabHtmlspecialchars($group['name']));
+            $final .= '<ul class="list-group">';
             foreach ($group['extra_fields'] as $field) {
                 $final .= '<li class="list-group-item">';
                 $newTab = ' target="_blank" rel="noopener"';
@@ -110,6 +110,13 @@ class TwigFilters
                         '<a href="%1$s"%2$s>%1$s</a>',
                         Tools::eLabHtmlspecialchars($value),
                         $newTab,
+                    );
+                }
+                // type:email is another special case
+                elseif ($metadataType === 'email') {
+                    $value = sprintf(
+                        '<a href="mailto:%1$s">%1$s</a>',
+                        Tools::eLabHtmlspecialchars($value),
                     );
                 }
                 // type:exp/items is another special case

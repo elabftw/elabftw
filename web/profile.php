@@ -14,7 +14,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Exceptions\FilesystemErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Make\Exports;
@@ -30,7 +29,6 @@ use Symfony\Component\HttpFoundation\Response;
  * Display profile of current user
  */
 require_once 'app/init.inc.php';
-$App->pageTitle = _('Profile');
 
 /** @psalm-suppress UncaughtThrowInGlobalScope */
 $Response = new Response();
@@ -54,7 +52,7 @@ try {
     $ExperimentsCategories = new ExperimentsCategories(new Teams($App->Users));
 
     // get the exported files
-    $Export = new Exports($App->Users, Storage::CACHE->getStorage());
+    $Export = new Exports($App->Users, Storage::EXPORTS->getStorage());
 
     $UserUploads = new UserUploads($App->Users);
     $PermissionsHelper = new PermissionsHelper();
@@ -65,6 +63,7 @@ try {
         'exportedFiles' => $Export->readAll(),
         'experimentsCategoryArr' => $ExperimentsCategories->readAll(),
         'maxUploadSizeRaw' => ini_get('post_max_size'),
+        'pageTitle' => _('Profile'),
         'pieData' => $UserStats->getPieData(),
         'pieDataCss' => $UserStats->getFormattedPieData(),
         'teamGroupsArr' => $teamGroupsArr,
@@ -74,18 +73,18 @@ try {
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
     );
     $Response->setContent($App->render($template, $renderArr));
-} catch (ImproperActionException $e) {
-    // show message to user
-    $template = 'error.html';
-    $renderArr = array('error' => $e->getMessage());
-    $Response->setContent($App->render($template, $renderArr));
 } catch (IllegalActionException $e) {
     $template = 'error.html';
     // log notice and show message
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
     $renderArr = array('error' => Tools::error(true));
     $Response->setContent($App->render($template, $renderArr));
-} catch (DatabaseErrorException | FilesystemErrorException $e) {
+} catch (ImproperActionException $e) {
+    // show message to user
+    $template = 'error.html';
+    $renderArr = array('error' => $e->getMessage());
+    $Response->setContent($App->render($template, $renderArr));
+} catch (DatabaseErrorException $e) {
     // log error and show message
     $template = 'error.html';
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));

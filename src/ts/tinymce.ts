@@ -32,6 +32,7 @@ import 'tinymce/plugins/link';
 import 'tinymce/plugins/lists';
 import 'tinymce/plugins/media';
 import 'tinymce/plugins/pagebreak';
+import 'tinymce/plugins/preview';
 import 'tinymce/plugins/save';
 import 'tinymce/plugins/searchreplace';
 import 'tinymce/plugins/table';
@@ -63,6 +64,8 @@ import { EntityType, Model } from './interfaces';
 import { getEntity, reloadElements, escapeExtendedQuery, updateEntityBody, getNewIdFromPostRequest } from './misc';
 import { Api } from './Apiv2.class';
 import { isSortable } from './TableSorting.class';
+import { MathJaxObject } from 'mathjax-full/js/components/startup';
+declare const MathJax: MathJaxObject;
 
 // AUTOSAVE
 const doneTypingInterval = 7000;  // time in ms between end of typing and save
@@ -191,8 +194,8 @@ const imagesUploadHandler = (blobInfo: TinyMCEBlobInfo) => new Promise((resolve,
 
 // options for tinymce to pass to tinymce.init()
 export function getTinymceBaseConfig(page: string): object {
-  let plugins = 'accordion advlist anchor autolink autoresize table searchreplace code fullscreen insertdatetime charmap lists save image media link pagebreak codesample template mention visualblocks visualchars emoticons';
-  let toolbar1 = 'custom-save | undo redo | styles fontsize bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap emoticons adddate | codesample | link | sort-table';
+  let plugins = 'accordion advlist anchor autolink autoresize table searchreplace code fullscreen insertdatetime charmap lists save image media link pagebreak codesample template mention visualblocks visualchars emoticons preview';
+  let toolbar1 = 'custom-save preview | undo redo | styles fontsize bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap emoticons adddate | codesample | link | sort-table';
   let removedMenuItems = 'newdocument, image, anchor';
   if (page === 'edit' || page === 'ucp') {
     plugins += ' autosave';
@@ -206,6 +209,12 @@ export function getTinymceBaseConfig(page: string): object {
 
   return {
     selector: '.mceditable',
+    table_default_styles: {
+      'min-width':'25%',
+      'width':'auto',
+    },
+    // The table width is changed when manipulating columns, the size of other columns is maintained.
+    table_column_resizing: 'resizetable',
     browser_spellcheck: true,
     // location of the skin directory
     skin_url: '/assets/tinymce_skins',
@@ -257,6 +266,7 @@ export function getTinymceBaseConfig(page: string): object {
       {text: 'Diff', value: 'diff'},
       {text: 'Fortran', value: 'fortran'},
       {text: 'Go', value: 'go'},
+      {text: 'Igor', value: 'igor'},
       {text: 'Java', value: 'java'},
       {text: 'JavaScript', value: 'javascript'},
       {text: 'Json', value: 'json'},
@@ -269,6 +279,7 @@ export function getTinymceBaseConfig(page: string): object {
       {text: 'Python', value: 'python'},
       {text: 'R', value: 'r'},
       {text: 'Ruby', value: 'ruby'},
+      {text: 'Rust', value: 'rust'},
       {text: 'SQL', value: 'sql'},
       {text: 'Tcl', value: 'tcl'},
       {text: 'VHDL', value: 'vhdl'},
@@ -312,7 +323,7 @@ export function getTinymceBaseConfig(page: string): object {
       },
     },
     mobile: {
-      plugins: [ 'autolink', 'image', 'link', 'lists', 'save' ],
+      plugins: [ 'autolink', 'image', 'link', 'lists', 'save', 'mention' ],
     },
     // use a custom function for the save button in toolbar
     save_onsavecallback: (): Promise<void> => updateEntityBody(),
@@ -320,8 +331,21 @@ export function getTinymceBaseConfig(page: string): object {
     setup: (editor: Editor): void => {
       // holds the timer setTimeout function
       let typingTimer;
-      // make the edges round
-      editor.on('init', () => editor.getContainer().className += ' rounded');
+      // use event SkinLoaded instead of init so we're sure skinNode is present
+      editor.on('SkinLoaded', () => {
+        // prevent skin.min.css from changing appearance of .mce-preview-body element
+        const skinNode = document.querySelector('[rel=stylesheet][href$="/skin.min.css"]') as HTMLLinkElement;
+        const skinCSS = skinNode.sheet;
+        Array.from(skinCSS.cssRules).forEach((rule, index) => {
+          if (rule instanceof CSSStyleRule) {
+            const selectors = rule.selectorText.split(',');
+            const modifiedSelectors = selectors.map((selector) => selector.trim() + ':not(.mce-preview-body *)').join(',');
+            rule.selectorText = modifiedSelectors;
+            skinCSS.deleteRule(index);
+            skinCSS.insertRule(rule.cssText, index);
+          }
+        });
+      });
       // Hook into the blur event - Finalize potential changes to images if user clicks outside of editor
       editor.on('blur', () => {
         // this will trigger the images_upload_handler event hook defined further above
@@ -357,7 +381,7 @@ export function getTinymceBaseConfig(page: string): object {
       });
 
       // floppy disk icon from COLLECTION: Zest Interface Icons LICENSE: MIT License AUTHOR: zest
-      editor.ui.registry.addIcon('customSave', '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M4 5a1 1 0 0 1 1-1h2v3a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V4h.172a1 1 0 0 1 .707.293l2.828 2.828a1 1 0 0 1 .293.707V19a1 1 0 0 1-1 1h-1v-7a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v7H5a1 1 0 0 1-1-1V5Zm4 15h8v-6H8v6Zm6-16H9v2h5V4ZM5 2a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V7.828a3 3 0 0 0-.879-2.12l-2.828-2.83A3 3 0 0 0 16.172 2H5Z" /></svg>'),
+      editor.ui.registry.addIcon('customSave', '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M4 5a1 1 0 0 1 1-1h2v3a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V4h.172a1 1 0 0 1 .707.293l2.828 2.828a1 1 0 0 1 .293.707V19a1 1 0 0 1-1 1h-1v-7a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v7H5a1 1 0 0 1-1-1V5Zm4 15h8v-6H8v6Zm6-16H9v2h5V4ZM5 2a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V7.828a3 3 0 0 0-.879-2.12l-2.828-2.83A3 3 0 0 0 16.172 2H5Z" /></svg>'), // eslint-disable-line
 
       // add date+time button
       editor.ui.registry.addButton('adddate', {
@@ -389,7 +413,7 @@ export function getTinymceBaseConfig(page: string): object {
       }
 
       // sort down icon from COLLECTION: Dazzle Line Icons LICENSE: CC Attribution License AUTHOR: Dazzle UI
-      editor.ui.registry.addIcon('sort-amount-down-alt', '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13 12h8m-8-4h8m-8 8h8M6 7v10m0 0-3-3m3 3 3-3" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'),
+      editor.ui.registry.addIcon('sort-amount-down-alt', '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13 12h8m-8-4h8m-8 8h8M6 7v10m0 0-3-3m3 3 3-3" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'), // eslint-disable-line
       // add toggle button for table sorting
       editor.ui.registry.addToggleButton('sort-table', {
         icon: 'sort-amount-down-alt',
@@ -466,5 +490,26 @@ export function getTinymceBaseConfig(page: string): object {
       },
     ],
     toolbar_sticky: true,
+    // render MathJax for TinyMCE preview
+    init_instance_callback: (editor) => {
+      editor.on('ExecCommand', (e) => {
+        if (e.command == 'mcePreview') {
+          // declaration as iFrame element required to avoid errors with getting srcdoc property
+          const iframe = (document.querySelector('iframe.tox-dialog__iframe') as HTMLIFrameElement);
+          if (iframe) {
+            iframe.onload = () => {
+              const tinyDiv = document.createElement('div');
+              tinyDiv.setAttribute('class', 'mce-content-body mce-preview-body');
+              iframe.contentDocument.body.childNodes.forEach((node) => {
+                tinyDiv.append(node);
+              });
+              // iframe replaced with div element because MathJax otherwise doesn't render menus properly; see #5295
+              iframe.replaceWith(tinyDiv);
+              MathJax.typesetPromise();
+            };
+          }
+        }
+      });
+    },
   };
 }

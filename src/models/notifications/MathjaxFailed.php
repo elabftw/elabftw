@@ -13,11 +13,12 @@ declare(strict_types=1);
 namespace Elabftw\Models\Notifications;
 
 use Elabftw\Enums\Notifications;
+use Override;
 
 /**
  * When there was an error during pdf generation because of MathJax
  */
-class MathjaxFailed extends WebOnlyNotifications
+final class MathjaxFailed extends WebOnlyNotifications
 {
     protected Notifications $category = Notifications::MathjaxFailed;
 
@@ -26,6 +27,7 @@ class MathjaxFailed extends WebOnlyNotifications
         parent::__construct();
     }
 
+    #[Override]
     protected function getBody(): array
     {
         return array(

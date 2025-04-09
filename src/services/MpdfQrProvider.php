@@ -16,12 +16,13 @@ namespace Elabftw\Services;
 use Mpdf\QrCode\Output\Png;
 use Mpdf\QrCode\QrCode;
 use RobThree\Auth\Providers\Qr\IQRCodeProvider;
+use Override;
 
 /**
  * Implements the IQRCodeProvider necessary for Two Factor Authentication.
  * It uses mpdf/qrcode to generate the QR code locally without external dependencies.
  */
-class MpdfQrProvider implements IQRCodeProvider
+final class MpdfQrProvider implements IQRCodeProvider
 {
     /**
      * Constructor
@@ -32,6 +33,7 @@ class MpdfQrProvider implements IQRCodeProvider
      */
     public function __construct(public array $background = array(255, 255, 255), public array $foreground = array(0, 0, 0), public int $compression = 0) {}
 
+    #[Override]
     public function getMimeType(): string
     {
         return 'image/png';
@@ -40,6 +42,7 @@ class MpdfQrProvider implements IQRCodeProvider
     /**
      * Generate the png qr code
      */
+    #[Override]
     public function getQRCodeImage(string $qrText, int $size): string
     {
         $qrCode = new QrCode($qrText);

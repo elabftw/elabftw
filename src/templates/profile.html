@@ -129,9 +129,7 @@
     <a id='attachementsEnd'></a>
     {% if currentLimit < uploadsTotal %}
       <div class='text-center page-buttons mt-2'>
-        <button class='btn btn-primary' type='button'>
-          <a href='?tab=2&limit={{ currentLimit * 2 }}#attachementsEnd' class='color-white'>{{ 'Load more'|trans }}</a>
-        </button>
+        <a class='btn btn-primary' href='?tab=2&limit={{ currentLimit * 2 }}#attachementsEnd' class='color-white'>{{ 'Load more'|trans }}</a>
       </div>
     {% endif %}
   </div>
@@ -146,10 +144,16 @@
     </p>
     <form class='form-group' id='importFileForm' enctype='multipart/form-data' action='api/v2/import' method='post' aria-label='{{ 'Import'|trans }}'>
       {{ App.Session.get('csrf')|csrf }}
-      <label class='d-block' for='importFileInput'>{{ 'Select a file to import'|trans }}</label>
       <div class='d-flex'>
         <div>
-          <input id='importFileInput' required name='file' type='file' accept='.eln,vnd.eln+zip,.csv,text/csv' />
+          <input id='importFileInput' hidden required name='file' type='file' accept='.eln,vnd.eln+zip,.csv,text/csv' />
+          <div class='mb-4 d-flex flex-row'>
+            <button type='button' class='btn btn-primary' data-action='show-file-input' >{{ 'Import from file'|trans }}</button>
+          </div>
+          <div class='mb-4' id='attachedFile' hidden>
+            {{ 'Attached file'|trans }} :
+            <span id='fileName' class='font-weight-bold'></span>
+          </div>
           <p class='smallgray'>{{ 'Allowed extensions: .eln, .csv'|trans }}<br>
           {{ 'Maximum size: %s'|format(maxUploadSizeRaw)|trans }}</p>
         </div>
@@ -257,7 +261,7 @@
         <li class='list-group-item py-3 px-2 m-1'>
           <span class='d-flex flew-wrap'>
             <span>
-              <button class='btn p-2 hl-hover-gray lh-normal border-0 my-n2 mr-2' data-toggle-plus-icon='1' data-toggle-target='showMoreDiv_{{ file.id }}' data-action='toggle-next' data-keep-icon='1' title='{{ 'Show more'|trans }}' aria-label='{{ 'Show more'|trans }}'><i class='fas fa-square-plus fa-fw link-like'></i></button>
+              <button class='btn p-2 hl-hover-gray lh-normal border-0 my-n2 mr-2' data-toggle-target='showMoreDiv_{{ file.id }}' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Show more'|trans }}' aria-label='{{ 'Show more'|trans }}'><i class='fas fa-square-plus fa-fw link-like'></i></button>
               <span class='state-indicator' data-state='{{ file.state }}' data-id='{{ file.id }}'>●</span>
               {% if file.real_name %}
                 <a title='{{ 'Download'|trans }}' class='rounded hl-hover-gray p-1' target='_blank' href='/api/v2/exports/{{ file.id }}?format=binary'>
@@ -273,11 +277,6 @@
               {% if file.pdfa %}<span class='p-1 rounded smallgray border'>{{ 'PDF/A'|trans }}</span>{% endif %}
               {% if file.json %}<span class='p-1 rounded smallgray border'>{{ 'JSON'|trans|upper }}</span>{% endif %}
               </span>
-              {% if file.filepath %}
-                <a href='/api/v2/export/{{ file.id }}?format=binary' class='btn hl-hover-gray lh-normal border-0 p-2 m-0 my-n2' title='{{ 'Download'|trans }}' aria-label='{{ 'Download'|trans }}'>
-                  <i class='fas fa-download fa-fw'></i>
-                </a>
-              {% endif %}
             </span>
           <button type='button' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2 ml-auto' data-action='destroy-export' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}' data-id='{{ file.id }}'><i class='fas fa-trash-alt fa-fw'></i></button>
           </span>

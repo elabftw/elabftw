@@ -15,7 +15,7 @@ namespace Elabftw\Storage;
 /**
  * For local cache folder, used by many processes that need to write files at some point
  */
-class Cache extends Local
+final class Cache extends Local
 {
     protected const string FOLDER = 'cache/elab';
 }

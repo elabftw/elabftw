@@ -12,16 +12,17 @@ declare(strict_types=1);
 
 namespace Elabftw\Enums;
 
+use Elabftw\Traits\EnumsTrait;
+
 enum RequestableAction: int
 {
-    use \Elabftw\Traits\EnumsTrait;
+    use EnumsTrait;
 
     case Archive = 10;
     case Lock = 20;
     case Review = 30;
     case Sign = 40;
     case Timestamp = 50;
-    case RemoveExclusiveEditMode = 60;
 
     public function toHuman(): string
     {
@@ -31,7 +32,6 @@ enum RequestableAction: int
             self::Review => _('review'),
             self::Sign => _('signing'),
             self::Timestamp => _('timestamping'),
-            self::RemoveExclusiveEditMode => _('removal of exclusive edit mode'),
         };
     }
 }

@@ -709,7 +709,7 @@ components:
               type:
                 nullable: true
                 type: string
-                enum: ['allow_multi_values', 'blank_value_on_duplicate', 'checkbox', 'date', 'datetime-local', 'description', 'email', 'group_id', 'number', 'options', 'position', 'radio', 'required', 'select', 'text', 'time', 'unit', 'url']
+                enum: ['allow_multi_values', 'blank_value_on_duplicate', 'checkbox', 'date', 'datetime-local', 'description', 'email', 'experiments', 'group_id', 'items', 'number', 'options', 'position', 'radio', 'required', 'select', 'text', 'time', 'unit', 'url', 'users']
               value:
                 nullable: true
                 type: string

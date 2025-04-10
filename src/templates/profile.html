@@ -140,7 +140,7 @@
   <h3 class='p-2 pl-3 section-title'>{{ 'Import'|trans }}</h3>
   <div class='pl-3 mt-2'>
     <p class='smallgrey'>
-      {{ 'You can import data from a .eln archive or a .csv file. %sSee documentation %s%s.'|trans|format("<a href='https://doc.elabftw.net/user-guide.html#importing-data' target='_blank' class='external-link' rel='noopener'>", "", '</a>')|raw }}
+      {{ 'You can import data from a .eln archive or a .csv file. %sSee documentation %s%s.'|trans|format("<a href='https://doc.elabftw.net/import-export.html#importing-data' target='_blank' class='external-link' rel='noopener'>", "", '</a>')|raw }}
     </p>
     <form class='form-group' id='importFileForm' enctype='multipart/form-data' action='api/v2/import' method='post' aria-label='{{ 'Import'|trans }}'>
       {{ App.Session.get('csrf')|csrf }}

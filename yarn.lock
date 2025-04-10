@@ -1915,6 +1915,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fullcalendar/premium-common@npm:~6.1.17":
+  version: 6.1.17
+  resolution: "@fullcalendar/premium-common@npm:6.1.17"
+  peerDependencies:
+    "@fullcalendar/core": ~6.1.17
+  checksum: 10c0/3a656ddfd98203c5000c5b3add18943e102ceff9a89d918474563b16cbed8f367a8e9cf740f447d4fe104ebcaef1e05ad22976f0c8bd496facd1a8ab2eb47f07
+  languageName: node
+  linkType: hard
+
+"@fullcalendar/scrollgrid@npm:~6.1.17":
+  version: 6.1.17
+  resolution: "@fullcalendar/scrollgrid@npm:6.1.17"
+  dependencies:
+    "@fullcalendar/premium-common": "npm:~6.1.17"
+  peerDependencies:
+    "@fullcalendar/core": ~6.1.17
+  checksum: 10c0/2f14b8af3f66b779ac85e0cbd274fe7ab448ccf22d93d598fa75608d039391977a32ee2bb45bee3fd85f7577984979047a940eab3e067b9cda620150b8bb9dfe
+  languageName: node
+  linkType: hard
+
 "@fullcalendar/timegrid@npm:^6.1.17":
   version: 6.1.17
   resolution: "@fullcalendar/timegrid@npm:6.1.17"
@@ -1923,6 +1943,18 @@ __metadata:
   peerDependencies:
     "@fullcalendar/core": ~6.1.17
   checksum: 10c0/ebd2ca0da0b0b98ddb336ee6a2a661e15918d4aebabec31c6c460587d085a9a0095604ef2ee08e0dc5eaf4dbc9a2cc9ae2c3f6802a0a5fcc319808e9a8cf6c98
+  languageName: node
+  linkType: hard
+
+"@fullcalendar/timeline@npm:^6.1.17":
+  version: 6.1.17
+  resolution: "@fullcalendar/timeline@npm:6.1.17"
+  dependencies:
+    "@fullcalendar/premium-common": "npm:~6.1.17"
+    "@fullcalendar/scrollgrid": "npm:~6.1.17"
+  peerDependencies:
+    "@fullcalendar/core": ~6.1.17
+  checksum: 10c0/1eb7bc95b60436bf388b0e8cd39edf2731a8e1bd9500239f625edb2a3f073f468d80ae8b028cd685ae2d228a26f2fbe1ca1179131f6faf6bed3a7c17a5906706
   languageName: node
   linkType: hard
 
@@ -5997,6 +6029,7 @@ __metadata:
     "@fullcalendar/interaction": "npm:^6.1.17"
     "@fullcalendar/list": "npm:^6.1.17"
     "@fullcalendar/timegrid": "npm:^6.1.17"
+    "@fullcalendar/timeline": "npm:^6.1.17"
     "@teselagen/bio-parsers": "npm:^0.4.22"
     "@teselagen/ove": "npm:^0.4.12"
     "@types/bootstrap": "npm:^5.2.10"

@@ -31,6 +31,7 @@ import zhcnLocale from '@fullcalendar/core/locales/zh-cn';
 import bootstrapPlugin from '@fullcalendar/bootstrap';
 import interactionPlugin from '@fullcalendar/interaction';
 import timeGridPlugin from '@fullcalendar/timegrid';
+import timelinePlugin from '@fullcalendar/timeline';
 import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { Action } from './interfaces';
@@ -90,26 +91,37 @@ document.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('itemSelect')) {
     eventBackgroundColor = (document.getElementById('itemSelect') as HTMLSelectElement).selectedOptions[0].dataset.color;
   }
-
+  const layoutCheckbox = document.getElementById('scheduler_layout') as HTMLInputElement;
+  const layout = (layoutCheckbox && layoutCheckbox.checked)
+    ? 'timelineDay,timelineWeek,listWeek,timelineMonth' // horizontal axis
+    : 'timeGridDay,timeGridWeek,listWeek,dayGridMonth'; // classic grid calendar
   // SCHEDULER
   const calendar = new Calendar(calendarEl, {
+    schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
     height: '70vh',
     // Determines how far forward the scroll pane is initially scrolled.
     scrollTime: '08:00:00',
     weekends: calendarEl.dataset.weekends === '1',
-    plugins: [ dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin, bootstrapPlugin ],
+    plugins: [ dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin, bootstrapPlugin, timelinePlugin ],
     headerToolbar: {
       left: 'prev,next today',
       center: 'title',
-      right: 'timeGridDay,timeGridWeek,listWeek,dayGridMonth',
+      right: layout,
     },
+    views: {
+      timelineMonth: {
+        slotLabelFormat: [
+          { weekday: 'short', day: 'numeric' }, // e.g., "Tue 8" in month view
+        ],
+      },
+    },
+    initialView: layoutCheckbox.checked ? 'timelineWeek' : 'timeGridWeek',
     themeSystem: 'bootstrap',
     // i18n
     // all available locales
     locales: [ caLocale, csLocale, deLocale, enLocale, esLocale, frLocale, itLocale, idLocale, jaLocale, koLocale, nlLocale, plLocale, ptLocale, ptbrLocale, ruLocale, skLocale, slLocale, zhcnLocale ],
     // selected locale
     locale: calendarEl.dataset.lang,
-    initialView: 'timeGridWeek',
     // allow selection of range
     selectable: selectable,
     // draw an event while selecting

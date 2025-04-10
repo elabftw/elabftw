@@ -455,7 +455,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const value = (document.getElementById('target_owner') as HTMLInputElement).value;
       const entity = getEntity();
       const params = {};
-      params[Target.UserId] = value;
+      params[Target.UserId] = parseInt(value.split(' ')[0], 10);
       ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => window.location.reload());
 
     // ADD USER TO PERMISSIONS

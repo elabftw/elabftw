@@ -45,6 +45,8 @@ final class DisplayParams extends BaseQueryParams
 
     public ?EntityType $relatedOrigin = null;
 
+    protected string $orderIsPinnedSql = 'is_pinned DESC,';
+
     public function __construct(
         private Users $requester,
         public EntityType $entityType,
@@ -54,9 +56,13 @@ final class DisplayParams extends BaseQueryParams
         public int $limit = 15,
         public int $offset = 0,
         public array $states = array(State::Normal),
+        public bool $skipOrderPinned = false,
     ) {
         // query parameters will override user defaults
         parent::__construct($query, $orderby, $sort, $limit, $offset, $states);
+        if ($skipOrderPinned === true) {
+            $this->orderIsPinnedSql = '';
+        }
         $this->adjust();
     }
 
@@ -69,7 +75,8 @@ final class DisplayParams extends BaseQueryParams
     public function getSql(): string
     {
         return sprintf(
-            'ORDER BY is_pinned DESC, %s %s, entity.id %s LIMIT %d OFFSET %d',
+            'ORDER BY %s %s %s, entity.id %s LIMIT %d OFFSET %d',
+            $this->orderIsPinnedSql,
             $this->orderby->toSql(),
             $this->sort->value,
             $this->sort->value,

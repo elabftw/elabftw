@@ -18,13 +18,11 @@
         </select>
         {# SELECT USER #}
         <label for='requestActionUserSelect'>{{ 'Select collaborator'|trans }}</label>
-        <select id='requestActionUserSelect' class='form-control'>
-          {% for user in Entity.Users.readAllActiveFromTeam %}
-            <option value='{{ user.userid }}'
-            {{ Entity.entityData.userid == user.userid ? ' selected' }}
-            >{{ user.fullname }}</option>
-          {% endfor %}
-        </select>
+        {# this exists so Firefox doesn't process the Search user field as password. No idea why it would do it in the first place though... #}
+        {# and autocomplete='off' doesn't work #}
+        <input type='password' disabled hidden />
+        <input type='text' placeholder='{{ 'Search user'|trans }}' id='requestActionUserSelect' class='form-control' data-identifier='requestActionUserSelect' data-complete-target='users'>
+        <div id='autocompleteAnchorDiv_requestActionUserSelect'></div>
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>

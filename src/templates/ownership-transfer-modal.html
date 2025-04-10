@@ -11,13 +11,11 @@
       <div class='modal-body'>
         {# SELECT USER #}
         <label for='target_owner'>{{ 'New owner'|trans }}</label>
-        <select id='target_owner' class='form-control'>
-          {% for user in Entity.Users.readAllFromTeam %}
-            <option value='{{ user.userid }}'
-            {{ Entity.entityData.userid == user.userid ? ' selected' }}
-            >{{ user.fullname }}</option>
-          {% endfor %}
-        </select>
+        {# this exists so Firefox doesn't process the Search user field as password. No idea why it would do it in the first place though... #}
+        {# and autocomplete='off' doesn't work #}
+        <input type='password' disabled hidden />
+        <input type='text' placeholder='{{ 'Search user'|trans }}' id='target_owner' class='form-control' data-identifier='targetOwnerInput' data-complete-target='users'>
+        <div id='autocompleteAnchorDiv_targetOwnerInput'></div>
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>

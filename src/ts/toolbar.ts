@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ApiC.post(`${entity.type}/${entity.id}/request_actions`, {
         action: Action.Create,
         target_action: actionSelect.value,
-        target_userid: userSelect.value,
+        target_userid: parseInt(userSelect.value.split(' ')[0], 10),
       }).then(() => reloadElements(['requestActionsDiv']))
         .then(() => relativeMoment())
         // the request gets rejected if repeated

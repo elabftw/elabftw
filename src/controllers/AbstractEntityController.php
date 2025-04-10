@@ -124,6 +124,7 @@ abstract class AbstractEntityController implements ControllerInterface
             limit: $this->App->Users->userData['limit_nb'],
             orderby: $orderBy,
             sort: Sort::tryFrom($this->App->Users->userData['sort']) ?? Sort::Desc,
+            skipOrderPinned: $this->App->Request->query->getBoolean('skip_pinned'),
         );
         $itemsArr = $this->Entity->readShow($DisplayParams);
 

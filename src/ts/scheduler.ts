@@ -84,54 +84,21 @@ document.addEventListener('DOMContentLoaded', () => {
   if (params.has('item') && params.get('item') !== 'all') {
     selectedItem = params.get('item');
   }
-  // allow filtering the category and owner of items in events
-  let queryString = '';
-  // const cat = params.get('cat');
-  // const eventOwner = params.get('eventOwner');
-  // const eventOwnerSelect = document.getElementById('eventOwnerSelect') as HTMLInputElement;
-  // const queryParams = [];
-  //
-  // if (eventOwnerSelect) {
-  //   let ownerId: string = '0';
-  //   eventOwnerSelect.addEventListener('change', () => {
-  //     const value = eventOwnerSelect.value;
-  //     ownerId = (value.split(' ')[0]);
-  //     console.log(ownerId);
-  //     queryParams.push('eventOwner=' + encodeURIComponent(ownerId));
-  //     console.log("after",queryParams);
-  //   });
-  // }
-  // if (cat) queryParams.push('cat=' + encodeURIComponent(cat));
-  //
-  // if (queryParams.length > 0) {
-  //   queryString = '?' + queryParams.join('&');
-  // }
+  // filter by category of items AND/OR owner of EVENTS
+  function buildQueryString(): string {
+    const catSelect = document.getElementById('schedulerSelectCat') as HTMLSelectElement;
+    if (catSelect && catSelect.value) {
+      params.set('cat', catSelect.value);
+    }
 
-  const cat = params.get('cat');
-
-  const eventOwnerSelect = document.getElementById('eventOwnerSelect') as HTMLInputElement;
-
-  if (eventOwnerSelect) {
-    eventOwnerSelect.addEventListener('change', () => {
-      const ownerId = eventOwnerSelect.value.trim().split(' ')[0];
-      const newParams = new URLSearchParams(window.location.search);
-
-      // update eventOwner
-      if (ownerId) {
-        newParams.set('eventOwner', ownerId);
-      } else {
-        newParams.delete('eventOwner');
-      }
-
-      // preserve cat
-      if (cat) {
-        newParams.set('cat', cat);
-      }
-
-      // trigger reload with new query
-      window.location.search = newParams.toString();
-    });
+    const eventOwnerInput = document.getElementById('eventOwnerSelect') as HTMLInputElement;
+    if (eventOwnerInput && eventOwnerInput.value.trim()) {
+      const ownerId = eventOwnerInput.value.trim().split(' ')[0];
+      params.set('eventOwner', ownerId);
+    }
+    return `api/v2/events/${selectedItem}${params.toString()}`;
   }
+
   let eventBackgroundColor = 'a9a9a9';
   if (document.getElementById('itemSelect')) {
     eventBackgroundColor = (document.getElementById('itemSelect') as HTMLSelectElement).selectedOptions[0].dataset.color;
@@ -182,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // load the events as JSON
     eventSources: [
       {
-        url: `api/v2/events/${selectedItem}${queryString}`,
+        url: buildQueryString(),
       },
     ],
     // first day is monday
@@ -349,6 +316,14 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.bindInput').forEach((input:HTMLInputElement) => input.value = '');
         calendar.refetchEvents();
       });
+    } else if (el.matches('[data-action="filter-owner"]')) {
+      const newQuery = buildQueryString();
+
+      calendar.removeAllEventSources();
+      calendar.addEventSource({
+        url: newQuery,
+      });
+      calendar.refetchEvents();
     }
   });
 

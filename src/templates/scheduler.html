@@ -179,13 +179,13 @@
     </div>
 
     {# EVENT OWNERS LIST #}
-    <div class="col-md-3">
-      {# SELECT USER #}
-      <label for='eventOwnerSelect'>{{ 'Filter owner'|trans }}</label>
-      {# this exists so Firefox doesn't process the Search user field as password #}
-      <input type='password' disabled hidden />
-      <input type='text' placeholder='{{ 'Search user'|trans }}' id='eventOwnerSelect' class='form-control' data-identifier='eventOwnerSelect' data-complete-target='users'>
+    <div class='input-group col-md-3' style='position:relative;'>
+      <label for='eventOwnerSelect' hidden>{{ 'Filter owner'|trans }}</label>
+      <input type='text' placeholder='{{ 'Filter owner'|trans }}' id='eventOwnerSelect' class='form-control' data-identifier='eventOwnerSelect' data-complete-target='users'>
       <div id='autocompleteAnchorDiv_eventOwnerSelect'></div>
+      <div class='input-group-append'>
+        <button class='btn btn-secondary' type='button' aria-label='{{ 'Filter owner'|trans }}' data-action='filter-owner' title='{{ 'Filter owner'|trans }}'><i class='color-white fas fa-magnifying-glass'></i></button>
+      </div>
     </div>
 
     {% if bookableItemData %}

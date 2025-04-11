@@ -86,17 +86,52 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   // allow filtering the category and owner of items in events
   let queryString = '';
+  // const cat = params.get('cat');
+  // const eventOwner = params.get('eventOwner');
+  // const eventOwnerSelect = document.getElementById('eventOwnerSelect') as HTMLInputElement;
+  // const queryParams = [];
+  //
+  // if (eventOwnerSelect) {
+  //   let ownerId: string = '0';
+  //   eventOwnerSelect.addEventListener('change', () => {
+  //     const value = eventOwnerSelect.value;
+  //     ownerId = (value.split(' ')[0]);
+  //     console.log(ownerId);
+  //     queryParams.push('eventOwner=' + encodeURIComponent(ownerId));
+  //     console.log("after",queryParams);
+  //   });
+  // }
+  // if (cat) queryParams.push('cat=' + encodeURIComponent(cat));
+  //
+  // if (queryParams.length > 0) {
+  //   queryString = '?' + queryParams.join('&');
+  // }
+
   const cat = params.get('cat');
-  const eventOwner = params.get('eventOwner');
 
-  const queryParams = [];
-  if (cat) queryParams.push('cat=' + encodeURIComponent(cat));
-  if (eventOwner) queryParams.push('eventOwner=' + encodeURIComponent(eventOwner));
+  const eventOwnerSelect = document.getElementById('eventOwnerSelect') as HTMLInputElement;
 
-  if (queryParams.length > 0) {
-    queryString = '?' + queryParams.join('&');
+  if (eventOwnerSelect) {
+    eventOwnerSelect.addEventListener('change', () => {
+      const ownerId = eventOwnerSelect.value.trim().split(' ')[0];
+      const newParams = new URLSearchParams(window.location.search);
+
+      // update eventOwner
+      if (ownerId) {
+        newParams.set('eventOwner', ownerId);
+      } else {
+        newParams.delete('eventOwner');
+      }
+
+      // preserve cat
+      if (cat) {
+        newParams.set('cat', cat);
+      }
+
+      // trigger reload with new query
+      window.location.search = newParams.toString();
+    });
   }
-
   let eventBackgroundColor = 'a9a9a9';
   if (document.getElementById('itemSelect')) {
     eventBackgroundColor = (document.getElementById('itemSelect') as HTMLSelectElement).selectedOptions[0].dataset.color;
@@ -317,7 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  ['schedulerSelectCat', 'itemSelect', 'eventOwnerSelect'].forEach(id => {
+  ['schedulerSelectCat', 'itemSelect'].forEach(id => {
     if (document.getElementById(id)) {
       new TomSelect(`#${id}`, {
         plugins: [

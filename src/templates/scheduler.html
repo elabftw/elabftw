@@ -179,25 +179,13 @@
     </div>
 
     {# EVENT OWNERS LIST #}
-    <div class='col-md-3'>
-      <form aria-label='{{ 'Filter by owner'|trans }}'>
-        {% if App.Config.configArr.debug -%}
-          <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
-        {%- endif %}
-        <select
-          aria-label='{{ 'Filter by owner'|trans }}'
-          class='autosubmit mr-1 form-control'
-          id='eventOwnerSelect'
-          name='eventOwner'
-        >
-          <option value=''>{{ 'Filter by owner'|trans }}</option>
-          {% for user in usersArr %}
-            <option value='{{ user.userid }}'{{ App.Request.query.get('eventOwner') == user.userid ? ' selected' }}>
-              {{ user.fullname }}
-            </option>
-          {% endfor %}
-        </select>
-      </form>
+    <div class="col-md-3">
+      {# SELECT USER #}
+      <label for='eventOwnerSelect'>{{ 'Filter owner'|trans }}</label>
+      {# this exists so Firefox doesn't process the Search user field as password #}
+      <input type='password' disabled hidden />
+      <input type='text' placeholder='{{ 'Search user'|trans }}' id='eventOwnerSelect' class='form-control' data-identifier='eventOwnerSelect' data-complete-target='users'>
+      <div id='autocompleteAnchorDiv_eventOwnerSelect'></div>
     </div>
 
     {% if bookableItemData %}

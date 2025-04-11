@@ -337,10 +337,17 @@ document.addEventListener('DOMContentLoaded', () => {
         plugins: ['dropdown_input', 'remove_button'],
       });
       ts.on('change', () => {
-        const newQuery = buildQueryString();
-        calendar.removeAllEventSources();
-        calendar.addEventSource({ url: newQuery });
-        calendar.refetchEvents();
+        if (id === 'schedulerSelectCat') {
+          const newQuery = buildQueryString();
+          calendar.removeAllEventSources();
+          calendar.addEventSource({ url: newQuery });
+          calendar.refetchEvents();
+        } else {
+          // if an item is selected, redirect to edit mode thanks to its value (id)
+          if (el.value) {
+            window.location.replace(`scheduler.php?item=${el.value}&start=${calendar.view.activeStart.toISOString()}`);
+          }
+        }
       });
     }
   });

@@ -86,17 +86,20 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   // filter by category of items AND/OR owner of EVENTS
   function buildQueryString(): string {
+    const newParams = new URLSearchParams();
+
     const catSelect = document.getElementById('schedulerSelectCat') as HTMLSelectElement;
     if (catSelect && catSelect.value) {
-      params.set('cat', catSelect.value);
+      newParams.set('cat', catSelect.value);
     }
 
     const eventOwnerInput = document.getElementById('eventOwnerSelect') as HTMLInputElement;
     if (eventOwnerInput && eventOwnerInput.value.trim()) {
       const ownerId = eventOwnerInput.value.trim().split(' ')[0];
-      params.set('eventOwner', ownerId);
+      newParams.set('eventOwner', ownerId);
     }
-    return `api/v2/events/${selectedItem}${params.toString()}`;
+    const query = newParams.toString();
+    return `api/v2/events/${selectedItem}${query ? '?' + query : ''}`;
   }
 
   let eventBackgroundColor = 'a9a9a9';
@@ -318,7 +321,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     } else if (el.matches('[data-action="filter-owner"]')) {
       const newQuery = buildQueryString();
-
       calendar.removeAllEventSources();
       calendar.addEventSource({
         url: newQuery,

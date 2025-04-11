@@ -131,30 +131,42 @@
   </div>
 </div>
 
+{#  macro for form selects#}
+{% macro selectFilter(id, name, label, options, selectedValue, optionValueKey, optionLabelKey, extraDataKey) %}
+  <div class='col-md-3'>
+    <form aria-label='{{ label|trans }}'>
+      {% if App.Config.configArr.debug -%}
+        <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
+      {%- endif %}
+      <select
+        aria-label='{{ label|trans }}'
+        class='autosubmit mr-1 form-control'
+        id='{{ id }}'
+        name='{{ name }}'
+      >
+        <option value=''>{{ label|trans }}</option>
+        {% for item in options %}
+          <option
+            value='{{ attribute(item, optionValueKey) }}'
+            {% if extraDataKey is defined %}data-color="{{ attribute(item, extraDataKey) }}"{% endif %}
+            {{ selectedValue == attribute(item, optionValueKey) ? 'selected' }}
+          >
+            {{ attribute(item, optionLabelKey) }}
+          </option>
+        {% endfor %}
+      </select>
+    </form>
+  </div>
+{% endmacro %}
+
 <div id='mainSchedulerContent'>
   <div class='row mb-3'>
-    <div class='col-md-3'>
-      {# CATEGORY #}
-      <form aria-label='{{ 'Filter by category'|trans }}'>
-        {% if App.Config.configArr.debug -%}
-          <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
-        {%- endif %}
-        <select
-          aria-label='{{ 'Filter by category'|trans }}'
-          class='autosubmit mr-1 form-control'
-          id='schedulerSelectCat'
-          name='cat'
-        >
-          <option value=''>{{ 'Filter by category'|trans }}</option>
-          {% for category in bookableItemsTypes %}
-            <option value='{{ category.id }}'{{ App.Request.query.get('cat') == category.id ? ' selected' }}>
-              {{ category.title }}
-            </option>
-          {% endfor %}
-        </select>
-      </form>
-    </div>
+    {# CATEGORY #}
+    {{ _self.selectFilter('schedulerSelectCat', 'cat', 'Filter by category', bookableItemsTypes, App.Request.query.get('cat'), 'id', 'title') }}
 
+    {# ITEM LIST #}
+{#    not working yet for items TODO #}
+{#    {{ _self.selectFilter('itemSelect', 'item', 'Select a resoasasurce', itemsArr, App.Request.query.get('item'), 'id', title) }}#}
     <div class='col-md-3'>
       {# ITEM LIST #}
       <form aria-label='{{ 'Select a resource'|trans }}'>
@@ -178,25 +190,8 @@
       </form>
     </div>
 
-    <div class='col-md-3'>
-      {# EVENT OWNERS LIST #}
-      <form aria-label='{{ 'Filter by owner'|trans }}'>
-        {% if App.Config.configArr.debug -%}
-          <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
-        {%- endif %}
-        <select
-          aria-label='{{ 'Filter by owner'|trans }}'
-          class='autosubmit mr-1 form-control'
-          id='eventOwnerSelect'
-          name='owner'
-        >
-          <option value=''>{{ 'Filter by owner'|trans }}</option>
-          {% for user in usersArr %}
-            <option value='{{ user.userid }}' {{- App.Request.query.get('owner') == user.userid ? ' selected' }}>{{ user.fullname }}</option>
-          {% endfor %}
-        </select>
-      </form>
-    </div>
+    {# EVENT OWNERS LIST #}
+    {{ _self.selectFilter('eventOwnerSelect', 'eventOwner', 'Filter by owner', usersArr, App.Request.query.get('eventOwner'), 'userid', 'fullname') }}
 
     {% if bookableItemData %}
       <div class='col-md-3 ml-auto'>

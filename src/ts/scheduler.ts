@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/scheduler.php') {
     return;
   }
-  document.getElementById('loading-spinner').remove();
+  document.getElementById('loading-spinner')?.remove();
 
   const ApiC = new Api();
 
@@ -74,6 +74,9 @@ document.addEventListener('DOMContentLoaded', () => {
     selectedDate = new Date(decodeURIComponent(start)).valueOf();
   }
 
+  // if no bookable items, return
+  const alertEl = document.querySelector('div[role="status"].alert-warning');
+  if (alertEl) return;
   // bind to the element #scheduler
   const calendarEl: HTMLElement = document.getElementById('scheduler');
 
@@ -84,11 +87,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // allow filtering the category and owner of items in events
   let queryString = '';
   const cat = params.get('cat');
-  const owner = params.get('owner');
+  const eventOwner = params.get('eventOwner');
 
   const queryParams = [];
   if (cat) queryParams.push('cat=' + encodeURIComponent(cat));
-  if (owner) queryParams.push('owner=' + encodeURIComponent(owner));
+  if (eventOwner) queryParams.push('eventOwner=' + encodeURIComponent(eventOwner));
 
   if (queryParams.length > 0) {
     queryString = '?' + queryParams.join('&');

@@ -80,19 +80,20 @@ document.addEventListener('DOMContentLoaded', () => {
   // bind to the element #scheduler
   const calendarEl: HTMLElement = document.getElementById('scheduler');
 
-  let selectedItem = '';
-  if (params.has('item') && params.get('item') !== 'all') {
-    selectedItem = params.get('item');
-  }
-  // filter by category of items AND/OR owner of EVENTS
   function buildQueryString(): string {
     const newParams = new URLSearchParams();
-
+    let selectedItem = '';
+    // filter by resource
+    const itemSelect = document.getElementById('itemSelect') as HTMLSelectElement;
+    if (itemSelect && itemSelect.value && itemSelect.value !== 'all') {
+      selectedItem = itemSelect.value;
+    }
+    // filter by category
     const catSelect = document.getElementById('schedulerSelectCat') as HTMLSelectElement;
     if (catSelect && catSelect.value) {
       newParams.set('cat', catSelect.value);
     }
-
+    // filter by owner
     const eventOwnerInput = document.getElementById('eventOwnerSelect') as HTMLInputElement;
     if (eventOwnerInput && eventOwnerInput.value.trim()) {
       const ownerId = eventOwnerInput.value.trim().split(' ')[0];
@@ -335,15 +336,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const ts = new TomSelect(`#${id}`, {
         plugins: ['dropdown_input', 'remove_button'],
       });
-      if (id === 'schedulerSelectCat') {
-        ts.on('change', () => {
-          const newQuery = buildQueryString();
-          console.log(newQuery);
-          calendar.removeAllEventSources();
-          calendar.addEventSource({ url: newQuery });
-          calendar.refetchEvents();
-        });
-      }
+      ts.on('change', () => {
+        const newQuery = buildQueryString();
+        calendar.removeAllEventSources();
+        calendar.addEventSource({ url: newQuery });
+        calendar.refetchEvents();
+      });
     }
   });
 });

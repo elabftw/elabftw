@@ -305,7 +305,6 @@ document.addEventListener('DOMContentLoaded', () => {
       ApiC.post(`event/${el.dataset.id}/notifications`, {action: Action.Create, msg: msg, target: target.value, targetid: parseInt(target.dataset.targetid, 10)}).then(() => {
         ApiC.delete(`event/${el.dataset.id}`).then(() => calendar.refetchEvents()).catch();
       });
-
     // SAVE EVENT TITLE
     } else if (el.matches('[data-action="save-event-title"]')) {
       const input = el.parentElement.parentElement.querySelector('input') as HTMLInputElement;
@@ -319,6 +318,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.bindInput').forEach((input:HTMLInputElement) => input.value = '');
         calendar.refetchEvents();
       });
+    // FILTER OWNER
     } else if (el.matches('[data-action="filter-owner"]')) {
       const newQuery = buildQueryString();
       calendar.removeAllEventSources();
@@ -330,13 +330,20 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   ['schedulerSelectCat', 'itemSelect'].forEach(id => {
-    if (document.getElementById(id)) {
-      new TomSelect(`#${id}`, {
-        plugins: [
-          'dropdown_input',
-          'remove_button',
-        ],
+    const el = document.getElementById(id) as HTMLSelectElement;
+    if (el) {
+      const ts = new TomSelect(`#${id}`, {
+        plugins: ['dropdown_input', 'remove_button'],
       });
+      if (id === 'schedulerSelectCat') {
+        ts.on('change', () => {
+          const newQuery = buildQueryString();
+          console.log(newQuery);
+          calendar.removeAllEventSources();
+          calendar.addEventSource({ url: newQuery });
+          calendar.refetchEvents();
+        });
+      }
     }
   });
 });

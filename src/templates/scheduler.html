@@ -141,7 +141,7 @@
         {%- endif %}
         <select
           aria-label='{{ 'Filter by category'|trans }}'
-          class='autosubmit mr-1 form-control'
+          class='mr-1 form-control'
           id='schedulerSelectCat'
           name='cat'
         >
@@ -192,26 +192,18 @@
 
   </div>
     {% if bookableItemData %}
-      <div class="d-flex align-items-center flex-wrap gap-2 ml-auto mb-3">
+      <div class="ml-auto mb-3">
         <i class="fas fa-link fa-fw text-muted mr-2"></i>
         <a href="database.php?mode=view&amp;id={{ bookableItemData.id }}" class="d-inline-flex align-items-center text-decoration-none hl-hover-gray">
-      <span
-        class="catstat-btn category-btn mr-2"
-        style="--bg: #{{ bookableItemData.category_color }}"
-      >
-        {{ bookableItemData.category_title }}
-      </span>
+          <span
+            class="catstat-btn category-btn mr-2"
+            style="--bg: #{{ bookableItemData.category_color }}"
+          >
+            {{ bookableItemData.category_title }}
+          </span>
           <span class="text-info font-weight-bold">{{ bookableItemData.title }}</span>
         </a>
-        <button
-          type="button"
-          class="btn btn-sm btn-link text-muted p-0 ml-2"
-          aria-label="Remove filter"
-          data-action="remove-param-reload"
-          data-target="item"
-        >
-          <i class="fas fa-times small"></i>
-        </button>
+        <button type="button" class="btn btn-sm btn-link text-muted p-0 ml-2" aria-label="Remove filter" data-action="remove-param-reload" data-target="item"><i class="fas fa-times small"></i></button>
       </div>
     {% endif %}
 </div>

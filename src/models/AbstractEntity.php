@@ -112,6 +112,8 @@ abstract class AbstractEntity extends AbstractRest
         $this->TeamGroups = new TeamGroups($this->Users);
         $this->Pins = new Pins($this);
         $this->ExclusiveEditMode = new ExclusiveEditMode($this);
+        // perform check here once instead of in canreadorexplode to avoid making the same query over and over by child entities
+        $this->isReadOnly = $this->ExclusiveEditMode->isActive();
         $this->setId($id);
     }
 
@@ -411,8 +413,7 @@ abstract class AbstractEntity extends AbstractRest
         // READ ONLY?
         if (
             ($permissions['read'] && !$permissions['write'])
-            || $this->ExclusiveEditMode->isActive()
-            || array_key_exists('is_locked', $this->entityData)
+            || (array_key_exists('locked', $this->entityData) && $this->entityData['locked'] === 1)
         ) {
             $this->isReadOnly = true;
         }

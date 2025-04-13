@@ -15,7 +15,9 @@ namespace Elabftw\Import;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Compounds;
 use Elabftw\Models\Compounds2ItemsLinks;
+use Elabftw\Models\Containers2ItemsLinks;
 use Elabftw\Models\Items;
+use Elabftw\Models\StorageUnits;
 use Elabftw\Params\EntityParams;
 use Elabftw\Services\PubChemImporter;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -36,6 +38,7 @@ final class CompoundsCsv extends AbstractCsv
         protected Compounds $Compounds,
         protected ?int $resourceCategory = null,
         protected ?PubChemImporter $PubChemImporter = null,
+        protected string $locationSplitter = '/',
     ) {
         parent::__construct($Items->Users, $UploadedFile);
     }
@@ -117,6 +120,14 @@ final class CompoundsCsv extends AbstractCsv
                     $this->Items->update(new EntityParams('metadata', $this->collectMetadata($row)));
                     $Compounds2ItemsLinks = new Compounds2ItemsLinks($this->Items, $id);
                     $Compounds2ItemsLinks->create();
+                    // process localisation
+                    if (isset($row['location']) && !empty($row['location']) && !empty($this->locationSplitter)) {
+                        $locationSplit = explode($this->locationSplitter, $row['location']);
+                        $StorageUnits = new StorageUnits($this->requester);
+                        $id = $StorageUnits->createImmutable($locationSplit);
+                        $Containers2ItemsLinks = new Containers2ItemsLinks($this->Items, $id);
+                        $Containers2ItemsLinks->createWithQuantity($row['quantity'] ?? 1.0, $row['unit'] ?? '•');
+                    }
                 }
             } catch (ImproperActionException $e) {
                 $this->output->writeln($e->getMessage());
@@ -129,7 +140,7 @@ final class CompoundsCsv extends AbstractCsv
         return $count;
     }
 
-    private function collectMetadata(array $row): ?string
+    private function collectMetadata(array $row): string
     {
         // these are the columns that are added to the compound
         $processedColumns = array(
@@ -181,7 +192,7 @@ final class CompoundsCsv extends AbstractCsv
         // we remove the columns present in compound to be left with the ones we want in metadata as extra fields
         $strippedRow = array_diff_key($row, array_flip($processedColumns));
         if (empty($strippedRow)) {
-            return null;
+            return '{}';
         }
         $metadata = array();
         foreach ($strippedRow as $key => $value) {

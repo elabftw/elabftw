@@ -140,30 +140,12 @@ abstract class AbstractLinks extends AbstractRest
             && $this->Entity->id === intval($targetId);
     }
 
-    abstract protected function getTargetType(): EntityType;
-
-    abstract protected function getCatTable(): string;
-
-    abstract protected function getStatusTable(): string;
-
-    abstract protected function getTable(): string;
-
-    abstract protected function getOtherImportTypeTable(): string;
-
-    abstract protected function getRelatedTable(): string;
-
-    abstract protected function getTemplateTable(): string;
-
-    abstract protected function getImportTargetTable(): string;
-
-    abstract protected function getOtherImportTargetTable(): string;
-
     /**
      * Add a link to an entity
      * Links to Items are possible from all entities
      * Links to Experiments are only allowed from other Experiments and Items
      */
-    protected function create(): int
+    public function create(): int
     {
         // don't insert a link to the same entity, make sure we check for the type too
         if ($this->Entity->id === $this->id && $this->Entity->entityType === $this->getTargetType()) {
@@ -181,6 +163,24 @@ abstract class AbstractLinks extends AbstractRest
 
         return $this->id;
     }
+
+    abstract protected function getTargetType(): EntityType;
+
+    abstract protected function getCatTable(): string;
+
+    abstract protected function getStatusTable(): string;
+
+    abstract protected function getTable(): string;
+
+    abstract protected function getOtherImportTypeTable(): string;
+
+    abstract protected function getRelatedTable(): string;
+
+    abstract protected function getTemplateTable(): string;
+
+    abstract protected function getImportTargetTable(): string;
+
+    abstract protected function getOtherImportTargetTable(): string;
 
     /**
      * Copy the links of one entity into another entity

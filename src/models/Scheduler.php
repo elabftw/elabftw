@@ -173,7 +173,7 @@ final class Scheduler extends AbstractRest
                 %s
                 %s",
             $category > 0 ? 'AND items.category = :category' : '',
-            $ownerId ? 'AND team_events.userid = :ownerid' : ''
+            $ownerId > 0 ? 'AND team_events.userid = :ownerid' : ''
         );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);

@@ -54,8 +54,6 @@ try {
         'bookableItemsTypes' => $bookableItemsTypes,
         'itemsArr' => $bookableItemsArr,
         'pageTitle' => _('Scheduler'),
-        // use autocomplete for user search -> input champ libre
-        'usersArr' => $App->Users->readAllActiveFromTeam(),
     );
 
     $Response->setContent($App->render($template, $renderArr));

@@ -343,10 +343,13 @@ document.addEventListener('DOMContentLoaded', () => {
           calendar.addEventSource({ url: newQuery });
           calendar.refetchEvents();
         } else {
-          // if an item is selected, redirect to edit mode thanks to its value (id)
+          // if an item is selected, redirect to edit mode with its id
+          const params = new URLSearchParams();
           if (el.value) {
-            window.location.replace(`scheduler.php?item=${el.value}&start=${calendar.view.activeStart.toISOString()}`);
+            params.set('item', el.value);
           }
+          params.set('start', calendar.view.activeStart.toISOString());
+          window.location.replace(`scheduler.php?${params.toString()}`);
         }
       });
     }

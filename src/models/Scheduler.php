@@ -26,6 +26,8 @@ use Override;
 use PDO;
 
 use function array_walk;
+use function array_pad;
+use function array_filter;
 use function preg_replace;
 use function strlen;
 use function substr;
@@ -131,12 +133,15 @@ final class Scheduler extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        $category = 0;
-        $ownerId = 0;
-        if ($queryParams !== null) {
-            $category = $queryParams->getQuery()->getInt('cat');
-            $ownerId = $queryParams->getQuery()->getInt('eventOwner');
-        }
+        // prepare filters for the scheduler view
+        $filters = array(
+            'category' => $queryParams?->getQuery()->getInt('cat'),
+            'ownerid'  => $queryParams?->getQuery()->getInt('eventOwner'),
+        );
+        $sqlFilters = array(
+            $filters['category'] > 0 ? 'AND items.category = :category' : '',
+            $filters['ownerid'] > 0 ? 'AND team_events.userid = :ownerid' : '',
+        );
         // the title of the event is title + Firstname Lastname of the user who booked it
         $sql = sprintf(
             "SELECT
@@ -170,20 +175,17 @@ final class Scheduler extends AbstractRest
                 -- events.start <= range.end and events.end >= range.start
                 AND team_events.start <= :end
                 AND team_events.end >= :start
-                %s
-                %s",
-            $category > 0 ? 'AND items.category = :category' : '',
-            $ownerId > 0 ? 'AND team_events.userid = :ownerid' : ''
+                %s %s",
+            ...array_pad(array_filter($sqlFilters), 2, '')
         );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
         $req->bindValue(':start', $this->normalizeDate($this->start));
         $req->bindValue(':end', $this->normalizeDate($this->end, true));
-        if ($category > 0) {
-            $req->bindParam(':category', $category, PDO::PARAM_INT);
-        }
-        if ($ownerId > 0) {
-            $req->bindParam(':ownerid', $ownerId, PDO::PARAM_INT);
+        foreach ($filters as $param => $value) {
+            if ($value > 0) {
+                $req->bindParam(":$param", $value, PDO::PARAM_INT);
+            }
         }
         $this->Db->execute($req);
         return $req->fetchAll();

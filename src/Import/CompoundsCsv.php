@@ -140,10 +140,11 @@ final class CompoundsCsv extends AbstractCsv
         return $count;
     }
 
-    private function collectMetadata(array $row): string
+    #[Override]
+    protected function getProcessedColumns(): array
     {
         // these are the columns that are added to the compound
-        $processedColumns = array(
+        return array(
             'cas',
             'ec_number',
             'inchi',
@@ -189,16 +190,5 @@ final class CompoundsCsv extends AbstractCsv
             'is_nano',
             'is_controlled',
         );
-        // we remove the columns present in compound to be left with the ones we want in metadata as extra fields
-        $strippedRow = array_diff_key($row, array_flip($processedColumns));
-        if (empty($strippedRow)) {
-            return '{}';
-        }
-        $metadata = array();
-        foreach ($strippedRow as $key => $value) {
-            $metadata['extra_fields'][$key] = array('value' => $value, 'type' => 'text');
-        }
-        return json_encode($metadata, JSON_THROW_ON_ERROR, 12);
-
     }
 }

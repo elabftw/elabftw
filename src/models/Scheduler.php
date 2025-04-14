@@ -215,12 +215,13 @@ final class Scheduler extends AbstractRest
     {
         $this->canWriteOrExplode();
         $event = $this->readOne();
+        $eventStart = new DateTimeImmutable($event['start']);
+        $this->isFutureOrExplode($eventStart);
         if ($event['book_is_cancellable'] === 0 && !$this->Items->Users->isAdmin) {
             throw new ImproperActionException(_('Event cancellation is not permitted.'));
         }
         if ($event['book_cancel_minutes'] !== 0 && !$this->Items->Users->isAdmin) {
             $now = new DateTimeImmutable();
-            $eventStart = new DateTimeImmutable($event['start']);
             $interval = $now->diff($eventStart);
             $totalMinutes = ($interval->h * 60) + $interval->i;
             if ($totalMinutes < $event['book_cancel_minutes']) {

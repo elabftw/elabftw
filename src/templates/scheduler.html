@@ -179,9 +179,9 @@
     </div>
 
     {# EVENT OWNERS SEARCH FILTER #}
-    <div class="col-md-3">
+    <div class='col-md-3'>
       <div class='input-group'>
-        <input type='text' aria-label="{{ 'Filter owner'|trans }}" placeholder='{{ 'Filter owner'|trans }}' id='eventOwnerSelect' class='form-control' data-identifier='eventOwnerSelect' data-complete-target='users'>
+        <input type='text' aria-label='{{ 'Filter owner'|trans }}' placeholder='{{ 'Filter owner'|trans }}' id='eventOwnerSelect' class='form-control' data-identifier='eventOwnerSelect' data-complete-target='users'>
         <div id='autocompleteAnchorDiv_eventOwnerSelect'></div>
         <div class='input-group-append'>
           <button class='btn btn-secondary' type='button' aria-label='{{ 'Filter owner'|trans }}' data-action='filter-owner' title='{{ 'Filter owner'|trans }}'><i class='color-white fas fa-magnifying-glass'></i></button>
@@ -191,18 +191,18 @@
 
   </div>
     {% if bookableItemData %}
-      <div class="ml-auto mb-3">
-        <i class="fas fa-link fa-fw text-muted mr-2"></i>
-        <a href="database.php?mode=view&amp;id={{ bookableItemData.id }}" class="d-inline-flex align-items-center text-decoration-none hl-hover-gray">
+      <div class='ml-auto mb-3'>
+        <i class='fas fa-link fa-fw text-muted mr-2'></i>
+        <a href='database.php?mode=view&amp;id={{ bookableItemData.id }}' class='d-inline-flex align-items-center text-decoration-none hl-hover-gray'>
           <span
-            class="catstat-btn category-btn mr-2"
-            style="--bg: #{{ bookableItemData.category_color }}"
+            class='catstat-btn category-btn mr-2'
+            style='--bg: #{{ bookableItemData.category_color }}'
           >
             {{ bookableItemData.category_title }}
           </span>
-          <span class="text-info font-weight-bold">{{ bookableItemData.title }}</span>
+          <span class='text-info font-weight-bold'>{{ bookableItemData.title }}</span>
         </a>
-        <button type="button" class="btn btn-sm btn-link text-muted p-0 ml-2" aria-label="Remove filter" data-action="remove-param-reload" data-target="item"><i class="fas fa-times small"></i></button>
+        <button type='button' class='btn btn-sm btn-link text-muted p-0 ml-2' aria-label='Remove filter' data-action='remove-param-reload' data-target='item'><i class='fas fa-times small'></i></button>
       </div>
     {% endif %}
 </div>

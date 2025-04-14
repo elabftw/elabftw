@@ -25,12 +25,12 @@
         {# PRICE NO TAXES #}
         <div class='d-flex justify-content-between mb-2'>
           <label for='proc_price_notax' class='col-form-label'>{{ 'Price without taxes'|trans }}</label>
-          <input class='form-control col-md-4' data-trigger='blur' data-model='items/{{ Entity.id }}' data-target='proc_price_notax' type='number' value='{{ Entity.entityData.proc_price_notax }}' id='proc_price_notax' />
+          <input class='form-control col-md-4' data-trigger='blur' data-model='items/{{ Entity.id }}' data-target='proc_price_notax' type='number' value='{{ Entity.entityData.proc_price_notax }}' id='proc_price_notax' step='0.01' />
         </div>
         {# PRICE WITH TAXES #}
         <div class='d-flex justify-content-between mb-2'>
           <label for='proc_price_tax' class='col-form-label'>{{ 'Price with taxes'|trans }}</label>
-          <input class='form-control col-md-4' data-trigger='blur' data-model='items/{{ Entity.id }}' data-target='proc_price_tax' type='number' value='{{ Entity.entityData.proc_price_tax }}' id='proc_price_tax' />
+          <input class='form-control col-md-4' data-trigger='blur' data-model='items/{{ Entity.id }}' data-target='proc_price_tax' type='number' value='{{ Entity.entityData.proc_price_tax }}' id='proc_price_tax' step='0.01' />
         </div>
         {# CURRENCY #}
         <div class='d-flex justify-content-between mb-2'>

@@ -22,9 +22,10 @@ use function arsort;
 use function array_diff_key;
 use function array_flip;
 use function json_encode;
+use function filter_var;
 
 /**
- * Import a csv file
+ * Parent class for processing a CSV file during import
  */
 abstract class AbstractCsv extends AbstractImport
 {
@@ -72,10 +73,7 @@ abstract class AbstractCsv extends AbstractImport
         return $csv;
     }
 
-    protected function getProcessedColumns(): array
-    {
-        return array();
-    }
+    abstract protected function getProcessedColumns(): array;
 
     protected function collectMetadata(array $row): string
     {

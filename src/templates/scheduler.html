@@ -190,21 +190,18 @@
     </div>
 
   </div>
-    {% if bookableItemData %}
-      <div class='ml-auto mb-3'>
-        <i class='fas fa-link fa-fw text-muted mr-2'></i>
-        <a href='database.php?mode=view&amp;id={{ bookableItemData.id }}' class='d-inline-flex align-items-center text-decoration-none hl-hover-gray'>
-          <span
-            class='catstat-btn category-btn mr-2'
-            style='--bg: #{{ bookableItemData.category_color }}'
-          >
-            {{ bookableItemData.category_title }}
-          </span>
-          <span class='text-info font-weight-bold'>{{ bookableItemData.title }}</span>
-        </a>
-        <button type='button' class='btn btn-sm btn-link text-muted p-0 ml-2' aria-label='Remove filter' data-action='remove-param-reload' data-target='item'><i class='fas fa-times small'></i></button>
-      </div>
-    {% endif %}
+  {% if bookableItemData %}
+    <div id='schedulerResourceDisplay' class='title d-flex justify-content-center'>
+      {{ 'Selected resource:'|trans }}
+      <a href='database.php?mode=view&amp;id={{ bookableItemData.id }}' target='_blank' rel='noopener' class='d-inline-flex align-items-center text-decoration-none hl-hover-gray ml-2'>
+        <span class='catstat-btn category-btn mr-2' style='--bg: #{{ bookableItemData.category_color }}'>
+          {{ bookableItemData.category_title }}
+        </span>
+        <span class='text-info font-weight-bold'>{{ bookableItemData.title }}</span>
+        <i class='fas fa-arrow-up-right-from-square mx-2 text-muted small'></i>
+      </a>
+    </div>
+  {% endif %}
 </div>
 
 {% if itemsArr|length == 0 %}

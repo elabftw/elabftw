@@ -17,8 +17,6 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use PDO;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response;
 
 use function sprintf;
 
@@ -39,6 +37,9 @@ final class ExclusiveEditMode
 
     public function readOne(): array
     {
+        if ($this->Entity->id === null) {
+            return array();
+        }
         // failsafe: is_stale is 1 if the entry is locked for longer than EXPIRATION_MINUTES
         $sql = sprintf(
             'SELECT locked_by,
@@ -73,20 +74,6 @@ final class ExclusiveEditMode
             return false;
         }
         return true;
-    }
-
-    public function gatekeeper(): ?RedirectResponse
-    {
-        if ($this->isActive()) {
-            /** @psalm-suppress PossiblyNullArgument */
-            return new RedirectResponse(sprintf(
-                '%s%sid=%d',
-                $this->Entity->entityType->toPage(),
-                '?mode=view&',
-                $this->Entity->id,
-            ), Response::HTTP_SEE_OTHER); // 303
-        }
-        return null;
     }
 
     public function canPatchOrExplode(Action $action): null

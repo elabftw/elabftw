@@ -114,6 +114,7 @@ final class CompoundsCsv extends AbstractCsv
                     if (isset($row['comment'])) {
                         $this->Items->update(new EntityParams('body', $row['comment']));
                     }
+                    $this->Items->update(new EntityParams('metadata', $this->collectMetadata($row)));
                     $Compounds2ItemsLinks = new Compounds2ItemsLinks($this->Items, $id);
                     $Compounds2ItemsLinks->create();
                 }
@@ -126,5 +127,67 @@ final class CompoundsCsv extends AbstractCsv
             $this->output->writeln(sprintf('[info] Imported %d/%d', $loopIndex, $countAll));
         }
         return $count;
+    }
+
+    private function collectMetadata(array $row): ?string
+    {
+        // these are the columns that are added to the compound
+        $processedColumns = array(
+            'cas',
+            'ec_number',
+            'inchi',
+            'inchi_key',
+            'iupacname',
+            'name',
+            'title',
+            'comment',
+            'chebi_id',
+            'chembl_id',
+            'dea_number',
+            'drugbank_id',
+            'dsstox_id',
+            'hmdb_id',
+            'kegg_id',
+            'metabolomics_wb_id',
+            'molecularformula',
+            'molecular_weight',
+            'nci_code',
+            'nikkaji_number',
+            'pharmgkb_id',
+            'pharos_ligand_id',
+            'pubchemcid',
+            'rxcui',
+            'smiles',
+            'unii',
+            'wikidata',
+            'wikipedia',
+            'is_corrosive',
+            'is_explosive',
+            'is_flammable',
+            'is_gas_under_pressure',
+            'is_hazardous2env',
+            'is_hazardous2health',
+            'is_oxidising',
+            'is_serious_health_hazard',
+            'is_toxic',
+            'is_radioactive',
+            'is_antibiotic_precursor',
+            'is_drug_precursor',
+            'is_explosive_precursor',
+            'is_cmr',
+            'is_nano',
+            'is_controlled',
+        );
+        // we remove the columns present in compound to be left with the ones we want in metadata as extra fields
+        $strippedRow = array_diff_key($row, array_flip($processedColumns));
+        if (empty($strippedRow)) {
+            return null;
+        }
+        $metadata = array();
+        foreach ($strippedRow as $key => $value) {
+            $metadata['extra_fields'][$key] = array('value' => $value, 'type' => 'text');
+        }
+        return json_encode($metadata, JSON_THROW_ON_ERROR, 12);
+
     }
 }

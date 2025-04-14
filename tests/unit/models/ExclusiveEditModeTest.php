@@ -15,7 +15,6 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class ExclusiveEditModeTest extends \PHPUnit\Framework\TestCase
 {
@@ -36,8 +35,6 @@ class ExclusiveEditModeTest extends \PHPUnit\Framework\TestCase
         // will be false because it's ourself
         $this->assertFalse($this->Experiments->ExclusiveEditMode->isActive());
         $this->assertTrue($this->Visitor->ExclusiveEditMode->isActive());
-        $this->assertInstanceOf(RedirectResponse::class, $this->Visitor->ExclusiveEditMode->gatekeeper());
-        $this->assertNull($this->Experiments->ExclusiveEditMode->gatekeeper());
         $exclusiveArr = $this->Experiments->ExclusiveEditMode->readOne();
         $this->assertEquals(1, $exclusiveArr['locked_by']);
         $this->assertEquals('Toto Le sysadmin', $exclusiveArr['locked_by_human']);

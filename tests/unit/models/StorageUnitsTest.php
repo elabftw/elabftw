@@ -64,4 +64,12 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertEquals('api/v2/storage_units/', $this->StorageUnits->getApiPath());
     }
+
+    public function testCreateImmutable(): void
+    {
+        $locations = array('Parent 1', 'Middle 1', '', 'Leaf 1');
+        $this->assertEquals(9, $this->StorageUnits->createImmutable($locations));
+        // a second time to ensure we get the same number
+        $this->assertEquals(9, $this->StorageUnits->createImmutable($locations));
+    }
 }

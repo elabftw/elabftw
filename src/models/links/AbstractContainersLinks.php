@@ -238,6 +238,33 @@ abstract class AbstractContainersLinks extends AbstractLinks
             && $this->Entity->id === intval($targetId);
     }
 
+    /**
+     * Add a link to an entity
+     * Links to Items are possible from all entities
+     * Links to Experiments are only allowed from other Experiments and Items
+     */
+    public function createWithQuantity(float $qty, string $unit): int
+    {
+        // don't insert a link to the same entity, make sure we check for the type too
+        if ($this->Entity->id === $this->id && $this->Entity->entityType === $this->getTargetType()) {
+            return 0;
+        }
+        $this->Entity->touch();
+
+        // use IGNORE to avoid failure due to a key constraint violations
+        $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (item_id, storage_id, qty_stored, qty_unit)
+            VALUES(:item_id, :storage, :qty_stored, :qty_unit)';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':storage', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':qty_stored', $qty);
+        $req->bindParam(':qty_unit', $unit);
+
+        $this->Db->execute($req);
+
+        return $this->id;
+    }
+
     #[Override]
     abstract protected function getTargetType(): EntityType;
 
@@ -281,33 +308,6 @@ abstract class AbstractContainersLinks extends AbstractLinks
             return 'containers2experiments';
         }
         return 'containers2items';
-    }
-
-    /**
-     * Add a link to an entity
-     * Links to Items are possible from all entities
-     * Links to Experiments are only allowed from other Experiments and Items
-     */
-    protected function createWithQuantity(float $qty, string $unit): int
-    {
-        // don't insert a link to the same entity, make sure we check for the type too
-        if ($this->Entity->id === $this->id && $this->Entity->entityType === $this->getTargetType()) {
-            return 0;
-        }
-        $this->Entity->touch();
-
-        // use IGNORE to avoid failure due to a key constraint violations
-        $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (item_id, storage_id, qty_stored, qty_unit)
-            VALUES(:item_id, :storage, :qty_stored, :qty_unit)';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':storage', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':qty_stored', $qty);
-        $req->bindParam(':qty_unit', $unit);
-
-        $this->Db->execute($req);
-
-        return $this->id;
     }
 
     /**

@@ -16,6 +16,7 @@ use Elabftw\Elabftw\CanSqlBuilder;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Params\CommentParam;
 use Elabftw\Services\Filter;
@@ -286,6 +287,30 @@ final class StorageUnits extends AbstractRest
         return $this->readOne();
     }
 
+    public function createImmutable(array $locations): int
+    {
+        $parent = null;
+        $id = 0;
+        foreach ($locations as $location) {
+            $unitName = trim($location);
+            if (empty($unitName)) {
+                continue;
+            }
+            $res = $this->searchStorage($unitName);
+            if ($res) {
+                $id = $res['id'];
+                $parent = $res['parent_id'];
+                if (!$parent) {
+                    $parent = $id;
+                }
+            } else {
+                $id = $this->create($unitName, $parent);
+                $parent = $id;
+            }
+        }
+        return $id;
+    }
+
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
@@ -325,6 +350,19 @@ final class StorageUnits extends AbstractRest
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         return $this->Db->execute($req);
+    }
+
+    private function searchStorage(string $unitName): array|false
+    {
+        $sql = 'SELECT id, parent_id FROM storage_units WHERE name = :name';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':name', $unitName);
+        $this->Db->execute($req);
+        try {
+            return $this->Db->fetch($req);
+        } catch (ResourceNotFoundException) {
+            return false;
+        }
     }
 
     private function getRecursiveSql(int $userid, int $team, string $discriminator): string

@@ -165,12 +165,6 @@
                 </div>
               {% endif %}
 
-            {# MOLFILES #}
-            {% elseif ext == 'mol' %}
-              <div class='text-center'>
-                <canvas class='molFile' id='molFile_{{ upload.id }}' data-molpath='app/download.php?f={{ upload.long_name|e('url') }}&amp;storage={{ upload.storage }}&amp;name={{ upload.real_name|e('url') }}'></canvas>
-              </div>
-
             {# MOLECULES #}
             {% elseif ext in constant('Elabftw\\Elabftw\\Extensions::MOLECULE') %}
               {# build control dropdown to change the representation style #}

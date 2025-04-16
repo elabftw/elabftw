@@ -19,9 +19,13 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Override;
 
 use function arsort;
+use function array_diff_key;
+use function array_flip;
+use function json_encode;
+use function filter_var;
 
 /**
- * Import a csv file
+ * Parent class for processing a CSV file during import
  */
 abstract class AbstractCsv extends AbstractImport
 {
@@ -67,5 +71,28 @@ abstract class AbstractCsv extends AbstractImport
         $csv->setDelimiter((string) key($delimitersCount));
         $csv->setHeaderOffset(0);
         return $csv;
+    }
+
+    abstract protected function getProcessedColumns(): array;
+
+    protected function collectMetadata(array $row): string
+    {
+        // we remove the columns present in compound to be left with the ones we want in metadata as extra fields
+        $processedColumns = $this->getProcessedColumns();
+        $strippedRow = array_diff_key($row, array_flip($processedColumns));
+        if (empty($strippedRow)) {
+            return '{}';
+        }
+        $metadata = array();
+        foreach ($strippedRow as $key => $value) {
+            $type = 'text';
+            // translate urls into links
+            if (filter_var($value, FILTER_VALIDATE_URL)) {
+                $type = 'url';
+            }
+            $metadata['extra_fields'][$key] = array('value' => $value, 'type' => $type);
+        }
+        return json_encode($metadata, JSON_THROW_ON_ERROR, 12);
+
     }
 }

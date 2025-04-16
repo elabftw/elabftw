@@ -59,13 +59,6 @@
       </button>
     {% endif %}
 
-    {# Save mol file as png #}
-    {% if ext matches '/(mol)$/i' %}
-      <button type='button' class='dropdown-item' data-action='save-mol-as-png' data-canvasid='molFile_{{ upload.id }}' data-name='{{ upload.real_name|e('html_attr') }}'>
-        <i class='fas fa-fw fa-image mr-1'></i>{{ 'Save as image'|trans }}
-      </button>
-    {% endif %}
-
     {# Upload a new version: only in edit mode because currently it'll look into the editor to change the image, but it might be convenient to also have it in view mode #}
     {% if not upload.immutable %}
       <button type='button' class='dropdown-item' data-action='replace-upload' data-uploadid='{{ upload.id }}'>

@@ -41,6 +41,8 @@ final class Scheduler extends AbstractRest
 
     public const string EVENT_END = '2037-31-12T00:00:00+00:00';
 
+    private const int GRACE_PERIOD = 5;
+
     private string $start = self::EVENT_START;
 
     private string $end = self::EVENT_END;
@@ -146,6 +148,8 @@ final class Scheduler extends AbstractRest
                 team_events.start,
                 team_events.end,
                 team_events.userid,
+                team_events.created_at,
+                team_events.modified_at,
                 TIMESTAMPDIFF(MINUTE, team_events.start, team_events.end) AS event_duration_minutes,
                 CONCAT(u.firstname, ' ', u.lastname) AS fullname,
                 CONCAT('[', items.title, '] ', team_events.title, ' (', u.firstname, ' ', u.lastname, ')') AS title,
@@ -215,14 +219,21 @@ final class Scheduler extends AbstractRest
     {
         $this->canWriteOrExplode();
         $event = $this->readOne();
-        $eventStart = new DateTimeImmutable($event['start']);
-        $this->isFutureOrExplode($eventStart);
+        $eventCreatedAt = new DateTimeImmutable($event['created_at']);
+        $this->isFutureOrExplode($eventCreatedAt);
+        // grace period (minutes) to prevent deleting right after the creation
+        $now = new DateTimeImmutable();
+        if ($now > $eventCreatedAt) {
+            $diff = ($now->getTimestamp() - $eventCreatedAt->getTimestamp()) / 60;
+            if ($diff <= self::GRACE_PERIOD && !$this->Items->Users->isAdmin) {
+                throw new ImproperActionException(sprintf(_('Cannot delete an event within %d minutes after its creation.'), self::GRACE_PERIOD));
+            }
+        }
         if ($event['book_is_cancellable'] === 0 && !$this->Items->Users->isAdmin) {
             throw new ImproperActionException(_('Event cancellation is not permitted.'));
         }
         if ($event['book_cancel_minutes'] !== 0 && !$this->Items->Users->isAdmin) {
-            $now = new DateTimeImmutable();
-            $interval = $now->diff($eventStart);
+            $interval = $now->diff(new DateTimeImmutable($event['start']));
             $totalMinutes = ($interval->h * 60) + $interval->i;
             if ($totalMinutes < $event['book_cancel_minutes']) {
                 throw new ImproperActionException(sprintf(_('Cannot cancel slot less than %d minutes before its start.'), $event['book_cancel_minutes']));
@@ -325,6 +336,8 @@ final class Scheduler extends AbstractRest
                 team_events.userid,
                 team_events.experiment,
                 team_events.item_link,
+                team_events.created_at,
+                team_events.modified_at,
                 items.book_is_cancellable,
                 items.book_cancel_minutes,
                 team_events.title AS title_only,
@@ -498,7 +511,7 @@ final class Scheduler extends AbstractRest
         }
         $now = new DateTime();
         if ($now > $date) {
-            throw new ImproperActionException(_('Creation/modification of events in the past is not allowed!'));
+            throw new ImproperActionException(_('Creation/modification/deletion of events in the past is not allowed!'));
         }
     }
 

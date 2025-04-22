@@ -41,7 +41,7 @@ final class Scheduler extends AbstractRest
 
     public const string EVENT_END = '2037-31-12T00:00:00+00:00';
 
-    private const int GRACE_PERIOD = 5;
+    private const int GRACE_PERIOD_MINUTES = 5;
 
     private string $start = self::EVENT_START;
 
@@ -225,8 +225,8 @@ final class Scheduler extends AbstractRest
         $now = new DateTimeImmutable();
         if ($now > $eventCreatedAt) {
             $diff = ($now->getTimestamp() - $eventCreatedAt->getTimestamp()) / 60;
-            if ($diff <= self::GRACE_PERIOD && !$this->Items->Users->isAdmin) {
-                throw new ImproperActionException(sprintf(_('Cannot delete an event within %d minutes after its creation.'), self::GRACE_PERIOD));
+            if ($diff <= self::GRACE_PERIOD_MINUTES && !$this->Items->Users->isAdmin) {
+                throw new ImproperActionException(sprintf(_('Cannot delete an event within %d minutes after its creation.'), self::GRACE_PERIOD_MINUTES));
             }
         }
         if ($event['book_is_cancellable'] === 0 && !$this->Items->Users->isAdmin) {
@@ -511,7 +511,7 @@ final class Scheduler extends AbstractRest
         }
         $now = new DateTime();
         if ($now > $date) {
-            throw new ImproperActionException(_('Creation/modification/deletion of events in the past is not allowed!'));
+            throw new ImproperActionException(_('Creation/modification of events in the past is not allowed!'));
         }
     }
 

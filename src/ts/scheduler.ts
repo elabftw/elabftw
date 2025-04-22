@@ -74,13 +74,13 @@ document.addEventListener('DOMContentLoaded', () => {
     selectedDate = new Date(decodeURIComponent(start)).valueOf();
   }
 
-  // if no bookable items, return
-  const alertEl = document.querySelector('div[role="status"].alert-warning');
-  if (alertEl) return;
   // bind to the element #scheduler
   const calendarEl: HTMLElement = document.getElementById('scheduler');
+  if (!calendarEl) {
+    return
+  }
 
-  function buildQueryString(): string {
+  function buildEventSourcesUrl(): string {
     const newParams = new URLSearchParams();
     let selectedItem = '';
     // filter by resource
@@ -100,7 +100,14 @@ document.addEventListener('DOMContentLoaded', () => {
       newParams.set('eventOwner', ownerId);
     }
     const query = newParams.toString();
-    return `api/v2/events/${selectedItem}${query ? '?' + query : ''}`;
+    return `api/v2/events/${selectedItem}?${query}`;
+  }
+  // refresh calendar when the event source is updated
+  function reloadCalendarEvents(): void {
+    const newQuery = buildEventSourcesUrl();
+    calendar.removeAllEventSources();
+    calendar.addEventSource({ url: newQuery });
+    calendar.refetchEvents();
   }
 
   let eventBackgroundColor = 'a9a9a9';
@@ -153,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // load the events as JSON
     eventSources: [
       {
-        url: buildQueryString(),
+        url: buildEventSourcesUrl(),
       },
     ],
     // first day is monday
@@ -335,12 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     // FILTER OWNER
     } else if (el.matches('[data-action="filter-owner"]')) {
-      const newQuery = buildQueryString();
-      calendar.removeAllEventSources();
-      calendar.addEventSource({
-        url: newQuery,
-      });
-      calendar.refetchEvents();
+      reloadCalendarEvents();
     }
   });
 
@@ -351,20 +353,8 @@ document.addEventListener('DOMContentLoaded', () => {
         plugins: ['dropdown_input', 'remove_button'],
       });
       ts.on('change', () => {
-        if (id === 'schedulerSelectCat') {
-          const newQuery = buildQueryString();
-          calendar.removeAllEventSources();
-          calendar.addEventSource({ url: newQuery });
-          calendar.refetchEvents();
-        } else {
-          // if an item is selected, redirect to edit mode with its id
-          const params = new URLSearchParams();
-          if (el.value) {
-            params.set('item', el.value);
-          }
-          params.set('start', calendar.view.activeStart.toISOString());
-          window.location.replace(`scheduler.php?${params.toString()}`);
-        }
+        // fix issue when an item has been selected, filters still apply but the "resource title" under table header remains
+          reloadCalendarEvents();
       });
     }
   });

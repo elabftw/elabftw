@@ -313,7 +313,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
     public function testCannotCancelRightAfterCreation(): void
     {
         $Items = new Items(new Users(2, 1));
-        $itemId = $Items->postAction(Action::Create, ['category_id' => 5]);
+        $itemId = $Items->postAction(Action::Create, array('category_id' => 5));
         $Items->setId($itemId);
         $Scheduler = new Scheduler($Items);
         $d = new DateTime('+1 hour');

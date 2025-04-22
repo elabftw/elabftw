@@ -47,6 +47,10 @@ final class Scheduler extends AbstractRest
 
     private string $end = self::EVENT_END;
 
+    private array $filterSqlParts = array();
+
+    private array $filterBindings = array();
+
     public function __construct(
         public Items $Items,
         ?int $id = null,
@@ -134,13 +138,10 @@ final class Scheduler extends AbstractRest
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         // prepare filters for the scheduler view
-        $category = 0;
-        $ownerId = 0;
-        $itemId   = 0;
         if ($queryParams !== null) {
-            $category = $queryParams->getQuery()->getInt('cat');
-            $ownerId = $queryParams->getQuery()->getInt('eventOwner');
-            $itemId = $queryParams->getQuery()->getInt('item');
+            $this->appendFilterSql('items.category', 'category', $queryParams->getQuery()->getInt('cat'));
+            $this->appendFilterSql('team_events.userid', 'ownerid', $queryParams->getQuery()->getInt('eventOwner'));
+            $this->appendFilterSql('items.id', 'itemid', $queryParams->getQuery()->getInt('item'));
         }
         // the title of the event is title + Firstname Lastname of the user who booked it
         $sql = sprintf(
@@ -177,23 +178,15 @@ final class Scheduler extends AbstractRest
                 -- events.start <= range.end and events.end >= range.start
                 AND team_events.start <= :end
                 AND team_events.end >= :start
-                %s %s %s",
-            $category > 0 ? 'AND items.category = :category' : '',
-            $ownerId > 0 ? 'AND team_events.userid = :ownerid' : '',
-            $itemId > 0 ? 'AND items.id = :itemid' : ''
+                %s",
+            implode(' ', $this->filterSqlParts)
         );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
         $req->bindValue(':start', $this->normalizeDate($this->start));
         $req->bindValue(':end', $this->normalizeDate($this->end, true));
-        if ($category > 0) {
-            $req->bindParam(':category', $category, PDO::PARAM_INT);
-        }
-        if ($ownerId > 0) {
-            $req->bindParam(':ownerid', $ownerId, PDO::PARAM_INT);
-        }
-        if ($itemId > 0) {
-            $req->bindParam(':itemid', $itemId, PDO::PARAM_INT);
+        foreach ($this->filterBindings as $param => $value) {
+            $req->bindValue(":$param", $value, PDO::PARAM_INT);
         }
         $this->Db->execute($req);
         return $req->fetchAll();
@@ -567,6 +560,14 @@ final class Scheduler extends AbstractRest
     {
         if ($this->canWrite() === false) {
             throw new ImproperActionException(Tools::error(true));
+        }
+    }
+
+    private function appendFilterSql(string $column, string $paramName, int $value): void
+    {
+        if ($value > 0) {
+            $this->filterSqlParts[] = "AND $column = :$paramName";
+            $this->filterBindings[$paramName] = $value;
         }
     }
 }

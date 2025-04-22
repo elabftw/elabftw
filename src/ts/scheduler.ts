@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // bind to the element #scheduler
   const calendarEl: HTMLElement = document.getElementById('scheduler');
   if (!calendarEl) {
-    return
+    return;
   }
 
   function buildEventSourcesUrl(): string {
@@ -353,8 +353,8 @@ document.addEventListener('DOMContentLoaded', () => {
         plugins: ['dropdown_input', 'remove_button'],
       });
       ts.on('change', () => {
-        // fix issue when an item has been selected, filters still apply but the "resource title" under table header remains
-          reloadCalendarEvents();
+        // TODO fix issue when an item has been selected, filters still apply but the "resource title" under table header remains
+        reloadCalendarEvents();
       });
     }
   });

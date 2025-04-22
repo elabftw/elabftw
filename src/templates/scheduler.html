@@ -127,12 +127,14 @@
     <a href='#' data-action='toggle-modal' data-target='schedulerSettingsModal' aria-label='{{ 'Settings'|trans }}' title='{{ 'Settings'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 mr-2'>
       <i class='fas fa-cogs fa-fw'></i>
     </a>
-    {% include 'scope-button.html' with {'reload': 'page', 'target': 'scope_items'} %}
   </div>
 </div>
 
 <div id='mainSchedulerContent'>
   <div class='row mb-3'>
+    <div class="ml-3">
+      {% include 'scope-button.html' with {'reload': 'page', 'target': 'scope_items'} %}
+    </div>
     {# CATEGORY #}
     <div class='col-md-3'>
       <form aria-label='{{ 'Filter by category'|trans }}'>

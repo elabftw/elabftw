@@ -355,13 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
             reloadCalendarEvents();
           }
         },
-        onChange: () => {
-          reloadCalendarEvents();
-          if (id === 'itemSelect') {
-            editable = true;
-            selectable = true;
-          }
-        },
+        onChange: reloadCalendarEvents,
       });
     }
   });

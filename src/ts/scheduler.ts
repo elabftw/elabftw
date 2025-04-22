@@ -80,27 +80,24 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
+  // remove existing params to build new event sources for the calendar
   function buildEventSourcesUrl(): string {
-    const newParams = new URLSearchParams();
-    let selectedItem = '';
-    // filter by resource
+    ['item', 'cat', 'eventOwner'].forEach((param) => params.delete(param));
     const itemSelect = document.getElementById('itemSelect') as HTMLSelectElement;
-    if (itemSelect && itemSelect.value && itemSelect.value !== 'all') {
-      selectedItem = itemSelect.value;
-    }
-    // filter by category
     const catSelect = document.getElementById('schedulerSelectCat') as HTMLSelectElement;
-    if (catSelect && catSelect.value) {
-      newParams.set('cat', catSelect.value);
+    const ownerInput = document.getElementById('eventOwnerSelect') as HTMLInputElement;
+
+    if (itemSelect?.value) {
+      params.set('item', itemSelect.value);
     }
-    // filter by owner
-    const eventOwnerInput = document.getElementById('eventOwnerSelect') as HTMLInputElement;
-    if (eventOwnerInput && eventOwnerInput.value.trim()) {
-      const ownerId = eventOwnerInput.value.trim().split(' ')[0];
-      newParams.set('eventOwner', ownerId);
+    if (catSelect?.value) {
+      params.set('cat', catSelect.value);
     }
-    const query = newParams.toString();
-    return `api/v2/events/${selectedItem}?${query}`;
+    if (ownerInput?.value.trim()) {
+      const ownerId = ownerInput.value.trim().split(' ')[0];
+      params.set('eventOwner', ownerId);
+    }
+    return `api/v2/events?${params.toString()}`;
   }
   // refresh calendar when the event source is updated
   function reloadCalendarEvents(): void {
@@ -108,6 +105,8 @@ document.addEventListener('DOMContentLoaded', () => {
     calendar.removeAllEventSources();
     calendar.addEventSource({ url: newQuery });
     calendar.refetchEvents();
+    // keep url in sync
+    window.history.replaceState({}, '', `${location.pathname}?${params.toString()}`);
   }
 
   let eventBackgroundColor = 'a9a9a9';
@@ -347,14 +346,22 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   ['schedulerSelectCat', 'itemSelect'].forEach(id => {
-    const el = document.getElementById(id) as HTMLSelectElement;
-    if (el) {
-      const ts = new TomSelect(`#${id}`, {
+    if (document.getElementById(id) as HTMLSelectElement) {
+      new TomSelect(`#${id}`, {
         plugins: ['dropdown_input', 'remove_button'],
-      });
-      ts.on('change', () => {
-        // TODO fix issue when an item has been selected, filters still apply but the "resource title" under table header remains
-        reloadCalendarEvents();
+        onItemRemove() {
+          if (id === 'itemSelect') {
+            window.location.replace('scheduler.php?');
+            reloadCalendarEvents();
+          }
+        },
+        onChange: () => {
+          reloadCalendarEvents();
+          if (id === 'itemSelect') {
+            editable = true;
+            selectable = true;
+          }
+        },
       });
     }
   });

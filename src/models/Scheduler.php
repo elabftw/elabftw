@@ -136,9 +136,11 @@ final class Scheduler extends AbstractRest
         // prepare filters for the scheduler view
         $category = 0;
         $ownerId = 0;
+        $itemId   = 0;
         if ($queryParams !== null) {
             $category = $queryParams->getQuery()->getInt('cat');
             $ownerId = $queryParams->getQuery()->getInt('eventOwner');
+            $itemId = $queryParams->getQuery()->getInt('item');
         }
         // the title of the event is title + Firstname Lastname of the user who booked it
         $sql = sprintf(
@@ -175,9 +177,10 @@ final class Scheduler extends AbstractRest
                 -- events.start <= range.end and events.end >= range.start
                 AND team_events.start <= :end
                 AND team_events.end >= :start
-                %s %s",
+                %s %s %s",
             $category > 0 ? 'AND items.category = :category' : '',
-            $ownerId > 0 ? 'AND team_events.userid = :ownerid' : ''
+            $ownerId > 0 ? 'AND team_events.userid = :ownerid' : '',
+            $itemId > 0 ? 'AND items.id = :itemid' : ''
         );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
@@ -188,6 +191,9 @@ final class Scheduler extends AbstractRest
         }
         if ($ownerId > 0) {
             $req->bindParam(':ownerid', $ownerId, PDO::PARAM_INT);
+        }
+        if ($itemId > 0) {
+            $req->bindParam(':itemid', $itemId, PDO::PARAM_INT);
         }
         $this->Db->execute($req);
         return $req->fetchAll();

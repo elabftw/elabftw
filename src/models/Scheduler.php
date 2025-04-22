@@ -217,6 +217,17 @@ final class Scheduler extends AbstractRest
         return $this->readOne();
     }
 
+    // checks if actions can be performed on an event
+    public function isEditableOrExplode(DateTimeImmutable $date): void
+    {
+        $now = new DateTimeImmutable();
+        $diff = ($now->getTimestamp() - $date->getTimestamp()) / 60;
+        if ($diff <= self::GRACE_PERIOD_MINUTES && !$this->Items->Users->isAdmin) {
+            throw new ImproperActionException(sprintf(_('Cannot delete an event within %d minutes after its creation.'), self::GRACE_PERIOD_MINUTES));
+        }
+        $this->isFutureOrExplode($date);
+    }
+
     /**
      * Remove an event
      */
@@ -226,15 +237,8 @@ final class Scheduler extends AbstractRest
         $this->canWriteOrExplode();
         $event = $this->readOne();
         $eventCreatedAt = new DateTimeImmutable($event['created_at']);
-        $this->isFutureOrExplode($eventCreatedAt);
-        // grace period (minutes) to prevent deleting right after the creation
+        $this->isEditableOrExplode($eventCreatedAt);
         $now = new DateTimeImmutable();
-        if ($now > $eventCreatedAt) {
-            $diff = ($now->getTimestamp() - $eventCreatedAt->getTimestamp()) / 60;
-            if ($diff <= self::GRACE_PERIOD_MINUTES && !$this->Items->Users->isAdmin) {
-                throw new ImproperActionException(sprintf(_('Cannot delete an event within %d minutes after its creation.'), self::GRACE_PERIOD_MINUTES));
-            }
-        }
         if ($event['book_is_cancellable'] === 0 && !$this->Items->Users->isAdmin) {
             throw new ImproperActionException(_('Event cancellation is not permitted.'));
         }

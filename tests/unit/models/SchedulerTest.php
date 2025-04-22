@@ -309,4 +309,20 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $this->Scheduler->setId($id);
         $this->assertTrue($this->Scheduler->destroy());
     }
+
+    public function testCannotCancelRightAfterCreation(): void
+    {
+        $Items = new Items(new Users(2, 1));
+        $itemId = $Items->postAction(Action::Create, ['category_id' => 5]);
+        $Items->setId($itemId);
+        $Scheduler = new Scheduler($Items);
+        $d = new DateTime('+1 hour');
+        $start = $d->format('c');
+        $d->add(new DateInterval('PT2H'));
+        $end = $d->format('c');
+        $id = $Scheduler->postAction(Action::Create, array('start' => $start, 'end' => $end, 'title' => 'test grace period'));
+        $Scheduler->setId($id);
+        $this->expectException(ImproperActionException::class);
+        $Scheduler->destroy();
+    }
 }

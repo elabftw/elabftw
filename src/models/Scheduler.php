@@ -139,9 +139,9 @@ final class Scheduler extends AbstractRest
     {
         // prepare filters for the scheduler view
         if ($queryParams !== null) {
-            $this->appendFilterSql('items.category', 'category', $queryParams->getQuery()->getInt('cat'));
-            $this->appendFilterSql('team_events.userid', 'ownerid', $queryParams->getQuery()->getInt('eventOwner'));
-            $this->appendFilterSql('items.id', 'itemid', $queryParams->getQuery()->getInt('item'));
+            $this->appendFilterSql(column: 'items.category', paramName: 'category', value: $queryParams->getQuery()->getInt('cat'));
+            $this->appendFilterSql(column: 'team_events.userid', paramName: 'ownerid', value: $queryParams->getQuery()->getInt('eventOwner'));
+            $this->appendFilterSql(column: 'items.id', paramName: 'itemid', value: $queryParams->getQuery()->getInt('item'));
         }
         // the title of the event is title + Firstname Lastname of the user who booked it
         $sql = sprintf(

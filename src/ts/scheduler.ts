@@ -346,16 +346,27 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   ['schedulerSelectCat', 'itemSelect'].forEach(id => {
-    if (document.getElementById(id) as HTMLSelectElement) {
+    const el = document.getElementById(id) as HTMLSelectElement;
+    if (el) {
       new TomSelect(`#${id}`, {
         plugins: ['dropdown_input', 'remove_button'],
         onItemRemove() {
           if (id === 'itemSelect') {
-            window.location.replace('scheduler.php?');
-            reloadCalendarEvents();
+            params.delete('item');
+            params.set('start', calendar.view.activeStart.toISOString());
+            window.location.replace(`scheduler.php?${params.toString()}`);
           }
         },
-        onChange: reloadCalendarEvents,
+        onChange() {
+          if (id === 'itemSelect') {
+            if (el.value) {
+              params.set('item', el.value);
+            }
+            params.set('start', calendar.view.activeStart.toISOString());
+            window.location.replace(`scheduler.php?${params.toString()}`);
+          }
+          reloadCalendarEvents();
+        },
       });
     }
   });

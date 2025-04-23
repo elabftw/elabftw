@@ -1,31 +1,6 @@
 {% extends 'base.html' %}
 
-{% set src = App.Users.userData %}
 {% block body %}
-{# Settings modal #}
-<div class='modal fade' id='schedulerSettingsModal' tabindex='-1' role='dialog' aria-labelledby='schedulerSettingsModalLabel'>
-  <div class='modal-dialog' role='document'>
-    <div class='modal-content'>
-      <div class='modal-header'>
-        <h4 class='modal-title' id='schedulerSettingsModalLabel'><i class='fas fa-fw fa-calendar-days'></i> {{ 'Scheduler settings'|trans }}</h4>
-        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
-          <span aria-hidden='true'>&times;</span>
-        </button>
-      </div>
-      <div class='modal-body'>
-        {# schedulerSettings #}
-        <div class='mb-2'>
-          {% include 'binary-setting.html' with {'label': 'Show weekends'|trans, 'model': 'users/me', 'slug': 'show_weekends', 'src': src} %}
-          {% include 'binary-setting.html' with {'label': 'Layout: timeline'|trans, 'model': 'users/me', 'slug': 'scheduler_layout', 'src': src} %}
-        </div>
-      </div>
-
-      <div class='modal-footer'>
-        <button type='button' class='btn btn-secondary' data-action='reload-page'>{{ 'Close'|trans }}</button>
-      </div>
-    </div>
-  </div>
-</div>
 {# Modal for event click #}
 <div class='modal fade' id='eventModal' tabindex='-1' role='dialog' aria-labelledby='eventModalLabel'>
   <div class='modal-dialog modal-lg' role='document'>
@@ -121,19 +96,24 @@
   </div>
 </div>
 
-<div class='d-flex mb-2'>
-  <div id='selectBookableWarningDiv' hidden>{{ 'Select a resource below in order to book it.'|trans }}</div>
-  <div class='ml-auto'>
-    <a href='#' data-action='toggle-modal' data-target='schedulerSettingsModal' aria-label='{{ 'Settings'|trans }}' title='{{ 'Settings'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 mr-2'>
-      <i class='fas fa-cogs fa-fw'></i>
-    </a>
-  </div>
+<div class='mb-2' id='selectBookableWarningDiv' hidden>{{ 'Select a resource below in order to book it.'|trans }}</div>
+<hr>
+<div class='d-flex'>
+  {% include 'scope-button.html' with {'reload': 'mainSchedulerContent', 'target': 'scope_items', 'isSecondary': 0, 'isSmall': 0} %}
+  <div class="vertical-separator"></div>
+  <button title='{{ 'Show weekends'|trans }}' aria-label='{{ 'Show weekends'|trans }}' type='button' class='btn hl-hover-gray px-2 mr-2' data-action='toggle-show-weekends'>
+    <i class="fas fa-calendar-week"></i>
+  </button>
+  <button title='{{ 'Switch layout'|trans }}' aria-label='{{ 'Switch layout'|trans }}' type='button' class='btn hl-hover-gray p-1 mr-1' data-action='toggle-scheduler-layout'>
+    <i class='fas fa-fw fa-list'></i>
+    <i class='fas fa-fw fa-table'></i>
+  </button>
 </div>
+<hr>
 
 <div id='mainSchedulerContent'>
   <div class='row mb-3'>
     <div class="ml-3">
-      {% include 'scope-button.html' with {'reload': 'mainSchedulerContent', 'target': 'scope_items', 'isSecondary': 0, 'isSmall': 0} %}
     </div>
     {# CATEGORY #}
     <div class='col-md-3'>
@@ -154,6 +134,7 @@
             </option>
           {% endfor %}
         </select>
+        <small class="form-text text-muted ml-1">Filter by the resource's category</small>
       </form>
     </div>
 
@@ -177,6 +158,7 @@
             </option>
           {% endfor %}
         </select>
+        <small class="form-text text-muted ml-1">Select the resource you want to book</small>
       </form>
     </div>
 
@@ -189,6 +171,7 @@
           <button class='btn btn-secondary' type='button' aria-label='{{ 'Filter owner'|trans }}' data-action='filter-owner' title='{{ 'Filter owner'|trans }}'><i class='color-white fas fa-magnifying-glass'></i></button>
         </div>
       </div>
+      <small class="form-text text-muted ml-1">Type a name to show only bookings by that user</small>
     </div>
 
   </div>
@@ -212,7 +195,7 @@
   <div class='d-flex justify-content-center' id='loading-spinner'>
     <div class='lds-dual-ring'></div>
   </div>
-  <div id='scheduler' data-lang='{{ App.getJsLang }}' data-render='{{ itemsArr|length > 0 ? 'true' : 'false' }}' data-weekends='{{ App.Users.userData.show_weekends }}'></div>
+  <div id='scheduler' data-lang='{{ App.getJsLang }}' data-render='{{ itemsArr|length > 0 ? 'true' : 'false' }}' data-weekends='{{ App.Users.userData.show_weekends }}' data-layout='{{ App.Users.userData.scheduler_layout }}'></div>
 {% endif %}
 
 {% endblock body %}

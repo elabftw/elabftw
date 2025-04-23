@@ -34,7 +34,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import timelinePlugin from '@fullcalendar/timeline';
 import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import { Action } from './interfaces';
+import { Action, Model } from './interfaces';
 import { Api } from './Apiv2.class';
 import { TomSelect } from './misc';
 
@@ -113,10 +113,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('itemSelect')) {
     eventBackgroundColor = (document.getElementById('itemSelect') as HTMLSelectElement).selectedOptions[0].dataset.color;
   }
-  const layoutCheckbox = document.getElementById('scheduler_layout') as HTMLInputElement;
-  const layout = (layoutCheckbox && layoutCheckbox.checked)
-    ? 'timelineDay,timelineWeek,listWeek,timelineMonth' // horizontal axis
-    : 'timeGridDay,timeGridWeek,listWeek,dayGridMonth'; // classic grid calendar
   // SCHEDULER
   const calendar = new Calendar(calendarEl, {
     schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
@@ -128,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
     headerToolbar: {
       left: 'prev,next today',
       center: 'title',
-      right: layout,
+      right: 'timeGridDay,timeGridWeek,listWeek,dayGridMonth',
     },
     views: {
       timelineMonth: {
@@ -137,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ],
       },
     },
-    initialView: layoutCheckbox.checked ? 'timelineWeek' : 'timeGridWeek',
+    initialView: calendarEl.dataset.layout === '1' ? 'timelineWeek' : 'timeGridWeek',
     themeSystem: 'bootstrap',
     // i18n
     // all available locales
@@ -342,6 +338,34 @@ document.addEventListener('DOMContentLoaded', () => {
     // FILTER OWNER
     } else if (el.matches('[data-action="filter-owner"]')) {
       reloadCalendarEvents();
+    // TOGGLE WEEKENDS BUTTON
+    } else if (el.matches('[data-action="toggle-show-weekends"]')) {
+      ApiC.getJson(`${Model.User}/me`).then(json => {
+        const newVal = json['show_weekends'] === 0 ? 1 : 0;
+
+        ApiC.patch(`${Model.User}/me`, { 'show_weekends': newVal }).then(() => {
+          calendar.setOption('weekends', newVal === 1);
+        });
+      });
+    // TOGGLE LAYOUT BUTTON
+    } else if (el.matches('[data-action="toggle-scheduler-layout"]')) {
+      ApiC.getJson(`${Model.User}/me`).then(json => {
+        const newVal = json['scheduler_layout'] === 0 ? 1 : 0;
+
+        ApiC.patch(`${Model.User}/me`, { 'scheduler_layout': newVal }).then(() => {
+          const newLayout = newVal === 1
+            ? 'timelineDay,timelineWeek,listWeek,timelineMonth'
+            : 'timeGridDay,timeGridWeek,listWeek,dayGridMonth';
+          const newInitialView = newVal === 1 ? 'timelineWeek' : 'timeGridWeek';
+
+          calendar.setOption('headerToolbar', {
+            left: 'prev,next today',
+            center: 'title',
+            right: newLayout,
+          });
+          calendar.changeView(newInitialView);
+        });
+      });
     }
   });
 

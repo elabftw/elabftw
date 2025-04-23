@@ -117,49 +117,39 @@
     </div>
     {# CATEGORY #}
     <div class='col-md-3'>
-      <form aria-label='{{ 'Filter by category'|trans }}'>
-        {% if App.Config.configArr.debug -%}
-          <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
-        {%- endif %}
-        <select
-          aria-label='{{ 'Filter by category'|trans }}'
-          class='mr-1 form-control'
-          id='schedulerSelectCat'
-          name='cat'
-        >
-          <option value=''>{{ 'Filter by category'|trans }}</option>
-          {% for category in bookableItemsTypes %}
-            <option value='{{ category.id }}'{{ App.Request.query.get('cat') == category.id ? ' selected' }}>
-              {{ category.title }}
-            </option>
-          {% endfor %}
-        </select>
-        <small class="form-text text-muted ml-1">Filter by the resource's category</small>
-      </form>
+      <select
+        aria-label='{{ 'Filter by category'|trans }}'
+        class='mr-1 form-control'
+        id='schedulerSelectCat'
+        name='cat'
+      >
+        <option value=''>{{ 'Filter by category'|trans }}</option>
+        {% for category in bookableItemsTypes %}
+          <option value='{{ category.id }}'{{- App.Request.query.get('cat') == category.id ? ' selected' -}}>
+            {{ category.title }}
+          </option>
+        {% endfor %}
+      </select>
+      <small class="form-text text-muted ml-1">Filter by the resource's category</small>
     </div>
 
     {# ITEM LIST #}
     <div class='col-md-3'>
-      <form aria-label='{{ 'Select a resource'|trans }}'>
-        {% if App.Config.configArr.debug -%}
-          <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
-        {%- endif %}
-        <select
-          aria-label='{{ 'Select a resource'|trans }}'
-          class='mr-1 form-control'
-          id='itemSelect'
-          name='item'
-        >
-          <option value=''>{{ 'Select a resource'|trans }}</option>
-          {% for item in itemsArr %}
-            {# data-color is used to set the background during initial drag #}
-            <option data-color='{{ item.category_color }}' value='{{ item.id }}'{{ App.Request.query.get('item') == item.id ? ' selected' }}>
-              {{ item.category_title }} - {{ item.title }}
-            </option>
-          {% endfor %}
-        </select>
-        <small class="form-text text-muted ml-1">Select the resource you want to book</small>
-      </form>
+      <select
+        aria-label='{{ 'Select a resource'|trans }}'
+        class='mr-1 form-control'
+        id='itemSelect'
+        name='item'
+      >
+        <option value=''>{{ 'Select a resource'|trans }}</option>
+        {% for item in itemsArr %}
+          {# data-color is used to set the background during initial drag #}
+          <option data-color='{{ item.category_color }}' value='{{ item.id }}'{{- App.Request.query.get('item') == item.id ? ' selected' -}}>
+            {{ item.category_title }} - {{ item.title }}
+          </option>
+        {% endfor %}
+      </select>
+      <small class="form-text text-muted ml-1">Select the resource you want to book</small>
     </div>
 
     {# EVENT OWNERS SEARCH FILTER #}

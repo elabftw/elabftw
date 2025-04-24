@@ -16,6 +16,7 @@ use DateTime;
 use DateTimeImmutable;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Notifications\EventDeleted;
@@ -140,8 +141,19 @@ final class Scheduler extends AbstractRest
         // prepare filters for the scheduler view
         if ($queryParams !== null) {
             $this->appendFilterSql(column: 'items.category', paramName: 'category', value: $queryParams->getQuery()->getInt('cat'));
-            $this->appendFilterSql(column: 'team_events.userid', paramName: 'ownerid', value: $queryParams->getQuery()->getInt('eventOwner'));
             $this->appendFilterSql(column: 'items.id', paramName: 'itemid', value: $queryParams->getQuery()->getInt('item'));
+            // there's a scope button AND a text-input to filter in users.
+            // apply eventOwner filter ONLY if scope is NOT self
+            $scope = $this->Items->Users->userData['scope_events'];
+            if ($scope !== Scope::User->value) {
+                $this->appendFilterSql('team_events.userid', 'ownerid', $queryParams->getQuery()->getInt('eventOwner'));
+            }
+            // apply scope-based visibility
+            if ($scope === Scope::User->value) {
+                $this->appendFilterSql('team_events.userid', 'userid', $this->Items->Users->userData['userid']);
+            } elseif ($scope === Scope::Team->value) {
+                $this->appendFilterSql('team_events.team', 'team_scope', $this->Items->Users->userData['team']);
+            }
         }
         // the title of the event is title + Firstname Lastname of the user who booked it
         $sql = sprintf(
@@ -565,9 +577,10 @@ final class Scheduler extends AbstractRest
 
     private function appendFilterSql(string $column, string $paramName, int $value): void
     {
-        if ($value > 0) {
-            $this->filterSqlParts[] = "AND $column = :$paramName";
-            $this->filterBindings[$paramName] = $value;
+        if ($value <= 0 || isset($this->filterBindings[$paramName])) {
+            return;
         }
+        $this->filterSqlParts[] = sprintf('AND %s = :%s', $column, $paramName);
+        $this->filterBindings[$paramName] = $value;
     }
 }

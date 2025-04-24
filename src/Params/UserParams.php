@@ -57,6 +57,7 @@ final class UserParams extends ContentParams
             'scope_experiments_templates',
             'scope_experiments',
             'scope_items',
+            'scope_events',
             'scope_teamgroups' => (string) (Scope::tryFrom($this->asInt()) ?? Scope::Team)->value,
             'sc_create', 'sc_favorite', 'sc_todo', 'sc_edit', 'sc_search' => Filter::firstLetter($this->asString()),
             'always_show_owned',

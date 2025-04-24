@@ -25,6 +25,10 @@
   }
 }
 
+.ts-filter {
+  width: 200px;
+}
+
 .ts-wrapper {
   max-width: clamp(var(--breakpoint-sm), 50vw, 90vw);
 

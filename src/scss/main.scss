@@ -1042,6 +1042,13 @@ the form-control fails to do that so we do the border ourselves */
   }
 }
 
+.scope-info {
+  position: absolute;
+  left: 12px;
+  top: -38px;
+  width: 100vw;
+}
+
 .smallgray {
   color: $medium;
   font-size: 80%;

@@ -1193,7 +1193,6 @@ CREATE TABLE `users` (
   `sc_search` varchar(1) NOT NULL DEFAULT 's',
   `scope_experiments` tinyint UNSIGNED NOT NULL DEFAULT 2,
   `scope_items` tinyint UNSIGNED NOT NULL DEFAULT 2,
-  `scope_events` tinyint UNSIGNED NOT NULL DEFAULT 2,
   `scope_experiments_templates` tinyint UNSIGNED NOT NULL DEFAULT 2,
   `scope_teamgroups` tinyint UNSIGNED NOT NULL DEFAULT 3,
   `use_isodate` tinyint UNSIGNED NOT NULL DEFAULT 0,

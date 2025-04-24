@@ -96,14 +96,11 @@
   </div>
 </div>
 
-<div class='mb-3' id='selectBookableWarningDiv' hidden>{{ 'Select a resource below in order to book it.'|trans }}</div>
-<hr>
-<div class='d-flex justify-content-between align-items-center mt-4'>
+<div id='selectBookableWarningDiv' hidden>{{ 'Select a resource below in order to book it.'|trans }}</div>
+<span class='smallgray'>{{ 'Select a scope and search bookable resources.'|trans }}</span>
+<div class='d-flex flex-wrap justify-content-between align-items-center my-2'>
 {#  FILTER FOR RESOURCES #}
-  <div class='position-relative'>
-    <small class='scope-info smallgray'>{{ 'The scope affects the resources available for the filters.'|trans }}</small>
-  </div>
-  {% include 'scope-button.html' with {'reload': 'scopeBtn,mainSchedulerContent', 'target': 'scope_items', 'isSecondary': 0, 'isSmall': 0} %}
+  {% include 'scope-button.html' with {'reload': 'page', 'target': 'scope_items', 'isSecondary': 0, 'isSmall': 0} %}
   <div id='mainSchedulerContent' class='mr-auto'>
     <div class='d-flex align-items-center'>
       {# CATEGORY #}
@@ -142,11 +139,6 @@
       </div>
       {#  FILTER FOR EVENTS #}
       <div class='vertical-separator'></div>
-      {# SCOPE TARGETING SCHEDULER EVENTS ONLY #}
-      <div class='position-relative'>
-        <small class='scope-info smallgray'>{{ 'The scope affects the owner of the events.'|trans }}</small>
-      </div>
-      {% include 'scope-button.html' with {'btnId': 'scopeEventsBtn', 'reload': 'page', 'target': 'scope_events', 'isSecondary': 0, 'isSmall': 0} %}
       {# EVENT OWNERS SEARCH FILTER #}
       <div class='d-flex flex-column mx-2'>
         <div class='input-group'>

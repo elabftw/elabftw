@@ -36,7 +36,7 @@ import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { Action, Model } from './interfaces';
 import { Api } from './Apiv2.class';
-import { TomSelect } from './misc';
+import { reloadElements, TomSelect } from './misc';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/scheduler.php') {
@@ -80,6 +80,32 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
+  const layoutCheckbox = document.getElementById('scheduler_layout') as HTMLInputElement;
+  const layout = (layoutCheckbox && layoutCheckbox.checked)
+    ? 'timelineDay,timelineWeek,listWeek,timelineMonth' // horizontal axis
+    : 'timeGridDay,timeGridWeek,listWeek,dayGridMonth'; // classic grid calendar
+
+  function initScopeButtons(): void {
+    document.querySelectorAll('[data-target^="scope_"]').forEach((button: HTMLButtonElement) => {
+      button.addEventListener('click', () => {
+        const model = button.dataset.model;
+        const target = button.dataset.target;
+        const value = button.value;
+        const reload = button.dataset.reload;
+
+        ApiC.patch(`${model}`, { [target]: parseInt(value, 10) }).then(() => {
+          if (reload) {
+            reloadElements(reload.split(','))
+              .then(() => initScopeButtons())
+              .then(() => initTomSelect()
+            );
+          }
+        });
+      });
+    });
+  }
+  initScopeButtons();
+  initTomSelect();
   // remove existing params to build new event sources for the calendar
   function buildEventSourcesUrl(): string {
     ['item', 'cat', 'eventOwner'].forEach((param) => params.delete(param));
@@ -124,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
     headerToolbar: {
       left: 'prev,next today',
       center: 'title',
-      right: 'timeGridDay,timeGridWeek,listWeek,dayGridMonth',
+      right: layout,
     },
     views: {
       timelineMonth: {
@@ -133,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ],
       },
     },
-    initialView: calendarEl.dataset.layout === '1' ? 'timelineWeek' : 'timeGridWeek',
+    initialView: layoutCheckbox.checked ? 'timelineWeek' : 'timeGridWeek',
     themeSystem: 'bootstrap',
     // i18n
     // all available locales
@@ -338,60 +364,34 @@ document.addEventListener('DOMContentLoaded', () => {
     // FILTER OWNER
     } else if (el.matches('[data-action="filter-owner"]')) {
       reloadCalendarEvents();
-    // TOGGLE WEEKENDS BUTTON
-    } else if (el.matches('[data-action="toggle-show-weekends"]')) {
-      ApiC.getJson(`${Model.User}/me`).then(json => {
-        const newVal = json['show_weekends'] === 0 ? 1 : 0;
-
-        ApiC.patch(`${Model.User}/me`, { 'show_weekends': newVal }).then(() => {
-          calendar.setOption('weekends', newVal === 1);
-        });
-      });
-    // TOGGLE LAYOUT BUTTON
-    } else if (el.matches('[data-action="toggle-scheduler-layout"]')) {
-      ApiC.getJson(`${Model.User}/me`).then(json => {
-        const newVal = json['scheduler_layout'] === 0 ? 1 : 0;
-
-        ApiC.patch(`${Model.User}/me`, { 'scheduler_layout': newVal }).then(() => {
-          const newLayout = newVal === 1
-            ? 'timelineDay,timelineWeek,listWeek,timelineMonth'
-            : 'timeGridDay,timeGridWeek,listWeek,dayGridMonth';
-          const newInitialView = newVal === 1 ? 'timelineWeek' : 'timeGridWeek';
-
-          calendar.setOption('headerToolbar', {
-            left: 'prev,next today',
-            center: 'title',
-            right: newLayout,
-          });
-          calendar.changeView(newInitialView);
-        });
-      });
     }
   });
 
-  ['schedulerSelectCat', 'itemSelect'].forEach(id => {
-    const el = document.getElementById(id) as HTMLSelectElement;
-    if (el) {
-      new TomSelect(`#${id}`, {
-        plugins: ['dropdown_input', 'remove_button'],
-        onItemRemove() {
-          if (id === 'itemSelect') {
-            params.delete('item');
-            params.set('start', calendar.view.activeStart.toISOString());
-            window.location.replace(`scheduler.php?${params.toString()}`);
-          }
-        },
-        onChange() {
-          if (id === 'itemSelect') {
-            if (el.value) {
-              params.set('item', el.value);
+  function initTomSelect(): void {
+    ['schedulerSelectCat', 'itemSelect'].forEach(id => {
+      const el = document.getElementById(id) as HTMLSelectElement;
+      if (el) {
+        new TomSelect(`#${id}`, {
+          plugins: ['dropdown_input', 'remove_button'],
+          onItemRemove() {
+            if (id === 'itemSelect') {
+              params.delete('item');
+              params.set('start', calendar.view.activeStart.toISOString());
+              window.location.replace(`scheduler.php?${params.toString()}`);
             }
-            params.set('start', calendar.view.activeStart.toISOString());
-            window.location.replace(`scheduler.php?${params.toString()}`);
-          }
-          reloadCalendarEvents();
-        },
-      });
-    }
-  });
+          },
+          onChange() {
+            if (id === 'itemSelect') {
+              if (el.value) {
+                params.set('item', el.value);
+              }
+              params.set('start', calendar.view.activeStart.toISOString());
+              window.location.replace(`scheduler.php?${params.toString()}`);
+            }
+            reloadCalendarEvents();
+          },
+        });
+      }
+    });
+  }
 });

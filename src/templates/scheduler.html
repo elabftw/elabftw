@@ -1,6 +1,30 @@
 {% extends 'base.html' %}
-
+{% set src = App.Users.userData %}
 {% block body %}
+{# Settings modal #}
+<div class='modal fade' id='schedulerSettingsModal' tabindex='-1' role='dialog' aria-labelledby='schedulerSettingsModalLabel'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h4 class='modal-title' id='schedulerSettingsModalLabel'><i class='fas fa-fw fa-calendar-days'></i> {{ 'Scheduler settings'|trans }}</h4>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        {# schedulerSettings #}
+        <div class='mb-2'>
+          {% include 'binary-setting.html' with {'label': 'Show weekends'|trans, 'model': 'users/me', 'slug': 'show_weekends', 'src': src} %}
+          {% include 'binary-setting.html' with {'label': 'Layout: timeline'|trans, 'model': 'users/me', 'slug': 'scheduler_layout', 'src': src} %}
+        </div>
+      </div>
+
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-action='reload-page'>{{ 'Close'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
 {# Modal for event click #}
 <div class='modal fade' id='eventModal' tabindex='-1' role='dialog' aria-labelledby='eventModalLabel'>
   <div class='modal-dialog modal-lg' role='document'>
@@ -97,10 +121,11 @@
 </div>
 
 <div id='selectBookableWarningDiv' hidden>{{ 'Select a resource below in order to book it.'|trans }}</div>
+  <hr>
 <span class='smallgray'>{{ 'Select a scope and search bookable resources.'|trans }}</span>
 <div class='d-flex flex-wrap justify-content-between align-items-center my-2'>
 {#  FILTER FOR RESOURCES #}
-  {% include 'scope-button.html' with {'reload': 'page', 'target': 'scope_items', 'isSecondary': 0, 'isSmall': 0} %}
+  {% include 'scope-button.html' with {'reload': 'scopeBtn,mainSchedulerContent', 'target': 'scope_items', 'isSecondary': 0, 'isSmall': 0} %}
   <div id='mainSchedulerContent' class='mr-auto'>
     <div class='d-flex align-items-center flex-wrap'>
       {# CATEGORY #}
@@ -152,15 +177,11 @@
     </div>
   </div>
 
-  <div class='vertical-separator'></div>
   <div class='d-flex align-items-center'>
-    <button title='{{ 'Show weekends'|trans }}' aria-label='{{ 'Show weekends'|trans }}' type='button' class='btn hl-hover-gray px-2 mr-2' data-action='toggle-show-weekends'>
-      <i class='fas fa-calendar-days'></i>
-    </button>
-    <button title='{{ 'Switch layout'|trans }}' aria-label='{{ 'Switch layout'|trans }}' type='button' class='btn hl-hover-gray p-1' data-action='toggle-scheduler-layout'>
-      <i class='fas fa-fw fa-list'></i>
-      <i class='fas fa-fw fa-table'></i>
-    </button>
+    <div class='vertical-separator'></div>
+    <a href='#' data-action='toggle-modal' data-target='schedulerSettingsModal' aria-label='{{ 'Settings'|trans }}' title='{{ 'Settings'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 mr-2'>
+      <i class='fas fa-cogs fa-fw'></i>
+    </a>
   </div>
 </div>
 <hr>

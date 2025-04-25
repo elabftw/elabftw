@@ -125,7 +125,8 @@
 <span class='smallgray'>{{ 'Select a scope and search bookable resources.'|trans }}</span>
 <div class='d-flex flex-wrap justify-content-between align-items-center my-2'>
 {#  FILTER FOR RESOURCES #}
-  {% include 'scope-button.html' with {'reload': 'scopeBtn,mainSchedulerContent', 'target': 'scope_items', 'isSecondary': 0, 'isSmall': 0} %}
+{#  TODO: make scopeBtn work without full page reload #}
+  {% include 'scope-button.html' with {'reload': 'page', 'target': 'scope_items', 'isSecondary': 0, 'isSmall': 0} %}
   <div id='mainSchedulerContent' class='mr-auto'>
     <div class='d-flex align-items-center flex-wrap'>
       {# CATEGORY #}

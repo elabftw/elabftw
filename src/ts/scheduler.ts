@@ -85,26 +85,21 @@ document.addEventListener('DOMContentLoaded', () => {
     ? 'timelineDay,timelineWeek,listWeek,timelineMonth' // horizontal axis
     : 'timeGridDay,timeGridWeek,listWeek,dayGridMonth'; // classic grid calendar
 
-  function initScopeButtons(): void {
-    document.querySelectorAll('[data-target^="scope_"]').forEach((button: HTMLButtonElement) => {
-      button.addEventListener('click', () => {
-        const model = button.dataset.model;
-        const target = button.dataset.target;
-        const value = button.value;
-        const reload = button.dataset.reload;
-
-        ApiC.patch(`${model}`, { [target]: parseInt(value, 10) }).then(() => {
-          if (reload) {
-            reloadElements(reload.split(','))
-              .then(() => initScopeButtons())
-              .then(() => initTomSelect(),
-              );
-          }
-        });
-      });
-    });
-  }
-  initScopeButtons();
+  // TODO: make scope btn work on inputs (tomselect filters) only
+  // function handleScopeButtonClick(): void {
+  //   document.querySelectorAll('[data-target^="scope_"]').forEach((button: HTMLButtonElement) => {
+  //     button.addEventListener('click', () => {
+  //       const reload = button.dataset.reload;
+  //       if (reload) {
+  //         reloadElements(reload.split(','))
+  //           .then(() => handleScopeButtonClick())
+  //           .then(() => initTomSelect(),
+  //         );
+  //       }
+  //     });
+  //   });
+  // }
+  // handleScopeButtonClick();
   initTomSelect();
   // remove existing params to build new event sources for the calendar
   function buildEventSourcesUrl(): string {

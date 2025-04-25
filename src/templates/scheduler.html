@@ -139,7 +139,7 @@
           <option value=''>{{ 'Filter by category'|trans }}</option>
           {% for category in bookableItemsTypes %}
             <option value='{{ category.id }}'{{- App.Request.query.get('cat') == category.id ? ' selected' -}}>
-              {{ category.title }}
+              {{ category.team_name }} - {{ category.title }}
             </option>
           {% endfor %}
         </select>

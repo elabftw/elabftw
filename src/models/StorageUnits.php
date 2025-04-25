@@ -298,14 +298,9 @@ final class StorageUnits extends AbstractRest
             }
             $res = $this->searchStorage($unitName);
             if ($res) {
-                $id = $res['id'];
-                $parent = $res['parent_id'];
-                if (!$parent) {
-                    $parent = $id;
-                }
+                $id = $parent = $res['id'];
             } else {
-                $id = $this->create($unitName, $parent);
-                $parent = $id;
+                $id = $parent = $this->create($unitName, $parent);
             }
         }
         return $id;

@@ -126,7 +126,7 @@ final class CompoundsCsv extends AbstractCsv
                         $StorageUnits = new StorageUnits($this->requester);
                         $id = $StorageUnits->createImmutable($locationSplit);
                         $Containers2ItemsLinks = new Containers2ItemsLinks($this->Items, $id);
-                        $Containers2ItemsLinks->createWithQuantity($row['quantity'] ?? 1.0, $row['unit'] ?? '•');
+                        $Containers2ItemsLinks->createWithQuantity((float) ($row['quantity'] ?? 1.0), $row['unit'] ?? '•');
                     }
                 }
             } catch (ImproperActionException $e) {

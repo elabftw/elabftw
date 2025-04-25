@@ -34,7 +34,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import timelinePlugin from '@fullcalendar/timeline';
 import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import { Action, Model } from './interfaces';
+import { Action } from './interfaces';
 import { Api } from './Apiv2.class';
 import { reloadElements, TomSelect } from './misc';
 
@@ -97,8 +97,8 @@ document.addEventListener('DOMContentLoaded', () => {
           if (reload) {
             reloadElements(reload.split(','))
               .then(() => initScopeButtons())
-              .then(() => initTomSelect()
-            );
+              .then(() => initTomSelect(),
+              );
           }
         });
       });
@@ -370,9 +370,17 @@ document.addEventListener('DOMContentLoaded', () => {
   function initTomSelect(): void {
     ['schedulerSelectCat', 'itemSelect'].forEach(id => {
       const el = document.getElementById(id) as HTMLSelectElement;
+      const catSelect = document.querySelector('#schedulerSelectCat') as HTMLSelectElement & { tomselect?: TomSelect };
       if (el) {
         new TomSelect(`#${id}`, {
           plugins: ['dropdown_input', 'remove_button'],
+          // on init, if there's an item selected, disable category filter
+          onInitialize() {
+            if (id === 'itemSelect' && el.value) {
+              catSelect.tomselect.disable();
+              catSelect.tomselect.clear();
+            }
+          },
           onItemRemove() {
             if (id === 'itemSelect') {
               params.delete('item');
@@ -383,6 +391,7 @@ document.addEventListener('DOMContentLoaded', () => {
           onChange() {
             if (id === 'itemSelect') {
               if (el.value) {
+                catSelect.tomselect.clear();
                 params.set('item', el.value);
               }
               params.set('start', calendar.view.activeStart.toISOString());

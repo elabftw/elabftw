@@ -2,6 +2,9 @@ parameters:
   level: 7
   treatPhpDocTypesAsCertain: false
   ignoreErrors:
+    - identifier: argument.named
+    - message: '#Call to method PHPUnit\\Framework\\Assert::.* with .* will always evaluate to true#'
+    - message: '#Call to function is_array\(\) with array will always evaluate to true#'
     - message: '#Variable \$App might not be defined.*#'
       path: %currentWorkingDirectory%/web
     - message: '#Variable \$Request might not be defined.*#'

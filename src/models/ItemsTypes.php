@@ -18,6 +18,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Orderby;
+use Elabftw\Enums\Sort;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
@@ -108,7 +109,7 @@ final class ItemsTypes extends AbstractTemplateEntity
     #[Override]
     public function getQueryParams(?InputBag $query = null, int $limit = 128): QueryParamsInterface
     {
-        return new BaseQueryParams(query: $query, orderby: Orderby::Ordering, limit: $limit);
+        return new BaseQueryParams(query: $query, orderby: Orderby::Ordering, limit: $limit, sort: Sort::Asc);
     }
 
     #[Override]

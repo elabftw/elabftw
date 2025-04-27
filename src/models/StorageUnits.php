@@ -172,12 +172,20 @@ final class StorageUnits extends AbstractRest
             compounds.is_oxidising,
             compounds.is_toxic,
             compounds.is_radioactive,
+            compounds.is_antibiotic,
             compounds.is_antibiotic_precursor,
+            compounds.is_drug,
             compounds.is_drug_precursor,
             compounds.is_explosive_precursor,
             compounds.is_cmr,
             compounds.is_nano,
-            compounds.is_controlled
+            compounds.is_controlled,
+            compounds.is_ed2health,
+            compounds.is_ed2env,
+            compounds.is_pbt,
+            compounds.is_pmt,
+            compounds.is_vpvb,
+            compounds.is_vpvm
         FROM
             containers2items AS c2i
         LEFT JOIN storage_units ON c2i.storage_id = storage_units.id
@@ -206,12 +214,20 @@ final class StorageUnits extends AbstractRest
             compounds.is_oxidising,
             compounds.is_toxic,
             compounds.is_radioactive,
+            compounds.is_antibiotic,
             compounds.is_antibiotic_precursor,
+            compounds.is_drug,
             compounds.is_drug_precursor,
             compounds.is_explosive_precursor,
             compounds.is_cmr,
             compounds.is_nano,
-            compounds.is_controlled
+            compounds.is_controlled,
+            compounds.is_ed2health,
+            compounds.is_ed2env,
+            compounds.is_pbt,
+            compounds.is_pmt,
+            compounds.is_vpvb,
+            compounds.is_vpvm
         FROM
             containers2experiments AS c2e
         LEFT JOIN storage_units ON c2e.storage_id = storage_units.id
@@ -413,12 +429,20 @@ final class StorageUnits extends AbstractRest
                     compounds.is_oxidising,
                     compounds.is_toxic,
                     compounds.is_radioactive,
+                    compounds.is_antibiotic,
                     compounds.is_antibiotic_precursor,
+                    compounds.is_drug,
                     compounds.is_drug_precursor,
                     compounds.is_explosive_precursor,
                     compounds.is_cmr,
                     compounds.is_nano,
-                    compounds.is_controlled
+                    compounds.is_controlled,
+                    compounds.is_ed2health,
+                    compounds.is_ed2env,
+                    compounds.is_pbt,
+                    compounds.is_pmt,
+                    compounds.is_vpvb,
+                    compounds.is_vpvm
                 FROM
                     containers2items AS c2i
                 LEFT JOIN
@@ -468,12 +492,20 @@ final class StorageUnits extends AbstractRest
                     compounds.is_oxidising,
                     compounds.is_toxic,
                     compounds.is_radioactive,
+                    compounds.is_antibiotic,
                     compounds.is_antibiotic_precursor,
+                    compounds.is_drug,
                     compounds.is_drug_precursor,
                     compounds.is_explosive_precursor,
                     compounds.is_cmr,
                     compounds.is_nano,
-                    compounds.is_controlled
+                    compounds.is_controlled,
+                    compounds.is_ed2health,
+                    compounds.is_ed2env,
+                    compounds.is_pbt,
+                    compounds.is_pmt,
+                    compounds.is_vpvb,
+                    compounds.is_vpvm
                 FROM
                     containers2experiments AS c2e
                 LEFT JOIN

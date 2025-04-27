@@ -36,7 +36,7 @@ import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { Action } from './interfaces';
 import { Api } from './Apiv2.class';
-import { reloadElements, TomSelect } from './misc';
+import { TomSelect } from './misc';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/scheduler.php') {
@@ -85,21 +85,6 @@ document.addEventListener('DOMContentLoaded', () => {
     ? 'timelineDay,timelineWeek,listWeek,timelineMonth' // horizontal axis
     : 'timeGridDay,timeGridWeek,listWeek,dayGridMonth'; // classic grid calendar
 
-  // TODO: make scope btn work on inputs (tomselect filters) only
-  // function handleScopeButtonClick(): void {
-  //   document.querySelectorAll('[data-target^="scope_"]').forEach((button: HTMLButtonElement) => {
-  //     button.addEventListener('click', () => {
-  //       const reload = button.dataset.reload;
-  //       if (reload) {
-  //         reloadElements(reload.split(','))
-  //           .then(() => handleScopeButtonClick())
-  //           .then(() => initTomSelect(),
-  //         );
-  //       }
-  //     });
-  //   });
-  // }
-  // handleScopeButtonClick();
   initTomSelect();
   // remove existing params to build new event sources for the calendar
   function buildEventSourcesUrl(): string {

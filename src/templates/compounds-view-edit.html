@@ -33,12 +33,20 @@
 
         {% set hazards2 = {
           'is_radioactive': {'icon': 'radiation', 'alt': 'Radioactive'},
+          'is_antibiotic': {'icon': 'bacterium', 'alt': 'Antibiotic'},
           'is_antibiotic_precursor': {'icon': 'bacterium', 'alt': 'Antibiotic precursor'},
+          'is_drug': {'icon': 'pills', 'alt': 'Drug'},
           'is_drug_precursor': {'icon': 'pills', 'alt': 'Drug precursor'},
           'is_explosive_precursor': {'icon': 'explosion', 'alt': 'Explosive precursor'},
           'is_cmr': {'icon': 'skull-crossbones', 'alt': 'Carcinogenic, mutagenic and reprotoxic'},
           'is_controlled': {'icon': 'shield', 'alt': 'Controlled substance'},
           'is_nano': {'icon': 'atom', 'alt': 'Nanomaterial'},
+          'is_ed2health': {'icon': 'atom', 'alt': 'Endocrine disruptor for human health'},
+          'is_ed2env': {'icon': 'atom', 'alt': 'Endocrine disruptor for the environment'},
+          'is_pbt': {'icon': 'atom', 'alt': 'PBT'},
+          'is_pmt': {'icon': 'atom', 'alt': 'PMT'},
+          'is_vpvb': {'icon': 'atom', 'alt': 'vPvB'},
+          'is_vpvm': {'icon': 'atom', 'alt': 'vPvM'}
         } %}
         {% for property, data in hazards2 %}
           {% if attribute(compound, property) %}

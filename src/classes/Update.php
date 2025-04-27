@@ -27,15 +27,16 @@ use function sprintf;
  * Use this to check for latest version or update the database schema
  *
  * How to modify the structure:
- * 1. add a file in src/sql/ named 'schemaXX.sql' where XX is the current schema version + 1
- * 2. increment the REQUIRED_SCHEMA number in this file
- * 3. Run `bin/console db:update`
- * 4. reflect the changes in src/sql/structure.sql (or models/Config.php for the config table)
+ * 1. Generate a schema with bin/console dev:genschema
+ * 2. Fix permissions as they might be owned by root from the container
+ * 3. Edit them to make changes in the db in both directions (up and down)
+ * 4. Run `bin/console db:update` to apply the changes as if you were upgrading
+ * 5. reflect the changes in src/sql/structure.sql (or models/Config.php for the config table)
  */
 final class Update
 {
     /** @var int REQUIRED_SCHEMA the current version of the database structure */
-    public const int REQUIRED_SCHEMA = 174;
+    public const int REQUIRED_SCHEMA = 175;
 
     private Db $Db;
 

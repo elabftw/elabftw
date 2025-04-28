@@ -131,6 +131,9 @@
     <div class='d-flex align-items-center flex-wrap'>
       {# CATEGORY #}
       <div class='d-flex flex-column mx-2'>
+        {% if App.Config.configArr.debug -%}
+          <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
+        {%- endif %}
         <select
           aria-label='{{ 'Filter by category'|trans }}'
           class='mr-1 form-control ts-filter'
@@ -148,6 +151,9 @@
 
       {# ITEM LIST #}
       <div class='d-flex flex-column mx-2'>
+        {% if App.Config.configArr.debug -%}
+          <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
+        {%- endif %}
         <select
           aria-label='{{ 'Select a resource'|trans }}'
           class='form-control ts-filter'

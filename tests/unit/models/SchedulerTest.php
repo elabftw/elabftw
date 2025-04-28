@@ -310,7 +310,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($this->Scheduler->destroy());
     }
 
-    public function testCannotCancelRightAfterCreation(): void
+    public function testCanCancelDuringGracePeriod(): void
     {
         $Items = new Items(new Users(2, 1));
         $itemId = $Items->postAction(Action::Create, array('category_id' => 5));
@@ -322,7 +322,6 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $end = $d->format('c');
         $id = $Scheduler->postAction(Action::Create, array('start' => $start, 'end' => $end, 'title' => 'test grace period'));
         $Scheduler->setId($id);
-        $this->expectException(ImproperActionException::class);
-        $Scheduler->destroy();
+        $this->assertTrue($Scheduler->destroy());
     }
 }

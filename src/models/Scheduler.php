@@ -220,7 +220,8 @@ final class Scheduler extends AbstractRest
         $event = $this->readOne();
         $createdAt = new DateTimeImmutable($event['created_at']);
         $start = new DateTimeImmutable($event['start']);
-        $this->isFutureOrExplode($start, $createdAt);
+        $this->isEditableOrExplode($createdAt, $start);
+
         if ($event['book_is_cancellable'] === 0 && !$this->Items->Users->isAdmin) {
             throw new ImproperActionException(_('Event cancellation is not permitted.'));
         }
@@ -495,28 +496,41 @@ final class Scheduler extends AbstractRest
      * Unlike Admins, Users can't create/modify something in the past, unless book_users_can_in_past is truthy
      * Input can be false because DateTime::createFromFormat will return false on failure
      */
-    private function isFutureOrExplode(DateTime|DateTimeImmutable|false $date, ?DateTimeImmutable $createdAt = null): void    {
+    private function isFutureOrExplode(DateTime|DateTimeImmutable|false $date): void
+    {
         if ($this->Items->canBookInPast()) {
             return;
         }
         if ($date === false) {
             throw new ImproperActionException('Could not understand date format!');
         }
-
-        $now = new DateTimeImmutable();
-        // Allow GRACE_PERIOD minutes after creation
-        if ($createdAt !== null) {
-            $gracePeriodEnd = $createdAt->modify('+' . self::GRACE_PERIOD_MINUTES . ' minutes');
-            if ($now <= $gracePeriodEnd) {
-                // inside grace period: allow!
-                return;
-            }
-        }
+        $now = new DateTime();
         if ($now > $date) {
             throw new ImproperActionException(_('Creation/modification of events in the past is not allowed!'));
         }
     }
 
+    /**
+     * Check that the item has been created in the last minutes (GRACE_PERIOD_MINUTES)
+     * Users can't delete events in the past (see #5596) unless in this span of time.
+     */
+    private function isInGracePeriod(DateTimeImmutable $createdAt): bool
+    {
+        if ($this->Items->Users->isAdmin) {
+            return true; // Admins can always edit
+        }
+        $now = new DateTimeImmutable();
+        $gracePeriodEnd = $createdAt->modify('+' . self::GRACE_PERIOD_MINUTES . ' minutes');
+        return $now <= $gracePeriodEnd;
+    }
+
+    private function isEditableOrExplode(DateTimeImmutable $createdAt, DateTimeImmutable $startDate): void
+    {
+        if ($this->isInGracePeriod($createdAt)) {
+            return;
+        }
+        $this->isFutureOrExplode($startDate);
+    }
     /**
      * Date can be Y-m-d or ISO::ATOM
      * Make sure we have the time, too

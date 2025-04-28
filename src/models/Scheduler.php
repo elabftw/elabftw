@@ -210,17 +210,6 @@ final class Scheduler extends AbstractRest
         return $this->readOne();
     }
 
-    // checks if actions can be performed on an event
-    public function isEditableOrExplode(DateTimeImmutable $date): void
-    {
-        $now = new DateTimeImmutable();
-        $diff = ($now->getTimestamp() - $date->getTimestamp()) / 60;
-        if ($diff <= self::GRACE_PERIOD_MINUTES && !$this->Items->Users->isAdmin) {
-            throw new ImproperActionException(sprintf(_('Cannot delete an event within %d minutes after its creation.'), self::GRACE_PERIOD_MINUTES));
-        }
-        $this->isFutureOrExplode($date);
-    }
-
     /**
      * Remove an event
      */
@@ -229,14 +218,16 @@ final class Scheduler extends AbstractRest
     {
         $this->canWriteOrExplode();
         $event = $this->readOne();
-        $eventCreatedAt = new DateTimeImmutable($event['created_at']);
-        $this->isEditableOrExplode($eventCreatedAt);
-        $now = new DateTimeImmutable();
+        $createdAt = new DateTimeImmutable($event['created_at']);
+        $start = new DateTimeImmutable($event['start']);
+        $this->isFutureOrExplode($start, $createdAt);
         if ($event['book_is_cancellable'] === 0 && !$this->Items->Users->isAdmin) {
             throw new ImproperActionException(_('Event cancellation is not permitted.'));
         }
         if ($event['book_cancel_minutes'] !== 0 && !$this->Items->Users->isAdmin) {
-            $interval = $now->diff(new DateTimeImmutable($event['start']));
+            $now = new DateTimeImmutable();
+            $eventStart = new DateTimeImmutable($event['start']);
+            $interval = $now->diff($eventStart);
             $totalMinutes = ($interval->h * 60) + $interval->i;
             if ($totalMinutes < $event['book_cancel_minutes']) {
                 throw new ImproperActionException(sprintf(_('Cannot cancel slot less than %d minutes before its start.'), $event['book_cancel_minutes']));
@@ -504,15 +495,23 @@ final class Scheduler extends AbstractRest
      * Unlike Admins, Users can't create/modify something in the past, unless book_users_can_in_past is truthy
      * Input can be false because DateTime::createFromFormat will return false on failure
      */
-    private function isFutureOrExplode(DateTime|DateTimeImmutable|false $date): void
-    {
+    private function isFutureOrExplode(DateTime|DateTimeImmutable|false $date, ?DateTimeImmutable $createdAt = null): void    {
         if ($this->Items->canBookInPast()) {
             return;
         }
         if ($date === false) {
             throw new ImproperActionException('Could not understand date format!');
         }
-        $now = new DateTime();
+
+        $now = new DateTimeImmutable();
+        // Allow GRACE_PERIOD minutes after creation
+        if ($createdAt !== null) {
+            $gracePeriodEnd = $createdAt->modify('+' . self::GRACE_PERIOD_MINUTES . ' minutes');
+            if ($now <= $gracePeriodEnd) {
+                // inside grace period: allow!
+                return;
+            }
+        }
         if ($now > $date) {
             throw new ImproperActionException(_('Creation/modification of events in the past is not allowed!'));
         }

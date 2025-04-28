@@ -35,7 +35,7 @@ use function sprintf;
 final class Update
 {
     /** @var int REQUIRED_SCHEMA the current version of the database structure */
-    public const int REQUIRED_SCHEMA = 175;
+    public const int REQUIRED_SCHEMA = 176;
 
     private Db $Db;
 

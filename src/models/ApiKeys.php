@@ -34,9 +34,9 @@ final class ApiKeys extends AbstractRest
 {
     use SetIdTrait;
 
-    private string $key = '';
+    public string $key = '';
 
-    private int $keyId = 0;
+    public int $keyId = 0;
 
     public function __construct(private Users $Users, ?int $id = null)
     {

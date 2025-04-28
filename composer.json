@@ -65,7 +65,7 @@
     "codeception/module-phpbrowser": "^3.0",
     "codeception/c3": "^2.9",
     "friendsoftwig/twigcs": "^6.2",
-    "phpstan/phpstan": "^1.10",
+    "phpstan/phpstan": "^2.1",
     "vimeo/psalm": "^6.5.1"
   },
   "autoload": {

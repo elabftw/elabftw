@@ -101,12 +101,20 @@ final class CompoundsCsv extends AbstractCsv
                         isSeriousHealthHazard: (bool) ($row['is_serious_health_hazard'] ?? false),
                         isToxic: (bool) ($row['is_toxic'] ?? false),
                         isRadioactive: (bool) ($row['is_radioactive'] ?? false),
+                        isAntibiotic: (bool) ($row['is_antibiotic'] ?? false),
                         isAntibioticPrecursor: (bool) ($row['is_antibiotic_precursor'] ?? false),
+                        isDrug: (bool) ($row['is_drug'] ?? false),
                         isDrugPrecursor: (bool) ($row['is_drug_precursor'] ?? false),
                         isExplosivePrecursor: (bool) ($row['is_explosive_precursor'] ?? false),
                         isCmr: (bool) ($row['is_cmr'] ?? false),
                         isNano: (bool) ($row['is_nano'] ?? false),
-                        isControlled: (bool) ($row['is_controlled'] ?? false)
+                        isControlled: (bool) ($row['is_controlled'] ?? false),
+                        isEd2health: (bool) ($row['is_ed2health'] ?? false),
+                        isEd2env: (bool) ($row['is_ed2env'] ?? false),
+                        isPbt: (bool) ($row['is_pbt'] ?? false),
+                        isPmt: (bool) ($row['is_pmt'] ?? false),
+                        isVpvb: (bool) ($row['is_vpvb'] ?? false),
+                        isVpvm: (bool) ($row['is_vpvm'] ?? false),
                     );
                 }
 
@@ -126,7 +134,7 @@ final class CompoundsCsv extends AbstractCsv
                         $StorageUnits = new StorageUnits($this->requester);
                         $id = $StorageUnits->createImmutable($locationSplit);
                         $Containers2ItemsLinks = new Containers2ItemsLinks($this->Items, $id);
-                        $Containers2ItemsLinks->createWithQuantity($row['quantity'] ?? 1.0, $row['unit'] ?? '•');
+                        $Containers2ItemsLinks->createWithQuantity((float) ($row['quantity'] ?? 1.0), $row['unit'] ?? '•');
                     }
                 }
             } catch (ImproperActionException $e) {

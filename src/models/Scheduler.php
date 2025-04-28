@@ -531,6 +531,7 @@ final class Scheduler extends AbstractRest
         }
         $this->isFutureOrExplode($startDate);
     }
+
     /**
      * Date can be Y-m-d or ISO::ATOM
      * Make sure we have the time, too

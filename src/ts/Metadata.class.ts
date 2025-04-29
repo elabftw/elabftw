@@ -444,6 +444,8 @@ export class Metadata {
         groupWrapperDiv.append(document.createElement('hr'));
         this.metadataDiv.append(groupWrapperDiv);
       });
+      // refresh the existing groups select on update (see 5611)
+      reloadElements(['newFieldGroupSelect', 'fieldsGroup']);
     }).then (() => {
       replaceWithTitle();
     });
@@ -511,8 +513,9 @@ export class Metadata {
   edit(): Promise<void> {
     return this.read().then(json => {
       this.editor.refresh(json as ValidMetadata);
-      // do nothing more if there is no extra_fields in our json
+      // clean groups field if they're removed via json editor
       if (!Object.prototype.hasOwnProperty.call(json, 'extra_fields')) {
+        reloadElements(['newFieldGroupSelect', 'fieldsGroup']);
         return;
       }
 
@@ -647,6 +650,7 @@ export class Metadata {
       });
 
       this.metadataDiv.append(wrapperDiv);
+      reloadElements(['newFieldGroupSelect', 'fieldsGroup']);
     }).then(() => {
       makeSortableGreatAgain();
       replaceWithTitle();

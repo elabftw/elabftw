@@ -370,7 +370,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
       let json = {};
       MetadataC.read().then(metadata => {
-        if (metadata) json = metadata;
+        if (metadata) {
+          json = metadata;
+        }
         // If the key (name) is being changed, remove previous field else it will create two separate ones
         if (originalFieldKey && originalFieldKey !== newFieldKey) {
           delete json['extra_fields'][originalFieldKey];

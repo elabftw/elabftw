@@ -1090,8 +1090,12 @@
 <div data-tabcontent='15' hidden>
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Inventory'|trans }}</h3>
   <div class='pl-3 mb-5'>
-    <div><a href='/api/v2/reports?format=csv&scope=stored_compounds' class='btn btn-primary'>{{ 'Get inventory report'|trans }}</a></div>
-    {% include 'storage-list.html' with {'storage_editable': true} %}
+    {% if storageUnitsArr %}
+      <div><a href='/api/v2/reports?format=csv&scope=stored_compounds' class='btn btn-primary'>{{ 'Get inventory report'|trans }}</a></div>
+      {% include 'storage-list.html' with {'storage_editable': true} %}
+    {% else %}
+      {{ 'No places have been defined yet. Head to the %sInventory page%s to add places.'|trans|format('<a href="/inventory.php">', '</a>')|raw }}
+    {% endif %}
   </div>
 </div>
 

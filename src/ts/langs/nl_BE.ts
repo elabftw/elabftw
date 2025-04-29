@@ -19,6 +19,7 @@ const t = {
     "filename": "Bestandsnaam",
     "generic-delete-warning": "Dit verwijderen?",
     "link-delete-warning": "Deze link verwijderen?",
+    "location-name": "Location name",
     "multi-changes-confirm": "Apply to {{num, number}} entries?",
     "no-self-links": "Het koppelen van een item aan zichzelf is niet toegestaan. Selecteer een andere target.",
     "not-set": "Niet ingesteld",

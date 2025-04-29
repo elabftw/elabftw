@@ -19,6 +19,7 @@ const t = {
     "filename": "Název souboru",
     "generic-delete-warning": "Vymazat to?",
     "link-delete-warning": "Smazat tento odkaz?",
+    "location-name": "Location name",
     "multi-changes-confirm": "Použít na položky {{num, number}}?",
     "no-self-links": "Propojení položky se sebou samou není povoleno. Vyberte prosím jiný cíl.",
     "not-set": "Nenastavený",

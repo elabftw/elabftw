@@ -19,6 +19,7 @@ const t = {
     "filename": "文件名",
     "generic-delete-warning": "删除？",
     "link-delete-warning": "删除此链接？",
+    "location-name": "Location name",
     "multi-changes-confirm": "应用到 {{num, number}} 个条目？",
     "no-self-links": "不允许链接到资源自身。请选择不同的目标。",
     "not-set": "未设置",

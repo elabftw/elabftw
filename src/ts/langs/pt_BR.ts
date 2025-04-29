@@ -19,6 +19,7 @@ const t = {
     "filename": "Nome do arquivo",
     "generic-delete-warning": "Deletar isso aqui?",
     "link-delete-warning": "Deletar este link?",
+    "location-name": "Location name",
     "multi-changes-confirm": "Apply to {{num, number}} entries?",
     "no-self-links": "Não é permitido vincular um item a ele mesmo. Selecione um destino diferente.",
     "not-set": "Não definido",

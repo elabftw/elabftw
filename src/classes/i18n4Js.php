@@ -53,6 +53,7 @@ final class i18n4Js
             'filename' => _('Filename'),
             'generic-delete-warning' => _('Delete this?'),
             'link-delete-warning' => _('Delete this link?'),
+            'location-name' => _('Location name'),
             // https://www.i18next.com/translation-function/formatting
             'multi-changes-confirm' => _('Apply to {{num, number}} entries?'),
             'no-self-links' => _('Linking an item to itself is not allowed. Please select a different target.'),

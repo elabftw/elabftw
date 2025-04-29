@@ -19,6 +19,7 @@ const t = {
     "filename": "Tiedoston nimi",
     "generic-delete-warning": "Poistetaanko tämä?",
     "link-delete-warning": "Poistetaanko tämä linkki?",
+    "location-name": "Location name",
     "multi-changes-confirm": "Apply to {{num, number}} entries?",
     "no-self-links": "Kohteen linkittäminen itseensä ei ole sallittua. Valitse toinen kohde.",
     "not-set": "Ei valittu",

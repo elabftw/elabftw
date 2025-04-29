@@ -516,16 +516,16 @@ final class Scheduler extends AbstractRest
      */
     private function isInGracePeriod(DateTimeImmutable $createdAt): bool
     {
-        if ($this->Items->Users->isAdmin) {
-            return true; // Admins can always edit
-        }
         $now = new DateTimeImmutable();
-        $gracePeriodEnd = $createdAt->modify('+' . self::GRACE_PERIOD_MINUTES . ' minutes');
+        $gracePeriodEnd = $createdAt->modify(sprintf('+%d minutes', self::GRACE_PERIOD_MINUTES));
         return $now <= $gracePeriodEnd;
     }
 
     private function isEditableOrExplode(DateTimeImmutable $createdAt, DateTimeImmutable $startDate): void
     {
+        if ($this->Items->Users->isAdmin) {
+            return;
+        }
         if ($this->isInGracePeriod($createdAt)) {
             return;
         }

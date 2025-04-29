@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/scheduler.php') {
     return;
   }
-  document.getElementById('loading-spinner').remove();
+  document.getElementById('loading-spinner')?.remove();
 
   const ApiC = new Api();
 
@@ -76,25 +76,49 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // bind to the element #scheduler
   const calendarEl: HTMLElement = document.getElementById('scheduler');
-
-  let selectedItem = '';
-  if (params.has('item') && params.get('item') !== 'all') {
-    selectedItem = params.get('item');
+  if (!calendarEl) {
+    return;
   }
-  // allow filtering the category of items in events
-  let queryString = '';
-  if (params.get('cat')) {
-    queryString += '?cat=' + params.get('cat');
+
+  const layoutCheckbox = document.getElementById('scheduler_layout') as HTMLInputElement;
+  const layout = (layoutCheckbox && layoutCheckbox.checked)
+    ? 'timelineDay,timelineWeek,listWeek,timelineMonth' // horizontal axis
+    : 'timeGridDay,timeGridWeek,listWeek,dayGridMonth'; // classic grid calendar
+
+  initTomSelect();
+  // remove existing params to build new event sources for the calendar
+  function buildEventSourcesUrl(): string {
+    ['item', 'cat', 'eventOwner'].forEach((param) => params.delete(param));
+    const itemSelect = document.getElementById('itemSelect') as HTMLSelectElement;
+    const catSelect = document.getElementById('schedulerSelectCat') as HTMLSelectElement;
+    const ownerInput = document.getElementById('eventOwnerSelect') as HTMLInputElement;
+
+    if (itemSelect?.value) {
+      params.set('item', itemSelect.value);
+    }
+    if (catSelect?.value) {
+      params.set('cat', catSelect.value);
+    }
+    if (ownerInput?.value.trim()) {
+      const ownerId = ownerInput.value.trim().split(' ')[0];
+      params.set('eventOwner', ownerId);
+    }
+    return `api/v2/events?${params.toString()}`;
+  }
+  // refresh calendar when the event source is updated
+  function reloadCalendarEvents(): void {
+    const newQuery = buildEventSourcesUrl();
+    calendar.removeAllEventSources();
+    calendar.addEventSource({ url: newQuery });
+    calendar.refetchEvents();
+    // keep url in sync
+    window.history.replaceState({}, '', `${location.pathname}?${params.toString()}`);
   }
 
   let eventBackgroundColor = 'a9a9a9';
   if (document.getElementById('itemSelect')) {
     eventBackgroundColor = (document.getElementById('itemSelect') as HTMLSelectElement).selectedOptions[0].dataset.color;
   }
-  const layoutCheckbox = document.getElementById('scheduler_layout') as HTMLInputElement;
-  const layout = (layoutCheckbox && layoutCheckbox.checked)
-    ? 'timelineDay,timelineWeek,listWeek,timelineMonth' // horizontal axis
-    : 'timeGridDay,timeGridWeek,listWeek,dayGridMonth'; // classic grid calendar
   // SCHEDULER
   const calendar = new Calendar(calendarEl, {
     schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
@@ -137,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // load the events as JSON
     eventSources: [
       {
-        url: `api/v2/events/${selectedItem}${queryString}`,
+        url: buildEventSourcesUrl(),
       },
     ],
     // first day is monday
@@ -253,6 +277,20 @@ document.addEventListener('DOMContentLoaded', () => {
   if (calendarEl.dataset.render === 'true') {
     calendar.render();
     calendar.updateSize();
+    // add selected resource name below the title
+    const titleEl = calendarEl.querySelector('.fc-toolbar .fc-toolbar-title');
+    const resourceEl = document.getElementById('schedulerResourceDisplay');
+    if (titleEl && resourceEl) {
+      const parent = titleEl.parentElement;
+      // wrapper to stack vertically below title (the scheduler date)
+      const wrapper = document.createElement('div');
+      wrapper.classList.add('text-center', 'd-flex', 'flex-column', 'align-items-center');
+      resourceEl.removeAttribute('hidden');
+      resourceEl.classList.add('mt-2', 'd-inline-flex', 'align-items-center');
+      wrapper.appendChild(titleEl);
+      wrapper.appendChild(resourceEl);
+      parent?.appendChild(wrapper);
+    }
   }
 
   // add on change event listener on datetime inputs
@@ -290,7 +328,6 @@ document.addEventListener('DOMContentLoaded', () => {
       ApiC.post(`event/${el.dataset.id}/notifications`, {action: Action.Create, msg: msg, target: target.value, targetid: parseInt(target.dataset.targetid, 10)}).then(() => {
         ApiC.delete(`event/${el.dataset.id}`).then(() => calendar.refetchEvents()).catch();
       });
-
     // SAVE EVENT TITLE
     } else if (el.matches('[data-action="save-event-title"]')) {
       const input = el.parentElement.parentElement.querySelector('input') as HTMLInputElement;
@@ -304,17 +341,46 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.bindInput').forEach((input:HTMLInputElement) => input.value = '');
         calendar.refetchEvents();
       });
+    // FILTER OWNER
+    } else if (el.matches('[data-action="filter-owner"]')) {
+      reloadCalendarEvents();
     }
   });
 
-  ['schedulerSelectCat', 'itemSelect'].forEach(id => {
-    if (document.getElementById(id)) {
-      new TomSelect(`#${id}`, {
-        plugins: [
-          'dropdown_input',
-          'remove_button',
-        ],
-      });
-    }
-  });
+  function initTomSelect(): void {
+    ['schedulerSelectCat', 'itemSelect'].forEach(id => {
+      const el = document.getElementById(id) as HTMLSelectElement;
+      const catSelect = document.querySelector('#schedulerSelectCat') as HTMLSelectElement & { tomselect?: TomSelect };
+      if (el) {
+        new TomSelect(`#${id}`, {
+          plugins: ['dropdown_input', 'remove_button'],
+          // on init, if there's an item selected, disable category filter
+          onInitialize() {
+            if (id === 'itemSelect' && el.value) {
+              catSelect.tomselect.disable();
+              catSelect.tomselect.clear();
+            }
+          },
+          onItemRemove() {
+            if (id === 'itemSelect') {
+              params.delete('item');
+              params.set('start', calendar.view.activeStart.toISOString());
+              window.location.replace(`scheduler.php?${params.toString()}`);
+            }
+          },
+          onChange() {
+            if (id === 'itemSelect') {
+              if (el.value) {
+                catSelect.tomselect.clear();
+                params.set('item', el.value);
+              }
+              params.set('start', calendar.view.activeStart.toISOString());
+              window.location.replace(`scheduler.php?${params.toString()}`);
+            }
+            reloadCalendarEvents();
+          },
+        });
+      }
+    });
+  }
 });

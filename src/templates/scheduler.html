@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-
 {% set src = App.Users.userData %}
 {% block body %}
 {# Settings modal #}
@@ -121,85 +120,99 @@
   </div>
 </div>
 
-<div class='d-flex mb-2'>
-  <div id='selectBookableWarningDiv' hidden>{{ 'Select a resource below in order to book it.'|trans }}</div>
-  <div class='ml-auto'>
-    <a href='#' data-action='toggle-modal' data-target='schedulerSettingsModal' aria-label='{{ 'Settings'|trans }}' title='{{ 'Settings'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 mr-2'>
-      <i class='fas fa-cogs fa-fw'></i>
-    </a>
-    {% include 'scope-button.html' with {'reload': 'page', 'target': 'scope_items'} %}
-  </div>
-</div>
-
-<div id='mainSchedulerContent'>
-  {% if itemsArr|length == 0 %}
-    {{ 'No bookable items.'|trans|msg('warning', false) }}
-  {% else %}
-  <div class='row mb-3'>
-    <div class='col-md-3'>
+<div id='selectBookableWarningDiv' hidden>{{ 'Select a resource below in order to book it.'|trans }}</div>
+  <hr>
+<span class='smallgray'>{{ 'Select a scope and search bookable resources.'|trans }}</span>
+<div class='d-flex flex-wrap justify-content-between align-items-center my-2'>
+{#  FILTER FOR RESOURCES #}
+{#  TODO: make scopeBtn work without full page reload #}
+  {% include 'scope-button.html' with {'reload': 'page', 'target': 'scope_items', 'isSecondary': 0, 'isSmall': 0} %}
+  <div id='mainSchedulerContent' class='mr-auto'>
+    <div class='d-flex align-items-center flex-wrap'>
       {# CATEGORY #}
-      <form aria-label='{{ 'Filter by category'|trans }}'>
+      <div class='d-flex flex-column mx-2'>
         {% if App.Config.configArr.debug -%}
           <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
         {%- endif %}
         <select
           aria-label='{{ 'Filter by category'|trans }}'
-          class='autosubmit mr-1 form-control'
+          class='mr-1 form-control ts-filter'
           id='schedulerSelectCat'
           name='cat'
         >
           <option value=''>{{ 'Filter by category'|trans }}</option>
           {% for category in bookableItemsTypes %}
-            <option value='{{ category.id }}'{{ App.Request.query.get('cat') == category.id ? ' selected' }}>
-              {{ category.title }}
+            <option value='{{ category.id }}'{{- App.Request.query.get('cat') == category.id ? ' selected' -}}>
+              {{ category.team_name }} - {{ category.title }}
             </option>
           {% endfor %}
         </select>
-      </form>
-    </div>
+      </div>
 
-    <div class='col-md-3'>
       {# ITEM LIST #}
-      <form aria-label='{{ 'Select a resource'|trans }}'>
+      <div class='d-flex flex-column mx-2'>
         {% if App.Config.configArr.debug -%}
           <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
         {%- endif %}
         <select
           aria-label='{{ 'Select a resource'|trans }}'
-          class='autosubmit mr-1 form-control'
+          class='form-control ts-filter'
           id='itemSelect'
           name='item'
         >
           <option value=''>{{ 'Select a resource'|trans }}</option>
           {% for item in itemsArr %}
             {# data-color is used to set the background during initial drag #}
-            <option data-color='{{ item.category_color }}' value='{{ item.id }}'{{ App.Request.query.get('item') == item.id ? ' selected' }}>
+            <option data-color='{{ item.category_color }}' value='{{ item.id }}'{{- App.Request.query.get('item') == item.id ? ' selected' -}}>
               {{ item.category_title }} - {{ item.title }}
             </option>
           {% endfor %}
         </select>
-      </form>
-    </div>
-
-    {% if bookableItemData %}
-      <div class='col-md-3 ml-auto'>
-        <div class='input-group justify-content-end flex-nowrap'>
-          <div class='input-group-prepend'>
-            <button class='btn btn-secondary' type='button' data-action='remove-param-reload' data-target='item'>X</button>
+      </div>
+      {#  FILTER FOR EVENTS #}
+      <div class='vertical-separator'></div>
+      {# EVENT OWNERS SEARCH FILTER #}
+      <div class='d-flex flex-column mx-2'>
+        <div class='input-group'>
+          <input type='text' aria-label='{{ 'Filter owner'|trans }}' placeholder='{{ 'Filter events by owner'|trans }}' id='eventOwnerSelect' class='form-control' data-identifier='eventOwnerSelect' data-complete-target='users'>
+          <div id='autocompleteAnchorDiv_eventOwnerSelect'></div>
+          <div class='input-group-append'>
+            <button class='btn btn-secondary' type='button' aria-label='{{ 'Filter owner'|trans }}' data-action='filter-owner' title='{{ 'Filter owner'|trans }}'><i class='color-white fas fa-magnifying-glass'></i></button>
           </div>
-          <a href='database.php?mode=view&amp;id={{ bookableItemData.id }}' class='list-group-item hl-hover-gray'><span style='--bg: #{{ bookableItemData.category_color }}' class='catstat-btn category-btn mr-2'>{{ bookableItemData.category_title }}</span>{{ bookableItemData.title }}</a>
         </div>
       </div>
-    {% endif %}
+    </div>
   </div>
-  {% endif %}
-</div>
-{# loading spinner #}
-<div class='d-flex justify-content-center' id='loading-spinner'>
-  <div class='lds-dual-ring'></div>
-</div>
 
-<div id='scheduler' data-lang='{{ App.getJsLang }}' data-render='{{ itemsArr|length > 0 ? 'true' : 'false' }}' data-weekends='{{ App.Users.userData.show_weekends }}'></div>
+  <div class='d-flex align-items-center'>
+    <div class='vertical-separator'></div>
+    <a href='#' data-action='toggle-modal' data-target='schedulerSettingsModal' aria-label='{{ 'Settings'|trans }}' title='{{ 'Settings'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 mr-2'>
+      <i class='fas fa-cogs fa-fw'></i>
+    </a>
+  </div>
+</div>
+<hr>
 
+
+{% if bookableItemData %}
+  <div id='schedulerResourceDisplay' class='title d-flex justify-content-center'>
+    {{ 'Selected resource:'|trans }}
+    <a href='database.php?mode=view&amp;id={{ bookableItemData.id }}' class='d-inline-flex align-items-center text-decoration-none hl-hover-gray ml-2'>
+      <span class='catstat-btn category-btn mr-2' style='--bg: #{{ bookableItemData.category_color }}'>
+        {{ bookableItemData.category_title }}
+      </span>
+      <span class='text-info font-weight-bold'>{{ bookableItemData.title }}</span>
+    </a>
+  </div>
+{% endif %}
+{% if itemsArr|length == 0 %}
+  {{ 'No bookable items.'|trans|msg('warning', false) }}
+{% else %}
+  {# loading spinner #}
+  <div class='d-flex justify-content-center' id='loading-spinner'>
+    <div class='lds-dual-ring'></div>
+  </div>
+  <div id='scheduler' data-lang='{{ App.getJsLang }}' data-render='{{ itemsArr|length > 0 ? 'true' : 'false' }}' data-weekends='{{ App.Users.userData.show_weekends }}' data-layout='{{ App.Users.userData.scheduler_layout }}'></div>
+{% endif %}
 
 {% endblock body %}

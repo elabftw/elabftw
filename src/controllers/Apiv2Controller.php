@@ -302,7 +302,6 @@ final class Apiv2Controller extends AbstractApiController
                 null,
                 $this->Request->query->getString('start', Scheduler::EVENT_START),
                 $this->Request->query->getString('end', Scheduler::EVENT_END),
-                $this->Request->query->getInt('cat'),
             ),
             ApiEndpoint::ExtraFieldsKeys => new ExtraFieldsKeys(
                 $this->requester,

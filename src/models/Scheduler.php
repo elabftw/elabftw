@@ -41,16 +41,21 @@ final class Scheduler extends AbstractRest
 
     public const string EVENT_END = '2037-31-12T00:00:00+00:00';
 
+    private const int GRACE_PERIOD_MINUTES = 5;
+
     private string $start = self::EVENT_START;
 
     private string $end = self::EVENT_END;
+
+    private array $filterSqlParts = array();
+
+    private array $filterBindings = array();
 
     public function __construct(
         public Items $Items,
         ?int $id = null,
         ?string $start = null,
         ?string $end = null,
-        private ?int $category = null,
     ) {
         parent::__construct();
         $this->setId($id);
@@ -132,6 +137,12 @@ final class Scheduler extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
+        // prepare filters for the scheduler view
+        if ($queryParams !== null) {
+            $this->appendFilterSql(column: 'items.category', paramName: 'category', value: $queryParams->getQuery()->getInt('cat'));
+            $this->appendFilterSql(column: 'team_events.userid', paramName: 'ownerid', value: $queryParams->getQuery()->getInt('eventOwner'));
+            $this->appendFilterSql(column: 'items.id', paramName: 'itemid', value: $queryParams->getQuery()->getInt('item'));
+        }
         // the title of the event is title + Firstname Lastname of the user who booked it
         $sql = sprintf(
             "SELECT
@@ -140,6 +151,8 @@ final class Scheduler extends AbstractRest
                 team_events.start,
                 team_events.end,
                 team_events.userid,
+                team_events.created_at,
+                team_events.modified_at,
                 TIMESTAMPDIFF(MINUTE, team_events.start, team_events.end) AS event_duration_minutes,
                 CONCAT(u.firstname, ' ', u.lastname) AS fullname,
                 CONCAT('[', items.title, '] ', team_events.title, ' (', u.firstname, ' ', u.lastname, ')') AS title,
@@ -166,16 +179,14 @@ final class Scheduler extends AbstractRest
                 AND team_events.start <= :end
                 AND team_events.end >= :start
                 %s",
-            $this->category > 0
-                ? 'AND items.category = :category'
-                : ''
+            implode(' ', $this->filterSqlParts)
         );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
         $req->bindValue(':start', $this->normalizeDate($this->start));
         $req->bindValue(':end', $this->normalizeDate($this->end, true));
-        if ($this->category > 0) {
-            $req->bindParam(':category', $this->category);
+        foreach ($this->filterBindings as $param => $value) {
+            $req->bindValue(":$param", $value, PDO::PARAM_INT);
         }
         $this->Db->execute($req);
         return $req->fetchAll();
@@ -207,6 +218,10 @@ final class Scheduler extends AbstractRest
     {
         $this->canWriteOrExplode();
         $event = $this->readOne();
+        $createdAt = new DateTimeImmutable($event['created_at']);
+        $start = new DateTimeImmutable($event['start']);
+        $this->isEditableOrExplode($createdAt, $start);
+
         if ($event['book_is_cancellable'] === 0 && !$this->Items->Users->isAdmin) {
             throw new ImproperActionException(_('Event cancellation is not permitted.'));
         }
@@ -316,6 +331,8 @@ final class Scheduler extends AbstractRest
                 team_events.userid,
                 team_events.experiment,
                 team_events.item_link,
+                team_events.created_at,
+                team_events.modified_at,
                 items.book_is_cancellable,
                 items.book_cancel_minutes,
                 team_events.title AS title_only,
@@ -494,6 +511,28 @@ final class Scheduler extends AbstractRest
     }
 
     /**
+     * Check that the item has been created in the last minutes (GRACE_PERIOD_MINUTES)
+     * Users can't delete events in the past (see #5596) unless in this span of time.
+     */
+    private function isInGracePeriod(DateTimeImmutable $createdAt): bool
+    {
+        $now = new DateTimeImmutable();
+        $gracePeriodEnd = $createdAt->modify(sprintf('+%d minutes', self::GRACE_PERIOD_MINUTES));
+        return $now <= $gracePeriodEnd;
+    }
+
+    private function isEditableOrExplode(DateTimeImmutable $createdAt, DateTimeImmutable $startDate): void
+    {
+        if ($this->Items->Users->isAdmin) {
+            return;
+        }
+        if ($this->isInGracePeriod($createdAt)) {
+            return;
+        }
+        $this->isFutureOrExplode($startDate);
+    }
+
+    /**
      * Date can be Y-m-d or ISO::ATOM
      * Make sure we have the time, too
      */
@@ -536,5 +575,14 @@ final class Scheduler extends AbstractRest
         if ($this->canWrite() === false) {
             throw new ImproperActionException(Tools::error(true));
         }
+    }
+
+    private function appendFilterSql(string $column, string $paramName, int $value): void
+    {
+        if ($value <= 0 || isset($this->filterBindings[$paramName])) {
+            return;
+        }
+        $this->filterSqlParts[] = sprintf('AND %s = :%s', $column, $paramName);
+        $this->filterBindings[$paramName] = $value;
     }
 }

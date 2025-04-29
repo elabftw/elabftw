@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-03 17:38+0100\n"
+"POT-Creation-Date: 2025-04-29 11:23+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Nicolas CARPi\n"
 "Language-Team: \n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 3.5\n"
+"X-Generator: Poedit 3.0.1\n"
 "X-Poedit-Mapping: php=gettext:PHP;html=twig\n"
 "X-Poedit-Basepath: ../../../..\n"
 "X-Poedit-SearchPath-0: src\n"
@@ -172,7 +172,7 @@ msgstr "Partiellement reçu"
 msgid "Received"
 msgstr "Reçu"
 
-#: src/Enums/ProcurementState.php:31 src/templates/show.html:191
+#: src/Enums/ProcurementState.php:31 src/templates/show.html:195
 #: src/templates/uploads.html:80 src/templates/uploads.html:141
 msgid "Archived"
 msgstr "Archivé"
@@ -181,41 +181,56 @@ msgstr "Archivé"
 msgid "Cancelled"
 msgstr "Annulé(e)"
 
-#: src/Enums/RequestableAction.php:31
+#: src/Enums/RequestableAction.php:30
 msgid "archiving"
 msgstr "archivage"
 
-#: src/Enums/RequestableAction.php:32
+#: src/Enums/RequestableAction.php:31
 msgid "locking"
 msgstr "verrouillage"
 
-#: src/Enums/RequestableAction.php:33
+#: src/Enums/RequestableAction.php:32
 msgid "review"
 msgstr "avis"
 
-#: src/Enums/RequestableAction.php:34
+#: src/Enums/RequestableAction.php:33
 msgid "signing"
 msgstr "signature"
 
-#: src/Enums/RequestableAction.php:35
+#: src/Enums/RequestableAction.php:34
 msgid "timestamping"
 msgstr "horodatage"
 
-#: src/Enums/RequestableAction.php:36
-msgid "removal of exclusive edit mode"
-msgstr "suppression du mode d'édition exclusif"
+#: src/Enums/Scope.php:33 src/templates/scope-button.html:13
+msgid "Self"
+msgstr "Soi-même"
+
+#: src/Enums/Scope.php:34 web/team.php:40 src/templates/admin.html:22
+#: src/templates/admin.html:305 src/templates/admin.html:780
+#: src/templates/catstat-view.html:4 src/templates/edit-compound-modal.html:110
+#: src/templates/editusers.html:267 src/templates/head.html:73
+#: src/templates/permissions-edit-modal.html:53 src/templates/register.html:43
+#: src/templates/register.html:44 src/templates/scope-button.html:17
+#: src/templates/todolist-panel.html:33 src/templates/ucp.html:468
+#: src/templates/ucp.html:479
+msgid "Team"
+msgstr "Équipe"
+
+#: src/Enums/Scope.php:35 src/templates/scope-button.html:21
+msgid "Everything"
+msgstr "Tout"
 
 #: src/Enums/Usergroup.php:24
 msgid "Sysadmin"
 msgstr "Sysadmin"
 
-#: src/Enums/Usergroup.php:25 src/templates/editusers.html:71
-#: src/templates/editusers.html:374 src/templates/team.html:41
+#: src/Enums/Usergroup.php:25 src/templates/editusers.html:76
+#: src/templates/editusers.html:383 src/templates/team.html:41
 msgid "Admin"
 msgstr "Administrateur"
 
 #: src/Enums/Usergroup.php:26 src/templates/changelog-block.html:7
-#: src/templates/editusers.html:72 src/templates/field-builder-modal.html:67
+#: src/templates/editusers.html:77 src/templates/field-builder-modal.html:67
 #: src/templates/pdf.html:175 src/templates/todolist-panel.html:28
 msgid "User"
 msgstr "Utilisateur"
@@ -274,7 +289,7 @@ msgstr "Trop court ! (minimum : %d)"
 msgid "Default group"
 msgstr "Groupe par défaut"
 
-#: src/classes/Metadata.php:111 src/classes/i18n4Js.php:77
+#: src/classes/Metadata.php:111 src/classes/i18n4Js.php:79
 msgid "Undefined group"
 msgstr "Groupe non défini"
 
@@ -300,10 +315,10 @@ msgstr "Une erreur est survenue!"
 msgid "User could not be found."
 msgstr "L'utilisateur n'a pas été trouvé."
 
-#: src/classes/UserStats.php:95 src/classes/i18n4Js.php:59
+#: src/classes/UserStats.php:95 src/classes/i18n4Js.php:60
 #: src/templates/catstat-edit.html:8 src/templates/catstat-edit.html:30
 #: src/templates/catstat-view.html:14 src/templates/catstat-view.html:22
-#: src/templates/show.html:377 src/templates/show.html:387
+#: src/templates/show.html:384 src/templates/show.html:394
 #: src/templates/sysconfig.html:246
 msgid "Not set"
 msgstr "Non défini"
@@ -322,27 +337,27 @@ msgstr "Cliquer pour modifier"
 #: src/templates/create-new-item-modal.html:53
 #: src/templates/create-resource-from-compound-modal.html:25
 #: src/templates/duplicate-modal.html:33
-#: src/templates/edit-compound-modal.html:109 src/templates/export-menu.html:15
+#: src/templates/edit-compound-modal.html:118 src/templates/export-menu.html:15
 #: src/templates/export-menu.html:49 src/templates/export-menu.html:108
 #: src/templates/footer.html:68 src/templates/idp-modal.html:104
 #: src/templates/import-pubchem-modal.html:50 src/templates/mfa.html:62
 #: src/templates/onboarding-email-modal.html:19
 #: src/templates/reset-user-password-modal.html:27
 #: src/templates/rm-user-from-team-modal.html:17
-#: src/templates/scheduler.html:109 src/templates/sysconfig.html:22
-#: src/templates/ucp.html:36 src/templates/view-edit-toolbar.html:53
-#: src/templates/view-edit-toolbar.html:77
-#: src/templates/view-edit-toolbar.html:118
-#: src/templates/view-edit-toolbar.html:145 src/templates/view-edit.html:39
+#: src/templates/sysconfig.html:22 src/templates/ucp.html:36
+#: src/templates/view-edit-toolbar.html:51
+#: src/templates/view-edit-toolbar.html:75
+#: src/templates/view-edit-toolbar.html:116
+#: src/templates/view-edit-toolbar.html:144 src/templates/view-edit.html:39
 msgid "Cancel"
 msgstr "Annuler"
 
-#: src/classes/i18n4Js.php:42 src/templates/view.html:194
-#: src/templates/view.html:196
+#: src/classes/i18n4Js.php:42 src/templates/view.html:183
+#: src/templates/view.html:185
 msgid "Add a comment"
 msgstr "Ajouter un commentaire"
 
-#: src/classes/i18n4Js.php:43 src/models/AbstractEntity.php:568
+#: src/classes/i18n4Js.php:43 src/models/AbstractEntity.php:572
 msgid "Custom ID is already used! Try another one."
 msgstr "L'identifiant personnalisé est déjà utilisé ! Essayez-en un autre."
 
@@ -355,9 +370,9 @@ msgid "File size limit:"
 msgstr "Taille limite de fichier :"
 
 #: src/classes/i18n4Js.php:46 src/templates/admin.html:284
-#: src/templates/show-item-table.html:15 src/templates/show-item.html:26
+#: src/templates/show-item-table.html:15 src/templates/show-item.html:31
 #: src/templates/sysconfig.html:825 src/templates/ucp.html:131
-#: src/templates/ucp.html:144 src/templates/view-edit-toolbar.html:184
+#: src/templates/ucp.html:144 src/templates/view-edit-toolbar.html:182
 msgid "Edit"
 msgstr "Editer"
 
@@ -382,7 +397,7 @@ msgid "A category is required to fetch the next Custom ID"
 msgstr "Une catégorie est nécessaire pour rechercher l'ID personnalisé suivant"
 
 #: src/classes/i18n4Js.php:52 src/templates/admin.html:382
-#: src/templates/edit.html:173 src/templates/view.html:159
+#: src/templates/edit.html:160 src/templates/view.html:148
 msgid "Extra fields"
 msgstr "Champs supplémentaires"
 
@@ -398,119 +413,123 @@ msgstr "Supprimer ça ?"
 msgid "Delete this link?"
 msgstr "Supprimer ce lien ?"
 
-#: src/classes/i18n4Js.php:57
+#: src/classes/i18n4Js.php:56
+msgid "Location name"
+msgstr "Nom du lieu"
+
+#: src/classes/i18n4Js.php:58
 msgid "Apply to {{num, number}} entries?"
 msgstr "Appliquer à {{num, nombre}} entrées ?"
 
-#: src/classes/i18n4Js.php:58 src/models/AbstractEntity.php:647
+#: src/classes/i18n4Js.php:59 src/models/AbstractEntity.php:647
 msgid ""
 "Linking an item to itself is not allowed. Please select a different target."
 msgstr ""
 "Il n'est pas permis de lier un élément à lui-même. Veuillez sélectionner une "
 "autre cible."
 
-#: src/classes/i18n4Js.php:60
+#: src/classes/i18n4Js.php:61
 msgid "Nothing selected!"
 msgstr "Aucune sélection !"
 
-#: src/classes/i18n4Js.php:61
+#: src/classes/i18n4Js.php:62
 msgid "Now"
 msgstr "Maintenant"
 
-#: src/classes/i18n4Js.php:62
+#: src/classes/i18n4Js.php:63
 msgid "Onboarding email(s) will soon be sent."
 msgstr "Le(s) courriel(s) d'accueil sera(ont) bientôt envoyé(s)."
 
-#: src/classes/i18n4Js.php:63 src/templates/duplicate-modal.html:11
+#: src/classes/i18n4Js.php:64 src/templates/duplicate-modal.html:11
 #: src/templates/footer.html:57 src/templates/idp-modal.html:12
 #: src/templates/login.html:15 src/templates/reset-user-password-modal.html:14
-#: src/templates/scheduler.html:37 src/templates/search-help-modal.html:10
+#: src/templates/scheduler.html:39 src/templates/search-help-modal.html:10
 #: src/templates/sysconfig.html:17 src/templates/ucp.html:25
-#: src/templates/view-edit-toolbar.html:47
-#: src/templates/view-edit-toolbar.html:70
-#: src/templates/view-edit-toolbar.html:94
+#: src/templates/view-edit-toolbar.html:45
+#: src/templates/view-edit-toolbar.html:68
+#: src/templates/view-edit-toolbar.html:92
 msgid "Please wait…"
 msgstr "Patientez…"
 
-#: src/classes/i18n4Js.php:64
+#: src/classes/i18n4Js.php:65
 msgid "Remove"
 msgstr "Supprimer"
 
-#: src/classes/i18n4Js.php:65
+#: src/classes/i18n4Js.php:66
 msgid "Do you want to replace the file on the server with this edit?"
 msgstr ""
 "Souhaitez-vous remplacer le fichier sur le serveur avec ce changement ?"
 
-#: src/classes/i18n4Js.php:66
+#: src/classes/i18n4Js.php:67
 msgid "Enter name of the file"
 msgstr "Nom du fichier"
 
-#: src/classes/i18n4Js.php:67 src/exceptions/ResourceNotFoundException.php:25
+#: src/classes/i18n4Js.php:68 src/exceptions/ResourceNotFoundException.php:25
 msgid "Nothing to show with this id"
 msgstr "Rien à afficher avec cet ID"
 
-#: src/classes/i18n4Js.php:68 src/templates/admin.html:94
+#: src/classes/i18n4Js.php:69 src/templates/admin.html:94
 #: src/templates/admin.html:106 src/templates/admin.html:140
 #: src/templates/admin.html:244 src/templates/admin.html:377
 #: src/templates/admin.html:438 src/templates/admin.html:485
-#: src/templates/admin.html:602 src/templates/edit-compound-modal.html:110
-#: src/templates/edit.html:164 src/templates/edit.html:227
-#: src/templates/editusers.html:74 src/templates/field-builder-modal.html:40
+#: src/templates/admin.html:602 src/templates/edit-compound-modal.html:119
+#: src/templates/edit.html:151 src/templates/edit.html:214
+#: src/templates/editusers.html:79 src/templates/field-builder-modal.html:40
 #: src/templates/field-builder-modal.html:155 src/templates/footer.html:69
 #: src/templates/idp-modal.html:105 src/templates/json-editor.html:37
 #: src/templates/onboarding-email.html:37
 #: src/templates/onboarding-email.html:80
-#: src/templates/permissions-edit-modal.html:118
+#: src/templates/permissions-edit-modal.html:117
 #: src/templates/reset-user-password-modal.html:28
-#: src/templates/scheduler.html:44 src/templates/show.html:433
+#: src/templates/scheduler.html:46 src/templates/show.html:440
 #: src/templates/steps-links-edit.html:73 src/templates/sysconfig.html:284
 #: src/templates/sysconfig.html:298 src/templates/sysconfig.html:491
-#: src/templates/sysconfig.html:774 src/templates/ucp.html:364
-#: src/templates/ucp.html:391 src/templates/view-edit-toolbar.html:31
+#: src/templates/sysconfig.html:774 src/templates/ucp.html:354
+#: src/templates/ucp.html:381 src/templates/view-edit-toolbar.html:29
 msgid "Save"
 msgstr "Enregistrer"
 
-#: src/classes/i18n4Js.php:69 web/app/controllers/SortableAjaxController.php:45
-#: web/app/controllers/SysconfigAjaxController.php:38
-#: web/app/controllers/UcpController.php:89
+#: src/classes/i18n4Js.php:70 web/app/controllers/SortableAjaxController.php:44
+#: web/app/controllers/SysconfigAjaxController.php:37
+#: web/app/controllers/UcpController.php:88
 msgid "Saved"
 msgstr "Enregistré"
 
-#: src/classes/i18n4Js.php:70
+#: src/classes/i18n4Js.php:71
 msgid "Sort by column"
 msgstr "Trier par colonne"
 
-#: src/classes/i18n4Js.php:71
+#: src/classes/i18n4Js.php:72
 msgid "Delete this step?"
 msgstr "Supprimer cette étape ?"
 
-#: src/classes/i18n4Js.php:72
+#: src/classes/i18n4Js.php:73
 msgid "Are you sure you want to undo this step?"
 msgstr "Êtes-vous certain(e) de vouloir défaire cette étape ?"
 
-#: src/classes/i18n4Js.php:73
+#: src/classes/i18n4Js.php:74
 msgid "Delete this tag?"
 msgstr "Supprimer ce tag ?"
 
-#: src/classes/i18n4Js.php:74
+#: src/classes/i18n4Js.php:75
 msgid "Template title"
 msgstr "Titre du modèle"
 
-#: src/classes/i18n4Js.php:75
+#: src/classes/i18n4Js.php:76
 msgid "Today"
 msgstr "Aujourd’hui"
 
-#: src/classes/i18n4Js.php:76
+#: src/classes/i18n4Js.php:77
 msgid "At least 3 characters are required to search"
 msgstr "Au moins 3 caractères sont nécessaires pour effectuer une recherche"
 
 #: src/classes/i18n4Js.php:78
+msgid "Unarchive and add to team {{team, string}}"
+msgstr "Désarchiver et ajouter à l'équipe {{team, string}}"
+
+#: src/classes/i18n4Js.php:80
 msgid "File comment"
 msgstr "Commentaire du fichier"
-
-#: src/controllers/AbstractEntityController.php:260
-msgid "This item is locked. You cannot edit it!"
-msgstr "Cet objet est verrouillé. Vous ne pouvez pas l'éditer !"
 
 #: src/controllers/ChemEditorController.php:31 src/templates/head.html:85
 msgid "Chemical Structure Editor"
@@ -551,11 +570,12 @@ msgid "Experiment templates"
 msgstr "Modèles d'expériences"
 
 #: src/controllers/InventoryController.php:31 src/templates/head.html:87
+#: src/templates/sysconfig.html:55 src/templates/sysconfig.html:1091
 msgid "Inventory"
 msgstr "Inventaire"
 
 #: src/controllers/LoginController.php:196
-#: web/app/controllers/ResetPasswordController.php:77 web/index.php:86
+#: web/app/controllers/ResetPasswordController.php:76 web/index.php:86
 msgid ""
 "Your account is not validated. An admin of your team needs to validate it!"
 msgstr ""
@@ -586,11 +606,7 @@ msgstr "L'authentification à deux facteurs est désormais active !"
 msgid "OpenCloning"
 msgstr "OpenCloning"
 
-#: src/exceptions/DatabaseErrorException.php:23
-msgid "Something went wrong! Try refreshing the page."
-msgstr "Une erreur s'est produite ! Essayez de rafraîchir la page."
-
-#: src/exceptions/InvalidCsrfTokenException.php:24 web/login.php:106
+#: src/exceptions/InvalidCsrfTokenException.php:24 web/login.php:105
 msgid "Your session expired."
 msgstr "Votre session a expiré."
 
@@ -618,11 +634,11 @@ msgstr "Signé par %s (%s)"
 msgid "Signature archive by %s (%s)"
 msgstr "Signature archive par %s (%s)"
 
-#: src/models/AbstractEntity.php:580
+#: src/models/AbstractEntity.php:584
 msgid "You don't have the rights to lock/unlock this."
 msgstr "Vous n'avez pas les droits suffisants pour vérouiller/déverouiller."
 
-#: src/models/AbstractEntity.php:597
+#: src/models/AbstractEntity.php:601
 #, php-format
 msgid ""
 "This experiment was locked by %s. You don't have the rights to unlock this."
@@ -646,14 +662,18 @@ msgstr "Besoin d'être refait"
 msgid "Fail"
 msgstr "Échec"
 
-#: src/models/ExclusiveEditMode.php:134
+#: src/models/ApiKeys.php:116
+msgid "Unauthorized"
+msgstr "Non autorisé"
+
+#: src/models/ApiKeys.php:116
+msgid "No corresponding API key found!"
+msgstr "Aucune clé API correspondante n'a été trouvée !"
+
+#: src/models/ExclusiveEditMode.php:90 src/templates/view.html:32
 #, php-format
-msgid ""
-"This entry is opened in exclusive edit mode by %s since %s. You cannot edit "
-"it before %s."
-msgstr ""
-"Cette entrée est ouverte en mode d'édition exclusive par %s depuis %s. Vous "
-"ne pouvez pas la modifier avant %s."
+msgid "This entry is being edited by %s."
+msgstr "Cette entrée est éditée par %s."
 
 #: src/models/Experiments.php:90
 msgid "Experiments must use a template!"
@@ -663,7 +683,7 @@ msgstr "Les expériences doivent utiliser un modèle !"
 msgid "Could not find tag. Please enter an existing tag."
 msgstr "Impossible de trouver ce tag. Merci de renseigner un tag existant."
 
-#: src/models/ItemsTypes.php:66 src/templates/admin.html:240
+#: src/models/ItemsTypes.php:67 src/templates/admin.html:240
 #: src/templates/admin.html:434 src/templates/admin.html:481
 msgid "Default"
 msgstr "Défaut"
@@ -719,11 +739,6 @@ msgstr "Les utilisateurs ne peuvent pas créer de tags."
 #: src/models/Uploads.php:311
 msgid "Please make sure to remove any reference to this file in the body!"
 msgstr "Soyez sûr de retirer toute référence à ce fichier dans l'expérience !"
-
-#: src/models/Users.php:498
-msgid "New password must not be the same as the current one."
-msgstr ""
-"Le nouveau mot de passe ne doit pas être identique au mot de passe actuel."
 
 #: src/models/notifications/ActionRequested.php:39
 #: src/services/Transform.php:123
@@ -820,6 +835,11 @@ msgstr "[ACTION REQUISE]"
 #, php-format
 msgid "Head to the admin panel to validate the account: %s"
 msgstr "Allez dans le panneau d'administration pour valider le compte: %s"
+
+#: src/models/users/Users.php:503
+msgid "New password must not be the same as the current one."
+msgstr ""
+"Le nouveau mot de passe ne doit pas être identique au mot de passe actuel."
 
 #: src/services/AdvancedSearchQuery.php:65
 #: src/services/AdvancedSearchQuery.php:67
@@ -934,7 +954,7 @@ msgstr ""
 "Une nouvelle version d'eLabFTW a été installée depuis votre dernière visite."
 "%sLire les notes de version en cliquant sur ce message."
 
-#: src/services/UserArchiver.php:54
+#: src/services/UserArchiver.php:56
 msgid ""
 "You are trying to archive an unvalidated user. Maybe you want to delete the "
 "account?"
@@ -942,16 +962,9 @@ msgstr ""
 "Vous essayez d'archiver un utilisateur non validé. Peut-être souhaitez-vous "
 "supprimer le compte ?"
 
-#: src/services/UserArchiver.php:57
+#: src/services/UserArchiver.php:59
 msgid "A sysadmin account cannot be archived."
 msgstr "Un compte sysadmin ne peut pas être archivé."
-
-#: src/services/UserArchiver.php:60
-msgid ""
-"This instance configuration only permits Sysadmin users to archive a user."
-msgstr ""
-"Cette configuration d'instance n'autorise que les utilisateurs Sysadmin à "
-"archiver un utilisateur."
 
 #: src/services/advancedSearchQuery/exceptions/LimitDepthIsExceededException.php:22
 msgid "Query is too complex!"
@@ -985,21 +998,21 @@ msgstr ""
 msgid "Registration successful :)<br>Welcome to eLabFTW o/"
 msgstr "Enregistrement réussi :)<br>Bienvenue sur eLabFTW ! o/"
 
-#: web/app/controllers/ResetPasswordController.php:60
+#: web/app/controllers/ResetPasswordController.php:59
 msgid "Email provided is invalid."
 msgstr "L'email n'est pas valide."
 
-#: web/app/controllers/ResetPasswordController.php:70
-#: web/app/controllers/ResetPasswordController.php:104
+#: web/app/controllers/ResetPasswordController.php:69
+#: web/app/controllers/ResetPasswordController.php:103
 msgid "If the account exists, an email has been sent."
 msgstr "Si le compte existe, un email a été envoyé."
 
-#: web/app/controllers/ResetPasswordController.php:84 web/change-pass.php:52
+#: web/app/controllers/ResetPasswordController.php:83 web/change-pass.php:52
 #: src/templates/login.html:16
 msgid "Reset password"
 msgstr "Réinitialiser le mot de passe utilisateur"
 
-#: web/app/controllers/ResetPasswordController.php:86
+#: web/app/controllers/ResetPasswordController.php:85
 #, php-format
 msgid ""
 "Hi. Someone (probably you) requested a new password on eLabFTW.%s Please "
@@ -1010,26 +1023,26 @@ msgstr ""
 "eLabFTW.%s Merci de suivre ce lien pour réinitialiser votre mot de passe: %s "
 "%sCe lien n'est valide que pendant %s minutes."
 
-#: web/app/controllers/ResetPasswordController.php:121
+#: web/app/controllers/ResetPasswordController.php:120
 msgid "New password inserted. You can now login."
 msgstr "Nouveau mot de passe mis à jour. Vous pouvez vous connecter désormais."
 
-#: web/app/controllers/TeamController.php:64
+#: web/app/controllers/TeamController.php:63
 #, php-format
 msgid "Email sent to %d users"
 msgstr "Email envoyé à %d utilisateurs"
 
-#: web/login.php:58 src/templates/mfa.html:7 src/templates/ucp.html:352
+#: web/login.php:57 src/templates/mfa.html:7 src/templates/ucp.html:342
 msgid "Two Factor Authentication"
 msgstr "Authentification à deux facteurs"
 
-#: web/login.php:112 src/templates/login.html:106 src/templates/login.html:126
+#: web/login.php:111 src/templates/login.html:106 src/templates/login.html:126
 #: src/templates/login.html:168 src/templates/login.html:194
 #: src/templates/login.html:218
 msgid "Login"
 msgstr "Connexion"
 
-#: web/profile.php:67 src/templates/profile.html:20
+#: web/profile.php:66 src/templates/profile.html:20
 msgid "Profile"
 msgstr "Profil"
 
@@ -1046,11 +1059,11 @@ msgstr "La création de compte est désactivée !"
 msgid "Register"
 msgstr "Créer un compte"
 
-#: web/revisions.php:50
+#: web/revisions.php:49
 msgid "Revisions"
 msgstr "Versions précédentes"
 
-#: web/scheduler.php:57 src/templates/dashboard.html:84
+#: web/scheduler.php:56 src/templates/dashboard.html:84
 #: src/templates/head.html:69 src/templates/ucp.html:109
 #: src/templates/ucp.html:115
 msgid "Scheduler"
@@ -1060,44 +1073,33 @@ msgstr "Planificateur"
 msgid "Instance settings"
 msgstr "Paramètres de l'instance"
 
-#: web/team.php:41 src/templates/admin.html:22 src/templates/admin.html:305
-#: src/templates/admin.html:780 src/templates/catstat-view.html:4
-#: src/templates/edit-compound-modal.html:101 src/templates/editusers.html:266
-#: src/templates/head.html:73 src/templates/permissions-edit-modal.html:53
-#: src/templates/permissions-edit-modal.html:66 src/templates/register.html:43
-#: src/templates/register.html:44 src/templates/scope-button.html:17
-#: src/templates/todolist-panel.html:33 src/templates/ucp.html:301
-#: src/templates/ucp.html:478 src/templates/ucp.html:489
-msgid "Team"
-msgstr "Équipe"
-
-#: web/ucp.php:65
+#: web/ucp.php:64
 msgid "New comment notification"
 msgstr "Notification de nouveau commentaire"
 
-#: web/ucp.php:69
+#: web/ucp.php:68
 msgid "Step deadline"
 msgstr "Date butoir de l'étape"
 
-#: web/ucp.php:77
+#: web/ucp.php:76
 msgid "New user created"
 msgstr "Nouvel utilisateur enregistré"
 
-#: web/ucp.php:82
+#: web/ucp.php:81
 msgid "New user need validation"
 msgstr "Un nouvel utilisateur nécessite une validation"
 
-#: web/ucp.php:87
+#: web/ucp.php:86
 msgid "Booking event cancelled"
 msgstr "Réservation annulée"
 
-#: web/ucp.php:111 src/templates/head.html:142 src/templates/scheduler.html:124
+#: web/ucp.php:110 src/templates/head.html:142 src/templates/scheduler.html:127
 #: src/templates/sysconfig.html:80
 msgid "Settings"
 msgstr "Paramètres"
 
 #: src/templates/add-container-modal.html:6
-#: src/templates/storage-view-edit.html:25
+#: src/templates/storage-view-edit.html:26
 msgid "Add container"
 msgstr "Ajouter un conteneur"
 
@@ -1112,8 +1114,8 @@ msgstr "Ajouter un conteneur"
 #: src/templates/create-statuslike-modal.html:7
 #: src/templates/create-statuslike-modal.html:25
 #: src/templates/duplicate-modal.html:7
-#: src/templates/edit-compound-modal.html:39 src/templates/editusers.html:55
-#: src/templates/editusers.html:102 src/templates/export-menu.html:7
+#: src/templates/edit-compound-modal.html:39 src/templates/editusers.html:60
+#: src/templates/editusers.html:107 src/templates/export-menu.html:7
 #: src/templates/export-menu.html:28 src/templates/export-menu.html:62
 #: src/templates/export-modal.html:7 src/templates/export-modal.html:99
 #: src/templates/favtags-panel.html:2 src/templates/field-builder-modal.html:11
@@ -1125,27 +1127,25 @@ msgstr "Ajouter un conteneur"
 #: src/templates/login.html:11 src/templates/login.html:25
 #: src/templates/onboarding-email-modal.html:6
 #: src/templates/ownership-transfer-modal.html:7
-#: src/templates/ownership-transfer-modal.html:23
+#: src/templates/ownership-transfer-modal.html:21
 #: src/templates/permissions-edit-modal.html:30
-#: src/templates/permissions-edit-modal.html:117
+#: src/templates/permissions-edit-modal.html:116
 #: src/templates/procurement-params-modal.html:7
 #: src/templates/procurement-params-modal.html:47
 #: src/templates/register.html:14 src/templates/register.html:22
-#: src/templates/remove-exclusive-edit-mode-modal.html:11
-#: src/templates/remove-exclusive-edit-mode-modal.html:20
 #: src/templates/reset-user-password-modal.html:10
-#: src/templates/rm-user-from-team-modal.html:7 src/templates/scheduler.html:10
-#: src/templates/scheduler.html:22 src/templates/scheduler.html:33
-#: src/templates/scheduler.html:115 src/templates/search-help-modal.html:6
+#: src/templates/rm-user-from-team-modal.html:7 src/templates/scheduler.html:11
+#: src/templates/scheduler.html:24 src/templates/scheduler.html:35
+#: src/templates/scheduler.html:118 src/templates/search-help-modal.html:6
 #: src/templates/search-help-modal.html:227 src/templates/sysconfig.html:13
 #: src/templates/todolist-panel.html:2 src/templates/ucp.html:21
 #: src/templates/uploads.html:8 src/templates/uploads.html:16
 #: src/templates/view-edit-toolbar.html:7
-#: src/templates/view-edit-toolbar.html:30
-#: src/templates/view-edit-toolbar.html:43
-#: src/templates/view-edit-toolbar.html:66
-#: src/templates/view-edit-toolbar.html:90
-#: src/templates/view-edit-toolbar.html:135
+#: src/templates/view-edit-toolbar.html:28
+#: src/templates/view-edit-toolbar.html:41
+#: src/templates/view-edit-toolbar.html:64
+#: src/templates/view-edit-toolbar.html:88
+#: src/templates/view-edit-toolbar.html:134
 msgid "Close"
 msgstr "Fermer"
 
@@ -1178,14 +1178,14 @@ msgstr "Valider"
 #: src/templates/admin.html:302 src/templates/admin.html:442
 #: src/templates/admin.html:489 src/templates/admin.html:619
 #: src/templates/admin.html:639 src/templates/admin.html:640
-#: src/templates/admin.html:762 src/templates/editusers.html:66
+#: src/templates/admin.html:762 src/templates/editusers.html:71
 #: src/templates/field-builder-modal.html:27
 #: src/templates/link-view-one.html:30 src/templates/profile.html:281
-#: src/templates/show.html:368 src/templates/steps-links-edit.html:18
+#: src/templates/show.html:375 src/templates/steps-links-edit.html:18
 #: src/templates/sysconfig.html:791 src/templates/sysconfig.html:826
-#: src/templates/ucp.html:494 src/templates/upload-dropdown-menu.html:107
-#: src/templates/uploads.html:119 src/templates/view-edit-toolbar.html:322
-#: src/templates/view.html:182
+#: src/templates/ucp.html:484 src/templates/upload-dropdown-menu.html:100
+#: src/templates/uploads.html:119 src/templates/view-edit-toolbar.html:305
+#: src/templates/view.html:171
 msgid "Delete"
 msgstr "Supprimer"
 
@@ -1195,7 +1195,7 @@ msgid "User Groups"
 msgstr "Groupes d'utilisateurs"
 
 #: src/templates/admin.html:24 src/templates/admin.html:792
-#: src/templates/permissions-edit-modal.html:81 src/templates/sysconfig.html:43
+#: src/templates/permissions-edit-modal.html:80 src/templates/sysconfig.html:43
 #: src/templates/sysconfig.html:67
 #: src/templates/view-permissions-details.html:23
 msgid "Users"
@@ -1207,7 +1207,7 @@ msgstr "Catégories"
 
 #: src/templates/admin.html:26 src/templates/catstat-edit.html:25
 #: src/templates/catstat-view.html:20 src/templates/pdf.html:39
-#: src/templates/show.html:295 src/templates/show.html:470
+#: src/templates/show.html:302 src/templates/show.html:477
 msgid "Status"
 msgid_plural "Status"
 msgstr[0] "Statut"
@@ -1219,7 +1219,7 @@ msgstr[1] "Statuts"
 #: src/templates/export-menu.html:109 src/templates/export-menu.html:116
 #: src/templates/head.html:141 src/templates/inventory.html:7
 #: src/templates/profile.html:9 src/templates/profile.html:247
-#: src/templates/show.html:354 src/templates/show.html:355
+#: src/templates/show.html:361 src/templates/show.html:362
 msgid "Export"
 msgstr "Export"
 
@@ -1346,7 +1346,7 @@ msgstr ""
 "des autorisations à ce groupe."
 
 #: src/templates/admin.html:149 src/templates/sysconfig.html:640
-#: src/templates/sysconfig.html:847 src/templates/ucp.html:437
+#: src/templates/sysconfig.html:847 src/templates/ucp.html:427
 msgid "Link to documentation"
 msgstr "Lien vers la documentation"
 
@@ -1363,7 +1363,7 @@ msgstr "Ajouter un groupe"
 #: src/templates/admin.html:456 src/templates/create-new-item-modal.html:54
 #: src/templates/create-new.html:4
 #: src/templates/create-statuslike-modal.html:26
-#: src/templates/editusers.html:310 src/templates/export-modal.html:100
+#: src/templates/editusers.html:311 src/templates/export-modal.html:100
 #: src/templates/register.html:102 src/templates/sysconfig.html:23
 #: src/templates/ucp.html:130 src/templates/ucp.html:140
 msgid "Create"
@@ -1382,7 +1382,7 @@ msgid "User name"
 msgstr "Nom d'utilisateur"
 
 #: src/templates/admin.html:189 src/templates/admin.html:796
-#: src/templates/permissions-edit-modal.html:92
+#: src/templates/permissions-edit-modal.html:91
 msgid "Add user"
 msgstr "Ajouter cet utilisateur"
 
@@ -1398,18 +1398,18 @@ msgstr "Créer et modifier les catégories disponibles pour les expériences."
 #: src/templates/admin.html:423 src/templates/admin.html:470
 #: src/templates/create-compound-modal.html:14
 #: src/templates/create-statuslike-modal.html:13
-#: src/templates/edit-compound-modal.html:49
+#: src/templates/edit-compound-modal.html:50
 #: src/templates/field-builder-modal.html:72
 #: src/templates/field-builder-modal.html:73 src/templates/sysconfig.html:18
 #: src/templates/sysconfig.html:224 src/templates/team.html:27
-#: src/templates/ucp.html:454 src/templates/ucp.html:479
-#: src/templates/ucp.html:490
+#: src/templates/ucp.html:444 src/templates/ucp.html:469
+#: src/templates/ucp.html:480
 msgid "Name"
 msgstr "Nom"
 
 #: src/templates/admin.html:234 src/templates/admin.html:317
 #: src/templates/admin.html:428 src/templates/admin.html:475
-#: src/templates/create-statuslike-modal.html:19 src/templates/edit.html:203
+#: src/templates/create-statuslike-modal.html:19 src/templates/edit.html:190
 msgid "Color"
 msgstr "Couleur"
 
@@ -1427,7 +1427,7 @@ msgstr ""
 "catégorie de ressources est similaire à un modèle d'expérience, mais pour "
 "les entrées de ressources."
 
-#: src/templates/admin.html:271 src/templates/view-edit-toolbar.html:164
+#: src/templates/admin.html:271 src/templates/view-edit-toolbar.html:163
 msgid "Back to listing"
 msgstr "Retourner à la liste"
 
@@ -1447,33 +1447,33 @@ msgstr "Autorisations pour la catégorie de ressources"
 msgid "Permissions for the derived resource"
 msgstr "Autorisations pour la ressource dérivée"
 
-#: src/templates/admin.html:334 src/templates/edit.html:103
+#: src/templates/admin.html:334 src/templates/edit.html:90
 msgid "Lock down read permissions"
 msgstr "Verrouiller les autorisations de lecture"
 
-#: src/templates/admin.html:347 src/templates/edit.html:116
+#: src/templates/admin.html:347 src/templates/edit.html:103
 msgid "Lock down write permissions"
 msgstr "Verrouiller les autorisations d'écriture"
 
-#: src/templates/admin.html:358 src/templates/edit.html:131
+#: src/templates/admin.html:358 src/templates/edit.html:118
 msgid "Display main text"
 msgstr "Afficher le texte principal"
 
-#: src/templates/admin.html:367 src/templates/edit.html:142
-#: src/templates/edit.html:148
+#: src/templates/admin.html:367 src/templates/edit.html:129
+#: src/templates/edit.html:135
 msgid "Main content"
 msgstr "Contenu principal"
 
-#: src/templates/admin.html:373 src/templates/edit.html:159
+#: src/templates/admin.html:373 src/templates/edit.html:146
 msgid "Switch editor"
 msgstr "Changer d'éditeur"
 
-#: src/templates/admin.html:387 src/templates/edit.html:178
+#: src/templates/admin.html:387 src/templates/edit.html:165
 #: src/templates/json-editor.html:13
 msgid "Add field"
 msgstr "Ajouter un champs"
 
-#: src/templates/admin.html:388 src/templates/edit.html:179
+#: src/templates/admin.html:388 src/templates/edit.html:166
 msgid "Load fields"
 msgstr "Charger les champs"
 
@@ -1506,32 +1506,32 @@ msgid "Select an export format"
 msgstr "Sélectionner le format d'export"
 
 #: src/templates/admin.html:517 src/templates/admin.html:548
-#: src/templates/export-menu.html:122 src/templates/show.html:356
+#: src/templates/export-menu.html:122 src/templates/show.html:363
 msgid "ELN Archive"
 msgstr "Archive ELN"
 
 #: src/templates/admin.html:518 src/templates/admin.html:549
-#: src/templates/export-menu.html:121 src/templates/show.html:357
+#: src/templates/export-menu.html:121 src/templates/show.html:364
 msgid "ZIP Archive"
 msgstr "Archive ZIP"
 
 #: src/templates/admin.html:519 src/templates/admin.html:550
-#: src/templates/export-menu.html:123 src/templates/show.html:358
+#: src/templates/export-menu.html:123 src/templates/show.html:365
 msgid "CSV File"
 msgstr "Fichier CSV"
 
 #: src/templates/admin.html:520 src/templates/admin.html:551
-#: src/templates/export-menu.html:120 src/templates/show.html:359
+#: src/templates/export-menu.html:120 src/templates/show.html:366
 msgid "PDF File"
 msgstr "Fichier PDF"
 
 #: src/templates/admin.html:521 src/templates/admin.html:552
-#: src/templates/show.html:360
+#: src/templates/show.html:367
 msgid "QR codes PDF"
 msgstr "PDF de QR codes"
 
 #: src/templates/admin.html:522 src/templates/admin.html:553
-#: src/templates/profile.html:278 src/templates/show.html:361
+#: src/templates/profile.html:278 src/templates/show.html:368
 msgid "JSON"
 msgstr "JSON"
 
@@ -1547,7 +1547,7 @@ msgstr "Sélectionner l'utilisateur"
 msgid "Export bookings"
 msgstr "Exporter réservations"
 
-#: src/templates/admin.html:568 src/templates/show.html:228
+#: src/templates/admin.html:568 src/templates/show.html:235
 msgid "Date from"
 msgstr "Date de"
 
@@ -1578,7 +1578,7 @@ msgstr ""
 "étiquettes."
 
 #: src/templates/admin.html:596 src/templates/admin.html:600
-#: src/templates/edit-tags.html:11 src/templates/show.html:407
+#: src/templates/edit-tags.html:11 src/templates/show.html:414
 msgid "Add a tag"
 msgstr "Ajouter un tag"
 
@@ -1644,31 +1644,31 @@ msgstr "Statut des expériences"
 msgid "Experiments tags"
 msgstr "Étiquettes d'expériences"
 
-#: src/templates/admin.html:739 src/templates/edit-compound-modal.html:99
-#: src/templates/show.html:486
+#: src/templates/admin.html:739 src/templates/edit-compound-modal.html:108
+#: src/templates/show.html:493
 msgid "Owner"
 msgstr "Propriétaire seulement"
 
-#: src/templates/admin.html:754 src/templates/show.html:350
+#: src/templates/admin.html:754 src/templates/show.html:357
 msgid "With selected:"
 msgstr "Avec sélection :"
 
-#: src/templates/admin.html:758 src/templates/show.html:364
+#: src/templates/admin.html:758 src/templates/show.html:371
 msgid "Lock"
 msgstr "Verrouiller"
 
-#: src/templates/admin.html:759 src/templates/show.html:365
+#: src/templates/admin.html:759 src/templates/show.html:372
 msgid "Unlock"
 msgstr "Déverrouiller"
 
 #: src/templates/admin.html:760 src/templates/ownership-transfer-modal.html:6
+#: src/templates/ownership-transfer-modal.html:23
 #: src/templates/ownership-transfer-modal.html:25
-#: src/templates/ownership-transfer-modal.html:27
-#: src/templates/view-edit-toolbar.html:308
+#: src/templates/view-edit-toolbar.html:291
 msgid "Transfer ownership"
 msgstr "Transférer la possession"
 
-#: src/templates/admin.html:761 src/templates/show.html:367
+#: src/templates/admin.html:761 src/templates/show.html:374
 msgid "Archive"
 msgstr "Archive"
 
@@ -1721,13 +1721,13 @@ msgstr "Choisir un groupe ici va donner accès à tous les membres de ce groupe.
 msgid "Teamgroup"
 msgstr "Groupe"
 
-#: src/templates/admin.html:792 src/templates/permissions-edit-modal.html:81
+#: src/templates/admin.html:792 src/templates/permissions-edit-modal.html:80
 msgid "Allow individual users to access this entry."
 msgstr "Autorisez les utilisateurs individuels à accéder à cette entrée."
 
-#: src/templates/admin.html:798 src/templates/compounds-view-edit.html:96
+#: src/templates/admin.html:798 src/templates/compounds-view-edit.html:104
 #: src/templates/favtags-panel.html:24
-#: src/templates/permissions-edit-modal.html:94
+#: src/templates/permissions-edit-modal.html:93
 #: src/templates/steps-links-edit.html:127
 #: src/templates/steps-links-edit.html:159 src/templates/todolist-panel.html:8
 #: src/templates/todolist-panel.html:10 src/templates/todolist-panel.html:11
@@ -1742,7 +1742,7 @@ msgstr "Définir les autorisations de lecture"
 msgid "Set write permissions"
 msgstr "Définir les droits d'écriture"
 
-#: src/templates/archive-user-modal.html:4 src/templates/editusers.html:228
+#: src/templates/archive-user-modal.html:4 src/templates/editusers.html:229
 msgid "Unarchive user"
 msgstr "Désarchiver utilisateur"
 
@@ -1754,7 +1754,7 @@ msgstr ""
 "Désarchiver un utilisateur signifie que son compte sera restauré. Cette "
 "action est réversible."
 
-#: src/templates/archive-user-modal.html:7 src/templates/editusers.html:232
+#: src/templates/archive-user-modal.html:7 src/templates/editusers.html:233
 msgid "Archive user"
 msgstr "Archiver utilisateur"
 
@@ -1771,7 +1771,8 @@ msgid "Lock and archive all experiments"
 msgstr "Verrouiller et archiver toutes les expériences"
 
 #: src/templates/booking-params-modal.html:6
-#: src/templates/view-edit-toolbar.html:302
+#: src/templates/view-edit-toolbar.html:201
+#: src/templates/view-edit-toolbar.html:285
 msgid "Modify booking parameters"
 msgstr "Modifier les paramètres de réservation"
 
@@ -1808,8 +1809,8 @@ msgid "Minimum time before a slot can be cancelled (in minutes)"
 msgstr "Temps minimum avant qu'un créneau puisse être annulé (en minutes)"
 
 #: src/templates/catstat-edit.html:4 src/templates/catstat-view.html:12
-#: src/templates/pdf.html:36 src/templates/show.html:293
-#: src/templates/show.html:464 src/templates/sysconfig.html:1055
+#: src/templates/pdf.html:36 src/templates/show.html:300
+#: src/templates/show.html:471 src/templates/sysconfig.html:1055
 #: src/templates/ucp.html:84
 msgid "Category"
 msgstr "Catégorie"
@@ -1823,7 +1824,7 @@ msgid "New password"
 msgstr "Nouveau mot de passe"
 
 #: src/templates/change-pass.html:19 src/templates/register.html:69
-#: src/templates/reset-user-password-modal.html:16 src/templates/ucp.html:341
+#: src/templates/reset-user-password-modal.html:16 src/templates/ucp.html:331
 msgid "Minimum password length: %d."
 msgstr "Longueur minimale du mot de passe : %d."
 
@@ -1838,7 +1839,7 @@ msgstr "Journal des modifications"
 
 #: src/templates/changelog-block.html:6
 #: src/templates/field-builder-modal.html:59 src/templates/pdf.html:27
-#: src/templates/pdf.html:174 src/templates/show.html:450
+#: src/templates/pdf.html:174 src/templates/show.html:457
 #: src/templates/ucp.html:85
 msgid "Date"
 msgstr "Date"
@@ -1880,52 +1881,52 @@ msgstr "Résultats de la recherche de sous-structures de composés"
 #: src/templates/reset-user-password-modal.html:18
 #: src/templates/steps-links-view.html:6 src/templates/steps-links-view.html:32
 #: src/templates/steps-links-view.html:47
-#: src/templates/storage-view-edit.html:3 src/templates/todolist-panel.html:4
+#: src/templates/storage-view-edit.html:4 src/templates/todolist-panel.html:4
 #: src/templates/todolist-panel.html:38 src/templates/todolist-panel.html:45
-#: src/templates/uploads.html:27 src/templates/view.html:159
-#: src/templates/view.html:171
+#: src/templates/uploads.html:27 src/templates/view.html:148
+#: src/templates/view.html:160
 msgid "Toggle visibility"
 msgstr "Afficher/Masquer"
 
 #: src/templates/compounds-view-edit.html:10
 #: src/templates/edit-compound-modal.html:26
-#: src/templates/edit-compound-modal.html:55
-#: src/templates/edit-compound-modal.html:62 src/templates/mfa.html:35
-#: src/templates/permissions-edit-modal.html:108 src/templates/ucp.html:445
+#: src/templates/edit-compound-modal.html:56
+#: src/templates/edit-compound-modal.html:63 src/templates/mfa.html:35
+#: src/templates/permissions-edit-modal.html:107 src/templates/ucp.html:435
 msgid "Copy to clipboard"
 msgstr "Copier dans le presse-papier"
 
-#: src/templates/compounds-view-edit.html:56
+#: src/templates/compounds-view-edit.html:64
 msgid "Name unset"
 msgstr "Nom non défini"
 
-#: src/templates/compounds-view-edit.html:64
-#: src/templates/edit-compound-modal.html:66
+#: src/templates/compounds-view-edit.html:72
+#: src/templates/edit-compound-modal.html:67
 msgid "Molecular formula"
 msgstr "Formule moléculaire"
 
-#: src/templates/compounds-view-edit.html:69 src/templates/compounds.html:31
+#: src/templates/compounds-view-edit.html:77 src/templates/compounds.html:31
 msgid "Search similar compounds"
 msgstr "Recherche de composés similaires"
 
-#: src/templates/compounds-view-edit.html:72
+#: src/templates/compounds-view-edit.html:80
 msgid "View in JSON"
 msgstr "Voir en JSON"
 
-#: src/templates/compounds-view-edit.html:75
+#: src/templates/compounds-view-edit.html:83
 #: src/templates/import-pubchem-modal.html:42
 msgid "View on PubChem"
 msgstr "Voir sur PubChem"
 
-#: src/templates/compounds-view-edit.html:78
+#: src/templates/compounds-view-edit.html:86
 msgid "Remove compound"
 msgstr "Retirer le composé"
 
-#: src/templates/compounds-view-edit.html:94
+#: src/templates/compounds-view-edit.html:102
 msgid "Link with compound"
 msgstr "Lien avec le composé"
 
-#: src/templates/compounds-view-edit.html:94
+#: src/templates/compounds-view-edit.html:102
 msgid "Search in local compounds database"
 msgstr "Recherche dans la base de données des composés locaux"
 
@@ -1999,7 +2000,7 @@ msgid "Add category…"
 msgstr "Ajouter une catégorie.."
 
 #: src/templates/create-resource-from-compound-modal.html:6
-#: src/templates/edit-compound-modal.html:46
+#: src/templates/edit-compound-modal.html:47
 msgid "Create resource from compound"
 msgstr "Créer une ressource à partir d'un composé"
 
@@ -2050,7 +2051,7 @@ msgid "Link to original entry"
 msgstr "Lien vers l'entrée originale"
 
 #: src/templates/duplicate-modal.html:34
-#: src/templates/view-edit-toolbar.html:193
+#: src/templates/view-edit-toolbar.html:190
 msgid "Duplicate"
 msgstr "Dupliquer"
 
@@ -2058,44 +2059,48 @@ msgstr "Dupliquer"
 msgid "Search associated resources"
 msgstr "Recherche de ressources associées"
 
-#: src/templates/edit-compound-modal.html:50
+#: src/templates/edit-compound-modal.html:46
+msgid "Search associated experiments"
+msgstr "Recherche d'expériences associées"
+
+#: src/templates/edit-compound-modal.html:51
 msgid "IUPAC Name"
 msgstr "Nom IUPAC"
 
-#: src/templates/edit-compound-modal.html:52
+#: src/templates/edit-compound-modal.html:53
 #: src/templates/import-pubchem-modal.html:28
 msgid "CAS number"
 msgstr "Numéro CAS"
 
-#: src/templates/edit-compound-modal.html:57
+#: src/templates/edit-compound-modal.html:58
 #: src/templates/import-pubchem-modal.html:33
 msgid "Please enter a valid CAS number (e.g., 58-08-2)"
 msgstr "Veuillez saisir un numéro CAS valide (par exemple, 58-08-2)"
 
-#: src/templates/edit-compound-modal.html:59
+#: src/templates/edit-compound-modal.html:60
 msgid "EC number"
 msgstr "Numéro EC"
 
-#: src/templates/edit-compound-modal.html:64
+#: src/templates/edit-compound-modal.html:65
 msgid "Please enter a valid EC number (e.g., 200-362-1)"
 msgstr "Veuillez saisir un numéro EC valide (par exemple, 200-362-1)"
 
-#: src/templates/edit-compound-modal.html:67
+#: src/templates/edit-compound-modal.html:68
 msgid "Molecular weight"
 msgstr "Poids moléculaire"
 
-#: src/templates/edit-compound-modal.html:73
+#: src/templates/edit-compound-modal.html:74
 msgid "Safety information"
 msgstr "Informations sur la sécurité"
 
-#: src/templates/edit-compound-modal.html:94
+#: src/templates/edit-compound-modal.html:103
 msgid "Immutable information"
 msgstr "Informations immuables"
 
 #: src/templates/edit-tags.html:3 src/templates/pdf.html:30
 #: src/templates/show.html:96 src/templates/show.html:105
-#: src/templates/show.html:106 src/templates/show.html:475
-#: src/templates/view.html:87
+#: src/templates/show.html:106 src/templates/show.html:482
+#: src/templates/view.html:76
 msgid "Tags"
 msgstr "Tags"
 
@@ -2103,9 +2108,9 @@ msgstr "Tags"
 msgid "Suggested tags"
 msgstr "Tags suggérés"
 
-#: src/templates/edit.html:13 src/templates/edit.html:73
+#: src/templates/edit.html:13 src/templates/edit.html:60
 #: src/templates/link-view-one.html:17 src/templates/show-item-table.html:30
-#: src/templates/show-item.html:71 src/templates/view.html:14
+#: src/templates/show-item.html:76 src/templates/view.html:13
 msgid "Custom ID"
 msgstr "ID personnalisé"
 
@@ -2113,65 +2118,56 @@ msgstr "ID personnalisé"
 msgid "Warning: this entry was modified %s seconds ago by %s."
 msgstr "Attention : cette entrée a été modifiée il y a %s secondes par %s."
 
-#: src/templates/edit.html:37 src/templates/view.html:42
-msgid ""
-"You opened this entry in exclusive edit mode at %s and it will stay active "
-"until %s, unless deactivated manually in view mode."
-msgstr ""
-"Vous avez ouvert cette entrée en mode d'édition exclusive à %s et elle "
-"restera active jusqu'à %s, à moins qu'elle ne soit désactivée manuellement "
-"en mode de visualisation."
-
-#: src/templates/edit.html:55 src/templates/view.html:70
+#: src/templates/edit.html:42 src/templates/view.html:59
 msgid "Started on"
 msgstr "Démarrée le"
 
-#: src/templates/edit.html:71 src/templates/sysconfig.html:223
-#: src/templates/upload-more-info.html:4 src/templates/view.html:100
+#: src/templates/edit.html:58 src/templates/sysconfig.html:223
+#: src/templates/upload-more-info.html:4 src/templates/view.html:89
 msgid "ID"
 msgstr "ID"
 
-#: src/templates/edit.html:76
+#: src/templates/edit.html:63
 msgid "Get next"
 msgstr "Obtenir le suivant"
 
-#: src/templates/edit.html:89
+#: src/templates/edit.html:76
 msgid "Permissions for the template"
 msgstr "Autorisations pour le modèle"
 
-#: src/templates/edit.html:95
+#: src/templates/edit.html:82
 msgid "Permissions for the derived experiment"
 msgstr "Autorisations pour l'expérience dérivée"
 
-#: src/templates/edit.html:126 src/templates/view.html:137
+#: src/templates/edit.html:113 src/templates/view.html:126
 msgid "Main text"
 msgstr "Texte principal"
 
-#: src/templates/edit.html:154
+#: src/templates/edit.html:141
 msgid "Last saved:"
 msgstr "Dernière sauvegarde :"
 
-#: src/templates/edit.html:165
+#: src/templates/edit.html:152
 msgid "Save and go back"
 msgstr "Enregistrer et revenir en arrière"
 
-#: src/templates/edit.html:194
+#: src/templates/edit.html:181
 msgid "Draw something"
 msgstr "Dessiner quelquechose"
 
-#: src/templates/edit.html:210
+#: src/templates/edit.html:197
 msgid "Stroke width"
 msgstr "Épaisseur du trait"
 
-#: src/templates/edit.html:217
+#: src/templates/edit.html:204
 msgid "Eraser"
 msgstr "Effaceur"
 
-#: src/templates/edit.html:222
+#: src/templates/edit.html:209
 msgid "Use %sCtrl%s + click to add text"
 msgstr "Utilisez %sCtrl%s + clic pour ajouter du texte"
 
-#: src/templates/edit.html:226 src/templates/filter-input-snippet.html:6
+#: src/templates/edit.html:213 src/templates/filter-input-snippet.html:6
 #: src/templates/json-editor.html:44 src/templates/sysconfig.html:287
 #: src/templates/sysconfig.html:301 src/templates/sysconfig.html:374
 #: src/templates/sysconfig.html:458 src/templates/sysconfig.html:464
@@ -2196,10 +2192,10 @@ msgstr "Toutes les équipes"
 msgid "Search for user"
 msgstr "Chercher des utilisateurs"
 
-#: src/templates/editusers.html:22 src/templates/editusers.html:333
+#: src/templates/editusers.html:22 src/templates/editusers.html:342
 #: src/templates/import-pubchem-modal.html:23
 #: src/templates/import-pubchem-modal.html:35 src/templates/inventory.html:20
-#: src/templates/scheduler.html:63 src/templates/scheduler.html:79
+#: src/templates/scheduler.html:65 src/templates/scheduler.html:81
 #: src/templates/show.html:40 src/templates/ucp.html:134
 #: src/templates/ucp.html:156
 msgid "Search"
@@ -2221,11 +2217,11 @@ msgstr "Afficher uniquement les administrateurs"
 msgid "Users list"
 msgstr "Liste des utilisateurs"
 
-#: src/templates/editusers.html:54 src/templates/editusers.html:189
+#: src/templates/editusers.html:59 src/templates/editusers.html:190
 msgid "Manage teams for user"
 msgstr "Gérer les équipes pour les utilisateurs"
 
-#: src/templates/editusers.html:78
+#: src/templates/editusers.html:83
 msgid ""
 "Utilize this attribute to specifically identify whether the user holds the "
 "primary Admin role within the team. Note that this designation is for "
@@ -2235,80 +2231,80 @@ msgstr ""
 "rôle principal d'administrateur au sein de l'équipe. Notez que cette "
 "désignation n'a qu'une valeur informative."
 
-#: src/templates/editusers.html:78
+#: src/templates/editusers.html:83
 msgid "Is Owner"
 msgstr "Est propriétaire"
 
-#: src/templates/editusers.html:90
+#: src/templates/editusers.html:95
 msgid "Add team"
 msgstr "Ajouter une équipe"
 
-#: src/templates/editusers.html:97
+#: src/templates/editusers.html:102
 msgid "Go"
 msgstr "Aller"
 
-#: src/templates/editusers.html:110
+#: src/templates/editusers.html:115
 msgid "Users table"
 msgstr "Table des utilisateurs"
 
-#: src/templates/editusers.html:113 src/templates/editusers.html:135
+#: src/templates/editusers.html:118 src/templates/editusers.html:135
 msgid "User ID"
 msgstr "ID utilisateur"
 
-#: src/templates/editusers.html:114 src/templates/editusers.html:136
+#: src/templates/editusers.html:119 src/templates/editusers.html:136
 msgid "Team(s)"
 msgstr "Équipe(s)"
 
-#: src/templates/editusers.html:115 src/templates/editusers.html:143
-#: src/templates/editusers.html:289 src/templates/editusers.html:344
-#: src/templates/editusers.html:354 src/templates/login.html:55
+#: src/templates/editusers.html:120 src/templates/editusers.html:143
+#: src/templates/editusers.html:290 src/templates/editusers.html:353
+#: src/templates/editusers.html:363 src/templates/login.html:55
 #: src/templates/register.html:78 src/templates/sysconfig.html:983
-#: src/templates/ucp.html:372
+#: src/templates/ucp.html:362
 msgid "Firstname"
 msgstr "Prénom"
 
-#: src/templates/editusers.html:116 src/templates/editusers.html:146
-#: src/templates/editusers.html:295 src/templates/editusers.html:345
-#: src/templates/editusers.html:355 src/templates/login.html:58
+#: src/templates/editusers.html:121 src/templates/editusers.html:146
+#: src/templates/editusers.html:296 src/templates/editusers.html:354
+#: src/templates/editusers.html:364 src/templates/login.html:58
 #: src/templates/register.html:84 src/templates/sysconfig.html:989
-#: src/templates/ucp.html:378
+#: src/templates/ucp.html:368
 msgid "Lastname"
 msgstr "Nom"
 
-#: src/templates/editusers.html:117 src/templates/editusers.html:149
-#: src/templates/editusers.html:303 src/templates/editusers.html:346
-#: src/templates/editusers.html:356 src/templates/field-builder-modal.html:61
+#: src/templates/editusers.html:122 src/templates/editusers.html:149
+#: src/templates/editusers.html:304 src/templates/editusers.html:355
+#: src/templates/editusers.html:365 src/templates/field-builder-modal.html:61
 #: src/templates/login.html:126 src/templates/register.html:55
 #: src/templates/sysconfig.html:45 src/templates/sysconfig.html:995
 #: src/templates/team.html:6 src/templates/team.html:28
-#: src/templates/ucp.html:333 src/templates/ucp.html:517
+#: src/templates/ucp.html:323 src/templates/ucp.html:507
 msgid "Email"
 msgstr "Email"
 
-#: src/templates/editusers.html:118 src/templates/editusers.html:152
+#: src/templates/editusers.html:123 src/templates/editusers.html:152
 msgid "Last login"
 msgstr "Dernière connexion"
 
-#: src/templates/editusers.html:119 src/templates/editusers.html:153
+#: src/templates/editusers.html:124 src/templates/editusers.html:153
 msgid "Valid until"
 msgstr "Valide jusqu'à"
 
-#: src/templates/editusers.html:120 src/templates/editusers.html:161
-#: src/templates/editusers.html:347 src/templates/editusers.html:357
+#: src/templates/editusers.html:125 src/templates/editusers.html:161
+#: src/templates/editusers.html:356 src/templates/editusers.html:366
 msgid "Internal ID"
 msgstr "ID interne"
 
-#: src/templates/editusers.html:121 src/templates/editusers.html:164
+#: src/templates/editusers.html:126 src/templates/editusers.html:164
 msgid "Is Sysadmin"
 msgstr "Est Sysadmin"
 
-#: src/templates/editusers.html:123 src/templates/editusers.html:173
+#: src/templates/editusers.html:128 src/templates/editusers.html:174
 #: src/templates/sysconfig.html:228 src/templates/team.html:105
 #: src/templates/team.html:135 src/templates/uploads.html:68
 msgid "Actions"
 msgstr "Actions"
 
-#: src/templates/editusers.html:152 src/templates/ucp.html:493
+#: src/templates/editusers.html:152 src/templates/ucp.html:483
 msgid "never"
 msgstr "jamais"
 
@@ -2316,58 +2312,58 @@ msgstr "jamais"
 msgid "Unvalidated"
 msgstr "Non validé"
 
-#: src/templates/editusers.html:172
+#: src/templates/editusers.html:173
 msgid "2FA enabled"
 msgstr "2FA activé"
 
-#: src/templates/editusers.html:176 src/templates/steps-links-edit.html:35
-#: src/templates/ucp.html:397 src/templates/upload-dropdown-menu.html:3
-#: src/templates/view-edit-toolbar.html:295
+#: src/templates/editusers.html:177 src/templates/steps-links-edit.html:35
+#: src/templates/ucp.html:387 src/templates/upload-dropdown-menu.html:3
+#: src/templates/view-edit-toolbar.html:278
 msgid "More options"
 msgstr "Plus d'options"
 
-#: src/templates/editusers.html:183
+#: src/templates/editusers.html:184
 msgid "Reset user password"
 msgstr "Réinitialiser le mot de passe utilisateur"
 
-#: src/templates/editusers.html:198
+#: src/templates/editusers.html:199
 msgid "Promote to Admin"
 msgstr "Promouvoir en administrateur"
 
-#: src/templates/editusers.html:204
+#: src/templates/editusers.html:205
 msgid "Demote from Admin"
 msgstr "Rétrograder d'Admin"
 
-#: src/templates/editusers.html:210
+#: src/templates/editusers.html:211
 msgid "Add to team"
 msgstr "Ajouter à l'équipe"
 
-#: src/templates/editusers.html:215
+#: src/templates/editusers.html:216
 #: src/templates/rm-user-from-team-modal.html:6
 msgid "Remove user from team"
 msgstr "Supprimer un utilisateur de l'équipe"
 
-#: src/templates/editusers.html:222
+#: src/templates/editusers.html:223
 msgid "Disable 2FA"
 msgstr "Désactiver 2FA"
 
-#: src/templates/editusers.html:237
+#: src/templates/editusers.html:238
 msgid "Validate user"
 msgstr "Valider l'utilisateur"
 
-#: src/templates/editusers.html:241
+#: src/templates/editusers.html:242
 msgid "Delete user"
 msgstr "Supprimer l'utilisateur"
 
-#: src/templates/editusers.html:251
+#: src/templates/editusers.html:252
 msgid "No user found!"
 msgstr "Pas d'utilisateur trouvé !"
 
-#: src/templates/editusers.html:259
+#: src/templates/editusers.html:260
 msgid "Add account"
 msgstr "Ajouter un compte"
 
-#: src/templates/editusers.html:261
+#: src/templates/editusers.html:262
 msgid ""
 "Note: new user will need to use the \"Forgot password\" button on the login "
 "page to set a password."
@@ -2375,27 +2371,39 @@ msgstr ""
 "Note : le nouvel utilisateur devra utiliser le boutton \"Mot de passe oublié"
 "\" sur la page de login pour avoir un mot de passe."
 
-#: src/templates/editusers.html:276
+#: src/templates/editusers.html:277
 msgid "Permission group"
 msgstr "Groupe utilisateur"
 
-#: src/templates/editusers.html:318
+#: src/templates/editusers.html:315
+msgid "Found archived users with same email address:"
+msgstr ""
+"Des utilisateurs archivés ayant la même adresse électronique ont été "
+"trouvés :"
+
+#: src/templates/editusers.html:319
+msgid "Create a new account anyway"
+msgstr "Créer quand même un nouveau compte"
+
+#: src/templates/editusers.html:327
 msgid "Add account from external directory"
 msgstr "Ajouter un compte à partir d’un répertoire externe"
 
-#: src/templates/editusers.html:326
+#: src/templates/editusers.html:335
+#: src/templates/ownership-transfer-modal.html:17
+#: src/templates/view-edit-toolbar.html:24
 msgid "Search user"
 msgstr "Chercher un utilisateur"
 
-#: src/templates/editusers.html:340
+#: src/templates/editusers.html:349
 msgid "Remote directory users list"
 msgstr "Liste des utilisateurs de l'annuaire à distance"
 
-#: src/templates/editusers.html:343 src/templates/editusers.html:353
+#: src/templates/editusers.html:352 src/templates/editusers.html:362
 msgid "Selection"
 msgstr "Sélection"
 
-#: src/templates/editusers.html:377
+#: src/templates/editusers.html:386
 msgid "Add selected"
 msgstr "Ajouter la sélection"
 
@@ -2787,7 +2795,7 @@ msgstr "Effacer tout"
 msgid "No new notifications to show."
 msgstr "Pas de nouvelles notifications."
 
-#: src/templates/head.html:107 src/templates/ucp.html:503
+#: src/templates/head.html:107 src/templates/ucp.html:493
 msgid "Notifications settings"
 msgstr "Préférences des notifications"
 
@@ -2882,16 +2890,20 @@ msgstr ""
 "souhaitez importer, ou effectuer une recherche à partir de son numéro CAS."
 
 #: src/templates/inventory.html:15
-msgid "Search containers or places"
+msgid "Search containers or locations"
 msgstr "Recherche de conteneurs ou de lieux"
 
 #: src/templates/inventory.html:25
 msgid "No results found"
 msgstr "Aucun résultat trouvé"
 
-#: src/templates/inventory.html:38
-msgid "Browse places"
-msgstr "Parcourir les lieux"
+#: src/templates/inventory.html:39
+msgid "Browse inventory locations"
+msgstr "Parcourir les lieux de l'inventaire"
+
+#: src/templates/inventory.html:41
+msgid "Add root element"
+msgstr "Ajouter un élément racine"
 
 #: src/templates/json-editor.html:6
 msgid "JSON Editor"
@@ -2923,7 +2935,7 @@ msgid "See documentation about extra fields."
 msgstr "Voir documentation à propos des champs supplémentaires."
 
 #: src/templates/link-view-one.html:21 src/templates/revisions.html:30
-#: src/templates/show-item-table.html:28 src/templates/show-item.html:125
+#: src/templates/show-item-table.html:28 src/templates/show-item.html:130
 msgid "Toggle content"
 msgstr "Afficher/Masquer contenu"
 
@@ -2992,7 +3004,7 @@ msgstr "Mot de passe"
 
 #: src/templates/login.html:132 src/templates/sysconfig.html:369
 #: src/templates/sysconfig.html:897 src/templates/ts-config.html:32
-#: src/templates/ucp.html:421
+#: src/templates/ucp.html:411
 msgid "Show password"
 msgstr "Afficher le mot de passe"
 
@@ -3146,7 +3158,7 @@ msgid_plural "Attached files"
 msgstr[0] "Fichier attaché"
 msgstr[1] "Fichiers attachés"
 
-#: src/templates/pdf.html:128 src/templates/scheduler.html:39
+#: src/templates/pdf.html:128 src/templates/scheduler.html:41
 #: src/templates/team.html:102 src/templates/team.html:125
 #: src/templates/ucp.html:87 src/templates/uploads.html:65
 msgid "Comment"
@@ -3154,11 +3166,11 @@ msgid_plural "Comments"
 msgstr[0] "Commentaire"
 msgstr[1] "Commentaires"
 
-#: src/templates/pdf.html:148 src/templates/view.html:151
+#: src/templates/pdf.html:148 src/templates/view.html:140
 msgid "Unique eLabID:"
 msgstr "ELabID unique :"
 
-#: src/templates/pdf.html:152 src/templates/view.html:60
+#: src/templates/pdf.html:152 src/templates/view.html:49
 msgid "Locked by %s on %s at %s"
 msgstr "Verrouillé par %s sur %s à %s"
 
@@ -3201,17 +3213,7 @@ msgstr "Sélectionner qui peut réserver cette entrée"
 msgid "Set scope"
 msgstr "Modifier le périmètre"
 
-#: src/templates/permissions-edit-modal.html:65
-#: src/templates/scope-button.html:13 src/templates/ucp.html:300
-msgid "Self"
-msgstr "Soi-même"
-
-#: src/templates/permissions-edit-modal.html:67
-#: src/templates/scope-button.html:21 src/templates/ucp.html:302
-msgid "Everything"
-msgstr "Tout"
-
-#: src/templates/permissions-edit-modal.html:72
+#: src/templates/permissions-edit-modal.html:71
 msgid ""
 "Selecting a user group here will give access to all users part of this user "
 "group."
@@ -3219,16 +3221,17 @@ msgstr ""
 "La sélection d'un groupe d'utilisateurs ici donnera accès à tous les "
 "utilisateurs faisant partie de ce groupe d'utilisateurs."
 
-#: src/templates/permissions-edit-modal.html:103
+#: src/templates/permissions-edit-modal.html:102
 msgid "Allow read access for anonymous users"
 msgstr "Autoriser l'accès en lecture pour les utilisateurs anonymes"
 
-#: src/templates/permissions-edit-modal.html:112
+#: src/templates/permissions-edit-modal.html:111
 msgid "Anyone following this link can access this entry."
 msgstr "Toute personne qui suit ce lien pourra accéder à cette entrée."
 
 #: src/templates/procurement-params-modal.html:6
-#: src/templates/view-edit-toolbar.html:304
+#: src/templates/view-edit-toolbar.html:239
+#: src/templates/view-edit-toolbar.html:287
 msgid "Modify procurement parameters"
 msgstr "Modifier les paramètres d'approvisionnement"
 
@@ -3293,7 +3296,7 @@ msgstr "Entrée correspondante"
 msgid "File size"
 msgstr "Taille du fichier"
 
-#: src/templates/profile.html:132 src/templates/show.html:502
+#: src/templates/profile.html:132 src/templates/show.html:509
 msgid "Load more"
 msgstr "Charger plus"
 
@@ -3424,33 +3427,6 @@ msgstr "Ressources associées"
 msgid "Show related resources"
 msgstr "Afficher les ressources connexes"
 
-#: src/templates/remove-exclusive-edit-mode-modal.html:2
-msgid ""
-"You have enabled \"Enforce exclusive edit mode\". If you enter edit mode, "
-"exclusive edit will be reactivated."
-msgstr ""
-"Vous avez activé l'option \"Appliquer le mode d'édition exclusive\". Si vous "
-"entrez en mode édition, l'édition exclusive sera réactivée."
-
-#: src/templates/remove-exclusive-edit-mode-modal.html:4
-msgid " Unlocking this entry will redirect you to view mode."
-msgstr ""
-" En déverrouillant cette entrée, vous serez redirigé vers le mode de "
-"visualisation."
-
-#: src/templates/remove-exclusive-edit-mode-modal.html:10
-msgid "Remove exclusive edit mode for this entry"
-msgstr "Supprimer le mode d'édition exclusif pour cette entrée"
-
-#: src/templates/remove-exclusive-edit-mode-modal.html:17
-msgid "You can change this in your %ssettings%s."
-msgstr "Vous pouvez modifier cela dans vos %ssettings%s."
-
-#: src/templates/remove-exclusive-edit-mode-modal.html:21
-#: src/templates/rm-user-from-team-modal.html:18
-msgid "Confirm"
-msgstr "Confirmer"
-
 #: src/templates/request-actions-show.html:9
 msgid "%s is requesting %s for"
 msgstr "%s demande %s pour"
@@ -3492,7 +3468,7 @@ msgstr "Sélectionner"
 msgid "Revision ID"
 msgstr "ID de révision"
 
-#: src/templates/revisions.html:33 src/templates/show-item.html:79
+#: src/templates/revisions.html:33 src/templates/show-item.html:84
 msgid "by"
 msgstr "par"
 
@@ -3513,86 +3489,98 @@ msgstr ""
 msgid "Are you sure you want to remove %s from team %s?"
 msgstr "Êtes-vous sûr de vouloir retirer %s de l'équipe %s ?"
 
-#: src/templates/scheduler.html:9
+#: src/templates/rm-user-from-team-modal.html:18
+msgid "Confirm"
+msgstr "Confirmer"
+
+#: src/templates/scheduler.html:10
 msgid "Scheduler settings"
 msgstr "Paramètres du planificateur"
 
-#: src/templates/scheduler.html:17 src/templates/ucp.html:119
+#: src/templates/scheduler.html:18 src/templates/ucp.html:119
 msgid "Show weekends"
 msgstr "Montrer les week-ends"
 
-#: src/templates/scheduler.html:32
+#: src/templates/scheduler.html:19
+msgid "Layout: timeline"
+msgstr "Mise en page : ligne du temps"
+
+#: src/templates/scheduler.html:34
 msgid "Edit event"
 msgstr "Éditer les événements"
 
-#: src/templates/scheduler.html:50
+#: src/templates/scheduler.html:52
 msgid "Start time"
 msgstr "Heure de début"
 
-#: src/templates/scheduler.html:52
+#: src/templates/scheduler.html:54
 msgid "End time"
 msgstr "Heure de fin"
 
-#: src/templates/scheduler.html:58
+#: src/templates/scheduler.html:60
 msgid "Bind an experiment"
 msgstr "Attacher une expérience"
 
-#: src/templates/scheduler.html:60 src/templates/scheduler.html:76
+#: src/templates/scheduler.html:62 src/templates/scheduler.html:78
 msgid "Unbind"
 msgstr "Détacher"
 
-#: src/templates/scheduler.html:67 src/templates/scheduler.html:83
+#: src/templates/scheduler.html:69 src/templates/scheduler.html:85
 msgid "Attach"
 msgstr "Attacher"
 
-#: src/templates/scheduler.html:74
+#: src/templates/scheduler.html:76
 msgid "Bind a resource"
 msgstr "Lier une ressource"
 
-#: src/templates/scheduler.html:92
+#: src/templates/scheduler.html:94
 msgid "Cancel booking slot"
 msgstr "Annuler le créneau de réservation"
 
-#: src/templates/scheduler.html:93
+#: src/templates/scheduler.html:95
 msgid "Add a custom message"
 msgstr "Ajouter un message personnalisé"
 
-#: src/templates/scheduler.html:95 src/templates/sysconfig.html:314
+#: src/templates/scheduler.html:97 src/templates/sysconfig.html:314
 #: src/templates/team.html:60
 msgid "Send to"
 msgstr "Envoyer à"
 
-#: src/templates/scheduler.html:97
+#: src/templates/scheduler.html:99
 msgid "Past and future users who booked this resource"
 msgstr "Utilisateurs passés et futurs qui ont réservé cette ressource"
 
-#: src/templates/scheduler.html:100 src/templates/team.html:62
+#: src/templates/scheduler.html:102 src/templates/team.html:62
 msgid "Members of team %s"
 msgstr "Membres de l’équipe %s"
 
-#: src/templates/scheduler.html:104 src/templates/team.html:66
+#: src/templates/scheduler.html:106 src/templates/team.html:66
 msgid "Members of teamgroup %s"
 msgstr "Membres du group d'équipe %s"
 
-#: src/templates/scheduler.html:108
+#: src/templates/scheduler.html:110
 msgid "Send message and cancel"
 msgstr "Envoyer un message et annuler"
 
-#: src/templates/scheduler.html:122
+#: src/templates/scheduler.html:112
+msgid "Cancel booking"
+msgstr "Annuler la réservation"
+
+#: src/templates/scheduler.html:125
 msgid "Select a resource below in order to book it."
 msgstr "Sélectionnez une ressource ci-dessous pour la réserver."
 
-#: src/templates/scheduler.html:133
+#: src/templates/scheduler.html:136
 msgid "No bookable items."
 msgstr "Pas d'équipement réservable."
 
-#: src/templates/scheduler.html:138 src/templates/scheduler.html:143
-#: src/templates/scheduler.html:148
+#: src/templates/scheduler.html:141 src/templates/scheduler.html:146
+#: src/templates/scheduler.html:151
 msgid "Filter by category"
 msgstr "Filtrer par catégorie"
 
-#: src/templates/scheduler.html:160 src/templates/scheduler.html:165
-#: src/templates/scheduler.html:170
+#: src/templates/scheduler.html:163 src/templates/scheduler.html:168
+#: src/templates/scheduler.html:173
 msgid "Select a resource"
 msgstr "Sélectionner une ressource"
 
@@ -3692,16 +3680,20 @@ msgstr "1, 2, 3, 4, 5 ou non noté ou 0"
 msgid "Entry"
 msgstr "Entrée"
 
-#: src/templates/show-item.html:14 src/templates/view-edit-toolbar.html:169
+#: src/templates/show-item.html:14 src/templates/view-edit-toolbar.html:168
 msgid "Create experiment from template"
 msgstr "Créer une expérience depuis ce modèle"
 
-#: src/templates/show-item.html:31
+#: src/templates/show-item.html:25
+msgid "Restore entry"
+msgstr "Rétablir l'entrée"
+
+#: src/templates/show-item.html:36
 msgid "View"
 msgstr "Voir"
 
-#: src/templates/show-item.html:89 src/templates/show.html:460
-#: src/templates/view.html:127
+#: src/templates/show-item.html:94 src/templates/show.html:467
+#: src/templates/view.html:116
 msgid "Next step"
 msgstr "Étape suivante"
 
@@ -3758,199 +3750,191 @@ msgstr "Valeur"
 msgid "Tip: you can use '%' as wildcard in value"
 msgstr "Astuce : vous pouvez utiliser '%' comme joker dans la valeur"
 
-#: src/templates/show.html:168
-msgid "Filter group"
-msgstr "Filtrer les groupes"
-
-#: src/templates/show.html:169
-msgid "Select group"
-msgstr "Sélectionner un groupe"
-
-#: src/templates/show.html:176 src/templates/show.html:177
+#: src/templates/show.html:178 src/templates/show.html:179
 msgid "Filter visibility"
 msgstr "Filtrer la visibilité"
 
-#: src/templates/show.html:188 src/templates/team.html:104
+#: src/templates/show.html:190 src/templates/team.html:104
 #: src/templates/team.html:133
 msgid "State"
 msgstr "État"
 
-#: src/templates/show.html:189
+#: src/templates/show.html:191
 msgid "Select state"
 msgstr "Sélectionner un état"
 
-#: src/templates/show.html:190
+#: src/templates/show.html:193
 msgid "Normal"
 msgstr "Normal"
 
-#: src/templates/show.html:192
+#: src/templates/show.html:197
 msgid "Deleted"
 msgstr "Supprimé"
 
-#: src/templates/show.html:193
+#: src/templates/show.html:199
 msgid "Normal or Archived"
 msgstr "Normal ou archivé"
 
-#: src/templates/show.html:194
+#: src/templates/show.html:201
 msgid "Any"
 msgstr "N'importe lequel"
 
-#: src/templates/show.html:199 src/templates/show.html:200
+#: src/templates/show.html:206 src/templates/show.html:207
 msgid "Select lock status"
 msgstr "Choisir un statut de vérouillage"
 
-#: src/templates/show.html:201 src/templates/show.html:209
-#: src/templates/ucp.html:357
+#: src/templates/show.html:208 src/templates/show.html:216
+#: src/templates/ucp.html:347
 msgid "Yes"
 msgstr "Oui"
 
-#: src/templates/show.html:202 src/templates/show.html:210
-#: src/templates/ucp.html:358
+#: src/templates/show.html:209 src/templates/show.html:217
+#: src/templates/ucp.html:348
 msgid "No"
 msgstr "Non"
 
-#: src/templates/show.html:207
+#: src/templates/show.html:214
 msgid "Timestamped"
 msgstr "Horodaté"
 
-#: src/templates/show.html:208
+#: src/templates/show.html:215
 msgid "Select timestamp status"
 msgstr "Choisir un statut d'horodatage"
 
-#: src/templates/show.html:216
+#: src/templates/show.html:223
 msgid "Select number of stars"
 msgstr "Choisir le nombre d'étoiles"
 
-#: src/templates/show.html:217
+#: src/templates/show.html:224
 msgid "Unrated"
 msgstr "Pas d'étoiles"
 
-#: src/templates/show.html:231
+#: src/templates/show.html:238
 msgid "Date operator"
 msgstr "Opérateur de date"
 
-#: src/templates/show.html:232
+#: src/templates/show.html:239
 msgid "less than"
 msgstr "moins que"
 
-#: src/templates/show.html:233
+#: src/templates/show.html:240
 msgid "less than or equal to"
 msgstr "moins que ou égal à"
 
-#: src/templates/show.html:234
+#: src/templates/show.html:241
 msgid "equal to"
 msgstr "égal à"
 
-#: src/templates/show.html:235
+#: src/templates/show.html:242
 msgid "greater than or equal to"
 msgstr "plus grand ou égal à"
 
-#: src/templates/show.html:236
+#: src/templates/show.html:243
 msgid "greater than"
 msgstr "plus grand que"
 
-#: src/templates/show.html:237
+#: src/templates/show.html:244
 msgid "not equal to"
 msgstr "non égal à"
 
-#: src/templates/show.html:242
+#: src/templates/show.html:249
 msgid "Date to (optional)"
 msgstr "Date à (optionnel)"
 
-#: src/templates/show.html:256
+#: src/templates/show.html:263
 msgid "Select all"
 msgstr "Sélectionner tout"
 
-#: src/templates/show.html:259
+#: src/templates/show.html:266
 msgid "Invert selection"
 msgstr "Inverser la sélection"
 
-#: src/templates/show.html:263
+#: src/templates/show.html:270
 msgid "Toggle main text"
 msgstr "Afficher le texte principal"
 
-#: src/templates/show.html:277 src/templates/uploads.html:37
+#: src/templates/show.html:284 src/templates/uploads.html:37
 msgid "Switch layout"
 msgstr "Changer la mise en page"
 
-#: src/templates/show.html:286 src/templates/show.html:288
+#: src/templates/show.html:293 src/templates/show.html:295
 #: src/templates/ucp.html:93
 msgid "Sort"
 msgstr "Ordre"
 
-#: src/templates/show.html:289
+#: src/templates/show.html:296
 msgid "Newest"
 msgstr "Plus récent"
 
-#: src/templates/show.html:290
+#: src/templates/show.html:297
 msgid "Oldest"
 msgstr "Plus ancien"
 
-#: src/templates/show.html:291
+#: src/templates/show.html:298
 msgid "Recently modified"
 msgstr "Modification récente"
 
-#: src/templates/show.html:292
+#: src/templates/show.html:299
 msgid "Least recently modified"
 msgstr "Modification ancienne"
 
-#: src/templates/show.html:294
+#: src/templates/show.html:301
 msgid "Category (inverted)"
 msgstr "Catégorie (inversé)"
 
-#: src/templates/show.html:296
+#: src/templates/show.html:303
 msgid "Status (inverted)"
 msgstr "Statut (inversé)"
 
-#: src/templates/show.html:297
+#: src/templates/show.html:304
 msgid "Highest ID"
 msgstr "ID décroissante"
 
-#: src/templates/show.html:298
+#: src/templates/show.html:305
 msgid "Lowest ID"
 msgstr "ID croissante"
 
-#: src/templates/show.html:299
+#: src/templates/show.html:306
 msgid "Highest Custom ID"
 msgstr "ID personnalisé décroissant"
 
-#: src/templates/show.html:300
+#: src/templates/show.html:307
 msgid "Lowest Custom ID"
 msgstr "ID personnalisé croissant"
 
-#: src/templates/show.html:301
+#: src/templates/show.html:308
 msgid "Recently commented"
 msgstr "Commenté récemment"
 
-#: src/templates/show.html:302
+#: src/templates/show.html:309
 msgid "Title (alphabetical)"
 msgstr "Titre (alphabetique)"
 
-#: src/templates/show.html:303
+#: src/templates/show.html:310
 msgid "Title (inverted)"
 msgstr "Titre (inversé)"
 
-#: src/templates/show.html:304
+#: src/templates/show.html:311
 msgid "User (alphabetical)"
 msgstr "Utilisateur (alphabétique)"
 
-#: src/templates/show.html:305
+#: src/templates/show.html:312
 msgid "User (inverted)"
 msgstr "Utilisateur (inversé)"
 
-#: src/templates/show.html:306
+#: src/templates/show.html:313
 msgid "Highest rating"
 msgstr "Note décroissante"
 
-#: src/templates/show.html:307
+#: src/templates/show.html:314
 msgid "Lowest rating"
 msgstr "Note croissante"
 
-#: src/templates/show.html:312 src/templates/show.html:314
+#: src/templates/show.html:319 src/templates/show.html:321
 msgid "Results per page"
 msgstr "Résultats par page"
 
-#: src/templates/show.html:328
+#: src/templates/show.html:335
 msgid ""
 "No resources categories have been defined for your team. Head to the %sAdmin "
 "Panel%s to add one."
@@ -3958,81 +3942,81 @@ msgstr ""
 "Aucune catégorie de ressources n'a été définie pour votre équipe. Rendez-"
 "vous dans le %spanneau d'administration%s pour en ajouter une."
 
-#: src/templates/show.html:336
+#: src/templates/show.html:343
 msgid "Sorry. I couldn't find anything :("
 msgstr "Désolé, aucun résultat pour ces critères :("
 
-#: src/templates/show.html:340 src/templates/steps-links-edit.html:125
+#: src/templates/show.html:347 src/templates/steps-links-edit.html:125
 msgid "Search in experiments"
 msgstr "Rechercher dans les expériences"
 
-#: src/templates/show.html:340 src/templates/steps-links-edit.html:157
+#: src/templates/show.html:347 src/templates/steps-links-edit.html:157
 msgid "Search in resources"
 msgstr "Rechercher dans les ressources"
 
-#: src/templates/show.html:345
+#: src/templates/show.html:352
 msgid "Welcome to eLabFTW. Use the 'Create new' button to get started!"
 msgstr ""
 "Bienvenue sur eLabFTW. Cliquez le bouton 'Créer une expérience' pour "
 "démarrer!"
 
-#: src/templates/show.html:366 src/templates/sysconfig.html:49
-#: src/templates/view-edit-toolbar.html:54
-#: src/templates/view-edit-toolbar.html:78
-#: src/templates/view-edit-toolbar.html:221
+#: src/templates/show.html:373 src/templates/sysconfig.html:49
+#: src/templates/view-edit-toolbar.html:52
+#: src/templates/view-edit-toolbar.html:76
+#: src/templates/view-edit-toolbar.html:225
 msgid "Timestamp"
 msgstr "Horodatage"
 
-#: src/templates/show.html:373 src/templates/show.html:375
+#: src/templates/show.html:380 src/templates/show.html:382
 msgid "Change category"
 msgstr "Changez de catégorie"
 
-#: src/templates/show.html:383 src/templates/show.html:385
+#: src/templates/show.html:390 src/templates/show.html:392
 msgid "Change status"
 msgstr "Changer le statut"
 
-#: src/templates/show.html:393 src/templates/show.html:394
+#: src/templates/show.html:400 src/templates/show.html:401
 msgid "Change read permissions"
 msgstr "Modifier les autorisations de lecture"
 
-#: src/templates/show.html:400 src/templates/show.html:401
+#: src/templates/show.html:407 src/templates/show.html:408
 msgid "Change write permissions"
 msgstr "Modifier les droits d'écriture"
 
-#: src/templates/show.html:410 src/templates/steps-links-edit.html:125
+#: src/templates/show.html:417 src/templates/steps-links-edit.html:125
 #: src/templates/steps-links-edit.html:157
 msgid "Add a link"
 msgstr "Ajouter un lien"
 
-#: src/templates/show.html:412 src/templates/steps-links-edit.html:150
+#: src/templates/show.html:419 src/templates/steps-links-edit.html:150
 msgid "Limit category"
 msgstr "Limite de catégories"
 
-#: src/templates/show.html:413 src/templates/steps-links-edit.html:151
+#: src/templates/show.html:420 src/templates/steps-links-edit.html:151
 msgid "Any category"
 msgstr "N'importe quelle catégorie"
 
-#: src/templates/show.html:422
+#: src/templates/show.html:429
 msgid "Link to an experiment"
 msgstr "Attacher une expérience"
 
-#: src/templates/show.html:424
+#: src/templates/show.html:431
 msgid "Limit author"
 msgstr "Limiter l'auteur"
 
-#: src/templates/show.html:425 src/templates/steps-links-edit.html:119
+#: src/templates/show.html:432 src/templates/steps-links-edit.html:119
 msgid "Any author"
 msgstr "N'importe quel auteur"
 
-#: src/templates/show.html:434
+#: src/templates/show.html:441
 msgid "Reset"
 msgstr "Réinitialiser"
 
-#: src/templates/show.html:456 src/templates/ucp.html:86
+#: src/templates/show.html:463 src/templates/ucp.html:86
 msgid "Title"
 msgstr "Titre"
 
-#: src/templates/show.html:480
+#: src/templates/show.html:487
 msgid "Rating"
 msgstr "Note"
 
@@ -4080,20 +4064,40 @@ msgid "Set deadline in"
 msgstr "Fixer une date butoir dans"
 
 #: src/templates/steps-links-edit.html:66
+msgid "+1 hour"
+msgstr "+1 heure"
+
+#: src/templates/steps-links-edit.html:66
 msgid "%d hour"
 msgstr "%d heure"
+
+#: src/templates/steps-links-edit.html:67
+msgid "+1 day"
+msgstr "+1 jour"
 
 #: src/templates/steps-links-edit.html:67
 msgid "%d day"
 msgstr "%d jour"
 
 #: src/templates/steps-links-edit.html:68
+msgid "+1 week"
+msgstr "+1 semaine"
+
+#: src/templates/steps-links-edit.html:68
 msgid "%d week"
 msgstr "%d semaine"
 
 #: src/templates/steps-links-edit.html:69
+msgid "+1 month"
+msgstr "+1 mois"
+
+#: src/templates/steps-links-edit.html:69
 msgid "%d month"
 msgstr "%d mois"
+
+#: src/templates/steps-links-edit.html:70
+msgid "+1 year"
+msgstr "+1 an"
 
 #: src/templates/steps-links-edit.html:70
 msgid "%d year"
@@ -4117,39 +4121,39 @@ msgstr "Ressources liées"
 msgid "Expand all"
 msgstr "Développer tout"
 
-#: src/templates/storage-list.html:19
-msgid "Add children to %s"
-msgstr "Ajouter des enfants à %s"
-
-#: src/templates/storage-list.html:20
-msgid "Delete %s and its children"
-msgstr "Supprimer %s et ses enfants"
-
-#: src/templates/storage-list.html:22
-msgid "Store in %s"
-msgstr "Stocker dans %s"
-
-#: src/templates/storage-list.html:24
+#: src/templates/storage-list.html:15 src/templates/storage-list.html:44
 msgid "Display content"
 msgstr "Afficher le contenu"
 
-#: src/templates/storage-list.html:35
-msgid "Add root element"
-msgstr "Ajouter un élément racine"
+#: src/templates/storage-list.html:17 src/templates/storage-list.html:42
+msgid "Add children to %s"
+msgstr "Ajouter des enfants à %s"
 
-#: src/templates/storage-view-edit.html:3
+#: src/templates/storage-list.html:18
+msgid "Delete %s and its children"
+msgstr "Supprimer %s et ses enfants"
+
+#: src/templates/storage-list.html:20
+msgid "Store in %s"
+msgstr "Stocker dans %s"
+
+#: src/templates/storage-list.html:36
+msgid "Inventory location"
+msgstr "Emplacement de l'inventaire"
+
+#: src/templates/storage-view-edit.html:4
 msgid "Containers"
 msgstr "Conteneurs"
 
-#: src/templates/storage-view-edit.html:12
+#: src/templates/storage-view-edit.html:13
 msgid "in"
 msgstr "dans"
 
-#: src/templates/storage-view-edit.html:20
+#: src/templates/storage-view-edit.html:21
 msgid "No containers stored"
 msgstr "Pas de conteneurs stockés"
 
-#: src/templates/storage-view-edit.html:24
+#: src/templates/storage-view-edit.html:25
 msgid "Modify storage"
 msgstr "Modifier le stock"
 
@@ -4209,10 +4213,6 @@ msgstr "Authentification externe"
 msgid "Audit Logs"
 msgstr "Journaux d’audit"
 
-#: src/templates/sysconfig.html:55 src/templates/sysconfig.html:1091
-msgid "Storage"
-msgstr "Stockage"
-
 #: src/templates/sysconfig.html:70
 msgid "Get users report"
 msgstr "Obtenir le rapport des utilisateurs"
@@ -4225,7 +4225,7 @@ msgstr "Conteneurs stockés"
 msgid "Stored containers: %d bound to experiments and %d bound to resources"
 msgstr "Conteneurs stockés : %d lié aux expériences et %d lié aux ressources"
 
-#: src/templates/sysconfig.html:76 src/templates/sysconfig.html:1093
+#: src/templates/sysconfig.html:76 src/templates/sysconfig.html:1094
 msgid "Get inventory report"
 msgstr "Obtenir un rapport d'inventaire"
 
@@ -4441,8 +4441,8 @@ msgstr "Créer une équipe"
 msgid "Organisation ID"
 msgstr "Organisation ID"
 
-#: src/templates/sysconfig.html:226 src/templates/ucp.html:481
-#: src/templates/ucp.html:492 src/templates/uploads.html:66
+#: src/templates/sysconfig.html:226 src/templates/ucp.html:471
+#: src/templates/ucp.html:482 src/templates/uploads.html:66
 msgid "Creation date"
 msgstr "Date de création"
 
@@ -5060,6 +5060,14 @@ msgstr "Acteur"
 msgid "Target user"
 msgstr "Utilisateur cible"
 
+#: src/templates/sysconfig.html:1097
+msgid ""
+"No places have been defined yet. Head to the %sInventory page%s to add "
+"places."
+msgstr ""
+"Aucun lieu n'a encore été défini. Rendez-vous sur la page %sInventaire%s "
+"pour ajouter des lieux."
+
 #: src/templates/team.html:7 src/templates/team.html:83
 #: src/templates/team.html:93
 msgid "Procurement requests"
@@ -5105,11 +5113,11 @@ msgstr "Devis"
 msgid "unset"
 msgstr "non défini"
 
-#: src/templates/team.html:138
+#: src/templates/team.html:137
 msgid "Cancel order"
 msgstr "Annuler la commande"
 
-#: src/templates/team.html:149
+#: src/templates/team.html:148
 msgid "No procurement requests have been made yet."
 msgstr "Aucune commande n'a encore été faite."
 
@@ -5125,7 +5133,7 @@ msgstr "Étapes non finies"
 msgid "Show steps for team"
 msgstr "Afficher les étapes pour l’équipe"
 
-#: src/templates/toggle-pin.html:6 src/templates/view-edit-toolbar.html:295
+#: src/templates/toggle-pin.html:6 src/templates/view-edit-toolbar.html:278
 msgid "Toggle pin"
 msgstr "Épingler/Désépingler"
 
@@ -5196,7 +5204,7 @@ msgid "API keys"
 msgstr "Clés API"
 
 #: src/templates/ucp.html:20 src/templates/ucp.html:37
-#: src/templates/ucp.html:409
+#: src/templates/ucp.html:399
 msgid "Regenerate signature keys"
 msgstr "Régénérer les clés de signature"
 
@@ -5272,8 +5280,8 @@ msgstr "Quelle page sera chargée en premier"
 msgid "Keyboard Shortcuts"
 msgstr "Raccourcis clavier"
 
-#: src/templates/ucp.html:128 src/templates/ucp.html:483
-#: src/templates/ucp.html:494
+#: src/templates/ucp.html:128 src/templates/ucp.html:473
+#: src/templates/ucp.html:484
 msgid "Action"
 msgstr "Action"
 
@@ -5352,19 +5360,11 @@ msgid "Always display your own entries, regardless of the current team"
 msgstr ""
 "Affichez toujours vos propres entrées, quelle que soit l'équipe utilisée"
 
-#: src/templates/ucp.html:285
-msgid ""
-"Enforce exclusive edit mode: each entry you start editing will be in "
-"exclusive edit mode."
-msgstr ""
-"Renforcer le mode d'édition exclusive : chaque entrée que vous commencez à "
-"éditer sera en mode d'édition exclusive."
-
-#: src/templates/ucp.html:295
+#: src/templates/ucp.html:286
 msgid "Select the scope for teamgroups"
 msgstr "Choisir le périmètre pour les groupes d'équipes"
 
-#: src/templates/ucp.html:296
+#: src/templates/ucp.html:287
 msgid ""
 "This setting controls which teamgroups will be listed in the permission "
 "settings window."
@@ -5372,45 +5372,45 @@ msgstr ""
 "Ce paramètre détermine quels groupes d'équipe seront répertoriés dans la "
 "fenêtre des paramètres de permission."
 
-#: src/templates/ucp.html:311
+#: src/templates/ucp.html:301
 msgid "User information"
 msgstr "Information utilisateur"
 
-#: src/templates/ucp.html:319
+#: src/templates/ucp.html:309
 msgid "Enter your password to edit your profile."
 msgstr "Entrez votre mot de passe pour éditer votre profil."
 
-#: src/templates/ucp.html:329
+#: src/templates/ucp.html:319
 msgid "Personal information"
 msgid_plural "Personal information"
 msgstr[0] "Information personnelle"
 msgstr[1] "Informations personnelles"
 
-#: src/templates/ucp.html:339
+#: src/templates/ucp.html:329
 msgid "Modify your password"
 msgstr "Modifier votre mot de passe"
 
-#: src/templates/ucp.html:355
+#: src/templates/ucp.html:345
 msgid "Use two-factor authentication?"
 msgstr "Utilise l'authentification deux facteurs ?"
 
-#: src/templates/ucp.html:369
+#: src/templates/ucp.html:359
 msgid "Your identity"
 msgstr "Votre identité"
 
-#: src/templates/ucp.html:394
+#: src/templates/ucp.html:384
 msgid "Signature keys"
 msgstr "Clés de signature"
 
-#: src/templates/ucp.html:402
+#: src/templates/ucp.html:392
 msgid "Download private key"
 msgstr "Télécharger la clé privée"
 
-#: src/templates/ucp.html:405
+#: src/templates/ucp.html:395
 msgid "Download public key"
 msgstr "Télécharger la clé publique"
 
-#: src/templates/ucp.html:413
+#: src/templates/ucp.html:403
 msgid ""
 "Signature keys are a highly secure public-key signature system that allows "
 "you to cryptographically sign experiments or resources. Signing an entry "
@@ -5420,7 +5420,7 @@ msgstr ""
 "sécurisé qui vous permet de signer cryptographiquement des expériences ou "
 "des ressources. La signature d'une entrée génère une archive immuable."
 
-#: src/templates/ucp.html:414
+#: src/templates/ucp.html:404
 msgid ""
 "To learn more about signature keys, have a look at the %scomplete "
 "documentation%s."
@@ -5428,21 +5428,21 @@ msgstr ""
 "Pour en savoir plus sur les clés de signature, consultez la %sdocumentation "
 "complète%s."
 
-#: src/templates/ucp.html:416
+#: src/templates/ucp.html:406
 msgid "You do not have a key pair associated with your account yet."
 msgstr "Vous n'avez pas encore de paire de clés associée à votre compte."
 
-#: src/templates/ucp.html:417
+#: src/templates/ucp.html:407
 msgid "To generate a key pair, enter a passphrase below and click the button:"
 msgstr ""
 "Pour générer une paire de clés, entrez une phrase secrète ci-dessous et "
 "cliquez sur le bouton :"
 
-#: src/templates/ucp.html:422
+#: src/templates/ucp.html:412
 msgid "Generate signature keys"
 msgstr "Générer des clés de signature"
 
-#: src/templates/ucp.html:425
+#: src/templates/ucp.html:415
 msgid ""
 "Tip: use a password manager or a passphrase that you can remember, see "
 "%sthis XKCD comic%s."
@@ -5450,20 +5450,20 @@ msgstr ""
 "Conseil : utilisez un gestionnaire de mots de passe ou une phrase de passe "
 "dont vous pouvez vous souvenir, voir %scette bande dessinée XKCD%s."
 
-#: src/templates/ucp.html:427
+#: src/templates/ucp.html:417
 msgid "Your account is already associated with a keypair."
 msgstr "Votre compte est déjà associé à une paire de clés."
 
-#: src/templates/ucp.html:428
+#: src/templates/ucp.html:418
 msgid "Here is your public key. You can share it with the world:"
 msgstr ""
 "Voici votre clé publique. Vous pouvez la partager avec le monde entier :"
 
-#: src/templates/ucp.html:438
+#: src/templates/ucp.html:428
 msgid "Create new key"
 msgstr "Créer une nouvelle clé"
 
-#: src/templates/ucp.html:442
+#: src/templates/ucp.html:432
 msgid ""
 "This is the only time the key will be shown! Make sure to copy it somewhere "
 "safe as you won't be able to see it again:"
@@ -5471,32 +5471,32 @@ msgstr ""
 "C'est la seule fois où la clé sera affichée ! Veillez à la copier dans un "
 "endroit sûr, car vous ne pourrez plus la voir à nouveau :"
 
-#: src/templates/ucp.html:460 src/templates/ucp.html:480
-#: src/templates/ucp.html:491
+#: src/templates/ucp.html:450 src/templates/ucp.html:470
+#: src/templates/ucp.html:481
 msgid "Permissions"
 msgstr "Permissions"
 
-#: src/templates/ucp.html:462 src/templates/ucp.html:491
+#: src/templates/ucp.html:452 src/templates/ucp.html:481
 msgid "Read Only"
 msgstr "Lecture seule"
 
-#: src/templates/ucp.html:463 src/templates/ucp.html:491
+#: src/templates/ucp.html:453 src/templates/ucp.html:481
 msgid "Read/Write"
 msgstr "Lecture/Écriture"
 
-#: src/templates/ucp.html:469
+#: src/templates/ucp.html:459
 msgid "Generate an API Key"
 msgstr "Générer une clé pour l'API"
 
-#: src/templates/ucp.html:474
+#: src/templates/ucp.html:464
 msgid "Existing keys"
 msgstr "Clés existantes"
 
-#: src/templates/ucp.html:482 src/templates/ucp.html:493
+#: src/templates/ucp.html:472 src/templates/ucp.html:483
 msgid "Last used"
 msgstr "Dernière utilisation"
 
-#: src/templates/ucp.html:510
+#: src/templates/ucp.html:500
 msgid "Web"
 msgstr "Web"
 
@@ -5523,28 +5523,24 @@ msgstr "Annoter cette image"
 msgid "Load into JSON Editor"
 msgstr "Charger dans l'éditeur JSON"
 
-#: src/templates/upload-dropdown-menu.html:65
-msgid "Save as image"
-msgstr "Enregistrer comme image"
-
-#: src/templates/upload-dropdown-menu.html:72 src/templates/uploads.html:108
+#: src/templates/upload-dropdown-menu.html:65 src/templates/uploads.html:108
 msgid "Upload a new version of this file"
 msgstr "Téléverser une nouvelle version du fichier"
 
-#: src/templates/upload-dropdown-menu.html:81
+#: src/templates/upload-dropdown-menu.html:74
 msgid "Show content of file"
 msgstr "Montrer le contenu du fichier"
 
-#: src/templates/upload-dropdown-menu.html:88
+#: src/templates/upload-dropdown-menu.html:81
 msgid "Open in NMRium"
 msgstr "Ouvrir dans NMRium"
 
-#: src/templates/upload-dropdown-menu.html:95 src/templates/uploads.html:75
+#: src/templates/upload-dropdown-menu.html:88 src/templates/uploads.html:75
 msgid "More information"
 msgstr "Plus d'informations"
 
-#: src/templates/upload-dropdown-menu.html:103 src/templates/uploads.html:115
-#: src/templates/view-edit-toolbar.html:317
+#: src/templates/upload-dropdown-menu.html:96 src/templates/uploads.html:115
+#: src/templates/view-edit-toolbar.html:300
 msgid "Archive/Unarchive"
 msgstr "Archivage/désarchivage"
 
@@ -5572,33 +5568,33 @@ msgstr "Montrer archives"
 msgid "Filesize"
 msgstr "Taille des fichiers"
 
-#: src/templates/uploads.html:182
+#: src/templates/uploads.html:176
 msgid "Style"
 msgstr "Style"
 
-#: src/templates/uploads.html:188
+#: src/templates/uploads.html:182
 msgid "Cartoon (proteins only)"
 msgstr "Cartoon (seulement pour les protéines)"
 
-#: src/templates/uploads.html:191
+#: src/templates/uploads.html:185
 msgid "Cross"
 msgstr "Croix"
 
-#: src/templates/uploads.html:194
+#: src/templates/uploads.html:188
 msgid "Line"
 msgstr "Ligne"
 
-#: src/templates/uploads.html:197
+#: src/templates/uploads.html:191
 msgid "Sphere"
 msgstr "Sphère"
 
-#: src/templates/uploads.html:200
+#: src/templates/uploads.html:194
 msgid "Stick"
 msgstr "Bâton"
 
 #: src/templates/view-edit-toolbar.html:6
-#: src/templates/view-edit-toolbar.html:288
-#: src/templates/view-edit-toolbar.html:289
+#: src/templates/view-edit-toolbar.html:271
+#: src/templates/view-edit-toolbar.html:272
 msgid "Request action"
 msgstr "Demande d'action"
 
@@ -5610,13 +5606,13 @@ msgstr "Sélectionner une action"
 msgid "Select collaborator"
 msgstr "Sélectionner un collaborateur"
 
-#: src/templates/view-edit-toolbar.html:42
-#: src/templates/view-edit-toolbar.html:65
+#: src/templates/view-edit-toolbar.html:40
+#: src/templates/view-edit-toolbar.html:63
 msgid "Timestamp Entry"
 msgstr "Horodater l'entrée"
 
-#: src/templates/view-edit-toolbar.html:48
-#: src/templates/view-edit-toolbar.html:72
+#: src/templates/view-edit-toolbar.html:46
+#: src/templates/view-edit-toolbar.html:70
 msgid ""
 "Timestamping an entry will create an irrefutable proof that the data was "
 "present at this point in time. You can timestamp an entry as many times as "
@@ -5628,7 +5624,7 @@ msgstr ""
 "fois que nécessaire : une archive d'horodatage immuable sera créée à chaque "
 "fois et stockée en tant que pièce jointe."
 
-#: src/templates/view-edit-toolbar.html:49
+#: src/templates/view-edit-toolbar.html:47
 msgid ""
 "With Trusted Timestamping (RFC3161), a cryptographic hash of your data is "
 "sent to a trusted third party. They reply with a token containing the "
@@ -5638,7 +5634,7 @@ msgstr ""
 "données est envoyé à un tiers de confiance. Celui-ci répond par un jeton "
 "contenant l'heure actuelle et signe le jeton à l'aide de sa clé privée."
 
-#: src/templates/view-edit-toolbar.html:73
+#: src/templates/view-edit-toolbar.html:71
 msgid ""
 "With Blockchain Timestamping, the cryptographic fingerprint of your data is "
 "added to a blockchain that is impossible to modify. This function uses the "
@@ -5648,12 +5644,12 @@ msgstr ""
 "ajoutée à une blockchain impossible à modifier. Cette fonction utilise la "
 "blockchain du Consortium Bloxberg basée sur Ethereum."
 
-#: src/templates/view-edit-toolbar.html:89
-#: src/templates/view-edit-toolbar.html:215
+#: src/templates/view-edit-toolbar.html:87
+#: src/templates/view-edit-toolbar.html:219
 msgid "Add signature"
 msgstr "Ajouter une signature"
 
-#: src/templates/view-edit-toolbar.html:95
+#: src/templates/view-edit-toolbar.html:93
 msgid ""
 "Adding your signature will cryptographically sign the content of this entry, "
 "and the signature will be stored alongside the content at the time of "
@@ -5665,7 +5661,7 @@ msgstr ""
 "signature, dans une archive, visible en tant que pièce jointe (masquée par "
 "défaut car archivée)."
 
-#: src/templates/view-edit-toolbar.html:97
+#: src/templates/view-edit-toolbar.html:95
 msgid ""
 "Your account is missing a cryptographic key pair, necessary for signature. "
 "You must generate one from your User Control Panel before you can sign an "
@@ -5675,69 +5671,65 @@ msgstr ""
 "signature. Vous devez en générer une à partir de votre panneau de contrôle "
 "de l'utilisateur avant de pouvoir signer une entrée."
 
-#: src/templates/view-edit-toolbar.html:101
+#: src/templates/view-edit-toolbar.html:99
 msgid "Select a meaning for this signature"
 msgstr "Sélectionnez une signification pour cette signature"
 
-#: src/templates/view-edit-toolbar.html:108
+#: src/templates/view-edit-toolbar.html:106
 msgid "Enter your passphrase to unlock your secret key:"
 msgstr "Saisissez votre phrase secrète pour déverrouiller votre clé :"
 
-#: src/templates/view-edit-toolbar.html:120
+#: src/templates/view-edit-toolbar.html:118
 msgid "Add your signature"
 msgstr "Ajoutez votre signature"
 
-#: src/templates/view-edit-toolbar.html:122
+#: src/templates/view-edit-toolbar.html:120
 msgid "Go to Settings"
 msgstr "Aller dans les Paramètres"
 
-#: src/templates/view-edit-toolbar.html:134
+#: src/templates/view-edit-toolbar.html:133
 msgid "Create procurement request"
 msgstr "Créer une commande"
 
-#: src/templates/view-edit-toolbar.html:141
+#: src/templates/view-edit-toolbar.html:140
 msgid "Enter a quantity to purchase"
 msgstr "Saisir une quantité à acheter"
 
-#: src/templates/view-edit-toolbar.html:146
-#: src/templates/view-edit-toolbar.html:235
+#: src/templates/view-edit-toolbar.html:145
+#: src/templates/view-edit-toolbar.html:239
 msgid "Place order"
 msgstr "Passer la commande"
 
-#: src/templates/view-edit-toolbar.html:178
+#: src/templates/view-edit-toolbar.html:177
 msgid "View mode"
 msgstr "Mode vue"
 
-#: src/templates/view-edit-toolbar.html:198
+#: src/templates/view-edit-toolbar.html:197
 msgid "Book item"
 msgstr "Réserver"
 
-#: src/templates/view-edit-toolbar.html:207
-#: src/templates/view-edit-toolbar.html:210
+#: src/templates/view-edit-toolbar.html:211
+#: src/templates/view-edit-toolbar.html:214
 msgid "Share"
 msgstr "Partager"
 
-#: src/templates/view-edit-toolbar.html:228
+#: src/templates/view-edit-toolbar.html:232
 msgid "Add to blockchain"
 msgstr "Ajouter à la blockchain"
 
-#: src/templates/view-edit-toolbar.html:255
+#: src/templates/view-edit-toolbar.html:260
 msgid "Lock/Unlock item"
 msgstr "Verrouiller/Déverrouiller"
 
-#: src/templates/view-edit-toolbar.html:268
-msgid "Enable/Disable exclusive edit mode"
-msgstr "Activer/désactiver le mode d'édition exclusif"
-
-#: src/templates/view-edit-toolbar.html:311
+#: src/templates/view-edit-toolbar.html:294
 msgid "See revisions"
 msgstr "Voir les révisions"
 
-#: src/templates/view-edit-toolbar.html:313
+#: src/templates/view-edit-toolbar.html:296
 msgid "See changelog"
 msgstr "Voir journal des modifications"
 
-#: src/templates/view-edit-toolbar.html:332
+#: src/templates/view-edit-toolbar.html:315
 msgid "Owned by %s"
 msgstr "Appartenant à %s"
 
@@ -5750,38 +5742,110 @@ msgstr ""
 msgid "%s has requested %s for this entity from %s"
 msgstr "%s a demandé %s cette entité à %s"
 
-#: src/templates/view.html:33
-msgid ""
-"This entry is opened by %s in exclusive edit mode since %s. You cannot edit "
-"it before %s. %sRequest exclusive edit mode removal%s"
-msgstr ""
-"Cette entrée est ouverte par %s en mode d'édition exclusive depuis %s. Vous "
-"ne pouvez pas la modifier avant %s. %sDemande de suppression du mode "
-"d'édition exclusif%s"
-
-#: src/templates/view.html:55
+#: src/templates/view.html:44
 msgid "Entry was timestamped by %s on %s at %s"
 msgstr "L'entrée a été horodatée par %s le %s à %s"
 
-#: src/templates/view.html:146
+#: src/templates/view.html:135
 msgid "Owner:"
 msgstr "Propriétaire :"
 
-#: src/templates/view.html:148
+#: src/templates/view.html:137
 msgid "Last modified on %s"
 msgstr "Dernière modification le %s"
 
-#: src/templates/view.html:171
+#: src/templates/view.html:160
 msgid "Comments"
 msgstr "Commentaires"
 
-#: src/templates/view.html:176
+#: src/templates/view.html:165
 msgid "commented"
 msgstr "a laissé un commentaire"
 
-#: src/templates/view.html:179
+#: src/templates/view.html:168
 msgid "edited"
 msgstr "édité"
+
+#~ msgid "removal of exclusive edit mode"
+#~ msgstr "suppression du mode d'édition exclusif"
+
+#~ msgid "This item is locked. You cannot edit it!"
+#~ msgstr "Cet objet est verrouillé. Vous ne pouvez pas l'éditer !"
+
+#~ msgid "Something went wrong! Try refreshing the page."
+#~ msgstr "Une erreur s'est produite ! Essayez de rafraîchir la page."
+
+#~ msgid ""
+#~ "This entry is opened in exclusive edit mode by %s since %s. You cannot "
+#~ "edit it before %s."
+#~ msgstr ""
+#~ "Cette entrée est ouverte en mode d'édition exclusive par %s depuis %s. "
+#~ "Vous ne pouvez pas la modifier avant %s."
+
+#~ msgid ""
+#~ "This instance configuration only permits Sysadmin users to archive a user."
+#~ msgstr ""
+#~ "Cette configuration d'instance n'autorise que les utilisateurs Sysadmin à "
+#~ "archiver un utilisateur."
+
+#~ msgid ""
+#~ "You opened this entry in exclusive edit mode at %s and it will stay "
+#~ "active until %s, unless deactivated manually in view mode."
+#~ msgstr ""
+#~ "Vous avez ouvert cette entrée en mode d'édition exclusive à %s et elle "
+#~ "restera active jusqu'à %s, à moins qu'elle ne soit désactivée "
+#~ "manuellement en mode de visualisation."
+
+#~ msgid "Browse places"
+#~ msgstr "Parcourir les lieux"
+
+#~ msgid ""
+#~ "You have enabled \"Enforce exclusive edit mode\". If you enter edit mode, "
+#~ "exclusive edit will be reactivated."
+#~ msgstr ""
+#~ "Vous avez activé l'option \"Appliquer le mode d'édition exclusive\". Si "
+#~ "vous entrez en mode édition, l'édition exclusive sera réactivée."
+
+#~ msgid " Unlocking this entry will redirect you to view mode."
+#~ msgstr ""
+#~ " En déverrouillant cette entrée, vous serez redirigé vers le mode de "
+#~ "visualisation."
+
+#~ msgid "Remove exclusive edit mode for this entry"
+#~ msgstr "Supprimer le mode d'édition exclusif pour cette entrée"
+
+#~ msgid "You can change this in your %ssettings%s."
+#~ msgstr "Vous pouvez modifier cela dans vos %ssettings%s."
+
+#~ msgid "Filter group"
+#~ msgstr "Filtrer les groupes"
+
+#~ msgid "Select group"
+#~ msgstr "Sélectionner un groupe"
+
+#~ msgid "Storage"
+#~ msgstr "Stockage"
+
+#~ msgid ""
+#~ "Enforce exclusive edit mode: each entry you start editing will be in "
+#~ "exclusive edit mode."
+#~ msgstr ""
+#~ "Renforcer le mode d'édition exclusive : chaque entrée que vous commencez "
+#~ "à éditer sera en mode d'édition exclusive."
+
+#~ msgid "Save as image"
+#~ msgstr "Enregistrer comme image"
+
+#~ msgid "Enable/Disable exclusive edit mode"
+#~ msgstr "Activer/désactiver le mode d'édition exclusif"
+
+#~ msgid ""
+#~ "This entry is opened by %s in exclusive edit mode since %s. You cannot "
+#~ "edit it before %s. %sRequest exclusive edit mode removal%s"
+#~ msgstr ""
+#~ "Cette entrée est ouverte par %s en mode d'édition exclusive depuis %s. "
+#~ "Vous ne pouvez pas la modifier avant %s. %sDemande de suppression du mode "
+#~ "d'édition exclusif%s"
 
 #~ msgid "Remove from team"
 #~ msgstr "Retirer de l'équipe"
@@ -6011,9 +6075,6 @@ msgstr "édité"
 
 #~ msgid "group"
 #~ msgstr "groupe"
-
-#~ msgid "author"
-#~ msgstr "auteur"
 
 #~ msgid "And visibility is:"
 #~ msgstr "Et la visibilité est :"

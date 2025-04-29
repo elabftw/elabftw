@@ -3685,6 +3685,12 @@ paths:
           schema:
             type: string
             enum: ['0', '1']
+        - name: team
+          in: query
+          description: Add a filter on the team
+          required: false
+          schema:
+            type: number
       responses:
         '200':
           description: A list of users

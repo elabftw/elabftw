@@ -286,7 +286,7 @@ class Users extends AbstractRest
         $Request = Request::createFromGlobals();
         return $this->readFromQuery(
             $Request->query->getString('q'),
-            0,
+            $Request->query->getInt('team', 0),
             $Request->query->getBoolean('includeArchived'),
             $Request->query->getBoolean('onlyAdmins'),
             $Request->query->getBoolean('onlyArchived'),

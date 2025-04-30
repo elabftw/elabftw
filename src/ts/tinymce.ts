@@ -211,7 +211,6 @@ export function getTinymceBaseConfig(page: string): object {
     selector: '.mceditable',
     table_default_styles: {
       'min-width':'25%',
-      'width':'auto',
     },
     // The table width is changed when manipulating columns, the size of other columns is maintained.
     table_column_resizing: 'resizetable',
@@ -378,6 +377,10 @@ export function getTinymceBaseConfig(page: string): object {
             tinymceEditImage.reset();
           }, 50);
         }
+      });
+      // prevent tables width from being set to "auto" and cause pdf export issues (see #5601)
+      editor.on('GetContent', (e) => {
+        e.content = e.content.replace(/(<table[^>]*?)\sstyle="[^"]*?width\s*:\s*auto;?[^"]*?"([^>]*?>)/gi, '$1$2');
       });
 
       // floppy disk icon from COLLECTION: Zest Interface Icons LICENSE: MIT License AUTHOR: zest

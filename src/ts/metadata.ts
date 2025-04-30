@@ -157,8 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (el.matches('[data-action="metadata-rm-field"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {
         MetadataC.read().then(metadata => {
-          const rawName = el.parentElement.parentElement.closest('div').querySelector('label').innerText.trim();
-          const name = normalizeFieldName(rawName);
+          const name = el.parentElement.parentElement.closest('div').querySelector('label').innerText.trim();
           delete metadata.extra_fields[name];
           MetadataC.update(metadata as ValidMetadata).then(() => document.getElementById('metadataDiv').scrollIntoView());
         });

@@ -479,6 +479,11 @@ export function escapeRegExp(string: string): string {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+// used in metadata.ts to normalize field names only by trimming out double and simple quotes, causing to SQL issues
+export function normalizeFieldName(input: string): string {
+  return input.replace(/['"]/g, '').trim().replace(/\s+/g, ' ');
+}
+
 function removeEmpty(params: object): object {
   for (const [key, value] of Object.entries(params)) {
     if (value === '') {

@@ -35,6 +35,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Override;
 
+use function array_find;
 use function basename;
 use function hash_file;
 use function json_decode;
@@ -148,12 +149,18 @@ class Eln extends AbstractZip
 
     protected function getNodeFromId(string $id): array
     {
-        foreach ($this->graph as $node) {
-            if ($node['@id'] === $id) {
-                return $node;
+        $result = array_find(
+            $this->graph,
+            function (array $node) use ($id) {
+                return $node['@id'] === $id;
             }
+        );
+        // looking up a node by id should always return something, otherwise there is something seriously wrong
+        if ($result === null) {
+            $this->logger->error(sprintf('Error looking up the node id %s', $id));
+            return array();
         }
-        return array();
+        return $result;
     }
 
     protected function getAuthor(array $dataset): Users

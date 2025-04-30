@@ -9,6 +9,7 @@ import {
   getEntity,
   notifError,
   addAutocompleteToExtraFieldsKeyInputs,
+  normalizeFieldName,
 } from './misc';
 import { Metadata } from './Metadata.class';
 import { ValidMetadata, ExtraFieldInputType } from './metadataInterfaces';
@@ -156,7 +157,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (el.matches('[data-action="metadata-rm-field"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {
         MetadataC.read().then(metadata => {
-          const name = el.parentElement.parentElement.closest('div').querySelector('label').innerText.trim();
+          const rawName = el.parentElement.parentElement.closest('div').querySelector('label').innerText.trim();
+          const name = normalizeFieldName(rawName);
           delete metadata.extra_fields[name];
           MetadataC.update(metadata as ValidMetadata).then(() => document.getElementById('metadataDiv').scrollIntoView());
         });
@@ -193,6 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   addAutocompleteToExtraFieldsKeyInputs();
+
 
   function toggleContentDiv(key: string) {
     const keys = ['classic', 'selectradio', 'checkbox', 'number'];
@@ -280,7 +283,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      const fieldKey = (document.getElementById('newFieldKeyInput') as HTMLInputElement).value.trim();
+      const fieldKeyValue = (document.getElementById('newFieldKeyInput') as HTMLInputElement).value.trim();
+      const fieldKey = normalizeFieldName(fieldKeyValue);
 
       let json = {};
       // get the current metadata
@@ -366,7 +370,8 @@ document.addEventListener('DOMContentLoaded', () => {
       // get field to update's current value
       const fieldNameInput = document.getElementById('newFieldKeyInput') as HTMLInputElement;
       const originalFieldKey = fieldNameInput.dataset.name; // store previous key
-      const newFieldKey = fieldNameInput.value.trim(); // new key from input
+      const newFieldKeyValue = fieldNameInput.value.trim(); // new key from input
+      const newFieldKey = normalizeFieldName(newFieldKeyValue);
 
       let json = {};
       MetadataC.read().then(metadata => {

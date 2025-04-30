@@ -211,7 +211,6 @@ export function getTinymceBaseConfig(page: string): object {
     selector: '.mceditable',
     table_default_styles: {
       'min-width':'25%',
-      'width':'auto',
     },
     // The table width is changed when manipulating columns, the size of other columns is maintained.
     table_column_resizing: 'resizetable',

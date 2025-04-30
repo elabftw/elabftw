@@ -33,6 +33,7 @@ code {
   list-style-type: none;
 }
 
+/* fix table being collapsed on export */
 table {
   border-collapse: collapse;
   table-layout: fixed;

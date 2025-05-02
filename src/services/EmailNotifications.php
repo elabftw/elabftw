@@ -93,7 +93,7 @@ class EmailNotifications
             WHERE send_email = 1
                 AND email_sent = 0
                 AND (category <> :step_deadline
-                    OR (category = :step_deadline AND DATE_ADD(NOW(), INTERVAL :notif_lead_time MINUTE)) >= body->>"$.deadline")';
+                    OR (category = :step_deadline AND DATE_ADD(NOW(), INTERVAL :notif_lead_time MINUTE) >= body->>"$.deadline"))';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':step_deadline', Notifications::StepDeadline->value, PDO::PARAM_INT);
         $req->bindValue(':notif_lead_time', StepDeadline::NOTIFLEADTIME, PDO::PARAM_INT);

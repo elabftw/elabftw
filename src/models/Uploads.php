@@ -255,6 +255,28 @@ final class Uploads extends AbstractRest
         return $req->fetchAll();
     }
 
+    // Retrieves the number of uploads for current entity.
+    // Returns an array with 'normal_' and 'archived_' count.
+    public function getUploadCounts(): array
+    {
+        $sql = 'SELECT
+            SUM(CASE WHEN state = :normal THEN 1 ELSE 0 END) AS normal_count,
+            SUM(CASE WHEN state = :archived THEN 1 ELSE 0 END) AS archived_count
+            FROM uploads WHERE item_id = :id AND type = :type';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindValue(':type', $this->Entity->entityType->value);
+        $req->bindValue(':normal', State::Normal->value, PDO::PARAM_INT);
+        $req->bindValue(':archived', State::Archived->value, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $result = $req->fetch(PDO::FETCH_ASSOC);
+        if (!$result) {
+            return array('normal_count' => 0, 'archived_count' => 0);
+        }
+        return $result;
+    }
+
     #[Override]
     public function patch(Action $action, array $params): array
     {

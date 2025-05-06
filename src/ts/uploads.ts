@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Update the query parameters in the URL
       url.search = queryParams.toString();
-      url.hash = 'filesdiv';
+      url.hash = 'filesDiv';
       const modifiedUrl = url.toString();
       window.location.replace(modifiedUrl);
 
@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="archive-upload"]')) {
       const uploadid = parseInt(el.dataset.uploadid, 10);
       ApiC.patch(`${entity.type}/${entity.id}/${Model.Upload}/${uploadid}`, {action: Action.Archive})
-        .then(() => reloadElements(['uploadsDiv']));
+        .then(() => reloadElements(['uploadsDiv','filesCount']));
 
     // DESTROY UPLOAD
     } else if (el.matches('[data-action="destroy-upload"]')) {

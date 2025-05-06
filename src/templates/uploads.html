@@ -20,15 +20,20 @@
 </div>
 
 {# UPLOADED FILES #}
-<div id='filesdiv'>
-  {% if (mode == 'view' and Entity.entityData.uploads) or mode == 'edit' %}
+<div id='filesDiv'>
+  {% if (mode == 'view' and (Entity.entityData.uploadsCount.normal_count > 0 or Entity.entityData.uploadsCount.archived_count > 0)) or mode == 'edit' %}
   <div class='d-flex justify-content-between'>
     <div>{# necessary div for flex #}
-      <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-toggle-target='uploadsDiv' data-toggle-target-extra='uploadsViewToggler' class='d-inline togglable-section-title' tabindex='0' role='button'>
+      <h3 id='filesCount' title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-toggle-target='uploadsDiv' data-toggle-target-extra='uploadsViewToggler' class='d-inline togglable-section-title' tabindex='0' role='button'>
         <i class='fas fa-caret-down fa-fw mr-2'></i>{% trans %}Attached file
         {% plural Entity.entityData.uploads|length %}
         Attached files
-        {% endtrans %} (<span id='uploadsCount'>{{ Entity.entityData.uploads|length }}</span>)
+        {% endtrans %} (
+          <span id='uploadsCount'>{{ Entity.entityData.uploadsCount.normal_count }}</span>
+          {% if Entity.entityData.uploadsCount.archived_count > 0 %}
+            , {{ 'Archived'|trans }}: {{ Entity.entityData.uploadsCount.archived_count }}
+          {% endif %}
+        )
       </h3>
     </div>
 
@@ -269,4 +274,4 @@
   </div>
   <hr>
   {% endif %}
-</div>{# #filesdiv #}
+</div>{# #filesDiv #}

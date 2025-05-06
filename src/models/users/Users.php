@@ -379,7 +379,7 @@ class Users extends AbstractRest
             Action::Update => (
                 function () use ($params) {
                     // only a sysadmin can edit anything about another sysadmin
-                    if ($this->requester->userData['is_sysadmin'] === 0 && $this->userid !== $this->requester->userid) {
+                    if ($this->requester->userData['is_sysadmin'] === 0 && $this->userid !== $this->requester->userid && $this->userData['is_sysadmin'] === 1) {
                         throw new IllegalActionException('A sysadmin level account is required to edit another sysadmin account.');
                     }
                     $Config = Config::getConfig();

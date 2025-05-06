@@ -100,7 +100,7 @@ final class Experiments extends AbstractConcreteEntity
         }
 
         // figure out the custom id
-        $customId = $this->getNextCustomId($template);
+        $customId = $this->getNextCustomId($category);
 
         // SQL for create experiments
         $sql = 'INSERT INTO experiments(team, title, date, body, category, status, elabid, canread, canwrite, canread_is_immutable, canwrite_is_immutable, metadata, custom_id, userid, content_type, rating)

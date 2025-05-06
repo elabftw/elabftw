@@ -135,7 +135,6 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         $this->entityData['related_experiments_links'] = $this->ExperimentsLinks->readRelated();
         $this->entityData['related_items_links'] = $this->ItemsLinks->readRelated();
         $this->entityData['uploads'] = $this->Uploads->readAll();
-        $this->entityData['uploadsCount'] = $this->Uploads->getUploadCounts();
         $this->entityData['comments'] = $this->Comments->readAll();
         $this->entityData['page'] = substr($this->entityType->toPage(), 0, -4);
         $CompoundsLinks = LinksFactory::getCompoundsLinks($this);

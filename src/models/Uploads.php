@@ -240,23 +240,16 @@ final class Uploads extends AbstractRest
         $queryParams = $this->getQueryParams($Request->query);
         $this->includeArchived = $queryParams->getQuery()->getBoolean('archived');
 
-        $state = 'state = :normal';
-        if ($this->includeArchived) {
-            $state = '(state = :normal OR uploads.state = :archived)';
-        }
-        $sql = sprintf(
-            "SELECT uploads.*, CONCAT (users.firstname, ' ', users.lastname) AS fullname
-            FROM uploads LEFT JOIN users ON (uploads.userid = users.userid) WHERE item_id = :id AND type = :type AND %s ORDER BY created_at DESC",
-            $state
-        );
+        $sql = 'SELECT uploads.*, CONCAT (users.firstname, " ", users.lastname) AS fullname
+            FROM uploads LEFT JOIN users ON (uploads.userid = users.userid) WHERE item_id = :id AND type = :type
+            AND ( uploads.state = :normal OR (:include_archived = 1 AND uploads.state = :archived) )
+            ORDER BY created_at DESC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindValue(':type', $this->Entity->entityType->value);
         $req->bindValue(':normal', State::Normal->value, PDO::PARAM_INT);
-
-        if ($this->includeArchived) {
-            $req->bindValue(':archived', State::Archived->value, PDO::PARAM_INT);
-        }
+        $req->bindValue(':archived', State::Archived->value, PDO::PARAM_INT);
+        $req->bindValue(':include_archived', $this->includeArchived ? 1 : 0, PDO::PARAM_BOOL);
         $this->Db->execute($req);
 
         return $req->fetchAll();

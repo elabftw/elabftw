@@ -50,7 +50,7 @@ final class Uploads extends AbstractRest
 
     public array $uploadData = array();
 
-    public function __construct(public AbstractEntity $Entity, public ?int $id = null, public bool $includeArchived = false)
+    public function __construct(public AbstractEntity $Entity, public ?int $id = null)
     {
         parent::__construct();
         if ($this->id !== null) {
@@ -238,18 +238,17 @@ final class Uploads extends AbstractRest
     {
         $Request = Request::createFromGlobals();
         $queryParams = $this->getQueryParams($Request->query);
-        $this->includeArchived = $queryParams->getQuery()->getBoolean('archived');
+        $statesSql = $queryParams->getStatesSql('uploads');
 
-        $sql = 'SELECT uploads.*, CONCAT (users.firstname, " ", users.lastname) AS fullname
-            FROM uploads LEFT JOIN users ON (uploads.userid = users.userid) WHERE item_id = :id AND type = :type
-            AND ( uploads.state = :normal OR (:include_archived = 1 AND uploads.state = :archived) )
-            ORDER BY created_at DESC';
+        $sql = sprintf(
+            'SELECT uploads.*, CONCAT (users.firstname, " ", users.lastname) AS fullname
+            FROM uploads LEFT JOIN users ON (uploads.userid = users.userid)
+            WHERE item_id = :id AND type = :type %s ORDER BY created_at DESC',
+            $statesSql
+        );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindValue(':type', $this->Entity->entityType->value);
-        $req->bindValue(':normal', State::Normal->value, PDO::PARAM_INT);
-        $req->bindValue(':archived', State::Archived->value, PDO::PARAM_INT);
-        $req->bindValue(':include_archived', $this->includeArchived ? 1 : 0, PDO::PARAM_BOOL);
         $this->Db->execute($req);
 
         return $req->fetchAll();

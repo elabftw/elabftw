@@ -169,9 +169,6 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
     public function testReadAll(): void
     {
         $this->assertIsArray($this->Entity->Uploads->readAll());
-        // same including archived uploads
-        $this->Entity->Uploads->includeArchived = true;
-        $this->assertIsArray($this->Entity->Uploads->readAll());
     }
 
     public function testDestroyAll(): void

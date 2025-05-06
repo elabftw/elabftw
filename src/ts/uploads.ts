@@ -130,11 +130,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const url = new URL(window.location.href);
       const queryParams = new URLSearchParams(url.search);
 
-      // toggle "archived" query parameter
-      if (queryParams.has('archived')) {
-        queryParams.delete('archived');
+      // toggle "archived" query parameter: display normal and archived
+      if (queryParams.has('state')) {
+        queryParams.delete('state');
       } else {
-        queryParams.set('archived', 'on');
+        queryParams.set('state', '1,2');
       }
 
       // Update the query parameters in the URL
@@ -193,7 +193,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const uploadid = parseInt(el.dataset.uploadid, 10);
       if (confirm(i18next.t('generic-delete-warning'))) {
         ApiC.delete(`${entity.type}/${entity.id}/${Model.Upload}/${uploadid}`)
-          .then(() => document.getElementById(`uploadDiv_${uploadid}`).remove());
+          .then(() => document.getElementById(`uploadDiv_${uploadid}`).remove())
+          .then(() => reloadElements(['filesCount']));
       }
     }
   });

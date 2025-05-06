@@ -380,7 +380,6 @@ abstract class AbstractEntity extends AbstractRest
 
     public function readOneFull(): array
     {
-        $this->Uploads->includeArchived = true;
         $base = $this->readOne();
         // items types don't have this yet
         if ($this instanceof AbstractConcreteEntity || $this instanceof Templates) {

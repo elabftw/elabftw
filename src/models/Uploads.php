@@ -255,8 +255,9 @@ final class Uploads extends AbstractRest
         return $req->fetchAll();
     }
 
-    // Retrieves the number of uploads for current entity.
-    // Returns an array with 'normal_' and 'archived_' count.
+    /**
+     * Retrieves the number of uploads for current entity as an associative array.
+    */
     public function getUploadCounts(): array
     {
         $sql = 'SELECT

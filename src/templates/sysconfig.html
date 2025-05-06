@@ -228,6 +228,7 @@
           <th scope='col'>{{ 'Actions'|trans }}</th>
         </tr>
       </thead>
+      <!-- [html-validate-disable-block prefer-native-element: suppress error from malle] -->
       <tbody id='teamsTableBody'>
         {% for team in teamsArr %}
           {% set count = Teams.getStats(team.id) %}

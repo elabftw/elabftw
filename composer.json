@@ -23,7 +23,7 @@
     "onelogin/php-saml": "^4.0.0",
     "guzzlehttp/guzzle": "^7.4.5",
     "symfony/http-foundation": "^6.0",
-    "twig/twig": "^3.5.0",
+    "twig/twig": "3.20.0",
     "monolog/monolog": "^3.1.0",
     "maennchen/zipstream-php": "^3.0.0",
     "league/csv": "^9.4",

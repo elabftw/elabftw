@@ -33,7 +33,6 @@ use League\Flysystem\UnableToRetrieveMetadata;
 use Override;
 use PDO;
 use RuntimeException;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use function hash_file;
@@ -236,10 +235,8 @@ final class Uploads extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        $Request = Request::createFromGlobals();
-        $queryParams = $this->getQueryParams($Request->query);
+        $queryParams ??= $this->getQueryParams();
         $statesSql = $queryParams->getStatesSql('uploads');
-
         $sql = sprintf(
             'SELECT uploads.*, CONCAT (users.firstname, " ", users.lastname) AS fullname
             FROM uploads LEFT JOIN users ON (uploads.userid = users.userid)

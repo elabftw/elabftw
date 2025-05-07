@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const url = new URL(window.location.href);
       const queryParams = new URLSearchParams(url.search);
 
-      // toggle "archived" query parameter: display normal and archived
+      // set the state query param to include normal and archived
       if (queryParams.has('state')) {
         queryParams.delete('state');
       } else {
@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="archive-upload"]')) {
       const uploadid = parseInt(el.dataset.uploadid, 10);
       ApiC.patch(`${entity.type}/${entity.id}/${Model.Upload}/${uploadid}`, {action: Action.Archive})
-        .then(() => reloadElements(['uploadsDiv','filesCount']));
+        .then(() => reloadElements(['uploadsDiv']));
 
     // DESTROY UPLOAD
     } else if (el.matches('[data-action="destroy-upload"]')) {

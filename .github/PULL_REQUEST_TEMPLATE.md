@@ -5,10 +5,9 @@ To help us review your pull request more efficiently, please go through the list
 ### Pull Request Checklist
 
 - [ ] I have added **tests** for any new features.
-- [ ] I have mentioned the related **feature request** (if it exists).
 - [ ] I have mentioned the related **issue** (if applicable).
-- [ ] I have updated or verified the [relevant documentation](https://doc.elabftw.net/api/v2/). (see [openapi.yaml](https://github.com/elabftw/elabftw/blob/master/apidoc/v2/openapi.yaml))
-- [ ] This change includes a **database schema update**. *(Leave unchecked if not applicable)*
+- [ ] I have updated or verified the [relevant documentation](https://github.com/elabftw/elabdoc). (see [openapi.yaml](https://github.com/elabftw/elabftw/blob/master/apidoc/v2/openapi.yaml))
+- [ ] All automated checks (CircleCI, Scrutinizer, Codespell...) pass on GitHub.
 ---
 
 ### Contribution Guidelines

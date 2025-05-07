@@ -4302,12 +4302,20 @@ paths:
         required: true
         schema:
           type: integer
-      - name: archived
+      - name: state
         in: query
-        description: Include archived uploads in the response if the value is truthy.
-        required: false
         schema:
           type: string
+          default: "1"
+        examples:
+          first:
+            summary: Display only archived uploads
+            value: "2"
+          second:
+            summary: Display archived and deleted uploads
+            value: "2,3"
+        description: |
+          Filter results based on their state: 1 (Normal), 2 (Archived), 3 (Deleted). Supports comma separated values.
     get:
       tags: ['Uploads']
       summary: Read attached files of that entity.

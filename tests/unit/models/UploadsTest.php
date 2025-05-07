@@ -19,7 +19,7 @@ use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use RuntimeException;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Response;
 
 class UploadsTest extends \PHPUnit\Framework\TestCase
@@ -169,13 +169,9 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
 
     public function testReadAll(): void
     {
-        $this->assertIsArray($this->Entity->Uploads->readAll());
-        // include archived uploads
-        $queryParams = array('state' => '2');
-        $req = new Request($queryParams);
-        $q = $this->Entity->Uploads->getQueryParams($req->query);
+        // display only archived uploads
+        $q = $this->Entity->Uploads->getQueryParams(new InputBag(array('state' => '2')));
         $archivedUploads = $this->Entity->Uploads->readAll($q);
-
         $this->assertIsArray($archivedUploads);
         $this->assertNotEmpty($archivedUploads);
         foreach ($archivedUploads as $upload) {

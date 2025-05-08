@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6d2cbf0d416c63184753e3e2dc5874de",
+    "content-hash": "5b860439dccf8603fbb086c8d352e6a2",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -1236,27 +1236,28 @@
         },
         {
             "name": "jblond/twig-trans",
-            "version": "v1.1.6",
+            "version": "v1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JBlond/twig-trans.git",
-                "reference": "665c56e3d40340ab542fd6deb048395d8ea54219"
+                "reference": "ac70c1c1b9716ff4fdd4cf137d592cb864c5409f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JBlond/twig-trans/zipball/665c56e3d40340ab542fd6deb048395d8ea54219",
-                "reference": "665c56e3d40340ab542fd6deb048395d8ea54219",
+                "url": "https://api.github.com/repos/JBlond/twig-trans/zipball/ac70c1c1b9716ff4fdd4cf137d592cb864c5409f",
+                "reference": "ac70c1c1b9716ff4fdd4cf137d592cb864c5409f",
                 "shasum": ""
             },
             "require": {
                 "ext-gettext": "*",
                 "ext-mbstring": "*",
-                "php": ">=7.2",
+                "php": ">=8.0",
                 "twig/twig": ">=3.0.0"
             },
             "require-dev": {
                 "phpunit/phpunit": "^7 || ^8 || ^9 || ^10",
-                "squizlabs/php_codesniffer": "*"
+                "squizlabs/php_codesniffer": "*",
+                "vimeo/psalm": "5.26.1 || ^6.8"
             },
             "type": "library",
             "autoload": {
@@ -1286,9 +1287,9 @@
             ],
             "support": {
                 "issues": "https://github.com/JBlond/twig-trans/issues",
-                "source": "https://github.com/JBlond/twig-trans/tree/v1.1.6"
+                "source": "https://github.com/JBlond/twig-trans/tree/v1.2.0"
             },
-            "time": "2025-02-23T22:11:15+00:00"
+            "time": "2025-05-08T09:53:23+00:00"
         },
         {
             "name": "lcobucci/jwt",
@@ -5435,16 +5436,16 @@
         },
         {
             "name": "twig/twig",
-            "version": "v3.20.0",
+            "version": "v3.21.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "3468920399451a384bef53cf7996965f7cd40183"
+                "reference": "285123877d4dd97dd7c11842ac5fb7e86e60d81d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/3468920399451a384bef53cf7996965f7cd40183",
-                "reference": "3468920399451a384bef53cf7996965f7cd40183",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/285123877d4dd97dd7c11842ac5fb7e86e60d81d",
+                "reference": "285123877d4dd97dd7c11842ac5fb7e86e60d81d",
                 "shasum": ""
             },
             "require": {
@@ -5498,7 +5499,7 @@
             ],
             "support": {
                 "issues": "https://github.com/twigphp/Twig/issues",
-                "source": "https://github.com/twigphp/Twig/tree/v3.20.0"
+                "source": "https://github.com/twigphp/Twig/tree/v3.21.1"
             },
             "funding": [
                 {
@@ -5510,7 +5511,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-02-13T08:34:43+00:00"
+            "time": "2025-05-03T07:21:55+00:00"
         },
         {
             "name": "xemlock/htmlpurifier-html5",

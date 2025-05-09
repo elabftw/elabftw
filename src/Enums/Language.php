@@ -36,6 +36,7 @@ enum Language: string
     case Russian = 'ru_RU';
     case Slovenian = 'sl_SI';
     case Slovak = 'sk_SK';
+    case Uzbek = 'uz_UZ';
     case Chinese = 'zh_CN';
 
     public static function getAllHuman(): array
@@ -69,6 +70,7 @@ enum Language: string
             $this::Russian => 'ru',
             $this::Slovenian => 'sl',
             $this::Slovak => 'sk',
+            $this::Uzbek => 'uz',
             $this::Chinese => 'zh-cn',
         };
     }
@@ -96,6 +98,7 @@ enum Language: string
             self::Russian => 'Russian',
             self::Slovenian => 'Slovenian',
             self::Slovak => 'Slovak',
+            self::Uzbek => 'Uzbek',
             self::Chinese => 'Chinese Simplified',
         };
     }

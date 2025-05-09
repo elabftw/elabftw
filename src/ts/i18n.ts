@@ -25,6 +25,7 @@ import ptPT from './langs/pt_PT';
 import ruRU from './langs/ru_RU';
 import slSI from './langs/sl_SI';
 import skSK from './langs/sk_SK';
+import uzUZ from './langs/uz_UZ';
 import zhCN from './langs/zh_CN';
 
 i18next.init({
@@ -49,6 +50,7 @@ i18next.init({
     'ru_RU',
     'sl_SI',
     'sk_SK',
+    'uz_UZ',
     'zh_CN',
   ],
   fallbackLng: 'en_GB',
@@ -72,6 +74,7 @@ i18next.init({
     ru_RU: ruRU,
     sk_SK: skSK,
     sl_SI: slSI,
+    uz_UZ: uzUZ,
     zh_CN: zhCN,
   },
 });

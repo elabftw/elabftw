@@ -59,6 +59,7 @@ import '../js/tinymce-langs/pt_PT.js';
 import '../js/tinymce-langs/ru_RU.js';
 import '../js/tinymce-langs/sk_SK.js';
 import '../js/tinymce-langs/sl_SI.js';
+import '../js/tinymce-langs/uz_UZ.js';
 import '../js/tinymce-langs/zh_CN.js';
 import '../js/tinymce-plugins/mention/plugin.js';
 import { EntityType, Model } from './interfaces';

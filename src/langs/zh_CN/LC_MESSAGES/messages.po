@@ -11,14 +11,19 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Poedit 3.5\n"
+"X-Poedit-Mapping: php=gettext:PHP;html=twig\n"
+"X-Poedit-Basepath: ../../../..\n"
+"X-Poedit-SearchPath-0: src\n"
+"X-Poedit-SearchPath-1: web\n"
+"X-Poedit-SearchPathExcluded-0: web/assets\n"
 
-#: src/templates/search.html:255 src/templates/search.html:266
-#: src/templates/ucp.html:353
+#: src/templates/show.html:208 src/templates/show.html:216
+#: src/templates/ucp.html:347
 msgid "Yes"
 msgstr "是"
 
-#: src/templates/search.html:256 src/templates/search.html:267
-#: src/templates/ucp.html:354
+#: src/templates/show.html:209 src/templates/show.html:217
+#: src/templates/ucp.html:348
 msgid "No"
 msgstr "否"
 
@@ -27,162 +32,164 @@ msgid "A mandatory field is missing!"
 msgstr "缺少必填字段！"
 
 #: src/templates/login.html:128 src/templates/register.html:67
-#: src/templates/sysconfig.html:884
+#: src/templates/sysconfig.html:892
 msgid "Password"
 msgstr "密码"
 
-#: src/templates/editusers.html:115 src/templates/editusers.html:138
-#: src/templates/editusers.html:288 src/templates/editusers.html:343
-#: src/templates/editusers.html:353 src/templates/login.html:55
-#: src/templates/register.html:78 src/templates/sysconfig.html:975
-#: src/templates/ucp.html:368
+#: src/templates/editusers.html:120 src/templates/editusers.html:143
+#: src/templates/editusers.html:290 src/templates/editusers.html:353
+#: src/templates/editusers.html:363 src/templates/login.html:55
+#: src/templates/register.html:78 src/templates/sysconfig.html:983
+#: src/templates/ucp.html:362
 msgid "Firstname"
 msgstr "名"
 
-#: src/templates/editusers.html:116 src/templates/editusers.html:141
-#: src/templates/editusers.html:294 src/templates/editusers.html:344
-#: src/templates/editusers.html:354 src/templates/login.html:58
-#: src/templates/register.html:84 src/templates/sysconfig.html:981
-#: src/templates/ucp.html:374
+#: src/templates/editusers.html:121 src/templates/editusers.html:146
+#: src/templates/editusers.html:296 src/templates/editusers.html:354
+#: src/templates/editusers.html:364 src/templates/login.html:58
+#: src/templates/register.html:84 src/templates/sysconfig.html:989
+#: src/templates/ucp.html:368
 msgid "Lastname"
 msgstr "姓"
 
-#: src/templates/editusers.html:117 src/templates/editusers.html:144
-#: src/templates/editusers.html:302 src/templates/editusers.html:345
-#: src/templates/editusers.html:355 src/templates/field-builder-modal.html:47
+#: src/templates/editusers.html:122 src/templates/editusers.html:149
+#: src/templates/editusers.html:304 src/templates/editusers.html:355
+#: src/templates/editusers.html:365 src/templates/field-builder-modal.html:61
 #: src/templates/login.html:126 src/templates/register.html:55
-#: src/templates/sysconfig.html:45 src/templates/sysconfig.html:987
-#: src/templates/team.html:8 src/templates/team.html:191
-#: src/templates/ucp.html:329 src/templates/ucp.html:524
+#: src/templates/sysconfig.html:45 src/templates/sysconfig.html:995
+#: src/templates/team.html:6 src/templates/team.html:28
+#: src/templates/ucp.html:323 src/templates/ucp.html:507
 msgid "Email"
 msgstr "Email"
 
-#: web/experiments.php:28 src/templates/admin.html:54
-#: src/templates/dashboard.html:19 src/templates/export-modal.html:17
-#: src/templates/field-builder-modal.html:51 src/templates/head.html:60
-#: src/templates/profile.html:64 src/templates/profile.html:165
-#: src/templates/search.html:72 src/templates/sysconfig.html:67
-#: src/templates/sysconfig.html:231 src/templates/team.html:182
-#: src/templates/todolist-panel.html:38 src/templates/ucp.html:117
+#: src/controllers/ExperimentsController.php:43 src/templates/admin.html:55
+#: src/templates/dashboard.html:13 src/templates/export-modal.html:17
+#: src/templates/field-builder-modal.html:65 src/templates/head.html:63
+#: src/templates/profile.html:64 src/templates/profile.html:169
+#: src/templates/sysconfig.html:69 src/templates/sysconfig.html:239
+#: src/templates/team.html:19 src/templates/todolist-panel.html:38
+#: src/templates/ucp.html:107
 msgid "Experiment"
 msgid_plural "Experiments"
 msgstr[0] "实验"
 
-#: src/templates/ucp.html:118
-msgid "Database"
-msgstr "数据库"
-
-#: web/team.php:32 src/templates/admin.html:22 src/templates/admin.html:381
-#: src/templates/admin.html:791 src/templates/catstat-view.html:4
-#: src/templates/editusers.html:265 src/templates/head.html:66
-#: src/templates/permissions-edit-modal.html:52
-#: src/templates/permissions-edit-modal.html:65 src/templates/register.html:43
-#: src/templates/register.html:44 src/templates/scope-button.html:12
-#: src/templates/show-templates-select.html:18
-#: src/templates/todolist-panel.html:33 src/templates/ucp.html:297
-#: src/templates/ucp.html:485 src/templates/ucp.html:496
+#: src/Enums/Scope.php:34 web/team.php:40 src/templates/admin.html:22
+#: src/templates/admin.html:305 src/templates/admin.html:780
+#: src/templates/catstat-view.html:4 src/templates/edit-compound-modal.html:110
+#: src/templates/editusers.html:267 src/templates/head.html:73
+#: src/templates/permissions-edit-modal.html:53 src/templates/register.html:43
+#: src/templates/register.html:44 src/templates/scope-button.html:17
+#: src/templates/todolist-panel.html:33 src/templates/ucp.html:468
+#: src/templates/ucp.html:479
 msgid "Team"
 msgstr "团队"
 
 #: src/templates/changelog-block.html:6
-#: src/templates/field-builder-modal.html:45 src/templates/pdf.html:27
-#: src/templates/pdf.html:161 src/templates/show.html:321
-#: src/templates/ucp.html:95
+#: src/templates/field-builder-modal.html:59 src/templates/pdf.html:27
+#: src/templates/pdf.html:174 src/templates/show.html:457
+#: src/templates/ucp.html:85
 msgid "Date"
 msgstr "日期"
 
-#: src/templates/show-templates-select.html:19 src/templates/show.html:327
-#: src/templates/ucp.html:96 src/templates/view-edit-template.html:182
+#: src/templates/show.html:463 src/templates/ucp.html:86
 msgid "Title"
 msgstr "标题"
 
 #: src/templates/admin.html:26 src/templates/catstat-edit.html:25
 #: src/templates/catstat-view.html:20 src/templates/pdf.html:39
-#: src/templates/show.html:54 src/templates/show.html:341
+#: src/templates/show.html:302 src/templates/show.html:477
 msgid "Status"
 msgid_plural "Status"
 msgstr[0] "状态"
 
-#: src/templates/admin.html:329 src/templates/show-item-table.html:15
-#: src/templates/show-item.html:20 src/templates/show-templates-select.html:33
-#: src/templates/sysconfig.html:817 src/templates/ucp.html:136
-#: src/templates/ucp.html:149 src/templates/view-edit-toolbar.html:178
+#: src/classes/i18n4Js.php:46 src/templates/admin.html:284
+#: src/templates/show-item-table.html:15 src/templates/show-item.html:31
+#: src/templates/sysconfig.html:825 src/templates/ucp.html:131
+#: src/templates/ucp.html:144 src/templates/view-edit-toolbar.html:182
 msgid "Edit"
 msgstr "编辑"
 
-#: src/classes/i18n4Js.php:65 src/templates/admin.html:150
-#: src/templates/admin.html:163 src/templates/admin.html:197
-#: src/templates/admin.html:295 src/templates/admin.html:420
-#: src/templates/admin.html:475 src/templates/admin.html:522
-#: src/templates/admin.html:630 src/templates/edit.html:120
-#: src/templates/edit.html:184 src/templates/editusers.html:74
-#: src/templates/editusers.html:180 src/templates/field-builder-modal.html:26
-#: src/templates/field-builder-modal.html:144 src/templates/footer.html:70
+#: src/classes/i18n4Js.php:69 src/templates/admin.html:94
+#: src/templates/admin.html:106 src/templates/admin.html:140
+#: src/templates/admin.html:244 src/templates/admin.html:377
+#: src/templates/admin.html:438 src/templates/admin.html:485
+#: src/templates/admin.html:602 src/templates/edit-compound-modal.html:119
+#: src/templates/edit.html:151 src/templates/edit.html:214
+#: src/templates/editusers.html:79 src/templates/field-builder-modal.html:40
+#: src/templates/field-builder-modal.html:155 src/templates/footer.html:69
 #: src/templates/idp-modal.html:105 src/templates/json-editor.html:37
 #: src/templates/onboarding-email.html:37
 #: src/templates/onboarding-email.html:80
-#: src/templates/ownership-transfer-modal.html:24
-#: src/templates/permissions-edit-modal.html:117 src/templates/show.html:292
-#: src/templates/steps-links-edit.html:71 src/templates/sysconfig.html:276
-#: src/templates/sysconfig.html:290 src/templates/sysconfig.html:483
-#: src/templates/sysconfig.html:766 src/templates/ucp.html:360
-#: src/templates/ucp.html:387 src/templates/view-edit-template.html:220
-#: src/templates/view-edit-toolbar.html:31
+#: src/templates/permissions-edit-modal.html:117
+#: src/templates/reset-user-password-modal.html:28
+#: src/templates/scheduler.html:46 src/templates/show.html:440
+#: src/templates/steps-links-edit.html:73 src/templates/sysconfig.html:284
+#: src/templates/sysconfig.html:298 src/templates/sysconfig.html:491
+#: src/templates/sysconfig.html:774 src/templates/ucp.html:354
+#: src/templates/ucp.html:381 src/templates/view-edit-toolbar.html:29
 msgid "Save"
 msgstr "保存"
 
-#: src/classes/i18n4Js.php:66 web/app/controllers/SortableAjaxController.php:44
-#: web/app/controllers/SysconfigAjaxController.php:39
-#: web/app/controllers/UcpController.php:90
+#: src/classes/i18n4Js.php:70 web/app/controllers/SortableAjaxController.php:44
+#: web/app/controllers/SysconfigAjaxController.php:37
+#: web/app/controllers/UcpController.php:88
 msgid "Saved"
 msgstr "已保存"
 
-#: src/classes/i18n4Js.php:40 src/templates/archive-user-modal.html:33
-#: src/templates/duplicate-modal.html:22 src/templates/export-menu.html:15
-#: src/templates/export-menu.html:49 src/templates/export-menu.html:90
-#: src/templates/footer.html:69 src/templates/idp-modal.html:104
-#: src/templates/mfa.html:61 src/templates/onboarding-email-modal.html:19
-#: src/templates/sysconfig.html:22 src/templates/team.html:91
-#: src/templates/ucp.html:46 src/templates/view-edit-template.html:24
-#: src/templates/view-edit-toolbar.html:53
-#: src/templates/view-edit-toolbar.html:77
-#: src/templates/view-edit-toolbar.html:118
-#: src/templates/view-edit-toolbar.html:145 src/templates/view-edit.html:37
+#: src/classes/i18n4Js.php:41 src/templates/archive-user-modal.html:33
+#: src/templates/create-compound-modal.html:24
+#: src/templates/create-new-item-modal.html:53
+#: src/templates/create-resource-from-compound-modal.html:25
+#: src/templates/duplicate-modal.html:33
+#: src/templates/edit-compound-modal.html:118 src/templates/export-menu.html:15
+#: src/templates/export-menu.html:49 src/templates/export-menu.html:108
+#: src/templates/footer.html:68 src/templates/idp-modal.html:104
+#: src/templates/import-pubchem-modal.html:50 src/templates/mfa.html:62
+#: src/templates/onboarding-email-modal.html:19
+#: src/templates/reset-user-password-modal.html:27
+#: src/templates/rm-user-from-team-modal.html:17
+#: src/templates/sysconfig.html:22 src/templates/ucp.html:36
+#: src/templates/view-edit-toolbar.html:51
+#: src/templates/view-edit-toolbar.html:75
+#: src/templates/view-edit-toolbar.html:116
+#: src/templates/view-edit-toolbar.html:144 src/templates/view-edit.html:39
 msgid "Cancel"
 msgstr "取消"
 
-#: src/templates/ucp.html:133 src/templates/ucp.html:490
-#: src/templates/ucp.html:501
+#: src/templates/ucp.html:128 src/templates/ucp.html:473
+#: src/templates/ucp.html:484
 msgid "Action"
 msgstr "动作"
 
-#: src/templates/ucp.html:144
+#: src/templates/ucp.html:139
 msgid "Shortcut"
 msgstr "快捷键"
 
-#: src/templates/admin.html:213 src/templates/admin.html:266
-#: src/templates/admin.html:315 src/templates/admin.html:446
-#: src/templates/admin.html:493 src/templates/create-new.html:37
+#: src/templates/admin.html:157 src/templates/admin.html:215
+#: src/templates/admin.html:264 src/templates/admin.html:409
+#: src/templates/admin.html:456 src/templates/create-new-item-modal.html:54
+#: src/templates/create-new.html:4
 #: src/templates/create-statuslike-modal.html:26
-#: src/templates/editusers.html:309 src/templates/export-modal.html:100
-#: src/templates/register.html:102 src/templates/show-templates-select.html:9
-#: src/templates/sysconfig.html:23 src/templates/ucp.html:135
-#: src/templates/ucp.html:145
+#: src/templates/editusers.html:311 src/templates/export-modal.html:100
+#: src/templates/register.html:102 src/templates/sysconfig.html:23
+#: src/templates/ucp.html:130 src/templates/ucp.html:140
 msgid "Create"
 msgstr "创建"
 
-#: src/templates/ucp.html:138 src/templates/ucp.html:157
+#: src/templates/ucp.html:133 src/templates/ucp.html:152
 msgid "TODO list"
 msgstr "待办清单"
 
-#: src/templates/admin.html:280 src/templates/admin.html:386
-#: src/templates/admin.html:460 src/templates/admin.html:507
+#: src/templates/admin.html:229 src/templates/admin.html:310
+#: src/templates/admin.html:423 src/templates/admin.html:470
+#: src/templates/create-compound-modal.html:14
 #: src/templates/create-statuslike-modal.html:13
-#: src/templates/field-builder-modal.html:58
-#: src/templates/field-builder-modal.html:59 src/templates/sysconfig.html:18
-#: src/templates/sysconfig.html:216 src/templates/team.html:190
-#: src/templates/ucp.html:461 src/templates/ucp.html:486
-#: src/templates/ucp.html:497
+#: src/templates/edit-compound-modal.html:50
+#: src/templates/field-builder-modal.html:72
+#: src/templates/field-builder-modal.html:73 src/templates/sysconfig.html:18
+#: src/templates/sysconfig.html:224 src/templates/team.html:27
+#: src/templates/ucp.html:444 src/templates/ucp.html:469
+#: src/templates/ucp.html:480
 msgid "Name"
 msgstr "名称"
 
@@ -190,33 +197,29 @@ msgstr "名称"
 msgid "There are users waiting for validation of their account:"
 msgstr "尚未被验证的用户账户："
 
-#: src/templates/admin.html:24 src/templates/admin.html:803
-#: src/templates/permissions-edit-modal.html:80 src/templates/search.html:168
-#: src/templates/sysconfig.html:43
+#: src/templates/admin.html:24 src/templates/admin.html:792
+#: src/templates/permissions-edit-modal.html:80 src/templates/sysconfig.html:43
+#: src/templates/sysconfig.html:67
 #: src/templates/view-permissions-details.html:23
 msgid "Users"
 msgstr "用户"
-
-#: src/templates/admin.html:148 src/templates/admin.html:161
-msgid "This is the default text when someone creates an experiment."
-msgstr "这是创建新实验时的默认文本。"
 
 #: src/templates/change-pass.html:31
 msgid "Save new password"
 msgstr "保存新密码"
 
-#: src/Import/Eln.php:234 src/classes/i18n4Js.php:46
-#: src/models/AbstractStatus.php:55 src/models/Experiments.php:58
-#: src/models/Items.php:62 src/models/TeamGroups.php:49
-#: src/models/Templates.php:67 src/services/Filter.php:109
+#: src/Import/Eln.php:272 src/classes/i18n4Js.php:49
+#: src/models/AbstractStatus.php:57 src/models/Experiments.php:62
+#: src/models/Items.php:69 src/models/TeamGroups.php:48
+#: src/models/Templates.php:70 src/services/Filter.php:133
 msgid "Untitled"
 msgstr "未命名"
 
-#: src/models/AbstractEntity.php:562
+#: src/models/AbstractEntity.php:584
 msgid "You don't have the rights to lock/unlock this."
 msgstr "您无权锁定/解锁。"
 
-#: web/login.php:37 src/templates/login.html:106 src/templates/login.html:126
+#: web/login.php:111 src/templates/login.html:106 src/templates/login.html:126
 #: src/templates/login.html:168 src/templates/login.html:194
 #: src/templates/login.html:218
 msgid "Login"
@@ -246,34 +249,20 @@ msgstr "创建您的账户"
 msgid "Restore"
 msgstr "还原"
 
-#: src/templates/editusers.html:22 src/templates/editusers.html:332
-#: src/templates/head.html:70 src/templates/head.html:83
-#: src/templates/team.html:45 src/templates/team.html:61
-#: src/templates/ucp.html:139 src/templates/ucp.html:161
+#: src/templates/editusers.html:22 src/templates/editusers.html:342
+#: src/templates/import-pubchem-modal.html:23
+#: src/templates/import-pubchem-modal.html:35 src/templates/inventory.html:20
+#: src/templates/scheduler.html:65 src/templates/scheduler.html:81
+#: src/templates/show.html:40 src/templates/ucp.html:134
+#: src/templates/ucp.html:156
 msgid "Search"
 msgstr "搜索"
 
-#: src/templates/search.html:70
-msgid "Search in"
-msgstr "搜索范围"
-
-#: src/templates/search.html:102 src/templates/search.html:114
-msgid "And status is"
-msgstr "状态"
-
-#: src/templates/search.html:196
-msgid "And rating is"
-msgstr "评级"
-
-#: src/templates/search.html:199
+#: src/templates/show.html:224
 msgid "Unrated"
 msgstr "未评级"
 
-#: src/templates/search.html:276
-msgid "Launch search"
-msgstr "启动搜索"
-
-#: src/templates/show.html:198
+#: src/templates/show.html:343
 msgid "Sorry. I couldn't find anything :("
 msgstr "抱歉。我什么也没找到 :("
 
@@ -281,10 +270,10 @@ msgstr "抱歉。我什么也没找到 :("
 msgid "Server"
 msgstr "服务器"
 
-#: src/templates/show.html:227 src/templates/sysconfig.html:49
-#: src/templates/view-edit-toolbar.html:54
-#: src/templates/view-edit-toolbar.html:78
-#: src/templates/view-edit-toolbar.html:215
+#: src/templates/show.html:373 src/templates/sysconfig.html:49
+#: src/templates/view-edit-toolbar.html:52
+#: src/templates/view-edit-toolbar.html:76
+#: src/templates/view-edit-toolbar.html:225
 msgid "Timestamp"
 msgstr "时间戳"
 
@@ -292,63 +281,41 @@ msgstr "时间戳"
 msgid "Security"
 msgstr "安全"
 
-#: src/templates/admin.html:52 src/templates/sysconfig.html:67
-#: src/templates/sysconfig.html:229 src/templates/team.html:6
-#: src/templates/team.html:182 src/templates/team.html:185
+#: src/templates/admin.html:53 src/templates/sysconfig.html:69
+#: src/templates/sysconfig.html:237 src/templates/team.html:5
+#: src/templates/team.html:19 src/templates/team.html:22
 msgid "Members"
 msgstr "成员"
 
-#: src/templates/sysconfig.html:422
+#: src/templates/sysconfig.html:430
 msgid "Number of allowed login attempts:"
 msgstr "允许尝试登录次数："
 
-#: src/templates/sysconfig.html:425
+#: src/templates/sysconfig.html:433
 msgid "3 might be too few. See for yourself :)"
 msgstr "3 次可能有点少。看看您自己需要几次 :)"
 
-#: src/templates/sysconfig.html:346
+#: src/templates/sysconfig.html:354
 msgid "Default is 587."
 msgstr "默认端口为 587。"
 
-#: src/templates/sysconfig.html:356
+#: src/templates/sysconfig.html:364
 msgid "SMTP password"
 msgstr "SMTP 密码"
 
-#: src/templates/head.html:208
-msgid "The admin of a team can edit the status and the types of items available (%sAdmin Panel%s)."
-msgstr "团队管理员可以编辑可用的状态和项目类别（%s管理面板%s）。"
-
-#: src/templates/head.html:214
-msgid "Custom shortcuts are available (%sControl Panel%s)."
-msgstr "您可以自定义快捷键（%s控制台%s）。"
-
-#: src/templates/head.html:217
-msgid "You can duplicate experiments in one click."
-msgstr "您可以一键复制实验。"
-
-#: src/templates/head.html:220
-msgid "Click a tag to list all items with this tag."
-msgstr "点击标签以列出所有带此标签的项目。"
-
-#: src/templates/head.html:223
-msgid "Once timestamped an experiment cannot be unlocked or modified. Only comments can be added."
-msgstr "一旦添加了时间戳，实验将不能解锁或编辑。只能对其添加评论。"
-
-#: src/templates/ucp.html:14
+#: src/templates/ucp.html:5
 msgid "Account"
 msgstr "账户"
 
-#: src/templates/ucp.html:56
+#: src/templates/ucp.html:46
 msgid "Preferences"
 msgstr "偏好"
 
-#: src/templates/export-modal.html:21 src/templates/head.html:133
-#: src/templates/profile.html:174 src/templates/team.html:7
-#: src/templates/ucp.html:15
+#: src/templates/export-modal.html:21 src/templates/profile.html:178
 msgid "Templates"
 msgstr "模板"
 
-#: src/templates/ucp.html:335
+#: src/templates/ucp.html:329
 msgid "Modify your password"
 msgstr "修改您的密码"
 
@@ -356,25 +323,25 @@ msgstr "修改您的密码"
 msgid "New password"
 msgstr "新密码"
 
-#: src/templates/footer.html:59 src/templates/sysconfig.html:76
-#: src/templates/ucp.html:59
+#: src/templates/footer.html:58 src/templates/sysconfig.html:84
+#: src/templates/ucp.html:49
 msgid "Language"
 msgstr "语言"
 
-#: src/templates/pdf.html:142 src/templates/view.html:133
+#: src/templates/pdf.html:148 src/templates/view.html:140
 msgid "Unique eLabID:"
 msgstr "唯一 eLabID："
 
-#: src/templates/view.html:152
+#: src/templates/view.html:160
 msgid "Comments"
 msgstr "评论"
 
-#: src/classes/i18n4Js.php:41 src/templates/view.html:175
-#: src/templates/view.html:177
+#: src/classes/i18n4Js.php:42 src/templates/view.html:183
+#: src/templates/view.html:185
 msgid "Add a comment"
 msgstr "添加评论"
 
-#: src/classes/i18n4Js.php:51
+#: src/classes/i18n4Js.php:54
 msgid "Delete this?"
 msgstr "删除？"
 
@@ -382,63 +349,53 @@ msgstr "删除？"
 msgid "No statistics available yet."
 msgstr "目前还没有统计数据。"
 
-#: src/templates/show.html:101 src/templates/show.html:102
+#: src/templates/show.html:76 src/templates/show.html:77
 msgid "Filter status"
 msgstr "筛选状态"
 
-#: src/templates/admin.html:737 src/templates/edit-tags.html:3
-#: src/templates/pdf.html:30 src/templates/show.html:154
-#: src/templates/show.html:346 src/templates/view.html:71
+#: src/templates/edit-tags.html:3 src/templates/pdf.html:30
+#: src/templates/show.html:96 src/templates/show.html:105
+#: src/templates/show.html:106 src/templates/show.html:482
+#: src/templates/view.html:76
 msgid "Tags"
 msgstr "标签"
 
-#: src/templates/admin.html:625 src/templates/admin.html:628
-#: src/templates/edit-tags.html:11 src/templates/show.html:266
+#: src/templates/admin.html:596 src/templates/admin.html:600
+#: src/templates/edit-tags.html:11 src/templates/show.html:414
 msgid "Add a tag"
 msgstr "添加标签"
 
-#: src/templates/show.html:269 src/templates/steps-links-edit.html:124
-#: src/templates/steps-links-edit.html:156
+#: src/templates/show.html:417 src/templates/steps-links-edit.html:125
+#: src/templates/steps-links-edit.html:157
 msgid "Add a link"
 msgstr "添加链接"
 
-#: src/templates/steps-links-edit.html:156
-msgid "from the database"
-msgstr "从数据库添加"
-
-#: web/ucp.php:41 src/templates/head.html:138 src/templates/sysconfig.html:72
+#: web/ucp.php:110 src/templates/head.html:142 src/templates/scheduler.html:127
+#: src/templates/sysconfig.html:80
 msgid "Settings"
 msgstr "设置"
 
-#: src/templates/head.html:148
+#: src/templates/head.html:152
 msgid "Logout"
 msgstr "退出登录"
 
-#: src/templates/head.html:143
+#: src/templates/head.html:147
 msgid "Sysadmin panel"
 msgstr "系统管理面板"
 
 #. I‘m not sure about the previous paraphrase translation...
 #. Should the Sysadmin be translated into something like "server admin"?
-#: web/admin.php:42 src/templates/head.html:140
+#: web/admin.php:130 src/templates/head.html:144
 msgid "Admin panel"
 msgstr "团队管理面板"
 
-#: src/templates/footer.html:36
+#: src/templates/footer.html:35
 msgid "Powered by"
 msgstr "Powered by"
 
-#: src/templates/head.html:202
-msgid "You can have experiments templates (%sControl Panel%s)."
-msgstr "您可以拥有自己的实验模板（%s控制面板%s）。"
-
-#: src/templates/head.html:211
-msgid "If you press Ctrl Shift D in the editor, the date will appear under the cursor."
-msgstr "如果您在编辑器中按下 Ctrl+Shift+D，日期将会插入到光标处。"
-
-#: src/templates/admin.html:787 src/templates/permissions-edit-modal.html:46
+#: src/templates/admin.html:776 src/templates/permissions-edit-modal.html:46
 #: src/templates/profile.html:30 src/templates/sysconfig.html:42
-#: src/templates/sysconfig.html:67 src/templates/sysconfig.html:993
+#: src/templates/sysconfig.html:69 src/templates/sysconfig.html:1001
 #: src/templates/view-permissions-details.html:5
 msgid "Teams"
 msgstr "团队"
@@ -451,16 +408,17 @@ msgstr "外部时间戳服务 URL："
 msgid "Registration successful :)<br>Your account must now be validated by an admin.<br>You will receive an email when it is done."
 msgstr "注册成功 :)<br>您的帐户现在必须由管理员进行验证。<br>验证通过后，您将会收到一封邮件。"
 
-#: src/templates/pdf.html:98 src/templates/uploads.html:28
+#: src/templates/pdf.html:104 src/templates/profile.html:154
+#: src/templates/uploads.html:28
 msgid "Attached file"
 msgid_plural "Attached files"
 msgstr[0] "附件"
 
-#: src/classes/i18n4Js.php:43
+#: src/classes/i18n4Js.php:44
 msgid "Drop files here to upload"
 msgstr "拖动文件到此处进行上传"
 
-#: src/models/Revisions.php:83
+#: src/models/Revisions.php:79
 msgid "You cannot restore a revision of a locked item!"
 msgstr "您无法还原已锁定项目的修订！"
 
@@ -472,15 +430,16 @@ msgstr "这里应该输入用于 %sRFC 3161%s-兼容 的时间戳请求的URL。
 msgid "Installed version:"
 msgstr "已安装版本："
 
-#: src/templates/ucp.html:233
+#: src/templates/ucp.html:228
 msgid "Miscellaneous"
 msgstr "杂项"
 
-#: src/templates/footer.html:40
+#: src/templates/footer.html:39
 msgid "seconds"
 msgstr "秒"
 
-#: src/templates/show.html:46 src/templates/ucp.html:103
+#: src/templates/show.html:293 src/templates/show.html:295
+#: src/templates/ucp.html:93
 msgid "Sort"
 msgstr "排序"
 
@@ -488,94 +447,94 @@ msgstr "排序"
 msgid "Remember me"
 msgstr "记住我"
 
-#: web/app/controllers/ResetPasswordController.php:125
+#: web/app/controllers/ResetPasswordController.php:120
 msgid "New password inserted. You can now login."
 msgstr "已配置新密码。您现在可以登录。"
 
-#: src/templates/view-edit-template.html:107
-#: src/templates/view-edit-toolbar.html:251
+#: src/templates/view-edit-toolbar.html:260
 msgid "Lock/Unlock item"
 msgstr "锁定/解锁项目"
 
-#: src/templates/sysconfig.html:385
+#: src/templates/sysconfig.html:393
 msgid "Send a test email"
 msgstr "发送一封测试邮件"
 
 #: src/templates/onboarding-email-modal.html:20
-#: src/templates/sysconfig.html:325 src/templates/sysconfig.html:390
-#: src/templates/team.html:245
+#: src/templates/sysconfig.html:333 src/templates/sysconfig.html:398
+#: src/templates/team.html:76
 msgid "Send"
 msgstr "发送"
 
 #: src/templates/catstat-edit.html:4 src/templates/catstat-view.html:12
-#: src/templates/pdf.html:36 src/templates/show-templates-select.html:20
-#: src/templates/show.html:52 src/templates/show.html:335
-#: src/templates/sysconfig.html:1047 src/templates/ucp.html:94
+#: src/templates/pdf.html:36 src/templates/show.html:300
+#: src/templates/show.html:471 src/templates/sysconfig.html:1055
+#: src/templates/ucp.html:84
 msgid "Category"
 msgstr "类别"
 
-#: src/templates/show.html:351
+#: src/templates/show.html:487
 msgid "Rating"
 msgstr "等级"
 
-#: src/templates/ucp.html:107
+#: src/templates/ucp.html:97
 msgid "DESC"
 msgstr "降序"
 
-#: src/templates/ucp.html:106
+#: src/templates/ucp.html:96
 msgid "ASC"
 msgstr "升序"
 
-#: src/templates/admin.html:285 src/templates/admin.html:391
-#: src/templates/admin.html:465 src/templates/admin.html:512
-#: src/templates/create-statuslike-modal.html:19 src/templates/edit.html:160
+#: src/templates/admin.html:234 src/templates/admin.html:317
+#: src/templates/admin.html:428 src/templates/admin.html:475
+#: src/templates/create-statuslike-modal.html:19 src/templates/edit.html:190
 msgid "Color"
 msgstr "颜色"
 
-#: src/templates/admin.html:12 src/templates/admin.html:225
-#: src/templates/admin.html:232 src/templates/admin.html:299
-#: src/templates/admin.html:358 src/templates/admin.html:479
-#: src/templates/admin.html:526 src/templates/admin.html:648
-#: src/templates/admin.html:666 src/templates/admin.html:667
-#: src/templates/admin.html:773 src/templates/editusers.html:66
-#: src/templates/link-view-one.html:29 src/templates/profile.html:282
-#: src/templates/show.html:229 src/templates/steps-links-edit.html:16
-#: src/templates/sysconfig.html:783 src/templates/sysconfig.html:818
-#: src/templates/ucp.html:501 src/templates/upload-dropdown-menu.html:107
-#: src/templates/uploads.html:119 src/templates/view-edit-toolbar.html:322
-#: src/templates/view.html:163
+#: src/templates/admin.html:12 src/templates/admin.html:172
+#: src/templates/admin.html:179 src/templates/admin.html:248
+#: src/templates/admin.html:302 src/templates/admin.html:442
+#: src/templates/admin.html:489 src/templates/admin.html:619
+#: src/templates/admin.html:639 src/templates/admin.html:640
+#: src/templates/admin.html:762 src/templates/editusers.html:71
+#: src/templates/field-builder-modal.html:27
+#: src/templates/link-view-one.html:30 src/templates/profile.html:281
+#: src/templates/show.html:375 src/templates/steps-links-edit.html:18
+#: src/templates/sysconfig.html:791 src/templates/sysconfig.html:826
+#: src/templates/ucp.html:484 src/templates/upload-dropdown-menu.html:100
+#: src/templates/uploads.html:119 src/templates/view-edit-toolbar.html:305
+#: src/templates/view.html:171
 msgid "Delete"
 msgstr "删除"
 
-#: src/templates/sysconfig.html:304
+#: src/templates/sysconfig.html:312
 msgid "Send a Mass Email"
 msgstr "群发邮件"
 
-#: src/templates/sysconfig.html:319
+#: src/templates/sysconfig.html:327
 msgid "Email Subject"
 msgstr "邮件主题"
 
-#: src/templates/sysconfig.html:322
+#: src/templates/sysconfig.html:330
 msgid "Email Body"
 msgstr "邮件内容"
 
-#: src/classes/Tools.php:99
+#: src/classes/Tools.php:112
 msgid "This section is out of your reach!"
 msgstr "您没有权限访问该区域！"
 
-#: src/classes/Tools.php:101
+#: src/classes/Tools.php:114
 msgid "An error occurred!"
 msgstr "错误！"
 
-#: src/templates/uploads.html:200
+#: src/templates/uploads.html:194
 msgid "Stick"
 msgstr "棍"
 
-#: src/templates/uploads.html:182
+#: src/templates/uploads.html:176
 msgid "Style"
 msgstr "样式"
 
-#: src/classes/i18n4Js.php:64 src/exceptions/ResourceNotFoundException.php:25
+#: src/classes/i18n4Js.php:68 src/exceptions/ResourceNotFoundException.php:25
 msgid "Nothing to show with this id"
 msgstr "该 ID 没有任何记录"
 
@@ -583,42 +542,38 @@ msgstr "该 ID 没有任何记录"
 msgid "Go back"
 msgstr "返回"
 
-#: src/templates/dashboard.html:90 src/templates/team.html:5
-#: src/templates/ucp.html:119
+#: web/scheduler.php:56 src/templates/dashboard.html:84
+#: src/templates/head.html:69 src/templates/ucp.html:109
+#: src/templates/ucp.html:115
 msgid "Scheduler"
 msgstr "调度表"
 
-#: src/templates/team.html:114
+#: src/templates/scheduler.html:136
 msgid "No bookable items."
 msgstr "没有可预订的项目。"
 
-#: src/templates/ucp.html:72
+#: src/templates/ucp.html:62
 msgid "Display"
 msgstr "显示"
 
-#: src/templates/ucp.html:128
+#: src/templates/ucp.html:123
 msgid "Keyboard Shortcuts"
 msgstr "键盘快捷键"
-
-#: src/templates/team.html:219 src/templates/ucp.html:433
-msgid "Experiments Templates"
-msgstr "实验模板"
 
 #: src/templates/admin.html:12
 msgid "Validate"
 msgstr "批准"
 
 #. “Group”在这里不涉及每个用户的具体职能，“群组”或者“小组”可能是更好的翻译
-#: src/templates/admin.html:23 src/templates/profile.html:41
-#: src/templates/search.html:173 src/templates/view-permissions-details.html:14
+#: src/templates/profile.html:41 src/templates/view-permissions-details.html:14
 msgid "Groups"
 msgstr "小组"
 
-#: src/templates/admin.html:63
+#: src/templates/admin.html:64
 msgid "Configure your Team"
 msgstr "配置团队"
 
-#: src/templates/editusers.html:171
+#: src/templates/editusers.html:184
 msgid "Reset user password"
 msgstr "重置密码"
 
@@ -626,66 +581,46 @@ msgstr "重置密码"
 msgid "characters minimum"
 msgstr "最小字符数"
 
-#: src/templates/admin.html:138 src/templates/admin.html:154
-msgid "Common Experiment Template"
-msgstr "通用实验模板"
-
-#: src/templates/admin.html:206
-msgid "Create a group"
-msgstr "创建小组"
-
-#: src/templates/admin.html:809 src/templates/favtags-panel.html:24
+#: src/templates/admin.html:798 src/templates/compounds-view-edit.html:104
+#: src/templates/favtags-panel.html:24
 #: src/templates/permissions-edit-modal.html:93
-#: src/templates/steps-links-edit.html:126
-#: src/templates/steps-links-edit.html:158 src/templates/todolist-panel.html:8
+#: src/templates/steps-links-edit.html:127
+#: src/templates/steps-links-edit.html:159 src/templates/todolist-panel.html:8
 #: src/templates/todolist-panel.html:10 src/templates/todolist-panel.html:11
 msgid "Add"
 msgstr "添加"
 
-#: src/templates/admin.html:221
-msgid "Existing groups"
-msgstr "现有的小组"
-
-#: src/templates/admin.html:48 src/templates/sysconfig.html:64
+#: src/templates/admin.html:49 src/templates/sysconfig.html:65
 msgid "Usage Statistics"
 msgstr "使用情况统计"
 
-#: src/templates/sysconfig.html:184
+#: src/templates/sysconfig.html:192
 msgid "Operating System"
 msgstr "操作系统"
 
-#: src/templates/sysconfig.html:186
+#: src/templates/sysconfig.html:194
 msgid "PHP Version"
 msgstr "PHP 版本"
 
-#: src/templates/sysconfig.html:189
+#: src/templates/sysconfig.html:197
 msgid "Largest integer supported"
 msgstr "最大整数支持"
 
-#: src/templates/sysconfig.html:190
+#: src/templates/sysconfig.html:198
 msgid "PHP configuration directory"
 msgstr "PHP 配置文件夹"
 
-#: src/templates/sysconfig.html:553
+#: src/templates/sysconfig.html:561
 msgid "Timestamping Configuration"
 msgstr "时间戳配置"
 
-#: src/templates/sysconfig.html:398
+#: src/templates/sysconfig.html:406
 msgid "Security Settings"
 msgstr "安全设置"
 
-#: src/templates/sysconfig.html:333
+#: src/templates/sysconfig.html:341
 msgid "E-mail Settings"
 msgstr "E-mail 设置"
-
-#: src/templates/head.html:111 src/templates/head.html:188
-#: src/templates/search.html:33
-msgid "Help"
-msgstr "帮助"
-
-#: src/templates/head.html:205
-msgid "You can make links inside the text by typing # and an autocomplete menu will spawn with a list of Experiments/Items."
-msgstr "您可以通过输入 # 号在文本中插入链接，自动完成功能将会弹出一个实验/项目的列表。"
 
 #: src/templates/search.html:184
 msgid "And visibility is:"
@@ -695,11 +630,11 @@ msgstr "可见性:"
 msgid "Select visibility"
 msgstr "选择可见性"
 
-#: src/templates/footer.html:42
+#: src/templates/footer.html:41
 msgid "Memory usage:"
 msgstr "内存使用："
 
-#: src/templates/footer.html:43
+#: src/templates/footer.html:42
 msgid "bytes"
 msgstr "字节"
 
@@ -707,79 +642,77 @@ msgstr "字节"
 msgid "Login through your institution"
 msgstr "通过您的机构登录"
 
-#: src/templates/ucp.html:476
+#: src/templates/ucp.html:459
 msgid "Generate an API Key"
 msgstr "生成 API 密匙"
 
-#: src/templates/duplicate-modal.html:23
-#: src/templates/view-edit-template.html:85
-#: src/templates/view-edit-toolbar.html:187
+#: src/templates/duplicate-modal.html:34
+#: src/templates/view-edit-toolbar.html:190
 msgid "Duplicate"
 msgstr "复制"
 
-#: src/templates/show-item.html:79 src/templates/show.html:331
-#: src/templates/view.html:110
+#: src/templates/show-item.html:94 src/templates/show.html:467
+#: src/templates/view.html:116
 msgid "Next step"
 msgstr "下一步骤"
 
-#: src/templates/steps-links-edit.html:86
-#: src/templates/steps-links-edit.html:88
+#: src/templates/steps-links-edit.html:87
+#: src/templates/steps-links-edit.html:89
 msgid "Add a step"
 msgstr "添加步骤"
 
-#: src/templates/edit.html:151
+#: src/templates/edit.html:181
 msgid "Draw something"
 msgstr "绘制"
 
-#: src/templates/edit.html:183 src/templates/filter-input-snippet.html:6
-#: src/templates/json-editor.html:44 src/templates/sysconfig.html:279
-#: src/templates/sysconfig.html:293 src/templates/sysconfig.html:366
-#: src/templates/sysconfig.html:450 src/templates/sysconfig.html:456
-#: src/templates/sysconfig.html:484 src/templates/sysconfig.html:894
+#: src/templates/edit.html:213 src/templates/filter-input-snippet.html:6
+#: src/templates/json-editor.html:44 src/templates/sysconfig.html:287
+#: src/templates/sysconfig.html:301 src/templates/sysconfig.html:374
+#: src/templates/sysconfig.html:458 src/templates/sysconfig.html:464
+#: src/templates/sysconfig.html:492 src/templates/sysconfig.html:902
 #: src/templates/ts-config.html:37
 msgid "Clear"
 msgstr "清除"
 
-#: src/templates/sysconfig.html:366 src/templates/sysconfig.html:894
+#: src/templates/sysconfig.html:374 src/templates/sysconfig.html:902
 #: src/templates/ts-config.html:37
 msgid "A password is already set."
 msgstr "密码已存在。"
 
-#: src/templates/ucp.html:105
+#: src/templates/ucp.html:95
 msgid "Use default"
 msgstr "使用默认的"
 
-#: src/templates/pdf.html:122 src/templates/team.html:271
-#: src/templates/team.html:294 src/templates/ucp.html:97
-#: src/templates/uploads.html:65
+#: src/templates/pdf.html:128 src/templates/scheduler.html:41
+#: src/templates/team.html:102 src/templates/team.html:125
+#: src/templates/ucp.html:87 src/templates/uploads.html:65
 msgid "Comment"
 msgid_plural "Comments"
 msgstr[0] "评论"
 
-#: src/templates/ucp.html:167
+#: src/templates/ucp.html:162
 msgid "Only lowercase letters are allowed."
 msgstr "只允许小写字母。"
 
-#: src/templates/ucp.html:237
+#: src/templates/ucp.html:232
 msgid "Disable the rich text editor and write Markdown directly"
 msgstr "禁止使用富文本编辑器，直接用 Markdown 编写"
 
-#: src/templates/ucp.html:255
+#: src/templates/ucp.html:250
 msgid "Default visibility for new experiments"
 msgstr "新实验的设置默认可见性"
 
 #: src/Enums/Usergroup.php:26 src/templates/changelog-block.html:7
-#: src/templates/editusers.html:72 src/templates/field-builder-modal.html:53
-#: src/templates/pdf.html:162 src/templates/todolist-panel.html:28
+#: src/templates/editusers.html:77 src/templates/field-builder-modal.html:67
+#: src/templates/pdf.html:175 src/templates/todolist-panel.html:28
 msgid "User"
 msgstr "用户"
 
-#: src/templates/sysconfig.html:90
+#: src/templates/sysconfig.html:98
 msgid "If you are behind a firewall/proxy, enter the address here. Example: http://proxy.example.com:3128"
 msgstr "如果您在一个防火墙/代理服务器之后，请将地址输入在此。示例：http://proxy.example.com:3128"
 
-#: src/templates/admin.html:322 src/templates/view-edit-template.html:65
-#: src/templates/view-edit-toolbar.html:164
+#: src/templates/admin.html:271 src/templates/view-edit-toolbar.html:163
 msgid "Back to listing"
 msgstr "返回列表"
 
@@ -787,11 +720,11 @@ msgstr "返回列表"
 msgid "Manage templates"
 msgstr "管理模板"
 
-#: src/templates/show.html:207
+#: src/templates/show.html:352
 msgid "Welcome to eLabFTW. Use the 'Create new' button to get started!"
 msgstr "欢迎来到 eLabFTW。从 '创建' 按钮开始体验！"
 
-#: src/templates/show.html:25
+#: src/templates/show.html:263
 msgid "Select all"
 msgstr "全选"
 
@@ -799,19 +732,19 @@ msgstr "全选"
 msgid "Clear selection"
 msgstr "取消已选"
 
-#: src/templates/show.html:28
+#: src/templates/show.html:266
 msgid "Invert selection"
 msgstr "反选"
 
-#: src/templates/admin.html:766 src/templates/show.html:212
+#: src/templates/admin.html:754 src/templates/show.html:357
 msgid "With selected:"
 msgstr "选择："
 
-#: src/templates/show.html:243 src/templates/show.html:245
+#: src/templates/show.html:390 src/templates/show.html:392
 msgid "Change status"
 msgstr "更改状态"
 
-#: src/models/Uploads.php:294
+#: src/models/Uploads.php:311
 msgid "Please make sure to remove any reference to this file in the body!"
 msgstr "请确保已移除正文对此文件的所有引用！"
 
@@ -822,7 +755,7 @@ msgstr "请确保已移除正文对此文件的所有引用！"
 msgid "Insert in text at cursor position"
 msgstr "插入至文本光标处"
 
-#: src/templates/archive-user-modal.html:7 src/templates/editusers.html:231
+#: src/templates/archive-user-modal.html:7 src/templates/editusers.html:233
 msgid "Archive user"
 msgstr "归档用户"
 
@@ -834,104 +767,111 @@ msgstr "匿名登录"
 msgid "Import to your profile"
 msgstr "导入到您的个人配置"
 
-#: src/templates/ucp.html:182
+#: src/templates/ucp.html:177
 msgid "PDF configuration"
 msgstr "PDF 配置"
 
-#: src/templates/ucp.html:185
+#: src/templates/ucp.html:180
 msgid "Select paper format for PDF"
 msgstr "选择 PDF 的纸张规格"
 
-#: src/templates/upload-dropdown-menu.html:72 src/templates/uploads.html:108
+#: src/templates/upload-dropdown-menu.html:65 src/templates/uploads.html:108
 msgid "Upload a new version of this file"
 msgstr "上传新版本文件"
 
 #. Dose this "proteins" actually means the proteins?
-#: src/templates/uploads.html:188
+#: src/templates/uploads.html:182
 msgid "Cartoon (proteins only)"
 msgstr "卡通（仅限蛋白质）"
 
-#: src/templates/uploads.html:191
+#: src/templates/uploads.html:185
 msgid "Cross"
 msgstr "十字"
 
-#: src/templates/uploads.html:194
+#: src/templates/uploads.html:188
 msgid "Line"
 msgstr "线"
 
-#: src/templates/uploads.html:197
+#: src/templates/uploads.html:191
 msgid "Sphere"
 msgstr "球"
 
-#: src/templates/sysconfig.html:191
+#: src/templates/sysconfig.html:199
 msgid "Maximum file size for uploaded files"
 msgstr "上传文件的最大尺寸"
 
-#: src/templates/sysconfig.html:193
+#: src/templates/sysconfig.html:201
 msgid "Timezone"
 msgstr "时区"
 
-#: src/templates/json-editor.html:65 src/templates/profile.html:6
-#: src/templates/sysconfig.html:181 src/templates/sysconfig.html:498
+#: src/templates/json-editor.html:56 src/templates/profile.html:6
+#: src/templates/sysconfig.html:189 src/templates/sysconfig.html:506
 msgid "Information"
 msgstr "信息"
 
-#: src/templates/steps-links-edit.html:29
-#: src/templates/steps-links-view.html:12
+#: src/templates/steps-links-edit.html:31
+#: src/templates/steps-links-view.html:14
 msgid "completed"
 msgstr "已完成"
 
-#: src/templates/view.html:157
+#: src/templates/view.html:165
 msgid "commented"
 msgstr "已评论"
 
+#: src/templates/add-container-modal.html:7
+#: src/templates/add-container-modal.html:39
 #: src/templates/archive-user-modal.html:15
 #: src/templates/booking-params-modal.html:7
 #: src/templates/booking-params-modal.html:65
+#: src/templates/create-compound-modal.html:8
 #: src/templates/create-new-item-modal.html:14
+#: src/templates/create-resource-from-compound-modal.html:7
 #: src/templates/create-statuslike-modal.html:7
 #: src/templates/create-statuslike-modal.html:25
-#: src/templates/duplicate-modal.html:7 src/templates/editusers.html:55
-#: src/templates/editusers.html:102 src/templates/export-menu.html:7
+#: src/templates/duplicate-modal.html:7
+#: src/templates/edit-compound-modal.html:39 src/templates/editusers.html:60
+#: src/templates/editusers.html:107 src/templates/export-menu.html:7
 #: src/templates/export-menu.html:28 src/templates/export-menu.html:62
 #: src/templates/export-modal.html:7 src/templates/export-modal.html:99
 #: src/templates/favtags-panel.html:2 src/templates/field-builder-modal.html:11
-#: src/templates/field-builder-modal.html:143
-#: src/templates/field-builder-modal.html:156
-#: src/templates/field-builder-modal.html:190 src/templates/footer.html:54
-#: src/templates/footer.html:104 src/templates/footer.html:111
-#: src/templates/head.html:189 src/templates/head.html:228
-#: src/templates/idp-modal.html:7 src/templates/login.html:11
-#: src/templates/login.html:25 src/templates/onboarding-email-modal.html:6
+#: src/templates/field-builder-modal.html:154
+#: src/templates/field-builder-modal.html:168
+#: src/templates/field-builder-modal.html:202 src/templates/footer.html:53
+#: src/templates/footer.html:103 src/templates/footer.html:110
+#: src/templates/idp-modal.html:7 src/templates/import-pubchem-modal.html:7
+#: src/templates/login.html:11 src/templates/login.html:25
+#: src/templates/onboarding-email-modal.html:6
 #: src/templates/ownership-transfer-modal.html:7
-#: src/templates/ownership-transfer-modal.html:23
+#: src/templates/ownership-transfer-modal.html:21
 #: src/templates/permissions-edit-modal.html:30
 #: src/templates/permissions-edit-modal.html:116
 #: src/templates/procurement-params-modal.html:7
 #: src/templates/procurement-params-modal.html:47
 #: src/templates/register.html:14 src/templates/register.html:22
-#: src/templates/search-syntax-doc-modal.html:6
-#: src/templates/search-syntax-doc-modal.html:197
-#: src/templates/sysconfig.html:13 src/templates/team.html:23
-#: src/templates/team.html:97 src/templates/todolist-panel.html:2
-#: src/templates/ucp.html:31 src/templates/uploads.html:8
-#: src/templates/uploads.html:16 src/templates/view-edit-toolbar.html:7
-#: src/templates/view-edit-toolbar.html:30
-#: src/templates/view-edit-toolbar.html:43
-#: src/templates/view-edit-toolbar.html:66
-#: src/templates/view-edit-toolbar.html:90
-#: src/templates/view-edit-toolbar.html:135
+#: src/templates/reset-user-password-modal.html:10
+#: src/templates/rm-user-from-team-modal.html:7 src/templates/scheduler.html:11
+#: src/templates/scheduler.html:24 src/templates/scheduler.html:35
+#: src/templates/scheduler.html:118 src/templates/search-help-modal.html:6
+#: src/templates/search-help-modal.html:227 src/templates/sysconfig.html:13
+#: src/templates/todolist-panel.html:2 src/templates/ucp.html:21
+#: src/templates/uploads.html:8 src/templates/uploads.html:16
+#: src/templates/view-edit-toolbar.html:7
+#: src/templates/view-edit-toolbar.html:28
+#: src/templates/view-edit-toolbar.html:41
+#: src/templates/view-edit-toolbar.html:64
+#: src/templates/view-edit-toolbar.html:88
+#: src/templates/view-edit-toolbar.html:134
 msgid "Close"
 msgstr "关闭"
 
-#: src/templates/head.html:135 src/templates/todolist-panel.html:4
+#: src/templates/head.html:139 src/templates/todolist-panel.html:4
 msgid "Todolist"
 msgstr "待办清单"
 
-#: src/templates/head.html:136 src/templates/json-editor.html:51
-#: src/templates/link-view-one.html:26 src/templates/profile.html:8
-#: src/templates/profile.html:142 src/templates/profile.html:147
-#: src/templates/profile.html:233
+#: src/templates/head.html:140 src/templates/import-pubchem-modal.html:51
+#: src/templates/json-editor.html:51 src/templates/link-view-one.html:27
+#: src/templates/profile.html:8 src/templates/profile.html:140
+#: src/templates/profile.html:145 src/templates/profile.html:237
 msgid "Import"
 msgstr "导入"
 
@@ -939,7 +879,7 @@ msgstr "导入"
 msgid "Tag manager"
 msgstr "标签管理"
 
-#: src/templates/admin.html:635
+#: src/templates/admin.html:607
 msgid "Manage tags of the team"
 msgstr "管理团队标签"
 
@@ -947,7 +887,7 @@ msgstr "管理团队标签"
 msgid "Select status"
 msgstr "选择状态"
 
-#: src/templates/search.html:198
+#: src/templates/show.html:223
 msgid "Select number of stars"
 msgstr "选择评级"
 
@@ -966,23 +906,23 @@ msgstr "选择一个团队"
 msgid "Privacy policy"
 msgstr "隐私政策"
 
-#: src/templates/admin.html:59 src/templates/sysconfig.html:68
+#: src/templates/admin.html:60
 msgid "Generate report"
 msgstr "生成报告"
 
-#: src/templates/sysconfig.html:137
+#: src/templates/sysconfig.html:145
 msgid "This allows search engines to crawl the site. Visitors will be automatically logged in in the specified team."
 msgstr "该选项允许搜索引擎爬取本网站。游客将自动登录到指定的团队中。"
 
-#: src/templates/sysconfig.html:147
+#: src/templates/sysconfig.html:155
 msgid "This has no effect if open science mode is disabled."
 msgstr "如果禁用开放式科学模式，则无效。"
 
-#: src/templates/sysconfig.html:332
+#: src/templates/sysconfig.html:340
 msgid "Without a valid way to send emails, users won't be able to reset their password. It is recommended to create a specific %ssmtp2go.com%s account and add the information here."
 msgstr "如果没有有效的发送电子邮件的方法，用户将无法重设密码。建议创建一个特定的 %ssmtp2go.com%s 账户，然后填写信息到此处。"
 
-#: src/templates/sysconfig.html:474
+#: src/templates/sysconfig.html:482
 msgid "Note: the text below is a template and must be edited and saved."
 msgstr "注意：下面的文本是模板，必须进行编辑和保存。"
 
@@ -990,15 +930,15 @@ msgstr "注意：下面的文本是模板，必须进行编辑和保存。"
 msgid "Search users"
 msgstr "搜索用户"
 
-#: src/templates/editusers.html:113 src/templates/editusers.html:130
+#: src/templates/editusers.html:118 src/templates/editusers.html:135
 msgid "User ID"
 msgstr "用户 ID"
 
-#: src/templates/editusers.html:240
+#: src/templates/editusers.html:242
 msgid "Delete user"
 msgstr "删除用户"
 
-#: src/templates/editusers.html:250
+#: src/templates/editusers.html:252
 msgid "No user found!"
 msgstr "找不到用户！"
 
@@ -1006,72 +946,72 @@ msgstr "找不到用户！"
 msgid "Select an identity provider"
 msgstr "选择身份提供者"
 
-#: src/classes/i18n4Js.php:47
+#: src/classes/i18n4Js.php:50
 msgid "The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?"
 msgstr "所选项目和所有相关数据将被永久删除。这不能被撤销。您确定吗？"
 
-#: src/classes/i18n4Js.php:70
+#: src/classes/i18n4Js.php:74
 msgid "Delete this tag?"
 msgstr "删除这个标签？"
 
-#: src/templates/revisions.html:33 src/templates/show-item.html:69
+#: src/templates/revisions.html:33 src/templates/show-item.html:84
 msgid "by"
 msgstr "由"
 
-#: src/templates/view-edit-toolbar.html:192
+#: src/templates/view-edit-toolbar.html:197
 msgid "Book item"
 msgstr "预订项目"
 
-#: src/templates/ucp.html:315
+#: src/templates/ucp.html:309
 msgid "Enter your password to edit your profile."
 msgstr "输入密码以编辑您的个人资料。"
 
-#: src/templates/ucp.html:16
+#: src/templates/ucp.html:6
 msgid "API keys"
 msgstr "API 密钥"
 
-#: src/templates/ucp.html:481
+#: src/templates/ucp.html:464
 msgid "Existing keys"
 msgstr "现有密钥"
 
-#: src/templates/admin.html:98 src/templates/ucp.html:467
-#: src/templates/ucp.html:487 src/templates/ucp.html:498
+#: src/templates/ucp.html:450 src/templates/ucp.html:470
+#: src/templates/ucp.html:481
 msgid "Permissions"
 msgstr "权限"
 
-#: src/templates/sysconfig.html:218 src/templates/ucp.html:488
-#: src/templates/ucp.html:499 src/templates/uploads.html:66
+#: src/templates/sysconfig.html:226 src/templates/ucp.html:471
+#: src/templates/ucp.html:482 src/templates/uploads.html:66
 msgid "Creation date"
 msgstr "创建日期"
 
-#: src/templates/ucp.html:470 src/templates/ucp.html:498
+#: src/templates/ucp.html:453 src/templates/ucp.html:481
 msgid "Read/Write"
 msgstr "读/写"
 
-#: src/templates/ucp.html:469 src/templates/ucp.html:498
+#: src/templates/ucp.html:452 src/templates/ucp.html:481
 msgid "Read Only"
 msgstr "只读"
 
-#: src/templates/ucp.html:445
+#: src/templates/ucp.html:428
 msgid "Create new key"
 msgstr "新建密钥"
 
-#: src/templates/team.html:181
+#: src/templates/team.html:18
 msgid "You belong to the %s team."
 msgstr "您属于 %s 团队。"
 
 #: src/templates/onboarding-email.html:13
-#: src/templates/onboarding-email.html:56 src/templates/team.html:239
+#: src/templates/onboarding-email.html:56 src/templates/team.html:70
 msgid "Subject"
 msgstr "主题"
 
 #: src/templates/onboarding-email.html:25
-#: src/templates/onboarding-email.html:68 src/templates/sysconfig.html:1049
-#: src/templates/team.html:241
+#: src/templates/onboarding-email.html:68 src/templates/sysconfig.html:1057
+#: src/templates/team.html:72
 msgid "Content"
 msgstr "内容"
 
-#: web/app/controllers/TeamController.php:65
+#: web/app/controllers/TeamController.php:63
 msgid "Email sent to %d users"
 msgstr "电子邮件已发送给 %d 位用户"
 
@@ -1079,7 +1019,7 @@ msgstr "电子邮件已发送给 %d 位用户"
 msgid "Registration is disabled."
 msgstr "注册被禁用。"
 
-#: web/app/controllers/ResetPasswordController.php:64
+#: web/app/controllers/ResetPasswordController.php:59
 msgid "Email provided is invalid."
 msgstr "提供的电子邮件地址无效。"
 
@@ -1087,16 +1027,16 @@ msgstr "提供的电子邮件地址无效。"
 msgid "This item is locked. You cannot edit it!"
 msgstr "该项目被锁定。您无法编辑！"
 
-#: src/classes/ContentParams.php:37 src/classes/StepParams.php:45
-#: src/classes/TagParam.php:33
+#: src/Params/ContentParams.php:44 src/Params/StepParams.php:39
+#: src/Params/TagParam.php:35
 msgid "Input is too short! (minimum: %d)"
 msgstr "输入太短！（最低：%d）"
 
-#: src/models/AbstractEntity.php:579
+#: src/models/AbstractEntity.php:601
 msgid "This experiment was locked by %s. You don't have the rights to unlock this."
 msgstr "此实验已被 %s 锁定。您无权解锁。"
 
-#: src/templates/archive-user-modal.html:4 src/templates/editusers.html:227
+#: src/templates/archive-user-modal.html:4 src/templates/editusers.html:229
 msgid "Unarchive user"
 msgstr "解档用户"
 
@@ -1108,41 +1048,41 @@ msgstr "注释此图像"
 msgid "Save as image"
 msgstr "另存为图片"
 
-#: src/templates/view-edit-toolbar.html:201
-#: src/templates/view-edit-toolbar.html:204
+#: src/templates/view-edit-toolbar.html:211
+#: src/templates/view-edit-toolbar.html:214
 msgid "Share"
 msgstr "分享"
 
-#: src/templates/admin.html:67 src/templates/sysconfig.html:270
+#: src/templates/admin.html:68 src/templates/sysconfig.html:278
 msgid "Announcement"
 msgstr "公告"
 
-#: src/templates/admin.html:70 src/templates/sysconfig.html:272
+#: src/templates/admin.html:71 src/templates/sysconfig.html:280
 msgid "The following text will be displayed to all users on all pages while it's active."
 msgstr "启用后，以下文本将在所有页面上显示给所有用户。"
 
-#: src/templates/pdf.html:86 src/templates/steps-links-edit.html:4
-#: src/templates/steps-links-view.html:4
+#: src/templates/pdf.html:92 src/templates/steps-links-edit.html:6
+#: src/templates/steps-links-view.html:6
 msgid "Steps"
 msgstr "步骤"
 
-#: src/templates/show.html:138 src/templates/show.html:139
+#: src/templates/show.html:319 src/templates/show.html:321
 msgid "Results per page"
 msgstr "每页项目数"
 
-#: src/templates/edit.html:167
+#: src/templates/edit.html:197
 msgid "Stroke width"
 msgstr "行程宽度"
 
-#: src/templates/edit.html:174
+#: src/templates/edit.html:204
 msgid "Eraser"
 msgstr "橡皮"
 
-#: src/classes/i18n4Js.php:68
+#: src/classes/i18n4Js.php:72
 msgid "Delete this step?"
 msgstr "删除此步骤？"
 
-#: src/classes/i18n4Js.php:52
+#: src/classes/i18n4Js.php:55
 msgid "Delete this link?"
 msgstr "删除此链接？"
 
@@ -1150,48 +1090,48 @@ msgstr "删除此链接？"
 msgid "JSON Editor"
 msgstr "JSON 编辑器"
 
-#: src/templates/view-edit-template.html:80
+#: src/templates/show-item.html:14 src/templates/view-edit-toolbar.html:168
 msgid "Create experiment from template"
 msgstr "从模版创建实验"
 
-#: src/templates/admin.html:242 src/templates/admin.html:807
+#: src/templates/admin.html:189 src/templates/admin.html:796
 #: src/templates/permissions-edit-modal.html:91
 msgid "Add user"
 msgstr "添加用户"
 
-#: src/templates/show.html:24
+#: src/templates/storage-list.html:4
 msgid "Expand all"
 msgstr "展开"
 
-#: src/templates/head.html:96 src/templates/search.html:279
+#: src/templates/head.html:102
 msgid "Clear all"
 msgstr "清除所有"
 
-#: src/templates/sysconfig.html:414
+#: src/templates/sysconfig.html:422
 msgid "Enforce a domain name for emails"
 msgstr "强制使用的 Email 域名"
 
-#: src/templates/sysconfig.html:417
+#: src/templates/sysconfig.html:425
 msgid "Only email addresses at this domain will be allowed to register an account."
 msgstr "仅允许此域名中的 Email 地址注册账户。"
 
-#: src/templates/editusers.html:258
+#: src/templates/editusers.html:260
 msgid "Add account"
 msgstr "新建账户"
 
-#: src/templates/team.html:22
+#: src/templates/scheduler.html:34
 msgid "Edit event"
 msgstr "编辑事件"
 
-#: src/templates/team.html:42 src/templates/team.html:58
+#: src/templates/scheduler.html:62 src/templates/scheduler.html:78
 msgid "Unbind"
 msgstr "解除绑定"
 
-#: src/templates/team.html:40
+#: src/templates/scheduler.html:60
 msgid "Bind an experiment"
 msgstr "绑定一个实验"
 
-#: src/templates/team.html:49 src/templates/team.html:65
+#: src/templates/scheduler.html:69 src/templates/scheduler.html:85
 msgid "Attach"
 msgstr "绑定"
 
@@ -1199,7 +1139,7 @@ msgstr "绑定"
 msgid "Load into JSON Editor"
 msgstr "使用 JSON 编辑器加载"
 
-#: src/templates/ucp.html:268
+#: src/templates/ucp.html:263
 msgid "Default write permission for new experiments"
 msgstr "新实验的默认写入权限"
 
@@ -1211,14 +1151,13 @@ msgstr "只有 @%s 的电子邮件才有权注册"
 msgid "Collapse all"
 msgstr "折叠所有"
 
-#: src/services/Check.php:46 src/services/PasswordValidator.php:32
+#: src/services/Check.php:47 src/services/PasswordValidator.php:32
 msgid "Password must contain at least %d characters."
 msgstr "密码必须至少包含 %d 个字符。"
 
-#: src/templates/editusers.html:186 src/templates/steps-links-edit.html:33
-#: src/templates/ucp.html:393 src/templates/upload-dropdown-menu.html:3
-#: src/templates/view-edit-template.html:141
-#: src/templates/view-edit-toolbar.html:291
+#: src/templates/editusers.html:177 src/templates/steps-links-edit.html:35
+#: src/templates/ucp.html:387 src/templates/upload-dropdown-menu.html:3
+#: src/templates/view-edit-toolbar.html:278
 msgid "More options"
 msgstr "更多选项"
 
@@ -1226,7 +1165,7 @@ msgstr "更多选项"
 msgid "Manage Permissions"
 msgstr "管理权限"
 
-#: src/templates/editusers.html:114 src/templates/editusers.html:131
+#: src/templates/editusers.html:119 src/templates/editusers.html:136
 msgid "Team(s)"
 msgstr "团队"
 
@@ -1255,60 +1194,60 @@ msgstr "还没有账户？%s立即注册%s！"
 msgid "Your account is linked to several teams. Select in which team you want to log in"
 msgstr "您的账户已关联到多个团队。 选择您要登录的团队"
 
-#: src/Auth/Local.php:51 src/Auth/Local.php:138
-#: src/controllers/LoginController.php:224
+#: src/Auth/Local.php:52 src/Auth/Local.php:140
+#: src/controllers/LoginController.php:231
 #: src/exceptions/InvalidCredentialsException.php:24
 msgid "Invalid email/password combination."
 msgstr "无效的电子邮件/密码组合。"
 
-#: src/templates/editusers.html:90
+#: src/templates/editusers.html:95
 msgid "Add team"
 msgstr "添加团队"
 
-#: src/exceptions/InvalidCsrfTokenException.php:24 web/login.php:108
+#: src/exceptions/InvalidCsrfTokenException.php:24 web/login.php:105
 msgid "Your session expired."
 msgstr "您的会话已过期。"
 
-#: src/templates/footer.html:7
+#: src/templates/footer.html:6
 msgid "Code repository on GitHub"
 msgstr "GitHub上 的代码存储库"
 
-#: src/templates/footer.html:11
+#: src/templates/footer.html:10
 msgid "Join the discussion on Gitter"
 msgstr "加入 Gitter 上的讨论"
 
-#: src/templates/sysconfig.html:132
+#: src/templates/sysconfig.html:140
 msgid "Registration and authentication configuration"
 msgstr "注册和认证配置"
 
-#: web/make.php:28 src/templates/admin.html:27 src/templates/admin.html:565
-#: src/templates/admin.html:596 src/templates/admin.html:617
+#: src/templates/admin.html:27 src/templates/admin.html:528
+#: src/templates/admin.html:559 src/templates/admin.html:580
 #: src/templates/export-menu.html:16 src/templates/export-menu.html:50
-#: src/templates/export-menu.html:91 src/templates/export-menu.html:98
-#: src/templates/head.html:137 src/templates/profile.html:9
-#: src/templates/profile.html:243 src/templates/show.html:216
-#: src/templates/show.html:217
+#: src/templates/export-menu.html:109 src/templates/export-menu.html:116
+#: src/templates/head.html:141 src/templates/inventory.html:7
+#: src/templates/profile.html:9 src/templates/profile.html:247
+#: src/templates/show.html:361 src/templates/show.html:362
 msgid "Export"
 msgstr "导出"
 
-#: web/app/controllers/ResetPasswordController.php:88 web/change-pass.php:29
+#: web/app/controllers/ResetPasswordController.php:83 web/change-pass.php:52
 #: src/templates/login.html:16
 msgid "Reset password"
 msgstr "重设密码"
 
-#: web/register.php:25
+#: web/register.php:56
 msgid "Register"
 msgstr "注册"
 
-#: web/register.php:37
+#: web/register.php:36
 msgid "Please %slogout%s before you register another account."
 msgstr "注册另一个账户之前，请先 %s退出登录%s。"
 
-#: web/register.php:45
+#: web/register.php:44
 msgid "No local account creation is allowed!"
 msgstr "不允许创建本地账户！"
 
-#: web/profile.php:33 src/templates/profile.html:20
+#: web/profile.php:66 src/templates/profile.html:20
 msgid "Profile"
 msgstr "个人资料"
 
@@ -1316,11 +1255,11 @@ msgstr "个人资料"
 msgid "eLabFTW Configuration"
 msgstr "eLabFTW 配置"
 
-#: web/revisions.php:29
+#: web/revisions.php:49
 msgid "Revisions"
 msgstr "修订"
 
-#: src/templates/ucp.html:93
+#: src/templates/ucp.html:83
 msgid "Last modified"
 msgstr "最后修改"
 
@@ -1328,8 +1267,7 @@ msgstr "最后修改"
 msgid "I agree with the %sPrivacy Policy%s"
 msgstr "我同意 %s隐私政策%s"
 
-#: src/templates/view-edit-template.html:148
-#: src/templates/view-edit-toolbar.html:308
+#: src/templates/admin.html:373 src/templates/edit.html:146
 msgid "Switch editor"
 msgstr "切换编辑器"
 
@@ -1337,12 +1275,12 @@ msgstr "切换编辑器"
 msgid "Related experiments"
 msgstr "关联的实验"
 
-#: src/templates/view-edit-toolbar.html:172
+#: src/templates/view-edit-toolbar.html:177
 msgid "View mode"
 msgstr "阅读模式"
 
-#: src/templates/link-view-one.html:20 src/templates/revisions.html:30
-#: src/templates/show-item-table.html:28 src/templates/show-item.html:119
+#: src/templates/link-view-one.html:21 src/templates/revisions.html:30
+#: src/templates/show-item-table.html:28 src/templates/show-item.html:130
 msgid "Toggle content"
 msgstr "切换内容"
 
@@ -1350,55 +1288,55 @@ msgstr "切换内容"
 msgid "External auth"
 msgstr "外部认证"
 
-#: src/templates/sysconfig.html:99
+#: src/templates/sysconfig.html:107
 msgid "Setting this to a low value will help keeping the database size small. Setting this to 0 will allow infinite number of revisions stored."
 msgstr "调低数值有助于减小数据库大小。设置为 0 将允许保存无限数量的修订。"
 
-#: src/templates/sysconfig.html:963
+#: src/templates/sysconfig.html:971
 msgid "External authentication mapping"
 msgstr "外部认证映射"
 
+#: src/templates/compounds-view-edit.html:2
 #: src/templates/related-snippet.html:6 src/templates/related-snippet.html:23
-#: src/templates/search.html:33 src/templates/steps-links-view.html:4
-#: src/templates/steps-links-view.html:30
-#: src/templates/steps-links-view.html:45 src/templates/templates-view.html:22
-#: src/templates/todolist-panel.html:4 src/templates/todolist-panel.html:38
-#: src/templates/todolist-panel.html:45 src/templates/uploads.html:27
-#: src/templates/view.html:140 src/templates/view.html:152
+#: src/templates/reset-user-password-modal.html:18
+#: src/templates/steps-links-view.html:6 src/templates/steps-links-view.html:32
+#: src/templates/steps-links-view.html:47
+#: src/templates/storage-view-edit.html:4 src/templates/todolist-panel.html:4
+#: src/templates/todolist-panel.html:38 src/templates/todolist-panel.html:45
+#: src/templates/uploads.html:27 src/templates/view.html:148
+#: src/templates/view.html:160
 msgid "Toggle visibility"
 msgstr "切换可见性"
 
-#: src/templates/show-item.html:112 src/templates/view-edit-template.html:141
-#: src/templates/view-edit-toolbar.html:245
-#: src/templates/view-edit-toolbar.html:291
+#: src/templates/toggle-pin.html:6 src/templates/view-edit-toolbar.html:278
 msgid "Toggle pin"
 msgstr "切换固定状态"
 
-#: src/templates/view.html:131
+#: src/templates/view.html:137
 msgid "Last modified on %s"
 msgstr "最后修改于 %s"
 
-#: src/classes/i18n4Js.php:74
+#: src/classes/i18n4Js.php:80
 msgid "File comment"
-msgstr "档案评论"
+msgstr "文件评论"
 
-#: src/models/notifications/SelfNeedValidation.php:31
+#: src/models/notifications/SelfNeedValidation.php:33
 msgid "Hi. Your account has been created but it is currently inactive (you cannot log in). The team admin has been notified and will validate your account. You will receive an email when it is done."
 msgstr "Hi. 您的账户已被创建但尚未激活（您目前仍无法登录）。团队管理员已收到通知并会验证您的账户。当验证完成您会收到一封邮件。"
 
-#: src/templates/editusers.html:260
+#: src/templates/editusers.html:262
 msgid "Note: new user will need to use the \"Forgot password\" button on the login page to set a password."
-msgstr "注意：新用户将需要使用登录页面上的 “忘记密码” 按钮来设置密码。"
+msgstr "注意：新用户将需要使用登录页面上的“忘记密码”按钮来设置密码。"
 
-#: src/templates/sysconfig.html:418
+#: src/templates/sysconfig.html:426
 msgid "You can add several domains by separating them with a comma."
 msgstr "您可以使用逗号分隔多个域名。"
 
-#: src/templates/sysconfig.html:968
+#: src/templates/sysconfig.html:976
 msgid "Remote user"
 msgstr "远程用户"
 
-#: src/templates/sysconfig.html:999
+#: src/templates/sysconfig.html:1007
 msgid "Logout URL"
 msgstr "登出 URL"
 
@@ -1438,7 +1376,7 @@ msgstr "强制执行实验的写入权限为"
 msgid "Enforce the write permission for all experiments of users in this team."
 msgstr "对该团队中所有用户的实验强制执行写入权限。"
 
-#: src/templates/editusers.html:97 src/templates/show.html:173
+#: src/templates/editusers.html:102
 msgid "Go"
 msgstr "开始"
 
@@ -1450,14 +1388,14 @@ msgstr "未完成的步骤"
 msgid "Read permissions enforced by admin. Aborting change."
 msgstr "读取权限由管理员强制执行。中止更改。"
 
-#: src/classes/i18n4Js.php:60 src/templates/duplicate-modal.html:11
-#: src/templates/footer.html:58 src/templates/head.html:193
-#: src/templates/idp-modal.html:12 src/templates/login.html:15
-#: src/templates/search-syntax-doc-modal.html:10
-#: src/templates/sysconfig.html:17 src/templates/team.html:27
-#: src/templates/ucp.html:35 src/templates/view-edit-toolbar.html:47
-#: src/templates/view-edit-toolbar.html:70
-#: src/templates/view-edit-toolbar.html:94
+#: src/classes/i18n4Js.php:64 src/templates/duplicate-modal.html:11
+#: src/templates/footer.html:57 src/templates/idp-modal.html:12
+#: src/templates/login.html:15 src/templates/reset-user-password-modal.html:14
+#: src/templates/scheduler.html:39 src/templates/search-help-modal.html:10
+#: src/templates/sysconfig.html:17 src/templates/ucp.html:25
+#: src/templates/view-edit-toolbar.html:45
+#: src/templates/view-edit-toolbar.html:68
+#: src/templates/view-edit-toolbar.html:92
 msgid "Please wait…"
 msgstr "请稍候…"
 
@@ -1465,20 +1403,19 @@ msgstr "请稍候…"
 msgid "Toggle create new menu"
 msgstr "切换新建菜单"
 
-#: src/templates/create-new.html:33 src/templates/json-editor.html:20
-#: src/templates/show-templates-select.html:7
+#: src/templates/json-editor.html:20 src/templates/profile.html:151
 msgid "Import from file"
 msgstr "从文件导入"
 
-#: src/classes/i18n4Js.php:50 src/templates/uploads.html:64
+#: src/classes/i18n4Js.php:53 src/templates/uploads.html:64
 msgid "Filename"
 msgstr "文件名"
 
-#: src/classes/i18n4Js.php:63
+#: src/classes/i18n4Js.php:67
 msgid "Enter name of the file"
 msgstr "输入文件名"
 
-#: src/templates/view-edit-toolbar.html:332
+#: src/templates/view-edit-toolbar.html:315
 msgid "Owned by %s"
 msgstr "所有者 %s"
 
@@ -1486,31 +1423,31 @@ msgstr "所有者 %s"
 msgid "Deduplicate"
 msgstr "去重"
 
-#: web/login.php:58 src/templates/mfa.html:7 src/templates/ucp.html:348
+#: web/login.php:57 src/templates/mfa.html:7 src/templates/ucp.html:342
 msgid "Two Factor Authentication"
 msgstr "双重验证"
 
-#: src/templates/mfa.html:63
+#: src/templates/mfa.html:59
 msgid "Verify"
 msgstr "验证"
 
-#: src/templates/ucp.html:84
+#: src/templates/ucp.html:74
 msgid "Item list (default)"
 msgstr "项目列表（默认）"
 
-#: src/templates/ucp.html:85
+#: src/templates/ucp.html:75
 msgid "Tabular"
 msgstr "表格"
 
-#: src/templates/ucp.html:351
+#: src/templates/ucp.html:345
 msgid "Use two-factor authentication?"
 msgstr "启用双重验证?"
 
-#: src/templates/sysconfig.html:844
+#: src/templates/sysconfig.html:852
 msgid "Toggle LDAP login"
 msgstr "切换 LDAP 登录"
 
-#: src/templates/sysconfig.html:855
+#: src/templates/sysconfig.html:863
 msgid "LDAP Host"
 msgstr "LDAP 主机"
 
@@ -1518,19 +1455,19 @@ msgstr "LDAP 主机"
 msgid "Domain name or IP address"
 msgstr "域名或 IP 地址"
 
-#: src/templates/sysconfig.html:862
+#: src/templates/sysconfig.html:870
 msgid "LDAP Port"
 msgstr "LDAP 端口"
 
-#: src/templates/sysconfig.html:865
+#: src/templates/sysconfig.html:873
 msgid "Default: 389 LDAPS: 636"
 msgstr "默认值: 389 LDAPS: 636"
 
-#: src/templates/sysconfig.html:877
+#: src/templates/sysconfig.html:885
 msgid "Username"
 msgstr "用户名"
 
-#: src/templates/sysconfig.html:868
+#: src/templates/sysconfig.html:876
 msgid "Use TLS"
 msgstr "使用 TLS"
 
@@ -1538,7 +1475,8 @@ msgstr "使用 TLS"
 msgid "You are already authenticated"
 msgstr "您已通过验证"
 
-#: src/templates/login.html:88 src/templates/login.html:116
+#: src/templates/create-compound-modal.html:25 src/templates/login.html:88
+#: src/templates/login.html:116
 msgid "Continue"
 msgstr "继续"
 
@@ -1546,22 +1484,22 @@ msgstr "继续"
 msgid "Local"
 msgstr "本地"
 
-#: src/templates/admin.html:770 src/templates/show.html:226
+#: src/templates/admin.html:758 src/templates/show.html:371
 msgid "Lock"
 msgstr "锁定"
 
-#: src/templates/editusers.html:123 src/templates/editusers.html:168
-#: src/templates/sysconfig.html:220 src/templates/team.html:274
-#: src/templates/team.html:301 src/templates/uploads.html:68
+#: src/templates/editusers.html:128 src/templates/editusers.html:174
+#: src/templates/sysconfig.html:228 src/templates/team.html:105
+#: src/templates/team.html:135 src/templates/uploads.html:68
 msgid "Actions"
 msgstr "操作"
 
-#: src/models/notifications/UserCreated.php:34
-#: src/models/notifications/UserNeedValidation.php:36
+#: src/models/notifications/UserCreated.php:36
+#: src/models/notifications/UserNeedValidation.php:38
 msgid "Hi. A new user registered an account on eLabFTW: %s (%s)."
 msgstr "Hi. 一个新用户在 eLabFTW 注册了：%s (%s)。"
 
-#: src/models/notifications/UserNeedValidation.php:41
+#: src/models/notifications/UserNeedValidation.php:43
 msgid "Head to the admin panel to validate the account: %s"
 msgstr "前往管理员面板并验证账户: %s"
 
@@ -1569,31 +1507,31 @@ msgstr "前往管理员面板并验证账户: %s"
 msgid "Authentication required"
 msgstr "需要验证"
 
-#: src/controllers/LoginController.php:377
+#: src/controllers/LoginController.php:385
 msgid "Two Factor Authentication was not enabled!"
 msgstr "双重验证未启用!"
 
-#: src/controllers/LoginController.php:386
+#: src/controllers/LoginController.php:394
 msgid "The code you entered is not valid!"
 msgstr "您输入的验证码无效！"
 
-#: src/controllers/LoginController.php:394
+#: src/controllers/LoginController.php:402
 msgid "Two Factor Authentication is now enabled!"
 msgstr "双重验证已启用！"
 
-#: src/classes/i18n4Js.php:57
+#: src/classes/i18n4Js.php:61
 msgid "Nothing selected!"
 msgstr "未选中任何选项！"
 
-#: src/classes/i18n4Js.php:62
+#: src/classes/i18n4Js.php:66
 msgid "Do you want to replace the file on the server with this edit?"
 msgstr "您要用此编辑替换服务器上的文件吗？"
 
-#: src/templates/sysconfig.html:106
+#: src/templates/sysconfig.html:114
 msgid "Setting this to a high value will help keeping the database size small."
 msgstr "设置为高数值有助于减小数据库体积。"
 
-#: src/templates/sysconfig.html:432 src/templates/sysconfig.html:622
+#: src/templates/sysconfig.html:440 src/templates/sysconfig.html:630
 msgid "Set to 0 to disable this feature."
 msgstr "设置为 0 以禁用该功能。"
 
@@ -1601,7 +1539,7 @@ msgstr "设置为 0 以禁用该功能。"
 msgid "Created by"
 msgstr "创建者"
 
-#: src/templates/pdf.html:71
+#: src/templates/pdf.html:77
 msgid "Linked item"
 msgid_plural "Linked items"
 msgstr[0] "链接的项目"
@@ -1610,29 +1548,28 @@ msgstr[0] "链接的项目"
 msgid "This email domain is not allowed. Allowed domains: %s"
 msgstr "该 Email 域名不被允许。允许的域名：%s"
 
-#: src/classes/i18n4Js.php:49 src/templates/edit.html:130
-#: src/templates/templates-view.html:22
-#: src/templates/view-edit-template.html:225 src/templates/view.html:140
+#: src/classes/i18n4Js.php:52 src/templates/admin.html:382
+#: src/templates/edit.html:160 src/templates/view.html:148
 msgid "Extra fields"
 msgstr "额外字段"
 
-#: src/classes/i18n4Js.php:71
+#: src/classes/i18n4Js.php:75
 msgid "Template title"
 msgstr "模板标题"
 
-#: src/templates/edit.html:69 src/templates/view.html:55
+#: src/templates/edit.html:42 src/templates/view.html:59
 msgid "Started on"
 msgstr "开始于"
 
-#: src/templates/view-edit-toolbar.html:222
+#: src/templates/view-edit-toolbar.html:232
 msgid "Add to blockchain"
 msgstr "加入区块链"
 
-#: src/templates/sysconfig.html:284
+#: src/templates/sysconfig.html:292
 msgid "Login page announcement"
 msgstr "登录页面通知"
 
-#: src/templates/sysconfig.html:286
+#: src/templates/sysconfig.html:294
 msgid "The following text will be displayed only on the login page."
 msgstr "这些文本将仅在登录页面上显示。"
 
@@ -1644,21 +1581,22 @@ msgstr "总是允许管理员账户创建标签。"
 msgid "Edit filename"
 msgstr "编辑文件名"
 
-#: src/services/Email.php:201
+#: src/services/Email.php:208
 msgid "Sent from eLabFTW"
 msgstr "发自 eLabFTW"
 
-#: src/models/Tags.php:138
+#: src/models/Tags.php:133
 msgid "Users cannot create tags."
 msgstr "用户不能创建标签。"
 
-#: src/templates/ucp.html:246
+#: src/templates/ucp.html:241
 msgid "Use ISO datetime in the text editor instead of localized one"
 msgstr "在文本编辑器中使用 ISO 日期时间而不是本地时间"
 
-#: src/templates/ownership-transfer-modal.html:6
-#: src/templates/view-edit-template.html:156
-#: src/templates/view-edit-toolbar.html:304
+#: src/templates/admin.html:760 src/templates/ownership-transfer-modal.html:6
+#: src/templates/ownership-transfer-modal.html:23
+#: src/templates/ownership-transfer-modal.html:25
+#: src/templates/view-edit-toolbar.html:291
 msgid "Transfer ownership"
 msgstr "转移所有权"
 
@@ -1666,16 +1604,17 @@ msgstr "转移所有权"
 msgid "New owner"
 msgstr "新的所有者"
 
-#: src/templates/edit.html:109 src/templates/edit.html:115
-#: src/templates/view-edit-template.html:213
+#: src/templates/admin.html:367 src/templates/edit.html:129
+#: src/templates/edit.html:135
 msgid "Main content"
 msgstr "主要内容"
 
-#: src/templates/steps-links-edit.html:22 src/templates/steps-links-view.html:9
+#: src/templates/steps-links-edit.html:24
+#: src/templates/steps-links-view.html:11
 msgid "Toggle completion"
 msgstr "切换完成"
 
-#: src/templates/head.html:125
+#: src/templates/head.html:130
 msgid "User menu"
 msgstr "用户菜单"
 
@@ -1683,17 +1622,17 @@ msgstr "用户菜单"
 msgid "Make sure to read the %suser guide%s."
 msgstr "请务必阅读 %s用户指南%s。"
 
-#: src/Enums/Usergroup.php:25 src/templates/editusers.html:71
-#: src/templates/editusers.html:373 src/templates/team.html:204
+#: src/Enums/Usergroup.php:25 src/templates/editusers.html:76
+#: src/templates/editusers.html:383 src/templates/team.html:41
 msgid "Admin"
 msgstr "管理员"
 
-#: src/templates/admin.html:751 src/templates/show-templates-select.html:21
-#: src/templates/show.html:357
+#: src/templates/admin.html:739 src/templates/edit-compound-modal.html:108
+#: src/templates/show.html:493
 msgid "Owner"
 msgstr "所有者"
 
-#: src/templates/edit.html:121
+#: src/templates/edit.html:152
 msgid "Save and go back"
 msgstr "保存并返回"
 
@@ -1705,33 +1644,33 @@ msgstr "显示全部"
 msgid "OK"
 msgstr "确定"
 
-#: src/templates/sysconfig.html:113
+#: src/templates/sysconfig.html:121
 msgid "If the last change is at least this days old, a revision will be created regardless of the minimum characters setting."
 msgstr "如果距离上一次修改不小于此天数，则忽略最小字符限制并创建一个修订。"
 
-#: src/templates/sysconfig.html:449
+#: src/templates/sysconfig.html:457
 msgid "%d users are currently prevented from logging in from unknown devices."
 msgstr "目前 %d 个用户被阻止从未知设备登录。"
 
-#: src/templates/sysconfig.html:455
+#: src/templates/sysconfig.html:463
 msgid "%d devices are currently denied authentication."
 msgstr "目前 %d 个设备被拒绝身份验证。"
 
-#: src/templates/ucp.html:93 src/templates/ucp.html:116
+#: src/templates/ucp.html:83 src/templates/ucp.html:106
 msgid "(default)"
 msgstr "（默认）"
 
-#: web/app/controllers/ResetPasswordController.php:74
-#: web/app/controllers/ResetPasswordController.php:108
+#: web/app/controllers/ResetPasswordController.php:69
+#: web/app/controllers/ResetPasswordController.php:103
 msgid "If the account exists, an email has been sent."
 msgstr "如果该账户存在，则已发送电子邮件。"
 
-#: src/controllers/LoginController.php:189
-#: web/app/controllers/ResetPasswordController.php:81 web/index.php:86
+#: src/controllers/LoginController.php:196
+#: web/app/controllers/ResetPasswordController.php:76 web/index.php:86
 msgid "Your account is not validated. An admin of your team needs to validate it!"
 msgstr "您的帐户未被验证。需要您的团队的管理员验证它！"
 
-#: web/app/controllers/ResetPasswordController.php:90
+#: web/app/controllers/ResetPasswordController.php:85
 msgid "Hi. Someone (probably you) requested a new password on eLabFTW.%s Please follow this link to reset your password: %s %sThis link is only valid for %s minutes."
 msgstr "Hi. 有人（大概率是您自己）申请设置 eLabFTW 的新密码。%s 请使用此链接重置您的密码：%s %s这个链接只在 %s 分钟内有效。"
 
@@ -1743,23 +1682,23 @@ msgstr "此链接已失效！密码重置链接仅在 %s 分钟内有效。"
 msgid "This browser cannot login anymore because of too many failed attempts."
 msgstr "因为登录失败过多，无法再从此浏览器登录。"
 
-#: src/models/Experiments.php:87
+#: src/models/Experiments.php:90
 msgid "Experiments must use a template!"
 msgstr "实验必须使用模板！"
 
-#: src/templates/edit.html:40
+#: src/templates/edit.html:31
 msgid "Warning: this entry was modified %s seconds ago by %s."
 msgstr "警告：此条目已于 %s 秒前被 %s 修改。"
 
-#: src/templates/search.html:218 src/templates/search.html:224
+#: src/templates/show.html:134 src/templates/show.html:140
 msgid "Name of field"
 msgstr "字段名"
 
-#: src/templates/search.html:235 src/templates/search.html:240
+#: src/templates/show.html:151 src/templates/show.html:156
 msgid "Value"
 msgstr "值"
 
-#: src/templates/admin.html:539
+#: src/templates/admin.html:502
 msgid "Export database items"
 msgstr "导出数据库项目"
 
@@ -1767,8 +1706,8 @@ msgstr "导出数据库项目"
 msgid "Custom TSA"
 msgstr "自定义 TSA"
 
-#: src/templates/favtags-panel.html:4 src/templates/ucp.html:137
-#: src/templates/ucp.html:153
+#: src/templates/favtags-panel.html:4 src/templates/ucp.html:132
+#: src/templates/ucp.html:148
 msgid "Favorite tags"
 msgstr "收藏的标签"
 
@@ -1780,19 +1719,19 @@ msgstr "筛选"
 msgid "Add a tag as favorite"
 msgstr "添加标签到收藏"
 
-#: src/templates/show.html:272 src/templates/steps-links-edit.html:150
+#: src/templates/show.html:420 src/templates/steps-links-edit.html:151
 msgid "Any category"
 msgstr "任何类别"
 
-#: src/classes/i18n4Js.php:69
+#: src/classes/i18n4Js.php:73
 msgid "Are you sure you want to undo this step?"
 msgstr "确实要撤消此步骤吗？"
 
-#: src/services/Email.php:73
+#: src/services/Email.php:74
 msgid "Test email"
 msgstr "测试邮件"
 
-#: src/models/notifications/CommentCreated.php:42
+#: src/models/notifications/CommentCreated.php:44
 msgid "New comment posted"
 msgstr "新评论发布"
 
@@ -1800,19 +1739,19 @@ msgstr "新评论发布"
 msgid "New user added to your team"
 msgstr "新用户已添加到您的团队"
 
-#: src/models/notifications/UserNeedValidation.php:33
+#: src/models/notifications/UserNeedValidation.php:35
 msgid "[ACTION REQUIRED]"
 msgstr "[需要采取的行动]"
 
-#: src/models/notifications/SelfNeedValidation.php:30
+#: src/models/notifications/SelfNeedValidation.php:32
 msgid "Your account has been created"
 msgstr "您的账户已创建"
 
-#: src/models/notifications/SelfIsValidated.php:29
+#: src/models/notifications/SelfIsValidated.php:31
 msgid "Account validated"
 msgstr "账户已验证"
 
-#: src/models/notifications/StepDeadline.php:62
+#: src/models/notifications/StepDeadline.php:58
 msgid "Hello. A step deadline is approaching: "
 msgstr "您好。即将到达步骤的截止期限: "
 
@@ -1836,36 +1775,36 @@ msgstr "无法添加某些附加的 PDF。"
 msgid "Query is too complex!"
 msgstr "查询太复杂了！"
 
-#: web/ucp.php:89
+#: web/ucp.php:64
 msgid "New comment notification"
 msgstr "新评论通知"
 
-#: web/ucp.php:93
+#: web/ucp.php:68
 msgid "Step deadline"
 msgstr "步骤截止期限"
 
-#: web/ucp.php:101
+#: web/ucp.php:76
 msgid "New user created"
 msgstr "新用户已创建"
 
-#: web/ucp.php:106
+#: web/ucp.php:81
 msgid "New user need validation"
 msgstr "新用户需要验证"
 
-#: src/templates/admin.html:569
+#: src/templates/admin.html:532
 msgid "Export experiments of user"
 msgstr "导出用户实验"
 
-#: src/templates/head.html:89 src/templates/head.html:90
-#: src/templates/ucp.html:17
+#: src/templates/head.html:95 src/templates/head.html:96
+#: src/templates/ucp.html:7
 msgid "Notifications"
 msgstr "通知"
 
-#: src/templates/head.html:98
+#: src/templates/head.html:104
 msgid "No new notifications to show."
 msgstr "没有要显示的新通知。"
 
-#: src/templates/head.html:101 src/templates/ucp.html:510
+#: src/templates/head.html:107 src/templates/ucp.html:493
 msgid "Notifications settings"
 msgstr "通知设置"
 
@@ -1885,8 +1824,8 @@ msgstr "您的帐户已创建，需要管理员验证。"
 msgid "Search Syntax"
 msgstr "搜索语法"
 
-#: src/services/AdvancedSearchQuery.php:64
-#: src/services/AdvancedSearchQuery.php:66 src/templates/search.html:14
+#: src/services/AdvancedSearchQuery.php:65
+#: src/services/AdvancedSearchQuery.php:67
 msgid "Search query"
 msgstr "搜索请求"
 
@@ -1894,35 +1833,35 @@ msgstr "搜索请求"
 msgid "Select author"
 msgstr "选择作者"
 
-#: src/templates/admin.html:605 src/templates/search.html:129
+#: src/templates/admin.html:568 src/templates/show.html:235
 msgid "Date from"
 msgstr "起始日期"
 
-#: src/templates/search.html:133
+#: src/templates/show.html:239
 msgid "less than"
 msgstr "少于"
 
-#: src/templates/search.html:134
+#: src/templates/show.html:240
 msgid "less than or equal to"
 msgstr "小于或等于"
 
-#: src/templates/search.html:135
+#: src/templates/show.html:241
 msgid "equal to"
 msgstr "等于"
 
-#: src/templates/search.html:136
+#: src/templates/show.html:242
 msgid "greater than or equal to"
 msgstr "大于或等于"
 
-#: src/templates/search.html:137
+#: src/templates/show.html:243
 msgid "greater than"
 msgstr "大于"
 
-#: src/templates/search.html:138
+#: src/templates/show.html:244
 msgid "not equal to"
 msgstr "不等于"
 
-#: src/templates/search.html:145
+#: src/templates/show.html:249
 msgid "Date to (optional)"
 msgstr "截止日期（可选）"
 
@@ -1930,15 +1869,15 @@ msgstr "截止日期（可选）"
 msgid "Locked"
 msgstr "锁定"
 
-#: src/templates/search.html:254
+#: src/templates/show.html:206 src/templates/show.html:207
 msgid "Select lock status"
 msgstr "选择锁定状态"
 
-#: src/templates/search.html:263
+#: src/templates/show.html:214
 msgid "Timestamped"
 msgstr "时间戳"
 
-#: src/templates/search.html:265
+#: src/templates/show.html:215
 msgid "Select timestamp status"
 msgstr "选择时间戳状态"
 
@@ -1950,29 +1889,29 @@ msgstr "类别"
 msgid "Select category"
 msgstr "选择类别"
 
-#: src/templates/steps-links-edit.html:37
+#: src/templates/steps-links-edit.html:39
 msgid "Completion time:"
 msgstr "完成时间："
 
 #. 错别字修正
-#: src/templates/steps-links-edit.html:41
+#: src/templates/steps-links-edit.html:43
 msgid "Not finished"
 msgstr "未完成"
 
-#: src/templates/steps-links-edit.html:47
-#: src/templates/steps-links-view.html:17
+#: src/templates/steps-links-edit.html:49
+#: src/templates/steps-links-view.html:19
 msgid "Deadline:"
 msgstr "截止期限："
 
-#: src/templates/steps-links-edit.html:52
+#: src/templates/steps-links-edit.html:54
 msgid "Toggle notifications"
 msgstr "切换通知"
 
-#: src/templates/steps-links-edit.html:56
+#: src/templates/steps-links-edit.html:58
 msgid "Clear deadline"
 msgstr "清除截止期限"
 
-#: src/templates/steps-links-edit.html:63
+#: src/templates/steps-links-edit.html:65
 msgid "Set deadline in"
 msgstr "设定截止期限"
 
@@ -1980,31 +1919,31 @@ msgstr "设定截止期限"
 msgid "Uploads"
 msgstr "上传"
 
-#: src/templates/sysconfig.html:559
+#: src/templates/sysconfig.html:567
 msgid "Blockchain timestamp configuration"
 msgstr "区块链时间戳配置"
 
-#: src/templates/sysconfig.html:514
+#: src/templates/sysconfig.html:522
 msgid "Where user uploaded files are stored:"
 msgstr "用户上传文件的存储位置："
 
-#: src/templates/sysconfig.html:516 src/templates/upload-more-info.html:1
+#: src/templates/sysconfig.html:524 src/templates/upload-more-info.html:1
 msgid "Local filesystem"
 msgstr "本地文件系统"
 
-#: src/templates/sysconfig.html:517
+#: src/templates/sysconfig.html:525
 msgid "S3 bucket"
 msgstr "S3 存储桶"
 
-#: src/templates/sysconfig.html:520
+#: src/templates/sysconfig.html:528
 msgid "You can select where uploaded files will be stored. The default is local storage but you can configure any S3 compatible object storage."
 msgstr "您可以选择上传文件的存储位置。默认为本地存储，但您可以配置任何与 S3 兼容的对象存储。"
 
-#: src/templates/ucp.html:517
+#: src/templates/ucp.html:500
 msgid "Web"
 msgstr "网页"
 
-#: src/templates/upload-dropdown-menu.html:95 src/templates/uploads.html:75
+#: src/templates/upload-dropdown-menu.html:88 src/templates/uploads.html:75
 msgid "More information"
 msgstr "更多信息"
 
@@ -2012,27 +1951,27 @@ msgstr "更多信息"
 msgid "Storage:"
 msgstr "存储："
 
-#: src/models/Scheduler.php:479
+#: src/models/Scheduler.php:492
 msgid "Creation/modification of events in the past is not allowed!"
 msgstr "建立或修改过去的事件是不允许的！"
 
-#: src/models/notifications/EventDeleted.php:82 src/services/Transform.php:54
+#: src/models/notifications/EventDeleted.php:91 src/services/Transform.php:54
 msgid "A booked slot was deleted from the scheduler."
 msgstr "一个预订时段被从调度表中删除了。"
 
-#: src/models/notifications/EventDeleted.php:84
+#: src/models/notifications/EventDeleted.php:93
 msgid "Hi. %s (%s). See item: %s. It was booked from %s to %s."
 msgstr "Hi. %s（由 %s）。请看项目：%s。它曾被从 %s 预订到了 %s。"
 
-#: web/ucp.php:111
+#: web/ucp.php:86
 msgid "Booking event cancelled"
 msgstr "预订事件被取消"
 
-#: src/templates/admin.html:601
+#: src/templates/admin.html:564
 msgid "Export bookings"
 msgstr "导出预订"
 
-#: src/templates/admin.html:611
+#: src/templates/admin.html:574
 msgid "Date to"
 msgstr "开始于"
 
@@ -2056,33 +1995,33 @@ msgstr "小组"
 msgid "author"
 msgstr "作者"
 
-#: src/templates/link-view-one.html:24
+#: src/templates/link-view-one.html:25
 msgid "Import links"
 msgstr "导入链接"
 
-#: src/Make/AbstractMakeTimestamp.php:123
+#: src/Make/AbstractMakeTimestamp.php:139
 msgid "Number of timestamps this past month reached the limit!"
 msgstr "过去一个月时间戳的数量达到上限！"
 
-#: src/templates/admin.html:646 src/templates/admin.html:656
-#: src/templates/admin.html:657
+#: src/templates/admin.html:617 src/templates/admin.html:629
+#: src/templates/admin.html:630
 msgid "Show tagged experiments"
 msgstr "显示已标记的实验"
 
-#: src/templates/admin.html:647 src/templates/admin.html:661
-#: src/templates/admin.html:662
+#: src/templates/admin.html:618 src/templates/admin.html:634
+#: src/templates/admin.html:635
 msgid "Show tagged items"
 msgstr "显示已标记的项目"
 
-#: src/templates/edit.html:179
+#: src/templates/edit.html:209
 msgid "Use %sCtrl%s + click to add text"
 msgstr "使用 %sCtrl%s+单击 添加文字"
 
-#: src/templates/json-editor.html:65
+#: src/templates/json-editor.html:56
 msgid "See documentation about extra fields."
 msgstr "查看有关额外字段的文档。"
 
-#: src/templates/sysconfig.html:187
+#: src/templates/sysconfig.html:195
 msgid "MySQL Version"
 msgstr "MySQL 版本"
 
@@ -2090,7 +2029,7 @@ msgstr "MySQL 版本"
 msgid "Number of allowed timestamps per month (0 means no limit):"
 msgstr "每个月允许的时间戳数量（0 表示没有限制）："
 
-#: src/Import/Handler.php:110
+#: src/Import/Handler.php:104
 msgid "Error: invalid file extension for import. Allowed extensions: %s."
 msgstr "错误：文件拓展名无效。允许的文件拓展名包括：%s。"
 
@@ -2098,27 +2037,27 @@ msgstr "错误：文件拓展名无效。允许的文件拓展名包括：%s。"
 msgid "Write permissions enforced by admin. Aborting change."
 msgstr "写入权限由管理员强制执行。中止更改。"
 
-#: src/models/AbstractStatus.php:66
+#: src/models/AbstractStatus.php:68
 msgid "Running"
 msgstr "进行中"
 
-#: src/models/AbstractStatus.php:67
+#: src/models/AbstractStatus.php:69
 msgid "Success"
 msgstr "成功"
 
-#: src/models/AbstractStatus.php:68
+#: src/models/AbstractStatus.php:70
 msgid "Need to be redone"
 msgstr "需重做"
 
-#: src/models/AbstractStatus.php:69
+#: src/models/AbstractStatus.php:71
 msgid "Fail"
 msgstr "失败"
 
-#: src/Make/MakeBloxberg.php:81 src/models/AbstractConcreteEntity.php:244
+#: src/Make/MakeBloxberg.php:81 src/models/AbstractConcreteEntity.php:253
 msgid "Timestamp archive by %s"
 msgstr "由 %s 时间戳归档"
 
-#: src/Import/Eln.php:215
+#: src/Import/Eln.php:253
 msgid "Error: could not read archive file properly! (missing %s)"
 msgstr "错误：存档文件读取异常！（缺少%s）"
 
@@ -2126,33 +2065,33 @@ msgstr "错误：存档文件读取异常！（缺少%s）"
 msgid "Your account has expired. Contact your team Admin to extend its validity."
 msgstr "您的账户已过期。请联系团队管理员延长有效期。"
 
-#: src/templates/admin.html:554 src/templates/admin.html:585
-#: src/templates/export-menu.html:104 src/templates/show.html:218
+#: src/templates/admin.html:517 src/templates/admin.html:548
+#: src/templates/export-menu.html:122 src/templates/show.html:363
 msgid "ELN Archive"
 msgstr "ELN 存档"
 
-#: src/templates/admin.html:555 src/templates/admin.html:586
-#: src/templates/export-menu.html:103 src/templates/show.html:219
+#: src/templates/admin.html:518 src/templates/admin.html:549
+#: src/templates/export-menu.html:121 src/templates/show.html:364
 msgid "ZIP Archive"
 msgstr "ZIP 存档"
 
-#: src/templates/admin.html:556 src/templates/admin.html:587
-#: src/templates/export-menu.html:105 src/templates/show.html:220
+#: src/templates/admin.html:519 src/templates/admin.html:550
+#: src/templates/export-menu.html:123 src/templates/show.html:365
 msgid "CSV File"
 msgstr "CSV 文件"
 
-#: src/templates/admin.html:557 src/templates/admin.html:588
-#: src/templates/export-menu.html:102 src/templates/show.html:221
+#: src/templates/admin.html:520 src/templates/admin.html:551
+#: src/templates/export-menu.html:120 src/templates/show.html:366
 msgid "PDF File"
 msgstr "PDF 文件"
 
-#: src/templates/admin.html:558 src/templates/admin.html:589
-#: src/templates/show.html:222
+#: src/templates/admin.html:521 src/templates/admin.html:552
+#: src/templates/show.html:367
 msgid "QR codes PDF"
 msgstr "二维码PDF"
 
-#: src/templates/admin.html:559 src/templates/admin.html:590
-#: src/templates/profile.html:274 src/templates/show.html:223
+#: src/templates/admin.html:522 src/templates/admin.html:553
+#: src/templates/profile.html:278 src/templates/show.html:368
 msgid "JSON"
 msgstr "JSON"
 
@@ -2168,63 +2107,63 @@ msgstr "未找到固定模板"
 msgid "Save as JSON"
 msgstr "另存为 JSON"
 
-#: src/templates/editusers.html:167
+#: src/templates/editusers.html:173
 msgid "2FA enabled"
 msgstr "双重验证已启用"
 
-#: src/templates/editusers.html:275
+#: src/templates/editusers.html:277
 msgid "Permission group"
 msgstr "权限组"
 
-#: src/templates/editusers.html:119 src/templates/editusers.html:148
+#: src/templates/editusers.html:124 src/templates/editusers.html:153
 msgid "Valid until"
 msgstr "有效期至"
 
-#: src/templates/show.html:112 src/templates/show.html:113
+#: src/templates/show.html:87 src/templates/show.html:88
 msgid "Filter owner"
 msgstr "筛选所有者"
 
-#: src/templates/show.html:122 src/templates/show.html:123
+#: src/templates/show.html:178 src/templates/show.html:179
 msgid "Filter visibility"
 msgstr "筛选可见性"
 
-#: src/templates/footer.html:15 src/templates/head.html:118
+#: src/templates/footer.html:14 src/templates/head.html:123
 msgid "Submit feedback"
 msgstr "提交反馈"
 
-#: src/templates/head.html:108
+#: src/templates/head.html:114
 msgid "Help menu"
 msgstr "帮助菜单"
 
-#: src/templates/head.html:110
+#: src/templates/head.html:116
 msgid "What's new"
 msgstr "新增内容"
 
-#: src/templates/head.html:114
+#: src/templates/head.html:119
 msgid "Support"
 msgstr "支持"
 
-#: src/templates/head.html:115
+#: src/templates/head.html:120
 msgid "Community forum"
 msgstr "社区论坛"
 
-#: src/templates/head.html:116
+#: src/templates/head.html:121
 msgid "Chat room"
 msgstr "聊天室"
 
-#: src/templates/head.html:119
+#: src/templates/head.html:124
 msgid "Contribute to eLabFTW"
 msgstr "为 eLabFTW 作贡献"
 
-#: src/templates/head.html:126
+#: src/templates/head.html:131
 msgid "Logged in as %s in:"
 msgstr "以 %s 的身份登录："
 
-#: src/templates/head.html:128
+#: src/templates/head.html:133
 msgid "Switch team"
 msgstr "切换团队"
 
-#: src/templates/head.html:134
+#: src/templates/head.html:138
 msgid "My profile"
 msgstr "个人资料"
 
@@ -2232,65 +2171,65 @@ msgstr "个人资料"
 msgid "Your account has been created and is now active. Try logging in again."
 msgstr "您的帐户已创建，现在处于活动状态。请尝试再次登录。"
 
-#: src/templates/pdf.html:56 src/templates/steps-links-edit.html:99
-#: src/templates/steps-links-view.html:31
+#: src/templates/pdf.html:62 src/templates/steps-links-edit.html:101
+#: src/templates/steps-links-view.html:33
 msgid "Linked experiment"
 msgid_plural "Linked experiments"
 msgstr[0] "链接的实验"
 
-#: src/templates/show.html:48
+#: src/templates/show.html:296
 msgid "Newest"
 msgstr "最新"
 
-#: src/templates/show.html:49
+#: src/templates/show.html:297
 msgid "Oldest"
 msgstr "最旧"
 
-#: src/templates/show.html:50
+#: src/templates/show.html:298
 msgid "Recently modified"
 msgstr "最新修改"
 
-#: src/templates/show.html:51
+#: src/templates/show.html:299
 msgid "Least recently modified"
 msgstr "最旧修改"
 
-#: src/templates/show.html:53
+#: src/templates/show.html:301
 msgid "Category (inverted)"
 msgstr "类别（倒序）"
 
-#: src/templates/show.html:56
+#: src/templates/show.html:304
 msgid "Highest ID"
 msgstr "最高 ID"
 
-#: src/templates/show.html:57
+#: src/templates/show.html:305
 msgid "Lowest ID"
 msgstr "最低 ID"
 
-#: src/templates/show.html:60
+#: src/templates/show.html:308
 msgid "Recently commented"
 msgstr "最新评论"
 
-#: src/templates/show.html:61
+#: src/templates/show.html:309
 msgid "Title (alphabetical)"
 msgstr "标题（字母顺序）"
 
-#: src/templates/show.html:62
+#: src/templates/show.html:310
 msgid "Title (inverted)"
 msgstr "标题（倒序）"
 
-#: src/templates/show.html:63
+#: src/templates/show.html:311
 msgid "User (alphabetical)"
 msgstr "用户（字母顺序）"
 
-#: src/templates/show.html:64
+#: src/templates/show.html:312
 msgid "User (inverted)"
 msgstr "用户（倒序）"
 
-#: src/templates/show.html:65
+#: src/templates/show.html:313
 msgid "Highest rating"
 msgstr "最高评级"
 
-#: src/templates/show.html:66
+#: src/templates/show.html:314
 msgid "Lowest rating"
 msgstr "最低评级"
 
@@ -2298,19 +2237,19 @@ msgstr "最低评级"
 msgid "Search in %s"
 msgstr "搜索 %s"
 
-#: src/templates/show.html:281
+#: src/templates/show.html:429
 msgid "Link to an experiment"
 msgstr "链接到实验"
 
-#: src/templates/show.html:284 src/templates/steps-links-edit.html:118
+#: src/templates/show.html:432 src/templates/steps-links-edit.html:119
 msgid "Any author"
 msgstr "任何作者"
 
-#: src/templates/team.html:32
+#: src/templates/scheduler.html:52
 msgid "Start time"
 msgstr "开始时间"
 
-#: src/templates/team.html:34
+#: src/templates/scheduler.html:54
 msgid "End time"
 msgstr "结束时间"
 
@@ -2322,7 +2261,7 @@ msgstr "过去 30 天的时间戳数：%d"
 msgid "Click to add a comment"
 msgstr "单击添加评论"
 
-#: src/templates/upload-dropdown-menu.html:81
+#: src/templates/upload-dropdown-menu.html:74
 msgid "Show content of file"
 msgstr "显示文件内容"
 
@@ -2330,11 +2269,11 @@ msgstr "显示文件内容"
 msgid "Uploaded by %s"
 msgstr "上传者 %s"
 
-#: src/templates/view.html:160
+#: src/templates/view.html:168
 msgid "edited"
 msgstr "已编辑"
 
-#: src/models/notifications/StepDeadline.php:71 src/services/Transform.php:104
+#: src/models/notifications/StepDeadline.php:67 src/services/Transform.php:106
 msgid "A step deadline is approaching."
 msgstr "即将到达步骤的截止期限。"
 
@@ -2342,33 +2281,33 @@ msgstr "即将到达步骤的截止期限。"
 msgid "Molecule editor"
 msgstr "分子编辑器"
 
-#: src/templates/head.html:112 src/templates/head.html:113
-#: src/templates/sysconfig.html:204
+#: src/templates/head.html:117 src/templates/head.html:118
+#: src/templates/sysconfig.html:212
 msgid "Documentation"
 msgstr "文档"
 
-#: src/templates/steps-links-edit.html:76
+#: src/templates/steps-links-edit.html:78
 msgid "Copy step to cursor position"
 msgstr "将步骤复制到光标位置"
 
-#: src/templates/upload-dropdown-menu.html:88
+#: src/templates/upload-dropdown-menu.html:81
 msgid "Open in NMRium"
 msgstr "在 NMRium 中打开"
 
-#: src/models/FavTags.php:91
+#: src/models/FavTags.php:83
 msgid "Could not find tag. Please enter an existing tag."
 msgstr "找不到标签。请输入一个现有的标签。"
 
-#: src/templates/changelog-block.html:1 src/templates/pdf.html:157
-#: src/templates/profile.html:272
+#: src/templates/changelog-block.html:1 src/templates/pdf.html:170
+#: src/templates/profile.html:276
 msgid "Changelog"
 msgstr "更改日志"
 
-#: src/templates/changelog-block.html:8 src/templates/pdf.html:163
+#: src/templates/changelog-block.html:8 src/templates/pdf.html:176
 msgid "Property changed"
 msgstr "更改属性"
 
-#: src/templates/changelog-block.html:9 src/templates/pdf.html:164
+#: src/templates/changelog-block.html:9 src/templates/pdf.html:177
 msgid "New value"
 msgstr "新值"
 
@@ -2381,13 +2320,12 @@ msgstr "切换固定状态（添加到创建按钮菜单）"
 msgid "Latest stable version:"
 msgstr "最新的稳定版本："
 
-#: src/templates/admin.html:205 src/templates/sysconfig.html:632
-#: src/templates/sysconfig.html:839 src/templates/ucp.html:444
+#: src/templates/admin.html:149 src/templates/sysconfig.html:640
+#: src/templates/sysconfig.html:847 src/templates/ucp.html:427
 msgid "Link to documentation"
 msgstr "文档链接"
 
-#: src/templates/view-edit-template.html:153
-#: src/templates/view-edit-toolbar.html:313
+#: src/templates/view-edit-toolbar.html:296
 msgid "See changelog"
 msgstr "查看更改日志"
 
@@ -2396,77 +2334,78 @@ msgid "From here you can add, edit or delete the tags for your team. Click the t
 msgstr "在这里您可以为您的团队添加、编辑或删除标签。点击标签来编辑它。然后点击去重按钮来合并类似的标签。"
 
 #: src/templates/field-builder-modal.html:10
+#: src/templates/field-builder-modal.html:53
 msgid "Add an extra field"
 msgstr "添加额外字段"
 
-#: src/templates/field-builder-modal.html:40
+#: src/templates/field-builder-modal.html:54
 msgid "Field type"
 msgstr "字段类型"
 
-#: src/templates/field-builder-modal.html:42
+#: src/templates/field-builder-modal.html:56
 msgid "Text"
 msgstr "文本"
 
-#: src/templates/field-builder-modal.html:43
+#: src/templates/field-builder-modal.html:57
 msgid "Dropdown menu"
 msgstr "下拉菜单"
 
-#: src/templates/field-builder-modal.html:44
+#: src/templates/field-builder-modal.html:58
 msgid "Radio buttons"
 msgstr "单选按钮"
 
-#: src/templates/field-builder-modal.html:49
+#: src/templates/field-builder-modal.html:63
 msgid "Checkbox"
 msgstr "复选框"
 
-#: src/templates/field-builder-modal.html:50
+#: src/templates/field-builder-modal.html:64
 msgid "Number"
 msgstr "数量"
 
-#: src/templates/field-builder-modal.html:58
+#: src/templates/field-builder-modal.html:72
 msgid "required"
 msgstr "必填项"
 
-#: src/templates/field-builder-modal.html:63
+#: src/templates/field-builder-modal.html:77
 msgid "Description"
 msgstr "描述"
 
-#: src/templates/field-builder-modal.html:64
+#: src/templates/field-builder-modal.html:78
 msgid "Enter a description for this field"
 msgstr "输入此字段的描述"
 
-#: src/templates/field-builder-modal.html:67
-#: src/templates/field-builder-modal.html:102
+#: src/templates/field-builder-modal.html:81
+#: src/templates/field-builder-modal.html:108
 msgid "Default value"
 msgstr "默认值"
 
-#: src/templates/field-builder-modal.html:68
+#: src/templates/field-builder-modal.html:82
 msgid "Enter a default value"
 msgstr "输入一个默认值"
 
-#: src/templates/field-builder-modal.html:73
+#: src/templates/field-builder-modal.html:87
 msgid "Choices"
 msgstr "选项"
 
-#: src/templates/field-builder-modal.html:79
-#: src/templates/field-builder-modal.html:97
+#: src/templates/field-builder-modal.html:93
+#: src/templates/field-builder-modal.html:103
 msgid "Add another choice"
 msgstr "增加一个选项"
 
-#: src/templates/field-builder-modal.html:104
+#: src/templates/field-builder-modal.html:110
 msgid "Unchecked"
 msgstr "未选择"
 
-#: src/templates/field-builder-modal.html:105
+#: src/templates/field-builder-modal.html:111
 msgid "Checked"
 msgstr "已选择"
 
-#: src/templates/admin.html:426 src/templates/edit.html:135
-#: src/templates/json-editor.html:13 src/templates/view-edit-template.html:230
+#: src/templates/admin.html:387 src/templates/edit.html:165
+#: src/templates/json-editor.html:13
 msgid "Add field"
 msgstr "添加字段"
 
-#: src/templates/admin.html:779 src/templates/permissions-edit-modal.html:36
+#: src/templates/admin.html:768 src/templates/permissions-edit-modal.html:36
 msgid "Base"
 msgstr "基础"
 
@@ -2474,7 +2413,7 @@ msgstr "基础"
 msgid "This setting sets a baseline upon which you can add more permissions by selecting teams, teamgroups or users below."
 msgstr "此项设定了一个基础，您可以在此之上通过选择团队、团队小组或用户来增加更多的权限。"
 
-#: src/templates/admin.html:788 src/templates/permissions-edit-modal.html:47
+#: src/templates/admin.html:777 src/templates/permissions-edit-modal.html:47
 msgid "Selecting a team here will give access to all members of this team."
 msgstr "选择一个团队，并授予访问权限给其所有成员。"
 
@@ -2482,11 +2421,11 @@ msgstr "选择一个团队，并授予访问权限给其所有成员。"
 msgid "Teamgroups"
 msgstr "团队小组"
 
-#: src/templates/admin.html:796 src/templates/permissions-edit-modal.html:71
+#: src/templates/admin.html:785
 msgid "Selecting a teamgroup here will give access to all users part of this teamgroup."
 msgstr "选择一个团队小组，并授予访问权限给其所有成员。"
 
-#: src/templates/admin.html:799 src/templates/permissions-edit-modal.html:76
+#: src/templates/admin.html:788
 msgid "Teamgroup"
 msgstr "团队小组"
 
@@ -2494,8 +2433,11 @@ msgstr "团队小组"
 msgid "Allow read access for anonymous users"
 msgstr "允许匿名用户的只读访问"
 
-#: src/templates/mfa.html:35 src/templates/permissions-edit-modal.html:107
-#: src/templates/ucp.html:452
+#: src/templates/compounds-view-edit.html:10
+#: src/templates/edit-compound-modal.html:26
+#: src/templates/edit-compound-modal.html:56
+#: src/templates/edit-compound-modal.html:63 src/templates/mfa.html:35
+#: src/templates/permissions-edit-modal.html:107 src/templates/ucp.html:435
 msgid "Copy to clipboard"
 msgstr "复制到剪贴板"
 
@@ -2503,7 +2445,7 @@ msgstr "复制到剪贴板"
 msgid "Anyone following this link can access this entry."
 msgstr "任何人点击这个链接都可以访问此条目。"
 
-#: src/templates/field-builder-modal.html:85
+#: src/templates/field-builder-modal.html:144
 msgid "Allow selection of multiple values?"
 msgstr "允许多选？"
 
@@ -2515,8 +2457,7 @@ msgstr "剩余可用的时间戳数量（0表示没有限制）："
 msgid "You can set a number of available timestamps here and it will be decremented by 1 on every timestamp."
 msgstr "每使用一次时间戳则剩余可用数值自动递减 1。"
 
-#: src/classes/Metadata.php:81 src/classes/Metadata.php:101
-#: src/classes/i18n4Js.php:73 src/templates/field-builder-modal.html:34
+#: src/classes/Metadata.php:111 src/classes/i18n4Js.php:79
 msgid "Undefined group"
 msgstr "默认分组"
 
@@ -2548,29 +2489,29 @@ msgstr "出错了！请尝试刷新页面。"
 msgid "Invalid authentication code."
 msgstr "身份验证代码无效。"
 
-#: src/classes/i18n4Js.php:44
+#: src/classes/i18n4Js.php:45
 msgid "File size limit:"
 msgstr "文件大小限制："
 
-#: src/classes/i18n4Js.php:45
+#: src/classes/i18n4Js.php:48
 msgid "You are currently editing the metadata attached to this entry."
 msgstr "当前正在编辑附加到此项的元数据。"
 
-#: src/models/ItemsTypes.php:55 src/templates/admin.html:291
-#: src/templates/admin.html:471 src/templates/admin.html:518
+#: src/models/ItemsTypes.php:67 src/templates/admin.html:240
+#: src/templates/admin.html:434 src/templates/admin.html:481
 msgid "Default"
 msgstr "默认"
 
-#: src/models/notifications/UserCreated.php:39
-#: src/models/notifications/UserNeedValidation.php:33
+#: src/models/notifications/UserCreated.php:41
+#: src/models/notifications/UserNeedValidation.php:35
 msgid "New user added to team: %s"
 msgstr "新用户已添加到团队：%s"
 
-#: web/admin.php:106 web/sysconfig.php:98
+#: web/admin.php:108 web/sysconfig.php:98
 msgid "No users found. Try another search."
 msgstr "找不到用户。尝试重新搜索。"
 
-#: web/search.php:36
+#: src/templates/search-help-modal.html:13
 msgid "Advanced search"
 msgstr "高级搜索"
 
@@ -2578,7 +2519,7 @@ msgstr "高级搜索"
 msgid "Users can create tags"
 msgstr "允许用户创建标签"
 
-#: src/templates/admin.html:80
+#: src/templates/admin.html:76
 msgid "Force experiment template use"
 msgstr "强制使用实验模板"
 
@@ -2598,39 +2539,39 @@ msgstr "链接地址"
 msgid "Common templates"
 msgstr "通用实验模板"
 
-#: src/templates/admin.html:211
+#: src/templates/admin.html:155
 msgid "Add a group"
 msgstr "添加一个小组"
 
-#: src/templates/admin.html:240 src/templates/editusers.html:20
+#: src/templates/admin.html:187 src/templates/editusers.html:20
 msgid "User name"
 msgstr "用户名"
 
-#: src/templates/admin.html:333
+#: src/templates/admin.html:295
 msgid "Use the handles to adjust the order in which the categories appear in the application."
 msgstr "使用拖柄调整项目类别的排列顺序。"
 
-#: src/templates/admin.html:542
+#: src/templates/admin.html:505
 msgid "Select what to export"
 msgstr "选择导出内容"
 
-#: src/templates/admin.html:552 src/templates/admin.html:583
+#: src/templates/admin.html:515 src/templates/admin.html:546
 msgid "Select an export format"
 msgstr "选择导出格式"
 
-#: src/templates/admin.html:573
+#: src/templates/admin.html:536
 msgid "Select user"
 msgstr "选择用户"
 
-#: src/templates/admin.html:644 src/templates/admin.html:654
+#: src/templates/admin.html:615 src/templates/admin.html:627
 msgid "Tag"
 msgstr "标签"
 
-#: src/templates/admin.html:645 src/templates/admin.html:655
+#: src/templates/admin.html:616 src/templates/admin.html:628
 msgid "Occurence"
 msgstr "数量"
 
-#: src/templates/sysconfig.html:796
+#: src/templates/sysconfig.html:804
 msgid "Add new IDP"
 msgstr "新增IDP"
 
@@ -2654,44 +2595,44 @@ msgstr "包括已归档"
 msgid "Users list"
 msgstr "用户列表"
 
-#: src/templates/editusers.html:54 src/templates/editusers.html:193
+#: src/templates/editusers.html:59 src/templates/editusers.html:190
 msgid "Manage teams for user"
 msgstr "团队角色管理"
 
-#: src/templates/editusers.html:78
+#: src/templates/editusers.html:83
 msgid "Is Owner"
 msgstr "所有者"
 
-#: src/templates/editusers.html:118 src/templates/editusers.html:147
+#: src/templates/editusers.html:123 src/templates/editusers.html:152
 msgid "Last login"
 msgstr "最后一次登录"
 
-#: src/templates/editusers.html:120 src/templates/editusers.html:156
-#: src/templates/editusers.html:346 src/templates/editusers.html:356
+#: src/templates/editusers.html:125 src/templates/editusers.html:161
+#: src/templates/editusers.html:356 src/templates/editusers.html:366
 msgid "Internal ID"
 msgstr "内部 ID"
 
-#: src/templates/editusers.html:121 src/templates/editusers.html:159
+#: src/templates/editusers.html:126 src/templates/editusers.html:164
 msgid "Is Sysadmin"
 msgstr "系统管理员"
 
-#: src/templates/editusers.html:147 src/templates/ucp.html:500
+#: src/templates/editusers.html:152 src/templates/ucp.html:483
 msgid "never"
 msgstr "从未登录"
 
-#: src/templates/editusers.html:175
+#: src/templates/reset-user-password-modal.html:16
 msgid "Set new password"
 msgstr "新密码"
 
-#: src/templates/editusers.html:317
+#: src/templates/editusers.html:327
 msgid "Add account from external directory"
 msgstr "从外部目录添加账户"
 
-#: src/templates/editusers.html:342 src/templates/editusers.html:352
+#: src/templates/editusers.html:352 src/templates/editusers.html:362
 msgid "Selection"
 msgstr "选择"
 
-#: src/templates/editusers.html:376
+#: src/templates/editusers.html:386
 msgid "Add selected"
 msgstr "添加选中"
 
@@ -2703,24 +2644,23 @@ msgstr "没有收藏的标签。用下面的窗口添加一个现有的标签。
 msgid "Group"
 msgstr "分组"
 
-#: src/templates/field-builder-modal.html:17
-#: src/templates/field-builder-modal.html:22
+#: src/templates/field-builder-modal.html:35
 msgid "Add group"
 msgstr "添加分组"
 
-#: src/templates/field-builder-modal.html:24
+#: src/templates/field-builder-modal.html:38
 msgid "New group name"
 msgstr "新分组名"
 
-#: src/templates/field-builder-modal.html:113
+#: src/templates/field-builder-modal.html:119
 msgid "Blank value on duplicate"
 msgstr "复制条目时清空值"
 
-#: src/templates/head.html:164
+#: src/templates/head.html:168
 msgid "Toggle favorite tags"
 msgstr "切换收藏标签面板"
 
-#: src/templates/head.html:170
+#: src/templates/head.html:174
 msgid "Toggle todolist"
 msgstr "切换待办清单面板"
 
@@ -2732,7 +2672,7 @@ msgstr "另存为..."
 msgid "Save as attachment"
 msgstr "另存为附件"
 
-#: src/templates/json-editor.html:58
+#: src/templates/admin.html:358 src/templates/edit.html:118
 msgid "Display main text"
 msgstr "显示正文"
 
@@ -2740,9 +2680,9 @@ msgstr "显示正文"
 msgid "It is mandatory to activate 2FA."
 msgstr "强制使用双重验证。"
 
-#: src/templates/admin.html:803 src/templates/permissions-edit-modal.html:80
+#: src/templates/admin.html:792 src/templates/permissions-edit-modal.html:80
 msgid "Allow individual users to access this entry."
-msgstr "允许个别用户编辑此条目。"
+msgstr "允许个别用户访问此条目。"
 
 #: src/templates/revisions.html:5
 msgid "This server is configured to store %d revisions per entry maximum."
@@ -2756,7 +2696,7 @@ msgstr "输入搜索请求，例如：%s"
 msgid "Enter a term to search in title, body, date and elabid; or use advanced syntax, or a combination of both."
 msgstr "输入检索词对标题、正文、日期和 elabid 进行搜索；或者使用高级语法，或两者的组合。"
 
-#: src/templates/search.html:62
+#: src/templates/show.html:46
 msgid "Show full syntax"
 msgstr "显示完整语法"
 
@@ -2764,7 +2704,7 @@ msgstr "显示完整语法"
 msgid "Results"
 msgstr "结果"
 
-#: src/templates/show-item.html:25 src/templates/show-templates-select.html:30
+#: src/templates/show-item.html:36
 msgid "View"
 msgstr "查看"
 
@@ -2772,7 +2712,7 @@ msgstr "查看"
 msgid "Last modification date"
 msgstr "最后修改日期"
 
-#: src/templates/show.html:40
+#: src/templates/show.html:118
 msgid "Toggle filters"
 msgstr "切换筛选"
 
@@ -2780,31 +2720,31 @@ msgstr "切换筛选"
 msgid "Filters"
 msgstr "筛选"
 
-#: src/templates/steps-links-edit.html:60
+#: src/templates/steps-links-edit.html:62
 msgid "Add a deadline"
 msgstr "截止期限"
 
-#: src/templates/steps-links-edit.html:64
+#: src/templates/steps-links-edit.html:66
 msgid "%d hour"
 msgstr "%d 小时"
 
-#: src/templates/steps-links-edit.html:65
+#: src/templates/steps-links-edit.html:67
 msgid "%d day"
 msgstr "%d 天"
 
-#: src/templates/steps-links-edit.html:66
+#: src/templates/steps-links-edit.html:68
 msgid "%d week"
 msgstr "%d 周"
 
-#: src/templates/steps-links-edit.html:67
+#: src/templates/steps-links-edit.html:69
 msgid "%d month"
 msgstr "%d 月"
 
-#: src/templates/steps-links-edit.html:68
+#: src/templates/steps-links-edit.html:70
 msgid "%d year"
 msgstr "%d 年"
 
-#: src/templates/steps-links-edit.html:124
+#: src/templates/show.html:347 src/templates/steps-links-edit.html:125
 msgid "Search in experiments"
 msgstr "搜索实验"
 
@@ -2824,312 +2764,313 @@ msgstr "通讯"
 msgid "Policies"
 msgstr "政策"
 
-#: src/templates/sysconfig.html:87
+#: src/templates/sysconfig.html:95
 msgid "Address of the Proxy"
 msgstr "代理服务器地址"
 
-#: src/templates/sysconfig.html:96
+#: src/templates/sysconfig.html:104
 msgid "Maximum number of stored revisions per entry"
 msgstr "每个条目保存的修订的数量限制"
 
-#: src/templates/sysconfig.html:103
+#: src/templates/sysconfig.html:111
 msgid "Minimum number of characters that need to be changed in order to create a new revision per entry"
 msgstr "最少修改多少个字符才创建新的修订"
 
-#: src/templates/sysconfig.html:110
+#: src/templates/sysconfig.html:118
 msgid "Number of days between changes to automatically create a revision"
 msgstr "自动创建修订的更改间隔天数"
 
-#: src/templates/sysconfig.html:117
+#: src/templates/sysconfig.html:125
 msgid "URL where the Support menu entry from Help dropdown points"
 msgstr "帮助下拉菜单中支持选项指向的 URL"
 
-#: src/templates/sysconfig.html:135
+#: src/templates/sysconfig.html:143
 msgid "Allow anonymous visitors to login and see Public experiments"
 msgstr "允许匿名访客登录并查看公开的实验"
 
-#: src/templates/sysconfig.html:137
+#: src/templates/sysconfig.html:145
 msgid "Switch this instance in open science mode"
 msgstr "切换此实例为开放科学模式"
 
-#: src/templates/sysconfig.html:140
+#: src/templates/sysconfig.html:148
 msgid "Select which team will be open to the world in open science mode"
 msgstr "选择将以开放科学模式向世界开放的团队"
 
-#: src/templates/sysconfig.html:595
+#: src/templates/sysconfig.html:603
 msgid "Enable local account creation"
 msgstr "启用本地账户创建功能"
 
-#: src/templates/sysconfig.html:150
+#: src/templates/sysconfig.html:158
 msgid "Admins can create local accounts"
 msgstr "管理员可以创建本地账号"
 
-#: src/templates/sysconfig.html:596
+#: src/templates/sysconfig.html:604
 msgid "Show local login form"
 msgstr "显示本地登录窗口"
 
-#: src/templates/sysconfig.html:162 src/templates/sysconfig.html:173
+#: src/templates/sysconfig.html:170 src/templates/sysconfig.html:181
 msgid "Remote directory configuration"
 msgstr "远程目录配置"
 
-#: src/templates/sysconfig.html:164
+#: src/templates/sysconfig.html:172
 msgid "Admins can create local accounts from remote directory"
 msgstr "管理员可以从远程目录创建本地帐户"
 
-#: src/templates/sysconfig.html:167
+#: src/templates/sysconfig.html:175
 msgid "Remote directory service"
 msgstr "远程目录服务"
 
-#: src/templates/sysconfig.html:176
+#: src/templates/sysconfig.html:184
 msgid "Use a JSON string for configuration. This setting is stored encrypted."
 msgstr "使用 JSON 字符串进行配置。该设置是加密存储的。"
 
-#: src/templates/sysconfig.html:185
+#: src/templates/sysconfig.html:193
 msgid "Docker image version"
 msgstr "Docker 镜像版本"
 
-#: src/templates/sysconfig.html:188
+#: src/templates/sysconfig.html:196
 msgid "MySQL database structure version"
 msgstr "MySQL 数据库结构版本"
 
-#: src/templates/sysconfig.html:201
+#: src/templates/sysconfig.html:209
 msgid "Teams list"
 msgstr "团队列表"
 
-#: src/templates/sysconfig.html:204
+#: src/templates/sysconfig.html:212
 msgid "This page allows you to edit the teams present on this instance."
 msgstr "此页面允许您编辑此实例上出现的团队。"
 
-#: src/templates/sysconfig.html:207
+#: src/templates/sysconfig.html:215
 msgid "Create a team"
 msgstr "创建一个团队"
 
-#: src/templates/sysconfig.html:217
+#: src/templates/sysconfig.html:225
 msgid "Organisation ID"
 msgstr "组织 ID"
 
-#: src/templates/sysconfig.html:219 src/templates/sysconfig.html:244
+#: src/templates/sysconfig.html:227 src/templates/sysconfig.html:252
 msgid "Visible"
 msgstr "可见性"
 
-#: src/classes/UserStats.php:95 src/classes/i18n4Js.php:56
+#: src/classes/UserStats.php:95 src/classes/i18n4Js.php:60
 #: src/templates/catstat-edit.html:8 src/templates/catstat-edit.html:30
 #: src/templates/catstat-view.html:14 src/templates/catstat-view.html:22
-#: src/templates/sysconfig.html:238
+#: src/templates/show.html:384 src/templates/show.html:394
+#: src/templates/sysconfig.html:246
 msgid "Not set"
 msgstr "未设置"
 
-#: src/templates/sysconfig.html:337
+#: src/templates/sysconfig.html:345
 msgid "Address of the SMTP server"
 msgstr "SMTP 服务器地址"
 
-#: src/templates/sysconfig.html:343
+#: src/templates/sysconfig.html:351
 msgid "SMTP Port"
 msgstr "SMTP 端口"
 
-#: src/templates/sysconfig.html:350
+#: src/templates/sysconfig.html:358
 msgid "SMTP username"
 msgstr "SMTP 用户名"
 
-#: src/templates/sysconfig.html:373
+#: src/templates/sysconfig.html:381
 msgid "Sender address"
 msgstr "发件人地址"
 
-#: src/templates/sysconfig.html:378 src/templates/sysconfig.html:547
+#: src/templates/sysconfig.html:386 src/templates/sysconfig.html:555
 msgid "Verify TLS certificate"
 msgstr "验证 TLS 证书"
 
-#: src/templates/sysconfig.html:401
+#: src/templates/sysconfig.html:409
 msgid "Users need validation by admin after registration"
 msgstr "用户注册后需通过管理员验证"
 
-#: src/templates/sysconfig.html:404
+#: src/templates/sysconfig.html:412
 msgid "Enforce 2FA"
 msgstr "强制使用双重验证"
 
-#: src/templates/sysconfig.html:429
+#: src/templates/sysconfig.html:437
 msgid "Time after which inactive sessions are invalidated (force logout) (in seconds)"
 msgstr "使不活动会话失效（强制登出）的时间（秒）"
 
-#: src/templates/sysconfig.html:446
+#: src/templates/sysconfig.html:454
 msgid "Bruteforce login protection"
 msgstr "暴力登录防护"
 
-#: src/templates/sysconfig.html:562
+#: src/templates/sysconfig.html:570
 msgid "Enable blockchain timestamping with Bloxberg"
 msgstr "使用 Bloxberg 启用区块链时间戳"
 
-#: src/templates/sysconfig.html:563
+#: src/templates/sysconfig.html:571
 msgid "Anonymize author for GDPR compliance"
 msgstr "遵守 GDPR 隐匿作者"
 
-#: src/templates/sysconfig.html:568
+#: src/templates/sysconfig.html:576
 msgid "Keeex configuration"
 msgstr "Keeex 配置"
 
-#: src/templates/sysconfig.html:570
+#: src/templates/sysconfig.html:578
 msgid "Requires a Keeex Fusion daemon running. %sSee documentation%s."
 msgstr "需要运行 Keeex Fusion 守护进程。%s查看文档%s。"
 
-#: src/templates/sysconfig.html:572
+#: src/templates/sysconfig.html:580
 msgid "Enable Keeex"
 msgstr "启用 Keeex"
 
-#: src/templates/sysconfig.html:575
+#: src/templates/sysconfig.html:583
 msgid "Keeex host"
 msgstr "Keeex 主机"
 
-#: src/templates/sysconfig.html:578
+#: src/templates/sysconfig.html:586
 msgid "Address (hostname or IP) of the Keeex service."
 msgstr "Keeex 服务地址（主机名或 IP）。"
 
-#: src/templates/sysconfig.html:582
+#: src/templates/sysconfig.html:590
 msgid "Keeex port"
 msgstr "Keeex 端口"
 
-#: src/templates/sysconfig.html:585
+#: src/templates/sysconfig.html:593
 msgid "Default port is 8080."
 msgstr "默认端口是 8080。"
 
-#: src/templates/sysconfig.html:635
+#: src/templates/sysconfig.html:643
 msgid "View metadata.xml"
 msgstr "查看 metadata.xml"
 
-#: src/templates/sysconfig.html:639
+#: src/templates/sysconfig.html:647
 msgid "General settings"
 msgstr "基础设置"
 
-#: src/templates/sysconfig.html:642
+#: src/templates/sysconfig.html:650
 msgid "Enable SAML authentication"
 msgstr "启用 SAML 身份验证"
 
-#: src/templates/sysconfig.html:643
+#: src/templates/sysconfig.html:651
 msgid "Strict mode"
 msgstr "严格模式"
 
-#: src/templates/sysconfig.html:644
+#: src/templates/sysconfig.html:652
 msgid "Debug mode"
 msgstr "Debug 模式"
 
-#: src/templates/sysconfig.html:648
+#: src/templates/sysconfig.html:656
 msgid "Service provider"
 msgstr "服务提供方"
 
-#: src/templates/sysconfig.html:652
+#: src/templates/sysconfig.html:660
 msgid "Base URL"
 msgstr "基 URL"
 
-#: src/templates/sysconfig.html:716
+#: src/templates/sysconfig.html:724
 msgid "Teams settings"
 msgstr "团队设置"
 
-#: src/templates/sysconfig.html:719
+#: src/templates/sysconfig.html:727
 msgid "Fallback to internal id if existing user cannot be matched with email"
 msgstr "如果现有用户无法与 Email 匹配，则回退到内部 ID"
 
-#: src/templates/sysconfig.html:720
+#: src/templates/sysconfig.html:728
 msgid "If user is matched with internal id, update the email sent by IDP?"
 msgstr "如果用户与内部 ID 匹配，将 Email 更新为由 IDP 发送的？"
 
-#: src/templates/sysconfig.html:721
+#: src/templates/sysconfig.html:729
 msgid "Synchronize the local teams with the teams sent by IDP"
 msgstr "使本地团队与 IDP 发送的团队保持同步"
 
-#: src/templates/sysconfig.html:722
+#: src/templates/sysconfig.html:730
 msgid "Create team sent by IDP if it doesn't exist already"
 msgstr "如果由 IDP 发送的团队尚不存在则创建它"
 
-#: src/templates/sysconfig.html:725 src/templates/sysconfig.html:921
-#: src/templates/sysconfig.html:1005
+#: src/templates/sysconfig.html:733 src/templates/sysconfig.html:929
+#: src/templates/sysconfig.html:1013
 msgid "If no team attribute is found, to which team user is assigned?"
 msgstr "如果没有找到团队属性，则将用户分配给哪个团队？"
 
-#: src/templates/sysconfig.html:730 src/templates/sysconfig.html:926
-#: src/templates/sysconfig.html:1010
+#: src/templates/sysconfig.html:738 src/templates/sysconfig.html:934
+#: src/templates/sysconfig.html:1018
 msgid "Throw error"
 msgstr "抛出错误"
 
-#: src/templates/sysconfig.html:731 src/templates/sysconfig.html:927
+#: src/templates/sysconfig.html:739 src/templates/sysconfig.html:935
 msgid "Let user select a team"
 msgstr "让用户选择一个团队"
 
-#: src/templates/sysconfig.html:737 src/templates/sysconfig.html:933
-#: src/templates/sysconfig.html:1016
+#: src/templates/sysconfig.html:745 src/templates/sysconfig.html:941
+#: src/templates/sysconfig.html:1024
 msgid "If the user doesn't exist yet, what to do?"
 msgstr "如果用户尚不存在，怎么做？"
 
-#: src/templates/sysconfig.html:739 src/templates/sysconfig.html:935
-#: src/templates/sysconfig.html:1018
+#: src/templates/sysconfig.html:747 src/templates/sysconfig.html:943
+#: src/templates/sysconfig.html:1026
 msgid "Create the user on the fly"
 msgstr "动态创建用户"
 
-#: src/templates/sysconfig.html:740 src/templates/sysconfig.html:936
-#: src/templates/sysconfig.html:1019
+#: src/templates/sysconfig.html:748 src/templates/sysconfig.html:944
+#: src/templates/sysconfig.html:1027
 msgid "Throw error, allowing a sysadmin to create the user"
 msgstr "抛出错误，让系统管理员创建用户"
 
-#: src/templates/sysconfig.html:746
+#: src/templates/sysconfig.html:754
 msgid "Security settings"
 msgstr "安全设置"
 
-#: src/templates/sysconfig.html:840
+#: src/templates/sysconfig.html:848
 msgid "LDAP server configuration"
 msgstr "LDAP 服务配置"
 
-#: src/templates/sysconfig.html:902
+#: src/templates/sysconfig.html:910
 msgid "eLabFTW LDAP configuration"
 msgstr "eLabFTW LDAP 配置"
 
-#: src/templates/sysconfig.html:906
+#: src/templates/sysconfig.html:914
 msgid "By which LDAP attribute the user will be found (default is 'mail')."
 msgstr "通过什么查找用户的 LDAP 属性（默认是 'mail'）。"
 
-#: src/templates/sysconfig.html:909
+#: src/templates/sysconfig.html:917
 msgid "You can search for several attributes by separating them with a comma (e.g. uid,mail)."
 msgstr "可以使用逗号分隔不同属性项来进行搜索（例如 uid, mail）。"
 
-#: src/templates/sysconfig.html:913
+#: src/templates/sysconfig.html:921
 msgid "What attribute to look for the team name"
 msgstr "用于查找团队名称的属性"
 
-#: src/templates/sysconfig.html:918 src/templates/sysconfig.html:1024
+#: src/templates/sysconfig.html:926 src/templates/sysconfig.html:1032
 msgid "Create team sent by server if it doesn't exist already"
 msgstr "如果服务器发送的团队尚不存在则创建它"
 
-#: src/templates/sysconfig.html:942
+#: src/templates/sysconfig.html:950
 msgid "What attribute to look for the email"
 msgstr "用于查找 Email 的属性"
 
-#: src/templates/sysconfig.html:948
+#: src/templates/sysconfig.html:956
 msgid "What attribute to look for the firstname"
 msgstr "用于查找名字的属性"
 
-#: src/templates/sysconfig.html:954
+#: src/templates/sysconfig.html:962
 msgid "What attribute to look for the lastname"
 msgstr "用于查找姓氏的属性"
 
-#: src/templates/sysconfig.html:965
+#: src/templates/sysconfig.html:973
 msgid "If authentication is handled by an upstream server, configure here the request headers mappings and behaviors."
 msgstr "如果身份验证由上游服务器处理，请在此配置请求头映射和行为。"
 
-#: src/templates/sysconfig.html:971
+#: src/templates/sysconfig.html:979
 msgid "Use this to detect if the user is logged in from upstream server (value is not used, only presence)."
 msgstr "使用它来检测用户是否从上游服务器登录（不使用 value，只使用 presence）。"
 
-#: src/templates/team.html:225
+#: src/templates/team.html:56
 msgid "Send an email to users"
 msgstr "向用户发送邮件"
 
-#: src/templates/sysconfig.html:306 src/templates/team.html:77
-#: src/templates/team.html:229
+#: src/templates/scheduler.html:97 src/templates/sysconfig.html:314
+#: src/templates/team.html:60
 msgid "Send to"
 msgstr "发送至"
 
-#: src/templates/team.html:82 src/templates/team.html:231
+#: src/templates/scheduler.html:102 src/templates/team.html:62
 msgid "Members of team %s"
 msgstr "团队成员 %s"
 
-#: src/templates/team.html:86 src/templates/team.html:235
+#: src/templates/scheduler.html:106 src/templates/team.html:66
 msgid "Members of teamgroup %s"
 msgstr "团队小组成员 %s"
 
@@ -3153,71 +3094,71 @@ msgstr "外部时间戳服务的账号"
 msgid "Password for external timestamping service"
 msgstr "外部时间戳服务的密码"
 
-#: src/templates/ucp.html:13
+#: src/templates/ucp.html:4
 msgid "General"
 msgstr "常规"
 
-#: src/templates/ucp.html:68
+#: src/templates/ucp.html:58
 msgid "Help us translate eLabFTW!"
 msgstr "帮助我们翻译 eLabFTW！"
 
-#: src/templates/ucp.html:76
+#: src/templates/ucp.html:66
 msgid "Items per page"
 msgstr "每页项目数"
 
-#: src/templates/ucp.html:82
+#: src/templates/ucp.html:72
 msgid "Display mode"
 msgstr "显示模式"
 
-#: src/templates/ucp.html:91
+#: src/templates/ucp.html:81
 msgid "Order by"
 msgstr "排序依据"
 
-#: src/templates/ucp.html:196
+#: src/templates/ucp.html:191
 msgid "Enable Chinese, Japanese and Korean fonts in PDF generation"
 msgstr "生成 PDF 的时候嵌入中文、日文和韩文字体"
 
-#: src/templates/ucp.html:197
+#: src/templates/ucp.html:192
 msgid "WARNING: this will dramatically increase the file size unless you disable PDF/A"
 msgstr "警告：如未禁用 PDF/A，将显著增加文件大小"
 
-#: src/templates/ucp.html:207 src/templates/ucp.html:208
+#: src/templates/ucp.html:202 src/templates/ucp.html:203
 msgid "Add attached files summary to the PDF"
-msgstr "向PDF中添加附件摘要"
+msgstr "向 PDF 中添加附件摘要"
 
-#: src/templates/ucp.html:216
+#: src/templates/ucp.html:211
 msgid "Append attached PDFs to exported PDF"
 msgstr "将附件中的 PDF 文件附加到导出的 PDF 中"
 
-#: src/templates/ucp.html:225
+#: src/templates/ucp.html:220
 msgid "Enable french style signature block in PDF Export"
 msgstr "在 PDF 导出中启用法式签名块"
 
-#: src/templates/ucp.html:365
+#: src/templates/ucp.html:359
 msgid "Your identity"
 msgstr "身份"
 
-#: src/templates/export-menu.html:106
+#: src/templates/export-menu.html:124
 msgid "QR Code"
 msgstr "二维码"
 
-#: src/templates/view.html:46
+#: src/templates/pdf.html:152 src/templates/view.html:49
 msgid "Locked by %s on %s at %s"
 msgstr "由 %s 于 %s %s 锁定"
 
-#: src/Auth/External.php:61 src/Auth/Ldap.php:67 src/Auth/Saml.php:328
+#: src/Auth/External.php:63 src/Auth/Ldap.php:69 src/Auth/Saml.php:330
 msgid "Could not find an existing user. Ask a Sysadmin to create your account."
 msgstr "找不到现有用户。请联系系统管理员创建您的账户。"
 
-#: src/classes/i18n4Js.php:39
+#: src/classes/i18n4Js.php:40
 msgid "Click to edit"
 msgstr "单击编辑"
 
-#: src/classes/i18n4Js.php:58
+#: src/classes/i18n4Js.php:62
 msgid "Now"
 msgstr "现在"
 
-#: src/classes/i18n4Js.php:72
+#: src/classes/i18n4Js.php:76
 msgid "Today"
 msgstr "今天"
 
@@ -3233,36 +3174,36 @@ msgstr "仅所有者"
 msgid "Revisions cannot be deleted."
 msgstr "不能被删除修订。"
 
-#: src/models/notifications/SelfIsValidated.php:31
+#: src/models/notifications/SelfIsValidated.php:33
 msgid "Hello. Your account on eLabFTW was validated by an admin. Follow this link to login: %s"
 msgstr "您好。您的 eLabFTW 账户已由管理员验证通过。点击下面的链接进行登录：%s"
 
-#: web/dashboard.php:25 src/templates/head.html:132 src/templates/ucp.html:116
+#: src/controllers/DashboardController.php:50 src/templates/head.html:137
+#: src/templates/ucp.html:106
 msgid "Dashboard"
 msgstr "仪表板"
 
-#: web/database.php:29 src/templates/dashboard.html:55
-#: src/templates/field-builder-modal.html:52 src/templates/team.html:265
-#: src/templates/team.html:281
+#: src/controllers/DatabaseController.php:40 src/templates/dashboard.html:49
+#: src/templates/field-builder-modal.html:66 src/templates/team.html:96
+#: src/templates/team.html:112
 msgid "Resource"
 msgid_plural "Resources"
 msgstr[0] "资源"
 
-#: src/templates/admin.html:308 src/templates/admin.html:681
+#: src/templates/admin.html:257 src/templates/admin.html:654
 #: src/templates/export-modal.html:29
 msgid "Resources categories"
 msgstr "资源类别"
 
-#: src/templates/admin.html:312
+#: src/templates/admin.html:261
 msgid "This menu allows you to define categories for your resources. A resource category is similar to an experiment template but for resources entries."
 msgstr "此菜单允许您为资源定义类别。资源类别类似于实验模板，但用于资源条目。"
 
-#: src/templates/admin.html:427 src/templates/edit.html:136
-#: src/templates/view-edit-template.html:231
+#: src/templates/admin.html:388 src/templates/edit.html:166
 msgid "Load fields"
 msgstr "加载字段"
 
-#: src/templates/dashboard.html:12
+#: src/templates/dashboard.html:6
 msgid "Welcome %s"
 msgstr "欢迎 %s"
 
@@ -3274,60 +3215,61 @@ msgstr "建议标签"
 msgid "Show only Admins"
 msgstr "仅显示管理员"
 
-#: src/templates/editusers.html:150
+#: src/templates/editusers.html:155
 msgid "Unvalidated"
 msgstr "未验证"
 
-#: src/templates/editusers.html:202
+#: src/templates/editusers.html:199
 msgid "Promote to Admin"
 msgstr "提升为管理员"
 
-#: src/templates/editusers.html:208
+#: src/templates/editusers.html:205
 msgid "Demote from Admin"
 msgstr "降级为普通用户"
 
-#: src/templates/editusers.html:236
+#: src/templates/editusers.html:238
 msgid "Validate user"
 msgstr "验证用户"
 
-#: src/templates/field-builder-modal.html:48
+#: src/templates/field-builder-modal.html:62
 msgid "Time"
 msgstr "时间"
 
-#: src/templates/field-builder-modal.html:155
+#: src/templates/field-builder-modal.html:167
 msgid "Load extra fields"
 msgstr "加载额外字段"
 
-#: src/templates/field-builder-modal.html:161
+#: src/templates/field-builder-modal.html:173
 msgid "Load from a database category"
 msgstr "从数据库类别加载"
 
-#: src/templates/field-builder-modal.html:169
 #: src/templates/field-builder-modal.html:181
+#: src/templates/field-builder-modal.html:193
 msgid "Load"
 msgstr "加载"
 
-#: src/templates/field-builder-modal.html:173
+#: src/templates/field-builder-modal.html:185
 msgid "Load from an experiment template"
 msgstr "从实验模板加载"
 
-#: src/templates/field-builder-modal.html:185
+#: src/templates/field-builder-modal.html:197
 msgid "Metadata preview"
 msgstr "元数据预览"
 
-#: src/templates/field-builder-modal.html:191
+#: src/templates/field-builder-modal.html:203
 msgid "Apply"
 msgstr "应用"
 
-#: src/templates/head.html:52
+#: src/templates/head.html:54 src/templates/head.html:60
+#: src/templates/head.html:61
 msgid "Go to dashboard"
 msgstr "前往仪表板"
 
-#: src/templates/admin.html:58 src/templates/export-modal.html:25
-#: src/templates/head.html:62 src/templates/profile.html:169
-#: src/templates/search.html:73 src/templates/sysconfig.html:67
-#: src/templates/sysconfig.html:235 src/templates/team.html:182
-#: src/templates/todolist-panel.html:45
+#: src/templates/admin.html:59 src/templates/export-modal.html:25
+#: src/templates/head.html:67 src/templates/profile.html:173
+#: src/templates/sysconfig.html:69 src/templates/sysconfig.html:243
+#: src/templates/team.html:19 src/templates/todolist-panel.html:45
+#: src/templates/ucp.html:108
 msgid "Resources"
 msgstr "资源"
 
@@ -3343,86 +3285,85 @@ msgstr "比较两个修订"
 msgid "Revision ID"
 msgstr "修订ID"
 
-#: src/templates/show.html:33 src/templates/uploads.html:37
+#: src/templates/show.html:284 src/templates/uploads.html:37
 msgid "Switch layout"
 msgstr "切换布局"
 
-#: src/templates/show.html:168 src/templates/uploads.html:41
+#: src/templates/uploads.html:41
 msgid "Show archived"
 msgstr "显示已归档"
 
-#: src/templates/sysconfig.html:93
+#: src/templates/sysconfig.html:101
 msgid "Allow the base permission setting «Only owner»"
 msgstr "允许将基础权限设置为 «仅所有者»"
 
-#: src/templates/sysconfig.html:156
+#: src/templates/sysconfig.html:164
 msgid "Message shown to user after successful external auth but local account provisioning is required"
 msgstr "对成功进行外部身份验证后，仍需进行本地帐户配置的用户显示的消息"
 
-#: src/templates/sysconfig.html:253
+#: src/templates/sysconfig.html:261
 msgid "None available"
 msgstr "不可用"
 
-#: src/templates/sysconfig.html:309
+#: src/templates/sysconfig.html:317
 msgid "All active users"
 msgstr "所有活跃用户"
 
-#: src/templates/sysconfig.html:313
+#: src/templates/sysconfig.html:321
 msgid "All active admins"
 msgstr "所有活跃管理员"
 
-#: src/templates/sysconfig.html:317
+#: src/templates/sysconfig.html:325
 msgid "All active sysadmins"
 msgstr "所有活跃系统管理员"
 
-#: src/templates/sysconfig.html:435
+#: src/templates/sysconfig.html:443
 msgid "Allow setting an authentication cookie"
 msgstr "允许设置身份验证 Cookie"
 
-#: src/templates/sysconfig.html:435
+#: src/templates/sysconfig.html:443
 msgid "Disabling this setting will hide the \"remember me\" checkbox on login page."
-msgstr "禁用此设置将隐藏登录页面上的 “记住我” 复选框。"
+msgstr "禁用此设置将隐藏登录页面上的“记住我”复选框。"
 
-#: src/templates/sysconfig.html:437
+#: src/templates/sysconfig.html:445
 msgid "Check the \"remember me\" box on login page by default"
 msgstr "默认选中登录页面上的\"记住我\"复选框"
 
-#: src/templates/sysconfig.html:440
+#: src/templates/sysconfig.html:448
 msgid "Validity period of an authentication cookie (in minutes)"
 msgstr "身份验证 Cookie 的有效期（分钟）"
 
-#: src/templates/sysconfig.html:469
+#: src/templates/sysconfig.html:477
 msgid "Link name"
 msgstr "链接名称"
 
-#: src/templates/ucp.html:113
+#: src/templates/ucp.html:103
 msgid "Which page will be loaded first"
 msgstr "优先加载页面"
 
-#: src/templates/ucp.html:172
+#: src/templates/ucp.html:167
 msgid "Disable all shortcuts"
 msgstr "禁用所有快捷键"
 
-#: src/templates/upload-dropdown-menu.html:103 src/templates/uploads.html:115
-#: src/templates/view-edit-toolbar.html:317
+#: src/templates/upload-dropdown-menu.html:96 src/templates/uploads.html:115
+#: src/templates/view-edit-toolbar.html:300
 msgid "Archive/Unarchive"
 msgstr "归档/解档"
 
-#: src/Enums/ProcurementState.php:30 src/templates/uploads.html:80
-#: src/templates/uploads.html:141
+#: src/Enums/ProcurementState.php:31 src/templates/show.html:195
+#: src/templates/uploads.html:80 src/templates/uploads.html:141
 msgid "Archived"
 msgstr "已归档"
 
-#: src/templates/view-edit-template.html:151
-#: src/templates/view-edit-toolbar.html:311
+#: src/templates/view-edit-toolbar.html:294
 msgid "See revisions"
 msgstr "查看修订"
 
-#: src/templates/view-edit.html:14
+#: src/templates/view-edit.html:16
 msgid "This entry is archived: it will not appear in the listings by default."
 msgstr "此项目已归档：默认不显示在列表中。"
 
-#: src/templates/ucp.html:449
+#: src/templates/ucp.html:432
 msgid "This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again:"
 msgstr "密钥将只显示这一次！请确保将其复制到安全的地方，因为您将无法再次看到它："
 
@@ -3434,36 +3375,37 @@ msgstr "包括匿名用户的所有人"
 msgid "Everyone with an account"
 msgstr "所有注册用户"
 
-#: src/models/Scheduler.php:86
+#: src/models/Scheduler.php:88
 msgid "You do not have the permission to book this entry."
 msgstr "您没有权限预订此条目。"
 
-#: src/models/Scheduler.php:207
+#: src/models/Scheduler.php:211
 msgid "Event cancellation is not permitted."
 msgstr "不允许取消事件。"
 
-#: src/models/Scheduler.php:215
+#: src/models/Scheduler.php:219
 msgid "Cannot cancel slot less than %d minutes before its start."
 msgstr "预订时段在开始前 %d 分钟内不能被取消。"
 
-#: src/models/Scheduler.php:411
+#: src/models/Scheduler.php:424
 msgid "Slot time is limited to %d minutes."
 msgstr "预订时段被限制小于 %d 分钟。"
 
-#: src/models/Scheduler.php:428
+#: src/models/Scheduler.php:441
 msgid "You cannot book any more slots. Maximum of %d reached."
 msgstr "您不能再预订更多的时段。已达到最大值 %d。"
 
-#: src/models/Scheduler.php:460
+#: src/models/Scheduler.php:473
 msgid "Overlapping booking slots is not permitted."
 msgstr "不允许重叠的预订时段。"
 
-#: src/models/notifications/EventDeleted.php:86
+#: src/models/notifications/EventDeleted.php:95
 msgid "Message:"
 msgstr "消息："
 
 #: src/templates/booking-params-modal.html:6
-#: src/templates/view-edit-toolbar.html:298
+#: src/templates/view-edit-toolbar.html:201
+#: src/templates/view-edit-toolbar.html:285
 msgid "Modify booking parameters"
 msgstr "修改预订参数"
 
@@ -3483,7 +3425,7 @@ msgstr "预订时段最大时长（分钟）"
 
 #: src/templates/booking-params-modal.html:37
 msgid "Maximum per-user future slot allowed"
-msgstr "每个用户将来允许的最大预订时段数量"
+msgstr "每个用户将来允许的时段最大数量"
 
 #: src/templates/booking-params-modal.html:52
 #: src/templates/booking-params-modal.html:53
@@ -3494,50 +3436,50 @@ msgstr "允许取消预订时段"
 msgid "Minimum time before a slot can be cancelled (in minutes)"
 msgstr "预订时段可以取消之前的最短时间（分钟）"
 
-#: src/templates/edit.html:105 src/templates/view.html:120
+#: src/templates/edit.html:113 src/templates/view.html:126
 msgid "Main text"
 msgstr "正文"
 
-#: src/templates/field-builder-modal.html:46
+#: src/templates/field-builder-modal.html:60
 msgid "Date and time"
 msgstr "日期和时间"
 
-#: src/templates/field-builder-modal.html:123
+#: src/templates/field-builder-modal.html:127
 msgid "Required"
 msgstr "必填"
 
 #: src/templates/permissions-edit-modal.html:22
-#: src/templates/view-permissions.html:15
+#: src/templates/view-permissions.html:16
 msgid "Select who can book this entry"
 msgstr "选择谁可以预订此条目"
 
-#: src/templates/team.html:74
+#: src/templates/scheduler.html:94
 msgid "Cancel booking slot"
 msgstr "取消预订时段"
 
-#: src/templates/team.html:75
+#: src/templates/scheduler.html:95
 msgid "Add a custom message"
 msgstr "添加自定义消息"
 
 #. What are the specific meanings of "pass and futrue" ? Why do I need to send message to "future users", and how it will happen ?
-#: src/templates/team.html:79
+#: src/templates/scheduler.html:99
 msgid "Past and future users who booked this resource"
 msgstr "过去和将来预定此资源的用户"
 
-#: src/templates/team.html:90
+#: src/templates/scheduler.html:110
 msgid "Send message and cancel"
 msgstr "发送消息并取消"
 
 #: src/templates/permissions-edit-modal.html:21
-#: src/templates/view-permissions.html:14
+#: src/templates/view-permissions.html:15
 msgid "Can book"
 msgstr "可预订"
 
-#: src/templates/dashboard.html:89
+#: src/templates/dashboard.html:83
 msgid "Scheduled bookings"
 msgstr "预订"
 
-#: src/templates/field-builder-modal.html:92
+#: src/templates/field-builder-modal.html:98
 msgid "Available units"
 msgstr "可用单位"
 
@@ -3556,20 +3498,20 @@ msgid "Select who can see this entry"
 msgstr "选择谁可以查看此条目"
 
 #: src/templates/permissions-edit-modal.html:17
-#: src/templates/view-permissions.html:10
+#: src/templates/view-permissions.html:11
 msgid "Can write"
 msgstr "可写"
 
 #: src/templates/permissions-edit-modal.html:18
-#: src/templates/view-permissions.html:11
+#: src/templates/view-permissions.html:12
 msgid "Select who can edit this entry"
 msgstr "选择谁可以编辑此条目"
 
-#: src/templates/sysconfig.html:83
+#: src/templates/sysconfig.html:91
 msgid "The default language of this instance. It can be overridden by each user."
 msgstr "此实例的默认语言。可以被每个用户的设置覆盖。"
 
-#: src/Make/MakeMultiPdf.php:29
+#: src/Make/MakeMultiPdf.php:32
 msgid "Multientry eLabFTW PDF"
 msgstr "多条目 eLabFTW PDF"
 
@@ -3589,60 +3531,60 @@ msgstr "新建实验状态"
 msgid "Create new resources status"
 msgstr "新建资源状态"
 
-#: src/templates/admin.html:260 src/templates/admin.html:709
+#: src/templates/admin.html:209 src/templates/admin.html:697
 msgid "Experiments categories"
 msgstr "实验类别"
 
-#: src/templates/admin.html:263
+#: src/templates/admin.html:212
 msgid "Create and modify the categories available to experiments."
 msgstr "创建和修改实验类别。"
 
-#: src/templates/admin.html:440
+#: src/templates/admin.html:403
 msgid "Experiments Status"
 msgstr "实验状态"
 
-#: src/templates/admin.html:487
+#: src/templates/admin.html:450
 msgid "Resources Status"
 msgstr "资源状态"
 
-#: src/templates/editusers.html:221
+#: src/templates/editusers.html:223
 msgid "Disable 2FA"
 msgstr "关闭双重验证"
 
-#: src/templates/field-builder-modal.html:133
+#: src/templates/field-builder-modal.html:135
 msgid "Read-only"
 msgstr "只读"
 
-#: src/templates/show.html:90 src/templates/show.html:91
+#: src/templates/show.html:65 src/templates/show.html:66
 msgid "Filter category"
 msgstr "筛选类别"
 
-#: src/templates/show.html:234 src/templates/show.html:236
+#: src/templates/show.html:380 src/templates/show.html:382
 msgid "Change category"
 msgstr "更改类别"
 
-#: src/templates/steps-links-edit.html:134
-#: src/templates/steps-links-view.html:45
+#: src/templates/steps-links-edit.html:136
+#: src/templates/steps-links-view.html:47
 msgid "Linked resources"
 msgstr "链接的资源"
 
-#: src/templates/team.html:56
+#: src/templates/scheduler.html:76
 msgid "Bind a resource"
 msgstr "绑定一个资源"
 
-#: src/templates/ucp.html:489 src/templates/ucp.html:500
+#: src/templates/ucp.html:472 src/templates/ucp.html:483
 msgid "Last used"
 msgstr "最后使用"
 
-#: src/classes/i18n4Js.php:48
+#: src/classes/i18n4Js.php:51
 msgid "A category is required to fetch the next Custom ID"
 msgstr "需要一个类别才能获取下一个自定义 ID"
 
-#: src/templates/admin.html:443
+#: src/templates/admin.html:406
 msgid "Create and modify the status available to experiments."
 msgstr "创建和修改可用于实验的状态。"
 
-#: src/templates/admin.html:490
+#: src/templates/admin.html:453
 msgid "Create and modify the status available to resources."
 msgstr "创建和修改可用于资源的状态。"
 
@@ -3662,50 +3604,52 @@ msgstr "锁定并归档所有实验"
 msgid "Select template"
 msgstr "选择模板"
 
-#: src/templates/create-new-item-modal.html:38
+#: src/templates/create-new-item-modal.html:47
 msgid "Add category…"
 msgstr "添加类别..."
 
-#: src/templates/create-new-item-modal.html:22
+#: src/templates/create-new-item-modal.html:28
 msgid "Default template"
 msgstr "默认模板"
 
-#: src/templates/dashboard.html:24 src/templates/dashboard.html:59
+#: src/templates/dashboard.html:18 src/templates/dashboard.html:53
 msgid "Browse by category"
 msgstr "按类别浏览"
 
-#: src/templates/dashboard.html:33 src/templates/dashboard.html:67
+#: src/templates/dashboard.html:27 src/templates/dashboard.html:61
 msgid "Browse by status"
 msgstr "按状态浏览"
 
-#: src/templates/dashboard.html:41
+#: src/templates/dashboard.html:35
 msgid "Last modified experiments"
 msgstr "最后修改的实验"
 
-#: src/templates/dashboard.html:75
+#: src/templates/dashboard.html:69
 msgid "Last modified resources"
 msgstr "最后修改的资源"
 
-#: src/templates/edit.html:84 src/templates/sysconfig.html:215
-#: src/templates/upload-more-info.html:4 src/templates/view.html:84
+#: src/templates/edit.html:58 src/templates/sysconfig.html:223
+#: src/templates/upload-more-info.html:4 src/templates/view.html:89
 msgid "ID"
 msgstr "ID"
 
-#: src/templates/edit.html:22 src/templates/edit.html:86
-#: src/templates/link-view-one.html:16 src/templates/show-item-table.html:30
-#: src/templates/show-item.html:61 src/templates/view.html:13
+#: src/templates/edit.html:13 src/templates/edit.html:60
+#: src/templates/link-view-one.html:17 src/templates/show-item-table.html:30
+#: src/templates/show-item.html:76 src/templates/view.html:13
 msgid "Custom ID"
 msgstr "自定义 ID"
 
-#: src/templates/edit.html:89
+#: src/templates/edit.html:63
 msgid "Get next"
 msgstr "获取下一个"
 
-#: src/templates/editusers.html:214
+#: src/templates/editusers.html:211
 msgid "Add to team"
 msgstr "添加到团队"
 
-#: src/templates/editusers.html:325
+#: src/templates/editusers.html:335
+#: src/templates/ownership-transfer-modal.html:17
+#: src/templates/view-edit-toolbar.html:24
 msgid "Search user"
 msgstr "搜索用户"
 
@@ -3721,107 +3665,112 @@ msgstr "按 %sctrl + enter%s 或 %s⌘ + enter%s 提交搜索。"
 msgid "Allowed Fields"
 msgstr "允许的字段"
 
-#: src/templates/search.html:35
+#: src/templates/search-help-modal.html:14
 msgid "field"
 msgstr "字段"
 
-#: src/templates/search.html:35
+#: src/templates/search-help-modal.html:14
 msgid "value"
 msgstr "值"
 
-#: src/templates/search.html:39
+#: src/templates/search-help-modal.html:21
 msgid "yes, no, simple or quoted term"
 msgstr "yes, no, 简单或引号包裹检索词"
 
-#: src/templates/search.html:40 src/templates/search.html:41
-#: src/templates/search.html:42 src/templates/search.html:45
-#: src/templates/search.html:46 src/templates/search.html:52
-#: src/templates/search.html:55 src/templates/search.html:57
-#: src/templates/search.html:58
+#: src/templates/search-help-modal.html:22
+#: src/templates/search-help-modal.html:23
+#: src/templates/search-help-modal.html:26
+#: src/templates/search-help-modal.html:27
+#: src/templates/search-help-modal.html:33
+#: src/templates/search-help-modal.html:35
+#: src/templates/search-help-modal.html:37
+#: src/templates/search-help-modal.html:39
+#: src/templates/search-help-modal.html:40
 msgid "simple or quoted term"
 msgstr "简单或引号包裹检索词"
 
-#: src/templates/search.html:44
+#: src/templates/search-help-modal.html:25
 msgid "see date format"
 msgstr "请参阅日期格式"
 
-#: src/templates/search.html:53 src/templates/search.html:56
+#: src/templates/search-help-modal.html:34
+#: src/templates/search-help-modal.html:38
 msgid "yes or no"
 msgstr "yes 或 no"
 
-#: src/templates/search.html:54
+#: src/templates/search-help-modal.html:36
 msgid "1, 2, 3, 4, 5, or unrated or 0"
 msgstr "1, 2, 3, 4, 5 或 unrated/0"
 
-#: src/templates/show.html:55
+#: src/templates/show.html:303
 msgid "Status (inverted)"
 msgstr "状态（倒序）"
 
-#: src/templates/show.html:58
+#: src/templates/show.html:306
 msgid "Highest Custom ID"
 msgstr "最高自定义 ID"
 
-#: src/templates/show.html:59
+#: src/templates/show.html:307
 msgid "Lowest Custom ID"
 msgstr "最低自定义 ID"
 
-#: src/templates/sysconfig.html:151
+#: src/templates/sysconfig.html:159
 msgid "Allow Admins to add existing users to their team"
 msgstr "允许管理员将现有用户添加到其团队"
 
-#: src/classes/i18n4Js.php:67
+#: src/classes/i18n4Js.php:71
 msgid "Sort by column"
 msgstr "按列排序"
 
-#: src/classes/i18n4Js.php:42 src/models/AbstractEntity.php:651
+#: src/classes/i18n4Js.php:43 src/models/AbstractEntity.php:572
 msgid "Custom ID is already used! Try another one."
 msgstr "自定义 ID 已被使用！请尝试另一个。"
 
-#: src/services/ExpirationNotifier.php:41
+#: src/services/ExpirationNotifier.php:43
 msgid "Account expiration warning"
 msgstr "账户到期警告"
 
-#: src/services/ExpirationNotifier.php:46
+#: src/services/ExpirationNotifier.php:48
 msgid "Your account on %s is due to expire on %s and become inaccessible (archived) passed this date. All your data will still be visible to others, but you will not be able to access it through this account."
 msgstr "您在 %s 上的帐户将在 %s 过期，并且将无法访问（被归档）。您的所有数据仍然对其他人可见，但您将无法再通过此账户访问它。"
 
-#: src/services/ExpirationNotifier.php:66
+#: src/services/ExpirationNotifier.php:68
 msgid "Account expiration information"
 msgstr "账户到期信息"
 
-#: src/services/ExpirationNotifier.php:76
+#: src/services/ExpirationNotifier.php:78
 msgid "One or several user accounts in your team will expire soon. Their account will become inaccessible (archived). All their data will still be visible to others."
-msgstr "您团队中的一个或多个用户账户即将过期。他们的账户将无法访问（归档）。其他人仍可看到他们的所有数据。"
+msgstr "您团队中的一个或多个用户账户即将过期。他们的账户将无法访问（被归档）。其他人仍可看到他们的所有数据。"
 
-#: src/services/Transform.php:111
+#: src/services/Transform.php:113
 msgid "A new eLabFTW version has been installed since your last visit.%sRead the release notes by clicking this message."
 msgstr "自从您上次访问以后，新版的 eLabFTW 已经安装。%s通过点击此消息可以阅读发行说明。"
 
-#: src/services/UserArchiver.php:54
+#: src/services/UserArchiver.php:56
 msgid "You are trying to archive an unvalidated user. Maybe you want to delete the account?"
 msgstr "您正在尝试归档一个未经验证的用户。或许你想删除这个账户？"
 
-#: src/services/UserArchiver.php:57
+#: src/services/UserArchiver.php:59
 msgid "A sysadmin account cannot be archived."
 msgstr "无法归档系统管理员帐户。"
 
 #: src/services/UserArchiver.php:60
 msgid "This instance configuration only permits Sysadmin users to archive a user."
-msgstr "此实例配置只允许系统管理员用户存档用户。"
+msgstr "此实例配置只允许系统管理员用户归档用户。"
 
-#: src/templates/admin.html:399
+#: src/templates/admin.html:323
 msgid "Permissions for the resource category"
 msgstr "资源类别的权限"
 
-#: src/templates/admin.html:402
+#: src/templates/admin.html:326
 msgid "Permissions for the derived resource"
 msgstr "衍生资源的权限"
 
-#: src/templates/admin.html:641
+#: src/templates/admin.html:612
 msgid "Tags of the team"
 msgstr "团队标签"
 
-#: src/templates/create-new-item-modal.html:23
+#: src/templates/create-new-item-modal.html:29
 msgid "Blank experiment"
 msgstr "空白实验"
 
@@ -3829,31 +3778,31 @@ msgstr "空白实验"
 msgid "Filter teams"
 msgstr "筛选团队"
 
-#: src/templates/editusers.html:78
+#: src/templates/editusers.html:83
 msgid "Utilize this attribute to specifically identify whether the user holds the primary Admin role within the team. Note that this designation is for informational purposes only."
 msgstr "利用此属性可具体识别用户是否在团队中担任主要管理员角色。请注意，此指定仅供参考。"
 
-#: src/templates/editusers.html:110
+#: src/templates/editusers.html:115
 msgid "Users table"
 msgstr "用户列表"
 
-#: src/templates/editusers.html:339
+#: src/templates/editusers.html:349
 msgid "Remote directory users list"
 msgstr "远程目录用户列表"
 
-#: src/templates/footer.html:15
+#: src/templates/footer.html:14
 msgid "Report bug"
 msgstr "报告 bug"
 
-#: src/templates/footer.html:53 src/templates/head.html:155
+#: src/templates/footer.html:52 src/templates/head.html:159
 msgid "Select language"
 msgstr "选择语言"
 
-#: src/templates/head.html:44
+#: src/templates/head.html:46
 msgid "Main menu"
 msgstr "主菜单"
 
-#: src/templates/head.html:47
+#: src/templates/head.html:49
 msgid "Toggle navigation"
 msgstr "切换导航"
 
@@ -3861,14 +3810,14 @@ msgstr "切换导航"
 msgid "Quicksearch"
 msgstr "快速搜索"
 
-#: src/templates/login.html:132 src/templates/sysconfig.html:361
-#: src/templates/sysconfig.html:889 src/templates/ts-config.html:32
-#: src/templates/ucp.html:417
+#: src/templates/login.html:132 src/templates/sysconfig.html:369
+#: src/templates/sysconfig.html:897 src/templates/ts-config.html:32
+#: src/templates/ucp.html:411
 msgid "Show password"
 msgstr "显示密码"
 
-#: src/templates/profile.html:263 src/templates/profile.html:277
-#: src/templates/team.html:257 src/templates/uploads.html:98
+#: src/templates/profile.html:267 src/templates/team.html:88
+#: src/templates/uploads.html:98
 msgid "Download"
 msgstr "下载"
 
@@ -3881,21 +3830,19 @@ msgstr "显示允许的 Email 域名"
 msgid "Select"
 msgstr "选择"
 
-#: src/templates/scope-button.html:5
+#: src/templates/scope-button.html:9 src/templates/scope-button.html:11
 msgid "Scope"
 msgstr "范围"
 
-#: src/templates/permissions-edit-modal.html:64
-#: src/templates/scope-button.html:8 src/templates/ucp.html:296
+#: src/Enums/Scope.php:33 src/templates/scope-button.html:13
 msgid "Self"
 msgstr "自己"
 
-#: src/templates/permissions-edit-modal.html:66
-#: src/templates/scope-button.html:16 src/templates/ucp.html:298
+#: src/Enums/Scope.php:35 src/templates/scope-button.html:21
 msgid "Everything"
 msgstr "所有"
 
-#: src/templates/search.html:132
+#: src/templates/show.html:238
 msgid "Date operator"
 msgstr "日期运算符"
 
@@ -3903,23 +3850,23 @@ msgstr "日期运算符"
 msgid "Entry"
 msgstr "条目"
 
-#: src/templates/show.html:80
+#: src/templates/show.html:56
 msgid "Query filters"
 msgstr "查询筛选器"
 
-#: src/templates/show.html:271 src/templates/steps-links-edit.html:149
+#: src/templates/show.html:419 src/templates/steps-links-edit.html:150
 msgid "Limit category"
 msgstr "限制分类"
 
-#: src/templates/show.html:283
+#: src/templates/show.html:431
 msgid "Limit author"
 msgstr "限制作者"
 
-#: src/templates/profile.html:133 src/templates/show.html:373
+#: src/templates/profile.html:132 src/templates/show.html:509
 msgid "Load more"
 msgstr "更多"
 
-#: src/templates/steps-links-edit.html:11
+#: src/templates/steps-links-edit.html:13
 msgid "Drag to reorder"
 msgstr "拖动以排序"
 
@@ -3927,66 +3874,66 @@ msgstr "拖动以排序"
 msgid "Email configuration is required. Consult the documentation (%slink%s) for help."
 msgstr "需要完成电子邮件设置。查阅文档（%s链接%s）以获取帮助。"
 
-#: src/templates/sysconfig.html:54 src/templates/sysconfig.html:1035
+#: src/templates/sysconfig.html:54 src/templates/sysconfig.html:1043
 msgid "Audit Logs"
 msgstr "审计日志"
 
-#: src/templates/sysconfig.html:123
+#: src/templates/sysconfig.html:131
 msgid "URL where the Chat room menu entry from Help dropdown points"
 msgstr "帮助下拉菜单中聊天室选项指向的 URL"
 
-#: src/templates/sysconfig.html:152
+#: src/templates/sysconfig.html:160
 msgid "Allow Admins to archive users"
 msgstr "允许管理员归档用户"
 
-#: src/templates/sysconfig.html:388
+#: src/templates/sysconfig.html:396
 msgid "Email address"
 msgstr "Email 地址"
 
-#: src/templates/sysconfig.html:1030
+#: src/templates/sysconfig.html:1038
 msgid "Audit Logs configuration"
 msgstr "审计日志配置"
 
-#: src/templates/sysconfig.html:1032
+#: src/templates/sysconfig.html:1040
 msgid "Emit audit logs with PHP error log"
 msgstr "通过 PHP 错误日志发布审计日志"
 
-#: src/templates/sysconfig.html:1037
+#: src/templates/sysconfig.html:1045
 msgid "This table lists the most recent events recorded in the application and worth keeping a trace of."
 msgstr "这个列表中列举了最近在应用中记录的事件并且值得持续关注。"
 
-#: src/templates/profile.html:253 src/templates/sysconfig.html:780
-#: src/templates/sysconfig.html:1040
+#: src/templates/profile.html:257 src/templates/sysconfig.html:788
+#: src/templates/sysconfig.html:1048
 msgid "Refresh"
 msgstr "刷新"
 
-#: src/templates/sysconfig.html:1048
+#: src/templates/sysconfig.html:1056
 msgid "Created at"
 msgstr "创建于"
 
-#: src/templates/sysconfig.html:1050
+#: src/templates/sysconfig.html:1058
 msgid "Actor"
 msgstr "操作者"
 
-#: src/templates/sysconfig.html:1051
+#: src/templates/sysconfig.html:1059
 msgid "Target user"
 msgstr "目标用户"
 
-#: src/templates/team.html:119 src/templates/team.html:124
-#: src/templates/team.html:129
+#: src/templates/scheduler.html:141 src/templates/scheduler.html:146
+#: src/templates/scheduler.html:151
 msgid "Filter by category"
 msgstr "筛选类别"
 
-#: src/templates/team.html:141 src/templates/team.html:146
-#: src/templates/team.html:151
+#: src/templates/scheduler.html:163 src/templates/scheduler.html:168
+#: src/templates/scheduler.html:173
 msgid "Select a resource"
 msgstr "选择一个资源"
 
-#: src/templates/team.html:226
+#: src/templates/team.html:57
 msgid "Mass email form"
 msgstr "群发邮件表单"
 
-#: src/templates/ucp.html:307
+#: src/templates/ucp.html:301
 msgid "User information"
 msgstr "用户信息"
 
@@ -4002,37 +3949,37 @@ msgstr "附件"
 msgid "Filesize"
 msgstr "文件大小"
 
-#: src/templates/view-edit-template.html:191
+#: src/templates/edit.html:76
 msgid "Permissions for the template"
 msgstr "模板的权限"
 
-#: src/templates/view-edit-template.html:194
+#: src/templates/edit.html:82
 msgid "Permissions for the derived experiment"
 msgstr "衍生实验的权限"
 
-#: src/templates/view-edit-toolbar.html:42
-#: src/templates/view-edit-toolbar.html:65
+#: src/templates/view-edit-toolbar.html:40
+#: src/templates/view-edit-toolbar.html:63
 msgid "Timestamp Entry"
 msgstr "时间戳条目"
 
-#: src/templates/view-edit-toolbar.html:48
-#: src/templates/view-edit-toolbar.html:72
+#: src/templates/view-edit-toolbar.html:46
+#: src/templates/view-edit-toolbar.html:70
 msgid "Timestamping an entry will create an irrefutable proof that the data was present at this point in time. You can timestamp an entry as many times as necessary: an immutable timestamp archive will be created each time, and stored as attachment."
 msgstr "给记录建立时间戳将会为数据在特定时间点的存在性建立一个无可辩驳的证据。您可以根据需要对一个条目进行多次时间戳：每次都将创建一个不可变的时间戳归档文件，并将其存储为附件。"
 
-#: src/templates/view-edit-toolbar.html:49
+#: src/templates/view-edit-toolbar.html:47
 msgid "With Trusted Timestamping (RFC3161), a cryptographic hash of your data is sent to a trusted third party. They reply with a token containing the current time, and they sign the token with their private key."
 msgstr "根据受信任的时间戳（RFC3161），你的数据的加密哈希值将被发送到一个受信任的第三方组织。他们将会回复一个包含当前时间的令牌，并且用他们的私钥加密这个令牌。"
 
-#: src/templates/view-edit-toolbar.html:73
+#: src/templates/view-edit-toolbar.html:71
 msgid "With Blockchain Timestamping, the cryptographic fingerprint of your data is added to a blockchain that is impossible to modify. This function uses the Bloxberg Consortium blockchain based on Ethereum."
 msgstr "根据区块链时间戳，你的数据的加密指纹被加入到一个不可修改的区块链中。这个功能使用 Bloxberg 联合体基于以太坊的区块链。"
 
-#: src/templates/view.html:41
+#: src/templates/view.html:44
 msgid "Entry was timestamped by %s on %s at %s"
 msgstr "由 %s 于 %s %s 加盖时间戳"
 
-#: src/classes/i18n4Js.php:55 src/models/AbstractEntity.php:684
+#: src/classes/i18n4Js.php:59 src/models/AbstractEntity.php:647
 msgid "Linking an item to itself is not allowed. Please select a different target."
 msgstr "不允许链接到资源自身。请选择不同的目标。"
 
@@ -4040,7 +3987,9 @@ msgstr "不允许链接到资源自身。请选择不同的目标。"
 msgid "Only members of the team"
 msgstr "仅团队成员"
 
-#: src/Enums/PasswordComplexity.php:29 src/templates/sysconfig.html:602
+#: src/Enums/PasswordComplexity.php:29
+#: src/templates/reset-user-password-modal.html:21
+#: src/templates/sysconfig.html:610
 msgid "Minimum password length"
 msgstr "最小密码长度"
 
@@ -4056,7 +4005,7 @@ msgstr "如果字母表允许，必须至少有一个大写字母和一个小写
 msgid "Must have at least one upper and one lower case letter, if your alphabet allows, one special character, and one digit"
 msgstr "如果字母表允许，必须至少有一个大写字母和一个小写字母，一个特殊字符和一个数字"
 
-#: src/models/Users.php:472
+#: src/models/users/Users.php:503
 msgid "New password must not be the same as the current one."
 msgstr "新密码不能与当前的相同。"
 
@@ -4064,12 +4013,12 @@ msgstr "新密码不能与当前的相同。"
 msgid "Password does not match requirement: %s"
 msgstr "密码不符合要求：%s"
 
-#: src/templates/change-pass.html:19 src/templates/editusers.html:175
-#: src/templates/register.html:69 src/templates/ucp.html:337
+#: src/templates/change-pass.html:19 src/templates/register.html:69
+#: src/templates/reset-user-password-modal.html:16 src/templates/ucp.html:331
 msgid "Minimum password length: %d."
 msgstr "最小密码长度：%d。"
 
-#: src/templates/search.html:43
+#: src/templates/search-help-modal.html:24
 msgid "number"
 msgstr "数字"
 
@@ -4077,11 +4026,11 @@ msgstr "数字"
 msgid "And extra field is"
 msgstr "额外字段"
 
-#: src/templates/search.html:225
+#: src/templates/show.html:141
 msgid "All fields"
 msgstr "全部字段"
 
-#: src/templates/search.html:246
+#: src/templates/show.html:164
 msgid "Tip: you can use '%' as wildcard in value"
 msgstr "提示：您可以使用 ‘%’ 作为通配符"
 
@@ -4089,23 +4038,24 @@ msgstr "提示：您可以使用 ‘%’ 作为通配符"
 msgid "Show related experiments"
 msgstr "显示关联实验"
 
-#: src/templates/sysconfig.html:599
+#: src/templates/sysconfig.html:607
 msgid "Password policy"
 msgstr "密码策略"
 
-#: src/templates/sysconfig.html:608
+#: src/templates/reset-user-password-modal.html:23
+#: src/templates/sysconfig.html:616
 msgid "Password complexity requirement"
 msgstr "密码复杂度要求"
 
-#: src/templates/sysconfig.html:615
+#: src/templates/sysconfig.html:623
 msgid "The minimum password length is always enforced."
 msgstr "始终强制要求最小密码长度。"
 
-#: src/templates/sysconfig.html:619
+#: src/templates/sysconfig.html:627
 msgid "Maximum number of days since last password change"
-msgstr "距上次更改密码的最大天数"
+msgstr "密码过期天数"
 
-#: src/templates/ucp.html:325
+#: src/templates/ucp.html:319
 msgid "Personal information"
 msgid_plural "Personal information"
 msgstr[0] "个人信息"
@@ -4150,22 +4100,23 @@ msgstr "瑞典克朗（SEK）"
 msgid "Norwegian Krone (NOK)"
 msgstr "挪威克朗（NOK）"
 
-#: src/Enums/ProcurementState.php:26
+#: src/Enums/ProcurementState.php:27
 msgid "Pending"
 msgstr "等待中"
 
-#: src/Enums/ProcurementState.php:27
+#: src/Enums/ProcurementState.php:28
 msgid "Validated"
 msgstr "已验证"
 
-#: src/Enums/ProcurementState.php:28
+#: src/Enums/ProcurementState.php:29
 msgid "Partially received"
 msgstr "部分收到"
 
-#: src/Enums/ProcurementState.php:29
+#: src/Enums/ProcurementState.php:30
 msgid "Received"
 msgstr "已收到"
 
+#: src/Make/MakeCompoundsReport.php:58 src/Make/MakeInventoryReport.php:65
 #: src/Make/MakeProcurementRequestsCsv.php:32
 msgid "Nothing to export!"
 msgstr "没有可导出的内容！"
@@ -4178,31 +4129,31 @@ msgstr "密钥格式无效！"
 msgid "Could not decrypt private key. Are you certain of the passphrase?"
 msgstr "无法解密私钥。您确定密码吗？"
 
-#: src/classes/TwigFilters.php:138
+#: src/classes/TwigFilters.php:145
 msgid "User could not be found."
 msgstr "找不到用户。"
 
-#: src/classes/i18n4Js.php:59
+#: src/classes/i18n4Js.php:63
 msgid "Onboarding email(s) will soon be sent."
 msgstr "即将发送入职电子邮件。"
 
-#: src/controllers/LoginController.php:344
+#: src/controllers/LoginController.php:352
 msgid "Your account has been associated successfully to a team. Please authenticate again."
 msgstr "您的帐户已成功关联至团队。请重新进行身份验证。"
 
-#: src/models/AbstractConcreteEntity.php:269
+#: src/models/AbstractConcreteEntity.php:307
 msgid "Signed by %s (%s)"
 msgstr "由 %s 签名（%s）"
 
-#: src/models/AbstractConcreteEntity.php:273
+#: src/models/AbstractConcreteEntity.php:311
 msgid "Signature archive by %s (%s)"
 msgstr "由 %s 签名归档（%s）"
 
-#: src/models/SigKeys.php:45
+#: src/models/SigKeys.php:44
 msgid "The mandatory \"passphrase\" parameter was not provided!"
-msgstr "未提供强制性的 “密码” 参数！"
+msgstr "未提供强制性的“密码”参数！"
 
-#: src/models/notifications/CommentCreated.php:37
+#: src/models/notifications/CommentCreated.php:39
 msgid "Hi. %s left a comment on your entry. Have a look: %s"
 msgstr "Hi. %s 对您的条目发表了评论。请查看：%s"
 
@@ -4215,7 +4166,7 @@ msgstr "您的条目有新评论。"
 msgid "Allow users booking in past"
 msgstr "允许用户预订过去时段"
 
-#: src/templates/edit.html:105
+#: src/templates/edit.html:141
 msgid "Last saved:"
 msgstr "最后保存："
 
@@ -4256,7 +4207,8 @@ msgid "This email will be sent to new (sys)admins."
 msgstr "该电子邮件将发送给新的（系统）管理员。"
 
 #: src/templates/procurement-params-modal.html:6
-#: src/templates/view-edit-toolbar.html:300
+#: src/templates/view-edit-toolbar.html:239
+#: src/templates/view-edit-toolbar.html:287
 msgid "Modify procurement parameters"
 msgstr "修改采购参数"
 
@@ -4281,56 +4233,57 @@ msgstr "含税价格"
 msgid "Currency"
 msgstr "货币"
 
-#: src/templates/admin.html:772 src/templates/show.html:228
+#: src/templates/admin.html:761 src/templates/show.html:374
 msgid "Archive"
 msgstr "归档"
 
-#: src/templates/sysconfig.html:135
+#: src/templates/sysconfig.html:143
 msgid "This allows users without an account to login into a team and see the experiments with public visibility. It also enables users to share specific entries with a special link."
 msgstr "这允许没有帐户的用户登录到一个团队中，并在公共可见性下查看实验。它还允许用户通过特殊链接共享特定条目。"
 
-#: src/templates/team.html:9 src/templates/team.html:252
-#: src/templates/team.html:262
+#: src/templates/team.html:7 src/templates/team.html:83
+#: src/templates/team.html:93
 msgid "Procurement requests"
 msgstr "采购申请"
 
-#: src/templates/team.html:266 src/templates/team.html:286
+#: src/templates/team.html:97 src/templates/team.html:117
 msgid "Requester"
 msgstr "申请人"
 
-#: src/templates/team.html:267 src/templates/team.html:288
+#: src/templates/team.html:98 src/templates/team.html:119
 msgid "Ordered"
 msgstr "采购时间"
 
-#: src/templates/team.html:268 src/templates/team.html:290
+#: src/templates/team.html:99 src/templates/team.html:121
 msgid "Quantity ordered"
 msgstr "采购数量"
 
-#: src/templates/team.html:269 src/templates/team.html:292
+#: src/templates/team.html:100 src/templates/team.html:123
 msgid "Total"
 msgstr "总额"
 
-#: src/templates/team.html:270 src/templates/team.html:293
+#: src/templates/team.html:101 src/templates/team.html:124
 msgid "Quantity received"
 msgstr "收到的数量"
 
-#: src/templates/team.html:272 src/templates/team.html:295
+#: src/templates/team.html:103
 msgid "Quote"
 msgstr "引用"
 
-#: src/templates/team.html:273 src/templates/team.html:300
+#: src/templates/show.html:190 src/templates/team.html:104
+#: src/templates/team.html:133
 msgid "State"
 msgstr "状态"
 
-#: src/templates/team.html:294
+#: src/templates/team.html:125
 msgid "unset"
 msgstr "取消设置"
 
-#: src/templates/team.html:302
+#: src/templates/team.html:137
 msgid "Cancel order"
 msgstr "取消订单"
 
-#: src/templates/team.html:312
+#: src/templates/team.html:148
 msgid "No procurement requests have been made yet."
 msgstr "尚未提出任何采购申请。"
 
@@ -4343,66 +4296,66 @@ msgstr "（免费，无需账户）"
 msgid "(requires account)"
 msgstr "（需要账户）"
 
-#: src/templates/ucp.html:30 src/templates/ucp.html:47
-#: src/templates/ucp.html:405
+#: src/templates/ucp.html:20 src/templates/ucp.html:37
+#: src/templates/ucp.html:399
 msgid "Regenerate signature keys"
 msgstr "重新生成签名密钥"
 
-#: src/templates/ucp.html:36
+#: src/templates/ucp.html:26
 msgid "Warning: regenerating your signature keys means the current key will be archived and will not be available anymore."
-msgstr "警告：重新生成您的签名密钥意味着当前密钥将被存档并且不再可用。"
+msgstr "警告：重新生成您的签名密钥意味着当前密钥将被归档并且不再可用。"
 
-#: src/templates/ucp.html:37
+#: src/templates/ucp.html:27
 msgid "Enter a passphrase:"
 msgstr "输入密码："
 
-#: src/templates/ucp.html:390
+#: src/templates/ucp.html:384
 msgid "Signature keys"
 msgstr "签名密钥"
 
-#: src/templates/ucp.html:398
+#: src/templates/ucp.html:392
 msgid "Download private key"
 msgstr "下载私钥"
 
-#: src/templates/ucp.html:401
+#: src/templates/ucp.html:395
 msgid "Download public key"
 msgstr "下载公钥"
 
-#: src/templates/ucp.html:409
+#: src/templates/ucp.html:403
 msgid "Signature keys are a highly secure public-key signature system that allows you to cryptographically sign experiments or resources. Signing an entry will generate an immutable archive."
 msgstr "签名密钥是一种高度安全的公钥签名系统，可让您以加密方式签署实验或资源。签署条目将生成一个不可变的存档。"
 
-#: src/templates/ucp.html:410
+#: src/templates/ucp.html:404
 msgid "To learn more about signature keys, have a look at the %scomplete documentation%s."
 msgstr "要了解有关签名密钥的更多信息，请查看 %s完整文档%s。"
 
-#: src/templates/ucp.html:412
+#: src/templates/ucp.html:406
 msgid "You do not have a key pair associated with your account yet."
 msgstr "您尚未拥有与您的帐户关联的密钥对。"
 
-#: src/templates/ucp.html:413
+#: src/templates/ucp.html:407
 msgid "To generate a key pair, enter a passphrase below and click the button:"
 msgstr "要生成密钥对，请在下面输入密码并单击按钮："
 
-#: src/templates/ucp.html:418
+#: src/templates/ucp.html:412
 msgid "Generate signature keys"
 msgstr "生成签名密钥"
 
-#: src/templates/ucp.html:421
+#: src/templates/ucp.html:415
 msgid "Tip: use a password manager or a passphrase that you can remember, see %sthis XKCD comic%s."
 msgstr "提示：使用密码管理器或您能记住的密码，请参阅 %s 此 XKCD 漫画 %s。"
 
-#: src/templates/ucp.html:423
+#: src/templates/ucp.html:417
 msgid "Your account is already associated with a keypair."
 msgstr "您的帐户已经与密钥对关联。"
 
-#: src/templates/ucp.html:424
+#: src/templates/ucp.html:418
 msgid "Here is your public key. You can share it with the world:"
 msgstr "这是你的公钥。你可以与全世界分享它："
 
 #: src/templates/view-edit-toolbar.html:6
-#: src/templates/view-edit-toolbar.html:284
-#: src/templates/view-edit-toolbar.html:285
+#: src/templates/view-edit-toolbar.html:271
+#: src/templates/view-edit-toolbar.html:272
 msgid "Request action"
 msgstr "申请操作"
 
@@ -4414,61 +4367,61 @@ msgstr "选择操作"
 msgid "Select collaborator"
 msgstr "选择合作者"
 
-#: src/templates/view-edit-toolbar.html:89
-#: src/templates/view-edit-toolbar.html:209
+#: src/templates/view-edit-toolbar.html:87
+#: src/templates/view-edit-toolbar.html:219
 msgid "Add signature"
 msgstr "添加签名"
 
-#: src/templates/view-edit-toolbar.html:95
+#: src/templates/view-edit-toolbar.html:93
 msgid "Adding your signature will cryptographically sign the content of this entry, and the signature will be stored alongside the content at the time of signature, in an archive, visible as attachment (masked by default because archived)."
-msgstr "添加您的签名将以加密方式签署此条目的内容，并且签名将与签名时的内容一起存储在档案中，以附件形式显示（由于已存档，因此默认被屏蔽）。"
+msgstr "添加您的签名将以加密方式签署此条目的内容，并且签名将与签名时的内容一起存储在档案中，以附件形式显示（由于已归档，默认被屏蔽）。"
 
-#: src/templates/view-edit-toolbar.html:97
+#: src/templates/view-edit-toolbar.html:95
 msgid "Your account is missing a cryptographic key pair, necessary for signature. You must generate one from your User Control Panel before you can sign an entry."
 msgstr "您的帐户缺少签名所需的加密密钥对。您必须先从用户控制面板生成一个密钥对，然后才能对条目签名。"
 
-#: src/templates/view-edit-toolbar.html:101
+#: src/templates/view-edit-toolbar.html:99
 msgid "Select a meaning for this signature"
 msgstr "选择此签名的含义"
 
-#: src/templates/view-edit-toolbar.html:108
+#: src/templates/view-edit-toolbar.html:106
 msgid "Enter your passphrase to unlock your secret key:"
 msgstr "输入您的密码来解锁您的密钥："
 
-#: src/templates/view-edit-toolbar.html:120
+#: src/templates/view-edit-toolbar.html:118
 msgid "Add your signature"
 msgstr "添加您的签名"
 
-#: src/templates/view-edit-toolbar.html:122
+#: src/templates/view-edit-toolbar.html:120
 msgid "Go to Settings"
 msgstr "前往设置"
 
-#: src/templates/view-edit-toolbar.html:134
+#: src/templates/view-edit-toolbar.html:133
 msgid "Create procurement request"
 msgstr "创建采购申请"
 
-#: src/templates/view-edit-toolbar.html:141
+#: src/templates/view-edit-toolbar.html:140
 msgid "Enter a quantity to purchase"
 msgstr "输入采购数量"
 
-#: src/templates/view-edit-toolbar.html:146
-#: src/templates/view-edit-toolbar.html:229
+#: src/templates/view-edit-toolbar.html:145
+#: src/templates/view-edit-toolbar.html:239
 msgid "Place order"
-msgstr "下订单"
+msgstr "采购"
 
-#: src/Enums/RequestableAction.php:29
+#: src/Enums/RequestableAction.php:30
 msgid "archiving"
 msgstr "归档"
 
-#: src/Enums/RequestableAction.php:30
+#: src/Enums/RequestableAction.php:31
 msgid "locking"
 msgstr "锁定"
 
-#: src/Enums/RequestableAction.php:32
+#: src/Enums/RequestableAction.php:33
 msgid "signing"
 msgstr "签名"
 
-#: src/Enums/RequestableAction.php:33
+#: src/Enums/RequestableAction.php:34
 msgid "timestamping"
 msgstr "时间戳"
 
@@ -4476,11 +4429,11 @@ msgstr "时间戳"
 msgid "removal of exclusive edit mode"
 msgstr "解除独占编辑模式"
 
-#: src/Make/Exports.php:105
+#: src/Make/Exports.php:108
 msgid "Cannot store more than %d exports. Delete previous exports to be permitted to create new ones."
 msgstr "无法存储多于 %d 的导出。请删除以前的导出以允许创建新的导出。"
 
-#: src/classes/i18n4Js.php:54
+#: src/classes/i18n4Js.php:58
 msgid "Apply to {{num, number}} entries?"
 msgstr "应用到 {{num, number}} 个条目？"
 
@@ -4496,23 +4449,23 @@ msgstr "已经申请执行此操作。"
 msgid "Batch actions"
 msgstr "批处理"
 
-#: src/templates/admin.html:173 src/templates/show-view-edit.html:8
+#: src/templates/admin.html:116 src/templates/show-view-edit.html:6
 msgid "Newcomer banner"
 msgstr "新人横幅"
 
-#: src/templates/admin.html:177
+#: src/templates/admin.html:120
 msgid "Activate newcomer banner"
 msgstr "启用新人横幅"
 
-#: src/templates/admin.html:178
+#: src/templates/admin.html:121
 msgid "Display a message to users that recently joined the team."
 msgstr "向最近加入团队的用户显示消息。"
 
-#: src/templates/admin.html:181
+#: src/templates/admin.html:124
 msgid "Number of days after registration where a user is considered a newcomer"
-msgstr "注册后将用户视为新用户的天数"
+msgstr "注册后多少天内视为新人"
 
-#: src/templates/admin.html:186
+#: src/templates/admin.html:129
 msgid "Message to display"
 msgstr "显示的消息"
 
@@ -4530,47 +4483,49 @@ msgstr "您于 %s 以独占编辑模式打开此条目。"
 msgid "This entry is opened by %s in exclusive edit mode since %s. You cannot edit it now but remove the lock or %sRequest exclusive edit mode removal%s."
 msgstr "此条目被 %s 于 %s 使用独占编辑模式打开。您目前无法编辑它，但可以解锁或者 %s申请解除独占编辑模式%s。"
 
-#: src/templates/admin.html:679
+#: src/templates/admin.html:652
 msgid "From here you can perform actions on entire group of entries at once."
 msgstr "您可以在这里一次对整个条目组执行操作。"
 
-#: src/templates/admin.html:681 src/templates/admin.html:695
-#: src/templates/admin.html:709 src/templates/admin.html:723
-#: src/templates/admin.html:737 src/templates/admin.html:751
+#: src/templates/admin.html:654 src/templates/admin.html:668
+#: src/templates/admin.html:682 src/templates/admin.html:697
+#: src/templates/admin.html:711 src/templates/admin.html:725
+#: src/templates/admin.html:739
 msgid "Toggle display"
 msgstr "切换显示"
 
-#: src/templates/admin.html:681 src/templates/admin.html:695
-#: src/templates/admin.html:709 src/templates/admin.html:723
-#: src/templates/admin.html:737 src/templates/admin.html:751
+#: src/templates/admin.html:654 src/templates/admin.html:668
+#: src/templates/admin.html:682 src/templates/admin.html:697
+#: src/templates/admin.html:711 src/templates/admin.html:725
+#: src/templates/admin.html:739
 msgid "selected"
 msgstr "选中"
 
-#: src/templates/admin.html:695
+#: src/templates/admin.html:668
 msgid "Resources status"
 msgstr "资源状态"
 
-#: src/templates/admin.html:723
+#: src/templates/admin.html:711
 msgid "Experiments status"
 msgstr "实验状态"
 
-#: src/templates/admin.html:771
+#: src/templates/admin.html:759 src/templates/show.html:372
 msgid "Unlock"
 msgstr "解锁"
 
-#: src/templates/admin.html:776
+#: src/templates/admin.html:765
 msgid "Set permissions"
 msgstr "设置权限"
 
-#: src/templates/admin.html:817 src/templates/profile.html:212
+#: src/templates/admin.html:806 src/templates/profile.html:216
 msgid "Set read permissions"
 msgstr "设置读权限"
 
-#: src/templates/admin.html:818 src/templates/profile.html:222
+#: src/templates/admin.html:807 src/templates/profile.html:226
 msgid "Set write permissions"
 msgstr "设置写权限"
 
-#: src/templates/show-view-edit.html:8
+#: src/templates/show-view-edit.html:6
 msgid "You are seeing this because your account is less than %d days old."
 msgstr "您看到此消息是因为您注册还不到 %d 天。"
 
@@ -4663,8 +4618,8 @@ msgstr "打开你的验证程序"
 msgid "Enter the 6 digits displayed on your phone"
 msgstr "输入手机上显示的 6 位数字"
 
-#: src/templates/permissions-edit-modal.html:61
 #: src/templates/permissions-edit-modal.html:62
+#: src/templates/permissions-edit-modal.html:63
 msgid "Set scope"
 msgstr "设置范围"
 
@@ -4696,7 +4651,7 @@ msgstr "父条目"
 msgid "File size"
 msgstr "文件大小"
 
-#: src/templates/profile.html:145
+#: src/templates/profile.html:143
 msgid "You can import data from a .eln archive or a .csv file. %sSee documentation %s%s."
 msgstr "您可以从 .eln 存档或 .csv 文件中导入数据。%s查看文档 %s%s。"
 
@@ -4704,47 +4659,47 @@ msgstr "您可以从 .eln 存档或 .csv 文件中导入数据。%s查看文档 
 msgid "Select a file to import"
 msgstr "选择导入的文件"
 
-#: src/templates/profile.html:153
+#: src/templates/profile.html:157
 msgid "Allowed extensions: .eln, .csv"
-msgstr "运行的扩展名：.eln，.csv"
+msgstr "允许的扩展名：.eln，.csv"
 
-#: src/templates/profile.html:160
+#: src/templates/profile.html:164
 msgid "Select where the entries will be created"
 msgstr "选择创建条目的位置"
 
-#: src/templates/profile.html:189
+#: src/templates/profile.html:193
 msgid "Select a category"
 msgstr "选择类别"
 
-#: src/templates/profile.html:201
+#: src/templates/profile.html:205
 msgid "Select owner of imported elements"
 msgstr "选择导入元素的所有者"
 
-#: src/templates/profile.html:245
+#: src/templates/profile.html:249
 msgid "This page allows you to export your data in different formats."
 msgstr "此页允许您以不同的格式导出数据。"
 
-#: src/templates/profile.html:247
+#: src/templates/profile.html:251
 msgid "Create new export"
 msgstr "创建新的导出"
 
-#: src/templates/profile.html:250
+#: src/templates/profile.html:254
 msgid "Exported files"
 msgstr "导出文件"
 
-#: src/templates/profile.html:260
+#: src/templates/profile.html:264
 msgid "Show more"
 msgstr "更多"
 
-#: src/templates/profile.html:268 src/templates/profile.html:291
+#: src/templates/profile.html:272 src/templates/profile.html:290
 msgid "File is not ready"
 msgstr "文件尚未准备好"
 
-#: src/templates/profile.html:273
+#: src/templates/profile.html:277
 msgid "PDF/A"
 msgstr "PDF/A"
 
-#: src/templates/profile.html:296
+#: src/templates/profile.html:295
 msgid "Error"
 msgstr "错误"
 
@@ -4760,37 +4715,37 @@ msgstr "显示关联资源"
 msgid "%s is requesting %s for"
 msgstr "%s 申请 %s"
 
-#: src/templates/show.html:252 src/templates/show.html:253
+#: src/templates/show.html:400 src/templates/show.html:401
 msgid "Change read permissions"
 msgstr "更改读权限"
 
-#: src/templates/show.html:259 src/templates/show.html:260
+#: src/templates/show.html:407 src/templates/show.html:408
 msgid "Change write permissions"
 msgstr "更改写权限"
 
-#: src/templates/show.html:293
+#: src/templates/show.html:441
 msgid "Reset"
 msgstr "重置"
 
-#: src/templates/team.html:106
+#: src/templates/scheduler.html:125
 msgid "Select a resource below in order to book it."
 msgstr "选择下面的资源进行预订。"
 
-#: src/templates/ucp.html:281
+#: src/templates/ucp.html:276
 msgid "Always display your own entries, regardless of the current team"
 msgstr "始终显示您自己的条目，不管当前团队是什么"
 
-#: src/templates/ucp.html:291
+#: src/templates/ucp.html:286
 msgid "Select the scope for teamgroups"
 msgstr "选择团队小组范围"
 
-#: src/templates/ucp.html:292
+#: src/templates/ucp.html:287
 msgid "This setting controls which teamgroups will be listed in the permission settings window."
 msgstr "此设置控制哪些团队小组会在权限设置窗口中列出。"
 
-#: src/templates/view-edit-template.html:14 src/templates/view-edit.html:27
+#: src/templates/view-edit.html:29
 msgid "%s has requested %s for this entity from %s"
-msgstr "%s 已申请对此条目进行 %s 向 %s"
+msgstr "%s 申请%s此条目  由 %s 执行"
 
 #: src/templates/view-edit-template.html:42 src/templates/view.html:29
 msgid "This entry is opened by %s in exclusive edit mode since %s. You cannot edit it now. %sRequest exclusive edit mode removal%s"
@@ -4814,54 +4769,54 @@ msgstr "无"
 
 #: src/Enums/Classification.php:27
 msgid "Restricted"
-msgstr "限制级"
+msgstr "限制"
 
 #: src/Enums/Classification.php:28
 msgid "Confidential"
-msgstr "秘密级"
+msgstr "秘密"
 
 #: src/Enums/Classification.php:29
 msgid "Secret"
-msgstr "机密级"
+msgstr "秘密"
 
 #: src/Enums/Classification.php:30
 msgid "Top Secret"
-msgstr "绝密级"
+msgstr "绝密"
 
-#: src/Enums/RequestableAction.php:31
+#: src/Enums/RequestableAction.php:32
 msgid "review"
 msgstr "审查"
 
-#: src/classes/i18n4Js.php:61
+#: src/classes/i18n4Js.php:65
 msgid "Remove"
 msgstr "移除"
 
-#: src/models/notifications/ActionRequested.php:37
-#: src/services/Transform.php:121
+#: src/models/notifications/ActionRequested.php:39
+#: src/services/Transform.php:123
 msgid "%s has requested %s from you."
 msgstr "%s 向你申请 %s 操作。"
 
-#: src/models/notifications/ActionRequested.php:42
+#: src/models/notifications/ActionRequested.php:44
 msgid "You can review the request here: %s"
 msgstr "您可以在这里审查申请：%s"
 
-#: src/models/notifications/ActionRequested.php:46
+#: src/models/notifications/ActionRequested.php:48
 msgid "Action requested"
 msgstr "申请的操作"
 
-#: src/templates/admin.html:787 src/templates/admin.html:795
+#: src/templates/admin.html:776 src/templates/admin.html:784
 #: src/templates/permissions-edit-modal.html:46
-#: src/templates/permissions-edit-modal.html:58
+#: src/templates/permissions-edit-modal.html:59
 msgid "(hold %sctrl%s key to select multiple entries, %sctrl%s + click to deselect a selected entry)"
 msgstr "（按住 %sctrl%s 键选择多个条目，按住 %sctrl%s +点击 可取消选中）"
 
 #: src/templates/export-menu-options.html:28
 msgid "Classification"
-msgstr "分类"
+msgstr "分级"
 
 #: src/templates/export-menu-options.html:29
 msgid "Add a classification level in the footer."
-msgstr "在页脚中添加分类级别。"
+msgstr "在页尾中添加分级。"
 
 #: src/templates/export-menu.html:6
 msgid "Export as PDF"
@@ -4895,23 +4850,23 @@ msgstr "包含标题"
 msgid "Edit IDP"
 msgstr "编辑 IDP"
 
-#: src/templates/profile.html:161
+#: src/templates/profile.html:165
 msgid "A .eln file can contain different types of entries. You can either force them all to be of a given type, or let eLabFTW decide the types, based on the 'genre' attribute of each entry. By default, Resources will be created if no genre can be found and no type has been imposed."
-msgstr ".eln 文件可以包含不同类型的条目。您可以强制它们都属于给定的类型，也可以让 eLabFTW 根据每个条目的 “genre” 属性决定类型。默认情况下，如果找不到类型并且没有强加类型，则将创建资源。"
+msgstr ".eln 文件可以包含不同类型的条目。您可以强制它们都属于给定的类型，也可以让 eLabFTW 根据每个条目的“genre”属性决定类型。默认情况下，如果找不到类型并且没有强加类型，则将创建资源。"
 
-#: src/templates/profile.html:178
+#: src/templates/profile.html:182
 msgid "Resources Categories"
 msgstr "资源类别"
 
-#: src/templates/profile.html:182
+#: src/templates/profile.html:186
 msgid "Do not force type"
 msgstr "不强制类型"
 
-#: src/templates/profile.html:191
+#: src/templates/profile.html:195
 msgid "Do not force a category"
 msgstr "不强制类别"
 
-#: src/templates/show.html:189
+#: src/templates/show.html:335
 msgid "No resources categories have been defined for your team. Head to the %sAdmin Panel%s to add one."
 msgstr "您的团队尚未定义资源类别。请前往 %s团队管理面板%s 添加。"
 
@@ -4919,102 +4874,684 @@ msgstr "您的团队尚未定义资源类别。请前往 %s团队管理面板%s 
 msgid "Local auth"
 msgstr "本地认证"
 
-#: src/templates/sysconfig.html:128
+#: src/templates/sysconfig.html:136
 msgid "Allow users to change their first name, last name, or email address"
 msgstr "允许用户更改他们的名字、姓氏或 Email 地址"
 
-#: src/templates/sysconfig.html:380
+#: src/templates/sysconfig.html:388
 msgid "Send mass emails grouped"
 msgstr "发送组合的群发邮件"
 
-#: src/templates/sysconfig.html:506
+#: src/templates/sysconfig.html:514
 msgid "This instance has %d files uploaded using %s of disk space."
 msgstr "此实例有 %d 个上传文件并占用 %s 磁盘空间。"
 
-#: src/templates/sysconfig.html:509
+#: src/templates/admin.html:588 src/templates/sysconfig.html:517
 msgid "Configuration"
 msgstr "配置"
 
-#: src/templates/sysconfig.html:592
+#: src/templates/sysconfig.html:600
 msgid "Local authentication configuration"
 msgstr "本地身份验证配置"
 
-#: src/templates/sysconfig.html:594
+#: src/templates/sysconfig.html:602
 msgid "Enable local authentication"
 msgstr "启用本地身份验证"
 
-#: src/templates/sysconfig.html:594
+#: src/templates/sysconfig.html:602
 msgid "Toggle local authentication method (email + password). Warning: disabling this method might lock you out!"
 msgstr "切换本地身份验证方法（Email + 密码）。警告：禁用此方法可能会将您锁定！"
 
-#: src/templates/sysconfig.html:595
+#: src/templates/sysconfig.html:603
 msgid "Allow users to create accounts through the registration page. You probably want to disable this if you use an external authentication/provisioning method."
 msgstr "允许用户通过注册页面创建帐户。如果使用外部身份验证/配置方法，您可能希望禁用此功能。"
 
-#: src/templates/sysconfig.html:596
+#: src/templates/sysconfig.html:604
 msgid "This setting will hide the local authentication fields from the login page, but one can still display them by appending ?letmein to the login page URL."
 msgstr "此设置将从登录页面隐藏本地身份验证字段，但仍然可以通过向登录页面 URL 追加 ?letmein 来显示它们。"
 
-#: src/templates/sysconfig.html:754
+#: src/templates/sysconfig.html:762
 msgid "Identity providers"
 msgstr "身份提供商"
 
-#: src/templates/sysconfig.html:756
+#: src/templates/sysconfig.html:764
 msgid "Add IDP(s) from URL"
 msgstr "从 URL 添加 IDP"
 
-#: src/templates/sysconfig.html:757
+#: src/templates/sysconfig.html:765
 msgid "You can register a remote URL corresponding to an XML metadata file containing a list of IDPs or a single IDP metadata. If Auto-refresh is enabled, the IDPs metadata will be refreshed every 24h automatically."
 msgstr "您可以注册一个远程 URL，该 URL 对应于包含 IDP 列表或单个 IDP 元数据的 XML 元数据文件。如果启用了自动刷新，则 IDP 元数据将每 24 小时自动刷新一次。"
 
-#: src/templates/sysconfig.html:775
+#: src/templates/sysconfig.html:783
 msgid "Auto-refresh"
 msgstr "自动刷新"
 
-#: src/templates/sysconfig.html:781
+#: src/templates/sysconfig.html:789
 msgid "Enable all"
 msgstr "启用所有"
 
-#: src/templates/sysconfig.html:782
+#: src/templates/sysconfig.html:790
 msgid "Disable all"
 msgstr "禁用所有"
 
-#: src/templates/sysconfig.html:786
+#: src/templates/sysconfig.html:794
 msgid "Associated with %d IDPs (%d enabled)"
 msgstr "已关联 %d 个 IDP（%d 个启用）"
 
-#: src/templates/sysconfig.html:792
+#: src/templates/sysconfig.html:800
 msgid "Add IDP manually"
 msgstr "手动添加 IDP"
 
-#: src/templates/sysconfig.html:793
+#: src/templates/sysconfig.html:801
 msgid "You can also add a new IDP manually. A manually added IDP will not have its metadata automatically refreshed."
 msgstr "您还可以手动添加新的 IDP。手动添加的 IDP 不会自动刷新其元数据。"
 
-#: src/templates/sysconfig.html:801
+#: src/templates/sysconfig.html:809
 msgid "IDPs list"
 msgstr "IDP 列表"
 
-#: src/templates/sysconfig.html:802
+#: src/templates/sysconfig.html:810
 msgid "Currently %d IDPs are configured."
 msgstr "目前已配置 %d 个 IDP。"
 
-#: src/templates/sysconfig.html:822
+#: src/templates/sysconfig.html:830
 msgid "Source"
 msgstr "来源"
 
-#: src/templates/sysconfig.html:847
+#: src/templates/sysconfig.html:855
 msgid "LDAP Scheme"
 msgstr "LDAP Scheme"
 
-#: src/templates/sysconfig.html:850
+#: src/templates/sysconfig.html:858
 msgid "Ldap scheme can be set regardless of the SSL/TLS settings. Valid values are \"ldap\" or \"ldaps\". Default is \"ldap\"."
 msgstr "无论 SSL/TLS 设置如何，都可以设置 Ldap Scheme。有效值为“ldap”或“ldaps”。默认值为“ldap”。"
 
-#: src/templates/sysconfig.html:1032
+#: src/templates/sysconfig.html:1040
 msgid "Enable to include audit logs events as NOTICE error in PHP logs."
 msgstr "允许将审计日志事件作为 NOTICE 错误包含在 PHP 日志中。"
 
-#: src/templates/view.html:129
+#: src/templates/view.html:135
 msgid "Owner:"
 msgstr "所有者："
+
+#: src/Enums/ProcurementState.php:32
+msgid "Cancelled"
+msgstr "取消"
+
+#: src/classes/Metadata.php:81
+msgid "Default group"
+msgstr "默认组"
+
+#: src/classes/i18n4Js.php:39 src/templates/compounds.html:22
+#: src/templates/create-compound-modal.html:6
+msgid "Add compound"
+msgstr "添加化合物"
+
+#: src/classes/i18n4Js.php:47 src/templates/edit-compound-modal.html:37
+msgid "Edit compound"
+msgstr "编辑化合物"
+
+#: src/classes/i18n4Js.php:56
+msgid "Location name"
+msgstr "地点名称"
+
+#: src/classes/i18n4Js.php:77
+msgid "At least 3 characters are required to search"
+msgstr "至少需要 3 个字符才能搜索"
+
+#: src/classes/i18n4Js.php:78
+msgid "Unarchive and add to team {{team, string}}"
+msgstr "取消存档并添加到团队 {{team, string}}"
+
+#: src/controllers/ChemEditorController.php:31 src/templates/head.html:85
+msgid "Chemical Structure Editor"
+msgstr "化学结构编辑器"
+
+#: src/controllers/CompoundsController.php:31
+#: src/templates/compounds-view-edit.html:2 src/templates/head.html:84
+msgid "Compounds"
+msgstr "化合物"
+
+#: src/controllers/ExperimentsController.php:45
+msgid "Experiment templates"
+msgstr "实验模板"
+
+#: src/controllers/InventoryController.php:31 src/templates/head.html:87
+#: src/templates/sysconfig.html:55 src/templates/sysconfig.html:1091
+msgid "Inventory"
+msgstr "库存"
+
+#: src/controllers/SycController.php:28
+msgid "OpenCloning"
+msgstr "开放克隆"
+
+#: src/models/ApiKeys.php:116
+msgid "Unauthorized"
+msgstr "未经授权"
+
+#: src/models/ApiKeys.php:116
+msgid "No corresponding API key found!"
+msgstr "未找到相应的 API 密钥！"
+
+#: src/models/ExclusiveEditMode.php:90 src/templates/view.html:32
+msgid "This entry is being edited by %s."
+msgstr "此条目正在由 %s 编辑。"
+
+#: web/sysconfig.php:147
+msgid "Instance settings"
+msgstr "实例设置"
+
+#: src/templates/add-container-modal.html:6
+#: src/templates/storage-view-edit.html:26
+msgid "Add container"
+msgstr "添加容器"
+
+#: src/templates/add-container-modal.html:14
+msgid "Adjust container capacity and unit"
+msgstr "调整容器容量和单位"
+
+#: src/templates/add-container-modal.html:19
+msgid "Quantity unit"
+msgstr "数量单位"
+
+#: src/templates/add-container-modal.html:31
+msgid "Adjust number of containers stored"
+msgstr "调整存放容器数量"
+
+#: src/templates/add-container-modal.html:33
+msgid "Select a storage location below"
+msgstr "选择下面的存储位置"
+
+#: src/templates/admin.html:23 src/templates/admin.html:784
+#: src/templates/permissions-edit-modal.html:57
+msgid "User Groups"
+msgstr "用户组"
+
+#: src/templates/admin.html:77
+msgid "Remove Default Template and Blank Experiment choices from Create menu, and force usage of existing Templates."
+msgstr "从创建菜单中删除默认模板和空白实验选项，并强制使用现有模板。"
+
+#: src/templates/admin.html:79
+msgid "Default Template main text"
+msgstr "默认模板正文"
+
+#: src/templates/admin.html:82
+msgid "Set the text included in the main body of an Experiment when the Default Template is selected."
+msgstr "选择默认模板时，设置实验主体中包含的文本。"
+
+#: src/templates/admin.html:83
+msgid "HTML version"
+msgstr "HTML 版本"
+
+#: src/templates/admin.html:98
+msgid "Markdown version"
+msgstr "Markdown 版本"
+
+#: src/templates/admin.html:148
+msgid "A User Group can contain users from different teams. Its main use is to later allow giving permissions to this group."
+msgstr "用户组可以包含来自不同团队的用户。其主要用途是稍后允许向该组授予权限。"
+
+#: src/templates/admin.html:150
+msgid "Create user group"
+msgstr "创建用户组"
+
+#: src/templates/admin.html:165
+msgid "Existing user groups"
+msgstr "现有用户组"
+
+#: src/templates/admin.html:168
+msgid "No user group created yet."
+msgstr "尚未创建用户组。"
+
+#: src/templates/admin.html:334 src/templates/edit.html:90
+msgid "Lock down read permissions"
+msgstr "锁定读取权限"
+
+#: src/templates/admin.html:347 src/templates/edit.html:103
+msgid "Lock down write permissions"
+msgstr "锁定写入权限"
+
+#: src/templates/admin.html:587
+msgid "From here you can add, edit or delete the tags for your team. Click the tag to edit it."
+msgstr "您可以在这里添加、编辑或删除团队的标签。点击标签即可进行编辑。"
+
+#: src/templates/admin.html:592
+msgid "Allow users to create new tags"
+msgstr "允许用户创建新标签"
+
+#: src/templates/admin.html:593
+msgid "An admin account will always be able to create new tags."
+msgstr "管理员帐户始终能够创建新标签。"
+
+#: src/templates/admin.html:682
+msgid "Resources tags"
+msgstr "资源标签"
+
+#: src/templates/admin.html:725
+msgid "Experiments tags"
+msgstr "实验标签"
+
+#: src/templates/admin.html:769 src/templates/permissions-edit-modal.html:37
+msgid "This setting sets a baseline upon which you can add more permissions by selecting teams, user groups or users below."
+msgstr "此设置设定了一个基线，您可以通过选择下面的团队、用户组或用户来添加更多权限。"
+
+#: src/templates/chem-editor.html:13
+msgid "Add to compounds database"
+msgstr "添加到化合物数据库"
+
+#: src/templates/chem-editor.html:15
+msgid "Search similar structures"
+msgstr "搜索相似结构"
+
+#: src/templates/chem-editor.html:17 src/templates/compounds.html:33
+msgid "Search exact structure"
+msgstr "搜索精确结构"
+
+#: src/templates/chem-editor.html:17
+msgid "Exact structure"
+msgstr "精确结构"
+
+#: src/templates/chem-editor.html:23
+msgid "Compounds substructure search results"
+msgstr "化合物子结构搜索结果"
+
+#: src/templates/compounds-view-edit.html:64
+msgid "Name unset"
+msgstr "名称未设置"
+
+#: src/templates/compounds-view-edit.html:72
+#: src/templates/edit-compound-modal.html:67
+msgid "Molecular formula"
+msgstr "分子式"
+
+#: src/templates/compounds-view-edit.html:77 src/templates/compounds.html:31
+msgid "Search similar compounds"
+msgstr "搜索类似化合物"
+
+#: src/templates/compounds-view-edit.html:80
+msgid "View in JSON"
+msgstr "以 JSON 格式查看"
+
+#: src/templates/compounds-view-edit.html:83
+#: src/templates/import-pubchem-modal.html:42
+msgid "View on PubChem"
+msgstr "在 PublishChem 上查看"
+
+#: src/templates/compounds-view-edit.html:86
+msgid "Remove compound"
+msgstr "移除化合物"
+
+#: src/templates/compounds-view-edit.html:102
+msgid "Link with compound"
+msgstr "与化合物连接"
+
+#: src/templates/compounds-view-edit.html:102
+msgid "Search in local compounds database"
+msgstr "在本地化合物数据库中搜索"
+
+#: src/templates/compounds.html:7
+msgid "Export to CSV"
+msgstr "导出到 CSV"
+
+#: src/templates/compounds.html:19
+msgid "Compounds are chemical entities associated with properties such as a CAS number, a molecular formula, SMILES or InChI representations, hazardous properties, etc... This page allows you to manage your compounds database, which is shared to everyone on the instance. Once created, a compound can be associated with a Resource (or Experiment)."
+msgstr "化合物是与 CAS 编号、分子式、SMILES 或 InChI 表示法、危险特性等属性相关的化学实体。此页面允许您管理化合物数据库，该数据库与实例上的所有人共享。创建后，化合物可以与资源（或实验）关联。"
+
+#: src/templates/compounds.html:21 src/templates/import-pubchem-modal.html:6
+msgid "Import from PubChem"
+msgstr "从 PubChem 导入"
+
+#: src/templates/compounds.html:29
+msgid "Substructure search from SMILES"
+msgstr "通过 SMILES 进行子结构搜索"
+
+#: src/templates/compounds.html:33
+msgid "Exact"
+msgstr "精确的"
+
+#: src/templates/compounds.html:38
+msgid "Double-click a row in the table below to edit compound."
+msgstr "双击下表中的一行来编辑化合物。"
+
+#: src/templates/compounds.html:41
+msgid "Delete selected compounds"
+msgstr "删除选定的化合物"
+
+#: src/templates/create-new-item-modal.html:13
+msgid "Create a new template"
+msgstr "创建新模板"
+
+#: src/templates/create-new-item-modal.html:21
+msgid "Enter a title"
+msgstr "输入标题"
+
+#: src/templates/create-resource-from-compound-modal.html:6
+#: src/templates/edit-compound-modal.html:47
+msgid "Create resource from compound"
+msgstr "从化合物创建资源"
+
+#: src/templates/create-resource-from-compound-modal.html:13
+msgid "Select a resource category"
+msgstr "选择资源类别"
+
+#: src/templates/duplicate-modal.html:23
+msgid "Link to original entry"
+msgstr "原始条目链接"
+
+#: src/templates/edit-compound-modal.html:45
+msgid "Search associated resources"
+msgstr "搜索相关资源"
+
+#: src/templates/edit-compound-modal.html:46
+msgid "Search associated experiments"
+msgstr "搜索相关实验"
+
+#: src/templates/edit-compound-modal.html:51
+msgid "IUPAC Name"
+msgstr "IUPAC 名称"
+
+#: src/templates/edit-compound-modal.html:53
+#: src/templates/import-pubchem-modal.html:28
+msgid "CAS number"
+msgstr "CAS 编号"
+
+#: src/templates/edit-compound-modal.html:58
+#: src/templates/import-pubchem-modal.html:33
+msgid "Please enter a valid CAS number (e.g., 58-08-2)"
+msgstr "请输入有效的 CAS 编号（例如 58-08-2）"
+
+#: src/templates/edit-compound-modal.html:60
+msgid "EC number"
+msgstr "EC 编号"
+
+#: src/templates/edit-compound-modal.html:65
+msgid "Please enter a valid EC number (e.g., 200-362-1)"
+msgstr "请输入有效的 EC 编号（例如 200-362-1）"
+
+#: src/templates/edit-compound-modal.html:68
+msgid "Molecular weight"
+msgstr "分子量"
+
+#: src/templates/edit-compound-modal.html:74
+msgid "Safety information"
+msgstr "安全信息"
+
+#: src/templates/edit-compound-modal.html:103
+msgid "Immutable information"
+msgstr "不可变信息"
+
+#: src/templates/editusers.html:216
+#: src/templates/rm-user-from-team-modal.html:6
+msgid "Remove user from team"
+msgstr "从团队中移除用户"
+
+#: src/templates/editusers.html:315
+msgid "Found archived users with same email address:"
+msgstr "找到具有相同电子邮件地址的已存档用户："
+
+#: src/templates/editusers.html:319
+msgid "Create a new account anyway"
+msgstr "仍然创建新帐户"
+
+#: src/templates/export-menu.html:91
+msgid "Number of lines for title"
+msgstr "标题行数"
+
+#: src/templates/export-menu.html:92
+msgid "Split the title into this many lines"
+msgstr "将标题拆分成以下几行"
+
+#: src/templates/export-menu.html:100
+msgid "Number of characters per line"
+msgstr "每行字符数"
+
+#: src/templates/export-menu.html:101
+msgid "Adjust how the title is displayed"
+msgstr "调整标题的显示方式"
+
+#: src/templates/field-builder-modal.html:17
+msgid "Manage field groups"
+msgstr "管理字段组"
+
+#: src/templates/field-builder-modal.html:18
+msgid "Use this feature to group related fields."
+msgstr "使用此功能对相关字段进行分组。"
+
+#: src/templates/field-builder-modal.html:24
+#: src/templates/field-builder-modal.html:156
+msgid "Update"
+msgstr "更新"
+
+#: src/templates/field-builder-modal.html:46
+msgid "Selected field group"
+msgstr "选定字段组"
+
+#: src/templates/footer.html:3
+msgid "Connect with us on the fediverse!"
+msgstr "在 fediverse 上与我们联系！"
+
+#: src/templates/head.html:38
+msgid "Skip to content"
+msgstr "跳至内容"
+
+#: src/templates/head.html:65
+msgid "Template"
+msgid_plural "Templates"
+msgstr[0] "模板"
+
+#: src/templates/head.html:81
+msgid "Tools"
+msgstr "工具"
+
+#: src/templates/head.html:86
+msgid "DNA Cloning"
+msgstr "DNA 克隆"
+
+#: src/templates/import-pubchem-modal.html:13
+msgid "Import a chemical compound from %sPubChem online database%s: you can specify directly the CID of the compound you wish to import, or search from its CAS number."
+msgstr "从 %sPubChem 在线数据库%s 导入化合物：您可以直接指定要导入的化合物的 CID，或通过其 CAS 编号进行搜索。"
+
+#: src/templates/inventory.html:15
+msgid "Search containers or locations"
+msgstr "搜索容器或位置"
+
+#: src/templates/inventory.html:25
+msgid "No results found"
+msgstr "未找到结果"
+
+#: src/templates/inventory.html:39
+msgid "Browse inventory locations"
+msgstr "浏览库存位置"
+
+#: src/templates/inventory.html:41
+msgid "Add root element"
+msgstr "添加根元素"
+
+#: src/templates/pdf.html:47
+msgid "This document has been timestamped by %s on %s."
+msgstr "此文档已由 %s 于 %s 加上时间戳。"
+
+#: src/templates/pdf.html:157
+msgid "Timestamped by %s on %s at %s"
+msgstr "时间戳由 %s 于 %s %s 生成"
+
+#: src/templates/permissions-edit-modal.html:71
+msgid "Selecting a user group here will give access to all users part of this user group."
+msgstr "在此处选择一个用户组将允许属于该用户组的所有用户访问。"
+
+#: src/templates/reset-user-password-modal.html:9
+msgid "Set user password"
+msgstr "设置用户密码"
+
+#: src/templates/rm-user-from-team-modal.html:12
+msgid "Removing a user association with a team will NOT impact existing experiments or resources. They will still be accessible."
+msgstr "移除用户与团队的关联不会影响现有的实验或资源。它们仍然可以访问。"
+
+#: src/templates/rm-user-from-team-modal.html:13
+msgid "Are you sure you want to remove %s from team %s?"
+msgstr "您确定要将 %s 从团队 %s 中移除吗？"
+
+#: src/templates/rm-user-from-team-modal.html:18
+msgid "Confirm"
+msgstr "确认"
+
+#: src/templates/scheduler.html:10
+msgid "Scheduler settings"
+msgstr "调度程序设置"
+
+#: src/templates/scheduler.html:18 src/templates/ucp.html:119
+msgid "Show weekends"
+msgstr "显示周末"
+
+#: src/templates/scheduler.html:19
+msgid "Layout: timeline"
+msgstr "布局：时间轴"
+
+#: src/templates/scheduler.html:112
+msgid "Cancel booking"
+msgstr "取消预订"
+
+#: src/templates/search-help-modal.html:5
+msgid "Search help"
+msgstr "搜索帮助"
+
+#: src/templates/search-help-modal.html:11
+msgid "Simple search"
+msgstr "简单搜索"
+
+#: src/templates/search-help-modal.html:12
+msgid "When searching a term in the search bar, results will contain this term in the title, main text, date or elabid."
+msgstr "在搜索栏中搜索某个术语时，结果将在标题、正文、日期或详细说明中包含该术语。"
+
+#: src/templates/search-help-modal.html:15
+msgid "The search bar supports searching with specific constraints such as \"title:Something\" and \"category:Tests\" (%s). You can combine them with logical expressions (AND, OR, NOT...) and group with parenthesis."
+msgstr "搜索栏支持使用特定约束进行搜索，例如“title:Something”和“category:Tests”（%s）。您可以使用逻辑表达式（AND、OR、NOT……）将它们组合起来，并使用括号进行分组。"
+
+#: src/templates/search-help-modal.html:16
+msgid "To search in extra fields (metadata), use the dedicated helper to build your query. For example, to search all entries where \"Temperature\" is 37, you would use: \"extrafield:Temperature:37\" in the search bar."
+msgstr "要在额外字段（元数据）中搜索，请使用专用助手构建查询。例如，要搜索“温度”为 37 的所有条目，您可以在搜索栏中使用“extrafield:Temperature:37”。"
+
+#: src/templates/search-help-modal.html:17
+msgid "Available fields"
+msgstr "可用字段"
+
+#: src/templates/show-item.html:25
+msgid "Restore entry"
+msgstr "恢复条目"
+
+#: src/templates/show.html:24
+msgid "resources"
+msgstr "资源"
+
+#: src/templates/show.html:26 src/templates/show.html:34
+#: src/templates/show.html:36
+msgid "Search %s"
+msgstr "搜索 %s"
+
+#: src/templates/show.html:191
+msgid "Select state"
+msgstr "选择状态"
+
+#: src/templates/show.html:193
+msgid "Normal"
+msgstr "正常"
+
+#: src/templates/show.html:197
+msgid "Deleted"
+msgstr "已删除"
+
+#: src/templates/show.html:199
+msgid "Normal or Archived"
+msgstr "正常或已存档"
+
+#: src/templates/show.html:201
+msgid "Any"
+msgstr "任何"
+
+#: src/templates/show.html:270
+msgid "Toggle main text"
+msgstr "切换正文"
+
+#: src/templates/show.html:347 src/templates/steps-links-edit.html:157
+msgid "Search in resources"
+msgstr "在资源中搜索"
+
+#: src/templates/steps-links-edit.html:66
+msgid "+1 hour"
+msgstr "+1 小时"
+
+#: src/templates/steps-links-edit.html:67
+msgid "+1 day"
+msgstr "+1 天"
+
+#: src/templates/steps-links-edit.html:68
+msgid "+1 week"
+msgstr "+1 周"
+
+#: src/templates/steps-links-edit.html:69
+msgid "+1 month"
+msgstr "+1 月"
+
+#: src/templates/steps-links-edit.html:70
+msgid "+1 year"
+msgstr "+1 年"
+
+#: src/templates/storage-list.html:15 src/templates/storage-list.html:44
+msgid "Display content"
+msgstr "显示内容"
+
+#: src/templates/storage-list.html:17 src/templates/storage-list.html:42
+msgid "Add children to %s"
+msgstr "将子项添加到 %s"
+
+#: src/templates/storage-list.html:18
+msgid "Delete %s and its children"
+msgstr "删除 %s 及其子项"
+
+#: src/templates/storage-list.html:20
+msgid "Store in %s"
+msgstr "存储在 %s"
+
+#: src/templates/storage-list.html:36
+msgid "Inventory location"
+msgstr "库存位置"
+
+#: src/templates/storage-view-edit.html:4
+msgid "Containers"
+msgstr "容器"
+
+#: src/templates/storage-view-edit.html:13
+msgid "in"
+msgstr "在"
+
+#: src/templates/storage-view-edit.html:21
+msgid "No containers stored"
+msgstr "未存放任何容器"
+
+#: src/templates/storage-view-edit.html:25
+msgid "Modify storage"
+msgstr "修改存储"
+
+#: src/templates/sysconfig.html:70
+msgid "Get users report"
+msgstr "获取用户报告"
+
+#: src/templates/sysconfig.html:73
+msgid "Stored containers"
+msgstr "储存容器"
+
+#: src/templates/sysconfig.html:75
+msgid "Stored containers: %d bound to experiments and %d bound to resources"
+msgstr "储存容器：%d 个与实验绑定，%d 个与资源绑定"
+
+#: src/templates/sysconfig.html:76 src/templates/sysconfig.html:1094
+msgid "Get inventory report"
+msgstr "获取库存报告"
+
+#: src/templates/sysconfig.html:866
+msgid "Domain name or IP address. You can specify multiple entries for redundancy, separated by commas."
+msgstr "域名或 IP 地址。您可以指定多个条目以实现冗余，并以逗号分隔。"
+
+#: src/templates/sysconfig.html:1097
+msgid "No places have been defined yet. Head to the %sInventory page%s to add places."
+msgstr "尚未定义任何位置。请前往 %s库存页面%s 添加位置。"

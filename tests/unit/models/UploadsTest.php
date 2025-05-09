@@ -19,6 +19,7 @@ use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use RuntimeException;
+use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Response;
 
 class UploadsTest extends \PHPUnit\Framework\TestCase
@@ -168,10 +169,19 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
 
     public function testReadAll(): void
     {
-        $this->assertIsArray($this->Entity->Uploads->readAll());
-        // same including archived uploads
-        $this->Entity->Uploads->includeArchived = true;
-        $this->assertIsArray($this->Entity->Uploads->readAll());
+        // display only archived uploads
+        $q = $this->Entity->Uploads->getQueryParams(new InputBag(array('state' => '2')));
+        $archivedUploads = $this->Entity->Uploads->readAll($q);
+        $this->assertIsArray($archivedUploads);
+        $this->assertNotEmpty($archivedUploads);
+        foreach ($archivedUploads as $upload) {
+            $this->assertEquals(State::Archived->value, $upload['state'], 'Upload state should be archived (2)');
+        }
+        $this->assertGreaterThanOrEqual(
+            count($archivedUploads),
+            count($this->Entity->Uploads->readAll()),
+            'All uploads should be more than or equal to archived (but not fewer).'
+        );
     }
 
     public function testDestroyAll(): void

@@ -49,7 +49,7 @@ final class Uploads extends AbstractRest
 
     public array $uploadData = array();
 
-    public function __construct(public AbstractEntity $Entity, public ?int $id = null, public bool $includeArchived = false)
+    public function __construct(public AbstractEntity $Entity, public ?int $id = null)
     {
         parent::__construct();
         if ($this->id !== null) {
@@ -229,20 +229,23 @@ final class Uploads extends AbstractRest
     }
 
     /**
-     * Read only the normal ones (not archived/deleted)
+     * Read all uploads except deleted ones.
+     * Includes 'archived' only if set in queryParams.
      */
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        if ($this->includeArchived) {
-            return $this->readNormalAndArchived();
-        }
-        $sql = 'SELECT uploads.*, CONCAT (users.firstname, " ", users.lastname) AS fullname
-            FROM uploads LEFT JOIN users ON (uploads.userid = users.userid) WHERE item_id = :id AND type = :type AND state = :state ORDER BY created_at DESC';
+        $queryParams ??= $this->getQueryParams();
+        $statesSql = $queryParams->getStatesSql('uploads');
+        $sql = sprintf(
+            'SELECT uploads.*, CONCAT (users.firstname, " ", users.lastname) AS fullname
+            FROM uploads LEFT JOIN users ON (uploads.userid = users.userid)
+            WHERE item_id = :id AND type = :type %s ORDER BY created_at DESC',
+            $statesSql
+        );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindValue(':type', $this->Entity->entityType->value);
-        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $req->fetchAll();
@@ -376,21 +379,6 @@ final class Uploads extends AbstractRest
         $req->bindValue(':content', $params->getContent());
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
-    }
-
-    private function readNormalAndArchived(): array
-    {
-        $sql = 'SELECT uploads.*, CONCAT (users.firstname, " ", users.lastname) AS fullname
-            FROM uploads LEFT JOIN users ON (uploads.userid = users.userid) WHERE item_id = :id AND type = :type AND (state = :normal OR state = :archived) ORDER BY uploads.created_at DESC';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindValue(':type', $this->Entity->entityType->value);
-        $req->bindValue(':normal', State::Normal->value, PDO::PARAM_INT);
-        $req->bindValue(':archived', State::Archived->value, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        return $req->fetchAll();
-
     }
 
     /**

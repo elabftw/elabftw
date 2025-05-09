@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // REPLACE UPLOADED FILE
   // this should be in uploads but there is no good way so far to interact with the two editors there
-  document.getElementById('filesdiv').addEventListener('submit', event => {
+  document.getElementById('filesDiv').addEventListener('submit', event => {
     const el = event.target as HTMLElement;
     if (el.matches('[data-action="replace-uploaded-file"]')) {
       event.preventDefault();

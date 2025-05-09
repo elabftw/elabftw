@@ -130,16 +130,16 @@ document.addEventListener('DOMContentLoaded', () => {
       const url = new URL(window.location.href);
       const queryParams = new URLSearchParams(url.search);
 
-      // toggle "archived" query parameter
-      if (queryParams.has('archived')) {
-        queryParams.delete('archived');
+      // set the state query param to include normal and archived
+      if (queryParams.has('state')) {
+        queryParams.delete('state');
       } else {
-        queryParams.set('archived', 'on');
+        queryParams.set('state', '1,2');
       }
 
       // Update the query parameters in the URL
       url.search = queryParams.toString();
-      url.hash = 'filesdiv';
+      url.hash = 'filesDiv';
       const modifiedUrl = url.toString();
       window.location.replace(modifiedUrl);
 

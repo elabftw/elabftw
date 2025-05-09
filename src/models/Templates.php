@@ -27,6 +27,7 @@ use Elabftw\Services\Filter;
 use Elabftw\Traits\SortableTrait;
 use Override;
 use PDO;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * All about the templates
@@ -163,6 +164,7 @@ final class Templates extends AbstractTemplateEntity
         if ($this->id === null) {
             throw new IllegalActionException('No id was set!');
         }
+        $queryParams = $this->getQueryParams(Request::createFromGlobals()->query);
         $builder = new TemplatesSqlBuilder($this);
         $sql = $builder->getReadSqlBeforeWhere(getTags: true, fullSelect: true);
         $sql .= sprintf(' WHERE entity.id = %d', $this->id);
@@ -194,7 +196,7 @@ final class Templates extends AbstractTemplateEntity
         if (!empty($this->entityData['metadata'])) {
             $this->entityData['metadata_decoded'] = json_decode($this->entityData['metadata']);
         }
-        $this->entityData['uploads'] = $this->Uploads->readAll();
+        $this->entityData['uploads'] = $this->Uploads->readAll($queryParams);
         $this->entityData['exclusive_edit_mode'] = $this->ExclusiveEditMode->readOne();
         return $this->entityData;
     }

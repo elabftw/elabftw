@@ -20,8 +20,7 @@
 </div>
 
 {# UPLOADED FILES #}
-<div id='filesdiv'>
-  {% if (mode == 'view' and Entity.entityData.uploads) or mode == 'edit' %}
+<div id='filesDiv'>
   <div class='d-flex justify-content-between'>
     <div>{# necessary div for flex #}
       <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-toggle-target='uploadsDiv' data-toggle-target-extra='uploadsViewToggler' class='d-inline togglable-section-title' tabindex='0' role='button'>
@@ -38,7 +37,7 @@
         <i class='fas fa-fw fa-list fa-flip-horizontal'></i>
         <i class='fas fa-fw fa-table-cells'></i>
       </button>
-      <button type='button' title='{{ 'Show archived'|trans }}' aria-label='{{ 'Show archived'|trans }}' class='btn hl-hover-gray p-1 lh-normal border-0 my-n1 {{- App.Request.query.has('archived') ? ' bgnd-gray' }}' data-action='toggle-uploads-show-archived'>
+      <button type='button' title='{{ 'Show archived'|trans }}' aria-label='{{ 'Show archived'|trans }}' class='btn hl-hover-gray p-1 lh-normal border-0 my-n1 {{- App.Request.query.has('state') ? ' bgnd-gray' }}' data-action='toggle-uploads-show-archived'>
         <i class='fas fa-fw fa-box-archive'></i>
       </button>
     </div>
@@ -268,5 +267,4 @@
     {% endif %}
   </div>
   <hr>
-  {% endif %}
-</div>{# #filesdiv #}
+</div>{# #filesDiv #}

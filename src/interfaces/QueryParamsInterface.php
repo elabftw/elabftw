@@ -21,4 +21,6 @@ interface QueryParamsInterface
     public function getQuery(): InputBag;
 
     public function getLimit(): int;
+
+    public function getStatesSql(string $tableName): string;
 }

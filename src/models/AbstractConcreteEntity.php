@@ -116,6 +116,8 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         if ($this->id === null) {
             throw new IllegalActionException('No id was set!');
         }
+        // build query params for Uploads
+        $queryParams = $this->getQueryParams(Request::createFromGlobals()->query);
         $EntitySqlBuilder = new EntitySqlBuilder($this);
         $sql = $EntitySqlBuilder->getReadSqlBeforeWhere(true, true);
 
@@ -134,7 +136,7 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         $this->entityData['items_links'] = $this->ItemsLinks->readAll();
         $this->entityData['related_experiments_links'] = $this->ExperimentsLinks->readRelated();
         $this->entityData['related_items_links'] = $this->ItemsLinks->readRelated();
-        $this->entityData['uploads'] = $this->Uploads->readAll();
+        $this->entityData['uploads'] = $this->Uploads->readAll($queryParams);
         $this->entityData['comments'] = $this->Comments->readAll();
         $this->entityData['page'] = substr($this->entityType->toPage(), 0, -4);
         $CompoundsLinks = LinksFactory::getCompoundsLinks($this);

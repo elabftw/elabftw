@@ -79,9 +79,6 @@ abstract class AbstractEntityController implements ControllerInterface
         $this->scopedTeamgroupsArr = $TeamGroups->readScopedTeamgroups();
         $Templates = new Templates($this->Entity->Users);
         $this->templatesArr = $Templates->Pins->readAll();
-        if ($App->Request->query->has('archived') && $Entity instanceof AbstractConcreteEntity) {
-            $Entity->Uploads->includeArchived = true;
-        }
     }
 
     #[Override]

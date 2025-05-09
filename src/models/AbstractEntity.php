@@ -41,6 +41,7 @@ use Elabftw\Traits\EntityTrait;
 use PDO;
 use PDOStatement;
 use Override;
+use Symfony\Component\HttpFoundation\InputBag;
 
 use function array_column;
 use function array_merge;
@@ -380,12 +381,15 @@ abstract class AbstractEntity extends AbstractRest
 
     public function readOneFull(): array
     {
-        $this->Uploads->includeArchived = true;
         $base = $this->readOne();
         // items types don't have this yet
         if ($this instanceof AbstractConcreteEntity || $this instanceof Templates) {
             $base['revisions'] = (new Revisions($this))->readAll();
             $base['changelog'] = (new Changelog($this))->readAll();
+            // we want to include ALL uploaded files
+            $base['uploads'] = (new Uploads($this))->readAll(
+                $this->getQueryParams(new InputBag(array('state' => '1,2,3')))
+            );
         }
         ksort($base);
         return $base;

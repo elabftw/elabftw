@@ -79,6 +79,8 @@ class TimestampResponse
                 return $matches[1];
             }
         }
-        throw new ImproperActionException('Could not get response time!');
+        // encode the output in json so it can be logged correctly
+        $jsonOutput = json_encode($output, JSON_THROW_ON_ERROR);
+        throw new ImproperActionException(sprintf('Timestamp error: could not get timestamp from response file. openssl output: %s', $jsonOutput));
     }
 }

@@ -73,6 +73,9 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches(`[data-action="${Action.Timestamp}"]`)) {
       ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.Timestamp}).then(() => {
         reloadElements(['requestActionsDiv', 'isTimestampedByInfoDiv']);
+      }).catch(error => {
+        console.error(error.message);
+        notifError(error);
       });
 
     // BLOXBERG

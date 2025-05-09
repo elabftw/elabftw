@@ -9,6 +9,7 @@ import i18next from 'i18next';
 import caES from './langs/ca_ES';
 import csCZ from './langs/cs_CZ';
 import deDE from './langs/de_DE';
+import elGR from './langs/el_GR';
 import enGB from './langs/en_GB';
 import esES from './langs/es_ES';
 import fiFI from './langs/fi_FI';
@@ -32,6 +33,7 @@ i18next.init({
     'ca_ES',
     'cs_CZ',
     'de_DE',
+    'el_GR',
     'en_GB',
     'es_ES',
     'fi_FI',
@@ -54,6 +56,7 @@ i18next.init({
     ca_ES: caES,
     cs_CZ: csCZ,
     de_DE: deDE,
+    el_GR: elGR,
     en_GB: enGB,
     es_ES: esES,
     fi_FI: fiFI,

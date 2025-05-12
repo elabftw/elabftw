@@ -1601,10 +1601,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@deltablot/malle@npm:^2.6.2":
-  version: 2.6.2
-  resolution: "@deltablot/malle@npm:2.6.2"
-  checksum: 10c0/54031640ea6fd699be28ad6c39f4c70d2b4894e076e7078c02f70a45fbf283fc3191d5580f075889913b217e4be99f2140cd08bb4d6e568ae35c3e34887f0cfc
+"@deltablot/malle@npm:^2.7.1":
+  version: 2.7.1
+  resolution: "@deltablot/malle@npm:2.7.1"
+  checksum: 10c0/4e24adef2a575348d4990a4e01de2caf98b8f399419f06bb6edd284152380cbe66b3cac69d9b2dc383476702cbc99552b76b04e19d20f4940c6b093f20f8e756
   languageName: node
   linkType: hard
 
@@ -1915,6 +1915,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fullcalendar/premium-common@npm:~6.1.17":
+  version: 6.1.17
+  resolution: "@fullcalendar/premium-common@npm:6.1.17"
+  peerDependencies:
+    "@fullcalendar/core": ~6.1.17
+  checksum: 10c0/3a656ddfd98203c5000c5b3add18943e102ceff9a89d918474563b16cbed8f367a8e9cf740f447d4fe104ebcaef1e05ad22976f0c8bd496facd1a8ab2eb47f07
+  languageName: node
+  linkType: hard
+
+"@fullcalendar/scrollgrid@npm:~6.1.17":
+  version: 6.1.17
+  resolution: "@fullcalendar/scrollgrid@npm:6.1.17"
+  dependencies:
+    "@fullcalendar/premium-common": "npm:~6.1.17"
+  peerDependencies:
+    "@fullcalendar/core": ~6.1.17
+  checksum: 10c0/2f14b8af3f66b779ac85e0cbd274fe7ab448ccf22d93d598fa75608d039391977a32ee2bb45bee3fd85f7577984979047a940eab3e067b9cda620150b8bb9dfe
+  languageName: node
+  linkType: hard
+
 "@fullcalendar/timegrid@npm:^6.1.17":
   version: 6.1.17
   resolution: "@fullcalendar/timegrid@npm:6.1.17"
@@ -1923,6 +1943,18 @@ __metadata:
   peerDependencies:
     "@fullcalendar/core": ~6.1.17
   checksum: 10c0/ebd2ca0da0b0b98ddb336ee6a2a661e15918d4aebabec31c6c460587d085a9a0095604ef2ee08e0dc5eaf4dbc9a2cc9ae2c3f6802a0a5fcc319808e9a8cf6c98
+  languageName: node
+  linkType: hard
+
+"@fullcalendar/timeline@npm:^6.1.17":
+  version: 6.1.17
+  resolution: "@fullcalendar/timeline@npm:6.1.17"
+  dependencies:
+    "@fullcalendar/premium-common": "npm:~6.1.17"
+    "@fullcalendar/scrollgrid": "npm:~6.1.17"
+  peerDependencies:
+    "@fullcalendar/core": ~6.1.17
+  checksum: 10c0/1eb7bc95b60436bf388b0e8cd39edf2731a8e1bd9500239f625edb2a3f073f468d80ae8b028cd685ae2d228a26f2fbe1ca1179131f6faf6bed3a7c17a5906706
   languageName: node
   linkType: hard
 
@@ -4453,17 +4485,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30001669":
-  version: 1.0.30001684
-  resolution: "caniuse-lite@npm:1.0.30001684"
-  checksum: 10c0/446485ca3d9caf408a339a44636a86a2b119ec247492393ae661cd93dccd6668401dd2dfec1e149be4e44563cd1e23351b44453a52fa2c2f19e2bf3287c865f6
-  languageName: node
-  linkType: hard
-
-"caniuse-lite@npm:^1.0.30001688":
-  version: 1.0.30001700
-  resolution: "caniuse-lite@npm:1.0.30001700"
-  checksum: 10c0/3d391bcdd193208166d3ad759de240b9c18ac3759dbd57195770f0fcd2eedcd47d5e853609aba1eee5a2def44b0a14eee457796bdb3451a27de0c8b27355017c
+"caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30001669, caniuse-lite@npm:^1.0.30001688":
+  version: 1.0.30001717
+  resolution: "caniuse-lite@npm:1.0.30001717"
+  checksum: 10c0/6c0bb1e5182fd578ebe97ee2203250849754a4e17d985839fab527ad27e125a4c4ffce3ece5505217fedf30ea0bbc17ac9f93e9ac525c0389ccba61c6e8345dc
   languageName: node
   linkType: hard
 
@@ -5987,7 +6012,7 @@ __metadata:
     "@babel/preset-env": "npm:^7.26.9"
     "@babel/preset-react": "npm:^7.26.3"
     "@deltablot/dropzone": "npm:^7.3.0"
-    "@deltablot/malle": "npm:^2.6.2"
+    "@deltablot/malle": "npm:^2.7.1"
     "@eslint/eslintrc": "npm:^3.3.1"
     "@eslint/js": "npm:^9.23.0"
     "@fancyapps/fancybox": "npm:^3.5.7"
@@ -5997,6 +6022,7 @@ __metadata:
     "@fullcalendar/interaction": "npm:^6.1.17"
     "@fullcalendar/list": "npm:^6.1.17"
     "@fullcalendar/timegrid": "npm:^6.1.17"
+    "@fullcalendar/timeline": "npm:^6.1.17"
     "@teselagen/bio-parsers": "npm:^0.4.22"
     "@teselagen/ove": "npm:^0.4.12"
     "@types/bootstrap": "npm:^5.2.10"

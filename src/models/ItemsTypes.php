@@ -18,6 +18,8 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Orderby;
+use Elabftw\Enums\Sort;
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
@@ -108,7 +110,7 @@ final class ItemsTypes extends AbstractTemplateEntity
     #[Override]
     public function getQueryParams(?InputBag $query = null, int $limit = 128): QueryParamsInterface
     {
-        return new BaseQueryParams(query: $query, orderby: Orderby::Ordering, limit: $limit);
+        return new BaseQueryParams(query: $query, orderby: Orderby::Ordering, limit: $limit, sort: Sort::Asc);
     }
 
     #[Override]
@@ -165,10 +167,11 @@ final class ItemsTypes extends AbstractTemplateEntity
     public function getIdempotentIdFromTitle(string $title, ?string $color = null): int
     {
         $sql = 'SELECT id
-            FROM items_types WHERE title = :title AND team = :team';
+            FROM items_types WHERE title = :title AND team = :team AND state = :state';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':title', $title);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
+        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
         $this->Db->execute($req);
         $res = $req->fetch(PDO::FETCH_COLUMN);
         if (!is_int($res)) {

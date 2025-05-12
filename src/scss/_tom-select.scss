@@ -25,6 +25,12 @@
   }
 }
 
+// in scheduler, prevent filter inputs (tomSelect) from resizing constantly when new resources are loaded
+.ts-filter {
+  min-width: 240px;
+  max-width: 300px;
+}
+
 .ts-wrapper {
   max-width: clamp(var(--breakpoint-sm), 50vw, 90vw);
 

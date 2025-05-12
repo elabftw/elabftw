@@ -148,5 +148,14 @@ These projects were created by users of eLabFTW, check them out if interested!
 * [TU Graz support page](https://www.tugraz.at/sites/rdm/tools/elabftw/elabftw-support)
 * [HeFDI eLabFTW Tutorials](https://ilias.uni-marburg.de/goto.php?target=crs_3174359&client_id=UNIMR)
 
+## Contributors
+
+<a href="https://github.com/elabftw/elabftw/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=elabftw/elabftw" />
+</a>
+
+Made with [contrib.rocks](https://contrib.rocks).
+
+## <3
 
 Thank you for using **eLabFTW**. I hope it will bring happiness to your lab ;)

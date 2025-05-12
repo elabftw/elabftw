@@ -42,6 +42,7 @@ import 'tinymce/plugins/visualchars';
 import '../js/tinymce-langs/ca_ES.js';
 import '../js/tinymce-langs/cs_CZ.js';
 import '../js/tinymce-langs/de_DE.js';
+import '../js/tinymce-langs/el_GR.js';
 import '../js/tinymce-langs/en_GB.js';
 import '../js/tinymce-langs/en_US.js';
 import '../js/tinymce-langs/es_ES.js';
@@ -58,6 +59,7 @@ import '../js/tinymce-langs/pt_PT.js';
 import '../js/tinymce-langs/ru_RU.js';
 import '../js/tinymce-langs/sk_SK.js';
 import '../js/tinymce-langs/sl_SI.js';
+import '../js/tinymce-langs/uz_UZ.js';
 import '../js/tinymce-langs/zh_CN.js';
 import '../js/tinymce-plugins/mention/plugin.js';
 import { EntityType, Model } from './interfaces';
@@ -211,7 +213,6 @@ export function getTinymceBaseConfig(page: string): object {
     selector: '.mceditable',
     table_default_styles: {
       'min-width':'25%',
-      'width':'auto',
     },
     // The table width is changed when manipulating columns, the size of other columns is maintained.
     table_column_resizing: 'resizetable',
@@ -378,6 +379,10 @@ export function getTinymceBaseConfig(page: string): object {
             tinymceEditImage.reset();
           }, 50);
         }
+      });
+      // prevent tables width from being set to "auto" and cause pdf export issues (see #5601)
+      editor.on('GetContent', (e) => {
+        e.content = e.content.replace(/(<table[^>]*?)\sstyle="[^"]*?width\s*:\s*auto;?[^"]*?"([^>]*?>)/gi, '$1$2');
       });
 
       // floppy disk icon from COLLECTION: Zest Interface Icons LICENSE: MIT License AUTHOR: zest

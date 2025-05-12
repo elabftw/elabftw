@@ -81,6 +81,7 @@ class BaseQueryParams implements QueryParamsInterface
         );
     }
 
+    #[Override]
     public function getStatesSql(string $tableName): string
     {
         return sprintf(' AND %s.state IN (%s)', $tableName, implode(', ', array_map(fn($state) => $state->value, $this->states)));

@@ -10,10 +10,10 @@
           <span class='input-group-text'><i class='fas fa-magnifying-glass'></i></span>
         </div>
           <div class='input-group-prepend'>
-            <select class='custom-select brl-none brr-none' name='teamFilter' id='teamFilter' aria-label='{{ 'Filter teams'|trans }}'>
-              <option value='' {{- App.Request.getScriptName|split('/')|last == 'sysconfig.php' and not App.Request.query.has('teamFilter') ? ' selected' }}>{{ 'All teams'|trans }}</option>
+            <select class='custom-select brl-none brr-none' name='team' id='teamFilter' aria-label='{{ 'Filter teams'|trans }}'>
+              <option value='' {{- App.Request.getScriptName|split('/')|last == 'sysconfig.php' and not App.Request.query.has('team') ? ' selected' }}>{{ 'All teams'|trans }}</option>
               {% for team in teamsArr %}
-                <option value='{{ team.id }}' {{- App.Request.query.get('teamFilter') == team.id or (App.Users.team == team.id and not App.Request.query.has('teamFilter') and App.Request.getScriptName|split('/')|last == 'admin.php') ? ' selected' }}>{{ team.name }}</option>
+                <option value='{{ team.id }}' {{- App.Request.query.get('team') == team.id or (App.Users.team == team.id and not App.Request.query.has('team') and App.Request.getScriptName|split('/')|last == 'admin.php') ? ' selected' }}>{{ team.name }}</option>
               {% endfor %}
             </select>
           </div>

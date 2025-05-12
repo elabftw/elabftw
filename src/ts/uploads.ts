@@ -10,7 +10,7 @@ import { Action as MalleAction, Malle } from '@deltablot/malle';
 import * as $3Dmol from '3dmol';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
 import { Action, Model } from './interfaces';
-import { displayMolFiles, getEntity, relativeMoment, reloadElements } from './misc';
+import { getEntity, relativeMoment, reloadElements } from './misc';
 import { displayPlasmidViewer } from './ove';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
@@ -30,7 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  displayMolFiles();
   displayPlasmidViewer(about);
   const entity = getEntity();
   const ApiC = new Api();
@@ -131,16 +130,16 @@ document.addEventListener('DOMContentLoaded', () => {
       const url = new URL(window.location.href);
       const queryParams = new URLSearchParams(url.search);
 
-      // toggle "archived" query parameter
-      if (queryParams.has('archived')) {
-        queryParams.delete('archived');
+      // set the state query param to include normal and archived
+      if (queryParams.has('state')) {
+        queryParams.delete('state');
       } else {
-        queryParams.set('archived', 'on');
+        queryParams.set('state', '1,2');
       }
 
       // Update the query parameters in the URL
       url.search = queryParams.toString();
-      url.hash = 'filesdiv';
+      url.hash = 'filesDiv';
       const modifiedUrl = url.toString();
       window.location.replace(modifiedUrl);
 
@@ -205,7 +204,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const uploadsDiv = document.getElementById('uploadsDiv');
   if (uploadsDiv) {
     new MutationObserver(() => {
-      displayMolFiles();
       $3Dmol.autoload();
       displayPlasmidViewer(about);
       malleableFilecomment.listen();

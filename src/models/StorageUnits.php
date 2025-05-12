@@ -16,6 +16,7 @@ use Elabftw\Elabftw\CanSqlBuilder;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Params\CommentParam;
 use Elabftw\Services\Filter;
@@ -171,12 +172,20 @@ final class StorageUnits extends AbstractRest
             compounds.is_oxidising,
             compounds.is_toxic,
             compounds.is_radioactive,
+            compounds.is_antibiotic,
             compounds.is_antibiotic_precursor,
+            compounds.is_drug,
             compounds.is_drug_precursor,
             compounds.is_explosive_precursor,
             compounds.is_cmr,
             compounds.is_nano,
-            compounds.is_controlled
+            compounds.is_controlled,
+            compounds.is_ed2health,
+            compounds.is_ed2env,
+            compounds.is_pbt,
+            compounds.is_pmt,
+            compounds.is_vpvb,
+            compounds.is_vpvm
         FROM
             containers2items AS c2i
         LEFT JOIN storage_units ON c2i.storage_id = storage_units.id
@@ -205,12 +214,20 @@ final class StorageUnits extends AbstractRest
             compounds.is_oxidising,
             compounds.is_toxic,
             compounds.is_radioactive,
+            compounds.is_antibiotic,
             compounds.is_antibiotic_precursor,
+            compounds.is_drug,
             compounds.is_drug_precursor,
             compounds.is_explosive_precursor,
             compounds.is_cmr,
             compounds.is_nano,
-            compounds.is_controlled
+            compounds.is_controlled,
+            compounds.is_ed2health,
+            compounds.is_ed2env,
+            compounds.is_pbt,
+            compounds.is_pmt,
+            compounds.is_vpvb,
+            compounds.is_vpvm
         FROM
             containers2experiments AS c2e
         LEFT JOIN storage_units ON c2e.storage_id = storage_units.id
@@ -286,6 +303,25 @@ final class StorageUnits extends AbstractRest
         return $this->readOne();
     }
 
+    public function createImmutable(array $locations): int
+    {
+        $parent = null;
+        $id = 0;
+        foreach ($locations as $location) {
+            $unitName = trim($location);
+            if (empty($unitName)) {
+                continue;
+            }
+            $res = $this->searchStorage($unitName);
+            if ($res) {
+                $id = $parent = $res['id'];
+            } else {
+                $id = $parent = $this->create($unitName, $parent);
+            }
+        }
+        return $id;
+    }
+
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
@@ -325,6 +361,19 @@ final class StorageUnits extends AbstractRest
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         return $this->Db->execute($req);
+    }
+
+    private function searchStorage(string $unitName): array|false
+    {
+        $sql = 'SELECT id, parent_id FROM storage_units WHERE name = :name';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':name', $unitName);
+        $this->Db->execute($req);
+        try {
+            return $this->Db->fetch($req);
+        } catch (ResourceNotFoundException) {
+            return false;
+        }
     }
 
     private function getRecursiveSql(int $userid, int $team, string $discriminator): string
@@ -380,12 +429,20 @@ final class StorageUnits extends AbstractRest
                     compounds.is_oxidising,
                     compounds.is_toxic,
                     compounds.is_radioactive,
+                    compounds.is_antibiotic,
                     compounds.is_antibiotic_precursor,
+                    compounds.is_drug,
                     compounds.is_drug_precursor,
                     compounds.is_explosive_precursor,
                     compounds.is_cmr,
                     compounds.is_nano,
-                    compounds.is_controlled
+                    compounds.is_controlled,
+                    compounds.is_ed2health,
+                    compounds.is_ed2env,
+                    compounds.is_pbt,
+                    compounds.is_pmt,
+                    compounds.is_vpvb,
+                    compounds.is_vpvm
                 FROM
                     containers2items AS c2i
                 LEFT JOIN
@@ -435,12 +492,20 @@ final class StorageUnits extends AbstractRest
                     compounds.is_oxidising,
                     compounds.is_toxic,
                     compounds.is_radioactive,
+                    compounds.is_antibiotic,
                     compounds.is_antibiotic_precursor,
+                    compounds.is_drug,
                     compounds.is_drug_precursor,
                     compounds.is_explosive_precursor,
                     compounds.is_cmr,
                     compounds.is_nano,
-                    compounds.is_controlled
+                    compounds.is_controlled,
+                    compounds.is_ed2health,
+                    compounds.is_ed2env,
+                    compounds.is_pbt,
+                    compounds.is_pmt,
+                    compounds.is_vpvb,
+                    compounds.is_vpvm
                 FROM
                     containers2experiments AS c2e
                 LEFT JOIN

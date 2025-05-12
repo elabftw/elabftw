@@ -15,7 +15,9 @@ namespace Elabftw\Import;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Compounds;
 use Elabftw\Models\Compounds2ItemsLinks;
+use Elabftw\Models\Containers2ItemsLinks;
 use Elabftw\Models\Items;
+use Elabftw\Models\StorageUnits;
 use Elabftw\Params\EntityParams;
 use Elabftw\Services\PubChemImporter;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -36,6 +38,7 @@ final class CompoundsCsv extends AbstractCsv
         protected Compounds $Compounds,
         protected ?int $resourceCategory = null,
         protected ?PubChemImporter $PubChemImporter = null,
+        protected string $locationSplitter = '/',
     ) {
         parent::__construct($Items->Users, $UploadedFile);
     }
@@ -98,12 +101,20 @@ final class CompoundsCsv extends AbstractCsv
                         isSeriousHealthHazard: (bool) ($row['is_serious_health_hazard'] ?? false),
                         isToxic: (bool) ($row['is_toxic'] ?? false),
                         isRadioactive: (bool) ($row['is_radioactive'] ?? false),
+                        isAntibiotic: (bool) ($row['is_antibiotic'] ?? false),
                         isAntibioticPrecursor: (bool) ($row['is_antibiotic_precursor'] ?? false),
+                        isDrug: (bool) ($row['is_drug'] ?? false),
                         isDrugPrecursor: (bool) ($row['is_drug_precursor'] ?? false),
                         isExplosivePrecursor: (bool) ($row['is_explosive_precursor'] ?? false),
                         isCmr: (bool) ($row['is_cmr'] ?? false),
                         isNano: (bool) ($row['is_nano'] ?? false),
-                        isControlled: (bool) ($row['is_controlled'] ?? false)
+                        isControlled: (bool) ($row['is_controlled'] ?? false),
+                        isEd2health: (bool) ($row['is_ed2health'] ?? false),
+                        isEd2env: (bool) ($row['is_ed2env'] ?? false),
+                        isPbt: (bool) ($row['is_pbt'] ?? false),
+                        isPmt: (bool) ($row['is_pmt'] ?? false),
+                        isVpvb: (bool) ($row['is_vpvb'] ?? false),
+                        isVpvm: (bool) ($row['is_vpvm'] ?? false),
                     );
                 }
 
@@ -114,8 +125,17 @@ final class CompoundsCsv extends AbstractCsv
                     if (isset($row['comment'])) {
                         $this->Items->update(new EntityParams('body', $row['comment']));
                     }
+                    $this->Items->update(new EntityParams('metadata', $this->collectMetadata($row)));
                     $Compounds2ItemsLinks = new Compounds2ItemsLinks($this->Items, $id);
                     $Compounds2ItemsLinks->create();
+                    // process localisation
+                    if (isset($row['location']) && !empty($row['location']) && !empty($this->locationSplitter)) {
+                        $locationSplit = explode($this->locationSplitter, $row['location']);
+                        $StorageUnits = new StorageUnits($this->requester);
+                        $id = $StorageUnits->createImmutable($locationSplit);
+                        $Containers2ItemsLinks = new Containers2ItemsLinks($this->Items, $id);
+                        $Containers2ItemsLinks->createWithQuantity((float) ($row['quantity'] ?? 1.0), $row['unit'] ?? '•');
+                    }
                 }
             } catch (ImproperActionException $e) {
                 $this->output->writeln($e->getMessage());
@@ -126,5 +146,57 @@ final class CompoundsCsv extends AbstractCsv
             $this->output->writeln(sprintf('[info] Imported %d/%d', $loopIndex, $countAll));
         }
         return $count;
+    }
+
+    #[Override]
+    protected function getProcessedColumns(): array
+    {
+        // these are the columns that are added to the compound
+        return array(
+            'cas',
+            'ec_number',
+            'inchi',
+            'inchi_key',
+            'iupacname',
+            'name',
+            'title',
+            'comment',
+            'chebi_id',
+            'chembl_id',
+            'dea_number',
+            'drugbank_id',
+            'dsstox_id',
+            'hmdb_id',
+            'kegg_id',
+            'metabolomics_wb_id',
+            'molecularformula',
+            'molecular_weight',
+            'nci_code',
+            'nikkaji_number',
+            'pharmgkb_id',
+            'pharos_ligand_id',
+            'pubchemcid',
+            'rxcui',
+            'smiles',
+            'unii',
+            'wikidata',
+            'wikipedia',
+            'is_corrosive',
+            'is_explosive',
+            'is_flammable',
+            'is_gas_under_pressure',
+            'is_hazardous2env',
+            'is_hazardous2health',
+            'is_oxidising',
+            'is_serious_health_hazard',
+            'is_toxic',
+            'is_radioactive',
+            'is_antibiotic_precursor',
+            'is_drug_precursor',
+            'is_explosive_precursor',
+            'is_cmr',
+            'is_nano',
+            'is_controlled',
+        );
     }
 }

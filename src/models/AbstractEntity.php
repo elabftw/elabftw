@@ -41,6 +41,7 @@ use Elabftw\Traits\EntityTrait;
 use PDO;
 use PDOStatement;
 use Override;
+use Symfony\Component\HttpFoundation\InputBag;
 
 use function array_column;
 use function array_merge;
@@ -112,6 +113,8 @@ abstract class AbstractEntity extends AbstractRest
         $this->TeamGroups = new TeamGroups($this->Users);
         $this->Pins = new Pins($this);
         $this->ExclusiveEditMode = new ExclusiveEditMode($this);
+        // perform check here once instead of in canreadorexplode to avoid making the same query over and over by child entities
+        $this->isReadOnly = $this->ExclusiveEditMode->isActive();
         $this->setId($id);
     }
 
@@ -378,12 +381,15 @@ abstract class AbstractEntity extends AbstractRest
 
     public function readOneFull(): array
     {
-        $this->Uploads->includeArchived = true;
         $base = $this->readOne();
         // items types don't have this yet
         if ($this instanceof AbstractConcreteEntity || $this instanceof Templates) {
             $base['revisions'] = (new Revisions($this))->readAll();
             $base['changelog'] = (new Changelog($this))->readAll();
+            // we want to include ALL uploaded files
+            $base['uploads'] = (new Uploads($this))->readAll(
+                $this->getQueryParams(new InputBag(array('state' => '1,2,3')))
+            );
         }
         ksort($base);
         return $base;
@@ -411,8 +417,7 @@ abstract class AbstractEntity extends AbstractRest
         // READ ONLY?
         if (
             ($permissions['read'] && !$permissions['write'])
-            || $this->ExclusiveEditMode->isActive()
-            || array_key_exists('is_locked', $this->entityData)
+            || (array_key_exists('locked', $this->entityData) && $this->entityData['locked'] === 1)
         ) {
             $this->isReadOnly = true;
         }

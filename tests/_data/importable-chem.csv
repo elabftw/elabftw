@@ -1,14 +1,14 @@
-Product ID,title,cas,molecularformula,Purity (%),Physical State,Hazard Class,Packaging Size,Manufacturer,Price (USD),comment
-CHM-001,Acetone,67-64-1,C3H6O,99.5,Liquid,Flammable,500 mL,ChemCorp Ltd.,15,yep
-CHM-002,Benzene,71-43-2,C6H6,99.9,Liquid,Carcinogenic,250 mL,AlphaChem Inc.,22.5,
-CHM-003,Sodium Hydroxide,1310-73-2,NaOH,98,Solid,Corrosive,1 kg,Beta Chemicals,10,
-CHM-004,Hydrochloric Acid,7647-01-0,HCl,37,Liquid,Corrosive,500 mL,Delta Labs,8.75,
-CHM-005,Ethanol,64-17-5,C2H6O,95,Liquid,Flammable,1 L,Gamma Industries,12,yop
-CHM-006,Sulfuric Acid,7664-93-9,H2SO4,98,Liquid,Corrosive,500 mL,Epsilon Chemicals,9.5,
-CHM-007,Methanol,67-56-1,CH4O,99.9,Liquid,Toxic,500 mL,Zeta Labs,14.5,
-CHM-008,Potassium Permanganate,7722-64-7,KMnO4,99,Solid,Oxidizer,250 g,ChemCorp Ltd.,7.25,
-CHM-009,Ammonium Nitrate,6484-52-2,NH4NO3,98.5,Solid,Oxidizer,500 g,AlphaChem Inc.,5,yap
-CHM-010,Acetic Acid,64-19-7,C2H4O2,99.8,Liquid,Corrosive,1 L,Delta Labs,13,
-CHM-011,Chloroform,67-66-3,CHCl3,99,Liquid,Toxic,500 mL,Gamma Industries,18.25,
-CHM-012,Acetic Anhydride,108-24-7,C4H6O3,97,Liquid,Corrosive,250 mL,Beta Chemicals,20,
-CHM-013,Nitric Acid,7697-37-2,HNO3,70,Liquid,Corrosive,500 mL,Epsilon Chemicals,11.5,yup
+Product ID,title,cas,molecularformula,Purity (%),Physical State,Hazard Class,Packaging Size,Manufacturer,Price (USD),comment,location,some column,maybe url
+CHM-001,Acetone,67-64-1,C3H6O,99.5,Liquid,Flammable,500 mL,ChemCorp Ltd.,15,yep,Parent 1 / Children A of parent 1,with some value,https://www.deltablot.com/
+CHM-002,Benzene,71-43-2,C6H6,99.9,Liquid,Carcinogenic,250 mL,AlphaChem Inc.,22.5,,Parent 1 / Children B of parent 1,that,https://www.deltablot.com/
+CHM-003,Sodium Hydroxide,1310-73-2,NaOH,98,Solid,Corrosive,1 kg,Beta Chemicals,10,,Parent 2 / Children C / Children Ca,will,https://www.deltablot.com/
+CHM-004,Hydrochloric Acid,7647-01-0,HCl,37,Liquid,Corrosive,500 mL,Delta Labs,8.75,,Parent 3,be,https://elab.local:3148/database.php?mode=view&id=595
+CHM-005,Ethanol,64-17-5,C2H6O,95,Liquid,Flammable,1 L,Gamma Industries,12,yop,Parent 2 / Children C,added,https://elab.local:3148/database.php?mode=view&id=595
+CHM-006,Sulfuric Acid,7664-93-9,H2SO4,98,Liquid,Corrosive,500 mL,Epsilon Chemicals,9.5,,,to,
+CHM-007,Methanol,67-56-1,CH4O,99.9,Liquid,Toxic,500 mL,Zeta Labs,14.5,,,metadata,
+CHM-008,Potassium Permanganate,7722-64-7,KMnO4,99,Solid,Oxidizer,250 g,ChemCorp Ltd.,7.25,,,because,
+CHM-009,Ammonium Nitrate,6484-52-2,NH4NO3,98.5,Solid,Oxidizer,500 g,AlphaChem Inc.,5,yap,,that’s,
+CHM-010,Acetic Acid,64-19-7,C2H4O2,99.8,Liquid,Corrosive,1 L,Delta Labs,13,,,how,
+CHM-011,Chloroform,67-66-3,CHCl3,99,Liquid,Toxic,500 mL,Gamma Industries,18.25,,,it,
+CHM-012,Acetic Anhydride,108-24-7,C4H6O3,97,Liquid,Corrosive,250 mL,Beta Chemicals,20,,,is,
+CHM-013,Nitric Acid,7697-37-2,HNO3,70,Liquid,Corrosive,500 mL,Epsilon Chemicals,11.5,yup,Nether,my man,

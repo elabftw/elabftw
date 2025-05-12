@@ -224,26 +224,6 @@ export function notif(info: ResponseMsg): void {
   }, fadeOutDelay);
 }
 
-// DISPLAY 2D MOL FILES
-export function displayMolFiles(): void {
-  return;
-}
-/*
-  // loop all the mol files and display the molecule with ChemDoodle
-  $.each($('.molFile'), function() {
-    // id of the canvas to attach the viewer to
-    const id = $(this).attr('id');
-    // now get the file content and display it in the viewer
-    ChemDoodle.io.file.content($(this).data('molpath'), function(fileContent: string){
-      const mol = ChemDoodle.readMOL(fileContent);
-      const viewer = new ChemDoodle.ViewerCanvas(id, 250, 250);
-      // load it
-      viewer.loadMolecule(mol);
-    });
-  });
-}
-*/
-
 // insert a get param in the url and reload the page
 export function insertParamAndReload(key: string, value: string): void {
   const params = new URLSearchParams(document.location.search.slice(1));
@@ -499,6 +479,11 @@ export function escapeRegExp(string: string): string {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+// used in metadata.ts to normalize field names only by trimming out double and simple quotes, causing to SQL issues
+export function normalizeFieldName(input: string): string {
+  return input.replace(/['"]/g, '').trim().replace(/\s+/g, ' ');
+}
+
 function removeEmpty(params: object): object {
   for (const [key, value] of Object.entries(params)) {
     if (value === '') {
@@ -747,11 +732,19 @@ export function toggleEditCompound(json: object): void {
     'is_toxic',
     'is_radioactive',
     'is_controlled',
+    'is_antibiotic',
     'is_antibiotic_precursor',
     'is_explosive_precursor',
+    'is_drug',
     'is_drug_precursor',
     'is_cmr',
     'is_nano',
+    'is_ed2health',
+    'is_ed2env',
+    'is_pbt',
+    'is_pmt',
+    'is_vpvb',
+    'is_vpvm',
   ];
   binaryParams.forEach(param => {
     const input = (document.getElementById(`addCompound${param}`) as HTMLInputElement);

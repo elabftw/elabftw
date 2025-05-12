@@ -58,7 +58,10 @@ final class Csv extends AbstractCsv
             if (empty($row['title'])) {
                 throw new ImproperActionException('Could not find the title column!');
             }
-            $body = $this->getBodyFromRow($row);
+            $body = null;
+            if (array_key_exists('body', $row) && !empty($row['body'])) {
+                $body = $row['body'];
+            }
             $date = empty($row['date']) ? null : new DateTimeImmutable($row['date']);
             $category = $this->category;
             // use the category_title of the row only if we didn't specify a category
@@ -68,6 +71,9 @@ final class Csv extends AbstractCsv
             $status = empty($row['status_title']) ? null : $this->getStatusId($this->entityType, $row['status_title']);
             $customId = empty($row['custom_id']) ? null : (int) $row['custom_id'];
             $metadata = empty($row['metadata']) ? null : (string) $row['metadata'];
+            if ($metadata === null) {
+                $metadata = $this->collectMetadata($row);
+            }
             $tags = empty($row['tags']) ? array() : explode(self::TAGS_SEPARATOR, $row['tags']);
             $canread = empty($row['canread']) ? $this->canread : $row['canread'];
             $canwrite = empty($row['canwrite']) ? $this->canwrite : $row['canwrite'];
@@ -85,6 +91,7 @@ final class Csv extends AbstractCsv
                 status: $status,
                 customId: $customId,
                 metadata: $metadata,
+                rating: (int) ($row['rating'] ?? 0),
             );
 
             $this->inserted++;
@@ -92,43 +99,21 @@ final class Csv extends AbstractCsv
         return $this->getInserted();
     }
 
-    /**
-     * Generate a body from a row. Add column name and content after that.
-     *
-     * @param array<string, null|string> $row row from the csv
-     */
-    private function getBodyFromRow(array $row): string
+    #[Override]
+    protected function getProcessedColumns(): array
     {
-        // if there is a row called "body", use that instead
-        if (array_key_exists('body', $row)) {
-            return $row['body'] ?? '';
-        }
-        // get rid of rows that are processed as columns
-        unset($row['title']);
-        unset($row['tags']);
-        unset($row['metadata']);
-        unset($row['category']);
-        unset($row['category_title']);
-        unset($row['category_color']);
-        unset($row['status']);
-        unset($row['status_title']);
-        unset($row['status_color']);
-        unset($row['id']);
-        unset($row['custom_id']);
-        unset($row['elabid']);
-        unset($row['date']);
-        unset($row['rating']);
-        // deal with the rest of the columns
-        $body = '';
-        foreach ($row as $subheader => $content) {
-            $contentEscaped = htmlspecialchars($content ??= '');
-            // translate urls into links
-            if (filter_var($content, FILTER_VALIDATE_URL)) {
-                $contentEscaped = sprintf('<a href="%1$s">%1$s</a>', $contentEscaped);
-            }
-            $body .= sprintf('<p>%s: %s</p>', htmlspecialchars($subheader), $contentEscaped);
-        }
-
-        return $body;
+        return array(
+            'canread',
+            'canwrite',
+            'category',
+            'category_title',
+            'custom_id',
+            'date',
+            'metadata',
+            'status',
+            'status_title',
+            'tags',
+            'title',
+        );
     }
 }

@@ -9,6 +9,7 @@ import {
   getEntity,
   notifError,
   addAutocompleteToExtraFieldsKeyInputs,
+  normalizeFieldName,
 } from './misc';
 import { Metadata } from './Metadata.class';
 import { ValidMetadata, ExtraFieldInputType } from './metadataInterfaces';
@@ -194,6 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   addAutocompleteToExtraFieldsKeyInputs();
 
+
   function toggleContentDiv(key: string) {
     const keys = ['classic', 'selectradio', 'checkbox', 'number'];
     document.getElementById('newFieldContentDiv_' + key).toggleAttribute('hidden', false);
@@ -280,7 +282,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      const fieldKey = (document.getElementById('newFieldKeyInput') as HTMLInputElement).value.trim();
+      const fieldKeyValue = (document.getElementById('newFieldKeyInput') as HTMLInputElement).value.trim();
+      const fieldKey = normalizeFieldName(fieldKeyValue);
 
       let json = {};
       // get the current metadata
@@ -366,11 +369,14 @@ document.addEventListener('DOMContentLoaded', () => {
       // get field to update's current value
       const fieldNameInput = document.getElementById('newFieldKeyInput') as HTMLInputElement;
       const originalFieldKey = fieldNameInput.dataset.name; // store previous key
-      const newFieldKey = fieldNameInput.value.trim(); // new key from input
+      const newFieldKeyValue = fieldNameInput.value.trim(); // new key from input
+      const newFieldKey = normalizeFieldName(newFieldKeyValue);
 
       let json = {};
       MetadataC.read().then(metadata => {
-        if (metadata) json = metadata;
+        if (metadata) {
+          json = metadata;
+        }
         // If the key (name) is being changed, remove previous field else it will create two separate ones
         if (originalFieldKey && originalFieldKey !== newFieldKey) {
           delete json['extra_fields'][originalFieldKey];

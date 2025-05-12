@@ -286,7 +286,7 @@ class Users extends AbstractRest
         $Request = Request::createFromGlobals();
         return $this->readFromQuery(
             $Request->query->getString('q'),
-            0,
+            $Request->query->getInt('team', 0),
             $Request->query->getBoolean('includeArchived'),
             $Request->query->getBoolean('onlyAdmins'),
             $Request->query->getBoolean('onlyArchived'),
@@ -379,7 +379,7 @@ class Users extends AbstractRest
             Action::Update => (
                 function () use ($params) {
                     // only a sysadmin can edit anything about another sysadmin
-                    if ($this->requester->userData['is_sysadmin'] === 0 && $this->userid !== $this->requester->userid) {
+                    if ($this->requester->userData['is_sysadmin'] === 0 && $this->userid !== $this->requester->userid && $this->userData['is_sysadmin'] === 1) {
                         throw new IllegalActionException('A sysadmin level account is required to edit another sysadmin account.');
                     }
                     $Config = Config::getConfig();

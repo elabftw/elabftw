@@ -33,10 +33,17 @@ abstract class AbstractLinks extends AbstractRest
 {
     use SetIdTrait;
 
+    /**
+     * The id of the target (link_id)
+     */
+    public ?int $id;
+
+    /**
+     * @param ?int $id The id of the target (link_id)
+     */
     public function __construct(public AbstractEntity $Entity, ?int $id = null)
     {
         parent::__construct();
-        // this field corresponds to the target id (link_id)
         $this->setId($id);
     }
 
@@ -133,26 +140,12 @@ abstract class AbstractLinks extends AbstractRest
             && $this->Entity->id === intval($targetId);
     }
 
-    abstract protected function getTargetType(): EntityType;
-
-    abstract protected function getCatTable(): string;
-
-    abstract protected function getStatusTable(): string;
-
-    abstract protected function getTable(): string;
-
-    abstract protected function getRelatedTable(): string;
-
-    abstract protected function getTemplateTable(): string;
-
-    abstract protected function getImportTargetTable(): string;
-
     /**
      * Add a link to an entity
      * Links to Items are possible from all entities
      * Links to Experiments are only allowed from other Experiments and Items
      */
-    protected function create(): int
+    public function create(): int
     {
         // don't insert a link to the same entity, make sure we check for the type too
         if ($this->Entity->id === $this->id && $this->Entity->entityType === $this->getTargetType()) {
@@ -171,25 +164,67 @@ abstract class AbstractLinks extends AbstractRest
         return $this->id;
     }
 
+    abstract protected function getTargetType(): EntityType;
+
+    abstract protected function getCatTable(): string;
+
+    abstract protected function getStatusTable(): string;
+
+    abstract protected function getTable(): string;
+
+    abstract protected function getOtherImportTypeTable(): string;
+
+    abstract protected function getRelatedTable(): string;
+
+    abstract protected function getTemplateTable(): string;
+
+    abstract protected function getImportTargetTable(): string;
+
+    abstract protected function getOtherImportTargetTable(): string;
+
     /**
-     * Copy the links of an item into our entity
-     * Also copy links of an experiment into our entity unless it is a template
+     * Copy the links of one entity into another entity
+     * The linked entity can have links to experiments and/or resources, both need to be imported
      */
     private function import(): int
     {
         $this->Entity->canOrExplode('write');
 
-        // the :item_id of the SELECT will be the same for all rows: our current entity id
-        // use IGNORE to avoid failure due to a key constraint violations
-        $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (item_id, link_id)
-            SELECT :item_id, link_id
-            FROM ' . $this->getImportTargetTable() . '
-            WHERE item_id = :link_id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
+        $tableTypes = array(
+            // same entity type: exp2exp, res2res
+            'same-entity' => array(
+                'table' => $this->getTable(),
+                'import-target' => $this->getImportTargetTable(),
+            ),
+            // other entity type: exp2res, res2exp
+            'other-entity' => array(
+                'table' => $this->getOtherImportTypeTable(),
+                'import-target' => $this->getOtherImportTargetTable(),
+            ),
+        );
 
-        return (int) $this->Db->execute($req);
+        $res = array();
+        foreach ($tableTypes as $tables) {
+            // the :item_id of the SELECT will be the same for all rows: our current entity id
+            // use IGNORE to avoid failure due to a key constraint violations
+            $sql = sprintf(
+                'INSERT IGNORE INTO %s (item_id, link_id)
+                    SELECT :item_id, link_id
+                    FROM %s
+                    WHERE item_id = :link_id',
+                $tables['table'],
+                $tables['import-target'],
+            );
+            $req = $this->Db->prepare($sql);
+            /** @psalm-suppress InaccessibleProperty Seems like a bug as $this->Entity->id is accessible */
+            $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+            /** @psalm-suppress InaccessibleProperty Seems like a bug as $this->id is accessible */
+            $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
+
+            $res[] = $this->Db->execute($req);
+        }
+
+        return (int) array_all($res, fn($v) => $v);
     }
 
     // Yes, the boolean is code smell, but it avoids a lot of code duplication

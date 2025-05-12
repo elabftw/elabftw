@@ -709,7 +709,7 @@ components:
               type:
                 nullable: true
                 type: string
-                enum: ['allow_multi_values', 'blank_value_on_duplicate', 'checkbox', 'date', 'datetime-local', 'description', 'email', 'group_id', 'number', 'options', 'position', 'radio', 'required', 'select', 'text', 'time', 'unit', 'url']
+                enum: ['allow_multi_values', 'blank_value_on_duplicate', 'checkbox', 'date', 'datetime-local', 'description', 'email', 'experiments', 'group_id', 'items', 'number', 'options', 'position', 'radio', 'required', 'select', 'text', 'time', 'unit', 'url', 'users']
               value:
                 nullable: true
                 type: string
@@ -3685,6 +3685,12 @@ paths:
           schema:
             type: string
             enum: ['0', '1']
+        - name: team
+          in: query
+          description: Add a filter on the team
+          required: false
+          schema:
+            type: number
       responses:
         '200':
           description: A list of users
@@ -4296,12 +4302,20 @@ paths:
         required: true
         schema:
           type: integer
-      - name: archived
+      - name: state
         in: query
-        description: Include archived uploads in the response if the value is truthy.
-        required: false
         schema:
           type: string
+          default: "1"
+        examples:
+          first:
+            summary: Display only archived uploads
+            value: "2"
+          second:
+            summary: Display archived and deleted uploads
+            value: "2,3"
+        description: |
+          Filter results based on their state: 1 (Normal), 2 (Archived), 3 (Deleted). Supports comma separated values.
     get:
       tags: ['Uploads']
       summary: Read attached files of that entity.

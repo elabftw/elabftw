@@ -302,7 +302,6 @@ final class Apiv2Controller extends AbstractApiController
                 null,
                 $this->Request->query->getString('start', Scheduler::EVENT_START),
                 $this->Request->query->getString('end', Scheduler::EVENT_END),
-                $this->Request->query->getInt('cat'),
             ),
             ApiEndpoint::ExtraFieldsKeys => new ExtraFieldsKeys(
                 $this->requester,
@@ -344,7 +343,7 @@ final class Apiv2Controller extends AbstractApiController
                 ),
                 ApiSubModels::Steps => new Steps($this->Model, $this->subId),
                 ApiSubModels::Tags => new Tags($this->Model, $this->subId),
-                ApiSubModels::Uploads => new Uploads($this->Model, $this->subId, includeArchived: $this->Request->query->getBoolean('archived')),
+                ApiSubModels::Uploads => new Uploads($this->Model, $this->subId),
                 default => throw new InvalidApiSubModelException(ApiEndpoint::from($this->Model->entityType->value)),
             };
         }

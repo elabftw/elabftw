@@ -455,7 +455,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const value = (document.getElementById('target_owner') as HTMLInputElement).value;
       const entity = getEntity();
       const params = {};
-      params[Target.UserId] = value;
+      params[Target.UserId] = parseInt(value.split(' ')[0], 10);
       ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => window.location.reload());
 
     // ADD USER TO PERMISSIONS
@@ -594,7 +594,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ApiC.post('storage_units', params).then(() => reloadElements(['storageDiv']));
 
     } else if (el.matches('[data-action="add-storage-children"]')) {
-      const unitName = prompt('Unit Name');
+      const unitName = prompt(i18next.t('location-name'));
       if (!unitName.length) {
         return;
       }

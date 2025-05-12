@@ -73,6 +73,9 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches(`[data-action="${Action.Timestamp}"]`)) {
       ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.Timestamp}).then(() => {
         reloadElements(['requestActionsDiv', 'isTimestampedByInfoDiv']);
+      }).catch(error => {
+        console.error(error.message);
+        notifError(error);
       });
 
     // BLOXBERG
@@ -113,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ApiC.post(`${entity.type}/${entity.id}/request_actions`, {
         action: Action.Create,
         target_action: actionSelect.value,
-        target_userid: userSelect.value,
+        target_userid: parseInt(userSelect.value.split(' ')[0], 10),
       }).then(() => reloadElements(['requestActionsDiv']))
         .then(() => relativeMoment())
         // the request gets rejected if repeated

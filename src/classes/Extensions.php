@@ -77,6 +77,7 @@ final class Extensions
         'gro',
         'mcif',
         'mmtf',
+        'mol',
         'mol2',
         'pdb',
         'pqr',

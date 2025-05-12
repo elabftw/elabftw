@@ -238,45 +238,12 @@ abstract class AbstractContainersLinks extends AbstractLinks
             && $this->Entity->id === intval($targetId);
     }
 
-    #[Override]
-    abstract protected function getTargetType(): EntityType;
-
-    #[Override]
-    abstract protected function getCatTable(): string;
-
-    #[Override]
-    abstract protected function getStatusTable(): string;
-
-    #[Override]
-    abstract protected function getTable(): string;
-
-    #[Override]
-    abstract protected function getImportTargetTable(): string;
-
-    #[Override]
-    protected function getTemplateTable(): string
-    {
-        if ($this->Entity instanceof Items || $this->Entity instanceof ItemsTypes) {
-            return 'containers2items_types';
-        }
-        return 'containers2experiments_templates';
-    }
-
-    #[Override]
-    protected function getRelatedTable(): string
-    {
-        if ($this->Entity instanceof Experiments) {
-            return 'containers2experiments';
-        }
-        return 'containers2items';
-    }
-
     /**
      * Add a link to an entity
      * Links to Items are possible from all entities
      * Links to Experiments are only allowed from other Experiments and Items
      */
-    protected function createWithQuantity(float $qty, string $unit): int
+    public function createWithQuantity(float $qty, string $unit): int
     {
         // don't insert a link to the same entity, make sure we check for the type too
         if ($this->Entity->id === $this->id && $this->Entity->entityType === $this->getTargetType()) {
@@ -296,6 +263,51 @@ abstract class AbstractContainersLinks extends AbstractLinks
         $this->Db->execute($req);
 
         return $this->id;
+    }
+
+    #[Override]
+    abstract protected function getTargetType(): EntityType;
+
+    #[Override]
+    abstract protected function getCatTable(): string;
+
+    #[Override]
+    abstract protected function getStatusTable(): string;
+
+    #[Override]
+    abstract protected function getTable(): string;
+
+    #[Override]
+    abstract protected function getImportTargetTable(): string;
+
+    #[Override]
+    protected function getOtherImportTypeTable(): string
+    {
+        return '';
+    }
+
+    #[Override]
+    protected function getOtherImportTargetTable(): string
+    {
+        return '';
+    }
+
+    #[Override]
+    protected function getTemplateTable(): string
+    {
+        if ($this->Entity instanceof Items || $this->Entity instanceof ItemsTypes) {
+            return 'containers2items_types';
+        }
+        return 'containers2experiments_templates';
+    }
+
+    #[Override]
+    protected function getRelatedTable(): string
+    {
+        if ($this->Entity instanceof Experiments) {
+            return 'containers2experiments';
+        }
+        return 'containers2items';
     }
 
     /**

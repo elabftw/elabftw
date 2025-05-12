@@ -57,7 +57,7 @@
     {# everything in there will be part of the burger #}
     <div class='collapse navbar-collapse' id='main-nav'>
         <div class='navbar-nav'>
-            <a aria-label='{{ 'Go to dashboard'|trans }}' class='btn nav-item nav-link {{ scriptName == 'dashboard.php' ? 'active' }}'
+            <a aria-label='{{ 'Go to dashboard'|trans }}' class='nav-item nav-link {{ scriptName == 'dashboard.php' ? 'active' }}'
                 href='dashboard.php' title='{{ 'Go to dashboard'|trans }}'><i class='fas fa-house'></i></a>
             <a class='nav-item nav-link {{ scriptName == 'experiments.php' ? 'active' }}'
                 href='experiments.php'>{% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}</a>

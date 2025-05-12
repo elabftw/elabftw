@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\Db;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
 use PDO;
@@ -27,8 +26,6 @@ final class ExpirationNotifier extends EmailNotifications
 {
     /** @var int NOTIF_PERIOD number of days before the validity date expiration when we start warning users */
     protected const NOTIF_PERIOD = 30;
-
-    protected Db $Db;
 
     #[Override]
     public function sendEmails(): int

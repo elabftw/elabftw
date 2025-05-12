@@ -27,6 +27,7 @@ use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\Output;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Override;
 
@@ -99,9 +100,9 @@ final class ImportEln extends Command
         $Importer->requesterIsAuthor = $requesterIsAuthor;
         $Importer->import();
         $logger->info(sprintf('Import finished for Team with ID %d%s', $teamid, $infoTrailer));
+        /** @var QuestionHelper */
         $helper = $this->getHelper('question');
         $question = new ConfirmationQuestion('[*] Delete ELN file? (y/N) ', false);
-        /** @phpstan-ignore-next-line ask method is part of QuestionHelper which extends HelperInterface */
         if ($helper->ask($input, $output, $question)) {
             $this->Fs->getFs()->delete((string) $input->getArgument('file'));
             $logger->info(sprintf('Deleted input file: %s', $filePath));

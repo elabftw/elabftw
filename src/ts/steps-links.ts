@@ -10,7 +10,15 @@ import 'jquery-ui/ui/widgets/autocomplete';
 import { Malle } from '@deltablot/malle';
 import Step from './Step.class';
 import i18next from 'i18next';
-import { relativeMoment, makeSortableGreatAgain, reloadElements, addAutocompleteToLinkInputs, addAutocompleteToCompoundsInputs, getEntity, adjustHiddenState } from './misc';
+import {
+  addAutocompleteToCompoundsInputs,
+  addAutocompleteToLinkInputs,
+  adjustHiddenState,
+  getEntity,
+  makeSortableGreatAgain,
+  relativeMoment,
+  reloadElements,
+} from './misc';
 import { Action, Target } from './interfaces';
 import { Api } from './Apiv2.class';
 
@@ -48,7 +56,10 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(() => reloadElements(['stepsDiv']));
     // IMPORT LINK(S) OF LINK
     } else if (el.matches('[data-action="import-links"]')) {
-      Promise.allSettled(['items_links', 'experiments_links'].map(endpoint => ApiC.post(`${entity.type}/${entity.id}/${endpoint}/${el.dataset.target}`, {'action': Action.Duplicate}))).then(() => reloadElements(['linksDiv', 'linksExpDiv']));
+      Promise.allSettled(['items_links', 'experiments_links'].map(endpoint => ApiC.post(
+        `${entity.type}/${entity.id}/${endpoint}/${el.dataset.target}`,
+        {'action': Action.Duplicate},
+      ))).then(() => reloadElements(['linksDiv', 'linksExpDiv']));
     // DESTROY LINK
     } else if (el.matches('[data-action="destroy-link"]')) {
       if (confirm(i18next.t('link-delete-warning'))) {
@@ -104,7 +115,11 @@ document.addEventListener('DOMContentLoaded', () => {
     inputClasses: ['form-control'],
     fun: async (value, original) => {
       return StepC.update(parseInt(original.dataset.stepid, 10), value, original.dataset.target as Target)
-        .then(resp => resp.json()).then(json => original.dataset.target === Target.Body ? json.body : json.deadline);
+        .then(resp => resp.json())
+        .then(json => original.dataset.target === Target.Body
+          ? json.body
+          : json.deadline,
+        );
     },
     listenOn: '.step.editable',
     returnedValueIsTrustedHtml: false,

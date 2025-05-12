@@ -53,13 +53,14 @@ final class ImportCompoundsCsv extends Command
     protected function configure(): void
     {
         $this->setDescription('Import compounds from a CSV file')
-            ->setHelp('Column names that will match: cas, chebi_id, chembl_id, dea_number, drugbank_id, dsstox_id, ec_number, hmdb_id, inchi, inchikey, iupacname, is_antibiotic_precursor, is_cmr, is_controlled, is_corrosive, is_drug_precursor, is_explosive, is_explosive_precursor, is_flammable, is_gas_under_pressure, is_hazardous2env, is_hazardous2health, is_nano, is_oxidising, is_radioactive, is_serious_health_hazard, is_toxic, kegg_id, metabolomics_wb_id, molecularformula, molecularweight, name, nci_code, nikkaji_number, pharmgkb_id, pharos_ligand_id, pubchemcid, rxcui, smiles, unii, wikidata, wikipedia. A column named "comment" will be added to the main text of the associated resource if a resource is associated with it.')
+            ->setHelp("Column names that will match: cas, chebi_id, chembl_id, dea_number, drugbank_id, dsstox_id, ec_number, hmdb_id, inchi, inchikey, iupacname, is_antibiotic, is_antibiotic_precursor, is_cmr, is_controlled, is_corrosive, is_drug, is_drug_precursor, is_explosive, is_explosive_precursor, is_flammable, is_gas_under_pressure, is_hazardous2env, is_hazardous2health, is_nano, is_oxidising, is_radioactive, is_serious_health_hazard, is_toxic, is_ed2health, is_ed2env, is_pbt, is_pmt, is_vpvb, is_vpvm, kegg_id, metabolomics_wb_id, molecularformula, molecularweight, name, nci_code, nikkaji_number, pharmgkb_id, pharos_ligand_id, pubchemcid, rxcui, smiles, unii, wikidata, wikipedia.\nA column named «comment» will be added to the main text of the associated resource if a resource is associated with it.\nA column named «location» will be interpreted as location, use the -l option to set the character separating the hierarchical location. The columns «quantity» and «unit» will be used when creating a container.")
             ->addArgument('file', InputArgument::REQUIRED, 'Name of the file to import. Must be present in /elabftw/exports folder in the container')
             ->addArgument('teamid', InputArgument::REQUIRED, 'Target team ID')
             ->addOption('userid', 'u', InputOption::VALUE_REQUIRED, 'Target user ID')
             ->addOption('dry-run', 'd', InputOption::VALUE_NONE, 'Process the file, but do not actually import things, display what would be done')
             ->addOption('use-pubchem', 'p', InputOption::VALUE_NONE, 'Use PubChem to complete information. Use the CAS number or Pubchem CID to fetch data from PubChem and complement existing data.')
-            ->addOption('create-resource', 'c', InputOption::VALUE_REQUIRED, 'Create a resource linked to that compound with the category ID provided');
+            ->addOption('create-resource', 'c', InputOption::VALUE_REQUIRED, 'Create a resource linked to that compound with the category ID provided')
+            ->addOption('location-splitter', 'l', InputOption::VALUE_REQUIRED, 'Set a character to split the location column values on.', '/');
     }
 
     #[Override]
@@ -80,6 +81,7 @@ final class ImportCompoundsCsv extends Command
         if ($input->getOption('create-resource')) {
             $resourceCategory = (int) $input->getOption('create-resource');
         }
+        $locationSplitter = $input->getOption('location-splitter');
         $Config = Config::getConfig();
         $Fingerprinter = new NullFingerprinter();
         $httpGetter = new HttpGetter(new Client(), $Config->configArr['proxy'], $Config->configArr['debug'] === '0');
@@ -102,6 +104,7 @@ final class ImportCompoundsCsv extends Command
             $Compounds,
             $resourceCategory,
             $pubChemImporter,
+            $locationSplitter,
         );
         if ($input->getOption('dry-run')) {
             // this is necessary so -vv isn't required to get dry run info

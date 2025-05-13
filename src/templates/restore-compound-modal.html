@@ -1,0 +1,24 @@
+{# Modal for restoring a deleted compound #}
+<div class='modal fade' id='restoreCompoundModal' tabindex='-1' role='dialog' aria-labelledby='createCompoundModalTitle'>
+  <div class='modal-dialog modal-lg' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='restoreCompoundModalTitle'><i class='fas fa-fw fa-trash-can-arrow-up'></i> {{ 'Restore compound'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        <div class='mb-2' id='restoreCompoundInputs'>
+          <label for='restoreCompoundId'>{{ 'Id'|trans }}</label>
+          <input name='restoreCompoundId' required class='form-control' id='restoreCompoundId' />
+          <p class='smallgray'>{{ 'The id of the compound is given by the error message when trying to create one that already exists.'|trans }}</p>
+        </div>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='button' class='btn btn-primary' id='restoreCompoundModalBtn' data-action='restore-compound' data-dismiss='modal'>{{ 'Restore'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>

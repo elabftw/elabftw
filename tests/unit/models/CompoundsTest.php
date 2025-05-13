@@ -100,6 +100,14 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
         // now try to add the same compound again
         $this->expectException(ImproperActionException::class);
         $Compounds->create(casNumber: self::CAFFEINE_CAS);
+
+        // now confirm the compound can be restored if previously deleted
+        $deletedCompound = $Compounds->patch(Action::Update, array('state' => 3));
+        $Compounds->setId($deletedCompound['id']);
+
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessageMatches('/already exists with ID: \d+ but is marked as deleted/');
+        $Compounds->create(casNumber: self::CAFFEINE_CAS);
     }
 
     public function testGetApiPath(): void

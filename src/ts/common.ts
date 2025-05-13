@@ -664,7 +664,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const resultTableDiv = document.getElementById('pubChemSearchResultTableDiv');
       const viewOnPubChemLink = document.getElementById('viewOnPubChemLink') as HTMLLinkElement;
       ApiC.getJson(`compounds?search_pubchem_${el.dataset.from}=${inputEl.value}`).then(json => {
-        mkSpinStop(el, elOldHTML);
         const table = generateTable(json);
         resultDiv.removeAttribute('hidden');
         viewOnPubChemLink.href = `https://pubchem.ncbi.nlm.nih.gov/compound/${json.cid}`;
@@ -674,7 +673,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const importBtn = document.querySelector('[data-action="import-compound"]') as HTMLButtonElement;
         importBtn.removeAttribute('disabled');
         importBtn.dataset.cid = json.cid;
-      });
+      }).catch(err => {
+        console.error(err);
+        notifError(new Error('No record found.'));
+      }).finally(() => mkSpinStop(el, elOldHTML));
 
     } else if (el.matches('[data-action="search-entity-from-compound"]')) {
       // try and grab the CAS for the search
@@ -751,7 +753,17 @@ document.addEventListener('DOMContentLoaded', () => {
         ApiC.delete(`compounds/${id}`);
       });
       document.dispatchEvent(new CustomEvent('dataReload'));
-
+    // TOGGLE RESTORE COMPOUND MODAL
+    } else if (el.matches('[data-action="restore-compound-modal"]')) {
+      $('#restoreCompoundModal').modal('toggle');
+    // RESTORE COMPOUND USING ID (provided in error message, when trying to create)
+    } else if (el.matches('[data-action="restore-compound"]')) {
+      const compoundId = (document.getElementById('restoreCompoundId') as HTMLInputElement).value;
+      const params = {'state': 1};
+      ApiC.patch(`compounds/${compoundId}`, params).then(() => {
+        document.dispatchEvent(new CustomEvent('dataReload'));
+        $('#restoreCompoundModal').modal('hide');
+      });
     // PASSWORD VISIBILITY TOGGLE
     } else if (el.matches('[data-action="toggle-password"]')) {
       // toggle eye icon

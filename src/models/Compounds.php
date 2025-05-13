@@ -315,7 +315,21 @@ final class Compounds extends AbstractRest
             // catch the duplicate constraint error to display a better error message
         } catch (DatabaseErrorException $e) {
             if ($e->getErrorCode() === Db::DUPLICATE_CONSTRAINT_ERROR) {
+                // check if the existing compound has state = 3 (deleted) and ask if user wants to restore it
+                $sql = 'SELECT id FROM compounds WHERE cas_number = :cas_number AND state = 3 LIMIT 1';
+                $req = $this->Db->prepare($sql);
+                $req->bindParam(':cas_number', $casNumber);
+                $this->Db->execute($req);
+                $deletedCompound = $req->fetch(PDO::FETCH_ASSOC);
+                if ($deletedCompound) {
+                    throw new ImproperActionException(sprintf(
+                        'This compound already exists with ID: %d but is marked as deleted. You can restore it by clicking on the restore button.',
+                        $deletedCompound['id']
+                    ));
+                }
+                // just notify it's a duplicate
                 throw new ImproperActionException(sprintf('Cannot add the same compound twice! %s', $e->getErrorMessage()));
+
             }
         }
 

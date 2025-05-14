@@ -753,17 +753,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ApiC.delete(`compounds/${id}`);
       });
       document.dispatchEvent(new CustomEvent('dataReload'));
-    // TOGGLE RESTORE COMPOUND MODAL
-    } else if (el.matches('[data-action="restore-compound-modal"]')) {
-      $('#restoreCompoundModal').modal('toggle');
-    // RESTORE COMPOUND USING ID (provided in error message, when trying to create)
-    } else if (el.matches('[data-action="restore-compound"]')) {
-      const compoundId = (document.getElementById('restoreCompoundId') as HTMLInputElement).value;
-      const params = {'state': 1};
-      ApiC.patch(`compounds/${compoundId}`, params).then(() => {
-        document.dispatchEvent(new CustomEvent('dataReload'));
-        $('#restoreCompoundModal').modal('hide');
-      });
+
     // PASSWORD VISIBILITY TOGGLE
     } else if (el.matches('[data-action="toggle-password"]')) {
       // toggle eye icon

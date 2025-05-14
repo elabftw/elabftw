@@ -69,7 +69,7 @@ final class Compounds extends AbstractRest
             $fp = $this->fingerprinter->calculate('smi', $q->getString('search_fp_smi'));
             return $this->searchFingerprint($fp, $q->getBoolean('exact'));
         }
-        $sql = $this->getSelectBeforeWhere() . ' WHERE 1=1 AND entity.state IN (:state_normal, :state_archived)';
+        $sql = $this->getSelectBeforeWhere() . ' WHERE 1=1';
         if ($queryParams->getQuery()->get('q')) {
             $sql .= ' AND (
                 entity.cas_number LIKE :query OR
@@ -109,8 +109,6 @@ final class Compounds extends AbstractRest
         if ($queryParams->getQuery()->get('q')) {
             $req->bindValue(':query', '%' . $queryParams->getQuery()->getString('q') . '%');
         }
-        $req->bindValue(':state_normal', State::Normal->value, PDO::PARAM_INT);
-        $req->bindValue(':state_archived', State::Archived->value, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $req->fetchAll();

@@ -52,6 +52,7 @@ final class i18n4Js
             'extra-fields' => _('Extra fields'),
             'filename' => _('Filename'),
             'generic-delete-warning' => _('Delete this?'),
+            'hide-deleted' => _('Hide deleted'),
             'link-delete-warning' => _('Delete this link?'),
             'location-name' => _('Location name'),
             // https://www.i18next.com/translation-function/formatting
@@ -69,6 +70,7 @@ final class i18n4Js
             'save' => _('Save'),
             'saved' => _('Saved'),
             'sort-by-column' => _('Sort by column'),
+            'show-deleted' => _('Show deleted'),
             'step-delete-warning' => _('Delete this step?'),
             'step-unfinish-warning' => _('Are you sure you want to undo this step?'),
             'tag-delete-warning' => _('Delete this tag?'),

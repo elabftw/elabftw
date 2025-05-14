@@ -315,21 +315,13 @@ final class Compounds extends AbstractRest
             // catch the duplicate constraint error to display a better error message
         } catch (DatabaseErrorException $e) {
             if ($e->getErrorCode() === Db::DUPLICATE_CONSTRAINT_ERROR) {
-                // check if the existing compound has state = 3 (deleted) and ask if user wants to restore it
-                $sql = 'SELECT id FROM compounds WHERE cas_number = :cas_number AND state = 3 LIMIT 1';
-                $req = $this->Db->prepare($sql);
-                $req->bindParam(':cas_number', $casNumber);
-                $this->Db->execute($req);
-                $deletedCompound = $req->fetch(PDO::FETCH_ASSOC);
-                if ($deletedCompound) {
-                    throw new ImproperActionException(sprintf(
-                        'This compound already exists with ID: %d but is marked as deleted. You can restore it by clicking on the restore button.',
-                        $deletedCompound['id']
-                    ));
+                // If the duplicate has been deleted, restore it.
+                $deletedCompoundId = $this->getCompoundIfDeleted($casNumber);
+                if ($deletedCompoundId !== null) {
+                    return $this->restoreCompound($deletedCompoundId);
                 }
-                // just notify it's a duplicate
+                // If it's just a duplicate, notify.
                 throw new ImproperActionException(sprintf('Cannot add the same compound twice! %s', $e->getErrorMessage()));
-
             }
         }
 
@@ -340,6 +332,29 @@ final class Compounds extends AbstractRest
             $Fingerprints = new Fingerprints($compoundId);
             $Fingerprints->create($fp['data']);
         }
+        return $compoundId;
+    }
+
+    /**
+     * If there's a duplicate, check if it's deleted and return its ID.
+     * The ID will be used to restore it. Check fn restoreCompound().
+     */
+    public function getCompoundIfDeleted(string $casNumber): ?int
+    {
+        $sql = 'SELECT id FROM compounds WHERE cas_number = :cas_number AND state = :state LIMIT 1';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':cas_number', $casNumber);
+        $req->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $result = $req->fetch(PDO::FETCH_ASSOC);
+
+        return $result ? (int) $result['id'] : null;
+    }
+
+    public function restoreCompound(int $compoundId): int
+    {
+        $this->setId($compoundId);
+        $this->update(new CompoundParams('state', State::Normal->value));
         return $compoundId;
     }
 

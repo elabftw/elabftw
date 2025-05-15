@@ -675,8 +675,10 @@ document.addEventListener('DOMContentLoaded', () => {
         importBtn.dataset.cid = json.cid;
       }).catch(err => {
         console.error(err);
-        notifError(new Error('No record found.'));
-      }).finally(() => mkSpinStop(el, elOldHTML));
+        notifError(new Error(i18next.t('resource-not-found')));
+      }).finally(() => {
+        mkSpinStop(el, elOldHTML)
+      });
 
     } else if (el.matches('[data-action="search-entity-from-compound"]')) {
       // try and grab the CAS for the search

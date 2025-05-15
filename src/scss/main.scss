@@ -742,17 +742,6 @@ tr:nth-child(odd) {
   }
 }
 
-.btn-ghost-active {
-  border: 1px solid $firstlevel;
-  background-color: $secondlevel;
-
-  &:hover {
-    background: $disabled;
-    border-color: $superlight;
-    color: $superlight;
-  }
-}
-
 /* SIDE PANEL */
 .sidepanel-btn {
   border-radius: 0 5px 5px 0;

@@ -146,7 +146,7 @@ if (document.getElementById('compounds-table')) {
         <div className='d-flex justify-content-end my-2'>
           <button
             type='button'
-            className={`btn btn-sm ${showDeleted ? 'btn-ghost-active' : 'btn-ghost'}`}
+            className={`btn btn-sm ${showDeleted ? 'bgnd-gray' : 'btn-ghost'}`}
             onClick={() => setShowDeleted(!showDeleted)}
           >
             {showDeleted ? i18next.t('hide-deleted') : i18next.t('show-deleted')}

@@ -273,7 +273,8 @@ final class Apiv2Controller extends AbstractApiController
                     $Config = Config::getConfig();
                     $Fingerprinter = new NullFingerprinter();
                     if (Config::boolFromEnv('USE_FINGERPRINTER')) {
-                        $httpGetter = new HttpGetter(new Client(), $Config->configArr['proxy'], $Config->configArr['debug'] === '0');
+                        $proxy = Config::boolFromEnv('FINGERPRINTER_USE_PROXY') ? $Config->configArr['proxy'] : '';
+                        $httpGetter = new HttpGetter(new Client(), $proxy, $Config->configArr['debug'] === '0');
                         $Fingerprinter = new Fingerprinter($httpGetter, Config::fromEnv('FINGERPRINTER_URL'));
                     }
                     return new Compounds(

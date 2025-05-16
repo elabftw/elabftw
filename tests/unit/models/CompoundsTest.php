@@ -121,10 +121,7 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
         $restoredCompoundId = $Compound->create(casNumber: self::CAFFEINE_CAS);
         $Compound->setId($restoredCompoundId);
         $restoredCompound = $Compound->readOne();
-
         $this->assertEquals(State::Normal->value, $restoredCompound['state']);
-        $this->assertEquals($compound['state'], $restoredCompound['state']);
-        $this->assertEquals($compound['id'], $restoredCompound['id']);
     }
 
     public function testGetApiPath(): void

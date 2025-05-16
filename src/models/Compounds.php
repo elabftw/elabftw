@@ -309,7 +309,56 @@ final class Compounds extends AbstractRest
         $req = $this->Db->prepare($sql);
         $req->bindParam(':requester', $this->requester->userid, PDO::PARAM_INT);
         $req->bindParam(':team', $this->requester->team, PDO::PARAM_INT);
-        $this->bindCompoundParams($req, $compoundData);
+        $req->bindParam(':name', $name);
+        $req->bindParam(':inchi', $inchi);
+        $req->bindParam(':inchi_key', $inchiKey);
+        $req->bindParam(':smiles', $smiles);
+        $req->bindParam(':molecular_formula', $molecularFormula);
+        $req->bindParam(':molecular_weight', $molecularWeight);
+        $req->bindParam(':cas_number', $casNumber);
+        $req->bindParam(':ec_number', $ecNumber);
+        $req->bindParam(':iupac_name', $iupacName);
+        $req->bindParam(':pubchem_cid', $pubchemCid);
+        $req->bindParam(':chebi_id', $chebiId);
+        $req->bindParam(':chembl_id', $chemblId);
+        $req->bindParam(':dea_number', $deaNumber);
+        $req->bindParam(':drugbank_id', $drugbankId);
+        $req->bindParam(':dsstox_id', $dsstoxId);
+        $req->bindParam(':hmdb_id', $hmdbId);
+        $req->bindParam(':kegg_id', $keggId);
+        $req->bindParam(':metabolomics_wb_id', $metabolomicsWbId);
+        $req->bindParam(':nci_code', $nciCode);
+        $req->bindParam(':nikkaji_number', $nikkajiNumber);
+        $req->bindParam(':pharmgkb_id', $pharmGkbId);
+        $req->bindParam(':pharos_ligand_id', $pharosLigandId);
+        $req->bindParam(':rxcui', $rxcui);
+        $req->bindParam(':unii', $unii);
+        $req->bindParam(':wikidata', $wikidata);
+        $req->bindParam(':wikipedia', $wikipedia);
+        $req->bindParam(':is_corrosive', $isCorrosive, PDO::PARAM_INT);
+        $req->bindParam(':is_serious_health_hazard', $isSeriousHealthHazard, PDO::PARAM_INT);
+        $req->bindParam(':is_explosive', $isExplosive, PDO::PARAM_INT);
+        $req->bindParam(':is_flammable', $isFlammable, PDO::PARAM_INT);
+        $req->bindParam(':is_gas_under_pressure', $isGasUnderPressure, PDO::PARAM_INT);
+        $req->bindParam(':is_hazardous2env', $isHazardous2env, PDO::PARAM_INT);
+        $req->bindParam(':is_hazardous2health', $isHazardous2health, PDO::PARAM_INT);
+        $req->bindParam(':is_oxidising', $isOxidising, PDO::PARAM_INT);
+        $req->bindParam(':is_radioactive', $isRadioactive, PDO::PARAM_INT);
+        $req->bindParam(':is_toxic', $isToxic, PDO::PARAM_INT);
+        $req->bindParam(':is_antibiotic', $isAntibiotic, PDO::PARAM_INT);
+        $req->bindParam(':is_antibiotic_precursor', $isAntibioticPrecursor, PDO::PARAM_INT);
+        $req->bindParam(':is_drug', $isDrug, PDO::PARAM_INT);
+        $req->bindParam(':is_drug_precursor', $isDrugPrecursor, PDO::PARAM_INT);
+        $req->bindParam(':is_explosive_precursor', $isExplosivePrecursor, PDO::PARAM_INT);
+        $req->bindParam(':is_cmr', $isCmr, PDO::PARAM_INT);
+        $req->bindParam(':is_nano', $isNano, PDO::PARAM_INT);
+        $req->bindParam(':is_controlled', $isControlled, PDO::PARAM_INT);
+        $req->bindParam(':is_ed2health', $isEd2health, PDO::PARAM_INT);
+        $req->bindParam(':is_ed2env', $isEd2env, PDO::PARAM_INT);
+        $req->bindParam(':is_pbt', $isPbt, PDO::PARAM_INT);
+        $req->bindParam(':is_pmt', $isPmt, PDO::PARAM_INT);
+        $req->bindParam(':is_vpvb', $isVpvb, PDO::PARAM_INT);
+        $req->bindParam(':is_vpvm', $isVpvm, PDO::PARAM_INT);
 
         try {
             $this->Db->execute($req);
@@ -343,28 +392,21 @@ final class Compounds extends AbstractRest
      * Find existing compound to perform an upsert.
      * Compare in db using unique keys (find at structure.sql - 159)
      */
-    public function findCompoundByUniqueKey(array $data): ?int
+    public function findCompoundByUniqueKey(array $uniqueKeys): ?int
     {
-        $conditions = [];
-        $params = [];
-        // build sql condition like 'WHERE cas_number = :cas_number OR pubchem_cid = :pubchem_cid'
-        foreach ($data as $key => $value) {
-            if (!empty($value)) {
-                $conditions[] = "$key = :$key";
-                $params[":$key"] = $value;
-            }
-        }
-        // remove empty fields from query
-        if (empty($conditions)) {
-            return null;
-        }
-        $sql = sprintf('SELECT id FROM compounds WHERE %s LIMIT 1', implode(' OR ', $conditions));
+        $params = array_map(fn($key) => "$key = :$key", array_keys($uniqueKeys));
+        $sql = sprintf(
+            'SELECT id FROM compounds WHERE %s LIMIT 1',
+            implode(' OR ', $params)
+        );
         $req = $this->Db->prepare($sql);
-        foreach ($params as $param => $value) {
-            $req->bindValue($param, $value);
+
+        foreach ($uniqueKeys as $key => $value) {
+            $req->bindValue(":$key", $value);
         }
         $this->Db->execute($req);
         $result = $req->fetch(PDO::FETCH_ASSOC);
+
         return $result ? (int) $result['id'] : null;
     }
 
@@ -505,25 +547,5 @@ final class Compounds extends AbstractRest
         $Importer = new PubChemImporter($this->httpGetter);
         $cid = $Importer->getCidFromCas($cas);
         return $this->searchPubChem($cid);
-    }
-
-    private function bindCompoundParams(\PDOStatement $req, array $data): void
-    {
-        // boolean data need PDO::PARAM_INT instruction
-        $booleanFields = [
-            'is_corrosive', 'is_serious_health_hazard', 'is_explosive', 'is_flammable',
-            'is_gas_under_pressure', 'is_hazardous2env', 'is_hazardous2health', 'is_oxidising',
-            'is_radioactive', 'is_toxic', 'is_antibiotic', 'is_antibiotic_precursor',
-            'is_drug', 'is_drug_precursor', 'is_explosive_precursor', 'is_cmr', 'is_nano',
-            'is_controlled', 'is_ed2health', 'is_ed2env', 'is_pbt', 'is_pmt', 'is_vpvb', 'is_vpvm'
-        ];
-        // other fields can be normal strings
-        foreach ($data as $key => $value) {
-            $paramType = in_array($key, $booleanFields, true)
-                ? PDO::PARAM_INT
-                : (is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR);
-
-            $req->bindValue(":$key", $value, $paramType);
-        }
     }
 }

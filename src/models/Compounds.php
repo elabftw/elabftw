@@ -239,7 +239,7 @@ final class Compounds extends AbstractRest
         bool $isVpvb = false,
         bool $isVpvm = false,
     ): int {
-        $compoundData = [
+        $compoundData = array(
             'inchi' => $inchi,
             'inchi_key' => $inchiKey,
             'name' => $name,
@@ -290,7 +290,7 @@ final class Compounds extends AbstractRest
             'is_pmt' => $isPmt,
             'is_vpvb' => $isVpvb,
             'is_vpvm' => $isVpvm,
-        ];
+        );
 
         $sql = 'INSERT INTO compounds (
             created_by, modified_by, name,
@@ -366,12 +366,12 @@ final class Compounds extends AbstractRest
         } catch (DatabaseErrorException $e) {
             if ($e->getErrorCode() === Db::DUPLICATE_CONSTRAINT_ERROR) {
                 // find the compound by comparing unique keys
-                $uniqueKeys = array_filter($compoundData, fn($v, $k) => in_array($k, [
+                $uniqueKeys = array_filter($compoundData, fn($v, $k) => in_array($k, array(
                     'cas_number', 'ec_number', 'chebi_id', 'chembl_id', 'dea_number',
                     'drugbank_id', 'dsstox_id', 'hmdb_id', 'inchi_key', 'kegg_id',
                     'metabolomics_wb_id', 'nci_code', 'nikkaji_number', 'pharmgkb_id',
-                    'pharos_ligand_id', 'pubchem_cid', 'rxcui', 'unii', 'wikidata', 'wikipedia'
-                ]), ARRAY_FILTER_USE_BOTH);
+                    'pharos_ligand_id', 'pubchem_cid', 'rxcui', 'unii', 'wikidata', 'wikipedia',
+                ), true), ARRAY_FILTER_USE_BOTH);
                 $existingId = $this->findCompoundByUniqueKey($uniqueKeys);
 
                 return $this->upsertCompound($existingId, $compoundData);
@@ -419,7 +419,16 @@ final class Compounds extends AbstractRest
         $this->setId($id);
         $this->update(new CompoundParams('state', State::Normal->value));
         foreach ($compoundData as $key => $value) {
-            $this->update(new CompoundParams($key, $value));
+            // without this try catch, sql fails on updating the unique columns with an empty value since it causes many rows with ''.
+            try {
+                $this->update(new CompoundParams($key, $value));
+            } catch (DatabaseErrorException $e) {
+                if ($e->getErrorCode() === Db::DUPLICATE_CONSTRAINT_ERROR) {
+                    // Skip as the fields ARE nullable so they'll be lots of ''
+                    continue;
+                }
+                throw new ImproperActionException(sprintf('Invalid update on unique column %s', $key));
+            }
         }
         return $id;
     }

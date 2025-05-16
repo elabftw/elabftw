@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Import;
 
+use Elabftw\Enums\Action;
 use Elabftw\Models\Compounds;
 use Elabftw\Models\Items;
 use Elabftw\Models\Users;
@@ -38,9 +39,10 @@ class CompoundsCsvTest extends \PHPUnit\Framework\TestCase
         );
         $httpGetter = new HttpGetter(new Client(), '', false);
         $Compounds = new Compounds($httpGetter, $requester, new NullFingerprinter());
+        $cid = 3345;
+        $compoundId = $Compounds->postAction(Action::Duplicate, array('cid' => $cid));
+        $Compounds->setId($compoundId);
         $Import = new CompoundsCsv(new NullOutput(), $Items, $uploadedFile, $Compounds, 1);
         $this->assertEquals(3, $Import->import());
-        // importing again will not import anything because of CAS clash
-        $this->assertEquals(0, $Import->import());
     }
 }

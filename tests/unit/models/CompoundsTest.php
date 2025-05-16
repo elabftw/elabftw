@@ -15,7 +15,6 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Storage;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\HttpGetter;
 use Elabftw\Services\NullFingerprinter;
 use GuzzleHttp\Client;
@@ -99,17 +98,13 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('PJMPHNIQZUBGLI-UHFFFAOYSA-N', $compound['inchi_key']);
         $this->assertEquals($this->smiles, $compound['smiles']);
         $this->assertEquals(self::FENTANYL_CAS, $compound['cas_number']);
-
-        // now try to add the same compound again
-        $this->expectException(ImproperActionException::class);
-        $Compounds->create(casNumber: self::FENTANYL_CAS);
     }
 
     public function testRestoreCompound(): void
     {
         // create a compound
         $Compound = new Compounds($this->httpGetter, new Users(1, 1), new NullFingerprinter());
-        $compoundId = $Compound->create(casNumber: self::CAFFEINE_CAS);
+        $compoundId = $this->Compounds->create(casNumber: self::CAFFEINE_CAS, pubchemCid: 2519, smiles: $this->smilesCaf);
         $Compound->setId($compoundId);
         $compound = $Compound->readOne();
         $this->assertEquals(State::Normal->value, $compound['state']);
@@ -118,7 +113,7 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
         $Compound->patch(Action::Update, array('state' => State::Deleted->value));
 
         // restore it
-        $restoredCompoundId = $Compound->create(casNumber: self::CAFFEINE_CAS);
+        $restoredCompoundId = $Compound->create(casNumber: self::CAFFEINE_CAS, pubchemCid: 2519, smiles: $this->smilesCaf);
         $Compound->setId($restoredCompoundId);
         $restoredCompound = $Compound->readOne();
         $this->assertEquals(State::Normal->value, $restoredCompound['state']);

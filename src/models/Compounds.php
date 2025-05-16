@@ -239,6 +239,65 @@ final class Compounds extends AbstractRest
         bool $isVpvb = false,
         bool $isVpvm = false,
     ): int {
+        $incomingData = [
+            'inchi' => $inchi,
+            'inchi_key' => $inchiKey,
+            'name' => $name,
+            'cas_number' => $casNumber,
+            'ec_number' => $ecNumber,
+            'iupac_name' => $iupacName,
+            'chebi_id' => $chebiId,
+            'chembl_id' => $chemblId,
+            'dea_number' => $deaNumber,
+            'drugbank_id' => $drugbankId,
+            'dsstox_id' => $dsstoxId,
+            'hmdb_id' => $hmdbId,
+            'kegg_id' => $keggId,
+            'metabolomics_wb_id' => $metabolomicsWbId,
+            'molecular_formula' => $molecularFormula,
+            'molecular_weight' => $molecularWeight,
+            'nci_code' => $nciCode,
+            'nikkaji_number' => $nikkajiNumber,
+            'pharmgkb_id' => $pharmGkbId,
+            'pharos_ligand_id' => $pharosLigandId,
+            'pubchem_cid' => $pubchemCid,
+            'rxcui' => $rxcui,
+            'smiles' => $smiles,
+            'unii' => $unii,
+            'wikidata' => $wikidata,
+            'wikipedia' => $wikipedia,
+            'is_corrosive' => $isCorrosive,
+            'is_explosive' => $isExplosive,
+            'is_flammable' => $isFlammable,
+            'is_gas_under_pressure' => $isGasUnderPressure,
+            'is_hazardous2env' => $isHazardous2env,
+            'is_hazardous2health' => $isHazardous2health,
+            'is_oxidising' => $isOxidising,
+            'is_serious_health_hazard' => $isSeriousHealthHazard,
+            'is_toxic' => $isToxic,
+            'is_radioactive' => $isRadioactive,
+            'is_antibiotic' => $isAntibiotic,
+            'is_antibiotic_precursor' => $isAntibioticPrecursor,
+            'is_drug' => $isDrug,
+            'is_drug_precursor' => $isDrugPrecursor,
+            'is_explosive_precursor' => $isExplosivePrecursor,
+            'is_cmr' => $isCmr,
+            'is_nano' => $isNano,
+            'is_controlled' => $isControlled,
+            'is_ed2health' => $isEd2health,
+            'is_ed2env' => $isEd2env,
+            'is_pbt' => $isPbt,
+            'is_pmt' => $isPmt,
+            'is_vpvb' => $isVpvb,
+            'is_vpvm' => $isVpvm,
+        ];
+
+        $uniqueKeys = array_filter($incomingData, fn($v, $k) => in_array($k, [
+            'cas_number', 'ec_number', 'chebi_id', 'chembl_id', 'dea_number',
+            'drugbank_id', 'dsstox_id', 'hmdb_id', 'inchi_key', 'kegg_id',
+            'metabolomics_wb_id', 'nci_code', 'nikkaji_number', 'pharmgkb_id',
+            'pharos_ligand_id', 'pubchem_cid', 'rxcui', 'unii', 'wikidata', 'wikipedia'
+        ]), ARRAY_FILTER_USE_BOTH);
 
         $sql = 'INSERT INTO compounds (
             created_by, modified_by, name,
@@ -313,13 +372,12 @@ final class Compounds extends AbstractRest
             // catch the duplicate constraint error to display a better error message
         } catch (DatabaseErrorException $e) {
             if ($e->getErrorCode() === Db::DUPLICATE_CONSTRAINT_ERROR) {
-                // If the duplicate has been deleted, restore it.
-                $deletedCompoundId = $this->getCompoundIfDeleted($casNumber);
-                if ($deletedCompoundId !== null) {
-                    return $this->restoreCompound($deletedCompoundId);
+                $existingId = $this->findExistingCompoundId($uniqueKeys); // pass full input array
+
+                if ($existingId !== null) {
+                    return $this->upsertCompound($existingId, $incomingData);
                 }
-                // If it's just a duplicate, notify.
-                throw new ImproperActionException(sprintf('Cannot add the same compound twice! %s', $e->getErrorMessage()));
+                throw new ImproperActionException(sprintf('Duplicate entry but no existing compound found. %s', $e->getErrorMessage()));
             }
         }
 
@@ -334,26 +392,42 @@ final class Compounds extends AbstractRest
     }
 
     /**
-     * If there's a duplicate, check if it's deleted and return its ID.
-     * The ID will be used to restore it. Check fn restoreCompound().
+     * Find existing compound to perform an upsert. Comparing is done through multiple unique keys
      */
-    public function getCompoundIfDeleted(string $casNumber): ?int
+    public function findExistingCompoundId(array $data): ?int
     {
-        $sql = 'SELECT id FROM compounds WHERE cas_number = :cas_number AND state = :state LIMIT 1';
+        // compare using only unique keys (see structure.sql - compounds table)
+        $conditions = [];
+        $params = [];
+        // build sql condition like 'WHERE cas_number = :cas_number OR pubchem_cid = :pubchem_cid'
+        foreach ($data as $key => $value) {
+            if (!empty($value)) {
+                $conditions[] = "$key = :$key";
+                $params[":$key"] = $value;
+            }
+        }
+        // no unique key filled on input
+        if (empty($conditions)) {
+            return null; // no unique key to check
+        }
+        $sql = sprintf('SELECT id FROM compounds WHERE %s LIMIT 1', implode(' OR ', $conditions));
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':cas_number', $casNumber);
-        $req->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
+        foreach ($params as $param => $value) {
+            $req->bindValue($param, $value);
+        }
         $this->Db->execute($req);
         $result = $req->fetch(PDO::FETCH_ASSOC);
-
         return $result ? (int) $result['id'] : null;
     }
 
-    public function restoreCompound(int $compoundId): int
+    public function upsertCompound(int $id, array $incomingData): ?int
     {
-        $this->setId($compoundId);
+        $this->setId($id);
         $this->update(new CompoundParams('state', State::Normal->value));
-        return $compoundId;
+        foreach ($incomingData as $key => $value) {
+            $this->update(new CompoundParams($key, $value));
+        }
+        return $id;
     }
 
     public function createFromCompound(Compound $compound): int

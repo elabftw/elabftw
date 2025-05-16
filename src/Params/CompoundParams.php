@@ -23,7 +23,7 @@ use function trim;
 final class CompoundParams extends ContentParams
 {
     #[Override]
-    public function getContent(): string | int | float
+    public function getContent(): string | int | float | null
     {
         return match ($this->target) {
             'name',
@@ -74,23 +74,29 @@ final class CompoundParams extends ContentParams
             'is_pmt',
             'is_vpvb',
             'is_vpvm',
-            'is_controlled' => Filter::onToBinary($this->content),
+            'is_controlled' => Filter::onToBinary((string) $this->content),
             'molecular_weight' => (float) $this->content,
             'state' => $this->getState(),
             default => throw new ImproperActionException('Invalid target for compound update.'),
         };
     }
 
-    private function isValidEcOrExplode(string $ecNumber): string
+    private function isValidEcOrExplode(?string $ecNumber): ?string
     {
+        if (empty($ecNumber)) {
+            return null;
+        }
         if (!$this->isValidEc($ecNumber)) {
             throw new ImproperActionException('Invalid EC number format!');
         }
         return $ecNumber;
     }
 
-    private function isValidCasOrExplode(string $casNumber): string
+    private function isValidCasOrExplode(?string $casNumber): ?string
     {
+        if (empty($casNumber)) {
+            return null;
+        }
         if (!$this->isValidCas($casNumber)) {
             throw new ImproperActionException('Invalid CAS number format!');
         }

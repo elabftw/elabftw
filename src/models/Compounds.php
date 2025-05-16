@@ -373,7 +373,9 @@ final class Compounds extends AbstractRest
                     'pharos_ligand_id', 'pubchem_cid', 'rxcui', 'unii', 'wikidata', 'wikipedia',
                 ), true), ARRAY_FILTER_USE_BOTH);
                 $existingId = $this->findCompoundByUniqueKey($uniqueKeys);
-
+                if ($existingId === null) {
+                    throw new ImproperActionException('Duplicate entry but no existing compound found.');
+                }
                 return $this->upsertCompound($existingId, $compoundData);
             }
         }
@@ -414,7 +416,7 @@ final class Compounds extends AbstractRest
      * Update the existing compound with incoming data.
      * For deleted compounds, restore by setting the state to 1.
      */
-    public function upsertCompound(int $id, array $compoundData): ?int
+    public function upsertCompound(int $id, array $compoundData): int
     {
         $this->setId($id);
         $this->update(new CompoundParams('state', State::Normal->value));

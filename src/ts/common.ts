@@ -677,7 +677,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error(err);
         notifError(new Error(i18next.t('resource-not-found')));
       }).finally(() => {
-        mkSpinStop(el, elOldHTML)
+        mkSpinStop(el, elOldHTML);
       });
 
     } else if (el.matches('[data-action="search-entity-from-compound"]')) {

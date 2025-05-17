@@ -36,6 +36,240 @@ components:
           type: integer
         team_name:
           type: string
+    # COMPOUND
+    compound:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 14
+        created_at:
+          type: string
+          format: date-time
+          example: "2025-05-17T15:39:15Z"
+        created_by:
+          type: integer
+          example: 1
+        modified_at:
+          type: string
+          format: date-time
+          example: "2025-05-17T15:39:15Z"
+        modified_by:
+          type: integer
+          example: 1
+        userid:
+          type: integer
+          example: 1
+        team:
+          type: integer
+          example: 1
+        state:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "2,4-Dichloroanisole"
+        molecular_formula:
+          type: string
+          example: "C7H6Cl2O"
+        cas_number:
+          type: string
+          example: "553-82-2"
+        ec_number:
+          type: string
+          nullable: true
+        chebi_id:
+          type: string
+          nullable: true
+        chembl_id:
+          type: string
+          nullable: true
+        dea_number:
+          type: string
+          nullable: true
+        drugbank_id:
+          type: string
+          nullable: true
+        dsstox_id:
+          type: string
+          nullable: true
+        hmdb_id:
+          type: string
+          nullable: true
+        inchi:
+          type: string
+          example: "InChI=1S/C7H6Cl2O/c1-10-7-3-2-5(8)4-6(7)9/h2-4H,1H3"
+        inchi_key:
+          type: string
+          example: "CICQUFBZCADHHX-UHFFFAOYSA-N"
+        iupac_name:
+          type: string
+          example: "2,4-dichloro-1-methoxybenzene"
+        kegg_id:
+          type: string
+          nullable: true
+        metabolomics_wb_id:
+          type: string
+          nullable: true
+        molecular_weight:
+          type: number
+          format: float
+          example: 177.02
+        nci_code:
+          type: string
+          nullable: true
+        nikkaji_number:
+          type: string
+          nullable: true
+        pharmgkb_id:
+          type: string
+          nullable: true
+        pharos_ligand_id:
+          type: string
+          nullable: true
+        pubchem_cid:
+          type: integer
+          example: 11119
+        rxcui:
+          type: string
+          nullable: true
+        smiles:
+          type: string
+          example: "COC1=C(C=C(C=C1)Cl)Cl"
+        unii:
+          type: string
+          nullable: true
+        wikidata:
+          type: string
+          nullable: true
+        wikipedia:
+          type: string
+          nullable: true
+        is_corrosive:
+          type: boolean
+        is_explosive:
+          type: boolean
+        is_flammable:
+          type: boolean
+        is_gas_under_pressure:
+          type: boolean
+        is_hazardous2env:
+          type: boolean
+        is_hazardous2health:
+          type: boolean
+        is_serious_health_hazard:
+          type: boolean
+        is_oxidising:
+          type: boolean
+        is_toxic:
+          type: boolean
+        is_radioactive:
+          type: boolean
+        is_antibiotic:
+          type: boolean
+        is_antibiotic_precursor:
+          type: boolean
+        is_drug:
+          type: boolean
+        is_drug_precursor:
+          type: boolean
+        is_explosive_precursor:
+          type: boolean
+        is_cmr:
+          type: boolean
+        is_nano:
+          type: boolean
+        is_controlled:
+          type: boolean
+        is_ed2health:
+          type: boolean
+        is_ed2env:
+          type: boolean
+        is_pbt:
+          type: boolean
+        is_pmt:
+          type: boolean
+        is_vpvb:
+          type: boolean
+        is_vpvm:
+          type: boolean
+        fp2_base64:
+          type: string
+          description: Base64-encoded fingerprint
+        userid_human:
+          type: string
+          example: "Toto Le sysadmin"
+        team_name:
+          type: string
+          example: "Alpha"
+        has_fingerprint:
+          type: boolean
+    CompoundDuplicateRequest:
+      type: object
+      required:
+        - action
+      properties:
+        action:
+          type: string
+          enum:
+            - duplicate
+        cid:
+          type: integer
+          description: PubChem ID of the compound to import from PubChem
+          example: 2519
+        cas:
+          type: string
+          description: CAS number of the compound to import from PubChem
+          example: 58-08-2
+      oneOf:
+        - required: [cid]
+        - required: [cas]
+
+    CompoundCreateRequest:
+      type: object
+      required:
+        - action
+      properties:
+        action:
+          type: string
+          enum:
+            - create
+        name:
+          type: string
+        inchi:
+          type: string
+        inchi_key:
+          type: string
+        smiles:
+          type: string
+        molecular_formula:
+          type: string
+        cas_number:
+          type: string
+        iupac_name:
+          type: string
+        pubchem_cid:
+          type: integer
+        is_corrosive:
+          type: boolean
+        is_serious_health_hazard:
+          type: boolean
+        is_explosive:
+          type: boolean
+        is_flammable:
+          type: boolean
+        is_gas_under_pressure:
+          type: boolean
+        is_hazardous2env:
+          type: boolean
+        is_hazardous2health:
+          type: boolean
+        is_oxidising:
+          type: boolean
+        is_toxic:
+          type: boolean
+
+    # COMMENT
     comment:
       type: object
       properties:
@@ -997,6 +1231,20 @@ paths:
   /apikeys:
     summary: Manage API keys
     description: Handle operations on API keys.
+    get:
+      tags: ['Api keys']
+      summary: Read API keys
+      description: Get list of API keys for currently logged in user.
+      operationId: get-apikeys
+      responses:
+        '200':
+          description: List API keys for user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/apikey'
     post:
       tags: ['Api keys']
       summary: Create an API key
@@ -1027,20 +1275,6 @@ paths:
               description: A fake URL that contains the API key in cleartext
               schema:
                 type: string
-    get:
-      tags: ['Api keys']
-      summary: Read API keys
-      description: Get list of API keys for currently logged in user.
-      operationId: get-apikeys
-      responses:
-        '200':
-          description: List API keys for user
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/apikey'
   /apikeys/{id}:
     summary: Actions on an api key
     parameters:
@@ -1058,6 +1292,76 @@ paths:
       responses:
         '204':
           description: The key was deleted
+
+  # COMPOUNDS
+  /compounds:
+    summary: The instance level compounds database
+    get:
+      tags: ['Compounds']
+      summary: Read compounds
+      description: Get a list of compounds
+      operationId: get-compounds
+      responses:
+        '200':
+          description: List compounds
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/compound'
+    post:
+      tags: ['Compounds']
+      summary: Create or import a compound
+      description: |
+        Add a compound to the database. Add action => duplicate parameter with a CAS or PubChem CID to import from PubChem. If the action parameter is something else, the compound will be created directly.
+      operationId: post-compounds
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/CompoundDuplicateRequest'
+                - $ref: '#/components/schemas/CompoundCreateRequest'
+      responses:
+        '201':
+          description: The compound has been created.
+          headers:
+            location:
+              description: URL to the created compound
+              schema:
+                type: string
+  # COMPOUND
+  /compounds/{id}:
+    get:
+      tags: ['Compounds']
+      summary: Get a single compound
+      description: Retrieve one compound by its ID
+      operationId: get-compound
+      parameters:
+        - name: id
+          in: path
+          description: ID of the compound
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A single compound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/compound'
+    delete:
+      tags: ['Compounds']
+      summary: Soft-delete a compound
+      description: The compound gets marked as deleted.
+      operationId: delete-compound
+      responses:
+        '204':
+          description: The compound was soft-deleted
+
   # CONFIG
   /config:
     summary: The general instance configuration settings

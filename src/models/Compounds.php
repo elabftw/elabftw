@@ -42,6 +42,30 @@ final class Compounds extends AbstractRest
 {
     use SetIdTrait;
 
+    // columns with the UNIQUE constraint: identifiers of a compound
+    private const array UNIQUE_KEYS = array(
+        'cas_number',
+        'chebi_id',
+        'chembl_id',
+        'dea_number',
+        'drugbank_id',
+        'dsstox_id',
+        'ec_number',
+        'hmdb_id',
+        'inchi_key',
+        'kegg_id',
+        'metabolomics_wb_id',
+        'nci_code',
+        'nikkaji_number',
+        'pharmgkb_id',
+        'pharos_ligand_id',
+        'pubchem_cid',
+        'rxcui',
+        'unii',
+        'wikidata',
+        'wikipedia',
+    );
+
     public function __construct(protected HttpGetter $httpGetter, private Users $requester, protected FingerprinterInterface $fingerprinter, ?int $id = null)
     {
         parent::__construct();
@@ -366,12 +390,10 @@ final class Compounds extends AbstractRest
         } catch (DatabaseErrorException $e) {
             if ($e->getErrorCode() === Db::DUPLICATE_CONSTRAINT_ERROR) {
                 // find the compound by comparing unique keys
-                $uniqueKeys = array_filter($compoundData, fn($v, $k) => in_array($k, array(
-                    'cas_number', 'ec_number', 'chebi_id', 'chembl_id', 'dea_number',
-                    'drugbank_id', 'dsstox_id', 'hmdb_id', 'inchi_key', 'kegg_id',
-                    'metabolomics_wb_id', 'nci_code', 'nikkaji_number', 'pharmgkb_id',
-                    'pharos_ligand_id', 'pubchem_cid', 'rxcui', 'unii', 'wikidata', 'wikipedia',
-                ), true), ARRAY_FILTER_USE_BOTH);
+                $uniqueKeys = array_intersect_key(
+                    $compoundData,
+                    array_flip(self::UNIQUE_KEYS)
+                );
                 $existingId = $this->findCompoundByUniqueKey($uniqueKeys);
                 if ($existingId === null) {
                     throw new ImproperActionException('Duplicate entry but no existing compound found.');

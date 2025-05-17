@@ -238,17 +238,8 @@ abstract class AbstractContainersLinks extends AbstractLinks
             && $this->Entity->id === intval($targetId);
     }
 
-    /**
-     * Add a link to an entity
-     * Links to Items are possible from all entities
-     * Links to Experiments are only allowed from other Experiments and Items
-     */
     public function createWithQuantity(float $qty, string $unit): int
     {
-        // don't insert a link to the same entity, make sure we check for the type too
-        if ($this->Entity->id === $this->id && $this->Entity->entityType === $this->getTargetType()) {
-            return 0;
-        }
         $this->Entity->touch();
 
         // use IGNORE to avoid failure due to a key constraint violations

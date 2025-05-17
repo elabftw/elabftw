@@ -115,6 +115,20 @@ document.addEventListener('DOMContentLoaded', () => {
     window.history.replaceState({}, '', `${location.pathname}?${params.toString()}`);
   }
 
+  function refreshBoundDivs(extendedProps) {
+    // start by clearing the divs
+    $('#eventBoundExp').html('');
+    $('#eventBoundDb').html('');
+    if (extendedProps.experiment != null) {
+      $('#eventBoundExp').html(`Event is bound to an experiment: <a href="experiments.php?mode=view&id=${extendedProps.experiment}">${extendedProps.experiment_title}</a>.`);
+      $('[data-action="scheduler-rm-bind"][data-type="experiment"]').show();
+    }
+    if (extendedProps.item_link != null) {
+      $('#eventBoundDb').html(`Event is bound to an item: <a href="database.php?mode=view&id=${extendedProps.item_link}">${extendedProps.item_link_title}</a>.`);
+      $('[data-action="scheduler-rm-bind"][data-type="item_link"]').show();
+    }
+  }
+
   let eventBackgroundColor = 'a9a9a9';
   if (document.getElementById('itemSelect')) {
     eventBackgroundColor = (document.getElementById('itemSelect') as HTMLSelectElement).selectedOptions[0].dataset.color;
@@ -203,9 +217,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
       $('[data-action="scheduler-rm-bind"]').hide();
       $('#eventModal').modal('toggle');
-      // set the event id on the cancel button
-      document.querySelectorAll('.cancelEventBtn').forEach((btn: HTMLButtonElement) => { btn.dataset.id = info.event.id; });
-      // FILL THE BOUND DIV
+      // set the event id on the various elements
+      document.querySelectorAll('[data-action="scheduler-bind-entity"]').forEach((btn: HTMLButtonElement) => btn.dataset.id = info.event.id);
+      document.querySelectorAll('[data-action="scheduler-rm-bind"]').forEach((btn:HTMLButtonElement) => btn.dataset.eventid = info.event.id);
+      document.querySelectorAll('.cancelEventBtn').forEach((btn: HTMLButtonElement) => btn.dataset.id = info.event.id);
 
       // title
       const eventTitle = document.getElementById('eventTitle') as HTMLInputElement;
@@ -219,36 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // also adjust the event id so the change listener will send a correct query
       startInput.dataset.eventid = info.event.id;
       endInput.dataset.eventid = info.event.id;
-      document.querySelectorAll('[data-action="scheduler-rm-bind"]').forEach((btn:HTMLButtonElement) => btn.dataset.eventid = info.event.id);
-
-      function refreshBoundDivs(extendedProps) {
-        // start by clearing the divs
-        $('#eventBoundExp').html('');
-        $('#eventBoundDb').html('');
-        if (extendedProps.experiment != null) {
-          $('#eventBoundExp').html(`Event is bound to an experiment: <a href="experiments.php?mode=view&id=${extendedProps.experiment}">${extendedProps.experiment_title}</a>.`);
-          $('[data-action="scheduler-rm-bind"][data-type="experiment"]').show();
-        }
-        if (extendedProps.item_link != null) {
-          $('#eventBoundDb').html(`Event is bound to an item: <a href="database.php?mode=view&id=${extendedProps.item_link}">${extendedProps.item_link_title}</a>.`);
-          $('[data-action="scheduler-rm-bind"][data-type="item_link"]').show();
-        }
-      }
-
       refreshBoundDivs(info.event.extendedProps);
-
-      // BIND AN ENTITY TO THE EVENT
-      $('[data-action="scheduler-bind-entity"]').on('click', function(): void {
-        const inputEl = $(this).parent().parent().find('input');
-        const entityid = parseInt((inputEl.val() as string), 10);
-        if (entityid > 0) {
-          ApiC.patch(`event/${info.event.id}`, {'target': $(this).data('type'), 'id': entityid}).then(res => res.json()).then(json => {
-            calendar.refetchEvents();
-            refreshBoundDivs(json);
-            inputEl.val('');
-          });
-        }
-      });
     },
     // on mouse enter add shadow and show title
     eventMouseEnter: function(info): void {
@@ -332,6 +318,18 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="save-event-title"]')) {
       const input = el.parentElement.parentElement.querySelector('input') as HTMLInputElement;
       ApiC.patch(`event/${input.dataset.eventid}`, {target: 'title', content: input.value}).then(() => calendar.refetchEvents());
+
+    // BIND AN ENTITY TO THE EVENT
+    } else if (el.matches('[data-action="scheduler-bind-entity"]')) {
+      const inputEl = el.parentNode.parentNode.querySelector('input') as HTMLInputElement;
+      const entityid = parseInt((inputEl.value as string), 10);
+      if (entityid > 0) {
+        ApiC.patch(`event/${el.dataset.id}`, {target: el.dataset.type, id: entityid}).then(res => res.json()).then(json => {
+          calendar.refetchEvents();
+          refreshBoundDivs(json);
+          inputEl.value = '';
+        });
+      }
     // REMOVE BIND
     } else if (el.matches('[data-action="scheduler-rm-bind"]')) {
       const bindType = el.dataset.type;

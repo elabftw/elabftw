@@ -125,6 +125,11 @@ This project is backed by [Deltablot](https://www.deltablot.com) company.
 
 * [The ELN Consortium](https://github.com/TheELNConsortium/): a consortium of ELN vendors interested in improving interoperability between ELNs
 
+## Importing data from another ELN
+
+* [Importing data from RSpace](https://github.com/elabftw/rspace2elabftw): A python script to import .eln files from RSpace into eLabFTW
+* [Importing data from LabFolder](https://github.com/TheELNConsortium/any2eln): A python script to import data from LabFolder into eLabFTW, using their API
+
 ## Third party libraries or scripts
 
 These projects were created by users of eLabFTW, check them out if interested!
@@ -132,7 +137,7 @@ These projects were created by users of eLabFTW, check them out if interested!
 * [elAPI](https://github.com/uhd-urz/elAPI/): a powerful, extensible API client for eLabFTW developed at the University Computing Centre of University of Heidelberg
 * [pyelabdata](https://github.com/FAU-PHYSIK-EP/pyelabdata): provides functions for simple one-line access to data stored in eLabFTW via Python
 * [elabftw-teamupload](https://github.com/HeFDI-DE/elabftw-teamupload/): Synchronize teamgroups and teams with users from Excel
-* [Reporting Dashboard](https://git.rwth-aachen.de/eln-rwth/reporting-scripts-public): Collection of scripts to create a reporting dashabord for eLabFTW SysAdmins 
+* [Reporting Dashboard](https://git.rwth-aachen.de/eln-rwth/reporting-scripts-public): Collection of scripts to create a reporting dashabord for eLabFTW SysAdmins
 
 ### Deprecated projects using retired api v1
 * [din14970/elabftwqrprint](https://github.com/din14970/elabftwqrprint): python library to print QR codes from database objects

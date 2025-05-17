@@ -86,7 +86,10 @@ final class ImportCompoundsCsv extends Command
         $Fingerprinter = new NullFingerprinter();
         $httpGetter = new HttpGetter(new Client(), $Config->configArr['proxy'], $Config->configArr['debug'] === '0');
         if (Config::boolFromEnv('USE_FINGERPRINTER')) {
-            $Fingerprinter = new Fingerprinter($httpGetter, Config::fromEnv('FINGERPRINTER_URL'));
+            // we use a different httpGetter object so we can configure proxy usage
+            $proxy = Config::boolFromEnv('FINGERPRINTER_USE_PROXY') ? $Config->configArr['proxy'] : '';
+            $fingerPrinterHttpGetter = new HttpGetter(new Client(), $proxy, $Config->configArr['debug'] === '0');
+            $Fingerprinter = new Fingerprinter($fingerPrinterHttpGetter, Config::fromEnv('FINGERPRINTER_URL'));
         }
 
         $usePubchem = (bool) $input->getOption('use-pubchem');

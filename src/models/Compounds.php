@@ -42,6 +42,30 @@ final class Compounds extends AbstractRest
 {
     use SetIdTrait;
 
+    // columns with the UNIQUE constraint: identifiers of a compound
+    private const array UNIQUE_KEYS = array(
+        'cas_number',
+        'chebi_id',
+        'chembl_id',
+        'dea_number',
+        'drugbank_id',
+        'dsstox_id',
+        'ec_number',
+        'hmdb_id',
+        'inchi_key',
+        'kegg_id',
+        'metabolomics_wb_id',
+        'nci_code',
+        'nikkaji_number',
+        'pharmgkb_id',
+        'pharos_ligand_id',
+        'pubchem_cid',
+        'rxcui',
+        'unii',
+        'wikidata',
+        'wikipedia',
+    );
+
     public function __construct(protected HttpGetter $httpGetter, private Users $requester, protected FingerprinterInterface $fingerprinter, ?int $id = null)
     {
         parent::__construct();
@@ -69,7 +93,7 @@ final class Compounds extends AbstractRest
             $fp = $this->fingerprinter->calculate('smi', $q->getString('search_fp_smi'));
             return $this->searchFingerprint($fp, $q->getBoolean('exact'));
         }
-        $sql = $this->getSelectBeforeWhere() . ' WHERE 1=1 AND entity.state IN (:state_normal, :state_archived)';
+        $sql = $this->getSelectBeforeWhere() . ' WHERE 1=1';
         if ($queryParams->getQuery()->get('q')) {
             $sql .= ' AND (
                 entity.cas_number LIKE :query OR
@@ -109,8 +133,6 @@ final class Compounds extends AbstractRest
         if ($queryParams->getQuery()->get('q')) {
             $req->bindValue(':query', '%' . $queryParams->getQuery()->getString('q') . '%');
         }
-        $req->bindValue(':state_normal', State::Normal->value, PDO::PARAM_INT);
-        $req->bindValue(':state_archived', State::Archived->value, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $req->fetchAll();
@@ -241,6 +263,58 @@ final class Compounds extends AbstractRest
         bool $isVpvb = false,
         bool $isVpvm = false,
     ): int {
+        $compoundData = array(
+            'inchi' => $inchi,
+            'inchi_key' => $inchiKey,
+            'name' => $name,
+            'cas_number' => $casNumber,
+            'ec_number' => $ecNumber,
+            'iupac_name' => $iupacName,
+            'chebi_id' => $chebiId,
+            'chembl_id' => $chemblId,
+            'dea_number' => $deaNumber,
+            'drugbank_id' => $drugbankId,
+            'dsstox_id' => $dsstoxId,
+            'hmdb_id' => $hmdbId,
+            'kegg_id' => $keggId,
+            'metabolomics_wb_id' => $metabolomicsWbId,
+            'molecular_formula' => $molecularFormula,
+            'molecular_weight' => $molecularWeight,
+            'nci_code' => $nciCode,
+            'nikkaji_number' => $nikkajiNumber,
+            'pharmgkb_id' => $pharmGkbId,
+            'pharos_ligand_id' => $pharosLigandId,
+            'pubchem_cid' => $pubchemCid,
+            'rxcui' => $rxcui,
+            'smiles' => $smiles,
+            'unii' => $unii,
+            'wikidata' => $wikidata,
+            'wikipedia' => $wikipedia,
+            'is_corrosive' => $isCorrosive,
+            'is_explosive' => $isExplosive,
+            'is_flammable' => $isFlammable,
+            'is_gas_under_pressure' => $isGasUnderPressure,
+            'is_hazardous2env' => $isHazardous2env,
+            'is_hazardous2health' => $isHazardous2health,
+            'is_oxidising' => $isOxidising,
+            'is_serious_health_hazard' => $isSeriousHealthHazard,
+            'is_toxic' => $isToxic,
+            'is_radioactive' => $isRadioactive,
+            'is_antibiotic' => $isAntibiotic,
+            'is_antibiotic_precursor' => $isAntibioticPrecursor,
+            'is_drug' => $isDrug,
+            'is_drug_precursor' => $isDrugPrecursor,
+            'is_explosive_precursor' => $isExplosivePrecursor,
+            'is_cmr' => $isCmr,
+            'is_nano' => $isNano,
+            'is_controlled' => $isControlled,
+            'is_ed2health' => $isEd2health,
+            'is_ed2env' => $isEd2env,
+            'is_pbt' => $isPbt,
+            'is_pmt' => $isPmt,
+            'is_vpvb' => $isVpvb,
+            'is_vpvm' => $isVpvm,
+        );
 
         $sql = 'INSERT INTO compounds (
             created_by, modified_by, name,
@@ -312,10 +386,19 @@ final class Compounds extends AbstractRest
 
         try {
             $this->Db->execute($req);
-            // catch the duplicate constraint error to display a better error message
+            // catch the duplicate constraint and upsert existing compound
         } catch (DatabaseErrorException $e) {
             if ($e->getErrorCode() === Db::DUPLICATE_CONSTRAINT_ERROR) {
-                throw new ImproperActionException(sprintf('Cannot add the same compound twice! %s', $e->getErrorMessage()));
+                // find the compound by comparing unique keys
+                $uniqueKeys = array_intersect_key(
+                    $compoundData,
+                    array_flip(self::UNIQUE_KEYS)
+                );
+                $existingId = $this->findCompoundByUniqueKey($uniqueKeys);
+                if ($existingId === null) {
+                    throw new ImproperActionException('Duplicate entry but no existing compound found.');
+                }
+                return $this->upsertCompound($existingId, $compoundData);
             }
         }
 
@@ -327,6 +410,51 @@ final class Compounds extends AbstractRest
             $Fingerprints->create($fp['data']);
         }
         return $compoundId;
+    }
+
+    /**
+     * Find existing compound to perform an upsert.
+     * Compare in db using unique keys (find at structure.sql - 159)
+     */
+    public function findCompoundByUniqueKey(array $uniqueKeys): ?int
+    {
+        $params = array_map(fn($key) => "$key = :$key", array_keys($uniqueKeys));
+        $sql = sprintf(
+            'SELECT id FROM compounds WHERE %s LIMIT 1',
+            implode(' OR ', $params)
+        );
+        $req = $this->Db->prepare($sql);
+
+        foreach ($uniqueKeys as $key => $value) {
+            $req->bindValue(":$key", $value);
+        }
+        $this->Db->execute($req);
+        $result = $req->fetch(PDO::FETCH_ASSOC);
+
+        return $result ? (int) $result['id'] : null;
+    }
+
+    /*
+     * Update the existing compound with incoming data.
+     * For deleted compounds, restore by setting the state to 1.
+     */
+    public function upsertCompound(int $id, array $compoundData): int
+    {
+        $this->setId($id);
+        $this->update(new CompoundParams('state', State::Normal->value));
+        foreach ($compoundData as $key => $value) {
+            // without this try catch, sql fails on updating the unique columns with an empty value since it causes many rows with ''.
+            try {
+                $this->update(new CompoundParams($key, $value));
+            } catch (DatabaseErrorException $e) {
+                if ($e->getErrorCode() === Db::DUPLICATE_CONSTRAINT_ERROR) {
+                    // Skip as the fields ARE nullable so they'll be lots of ''
+                    continue;
+                }
+                throw new ImproperActionException(sprintf('Invalid update on unique column %s', $key));
+            }
+        }
+        return $id;
     }
 
     public function createFromCompound(Compound $compound): int

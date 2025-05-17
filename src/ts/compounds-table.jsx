@@ -18,6 +18,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Api } from './Apiv2.class';
 import { toggleEditCompound } from './misc';
+import i18next from 'i18next';
 
 const ApiC = new Api();
 
@@ -74,10 +75,13 @@ if (document.getElementById('compounds-table')) {
           { field: 'id', type: 'numericColumn' },
       ]);
 
-    // Load data on component mount
+    // filter by deleted compounds
+    const [showDeleted, setShowDeleted] = useState(false);
+
+    // Load data on component mount and refresh on showDeleted change
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [showDeleted]);
 
     // all the compounds are loaded in the table, which does client side pagination
     const fetchData = async () => {
@@ -90,7 +94,9 @@ if (document.getElementById('compounds-table')) {
           searchString = `&search_fp_smi=${encodeURIComponent(subInput.value)}${exact}`;
         }
       }
-      const compounds = await ApiC.getJson(`compounds?limit=999999${searchString}`);
+      // adding deleted flag to query
+      const deletedParam = showDeleted ? '&state=3' : '';
+      const compounds = await ApiC.getJson(`compounds?limit=999999${searchString}${deletedParam}`);
       setRowData(compounds);
     };
 
@@ -137,6 +143,15 @@ if (document.getElementById('compounds-table')) {
           paginationPageSize={15}
           paginationPageSizeSelector={[15, 50, 100, 500]}
         />
+        <div className='d-flex justify-content-end my-2'>
+          <button
+            type='button'
+            className={`btn btn-sm ${showDeleted ? 'bgnd-gray' : 'btn-ghost'}`}
+            onClick={() => setShowDeleted(!showDeleted)}
+          >
+            {showDeleted ? i18next.t('hide-deleted') : i18next.t('show-deleted')}
+          </button>
+        </div>
       </div>
     );
   };

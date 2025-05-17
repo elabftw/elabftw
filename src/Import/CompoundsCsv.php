@@ -52,6 +52,8 @@ final class CompoundsCsv extends AbstractCsv
 
         $loopIndex = 0;
         foreach ($this->reader->getRecords() as $row) {
+            // this might store the compound from pubchem
+            $compound = false;
             $id = -1;
             try {
                 if ($this->PubChemImporter !== null) {
@@ -120,7 +122,11 @@ final class CompoundsCsv extends AbstractCsv
 
                 // optionally create Resource
                 if ($this->resourceCategory !== null) {
-                    $resource = $this->Items->create(template: $this->resourceCategory, title: $row['name'] ?? $row['iupacname'] ?? 'Unnamed compound');
+                    $title = $row['name'] ?? $row['iupacname'] ?? null;
+                    if ($title === null && $compound) {
+                        $title = $compound->name ?? $compound->iupacName;
+                    }
+                    $resource = $this->Items->create(template: $this->resourceCategory, title: $title ?? 'Unnamed compound');
                     $this->Items->setId($resource);
                     if (isset($row['comment'])) {
                         $this->Items->update(new EntityParams('body', $row['comment']));

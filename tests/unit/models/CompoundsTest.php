@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\State;
 use Elabftw\Enums\Storage;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\HttpGetter;
 use Elabftw\Services\NullFingerprinter;
 use GuzzleHttp\Client;
@@ -25,6 +25,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 class CompoundsTest extends \PHPUnit\Framework\TestCase
 {
+    private const string FENTANYL_CAS = '437-38-7';
+
     private const string CAFFEINE_CAS = '58-08-2';
 
     private Compounds $Compounds;
@@ -54,7 +56,7 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
     public function testCreateSearchAndDestroy(): void
     {
         $compoundId = $this->Compounds->create(
-            casNumber: '58-08-2',
+            casNumber: self::CAFFEINE_CAS,
             pubchemCid: 2519,
             smiles: $this->smilesCaf,
         );
@@ -95,11 +97,26 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('InChI=1S/C22H28N2O/c1-2-22(25)24(20-11-7-4-8-12-20)21-14-17-23(18-15-21)16-13-19-9-5-3-6-10-19/h3-12,21H,2,13-18H2,1H3', $compound['inchi']);
         $this->assertEquals('PJMPHNIQZUBGLI-UHFFFAOYSA-N', $compound['inchi_key']);
         $this->assertEquals($this->smiles, $compound['smiles']);
-        $this->assertEquals('437-38-7', $compound['cas_number']);
+        $this->assertEquals(self::FENTANYL_CAS, $compound['cas_number']);
+    }
 
-        // now try to add the same compound again
-        $this->expectException(ImproperActionException::class);
-        $Compounds->create(casNumber: self::CAFFEINE_CAS);
+    public function testRestoreCompound(): void
+    {
+        // create a compound
+        $Compound = new Compounds($this->httpGetter, new Users(1, 1), new NullFingerprinter());
+        $compoundId = $this->Compounds->create(casNumber: self::CAFFEINE_CAS, pubchemCid: 2519, smiles: $this->smilesCaf);
+        $Compound->setId($compoundId);
+        $compound = $Compound->readOne();
+        $this->assertEquals(State::Normal->value, $compound['state']);
+
+        // delete it
+        $Compound->patch(Action::Update, array('state' => State::Deleted->value));
+
+        // restore it
+        $restoredCompoundId = $Compound->create(casNumber: self::CAFFEINE_CAS, pubchemCid: 2519, smiles: $this->smilesCaf);
+        $Compound->setId($restoredCompoundId);
+        $restoredCompound = $Compound->readOne();
+        $this->assertEquals(State::Normal->value, $restoredCompound['state']);
     }
 
     public function testGetApiPath(): void

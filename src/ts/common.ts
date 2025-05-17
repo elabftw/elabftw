@@ -664,7 +664,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const resultTableDiv = document.getElementById('pubChemSearchResultTableDiv');
       const viewOnPubChemLink = document.getElementById('viewOnPubChemLink') as HTMLLinkElement;
       ApiC.getJson(`compounds?search_pubchem_${el.dataset.from}=${inputEl.value}`).then(json => {
-        mkSpinStop(el, elOldHTML);
         const table = generateTable(json);
         resultDiv.removeAttribute('hidden');
         viewOnPubChemLink.href = `https://pubchem.ncbi.nlm.nih.gov/compound/${json.cid}`;
@@ -674,6 +673,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const importBtn = document.querySelector('[data-action="import-compound"]') as HTMLButtonElement;
         importBtn.removeAttribute('disabled');
         importBtn.dataset.cid = json.cid;
+      }).catch(err => {
+        console.error(err);
+        notifError(new Error(i18next.t('resource-not-found')));
+      }).finally(() => {
+        mkSpinStop(el, elOldHTML);
       });
 
     } else if (el.matches('[data-action="search-entity-from-compound"]')) {

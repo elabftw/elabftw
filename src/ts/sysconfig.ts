@@ -149,15 +149,6 @@ document.addEventListener('DOMContentLoaded', () => {
         ApiC.patch(`${Model.User}/${userid}`, {'action': Action.Unreference, 'team': team})
           .then(() => reloadElements([`manageUsers2teamsModal_${userid}`]));
       }
-    // MODIFY USER GROUP IN TEAM
-    } else if (el.matches('[data-action="patch-user2team-group"]')) {
-      // will be 1 for Admin, 0 for user
-      const selectEl = (el.previousElementSibling as HTMLSelectElement);
-      const group = parseInt(selectEl.options[selectEl.selectedIndex].value, 10);
-      const team = parseInt(el.dataset.team, 10);
-      const userid = parseInt(el.dataset.userid, 10);
-      // add the userid in params too for Users2Teams
-      ApiC.patch(`${Model.User}/${userid}`, {action: Action.PatchUser2Team, team: team, target: 'group', content: group, userid: userid});
     // PATCH ANNOUNCEMENT - save or clear
     } else if (el.matches('[data-action="patch-announcement"]')) {
       const input = (document.getElementById(el.dataset.inputid) as HTMLInputElement);

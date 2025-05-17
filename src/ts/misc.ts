@@ -61,13 +61,18 @@ function triggerHandler(event: Event, el: HTMLInputElement): void {
   el.classList.remove('is-invalid');
   // for a checkbox element, look at the checked attribute, not the value
   let value = el.type === 'checkbox' ? el.checked ? '1' : '0' : el.value;
+
+  // CUSTOM ACTIONS
   if (el.dataset.customAction === 'patch-user2team-is-owner') {
-    // currently only for modifying is_owner of a user in a given team
-    const team = parseInt(el.dataset.team, 10);
-    const userid = parseInt(el.dataset.userid, 10);
-    ApiC.patch(`${Model.User}/${userid}`, {action: Action.PatchUser2Team, userid: userid, team: team, target: 'is_owner', content: value});
+    ApiC.patch(`${Model.User}/${el.dataset.userid}`, {action: Action.PatchUser2Team, userid: el.dataset.userid, team: el.dataset.team, target: 'is_owner', content: value});
     return;
   }
+  if (el.dataset.customAction === 'patch-user2team-is-admin') {
+    const group = value === '1' ? 2 : 4;
+    ApiC.patch(`${Model.User}/${el.dataset.userid}`, {action: Action.PatchUser2Team, team: el.dataset.team, target: 'group', content: group, userid: el.dataset.userid}).then(() => reloadElements(['editUsersBox']));
+    return;
+  }
+  // END CUSTOM ACTIONS
 
   if (el.dataset.transform === 'permissionsToJson') {
     value = permissionsToJson(parseInt(value, 10), []);

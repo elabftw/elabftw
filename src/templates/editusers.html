@@ -71,13 +71,11 @@
                           <span title='{{ 'Delete'|trans }}' class='hl-hover-gray p-1 rounded clickable m-1' data-action='destroy-user2team' data-userid='{{ user.userid }}' data-teamid='{{ team.id }}'><i class='fas fa-xmark' style='color:#29AEB9'></i></span>
                         {% endif %}
                         <div class='d-flex justify-content-between'>
-                          <span class='form-group form-inline mt-2'>
-                            <select class='form-control brr-none' autocomplete='off'>
-                              <option value='2' {{ currentTeam.usergroup == 2 ? 'selected' }}>{{ 'Admin'|trans }}</option>
-                              <option value='4' {{ currentTeam.usergroup == 4 ? 'selected' }}>{{ 'User'|trans }}</option>
-                            </select>
-                            <button type='button' data-action='patch-user2team-group' data-userid='{{ user.userid }}' data-team='{{ team.id }}' data-target='usergroup' class='btn btn-primary brl-none'>{{ 'Save'|trans }}</button>
-                          </span>
+                          <label for='user_{{ user.id }}_isAdminTeam_{{ team.id }}' class='col-form-label'>{{ 'Is Admin'|trans }}</label>
+                          <label class='switch ucp-align'>
+                            <input type='checkbox' autocomplete='off' data-trigger='change' data-custom-action='patch-user2team-is-admin' data-userid='{{ user.userid }}' data-team='{{ team.id }}' {{ currentTeam.usergroup == 2 ? 'checked="checked"' }} id='user_{{ user.id }}_isAdminTeam_{{ team.id }}'>
+                            <span class='slider'></span>
+                          </label>
                         </div>
                         <div class='d-flex justify-content-between'>
                           <label for='user_{{ user.id }}_isOwnerTeam_{{ team.id }}' class='col-form-label'><abbr title='{{ 'Utilize this attribute to specifically identify whether the user holds the primary Admin role within the team. Note that this designation is for informational purposes only.'|trans }}'>{{ 'Is Owner'|trans }}</label>

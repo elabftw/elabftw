@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // remove exclusive edit mode when leaving the page
   window.onbeforeunload = function() {
     ApiC.notifOnSaved = false;
+    ApiC.keepalive = true;
     ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.RemoveExclusiveEditMode});
   };
   // Which editor are we using? md or tiny

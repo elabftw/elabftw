@@ -32,6 +32,7 @@
             <hr>
           {% endif %}
           {% set btnId = 'createNewTemplates_' ~ entityPage %}
+          <p class='smallgray'>{{ 'Note: only pinned templates are displayed below.'|trans }}</p>
           {% include 'scope-button.html' with {'btnId': btnId, 'reload': btnId ~ ',tplCreateNewDiv_' ~ entityPage, 'target': 'scope_experiments_templates'} %}
           <div id='tplCreateNewDiv_{{ entityPage }}'>
             {% for category in createNewCategoryArr %}

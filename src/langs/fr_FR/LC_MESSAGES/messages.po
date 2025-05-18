@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-17 11:49+0200\n"
+"POT-Creation-Date: 2025-05-18 12:29+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Nicolas CARPi\n"
 "Language-Team: \n"
@@ -494,13 +494,13 @@ msgid_plural "Resources"
 msgstr[0] "Ressource"
 msgstr[1] "Ressources"
 
-#: src/controllers/ExperimentsController.php:43
+#: src/controllers/ExperimentsController.php:44
 msgid "Experiment"
 msgid_plural "Experiments"
 msgstr[0] "Expérience"
 msgstr[1] "Expériences"
 
-#: src/controllers/ExperimentsController.php:45
+#: src/controllers/ExperimentsController.php:46
 msgid "Experiment templates"
 msgstr "Modèles d'expériences"
 
@@ -690,10 +690,8 @@ msgstr "Action demandée"
 
 #: src/models/notifications/CommentCreated.php:39
 #, php-format
-msgid "Hi. %s left a comment on your entry. Have a look: %s"
-msgstr ""
-"Hi. %s a laissé un commentaire sur votre inscription. Jetez-y un coup "
-"d'œil : %s"
+msgid "Hi. %s left a comment. Have a look: %s"
+msgstr "Bonjour. %s a laissé un commentaire. Jetez-y un coup d'œil : %s"
 
 #: src/models/notifications/CommentCreated.php:44
 msgid "New comment posted"
@@ -1042,7 +1040,7 @@ msgstr "Ajouter un conteneur"
 #: src/templates/create-statuslike-modal.html:25
 #: src/templates/duplicate-modal.html:7
 #: src/templates/edit-compound-modal.html:39 src/templates/editusers.html:60
-#: src/templates/editusers.html:107 src/templates/export-menu.html:7
+#: src/templates/editusers.html:105 src/templates/export-menu.html:7
 #: src/templates/export-menu.html:28 src/templates/export-menu.html:62
 #: src/templates/export-modal.html:7 src/templates/export-modal.html:99
 #: src/templates/favtags-panel.html:2 src/templates/field-builder-modal.html:11
@@ -1287,10 +1285,10 @@ msgstr "Ajouter un groupe"
 
 #: src/templates/admin.html:157 src/templates/admin.html:215
 #: src/templates/admin.html:264 src/templates/admin.html:409
-#: src/templates/admin.html:456 src/templates/create-new-item-modal.html:54
+#: src/templates/admin.html:456 src/templates/create-new-item-modal.html:55
 #: src/templates/create-new.html:4
 #: src/templates/create-statuslike-modal.html:26
-#: src/templates/editusers.html:311 src/templates/export-modal.html:100
+#: src/templates/editusers.html:309 src/templates/export-modal.html:100
 #: src/templates/register.html:102 src/templates/sysconfig.html:23
 #: src/templates/ucp.html:130 src/templates/ucp.html:140
 msgid "Create"
@@ -1669,7 +1667,7 @@ msgstr "Définir les autorisations de lecture"
 msgid "Set write permissions"
 msgstr "Définir les droits d'écriture"
 
-#: src/templates/archive-user-modal.html:4 src/templates/editusers.html:229
+#: src/templates/archive-user-modal.html:4 src/templates/editusers.html:227
 msgid "Unarchive user"
 msgstr "Désarchiver utilisateur"
 
@@ -1681,7 +1679,7 @@ msgstr ""
 "Désarchiver un utilisateur signifie que son compte sera restauré. Cette "
 "action est réversible."
 
-#: src/templates/archive-user-modal.html:7 src/templates/editusers.html:233
+#: src/templates/archive-user-modal.html:7 src/templates/editusers.html:231
 msgid "Archive user"
 msgstr "Archiver utilisateur"
 
@@ -1922,7 +1920,11 @@ msgstr "Modèle par défaut"
 msgid "Blank experiment"
 msgstr "Expérience vide"
 
-#: src/templates/create-new-item-modal.html:47
+#: src/templates/create-new-item-modal.html:35
+msgid "Note: only pinned templates are displayed below."
+msgstr "Remarque : seuls les modèles épinglés sont affichés ci-dessous."
+
+#: src/templates/create-new-item-modal.html:48
 msgid "Add category…"
 msgstr "Ajouter une catégorie.."
 
@@ -2119,7 +2121,7 @@ msgstr "Toutes les équipes"
 msgid "Search for user"
 msgstr "Chercher des utilisateurs"
 
-#: src/templates/editusers.html:22 src/templates/editusers.html:342
+#: src/templates/editusers.html:22 src/templates/editusers.html:340
 #: src/templates/import-pubchem-modal.html:23
 #: src/templates/import-pubchem-modal.html:35 src/templates/inventory.html:20
 #: src/templates/scheduler.html:64 src/templates/scheduler.html:80
@@ -2144,11 +2146,15 @@ msgstr "Afficher uniquement les administrateurs"
 msgid "Users list"
 msgstr "Liste des utilisateurs"
 
-#: src/templates/editusers.html:59 src/templates/editusers.html:190
+#: src/templates/editusers.html:59 src/templates/editusers.html:188
 msgid "Manage teams for user"
 msgstr "Gérer les équipes pour les utilisateurs"
 
-#: src/templates/editusers.html:83
+#: src/templates/editusers.html:74
+msgid "Is Admin"
+msgstr "Est Admin"
+
+#: src/templates/editusers.html:81
 msgid ""
 "Utilize this attribute to specifically identify whether the user holds the "
 "primary Admin role within the team. Note that this designation is for "
@@ -2158,49 +2164,49 @@ msgstr ""
 "rôle principal d'administrateur au sein de l'équipe. Notez que cette "
 "désignation n'a qu'une valeur informative."
 
-#: src/templates/editusers.html:83
+#: src/templates/editusers.html:81
 msgid "Is Owner"
 msgstr "Est propriétaire"
 
-#: src/templates/editusers.html:95
+#: src/templates/editusers.html:93
 msgid "Add team"
 msgstr "Ajouter une équipe"
 
-#: src/templates/editusers.html:102
+#: src/templates/editusers.html:100
 msgid "Go"
 msgstr "Aller"
 
-#: src/templates/editusers.html:115
+#: src/templates/editusers.html:113
 msgid "Users table"
 msgstr "Table des utilisateurs"
 
-#: src/templates/editusers.html:118 src/templates/editusers.html:135
+#: src/templates/editusers.html:116 src/templates/editusers.html:133
 msgid "User ID"
 msgstr "ID utilisateur"
 
-#: src/templates/editusers.html:119 src/templates/editusers.html:136
+#: src/templates/editusers.html:117 src/templates/editusers.html:134
 msgid "Team(s)"
 msgstr "Équipe(s)"
 
-#: src/templates/editusers.html:120 src/templates/editusers.html:143
-#: src/templates/editusers.html:290 src/templates/editusers.html:353
-#: src/templates/editusers.html:363 src/templates/login.html:55
+#: src/templates/editusers.html:118 src/templates/editusers.html:141
+#: src/templates/editusers.html:288 src/templates/editusers.html:351
+#: src/templates/editusers.html:361 src/templates/login.html:55
 #: src/templates/register.html:78 src/templates/sysconfig.html:984
 #: src/templates/ucp.html:362
 msgid "Firstname"
 msgstr "Prénom"
 
-#: src/templates/editusers.html:121 src/templates/editusers.html:146
-#: src/templates/editusers.html:296 src/templates/editusers.html:354
-#: src/templates/editusers.html:364 src/templates/login.html:58
+#: src/templates/editusers.html:119 src/templates/editusers.html:144
+#: src/templates/editusers.html:294 src/templates/editusers.html:352
+#: src/templates/editusers.html:362 src/templates/login.html:58
 #: src/templates/register.html:84 src/templates/sysconfig.html:990
 #: src/templates/ucp.html:368
 msgid "Lastname"
 msgstr "Nom"
 
-#: src/templates/editusers.html:122 src/templates/editusers.html:149
-#: src/templates/editusers.html:304 src/templates/editusers.html:355
-#: src/templates/editusers.html:365 src/templates/field-builder-modal.html:61
+#: src/templates/editusers.html:120 src/templates/editusers.html:147
+#: src/templates/editusers.html:302 src/templates/editusers.html:353
+#: src/templates/editusers.html:363 src/templates/field-builder-modal.html:61
 #: src/templates/login.html:126 src/templates/register.html:55
 #: src/templates/sysconfig.html:45 src/templates/sysconfig.html:996
 #: src/templates/team.html:6 src/templates/team.html:28
@@ -2208,89 +2214,89 @@ msgstr "Nom"
 msgid "Email"
 msgstr "Email"
 
-#: src/templates/editusers.html:123 src/templates/editusers.html:152
+#: src/templates/editusers.html:121 src/templates/editusers.html:150
 msgid "Last login"
 msgstr "Dernière connexion"
 
-#: src/templates/editusers.html:124 src/templates/editusers.html:153
+#: src/templates/editusers.html:122 src/templates/editusers.html:151
 msgid "Valid until"
 msgstr "Valide jusqu'à"
 
-#: src/templates/editusers.html:125 src/templates/editusers.html:161
-#: src/templates/editusers.html:356 src/templates/editusers.html:366
+#: src/templates/editusers.html:123 src/templates/editusers.html:159
+#: src/templates/editusers.html:354 src/templates/editusers.html:364
 msgid "Internal ID"
 msgstr "ID interne"
 
-#: src/templates/editusers.html:126 src/templates/editusers.html:164
+#: src/templates/editusers.html:124 src/templates/editusers.html:162
 msgid "Is Sysadmin"
 msgstr "Est Sysadmin"
 
-#: src/templates/editusers.html:128 src/templates/editusers.html:174
+#: src/templates/editusers.html:126 src/templates/editusers.html:172
 #: src/templates/sysconfig.html:228 src/templates/team.html:105
 #: src/templates/team.html:135 src/templates/uploads.html:67
 msgid "Actions"
 msgstr "Actions"
 
-#: src/templates/editusers.html:152 src/templates/ucp.html:483
+#: src/templates/editusers.html:150 src/templates/ucp.html:483
 msgid "never"
 msgstr "jamais"
 
-#: src/templates/editusers.html:155
+#: src/templates/editusers.html:153
 msgid "Unvalidated"
 msgstr "Non validé"
 
-#: src/templates/editusers.html:173
+#: src/templates/editusers.html:171
 msgid "2FA enabled"
 msgstr "2FA activé"
 
-#: src/templates/editusers.html:177 src/templates/steps-links-edit.html:35
+#: src/templates/editusers.html:175 src/templates/steps-links-edit.html:35
 #: src/templates/ucp.html:387 src/templates/upload-dropdown-menu.html:3
 #: src/templates/view-edit-toolbar.html:278
 msgid "More options"
 msgstr "Plus d'options"
 
-#: src/templates/editusers.html:184
+#: src/templates/editusers.html:182
 msgid "Reset user password"
 msgstr "Réinitialiser le mot de passe utilisateur"
 
-#: src/templates/editusers.html:199
+#: src/templates/editusers.html:197
 msgid "Promote to Admin"
 msgstr "Promouvoir en administrateur"
 
-#: src/templates/editusers.html:205
+#: src/templates/editusers.html:203
 msgid "Demote from Admin"
 msgstr "Rétrograder d'Admin"
 
-#: src/templates/editusers.html:211
+#: src/templates/editusers.html:209
 msgid "Add to team"
 msgstr "Ajouter à l'équipe"
 
-#: src/templates/editusers.html:216
+#: src/templates/editusers.html:214
 #: src/templates/rm-user-from-team-modal.html:6
 msgid "Remove user from team"
 msgstr "Supprimer un utilisateur de l'équipe"
 
-#: src/templates/editusers.html:223
+#: src/templates/editusers.html:221
 msgid "Disable 2FA"
 msgstr "Désactiver 2FA"
 
-#: src/templates/editusers.html:238
+#: src/templates/editusers.html:236
 msgid "Validate user"
 msgstr "Valider l'utilisateur"
 
-#: src/templates/editusers.html:242
+#: src/templates/editusers.html:240
 msgid "Delete user"
 msgstr "Supprimer l'utilisateur"
 
-#: src/templates/editusers.html:252
+#: src/templates/editusers.html:250
 msgid "No user found!"
 msgstr "Pas d'utilisateur trouvé !"
 
-#: src/templates/editusers.html:260
+#: src/templates/editusers.html:258
 msgid "Add account"
 msgstr "Ajouter un compte"
 
-#: src/templates/editusers.html:262
+#: src/templates/editusers.html:260
 msgid ""
 "Note: new user will need to use the \"Forgot password\" button on the login "
 "page to set a password."
@@ -2298,39 +2304,39 @@ msgstr ""
 "Note : le nouvel utilisateur devra utiliser le boutton \"Mot de passe "
 "oublié\" sur la page de login pour avoir un mot de passe."
 
-#: src/templates/editusers.html:277
+#: src/templates/editusers.html:275
 msgid "Permission group"
 msgstr "Groupe utilisateur"
 
-#: src/templates/editusers.html:315
+#: src/templates/editusers.html:313
 msgid "Found archived users with same email address:"
 msgstr ""
 "Des utilisateurs archivés ayant la même adresse électronique ont été "
 "trouvés :"
 
-#: src/templates/editusers.html:319
+#: src/templates/editusers.html:317
 msgid "Create a new account anyway"
 msgstr "Créer quand même un nouveau compte"
 
-#: src/templates/editusers.html:327
+#: src/templates/editusers.html:325
 msgid "Add account from external directory"
 msgstr "Ajouter un compte à partir d’un répertoire externe"
 
-#: src/templates/editusers.html:335
+#: src/templates/editusers.html:333
 #: src/templates/ownership-transfer-modal.html:17
 #: src/templates/view-edit-toolbar.html:24
 msgid "Search user"
 msgstr "Chercher un utilisateur"
 
-#: src/templates/editusers.html:349
+#: src/templates/editusers.html:347
 msgid "Remote directory users list"
 msgstr "Liste des utilisateurs de l'annuaire à distance"
 
-#: src/templates/editusers.html:352 src/templates/editusers.html:362
+#: src/templates/editusers.html:350 src/templates/editusers.html:360
 msgid "Selection"
 msgstr "Sélection"
 
-#: src/templates/editusers.html:386
+#: src/templates/editusers.html:384
 msgid "Add selected"
 msgstr "Ajouter la sélection"
 

@@ -12,6 +12,11 @@ export class Api {
   // set this to false to prevent the "Saved" notification from showing up
   notifOnSaved = true;
   notifOnError = true;
+  // allow forcing the browser to make the request even if page is closed − useful for clearing exclusive edit on window unload
+  // it is false by default for two reasons:
+  // 1. It is not needed
+  // 2. This bug: https://bugzilla.mozilla.org/show_bug.cgi?id=1926042
+  keepalive = false;
 
   get(query: string): Promise<Response> {
     return this.send(Method.GET, query);
@@ -73,8 +78,7 @@ export class Api {
         'X-CSRF-Token': csrfToken,
         'X-Requested-With': 'XMLHttpRequest',
       },
-      // keeps the request alive if the page that initiated it is unloaded before completion.
-      keepalive: true,
+      keepalive: this.keepalive,
     };
     if ([Method.POST, Method.PATCH].includes(method)) {
       options['body'] = JSON.stringify(params);

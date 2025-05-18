@@ -24,7 +24,7 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->Entity = new Experiments(new Users(1, 1), 1);
+        $this->Entity = new Experiments(new Users(2, 1), 1);
 
         $this->Comments = new Comments($this->Entity);
     }
@@ -34,27 +34,35 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('api/v2/experiments/1/comments/', $this->Comments->getApiPath());
     }
 
-    public function testCreate(): void
+    public function testCreateAndRead(): void
     {
-        $this->assertIsInt($this->Comments->postAction(Action::Create, array('comment' => 'Ohai')));
-    }
-
-    public function testRead(): void
-    {
-        $id = $this->Comments->postAction(Action::Create, array('comment' => 'Ohai'));
-        $this->assertIsArray($this->Comments->readAll());
+        $comment = 'Heads up: the lab’s barometer was off yesterday, you might want to rerun that step.';
+        $id = $this->Comments->postAction(Action::Create, array('comment' => $comment));
+        $all = $this->Comments->readAll();
+        $this->assertEquals(1, count($all));
         $this->Comments->setId($id);
-        $this->assertIsArray($this->Comments->readOne());
+        $one = $this->Comments->readOne();
+        $this->assertEquals($comment, $one['comment']);
     }
 
     public function testUpdate(): void
     {
         $id = $this->Comments->postAction(Action::Create, array('comment' => 'Ohai'));
         $this->Comments->setId($id);
-        $this->Comments->patch(Action::Update, array('comment' => 'Updated'));
+        $new = 'Updated comment';
+        $comment = $this->Comments->patch(Action::Update, array('comment' => $new));
+        $this->assertEquals($new, $comment['comment']);
         // too short comment
         $this->expectException(ImproperActionException::class);
-        $this->Comments->Update(new CommentParam(''));
+        $this->Comments->update(new CommentParam(''));
+    }
+
+    public function testUpdateImmutable(): void
+    {
+        $ImmutableComments = new ImmutableComments($this->Entity);
+        $ImmutableComments->setId($ImmutableComments->create(new CommentParam('An immutable comment')));
+        $this->expectException(ImproperActionException::class);
+        $ImmutableComments->update(new CommentParam('Nope'));
     }
 
     public function testDestroy(): void

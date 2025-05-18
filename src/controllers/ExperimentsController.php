@@ -19,6 +19,7 @@ use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Override;
+use Symfony\Component\HttpFoundation\InputBag;
 
 /**
  * For experiments.php
@@ -31,9 +32,9 @@ final class ExperimentsController extends AbstractEntityController
 
         $Teams = new Teams($this->App->Users, $this->App->Users->team);
         $Category = new ExperimentsCategories($Teams);
-        $this->categoryArr = $Category->readAll();
+        $this->categoryArr = $Category->readAll($Category->getQueryParams(new InputBag(array('limit' => 9999))));
         $Status = new ExperimentsStatus($Teams);
-        $this->statusArr = $Status->readAll();
+        $this->statusArr = $Status->readAll($Status->getQueryParams(new InputBag(array('limit' => 9999))));
     }
 
     #[Override]

@@ -36,7 +36,7 @@ final class CommentCreated extends AbstractNotifications implements MailableInte
         $url = sprintf('%s/%s?mode=view&id=%d', Config::fromEnv('SITE_URL'), $this->page, $this->entityId);
 
         $body = sprintf(
-            _('Hi. %s left a comment on your entry. Have a look: %s'),
+            _('Hi. %s left a comment. Have a look: %s'),
             $commenter->userData['fullname'],
             $url,
         );

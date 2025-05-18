@@ -94,6 +94,7 @@ class Comments extends AbstractRest
     {
         $this->Entity->canOrExplode('read');
         $this->canWriteOrExplode();
+        // note: we're using a strict WHERE clause here to prevent writing comments from someone else
         $sql = 'UPDATE ' . $this->Entity->entityType->value . '_comments SET
             comment = :content
             WHERE id = :id AND userid = :userid AND item_id = :item_id';
@@ -119,15 +120,7 @@ class Comments extends AbstractRest
         return $this->Db->execute($req);
     }
 
-    protected function canWriteOrExplode(): void
-    {
-        $comment = $this->readOne();
-        if ($comment['immutable'] === 1) {
-            throw new ImproperActionException(Tools::error(true));
-        }
-    }
-
-    protected function create(CommentParam $params): int
+    public function create(CommentParam $params): int
     {
         $sql = 'INSERT INTO ' . $this->Entity->entityType->value . '_comments(item_id, comment, userid, immutable)
             VALUES(:item_id, :content, :userid, :immutable)';
@@ -138,24 +131,37 @@ class Comments extends AbstractRest
         $req->bindParam(':immutable', $this->immutable, PDO::PARAM_INT);
 
         $this->Db->execute($req);
-        $this->createNotification();
+        $id = $this->Db->lastInsertId();
+        $this->createNotifications();
 
-        return $this->Db->lastInsertId();
+        return $id;
+    }
+
+    protected function canWriteOrExplode(): void
+    {
+        $comment = $this->readOne();
+        if ($comment['immutable'] === 1) {
+            throw new ImproperActionException(Tools::error(true));
+        }
     }
 
     /**
-     * Create a notification to the experiment owner to alert a comment was posted
-     * (issue #160). Only for an experiment we don't own.
+     * Create a notification to all participants and owner
      */
-    protected function createNotification(): void
+    protected function createNotifications(): void
     {
-        if ($this->Entity->entityData['userid'] === $this->Entity->Users->userData['userid']) {
-            return;
+        $comments = $this->readAll();
+        $userids = array_values(array_unique(array_column($comments, 'userid')));
+        // add the owner
+        $userids[] = $this->Entity->entityData['userid'];
+        foreach ($userids as $userid) {
+            // skip commenter
+            if ($userid === $this->Entity->Users->userData['userid']) {
+                continue;
+            }
+            /** @psalm-suppress PossiblyNullArgument */
+            $Notif = new CommentCreated($this->Entity->entityType->toPage(), $this->Entity->id, $this->Entity->Users->userData['userid']);
+            $Notif->create($userid);
         }
-
-        /** @psalm-suppress PossiblyNullArgument */
-        $Notif = new CommentCreated($this->Entity->entityType->toPage(), $this->Entity->id, $this->Entity->Users->userData['userid']);
-        // target user is the owner of the entry
-        $Notif->create($this->Entity->entityData['userid']);
     }
 }

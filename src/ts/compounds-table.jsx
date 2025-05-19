@@ -114,7 +114,7 @@ if (document.getElementById('compounds-table')) {
         const compounds = await ApiC.getJson(`compounds?limit=999999${searchString}${deletedParam}`);
         setRowData(compounds);
       } catch (error) {
-        console.error(error);
+        console.error(`Could not load compounds: ${error}`);
       }
     };
 

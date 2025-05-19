@@ -6,7 +6,7 @@
  * @package elabftw
  */
 
-import { notifError } from './misc';
+import { notifNotFound } from './misc';
 import { Ketcher } from 'ketcher-core';
 import $ from 'jquery';
 
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (el.matches('[data-action="search-from-editor"]')) {
       window.ketcher.getSmiles().then(s => {
         if (!s) {
-          notifError(new Error('No structure found!'));
+          notifNotFound('structure');
           return;
         }
         const smilesInput = document.getElementById('substructureSearchInput') as HTMLInputElement;

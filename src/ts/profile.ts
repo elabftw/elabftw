@@ -7,7 +7,7 @@
  */
 import { Api } from './Apiv2.class';
 import Tab from './Tab.class';
-import { collectForm, relativeMoment, reloadElements, notifError, notifCustom } from './misc';
+import { collectForm, relativeMoment, reloadElements, notifCustom } from './misc';
 import i18next from 'i18next';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -108,12 +108,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (response.status === 201) {
         notifCustom(true, 'file-imported');
       } else {
-        const msg = await response.text();
-        notifCustom(false, { key: 'import-error', options: { error: msg } });
-        console.error(msg);
+        const error = await response.text();
+        notifCustom(false, { key: 'import-error', options: { error } });
+        console.error(error);
       }
     }).catch(error => {
-      notifError(new Error('Import error: ' + error.message));
+      notifCustom(false, { key: 'import-error', options: { error: error.message } });
     }).finally(() => {
       submitBtn.removeAttribute('disabled');
       submitBtn.textContent = originalBtnContent;

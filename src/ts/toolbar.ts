@@ -8,6 +8,7 @@
 import {
   getEntity,
   getNewIdFromPostRequest,
+  notifCustom,
   notifError,
   relativeMoment,
   reloadElements,
@@ -131,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const qty = parseInt(input.value, 10);
       // sanity check
       if (qty < 1) {
-        notifError(new Error('Invalid quantity!'));
+        notifCustom(false, { key: 'invalid-quantity', options: { num: qty } });
         return;
       }
       ApiC.post(`${Model.Team}/current/procurement_requests`, {entity_id: entity.id, qty_ordered: qty});

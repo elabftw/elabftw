@@ -212,6 +212,11 @@ export function notifCustom(res: boolean, e): void {
   return notif({ res, msg });
 }
 
+// useful for "not found" results, e.g. notifNotFound('experiments')
+export function notifNotFound(type: string):void {
+  return notifCustom(false, { key: 'not-found', options: { type } });
+}
+
 // PUT A NOTIFICATION IN TOP LEFT WINDOW CORNER
 export function notif(info: ResponseMsg): void {
   // clear an existing one

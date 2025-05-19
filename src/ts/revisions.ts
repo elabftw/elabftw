@@ -8,7 +8,7 @@
 
 import { Api } from './Apiv2.class';
 import { Action } from './interfaces';
-import { notifError } from './misc';
+import { notifCustom } from './misc';
 import DiffMatchPatch from 'diff-match-patch';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="compare-revisions"]')) {
       const checkedBoxes = getCheckedBoxes();
       if (checkedBoxes.length !== 2) {
-        notifError(new Error('Select two revisions to compare them.'));
+        notifCustom(false, 'revisions-error');
         return;
       }
       const dmp = new DiffMatchPatch();

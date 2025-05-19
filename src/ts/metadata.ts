@@ -7,9 +7,10 @@
  */
 import {
   getEntity,
-  notifError,
   addAutocompleteToExtraFieldsKeyInputs,
   normalizeFieldName,
+  notifNotFound,
+  notifCustom,
 } from './misc';
 import { Metadata } from './Metadata.class';
 import { ValidMetadata, ExtraFieldInputType } from './metadataInterfaces';
@@ -68,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const extraField = el.parentElement.parentElement.closest('div');
       if (!extraField) {
-        notifError(new Error(i18next.t('Extra field not found')));
+        notifNotFound('extra-fields');
         return;
       }
       // store current name as attribute, to use as field's key and update
@@ -278,7 +279,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // SAVE NEW EXTRA FIELD
     if (el.matches('[data-action="save-new-field"]')) {
       if ((document.getElementById('newFieldForm') as HTMLFormElement).reportValidity() === false) {
-        notifError(new Error('Error validating the form.'));
+        notifCustom(false, 'form-validation-error');
         return;
       }
 
@@ -363,7 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="edit-extra-field"]')) {
       // prevent form invalid data
       if ((document.getElementById('newFieldForm') as HTMLFormElement).reportValidity() === false) {
-        notifError(new Error('Error validating the form.'));
+        notifCustom(false, 'form-validation-error');
         return;
       }
       // get field to update's current value
@@ -556,7 +557,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Check if group exists in metadata
         const groupIndex: number = metadata.elabftw.extra_fields_groups.findIndex(group => group.id === groupId);
         if (groupIndex === -1) {
-          notifError(new Error(i18next.t('Group not found')));
+          notifNotFound('group');
           return;
         }
 

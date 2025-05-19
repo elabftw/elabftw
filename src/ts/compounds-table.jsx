@@ -78,8 +78,22 @@ if (document.getElementById('compounds-table')) {
     // filter by deleted compounds
     const [showDeleted, setShowDeleted] = useState(false);
 
+    // switch delete-compounds <=> restore-compounds buttons when showing deleted compounds
+    const showDeletedCompounds = (showDeleted) => {
+      const deleteBtn = document.getElementById('deleteCompoundsBtn');
+      const restoreBtn = document.getElementById('restoreCompoundsBtn');
+      if (showDeleted) {
+        deleteBtn?.classList.add('d-none');
+        restoreBtn?.classList.remove('d-none');
+      } else {
+        deleteBtn?.classList.remove('d-none');
+        restoreBtn?.classList.add('d-none');
+      }
+    };
+
     // Load data on component mount and refresh on showDeleted change
     useEffect(() => {
+        showDeletedCompounds(showDeleted);
         fetchData();
     }, [showDeleted]);
 
@@ -114,11 +128,21 @@ if (document.getElementById('compounds-table')) {
 
     // when a row is selected with the checkbox
     const selectionChanged = (event) => {
-      // we store the selected rows as data-target string on the delete button
-      const btn = document.getElementById('deleteCompoundsBtn');
-      btn.removeAttribute('disabled');
+      // we store the selected rows as data-target string on the delete and restore buttons
       const selectedRows = event.api.getSelectedRows();
-      btn.dataset.target = selectedRows.map(c => c.id).join(',');
+      const selectedIds = selectedRows.map(c => c.id).join(',');
+      const deleteBtn = document.getElementById('deleteCompoundsBtn');
+      const restoreBtn = document.getElementById('restoreCompoundsBtn');
+
+      // buttons are disabled if no rows are selected.
+      if (deleteBtn) {
+        deleteBtn.disabled = selectedRows.length === 0;
+        deleteBtn.dataset.target = selectedIds;
+      }
+      if (restoreBtn) {
+        restoreBtn.disabled = selectedRows.length === 0;
+        restoreBtn.dataset.target = selectedIds;
+      }
     };
 
     const cellDoubleClicked = (event) => {

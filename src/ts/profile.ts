@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
         notifCustom(true, 'file-imported');
       } else {
         const msg = await response.text();
-        notifError(new Error('Import error: ' + msg));
+        notifCustom(false, { key: 'import-error', options: { error: msg } });
         console.error(msg);
       }
     }).catch(error => {

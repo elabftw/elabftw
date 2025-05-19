@@ -56,6 +56,7 @@ final class i18n4Js
             'file-imported' => _('File imported successfully'),
             'generic-delete-warning' => _('Delete this?'),
             'hide-deleted' => _('Hide deleted'),
+            'import-error' => _('Import failed: {{error}}'),
             'invalid-dna-file' => _('Invalid DNA data in file {{file}}'),
             'json-parse-error' => _('Invalid JSON syntax'),
             'json-editor-error' => _('JSON Editor: {{error}}'),

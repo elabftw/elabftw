@@ -9,7 +9,6 @@ import {
   getNewIdFromPostRequest,
   mkSpin,
   mkSpinStop,
-  notif,
   notifCustom,
   notifError,
   permissionsToJson,
@@ -293,7 +292,7 @@ if (window.location.pathname === '/admin.php') {
           .map(option => parseInt(option.value, 10)),
       }).then(response => {
         if (response.ok) {
-          notif({'res': true, 'msg': i18next.t('onboarding-email-sent')});
+          notifCustom(true, 'onboarding-email-sent');
         }
       });
     }

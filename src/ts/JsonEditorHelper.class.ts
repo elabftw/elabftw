@@ -125,7 +125,7 @@ export default class JsonEditorHelper {
     try {
       this.MetadataC.update(this.editor.get());
     } catch (error) {
-      notif({res: false, msg: 'Error parsing the JSON! Error logged in console.'});
+      notifCustom(false, { key: 'json-editor-error', options: { error } });
       console.error(error);
     }
   }

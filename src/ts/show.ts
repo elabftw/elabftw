@@ -10,8 +10,8 @@ import {
   collectForm,
   getCheckedBoxes,
   getEntity,
-  notif,
   notifCustom,
+  notifSaved,
   permissionsToJson,
   reloadElements,
   reloadEntitiesShow,
@@ -391,7 +391,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       // reload the page once it's done
       Promise.all(ajaxs).then(() => {
-        notif({msg: i18next.t('saved'), res: true});
+        notifSaved();
         ApiC.notifOnSaved = true;
         reloadEntitiesShow();
       });

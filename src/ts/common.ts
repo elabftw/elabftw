@@ -751,21 +751,16 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!confirm(`Delete ${idList.length} compound(s)?`)) {
         return;
       }
-      idList.forEach(id => {
-        ApiC.delete(`compounds/${id}`);
-      });
+      idList.forEach(id => ApiC.delete(`compounds/${id}`));
       document.dispatchEvent(new CustomEvent('dataReload'));
+
     // RESTORE SELECTED COMPOUNDS
     } else if (el.matches('[data-action="restore-compounds"]')) {
       const btn = document.getElementById('restoreCompoundsBtn');
       const idList = btn.dataset.target.split(',');
-      if (!confirm(`Restore ${idList.length} compound(s)?`)) {
-        return;
-      }
-      idList.forEach(id => {
-        ApiC.patch(`compounds/${id}`, {state: 1});
-      });
+      idList.forEach(id => ApiC.patch(`compounds/${id}`, {state: 1}));
       document.dispatchEvent(new CustomEvent('dataReload'));
+      
     // PASSWORD VISIBILITY TOGGLE
     } else if (el.matches('[data-action="toggle-password"]')) {
       // toggle eye icon

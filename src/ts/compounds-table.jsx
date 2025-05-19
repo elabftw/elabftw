@@ -83,11 +83,11 @@ if (document.getElementById('compounds-table')) {
       const deleteBtn = document.getElementById('deleteCompoundsBtn');
       const restoreBtn = document.getElementById('restoreCompoundsBtn');
       if (showDeleted) {
-        deleteBtn?.classList.add('d-none');
-        restoreBtn?.classList.remove('d-none');
+        deleteBtn?.setAttribute('hidden', '');
+        restoreBtn?.removeAttribute('hidden');
       } else {
-        deleteBtn?.classList.remove('d-none');
-        restoreBtn?.classList.add('d-none');
+        deleteBtn?.removeAttribute('hidden');
+        restoreBtn?.setAttribute('hidden', '');
       }
     };
 

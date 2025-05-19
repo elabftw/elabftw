@@ -213,7 +213,7 @@ export function notifCustom(res: boolean, e): void {
 }
 
 // useful for "not found" results, e.g. notifNotFound('experiments')
-export function notifNotFound(type: string):void {
+export function notifNotFound(type: string): void {
   return notifCustom(false, { key: 'not-found', options: { type } });
 }
 

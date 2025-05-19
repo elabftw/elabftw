@@ -17,7 +17,7 @@ import '@ag-grid-community/styles/ag-theme-alpine.css';
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Api } from './Apiv2.class';
-import { toggleEditCompound } from './misc';
+import { notif, toggleEditCompound } from './misc';
 import i18next from 'i18next';
 
 const ApiC = new Api();
@@ -110,8 +110,12 @@ if (document.getElementById('compounds-table')) {
       }
       // adding deleted flag to query
       const deletedParam = showDeleted ? '&state=3' : '';
-      const compounds = await ApiC.getJson(`compounds?limit=999999${searchString}${deletedParam}`);
-      setRowData(compounds);
+      try {
+        const compounds = await ApiC.getJson(`compounds?limit=999999${searchString}${deletedParam}`);
+        setRowData(compounds);
+      } catch (error) {
+        notif({'res': false, 'msg': 'Could not load compounds.'});
+      }
     };
 
       const defaultColDef = useMemo(() => {

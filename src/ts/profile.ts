@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
       body: formData,
     }).then(async response => {
       if (response.status === 201) {
-        notifCustom(true, 'file-imported')
+        notifCustom(true, 'file-imported');
       } else {
         const msg = await response.text();
         notifError(new Error('Import error: ' + msg));

@@ -17,7 +17,7 @@ import '@ag-grid-community/styles/ag-theme-alpine.css';
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Api } from './Apiv2.class';
-import { notif, toggleEditCompound } from './misc';
+import { toggleEditCompound } from './misc';
 import i18next from 'i18next';
 
 const ApiC = new Api();

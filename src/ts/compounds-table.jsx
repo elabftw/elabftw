@@ -83,11 +83,11 @@ if (document.getElementById('compounds-table')) {
       const deleteBtn = document.getElementById('deleteCompoundsBtn');
       const restoreBtn = document.getElementById('restoreCompoundsBtn');
       if (showDeleted) {
-        deleteBtn?.setAttribute('hidden', '');
+        deleteBtn?.setAttribute('hidden', 'hidden');
         restoreBtn?.removeAttribute('hidden');
       } else {
         deleteBtn?.removeAttribute('hidden');
-        restoreBtn?.setAttribute('hidden', '');
+        restoreBtn?.setAttribute('hidden', 'hidden');
       }
     };
 
@@ -114,7 +114,7 @@ if (document.getElementById('compounds-table')) {
         const compounds = await ApiC.getJson(`compounds?limit=999999${searchString}${deletedParam}`);
         setRowData(compounds);
       } catch (error) {
-        notif({'res': false, 'msg': 'Could not load compounds.'});
+        console.error(error);
       }
     };
 

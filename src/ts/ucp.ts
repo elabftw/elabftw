@@ -8,7 +8,7 @@
 import {
   collectForm,
   getEntity,
-  notif,
+  notifCustom,
   reloadElements,
   saveStringAsFile,
   updateCatStat,
@@ -79,7 +79,7 @@ if (window.location.pathname === '/ucp.php') {
       const nameInput = (document.getElementById('apikeyName') as HTMLInputElement);
       const content = nameInput.value;
       if (!content) {
-        notif({'res': false, 'msg': 'A name is required!'});
+        notifCustom(false, 'check-required');
         // set the border in red to bring attention
         nameInput.style.borderColor = 'red';
         return;

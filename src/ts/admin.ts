@@ -7,15 +7,15 @@
  */
 import {
   getNewIdFromPostRequest,
+  mkSpin,
+  mkSpinStop,
   notif,
+  notifCustom,
   notifError,
+  permissionsToJson,
   reloadElements,
   TomSelect,
   updateCatStat,
-  notifNothingSelected,
-  permissionsToJson,
-  mkSpin,
-  mkSpinStop,
 } from './misc';
 import $ from 'jquery';
 import { Malle } from '@deltablot/malle';
@@ -139,7 +139,7 @@ if (window.location.pathname === '/admin.php') {
       const btn = el as HTMLButtonElement;
       const selected = getSelected();
       if (!Object.values(selected).some(array => array.length > 0)) {
-        notifNothingSelected();
+        notifCustom(false, 'nothing-selected');
         return;
       }
       const oldHTML = mkSpin(btn);
@@ -148,7 +148,7 @@ if (window.location.pathname === '/admin.php') {
       ApiC.notifOnSaved = false;
       ApiC.post('batch', selected).then(res => {
         const processed = res.headers.get('location').split('/').pop();
-        notif({res: true, msg: `${processed} entries processed`});
+        notifCustom(true, { key: 'entries-processed', options: { num: processed } });
       }).finally(() => {
         mkSpinStop(btn, oldHTML);
       });

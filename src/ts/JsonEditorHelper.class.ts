@@ -9,7 +9,7 @@ import { Metadata } from './Metadata.class';
 import JSONEditor from 'jsoneditor';
 import $ from 'jquery';
 import i18next from 'i18next';
-import { getNewIdFromPostRequest, notif, notifSaved, reloadElements } from './misc';
+import {getNewIdFromPostRequest, notif, notifCustom, notifSaved, reloadElements} from './misc';
 import { Action, Entity, Model } from './interfaces';
 import { Api } from './Apiv2.class';
 import { ValidMetadata } from './metadataInterfaces';
@@ -100,9 +100,9 @@ export default class JsonEditorHelper {
       })
       .catch(e => {
         if (e instanceof SyntaxError) {
-          notif({ 'res': false, 'msg': i18next.t('json-parse-error') });
+          notifCustom(false, 'json-parse-error');
         } else {
-          notif({'res': false, 'msg':'JSON Editor: ' + e.message});
+          notifCustom(false, { key: 'json-editor-error', options: { error: e.message } });
         }
       });
     // add the filename as a title

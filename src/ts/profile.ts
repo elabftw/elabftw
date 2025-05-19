@@ -7,7 +7,7 @@
  */
 import { Api } from './Apiv2.class';
 import Tab from './Tab.class';
-import { collectForm, relativeMoment, reloadElements, notif, notifError } from './misc';
+import { collectForm, relativeMoment, reloadElements, notifError, notifCustom } from './misc';
 import i18next from 'i18next';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
       body: formData,
     }).then(async response => {
       if (response.status === 201) {
-        notif({msg: 'File imported successfully', res: true});
+        notifCustom(true, 'file-imported')
       } else {
         const msg = await response.text();
         notifError(new Error('Import error: ' + msg));

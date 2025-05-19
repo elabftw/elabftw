@@ -200,6 +200,18 @@ export function notifSaved(): void {
   return notif({'res': true, 'msg': i18next.t('saved')});
 }
 
+// translated custom messages. false = error, true = success
+export function notifCustom(res: boolean, e): void {
+  let msg;
+  if (typeof e === 'string') {
+    msg = i18next.t(e);
+  } else {
+    // allow for translations with options, e.g. 'Lock {{ number }} entries',
+    msg = i18next.t(e.key, e.options);
+  }
+  return notif({ res, msg });
+}
+
 // PUT A NOTIFICATION IN TOP LEFT WINDOW CORNER
 export function notif(info: ResponseMsg): void {
   // clear an existing one
@@ -227,14 +239,6 @@ export function notif(info: ResponseMsg): void {
       $(this).remove();
     });
   }, fadeOutDelay);
-}
-
-// insert a get param in the url and reload the page
-export function insertParamAndReload(key: string, value: string): void {
-  const params = new URLSearchParams(document.location.search.slice(1));
-  params.set(key, value);
-  // reload the page
-  document.location.search = params.toString();
 }
 
 // SORTABLE ELEMENTS
@@ -271,14 +275,6 @@ export function makeSortableGreatAgain(): void {
     },
   });
 }
-
-export function notifNothingSelected(): void {
-  notif({
-    msg: i18next.t('nothing-selected'),
-    res: false,
-  });
-}
-
 
 export function getCheckedBoxes(): Array<CheckableItem> {
   const checkedBoxes = [];

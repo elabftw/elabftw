@@ -10,8 +10,8 @@ import {
   collectForm,
   getCheckedBoxes,
   getEntity,
-  notifNothingSelected,
   notif,
+  notifCustom,
   permissionsToJson,
   reloadElements,
   reloadEntitiesShow,
@@ -257,7 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (el.matches('[data-action="export-selected-entities"]')) {
       const checked = getCheckedBoxes();
       if (checked.length === 0) {
-        notifNothingSelected();
+        notifCustom(false, 'nothing-selected');
         return;
       }
       const format = el.value;
@@ -353,7 +353,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // get the item id of all checked boxes
       const checked = getCheckedBoxes();
       if (checked.length === 0) {
-        notifNothingSelected();
+        notifCustom(false, 'nothing-selected');
         return;
       }
       // display a warning with the number of impacted entries
@@ -546,7 +546,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // get the item id of all checked boxes
       const checked = getCheckedBoxes();
       if (checked.length === 0) {
-        notifNothingSelected();
+        notifCustom(false, 'nothing-selected');
         return;
       }
       const action = <Action>el.dataset.what;
@@ -562,7 +562,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // get the item id of all checked boxes
       const checked = getCheckedBoxes();
       if (checked.length === 0) {
-        notifNothingSelected();
+        notifCustom(false, 'nothing-selected');
         return;
       }
       // ask for confirmation

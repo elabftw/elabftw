@@ -760,7 +760,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const idList = btn.dataset.target.split(',');
       idList.forEach(id => ApiC.patch(`compounds/${id}`, {state: 1}));
       document.dispatchEvent(new CustomEvent('dataReload'));
-      
+
     // PASSWORD VISIBILITY TOGGLE
     } else if (el.matches('[data-action="toggle-password"]')) {
       // toggle eye icon

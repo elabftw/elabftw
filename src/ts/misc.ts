@@ -10,6 +10,7 @@ import { Action, CheckableItem, ResponseMsg, EntityType, Entity, Model, Target }
 import { DateTime } from 'luxon';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 import tinymce from 'tinymce/tinymce';
+import { SuccessNotification } from './Notifications.class';
 import TableSorting from './TableSorting.class';
 declare const MathJax: MathJaxObject;
 import $ from 'jquery';
@@ -197,7 +198,7 @@ export function notifError(e): void {
 }
 
 export function notifSaved(): void {
-  return notif({'res': true, 'msg': i18next.t('saved')});
+  new SuccessNotification('saved');
 }
 
 // translated custom messages. false = error, true = success

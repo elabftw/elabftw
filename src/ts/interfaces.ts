@@ -170,15 +170,15 @@ interface Entity {
 }
 
 enum NotificationType {
-  // Success = 'success',
-  // Error = 'error',
-  // Warning = 'warning',
-  // Info = 'info'
-  OK = 'ok',
-  KO = 'ko'
+  Debug = 'debug',
+  Error = 'error',
+  Info = 'info',
+  Success = 'success',
+  Warning = 'warning'
 }
 
-interface MessageInput {
+// for i18n strings
+interface TranslatedInput {
   key: string;
   options?: Record<string, string | number | boolean>;
 }
@@ -190,7 +190,7 @@ export {
   Selected,
   Entity,
   EntityType,
-  MessageInput,
+  TranslatedInput,
   Method,
   Model,
   NotificationType,

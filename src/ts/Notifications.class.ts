@@ -8,27 +8,33 @@
  */
 
 import i18next from 'i18next';
-import { NotificationType, MessageInput } from './interfaces';
+import { TranslatedInput, NotificationType } from './interfaces';
 
 class Notification {
-  private readonly message: string;
-  private readonly type: NotificationType;
+  protected readonly message: string;
+  protected readonly type: NotificationType;
 
-  constructor(input: string | MessageInput, type: NotificationType) {
+  constructor(input: string | TranslatedInput, type: NotificationType) {
     this.message = this.resolveMessage(input);
     this.type = type;
     this.show();
   }
 
-  private resolveMessage(input: string | MessageInput): string {
+  /**
+   * Returns an i18n translated string, both single and interpolated.
+   * Examples:
+   * - 'add-quantity' => 'Add quantity'
+   * - { key: 'add-quantity', options: { qty: 5 } } => 'Add 5 of this'
+   * - 'Random sentence' => 'Random sentence' (if not found in i18n catalog)
+   */
+  private resolveMessage(input: string | TranslatedInput): string {
     if (typeof input === 'string') {
       return i18next.t(input);
     }
-    // in case of i18n interpolation, e.g. 'multi-changes-confirm', { num: checked.length }
     return String(i18next.t(input.key, input.options));
   }
 
-  public show(): void {
+  protected show(): void {
     // remove existing
     if (document.getElementById('overlay')) {
       document.getElementById('overlay').remove();
@@ -45,7 +51,7 @@ class Notification {
     overlay.appendChild(p);
     document.body.appendChild(overlay);
     // error message takes longer to disappear
-    const fadeOutDelay = this.type === 'ok' ? 2733 : 4871;
+    const fadeOutDelay = this.type === NotificationType.Success ? 2733 : 4871;
     setTimeout(() => {
       $('#overlay').fadeOut(763, function() {
         $(this).remove();
@@ -54,14 +60,40 @@ class Notification {
   }
 }
 
-export class ErrorNotification extends Notification {
-  constructor(input: string | MessageInput) {
-    super(input, NotificationType.KO);
+class ErrorNotification extends Notification {
+  constructor(input: string | TranslatedInput) {
+    super(input, NotificationType.Error);
   }
 }
 
-export class SuccessNotification extends Notification {
-  constructor(input: string | MessageInput) {
-    super(input, NotificationType.OK);
+class InfoNotification extends Notification {
+  constructor(input: string | TranslatedInput) {
+    super(input, NotificationType.Info);
   }
 }
+
+class SuccessNotification extends Notification {
+  constructor(input: string | TranslatedInput) {
+    super(input, NotificationType.Success);
+  }
+}
+
+class WarningNotification extends Notification {
+  constructor(input: string | TranslatedInput) {
+    super(input, NotificationType.Warning);
+  }
+}
+
+class DebugNotification extends Notification {
+  constructor(input: string | TranslatedInput) {
+    super(input, NotificationType.Debug);
+  }
+}
+
+export {
+  ErrorNotification,
+  InfoNotification,
+  SuccessNotification,
+  WarningNotification,
+  DebugNotification,
+};

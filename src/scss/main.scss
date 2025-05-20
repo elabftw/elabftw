@@ -606,14 +606,32 @@ tr:nth-child(odd) {
   vertical-align: middle;
 }
 
-.overlay-ok {
+.overlay-success {
   background-color: $elabblue;
 }
 
-.overlay-ko,
-.overlay-ko p {
+.overlay-debug {
+  background-color: #fff;
+}
+
+.overlay-info,
+.overlay-info p {
+  background-color: $lightblue;
+  color: $darkblue;
+}
+
+.overlay-error {
   background-color: $lightred;
-  color: #000;
+}
+
+.overlay-warning {
+  background-color: $warningbg;
+}
+
+.overlay-error p,
+.overlay-debug p,
+.overlay-warning p {
+  color: $strongest;
 }
 
 .opacity-8 {

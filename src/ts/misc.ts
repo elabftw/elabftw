@@ -193,9 +193,6 @@ export function getEntity(): Entity {
     id: entityId,
   };
 }
-export function notifError(e): void {
-  return notif({'res': false, 'msg': e.name + ': ' + e.message});
-}
 
 export function notifSaved(): void {
   new SuccessNotification('saved');

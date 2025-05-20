@@ -6,9 +6,10 @@
  * @package elabftw
  */
 import Dropzone from '@deltablot/dropzone';
-import { notifError, reloadElements, sizeToMb } from './misc';
+import { reloadElements, sizeToMb } from './misc';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
+import { ErrorNotification } from './Notifications.class';
 
 export class Uploader
 {
@@ -25,7 +26,7 @@ export class Uploader
         this.on('error', (file, errorMessage) => {
           const msg = `Error with file: ${file.name}: [${errorMessage.code}] ${errorMessage.description}`;
           console.error(msg);
-          notifError(new Error(msg));
+          new ErrorNotification(msg);
         });
         // once all files are uploaded
         this.on('queuecomplete', function() {

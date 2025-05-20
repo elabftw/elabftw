@@ -6,7 +6,8 @@
  * @package elabftw
  */
 import { Method } from './interfaces';
-import { notifSaved, notifError, getNewIdFromPostRequest } from './misc';
+import { notifSaved, getNewIdFromPostRequest } from './misc';
+import { ErrorNotification } from './Notifications.class';
 
 export class Api {
   // set this to false to prevent the "Saved" notification from showing up
@@ -96,7 +97,7 @@ export class Api {
       return response;
     }).catch(error => {
       if (this.notifOnError) {
-        notifError(error);
+        new ErrorNotification(error);
       }
       return Promise.reject(new Error(error.message));
     });

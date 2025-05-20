@@ -5,11 +5,12 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { clearForm, collectForm, notif, notifError, reloadElements } from './misc';
+import { clearForm, collectForm, notif, reloadElements } from './misc';
 import { Action, Model } from './interfaces';
 import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
 import { getEditor } from './Editor.class';
+import { ErrorNotification } from './Notifications.class';
 import Tab from './Tab.class';
 import { Ajax } from './Ajax.class';
 import { Api } from './Apiv2.class';
@@ -93,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
           // trigger blur so it is saved if it is a save trigger
           target.dispatchEvent(new Event('blur'));
         } catch (error) {
-          notifError(error);
+          new ErrorNotification(error);
         }
       };
     });
@@ -252,7 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         }
       } catch (e) {
-        notifError(e);
+        new ErrorNotification(e);
         return;
       }
 

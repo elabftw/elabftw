@@ -10,7 +10,6 @@ import {
   mkSpin,
   mkSpinStop,
   notifCustom,
-  notifError,
   permissionsToJson,
   reloadElements,
   TomSelect,
@@ -23,7 +22,7 @@ import { getEditor } from './Editor.class';
 import { Api } from './Apiv2.class';
 import { EntityType, Model, Action, Selected } from './interfaces';
 import tinymce from 'tinymce/tinymce';
-import { SuccessNotification } from './Notifications.class';
+import { ErrorNotification, SuccessNotification} from './Notifications.class';
 import Tab from './Tab.class';
 
 function collectSelectable(name: string): number[] {
@@ -180,7 +179,7 @@ if (window.location.pathname === '/admin.php') {
     } else if (el.matches('[data-action="adduser-teamgroup"]')) {
       const user = parseInt(el.parentNode.parentNode.querySelector('input').value, 10);
       if (isNaN(user)) {
-        notifError(new Error(i18next.t('add-user-error')));
+        new ErrorNotification('add-user-error');
         return;
       }
       ApiC.patch(
@@ -204,7 +203,7 @@ if (window.location.pathname === '/admin.php') {
       const nameInput = (holder.querySelector('input[type="text"]') as HTMLInputElement);
       const name = nameInput.value;
       if (!name) {
-        notifError(new Error(i18next.t('invalid-status-name')));
+        new ErrorNotification('invalid-status-name');
         // set the border in red to bring attention
         nameInput.style.borderColor = 'red';
         return;

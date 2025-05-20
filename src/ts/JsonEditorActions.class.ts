@@ -8,8 +8,9 @@
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 import JsonEditorHelper from './JsonEditorHelper.class';
-import { notifError, saveStringAsFile } from './misc';
+import { saveStringAsFile } from './misc';
 import 'jsoneditor/dist/jsoneditor.min.css';
+import { ErrorNotification } from './Notifications.class';
 
 export class JsonEditorActions {
 
@@ -58,14 +59,14 @@ export class JsonEditorActions {
             try {
               JsonEditorHelperC.editor.set(JSON.parse(reader.result as string));
             } catch (error) {
-              notifError(error);
+              new ErrorNotification(error);
             }
           };
         } else if (el.matches('[data-action="json-clear"]')) {
           JsonEditorHelperC.clear();
         }
       } catch (error) {
-        notifError(error);
+        new ErrorNotification(error);
       }
     });
   }

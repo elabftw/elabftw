@@ -9,7 +9,6 @@ import {
   getEntity,
   getNewIdFromPostRequest,
   notifCustom,
-  notifError,
   relativeMoment,
   reloadElements,
 } from './misc';
@@ -17,6 +16,7 @@ import { Api } from './Apiv2.class';
 import i18next from 'i18next';
 import $ from 'jquery';
 import { Action, Model } from './interfaces';
+import { ErrorNotification } from './Notifications.class';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
         reloadElements(['requestActionsDiv', 'isTimestampedByInfoDiv']);
       }).catch(error => {
         console.error(error.message);
-        notifError(error);
+        new ErrorNotification(error);
       });
 
     // BLOXBERG

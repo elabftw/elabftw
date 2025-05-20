@@ -78,16 +78,9 @@ class InfoNotification extends Notification {
   }
 }
 
-class DebugNotification extends Notification {
-  constructor(key: string, options?: I18nOptions) {
-    super(key, NotificationType.Debug, options);
-  }
-}
-
 export {
   ErrorNotification,
   InfoNotification,
   SuccessNotification,
   WarningNotification,
-  DebugNotification,
 };

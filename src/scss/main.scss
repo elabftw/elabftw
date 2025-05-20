@@ -610,10 +610,6 @@ tr:nth-child(odd) {
   background-color: $elabblue;
 }
 
-.overlay-debug {
-  background-color: #fff;
-}
-
 .overlay-info,
 .overlay-info p {
   background-color: $lightblue;
@@ -629,7 +625,6 @@ tr:nth-child(odd) {
 }
 
 .overlay-error p,
-.overlay-debug p,
 .overlay-warning p {
   color: $strongest;
 }

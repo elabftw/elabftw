@@ -169,6 +169,20 @@ interface Entity {
   id: number;
 }
 
+enum NotificationType {
+  // Success = 'success',
+  // Error = 'error',
+  // Warning = 'warning',
+  // Info = 'info'
+  OK = 'ok',
+  KO = 'ko'
+}
+
+interface MessageInput {
+  key: string;
+  options?: Record<string, string | number | boolean>;
+}
+
 export {
   Action,
   Categories,
@@ -176,8 +190,10 @@ export {
   Selected,
   Entity,
   EntityType,
+  MessageInput,
   Method,
   Model,
+  NotificationType,
   ProcurementState,
   ResponseMsg,
   Target,

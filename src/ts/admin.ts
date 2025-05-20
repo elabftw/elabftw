@@ -23,6 +23,7 @@ import { getEditor } from './Editor.class';
 import { Api } from './Apiv2.class';
 import { EntityType, Model, Action, Selected } from './interfaces';
 import tinymce from 'tinymce/tinymce';
+import { SuccessNotification } from './Notifications.class';
 import Tab from './Tab.class';
 
 function collectSelectable(name: string): number[] {
@@ -292,7 +293,8 @@ if (window.location.pathname === '/admin.php') {
           .map(option => parseInt(option.value, 10)),
       }).then(response => {
         if (response.ok) {
-          notifCustom(true, 'onboarding-email-sent');
+          new SuccessNotification('onboarding-email-sent');
+          // notifCustom(true, 'onboarding-email-sent');
         }
       });
     }

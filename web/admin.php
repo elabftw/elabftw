@@ -31,6 +31,7 @@ use Elabftw\Services\Filter;
 use Elabftw\Services\UsersHelper;
 use Exception;
 use GuzzleHttp\Client;
+use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Response;
 
 use function array_filter;
@@ -61,14 +62,14 @@ try {
 
     $itemsCategoryArr = $ItemsTypes->readAll();
     $ExperimentsCategories = new ExperimentsCategories($Teams);
-    $experimentsCategoriesArr = $ExperimentsCategories->readAll();
+    $experimentsCategoriesArr = $ExperimentsCategories->readAll($ExperimentsCategories->getQueryParams(new InputBag(array('limit' => 9999))));
     if ($App->Request->query->has('templateid')) {
         $ItemsTypes->setId($App->Request->query->getInt('templateid'));
         $ItemsTypes->canOrExplode('write');
         $ContainersLinks = LinksFactory::getContainersLinks($ItemsTypes);
         $ItemsTypes->entityData['containers'] = $ContainersLinks->readAll();
     }
-    $statusArr = $Status->readAll();
+    $statusArr = $Status->readAll($Status->getQueryParams(new InputBag(array('limit' => 9999))));
     $teamGroupsArr = $TeamGroups->readAll();
     $teamsArr = $Teams->readAll();
     $allTeamUsersArr = $App->Users->readAllFromTeam();

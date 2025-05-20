@@ -177,11 +177,7 @@ enum NotificationType {
   Warning = 'warning'
 }
 
-// for i18n strings
-interface TranslatedInput {
-  key: string;
-  options?: Record<string, string | number | boolean>;
-}
+type I18nOptions = Record<string, string | number | boolean>;
 
 export {
   Action,
@@ -190,7 +186,7 @@ export {
   Selected,
   Entity,
   EntityType,
-  TranslatedInput,
+  I18nOptions,
   Method,
   Model,
   NotificationType,

@@ -9,10 +9,11 @@ import { Metadata } from './Metadata.class';
 import JSONEditor from 'jsoneditor';
 import $ from 'jquery';
 import i18next from 'i18next';
-import { getNewIdFromPostRequest, notifCustom, notifSaved, reloadElements } from './misc';
+import { getNewIdFromPostRequest, notifCustom, reloadElements } from './misc';
 import { Action, Entity, Model } from './interfaces';
 import { Api } from './Apiv2.class';
 import { ValidMetadata } from './metadataInterfaces';
+import { SuccessNotification } from './Notifications.class';
 
 // This class is named helper because the jsoneditor lib already exports JSONEditor
 export default class JsonEditorHelper {
@@ -187,7 +188,7 @@ export default class JsonEditorHelper {
       method: 'POST',
       body: formData,
     });
-    notifSaved();
+    new SuccessNotification('blabla');
   }
 
   toggleDisplayMainText(): void {

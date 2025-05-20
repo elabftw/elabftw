@@ -19,7 +19,6 @@ import { anyToJson } from '@teselagen/bio-parsers';
 import { reloadElements } from './misc';
 import { Action, Model } from './interfaces';
 import { Api } from './Apiv2.class';
-import i18next from 'i18next';
 import { ErrorNotification } from './Notifications.class';
 
 // DISPLAY Plasmids FILES
@@ -69,17 +68,9 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
       }
 
       if (parsedData[0].success === false) {
-        const err = { key: 'invalid-dna-file', options: { file: realName } };
-        new ErrorNotification('This is an error notification.');
-        // new InfoNotification('This is an error notification.');
-        // new SuccessNotification('This is an error notification.');
-        // new WarningNotification('This is an error notification.');
-        // new DebugNotification('This is an error notification.');
-        // new DebugNotification({
-        //   key: 'invalid-dna-file',
-        //   options: { file: realName },
-        // });
-        throw new Error(i18next.t(err.key, err.options));
+        const msg = 'Invalid DNA data in file ' + realName;
+        new ErrorNotification('invalid-dna-file', { file: realName});
+        throw msg;
       }
 
       const parsedSequence = parsedData[0].parsedSequence;

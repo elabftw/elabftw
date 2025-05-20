@@ -8,14 +8,14 @@
  */
 
 import i18next from 'i18next';
-import { TranslatedInput, NotificationType } from './interfaces';
+import { NotificationType, I18nOptions } from './interfaces';
 
 class Notification {
   protected readonly message: string;
   protected readonly type: NotificationType;
 
-  constructor(input: string | TranslatedInput, type: NotificationType) {
-    this.message = this.resolveMessage(input);
+  constructor(key: string, type: NotificationType, options?: I18nOptions) {
+    this.message = i18next.t(key, options);
     this.type = type;
     this.show();
   }
@@ -24,15 +24,9 @@ class Notification {
    * Returns an i18n translated string, both single and interpolated.
    * Examples:
    * - 'add-quantity' => 'Add quantity'
-   * - { key: 'add-quantity', options: { qty: 5 } } => 'Add 5 of this'
+   * - 'increment-something', 5 => 'Add 5 units'
    * - 'Random sentence' => 'Random sentence' (if not found in i18n catalog)
    */
-  private resolveMessage(input: string | TranslatedInput): string {
-    if (typeof input === 'string') {
-      return i18next.t(input);
-    }
-    return String(i18next.t(input.key, input.options));
-  }
 
   protected show(): void {
     // remove existing
@@ -61,32 +55,32 @@ class Notification {
 }
 
 class ErrorNotification extends Notification {
-  constructor(input: string | TranslatedInput) {
-    super(input, NotificationType.Error);
-  }
-}
-
-class InfoNotification extends Notification {
-  constructor(input: string | TranslatedInput) {
-    super(input, NotificationType.Info);
+  constructor(key: string, options?: I18nOptions) {
+    super(key, NotificationType.Error, options);
   }
 }
 
 class SuccessNotification extends Notification {
-  constructor(input: string | TranslatedInput) {
-    super(input, NotificationType.Success);
+  constructor(key: string, options?: I18nOptions) {
+    super(key, NotificationType.Success, options);
   }
 }
 
 class WarningNotification extends Notification {
-  constructor(input: string | TranslatedInput) {
-    super(input, NotificationType.Warning);
+  constructor(key: string, options?: I18nOptions) {
+    super(key, NotificationType.Warning, options);
+  }
+}
+
+class InfoNotification extends Notification {
+  constructor(key: string, options?: I18nOptions) {
+    super(key, NotificationType.Info, options);
   }
 }
 
 class DebugNotification extends Notification {
-  constructor(input: string | TranslatedInput) {
-    super(input, NotificationType.Debug);
+  constructor(key: string, options?: I18nOptions) {
+    super(key, NotificationType.Debug, options);
   }
 }
 

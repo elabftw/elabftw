@@ -8,7 +8,7 @@
  */
 
 import i18next from 'i18next';
-import { NotificationType, I18nOptions } from './interfaces';
+import { I18nOptions, NotificationType } from './interfaces';
 
 class Notification {
   protected readonly message: string;
@@ -72,15 +72,8 @@ class WarningNotification extends Notification {
   }
 }
 
-class InfoNotification extends Notification {
-  constructor(key: string, options?: I18nOptions) {
-    super(key, NotificationType.Info, options);
-  }
-}
-
 export {
   ErrorNotification,
-  InfoNotification,
   SuccessNotification,
   WarningNotification,
 };

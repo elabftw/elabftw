@@ -170,9 +170,7 @@ interface Entity {
 }
 
 enum NotificationType {
-  Debug = 'debug',
   Error = 'error',
-  Info = 'info',
   Success = 'success',
   Warning = 'warning'
 }

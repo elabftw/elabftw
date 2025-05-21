@@ -32,7 +32,6 @@ const t = {
     "replace-edited-file": "Apakah Anda ingin mengganti file di server dengan hasil edit ini?",
     "request-filename": "Masukkan nama file",
     "resource-not-found": "Tidak ada yang bisa ditampilkan dengan id ini",
-    "revisions-error": "Select two revisions to compare them.",
     "save": "Simpan",
     "saved": "Tersimpan",
     "show-deleted": "Show deleted",

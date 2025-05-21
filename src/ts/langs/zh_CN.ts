@@ -32,7 +32,6 @@ const t = {
     "replace-edited-file": "您要用此编辑替换服务器上的文件吗？",
     "request-filename": "输入文件名",
     "resource-not-found": "该 ID 没有任何记录",
-    "revisions-error": "Select two revisions to compare them.",
     "save": "保存",
     "saved": "已保存",
     "show-deleted": "Show deleted",

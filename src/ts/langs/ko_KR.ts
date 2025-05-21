@@ -32,7 +32,6 @@ const t = {
     "replace-edited-file": "서버에 저장된 파일을 현재 수정본으로 교체할까요?",
     "request-filename": "파일 이름 입력",
     "resource-not-found": "이 계정과 관련된 추가 정보는 없습니다",
-    "revisions-error": "Select two revisions to compare them.",
     "save": "저장",
     "saved": "저장됨",
     "show-deleted": "Show deleted",

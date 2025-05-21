@@ -32,7 +32,6 @@ const t = {
     "replace-edited-file": "Haluatko korvata palvelimella olevan tiedoston tällä muokkauksella?",
     "request-filename": "Anna tiedoston nimi",
     "resource-not-found": "Ei mitään näytettävää tällä tunnuksella",
-    "revisions-error": "Select two revisions to compare them.",
     "save": "Tallenna",
     "saved": "Tallennettu",
     "show-deleted": "Show deleted",

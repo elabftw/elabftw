@@ -32,7 +32,6 @@ const t = {
     "replace-edited-file": "Serverdagi faylni ushbu tahrir bilan almashtirmoqchimisiz?",
     "request-filename": "Fayl nomini kiriting",
     "resource-not-found": "Bu identifikator bilan hech narsa ko'rsatilmaydi",
-    "revisions-error": "Select two revisions to compare them.",
     "save": "Saqlash",
     "saved": "Saqlangan",
     "show-deleted": "Show deleted",

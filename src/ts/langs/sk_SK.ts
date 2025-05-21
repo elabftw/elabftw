@@ -32,7 +32,6 @@ const t = {
     "replace-edited-file": "Chcete touto úpravou nahradiť súbor na servery?",
     "request-filename": "Zadajte názov súboru",
     "resource-not-found": "Nič sa nezobrazí s týmto identifikátorom",
-    "revisions-error": "Select two revisions to compare them.",
     "save": "Uložiť",
     "saved": "Uložené",
     "show-deleted": "Show deleted",

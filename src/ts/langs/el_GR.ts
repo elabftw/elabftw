@@ -32,7 +32,6 @@ const t = {
     "replace-edited-file": "Θέλετε να αντικαταστήσετε το αρχείο στον διακομιστή με αυτήν την επεξεργασία;",
     "request-filename": "Εισαγάγετε το όνομα του αρχείου",
     "resource-not-found": "Δεν υπάρχει τίποτα για εμφάνιση με αυτό το αναγνωριστικό",
-    "revisions-error": "Select two revisions to compare them.",
     "save": "Αποθήκευση",
     "saved": "Αποθηκεύτηκε",
     "show-deleted": "Show deleted",

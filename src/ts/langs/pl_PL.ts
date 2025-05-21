@@ -32,7 +32,6 @@ const t = {
     "replace-edited-file": "Czy chcesz zastąpić plik na serwerze tą edycją?",
     "request-filename": "Wpisz nazwę pliku",
     "resource-not-found": "Nie istnieje nic o wskazanym id",
-    "revisions-error": "Select two revisions to compare them.",
     "save": "Zapisz",
     "saved": "Zapisane",
     "show-deleted": "Show deleted",

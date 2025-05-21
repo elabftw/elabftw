@@ -32,7 +32,6 @@ const t = {
     "replace-edited-file": "Vol reemplaçar el fitxer al servidor amb aquesta edicio",
     "request-filename": "Introduïu el nom del fitxer",
     "resource-not-found": "Res a mostrar amb aquest identificador",
-    "revisions-error": "Select two revisions to compare them.",
     "save": "Guardar",
     "saved": "Guardat",
     "show-deleted": "Show deleted",

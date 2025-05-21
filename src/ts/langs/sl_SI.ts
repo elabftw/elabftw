@@ -32,7 +32,6 @@ const t = {
     "replace-edited-file": "Ali želite zamenjati datoteko na strežniku s tem urejanjem?",
     "request-filename": "Vnesite ime datoteke",
     "resource-not-found": "Ničesar za prikaz s to identifikacijo",
-    "revisions-error": "Select two revisions to compare them.",
     "save": "Shrani",
     "saved": "Shranjeno",
     "show-deleted": "Show deleted",

@@ -32,7 +32,6 @@ const t = {
     "replace-edited-file": "Вы хотите заменить файл на сервере этим редактированием?",
     "request-filename": "Введите имя файла",
     "resource-not-found": "С этим id ничего нет",
-    "revisions-error": "Select two revisions to compare them.",
     "save": "Сохранить",
     "saved": "Сохранено",
     "show-deleted": "Show deleted",

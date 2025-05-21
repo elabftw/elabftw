@@ -32,7 +32,6 @@ const t = {
     "replace-edited-file": "Wilt u het bestand op de server vervangen met deze wijziging?",
     "request-filename": "Voer de naam van het bestand in",
     "resource-not-found": "Niets te tonen met dit id",
-    "revisions-error": "Select two revisions to compare them.",
     "save": "Opslaan",
     "saved": "Opgeslagen",
     "show-deleted": "Show deleted",

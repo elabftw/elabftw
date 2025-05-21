@@ -146,7 +146,7 @@ if (window.location.pathname === '/admin.php') {
       ApiC.notifOnSaved = false;
       ApiC.post('batch', selected).then(res => {
         const processed = res.headers.get('location').split('/').pop();
-        new SuccessNotification('entries-processed', { num: processed });
+        new SuccessNotification(`${processed} entries processed`);
       }).finally(() => {
         mkSpinStop(btn, oldHTML);
       });
@@ -178,7 +178,7 @@ if (window.location.pathname === '/admin.php') {
     } else if (el.matches('[data-action="adduser-teamgroup"]')) {
       const user = parseInt(el.parentNode.parentNode.querySelector('input').value, 10);
       if (isNaN(user)) {
-        new ErrorNotification('add-user-error');
+        new ErrorNotification('Use the autocompletion menu to add users.');
         return;
       }
       ApiC.patch(
@@ -202,7 +202,7 @@ if (window.location.pathname === '/admin.php') {
       const nameInput = (holder.querySelector('input[type="text"]') as HTMLInputElement);
       const name = nameInput.value;
       if (!name) {
-        new ErrorNotification('invalid-status-name');
+        new ErrorNotification('Invalid status name.');
         // set the border in red to bring attention
         nameInput.style.borderColor = 'red';
         return;

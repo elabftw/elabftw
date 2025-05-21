@@ -465,7 +465,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const addUserPermissionsInput = (document.getElementById(`${el.dataset.identifier}_select_users`) as HTMLInputElement);
       const userid = parseInt(addUserPermissionsInput.value, 10);
       if (isNaN(userid)) {
-        new ErrorNotification('add-user-error');
+        new ErrorNotification('Use the autocompletion menu to add users.');
         return;
       }
       const userName = addUserPermissionsInput.value.split(' - ')[1];

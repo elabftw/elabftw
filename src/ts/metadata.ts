@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const extraField = el.parentElement.parentElement.closest('div');
       if (!extraField) {
-        new ErrorNotification('not-found', { entityType: 'extra-fields' });
+        new ErrorNotification('Extra field not found');
         return;
       }
       // store current name as attribute, to use as field's key and update
@@ -278,7 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // SAVE NEW EXTRA FIELD
     if (el.matches('[data-action="save-new-field"]')) {
       if ((document.getElementById('newFieldForm') as HTMLFormElement).reportValidity() === false) {
-        new ErrorNotification('form-validation-error');
+        new ErrorNotification('Error validating the form.');
         return;
       }
 
@@ -363,7 +363,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="edit-extra-field"]')) {
       // prevent form invalid data
       if ((document.getElementById('newFieldForm') as HTMLFormElement).reportValidity() === false) {
-        new ErrorNotification('form-validation-error');
+        new ErrorNotification('Error validating the form.');
         return;
       }
       // get field to update's current value
@@ -556,7 +556,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Check if group exists in metadata
         const groupIndex: number = metadata.elabftw.extra_fields_groups.findIndex(group => group.id === groupId);
         if (groupIndex === -1) {
-          new ErrorNotification('not-found', { entityType: 'group' });
+          new ErrorNotification('Group not found');
           return;
         }
 

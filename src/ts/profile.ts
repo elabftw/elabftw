@@ -107,13 +107,13 @@ document.addEventListener('DOMContentLoaded', () => {
       body: formData,
     }).then(async response => {
       if (response.status === 201) {
-        new SuccessNotification('file-imported');
+        new SuccessNotification('File imported successfully');
       } else {
         const msg = await response.text();
-        new ErrorNotification('import-error', { error: msg });
+        new ErrorNotification(`Import error: ${msg}`);
       }
     }).catch(error => {
-      new ErrorNotification('import-error', { error: error.message } );
+      new ErrorNotification(`Import error: ${error.message}`);
     }).finally(() => {
       submitBtn.removeAttribute('disabled');
       submitBtn.textContent = originalBtnContent;

@@ -101,9 +101,9 @@ export default class JsonEditorHelper {
       })
       .catch(e => {
         if (e instanceof SyntaxError) {
-          new ErrorNotification('json-parse-error');
+          new ErrorNotification('Invalid JSON Syntax');
         } else {
-          new ErrorNotification('json-editor-error', {error: e.message });
+          new ErrorNotification(`JSON Editor: ${e.message}`);
         }
       });
     // add the filename as a title

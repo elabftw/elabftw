@@ -6,8 +6,9 @@
  * @package elabftw
  */
 import { Api } from './Apiv2.class';
+import { ErrorNotification, SuccessNotification } from "./Notifications.class";
 import Tab from './Tab.class';
-import { collectForm, relativeMoment, reloadElements, notifCustom } from './misc';
+import { collectForm, relativeMoment, reloadElements } from './misc';
 import i18next from 'i18next';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -106,14 +107,16 @@ document.addEventListener('DOMContentLoaded', () => {
       body: formData,
     }).then(async response => {
       if (response.status === 201) {
-        notifCustom(true, 'file-imported');
+        new SuccessNotification('file-imported');
       } else {
         const error = await response.text();
-        notifCustom(false, { key: 'import-error', options: { error } });
+        // TODO-notification: prints html
+        // Import failed: {&quot;code&quot;:400,&quot;message&quot;:&quot;Bad Request&quot;,&quot;description&quot;:&quot;Could not find the title column!&quot;}
+        new ErrorNotification('import-error', { error });
         console.error(error);
       }
     }).catch(error => {
-      notifCustom(false, { key: 'import-error', options: { error: error.message } });
+      new ErrorNotification('import-error', { error: error.message } );
     }).finally(() => {
       submitBtn.removeAttribute('disabled');
       submitBtn.textContent = originalBtnContent;

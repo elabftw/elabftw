@@ -6,8 +6,8 @@
  * @package elabftw
  */
 import { Method } from './interfaces';
-import { notifSaved, getNewIdFromPostRequest } from './misc';
-import { ErrorNotification } from './Notifications.class';
+import { getNewIdFromPostRequest } from './misc';
+import { ErrorNotification, SuccessNotification } from './Notifications.class';
 
 export class Api {
   // set this to false to prevent the "Saved" notification from showing up
@@ -92,7 +92,7 @@ export class Api {
       return response;
     }).then(response => {
       if (method !== Method.GET && this.notifOnSaved) {
-        notifSaved();
+        new SuccessNotification('saved');
       }
       return response;
     }).catch(error => {

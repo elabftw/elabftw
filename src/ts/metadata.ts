@@ -10,7 +10,6 @@ import {
   addAutocompleteToExtraFieldsKeyInputs,
   normalizeFieldName,
   notifNotFound,
-  notifCustom,
 } from './misc';
 import { Metadata } from './Metadata.class';
 import { ValidMetadata, ExtraFieldInputType } from './metadataInterfaces';
@@ -20,6 +19,7 @@ import { Api } from './Apiv2.class';
 import i18next from 'i18next';
 import { merge } from 'lodash-es';
 import $ from 'jquery';
+import { ErrorNotification } from "./Notifications.class";
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -279,7 +279,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // SAVE NEW EXTRA FIELD
     if (el.matches('[data-action="save-new-field"]')) {
       if ((document.getElementById('newFieldForm') as HTMLFormElement).reportValidity() === false) {
-        notifCustom(false, 'form-validation-error');
+        new ErrorNotification('form-validation-error');
         return;
       }
 
@@ -364,7 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="edit-extra-field"]')) {
       // prevent form invalid data
       if ((document.getElementById('newFieldForm') as HTMLFormElement).reportValidity() === false) {
-        notifCustom(false, 'form-validation-error');
+        new ErrorNotification('form-validation-error');
         return;
       }
       // get field to update's current value

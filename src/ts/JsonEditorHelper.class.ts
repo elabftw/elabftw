@@ -188,7 +188,7 @@ export default class JsonEditorHelper {
       method: 'POST',
       body: formData,
     });
-    new SuccessNotification('blabla');
+    new SuccessNotification('saved');
   }
 
   toggleDisplayMainText(): void {

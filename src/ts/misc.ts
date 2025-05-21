@@ -194,10 +194,6 @@ export function getEntity(): Entity {
   };
 }
 
-export function notifSaved(): void {
-  new SuccessNotification('saved');
-}
-
 // translated custom messages. false = error, true = success
 export function notifCustom(res: boolean, e): void {
   let msg;

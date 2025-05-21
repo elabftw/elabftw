@@ -11,7 +11,6 @@ import {
   getCheckedBoxes,
   getEntity,
   notifCustom,
-  notifSaved,
   permissionsToJson,
   reloadElements,
   reloadEntitiesShow,
@@ -22,6 +21,7 @@ import 'bootstrap/js/src/modal.js';
 import i18next from 'i18next';
 import FavTag from './FavTag.class';
 import { Api } from './Apiv2.class';
+import { SuccessNotification } from "./Notifications.class";
 import { SearchSyntaxHighlighting } from './SearchSyntaxHighlighting.class';
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
@@ -391,7 +391,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       // reload the page once it's done
       Promise.all(ajaxs).then(() => {
-        notifSaved();
+        new SuccessNotification('saved');
         ApiC.notifOnSaved = true;
         reloadEntitiesShow();
       });

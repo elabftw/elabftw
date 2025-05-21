@@ -27,28 +27,51 @@ class Notification {
    * - 'increment-something', 5 => 'Add 5 units'
    * - 'Random sentence' => 'Random sentence' (if not found in i18n catalog)
    */
-
   protected show(): void {
-    // remove existing
-    if (document.getElementById('overlay')) {
-      document.getElementById('overlay').remove();
+    // add a container to hold all overlays, allow stacking.
+    let container = document.getElementById('overlay-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'overlay-container';
+      document.body.appendChild(container);
     }
+
+    // As overlays can be stacked, count existing overlays
+    const existingOverlays = container.querySelectorAll('.overlay');
+    // create overlay
+    const overlay = document.createElement('div');
+    overlay.classList.add('overlay', `overlay-${this.type}`);
+
+    // assign ID only to the first visible overlay (for Cypress tests)
+    if (existingOverlays.length === 0) {
+      overlay.id = 'overlay'; // cypress target
+    } else {
+      overlay.id = `overlay-${existingOverlays.length + 1}`;
+    }
+
+    // create overlay content
     const p = document.createElement('p');
     // "status" role: see WCAG2.1 4.1.3
     p.role = 'status';
     p.innerText = this.message;
-
-    const overlay = document.createElement('div');
-    overlay.id = 'overlay';
-    overlay.classList.add('overlay', `overlay-${this.type}`);
     // show the overlay
     overlay.appendChild(p);
-    document.body.appendChild(overlay);
+    // append overlays to the container
+    container.appendChild(overlay);
+
     // error message takes longer to disappear
     const fadeOutDelay = this.type === NotificationType.Success ? 2733 : 4871;
     setTimeout(() => {
-      $('#overlay').fadeOut(763, function() {
+      $(overlay).fadeOut(763, function() {
         $(this).remove();
+
+        // If this was the overlay with ID "overlay", reassign ID to the next one (if any) to keep chain-removing them
+        if (overlay.id === 'overlay') {
+          const next = container.querySelector('.overlay');
+          if (next) {
+            next.id = 'overlay';
+          }
+        }
       });
     }, fadeOutDelay);
   }

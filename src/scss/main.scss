@@ -588,12 +588,9 @@ tr:nth-child(odd) {
 .overlay {
   border-radius: 5px;
   display: flex;
-  left: 10px;
   line-height: 50px;
   opacity: 0.9;
   padding: 0 10px;
-  position: fixed;
-  top: 10px;
   // keep this above 1200 for tinymce fullscreen mode
   // see #2419
   // and over 15000 for open vector editor fullscreen mode
@@ -625,6 +622,17 @@ tr:nth-child(odd) {
 
 .opacity-8 {
   opacity: 0.8;
+}
+
+/* OVERLAY CONTAINER: allow stacking overlays */
+#overlay-container {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 19850;
 }
 
 .full-screen-overlay {

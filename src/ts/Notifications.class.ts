@@ -54,9 +54,11 @@ class Notification {
   }
 }
 
+// display the notification AND log in the console for debugging.
 class ErrorNotification extends Notification {
   constructor(key: string, options?: I18nOptions) {
     super(key, NotificationType.Error, options);
+    console.error(i18next.t(key));
   }
 }
 
@@ -66,12 +68,14 @@ class SuccessNotification extends Notification {
   }
 }
 
+// to handle json responses with true or false
 class ResponseNotification {
   constructor(json: { res: boolean; msg: string }) {
     if (json.res === true) {
       new SuccessNotification(json.msg);
     } else {
       new ErrorNotification(json.msg);
+      console.error(json.msg);
     }
   }
 }

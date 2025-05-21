@@ -109,11 +109,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (response.status === 201) {
         new SuccessNotification('file-imported');
       } else {
-        const error = await response.text();
-        // TODO-notification: prints html
-        // Import failed: {&quot;code&quot;:400,&quot;message&quot;:&quot;Bad Request&quot;,&quot;description&quot;:&quot;Could not find the title column!&quot;}
-        new ErrorNotification('import-error', { error });
-        console.error(error);
+        const msg = await response.text();
+        new ErrorNotification('import-error', { error: msg });
       }
     }).catch(error => {
       new ErrorNotification('import-error', { error: error.message } );

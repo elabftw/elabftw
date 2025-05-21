@@ -68,9 +68,7 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
       }
 
       if (parsedData[0].success === false) {
-        const msg = 'Invalid DNA data in file ' + realName;
         new ErrorNotification('invalid-dna-file', { file: realName});
-        throw msg;
       }
 
       const parsedSequence = parsedData[0].parsedSequence;

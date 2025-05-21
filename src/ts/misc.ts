@@ -194,35 +194,6 @@ export function getEntity(): Entity {
   };
 }
 
-// PUT A NOTIFICATION IN TOP LEFT WINDOW CORNER
-export function notif(info: ResponseMsg): void {
-  // clear an existing one
-  if (document.getElementById('overlay')) {
-    document.getElementById('overlay').remove();
-  }
-
-  const p = document.createElement('p');
-  // "status" role: see WCAG2.1 4.1.3
-  p.role = 'status';
-  p.innerText = info.msg;
-  const overlay = document.createElement('div');
-  overlay.id = 'overlay';
-  overlay.classList.add('overlay');
-  overlay.classList.add(`overlay-${info.res ? 'ok' : 'ko'}`);
-  // show the overlay
-  document.body.appendChild(overlay);
-  // add text inside
-  document.getElementById('overlay').appendChild(p);
-  // error message takes longer to disappear
-  const fadeOutDelay = info.res ? 2733 : 4871;
-  // wait a bit and make it disappear
-  window.setTimeout(function() {
-    $('#overlay').fadeOut(763, function() {
-      $(this).remove();
-    });
-  }, fadeOutDelay);
-}
-
 // SORTABLE ELEMENTS
 export function makeSortableGreatAgain(): void {
   // need an axis and a table via data attribute

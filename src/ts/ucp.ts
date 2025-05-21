@@ -8,7 +8,6 @@
 import {
   collectForm,
   getEntity,
-  notifCustom,
   reloadElements,
   saveStringAsFile,
   updateCatStat,
@@ -16,6 +15,7 @@ import {
 import i18next from 'i18next';
 import { Action, Model } from './interfaces';
 import { getEditor } from './Editor.class';
+import { ErrorNotification } from './Notifications.class';
 import Tab from './Tab.class';
 import { Api } from './Apiv2.class';
 import $ from 'jquery';
@@ -79,7 +79,7 @@ if (window.location.pathname === '/ucp.php') {
       const nameInput = (document.getElementById('apikeyName') as HTMLInputElement);
       const content = nameInput.value;
       if (!content) {
-        notifCustom(false, 'check-required');
+        new ErrorNotification('check-required');
         // set the border in red to bring attention
         nameInput.style.borderColor = 'red';
         return;

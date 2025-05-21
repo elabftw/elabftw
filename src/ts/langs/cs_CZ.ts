@@ -51,7 +51,7 @@ const t = {
     "sort-by-column": "Setřídit dle sloupce",
     "step-delete-warning": "Vymazat tento krok?",
     "step-unfinish-warning": "Jste si jisti, že chcete tento krok vrátit?",
-    "not-found": "{{type, t}} not found!",
+    "not-found": "{{entityType, t}} not found!",
     "structure": "Structure",
     "tag-delete-warning": "Smazat tento štítek?",
     "template-title": "Název šablony",

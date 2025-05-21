@@ -66,6 +66,16 @@ class SuccessNotification extends Notification {
   }
 }
 
+class ResponseNotification {
+  constructor(json: { res: boolean; msg: string }) {
+    if (json.res === true) {
+      new SuccessNotification(json.msg);
+    } else {
+      new ErrorNotification(json.msg);
+    }
+  }
+}
+
 class WarningNotification extends Notification {
   constructor(key: string, options?: I18nOptions) {
     super(key, NotificationType.Warning, options);
@@ -75,5 +85,6 @@ class WarningNotification extends Notification {
 export {
   ErrorNotification,
   SuccessNotification,
+  ResponseNotification,
   WarningNotification,
 };

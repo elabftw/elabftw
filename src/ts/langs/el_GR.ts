@@ -51,7 +51,7 @@ const t = {
     "sort-by-column": "Ταξινόμηση ανά στήλη",
     "step-delete-warning": "Διαγραφή αυτού του βήματος;",
     "step-unfinish-warning": "Είστε βέβαιοι ότι θέλετε να αναιρέσετε αυτό το βήμα;",
-    "not-found": "{{type, t}} not found!",
+    "not-found": "{{entityType, t}} not found!",
     "structure": "Structure",
     "tag-delete-warning": "Διαγραφή αυτής της ετικέτας;",
     "template-title": "Τίτλος προτύπου",

@@ -86,7 +86,7 @@ final class i18n4Js
             'sort-by-column' => _('Sort by column'),
             'step-delete-warning' => _('Delete this step?'),
             'step-unfinish-warning' => _('Are you sure you want to undo this step?'),
-            'not-found' => _('{{type, t}} not found!'),
+            'not-found' => _('{{entityType, t}} not found!'),
             'structure' => _('Structure'),
             'tag-delete-warning' => _('Delete this tag?'),
             'template-title' => _('Template title'),

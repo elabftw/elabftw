@@ -51,7 +51,7 @@ const t = {
     "sort-by-column": "按列排序",
     "step-delete-warning": "删除此步骤？",
     "step-unfinish-warning": "确实要撤消此步骤吗？",
-    "not-found": "{{type, t}} not found!",
+    "not-found": "{{entityType, t}} not found!",
     "structure": "Structure",
     "tag-delete-warning": "删除这个标签？",
     "template-title": "模板标题",

@@ -51,7 +51,7 @@ const t = {
     "sort-by-column": "Sorteer op kolom",
     "step-delete-warning": "Deze stap verwijderen?",
     "step-unfinish-warning": "Ben je zeker dat je deze stap ongedaan wil maken?",
-    "not-found": "{{type, t}} not found!",
+    "not-found": "{{entityType, t}} not found!",
     "structure": "Structure",
     "tag-delete-warning": "Dit label verwijderen?",
     "template-title": "Sjabloon titel",

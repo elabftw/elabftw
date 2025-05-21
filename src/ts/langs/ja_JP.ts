@@ -51,7 +51,7 @@ const t = {
     "sort-by-column": "列で並べ替え",
     "step-delete-warning": "このステップを削除しますか？",
     "step-unfinish-warning": "本当にこのステップを取り消しますか？",
-    "not-found": "{{type, t}} not found!",
+    "not-found": "{{entityType, t}} not found!",
     "structure": "Structure",
     "tag-delete-warning": "このタグを削除しますか？",
     "template-title": "テンプレートタイトル",

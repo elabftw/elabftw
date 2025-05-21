@@ -9,7 +9,6 @@ import {
   getEntity,
   addAutocompleteToExtraFieldsKeyInputs,
   normalizeFieldName,
-  notifNotFound,
 } from './misc';
 import { Metadata } from './Metadata.class';
 import { ValidMetadata, ExtraFieldInputType } from './metadataInterfaces';
@@ -19,7 +18,7 @@ import { Api } from './Apiv2.class';
 import i18next from 'i18next';
 import { merge } from 'lodash-es';
 import $ from 'jquery';
-import { ErrorNotification } from "./Notifications.class";
+import { ErrorNotification } from './Notifications.class';
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -69,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const extraField = el.parentElement.parentElement.closest('div');
       if (!extraField) {
-        notifNotFound('extra-fields');
+        new ErrorNotification('not-found', { entityType: 'extra-fields' });
         return;
       }
       // store current name as attribute, to use as field's key and update
@@ -557,7 +556,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Check if group exists in metadata
         const groupIndex: number = metadata.elabftw.extra_fields_groups.findIndex(group => group.id === groupId);
         if (groupIndex === -1) {
-          notifNotFound('group');
+          new ErrorNotification('not-found', { entityType: 'group' });
           return;
         }
 

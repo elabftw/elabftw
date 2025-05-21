@@ -5,12 +5,12 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { clearForm, collectForm, notif, reloadElements } from './misc';
+import { clearForm, collectForm, reloadElements } from './misc';
 import { Action, Model } from './interfaces';
 import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
 import { getEditor } from './Editor.class';
-import { ErrorNotification } from './Notifications.class';
+import { ErrorNotification, ResponseNotification } from './Notifications.class';
 import Tab from './Tab.class';
 import { Ajax } from './Ajax.class';
 import { Api } from './Apiv2.class';
@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (json.res) {
             reloadElements(['bruteforceDiv']);
           }
-          notif(json);
+          new ResponseNotification(json);
         }));
 
     // CREATE TEAM
@@ -285,7 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function handleEmailResponse(resp: Response, button: HTMLButtonElement): void {
     resp.json().then(json => {
-      notif(json);
+      new ResponseNotification(json);
       if (json.res) {
         button.innerText = 'Sent!';
         button.disabled = false;

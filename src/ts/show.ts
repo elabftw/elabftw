@@ -10,7 +10,6 @@ import {
   collectForm,
   getCheckedBoxes,
   getEntity,
-  notifCustom,
   permissionsToJson,
   reloadElements,
   reloadEntitiesShow,
@@ -21,7 +20,7 @@ import 'bootstrap/js/src/modal.js';
 import i18next from 'i18next';
 import FavTag from './FavTag.class';
 import { Api } from './Apiv2.class';
-import { SuccessNotification } from "./Notifications.class";
+import { ErrorNotification, SuccessNotification } from './Notifications.class';
 import { SearchSyntaxHighlighting } from './SearchSyntaxHighlighting.class';
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
@@ -257,7 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (el.matches('[data-action="export-selected-entities"]')) {
       const checked = getCheckedBoxes();
       if (checked.length === 0) {
-        notifCustom(false, 'nothing-selected');
+        new ErrorNotification('nothing-selected');
         return;
       }
       const format = el.value;
@@ -353,7 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // get the item id of all checked boxes
       const checked = getCheckedBoxes();
       if (checked.length === 0) {
-        notifCustom(false, 'nothing-selected');
+        new ErrorNotification('nothing-selected');
         return;
       }
       // display a warning with the number of impacted entries
@@ -546,7 +545,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // get the item id of all checked boxes
       const checked = getCheckedBoxes();
       if (checked.length === 0) {
-        notifCustom(false, 'nothing-selected');
+        new ErrorNotification('nothing-selected');
         return;
       }
       const action = <Action>el.dataset.what;
@@ -562,7 +561,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // get the item id of all checked boxes
       const checked = getCheckedBoxes();
       if (checked.length === 0) {
-        notifCustom(false, 'nothing-selected');
+        new ErrorNotification('nothing-selected');
         return;
       }
       // ask for confirmation

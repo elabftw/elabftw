@@ -51,7 +51,7 @@ const t = {
     "sort-by-column": "Sortuj według kolumny",
     "step-delete-warning": "Usunąć ten krok?",
     "step-unfinish-warning": "Czy na pewno chcesz cofnąć ten krok?",
-    "not-found": "{{type, t}} not found!",
+    "not-found": "{{entityType, t}} not found!",
     "structure": "Structure",
     "tag-delete-warning": "Usunąć ten tag?",
     "template-title": "Tytuł szablonu",

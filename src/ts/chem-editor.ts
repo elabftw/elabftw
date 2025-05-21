@@ -6,9 +6,9 @@
  * @package elabftw
  */
 
-import { notifNotFound } from './misc';
 import { Ketcher } from 'ketcher-core';
 import $ from 'jquery';
+import { ErrorNotification } from './Notifications.class';
 
 // we add ketcher to window with onInit param during ketcher initialization
 declare global {
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (el.matches('[data-action="search-from-editor"]')) {
       window.ketcher.getSmiles().then(s => {
         if (!s) {
-          notifNotFound('structure');
+          new ErrorNotification('not-found', { entityType: 'structure' });
           return;
         }
         const smilesInput = document.getElementById('substructureSearchInput') as HTMLInputElement;

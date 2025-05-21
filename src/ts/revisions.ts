@@ -9,7 +9,7 @@
 import { Api } from './Apiv2.class';
 import { Action } from './interfaces';
 import DiffMatchPatch from 'diff-match-patch';
-import { ErrorNotification } from "./Notifications.class";
+import { ErrorNotification } from './Notifications.class';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('info')) {

@@ -51,7 +51,7 @@ const t = {
     "sort-by-column": "Nach Spalte sortieren",
     "step-delete-warning": "Diesen Schritt löschen?",
     "step-unfinish-warning": "Sind Sie sicher, dass Sie diesen Schritt rückgängig machen wollen?",
-    "not-found": "{{type, t}} not found!",
+    "not-found": "{{entityType, t}} not found!",
     "structure": "Structure",
     "tag-delete-warning": "Tag löschen?",
     "template-title": "Titel der Vorlage",

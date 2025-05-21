@@ -10,7 +10,7 @@ import { Action, CheckableItem, ResponseMsg, EntityType, Entity, Model, Target }
 import { DateTime } from 'luxon';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 import tinymce from 'tinymce/tinymce';
-import { SuccessNotification } from './Notifications.class';
+import { ResponseNotification } from './Notifications.class';
 import TableSorting from './TableSorting.class';
 declare const MathJax: MathJaxObject;
 import $ from 'jquery';
@@ -194,23 +194,6 @@ export function getEntity(): Entity {
   };
 }
 
-// translated custom messages. false = error, true = success
-export function notifCustom(res: boolean, e): void {
-  let msg;
-  if (typeof e === 'string') {
-    msg = i18next.t(e);
-  } else {
-    // allow for translations with options, e.g. 'Lock {{ number }} entries',
-    msg = i18next.t(e.key, e.options);
-  }
-  return notif({ res, msg });
-}
-
-// useful for "not found" results, e.g. notifNotFound('experiments')
-export function notifNotFound(type: string): void {
-  return notifCustom(false, { key: 'not-found', options: { type } });
-}
-
 // PUT A NOTIFICATION IN TOP LEFT WINDOW CORNER
 export function notif(info: ResponseMsg): void {
   // clear an existing one
@@ -269,7 +252,7 @@ export function makeSortableGreatAgain(): void {
         },
         body: JSON.stringify(params),
       }).then(resp => resp.json()).then(json => {
-        notif(json);
+        new ResponseNotification(json);
       });
     },
   });

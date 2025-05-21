@@ -51,7 +51,7 @@ const t = {
     "sort-by-column": "Сортировать по столбцу",
     "step-delete-warning": "Удалить этот этап?",
     "step-unfinish-warning": "Вы уверены, что хотите отменить этот шаг?",
-    "not-found": "{{type, t}} not found!",
+    "not-found": "{{entityType, t}} not found!",
     "structure": "Structure",
     "tag-delete-warning": "Удалить этот тег?",
     "template-title": "Название шаблона",

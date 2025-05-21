@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import { Api } from './Apiv2.class';
-import { ErrorNotification, SuccessNotification } from "./Notifications.class";
+import { ErrorNotification, SuccessNotification } from './Notifications.class';
 import Tab from './Tab.class';
 import { collectForm, relativeMoment, reloadElements } from './misc';
 import i18next from 'i18next';

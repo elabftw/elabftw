@@ -51,7 +51,7 @@ const t = {
     "sort-by-column": "Sort by column",
     "step-delete-warning": "Delete this step?",
     "step-unfinish-warning": "Are you sure you want to undo this step?",
-    "not-found": "{{type, t}} not found!",
+    "not-found": "{{entityType, t}} not found!",
     "structure": "Structure",
     "tag-delete-warning": "Delete this tag?",
     "template-title": "Template title",

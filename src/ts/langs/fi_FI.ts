@@ -51,7 +51,7 @@ const t = {
     "sort-by-column": "Lajittele sarakkeen mukaan",
     "step-delete-warning": "Poistetaanko tämä vaihe?",
     "step-unfinish-warning": "Haluatko varmasti kumota tämän vaiheen?",
-    "not-found": "{{type, t}} not found!",
+    "not-found": "{{entityType, t}} not found!",
     "structure": "Structure",
     "tag-delete-warning": "Poistetaanko tämä tunniste?",
     "template-title": "Malliotsikko",

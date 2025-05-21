@@ -51,7 +51,7 @@ const t = {
     "sort-by-column": "Ustun bo'yicha saralash",
     "step-delete-warning": "Bu qadam oʻchirilsinmi?",
     "step-unfinish-warning": "Haqiqatan ham bu qadamni bekor qilmoqchimisiz?",
-    "not-found": "{{type, t}} not found!",
+    "not-found": "{{entityType, t}} not found!",
     "structure": "Structure",
     "tag-delete-warning": "Bu teg oʻchirilsinmi?",
     "template-title": "Shablon sarlavhasi",

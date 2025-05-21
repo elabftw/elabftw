@@ -51,7 +51,7 @@ const t = {
     "sort-by-column": "Trier par colonne",
     "step-delete-warning": "Supprimer cette étape ?",
     "step-unfinish-warning": "Êtes-vous certain(e) de vouloir défaire cette étape ?",
-    "not-found": "{{type, t}} not found!",
+    "not-found": "{{entityType, t}} not found!",
     "structure": "Structure",
     "tag-delete-warning": "Supprimer ce tag ?",
     "template-title": "Titre du modèle",

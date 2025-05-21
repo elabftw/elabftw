@@ -51,7 +51,7 @@ const t = {
     "sort-by-column": "Ordena per columna",
     "step-delete-warning": "Voleu eliminar aquest pas?",
     "step-unfinish-warning": "Estàs segura de voler desfer aquest pas?",
-    "not-found": "{{type, t}} not found!",
+    "not-found": "{{entityType, t}} not found!",
     "structure": "Structure",
     "tag-delete-warning": "Vols suprimir aquesta etiqueta?",
     "template-title": "Títol de la plantilla",

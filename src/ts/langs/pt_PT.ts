@@ -51,7 +51,7 @@ const t = {
     "sort-by-column": "Ordenar por coluna",
     "step-delete-warning": "Excluir este passo?",
     "step-unfinish-warning": "Tem certeza que gostaria de desfazer esta etapa?",
-    "not-found": "{{type, t}} not found!",
+    "not-found": "{{entityType, t}} not found!",
     "structure": "Structure",
     "tag-delete-warning": "Eliminar esta etiqueta?",
     "template-title": "Título do modelo",

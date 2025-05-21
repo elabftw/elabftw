@@ -51,7 +51,7 @@ const t = {
     "sort-by-column": "Razvrsti po stolpcu",
     "step-delete-warning": "Ali želite izbrisati ta korak?",
     "step-unfinish-warning": "Ali ste prepričani, da želite razveljaviti ta korak?",
-    "not-found": "{{type, t}} not found!",
+    "not-found": "{{entityType, t}} not found!",
     "structure": "Structure",
     "tag-delete-warning": "Želite izbrisati to oznako?",
     "template-title": "Naslov predloge",

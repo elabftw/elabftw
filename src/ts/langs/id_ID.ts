@@ -51,7 +51,7 @@ const t = {
     "sort-by-column": "Urutkan berdasarkan kolom",
     "step-delete-warning": "Hapus langkah ini?",
     "step-unfinish-warning": "Anda yakin ingin mengurungkan langkah ini?",
-    "not-found": "{{type, t}} not found!",
+    "not-found": "{{entityType, t}} not found!",
     "structure": "Structure",
     "tag-delete-warning": "Hapus label ini?",
     "template-title": "Judul templat",

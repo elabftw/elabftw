@@ -51,7 +51,7 @@ const t = {
     "sort-by-column": "Zoradiť podľa stĺpca",
     "step-delete-warning": "Odstrániť tento krok?",
     "step-unfinish-warning": "Naozaj chceš vrátiť krok späť ?",
-    "not-found": "{{type, t}} not found!",
+    "not-found": "{{entityType, t}} not found!",
     "structure": "Structure",
     "tag-delete-warning": "Odstrániť túto značku?",
     "template-title": "Názov šablóny",

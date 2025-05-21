@@ -9,7 +9,6 @@ import {
   getNewIdFromPostRequest,
   mkSpin,
   mkSpinStop,
-  notifCustom,
   permissionsToJson,
   reloadElements,
   TomSelect,
@@ -22,7 +21,7 @@ import { getEditor } from './Editor.class';
 import { Api } from './Apiv2.class';
 import { EntityType, Model, Action, Selected } from './interfaces';
 import tinymce from 'tinymce/tinymce';
-import { ErrorNotification, SuccessNotification} from './Notifications.class';
+import { ErrorNotification, SuccessNotification } from './Notifications.class';
 import Tab from './Tab.class';
 
 function collectSelectable(name: string): number[] {
@@ -138,7 +137,7 @@ if (window.location.pathname === '/admin.php') {
       const btn = el as HTMLButtonElement;
       const selected = getSelected();
       if (!Object.values(selected).some(array => array.length > 0)) {
-        notifCustom(false, 'nothing-selected');
+        new ErrorNotification('nothing-selected');
         return;
       }
       const oldHTML = mkSpin(btn);
@@ -147,7 +146,7 @@ if (window.location.pathname === '/admin.php') {
       ApiC.notifOnSaved = false;
       ApiC.post('batch', selected).then(res => {
         const processed = res.headers.get('location').split('/').pop();
-        notifCustom(true, { key: 'entries-processed', options: { num: processed } });
+        new SuccessNotification('entries-processed', { num: processed });
       }).finally(() => {
         mkSpinStop(btn, oldHTML);
       });
@@ -293,7 +292,6 @@ if (window.location.pathname === '/admin.php') {
       }).then(response => {
         if (response.ok) {
           new SuccessNotification('onboarding-email-sent');
-          // notifCustom(true, 'onboarding-email-sent');
         }
       });
     }

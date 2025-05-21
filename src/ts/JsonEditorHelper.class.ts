@@ -9,11 +9,11 @@ import { Metadata } from './Metadata.class';
 import JSONEditor from 'jsoneditor';
 import $ from 'jquery';
 import i18next from 'i18next';
-import { getNewIdFromPostRequest, notifCustom, reloadElements } from './misc';
+import { getNewIdFromPostRequest, reloadElements } from './misc';
 import { Action, Entity, Model } from './interfaces';
 import { Api } from './Apiv2.class';
 import { ValidMetadata } from './metadataInterfaces';
-import { SuccessNotification } from './Notifications.class';
+import { ErrorNotification, SuccessNotification } from './Notifications.class';
 
 // This class is named helper because the jsoneditor lib already exports JSONEditor
 export default class JsonEditorHelper {
@@ -101,9 +101,9 @@ export default class JsonEditorHelper {
       })
       .catch(e => {
         if (e instanceof SyntaxError) {
-          notifCustom(false, 'json-parse-error');
+          new ErrorNotification('json-parse-error');
         } else {
-          notifCustom(false, { key: 'json-editor-error', options: { error: e.message } });
+          new ErrorNotification('json-editor-error', {error: e.message });
         }
       });
     // add the filename as a title
@@ -126,7 +126,7 @@ export default class JsonEditorHelper {
     try {
       this.MetadataC.update(this.editor.get());
     } catch (error) {
-      notifCustom(false, { key: 'json-editor-error', options: { error } });
+      new ErrorNotification('json-editor-error', {error: error.message });
       console.error(error);
     }
   }

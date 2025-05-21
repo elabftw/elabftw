@@ -51,7 +51,7 @@ const t = {
     "sort-by-column": "특정 컬럼으로 정렬",
     "step-delete-warning": "단계를 삭제할까요?",
     "step-unfinish-warning": "정말 이 단계를 되돌리기하시겠습니까?",
-    "not-found": "{{type, t}} not found!",
+    "not-found": "{{entityType, t}} not found!",
     "structure": "Structure",
     "tag-delete-warning": "이 태그를 삭제할까요?",
     "template-title": "템플릿 제목",

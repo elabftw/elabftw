@@ -586,7 +586,6 @@ tr:nth-child(odd) {
 
 /* OVERLAY CONTAINER: allow stacking overlays */
 #overlay-container {
-  min-width: 25%;
   position: fixed;
   top: 10px;
   left: 10px;
@@ -598,6 +597,7 @@ tr:nth-child(odd) {
 
 /* OVERLAY */
 .overlay {
+  width: fit-content;
   border-radius: 5px;
   display: flex;
   line-height: 50px;

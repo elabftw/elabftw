@@ -100,27 +100,28 @@ final class DisplayParams extends BaseQueryParams
 
         // SCOPE FILTER
         // default scope is the user setting, but can be overridden by query param
-        $scope = $this->requester->userData['scope_' . $this->entityType->value];
+        $scopeInt = $this->requester->userData['scope_' . $this->entityType->value] ?? Scope::Everything->value;
         if (Check::id($query->getInt('scope')) !== false) {
-            $scope = $query->getInt('scope');
+            $scopeInt = $query->getInt('scope');
         }
+        $scope = Scope::from($scopeInt);
 
         // filter by user if we don't want to show the rest of the team
         // looking for an owner will bypass the user preference
         // same with an extended search: we show all
-        if ($scope === Scope::User->value && empty($query->get('owner')) && empty($query->get('extended'))) {
+        if ($scope === Scope::User && empty($query->get('owner')) && empty($query->get('extended'))) {
             $this->appendFilterSql(FilterableColumn::Owner, $this->requester->userData['userid']);
         }
         // add filter on team only if scope is not set to everything
-        if ($this->requester->userData['scope_' . $this->entityType->value] === Scope::Team->value && $scope !== Scope::Everything->value) {
+        if ($this->requester->userData['scope_' . $this->entityType->value] === Scope::Team && $scope !== Scope::Everything) {
             $this->appendFilterSql(FilterableColumn::Team, $this->requester->team ?? 0);
         }
         // TAGS SEARCH
         if (!empty(($query->all('tags'))[0])) {
             // get all the ids with that tag
             $tags = $query->all('tags');
-            $Tags2Entity = new Tags2Entity($this->entityType);
-            $this->filterSql = Tools::getIdFilterSql($Tags2Entity->getEntitiesIdFromTags('tag', $tags));
+            $Tags2Entity = new Tags2Entity($this->requester, $this->entityType);
+            $this->filterSql = Tools::getIdFilterSql($Tags2Entity->getEntitiesIdFromTags('tag', $tags, $scope));
         }
 
         // RELATED FILTER

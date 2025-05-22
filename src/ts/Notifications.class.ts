@@ -12,6 +12,7 @@ import { I18nOptions, NotificationType } from './interfaces';
 
 /**
  * Returns an i18n translated string, both single and interpolated.
+ * Overlays come in different types : Success, Error, Warning
  * Examples:
  * - 'add-quantity' => 'Add quantity'
  * - 'increment-something', 5 => 'Add 5 units'
@@ -85,9 +86,11 @@ class ResponseNotification {
   }
 }
 
+// TODO-notifications: see where Warnings could be used instead of Errors. If not relevant, remove.
 class WarningNotification extends Notification {
   constructor(key: string, options?: I18nOptions) {
     super(key, NotificationType.Warning, options);
+    console.warn(i18next.t(key));
   }
 }
 

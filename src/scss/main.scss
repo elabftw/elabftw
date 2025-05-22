@@ -584,6 +584,18 @@ tr:nth-child(odd) {
   }
 }
 
+/* OVERLAY CONTAINER: allow stacking overlays */
+#overlay-container {
+  min-width: 25%;
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 19850;
+}
+
 /* OVERLAY */
 .overlay {
   border-radius: 5px;
@@ -622,19 +634,6 @@ tr:nth-child(odd) {
 
 .opacity-8 {
   opacity: 0.8;
-}
-
-/* OVERLAY CONTAINER: allow stacking overlays */
-#overlay-container {
-  // min width to prevent resizing due to text-content size for each stacked notification
-  min-width: 25%;
-  position: fixed;
-  top: 10px;
-  left: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  z-index: 19850;
 }
 
 .full-screen-overlay {

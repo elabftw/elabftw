@@ -178,7 +178,7 @@ if (window.location.pathname === '/admin.php') {
     } else if (el.matches('[data-action="adduser-teamgroup"]')) {
       const user = parseInt(el.parentNode.parentNode.querySelector('input').value, 10);
       if (isNaN(user)) {
-        notify.error('Use the autocompletion menu to add users.');
+        notify.error('add-user-error');
         return;
       }
       ApiC.patch(

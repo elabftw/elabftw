@@ -9,7 +9,7 @@ import Dropzone from '@deltablot/dropzone';
 import { reloadElements, sizeToMb } from './misc';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
-import { ErrorNotification } from './Notifications.class';
+import { Notification } from './Notifications.class';
 
 export class Uploader
 {
@@ -25,8 +25,7 @@ export class Uploader
         // Fires when *any* file errors (validation or server-side)
         this.on('error', (file, errorMessage) => {
           const msg = `Error with file: ${file.name}: [${errorMessage.code}] ${errorMessage.description}`;
-          console.error(msg);
-          new ErrorNotification(msg);
+          (new Notification()).error(msg);
         });
         // once all files are uploaded
         this.on('queuecomplete', function() {

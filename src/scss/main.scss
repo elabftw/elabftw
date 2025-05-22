@@ -607,6 +607,7 @@ tr:nth-child(odd) {
   // see #2419
   // and over 15000 for open vector editor fullscreen mode
   z-index: 19850;
+  animation: slideInOut 3.5s ease-in-out forwards;
 }
 
 .overlay p {

@@ -8,7 +8,7 @@
  */
 
 import i18next from 'i18next';
-import { I18nOptions, NotificationType } from './interfaces';
+import { I18nOptions, NotificationType, ResponseMsg } from './interfaces';
 
 /**
  * Returns an i18n translated string, both single and interpolated.
@@ -22,8 +22,8 @@ class Notification {
   protected readonly message: string;
   protected readonly type: NotificationType;
 
-  constructor(key: string, type: NotificationType, options?: I18nOptions) {
-    this.message = i18next.t(key, options);
+  constructor(msg: string, type: NotificationType, options?: I18nOptions) {
+    this.message = i18next.t(msg, options);
     this.type = type;
     this.show();
   }
@@ -50,47 +50,43 @@ class Notification {
     overlay.appendChild(p);
     container.appendChild(overlay);
 
-    // error message takes longer to disappear
-    const fadeOutDelay = this.type === NotificationType.Success ? 2733 : 4871;
-    setTimeout(() => {
-      $(overlay).fadeOut(763, function() {
-        $(this).remove();
-      });
-    }, fadeOutDelay);
+    // overlay animation: fades in and out. Remove element when ended
+    overlay.addEventListener('animationend', () => {
+      overlay.remove();
+    });
   }
 }
 
 // display the notification AND log in the console for debugging.
 class ErrorNotification extends Notification {
-  constructor(key: string, options?: I18nOptions) {
-    super(key, NotificationType.Error, options);
-    console.error(i18next.t(key));
+  constructor(msg: string, options?: I18nOptions) {
+    super(msg, NotificationType.Error, options);
+    console.error(i18next.t(msg));
   }
 }
 
 class SuccessNotification extends Notification {
-  constructor(key: string, options?: I18nOptions) {
-    super(key, NotificationType.Success, options);
+  constructor(msg: string, options?: I18nOptions) {
+    super(msg, NotificationType.Success, options);
   }
 }
 
 // to handle json responses with true or false
 class ResponseNotification {
-  constructor(json: { res: boolean; msg: string }) {
+  constructor(json: ResponseMsg) {
     if (json.res === true) {
       new SuccessNotification(json.msg);
     } else {
       new ErrorNotification(json.msg);
-      console.error(json.msg);
     }
   }
 }
 
 // TODO-notifications: see where Warnings could be used instead of Errors. If not relevant, remove.
 class WarningNotification extends Notification {
-  constructor(key: string, options?: I18nOptions) {
-    super(key, NotificationType.Warning, options);
-    console.warn(i18next.t(key));
+  constructor(msg: string, options?: I18nOptions) {
+    super(msg, NotificationType.Warning, options);
+    console.warn(i18next.t(msg));
   }
 }
 

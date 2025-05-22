@@ -20,6 +20,7 @@ use Elabftw\Models\Items;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Params\EntityParams;
 use Elabftw\Services\PubChemImporter;
+use GuzzleHttp\Exception\RequestException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Console\Output\OutputInterface;
 use Override;
@@ -143,7 +144,7 @@ final class CompoundsCsv extends AbstractCsv
                         $Containers2ItemsLinks->createWithQuantity((float) ($row['quantity'] ?? 1.0), $row['unit'] ?? '•');
                     }
                 }
-            } catch (ImproperActionException $e) {
+            } catch (ImproperActionException | RequestException $e) {
                 $this->output->writeln($e->getMessage());
                 // decrement the count so we can give a correct number
                 --$count;

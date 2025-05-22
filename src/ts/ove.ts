@@ -19,7 +19,7 @@ import { anyToJson } from '@teselagen/bio-parsers';
 import { reloadElements } from './misc';
 import { Action, Model } from './interfaces';
 import { Api } from './Apiv2.class';
-import { ErrorNotification } from './Notifications.class';
+import { Notification } from './Notifications.class';
 
 // DISPLAY Plasmids FILES
 export function displayPlasmidViewer(about: DOMStringMap): void {
@@ -68,7 +68,8 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
       }
 
       if (parsedData[0].success === false) {
-        new ErrorNotification(`Invalid DNA data in file: ${realName}`);
+        const notif = new Notification();
+        notif.error(`Invalid DNA data in file: ${realName}`);
       }
 
       const parsedSequence = parsedData[0].parsedSequence;

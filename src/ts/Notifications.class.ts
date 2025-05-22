@@ -12,23 +12,43 @@ import { I18nOptions, NotificationType, ResponseMsg } from './interfaces';
 
 /**
  * Returns an i18n translated string, both single and interpolated.
- * Overlays come in different types : Success, Error, Warning
+ * Overlays come in different types. See methods: success(), error(), etc.
  * Examples:
  * - 'add-quantity' => 'Add quantity'
  * - 'increment-something', 5 => 'Add 5 units'
  * - 'Random sentence' => 'Random sentence' (if not found in i18n catalog)
  */
-class Notification {
-  protected readonly message: string;
-  protected readonly type: NotificationType;
-
-  constructor(msg: string, type: NotificationType, options?: I18nOptions) {
-    this.message = i18next.t(msg, options);
-    this.type = type;
-    this.show();
+export class Notification {
+  // default value: 'Saved'
+  public success(msg: string = 'saved', options?: I18nOptions): void {
+    const translated = i18next.t(msg, options);
+    this.notify(translated, NotificationType.Success);
   }
 
-  protected show(): void {
+  // display the notification & log in the console for debugging.
+  public error(msg: string, options?: I18nOptions): void {
+    const translated = i18next.t(msg, options);
+    console.error(translated);
+    this.notify(translated, NotificationType.Error);
+  }
+
+  // TODO-notifications: see where Warnings could be used instead of Errors. If not relevant, remove.
+  public warning(msg: string, options?: I18nOptions): void {
+    const translated = i18next.t(msg, options);
+    console.warn(translated);
+    this.notify(translated, NotificationType.Warning);
+  }
+
+  // to handle json responses
+  public response(json: ResponseMsg): void {
+    if (json.res === true) {
+      this.success(json.msg);
+    } else {
+      this.error(json.msg);
+    }
+  }
+
+  private notify(message: string, type: NotificationType): void {
     // add a container to hold all overlays, allow stacking
     let container = document.getElementById('overlay-container');
     if (!container) {
@@ -39,13 +59,12 @@ class Notification {
 
     // create overlay
     const overlay = document.createElement('div');
-    overlay.classList.add('overlay', `overlay-${this.type}`);
-
+    overlay.classList.add('overlay', `overlay-${type}`);
     // create overlay content
     const p = document.createElement('p');
     // "status" role: see WCAG2.1 4.1.3
     p.role = 'status';
-    p.innerText = this.message;
+    p.innerText = message;
     // show the overlay
     overlay.appendChild(p);
     container.appendChild(overlay);
@@ -56,43 +75,3 @@ class Notification {
     });
   }
 }
-
-// display the notification AND log in the console for debugging.
-class ErrorNotification extends Notification {
-  constructor(msg: string, options?: I18nOptions) {
-    super(msg, NotificationType.Error, options);
-    console.error(i18next.t(msg));
-  }
-}
-
-class SuccessNotification extends Notification {
-  constructor(msg: string, options?: I18nOptions) {
-    super(msg, NotificationType.Success, options);
-  }
-}
-
-// to handle json responses with true or false
-class ResponseNotification {
-  constructor(json: ResponseMsg) {
-    if (json.res === true) {
-      new SuccessNotification(json.msg);
-    } else {
-      new ErrorNotification(json.msg);
-    }
-  }
-}
-
-// TODO-notifications: see where Warnings could be used instead of Errors. If not relevant, remove.
-class WarningNotification extends Notification {
-  constructor(msg: string, options?: I18nOptions) {
-    super(msg, NotificationType.Warning, options);
-    console.warn(i18next.t(msg));
-  }
-}
-
-export {
-  ErrorNotification,
-  SuccessNotification,
-  ResponseNotification,
-  WarningNotification,
-};

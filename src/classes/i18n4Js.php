@@ -52,6 +52,7 @@ final class i18n4Js
             'entity-delete-warning' => _('The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?'),
             'entries-processed' => _('{{num, number}} entries processed'),
             'error-no-category' => _('A category is required to fetch the next Custom ID'),
+            'error-fetch-request' => _('There was an error while fetching the requested data: {{error}}'),
             'extra-fields' => _('Extra fields'),
             'filename' => _('Filename'),
             'file-imported' => _('File imported successfully'),
@@ -59,17 +60,15 @@ final class i18n4Js
             'group' => _('Group'),
             'generic-delete-warning' => _('Delete this?'),
             'hide-deleted' => _('Hide deleted'),
-//            'import-error' => _('Import failed: {{error}}'),
-//            'invalid-dna-file' => _('Invalid DNA data in file {{file}}'),
-//            'invalid-quantity' => _('Invalid quantity: {{num, number}}'),
-//            'invalid-status-name' => _('Invalid status name.'),
-//            'json-parse-error' => _('Invalid JSON syntax'),
-//            'json-editor-error' => _('JSON Editor: {{error}}'),
+            'invalid-info' => _('Invalid syntax or information: {{error}}'),
             'link-delete-warning' => _('Delete this link?'),
             'location-name' => _('Location name'),
             // https://www.i18next.com/translation-function/formatting
             'multi-changes-confirm' => _('Apply to {{num, number}} entries?'),
             'no-self-links' => _('Linking an item to itself is not allowed. Please select a different target.'),
+            // not-found can be used with default entity types (Experiment, Resource, etc.)
+            // interpolation : https://www.i18next.com/translation-function/interpolation#basic
+            'not-found' => _('{{entityType}} not found!'),
             'not-set' => _('Not set'),
             'nothing-selected' => _('Nothing selected!'),
             'now' => _('Now'),
@@ -86,9 +85,6 @@ final class i18n4Js
             'sort-by-column' => _('Sort by column'),
             'step-delete-warning' => _('Delete this step?'),
             'step-unfinish-warning' => _('Are you sure you want to undo this step?'),
-            // interpolation : https://www.i18next.com/translation-function/interpolation#basic
-            // not-found can be used with default entity types (Experiment, Resource, etc.)
-            'not-found' => _('{{entityType}} not found!'),
             'structure' => _('Structure'),
             'tag-delete-warning' => _('Delete this tag?'),
             'template-title' => _('Template title'),

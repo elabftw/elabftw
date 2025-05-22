@@ -146,7 +146,7 @@ if (window.location.pathname === '/admin.php') {
       ApiC.notifOnSaved = false;
       ApiC.post('batch', selected).then(res => {
         const processed = res.headers.get('location').split('/').pop();
-        notify.success(`${processed} entries processed`);
+        notify.success('entries-processed', { num: processed });
       }).finally(() => {
         mkSpinStop(btn, oldHTML);
       });
@@ -202,7 +202,7 @@ if (window.location.pathname === '/admin.php') {
       const nameInput = (holder.querySelector('input[type="text"]') as HTMLInputElement);
       const name = nameInput.value;
       if (!name) {
-        notify.error('Invalid status name.');
+        notify.error('invalid-info', { error: 'status name'});
         // set the border in red to bring attention
         nameInput.style.borderColor = 'red';
         return;

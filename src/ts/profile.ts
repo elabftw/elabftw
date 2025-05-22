@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
       body: formData,
     }).then(async response => {
       if (response.status === 201) {
-        new SuccessNotification('File imported successfully');
+        new SuccessNotification('file-imported');
       } else {
         const msg = await response.text();
         new ErrorNotification(`Import error: ${msg}`);

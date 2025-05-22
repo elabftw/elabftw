@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="compare-revisions"]')) {
       const checkedBoxes = getCheckedBoxes();
       if (checkedBoxes.length !== 2) {
-        new ErrorNotification('Select two revisions to compare them.');
+        new ErrorNotification('revisions-error');
         return;
       }
       const dmp = new DiffMatchPatch();

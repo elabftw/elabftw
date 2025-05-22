@@ -278,7 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // SAVE NEW EXTRA FIELD
     if (el.matches('[data-action="save-new-field"]')) {
       if ((document.getElementById('newFieldForm') as HTMLFormElement).reportValidity() === false) {
-        new ErrorNotification('Error validating the form.');
+        new ErrorNotification('form-validation-error');
         return;
       }
 
@@ -363,7 +363,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="edit-extra-field"]')) {
       // prevent form invalid data
       if ((document.getElementById('newFieldForm') as HTMLFormElement).reportValidity() === false) {
-        new ErrorNotification('Error validating the form.');
+        new ErrorNotification('form-validation-error');
         return;
       }
       // get field to update's current value

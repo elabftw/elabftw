@@ -146,7 +146,7 @@ if (window.location.pathname === '/admin.php') {
       ApiC.notifOnSaved = false;
       ApiC.post('batch', selected).then(res => {
         const processed = res.headers.get('location').split('/').pop();
-        new SuccessNotification(`${processed} entries processed`);
+        new SuccessNotification('entries-processed', { num: processed });
       }).finally(() => {
         mkSpinStop(btn, oldHTML);
       });
@@ -178,7 +178,7 @@ if (window.location.pathname === '/admin.php') {
     } else if (el.matches('[data-action="adduser-teamgroup"]')) {
       const user = parseInt(el.parentNode.parentNode.querySelector('input').value, 10);
       if (isNaN(user)) {
-        new ErrorNotification('Use the autocompletion menu to add users.');
+        new ErrorNotification('add-user-error');
         return;
       }
       ApiC.patch(

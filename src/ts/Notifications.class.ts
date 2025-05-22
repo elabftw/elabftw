@@ -10,6 +10,13 @@
 import i18next from 'i18next';
 import { I18nOptions, NotificationType } from './interfaces';
 
+/**
+ * Returns an i18n translated string, both single and interpolated.
+ * Examples:
+ * - 'add-quantity' => 'Add quantity'
+ * - 'increment-something', 5 => 'Add 5 units'
+ * - 'Random sentence' => 'Random sentence' (if not found in i18n catalog)
+ */
 class Notification {
   protected readonly message: string;
   protected readonly type: NotificationType;
@@ -20,15 +27,8 @@ class Notification {
     this.show();
   }
 
-  /**
-   * Returns an i18n translated string, both single and interpolated.
-   * Examples:
-   * - 'add-quantity' => 'Add quantity'
-   * - 'increment-something', 5 => 'Add 5 units'
-   * - 'Random sentence' => 'Random sentence' (if not found in i18n catalog)
-   */
   protected show(): void {
-    // add a container to hold all overlays, allow stacking.
+    // add a container to hold all overlays, allow stacking
     let container = document.getElementById('overlay-container');
     if (!container) {
       container = document.createElement('div');
@@ -36,18 +36,9 @@ class Notification {
       document.body.appendChild(container);
     }
 
-    // As overlays can be stacked, count existing overlays
-    const existingOverlays = container.querySelectorAll('.overlay');
     // create overlay
     const overlay = document.createElement('div');
     overlay.classList.add('overlay', `overlay-${this.type}`);
-
-    // assign ID only to the first visible overlay (for Cypress tests)
-    if (existingOverlays.length === 0) {
-      overlay.id = 'overlay'; // cypress target
-    } else {
-      overlay.id = `overlay-${existingOverlays.length + 1}`;
-    }
 
     // create overlay content
     const p = document.createElement('p');
@@ -56,7 +47,6 @@ class Notification {
     p.innerText = this.message;
     // show the overlay
     overlay.appendChild(p);
-    // append overlays to the container
     container.appendChild(overlay);
 
     // error message takes longer to disappear
@@ -64,14 +54,6 @@ class Notification {
     setTimeout(() => {
       $(overlay).fadeOut(763, function() {
         $(this).remove();
-
-        // If this was the overlay with ID "overlay", reassign ID to the next one (if any) to keep chain-removing them
-        if (overlay.id === 'overlay') {
-          const next = container.querySelector('.overlay');
-          if (next) {
-            next.id = 'overlay';
-          }
-        }
       });
     }, fadeOutDelay);
   }

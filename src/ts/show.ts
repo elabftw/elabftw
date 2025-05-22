@@ -556,7 +556,12 @@ document.addEventListener('DOMContentLoaded', () => {
       checked.forEach(chk => {
         results.push(ApiC.patch(`${entity.type}/${chk.id}`, {action: action}));
       });
-      Promise.all(results).then(() => reloadEntitiesShow());
+      ApiC.notifOnSaved = false;
+      Promise.all(results).then(() => {
+        notify.success();
+        reloadEntitiesShow();
+        ApiC.notifOnSaved = true;
+      });
 
     // THE DELETE BUTTON FOR CHECKED BOXES
     } else if (el.matches('[data-action="destroy-selected-entities"]')) {

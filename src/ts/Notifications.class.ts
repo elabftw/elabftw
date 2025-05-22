@@ -32,7 +32,6 @@ export class Notification {
     this.notify(translated, NotificationType.Error);
   }
 
-  // TODO-notifications: see where Warnings could be used instead of Errors. If not relevant, remove.
   public warning(msg: string, options?: I18nOptions): void {
     const translated = i18next.t(msg, options);
     console.warn(translated);
@@ -41,11 +40,10 @@ export class Notification {
 
   // to handle json responses
   public response(json: ResponseMsg): void {
-    if (json.res === true) {
-      this.success(json.msg);
-    } else {
-      this.error(json.msg);
-    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    (json.res === true
+      ? this.success(json.msg)
+      : this.error(json.msg));
   }
 
   private notify(message: string, type: NotificationType): void {

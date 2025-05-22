@@ -11,7 +11,7 @@ import i18next from 'i18next';
 import { Api } from './Apiv2.class';
 import { ValidMetadata, ExtraFieldProperties, ExtraFieldsGroup, ExtraFieldInputType } from './metadataInterfaces';
 import JsonEditorHelper from './JsonEditorHelper.class';
-import { ErrorNotification } from './Notifications.class';
+import { Notification } from './Notifications.class';
 
 export function ResourceNotFoundException(message: string): void {
   this.message = message;
@@ -63,7 +63,7 @@ export class Metadata {
     if (el.dataset.completeTarget === document.getElementById('info').dataset.type
       && parseInt(el.value, 10) === parseInt(document.getElementById('info').dataset.id, 10)
     ) {
-      new ErrorNotification('no-self-links');
+      (new Notification()).error('no-self-links');
       return false;
     }
 

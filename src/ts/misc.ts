@@ -10,7 +10,7 @@ import { Action, CheckableItem, EntityType, Entity, Model, Target } from './inte
 import { DateTime } from 'luxon';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 import tinymce from 'tinymce/tinymce';
-import { ResponseNotification } from './Notifications.class';
+import { Notification } from './Notifications.class';
 import TableSorting from './TableSorting.class';
 declare const MathJax: MathJaxObject;
 import $ from 'jquery';
@@ -223,7 +223,7 @@ export function makeSortableGreatAgain(): void {
         },
         body: JSON.stringify(params),
       }).then(resp => resp.json()).then(json => {
-        new ResponseNotification(json);
+        (new Notification()).response(json);
       });
     },
   });

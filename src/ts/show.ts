@@ -20,7 +20,7 @@ import 'bootstrap/js/src/modal.js';
 import i18next from 'i18next';
 import FavTag from './FavTag.class';
 import { Api } from './Apiv2.class';
-import { ErrorNotification, SuccessNotification } from './Notifications.class';
+import { Notification } from './Notifications.class';
 import { SearchSyntaxHighlighting } from './SearchSyntaxHighlighting.class';
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
@@ -38,6 +38,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // SEARCH RELATED CODE
   const searchInput = document.getElementById('extendedArea') as HTMLInputElement;
   SearchSyntaxHighlighting.init(searchInput);
+
+  const notify = new Notification();
 
   // TomSelect for extra fields search select
   new TomSelect('#metakey', {
@@ -256,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (el.matches('[data-action="export-selected-entities"]')) {
       const checked = getCheckedBoxes();
       if (checked.length === 0) {
-        new ErrorNotification('nothing-selected');
+        notify.error('nothing-selected');
         return;
       }
       const format = el.value;
@@ -352,7 +354,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // get the item id of all checked boxes
       const checked = getCheckedBoxes();
       if (checked.length === 0) {
-        new ErrorNotification('nothing-selected');
+        notify.error('nothing-selected');
         return;
       }
       // display a warning with the number of impacted entries
@@ -390,7 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       // reload the page once it's done
       Promise.all(ajaxs).then(() => {
-        new SuccessNotification('saved');
+        notify.success();
         ApiC.notifOnSaved = true;
         reloadEntitiesShow();
       });
@@ -545,7 +547,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // get the item id of all checked boxes
       const checked = getCheckedBoxes();
       if (checked.length === 0) {
-        new ErrorNotification('nothing-selected');
+        notify.error('nothing-selected');
         return;
       }
       const action = <Action>el.dataset.what;
@@ -561,7 +563,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // get the item id of all checked boxes
       const checked = getCheckedBoxes();
       if (checked.length === 0) {
-        new ErrorNotification('nothing-selected');
+        notify.error('nothing-selected');
         return;
       }
       // ask for confirmation

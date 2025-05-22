@@ -13,7 +13,9 @@ import { getNewIdFromPostRequest, reloadElements } from './misc';
 import { Action, Entity, Model } from './interfaces';
 import { Api } from './Apiv2.class';
 import { ValidMetadata } from './metadataInterfaces';
-import { ErrorNotification, SuccessNotification } from './Notifications.class';
+import { Notification } from './Notifications.class';
+
+const notify = new Notification();
 
 // This class is named helper because the jsoneditor lib already exports JSONEditor
 export default class JsonEditorHelper {
@@ -101,9 +103,9 @@ export default class JsonEditorHelper {
       })
       .catch(e => {
         if (e instanceof SyntaxError) {
-          new ErrorNotification('Invalid JSON Syntax');
+          notify.error('Invalid JSON Syntax');
         } else {
-          new ErrorNotification(`JSON Editor: ${e.message}`);
+          notify.error(`JSON Editor: ${e.message}`);
         }
       });
     // add the filename as a title
@@ -126,7 +128,7 @@ export default class JsonEditorHelper {
     try {
       this.MetadataC.update(this.editor.get());
     } catch (error) {
-      new ErrorNotification('json-editor-error', {error: error.message });
+      notify.error('json-editor-error', {error: error.message });
       console.error(error);
     }
   }
@@ -188,7 +190,7 @@ export default class JsonEditorHelper {
       method: 'POST',
       body: formData,
     });
-    new SuccessNotification('saved');
+    notify.success();
   }
 
   toggleDisplayMainText(): void {

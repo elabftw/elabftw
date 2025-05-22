@@ -18,7 +18,7 @@ import { Api } from './Apiv2.class';
 import i18next from 'i18next';
 import { merge } from 'lodash-es';
 import $ from 'jquery';
-import { ErrorNotification } from './Notifications.class';
+import { Notification } from './Notifications.class';
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
+  const notify = new Notification();
   // add extra fields elements from metadata json
   const JsonEditorHelperC = new JsonEditorHelper(entity);
   // only run if there is the json-editor block
@@ -68,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const extraField = el.parentElement.parentElement.closest('div');
       if (!extraField) {
-        new ErrorNotification('Extra field not found');
+        notify.error('Extra field not found');
         return;
       }
       // store current name as attribute, to use as field's key and update
@@ -278,7 +279,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // SAVE NEW EXTRA FIELD
     if (el.matches('[data-action="save-new-field"]')) {
       if ((document.getElementById('newFieldForm') as HTMLFormElement).reportValidity() === false) {
-        new ErrorNotification('Error validating the form.');
+        notify.error('Error validating the form.');
         return;
       }
 
@@ -363,7 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="edit-extra-field"]')) {
       // prevent form invalid data
       if ((document.getElementById('newFieldForm') as HTMLFormElement).reportValidity() === false) {
-        new ErrorNotification('Error validating the form.');
+        notify.error('Error validating the form.');
         return;
       }
       // get field to update's current value
@@ -556,7 +557,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Check if group exists in metadata
         const groupIndex: number = metadata.elabftw.extra_fields_groups.findIndex(group => group.id === groupId);
         if (groupIndex === -1) {
-          new ErrorNotification('Group not found');
+          notify.error('Group not found');
           return;
         }
 

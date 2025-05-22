@@ -8,7 +8,7 @@
 
 import { Ketcher } from 'ketcher-core';
 import $ from 'jquery';
-import { ErrorNotification } from './Notifications.class';
+import { Notification } from './Notifications.class';
 
 // we add ketcher to window with onInit param during ketcher initialization
 declare global {
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (el.matches('[data-action="search-from-editor"]')) {
       window.ketcher.getSmiles().then(s => {
         if (!s) {
-          new ErrorNotification('Structure not found');
+          (new Notification()).error('Structure not found');
           return;
         }
         const smilesInput = document.getElementById('substructureSearchInput') as HTMLInputElement;

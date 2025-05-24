@@ -8,7 +8,15 @@
  */
 
 import i18next from 'i18next';
-import { I18nOptions, NotificationType, ResponseMsg } from './interfaces';
+import { ResponseMsg } from './interfaces';
+
+enum NotificationType {
+  Error = 'error',
+  Success = 'success',
+  Warning = 'warning'
+}
+
+type I18nOptions = Record<string, string | number | boolean>;
 
 /**
  * Returns an i18n translated string, both single and interpolated.

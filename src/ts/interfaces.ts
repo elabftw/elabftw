@@ -169,14 +169,6 @@ interface Entity {
   id: number;
 }
 
-enum NotificationType {
-  Error = 'error',
-  Success = 'success',
-  Warning = 'warning'
-}
-
-type I18nOptions = Record<string, string | number | boolean>;
-
 export {
   Action,
   Categories,
@@ -184,10 +176,8 @@ export {
   Selected,
   Entity,
   EntityType,
-  I18nOptions,
   Method,
   Model,
-  NotificationType,
   ProcurementState,
   ResponseMsg,
   Target,

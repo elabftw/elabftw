@@ -584,9 +584,10 @@ tr:nth-child(odd) {
   }
 }
 
-/* OVERLAY CONTAINER: allow stacking overlays */
+/* NOTIFICATIONS */
+
+/* container for notifications in top left of screen */
 #overlay-container {
-  min-width: 25%;
   position: fixed;
   top: 10px;
   left: 10px;
@@ -596,7 +597,7 @@ tr:nth-child(odd) {
   z-index: 19850;
 }
 
-/* OVERLAY */
+/* class for a single notification */
 .overlay {
   border-radius: 5px;
   display: flex;

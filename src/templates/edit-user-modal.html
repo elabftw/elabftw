@@ -1,0 +1,88 @@
+{# Modal for editing a single user #}
+<div class='modal fade' id='editUserModal' tabindex='-1' role='dialog' aria-labelledby='editUserModalTitle'>
+  <div class='modal-dialog modal-lg' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='editUserModalTitle'><i class='fas fa-fw fa-pencil'></i> {{ 'Edit user'|trans }}</h5>
+        {# the clear-form action is repeated on the x icon or it would only work when clicking just next to the x, on the button element #}
+        <button type='button' class='close' data-dismiss='modal' data-action='clear-form' data-target='editUserInputs' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true' data-action='clear-form' data-target='editUserInputs'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        <div class='mb-2' id='editUserInputs'>
+          <label for='userInput-id'>{{ 'User ID'|trans }}</label>
+          <input name='userid' class='form-control' id='userInput-userid' readonly disabled />
+          <label for='userInput-firstname'>{{ 'Firstname'|trans }}</label>
+          <input name='firstname' class='form-control' id='userInput-firstname' />
+          <label for='userInput-lastname'>{{ 'Lastname'|trans }}</label>
+          <input name='lastname' class='form-control' id='userInput-lastname' />
+          <label for='userInput-email'>{{ 'Email'|trans }}</label>
+          <input name='email' type='email' class='form-control' id='userInput-email' />
+          <label for='userInput-valid_until'>{{ 'Valid until'|trans }}</label>
+          <input name='valid_until' type='date' class='form-control' id='userInput-valid_until' />
+          <label for='userInput-orgid'>{{ 'Internal ID'|trans }}</label>
+          <input name='orgid' class='form-control' id='userInput-orgid' />
+          <div class='d-flex justify-content-between'>
+            <label for='userInput-is_sysadmin' class='col-form-label'>{{ 'Is Sysadmin'|trans }}</label>
+            <label class='switch ucp-align {{- App.Users.userData.is_sysadmin == 0 ? ' disabled' }}'>
+              <input type='checkbox' id='userInput-is_sysadmin' autocomplete='off' {{ App.Users.userData.is_sysadmin == 0 ? "disabled='disabled'" }} name='is_sysadmin'>
+              <span class='slider'></span>
+            </label>
+          </div>
+        </div>
+
+        <hr>
+        <details id='manageUsers2Teams'>
+          <summary>{{ 'Manage teams for user'|trans }}</summary>
+            <div class='d-flex flex-row flex-wrap' id='manageTeamsDiv'></div>
+            <div id='addTeamDiv'>
+              <span class='px-2 py-1 rounded mr-2 mt-2 btn btn-primary' data-action='toggle-next' data-opened-icon='fa-minus-circle' data-closed-icon='fa-plus-circle'><i class='text-light fas fa-plus-circle'></i> {{ 'Add team'|trans }}</span>
+              <span class='form-group form-inline mt-2' hidden>
+                {# options will be populated by js #}
+                <select class='form-control' id='addTeamSelect'></select>
+                <button type='button' data-action='create-user2team' class='btn btn-primary'>{{ 'Go'|trans }}</button>
+              </span>
+            </div>
+        </details>
+
+        <hr>
+        <details>
+          <summary>{{ 'Set user password'|trans }}</summary>
+          <div class='input-group mb-2' id='resetUserPasswordForm'>
+            <input class='form-control' minlength='{{ App.Config.configArr.min_password_length }}' required name='resetPassword' title='{{ 'Minimum password length: %d.'|trans|format(App.Config.configArr.min_password_length) }}' placeholder='{{ 'Set new password'|trans }}' type='password' id='resetUserPasswordInput_{{ userid }}' autocomplete='new-password' pattern='{{ passwordInputPattern|e('html_attr') }}' />
+            <div class='input-group-append'>
+              <span class='btn btn-light input-border' tabindex='-1' title='{{ 'Toggle visibility'|trans }}' data-action='toggle-password' data-target='resetUserPasswordInput_{{ userid }}'><i class='fas fa-eye' aria-hidden='true'></i></span>
+            </div>
+          </div>
+          <h6>{{ 'Minimum password length'|trans }}</h6>
+          <p class='smallgray'>{{ App.Config.configArr.min_password_length }}</p>
+          <h6>{{ 'Password complexity requirement'|trans }}</h6>
+          <p class='smallgray'>{{ passwordComplexityArr[App.Config.configArr.password_complexity_requirement] }}</p>
+        </details>
+        <hr>
+        {# DISABLE 2FA: only for sysadmin if user has 2fa enabled #}
+        {% if App.Users.userData.is_sysadmin %}
+          <button id='disable2faBtn' type='button' class='btn btn-ghost' data-action='remove-user-2fa'>
+            <i class='fas fa-fw fa-user-shield mr-1'></i>{{ 'Disable 2FA'|trans }}
+          </button>
+          {# ARCHIVE USER #}
+          <button type='button' class='btn btn-ghost' id='toggleArchiveBtn' data-action='toggle-modal' data-target='archiveUserModal'>
+            <i class='fas fa-fw fa-box-archive mr-1'></i>{{ 'Archive user'|trans }}
+          </button>
+          <button type='button' class='btn btn-ghost hover-danger' data-action='destroy-user' data-userid='{{ user.userid }}'>
+            <i class='fas fa-fw fa-trash-alt mr-1'></i>{{ 'Delete user'|trans }}
+          </button>
+        {% endif %}
+        <button type='button' class='btn btn-ghost' data-action='validate-user' data-userid='{{ user.userid }}'>
+          <i class='fas fa-fw fa-check mr-1'></i>{{ 'Validate user'|trans }}
+        </button>
+      </div>
+
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='button' class='btn btn-primary' id='editUserModalSaveBtn' data-action='save-user'>{{ 'Save'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>

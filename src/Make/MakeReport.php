@@ -52,7 +52,7 @@ class MakeReport extends AbstractMakeCsv
 
     protected function readUsers(): array
     {
-        return $this->requester->readFromQuery('', includeArchived: true);
+        return $this->requester->readFromQuery();
     }
 
     /**
@@ -70,11 +70,12 @@ class MakeReport extends AbstractMakeCsv
             'email',
             'has_mfa_enabled',
             'validated',
-            'archived',
             'last_login',
             'valid_until',
             'is_sysadmin',
             'full_name',
+            'initials',
+            'teams_full',
             'team(s)',
             'diskusage_in_bytes',
             'diskusage_formatted',

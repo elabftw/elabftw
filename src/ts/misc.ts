@@ -69,7 +69,11 @@ function triggerHandler(event: Event, el: HTMLInputElement): void {
   }
   if (el.dataset.customAction === 'patch-user2team-is-admin') {
     const group = value === '1' ? 2 : 4;
-    ApiC.patch(`${Model.User}/${el.dataset.userid}`, {action: Action.PatchUser2Team, team: el.dataset.team, target: 'group', content: group, userid: el.dataset.userid}).then(() => reloadElements(['editUsersBox']));
+    ApiC.patch(`${Model.User}/${el.dataset.userid}`, {action: Action.PatchUser2Team, team: el.dataset.team, target: 'is_admin', content: group, userid: el.dataset.userid}).then(() => reloadElements(['editUsersBox']));
+    return;
+  }
+  if (el.dataset.customAction === 'patch-user2team-is-archived') {
+    ApiC.patch(`${Model.User}/${el.dataset.userid}`, {action: Action.PatchUser2Team, team: el.dataset.team, target: 'is_archived', content: value, userid: el.dataset.userid}).then(() => reloadElements(['editUsersBox']));
     return;
   }
   // END CUSTOM ACTIONS
@@ -136,6 +140,7 @@ export function collectForm(form: HTMLElement): object {
   inputs.forEach(input => {
     const el = input;
     if (el.reportValidity() === false) {
+      console.error(el);
       throw new Error('Invalid input found! Aborting.');
     }
     let value = el.value;
@@ -705,6 +710,7 @@ export function sizeToMb(size: string): number {
   return value * units[unit];
 }
 
+
 export function toggleEditCompound(json: object): void {
   const textParams = [
     'id',
@@ -774,4 +780,102 @@ export function mkSpin(el: HTMLElement): string {
 export function mkSpinStop(el: HTMLElement, oldHTML: string): void {
   el.innerHTML = oldHTML;
   el.removeAttribute('disabled');
+}
+export async function populateUserModal(user: Record<string, string|number>) {
+  const ApiC = new Api();
+  const requester = await ApiC.getJson('users/me');
+  const userTeams = JSON.parse(String(user.teams));
+  // manage teams block
+  const manageTeamsDiv = document.getElementById('manageTeamsDiv');
+  // remove previous content
+  manageTeamsDiv.innerHTML = '';
+  userTeams.forEach(team => {
+    const teamBadge = document.createElement('div');
+    teamBadge.classList.add('user-badge', 'm-1');
+    teamBadge.innerText = team.name;
+    // REMOVE TEAM BUTTON
+    // prevent deleting association of the team we are currently logged in, allow it for other users
+    if (team.id !== requester.team || user.userid !== requester.userid) {
+      const removeTeamBtn = document.createElement('span');
+      removeTeamBtn.classList.add('hl-hover-gray', 'p-1', 'rounded', 'clickable', 'm-1');
+      removeTeamBtn.title = i18next.t('delete');
+      removeTeamBtn.dataset.action = 'destroy-user2team';
+      removeTeamBtn.dataset.userid = String(user.userid);
+      removeTeamBtn.dataset.teamid = team.id;
+      const removeTeamIcon = document.createElement('i');
+      removeTeamIcon.classList.add('fas', 'fa-xmark', 'color-blue');
+      removeTeamBtn.appendChild(removeTeamIcon);
+      teamBadge.appendChild(removeTeamBtn);
+    }
+
+    teamBadge.appendChild(generateIsSomethingElement('admin', team, user));
+    teamBadge.appendChild(generateIsSomethingElement('owner', team, user));
+    teamBadge.appendChild(generateIsSomethingElement('archived', team, user));
+
+    manageTeamsDiv.appendChild(teamBadge);
+    listenTrigger(manageTeamsDiv.id);
+  });
+  // add team section
+  // we need to generate the teams that are addable for this user
+  const teams = await ApiC.getJson('teams');
+  const userTeamIds = new Set(userTeams.map(t => t.id));
+  const addTeamSelect = document.getElementById('addTeamSelect');
+  addTeamSelect.innerHTML = '';
+  addTeamSelect.dataset.userid = String(user.userid);
+  const available = teams.filter((team: Record<string, string|number>) => !userTeamIds.has(team.id));
+  available
+    .forEach(({ id, name }) => {
+      const opt = document.createElement('option');
+      opt.value = id;
+      opt.textContent = name;
+      addTeamSelect.appendChild(opt);
+    });
+  // don't show it if empty
+  const addTeamDiv = document.getElementById('addTeamDiv');
+  addTeamDiv.hidden = available.length === 0;
+
+  // actions
+  if (user.has_mfa_enabled === 0) {
+    const disable2faBtn = document.getElementById('disable2faBtn');
+    disable2faBtn.setAttribute('disabled', 'disabled');
+  }
+  const prefix = user.archived === 1 ? 'un' : '';
+  const toggleArchiveBtn = document.getElementById('toggleArchiveBtn');
+  toggleArchiveBtn.innerText = i18next.t(`${prefix}archive-user`);
+  const archiveUserModal = document.getElementById('archiveUserModal');
+  (archiveUserModal.querySelector('.modal-title') as HTMLHeadElement).innerText = i18next.t(`${prefix}archive-user`);
+  const toggleArchiveActionBtn = archiveUserModal.querySelector('[data-action="toggle-archive-user"]') as HTMLButtonElement;
+  toggleArchiveActionBtn.innerText = i18next.t(`${prefix}archive-user`);
+  toggleArchiveActionBtn.dataset.userid = String(user.userid);
+  (archiveUserModal.querySelector('.modal-body p') as HTMLParagraphElement).innerText = i18next.t(`${prefix}archive-user-description`);
+  (document.getElementById('lockSwitchDiv') as HTMLDivElement).hidden = user.archived === 1;
+}
+
+// generate the slider element to toggle isAdmin and isOwner for a given user in a given team
+function generateIsSomethingElement(what: string, team: Record<string, string|number>, user: Record<string, string|number>) {
+  const isSomething = document.createElement('div');
+  isSomething.classList.add('d-flex', 'justify-content-between');
+  const isSomethingLabel = document.createElement('label');
+  isSomethingLabel.htmlFor = `is${what}Team_${team.id}`;
+  isSomethingLabel.classList.add('col-form-label');
+  isSomethingLabel.innerText = i18next.t(`is-${what}`);
+  const isSomethingSwitch = document.createElement('label');
+  isSomethingSwitch.classList.add('switch', 'ucp-align');
+  isSomethingSwitch.id = `is${what}TeamSwitch_${team.id}`;
+  const isSomethingInput = document.createElement('input');
+  isSomethingInput.type = 'checkbox';
+  isSomethingInput.autocomplete = 'off';
+  isSomethingInput.dataset.trigger = 'change';
+  isSomethingInput.dataset.customAction = `patch-user2team-is-${what}`;
+  isSomethingInput.dataset.userid = String(user.userid);
+  isSomethingInput.dataset.team = String(team.id);
+  isSomethingInput.checked = team.is_admin === 1;
+  isSomethingInput.id = `is${what}Team_${team.id}`;
+  const slider = document.createElement('span');
+  slider.classList.add('slider');
+  isSomethingSwitch.appendChild(isSomethingInput);
+  isSomethingSwitch.appendChild(slider);
+  isSomething.appendChild(isSomethingLabel);
+  isSomething.appendChild(isSomethingSwitch);
+  return isSomething;
 }

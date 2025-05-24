@@ -42,6 +42,10 @@ final class Filter
 
     public static function toBinary(string|bool|int $input): int
     {
+        // special case for uncheck checkboxes
+        if ($input === 'off') {
+            return 0;
+        }
         return $input ? 1 : 0;
     }
 

@@ -86,7 +86,6 @@ try {
         $usersArr = $App->Users->readFromQuery(
             $App->Request->query->getString('q'),
             $App->Request->query->getInt('team'),
-            $App->Request->query->getBoolean('includeArchived'),
             $App->Request->query->getBoolean('onlyAdmins'),
             $App->Request->query->getBoolean('onlyArchived'),
         );

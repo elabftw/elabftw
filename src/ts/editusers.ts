@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import i18next from 'i18next';
-import { clearForm, collectForm, reloadElements } from './misc';
+import { clearForm, collectForm, notifError, reloadElements } from './misc';
 import { InputType, Malle } from '@deltablot/malle';
 import { Api } from './Apiv2.class';
 import { Action, Model } from './interfaces';
@@ -70,6 +70,22 @@ document.addEventListener('DOMContentLoaded', () => {
         reloadElements(['editUsersBox']);
       });
 
+    // EDIT USER
+    } else if (el.matches('[data-action="save-user"]')) {
+      try {
+        if (el.dataset.userid) { // edit
+          const form = document.getElementById('editUserInputs');
+          const params = collectForm(form);
+          ApiC.patch(`users/${el.dataset.userid}`, params).then(() => {
+            document.dispatchEvent(new CustomEvent('dataReload'));
+            $('#editUserModal').modal('hide');
+            clearForm(form);
+          });
+        }
+      } catch (err) {
+        notifError(err);
+        return;
+      }
     // CREATE USER(s) FROM REMOTE DIRECTORY
     } else if (el.matches('[data-action="create-user-from-remote"]')) {
       // the users are in a table row, we need to collect all the rows that are selected
@@ -129,10 +145,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // ARCHIVE USER TOGGLE
     } else if (el.matches('[data-action="toggle-archive-user"]')) {
       let lockExp = false;
-      if (document.getElementById(`lockSwitch_${el.dataset.userid}`)) {
-        lockExp = (document.getElementById(`lockSwitch_${el.dataset.userid}`) as HTMLInputElement).checked;
+      if (document.getElementById('lockSwitch')) {
+        lockExp = (document.getElementById('lockSwitch') as HTMLInputElement).checked;
       }
-      ApiC.patch(`users/${el.dataset.userid}`, {action: Action.Archive, with_exp: lockExp}).then(() => reloadElements(['editUsersBox', `archiveUserModal_${el.dataset.userid}`]));
+      ApiC.patch(`users/${el.dataset.userid}`, {action: Action.Archive, with_exp: lockExp}).then(() => reloadElements(['editUsersBox', 'archiveUserModal']));
 
     // VALIDATE USER
     } else if (el.matches('[data-action="validate-user"]')) {

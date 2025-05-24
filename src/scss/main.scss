@@ -1095,7 +1095,7 @@ the form-control fails to do that so we do the border ourselves */
 
 /* background for archived users */
 .bg-medium {
-  background-color: $secondlevel;
+  background-color: $secondlevel !important;
 }
 
 .border-secondlevel {

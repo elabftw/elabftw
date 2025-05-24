@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
-use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 
@@ -48,7 +47,7 @@ class Users2TeamsTest extends \PHPUnit\Framework\TestCase
         // add tata to team alpha
         $this->Users2Teams->addUserToTeams(5, array(1));
         // make tata Admin in Alpha
-        $this->Users2Teams->patchUser2Team(array('userid' => 5, 'team' => 1, 'target' => 'group', 'content' => 2));
+        $this->Users2Teams->patchUser2Team(array('userid' => 5, 'team' => 1, 'target' => 'is_admin', 'content' => 1));
         // and remove tata from team alpha
         $this->Users2Teams->destroy(5, 1);
     }
@@ -58,10 +57,10 @@ class Users2TeamsTest extends \PHPUnit\Framework\TestCase
         $params = array(
             'userid' => 2,
             'team' => 1,
-            'target' => 'group',
-            'content' => Usergroup::User->value,
+            'target' => 'is_admin',
+            'content' => 0,
         );
-        $this->assertEquals(4, $this->Users2Teams->patchUser2Team($params));
+        $this->assertEquals(0, $this->Users2Teams->patchUser2Team($params));
     }
 
     public function testPatchIsOwner(): void
@@ -92,15 +91,15 @@ class Users2TeamsTest extends \PHPUnit\Framework\TestCase
         $this->Users2Teams->patchUser2Team(array(
             'userid' => $newUser,
             'team' => 2,
-            'target' => 'group',
-            'content' => Usergroup::Admin->value,
+            'target' => 'is_admin',
+            'content' => 1,
         ));
         // promote to admin in team 1
-        $this->assertEquals(2, $this->Users2Teams->patchUser2Team(array(
+        $this->assertEquals(1, $this->Users2Teams->patchUser2Team(array(
             'userid' => $newUser,
             'team' => 1,
-            'target' => 'group',
-            'content' => Usergroup::Admin->value,
+            'target' => 'is_admin',
+            'content' => 1,
         )));
         // remove user again
         (new Users($newUser, 1))->destroy();

@@ -62,20 +62,19 @@ final class TeamsHelper
 
     public function isAdmin(int $userid): bool
     {
-        // groups_id is either 2 (admin) or 4 (user)
-        $sql = 'SELECT `groups_id` FROM `users2teams`
+        $sql = 'SELECT `is_admin` FROM `users2teams`
             WHERE `teams_id` = :team
                 AND `users_id` = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
         $this->Db->execute($req);
-        return $req->fetchColumn() === Usergroup::Admin->value;
+        return $req->fetchColumn() === 1;
     }
 
     public function getUserInTeam(int $userid): array
     {
-        $sql = 'SELECT `users_id`, `groups_id` FROM `users2teams` WHERE `teams_id` = :team AND `users_id` = :userid';
+        $sql = 'SELECT `users_id`, `is_admin` FROM `users2teams` WHERE `teams_id` = :team AND `users_id` = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
@@ -86,7 +85,7 @@ final class TeamsHelper
     public function isAdminInTeam(int $userid): bool
     {
         $userInTeam = $this->getUserInTeam($userid);
-        return !empty($userInTeam) && ($userInTeam['groups_id'] <= Usergroup::Admin->value);
+        return !empty($userInTeam) && ($userInTeam['is_admin'] === 1);
     }
 
     public function isUserInTeam(int $userid): bool
@@ -109,17 +108,13 @@ final class TeamsHelper
      */
     public function getAllAdminsUserid(): array
     {
-        $sql = sprintf(
-            'SELECT users_id
+        $sql = 'SELECT users_id
                 FROM users2teams
                 LEFT JOIN users
                     ON (users2teams.users_id = users.userid)
-                WHERE groups_id IN (%d, %d)
+                WHERE is_admin = 1
                     AND users.archived = 0
-                    AND users2teams.teams_id = :team',
-            Usergroup::Sysadmin->value,
-            Usergroup::Admin->value,
-        );
+                    AND users2teams.teams_id = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
         $this->Db->execute($req);

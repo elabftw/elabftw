@@ -27,7 +27,6 @@ use Elabftw\Models\Teams;
 use Elabftw\Services\DummyRemoteDirectory;
 use Elabftw\Services\EairefRemoteDirectory;
 use Elabftw\Services\UploadsChecker;
-use Elabftw\Services\UsersHelper;
 use Exception;
 use GuzzleHttp\Client;
 use PDO;
@@ -37,7 +36,6 @@ use function array_walk;
 
 /**
  * Administrate elabftw install
- *
  */
 require_once 'app/init.inc.php';
 /** @psalm-suppress UncaughtThrowInGlobalScope */
@@ -60,30 +58,6 @@ try {
     $Teams = new Teams($App->Users);
     $teamsArr = $Teams->readAll();
     $Experiments = new Experiments($App->Users);
-
-    // Users search
-    $isSearching = false;
-    $usersArr = array();
-    if ($App->Request->query->has('q')) {
-        $isSearching = true;
-        $usersArr = $App->Users->readFromQuery(
-            $App->Request->query->getString('q'),
-            $App->Request->query->getInt('team'),
-            $App->Request->query->getBoolean('includeArchived'),
-            $App->Request->query->getBoolean('onlyAdmins'),
-        );
-        foreach ($usersArr as &$user) {
-            $UsersHelper = new UsersHelper($user['userid']);
-            $user['teams'] = $UsersHelper->getTeamsFromUserid();
-        }
-        // further filter if userid is present
-        if ($App->Request->query->has('userid')) {
-            $usersArr = array_filter(
-                $usersArr,
-                fn($u): bool => $u['userid'] === $App->Request->query->getInt('userid'),
-            );
-        }
-    }
 
     // Remote directory search
     $remoteDirectoryUsersArr = array();
@@ -143,7 +117,6 @@ try {
         'elabimgVersion' => $elabimgVersion,
         'idpsArr' => $idpsArr,
         'idpsSources' => $idpsSources,
-        'isSearching' => $isSearching,
         'pageTitle' => _('Instance settings'),
         'passwordInputHelp' => $passwordComplexity->toHuman(),
         'passwordInputPattern' => $passwordComplexity->toPattern(),
@@ -156,7 +129,6 @@ try {
         'storageUnitsArr' => $StorageUnits->readAllRecursive(),
         'timestampLastMonth' => $Experiments->getTimestampLastMonth(),
         'uploadsStats' => UploadsChecker::getStats(),
-        'usersArr' => $usersArr,
         'enforceMfaArr' => EnforceMfa::getAssociativeArray(),
         'passwordComplexityArr' => PasswordComplexity::getAssociativeArray(),
     );

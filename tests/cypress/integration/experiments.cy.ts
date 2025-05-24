@@ -25,7 +25,7 @@ describe('Import tab on profile page', () => {
    */
     cy.get('#importFileBtn').should('exist').click();
     //cy.wait('@importController');
-    cy.get('#overlay').should('contain', 'File imported successfully');
+    cy.get('.overlay').first().should('be.visible').should('contain', 'File imported successfully');
     // now CSV
     cy.get('[data-action="show-file-input"]').should('exist').click();
     cy.get('#importFileInput').should('exist').selectFile('tests/_data/importable.csv', { force: true });
@@ -39,6 +39,6 @@ describe('Import tab on profile page', () => {
    */
     cy.get('#importFileBtn').click();
     //cy.wait('@importController');
-    cy.get('#overlay').should('contain', 'File imported successfully');
+    cy.get('.overlay').first().should('be.visible').should('contain', 'File imported successfully');
   });
 });

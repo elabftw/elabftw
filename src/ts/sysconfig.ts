@@ -5,11 +5,12 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { clearForm, collectForm, notif, notifError, reloadElements } from './misc';
+import { clearForm, collectForm, reloadElements } from './misc';
 import { Action, Model } from './interfaces';
 import i18next from 'i18next';
 import tinymce from 'tinymce/tinymce';
 import { getEditor } from './Editor.class';
+import { Notification } from './Notifications.class';
 import Tab from './Tab.class';
 import { Ajax } from './Ajax.class';
 import { Api } from './Apiv2.class';
@@ -24,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const TabMenu = new Tab();
   const AjaxC = new Ajax();
   const ApiC = new Api();
+  const notify = new Notification();
   TabMenu.init(document.querySelector('.tabbed-menu'));
 
   // GET the latest version information
@@ -93,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
           // trigger blur so it is saved if it is a save trigger
           target.dispatchEvent(new Event('blur'));
         } catch (error) {
-          notifError(error);
+          notify.error(error);
         }
       };
     });
@@ -109,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (json.res) {
             reloadElements(['bruteforceDiv']);
           }
-          notif(json);
+          notify.response(json);
         }));
 
     // CREATE TEAM
@@ -252,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         }
       } catch (e) {
-        notifError(e);
+        notify.error(e);
         return;
       }
 
@@ -284,7 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function handleEmailResponse(resp: Response, button: HTMLButtonElement): void {
     resp.json().then(json => {
-      notif(json);
+      notify.response(json);
       if (json.res) {
         button.innerText = 'Sent!';
         button.disabled = false;

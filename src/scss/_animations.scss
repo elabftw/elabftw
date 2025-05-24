@@ -80,6 +80,28 @@
   animation: bounce-right 250ms;
 }
 
+/* OVERLAY notifications animation */
+@keyframes slideInOut {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+
+  10% {
+    transform: translateX(0);
+    opacity: 0.9;
+  }
+
+  90% {
+    transform: translateX(0);
+    opacity: 0.9;
+  }
+
+  100% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
 
 /** small spinner for buttons */
 @keyframes spin {

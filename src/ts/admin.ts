@@ -7,15 +7,12 @@
  */
 import {
   getNewIdFromPostRequest,
-  notif,
-  notifError,
+  mkSpin,
+  mkSpinStop,
+  permissionsToJson,
   reloadElements,
   TomSelect,
   updateCatStat,
-  notifNothingSelected,
-  permissionsToJson,
-  mkSpin,
-  mkSpinStop,
 } from './misc';
 import $ from 'jquery';
 import { Malle } from '@deltablot/malle';
@@ -24,6 +21,7 @@ import { getEditor } from './Editor.class';
 import { Api } from './Apiv2.class';
 import { EntityType, Model, Action, Selected } from './interfaces';
 import tinymce from 'tinymce/tinymce';
+import { Notification } from './Notifications.class';
 import Tab from './Tab.class';
 
 function collectSelectable(name: string): number[] {
@@ -80,7 +78,7 @@ function getRandomColor(): string {
 if (window.location.pathname === '/admin.php') {
 
   const ApiC = new Api();
-
+  const notify = new Notification();
   const TabMenu = new Tab();
   TabMenu.init(document.querySelector('.tabbed-menu'));
 
@@ -139,7 +137,7 @@ if (window.location.pathname === '/admin.php') {
       const btn = el as HTMLButtonElement;
       const selected = getSelected();
       if (!Object.values(selected).some(array => array.length > 0)) {
-        notifNothingSelected();
+        notify.error('nothing-selected');
         return;
       }
       const oldHTML = mkSpin(btn);
@@ -148,7 +146,7 @@ if (window.location.pathname === '/admin.php') {
       ApiC.notifOnSaved = false;
       ApiC.post('batch', selected).then(res => {
         const processed = res.headers.get('location').split('/').pop();
-        notif({res: true, msg: `${processed} entries processed`});
+        notify.success(`${processed} entries processed`);
       }).finally(() => {
         mkSpinStop(btn, oldHTML);
       });
@@ -180,7 +178,7 @@ if (window.location.pathname === '/admin.php') {
     } else if (el.matches('[data-action="adduser-teamgroup"]')) {
       const user = parseInt(el.parentNode.parentNode.querySelector('input').value, 10);
       if (isNaN(user)) {
-        notifError(new Error('Use the autocompletion menu to add users.'));
+        notify.error('Use the autocompletion menu to add users.');
         return;
       }
       ApiC.patch(
@@ -204,7 +202,7 @@ if (window.location.pathname === '/admin.php') {
       const nameInput = (holder.querySelector('input[type="text"]') as HTMLInputElement);
       const name = nameInput.value;
       if (!name) {
-        notifError(new Error('Invalid status name'));
+        notify.error('Invalid status name.');
         // set the border in red to bring attention
         nameInput.style.borderColor = 'red';
         return;
@@ -293,7 +291,7 @@ if (window.location.pathname === '/admin.php') {
           .map(option => parseInt(option.value, 10)),
       }).then(response => {
         if (response.ok) {
-          notif({'res': true, 'msg': i18next.t('onboarding-email-sent')});
+          notify.success('onboarding-email-sent');
         }
       });
     }

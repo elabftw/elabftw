@@ -10,8 +10,6 @@ import {
   collectForm,
   getCheckedBoxes,
   getEntity,
-  notifNothingSelected,
-  notif,
   permissionsToJson,
   reloadElements,
   reloadEntitiesShow,
@@ -22,6 +20,7 @@ import 'bootstrap/js/src/modal.js';
 import i18next from 'i18next';
 import FavTag from './FavTag.class';
 import { Api } from './Apiv2.class';
+import { Notification } from './Notifications.class';
 import { SearchSyntaxHighlighting } from './SearchSyntaxHighlighting.class';
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
@@ -39,6 +38,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // SEARCH RELATED CODE
   const searchInput = document.getElementById('extendedArea') as HTMLInputElement;
   SearchSyntaxHighlighting.init(searchInput);
+
+  const notify = new Notification();
 
   // TomSelect for extra fields search select
   new TomSelect('#metakey', {
@@ -257,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (el.matches('[data-action="export-selected-entities"]')) {
       const checked = getCheckedBoxes();
       if (checked.length === 0) {
-        notifNothingSelected();
+        notify.error('nothing-selected');
         return;
       }
       const format = el.value;
@@ -353,7 +354,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // get the item id of all checked boxes
       const checked = getCheckedBoxes();
       if (checked.length === 0) {
-        notifNothingSelected();
+        notify.error('nothing-selected');
         return;
       }
       // display a warning with the number of impacted entries
@@ -391,7 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       // reload the page once it's done
       Promise.all(ajaxs).then(() => {
-        notif({msg: i18next.t('saved'), res: true});
+        notify.success();
         ApiC.notifOnSaved = true;
         reloadEntitiesShow();
       });
@@ -546,7 +547,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // get the item id of all checked boxes
       const checked = getCheckedBoxes();
       if (checked.length === 0) {
-        notifNothingSelected();
+        notify.error('nothing-selected');
         return;
       }
       const action = <Action>el.dataset.what;
@@ -555,14 +556,19 @@ document.addEventListener('DOMContentLoaded', () => {
       checked.forEach(chk => {
         results.push(ApiC.patch(`${entity.type}/${chk.id}`, {action: action}));
       });
-      Promise.all(results).then(() => reloadEntitiesShow());
+      ApiC.notifOnSaved = false;
+      Promise.all(results).then(() => {
+        notify.success();
+        reloadEntitiesShow();
+        ApiC.notifOnSaved = true;
+      });
 
     // THE DELETE BUTTON FOR CHECKED BOXES
     } else if (el.matches('[data-action="destroy-selected-entities"]')) {
       // get the item id of all checked boxes
       const checked = getCheckedBoxes();
       if (checked.length === 0) {
-        notifNothingSelected();
+        notify.error('nothing-selected');
         return;
       }
       // ask for confirmation

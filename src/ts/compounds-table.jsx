@@ -17,7 +17,7 @@ import '@ag-grid-community/styles/ag-theme-alpine.css';
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Api } from './Apiv2.class';
-import { notifError, toggleEditCompound } from './misc';
+import { toggleEditCompound } from './misc';
 import i18next from 'i18next';
 
 const ApiC = new Api();
@@ -114,8 +114,7 @@ if (document.getElementById('compounds-table')) {
         const compounds = await ApiC.getJson(`compounds?limit=999999${searchString}${deletedParam}`);
         setRowData(compounds);
       } catch (error) {
-        notifError(error);
-        console.error(`Could not load compounds: ${error}`);
+        (new Notifications()).error(error);
       }
     };
 

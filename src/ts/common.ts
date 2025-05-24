@@ -20,7 +20,6 @@ import {
   makeSortableGreatAgain,
   mkSpin,
   mkSpinStop,
-  notifError,
   permissionsToJson,
   relativeMoment,
   reloadElements,
@@ -52,6 +51,7 @@ import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.ru.js';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.sl.js';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.sv.js';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.zh.js';
+import { Notification } from './Notifications.class';
 import TableSorting from './TableSorting.class';
 import { KeyboardShortcuts } from './KeyboardShortcuts.class';
 import JsonEditorHelper from './JsonEditorHelper.class';
@@ -78,6 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const ApiC = new Api();
+  const notify = new Notification();
 
   const TableSortingC = new TableSorting();
   TableSortingC.init();
@@ -465,7 +466,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const addUserPermissionsInput = (document.getElementById(`${el.dataset.identifier}_select_users`) as HTMLInputElement);
       const userid = parseInt(addUserPermissionsInput.value, 10);
       if (isNaN(userid)) {
-        notifError(new Error('Use the autocompletion menu to add users.'));
+        notify.error('Use the autocompletion menu to add users.');
         return;
       }
       const userName = addUserPermissionsInput.value.split(' - ')[1];
@@ -620,7 +621,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Execute all POST calls and reload elements after all are resolved
       Promise.all(postCalls)
         .then(() => reloadElements(['storageDivContent']))
-        .catch((error) => notifError(error));
+        .catch((error) => notify.error(error));
 
     } else if (el.matches('[data-action="destroy-container"]')) {
       const entity = getEntity();
@@ -675,7 +676,7 @@ document.addEventListener('DOMContentLoaded', () => {
         importBtn.dataset.cid = json.cid;
       }).catch(err => {
         console.error(err);
-        notifError(new Error(i18next.t('resource-not-found')));
+        notify.error('resource-not-found');
       }).finally(() => {
         mkSpinStop(el, elOldHTML);
       });
@@ -741,7 +742,7 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         }
       } catch (err) {
-        notifError(err);
+        notify.error(err);
         return;
       }
     // DELETE SELECTED COMPOUNDS

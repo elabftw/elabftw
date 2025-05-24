@@ -43,6 +43,7 @@ final class CommentCreated extends AbstractNotifications implements MailableInte
         return array(
             'subject' => _('New comment posted'),
             'body' => $body,
+            'replyTo' => $commenter->userData['email'],
         );
     }
 

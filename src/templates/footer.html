@@ -33,8 +33,8 @@
 
   <p class='footer-right'>
     {{ 'Powered by'|trans }}
-    <a href='https://www.elabftw.net'>eLabFTW</a> {% if App.Session.has('is_auth') %}<a href="{{ App.getWhatsnewLink(constant('Elabftw\\Elabftw\\App::INSTALLED_VERSION_INT')) }}">{{ constant('Elabftw\\Elabftw\\App::INSTALLED_VERSION') }}</a>{% endif %}<br>
-    Made with ♥ by <a href='https://www.deltablot.com'>Deltablot</a>
+    <a href='https://www.elabftw.net' target='_blank' rel='noopener'>eLabFTW</a> {% if App.Session.has('is_auth') %}<a href="{{ App.getWhatsnewLink(constant('Elabftw\\Elabftw\\App::INSTALLED_VERSION_INT')) }}" target='_blank' rel='noopener'>{{ constant('Elabftw\\Elabftw\\App::INSTALLED_VERSION') }}</a>{% endif %}<br>
+    Made with ♥ by <a href='https://www.deltablot.com' target='_blank' rel='noopener'>Deltablot</a>
     {% if App.Config.configArr.debug %}
       <br>{{ 'Page generated in' }} {{ generationTime() }} {{ 'seconds'|trans }}
       ({{ numberOfQueries() }} SQL)
@@ -92,6 +92,8 @@
   {# this is here for the heartbeat #}
   <div id='is-auth'></div>
 {% endif %}
+
+{% include 'about-elabftw-modal.html' %}
 
 {# Modal for policies #}
 <div class='modal fade' id='policiesModal' tabindex='-1' role='dialog' aria-labelledby='policiesModalLabel'>

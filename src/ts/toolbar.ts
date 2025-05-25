@@ -8,7 +8,6 @@
 import {
   getEntity,
   getNewIdFromPostRequest,
-  notifError,
   relativeMoment,
   reloadElements,
 } from './misc';
@@ -16,6 +15,7 @@ import { Api } from './Apiv2.class';
 import i18next from 'i18next';
 import $ from 'jquery';
 import { Action, Model } from './interfaces';
+import { Notification } from './Notifications.class';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const entity = getEntity();
   const ApiC = new Api();
+  const notify = new Notification();
 
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {
@@ -74,8 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.Timestamp}).then(() => {
         reloadElements(['requestActionsDiv', 'isTimestampedByInfoDiv']);
       }).catch(error => {
-        console.error(error.message);
-        notifError(error);
+        notify.error(error);
       });
 
     // BLOXBERG
@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const qty = parseInt(input.value, 10);
       // sanity check
       if (qty < 1) {
-        notifError(new Error('Invalid quantity!'));
+        notify.error('Invalid quantity');
         return;
       }
       ApiC.post(`${Model.Team}/current/procurement_requests`, {entity_id: entity.id, qty_ordered: qty});

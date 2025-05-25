@@ -584,20 +584,31 @@ tr:nth-child(odd) {
   }
 }
 
-/* OVERLAY */
+/* NOTIFICATIONS */
+
+/* container for notifications in top left of screen */
+#overlay-container {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 19850;
+}
+
+/* class for a single notification */
 .overlay {
   border-radius: 5px;
   display: flex;
-  left: 10px;
   line-height: 50px;
   opacity: 0.9;
   padding: 0 10px;
-  position: fixed;
-  top: 10px;
   // keep this above 1200 for tinymce fullscreen mode
   // see #2419
   // and over 15000 for open vector editor fullscreen mode
   z-index: 19850;
+  animation: slideInOut 3.5s ease-in-out forwards;
 }
 
 .overlay p {
@@ -606,14 +617,21 @@ tr:nth-child(odd) {
   vertical-align: middle;
 }
 
-.overlay-ok {
+.overlay-success {
   background-color: $elabblue;
 }
 
-.overlay-ko,
-.overlay-ko p {
+.overlay-error {
   background-color: $lightred;
-  color: #000;
+}
+
+.overlay-warning {
+  background-color: $warningbg;
+}
+
+.overlay-error p,
+.overlay-warning p {
+  color: $strongest;
 }
 
 .opacity-8 {

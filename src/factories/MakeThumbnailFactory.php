@@ -37,10 +37,11 @@ final class MakeThumbnailFactory
             'application/postscript',
             'image/gif',
             'image/heic',
+            'image/heif',
             'image/tiff',
             'image/x-eps' => new MakeThumbnailFromFirstFrame($mime, $filePath, $longName, $storageFs),
-            'image/png',
             'image/jpeg',
+            'image/png',
             'image/svg+xml' => new MakeThumbnail($mime, $filePath, $longName, $storageFs),
             default => new MakeNullThumbnail($mime, $filePath, $longName, $storageFs),
         };

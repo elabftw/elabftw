@@ -16,6 +16,8 @@ use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Override;
 
+use function is_string;
+
 /**
  * An entity like Templates or ItemsTypes. Template as opposed to Concrete: Experiments and Items
  */
@@ -24,6 +26,11 @@ abstract class AbstractTemplateEntity extends AbstractEntity
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
+        // force tags to be an array
+        $tags = $reqBody['tags'] ?? null;
+        if (is_string($tags)) {
+            $tags = array($tags);
+        }
         return match ($action) {
             Action::Create => $this->create(
                 title: $reqBody['title'] ?? null,
@@ -33,7 +40,7 @@ abstract class AbstractTemplateEntity extends AbstractEntity
                 canreadIsImmutable: (bool) ($reqBody['canread_is_immutable'] ?? false),
                 canwrite: $reqBody['canwrite'] ?? null,
                 canwriteIsImmutable: (bool) ($reqBody['canwrite_is_immutable'] ?? false),
-                tags: $reqBody['tags'] ?? array(),
+                tags: $tags ?? array(),
                 category: $reqBody['category'] ?? null,
                 status: $reqBody['status'] ?? null,
                 metadata: $reqBody['metadata'] ?? null,

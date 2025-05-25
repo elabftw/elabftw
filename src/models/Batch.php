@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\FilterableColumn;
+use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Params\DisplayParams;
@@ -76,8 +77,8 @@ final class Batch extends AbstractRest
 
     private function processTags(array $tags, AbstractConcreteEntity $model, Action $action, array $params): void
     {
-        $Tags2Entity = new Tags2Entity($model->entityType);
-        $targetIds = $Tags2Entity->getEntitiesIdFromTags('id', $tags);
+        $Tags2Entity = new Tags2Entity($this->requester, $model->entityType);
+        $targetIds = $Tags2Entity->getEntitiesIdFromTags('id', $tags, Scope::Team);
         // Format tags as associative array to be processed the same way as other entries
         $tagEntries = array_map(fn($id) => array('id' => $id), $targetIds);
         $this->loopOverEntries($tagEntries, $model, $action, $params);

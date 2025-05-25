@@ -11,13 +11,13 @@ describe('Experiments', () => {
     cy.intercept('PATCH', `/api/v2/${endpoint}/**`).as('apiPATCH');
     cy.get('#date_input').type('2021-05-01').blur();
     cy.wait('@apiPATCH');
-    cy.get('#overlay').should('be.visible').should('contain', 'Saved');
+    cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
 
     // create Tag
     cy.intercept('POST', `/api/v2/${endpoint}/**`).as('apiPOST');
     cy.get('#createTagInput').type('some tag').blur();
     cy.wait('@apiPOST');
-    cy.get('#overlay').should('be.visible').should('contain', 'Saved');
+    cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
     cy.get('div.tags').contains('some tag').should('exist');
 
     // delete tag
@@ -103,7 +103,7 @@ describe('Experiments', () => {
     // change status
     cy.get('#status_select').select('Success').blur();
     cy.wait('@apiPATCH');
-    cy.get('#overlay').should('be.visible').should('contain', 'Saved');
+    cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
     entityComment();
     entityDuplicate();
     entityDestroy();
@@ -120,7 +120,7 @@ describe('Experiments', () => {
     cy.wait('@apiGET');
     entityEdit(endpoint);
     cy.get('#category_select').select('Plasmid').blur();
-    cy.get('#overlay').should('be.visible').should('contain', 'Saved');
+    cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
     entityComment();
     entityDuplicate();
     entityDestroy();

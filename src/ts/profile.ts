@@ -6,8 +6,9 @@
  * @package elabftw
  */
 import { Api } from './Apiv2.class';
+import { Notification } from './Notifications.class';
 import Tab from './Tab.class';
-import { collectForm, relativeMoment, reloadElements, notif, notifError } from './misc';
+import { collectForm, relativeMoment, reloadElements } from './misc';
 import i18next from 'i18next';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -16,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const ApiC = new Api();
-
+  const notify = new Notification();
   const TabMenu = new Tab();
   TabMenu.init(document.querySelector('.tabbed-menu'));
 
@@ -106,14 +107,13 @@ document.addEventListener('DOMContentLoaded', () => {
       body: formData,
     }).then(async response => {
       if (response.status === 201) {
-        notif({msg: 'File imported successfully', res: true});
+        notify.success('File imported successfully');
       } else {
         const msg = await response.text();
-        notifError(new Error('Import error: ' + msg));
-        console.error(msg);
+        notify.error(`Import error: ${msg}`);
       }
     }).catch(error => {
-      notifError(new Error('Import error: ' + error.message));
+      notify.error(`Import error: ${error.message}`);
     }).finally(() => {
       submitBtn.removeAttribute('disabled');
       submitBtn.textContent = originalBtnContent;

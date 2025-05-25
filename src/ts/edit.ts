@@ -9,7 +9,6 @@ import {
   escapeRegExp,
   getEntity,
   getNewIdFromPostRequest,
-  notifError,
   reloadElements,
   updateCatStat,
   updateEntityBody,
@@ -18,8 +17,8 @@ import { Target, Model, Action } from './interfaces';
 import './doodle';
 import { getEditor } from './Editor.class';
 import $ from 'jquery';
-import i18next from 'i18next';
 import { Api } from './Apiv2.class';
+import { Notification } from './Notifications.class';
 import { Uploader } from './uploader';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -85,7 +84,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       // fetch the category from the current value of select, as it might be different from the one on page load
       const category = (document.getElementById('category_select') as HTMLSelectElement).value;
       if (category === '0') {
-        notifError(new Error(i18next.t('error-no-category')));
+        (new Notification()).error('error-no-category');
         return;
       }
       const inputEl = document.getElementById('custom_id_input') as HTMLInputElement;

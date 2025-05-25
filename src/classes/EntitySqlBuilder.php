@@ -430,8 +430,7 @@ class EntitySqlBuilder
             ON (users.userid = entity.userid)';
         $this->joinsSql[] = sprintf(
             'LEFT JOIN users2teams
-                ON (users2teams.users_id = users.userid
-                    AND users2teams.teams_id = %d)
+                ON (users2teams.teams_id = %d)
             LEFT JOIN teams ON (entity.team = teams.id)',
             $this->entity->Users->team ?? 0,
         );

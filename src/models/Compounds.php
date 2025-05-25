@@ -443,6 +443,10 @@ final class Compounds extends AbstractRest
         $this->setId($id);
         $this->update(new CompoundParams('state', State::Normal->value));
         foreach ($compoundData as $key => $value) {
+            if ($value === true) {
+                // because the getContent of compoundParam will use onToBinary
+                $value = 'on';
+            }
             // without this try catch, sql fails on updating the unique columns with an empty value since it causes many rows with ''.
             try {
                 $this->update(new CompoundParams($key, $value));

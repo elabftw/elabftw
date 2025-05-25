@@ -47,6 +47,7 @@ final class ActionRequested extends AbstractNotifications implements MailableInt
         return array(
             'subject' => _('Action requested'),
             'body' => $body,
+            'replyTo' => $this->requester->userData['email'],
         );
     }
 

@@ -83,7 +83,7 @@
               <div class='dropdown-menu'>
                 <a class='dropdown-item' href='compounds.php'><i class='fas fa-flask fa-fw'></i>{{ 'Compounds'|trans }}</a>
                 <a class='dropdown-item' href='chem-editor.php'><i class='fas fa-pen-to-square fa-fw'></i> {{ 'Chemical Structure Editor'|trans }}</a>
-                <a class='dropdown-item' href='syc.php'><i class='fas fa-dna fa-fw'></i> {{ 'DNA Cloning'|trans }}</a>
+                <a class='dropdown-item {{ not App.Config.boolFromEnv('USE_OPENCLONING') ? 'disabled' }}' href='syc.php'><i class='fas fa-dna fa-fw'></i> {{ 'DNA Cloning'|trans }}</a>
                 <a class='dropdown-item' href='inventory.php'><i class='fas fa-warehouse fa-fw'></i> {{ 'Inventory'|trans }}</a>
               </div>
             </div>
@@ -122,6 +122,8 @@
             <div class='dropdown-divider'></div>
             <a class='dropdown-item' href='https://github.com/elabftw/elabftw/issues/new/choose' target='_blank' rel='noopener'><i class='fas fa-bug fa-fw'></i> {{ 'Submit feedback'|trans }}</a>
             <a class='dropdown-item' href='https://doc.elabftw.net/contributing.html' target='_blank' rel='noopener'><i class='fas fa-handshake-angle fa-fw'></i> {{ 'Contribute to eLabFTW'|trans }}</a>
+            <div class='dropdown-divider'></div>
+            <a class='dropdown-item' data-action='toggle-modal' data-target='aboutElabftwModal'><i class='fas fa-circle-info fa-fw'></i> {{ 'About eLabFTW'|trans }}</a>
           </div>
         </div>
 

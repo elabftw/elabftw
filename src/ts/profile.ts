@@ -109,6 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (response.status === 201) {
         notify.success('file-imported');
       } else {
+        const msg = await response.text();
         // notify for information, but the error is shown in the console only (heavy html template).
         notify.error('import-error');
         console.error(msg);

@@ -79,7 +79,7 @@ if (window.location.pathname === '/ucp.php') {
       const nameInput = (document.getElementById('apikeyName') as HTMLInputElement);
       const content = nameInput.value;
       if (!content) {
-        (new Notification()).error('Please check required fields.');
+        (new Notification()).error('check-required');
         // set the border in red to bring attention
         nameInput.style.borderColor = 'red';
         return;

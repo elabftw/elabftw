@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (el.matches('[data-action="search-from-editor"]')) {
       window.ketcher.getSmiles().then(s => {
         if (!s) {
-          (new Notification()).error('Structure not found');
+          (new Notification()).error('not-found');
           return;
         }
         const smilesInput = document.getElementById('substructureSearchInput') as HTMLInputElement;

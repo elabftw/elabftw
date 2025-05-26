@@ -103,9 +103,9 @@ export default class JsonEditorHelper {
       })
       .catch(e => {
         if (e instanceof SyntaxError) {
-          notify.error('Invalid JSON Syntax');
+          notify.error('invalid-info');
         } else {
-          notify.error(`JSON Editor: ${e.message}`);
+          notify.error(e.message);
         }
       });
     // add the filename as a title
@@ -128,8 +128,7 @@ export default class JsonEditorHelper {
     try {
       this.MetadataC.update(this.editor.get());
     } catch (error) {
-      notify.error('json-editor-error', {error: error.message });
-      console.error(error);
+      notify.error(error);
     }
   }
 

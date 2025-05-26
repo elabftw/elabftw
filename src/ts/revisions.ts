@@ -8,8 +8,8 @@
 
 import { Api } from './Apiv2.class';
 import { Action } from './interfaces';
-import { notifError } from './misc';
 import DiffMatchPatch from 'diff-match-patch';
+import { Notification } from './Notifications.class';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('info')) {
@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="compare-revisions"]')) {
       const checkedBoxes = getCheckedBoxes();
       if (checkedBoxes.length !== 2) {
-        notifError(new Error('Select two revisions to compare them.'));
+        (new Notification()).error('Select two revisions to compare them.');
         return;
       }
       const dmp = new DiffMatchPatch();

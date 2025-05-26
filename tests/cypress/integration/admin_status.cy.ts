@@ -13,7 +13,7 @@ describe('Status in admin panel', () => {
     cy.get('#createexperiments_statusName').wait(500).type(newname);
     cy.get('[data-action="create-statuslike"]').filter(':visible').click();
     // need to wait for it to appear
-    cy.get('#overlay').should('be.visible').should('contain', 'Saved').wait(400);
+    cy.get('.overlay').first().should('be.visible').should('contain', 'Saved').wait(400);
     cy.get('[data-action="destroy-catstat"][data-target="experiments_status"]').then(allBtn => {
       const elementWithHighestDataId = Array.from(allBtn).reduce((prev, current) => {
         const prevDataId = parseInt(prev.dataset.id);

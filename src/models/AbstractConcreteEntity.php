@@ -50,6 +50,7 @@ use Symfony\Component\HttpFoundation\Request;
 use ZipArchive;
 use Override;
 
+use function is_string;
 use function json_decode;
 use function ksort;
 use function sprintf;
@@ -71,6 +72,11 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         if (!empty($reqBody['metadata'])) {
             $metadata = json_encode($reqBody['metadata'], JSON_THROW_ON_ERROR);
         }
+        // force tags to be an array
+        $tags = $reqBody['tags'] ?? null;
+        if (is_string($tags)) {
+            $tags = array($tags);
+        }
         return match ($action) {
             Action::Create => $this->create(
                 // the category_id is there for backward compatibility (changed in 5.1)
@@ -81,7 +87,7 @@ abstract class AbstractConcreteEntity extends AbstractEntity
                 canwrite: $reqBody['canwrite'] ?? null,
                 canreadIsImmutable: (bool) ($reqBody['canread_is_immutable'] ?? false),
                 canwriteIsImmutable: (bool) ($reqBody['canwrite_is_immutable'] ?? false),
-                tags: $reqBody['tags'] ?? array(),
+                tags: $tags ?? array(),
                 category: $category,
                 status: $status,
                 metadata: $metadata,

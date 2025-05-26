@@ -6,10 +6,11 @@
  * @package elabftw
  */
 import 'jquery-ui/ui/widgets/sortable';
-import { Action, CheckableItem, ResponseMsg, EntityType, Entity, Model, Target } from './interfaces';
+import { Action, CheckableItem, EntityType, Entity, Model, Target } from './interfaces';
 import { DateTime } from 'luxon';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 import tinymce from 'tinymce/tinymce';
+import { Notification } from './Notifications.class';
 import TableSorting from './TableSorting.class';
 declare const MathJax: MathJaxObject;
 import $ from 'jquery';
@@ -197,50 +198,6 @@ export function getEntity(): Entity {
     id: entityId,
   };
 }
-export function notifError(e): void {
-  return notif({'res': false, 'msg': e.name + ': ' + e.message});
-}
-
-export function notifSaved(): void {
-  return notif({'res': true, 'msg': i18next.t('saved')});
-}
-
-// PUT A NOTIFICATION IN TOP LEFT WINDOW CORNER
-export function notif(info: ResponseMsg): void {
-  // clear an existing one
-  if (document.getElementById('overlay')) {
-    document.getElementById('overlay').remove();
-  }
-
-  const p = document.createElement('p');
-  // "status" role: see WCAG2.1 4.1.3
-  p.role = 'status';
-  p.innerText = info.msg;
-  const overlay = document.createElement('div');
-  overlay.id = 'overlay';
-  overlay.classList.add('overlay');
-  overlay.classList.add(`overlay-${info.res ? 'ok' : 'ko'}`);
-  // show the overlay
-  document.body.appendChild(overlay);
-  // add text inside
-  document.getElementById('overlay').appendChild(p);
-  // error message takes longer to disappear
-  const fadeOutDelay = info.res ? 2733 : 4871;
-  // wait a bit and make it disappear
-  window.setTimeout(function() {
-    $('#overlay').fadeOut(763, function() {
-      $(this).remove();
-    });
-  }, fadeOutDelay);
-}
-
-// insert a get param in the url and reload the page
-export function insertParamAndReload(key: string, value: string): void {
-  const params = new URLSearchParams(document.location.search.slice(1));
-  params.set(key, value);
-  // reload the page
-  document.location.search = params.toString();
-}
 
 // SORTABLE ELEMENTS
 export function makeSortableGreatAgain(): void {
@@ -271,19 +228,11 @@ export function makeSortableGreatAgain(): void {
         },
         body: JSON.stringify(params),
       }).then(resp => resp.json()).then(json => {
-        notif(json);
+        (new Notification()).response(json);
       });
     },
   });
 }
-
-export function notifNothingSelected(): void {
-  notif({
-    msg: i18next.t('nothing-selected'),
-    res: false,
-  });
-}
-
 
 export function getCheckedBoxes(): Array<CheckableItem> {
   const checkedBoxes = [];
@@ -303,10 +252,6 @@ export async function reloadEntitiesShow(tag = ''): Promise<void | Response> {
   const html = await fetchCurrentPage(tag);
   // reload items
   document.getElementById('showModeContent').innerHTML = html.getElementById('showModeContent').innerHTML;
-  // also reload any pinned entities present
-  if (document.getElementById('pinned-entities')) {
-    document.getElementById('pinned-entities').innerHTML = html.getElementById('pinned-entities').innerHTML;
-  }
   // ask mathjax to reparse the page
   MathJax.typeset();
   // rebind autocomplete for links input

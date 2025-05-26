@@ -16,9 +16,10 @@ declare global {
 import '@teselagen/ove';
 import '@teselagen/ove/style.css';
 import { anyToJson } from '@teselagen/bio-parsers';
-import { notif, reloadElements } from './misc';
+import { reloadElements } from './misc';
 import { Action, Model } from './interfaces';
 import { Api } from './Apiv2.class';
+import { Notification } from './Notifications.class';
 
 // DISPLAY Plasmids FILES
 export function displayPlasmidViewer(about: DOMStringMap): void {
@@ -67,9 +68,8 @@ export function displayPlasmidViewer(about: DOMStringMap): void {
       }
 
       if (parsedData[0].success === false) {
-        const msg = 'Invalid DNA data in file ' + realName;
-        notif({res: false, msg: msg});
-        throw msg;
+        const notif = new Notification();
+        notif.error(`Invalid DNA data in file: ${realName}`);
       }
 
       const parsedSequence = parsedData[0].parsedSequence;

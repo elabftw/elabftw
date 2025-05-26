@@ -28,6 +28,12 @@ require_once 'app/init.inc.php';
 $Response = new Response();
 $Response->prepare($Request);
 $template = 'error.html';
+if (!$App->Config->boolFromEnv('USE_OPENCLONING')) {
+    $renderArr = array('error' => 'OpenCloning is disabled on this instance!');
+    $Response->setContent($App->render($template, $renderArr));
+    $Response->send();
+    exit;
+}
 
 try {
     $Controller = new SycController($App);

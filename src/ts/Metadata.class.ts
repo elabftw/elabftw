@@ -6,11 +6,12 @@
  * @package elabftw
  */
 import { Action, Entity, EntityType } from './interfaces';
-import { adjustHiddenState, makeSortableGreatAgain, notifError, reloadElements, replaceWithTitle } from './misc';
+import { adjustHiddenState, makeSortableGreatAgain, reloadElements, replaceWithTitle } from './misc';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
 import { ValidMetadata, ExtraFieldProperties, ExtraFieldsGroup, ExtraFieldInputType } from './metadataInterfaces';
 import JsonEditorHelper from './JsonEditorHelper.class';
+import { Notification } from './Notifications.class';
 
 export function ResourceNotFoundException(message: string): void {
   this.message = message;
@@ -62,7 +63,7 @@ export class Metadata {
     if (el.dataset.completeTarget === document.getElementById('info').dataset.type
       && parseInt(el.value, 10) === parseInt(document.getElementById('info').dataset.id, 10)
     ) {
-      notifError(new Error(i18next.t('no-self-links')));
+      (new Notification()).error('no-self-links');
       return false;
     }
 

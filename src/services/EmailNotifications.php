@@ -54,12 +54,17 @@ class EmailNotifications
             $email = $Factory->getMailable()->getEmail();
             $cc = array_key_exists('cc', $email) ? $email['cc'] : null;
             $htmlBody = array_key_exists('htmlBody', $email) ? (string) $email['htmlBody'] : null;
+            $replyTo = null;
+            if (isset($email['replyTo'])) {
+                $replyTo = new Address($email['replyTo']);
+            }
             $isEmailSent = $this->emailService->sendEmail(
                 $to,
                 self::BASE_SUBJECT . $email['subject'],
                 $email['body'],
                 $cc,
                 $htmlBody,
+                replyTo: $replyTo,
             );
             if ($isEmailSent) {
                 $this->setEmailSent($notif['id']);

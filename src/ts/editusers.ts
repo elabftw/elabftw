@@ -6,11 +6,12 @@
  * @package elabftw
  */
 import i18next from 'i18next';
-import { clearForm, collectForm, notifError, reloadElements } from './misc';
+import { clearForm, collectForm, reloadElements } from './misc';
 import { InputType, Malle } from '@deltablot/malle';
 import { Api } from './Apiv2.class';
 import { Action, Model } from './interfaces';
 import $ from 'jquery';
+import { Notification } from './Notifications.class';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!['/sysconfig.php', '/admin.php'].includes(window.location.pathname)) {
@@ -83,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         }
       } catch (err) {
-        notifError(err);
+        (new Notification()).error('Something went wrong: ', {err});
         return;
       }
     // CREATE USER(s) FROM REMOTE DIRECTORY

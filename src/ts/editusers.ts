@@ -11,7 +11,7 @@ import { InputType, Malle } from '@deltablot/malle';
 import { Api } from './Apiv2.class';
 import { Action, Model } from './interfaces';
 import $ from 'jquery';
-import { Notification } from "./Notifications.class";
+import { Notification } from './Notifications.class';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!['/sysconfig.php', '/admin.php'].includes(window.location.pathname)) {

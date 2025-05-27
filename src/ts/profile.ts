@@ -28,19 +28,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const attachedFile = document.getElementById('attachedFile') as HTMLElement;
     attachedFile.removeAttribute('hidden');
     const input = event.target as HTMLInputElement;
-    const errorDivId = input.id + '_errorDiv';
-    // make sure previous error message is removed first
-    document.getElementById(errorDivId)?.remove();
     // display the selected file name on screen
     const fileName = input.files[0]?.name || '';
-    document.getElementById('fileName').textContent = fileName;
+    const fileNameDiv = document.getElementById('fileName');
+    fileNameDiv.textContent = fileName;
+    // make sure previous error message is removed first
+    fileNameDiv.classList.remove('alert-danger', 'm-2', 'p-2', 'rounded', 'border');
     const maxsize = await ApiC.getJson('import').then(json => json.max_filesize);
     if (input.files[0].size > maxsize) {
-      const errorDiv = document.createElement('div');
-      errorDiv.classList.add('alert-danger', 'm-2', 'p-2', 'rounded', 'border');
-      errorDiv.id = errorDivId;
-      errorDiv.innerText = 'Error: file is too large!';
-      input.parentNode.appendChild(errorDiv);
+      notify.error('file-too-large');
+      fileNameDiv.classList.add('alert-danger', 'm-2', 'p-2', 'rounded', 'border');
     }
     // toggle the eln/csv options depending on file extension
     const isEln = input.files[0].name.endsWith('.eln');

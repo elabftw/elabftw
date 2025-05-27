@@ -247,10 +247,6 @@ export async function reloadEntitiesShow(tag = ''): Promise<void | Response> {
   const html = await fetchCurrentPage(tag);
   // reload items
   document.getElementById('showModeContent').innerHTML = html.getElementById('showModeContent').innerHTML;
-  // also reload any pinned entities present
-  if (document.getElementById('pinned-entities')) {
-    document.getElementById('pinned-entities').innerHTML = html.getElementById('pinned-entities').innerHTML;
-  }
   // ask mathjax to reparse the page
   MathJax.typeset();
   // rebind autocomplete for links input

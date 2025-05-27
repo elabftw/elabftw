@@ -33,10 +33,10 @@ export class Notification {
     this.notify(translated, NotificationType.Success);
   }
 
-  // display the notification & log in the console for debugging.
-  public error(msg: string, options?: I18nOptions): void {
-    const translated = i18next.t(msg, options);
-    console.error(translated);
+  // log the error in console and show a translated readable notification.
+  public error(msg: string|Error, options?: I18nOptions): void {
+    console.error(msg);
+    const translated = i18next.t(String(msg), options);
     this.notify(translated, NotificationType.Error);
   }
 

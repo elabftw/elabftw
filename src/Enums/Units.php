@@ -14,7 +14,9 @@ namespace Elabftw\Enums;
 
 enum Units: string
 {
+    case Bar = 'bar';
     case Unit = '•';
+    case Metre = 'm';
     case MicroLiter = 'μL';
     case MilliLiter = 'mL';
     case Liter = 'L';

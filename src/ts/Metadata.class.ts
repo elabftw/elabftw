@@ -375,11 +375,10 @@ export class Metadata {
       for (const unit of properties.units) {
         const optionEl = document.createElement('option');
         optionEl.text = unit;
-        if (properties.unit === unit) {
-          optionEl.setAttribute('selected', '');
-        }
         unitsSel.add(optionEl);
       }
+      // if no default unit is set, auto-select first option. See #5680
+      unitsSel.value = properties.unit || properties.units[0];
       unitsSel.classList.add('form-control', 'brl-none');
       // add this so we can differentiate the change event from the main input
       unitsSel.dataset.units = '1';

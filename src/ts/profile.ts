@@ -21,10 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const TabMenu = new Tab();
   TabMenu.init(document.querySelector('.tabbed-menu'));
 
-  // when the file is selected, check for its size, so we can display an error before submit
   document.getElementById('importFileInput')?.addEventListener('change', async function(event) {
     const importOptionsDiv = document.getElementById('importOptionsDiv') as HTMLElement;
-    importOptionsDiv.removeAttribute('hidden');
     const attachedFile = document.getElementById('attachedFile') as HTMLElement;
     attachedFile.removeAttribute('hidden');
     const input = event.target as HTMLInputElement;
@@ -34,11 +32,15 @@ document.addEventListener('DOMContentLoaded', () => {
     fileNameDiv.textContent = fileName;
     // make sure previous error message is removed first
     fileNameDiv.classList.remove('alert-danger', 'm-2', 'p-2', 'rounded', 'border');
+    // when the file is selected, validate the file size before showing options or proceeding
     const maxsize = await ApiC.getJson('import').then(json => json.max_filesize);
     if (input.files[0].size > maxsize) {
       notify.error('file-too-large');
       fileNameDiv.classList.add('alert-danger', 'm-2', 'p-2', 'rounded', 'border');
+      importOptionsDiv.setAttribute('hidden', 'hidden');
+      return;
     }
+    importOptionsDiv.removeAttribute('hidden');
     // toggle the eln/csv options depending on file extension
     const isEln = input.files[0].name.endsWith('.eln');
     document.querySelectorAll('[data-showif="eln"]')

@@ -141,6 +141,8 @@ document.addEventListener('DOMContentLoaded', () => {
           toggleContentDiv('checkbox');
           const checkboxSelect = document.getElementById('newFieldCheckboxDefaultSelect') as HTMLSelectElement;
           checkboxSelect.value = fieldData.value === 'on' ? 'checked' : 'unchecked';
+        } else if (fieldType === ExtraFieldInputType.Text) {
+          toggleContentDiv('text');
         } else {
           // Default handling for simple text-based inputs
           const fieldValueInput = document.getElementById('newFieldValueInput') as HTMLInputElement;
@@ -198,7 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   function toggleContentDiv(key: string) {
-    const keys = ['classic', 'selectradio', 'checkbox', 'number'];
+    const keys = ['classic', 'selectradio', 'checkbox', 'number', 'text'];
     document.getElementById('newFieldContentDiv_' + key).toggleAttribute('hidden', false);
     // remove the shown one from the list and hide all others
     keys.filter(k => k !== key).forEach(k => {

@@ -213,6 +213,13 @@ select.form-control {
   z-index: 3;
 }
 
+/* metadata textarea fields */
+.form-textarea {
+  min-height: 60px;
+  overflow: hidden;
+  resize: vertical;
+}
+
 /* fix bootstrap setting it to nowrap, it results in long content making the whole thing super wide */
 .dropdown-item.wrap {
   white-space: normal;

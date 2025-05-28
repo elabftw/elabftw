@@ -5,12 +5,12 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { Action, Entity, EntityType } from './interfaces';
-import { adjustHiddenState, makeSortableGreatAgain, reloadElements, replaceWithTitle } from './misc';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
-import { ValidMetadata, ExtraFieldProperties, ExtraFieldsGroup, ExtraFieldInputType } from './metadataInterfaces';
+import { Action, Entity, EntityType } from './interfaces';
 import JsonEditorHelper from './JsonEditorHelper.class';
+import { ExtraFieldInputType, ExtraFieldProperties, ExtraFieldsGroup, ValidMetadata } from './metadataInterfaces';
+import { adjustHiddenState, makeSortableGreatAgain, reloadElements, replaceWithTitle } from './misc';
 import { Notification } from './Notifications.class';
 
 export function ResourceNotFoundException(message: string): void {
@@ -120,6 +120,31 @@ export class Metadata {
     return this.api.patch(`${this.entity.type}/${this.entity.id}`, {'metadata': JSON.stringify(metadata)});
   }
 
+  /**
+   * Build text areas for default extra field types
+   */
+  buildTextArea(properties: ExtraFieldProperties): Element {
+    const element = document.createElement('textarea');
+
+    // style it to look like an input & reset height
+    element.classList.add('form-control', 'form-textarea');
+    element.rows = 1;
+    element.style.height = `${element.scrollHeight}px`;
+
+    // dynamic height on input
+    element.addEventListener('input', () => {
+      element.style.height = `${element.scrollHeight}px`; // Adjust to content
+    });
+
+    // set initial value and trigger auto-resize
+    if (properties.value) {
+      element.value = properties.value as string;
+      element.dispatchEvent(new Event('input'));
+    }
+
+    element.addEventListener('change', this, false);
+    return element;
+  }
   /**
    * For radio we need a special build workflow
    */
@@ -262,11 +287,16 @@ export class Metadata {
         element.add(optionEl);
       }
       break;
+    case ExtraFieldInputType.Experiments:
+    case ExtraFieldInputType.Items:
+    case ExtraFieldInputType.Users:
+      element = document.createElement('input');
+      element.type = 'text';
+      break;
     case ExtraFieldInputType.Radio:
       return this.buildRadio(name, properties);
     default:
-      element = document.createElement('input');
-      element.type = 'text';
+      return this.buildTextArea(properties);
     }
 
     // add the unique id to the element
@@ -573,7 +603,7 @@ export class Metadata {
             badge.classList.add('badge', 'badge-pill', 'badge-light', 'mr-3');
             // define input type for badge (sometimes it's input (text, url) sometimes it's an input-group (datetime, search user/experiment etc.)
             let inputType;
-            if (element.element.tagName === 'INPUT' || element.element.tagName === 'SELECT') {
+            if (element.element.tagName === 'INPUT' || element.element.tagName === 'SELECT' || element.element.tagName === 'TEXTAREA') {
               inputType = element.element.type;
             } else if (element.element.classList.contains('input-group')) {
               // find the first input element within the input group

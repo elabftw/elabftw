@@ -127,7 +127,7 @@ export class Metadata {
   }
 
   /**
-   * Build text areas for default extra field types
+   * Build text areas for extra fields (default type)
    */
   buildTextArea(name, properties: ExtraFieldProperties): Element {
     const element = document.createElement('textarea');
@@ -139,15 +139,13 @@ export class Metadata {
     // dynamic height on input
     element.addEventListener('input', () => autoResize(element));
 
-    // resize after rendering — ensures proper height on page load
+    // resize after rendering: ensures proper height on page load
     requestAnimationFrame(() => autoResize(element));
 
-    // set initial value and trigger auto-resize
     if (properties.value) {
       element.value = properties.value as string;
     }
     element.dataset.field = name;
-
     element.addEventListener('change', this, false);
     return element;
   }

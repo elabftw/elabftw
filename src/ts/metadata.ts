@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
           checkboxSelect.value = fieldData.value === 'on' ? 'checked' : 'unchecked';
         } else if (fieldType === ExtraFieldInputType.Text) {
           toggleContentDiv('text');
-          // todo-metadata: non-blocking - update textArea size on page load (for edit). see autoResize() in Metadata.class.ts doesn't work here
+          // todo-metadata: non-blocking - update textArea size on page load (for edit). see autoResize() in Metadata.class.ts. Works on page load but not on building the modal for editing
           const fieldValueTextArea = document.getElementById('newFieldValueTextArea') as HTMLTextAreaElement;
           fieldValueTextArea.value = fieldData.value || '';
         } else {

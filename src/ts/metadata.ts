@@ -143,6 +143,9 @@ document.addEventListener('DOMContentLoaded', () => {
           checkboxSelect.value = fieldData.value === 'on' ? 'checked' : 'unchecked';
         } else if (fieldType === ExtraFieldInputType.Text) {
           toggleContentDiv('text');
+          // todo-metadata: non-blocking - update textArea size on page load (for edit). see autoResize() in Metadata.class.ts doesn't work here
+          const fieldValueTextArea = document.getElementById('newFieldValueTextArea') as HTMLTextAreaElement;
+          fieldValueTextArea.value = fieldData.value || '';
         } else {
           // Default handling for simple text-based inputs
           const fieldValueInput = document.getElementById('newFieldValueInput') as HTMLInputElement;
@@ -301,7 +304,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const field = {};
         field['type'] = (document.getElementById('newFieldTypeSelect') as HTMLSelectElement).value;
         let fieldValue: string;
-        if (['text', 'date', 'datetime-local', 'email', 'time', 'url'].includes(field['type'])) {
+        if (field['type'] === ExtraFieldInputType.Text) {
+          fieldValue = (document.getElementById('newFieldValueTextArea') as HTMLTextAreaElement).value.trim();
+        } else if (['date', 'datetime-local', 'email', 'time', 'url'].includes(field['type'])) {
           fieldValue = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();
         } else if (['select', 'radio'].includes(field['type'])) {
           field['options'] = [];
@@ -395,7 +400,10 @@ document.addEventListener('DOMContentLoaded', () => {
           field['description'] = fieldDescriptionInput.value.trim();
         }
         // handle values depending on type
-        if (['text', 'date', 'datetime-local', 'email', 'time', 'url'].includes(field['type'])) {
+        if (field['type'] === ExtraFieldInputType.Text) {
+          const textAreaField = (document.getElementById('newFieldValueTextArea') as HTMLTextAreaElement);
+          field['value'] = textAreaField.value.trim();
+        } else if (['date', 'datetime-local', 'email', 'time', 'url'].includes(field['type'])) {
           field['value'] = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();
         } else if (['select', 'radio'].includes(field['type'])) {
           field['options'] = [];

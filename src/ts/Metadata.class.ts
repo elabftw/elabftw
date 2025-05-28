@@ -18,6 +18,12 @@ export function ResourceNotFoundException(message: string): void {
   this.name = 'ResourceNotFoundException';
 }
 
+// Auto-resize the textarea to prevent hidden lines on page load
+export function autoResize(element: HTMLElement): void {
+  element.style.height = 'auto';
+  element.style.height = `${element.scrollHeight}px`;
+}
+
 export class Metadata {
   entity: Entity;
   editor: JsonEditorHelper;
@@ -129,23 +135,23 @@ export class Metadata {
     // style it to look like an input & reset height
     element.classList.add('form-control', 'form-textarea');
     element.rows = 1;
-    element.style.height = `${element.scrollHeight}px`;
 
     // dynamic height on input
-    element.addEventListener('input', () => {
-      element.style.height = `${element.scrollHeight}px`; // Adjust to content
-    });
+    element.addEventListener('input', () => autoResize(element));
+
+    // resize after rendering — ensures proper height on page load
+    requestAnimationFrame(() => autoResize(element));
 
     // set initial value and trigger auto-resize
     if (properties.value) {
       element.value = properties.value as string;
-      element.dispatchEvent(new Event('input'));
     }
     element.dataset.field = name;
 
     element.addEventListener('change', this, false);
     return element;
   }
+
   /**
    * For radio we need a special build workflow
    */

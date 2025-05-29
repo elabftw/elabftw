@@ -466,7 +466,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const addUserPermissionsInput = (document.getElementById(`${el.dataset.identifier}_select_users`) as HTMLInputElement);
       const userid = parseInt(addUserPermissionsInput.value, 10);
       if (isNaN(userid)) {
-        notify.error('Use the autocompletion menu to add users.');
+        notify.error('add-user-error');
         return;
       }
       const userName = addUserPermissionsInput.value.split(' - ')[1];
@@ -873,18 +873,8 @@ document.addEventListener('DOMContentLoaded', () => {
       window.setTimeout(function() {
         el.innerHTML = previousHTML;
       }, 1337);
-      el.innerText = 'Copied!';
+      el.innerText = i18next.t('copied');
 
-    // CHECK MAX SIZE
-    } else if (el.matches('[data-action="check-max-size"]')) {
-      const input = document.getElementById(el.dataset.input) as HTMLInputElement;
-      // file.size from input will be in bytes, maxsize will be in Mb
-      const maxsize = parseInt(el.dataset.maxsize, 10) * 1024 * 1024;
-      if (input.files[0].size > maxsize) {
-        document.getElementById('errorHolder').innerText = 'Error: file is too large!';
-        // prevent the form from being submitted
-        event.preventDefault();
-      }
     // REMOVE COMPOUND LINK
     } else if (el.matches('[data-action="delete-compoundlink"]')) {
       const entity = getEntity();

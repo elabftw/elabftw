@@ -116,7 +116,7 @@ final class Filter
     {
         // if the sent email is different from the existing one, check it's valid (not duplicate and respects domain constraint)
         $Config = Config::getConfig();
-        $EmailValidator = new EmailValidator($input, $Config->configArr['email_domain']);
+        $EmailValidator = new EmailValidator($input, (bool) $Config->configArr['admins_import_users'], $Config->configArr['email_domain']);
         return $EmailValidator->validate();
     }
 

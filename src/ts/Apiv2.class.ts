@@ -50,7 +50,7 @@ export class Api {
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
     }).catch(error => {
-      console.error('Error fetching the file:', error);
+      notify.error('error-fetch-request', { error });
     });
   }
 

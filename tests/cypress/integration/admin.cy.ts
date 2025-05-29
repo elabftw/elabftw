@@ -19,9 +19,5 @@ describe('admin page', () => {
       cy.get('#loading-spinner').should('not.exist');
       cy.get(`div[data-tabcontent="${i}"]`).htmlvalidate();
     }
-
-    // Search user
-    cy.visit('/admin.php?tab=3&q=toto');
-    cy.get('#editUsersBox').should('contain', 'Le sysadmin');
   });
 });

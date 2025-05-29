@@ -28,7 +28,7 @@ final class EmailValidator
 
     private Db $Db;
 
-    public function __construct(private string $email, ?string $emailDomain = null)
+    public function __construct(private string $email, private bool $adminsImportUsers = false, ?string $emailDomain = null)
     {
         // if it's an empty string, make it null
         if ($emailDomain === '') {
@@ -42,7 +42,12 @@ final class EmailValidator
     {
         $this->basicCheck();
         if ($this->isDuplicateEmail()) {
-            throw new ImproperActionException(_('Someone is already using that email address!'));
+            // error message will be different depending on the setting of "Allow admins to import users"
+            $msg = _('An active account already exists with this email. Use the Sysconfig Panel to add user to the requested team.');
+            if ($this->adminsImportUsers) {
+                $msg = _('An active account already exists with this email. Search for user in the input above without a team filter and use "Add to team" action to add the user to your team.');
+            }
+            throw new ImproperActionException($msg);
         }
         $this->validateDomain();
         return $this->email;

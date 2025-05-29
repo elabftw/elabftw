@@ -44,7 +44,11 @@ final class MakeEln extends AbstractMakeEln
     public function getStreamZip(): void
     {
         foreach ($this->entityArr as $entity) {
-            $this->processEntity($entity);
+            try {
+                $this->processEntity($entity);
+            } catch (IllegalActionException) {
+                continue;
+            }
         }
         // add the description of root with hasPart property
         $this->dataEntities[] = array(

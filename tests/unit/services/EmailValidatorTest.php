@@ -37,14 +37,14 @@ class EmailValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function testForbiddenDomain(): void
     {
-        $EmailValidator = new EmailValidator('yolololol@yopmail.com', 'example.org');
+        $EmailValidator = new EmailValidator('yolololol@yopmail.com', false, 'example.org');
         $this->expectException(ImproperActionException::class);
         $EmailValidator->validate();
     }
 
     public function testAllowedDomain(): void
     {
-        $EmailValidator = new EmailValidator('yolololol@yopmail.com', 'yopmail.com');
+        $EmailValidator = new EmailValidator('yolololol@yopmail.com', false, 'yopmail.com');
         $EmailValidator->validate();
     }
 }

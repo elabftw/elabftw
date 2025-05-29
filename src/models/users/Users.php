@@ -98,7 +98,7 @@ class Users extends AbstractRest
         $teams = $Teams->getTeamsFromIdOrNameOrOrgidArray($teams, $allowTeamCreation);
         $TeamsHelper = new TeamsHelper($teams[0]['id']);
 
-        $EmailValidator = new EmailValidator($email, $Config->configArr['email_domain']);
+        $EmailValidator = new EmailValidator($email, (bool) $Config->configArr['admins_import_users'], $Config->configArr['email_domain']);
         $EmailValidator->validate();
 
         $firstname = trim($firstname);

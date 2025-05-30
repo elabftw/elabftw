@@ -447,9 +447,9 @@ button:disabled {
   }
 
   th {
-    border-top: 0;
     white-space: nowrap;
-    border-top: 1px solid $firstlevel;
+    /* border-bottom is being overwritten by a 2px solid #dee2e6 that's nowhere to be found */
+    border-bottom: 1px solid $firstlevel !important;
 
     &:not(:last-child) {
       border-right: $firstlevel 1px solid;
@@ -468,6 +468,11 @@ tr:nth-child(even) {
 
 tr:nth-child(odd) {
   background-color: $mainbackground;
+}
+
+/* the first row does not need a border-top */
+tr:first-child td {
+  border-top-width: 0;
 }
 
 /* responsive tables, with a threshold width pretty high */

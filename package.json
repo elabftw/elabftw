@@ -54,14 +54,14 @@
     "process": "^0.11.10",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "sass": "^1.86.3",
+    "sass": "^1.89.0",
     "terser-webpack-plugin": "^5.3.14",
     "tinymce": "^6.8.6",
     "tom-select": "^2.4.3",
     "ts-loader": "^9.5.2",
-    "typescript": "5.8.2",
+    "typescript": "5.8.3",
     "util": "^0.12.5",
-    "webpack": "^5.98.0",
+    "webpack": "^5.99.9",
     "webpack-cli": "^6.0.1"
   },
   "resolutions": {
@@ -94,7 +94,7 @@
     "postcss": "^8.5.3",
     "postcss-scss": "^4.0.9",
     "sass-loader": "^16.0.5",
-    "stylelint": "^16.17.0",
+    "stylelint": "^16.20.0",
     "stylelint-config-sass-guidelines": "^12.1.0",
     "webpack-bundle-analyzer": "^4.10.2"
   },

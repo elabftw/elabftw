@@ -1334,18 +1334,18 @@ paths:
                 type: string
   # COMPOUND
   /compounds/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: ID of the compound
+        required: true
+        schema:
+          type: integer
     get:
       tags: ['Compounds']
       summary: Get a single compound
       description: Retrieve one compound by its ID
       operationId: get-compound
-      parameters:
-        - name: id
-          in: path
-          description: ID of the compound
-          required: true
-          schema:
-            type: integer
       responses:
         '200':
           description: A single compound

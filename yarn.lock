@@ -6084,7 +6084,7 @@ __metadata:
     stylelint: "npm:^16.17.0"
     stylelint-config-sass-guidelines: "npm:^12.1.0"
     terser-webpack-plugin: "npm:^5.3.14"
-    tinymce: "npm:^6.8.5"
+    tinymce: "npm:^6.8.6"
     tom-select: "npm:^2.4.3"
     ts-loader: "npm:^9.5.2"
     typescript: "npm:5.8.2"
@@ -12855,10 +12855,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tinymce@npm:^6.8.5":
-  version: 6.8.5
-  resolution: "tinymce@npm:6.8.5"
-  checksum: 10c0/8c273b1ee321080dc8684d433ad6e8b10870032347d56768a2feb533a4d6a43c51ce44feb7707a4d195ddaafe329c4ec7690f0aebcc8b37faf19a99f739b227d
+"tinymce@npm:^6.8.6":
+  version: 6.8.6
+  resolution: "tinymce@npm:6.8.6"
+  checksum: 10c0/69d48677366fa95dc7126f8474db92f2903ebc8b1f287541ac0c3a19e9fcd0eee8515278d6424a4a4c9fb7e6313de985c00dc37fcaa01ae676139634d793e2ee
   languageName: node
   linkType: hard
 

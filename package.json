@@ -56,7 +56,7 @@
     "react-dom": "^18.3.1",
     "sass": "^1.86.3",
     "terser-webpack-plugin": "^5.3.14",
-    "tinymce": "^6.8.5",
+    "tinymce": "^6.8.6",
     "tom-select": "^2.4.3",
     "ts-loader": "^9.5.2",
     "typescript": "5.8.2",

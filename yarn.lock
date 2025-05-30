@@ -6060,7 +6060,7 @@ __metadata:
     ketcher-react: "npm:^3.0.1"
     lodash-es: "npm:^4.17.21"
     luxon: "npm:^3.6.1"
-    marked: "npm:^15.0.7"
+    marked: "npm:^15.0.12"
     mathjax-full: "npm:^3.2.2"
     mini-css-extract-plugin: "npm:^2.9.2"
     peggy: "npm:^3.0.2"
@@ -8627,12 +8627,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"marked@npm:^15.0.7":
-  version: 15.0.7
-  resolution: "marked@npm:15.0.7"
+"marked@npm:^15.0.12":
+  version: 15.0.12
+  resolution: "marked@npm:15.0.12"
   bin:
     marked: bin/marked.js
-  checksum: 10c0/0b9d07bace37bbf0548bae356c4184765afa4d2296ed0be4418aa4bb0ce703f323dc1a475125d536581f9fe264797e6265dd0b57499d97c0fe0f29bc6d016343
+  checksum: 10c0/e09da211544b787ecfb25fed07af206060bf7cd6d9de6cb123f15c496a57f83b7aabea93340aaa94dae9c94e097ae129377cad6310abc16009590972e85f4212
   languageName: node
   linkType: hard
 

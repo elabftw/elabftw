@@ -44,7 +44,7 @@
     "ketcher-react": "^3.0.1",
     "lodash-es": "^4.17.21",
     "luxon": "^3.6.1",
-    "marked": "^15.0.7",
+    "marked": "^15.0.12",
     "mathjax-full": "^3.2.2",
     "mini-css-extract-plugin": "^2.9.2",
     "peggy": "^3.0.2",

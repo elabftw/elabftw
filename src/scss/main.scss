@@ -412,6 +412,10 @@ button:disabled {
 }
 
 .table {
+  /* display borders correctly, keeps cells flush without extra spacing. See #5681  */
+  border-collapse: separate;
+  border-spacing: 0;
+
   thead {
     position: sticky;
     top: 0;
@@ -445,6 +449,7 @@ button:disabled {
   th {
     border-top: 0;
     white-space: nowrap;
+    border-top: 1px solid $firstlevel;
 
     &:not(:last-child) {
       border-right: $firstlevel 1px solid;

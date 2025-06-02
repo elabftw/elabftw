@@ -425,6 +425,9 @@ button:disabled {
     &.with-top {
       border-top: 1px solid $firstlevel;
     }
+    th {
+      border-bottom: $firstlevel 1px solid;
+    }
   }
 
   tbody {
@@ -448,8 +451,6 @@ button:disabled {
 
   th {
     white-space: nowrap;
-    /* border-bottom is being overwritten by a 2px solid #dee2e6 that's nowhere to be found */
-    border-bottom: 1px solid $firstlevel !important;
 
     &:not(:last-child) {
       border-right: $firstlevel 1px solid;

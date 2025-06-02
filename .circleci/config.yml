@@ -56,11 +56,20 @@ jobs:
             printf "ELABFTW_USER=nginx\nELABFTW_GROUP=nginx\nELABFTW_USERID=101\nELABFTW_GROUPID=101\n" > tests/elabftw-user.env
             docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
       - run:
+          name: tmp cache delete
+          command: docker exec -it elabtmp rm -rf /root/.yarn/berry/cache/
+      - run:
           name: Install JS dependencies
           command: docker exec -it elabtmp yarn install --silent --immutable
       - run:
+          name: tmp cache delete
+          command: docker exec -it elabtmp rm -rf /root/.yarn/berry/cache/
+      - run:
           name: Build all
           command: docker exec -it elabtmp yarn buildall:dev
+      - run:
+          name: tmp cache delete
+          command: docker exec -it elabtmp rm -rf /root/.yarn/berry/cache/
       - run:
           name: Run SCSS linter
           command: docker exec -it elabtmp yarn csslint

@@ -141,15 +141,10 @@ document.addEventListener('DOMContentLoaded', () => {
           toggleContentDiv('checkbox');
           const checkboxSelect = document.getElementById('newFieldCheckboxDefaultSelect') as HTMLSelectElement;
           checkboxSelect.value = fieldData.value === 'on' ? 'checked' : 'unchecked';
-        } else if (fieldType === ExtraFieldInputType.Text) {
-          toggleContentDiv('text');
-          const fieldValueTextArea = document.getElementById('newFieldValueTextArea') as HTMLTextAreaElement;
-          fieldValueTextArea.value = fieldData.value || '';
         } else {
           // Default handling for simple text-based inputs
-          const fieldValueInput = document.getElementById('newFieldValueInput') as HTMLInputElement;
-          fieldValueInput.value = fieldData.value || '';
-          fieldValueInput.type = fieldType;
+          const fieldValueTextArea = document.getElementById('newFieldValueTextArea') as HTMLTextAreaElement;
+          fieldValueTextArea.value = fieldData.value || '';
         }
 
         fieldGroupSelect.value = fieldData.group_id ?? '-1';
@@ -188,12 +183,12 @@ document.addEventListener('DOMContentLoaded', () => {
       editButton.setAttribute('hidden', 'hidden');
       saveButton.removeAttribute('hidden');
     }
-    // reset all input fields except classic text (default)
-    document.querySelectorAll('[id^="newFieldContentDiv_"]:not([id="newFieldContentDiv_classic"])')
+    // reset all input fields except default (text)
+    document.querySelectorAll('[id^="newFieldContentDiv_"]:not([id="newFieldContentDiv_text"])')
       .forEach(div => {
         (div as HTMLDivElement).hidden = true;
       });
-    document.getElementById('newFieldContentDiv_classic').hidden = false;
+    document.getElementById('newFieldContentDiv_text').hidden = false;
     multiSelectDiv.setAttribute('hidden', 'hidden');
     clearForm();
   });
@@ -201,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
   addAutocompleteToExtraFieldsKeyInputs();
 
   function toggleContentDiv(key: string) {
-    const keys = ['classic', 'selectradio', 'checkbox', 'number', 'text'];
+    const keys = ['text', 'classic', 'selectradio', 'checkbox', 'number'];
     document.getElementById('newFieldContentDiv_' + key).toggleAttribute('hidden', false);
     // remove the shown one from the list and hide all others
     keys.filter(k => k !== key).forEach(k => {
@@ -449,7 +444,6 @@ document.addEventListener('DOMContentLoaded', () => {
         json['extra_fields'][newFieldKey] = field;
 
         MetadataC.update(json as ValidMetadata).then(() => {
-          clearForm();
           $('#fieldBuilderModal').modal('toggle');
         });
       });

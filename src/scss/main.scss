@@ -216,7 +216,7 @@ select.form-control {
 /* textarea for metadata (extra fields) */
 /* default size same as other inputs to keep harmony */
 .form-textarea {
-  min-height: 38px;
+  min-height: 2rem;
   overflow: auto;
   resize: vertical;
 }

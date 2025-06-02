@@ -10,7 +10,7 @@ import {
   addAutocompleteToExtraFieldsKeyInputs,
   normalizeFieldName,
 } from './misc';
-import { Metadata } from './Metadata.class';
+import { autoResize, Metadata } from './Metadata.class';
 import { ValidMetadata, ExtraFieldInputType } from './metadataInterfaces';
 import JsonEditorHelper from './JsonEditorHelper.class';
 import { JsonEditorActions } from './JsonEditorActions.class';
@@ -143,7 +143,6 @@ document.addEventListener('DOMContentLoaded', () => {
           checkboxSelect.value = fieldData.value === 'on' ? 'checked' : 'unchecked';
         } else if (fieldType === ExtraFieldInputType.Text) {
           toggleContentDiv('text');
-          // todo-metadata: non-blocking - update textArea size on page load (for edit). see autoResize() in Metadata.class.ts. Works on page load but not on building the modal for editing
           const fieldValueTextArea = document.getElementById('newFieldValueTextArea') as HTMLTextAreaElement;
           fieldValueTextArea.value = fieldData.value || '';
         } else {
@@ -201,7 +200,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   addAutocompleteToExtraFieldsKeyInputs();
 
-
   function toggleContentDiv(key: string) {
     const keys = ['classic', 'selectradio', 'checkbox', 'number', 'text'];
     document.getElementById('newFieldContentDiv_' + key).toggleAttribute('hidden', false);
@@ -218,7 +216,6 @@ document.addEventListener('DOMContentLoaded', () => {
     multiSelectDiv.setAttribute('hidden', 'hidden');
 
     switch (fieldType as ExtraFieldInputType) {
-    case ExtraFieldInputType.Text:
     case ExtraFieldInputType.Date:
     case ExtraFieldInputType.DateTime:
     case ExtraFieldInputType.Email:
@@ -237,8 +234,9 @@ document.addEventListener('DOMContentLoaded', () => {
     case ExtraFieldInputType.Radio:
       toggleContentDiv('selectradio');
       break;
-    case ExtraFieldInputType.Number:
     case ExtraFieldInputType.Checkbox:
+    case ExtraFieldInputType.Number:
+    case ExtraFieldInputType.Text:
       toggleContentDiv(fieldType);
       break;
     default:
@@ -281,6 +279,11 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('fieldBuilderModal').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
     const grpSel = (document.getElementById('newFieldGroupSelect') as HTMLSelectElement);
+    // adapt textarea size to text to prevent missing existing content
+    const textAreaField = (document.getElementById('newFieldValueTextArea') as HTMLTextAreaElement);
+    if (textAreaField) {
+      requestAnimationFrame(() => autoResize(textAreaField));
+    }
     // SAVE NEW EXTRA FIELD
     if (el.matches('[data-action="save-new-field"]')) {
       if ((document.getElementById('newFieldForm') as HTMLFormElement).reportValidity() === false) {
@@ -305,7 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
         field['type'] = (document.getElementById('newFieldTypeSelect') as HTMLSelectElement).value;
         let fieldValue: string;
         if (field['type'] === ExtraFieldInputType.Text) {
-          fieldValue = (document.getElementById('newFieldValueTextArea') as HTMLTextAreaElement).value.trim();
+          fieldValue = textAreaField.value.trim();
         } else if (['date', 'datetime-local', 'email', 'time', 'url'].includes(field['type'])) {
           fieldValue = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();
         } else if (['select', 'radio'].includes(field['type'])) {
@@ -401,7 +404,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         // handle values depending on type
         if (field['type'] === ExtraFieldInputType.Text) {
-          const textAreaField = (document.getElementById('newFieldValueTextArea') as HTMLTextAreaElement);
           field['value'] = textAreaField.value.trim();
         } else if (['date', 'datetime-local', 'email', 'time', 'url'].includes(field['type'])) {
           field['value'] = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();

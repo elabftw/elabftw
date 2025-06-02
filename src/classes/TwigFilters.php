@@ -24,6 +24,7 @@ use Elabftw\Models\Users;
 
 use function is_array;
 use function sprintf;
+use function nl2br;
 
 /**
  * Twig filters

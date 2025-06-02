@@ -19,7 +19,7 @@ export function ResourceNotFoundException(message: string): void {
 }
 
 // Auto-resize the textarea to prevent hidden lines on page load
-export function autoResize(element: HTMLElement): void {
+export function autoResize(element: HTMLTextAreaElement): void {
   element.style.height = 'auto';
   element.style.height = `${element.scrollHeight}px`;
 }

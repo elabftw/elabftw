@@ -19,6 +19,8 @@ use Elabftw\Interfaces\MakeTrustedTimestampInterface;
 use ZipArchive;
 use Override;
 
+use function sprintf;
+
 /**
  * Timestamp an experiment with RFC 3161 protocol: https://www.ietf.org/rfc/rfc3161.txt
  * Originally based on: https://d-mueller.de/blog/dealing-with-trusted-timestamps-in-php-rfc-3161/
@@ -63,7 +65,7 @@ abstract class AbstractMakeTrustedTimestamp extends AbstractMakeTimestamp implem
     {
         $time = strtotime($timestamp);
         if ($time === false) {
-            throw new ImproperActionException('Could not get response time!');
+            throw new ImproperActionException(sprintf('Could not format response time from timestamp: %s', $timestamp));
         }
         return date('Y-m-d H:i:s', $time);
     }

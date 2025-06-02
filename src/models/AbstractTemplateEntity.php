@@ -16,7 +16,9 @@ use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Override;
 
+use function is_array;
 use function is_string;
+use function json_encode;
 
 /**
  * An entity like Templates or ItemsTypes. Template as opposed to Concrete: Experiments and Items
@@ -31,6 +33,11 @@ abstract class AbstractTemplateEntity extends AbstractEntity
         if (is_string($tags)) {
             $tags = array($tags);
         }
+        // force metadata to be a string
+        $metadata = $reqBody['metadata'] ?? null;
+        if (is_array($metadata)) {
+            $metadata = json_encode($metadata, JSON_THROW_ON_ERROR, 128);
+        }
         return match ($action) {
             Action::Create => $this->create(
                 title: $reqBody['title'] ?? null,
@@ -43,7 +50,7 @@ abstract class AbstractTemplateEntity extends AbstractEntity
                 tags: $tags ?? array(),
                 category: $reqBody['category'] ?? null,
                 status: $reqBody['status'] ?? null,
-                metadata: $reqBody['metadata'] ?? null,
+                metadata: $metadata,
                 rating: $reqBody['rating'] ?? 0,
                 contentType: $reqBody['content_type'] ?? null,
             ),

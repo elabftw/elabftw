@@ -68,6 +68,7 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         // convert to int only if not empty, otherwise send null: we don't want to convert a null to int, as it would send 0
         $category = !empty($reqBody['category']) ? (int) $reqBody['category'] : null;
         $status = !empty($reqBody['status']) ? (int) $reqBody['status'] : null;
+        // force metadata to be a string
         $metadata = null;
         if (!empty($reqBody['metadata'])) {
             $metadata = json_encode($reqBody['metadata'], JSON_THROW_ON_ERROR);

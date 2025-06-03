@@ -1428,7 +1428,7 @@ ALTER TABLE `experiments_templates`
 -- Indexes and Constraints for table `experiments_templates_comments`
 --
 
-ALTER TABLE `experiments_templates_comments` (
+ALTER TABLE `experiments_templates_comments`
   ADD KEY `fk_experiments_templates_comments_experiments_templates_id` (`item_id`),
   ADD KEY `fk_experiments_templates_comments_users_userid` (`userid`),
   ADD CONSTRAINT `fk_experiments_templates_comments_experiments_templates_id` FOREIGN KEY (`item_id`) REFERENCES `experiments_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,

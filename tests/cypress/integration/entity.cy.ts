@@ -94,7 +94,7 @@ describe('Experiments', () => {
     cy.wait('@apiDELETE');
   };
 
-  it('Create and edit an experiment', () => {
+  it('Create, edit, duplicate and delete an experiment', () => {
     // Intercept BEFORE triggering API calls
     interceptEntityApi('experiments');
     cy.visit('/experiments.php');
@@ -113,7 +113,7 @@ describe('Experiments', () => {
     entityDestroy();
   });
 
-  it('Create and edit an item', () => {
+  it('Create, edit, duplicate and delete an item', () => {
     interceptEntityApi('items');
     cy.visit('/database.php');
     cy.htmlvalidate();
@@ -129,7 +129,7 @@ describe('Experiments', () => {
     entityDestroy();
   });
 
-  it('Create and edit an experiment template', () => {
+  it('Create, edit, duplicate and delete an experiment template', () => {
     interceptEntityApi('experiments_templates');
     cy.visit('/templates.php');
     cy.htmlvalidate();
@@ -143,13 +143,13 @@ describe('Experiments', () => {
     cy.get('#category_select').select('Cell biology').blur();
     cy.get('#status_select').select('Success').blur();
     cy.wait('@apiPATCH'); // wait for status update
-    // actions specific to template: lock permissions for derived experiments
+    // actions specific to template: lock permissions for derived entities
     cy.get('#canread_is_immutable').check();
     cy.get('#canwrite_is_immutable').check();
     cy.get('#canread_is_immutable').should('be.checked');
     cy.get('#canwrite_is_immutable').should('be.checked');
     cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
-    // entity related actions
+    // actions for all entities
     entityEdit();
     entityComment();
     entityDuplicate();

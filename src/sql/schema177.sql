@@ -10,6 +10,6 @@ CREATE TABLE `experiments_templates_comments` (
   PRIMARY KEY (`id`),
   KEY `fk_experiments_templates_comments_experiments_templates_id` (`item_id`),
   KEY `fk_experiments_templates_comments_users_userid` (`userid`),
-  CONSTRAINT `fk_experiments_templates_comments_experiments_templates_id` FOREIGN KEY (`item_id`) REFERENCES `experiments_templates` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_experiments_templates_comments_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE
+  CONSTRAINT `fk_experiments_templates_comments_experiments_templates_id` FOREIGN KEY (`item_id`) REFERENCES `experiments_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_experiments_templates_comments_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

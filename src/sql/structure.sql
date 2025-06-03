@@ -378,6 +378,8 @@ CREATE TABLE `experiments_templates_revisions` (
 --       `users` -> `userid`
 --
 
+-- --------------------------------------------------------
+
 --
 -- Table structure for table `experiments_templates_comments`
 --
@@ -1425,6 +1427,16 @@ ALTER TABLE `experiments_templates`
   ADD KEY `idx_experiments_templates_state` (`state`),
   ADD KEY `fk_experiments_templates_users_userid` (`userid`),
   ADD UNIQUE `unique_experiments_templates_custom_id` (`category`, `custom_id`);
+
+--
+-- Indexes and Constraints for table `experiments_templates_comments`
+--
+
+ALTER TABLE `experiments_templates_comments` (
+  ADD KEY `fk_experiments_templates_comments_experiments_templates_id` (`item_id`),
+  ADD KEY `fk_experiments_templates_comments_users_userid` (`userid`),
+  ADD CONSTRAINT `fk_experiments_templates_comments_experiments_templates_id` FOREIGN KEY (`item_id`) REFERENCES `experiments_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_experiments_templates_comments_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Indexes and Constraints for table `experiments_templates_changelog`

@@ -28,6 +28,7 @@ use Elabftw\Models\Templates;
 use Elabftw\Models\UserRequestActions;
 use Elabftw\Params\DisplayParams;
 use Override;
+use Symfony\Component\HttpFoundation\InputBag;
 
 use function array_merge;
 
@@ -85,8 +86,8 @@ final class DashboardController extends AbstractHtmlController
                 'itemsCategoryArr' => $ItemsTypes->readAll(),
                 'itemsStatusArr' => $ItemsStatus->readAll(),
                 'experimentsArr' => $Experiments->readShow($DisplayParamsExp),
-                'experimentsCategoryArr' => $ExperimentsCategory->readAll(),
-                'experimentsStatusArr' => $ExperimentsStatus->readAll(),
+                'experimentsCategoryArr' => $ExperimentsCategory->readAll($ExperimentsCategory->getQueryParams(new InputBag(array('limit' => 9999)))),
+                'experimentsStatusArr' => $ExperimentsStatus->readAll($ExperimentsStatus->getQueryParams(new InputBag(array('limit' => 9999)))),
                 'itemsArr' => $Items->readShow($DisplayParamsItems),
                 'requestActionsArr' => $UserRequestActions->readAllFull(),
                 'templatesArr' => $Templates->Pins->readAll(),

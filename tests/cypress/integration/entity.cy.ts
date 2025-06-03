@@ -144,8 +144,8 @@ describe('Experiments', () => {
     cy.get('#status_select').select('Success').blur();
     cy.wait('@apiPATCH'); // wait for status update
     // actions specific to template: lock permissions for derived entities
-    cy.get('#canread_is_immutable').check();
-    cy.get('#canwrite_is_immutable').check();
+    cy.get('#canread_is_immutable').check({ force: true });
+    cy.get('#canwrite_is_immutable').check({ force: true });
     cy.get('#canread_is_immutable').should('be.checked');
     cy.get('#canwrite_is_immutable').should('be.checked');
     cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');

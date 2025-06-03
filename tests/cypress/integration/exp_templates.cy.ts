@@ -5,35 +5,30 @@ describe('Experiments templates', () => {
   });
 
   it('Create and edit an experiment template', () => {
-    const endpoint = 'templates';
     cy.visit('/templates.php');
     cy.htmlvalidate();
     cy.contains('Create').click();
-    // cy.intercept('GET', `/api/v2/${endpoint}/**`).as('apiGET');
     cy.get('#createModal_templates').should('be.visible').should('contain', 'Create a new template');
     cy.get('input[name=title]').type('Template');
     cy.get('button[data-action="create-entity"][data-type="experiments_templates"]').click();
-    templateEdit(endpoint);
+    templateEdit();
     templateComment();
-    templateDuplicate(endpoint);
+    templateDuplicate();
     templateDestroy();
   });
 
 
-  const templateEdit = (endpoint: string) => {
+  const templateEdit = () => {
     cy.url().should('include', 'mode=edit');
 
     // change category and status
     cy.get('#category_select').select('Cell biology').blur();
     cy.get('#status_select').select('Success').blur();
     // edit tags, steps and permissions
-    // cy.intercept('POST', `/api/v2/${endpoint}/**`).as('apiPOST');
-    // cy.intercept('PATCH', `/api/v2/${endpoint}/**`).as('apiPATCH');
 
-    createAndDeleteTag(endpoint);
-    createCompleteAndDeleteStep(endpoint);
+    createAndDeleteTag();
+    createCompleteAndDeleteStep();
 
-    // cy.intercept('PATCH', `/api/v2/${endpoint}/**`).as('apiPATCH');
     cy.get('#canread_is_immutable').check({force: true});
     cy.get('#canwrite_is_immutable').check({force: true});
     cy.get('#canread_is_immutable').should('be.checked');
@@ -55,12 +50,10 @@ describe('Experiments templates', () => {
     cy.htmlvalidate();
   };
 
-  const templateDuplicate = (endpoint: string) => {
+  const templateDuplicate = () => {
     // keep the original template url in memory
     cy.url().then(url => {
       cy.log(url);
-      cy.intercept('GET', `/api/v2/${endpoint}/**`).as('apiGET');
-      cy.intercept('POST', `/api/v2/${endpoint}/**`).as('apiPOST');
       cy.get('[data-target="duplicateModal"]').click()
         .get('[data-action="duplicate-entity"]').click();
       // cy.wait('@apiGET');
@@ -74,38 +67,30 @@ describe('Experiments templates', () => {
     });
   };
 
-  const createAndDeleteTag = (endpoint: string) => {
+  const createAndDeleteTag = () => {
     // create Tag
-    // cy.intercept('POST', `/api/v2/${endpoint}/**`).as('apiPOST');
     cy.get('#createTagInput').type('some tag').blur();
-    // cy.wait('@apiPOST');
     cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
     cy.get('div.tags').contains('some tag').should('exist');
 
     // delete tag
-    // cy.intercept('PATCH', `/api/v2/${endpoint}/**`).as('apiPATCH');
     cy.on('window:confirm', () => { return true; });
     cy.contains('some tag').click();
-    // cy.wait('@apiPATCH');
     cy.get('div.tags').contains('some tag').should('not.exist');
   };
 
-  const createCompleteAndDeleteStep = (endpoint: string) => {
+  const createCompleteAndDeleteStep = () => {
     // create step
     cy.get('.stepinput').type('some step');
     cy.get('[data-action="create-step"').click();
-    // cy.wait('@apiPOST');
     cy.get('.step-static').should('contain', 'some step');
 
     // complete step
     cy.get('.stepbox').click();
-    // cy.wait('@apiPATCH');
     cy.get('.text-muted').should('contain', 'completed');
 
     // delete step
-    // cy.intercept('DELETE', `/api/v2/${endpoint}/**`).as('apiDELETE');
     cy.get('[data-action="destroy-step"]').click();
-    // cy.wait('@apiDELETE');
     cy.contains('some step').should('not.exist');
   };
 
@@ -116,7 +101,7 @@ describe('Experiments templates', () => {
   //   // read permissions
   //   cy.get('button[data-action="toggle-modal"][data-target="permModal-canread"]').click();
   //   cy.get('#permModal-canread').should('be.visible');
-  //   // click only the save button in this modal (because there's many on the web page)
+  //   // click only the save button in this modal (because there's many on the web page) // .within() still not working
   //   cy.get('button[data-action="toggle-modal"][data-target="permModal-canread"]').should('be.visible').click();
   //   cy.get('.overlay').first().should('contain', 'Saved');
   //   cy.get('#permModal-canread').should('not.be.visible');

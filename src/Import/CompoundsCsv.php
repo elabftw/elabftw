@@ -173,7 +173,7 @@ final class CompoundsCsv extends AbstractCsv
      */
     protected function findMatch(string $value): ?array
     {
-        $queryValue = sprintf('extrafield:%s:%s', $this->matchWith, $value);
+        $queryValue = sprintf('extrafield:%s:%s', $this->matchWith ?? '', $value);
         $query = new InputBag(array('q' => $queryValue, 'scope' => 3));
         $DisplayParams = new DisplayParams($this->Items->Users, $this->Items->entityType, $query);
         $results = $this->Items->readShow($DisplayParams);

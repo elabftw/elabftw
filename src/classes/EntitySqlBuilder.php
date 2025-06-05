@@ -211,21 +211,17 @@ class EntitySqlBuilder
 
     protected function steps(): void
     {
-        $this->selectSql[] = "SUBSTRING_INDEX(GROUP_CONCAT(
-                stepst.next_step
-                ORDER BY steps_ordering, steps_id
-                SEPARATOR '|'
-            ), '|', 1) AS next_step";
-        $this->joinsSql[] = 'LEFT JOIN (
-                SELECT item_id AS steps_item_id,
-                    body AS next_step,
-                    ordering AS steps_ordering,
-                    id AS steps_id,
-                    finished AS finished
+        // any_value is necessary to silence the nonaggregated column error
+        $this->selectSql[] = 'ANY_VALUE(st.body) AS next_step';
+        $this->joinsSql[] = 'LEFT JOIN %1$s_steps AS st
+            ON st.item_id = entity.id
+            AND st.finished = 0
+            AND st.ordering = (
+                SELECT MIN(ordering)
                 FROM %1$s_steps
-                WHERE finished = 0
-            ) AS stepst
-                ON (stepst.steps_item_id = entity.id)';
+                WHERE item_id = entity.id
+                AND finished = 0
+            )';
     }
 
     protected function comments(): void

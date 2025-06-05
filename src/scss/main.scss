@@ -420,6 +420,10 @@ button:disabled {
 }
 
 .table {
+  /* display borders correctly, keeps cells flush without extra spacing. See #5681  */
+  border-collapse: separate;
+  border-spacing: 0;
+
   thead {
     position: sticky;
     top: 0;
@@ -428,6 +432,10 @@ button:disabled {
     /* stylelint-disable-next-line selector-no-qualifying-type */
     &.with-top {
       border-top: 1px solid $firstlevel;
+    }
+
+    th {
+      border-bottom: $firstlevel 1px solid;
     }
   }
 
@@ -451,7 +459,6 @@ button:disabled {
   }
 
   th {
-    border-top: 0;
     white-space: nowrap;
 
     &:not(:last-child) {
@@ -471,6 +478,11 @@ tr:nth-child(even) {
 
 tr:nth-child(odd) {
   background-color: $mainbackground;
+}
+
+/* the first row does not need a border-top */
+tr:first-child td {
+  border-top-width: 0;
 }
 
 /* responsive tables, with a threshold width pretty high */

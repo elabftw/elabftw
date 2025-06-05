@@ -11,7 +11,7 @@ COPY ../bin /elabftw/bin
 COPY ../src /elabftw/src
 COPY ../tests /elabftw/tests
 COPY ../web /elabftw/web
-COPY ../.eslintrc.js /elabftw
+COPY ../eslint.config.mjs /elabftw
 COPY ../.php-cs-fixer.dist.php /elabftw
 COPY ../.stylelintrc.json /elabftw
 COPY ../builder.js /elabftw

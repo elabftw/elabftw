@@ -19,6 +19,8 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Override;
 
+use function sprintf;
+
 /**
  * RFC3161 timestamping with Universign service
  * https://www.universign.com/en/
@@ -72,6 +74,6 @@ class MakeUniversignTimestamp extends AbstractMakeTrustedTimestamp
             // PHP will take care of correct timezone conversions (if configured correctly)
             return date('Y-m-d H:i:s', $date->getTimestamp());
         }
-        throw new ImproperActionException('Could not get response time!');
+        throw new ImproperActionException(sprintf('Could not format response time from timestamp: %s', $timestamp));
     }
 }

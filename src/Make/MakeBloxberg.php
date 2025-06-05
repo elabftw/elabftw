@@ -67,7 +67,8 @@ final class MakeBloxberg extends AbstractMakeTimestamp
         }
         // now we send the previous response to another endpoint to get the pdf back in a zip archive
         // the binary response is a zip archive that contains the certificate in pdf format
-        $zip = $this->getter->postJson(self::PROOF_URL, $certifyResponse, array('api_key' => $this->apiKey));
+        // we send both api_key and api-key headers because on June 27th 2025 only api-key will work.
+        $zip = $this->getter->postJson(self::PROOF_URL, $certifyResponse, array('api_key' => $this->apiKey, 'api-key' => $this->apiKey));
 
         // add the data to the zipfile and get the path to where it is stored in cache
         $tmpFilePath = $this->addToZip($zip, $data);

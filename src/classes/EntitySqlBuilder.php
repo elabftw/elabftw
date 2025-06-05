@@ -226,15 +226,14 @@ class EntitySqlBuilder
 
     protected function comments(): void
     {
-        $this->selectSql[] = 'commentst.recent_comment,
-            (commentst.recent_comment IS NOT NULL) AS has_comment';
-        $this->joinsSql[] = 'LEFT JOIN (
-                SELECT MAX(created_at) AS recent_comment,
-                    item_id
-                FROM %1$s_comments
-                GROUP BY item_id
-            ) AS commentst
-                ON (commentst.item_id = entity.id)';
+        $this->selectSql[] = 'ANY_VALUE(cmt.created_at) AS recent_comment';
+        $this->joinsSql[] = 'LEFT JOIN %1$s_comments AS cmt
+            ON cmt.item_id = entity.id
+            AND cmt.created_at = (
+                SELECT MAX(created_at)
+                FROM experiments_comments
+                WHERE item_id = entity.id
+            )';
     }
 
     /**

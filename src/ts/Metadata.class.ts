@@ -605,10 +605,12 @@ export class Metadata {
             const badgeContainer = document.createElement('div');
             const badge = document.createElement('span');
             badge.classList.add('badge', 'badge-pill', 'badge-light', 'mr-3');
-            // define input type for badge (sometimes it's input (text, url) sometimes it's an input-group (datetime, search user/experiment etc.)
+            // define input type for badge. This "type" is just indicative for the badge.
             let inputType;
-            if (element.element.tagName === 'INPUT' || element.element.tagName === 'SELECT' || element.element.tagName === 'TEXTAREA') {
+            if (element.element.tagName === 'INPUT' || element.element.tagName === 'SELECT') {
               inputType = element.element.type;
+            } else if (element.element.tagName === 'TEXTAREA') {
+              inputType = 'text';
             } else if (element.element.classList.contains('input-group')) {
               // find the first input element within the input group
               const input = element.element.querySelector('input');

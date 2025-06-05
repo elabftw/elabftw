@@ -24,6 +24,7 @@ use Elabftw\Models\Users;
 
 use function is_array;
 use function sprintf;
+use function nl2br;
 
 /**
  * Twig filters
@@ -103,6 +104,10 @@ final class TwigFilters
                 if ($metadataType === 'checkbox') {
                     $checked = $field[MetadataEnum::Value->value] === 'on' ? ' checked="checked"' : '';
                     $value = '<input class="d-block" disabled type="checkbox"' . $checked . '>';
+                }
+                // type:text is another special case that becomes textarea, handles multiple lines
+                elseif ($metadataType === 'text') {
+                    $value = nl2br(Tools::eLabHtmlspecialchars($value));
                 }
                 // type:url is another special case
                 elseif ($metadataType === 'url') {

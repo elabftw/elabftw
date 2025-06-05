@@ -147,7 +147,7 @@
 {# METADATA view #}
 {% if Entity.entityData.metadata %}
   <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='extraFieldsDiv'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Extra fields'|trans }}</h3>
-  <div class='mt-2 col-md-6' id='extraFieldsDiv' data-save-hidden='extraFieldsDiv'>
+  <div class='mt-2 col-md-8' id='extraFieldsDiv' data-save-hidden='extraFieldsDiv'>
     {{ Entity.entityData.metadata|formatMetadata }}
   </div>
   <hr>

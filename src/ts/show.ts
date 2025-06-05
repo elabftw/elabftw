@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (element.id === 'metakey') {
         return handleMetadata();
       }
-      return escapeDoubleQuotes(element.options[element.selectedIndex].text);
+      return escapeDoubleQuotes(element.options[element.selectedIndex].value);
     }
     if (element instanceof HTMLInputElement) {
       if (element.id === 'date') {

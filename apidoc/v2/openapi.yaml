@@ -538,8 +538,6 @@ components:
               type: string
             has_attachement:
               type: integer
-            has_comment:
-              type: integer
             id:
               type: integer
             items_links:

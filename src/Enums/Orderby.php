@@ -32,7 +32,7 @@ enum Orderby: string
     {
         return match ($this) {
             self::Category => 'categoryt.title',
-            self::Comment => 'commentst.recent_comment',
+            self::Comment => 'recent_comment',
             self::CreatedAt => 'created_at',
             self::Customid => 'entity.custom_id',
             self::Date => 'date',

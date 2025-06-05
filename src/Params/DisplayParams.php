@@ -113,7 +113,7 @@ final class DisplayParams extends BaseQueryParams
             $this->appendFilterSql(FilterableColumn::Owner, $this->requester->userData['userid']);
         }
         // add filter on team only if scope is not set to everything
-        if ($this->requester->userData['scope_' . $this->entityType->value] === Scope::Team && $scope !== Scope::Everything) {
+        if ($this->requester->userData['scope_' . $this->entityType->value] === Scope::Team->value && $scope !== Scope::Everything) {
             $this->appendFilterSql(FilterableColumn::Team, $this->requester->team ?? 0);
         }
         // TAGS SEARCH

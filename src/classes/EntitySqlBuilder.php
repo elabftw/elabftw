@@ -66,7 +66,7 @@ class EntitySqlBuilder
         $this->uploads();
 
         $sql = array(
-            'SELECT DISTINCT',
+            'SELECT',
             implode(', ', $this->selectSql),
             'FROM %1$s AS entity',
             implode(' ', $this->joinsSql),

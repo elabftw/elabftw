@@ -18,12 +18,14 @@ use Elabftw\Models\Compounds2ItemsLinks;
 use Elabftw\Models\Containers2ItemsLinks;
 use Elabftw\Models\Items;
 use Elabftw\Models\StorageUnits;
+use Elabftw\Params\DisplayParams;
 use Elabftw\Params\EntityParams;
 use Elabftw\Services\PubChemImporter;
 use GuzzleHttp\Exception\RequestException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Console\Output\OutputInterface;
 use Override;
+use Symfony\Component\HttpFoundation\InputBag;
 
 use function sprintf;
 
@@ -40,6 +42,7 @@ final class CompoundsCsv extends AbstractCsv
         protected ?int $resourceCategory = null,
         protected ?PubChemImporter $PubChemImporter = null,
         protected string $locationSplitter = '/',
+        protected ?string $matchWith = null,
     ) {
         parent::__construct($Items->Users, $UploadedFile);
     }
@@ -144,6 +147,16 @@ final class CompoundsCsv extends AbstractCsv
                         $Containers2ItemsLinks->createWithQuantity((float) ($row['quantity'] ?? 1.0), $row['unit'] ?? '•');
                     }
                 }
+
+                // optionally link with an existing Resource that we match with the extra field
+                if ($this->matchWith !== null && $row[$this->matchWith]) {
+                    $resource = $this->findMatch($row[$this->matchWith]);
+                    if (is_array($resource)) {
+                        $this->Items->setId($resource['id']);
+                        $Compounds2ItemsLinks = new Compounds2ItemsLinks($this->Items, $id);
+                        $Compounds2ItemsLinks->create();
+                    }
+                }
             } catch (ImproperActionException | RequestException $e) {
                 $this->output->writeln($e->getMessage());
                 // decrement the count so we can give a correct number
@@ -153,6 +166,21 @@ final class CompoundsCsv extends AbstractCsv
             $this->output->writeln(sprintf('[info] Imported %d/%d', $loopIndex, $countAll));
         }
         return $count;
+    }
+
+    /**
+     * Look for a Resource where the extra field defined in matchWith has the value provided
+     */
+    protected function findMatch(string $value): ?array
+    {
+        $queryValue = sprintf('extrafield:%s:%s', $this->matchWith ?? '', $value);
+        $query = new InputBag(array('q' => $queryValue, 'scope' => 3));
+        $DisplayParams = new DisplayParams($this->Items->Users, $this->Items->entityType, $query);
+        $results = $this->Items->readShow($DisplayParams);
+        if (count($results) > 1) {
+            $this->output->writeln(sprintf('[warning] Found %d matches for %s. Linking with first one found.', count($results), $value));
+        }
+        return $results[0] ?? null;
     }
 
     #[Override]

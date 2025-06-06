@@ -66,7 +66,7 @@ class EntitySqlBuilder
         $this->uploads();
 
         $sql = array(
-            'SELECT DISTINCT',
+            'SELECT',
             implode(', ', $this->selectSql),
             'FROM %1$s AS entity',
             implode(' ', $this->joinsSql),
@@ -211,34 +211,29 @@ class EntitySqlBuilder
 
     protected function steps(): void
     {
-        $this->selectSql[] = "SUBSTRING_INDEX(GROUP_CONCAT(
-                stepst.next_step
-                ORDER BY steps_ordering, steps_id
-                SEPARATOR '|'
-            ), '|', 1) AS next_step";
-        $this->joinsSql[] = 'LEFT JOIN (
-                SELECT item_id AS steps_item_id,
-                    body AS next_step,
-                    ordering AS steps_ordering,
-                    id AS steps_id,
-                    finished AS finished
+        // any_value is necessary to silence the nonaggregated column error
+        $this->selectSql[] = 'ANY_VALUE(st.body) AS next_step';
+        $this->joinsSql[] = 'LEFT JOIN %1$s_steps AS st
+            ON st.item_id = entity.id
+            AND st.finished = 0
+            AND st.ordering = (
+                SELECT MIN(ordering)
                 FROM %1$s_steps
-                WHERE finished = 0
-            ) AS stepst
-                ON (stepst.steps_item_id = entity.id)';
+                WHERE item_id = entity.id
+                AND finished = 0
+            )';
     }
 
     protected function comments(): void
     {
-        $this->selectSql[] = 'commentst.recent_comment,
-            (commentst.recent_comment IS NOT NULL) AS has_comment';
-        $this->joinsSql[] = 'LEFT JOIN (
-                SELECT MAX(created_at) AS recent_comment,
-                    item_id
-                FROM %1$s_comments
-                GROUP BY item_id
-            ) AS commentst
-                ON (commentst.item_id = entity.id)';
+        $this->selectSql[] = 'ANY_VALUE(cmt.created_at) AS recent_comment';
+        $this->joinsSql[] = 'LEFT JOIN %1$s_comments AS cmt
+            ON cmt.item_id = entity.id
+            AND cmt.created_at = (
+                SELECT MAX(created_at)
+                FROM experiments_comments
+                WHERE item_id = entity.id
+            )';
     }
 
     /**
@@ -430,7 +425,7 @@ class EntitySqlBuilder
             ON (users.userid = entity.userid)';
         $this->joinsSql[] = sprintf(
             'LEFT JOIN users2teams
-                ON (users2teams.teams_id = %d)
+                ON (users2teams.users_id = entity.userid and users2teams.teams_id = %d)
             LEFT JOIN teams ON (entity.team = teams.id)',
             $this->entity->Users->team ?? 0,
         );

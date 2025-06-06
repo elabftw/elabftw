@@ -522,6 +522,10 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/comment'
+            compounds:
+              type: array
+              items:
+                $ref: '#/components/schemas/compound'
             created_at:
               type: string
             elabid:

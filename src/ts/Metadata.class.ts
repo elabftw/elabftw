@@ -167,7 +167,12 @@ export class Metadata {
     if (mode === 'view') {
       return this.generateViewableElement(name, properties);
     }
-    return this.generateInput(name, properties);
+    try {
+      return this.generateInput(name, properties);
+    } catch (err) {
+      (new Notification()).error('error-parsing-metadata');
+      console.error(err);
+    }
   }
 
   /**

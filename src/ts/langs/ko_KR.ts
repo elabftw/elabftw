@@ -20,6 +20,7 @@ const t = {
     "entries-processed": "{{num, number}} entries processed",
     "error-no-category": "다음 맞춤 ID를 가져오려면 카테고리가 필요합니다.",
     "error-fetch-request": "There was an error while fetching the requested data: {{error}}",
+    "error-parsing-metadata": "There was an error while parsing metadata (extra fields). Full error has been logged to the browser console.",
     "extra-fields": "기타 필드",
     "filename": "파일 이름",
     "file-imported": "File imported successfully",

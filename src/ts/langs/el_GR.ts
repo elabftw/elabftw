@@ -20,6 +20,7 @@ const t = {
     "entries-processed": "{{num, number}} entries processed",
     "error-no-category": "Απαιτείται μια κατηγορία για την ανάκτηση του επόμενου προσαρμοσμένου αναγνωριστικού",
     "error-fetch-request": "There was an error while fetching the requested data: {{error}}",
+    "error-parsing-metadata": "There was an error while parsing metadata (extra fields). Full error has been logged to the browser console.",
     "extra-fields": "Επιπλέον πεδία",
     "filename": "Όνομα αρχείου",
     "file-imported": "File imported successfully",

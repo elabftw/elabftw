@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "baseUrl": "../..",
-    "module": "es6",
+    "module": "NodeNext",
     "esModuleInterop": true,
-    "moduleResolution": "node",
+    "moduleResolution": "NodeNext",
     "strict": false,
     "removeComments": true,
     "preserveConstEnums": true,

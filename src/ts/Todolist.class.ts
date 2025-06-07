@@ -17,7 +17,6 @@ export default class Todolist extends SidePanel {
 
   unfinishedStepsScope: string;
   initialLoad = true;
-  api: Api;
   mallemalleable: Malle;
 
   constructor() {

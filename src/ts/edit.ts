@@ -20,6 +20,7 @@ import $ from 'jquery';
 import { Api } from './Apiv2.class';
 import { Notification } from './Notifications.class';
 import { Uploader } from './uploader';
+import {clearLocalStorage} from './localStorage';
 
 document.addEventListener('DOMContentLoaded', async () => {
   // only run in edit mode
@@ -62,14 +63,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     params[Target.Body] = localStorage.getItem('body');
     ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => {
       editor.replaceContent(localStorage.getItem('body'));
-      localStorage.clear();
+      clearLocalStorage();
       document.getElementById('recoveryDiv').remove();
     });
   });
 
   // RECOVER NO
   $(document).on('click', '.recover-no', function() {
-    localStorage.clear();
+    clearLocalStorage();
     document.getElementById('recoveryDiv').remove();
   });
 

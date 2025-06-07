@@ -9,6 +9,7 @@ import $ from 'jquery';
 import { Api } from './Apiv2.class';
 import { Malle, InputType, Action as MalleAction } from '@deltablot/malle';
 import 'bootstrap/js/src/modal.js';
+import { clearLocalStorage, rememberLastSelected, selectLastSelected } from './localStorage';
 import {
   adjustHiddenState,
   clearForm,
@@ -69,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(() => {
       fetch('app/controllers/HeartBeat.php').then(response => {
         if (!response.ok) {
-          localStorage.clear();
+          clearLocalStorage();
           alert('Your session expired!');
           window.location.replace('login.php');
         }
@@ -244,13 +245,16 @@ document.addEventListener('DOMContentLoaded', () => {
   }).listen();
 
   // tom-select for team selection on login and register page, and idp selection
-  ['init_team_select', 'team', 'idp_login_select'].forEach(id =>{
+  ['init_team_select', 'team', 'team_selection_select', 'idp_login_select'].forEach(id =>{
     if (document.getElementById(id)) {
       new TomSelect(`#${id}`, {
         plugins: [
           'dropdown_input',
           'no_active_items',
         ],
+        // we also remember the last selected one in localStorage
+        onChange: rememberLastSelected(id),
+        onInitialize: selectLastSelected(id),
       });
     }
   });
@@ -779,7 +783,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // LOGOUT
     } else if (el.matches('[data-action="logout"]')) {
-      localStorage.clear();
+      clearLocalStorage();
       window.location.href = 'app/logout.php';
 
     // ACK NOTIF

@@ -20,7 +20,7 @@ import $ from 'jquery';
 import { Api } from './Apiv2.class';
 import { Notification } from './Notifications.class';
 import { Uploader } from './uploader';
-import {clearLocalStorage} from './localStorage';
+import { clearLocalStorage } from './localStorage';
 
 document.addEventListener('DOMContentLoaded', async () => {
   // only run in edit mode

@@ -17,12 +17,12 @@ import $ from 'jquery';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
 import { getEditor } from './Editor.class';
-import TomSelect from 'tom-select/dist/esm/tom-select';
-import TomSelectCheckboxOptions from 'tom-select/dist/esm/plugins/checkbox_options/plugin';
-import TomSelectClearButton from 'tom-select/dist/esm/plugins/clear_button/plugin';
-import TomSelectDropdownInput from 'tom-select/dist/esm/plugins/dropdown_input/plugin';
-import TomSelectNoActiveItems from 'tom-select/dist/esm/plugins/no_active_items/plugin';
-import TomSelectRemoveButton from 'tom-select/dist/esm/plugins/remove_button/plugin';
+import TomSelect from 'tom-select/base';
+import TomSelectCheckboxOptions from 'tom-select/dist/esm/plugins/checkbox_options/plugin.js';
+import TomSelectClearButton from 'tom-select/dist/esm/plugins/clear_button/plugin.js';
+import TomSelectDropdownInput from 'tom-select/dist/esm/plugins/dropdown_input/plugin.js';
+import TomSelectNoActiveItems from 'tom-select/dist/esm/plugins/no_active_items/plugin.js';
+import TomSelectRemoveButton from 'tom-select/dist/esm/plugins/remove_button/plugin.js';
 
 // get html of current page reloaded via get
 function fetchCurrentPage(tag = ''): Promise<Document>{

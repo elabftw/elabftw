@@ -21,7 +21,6 @@ use Elabftw\Auth\Local;
 use Elabftw\Auth\Mfa;
 use Elabftw\Auth\Saml as SamlAuth;
 use Elabftw\Auth\Team;
-use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\IdpsHelper;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -43,10 +42,13 @@ use Elabftw\Services\MfaHelper;
 use Elabftw\Services\ResetPasswordKey;
 use LdapRecord\Connection;
 use LdapRecord\Models\Entry;
+use Monolog\Logger;
 use OneLogin\Saml2\Auth as SamlAuthLib;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Override;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 
 use function setcookie;
 
@@ -65,13 +67,19 @@ final class LoginController implements ControllerInterface
 
     public const int AUTH_ANON = 50;
 
-    public function __construct(private App $App) {}
+    public function __construct(
+        private readonly Config $Config,
+        private readonly Request $Request,
+        private readonly FlashBagAwareSessionInterface $Session,
+        private readonly Logger $Logger,
+        private readonly Users $Users,
+    ) {}
 
     #[Override]
     public function getResponse(): Response
     {
         // ENABLE MFA FOR OUR USER
-        if ($this->App->Session->has('enable_mfa')) {
+        if ($this->Session->has('enable_mfa')) {
             $location = $this->enableMFA();
             if ($location !== '') {
                 return new RedirectResponse($location);
@@ -79,11 +87,11 @@ final class LoginController implements ControllerInterface
         }
 
         // get our Auth service
-        $authType = $this->App->Request->request->getAlpha('auth_type');
+        $authType = $this->Request->request->getAlpha('auth_type');
 
         // store the rememberme choice in a cookie, not the session as it won't follow up for saml
         $icanhazcookies = '0';
-        if ($this->App->Request->request->has('rememberme') && $this->App->Config->configArr['remember_me_allowed'] === '1') {
+        if ($this->Request->request->has('rememberme') && $this->Config->configArr['remember_me_allowed'] === '1') {
             $icanhazcookies = '1';
         }
         $cookieOptions = array(
@@ -99,7 +107,7 @@ final class LoginController implements ControllerInterface
         // TRY TO AUTHENTICATE
         $AuthResponse = $this->getAuthService($authType)->tryAuth();
 
-        if ($this->App->Session->get('mfa_auth_required') === true && !$AuthResponse->hasVerifiedMfa) {
+        if ($this->Session->get('mfa_auth_required') === true && !$AuthResponse->hasVerifiedMfa) {
             throw new IllegalActionException('MFA auth is required');
         }
 
@@ -110,7 +118,7 @@ final class LoginController implements ControllerInterface
         if ($authType === 'local'
             && Local::enforceMfa(
                 $AuthResponse,
-                (int) $this->App->Config->configArr['enforce_mfa']
+                (int) $this->Config->configArr['enforce_mfa']
             )
         ) {
             // Need to request verification code to confirm user got secret and can authenticate in the future by MFA
@@ -118,12 +126,12 @@ final class LoginController implements ControllerInterface
             // which will pickup that enable_mfa is there so it will display the qr code to initialize the process
             // and after that we redirect back to login to cleanup
             // the mfa_secret is not yet saved to the DB
-            $this->App->Session->set('enforce_mfa', true);
-            $this->App->Session->set('enable_mfa', true);
-            $this->App->Session->set('mfa_auth_required', true);
-            $this->App->Session->set('mfa_secret', (new MfaHelper(0))->generateSecret());
-            $this->App->Session->set('auth_userid', $AuthResponse->userid);
-            $this->App->Session->set('rememberme', $icanhazcookies);
+            $this->Session->set('enforce_mfa', true);
+            $this->Session->set('enable_mfa', true);
+            $this->Session->set('mfa_auth_required', true);
+            $this->Session->set('mfa_secret', (new MfaHelper(0))->generateSecret());
+            $this->Session->set('auth_userid', $AuthResponse->userid);
+            $this->Session->set('rememberme', $icanhazcookies);
 
             return new RedirectResponse('/login.php');
         }
@@ -133,17 +141,17 @@ final class LoginController implements ControllerInterface
         /////////
         // check if we need to do mfa auth too after a first successful authentication
         if ($AuthResponse->mfaSecret && !$AuthResponse->hasVerifiedMfa) {
-            $this->App->Session->set('mfa_auth_required', true);
-            $this->App->Session->set('mfa_secret', $AuthResponse->mfaSecret);
+            $this->Session->set('mfa_auth_required', true);
+            $this->Session->set('mfa_secret', $AuthResponse->mfaSecret);
             // remember which user is authenticated
-            $this->App->Session->set('auth_userid', $AuthResponse->userid);
-            $this->App->Session->set('rememberme', $icanhazcookies);
+            $this->Session->set('auth_userid', $AuthResponse->userid);
+            $this->Session->set('rememberme', $icanhazcookies);
             return new RedirectResponse('/login.php');
         }
         if ($AuthResponse->hasVerifiedMfa) {
-            $this->App->Session->remove('enforce_mfa');
-            $this->App->Session->remove('mfa_auth_required');
-            $this->App->Session->remove('mfa_secret');
+            $this->Session->remove('enforce_mfa');
+            $this->Session->remove('mfa_auth_required');
+            $this->Session->remove('mfa_secret');
         }
 
         /////////////////////
@@ -152,11 +160,11 @@ final class LoginController implements ControllerInterface
         // check if we need to renew our local password
         if ($AuthResponse->mustRenewPassword) {
             // remember which user is authenticated
-            $this->App->Session->set('auth_userid', $AuthResponse->userid);
-            $this->App->Session->set('rememberme', $icanhazcookies);
-            $this->App->Session->set('renew_password_required', true);
+            $this->Session->set('auth_userid', $AuthResponse->userid);
+            $this->Session->set('rememberme', $icanhazcookies);
+            $this->Session->set('renew_password_required', true);
             $ResetPasswordKey = new ResetPasswordKey(time(), Config::fromEnv('SECRET_KEY'));
-            $Users = new Users($this->App->Session->get('auth_userid'));
+            $Users = new Users($this->Session->get('auth_userid'));
             $key = $ResetPasswordKey->generate($Users->userData['email']);
             return new RedirectResponse('/change-pass.php?key=' . $key);
         }
@@ -166,28 +174,28 @@ final class LoginController implements ControllerInterface
         ////////////////////
         // if the user is in several teams, we need to redirect to the team selection
         if ($AuthResponse->isInSeveralTeams) {
-            $this->App->Session->set('team_selection_required', true);
-            $this->App->Session->set('team_selection', $AuthResponse->selectableTeams);
-            $this->App->Session->set('auth_userid', $AuthResponse->userid);
+            $this->Session->set('team_selection_required', true);
+            $this->Session->set('team_selection', $AuthResponse->selectableTeams);
+            $this->Session->set('auth_userid', $AuthResponse->userid);
             // carry over the cookie
-            $this->App->Session->set('rememberme', $icanhazcookies);
+            $this->Session->set('rememberme', $icanhazcookies);
             return new RedirectResponse('/login.php');
         }
 
         // user does not exist and no team was found so user must select one
         if ($AuthResponse->initTeamRequired) {
-            $this->App->Session->set('initial_team_selection_required', true);
-            $this->App->Session->set('teaminit_email', $AuthResponse->initTeamUserInfo['email']);
-            $this->App->Session->set('teaminit_firstname', $AuthResponse->initTeamUserInfo['firstname']);
-            $this->App->Session->set('teaminit_lastname', $AuthResponse->initTeamUserInfo['lastname']);
-            $this->App->Session->set('teaminit_orgid', $AuthResponse->initTeamUserInfo['orgid'] ?? '');
+            $this->Session->set('initial_team_selection_required', true);
+            $this->Session->set('teaminit_email', $AuthResponse->initTeamUserInfo['email']);
+            $this->Session->set('teaminit_firstname', $AuthResponse->initTeamUserInfo['firstname']);
+            $this->Session->set('teaminit_lastname', $AuthResponse->initTeamUserInfo['lastname']);
+            $this->Session->set('teaminit_orgid', $AuthResponse->initTeamUserInfo['orgid'] ?? '');
             return new RedirectResponse('/login.php');
         }
 
         // user exists but no team was found so user must select one
         if ($AuthResponse->teamRequestSelectionRequired) {
-            $this->App->Session->set('team_request_selection_required', true);
-            $this->App->Session->set('teaminit_userid', $AuthResponse->initTeamUserInfo['userid']);
+            $this->Session->set('team_request_selection_required', true);
+            $this->Session->set('teaminit_userid', $AuthResponse->initTeamUserInfo['userid']);
             return new RedirectResponse('/login.php');
         }
 
@@ -197,12 +205,12 @@ final class LoginController implements ControllerInterface
         }
 
         // All good now we can login the user
-        $LoginHelper = new LoginHelper($AuthResponse, $this->App->Session);
+        $LoginHelper = new LoginHelper($AuthResponse, $this->Session);
         $LoginHelper->login((bool) $icanhazcookies);
 
         // cleanup
-        $this->App->Session->remove('rememberme');
-        $this->App->Session->remove('auth_userid');
+        $this->Session->remove('rememberme');
+        $this->Session->remove('auth_userid');
 
         // we redirect to index that will then redirect to the correct entrypoint set by user
         return new RedirectResponse('/index.php');
@@ -214,11 +222,11 @@ final class LoginController implements ControllerInterface
     private function validateDeviceToken(): void
     {
         // skip for multi team auth
-        if ($this->App->Session->has('auth_userid')) {
+        if ($this->Session->has('auth_userid')) {
             return;
         }
         // a devicetoken cookie might or might not exist, so this can be null
-        $token = $this->App->Request->cookies->getString('devicetoken');
+        $token = $this->Request->cookies->getString('devicetoken');
         // if a token is sent, we need to validate it
         $DeviceTokenValidator = new DeviceTokenValidator(DeviceToken::getConfig(), $token);
         $isTokenValid = $DeviceTokenValidator->validate();
@@ -226,7 +234,7 @@ final class LoginController implements ControllerInterface
         if ($isTokenValid === false) {
             // email might be for non existing user, which will throw exception
             try {
-                $Users = ExistingUser::fromEmail($this->App->Request->request->getString('email'));
+                $Users = ExistingUser::fromEmail($this->Request->request->getString('email'));
             } catch (ResourceNotFoundException) {
                 throw new QuantumException(_('Invalid email/password combination.'));
             }
@@ -243,8 +251,8 @@ final class LoginController implements ControllerInterface
         switch ($authType) {
             // AUTH WITH LDAP
             case 'ldap':
-                $this->App->Session->set('auth_service', self::AUTH_LDAP);
-                $c = $this->App->Config->configArr;
+                $this->Session->set('auth_service', self::AUTH_LDAP);
+                $c = $this->Config->configArr;
                 $ldapPassword = null;
                 // assume there is a password to decrypt if username is not null
                 if ($c['ldap_username']) {
@@ -265,72 +273,72 @@ final class LoginController implements ControllerInterface
                     $connection,
                     new Entry(),
                     $c,
-                    $this->App->Request->request->getString('email'),
-                    $this->App->Request->request->getString('password')
+                    $this->Request->request->getString('email'),
+                    $this->Request->request->getString('password')
                 );
 
                 // AUTH WITH LOCAL DATABASE
             case 'local':
                 // make sure local auth is enabled
-                if ($this->App->Config->configArr['local_auth_enabled'] === '0') {
+                if ($this->Config->configArr['local_auth_enabled'] === '0') {
                     throw new ImproperActionException('Local authentication is disabled on this instance.');
                 }
-                $this->App->Session->set('auth_service', self::AUTH_LOCAL);
+                $this->Session->set('auth_service', self::AUTH_LOCAL);
                 // only local auth validates device token
                 $this->validateDeviceToken();
                 return new Local(
-                    $this->App->Request->request->getString('email'),
-                    $this->App->Request->request->getString('password'),
-                    (bool) $this->App->Config->configArr['local_login'],
-                    (bool) $this->App->Config->configArr['local_login_hidden_only_sysadmin'],
-                    (bool) $this->App->Config->configArr['local_login_only_sysadmin'],
-                    (int) $this->App->Config->configArr['max_password_age_days'],
+                    $this->Request->request->getString('email'),
+                    $this->Request->request->getString('password'),
+                    (bool) $this->Config->configArr['local_login'],
+                    (bool) $this->Config->configArr['local_login_hidden_only_sysadmin'],
+                    (bool) $this->Config->configArr['local_login_only_sysadmin'],
+                    (int) $this->Config->configArr['max_password_age_days'],
                 );
 
                 // AUTH WITH SAML
             case 'saml':
-                $this->App->Session->set('auth_service', self::AUTH_SAML);
-                $IdpsHelper = new IdpsHelper($this->App->Config, new Idps($this->App->Users));
-                $idpId = $this->App->Request->request->getInt('idpId');
+                $this->Session->set('auth_service', self::AUTH_SAML);
+                $IdpsHelper = new IdpsHelper($this->Config, new Idps($this->Users));
+                $idpId = $this->Request->request->getInt('idpId');
                 // No cookie is required anymore, as entity Id is extracted from response
                 $settings = $IdpsHelper->getSettings($idpId);
-                return new SamlAuth(new SamlAuthLib($settings), $this->App->Config->configArr, $settings);
+                return new SamlAuth(new SamlAuthLib($settings), $this->Config->configArr, $settings);
 
             case 'external':
-                $this->App->Session->set('auth_service', self::AUTH_EXTERNAL);
+                $this->Session->set('auth_service', self::AUTH_EXTERNAL);
                 return new External(
-                    $this->App->Config->configArr,
-                    $this->App->Request->server->all(),
-                    $this->App->Log,
+                    $this->Config->configArr,
+                    $this->Request->server->all(),
+                    $this->Logger,
                 );
 
                 // AUTH AS ANONYMOUS USER
             case 'anon':
-                $this->App->Session->set('auth_service', self::AUTH_ANON);
-                return new Anon($this->App->Config->configArr, $this->App->Request->request->getInt('team_id'));
+                $this->Session->set('auth_service', self::AUTH_ANON);
+                return new Anon($this->Config->configArr, $this->Request->request->getInt('team_id'));
 
                 // AUTH in a team (after the team selection page)
                 // we are already authenticated
             case 'team':
                 return new Team(
-                    $this->App->Session->get('auth_userid'),
-                    $this->App->Request->request->getInt('selected_team'),
+                    $this->Session->get('auth_userid'),
+                    $this->Request->request->getInt('selected_team'),
                 );
 
                 // MFA AUTH
             case 'mfa':
                 return new Mfa(
                     new MfaHelper(
-                        $this->App->Session->get('auth_userid'),
-                        $this->App->Session->get('mfa_secret'),
+                        $this->Session->get('auth_userid'),
+                        $this->Session->get('mfa_secret'),
                     ),
-                    $this->App->Request->request->getAlnum('mfa_code'),
+                    $this->Request->request->getAlnum('mfa_code'),
                 );
             case 'teaminit':
                 $this->initTeamSelection();
                 exit;
             case 'teamselection':
-                $this->teamSelection($this->App->Session->get('teaminit_userid'), $this->App->Request->request->getInt('team_id'));
+                $this->teamSelection($this->Session->get('teaminit_userid'), $this->Request->request->getInt('team_id'));
                 exit;
 
             default:
@@ -347,13 +355,13 @@ final class LoginController implements ControllerInterface
         $TeamsHelper = new TeamsHelper($teamId);
         $TeamsHelper->teamIsVisibleOrExplode();
 
-        $this->App->Session->remove('team_selection_required');
+        $this->Session->remove('team_selection_required');
         $Users2Teams = new Users2Teams(new Users($userid));
         $Users2Teams->create($userid, $teamId);
-        $this->App->Session->remove('teaminit_userid');
-        $this->App->Session->remove('team_request_selection_required');
+        $this->Session->remove('teaminit_userid');
+        $this->Session->remove('team_request_selection_required');
         // TODO avoid re-login
-        $this->App->Session->getFlashBag()->add('ok', _('Your account has been associated successfully to a team. Please authenticate again.'));
+        $this->Session->getFlashBag()->add('ok', _('Your account has been associated successfully to a team. Please authenticate again.'));
         $location = '/login.php';
         echo "<html><head><meta http-equiv='refresh' content='1;url=$location' /><title>You are being redirected...</title></head><body>You are being redirected...</body></html>";
     }
@@ -361,56 +369,56 @@ final class LoginController implements ControllerInterface
     private function initTeamSelection(): void
     {
         // Ensure that the team is actually one that users should be able to select.
-        $TeamsHelper = new TeamsHelper($this->App->Request->request->getInt('team_id'));
+        $TeamsHelper = new TeamsHelper($this->Request->request->getInt('team_id'));
         $TeamsHelper->teamIsVisibleOrExplode();
 
         // create a user in the requested team
         $newUser = ExistingUser::fromScratch(
-            $this->App->Session->get('teaminit_email'),
-            array($this->App->Request->request->getInt('team_id')),
-            $this->App->Request->request->getString('teaminit_firstname'),
-            $this->App->Request->request->getString('teaminit_lastname'),
-            orgid: $this->App->Session->get('teaminit_orgid'),
+            $this->Session->get('teaminit_email'),
+            array($this->Request->request->getInt('team_id')),
+            $this->Request->request->getString('teaminit_firstname'),
+            $this->Request->request->getString('teaminit_lastname'),
+            orgid: $this->Session->get('teaminit_orgid'),
         );
-        $this->App->Session->set('teaminit_done', true);
+        $this->Session->set('teaminit_done', true);
         // will display the appropriate message to user
-        $this->App->Session->set('teaminit_done_need_validation', (string) $newUser->needValidation);
-        $this->App->Session->remove('initial_team_selection_required');
+        $this->Session->set('teaminit_done_need_validation', (string) $newUser->needValidation);
+        $this->Session->remove('initial_team_selection_required');
         $location = '/login.php';
         echo "<html><head><meta http-equiv='refresh' content='1;url=$location' /><title>You are being redirected...</title></head><body>You are being redirected...</body></html>";
     }
 
     private function enableMFA(): string
     {
-        $flashBag = $this->App->Session->getFlashBag();
+        $flashBag = $this->Session->getFlashBag();
 
-        if ($this->App->Request->request->get('Cancel') === 'cancel') {
-            $this->App->Session->clear();
+        if ($this->Request->request->get('Cancel') === 'cancel') {
+            $this->Session->clear();
             $flashBag->add('ko', _('Two Factor Authentication was not enabled!'));
             return '/login.php';
         }
 
-        $userid = $this->App->Users->userData['userid'] ?? $this->App->Session->get('auth_userid');
-        $MfaHelper = new MfaHelper($userid, $this->App->Session->get('mfa_secret'));
+        $userid = $this->Users->userData['userid'] ?? $this->Session->get('auth_userid');
+        $MfaHelper = new MfaHelper($userid, $this->Session->get('mfa_secret'));
 
         // check the input code against the secret stored in session
-        if (!$MfaHelper->verifyCode($this->App->Request->request->getAlnum('mfa_code'))) {
+        if (!$MfaHelper->verifyCode($this->Request->request->getAlnum('mfa_code'))) {
             $flashBag->add('ko', _('The code you entered is not valid!'));
             return '/login.php';
         }
 
         // all good, save the secret in the database now that we now the user can authenticate against it
         $MfaHelper->saveSecret();
-        $this->App->Session->remove('enable_mfa');
+        $this->Session->remove('enable_mfa');
 
         $flashBag->add('ok', _('Two Factor Authentication is now enabled!'));
 
-        $location = $this->App->Session->get('mfa_redirect_origin', '');
+        $location = $this->Session->get('mfa_redirect_origin', '');
 
-        if (!$this->App->Session->get('enforce_mfa')) {
-            $this->App->Session->remove('mfa_auth_required');
-            $this->App->Session->remove('mfa_secret');
-            $this->App->Session->remove('mfa_redirect_origin');
+        if (!$this->Session->get('enforce_mfa')) {
+            $this->Session->remove('mfa_auth_required');
+            $this->Session->remove('mfa_secret');
+            $this->Session->remove('mfa_redirect_origin');
         }
 
         return $location;

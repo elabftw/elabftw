@@ -68,7 +68,10 @@ if ($ci); then
     docker exec -it elabtmp yarn static
 fi
 # populate the database
-docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y
+if [ "${SKIP_POPULATE:-0}" -ne 1 ]; then
+    echo "Running populate script. Use SKIP_POPULATE=1 to disable."
+    docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y
+fi
 # RUN TESTS
 if ($ci); then
     # fix permissions on test output and uploads

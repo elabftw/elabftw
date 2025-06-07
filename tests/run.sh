@@ -57,7 +57,10 @@ if ($ci); then
 else
     # we need to add the parser because it's in cache/ and it's tmpfs mounted now
     docker exec -it elabtmp yarn buildparser
-    docker exec -it elabtmp yarn twigcs
+    if [ "${SKIP_TWIGCS:-0}" -ne 1 ]; then
+        echo "Running twigcs. Use SKIP_TWIGCS=1 to disable."
+        docker exec -it elabtmp yarn twigcs
+    fi
 fi
 # fix permissions on cache folders
 docker exec -it elabtmp mkdir -p cache/purifier/{HTML,CSS,URI} cache/{elab,mpdf,twig}

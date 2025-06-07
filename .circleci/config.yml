@@ -16,6 +16,7 @@ jobs:
     # https://circleci.com/docs/2.0/circleci-images/
     docker:
       - image: cimg/base:current
+    resource_class: xlarge
       # ignore login credentials for now
       #  auth:
       #    username: nicolascarpi

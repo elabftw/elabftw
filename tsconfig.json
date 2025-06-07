@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "baseUrl": "../..",
+    "baseUrl": ".",
     "module": "NodeNext",
     "esModuleInterop": true,
     "moduleResolution": "NodeNext",
@@ -11,6 +11,6 @@
     "lib": ["es2022", "dom"]
   },
   "include": [
-    "."
+    "src/ts/**/*"
   ]
 }

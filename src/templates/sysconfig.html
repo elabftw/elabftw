@@ -603,6 +603,8 @@
     {% include 'binary-setting.html' with {'label': 'Enable local authentication'|trans, 'slug': 'local_auth_enabled', 'help': 'Toggle local authentication method (email + password). Warning: disabling this method might lock you out!'|trans} %}
     {% include 'binary-setting.html' with {'label': 'Enable local account creation'|trans, 'slug': 'local_register', 'help': 'Allow users to create accounts through the registration page. You probably want to disable this if you use an external authentication/provisioning method.'|trans} %}
     {% include 'binary-setting.html' with {'label': 'Show local login form'|trans, 'slug': 'local_login', 'help': 'This setting will hide the local authentication fields from the login page, but one can still display them by appending ?letmein to the login page URL.'|trans} %}
+    {% include 'binary-setting.html' with {'label': 'Only allow a Sysadmin to login when local login form is hidden'|trans, 'slug': 'local_login_hidden_only_sysadmin', 'help': 'Enable this setting to prevent non-sysadmin users to authenticate using local auth when the form is hidden.'|trans} %}
+    {% include 'binary-setting.html' with {'label': 'Only allow a Sysadmin to login with local login form'|trans, 'slug': 'local_login_only_sysadmin', 'help': 'Only a Sysadmin account can use the local login regardless if the local login form is hidden or not. Only activate it if you have another authentication method enabled for users.'|trans} %}
   </div>
 
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Password policy'|trans }}</h3>

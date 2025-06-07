@@ -280,7 +280,11 @@ final class LoginController implements ControllerInterface
                 $this->validateDeviceToken();
                 return new Local(
                     $this->App->Request->request->getString('email'),
-                    $this->App->Request->request->getString('password')
+                    $this->App->Request->request->getString('password'),
+                    (bool) $this->App->Config->configArr['local_login'],
+                    (bool) $this->App->Config->configArr['local_login_hidden_only_sysadmin'],
+                    (bool) $this->App->Config->configArr['local_login_only_sysadmin'],
+                    (int) $this->App->Config->configArr['max_password_age_days'],
                 );
 
                 // AUTH WITH SAML

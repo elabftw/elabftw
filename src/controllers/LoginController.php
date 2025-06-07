@@ -315,7 +315,7 @@ final class LoginController implements ControllerInterface
                 // AUTH AS ANONYMOUS USER
             case 'anon':
                 $this->Session->set('auth_service', self::AUTH_ANON);
-                return new Anon($this->Config->configArr, $this->Request->request->getInt('team_id'));
+                return new Anon((bool) $this->Config->configArr['anon_users'], $this->Request->request->getInt('team_id'));
 
                 // AUTH in a team (after the team selection page)
                 // we are already authenticated

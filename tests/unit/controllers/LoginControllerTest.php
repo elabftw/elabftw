@@ -12,7 +12,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\QuantumException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
 use Monolog\Logger;
@@ -86,6 +88,82 @@ class LoginControllerTest extends \PHPUnit\Framework\TestCase
         );
         $this->expectException(ImproperActionException::class);
         $LoginController->getResponse();
+    }
+
+    public function testAuthLocalButNothingProvided(): void
+    {
+        $Request = Request::createFromGlobals();
+        $Request->request->set('auth_type', 'local');
+        $Config = Config::getConfig();
+        $Config->configArr['local_auth_enabled'] = '1';
+        $LoginController = new LoginController(
+            $Config,
+            $Request,
+            new Session(),
+            new Logger('test'),
+            new Users(1, 1),
+        );
+        $this->expectException(QuantumException::class);
+        $LoginController->getResponse();
+    }
+
+    public function testAuthLocal(): void
+    {
+        $Request = Request::createFromGlobals();
+        $Request->request->set('auth_type', 'local');
+        $Request->request->set('email', 'toto@yopmail.com');
+        $Request->request->set('password', 'totototototo');
+        $Config = Config::getConfig();
+        $Config->configArr['local_auth_enabled'] = '1';
+        $LoginController = new LoginController(
+            $Config,
+            $Request,
+            new Session(),
+            new Logger('test'),
+            new Users(1, 1),
+        );
+        $res = $LoginController->getResponse();
+        $this->assertInstanceOf(RedirectResponse::class, $res);
+        $this->assertSame('/index.php', $res->headers->get('Location'));
+    }
+
+    public function testAuthAnonButNotAllowed(): void
+    {
+        $Session = new Session();
+        $Request = Request::createFromGlobals();
+        $Request->request->set('auth_type', 'anon');
+        $Request->request->set('team_id', 1);
+        $Config = Config::getConfig();
+        $Config->configArr['anon_users'] = '0';
+        $LoginController = new LoginController(
+            $Config,
+            $Request,
+            $Session,
+            new Logger('test'),
+            new Users(1, 1),
+        );
+        $this->expectException(IllegalActionException::class);
+        $LoginController->getResponse();
+    }
+
+    public function testAuthAnon(): void
+    {
+        $Session = new Session();
+        $Request = Request::createFromGlobals();
+        $Request->request->set('auth_type', 'anon');
+        $Request->request->set('team_id', 1);
+        $Config = Config::getConfig();
+        $Config->configArr['anon_users'] = '1';
+        $LoginController = new LoginController(
+            $Config,
+            $Request,
+            $Session,
+            new Logger('test'),
+            new Users(1, 1),
+        );
+        $res = $LoginController->getResponse();
+        $this->assertInstanceOf(Response::class, $res);
+        $this->assertSame('/index.php', $res->headers->get('Location'));
     }
 
     public function testAuthTeam(): void

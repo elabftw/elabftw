@@ -53,21 +53,12 @@
 
 <section>
 
-  {# DATE and RATING #}
-  <div class='d-flex mb-1'>
-    {# DATE #}
-    {% if Entity.entityType.value != 'experiments_templates' %}
-      <div class='color-medium mb-2'>
-        {{ 'Started on'|trans }} {{ Entity.entityData.date|date('Y-m-d') }}
-      </div>
-    {% endif %}
-    {# RATING #}
-    <div class='ml-auto'>
-      {% if Entity.entityData.rating > 0 %}
-        <span class='rating-show rounded p-1'><i class='fas fa-star' title='☻'></i>{{ Entity.entityData.rating }}</span>
-      {% endif %}
+  {# DATE #}
+  {% if Entity.entityType.value != 'experiments_templates' %}
+    <div class='color-medium mb-2'>
+      {{ 'Started on'|trans }} {{ Entity.entityData.date|date('Y-m-d') }}
     </div>
-  </div>
+  {% endif %}
 
   {% include('catstat-view.html') %}
 

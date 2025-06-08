@@ -56,15 +56,6 @@
       </div>
     </div>
     {% endif %}
-
-    {# RATING #}
-    {# experiments templates won't have any date or custom id, so we need to push the rating to the right with ml-auto #}
-    <div class='rating {{ Entity.entityType.value == 'experiments_templates' ? 'ml-auto' }}' id='editRatingDiv'>
-      <span class='cancel-button' data-trigger='click' data-model='{{ Entity.entityType.value }}/{{ Entity.entityData.id }}' data-target='rating' data-value='0' data-reload='editRatingDiv'><i class='fas fa-ban fa-fw'></i></span>
-      {% for i in range(5, 1) %}
-        <input {{ Entity.entityData.rating == i ? 'checked="checked"' }} type='radio' id='star{{ i }}' data-trigger='change' data-model='{{ Entity.entityType.value }}/{{ Entity.entityData.id }}' data-target='rating' data-value='{{ i }}' data-reload='editRatingDiv' value='{{ i }}' /><label for='star{{ i }}' aria-label='{{ i }} star {{- i > 1 ? 's' }}'></label>
-      {% endfor %}
-    </div>
   </div>
 
   {# TAGS #}

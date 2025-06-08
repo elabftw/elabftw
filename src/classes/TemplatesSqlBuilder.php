@@ -44,6 +44,7 @@ final class TemplatesSqlBuilder extends EntitySqlBuilder
             entity.lockedby,
             entity.locked_at,
             entity.metadata,
+            entity.rating,
             entity.state,
             (pin_experiments_templates2users.entity_id IS NOT NULL) AS is_pinned';
         $this->joinsSql[] = 'LEFT JOIN pin_experiments_templates2users

@@ -1,6 +1,6 @@
 {# TAGS #}
 <div class='d-flex mb-2 align-items-center mathjax-ignore'>
-  <label for='createTagInput' class='col-form-label mr-3 edit-mode-label'>{{ 'Tags'|trans }}</label>
+  <label for='createTagInput' class='col-form-label mr-3 edit-mode-label d-sm-block d-none'>{{ 'Tags'|trans }}</label>
   <div class='tags form-inline align-items-center mr-2'>
     <div id='tags_div_currenttags_{{ Entity.id }}' class='d-flex flex-wrap'>
       {% set attachedTags = Entity.Tags.readAll() %}
@@ -10,7 +10,7 @@
     </div>
     <input type='text' id='createTagInput' data-autocomplete='tags' class='createTagInput form-control' placeholder='{{ 'Add a tag'|trans }}' />
   </div>
-  <div class='mathjax-ignore ml-auto'>
+  <div class='mathjax-ignore ml-auto d-sm-block d-none'>
     <details closed class='suggested-tags'>
       <summary>{{ 'Suggested tags'|trans }}</summary>
       <div id='tags_div_suggestedtags_{{ Entity.id }}' class='suggested-tags-menu'>

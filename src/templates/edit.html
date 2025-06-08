@@ -37,17 +37,17 @@
 
 <section id='main_section' aria-label='main section'>
 
-  {# DATE and RATING #}
+  {# DATE #}
   <div class='d-flex mb-2 justify-content-between '>
     {% if Entity.entityType.value != 'experiments_templates' %}
       <div class='form-inline'>
-        <label for='date_input' class='col-form-label mr-3 edit-mode-label justify-content-start'>{{ 'Started on'|trans }}</label>
+        <label for='date_input' class='col-form-label mr-3 edit-mode-label justify-content-start d-sm-block d-none'>{{ 'Started on'|trans }}</label>
         {# the input expects date in YYYY-MM-DD format, and it will be displayed according to the browser's locale #}
         <input id='date_input' data-trigger='blur' data-model='{{ Entity.entityType.value }}/{{ Entity.entityData.id }}' data-target='date' type='date' value='{{ Entity.entityData.date|date('Y-m-d') }}' class='form-control' />
       </div>
     {# CUSTOM ID #}
-    <div class='d-flex ml-2'>
-      <label for='custom_id_input' class='col-form-label mr-3 edit-mode-label'>{{ 'Custom ID'|trans }}</label>
+    <div class='d-flex ml-2 d-inline-flex flex-nowrap align-items-center'>
+      <label for='custom_id_input' class='col-form-label mr-3 edit-mode-label d-sm-block d-none'>{{ 'Custom ID'|trans }}</label>
       <div class='input-group'>
         <div class='input-group-prepend'>
           <button class='btn btn-secondary' type='button' data-action='get-next-custom-id' data-endpoint='{{ Entity.entityType.value }}'>{{ 'Get next'|trans }}</button>

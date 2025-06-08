@@ -253,7 +253,7 @@
     {% if not App.Session.has('is_anon') %}
     {% if mode == 'edit' %}
       {# RATING EDIT #}
-      <div class='rating mr-2' id='editRatingDiv'>
+      <div class='rating mr-2 d-inline-flex flex-nowrap align-items-center' id='editRatingDiv'>
         <span class='cancel-button' data-trigger='click' data-model='{{ Entity.entityType.value }}/{{ Entity.entityData.id }}' data-target='rating' data-value='0' data-reload='editRatingDiv'><i class='fas fa-ban fa-fw'></i></span>
         {% for i in range(5, 1) %}
           <input {{ Entity.entityData.rating == i ? 'checked="checked"' }} type='radio' id='star{{ i }}' data-trigger='change' data-model='{{ Entity.entityType.value }}/{{ Entity.entityData.id }}' data-target='rating' data-value='{{ i }}' data-reload='editRatingDiv' value='{{ i }}' /><label for='star{{ i }}' aria-label='{{ i }} star {{- i > 1 ? 's' }}'></label>

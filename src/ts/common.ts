@@ -7,7 +7,7 @@
  */
 import $ from 'jquery';
 import { Api } from './Apiv2.class';
-import { Malle, InputType, Action as MalleAction } from '@deltablot/malle';
+import { Malle, InputType, Action as MalleAction, SelectOptions } from '@deltablot/malle';
 import 'bootstrap/js/src/modal.js';
 import { clearLocalStorage, rememberLastSelected, selectLastSelected } from './localStorage';
 import {
@@ -31,6 +31,7 @@ import {
   toggleIcon,
   TomSelect,
   updateEntityBody,
+  updateCatStat,
 } from './misc';
 import i18next from 'i18next';
 import { Metadata } from './Metadata.class';
@@ -89,6 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
   i18next.changeLanguage(userPrefs.lang);
 
   makeSortableGreatAgain();
+
+  const entity = getEntity();
 
   if (userPrefs.scDisabled === '0') {
     const kbd = new KeyboardShortcuts(
@@ -259,6 +262,96 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // UPDATE MALLEABLE STATUS
+  interface Status extends SelectOptions {
+    id: number;
+    color: string;
+    title: string;
+  }
+
+  const notsetOpts = {id: null, title: i18next.t('not-set'), color: 'bdbdbd'};
+
+  let categoryEndpoint = `${EntityType.ItemType}`;
+  let statusEndpoint = `${Model.Team}/current/items_status`;
+  if (entity.type === EntityType.Experiment || entity.type === EntityType.Template) {
+    categoryEndpoint = `${Model.Team}/current/experiments_categories`;
+    statusEndpoint = `${Model.Team}/current/experiments_status`;
+  }
+
+  const malleableStatus = new Malle({
+    // use the after hook to add the colored circle before text
+    after: (elem: HTMLElement, _: Event, value: string) => {
+      const icon = document.createElement('i');
+      icon.classList.add('fas', 'fa-circle', 'mr-1');
+      const splitValue = value.split('|');
+      icon.style.color = `#${splitValue[1]}`;
+      elem.insertBefore(icon, elem.firstChild);
+      return true;
+    },
+    // use the onEdit hook to set the correct selected option (because of the circle icon interference)
+    onEdit: async (original: HTMLElement, _: Event, input: HTMLInputElement|HTMLSelectElement) => {
+      // the options can be a promise, so we need to use await or its length will be 0 here
+      const opts = await (input as HTMLSelectElement).options;
+      for (let i = 0; i < opts.length; i++) {
+        if (opts.item(i).textContent === original.textContent.trim()) {
+          opts.item(i).selected = true;
+          break;
+        }
+      }
+      return true;
+    },
+    cancel : i18next.t('cancel'),
+    cancelClasses: ['btn', 'btn-danger', 'ml-1'],
+    inputClasses: ['form-control', 'ml-2'],
+    formClasses: ['form-inline'],
+    fun: (value: string, original: HTMLElement) => updateCatStat(original.dataset.target, entity, value).then(color => {
+      original.style.setProperty('--bg', `#${color}`);
+      return color;
+    }),
+    inputType: InputType.Select,
+    selectOptionsValueKey: 'id',
+    selectOptionsTextKey: 'title',
+    selectOptions: ApiC.getJson(statusEndpoint).then(json => Array.from(json)).then((statusArr: Array<Status>) => {
+      statusArr.unshift(notsetOpts);
+      return statusArr;
+    }),
+    listenOn: '.malleableStatus',
+    returnedValueIsTrustedHtml: false,
+    submit : i18next.t('save'),
+    submitClasses: ['btn', 'btn-primary', 'ml-1'],
+    tooltip: i18next.t('click-to-edit'),
+  });
+
+  // UPDATE MALLEABLE CATEGORY
+
+  const malleableCategory = new Malle({
+    // use the after hook to change the background color of the new element
+    after: (elem: HTMLElement, _: Event, value: string) => {
+      // we get back a string with the id separated from color with a |
+      const splitValue = value.split('|');
+      elem.dataset.id = splitValue[0];
+      elem.style.setProperty('--bg', `#${splitValue[1]}`);
+      return true;
+    },
+    cancel : i18next.t('cancel'),
+    cancelClasses: ['btn', 'btn-danger', 'mx-1'],
+    inputClasses: ['form-control'],
+    formClasses: ['form-inline'],
+    fun: (value: string, original: HTMLElement) => updateCatStat(original.dataset.target, entity, value),
+    inputType: InputType.Select,
+    selectOptionsValueKey: 'id',
+    selectOptionsTextKey: 'title',
+    selectOptions: ApiC.getJson(categoryEndpoint).then(json => [notsetOpts, ...Array.from(json)]),
+    listenOn: '.malleableCategory',
+    returnedValueIsTrustedHtml: false,
+    submit : i18next.t('save'),
+    submitClasses: ['btn', 'btn-primary', 'ml-1'],
+    tooltip: i18next.t('click-to-edit'),
+  });
+
+  malleableStatus.listen();
+  malleableCategory.listen();
+
   // validate the form upon change. fix #451
   // add to the input itself, not the form for more flexibility
   // for instance the tags input allow multiple selection, so we don't want to submit on change
@@ -410,7 +503,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // TOGGLE PINNED
     } else if (el.matches('[data-action="toggle-pin"]')) {
-      const entity = getEntity();
       let id = entity.id;
       if (isNaN(id) || id === null) {
         id = parseInt(el.dataset.id, 10);

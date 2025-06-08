@@ -419,7 +419,9 @@ export async function updateCatStat(target: string, entity: Entity, value: strin
   const params = {};
   params[target] = value;
   const newEntity = await (new Api()).patch(`${entity.type}/${entity.id}`, params).then(resp => resp.json());
-  return (target === 'category' ? newEntity.category_color : newEntity.status_color) ?? 'bdbdbd';
+  // return a string separated with | with the id first so we can use it in data-id of new element
+  let response = value + '|';
+  return response += (target === 'category' ? newEntity.category_color : newEntity.status_color) ?? 'bdbdbd';
 }
 
 // used in edit.ts to build search patterns from strings that contain special characters

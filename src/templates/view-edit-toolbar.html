@@ -152,7 +152,7 @@
 <hr>
 
 {# TOP TOOLBAR #}
-<div class='d-flex align-items-center' id='topToolbar'>
+<div class='d-flex align-items-center flex-wrap' id='topToolbar'>
   {# BACK TO LINK #}
   {% if App.Session.has('lastquery') %}
     {% set lastquery = App.Session.get('lastquery') %}
@@ -249,7 +249,7 @@
   {# DOWNLOAD / EXPORT MENU #}
   {% include 'export-menu.html' %}
 
-  <div class='ml-auto d-flex align-items-center'>
+  <div class='ml-auto d-flex flex-wrap align-items-center'>
     {% if not App.Session.has('is_anon') %}
     {% if mode == 'edit' %}
       {# RATING EDIT #}

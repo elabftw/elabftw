@@ -90,6 +90,20 @@ describe('Experiments', () => {
     cy.wait('@apiDELETE');
   };
 
+  const entityCatStat = () => {
+    cy.wait('@apiGET');
+    // change category
+    cy.get('.malleableCategory').click();
+    cy.get('select:has(option:selected:contains("Not set"))').select('Cell biology');
+    cy.wait('@apiPATCH');
+    cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
+    // change status
+    cy.get('.malleableStatus').click();
+    cy.get('select:has(option:selected:contains("Not set"))').select('Success');
+    cy.wait('@apiPATCH');
+    cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
+  };
+
   it('Create and edit an experiment', () => {
     const endpoint = 'experiments';
     cy.visit('/experiments.php');
@@ -97,13 +111,8 @@ describe('Experiments', () => {
     cy.contains('Create').click();
     cy.intercept('GET', `/api/v2/${endpoint}/**`).as('apiGET');
     cy.get('#createModal_experiments').should('be.visible').should('contain', 'Default template').contains('Default template').click();
-    cy.wait('@apiGET');
-    cy.wait('@apiGET');
+    entityCatStat();
     entityEdit(endpoint);
-    // change status
-    cy.get('#status_select').select('Success').blur();
-    cy.wait('@apiPATCH');
-    cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
     entityComment();
     entityDuplicate();
     entityDestroy();
@@ -116,11 +125,8 @@ describe('Experiments', () => {
     cy.contains('Create').click();
     cy.intercept('GET', `/api/v2/${endpoint}/**`).as('apiGET');
     cy.get('#createModal_database').should('be.visible').should('contain', 'Microscope').contains('Microscope').click();
-    cy.wait('@apiGET');
-    cy.wait('@apiGET');
+    entityCatStat();
     entityEdit(endpoint);
-    cy.get('#category_select').select('Plasmid').blur();
-    cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
     entityComment();
     entityDuplicate();
     entityDestroy();

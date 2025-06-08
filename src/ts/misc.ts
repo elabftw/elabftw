@@ -172,17 +172,21 @@ export function getEntity(): Entity {
   // holds info about the page through data attributes
   const about = document.getElementById('info').dataset;
   let entityType: EntityType;
-  if (about.type === 'experiments') {
+  switch (about.type) {
+  case 'experiments':
     entityType = EntityType.Experiment;
-  }
-  if (about.type === 'items') {
+    break;
+  case 'items':
     entityType = EntityType.Item;
-  }
-  if (about.type === 'experiments_templates') {
+    break;
+  case 'experiments_templates':
     entityType = EntityType.Template;
-  }
-  if (about.type === 'items_types') {
+    break;
+  case 'items_types':
     entityType = EntityType.ItemType;
+    break;
+  default:
+    return {type: EntityType.Other, id: 0};
   }
   let entityId = null;
   if (about.id) {

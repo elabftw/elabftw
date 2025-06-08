@@ -167,7 +167,7 @@ export function clearForm(form: HTMLElement): void {
 // for view or edit mode, get type and id from the page to construct the entity object
 export function getEntity(): Entity {
   if (!document.getElementById('info')) {
-    return;
+    return {type: EntityType.Other, id: 0};
   }
   // holds info about the page through data attributes
   const about = document.getElementById('info').dataset;

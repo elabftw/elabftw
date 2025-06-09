@@ -20,6 +20,7 @@ const t = {
     "entries-processed": "{{num, number}} entrées traitées",
     "error-no-category": "Une catégorie est nécessaire pour rechercher l'ID personnalisé suivant",
     "error-fetch-request": "Une erreur s'est produite lors de l'extraction des données demandées : {{error}}",
+    "error-parsing-metadata": "There was an error while parsing metadata (extra fields). Full error has been logged to the browser console.",
     "extra-fields": "Champs supplémentaires",
     "filename": "Nom du fichier",
     "file-imported": "Fichier importé avec succès",

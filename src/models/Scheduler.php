@@ -144,17 +144,12 @@ final class Scheduler extends AbstractRest
             $this->appendFilterSql(column: 'team_events.userid', paramName: 'ownerid', value: $queryParams->getQuery()->getInt('eventOwner'));
             $this->appendFilterSql(column: 'items.id', paramName: 'itemid', value: $queryParams->getQuery()->getInt('item'));
         }
+        // apply scope for events
         $scopeInt = $this->Items->Users->userData['scope_events'] ?? Scope::Everything->value;
-        switch ($scopeInt) {
-            case Scope::User->value:
-                $this->appendFilterSql('team_events.userid', 'userid', $this->Items->Users->userData['userid']);
-                break;
-            case Scope::Team->value:
-                $this->appendFilterSql('team_events.team', 'team_scope', $this->Items->Users->userData['team']);
-                break;
-            case Scope::Everything->value:
-            default:
-                break;
+        if ($scopeInt === Scope::User->value) {
+            $this->appendFilterSql('team_events.userid', 'userid', $this->Items->Users->userData['userid']);
+        } elseif ($scopeInt === Scope::Team->value) {
+            $this->appendFilterSql('team_events.team', 'team_scope', $this->Items->Users->userData['team']);
         }
         // the title of the event is title + Firstname Lastname of the user who booked it
         $sql = sprintf(

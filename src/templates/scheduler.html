@@ -172,6 +172,7 @@
       {#  FILTER FOR EVENTS #}
       <div class='vertical-separator'></div>
       {# EVENT OWNERS SEARCH FILTER #}
+      {% include 'scope-button.html' with {'btnId': 'scopeEventBtn', 'reload': 'page', 'target': 'scope_events', 'isSecondary': 0, 'isSmall': 0} %}
       <div class='d-flex flex-column mx-2'>
         <div class='input-group'>
           <input type='text' aria-label='{{ 'Filter owner'|trans }}' placeholder='{{ 'Filter events by owner'|trans }}' id='eventOwnerSelect' class='form-control' data-identifier='eventOwnerSelect' data-complete-target='users'>

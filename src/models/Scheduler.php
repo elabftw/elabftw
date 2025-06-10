@@ -279,10 +279,6 @@ final class Scheduler extends AbstractRest
             LEFT JOIN items_types ON (items.category = items_types.id)
             LEFT JOIN users AS u ON team_events.userid = u.userid
             WHERE team_events.item = :item
-                --                 |start  search range  end|
-                -- | event 1 | | event 2 | | event 3 | | event 4 | | event 5 |
-                --               |           event 6          |
-                -- events.start <= range.end and events.end >= range.start
                 AND team_events.start <= :end
                 AND team_events.end >= :start";
         $req = $this->Db->prepare($sql);

@@ -1,2 +1,2 @@
 -- schema 177
-ALTER TABLE `users` ADD `scope_events` TINYINT UNSIGNED NOT NULL DEFAULT 2 AFTER `scope_experiments`;
+ALTER TABLE `users` ADD `scope_events` TINYINT UNSIGNED NOT NULL DEFAULT 2;

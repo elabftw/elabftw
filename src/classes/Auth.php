@@ -90,7 +90,7 @@ final class Auth implements AuthInterface
                 if ($team === 0) {
                     throw new UnauthorizedException();
                 }
-                return new Anon($this->Config->configArr, $team);
+                return new Anon((bool) $this->Config->configArr['anon_users'], $team);
             case 'open':
                 // don't do it if we have elabid in url
                 // only autologin on selected pages and if we are not authenticated with an account
@@ -99,7 +99,7 @@ final class Auth implements AuthInterface
                     Entrypoint::Database->toPage(),
                 );
                 if (in_array(basename($this->Request->getScriptName()), $autoAnon, true)) {
-                    return new Anon($this->Config->configArr, (int) ($this->Config->configArr['open_team'] ?? 1));
+                    return new Anon((bool) $this->Config->configArr['anon_users'], (int) ($this->Config->configArr['open_team'] ?? 1));
                 }
                 // no break
             default:

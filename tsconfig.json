@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "baseUrl": "../..",
-    "module": "es6",
+    "baseUrl": ".",
+    "module": "NodeNext",
     "esModuleInterop": true,
-    "moduleResolution": "node",
+    "moduleResolution": "NodeNext",
     "strict": false,
     "removeComments": true,
     "preserveConstEnums": true,
@@ -11,6 +11,6 @@
     "lib": ["es2022", "dom"]
   },
   "include": [
-    "."
+    "src/ts/**/*"
   ]
 }

@@ -96,6 +96,9 @@
       {% endif %}
       {{ App.Session.get('csrf')|csrf }}
       <div class='col-md-4 mx-auto mt-4 text-left form-group'>
+        {% if App.Config.configArr.debug -%}
+          <!-- [html-validate-disable-block input-missing-label, prefer-native-element: suppress errors from tom-select] -->
+        {%- endif %}
         <label for='team_selection_select'>{{ 'Your account is linked to several teams. Select in which team you want to log in'|trans }}</label>
         <select name='selected_team' id='team_selection_select' class='form-control'>
           {% for team in App.Session.get('team_selection') %}
@@ -173,6 +176,7 @@
 
     {% endif %}
 
+    {# SAML LOGIN #}
     {% if App.Config.configArr.saml_toggle and idpsArr|length %}
       <div class='separator col-md-4 mx-auto'></div>
       <h2>{{ 'Login through your institution'|trans }}</h2>

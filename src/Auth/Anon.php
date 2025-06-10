@@ -24,9 +24,9 @@ final class Anon implements AuthInterface
 {
     private AuthResponse $AuthResponse;
 
-    public function __construct(array $configArr, int $team)
+    public function __construct(bool $isAnonAllowed, int $team)
     {
-        if (!$configArr['anon_users']) {
+        if (!$isAnonAllowed) {
             throw new IllegalActionException('Cannot login as anon because it is not allowed by sysadmin!');
         }
         $this->AuthResponse = new AuthResponse();

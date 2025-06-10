@@ -118,6 +118,8 @@ final class Config extends AbstractRest
             ('saml_user_default', '1'),
             ('saml_allowrepeatattributename', '0'),
             ('local_login', '1'),
+            ('local_login_hidden_only_sysadmin', '0'),
+            ('local_login_only_sysadmin', '0'),
             ('local_auth_enabled', '1'),
             ('local_register', '1'),
             ('admins_create_users', '1'),

@@ -20,6 +20,7 @@ const t = {
     "entries-processed": "{{num, number}} entries processed",
     "error-no-category": "Для получения следующего индивидуального идентификатора требуется категория.",
     "error-fetch-request": "There was an error while fetching the requested data: {{error}}",
+    "error-parsing-metadata": "There was an error while parsing metadata (extra fields). Full error has been logged to the browser console.",
     "extra-fields": "Дополнительные поля",
     "filename": "Имя файла",
     "file-imported": "File imported successfully",

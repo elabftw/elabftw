@@ -122,73 +122,59 @@
 
 <div id='selectBookableWarningDiv' hidden>{{ 'Select a resource below in order to book it.'|trans }}</div>
   <hr>
-{# DESCRIPTIONS FOR THE FILTERS #}
-  <div class='d-flex'>
-    <div class='col-md-6'>
-      <span class='smallgray'>{{ 'Select a scope and search bookable resources.'|trans }}</span>
-    </div>
-    <div class='col-md-6 ml-5'>
-      <span class='smallgray'>{{ 'Select a scope and search for events.'|trans }}</span>
-    </div>
-  </div>
 
-<div id='mainSchedulerContent' class='d-flex'>
-  {#  RESOURCES FILTERS #}
-  <div class='d-flex col-md-6'>
-    <div class='d-flex flex-wrap justify-content-between align-items-center my-2'>
-      <div class='d-flex align-items-center flex-wrap'>
+  {# FILTERS #}
+  <div class='d-flex flex-row justify-content-between flex-wrap'>
+    {# LEFT PART: filter resources #}
+    <div class='flex-row align-items-center'>
+      <p class='smallgray'>{{ 'Select a scope and search bookable resources.'|trans }}</p>
+      <div class='d-flex flex-row'>
         {#  TODO: make scopeBtn work without full page reload #}
         {# RESOURCES SCOPE #}
         {% include 'scope-button.html' with {'reload': 'page', 'target': 'scope_items', 'isSecondary': 0, 'isSmall': 0} %}
         {# FILTER BY CATEGORY #}
-        <div class='d-flex flex-column mx-2'>
         {% if App.Config.configArr.debug -%}
           <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
         {%- endif %}
-          <select
-            aria-label='{{ 'Filter by category'|trans }}'
-            class='mr-1 form-control ts-filter'
-            id='schedulerSelectCat'
-            name='cat'
-          >
-            <option value=''>{{ 'Filter by category'|trans }}</option>
-            {% for category in bookableItemsTypes %}
-              <option value='{{ category.id }}'{{- App.Request.query.get('cat') == category.id ? ' selected' -}}>
-                {{ category.team_name }} - {{ category.title }}
-              </option>
-            {% endfor %}
-          </select>
-        </div>
+        <select
+          aria-label='{{ 'Filter by category'|trans }}'
+          class='mr-1 form-control ts-filter form-inline'
+          id='schedulerSelectCat'
+          name='cat'
+        >
+          <option value=''>{{ 'Filter by category'|trans }}</option>
+          {% for category in bookableItemsTypes %}
+            <option value='{{ category.id }}'{{- App.Request.query.get('cat') == category.id ? ' selected' -}}>
+              {{ category.team_name }} - {{ category.title }}
+            </option>
+          {% endfor %}
+        </select>
+
         {# FILTER BY RESOURCE #}
-        <div class='d-flex flex-column mx-2'>
-          {% if App.Config.configArr.debug -%}
-            <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
-          {%- endif %}
-          <select
-            aria-label='{{ 'Select a resource'|trans }}'
-            class='form-control ts-filter'
-            id='itemSelect'
-            name='item'
-          >
-            <option value=''>{{ 'Select a resource'|trans }}</option>
-            {% for item in itemsArr %}
-              {# data-color is used to set the background during initial drag #}
-              <option data-color='{{ item.category_color }}' value='{{ item.id }}'{{- App.Request.query.get('item') == item.id ? ' selected' -}}>
-                {{ item.category_title }} - {{ item.title }}
-              </option>
-            {% endfor %}
-          </select>
-        </div>
+        {% if App.Config.configArr.debug -%}
+          <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
+        {%- endif %}
+        <select
+          aria-label='{{ 'Select a resource'|trans }}'
+          class='form-control ts-filter form-inline'
+          id='itemSelect'
+          name='item'
+        >
+          <option value=''>{{ 'Select a resource'|trans }}</option>
+          {% for item in itemsArr %}
+            {# data-color is used to set the background during initial drag #}
+            <option data-color='{{ item.category_color }}' value='{{ item.id }}'{{- App.Request.query.get('item') == item.id ? ' selected' -}}>
+              {{ item.category_title }} - {{ item.title }}
+            </option>
+          {% endfor %}
+        </select>
       </div>
     </div>
-  </div>
 
-  <div class='vertical-separator my-auto'></div>
-
-  {#  EVENT FILTERS #}
-  <div class='d-flex col-md-6'>
-    <div class='my-2'>
-      <div class='d-flex'>
+    {# MIDDLE PART: events filters #}
+    <div class='flex-row align-items-center'>
+      <p class='smallgray'>{{ 'Select a scope and search for events.'|trans }}</p>
+      <div class='d-flex flex-row'>
         {# EVENTS SCOPE #}
         {% include 'scope-button.html' with {'btnId': 'scopeEventBtn', 'reload': 'page', 'target': 'scope_events', 'isSecondary': 0, 'isSmall': 0} %}
         <div class='input-group ml-2'>
@@ -201,19 +187,17 @@
         </div>
       </div>
     </div>
-    {# SETTINGS #}
-    <div class='ml-auto d-flex'>
-      <div class='vertical-separator my-auto'></div>
-      <div class='d-flex align-items-center'>
-        <a href='#' data-action='toggle-modal' data-target='schedulerSettingsModal' aria-label='{{ 'Settings'|trans }}' title='{{ 'Settings'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 mr-2'>
-          <i class='fas fa-cogs fa-fw'></i>
-        </a>
-      </div>
+
+    {# RIGHT PART: SETTINGS #}
+    {# div is necessary to prevent the link being too high, align-self-end to put it at bottom #}
+    <div class='align-self-end'>
+      <a href='#' data-action='toggle-modal' data-target='schedulerSettingsModal' aria-label='{{ 'Settings'|trans }}' title='{{ 'Settings'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 mr-2'>
+        <i class='fas fa-cogs fa-fw'></i>
+      </a>
     </div>
   </div>
-</div>
-<hr>
 
+  <hr>
 
 {% if bookableItemData %}
   <div id='schedulerResourceDisplay' class='title d-flex justify-content-center'>

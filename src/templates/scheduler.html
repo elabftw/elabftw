@@ -122,59 +122,77 @@
 
 <div id='selectBookableWarningDiv' hidden>{{ 'Select a resource below in order to book it.'|trans }}</div>
   <hr>
-<span class='smallgray'>{{ 'Select a scope and search bookable resources.'|trans }}</span>
-<div class='d-flex flex-wrap justify-content-between align-items-center my-2'>
-{#  FILTER FOR RESOURCES #}
-{#  TODO: make scopeBtn work without full page reload #}
-  {% include 'scope-button.html' with {'reload': 'page', 'target': 'scope_items', 'isSecondary': 0, 'isSmall': 0} %}
-  <div id='mainSchedulerContent' class='mr-auto'>
-    <div class='d-flex align-items-center flex-wrap'>
-      {# CATEGORY #}
-      <div class='d-flex flex-column mx-2'>
-        {% if App.Config.configArr.debug -%}
-          <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
-        {%- endif %}
-        <select
-          aria-label='{{ 'Filter by category'|trans }}'
-          class='mr-1 form-control ts-filter'
-          id='schedulerSelectCat'
-          name='cat'
-        >
-          <option value=''>{{ 'Filter by category'|trans }}</option>
-          {% for category in bookableItemsTypes %}
-            <option value='{{ category.id }}'{{- App.Request.query.get('cat') == category.id ? ' selected' -}}>
-              {{ category.team_name }} - {{ category.title }}
-            </option>
-          {% endfor %}
-        </select>
-      </div>
+{# DESCRIPTIONS FOR THE FILTERS #}
+  <div class='d-flex'>
+    <div class='col-md-6'>
+      <span class='smallgray'>{{ 'Select a scope and search bookable resources.'|trans }}</span>
+    </div>
+    <div class='col-md-6 ml-5'>
+      <span class='smallgray'>{{ 'Select a scope and search for events.'|trans }}</span>
+    </div>
+  </div>
 
-      {# ITEM LIST #}
-      <div class='d-flex flex-column mx-2'>
+<div id='mainSchedulerContent' class='d-flex'>
+  {#  RESOURCES FILTERS #}
+  <div class='d-flex col-md-6'>
+    <div class='d-flex flex-wrap justify-content-between align-items-center my-2'>
+      <div class='d-flex align-items-center flex-wrap'>
+        {#  TODO: make scopeBtn work without full page reload #}
+        {# RESOURCES SCOPE #}
+        {% include 'scope-button.html' with {'reload': 'page', 'target': 'scope_items', 'isSecondary': 0, 'isSmall': 0} %}
+        {# FILTER BY CATEGORY #}
+        <div class='d-flex flex-column mx-2'>
         {% if App.Config.configArr.debug -%}
           <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
         {%- endif %}
-        <select
-          aria-label='{{ 'Select a resource'|trans }}'
-          class='form-control ts-filter'
-          id='itemSelect'
-          name='item'
-        >
-          <option value=''>{{ 'Select a resource'|trans }}</option>
-          {% for item in itemsArr %}
-            {# data-color is used to set the background during initial drag #}
-            <option data-color='{{ item.category_color }}' value='{{ item.id }}'{{- App.Request.query.get('item') == item.id ? ' selected' -}}>
-              {{ item.category_title }} - {{ item.title }}
-            </option>
-          {% endfor %}
-        </select>
+          <select
+            aria-label='{{ 'Filter by category'|trans }}'
+            class='mr-1 form-control ts-filter'
+            id='schedulerSelectCat'
+            name='cat'
+          >
+            <option value=''>{{ 'Filter by category'|trans }}</option>
+            {% for category in bookableItemsTypes %}
+              <option value='{{ category.id }}'{{- App.Request.query.get('cat') == category.id ? ' selected' -}}>
+                {{ category.team_name }} - {{ category.title }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+        {# FILTER BY RESOURCE #}
+        <div class='d-flex flex-column mx-2'>
+          {% if App.Config.configArr.debug -%}
+            <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
+          {%- endif %}
+          <select
+            aria-label='{{ 'Select a resource'|trans }}'
+            class='form-control ts-filter'
+            id='itemSelect'
+            name='item'
+          >
+            <option value=''>{{ 'Select a resource'|trans }}</option>
+            {% for item in itemsArr %}
+              {# data-color is used to set the background during initial drag #}
+              <option data-color='{{ item.category_color }}' value='{{ item.id }}'{{- App.Request.query.get('item') == item.id ? ' selected' -}}>
+                {{ item.category_title }} - {{ item.title }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
       </div>
-      {#  FILTER FOR EVENTS #}
-      <div class='vertical-separator'></div>
-      {# EVENT OWNERS SEARCH FILTER #}
-      {% include 'scope-button.html' with {'btnId': 'scopeEventBtn', 'reload': 'page', 'target': 'scope_events', 'isSecondary': 0, 'isSmall': 0} %}
-      <div class='d-flex flex-column mx-2'>
-        <div class='input-group'>
+    </div>
+  </div>
+
+  <div class='vertical-separator my-auto'></div>
+
+  {#  EVENT FILTERS #}
+  <div class='d-flex col-md-6'>
+    <div class='my-2'>
+      <div class='d-flex'>
+        {# EVENTS SCOPE #}
+        {% include 'scope-button.html' with {'btnId': 'scopeEventBtn', 'reload': 'page', 'target': 'scope_events', 'isSecondary': 0, 'isSmall': 0} %}
+        <div class='input-group ml-2'>
+          {#  FILTER BY OWNER #}
           <input type='text' aria-label='{{ 'Filter owner'|trans }}' placeholder='{{ 'Filter events by owner'|trans }}' id='eventOwnerSelect' class='form-control' data-identifier='eventOwnerSelect' data-complete-target='users'>
           <div id='autocompleteAnchorDiv_eventOwnerSelect'></div>
           <div class='input-group-append'>
@@ -183,13 +201,15 @@
         </div>
       </div>
     </div>
-  </div>
-
-  <div class='d-flex align-items-center'>
-    <div class='vertical-separator'></div>
-    <a href='#' data-action='toggle-modal' data-target='schedulerSettingsModal' aria-label='{{ 'Settings'|trans }}' title='{{ 'Settings'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 mr-2'>
-      <i class='fas fa-cogs fa-fw'></i>
-    </a>
+    {# SETTINGS #}
+    <div class='ml-auto d-flex'>
+      <div class='vertical-separator my-auto'></div>
+      <div class='d-flex align-items-center'>
+        <a href='#' data-action='toggle-modal' data-target='schedulerSettingsModal' aria-label='{{ 'Settings'|trans }}' title='{{ 'Settings'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 mr-2'>
+          <i class='fas fa-cogs fa-fw'></i>
+        </a>
+      </div>
+    </div>
   </div>
 </div>
 <hr>

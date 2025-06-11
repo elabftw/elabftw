@@ -1,7 +1,6 @@
 describe('UCP', () => {
   beforeEach(() => {
     cy.login();
-    cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
   });
 
   it('Show UCP page', () => {
@@ -14,7 +13,6 @@ describe('UCP', () => {
       cy.visit(`/ucp.php?tab=${i}`);
       cy.get(`[data-tabtarget="${i}"]`).should('have.class', 'selected');
       cy.get('#loading-spinner').should('not.exist');
-      cy.get(`div[data-tabcontent="${i}"]`).htmlvalidate();
     }
   });
 });

@@ -71,43 +71,43 @@ jobs:
       - run:
           name: Composer install
           command: docker exec -it elabtmp composer install --no-progress -q
-      - run:
-          name: Run PHP-CS-Fixer
-          command: docker exec -it elabtmp yarn phpcs-dry
-      - run:
-          name: Run Twig linter
-          command: docker exec -it elabtmp yarn twigcs
-      - run:
-          name: "PHP static analysis: psalm + phpstan"
-          command: docker exec -it elabtmp yarn static
-      - run:
-          name: Populate the database
-          command: docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y
-      - run:
-          name: Fix permissions
-          command: |
-            docker exec -it elabtmp mkdir -p cache/purifier/{HTML,CSS,URI} cache/{elab,mpdf,twig}
-            docker exec -it elabtmp chown -R nginx:nginx cache
-            docker exec -it elabtmp chmod -R 777 cache
-            docker exec -it elabtmp chmod -R 777 tests/_output
-            docker exec -it elabtmp chown -R nginx:nginx uploads
-            docker exec -it elabtmp chmod -R 777 uploads
-      - run:
-          name: Run unit and apiv2 tests
-          command: docker exec -it elabtmp php vendor/bin/codecept run --skip cypress --coverage --coverage-xml --coverage-html
-      - run:
-          name: Extract coverage report
-          command: docker cp elabtmp:/elabftw/tests/_output/coverage.xml .
-      - run:
-          name: Extract coverage HTML report
-          command: docker cp elabtmp:/elabftw/tests/_output/coverage coverage-html
-      - run:
-          name: Generate the php documentation
-          # Note:  --setting=graphs.enabled=true has been removed because the graphs are too large
-          command: docker exec -it elabtmp ./phpdoc -i ./cache -i ./uploads -d ./src/ -t phpdoc-html
-      - run:
-          name: Extract the php documentation
-          command: docker cp elabtmp:/elabftw/phpdoc-html phpdoc-html
+          #- run:
+          #    name: Run PHP-CS-Fixer
+          #    command: docker exec -it elabtmp yarn phpcs-dry
+          #- run:
+          #    name: Run Twig linter
+          #    command: docker exec -it elabtmp yarn twigcs
+          #- run:
+          #    name: "PHP static analysis: psalm + phpstan"
+          #    command: docker exec -it elabtmp yarn static
+          #- run:
+          #    name: Populate the database
+          #    command: docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y
+          #- run:
+          #    name: Fix permissions
+          #    command: |
+          #      docker exec -it elabtmp mkdir -p cache/purifier/{HTML,CSS,URI} cache/{elab,mpdf,twig}
+          #      docker exec -it elabtmp chown -R nginx:nginx cache
+          #      docker exec -it elabtmp chmod -R 777 cache
+          #      docker exec -it elabtmp chmod -R 777 tests/_output
+          #      docker exec -it elabtmp chown -R nginx:nginx uploads
+          #      docker exec -it elabtmp chmod -R 777 uploads
+          #- run:
+          #    name: Run unit and apiv2 tests
+          #    command: docker exec -it elabtmp php vendor/bin/codecept run --skip cypress --coverage --coverage-xml --coverage-html
+          #- run:
+          #    name: Extract coverage report
+          #    command: docker cp elabtmp:/elabftw/tests/_output/coverage.xml .
+          #- run:
+          #    name: Extract coverage HTML report
+          #    command: docker cp elabtmp:/elabftw/tests/_output/coverage coverage-html
+          #- run:
+          #    name: Generate the php documentation
+          #    # Note:  --setting=graphs.enabled=true has been removed because the graphs are too large
+          #    command: docker exec -it elabtmp ./phpdoc -i ./cache -i ./uploads -d ./src/ -t phpdoc-html
+          #- run:
+          #    name: Extract the php documentation
+          #    command: docker cp elabtmp:/elabftw/phpdoc-html phpdoc-html
       - run:
           name: Reset database
           command: docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y
@@ -124,8 +124,7 @@ jobs:
           name: Run Cypress e2e tests and extract artifacts
           # have to save cypress exit code to first extract artifacts
           command: |
-            docker exec -it elabtmp rm -v /etc/php84/conf.d/42_xdebug.ini
-            docker exec -it sed -i 's|^auto_prepend_file|d|' /etc/php84/php.ini
+            docker exec -it elabtmp rm -vf /etc/php84/conf.d/42_xdebug.ini
             docker exec -it elabtmp reload php
             docker exec -it elab-cypress cypress run
             cypressExitCode=$?

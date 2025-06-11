@@ -124,6 +124,8 @@ jobs:
           name: Run Cypress e2e tests and extract artifacts
           # have to save cypress exit code to first extract artifacts
           command: |
+            docker exec -it elabtmp rm /etc/php84/conf.d/42_xdebug.ini
+            docker exec -it elabtmp reload php
             docker exec -it elab-cypress cypress run
             cypressExitCode=$?
             docker cp elab-cypress:/home/node/tests/cypress/screenshots/. cypress/screenshots

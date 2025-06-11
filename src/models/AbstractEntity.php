@@ -333,7 +333,7 @@ abstract class AbstractEntity extends AbstractRest
         // everyone can Pin, AccessKey, Bloxberg, Sign, Timestamp
         $this->ExclusiveEditMode->canPatchOrExplode($action);
         match ($action) {
-            Action::AccessKey => (new AccessKeyHelper($this))->toggleAccessKey(),
+            Action::AccessKey => (new AccessKeyHelper($this->entityType, $this->id))->toggleAccessKey(),
             Action::Archive => (
                 function () {
                     $targetState = State::Normal;

@@ -36,6 +36,7 @@ final class AnonymousUser extends Users
         $this->userData['disable_shortcuts'] = 1;
         $this->userData['scope_experiments'] = Scope::Team->value;
         $this->userData['scope_items'] = Scope::Team->value;
+        $this->userData['scope_events'] = Scope::Everything->value;
         $this->userData['scope_experiments_templates'] = Scope::Team->value;
         $this->userData['scope_teamgroups'] = Scope::Team->value;
         $this->userData['fullname'] = 'Anon Ymous';

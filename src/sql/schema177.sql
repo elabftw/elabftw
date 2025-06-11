@@ -1,0 +1,2 @@
+-- schema 177
+ALTER TABLE `users` ADD `scope_events` TINYINT UNSIGNED NOT NULL DEFAULT 3;

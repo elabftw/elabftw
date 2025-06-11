@@ -1,8 +1,4 @@
 describe('UnauthRequestHandler', () => {
-  beforeEach(() => {
-    cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
-  });
-
   it('provides Json response', () => {
     cy.request('/app/controllers/UnauthRequestHandler.php').then(resp => {
       expect(resp.status).to.eq(200);

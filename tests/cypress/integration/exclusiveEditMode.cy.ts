@@ -1,7 +1,6 @@
 describe('Exclusive edit mode', () => {
   beforeEach(() => {
     cy.login();
-    cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
   });
   const title = 'Entity with exclusive edit mode';
   // prepare an experiment with exclusive edit mode

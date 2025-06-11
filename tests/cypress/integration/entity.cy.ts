@@ -3,7 +3,6 @@ import { interceptEntityApi } from '../support/apiIntercepts';
 describe('Experiments', () => {
   beforeEach(() => {
     cy.login();
-    cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
   });
 
   const entityEdit = () => {

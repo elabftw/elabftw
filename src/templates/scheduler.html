@@ -122,21 +122,23 @@
 
 <div id='selectBookableWarningDiv' hidden>{{ 'Select a resource below in order to book it.'|trans }}</div>
   <hr>
-<span class='smallgray'>{{ 'Select a scope and search bookable resources.'|trans }}</span>
-<div class='d-flex flex-wrap justify-content-between align-items-center my-2'>
-{#  FILTER FOR RESOURCES #}
-{#  TODO: make scopeBtn work without full page reload #}
-  {% include 'scope-button.html' with {'reload': 'page', 'target': 'scope_items', 'isSecondary': 0, 'isSmall': 0} %}
-  <div id='mainSchedulerContent' class='mr-auto'>
-    <div class='d-flex align-items-center flex-wrap'>
-      {# CATEGORY #}
-      <div class='d-flex flex-column mx-2'>
+
+  {# FILTERS #}
+  <div class='d-flex flex-row justify-content-between flex-wrap'>
+    {# LEFT PART: filter resources #}
+    <div class='flex-row align-items-center'>
+      <p class='smallgray'>{{ 'Select a scope and search bookable resources.'|trans }}</p>
+      <div class='d-flex flex-row'>
+        {#  TODO: make scopeBtn work without full page reload #}
+        {# RESOURCES SCOPE #}
+        {% include 'scope-button.html' with {'reload': 'page', 'target': 'scope_items', 'isSecondary': 0, 'isSmall': 0} %}
+        {# FILTER BY CATEGORY #}
         {% if App.Config.configArr.debug -%}
           <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
         {%- endif %}
         <select
           aria-label='{{ 'Filter by category'|trans }}'
-          class='mr-1 form-control ts-filter'
+          class='ml-2 form-control ts-filter form-inline'
           id='schedulerSelectCat'
           name='cat'
         >
@@ -147,16 +149,14 @@
             </option>
           {% endfor %}
         </select>
-      </div>
 
-      {# ITEM LIST #}
-      <div class='d-flex flex-column mx-2'>
+        {# FILTER BY RESOURCE #}
         {% if App.Config.configArr.debug -%}
           <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
         {%- endif %}
         <select
           aria-label='{{ 'Select a resource'|trans }}'
-          class='form-control ts-filter'
+          class='ml-2 form-control ts-filter form-inline'
           id='itemSelect'
           name='item'
         >
@@ -169,11 +169,16 @@
           {% endfor %}
         </select>
       </div>
-      {#  FILTER FOR EVENTS #}
-      <div class='vertical-separator'></div>
-      {# EVENT OWNERS SEARCH FILTER #}
-      <div class='d-flex flex-column mx-2'>
-        <div class='input-group'>
+    </div>
+
+    {# MIDDLE PART: events filters #}
+    <div class='flex-row align-items-center'>
+      <p class='smallgray'>{{ 'Select a scope and search for events.'|trans }}</p>
+      <div class='d-flex flex-row'>
+        {# EVENTS SCOPE #}
+        {% include 'scope-button.html' with {'btnId': 'scopeEventBtn', 'reload': 'page', 'target': 'scope_events', 'isSecondary': 0, 'isSmall': 0} %}
+        <div class='input-group ml-2'>
+          {#  FILTER BY OWNER #}
           <input type='text' aria-label='{{ 'Filter owner'|trans }}' placeholder='{{ 'Filter events by owner'|trans }}' id='eventOwnerSelect' class='form-control' data-identifier='eventOwnerSelect' data-complete-target='users'>
           <div id='autocompleteAnchorDiv_eventOwnerSelect'></div>
           <div class='input-group-append'>
@@ -182,17 +187,17 @@
         </div>
       </div>
     </div>
+
+    {# RIGHT PART: SETTINGS #}
+    {# div is necessary to prevent the link being too high, align-self-end to put it at bottom #}
+    <div class='align-self-end'>
+      <a href='#' data-action='toggle-modal' data-target='schedulerSettingsModal' aria-label='{{ 'Settings'|trans }}' title='{{ 'Settings'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0'>
+        <i class='fas fa-cogs fa-fw'></i>
+      </a>
+    </div>
   </div>
 
-  <div class='d-flex align-items-center'>
-    <div class='vertical-separator'></div>
-    <a href='#' data-action='toggle-modal' data-target='schedulerSettingsModal' aria-label='{{ 'Settings'|trans }}' title='{{ 'Settings'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 mr-2'>
-      <i class='fas fa-cogs fa-fw'></i>
-    </a>
-  </div>
-</div>
-<hr>
-
+  <hr>
 
 {% if bookableItemData %}
   <div id='schedulerResourceDisplay' class='title d-flex justify-content-center'>

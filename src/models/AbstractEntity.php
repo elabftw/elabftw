@@ -547,6 +547,12 @@ abstract class AbstractEntity extends AbstractRest
         if ($params->getTarget() === 'bodyappend') {
             $content = $this->readOne()['body'] . $content;
         }
+        // ensure no changes happen on entries with immutable permissions
+        if ($params->getTarget() === 'canread' || $params->getTarget() === 'canwrite') {
+            if (($this->entityData[$params->getTarget() . '_is_immutable'] ?? 0) === 1) {
+                throw new ImproperActionException(_('Cannot modify permissions on entry with immutable permissions.'));
+            }
+        }
 
         // save a revision for body target
         if ($params->getTarget() === 'body' || $params->getTarget() === 'bodyappend') {

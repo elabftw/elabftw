@@ -1,8 +1,4 @@
 describe('Register new user', () => {
-  beforeEach(() => {
-    cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
-  });
-
   it('fills form and submits', () => {
     cy.visit('/register.php');
     cy.htmlvalidate();

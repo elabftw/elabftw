@@ -1,7 +1,6 @@
 describe('Import links', () => {
   beforeEach(() => {
     cy.login().as('csrfToken');
-//    cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
   });
 
   const postRequest = (endpoint: string, body: object): Cypress.Chainable => {

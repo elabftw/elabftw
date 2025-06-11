@@ -1,7 +1,6 @@
 describe('Revisions', () => {
   beforeEach(() => {
     cy.login();
-//    cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
   });
 
   it('Show revisions page', () => {

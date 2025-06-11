@@ -1,7 +1,6 @@
 describe('Change Password', () => {
   beforeEach(() => {
     cy.login();
-//    cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
   });
 
   it('Change Password', () => {

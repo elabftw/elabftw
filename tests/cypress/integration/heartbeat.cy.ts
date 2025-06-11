@@ -1,6 +1,5 @@
 describe('Heart Beat', () => {
   beforeEach(() => {
-//    cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
   });
 
   it('is normal', () => {

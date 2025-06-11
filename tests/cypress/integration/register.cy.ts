@@ -1,6 +1,5 @@
 describe('Register new user', () => {
   beforeEach(() => {
-//    cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
   });
 
   it('fills form and submits', () => {

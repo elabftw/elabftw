@@ -1,7 +1,6 @@
 describe('Users tab in Admin page', () => {
   beforeEach(() => {
     cy.login();
-//    cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
     cy.visit('/admin.php?tab=3&q=toto');
   });
 

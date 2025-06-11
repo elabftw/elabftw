@@ -1,7 +1,6 @@
 describe('Items Types', () => {
   beforeEach(() => {
     cy.login();
-//    cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
   });
   const newname = 'Cypress :: New item type name';
 

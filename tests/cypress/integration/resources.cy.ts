@@ -1,7 +1,6 @@
 describe('Resources', () => {
   beforeEach(() => {
     cy.login();
-    cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
   });
 
   it('See page', () => {

@@ -1,7 +1,4 @@
 describe('Register new user', () => {
-  beforeEach(() => {
-  });
-
   it('fills form and submits', () => {
     cy.visit('/register.php');
     cy.htmlvalidate();

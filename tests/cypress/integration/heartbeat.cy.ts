@@ -1,7 +1,4 @@
 describe('Heart Beat', () => {
-  beforeEach(() => {
-  });
-
   it('is normal', () => {
     cy.login();
 

@@ -60,6 +60,14 @@
     </div>
   {% endif %}
 
+  {# OWNER #}
+  <div class='d-flex mb-2 align-items-center'>
+    <div class='edit-mode-label'>
+      <i aria-hidden='true' class='fas fa-fw fa-user mr-1'></i>{{ 'Owner'|trans }}
+    </div>
+    {{ Entity.entityData.fullname }}
+  </div>
+
   {# TEAM #}
   <div class='d-flex mb-2 align-items-center'>
     <div class='edit-mode-label'>
@@ -175,8 +183,6 @@
 {# STATIC INFO #}
 <hr>
 <div class='d-flex flex-column align-items-end'>
-  {# SHOW OWNER #}
-  <div>{{ 'Owner:'|trans }} {{ Entity.entityData.fullname }}</div>
   {# SHOW LAST MOD #}
   <div>{{ 'Last modified on %s'|trans|format(Entity.entityData.modified_at) }}</div>
   {# eLabID: add an if because templates don't have one #}

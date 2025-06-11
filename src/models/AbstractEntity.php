@@ -333,7 +333,7 @@ abstract class AbstractEntity extends AbstractRest
         // everyone can Pin, AccessKey, Bloxberg, Sign, Timestamp
         $this->ExclusiveEditMode->canPatchOrExplode($action);
         match ($action) {
-            Action::AccessKey => (new AccessKeyHelper($this))->toggleAccessKey(),
+            Action::AccessKey => (new AccessKeyHelper($this->entityType, $this->id))->toggleAccessKey(),
             Action::Archive => (
                 function () {
                     $targetState = State::Normal;
@@ -546,6 +546,16 @@ abstract class AbstractEntity extends AbstractRest
         $content = $params->getContent();
         if ($params->getTarget() === 'bodyappend') {
             $content = $this->readOne()['body'] . $content;
+        }
+        // ensure no changes happen on entries with immutable permissions
+        if ($params->getTarget() === 'canread' || $params->getTarget() === 'canwrite') {
+            if (($this->entityData[$params->getTarget() . '_is_immutable'] ?? 0) === 1) {
+                throw new ImproperActionException(_('Cannot modify permissions on entry with immutable permissions.'));
+            }
+        }
+        // also prevent modifying immutability of permissions on concrete entities
+        if (str_ends_with($params->getTarget(), '_is_immutable') && $this instanceof AbstractConcreteEntity) {
+            throw new ImproperActionException(_('Cannot modify permissions immutability settings.'));
         }
 
         // save a revision for body target

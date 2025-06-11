@@ -56,6 +56,7 @@ final class UserParams extends ContentParams
             'orderby' => (Orderby::tryFrom($this->content) ?? Orderby::Date)->value,
             'scope_experiments_templates',
             'scope_experiments',
+            'scope_events',
             'scope_items',
             'scope_teamgroups' => (string) (Scope::tryFrom($this->asInt()) ?? Scope::Team)->value,
             'sc_create', 'sc_favorite', 'sc_todo', 'sc_edit', 'sc_search' => Filter::firstLetter($this->asString()),

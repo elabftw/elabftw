@@ -208,6 +208,22 @@ final class Compounds extends AbstractRest
     #[Override]
     public function destroy(): bool
     {
+        // check if the compound is linked somewhere first
+        $sql = 'SELECT
+          CASE
+            WHEN EXISTS(SELECT 1 FROM compounds2experiments             WHERE compound_id = :compound_id)
+              OR EXISTS(SELECT 1 FROM compounds2items                   WHERE compound_id = :compound_id)
+              OR EXISTS(SELECT 1 FROM compounds2experiments_templates   WHERE compound_id = :compound_id)
+              OR EXISTS(SELECT 1 FROM compounds2items_types             WHERE compound_id = :compound_id)
+            THEN 1
+            ELSE 0
+          END AS is_present';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':compound_id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        if (((int) $req->fetchColumn()) === 1) {
+            throw new ImproperActionException(_('Cannot delete a linked compound.'));
+        }
         return $this->update(new CompoundParams('state', State::Deleted->value));
     }
 

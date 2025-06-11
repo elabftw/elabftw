@@ -2,7 +2,7 @@ describe('download.php', () => {
   let csrf: string;
   beforeEach(() => {
     cy.login().then(value => csrf = value);
-    cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
+//    cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
   });
 
   it('send empty file if no query is provided', () => {

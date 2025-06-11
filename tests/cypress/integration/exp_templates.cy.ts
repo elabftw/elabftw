@@ -1,7 +1,7 @@
 describe('Experiments templates', () => {
   beforeEach(() => {
     cy.login();
-    cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
+//    cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
   });
 
   it('Create and edit an experiment template', () => {

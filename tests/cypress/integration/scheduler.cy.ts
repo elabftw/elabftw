@@ -1,7 +1,7 @@
 describe('Scheduler', () => {
   beforeEach(() => {
     cy.login();
-    cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
+//    cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
   });
 
   it('Displays Scheduler page', () => {

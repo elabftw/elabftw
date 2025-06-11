@@ -1,7 +1,7 @@
 describe('Make', () => {
   beforeEach(() => {
     cy.login();
-    cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
+//    cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
   });
 
   it('csv', () => {

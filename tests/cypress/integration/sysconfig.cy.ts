@@ -1,7 +1,7 @@
 describe('Sysconfig', () => {
   beforeEach(() => {
     cy.login();
-    cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
+//    cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
   });
 
   it('Show sysconfig page', () => {

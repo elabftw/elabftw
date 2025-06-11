@@ -1,6 +1,6 @@
 describe('Login page', () => {
   beforeEach(() => {
-    cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
+//    cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
   });
 
   it('sets auth cookie when logging in via form submission', () => {

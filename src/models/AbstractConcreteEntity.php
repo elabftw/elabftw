@@ -81,7 +81,7 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         return match ($action) {
             Action::Create => $this->create(
                 // the category_id is there for backward compatibility (changed in 5.1)
-                template: (int) ($reqBody['template'] ?? $reqBody['category_id'] ?? -1),
+                template: (int) ($reqBody['template'] ?? $reqBody['category_id'] ?? $category ?? -1),
                 body: $reqBody['body'] ?? null,
                 title: $reqBody['title'] ?? null,
                 canread: $reqBody['canread'] ?? null,
@@ -169,7 +169,8 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         if (!empty($this->entityData['metadata'])) {
             $this->entityData['metadata_decoded'] = json_decode($this->entityData['metadata']);
         }
-        $this->entityData['exclusive_edit_mode'] = $this->ExclusiveEditMode->readOne();
+        $exclusiveEditMode = $this->ExclusiveEditMode->readOne();
+        $this->entityData['exclusive_edit_mode'] = empty($exclusiveEditMode) ? null : $exclusiveEditMode;
         ksort($this->entityData);
         return $this->entityData;
     }

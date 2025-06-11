@@ -395,7 +395,7 @@ document.addEventListener('DOMContentLoaded', () => {
         notify.success();
         ApiC.notifOnSaved = true;
         reloadEntitiesShow();
-      });
+      }).catch(() => (el as HTMLButtonElement).disabled = false);
 
     } else if (el.matches('[data-action="clear-form"]')) {
       clearForm(document.getElementById(el.dataset.target));

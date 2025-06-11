@@ -48,19 +48,3 @@ Cypress.Commands.add('login', (email = 'toto@yopmail.com', password = 'totototot
       });
     });
 });
-
-//Cypress.Commands.add('enableCodeCoverage', (testFile = 'a cypress test') => {
-//  cy.setCookie(
-//    'CODECEPTION_CODECOVERAGE',
-//    JSON.stringify({
-//      CodeCoverage: testFile,
-//      CodeCoverage_Suite: 'cypress',
-//    }),
-//    {
-//      domain: 'elabtmp',
-//      path: '/',
-//      secure: true,
-//      httpOnly: true,
-//    },
-//  );
-//});

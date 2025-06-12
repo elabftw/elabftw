@@ -85,9 +85,6 @@ jobs:
           name: Build all
           command: docker exec -it elabtmp yarn buildall:dev
       - run:
-          name: Composer install
-          command: docker exec -it elabtmp composer install --no-progress -q
-      - run:
           name: Save dependencies
           command: |
             docker cp elabtmp:/elabftw/web/assets .
@@ -129,6 +126,9 @@ jobs:
       - run:
           name: Run Javascript linter
           command: docker exec -it elabtmp yarn jslint-ci:all
+      - run:
+          name: Composer install
+          command: docker exec -it elabtmp composer install --no-progress -q
       - run:
           name: Run PHP-CS-Fixer
           command: docker exec -it elabtmp yarn phpcs-dry

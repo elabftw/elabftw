@@ -113,32 +113,23 @@ jobs:
 #            docker exec -it elabtmp chmod -R 777 tests/_output
 #            docker exec -it elabtmp chown -R nginx:nginx uploads
 #            docker exec -it elabtmp chmod -R 777 uploads
-#      # Preserve containers so they persist in the different jobs
-#      - run:
-#          name: Save Docker images
-#          command: |
-#            docker commit elabtmp elabtmp-prepared
-#            docker save elabtmp-prepared -o elabtmp-prepared.tar
-#      # Allow reusing the built containers
-#      - persist_to_workspace:
-#          root: .
-#          paths:
-#            - elabtmp-prepared.tar
-#            - cypress/
-#            - tests/
 
   backend_unit_tests:
     executor: elab-executor
     working_directory: ~/elabftw/elabftw
     shell: /bin/bash --login
     steps:
+      - checkout
       - setup_remote_docker:
           version: docker27
       - attach_workspace:
           at: .
       - run:
-          name: Start elabtmp
+          name: Build elabtmp image and start containers
           command: |
+            docker build -q --no-cache -t elabtmp -f tests/elabtmp.Dockerfile .
+            docker build -q --no-cache -t elabtmp -f tests/circleci.Dockerfile .
+            docker build -q --no-cache -t elab-cypress -f tests/elab-cypress.Dockerfile .
             printf "ELABFTW_USER=nginx\nELABFTW_GROUP=nginx\nELABFTW_USERID=101\nELABFTW_GROUPID=101\n" > tests/elabftw-user.env
             docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
       - run:
@@ -202,13 +193,17 @@ jobs:
     working_directory: ~/elabftw/elabftw
     shell: /bin/bash --login
     steps:
+      - checkout
       - setup_remote_docker:
           version: docker27
       - attach_workspace:
           at: .
       - run:
-          name: Build containers for Cypress tests
+          name: Build elabtmp image and start containers
           command: |
+            docker build -q --no-cache -t elabtmp -f tests/elabtmp.Dockerfile .
+            docker build -q --no-cache -t elabtmp -f tests/circleci.Dockerfile .
+            docker build -q --no-cache -t elab-cypress -f tests/elab-cypress.Dockerfile .
             printf "ELABFTW_USER=nginx\nELABFTW_GROUP=nginx\nELABFTW_USERID=101\nELABFTW_GROUPID=101\n" > tests/elabftw-user.env
             docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
       - run:
@@ -223,6 +218,15 @@ jobs:
       - run:
           name: Populate the database
           command: docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y
+      - run:
+          name: Fix permissions
+          command: |
+            docker exec -it elabtmp mkdir -p cache/purifier/{HTML,CSS,URI} cache/{elab,mpdf,twig}
+            docker exec -it elabtmp chown -R nginx:nginx cache
+            docker exec -it elabtmp chmod -R 777 cache
+            docker exec -it elabtmp chmod -R 777 tests/_output
+            docker exec -it elabtmp chown -R nginx:nginx uploads
+            docker exec -it elabtmp chmod -R 777 uploads
       - run:
           name: Run Cypress e2e tests and extract artifacts
           # have to save cypress exit code to first extract artifacts
@@ -273,9 +277,9 @@ workflows:
       - code_linters:
           requires:
             - setup
-#      - backend_unit_tests:
-#          requires:
-#            - setup
-#      - cypress_tests:
-#          requires:
-#            - setup
+      - backend_unit_tests:
+          requires:
+            - setup
+      - cypress_tests:
+          requires:
+            - setup

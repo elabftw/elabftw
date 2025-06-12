@@ -1,4 +1,4 @@
--- schema 178
+-- schema 179
 CREATE TABLE `experiments_templates_comments` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,

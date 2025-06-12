@@ -64,6 +64,7 @@ jobs:
     working_directory: ~/elabftw/elabftw
     shell: /bin/bash --login
     steps:
+      - checkout
       - setup_remote_docker:
           version: docker27
       - attach_workspace:
@@ -71,7 +72,11 @@ jobs:
       - run:
           name: Build elabtmp image and start containers
           command: |
-            docker compose -f tests/docker-compose.yml up -d --quiet-pull
+            docker build -q --no-cache -t elabtmp -f tests/elabtmp.Dockerfile .
+            docker build -q --no-cache -t elabtmp -f tests/circleci.Dockerfile .
+            docker build -q --no-cache -t elab-cypress -f tests/elab-cypress.Dockerfile .
+            printf "ELABFTW_USER=nginx\nELABFTW_GROUP=nginx\nELABFTW_USERID=101\nELABFTW_GROUPID=101\n" > tests/elabftw-user.env
+            docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
       - run:
           name: Install JS dependencies
           command: docker exec -it elabtmp yarn install --silent --immutable

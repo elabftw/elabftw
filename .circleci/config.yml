@@ -174,8 +174,6 @@ jobs:
           command: |
             docker load -i elabtmp-prepared.tar
             docker run -d --name elabtmp elabtmp-prepared
-            docker build -q -t elab-cypress -f tests/elab-cypress.Dockerfile .
-            docker run -d --name elab-cypress --network container:elabtmp elab-cypress
 #      - run:
 #          name: Load Docker images
 #          command: |

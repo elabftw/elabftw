@@ -274,6 +274,9 @@ workflows:
               ignore:
                 - demo
                 - ird
+      - code_linters:
+          requires:
+            - setup
       - backend_unit_tests:
           requires:
             - setup

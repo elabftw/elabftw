@@ -15,10 +15,10 @@ executors:
     docker:
       - image: cimg/base:current
     resource_class: large
-    # ignore login credentials for now
-    #  auth:
-    #    username: nicolascarpi
-    #    password: $DOCKERHUB_PULL_TOKEN
+      # ignore login credentials for now
+      #  auth:
+      #    username: nicolascarpi
+      #    password: $DOCKERHUB_PULL_TOKEN
     environment:
       DOCKER_BUILDKIT: 1
       BUILDKIT_PROGRESS: plain
@@ -59,7 +59,8 @@ jobs:
             - cypress.config.ts
             - src/
 
-  code_linters:
+  # build dependencies noly once. Then restore the build folders inside each job
+  build_dependencies:
     executor: elab-executor
     working_directory: ~/elabftw/elabftw
     shell: /bin/bash --login
@@ -70,7 +71,7 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: Build elabtmp image and start containers
+          name: Build Docker images & start container
           command: |
             docker build -q --no-cache -t elabtmp -f tests/elabtmp.Dockerfile .
             docker build -q --no-cache -t elabtmp -f tests/circleci.Dockerfile .
@@ -86,6 +87,38 @@ jobs:
       - run:
           name: Composer install
           command: docker exec -it elabtmp composer install --no-progress -q
+      - run:
+          name: Save built files from container
+          command: |
+            docker cp elabtmp:/elabftw/node_modules ./node_modules
+            docker cp elabtmp:/elabftw/vendor ./vendor
+            docker cp elabtmp:/elabftw/dist ./dist || true
+      - persist_to_workspace:
+          root: .
+          paths:
+            - node_modules/
+            - vendor/
+            - dist/
+            - tests/
+            - cypress/
+            - cypress.config.ts
+            - src/
+
+  code_linters:
+    executor: elab-executor
+    working_directory: ~/elabftw/elabftw
+    shell: /bin/bash --login
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: docker27
+      - attach_workspace:
+          at: .
+      - run:
+          name: Restore built dependencies into container
+          command: |
+            docker cp ./node_modules elabtmp:/elabftw/
+            docker cp ./vendor elabtmp:/elabftw/
       - run:
           name: Run SCSS linter
           command: docker exec -it elabtmp yarn csslint
@@ -101,18 +134,6 @@ jobs:
       - run:
           name: "PHP static analysis: psalm + phpstan"
           command: docker exec -it elabtmp yarn static
-#      - run:
-#          name: Populate the database
-#          command: docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y
-#      - run:
-#          name: Fix permissions
-#          command: |
-#            docker exec -it elabtmp mkdir -p cache/purifier/{HTML,CSS,URI} cache/{elab,mpdf,twig}
-#            docker exec -it elabtmp chown -R nginx:nginx cache
-#            docker exec -it elabtmp chmod -R 777 cache
-#            docker exec -it elabtmp chmod -R 777 tests/_output
-#            docker exec -it elabtmp chown -R nginx:nginx uploads
-#            docker exec -it elabtmp chmod -R 777 uploads
 
   backend_unit_tests:
     executor: elab-executor
@@ -125,22 +146,10 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: Build elabtmp image and start containers
+          name: Restore built dependencies into container
           command: |
-            docker build -q --no-cache -t elabtmp -f tests/elabtmp.Dockerfile .
-            docker build -q --no-cache -t elabtmp -f tests/circleci.Dockerfile .
-            docker build -q --no-cache -t elab-cypress -f tests/elab-cypress.Dockerfile .
-            printf "ELABFTW_USER=nginx\nELABFTW_GROUP=nginx\nELABFTW_USERID=101\nELABFTW_GROUPID=101\n" > tests/elabftw-user.env
-            docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
-      - run:
-          name: Install JS dependencies
-          command: docker exec -it elabtmp yarn install --silent --immutable
-      - run:
-          name: Build all
-          command: docker exec -it elabtmp yarn buildall:dev
-      - run:
-          name: Composer install
-          command: docker exec -it elabtmp composer install --no-progress -q
+            docker cp ./node_modules elabtmp:/elabftw/
+            docker cp ./vendor elabtmp:/elabftw/
       - run:
           name: Populate the database
           command: docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y
@@ -169,18 +178,6 @@ jobs:
       - run:
           name: Extract the php documentation
           command: docker cp elabtmp:/elabftw/phpdoc-html phpdoc-html
-#      - run:
-#          name: Reset database
-#          command: docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y
-#      - run:
-#          name: Fix permissions
-#          command: |
-#            docker exec -it elabtmp mkdir -p cache/purifier/{HTML,CSS,URI} cache/{elab,mpdf,twig}
-#            docker exec -it elabtmp chown -R nginx:nginx cache
-#            docker exec -it elabtmp chmod -R 777 cache
-#            docker exec -it elabtmp chmod -R 777 tests/_output
-#            docker exec -it elabtmp chown -R nginx:nginx uploads
-#            docker exec -it elabtmp chmod -R 777 uploads
       - store_artifacts:
           path: phpdoc-html
           destination: phpdoc-html
@@ -199,22 +196,10 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: Build elabtmp image and start containers
+          name: Restore built dependencies into container
           command: |
-            docker build -q --no-cache -t elabtmp -f tests/elabtmp.Dockerfile .
-            docker build -q --no-cache -t elabtmp -f tests/circleci.Dockerfile .
-            docker build -q --no-cache -t elab-cypress -f tests/elab-cypress.Dockerfile .
-            printf "ELABFTW_USER=nginx\nELABFTW_GROUP=nginx\nELABFTW_USERID=101\nELABFTW_GROUPID=101\n" > tests/elabftw-user.env
-            docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
-      - run:
-          name: Install JS dependencies
-          command: docker exec -it elabtmp yarn install --silent --immutable
-      - run:
-          name: Build all
-          command: docker exec -it elabtmp yarn buildall:dev
-      - run:
-          name: Composer install
-          command: docker exec -it elabtmp composer install --no-progress -q
+            docker cp ./node_modules elabtmp:/elabftw/
+            docker cp ./vendor elabtmp:/elabftw/
       - run:
           name: Populate the database
           command: docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y
@@ -274,12 +259,15 @@ workflows:
               ignore:
                 - demo
                 - ird
+      - build_dependencies:
+          requires:
+            - setup
       - code_linters:
           requires:
-            - setup
+            - build_dependencies
       - backend_unit_tests:
           requires:
-            - setup
+            - build_dependencies
       - cypress_tests:
           requires:
-            - setup
+            - build_dependencies

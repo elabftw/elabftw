@@ -39,7 +39,6 @@ use Elabftw\Models\UserRequestActions;
 use Elabftw\Models\Users;
 use Elabftw\Params\DisplayParams;
 use Elabftw\Params\BaseQueryParams;
-use Elabftw\Services\AccessKeyHelper;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Override;
@@ -178,17 +177,6 @@ abstract class AbstractEntityController implements ControllerInterface
      */
     protected function view(): Response
     {
-        // but if we have an access_key we might be able to bypass read permissions
-        if ($this->App->Request->query->has('access_key') && $this->App->Request->query->get('access_key') !== ($this->Entity->entityData['access_key'] ?? '')) {
-            // for that we fetch the id not from the id param but from the access_key, so we will get a valid id that corresponds to an entity
-            // with this access_key
-            $id = (new AccessKeyHelper($this->Entity))->getIdFromAccessKey($this->App->Request->query->getString('access_key'));
-            if ($id > 0) {
-                $this->Entity->bypassReadPermission = true;
-                $this->Entity->setId($id);
-            }
-        }
-
         // the items categoryArr for add link input
         $ItemsTypes = new ItemsTypes($this->App->Users);
         $itemsCategoryArr = $ItemsTypes->readAll();

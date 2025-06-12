@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use Elabftw\Enums\EntityType;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
 
@@ -21,7 +22,7 @@ class AccessKeyHelperTest extends \PHPUnit\Framework\TestCase
         $Entity = new Experiments(new Users(1, 1));
         $id = $Entity->create();
         $Entity->setId($id);
-        $AkHelper = new AccessKeyHelper($Entity);
+        $AkHelper = new AccessKeyHelper(EntityType::Experiments, $id);
         // set an ak
         $ak = $AkHelper->toggleAccessKey();
         $this->assertEquals($id, $AkHelper->getIdFromAccessKey($ak));

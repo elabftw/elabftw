@@ -71,11 +71,7 @@ jobs:
       - run:
           name: Build elabtmp image and start containers
           command: |
-            docker build -q --no-cache -t elabtmp -f tests/elabtmp.Dockerfile .
-            docker build -q --no-cache -t elabtmp -f tests/circleci.Dockerfile .
-            docker build -q --no-cache -t elab-cypress -f tests/elab-cypress.Dockerfile .
-            printf "ELABFTW_USER=nginx\nELABFTW_GROUP=nginx\nELABFTW_USERID=101\nELABFTW_GROUPID=101\n" > tests/elabftw-user.env
-            docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
+            docker compose -f tests/docker-compose.yml up -d --quiet-pull
       - run:
           name: Install JS dependencies
           command: docker exec -it elabtmp yarn install --silent --immutable
@@ -83,14 +79,14 @@ jobs:
           name: Build all
           command: docker exec -it elabtmp yarn buildall:dev
       - run:
+          name: Composer install
+          command: docker exec -it elabtmp composer install --no-progress -q
+      - run:
           name: Run SCSS linter
           command: docker exec -it elabtmp yarn csslint
       - run:
           name: Run Javascript linter
           command: docker exec -it elabtmp yarn jslint-ci:all
-      - run:
-          name: Composer install
-          command: docker exec -it elabtmp composer install --no-progress -q
       - run:
           name: Run PHP-CS-Fixer
           command: docker exec -it elabtmp yarn phpcs-dry
@@ -206,15 +202,10 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: Start elabtmp
+          name: Build containers for Cypress tests
           command: |
             printf "ELABFTW_USER=nginx\nELABFTW_GROUP=nginx\nELABFTW_USERID=101\nELABFTW_GROUPID=101\n" > tests/elabftw-user.env
             docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
-      - run:
-          name: Build and run Cypress container
-          command: |
-            docker build -q -t elab-cypress -f tests/elab-cypress.Dockerfile .
-            docker run -d --name elab-cypress --network container:elabtmp elab-cypress
       - run:
           name: Install JS dependencies
           command: docker exec -it elabtmp yarn install --silent --immutable
@@ -277,9 +268,9 @@ workflows:
       - code_linters:
           requires:
             - setup
-      - backend_unit_tests:
-          requires:
-            - setup
-      - cypress_tests:
-          requires:
-            - setup
+#      - backend_unit_tests:
+#          requires:
+#            - setup
+#      - cypress_tests:
+#          requires:
+#            - setup

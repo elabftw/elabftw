@@ -66,8 +66,23 @@ jobs:
           name: Build all
           command: docker exec -it elabtmp yarn buildall:dev
       - run:
+          name: Run SCSS linter
+          command: docker exec -it elabtmp yarn csslint
+      - run:
+          name: Run Javascript linter
+          command: docker exec -it elabtmp yarn jslint-ci:all
+      - run:
           name: Composer install
           command: docker exec -it elabtmp composer install --no-progress -q
+      - run:
+          name: Run PHP-CS-Fixer
+          command: docker exec -it elabtmp yarn phpcs-dry
+      - run:
+          name: Run Twig linter
+          command: docker exec -it elabtmp yarn twigcs
+      - run:
+          name: "PHP static analysis: psalm + phpstan"
+          command: docker exec -it elabtmp yarn static
       - run:
           name: Populate the database
           command: docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y
@@ -80,34 +95,35 @@ jobs:
             docker exec -it elabtmp chmod -R 777 tests/_output
             docker exec -it elabtmp chown -R nginx:nginx uploads
             docker exec -it elabtmp chmod -R 777 uploads
-#            TODO
+      # Preserve containers so they persist in the different jobs
+      - run:
+          name: Save Docker images
+          command: |
+            docker commit elabtmp elabtmp-prepared
+            docker save elabtmp-prepared -o elabtmp-prepared.tar
+      # Allow reusing the built containers
       - persist_to_workspace:
           root: .
           paths:
-            - .
+            - elabtmp-prepared.tar
+            - cypress/
+            - tests/
 
   backend_unit_tests:
     executor: elab-executor
     working_directory: ~/elabftw/elabftw
     shell: /bin/bash --login
     steps:
+      - setup_remote_docker:
+          version: docker27
       - attach_workspace:
           at: .
+      # run prepared containers
       - run:
-          name: Run SCSS linter
-          command: docker exec -it elabtmp yarn csslint
-      - run:
-          name: Run Javascript linter
-          command: docker exec -it elabtmp yarn jslint-ci:all
-      - run:
-          name: Run PHP-CS-Fixer
-          command: docker exec -it elabtmp yarn phpcs-dry
-      - run:
-          name: Run Twig linter
-          command: docker exec -it elabtmp yarn twigcs
-      - run:
-          name: "PHP static analysis: psalm + phpstan"
-          command: docker exec -it elabtmp yarn static
+          name: Load elabtmp image and start container
+          command: |
+            docker load -i elabtmp-prepared.tar
+            docker run -d --name elabtmp elabtmp-prepared
       - run:
           name: Run unit and apiv2 tests
           command: docker exec -it elabtmp php vendor/bin/codecept run --skip cypress --coverage --coverage-xml --coverage-html
@@ -148,8 +164,23 @@ jobs:
     working_directory: ~/elabftw/elabftw
     shell: /bin/bash --login
     steps:
+      - setup_remote_docker:
+          version: docker27
       - attach_workspace:
           at: .
+      # run prepared containers
+      - run:
+          name: Load elabtmp image and start containers
+          command: |
+            docker load -i elabtmp-prepared.tar
+            docker run -d --name elabtmp elabtmp-prepared
+            docker build -q -t elab-cypress -f tests/elab-cypress.Dockerfile .
+            docker run -d --name elab-cypress --network container:elabtmp elab-cypress
+#      - run:
+#          name: Load Docker images
+#          command: |
+#            docker load -i elabtmp.tar
+#            docker load -i elab-cypress.tar
       - run:
           name: Run Cypress e2e tests and extract artifacts
           # have to save cypress exit code to first extract artifacts

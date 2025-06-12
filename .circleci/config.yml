@@ -87,22 +87,33 @@ jobs:
       - run:
           name: Composer install
           command: docker exec -it elabtmp composer install --no-progress -q
+#      - run:
+#          name: Save built files from container
+#          command: |
+#            docker cp elabtmp:/elabftw/node_modules node_modules
+#            docker cp elabtmp:/elabftw/vendor vendor
+#            docker cp elabtmp:/elabftw/dist dist
       - run:
-          name: Save built files from container
+          name: Save dependencies
           command: |
-            docker cp elabtmp:/elabftw/node_modules node_modules
-            docker cp elabtmp:/elabftw/vendor vendor
-            docker cp elabtmp:/elabftw/dist dist || true
+            mkdir -p cache_output
+            cp -R node_modules cache_output/
+            cp -R vendor cache_output/
+            cp -R dist cache_output/
       - persist_to_workspace:
           root: .
           paths:
-            - node_modules/
-            - vendor/
-            - dist/
-            - tests/
-            - cypress/
-            - cypress.config.ts
-            - src/
+            - cache_output
+#      - persist_to_workspace:
+#          root: .
+#          paths:
+#            - node_modules/
+#            - vendor/
+#            - dist/
+#            - tests/
+#            - cypress/
+#            - cypress.config.ts
+#            - src/
 
   code_linters:
     executor: elab-executor
@@ -114,11 +125,17 @@ jobs:
           version: docker27
       - attach_workspace:
           at: .
+#      - run:
+#          name: Restore built dependencies into container
+#          command: |
+#            docker cp ./node_modules elabtmp:/elabftw/
+#            docker cp ./vendor elabtmp:/elabftw/
       - run:
-          name: Restore built dependencies into container
+          name: Restore dependencies into project
           command: |
-            docker cp ./node_modules elabtmp:/elabftw/
-            docker cp ./vendor elabtmp:/elabftw/
+            cp -R cache_output/node_modules ./node_modules
+            cp -R cache_output/vendor ./vendor
+            cp -R cache_output/dist ./vendor
       - run:
           name: Run SCSS linter
           command: docker exec -it elabtmp yarn csslint
@@ -146,10 +163,11 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: Restore built dependencies into container
+          name: Restore dependencies into project
           command: |
-            docker cp ./node_modules elabtmp:/elabftw/
-            docker cp ./vendor elabtmp:/elabftw/
+            cp -R cache_output/node_modules ./node_modules
+            cp -R cache_output/vendor ./vendor
+            cp -R cache_output/dist ./vendor
       - run:
           name: Populate the database
           command: docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y
@@ -196,10 +214,11 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: Restore built dependencies into container
+          name: Restore dependencies into project
           command: |
-            docker cp ./node_modules elabtmp:/elabftw/
-            docker cp ./vendor elabtmp:/elabftw/
+            cp -R cache_output/node_modules ./node_modules
+            cp -R cache_output/vendor ./vendor
+            cp -R cache_output/dist ./vendor
       - run:
           name: Populate the database
           command: docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y

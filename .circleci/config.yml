@@ -4,11 +4,9 @@ version: 2.1
 # code coverage orb
 orbs:
   codecov: codecov/codecov@3.2.2
-jobs:
-  build:
-    working_directory: ~/elabftw/elabftw
-    parallelism: 1
-    shell: /bin/bash --login
+# split the jobs to run back_end tests and front e2e tests after db setup
+executors:
+  elab-executor:
     # The following configuration line tells CircleCI to use the specified docker image as the runtime environment for you job.
     # For more information on choosing an image (or alternatively using a
     # VM instead of a container) see https://circleci.com/docs/2.0/executor-types/
@@ -17,14 +15,19 @@ jobs:
     docker:
       - image: cimg/base:current
     resource_class: large
-      # ignore login credentials for now
-      #  auth:
-      #    username: nicolascarpi
-      #    password: $DOCKERHUB_PULL_TOKEN
+    # ignore login credentials for now
+    #  auth:
+    #    username: nicolascarpi
+    #    password: $DOCKERHUB_PULL_TOKEN
     environment:
       DOCKER_BUILDKIT: 1
       BUILDKIT_PROGRESS: plain
       COMPOSE_DOCKER_CLI_BUILD: 1
+jobs:
+  setup:
+    executor: elab-executor
+    working_directory: ~/elabftw/elabftw
+    shell: /bin/bash --login
     steps:
       - checkout
       - setup_remote_docker:
@@ -63,6 +66,31 @@ jobs:
           name: Build all
           command: docker exec -it elabtmp yarn buildall:dev
       - run:
+          name: Populate the database
+          command: docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y
+      - run:
+          name: Fix permissions
+          command: |
+            docker exec -it elabtmp mkdir -p cache/purifier/{HTML,CSS,URI} cache/{elab,mpdf,twig}
+            docker exec -it elabtmp chown -R nginx:nginx cache
+            docker exec -it elabtmp chmod -R 777 cache
+            docker exec -it elabtmp chmod -R 777 tests/_output
+            docker exec -it elabtmp chown -R nginx:nginx uploads
+            docker exec -it elabtmp chmod -R 777 uploads
+#            TODO
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+
+  backend_unit_tests:
+    executor: elab-executor
+    working_directory: ~/elabftw/elabftw
+    shell: /bin/bash --login
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
           name: Run SCSS linter
           command: docker exec -it elabtmp yarn csslint
       - run:
@@ -81,18 +109,6 @@ jobs:
           name: "PHP static analysis: psalm + phpstan"
           command: docker exec -it elabtmp yarn static
       - run:
-          name: Populate the database
-          command: docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y
-      - run:
-          name: Fix permissions
-          command: |
-            docker exec -it elabtmp mkdir -p cache/purifier/{HTML,CSS,URI} cache/{elab,mpdf,twig}
-            docker exec -it elabtmp chown -R nginx:nginx cache
-            docker exec -it elabtmp chmod -R 777 cache
-            docker exec -it elabtmp chmod -R 777 tests/_output
-            docker exec -it elabtmp chown -R nginx:nginx uploads
-            docker exec -it elabtmp chmod -R 777 uploads
-      - run:
           name: Run unit and apiv2 tests
           command: docker exec -it elabtmp php vendor/bin/codecept run --skip cypress --coverage --coverage-xml --coverage-html
       - run:
@@ -108,18 +124,32 @@ jobs:
       - run:
           name: Extract the php documentation
           command: docker cp elabtmp:/elabftw/phpdoc-html phpdoc-html
-      - run:
-          name: Reset database
-          command: docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y
-      - run:
-          name: Fix permissions
-          command: |
-            docker exec -it elabtmp mkdir -p cache/purifier/{HTML,CSS,URI} cache/{elab,mpdf,twig}
-            docker exec -it elabtmp chown -R nginx:nginx cache
-            docker exec -it elabtmp chmod -R 777 cache
-            docker exec -it elabtmp chmod -R 777 tests/_output
-            docker exec -it elabtmp chown -R nginx:nginx uploads
-            docker exec -it elabtmp chmod -R 777 uploads
+#      - run:
+#          name: Reset database
+#          command: docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y
+#      - run:
+#          name: Fix permissions
+#          command: |
+#            docker exec -it elabtmp mkdir -p cache/purifier/{HTML,CSS,URI} cache/{elab,mpdf,twig}
+#            docker exec -it elabtmp chown -R nginx:nginx cache
+#            docker exec -it elabtmp chmod -R 777 cache
+#            docker exec -it elabtmp chmod -R 777 tests/_output
+#            docker exec -it elabtmp chown -R nginx:nginx uploads
+#            docker exec -it elabtmp chmod -R 777 uploads
+      - store_artifacts:
+          path: phpdoc-html
+          destination: phpdoc-html
+      - store_artifacts:
+          path: coverage-html
+          destination: coverage-html
+
+  cypress_tests:
+    executor: elab-executor
+    working_directory: ~/elabftw/elabftw
+    shell: /bin/bash --login
+    steps:
+      - attach_workspace:
+          at: .
       - run:
           name: Run Cypress e2e tests and extract artifacts
           # have to save cypress exit code to first extract artifacts
@@ -140,14 +170,6 @@ jobs:
             docker cp elabtmp:/elabftw/tests/_output/merge_cov/coverage-merged.clover.xml .
             docker cp elabtmp:/elabftw/tests/_output/merge_cov/coverage-html-merged .
       - store_artifacts:
-          path: phpdoc-html
-          destination: phpdoc-html
-      - store_artifacts:
-          path: coverage-html
-          destination: coverage-html
-      - codecov/upload:
-          file: coverage-merged.clover.xml
-      - store_artifacts:
           path: cypress
           destination: cypress
       - store_artifacts:
@@ -162,13 +184,22 @@ jobs:
       - store_artifacts:
           path: coverage-merged.clover.xml
           destination: coverage-merged.clover.xml
+      - codecov/upload:
+          file: coverage-merged.clover.xml
+
 workflows:
   version: 2
   build_and_test:
     jobs:
-      - build:
+      - setup:
           filters:
             branches:
               ignore:
                 - demo
                 - ird
+      - backend_unit_tests:
+          requires:
+            - setup
+      - cypress_tests:
+          requires:
+            - setup

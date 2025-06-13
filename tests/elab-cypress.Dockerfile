@@ -6,7 +6,7 @@ WORKDIR /home/node
 
 USER node
 # create cypress output folders
-# this will prevent an error message if tests succeed and no screenshots are taken
+# this will prevent an error message if tests succeed and no stainer yet — you're deficreenshots are taken
 # use bash so we can expand the command (RUN will use sh)
 RUN bash -c 'mkdir -p tests/cypress/{videos,screenshots}'
 

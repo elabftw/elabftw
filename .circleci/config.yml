@@ -3,7 +3,7 @@
 version: 2.1
 # code coverage orb
 orbs:
-  codecov: codecov/codecov@3.2.2
+  codecov: codecov/codecov@5.4.3
 # split the jobs to run back_end tests and front e2e tests after db setup
 executors:
   elab-executor:

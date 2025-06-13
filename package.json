@@ -123,7 +123,7 @@
     "csslint": "yarn run stylelint src/scss/*.scss",
     "cy": "tests/run.sh cy",
     "full": "yarn phpcs && yarn jslint && yarn csslint && yarn psalm && yarn phpstan && yarn test unit",
-    "jslint": "eslint src/ts && eslint tests-cypress",
+    "jslint": "eslint src/ts && eslint tests/cypress",
     "phpcs": "PHP_CS_FIXER_IGNORE_ENV=1 ./vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php -v",
     "phpcs-dry": "PHP_CS_FIXER_IGNORE_ENV=1 ./vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php -v --dry-run --stop-on-violation",
     "phpmetrics": "phpmetrics --report-html=metrics . && firefox metrics/index.html",

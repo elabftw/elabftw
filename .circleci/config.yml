@@ -84,7 +84,7 @@ commands:
     steps:
       - run:
           name: Build JS
-          command: docker exec -it elabtmp yarn buildall:dev
+          command: docker exec -it elabtmp yarn buildall:ci
       - run:
           name: Composer install
           command: docker exec -it elabtmp composer install
@@ -101,8 +101,6 @@ jobs:
           name: Prepare CI for cypress
           command: |
             mkdir -p cypress/{screenshots,videos}
-            sed -i 's/elab.local:3148/elabtmp/g' tests/docker-compose.yml
-            sed -i 's/elab.local/elabtmp/g' tests/docker-compose.yml
             sed -i 's/elab.local:3148/elabtmp/g' cypress.config.ts
             sed -i 's/elab.local:3148/elabtmp/g' src/tools/populate-config.yml.dist
       - persist_to_workspace:

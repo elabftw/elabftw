@@ -1,0 +1,5 @@
+# because we build ci images here
+cache
+exports
+uploads
+

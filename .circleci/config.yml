@@ -25,12 +25,14 @@ executors:
       COMPOSE_DOCKER_CLI_BUILD: 1
 # make reusable the db populate & fix permissions command. See https://circleci.com/docs/reusing-config/#authoring-reusable-commands
 commands:
+
   populate_db:
     description: Populate the database
     steps:
       - run:
           name: Populate the database
           command: docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y
+
   fix_permissions:
     description: Fix the permissions after populating database
     steps:
@@ -43,55 +45,45 @@ commands:
             docker exec -it elabtmp chmod -R 777 tests/_output
             docker exec -it elabtmp chown -R nginx:nginx uploads
             docker exec -it elabtmp chmod -R 777 uploads
+
   build_elabtmp:
-    description: Build elabtmp image
     steps:
       - run:
           name: Build elabtmp image
           command: |
-            docker build -q --no-cache -t elabtmp -f tests/elabtmp.Dockerfile .
-            docker build -q --no-cache -t elabtmp -f tests/circleci.Dockerfile .
+            docker build -q --no-cache -t elabtmp -f tests/elabtmp.Dockerfile -f tests/circleci.Dockerfile .
             printf "ELABFTW_USER=nginx\nELABFTW_GROUP=nginx\nELABFTW_USERID=101\nELABFTW_GROUPID=101\n" > tests/elabftw-user.env
 
-
   build_cypress:
-    description: Build elab-cypress image
     steps:
       - run:
           name: Build elab-cypress image
           command: docker build -q --no-cache -t elab-cypress -f tests/elab-cypress.Dockerfile .
+
   start_elabtmp:
-    description: Start only elabtmp
     steps:
       - run:
           name: Start elabtmp container
-          command: |
-            docker compose --ansi never -f tests/elabtmp-compose.yml up -d --quiet-pull
+          command: docker compose --ansi never -f tests/elabtmp-compose.yml up -d --quiet-pull
 
   start_mysql:
-    description: Start only mysql
     steps:
       - run:
           name: Start mysql container
-          command: |
-            docker compose --ansi never -f tests/mysql-compose.yml up -d --quiet-pull
+          command: docker compose --ansi never -f tests/mysql-compose.yml up -d --quiet-pull
+
   start_cypress:
-    description: Start only cypress
     steps:
       - run:
           name: Start cypress container
-          command: |
-            docker compose --ansi never -f tests/cypress-compose.yml up -d --quiet-pull
+          command: docker compose --ansi never -f tests/cypress-compose.yml up -d --quiet-pull
 
   # setup for each job: install JS & PHP dependencies, buildall & composer install
   install_js_php_dependencies:
     description: "Install JS and PHP dependencies inside elabtmp"
     steps:
       - run:
-          name: Install JS dependencies
-          command: docker exec -it elabtmp yarn install --silent --immutable
-      - run:
-          name: Build all
+          name: Build JS
           command: docker exec -it elabtmp yarn buildall:dev
       - run:
           name: Composer install

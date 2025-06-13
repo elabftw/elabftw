@@ -43,17 +43,31 @@ commands:
             docker exec -it elabtmp chmod -R 777 tests/_output
             docker exec -it elabtmp chown -R nginx:nginx uploads
             docker exec -it elabtmp chmod -R 777 uploads
-  build_image_and_containers:
-    description: Build all images and containers
+  build_elabtmp:
+    description: Build elabtmp image
     steps:
       - run:
           name: Build elabtmp image and start containers
           command: |
             docker build -q --no-cache -t elabtmp -f tests/elabtmp.Dockerfile .
             docker build -q --no-cache -t elabtmp -f tests/circleci.Dockerfile .
-            docker build -q --no-cache -t elab-cypress -f tests/elab-cypress.Dockerfile .
             printf "ELABFTW_USER=nginx\nELABFTW_GROUP=nginx\nELABFTW_USERID=101\nELABFTW_GROUPID=101\n" > tests/elabftw-user.env
+
+  build_cypress:
+    description: Build elab-cypress image
+    steps:
+      - run:
+          name: Build elab-cypress image
+          command: docker build -q --no-cache -t elab-cypress -f tests/elab-cypress.Dockerfile .
+
+  start_containers:
+    description: Start containers
+    steps:
+      - run:
+          name: Start containers
+          command: |
             docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
+
   # setup for each job: install JS & PHP dependencies, buildall & composer install
   install_js_php_dependencies:
     description: "Install JS and PHP dependencies inside elabtmp"
@@ -113,7 +127,7 @@ jobs:
           version: docker27
       - attach_workspace:
           at: .
-      - build_image_and_containers
+      - build_elabtmp
       - install_js_php_dependencies
       - run:
           name: Run SCSS linter
@@ -144,7 +158,8 @@ jobs:
           version: docker27
       - attach_workspace:
           at: .
-      - build_image_and_containers
+      - build_elabtmp
+      - start_containers
       - install_js_php_dependencies
       - populate_db
       - fix_permissions
@@ -181,46 +196,23 @@ jobs:
           version: docker27
       - attach_workspace:
           at: .
-      - build_image_and_containers
+      - build_elabtmp
+      - build_cypress
+      - start_containers
       - install_js_php_dependencies
       - populate_db
       - fix_permissions
       - run:
           name: Run Cypress e2e tests and extract artifacts
-          # have to save cypress exit code to first extract artifacts
+          command: docker exec -it elab-cypress cypress run
+      - run:
+          name: Extract cypress screenshots and videos
           command: |
-            docker exec -it elab-cypress cypress run
-            cypressExitCode=$?
             docker cp elab-cypress:/home/node/tests/cypress/screenshots/. cypress/screenshots
             docker cp elab-cypress:/home/node/tests/cypress/videos/. cypress/videos
-            # extract coverage reports
-            docker cp elabtmp:/elabftw/tests/_output/c3tmp/codecoverage.tar cypress-coverage.tar
-            mkdir cypress-coverage-html && tar -xf cypress-coverage.tar -C cypress-coverage-html
-            docker cp elabtmp:/elabftw/tests/_output/c3tmp/codecoverage.clover.xml cypress-coverage.clover.xml
-            exit "$cypressExitCode"
-      - run :
-          name: Merge both coverage reports
-          command: |
-            docker exec -it elabtmp bash /elabftw/tests/merge-coverage-reports.sh
-            docker cp elabtmp:/elabftw/tests/_output/merge_cov/coverage-merged.clover.xml .
-            docker cp elabtmp:/elabftw/tests/_output/merge_cov/coverage-html-merged .
       - store_artifacts:
           path: cypress
           destination: cypress
-      - store_artifacts:
-          path: cypress-coverage-html
-          destination: cypress-coverage-html
-      - store_artifacts:
-          path: cypress-coverage.clover.xml
-          destination: cypress-coverage.clover.xml
-      - store_artifacts:
-          path: coverage-html-merged
-          destination: coverage-html-merged
-      - store_artifacts:
-          path: coverage-merged.clover.xml
-          destination: coverage-merged.clover.xml
-      - codecov/upload:
-          file: coverage-merged.clover.xml
 
 workflows:
   version: 2

@@ -1,6 +1,5 @@
 name: Build and push elabtmp image
 
-# triggered by publishing a release
 on:
   push:
 

@@ -46,7 +46,6 @@ commands:
   build_image_and_containers:
     description: Build all images and containers
     steps:
-      - build_image_and_containers
       - run:
           name: Build elabtmp image and start containers
           command: |
@@ -55,6 +54,19 @@ commands:
             docker build -q --no-cache -t elab-cypress -f tests/elab-cypress.Dockerfile .
             printf "ELABFTW_USER=nginx\nELABFTW_GROUP=nginx\nELABFTW_USERID=101\nELABFTW_GROUPID=101\n" > tests/elabftw-user.env
             docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
+  # setup for each job: install JS & PHP dependencies, buildall & composer install
+  install_js_php_dependencies:
+    description: "Install JS and PHP dependencies inside elabtmp"
+    steps:
+      - run:
+          name: Install JS dependencies
+          command: docker exec -it elabtmp yarn install --silent --immutable
+      - run:
+          name: Build all
+          command: docker exec -it elabtmp yarn buildall:dev
+      - run:
+          name: Composer install
+          command: docker exec -it elabtmp composer install --no-progress -q
 jobs:
   setup:
     executor: elab-executor
@@ -102,15 +114,7 @@ jobs:
       - attach_workspace:
           at: .
       - build_image_and_containers
-      - run:
-          name: Install JS dependencies
-          command: docker exec -it elabtmp yarn install --silent --immutable
-      - run:
-          name: Build all
-          command: docker exec -it elabtmp yarn buildall:dev
-      - run:
-          name: Composer install
-          command: docker exec -it elabtmp composer install --no-progress -q
+      - install_js_php_dependencies
       - run:
           name: Run SCSS linter
           command: docker exec -it elabtmp yarn csslint
@@ -141,15 +145,7 @@ jobs:
       - attach_workspace:
           at: .
       - build_image_and_containers
-      - run:
-          name: Install JS dependencies
-          command: docker exec -it elabtmp yarn install --silent --immutable
-      - run:
-          name: Build all
-          command: docker exec -it elabtmp yarn buildall:dev
-      - run:
-          name: Composer install
-          command: docker exec -it elabtmp composer install --no-progress -q
+      - install_js_php_dependencies
       - populate_db
       - fix_permissions
       - run:
@@ -186,15 +182,7 @@ jobs:
       - attach_workspace:
           at: .
       - build_image_and_containers
-      - run:
-          name: Install JS dependencies
-          command: docker exec -it elabtmp yarn install --silent --immutable
-      - run:
-          name: Build all
-          command: docker exec -it elabtmp yarn buildall:dev
-      - run:
-          name: Composer install
-          command: docker exec -it elabtmp composer install --no-progress -q
+      - install_js_php_dependencies
       - populate_db
       - fix_permissions
       - run:

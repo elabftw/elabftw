@@ -40,8 +40,6 @@ services:
             interval: 10s
             timeout: 5s
             retries: 3
-        volumes:
-            - ..:/elabftw
         tmpfs:
             - /elabftw/cache:uid=1000,gid=1000
         networks:

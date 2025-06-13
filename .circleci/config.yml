@@ -51,32 +51,33 @@ commands:
       - run:
           name: Build elabtmp image
           command: |
-            docker build -q --no-cache -t elabtmp -f tests/elabtmp.Dockerfile -f tests/circleci.Dockerfile .
+            docker build -t elabtmp -f tests/elabtmp.Dockerfile .
+            docker build -t elabtmp -f tests/circleci.Dockerfile .
             printf "ELABFTW_USER=nginx\nELABFTW_GROUP=nginx\nELABFTW_USERID=101\nELABFTW_GROUPID=101\n" > tests/elabftw-user.env
 
   build_cypress:
     steps:
       - run:
           name: Build elab-cypress image
-          command: docker build -q --no-cache -t elab-cypress -f tests/elab-cypress.Dockerfile .
+          command: docker build -t elab-cypress -f tests/elab-cypress.Dockerfile .
 
   start_elabtmp:
     steps:
       - run:
           name: Start elabtmp container
-          command: docker compose --ansi never -f tests/elabtmp-compose.yml up -d --quiet-pull
+          command: docker compose -f tests/elabtmp-compose.yml up -d
 
   start_mysql:
     steps:
       - run:
           name: Start mysql container
-          command: docker compose --ansi never -f tests/mysql-compose.yml up -d --quiet-pull
+          command: docker compose -f tests/mysql-compose.yml up -d
 
   start_cypress:
     steps:
       - run:
           name: Start cypress container
-          command: docker compose --ansi never -f tests/cypress-compose.yml up -d --quiet-pull
+          command: docker compose -f tests/cypress-compose.yml up -d
 
   # setup for each job: install JS & PHP dependencies, buildall & composer install
   install_js_php_dependencies:
@@ -99,15 +100,6 @@ jobs:
           version: docker27
           # docker_layer_caching: true # DLC will explicitly cache layers here and try to avoid rebuilding.
           # docker_layer_caching is behind a paywall
-      - run:
-          name: Prepare docker-compose.yml
-          # Don't bind mount here, files are copied. See circleci.Dockerfile
-          # It is NOT possible to bind mount with the docker container in circleci!
-          # See: https://circleci.com/docs/building-docker-images#mounting-folders
-          # first backslash enables different delimiter than slash
-          command: |
-            sed -i '\#volumes:#D' tests/docker-compose.yml
-            sed -i '\#- \.\.:/elabftw#D' tests/docker-compose.yml
       - run:
           name: Prepare CI for cypress
           command: |

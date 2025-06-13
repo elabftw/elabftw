@@ -80,16 +80,14 @@ commands:
           name: Start cypress container
           command: docker compose -f tests/cypress-compose.yml up -d
 
-  # setup for each job: install JS & PHP dependencies, buildall & composer install
   install_js_php_dependencies:
-    description: "Install JS and PHP dependencies inside elabtmp"
     steps:
       - run:
           name: Build JS
           command: docker exec -it elabtmp yarn buildall:dev
       - run:
           name: Composer install
-          command: docker exec -it elabtmp composer install --no-progress -q
+          command: docker exec -it elabtmp composer install
 jobs:
   setup:
     executor: elab-executor
@@ -99,8 +97,6 @@ jobs:
       - checkout
       - setup_remote_docker:
           version: docker27
-          # docker_layer_caching: true # DLC will explicitly cache layers here and try to avoid rebuilding.
-          # docker_layer_caching is behind a paywall
       - run:
           name: Prepare CI for cypress
           command: |

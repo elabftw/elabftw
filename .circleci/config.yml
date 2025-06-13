@@ -23,6 +23,27 @@ executors:
       DOCKER_BUILDKIT: 1
       BUILDKIT_PROGRESS: plain
       COMPOSE_DOCKER_CLI_BUILD: 1
+# make reusable the db populate & fix permissions command. See https://circleci.com/docs/reusing-config/#authoring-reusable-commands
+commands:
+  populate_db:
+    description: Populate the database
+    steps:
+      - run:
+          name: Populate the database
+          command: docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y
+  fix_permissions:
+    description: Fix the permissions after populating database
+    steps:
+      - run:
+          name: Fix permissions
+          command: |
+            docker exec -it elabtmp mkdir -p cache/purifier/{HTML,CSS,URI} cache/{elab,mpdf,twig}
+            docker exec -it elabtmp chown -R nginx:nginx cache
+            docker exec -it elabtmp chmod -R 777 cache
+            docker exec -it elabtmp chmod -R 777 tests/_output
+            docker exec -it elabtmp chown -R nginx:nginx uploads
+            docker exec -it elabtmp chmod -R 777 uploads
+
 jobs:
   setup:
     executor: elab-executor
@@ -105,7 +126,7 @@ jobs:
           name: Run PHPStan
           command: docker exec -it elabtmp yarn phpstan
 
-  backend_unit_tests:
+  php_unit_tests:
     executor: elab-executor
     working_directory: ~/elabftw/elabftw
     shell: /bin/bash --login
@@ -132,18 +153,8 @@ jobs:
       - run:
           name: Composer install
           command: docker exec -it elabtmp composer install --no-progress -q
-      - run:
-          name: Populate the database
-          command: docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y
-      - run:
-          name: Fix permissions
-          command: |
-            docker exec -it elabtmp mkdir -p cache/purifier/{HTML,CSS,URI} cache/{elab,mpdf,twig}
-            docker exec -it elabtmp chown -R nginx:nginx cache
-            docker exec -it elabtmp chmod -R 777 cache
-            docker exec -it elabtmp chmod -R 777 tests/_output
-            docker exec -it elabtmp chown -R nginx:nginx uploads
-            docker exec -it elabtmp chmod -R 777 uploads
+      - populate_db
+      - fix_permissions
       - run:
           name: Run unit and apiv2 tests
           command: docker exec -it elabtmp php vendor/bin/codecept run --skip cypress --coverage --coverage-xml --coverage-html
@@ -167,7 +178,7 @@ jobs:
           path: coverage-html
           destination: coverage-html
 
-  cypress_tests:
+  cypress_e2e_tests:
     executor: elab-executor
     working_directory: ~/elabftw/elabftw
     shell: /bin/bash --login
@@ -194,18 +205,8 @@ jobs:
       - run:
           name: Composer install
           command: docker exec -it elabtmp composer install --no-progress -q
-      - run:
-          name: Populate the database
-          command: docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y
-      - run:
-          name: Fix permissions
-          command: |
-            docker exec -it elabtmp mkdir -p cache/purifier/{HTML,CSS,URI} cache/{elab,mpdf,twig}
-            docker exec -it elabtmp chown -R nginx:nginx cache
-            docker exec -it elabtmp chmod -R 777 cache
-            docker exec -it elabtmp chmod -R 777 tests/_output
-            docker exec -it elabtmp chown -R nginx:nginx uploads
-            docker exec -it elabtmp chmod -R 777 uploads
+      - populate_db
+      - fix_permissions
       - run:
           name: Run Cypress e2e tests and extract artifacts
           # have to save cypress exit code to first extract artifacts
@@ -256,9 +257,9 @@ workflows:
       - code_linters:
           requires:
             - setup
-      - backend_unit_tests:
+      - php_unit_tests:
           requires:
             - setup
-      - cypress_tests:
+      - cypress_e2e_tests:
           requires:
             - setup

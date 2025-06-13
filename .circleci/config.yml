@@ -87,13 +87,13 @@ jobs:
       - run:
           name: Save dependencies
           command: |
-            docker cp elabtmp:/elabftw/web/assets .
+            docker cp elabtmp:/elabftw/web/assets ./web_assets
             docker save elabtmp -o elabtmp.tar
             docker save elab-cypress -o elab-cypress.tar
       - persist_to_workspace:
           root: .
           paths:
-            - web/assets/
+            - web_assets
             - elabtmp.tar
             - elab-cypress.tar
 
@@ -119,7 +119,9 @@ jobs:
             docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
       - run:
           name: Restore built dependencies into container
-          command: docker cp ./web/assets elabtmp:/elabftw/web/assets/.
+          command: |
+            docker exec -it elabtmp rm -rf /elabftw/web/assets/*
+            docker cp ./web_assets/. elabtmp:/elabftw/web/assets
       - run:
           name: Run SCSS linter
           command: docker exec -it elabtmp yarn csslint

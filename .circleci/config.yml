@@ -85,17 +85,23 @@ jobs:
           name: Build all
           command: docker exec -it elabtmp yarn buildall:dev
       - run:
+          name: Composer install
+          command: docker exec -it elabtmp composer install --no-progress -q
+      - run:
           name: Save dependencies
           command: |
             docker cp elabtmp:/elabftw/web/assets ./web_assets
+            docker cp elabtmp:/elabftw/vendor ./vendor_cache
             docker save elabtmp -o elabtmp.tar
             docker save elab-cypress -o elab-cypress.tar
+
       - persist_to_workspace:
           root: .
           paths:
             - web_assets
             - elabtmp.tar
             - elab-cypress.tar
+            - vendor_cache
 
   code_linters:
     executor: elab-executor
@@ -122,15 +128,17 @@ jobs:
           command: |
             docker exec -it elabtmp rm -rf /elabftw/web/assets/*
             docker cp ./web_assets/. elabtmp:/elabftw/web/assets
+            docker exec -it elabtmp rm -rf /elabftw/vendor/*
+            docker cp ./vendor_cache/. elabtmp:/elabftw/vendor
+      - run:
+          name: Composer install
+          command: docker exec -it elabtmp composer install --no-progress -q
       - run:
           name: Run SCSS linter
           command: docker exec -it elabtmp yarn csslint
       - run:
           name: Run Javascript linter
           command: docker exec -it elabtmp yarn jslint-ci:all
-      - run:
-          name: Composer install
-          command: docker exec -it elabtmp composer install --no-progress -q
       - run:
           name: Run PHP-CS-Fixer
           command: docker exec -it elabtmp yarn phpcs-dry

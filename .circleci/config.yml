@@ -43,7 +43,18 @@ commands:
             docker exec -it elabtmp chmod -R 777 tests/_output
             docker exec -it elabtmp chown -R nginx:nginx uploads
             docker exec -it elabtmp chmod -R 777 uploads
-
+  build_image_and_containers:
+    description: Build all images and containers
+    steps:
+      - build_image_and_containers
+      - run:
+          name: Build elabtmp image and start containers
+          command: |
+            docker build -q --no-cache -t elabtmp -f tests/elabtmp.Dockerfile .
+            docker build -q --no-cache -t elabtmp -f tests/circleci.Dockerfile .
+            docker build -q --no-cache -t elab-cypress -f tests/elab-cypress.Dockerfile .
+            printf "ELABFTW_USER=nginx\nELABFTW_GROUP=nginx\nELABFTW_USERID=101\nELABFTW_GROUPID=101\n" > tests/elabftw-user.env
+            docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
 jobs:
   setup:
     executor: elab-executor
@@ -90,14 +101,7 @@ jobs:
           version: docker27
       - attach_workspace:
           at: .
-      - run:
-          name: Build elabtmp image and start containers
-          command: |
-            docker build -q --no-cache -t elabtmp -f tests/elabtmp.Dockerfile .
-            docker build -q --no-cache -t elabtmp -f tests/circleci.Dockerfile .
-            docker build -q --no-cache -t elab-cypress -f tests/elab-cypress.Dockerfile .
-            printf "ELABFTW_USER=nginx\nELABFTW_GROUP=nginx\nELABFTW_USERID=101\nELABFTW_GROUPID=101\n" > tests/elabftw-user.env
-            docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
+      - build_image_and_containers
       - run:
           name: Install JS dependencies
           command: docker exec -it elabtmp yarn install --silent --immutable
@@ -136,14 +140,7 @@ jobs:
           version: docker27
       - attach_workspace:
           at: .
-      - run:
-          name: Build elabtmp image and start containers
-          command: |
-            docker build -q --no-cache -t elabtmp -f tests/elabtmp.Dockerfile .
-            docker build -q --no-cache -t elabtmp -f tests/circleci.Dockerfile .
-            docker build -q --no-cache -t elab-cypress -f tests/elab-cypress.Dockerfile .
-            printf "ELABFTW_USER=nginx\nELABFTW_GROUP=nginx\nELABFTW_USERID=101\nELABFTW_GROUPID=101\n" > tests/elabftw-user.env
-            docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
+      - build_image_and_containers
       - run:
           name: Install JS dependencies
           command: docker exec -it elabtmp yarn install --silent --immutable
@@ -188,14 +185,7 @@ jobs:
           version: docker27
       - attach_workspace:
           at: .
-      - run:
-          name: Build elabtmp image and start containers
-          command: |
-            docker build -q --no-cache -t elabtmp -f tests/elabtmp.Dockerfile .
-            docker build -q --no-cache -t elabtmp -f tests/circleci.Dockerfile .
-            docker build -q --no-cache -t elab-cypress -f tests/elab-cypress.Dockerfile .
-            printf "ELABFTW_USER=nginx\nELABFTW_GROUP=nginx\nELABFTW_USERID=101\nELABFTW_GROUPID=101\n" > tests/elabftw-user.env
-            docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
+      - build_image_and_containers
       - run:
           name: Install JS dependencies
           command: docker exec -it elabtmp yarn install --silent --immutable

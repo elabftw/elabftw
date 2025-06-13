@@ -59,8 +59,7 @@ jobs:
             - cypress.config.ts
             - src/
 
-  # build dependencies noly once. Then restore the build folders inside each job
-  build_dependencies:
+  code_linters:
     executor: elab-executor
     working_directory: ~/elabftw/elabftw
     shell: /bin/bash --login
@@ -71,7 +70,7 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: Build Docker images & start container
+          name: Build elabtmp image and start containers
           command: |
             docker build -q --no-cache -t elabtmp -f tests/elabtmp.Dockerfile .
             docker build -q --no-cache -t elabtmp -f tests/circleci.Dockerfile .
@@ -88,52 +87,6 @@ jobs:
           name: Composer install
           command: docker exec -it elabtmp composer install --no-progress -q
       - run:
-          name: Save dependencies
-          command: |
-            docker cp elabtmp:/elabftw/web/assets ./web_assets
-            docker cp elabtmp:/elabftw/vendor ./vendor_cache
-            docker save elabtmp -o elabtmp.tar
-            docker save elab-cypress -o elab-cypress.tar
-
-      - persist_to_workspace:
-          root: .
-          paths:
-            - web_assets
-            - elabtmp.tar
-            - elab-cypress.tar
-            - vendor_cache
-
-  code_linters:
-    executor: elab-executor
-    working_directory: ~/elabftw/elabftw
-    shell: /bin/bash --login
-    steps:
-      - checkout
-      - setup_remote_docker:
-          version: docker27
-      - attach_workspace:
-          at: .
-      - run:
-          name: Load Docker images
-          command: |
-            docker load -i elabtmp.tar
-            docker load -i elab-cypress.tar
-      - run:
-          name: Start docker containers
-          command: |
-            printf "ELABFTW_USER=nginx\nELABFTW_GROUP=nginx\nELABFTW_USERID=101\nELABFTW_GROUPID=101\n" > tests/elabftw-user.env
-            docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
-      - run:
-          name: Restore built dependencies into container
-          command: |
-            docker exec -it elabtmp rm -rf /elabftw/web/assets/*
-            docker cp ./web_assets/. elabtmp:/elabftw/web/assets
-            docker exec -it elabtmp rm -rf /elabftw/vendor/*
-            docker cp ./vendor_cache/. elabtmp:/elabftw/vendor
-      - run:
-          name: Composer install
-          command: docker exec -it elabtmp composer install --no-progress -q
-      - run:
           name: Run SCSS linter
           command: docker exec -it elabtmp yarn csslint
       - run:
@@ -146,8 +99,11 @@ jobs:
           name: Run Twig linter
           command: docker exec -it elabtmp yarn twigcs
       - run:
-          name: "PHP static analysis: psalm + phpstan"
-          command: docker exec -it elabtmp yarn static
+          name: Run PSALM
+          command: docker exec -it elabtmp yarn psalm
+      - run:
+          name: Run PHPStan
+          command: docker exec -it elabtmp yarn phpstan
 
   backend_unit_tests:
     executor: elab-executor
@@ -160,18 +116,22 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: Load Docker images
+          name: Build elabtmp image and start containers
           command: |
-            docker load -i elabtmp.tar
-            docker load -i elab-cypress.tar
-      - run:
-          name: Start docker containers
-          command: |
+            docker build -q --no-cache -t elabtmp -f tests/elabtmp.Dockerfile .
+            docker build -q --no-cache -t elabtmp -f tests/circleci.Dockerfile .
+            docker build -q --no-cache -t elab-cypress -f tests/elab-cypress.Dockerfile .
             printf "ELABFTW_USER=nginx\nELABFTW_GROUP=nginx\nELABFTW_USERID=101\nELABFTW_GROUPID=101\n" > tests/elabftw-user.env
             docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
       - run:
-          name: Restore built dependencies into container
-          command: docker cp ./web/assets elabtmp:/elabftw/web/assets/.
+          name: Install JS dependencies
+          command: docker exec -it elabtmp yarn install --silent --immutable
+      - run:
+          name: Build all
+          command: docker exec -it elabtmp yarn buildall:dev
+      - run:
+          name: Composer install
+          command: docker exec -it elabtmp composer install --no-progress -q
       - run:
           name: Populate the database
           command: docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y
@@ -218,18 +178,22 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: Load Docker images
+          name: Build elabtmp image and start containers
           command: |
-            docker load -i elabtmp.tar
-            docker load -i elab-cypress.tar
-      - run:
-          name: Start docker containers
-          command: |
+            docker build -q --no-cache -t elabtmp -f tests/elabtmp.Dockerfile .
+            docker build -q --no-cache -t elabtmp -f tests/circleci.Dockerfile .
+            docker build -q --no-cache -t elab-cypress -f tests/elab-cypress.Dockerfile .
             printf "ELABFTW_USER=nginx\nELABFTW_GROUP=nginx\nELABFTW_USERID=101\nELABFTW_GROUPID=101\n" > tests/elabftw-user.env
             docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
       - run:
-          name: Restore built dependencies into container
-          command: docker cp ./web/assets elabtmp:/elabftw/web/assets/.
+          name: Install JS dependencies
+          command: docker exec -it elabtmp yarn install --silent --immutable
+      - run:
+          name: Build all
+          command: docker exec -it elabtmp yarn buildall:dev
+      - run:
+          name: Composer install
+          command: docker exec -it elabtmp composer install --no-progress -q
       - run:
           name: Populate the database
           command: docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y
@@ -289,15 +253,12 @@ workflows:
               ignore:
                 - demo
                 - ird
-      - build_dependencies:
-          requires:
-            - setup
       - code_linters:
           requires:
-            - build_dependencies
-#      - backend_unit_tests:
-#          requires:
-#            - build_dependencies
-#      - cypress_tests:
-#          requires:
-#            - build_dependencies
+            - setup
+      - backend_unit_tests:
+          requires:
+            - setup
+      - cypress_tests:
+          requires:
+            - setup

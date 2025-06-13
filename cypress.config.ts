@@ -6,6 +6,7 @@ export default defineConfig({
   fixturesFolder: 'tests/cypress/fixtures',
   screenshotsFolder: 'tests/cypress/screenshots',
   video: false,
+  videosFolder: 'tests/cypress/videos',
   viewportWidth: 1440,
   viewportHeight: 900,
   e2e: {
@@ -42,9 +43,4 @@ export default defineConfig({
     specPattern: 'tests/cypress/integration/**/*.cy.{js,jsx,ts,tsx}',
     supportFile: 'tests/cypress/support/index.ts',
   },
-  // give more time because Xdebug slows down php a bit
-  defaultCommandTimeout: 15000,
-  requestTimeout: 10000,
-  responseTimeout: 130000,
-  taskTimeout: 300000,
 });

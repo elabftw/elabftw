@@ -23,7 +23,8 @@ executors:
       DOCKER_BUILDKIT: 1
       BUILDKIT_PROGRESS: plain
       COMPOSE_DOCKER_CLI_BUILD: 1
-# make reusable the db populate & fix permissions command. See https://circleci.com/docs/reusing-config/#authoring-reusable-commands
+
+# See https://circleci.com/docs/reusing-config/#authoring-reusable-commands
 commands:
 
   populate_db:

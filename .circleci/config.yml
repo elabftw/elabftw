@@ -187,8 +187,7 @@ jobs:
       - store_artifacts:
           path: coverage-html
           destination: coverage-html
-      - codecov/upload:
-          file: coverage.xml
+      - codecov/upload
 
   cypress_e2e_tests:
     executor: elab-executor

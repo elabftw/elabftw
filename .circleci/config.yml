@@ -47,11 +47,12 @@ commands:
     description: Build elabtmp image
     steps:
       - run:
-          name: Build elabtmp image and start containers
+          name: Build elabtmp image
           command: |
             docker build -q --no-cache -t elabtmp -f tests/elabtmp.Dockerfile .
             docker build -q --no-cache -t elabtmp -f tests/circleci.Dockerfile .
             printf "ELABFTW_USER=nginx\nELABFTW_GROUP=nginx\nELABFTW_USERID=101\nELABFTW_GROUPID=101\n" > tests/elabftw-user.env
+
 
   build_cypress:
     description: Build elab-cypress image
@@ -59,14 +60,28 @@ commands:
       - run:
           name: Build elab-cypress image
           command: docker build -q --no-cache -t elab-cypress -f tests/elab-cypress.Dockerfile .
-
-  start_containers:
-    description: Start containers
+  start_elabtmp:
+    description: Start only elabtmp
     steps:
       - run:
-          name: Start containers
+          name: Start elabtmp container
           command: |
-            docker compose --ansi never -f tests/docker-compose.yml up -d --quiet-pull
+            docker compose --ansi never -f tests/elabtmp-compose.yml up -d --quiet-pull
+
+  start_mysql:
+    description: Start only mysql
+    steps:
+      - run:
+          name: Start mysql container
+          command: |
+            docker compose --ansi never -f tests/mysql-compose.yml up -d --quiet-pull
+  start_cypress:
+    description: Start only cypress
+    steps:
+      - run:
+          name: Start cypress container
+          command: |
+            docker compose --ansi never -f tests/cypress-compose.yml up -d --quiet-pull
 
   # setup for each job: install JS & PHP dependencies, buildall & composer install
   install_js_php_dependencies:
@@ -128,10 +143,11 @@ jobs:
       - attach_workspace:
           at: .
       - build_elabtmp
+      - start_elabtmp
       - install_js_php_dependencies
       - run:
           name: Run SCSS linter
-          command: docker exec -it elabtmp yarn csslint
+          command: docker run elabtmp yarn csslint
       - run:
           name: Run Javascript linter
           command: docker exec -it elabtmp yarn jslint-ci:all
@@ -159,7 +175,8 @@ jobs:
       - attach_workspace:
           at: .
       - build_elabtmp
-      - start_containers
+      - start_elabtmp
+      - start_mysql
       - install_js_php_dependencies
       - populate_db
       - fix_permissions
@@ -198,7 +215,9 @@ jobs:
           at: .
       - build_elabtmp
       - build_cypress
-      - start_containers
+      - start_elabtmp
+      - start_mysql
+      - start_cypress
       - install_js_php_dependencies
       - populate_db
       - fix_permissions

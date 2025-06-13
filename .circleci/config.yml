@@ -131,10 +131,10 @@ jobs:
       - install_js_php_dependencies
       - run:
           name: Run SCSS linter
-          command: docker run elabtmp yarn csslint
+          command: docker exec -it elabtmp yarn csslint
       - run:
           name: Run Javascript linter
-          command: docker exec -it elabtmp yarn jslint-ci:all
+          command: docker exec -it elabtmp yarn jslint
       - run:
           name: Run PHP-CS-Fixer
           command: docker exec -it elabtmp yarn phpcs-dry
@@ -186,6 +186,8 @@ jobs:
       - store_artifacts:
           path: coverage-html
           destination: coverage-html
+      - codecov/upload:
+          file: coverage.xml
 
   cypress_e2e_tests:
     executor: elab-executor

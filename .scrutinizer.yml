@@ -22,6 +22,11 @@ checks:
 build:
   nodes:
     analysis:
+      dependencies:
+        override:
+          - echo do nothing here
+        before:
+          - echo do nothing here
       tests:
         override:
           - php-scrutinizer-run

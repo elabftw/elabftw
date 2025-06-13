@@ -27,11 +27,6 @@ build:
       version: 8.4.8
   nodes:
     analysis:
-      dependencies:
-        override:
-          - echo do nothing here
-        before:
-          - echo do nothing here
       tests:
         override:
           - php-scrutinizer-run

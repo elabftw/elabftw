@@ -187,6 +187,7 @@ final class Templates extends AbstractTemplateEntity
             EntityType::Templates->toPage(),
             $this->id
         );
+        $this->entityData['comments'] = $this->Comments->readAll();
         // add the body as html
         $this->entityData['body_html'] = $this->entityData['body'];
         // convert from markdown only if necessary

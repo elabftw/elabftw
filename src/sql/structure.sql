@@ -379,6 +379,31 @@ CREATE TABLE `experiments_templates_revisions` (
 --
 
 -- --------------------------------------------------------
+
+--
+-- Table structure for table `experiments_templates_comments`
+--
+
+CREATE TABLE `experiments_templates_comments` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `item_id` int(10) UNSIGNED NOT NULL,
+  `comment` text NOT NULL,
+  `userid` int(10) UNSIGNED NOT NULL,
+  `immutable` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `experiments_templates_comments`:
+--   `item_id`
+--       `experiments_templates` -> `id`
+--   `userid`
+--       `users` -> `userid`
+--
+
+-- --------------------------------------------------------
 --
 -- Table structure for table `exports`
 --
@@ -1399,6 +1424,16 @@ ALTER TABLE `experiments_templates`
   ADD KEY `idx_experiments_templates_state` (`state`),
   ADD KEY `fk_experiments_templates_users_userid` (`userid`),
   ADD UNIQUE `unique_experiments_templates_custom_id` (`category`, `custom_id`);
+
+--
+-- Indexes and Constraints for table `experiments_templates_comments`
+--
+
+ALTER TABLE `experiments_templates_comments`
+  ADD KEY `fk_experiments_templates_comments_experiments_templates_id` (`item_id`),
+  ADD KEY `fk_experiments_templates_comments_users_userid` (`userid`),
+  ADD CONSTRAINT `fk_experiments_templates_comments_experiments_templates_id` FOREIGN KEY (`item_id`) REFERENCES `experiments_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_experiments_templates_comments_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Indexes and Constraints for table `experiments_templates_changelog`

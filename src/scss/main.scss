@@ -1713,3 +1713,14 @@ input:user-invalid {
   color: $secondlevel;
   font-size: 1.5rem;
 }
+
+/* opencloning iframe */
+#syc-root {
+  height: 87vh;
+  width: 100%;
+
+  iframe {
+    height: 100%;
+    width: 100%;
+  }
+}

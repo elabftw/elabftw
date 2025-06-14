@@ -316,6 +316,11 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     } else if (el.matches('[data-scope]')) {
       reloadCalendarEvents();
+      // only if an item is selected, reload the page.
+      // If a user has scope "Everything" ans selects an item from another team, changing the scope again (to User for example) without full reload keeps the item selected.
+      if (params.get('item')) {
+        window.location.replace(`scheduler.php?${params.toString()}`);
+      }
     // SAVE EVENT TITLE
     } else if (el.matches('[data-action="save-event-title"]')) {
       const input = el.parentElement.parentElement.querySelector('input') as HTMLInputElement;

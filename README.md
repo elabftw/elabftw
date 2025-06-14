@@ -11,7 +11,7 @@
 [![CircleCI](https://circleci.com/gh/elabftw/elabftw/tree/master.svg?style=svg)](https://circleci.com/gh/elabftw/elabftw/tree/master)
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/elabftw/elabftw/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/elabftw/elabftw/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/elabftw/elabftw/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/elabftw/elabftw/?branch=master)
+[![Code Coverage](https://codecov.io/gh/elabftw/elabftw/branch/hypernext/graph/badge.svg?token=SHSZuaxt17)](https://codecov.io/gh/elabftw/elabftw)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2766/badge)](https://bestpractices.coreinfrastructure.org/projects/2766)
 [![Join the chat at https://gitter.im/elabftw/elabftw](https://badges.gitter.im/elabftw/elabftw.svg)](https://gitter.im/elabftw/elabftw?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![License](https://img.shields.io/badge/license-AGPL-blue.svg)](https://www.gnu.org/licenses/agpl-3.0.en.html)

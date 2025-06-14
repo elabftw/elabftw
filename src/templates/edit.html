@@ -102,8 +102,27 @@
   </div>
 </section>
 
-{# PERMISSIONS #}
 <hr>
+{# EXTRA FIELDS #}
+{% include('field-builder-modal.html') %}
+<h3 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Extra fields'|trans }}</h3>
+<div data-save-hidden='metadataDiv' class='col-md-8 mt-4'>
+  {# this div is filled in JS by Metadata.class.ts edit() #}
+  <div id='metadataDiv'></div>
+  <div class='mt-3 row'>
+    <button type='button' data-action='toggle-modal' data-target='fieldBuilderModal' class='btn btn-secondary'>{{ 'Add field'|trans }}</button>
+    <button type='button' data-action='toggle-modal' data-target='fieldLoaderModal' class='ml-3 btn hl-hover-gray'>{{ 'Load fields'|trans }}</button>
+  </div>
+</div>
+<hr>
+
+
+
+{% include 'uploads.html' %}
+
+{% include 'steps-links-edit.html' %}
+
+{# PERMISSIONS #}
 <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='permissionsDiv'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Permissions'|trans }}</h3>
 <div class='mt-2 ml-3' id='permissionsDiv' data-save-hidden='permissionsDiv'>
   {% if Entity.entityData.canread_target %}
@@ -142,27 +161,6 @@
     </div>
   {% endif %}
 </div>
-<hr>
-
-
-{# EXTRA FIELDS #}
-<h3 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Extra fields'|trans }}</h3>
-<div data-save-hidden='metadataDiv' class='col-md-8 mt-4'>
-  {# this div is filled in JS by Metadata.class.ts edit() #}
-  <div id='metadataDiv'></div>
-  <div class='mt-3 row'>
-    <button type='button' data-action='toggle-modal' data-target='fieldBuilderModal' class='btn btn-secondary'>{{ 'Add field'|trans }}</button>
-    <button type='button' data-action='toggle-modal' data-target='fieldLoaderModal' class='ml-3 btn hl-hover-gray'>{{ 'Load fields'|trans }}</button>
-  </div>
-</div>
-<hr>
-
-{% include 'steps-links-edit.html' %}
-
-{% include 'uploads.html' %}
-
-{% include 'json-editor.html' %}
-
 <hr>
 
 {# DOODLE #}
@@ -206,6 +204,8 @@
   </div>
 </div>
 
+<hr>
+{% include 'json-editor.html' %}
 <hr>
 
 <div id='info'

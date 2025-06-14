@@ -129,13 +129,6 @@
 
 </section>
 
-{# PERMISSIONS #}
-<h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='permissionsDiv'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Permissions'|trans }}</h3>
-<div class='mt-2 ml-3' id='permissionsDiv' data-save-hidden='permissionsDiv'>
-  {% include('edit-permissions.html') %}
-</div>
-<hr>
-
 {# METADATA view #}
 {% if Entity.entityData.metadata %}
   <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='extraFieldsDiv'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Extra fields'|trans }}</h3>
@@ -145,9 +138,17 @@
   <hr>
 {% endif %}
 
+{% include 'uploads.html' %}
+
 {% include 'steps-links-view.html' %}
 
-{% include 'uploads.html' %}
+{# PERMISSIONS #}
+<h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='permissionsDiv'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Permissions'|trans }}</h3>
+<div class='mt-2 ml-3' id='permissionsDiv' data-save-hidden='permissionsDiv'>
+  {% include('edit-permissions.html') %}
+</div>
+<hr>
+
 
 {% if App.Session.get('is_auth') and not App.Session.has('is_anon') %}
   <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='commentsDiv'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Comments'|trans }} (<span id='commentsCount'>{{ Entity.entityData.comments|length }}</span>)</h3>

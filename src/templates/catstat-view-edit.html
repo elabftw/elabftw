@@ -5,9 +5,4 @@
   <button id='categoryBtn' style='--bg: #{{ Entity.entityData.category_color|default('bdbdbd') }}' type='button' data-target='category' data-id='{{ Entity.entityData.category }}' class='mr-2 btn catstat-btn category-btn malleableCategory lh-normal border-0'>{{ Entity.entityData.category_title|default('Add category'|trans) }}</button>
   {# STATUS #}
   <button data-target='status' type='button' class='btn catstat-btn status-btn malleableStatus lh-normal border-0'><i class='fas fa-circle fa-fw' style='--bg: #{{ Entity.entityData.status_color|default('bdbdbd') }}'></i> {{ Entity.entityData.status_title|default('Add status'|trans) }}</button>
-
-{# show message if we are not owner #}
-{% if Entity.entityData.userid != Entity.Users.userData.userid %}
-  <span class='ml-auto'>{{ 'Owned by %s'|trans|format(Entity.entityData.fullname) }}</span>
-{% endif %}
 </div>

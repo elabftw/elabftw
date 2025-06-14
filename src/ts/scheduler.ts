@@ -314,6 +314,8 @@ document.addEventListener('DOMContentLoaded', () => {
       ApiC.post(`event/${el.dataset.id}/notifications`, {action: Action.Create, msg: msg, target: target.value, targetid: parseInt(target.dataset.targetid, 10)}).then(() => {
         ApiC.delete(`event/${el.dataset.id}`).then(() => calendar.refetchEvents()).catch();
       });
+    } else if (el.matches('[data-scope]')) {
+      reloadCalendarEvents();
     // SAVE EVENT TITLE
     } else if (el.matches('[data-action="save-event-title"]')) {
       const input = el.parentElement.parentElement.querySelector('input') as HTMLInputElement;

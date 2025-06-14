@@ -176,7 +176,7 @@
       <p class='smallgray'>{{ 'Select a scope and search for events.'|trans }}</p>
       <div class='d-flex flex-row'>
         {# EVENTS SCOPE #}
-        {% include 'scope-button.html' with {'btnId': 'scopeEventBtn', 'reload': 'page', 'target': 'scope_events', 'isSecondary': 0, 'isSmall': 0} %}
+        {% include 'scope-button.html' with {'btnId': 'scopeEventBtn', 'reload': 'scopeEventBtn', 'target': 'scope_events', 'isSecondary': 0, 'isSmall': 0} %}
         <div class='input-group ml-2'>
           {#  FILTER BY OWNER #}
           <input type='text' aria-label='{{ 'Filter owner'|trans }}' placeholder='{{ 'Filter events by owner'|trans }}' id='eventOwnerSelect' class='form-control' data-identifier='eventOwnerSelect' data-complete-target='users'>

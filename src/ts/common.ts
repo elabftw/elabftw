@@ -933,6 +933,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (el.dataset.type === 'experiments_templates') {
         page = 'templates.php';
       }
+      if (el.dataset.type === 'items_types') {
+        page = 'resources-templates.php';
+      }
       if (el.dataset.type === 'database') {
         el.dataset.type = 'items';
         page = 'database.php';

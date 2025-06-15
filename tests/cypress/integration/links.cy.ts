@@ -9,7 +9,7 @@ describe('Test links', () => {
     cy.visit('/experiments.php?mode=edit&id=33');
     // link to an experiment
     cy.get('#addLinkExpInput').type('Synthesis');
-    cy.get('.ui-menu-item-wrapper').click();
+    cy.get('.ui-menu-item-wrapper').first().click();
     cy.get('#addLinkExpInput').type('{enter}');
     cy.get('#experimentsLinksDiv').should('contain.text', 'Synthesis and Characterization');
     cy.intercept('DELETE', '/api/v2/**').as('delete');

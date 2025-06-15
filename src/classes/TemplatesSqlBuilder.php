@@ -53,6 +53,12 @@ final class TemplatesSqlBuilder extends EntitySqlBuilder
     }
 
     #[Override]
+    protected function compounds(): void
+    {
+        return;
+    }
+
+    #[Override]
     protected function status(): void
     {
         $this->selectSql[] = 'statust.title AS status_title,

@@ -26,6 +26,7 @@ final class ItemsTypesSqlBuilder extends EntitySqlBuilder
             entity.userid,
             entity.created_at,
             entity.modified_at,
+            entity.lastchangeby,
             entity.team,
             entity.color,
             entity.title,

@@ -59,12 +59,24 @@
         <div class='navbar-nav'>
             <a aria-label='{{ 'Go to dashboard'|trans }}' class='nav-item nav-link {{ scriptName == 'dashboard.php' ? 'active' }}'
                 href='dashboard.php' title='{{ 'Go to dashboard'|trans }}'><i class='fas fa-house'></i></a>
-            <a class='nav-item nav-link {{ scriptName == 'experiments.php' ? 'active' }}'
-                href='experiments.php'>{% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}</a>
-            <a class='nav-item nav-link {{ scriptName == 'templates.php' ? 'active' }}'
-                href='templates.php'>{% trans %}Template{% plural 2 %}Templates{% endtrans %}</a>
-            <a class='nav-item nav-link {{ scriptName == 'database.php' ? 'active' }}'
-                href='database.php'>{{ 'Resources'|trans }}</a>
+            <div class='nav-item dropdown'>
+              <div class='nav-link dropdown-toggle {{ scriptName == 'experiments.php' or scriptName == 'templates.php' ? 'active' }}' role='button' data-toggle='dropdown' aria-expanded='false'>
+              {% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}
+              </div>
+              <div class='dropdown-menu'>
+                <a class='dropdown-item {{ scriptName == 'experiments.php' ? 'active' }}' href='experiments.php'>{{ 'Experiments'|trans }}</a>
+                <a class='dropdown-item {{ scriptName == 'templates.php' ? 'active' }}' href='templates.php'>{{ 'Templates'|trans }}</a>
+              </div>
+            </div>
+            <div class='nav-item dropdown'>
+              <div class='nav-link dropdown-toggle {{ scriptName == 'database.php' or scriptName == 'resources-templates.php' ? 'active' }}' role='button' data-toggle='dropdown' aria-expanded='false'>
+                {{ 'Resources'|trans }}
+              </div>
+              <div class='dropdown-menu'>
+                <a class='dropdown-item {{ scriptName == 'database.php' ? 'active' }}' href='database.php'>{{ 'Resources'|trans }}</a>
+                <a class='dropdown-item {{ scriptName == 'resources-templates.php' ? 'active' }}' href='resources-templates.php'>{{ 'Templates'|trans }}</a>
+              </div>
+            </div>
             <a class='nav-item nav-link {{ scriptName == 'scheduler.php' ? 'active' }}'
                 href='scheduler.php'>{{ 'Scheduler'|trans }}</a>
 

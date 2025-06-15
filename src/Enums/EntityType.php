@@ -53,7 +53,7 @@ enum EntityType: string
             $this::Experiments => 'experiments.php',
             $this::Items => 'database.php',
             $this::Templates => 'templates.php',
-            $this::ItemsTypes => 'admin.php?tab=4',
+            $this::ItemsTypes => 'resources-templates.php',
         };
     }
 }

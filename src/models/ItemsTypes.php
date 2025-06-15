@@ -23,6 +23,7 @@ use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
+use Elabftw\Interfaces\SqlBuilderInterface;
 use Elabftw\Params\BaseQueryParams;
 use Elabftw\Params\OrderingParams;
 use Elabftw\Services\Filter;
@@ -132,30 +133,6 @@ final class ItemsTypes extends AbstractTemplateEntity
     }
 
     #[Override]
-    public function readOne(): array
-    {
-        if ($this->id === null) {
-            throw new IllegalActionException('No id was set!');
-        }
-        $builder = new ItemsTypesSqlBuilder($this);
-        $sql = $builder->getReadSqlBeforeWhere(getTags: false);
-
-        $sql .= sprintf(' WHERE entity.id = %d', $this->id);
-        $req = $this->Db->prepare($sql);
-        $this->Db->execute($req);
-
-        $this->entityData = $this->Db->fetch($req);
-        $this->canOrExplode('read');
-        // add steps and links in there too
-        $this->entityData['steps'] = $this->Steps->readAll();
-        $this->entityData['items_links'] = $this->ItemsLinks->readAll();
-        $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll();
-        $exclusiveEditMode = $this->ExclusiveEditMode->readOne();
-        $this->entityData['exclusive_edit_mode'] = empty($exclusiveEditMode) ? null : $exclusiveEditMode;
-        return $this->entityData;
-    }
-
-    #[Override]
     public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int
     {
         // TODO: implement
@@ -204,6 +181,12 @@ final class ItemsTypes extends AbstractTemplateEntity
             $req->bindParam(':id', $id, PDO::PARAM_INT);
             $this->Db->execute($req);
         }
+    }
+
+    #[Override]
+    protected function getSqlBuilder(): SqlBuilderInterface
+    {
+        return new ItemsTypesSqlBuilder($this);
     }
 
     private function isAdminOrExplode(): void

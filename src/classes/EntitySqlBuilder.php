@@ -15,18 +15,20 @@ namespace Elabftw\Elabftw;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Interfaces\SqlBuilderInterface;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\AbstractTemplateEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
-use Elabftw\Models\Templates;
 use Elabftw\Services\UsersHelper;
+use Override;
 
 use function array_column;
 use function array_unique;
 use function implode;
 use function sprintf;
 
-class EntitySqlBuilder
+class EntitySqlBuilder implements SqlBuilderInterface
 {
     protected array $selectSql = array();
 
@@ -41,6 +43,7 @@ class EntitySqlBuilder
      * @param bool $fullSelect select all the columns of entity
      * @param null|EntityType $relatedOrigin Are we looking for related entries, what is the origin, experiments or items?
      */
+    #[Override]
     public function getReadSqlBeforeWhere(
         bool $getTags = true,
         bool $fullSelect = false,
@@ -76,6 +79,7 @@ class EntitySqlBuilder
         return sprintf(implode(' ', $sql), $this->entity->entityType->value);
     }
 
+    #[Override]
     public function getCanFilter(string $can): string
     {
         $sql = '';
@@ -119,7 +123,6 @@ class EntitySqlBuilder
                 entity.date,
                 entity.category,
                 entity.team,
-                entity.status,
                 entity.rating,
                 entity.userid,
                 entity.locked,
@@ -231,7 +234,7 @@ class EntitySqlBuilder
             ON cmt.item_id = entity.id
             AND cmt.created_at = (
                 SELECT MAX(created_at)
-                FROM experiments_comments
+                FROM %1$s_comments
                 WHERE item_id = entity.id
             )';
     }
@@ -390,7 +393,7 @@ class EntitySqlBuilder
         } elseif ($this->entity instanceof Items) {
             $this->selectSql[] = 'entity.is_bookable';
             $eventsColumn = 'item_link = entity.id OR team_events.item';
-        } elseif ($this->entity instanceof Templates) {
+        } elseif ($this->entity instanceof AbstractTemplateEntity) {
             return;
         } else {
             throw new IllegalActionException('Nope.');

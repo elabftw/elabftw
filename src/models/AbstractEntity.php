@@ -15,6 +15,7 @@ namespace Elabftw\Models;
 use DateTimeImmutable;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\EntitySqlBuilder;
+use Elabftw\Elabftw\ItemsTypesSqlBuilder;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\TemplatesSqlBuilder;
 use Elabftw\Elabftw\Tools;
@@ -29,6 +30,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Interfaces\ContentParamsInterface;
+use Elabftw\Interfaces\SqlBuilderInterface;
 use Elabftw\Params\ContentParams;
 use Elabftw\Params\DisplayParams;
 use Elabftw\Params\EntityParams;
@@ -42,6 +44,7 @@ use PDO;
 use PDOStatement;
 use Override;
 use Symfony\Component\HttpFoundation\InputBag;
+use Symfony\Component\HttpFoundation\Request;
 
 use function array_column;
 use function array_merge;
@@ -242,6 +245,8 @@ abstract class AbstractEntity extends AbstractRest
         // TODO inject
         if ($this instanceof Templates) {
             $EntitySqlBuilder = new TemplatesSqlBuilder($this);
+        } elseif ($this instanceof ItemsTypes) {
+            $EntitySqlBuilder = new ItemsTypesSqlBuilder($this);
         } else {
             $EntitySqlBuilder = new EntitySqlBuilder($this);
         }
@@ -379,18 +384,79 @@ abstract class AbstractEntity extends AbstractRest
         return $this->readOne();
     }
 
+    #[Override]
+    public function readOne(): array
+    {
+        if ($this->id === null) {
+            throw new IllegalActionException('No id was set!');
+        }
+        // build query params for Uploads
+        $queryParams = $this->getQueryParams(Request::createFromGlobals()->query);
+        $sql = $this->getSqlBuilder()->getReadSqlBeforeWhere(true, true);
+
+        $sql .= sprintf(' WHERE entity.id = %d', $this->id);
+
+        $req = $this->Db->prepare($sql);
+        if (str_contains($sql, ':userid')) {
+            $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
+        }
+        $this->Db->execute($req);
+        $this->entityData = $this->Db->fetch($req);
+        // Note: this is returning something with all values set to null instead of resource not found exception if the id is incorrect.
+        if ($this->entityData['id'] === null) {
+            throw new ResourceNotFoundException();
+        }
+        $this->canOrExplode('read');
+        $this->entityData['steps'] = $this->Steps->readAll();
+        $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll();
+        $this->entityData['items_links'] = $this->ItemsLinks->readAll();
+        $this->entityData['related_experiments_links'] = $this->ExperimentsLinks->readRelated();
+        $this->entityData['related_items_links'] = $this->ItemsLinks->readRelated();
+        $this->entityData['uploads'] = $this->Uploads->readAll($queryParams);
+        // no comments on templates for now
+        if ($this instanceof AbstractConcreteEntity) {
+            $this->entityData['comments'] = $this->Comments->readAll();
+        }
+        $this->entityData['page'] = substr($this->entityType->toPage(), 0, -4);
+        $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
+        $this->entityData['compounds'] = $CompoundsLinks->readAll();
+        $ContainersLinks = LinksFactory::getContainersLinks($this);
+        $this->entityData['containers'] = $ContainersLinks->readAll();
+        $this->entityData['sharelink'] = sprintf(
+            '%s/%s?mode=view&id=%d%s',
+            Config::fromEnv('SITE_URL'),
+            $this->entityType->toPage(),
+            $this->id,
+            // add a share link
+            !empty($this->entityData['access_key'])
+                ? sprintf('&access_key=%s', $this->entityData['access_key'])
+                : '',
+        );
+        // add the body as html
+        $this->entityData['body_html'] = $this->entityData['body'];
+        // convert from markdown only if necessary
+        if ($this->entityData['content_type'] === self::CONTENT_MD) {
+            $this->entityData['body_html'] = Tools::md2html($this->entityData['body'] ?? '');
+        }
+        if (!empty($this->entityData['metadata'])) {
+            $this->entityData['metadata_decoded'] = json_decode($this->entityData['metadata']);
+        }
+        $exclusiveEditMode = $this->ExclusiveEditMode->readOne();
+        $this->entityData['exclusive_edit_mode'] = empty($exclusiveEditMode) ? null : $exclusiveEditMode;
+        ksort($this->entityData);
+        return $this->entityData;
+    }
+
     public function readOneFull(): array
     {
         $base = $this->readOne();
         // items types don't have this yet
-        if ($this instanceof AbstractConcreteEntity || $this instanceof Templates) {
-            $base['revisions'] = (new Revisions($this))->readAll();
-            $base['changelog'] = (new Changelog($this))->readAll();
-            // we want to include ALL uploaded files
-            $base['uploads'] = (new Uploads($this))->readAll(
-                $this->getQueryParams(new InputBag(array('state' => '1,2,3')))
-            );
-        }
+        $base['revisions'] = (new Revisions($this))->readAll();
+        $base['changelog'] = (new Changelog($this))->readAll();
+        // we want to include ALL uploaded files
+        $base['uploads'] = (new Uploads($this))->readAll(
+            $this->getQueryParams(new InputBag(array('state' => '1,2,3')))
+        );
         ksort($base);
         return $base;
     }
@@ -587,6 +653,11 @@ abstract class AbstractEntity extends AbstractRest
             }
             throw $e;
         }
+    }
+
+    protected function getSqlBuilder(): SqlBuilderInterface
+    {
+        return new EntitySqlBuilder($this);
     }
 
     protected function checkToggleLockPermissions(): void

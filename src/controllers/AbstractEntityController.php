@@ -76,8 +76,10 @@ abstract class AbstractEntityController implements ControllerInterface
         $this->requestableActionArr = RequestableAction::getAssociativeArray();
         $this->currencyArr = Currency::getAssociativeArray();
         $this->scopedTeamgroupsArr = $TeamGroups->readScopedTeamgroups();
-        $Templates = new Templates($this->Entity->Users);
-        $this->templatesArr = $Templates->Pins->readAll();
+        if (!$Entity instanceof ItemsTypes) {
+            $Templates = new Templates($this->Entity->Users);
+            $this->templatesArr = $Templates->Pins->readAll();
+        }
     }
 
     #[Override]
@@ -112,6 +114,10 @@ abstract class AbstractEntityController implements ControllerInterface
 
         // read all based on query parameters or user defaults
         $orderBy = Orderby::tryFrom($this->App->Users->userData['orderby']) ?? Orderby::Lastchange;
+        $skipOrderPinned = $this->App->Request->query->getBoolean('skip_pinned');
+        if ($this->Entity instanceof ItemsTypes) {
+            $skipOrderPinned = true;
+        }
         $DisplayParams = new DisplayParams(
             requester: $this->App->Users,
             query: $this->App->Request->query,
@@ -119,7 +125,7 @@ abstract class AbstractEntityController implements ControllerInterface
             limit: $this->App->Users->userData['limit_nb'],
             orderby: $orderBy,
             sort: Sort::tryFrom($this->App->Users->userData['sort']) ?? Sort::Desc,
-            skipOrderPinned: $this->App->Request->query->getBoolean('skip_pinned'),
+            skipOrderPinned: $skipOrderPinned,
         );
         $itemsArr = $this->Entity->readShow($DisplayParams);
 
@@ -264,6 +270,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'classificationArr' => $this->classificationArr,
             'currencyArr' => $this->currencyArr,
             'Entity' => $this->Entity,
+            // TODO ideally we only send entityData, not both Entity and entityData: check if Entity can be removed
             'entityData' => $this->Entity->entityData,
             'entityProcurementRequestsArr' => $ProcurementRequests->readActiveForEntity($this->Entity->id ?? 0),
             'entityRequestActionsArr' => $RequestActions->readAllFull(),

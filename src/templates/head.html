@@ -60,6 +60,9 @@
             <a aria-label='{{ 'Go to dashboard'|trans }}' class='nav-item nav-link {{ scriptName == 'dashboard.php' ? 'active' }}'
                 href='dashboard.php' title='{{ 'Go to dashboard'|trans }}'><i class='fas fa-house'></i></a>
             <div class='nav-item dropdown'>
+              {% if App.Config.configArr.debug -%}
+                <!-- [html-validate-disable-next prefer-native-element: using a button here will mess up the navbar] -->
+              {%- endif %}
               <div class='nav-link dropdown-toggle {{ scriptName == 'experiments.php' or scriptName == 'templates.php' ? 'active' }}' role='button' data-toggle='dropdown' aria-expanded='false'>
               {% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}
               </div>
@@ -69,6 +72,9 @@
               </div>
             </div>
             <div class='nav-item dropdown'>
+              {% if App.Config.configArr.debug -%}
+                <!-- [html-validate-disable-next prefer-native-element: using a button here will mess up the navbar] -->
+              {%- endif %}
               <div class='nav-link dropdown-toggle {{ scriptName == 'database.php' or scriptName == 'resources-templates.php' ? 'active' }}' role='button' data-toggle='dropdown' aria-expanded='false'>
                 {{ 'Resources'|trans }}
               </div>

@@ -113,6 +113,7 @@ jobs:
 
   code_linters:
     executor: elab-executor
+    parallelism: 6
     working_directory: ~/elabftw/elabftw
     shell: /bin/bash --login
     steps:
@@ -126,22 +127,41 @@ jobs:
       - install_js_php_dependencies
       - run:
           name: Run SCSS linter
-          command: docker exec -it elabtmp yarn csslint
+          command: |
+            if [ "$CIRCLE_NODE_INDEX" -eq "0" ]; then
+              docker exec -it elabtmp yarn csslint
+            fi
       - run:
           name: Run Javascript linter
-          command: docker exec -it elabtmp yarn jslint
+          command: |
+            if [ "$CIRCLE_NODE_INDEX" -eq "1" ]; then
+              docker exec -it elabtmp yarn csslint
+            fi
+          command: docker exec -it elabtmp jslint
       - run:
           name: Run PHP-CS-Fixer
-          command: docker exec -it elabtmp yarn phpcs-dry
+          command: |
+            if [ "$CIRCLE_NODE_INDEX" -eq "2" ]; then
+              docker exec -it elabtmp yarn phpcs-dry
+            fi
       - run:
           name: Run Twig linter
-          command: docker exec -it elabtmp yarn twigcs
+          command: |
+            if [ "$CIRCLE_NODE_INDEX" -eq "3" ]; then
+              docker exec -it elabtmp yarn twigcs
+            fi
       - run:
           name: Run PSALM
-          command: docker exec -it elabtmp yarn psalm
+          command: |
+            if [ "$CIRCLE_NODE_INDEX" -eq "4" ]; then
+              docker exec -it elabtmp yarn psalm
+            fi
       - run:
           name: Run PHPStan
-          command: docker exec -it elabtmp yarn phpstan
+          command: |
+            if [ "$CIRCLE_NODE_INDEX" -eq "5" ]; then
+              docker exec -it elabtmp yarn phpstan
+            fi
 
   php_unit_tests:
     executor: elab-executor

@@ -135,9 +135,8 @@ jobs:
           name: Run Javascript linter
           command: |
             if [ "$CIRCLE_NODE_INDEX" -eq "1" ]; then
-              docker exec -it elabtmp yarn csslint
+              docker exec -it elabtmp yarn jslint
             fi
-          command: docker exec -it elabtmp jslint
       - run:
           name: Run PHP-CS-Fixer
           command: |

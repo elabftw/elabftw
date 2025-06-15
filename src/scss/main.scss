@@ -17,6 +17,7 @@ $theme-colors: (
   'danger': $dangerred,
   'neutral': $medium,
 );
+$dropdown-link-active-bg: $elabblue;
 /* make the non active link in navbar have slightly more contrast */
 $navbar-dark-color: $secondlevel;
 $text-muted: $medium;

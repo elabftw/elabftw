@@ -88,7 +88,9 @@ commands:
     steps:
       - run:
           name: Build JS
-          command: docker exec -it elabtmp yarn buildall:ci
+          command: |
+            docker exec -it elabtmp yarn install
+            docker exec -it elabtmp yarn buildall:ci
       - run:
           name: Composer install
           command: docker exec -it elabtmp composer install

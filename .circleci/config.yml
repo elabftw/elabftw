@@ -204,6 +204,7 @@ jobs:
 
   cypress_e2e_tests:
     executor: elab-executor
+    parallelism: 3
     working_directory: ~/elabftw/elabftw
     shell: /bin/bash --login
     steps:
@@ -221,10 +222,26 @@ jobs:
       - populate_db
       - fix_permissions
       - run:
-          name: Run Cypress e2e tests and extract artifacts
+          name: Create folders
+          command: mkdir -p cypress/{screenshots,videos}
+      - run:
+          name: Run Cypress e2e tests on Firefox
           command: |
-            mkdir -p cypress/{screenshots,videos}
-            docker exec -it elab-cypress cypress run
+            if [ "$CIRCLE_NODE_INDEX" -eq "0" ]; then
+              docker exec -it elab-cypress cypress run --browser firefox
+            fi
+      - run:
+          name: Run Cypress e2e tests on Chrome
+          command: |
+            if [ "$CIRCLE_NODE_INDEX" -eq "1" ]; then
+              docker exec -it elab-cypress cypress run --browser chrome
+            fi
+      - run:
+          name: Run Cypress e2e tests on Edge
+          command: |
+            if [ "$CIRCLE_NODE_INDEX" -eq "2" ]; then
+              docker exec -it elab-cypress cypress run --browser edge
+            fi
       - run:
           name: Extract cypress screenshots and videos in case it is enabled again to debug a faulty run
           command: |

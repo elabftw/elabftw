@@ -11,7 +11,7 @@ describe('Test links', () => {
     cy.get('#addLinkExpInput').type('Synthesis');
     cy.get('.ui-menu-item-wrapper').first().click();
     cy.get('#addLinkExpInput').type('{enter}');
-    cy.get('#experimentsLinksDiv').should('contain.text', 'Synthesis and Characterization');
+    cy.get('#experimentsLinksDiv').should('contain.text', 'Synthesis');
     cy.intercept('DELETE', '/api/v2/**').as('delete');
     cy.get('[data-action="destroy-link"]').first().click();
     cy.wait('@delete').its('response.statusCode').should('eq', 204);

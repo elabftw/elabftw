@@ -24,33 +24,3 @@
   <hr>
 {% endif %}
 </div>
-
-{# EXPERIMENTS LINKS #}
-{% if Entity.entityData.experiments_links %}
-  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='linkExpDiv' id='linksExpDivTitle'><i class='fas fa-caret-down mr-2 fa-fw'></i>{% trans %}
-    Linked experiment
-    {% plural 2 %}
-    Linked experiments
-    {% endtrans %} ({{ Entity.entityData.experiments_links|length }})</h3>
-  <div class='row mt-2' id='linksExpDiv' data-save-hidden='linksExpDiv'>
-    {% for link in Entity.entityData.experiments_links %}
-      {% include 'link-view-one.html' %}
-    {% endfor %}
-  </div>
-  <hr>
-{% endif %}
-
-{# ITEMS LINKS #}
-{% if Entity.entityData.items_links %}
-  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='linksDiv' id='linksDivTitle'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Linked resources'|trans }} ({{ Entity.entityData.items_links|length }})</h3>
-  <div class='row mt-2' id='linksDiv' data-save-hidden='linksDiv'>
-    {% for link in Entity.entityData.items_links %}
-      {% include 'link-view-one.html' %}
-    {% endfor %}
-  </div>
-  <hr>
-{% endif %}
-
-{% include 'related-snippet.html' %}
-{% include 'storage-view-edit.html' %}
-{% include 'compounds-view-edit.html' %}

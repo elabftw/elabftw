@@ -390,7 +390,8 @@
       </div>
       <hr>
       {% set mode = 'edit-template' %}
-      {% include 'steps-links-edit.html' %}
+      {% include 'links.html' with {'mode': 'edit'} %}
+      {% include 'steps-edit.html' %}
       {# METADATA editor for items types #}
       {% include 'json-editor.html' %}
     {% endif %}

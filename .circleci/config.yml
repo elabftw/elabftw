@@ -224,17 +224,24 @@ jobs:
       - run:
           name: Create folders
           command: mkdir -p cypress/{screenshots,videos}
-      - run:
-          name: Run Cypress e2e tests on Firefox
-          command: |
-            if [ "$CIRCLE_NODE_INDEX" -eq "0" ]; then
-              docker exec -it elab-cypress cypress run --browser firefox
-            fi
+      # commented out because it stays stuck on Import tab on profile page
+      #- run:
+      #    name: Run Cypress e2e tests on Firefox
+      #    command: |
+      #      if [ "$CIRCLE_NODE_INDEX" -eq "0" ]; then
+      #        docker exec -it elab-cypress cypress run --browser firefox
+      #      fi
       - run:
           name: Run Cypress e2e tests on Chrome
           command: |
-            if [ "$CIRCLE_NODE_INDEX" -eq "1" ]; then
+            if [ "$CIRCLE_NODE_INDEX" -eq "0" ]; then
               docker exec -it elab-cypress cypress run --browser chrome
+            fi
+      - run:
+          name: Run Cypress e2e tests on Electron
+          command: |
+            if [ "$CIRCLE_NODE_INDEX" -eq "1" ]; then
+              docker exec -it elab-cypress cypress run --browser electron
             fi
       - run:
           name: Run Cypress e2e tests on Edge

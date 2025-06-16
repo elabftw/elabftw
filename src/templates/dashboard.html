@@ -12,7 +12,7 @@
     <div class='d-flex justify-content-between'>
       <h4>{% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}</h4>
       <div>
-        {% include 'scope-button.html' with {'reload': 'lastModifiedExp', 'target': 'scope_experiments', 'isSecondary': 0, 'isSmall': 0} %}
+        {% include 'scope-button.html' with {'btnId': 'scopeExp', 'reload': 'lastModifiedExp,scopeExp', 'target': 'scope_experiments', 'isSecondary': 0, 'isSmall': 0} %}
         {% include 'create-new.html' with {'entityPage': 'experiments'} %}
       </div>
     </div>
@@ -51,7 +51,7 @@
     <div class='d-flex justify-content-between'>
       <h4>{% trans %}Resource{% plural 2 %}Resources{% endtrans %}</h4>
       <div>
-        {% include 'scope-button.html' with {'reload': 'lastModifiedResources', 'target': 'scope_items', 'isSecondary': 0, 'isSmall': 0} %}
+        {% include 'scope-button.html' with {'btnId': 'scopeItems', 'reload': 'lastModifiedResources,scopeItems', 'target': 'scope_items', 'isSecondary': 0, 'isSmall': 0} %}
         {% include 'create-new.html' with {'entityPage': 'database'} %}
       </div>
     </div>
@@ -88,7 +88,7 @@
     <div class='d-flex justify-content-between'>
       <h4>{{ 'Scheduled bookings'|trans }}</h4>
       <div>
-        {% include 'scope-button.html' with {'btnId': 'scopeEventBtn', 'reload': 'scheduledBookings', 'target': 'scope_events', 'isSecondary': 0, 'isSmall': 0} %}
+        {% include 'scope-button.html' with {'btnId': 'scopeEvent', 'reload': 'scheduledBookings,scopeEvent', 'target': 'scope_events', 'isSecondary': 0, 'isSmall': 0} %}
         <a href='scheduler.php' class='btn btn-secondary'>{{ 'Scheduler'|trans }}</a>
       </div>
     </div>

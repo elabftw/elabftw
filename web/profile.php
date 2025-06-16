@@ -23,6 +23,7 @@ use Elabftw\Models\Teams;
 use Elabftw\Models\UserUploads;
 use Elabftw\Services\UsersHelper;
 use Exception;
+use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -57,8 +58,9 @@ try {
     $UserUploads = new UserUploads($App->Users);
     $PermissionsHelper = new PermissionsHelper();
 
+    $queryParams = $UserUploads->getQueryParams(new InputBag($App->Request->query->all()));
     $renderArr = array(
-        'attachedFiles' => $UserUploads->readAll(),
+        'attachedFiles' => $UserUploads->readAll($queryParams),
         'count' => $count,
         'exportedFiles' => $Export->readAll(),
         'experimentsCategoryArr' => $ExperimentsCategories->readAll(),
@@ -68,7 +70,7 @@ try {
         'pieDataCss' => $UserStats->getFormattedPieData(),
         'teamGroupsArr' => $teamGroupsArr,
         'teamsArr' => $teams,
-        'uploadsTotal' => $UserUploads->countAll(),
+        'uploadsTotal' => $UserUploads->countAll($queryParams),
         'usersArr' => $App->Users->readAllActiveFromTeam(),
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
     );

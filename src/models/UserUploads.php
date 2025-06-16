@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Orderby;
-use Elabftw\Enums\State;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Params\BaseQueryParams;
 use Override;
@@ -70,15 +69,17 @@ final class UserUploads extends AbstractRest
         return $req->fetchAll();
     }
 
-    public function countAll(): int
+    public function countAll(?QueryParamsInterface $queryParams = null): int
     {
-        $sql = 'SELECT COUNT(uploads.id) FROM uploads WHERE userid = :userid AND (state = :state_normal OR state = :state_archived)';
+        $queryParams ??= $this->getQueryParams();
+        $statesSql = $queryParams->getStatesSql('uploads');
+        $sql = sprintf(
+            'SELECT COUNT(uploads.id) FROM uploads WHERE userid = :userid %s',
+            $statesSql
+        );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->owner->userid, PDO::PARAM_INT);
-        $req->bindValue(':state_normal', State::Normal->value, PDO::PARAM_INT);
-        $req->bindValue(':state_archived', State::Archived->value, PDO::PARAM_INT);
         $this->Db->execute($req);
-
         return (int) $req->fetchColumn();
     }
 }

@@ -11,7 +11,10 @@
   <div class='col-md-4'>
     <div class='d-flex justify-content-between'>
       <h4>{% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}</h4>
-      {% include 'create-new.html' with {'entityPage': 'experiments'} %}
+      <div>
+        {% include 'scope-button.html' with {'reload': 'page', 'target': 'scope_experiments', 'isSecondary': 0, 'isSmall': 0} %}
+        {% include 'create-new.html' with {'entityPage': 'experiments'} %}
+      </div>
     </div>
     <hr>
     {% if experimentsCategoryArr %}
@@ -47,7 +50,10 @@
   <div class='col-md-4 mt-2 mt-md-0'>
     <div class='d-flex justify-content-between'>
       <h4>{% trans %}Resource{% plural 2 %}Resources{% endtrans %}</h4>
-      {% include 'create-new.html' with {'entityPage': 'database'} %}
+      <div>
+        {% include 'scope-button.html' with {'reload': 'page', 'target': 'scope_items', 'isSecondary': 0, 'isSmall': 0} %}
+        {% include 'create-new.html' with {'entityPage': 'database'} %}
+      </div>
     </div>
     <hr>
     <h5>{{ 'Browse by category'|trans }}</h5>
@@ -81,8 +87,12 @@
   <div class='col-md-4 mt-2 mt-md-0'>
     <div class='d-flex justify-content-between'>
       <h4>{{ 'Scheduled bookings'|trans }}</h4>
-      <a href='scheduler.php' class='btn btn-secondary'>{{ 'Scheduler'|trans }}</a>
+      <div>
+        {% include 'scope-button.html' with {'btnId': 'scopeEventBtn', 'reload': 'page', 'target': 'scope_events', 'isSecondary': 0, 'isSmall': 0} %}
+        <a href='scheduler.php' class='btn btn-secondary'>{{ 'Scheduler'|trans }}</a>
+      </div>
     </div>
+    <hr>
     <div class='list-group mt-1'>
       {% for booking in bookingsArr %}
         <a href='scheduler.php?item={{ booking.items_id }}&amp;start={{ booking.start|url_encode }}' class='list-group-item hl-hover-gray'><span style='color: {{ booking.color }}'>{{ booking.title }}</span> <span title='{{ booking.start|date('Y-m-d H:i:s') }}' class='relative-moment text-nowrap smallgray'></span></a>

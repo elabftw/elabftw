@@ -1,0 +1,46 @@
+networks:
+    elabftw-net:
+services:
+    web:
+        image: elabtmp
+        build:
+          context: ..
+          dockerfile: ./tests/elabtmp.Dockerfile
+        container_name: elabtmp
+        cap_drop:
+            - ALL
+        cap_add:
+            - CHOWN
+            - SETGID
+            - SETUID
+            - FOWNER
+            - DAC_OVERRIDE
+        env_file:
+            - elabftw-user.env
+        environment:
+            - DB_HOST=mysqltmp
+            - DB_NAME=phpunit
+            - DB_USER=phpunit
+            # oMg tHe sOuRcE CoDe cOnTaInS PaSsWoRdS In pLaIn tExT!!!
+            - DB_PASSWORD=phpunit
+            - SECRET_KEY=def00000195a92432f2ebb86bf6e9b9646b45ea955cab7b8f2d96ba2259a85c9e09b04647078c425c5392cb631fa3d9816974bbe8e458d61e16f897ef36c0def362458fd
+            - SERVER_NAME=elab.local
+            - DISABLE_HTTPS=false
+            - ENABLE_LETSENCRYPT=false
+            - MAX_UPLOAD_SIZE=200M
+            - PHP_TIMEZONE=Europe/Paris
+            - TZ=Europe/Paris
+            - DEV_MODE=true
+            - SITE_URL=https://elab.local:3148
+            - ELAB_AWS_ACCESS_KEY=yep
+            - ELAB_AWS_SECRET_KEY=yop
+            - MAX_PHP_MEMORY=512M
+        healthcheck:
+            test: /etc/nginx/healthcheck.sh
+            interval: 10s
+            timeout: 5s
+            retries: 3
+        tmpfs:
+            - /elabftw/cache:uid=1000,gid=1000
+        networks:
+            - elabftw-net

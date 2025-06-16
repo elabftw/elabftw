@@ -46,8 +46,8 @@
             {% endfor %}
           </div>
           {# show add button to admin, for items #}
-          {% if entityPage == 'items' and App.Users.isAdmin %}
-            <a style='color:#343434; border: 1px #ccc solid;' class='btn btn-light mt-1' href='/admin.php?tab=4#{{ entityPage }}CategoriesAnchor'>{{ 'Add category…'|trans }}</a>
+          {% if entityPage == 'database' and App.Users.isAdmin %}
+            <a style='color:#343434; border: 1px #ccc solid;' class='btn btn-light mt-1' href='/resources-templates.php'>{{ 'Add template…'|trans }}</a>
           {% endif %}
         {% endif %}
       </div>

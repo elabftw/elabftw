@@ -97,15 +97,41 @@
   <h3 class='p-2 pl-3 section-title' id='attachedFiles'>{{ 'Attached files'|trans }}</h3>
   <div class='pl-3 mt-2'>
     {% set currentLimit = App.Request.query.get('limit')|default(42) %}
-    <p>{{ 'Displaying %d of %d attached files.'|trans|format(min(currentLimit, uploadsTotal), uploadsTotal) }}
-      <a href='?tab=2&limit={{ uploadsTotal }}' class='ml-3 btn btn-sm btn-secondary {{ currentLimit == uploadsTotal ? 'disabled' }}'>
-        {{ 'Show all'|trans }}
-      </a>
+    {% set currentLimit = App.Request.query.get('order')|default('created_at') %}
+    <p id='countDisplay'>{{ 'Displaying %d of %d attached files.'|trans|format(min(currentLimit, uploadsTotal), uploadsTotal) }}</p>
+    {# FILTERS #}
+    <div class='d-flex form-group form-inline'>
+      {# FILTER BY NAME #}
+      {% include 'filter-input-snippet.html' with {'target': 'attachedFilesTable'} %}
+
+      {# FILTER BY STATE #}
+      <div class="ml-2">
+        {% include 'select-state.html' with {'dataAction': 'set-state-and-reload'} %}
+      </div>
+
+      {# ORDER BY FILTER #}
+      <select name='orderby' class='form-control filterHelper filterAuto ml-2' aria-label='{{ 'Order by'|trans }}'>
+        <option value=''>{{ 'Sort'|trans }}</option>
+        <option data-action='set-orderby-and-reload' value='filesize' {{ App.Request.query.get('order') == 'filesize' ? 'selected' }}>{{ 'File size'|trans }}</option>
+        <option data-action='set-orderby-and-reload' value='created_at' {{ App.Request.query.get('order') == file.created_at ? 'selected' }}>{{ 'Created'|trans }}</option>
+        <option data-action='set-orderby-and-reload' value='filename' {{ App.Request.query.get('order') == file.realname ? 'selected' }}>{{ 'File name'|trans }}</option>
+      </select>
+
       <a href='?tab=2&limit={{ uploadsTotal }}&order=filesize&sort=desc' class='ml-3 btn btn-sm btn-secondary {{ App.Request.query.get('order') == 'filesize' ? 'disabled' }}'>{{ 'List biggest files first'|trans }}
       </a>
-    </p>
-    {% include 'filter-input-snippet.html' with {'target': 'attachedFilesTable'} %}
-    <table class='table' aria-describedby='attachedFiles' data-table-sort='true'>
+
+      {# LIMIT NUMBER OF RESULTS #}
+      <select name='limit' class='form-control filterHelper filterAuto ml-2' aria-label='{{ 'Results per page'|trans }}'>
+        <option value=''>{{ 'Results per page'|trans }}</option>
+        <option data-action='set-limit-and-reload' value='5' {{ currentLimit == '5' ? 'selected' }}>5</option>
+        <option data-action='set-limit-and-reload' value='10' {{ currentLimit == '10' ? 'selected' }}>10</option>
+        <option data-action='set-limit-and-reload' value='15' {{ currentLimit == '15' ? 'selected' }}>15</option>
+        <option data-action='set-limit-and-reload' value='20' {{ currentLimit == '20' ? 'selected' }}>20</option>
+        <option data-action='set-limit-and-reload' value='{{ uploadsTotal }}' {{ currentLimit == uploadsTotal ? 'selected' }}>{{ 'Show all'|trans }}</option>
+      </select>
+    </div>
+
+    <table class='table' aria-describedby='attachedFiles' data-table-sort='true' id='attachmentsTable'>
       <thead>
         <tr>
           <th scope='col'>{{ 'File name'|trans }}</th>

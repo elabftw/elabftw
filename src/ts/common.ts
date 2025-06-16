@@ -388,6 +388,28 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="switch-editor"]')) {
       getEditor().switch(getEntity()).then(() => window.location.reload());
 
+    // TODO-attachments: refacto
+    // ORDER BY FILTER
+    } else if (el.matches('[data-action="set-orderby-and-reload"]')) {
+      const params = new URLSearchParams(document.location.search.slice(1));
+      params.set('order', (el as HTMLSelectElement).value);
+      window.history.replaceState({}, '', `?${params.toString()}`);
+      reloadElements(['attachmentsTable','countDisplay']);
+
+    // LIMIT FILTER
+    } else if (el.matches('[data-action="set-limit-and-reload"]')) {
+      const params = new URLSearchParams(document.location.search.slice(1));
+      params.set('limit', (el as HTMLSelectElement).value);
+      window.history.replaceState({}, '', `?${params.toString()}`);
+      reloadElements(['attachmentsTable','countDisplay']);
+
+    // STATE FILTER
+    } else if (el.matches('[data-action="set-state-and-reload"]')) {
+      const params = new URLSearchParams(document.location.search.slice(1));
+      params.set('state', (el as HTMLSelectElement).value);
+      window.history.replaceState({}, '', `?${params.toString()}`);
+      reloadElements(['attachmentsTable','countDisplay']);
+
     } else if (el.matches('[data-action="insert-param-and-reload-show"]')) {
       const params = new URLSearchParams(document.location.search.slice(1));
       params.set(el.dataset.key, el.dataset.value);

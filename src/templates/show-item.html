@@ -1,7 +1,9 @@
 {# dim the experiment a bit if it's not yours #}
 {% set randomId = random() %}
+{% set label = Entity.entityType.value == 'items_types' ? 'Create resource from template'|trans : 'Create experiment from template'|trans %}
+{% set dataType = Entity.entityType.value == 'experiments_templates' ? 'experiments' : 'database' %}
 
-<section class='entity {{ Entity.entityType.value == 'experiments_templates' ? 'entity-template' }} pl-3 d-flex' id='parent_{{ randomId }}' style='--left-color: #{{ item.category_color|default('bdbdbd') }};' aria-label='{{ 'Entry'|trans }}_{{ randomId }}'>
+<section class='entity {{ Entity.entityType.value in ['experiments_templates', 'items_types'] ? 'entity-template' }} pl-3 d-flex' id='parent_{{ randomId }}' style='--left-color: #{{ item.category_color|default('bdbdbd') }};' aria-label='{{ 'Entry'|trans }}_{{ randomId }}'>
 
   {# left part, full height: checkbox #}
   <div class='d-flex align-items-center'>
@@ -10,8 +12,8 @@
     <div class='d-flex'>
 
       {# for templates: create from button #}
-      {% if Entity.entityType.value == 'experiments_templates' %}
-      <a data-action='create-entity' data-type='experiments' data-tplid='{{ item.id }}' href='#' class='left-icon rounded mr-3 my-1 hl-hover-gray bgnd-blue' title='{{ 'Create experiment from template'|trans }}' aria-label='{{ 'Create experiment from template'|trans }}'>
+      {% if Entity.entityType.value in ['experiments_templates', 'items_types'] %}
+      <a data-action='create-entity' data-type={{ dataType }} data-tplid='{{ item.id }}' href='#' class='left-icon rounded mr-3 my-1 hl-hover-gray bgnd-blue' title='{{ label }}' aria-label='{{ label }}'>
         <i class='fas fa-file-circle-plus fa-fw'></i>
       </a>
       {% endif %}

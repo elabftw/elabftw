@@ -714,7 +714,6 @@ abstract class AbstractEntity extends AbstractRest
 
     protected function getTimestampMaker(array $config, ExportFormat $dataFormat): MakeTrustedTimestampInterface
     {
-        //$entitySlugs = array(new EntitySlug($this->entityType, $this->id ?? 0));
         return match ($config['ts_authority']) {
             'dfn' => new MakeDfnTimestamp($this->Users, $this, $config, $dataFormat),
             'dgn' => new MakeDgnTimestamp($this->Users, $this, $config, $dataFormat),

@@ -119,8 +119,9 @@
       </select>
 
       {# SORT FILTER #}
-      <select name='sort' class='form-control filterHelper filterAuto ml-2' aria-label='{{ 'Sort'|trans }}'>
-        <option value='' data-action='clear'>{{ 'Sort'|trans }}</option>
+      <select name='sort' class='form-control filterHelper filterAuto ml-2' aria-label='{{ 'Order by'|trans }}'>
+        {# TODO: FIXME: sort should mean 'filter by entity', and order by 'order asc/desc'. Label is 'Order By' for the user understanding #}
+        <option value='' data-action='clear'>{{ 'Order by'|trans }}</option>
         <option data-action='set-filter-and-reload' data-target='sort' value='asc' {{ currentSort == 'asc' ? 'selected' }}>{{ 'Asc'|trans }}</option>
         <option data-action='set-filter-and-reload' data-target='sort' value='desc' {{ currentSort == 'desc' ? 'selected' }}>{{ 'Desc'|trans }}</option>
       </select>
@@ -128,10 +129,9 @@
       {# LIMIT NUMBER OF RESULTS #}
       <select name='limit' class='form-control filterHelper filterAuto ml-2' aria-label='{{ 'Results per page'|trans }}'>
         <option value='' data-action='clear'>{{ 'Results per page'|trans }}</option>
-        <option data-action='set-filter-and-reload' data-target='limit' value='5' {{ currentLimit == '5' ? 'selected' }}>5</option>
-        <option data-action='set-filter-and-reload' data-target='limit' value='10' {{ currentLimit == '10' ? 'selected' }}>10</option>
-        <option data-action='set-filter-and-reload' data-target='limit' value='15' {{ currentLimit == '15' ? 'selected' }}>15</option>
-        <option data-action='set-filter-and-reload' data-target='limit' value='20' {{ currentLimit == '20' ? 'selected' }}>20</option>
+        {% for option in limitOptions(75) %}
+          <option data-action='set-filter-and-reload' data-target='limit' value='{{ option }}' {{ currentLimit == option ? 'selected' }}>{{ option }}</option>
+        {% endfor %}
         <option data-action='set-filter-and-reload' data-target='limit' value='{{ uploadsTotal }}' {{ currentLimit == uploadsTotal ? 'selected' }}>{{ 'Show all'|trans }}</option>
       </select>
     </div>

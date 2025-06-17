@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Orderby;
-use Elabftw\Enums\State;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Params\BaseQueryParams;
 use Override;

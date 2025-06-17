@@ -338,11 +338,8 @@ abstract class AbstractEntity extends AbstractRest
     {
         // a Review action doesn't do anything: TODO leave a comment
         if ($action === Action::Review) {
-            // clear any request action - skip for templates
-            if ($this instanceof AbstractConcreteEntity) {
-                $RequestActions = new RequestActions($this->Users, $this);
-                $RequestActions->remove(RequestableAction::Review);
-            }
+            $RequestActions = new RequestActions($this->Users, $this);
+            $RequestActions->remove(RequestableAction::Review);
             return $this->readOne();
         }
         // the toggle pin action doesn't require write access to the entity

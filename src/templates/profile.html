@@ -156,13 +156,6 @@
         {% endfor %}
       </tbody>
     </table>
-    {# LOAD MORE button #}
-    <a id='attachementsEnd'></a>
-    {% if currentLimit < uploadsTotal %}
-      <div class='text-center page-buttons mt-2'>
-        <a class='btn btn-primary' href='?tab=2&limit={{ currentLimit * 2 }}#attachementsEnd' class='color-white'>{{ 'Load more'|trans }}</a>
-      </div>
-    {% endif %}
   </div>
 </div>
 

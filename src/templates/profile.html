@@ -97,7 +97,8 @@
   <h3 class='p-2 pl-3 section-title' id='attachedFiles'>{{ 'Attached files'|trans }}</h3>
   <div class='pl-3 mt-2'>
     {% set currentLimit = App.Request.query.get('limit')|default(42) %}
-    {% set currentLimit = App.Request.query.get('order')|default('created_at') %}
+    {% set currentOrderBy = App.Request.query.get('order')|default('created_at') %}
+    {% set currentSort = App.Request.query.get('sort')|default('desc') %}
     <p id='countDisplay'>{{ 'Displaying %d of %d attached files.'|trans|format(min(currentLimit, uploadsTotal), uploadsTotal) }}</p>
     {# FILTERS #}
     <div class='d-flex form-group form-inline'>
@@ -106,28 +107,32 @@
 
       {# FILTER BY STATE #}
       <div class="ml-2">
-        {% include 'select-state.html' with {'dataAction': 'set-state-and-reload'} %}
+        {% include 'select-state.html' with {'dataAction': 'set-filter-and-reload', 'dataTarget': 'state'} %}
       </div>
 
       {# ORDER BY FILTER #}
       <select name='orderby' class='form-control filterHelper filterAuto ml-2' aria-label='{{ 'Order by'|trans }}'>
-        <option value=''>{{ 'Sort'|trans }}</option>
-        <option data-action='set-orderby-and-reload' value='filesize' {{ App.Request.query.get('order') == 'filesize' ? 'selected' }}>{{ 'File size'|trans }}</option>
-        <option data-action='set-orderby-and-reload' value='created_at' {{ App.Request.query.get('order') == file.created_at ? 'selected' }}>{{ 'Created'|trans }}</option>
-        <option data-action='set-orderby-and-reload' value='filename' {{ App.Request.query.get('order') == file.realname ? 'selected' }}>{{ 'File name'|trans }}</option>
+        <option value='' data-action='clear'>{{ 'Sort'|trans }}</option>
+        <option data-action='set-filter-and-reload' data-target='order' value='filesize' {{ currentOrderBy == 'filesize' ? 'selected' }}>{{ 'File size'|trans }}</option>
+        <option data-action='set-filter-and-reload' data-target='order' value='created_at' {{ currentOrderBy == 'created_at' ? 'selected' }}>{{ 'Created'|trans }}</option>
+        <option data-action='set-filter-and-reload' data-target='order' value='filename' {{ currentOrderBy == 'filename' ? 'selected' }}>{{ 'File name'|trans }}</option>
       </select>
 
-      <a href='?tab=2&limit={{ uploadsTotal }}&order=filesize&sort=desc' class='ml-3 btn btn-sm btn-secondary {{ App.Request.query.get('order') == 'filesize' ? 'disabled' }}'>{{ 'List biggest files first'|trans }}
-      </a>
+      {# SORT FILTER #}
+      <select name='sort' class='form-control filterHelper filterAuto ml-2' aria-label='{{ 'Sort'|trans }}'>
+        <option value='' data-action='clear'>{{ 'Sort'|trans }}</option>
+        <option data-action='set-filter-and-reload' data-target='sort' value='asc' {{ currentSort == 'asc' ? 'selected' }}>{{ 'Asc'|trans }}</option>
+        <option data-action='set-filter-and-reload' data-target='sort' value='desc' {{ currentSort == 'desc' ? 'selected' }}>{{ 'Desc'|trans }}</option>
+      </select>
 
       {# LIMIT NUMBER OF RESULTS #}
       <select name='limit' class='form-control filterHelper filterAuto ml-2' aria-label='{{ 'Results per page'|trans }}'>
-        <option value=''>{{ 'Results per page'|trans }}</option>
-        <option data-action='set-limit-and-reload' value='5' {{ currentLimit == '5' ? 'selected' }}>5</option>
-        <option data-action='set-limit-and-reload' value='10' {{ currentLimit == '10' ? 'selected' }}>10</option>
-        <option data-action='set-limit-and-reload' value='15' {{ currentLimit == '15' ? 'selected' }}>15</option>
-        <option data-action='set-limit-and-reload' value='20' {{ currentLimit == '20' ? 'selected' }}>20</option>
-        <option data-action='set-limit-and-reload' value='{{ uploadsTotal }}' {{ currentLimit == uploadsTotal ? 'selected' }}>{{ 'Show all'|trans }}</option>
+        <option value='' data-action='clear'>{{ 'Results per page'|trans }}</option>
+        <option data-action='set-filter-and-reload' data-target='limit' value='5' {{ currentLimit == '5' ? 'selected' }}>5</option>
+        <option data-action='set-filter-and-reload' data-target='limit' value='10' {{ currentLimit == '10' ? 'selected' }}>10</option>
+        <option data-action='set-filter-and-reload' data-target='limit' value='15' {{ currentLimit == '15' ? 'selected' }}>15</option>
+        <option data-action='set-filter-and-reload' data-target='limit' value='20' {{ currentLimit == '20' ? 'selected' }}>20</option>
+        <option data-action='set-filter-and-reload' data-target='limit' value='{{ uploadsTotal }}' {{ currentLimit == uploadsTotal ? 'selected' }}>{{ 'Show all'|trans }}</option>
       </select>
     </div>
 

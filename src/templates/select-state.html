@@ -1,16 +1,17 @@
 {# select state filter #}
 {# If not in show page, the behaviour is conducted by the 'set-state-and-reload' data-action. #}
 {% set dataAction = dataAction|default(1) %}
+{% set dataTarget = dataTarget|default(1) %}
 <select name='state' aria-label='{{ 'State'|trans }}' class='form-control filterAuto'>
-  <option data-action={{ dataAction }} value='' data-action='clear'>{{ 'Select state'|trans }}</option>
+  <option data-action={{ dataAction }} data-target={{ dataTarget }} value='' data-action='clear'>{{ 'Select state'|trans }}</option>
   {% set stateValue = enum('Elabftw\\Enums\\State').Normal.value %}
-  <option data-action={{ dataAction }} value='{{ stateValue }}' {{- Request.query.get('state') == stateValue ? ' selected' }}>{{ 'Normal'|trans }}</option>
+  <option data-action={{ dataAction }} data-target={{ dataTarget }} value='{{ stateValue }}' {{- Request.query.get('state') == stateValue ? ' selected' }}>{{ 'Normal'|trans }}</option>
   {% set stateValue = enum('Elabftw\\Enums\\State').Archived.value %}
-  <option data-action={{ dataAction }} value='{{ stateValue }}' {{- Request.query.get('state') == stateValue ? ' selected' }}>{{ 'Archived'|trans }}</option>
+  <option data-action={{ dataAction }} data-target={{ dataTarget }} value='{{ stateValue }}' {{- Request.query.get('state') == stateValue ? ' selected' }}>{{ 'Archived'|trans }}</option>
   {% set stateValue = enum('Elabftw\\Enums\\State').Deleted.value %}
-  <option data-action={{ dataAction }} value='{{ stateValue }}' {{- Request.query.get('state') == stateValue ? ' selected' }}>{{ 'Deleted'|trans }}</option>
+  <option data-action={{ dataAction }} data-target={{ dataTarget }} value='{{ stateValue }}' {{- Request.query.get('state') == stateValue ? ' selected' }}>{{ 'Deleted'|trans }}</option>
   {% set stateValue = enum('Elabftw\\Enums\\State').Normal.value ~ ',' ~ enum('Elabftw\\Enums\\State').Archived.value %}
-  <option data-action={{ dataAction }} value='{{ stateValue }}' {{- Request.query.get('state') == stateValue ? ' selected' }}>{{ 'Normal or Archived'|trans }}</option>
+  <option data-action={{ dataAction }} data-target={{ dataTarget }} value='{{ stateValue }}' {{- Request.query.get('state') == stateValue ? ' selected' }}>{{ 'Normal or Archived'|trans }}</option>
   {% set stateValue = enum('Elabftw\\Enums\\State').Normal.value ~ ',' ~ enum('Elabftw\\Enums\\State').Archived.value ~ ',' ~ enum('Elabftw\\Enums\\State').Deleted.value %}
-  <option data-action={{ dataAction }} value='{{ stateValue }}' {{- Request.query.get('state') == stateValue ? ' selected' }}>{{ 'Any'|trans }}</option>
+  <option data-action={{ dataAction }} data-target={{ dataTarget }} value='{{ stateValue }}' {{- Request.query.get('state') == stateValue ? ' selected' }}>{{ 'Any'|trans }}</option>
 </select>

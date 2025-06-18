@@ -18,13 +18,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Api } from './Apiv2.class';
 import { populateUserModal, notifError } from './misc';
-import i18next from 'i18next';
+import i18next from './i18n';
 import $ from 'jquery';
-
-// Not sure why we need to set lang again here, maybe it's because it's jsx and the same line in common.ts doesn't work...
-const userPrefs = document.getElementById('user-prefs').dataset;
-// set the language for js translated strings
-i18next.changeLanguage(userPrefs.lang);
 
 const ApiC = new Api();
 

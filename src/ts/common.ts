@@ -32,7 +32,7 @@ import {
   updateEntityBody,
   updateCatStat,
 } from './misc';
-import i18next from 'i18next';
+import i18next from './i18n';
 import { Metadata } from './Metadata.class';
 import { DateTime } from 'luxon';
 import { Action, EntityType, Model, Target } from './interfaces';
@@ -92,12 +92,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const TableSortingC = new TableSorting();
   TableSortingC.init();
 
-  const userPrefs = document.getElementById('user-prefs').dataset;
-  // set the language for js translated strings
-  i18next.changeLanguage(userPrefs.lang);
-
   makeSortableGreatAgain();
 
+  const userPrefs = document.getElementById('user-prefs').dataset;
   if (userPrefs.scDisabled === '0') {
     const kbd = new KeyboardShortcuts(
       userPrefs.scCreate,

@@ -7,7 +7,7 @@
  */
 import { clearForm, collectForm, populateUserModal, reloadElements } from './misc';
 import { Action, Model } from './interfaces';
-import i18next from 'i18next';
+import i18next from './i18n';
 import tinymce from 'tinymce/tinymce';
 import { getEditor } from './Editor.class';
 import { Notification } from './Notifications.class';

@@ -14,7 +14,7 @@ import { Notification } from './Notifications.class';
 import TableSorting from './TableSorting.class';
 declare const MathJax: MathJaxObject;
 import $ from 'jquery';
-import i18next from 'i18next';
+import i18next from './i18n';
 import { Api } from './Apiv2.class';
 import { getEditor } from './Editor.class';
 import TomSelect from 'tom-select/base';

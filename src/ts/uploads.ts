@@ -12,7 +12,7 @@ import '@fancyapps/fancybox/dist/jquery.fancybox.js';
 import { Action, Model } from './interfaces';
 import { getEntity, relativeMoment, reloadElements } from './misc';
 import { displayPlasmidViewer } from './ove';
-import i18next from 'i18next';
+import i18next from './i18n';
 import { Api } from './Apiv2.class';
 import { marked } from 'marked';
 import Prism from 'prismjs';

@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import i18next from 'i18next';
+import i18next from './i18n';
 import { clearForm, collectForm, reloadElements } from './misc';
 import { InputType, Malle } from '@deltablot/malle';
 import { Api } from './Apiv2.class';

@@ -15,7 +15,7 @@ import {
 } from './misc';
 import $ from 'jquery';
 import { Malle } from '@deltablot/malle';
-import i18next from 'i18next';
+import i18next from './i18n';
 import { getEditor } from './Editor.class';
 import { Api } from './Apiv2.class';
 import { EntityType, Model, Action, Selected } from './interfaces';

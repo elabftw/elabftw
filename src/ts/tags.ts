@@ -8,7 +8,7 @@
 import 'jquery-ui/ui/widgets/autocomplete';
 import { Malle } from '@deltablot/malle';
 import FavTag from './FavTag.class';
-import i18next from 'i18next';
+import i18next from './i18n';
 import { addAutocompleteToTagInputs, getEntity, reloadElements } from './misc';
 import { Action, Model } from './interfaces';
 import { Api } from './Apiv2.class';

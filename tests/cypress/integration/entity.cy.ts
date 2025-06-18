@@ -79,27 +79,15 @@ describe('Experiments', () => {
       .get('button[data-action="destroy"]').click();
   };
 
-  const entityCatStat = (category: string, categoryTarget: string, statusTarget: string) => {
-    cy.wait('@apiGET');
-    // change category
-    cy.get('.malleableCategory').click();
-    cy.get(`select:has(option:selected:contains("${category}"))`).select(`${categoryTarget}`);
-    cy.get('.form-inline > .btn-primary').click();
-    cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
-    // change status
-    cy.get('.malleableStatus').click();
-    cy.get('select:has(option:selected:contains("Not set"))').select(`${statusTarget}`);
-    cy.get('.form-inline > .btn-primary').click();
-    cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
-  };
-
-  it('Create and edit an experiment', () => {
+  it('Create, edit, duplicate and delete an experiment', () => {
     cy.visit('/experiments.php');
     cy.htmlvalidate();
     cy.contains('Create').click();
     cy.get('#createModal_experiments').should('be.visible').should('contain', 'Default template').contains('Default template').click();
-    entityCatStat('Not set', 'Cell biology', 'Success');
     entityEdit();
+    // change status
+    cy.get('#status_select').select('Success').blur();
+    cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
     entityComment();
     entityDuplicate();
     entityDestroy();
@@ -110,8 +98,9 @@ describe('Experiments', () => {
     cy.htmlvalidate();
     cy.contains('Create').click();
     cy.get('#createModal_database').should('be.visible').should('contain', 'Microscope').contains('Microscope').click();
-    entityCatStat('Microscope', 'Plasmid', 'In stock');
     entityEdit();
+    cy.get('#category_select').select('Plasmid').blur();
+    cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
     entityComment();
     entityDuplicate();
     entityDestroy();

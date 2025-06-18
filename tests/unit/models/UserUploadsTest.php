@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
+use Symfony\Component\HttpFoundation\InputBag;
 
 class UserUploadsTest extends \PHPUnit\Framework\TestCase
 {
@@ -37,7 +38,15 @@ class UserUploadsTest extends \PHPUnit\Framework\TestCase
 
     public function testCountAll(): void
     {
+        // count All without filter (normal, archived, deleted)
+        $countAll = $this->UserUploads->countAll();
         $this->assertIsInt($this->UserUploads->countAll());
+        // count only archived
+        $queryParams = new InputBag(array('state' => 2));
+        $q = $this->UserUploads->getQueryParams($queryParams);
+        $countArchived = $this->UserUploads->countAll($q);
+        $this->assertIsInt($countArchived);
+        $this->assertNotEquals($countAll, $countArchived, 'Total count and archived count should differ');
     }
 
     public function testRead(): void

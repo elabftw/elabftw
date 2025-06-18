@@ -87,21 +87,30 @@ function triggerHandler(event: Event, el: HTMLInputElement): void {
     // data-reload can be "page" to reload the page, "reloadEntitiesShow" to reload properly entities in show mode,
     // or a comma separated list of ids of elements to reload
     if (el.dataset.reload) {
-      if (el.dataset.reload === 'page') {
-        location.reload();
-      } else {
-        el.dataset.reload.split(',').forEach(toreload => {
-          if (toreload === 'reloadEntitiesShow') {
-            reloadEntitiesShow();
-          } else {
-            reloadElements([toreload]).then(() => relativeMoment());
-          }
-        });
-      }
+      handleReloads(el.dataset.reload);
     }
   }).catch(error => {
     if (el.dataset.target === Target.Customid && error.message === i18next.t('custom-id-in-use')) {
       el.classList.add('is-invalid');
+    }
+  });
+}
+
+// takes a dataset.reload string as parameter, like "page","reloadEntitiesShow" or "btn1,btn2"
+export function handleReloads(reloadAttributes: string | undefined): void {
+  if (!reloadAttributes) return;
+
+  if (reloadAttributes === 'page') {
+    location.reload();
+    return;
+  }
+
+  const reloadTargets = reloadAttributes.split(',');
+  reloadTargets.forEach((toReload) => {
+    if (toReload === 'reloadEntitiesShow') {
+      reloadEntitiesShow();
+    } else {
+      reloadElements([toReload]).then(() => relativeMoment());
     }
   });
 }

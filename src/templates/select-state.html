@@ -12,6 +12,6 @@
 } %}
 <select name='state' aria-label='{{ 'State'|trans }}' class='form-control filterAuto' autocomplete='off'>
   {% for value, label in stateOptions %}
-    <option data-action='set-filter-and-reload' data-target='state' value='{{ value }}' {% if value == '' %}data-action='clear'{% endif %} {% if dataReload %}data-reload='{{ dataReload }}'{% endif %} {{ reqState == value ? 'selected' }}>{{ label }}</option>
+    <option data-action='insert-param-and-reload' data-target='state' value='{{ value }}' {% if value == '' %}data-action='clear'{% endif %} {% if dataReload %}data-reload='{{ dataReload }}'{% endif %} {{ reqState == value ? 'selected' }}>{{ label }}</option>
   {% endfor %}
 </select>

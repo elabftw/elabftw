@@ -117,9 +117,9 @@
       {% set byFilename = Orderby.Filename.value %}
       <select name='orderby' class='form-control filterHelper ml-2' aria-label='{{ 'Order by'|trans }}'>
         <option value='' data-action='clear'>{{ 'Order by'|trans }}</option>
-        <option data-reload='attachedFilesTable,countDisplay' data-action='set-filter-and-reload' data-target='order' value='{{ byFilesize }}' {{ currentOrderBy == byFilesize ? 'selected' }}>{{ 'File size'|trans }}</option>
-        <option data-reload='attachedFilesTable,countDisplay' data-action='set-filter-and-reload' data-target='order' value='{{ byCreated }}' {{ currentOrderBy == byCreated ? 'selected' }}>{{ 'Created'|trans }}</option>
-        <option data-reload='attachedFilesTable,countDisplay' data-action='set-filter-and-reload' data-target='order' value='{{ byFilename }}' {{ currentOrderBy == byFilename ? 'selected' }}>{{ 'File name'|trans }}</option>
+        <option data-reload='attachedFilesTable,countDisplay' data-action='insert-param-and-reload' data-target='order' value='{{ byFilesize }}' {{ currentOrderBy == byFilesize ? 'selected' }}>{{ 'File size'|trans }}</option>
+        <option data-reload='attachedFilesTable,countDisplay' data-action='insert-param-and-reload' data-target='order' value='{{ byCreated }}' {{ currentOrderBy == byCreated ? 'selected' }}>{{ 'Created'|trans }}</option>
+        <option data-reload='attachedFilesTable,countDisplay' data-action='insert-param-and-reload' data-target='order' value='{{ byFilename }}' {{ currentOrderBy == byFilename ? 'selected' }}>{{ 'File name'|trans }}</option>
       </select>
 
       {# SORT FILTER #}
@@ -127,17 +127,17 @@
       {% set sortDesc = enum('Elabftw\\Enums\\Sort').Desc.value %}
       <select name='sort' class='form-control filterHelper ml-2' aria-label='{{ 'Sort'|trans }}'>
         <option value='' data-action='clear'>{{ 'Sort'|trans }}</option>
-        <option data-reload='attachedFilesTable,countDisplay' data-action='set-filter-and-reload' data-target='sort' value='{{ sortAsc }}' {{ currentSort == sortAsc ? 'selected' }}>{{ 'Asc'|trans }}</option>
-        <option data-reload='attachedFilesTable,countDisplay' data-action='set-filter-and-reload' data-target='sort' value='{{ sortDesc }}' {{ currentSort == sortDesc ? 'selected' }}>{{ 'Desc'|trans }}</option>
+        <option data-reload='attachedFilesTable,countDisplay' data-action='insert-param-and-reload' data-target='sort' value='{{ sortAsc }}' {{ currentSort == sortAsc ? 'selected' }}>{{ 'Asc'|trans }}</option>
+        <option data-reload='attachedFilesTable,countDisplay' data-action='insert-param-and-reload' data-target='sort' value='{{ sortDesc }}' {{ currentSort == sortDesc ? 'selected' }}>{{ 'Desc'|trans }}</option>
       </select>
 
       {# LIMIT NUMBER OF RESULTS #}
       <select name='limit' class='form-control filterHelper ml-2' aria-label='{{ 'Results per page'|trans }}'>
         <option value='' data-action='clear'>{{ 'Results per page'|trans }}</option>
         {% for option in limitOptions(75) %}
-          <option data-reload='attachedFilesTable,countDisplay' data-action='set-filter-and-reload' data-target='limit' value='{{ option }}' {{ currentLimit == option ? 'selected' }}>{{ option }}</option>
+          <option data-reload='attachedFilesTable,countDisplay' data-action='insert-param-and-reload' data-target='limit' value='{{ option }}' {{ currentLimit == option ? 'selected' }}>{{ option }}</option>
         {% endfor %}
-        <option data-action='set-filter-and-reload' data-target='limit' value='{{ uploadsTotal }}' {{ currentLimit == uploadsTotal ? 'selected' }}>{{ 'Show all'|trans }}</option>
+        <option data-action='insert-param-and-reload' data-target='limit' value='{{ uploadsTotal }}' {{ currentLimit == uploadsTotal ? 'selected' }}>{{ 'Show all'|trans }}</option>
       </select>
     </div>
 

@@ -16,7 +16,7 @@ import {
   collectForm,
   escapeExtendedQuery,
   generateMetadataLink,
-  getEntity,
+  getEntity, handleReloads,
   listenTrigger,
   makeSortableGreatAgain,
   mkSpin,
@@ -24,7 +24,6 @@ import {
   permissionsToJson,
   relativeMoment,
   reloadElements,
-  reloadEntitiesShow,
   replaceWithTitle,
   toggleEditCompound,
   toggleGrayClasses,
@@ -389,10 +388,12 @@ document.addEventListener('DOMContentLoaded', () => {
       getEditor().switch(getEntity()).then(() => window.location.reload());
 
     // SELECT FILTERS - state, orderby...
-    } else if (el.matches('[data-action="set-filter-and-reload"]')) {
-      const target = el.dataset.target;
+    } else if (el.matches('[data-action="insert-param-and-reload"]')) {
       const params = new URLSearchParams(document.location.search.slice(1));
-      const value = (el as HTMLSelectElement).value;
+      // handle special case where "results per page" is a button in show.html, the rest is select.
+      const isSelect = el instanceof HTMLSelectElement;
+      const target = el.dataset.target;
+      const value = isSelect ? el.value : el.dataset.value;
       if (!target) return;
       if (value) {
         params.set(target, value);
@@ -400,16 +401,7 @@ document.addEventListener('DOMContentLoaded', () => {
         params.delete(target);
       }
       window.history.replaceState({}, '', `?${params.toString()}`);
-      el.dataset.reload.split(',').forEach(toreload => {
-        reloadElements([toreload]).then(() => relativeMoment());
-      });
-
-    } else if (el.matches('[data-action="insert-param-and-reload-show"]')) {
-      const params = new URLSearchParams(document.location.search.slice(1));
-      params.set(el.dataset.key, el.dataset.value);
-      window.history.replaceState({}, '', `?${params.toString()}`);
-      reloadEntitiesShow();
-
+      handleReloads(el.dataset.reload);
     } else if (el.matches('[data-action="add-query-filter"]')) {
       const params = new URLSearchParams(document.location.search.substring(1));
       params.set(el.dataset.key, el.dataset.value);

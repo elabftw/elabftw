@@ -17,7 +17,7 @@ use Override;
 
 final class PermissionLevelChanged extends AbstractUsers2TeamsModifiedEvent
 {
-    public function __construct(int $requesterUserid, private int $group, int $userid, private int $teamid)
+    public function __construct(int $requesterUserid, int $userid, private Users2TeamsTargets $target, private int $value, private int $teamid)
     {
         parent::__construct($requesterUserid, $userid);
     }
@@ -26,8 +26,9 @@ final class PermissionLevelChanged extends AbstractUsers2TeamsModifiedEvent
     public function getBody(): string
     {
         return sprintf(
-            'User status was changed to %s in team %d',
-            Users2TeamsTargets::from($this->group)->toHuman(),
+            'Value of %s was changed to %d in team %d',
+            $this->target->toHuman(),
+            $this->value,
             $this->teamid,
         );
     }

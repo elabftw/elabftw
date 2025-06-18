@@ -7,7 +7,7 @@
  */
 
 /**
- * Code related to the compounds table present on the Compounds page from ag-grid
+ * Code related to the users table present on the Users tab of Admin and Sysconfig panels
  */
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ModuleRegistry } from '@ag-grid-community/core';
@@ -19,6 +19,7 @@ import { createRoot } from 'react-dom/client';
 import { Api } from './Apiv2.class';
 import { populateUserModal, notifError } from './misc';
 import i18next from 'i18next';
+import $ from 'jquery';
 
 // Not sure why we need to set lang again here, maybe it's because it's jsx and the same line in common.ts doesn't work...
 const userPrefs = document.getElementById('user-prefs').dataset;

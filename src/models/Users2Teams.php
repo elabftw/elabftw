@@ -161,7 +161,7 @@ final class Users2Teams
             (new OnboardingEmail(-1, $promoteToAdmin))->create($userid);
         }
         /** @psalm-suppress PossiblyNullArgument */
-        AuditLogs::create(new PermissionLevelChanged($this->requester->userid, (int) $isAdmin, $userid, $teamid));
+        AuditLogs::create(new PermissionLevelChanged($this->requester->userid, $userid, Users2TeamsTargets::IsAdmin, (int) $isAdmin, $teamid));
         return (int) $isAdmin;
     }
 

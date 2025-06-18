@@ -86,7 +86,7 @@
     "@typescript-eslint/eslint-plugin": "^8.33.0",
     "@typescript-eslint/parser": "^8.33.0",
     "babel-loader": "^10.0.0",
-    "cypress": "^14.4.0",
+    "cypress": "^14.4.1",
     "cypress-html-validate": "^7.1.0",
     "eslint": "^9.27.0",
     "globals": "^16.2.0",
@@ -148,5 +148,5 @@
     "url": "https://github.com/elabftw/elabftw/issues"
   },
   "homepage": "https://www.elabftw.net",
-  "packageManager": "yarn@4.6.0"
+  "packageManager": "yarn@4.9.2"
 }

@@ -4,6 +4,7 @@
 
 {% embed 'view-edit.html' %}
   {% block createnew %}
+  {% include 'catstat-view-edit.html' %}
     <div class='d-flex'>
       <div class='align-self-center flex-grow-1 mr-2'>
         {# CUSTOM ID #}
@@ -36,43 +37,100 @@
 
 <section id='main_section' aria-label='main section'>
 
-  {# DATE and RATING #}
-  <div class='d-flex mb-2'>
+  {# DATE #}
+  <div class='d-flex mb-2 justify-content-between '>
     {% if Entity.entityType.value != 'experiments_templates' %}
       <div class='form-inline'>
-        <label for='date_input' class='col-form-label mr-3 edit-mode-label justify-content-start'>{{ 'Started on'|trans }}</label>
+        <label for='date_input' class='col-form-label mr-3 edit-mode-label justify-content-start d-sm-block d-none'>{{ 'Started on'|trans }}</label>
         {# the input expects date in YYYY-MM-DD format, and it will be displayed according to the browser's locale #}
         <input id='date_input' data-trigger='blur' data-model='{{ Entity.entityType.value }}/{{ Entity.entityData.id }}' data-target='date' type='date' value='{{ Entity.entityData.date|date('Y-m-d') }}' class='form-control' />
       </div>
-    {% endif %}
-    {# RATING #}
-    <div class='ml-auto rating' id='editRatingDiv'>
-      <span class='cancel-button' data-trigger='click' data-model='{{ Entity.entityType.value }}/{{ Entity.entityData.id }}' data-target='rating' data-value='0' data-reload='editRatingDiv'><i class='fas fa-ban fa-fw'></i></span>
-      {% for i in range(5, 1) %}
-        <input {{ Entity.entityData.rating == i ? 'checked="checked"' }} type='radio' id='star{{ i }}' data-trigger='change' data-model='{{ Entity.entityType.value }}/{{ Entity.entityData.id }}' data-target='rating' data-value='{{ i }}' data-reload='editRatingDiv' value='{{ i }}' /><label for='star{{ i }}' aria-label='{{ i }} star {{- i > 1 ? 's' }}'></label>
-      {% endfor %}
-    </div>
-  </div>
-
-  {# ID + CUSTOM ID #}
-  <div class='d-flex mb-2 justify-content-between align-items-center'>
-    <label for='id_input' class='col-form-label mr-3 edit-mode-label'>{{ 'ID'|trans }}</label>
-    <input id='id_input' class='form-control' type='text' disabled value='{{ Entity.entityData.id }}' />
-    <label for='custom_id_input' class='col-form-label mx-3 edit-mode-label'>{{ 'Custom ID'|trans }}</label>
-    <div class='input-group justify-content-end flex-nowrap'>
-      <div class='input-group-prepend'>
-        <button class='btn btn-secondary' type='button' data-action='get-next-custom-id' data-endpoint='{{ Entity.entityType.value }}'>{{ 'Get next'|trans }}</button>
+    {# CUSTOM ID #}
+    <div class='d-flex ml-2 d-inline-flex flex-nowrap align-items-center'>
+      <label for='custom_id_input' class='col-form-label mr-3 edit-mode-label d-sm-block d-none'>{{ 'Custom ID'|trans }}</label>
+      <div class='input-group'>
+        <div class='input-group-prepend'>
+          <button class='btn btn-secondary' type='button' data-action='get-next-custom-id' data-endpoint='{{ Entity.entityType.value }}'>{{ 'Get next'|trans }}</button>
+        </div>
+        <input id='custom_id_input' class='form-control' data-trigger='change' data-model='{{ Entity.entityType.value }}/{{ Entity.entityData.id }}' data-target='custom_id' type='number' min='0' value='{{ Entity.entityData.custom_id }}' />
       </div>
-      <input id='custom_id_input' class='form-control' data-trigger='change' data-model='{{ Entity.entityType.value }}/{{ Entity.entityData.id }}' data-target='custom_id' type='number' min='0' value='{{ Entity.entityData.custom_id }}' />
     </div>
+    {% endif %}
   </div>
 
-  {# CATEGORY / STATUS #}
-  {% include('catstat-edit.html') %}
   {# TAGS #}
   {% include('edit-tags.html') %}
-  {# PERMISSIONS #}
+
+  {# BODY #}
   <hr>
+  <h3 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-toggle-target='mainTextDiv' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-{{ displayMainText ? 'down' : 'right' }} fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
+  <div data-save-hidden='mainTextDiv' {{ not displayMainText ? 'hidden' }} id='mainTextDiv'>
+    <div class='mt-2' id='entityBodyEditorDiv' data-content-type='{{ Entity.entityData.content_type }}'>{# << this div is important around the textarea to fix an issue on mobile editor. See #3107 #}
+      {# tinymce or markdown? #}
+      {% if Entity.entityData.content_type == '2' %}
+        <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' data-language='{{ App.getJsLang }}' name='body'>{{ Entity.entityData.body }}</textarea>
+      {% else %}
+      {# do not display body if set in metadata, done via css to avoid delayed disappearance after JS is executed #}
+        {% if App.Config.configArr.debug -%}
+          <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element: suppress errors from tinymce] -->
+        {%- endif %}
+        <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='mceditable invisible' name='body'>{{ Entity.entityData.body }}</textarea>
+      {% endif %}
+    </div>
+    <div class='d-flex ml-1'>
+      {# LAST SAVED #}
+      <div>
+        <span class='smallgray'>{{ 'Last saved:'|trans }}</span>
+        <span id='lastSavedAt' class='ml-1 relative-moment smallgray' title='{{ Entity.entityData.modified_at }}'></span>
+      </div>
+      {# SWITCH EDITOR #}
+      <div class='ml-auto'>
+        <button type='button' class='btn btn-sm hl-hover-gray p-1 rounded' data-action='switch-editor'><i class='fas fa-pencil-alt fa-fw'></i> {{ 'Switch editor'|trans }}</button>
+        {# Display main text switch #}
+        <label class='ml-1 small' for='displayMainTextSliderInput'>{{ 'Display main text'|trans }}</label>
+        <label class='switch'>
+          <input type='checkbox' {{ entityData.metadata|extractDisplayMainText() ? 'checked="checked"' }} id='displayMainTextSliderInput'>
+          <span class='slider'></span>
+        </label>
+      </div>
+    </div>
+
+    <div class='mt-1 text-center'>
+      <button type='button' {{ not displayMainText ? 'hidden' }} data-action='update-entity-body' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+      <button type='button' data-action='update-entity-body' data-redirect='view' class='btn btn-secondary'>{{ 'Save and go back'|trans }}</button>
+    </div>
+  </div>
+</section>
+
+<hr>
+{# EXTRA FIELDS #}
+{% include('field-builder-modal.html') %}
+<h3 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Extra fields'|trans }}</h3>
+<div data-save-hidden='metadataDiv' class='col-md-8 mt-4'>
+  {# this div is filled in JS by Metadata.class.ts edit() #}
+  <div id='metadataDiv'></div>
+  <div class='mt-3 row'>
+    <button type='button' data-action='toggle-modal' data-target='fieldBuilderModal' class='btn btn-secondary'>{{ 'Add field'|trans }}</button>
+    <button type='button' data-action='toggle-modal' data-target='fieldLoaderModal' class='ml-3 btn hl-hover-gray'>{{ 'Load fields'|trans }}</button>
+  </div>
+</div>
+<hr>
+
+
+
+{% include 'uploads.html' %}
+
+{% include 'steps-edit.html' %}
+
+{% include 'links.html' %}
+
+{% include 'storage-view-edit.html' %}
+
+{% include 'compounds-view-edit.html' %}
+
+{# PERMISSIONS #}
+<h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='permissionsDiv'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Permissions'|trans }}</h3>
+<div class='mt-2 ml-3' id='permissionsDiv' data-save-hidden='permissionsDiv'>
   {% if Entity.entityData.canread_target %}
     <h5>{{ 'Permissions for the template'|trans }}</h5>
   {% endif %}
@@ -107,74 +165,8 @@
         <span class='slider'></span>
       </label>
     </div>
-  <hr>
   {% endif %}
-
-  {# BODY #}
-  <h3 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-toggle-target='mainTextDiv' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-{{ displayMainText ? 'down' : 'right' }} fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
-  <div data-save-hidden='mainTextDiv' {{ not displayMainText ? 'hidden' }} id='mainTextDiv'>
-    <div class='d-flex ml-4'>
-      {# Display main text switch #}
-      <div class='ml-auto'>
-        <label class='mr-1 smallgray' for='displayMainTextSliderInput'>{{ 'Display main text'|trans }}</label>
-        <label class='switch'>
-          <input type='checkbox' {{ entityData.metadata|extractDisplayMainText() ? 'checked="checked"' }} id='displayMainTextSliderInput'>
-          <span class='slider'></span>
-        </label>
-      </div>
-    </div>
-
-    <div class='mt-2' id='entityBodyEditorDiv' data-content-type='{{ Entity.entityData.content_type }}'>{# << this div is important around the textarea to fix an issue on mobile editor. See #3107 #}
-      {# tinymce or markdown? #}
-      {% if Entity.entityData.content_type == '2' %}
-        <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' data-language='{{ App.getJsLang }}' name='body'>{{ Entity.entityData.body }}</textarea>
-      {% else %}
-      {# do not display body if set in metadata, done via css to avoid delayed disappearance after JS is executed #}
-        {% if App.Config.configArr.debug -%}
-          <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element: suppress errors from tinymce] -->
-        {%- endif %}
-        <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='mceditable invisible' name='body'>{{ Entity.entityData.body }}</textarea>
-      {% endif %}
-    </div>
-    <div class='d-flex ml-1'>
-      {# LAST SAVED #}
-      <div>
-        <span class='smallgray'>{{ 'Last saved:'|trans }}</span>
-        <span id='lastSavedAt' class='ml-1 relative-moment smallgray' title='{{ Entity.entityData.modified_at }}'></span>
-      </div>
-      {# SWITCH EDITOR #}
-      <div class='ml-auto'>
-        <button type='button' class='btn btn-sm hl-hover-gray p-1 mt-1 rounded' data-action='switch-editor'><i class='fas fa-pencil-alt fa-fw'></i> {{ 'Switch editor'|trans }}</button>
-      </div>
-    </div>
-
-    <div class='mt-1 text-center'>
-      <button type='button' {{ not displayMainText ? 'hidden' }} data-action='update-entity-body' class='btn btn-primary'>{{ 'Save'|trans }}</button>
-      <button type='button' data-action='update-entity-body' data-redirect='view' class='btn btn-secondary'>{{ 'Save and go back'|trans }}</button>
-    </div>
-  </div>
-  <hr>
-</section>
-
-
-{# EXTRA FIELDS #}
-<h3 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Extra fields'|trans }}</h3>
-<div data-save-hidden='metadataDiv' class='col-md-8 mt-4'>
-  {# this div is filled in JS by Metadata.class.ts edit() #}
-  <div id='metadataDiv'></div>
-  <div class='mt-3 row'>
-    <button type='button' data-action='toggle-modal' data-target='fieldBuilderModal' class='btn btn-secondary'>{{ 'Add field'|trans }}</button>
-    <button type='button' data-action='toggle-modal' data-target='fieldLoaderModal' class='ml-3 btn hl-hover-gray'>{{ 'Load fields'|trans }}</button>
-  </div>
 </div>
-<hr>
-
-{% include 'steps-links-edit.html' %}
-
-{% include 'uploads.html' %}
-
-{% include 'json-editor.html' %}
-
 <hr>
 
 {# DOODLE #}
@@ -218,6 +210,8 @@
   </div>
 </div>
 
+<hr>
+{% include 'json-editor.html' %}
 <hr>
 
 <div id='info'

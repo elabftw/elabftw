@@ -175,22 +175,26 @@ export function clearForm(form: HTMLElement): void {
 // for view or edit mode, get type and id from the page to construct the entity object
 export function getEntity(): Entity {
   if (!document.getElementById('info')) {
-    return;
+    return {type: EntityType.Other, id: 0};
   }
   // holds info about the page through data attributes
   const about = document.getElementById('info').dataset;
   let entityType: EntityType;
-  if (about.type === 'experiments') {
+  switch (about.type) {
+  case 'experiments':
     entityType = EntityType.Experiment;
-  }
-  if (about.type === 'items') {
+    break;
+  case 'items':
     entityType = EntityType.Item;
-  }
-  if (about.type === 'experiments_templates') {
+    break;
+  case 'experiments_templates':
     entityType = EntityType.Template;
-  }
-  if (about.type === 'items_types') {
+    break;
+  case 'items_types':
     entityType = EntityType.ItemType;
+    break;
+  default:
+    return {type: EntityType.Other, id: 0};
   }
   let entityId = null;
   if (about.id) {
@@ -427,7 +431,9 @@ export async function updateCatStat(target: string, entity: Entity, value: strin
   const params = {};
   params[target] = value;
   const newEntity = await (new Api()).patch(`${entity.type}/${entity.id}`, params).then(resp => resp.json());
-  return (target === 'category' ? newEntity.category_color : newEntity.status_color) ?? 'bdbdbd';
+  // return a string separated with | with the id first so we can use it in data-id of new element
+  let response = value + '|';
+  return response += (target === 'category' ? newEntity.category_color : newEntity.status_color) ?? 'bdbdbd';
 }
 
 // used in edit.ts to build search patterns from strings that contain special characters

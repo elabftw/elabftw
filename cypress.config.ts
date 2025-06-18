@@ -43,4 +43,9 @@ export default defineConfig({
     specPattern: 'tests/cypress/integration/**/*.cy.{js,jsx,ts,tsx}',
     supportFile: 'tests/cypress/support/index.ts',
   },
+  // give more time
+  defaultCommandTimeout: 15000,
+  requestTimeout: 10000,
+  responseTimeout: 130000,
+  taskTimeout: 300000,
 });

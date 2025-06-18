@@ -137,6 +137,7 @@ enum EntityType {
   Item = 'items',
   ItemType = 'items_types',
   Template = 'experiments_templates',
+  Other = 'other',
 }
 
 enum Target {

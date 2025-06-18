@@ -1,6 +1,6 @@
 {# TAGS #}
 <div class='d-flex mb-2 align-items-center mathjax-ignore'>
-  <label for='createTagInput' class='col-form-label mr-3 edit-mode-label'>{{ 'Tags'|trans }}</label>
+  <label for='createTagInput' class='col-form-label mr-3 edit-mode-label d-sm-block d-none'>{{ 'Tags'|trans }}</label>
   <div class='tags form-inline align-items-center mr-2'>
     <div id='tags_div_currenttags_{{ Entity.id }}' class='d-flex flex-wrap'>
       {% set attachedTags = Entity.Tags.readAll() %}
@@ -10,27 +10,27 @@
     </div>
     <input type='text' id='createTagInput' data-autocomplete='tags' class='createTagInput form-control' placeholder='{{ 'Add a tag'|trans }}' />
   </div>
-</div>
-<div class='d-none d-sm-block mb-2 align-items-center mathjax-ignore'>
-  <details closed>
-    <summary class='col-form-label mr-3 edit-mode-label'>{{ 'Suggested tags'|trans }}</summary>
-    <div id='tags_div_suggestedtags_{{ Entity.id }}' class='mr-2 d-flex flex-wrap'>
-      {% set filteredTags = [] %}
-      {% for tag in teamTagsArr %}
-        {% set tagFound = false %}
-        {% for attachedTag in attachedTags %}
-          {% if tag.tag == attachedTag.tag %}
-            {% set tagFound = true %}
+  <div class='mathjax-ignore ml-auto d-sm-block d-none'>
+    <details closed class='suggested-tags'>
+      <summary>{{ 'Suggested tags'|trans }}</summary>
+      <div id='tags_div_suggestedtags_{{ Entity.id }}' class='suggested-tags-menu'>
+        {% set filteredTags = [] %}
+        {% for tag in teamTagsArr %}
+          {% set tagFound = false %}
+          {% for attachedTag in attachedTags %}
+            {% if tag.tag == attachedTag.tag %}
+              {% set tagFound = true %}
+            {% endif %}
+          {% endfor %}
+          {% if not tagFound %}
+            {% set filteredTags = filteredTags|merge([tag]) %}
           {% endif %}
         {% endfor %}
-        {% if not tagFound %}
-          {% set filteredTags = filteredTags|merge([tag]) %}
-        {% endif %}
-      {% endfor %}
 
-      {% for tag in filteredTags|slice(0, 101) %}
-        <button class='btn tag margin-1px opacity-8 lh-normal border-0 {{- loop.last ? ' mr-2' }} {{- tag.is_favorite ? ' favorite' }}' data-action='add-suggested-tag' data-tagid='{{ tag.tag_id }}' type='button'>{{ tag.tag }}</button>
-      {%- endfor -%}
-    </div>
-  </details>
+        {% for tag in filteredTags|slice(0, 101) %}
+          <button class='btn tag margin-1px opacity-8 lh-normal border-0 {{- loop.last ? ' mr-2' }} {{- tag.is_favorite ? ' favorite' }}' data-action='add-suggested-tag' data-tagid='{{ tag.tag_id }}' type='button'>{{ tag.tag }}</button>
+        {%- endfor -%}
+      </div>
+    </details>
+  </div>
 </div>

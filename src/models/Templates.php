@@ -14,20 +14,17 @@ namespace Elabftw\Models;
 
 use DateTimeImmutable;
 use Elabftw\Elabftw\TemplatesSqlBuilder;
-use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Scope;
 use Elabftw\Enums\State;
-use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\QueryParamsInterface;
+use Elabftw\Interfaces\SqlBuilderInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SortableTrait;
 use Override;
 use PDO;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * All about the templates
@@ -158,51 +155,6 @@ final class Templates extends AbstractTemplateEntity
         return $newId;
     }
 
-    #[Override]
-    public function readOne(): array
-    {
-        if ($this->id === null) {
-            throw new IllegalActionException('No id was set!');
-        }
-        $queryParams = $this->getQueryParams(Request::createFromGlobals()->query);
-        $builder = new TemplatesSqlBuilder($this);
-        $sql = $builder->getReadSqlBeforeWhere(getTags: true, fullSelect: true);
-        $sql .= sprintf(' WHERE entity.id = %d', $this->id);
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $this->entityData = $this->Db->fetch($req);
-        // this is needed because the query will return something with everything null instead of throwing the exception at fetch()
-        if ($this->entityData['id'] === null) {
-            throw new ResourceNotFoundException();
-        }
-        $this->canOrExplode('read');
-        // add steps and links in there too
-        $this->entityData['steps'] = $this->Steps->readAll();
-        $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll();
-        $this->entityData['items_links'] = $this->ItemsLinks->readAll();
-        $this->entityData['sharelink'] = sprintf(
-            '%s/%s?mode=view&id=%d',
-            Config::fromEnv('SITE_URL'),
-            EntityType::Templates->toPage(),
-            $this->id
-        );
-        $this->entityData['comments'] = $this->Comments->readAll();
-        // add the body as html
-        $this->entityData['body_html'] = $this->entityData['body'];
-        // convert from markdown only if necessary
-        if ($this->entityData['content_type'] === self::CONTENT_MD) {
-            $this->entityData['body_html'] = Tools::md2html($this->entityData['body'] ?? '');
-        }
-        if (!empty($this->entityData['metadata'])) {
-            $this->entityData['metadata_decoded'] = json_decode($this->entityData['metadata']);
-        }
-        $this->entityData['uploads'] = $this->Uploads->readAll($queryParams);
-        $exclusiveEditMode = $this->ExclusiveEditMode->readOne();
-        $this->entityData['exclusive_edit_mode'] = empty($exclusiveEditMode) ? null : $exclusiveEditMode;
-        return $this->entityData;
-    }
-
     /**
      * Get a list of fullname + id + title of template
      * Use this to build a select of the readable templates
@@ -240,5 +192,11 @@ final class Templates extends AbstractTemplateEntity
     {
         // delete from pinned too
         return parent::destroy() && $this->Pins->cleanup();
+    }
+
+    #[Override]
+    protected function getSqlBuilder(): SqlBuilderInterface
+    {
+        return new TemplatesSqlBuilder($this);
     }
 }

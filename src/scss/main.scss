@@ -17,6 +17,7 @@ $theme-colors: (
   'danger': $dangerred,
   'neutral': $medium,
 );
+$dropdown-link-active-bg: $elabblue;
 /* make the non active link in navbar have slightly more contrast */
 $navbar-dark-color: $secondlevel;
 $text-muted: $medium;
@@ -1049,7 +1050,7 @@ the form-control fails to do that so we do the border ourselves */
 .catstat-btn {
   border: 0;
   border-radius: 0.25rem;
-  font-size: 72%;
+  font-size: 75%;
   font-weight: bold;
   line-height: normal;
   text-transform: uppercase;
@@ -1125,6 +1126,29 @@ the form-control fails to do that so we do the border ourselves */
   &.favorite {
     background-color: $gold;
   }
+}
+
+/* make the details shrink-to-fit and establish a positioning context */
+.suggested-tags {
+  display: inline-block;
+  position: relative;
+}
+
+/* replace flex container with a responsive grid */
+.suggested-tags-menu {
+  background: #fff;
+  border-radius: 5px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  display: grid;
+  gap: 0.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  margin-top: 6px;
+  max-width: 40rem;
+  padding: 0.5rem;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  z-index: 100;
 }
 
 .box {
@@ -1689,4 +1713,15 @@ input:user-invalid {
   font-weight: bold;
   color: $secondlevel;
   font-size: 1.5rem;
+}
+
+/* opencloning iframe */
+#syc-root {
+  height: 87vh;
+  width: 100%;
+
+  iframe {
+    height: 100%;
+    width: 100%;
+  }
 }

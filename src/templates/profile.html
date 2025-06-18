@@ -97,15 +97,51 @@
   <h3 class='p-2 pl-3 section-title' id='attachedFiles'>{{ 'Attached files'|trans }}</h3>
   <div class='pl-3 mt-2'>
     {% set currentLimit = App.Request.query.get('limit')|default(42) %}
-    <p>{{ 'Displaying %d of %d attached files.'|trans|format(min(currentLimit, uploadsTotal), uploadsTotal) }}
-      <a href='?tab=2&limit={{ uploadsTotal }}' class='ml-3 btn btn-sm btn-secondary {{ currentLimit == uploadsTotal ? 'disabled' }}'>
-        {{ 'Show all'|trans }}
-      </a>
-      <a href='?tab=2&limit={{ uploadsTotal }}&order=filesize&sort=desc' class='ml-3 btn btn-sm btn-secondary {{ App.Request.query.get('order') == 'filesize' ? 'disabled' }}'>{{ 'List biggest files first'|trans }}
-      </a>
-    </p>
-    {% include 'filter-input-snippet.html' with {'target': 'attachedFilesTable'} %}
-    <table class='table' aria-describedby='attachedFiles' data-table-sort='true'>
+    {% set currentOrderBy = App.Request.query.get('order')|default('created_at') %}
+    {% set currentSort = App.Request.query.get('sort')|default('desc') %}
+    <p id='countDisplay'>{{ 'Displaying %d of %d attached files.'|trans|format(min(currentLimit, uploadsTotal), uploadsTotal) }}</p>
+    {# FILTERS #}
+    <div class='d-flex form-group form-inline'>
+      {# FILTER BY NAME #}
+      {% include 'filter-input-snippet.html' with {'target': 'attachedFilesTable'} %}
+
+      {# FILTER BY STATE #}
+      <div class="ml-2">
+        {% include 'select-state.html' with {'dataReload': 'attachedFilesTable,countDisplay'} %}
+      </div>
+
+      {# ORDER BY FILTER #}
+      {% set Orderby = enum('Elabftw\\Enums\\Orderby') %}
+      {% set byFilesize = Orderby.Filesize.value %}
+      {% set byCreated = Orderby.CreatedAt.value %}
+      {% set byFilename = Orderby.Filename.value %}
+      <select name='orderby' class='form-control ml-2' aria-label='{{ 'Order by'|trans }}'>
+        <option value='' data-action='clear'>{{ 'Order by'|trans }}</option>
+        <option data-reload='attachedFilesTable,countDisplay' data-action='insert-param-and-reload' data-target='order' value='{{ byFilesize }}' {{ currentOrderBy == byFilesize ? 'selected' }}>{{ 'File size'|trans }}</option>
+        <option data-reload='attachedFilesTable,countDisplay' data-action='insert-param-and-reload' data-target='order' value='{{ byCreated }}' {{ currentOrderBy == byCreated ? 'selected' }}>{{ 'Creation date'|trans }}</option>
+        <option data-reload='attachedFilesTable,countDisplay' data-action='insert-param-and-reload' data-target='order' value='{{ byFilename }}' {{ currentOrderBy == byFilename ? 'selected' }}>{{ 'File name'|trans }}</option>
+      </select>
+
+      {# SORT FILTER #}
+      {% set sortAsc = enum('Elabftw\\Enums\\Sort').Asc.value %}
+      {% set sortDesc = enum('Elabftw\\Enums\\Sort').Desc.value %}
+      <select name='sort' class='form-control ml-2' aria-label='{{ 'Sort'|trans }}'>
+        <option value='' data-action='clear'>{{ 'Sort'|trans }}</option>
+        <option data-reload='attachedFilesTable,countDisplay' data-action='insert-param-and-reload' data-target='sort' value='{{ sortAsc }}' {{ currentSort == sortAsc ? 'selected' }}>{{ 'Asc'|trans }}</option>
+        <option data-reload='attachedFilesTable,countDisplay' data-action='insert-param-and-reload' data-target='sort' value='{{ sortDesc }}' {{ currentSort == sortDesc ? 'selected' }}>{{ 'Desc'|trans }}</option>
+      </select>
+
+      {# LIMIT NUMBER OF RESULTS #}
+      <select name='limit' class='form-control ml-2' aria-label='{{ 'Results per page'|trans }}'>
+        <option value='' data-action='clear'>{{ 'Results per page'|trans }}</option>
+        {% for option in limitOptions(75) %}
+          <option data-reload='attachedFilesTable,countDisplay' data-action='insert-param-and-reload' data-target='limit' value='{{ option }}' {{ currentLimit == option ? 'selected' }}>{{ option }}</option>
+        {% endfor %}
+        <option data-action='insert-param-and-reload' data-target='limit' value='{{ uploadsTotal }}' {{ currentLimit == uploadsTotal ? 'selected' }}>{{ 'Show all'|trans }}</option>
+      </select>
+    </div>
+
+    <table class='table' aria-describedby='attachedFiles' data-table-sort='true' id='attachmentsTable'>
       <thead>
         <tr>
           <th scope='col'>{{ 'File name'|trans }}</th>
@@ -125,13 +161,6 @@
         {% endfor %}
       </tbody>
     </table>
-    {# LOAD MORE button #}
-    <a id='attachementsEnd'></a>
-    {% if currentLimit < uploadsTotal %}
-      <div class='text-center page-buttons mt-2'>
-        <a class='btn btn-primary' href='?tab=2&limit={{ currentLimit * 2 }}#attachementsEnd' class='color-white'>{{ 'Load more'|trans }}</a>
-      </div>
-    {% endif %}
   </div>
 </div>
 

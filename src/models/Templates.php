@@ -241,10 +241,4 @@ final class Templates extends AbstractTemplateEntity
         // delete from pinned too
         return parent::destroy() && $this->Pins->cleanup();
     }
-
-    #[Override]
-    public function getTimestamperFullname(): string
-    {
-        return '';
-    }
 }

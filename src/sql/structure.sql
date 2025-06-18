@@ -328,6 +328,9 @@ CREATE TABLE `experiments_templates` (
   `metadata` json NULL DEFAULT NULL,
   `state` int(10) UNSIGNED NOT NULL DEFAULT 1,
   `status` INT UNSIGNED NULL DEFAULT NULL,
+  `timestamped` tinyint UNSIGNED NOT NULL DEFAULT 0,
+  `timestampedby` int(11) NULL DEFAULT NULL,
+  `timestamped_at` timestamp NULL DEFAULT NULL,
   `access_key` varchar(36) NULL DEFAULT NULL,
   `rating` tinyint UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
@@ -771,6 +774,9 @@ CREATE TABLE `items_types` (
   `metadata` json NULL DEFAULT NULL,
   `state` int(10) UNSIGNED NOT NULL DEFAULT 1,
   `status` INT UNSIGNED NULL DEFAULT NULL,
+  `timestamped` tinyint UNSIGNED NOT NULL DEFAULT 0,
+  `timestampedby` int(11) NULL DEFAULT NULL,
+  `timestamped_at` timestamp NULL DEFAULT NULL,
   `access_key` varchar(36) NULL DEFAULT NULL,
   `rating` tinyint UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)

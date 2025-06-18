@@ -401,7 +401,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
       window.history.replaceState({}, '', `?${params.toString()}`);
-      reloadElements(['attachedFilesTable', 'countDisplay']).then(() => relativeMoment());
+      el.dataset.reload.split(',').forEach(toreload => {
+        reloadElements([toreload]).then(() => relativeMoment());
+      })
 
     } else if (el.matches('[data-action="insert-param-and-reload-show"]')) {
       const params = new URLSearchParams(document.location.search.slice(1));

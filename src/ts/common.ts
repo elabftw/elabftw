@@ -7,15 +7,16 @@
  */
 import $ from 'jquery';
 import { Api } from './Apiv2.class';
-import { Malle, InputType, Action as MalleAction } from '@deltablot/malle';
+import { Malle, InputType, Action as MalleAction, SelectOptions } from '@deltablot/malle';
 import 'bootstrap/js/src/modal.js';
+import { clearLocalStorage, rememberLastSelected, selectLastSelected } from './localStorage';
 import {
   adjustHiddenState,
   clearForm,
   collectForm,
   escapeExtendedQuery,
   generateMetadataLink,
-  getEntity,
+  getEntity, handleReloads,
   listenTrigger,
   makeSortableGreatAgain,
   mkSpin,
@@ -23,13 +24,13 @@ import {
   permissionsToJson,
   relativeMoment,
   reloadElements,
-  reloadEntitiesShow,
   replaceWithTitle,
   toggleEditCompound,
   toggleGrayClasses,
   toggleIcon,
   TomSelect,
   updateEntityBody,
+  updateCatStat,
 } from './misc';
 import i18next from 'i18next';
 import { Metadata } from './Metadata.class';
@@ -58,6 +59,13 @@ import JsonEditorHelper from './JsonEditorHelper.class';
 import { Counter } from './Counter.class';
 import { getEditor } from './Editor.class';
 
+// we need to extend the interface from malle to add more properties
+interface Status extends SelectOptions {
+  id: number;
+  color: string;
+  title: string;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   // HEARTBEAT
   // this function is to check periodically that we are still authenticated
@@ -69,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(() => {
       fetch('app/controllers/HeartBeat.php').then(response => {
         if (!response.ok) {
-          localStorage.clear();
+          clearLocalStorage();
           alert('Your session expired!');
           window.location.replace('login.php');
         }
@@ -79,6 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const ApiC = new Api();
   const notify = new Notification();
+  const entity = getEntity();
 
   const TableSortingC = new TableSorting();
   TableSortingC.init();
@@ -185,37 +194,23 @@ document.addEventListener('DOMContentLoaded', () => {
     tooltip: i18next.t('click-to-edit'),
   }).listen();
 
-  // Listen for malleable entity title
-  new Malle({
-    after: (original, _, value) => {
-      // special case for title: update the page title on update
-      if (original.id === 'documentTitle') {
-        document.title = value;
-      }
-      return true;
-    },
-    onEdit: (original, _, input) => {
-      if (original.innerText === 'unset') {
-        input.value = '';
-        original.classList.remove('font-italic');
-      }
-      return true;
-    },
-    inputClasses: ['form-control'],
-    fun: (value, original) => {
-      const params = {};
-      params[original.dataset.target] = value;
-      return ApiC.patch(`${original.dataset.endpoint}/${original.dataset.id}`, params)
-        .then(res => res.json())
-        .then(json => json[original.dataset.target]);
-    },
-    listenOn: '.malleableTitle',
-    returnedValueIsTrustedHtml: false,
-    onBlur: MalleAction.Submit,
-    tooltip: i18next.t('click-to-edit'),
-  }).listen();
 
-  // Listen for malleable qty_unit - we need a specific code to add the select options
+  // tom-select for team selection on login and register page, and idp selection
+  ['init_team_select', 'team', 'team_selection_select', 'idp_login_select'].forEach(id =>{
+    if (document.getElementById(id)) {
+      new TomSelect(`#${id}`, {
+        plugins: [
+          'dropdown_input',
+          'no_active_items',
+        ],
+        // we also remember the last selected one in localStorage
+        onChange: rememberLastSelected(id),
+        onInitialize: selectLastSelected(id),
+      });
+    }
+  });
+
+  // MALLEABLE QTY_UNIT - we need a specific code to add the select options
   new Malle({
     cancel : i18next.t('cancel'),
     cancelClasses: ['btn', 'btn-danger', 'mt-2', 'ml-1'],
@@ -243,17 +238,119 @@ document.addEventListener('DOMContentLoaded', () => {
     tooltip: i18next.t('click-to-edit'),
   }).listen();
 
-  // tom-select for team selection on login and register page, and idp selection
-  ['init_team_select', 'team', 'idp_login_select'].forEach(id =>{
-    if (document.getElementById(id)) {
-      new TomSelect(`#${id}`, {
-        plugins: [
-          'dropdown_input',
-          'no_active_items',
-        ],
-      });
+  // only on entity page
+  if (entity.type !== EntityType.Other) {
+    // MALLEABLE ENTITY TITLE
+    new Malle({
+      after: (original, _, value) => {
+        // special case for title: update the page title on update
+        if (original.id === 'documentTitle') {
+          document.title = value;
+        }
+        return true;
+      },
+      onEdit: (original, _, input) => {
+        if (original.innerText === 'unset') {
+          input.value = '';
+          original.classList.remove('font-italic');
+        }
+        return true;
+      },
+      inputClasses: ['form-control'],
+      fun: (value, original) => {
+        const params = {};
+        params[original.dataset.target] = value;
+        return ApiC.patch(`${original.dataset.endpoint}/${original.dataset.id}`, params)
+          .then(res => res.json())
+          .then(json => json[original.dataset.target]);
+      },
+      listenOn: '.malleableTitle',
+      returnedValueIsTrustedHtml: false,
+      onBlur: MalleAction.Submit,
+      tooltip: i18next.t('click-to-edit'),
+    }).listen();
+
+    // CATEGORY AND STATUS
+    const notsetOpts = {id: null, title: i18next.t('not-set'), color: 'bdbdbd'};
+
+    let categoryEndpoint = `${EntityType.ItemType}`;
+    let statusEndpoint = `${Model.Team}/current/items_status`;
+    if (entity.type === EntityType.Experiment || entity.type === EntityType.Template) {
+      categoryEndpoint = `${Model.Team}/current/experiments_categories`;
+      statusEndpoint = `${Model.Team}/current/experiments_status`;
     }
-  });
+
+    // MALLEABLE STATUS
+    new Malle({
+      // use the after hook to add the colored circle before text
+      after: (elem: HTMLElement, _: Event, value: string) => {
+        const icon = document.createElement('i');
+        icon.classList.add('fas', 'fa-circle', 'mr-1');
+        const splitValue = value.split('|');
+        icon.style.color = `#${splitValue[1]}`;
+        elem.insertBefore(icon, elem.firstChild);
+        return true;
+      },
+      // use the onEdit hook to set the correct selected option (because of the circle icon interference)
+      onEdit: async (original: HTMLElement, _: Event, input: HTMLInputElement|HTMLSelectElement) => {
+        // the options can be a promise, so we need to use await or its length will be 0 here
+        const opts = (input as HTMLSelectElement).options;
+        for (let i = 0; i < opts.length; i++) {
+          if (opts.item(i).textContent === original.textContent.trim()) {
+            opts.item(i).selected = true;
+            break;
+          }
+        }
+        return true;
+      },
+      cancel : i18next.t('cancel'),
+      cancelClasses: ['btn', 'btn-danger', 'ml-1'],
+      inputClasses: ['form-control', 'ml-2'],
+      formClasses: ['form-inline'],
+      fun: (value: string, original: HTMLElement) => updateCatStat(original.dataset.target, entity, value).then(color => {
+        original.style.setProperty('--bg', `#${color}`);
+        return color;
+      }),
+      inputType: InputType.Select,
+      selectOptionsValueKey: 'id',
+      selectOptionsTextKey: 'title',
+      selectOptions: ApiC.getJson(statusEndpoint).then(json => Array.from(json)).then((statusArr: Array<Status>) => {
+        statusArr.unshift(notsetOpts);
+        return statusArr;
+      }),
+      listenOn: '.malleableStatus',
+      returnedValueIsTrustedHtml: false,
+      submit : i18next.t('save'),
+      submitClasses: ['btn', 'btn-primary', 'ml-1'],
+      tooltip: i18next.t('click-to-edit'),
+    }).listen();
+
+    // MALLEABLE CATEGORY
+    new Malle({
+      // use the after hook to change the background color of the new element
+      after: (elem: HTMLElement, _: Event, value: string) => {
+        // we get back a string with the id separated from color with a |
+        const splitValue = value.split('|');
+        elem.dataset.id = splitValue[0];
+        elem.style.setProperty('--bg', `#${splitValue[1]}`);
+        return true;
+      },
+      cancel : i18next.t('cancel'),
+      cancelClasses: ['btn', 'btn-danger', 'mx-1'],
+      inputClasses: ['form-control'],
+      formClasses: ['form-inline'],
+      fun: (value: string, original: HTMLElement) => updateCatStat(original.dataset.target, entity, value),
+      inputType: InputType.Select,
+      selectOptionsValueKey: 'id',
+      selectOptionsTextKey: 'title',
+      selectOptions: ApiC.getJson(categoryEndpoint).then(json => [notsetOpts, ...Array.from(json)]),
+      listenOn: '.malleableCategory',
+      returnedValueIsTrustedHtml: false,
+      submit : i18next.t('save'),
+      submitClasses: ['btn', 'btn-primary', 'ml-1'],
+      tooltip: i18next.t('click-to-edit'),
+    }).listen();
+  }
 
   // validate the form upon change. fix #451
   // add to the input itself, not the form for more flexibility
@@ -382,14 +479,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // SWITCH EDITOR
     } else if (el.matches('[data-action="switch-editor"]')) {
-      getEditor().switch(getEntity()).then(() => window.location.reload());
+      getEditor().switch(entity).then(() => window.location.reload());
 
-    } else if (el.matches('[data-action="insert-param-and-reload-show"]')) {
+    // SELECT FILTERS - state, orderby...
+    } else if (el.matches('[data-action="insert-param-and-reload"]')) {
       const params = new URLSearchParams(document.location.search.slice(1));
-      params.set(el.dataset.key, el.dataset.value);
+      const target = el.dataset.target;
+      const value = (el as HTMLInputElement).value;
+      if (!target) return;
+      if (value) {
+        params.set(target, value);
+      } else {
+        params.delete(target);
+      }
       window.history.replaceState({}, '', `?${params.toString()}`);
-      reloadEntitiesShow();
-
+      handleReloads(el.dataset.reload);
     } else if (el.matches('[data-action="add-query-filter"]')) {
       const params = new URLSearchParams(document.location.search.substring(1));
       params.set(el.dataset.key, el.dataset.value);
@@ -406,7 +510,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // TOGGLE PINNED
     } else if (el.matches('[data-action="toggle-pin"]')) {
-      const entity = getEntity();
       let id = entity.id;
       if (isNaN(id) || id === null) {
         id = parseInt(el.dataset.id, 10);
@@ -454,7 +557,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // TRANSFER OWNERSHIP
     } else if (el.matches('[data-action="transfer-ownership"]')) {
       const value = (document.getElementById('target_owner') as HTMLInputElement).value;
-      const entity = getEntity();
       const params = {};
       params[Target.UserId] = parseInt(value.split(' ')[0], 10);
       ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => window.location.reload());
@@ -466,7 +568,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const addUserPermissionsInput = (document.getElementById(`${el.dataset.identifier}_select_users`) as HTMLInputElement);
       const userid = parseInt(addUserPermissionsInput.value, 10);
       if (isNaN(userid)) {
-        notify.error('Use the autocompletion menu to add users.');
+        notify.error('add-user-error');
         return;
       }
       const userName = addUserPermissionsInput.value.split(' - ')[1];
@@ -546,7 +648,6 @@ document.addEventListener('DOMContentLoaded', () => {
         delete params[el.dataset.rw];
         ApiC.patch(`${Model.User}/me`, params).then(() => reloadElements([el.dataset.identifier + 'Div']));
       } else {
-        const entity = getEntity();
         ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElements([el.dataset.identifier + 'Div']));
       }
 
@@ -604,7 +705,6 @@ document.addEventListener('DOMContentLoaded', () => {
       params['name'] = unitName;
       ApiC.post('storage_units', params).then(() => reloadElements(['storageDiv']));
     } else if (el.matches('[data-action="create-container"]')) {
-      const entity = getEntity();
       const qty_stored = (document.getElementById('containerQtyStoredInput') as HTMLInputElement).value;
       const qty_unit = (document.getElementById('containerQtyUnitSelect') as HTMLSelectElement).value;
       let multiplier = parseInt((document.getElementById('containerMultiplierInput') as HTMLInputElement).value, 10);
@@ -624,7 +724,6 @@ document.addEventListener('DOMContentLoaded', () => {
         .catch((error) => notify.error(error));
 
     } else if (el.matches('[data-action="destroy-container"]')) {
-      const entity = getEntity();
       ApiC.delete(`${entity.type}/${entity.id}/containers/${el.dataset.id}`).then(() => reloadElements(['storageDivContent']));
     } else if (el.matches('[data-action="destroy-storage"]')) {
       ApiC.delete(`storage_units/${el.dataset.id}`).then(() => reloadElements(['storageDiv']));
@@ -647,7 +746,6 @@ document.addEventListener('DOMContentLoaded', () => {
       updateEntityBody().then(() => {
         // SAVE AND GO BACK BUTTON
         if (el.matches('[data-redirect="view"]')) {
-          const entity = getEntity();
           window.location.replace('?mode=view&id=' + entity.id);
         }
       });
@@ -779,7 +877,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // LOGOUT
     } else if (el.matches('[data-action="logout"]')) {
-      localStorage.clear();
+      clearLocalStorage();
       window.location.href = 'app/logout.php';
 
     // ACK NOTIF
@@ -841,6 +939,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (el.dataset.type === 'experiments_templates') {
         page = 'templates.php';
       }
+      if (el.dataset.type === 'items_types') {
+        page = 'resources-templates.php';
+      }
       if (el.dataset.type === 'database') {
         el.dataset.type = 'items';
         page = 'database.php';
@@ -859,7 +960,6 @@ document.addEventListener('DOMContentLoaded', () => {
       window.location.href = `make.php?format=eln&type=experiments_templates&id=${el.dataset.id}`;
     // TOGGLE ANONYMOUS READ ACCESS
     } else if (el.matches('[data-action="toggle-anonymous-access"]')) {
-      const entity = getEntity();
       ApiC.patch(`${entity.type}/${entity.id}`, {'action': Action.AccessKey}).then(response => response.json()).then(json => {
         document.getElementById('anonymousAccessUrlDiv').toggleAttribute('hidden');
         (document.getElementById('anonymousAccessUrlInput') as HTMLInputElement).value = json.sharelink;
@@ -873,21 +973,10 @@ document.addEventListener('DOMContentLoaded', () => {
       window.setTimeout(function() {
         el.innerHTML = previousHTML;
       }, 1337);
-      el.innerText = 'Copied!';
+      el.innerText = i18next.t('copied');
 
-    // CHECK MAX SIZE
-    } else if (el.matches('[data-action="check-max-size"]')) {
-      const input = document.getElementById(el.dataset.input) as HTMLInputElement;
-      // file.size from input will be in bytes, maxsize will be in Mb
-      const maxsize = parseInt(el.dataset.maxsize, 10) * 1024 * 1024;
-      if (input.files[0].size > maxsize) {
-        document.getElementById('errorHolder').innerText = 'Error: file is too large!';
-        // prevent the form from being submitted
-        event.preventDefault();
-      }
     // REMOVE COMPOUND LINK
     } else if (el.matches('[data-action="delete-compoundlink"]')) {
-      const entity = getEntity();
       ApiC.delete(`${entity.type}/${entity.id}/compounds/${el.dataset.id}`).then(() => reloadElements(['compoundDiv']));
     // CLICK the NOW button of a time or date extra field
     } else if (el.matches('[data-action="update-to-now"]')) {

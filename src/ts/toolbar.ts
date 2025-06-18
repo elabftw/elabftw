@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const qty = parseInt(input.value, 10);
       // sanity check
       if (qty < 1) {
-        notify.error('Invalid quantity');
+        notify.error('invalid-info');
         return;
       }
       ApiC.post(`${Model.Team}/current/procurement_requests`, {entity_id: entity.id, qty_ordered: qty});

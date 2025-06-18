@@ -108,7 +108,7 @@ module.exports = (env) => {
       ),
       // required to make process work in the browser
       new webpack.ProvidePlugin({
-        process: 'process/browser',
+        process: 'process/browser.js',
       }),
     ],
     resolve: {

@@ -8,13 +8,6 @@
           <div>
             {{ '%s is requesting %s for'|trans|format(action.requester_firstname, action.action) }}
             {% set url = '/%s?mode=%s&id=%d' %}
-            {# TODO remove backward compatibility with ucp for old actions (added in 5.2) #}
-            {% if action.entity_page == 'ucp.php?tab=3' %}
-              {{ action.entity_page == 'templates.php' }}
-              {% set url = '/%s&mode=%s&templateid=%d' %}
-            {% elseif action.entity_page == 'admin.php?tab=4' %}
-              {% set url = '/%s%s&templateid=%d#itemsCategoriesAnchor' %}
-            {% endif %}
             <a href='{{ url|format(action.entity_page, 'view', action.entity_id) }}'>{{ action.entity_title }}</a>
             <span title='{{ action.created_at }}' class='relative-moment text-nowrap smallgray ml-1'></span>
           </div>

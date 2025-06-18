@@ -522,6 +522,10 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/comment'
+            compounds:
+              type: array
+              items:
+                $ref: '#/components/schemas/compound'
             created_at:
               type: string
             elabid:
@@ -537,8 +541,6 @@ components:
             fullname:
               type: string
             has_attachement:
-              type: integer
-            has_comment:
               type: integer
             id:
               type: integer
@@ -1334,18 +1336,18 @@ paths:
                 type: string
   # COMPOUND
   /compounds/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: ID of the compound
+        required: true
+        schema:
+          type: integer
     get:
       tags: ['Compounds']
       summary: Get a single compound
       description: Retrieve one compound by its ID
       operationId: get-compound
-      parameters:
-        - name: id
-          in: path
-          description: ID of the compound
-          required: true
-          schema:
-            type: integer
       responses:
         '200':
           description: A single compound

@@ -76,8 +76,15 @@
           {# DESCRIPTION #}
           <label for='newFieldDescriptionInput'>{{ 'Description'|trans }}</label>
           <input type='text' autocomplete='off' placeholder='{{ 'Enter a description for this field'|trans }}' id='newFieldDescriptionInput' class='form-control'>
-          {# TEXT, URL, NUMBER, DATE #}
-          <div id='newFieldContentDiv_classic'>
+
+          {# TEXTAREA #}
+          <div id='newFieldContentDiv_text'>
+            <label for='newFieldValueTextArea'>{{ 'Default value'|trans }}</label>
+            <textarea id='newFieldValueTextArea' class='form-control form-textarea'></textarea>
+          </div>
+
+          {# URL, NUMBER, DATE #}
+          <div id='newFieldContentDiv_classic' hidden>
             <label for='newFieldValueInput'>{{ 'Default value'|trans }}</label>
             <input type='text' autocomplete='off' placeholder='{{ 'Enter a default value'|trans }}' id='newFieldValueInput' class='form-control'>
           </div>

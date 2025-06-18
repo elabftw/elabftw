@@ -328,6 +328,9 @@ CREATE TABLE `experiments_templates` (
   `metadata` json NULL DEFAULT NULL,
   `state` int(10) UNSIGNED NOT NULL DEFAULT 1,
   `status` INT UNSIGNED NULL DEFAULT NULL,
+  `timestamped` tinyint UNSIGNED NOT NULL DEFAULT 0,
+  `timestampedby` int(11) NULL DEFAULT NULL,
+  `timestamped_at` timestamp NULL DEFAULT NULL,
   `access_key` varchar(36) NULL DEFAULT NULL,
   `rating` tinyint UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
@@ -372,6 +375,31 @@ CREATE TABLE `experiments_templates_revisions` (
 
 --
 -- RELATIONSHIPS FOR TABLE `experiments_templates_revisions`:
+--   `item_id`
+--       `experiments_templates` -> `id`
+--   `userid`
+--       `users` -> `userid`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `experiments_templates_comments`
+--
+
+CREATE TABLE `experiments_templates_comments` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `item_id` int(10) UNSIGNED NOT NULL,
+  `comment` text NOT NULL,
+  `userid` int(10) UNSIGNED NOT NULL,
+  `immutable` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `experiments_templates_comments`:
 --   `item_id`
 --       `experiments_templates` -> `id`
 --   `userid`
@@ -721,6 +749,9 @@ CREATE TABLE `items_types` (
   `metadata` json NULL DEFAULT NULL,
   `state` int(10) UNSIGNED NOT NULL DEFAULT 1,
   `status` INT UNSIGNED NULL DEFAULT NULL,
+  `timestamped` tinyint UNSIGNED NOT NULL DEFAULT 0,
+  `timestampedby` int(11) NULL DEFAULT NULL,
+  `timestamped_at` timestamp NULL DEFAULT NULL,
   `access_key` varchar(36) NULL DEFAULT NULL,
   `rating` tinyint UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
@@ -1167,6 +1198,7 @@ CREATE TABLE `users` (
   `sc_todo` varchar(1) NOT NULL DEFAULT 't',
   `sc_search` varchar(1) NOT NULL DEFAULT 's',
   `scope_experiments` tinyint UNSIGNED NOT NULL DEFAULT 2,
+  `scope_events` tinyint UNSIGNED NOT NULL DEFAULT 3,
   `scope_items` tinyint UNSIGNED NOT NULL DEFAULT 2,
   `scope_experiments_templates` tinyint UNSIGNED NOT NULL DEFAULT 2,
   `scope_teamgroups` tinyint UNSIGNED NOT NULL DEFAULT 3,
@@ -1372,6 +1404,16 @@ ALTER TABLE `experiments_templates`
   ADD KEY `idx_experiments_templates_state` (`state`),
   ADD KEY `fk_experiments_templates_users_userid` (`userid`),
   ADD UNIQUE `unique_experiments_templates_custom_id` (`category`, `custom_id`);
+
+--
+-- Indexes and Constraints for table `experiments_templates_comments`
+--
+
+ALTER TABLE `experiments_templates_comments`
+  ADD KEY `fk_experiments_templates_comments_experiments_templates_id` (`item_id`),
+  ADD KEY `fk_experiments_templates_comments_users_userid` (`userid`),
+  ADD CONSTRAINT `fk_experiments_templates_comments_experiments_templates_id` FOREIGN KEY (`item_id`) REFERENCES `experiments_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_experiments_templates_comments_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Indexes and Constraints for table `experiments_templates_changelog`

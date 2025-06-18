@@ -26,6 +26,7 @@ final class ItemsTypesSqlBuilder extends EntitySqlBuilder
             entity.userid,
             entity.created_at,
             entity.modified_at,
+            entity.lastchangeby,
             entity.team,
             entity.color,
             entity.title,
@@ -43,7 +44,10 @@ final class ItemsTypesSqlBuilder extends EntitySqlBuilder
             entity.lockedby,
             entity.locked_at,
             entity.metadata,
-            entity.state';
+            entity.state,
+            entity.timestamped,
+            entity.timestamped_at,
+            entity.timestampedby';
     }
 
     #[Override]

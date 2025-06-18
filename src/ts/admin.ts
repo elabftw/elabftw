@@ -6,7 +6,6 @@
  * @package elabftw
  */
 import {
-  getNewIdFromPostRequest,
   mkSpin,
   mkSpinStop,
   permissionsToJson,
@@ -122,18 +121,8 @@ if (window.location.pathname === '/admin.php') {
 
   document.getElementById('container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
-    // CREATE ITEMS TYPES
-    if (el.matches('[data-action="itemstypes-create"]')) {
-      const title = prompt(i18next.t('template-title'));
-      if (title) {
-        // no body on template creation
-        ApiC.post(EntityType.ItemType, {'title': title}).then(resp => {
-          const newId = getNewIdFromPostRequest(resp);
-          window.location.replace(`?tab=4&templateid=${newId}#itemsCategoriesAnchor`);
-        });
-      }
     // RUN ACTION ON SELECTED (BATCH)
-    } else if (el.matches('[data-action="run-action-selected"]')) {
+    if (el.matches('[data-action="run-action-selected"]')) {
       const btn = el as HTMLButtonElement;
       const selected = getSelected();
       if (!Object.values(selected).some(array => array.length > 0)) {
@@ -146,7 +135,7 @@ if (window.location.pathname === '/admin.php') {
       ApiC.notifOnSaved = false;
       ApiC.post('batch', selected).then(res => {
         const processed = res.headers.get('location').split('/').pop();
-        notify.success(`${processed} entries processed`);
+        notify.success('entries-processed', { num: processed });
       }).finally(() => {
         mkSpinStop(btn, oldHTML);
       });
@@ -178,7 +167,7 @@ if (window.location.pathname === '/admin.php') {
     } else if (el.matches('[data-action="adduser-teamgroup"]')) {
       const user = parseInt(el.parentNode.parentNode.querySelector('input').value, 10);
       if (isNaN(user)) {
-        notify.error('Use the autocompletion menu to add users.');
+        notify.error('add-user-error');
         return;
       }
       ApiC.patch(
@@ -202,7 +191,7 @@ if (window.location.pathname === '/admin.php') {
       const nameInput = (holder.querySelector('input[type="text"]') as HTMLInputElement);
       const name = nameInput.value;
       if (!name) {
-        notify.error('Invalid status name.');
+        notify.error('invalid-info');
         // set the border in red to bring attention
         nameInput.style.borderColor = 'red';
         return;

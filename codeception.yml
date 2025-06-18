@@ -18,7 +18,6 @@ coverage:
         - src/services/*
         - src/Storage/*
         - src/traits/*
-        - web/*
     exclude:
         - src/commands/PopulateDatabase.php
         - src/commands/GenI18n4Js.php

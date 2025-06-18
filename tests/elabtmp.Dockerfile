@@ -7,7 +7,6 @@ FROM elabftw/elabimg:$BASE_IMAGE_VERSION
 # install phpcov
 ADD --chmod=755 https://phar.phpunit.de/phpcov-11.0.0.phar /usr/bin/phpcov
 
-RUN yarn install
 # Install xdebug for coverage
 RUN apk add --update php84-pecl-xdebug
 RUN printf "zend_extension=xdebug.so\nxdebug.mode=coverage" > /etc/php84/conf.d/42_xdebug.ini

@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Models\AbstractEntity;
+use Elabftw\Enums\EntityType;
 use PDO;
 
 /**
@@ -23,14 +23,14 @@ final class AccessKeyHelper
 {
     private Db $Db;
 
-    public function __construct(private AbstractEntity $entity)
+    public function __construct(private EntityType $entityType, private ?int $id = null)
     {
         $this->Db = Db::getConnection();
     }
 
     public function getIdFromAccessKey(string $ak): int
     {
-        $sql = 'SELECT id FROM ' . $this->entity->entityType->value . ' WHERE access_key = :ak';
+        $sql = 'SELECT id FROM ' . $this->entityType->value . ' WHERE access_key = :ak';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':ak', $ak);
         $this->Db->execute($req);
@@ -39,13 +39,11 @@ final class AccessKeyHelper
 
     public function toggleAccessKey(): ?string
     {
-        $sql = 'UPDATE ' . $this->entity->entityType->value . ' SET access_key = ' . $this->getSqlValue() . ' WHERE id = :id';
+        $sql = 'UPDATE ' . $this->entityType->value . ' SET access_key = ' . $this->getSqlValue() . ' WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->entity->id, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
-        $ak = $this->getAccessKey();
-        $this->entity->entityData['access_key'] = $ak;
-        return $ak;
+        return $this->getAccessKey();
     }
 
     private function getSqlValue(): string
@@ -58,9 +56,9 @@ final class AccessKeyHelper
 
     private function getAccessKey(): ?string
     {
-        $sql = 'SELECT access_key FROM ' . $this->entity->entityType->value . ' WHERE id = :id';
+        $sql = 'SELECT access_key FROM ' . $this->entityType->value . ' WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->entity->id, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         $res = $req->fetchColumn();
         if ($res === false || is_int($res)) {

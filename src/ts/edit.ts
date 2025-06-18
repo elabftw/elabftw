@@ -20,6 +20,7 @@ import $ from 'jquery';
 import { Api } from './Apiv2.class';
 import { Notification } from './Notifications.class';
 import { Uploader } from './uploader';
+import { clearLocalStorage } from './localStorage';
 
 document.addEventListener('DOMContentLoaded', async () => {
   // only run in edit mode
@@ -62,14 +63,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     params[Target.Body] = localStorage.getItem('body');
     ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => {
       editor.replaceContent(localStorage.getItem('body'));
-      localStorage.clear();
+      clearLocalStorage();
       document.getElementById('recoveryDiv').remove();
     });
   });
 
   // RECOVER NO
   $(document).on('click', '.recover-no', function() {
-    localStorage.clear();
+    clearLocalStorage();
     document.getElementById('recoveryDiv').remove();
   });
 
@@ -82,7 +83,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // GET NEXT CUSTOM ID
     if (el.matches('[data-action="get-next-custom-id"]')) {
       // fetch the category from the current value of select, as it might be different from the one on page load
-      const category = (document.getElementById('category_select') as HTMLSelectElement).value;
+      const category = (document.getElementById('categoryBtn') as HTMLButtonElement).dataset.id;
       if (category === '0') {
         (new Notification()).error('error-no-category');
         return;
@@ -95,7 +96,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       // make sure the current id is null or it will increment this one
       const params = {};
       params[Target.Customid] = null;
+      ApiC.notifOnSaved = false;
       ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => {
+        ApiC.notifOnSaved = true;
         // get the entity with highest custom_id
         return ApiC.getJson(`${el.dataset.endpoint}/?cat=${category}&order=customid&limit=1&sort=desc&scope=3&skip_pinned=1`);
       }).then(json => {

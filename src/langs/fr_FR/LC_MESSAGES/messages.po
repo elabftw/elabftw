@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-18 12:29+0200\n"
+"POT-Creation-Date: 2025-05-29 18:07+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Nicolas CARPi\n"
 "Language-Team: \n"
@@ -227,7 +227,7 @@ msgstr "Utilisateur"
 msgid "Error: could not read archive file properly! (missing %s)"
 msgstr "Erreur : impossible de lire le fichier correctement ! (manque %s)"
 
-#: src/Import/Eln.php:279 src/classes/i18n4Js.php:49
+#: src/Import/Eln.php:279 src/classes/i18n4Js.php:52
 #: src/models/AbstractStatus.php:57 src/models/Experiments.php:62
 #: src/models/Items.php:69 src/models/TeamGroups.php:48
 #: src/models/Templates.php:71 src/services/Filter.php:133
@@ -252,7 +252,7 @@ msgstr ""
 "Vous ne pouvez pas stocker plus de %d exports. Supprimez les exports "
 "précédents pour pouvoir en créer de nouveaux."
 
-#: src/Make/MakeBloxberg.php:81 src/models/AbstractConcreteEntity.php:255
+#: src/Make/MakeBloxberg.php:81 src/models/AbstractConcreteEntity.php:261
 #, php-format
 msgid "Timestamp archive by %s"
 msgstr "Archive d'horodatage par %s"
@@ -276,7 +276,7 @@ msgstr "Trop court ! (minimum : %d)"
 msgid "Default group"
 msgstr "Groupe par défaut"
 
-#: src/classes/Metadata.php:111 src/classes/i18n4Js.php:81
+#: src/classes/Metadata.php:111 src/classes/i18n4Js.php:94
 msgid "Undefined group"
 msgstr "Groupe non défini"
 
@@ -302,7 +302,7 @@ msgstr "Une erreur est survenue!"
 msgid "User could not be found."
 msgstr "L'utilisateur n'a pas été trouvé."
 
-#: src/classes/UserStats.php:95 src/classes/i18n4Js.php:61
+#: src/classes/UserStats.php:95 src/classes/i18n4Js.php:73
 msgid "Not set"
 msgstr "Non défini"
 
@@ -311,42 +311,54 @@ msgid "Add compound"
 msgstr "Ajouter un composé"
 
 #: src/classes/i18n4Js.php:40
+msgid "Use the autocompletion menu to add users."
+msgstr "Utilisez le menu d'autocomplétion pour ajouter des utilisateurs."
+
+#: src/classes/i18n4Js.php:41
 msgid "Click to edit"
 msgstr "Cliquer pour modifier"
 
-#: src/classes/i18n4Js.php:41
+#: src/classes/i18n4Js.php:42
 msgid "Cancel"
 msgstr "Annuler"
 
-#: src/classes/i18n4Js.php:42
+#: src/classes/i18n4Js.php:43
+msgid "Copied to clipboard."
+msgstr "Copié dans le presse-papiers."
+
+#: src/classes/i18n4Js.php:44
+msgid "Please check required fields."
+msgstr "Veuillez vérifier les champs obligatoires."
+
+#: src/classes/i18n4Js.php:45
 msgid "Add a comment"
 msgstr "Ajouter un commentaire"
 
-#: src/classes/i18n4Js.php:43 src/models/AbstractEntity.php:576
+#: src/classes/i18n4Js.php:46 src/models/AbstractEntity.php:576
 msgid "Custom ID is already used! Try another one."
 msgstr "L'identifiant personnalisé est déjà utilisé ! Essayez-en un autre."
 
-#: src/classes/i18n4Js.php:44
+#: src/classes/i18n4Js.php:47
 msgid "Drop files here to upload"
 msgstr "Déposez ici les fichiers à uploader"
 
-#: src/classes/i18n4Js.php:45
+#: src/classes/i18n4Js.php:48
 msgid "File size limit:"
 msgstr "Taille limite de fichier :"
 
-#: src/classes/i18n4Js.php:46
+#: src/classes/i18n4Js.php:49
 msgid "Edit"
 msgstr "Editer"
 
-#: src/classes/i18n4Js.php:47
+#: src/classes/i18n4Js.php:50
 msgid "Edit compound"
 msgstr "Éditer le composé"
 
-#: src/classes/i18n4Js.php:48
+#: src/classes/i18n4Js.php:51
 msgid "You are currently editing the metadata attached to this entry."
 msgstr "Vous êtes en train de modifier les métadonnées jointes à cette entrée."
 
-#: src/classes/i18n4Js.php:50
+#: src/classes/i18n4Js.php:53
 msgid ""
 "The selected item(s) and all associated data will be permanently deleted. "
 "This cannot be undone. Are you sure?"
@@ -354,125 +366,165 @@ msgstr ""
 "Le ou les objet(s) sélectionné(s) ainsi que toutes les données associées "
 "seront supprimés définitivement. Cela est irréversible. Êtes-vous sûr(e) ?"
 
-#: src/classes/i18n4Js.php:51
+#: src/classes/i18n4Js.php:54
+msgid "{{num, number}} entries processed"
+msgstr "{{num, number}} entrées traitées"
+
+#: src/classes/i18n4Js.php:55
 msgid "A category is required to fetch the next Custom ID"
 msgstr "Une catégorie est nécessaire pour rechercher l'ID personnalisé suivant"
 
-#: src/classes/i18n4Js.php:52
+#: src/classes/i18n4Js.php:56
+msgid "There was an error while fetching the requested data: {{error}}"
+msgstr ""
+"Une erreur s'est produite lors de l'extraction des données demandées : "
+"{{error}}"
+
+#: src/classes/i18n4Js.php:57
 msgid "Extra fields"
 msgstr "Champs supplémentaires"
 
-#: src/classes/i18n4Js.php:53
+#: src/classes/i18n4Js.php:58
 msgid "Filename"
 msgstr "Nom du fichier"
 
-#: src/classes/i18n4Js.php:54
+#: src/classes/i18n4Js.php:59
+msgid "File imported successfully"
+msgstr "Fichier importé avec succès"
+
+#: src/classes/i18n4Js.php:60
+msgid "Error: file is too large!"
+msgstr "Erreur : le fichier est trop volumineux !"
+
+#: src/classes/i18n4Js.php:61
+msgid "Error validating the form."
+msgstr "Erreur de validation du formulaire."
+
+#: src/classes/i18n4Js.php:62
 msgid "Delete this?"
 msgstr "Supprimer ça ?"
 
-#: src/classes/i18n4Js.php:55
+#: src/classes/i18n4Js.php:63
 msgid "Hide deleted"
 msgstr "Masquer les données supprimées"
 
-#: src/classes/i18n4Js.php:56
+#: src/classes/i18n4Js.php:65
+msgid "Error during import. Please check the console for more information."
+msgstr ""
+"Erreur lors de l'importation. Veuillez consulter la console pour plus "
+"d'informations."
+
+#: src/classes/i18n4Js.php:66
+msgid "Invalid syntax or information provided."
+msgstr "La syntaxe ou les informations fournies ne sont pas valides."
+
+#: src/classes/i18n4Js.php:67
 msgid "Delete this link?"
 msgstr "Supprimer ce lien ?"
 
-#: src/classes/i18n4Js.php:57
+#: src/classes/i18n4Js.php:68
 msgid "Location name"
 msgstr "Nom du lieu"
 
-#: src/classes/i18n4Js.php:59
+#: src/classes/i18n4Js.php:70
 msgid "Apply to {{num, number}} entries?"
 msgstr "Appliquer à {{num, nombre}} entrées ?"
 
-#: src/classes/i18n4Js.php:60 src/models/AbstractEntity.php:651
+#: src/classes/i18n4Js.php:71 src/models/AbstractEntity.php:651
 msgid ""
 "Linking an item to itself is not allowed. Please select a different target."
 msgstr ""
 "Il n'est pas permis de lier un élément à lui-même. Veuillez sélectionner une "
 "autre cible."
 
-#: src/classes/i18n4Js.php:62
+#: src/classes/i18n4Js.php:72
+msgid "No matching result found."
+msgstr "Aucun résultat correspondant n'a été trouvé."
+
+#: src/classes/i18n4Js.php:74
 msgid "Nothing selected!"
 msgstr "Aucune sélection !"
 
-#: src/classes/i18n4Js.php:63
+#: src/classes/i18n4Js.php:75
 msgid "Now"
 msgstr "Maintenant"
 
-#: src/classes/i18n4Js.php:64
+#: src/classes/i18n4Js.php:76
 msgid "Onboarding email(s) will soon be sent."
 msgstr "Le(s) courriel(s) d'accueil sera(ont) bientôt envoyé(s)."
 
-#: src/classes/i18n4Js.php:65
+#: src/classes/i18n4Js.php:77
 msgid "Please wait…"
 msgstr "Patientez…"
 
-#: src/classes/i18n4Js.php:66
+#: src/classes/i18n4Js.php:78
 msgid "Remove"
 msgstr "Supprimer"
 
-#: src/classes/i18n4Js.php:67
+#: src/classes/i18n4Js.php:79
 msgid "Do you want to replace the file on the server with this edit?"
 msgstr ""
 "Souhaitez-vous remplacer le fichier sur le serveur avec ce changement ?"
 
-#: src/classes/i18n4Js.php:68
+#: src/classes/i18n4Js.php:80
 msgid "Enter name of the file"
 msgstr "Nom du fichier"
 
-#: src/classes/i18n4Js.php:69 src/exceptions/ResourceNotFoundException.php:25
+#: src/classes/i18n4Js.php:81 src/exceptions/ResourceNotFoundException.php:25
 msgid "Nothing to show with this id"
 msgstr "Rien à afficher avec cet ID"
 
-#: src/classes/i18n4Js.php:70
+#: src/classes/i18n4Js.php:82
+msgid "Select two revisions to compare them."
+msgstr "Sélectionnez deux révisions pour les comparer."
+
+#: src/classes/i18n4Js.php:83
 msgid "Save"
 msgstr "Enregistrer"
 
-#: src/classes/i18n4Js.php:71 web/app/controllers/SortableAjaxController.php:44
+#: src/classes/i18n4Js.php:84 web/app/controllers/SortableAjaxController.php:44
 #: web/app/controllers/SysconfigAjaxController.php:37
 #: web/app/controllers/UcpController.php:88
 msgid "Saved"
 msgstr "Enregistré"
 
-#: src/classes/i18n4Js.php:72
+#: src/classes/i18n4Js.php:85
 msgid "Show deleted"
 msgstr "Montrer les supprimés"
 
-#: src/classes/i18n4Js.php:73
+#: src/classes/i18n4Js.php:86
 msgid "Sort by column"
 msgstr "Trier par colonne"
 
-#: src/classes/i18n4Js.php:74
+#: src/classes/i18n4Js.php:87
 msgid "Delete this step?"
 msgstr "Supprimer cette étape ?"
 
-#: src/classes/i18n4Js.php:75
+#: src/classes/i18n4Js.php:88
 msgid "Are you sure you want to undo this step?"
 msgstr "Êtes-vous certain(e) de vouloir défaire cette étape ?"
 
-#: src/classes/i18n4Js.php:76
+#: src/classes/i18n4Js.php:89
 msgid "Delete this tag?"
 msgstr "Supprimer ce tag ?"
 
-#: src/classes/i18n4Js.php:77
+#: src/classes/i18n4Js.php:90
 msgid "Template title"
 msgstr "Titre du modèle"
 
-#: src/classes/i18n4Js.php:78
+#: src/classes/i18n4Js.php:91
 msgid "Today"
 msgstr "Aujourd’hui"
 
-#: src/classes/i18n4Js.php:79
+#: src/classes/i18n4Js.php:92
 msgid "At least 3 characters are required to search"
 msgstr "Au moins 3 caractères sont nécessaires pour effectuer une recherche"
 
-#: src/classes/i18n4Js.php:80
+#: src/classes/i18n4Js.php:93
 msgid "Unarchive and add to team {{team, string}}"
 msgstr "Désarchiver et ajouter à l'équipe {{team, string}}"
 
-#: src/classes/i18n4Js.php:82
+#: src/classes/i18n4Js.php:95
 msgid "File comment"
 msgstr "Commentaire du fichier"
 
@@ -558,12 +610,12 @@ msgstr "Code d'authentification non valide."
 msgid "Authentication required"
 msgstr "Authentification requise"
 
-#: src/models/AbstractConcreteEntity.php:309
+#: src/models/AbstractConcreteEntity.php:315
 #, php-format
 msgid "Signed by %s (%s)"
 msgstr "Signé par %s (%s)"
 
-#: src/models/AbstractConcreteEntity.php:313
+#: src/models/AbstractConcreteEntity.php:319
 #, php-format
 msgid "Signature archive by %s (%s)"
 msgstr "Signature archive par %s (%s)"
@@ -790,11 +842,25 @@ msgstr "Email de test"
 msgid "Sent from eLabFTW"
 msgstr "Envoyé depuis eLabFTW"
 
-#: src/services/EmailValidator.php:45
-msgid "Someone is already using that email address!"
-msgstr "Cette adresse email est déjà enregistrée !"
+#: src/services/EmailValidator.php:46
+msgid ""
+"An active account already exists with this email. Use the Sysconfig Panel to "
+"add user to the requested team."
+msgstr ""
+"Un compte actif existe déjà avec cet email. Utilisez le panneau Sysconfig "
+"pour ajouter l'utilisateur à l'équipe demandée."
 
-#: src/services/EmailValidator.php:64
+#: src/services/EmailValidator.php:48
+msgid ""
+"An active account already exists with this email. Search for user in the "
+"input above without a team filter and use \"Add to team\" action to add the "
+"user to your team."
+msgstr ""
+"Un compte actif existe déjà avec cet email. Recherchez l'utilisateur dans le "
+"champs de recherche ci-dessus, sans filtre d'équipe, et utilisez l'action "
+"\"Ajouter à l'équipe\" pour ajouter l'utilisateur à votre équipe."
+
+#: src/services/EmailValidator.php:69
 #, php-format
 msgid "This email domain is not allowed. Allowed domains: %s"
 msgstr "Ce nom de domaine n'est pas valide. Domaines autorisés : %s"
@@ -901,11 +967,11 @@ msgstr "Un compte sysadmin ne peut pas être archivé."
 msgid "Query is too complex!"
 msgstr "La requête est trop complexe !"
 
-#: web/admin.php:108 web/sysconfig.php:98
+#: web/admin.php:109 web/sysconfig.php:98
 msgid "No users found. Try another search."
 msgstr "Aucun utilisateur trouvé. Essayez une autre recherche."
 
-#: web/admin.php:130
+#: web/admin.php:131
 msgid "Admin panel"
 msgstr "Panneau d'administration"
 
@@ -1023,13 +1089,10 @@ msgstr "Réservation annulée"
 msgid "Settings"
 msgstr "Paramètres"
 
-#: src/templates/add-container-modal.html:6
-#: src/templates/storage-view-edit.html:26
-msgid "Add container"
-msgstr "Ajouter un conteneur"
-
+#: src/templates/about-elabftw-modal.html:7
+#: src/templates/about-elabftw-modal.html:20
 #: src/templates/add-container-modal.html:7
-#: src/templates/add-container-modal.html:39
+#: src/templates/add-container-modal.html:42
 #: src/templates/archive-user-modal.html:15
 #: src/templates/booking-params-modal.html:7
 #: src/templates/booking-params-modal.html:65
@@ -1047,7 +1110,7 @@ msgstr "Ajouter un conteneur"
 #: src/templates/field-builder-modal.html:154
 #: src/templates/field-builder-modal.html:168
 #: src/templates/field-builder-modal.html:202 src/templates/footer.html:53
-#: src/templates/footer.html:103 src/templates/footer.html:110
+#: src/templates/footer.html:105 src/templates/footer.html:112
 #: src/templates/idp-modal.html:7 src/templates/import-pubchem-modal.html:7
 #: src/templates/login.html:11 src/templates/login.html:25
 #: src/templates/onboarding-email-modal.html:6
@@ -1074,6 +1137,31 @@ msgstr "Ajouter un conteneur"
 msgid "Close"
 msgstr "Fermer"
 
+#: src/templates/about-elabftw-modal.html:12
+msgid ""
+"eLabFTW is a free and open source electronic laboratory notebook crafted by "
+"%s and contributors."
+msgstr ""
+"eLabFTW est un cahier de laboratoire électronique libre et gratuit conçu par "
+"%s et des contributeurs."
+
+#: src/templates/about-elabftw-modal.html:15
+msgid "Running version: %s"
+msgstr "Version en cours d'exécution : %s"
+
+#: src/templates/about-elabftw-modal.html:16
+msgid "License: %s"
+msgstr "Licence : %s"
+
+#: src/templates/about-elabftw-modal.html:17
+msgid "Source code: %s"
+msgstr "Code source : %s"
+
+#: src/templates/add-container-modal.html:6
+#: src/templates/storage-view-edit.html:26
+msgid "Add container"
+msgstr "Ajouter un conteneur"
+
 #: src/templates/add-container-modal.html:14
 msgid "Adjust container capacity and unit"
 msgstr "Ajuster la capacité et l'unité du conteneur"
@@ -1082,11 +1170,11 @@ msgstr "Ajuster la capacité et l'unité du conteneur"
 msgid "Quantity unit"
 msgstr "Unité de quantité"
 
-#: src/templates/add-container-modal.html:31
+#: src/templates/add-container-modal.html:34
 msgid "Adjust number of containers stored"
 msgstr "Ajuster le nombre de conteneurs stockés"
 
-#: src/templates/add-container-modal.html:33
+#: src/templates/add-container-modal.html:36
 msgid "Select a storage location below"
 msgstr "Sélectionnez un lieu de stockage ci-dessous"
 
@@ -1142,7 +1230,7 @@ msgstr[1] "Statuts"
 #: src/templates/admin.html:559 src/templates/admin.html:580
 #: src/templates/export-menu.html:16 src/templates/export-menu.html:50
 #: src/templates/export-menu.html:109 src/templates/export-menu.html:116
-#: src/templates/head.html:141 src/templates/inventory.html:7
+#: src/templates/head.html:143 src/templates/inventory.html:7
 #: src/templates/profile.html:9 src/templates/profile.html:247
 #: src/templates/show.html:361 src/templates/show.html:362
 msgid "Export"
@@ -1895,6 +1983,10 @@ msgstr ""
 msgid "Delete selected compounds"
 msgstr "Supprimer les composés sélectionnés"
 
+#: src/templates/compounds.html:42
+msgid "Restore selected compounds"
+msgstr "Rétablir les composés sélectionnés"
+
 #: src/templates/create-compound-modal.html:25 src/templates/login.html:88
 #: src/templates/login.html:116
 msgid "Continue"
@@ -1921,8 +2013,9 @@ msgid "Blank experiment"
 msgstr "Expérience vide"
 
 #: src/templates/create-new-item-modal.html:35
-msgid "Note: only pinned templates are displayed below."
-msgstr "Remarque : seuls les modèles épinglés sont affichés ci-dessous."
+msgid "Note: only templates that you have pinned are displayed below."
+msgstr ""
+"Remarque : seuls les modèles que vous avez épinglés sont affichés ci-dessous."
 
 #: src/templates/create-new-item-modal.html:48
 msgid "Add category…"
@@ -2675,7 +2768,7 @@ msgstr "Utilisation mémoire :"
 msgid "bytes"
 msgstr "octets"
 
-#: src/templates/footer.html:52 src/templates/head.html:159
+#: src/templates/footer.html:52 src/templates/head.html:161
 msgid "Select language"
 msgstr "Choisir la langue"
 
@@ -2761,46 +2854,50 @@ msgstr "Tchat"
 msgid "Contribute to eLabFTW"
 msgstr "Contribuer à eLabFTW"
 
-#: src/templates/head.html:130
+#: src/templates/head.html:126
+msgid "About eLabFTW"
+msgstr "À propos d'eLabFTW"
+
+#: src/templates/head.html:132
 msgid "User menu"
 msgstr "Menu utilisateur"
 
-#: src/templates/head.html:131
+#: src/templates/head.html:133
 msgid "Logged in as %s in:"
 msgstr "Connecté en tant que %s dans :"
 
-#: src/templates/head.html:133
+#: src/templates/head.html:135
 msgid "Switch team"
 msgstr "Changer d'équipe"
 
-#: src/templates/head.html:138
+#: src/templates/head.html:140
 msgid "My profile"
 msgstr "Mon profil"
 
-#: src/templates/head.html:139 src/templates/todolist-panel.html:4
+#: src/templates/head.html:141 src/templates/todolist-panel.html:4
 msgid "Todolist"
 msgstr "Todoliste"
 
-#: src/templates/head.html:140 src/templates/import-pubchem-modal.html:51
+#: src/templates/head.html:142 src/templates/import-pubchem-modal.html:51
 #: src/templates/json-editor.html:51 src/templates/link-view-one.html:27
 #: src/templates/profile.html:8 src/templates/profile.html:140
 #: src/templates/profile.html:145 src/templates/profile.html:237
 msgid "Import"
 msgstr "Import"
 
-#: src/templates/head.html:147
+#: src/templates/head.html:149
 msgid "Sysadmin panel"
 msgstr "Panneau du sysadmin"
 
-#: src/templates/head.html:152
+#: src/templates/head.html:154
 msgid "Logout"
 msgstr "Déconnexion"
 
-#: src/templates/head.html:168
+#: src/templates/head.html:170
 msgid "Toggle favorite tags"
 msgstr "Basculer les tags favoris"
 
-#: src/templates/head.html:174
+#: src/templates/head.html:176
 msgid "Toggle todolist"
 msgstr "Basculer la Todoliste"
 
@@ -3074,10 +3171,10 @@ msgstr[0] "Expérience liée"
 msgstr[1] "Expériences liées"
 
 #: src/templates/pdf.html:77
-msgid "Linked item"
-msgid_plural "Linked items"
-msgstr[0] "Item lié"
-msgstr[1] "Items liés"
+msgid "Linked resource"
+msgid_plural "Linked resources"
+msgstr[0] "Ressource liée"
+msgstr[1] "Ressources liées"
 
 #: src/templates/pdf.html:92 src/templates/steps-links-edit.html:6
 #: src/templates/steps-links-view.html:6
@@ -5689,440 +5786,3 @@ msgstr "a laissé un commentaire"
 #: src/templates/view.html:169
 msgid "edited"
 msgstr "édité"
-
-#~ msgid "+1 hour"
-#~ msgstr "+1 heure"
-
-#~ msgid "+1 day"
-#~ msgstr "+1 jour"
-
-#~ msgid "+1 week"
-#~ msgstr "+1 semaine"
-
-#~ msgid "+1 month"
-#~ msgstr "+1 mois"
-
-#~ msgid "+1 year"
-#~ msgstr "+1 an"
-
-#~ msgid "removal of exclusive edit mode"
-#~ msgstr "suppression du mode d'édition exclusif"
-
-#~ msgid "This item is locked. You cannot edit it!"
-#~ msgstr "Cet objet est verrouillé. Vous ne pouvez pas l'éditer !"
-
-#~ msgid "Something went wrong! Try refreshing the page."
-#~ msgstr "Une erreur s'est produite ! Essayez de rafraîchir la page."
-
-#~ msgid ""
-#~ "This entry is opened in exclusive edit mode by %s since %s. You cannot "
-#~ "edit it before %s."
-#~ msgstr ""
-#~ "Cette entrée est ouverte en mode d'édition exclusive par %s depuis %s. "
-#~ "Vous ne pouvez pas la modifier avant %s."
-
-#~ msgid ""
-#~ "This instance configuration only permits Sysadmin users to archive a user."
-#~ msgstr ""
-#~ "Cette configuration d'instance n'autorise que les utilisateurs Sysadmin à "
-#~ "archiver un utilisateur."
-
-#~ msgid ""
-#~ "You opened this entry in exclusive edit mode at %s and it will stay "
-#~ "active until %s, unless deactivated manually in view mode."
-#~ msgstr ""
-#~ "Vous avez ouvert cette entrée en mode d'édition exclusive à %s et elle "
-#~ "restera active jusqu'à %s, à moins qu'elle ne soit désactivée "
-#~ "manuellement en mode de visualisation."
-
-#~ msgid "Browse places"
-#~ msgstr "Parcourir les lieux"
-
-#~ msgid ""
-#~ "You have enabled \"Enforce exclusive edit mode\". If you enter edit mode, "
-#~ "exclusive edit will be reactivated."
-#~ msgstr ""
-#~ "Vous avez activé l'option \"Appliquer le mode d'édition exclusive\". Si "
-#~ "vous entrez en mode édition, l'édition exclusive sera réactivée."
-
-#~ msgid " Unlocking this entry will redirect you to view mode."
-#~ msgstr ""
-#~ " En déverrouillant cette entrée, vous serez redirigé vers le mode de "
-#~ "visualisation."
-
-#~ msgid "Remove exclusive edit mode for this entry"
-#~ msgstr "Supprimer le mode d'édition exclusif pour cette entrée"
-
-#~ msgid "You can change this in your %ssettings%s."
-#~ msgstr "Vous pouvez modifier cela dans vos %ssettings%s."
-
-#~ msgid "Filter group"
-#~ msgstr "Filtrer les groupes"
-
-#~ msgid "Select group"
-#~ msgstr "Sélectionner un groupe"
-
-#~ msgid "Storage"
-#~ msgstr "Stockage"
-
-#~ msgid ""
-#~ "Enforce exclusive edit mode: each entry you start editing will be in "
-#~ "exclusive edit mode."
-#~ msgstr ""
-#~ "Renforcer le mode d'édition exclusive : chaque entrée que vous commencez "
-#~ "à éditer sera en mode d'édition exclusive."
-
-#~ msgid "Save as image"
-#~ msgstr "Enregistrer comme image"
-
-#~ msgid "Enable/Disable exclusive edit mode"
-#~ msgstr "Activer/désactiver le mode d'édition exclusif"
-
-#~ msgid ""
-#~ "This entry is opened by %s in exclusive edit mode since %s. You cannot "
-#~ "edit it before %s. %sRequest exclusive edit mode removal%s"
-#~ msgstr ""
-#~ "Cette entrée est ouverte par %s en mode d'édition exclusive depuis %s. "
-#~ "Vous ne pouvez pas la modifier avant %s. %sDemande de suppression du mode "
-#~ "d'édition exclusif%s"
-
-#~ msgid "Remove from team"
-#~ msgstr "Retirer de l'équipe"
-
-#~ msgid "Cloning tool"
-#~ msgstr "Outil de clonage"
-
-#~ msgid "eLabFTW Configuration"
-#~ msgstr "Configuration eLabFTW"
-
-#~ msgid "Enter a PubChem CID number to import the compound locally"
-#~ msgstr "Entrez un numéro CID de PubChem pour importer le composé localement"
-
-#~ msgid "Follow eLabFTW on X!"
-#~ msgstr "Suivez eLabFTW sur X !"
-
-#~ msgid "Get complete storage report"
-#~ msgstr "Obtenir un rapport complet sur le stockage"
-
-#~ msgid "Add from PubChem"
-#~ msgstr "Ajouter depuis PubChem"
-
-#~ msgid "PubChem CID"
-#~ msgstr "PubChem CID"
-
-#~ msgid "Read permissions enforced by admin. Aborting change."
-#~ msgstr ""
-#~ "Permission d'écriture imposée par l'admin. Annulation du changement."
-
-#~ msgid "Write permissions enforced by admin. Aborting change."
-#~ msgstr ""
-#~ "Permission d'écriture imposée par l'admin. Annulation du changement."
-
-#~ msgid "Revisions cannot be deleted."
-#~ msgstr "Les révisions ne peuvent pas être supprimées."
-
-#~ msgid "Menu link"
-#~ msgstr "Lien de menu"
-
-#~ msgid "Name of the link in the top menu"
-#~ msgstr "Nom du lien dans le menu du haut"
-
-#~ msgid "Address where this link should point"
-#~ msgstr "Adresse vers laquelle ce lien pointe"
-
-#~ msgid "Select if you want to enforce read permissions on experiments"
-#~ msgstr ""
-#~ "Sélectionner pour imposer les permissions de lecture sur les expériences"
-
-#~ msgid "Enforced read permissions on experiments"
-#~ msgstr "Permission de lecture imposée sur les expériences"
-
-#~ msgid ""
-#~ "Enforce the read permission for all experiments of users in this team."
-#~ msgstr ""
-#~ "Imposer les permissions d'écriture pour toutes les expériences des "
-#~ "utilisateurs de cette équipe."
-
-#~ msgid "Select if you want to enforce write permissions on experiments"
-#~ msgstr ""
-#~ "Sélectionner pour imposer les permissions d'écriture sur les expériences"
-
-#~ msgid "Enforced write permissions on experiments"
-#~ msgstr "Permission d'écriture imposée sur les expériences"
-
-#~ msgid ""
-#~ "Enforce the write permission for all experiments of users in this team."
-#~ msgstr ""
-#~ "Imposer les permissions d'écriture sur toutes les expériences des "
-#~ "utilisateurs de cette équipe."
-
-#~ msgid "Common templates"
-#~ msgstr "Modèle d'expérience commun"
-
-#~ msgid "Common Experiment Template"
-#~ msgstr "Modèle d'expérience commun"
-
-#~ msgid "This is the default text when someone creates an experiment."
-#~ msgstr ""
-#~ "Ceci est le texte par défaut affiché lorsqu'une expérience est créée."
-
-#~ msgid "You opened this entry in exclusive edit mode at %s."
-#~ msgstr "Vous avez ouvert cette entrée en mode d'édition exclusive à %s."
-
-#~ msgid ""
-#~ "This entry is opened by %s in exclusive edit mode since %s. You cannot "
-#~ "edit it now but remove the lock or %sRequest exclusive edit mode "
-#~ "removal%s."
-#~ msgstr ""
-#~ "Cette entrée est ouverte par %s en mode édition exclusive depuis %s. Vous "
-#~ "ne pouvez pas l'éditer maintenant, mais retirez le verrou ou %s demandez "
-#~ "la suppression du mode d'édition exclusif%s."
-
-#~ msgid "Deduplicate"
-#~ msgstr "Dédupliquer"
-
-#~ msgid "Teamgroups"
-#~ msgstr "Groupes"
-
-#~ msgid "Manage templates"
-#~ msgstr "Gérer les modèles"
-
-#~ msgid "Toggle create new menu"
-#~ msgstr "Afficher/Masquer menu création"
-
-#~ msgid "No pinned templates found"
-#~ msgstr "Pas de modèles favoris trouvés"
-
-#~ msgid ""
-#~ "This entry is opened by %s in exclusive edit mode since %s. You cannot "
-#~ "edit it now but remove the lock in the toolbar below or %sRequest "
-#~ "exclusive edit mode removal%s."
-#~ msgstr ""
-#~ "Cette entrée est ouverte par %s en mode édition exclusive depuis %s. Vous "
-#~ "ne pouvez pas l'éditer maintenant mais enlevez le cadenas dans la barre "
-#~ "d'outils ci-dessous ou %sDemander la suppression du mode d'édition "
-#~ "exclusif%s."
-
-#~ msgid "Save as JSON"
-#~ msgstr "Enregistrer au format JSON"
-
-#~ msgid "Save as RXN"
-#~ msgstr "Enregistrer au format RXN"
-
-#~ msgid "Group"
-#~ msgstr "Groupe"
-
-#~ msgid "Quicksearch"
-#~ msgstr "Recherche rapide"
-
-#~ msgid "Help"
-#~ msgstr "Aide"
-
-#~ msgid "Make sure to read the %suser guide%s."
-#~ msgstr "Soyez certain de lire le %sguide utilisateur%s."
-
-#~ msgid "You can use a TODOlist by pressing '%s'."
-#~ msgstr "Vous pouvez afficher une TODOliste en pressant '%s'."
-
-#~ msgid "You can have experiments templates (%sControl Panel%s)."
-#~ msgstr ""
-#~ "Vous pouvez avoir des modèles d'expériences (%sPanneau de contrôle "
-#~ "utilisateur%s)."
-
-#~ msgid ""
-#~ "You can make links inside the text by typing # and an autocomplete menu "
-#~ "will spawn with a list of Experiments/Items."
-#~ msgstr ""
-#~ "Vous pouvez ajouter des liens dans le texte en tapant # et un menu "
-#~ "d'autocomplétion va apparaître avec une liste d'expériences/objets."
-
-#~ msgid ""
-#~ "The admin of a team can edit the status and the types of items available "
-#~ "(%sAdmin Panel%s)."
-#~ msgstr ""
-#~ "L'administrateur d'une équipe peut éditer les statuts et les types "
-#~ "d'items disponibles (%sPanneau d'administration%s)."
-
-#~ msgid ""
-#~ "If you press Ctrl Shift D in the editor, the date will appear under the "
-#~ "cursor."
-#~ msgstr ""
-#~ "Si vous faîtes Ctrl Maj D dans la fenêtre d'édition, la date apparaîtra "
-#~ "sous le curseur."
-
-#~ msgid "Custom shortcuts are available (%sControl Panel%s)."
-#~ msgstr ""
-#~ "Des raccourcis claviers personnalisables sont disponibles (%sPanneau de "
-#~ "contrôle utilisateur%s)."
-
-#~ msgid "You can duplicate experiments in one click."
-#~ msgstr "Vous pouvez dupliquer des expériences en un seul clic."
-
-#~ msgid "Click a tag to list all items with this tag."
-#~ msgstr "Cliquez un tag pour lister tous les items avec ce tag."
-
-#~ msgid ""
-#~ "Once timestamped an experiment cannot be unlocked or modified. Only "
-#~ "comments can be added."
-#~ msgstr ""
-#~ "Une fois verrouillée, une expérience ne peut plus être déverrouillée ou "
-#~ "modifiée, seuls des commentaires peuvent être ajoutés."
-
-#~ msgid "Select a file to import"
-#~ msgstr "Sélectionner un fichier à importer"
-
-#~ msgid "Search Syntax"
-#~ msgstr "Syntax de recherche"
-
-#~ msgid "Enter search query, e.g.: %s"
-#~ msgstr "Entrez la requête de recherche, par exemple: %s"
-
-#~ msgid ""
-#~ "Enter a term to search in title, body, date and elabid; or use advanced "
-#~ "syntax, or a combination of both."
-#~ msgstr ""
-#~ "Entrez un terme à rechercher dans le titre, le corps, la date et "
-#~ "l’elabid ; ou utilisez une syntaxe avancée, ou une combinaison des deux."
-
-#~ msgid "Press %sctrl + enter%s or %s⌘ + enter%s to submit search."
-#~ msgstr ""
-#~ "Appuyez sur %sctrl + enter%s ou %s⌘ + enter%s pour valider la recherche."
-
-#~ msgid "Allowed Fields"
-#~ msgstr "Champs autorisés"
-
-#~ msgid "Search in"
-#~ msgstr "Chercher dans"
-
-#~ msgid "And category is"
-#~ msgstr "Et la catégorie est"
-
-#~ msgid "Select category"
-#~ msgstr "Choisissez une catégorie"
-
-#~ msgid "And status is"
-#~ msgstr "Et le statut est"
-
-#~ msgid "And author is"
-#~ msgstr "Et l'auteur est"
-
-#~ msgid "belongs to group:"
-#~ msgstr "appartient au groupe :"
-
-#~ msgid "Select author"
-#~ msgstr "Sélectionner auteur"
-
-#~ msgid "group"
-#~ msgstr "groupe"
-
-#~ msgid "And visibility is:"
-#~ msgstr "Et la visibilité est :"
-
-#~ msgid "Select visibility"
-#~ msgstr "Sélectionner la visibilité"
-
-#~ msgid "And rating is"
-#~ msgstr "Et l'évaluation est"
-
-#~ msgid "And extra field is"
-#~ msgstr "Et le champ supplémentaire est"
-
-#~ msgid "Locked"
-#~ msgstr "Verrouillé"
-
-#~ msgid "Launch search"
-#~ msgstr "Lancer la recherche"
-
-#~ msgid "Results"
-#~ msgstr "Résultats"
-
-#~ msgid "Last modification date"
-#~ msgstr "Date de la dernière modification"
-
-#~ msgid "Toggle pin (add to create button menu)"
-#~ msgstr "Ajouter/retirer des favoris (ajouter au menu création)"
-
-#~ msgid "Collapse all"
-#~ msgstr "Replier tout"
-
-#~ msgid "Clear selection"
-#~ msgstr "Tout déselectionner"
-
-#~ msgid "Filters"
-#~ msgstr "Filtres"
-
-#~ msgid "Domain name or IP address"
-#~ msgstr "Nom de domaine ou adresse IP"
-
-#~ msgid "Experiments Templates"
-#~ msgstr "Modèles d'expériences"
-
-#~ msgid "Database"
-#~ msgstr "Base de données"
-
-#~ msgid "Import to your profile"
-#~ msgstr "Importer dans votre profil"
-
-#~ msgid "Manage Permissions"
-#~ msgstr "Gérer les permissions"
-
-#~ msgid "Destroy template"
-#~ msgstr "Supprimer ce modèle"
-
-#~ msgid "from the database"
-#~ msgstr "depuis la base de données"
-
-#~ msgid "Author"
-#~ msgstr "Auteur"
-
-#~ msgid "Include users not in this team"
-#~ msgstr "Inclure les utilisateurs qui ne font pas partie de cette équipe"
-
-#~ msgid "Long term storage PDF"
-#~ msgstr "PDF pour stockage à long terme"
-
-#~ msgid "Long term storage ZIP"
-#~ msgstr "ZIP pour stockage à long terme"
-
-#~ msgid ""
-#~ "Warning: clicking Apply will completely replace any existing metadata!"
-#~ msgstr ""
-#~ "Attention : le fait de cliquer sur Appliquer remplacera complètement "
-#~ "toutes les métadonnées existantes !"
-
-#~ msgid "Authentication code"
-#~ msgstr "Code d'authentification"
-
-#~ msgid "Trust imported files about data ownership and dates"
-#~ msgstr ""
-#~ "Faire confiance aux fichiers importés en ce qui concerne la propriété des "
-#~ "données et les dates"
-
-#~ msgid ""
-#~ "Allows users to import experiments under the identity stated in the file, "
-#~ "creating missing users (if allowed)."
-#~ msgstr ""
-#~ "Permet aux utilisateurs d'importer des expériences sous l'identité "
-#~ "indiquée dans le fichier, en créant des utilisateurs manquants (si cela "
-#~ "est autorisé)."
-
-#~ msgid "%sClear it%s or change it below:"
-#~ msgstr "%sEffacer%s ou modifier ci-dessous :"
-
-#~ msgid "Uploaded files configuration"
-#~ msgstr "Configuration des fichiers téléversés"
-
-#~ msgid ""
-#~ "It is possible to configure several identity providers for your instance."
-#~ msgstr ""
-#~ "Il est possible de configurer plusieurs fournisseurs d’identité pour "
-#~ "votre instance."
-
-#~ msgid "Experiments"
-#~ msgstr "Expériences"
-
-#~ msgid "Select read permissions"
-#~ msgstr "Sélectionner les autorisations de lecture"
-
-#~ msgid "Select write permissions"
-#~ msgstr "Sélectionner les droits d'écriture"

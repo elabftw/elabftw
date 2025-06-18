@@ -16,6 +16,7 @@ use DateTime;
 use DateTimeImmutable;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Notifications\EventDeleted;
@@ -143,6 +144,13 @@ final class Scheduler extends AbstractRest
             $this->appendFilterSql(column: 'team_events.userid', paramName: 'ownerid', value: $queryParams->getQuery()->getInt('eventOwner'));
             $this->appendFilterSql(column: 'items.id', paramName: 'itemid', value: $queryParams->getQuery()->getInt('item'));
         }
+        // apply scope for events
+        $scopeInt = $this->Items->Users->userData['scope_events'] ?? Scope::Everything->value;
+        if ($scopeInt === Scope::User->value) {
+            $this->appendFilterSql('team_events.userid', 'userid', $this->Items->Users->userData['userid']);
+        } elseif ($scopeInt === Scope::Team->value) {
+            $this->appendFilterSql('team_events.team', 'team_scope', $this->Items->Users->userData['team']);
+        }
         // the title of the event is title + Firstname Lastname of the user who booked it
         $sql = sprintf(
             "SELECT
@@ -171,18 +179,13 @@ final class Scheduler extends AbstractRest
             LEFT JOIN items AS items_linkt ON (team_events.item_link = items_linkt.id)
             LEFT JOIN items_types ON (items.category = items_types.id)
             LEFT JOIN users AS u ON (team_events.userid = u.userid)
-            WHERE (team_events.team = :team OR items.team = :team)
-                --                 |start  search range  end|
-                -- | event 1 | | event 2 | | event 3 | | event 4 | | event 5 |
-                --               |           event 6          |
-                -- events.start <= range.end and events.end >= range.start
+            WHERE 1 = 1
                 AND team_events.start <= :end
                 AND team_events.end >= :start
                 %s",
             implode(' ', $this->filterSqlParts)
         );
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
         $req->bindValue(':start', $this->normalizeDate($this->start));
         $req->bindValue(':end', $this->normalizeDate($this->end, true));
         foreach ($this->filterBindings as $param => $value) {
@@ -272,10 +275,6 @@ final class Scheduler extends AbstractRest
             LEFT JOIN items_types ON (items.category = items_types.id)
             LEFT JOIN users AS u ON team_events.userid = u.userid
             WHERE team_events.item = :item
-                --                 |start  search range  end|
-                -- | event 1 | | event 2 | | event 3 | | event 4 | | event 5 |
-                --               |           event 6          |
-                -- events.start <= range.end and events.end >= range.start
                 AND team_events.start <= :end
                 AND team_events.end >= :start";
         $req = $this->Db->prepare($sql);

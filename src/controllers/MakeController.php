@@ -175,7 +175,11 @@ final class MakeController extends AbstractController
             );
         }
         foreach ($idArr as $id) {
-            $this->entityArr[] = $entityType->toInstance($this->requester, $id);
+            try {
+                $this->entityArr[] = $entityType->toInstance($this->requester, $id);
+            } catch (IllegalActionException) {
+                continue;
+            }
         }
 
         // generate audit log event if exporting more than $threshold entries

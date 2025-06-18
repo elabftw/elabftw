@@ -186,21 +186,7 @@
       <input type='hidden' name='mode' value='show' />
 
       <div>
-        {# STATE #}
-        <select name='state' aria-label='{{ 'State'|trans }}' class='form-control filterAuto'>
-          <option value='' data-action='clear'>{{ 'Select state'|trans }}</option>
-          {% set stateValue = enum('Elabftw\\Enums\\State').Normal.value %}
-          <option value='{{ stateValue }}' {{- Request.query.get('state') == stateValue ? ' selected' }}>{{ 'Normal'|trans }}</option>
-          {% set stateValue = enum('Elabftw\\Enums\\State').Archived.value %}
-          <option value='{{ stateValue }}' {{- Request.query.get('state') == stateValue ? ' selected' }}>{{ 'Archived'|trans }}</option>
-          {% set stateValue = enum('Elabftw\\Enums\\State').Deleted.value %}
-          <option value='{{ stateValue }}' {{- Request.query.get('state') == stateValue ? ' selected' }}>{{ 'Deleted'|trans }}</option>
-          {% set stateValue = enum('Elabftw\\Enums\\State').Normal.value ~ ',' ~ enum('Elabftw\\Enums\\State').Archived.value %}
-          <option value='{{ stateValue }}' {{- Request.query.get('state') == stateValue ? ' selected' }}>{{ 'Normal or Archived'|trans }}</option>
-          {% set stateValue = enum('Elabftw\\Enums\\State').Normal.value ~ ',' ~ enum('Elabftw\\Enums\\State').Archived.value ~ ',' ~ enum('Elabftw\\Enums\\State').Deleted.value %}
-          <option value='{{ stateValue }}' {{- Request.query.get('state') == stateValue ? ' selected' }}>{{ 'Any'|trans }}</option>
-        </select>
-        {# END STATE #}
+        {% include 'select-state.html' %}
 
         {# LOCK #}
         <select name='locked' aria-label='{{ 'Select lock status'|trans }}' class='form-control filterHelper'>
@@ -320,7 +306,7 @@
         <div class='dropdown-menu dropdown-menu-right'>
           <h6 class='dropdown-header'>{{ 'Results per page'|trans }}</h6>
         {% for option in limitOptions(DisplayParams.limit) %}
-          <button type='button' class='btn btn-dropdown-item dropdown-item' data-action='insert-param-and-reload-show' data-key='limit' data-value='{{ option }}'>{{ option }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item' data-action='insert-param-and-reload' data-target='limit' data-reload='reloadEntitiesShow' value='{{ option }}'>{{ option }}</button>
         {% endfor %}
         </div>
       </div>
@@ -332,7 +318,7 @@
   {% set count = itemsArr|length %}
 
   {% if App.Users.isAdmin and itemsCategoryArr|length == 0 %}
-  {{ 'No resources categories have been defined for your team. Head to the %sAdmin Panel%s to add one.'|trans|format("<a href='admin.php?tab=4#itemsCategoriesAnchor'>", "</a>")|raw|msg('warning', false) }}
+  {{ 'No resources categories have been defined for your team. Head to the %sAdmin Panel%s to add one.'|trans|format("<a href='resources-templates.php'>", "</a>")|raw|msg('warning', false) }}
   {% endif %}
   <div id='showModeContent'>
 

@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (element.id === 'metakey') {
         return handleMetadata();
       }
-      return escapeDoubleQuotes(element.options[element.selectedIndex].text);
+      return escapeDoubleQuotes(element.options[element.selectedIndex].value);
     }
     if (element instanceof HTMLInputElement) {
       if (element.id === 'date') {
@@ -395,7 +395,7 @@ document.addEventListener('DOMContentLoaded', () => {
         notify.success();
         ApiC.notifOnSaved = true;
         reloadEntitiesShow();
-      });
+      }).catch(() => (el as HTMLButtonElement).disabled = false);
 
     } else if (el.matches('[data-action="clear-form"]')) {
       clearForm(document.getElementById(el.dataset.target));

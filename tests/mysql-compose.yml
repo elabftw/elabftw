@@ -1,0 +1,40 @@
+networks:
+    elabftw-net:
+services:
+    mysql:
+        image: mysql:8.4
+        container_name: mysqltmp
+        healthcheck:
+            test: "/usr/bin/mysql --user=$$MYSQL_USER --password=$$MYSQL_PASSWORD --execute 'SHOW DATABASES;'"
+            interval: 2s
+            timeout: 5s
+            retries: 20
+        cap_drop:
+            - AUDIT_WRITE
+            - MKNOD
+            - SYS_CHROOT
+            - SETFCAP
+            - NET_RAW
+        environment:
+            - MYSQL_ROOT_PASSWORD=phpunit
+            - MYSQL_DATABASE=phpunit
+            - MYSQL_USER=phpunit
+            - MYSQL_PASSWORD=phpunit
+            # the following env var are useful to really squeeze out perf from our tmpfs mysql
+            - MYSQL_INNODB_FLUSH_LOG_AT_TRX_COMMIT=0
+            - MYSQL_SYNC_BINLOG=0
+            - MYSQL_INNODB_DOUBLEWRITE=0
+            - MYSQL_INNODB_FLUSH_METHOD=O_DIRECT
+            - MYSQL_INNODB_BUFFER_POOL_SIZE=4294967296  # 4G
+            - MYSQL_INNODB_IO_CAPACITY=2000
+            - MYSQL_INNODB_IO_CAPACITY_MAX=4000
+            - MYSQL_MAX_CONNECTIONS=1000
+            - MYSQL_INNODB_COMMIT_CONCURRENCY=0
+            - MYSQL_INNODB_THREAD_CONCURRENCY=0
+            - TZ=Europe/Paris
+        # run the full database in tmpfs!
+        tmpfs:
+           - /var/lib/mysql:rw,noexec,nosuid,size=600m
+           - /tmp:rw,noexec,nosuid,size=50m
+        networks:
+            - elabftw-net

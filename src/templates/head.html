@@ -59,12 +59,30 @@
         <div class='navbar-nav'>
             <a aria-label='{{ 'Go to dashboard'|trans }}' class='nav-item nav-link {{ scriptName == 'dashboard.php' ? 'active' }}'
                 href='dashboard.php' title='{{ 'Go to dashboard'|trans }}'><i class='fas fa-house'></i></a>
-            <a class='nav-item nav-link {{ scriptName == 'experiments.php' ? 'active' }}'
-                href='experiments.php'>{% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}</a>
-            <a class='nav-item nav-link {{ scriptName == 'templates.php' ? 'active' }}'
-                href='templates.php'>{% trans %}Template{% plural 2 %}Templates{% endtrans %}</a>
-            <a class='nav-item nav-link {{ scriptName == 'database.php' ? 'active' }}'
-                href='database.php'>{{ 'Resources'|trans }}</a>
+            <div class='nav-item dropdown'>
+              {% if App.Config.configArr.debug -%}
+                <!-- [html-validate-disable-next prefer-native-element: using a button here will mess up the navbar] -->
+              {%- endif %}
+              <div class='nav-link dropdown-toggle {{ scriptName == 'experiments.php' or scriptName == 'templates.php' ? 'active' }}' role='button' data-toggle='dropdown' aria-expanded='false'>
+              {% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}
+              </div>
+              <div class='dropdown-menu'>
+                <a class='dropdown-item {{ scriptName == 'experiments.php' ? 'active' }}' href='experiments.php'>{{ 'Experiments'|trans }}</a>
+                <a class='dropdown-item {{ scriptName == 'templates.php' ? 'active' }}' href='templates.php'>{{ 'Templates'|trans }}</a>
+              </div>
+            </div>
+            <div class='nav-item dropdown'>
+              {% if App.Config.configArr.debug -%}
+                <!-- [html-validate-disable-next prefer-native-element: using a button here will mess up the navbar] -->
+              {%- endif %}
+              <div class='nav-link dropdown-toggle {{ scriptName == 'database.php' or scriptName == 'resources-templates.php' ? 'active' }}' role='button' data-toggle='dropdown' aria-expanded='false'>
+                {{ 'Resources'|trans }}
+              </div>
+              <div class='dropdown-menu'>
+                <a class='dropdown-item {{ scriptName == 'database.php' ? 'active' }}' href='database.php'>{{ 'Resources'|trans }}</a>
+                <a class='dropdown-item {{ scriptName == 'resources-templates.php' ? 'active' }}' href='resources-templates.php'>{{ 'Templates'|trans }}</a>
+              </div>
+            </div>
             <a class='nav-item nav-link {{ scriptName == 'scheduler.php' ? 'active' }}'
                 href='scheduler.php'>{{ 'Scheduler'|trans }}</a>
 
@@ -83,7 +101,7 @@
               <div class='dropdown-menu'>
                 <a class='dropdown-item' href='compounds.php'><i class='fas fa-flask fa-fw'></i>{{ 'Compounds'|trans }}</a>
                 <a class='dropdown-item' href='chem-editor.php'><i class='fas fa-pen-to-square fa-fw'></i> {{ 'Chemical Structure Editor'|trans }}</a>
-                <a class='dropdown-item {{ not App.Config.boolFromEnv('USE_OPENCLONING') ? 'disabled' }}' href='syc.php'><i class='fas fa-dna fa-fw'></i> {{ 'DNA Cloning'|trans }}</a>
+                <a class='dropdown-item {{ not App.Config.boolFromEnv('USE_OPENCLONING') ? 'disabled' }}' href='syc.php'><i class='fas fa-dna fa-fw'></i> {{ 'OpenCloning'|trans }}</a>
                 <a class='dropdown-item' href='inventory.php'><i class='fas fa-warehouse fa-fw'></i> {{ 'Inventory'|trans }}</a>
               </div>
             </div>
@@ -104,7 +122,7 @@
               <div class='notification p-3'>{{ 'No new notifications to show.'|trans }}</div>
               <div class='dropdown-divider'></div>
             {% endif %}
-            <a href='ucp.php?tab=5' class='dropdown-item'><i class='fas fa-cogs fa-fw'></i> {{ 'Notifications settings'|trans }}</a>
+            <a href='ucp.php?tab=4' class='dropdown-item'><i class='fas fa-cogs fa-fw'></i> {{ 'Notifications settings'|trans }}</a>
           </div>
         </div>
         {% endif %}

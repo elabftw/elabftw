@@ -17,6 +17,7 @@ $theme-colors: (
   'danger': $dangerred,
   'neutral': $medium,
 );
+$dropdown-link-active-bg: $elabblue;
 /* make the non active link in navbar have slightly more contrast */
 $navbar-dark-color: $secondlevel;
 $text-muted: $medium;
@@ -211,6 +212,14 @@ select.form-control {
   border-color: $elabblue;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(41, 174, 185, 0.6);
   z-index: 3;
+}
+
+/* textarea for metadata (extra fields) */
+/* default size same as other inputs to keep harmony */
+.form-textarea {
+  min-height: 2rem;
+  overflow: auto;
+  resize: vertical;
 }
 
 /* fix bootstrap setting it to nowrap, it results in long content making the whole thing super wide */
@@ -412,6 +421,10 @@ button:disabled {
 }
 
 .table {
+  /* display borders correctly, keeps cells flush without extra spacing. See #5681  */
+  border-collapse: separate;
+  border-spacing: 0;
+
   thead {
     position: sticky;
     top: 0;
@@ -420,6 +433,10 @@ button:disabled {
     /* stylelint-disable-next-line selector-no-qualifying-type */
     &.with-top {
       border-top: 1px solid $firstlevel;
+    }
+
+    th {
+      border-bottom: $firstlevel 1px solid;
     }
   }
 
@@ -443,7 +460,6 @@ button:disabled {
   }
 
   th {
-    border-top: 0;
     white-space: nowrap;
 
     &:not(:last-child) {
@@ -463,6 +479,11 @@ tr:nth-child(even) {
 
 tr:nth-child(odd) {
   background-color: $mainbackground;
+}
+
+/* the first row does not need a border-top */
+tr:first-child td {
+  border-top-width: 0;
 }
 
 /* responsive tables, with a threshold width pretty high */
@@ -1029,7 +1050,7 @@ the form-control fails to do that so we do the border ourselves */
 .catstat-btn {
   border: 0;
   border-radius: 0.25rem;
-  font-size: 72%;
+  font-size: 75%;
   font-weight: bold;
   line-height: normal;
   text-transform: uppercase;
@@ -1105,6 +1126,29 @@ the form-control fails to do that so we do the border ourselves */
   &.favorite {
     background-color: $gold;
   }
+}
+
+/* make the details shrink-to-fit and establish a positioning context */
+.suggested-tags {
+  display: inline-block;
+  position: relative;
+}
+
+/* replace flex container with a responsive grid */
+.suggested-tags-menu {
+  background: #fff;
+  border-radius: 5px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  display: grid;
+  gap: 0.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  margin-top: 6px;
+  max-width: 40rem;
+  padding: 0.5rem;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  z-index: 100;
 }
 
 .box {
@@ -1669,4 +1713,15 @@ input:user-invalid {
   font-weight: bold;
   color: $secondlevel;
   font-size: 1.5rem;
+}
+
+/* opencloning iframe */
+#syc-root {
+  height: 87vh;
+  width: 100%;
+
+  iframe {
+    height: 100%;
+    width: 100%;
+  }
 }

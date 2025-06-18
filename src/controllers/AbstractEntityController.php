@@ -22,7 +22,6 @@ use Elabftw\Enums\Orderby;
 use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\Sort;
 use Elabftw\Interfaces\ControllerInterface;
-use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Changelog;
 use Elabftw\Models\ExtraFieldsKeys;
@@ -39,7 +38,6 @@ use Elabftw\Models\UserRequestActions;
 use Elabftw\Models\Users;
 use Elabftw\Params\DisplayParams;
 use Elabftw\Params\BaseQueryParams;
-use Elabftw\Services\AccessKeyHelper;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Override;
@@ -77,8 +75,10 @@ abstract class AbstractEntityController implements ControllerInterface
         $this->requestableActionArr = RequestableAction::getAssociativeArray();
         $this->currencyArr = Currency::getAssociativeArray();
         $this->scopedTeamgroupsArr = $TeamGroups->readScopedTeamgroups();
-        $Templates = new Templates($this->Entity->Users);
-        $this->templatesArr = $Templates->Pins->readAll();
+        if (!$Entity instanceof ItemsTypes) {
+            $Templates = new Templates($this->Entity->Users);
+            $this->templatesArr = $Templates->Pins->readAll();
+        }
     }
 
     #[Override]
@@ -113,6 +113,10 @@ abstract class AbstractEntityController implements ControllerInterface
 
         // read all based on query parameters or user defaults
         $orderBy = Orderby::tryFrom($this->App->Users->userData['orderby']) ?? Orderby::Lastchange;
+        $skipOrderPinned = $this->App->Request->query->getBoolean('skip_pinned');
+        if ($this->Entity instanceof ItemsTypes) {
+            $skipOrderPinned = true;
+        }
         $DisplayParams = new DisplayParams(
             requester: $this->App->Users,
             query: $this->App->Request->query,
@@ -120,7 +124,7 @@ abstract class AbstractEntityController implements ControllerInterface
             limit: $this->App->Users->userData['limit_nb'],
             orderby: $orderBy,
             sort: Sort::tryFrom($this->App->Users->userData['sort']) ?? Sort::Desc,
-            skipOrderPinned: $this->App->Request->query->getBoolean('skip_pinned'),
+            skipOrderPinned: $skipOrderPinned,
         );
         $itemsArr = $this->Entity->readShow($DisplayParams);
 
@@ -178,17 +182,6 @@ abstract class AbstractEntityController implements ControllerInterface
      */
     protected function view(): Response
     {
-        // but if we have an access_key we might be able to bypass read permissions
-        if ($this->App->Request->query->has('access_key') && $this->App->Request->query->get('access_key') !== ($this->Entity->entityData['access_key'] ?? '')) {
-            // for that we fetch the id not from the id param but from the access_key, so we will get a valid id that corresponds to an entity
-            // with this access_key
-            $id = (new AccessKeyHelper($this->Entity))->getIdFromAccessKey($this->App->Request->query->getString('access_key'));
-            if ($id > 0) {
-                $this->Entity->bypassReadPermission = true;
-                $this->Entity->setId($id);
-            }
-        }
-
         // the items categoryArr for add link input
         $ItemsTypes = new ItemsTypes($this->App->Users);
         $itemsCategoryArr = $ItemsTypes->readAll();
@@ -214,9 +207,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'teamsArr' => $Teams->readAll(),
             'scopedTeamgroupsArr' => $this->scopedTeamgroupsArr,
             'templatesArr' => $this->templatesArr,
-            ...$this->Entity instanceof AbstractConcreteEntity
-                    ? array('timestamperFullname' => $this->Entity->getTimestamperFullname())
-                    : array(),
+            'timestamperFullname' => $this->Entity->getTimestamperFullname(),
             'lockerFullname' => $this->Entity->getLockerFullname(),
             'meaningArr' => $this->meaningArr,
             'requestableActionArr' => $this->requestableActionArr,
@@ -276,6 +267,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'classificationArr' => $this->classificationArr,
             'currencyArr' => $this->currencyArr,
             'Entity' => $this->Entity,
+            // TODO ideally we only send entityData, not both Entity and entityData: check if Entity can be removed
             'entityData' => $this->Entity->entityData,
             'entityProcurementRequestsArr' => $ProcurementRequests->readActiveForEntity($this->Entity->id ?? 0),
             'entityRequestActionsArr' => $RequestActions->readAllFull(),

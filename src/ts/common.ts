@@ -390,20 +390,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // SELECT FILTERS - state, orderby...
     } else if (el.matches('[data-action="set-filter-and-reload"]')) {
-      const target = el.getAttribute('data-target');
+      const target = el.dataset.target;
       const params = new URLSearchParams(document.location.search.slice(1));
       const value = (el as HTMLSelectElement).value;
-      if (target) {
-        if (value) {
-          params.set(target, value);
-        } else {
-          params.delete(target);
-        }
+      if (!target) return;
+      if (value) {
+        params.set(target, value);
+      } else {
+        params.delete(target);
       }
       window.history.replaceState({}, '', `?${params.toString()}`);
       el.dataset.reload.split(',').forEach(toreload => {
         reloadElements([toreload]).then(() => relativeMoment());
-      })
+      });
 
     } else if (el.matches('[data-action="insert-param-and-reload-show"]')) {
       const params = new URLSearchParams(document.location.search.slice(1));

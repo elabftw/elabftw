@@ -107,7 +107,7 @@
 
       {# FILTER BY STATE #}
       <div class="ml-2">
-        {% include 'select-state.html' with {'dataAction': 'set-filter-and-reload', 'dataTarget': 'state'} %}
+        {% include 'select-state.html' with {'dataAction': 'set-filter-and-reload', 'dataTarget': 'state', 'dataReload': 'attachedFilesTable,countDisplay'} %}
       </div>
 
       {# ORDER BY FILTER #}
@@ -117,7 +117,7 @@
       {% set byFilename = Orderby.Filename.value %}
       <select name='orderby' class='form-control filterHelper filterAuto ml-2' aria-label='{{ 'Order by'|trans }}'>
         <option value='' data-action='clear'>{{ 'Order by'|trans }}</option>
-        <option data-reload='attachedFilesTable,countDisplay' data-action='set-filter-and-reload' data-target='order' value='{{ byFilesize  }}' {{ currentOrderBy == byFilesize ? 'selected' }}>{{ 'File size'|trans }}</option>
+        <option data-reload='attachedFilesTable,countDisplay' data-action='set-filter-and-reload' data-target='order' value='{{ byFilesize }}' {{ currentOrderBy == byFilesize ? 'selected' }}>{{ 'File size'|trans }}</option>
         <option data-reload='attachedFilesTable,countDisplay' data-action='set-filter-and-reload' data-target='order' value='{{ byCreated }}' {{ currentOrderBy == byCreated ? 'selected' }}>{{ 'Created'|trans }}</option>
         <option data-reload='attachedFilesTable,countDisplay' data-action='set-filter-and-reload' data-target='order' value='{{ byFilename }}' {{ currentOrderBy == byFilename ? 'selected' }}>{{ 'File name'|trans }}</option>
       </select>

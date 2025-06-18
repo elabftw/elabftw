@@ -17,4 +17,13 @@ enum Users2TeamsTargets: string
     case IsAdmin = 'is_admin';
     case IsArchived = 'is_archived';
     case IsOwner = 'is_owner';
+
+    public function toHuman(): string
+    {
+        return match ($this) {
+            self::IsAdmin => _('Admin'),
+            self::IsArchived => _('Archived'),
+            self::IsOwner => _('Owner'),
+        };
+    }
 }

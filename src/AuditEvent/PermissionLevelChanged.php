@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\AuditEvent;
 
-use Elabftw\Enums\Usergroup;
+use Elabftw\Enums\Users2TeamsTargets;
 use Override;
 
 final class PermissionLevelChanged extends AbstractUsers2TeamsModifiedEvent
@@ -26,8 +26,8 @@ final class PermissionLevelChanged extends AbstractUsers2TeamsModifiedEvent
     public function getBody(): string
     {
         return sprintf(
-            'User permission level was changed to %s in team %d',
-            Usergroup::from($this->group)->toHuman(),
+            'User status was changed to %s in team %d',
+            Users2TeamsTargets::from($this->group)->toHuman(),
             $this->teamid,
         );
     }

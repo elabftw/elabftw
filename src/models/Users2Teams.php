@@ -21,7 +21,6 @@ use Elabftw\Enums\Users2TeamsTargets;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Notifications\OnboardingEmail;
-use Elabftw\Services\Check;
 use Elabftw\Services\UsersHelper;
 use Elabftw\Services\TeamsHelper;
 use PDO;

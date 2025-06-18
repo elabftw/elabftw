@@ -16,7 +16,7 @@ import {
   collectForm,
   escapeExtendedQuery,
   generateMetadataLink,
-  getEntity,
+  getEntity, handleReloads,
   listenTrigger,
   makeSortableGreatAgain,
   mkSpin,
@@ -24,7 +24,6 @@ import {
   permissionsToJson,
   relativeMoment,
   reloadElements,
-  reloadEntitiesShow,
   replaceWithTitle,
   toggleEditCompound,
   toggleGrayClasses,
@@ -388,12 +387,19 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="switch-editor"]')) {
       getEditor().switch(getEntity()).then(() => window.location.reload());
 
-    } else if (el.matches('[data-action="insert-param-and-reload-show"]')) {
+    // SELECT FILTERS - state, orderby...
+    } else if (el.matches('[data-action="insert-param-and-reload"]')) {
       const params = new URLSearchParams(document.location.search.slice(1));
-      params.set(el.dataset.key, el.dataset.value);
+      const target = el.dataset.target;
+      const value = (el as HTMLInputElement).value;
+      if (!target) return;
+      if (value) {
+        params.set(target, value);
+      } else {
+        params.delete(target);
+      }
       window.history.replaceState({}, '', `?${params.toString()}`);
-      reloadEntitiesShow();
-
+      handleReloads(el.dataset.reload);
     } else if (el.matches('[data-action="add-query-filter"]')) {
       const params = new URLSearchParams(document.location.search.substring(1));
       params.set(el.dataset.key, el.dataset.value);

@@ -40,6 +40,9 @@
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Users list'|trans }}</h3>
   <div class='pl-3'>
     <p class='smallgray'>{{ 'Double-click a row in the table below to edit user.'|trans }}</p>
+    {% if App.Config.configArr.debug -%}
+      <!-- [html-validate-disable-next prefer-native-element, element-permitted-content: ag-grid] -->
+    {%- endif %}
     <div id='users-table'></div>
   </div>
 </div>

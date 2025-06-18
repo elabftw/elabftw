@@ -2359,6 +2359,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@peggyjs/from-mem@npm:2.0.0":
+  version: 2.0.0
+  resolution: "@peggyjs/from-mem@npm:2.0.0"
+  dependencies:
+    semver: "npm:7.7.1"
+  checksum: 10c0/c4aee500d5687b06d76e5fac035de6a3d802199bcceef6437bb17c1802500bd6172b79c04f968aa2d31c0354fa50a87d88826171a41274bd48c86379682023f5
+  languageName: node
+  linkType: hard
+
 "@pkgjs/parseargs@npm:^0.11.0":
   version: 0.11.0
   resolution: "@pkgjs/parseargs@npm:0.11.0"
@@ -4738,17 +4747,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"commander@npm:^10.0.0":
-  version: 10.0.1
-  resolution: "commander@npm:10.0.1"
-  checksum: 10c0/53f33d8927758a911094adadda4b2cbac111a5b377d8706700587650fd8f45b0bbe336de4b5c3fe47fd61f420a3d9bd452b6e0e6e5600a7e74d7bf0174f6efe3
-  languageName: node
-  linkType: hard
-
 "commander@npm:^12.1.0":
   version: 12.1.0
   resolution: "commander@npm:12.1.0"
   checksum: 10c0/6e1996680c083b3b897bfc1cfe1c58dfbcd9842fd43e1aaf8a795fbc237f65efcc860a3ef457b318e73f29a4f4a28f6403c3d653d021d960e4632dd45bde54a9
+  languageName: node
+  linkType: hard
+
+"commander@npm:^14.0.0":
+  version: 14.0.0
+  resolution: "commander@npm:14.0.0"
+  checksum: 10c0/73c4babfa558077868d84522b11ef56834165d472b9e86a634cd4c3ae7fc72d59af6377d8878e06bd570fe8f3161eced3cbe383c38f7093272bb65bd242b595b
   languageName: node
   linkType: hard
 
@@ -5932,8 +5941,8 @@ __metadata:
     marked: "npm:^15.0.12"
     mathjax-full: "npm:^3.2.2"
     mini-css-extract-plugin: "npm:^2.9.2"
-    peggy: "npm:^3.0.2"
-    phpeggy: "npm:^2.0.1"
+    peggy: "npm:^5.0.3"
+    phpeggy: "npm:^3.0.0"
     popper.js: "npm:^1.16.1"
     postcss: "npm:^8.5.4"
     postcss-scss: "npm:^4.0.9"
@@ -9952,15 +9961,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"peggy@npm:^3.0.2":
-  version: 3.0.2
-  resolution: "peggy@npm:3.0.2"
+"peggy@npm:^5.0.3":
+  version: 5.0.3
+  resolution: "peggy@npm:5.0.3"
   dependencies:
-    commander: "npm:^10.0.0"
-    source-map-generator: "npm:0.8.0"
+    "@peggyjs/from-mem": "npm:2.0.0"
+    commander: "npm:^14.0.0"
+    source-map-generator: "npm:2.0.0"
   bin:
     peggy: bin/peggy.js
-  checksum: 10c0/73c61e4478e015d6ba78736914d53b464318649f4727164d58ded3ce0f71d58e009451dbb8d01de53f2a30378aec9cdd44bc76c926dc9ba7d513f12aa3923cb1
+  checksum: 10c0/58a5be2a2125e89d1970baf459ce4d9a9e9e50b9ebad3ae22138c91ec9bc41d17c917ce9bfb78acc4c6e28060c40df94b7ed343a45cb78726a6636125ced441f
   languageName: node
   linkType: hard
 
@@ -9978,12 +9988,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"phpeggy@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "phpeggy@npm:2.0.1"
+"phpeggy@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "phpeggy@npm:3.0.0"
   peerDependencies:
-    peggy: ^3.0.0
-  checksum: 10c0/1782b456eff2951c2cc61dc153d6703fc41694ebcb4e3a8affea0bdaeb0b1fc6b7352f152bee6900aee83bc131bd15176021cce6cfdcba15d6698a12ae7083f3
+    peggy: ^5.0.3
+  checksum: 10c0/1506f61fe93acb070d8f9ce480df781d1b07368e40d6663b72b71016b34750b854ae63489fee9697d720d61747817619cee187929d9fd7d0fb334575e9b55647
   languageName: node
   linkType: hard
 
@@ -11675,6 +11685,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"semver@npm:7.7.1":
+  version: 7.7.1
+  resolution: "semver@npm:7.7.1"
+  bin:
+    semver: bin/semver.js
+  checksum: 10c0/fd603a6fb9c399c6054015433051bdbe7b99a940a8fb44b85c2b524c4004b023d7928d47cb22154f8d054ea7ee8597f586605e05b52047f048278e4ac56ae958
+  languageName: node
+  linkType: hard
+
 "semver@npm:^6.3.1":
   version: 6.3.1
   resolution: "semver@npm:6.3.1"
@@ -11938,10 +11957,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"source-map-generator@npm:0.8.0":
-  version: 0.8.0
-  resolution: "source-map-generator@npm:0.8.0"
-  checksum: 10c0/4cab61cd56c81c4ecd8f2249ea0d81e24210686de1d5814432e9ae03f153692d0e85f1f1edf87ae54f74a18dd4211ad966d721e034d6cacfb08a6f099b0b1329
+"source-map-generator@npm:2.0.0":
+  version: 2.0.0
+  resolution: "source-map-generator@npm:2.0.0"
+  checksum: 10c0/3ef4883f68f4ec0bf44050de7bd05462078c986f67bc97687de5523e3ef451ed0e9e034478703e951957779eed086d5f194ac9a22796d5da603bb670c0a5a1e0
   languageName: node
   linkType: hard
 

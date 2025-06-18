@@ -12,42 +12,19 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\AuditEvent\SignatureCreated;
-use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\EntitySqlBuilder;
-use Elabftw\Elabftw\FsTools;
-use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
-use Elabftw\Enums\ExportFormat;
-use Elabftw\Enums\Meaning;
-use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Factories\LinksFactory;
-use Elabftw\Interfaces\MakeTrustedTimestampInterface;
 use Elabftw\Interfaces\QueryParamsInterface;
-use Elabftw\Make\MakeBloxberg;
-use Elabftw\Make\MakeCustomTimestamp;
-use Elabftw\Make\MakeDfnTimestamp;
-use Elabftw\Make\MakeDgnTimestamp;
-use Elabftw\Make\MakeDigicertTimestamp;
-use Elabftw\Make\MakeFullJson;
-use Elabftw\Make\MakeGlobalSignTimestamp;
-use Elabftw\Make\MakeSectigoTimestamp;
-use Elabftw\Make\MakeUniversignTimestamp;
-use Elabftw\Make\MakeUniversignTimestampDev;
 use Elabftw\Params\DisplayParams;
-use Elabftw\Services\HttpGetter;
-use Elabftw\Services\SignatureHelper;
-use Elabftw\Services\TimestampUtils;
-use GuzzleHttp\Client;
 use PDO;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
-use ZipArchive;
 use Override;
 
 use function is_string;
@@ -98,19 +75,6 @@ abstract class AbstractConcreteEntity extends AbstractEntity
             ),
             Action::Duplicate => $this->duplicate((bool) ($reqBody['copyFiles'] ?? false), (bool) ($reqBody['linkToOriginal'] ?? false)),
             default => throw new ImproperActionException('Invalid action parameter.'),
-        };
-    }
-
-    #[Override]
-    public function patch(Action $action, array $params): array
-    {
-        // was "write" previously, but let's make timestamping/signing only require read access
-        $this->canOrExplode('read');
-        return match ($action) {
-            Action::Bloxberg => $this->bloxberg(),
-            Action::Sign => $this->sign($params['passphrase'], Meaning::from((int) $params['meaning'])),
-            Action::Timestamp => $this->timestamp(),
-            default => parent::patch($action, $params),
         };
     }
 
@@ -222,117 +186,6 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
         return (int) $req->fetchColumn();
-    }
-
-    /**
-     * Get timestamper full name for display in view mode
-     */
-    #[Override]
-    public function getTimestamperFullname(): string
-    {
-        if ($this->entityData['timestamped'] === 0) {
-            return 'Unknown';
-        }
-        return $this->getFullnameFromUserid($this->entityData['timestampedby']);
-    }
-
-    public function timestamp(): array
-    {
-        $Config = Config::getConfig();
-
-        // the source data can be in any format, here it defaults to json but can be pdf too
-        $dataFormat = ExportFormat::Json;
-        // if we do keeex we want to timestamp a pdf so we can keeex it
-        // there might be other options impacting this condition later
-        if ($Config->configArr['keeex_enabled'] === '1') {
-            $dataFormat = ExportFormat::Pdf;
-        }
-
-        // select the timestamp service and do the timestamp request to TSA
-        $Maker = $this->getTimestampMaker($Config->configArr, $dataFormat);
-        $TimestampUtils = new TimestampUtils(
-            new Client(),
-            $Maker->generateData(),
-            $Maker->getTimestampParameters(),
-            new TimestampResponse(),
-        );
-
-        // save the token and data in a zip archive
-        $zipName = $Maker->getFileName();
-        $zipPath = FsTools::getCacheFile() . '.zip';
-        $comment = sprintf(_('Timestamp archive by %s'), $this->Users->userData['fullname']);
-        $Maker->saveTimestamp(
-            $TimestampUtils->timestamp(),
-            new CreateUpload($zipName, $zipPath, $comment, immutable: 1, state: State::Archived),
-        );
-
-        // decrement the balance
-        $Config->decrementTsBalance();
-
-        // clear any request action
-        $RequestActions = new RequestActions($this->Users, $this);
-        $RequestActions->remove(RequestableAction::Timestamp);
-
-        return $this->readOne();
-    }
-
-    protected function bloxberg(): array
-    {
-        $configArr = Config::getConfig()->configArr;
-        $HttpGetter = new HttpGetter(new Client(), $configArr['proxy']);
-        $Maker = new MakeBloxberg(
-            $this->Users,
-            $this,
-            $configArr,
-            $HttpGetter,
-        );
-        $Maker->timestamp();
-        return $this->readOne();
-    }
-
-    protected function getTimestampMaker(array $config, ExportFormat $dataFormat): MakeTrustedTimestampInterface
-    {
-        //$entitySlugs = array(new EntitySlug($this->entityType, $this->id ?? 0));
-        return match ($config['ts_authority']) {
-            'dfn' => new MakeDfnTimestamp($this->Users, $this, $config, $dataFormat),
-            'dgn' => new MakeDgnTimestamp($this->Users, $this, $config, $dataFormat),
-            'universign' => $config['debug'] ? new MakeUniversignTimestampDev($this->Users, $this, $config, $dataFormat) : new MakeUniversignTimestamp($this->Users, $this, $config, $dataFormat),
-            'digicert' => new MakeDigicertTimestamp($this->Users, $this, $config, $dataFormat),
-            'sectigo' => new MakeSectigoTimestamp($this->Users, $this, $config, $dataFormat),
-            'globalsign' => new MakeGlobalSignTimestamp($this->Users, $this, $config, $dataFormat),
-            'custom' => new MakeCustomTimestamp($this->Users, $this, $config, $dataFormat),
-            default => throw new ImproperActionException('Incorrect timestamp authority configuration.'),
-        };
-    }
-
-    protected function sign(string $passphrase, Meaning $meaning): array
-    {
-        $Sigkeys = new SignatureHelper($this->Users);
-        $Maker = new MakeFullJson(array($this));
-        $message = $Maker->getFileContent();
-        $signature = $Sigkeys->serializeSignature($this->Users->userData['sig_privkey'], $passphrase, $message, $meaning);
-        $SigKeys = new SigKeys($this->Users);
-        $SigKeys->touch();
-        $Comments = new ImmutableComments($this);
-        $comment = sprintf(_('Signed by %s (%s)'), $this->Users->userData['fullname'], $meaning->name);
-        $Comments->postAction(Action::Create, array('comment' => $comment));
-        // save the signature and data in a zip archive
-        $zipPath = FsTools::getCacheFile() . '.zip';
-        $comment = sprintf(_('Signature archive by %s (%s)'), $this->Users->userData['fullname'], $meaning->name);
-        $ZipArchive = new ZipArchive();
-        $ZipArchive->open($zipPath, ZipArchive::CREATE);
-        $ZipArchive->addFromString('data.json.minisig', $signature);
-        $ZipArchive->addFromString('data.json', $message);
-        $ZipArchive->addFromString('key.pub', $this->Users->userData['sig_pubkey']);
-        $ZipArchive->addFromString('verify.sh', "#!/bin/sh\nminisign -H -V -p key.pub -m data.json\n");
-        $ZipArchive->close();
-        // allow uploading a file to that entity because sign action only requires read access
-        $this->Uploads->Entity->bypassWritePermission = true;
-        $this->Uploads->create(new CreateUpload('signature archive.zip', $zipPath, $comment, immutable: 1, state: State::Archived));
-        $RequestActions = new RequestActions($this->Users, $this);
-        $RequestActions->remove(RequestableAction::Sign);
-        AuditLogs::create(new SignatureCreated($this->Users->userData['userid'], $this->id ?? 0, $this->entityType));
-        return $this->readOne();
     }
 
     protected function getNextCustomId(?int $category): ?int

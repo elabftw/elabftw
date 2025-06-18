@@ -17,9 +17,11 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Meaning;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Params\DisplayParams;
 use Elabftw\Params\EntityParams;
 use Elabftw\Params\ExtraFieldsOrderingParams;
 use Elabftw\Services\Check;
+use Symfony\Component\HttpFoundation\InputBag;
 
 class ExperimentsTest extends \PHPUnit\Framework\TestCase
 {
@@ -43,7 +45,14 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->Experiments->patch(Action::Archive, array()));
         // two times to test unarchive branch
         $this->assertIsArray($this->Experiments->patch(Action::Archive, array()));
-        $this->Experiments->toggleLock();
+        $exp = $this->Experiments->toggleLock();
+        $this->assertEquals(0, $exp['locked']);
+        $exp = $this->Experiments->toggleLock();
+        $this->assertEquals(1, $exp['locked']);
+        $exp = $this->Experiments->lock();
+        $this->assertEquals(1, $exp['locked']);
+        $exp = $this->Experiments->unlock();
+        $this->assertEquals(0, $exp['locked']);
         $this->Experiments->destroy();
         $Templates = new Templates($this->Users);
         $Templates->create(title: 'my template');
@@ -61,12 +70,21 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testRead(): void
     {
-        $new = $this->Experiments->create(template: 0);
+        $title = 'uP75wAqLqTXxqnxSK5CDDyniHFfj';
+        $query = new InputBag(array('q' => $title));
+        $DisplayParams = new DisplayParams($this->Users, EntityType::Experiments, $query);
+        $all = $this->Experiments->readAll($DisplayParams);
+        // first search for it before creating it
+        $this->assertTrue(empty($all));
+        // then create it so we can find it with a search
+        $new = $this->Experiments->create(template: -1, title: $title);
+        $all = $this->Experiments->readAll($DisplayParams);
+        $this->assertEquals(1, count($all));
         $this->Experiments->setId($new);
         $this->Experiments->canOrExplode('read');
         $experiment = $this->Experiments->readOne();
         $this->assertTrue(is_array($experiment));
-        $this->assertEquals('Untitled', $experiment['title']);
+        $this->assertEquals($title, $experiment['title']);
     }
 
     public function testUpdate(): void

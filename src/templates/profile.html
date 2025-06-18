@@ -118,7 +118,7 @@
       <select name='orderby' class='form-control ml-2' aria-label='{{ 'Order by'|trans }}'>
         <option value='' data-action='clear'>{{ 'Order by'|trans }}</option>
         <option data-reload='attachedFilesTable,countDisplay' data-action='insert-param-and-reload' data-target='order' value='{{ byFilesize }}' {{ currentOrderBy == byFilesize ? 'selected' }}>{{ 'File size'|trans }}</option>
-        <option data-reload='attachedFilesTable,countDisplay' data-action='insert-param-and-reload' data-target='order' value='{{ byCreated }}' {{ currentOrderBy == byCreated ? 'selected' }}>{{ 'Created'|trans }}</option>
+        <option data-reload='attachedFilesTable,countDisplay' data-action='insert-param-and-reload' data-target='order' value='{{ byCreated }}' {{ currentOrderBy == byCreated ? 'selected' }}>{{ 'Creation date'|trans }}</option>
         <option data-reload='attachedFilesTable,countDisplay' data-action='insert-param-and-reload' data-target='order' value='{{ byFilename }}' {{ currentOrderBy == byFilename ? 'selected' }}>{{ 'File name'|trans }}</option>
       </select>
 

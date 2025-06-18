@@ -195,12 +195,6 @@ final class Templates extends AbstractTemplateEntity
     }
 
     #[Override]
-    public function getTimestamperFullname(): string
-    {
-        return '';
-    }
-
-    #[Override]
     protected function getSqlBuilder(): SqlBuilderInterface
     {
         return new TemplatesSqlBuilder($this);

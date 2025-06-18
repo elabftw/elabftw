@@ -44,7 +44,10 @@ final class ItemsTypesSqlBuilder extends EntitySqlBuilder
             entity.lockedby,
             entity.locked_at,
             entity.metadata,
-            entity.state';
+            entity.state,
+            entity.timestamped,
+            entity.timestamped_at,
+            entity.timestampedby';
     }
 
     #[Override]

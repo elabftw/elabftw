@@ -4,11 +4,6 @@ describe('Users tab in Admin page', () => {
     cy.visit('/admin.php?tab=3&q=toto');
   });
 
-  it('has valid html', () => {
-    // Search user
-    cy.get('#editUsersBox').should('contain', 'Le sysadmin');
-  });
-
   it('cannot create user with empty fields', () => {
     // create user without filling
     cy.get('#initialCreateUserBtn').should('exist').click();

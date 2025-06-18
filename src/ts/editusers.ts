@@ -69,7 +69,8 @@ document.addEventListener('DOMContentLoaded', () => {
           form.reset();
           document.getElementById('archivedUsersFound').setAttribute('hidden', 'hidden');
           document.getElementById('initialCreateUserBtn').removeAttribute('disabled');
-          reloadElements(['editUsersBox']);
+          // TODO replace with custom event to reload table reloadElements(['editUsersBox']);
+          // also in code below
         });
       } catch (error) {
         el.removeAttribute('disabled');
@@ -124,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         ApiC.patch(`${Model.User}/${el.dataset.userid}`, params).then(() => {
           document.getElementById('archivedUsersFound').remove();
-          reloadElements(['editUsersBox']);
+          // TODO replace with custom event to reload table reloadElements(['editUsersBox']);
         });
       });
 

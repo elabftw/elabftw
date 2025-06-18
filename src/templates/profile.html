@@ -112,16 +112,15 @@
 
       {# ORDER BY FILTER #}
       <select name='orderby' class='form-control filterHelper filterAuto ml-2' aria-label='{{ 'Order by'|trans }}'>
-        <option value='' data-action='clear'>{{ 'Sort'|trans }}</option>
+        <option value='' data-action='clear'>{{ 'Order by'|trans }}</option>
         <option data-action='set-filter-and-reload' data-target='order' value='filesize' {{ currentOrderBy == 'filesize' ? 'selected' }}>{{ 'File size'|trans }}</option>
         <option data-action='set-filter-and-reload' data-target='order' value='created_at' {{ currentOrderBy == 'created_at' ? 'selected' }}>{{ 'Created'|trans }}</option>
         <option data-action='set-filter-and-reload' data-target='order' value='filename' {{ currentOrderBy == 'filename' ? 'selected' }}>{{ 'File name'|trans }}</option>
       </select>
 
       {# SORT FILTER #}
-      <select name='sort' class='form-control filterHelper filterAuto ml-2' aria-label='{{ 'Order by'|trans }}'>
-        {# TODO: FIXME: sort should mean 'filter by entity', and order by 'order asc/desc'. Label is 'Order By' for the user understanding #}
-        <option value='' data-action='clear'>{{ 'Order by'|trans }}</option>
+      <select name='sort' class='form-control filterHelper filterAuto ml-2' aria-label='{{ 'Sort'|trans }}'>
+        <option value='' data-action='clear'>{{ 'Sort'|trans }}</option>
         <option data-action='set-filter-and-reload' data-target='sort' value='asc' {{ currentSort == 'asc' ? 'selected' }}>{{ 'Asc'|trans }}</option>
         <option data-action='set-filter-and-reload' data-target='sort' value='desc' {{ currentSort == 'desc' ? 'selected' }}>{{ 'Desc'|trans }}</option>
       </select>

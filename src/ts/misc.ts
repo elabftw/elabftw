@@ -84,8 +84,6 @@ function triggerHandler(event: Event, el: HTMLInputElement): void {
   const params = {};
   params[el.dataset.target] = value;
   ApiC.patch(`${el.dataset.model}`, params).then(() => {
-    // data-reload can be "page" to reload the page, "reloadEntitiesShow" to reload properly entities in show mode,
-    // or a comma separated list of ids of elements to reload
     if (el.dataset.reload) {
       handleReloads(el.dataset.reload);
     }
@@ -96,7 +94,8 @@ function triggerHandler(event: Event, el: HTMLInputElement): void {
   });
 }
 
-// takes a dataset.reload string as parameter, like "page","reloadEntitiesShow" or "btn1,btn2"
+// data-reload can be "page" for full page, "reloadEntitiesShow" for entities in show mode,
+// or a comma separated list of ids of elements to reload
 export function handleReloads(reloadAttributes: string | undefined): void {
   if (!reloadAttributes) return;
 

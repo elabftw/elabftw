@@ -390,10 +390,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // SELECT FILTERS - state, orderby...
     } else if (el.matches('[data-action="insert-param-and-reload"]')) {
       const params = new URLSearchParams(document.location.search.slice(1));
-      // handle special case where "results per page" is a button in show.html, the rest is select.
-      const isSelect = el instanceof HTMLSelectElement;
       const target = el.dataset.target;
-      const value = isSelect ? el.value : el.dataset.value;
+      const value = (el as HTMLInputElement).value;
       if (!target) return;
       if (value) {
         params.set(target, value);

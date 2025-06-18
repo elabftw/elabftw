@@ -306,7 +306,7 @@
         <div class='dropdown-menu dropdown-menu-right'>
           <h6 class='dropdown-header'>{{ 'Results per page'|trans }}</h6>
         {% for option in limitOptions(DisplayParams.limit) %}
-          <button type='button' class='btn btn-dropdown-item dropdown-item' data-action='insert-param-and-reload' data-target='limit' data-reload='reloadEntitiesShow' data-value='{{ option }}'>{{ option }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item' data-action='insert-param-and-reload' data-target='limit' data-reload='reloadEntitiesShow' value='{{ option }}'>{{ option }}</button>
         {% endfor %}
         </div>
       </div>

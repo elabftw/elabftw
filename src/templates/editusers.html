@@ -41,7 +41,7 @@
   <div class='pl-3'>
     <p class='smallgray'>{{ 'Double-click a row in the table below to edit user.'|trans }}</p>
     {% if App.Config.configArr.debug -%}
-      <!-- [html-validate-disable-block prefer-native-element, element-permitted-content: ag-grid] -->
+      <!-- [html-validate-disable-block prefer-native-element, element-permitted-content, no-missing-references: ag-grid] -->
     {%- endif %}
     <div id='users-table'></div>
   </div>

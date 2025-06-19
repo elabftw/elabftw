@@ -152,10 +152,10 @@ final class Scheduler extends AbstractRest
             $this->appendFilterSql('team_events.userid', 'userid', $this->Items->Users->userData['userid']);
         } elseif ($scopeInt === Scope::Team->value) {
             // Events created by Me and events whose "item.canbook" i'm included in (base = Team)
-            $this->filterSqlParts[] = $this->getCanBookWhereClause(Scope::Team->value);
+            $this->appendFilterSql('team_events.team', 'team', $this->Items->Users->userData['team']);
         } elseif ($scopeInt === Scope::Everything->value) {
             // Events created by me + events whose "item.canbook" include my team or usergroups
-            $this->filterSqlParts[] = $this->getCanBookWhereClause(Scope::Everything->value);
+            $this->filterSqlParts[] = $this->getCanBookWhereClause();
         }
         // the title of the event is title + Firstname Lastname of the user who booked it
         $sql = sprintf(
@@ -594,7 +594,7 @@ final class Scheduler extends AbstractRest
     /*
      * Filtering events based on the Item's canbook permission
      */
-    private function getCanBookWhereClause(int $scope): string
+    private function getCanBookWhereClause(): string
     {
         $userId = (int) $this->Items->Users->userData['userid'];
         $UsersHelper = new UsersHelper($userId);
@@ -602,28 +602,22 @@ final class Scheduler extends AbstractRest
         $teamGroupsOfUser = array_column((new TeamGroups($this->Items->Users))->readGroupsFromUser(), 'id');
         $conditions = [];
 
-        if ($scope === Scope::Team->value) {
-            // all events from my teams that are included in canbook
-            foreach ($teamsOfUser as $team) {
-                $conditions[] = sprintf("%d MEMBER OF (items.canbook->'$.teams')", $team);
-            }
-            // + events I personally created (regardless of canbook)
-            $this->filterBindings['userid'] = $this->Items->Users->userData['userid'];
-            $conditions[] = "team_events.userid = :userid";
-        } elseif ($scope === Scope::Everything->value) {
-            // I'm included in canbook
-            $conditions[] = sprintf("%d MEMBER OF (items.canbook->'$.users')", $userId);
-            // Or one of my teams is included in canbook
-            foreach ($teamsOfUser as $team) {
-                $conditions[] = sprintf("%d MEMBER OF (items.canbook->'$.teams')", $team);
-            }
-            // Or one of my user groups included in canbook
-            foreach ($teamGroupsOfUser as $group) {
-                $conditions[] = sprintf("%d MEMBER OF (items.canbook->'$.teamgroups')", $group);
-            }
-            $this->filterBindings['userid'] = $this->Items->Users->userData['userid'];
-            $conditions[] = "team_events.userid = :userid";
+        // I'm included in canbook
+        $conditions[] = sprintf("%d MEMBER OF (items.canbook->'$.users')", $userId);
+        // Or one of my teams is included in canbook
+        foreach ($teamsOfUser as $team) {
+            $conditions[] = sprintf("%d MEMBER OF (items.canbook->'$.teams')", $team);
         }
+        // Or one of my user groups included in canbook
+        foreach ($teamGroupsOfUser as $group) {
+            $conditions[] = sprintf("%d MEMBER OF (items.canbook->'$.teamgroups')", $group);
+        }
+        // events created by me or my team
+        $this->filterBindings['userid'] = $this->Items->Users->userData['userid'];
+        $this->filterBindings['team'] = $this->Items->Users->userData['team'];
+        $conditions[] = "team_events.userid = :userid OR team_events.team = :team";
+        // Events created by others explicitly listed in canbook
+        $conditions[] = "team_events.userid MEMBER OF (items.canbook->'$.users')";
 
         return "AND (" . implode(" OR ", $conditions) . ")";
     }

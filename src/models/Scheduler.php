@@ -591,16 +591,14 @@ final class Scheduler extends AbstractRest
         $this->filterBindings[$paramName] = $value;
     }
 
-    /*
-     * Filtering events based on the Item's canbook permission
-     */
+    // Filtering events based on the Item's canbook permission
     private function getCanBookWhereClause(): string
     {
         $userId = (int) $this->Items->Users->userData['userid'];
         $UsersHelper = new UsersHelper($userId);
         $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
         $teamGroupsOfUser = array_column((new TeamGroups($this->Items->Users))->readGroupsFromUser(), 'id');
-        $conditions = [];
+        $conditions = array();
 
         // I'm included in canbook
         $conditions[] = sprintf("%d MEMBER OF (items.canbook->'$.users')", $userId);
@@ -615,10 +613,10 @@ final class Scheduler extends AbstractRest
         // events created by me or my team
         $this->filterBindings['userid'] = $this->Items->Users->userData['userid'];
         $this->filterBindings['team'] = $this->Items->Users->userData['team'];
-        $conditions[] = "team_events.userid = :userid OR team_events.team = :team";
+        $conditions[] = 'team_events.userid = :userid OR team_events.team = :team';
         // Events created by others explicitly listed in canbook
         $conditions[] = "team_events.userid MEMBER OF (items.canbook->'$.users')";
 
-        return "AND (" . implode(" OR ", $conditions) . ")";
+        return 'AND (' . implode(' OR ', $conditions) . ')';
     }
 }

@@ -23,8 +23,6 @@ use function date;
  */
 final class MakeProcurementRequestsCsv extends AbstractMakeCsv
 {
-    private array $rows;
-
     public function __construct(ProcurementRequests $procurementRequests)
     {
         $this->rows = $procurementRequests->readAll();
@@ -40,15 +38,6 @@ final class MakeProcurementRequestsCsv extends AbstractMakeCsv
     public function getFileName(): string
     {
         return date('Y-m-d') . '-procurement-requests.elabftw.csv';
-    }
-
-    /**
-     * Here we populate the first row: it will be the column names
-     */
-    #[Override]
-    protected function getHeader(): array
-    {
-        return array_keys($this->rows[0]);
     }
 
     /**

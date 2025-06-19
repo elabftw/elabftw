@@ -32,6 +32,7 @@ class MakeReport extends AbstractMakeCsv
     {
         parent::__construct();
         $this->canReadOrExplode();
+        $this->rows = $this->getRows();
     }
 
     /**
@@ -53,35 +54,6 @@ class MakeReport extends AbstractMakeCsv
     protected function readUsers(): array
     {
         return $this->requester->readFromQuery();
-    }
-
-    /**
-     * Columns of the CSV
-     */
-    #[Override]
-    protected function getHeader(): array
-    {
-        return array(
-            'userid',
-            'firstname',
-            'lastname',
-            'created_at',
-            'orgid',
-            'email',
-            'has_mfa_enabled',
-            'validated',
-            'last_login',
-            'valid_until',
-            'is_sysadmin',
-            'full_name',
-            'initials',
-            'teams_full',
-            'team(s)',
-            'diskusage_in_bytes',
-            'diskusage_formatted',
-            'exp_total',
-            'exp_timestamped_total',
-        );
     }
 
     /**

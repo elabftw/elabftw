@@ -32,4 +32,22 @@ class MakeReportTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertIsString($this->Make->getFileContent());
     }
+
+    public function testCsvHeaderIsCorrect(): void
+    {
+        // getHeaders is protected so get them from the file content
+        $csvContent = $this->Make->getFileContent();
+
+        // first line of csv contains headers
+        $lines = explode("\n", $csvContent);
+        $headerLine = trim($lines[0]);
+        // due to a UTF-8 BOM, strip the BOM before comparing
+        $headerLine = preg_replace('/^\xEF\xBB\xBF/', '', $headerLine);
+
+        $expectedHeaders = MakeReport::CSV_HEADERS;
+        // csv escapes special characters so make sure we compare the correct string
+        $expectedLine = implode(',', $expectedHeaders);
+
+        $this->assertSame($expectedLine, $headerLine);
+    }
 }

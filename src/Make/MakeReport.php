@@ -28,6 +28,28 @@ class MakeReport extends AbstractMakeCsv
 {
     protected array $users;
 
+    public const array CSV_HEADERS = array(
+        'userid',
+        'firstname',
+        'lastname',
+        'created_at',
+        'orgid',
+        'email',
+        'has_mfa_enabled',
+        'validated',
+        'archived',
+        'last_login',
+        'valid_until',
+        'is_sysadmin',
+        'full_name',
+        'initials',
+        'team(s)',
+        'diskusage_in_bytes',
+        'diskusage_formatted',
+        'exp_total',
+        'exp_timestamped_total',
+    );
+
     public function __construct(protected Users $requester)
     {
         parent::__construct();
@@ -61,26 +83,7 @@ class MakeReport extends AbstractMakeCsv
     #[Override]
     protected function getHeader(): array
     {
-        return array(
-            'userid',
-            'firstname',
-            'lastname',
-            'created_at',
-            'orgid',
-            'email',
-            'has_mfa_enabled',
-            'validated',
-            'archived',
-            'last_login',
-            'valid_until',
-            'is_sysadmin',
-            'full_name',
-            'team(s)',
-            'diskusage_in_bytes',
-            'diskusage_formatted',
-            'exp_total',
-            'exp_timestamped_total',
-        );
+        return self::CSV_HEADERS;
     }
 
     /**

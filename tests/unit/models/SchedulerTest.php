@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 use DateInterval;
 use DateTime;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 
@@ -71,6 +72,19 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $Items = new Items(new Users(1, 1), 1);
         $this->Scheduler = new Scheduler($Items, null, $this->start, $this->end);
         $this->assertIsArray($this->Scheduler->readOne());
+    }
+
+    public function testReadAllWithVariousScopes(): void
+    {
+        foreach (array(Scope::User->value, Scope::Team->value, Scope::Everything->value) as $scope) {
+            $Users = new Users(1, 1);
+            $Users->userData['scope_events'] = $scope;
+
+            $Items = new Items($Users, 1);
+            $Scheduler = new Scheduler($Items, null, $this->start, $this->end);
+
+            $this->assertReadAllReturnsValidEvents($Scheduler, $scope);
+        }
     }
 
     public function testPatchEpoch(): Scheduler
@@ -323,5 +337,45 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $id = $Scheduler->postAction(Action::Create, array('start' => $start, 'end' => $end, 'title' => 'test grace period'));
         $Scheduler->setId($id);
         $this->assertTrue($Scheduler->destroy());
+    }
+
+    private function assertReadAllReturnsValidEvents(Scheduler $Scheduler, int $scope): void
+    {
+        $events = $Scheduler->readAll();
+        $this->assertNotEmpty($events, 'Expected events but got none');
+
+        foreach ($events as $event) {
+            $this->assertArrayHasKey('id', $event);
+            $this->assertArrayHasKey('userid', $event);
+            $this->assertArrayHasKey('start', $event);
+            $this->assertArrayHasKey('end', $event);
+        }
+
+        $this->assertReadAllByScope($events, $scope);
+    }
+
+    private function assertReadAllByScope(array $events, int $scope): void
+    {
+        foreach ($events as $event) {
+            switch ($scope) {
+                case Scope::User->value:
+                    $this->assertEquals(1, $event['userid'], 'Event does not belong to user with id 1');
+                    break;
+
+                case Scope::Team->value:
+                    $this->assertEquals(1, $event['team'], 'Event is not from team with id 1');
+                    break;
+
+                case Scope::Everything->value:
+                    $this->assertTrue(
+                        $event['userid'] === 1 || $event['team'] === 1,
+                        'Event does not match user or team!'
+                    );
+                    break;
+
+                default:
+                    $this->fail("Unknown scope value: $scope");
+            }
+        }
     }
 }

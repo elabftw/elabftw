@@ -70,6 +70,7 @@ final class Csv extends AbstractCsv
             }
             $status = empty($row['status_title']) ? null : $this->getStatusId($this->entityType, $row['status_title']);
             $customId = empty($row['custom_id']) ? null : (int) $row['custom_id'];
+            $contentType = empty($row['content_type']) ? null : (int) $row['content_type'];
             $metadata = empty($row['metadata']) ? null : (string) $row['metadata'];
             if ($metadata === null) {
                 $metadata = $this->collectMetadata($row);
@@ -83,6 +84,7 @@ final class Csv extends AbstractCsv
                 body: $body,
                 canread: $canread,
                 canwrite: $canwrite,
+                contentType: $contentType,
                 date: $date,
                 tags: $tags,
                 template: $category,
@@ -103,13 +105,16 @@ final class Csv extends AbstractCsv
     protected function getProcessedColumns(): array
     {
         return array(
+            'body',
             'canread',
             'canwrite',
             'category',
             'category_title',
             'custom_id',
+            'content_type',
             'date',
             'metadata',
+            'rating',
             'status',
             'status_title',
             'tags',

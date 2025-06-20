@@ -16,6 +16,7 @@ use DateTime;
 use DateTimeImmutable;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
@@ -145,16 +146,20 @@ final class Scheduler extends AbstractRest
             $this->appendFilterSql(column: 'items.id', paramName: 'itemid', value: $queryParams->getQuery()->getInt('item'));
         }
         // apply scope for events
-        $scopeInt = $this->Items->Users->userData['scope_events'] ?? Scope::Everything->value;
+        $itemId = ($queryParams !== null) ? $queryParams->getQuery()->getInt('item') : 0;
+        $scopeInt = $this->getScope($itemId);
         if ($scopeInt === Scope::User->value) {
             $this->appendFilterSql('team_events.userid', 'userid', $this->Items->Users->userData['userid']);
         } elseif ($scopeInt === Scope::Team->value) {
-            $this->appendFilterSql('team_events.team', 'team_scope', $this->Items->Users->userData['team']);
+            $this->filterSqlParts[] = $this->getCanBookWhereClause(Scope::Team->value);
+        } else {
+            $this->filterSqlParts[] = $this->getCanBookWhereClause(Scope::Everything->value);
         }
         // the title of the event is title + Firstname Lastname of the user who booked it
         $sql = sprintf(
             "SELECT
                 team_events.id,
+                team_events.team,
                 team_events.title AS title_only,
                 team_events.start,
                 team_events.end,
@@ -252,6 +257,15 @@ final class Scheduler extends AbstractRest
             $Notif->create($userid);
         });
         return $this->Db->execute($req);
+    }
+
+    private function getScope(int $queryParamsItem): int
+    {
+        // if there is an item selected, we force the events scope to everything
+        if ($queryParamsItem > 0) {
+            return Scope::Everything->value;
+        }
+        return $this->Items->Users->userData['scope_events'] ?? Scope::Everything->value;
     }
 
     /**
@@ -583,5 +597,40 @@ final class Scheduler extends AbstractRest
         }
         $this->filterSqlParts[] = sprintf('AND %s = :%s', $column, $paramName);
         $this->filterBindings[$paramName] = $value;
+    }
+
+    // Filtering events based on the Item's canbook permission
+    private function getCanBookWhereClause(int $scope): string
+    {
+        $this->filterBindings['team'] = (int) $this->Items->Users->userData['team'];
+        $teamGroupsOfUser = array_column((new TeamGroups($this->Items->Users))->readGroupsFromUser(), 'id');
+        $conditions = array();
+
+        // Publicly bookable events: Full or Organization
+        $conditions[] = sprintf(
+            "JSON_EXTRACT(items.canbook, '$.base') IN (%d, %d)",
+            BasePermissions::Full->value,
+            BasePermissions::Organization->value
+        );
+
+        // Events visible in scope::Team are also included in Scope::Everything
+        if ($scope === Scope::Team->value || $scope === Scope::Everything->value) {
+            $conditions[] = sprintf(
+                "(JSON_EXTRACT(items.canbook, '$.base') = %d AND team_events.team = :team)",
+                BasePermissions::Team->value
+            );
+        }
+
+        // Events visible in scope::Team + Events from user groups
+        if ($scope === Scope::Everything->value) {
+            // Scope: Everything — my userid is listed in canbook
+            $conditions[] = sprintf("%d MEMBER OF (items.canbook->'$.users')", (int) $this->Items->Users->userData['userid']);
+
+            // User is part of teamgroups listed
+            foreach ($teamGroupsOfUser as $groupId) {
+                $conditions[] = sprintf("%d MEMBER OF (items.canbook->'$.teamgroups')", $groupId);
+            }
+        }
+        return 'AND (' . implode(' OR ', $conditions) . ')';
     }
 }

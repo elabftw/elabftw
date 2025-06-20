@@ -75,6 +75,7 @@ class MakeReport extends AbstractMakeCsv
             'valid_until',
             'is_sysadmin',
             'full_name',
+            'initials',
             'team(s)',
             'diskusage_in_bytes',
             'diskusage_formatted',

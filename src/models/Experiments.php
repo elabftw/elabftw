@@ -19,6 +19,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Factories\LinksFactory;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\InsertTagsTrait;
 use PDO;
@@ -132,6 +133,8 @@ final class Experiments extends AbstractConcreteEntity
             $this->Steps->duplicate($template, $newId, true);
             $this->ItemsLinks->duplicate($template, $newId, true);
             $this->ExperimentsLinks->duplicate($template, $newId, true);
+            $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
+            $CompoundsLinks->duplicate($template, $newId, true);
             $freshSelf = new self($this->Users, $newId);
             $Templates->Uploads->duplicate($freshSelf);
         }
@@ -180,6 +183,8 @@ final class Experiments extends AbstractConcreteEntity
         $this->ItemsLinks->duplicate($this->id, $newId);
         $this->Steps->duplicate($this->id, $newId);
         $this->Tags->copyTags($newId);
+        $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
+        $CompoundsLinks->duplicate($this->id, $newId, false);
         // also add a link to the original experiment if requested
         if ($linkToOriginal) {
             $ExperimentsLinks = new Experiments2ExperimentsLinks($fresh);

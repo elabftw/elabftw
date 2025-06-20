@@ -57,6 +57,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   const params = new URLSearchParams(document.location.search.substring(1));
 
+  // disable scopeBtn when an item is selected. Default scope becomes Everything
+  const scopeBtnWrapper = document.getElementById('scopeEventBtn');
+  const scopeBtn = scopeBtnWrapper?.querySelector('button.dropdown-toggle') as HTMLButtonElement;
+  if (scopeBtn) {
+    scopeBtn.removeAttribute('disabled');
+  }
+  scopeBtn.disabled = !!params.get('item');
+
   // if we show all items, they are not editable
   let editable = true;
   let selectable = true;

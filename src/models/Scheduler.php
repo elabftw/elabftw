@@ -146,7 +146,7 @@ final class Scheduler extends AbstractRest
             $this->appendFilterSql(column: 'items.id', paramName: 'itemid', value: $queryParams->getQuery()->getInt('item'));
         }
         // apply scope for events
-        $scopeInt = $this->getScope($queryParams->getQuery()->getInt('item'));
+        $scopeInt = $this->getScope($queryParams?->getQuery()->getInt('item') ?? 0);
         if ($scopeInt === Scope::User->value) {
             $this->appendFilterSql('team_events.userid', 'userid', $this->Items->Users->userData['userid']);
         } elseif ($scopeInt === Scope::Team->value) {

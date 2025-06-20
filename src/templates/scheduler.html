@@ -176,6 +176,7 @@
       <p class='smallgray'>{{ 'Select a scope and search for events.'|trans }}</p>
       <div class='d-flex flex-row'>
         {# EVENTS SCOPE #}
+        {# If an item is selected, it's forced to "Everything" and disabled #}
         {% include 'scope-button.html' with {'btnId': 'scopeEventBtn', 'reload': 'page', 'target': 'scope_events', 'isSecondary': 0, 'isSmall': 0} %}
         <div class='input-group ml-2'>
           {#  FILTER BY OWNER #}

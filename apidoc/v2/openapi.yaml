@@ -113,8 +113,9 @@ components:
           nullable: true
         molecular_weight:
           type: number
-          format: float
-          example: 177.02
+          # it's a string, see #5733
+          format: string
+          example: "177.02"
         nci_code:
           type: string
           nullable: true

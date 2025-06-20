@@ -146,7 +146,7 @@ final class Scheduler extends AbstractRest
             $this->appendFilterSql(column: 'items.id', paramName: 'itemid', value: $queryParams->getQuery()->getInt('item'));
         }
         // apply scope for events
-        $scopeInt = $this->Items->Users->userData['scope_events'] ?? Scope::Everything->value;
+        $scopeInt = $this->getScope($queryParams->getQuery()->getInt('item'));
         if ($scopeInt === Scope::User->value) {
             $this->appendFilterSql('team_events.userid', 'userid', $this->Items->Users->userData['userid']);
         } elseif ($scopeInt === Scope::Team->value) {
@@ -256,6 +256,15 @@ final class Scheduler extends AbstractRest
             $Notif->create($userid);
         });
         return $this->Db->execute($req);
+    }
+
+    private function getScope(int $queryParamsItem): int
+    {
+        // if there is an item selected, we force the events scope to everything
+        if ($queryParamsItem > 0) {
+            return Scope::Everything->value;
+        }
+        return $this->Items->Users->userData['scope_events'] ?? Scope::Everything->value;
     }
 
     /**

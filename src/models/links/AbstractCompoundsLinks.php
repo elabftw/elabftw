@@ -69,6 +69,32 @@ abstract class AbstractCompoundsLinks extends AbstractRest
         };
     }
 
+    /**
+     * Copy the links from one entity to an other
+     *
+     * @param int $id The id of the original entity
+     * @param int $newId The id of the new entity that will receive the links
+     * @param bool $fromTpl do we duplicate from template?
+     */
+    public function duplicate(int $id, int $newId, $fromTpl = false): int
+    {
+        $table = $this->getTable();
+        if ($fromTpl) {
+            $table = 'compounds2experiments_templates';
+            // TODO implement properly, right now items_types have no ui for compounds
+            //$table = $this->getTemplateTable();
+        }
+        $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (entity_id, compound_id)
+            SELECT :new_id, compound_id
+            FROM ' . $table . '
+            WHERE entity_id = :old_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':new_id', $newId, PDO::PARAM_INT);
+        $req->bindParam(':old_id', $id, PDO::PARAM_INT);
+
+        return (int) $this->Db->execute($req);
+    }
+
     #[Override]
     public function destroy(): bool
     {

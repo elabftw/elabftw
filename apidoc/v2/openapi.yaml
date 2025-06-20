@@ -113,8 +113,9 @@ components:
           nullable: true
         molecular_weight:
           type: number
-          format: float
-          example: 177.02
+          # it's a string, see #5733
+          format: string
+          example: "177.02"
         nci_code:
           type: string
           nullable: true
@@ -146,53 +147,77 @@ components:
           type: string
           nullable: true
         is_corrosive:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_explosive:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_flammable:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_gas_under_pressure:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_hazardous2env:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_hazardous2health:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_serious_health_hazard:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_oxidising:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_toxic:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_radioactive:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_antibiotic:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_antibiotic_precursor:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_drug:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_drug_precursor:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_explosive_precursor:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_cmr:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_nano:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_controlled:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_ed2health:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_ed2env:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_pbt:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_pmt:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_vpvb:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_vpvm:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         fp2_base64:
           type: string
           description: Base64-encoded fingerprint
@@ -203,7 +228,8 @@ components:
           type: string
           example: "Alpha"
         has_fingerprint:
-          type: boolean
+          type: integer
+          enum: [0, 1]
     CompoundDuplicateRequest:
       type: object
       required:
@@ -251,23 +277,32 @@ components:
         pubchem_cid:
           type: integer
         is_corrosive:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_serious_health_hazard:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_explosive:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_flammable:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_gas_under_pressure:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_hazardous2env:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_hazardous2health:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_oxidising:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_toxic:
-          type: boolean
+          type: integer
+          enum: [0, 1]
 
     # COMMENT
     comment:
@@ -1135,7 +1170,7 @@ components:
         item_id:
           type: integer
         userid:
-          type: string
+          type: integer
         type:
           type: string
         created_at:

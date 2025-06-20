@@ -14,6 +14,8 @@ namespace Elabftw\Models;
 use DateInterval;
 use DateTime;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 
@@ -71,6 +73,75 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $Items = new Items(new Users(1, 1), 1);
         $this->Scheduler = new Scheduler($Items, null, $this->start, $this->end);
         $this->assertIsArray($this->Scheduler->readOne());
+    }
+
+    public function testReadAllWithVariousScopes(): void
+    {
+        foreach (array(Scope::User->value, Scope::Team->value, Scope::Everything->value) as $scope) {
+            $Users = new Users(1, 1);
+            $Users->userData['scope_events'] = $scope;
+
+            $Items = new Items($Users, 1);
+            $Scheduler = new Scheduler($Items, null, $this->start, $this->end);
+
+            $this->assertReadAllReturnsValidEvents($Scheduler, $scope);
+        }
+    }
+
+    public function testEventVisibilityByTeamAccess(): void
+    {
+        // user 1 in team 1 creates an item
+        $User1 = new Users(1, 1);
+        $Items1 = new Items($User1);
+        $itemId = $Items1->postAction(Action::Create, array('category_id' => 5));
+        $Items1->setId($itemId);
+
+        // gives canread permissions to user 2 to avoid "tried to access entity without permission" error
+        // but not giving canbook permission
+        $Items1->patch(Action::Update, array(
+            'canread' => json_encode(array(
+                'base' => BasePermissions::User->value,
+                'users' => array(2),
+                'teams' => array(),
+                'teamgroups' => array(),
+            )),
+        ));
+
+        // add event to scheduler by user 1
+        $Scheduler1 = new Scheduler($Items1);
+        $Scheduler1->postAction(Action::Create, array(
+            'start' => $this->start,
+            'end' => $this->end,
+            'title' => 'Bookable only by user 1',
+        ));
+
+        // User 2 has read access but no book access
+        $User2 = new Users(2, 2);
+        // goes in scope Everything and tries to see user 1's booking
+        $User2->userData['scope_events'] = Scope::Everything->value;
+        $Items2 = new Items($User2, $itemId);
+        $Scheduler2 = new Scheduler($Items2, null, $this->start, $this->end);
+
+        $events = $Scheduler2->readAll();
+        $this->assertIsArray($events);
+        $this->assertCount(0, $events, 'User 2 should not see any events due to lack of book permission.');
+
+        // now make it visible for user in the other team
+        $Items1->patch(Action::Update, array(
+            'canbook' => json_encode(array(
+                'base' => BasePermissions::User->value,
+                'users' => array(2),
+                'teams' => array(),
+                'teamgroups' => array(),
+            )),
+        ));
+
+        // User 2 retries after being granted book permission
+        $eventsAfterGrant = $Scheduler2->readAll();
+        $this->assertIsArray($eventsAfterGrant);
+        $this->assertCount(1, $eventsAfterGrant, 'User 2 should now see the event.');
+        // title of events is formatted [untitled] title (user fullname)
+        $this->assertEquals('[Untitled] Bookable only by user 1 (Toto Le sysadmin)', $eventsAfterGrant[0]['title']);
     }
 
     public function testPatchEpoch(): Scheduler
@@ -323,5 +394,45 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $id = $Scheduler->postAction(Action::Create, array('start' => $start, 'end' => $end, 'title' => 'test grace period'));
         $Scheduler->setId($id);
         $this->assertTrue($Scheduler->destroy());
+    }
+
+    private function assertReadAllReturnsValidEvents(Scheduler $Scheduler, int $scope): void
+    {
+        $events = $Scheduler->readAll();
+        $this->assertNotEmpty($events, 'Expected events but got none');
+
+        foreach ($events as $event) {
+            $this->assertArrayHasKey('id', $event);
+            $this->assertArrayHasKey('userid', $event);
+            $this->assertArrayHasKey('start', $event);
+            $this->assertArrayHasKey('end', $event);
+        }
+
+        $this->assertReadAllByScope($events, $scope);
+    }
+
+    private function assertReadAllByScope(array $events, int $scope): void
+    {
+        foreach ($events as $event) {
+            switch ($scope) {
+                case Scope::User->value:
+                    $this->assertEquals(1, $event['userid'], 'Event does not belong to user with id 1');
+                    break;
+
+                case Scope::Team->value:
+                    $this->assertEquals(1, $event['team'], 'Event is not from team with id 1');
+                    break;
+
+                case Scope::Everything->value:
+                    $this->assertTrue(
+                        $event['userid'] === 1 || $event['team'] === 1,
+                        'Event does not match user or team!'
+                    );
+                    break;
+
+                default:
+                    $this->fail("Unknown scope value: $scope");
+            }
+        }
     }
 }

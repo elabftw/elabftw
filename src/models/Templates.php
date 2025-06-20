@@ -22,6 +22,7 @@ use Elabftw\Enums\Scope;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Factories\LinksFactory;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SortableTrait;
@@ -181,6 +182,8 @@ final class Templates extends AbstractTemplateEntity
         $this->entityData['steps'] = $this->Steps->readAll();
         $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll();
         $this->entityData['items_links'] = $this->ItemsLinks->readAll();
+        $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
+        $this->entityData['compounds'] = $CompoundsLinks->readAll();
         $this->entityData['sharelink'] = sprintf(
             '%s/%s?mode=view&id=%d',
             Config::fromEnv('SITE_URL'),

@@ -19,6 +19,7 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FilterableColumn;
+use Elabftw\Factories\LinksFactory;
 use Elabftw\Params\ContentParams;
 use Elabftw\Params\DisplayParams;
 use Elabftw\Services\Filter;
@@ -166,6 +167,8 @@ final class Items extends AbstractConcreteEntity
         $this->ItemsLinks->duplicate($this->id, $newId);
         $this->Steps->duplicate($this->id, $newId);
         $this->Tags->copyTags($newId);
+        $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
+        $CompoundsLinks->duplicate($this->id, $newId, false);
         // also add a link to the original resource
         if ($linkToOriginal) {
             $ItemsLinks = new Items2ItemsLinks($fresh);

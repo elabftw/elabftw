@@ -605,6 +605,13 @@ final class Scheduler extends AbstractRest
         $teamGroupsOfUser = array_column((new TeamGroups($this->Items->Users))->readGroupsFromUser(), 'id');
         $conditions = array();
 
+        // Publicly bookable events: Full or Organization
+        $conditions[] = sprintf(
+            "JSON_EXTRACT(items.canbook, '$.base') IN (%d, %d)",
+            BasePermissions::Full->value,
+            BasePermissions::Organization->value
+        );
+
         // Events visible in scope::Team are also included in Scope::Everything
         if ($scope === Scope::Team->value || $scope === Scope::Everything->value) {
             $conditions[] = sprintf(

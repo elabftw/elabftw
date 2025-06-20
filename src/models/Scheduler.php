@@ -148,19 +148,18 @@ final class Scheduler extends AbstractRest
         // apply scope for events
         $scopeInt = $this->Items->Users->userData['scope_events'] ?? Scope::Everything->value;
         if ($scopeInt === Scope::User->value) {
-            // Only events I created
             $this->appendFilterSql('team_events.userid', 'userid', $this->Items->Users->userData['userid']);
         } elseif ($scopeInt === Scope::Team->value) {
-            // Events created by Me and events whose "item.canbook" i'm included in (base = Team)
             $this->appendFilterSql('team_events.team', 'team', $this->Items->Users->userData['team']);
-        } elseif ($scopeInt === Scope::Everything->value) {
-            // Events created by me + events whose "item.canbook" include my team or usergroups
+        } else {
+            // Scope::Everything - Events created by me + events whose "item.canbook" include my team or usergroups
             $this->filterSqlParts[] = $this->getCanBookWhereClause();
         }
         // the title of the event is title + Firstname Lastname of the user who booked it
         $sql = sprintf(
             "SELECT
                 team_events.id,
+                team_events.team,
                 team_events.title AS title_only,
                 team_events.start,
                 team_events.end,
@@ -600,7 +599,7 @@ final class Scheduler extends AbstractRest
         $teamGroupsOfUser = array_column((new TeamGroups($this->Items->Users))->readGroupsFromUser(), 'id');
         $conditions = array();
 
-        // I'm included in canbook
+        // My userid is specified in canbook
         $conditions[] = sprintf("%d MEMBER OF (items.canbook->'$.users')", $userId);
         // Or one of my teams is included in canbook
         foreach ($teamsOfUser as $team) {

@@ -1170,7 +1170,7 @@ components:
         item_id:
           type: integer
         userid:
-          type: string
+          type: integer
         type:
           type: string
         created_at:

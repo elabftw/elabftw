@@ -601,11 +601,26 @@ document.addEventListener('DOMContentLoaded', () => {
           details.open = state;
         });
       }
+    } else if (el.matches('[data-action="rename-storage"]')) {
+      const name = prompt('Name');
+      const params = {
+        parent_id: el.dataset.id,
+        name: name,
+      };
+      ApiC.patch(`storage_units/${el.dataset.id}`, params).then(() => {
+        reloadElements(['storageDiv']).then(() => {
+          const parent: HTMLDetailsElement = document.querySelector(`details[data-id="${params.parent_id}"]`);
+          parent.open = true;
+          // now open ancestors too
+          getAncestorDetails(parent).forEach(details => details.open = true);
+        });
+      });
     } else if (el.matches('[data-action="add-storage"]')) {
       const name = prompt('Name');
-      const params = {};
-      params['parent_id'] = el.dataset.parentId;
-      params['name'] = name;
+      const params = {
+        parent_id: el.dataset.parentId,
+        name: name,
+      };
       ApiC.post('storage_units', params).then(() => reloadElements(['storageDiv']));
 
     } else if (el.matches('[data-action="add-storage-children"]')) {

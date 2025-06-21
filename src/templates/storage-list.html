@@ -8,8 +8,8 @@
     <ul class='list-group'>
       {% for item in items %}
         <li class='list-group-item py-1'>
-          {#<details {% if item.children_count == 0 %}open{% endif %}>#}
-          <details>
+          {# this data-id is used to open it up after adding children #}
+          <details data-id='{{ item.id }}'>
             <summary>{{ item.name }} {% if item.children_count > 0 %}({{ item.children_count }}){% endif %}</summary>
             <div class='mb-1'>
               {% if storage_editable %}

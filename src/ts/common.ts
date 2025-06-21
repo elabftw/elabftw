@@ -300,6 +300,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  function getAncestorDetails(el: Element): HTMLDetailsElement[] {
+    const detailsEls: HTMLDetailsElement[] = [];
+    let parent = el.parentElement;
+    while (parent) {
+      if (parent.tagName.toLowerCase() === 'details') {
+        detailsEls.push(parent as HTMLDetailsElement);
+      }
+      parent = parent.parentElement;
+    }
+    return detailsEls;
+  }
+
   function generateTable(data: Record<string, string | null>) {
     const table = document.createElement('table');
     table.classList.add('table');
@@ -599,10 +611,18 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!unitName.length) {
         return;
       }
-      const params = {};
-      params['parent_id'] = el.dataset.parentId;
-      params['name'] = unitName;
-      ApiC.post('storage_units', params).then(() => reloadElements(['storageDiv']));
+      const params = {
+        parent_id: el.dataset.parentId,
+        name: unitName,
+      };
+      ApiC.post('storage_units', params).then(() => {
+        reloadElements(['storageDiv']).then(() => {
+          const parent: HTMLDetailsElement = document.querySelector(`details[data-id="${params.parent_id}"]`);
+          parent.open = true;
+          // now open ancestors too
+          getAncestorDetails(parent).forEach(details => details.open = true);
+        });
+      });
     } else if (el.matches('[data-action="create-container"]')) {
       const entity = getEntity();
       const qty_stored = (document.getElementById('containerQtyStoredInput') as HTMLInputElement).value;

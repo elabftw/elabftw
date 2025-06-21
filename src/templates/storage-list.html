@@ -36,7 +36,7 @@
       <p class='smallgray'>{{ 'Inventory location'|trans }}</p>
       <div class='d-flex'>
         <div>
-          <i class='fas fa-location-dot mr-2'></i><span class='font-weight-bold'>{{ root.name }}</span>
+            <i class='fas fa-location-dot mr-2'></i><span class='malleableColumn hl-hover-gray p-1 rounded font-weight-bold' data-endpoint='storage_units' data-id='{{ root.id }}' data-target='name'>{{ root.name }}</span>
         </div>
         {% if storage_editable %}
           <div class='ml-auto'>

@@ -623,6 +623,9 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(() => reloadElements(['storageDivContent']))
         .catch((error) => notify.error(error));
 
+    } else if (el.matches('[data-action="delete-storage-root"]')) {
+      ApiC.delete(`storage_units/${el.dataset.id}`).then(() => reloadElements(['storageDiv']));
+
     } else if (el.matches('[data-action="destroy-container"]')) {
       const entity = getEntity();
       ApiC.delete(`${entity.type}/${entity.id}/containers/${el.dataset.id}`).then(() => reloadElements(['storageDivContent']));

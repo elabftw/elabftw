@@ -12,7 +12,10 @@
                 <div>
                   <span class='mr-2'><span class='malleableColumn hl-hover-gray p-1 rounded' data-ma-type='number' data-endpoint='{{ Entity.entityType.value }}/{{ Entity.id }}/containers' data-id='{{ container.id }}' data-target='qty_stored'>{{ container.qty_stored }}</span> <span class='mr-2'><span class='malleableQtyUnit hl-hover-gray p-1 rounded' data-endpoint='{{ Entity.entityType.value }}/{{ Entity.id }}/containers' data-id='{{ container.id }}'>{{ container.qty_unit }}</span> {{ 'in'|trans }} {{ container.full_path }}</span>
                 </div>
-                <span data-action='destroy-container' data-id='{{ container.id }}' class='hl-hover-gray rounded p-1 ml-auto'><i class='fas fa-trash-alt'></i></span>
+                <div class='ml-auto'>
+                  <a href='inventory.php?storage_unit={{ container.storage_id }}' class='hl-hover-gray rounded p-1 ml-auto'><i class='fas fa-magnifying-glass'></i></a>
+                  <span data-action='destroy-container' data-id='{{ container.id }}' class='hl-hover-gray rounded p-1 ml-auto'><i class='fas fa-trash-alt'></i></span>
+                </div>
               </div>
             </li>
           {% endfor %}

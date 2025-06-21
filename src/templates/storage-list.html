@@ -12,8 +12,8 @@
           <details>
             <summary>{{ item.name }} {% if item.children_count > 0 %}({{ item.children_count }}){% endif %}</summary>
             <div class='mb-1'>
-              <a class='btn btn-secondary btn-sm' href='?storage_unit={{ item.id }}'><i class='fas fa-magnifying-glass mr-1 color-white'></i>{{ 'Display content'|trans }}</a>
               {% if storage_editable %}
+                <a class='btn btn-secondary btn-sm' href='?storage_unit={{ item.id }}'><i class='fas fa-magnifying-glass mr-1 color-white'></i>{{ 'Display content'|trans }}</a>
                 <button type='button' class='btn btn-secondary btn-sm' data-parent-id='{{ item.id }}' data-action='add-storage-children'><i class='fas fa-plus-circle mr-1 color-white'></i>{{ 'Add children to %s'|trans|format(item.name) }}</button>
                 <button type='button' class='btn btn-danger btn-sm' data-id='{{ item.id }}' data-action='destroy-storage'><i class='fas fa-minus-circle mr-1 color-white'></i>{{ 'Delete %s and its children'|trans|format(item.name) }}</button>
               {% else %}
@@ -38,11 +38,14 @@
         <div>
           <i class='fas fa-location-dot mr-2'></i><span class='font-weight-bold'>{{ root.name }}</span>
         </div>
-        <div class='ml-auto'>
-          <button type='button' class='btn btn-secondary btn-sm' title='{{ 'Add children to %s'|trans|format(root.name) }}' aria-label='{{ 'Add children to %s'|trans|format(root.name) }}' data-parent-id='{{ root.id }}' data-action='add-storage-children'><i class='fas fa-plus-circle color-white'></i></button>
-          {# search with name instead of id for parent #}
-          <a class='btn btn-secondary btn-sm' title='{{ 'Display content'|trans }}' href='?q={{ root.name }}'><i class='fas fa-magnifying-glass color-white'></i></a>
-        </div>
+        {% if storage_editable %}
+          <div class='ml-auto'>
+            <button type='button' class='btn btn-secondary btn-sm' title='{{ 'Add children to %s'|trans|format(root.name) }}' aria-label='{{ 'Add children to %s'|trans|format(root.name) }}' data-parent-id='{{ root.id }}' data-action='add-storage-children'><i class='fas fa-plus-circle color-white'></i></button>
+            {# search with name instead of id for parent #}
+            <a class='btn btn-secondary btn-sm' title='{{ 'Display content'|trans }}' href='?q={{ root.name }}'><i class='fas fa-magnifying-glass color-white'></i></a>
+            <a class='btn btn-danger btn-sm' data-action='delete-storage-root' data-id='{{ root.id }}' title='{{ 'Delete'|trans }}'><i class='fas fa-xmark color-white'></i></a>
+          </div>
+        {% endif %}
       </div>
       <hr>
       {# now render the children of this root element #}

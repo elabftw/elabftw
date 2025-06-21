@@ -591,12 +591,14 @@ document.addEventListener('DOMContentLoaded', () => {
       // now deal with icon of executor element
       toggleIcon(el, isHidden);
 
-    } else if (el.matches('[data-action="expand-all-storage"]')) {
+    } else if (el.matches('[data-action="toggle-all-storage"]')) {
+      // expand or collapse all storage nodes
       const root = document.getElementById('storageDiv');
+      const state = el.dataset.expand === '1';
       if (root) {
         const detailsElements = root.querySelectorAll('details');
         detailsElements.forEach((details: HTMLDetailsElement) => {
-          details.open = true;
+          details.open = state;
         });
       }
     } else if (el.matches('[data-action="add-storage"]')) {

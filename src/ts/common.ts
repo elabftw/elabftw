@@ -394,6 +394,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  function getAncestorDetails(el: Element): HTMLDetailsElement[] {
+    const detailsEls: HTMLDetailsElement[] = [];
+    let parent = el.parentElement;
+    while (parent) {
+      if (parent.tagName.toLowerCase() === 'details') {
+        detailsEls.push(parent as HTMLDetailsElement);
+      }
+      parent = parent.parentElement;
+    }
+    return detailsEls;
+  }
+
   function generateTable(data: Record<string, string | null>) {
     const table = document.createElement('table');
     table.classList.add('table');
@@ -677,19 +689,36 @@ document.addEventListener('DOMContentLoaded', () => {
       // now deal with icon of executor element
       toggleIcon(el, isHidden);
 
-    } else if (el.matches('[data-action="expand-all-storage"]')) {
+    } else if (el.matches('[data-action="toggle-all-storage"]')) {
+      // expand or collapse all storage nodes
       const root = document.getElementById('storageDiv');
+      const state = el.dataset.expand === '1';
       if (root) {
         const detailsElements = root.querySelectorAll('details');
         detailsElements.forEach((details: HTMLDetailsElement) => {
-          details.open = true;
+          details.open = state;
         });
       }
+    } else if (el.matches('[data-action="rename-storage"]')) {
+      const name = prompt('Name');
+      const params = {
+        parent_id: el.dataset.id,
+        name: name,
+      };
+      ApiC.patch(`storage_units/${el.dataset.id}`, params).then(() => {
+        reloadElements(['storageDiv']).then(() => {
+          const parent: HTMLDetailsElement = document.querySelector(`details[data-id="${params.parent_id}"]`);
+          parent.open = true;
+          // now open ancestors too
+          getAncestorDetails(parent).forEach(details => details.open = true);
+        });
+      });
     } else if (el.matches('[data-action="add-storage"]')) {
       const name = prompt('Name');
-      const params = {};
-      params['parent_id'] = el.dataset.parentId;
-      params['name'] = name;
+      const params = {
+        parent_id: el.dataset.parentId,
+        name: name,
+      };
       ApiC.post('storage_units', params).then(() => reloadElements(['storageDiv']));
 
     } else if (el.matches('[data-action="add-storage-children"]')) {
@@ -697,10 +726,18 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!unitName.length) {
         return;
       }
-      const params = {};
-      params['parent_id'] = el.dataset.parentId;
-      params['name'] = unitName;
-      ApiC.post('storage_units', params).then(() => reloadElements(['storageDiv']));
+      const params = {
+        parent_id: el.dataset.parentId,
+        name: unitName,
+      };
+      ApiC.post('storage_units', params).then(() => {
+        reloadElements(['storageDiv']).then(() => {
+          const parent: HTMLDetailsElement = document.querySelector(`details[data-id="${params.parent_id}"]`);
+          parent.open = true;
+          // now open ancestors too
+          getAncestorDetails(parent).forEach(details => details.open = true);
+        });
+      });
     } else if (el.matches('[data-action="create-container"]')) {
       const qty_stored = (document.getElementById('containerQtyStoredInput') as HTMLInputElement).value;
       const qty_unit = (document.getElementById('containerQtyUnitSelect') as HTMLSelectElement).value;
@@ -719,6 +756,9 @@ document.addEventListener('DOMContentLoaded', () => {
       Promise.all(postCalls)
         .then(() => reloadElements(['storageDivContent']))
         .catch((error) => notify.error(error));
+
+    } else if (el.matches('[data-action="delete-storage-root"]')) {
+      ApiC.delete(`storage_units/${el.dataset.id}`).then(() => reloadElements(['storageDiv']));
 
     } else if (el.matches('[data-action="destroy-container"]')) {
       ApiC.delete(`${entity.type}/${entity.id}/containers/${el.dataset.id}`).then(() => reloadElements(['storageDivContent']));

@@ -61,7 +61,7 @@ final class StorageUnits extends AbstractRest
                 WHERE
                     id = :id  -- Use the provided id as the base case
 
-                UNION ALL
+                UNION
 
                 -- Recursive case: Trace the path upwards by finding parent units
                 SELECT
@@ -193,7 +193,7 @@ final class StorageUnits extends AbstractRest
         LEFT JOIN compounds2items ON items.id = compounds2items.entity_id
         LEFT JOIN compounds ON compounds2items.compound_id = compounds.id
 
-        UNION ALL
+        UNION
 
         SELECT
             storage_units.id AS storage_id,
@@ -255,7 +255,7 @@ final class StorageUnits extends AbstractRest
             WHERE
                 parent_id IS NULL
 
-            UNION ALL
+            UNION
 
             -- Recursive case: Select child units and append them to the parent's path
             SELECT
@@ -355,12 +355,45 @@ final class StorageUnits extends AbstractRest
     #[Override]
     public function destroy(): bool
     {
-        //$this->canWriteOrExplode();
+        if ($this->hasChildren()) {
+            throw new ImproperActionException(_('Cannot delete a storage unit with children!'));
+        }
+        if ($this->hasContainers()) {
+            throw new ImproperActionException(_('Cannot delete a storage unit with containers!'));
+        }
         $sql = 'DELETE FROM storage_units WHERE id = :id OR parent_id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         return $this->Db->execute($req);
+    }
+
+    private function hasContainers(): bool
+    {
+        $sql = 'SELECT
+          IF(
+            EXISTS (SELECT 1 FROM containers2experiments            WHERE storage_id = :storage_id)
+         OR EXISTS (SELECT 1 FROM containers2experiments_templates  WHERE storage_id = :storage_id)
+         OR EXISTS (SELECT 1 FROM containers2items                  WHERE storage_id = :storage_id)
+         OR EXISTS (SELECT 1 FROM containers2items_types            WHERE storage_id = :storage_id),
+            1,
+            0
+          ) AS has_container';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':storage_id', $this->id, PDO::PARAM_INT);
+
+        $this->Db->execute($req);
+        return (bool) $req->fetchColumn();
+    }
+
+    private function hasChildren(): bool
+    {
+        $sql = 'SELECT id FROM storage_units WHERE parent_id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+
+        $this->Db->execute($req);
+        return (bool) $req->fetchColumn();
     }
 
     private function searchStorage(string $unitName): array|false
@@ -390,7 +423,7 @@ final class StorageUnits extends AbstractRest
                 FROM storage_units AS su
                 WHERE su.parent_id IS NULL -- Root-level units
 
-                UNION ALL
+                UNION
 
                 SELECT
                     su.id AS storage_id,
@@ -463,7 +496,7 @@ final class StorageUnits extends AbstractRest
                     -- can sql AND query or storage_id
                     1=1 %s AND %s
 
-            UNION ALL
+            UNION
                 SELECT
                     entity.id AS entity_id,
                     entity.title AS entity_title,
@@ -513,7 +546,7 @@ final class StorageUnits extends AbstractRest
                 LEFT JOIN
                     experiments AS entity ON c2e.item_id = entity.id
                 LEFT JOIN
-                    compounds2experiments ON entity.id = c2e.item_id
+                    compounds2experiments ON compounds2experiments.entity_id = c2e.item_id
                 LEFT JOIN
                     compounds ON compounds2experiments.compound_id = compounds.id
                 LEFT JOIN

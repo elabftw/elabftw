@@ -27,8 +27,8 @@ final class InstallRedir extends Command
     #[Override]
     protected function configure(): void
     {
-        $this->setDescription('Use "bin/install start" instead')
-            ->setHelp('Use "bin/install start" instead');
+        $this->setDescription('Use "bin/init db:install" instead')
+            ->setHelp('Use "bin/init db:install" instead');
     }
 
     #[Override]

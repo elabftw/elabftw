@@ -58,19 +58,27 @@ final class CompoundsCsv extends AbstractCsv
         foreach ($this->reader->getRecords() as $row) {
             // this might store the compound from pubchem
             $compound = false;
-            $id = -1;
+            $ids = array();
+            $cids[] = array();
             try {
                 if ($this->PubChemImporter !== null) {
                     $cid = isset($row['pubchemcid']) ? (int) $row['pubchemcid'] : null;
-                    if (empty($cid) && !empty($row['cas'])) {
-                        $cid = $this->PubChemImporter->getCidFromCas($row['cas']);
-                    }
                     if ($cid) {
+                        $cids[] = $cid;
+                    }
+
+                    // cas will likely return several compounds cid !
+                    if (empty($cid) && !empty($row['cas'])) {
+                        $cids = $this->PubChemImporter->getCidFromCas($row['cas']);
+                    }
+
+                    foreach ($cids as $cid) {
+                        $this->output->writeln(sprintf('[info] Importing compound with CID %d', $cid));
                         $compound = $this->PubChemImporter->fromPugView($cid);
-                        $id = $this->Compounds->createFromCompound($compound);
+                        $ids[] = $this->Compounds->createFromCompound($compound);
                     }
                 } else {
-                    $id = $this->Compounds->create(
+                    $ids[] = $this->Compounds->create(
                         casNumber: $row['cas'] ?? null,
                         ecNumber: $row['ec_number'] ?? null,
                         inchi: $row['inchi'] ?? null,
@@ -136,8 +144,10 @@ final class CompoundsCsv extends AbstractCsv
                         $this->Items->update(new EntityParams('body', $row['comment']));
                     }
                     $this->Items->update(new EntityParams('metadata', $this->collectMetadata($row)));
-                    $Compounds2ItemsLinks = new Compounds2ItemsLinks($this->Items, $id);
-                    $Compounds2ItemsLinks->create();
+                    foreach ($ids as $id) {
+                        $Compounds2ItemsLinks = new Compounds2ItemsLinks($this->Items, $id);
+                        $Compounds2ItemsLinks->create();
+                    }
                     // process localisation
                     if (isset($row['location']) && !empty($row['location']) && !empty($this->locationSplitter)) {
                         $locationSplit = explode($this->locationSplitter, $row['location']);
@@ -188,6 +198,9 @@ final class CompoundsCsv extends AbstractCsv
     {
         // these are the columns that are added to the compound
         return array(
+            'quantity',
+            'unit',
+            'location',
             'cas',
             'ec_number',
             'inchi',

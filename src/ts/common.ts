@@ -705,12 +705,35 @@ document.addEventListener('DOMContentLoaded', () => {
       const resultTableDiv = document.getElementById('pubChemSearchResultTableDiv');
       const viewOnPubChemLink = document.getElementById('viewOnPubChemLink') as HTMLLinkElement;
       ApiC.getJson(`compounds?search_pubchem_${el.dataset.from}=${inputEl.value}`).then(json => {
-        const table = generateTable(json);
         resultDiv.removeAttribute('hidden');
-        viewOnPubChemLink.href = `https://pubchem.ncbi.nlm.nih.gov/compound/${json.cid}`;
-        // clear any previous result
-        resultTableDiv.innerHTML = '';
-        resultTableDiv.appendChild(table);
+        if (el.dataset.from === 'cid') {
+          const table = generateTable(json);
+          viewOnPubChemLink.href = `https://pubchem.ncbi.nlm.nih.gov/compound/${json.cid}`;
+          // clear any previous result
+          resultTableDiv.innerHTML = '';
+          resultTableDiv.appendChild(table);
+        } else {
+          // cas will be multiple
+          const table = document.createElement('table');
+          table.classList.add('table');
+          const tbody = document.createElement('tbody');
+
+          json.forEach(compound => {
+            const row = document.createElement('tr');
+            const cellKey = document.createElement('td');
+            cellKey.textContent = `CID: ${compound.cid}`;
+            row.appendChild(cellKey);
+            const cellValue: HTMLTableCellElement = document.createElement('td');
+            cellValue.textContent = `CAS: ${compound.cas} Name: ${compound.name}`;
+            row.appendChild(cellValue);
+            tbody.appendChild(row);
+            table.appendChild(tbody);
+          });
+          viewOnPubChemLink.setAttribute('hidden', 'hidden');
+          // clear any previous result
+          resultTableDiv.innerHTML = '';
+          resultTableDiv.appendChild(table);
+        }
         const importBtn = document.querySelector('[data-action="import-compound"]') as HTMLButtonElement;
         importBtn.removeAttribute('disabled');
         importBtn.dataset.cid = json.cid;

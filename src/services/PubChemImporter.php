@@ -37,12 +37,12 @@ final class PubChemImporter
         return Compound::fromPug($this->httpGetter->get(sprintf('%s/compound/cid/%d/json', self::PUG_URL, $cid)));
     }
 
-    public function getCidFromCas(string $cas): int
+    public function getCidFromCas(string $cas): array
     {
         usleep(self::REQ_DELAY);
-        $json = $this->httpGetter->get(sprintf('%s/compound/xref/rn/%s/json', self::PUG_URL, $cas));
-        $decoded = json_decode($json, true, 42);
-        return $decoded['PC_Compounds'][0]['id']['id']['cid'];
+        $json = $this->httpGetter->get(sprintf('%s/compound/xref/rn/%s/cids/json', self::PUG_URL, $cas));
+        $decoded = json_decode($json, true, 10);
+        return $decoded['IdentifierList']['CID'];
     }
 
     public function fromPugView(int $cid): Compound

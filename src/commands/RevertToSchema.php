@@ -56,7 +56,6 @@ final class RevertToSchema extends Command
 
         if ($target >= $current) {
             $output->writeln(sprintf('<error>Target schema (%d) must be lower than current schema (%d).</error>', $target, $current));
-
             return Command::FAILURE;
         }
 

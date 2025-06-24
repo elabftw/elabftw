@@ -157,6 +157,33 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
         $commandTester->assertCommandIsSuccessful();
     }
 
+    public function testRevertSchemaTo(): void
+    {
+        // Try reverting from 44 to 42
+        $config = Config::getConfig();
+        // keep original schema to prevent breaking other tests
+        // not doing it on setup/teardown as it's the only need
+        $originalSchema = $config->configArr['schema'];
+        try {
+            $config->configArr['schema'] = 44;
+            $fs = (new Fixtures())->getFs();
+
+            $command = new RevertToSchema($fs);
+            $commandTester = new CommandTester($command);
+            $commandTester->execute(array('target' => 42));
+            $output = $commandTester->getDisplay();
+
+            $commandTester->assertCommandIsSuccessful();
+            $this->assertStringContainsString('Reverting schema 44', $output);
+            $this->assertStringContainsString('Reverting schema 43', $output);
+            $this->assertStringContainsString('Reverting schema 42', $output);
+            $success = sprintf('Successfully reverted from schema: %d to schema: %d included.', $config->configArr['schema'], 42);
+            $this->assertStringContainsString($success, $output);
+        } finally {
+            $config->configArr['schema'] = $originalSchema;
+        }
+    }
+
     public function testExecuteCacheClear(): void
     {
         $commandTester = new CommandTester(new CacheClear());

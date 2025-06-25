@@ -177,7 +177,7 @@
       <div class='d-flex flex-row'>
         {# EVENTS SCOPE #}
         {# If an item is selected, it's forced to 'Everything' and disabled #}
-        {% if App.Request.query.get('item')|length > 0 %}
+        {% if App.Request.query.getInt('item') > 0 %}
           <div class='btn-group'>
             <button disabled class='btn dropdown-toggle' type='button' aria-label='Scope' title='Scope'><i class='fas fa-globe fa-fw mr-1'></i></button>
           </div>

@@ -176,10 +176,10 @@
       <p class='smallgray'>{{ 'Select a scope and search for events.'|trans }}</p>
       <div class='d-flex flex-row'>
         {# EVENTS SCOPE #}
-        {# If an item is selected, it's forced to "Everything" and disabled #}
-        {% if App.Request.query.has('item') %}
-          <div class="btn-group">
-            <button disabled class="btn dropdown-toggle" type="button" aria-label="Scope" title="Scope"><i class="fas fa-globe fa-fw mr-1"></i></button>
+        {# If an item is selected, it's forced to 'Everything' and disabled #}
+        {% if App.Request.query.get('item')|length > 0 %}
+          <div class='btn-group'>
+            <button disabled class='btn dropdown-toggle' type='button' aria-label='Scope' title='Scope'><i class='fas fa-globe fa-fw mr-1'></i></button>
           </div>
         {% else %}
           {% include 'scope-button.html' with {'btnId': 'scopeEventBtn', 'reload': 'page', 'target': 'scope_events', 'isSecondary': 0, 'isSmall': 0} %}

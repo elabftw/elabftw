@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
+use Elabftw\Elabftw\Db;
 use Elabftw\Models\Config;
 use Elabftw\Services\Email;
 use Elabftw\Services\MfaHelperTest;
@@ -28,10 +29,13 @@ use Symfony\Component\Mailer\MailerInterface;
  */
 class CommandsTest extends \PHPUnit\Framework\TestCase
 {
+    private Db $Db;
+
     private Email $Email;
 
     protected function setUp(): void
     {
+        $this->Db = Db::getConnection();
         $Logger = new Logger('elabftw');
         // use NullHandler because we don't care about logs here
         $Logger->pushHandler(new NullHandler());
@@ -157,19 +161,17 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
         $commandTester->assertCommandIsSuccessful();
     }
 
-    public function testRevertSchemaTo(): void
+    public function testRevertToSchema(): void
     {
         // Try reverting from 44 to 42
-        $config = Config::getConfig();
+        $Config = Config::getConfig();
         // keep original schema to prevent breaking other tests
         // not doing it on setup/teardown as it's the only need
-        $originalSchema = $config->configArr['schema'];
+        $originalSchema = $Config->configArr['schema'];
         try {
-            $config->configArr['schema'] = 44;
-            $fs = (new Fixtures())->getFs();
+            $Config->configArr['schema'] = 44;
+            $commandTester = new CommandTester(new RevertToSchema((new Fixtures())->getFs()));
 
-            $command = new RevertToSchema($fs);
-            $commandTester = new CommandTester($command);
             $commandTester->execute(array('target' => 42));
             $output = $commandTester->getDisplay();
 
@@ -177,10 +179,17 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
             $this->assertStringContainsString('Reverting schema 44', $output);
             $this->assertStringContainsString('Reverting schema 43', $output);
             $this->assertStringContainsString('Reverting schema 42', $output);
-            $success = sprintf('Successfully reverted from schema: %d to schema: %d included.', $config->configArr['schema'], 42);
+            $success = sprintf('Successfully reverted from schema: %d to schema: %d included.', $Config->configArr['schema'], 42);
             $this->assertStringContainsString($success, $output);
+
+            $sql = "SELECT config.conf_value FROM config WHERE config.conf_name = 'schema'";
+            $req = $this->Db->prepare($sql);
+            $req->execute();
+
+            // When reverting schema 42, the new config schema becomes 41.
+            $this->assertEquals(41, $req->fetchColumn());
         } finally {
-            $config->configArr['schema'] = $originalSchema;
+            $Config->configArr['schema'] = $originalSchema;
         }
     }
 

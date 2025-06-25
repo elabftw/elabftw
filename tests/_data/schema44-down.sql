@@ -1,2 +1,2 @@
 -- this file is here to test the schema downgrade db:revertto command
-SELECT 1;
+UPDATE config SET conf_value = 43 WHERE conf_name = 'schema';

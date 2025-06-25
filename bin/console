@@ -69,6 +69,7 @@ $Application->add(new ImportEln($exportsFs));
 $Application->add(new ImportCompoundsCsv($exportsFs));
 $Application->add(new UpdateDatabase());
 $Application->add(new RevertSchema($sqlFs));
+$Application->add(new RevertToSchema($sqlFs));
 $Application->add(new UpdateTo3());
 $Application->add(new UpdateTo34());
 $Application->add(new SnapFingers());

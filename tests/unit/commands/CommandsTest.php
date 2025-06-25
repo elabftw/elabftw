@@ -182,11 +182,7 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
             $success = sprintf('Successfully reverted from schema: %d to schema: %d included.', $Config->configArr['schema'], 42);
             $this->assertStringContainsString($success, $output);
 
-            $sql = "SELECT config.conf_value FROM config WHERE config.conf_name = 'schema'";
-            $req = $this->Db->prepare($sql);
-            $req->execute();
-
-            // When reverting schema 42, the new config schema becomes 41.
+            $req = $this->Db->q("SELECT config.conf_value FROM config WHERE config.conf_name = 'schema'");
             $this->assertEquals(41, $req->fetchColumn());
         } finally {
             $Config->configArr['schema'] = $originalSchema;

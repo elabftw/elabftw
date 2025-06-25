@@ -13,7 +13,7 @@
         <div class='d-flex justify-content-between mb-2'>
           <label class='d-inline mr-1' for='isBookableSwitch'>{{ 'Allow booking this resource'|trans }}</label>
           <label class='switch' title='{{ 'Allow booking this resource'|trans }}'>
-            <input type='checkbox' autocomplete='off' id='isBookableSwitch' data-reload='topToolbar' data-trigger='change' data-model='items/{{ Entity.id }}' data-target='is_bookable' {{ Entity.entityData.is_bookable == 1 ? 'checked="checked"' }}>
+            <input type='checkbox' autocomplete='off' id='isBookableSwitch' data-reload='topToolbar,permissionsDiv' data-trigger='change' data-model='items/{{ Entity.id }}' data-target='is_bookable' {{ Entity.entityData.is_bookable == 1 ? 'checked="checked"' }}>
             <span class='slider'></span>
           </label>
         </div>

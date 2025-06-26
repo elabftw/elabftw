@@ -144,12 +144,11 @@ final class Scheduler extends AbstractRest
             $this->appendFilterSql(column: 'items.category', paramName: 'category', value: $queryParams->getQuery()->getInt('cat'));
             $this->appendFilterSql(column: 'team_events.userid', paramName: 'ownerid', value: $queryParams->getQuery()->getInt('eventOwner'));
             // handle multiple items
-            $itemIds = (string) $queryParams->getQuery()->get('item');
-            if (!empty($itemIds)) {
-                $ids = array_filter(array_map('intval', explode(',', $itemIds)));
+            $itemParams = $queryParams->getQuery()->all('items');
+            if (!empty($itemParams)) {
+                $ids = array_filter(array_map('intval', $itemParams)); // force numeric IDs
                 if ($ids) {
                     $placeholders = array();
-                    // secure way to concat the item ids. :itemid0, :itemid1
                     foreach ($ids as $index => $id) {
                         $key = "itemid$index";
                         $placeholders[] = ":$key";

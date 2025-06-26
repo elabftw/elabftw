@@ -200,7 +200,27 @@
 
   <hr>
 
-{% if bookableItemData %}
+  <div class="modal fade" id="itemPickerModal" tabindex="-1" aria-labelledby="itemPickerLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="itemPickerLabel">{{ 'Select items to create an event'|trans }}'</h5>
+          <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+            <span aria-hidden='true'>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="itemPickerBody">
+          {# filled dynamically in js. Contains the item select OR multiple checkboxes with items selected #}
+          <!-- Filled dynamically -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="confirmItemSelection">{{ 'Create event(s)'|trans }}'</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if bookableItemData %}
   <div id='schedulerResourceDisplay' class='title d-flex justify-content-center'>
     {{ 'Selected resource:'|trans }}
     <a href='database.php?mode=view&amp;id={{ bookableItemData.id }}' class='d-inline-flex align-items-center text-decoration-none hl-hover-gray ml-2'>

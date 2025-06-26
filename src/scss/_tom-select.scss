@@ -76,3 +76,37 @@
 #metavalue {
   height: auto;
 }
+// TODO: clean up
+.ts-wrapper.multi .ts-control {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  max-width: 400px;
+  min-height: 38px;
+  padding: 4px 8px;
+  gap: 4px;
+  // needed on firefox
+  scrollbar-width: thin;
+}
+
+.ts-wrapper.multi .item {
+  background-color: #dee2e6;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.ts-wrapper.multi .item .remove {
+  font-size: 1rem;
+  margin-left: 4px;
+  color: #6c757d;
+}
+
+.ts-wrapper.multi .ts-control::-webkit-scrollbar {
+  height: 4px;
+}
+
+.ts-wrapper.multi .ts-control::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 2px;
+}

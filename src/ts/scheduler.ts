@@ -65,12 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   scopeBtn.disabled = !!params.get('item');
 
-  // if we show all items, they are not editable
-  let editable = true;
-  let selectable = true;
   if (!params.has('item')) {
-    editable = false;
-    selectable = false;
     if (document.getElementById('selectBookableWarningDiv')) {
       document.getElementById('selectBookableWarningDiv').removeAttribute('hidden');
     }
@@ -93,16 +88,25 @@ document.addEventListener('DOMContentLoaded', () => {
     ? 'timelineDay,timelineWeek,listWeek,timelineMonth' // horizontal axis
     : 'timeGridDay,timeGridWeek,listWeek,dayGridMonth'; // classic grid calendar
 
+  if (params.has('item')) {
+    const legacyItems = params.get('item')?.split(',') ?? [];
+    params.delete('item');
+    legacyItems.forEach(id => params.append('items[]', id));
+    window.location.replace(`${location.pathname}?${params.toString()}`);
+  }
+
   initTomSelect();
   // remove existing params to build new event sources for the calendar
   function buildEventSourcesUrl(): string {
-    ['item', 'cat', 'eventOwner'].forEach((param) => params.delete(param));
+    ['items[]', 'cat', 'eventOwner', 'item'].forEach((param) => params.delete(param));
     const itemSelect = document.getElementById('itemSelect') as HTMLSelectElement & { tomselect?: TomSelect };
     const catSelect = document.getElementById('schedulerSelectCat') as HTMLSelectElement;
     const ownerInput = document.getElementById('eventOwnerSelect') as HTMLInputElement;
 
     if (itemSelect?.tomselect?.items?.length) {
-      params.set('item', itemSelect.tomselect.items.join(','));
+      itemSelect.tomselect.items.forEach(id => {
+        params.append('items[]', id);
+      });
     }
     if (catSelect?.value) {
       params.set('cat', catSelect.value);
@@ -120,6 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
     calendar.addEventSource({ url: newQuery });
     calendar.refetchEvents();
     // keep url in sync
+    params.delete('item');
     window.history.replaceState({}, '', `${location.pathname}?${params.toString()}`);
   }
 
@@ -137,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  let eventBackgroundColor = 'a9a9a9';
+  const eventBackgroundColor = 'a9a9a9';
   // if (document.getElementById('itemSelect')) {
   //   eventBackgroundColor = (document.getElementById('itemSelect') as HTMLSelectElement)?.selectedOptions[0]?.dataset.color;
   // }
@@ -169,11 +174,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // selected locale
     locale: calendarEl.dataset.lang,
     // allow selection of range
-    selectable: selectable,
+    selectable: true,
     // draw an event while selecting
     selectMirror: true,
-    // if no item is selected, the calendar is not editable
-    editable: editable,
+    editable: true,
     // allow "more" link when too many events
     dayMaxEventRows: true,
     // set the date loaded
@@ -194,35 +198,86 @@ document.addEventListener('DOMContentLoaded', () => {
     eventBackgroundColor: '#' + eventBackgroundColor,
     // selection
     select: function(info): void {
-      // get the item id from url
-      const params = new URLSearchParams(document.location.search.slice(1));
-      const itemid = parseInt(params.get('item'), 10);
-      if (!Number.isSafeInteger(itemid)) {
-        calendar.unselect();
-        return;
+      const itemSelectEl = document.getElementById('itemSelect') as HTMLSelectElement & { tomselect?: TomSelect };
+      const selectedItemIds: string[] = itemSelectEl.tomselect?.items || [];
+
+      const body = document.getElementById('itemPickerBody')!;
+      body.innerHTML = ''; // Reset modal body
+
+      let manualSelect: TomSelect | null = null;
+
+      if (selectedItemIds.length > 0) {
+        // Show checkboxes for already selected items
+        selectedItemIds.forEach(itemId => {
+          const option = itemSelectEl.querySelector(`option[value="${itemId}"]`);
+          const label = option?.textContent || `Item ${itemId}`;
+
+          body.innerHTML += `
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="${itemId}" id="itemCheck${itemId}" checked>
+          <label class="form-check-label" for="itemCheck${itemId}">
+            ${label}
+          </label>
+        </div>
+      `;
+        });
+      } else {
+        // Show TomSelect input if nothing selected
+        const selectHtml = `
+      <label for="itemPickerSelect" class="form-label">Select items to book</label>
+      <select multiple id="itemPickerSelect" class="form-select">
+        ${Array.from(itemSelectEl.options).filter(opt => opt.value).map(opt => `
+          <option value="${opt.value}">${opt.textContent}</option>
+        `).join('')}
+      </select>
+    `;
+        body.innerHTML = selectHtml;
+
+        manualSelect = new TomSelect('#itemPickerSelect', {
+          maxItems: null,
+          plugins: ['remove_button', 'dropdown_input'],
+        });
       }
 
-      const postParams = {
-        start: info.startStr,
-        end: info.endStr,
+      $('#itemPickerModal').modal('show');
+
+      const confirmBtn = document.getElementById('confirmItemSelection') as HTMLButtonElement;
+      confirmBtn.onclick = () => {
+        let itemIdsToPost: string[] = [];
+
+        if (selectedItemIds.length > 0) {
+          const checkedInputs = body.querySelectorAll<HTMLInputElement>('input[type="checkbox"]:checked');
+          itemIdsToPost = Array.from(checkedInputs).map(cb => cb.value);
+        } else {
+          itemIdsToPost = manualSelect?.items || [];
+        }
+
+        if (itemIdsToPost.length === 0) {
+          alert('Please select at least one item to book.');
+          return;
+        }
+
+        const postParams = {
+          start: info.startStr,
+          end: info.endStr,
+        };
+
+        Promise.all(
+          itemIdsToPost.map(itemId =>
+            ApiC.post(`events/${itemId}`, postParams),
+          ),
+        ).then(() => {
+          calendar.refetchEvents();
+          calendar.unselect();
+          $('#itemPickerModal').modal('hide');
+        }).catch(() => {
+          calendar.unselect();
+          $('#itemPickerModal').modal('hide');
+        });
       };
-      ApiC.post(`events/${itemid}`, postParams).then(()=> {
-        calendar.refetchEvents();
-        // refresh item with its title by triggering unselect (see #5265)
-        calendar.unselect();
-      }).catch(() => {
-        calendar.unselect();
-        return;
-      });
     },
     // on click activate modal window
     eventClick: function(info): void {
-      if (!editable) {
-        // load page with selected item + correct start depending on current view
-        window.location.replace(`scheduler.php?item=${info.event.extendedProps.items_id}&start=${calendar.view.activeStart.toISOString()}`);
-        return;
-      }
-
       $('[data-action="scheduler-rm-bind"]').hide();
       $('#eventModal').modal('toggle');
       // set the event id on the various elements
@@ -246,9 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     // on mouse enter add shadow and show title
     eventMouseEnter: function(info): void {
-      if (editable) {
-        info.el.style.boxShadow = '5px 4px 4px #474747';
-      }
+      info.el.style.boxShadow = '5px 4px 4px #474747';
       info.el.title = info.event.title;
     },
     // remove the box shadow when mouse leaves
@@ -257,12 +310,10 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     // a drop means we change start date
     eventDrop: function(info): void {
-      if (!editable) { return; }
       ApiC.patch(`event/${info.event.id}`, {'target': 'start', 'delta': info.delta}).catch(() => info.revert());
     },
     // a resize means we change end date
     eventResize: function(info): void {
-      if (!editable) { return; }
       ApiC.patch(`event/${info.event.id}`, {'target': 'end', 'delta': info.endDelta}).catch(() => info.revert());
     },
   });
@@ -354,32 +405,46 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function initTomSelect(): void {
-    const itemSelect = document.getElementById('itemSelect') as HTMLSelectElement;
-    const catSelectEl = document.getElementById('schedulerSelectCat') as HTMLSelectElement;
-    const catTomSelect = new TomSelect(catSelectEl, {
-      maxItems: 1,
+    new TomSelect('#schedulerSelectCat', {
       plugins: ['remove_button', 'dropdown_input'],
-    });
-    const itemTomSelect = new TomSelect(itemSelect, {
-      maxItems: null,
-      plugins: ['remove_button', 'dropdown_input'],
-      onInitialize() {
-        if (itemSelect.value) {
-          catTomSelect?.disable();
-          catTomSelect?.clear();
+      onChange(value) {
+        if (value) {
+          params.set('cat', value);
+        } else {
+          params.delete('cat');
         }
-      },
-      onItemAdd() {
-        params.set('item', itemTomSelect.items.join(','));
         reloadCalendarEvents();
       },
-      onItemRemove() {
-        const items = itemTomSelect.items;
-        if (items.length > 0) {
-          params.set('item', items.join(','));
-        } else {
-          params.delete('item');
+    });
+    new TomSelect('#itemSelect', {
+      maxItems: null,
+      plugins: {
+        checkbox_options: {
+          checkedClassNames: ['ts-checked'],
+          uncheckedClassNames: ['ts-unchecked'],
+        },
+        clear_button: {},
+        dropdown_input: {},
+        no_active_items: {},
+        remove_button: {},
+      },
+      onChange: (selectedItems) => {
+        const url = new URL(window.location.href);
+        url.searchParams.delete('items[]');
+        params.delete('items[]');
+        url.searchParams.delete('item');
+        params.delete('item');
+
+        selectedItems.forEach(itemId => {
+          url.searchParams.append('items[]', itemId);
+          params.append('items[]', itemId);
+        });
+
+        if (selectedItems.length === 0) {
+          url.searchParams.delete('items[]');
+          params.delete('items[]');
         }
+        window.history.replaceState({}, '', url.toString());
         reloadCalendarEvents();
       },
     });

@@ -97,12 +97,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // remove existing params to build new event sources for the calendar
   function buildEventSourcesUrl(): string {
     ['item', 'cat', 'eventOwner'].forEach((param) => params.delete(param));
-    const itemSelect = document.getElementById('itemSelect') as HTMLSelectElement;
+    const itemSelect = document.getElementById('itemSelect') as HTMLSelectElement & { tomselect?: TomSelect };
     const catSelect = document.getElementById('schedulerSelectCat') as HTMLSelectElement;
     const ownerInput = document.getElementById('eventOwnerSelect') as HTMLInputElement;
 
-    if (itemSelect?.value) {
-      params.set('item', itemSelect.value);
+    if (itemSelect?.tomselect?.items?.length) {
+      params.set('item', itemSelect.tomselect.items.join(','));
     }
     if (catSelect?.value) {
       params.set('cat', catSelect.value);
@@ -138,9 +138,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   let eventBackgroundColor = 'a9a9a9';
-  if (document.getElementById('itemSelect')) {
-    eventBackgroundColor = (document.getElementById('itemSelect') as HTMLSelectElement).selectedOptions[0].dataset.color;
-  }
+  // if (document.getElementById('itemSelect')) {
+  //   eventBackgroundColor = (document.getElementById('itemSelect') as HTMLSelectElement)?.selectedOptions[0]?.dataset.color;
+  // }
   // SCHEDULER
   const calendar = new Calendar(calendarEl, {
     schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
@@ -354,39 +354,34 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function initTomSelect(): void {
-    ['schedulerSelectCat', 'itemSelect'].forEach(id => {
-      const el = document.getElementById(id) as HTMLSelectElement;
-      const catSelect = document.querySelector('#schedulerSelectCat') as HTMLSelectElement & { tomselect?: TomSelect };
-      if (el) {
-        new TomSelect(`#${id}`, {
-          plugins: ['dropdown_input', 'remove_button'],
-          // on init, if there's an item selected, disable category filter
-          onInitialize() {
-            if (id === 'itemSelect' && el.value) {
-              catSelect.tomselect.disable();
-              catSelect.tomselect.clear();
-            }
-          },
-          onItemRemove() {
-            if (id === 'itemSelect') {
-              params.delete('item');
-              params.set('start', calendar.view.activeStart.toISOString());
-              window.location.replace(`scheduler.php?${params.toString()}`);
-            }
-          },
-          onChange() {
-            if (id === 'itemSelect') {
-              if (el.value) {
-                catSelect.tomselect.clear();
-                params.set('item', el.value);
-              }
-              params.set('start', calendar.view.activeStart.toISOString());
-              window.location.replace(`scheduler.php?${params.toString()}`);
-            }
-            reloadCalendarEvents();
-          },
-        });
-      }
+    const itemSelect = document.getElementById('itemSelect') as HTMLSelectElement;
+    const catSelectEl = document.getElementById('schedulerSelectCat') as HTMLSelectElement;
+    const catTomSelect = new TomSelect(catSelectEl, {
+      maxItems: 1,
+      plugins: ['remove_button', 'dropdown_input'],
+    });
+    const itemTomSelect = new TomSelect(itemSelect, {
+      maxItems: null,
+      plugins: ['remove_button', 'dropdown_input'],
+      onInitialize() {
+        if (itemSelect.value) {
+          catTomSelect?.disable();
+          catTomSelect?.clear();
+        }
+      },
+      onItemAdd() {
+        params.set('item', itemTomSelect.items.join(','));
+        reloadCalendarEvents();
+      },
+      onItemRemove() {
+        const items = itemTomSelect.items;
+        if (items.length > 0) {
+          params.set('item', items.join(','));
+        } else {
+          params.delete('item');
+        }
+        reloadCalendarEvents();
+      },
     });
   }
 });

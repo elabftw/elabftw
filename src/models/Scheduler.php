@@ -143,7 +143,21 @@ final class Scheduler extends AbstractRest
         if ($queryParams !== null) {
             $this->appendFilterSql(column: 'items.category', paramName: 'category', value: $queryParams->getQuery()->getInt('cat'));
             $this->appendFilterSql(column: 'team_events.userid', paramName: 'ownerid', value: $queryParams->getQuery()->getInt('eventOwner'));
-            $this->appendFilterSql(column: 'items.id', paramName: 'itemid', value: $queryParams->getQuery()->getInt('item'));
+            // handle multiple items
+            $itemIds = (string) $queryParams->getQuery()->get('item');
+            if (!empty($itemIds)) {
+                $ids = array_filter(array_map('intval', explode(',', $itemIds)));
+                if ($ids) {
+                    $placeholders = array();
+                    // secure way to concat the item ids. :itemid0, :itemid1
+                    foreach ($ids as $index => $id) {
+                        $key = "itemid$index";
+                        $placeholders[] = ":$key";
+                        $this->filterBindings[$key] = $id;
+                    }
+                    $this->filterSqlParts[] = 'AND items.id IN (' . implode(',', $placeholders) . ')';
+                }
+            }
         }
         // apply scope for events
         $itemId = ($queryParams !== null) ? $queryParams->getQuery()->getInt('item') : 0;

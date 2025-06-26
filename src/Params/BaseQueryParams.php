@@ -33,6 +33,7 @@ class BaseQueryParams implements QueryParamsInterface
         public int $limit = 15,
         public int $offset = 0,
         public array $states = array(State::Normal),
+        protected array $bindings = array(),
     ) {
         if ($query !== null) {
             if ($query->has('limit')) {
@@ -85,5 +86,41 @@ class BaseQueryParams implements QueryParamsInterface
     public function getStatesSql(string $tableName): string
     {
         return sprintf(' AND %s.state IN (%s)', $tableName, implode(', ', array_map(fn($state) => $state->value, $this->states)));
+    }
+
+    #[Override]
+    public function getBindings(): array
+    {
+        return $this->bindings;
+    }
+
+    #[Override]
+    public function getParamSql(string $column, string $paramName): string
+    {
+        return sprintf(' AND %s = :%s', $column, $paramName);
+    }
+
+    #[Override]
+    public function getMultipleParamSql(string $column, string $paramName, array $values): string
+    {
+        if (empty($values)) {
+            return '';
+        }
+
+        $placeholderList = $this->generateInClause($paramName, $values);
+        return sprintf(' AND %s IN (%s)', $column, $placeholderList);
+    }
+
+    private function generateInClause(string $paramName, array $values): string
+    {
+        $placeholders = [];
+
+        foreach ($values as $i => $value) {
+            $key = "{$paramName}_$i";
+            $placeholders[] = ":$key";
+            $this->bindings[$key] = $value;
+        }
+
+        return implode(', ', $placeholders);
     }
 }

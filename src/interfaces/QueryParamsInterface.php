@@ -23,4 +23,10 @@ interface QueryParamsInterface
     public function getLimit(): int;
 
     public function getStatesSql(string $tableName): string;
+
+    public function getParamSql(string $column, string $paramName): string;
+
+    public function getBindings(): array;
+
+    public function getMultipleParamSql(string $column, string $paramName, array $values): string;
 }

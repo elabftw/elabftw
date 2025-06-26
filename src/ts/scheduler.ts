@@ -143,9 +143,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const eventBackgroundColor = 'a9a9a9';
-  // if (document.getElementById('itemSelect')) {
-  //   eventBackgroundColor = (document.getElementById('itemSelect') as HTMLSelectElement)?.selectedOptions[0]?.dataset.color;
-  // }
   // SCHEDULER
   const calendar = new Calendar(calendarEl, {
     schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
@@ -322,20 +319,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (calendarEl.dataset.render === 'true') {
     calendar.render();
     calendar.updateSize();
-    // add selected resource name below the title
-    const titleEl = calendarEl.querySelector('.fc-toolbar .fc-toolbar-title');
-    const resourceEl = document.getElementById('schedulerResourceDisplay');
-    if (titleEl && resourceEl) {
-      const parent = titleEl.parentElement;
-      // wrapper to stack vertically below title (the scheduler date)
-      const wrapper = document.createElement('div');
-      wrapper.classList.add('text-center', 'd-flex', 'flex-column', 'align-items-center');
-      resourceEl.removeAttribute('hidden');
-      resourceEl.classList.add('mt-2', 'd-inline-flex', 'align-items-center');
-      wrapper.appendChild(titleEl);
-      wrapper.appendChild(resourceEl);
-      parent?.appendChild(wrapper);
-    }
   }
 
   // add on change event listener on datetime inputs

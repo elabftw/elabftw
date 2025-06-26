@@ -220,17 +220,6 @@
     </div>
   </div>
 
-  {% if bookableItemData %}
-  <div id='schedulerResourceDisplay' class='title d-flex justify-content-center'>
-    {{ 'Selected resource:'|trans }}
-    <a href='database.php?mode=view&amp;id={{ bookableItemData.id }}' class='d-inline-flex align-items-center text-decoration-none hl-hover-gray ml-2'>
-      <span class='catstat-btn category-btn mr-2' style='--bg: #{{ bookableItemData.category_color }}'>
-        {{ bookableItemData.category_title }}
-      </span>
-      <span class='text-info font-weight-bold'>{{ bookableItemData.title }}</span>
-    </a>
-  </div>
-{% endif %}
 {% if itemsArr|length == 0 %}
   {{ 'No bookable items.'|trans|msg('warning', false) }}
 {% else %}

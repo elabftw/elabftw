@@ -56,20 +56,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return datetime.valueOf() - offset;
   }
   const params = new URLSearchParams(document.location.search.substring(1));
-
-  // disable scopeBtn when an item is selected. Default scope becomes Everything
-  const scopeBtnWrapper = document.getElementById('scopeEventBtn');
-  const scopeBtn = scopeBtnWrapper?.querySelector('button.dropdown-toggle') as HTMLButtonElement;
-  if (scopeBtn) {
-    scopeBtn.removeAttribute('disabled');
-  }
-  scopeBtn.disabled = !!params.get('item');
-
-  if (!params.has('item')) {
-    if (document.getElementById('selectBookableWarningDiv')) {
-      document.getElementById('selectBookableWarningDiv').removeAttribute('hidden');
-    }
-  }
   // get the start parameter from url and use that as start time if it's there
   const start = params.get('start');
   let selectedDate = new Date().valueOf();
@@ -387,6 +373,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  function lockScopeButton(selectedItems: string[]): void {
+    const scopeBtn = document.getElementById('scopeEventBtn');
+    const lockedBtn = document.getElementById('scopeLocked');
+    const showLocked = selectedItems.length > 0;
+
+    scopeBtn?.toggleAttribute('hidden', showLocked);
+    lockedBtn?.toggleAttribute('hidden', !showLocked);
+  }
+
   function initTomSelect(): void {
     new TomSelect('#schedulerSelectCat', {
       plugins: ['remove_button', 'dropdown_input'],
@@ -412,6 +407,8 @@ document.addEventListener('DOMContentLoaded', () => {
         remove_button: {},
       },
       onChange: (selectedItems) => {
+        lockScopeButton(selectedItems);
+
         const url = new URL(window.location.href);
         url.searchParams.delete('items[]');
         params.delete('items[]');

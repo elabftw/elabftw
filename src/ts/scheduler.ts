@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function buildEventSourcesUrl(): string {
     ['items[]', 'cat', 'eventOwner', 'item'].forEach((param) => params.delete(param));
     const itemSelect = document.getElementById('itemSelect') as HTMLSelectElement & { tomselect?: TomSelect };
-    const catSelect = document.getElementById('schedulerSelectCat') as HTMLSelectElement;
+    const categorySelect = document.getElementById('categorySelect') as HTMLSelectElement;
     const ownerInput = document.getElementById('eventOwnerSelect') as HTMLInputElement;
 
     if (itemSelect?.tomselect?.items?.length) {
@@ -94,8 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
         params.append('items[]', id);
       });
     }
-    if (catSelect?.value) {
-      params.set('cat', catSelect.value);
+    if (categorySelect?.value) {
+      params.set('cat', categorySelect.value);
     }
     if (ownerInput?.value.trim()) {
       const ownerId = ownerInput.value.trim().split(' ')[0];
@@ -382,19 +382,58 @@ document.addEventListener('DOMContentLoaded', () => {
     lockedBtn?.toggleAttribute('hidden', !showLocked);
   }
 
+  // function initTomSelect(): void {
+  //   new TomSelect('#schedulerSelectCat', {
+  //     plugins: ['remove_button', 'dropdown_input'],
+  //     onChange(value) {
+  //       if (value) {
+  //         params.set('cat', value);
+  //       } else {
+  //         params.delete('cat');
+  //       }
+  //       reloadCalendarEvents();
+  //     },
+  //   });
+  //   new TomSelect('#itemSelect', {
+  //     maxItems: null,
+  //     plugins: {
+  //       checkbox_options: {
+  //         checkedClassNames: ['ts-checked'],
+  //         uncheckedClassNames: ['ts-unchecked'],
+  //       },
+  //       clear_button: {},
+  //       dropdown_input: {},
+  //       no_active_items: {},
+  //       remove_button: {},
+  //     },
+  //     onChange: (selectedItems) => {
+  //       lockScopeButton(selectedItems);
+  //
+  //       const url = new URL(window.location.href);
+  //       url.searchParams.delete('items[]');
+  //       params.delete('items[]');
+  //       url.searchParams.delete('item');
+  //       params.delete('item');
+  //
+  //       selectedItems.forEach(itemId => {
+  //         url.searchParams.append('items[]', itemId);
+  //         params.append('items[]', itemId);
+  //       });
+  //
+  //       if (selectedItems.length === 0) {
+  //         url.searchParams.delete('items[]');
+  //         params.delete('items[]');
+  //       }
+  //       window.history.replaceState({}, '', url.toString());
+  //       reloadCalendarEvents();
+  //     },
+  //   });
+  // }
   function initTomSelect(): void {
-    new TomSelect('#schedulerSelectCat', {
-      plugins: ['remove_button', 'dropdown_input'],
-      onChange(value) {
-        if (value) {
-          params.set('cat', value);
-        } else {
-          params.delete('cat');
-        }
-        reloadCalendarEvents();
-      },
-    });
-    new TomSelect('#itemSelect', {
+    const itemSelect = document.getElementById('itemSelect') as HTMLSelectElement;
+    const categorySelect = document.getElementById('categorySelect') as HTMLSelectElement;
+
+    const itemTomSelect = new TomSelect('#itemSelect', {
       maxItems: null,
       plugins: {
         checkbox_options: {
@@ -427,6 +466,22 @@ document.addEventListener('DOMContentLoaded', () => {
         window.history.replaceState({}, '', url.toString());
         reloadCalendarEvents();
       },
+    });
+
+    // Filter selectable resources depending on the category selected
+    categorySelect.addEventListener('change', () => {
+      const selectedCategory = categorySelect.value;
+
+      // clear item select options and re-add only options matching the category
+      itemTomSelect.clearOptions();
+      for (const option of Array.from(itemSelect.options)) {
+        if (!selectedCategory || option.dataset.category === selectedCategory) {
+          itemTomSelect.addOption({ value: option.value, text: option.textContent });
+        }
+      }
+
+      itemTomSelect.refreshOptions(false);
+      reloadCalendarEvents();
     });
   }
 });

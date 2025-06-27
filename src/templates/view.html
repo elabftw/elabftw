@@ -28,12 +28,10 @@
 
 {# Exclusive edit mode notification #}
 <div id='exclusiveEditModeInfo'>
-{% if Entity.entityData.exclusive_edit_mode.locked_by %}
-  {% if Entity.entityData.exclusive_edit_mode.locked_by != Entity.Users.userData.userid %}
-    {% set writeLockNotice = 'This entry is being edited by %s.'|trans|format(
-        Entity.entityData.exclusive_edit_mode.locked_by_human,
-      )|msg('warning', false) %}
-  {% endif %}
+{% if Entity.entityData.exclusive_edit_mode.locked_by != App.Users.userid and not Entity.entityData.exclusive_edit_mode.is_stale %}
+  {% set writeLockNotice = 'This entry is being edited by %s.'|trans|format(
+      Entity.entityData.exclusive_edit_mode.locked_by_human,
+    )|msg('warning', false) %}
   {{ writeLockNotice|raw }}
 {% endif %}
 </div>

@@ -28,7 +28,7 @@
 
 {# Exclusive edit mode notification #}
 <div id='exclusiveEditModeInfo'>
-{% if Entity.entityData.exclusive_edit_mode.locked_by != App.Users.userid and not Entity.entityData.exclusive_edit_mode.is_stale %}
+  {% if Entity.entityData.exclusive_edit_mode.locked_by > 0 and Entity.entityData.exclusive_edit_mode.locked_by != App.Users.userid and not Entity.entityData.exclusive_edit_mode.is_stale %}
   {% set writeLockNotice = 'This entry is being edited by %s.'|trans|format(
       Entity.entityData.exclusive_edit_mode.locked_by_human,
     )|msg('warning', false) %}

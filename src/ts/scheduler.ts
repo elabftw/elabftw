@@ -81,6 +81,12 @@ document.addEventListener('DOMContentLoaded', () => {
     window.location.replace(`${location.pathname}?${params.toString()}`);
   }
 
+  // clean up 'cat' parameter on page refresh or else it keeps it as the only available value in the Select
+  if (params.has('cat')) {
+    params.delete('cat');
+    window.location.replace(`${location.pathname}?${params.toString()}`);
+  }
+
   initTomSelect();
   // remove existing params to build new event sources for the calendar
   function buildEventSourcesUrl(): string {
@@ -382,53 +388,6 @@ document.addEventListener('DOMContentLoaded', () => {
     lockedBtn?.toggleAttribute('hidden', !showLocked);
   }
 
-  // function initTomSelect(): void {
-  //   new TomSelect('#schedulerSelectCat', {
-  //     plugins: ['remove_button', 'dropdown_input'],
-  //     onChange(value) {
-  //       if (value) {
-  //         params.set('cat', value);
-  //       } else {
-  //         params.delete('cat');
-  //       }
-  //       reloadCalendarEvents();
-  //     },
-  //   });
-  //   new TomSelect('#itemSelect', {
-  //     maxItems: null,
-  //     plugins: {
-  //       checkbox_options: {
-  //         checkedClassNames: ['ts-checked'],
-  //         uncheckedClassNames: ['ts-unchecked'],
-  //       },
-  //       clear_button: {},
-  //       dropdown_input: {},
-  //       no_active_items: {},
-  //       remove_button: {},
-  //     },
-  //     onChange: (selectedItems) => {
-  //       lockScopeButton(selectedItems);
-  //
-  //       const url = new URL(window.location.href);
-  //       url.searchParams.delete('items[]');
-  //       params.delete('items[]');
-  //       url.searchParams.delete('item');
-  //       params.delete('item');
-  //
-  //       selectedItems.forEach(itemId => {
-  //         url.searchParams.append('items[]', itemId);
-  //         params.append('items[]', itemId);
-  //       });
-  //
-  //       if (selectedItems.length === 0) {
-  //         url.searchParams.delete('items[]');
-  //         params.delete('items[]');
-  //       }
-  //       window.history.replaceState({}, '', url.toString());
-  //       reloadCalendarEvents();
-  //     },
-  //   });
-  // }
   function initTomSelect(): void {
     const itemSelect = document.getElementById('itemSelect') as HTMLSelectElement;
     const categorySelect = document.getElementById('categorySelect') as HTMLSelectElement;

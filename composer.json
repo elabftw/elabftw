@@ -94,6 +94,9 @@
       "Elabftw\\Factories\\": [
         "src/factories"
       ],
+      "Elabftw\\Hash\\": [
+        "src/Hash"
+      ],
       "Elabftw\\Import\\": [
         "src/Import"
       ],

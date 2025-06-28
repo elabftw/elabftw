@@ -10,23 +10,18 @@
 
 declare(strict_types=1);
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Hash;
 
 use Elabftw\Interfaces\HashInterface;
 use Override;
 
 use function hash;
 
-class Hash implements HashInterface
+abstract class AbstractHash implements HashInterface
 {
     protected const string HASH_ALGORITHM = 'sha256';
 
-    // length of input above which we don't process it
-    protected const int THRESHOLD = 4200000000;
-
     protected ?string $hash = null;
-
-    public function __construct(protected readonly string $input) {}
 
     #[Override]
     public function getHash(): ?string
@@ -45,17 +40,15 @@ class Hash implements HashInterface
         return self::HASH_ALGORITHM;
     }
 
-    // todo add getContent so compute can be the same in filehash
+    abstract protected function getContent(): string;
+
     protected function compute(): ?string
     {
         if ($this->canCompute()) {
-            return hash(self::HASH_ALGORITHM, $this->input);
+            return hash(self::HASH_ALGORITHM, $this->getContent());
         }
         return null;
     }
 
-    protected function canCompute(): bool
-    {
-        return mb_strlen($this->input) < self::THRESHOLD;
-    }
+    abstract protected function canCompute(): bool;
 }

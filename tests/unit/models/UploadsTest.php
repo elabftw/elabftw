@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\CreateUploadFromLocalFile;
-use Elabftw\Elabftw\NullHash;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\State;
@@ -148,12 +147,13 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
 
     public function testReplace(): void
     {
+        $comment = 'some super duper comment';
         $Uploads = new Uploads($this->Entity);
-        $id = $Uploads->create(new CreateUploadFromLocalFile('example.png', dirname(__DIR__, 2) . '/_data/example.png', 'some super duper comment'));
+        $id = $Uploads->create(new CreateUploadFromLocalFile('example.png', dirname(__DIR__, 2) . '/_data/example.png', $comment));
         $Uploads->setId($id);
         $upArrBefore = $Uploads->uploadData;
 
-        $id = $Uploads->replace(array('real_name' => 'example.png', 'filePath' => dirname(__DIR__, 2) . '/_data/example.png'), new NullHash());
+        $id = $Uploads->replace(new CreateUploadFromLocalFile('example.png', dirname(__DIR__, 2) . '/_data/example.png', $comment));
         $this->assertIsInt($id);
         // make sure the old one is archived
         $this->assertEquals($Uploads->readOne()['state'], State::Archived->value);

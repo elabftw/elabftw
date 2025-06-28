@@ -14,10 +14,9 @@ namespace Elabftw\Models;
 
 use DateTimeImmutable;
 use Elabftw\AuditEvent\SignatureCreated;
-use Elabftw\Elabftw\CreateUpload;
+use Elabftw\Elabftw\CreateUploadFromLocalFile;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\EntitySqlBuilder;
-use Elabftw\Elabftw\FileHash;
 use Elabftw\Elabftw\ItemsTypesSqlBuilder;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Permissions;
@@ -703,10 +702,9 @@ abstract class AbstractEntity extends AbstractRest
         $zipName = $Maker->getFileName();
         $zipPath = FsTools::getCacheFile() . '.zip';
         $comment = sprintf(_('Timestamp archive by %s'), $this->Users->userData['fullname']);
-        $hasher = new FileHash(FsTools::getFs(dirname($zipPath)), basename($zipPath));
         $Maker->saveTimestamp(
             $TimestampUtils->timestamp(),
-            new CreateUpload($zipName, $zipPath, $hasher, $comment, immutable: 1, state: State::Archived),
+            new CreateUploadFromLocalFile($zipName, $zipPath, $comment, immutable: 1, state: State::Archived),
         );
 
         // decrement the balance
@@ -804,14 +802,12 @@ abstract class AbstractEntity extends AbstractRest
         $signature = $Sigkeys->serializeSignature($this->Users->userData['sig_privkey'], $passphrase, $message, $meaning);
         $SigKeys = new SigKeys($this->Users);
         $SigKeys->touch();
+        // create an immutable comment
         $Comments = new ImmutableComments($this);
         $comment = sprintf(_('Signed by %s (%s)'), $this->Users->userData['fullname'], $meaning->name);
         $Comments->postAction(Action::Create, array('comment' => $comment));
         // save the signature and data in a zip archive
-        $protoZipPath = FsTools::getCacheFile();
-        $zipFolderPath = dirname($protoZipPath);
-        $zipPath = $protoZipPath . '.zip';
-        $comment = sprintf(_('Signature archive by %s (%s)'), $this->Users->userData['fullname'], $meaning->name);
+        $zipPath = FsTools::getCacheFile() . '.zip';
         $ZipArchive = new ZipArchive();
         $ZipArchive->open($zipPath, ZipArchive::CREATE);
         $ZipArchive->addFromString('data.json.minisig', $signature);
@@ -821,8 +817,8 @@ abstract class AbstractEntity extends AbstractRest
         $ZipArchive->close();
         // allow uploading a file to that entity because sign action only requires read access
         $this->Uploads->Entity->bypassWritePermission = true;
-        $hasher = new FileHash(FsTools::getFs($zipFolderPath), basename($zipPath));
-        $this->Uploads->create(new CreateUpload('signature archive.zip', $zipPath, $hasher, $comment, immutable: 1, state: State::Archived));
+        $comment = sprintf(_('Signature archive by %s (%s)'), $this->Users->userData['fullname'], $meaning->name);
+        $this->Uploads->create(new CreateUploadFromLocalFile('signature archive.zip', $zipPath, $comment, immutable: 1, state: State::Archived));
         $RequestActions = new RequestActions($this->Users, $this);
         $RequestActions->remove(RequestableAction::Sign);
         AuditLogs::create(new SignatureCreated($this->Users->userData['userid'], $this->id ?? 0, $this->entityType));

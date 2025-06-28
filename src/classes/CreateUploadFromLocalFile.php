@@ -13,12 +13,13 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\State;
+use Elabftw\Hash\LocalFileHash;
 use Elabftw\Interfaces\HashInterface;
 use League\Flysystem\Filesystem;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Override;
 
-class CreateUploadFromLocalFile extends CreateUpload
+final class CreateUploadFromLocalFile extends CreateUpload
 {
     public function __construct(
         string $realName,

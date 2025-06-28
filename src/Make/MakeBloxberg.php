@@ -12,8 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use Elabftw\Elabftw\CreateUpload;
-use Elabftw\Elabftw\FileHash;
+use Elabftw\Elabftw\CreateUploadFromLocalFile;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\State;
@@ -21,7 +20,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Users;
 use Elabftw\Services\HttpGetter;
-use Elabftw\Storage\Cache;
 use RuntimeException;
 use ZipArchive;
 
@@ -77,12 +75,10 @@ final class MakeBloxberg extends AbstractMakeTimestamp
         // update timestamp on the entry
         $this->updateTimestamp(date('Y-m-d H:i:s'));
         // save the zip file as an upload
-        $hasher = new FileHash(FsTools::getFs(dirname($tmpFilePath)), basename($tmpFilePath));
         return $this->entity->Uploads->create(
-            new CreateUpload(
+            new CreateUploadFromLocalFile(
                 $this->getFileName(),
                 $tmpFilePath,
-                $hasher,
                 sprintf(_('Timestamp archive by %s'), $this->entity->Users->userData['fullname']),
                 immutable: 1,
                 state: State::Archived,

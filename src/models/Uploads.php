@@ -14,12 +14,12 @@ namespace Elabftw\Models;
 
 use Elabftw\Controllers\DownloadController;
 use Elabftw\Elabftw\CreateUpload;
+use Elabftw\Elabftw\CreateUploadFromLocalFile;
 use Elabftw\Elabftw\CreateUploadFromS3;
 use Elabftw\Elabftw\CreateUploadFromUploadedFile;
-use Elabftw\Elabftw\ExistingHash;
-use Elabftw\Elabftw\FileHash;
+use Elabftw\Hash\ExistingHash;
 use Elabftw\Elabftw\FsTools;
-use Elabftw\Elabftw\Hash;
+use Elabftw\Hash\StringHash;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\FileFromString;
@@ -29,11 +29,9 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Factories\MakeThumbnailFactory;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
-use Elabftw\Interfaces\HashInterface;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Params\UploadParams;
 use Elabftw\Services\Check;
-use Elabftw\Storage\Cache;
 use ImagickException;
 use League\Flysystem\UnableToRetrieveMetadata;
 use Override;
@@ -293,7 +291,7 @@ final class Uploads extends AbstractRest
                     return $this->createFromString($fileType, $reqBody['real_name'], $reqBody['content']);
                 }
             )(),
-            Action::Replace => $this->replace($reqBody, new FileHash(new Cache()->getFs(), $reqBody['filePath'])),
+            Action::Replace => $this->replace(new CreateUploadFromLocalFile($reqBody['real_name'], $reqBody['filePath'], $this->uploadData['comment'])),
             default => throw new ImproperActionException('Invalid action for upload creation.'),
         };
     }
@@ -372,19 +370,17 @@ final class Uploads extends AbstractRest
         $tmpFilePathFs = FsTools::getFs(dirname($tmpFilePath));
         $tmpFilePathFs->write(basename($tmpFilePath), $content);
 
-        return $this->create(new CreateUpload($realName, $tmpFilePath, state: $state, hasher: new Hash($content)));
+        return $this->create(new CreateUpload($realName, $tmpFilePath, state: $state, hasher: new StringHash($content)));
     }
 
     /**
      * Attached files are immutable (change history is kept), so the current
      * file gets its state changed to "archived" and a new one is added
      */
-    public function replace(array $reqBody, HashInterface $hasher): int
+    public function replace(CreateUploadParamsInterface $params): int
     {
-        // read the current one to get the comment, and at the same time archive it
-        $upload = $this->archive();
-
-        return $this->create(new CreateUpload($reqBody['real_name'], $reqBody['filePath'], $hasher, $upload['comment']));
+        $this->archive();
+        return $this->create($params);
     }
 
     private function update(UploadParams $params): bool

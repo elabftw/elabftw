@@ -10,17 +10,18 @@
 
 declare(strict_types=1);
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Hash;
 
 use Override;
 
-class ExistingHash extends Hash
+/**
+ * Always compute hash, regardless of filesize
+ */
+final class NolimitFileHash extends FileHash
 {
-    public function __construct(protected ?string $hash = null) {}
-
     #[Override]
-    protected function compute(): ?string
+    protected function canCompute(): bool
     {
-        return $this->hash;
+        return true;
     }
 }

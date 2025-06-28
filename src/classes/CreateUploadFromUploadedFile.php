@@ -13,13 +13,14 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\State;
+use Elabftw\Hash\FileHash;
 use Elabftw\Interfaces\HashInterface;
 use Elabftw\Storage\Tmp;
 use League\Flysystem\Filesystem;
 use Override;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-class CreateUploadFromUploadedFile extends CreateUpload
+final class CreateUploadFromUploadedFile extends CreateUpload
 {
     public function __construct(
         private readonly UploadedFile $uploadedFile,

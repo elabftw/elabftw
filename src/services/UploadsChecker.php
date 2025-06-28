@@ -14,7 +14,7 @@ namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\FsTools;
-use Elabftw\Elabftw\NolimitFileHash;
+use Elabftw\Hash\NolimitFileHash;
 use Elabftw\Enums\Storage;
 use Elabftw\Interfaces\HashInterface;
 use League\Flysystem\UnableToRetrieveMetadata;

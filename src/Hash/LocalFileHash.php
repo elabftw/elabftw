@@ -10,7 +10,7 @@
 
 declare(strict_types=1);
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Hash;
 
 use League\Flysystem\Filesystem;
 use League\Flysystem\Local\LocalFilesystemAdapter;
@@ -18,7 +18,7 @@ use League\Flysystem\Local\LocalFilesystemAdapter;
 /**
  * To hash a file stored on local filesystem
  */
-class LocalFileHash extends FileHash
+final class LocalFileHash extends FileHash
 {
     public function __construct(string $filepath)
     {

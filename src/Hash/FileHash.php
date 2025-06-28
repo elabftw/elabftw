@@ -10,17 +10,15 @@
 
 declare(strict_types=1);
 
-namespace Elabftw\Elabftw;
+namespace Elabftw\Hash;
 
 use League\Flysystem\FilesystemOperator;
 use Override;
 
-use function hash;
-
 /**
  * To hash a file
  */
-class FileHash extends Hash
+class FileHash extends StringHash
 {
     protected const string HASH_ALGORITHM = 'sha256';
 
@@ -33,12 +31,9 @@ class FileHash extends Hash
     ) {}
 
     #[Override]
-    protected function compute(): ?string
+    protected function getContent(): string
     {
-        if ($this->canCompute()) {
-            return hash(self::HASH_ALGORITHM, $this->filesystem->read($this->filename));
-        }
-        return null;
+        return $this->filesystem->read($this->filename);
     }
 
     #[Override]

@@ -11,8 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use Elabftw\Elabftw\CreateUpload;
-use Elabftw\Elabftw\NullHash;
+use Elabftw\Elabftw\CreateUploadFromLocalFile;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
 use Elabftw\Traits\TestsUtilsTrait;
@@ -52,8 +51,8 @@ class MakeStreamZipTest extends \PHPUnit\Framework\TestCase
         // add two files with the same name to that experiment
         $filepath = dirname(__DIR__, 2) . '/_data/example.png';
         $filename = 'similar';
-        $Experiments->Uploads->create(new CreateUpload($filename, $filepath, new NullHash()));
-        $Experiments->Uploads->create(new CreateUpload($filename, $filepath, new NullHash()));
+        $Experiments->Uploads->create(new CreateUploadFromLocalFile($filename, $filepath));
+        $Experiments->Uploads->create(new CreateUploadFromLocalFile($filename, $filepath));
         $Zip = $this->createMock(ZipStream::class);
         $MakeExp = new MakeStreamZip($Zip, new Users(1, 1), array($this->getFreshExperiment()));
         $MakeExp->getStreamZip();

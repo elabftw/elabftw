@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\CreateUpload;
+use Elabftw\Elabftw\CreateUploadFromLocalFile;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users;
 use League\Flysystem\UnableToDeleteFile;
@@ -22,7 +22,7 @@ class UploadsPrunerTest extends \PHPUnit\Framework\TestCase
     {
         // create an upload that we will delete
         $Experiments = new Experiments(new Users(1, 1), 1);
-        $uploadId = $Experiments->Uploads->create(new CreateUpload('to_delete.sql', dirname(__DIR__, 2) . '/_data/dummy.sql'));
+        $uploadId = $Experiments->Uploads->create(new CreateUploadFromLocalFile('to_delete.sql', dirname(__DIR__, 2) . '/_data/dummy.sql'));
         $Experiments->Uploads->setId($uploadId);
         $Experiments->Uploads->destroy();
 

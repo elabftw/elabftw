@@ -25,12 +25,6 @@ final class CreateUploadFromS3 extends CreateUpload
     }
 
     #[Override]
-    public function getSourcePath(): string
-    {
-        return $this->filePath;
-    }
-
-    #[Override]
     public function getTmpFilePath(): string
     {
         return $this->filePath;

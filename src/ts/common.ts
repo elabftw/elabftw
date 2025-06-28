@@ -406,26 +406,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return detailsEls;
   }
 
-  function generateTable(data: Record<string, string | null>) {
-    const table = document.createElement('table');
-    table.classList.add('table');
-    const tbody = document.createElement('tbody');
-
-    for (const [key, value] of Object.entries(data)) {
-      const row = document.createElement('tr');
-      const cellKey = document.createElement('td');
-      cellKey.textContent = key;
-      row.appendChild(cellKey);
-      const cellValue: HTMLTableCellElement = document.createElement('td');
-      cellValue.textContent = value !== null ? value : 'N/A';
-      row.appendChild(cellValue);
-      tbody.appendChild(row);
-    }
-
-    table.appendChild(tbody);
-    return table;
-  }
-
   /**
   * Add an event listener on wheel event to prevent scrolling down with a number input selected.
   * Without this, the number will change to the next integer and information entered is lost.
@@ -796,22 +776,68 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       const elOldHTML = mkSpin(el);
-      const resultDiv = document.getElementById('pubChemSearchResultDiv');
       const resultTableDiv = document.getElementById('pubChemSearchResultTableDiv');
-      const viewOnPubChemLink = document.getElementById('viewOnPubChemLink') as HTMLLinkElement;
+      // we will handle errors differently here
+      ApiC.notifOnError = false;
       ApiC.getJson(`compounds?search_pubchem_${el.dataset.from}=${inputEl.value}`).then(json => {
-        const table = generateTable(json);
-        resultDiv.removeAttribute('hidden');
-        viewOnPubChemLink.href = `https://pubchem.ncbi.nlm.nih.gov/compound/${json.cid}`;
+        const compounds = Array.isArray(json) ? json : [json];
+        const table = document.createElement('table');
+        table.classList.add('table');
+
+        // a good cas to try this code: 56392-17-7 (has 10 cids)
+        const thead = document.createElement('thead');
+        const headerRow = document.createElement('tr');
+        ['CID', 'CAS', i18next.t('name'), i18next.t('import')].forEach(text => {
+          const th = document.createElement('th');
+          th.textContent = text;
+          headerRow.appendChild(th);
+        });
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+
+        const tbody = document.createElement('tbody');
+        table.appendChild(tbody);
+        compounds.forEach(compound => {
+          const row = document.createElement('tr');
+          // CID column
+          const cidCell = document.createElement('td');
+          const cidLink = document.createElement('a');
+          cidLink.href = `https://pubchem.ncbi.nlm.nih.gov/compound/${compound.cid}`;
+          cidLink.classList.add('external-link');
+          cidLink.target = '_blank';
+          cidLink.rel = 'noopener';
+          cidLink.textContent = compound.cid;
+          cidCell.appendChild(cidLink);
+          row.appendChild(cidCell);
+
+          // CAS column
+          const casCell = document.createElement('td');
+          casCell.textContent = compound.cas;
+          row.appendChild(casCell);
+
+          // Name column
+          const nameCell = document.createElement('td');
+          nameCell.textContent = compound.name;
+          row.appendChild(nameCell);
+
+          // Import column
+          const importCell = document.createElement('td');
+          const importBtn = document.createElement('button');
+          importBtn.classList.add('btn', 'btn-primary');
+          importBtn.innerText = i18next.t('import');
+          importBtn.dataset.cid = String(compound.cid);
+          importBtn.dataset.action = 'import-compound';
+          importCell.appendChild(importBtn);
+          row.appendChild(importCell);
+
+          tbody.appendChild(row);
+        });
         // clear any previous result
         resultTableDiv.innerHTML = '';
         resultTableDiv.appendChild(table);
-        const importBtn = document.querySelector('[data-action="import-compound"]') as HTMLButtonElement;
-        importBtn.removeAttribute('disabled');
-        importBtn.dataset.cid = json.cid;
       }).catch(err => {
         console.error(err);
-        notify.error('resource-not-found');
+        resultTableDiv.innerText = err;
       }).finally(() => {
         mkSpinStop(el, elOldHTML);
       });
@@ -827,16 +853,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // IMPORT FROM PUBCHEM
     } else if (el.matches('[data-action="import-compound"]')) {
+      //el.setAttribute('disabled', 'disabled');
+      const elOldHTML = mkSpin(el);
       const params = {cid: parseInt(el.dataset.cid, 10), action: Action.Duplicate};
       ApiC.post2location('compounds', params).then(() => {
         document.dispatchEvent(new CustomEvent('dataReload'));
-        clearForm(document.getElementById('importFromPubChemModal'));
-        const resultDiv = document.getElementById('pubChemSearchResultDiv');
-        resultDiv.setAttribute('hidden', 'hidden');
-        const resultTableDiv = document.getElementById('pubChemSearchResultTableDiv');
-        resultTableDiv.innerHTML = '';
-        const importBtn = document.querySelector('[data-action="import-cid"]');
-        importBtn.setAttribute('disabled', 'disabled');
+      }).catch(err => {
+        console.error(err);
+      }).finally(() => {
+        mkSpinStop(el, elOldHTML);
+        el.setAttribute('disabled', 'disabled');
       });
 
     } else if (el.matches('[data-action="create-resource-from-compound"]')) {

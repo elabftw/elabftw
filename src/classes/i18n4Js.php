@@ -74,6 +74,7 @@ final class i18n4Js
             'form-validation-error' => _('Error validating the form.'),
             'generic-delete-warning' => _('Delete this?'),
             'hide-deleted' => _('Hide deleted'),
+            'import' => _('Import'),
             // import errors often print html content
             'import-error' => _('Error during import. Please check the console for more information.'),
             'invalid-info' => _('Invalid syntax or information provided.'),
@@ -81,6 +82,7 @@ final class i18n4Js
             'location-name' => _('Location name'),
             // https://www.i18next.com/translation-function/formatting
             'multi-changes-confirm' => _('Apply to {{num, number}} entries?'),
+            'name' => _('Name'),
             'no-self-links' => _('Linking an item to itself is not allowed. Please select a different target.'),
             'not-found' => _('No matching result found.'),
             'not-set' => _('Not set'),

@@ -13,8 +13,10 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\FsTools;
+use Elabftw\Elabftw\NolimitFileHash;
 use Elabftw\Enums\Storage;
-use Elabftw\Models\Uploads;
+use Elabftw\Interfaces\HashInterface;
 use League\Flysystem\UnableToRetrieveMetadata;
 use PDO;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -84,16 +86,14 @@ final class UploadsChecker
         $this->Db->execute($req);
         $uploads = $req->fetchAll();
         foreach ($uploads as $upload) {
-            $hash = hash_file(Uploads::HASH_ALGORITHM, dirname(__DIR__, 2) . '/uploads/' . $upload['long_name']);
-            if (empty($hash)) {
-                continue;
-            }
+            $hasher = new NolimitFileHash(FsTools::getFs(dirname(__DIR__, 2) . '/uploads/'), $upload['long_name']);
+            $hash = $hasher->getHash();
             if ($upload['hash'] !== $hash) {
                 $this->output->writeln(sprintf('Found hash mismatch for upload id: %d, stored at %s', $upload['id'], $upload['long_name']));
-                $this->output->writeln(sprintf('Expected: %s but calculated: %s', $upload['hash'], $hash));
+                $this->output->writeln(sprintf('Expected: %s but calculated: %s', $upload['hash'], $hash ?? 'error'));
                 if (!$dryRun) {
                     $this->output->writeln('Replacing faulty hash in database...');
-                    $this->updateHash($upload['id'], $hash);
+                    $this->updateHash($upload['id'], $hasher);
                 } else {
                     $this->output->writeln('Not replacing faulty hash in database because dry-run mode enabled.');
                 }
@@ -107,22 +107,19 @@ final class UploadsChecker
         $toFix = $this->getNullColumn('hash');
         $fixedCount = 0;
         foreach ($toFix as $upload) {
-            $hash = hash_file(Uploads::HASH_ALGORITHM, dirname(__DIR__, 2) . '/uploads/' . $upload['long_name']);
-            if (empty($hash)) {
-                continue;
-            }
-            $this->updateHash($upload['id'], $hash);
+            $hasher = new NolimitFileHash(FsTools::getFs(dirname(__DIR__, 2) . '/uploads/'), $upload['long_name']);
+            $this->updateHash($upload['id'], $hasher);
             $fixedCount += 1;
         }
         return $fixedCount;
     }
 
-    private function updateHash(int $id, string $hash): bool
+    private function updateHash(int $id, HashInterface $hasher): bool
     {
         $sql = 'UPDATE uploads SET hash = :hash, hash_algorithm = :hash_algorithm WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':hash', $hash);
-        $req->bindValue(':hash_algorithm', Uploads::HASH_ALGORITHM);
+        $req->bindValue(':hash', $hasher->getHash());
+        $req->bindValue(':hash_algorithm', $hasher->getAlgo());
         $req->bindParam(':id', $id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }

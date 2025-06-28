@@ -15,7 +15,11 @@ namespace Elabftw\Models;
 use Elabftw\Controllers\DownloadController;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\CreateUploadFromS3;
+use Elabftw\Elabftw\CreateUploadFromUploadedFile;
+use Elabftw\Elabftw\ExistingHash;
+use Elabftw\Elabftw\FileHash;
 use Elabftw\Elabftw\FsTools;
+use Elabftw\Elabftw\Hash;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\FileFromString;
@@ -25,25 +29,24 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Factories\MakeThumbnailFactory;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
+use Elabftw\Interfaces\HashInterface;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Params\UploadParams;
 use Elabftw\Services\Check;
+use Elabftw\Storage\Cache;
 use ImagickException;
 use League\Flysystem\UnableToRetrieveMetadata;
 use Override;
 use PDO;
 use RuntimeException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
-
-use function hash_file;
 
 /**
  * All about the file uploads
  */
 final class Uploads extends AbstractRest
 {
-    public const string HASH_ALGORITHM = 'sha256';
-
     // size of a file in bytes above which we don't process it (50 Mb)
     private const int BIG_FILE_THRESHOLD = 50000000;
 
@@ -89,12 +92,10 @@ final class Uploads extends AbstractRest
 
         $tmpFilename = $params->getTmpFilePath();
         $filesize = $sourceFs->filesize($tmpFilename);
-        $hash = '';
         // we don't hash big files as this could take too much time/resources
         // same with thumbnails
+        // TODO add the filesize check inside the makethumnailclass like we did for hasher
         if ($filesize < self::BIG_FILE_THRESHOLD) {
-            // get a hash sum
-            $hash = hash_file(self::HASH_ALGORITHM, $params->getFilePath());
             // get a thumbnail
             // Imagick cannot open password protected PDFs, thumbnail generation will throw ImagickException
             try {
@@ -153,8 +154,8 @@ final class Uploads extends AbstractRest
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindValue(':type', $this->Entity->entityType->value);
-        $req->bindParam(':hash', $hash);
-        $req->bindValue(':hash_algorithm', self::HASH_ALGORITHM);
+        $req->bindValue(':hash', $params->getHasher()->getHash());
+        $req->bindValue(':hash_algorithm', $params->getHasher()->getAlgo());
         $req->bindValue(':state', $params->getState()->value, PDO::PARAM_INT);
         $req->bindParam(':storage', $storage, PDO::PARAM_INT);
         $req->bindParam(':filesize', $filesize, PDO::PARAM_INT);
@@ -171,9 +172,9 @@ final class Uploads extends AbstractRest
         foreach ($uploads as $upload) {
             if ($upload['storage'] === Storage::LOCAL->value) {
                 $prefix = '/elabftw/uploads/';
-                $param = new CreateUpload($upload['real_name'], $prefix . $upload['long_name'], $upload['comment']);
+                $param = new CreateUpload($upload['real_name'], $prefix . $upload['long_name'], new ExistingHash($upload['hash']), $upload['comment']);
             } else {
-                $param = new CreateUploadFromS3($upload['real_name'], $upload['long_name'], $upload['comment']);
+                $param = new CreateUploadFromS3($upload['real_name'], $upload['long_name'], new ExistingHash($upload['hash']), $upload['comment']);
             }
             $id = $entity->Uploads->create($param);
             $fresh = new self($entity, $id);
@@ -277,7 +278,9 @@ final class Uploads extends AbstractRest
             throw new ImproperActionException('Cannot create an upload with an empty real_name value.');
         }
         return match ($action) {
-            Action::Create => $this->create(new CreateUpload($reqBody['real_name'], $reqBody['filePath'], $reqBody['comment'])),
+            Action::Create => $this->create(
+                new CreateUploadFromUploadedFile(new UploadedFile($reqBody['filePath'], $reqBody['real_name']), $reqBody['comment'])
+            ),
             Action::CreateFromString => (
                 function () use ($reqBody) {
                     $fileType = FileFromString::tryFrom($reqBody['file_type']);
@@ -290,7 +293,7 @@ final class Uploads extends AbstractRest
                     return $this->createFromString($fileType, $reqBody['real_name'], $reqBody['content']);
                 }
             )(),
-            Action::Replace => $this->replace(new CreateUpload($reqBody['real_name'], $reqBody['filePath'])),
+            Action::Replace => $this->replace($reqBody, new FileHash(new Cache()->getFs(), $reqBody['filePath'])),
             default => throw new ImproperActionException('Invalid action for upload creation.'),
         };
     }
@@ -369,7 +372,19 @@ final class Uploads extends AbstractRest
         $tmpFilePathFs = FsTools::getFs(dirname($tmpFilePath));
         $tmpFilePathFs->write(basename($tmpFilePath), $content);
 
-        return $this->create(new CreateUpload($realName, $tmpFilePath, state: $state));
+        return $this->create(new CreateUpload($realName, $tmpFilePath, state: $state, hasher: new Hash($content)));
+    }
+
+    /**
+     * Attached files are immutable (change history is kept), so the current
+     * file gets its state changed to "archived" and a new one is added
+     */
+    public function replace(array $reqBody, HashInterface $hasher): int
+    {
+        // read the current one to get the comment, and at the same time archive it
+        $upload = $this->archive();
+
+        return $this->create(new CreateUpload($reqBody['real_name'], $reqBody['filePath'], $hasher, $upload['comment']));
     }
 
     private function update(UploadParams $params): bool
@@ -379,18 +394,6 @@ final class Uploads extends AbstractRest
         $req->bindValue(':content', $params->getContent());
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
-    }
-
-    /**
-     * Attached files are immutable (change history is kept), so the current
-     * file gets its state changed to "archived" and a new one is added
-     */
-    private function replace(CreateUpload $params): int
-    {
-        // read the current one to get the comment, and at the same time archive it
-        $upload = $this->archive();
-
-        return $this->create(new CreateUpload($params->getFilename(), $params->getFilePath(), $upload['comment']));
     }
 
     /**

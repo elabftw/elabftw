@@ -11,7 +11,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\CreateUpload;
+use Elabftw\Elabftw\CreateUploadFromLocalFile;
+use Elabftw\Elabftw\NullHash;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\State;
@@ -35,7 +36,7 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
     {
         $fixturesFs = Storage::FIXTURES->getStorage();
         $fileName = 'example.png';
-        $this->Entity->Uploads->create(new CreateUpload($fileName, $fixturesFs->getPath() . '/' . $fileName));
+        $this->Entity->Uploads->create(new CreateUploadFromLocalFile($fileName, $fixturesFs->getPath() . '/' . $fileName));
         $this->Entity->Uploads->duplicate($this->Entity);
     }
 
@@ -49,7 +50,7 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
     {
         $fixturesFs = Storage::FIXTURES->getStorage();
         $fileName = 'example.txt';
-        $this->Entity->Uploads->create(new CreateUpload('example.pdf', $fixturesFs->getPath() . '/' . $fileName));
+        $this->Entity->Uploads->create(new CreateUploadFromLocalFile('example.pdf', $fixturesFs->getPath() . '/' . $fileName));
     }
 
     public function testCreatePngFromString(): void
@@ -102,19 +103,19 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
     public function testUploadingPhpFile(): void
     {
         $this->expectException(ImproperActionException::class);
-        $this->Entity->Uploads->create(new CreateUpload('some.php', __FILE__));
+        $this->Entity->Uploads->create(new CreateUploadFromLocalFile('some.php', __FILE__));
     }
 
     public function testReadBinary(): void
     {
-        $id = $this->Entity->Uploads->create(new CreateUpload('some-file.zip', dirname(__DIR__, 2) . '/_data/importable.zip'));
+        $id = $this->Entity->Uploads->create(new CreateUploadFromLocalFile('some-file.zip', dirname(__DIR__, 2) . '/_data/importable.zip'));
         $this->Entity->Uploads->setId($id);
         $this->assertInstanceOf(Response::class, $this->Entity->Uploads->readBinary());
     }
 
     public function testPatch(): void
     {
-        $id = $this->Entity->Uploads->create(new CreateUpload('some-file.zip', dirname(__DIR__, 2) . '/_data/importable.zip'));
+        $id = $this->Entity->Uploads->create(new CreateUploadFromLocalFile('some-file.zip', dirname(__DIR__, 2) . '/_data/importable.zip'));
         $this->Entity->Uploads->setId($id);
         $this->Entity->Uploads->patch(Action::Archive, array());
         $this->Entity->Uploads->patch(Action::Update, array(
@@ -131,7 +132,7 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
 
     public function testEditAnImmutableFile(): void
     {
-        $id = $this->Entity->Uploads->create(new CreateUpload('some-immutable.zip', dirname(__DIR__, 2) . '/_data/importable.zip', immutable: 1));
+        $id = $this->Entity->Uploads->create(new CreateUploadFromLocalFile('some-immutable.zip', dirname(__DIR__, 2) . '/_data/importable.zip', immutable: 1));
         $this->Entity->Uploads->setId($id);
         $this->expectException(IllegalActionException::class);
         $this->Entity->Uploads->patch(Action::Update, array('real_name' => 'new'));
@@ -140,7 +141,7 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
     public function testGetStorageFromLongname(): void
     {
         $Uploads = new Uploads($this->Entity);
-        $id = $Uploads->create(new CreateUpload('example.png', dirname(__DIR__, 2) . '/_data/example.png'));
+        $id = $Uploads->create(new CreateUploadFromLocalFile('example.png', dirname(__DIR__, 2) . '/_data/example.png'));
         $Uploads->setId($id);
         $this->assertEquals($Uploads->uploadData['storage'], $Uploads->getStorageFromLongname($Uploads->uploadData['long_name']));
     }
@@ -148,11 +149,11 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
     public function testReplace(): void
     {
         $Uploads = new Uploads($this->Entity);
-        $id = $Uploads->create(new CreateUpload('example.png', dirname(__DIR__, 2) . '/_data/example.png', 'some super duper comment'));
+        $id = $Uploads->create(new CreateUploadFromLocalFile('example.png', dirname(__DIR__, 2) . '/_data/example.png', 'some super duper comment'));
         $Uploads->setId($id);
         $upArrBefore = $Uploads->uploadData;
 
-        $id = $Uploads->postAction(Action::Create, array('real_name' => 'example.png', 'filePath' => dirname(__DIR__, 2) . '/_data/example.png'));
+        $id = $Uploads->replace(array('real_name' => 'example.png', 'filePath' => dirname(__DIR__, 2) . '/_data/example.png'), new NullHash());
         $this->assertIsInt($id);
         // make sure the old one is archived
         $this->assertEquals($Uploads->readOne()['state'], State::Archived->value);

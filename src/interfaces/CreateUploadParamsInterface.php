@@ -30,9 +30,9 @@ interface CreateUploadParamsInterface
 
     public function getSourceFs(): Filesystem;
 
-    public function getSourcePath(): string;
-
     public function getImmutable(): int;
 
     public function getState(): State;
+
+    public function getHasher(): HashInterface;
 }

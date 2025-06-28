@@ -53,7 +53,8 @@ final class ImportEln extends Command
             ->addOption('type', 't', InputOption::VALUE_REQUIRED, 'Force entity type. Values: ' . implode(', ', array_map(fn($case) => $case->value, EntityType::cases())))
             ->addOption('category', 'c', InputOption::VALUE_REQUIRED, 'Force category: provide a category ID that belongs to the team')
             ->addOption('dry-run', 'd', InputOption::VALUE_NONE, 'Process the archive, but do not actually import things, display what would be done')
-            ->addOption('checksum', 'k', InputOption::VALUE_NEGATABLE, 'Verify file integrity before import', true);
+            ->addOption('checksum', 'k', InputOption::VALUE_NEGATABLE, 'Verify file integrity before import', true)
+            ->addOption('checksum-error-skip', 'e', InputOption::VALUE_NEGATABLE, 'Skip file import if integrity check failed', false);
     }
 
     #[Override]
@@ -90,6 +91,7 @@ final class ImportEln extends Command
             $entityType,
             category: $defaultCategory,
             verifyChecksum: (bool) $input->getOption('checksum'),
+            checksumErrorSkip: (bool) $input->getOption('checksum-error-skip'),
         );
         if ($input->getOption('dry-run')) {
             // this is necessary so -vv isn't required to get dry run info

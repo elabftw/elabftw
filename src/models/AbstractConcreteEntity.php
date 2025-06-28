@@ -15,6 +15,7 @@ namespace Elabftw\Models;
 use Elabftw\AuditEvent\SignatureCreated;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\EntitySqlBuilder;
+use Elabftw\Elabftw\FileHash;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Elabftw\Tools;
@@ -51,6 +52,7 @@ use ZipArchive;
 use Override;
 
 use function is_string;
+use function dirname;
 use function json_decode;
 use function ksort;
 use function sprintf;
@@ -261,9 +263,10 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         $zipName = $Maker->getFileName();
         $zipPath = FsTools::getCacheFile() . '.zip';
         $comment = sprintf(_('Timestamp archive by %s'), $this->Users->userData['fullname']);
+        $hasher = new FileHash(FsTools::getFs(dirname($zipPath)), basename($zipPath));
         $Maker->saveTimestamp(
             $TimestampUtils->timestamp(),
-            new CreateUpload($zipName, $zipPath, $comment, immutable: 1, state: State::Archived),
+            new CreateUpload($zipName, $zipPath, $hasher, $comment, immutable: 1, state: State::Archived),
         );
 
         // decrement the balance
@@ -317,7 +320,9 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         $comment = sprintf(_('Signed by %s (%s)'), $this->Users->userData['fullname'], $meaning->name);
         $Comments->postAction(Action::Create, array('comment' => $comment));
         // save the signature and data in a zip archive
-        $zipPath = FsTools::getCacheFile() . '.zip';
+        $protoZipPath = FsTools::getCacheFile();
+        $zipFolderPath = dirname($protoZipPath);
+        $zipPath = $protoZipPath . '.zip';
         $comment = sprintf(_('Signature archive by %s (%s)'), $this->Users->userData['fullname'], $meaning->name);
         $ZipArchive = new ZipArchive();
         $ZipArchive->open($zipPath, ZipArchive::CREATE);
@@ -328,7 +333,8 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         $ZipArchive->close();
         // allow uploading a file to that entity because sign action only requires read access
         $this->Uploads->Entity->bypassWritePermission = true;
-        $this->Uploads->create(new CreateUpload('signature archive.zip', $zipPath, $comment, immutable: 1, state: State::Archived));
+        $hasher = new FileHash(FsTools::getFs($zipFolderPath), basename($zipPath));
+        $this->Uploads->create(new CreateUpload('signature archive.zip', $zipPath, $hasher, $comment, immutable: 1, state: State::Archived));
         $RequestActions = new RequestActions($this->Users, $this);
         $RequestActions->remove(RequestableAction::Sign);
         AuditLogs::create(new SignatureCreated($this->Users->userData['userid'], $this->id ?? 0, $this->entityType));

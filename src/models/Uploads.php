@@ -14,7 +14,6 @@ namespace Elabftw\Models;
 
 use Elabftw\Controllers\DownloadController;
 use Elabftw\Elabftw\CreateUpload;
-use Elabftw\Elabftw\CreateUploadFromLocalFile;
 use Elabftw\Elabftw\CreateUploadFromS3;
 use Elabftw\Elabftw\CreateUploadFromUploadedFile;
 use Elabftw\Hash\ExistingHash;
@@ -291,7 +290,9 @@ final class Uploads extends AbstractRest
                     return $this->createFromString($fileType, $reqBody['real_name'], $reqBody['content']);
                 }
             )(),
-            Action::Replace => $this->replace(new CreateUploadFromLocalFile($reqBody['real_name'], $reqBody['filePath'], $this->uploadData['comment'])),
+            Action::Replace => $this->replace(new CreateUploadFromUploadedFile(
+                new UploadedFile($reqBody['filePath'], $reqBody['real_name'], $this->uploadData['comment'])
+            )),
             default => throw new ImproperActionException('Invalid action for upload creation.'),
         };
     }

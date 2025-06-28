@@ -18,6 +18,7 @@ use Elabftw\Enums\State;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Storage\Tmp;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,6 +38,12 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         $fileName = 'example.png';
         $this->Entity->Uploads->create(new CreateUploadFromLocalFile($fileName, $fixturesFs->getPath() . '/' . $fileName));
         $this->Entity->Uploads->duplicate($this->Entity);
+    }
+
+    public function testCreateEmptyRealname(): void
+    {
+        $this->expectException(ImproperActionException::class);
+        $this->Entity->Uploads->postAction(Action::Create, array());
     }
 
     public function testReadFilesizeSum(): void
@@ -143,6 +150,16 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         $id = $Uploads->create(new CreateUploadFromLocalFile('example.png', dirname(__DIR__, 2) . '/_data/example.png'));
         $Uploads->setId($id);
         $this->assertEquals($Uploads->uploadData['storage'], $Uploads->getStorageFromLongname($Uploads->uploadData['long_name']));
+    }
+
+    public function testReplaceFromPost(): void
+    {
+        $Uploads = new Uploads($this->Entity);
+        $id = $Uploads->create(new CreateUploadFromLocalFile('example.png', dirname(__DIR__, 2) . '/_data/example.png'));
+        $Uploads->setId($id);
+        $fs = new Tmp()->getFs();
+        $fs->write('a.file', 'yes');
+        $this->assertIsInt($Uploads->postAction(Action::Replace, array('real_name' => 'yep', 'filePath' => '/tmp/a.file')));
     }
 
     public function testReplace(): void

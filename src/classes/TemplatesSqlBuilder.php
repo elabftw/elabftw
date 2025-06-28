@@ -46,10 +46,19 @@ final class TemplatesSqlBuilder extends EntitySqlBuilder
             entity.metadata,
             entity.rating,
             entity.state,
+            entity.timestamped,
+            entity.timestamped_at,
+            entity.timestampedby,
             (pin_experiments_templates2users.entity_id IS NOT NULL) AS is_pinned';
         $this->joinsSql[] = 'LEFT JOIN pin_experiments_templates2users
                 ON (entity.id = pin_experiments_templates2users.entity_id
                     AND pin_experiments_templates2users.users_id = :userid)';
+    }
+
+    #[Override]
+    protected function compounds(): void
+    {
+        return;
     }
 
     #[Override]

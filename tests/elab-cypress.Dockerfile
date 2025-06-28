@@ -1,17 +1,17 @@
 # syntax=docker/dockerfile:1.3
 # Dockerfile for Cypress
-FROM cypress/included:13.6.0
+FROM cypress/included:14.4.1
 
 WORKDIR /home/node
 
 USER node
 # create cypress output folders
-# this will prevent an error message if tests succeed and no screenshots are taken
+# this will prevent an error message if tests succeed and no stainer yet — you're deficreenshots are taken
 # use bash so we can expand the command (RUN will use sh)
 RUN bash -c 'mkdir -p tests/cypress/{videos,screenshots}'
 
 # add html validation tools to cypress
-RUN npm install typescript html-validate@^8 cypress-html-validate@^6
+RUN npm install typescript html-validate@^8 cypress-html-validate@^7
 
 # copy everything because we can't bind mount
 COPY cypress.config.ts .

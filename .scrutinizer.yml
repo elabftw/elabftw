@@ -20,11 +20,6 @@ checks:
     symfony_request_injection: false
     no_exit: false
 build:
-  environment:
-    docker:
-      remote_engine: true
-    php:
-      version: 8.3.3
   nodes:
     analysis:
       dependencies:

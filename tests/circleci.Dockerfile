@@ -21,10 +21,12 @@ COPY ../composer.lock /elabftw
 COPY ../cypress.config.ts /elabftw
 COPY ../node-builder.js /elabftw
 COPY ../package.json /elabftw
+COPY ../tsconfig.json /elabftw
 COPY ../yarn.lock /elabftw
 
 # install phpDocumentor
-ARG PHP_DOCUMENTOR_VERSION=v3.3.1
+# https://github.com/phpDocumentor/phpDocumentor/releases/
+ARG PHP_DOCUMENTOR_VERSION=v3.7.1
 ADD --chmod=755 https://github.com/phpDocumentor/phpDocumentor/releases/download/$PHP_DOCUMENTOR_VERSION/phpDocumentor.phar phpdoc
 
 # phpDocumentor requires ext-iconv and plantuml, graphviz for generating the svg graph

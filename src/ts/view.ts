@@ -6,10 +6,10 @@
  * @package elabftw
  */
 import i18next from 'i18next';
-import { InputType, Malle, SelectOptions } from '@deltablot/malle';
+import { InputType, Malle } from '@deltablot/malle';
 import { Api } from './Apiv2.class';
-import { getEntity, updateCatStat, relativeMoment, reloadElements } from './misc';
-import { EntityType, Model } from './interfaces';
+import { getEntity, relativeMoment, reloadElements } from './misc';
+import { Model } from './interfaces';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -77,90 +77,6 @@ document.addEventListener('DOMContentLoaded', () => {
     submitClasses: ['button', 'btn', 'btn-primary', 'mt-2'],
     tooltip: i18next.t('click-to-edit'),
   });
-
-  // UPDATE MALLEABLE STATUS
-  interface Status extends SelectOptions {
-    id: number;
-    color: string;
-    title: string;
-  }
-
-  const notsetOpts = {id: null, title: i18next.t('not-set'), color: 'bdbdbd'};
-
-  let categoryEndpoint = `${EntityType.ItemType}`;
-  let statusEndpoint = `${Model.Team}/current/items_status`;
-  if (entity.type === EntityType.Experiment || entity.type === EntityType.Template) {
-    categoryEndpoint = `${Model.Team}/current/experiments_categories`;
-    statusEndpoint = `${Model.Team}/current/experiments_status`;
-  }
-
-  const malleableStatus = new Malle({
-    // use the after hook to add the colored circle before text
-    after: (elem: HTMLElement, _: Event, value: string) => {
-      const icon = document.createElement('i');
-      icon.classList.add('fas', 'fa-circle', 'mr-1');
-      icon.style.color = `#${value}`;
-      elem.insertBefore(icon, elem.firstChild);
-      return true;
-    },
-    // use the onEdit hook to set the correct selected option (because of the circle icon interference)
-    onEdit: async (original: HTMLElement, _: Event, input: HTMLInputElement|HTMLSelectElement) => {
-      // the options can be a promise, so we need to use await or its length will be 0 here
-      const opts = await (input as HTMLSelectElement).options;
-      for (let i = 0; i < opts.length; i++) {
-        if (opts.item(i).textContent === original.textContent.trim()) {
-          opts.item(i).selected = true;
-          break;
-        }
-      }
-      return true;
-    },
-    cancel : i18next.t('cancel'),
-    cancelClasses: ['btn', 'btn-danger', 'mt-2', 'ml-1'],
-    inputClasses: ['form-control'],
-    fun: (value: string, original: HTMLElement) => updateCatStat(original.dataset.target, entity, value).then(color => {
-      original.style.setProperty('--bg', `#${color}`);
-      return color;
-    }),
-    inputType: InputType.Select,
-    selectOptionsValueKey: 'id',
-    selectOptionsTextKey: 'title',
-    selectOptions: ApiC.getJson(statusEndpoint).then(json => Array.from(json)).then((statusArr: Array<Status>) => {
-      statusArr.unshift(notsetOpts);
-      return statusArr;
-    }),
-    listenOn: '.malleableStatus',
-    returnedValueIsTrustedHtml: false,
-    submit : i18next.t('save'),
-    submitClasses: ['btn', 'btn-primary', 'mt-2'],
-    tooltip: i18next.t('click-to-edit'),
-  });
-
-  // UPDATE MALLEABLE CATEGORY
-
-  const malleableCategory = new Malle({
-    // use the after hook to change the background color of the new element
-    after: (elem: HTMLElement, _: Event, value: string) => {
-      elem.style.setProperty('--bg', `#${value}`);
-      return true;
-    },
-    cancel : i18next.t('cancel'),
-    cancelClasses: ['btn', 'btn-danger', 'mt-2', 'ml-1'],
-    inputClasses: ['form-control'],
-    fun: (value: string, original: HTMLElement) => updateCatStat(original.dataset.target, entity, value),
-    inputType: InputType.Select,
-    selectOptionsValueKey: 'id',
-    selectOptionsTextKey: 'title',
-    selectOptions: ApiC.getJson(categoryEndpoint).then(json => [notsetOpts, ...Array.from(json)]),
-    listenOn: '.malleableCategory',
-    returnedValueIsTrustedHtml: false,
-    submit : i18next.t('save'),
-    submitClasses: ['btn', 'btn-primary', 'mt-2'],
-    tooltip: i18next.t('click-to-edit'),
-  });
-
   // listen on existing comments
   malleableComments.listen();
-  malleableStatus.listen();
-  malleableCategory.listen();
 });

@@ -17,12 +17,12 @@ import $ from 'jquery';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
 import { getEditor } from './Editor.class';
-import TomSelect from 'tom-select/dist/esm/tom-select';
-import TomSelectCheckboxOptions from 'tom-select/dist/esm/plugins/checkbox_options/plugin';
-import TomSelectClearButton from 'tom-select/dist/esm/plugins/clear_button/plugin';
-import TomSelectDropdownInput from 'tom-select/dist/esm/plugins/dropdown_input/plugin';
-import TomSelectNoActiveItems from 'tom-select/dist/esm/plugins/no_active_items/plugin';
-import TomSelectRemoveButton from 'tom-select/dist/esm/plugins/remove_button/plugin';
+import TomSelect from 'tom-select/base';
+import TomSelectCheckboxOptions from 'tom-select/dist/esm/plugins/checkbox_options/plugin.js';
+import TomSelectClearButton from 'tom-select/dist/esm/plugins/clear_button/plugin.js';
+import TomSelectDropdownInput from 'tom-select/dist/esm/plugins/dropdown_input/plugin.js';
+import TomSelectNoActiveItems from 'tom-select/dist/esm/plugins/no_active_items/plugin.js';
+import TomSelectRemoveButton from 'tom-select/dist/esm/plugins/remove_button/plugin.js';
 
 // get html of current page reloaded via get
 function fetchCurrentPage(tag = ''): Promise<Document>{
@@ -84,24 +84,32 @@ function triggerHandler(event: Event, el: HTMLInputElement): void {
   const params = {};
   params[el.dataset.target] = value;
   ApiC.patch(`${el.dataset.model}`, params).then(() => {
-    // data-reload can be "page" to reload the page, "reloadEntitiesShow" to reload properly entities in show mode,
-    // or a comma separated list of ids of elements to reload
     if (el.dataset.reload) {
-      if (el.dataset.reload === 'page') {
-        location.reload();
-      } else {
-        el.dataset.reload.split(',').forEach(toreload => {
-          if (toreload === 'reloadEntitiesShow') {
-            reloadEntitiesShow();
-          } else {
-            reloadElements([toreload]).then(() => relativeMoment());
-          }
-        });
-      }
+      handleReloads(el.dataset.reload);
     }
   }).catch(error => {
     if (el.dataset.target === Target.Customid && error.message === i18next.t('custom-id-in-use')) {
       el.classList.add('is-invalid');
+    }
+  });
+}
+
+// data-reload can be "page" for full page, "reloadEntitiesShow" for entities in show mode,
+// or a comma separated list of ids of elements to reload
+export function handleReloads(reloadAttributes: string | undefined): void {
+  if (!reloadAttributes) return;
+
+  if (reloadAttributes === 'page') {
+    location.reload();
+    return;
+  }
+
+  const reloadTargets = reloadAttributes.split(',');
+  reloadTargets.forEach((toReload) => {
+    if (toReload === 'reloadEntitiesShow') {
+      reloadEntitiesShow();
+    } else {
+      reloadElements([toReload]).then(() => relativeMoment());
     }
   });
 }
@@ -167,22 +175,26 @@ export function clearForm(form: HTMLElement): void {
 // for view or edit mode, get type and id from the page to construct the entity object
 export function getEntity(): Entity {
   if (!document.getElementById('info')) {
-    return;
+    return {type: EntityType.Other, id: 0};
   }
   // holds info about the page through data attributes
   const about = document.getElementById('info').dataset;
   let entityType: EntityType;
-  if (about.type === 'experiments') {
+  switch (about.type) {
+  case 'experiments':
     entityType = EntityType.Experiment;
-  }
-  if (about.type === 'items') {
+    break;
+  case 'items':
     entityType = EntityType.Item;
-  }
-  if (about.type === 'experiments_templates') {
+    break;
+  case 'experiments_templates':
     entityType = EntityType.Template;
-  }
-  if (about.type === 'items_types') {
+    break;
+  case 'items_types':
     entityType = EntityType.ItemType;
+    break;
+  default:
+    return {type: EntityType.Other, id: 0};
   }
   let entityId = null;
   if (about.id) {
@@ -419,7 +431,9 @@ export async function updateCatStat(target: string, entity: Entity, value: strin
   const params = {};
   params[target] = value;
   const newEntity = await (new Api()).patch(`${entity.type}/${entity.id}`, params).then(resp => resp.json());
-  return (target === 'category' ? newEntity.category_color : newEntity.status_color) ?? 'bdbdbd';
+  // return a string separated with | with the id first so we can use it in data-id of new element
+  let response = value + '|';
+  return response += (target === 'category' ? newEntity.category_color : newEntity.status_color) ?? 'bdbdbd';
 }
 
 // used in edit.ts to build search patterns from strings that contain special characters

@@ -1,7 +1,6 @@
 describe('Import tab on profile page', () => {
   beforeEach(() => {
     cy.login();
-    cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
   });
 
   it('can import eln and csv files', () => {

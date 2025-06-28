@@ -24,7 +24,7 @@ use Override;
  */
 final class DatabaseController extends AbstractEntityController
 {
-    public function __construct(App $app, Items $entity)
+    public function __construct(App $app, Items|ItemsTypes $entity)
     {
         parent::__construct($app, $entity);
 
@@ -37,6 +37,9 @@ final class DatabaseController extends AbstractEntityController
     #[Override]
     protected function getPageTitle(): string
     {
-        return ngettext('Resource', 'Resources', 2);
+        if ($this->Entity instanceof Items) {
+            return ngettext('Resource', 'Resources', 2);
+        }
+        return _('Resources templates');
     }
 }

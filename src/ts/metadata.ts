@@ -10,7 +10,7 @@ import {
   addAutocompleteToExtraFieldsKeyInputs,
   normalizeFieldName,
 } from './misc';
-import { Metadata } from './Metadata.class';
+import { autoResize, Metadata } from './Metadata.class';
 import { ValidMetadata, ExtraFieldInputType } from './metadataInterfaces';
 import JsonEditorHelper from './JsonEditorHelper.class';
 import { JsonEditorActions } from './JsonEditorActions.class';
@@ -143,9 +143,8 @@ document.addEventListener('DOMContentLoaded', () => {
           checkboxSelect.value = fieldData.value === 'on' ? 'checked' : 'unchecked';
         } else {
           // Default handling for simple text-based inputs
-          const fieldValueInput = document.getElementById('newFieldValueInput') as HTMLInputElement;
-          fieldValueInput.value = fieldData.value || '';
-          fieldValueInput.type = fieldType;
+          const fieldValueTextArea = document.getElementById('newFieldValueTextArea') as HTMLTextAreaElement;
+          fieldValueTextArea.value = fieldData.value || '';
         }
 
         fieldGroupSelect.value = fieldData.group_id ?? '-1';
@@ -184,21 +183,20 @@ document.addEventListener('DOMContentLoaded', () => {
       editButton.setAttribute('hidden', 'hidden');
       saveButton.removeAttribute('hidden');
     }
-    // reset all input fields except classic text (default)
-    document.querySelectorAll('[id^="newFieldContentDiv_"]:not([id="newFieldContentDiv_classic"])')
+    // reset all input fields except default (text)
+    document.querySelectorAll('[id^="newFieldContentDiv_"]:not([id="newFieldContentDiv_text"])')
       .forEach(div => {
         (div as HTMLDivElement).hidden = true;
       });
-    document.getElementById('newFieldContentDiv_classic').hidden = false;
+    document.getElementById('newFieldContentDiv_text').hidden = false;
     multiSelectDiv.setAttribute('hidden', 'hidden');
     clearForm();
   });
 
   addAutocompleteToExtraFieldsKeyInputs();
 
-
   function toggleContentDiv(key: string) {
-    const keys = ['classic', 'selectradio', 'checkbox', 'number'];
+    const keys = ['text', 'classic', 'selectradio', 'checkbox', 'number'];
     document.getElementById('newFieldContentDiv_' + key).toggleAttribute('hidden', false);
     // remove the shown one from the list and hide all others
     keys.filter(k => k !== key).forEach(k => {
@@ -213,7 +211,6 @@ document.addEventListener('DOMContentLoaded', () => {
     multiSelectDiv.setAttribute('hidden', 'hidden');
 
     switch (fieldType as ExtraFieldInputType) {
-    case ExtraFieldInputType.Text:
     case ExtraFieldInputType.Date:
     case ExtraFieldInputType.DateTime:
     case ExtraFieldInputType.Email:
@@ -232,8 +229,9 @@ document.addEventListener('DOMContentLoaded', () => {
     case ExtraFieldInputType.Radio:
       toggleContentDiv('selectradio');
       break;
-    case ExtraFieldInputType.Number:
     case ExtraFieldInputType.Checkbox:
+    case ExtraFieldInputType.Number:
+    case ExtraFieldInputType.Text:
       toggleContentDiv(fieldType);
       break;
     default:
@@ -276,6 +274,11 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('fieldBuilderModal').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
     const grpSel = (document.getElementById('newFieldGroupSelect') as HTMLSelectElement);
+    // adapt textarea size to text to prevent missing existing content
+    const textAreaField = (document.getElementById('newFieldValueTextArea') as HTMLTextAreaElement);
+    if (textAreaField) {
+      requestAnimationFrame(() => autoResize(textAreaField));
+    }
     // SAVE NEW EXTRA FIELD
     if (el.matches('[data-action="save-new-field"]')) {
       if ((document.getElementById('newFieldForm') as HTMLFormElement).reportValidity() === false) {
@@ -299,7 +302,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const field = {};
         field['type'] = (document.getElementById('newFieldTypeSelect') as HTMLSelectElement).value;
         let fieldValue: string;
-        if (['text', 'date', 'datetime-local', 'email', 'time', 'url'].includes(field['type'])) {
+        if (field['type'] === ExtraFieldInputType.Text) {
+          fieldValue = textAreaField.value.trim();
+        } else if (['date', 'datetime-local', 'email', 'time', 'url'].includes(field['type'])) {
           fieldValue = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();
         } else if (['select', 'radio'].includes(field['type'])) {
           field['options'] = [];
@@ -393,7 +398,9 @@ document.addEventListener('DOMContentLoaded', () => {
           field['description'] = fieldDescriptionInput.value.trim();
         }
         // handle values depending on type
-        if (['text', 'date', 'datetime-local', 'email', 'time', 'url'].includes(field['type'])) {
+        if (field['type'] === ExtraFieldInputType.Text) {
+          field['value'] = textAreaField.value.trim();
+        } else if (['date', 'datetime-local', 'email', 'time', 'url'].includes(field['type'])) {
           field['value'] = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();
         } else if (['select', 'radio'].includes(field['type'])) {
           field['options'] = [];
@@ -437,7 +444,6 @@ document.addEventListener('DOMContentLoaded', () => {
         json['extra_fields'][newFieldKey] = field;
 
         MetadataC.update(json as ValidMetadata).then(() => {
-          clearForm();
           $('#fieldBuilderModal').modal('toggle');
         });
       });

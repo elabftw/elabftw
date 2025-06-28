@@ -1,0 +1,18 @@
+{# select state filter #}
+{% set reqState = App.Request.query.get('state') %}
+{# use enums first three states (normal, archived, deleted #}
+{% set State = enum('Elabftw\\Enums\\State') %}
+{% set stateOptions = {
+  '': 'Select state'|trans,
+  (State.Normal.value): 'Normal'|trans,
+  (State.Archived.value): 'Archived'|trans,
+  (State.Deleted.value): 'Deleted'|trans,
+  (State.Normal.value ~ ',' ~ State.Archived.value): 'Normal or Archived'|trans,
+  (State.Normal.value ~ ',' ~ State.Archived.value ~ ',' ~ State.Deleted.value): 'Any'|trans
+} %}
+{# here we have filterHelper and filterAuto that are only meaningful on show mode #}
+<select name='state' aria-label='{{ 'State'|trans }}' class='form-control filterHelper filterAuto' autocomplete='off'>
+  {% for value, label in stateOptions %}
+    <option data-action='insert-param-and-reload' data-target='state' value='{{ value }}' {% if value == '' %}data-action='clear'{% endif %} {% if dataReload %}data-reload='{{ dataReload }}'{% endif %} {{ reqState == value ? 'selected' }}>{{ label }}</option>
+  {% endfor %}
+</select>

@@ -1,0 +1,11 @@
+networks:
+    elabftw-net:
+services:
+  cypress:
+    image: elab-cypress
+    build:
+      context: ..
+      dockerfile: ./tests/elab-cypress.Dockerfile
+    container_name: elab-cypress
+    networks:
+      - elabftw-net

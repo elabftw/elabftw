@@ -29,10 +29,10 @@ enum EntityType: string
     public function toInstance(Users $users, ?int $entityId = null, ?bool $bypassReadPermission = null, ?bool $bypassWritePermission = null): AbstractEntity
     {
         return match ($this) {
-            $this::Experiments => new Experiments($users, $entityId, $bypassReadPermission, $bypassWritePermission),
-            $this::Items => new Items($users, $entityId, $bypassReadPermission, $bypassWritePermission),
-            $this::Templates => new Templates($users, $entityId, $bypassReadPermission, $bypassWritePermission),
-            $this::ItemsTypes => new ItemsTypes($users, $entityId, $bypassReadPermission, $bypassWritePermission),
+            self::Experiments => new Experiments($users, $entityId, $bypassReadPermission, $bypassWritePermission),
+            self::Items => new Items($users, $entityId, $bypassReadPermission, $bypassWritePermission),
+            self::Templates => new Templates($users, $entityId, $bypassReadPermission, $bypassWritePermission),
+            self::ItemsTypes => new ItemsTypes($users, $entityId, $bypassReadPermission, $bypassWritePermission),
         };
     }
 
@@ -40,20 +40,20 @@ enum EntityType: string
     public function toGenre(): string
     {
         return match ($this) {
-            $this::Experiments => 'experiment',
-            $this::Items => 'resource',
-            $this::Templates => 'experiment template',
-            $this::ItemsTypes => 'resource template',
+            self::Experiments => 'experiment',
+            self::Items => 'resource',
+            self::Templates => 'experiment template',
+            self::ItemsTypes => 'resource template',
         };
     }
 
     public function toPage(): string
     {
         return match ($this) {
-            $this::Experiments => 'experiments.php',
-            $this::Items => 'database.php',
-            $this::Templates => 'templates.php',
-            $this::ItemsTypes => 'admin.php?tab=4',
+            self::Experiments => 'experiments.php',
+            self::Items => 'database.php',
+            self::Templates => 'templates.php',
+            self::ItemsTypes => 'resources-templates.php',
         };
     }
 }

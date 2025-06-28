@@ -5,17 +5,23 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { Action, Entity, EntityType } from './interfaces';
-import { adjustHiddenState, makeSortableGreatAgain, reloadElements, replaceWithTitle } from './misc';
 import i18next from 'i18next';
 import { Api } from './Apiv2.class';
-import { ValidMetadata, ExtraFieldProperties, ExtraFieldsGroup, ExtraFieldInputType } from './metadataInterfaces';
+import { Action, Entity, EntityType } from './interfaces';
 import JsonEditorHelper from './JsonEditorHelper.class';
+import { ExtraFieldInputType, ExtraFieldProperties, ExtraFieldsGroup, ValidMetadata } from './metadataInterfaces';
+import { adjustHiddenState, makeSortableGreatAgain, reloadElements, replaceWithTitle } from './misc';
 import { Notification } from './Notifications.class';
 
 export function ResourceNotFoundException(message: string): void {
   this.message = message;
   this.name = 'ResourceNotFoundException';
+}
+
+// Auto-resize the textarea to prevent hidden lines on page load
+export function autoResize(element: HTMLTextAreaElement): void {
+  element.style.height = 'auto';
+  element.style.height = `${element.scrollHeight}px`;
 }
 
 export class Metadata {
@@ -118,6 +124,30 @@ export class Metadata {
 
   save(metadata: ValidMetadata): Promise<Response> {
     return this.api.patch(`${this.entity.type}/${this.entity.id}`, {'metadata': JSON.stringify(metadata)});
+  }
+
+  /**
+   * Build text areas for extra fields (default type)
+   */
+  buildTextArea(name, properties: ExtraFieldProperties): Element {
+    const element = document.createElement('textarea');
+
+    // style it to look like an input & reset height
+    element.classList.add('form-control', 'form-textarea');
+    element.rows = 1;
+
+    // dynamic height on input
+    element.addEventListener('input', () => autoResize(element));
+
+    // resize after rendering: ensures proper height on page load
+    requestAnimationFrame(() => autoResize(element));
+
+    if (properties.value) {
+      element.value = properties.value as string;
+    }
+    element.dataset.field = name;
+    element.addEventListener('change', this, false);
+    return element;
   }
 
   /**
@@ -267,11 +297,16 @@ export class Metadata {
         element.add(optionEl);
       }
       break;
+    case ExtraFieldInputType.Experiments:
+    case ExtraFieldInputType.Items:
+    case ExtraFieldInputType.Users:
+      element = document.createElement('input');
+      element.type = 'text';
+      break;
     case ExtraFieldInputType.Radio:
       return this.buildRadio(name, properties);
     default:
-      element = document.createElement('input');
-      element.type = 'text';
+      return this.buildTextArea(name, properties);
     }
 
     // add the unique id to the element
@@ -345,11 +380,10 @@ export class Metadata {
       for (const unit of properties.units) {
         const optionEl = document.createElement('option');
         optionEl.text = unit;
-        if (properties.unit === unit) {
-          optionEl.setAttribute('selected', '');
-        }
         unitsSel.add(optionEl);
       }
+      // if no default unit is set, auto-select first option. See #5680
+      unitsSel.value = properties.unit || properties.units[0];
       unitsSel.classList.add('form-control', 'brl-none');
       // add this so we can differentiate the change event from the main input
       unitsSel.dataset.units = '1';
@@ -576,10 +610,12 @@ export class Metadata {
             const badgeContainer = document.createElement('div');
             const badge = document.createElement('span');
             badge.classList.add('badge', 'badge-pill', 'badge-light', 'mr-3');
-            // define input type for badge (sometimes it's input (text, url) sometimes it's an input-group (datetime, search user/experiment etc.)
+            // define input type for badge. This "type" is just indicative for the badge.
             let inputType;
             if (element.element.tagName === 'INPUT' || element.element.tagName === 'SELECT') {
               inputType = element.element.type;
+            } else if (element.element.tagName === 'TEXTAREA') {
+              inputType = 'text';
             } else if (element.element.classList.contains('input-group')) {
               // find the first input element within the input group
               const input = element.element.querySelector('input');

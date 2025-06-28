@@ -33,7 +33,7 @@ $location = '/login.php';
 $Response = new RedirectResponse($location);
 
 try {
-    $Controller = new LoginController($App);
+    $Controller = new LoginController($App->Config, $App->Request, $App->Session, $App->Log, $App->Users);
     $Response = $Controller->getResponse();
 } catch (QuantumException | InvalidCredentialsException | InvalidMfaCodeException $e) {
     $loginTries = (int) $App->Config->configArr['login_tries'];

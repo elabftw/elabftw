@@ -2,6 +2,8 @@
 {# requires: entityPage + {experiments,resources}CategoriesArr #}
 {% if entityPage == 'experiments' %}
   {% set createNewCategoryArr = templatesArr %}
+{% elseif entityPage == 'resources_categories' %}
+  {% set createNewCategoryArr = [] %}
 {% else %}
   {% set createNewCategoryArr = categoryArr|default(itemsCategoryArr) %}
 {% endif %}
@@ -10,13 +12,13 @@
   <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
-        <h5 class='modal-title' id='createModalLabel_{{ entityPage }}'>{{ entityPage == 'templates' ? 'Create a new template'|trans : 'Select template'|trans }}</h5>
+        <h5 class='modal-title' id='createModalLabel_{{ entityPage }}'>{{ entityPage == 'templates' or entityPage == 'resources-templates' ? 'Create a new template'|trans : 'Select template'|trans }}</h5>
         <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
       <div class='modal-body mb-3'>
-        {% if entityPage == 'templates' %}
+        {% if entityPage == 'templates' or entityPage == 'resources-templates' %}
         <div id='createNewForm'>
           <label for='createNewModalTitleInput'>{{ 'Enter a title'|trans }}</label>
           <input name='title' required class='form-control' type='text' id='createNewModalTitleInput' />
@@ -44,15 +46,15 @@
             {% endfor %}
           </div>
           {# show add button to admin, for items #}
-          {% if entityPage == 'items' and App.Users.isAdmin %}
-            <a style='color:#343434; border: 1px #ccc solid;' class='btn btn-light mt-1' href='/admin.php?tab=4#{{ entityPage }}CategoriesAnchor'>{{ 'Add category…'|trans }}</a>
+          {% if entityPage == 'database' and App.Users.isAdmin %}
+            <a style='color:#343434; border: 1px #ccc solid;' class='btn btn-light mt-1' href='/resources-templates.php'>{{ 'Add template…'|trans }}</a>
           {% endif %}
         {% endif %}
       </div>
-      {% if entityPage == 'templates' %}
+      {% if entityPage == 'templates' or entityPage == 'resources-templates' %}
         <div class='modal-footer'>
           <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
-          <button type='button' data-action='create-entity' data-type='experiments_templates' data-has-title='1' class='btn btn-primary'>{{ 'Create'|trans }}</button>
+          <button type='button' data-action='create-entity' data-type='{{ Entity.entityType.value }}' data-has-title='1' class='btn btn-primary'>{{ 'Create'|trans }}</button>
         </div>
       {% endif %}
     </div>

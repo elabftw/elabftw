@@ -13,13 +13,21 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DateTimeImmutable;
+use Elabftw\AuditEvent\SignatureCreated;
+use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\EntitySqlBuilder;
+use Elabftw\Elabftw\FileHash;
+use Elabftw\Elabftw\ItemsTypesSqlBuilder;
+use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\TemplatesSqlBuilder;
+use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
+use Elabftw\Enums\ExportFormat;
+use Elabftw\Enums\Meaning;
 use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\State;
@@ -29,6 +37,18 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Interfaces\ContentParamsInterface;
+use Elabftw\Interfaces\SqlBuilderInterface;
+use Elabftw\Interfaces\MakeTrustedTimestampInterface;
+use Elabftw\Make\MakeBloxberg;
+use Elabftw\Make\MakeCustomTimestamp;
+use Elabftw\Make\MakeDfnTimestamp;
+use Elabftw\Make\MakeDgnTimestamp;
+use Elabftw\Make\MakeDigicertTimestamp;
+use Elabftw\Make\MakeFullJson;
+use Elabftw\Make\MakeGlobalSignTimestamp;
+use Elabftw\Make\MakeSectigoTimestamp;
+use Elabftw\Make\MakeUniversignTimestamp;
+use Elabftw\Make\MakeUniversignTimestampDev;
 use Elabftw\Params\ContentParams;
 use Elabftw\Params\DisplayParams;
 use Elabftw\Params\EntityParams;
@@ -37,11 +57,17 @@ use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 use Elabftw\Services\Filter;
+use Elabftw\Services\HttpGetter;
+use Elabftw\Services\SignatureHelper;
+use Elabftw\Services\TimestampUtils;
 use Elabftw\Traits\EntityTrait;
+use GuzzleHttp\Client;
 use PDO;
 use PDOStatement;
 use Override;
 use Symfony\Component\HttpFoundation\InputBag;
+use Symfony\Component\HttpFoundation\Request;
+use ZipArchive;
 
 use function array_column;
 use function array_merge;
@@ -242,6 +268,8 @@ abstract class AbstractEntity extends AbstractRest
         // TODO inject
         if ($this instanceof Templates) {
             $EntitySqlBuilder = new TemplatesSqlBuilder($this);
+        } elseif ($this instanceof ItemsTypes) {
+            $EntitySqlBuilder = new ItemsTypesSqlBuilder($this);
         } else {
             $EntitySqlBuilder = new EntitySqlBuilder($this);
         }
@@ -314,13 +342,10 @@ abstract class AbstractEntity extends AbstractRest
     #[Override]
     public function patch(Action $action, array $params): array
     {
-        // a Review action doesn't do anything
+        // a Review action doesn't do anything: TODO leave a comment
         if ($action === Action::Review) {
-            // clear any request action - skip for templates
-            if ($this instanceof AbstractConcreteEntity) {
-                $RequestActions = new RequestActions($this->Users, $this);
-                $RequestActions->remove(RequestableAction::Review);
-            }
+            $RequestActions = new RequestActions($this->Users, $this);
+            $RequestActions->remove(RequestableAction::Review);
             return $this->readOne();
         }
         // the toggle pin action doesn't require write access to the entity
@@ -349,13 +374,17 @@ abstract class AbstractEntity extends AbstractRest
                     $RequestActions->remove(RequestableAction::Archive);
                 }
             )(),
+            Action::Bloxberg => $this->bloxberg(),
             Action::Destroy => $this->destroy(),
             Action::Lock => $this->toggleLock(),
             Action::ForceLock => $this->lock(),
             Action::ForceUnlock => $this->unlock(),
             Action::Pin => $this->Pins->togglePin(),
+            Action::RemoveExclusiveEditMode => $this->ExclusiveEditMode->destroy(),
             Action::SetCanread => $this->update(new EntityParams('canread', $params['can'])),
             Action::SetCanwrite => $this->update(new EntityParams('canwrite', $params['can'])),
+            Action::Sign => $this->sign($params['passphrase'], Meaning::from((int) $params['meaning'])),
+            Action::Timestamp => $this->timestamp(),
             Action::UpdateMetadataField => (
                 function () use ($params) {
                     foreach ($params as $key => $value) {
@@ -373,24 +402,84 @@ abstract class AbstractEntity extends AbstractRest
                     }
                 }
             )(),
-            Action::RemoveExclusiveEditMode => $this->ExclusiveEditMode->destroy(),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
         return $this->readOne();
+    }
+
+    #[Override]
+    public function readOne(): array
+    {
+        if ($this->id === null) {
+            throw new IllegalActionException('No id was set!');
+        }
+        // build query params for Uploads
+        $queryParams = $this->getQueryParams(Request::createFromGlobals()->query);
+        $sql = $this->getSqlBuilder()->getReadSqlBeforeWhere(true, true);
+
+        $sql .= sprintf(' WHERE entity.id = %d', $this->id);
+
+        $req = $this->Db->prepare($sql);
+        if (str_contains($sql, ':userid')) {
+            $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
+        }
+        $this->Db->execute($req);
+        $this->entityData = $this->Db->fetch($req);
+        // Note: this is returning something with all values set to null instead of resource not found exception if the id is incorrect.
+        if ($this->entityData['id'] === null) {
+            throw new ResourceNotFoundException();
+        }
+        $this->canOrExplode('read');
+        $this->entityData['steps'] = $this->Steps->readAll();
+        $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll();
+        $this->entityData['items_links'] = $this->ItemsLinks->readAll();
+        $this->entityData['related_experiments_links'] = $this->ExperimentsLinks->readRelated();
+        $this->entityData['related_items_links'] = $this->ItemsLinks->readRelated();
+        $this->entityData['uploads'] = $this->Uploads->readAll($queryParams);
+        // no comments on templates for now
+        if ($this instanceof AbstractConcreteEntity) {
+            $this->entityData['comments'] = $this->Comments->readAll();
+        }
+        $this->entityData['page'] = substr($this->entityType->toPage(), 0, -4);
+        $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
+        $this->entityData['compounds'] = $CompoundsLinks->readAll();
+        $ContainersLinks = LinksFactory::getContainersLinks($this);
+        $this->entityData['containers'] = $ContainersLinks->readAll();
+        $this->entityData['sharelink'] = sprintf(
+            '%s/%s?mode=view&id=%d%s',
+            Config::fromEnv('SITE_URL'),
+            $this->entityType->toPage(),
+            $this->id,
+            // add a share link
+            !empty($this->entityData['access_key'])
+                ? sprintf('&access_key=%s', $this->entityData['access_key'])
+                : '',
+        );
+        // add the body as html
+        $this->entityData['body_html'] = $this->entityData['body'];
+        // convert from markdown only if necessary
+        if ($this->entityData['content_type'] === self::CONTENT_MD) {
+            $this->entityData['body_html'] = Tools::md2html($this->entityData['body'] ?? '');
+        }
+        if (!empty($this->entityData['metadata'])) {
+            $this->entityData['metadata_decoded'] = json_decode($this->entityData['metadata']);
+        }
+        $exclusiveEditMode = $this->ExclusiveEditMode->readOne();
+        $this->entityData['exclusive_edit_mode'] = empty($exclusiveEditMode) ? null : $exclusiveEditMode;
+        ksort($this->entityData);
+        return $this->entityData;
     }
 
     public function readOneFull(): array
     {
         $base = $this->readOne();
         // items types don't have this yet
-        if ($this instanceof AbstractConcreteEntity || $this instanceof Templates) {
-            $base['revisions'] = (new Revisions($this))->readAll();
-            $base['changelog'] = (new Changelog($this))->readAll();
-            // we want to include ALL uploaded files
-            $base['uploads'] = (new Uploads($this))->readAll(
-                $this->getQueryParams(new InputBag(array('state' => '1,2,3')))
-            );
-        }
+        $base['revisions'] = (new Revisions($this))->readAll();
+        $base['changelog'] = (new Changelog($this))->readAll();
+        // we want to include ALL uploaded files
+        $base['uploads'] = (new Uploads($this))->readAll(
+            $this->getQueryParams(new InputBag(array('state' => '1,2,3')))
+        );
         ksort($base);
         return $base;
     }
@@ -589,6 +678,52 @@ abstract class AbstractEntity extends AbstractRest
         }
     }
 
+    public function timestamp(): array
+    {
+        $Config = Config::getConfig();
+
+        // the source data can be in any format, here it defaults to json but can be pdf too
+        $dataFormat = ExportFormat::Json;
+        // if we do keeex we want to timestamp a pdf so we can keeex it
+        // there might be other options impacting this condition later
+        if ($Config->configArr['keeex_enabled'] === '1') {
+            $dataFormat = ExportFormat::Pdf;
+        }
+
+        // select the timestamp service and do the timestamp request to TSA
+        $Maker = $this->getTimestampMaker($Config->configArr, $dataFormat);
+        $TimestampUtils = new TimestampUtils(
+            new Client(),
+            $Maker->generateData(),
+            $Maker->getTimestampParameters(),
+            new TimestampResponse(),
+        );
+
+        // save the token and data in a zip archive
+        $zipName = $Maker->getFileName();
+        $zipPath = FsTools::getCacheFile() . '.zip';
+        $comment = sprintf(_('Timestamp archive by %s'), $this->Users->userData['fullname']);
+        $hasher = new FileHash(FsTools::getFs(dirname($zipPath)), basename($zipPath));
+        $Maker->saveTimestamp(
+            $TimestampUtils->timestamp(),
+            new CreateUpload($zipName, $zipPath, $hasher, $comment, immutable: 1, state: State::Archived),
+        );
+
+        // decrement the balance
+        $Config->decrementTsBalance();
+
+        // clear any request action
+        $RequestActions = new RequestActions($this->Users, $this);
+        $RequestActions->remove(RequestableAction::Timestamp);
+
+        return $this->readOne();
+    }
+
+    protected function getSqlBuilder(): SqlBuilderInterface
+    {
+        return new EntitySqlBuilder($this);
+    }
+
     protected function checkToggleLockPermissions(): void
     {
         $this->getPermissions();
@@ -631,6 +766,67 @@ abstract class AbstractEntity extends AbstractRest
         }
 
         return (new Permissions($this->Users, $this->entityData))->forEntity();
+    }
+
+    protected function bloxberg(): array
+    {
+        $configArr = Config::getConfig()->configArr;
+        $HttpGetter = new HttpGetter(new Client(), $configArr['proxy']);
+        $Maker = new MakeBloxberg(
+            $this->Users,
+            $this,
+            $configArr,
+            $HttpGetter,
+        );
+        $Maker->timestamp();
+        return $this->readOne();
+    }
+
+    protected function getTimestampMaker(array $config, ExportFormat $dataFormat): MakeTrustedTimestampInterface
+    {
+        return match ($config['ts_authority']) {
+            'dfn' => new MakeDfnTimestamp($this->Users, $this, $config, $dataFormat),
+            'dgn' => new MakeDgnTimestamp($this->Users, $this, $config, $dataFormat),
+            'universign' => $config['debug'] ? new MakeUniversignTimestampDev($this->Users, $this, $config, $dataFormat) : new MakeUniversignTimestamp($this->Users, $this, $config, $dataFormat),
+            'digicert' => new MakeDigicertTimestamp($this->Users, $this, $config, $dataFormat),
+            'sectigo' => new MakeSectigoTimestamp($this->Users, $this, $config, $dataFormat),
+            'globalsign' => new MakeGlobalSignTimestamp($this->Users, $this, $config, $dataFormat),
+            'custom' => new MakeCustomTimestamp($this->Users, $this, $config, $dataFormat),
+            default => throw new ImproperActionException('Incorrect timestamp authority configuration.'),
+        };
+    }
+
+    protected function sign(string $passphrase, Meaning $meaning): array
+    {
+        $Sigkeys = new SignatureHelper($this->Users);
+        $Maker = new MakeFullJson(array($this));
+        $message = $Maker->getFileContent();
+        $signature = $Sigkeys->serializeSignature($this->Users->userData['sig_privkey'], $passphrase, $message, $meaning);
+        $SigKeys = new SigKeys($this->Users);
+        $SigKeys->touch();
+        $Comments = new ImmutableComments($this);
+        $comment = sprintf(_('Signed by %s (%s)'), $this->Users->userData['fullname'], $meaning->name);
+        $Comments->postAction(Action::Create, array('comment' => $comment));
+        // save the signature and data in a zip archive
+        $protoZipPath = FsTools::getCacheFile();
+        $zipFolderPath = dirname($protoZipPath);
+        $zipPath = $protoZipPath . '.zip';
+        $comment = sprintf(_('Signature archive by %s (%s)'), $this->Users->userData['fullname'], $meaning->name);
+        $ZipArchive = new ZipArchive();
+        $ZipArchive->open($zipPath, ZipArchive::CREATE);
+        $ZipArchive->addFromString('data.json.minisig', $signature);
+        $ZipArchive->addFromString('data.json', $message);
+        $ZipArchive->addFromString('key.pub', $this->Users->userData['sig_pubkey']);
+        $ZipArchive->addFromString('verify.sh', "#!/bin/sh\nminisign -H -V -p key.pub -m data.json\n");
+        $ZipArchive->close();
+        // allow uploading a file to that entity because sign action only requires read access
+        $this->Uploads->Entity->bypassWritePermission = true;
+        $hasher = new FileHash(FsTools::getFs($zipFolderPath), basename($zipPath));
+        $this->Uploads->create(new CreateUpload('signature archive.zip', $zipPath, $hasher, $comment, immutable: 1, state: State::Archived));
+        $RequestActions = new RequestActions($this->Users, $this);
+        $RequestActions->remove(RequestableAction::Sign);
+        AuditLogs::create(new SignatureCreated($this->Users->userData['userid'], $this->id ?? 0, $this->entityType));
+        return $this->readOne();
     }
 
     protected function getFullnameFromUserid(int $userid): string

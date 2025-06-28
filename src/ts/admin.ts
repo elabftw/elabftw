@@ -6,7 +6,6 @@
  * @package elabftw
  */
 import {
-  getNewIdFromPostRequest,
   mkSpin,
   mkSpinStop,
   permissionsToJson,
@@ -122,18 +121,8 @@ if (window.location.pathname === '/admin.php') {
 
   document.getElementById('container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
-    // CREATE ITEMS TYPES
-    if (el.matches('[data-action="itemstypes-create"]')) {
-      const title = prompt(i18next.t('template-title'));
-      if (title) {
-        // no body on template creation
-        ApiC.post(EntityType.ItemType, {'title': title}).then(resp => {
-          const newId = getNewIdFromPostRequest(resp);
-          window.location.replace(`?tab=4&templateid=${newId}#itemsCategoriesAnchor`);
-        });
-      }
     // RUN ACTION ON SELECTED (BATCH)
-    } else if (el.matches('[data-action="run-action-selected"]')) {
+    if (el.matches('[data-action="run-action-selected"]')) {
       const btn = el as HTMLButtonElement;
       const selected = getSelected();
       if (!Object.values(selected).some(array => array.length > 0)) {

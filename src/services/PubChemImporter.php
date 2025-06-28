@@ -45,6 +45,14 @@ final class PubChemImporter
         return $decoded['IdentifierList']['CID'];
     }
 
+    public function getCidFromName(string $name): array
+    {
+        usleep(self::REQ_DELAY);
+        $json = $this->httpGetter->get(sprintf('%s/compound/name/%s/cids/json', self::PUG_URL, $name));
+        $decoded = json_decode($json, true, 10);
+        return $decoded['IdentifierList']['CID'];
+    }
+
     public function fromPugView(int $cid): Compound
     {
         usleep(self::REQ_DELAY);

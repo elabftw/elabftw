@@ -59,7 +59,7 @@ final class CompoundsCsv extends AbstractCsv
             // this might store the compound from pubchem
             $compound = false;
             $ids = array();
-            $cids[] = array();
+            $cids = array();
             try {
                 if ($this->PubChemImporter !== null) {
                     $cid = isset($row['pubchemcid']) ? (int) $row['pubchemcid'] : null;
@@ -163,8 +163,10 @@ final class CompoundsCsv extends AbstractCsv
                     $resource = $this->findMatch($row[$this->matchWith]);
                     if (is_array($resource)) {
                         $this->Items->setId($resource['id']);
-                        $Compounds2ItemsLinks = new Compounds2ItemsLinks($this->Items, $id);
-                        $Compounds2ItemsLinks->create();
+                        foreach ($ids as $id) {
+                            $Compounds2ItemsLinks = new Compounds2ItemsLinks($this->Items, $id);
+                            $Compounds2ItemsLinks->create();
+                        }
                     }
                 }
             } catch (ImproperActionException | RequestException $e) {

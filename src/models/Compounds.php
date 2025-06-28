@@ -88,6 +88,9 @@ final class Compounds extends AbstractRest
         if (!empty($queryParams->getQuery()->get('search_pubchem_cas'))) {
             return $this->searchPubChemCas($queryParams->getQuery()->getString('search_pubchem_cas'));
         }
+        if (!empty($queryParams->getQuery()->get('search_pubchem_name'))) {
+            return $this->searchPubChemName($queryParams->getQuery()->getString('search_pubchem_name'));
+        }
         if (!empty($queryParams->getQuery()->get('search_fp_smi'))) {
             $q = $queryParams->getQuery();
             $fp = $this->fingerprinter->calculate('smi', $q->getString('search_fp_smi'));
@@ -523,7 +526,7 @@ final class Compounds extends AbstractRest
         if (!empty($reqBody['cid'])) {
             return $this->createFromCompound($this->searchPubChem((int) $reqBody['cid']));
         }
-        return $this->createFromCompound($this->searchPubChemCas($reqBody['cas']));
+        return $this->createFromCompound($this->searchPubChemCas($reqBody['cas'])[0]);
     }
 
     private function getSelectBeforeWhere(): string
@@ -602,6 +605,20 @@ final class Compounds extends AbstractRest
     {
         $Importer = new PubChemImporter($this->httpGetter);
         $cids = $Importer->getCidFromCas($cas);
+        $compounds = array();
+        foreach ($cids as $cid) {
+            $compounds[] = $this->searchPubChem($cid);
+        }
+        return $compounds;
+    }
+
+    /**
+     * @return Compound[]
+     */
+    private function searchPubChemName(string $name): array
+    {
+        $Importer = new PubChemImporter($this->httpGetter);
+        $cids = $Importer->getCidFromName($name);
         $compounds = array();
         foreach ($cids as $cid) {
             $compounds[] = $this->searchPubChem($cid);

@@ -136,7 +136,8 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
             )),
         ));
 
-        // User 2 retries after being granted book permission
+        // Refresh scheduler then User 2 retries after being granted book permission
+        $Scheduler2 = new Scheduler($Items2, null, $this->start, $this->end);
         $eventsAfterGrant = $Scheduler2->readAll();
         $this->assertIsArray($eventsAfterGrant);
         $this->assertCount(1, $eventsAfterGrant, 'User 2 should now see the event.');

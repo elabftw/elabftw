@@ -70,11 +70,8 @@
   },
   "autoload": {
     "psr-4": {
-      "Elabftw\\AuditEvent\\": [
-        "src/AuditEvent"
-      ],
-      "Elabftw\\Auth\\": [
-        "src/Auth"
+      "Elabftw\\": [
+        "src/"
       ],
       "Elabftw\\Controllers\\": [
         "src/controllers"
@@ -88,23 +85,11 @@
       "Elabftw\\Exceptions\\": [
         "src/exceptions"
       ],
-      "Elabftw\\Enums\\": [
-        "src/Enums"
-      ],
       "Elabftw\\Factories\\": [
         "src/factories"
       ],
-      "Elabftw\\Hash\\": [
-        "src/Hash"
-      ],
-      "Elabftw\\Import\\": [
-        "src/Import"
-      ],
       "Elabftw\\Interfaces\\": [
         "src/interfaces"
-      ],
-      "Elabftw\\Make\\": [
-        "src/Make"
       ],
       "Elabftw\\Models\\": [
         "src/models",
@@ -114,14 +99,8 @@
       "Elabftw\\Models\\Notifications\\": [
         "src/models/notifications"
       ],
-      "Elabftw\\Params\\": [
-        "src/Params"
-      ],
       "Elabftw\\Services\\": [
         "src/services"
-      ],
-      "Elabftw\\Storage\\": [
-        "src/Storage"
       ],
       "Elabftw\\Services\\AdvancedSearchQuery\\Collectors\\": [
         "src/services/advancedSearchQuery/collectors"

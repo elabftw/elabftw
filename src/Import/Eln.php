@@ -19,6 +19,7 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Hash\LocalFileHash;
 use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\AbstractTemplateEntity;
@@ -37,7 +38,6 @@ use Override;
 
 use function array_find;
 use function basename;
-use function hash_file;
 use function json_decode;
 use function sprintf;
 use function strtr;
@@ -76,6 +76,7 @@ class Eln extends AbstractZip
         protected ?EntityType $entityType = null,
         protected ?int $category = null,
         private bool $verifyChecksum = true,
+        private bool $checksumErrorSkip = true,
     ) {
         parent::__construct(
             $requester,
@@ -493,16 +494,18 @@ class Eln extends AbstractZip
         // fix for bloxberg attachments containing : character
         $filepath = strtr($filepath, ':', '_');
 
+        $hasher = new LocalFileHash($filepath);
+        $hash = $hasher->getHash();
         // CHECKSUM
-        if ($this->verifyChecksum) {
-            $hash = hash_file('sha256', $filepath);
-            if ($hash !== $file['sha256']) {
-                $this->logger->error(sprintf(
-                    'Error: %s has incorrect sha256 sum. File was not imported. Expected: %s. Actual: %s',
-                    basename($filepath),
-                    $file['sha256'],
-                    $hash,
-                ));
+        if ($this->verifyChecksum && $hash !== $file['sha256']) {
+            $this->logger->error(sprintf(
+                'Error: %s has incorrect sha256 sum. Expected: %s. Actual: %s',
+                basename($filepath),
+                $file['sha256'],
+                $hash ?? '?',
+            ));
+            if ($this->checksumErrorSkip) {
+                $this->logger->error('File was not imported.');
                 return;
             }
         }
@@ -510,6 +513,7 @@ class Eln extends AbstractZip
         $newUploadId = $this->Entity->Uploads->create(new CreateUpload(
             $file['name'] ?? basename($file['@id']),
             $filepath,
+            $hasher,
             $this->transformIfNecessary($file['description'] ?? '', true) ?: null,
         ));
         // the alternateName holds the previous long_name of the file

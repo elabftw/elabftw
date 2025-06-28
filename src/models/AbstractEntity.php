@@ -14,7 +14,7 @@ namespace Elabftw\Models;
 
 use DateTimeImmutable;
 use Elabftw\AuditEvent\SignatureCreated;
-use Elabftw\Elabftw\CreateUpload;
+use Elabftw\Elabftw\CreateUploadFromLocalFile;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Elabftw\ItemsTypesSqlBuilder;
@@ -704,7 +704,7 @@ abstract class AbstractEntity extends AbstractRest
         $comment = sprintf(_('Timestamp archive by %s'), $this->Users->userData['fullname']);
         $Maker->saveTimestamp(
             $TimestampUtils->timestamp(),
-            new CreateUpload($zipName, $zipPath, $comment, immutable: 1, state: State::Archived),
+            new CreateUploadFromLocalFile($zipName, $zipPath, $comment, immutable: 1, state: State::Archived),
         );
 
         // decrement the balance
@@ -802,12 +802,12 @@ abstract class AbstractEntity extends AbstractRest
         $signature = $Sigkeys->serializeSignature($this->Users->userData['sig_privkey'], $passphrase, $message, $meaning);
         $SigKeys = new SigKeys($this->Users);
         $SigKeys->touch();
+        // create an immutable comment
         $Comments = new ImmutableComments($this);
         $comment = sprintf(_('Signed by %s (%s)'), $this->Users->userData['fullname'], $meaning->name);
         $Comments->postAction(Action::Create, array('comment' => $comment));
         // save the signature and data in a zip archive
         $zipPath = FsTools::getCacheFile() . '.zip';
-        $comment = sprintf(_('Signature archive by %s (%s)'), $this->Users->userData['fullname'], $meaning->name);
         $ZipArchive = new ZipArchive();
         $ZipArchive->open($zipPath, ZipArchive::CREATE);
         $ZipArchive->addFromString('data.json.minisig', $signature);
@@ -817,7 +817,8 @@ abstract class AbstractEntity extends AbstractRest
         $ZipArchive->close();
         // allow uploading a file to that entity because sign action only requires read access
         $this->Uploads->Entity->bypassWritePermission = true;
-        $this->Uploads->create(new CreateUpload('signature archive.zip', $zipPath, $comment, immutable: 1, state: State::Archived));
+        $comment = sprintf(_('Signature archive by %s (%s)'), $this->Users->userData['fullname'], $meaning->name);
+        $this->Uploads->create(new CreateUploadFromLocalFile('signature archive.zip', $zipPath, $comment, immutable: 1, state: State::Archived));
         $RequestActions = new RequestActions($this->Users, $this);
         $RequestActions->remove(RequestableAction::Sign);
         AuditLogs::create(new SignatureCreated($this->Users->userData['userid'], $this->id ?? 0, $this->entityType));

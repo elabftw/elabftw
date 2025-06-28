@@ -28,6 +28,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Override;
 
 use function is_string;
+use function json_decode;
+use function ksort;
 use function sprintf;
 
 /**

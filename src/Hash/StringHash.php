@@ -17,7 +17,7 @@ use Override;
 class StringHash extends AbstractHash
 {
     // length of input above which we don't process it
-    protected const int THRESHOLD = 4200000000;
+    protected const int THRESHOLD = 268435456;
 
     public function __construct(protected readonly string $input) {}
 

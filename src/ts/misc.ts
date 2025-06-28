@@ -348,7 +348,7 @@ export function addAutocompleteToLinkInputs(): void {
             response(res);
             return;
           }
-          ApiC.getJson(`${object.itemType}/?${object.filterFamily}=${filterEl.value}&q=${escapeExtendedQuery(request.term)}`).then(json => {
+          ApiC.getJson(`${object.itemType}/?${object.filterFamily}=${filterEl.value}&q=${escapeExtendedQuery(request.term)}&scope=3`).then(json => {
             cache[object.selectElid][term] = json;
             const res = [];
             json.forEach(entity => {

@@ -5,10 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { DateTime } from 'luxon';
-import 'jquery-ui/ui/widgets/autocomplete';
-import $ from 'jquery';
-import 'bootstrap/js/src/modal.js';
+import bootstrapPlugin from '@fullcalendar/bootstrap';
 import { Calendar } from '@fullcalendar/core';
 import caLocale from '@fullcalendar/core/locales/ca';
 import csLocale from '@fullcalendar/core/locales/cs';
@@ -28,14 +25,18 @@ import ruLocale from '@fullcalendar/core/locales/ru';
 import skLocale from '@fullcalendar/core/locales/sk';
 import slLocale from '@fullcalendar/core/locales/sl';
 import zhcnLocale from '@fullcalendar/core/locales/zh-cn';
-import bootstrapPlugin from '@fullcalendar/bootstrap';
+import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import listPlugin from '@fullcalendar/list';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import timelinePlugin from '@fullcalendar/timeline';
-import listPlugin from '@fullcalendar/list';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import { Action } from './interfaces';
+import i18next from 'i18next';
+import $ from 'jquery';
+import 'bootstrap/js/src/modal.js';
+import { DateTime } from 'luxon';
+import 'jquery-ui/ui/widgets/autocomplete';
 import { Api } from './Apiv2.class';
+import { Action } from './interfaces';
 import { TomSelect } from './misc';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -211,20 +212,68 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
         });
       } else {
-        // Show TomSelect input if nothing selected
-        const selectHtml = `
-      <label for="itemPickerSelect" class="form-label">Select items to book</label>
-      <select multiple id="itemPickerSelect" class="form-select">
-        ${Array.from(itemSelectEl.options).filter(opt => opt.value).map(opt => `
-          <option value="${opt.value}">${opt.textContent}</option>
-        `).join('')}
-      </select>
-    `;
-        body.innerHTML = selectHtml;
+        // Rebuild TomSelect inputs if nothing selected
+        const itemSelectLabel = i18next.t('select-resource');
+        const categorySelectLabel = i18next.t('filter-by-category');
 
-        manualSelect = new TomSelect('#itemPickerSelect', {
+        const categorySelectEl = document.getElementById('categorySelect') as HTMLSelectElement;
+        const categories = Array.from(categorySelectEl.options)
+          .filter(opt => opt.value)
+          .map(opt => `<option value="${opt.value}">${opt.textContent}</option>`)
+          .join('');
+        const items = Array.from(itemSelectEl.options)
+          .filter(opt => opt.value)
+          .map(opt => `<option value="${opt.value}" data-category="${opt.dataset.category ?? ''}">${opt.textContent}</option>`)
+          .join('');
+
+        body.innerHTML = `
+          <div class='input-group ml-2'>
+            <div class='input-group-prepend'>
+              <span class='input-group-text'><i class='fas fa-magnifying-glass'></i></span>
+            </div>
+            <select id='categorySelectModal' class='form-control' style='max-width: 40%;' aria-label='${categorySelectLabel}'>
+              <option value=''>${categorySelectLabel}</option>
+              ${categories}
+            </select>
+            <select id='itemSelectModal' name='items[]' aria-label='${itemSelectLabel}' class='form-control ts-filter form-inline'>
+              <option value=''>${itemSelectLabel}</option>
+              ${items}
+            </select>
+          </div>
+        `;
+
+        const itemSelectModalEl = document.getElementById('itemSelectModal') as HTMLSelectElement & { tomselect?: TomSelect };
+        const categorySelectModalEl = document.getElementById('categorySelectModal') as HTMLSelectElement;
+        // Initialize TomSelect after modal select is added to DOM
+        manualSelect = new TomSelect(itemSelectModalEl, {
           maxItems: null,
-          plugins: ['remove_button', 'dropdown_input'],
+          plugins: {
+            checkbox_options: {
+              checkedClassNames: ['ts-checked'],
+              uncheckedClassNames: ['ts-unchecked'],
+            },
+            clear_button: {},
+            dropdown_input: {},
+            no_active_items: {},
+            remove_button: {},
+          },
+        });
+
+        // Category change filtering (modal)
+        categorySelectModalEl.addEventListener('change', () => {
+          const selectedCategory = categorySelectModalEl.value;
+          const ts = itemSelectModalEl.tomselect;
+          if (!ts) return;
+
+          ts.clearOptions();
+
+          Array.from(itemSelectModalEl.options).forEach(opt => {
+            if (!selectedCategory || opt.dataset.category === selectedCategory) {
+              ts.addOption({ value: opt.value, text: opt.textContent ?? '' });
+            }
+          });
+
+          ts.refreshOptions(false);
         });
       }
 

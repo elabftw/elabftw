@@ -8,6 +8,7 @@
 import i18next from 'i18next';
 import { InputType, Malle } from '@deltablot/malle';
 import { Api } from './Apiv2.class';
+import { getEditor } from './Editor.class';
 import { getEntity, relativeMoment, reloadElements } from './misc';
 import { Model } from './interfaces';
 
@@ -30,6 +31,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const entity = getEntity();
   const ApiC = new Api();
 
+  // mail users who booked a resource
+  const editor = getEditor();
+  editor.init('edit');
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);

@@ -14,7 +14,6 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Enums\State;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Override;
 use PDO;
@@ -55,13 +54,12 @@ final class Info extends AbstractRest
         $sql = 'SELECT
         (SELECT COUNT(users.userid) FROM users) AS all_users_count,
         (SELECT COUNT(users.userid) FROM users WHERE archived = 0 AND validated = 1) AS active_users_count,
-        (SELECT COUNT(items.id) FROM items WHERE items.state = :state) AS items_count,
+        (SELECT COUNT(items.id) FROM items) AS items_count,
         (SELECT COUNT(teams.id) FROM teams) AS teams_count,
-        (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.state = :state) AS experiments_count,
-        (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.state = :state AND experiments.timestamped = 1) AS experiments_timestamped_count,
+        (SELECT COUNT(experiments.id) FROM experiments) AS experiments_count,
+        (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.timestamped = 1) AS experiments_timestamped_count,
         (SELECT COUNT(id) FROM uploads WHERE comment LIKE "Timestamp archive%" = 1 AND created_at > (NOW() - INTERVAL 1 MONTH)) AS entities_timestamped_count_last_30_days';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         $res = $req->fetch(PDO::FETCH_NAMED);

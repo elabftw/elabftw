@@ -11,3 +11,8 @@ ALTER TABLE users2teams ADD COLUMN is_archived TINYINT(1) UNSIGNED NOT NULL DEFA
 UPDATE users2teams ut JOIN users u ON ut.users_id = u.userid SET ut.is_archived = 1 WHERE u.archived = 1;
 -- maybe do that in next version ALTER TABLE users DROP COLUMN archived;
 DROP TABLE `groups`;
+-- add team settings for status/categories
+ALTER TABLE teams ADD COLUMN users_canwrite_experiments_categories TINYINT(1) UNSIGNED NOT NULL DEFAULT 1;
+ALTER TABLE teams ADD COLUMN users_canwrite_experiments_status TINYINT(1) UNSIGNED NOT NULL DEFAULT 1;
+ALTER TABLE teams ADD COLUMN users_canwrite_resources_categories TINYINT(1) UNSIGNED NOT NULL DEFAULT 1;
+ALTER TABLE teams ADD COLUMN users_canwrite_resources_status TINYINT(1) UNSIGNED NOT NULL DEFAULT 1;

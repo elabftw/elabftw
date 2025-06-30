@@ -52,8 +52,7 @@ final class Populate
      */
     public function generate(Experiments | Items $Entity): void
     {
-        $Teams = new Teams($Entity->Users, $Entity->Users->team);
-        $Teams->bypassWritePermission = true;
+        $Teams = new Teams($Entity->Users, $Entity->Users->team, bypassReadPermission: true, bypassWritePermission: true);
         if ($Entity instanceof Experiments) {
             $Category = new ExperimentsCategories($Teams);
             $Status = new ExperimentsStatus($Teams);
@@ -199,7 +198,8 @@ final class Populate
         // use yopmail.com instead of safeEmail() so we don't hard bounce on example.tld domains when testing mass emails
         $email = $user['email'] ?? sprintf('elabuser-%d@yopmail.com', $this->faker->randomNumber(6));
 
-        $userid = $Teams->Users->createOne(
+        $Users = new Users();
+        $userid = $Users->createOne(
             email: $email,
             teams: array($user['team']),
             firstname: $firstname,

@@ -37,17 +37,20 @@ final class Teams extends AbstractRest
 {
     use SetIdTrait;
 
-    public bool $bypassWritePermission = false;
+    public array $teamArr = array();
 
-    public bool $bypassReadPermission = false;
-
-    public function __construct(public Users $Users, ?int $id = null)
+    public function __construct(public Users $Users, ?int $id = null, public bool $bypassReadPermission = false, public bool $bypassWritePermission = false)
     {
         parent::__construct();
+        /*
         if ($id === null && ($Users->userData['team'] ?? 0) !== 0) {
             $id = $Users->userData['team'];
         }
+         */
         $this->setId($id);
+        if ($this->id) {
+            $this->teamArr = $this->readOne();
+        }
     }
 
     /**
@@ -162,6 +165,16 @@ final class Teams extends AbstractRest
         }
         $onlyIds = array_map('intval', $idArr);
         $sql = 'SELECT teams.name FROM teams WHERE id IN (' . implode(',', $onlyIds) . ') ORDER BY name ASC';
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+
+        return $req->fetchAll();
+    }
+
+    // if all you need is a name/id for all visible teams
+    public function readAllVisible(): array
+    {
+        $sql = 'SELECT id, name FROM teams WHERE visible = 1 ORDER BY name ASC';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
 
@@ -297,7 +310,7 @@ final class Teams extends AbstractRest
         throw new IllegalActionException('User tried to update a team setting but they are not admin of that team.');
     }
 
-    private function create(string $name): int
+    public function create(string $name): int
     {
         $name = Filter::title($name);
 

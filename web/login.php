@@ -17,7 +17,6 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Idps;
-use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use Elabftw\Services\MfaHelper;
 use Exception;
@@ -96,10 +95,6 @@ try {
     $Idps = new Idps($App->Users);
     $idpsArr = $Idps->readAllSimpleEnabled();
 
-    $Teams = new Teams($App->Users);
-    $Teams->bypassReadPermission = true;
-    $teamsArr = $Teams->readAll();
-
     if ($App->Request->cookies->has('kickreason')) {
         // at the moment there is only one reason
         $App->Session->getFlashBag()->add('ko', _('Your session expired.'));
@@ -109,7 +104,7 @@ try {
     $renderArr = array(
         'idpsArr' => $idpsArr,
         'pageTitle' => _('Login'),
-        'teamsArr' => $teamsArr,
+        'teamsArr' => $App->Teams->readAllVisible(),
         'showLocal' => $showLocal,
         'hideTitle' => true,
     );

@@ -46,8 +46,7 @@ final class OnboardingEmail extends EmailOnlyNotifications implements MailableIn
         );
 
         if ($this->teamId > 0) {
-            $Team = new Teams(new Users(), $this->teamId);
-            $Team->bypassReadPermission = true;
+            $Team = new Teams(new Users(), $this->teamId, bypassReadPermission: true);
             $dataArr = $Team->readOne();
         } elseif ($this->teamId === -1) {
             $dataArr = Config::getConfig()->configArr;

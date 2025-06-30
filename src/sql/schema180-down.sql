@@ -15,4 +15,10 @@ UPDATE users2teams SET groups_id = IF(groups_id = 1, 2, 4);
 ALTER TABLE users2teams DROP COLUMN is_archived;
 ALTER TABLE users2teams ADD KEY `fk_users2teams_groups_id` (`groups_id`);
 ALTER TABLE users2teams ADD CONSTRAINT `fk_users2teams_groups_id` FOREIGN KEY (`groups_id`) REFERENCES `groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE teams DROP COLUMN users_canwrite_experiments_categories;
+ALTER TABLE teams DROP COLUMN users_canwrite_experiments_status;
+ALTER TABLE teams DROP COLUMN users_canwrite_resources_categories;
+ALTER TABLE teams DROP COLUMN users_canwrite_resources_status;
+
 UPDATE config SET conf_value = 179 WHERE conf_name = 'schema';

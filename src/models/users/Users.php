@@ -91,7 +91,7 @@ class Users extends AbstractRest
         bool $allowTeamCreation = false,
     ): int {
         $Config = Config::getConfig();
-        $Teams = new Teams($this);
+        $Teams = new Teams($this, bypassReadPermission: true);
 
         // make sure that all the teams in which the user will be are created/exist
         // this might throw an exception if the team doesn't exist and we can't create it on the fly
@@ -798,7 +798,7 @@ class Users extends AbstractRest
         // Check setting for each team individually
         $teams = json_decode($this->userData['teams']);
         foreach (array_column($teams, 'id') as $teamId) {
-            if ((new Teams($this))->readOne()['onboarding_email_active'] === 1) {
+            if ((new Teams($this, $this->team))->readOne()['onboarding_email_active'] === 1) {
                 (new OnboardingEmail($teamId))->create($this->userData['userid']);
             }
         }

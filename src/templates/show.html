@@ -317,7 +317,7 @@
 
   {% set count = itemsArr|length %}
 
-  {% if App.Users.isAdmin and itemsCategoryArr|length == 0 %}
+  {% if App.Users.isAdmin and App.itemsCategoryArr|length == 0 %}
   {{ 'No resources categories have been defined for your team. Head to the %sAdmin Panel%s to add one.'|trans|format("<a href='resources-templates.php'>", "</a>")|raw|msg('warning', false) }}
   {% endif %}
   <div id='showModeContent'>
@@ -404,7 +404,7 @@
             <div class='input-group-append'>
               <select id='addLinkCatFilter' class='brl-none form-control' aria-label='{{ 'Limit category'|trans }}'>
                 <option selected value=''>{{ 'Any category'|trans }}</option>
-                {% for cat in itemsCategoryArr %}
+                {% for cat in App.itemsCategoryArr %}
                   <option value='{{ cat.id }}'>{{ cat.title }}</option>
                 {% endfor %}
               </select>

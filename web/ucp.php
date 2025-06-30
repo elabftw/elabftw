@@ -23,7 +23,6 @@ use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\TeamGroups;
-use Elabftw\Models\Teams;
 use Elabftw\Models\TeamTags;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
@@ -41,12 +40,11 @@ try {
     $ApiKeys = new ApiKeys($App->Users);
     $apiKeysArr = $ApiKeys->readAll();
 
-    $Teams = new Teams($App->Users);
     $TeamGroups = new TeamGroups($App->Users);
     $TeamTags = new TeamTags($App->Users);
 
-    $Category = new ExperimentsCategories($Teams);
-    $Status = new ExperimentsStatus($Teams);
+    $Category = new ExperimentsCategories($App->Teams);
+    $Status = new ExperimentsStatus($App->Teams);
     $entityData = array();
     $changelogData = array();
     $metadataGroups = array();
@@ -103,7 +101,7 @@ try {
         'classificationArr' => Classification::getAssociativeArray(),
         'entityData' => $entityData,
         'itemsCategoryArr' => $itemsCategoryArr,
-        'teamsArr' => $Teams->readAll(),
+        'teamsArr' => $App->Teams->readAllVisible(),
         'metadataGroups' => $metadataGroups,
         'scopedTeamgroupsArr' => $TeamGroups->readScopedTeamgroups(),
         'notificationsSettings' => $notificationsSettings,

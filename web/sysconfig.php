@@ -23,7 +23,6 @@ use Elabftw\Models\Idps;
 use Elabftw\Models\IdpsSources;
 use Elabftw\Models\Info;
 use Elabftw\Models\StorageUnits;
-use Elabftw\Models\Teams;
 use Elabftw\Services\DummyRemoteDirectory;
 use Elabftw\Services\EairefRemoteDirectory;
 use Elabftw\Services\UploadsChecker;
@@ -55,8 +54,7 @@ try {
     $idpsArr = $Idps->readAllLight();
     $IdpsSources = new IdpsSources($App->Users);
     $idpsSources = $IdpsSources->readAll();
-    $Teams = new Teams($App->Users);
-    $teamsArr = $Teams->readAll();
+    $teamsArr = $App->Teams->readAll();
     $Experiments = new Experiments($App->Users);
 
     // Remote directory search
@@ -123,7 +121,8 @@ try {
         'phpInfos' => $phpInfos,
         'remoteDirectoryUsersArr' => $remoteDirectoryUsersArr,
         'samlSecuritySettings' => $samlSecuritySettings,
-        'Teams' => $Teams,
+        // disabled as we don't use getStats here now
+        //'Teams' => $Teams,
         'teamsArr' => $teamsArr,
         'info' => (new Info())->readAll(),
         'storageUnitsArr' => $StorageUnits->readAllRecursive(),

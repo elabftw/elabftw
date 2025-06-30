@@ -12,7 +12,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Traits\EntityTrait;
 use Elabftw\Traits\SortableTrait;
 use PDO;
@@ -61,5 +63,16 @@ abstract class AbstractCategory extends AbstractRest
 
         // if there is no default status, null is fine
         return (int) $req->fetchColumn() ?: null;
+    }
+
+    protected function canWriteOrExplode(): void
+    {
+        $property = sprintf('users_canwrite_%s', $this->table);
+        if ($this->Teams->bypassWritePermission) {
+            return;
+        }
+        if ($this->Teams->teamArr[$property] === 0 and !$this->Teams->Users->isAdmin) {
+            throw new ImproperActionException(Tools::error(true));
+        }
     }
 }

@@ -17,13 +17,11 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Factories\LinksFactory;
-use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Models\TeamGroups;
-use Elabftw\Models\Teams;
 use Elabftw\Models\TeamTags;
 use Elabftw\Services\DummyRemoteDirectory;
 use Elabftw\Services\EairefRemoteDirectory;
@@ -52,17 +50,13 @@ try {
     }
 
     $ItemsTypes = new ItemsTypes($App->Users, Filter::intOrNull($Request->query->getInt('templateid')));
-    $Teams = new Teams($App->Users, $App->Users->userData['team']);
-    $Status = new ExperimentsStatus($Teams);
-    $ItemsStatus = new ItemsStatus($Teams);
+    $Status = new ExperimentsStatus($App->Teams);
+    $ItemsStatus = new ItemsStatus($App->Teams);
     $TeamTags = new TeamTags($App->Users);
     $TeamGroups = new TeamGroups($App->Users);
     $PermissionsHelper = new PermissionsHelper();
-    $teamStats = $Teams->getStats($App->Users->userData['team']);
+    $teamStats = $App->Teams->getStats($App->Users->userData['team']);
 
-    $itemsCategoryArr = $ItemsTypes->readAll();
-    $ExperimentsCategories = new ExperimentsCategories($Teams);
-    $experimentsCategoriesArr = $ExperimentsCategories->readAll($ExperimentsCategories->getQueryParams(new InputBag(array('limit' => 9999))));
     if ($App->Request->query->has('templateid')) {
         $ItemsTypes->setId($App->Request->query->getInt('templateid'));
         $ItemsTypes->canOrExplode('write');
@@ -71,7 +65,6 @@ try {
     }
     $statusArr = $Status->readAll($Status->getQueryParams(new InputBag(array('limit' => 9999))));
     $teamGroupsArr = $TeamGroups->readAll();
-    $teamsArr = $Teams->readAll();
     $allTeamUsersArr = $App->Users->readAllFromTeam();
     // only the unvalidated ones
     $unvalidatedUsersArr = array_filter(
@@ -79,10 +72,8 @@ try {
         fn($u): bool => $u['validated'] === 0,
     );
     // Users search
-    $isSearching = false;
     $usersArr = array();
     if ($App->Request->query->has('q')) {
-        $isSearching = true;
         $usersArr = $App->Users->readFromQuery(
             $App->Request->query->getString('q'),
             $App->Request->query->getInt('team'),
@@ -117,15 +108,11 @@ try {
 
     $template = 'admin.html';
     $renderArr = array(
-        'Entity' => $ItemsTypes,
         'allTeamUsersArr' => $allTeamUsersArr,
         'tagsArr' => $TeamTags->readAll(),
-        'isSearching' => $isSearching,
-        'itemsCategoryArr' => $itemsCategoryArr,
         'metadataGroups' => $metadataGroups,
         'allTeamgroupsArr' => $TeamGroups->readAllEverything(),
         'statusArr' => $statusArr,
-        'experimentsCategoriesArr' => $experimentsCategoriesArr,
         'itemsStatusArr' => $ItemsStatus->readAll(),
         'pageTitle' => _('Admin panel'),
         'passwordInputHelp' => $passwordComplexity->toHuman(),
@@ -135,7 +122,6 @@ try {
         'remoteDirectoryUsersArr' => $remoteDirectoryUsersArr,
         'scopedTeamgroupsArr' => $TeamGroups->readScopedTeamgroups(),
         'storageUnitsArr' => (new StorageUnits($App->Users))->readAllRecursive(),
-        'teamsArr' => $teamsArr,
         'teamStats' => $teamStats,
         'unvalidatedUsersArr' => $unvalidatedUsersArr,
         'usersArr' => $usersArr,

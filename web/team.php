@@ -17,7 +17,6 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\ProcurementRequests;
 use Elabftw\Models\TeamGroups;
-use Elabftw\Models\Teams;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -25,22 +24,19 @@ use Symfony\Component\HttpFoundation\Response;
  * The TEAM page
  */
 require_once 'app/init.inc.php';
-// default response is error page with general error message
-/** @psalm-suppress UncaughtThrowInGlobalScope */
 $Response = new Response();
 $Response->prepare($App->Request);
 
 try {
-    $Teams = new Teams($App->Users);
     $TeamGroups = new TeamGroups($App->Users);
-    $ProcurementRequests = new ProcurementRequests($Teams);
+    $ProcurementRequests = new ProcurementRequests($App->Teams);
 
     $template = 'team.html';
     $renderArr = array(
         'pageTitle' => _('Team'),
         'teamGroupsArr' => $TeamGroups->readAll(),
         'teamProcurementRequestsArr' => $ProcurementRequests->readAll(),
-        'teamsStats' => $Teams->getStats($App->Users->userData['team']),
+        'teamsStats' => $App->Teams->getStats($App->Users->userData['team']),
     );
 
     $Response->setContent($App->render($template, $renderArr));

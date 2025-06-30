@@ -18,12 +18,15 @@ use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\AnonymousUser;
 use Elabftw\Models\AuthenticatedUser;
 use Elabftw\Models\Config;
+use Elabftw\Models\ExperimentsCategories;
+use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Notifications\UserNotifications;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use Elabftw\Traits\TwigTrait;
 use Monolog\Logger;
 use RuntimeException;
+use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 
@@ -50,11 +53,14 @@ final class App
     // we should be pretty safe from ever reaching 100 as a minor or patch version!
     public const int INSTALLED_VERSION_INT = 50208;
 
-    // stores the configuration of the current team
-    public array $teamArr = array();
-
     /** @psalm-suppress PossiblyUnusedProperty this property is used in twig templates */
     public array $notifsArr = array();
+
+    public array $experimentsCategoryArr = array();
+
+    public array $itemsCategoryArr = array();
+
+    public Teams $Teams;
 
     public function __construct(
         public Request $Request,
@@ -111,6 +117,11 @@ final class App
             ));
         }
 
+        $this->Teams = new Teams($this->Users, $this->Users->team);
+        $ItemsTypes = new ItemsTypes($this->Users);
+        $this->itemsCategoryArr = $ItemsTypes->readAll();
+        $ExperimentsCategory = new ExperimentsCategories($this->Teams);
+        $this->experimentsCategoryArr = $ExperimentsCategory->readAll($ExperimentsCategory->getQueryParams(new InputBag(array('limit' => 9999))));
         $this->initi18n();
     }
 
@@ -126,7 +137,10 @@ final class App
             )->render(
                 $template,
                 array_merge(
-                    array('App' => $this, 'langsArr' => Language::getAllHuman()),
+                    array(
+                        'App' => $this,
+                        'langsArr' => Language::getAllHuman(),
+                    ),
                     $variables,
                 )
             );
@@ -174,10 +188,6 @@ final class App
     private function loadUser(AuthenticatedUser | AnonymousUser $users): void
     {
         $this->Users = $users;
-        // we have an user in a team, load the top menu link
-        $Teams = new Teams($this->Users);
-        $this->teamArr = $Teams->readOne();
-        // Notifs
         $Notifications = new UserNotifications($this->Users);
         $this->notifsArr = $Notifications->readAll();
     }

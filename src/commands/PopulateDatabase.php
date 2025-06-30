@@ -27,6 +27,7 @@ use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
+use Elabftw\Models\UltraAdmin;
 use Elabftw\Models\Users;
 use Elabftw\Services\Populate;
 use League\Flysystem\Filesystem as Fs;
@@ -109,16 +110,14 @@ final class PopulateDatabase extends Command
 
         $output->writeln('Creating teams, users, experiments, and resources...');
         // create teams
-        $Users = new Users();
-        $Teams = new Teams($Users);
-        $Teams->bypassReadPermission = true;
-        $Teams->bypassWritePermission = true;
+        $Users = new UltraAdmin();
+        $Teams = new Teams($Users, bypassReadPermission: true, bypassWritePermission: true);
         $Status = new ItemsStatus($Teams);
         $Category = new ExperimentsCategories($Teams);
         $faker = \Faker\Factory::create();
 
         foreach ($yaml['teams'] as $team) {
-            $id = $Teams->postAction(Action::Create, array('name' => $team['name'], 'default_category_name' => $team['default_category_name'] ?? 'Lorem ipsum'));
+            $id = $Teams->create($team['name']);
             $Teams->setId($id);
 
             // create fake categories and status

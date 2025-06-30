@@ -19,7 +19,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Make\Exports;
 use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\TeamGroups;
-use Elabftw\Models\Teams;
 use Elabftw\Models\UserUploads;
 use Elabftw\Services\UsersHelper;
 use Exception;
@@ -50,7 +49,7 @@ try {
     // get the team groups in which the user is
     $TeamGroups = new TeamGroups($App->Users);
     $teamGroupsArr = $TeamGroups->readGroupsWithUsersFromUser();
-    $ExperimentsCategories = new ExperimentsCategories(new Teams($App->Users));
+    $ExperimentsCategories = new ExperimentsCategories($App->Teams);
 
     // get the exported files
     $Export = new Exports($App->Users, Storage::EXPORTS->getStorage());

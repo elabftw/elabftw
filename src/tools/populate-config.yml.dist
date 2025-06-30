@@ -37,7 +37,6 @@ config:
 
 teams:
   - name: Alpha
-    default_category_name: Generated
     onboarding_email_subject: test email subject
     onboarding_email_body: <p>Test email body <strong>with</strong> HTML.</p>
     onboarding_email_active: 1

@@ -14,12 +14,8 @@ namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
 use Elabftw\Models\Experiments;
-use Elabftw\Models\ExperimentsCategories;
-use Elabftw\Models\ExperimentsStatus;
-use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Override;
-use Symfony\Component\HttpFoundation\InputBag;
 
 /**
  * For experiments.php
@@ -30,11 +26,8 @@ final class ExperimentsController extends AbstractEntityController
     {
         parent::__construct($app, $entity);
 
-        $Teams = new Teams($this->App->Users, $this->App->Users->team);
-        $Category = new ExperimentsCategories($Teams);
-        $this->categoryArr = $Category->readAll($Category->getQueryParams(new InputBag(array('limit' => 9999))));
-        $Status = new ExperimentsStatus($Teams);
-        $this->statusArr = $Status->readAll($Status->getQueryParams(new InputBag(array('limit' => 9999))));
+        $this->categoryArr = $app->experimentsCategoryArr;
+        $this->statusArr = $this->experimentsStatusArr;
     }
 
     #[Override]

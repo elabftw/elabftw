@@ -27,12 +27,6 @@
   {% endblock %}
 {% endembed %}
 
-{# show message if it was recently modified #}
-{% set lastchangeDiff = 'now'|date('U') - Entity.entityData.modified_at|date('U') %}
-{% if (lastchangeDiff < 600) and Entity.entityData.lastchangeby is not null and Entity.entityData.lastchangeby != Entity.Users.userData.userid %}
-  {{ 'Warning: this entry was modified %s seconds ago by %s.'|trans|format(lastchangeDiff, lastModifierFullname)|msg('warning', false) }}
-{% endif %}
-
 {% include('view-edit-toolbar.html') %}
 
 <section id='main_section' aria-label='main section'>
@@ -89,7 +83,7 @@
         {# Display main text switch #}
         <label class='ml-1 small' for='displayMainTextSliderInput'>{{ 'Display main text'|trans }}</label>
         <label class='switch'>
-          <input type='checkbox' {{ entityData.metadata|extractDisplayMainText() ? 'checked="checked"' }} id='displayMainTextSliderInput'>
+          <input type='checkbox' {{ Entity.entityData.metadata|extractDisplayMainText() ? 'checked="checked"' }} id='displayMainTextSliderInput'>
           <span class='slider'></span>
         </label>
       </div>

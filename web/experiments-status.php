@@ -12,17 +12,15 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Controllers\DatabaseController;
+use Elabftw\Controllers\ExperimentsStatusController;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\ItemsTypes;
-use Elabftw\Services\Filter;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Resources templates main page
+ * Experiments categories
  */
 require_once 'app/init.inc.php';
 
@@ -32,10 +30,10 @@ $Response->prepare($Request);
 $template = 'error.html';
 
 try {
-    if ($App->Teams->teamArr['users_canwrite_resources_categories'] === 0 && !$App->Users->isAdmin) {
-        throw new ImproperActionException(_('Only a team Admin can edit resources templates'));
+    if ($App->Teams->teamArr['users_canwrite_experiments_status'] === 0 && !$App->Users->isAdmin) {
+        throw new ImproperActionException(_('Only a team Admin can edit experiments status'));
     }
-    $Controller = new DatabaseController($App, new ItemsTypes($App->Users, Filter::intOrNull($Request->query->getInt('id'))));
+    $Controller = new ExperimentsStatusController($App);
     $Response = $Controller->getResponse();
 } catch (IllegalActionException $e) {
     // log notice and show message

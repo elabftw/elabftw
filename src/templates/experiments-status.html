@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+{% include 'create-statuslike-modal.html' with {'target': 'experiments_status', 'title': 'Create new experiments status'|trans} %}
+{% from 'status-macro.html' import render_status %}
+{{ render_status(statusArr, 'experiments') }}
+
+{% endblock body %}

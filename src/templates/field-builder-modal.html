@@ -180,7 +180,7 @@
         <h5 class='mb-3'>{{ 'Load from a database category'|trans }}</h5>
         <div class='input-group'>
           <select class='form-control' id='loadMetadataSelect_items_types'>
-            {% for itemType in itemsCategoryArr %}
+            {% for itemType in App.itemsCategoryArr %}
               <option value='{{ itemType.id }}'>{{ itemType.title }}</option>
             {% endfor %}
           </select>

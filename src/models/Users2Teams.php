@@ -57,8 +57,7 @@ final class Users2Teams
         AuditLogs::create(new TeamAddition($teamid, $isAdmin, $this->requester->userid ?? 0, $userid));
 
         // check onboarding email setting for each team
-        $Team = new Teams(new Users(), $teamid);
-        $Team->bypassReadPermission = true;
+        $Team = new Teams(new Users(), $teamid, bypassReadPermission: true);
         if ($this->sendOnboardingEmailOfTeams && $Team->readOne()['onboarding_email_active'] === 1) {
             (new OnboardingEmail($teamid))->create($userid);
         }

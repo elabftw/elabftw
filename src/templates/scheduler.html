@@ -155,7 +155,7 @@
           {% if App.Config.configArr.debug -%}
             <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
           {%- endif %}
-          <select id='itemSelect' name='items[]' aria-label='{{ 'Select a resource'|trans }}' class='form-control ts-filter form-inline'>
+          <select id='itemSelect' name='items[]' aria-label='{{ 'Select a resource'|trans }}' class='form-control form-inline'>
             {% for item in itemsArr %}
               <option value=''>{{ 'Select a resource'|trans }}</option>
               <option value='{{ item.id }}'{{- App.Request.query.get('item') == item.id ? ' selected' -}} data-category='{{ item.category }}'>

@@ -47,6 +47,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const ApiC = new Api();
 
+  // TomSelect settings shared on page & modal selects
+  const sharedTomSelectOptions = {
+    maxItems: null,
+    plugins: {
+      checkbox_options: {
+        checkedClassNames: ['ts-checked'],
+        uncheckedClassNames: ['ts-unchecked'],
+      },
+      clear_button: {},
+      dropdown_input: {},
+      no_active_items: {},
+      remove_button: {},
+    },
+  };
+
   // start and end inputs
   const startInput = (document.getElementById('schedulerEventModalStart') as HTMLInputElement);
   const endInput = (document.getElementById('schedulerEventModalEnd') as HTMLInputElement);
@@ -75,9 +90,9 @@ document.addEventListener('DOMContentLoaded', () => {
     ? 'timelineDay,timelineWeek,listWeek,timelineMonth' // horizontal axis
     : 'timeGridDay,timeGridWeek,listWeek,dayGridMonth'; // classic grid calendar
 
-  if (params.has('item')) {
-    const legacyItems = params.get('item')?.split(',') ?? [];
-    params.delete('item');
+  if (params.has('items')) {
+    const legacyItems = params.get('items')?.split(',') ?? [];
+    params.delete('items');
     legacyItems.forEach(id => params.append('items[]', id));
     window.location.replace(`${location.pathname}?${params.toString()}`);
   }
@@ -91,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initTomSelect();
   // remove existing params to build new event sources for the calendar
   function buildEventSourcesUrl(): string {
-    ['items[]', 'cat', 'eventOwner', 'item'].forEach((param) => params.delete(param));
+    ['items[]', 'cat', 'eventOwner'].forEach((param) => params.delete(param));
     const itemSelect = document.getElementById('itemSelect') as HTMLSelectElement & { tomselect?: TomSelect };
     const categorySelect = document.getElementById('categorySelect') as HTMLSelectElement;
     const ownerInput = document.getElementById('eventOwnerSelect') as HTMLInputElement;
@@ -235,7 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <option value=''>${categorySelectLabel}</option>
               ${categories}
             </select>
-            <select id='itemSelectModal' name='items[]' aria-label='${itemSelectLabel}' class='form-control ts-filter form-inline'>
+            <select id='itemSelectModal' name='items[]' aria-label='${itemSelectLabel}' class='form-control form-inline'>
               <option value=''>${itemSelectLabel}</option>
               ${items}
             </select>
@@ -245,35 +260,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const itemSelectModalEl = document.getElementById('itemSelectModal') as HTMLSelectElement & { tomselect?: TomSelect };
         const categorySelectModalEl = document.getElementById('categorySelectModal') as HTMLSelectElement;
         // Initialize TomSelect after modal select is added to DOM
-        manualSelect = new TomSelect(itemSelectModalEl, {
-          maxItems: null,
-          plugins: {
-            checkbox_options: {
-              checkedClassNames: ['ts-checked'],
-              uncheckedClassNames: ['ts-unchecked'],
-            },
-            clear_button: {},
-            dropdown_input: {},
-            no_active_items: {},
-            remove_button: {},
-          },
-        });
+        manualSelect = new TomSelect(itemSelectModalEl, { ...sharedTomSelectOptions });
 
-        // Category change filtering (modal)
+        // Filter resources from selected category (modal)
         categorySelectModalEl.addEventListener('change', () => {
           const selectedCategory = categorySelectModalEl.value;
-          const ts = itemSelectModalEl.tomselect;
-          if (!ts) return;
-
-          ts.clearOptions();
-
-          Array.from(itemSelectModalEl.options).forEach(opt => {
-            if (!selectedCategory || opt.dataset.category === selectedCategory) {
-              ts.addOption({ value: opt.value, text: opt.textContent ?? '' });
-            }
-          });
-
-          ts.refreshOptions(false);
+          filterOptionsByCategory(itemSelectModalEl, selectedCategory);
         });
       }
 
@@ -437,36 +429,39 @@ document.addEventListener('DOMContentLoaded', () => {
     lockedBtn?.toggleAttribute('hidden', !showLocked);
   }
 
+  function filterOptionsByCategory(
+    selectEl: HTMLSelectElement & { tomselect?: TomSelect },
+    category: string,
+  ): void {
+    if (!selectEl.tomselect) return;
+    // clear item select options and re-add only options matching the category
+    selectEl.tomselect.clearOptions();
+
+    Array.from(selectEl.options).forEach(option => {
+      if (!category || option.dataset.category === category) {
+        selectEl.tomselect.addOption({ value: option.value, text: option.textContent ?? '',
+        });
+      }
+    });
+
+    selectEl.tomselect.refreshOptions(false);
+  }
+
   function initTomSelect(): void {
     const itemSelect = document.getElementById('itemSelect') as HTMLSelectElement;
     const categorySelect = document.getElementById('categorySelect') as HTMLSelectElement;
 
-    const itemTomSelect = new TomSelect('#itemSelect', {
-      maxItems: null,
-      plugins: {
-        checkbox_options: {
-          checkedClassNames: ['ts-checked'],
-          uncheckedClassNames: ['ts-unchecked'],
-        },
-        clear_button: {},
-        dropdown_input: {},
-        no_active_items: {},
-        remove_button: {},
-      },
+    new TomSelect('#itemSelect', {
+      ...sharedTomSelectOptions,
       onChange: (selectedItems) => {
         lockScopeButton(selectedItems);
 
         const url = new URL(window.location.href);
         url.searchParams.delete('items[]');
-        params.delete('items[]');
-        url.searchParams.delete('item');
-        params.delete('item');
-
         selectedItems.forEach(itemId => {
           url.searchParams.append('items[]', itemId);
           params.append('items[]', itemId);
         });
-
         if (selectedItems.length === 0) {
           url.searchParams.delete('items[]');
           params.delete('items[]');
@@ -476,19 +471,10 @@ document.addEventListener('DOMContentLoaded', () => {
       },
     });
 
-    // Filter selectable resources depending on the category selected
+    // Filter resources from selected category
     categorySelect.addEventListener('change', () => {
       const selectedCategory = categorySelect.value;
-
-      // clear item select options and re-add only options matching the category
-      itemTomSelect.clearOptions();
-      for (const option of Array.from(itemSelect.options)) {
-        if (!selectedCategory || option.dataset.category === selectedCategory) {
-          itemTomSelect.addOption({ value: option.value, text: option.textContent });
-        }
-      }
-
-      itemTomSelect.refreshOptions(false);
+      filterOptionsByCategory(itemSelect, selectedCategory);
       reloadCalendarEvents();
     });
   }

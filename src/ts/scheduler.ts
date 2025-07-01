@@ -90,13 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
     ? 'timelineDay,timelineWeek,listWeek,timelineMonth' // horizontal axis
     : 'timeGridDay,timeGridWeek,listWeek,dayGridMonth'; // classic grid calendar
 
-  if (params.has('items')) {
-    const legacyItems = params.get('items')?.split(',') ?? [];
-    params.delete('items');
-    legacyItems.forEach(id => params.append('items[]', id));
-    window.location.replace(`${location.pathname}?${params.toString()}`);
-  }
-
   // clean up 'cat' parameter on page refresh or else it keeps it as the only available value in the Select
   if (params.has('cat')) {
     params.delete('cat');
@@ -112,6 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const ownerInput = document.getElementById('eventOwnerSelect') as HTMLInputElement;
 
     if (itemSelect?.tomselect?.items?.length) {
+      lockScopeButton(itemSelect.tomselect.items);
       itemSelect.tomselect.items.forEach(id => {
         params.append('items[]', id);
       });
@@ -131,8 +125,6 @@ document.addEventListener('DOMContentLoaded', () => {
     calendar.removeAllEventSources();
     calendar.addEventSource({ url: newQuery });
     calendar.refetchEvents();
-    // keep url in sync
-    params.delete('item');
     window.history.replaceState({}, '', `${location.pathname}?${params.toString()}`);
   }
 
@@ -150,7 +142,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  const eventBackgroundColor = 'a9a9a9';
   // SCHEDULER
   const calendar = new Calendar(calendarEl, {
     schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
@@ -200,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // remove possibility to book whole day, might add it later
     allDaySlot: false,
     // adjust the background color of event to the color of the item type
-    eventBackgroundColor: '#' + eventBackgroundColor,
+    eventBackgroundColor: '#a9a9a9',
     // selection
     select: function(info): void {
       const itemSelectEl = document.getElementById('itemSelect') as HTMLSelectElement & { tomselect?: TomSelect };
@@ -218,13 +209,13 @@ document.addEventListener('DOMContentLoaded', () => {
           const label = option?.textContent || `Item ${itemId}`;
 
           body.innerHTML += `
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" value="${itemId}" id="itemCheck${itemId}" checked>
-          <label class="form-check-label" for="itemCheck${itemId}">
-            ${label}
-          </label>
-        </div>
-      `;
+            <div class='form-check'>
+              <input class='form-check-input' type='checkbox' value='${itemId}' id='selectedItem${itemId}' checked>
+              <label class='form-check-label' for='selectedItem${itemId}'>
+                ${label}
+              </label>
+            </div>
+          `;
         });
       } else {
         // Rebuild TomSelect inputs if nothing selected
@@ -262,7 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Initialize TomSelect after modal select is added to DOM
         manualSelect = new TomSelect(itemSelectModalEl, { ...sharedTomSelectOptions });
 
-        // Filter resources from selected category (modal)
+        // Filter resources from selected category
         categorySelectModalEl.addEventListener('change', () => {
           const selectedCategory = categorySelectModalEl.value;
           filterOptionsByCategory(itemSelectModalEl, selectedCategory);
@@ -272,6 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
       $('#itemPickerModal').modal('show');
 
       const confirmBtn = document.getElementById('confirmItemSelection') as HTMLButtonElement;
+      // not using addEventListener or else it infinite loops the confirm modal
       confirmBtn.onclick = () => {
         let itemIdsToPost: string[] = [];
 
@@ -298,6 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
           ),
         ).then(() => {
           calendar.refetchEvents();
+          // refresh item with its title by triggering unselect (see #5265)
           calendar.unselect();
           $('#itemPickerModal').modal('hide');
         }).catch(() => {
@@ -429,12 +422,12 @@ document.addEventListener('DOMContentLoaded', () => {
     lockedBtn?.toggleAttribute('hidden', !showLocked);
   }
 
+  // Filters & repopulates the item TomSelect dropdown with options that match the selected category
   function filterOptionsByCategory(
     selectEl: HTMLSelectElement & { tomselect?: TomSelect },
     category: string,
   ): void {
     if (!selectEl.tomselect) return;
-    // clear item select options and re-add only options matching the category
     selectEl.tomselect.clearOptions();
 
     Array.from(selectEl.options).forEach(option => {
@@ -443,7 +436,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
     });
-
     selectEl.tomselect.refreshOptions(false);
   }
 
@@ -451,7 +443,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const itemSelect = document.getElementById('itemSelect') as HTMLSelectElement;
     const categorySelect = document.getElementById('categorySelect') as HTMLSelectElement;
 
-    new TomSelect('#itemSelect', {
+    new TomSelect(itemSelect, {
       ...sharedTomSelectOptions,
       onChange: (selectedItems) => {
         lockScopeButton(selectedItems);
@@ -459,19 +451,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const url = new URL(window.location.href);
         url.searchParams.delete('items[]');
         selectedItems.forEach(itemId => {
-          url.searchParams.append('items[]', itemId);
           params.append('items[]', itemId);
+          url.searchParams.append('items[]', itemId);
         });
         if (selectedItems.length === 0) {
           url.searchParams.delete('items[]');
-          params.delete('items[]');
         }
         window.history.replaceState({}, '', url.toString());
         reloadCalendarEvents();
       },
     });
 
-    // Filter resources from selected category
     categorySelect.addEventListener('change', () => {
       const selectedCategory = categorySelect.value;
       filterOptionsByCategory(itemSelect, selectedCategory);

@@ -2,7 +2,6 @@
 
 {% block body %}
 
-{% include 'view-mail-bookers-modal.html' %}
 {% embed 'view-edit.html' %}
   {% block createnew %}
   {% include 'catstat-view-edit.html' %}
@@ -99,7 +98,6 @@
       {% for event in Entity.entityData.events_start|split('|') %}
         <a href='scheduler.php?item={{ splitItemids[loop.index - 1] }}&amp;start={{ event|url_encode }}' class='mx-1 btn btn-neutral relative-moment'  title='{{ event|date('Y-m-d H:i:s') }}' aria-label='{{ event|date('Y-m-d H:i:s') }}'></a>
       {% endfor %}
-      <button type='button' data-action='toggle-modal' data-target='mailBookersModal' class='btn btn-primary'>{{ 'Mail users who booked this resource'|trans }}</button>
     </div>
     <hr>
   {% endif %}

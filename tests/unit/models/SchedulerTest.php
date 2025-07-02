@@ -18,7 +18,6 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
-use Symfony\Component\HttpFoundation\InputBag;
 
 class SchedulerTest extends \PHPUnit\Framework\TestCase
 {
@@ -145,42 +144,6 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         // title of events is formatted [untitled] title (user fullname)
         $this->assertEquals('[Untitled] Bookable only by user 1 (Toto Le sysadmin)', $eventsAfterGrant[0]['title']);
     }
-    //
-    //    public function testReadAllWithMultipleItemsFilter(): void
-    //    {
-    //        $User1 = new Users(1, 1);
-    //        $Items1 = new Items($User1);
-    //        $itemId = $Items1->postAction(Action::Create, array('category_id' => 5));
-    //        $Items1->setId($itemId);
-    //
-    //        $Scheduler = new Scheduler($Items1);
-    //        $eventId1 = $Scheduler->postAction(Action::Create, array(
-    //            'start' => $this->start,
-    //            'end' => $this->end,
-    //            'title' => 'Event 1',
-    //        ));
-    //        $eventId2 = $Scheduler->postAction(Action::Create, array(
-    //            'start' => $this->start,
-    //            'end' => $this->end,
-    //            'title' => 'Event 2',
-    //        ));
-    //
-    //        $q = $Scheduler->getQueryParams(new InputBag(array($eventId1, $eventId2)));
-    //        $allEvents = $Scheduler->readAll();
-    //        $filteredEvents = $Scheduler->readAll($q);
-    //        dd($q, $Scheduler->readAll($q));
-    ////        dd($allEvents, $filteredEvents);
-    //
-    //        $this->assertIsArray($events);
-    //        $eventItemIds = array_column($events, 'item');
-    //        $this->assertContains($itemId1, $eventItemIds);
-    //        $this->assertContains($itemId2, $eventItemIds);
-    //        // clear
-    ////        $Scheduler->setId($eventId1);
-    ////        $Scheduler->destroy();
-    ////        $Scheduler->setId($eventId2);
-    ////        $Scheduler->destroy();
-    //    }
 
     public function testPatchEpoch(): Scheduler
     {

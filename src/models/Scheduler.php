@@ -145,21 +145,14 @@ final class Scheduler extends AbstractRest
             $this->appendFilterSql(column: 'team_events.userid', paramName: 'ownerid', value: $queryParams->getQuery()->getInt('eventOwner'));
             // handle multiple items
             $itemParams = $queryParams->getQuery()->all('items');
-            if (!empty($itemParams)) {
-                $ids = array_filter(array_map('intval', $itemParams)); // force numeric IDs
-                if ($ids) {
-                    $placeholders = array();
-                    foreach ($ids as $index => $id) {
-                        $key = "itemid$index";
-                        $placeholders[] = ":$key";
-                        $this->filterBindings[$key] = $id;
-                    }
-                    $this->filterSqlParts[] = 'AND items.id IN (' . implode(',', $placeholders) . ')';
-                }
-            }
+            $ids = array_filter(array_map('intval', $itemParams)); // force numeric IDs
+            if ($ids) {
+                $this->appendItemsIdsToSql($ids);
+            };
         }
         // apply scope for events
-        $itemId = ($queryParams !== null) ? $queryParams->getQuery()->getInt('item') : 0;
+        $itemParams = $queryParams?->getQuery()->all('items');
+        $itemId = !empty($itemParams) ? (int) $itemParams[0] : 0;
         $scopeInt = $this->getScope($itemId);
         if ($scopeInt === Scope::User->value) {
             $this->appendFilterSql('team_events.userid', 'userid', $this->Items->Users->userData['userid']);
@@ -275,6 +268,17 @@ final class Scheduler extends AbstractRest
             $Notif->create($userid);
         });
         return $this->Db->execute($req);
+    }
+
+    private function appendItemsIdsToSql(array $itemsIds): void
+    {
+        $placeholders = array();
+        foreach ($itemsIds as $index => $id) {
+            $key = "itemid$index";
+            $placeholders[] = ":$key";
+            $this->filterBindings[$key] = $id;
+        }
+        $this->filterSqlParts[] = 'AND items.id IN (' . implode(',', $placeholders) . ')';
     }
 
     private function getScope(int $queryParamsItem): int

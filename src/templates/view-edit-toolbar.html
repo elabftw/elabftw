@@ -194,7 +194,7 @@
     {# Calendar booking #}
     {% if Entity.entityType.value == 'items' and (Entity.entityData.is_bookable or not Entity.isReadOnly) %}
       {% if Entity.entityData.is_bookable %}
-        <a class='btn mr-2 hl-hover-gray p-2 lh-normal border-0' title='{{ 'Book item'|trans }}' aria-label='{{ 'Book item'|trans }}' href='scheduler.php?item={{ Entity.id }}'>
+        <a class='btn mr-2 hl-hover-gray p-2 lh-normal border-0' title='{{ 'Book item'|trans }}' aria-label='{{ 'Book item'|trans }}' href='scheduler.php?items[]={{ Entity.id }}'>
           <i class='fas fa-calendar-plus fa-fw'></i>
         </a>
       {% else %}

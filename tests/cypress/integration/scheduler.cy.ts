@@ -11,7 +11,7 @@ describe('Scheduler', () => {
     cy.htmlvalidate();
 
     // Scheduler with selected item
-    cy.visit('/scheduler.php?item=1');
+    cy.visit('/scheduler.php?items[]=1');
     cy.get('#loading-spinner').should('not.exist');
     cy.htmlvalidate();
   });

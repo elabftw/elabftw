@@ -207,8 +207,25 @@ final class Filter
         // configure the cache for htmlpurifier
         $tmpDir = FsTools::getCacheFolder('purifier');
         $config->set('Cache.SerializerPath', $tmpDir);
-        // allow "display" css attribute
+        // allow "display" attribute for centering images
         $config->set('CSS.AllowTricky', true);
+        $config->set('Attr.AllowedClasses', array());
+        $config->set('CSS.AllowedProperties', array(
+            'background-color' => true,
+            'border' => true,
+            'border-color' => true,
+            'color' => true,
+            'display' => true, // see #3368
+            'font-family' => true,
+            'height' => true,
+            'line-height' => true,
+            'margin-left' => true,
+            'margin-right' => true,
+            'min-width' => true,
+            'text-align' => true,
+            'text-decoration' => true,
+            'width' => true,
+        ));
         // allow any image size, see #3800
         $config->set('CSS.MaxImgLength', null);
         $config->set('HTML.MaxImgLength', null);

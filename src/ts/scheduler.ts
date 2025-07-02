@@ -37,7 +37,7 @@ import { DateTime } from 'luxon';
 import 'jquery-ui/ui/widgets/autocomplete';
 import { Api } from './Apiv2.class';
 import { Action } from './interfaces';
-import { TomSelect } from './misc';
+import { escapeHTML, TomSelect } from './misc';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/scheduler.php') {
@@ -206,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Show checkboxes for already selected items
         selectedItemIds.forEach(itemId => {
           const option = itemSelectEl.querySelector(`option[value="${itemId}"]`);
-          const label = option?.textContent || `Item ${itemId}`;
+          const label = escapeHTML(option?.textContent || `Item ${itemId}`);
 
           body.innerHTML += `
             <div class='form-check'>
@@ -229,7 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
           .join('');
         const items = Array.from(itemSelectEl.options)
           .filter(opt => opt.value)
-          .map(opt => `<option value="${opt.value}" data-category="${opt.dataset.category ?? ''}">${opt.textContent}</option>`)
+          .map(opt => `<option value="${opt.value}" data-category="${escapeHTML(opt.dataset.category) ?? ''}">${escapeHTML(opt.textContent)}</option>`)
           .join('');
 
         body.innerHTML = `

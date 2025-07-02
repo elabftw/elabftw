@@ -173,8 +173,19 @@ class AutoComplete {
   }
 
   matcher(item) {
-    return this.query.toLowerCase().split(' ').every(word => item[this.options.queryBy].toLowerCase().includes(word))
-      || /^[1-9]\d*$/.test(this.query) && parseInt(this.query, 10) === item.custom_id;
+    const q = this.query.trim()
+    const terms = q.toLowerCase().split(/\s+/)
+    const matchesText = terms.every(word =>
+      item[this.options.queryBy]
+        .toLowerCase()
+        .includes(word)
+    )
+
+    const isPositiveInt = /^[1-9]\d*$/.test(q)
+    const n = isPositiveInt ? parseInt(q, 10) : null
+    const matchesId = isPositiveInt && (n === item.custom_id || n === item.id)
+
+    return matchesText || matchesId
   }
 
   sorter(items) {

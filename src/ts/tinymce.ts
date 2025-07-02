@@ -302,9 +302,12 @@ export function getTinymceBaseConfig(page: string): object {
       // get the source from json with get request
       source: function(query: string, process: (data) => void): void {
         query = escapeExtendedQuery(query);
+        if (query.length < 1) {
+          return;
+        }
         // grab experiments and items
-        const expjson = ApiC.getJson(`${EntityType.Experiment}?limit=100&scope=3q=${query}`);
-        const itemjson = ApiC.getJson(`${EntityType.Item}?limit=100&scope=3&q=${query}`);
+        const expjson = ApiC.getJson(`${EntityType.Experiment}?limit=12&scope=3&fastq=${query}`);
+        const itemjson = ApiC.getJson(`${EntityType.Item}?limit=12&scope=3&fastq=${query}`);
         // and merge them into one
         Promise.all([expjson, itemjson]).then(values => {
           process(values[0].concat(values[1]));

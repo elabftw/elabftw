@@ -2,12 +2,18 @@
   <div class='input-group-prepend'>
     <span class='input-group-text'><i class='fas fa-magnifying-glass'></i></span>
   </div>
+  {% if App.Config.configArr.debug -%}
+    <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
+  {%- endif %}
   <select id='{{ categorySelectId|default("categorySelect") }}' aria-label='{{ "Filter by category"|trans }}' class='form-control'>
     <option value=''>{{ "Filter by category"|trans }}</option>
     {% for category in bookableItemsTypes %}
       <option value='{{ category.id }}'>{{ category.team_name }} - {{ category.title }}</option>
     {% endfor %}
   </select>
+  {% if App.Config.configArr.debug -%}
+    <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
+  {%- endif %}
   <select id='{{ itemSelectId|default("itemSelect") }}' name='items[]' aria-label='{{ "Select a resource"|trans }}' class='form-control form-inline'>
     <option value=''>{{ "Select a resource"|trans }}</option>
     {% for item in itemsArr %}

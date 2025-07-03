@@ -206,16 +206,29 @@ document.addEventListener('DOMContentLoaded', () => {
         // Show checkboxes for already selected items
         selectedItemIds.forEach(itemId => {
           const option = itemSelectEl.querySelector(`option[value="${itemId}"]`);
-          const label = escapeHTML(option?.textContent || `Item ${itemId}`);
 
-          body.innerHTML += `
-            <div class='form-check'>
-              <input class='form-check-input' type='checkbox' value='${itemId}' id='selectedItem${itemId}' checked>
-              <label class='form-check-label' for='selectedItem${itemId}'>
-                ${label}
-              </label>
-            </div>
-          `;
+          // wrapper div
+          const div = document.createElement('div');
+          div.className = 'form-check';
+
+          // checkbox input
+          const input = document.createElement('input');
+          input.className = 'form-check-input';
+          input.type = 'checkbox';
+          input.value = itemId;
+          input.id = `selectedItem${itemId}`;
+          input.checked = true;
+
+          // label
+          const label = document.createElement('label');
+          label.className = 'form-check-label';
+          label.htmlFor = `selectedItem${itemId}`;
+          label.textContent = option?.textContent || `Item ${itemId}`;
+
+          // append input and label to div
+          div.appendChild(input);
+          div.appendChild(label);
+          body.appendChild(div);
         });
       } else {
         // Rebuild TomSelect inputs if nothing selected

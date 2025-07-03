@@ -133,37 +133,7 @@
         {# RESOURCES SCOPE #}
         {% include 'scope-button.html' with {'reload': 'page', 'target': 'scope_items', 'isSecondary': 0, 'isSmall': 0} %}
         {# FILTERS GROUP CATEGORY AND RESOURCE #}
-        <div class='input-group ml-2'>
-          <div class='input-group-prepend'>
-            <span class='input-group-text'><i class='fas fa-magnifying-glass'></i></span>
-          </div>
-
-          {# FILTER BY CATEGORY #}
-          {% if App.Config.configArr.debug -%}
-            <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
-          {%- endif %}
-          <select id='categorySelect' name='category' aria-label='{{ 'Filter by category'|trans }}' class='form-control' style='max-width: 40%;'>
-            <option value=''>{{ 'Filter by category'|trans }}</option>
-            {% for category in bookableItemsTypes %}
-              <option value='{{ category.id }}'{{- App.Request.query.get('category') == category.id ? ' selected' -}}>
-                {{ category.team_name }} - {{ category.title }}
-              </option>
-            {% endfor %}
-          </select>
-
-          {# FILTER BY RESOURCE #}
-          {% if App.Config.configArr.debug -%}
-            <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
-          {%- endif %}
-          <select id='itemSelect' name='items[]' aria-label='{{ 'Select a resource'|trans }}' class='form-control form-inline'>
-            {% for item in itemsArr %}
-              <option value=''>{{ 'Select a resource'|trans }}</option>
-              <option value='{{ item.id }}'{{- App.Request.query.get('item') == item.id ? ' selected' -}} data-category='{{ item.category }}'>
-                {{ item.category_title }} - {{ item.title }}
-              </option>
-            {% endfor %}
-          </select>
-        </div>
+        {% include 'scheduler-filter-items.html' %}
       </div>
     </div>
 
@@ -208,28 +178,8 @@
             <span aria-hidden='true'>&times;</span>
           </button>
         </div>
-        <div class='modal-body'>
-          <div class='input-group ml-2'>
-            <div class='input-group-prepend'>
-              <span class='input-group-text'><i class='fas fa-magnifying-glass'></i></span>
-            </div>
-
-            <select id='categorySelectModal' aria-label='{{ 'Filter by category'|trans }}' class='form-control'>
-              <option value=''>{{ 'Filter by category'|trans }}</option>
-              {% for category in bookableItemsTypes %}
-                <option value='{{ category.id }}'>{{ category.team_name }} - {{ category.title }}</option>
-              {% endfor %}
-            </select>
-
-            <select id='itemSelectModal' name='items[]' aria-label='{{ 'Select a resource'|trans }}' class='form-control form-inline'>
-              <option value=''>{{ 'Select a resource'|trans }}</option>
-              {% for item in itemsArr %}
-                <option value='{{ item.id }}' data-category='{{ item.category }}'>
-                  {{ item.category_title }} - {{ item.title }}
-                </option>
-              {% endfor %}
-            </select>
-          </div>
+        <div class='modal-body mr-2'>
+          {% include 'scheduler-filter-items.html' with {'categorySelectId': 'categorySelectModal', 'itemSelectId': 'itemSelectModal'} %}
         </div>
         <div class='modal-footer'>
           <button type='button' class='btn btn-primary' id='confirmItemSelect'>{{ 'Create event(s)'|trans }}</button>

@@ -15,7 +15,7 @@ describe('Test links', () => {
     cy.intercept('DELETE', '/api/v2/**').as('delete');
     cy.get('[data-action="destroy-link"]').first().click();
     cy.wait('@delete').its('response.statusCode').should('eq', 204);
-    //cy.get('#experimentsLinksDiv').should('not.contain.text', 'Synthesis and Characterization');
+    cy.get('#experimentsLinksDiv').should('not.contain.text', 'Synthesis and Characterization');
 
     // link to a resource
     cy.get('#addLinkItemsInput').type('Ammonia');

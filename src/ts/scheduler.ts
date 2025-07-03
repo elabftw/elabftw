@@ -95,7 +95,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.location.replace(`${location.pathname}?${params.toString()}`);
   }
 
-  initTomSelect();
   // remove existing params to build new event sources for the calendar
   function buildEventSourcesUrl(): string {
     ['items[]', 'category', 'eventOwner'].forEach((param) => params.delete(param));
@@ -331,6 +330,8 @@ document.addEventListener('DOMContentLoaded', () => {
     },
   });
 
+  initTomSelect();
+
   // only try to render if we actually have some bookable items
   if (calendarEl.dataset.render === 'true') {
     calendar.render();
@@ -433,7 +434,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const itemSelect = document.getElementById('itemSelect') as HTMLSelectElement;
     const categorySelect = document.getElementById('categorySelect') as HTMLSelectElement;
 
-    new TomSelect(itemSelect, {
+    const urlParams = new URLSearchParams(window.location.search);
+    // load items on page load (e.g coming from Resource view page)
+    const selectedItems = urlParams.getAll('items[]');
+
+    const itemTs = new TomSelect(itemSelect, {
       ...sharedTomSelectOptions,
       onChange: (selectedItems) => {
         lockScopeButton(selectedItems);
@@ -441,8 +446,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const url = new URL(window.location.href);
         url.searchParams.delete('items[]');
         selectedItems.forEach(itemId => {
-          params.append('items[]', itemId);
           url.searchParams.append('items[]', itemId);
+          params.append('items[]', itemId);
         });
         if (selectedItems.length === 0) {
           url.searchParams.delete('items[]');
@@ -452,10 +457,19 @@ document.addEventListener('DOMContentLoaded', () => {
       },
     });
 
+    if (selectedItems.length > 0) {
+      itemTs.setValue(selectedItems);
+      lockScopeButton(selectedItems);
+    }
+
     categorySelect.addEventListener('change', () => {
       const selectedCategory = categorySelect.value;
       filterOptionsByCategory(itemSelect, selectedCategory);
       reloadCalendarEvents();
     });
+
+    if (selectedItems.length > 0) {
+      reloadCalendarEvents();
+    }
   }
 });

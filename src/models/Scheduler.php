@@ -141,12 +141,16 @@ final class Scheduler extends AbstractRest
     {
         // prepare filters for the scheduler view
         if ($queryParams !== null) {
-            $this->appendFilterSql(column: 'items.category', paramName: 'category', value: $queryParams->getQuery()->getInt('cat'));
+            $this->appendFilterSql(column: 'items.category', paramName: 'category', value: $queryParams->getQuery()->getInt('category'));
             $this->appendFilterSql(column: 'team_events.userid', paramName: 'ownerid', value: $queryParams->getQuery()->getInt('eventOwner'));
-            $this->appendFilterSql(column: 'items.id', paramName: 'itemid', value: $queryParams->getQuery()->getInt('item'));
+            // handle multiple items
+            $itemParams = $queryParams->getQuery()->all('items');
+            $ids = array_filter(array_map('intval', $itemParams)); // force numeric IDs
+            $this->appendItemsIdsToSql($ids);
         }
         // apply scope for events
-        $itemId = ($queryParams !== null) ? $queryParams->getQuery()->getInt('item') : 0;
+        $itemParams = $queryParams?->getQuery()->all('items');
+        $itemId = !empty($itemParams) ? (int) $itemParams[0] : 0;
         $scopeInt = $this->getScope($itemId);
         if ($scopeInt === Scope::User->value) {
             $this->appendFilterSql('team_events.userid', 'userid', $this->Items->Users->userData['userid']);
@@ -262,6 +266,20 @@ final class Scheduler extends AbstractRest
             $Notif->create($userid);
         });
         return $this->Db->execute($req);
+    }
+
+    private function appendItemsIdsToSql(array $itemsIds): void
+    {
+        if (empty($itemsIds)) {
+            return;
+        }
+        $placeholders = array();
+        foreach ($itemsIds as $index => $id) {
+            $key = "itemid$index";
+            $placeholders[] = ":$key";
+            $this->filterBindings[$key] = $id;
+        }
+        $this->filterSqlParts[] = 'AND items.id IN (' . implode(',', $placeholders) . ')';
     }
 
     private function getScope(int $queryParamsItem): int

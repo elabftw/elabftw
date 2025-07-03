@@ -15,6 +15,7 @@ namespace Elabftw\Models;
 use DateTimeImmutable;
 use Elabftw\AuditEvent\SignatureCreated;
 use Elabftw\Elabftw\CreateUploadFromLocalFile;
+use Elabftw\Elabftw\CanSqlBuilder;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Elabftw\ItemsTypesSqlBuilder;
@@ -23,6 +24,7 @@ use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\TemplatesSqlBuilder;
 use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExportFormat;
@@ -259,6 +261,9 @@ abstract class AbstractEntity extends AbstractRest
      */
     public function readShow(DisplayParams $displayParams, bool $extended = false, string $can = 'canread'): array
     {
+        if (!empty($displayParams->fastq)) {
+            return $this->readAllSimple($displayParams);
+        }
         // (extended) search (block must be before the call to getReadSqlBeforeWhere so extendedValues is filled)
         if (!empty($displayParams->queryString) || !empty($displayParams->extendedQuery)) {
             $this->processExtendedQuery(trim($displayParams->queryString . ' ' . $displayParams->extendedQuery));
@@ -481,6 +486,47 @@ abstract class AbstractEntity extends AbstractRest
         );
         ksort($base);
         return $base;
+    }
+
+    public function readAllSimple(DisplayParams $displayParams): array
+    {
+        $categoryTable = $this instanceof Items ? 'items_types' : 'experiments_categories';
+        $CanSqlBuilder = new CanSqlBuilder($this->Users->requester, AccessType::Read);
+        $canFilter = $CanSqlBuilder->getCanFilter();
+        $displayParams->skipOrderPinned = true;
+        $intQuery = intval($displayParams->fastq);
+        // if the query has a numeric part, we also try and match the custom_id or id exactly
+        $idSql = '';
+        if ($intQuery > 0) {
+            $idSql = 'OR entity.id = :intQuery OR entity.custom_id = :intQuery';
+        }
+
+        $sql = 'SELECT entity.id, entity.title, entity.custom_id,
+            categoryt.color AS category_color,
+            categoryt.title AS category_title,
+            statust.color AS status_color,
+            statust.title AS status_title,
+            "' . $this->entityType->value . '" AS type,
+            "' . $this->entityType->toPage() . '" AS page
+            FROM ' . $this->entityType->value . ' AS entity
+            LEFT JOIN ' . $categoryTable . ' AS categoryt ON entity.category = categoryt.id
+            LEFT JOIN ' . $this->entityType->value . '_status AS statust ON entity.status = statust.id
+            LEFT JOIN
+                users2teams ON (users2teams.users_id = :userid AND users2teams.teams_id = :teamid)
+            WHERE
+                entity.title LIKE :query ' . $idSql . '
+            ' . $canFilter . '
+            ' . $displayParams->filterSql . '
+            ' . $displayParams->getSql();
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->Users->requester->userid, PDO::PARAM_INT);
+        $req->bindParam(':teamid', $this->Users->requester->team, PDO::PARAM_INT);
+        $req->bindValue(':query', '%' . $displayParams->fastq . '%');
+        if ($intQuery > 0) {
+            $req->bindValue(':intQuery', $intQuery, PDO::PARAM_INT);
+        }
+        $this->Db->execute($req);
+        return $req->fetchAll();
     }
 
     /**

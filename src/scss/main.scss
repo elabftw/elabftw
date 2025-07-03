@@ -453,9 +453,9 @@ button:disabled {
     width: fit-content;
 
     img {
-      object-fit: contain;
-      max-width: 100%;
       height: auto;
+      max-width: 100%;
+      object-fit: contain;
     }
   }
 
@@ -609,17 +609,18 @@ tr:first-child td {
 
 /* container for notifications in top left of screen */
 #overlay-container {
-  position: fixed;
-  top: 10px;
-  left: 10px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  left: 10px;
+  position: fixed;
+  top: 10px;
   z-index: 19850;
 }
 
 /* class for a single notification */
 .overlay {
+  animation: slideInOut 3.5s ease-in-out forwards;
   border-radius: 5px;
   display: flex;
   line-height: 50px;
@@ -629,7 +630,6 @@ tr:first-child td {
   // see #2419
   // and over 15000 for open vector editor fullscreen mode
   z-index: 19850;
-  animation: slideInOut 3.5s ease-in-out forwards;
 }
 
 .overlay p {
@@ -681,13 +681,13 @@ tr:first-child td {
 
 /* ENTITIES */
 .entity {
-  min-width: 100%;
-  max-width: 100%;
   background-color: $white;
   border: 1px solid $firstlevel;
   border-left: 6px solid var(--left-color);
   border-radius: 5px;
   margin: 5px auto;
+  max-width: 100%;
+  min-width: 100%;
   opacity: var(--opacity);
   padding: 5px 10px 5px 5px;
 
@@ -1053,8 +1053,8 @@ the form-control fails to do that so we do the border ourselves */
   font-size: 75%;
   font-weight: bold;
   line-height: normal;
-  text-transform: uppercase;
   padding: 0.25rem;
+  text-transform: uppercase;
 
   /* Only Category */
   &.category-btn {
@@ -1405,8 +1405,8 @@ input[type='color'] {
   &::before {
     color: $dangerred;
     content: 'Admin';
-    left: 0;
     font-size: 75%;
+    left: 0;
     position: absolute;
     top: -16px;
   }
@@ -1685,9 +1685,9 @@ input:user-invalid {
 }
 
 .ketcher-editor-container {
+  display: flex;
   /*flex-grow: 1; /* Make the editor grow to fill available space */
   flex: 0 1 620px;
-  display: flex;
   flex-direction: column;
 }
 
@@ -1710,9 +1710,9 @@ input:user-invalid {
 
 /* top right button */
 .initials {
-  font-weight: bold;
   color: $secondlevel;
   font-size: 1.5rem;
+  font-weight: bold;
 }
 
 /* opencloning iframe */
@@ -1733,4 +1733,8 @@ input:user-invalid {
   line-height: 1;
   vertical-align: middle;
   width: 1em;
+}
+
+.calendar-event-hover {
+  box-shadow: 5px 4px 4px #474747 !important;
 }

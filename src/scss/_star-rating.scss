@@ -20,8 +20,8 @@
   label {
     cursor: pointer;
     float: right;
-    position: relative;
     margin-bottom: 0;
+    position: relative;
 
     &:not(:first-of-type) {
       padding-right: 3px;

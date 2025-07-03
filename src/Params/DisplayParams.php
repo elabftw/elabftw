@@ -40,6 +40,9 @@ final class DisplayParams extends BaseQueryParams
     // the search from the top right search bar on experiments/database
     public string $queryString = '';
 
+    // fastq is the quick query string that we use in autocomplete for instance
+    public string $fastq = '';
+
     // the extended search query
     public string $extendedQuery = '';
 
@@ -60,9 +63,6 @@ final class DisplayParams extends BaseQueryParams
     ) {
         // query parameters will override user defaults
         parent::__construct($query, $orderby, $sort, $limit, $offset, $states);
-        if ($skipOrderPinned === true) {
-            $this->orderIsPinnedSql = '';
-        }
         $this->adjust();
     }
 
@@ -74,6 +74,9 @@ final class DisplayParams extends BaseQueryParams
     #[Override]
     public function getSql(): string
     {
+        if ($this->skipOrderPinned === true) {
+            $this->orderIsPinnedSql = '';
+        }
         return sprintf(
             'ORDER BY %s %s %s, entity.id %s LIMIT %d OFFSET %d',
             $this->orderIsPinnedSql,
@@ -93,6 +96,9 @@ final class DisplayParams extends BaseQueryParams
         $query = $this->getQuery();
         if (!empty($query->get('q'))) {
             $this->queryString = trim($query->getString('q'));
+        }
+        if (!empty($query->get('fastq'))) {
+            $this->fastq = trim($query->getString('fastq'));
         }
         if (!empty($query->get('extended'))) {
             $this->extendedQuery = trim($query->getString('extended'));

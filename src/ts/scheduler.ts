@@ -5,10 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { DateTime } from 'luxon';
-import 'jquery-ui/ui/widgets/autocomplete';
-import $ from 'jquery';
-import 'bootstrap/js/src/modal.js';
+import bootstrapPlugin from '@fullcalendar/bootstrap';
 import { Calendar } from '@fullcalendar/core';
 import caLocale from '@fullcalendar/core/locales/ca';
 import csLocale from '@fullcalendar/core/locales/cs';
@@ -28,14 +25,17 @@ import ruLocale from '@fullcalendar/core/locales/ru';
 import skLocale from '@fullcalendar/core/locales/sk';
 import slLocale from '@fullcalendar/core/locales/sl';
 import zhcnLocale from '@fullcalendar/core/locales/zh-cn';
-import bootstrapPlugin from '@fullcalendar/bootstrap';
+import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import listPlugin from '@fullcalendar/list';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import timelinePlugin from '@fullcalendar/timeline';
-import listPlugin from '@fullcalendar/list';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import { Action } from './interfaces';
+import $ from 'jquery';
+import 'bootstrap/js/src/modal.js';
+import { DateTime } from 'luxon';
+import 'jquery-ui/ui/widgets/autocomplete';
 import { Api } from './Apiv2.class';
+import { Action } from './interfaces';
 import { TomSelect } from './misc';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -45,6 +45,17 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('loading-spinner')?.remove();
 
   const ApiC = new Api();
+
+  // TomSelect settings shared on page & modal selects
+  const sharedTomSelectOptions = {
+    maxItems: null,
+    plugins: {
+      clear_button: {},
+      dropdown_input: {},
+      no_active_items: {},
+      remove_button: {},
+    },
+  };
 
   // start and end inputs
   const startInput = (document.getElementById('schedulerEventModalStart') as HTMLInputElement);
@@ -56,16 +67,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return datetime.valueOf() - offset;
   }
   const params = new URLSearchParams(document.location.search.substring(1));
-  // if we show all items, they are not editable
-  let editable = true;
-  let selectable = true;
-  if (!params.has('item')) {
-    editable = false;
-    selectable = false;
-    if (document.getElementById('selectBookableWarningDiv')) {
-      document.getElementById('selectBookableWarningDiv').removeAttribute('hidden');
-    }
-  }
   // get the start parameter from url and use that as start time if it's there
   const start = params.get('start');
   let selectedDate = new Date().valueOf();
@@ -84,19 +85,27 @@ document.addEventListener('DOMContentLoaded', () => {
     ? 'timelineDay,timelineWeek,listWeek,timelineMonth' // horizontal axis
     : 'timeGridDay,timeGridWeek,listWeek,dayGridMonth'; // classic grid calendar
 
-  initTomSelect();
+  // clean up 'category' parameter on page refresh or else it keeps it as the only available value in the Select
+  if (params.has('category')) {
+    params.delete('category');
+    window.location.replace(`${location.pathname}?${params.toString()}`);
+  }
+
   // remove existing params to build new event sources for the calendar
   function buildEventSourcesUrl(): string {
-    ['item', 'cat', 'eventOwner'].forEach((param) => params.delete(param));
-    const itemSelect = document.getElementById('itemSelect') as HTMLSelectElement;
-    const catSelect = document.getElementById('schedulerSelectCat') as HTMLSelectElement;
+    ['items[]', 'category', 'eventOwner'].forEach((param) => params.delete(param));
+    const itemSelect = document.getElementById('itemSelect') as HTMLSelectElement & { tomselect?: TomSelect };
+    const categorySelect = document.getElementById('categorySelect') as HTMLSelectElement;
     const ownerInput = document.getElementById('eventOwnerSelect') as HTMLInputElement;
 
-    if (itemSelect?.value) {
-      params.set('item', itemSelect.value);
+    if (itemSelect?.tomselect?.items?.length) {
+      lockScopeButton(itemSelect.tomselect.items);
+      itemSelect.tomselect.items.forEach(id => {
+        params.append('items[]', id);
+      });
     }
-    if (catSelect?.value) {
-      params.set('cat', catSelect.value);
+    if (categorySelect?.value) {
+      params.set('category', categorySelect.value);
     }
     if (ownerInput?.value.trim()) {
       const ownerId = ownerInput.value.trim().split(' ')[0];
@@ -110,7 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
     calendar.removeAllEventSources();
     calendar.addEventSource({ url: newQuery });
     calendar.refetchEvents();
-    // keep url in sync
     window.history.replaceState({}, '', `${location.pathname}?${params.toString()}`);
   }
 
@@ -128,10 +136,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  let eventBackgroundColor = 'a9a9a9';
-  if (document.getElementById('itemSelect')) {
-    eventBackgroundColor = (document.getElementById('itemSelect') as HTMLSelectElement).selectedOptions[0].dataset.color;
-  }
   // SCHEDULER
   const calendar = new Calendar(calendarEl, {
     schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
@@ -160,11 +164,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // selected locale
     locale: calendarEl.dataset.lang,
     // allow selection of range
-    selectable: selectable,
+    selectable: true,
     // draw an event while selecting
     selectMirror: true,
-    // if no item is selected, the calendar is not editable
-    editable: editable,
+    editable: true,
     // allow "more" link when too many events
     dayMaxEventRows: true,
     // set the date loaded
@@ -181,39 +184,109 @@ document.addEventListener('DOMContentLoaded', () => {
     firstDay: 1,
     // remove possibility to book whole day, might add it later
     allDaySlot: false,
-    // adjust the background color of event to the color of the item type
-    eventBackgroundColor: '#' + eventBackgroundColor,
+    // background color is $secondlevel for all and it changes after validation of event
+    // TODO maybe we could have an automatically generated .ts file exporting colors from _variables.scss
+    eventBackgroundColor: '#bdbdbd',
     // selection
     select: function(info): void {
-      // get the item id from url
-      const params = new URLSearchParams(document.location.search.slice(1));
-      const itemid = parseInt(params.get('item'), 10);
-      if (!Number.isSafeInteger(itemid)) {
-        calendar.unselect();
-        return;
+      const itemSelectEl = document.getElementById('itemSelect') as HTMLSelectElement & { tomselect?: TomSelect };
+      const selectedItemIds: string[] = itemSelectEl.tomselect?.items || [];
+
+      let manualSelect: TomSelect | null = null;
+
+      // Handle post action for modals
+      function handleConfirm(buttonId: string, getIdsFn: () => string[]) {
+        const confirmBtn = document.getElementById(buttonId) as HTMLButtonElement;
+        if (!confirmBtn) {
+          console.warn(`Confirm button "${buttonId}" not found.`);
+          return;
+        }
+
+        // not using addEventListener or else it infinite loops the confirm modal
+        confirmBtn.onclick = () => {
+          const itemIdsToPost = getIdsFn();
+          if (itemIdsToPost.length === 0) {
+            alert('Please select at least one item to book.');
+            return;
+          }
+
+          const postParams = { start: info.startStr, end: info.endStr };
+          Promise.all(
+            itemIdsToPost.map(itemId => ApiC.post(`events/${itemId}`, postParams)),
+          ).then(() => {
+            calendar.refetchEvents();
+            // refresh item with its title by triggering unselect (see #5265)
+            calendar.unselect();
+            $('.modal').modal('hide');
+          }).catch(() => {
+            calendar.unselect();
+            $('.modal').modal('hide');
+          });
+        };
       }
 
-      const postParams = {
-        start: info.startStr,
-        end: info.endStr,
-      };
-      ApiC.post(`events/${itemid}`, postParams).then(()=> {
-        calendar.refetchEvents();
-        // refresh item with its title by triggering unselect (see #5265)
-        calendar.unselect();
-      }).catch(() => {
-        calendar.unselect();
-        return;
-      });
+      // case 1: Already selected items -> checkboxes with selected
+      if (selectedItemIds.length > 0) {
+        const container = document.getElementById('selectedItemsCheckboxes')!;
+        container.innerHTML = '';
+
+        selectedItemIds.forEach(itemId => {
+          const option = itemSelectEl.querySelector(`option[value="${itemId}"]`);
+          const labelText = option?.textContent || `Item ${itemId}`;
+
+          const div = document.createElement('div');
+          div.className = 'form-check';
+
+          const input = document.createElement('input');
+          input.className = 'form-check-input';
+          input.type = 'checkbox';
+          input.value = itemId;
+          input.id = `selectedItem${itemId}`;
+          input.checked = true;
+
+          const label = document.createElement('label');
+          label.className = 'form-check-label';
+          label.htmlFor = input.id;
+          label.textContent = labelText;
+
+          div.appendChild(input);
+          div.appendChild(label);
+          container.appendChild(div);
+        });
+
+        $('#itemPickerReviewModal').modal('show');
+
+        handleConfirm('confirmItemReview', () => {
+          const checked = container.querySelectorAll<HTMLInputElement>('input[type="checkbox"]:checked');
+          return Array.from(checked).map(cb => cb.value);
+        });
+      }
+
+      // case 2: no items selected -> modal with tomSelect
+      else {
+        const itemSelectModalEl = document.getElementById('itemSelectModal') as HTMLSelectElement & { tomselect?: TomSelect };
+        const categorySelectModalEl = document.getElementById('categorySelectModal') as HTMLSelectElement;
+
+        // init TomSelect if not already
+        if (!itemSelectModalEl.tomselect) {
+          manualSelect = new TomSelect(itemSelectModalEl, { ...sharedTomSelectOptions });
+
+          categorySelectModalEl.addEventListener('change', () => {
+            const selectedCategory = categorySelectModalEl.value;
+            filterOptionsByCategory(itemSelectModalEl, selectedCategory);
+          });
+        } else {
+          manualSelect = itemSelectModalEl.tomselect;
+        }
+
+        $('#itemPickerSelectModal').modal('show');
+
+        // confirm handler uses selected TomSelect items
+        handleConfirm('confirmItemSelect', () => manualSelect?.items || []);
+      }
     },
     // on click activate modal window
     eventClick: function(info): void {
-      if (!editable) {
-        // load page with selected item + correct start depending on current view
-        window.location.replace(`scheduler.php?item=${info.event.extendedProps.items_id}&start=${calendar.view.activeStart.toISOString()}`);
-        return;
-      }
-
       $('[data-action="scheduler-rm-bind"]').hide();
       $('#eventModal').modal('toggle');
       // set the event id on the various elements
@@ -237,45 +310,29 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     // on mouse enter add shadow and show title
     eventMouseEnter: function(info): void {
-      if (editable) {
-        info.el.style.boxShadow = '5px 4px 4px #474747';
-      }
+      info.el.classList.add('calendar-event-hover');
       info.el.title = info.event.title;
     },
     // remove the box shadow when mouse leaves
     eventMouseLeave: function(info): void {
-      info.el.style.boxShadow = 'unset';
+      info.el.classList.remove('calendar-event-hover');
     },
     // a drop means we change start date
     eventDrop: function(info): void {
-      if (!editable) { return; }
       ApiC.patch(`event/${info.event.id}`, {'target': 'start', 'delta': info.delta}).catch(() => info.revert());
     },
     // a resize means we change end date
     eventResize: function(info): void {
-      if (!editable) { return; }
       ApiC.patch(`event/${info.event.id}`, {'target': 'end', 'delta': info.endDelta}).catch(() => info.revert());
     },
   });
+
+  initTomSelect();
 
   // only try to render if we actually have some bookable items
   if (calendarEl.dataset.render === 'true') {
     calendar.render();
     calendar.updateSize();
-    // add selected resource name below the title
-    const titleEl = calendarEl.querySelector('.fc-toolbar .fc-toolbar-title');
-    const resourceEl = document.getElementById('schedulerResourceDisplay');
-    if (titleEl && resourceEl) {
-      const parent = titleEl.parentElement;
-      // wrapper to stack vertically below title (the scheduler date)
-      const wrapper = document.createElement('div');
-      wrapper.classList.add('text-center', 'd-flex', 'flex-column', 'align-items-center');
-      resourceEl.removeAttribute('hidden');
-      resourceEl.classList.add('mt-2', 'd-inline-flex', 'align-items-center');
-      wrapper.appendChild(titleEl);
-      wrapper.appendChild(resourceEl);
-      parent?.appendChild(wrapper);
-    }
   }
 
   // add on change event listener on datetime inputs
@@ -344,40 +401,99 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  function initTomSelect(): void {
-    ['schedulerSelectCat', 'itemSelect'].forEach(id => {
-      const el = document.getElementById(id) as HTMLSelectElement;
-      const catSelect = document.querySelector('#schedulerSelectCat') as HTMLSelectElement & { tomselect?: TomSelect };
-      if (el) {
-        new TomSelect(`#${id}`, {
-          plugins: ['dropdown_input', 'remove_button'],
-          // on init, if there's an item selected, disable category filter
-          onInitialize() {
-            if (id === 'itemSelect' && el.value) {
-              catSelect.tomselect.disable();
-              catSelect.tomselect.clear();
-            }
-          },
-          onItemRemove() {
-            if (id === 'itemSelect') {
-              params.delete('item');
-              params.set('start', calendar.view.activeStart.toISOString());
-              window.location.replace(`scheduler.php?${params.toString()}`);
-            }
-          },
-          onChange() {
-            if (id === 'itemSelect') {
-              if (el.value) {
-                catSelect.tomselect.clear();
-                params.set('item', el.value);
-              }
-              params.set('start', calendar.view.activeStart.toISOString());
-              window.location.replace(`scheduler.php?${params.toString()}`);
-            }
-            reloadCalendarEvents();
-          },
+  function lockScopeButton(selectedItems: string[]): void {
+    const scopeBtn = document.getElementById('scopeEventBtn');
+    const lockedBtn = document.getElementById('scopeLocked');
+    const showLocked = selectedItems.length > 0;
+
+    scopeBtn?.toggleAttribute('hidden', showLocked);
+    lockedBtn?.toggleAttribute('hidden', !showLocked);
+  }
+
+  // Filters & repopulates the item TomSelect dropdown with options that match the selected category
+  function filterOptionsByCategory(
+    selectEl: HTMLSelectElement & { tomselect?: TomSelect },
+    category: string,
+  ): void {
+    if (!selectEl.tomselect) return;
+    selectEl.tomselect.clearOptions();
+
+    Array.from(selectEl.options).forEach(option => {
+      if (!category || option.dataset.category === category) {
+        selectEl.tomselect.addOption({ value: option.value, text: option.textContent ?? '',
         });
       }
     });
+    selectEl.tomselect.refreshOptions(false);
+  }
+
+  function initTomSelect(): void {
+    const itemSelect = document.getElementById('itemSelect') as HTMLSelectElement;
+    const categorySelect = document.getElementById('categorySelect') as HTMLSelectElement;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    // load items on page load (e.g. coming from Resource view page)
+    const selectedItems = urlParams.getAll('items[]');
+
+    const itemTs = new TomSelect(itemSelect, {
+      ...sharedTomSelectOptions,
+      onChange: (selectedItems) => {
+        lockScopeButton(selectedItems);
+
+        const container = document.getElementById('selectedItemsContainer')!;
+        const display = document.getElementById('selectedItemsDisplay')!;
+        display.innerHTML = '';
+
+        const url = new URL(window.location.href);
+        url.searchParams.delete('items[]');
+        params.delete('items[]');
+
+        if (selectedItems.length === 0) {
+          // not hidden attribute because we play with the wrap
+          container.classList.add('d-none');
+          window.history.replaceState({}, '', url.toString());
+          reloadCalendarEvents();
+          return;
+        }
+        container.classList.remove('d-none');
+
+        selectedItems.forEach(id => {
+          const opt = itemSelect.querySelector(`option[value="${id}"]`) as HTMLOptionElement;
+          if (!opt) return;
+
+          const badge = document.createElement('a');
+          badge.href = `/database.php?mode=view&id=${id}`;
+          badge.target='_blank';
+          badge.textContent = opt.textContent;
+          badge.className = 'selected-item-badge';
+          const rawColor = opt.dataset.color;
+          badge.style.backgroundColor = rawColor?.startsWith('#') ? rawColor : `#${rawColor || '000'}`;
+          badge.style.color = 'white';
+
+          display.appendChild(badge);
+
+          url.searchParams.append('items[]', id);
+          params.append('items[]', id);
+        });
+
+        window.history.replaceState({}, '', url.toString());
+        reloadCalendarEvents();
+      },
+    });
+
+    if (selectedItems.length > 0) {
+      itemTs.setValue(selectedItems);
+      lockScopeButton(selectedItems);
+    }
+
+    categorySelect.addEventListener('change', () => {
+      const selectedCategory = categorySelect.value;
+      filterOptionsByCategory(itemSelect, selectedCategory);
+      reloadCalendarEvents();
+    });
+
+    if (selectedItems.length > 0) {
+      reloadCalendarEvents();
+    }
   }
 });

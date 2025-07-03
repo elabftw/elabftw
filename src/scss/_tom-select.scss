@@ -25,12 +25,6 @@
   }
 }
 
-// in scheduler, prevent filter inputs (tomSelect) from resizing constantly when new resources are loaded
-.ts-filter {
-  min-width: 240px;
-  max-width: 300px;
-}
-
 .ts-wrapper {
   max-width: clamp(var(--breakpoint-sm), 50vw, 90vw);
 
@@ -41,11 +35,43 @@
     color: #343a40;
     cursor: pointer;
     padding: 1px 5px;
+    white-space: nowrap;
   }
 
   // don't block down button
   .ts-control:not(.rtl) {
     padding-right: 2rem !important;
+  }
+
+  &.multi {
+    position: relative;
+
+    .ts-control {
+      flex-wrap: nowrap;
+      gap: 4px;
+      max-width: 400px;
+      min-height: 38px;
+      overflow-x: auto;
+      padding: 4px 8px;
+      scrollbar-width: thin;
+
+      &::-webkit-scrollbar {
+        height: 4px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 2px;
+      }
+
+      .clear-button {
+        background: $white !important;
+        position: sticky;
+        right: -2rem;
+        // top attribute not applying
+        transform: translateY(0);
+      }
+    }
   }
 
   // keep size of select for tag filter
@@ -75,4 +101,15 @@
 // let the metavalue inuput stretch to same height as metakey select
 #metavalue {
   height: auto;
+}
+
+.selected-item-badge {
+  border-radius: 999px;
+  color: $white;
+  display: inline-block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin: 0 6px 6px 0;
+  padding: 4px 10px;
+  text-decoration: none;
 }

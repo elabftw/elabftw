@@ -30,14 +30,13 @@ import interactionPlugin from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import timelinePlugin from '@fullcalendar/timeline';
-import i18next from 'i18next';
 import $ from 'jquery';
 import 'bootstrap/js/src/modal.js';
 import { DateTime } from 'luxon';
 import 'jquery-ui/ui/widgets/autocomplete';
 import { Api } from './Apiv2.class';
 import { Action } from './interfaces';
-import { escapeHTML, TomSelect } from './misc';
+import { TomSelect } from './misc';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/scheduler.php') {
@@ -197,21 +196,51 @@ document.addEventListener('DOMContentLoaded', () => {
       const itemSelectEl = document.getElementById('itemSelect') as HTMLSelectElement & { tomselect?: TomSelect };
       const selectedItemIds: string[] = itemSelectEl.tomselect?.items || [];
 
-      const body = document.getElementById('modalBody')!;
-      body.innerHTML = ''; // Reset modal body
-
       let manualSelect: TomSelect | null = null;
 
+      // Handle post action for modals
+      function handleConfirm(buttonId: string, getIdsFn: () => string[]) {
+        const confirmBtn = document.getElementById(buttonId) as HTMLButtonElement;
+        if (!confirmBtn) {
+          console.warn(`Confirm button "${buttonId}" not found.`);
+          return;
+        }
+
+        // not using addEventListener or else it infinite loops the confirm modal
+        confirmBtn.onclick = () => {
+          const itemIdsToPost = getIdsFn();
+          if (itemIdsToPost.length === 0) {
+            alert('Please select at least one item to book.');
+            return;
+          }
+
+          const postParams = { start: info.startStr, end: info.endStr };
+          Promise.all(
+            itemIdsToPost.map(itemId => ApiC.post(`events/${itemId}`, postParams)),
+          ).then(() => {
+            calendar.refetchEvents();
+            // refresh item with its title by triggering unselect (see #5265)
+            calendar.unselect();
+            $('.modal').modal('hide');
+          }).catch(() => {
+            calendar.unselect();
+            $('.modal').modal('hide');
+          });
+        };
+      }
+
+      // case 1: Already selected items -> checkboxes with selected
       if (selectedItemIds.length > 0) {
-        // Show checkboxes for already selected items
+        const container = document.getElementById('selectedItemsContainer')!;
+        container.innerHTML = '';
+
         selectedItemIds.forEach(itemId => {
           const option = itemSelectEl.querySelector(`option[value="${itemId}"]`);
+          const labelText = option?.textContent || `Item ${itemId}`;
 
-          // wrapper div
           const div = document.createElement('div');
           div.className = 'form-check';
 
-          // checkbox input
           const input = document.createElement('input');
           input.className = 'form-check-input';
           input.type = 'checkbox';
@@ -219,98 +248,46 @@ document.addEventListener('DOMContentLoaded', () => {
           input.id = `selectedItem${itemId}`;
           input.checked = true;
 
-          // label
           const label = document.createElement('label');
           label.className = 'form-check-label';
-          label.htmlFor = `selectedItem${itemId}`;
-          label.textContent = option?.textContent || `Item ${itemId}`;
+          label.htmlFor = input.id;
+          label.textContent = labelText;
 
-          // append input and label to div
           div.appendChild(input);
           div.appendChild(label);
-          body.appendChild(div);
+          container.appendChild(div);
         });
-      } else {
-        // Rebuild TomSelect inputs if nothing selected
-        const itemSelectLabel = i18next.t('select-resource');
-        const categorySelectLabel = i18next.t('filter-by-category');
 
-        const categorySelectEl = document.getElementById('categorySelect') as HTMLSelectElement;
-        const categories = Array.from(categorySelectEl.options)
-          .filter(opt => opt.value)
-          .map(opt => `<option value="${opt.value}">${opt.textContent}</option>`)
-          .join('');
-        const items = Array.from(itemSelectEl.options)
-          .filter(opt => opt.value)
-          .map(opt => `<option value="${opt.value}" data-category="${escapeHTML(opt.dataset.category) ?? ''}">${escapeHTML(opt.textContent)}</option>`)
-          .join('');
+        $('#itemPickerReviewModal').modal('show');
 
-        body.innerHTML = `
-          <div class='input-group ml-2'>
-            <div class='input-group-prepend'>
-              <span class='input-group-text'><i class='fas fa-magnifying-glass'></i></span>
-            </div>
-            <select id='categorySelectModal' class='form-control' style='max-width: 40%;' aria-label='${categorySelectLabel}'>
-              <option value=''>${categorySelectLabel}</option>
-              ${categories}
-            </select>
-            <select id='itemSelectModal' name='items[]' aria-label='${itemSelectLabel}' class='form-control form-inline'>
-              <option value=''>${itemSelectLabel}</option>
-              ${items}
-            </select>
-          </div>
-        `;
-
-        const itemSelectModalEl = document.getElementById('itemSelectModal') as HTMLSelectElement & { tomselect?: TomSelect };
-        const categorySelectModalEl = document.getElementById('categorySelectModal') as HTMLSelectElement;
-        // Initialize TomSelect after modal select is added to DOM
-        manualSelect = new TomSelect(itemSelectModalEl, { ...sharedTomSelectOptions });
-
-        // Filter resources from selected category
-        categorySelectModalEl.addEventListener('change', () => {
-          const selectedCategory = categorySelectModalEl.value;
-          filterOptionsByCategory(itemSelectModalEl, selectedCategory);
+        handleConfirm('confirmItemReview', () => {
+          const checked = container.querySelectorAll<HTMLInputElement>('input[type="checkbox"]:checked');
+          return Array.from(checked).map(cb => cb.value);
         });
       }
 
-      $('#itemPickerModal').modal('show');
+      // case 2: no items selected -> modal with tomSelect
+      else {
+        const itemSelectModalEl = document.getElementById('itemSelectModal') as HTMLSelectElement & { tomselect?: TomSelect };
+        const categorySelectModalEl = document.getElementById('categorySelectModal') as HTMLSelectElement;
 
-      const confirmBtn = document.getElementById('confirmItemSelection') as HTMLButtonElement;
-      // not using addEventListener or else it infinite loops the confirm modal
-      confirmBtn.onclick = () => {
-        let itemIdsToPost: string[] = [];
+        // init TomSelect if not already
+        if (!itemSelectModalEl.tomselect) {
+          manualSelect = new TomSelect(itemSelectModalEl, { ...sharedTomSelectOptions });
 
-        if (selectedItemIds.length > 0) {
-          const checkedInputs = body.querySelectorAll<HTMLInputElement>('input[type="checkbox"]:checked');
-          itemIdsToPost = Array.from(checkedInputs).map(cb => cb.value);
+          categorySelectModalEl.addEventListener('change', () => {
+            const selectedCategory = categorySelectModalEl.value;
+            filterOptionsByCategory(itemSelectModalEl, selectedCategory);
+          });
         } else {
-          itemIdsToPost = manualSelect?.items || [];
+          manualSelect = itemSelectModalEl.tomselect;
         }
 
-        if (itemIdsToPost.length === 0) {
-          alert('Please select at least one item to book.');
-          return;
-        }
+        $('#itemPickerSelectModal').modal('show');
 
-        const postParams = {
-          start: info.startStr,
-          end: info.endStr,
-        };
-
-        Promise.all(
-          itemIdsToPost.map(itemId =>
-            ApiC.post(`events/${itemId}`, postParams),
-          ),
-        ).then(() => {
-          calendar.refetchEvents();
-          // refresh item with its title by triggering unselect (see #5265)
-          calendar.unselect();
-          $('#itemPickerModal').modal('hide');
-        }).catch(() => {
-          calendar.unselect();
-          $('#itemPickerModal').modal('hide');
-        });
-      };
+        // confirm handler uses selected TomSelect items
+        handleConfirm('confirmItemSelect', () => manualSelect?.items || []);
+      }
     },
     // on click activate modal window
     eventClick: function(info): void {

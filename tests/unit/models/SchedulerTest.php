@@ -18,6 +18,7 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
+use Symfony\Component\HttpFoundation\InputBag;
 
 class SchedulerTest extends \PHPUnit\Framework\TestCase
 {
@@ -143,6 +144,40 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(1, $eventsAfterGrant, 'User 2 should now see the event.');
         // title of events is formatted [untitled] title (user fullname)
         $this->assertEquals('[Untitled] Bookable only by user 1 (Toto Le sysadmin)', $eventsAfterGrant[0]['title']);
+    }
+
+    public function testReadAllWithFilters(): void
+    {
+        $categoryId = 4;
+        $User = new Users(1, 1);
+        $Items = new Items($User);
+        $itemId = $Items->postAction(Action::Create, array('category_id' => $categoryId));
+        $Items->setId($itemId);
+        $Scheduler = new Scheduler($Items);
+
+        $title = 'The filtered event';
+        $Scheduler->postAction(Action::Create, array('start' => $this->start, 'end' => $this->end, 'title' => $title));
+
+        // Filtering by item id
+        $q = $this->Scheduler->getQueryParams(new InputBag(array('items' => array($Items->id))));
+        $allEvents = $this->Scheduler->readAll();
+        $filteredEvent = $this->Scheduler->readAll($q);
+
+        $this->assertNotEmpty($allEvents);
+        $this->assertCount(1, $filteredEvent);
+        $this->assertEquals($title, $filteredEvent[0]['title_only']);
+        $this->assertEquals($Items->id, $filteredEvent[0]['items_id'], 'Item ID should match the filtered item');
+
+        // Filtering by category
+        $titleItem2 = 'New Item in category 4';
+        $Scheduler->postAction(Action::Create, array('start' => $this->start, 'end' => $this->end, 'title' => $titleItem2));
+
+        $qCat = $this->Scheduler->getQueryParams(new InputBag(array('cat' => $categoryId)));
+        $filteredCatEvents = $this->Scheduler->readAll($qCat);
+        // two events in category 4 now
+        $this->assertCount(2, $filteredCatEvents);
+        $this->assertEquals($title, $filteredCatEvents[0]['title_only']);
+        $this->assertEquals($titleItem2, $filteredCatEvents[1]['title_only']);
     }
 
     public function testPatchEpoch(): Scheduler

@@ -96,6 +96,7 @@
     "sass-loader": "^16.0.5",
     "stylelint": "^16.20.0",
     "stylelint-config-sass-guidelines": "^12.1.0",
+    "stylelint-order": "^7.0.0",
     "webpack-bundle-analyzer": "^4.10.2"
   },
   "scripts": {

@@ -5954,6 +5954,7 @@ __metadata:
     sass-loader: "npm:^16.0.5"
     stylelint: "npm:^16.20.0"
     stylelint-config-sass-guidelines: "npm:^12.1.0"
+    stylelint-order: "npm:^7.0.0"
     terser-webpack-plugin: "npm:^5.3.14"
     tinymce: "npm:^6.8.6"
     tom-select: "npm:^2.4.3"
@@ -10442,6 +10443,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"postcss-sorting@npm:^9.1.0":
+  version: 9.1.0
+  resolution: "postcss-sorting@npm:9.1.0"
+  peerDependencies:
+    postcss: ^8.4.20
+  checksum: 10c0/1faea84bf00d85929228d297587798fa9c384a02966a28a942777b2de553a8186087cfdcd0aca3dd40e4b2793aee050792d807458db8cf4880867c98c7bf22fd
+  languageName: node
+  linkType: hard
+
 "postcss-svgo@npm:^7.0.2":
   version: 7.0.2
   resolution: "postcss-svgo@npm:7.0.2"
@@ -12201,6 +12211,18 @@ __metadata:
     postcss: ^8.4.21
     stylelint: ^16.1.0
   checksum: 10c0/622428cae45e2a8d51111ecf3e9eaec5a371735c39634f02a388fc0d3de37774faf48c8954494c3a9b5b10f6fa6630dc41828fa8dc10248750b9ae2eed8b0cd5
+  languageName: node
+  linkType: hard
+
+"stylelint-order@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "stylelint-order@npm:7.0.0"
+  dependencies:
+    postcss: "npm:^8.5.3"
+    postcss-sorting: "npm:^9.1.0"
+  peerDependencies:
+    stylelint: ^16.18.0
+  checksum: 10c0/202ea7f0ce44b272f0ee8745383e347520663ef3defb9478c2dae8f33378950e32138815d038228db49383cab7b111148b9b9521e409311a91047cfc4740d507
   languageName: node
   linkType: hard
 

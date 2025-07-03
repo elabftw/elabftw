@@ -83,23 +83,23 @@
 /* OVERLAY notifications animation */
 @keyframes slideInOut {
   0% {
-    transform: translateX(-100%);
     opacity: 0;
+    transform: translateX(-100%);
   }
 
   10% {
-    transform: translateX(0);
     opacity: 0.9;
+    transform: translateX(0);
   }
 
   90% {
-    transform: translateX(0);
     opacity: 0.9;
+    transform: translateX(0);
   }
 
   100% {
-    transform: translateX(-100%);
     opacity: 0;
+    transform: translateX(-100%);
   }
 }
 
@@ -111,11 +111,11 @@
 }
 
 .spinner {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-top-color: rgba(255, 255, 255, 0.9);
-  border-radius: 50%;
   animation: spin 0.6s linear infinite;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  border-top-color: rgba(255, 255, 255, 0.9);
+  display: inline-block;
+  height: 16px;
+  width: 16px;
 }

@@ -120,54 +120,20 @@
   </div>
 </div>
 
-<div id='selectBookableWarningDiv' hidden>{{ 'Select a resource below in order to book it.'|trans }}</div>
+  <div>{{ 'Book a resource by clicking on the scheduler.'|trans }}</div>
   <hr>
 
   {# FILTERS #}
   <div class='d-flex flex-row justify-content-between flex-wrap'>
     {# LEFT PART: filter resources #}
-    <div class='flex-row align-items-center'>
+    <div class='flex-row align-items-center' style='max-width:50%;'>
       <p class='smallgray'>{{ 'Select a scope and search bookable resources.'|trans }}</p>
       <div class='d-flex flex-row'>
         {#  TODO: make scopeBtn work without full page reload #}
         {# RESOURCES SCOPE #}
         {% include 'scope-button.html' with {'reload': 'page', 'target': 'scope_items', 'isSecondary': 0, 'isSmall': 0} %}
-        {# FILTER BY CATEGORY #}
-        {% if App.Config.configArr.debug -%}
-          <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
-        {%- endif %}
-        <select
-          aria-label='{{ 'Filter by category'|trans }}'
-          class='ml-2 form-control ts-filter form-inline'
-          id='schedulerSelectCat'
-          name='cat'
-        >
-          <option value=''>{{ 'Filter by category'|trans }}</option>
-          {% for category in bookableItemsTypes %}
-            <option value='{{ category.id }}'{{- App.Request.query.get('cat') == category.id ? ' selected' -}}>
-              {{ category.team_name }} - {{ category.title }}
-            </option>
-          {% endfor %}
-        </select>
-
-        {# FILTER BY RESOURCE #}
-        {% if App.Config.configArr.debug -%}
-          <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
-        {%- endif %}
-        <select
-          aria-label='{{ 'Select a resource'|trans }}'
-          class='ml-2 form-control ts-filter form-inline'
-          id='itemSelect'
-          name='item'
-        >
-          <option value=''>{{ 'Select a resource'|trans }}</option>
-          {% for item in itemsArr %}
-            {# data-color is used to set the background during initial drag #}
-            <option data-color='{{ item.category_color }}' value='{{ item.id }}'{{- App.Request.query.get('item') == item.id ? ' selected' -}}>
-              {{ item.category_title }} - {{ item.title }}
-            </option>
-          {% endfor %}
-        </select>
+        {# FILTERS GROUP CATEGORY AND RESOURCE #}
+        {% include 'scheduler-filter-items.html' %}
       </div>
     </div>
 
@@ -177,13 +143,10 @@
       <div class='d-flex flex-row'>
         {# EVENTS SCOPE #}
         {# If an item is selected, it's forced to 'Everything' and disabled #}
-        {% if App.Request.query.getInt('item') > 0 %}
-          <div class='btn-group'>
-            <button disabled class='btn dropdown-toggle' type='button' aria-label='Scope' title='Scope'><i class='fas fa-globe fa-fw mr-1'></i></button>
-          </div>
-        {% else %}
-          {% include 'scope-button.html' with {'btnId': 'scopeEventBtn', 'reload': 'page', 'target': 'scope_events', 'isSecondary': 0, 'isSmall': 0} %}
-        {% endif %}
+        <div id='scopeLocked' class='btn-group' hidden>
+          <button disabled class='btn dropdown-toggle' type='button' aria-label='Scope' title='Scope'><i class='fas fa-globe fa-fw mr-1'></i></button>
+        </div>
+        {% include 'scope-button.html' with {'btnId': 'scopeEventBtn', 'reload': 'page', 'target': 'scope_events', 'isSecondary': 0, 'isSmall': 0} %}
         <div class='input-group ml-2'>
           {#  FILTER BY OWNER #}
           <input type='text' aria-label='{{ 'Filter owner'|trans }}' placeholder='{{ 'Filter events by owner'|trans }}' id='eventOwnerSelect' class='form-control' data-identifier='eventOwnerSelect' data-complete-target='users'>
@@ -203,20 +166,53 @@
       </a>
     </div>
   </div>
+  <div id='selectedItemsContainer' class='mt-2 d-none'>
+    <strong class='d-block mb-1'>{{ 'Selected items:'|trans }}</strong>
+    <div id='selectedItemsDisplay' class='d-flex flex-wrap gap-2'></div>
+  </div>
 
   <hr>
 
-{% if bookableItemData %}
-  <div id='schedulerResourceDisplay' class='title d-flex justify-content-center'>
-    {{ 'Selected resource:'|trans }}
-    <a href='database.php?mode=view&amp;id={{ bookableItemData.id }}' class='d-inline-flex align-items-center text-decoration-none hl-hover-gray ml-2'>
-      <span class='catstat-btn category-btn mr-2' style='--bg: #{{ bookableItemData.category_color }}'>
-        {{ bookableItemData.category_title }}
-      </span>
-      <span class='text-info font-weight-bold'>{{ bookableItemData.title }}</span>
-    </a>
+  <div class='modal fade' id='itemPickerSelectModal' tabindex='-1' aria-labelledby='itemPickerSelectLabel'>
+    <div class='modal-dialog modal-lg modal-dialog-centered'>
+      <div class='modal-content'>
+        <div class='modal-header'>
+          <h5 class='modal-title' id='itemPickerSelectLabel'>{{ 'Book item'|trans }}</h5>
+          <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+            <span aria-hidden='true'>&times;</span>
+          </button>
+        </div>
+        <div class='modal-body mr-2'>
+          {% include 'scheduler-filter-items.html' with {'categorySelectId': 'categorySelectModal', 'itemSelectId': 'itemSelectModal'} %}
+        </div>
+        <div class='modal-footer'>
+          <button type='button' class='btn btn-primary' id='confirmItemSelect'>{{ 'Create event(s)'|trans }}</button>
+        </div>
+      </div>
+    </div>
   </div>
-{% endif %}
+
+  {# When items have been selected: modal with checkboxes #}
+  <div class='modal fade' id='itemPickerReviewModal' tabindex='-1' aria-labelledby='itemPickerReviewLabel'>
+    <div class='modal-dialog modal-lg modal-dialog-centered'>
+      <div class='modal-content'>
+        <div class='modal-header'>
+          <h5 class='modal-title' id='itemPickerReviewLabel'>{{ 'Review selected items'|trans }}</h5>
+          <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+            <span aria-hidden='true'>&times;</span>
+          </button>
+        </div>
+        <div class='modal-body'>
+          <div id="selectedItemsCheckboxes">
+            {# filled dynamically in JS #}
+          </div>
+        </div>
+        <div class='modal-footer'>
+          <button type='button' class='btn btn-primary' id='confirmItemReview'>{{ 'Create event(s)'|trans }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
 {% if itemsArr|length == 0 %}
   {{ 'No bookable items.'|trans|msg('warning', false) }}
 {% else %}

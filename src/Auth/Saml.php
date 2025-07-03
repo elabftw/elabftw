@@ -143,7 +143,7 @@ final class Saml implements AuthInterface
         if (!empty($errors)) {
             $error = Tools::error();
             // get more verbose if debug mode is active
-            if ($this->configArr['debug']) {
+            if ($this->configArr['saml_debug']) {
                 $error = implode(', ', $errors);
             }
             throw new UnauthorizedException($error);

@@ -59,7 +59,7 @@ class SamlTest extends \PHPUnit\Framework\TestCase
         ));
 
         $this->configArr = array(
-            'debug' => '0',
+            'saml_debug' => '0',
             'saml_sync_teams' => '0',
             'saml_team_default' => '2',
             'saml_user_default' => '0',
@@ -489,7 +489,7 @@ class SamlTest extends \PHPUnit\Framework\TestCase
         $this->SamlAuthLib = $this->createMock(SamlAuthLib::class);
         $this->SamlAuthLib->method('getErrors')->willReturn(array('Error' => 'Something went wrong!'));
         $configArr = $this->configArr;
-        $configArr['debug'] = '1';
+        $configArr['saml_debug'] = '1';
         $AuthService = new SamlAuth($this->SamlAuthLib, $configArr, $this->settings);
         $this->expectException(UnauthorizedException::class);
         $AuthService->assertIdpResponse();

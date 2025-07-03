@@ -403,6 +403,10 @@ button:disabled {
 }
 
 #body_view {
+  /* https://developer.mozilla.org/en-US/docs/Web/CSS/contain */
+  /* we cannot apply strict here */
+  contain: content;
+
   img {
     max-height: 100%;
     max-width: 100%;

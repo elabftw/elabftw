@@ -141,7 +141,7 @@ final class Scheduler extends AbstractRest
     {
         // prepare filters for the scheduler view
         if ($queryParams !== null) {
-            $this->appendFilterSql(column: 'items.category', paramName: 'category', value: $queryParams->getQuery()->getInt('cat'));
+            $this->appendFilterSql(column: 'items.category', paramName: 'category', value: $queryParams->getQuery()->getInt('category'));
             $this->appendFilterSql(column: 'team_events.userid', paramName: 'ownerid', value: $queryParams->getQuery()->getInt('eventOwner'));
             // handle multiple items
             $itemParams = $queryParams->getQuery()->all('items');

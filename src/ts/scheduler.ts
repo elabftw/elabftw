@@ -90,16 +90,16 @@ document.addEventListener('DOMContentLoaded', () => {
     ? 'timelineDay,timelineWeek,listWeek,timelineMonth' // horizontal axis
     : 'timeGridDay,timeGridWeek,listWeek,dayGridMonth'; // classic grid calendar
 
-  // clean up 'cat' parameter on page refresh or else it keeps it as the only available value in the Select
-  if (params.has('cat')) {
-    params.delete('cat');
+  // clean up 'category' parameter on page refresh or else it keeps it as the only available value in the Select
+  if (params.has('category')) {
+    params.delete('category');
     window.location.replace(`${location.pathname}?${params.toString()}`);
   }
 
   initTomSelect();
   // remove existing params to build new event sources for the calendar
   function buildEventSourcesUrl(): string {
-    ['items[]', 'cat', 'eventOwner'].forEach((param) => params.delete(param));
+    ['items[]', 'category', 'eventOwner'].forEach((param) => params.delete(param));
     const itemSelect = document.getElementById('itemSelect') as HTMLSelectElement & { tomselect?: TomSelect };
     const categorySelect = document.getElementById('categorySelect') as HTMLSelectElement;
     const ownerInput = document.getElementById('eventOwnerSelect') as HTMLInputElement;
@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
     if (categorySelect?.value) {
-      params.set('cat', categorySelect.value);
+      params.set('category', categorySelect.value);
     }
     if (ownerInput?.value.trim()) {
       const ownerId = ownerInput.value.trim().split(' ')[0];
@@ -197,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const itemSelectEl = document.getElementById('itemSelect') as HTMLSelectElement & { tomselect?: TomSelect };
       const selectedItemIds: string[] = itemSelectEl.tomselect?.items || [];
 
-      const body = document.getElementById('itemPickerBody')!;
+      const body = document.getElementById('modalBody')!;
       body.innerHTML = ''; // Reset modal body
 
       let manualSelect: TomSelect | null = null;
@@ -324,12 +324,12 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     // on mouse enter add shadow and show title
     eventMouseEnter: function(info): void {
-      info.el.style.boxShadow = '5px 4px 4px #474747';
+      info.el.classList.add('calendar-event-hover');
       info.el.title = info.event.title;
     },
     // remove the box shadow when mouse leaves
     eventMouseLeave: function(info): void {
-      info.el.style.boxShadow = 'unset';
+      info.el.classList.remove('calendar-event-hover');
     },
     // a drop means we change start date
     eventDrop: function(info): void {

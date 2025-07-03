@@ -160,7 +160,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $titleItem2 = 'New Item in category 4';
         $Scheduler->postAction(Action::Create, array('start' => $this->start, 'end' => $this->end, 'title' => $titleItem2));
 
-        $qCat = $this->Scheduler->getQueryParams(new InputBag(array('cat' => $categoryId)));
+        $qCat = $this->Scheduler->getQueryParams(new InputBag(array('category' => $categoryId)));
         $filteredCatEvents = $this->Scheduler->readAll($qCat);
         // two events in category 4 now
         $this->assertCount(2, $filteredCatEvents);

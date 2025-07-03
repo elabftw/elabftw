@@ -44,6 +44,8 @@
   }
 
   &.multi {
+    position: relative;
+
     .ts-control {
       flex-wrap: nowrap;
       overflow-x: auto;
@@ -62,9 +64,12 @@
         border-radius: 2px;
       }
 
-      // padding is not possible like with tags so apply a background to make it visible
       .clear-button {
-        background-color: $white !important;
+        position: sticky;
+        right: -2rem;
+        // top attribute not applying
+        transform: translateY(0);
+        background: $white !important;
       }
     }
   }

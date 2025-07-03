@@ -146,9 +146,7 @@ final class Scheduler extends AbstractRest
             // handle multiple items
             $itemParams = $queryParams->getQuery()->all('items');
             $ids = array_filter(array_map('intval', $itemParams)); // force numeric IDs
-            if ($ids) {
-                $this->appendItemsIdsToSql($ids);
-            };
+            $this->appendItemsIdsToSql($ids);
         }
         // apply scope for events
         $itemParams = $queryParams?->getQuery()->all('items');
@@ -272,6 +270,9 @@ final class Scheduler extends AbstractRest
 
     private function appendItemsIdsToSql(array $itemsIds): void
     {
+        if (empty($itemsIds)) {
+            return;
+        }
         $placeholders = array();
         foreach ($itemsIds as $index => $id) {
             $key = "itemid$index";

@@ -447,9 +447,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const display = document.getElementById('selectedItemsDisplay')!;
         display.innerHTML = '';
 
+        const url = new URL(window.location.href);
+        url.searchParams.delete('items[]');
+        params.delete('items[]');
+
         if (selectedItems.length === 0) {
           // not hidden attribute because we play with the wrap
           container.classList.add('d-none');
+          window.history.replaceState({}, '', url.toString());
+          reloadCalendarEvents();
           return;
         }
         container.classList.remove('d-none');
@@ -468,17 +474,11 @@ document.addEventListener('DOMContentLoaded', () => {
           badge.style.color = 'white';
 
           display.appendChild(badge);
+
+          url.searchParams.append('items[]', id);
+          params.append('items[]', id);
         });
 
-        const url = new URL(window.location.href);
-        url.searchParams.delete('items[]');
-        selectedItems.forEach(itemId => {
-          url.searchParams.append('items[]', itemId);
-          params.append('items[]', itemId);
-        });
-        if (selectedItems.length === 0) {
-          url.searchParams.delete('items[]');
-        }
         window.history.replaceState({}, '', url.toString());
         reloadCalendarEvents();
       },

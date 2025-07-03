@@ -48,11 +48,11 @@
 
     .ts-control {
       flex-wrap: nowrap;
-      overflow-x: auto;
+      gap: 4px;
       max-width: 400px;
       min-height: 38px;
+      overflow-x: auto;
       padding: 4px 8px;
-      gap: 4px;
       scrollbar-width: thin;
 
       &::-webkit-scrollbar {
@@ -65,11 +65,11 @@
       }
 
       .clear-button {
+        background: $white !important;
         position: sticky;
         right: -2rem;
         // top attribute not applying
         transform: translateY(0);
-        background: $white !important;
       }
     }
   }
@@ -105,11 +105,11 @@
 
 .selected-item-badge {
   border-radius: 999px;
-  padding: 4px 10px;
-  margin: 0 6px 6px 0;
   color: $white;
+  display: inline-block;
   font-size: 0.875rem;
   font-weight: 500;
+  margin: 0 6px 6px 0;
+  padding: 4px 10px;
   text-decoration: none;
-  display: inline-block;
 }

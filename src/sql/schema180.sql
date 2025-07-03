@@ -1,6 +1,89 @@
 -- schema 180
-ALTER TABLE `users2teams` DROP FOREIGN KEY `fk_users2teams_groups_id`;
-ALTER TABLE `users2teams` DROP INDEX `fk_users2teams_groups_id`;
+-- DROP FOREIGN KEY PROCEDURE
+DROP PROCEDURE IF EXISTS `DropFK`;
+CREATE PROCEDURE `DropFK`(
+    IN tblName  VARCHAR(64),
+    IN fkName   VARCHAR(64)
+)
+MODIFIES SQL DATA
+BEGIN
+  IF EXISTS (
+    SELECT 1
+      FROM information_schema.TABLE_CONSTRAINTS
+     WHERE CONSTRAINT_SCHEMA = DATABASE()
+       AND TABLE_NAME        = tblName
+       AND CONSTRAINT_NAME   = fkName
+       AND CONSTRAINT_TYPE   = 'FOREIGN KEY'
+  ) THEN
+    SET @ddl = CONCAT(
+      'ALTER TABLE `', tblName,
+      '` DROP FOREIGN KEY `', fkName, '`'
+    ); /**/
+    PREPARE stmt FROM @ddl; /**/
+    EXECUTE stmt; /**/
+    DEALLOCATE PREPARE stmt; /**/
+  END IF; /**/
+END;
+-- END DROP FOREIGN KEY PROCEDURE
+
+-- DROP INDEX PROCEDURE
+DROP PROCEDURE IF EXISTS `DropIdx`;
+CREATE PROCEDURE `DropIdx`(
+    IN tblName  VARCHAR(64),
+    IN IdxName   VARCHAR(64)
+)
+MODIFIES SQL DATA
+BEGIN
+  IF EXISTS (
+    SELECT 1
+      FROM information_schema.TABLE_CONSTRAINTS
+     WHERE CONSTRAINT_SCHEMA = DATABASE()
+       AND TABLE_NAME        = tblName
+       AND CONSTRAINT_NAME   = IdxName
+       AND CONSTRAINT_TYPE   = 'INDEX'
+  ) THEN
+    SET @ddl = CONCAT(
+      'ALTER TABLE `', tblName,
+      '` DROP INDEX`', fkName, '`'
+    ); /**/
+    PREPARE stmt FROM @ddl; /**/
+    EXECUTE stmt; /**/
+    DEALLOCATE PREPARE stmt; /**/
+  END IF; /**/
+END;
+-- END DROP INDEX PROCEDURE
+
+-- DROP COLUMN PROCEDURE
+-- remove old proc if present
+DROP PROCEDURE IF EXISTS `DropColumn`;
+
+-- create the new proc
+CREATE PROCEDURE `DropColumn`(
+    IN tblName  VARCHAR(64),
+    IN colName  VARCHAR(64)
+)
+MODIFIES SQL DATA
+BEGIN
+  -- only run if the column actually exists in this schema
+  IF EXISTS (
+    SELECT 1
+      FROM information_schema.COLUMNS
+     WHERE TABLE_SCHEMA = DATABASE()
+       AND TABLE_NAME   = tblName
+       AND COLUMN_NAME  = colName
+  ) THEN
+    SET @ddl = CONCAT(
+      'ALTER TABLE `', tblName,
+      '` DROP COLUMN `', colName, '`'
+    ); /**/
+    PREPARE stmt FROM @ddl; /**/
+    EXECUTE stmt; /**/
+    DEALLOCATE PREPARE stmt; /**/
+  END IF; /**/
+END;
+
+CALL DropFK('users2teams', 'fk_users2teams_groups_id');
+CALL DropIdx('users2teams', 'fk_users2teams_groups_id');
 
 -- 1) Convert existing values: 2 → 1, 4 → 0
 UPDATE users2teams SET groups_id = IF(groups_id = 2, 1, 0);
@@ -9,6 +92,9 @@ UPDATE users2teams SET groups_id = IF(groups_id = 2, 1, 0);
 ALTER TABLE users2teams CHANGE COLUMN groups_id is_admin TINYINT(1) UNSIGNED NOT NULL DEFAULT 0;
 ALTER TABLE users2teams ADD COLUMN is_archived TINYINT(1) UNSIGNED NOT NULL DEFAULT 0;
 UPDATE users2teams ut JOIN users u ON ut.users_id = u.userid SET ut.is_archived = 1 WHERE u.archived = 1;
+-- this FK might still exist in older instances
+CALL DropFK('users', 'fk_users_groups_id');
+CALL DropColumn('users', 'usergroup_old');
 -- maybe do that in next version ALTER TABLE users DROP COLUMN archived;
 DROP TABLE `groups`;
 -- add team settings for status/categories
@@ -16,3 +102,5 @@ ALTER TABLE teams ADD COLUMN users_canwrite_experiments_categories TINYINT(1) UN
 ALTER TABLE teams ADD COLUMN users_canwrite_experiments_status TINYINT(1) UNSIGNED NOT NULL DEFAULT 1;
 ALTER TABLE teams ADD COLUMN users_canwrite_resources_categories TINYINT(1) UNSIGNED NOT NULL DEFAULT 1;
 ALTER TABLE teams ADD COLUMN users_canwrite_resources_status TINYINT(1) UNSIGNED NOT NULL DEFAULT 1;
+-- also remove that old column
+CALL DropColumn('items_types', 'bookable_old');

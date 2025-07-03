@@ -10,7 +10,7 @@ describe('Test links', () => {
     // link to an experiment
     cy.get('#addLinkExpInput').type('Synthesis');
     cy.get('.ui-menu-item-wrapper').first().click();
-    cy.get('#addLinkExpInput').type('{enter}');
+    cy.get('button[aria-label="Add experiment link"]').click();
     cy.get('#experimentsLinksDiv').should('contain.text', 'Synthesis');
     cy.intercept('DELETE', '/api/v2/**').as('delete');
     cy.get('[data-action="destroy-link"]').first().click();
@@ -18,14 +18,12 @@ describe('Test links', () => {
     //cy.get('#experimentsLinksDiv').should('not.contain.text', 'Synthesis and Characterization');
 
     // link to a resource
-    /*
     cy.get('#addLinkItemsInput').type('Ammonia');
-    cy.get('.ui-menu-item-wrapper').click();
-    cy.get('#addLinkExpInput').type('{enter}');
+    cy.get('.ui-menu-item-wrapper').contains('Ammonia').click();
+    cy.get('button[aria-label="Add item link"]').click();
     cy.get('#itemsLinksDiv').should('contain.text', 'Ammonia - NH3');
     cy.intercept('DELETE', '/api/v2/**').as('delete');
     cy.get('[data-action="destroy-link"]').first().click();
     cy.wait('@delete').its('response.statusCode').should('eq', 204);
-   */
   });
 });

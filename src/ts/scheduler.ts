@@ -184,8 +184,9 @@ document.addEventListener('DOMContentLoaded', () => {
     firstDay: 1,
     // remove possibility to book whole day, might add it later
     allDaySlot: false,
-    // adjust the background color of event to the color of the item type
-    eventBackgroundColor: '#a9a9a9',
+    // background color is $secondlevel for all and it changes after validation of event
+    // TODO maybe we could have an automatically generated .ts file exporting colors from _variables.scss
+    eventBackgroundColor: '#bdbdbd',
     // selection
     select: function(info): void {
       const itemSelectEl = document.getElementById('itemSelect') as HTMLSelectElement & { tomselect?: TomSelect };
@@ -431,7 +432,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const categorySelect = document.getElementById('categorySelect') as HTMLSelectElement;
 
     const urlParams = new URLSearchParams(window.location.search);
-    // load items on page load (e.g coming from Resource view page)
+    // load items on page load (e.g. coming from Resource view page)
     const selectedItems = urlParams.getAll('items[]');
 
     const itemTs = new TomSelect(itemSelect, {

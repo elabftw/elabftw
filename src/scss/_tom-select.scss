@@ -102,3 +102,14 @@
 #metavalue {
   height: auto;
 }
+
+.selected-item-badge {
+  border-radius: 999px;
+  padding: 4px 10px;
+  margin: 0 6px 6px 0;
+  color: $white;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  display: inline-block;
+}

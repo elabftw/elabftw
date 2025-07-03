@@ -11,7 +11,7 @@
   <select id='{{ itemSelectId|default("itemSelect") }}' name='items[]' aria-label='{{ "Select a resource"|trans }}' class='form-control form-inline'>
     <option value=''>{{ "Select a resource"|trans }}</option>
     {% for item in itemsArr %}
-      <option value='{{ item.id }}' data-category='{{ item.category }}'>
+      <option value='{{ item.id }}' data-category='{{ item.category }}' data-color="{{ item.category_color }}">
         {{ item.category_title }} - {{ item.title }}
       </option>
     {% endfor %}

@@ -126,7 +126,7 @@
   {# FILTERS #}
   <div class='d-flex flex-row justify-content-between flex-wrap'>
     {# LEFT PART: filter resources #}
-    <div class='flex-row align-items-center' style="max-width:50%;">
+    <div class='flex-row align-items-center' style='max-width:50%;'>
       <p class='smallgray'>{{ 'Select a scope and search bookable resources.'|trans }}</p>
       <div class='d-flex flex-row'>
         {#  TODO: make scopeBtn work without full page reload #}
@@ -166,6 +166,10 @@
       </a>
     </div>
   </div>
+  <div id='selectedItemsContainer' class='mt-2 d-none'>
+    <strong class='d-block mb-1'>{{ 'Selected items:'|trans }}</strong>
+    <div id='selectedItemsDisplay' class='d-flex flex-wrap gap-2'></div>
+  </div>
 
   <hr>
 
@@ -199,8 +203,8 @@
           </button>
         </div>
         <div class='modal-body'>
-          <div id='selectedItemsContainer'>
-            {# Filled by JS: checkboxes for each selected item #}
+          <div id="selectedItemsCheckboxes">
+            {# filled dynamically in JS #}
           </div>
         </div>
         <div class='modal-footer'>

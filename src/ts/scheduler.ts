@@ -230,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // case 1: Already selected items -> checkboxes with selected
       if (selectedItemIds.length > 0) {
-        const container = document.getElementById('selectedItemsContainer')!;
+        const container = document.getElementById('selectedItemsCheckboxes')!;
         container.innerHTML = '';
 
         selectedItemIds.forEach(itemId => {
@@ -442,6 +442,33 @@ document.addEventListener('DOMContentLoaded', () => {
       ...sharedTomSelectOptions,
       onChange: (selectedItems) => {
         lockScopeButton(selectedItems);
+
+        const container = document.getElementById('selectedItemsContainer')!;
+        const display = document.getElementById('selectedItemsDisplay')!;
+        display.innerHTML = '';
+
+        if (selectedItems.length === 0) {
+          // not hidden attribute because we play with the wrap
+          container.classList.add('d-none');
+          return;
+        }
+        container.classList.remove('d-none');
+
+        selectedItems.forEach(id => {
+          const opt = itemSelect.querySelector(`option[value="${id}"]`) as HTMLOptionElement;
+          if (!opt) return;
+
+          const badge = document.createElement('a');
+          badge.href = `/database.php?mode=view&id=${id}`;
+          badge.target='_blank';
+          badge.textContent = opt.textContent;
+          badge.className = 'selected-item-badge';
+          const rawColor = opt.dataset.color;
+          badge.style.backgroundColor = rawColor?.startsWith('#') ? rawColor : `#${rawColor || '000'}`;
+          badge.style.color = 'white';
+
+          display.appendChild(badge);
+        });
 
         const url = new URL(window.location.href);
         url.searchParams.delete('items[]');

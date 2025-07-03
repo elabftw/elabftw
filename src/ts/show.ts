@@ -613,10 +613,6 @@ document.addEventListener('DOMContentLoaded', () => {
       reloadEntitiesShow();
     },
     plugins: {
-      checkbox_options: {
-        checkedClassNames: ['ts-checked'],
-        uncheckedClassNames: ['ts-unchecked'],
-      },
       clear_button: {},
       dropdown_input: {},
       no_active_items: {},

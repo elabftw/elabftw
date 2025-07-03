@@ -259,6 +259,7 @@ export function getTinymceBaseConfig(page: string): object {
     paste_preprocess: function(plugin, args) {
       args.content = args.content.replaceAll('bgcolor="', 'style="background-color:');
     },
+    // also add it to Filter.php in Attr.AllowedClasses
     codesample_languages: [
       {text: 'Bash', value: 'bash'},
       {text: 'C', value: 'c'},

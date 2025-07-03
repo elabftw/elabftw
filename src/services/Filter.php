@@ -213,22 +213,52 @@ final class Filter
         $config->set('Cache.SerializerPath', $tmpDir);
         // allow "display" attribute for centering images
         $config->set('CSS.AllowTricky', true);
-        $config->set('Attr.AllowedClasses', array());
+        $config->set('Attr.AllowedClasses', array(
+            'language-bash',
+            'language-c',
+            'language-cpp',
+            'language-css',
+            'language-diff',
+            'language-fortran',
+            'language-go',
+            'language-igor',
+            'language-java',
+            'language-javascript',
+            'language-json',
+            'language-julia',
+            'language-latex',
+            'language-lua',
+            'language-makefile',
+            'language-matlab',
+            'language-perl',
+            'language-python',
+            'language-r',
+            'language-ruby',
+            'language-rust',
+            'language-sql',
+            'language-tcl',
+            'language-vhdl',
+            'language-yaml',
+        ));
         $config->set('CSS.AllowedProperties', array(
-            'background-color' => true,
-            'border' => true,
-            'border-color' => true,
-            'color' => true,
-            'display' => true, // see #3368
-            'font-family' => true,
-            'height' => true,
-            'line-height' => true,
-            'margin-left' => true,
-            'margin-right' => true,
-            'min-width' => true,
-            'text-align' => true,
-            'text-decoration' => true,
-            'width' => true,
+            'background-color',
+            'border',
+            'border-color',
+            'color',
+            'display', // see #3368
+            'font-family',
+            'height',
+            'hyphens',
+            'line-height',
+            'margin-left',
+            'margin-right',
+            'min-width',
+            'text-align',
+            'text-decoration',
+            'word-break',
+            'word-spacing',
+            'width',
+            'white-space',
         ));
         // allow any image size, see #3800
         $config->set('CSS.MaxImgLength', null);

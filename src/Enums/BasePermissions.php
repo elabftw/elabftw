@@ -23,11 +23,11 @@ enum BasePermissions: int
     public function toHuman(): string
     {
         return match ($this) {
-            $this::Full => _('Everyone including anonymous users'),
-            $this::Organization => _('Everyone with an account'),
-            $this::Team => _('Only members of the team'),
-            $this::User => _('Only owner and admins'),
-            $this::UserOnly => _('Only owner'),
+            self::Full => _('Everyone including anonymous users'),
+            self::Organization => _('Everyone with an account'),
+            self::Team => _('Only members of the team'),
+            self::User => _('Only owner and admins'),
+            self::UserOnly => _('Only owner'),
         };
     }
 

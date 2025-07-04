@@ -98,8 +98,6 @@
     <p class='smallgray'>{{ 'If you are behind a firewall/proxy, enter the address here. Example: http://proxy.example.com:3128'|trans }}</p>
     <hr>
 
-    {% include 'binary-setting.html' with {'label': 'Allow the base permission setting «Only owner»'|trans, 'slug': 'allow_useronly'} %}
-
     <div class='d-flex justify-content-between'>
       <label for='max_revisions' class='col-form-label'>{{ 'Maximum number of stored revisions per entry'|trans }}</label>
       <input class='form-control col-md-3' data-trigger='blur' data-model='config' data-target='max_revisions' type='number' min='0' max='999' value='{{ App.Config.configArr.max_revisions }}' id='max_revisions' />
@@ -135,6 +133,15 @@
 
     {% include 'binary-setting.html' with {'label': 'Allow users to change their first name, last name, or email address'|trans, 'slug': 'allow_users_change_identity', 'help': 'When disabled, only a Sysadmin will be allowed to modify these parameters.'} %}
 
+  </div>
+
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Permissions settings'|trans }}</h3>
+  <div class='pl-3'>
+    {% include 'binary-setting.html' with {'label': 'Allow the base permission setting «Everyone including anonymous users»'|trans, 'slug': 'allow_full'} %}
+    {% include 'binary-setting.html' with {'label': 'Allow the base permission setting «Everyone with an account»'|trans, 'slug': 'allow_organization'} %}
+    {% include 'binary-setting.html' with {'label': 'Allow the base permission setting «Only members of the team»'|trans, 'slug': 'allow_team'} %}
+    {% include 'binary-setting.html' with {'label': 'Allow the base permission setting «Only owner and admins»'|trans, 'slug': 'allow_user'} %}
+    {% include 'binary-setting.html' with {'label': 'Allow the base permission setting «Only owner»'|trans, 'slug': 'allow_useronly'} %}
   </div>
 
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Registration and authentication configuration'|trans }}</h3>

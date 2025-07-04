@@ -43,10 +43,8 @@ class PermissionsHelperTest extends \PHPUnit\Framework\TestCase
         $permissions = $this->PermissionsHelper->getAssociativeArray();
         $this->assertArrayHasKey(BasePermissions::Team->value, $permissions);
         $this->assertArrayHasKey(BasePermissions::Full->value, $permissions);
-    }
 
-    public function testPermissionHelperCannotHaveNone(): void
-    {
+        // Must have at least one permission
         $this->Config->patch(Action::Update, array(
             'allow_team' => '0',
             'allow_user' => '0',

@@ -55,7 +55,7 @@ final class PermissionsHelper
         // add settings based on the main config
         foreach (BasePermissions::all() as $permission) {
             $key = $permission->configKey();
-            if (isset($Config->configArr[$key]) && $Config->configArr[$key] !== '0') {
+            if (isset($Config->configArr[$key]) && $Config->configArr[$key] === '1') {
                 $base[$permission->value] = $permission->toHuman();
             }
         }

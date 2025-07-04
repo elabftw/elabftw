@@ -31,6 +31,29 @@ enum BasePermissions: int
         };
     }
 
+    public function configKey(): string
+    {
+        return match ($this) {
+            self::Full => 'allow_full',
+            self::Organization => 'allow_organization',
+            self::Team => 'allow_team',
+            self::User => 'allow_user',
+            self::UserOnly => 'allow_useronly',
+        };
+    }
+
+    // a static list of all config-enabled permissions, useful for loops
+    public static function all(): array
+    {
+        return array(
+            self::Full,
+            self::Organization,
+            self::Team,
+            self::User,
+            self::UserOnly,
+        );
+    }
+
     public function toJson(): string
     {
         return sprintf('{"base": %d, "teams": [], "teamgroups": [], "users": []}', $this->value);

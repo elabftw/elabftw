@@ -137,11 +137,9 @@
 
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Permissions settings'|trans }}</h3>
   <div class='pl-3'>
-    {% include 'binary-setting.html' with {'label': 'Allow the base permission setting «Everyone including anonymous users»'|trans, 'slug': 'allow_full'} %}
-    {% include 'binary-setting.html' with {'label': 'Allow the base permission setting «Everyone with an account»'|trans, 'slug': 'allow_organization'} %}
-    {% include 'binary-setting.html' with {'label': 'Allow the base permission setting «Only members of the team»'|trans, 'slug': 'allow_team'} %}
-    {% include 'binary-setting.html' with {'label': 'Allow the base permission setting «Only owner and admins»'|trans, 'slug': 'allow_user'} %}
-    {% include 'binary-setting.html' with {'label': 'Allow the base permission setting «Only owner»'|trans, 'slug': 'allow_useronly'} %}
+    {% for perm in permissions %}
+      {% include 'binary-setting.html' with {'label': 'Allow the base permission setting «' ~ perm.toHuman|trans ~ '»', 'slug': perm.configKey} %}
+    {% endfor %}
   </div>
 
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Registration and authentication configuration'|trans }}</h3>

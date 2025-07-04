@@ -53,17 +53,10 @@ final class PermissionsHelper
         $base = array();
 
         // add settings based on the main config
-        $baseAllowed = array(
-            'allow_team' => BasePermissions::Team,
-            'allow_user' => BasePermissions::User,
-            'allow_full' => BasePermissions::Full,
-            'allow_organization' => BasePermissions::Organization,
-            'allow_useronly' => BasePermissions::UserOnly,
-        );
-
-        foreach ($baseAllowed as $configKey => $permissionEnum) {
-            if (isset($Config->configArr[$configKey]) && $Config->configArr[$configKey] !== '0') {
-                $base[$permissionEnum->value] = $permissionEnum->toHuman();
+        foreach (BasePermissions::all() as $permission) {
+            $key = $permission->configKey();
+            if (isset($Config->configArr[$key]) && $Config->configArr[$key] !== '0') {
+                $base[$permission->value] = $permission->toHuman();
             }
         }
 

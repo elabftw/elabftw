@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\TeamGroups;
@@ -48,18 +49,21 @@ final class PermissionsHelper
      */
     public function getAssociativeArray(): array
     {
-        $base = array(
-            BasePermissions::Full->value => BasePermissions::Full->toHuman(),
-            BasePermissions::Organization->value => BasePermissions::Organization->toHuman(),
-            BasePermissions::Team->value => BasePermissions::Team->toHuman(),
-            BasePermissions::User->value => BasePermissions::User->toHuman(),
-        );
-
-        // add the only me setting only if it is allowed by main config
         $Config = Config::getConfig();
-        if ($Config->configArr['allow_useronly'] === '1') {
-            $base[BasePermissions::UserOnly->value] = BasePermissions::UserOnly->toHuman();
+        $base = array();
+
+        // add settings based on the main config
+        foreach (BasePermissions::all() as $permission) {
+            $key = $permission->configKey();
+            if (isset($Config->configArr[$key]) && $Config->configArr[$key] === '1') {
+                $base[$permission->value] = $permission->toHuman();
+            }
         }
+
+        if (empty($base)) {
+            throw new IllegalActionException('At least one permission needs to be enabled in the config.');
+        }
+
         return $base;
     }
 

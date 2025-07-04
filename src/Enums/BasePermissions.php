@@ -23,12 +23,35 @@ enum BasePermissions: int
     public function toHuman(): string
     {
         return match ($this) {
-            $this::Full => _('Everyone including anonymous users'),
-            $this::Organization => _('Everyone with an account'),
-            $this::Team => _('Only members of the team'),
-            $this::User => _('Only owner and admins'),
-            $this::UserOnly => _('Only owner'),
+            self::Full => _('Everyone including anonymous users'),
+            self::Organization => _('Everyone with an account'),
+            self::Team => _('Only members of the team'),
+            self::User => _('Only owner and admins'),
+            self::UserOnly => _('Only owner'),
         };
+    }
+
+    public function configKey(): string
+    {
+        return match ($this) {
+            self::Full => 'allow_full',
+            self::Organization => 'allow_organization',
+            self::Team => 'allow_team',
+            self::User => 'allow_user',
+            self::UserOnly => 'allow_useronly',
+        };
+    }
+
+    // a static list of all config-enabled permissions, useful for loops
+    public static function all(): array
+    {
+        return array(
+            self::Full,
+            self::Organization,
+            self::Team,
+            self::User,
+            self::UserOnly,
+        );
     }
 
     public function toJson(): string

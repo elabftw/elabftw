@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\AuditCategory;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EnforceMfa;
 use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Exceptions\IllegalActionException;
@@ -159,6 +160,7 @@ try {
         'usersArr' => $usersArr,
         'enforceMfaArr' => EnforceMfa::getAssociativeArray(),
         'passwordComplexityArr' => PasswordComplexity::getAssociativeArray(),
+        'permissions' => BasePermissions::all(),
     );
 } catch (IllegalActionException $e) {
     $renderArr['error'] = Tools::error(true);

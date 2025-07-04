@@ -104,6 +104,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
+    // CHECK AT LEAST ONE PERMISSION IS ALLOWED
+    if (!validateAtLeastOnePermissionChecked()) {
+      event.preventDefault();
+    }
     // CLEAR-LOCKEDUSERS and CLEAR-LOCKOUTDEVICES
     if (el.matches('[data-action="clear-nologinusers"]') || el.matches('[data-action="clear-lockoutdevices"]')) {
       AjaxC.postForm('app/controllers/SysconfigAjaxController.php', { [el.dataset.action]: '1' })
@@ -309,6 +313,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     // and also on page load
     updateTsFieldsVisibility(select);
+  }
+
+  function validateAtLeastOnePermissionChecked() {
+    const permissionDiv = document.getElementById('permissionsSettingsDiv');
+    const checkboxes = permissionDiv.querySelectorAll<HTMLInputElement>('input[type="checkbox"]');
+    const isAnyChecked = Array.from(checkboxes).some(cb => cb.checked);
+
+    if (!isAnyChecked) {
+      notify.error('enable-permission');
+      return false;
+    }
+    return true;
   }
 
   function updateTsFieldsVisibility(select: HTMLSelectElement) {

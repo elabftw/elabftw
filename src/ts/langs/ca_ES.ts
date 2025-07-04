@@ -42,6 +42,7 @@ const t = {
     "nothing-selected": "Res seleccionat!",
     "now": "Ara",
     "onboarding-email-sent": "Aviat s'enviaran correus electrònics d'incorporació.",
+    "enable-permission": "You must allow at least one permission setting.",
     "please-wait": "Espereu...",
     "remove": "Eliminar",
     "replace-edited-file": "Vol reemplaçar el fitxer al servidor amb aquesta edicio",

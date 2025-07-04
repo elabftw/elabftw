@@ -42,6 +42,7 @@ const t = {
     "nothing-selected": "Ничего не выбрано!",
     "now": "Сейчас",
     "onboarding-email-sent": "Скоро будут отправлены электронные письма.",
+    "enable-permission": "You must allow at least one permission setting.",
     "please-wait": "Пожалуйста, подождите…",
     "remove": "Удалять",
     "replace-edited-file": "Вы хотите заменить файл на сервере этим редактированием?",

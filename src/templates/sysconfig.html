@@ -136,7 +136,7 @@
   </div>
 
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Permissions settings'|trans }}</h3>
-  <div class='pl-3'>
+  <div id='permissionsSettingsDiv' class='pl-3'>
     {% for perm in permissions %}
       {% include 'binary-setting.html' with {'label': 'Allow the base permission setting «' ~ perm.toHuman|trans ~ '»', 'slug': perm.configKey} %}
     {% endfor %}

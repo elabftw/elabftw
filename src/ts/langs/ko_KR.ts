@@ -42,6 +42,7 @@ const t = {
     "nothing-selected": "아무 것도 선택되지 않았습니다!",
     "now": "지금",
     "onboarding-email-sent": "온보딩 이메일이 곧 전송될 예정입니다.",
+    "enable-permission": "You must allow at least one permission setting.",
     "please-wait": "잠시만 기다려주세요…",
     "remove": "제거하다",
     "replace-edited-file": "서버에 저장된 파일을 현재 수정본으로 교체할까요?",

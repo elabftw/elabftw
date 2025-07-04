@@ -42,6 +42,7 @@ const t = {
     "nothing-selected": "Nic není vybráno!",
     "now": "Nyní",
     "onboarding-email-sent": "Tez orada ishga kirish haqidagi e-pochta(lar) yuboriladi.",
+    "enable-permission": "You must allow at least one permission setting.",
     "please-wait": "Počkejte prosím…",
     "remove": "Odstranit",
     "replace-edited-file": "Chcete nahradit soubor na serveru touto úpravou?",

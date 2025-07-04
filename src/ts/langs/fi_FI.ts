@@ -42,6 +42,7 @@ const t = {
     "nothing-selected": "Ei valittu mitään!",
     "now": "Nyt",
     "onboarding-email-sent": "Aloitussähköposti(t) lähetetään pian.",
+    "enable-permission": "You must allow at least one permission setting.",
     "please-wait": "Odota…",
     "remove": "Poistaa",
     "replace-edited-file": "Haluatko korvata palvelimella olevan tiedoston tällä muokkauksella?",

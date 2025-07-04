@@ -42,6 +42,7 @@ const t = {
     "nothing-selected": "未选中任何选项！",
     "now": "现在",
     "onboarding-email-sent": "即将发送入职电子邮件。",
+    "enable-permission": "You must allow at least one permission setting.",
     "please-wait": "请稍候…",
     "remove": "移除",
     "replace-edited-file": "您要用此编辑替换服务器上的文件吗？",

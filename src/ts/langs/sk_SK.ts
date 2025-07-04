@@ -42,6 +42,7 @@ const t = {
     "nothing-selected": "Nič nevybrané!",
     "now": "Teraz",
     "onboarding-email-sent": "Registračný e-mail (e-maily) budú čoskoro odoslané.",
+    "enable-permission": "You must allow at least one permission setting.",
     "please-wait": "Prosím počkajte…",
     "remove": "Odstrániť",
     "replace-edited-file": "Chcete touto úpravou nahradiť súbor na servery?",

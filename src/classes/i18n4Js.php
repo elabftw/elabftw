@@ -78,6 +78,7 @@ final class i18n4Js
             'nothing-selected' => _('Nothing selected!'),
             'now' => _('Now'),
             'onboarding-email-sent' => _('Onboarding email(s) will soon be sent.'),
+            'enable-permission' => _('You must allow at least one permission setting.'),
             'please-wait' => _('Please wait…'),
             'remove' => _('Remove'),
             'replace-edited-file' => _('Do you want to replace the file on the server with this edit?'),

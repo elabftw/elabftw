@@ -7,8 +7,8 @@ describe('Test links', () => {
     cy.on('window:confirm', cy.stub().returns(true));
 
     cy.visit('/experiments.php?mode=edit&id=33');
-    // link to an experiment
-    cy.get('#addLinkExpInput').type('Synthesis');
+    // the first get takes time on Edge e2e tests - CircleCI
+    cy.get('#addLinkExpInput', { timeout: 20000 }).should('be.visible');
     cy.get('.ui-menu-item-wrapper').first().click();
     cy.get('button[aria-label="Add experiment link"]').click();
     cy.get('#experimentsLinksDiv').should('contain.text', 'Synthesis');

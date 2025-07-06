@@ -34,11 +34,11 @@ enum BasePermissions: int
     public function configKey(): string
     {
         return match ($this) {
-            self::Full => 'allow_full',
-            self::Organization => 'allow_organization',
-            self::Team => 'allow_team',
-            self::User => 'allow_user',
-            self::UserOnly => 'allow_useronly',
+            self::Full => 'allow_permission_full',
+            self::Organization => 'allow_permission_organization',
+            self::Team => 'allow_permission_team',
+            self::User => 'allow_permission_user',
+            self::UserOnly => 'allow_permission_useronly',
         };
     }
 

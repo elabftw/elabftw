@@ -73,7 +73,7 @@ final class PermissionsHelper
         );
         // add the only me setting only if it is allowed by main config
         $Config = Config::getConfig();
-        if ($Config->configArr['allow_useronly'] === '1') {
+        if ($Config->configArr['allow_permission_useronly'] === '1') {
             $englishBase['useronly'] = BasePermissions::UserOnly->value;
         }
         return $flipped + $englishBase;

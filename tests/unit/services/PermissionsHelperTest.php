@@ -46,11 +46,11 @@ class PermissionsHelperTest extends \PHPUnit\Framework\TestCase
 
         // Must have at least one permission
         $this->Config->patch(Action::Update, array(
-            'allow_team' => '0',
-            'allow_user' => '0',
-            'allow_full' => '0',
-            'allow_organization' => '0',
-            'allow_useronly' => '0',
+            'allow_permission_team' => '0',
+            'allow_permission_user' => '0',
+            'allow_permission_full' => '0',
+            'allow_permission_organization' => '0',
+            'allow_permission_useronly' => '0',
         ));
         $this->expectException(IllegalActionException::class);
         $this->PermissionsHelper->getAssociativeArray();

@@ -160,7 +160,7 @@ try {
         'usersArr' => $usersArr,
         'enforceMfaArr' => EnforceMfa::getAssociativeArray(),
         'passwordComplexityArr' => PasswordComplexity::getAssociativeArray(),
-        'permissions' => BasePermissions::all(),
+        'permissions' => BasePermissions::cases(),
     );
 } catch (IllegalActionException $e) {
     $renderArr['error'] = Tools::error(true);

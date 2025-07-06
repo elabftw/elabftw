@@ -42,16 +42,16 @@ enum BasePermissions: int
         };
     }
 
-    // a static list of all config-enabled permissions, useful for loops
-    public static function all(): array
+    public static function getBase(array $config): array
     {
-        return array(
-            self::Full,
-            self::Organization,
-            self::Team,
-            self::User,
-            self::UserOnly,
-        );
+        $base = array();
+        foreach (self::cases() as $permission) {
+            $key = $permission->configKey();
+            if (!empty($config[$key]) && $config[$key] === '1') {
+                $base[$permission->value] = $permission->toHuman();
+            }
+        }
+        return $base;
     }
 
     public function toJson(): string

@@ -144,6 +144,10 @@ document.addEventListener('DOMContentLoaded', () => {
         ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.Archive})
           .then(() => window.location.href = `?mode=view&id=${entity.id}`);
         break;
+      case Action.Unarchive:
+        ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.Unarchive})
+          .then(() => window.location.href = `?mode=view&id=${entity.id}`);
+        break;
       case Action.Lock:
         // reload the page to change the icon and make the edit button disappear (#1897)
         ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.Lock})
@@ -188,8 +192,17 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="destroy"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {
         const path = window.location.pathname;
-        ApiC.delete(`${entity.type}/${entity.id}`).then(() => window.location.replace(path.split('/').pop()));
+        ApiC.delete(`${entity.type}/${entity.id}`).then(
+          () => window.location.replace(path.split('/').pop()));
       }
+    }
+    // RESTORE ENTITY
+    else if (el.matches('[data-action="restore-entity"]')) {
+      // unlock entity and restore it
+      ApiC.patch(`${entity.type}/${entity.id}`, { action: Action.ForceUnlock })
+        .then(() => ApiC.patch(`${entity.type}/${entity.id}`, { state: 1 }))
+        .then(() => { window.location.href = `?mode=view&id=${entity.id}`;
+        });
     }
   });
 });

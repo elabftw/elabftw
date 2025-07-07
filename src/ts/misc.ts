@@ -90,9 +90,9 @@ function triggerHandler(event: Event, el: HTMLInputElement): void {
       handleReloads(el.dataset.reload);
     }
   }).catch(error => {
-    // Custom error doesn't behave reliably in Babel environment. `error instanceof CustomError` fails
-    // see https://github.com/babel/babel/issues/3083
-    if (el.dataset.target.startsWith('allow_permission_')) {
+    // handle 422: UnprocessableContentEception errors
+    const prefix = '422';
+    if (error.message.startsWith(prefix)) {
       if (el.type === 'checkbox') {
         el.checked = Boolean(originalValue);
         return;

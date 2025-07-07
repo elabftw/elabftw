@@ -363,21 +363,7 @@ abstract class AbstractEntity extends AbstractRest
         $this->ExclusiveEditMode->canPatchOrExplode($action);
         match ($action) {
             Action::AccessKey => (new AccessKeyHelper($this->entityType, $this->id))->toggleAccessKey(),
-            Action::Archive => (
-                function () {
-                    $targetState = State::Normal;
-                    if ($this->entityData['state'] === $targetState->value) {
-                        $targetState = State::Archived;
-                        if ($this->entityData['locked'] === 0) {
-                            $this->toggleLock();
-                        }
-                    }
-                    $this->update(new EntityParams('state', (string) $targetState->value));
-                    // clear any request action
-                    $RequestActions = new RequestActions($this->Users, $this);
-                    $RequestActions->remove(RequestableAction::Archive);
-                }
-            )(),
+            Action::Archive => $this->archiveEntity(),
             Action::Bloxberg => $this->bloxberg(),
             Action::Destroy => $this->destroy(),
             Action::Lock => $this->toggleLock(),
@@ -389,6 +375,7 @@ abstract class AbstractEntity extends AbstractRest
             Action::SetCanwrite => $this->update(new EntityParams('canwrite', $params['can'])),
             Action::Sign => $this->sign($params['passphrase'], Meaning::from((int) $params['meaning'])),
             Action::Timestamp => $this->timestamp(),
+            Action::Unarchive => $this->unarchiveEntity(),
             Action::UpdateMetadataField => (
                 function () use ($params) {
                     foreach ($params as $key => $value) {
@@ -880,6 +867,29 @@ abstract class AbstractEntity extends AbstractRest
             return 'User not found!';
         }
         return $user->userData['fullname'];
+    }
+
+    private function archiveEntity(): void
+    {
+        $targetState = State::Normal;
+        if ($this->entityData['state'] === $targetState->value) {
+            $targetState = State::Archived;
+            $this->lock();
+        }
+        $this->update(new EntityParams('state', (string) $targetState->value));
+
+        $RequestActions = new RequestActions($this->Users, $this);
+        $RequestActions->remove(RequestableAction::Archive);
+    }
+
+    private function unarchiveEntity(): void
+    {
+        $targetState = State::Archived;
+        if ($this->entityData['state'] === $targetState->value) {
+            $targetState = State::Normal;
+            $this->unlock();
+        }
+        $this->update(new EntityParams('state', (string) $targetState->value));
     }
 
     private function addToExtendedFilter(string $extendedFilter, array $extendedValues = array()): void

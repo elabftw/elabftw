@@ -15,6 +15,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Meaning;
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Params\DisplayParams;
@@ -42,16 +43,25 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->setId($new);
         $this->Experiments->canOrExplode('write');
         // test archive too
-        $this->assertIsArray($this->Experiments->patch(Action::Archive, array()));
-        // two times to test unarchive branch
-        $this->assertIsArray($this->Experiments->patch(Action::Archive, array()));
-        $exp = $this->Experiments->toggleLock();
-        $this->assertEquals(0, $exp['locked']);
-        $exp = $this->Experiments->toggleLock();
-        $this->assertEquals(1, $exp['locked']);
+        $exp = $this->Experiments->patch(Action::Archive, array());
+        $this->assertIsArray($exp);
+        $this->assertEquals(State::Archived->value, $exp['state']);
+        $this->assertEquals(1, $exp['locked'], 'Entity should be locked when archived');
+        // unarchive (should also unlock)
+        $exp = $this->Experiments->patch(Action::Unarchive, array());
+        $this->assertIsArray($exp);
+        $this->assertEquals(State::Normal->value, $exp['state']);
+        $this->assertEquals(0, $exp['locked'], 'Entity should be unlocked when unarchived');
+        // lock
         $exp = $this->Experiments->lock();
         $this->assertEquals(1, $exp['locked']);
+        // unlock
         $exp = $this->Experiments->unlock();
+        $this->assertEquals(0, $exp['locked']);
+        // toggle locks
+        $exp = $this->Experiments->toggleLock();
+        $this->assertEquals(1, $exp['locked']);
+        $exp = $this->Experiments->toggleLock();
         $this->assertEquals(0, $exp['locked']);
         $this->Experiments->destroy();
         $Templates = new Templates($this->Users);

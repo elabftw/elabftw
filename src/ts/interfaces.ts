@@ -98,6 +98,7 @@ enum Action {
   SendOnboardingEmails = 'sendonboardingemails',
   Sign = 'sign',
   Timestamp = 'timestamp',
+  Unarchive = 'unarchive',
   Unreference = 'unreference',
   UpdateMetadataField = 'updatemetadatafield',
   UpdatePassword = 'updatepassword',

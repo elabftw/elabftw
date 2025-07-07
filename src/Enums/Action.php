@@ -40,6 +40,7 @@ enum Action: string
     case SetCanwrite = 'setcanwrite';
     case Sign = 'sign';
     case Timestamp = 'timestamp';
+    case Unarchive = 'unarchive';
     case Unreference = 'unreference';
     case Update = 'update';
     case UpdateMetadataField = 'updatemetadatafield';

@@ -28,6 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const notify = new Notification();
   TabMenu.init(document.querySelector('.tabbed-menu'));
 
+  let initialPermissionStateChecked = false;
+
   // GET the latest version information
   const updateUrl = 'https://get.elabftw.net/updates.json';
   const currentVersionDiv = document.getElementById('currentVersion');
@@ -100,6 +102,10 @@ document.addEventListener('DOMContentLoaded', () => {
       };
     });
   });
+
+  const permissionDiv = document.getElementById('permissionsSettingsDiv');
+  const checkboxes = permissionDiv.querySelectorAll<HTMLInputElement>('input[type="checkbox"]');
+  initialPermissionStateChecked = Array.from(checkboxes).some(cb => cb.checked);
 
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {
@@ -315,11 +321,15 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTsFieldsVisibility(select);
   }
 
-  function validateAtLeastOnePermissionChecked() {
+  function validateAtLeastOnePermissionChecked(): boolean {
     const permissionDiv = document.getElementById('permissionsSettingsDiv');
     const checkboxes = permissionDiv.querySelectorAll<HTMLInputElement>('input[type="checkbox"]');
     const isAnyChecked = Array.from(checkboxes).some(cb => cb.checked);
 
+    if (!initialPermissionStateChecked) {
+      // if nothing was checked originally, allow first submission to fix it
+      return true;
+    }
     if (!isAnyChecked) {
       notify.error('enable-permission');
       return false;

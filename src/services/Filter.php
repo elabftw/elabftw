@@ -148,7 +148,15 @@ final class Filter
      */
     public static function forFilesystem(string $input): string
     {
-        return new AsciiSlugger()->slug($input)->toString();
+        // need to split the extension out of it or the . will be replaced, too
+        $safe = new AsciiSlugger()->slug(pathinfo($input, PATHINFO_FILENAME))->toString();
+
+        $ext = pathinfo($input, PATHINFO_EXTENSION);
+        if ($ext) {
+            // re-attach extension
+            return $safe . '.' . $ext;
+        }
+        return $safe;
     }
 
     /**

@@ -18,10 +18,10 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use HTMLPurifier;
 use HTMLPurifier_HTML5Config;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 
 use function checkdate;
 use function filter_var;
-use function htmlspecialchars_decode;
 use function mb_convert_encoding;
 use function mb_strlen;
 use function mb_substr;
@@ -142,21 +142,13 @@ final class Filter
     }
 
     /**
-     * Remove all non word characters. Used for files saved on the filesystem (pdf, zip, ...)
-     * This code is from https://developer.wordpress.org/reference/functions/sanitize_file_name/
-     *
-     * @param string $input what to sanitize
-     * @return string the clean string
+     * Remove all non ascii characters. Used for files saved on the filesystem (pdf, zip, ...)
+     * FIXME: this should be improved so valid utf-8 strings are still accepted
+     * see: https://github.com/elabftw/elabftw/issues/5783#issuecomment-3043949949
      */
     public static function forFilesystem(string $input): string
     {
-        $specialChars = array('?', '[', ']', '/', '\\', '=', '<', '>', ':', ';', ',', "'", '"', '&', '$', '#', '*', '(', ')', '|', '~', '`', '!', '{', '}', '%', '+', chr(0));
-        $input = htmlspecialchars_decode($input, ENT_QUOTES);
-        $input = str_replace("#\x{00a0}#siu", ' ', $input);
-        $input = str_replace($specialChars, '', $input);
-        $input = str_replace(array('%20', '+'), '-', $input);
-        $input = preg_replace('/[\r\n\t -]+/', '-', $input);
-        return trim($input ?? 'file', '.-_');
+        return new AsciiSlugger()->slug($input)->toString();
     }
 
     /**

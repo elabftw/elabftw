@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Enums;
 
+use InvalidArgumentException;
+
 enum BasePermissions: int
 {
     case Full = 50;
@@ -42,7 +44,20 @@ enum BasePermissions: int
         };
     }
 
-    public static function getBase(array $config): array
+    public static function fromKey(string $confName): BasePermissions
+    {
+        return match ($confName) {
+            'allow_permission_full' => self::Full,
+            'allow_permission_organization' => self::Organization,
+            'allow_permission_team' => self::Team,
+            'allow_permission_user' => self::User,
+            'allow_permission_useronly' => self::UserOnly,
+            default => throw new InvalidArgumentException("Invalid permission key: $confName"),
+        };
+    }
+
+    // get base permissions that are in active state
+    public static function getActiveBase(array $config): array
     {
         $base = array();
         foreach (self::cases() as $permission) {

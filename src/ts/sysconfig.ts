@@ -28,8 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const notify = new Notification();
   TabMenu.init(document.querySelector('.tabbed-menu'));
 
-  let initialPermissionStateChecked = false;
-
   // GET the latest version information
   const updateUrl = 'https://get.elabftw.net/updates.json';
   const currentVersionDiv = document.getElementById('currentVersion');
@@ -83,7 +81,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }).catch(error => latestVersionDiv.append(error));
 
-
   document.querySelectorAll('[data-action="load-file-on-change"]').forEach(input => {
     input.addEventListener('change', (event) => {
       const el = (event.target as HTMLInputElement);
@@ -103,17 +100,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  const permissionDiv = document.getElementById('permissionsSettingsDiv');
-  const checkboxes = permissionDiv.querySelectorAll<HTMLInputElement>('input[type="checkbox"]');
-  initialPermissionStateChecked = Array.from(checkboxes).some(cb => cb.checked);
-
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);
-    // CHECK AT LEAST ONE PERMISSION IS ALLOWED
-    if (!validateAtLeastOnePermissionChecked()) {
-      event.preventDefault();
-    }
     // CLEAR-LOCKEDUSERS and CLEAR-LOCKOUTDEVICES
     if (el.matches('[data-action="clear-nologinusers"]') || el.matches('[data-action="clear-lockoutdevices"]')) {
       AjaxC.postForm('app/controllers/SysconfigAjaxController.php', { [el.dataset.action]: '1' })
@@ -319,22 +308,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     // and also on page load
     updateTsFieldsVisibility(select);
-  }
-
-  function validateAtLeastOnePermissionChecked(): boolean {
-    const permissionDiv = document.getElementById('permissionsSettingsDiv');
-    const checkboxes = permissionDiv.querySelectorAll<HTMLInputElement>('input[type="checkbox"]');
-    const isAnyChecked = Array.from(checkboxes).some(cb => cb.checked);
-
-    if (!initialPermissionStateChecked) {
-      // if nothing was checked originally, allow first submission to fix it
-      return true;
-    }
-    if (!isAnyChecked) {
-      notify.error('enable-permission');
-      return false;
-    }
-    return true;
   }
 
   function updateTsFieldsVisibility(select: HTMLSelectElement) {

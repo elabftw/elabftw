@@ -50,7 +50,7 @@ final class PermissionsHelper
     public function getAssociativeArray(): array
     {
         $Config = Config::getConfig();
-        $base = BasePermissions::getBase($Config->configArr);
+        $base = BasePermissions::getActiveBase($Config->configArr);
 
         if (empty($base)) {
             throw new IllegalActionException('At least one permission needs to be enabled in the config.');

@@ -62,6 +62,8 @@ function triggerHandler(event: Event, el: HTMLInputElement): void {
   el.classList.remove('is-invalid');
   // for a checkbox element, look at the checked attribute, not the value
   let value = el.type === 'checkbox' ? el.checked ? '1' : '0' : el.value;
+  // keep original value to revert in case we need to
+  const originalValue = value;
 
   // CUSTOM ACTIONS
   if (el.dataset.customAction === 'patch-user2team-is-owner') {
@@ -88,6 +90,16 @@ function triggerHandler(event: Event, el: HTMLInputElement): void {
       handleReloads(el.dataset.reload);
     }
   }).catch(error => {
+    // handle 422: UnprocessableContentEception errors
+    const prefix = '422';
+    if (error.message.startsWith(prefix)) {
+      if (el.type === 'checkbox') {
+        el.checked = Boolean(originalValue);
+        return;
+      }
+      el.value = originalValue;
+      return;
+    }
     if (el.dataset.target === Target.Customid && error.message === i18next.t('custom-id-in-use')) {
       el.classList.add('is-invalid');
     }

@@ -40,7 +40,7 @@
     "ezyang/htmlpurifier": "^4.13",
     "symfony/mailer": "^6.0",
     "xemlock/htmlpurifier-html5": "^0.1.11",
-    "aws/aws-sdk-php": "^3.209",
+    "aws/aws-sdk-php": "3.339.19",
     "league/flysystem-aws-s3-v3": "^3.0",
     "jblond/twig-trans": "^1.1.6",
     "twig/intl-extra": "^3.3",

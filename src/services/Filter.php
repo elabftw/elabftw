@@ -18,11 +18,9 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use HTMLPurifier;
 use HTMLPurifier_HTML5Config;
-use Symfony\Component\String\Slugger\AsciiSlugger;
 
 use function checkdate;
 use function filter_var;
-use function mb_convert_encoding;
 use function mb_strlen;
 use function mb_substr;
 use function strlen;
@@ -141,6 +139,11 @@ final class Filter
         return str_replace(array("\r\n", "\n", "\r"), ' ', $title);
     }
 
+    public static function toAsciiSlug(string $input): string
+    {
+        return new FileSlugger()->slug($input)->toString();
+    }
+
     /**
      * Remove all non ascii characters. Used for files saved on the filesystem (pdf, zip, ...)
      * FIXME: this should be improved so valid utf-8 strings are still accepted
@@ -149,7 +152,7 @@ final class Filter
     public static function forFilesystem(string $input): string
     {
         // need to split the extension out of it or the . will be replaced, too
-        $safe = new AsciiSlugger()->slug(pathinfo($input, PATHINFO_FILENAME))->toString();
+        $safe = self::toAsciiSlug(pathinfo($input, PATHINFO_FILENAME));
 
         $ext = pathinfo($input, PATHINFO_EXTENSION);
         if ($ext) {
@@ -157,15 +160,6 @@ final class Filter
             return $safe . '.' . $ext;
         }
         return $safe;
-    }
-
-    /**
-     * This exists because: The filename fallback must only contain ASCII characters. at /elabftw/vendor/symfony/http-foundation/HeaderUtils.php:173
-     */
-    public static function toAscii(string $input): string
-    {
-        // mb_convert_encoding will replace invalid characters with ?, but we want _ instead
-        return str_replace('?', '_', mb_convert_encoding(self::forFilesystem($input), 'ASCII', 'UTF-8'));
     }
 
     public static function intOrNull(string|int $input): ?int

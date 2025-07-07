@@ -28,6 +28,7 @@ use Elabftw\Services\PasswordValidator;
 use Override;
 
 use function trim;
+use function mb_substr;
 
 final class UserParams extends ContentParams
 {
@@ -119,7 +120,7 @@ final class UserParams extends ContentParams
             throw new ImproperActionException('Incorrect orcid: invalid format.');
         }
         // now check the sum
-        $baseNumbers = str_replace('-', '', substr($input, 0, -1));
+        $baseNumbers = str_replace('-', '', mb_substr($input, 0, -1));
         if (Check::digit($baseNumbers, $this->getChecksumFromOrcid($input)) === false) {
             throw new ImproperActionException('Invalid orcid: checksum failed.');
         }

@@ -24,6 +24,7 @@ use function filter_var;
 use function htmlspecialchars_decode;
 use function mb_convert_encoding;
 use function mb_strlen;
+use function mb_substr;
 use function strlen;
 use function trim;
 
@@ -72,9 +73,9 @@ final class Filter
     public static function kdate(string $input): string
     {
         // Check if day/month/year are good
-        $year = (int) substr($input, 0, 4);
-        $month = (int) substr($input, 5, 2);
-        $day = (int) substr($input, 8, 2);
+        $year = (int) mb_substr($input, 0, 4);
+        $month = (int) mb_substr($input, 5, 2);
+        $day = (int) mb_substr($input, 8, 2);
         if (mb_strlen($input) !== 10 || !checkdate($month, $day, $year)) {
             return date('Y-m-d');
         }

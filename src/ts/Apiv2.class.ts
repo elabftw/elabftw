@@ -91,7 +91,7 @@ export class Api {
         // Couldn't throw a custom error here (e.g., UnprocessableContentException) because extending built-in Error
         // doesn't behave reliably in Babel environment. `error instanceof CustomError fails`
         // see https://github.com/babel/babel/issues/3083
-        throw new Error('422 - You must have at least one base permission active.');
+        throw new Error('You must have at least one base permission active.');
       }
       if (response.status !== this.getOkStatusFromMethod(method)) {
         // if there is an error we will get the message in the reply body

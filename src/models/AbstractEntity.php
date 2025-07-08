@@ -636,8 +636,6 @@ abstract class AbstractEntity extends AbstractRest
         $this->canOrExplode('write');
         // remove the custom_id upon deletion
         $this->update(new EntityParams('custom_id', ''));
-        // lock entity
-        $this->lock();
         // set state to deleted
         return $this->update(new EntityParams('state', (string) State::Deleted->value));
     }

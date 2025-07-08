@@ -350,8 +350,6 @@ components:
           type: string
         cookie_validity_time:
           type: integer
-        debug:
-          type: string
         email_domain:
           type: string
         extauth_email:

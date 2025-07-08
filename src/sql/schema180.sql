@@ -104,3 +104,4 @@ ALTER TABLE teams ADD COLUMN users_canwrite_resources_categories TINYINT(1) UNSI
 ALTER TABLE teams ADD COLUMN users_canwrite_resources_status TINYINT(1) UNSIGNED NOT NULL DEFAULT 1;
 -- also remove that old column
 CALL DropColumn('items_types', 'bookable_old');
+DELETE FROM config WHERE conf_name = 'debug';

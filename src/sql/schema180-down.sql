@@ -20,5 +20,6 @@ ALTER TABLE teams DROP COLUMN users_canwrite_experiments_categories;
 ALTER TABLE teams DROP COLUMN users_canwrite_experiments_status;
 ALTER TABLE teams DROP COLUMN users_canwrite_resources_categories;
 ALTER TABLE teams DROP COLUMN users_canwrite_resources_status;
+INSERT INTO config (conf_name, conf_value) VALUES ('debug', '0');
 
 UPDATE config SET conf_value = 179 WHERE conf_name = 'schema';

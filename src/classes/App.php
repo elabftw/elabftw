@@ -133,7 +133,7 @@ final class App
     {
         try {
             return $this->getTwig(
-                (bool) $this->Config->configArr['debug']
+                $this->Config::boolFromEnv('DEV_MODE')
             )->render(
                 $template,
                 array_merge(

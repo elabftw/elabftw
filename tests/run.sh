@@ -32,7 +32,7 @@ fi
 # we need to add the parser because it's in cache/ and it's tmpfs mounted now
 docker exec -it elabtmp yarn buildparser
 if [ "${SKIP_TWIGCS:-0}" -ne 1 ]; then
-    echo "Running twigcs. Use SKIP_TWIGCS=1 to disable."
+    echo "▶ Running twigcs. Use SKIP_TWIGCS=1 to disable."
     docker exec -it elabtmp yarn twigcs
 fi
 # fix permissions on cache folders
@@ -42,7 +42,7 @@ docker exec -it elabtmp chown -R "$worker_user":"$worker_user" cache
 
 # populate the database
 if [ "${SKIP_POPULATE:-0}" -ne 1 ]; then
-    echo "Running populate script. Use SKIP_POPULATE=1 to disable."
+    echo "▶ Running populate script. Use SKIP_POPULATE=1 to disable."
     docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y
 fi
 # RUN TESTS

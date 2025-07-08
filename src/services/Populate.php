@@ -27,6 +27,7 @@ use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Users;
 use Elabftw\Params\UserParams;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * This is used to generate data for dev purposes
@@ -42,7 +43,7 @@ final class Populate
     private \Faker\Generator $faker;
 
     // iter: iterations: number of things to generate
-    public function __construct(private int $iter = 50)
+    public function __construct(private OutputInterface $output, private int $iter = 50)
     {
         $this->faker = \Faker\Factory::create();
     }
@@ -50,16 +51,16 @@ final class Populate
     /**
      * Populate the db with fake experiments or items
      */
-    public function generate(Experiments | Items $Entity): void
+    public function generate(Experiments | Items $Entity, ?int $iterations = null): void
     {
+        $iterations ??= $this->iter;
         $Teams = new Teams($Entity->Users, $Entity->Users->team, bypassReadPermission: true, bypassWritePermission: true);
         if ($Entity instanceof Experiments) {
             $Category = new ExperimentsCategories($Teams);
             $Status = new ExperimentsStatus($Teams);
             $tpl = 0;
         } else {
-            $Category = new ItemsTypes($Entity->Users);
-            $Category->bypassWritePermission = true;
+            $Category = new ItemsTypes($Entity->Users, bypassReadPermission: true, bypassWritePermission: true);
             if (empty($Category->readAll())) {
                 $Category->create();
             }
@@ -131,7 +132,7 @@ final class Populate
             'scientific literature',
         );
 
-        for ($i = 0; $i <= $this->iter; $i++) {
+        for ($i = 0; $i <= $iterations; $i++) {
             $id = $Entity->create(template: $tpl);
             $Entity->setId($id);
             // variable tag number
@@ -196,7 +197,7 @@ final class Populate
         $orgid = $user['orgid'] ?? null;
         $passwordHash = (new UserParams('password', $user['password'] ?? self::DEFAULT_PASSWORD))->getStringContent();
         // use yopmail.com instead of safeEmail() so we don't hard bounce on example.tld domains when testing mass emails
-        $email = $user['email'] ?? sprintf('elabuser-%d@yopmail.com', $this->faker->randomNumber(6));
+        $email = $user['email'] ?? sprintf('%s-%d@yopmail.com', $this->faker->word, $this->faker->randomNumber(8));
 
         $Users = new Users();
         $userid = $Users->createOne(
@@ -230,10 +231,10 @@ final class Populate
             $MfaHelper->saveSecret();
         }
         if ($user['create_experiments'] ?? false) {
-            $this->generate(new Experiments($Users));
+            $this->generate(new Experiments($Users), $user['experiments_iter'] ?? $this->iter);
         }
         if ($user['create_items'] ?? false) {
-            $this->generate(new Items($Users));
+            $this->generate(new Items($Users), $user['items_iter'] ?? $this->iter);
         }
         if ($user['api_key'] ?? false) {
             $ApiKeys = new ApiKeys($Users);
@@ -249,5 +250,6 @@ final class Populate
                 $Templates->create(title: $this->faker->sentence(), body: $this->faker->realText(1000));
             }
         }
+        $this->output->writeln(sprintf('├ Created user: %s %s (%s)', $firstname, $lastname, $email));
     }
 }

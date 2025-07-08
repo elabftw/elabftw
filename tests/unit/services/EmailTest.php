@@ -60,12 +60,12 @@ class EmailTest extends \PHPUnit\Framework\TestCase
     {
         $replyTo = new Address('sender@example.com', 'Sergent Garcia');
         // Note that non-validated users are not active users
-        $this->assertEquals(19, $this->Email->massEmail(EmailTarget::ActiveUsers, null, '', 'yep', $replyTo, true));
+        $this->assertEquals(102, $this->Email->massEmail(EmailTarget::ActiveUsers, null, '', 'yep', $replyTo, true));
         // not grouped
-        $this->assertEquals(19, $this->Email->massEmail(EmailTarget::ActiveUsers, null, '', 'yep', $replyTo, false));
+        $this->assertEquals(102, $this->Email->massEmail(EmailTarget::ActiveUsers, null, '', 'yep', $replyTo, false));
         $this->assertEquals(10, $this->Email->massEmail(EmailTarget::Team, 1, 'Important message', 'yep', $replyTo, true));
         $this->assertEquals(0, $this->Email->massEmail(EmailTarget::TeamGroup, 1, 'Important message', 'yep', $replyTo, true));
-        $this->assertEquals(6, $this->Email->massEmail(EmailTarget::Admins, null, 'Important message to admins', 'yep', $replyTo, true));
+        $this->assertEquals(8, $this->Email->massEmail(EmailTarget::Admins, null, 'Important message to admins', 'yep', $replyTo, true));
         $this->assertEquals(1, $this->Email->massEmail(EmailTarget::Sysadmins, null, 'Important message to sysadmins', 'yep', $replyTo, true));
         $this->assertEquals(1, $this->Email->massEmail(EmailTarget::BookableItem, 1, 'Oops', 'My cells died', $replyTo, true));
         $this->assertEquals(1, $this->Email->massEmail(EmailTarget::AdminsOfTeam, 1, 'Important message to admins of a team', 'yep', $replyTo, true));

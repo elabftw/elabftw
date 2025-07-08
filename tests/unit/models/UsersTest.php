@@ -287,7 +287,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     public function testDestroy(): void
     {
         $Admin = new Users(5, 2);
-        $id = $Admin->createOne('testdestroy@a.fr', array('Bravo'), 'Life', 'isShort', 'yololololol', Usergroup::User, false, false);
+        $id = $Admin->createOne('testdestroy@a.fr', array('2'), 'Life', 'isShort', 'yololololol', Usergroup::User, false, false);
         $Target = new Users($id, 2, $Admin);
         $this->assertTrue($Target->destroy());
     }

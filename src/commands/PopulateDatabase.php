@@ -45,8 +45,6 @@ use Override;
 
 use function array_key_exists;
 use function is_string;
-use function mb_strlen;
-use function str_repeat;
 
 /**
  * Populate the database with example data. Useful to get a fresh dev env.
@@ -81,12 +79,6 @@ final class PopulateDatabase extends Command
             return 1;
         }
 
-        // display header
-        $output->writeln(array(
-            $this->getDescription(),
-            str_repeat('=', mb_strlen($this->getDescription())),
-        ));
-
         // ask confirmation before deleting all the database
         $helper = $this->getHelper('question');
         // the -y flag overrides the config value
@@ -101,14 +93,14 @@ final class PopulateDatabase extends Command
         }
 
         // drop database
-        $output->writeln('Dropping current database and loading structure...');
+        $output->writeln('▶ Dropping current database and loading structure...');
         $this->dropAndInitDb();
 
         // adjust global config
         $Config = Config::getConfig();
         $Config->patch(Action::Update, $yaml['config'] ?? array());
 
-        $output->writeln('Creating teams, users, experiments, and resources...');
+        $output->writeln('┌ Creating teams, users, experiments, and resources...');
         // create teams
         $Users = new UltraAdmin();
         $Teams = new Teams($Users, bypassReadPermission: true, bypassWritePermission: true);
@@ -118,6 +110,7 @@ final class PopulateDatabase extends Command
 
         foreach ($yaml['teams'] as $team) {
             $id = $Teams->create($team['name']);
+            $output->writeln(sprintf('├ Created team: %s', $team['name']));
             $Teams->setId($id);
 
             // create fake categories and status
@@ -155,7 +148,7 @@ final class PopulateDatabase extends Command
         }
 
         $iterations = $yaml['iterations'] ?? self::DEFAULT_ITERATIONS;
-        $Populate = new Populate((int) $iterations);
+        $Populate = new Populate($output, (int) $iterations);
 
         // create users
         // all users have the same password to make switching accounts easier
@@ -244,9 +237,12 @@ final class PopulateDatabase extends Command
         // add Resources Categories (items types)
         if (array_key_exists('items_types', $yaml)) {
             foreach ($yaml['items_types'] as $items_types) {
-                $user = new Users(1, (int) ($items_types['team'] ?? 1));
+                $team = (int) ($items_types['team'] ?? 1);
+                $user = new Users(1, $team);
                 $ItemsTypes = new ItemsTypes($user);
-                $ItemsTypes->setId($ItemsTypes->create(title: $items_types['name']));
+                $itemTypeId = $ItemsTypes->create(title: $items_types['name']);
+                $ItemsTypes->setId($itemTypeId);
+                $output->writeln(sprintf('├ Created resource category: %s (id: %d in team: %d)', $items_types['name'], $itemTypeId, $team));
                 $ItemsTypes->bypassWritePermission = true;
                 $defaultPermissions = BasePermissions::Team->toJson();
                 $patch = array(
@@ -265,8 +261,9 @@ final class PopulateDatabase extends Command
             shuffle($yaml['items']);
             foreach ($yaml['items'] as $item) {
                 $user = new Users((int) ($item['user'] ?? 1), (int) ($item['team'] ?? 1));
+                $ItemsTypes = new ItemsTypes($user);
                 $Items = new Items($user);
-                $id = $Items->postAction(Action::Create, array('category_id' => $item['category']));
+                $id = $Items->create(template: (int) ($item['category'] ?? $ItemsTypes->getDefault()));
                 $Items->setId($id);
                 $patch = array(
                     'title' => $item['title'],
@@ -294,7 +291,8 @@ final class PopulateDatabase extends Command
             }
         }
 
-        $output->writeln('All done.');
+        $output->writeln('├ ✓ All done');
+        $output->writeln('└' . str_repeat('─', 62));
         return Command::SUCCESS;
     }
 

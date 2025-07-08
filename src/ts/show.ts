@@ -551,32 +551,30 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       const action = <Action>el.dataset.what;
-      // loop over it and patch with selected action
-      const results = [];
-      checked.forEach(chk => {
-        results.push(ApiC.patch(`${entity.type}/${chk.id}`, {action: action}));
-      });
+      // special case: DELETE request for confirmation & deletes div
+      if (action === Action.Destroy) {
+        if (!confirm(i18next.t('generic-delete-warning'))) {
+          return;
+        }
+        // perform deletes
+        checked.forEach(chk => {
+          ApiC.delete(`${entity.type}/${chk.id}`).then(() => {
+            // use curly braces to avoid implicit return
+            document.getElementById(`parent_${chk.randomid}`)?.remove();
+          });
+        });
+        return;
+      }
+      // handle all other PATCH with selected action
+      const results = checked.map(chk =>
+        ApiC.patch(`${entity.type}/${chk.id}`, {action}),
+      );
       ApiC.notifOnSaved = false;
       Promise.all(results).then(() => {
         notify.success();
         reloadEntitiesShow();
         ApiC.notifOnSaved = true;
       });
-
-    // THE DELETE BUTTON FOR CHECKED BOXES
-    } else if (el.matches('[data-action="destroy-selected-entities"]')) {
-      // get the item id of all checked boxes
-      const checked = getCheckedBoxes();
-      if (checked.length === 0) {
-        notify.error('nothing-selected');
-        return;
-      }
-      // ask for confirmation
-      if (!confirm(i18next.t('generic-delete-warning'))) {
-        return;
-      }
-      // loop on it and delete stuff (use curly braces to avoid implicit return)
-      checked.forEach(chk => {ApiC.delete(`${entity.type}/${chk.id}`).then(() => document.getElementById(`parent_${chk.randomid}`).remove());});
     }
   });
 

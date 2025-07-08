@@ -70,7 +70,6 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue((bool) Check::id($new));
         $this->Experiments = new Experiments($this->Users, $new);
         $this->Experiments->destroy();
-        // TODO: test when destroyed entity is locked
     }
 
     public function testSetId(): void

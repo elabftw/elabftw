@@ -186,6 +186,7 @@
       <input type='hidden' name='mode' value='show' />
 
       <div>
+        {# STATE filter #}
         {% include 'select-state.html' %}
 
         {# LOCK #}
@@ -359,7 +360,7 @@
           <button data-action='patch-selected-entities' data-what='timestamp' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Timestamp'|trans }}</button>
           <button data-action='patch-selected-entities' data-what='archive' type='button' class='btn btn-secondary mr-1 mb-2'>{{ 'Archive'|trans }}</button>
           <button data-action='patch-selected-entities' data-what='unarchive' type='button' class='btn btn-secondary mr-1 mb-2'>{{ 'Unarchive'|trans }}</button>
-          <button data-action='destroy-selected-entities' type='button' class='btn btn-danger mr-1 mb-2'>{{ 'Delete'|trans }}</button>
+          <button data-action='patch-selected-entities' data-what='destroy' type='button' class='btn btn-danger mr-1 mb-2'>{{ 'Delete'|trans }}</button>
         </div>
 
         <form id='multiChangesForm' class='row mx-0 form-inline'>

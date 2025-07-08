@@ -184,6 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
       SearchSyntaxHighlighting.update(searchInput.value);
     });
   });
+  // FILTERS HANDLER FOR THE SHOW PAGE
   document.querySelectorAll('.filterAuto').forEach(el => {
     el.addEventListener('change', event => {
       const url = new URL(window.location.href);
@@ -503,19 +504,19 @@ document.addEventListener('DOMContentLoaded', () => {
       event.preventDefault();
       if (el.dataset.target === 'select') {
         // check all boxes and set background color
-        document.querySelectorAll('.entity input[type=checkbox]').forEach(box => {
+        document.querySelectorAll('.entity input[type=checkbox]')?.forEach(box => {
           (box as HTMLInputElement).checked = true;
           (box.closest('.entity') as HTMLElement).style.backgroundColor = bgColor;
         });
-        document.getElementById('withSelected').classList.remove('d-none');
+        document.getElementById('withSelected')?.classList.remove('d-none');
         el.dataset.target = 'unselect';
       } else {
-        document.querySelectorAll('.entity input[type=checkbox]').forEach(box => {
+        document.querySelectorAll('.entity input[type=checkbox]')?.forEach(box => {
           (box as HTMLInputElement).checked = false;
           (box.closest('.entity') as HTMLElement).style.backgroundColor = '';
         });
         el.dataset.target = 'select';
-        document.getElementById('withSelected').classList.add('d-none');
+        document.getElementById('withSelected')?.classList.add('d-none');
       }
       const icon = el.querySelector('i');
       icon.classList.toggle('fa-square');

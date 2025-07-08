@@ -2,7 +2,7 @@
 <div class='modal fade' id='fieldBuilderModal' tabindex='-1' role='dialog' aria-labelledby='fieldBuilderLabel'>
   <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content'>
-      {% if App.Config.configArr.debug -%}
+      {% if App.devMode -%}
         <!-- [html-validate-disable-next wcag/h32: no submit button for navbar search field] -->
       {%- endif %}
       <form id ='newFieldForm' class='new-field-form' aria-label='new extra field'>

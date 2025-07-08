@@ -18,8 +18,6 @@ skip_confirm: false
 config:
   # skip admin validation of new accounts
   admin_validate: 0
-  # set debug mode ON
-  debug: 1
   ldap_base_dn: dc=example,dc=org
   ldap_host: ldap
   # this is the default password of osixia/openldap docker container

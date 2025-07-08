@@ -68,6 +68,7 @@ final class App
         public Config $Config,
         public Logger $Log,
         public Users $Users,
+        public bool $devMode = false,
     ) {}
 
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-//
@@ -132,9 +133,7 @@ final class App
     public function render(string $template, array $variables): string
     {
         try {
-            return $this->getTwig(
-                $this->Config::boolFromEnv('DEV_MODE')
-            )->render(
+            return $this->getTwig($this->devMode)->render(
                 $template,
                 array_merge(
                     array(

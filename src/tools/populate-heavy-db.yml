@@ -18,8 +18,6 @@ skip_confirm: false
 config:
   # skip admin validation of new accounts
   admin_validate: 0
-  # set debug mode ON
-  debug: 1
   # the url of the dev install
   url: "https://elab.local:3148"
   # set the mail_from config

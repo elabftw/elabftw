@@ -94,7 +94,7 @@
           {# SEARCH WITH TAG #}
           {# select is hidden to avoid showing the raw list and a layout change, it shows up with TomSelect #}
           <input placeholder='{{ 'Tags'|trans }}' id='tagFilterPlaceholder' class='form-control' aria-label='placeholder for tags input' />
-          {% if App.Config.configArr.debug -%}
+          {% if App.devMode -%}
             <!-- [html-validate-disable-block input-missing-label, prefer-native-element: suppress error from tom-select] -->
           {%- endif %}
           <select hidden
@@ -127,7 +127,7 @@
       {# METADATA SEARCH #}
       <div class='d-flex'>
         <div class='input-group d-flex flex-nowrap'>
-          {% if App.Config.configArr.debug -%}
+          {% if App.devMode -%}
             <!-- [html-validate-disable input-missing-label, prefer-native-element: suppress errors from tom-select] -->
           {%- endif %}
           <select
@@ -143,7 +143,7 @@
               <option value='{{ metakey }}' {{- metakey == App.Request.query.get('metakey') ? ' selected' }}>{{ metakey|raw }}</option>
             {% endfor %}
           </select>
-          {% if App.Config.configArr.debug -%}
+          {% if App.devMode -%}
             <!-- [html-validate-enable input-missing-label, prefer-native-element: suppress errors from tom-select] -->
           {%- endif %}
           <div class='input-group-text px-1 brl-none brr-none' style='margin-left:-1px;margin-right:-1px;'>:</div>

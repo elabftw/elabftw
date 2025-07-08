@@ -474,7 +474,7 @@
 {# TAB 7 POLICIES #}
 <div data-tabcontent='7' hidden>
 
-  {% macro policy(title, slug, configArr) %}
+  {% macro policy(title, slug, configArr, devMode) %}
     <h3 class='mb-3 p-2 pl-3 section-title'>{{ title|trans }}</h3>
     <div class='pl-3'>
       <div class='d-flex justify-content-between'>
@@ -485,7 +485,7 @@
       {% if not configArr[slug] %}
         {{ 'Note: the text below is a template and must be edited and saved.'|trans|msg('ok', false) }}
       {% endif %}
-      {% if App.devMode -%}
+      {% if devMode -%}
         <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element, no-unused-disable, require-sri: suppress errors from tinymce] -->
       {%- endif %}
       <textarea id='{{ slug }}Input' class='mceditable'>
@@ -498,10 +498,10 @@
     </div>
   {% endmacro %}
 
-  {{ _self.policy('Privacy policy', 'privacy_policy', App.Config.configArr) }}
-  {{ _self.policy('Terms of service', 'terms_of_service', App.Config.configArr) }}
-  {{ _self.policy('Accessibility statement', 'a11y_statement', App.Config.configArr) }}
-  {{ _self.policy('Legal notice', 'legal_notice', App.Config.configArr) }}
+  {{ _self.policy('Privacy policy', 'privacy_policy', App.Config.configArr, App.devMode) }}
+  {{ _self.policy('Terms of service', 'terms_of_service', App.Config.configArr, App.devMode) }}
+  {{ _self.policy('Accessibility statement', 'a11y_statement', App.Config.configArr, App.devMode) }}
+  {{ _self.policy('Legal notice', 'legal_notice', App.Config.configArr, App.devMode) }}
 
 </div>
 

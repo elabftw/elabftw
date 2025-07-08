@@ -17,6 +17,7 @@ use Elabftw\Models\Users;
 use PDO;
 use Symfony\Component\Mime\Address;
 use Override;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Warn users and their Admins about account expiration
@@ -28,7 +29,7 @@ final class ExpirationNotifier extends EmailNotifications
     protected const NOTIF_PERIOD = 30;
 
     #[Override]
-    public function sendEmails(): int
+    public function sendEmails(OutputInterface $output): int
     {
         return $this->sendAdminsEmails($this->sendUsersEmails());
     }

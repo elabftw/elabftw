@@ -23,6 +23,7 @@ use Elabftw\Models\Notifications\SelfNeedValidation;
 use Elabftw\Models\Notifications\StepDeadline;
 use Elabftw\Models\Notifications\UserCreated;
 use Elabftw\Models\Notifications\UserNeedValidation;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 class EmailNotificationsTest extends \PHPUnit\Framework\TestCase
 {
@@ -73,6 +74,6 @@ class EmailNotificationsTest extends \PHPUnit\Framework\TestCase
         $stub->method('sendEmail')->willReturn(true);
         $EmailNotifications = new EmailNotifications($stub);
         // valid ones
-        $EmailNotifications->sendEmails();
+        $EmailNotifications->sendEmails(new ConsoleOutput());
     }
 }

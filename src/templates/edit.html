@@ -33,7 +33,7 @@
 
   {# DATE #}
   <div class='d-flex mb-2 justify-content-between '>
-    {% if Entity.entityType.value != 'experiments_templates' %}
+    {% if Entity.entityType.value != 'experiments_templates' and Entity.entityType.value != 'items_types' %}
       <div class='form-inline'>
         <label for='date_input' class='col-form-label mr-3 edit-mode-label justify-content-start d-sm-block d-none'>{{ 'Started on'|trans }}</label>
         {# the input expects date in YYYY-MM-DD format, and it will be displayed according to the browser's locale #}
@@ -49,6 +49,12 @@
         <input id='custom_id_input' class='form-control' data-trigger='change' data-model='{{ Entity.entityType.value }}/{{ Entity.entityData.id }}' data-target='custom_id' type='number' min='0' value='{{ Entity.entityData.custom_id }}' />
       </div>
     </div>
+    {% endif %}
+    {% if Entity.entityType.value == 'items_types' %}
+      <div class='form-inline'>
+        <label for='color_input' class='col-form-label mr-3 edit-mode-label justify-content-start d-sm-block d-none'>{{ 'Color'|trans }}</label>
+        <input id='color_input' data-trigger='change' data-model='{{ Entity.entityType.value }}/{{ Entity.entityData.id }}' data-target='color' type='color' value='#{{ Entity.entityData.color }}' class='form-control' style='min-width: 123px' />
+      </div>
     {% endif %}
   </div>
 

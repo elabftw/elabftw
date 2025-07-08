@@ -44,9 +44,9 @@
   </div>
 
   {# middle part: category, title, icons and tags #}
-  <div>
+  <div class='align-self-center'>
     {# first line #}
-    <div class='my-1'>
+    <div>
       {# timestamp icon #}
       {% if item.timestamped %}
         <i style='color:#{{ item.category_color|default('bdbdbd') }}' class='far fa-calendar-check fa-fw'></i>
@@ -66,19 +66,20 @@
       {% endif %}
       {# status #}
       {% if item.status %}
-        <button class='btn catstat-btn status-btn bg-firstlevel' type='button' data-action='add-query-filter' data-key='status' data-value='{{ item.status|e('html_attr') }}' style='line-height:normal;'><i class='fas fa-circle fa-fw' style='--bg: #{{ item.status_color|default('bdbdbd') }}'></i> {{ item.status_title }}</button>
+        <button class='btn catstat-btn status-btn bg-firstlevel mb-1' type='button' data-action='add-query-filter' data-key='status' data-value='{{ item.status|e('html_attr') }}' style='line-height:normal;'><i class='fas fa-circle fa-fw' style='--bg: #{{ item.status_color|default('bdbdbd') }}'></i> {{ item.status_title }}</button>
       {% endif %}
     </div>
     {# end first line #}
 
     {# second line: title #}
-    <div class='d-flex justify-content-between title'>
-      <p>
-      {% if item.custom_id %}
-        <span class='custom-id-badge' title='{{ 'Custom ID'|trans }}'>{{ item.custom_id }}</span>
+    <div class='d-flex title flex-nowrap'>
+      {% if item.color %}
+        <span class='round-spot mr-1' style='background-color: #{{ item.color }}'></span>
       {% endif %}
-        <a href='{{ Entity.entityType.toPage }}?mode=view&amp;id={{ item.id }}'>{{ item.title }}</a>
-      </p>
+      {% if item.custom_id %}
+        <span class='custom-id-badge mr-1' title='{{ 'Custom ID'|trans }}'>{{ item.custom_id }}</span>
+      {% endif %}
+      <a href='{{ Entity.entityType.toPage }}?mode=view&amp;id={{ item.id }}'>{{ item.title }}</a>
     </div>
     {# owner #}
     <div class='owner'>

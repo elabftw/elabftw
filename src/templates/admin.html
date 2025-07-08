@@ -22,9 +22,9 @@
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='1'>{{ 'Team'|trans }}</button></li>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='2'>{{ 'User Groups'|trans }}</button></li>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='3'>{{ 'Users'|trans }}</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='6'>{{ 'Export'|trans }}</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='7'>{{ 'Tag manager'|trans }}</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='8'>{{ 'Batch actions'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='4'>{{ 'Export'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='5'>{{ 'Tag manager'|trans }}</button></li>
+  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='6'>{{ 'Batch actions'|trans }}</button></li>
 </ul>
 
 {# loading spinner #}
@@ -216,7 +216,7 @@
 </div>
 
 {# TAB 6 EXPORT #}
-<div data-tabcontent='6' hidden>
+<div data-tabcontent='4' hidden>
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Export database items'|trans }}</h3>
   <div class='pl-3 mb-5'>
     <div class='d-flex justify-content-between'>
@@ -301,7 +301,7 @@
 </div>
 
 {# TAB 7 TAG MANAGER #}
-<div data-tabcontent='7' hidden>
+<div data-tabcontent='5' hidden>
   <p>{{ 'From here you can add, edit or delete the tags for your team. Click the tag to edit it.'|trans }}</p>
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Configuration'|trans }}</h3>
   <div class='pl-3 mb-5'>
@@ -366,7 +366,7 @@
 </div>
 
 {# TAB 8 BATCH ACTIONS #}
-<div data-tabcontent='8' id='batchActions' hidden>
+<div data-tabcontent='6' id='batchActions' hidden>
   <p>{{ 'From here you can perform actions on entire group of entries at once.'|trans }}</p>
   <hr>
   <button type='button' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Resources categories'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>

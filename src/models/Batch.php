@@ -15,6 +15,7 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\FilterableColumn;
 use Elabftw\Enums\Scope;
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Params\DisplayParams;
@@ -33,24 +34,28 @@ final class Batch extends AbstractRest
     public function postAction(Action $action, array $reqBody): int
     {
         $action = Action::from($reqBody['action']);
+        $state = null;
+        if ($action === Action::Unarchive) {
+            $state = State::Archived;
+        }
         if ($reqBody['items_tags']) {
             $this->processTags($reqBody['items_tags'], new Items($this->requester), $action, $reqBody);
         }
         if ($reqBody['items_types']) {
             $model = new Items($this->requester);
-            $this->processEntities($reqBody['items_types'], $model, FilterableColumn::Category, $action, $reqBody);
+            $this->processEntities($reqBody['items_types'], $model, FilterableColumn::Category, $action, $reqBody, $state);
         }
         if ($reqBody['items_status']) {
             $model = new Items($this->requester);
-            $this->processEntities($reqBody['items_status'], $model, FilterableColumn::Status, $action, $reqBody);
+            $this->processEntities($reqBody['items_status'], $model, FilterableColumn::Status, $action, $reqBody, $state);
         }
         if ($reqBody['experiments_categories']) {
             $model = new Experiments($this->requester);
-            $this->processEntities($reqBody['experiments_categories'], $model, FilterableColumn::Category, $action, $reqBody);
+            $this->processEntities($reqBody['experiments_categories'], $model, FilterableColumn::Category, $action, $reqBody, $state);
         }
         if ($reqBody['experiments_status']) {
             $model = new Experiments($this->requester);
-            $this->processEntities($reqBody['experiments_status'], $model, FilterableColumn::Status, $action, $reqBody);
+            $this->processEntities($reqBody['experiments_status'], $model, FilterableColumn::Status, $action, $reqBody, $state);
         }
         if ($reqBody['experiments_tags']) {
             $this->processTags($reqBody['experiments_tags'], new Experiments($this->requester), $action, $reqBody);
@@ -58,7 +63,7 @@ final class Batch extends AbstractRest
         if ($reqBody['users']) {
             // only process experiments
             $model = new Experiments($this->requester);
-            $this->processEntities($reqBody['users'], $model, FilterableColumn::Owner, $action, $reqBody);
+            $this->processEntities($reqBody['users'], $model, FilterableColumn::Owner, $action, $reqBody, $state);
         }
         return $this->processed;
     }
@@ -69,9 +74,9 @@ final class Batch extends AbstractRest
         return 'api/v2/batch/';
     }
 
-    private function processEntities(array $idArr, AbstractConcreteEntity $model, FilterableColumn $column, Action $action, array $params): void
+    private function processEntities(array $idArr, AbstractConcreteEntity $model, FilterableColumn $column, Action $action, array $params, ?State $state = null): void
     {
-        $entries = $this->getEntriesByIds($idArr, $model, $column);
+        $entries = $this->getEntriesByIds($idArr, $model, $column, $state);
         $this->loopOverEntries($entries, $model, $action, $params);
     }
 
@@ -84,16 +89,17 @@ final class Batch extends AbstractRest
         $this->loopOverEntries($tagEntries, $model, $action, $params);
     }
 
-    private function getEntriesByIds(array $idArr, AbstractConcreteEntity $model, FilterableColumn $column): array
+    private function getEntriesByIds(array $idArr, AbstractConcreteEntity $model, FilterableColumn $column, ?State $state): array
     {
         $allEntries = array();
         foreach ($idArr as $id) {
             $DisplayParams = new DisplayParams(
                 requester: $this->requester,
                 // this is needed so psalm is happy (might be a bug in psalm)
-                query: null,
                 entityType: $model->entityType,
+                query: null,
                 limit: 100000,
+                states: $state ? array($state) : array(State::Normal),
             );
             $DisplayParams->appendFilterSql($column, $id);
             $entries = $model->readShow($DisplayParams, false);

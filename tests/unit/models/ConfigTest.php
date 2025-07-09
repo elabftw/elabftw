@@ -13,6 +13,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\UnprocessableContentException;
 
 class ConfigTest extends \PHPUnit\Framework\TestCase
 {
@@ -23,7 +24,17 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->Config = Config::getConfig();
-        $this->setupValues = $this->Config->configArr;
+        // remove sensitive/conflicting values
+        // fixes [Elabftw\Exceptions\DatabaseErrorException] Data too long for column 'conf_value' at row 1
+        $this->setupValues = array_diff_key(
+            $this->Config->configArr,
+            array_flip(array(
+                'smtp_password',
+                'ldap_password',
+                'ts_password',
+                'remote_dir_config',
+            ))
+        );
     }
 
     protected function tearDown(): void
@@ -88,5 +99,24 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(ImproperActionException::class);
         $this->Config->postAction(Action::Create, array());
+    }
+
+    public function testCannotPatchWithInvalidPermissions(): void
+    {
+        // Must have at least one permission
+        $this->expectException(UnprocessableContentException::class);
+        $this->Config->patch(Action::Update, array(
+            'allow_permission_team' => '0',
+            'allow_permission_user' => '0',
+            'allow_permission_full' => '0',
+            'allow_permission_organization' => '0',
+            'allow_permission_useronly' => '0',
+        ));
+
+        // correct patch
+        $this->Config->patch(Action::Update, array(
+            'allow_permission_team' => '1',
+            'allow_permission_user' => '1',
+        ));
     }
 }

@@ -12,9 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\PermissionsHelper;
-use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
-use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Models\Config;
 
 class PermissionsHelperTest extends \PHPUnit\Framework\TestCase
@@ -42,16 +40,6 @@ class PermissionsHelperTest extends \PHPUnit\Framework\TestCase
         $permissions = $this->PermissionsHelper->getAssociativeArray();
         $this->assertArrayHasKey(BasePermissions::Team->value, $permissions);
         $this->assertArrayHasKey(BasePermissions::Full->value, $permissions);
-
-        // Must have at least one permission
-        $this->Config->patch(Action::Update, array(
-            'allow_permission_team' => '0',
-            'allow_permission_user' => '0',
-            'allow_permission_full' => '0',
-            'allow_permission_organization' => '0',
-            'allow_permission_useronly' => '0',
-        ));
-        $this->expectException(UnprocessableContentException::class);
-        $this->PermissionsHelper->getAssociativeArray();
+        $this->assertArrayHasKey(BasePermissions::Organization->value, $permissions);
     }
 }

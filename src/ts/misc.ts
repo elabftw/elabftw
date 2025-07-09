@@ -90,7 +90,7 @@ function triggerHandler(event: Event, el: HTMLInputElement): void {
       handleReloads(el.dataset.reload);
     }
   }).catch(error => {
-    // handle 422: UnprocessableContentEception errors
+    // handle 422: UnprocessableContentException errors
     const prefix = '422';
     if (error.message.startsWith(prefix)) {
       if (el.type === 'checkbox') {

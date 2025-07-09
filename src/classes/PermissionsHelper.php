@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\BasePermissions;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\TeamGroups;
@@ -53,7 +53,7 @@ final class PermissionsHelper
         $base = BasePermissions::getActiveBase($Config->configArr);
 
         if (empty($base)) {
-            throw new IllegalActionException('At least one permission needs to be enabled in the config.');
+            throw new UnprocessableContentException('At least one permission needs to be enabled in the config.');
         }
 
         return $base;

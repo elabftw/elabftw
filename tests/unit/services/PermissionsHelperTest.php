@@ -13,31 +13,13 @@ namespace Elabftw\Services;
 
 use Elabftw\Elabftw\PermissionsHelper;
 use Elabftw\Enums\BasePermissions;
-use Elabftw\Models\Config;
 
 class PermissionsHelperTest extends \PHPUnit\Framework\TestCase
 {
-    private PermissionsHelper $PermissionsHelper;
-
-    private Config $Config;
-
-    private array $setupValues;
-
-    protected function setUp(): void
+    public function testGetAssociativeArray(): void
     {
-        $this->PermissionsHelper = new PermissionsHelper();
-        $this->Config = Config::getConfig();
-        $this->setupValues = $this->Config->configArr;
-    }
-
-    protected function tearDown(): void
-    {
-        $this->Config->configArr = $this->setupValues;
-    }
-
-    public function testGetAssociativeArrayWithValidPermissions(): void
-    {
-        $permissions = $this->PermissionsHelper->getAssociativeArray();
+        $permissionHelper = new PermissionsHelper();
+        $permissions = $permissionHelper->getAssociativeArray();
         $this->assertArrayHasKey(BasePermissions::Team->value, $permissions);
         $this->assertArrayHasKey(BasePermissions::Full->value, $permissions);
         $this->assertArrayHasKey(BasePermissions::Organization->value, $permissions);

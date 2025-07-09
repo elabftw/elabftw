@@ -123,8 +123,8 @@ final class Apiv2Controller extends AbstractApiController
             return new JsonResponse($error, $error['code']);
         } catch (UnprocessableContentException $e) {
             $error = array(
-                'code' => 422,
-                'message' => 'Bad Request',
+                'code' => $e->getCode(),
+                'message' => 'Unprocessable Request',
                 'description' => $e->getMessage(),
             );
             return new JsonResponse($error, $error['code']);

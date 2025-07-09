@@ -42,6 +42,7 @@ const t = {
     "nothing-selected": "Τίποτα επιλεγμένο!",
     "now": "Τώρα",
     "onboarding-email-sent": "Σύντομα θα σταλούν μηνύματα ηλεκτρονικού ταχυδρομείου ενσωμάτωσης.",
+    "enable-permission": "You must allow at least one permission setting.",
     "please-wait": "Παρακαλώ περιμένετε",
     "remove": "Αφαίρεση",
     "replace-edited-file": "Θέλετε να αντικαταστήσετε το αρχείο στον διακομιστή με αυτήν την επεξεργασία;",

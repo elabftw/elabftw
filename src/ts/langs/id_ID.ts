@@ -42,6 +42,7 @@ const t = {
     "nothing-selected": "Tidak ada yang dipilih!",
     "now": "Sekarang",
     "onboarding-email-sent": "Email orientasi akan segera dikirimkan.",
+    "enable-permission": "You must allow at least one permission setting.",
     "please-wait": "Mohon tunggu…",
     "remove": "Menghapus",
     "replace-edited-file": "Apakah Anda ingin mengganti file di server dengan hasil edit ini?",

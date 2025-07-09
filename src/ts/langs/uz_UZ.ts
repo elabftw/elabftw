@@ -42,6 +42,7 @@ const t = {
     "nothing-selected": "Hech narsa tanlanmagan!",
     "now": "Hozir",
     "onboarding-email-sent": "Tez orada ishga kirish haqidagi e-pochta(lar) yuboriladi.",
+    "enable-permission": "You must allow at least one permission setting.",
     "please-wait": "Iltimos kuting…",
     "remove": "O'chirish",
     "replace-edited-file": "Serverdagi faylni ushbu tahrir bilan almashtirmoqchimisiz?",

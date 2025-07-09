@@ -42,6 +42,7 @@ const t = {
     "nothing-selected": "Nič izbranega!",
     "now": "zdaj",
     "onboarding-email-sent": "E-poštna sporočila za pripravo bodo kmalu poslana.",
+    "enable-permission": "You must allow at least one permission setting.",
     "please-wait": "Prosim počakaj…",
     "remove": "Odstrani",
     "replace-edited-file": "Ali želite zamenjati datoteko na strežniku s tem urejanjem?",

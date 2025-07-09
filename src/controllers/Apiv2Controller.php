@@ -23,6 +23,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidApiSubModelException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Import\Handler as ImportHandler;
 use Elabftw\Interfaces\RestInterface;
@@ -117,6 +118,13 @@ final class Apiv2Controller extends AbstractApiController
             $error = array(
                 'code' => 403,
                 'message' => 'Access Forbidden',
+                'description' => $e->getMessage(),
+            );
+            return new JsonResponse($error, $error['code']);
+        } catch (UnprocessableContentException $e) {
+            $error = array(
+                'code' => $e->getCode(),
+                'message' => 'Unprocessable Request',
                 'description' => $e->getMessage(),
             );
             return new JsonResponse($error, $error['code']);

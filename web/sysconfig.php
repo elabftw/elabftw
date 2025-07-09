@@ -13,9 +13,11 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\AuditCategory;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EnforceMfa;
 use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\AuthFail;
 use Elabftw\Models\Experiments;
@@ -159,9 +161,12 @@ try {
         'usersArr' => $usersArr,
         'enforceMfaArr' => EnforceMfa::getAssociativeArray(),
         'passwordComplexityArr' => PasswordComplexity::getAssociativeArray(),
+        'permissions' => BasePermissions::cases(),
     );
 } catch (IllegalActionException $e) {
     $renderArr['error'] = Tools::error(true);
+} catch (UnprocessableContentException $e) {
+    return new Response($e->getMessage(), $e->getCode());
 } catch (Exception $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
     $renderArr['error'] = $e->getMessage();

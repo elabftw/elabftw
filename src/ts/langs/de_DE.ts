@@ -42,6 +42,7 @@ const t = {
     "nothing-selected": "Nichts ausgewählt!",
     "now": "Jetzt",
     "onboarding-email-sent": "Onboarding-E-Mails werden in Kürze versendet.",
+    "enable-permission": "You must allow at least one permission setting.",
     "please-wait": "Bitte warten …",
     "remove": "Entfernen",
     "replace-edited-file": "Möchten Sie die Datei auf dem Server durch diese Bearbeitung ersetzen?",

@@ -81,7 +81,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }).catch(error => latestVersionDiv.append(error));
 
-
   document.querySelectorAll('[data-action="load-file-on-change"]').forEach(input => {
     input.addEventListener('change', (event) => {
       const el = (event.target as HTMLInputElement);

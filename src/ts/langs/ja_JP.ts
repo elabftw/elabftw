@@ -42,6 +42,7 @@ const t = {
     "nothing-selected": "何も選択されていません！",
     "now": "現在",
     "onboarding-email-sent": "オンボーディングメールがすぐに送信されます。",
+    "enable-permission": "You must allow at least one permission setting.",
     "please-wait": "お待ちください…",
     "remove": "取り除く",
     "replace-edited-file": "この編集したものでサーバー上のファイルを置き換えますか？",

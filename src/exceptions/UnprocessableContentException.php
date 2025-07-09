@@ -2,7 +2,6 @@
 
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
- * @author    Moustapha Camara <Deltablot>
  * @copyright 2025 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0

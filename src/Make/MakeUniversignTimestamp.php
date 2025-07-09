@@ -12,14 +12,12 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use DateTime;
+use DateTimeImmutable;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Override;
-
-use function sprintf;
 
 /**
  * RFC3161 timestamping with Universign service
@@ -68,12 +66,17 @@ class MakeUniversignTimestamp extends AbstractMakeTrustedTimestamp
     #[Override]
     protected function formatResponseTime(string $timestamp): string
     {
-        $date = DateTime::createFromFormat('M j H:i:s.u Y T', $timestamp);
-        if ($date instanceof DateTime) {
+        $date = DateTimeImmutable::createFromFormat('M j H:i:s.u Y T', $timestamp);
+        if ($date instanceof DateTimeImmutable) {
             // Return formatted time as this is what we will store in the database.
             // PHP will take care of correct timezone conversions (if configured correctly)
             return date('Y-m-d H:i:s', $date->getTimestamp());
         }
-        throw new ImproperActionException(sprintf('Could not format response time from timestamp: %s', $timestamp));
+        // try again but this time without microseconds as it might happen in some cases that it's not present for some reason
+        $date = DateTimeImmutable::createFromFormat('M j H:i:s Y T', $timestamp);
+        if ($date instanceof DateTimeImmutable) {
+            return date('Y-m-d H:i:s', $date->getTimestamp());
+        }
+        return parent::formatResponseTime($timestamp);
     }
 }

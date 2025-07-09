@@ -14,7 +14,6 @@ namespace Elabftw\Services;
 use Elabftw\Elabftw\PermissionsHelper;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
-use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Models\Config;
 

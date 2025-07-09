@@ -15,6 +15,7 @@ use Elabftw\Elabftw\PermissionsHelper;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Models\Config;
 
 class PermissionsHelperTest extends \PHPUnit\Framework\TestCase
@@ -51,7 +52,7 @@ class PermissionsHelperTest extends \PHPUnit\Framework\TestCase
             'allow_permission_organization' => '0',
             'allow_permission_useronly' => '0',
         ));
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(UnprocessableContentException::class);
         $this->PermissionsHelper->getAssociativeArray();
     }
 }

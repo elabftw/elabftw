@@ -14,6 +14,8 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Scope;
 
+use function json_decode;
+
 /**
  * An anonymous user is "logged in" in a team and has default settings
  * With a userid of 0
@@ -48,7 +50,7 @@ final class AnonymousUser extends Users
         $this->userData['pdf_format'] = 'A4';
         $this->userData['userid'] = 0;
         $this->userData['entrypoint'] = 1;
-        $this->userData['initials'] = '☉'; // generic character utf &#9737. see issue #5778
+        $this->userData['initials'] = json_decode('"\u2609"'); // ☉
         $this->userData['show_weekends'] = 0;
         $this->userData['enforce_exclusive_edit_mode'] = 0;
         $this->userData['scheduler_layout'] = 0;

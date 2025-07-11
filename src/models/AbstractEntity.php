@@ -871,23 +871,23 @@ abstract class AbstractEntity extends AbstractRest
 
     private function archiveEntity(): void
     {
-        $targetState = State::Normal;
-        if ($this->entityData['state'] === $targetState->value) {
-            $targetState = State::Archived;
-            $this->lock();
-        }
-        $this->update(new EntityParams('state', (string) $targetState->value));
-
+        $this->handleArchivedState(State::Normal, State::Archived, fn() => $this->lock());
         $RequestActions = new RequestActions($this->Users, $this);
         $RequestActions->remove(RequestableAction::Archive);
     }
 
     private function unarchiveEntity(): void
     {
-        $targetState = State::Archived;
-        if ($this->entityData['state'] === $targetState->value) {
-            $targetState = State::Normal;
-            $this->unlock();
+        $this->handleArchivedState(State::Archived, State::Normal, fn() => $this->unlock());
+    }
+
+    // Archive a normal entity, Unarchive an archived entity.
+    private function handleArchivedState(State $from, State $to, callable $toggleLock): void
+    {
+        $targetState = $from;
+        if ($this->entityData['state'] === $from->value) {
+            $targetState = $to;
+            $toggleLock();
         }
         $this->update(new EntityParams('state', (string) $targetState->value));
     }

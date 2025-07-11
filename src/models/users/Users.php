@@ -39,7 +39,6 @@ use Elabftw\Services\EmailValidator;
 use Elabftw\Services\Filter;
 use Elabftw\Services\MfaHelper;
 use Elabftw\Services\TeamsHelper;
-use Elabftw\Services\UserArchiver;
 use Elabftw\Services\UserCreator;
 use Elabftw\Services\UsersHelper;
 use PDO;
@@ -419,7 +418,6 @@ class Users extends AbstractRest
             Action::Disable2fa => $this->disable2fa(),
             Action::PatchUser2Team => (new Users2Teams($this->requester))->patchUser2Team($params),
             Action::Unreference => (new Users2Teams($this->requester))->destroy($this->userData['userid'], (int) $params['team']),
-            Action::Lock, Action::Archive => (new UserArchiver($this->requester, $this))->toggleArchive((bool) ($params['with_exp'] ?? false)),
             Action::UpdatePassword => $this->updatePassword($params),
             Action::Update => (
                 function () use ($params) {
@@ -509,7 +507,7 @@ class Users extends AbstractRest
     public function isAdminOf(int $userid): bool
     {
         // consider that we are admin of ourselves
-        if ($this->userid === $userid) {
+        if ($this->userid === $userid || $this->userData['is_sysadmin'] === 1) {
             return true;
         }
         // check if in the teams we have in common, the potential admin is admin

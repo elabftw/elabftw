@@ -12,10 +12,13 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use Elabftw\AuditEvent\UserAttributeChanged;
+use Elabftw\AuditEvent\TeamStatusModified;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\State;
+use Elabftw\Enums\Users2TeamsTargets;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Config;
@@ -34,19 +37,21 @@ final class UserArchiver
         $this->Db = Db::getConnection();
     }
 
-    public function toggleArchive(bool $lockExp = false): array
+    // TODO probably remove the lockExp from here because the ui doesn't provide it
+    public function setArchived(BinaryValue $isArchived, bool $lockExp = false): BinaryValue
     {
-        $this->target->userData['archived'] === 0 ? $this->archive($lockExp) : $this->unarchive();
-        if ($this->toggleArchiveSql()) {
-            AuditLogs::create(new UserAttributeChanged(
-                $this->requester->userid ?? 0,
-                $this->target->userid ?? 0,
-                'archived',
-                (string) $this->target->userData['archived'],
-                $this->target->userData['archived'] === 0 ? '1' : '0',
-            ));
+        $isArchived->toBoolean() ? $this->archive($lockExp) : $this->unarchive();
+        if ($this->toggleArchiveSql($isArchived)) {
+        /** @psalm-suppress PossiblyNullArgument */
+        AuditLogs::create(new TeamStatusModified(
+            $this->target->team,
+            Users2TeamsTargets::IsArchived,
+            $isArchived,
+            $this->requester->userid,
+            $this->target->userid,
+        ));
         }
-        return $this->target->readOne();
+        return $isArchived;
     }
 
     private function archive(bool $lockExp = false): bool
@@ -66,27 +71,18 @@ final class UserArchiver
     private function unarchive(): bool
     {
         $this->checkArchivePermission();
-        if ($this->getUnarchivedCount() > 0) {
-            throw new ImproperActionException('Cannot unarchive this user because they have another active account with the same email!');
-        }
         return true;
     }
 
-    // if the user is already archived, make sure there is no other account with the same email
-    private function getUnarchivedCount(): int
+    private function toggleArchiveSql(BinaryValue $isArchived): bool
     {
-        $sql = 'SELECT COUNT(email) FROM users WHERE email = :email AND archived = 0';
+        $sql = 'UPDATE users2teams SET is_archived = :is_archived WHERE `users_id` = :userid AND `teams_id` = :team';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':email', $this->target->userData['email']);
-        $this->Db->execute($req);
-        return (int) $req->fetchColumn();
-    }
-
-    private function toggleArchiveSql(): bool
-    {
-        $sql = 'UPDATE users SET archived = IF(archived = 1, 0, 1), token = null WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
+        $req->bindValue(':is_archived', $isArchived->value, PDO::PARAM_INT);
+        $req->bindValue(':team', $this->target->team, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->target->userData['userid'], PDO::PARAM_INT);
+        // also log them out of current session
+        $this->target->invalidateToken();
         return $this->Db->execute($req);
     }
 
@@ -111,6 +107,15 @@ final class UserArchiver
         if (Config::getConfig()->configArr['admins_archive_users'] === '0' &&
             $this->requester->userData['is_sysadmin'] !== 1) {
             throw new ImproperActionException(Tools::error(true));
+        }
+        // make sure requester is admin of target user
+        if (!$this->requester->isAdminOf($this->target->userid ?? 0)) {
+            throw new IllegalActionException('User tried to patch is_archived of another user but they are not admin');
+        }
+
+        $TeamsHelper = new TeamsHelper($this->target->team ?? 0);
+        if (!$TeamsHelper->isAdminInTeam($this->requester->userData['userid']) && $this->requester->userData['is_sysadmin'] !== 1) {
+            throw new IllegalActionException('User tried to patch is_archived of a team where they are not admin');
         }
     }
 }

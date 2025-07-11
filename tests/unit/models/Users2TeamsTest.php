@@ -14,9 +14,12 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Traits\TestsUtilsTrait;
 
 class Users2TeamsTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private Users2Teams $Users2Teams;
 
     protected function setUp(): void
@@ -34,22 +37,26 @@ class Users2TeamsTest extends \PHPUnit\Framework\TestCase
 
     public function testRmUserFromTeamButNotAdminInTeam(): void
     {
-        // tata in bravo
-        $Users2Teams = new Users2Teams(new Users(5, 2));
+        // admin in team 2
+        $admin2 = $this->getUserInTeam(team: 2, admin: 1);
+        $Users2Teams = new Users2Teams($admin2);
         // user in bravo, adding them to alpha
-        $Users2Teams->addUserToTeams(6, array(1));
+        $user2 = $this->getUserInTeam(team: 2, admin: 0);
+        $Users2Teams->addUserToTeams($user2->userid, array(1));
         $this->expectException(ImproperActionException::class);
         $Users2Teams->destroy(6, 1);
     }
 
     public function testRmAdminFromTeamAsSysadmin(): void
     {
+        // admin in team 2
+        $admin2 = $this->getUserInTeam(team: 2, admin: 1);
         // add tata to team alpha
-        $this->Users2Teams->addUserToTeams(5, array(1));
+        $this->Users2Teams->addUserToTeams($admin2->userid, array(1));
         // make tata Admin in Alpha
-        $this->Users2Teams->patchUser2Team(array('userid' => 5, 'team' => 1, 'target' => 'is_admin', 'content' => 1));
+        $this->Users2Teams->patchUser2Team(array('userid' => $admin2->userid, 'team' => 1, 'target' => 'is_admin', 'content' => 1));
         // and remove tata from team alpha
-        $this->Users2Teams->destroy(5, 1);
+        $this->Users2Teams->destroy($admin2->userid, 1);
     }
 
     public function testPatchUser2TeamGroup(): void

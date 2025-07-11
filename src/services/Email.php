@@ -209,8 +209,8 @@ class Email
 
     private static function getAllEmailAddressesRawData(EmailTarget $target, ?int $targetId = null): array
     {
-        $select = 'SELECT DISTINCT users.userid, email, CONCAT(firstname, " ", lastname) AS fullname FROM users2teams
-            LEFT JOIN users ON (users2teams.users_id = users.userid AND users2teams.is_archived = 0)
+        $select = 'SELECT DISTINCT users.userid, email, CONCAT(firstname, " ", lastname) AS fullname FROM users
+            LEFT JOIN users2teams ON (users2teams.users_id = users.userid AND users2teams.is_archived = 0)
             LEFT JOIN users2team_groups ON (users2team_groups.userid = users.userid)
             LEFT JOIN team_events ON (team_events.userid = users.userid)';
         switch ($target) {

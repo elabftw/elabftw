@@ -15,7 +15,10 @@ namespace Elabftw\Models;
 use Elabftw\AuditEvent\PermissionLevelChanged;
 use Elabftw\AuditEvent\TeamAddition;
 use Elabftw\AuditEvent\TeamRemoval;
+use Elabftw\AuditEvent\TeamStatusModified;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Enums\Users2TeamsTargets;
 use Elabftw\Exceptions\IllegalActionException;
@@ -23,6 +26,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Notifications\OnboardingEmail;
 use Elabftw\Services\UsersHelper;
 use Elabftw\Services\TeamsHelper;
+use Elabftw\Services\UserArchiver;
 use PDO;
 
 /**
@@ -71,7 +75,7 @@ final class Users2Teams
             Users2TeamsTargets::from($params['target']),
             (int) $params['userid'],
             (int) $params['team'],
-            (int) $params['content'],
+            BinaryValue::from((int) $params['content']),
         );
     }
 
@@ -133,12 +137,12 @@ final class Users2Teams
         return $Users->readOne();
     }
 
-    private function patchIsAdmin(int $userid, int $teamid, bool $isAdmin): int
+    private function patchIsAdmin(int $userid, int $teamid, BinaryValue $isAdmin): int
     {
-        $promoteToAdmin = $isAdmin && !$this->wasAdminAlready($userid);
+        $promoteToAdmin = $isAdmin->toBoolean() && !$this->wasAdminAlready($userid);
         // make sure requester is admin of target user
         if (!$this->requester->isAdminOf($userid) && $this->requester->userData['is_sysadmin'] !== 1) {
-            throw new IllegalActionException('User tried to patch team group of another user but they are not admin');
+            throw new IllegalActionException('User tried to patch is_admin of another user but they are not admin');
         }
 
         $TeamsHelper = new TeamsHelper($teamid);
@@ -147,7 +151,7 @@ final class Users2Teams
         }
         $sql = 'UPDATE users2teams SET is_admin = :is_admin WHERE `users_id` = :userid AND `teams_id` = :team';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':is_admin', $isAdmin, PDO::PARAM_INT);
+        $req->bindValue(':is_admin', $isAdmin->value, PDO::PARAM_INT);
         $req->bindValue(':userid', $userid, PDO::PARAM_INT);
         $req->bindValue(':team', $teamid, PDO::PARAM_INT);
 
@@ -160,14 +164,23 @@ final class Users2Teams
             (new OnboardingEmail(-1, $promoteToAdmin))->create($userid);
         }
         /** @psalm-suppress PossiblyNullArgument */
-        AuditLogs::create(new PermissionLevelChanged($this->requester->userid, $userid, Users2TeamsTargets::IsAdmin, (int) $isAdmin, $teamid));
-        return (int) $isAdmin;
+        AuditLogs::create(new PermissionLevelChanged($this->requester->userid, $userid, Users2TeamsTargets::IsAdmin, $isAdmin->value, $teamid));
+        return $isAdmin->value;
     }
 
-    private function patchIsSomething(Users2TeamsTargets $what, int $userid, int $teamid, int $content): int
+    private function patchIsArchived(int $userid, int $teamid, BinaryValue $content): int
+    {
+        return new UserArchiver($this->requester, new Users($userid, $teamid))
+            ->setArchived($content)->value;
+    }
+
+    private function patchIsSomething(Users2TeamsTargets $what, int $userid, int $teamid, BinaryValue $content): int
     {
         if ($what === Users2TeamsTargets::IsAdmin) {
-            return $this->patchIsAdmin($userid, $teamid, (bool) $content);
+            return $this->patchIsAdmin($userid, $teamid, $content);
+        }
+        if ($what === Users2TeamsTargets::IsArchived) {
+            return $this->patchIsArchived($userid, $teamid, $content);
         }
         // only sysdamin can do that
         if ($this->requester->userData['is_sysadmin'] === 0) {
@@ -180,7 +193,7 @@ final class Users2Teams
         $req->bindValue(':team', $teamid, PDO::PARAM_INT);
 
         $this->Db->execute($req);
-        return $content;
+        return $content->value;
     }
 
     private function wasAdminAlready(int $userid): bool

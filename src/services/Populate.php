@@ -190,7 +190,7 @@ final class Populate
     }
 
     // create a user based on options provided in yaml file
-    public function createUser(Teams $Teams, array $user): void
+    public function createUser(int $team, ?array $user = null): void
     {
         $firstname = $user['firstname'] ?? $this->faker->firstName();
         $lastname = $user['lastname'] ?? $this->faker->lastName();
@@ -202,7 +202,7 @@ final class Populate
         $Users = new Users();
         $userid = $Users->createOne(
             email: $email,
-            teams: array($user['team']),
+            teams: array($team),
             firstname: $firstname,
             lastname: $lastname,
             passwordHash: $passwordHash,
@@ -212,16 +212,15 @@ final class Populate
             validUntil: null,
             orgid: $orgid
         );
-        $team = $Teams->getTeamsFromIdOrNameOrOrgidArray(array($user['team']), true);
         $Requester = new Users(1, 1);
-        $Users = new Users($userid, $team[0]['id'], $Requester);
+        $Users = new Users($userid, $team, $Requester);
 
         if ($user['is_sysadmin'] ?? false) {
-            $Users->patch(Action::Update, array('is_sysadmin' => 1));
+            $Users->update(new UserParams('is_sysadmin', 1));
         }
 
         if (isset($user['validated']) && !$user['validated']) {
-            $Users->patch(Action::Update, array('validated' => 0));
+            $Users->update(new UserParams('validated', 0));
         }
 
         if ($user['create_mfa_secret'] ?? false) {
@@ -236,9 +235,9 @@ final class Populate
         if ($user['create_items'] ?? false) {
             $this->generate(new Items($Users), $user['items_iter'] ?? $this->iter);
         }
-        if ($user['api_key'] ?? false) {
+        if (array_key_exists('api_key', $user ?? array())) {
             $ApiKeys = new ApiKeys($Users);
-            $ApiKeys->createKnown($user['api_key']);
+            $ApiKeys->createKnown($user['api_key'] ?? 'yep');
         }
         if (isset($user['user_preferences'])) {
             $Users->patch(Action::Update, $user['user_preferences']);
@@ -250,6 +249,6 @@ final class Populate
                 $Templates->create(title: $this->faker->sentence(), body: $this->faker->realText(1000));
             }
         }
-        $this->output->writeln(sprintf('├ Created user: %s %s (%s)', $firstname, $lastname, $email));
+        $this->output->writeln(sprintf('├ + user: %s %s (%s) in team %d', $firstname, $lastname, $email, $team));
     }
 }

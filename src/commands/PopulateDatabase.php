@@ -108,10 +108,13 @@ final class PopulateDatabase extends Command
         $Category = new ExperimentsCategories($Teams);
         $faker = \Faker\Factory::create();
 
+        $iterations = $yaml['iterations'] ?? self::DEFAULT_ITERATIONS;
+        $Populate = new Populate($output, (int) $iterations);
+
         foreach ($yaml['teams'] as $team) {
-            $id = $Teams->create($team['name']);
-            $output->writeln(sprintf('├ Created team: %s', $team['name']));
-            $Teams->setId($id);
+            $teamid = $Teams->create($team['name']);
+            $output->writeln(sprintf('├ + team: %s (ID: %d)', $team['name'], $teamid));
+            $Teams->setId($teamid);
 
             // create fake categories and status
             $Category->postAction(Action::Create, array('name' => 'Cell biology', 'color' => $faker->hexColor(), 'is_default' => 0));
@@ -145,22 +148,22 @@ final class PopulateDatabase extends Command
                     $Teams->patch(Action::Update, array($column => (string) $team[$column]));
                 }
             }
-        }
+            // create users inside that team
+            // all users have the same password to make switching accounts easier
+            // if the password is provided in the config file, it'll be used instead for that user
+            foreach ($team['users'] ?? array() as $user) {
+                $Populate->createUser($teamid, $user);
+            }
+            if (array_key_exists('random_users', $team)) {
+                $iter = (int) $team['random_users'];
+                for ($i = 0; $i < $iter; $i++) {
+                    $Populate->createUser($teamid);
+                }
+            }
 
-        $iterations = $yaml['iterations'] ?? self::DEFAULT_ITERATIONS;
-        $Populate = new Populate($output, (int) $iterations);
-
-        // create users
-        // all users have the same password to make switching accounts easier
-        // if the password is provided in the config file, it'll be used instead for that user
-        foreach ($yaml['users'] as $user) {
-            $Populate->createUser($Teams, $user);
-        }
-
-        // create predefined templates
-        if (isset($yaml['templates'])) {
-            foreach ($yaml['templates'] as $template) {
-                $user = new Users((int) ($template['user'] ?? 1), (int) ($template['team'] ?? 1));
+            // EXPERIMENTS TEMPLATES
+            foreach ($team['templates'] ?? array() as $template) {
+                $user = new Users((int) ($template['user'] ?? 1), $teamid);
                 $Templates = new Templates($user);
                 $id = $Templates->postAction(Action::Create, array());
                 $Templates->setId($id);
@@ -187,12 +190,10 @@ final class PopulateDatabase extends Command
                     }
                 }
             }
-        }
 
-        if (isset($yaml['experiments'])) {
-            // read defined experiments
-            foreach ($yaml['experiments'] as $experiment) {
-                $user = new Users((int) ($experiment['user'] ?? 1), (int) ($experiment['team'] ?? 1));
+            // EXPERIMENTS
+            foreach ($team['experiments'] ?? array() as $experiment) {
+                $user = new Users((int) ($experiment['user'] ?? 1), $teamid);
                 $Experiments = new Experiments($user);
                 $id = $Experiments->postAction(Action::Create, array());
                 $Experiments->setId($id);
@@ -232,17 +233,15 @@ final class PopulateDatabase extends Command
                     }
                 }
             }
-        }
 
-        // add Resources Categories (items types)
-        if (array_key_exists('items_types', $yaml)) {
-            foreach ($yaml['items_types'] as $items_types) {
+            // add Resources Categories (items types)
+            foreach ($team['items_types'] ?? array() as $items_types) {
                 $team = (int) ($items_types['team'] ?? 1);
                 $user = new Users(1, $team);
                 $ItemsTypes = new ItemsTypes($user);
                 $itemTypeId = $ItemsTypes->create(title: $items_types['name']);
                 $ItemsTypes->setId($itemTypeId);
-                $output->writeln(sprintf('├ Created resource category: %s (id: %d in team: %d)', $items_types['name'], $itemTypeId, $team));
+                $output->writeln(sprintf('├ + resource category: %s (id: %d in team: %d)', $items_types['name'], $itemTypeId, $team));
                 $ItemsTypes->bypassWritePermission = true;
                 $defaultPermissions = BasePermissions::Team->toJson();
                 $patch = array(
@@ -254,42 +253,43 @@ final class PopulateDatabase extends Command
                 );
                 $ItemsTypes->patch(Action::Update, $patch);
             }
-        }
 
-        // randomize the entries so they look like they are not added at once
-        if (isset($yaml['items'])) {
-            shuffle($yaml['items']);
-            foreach ($yaml['items'] as $item) {
-                $user = new Users((int) ($item['user'] ?? 1), (int) ($item['team'] ?? 1));
-                $ItemsTypes = new ItemsTypes($user);
-                $Items = new Items($user);
-                $id = $Items->create(template: (int) ($item['category'] ?? $ItemsTypes->getDefault()));
-                $Items->setId($id);
-                $patch = array(
-                    'title' => $item['title'],
-                    'body' => $item['body'] ?? '',
-                    'date' => $item['date'] ?? date('Ymd'),
-                    'rating' => $item['rating'] ?? 0,
-                );
-                // don't override the items type metadata
-                if (isset($item['metadata'])) {
-                    $patch['metadata'] = $item['metadata'];
-                }
-                if (isset($item['experiments_links'])) {
-                    foreach ($item['experiments_links'] as $target) {
-                        $ExperimentsLinks = new Items2ExperimentsLinks($Items, (int) $target);
-                        $ExperimentsLinks->postAction(Action::Create, array());
+            // randomize the entries so they look like they are not added at once
+            if (isset($team['items'])) {
+                shuffle($team['items']);
+                foreach ($team['items'] as $item) {
+                    $user = new Users((int) ($item['user'] ?? 1), (int) ($item['team'] ?? 1));
+                    $ItemsTypes = new ItemsTypes($user);
+                    $Items = new Items($user);
+                    $id = $Items->create(template: (int) ($item['category'] ?? $ItemsTypes->getDefault()));
+                    $Items->setId($id);
+                    $patch = array(
+                        'title' => $item['title'],
+                        'body' => $item['body'] ?? '',
+                        'date' => $item['date'] ?? date('Ymd'),
+                        'rating' => $item['rating'] ?? 0,
+                    );
+                    // don't override the items type metadata
+                    if (isset($item['metadata'])) {
+                        $patch['metadata'] = $item['metadata'];
                     }
-                }
-                if (isset($item['items_links'])) {
-                    foreach ($item['items_links'] as $target) {
-                        $ItemsLinks = new Items2ItemsLinks($Items, (int) $target);
-                        $ItemsLinks->postAction(Action::Create, array());
+                    if (isset($item['experiments_links'])) {
+                        foreach ($item['experiments_links'] as $target) {
+                            $ExperimentsLinks = new Items2ExperimentsLinks($Items, (int) $target);
+                            $ExperimentsLinks->postAction(Action::Create, array());
+                        }
                     }
+                    if (isset($item['items_links'])) {
+                        foreach ($item['items_links'] as $target) {
+                            $ItemsLinks = new Items2ItemsLinks($Items, (int) $target);
+                            $ItemsLinks->postAction(Action::Create, array());
+                        }
+                    }
+                    $Items->patch(Action::Update, $patch);
                 }
-                $Items->patch(Action::Update, $patch);
             }
         }
+
 
         $output->writeln('├ ✓ All done');
         $output->writeln('└' . str_repeat('─', 62));

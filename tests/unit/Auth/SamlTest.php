@@ -20,10 +20,13 @@ use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Users;
+use Elabftw\Traits\TestsUtilsTrait;
 use OneLogin\Saml2\Auth as SamlAuthLib;
 
 class SamlTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private array $configArr;
 
     private SamlAuthLib $SamlAuthLib;
@@ -284,10 +287,11 @@ class SamlTest extends \PHPUnit\Framework\TestCase
     public function testMatchUserWithOrgidAndChangeEmail(): void
     {
         $samlUserdata = $this->samlUserdata;
+        $email = 'somesamluser42@example.com';
         // this will match the user with original email "somesamluser@example.com"
         $samlUserdata['internal_id'] = 'internal_id_42';
         // we assign a new email to that user from the idp response
-        $samlUserdata['User.email'] = 'somesamluser42@example.com';
+        $samlUserdata['User.email'] = $email;
         // make sure the orgid is picked up
         $this->settings['idp']['orgidAttr'] = 'internal_id';
         $config = $this->configArr;
@@ -296,7 +300,7 @@ class SamlTest extends \PHPUnit\Framework\TestCase
         $config['saml_sync_email_idp'] = '1';
 
         $authResponse = $this->getAuthResponse($samlUserdata, $config);
-        $this->assertEquals(46, $authResponse->userid);
+        $this->assertEquals($this->getUserIdFromEmail($email), $authResponse->userid);
     }
 
     /**

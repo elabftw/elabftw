@@ -17,9 +17,12 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
+use Elabftw\Traits\TestsUtilsTrait;
 
 class UserCreatorTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private UserCreator $UserCreator;
 
     protected function setUp(): void
@@ -46,7 +49,8 @@ class UserCreatorTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateFromAdminUser(): void
     {
-        $UserCreator = new UserCreator(new Users(5, 2), array(
+        $Admin = $this->getUserInTeam(team: 2, admin: 1);
+        $UserCreator = new UserCreator($Admin, array(
             'team' => 2,
             'email' => 'praisetheprophets@staff.ds9.bjr',
             'firstname' => 'Kira',

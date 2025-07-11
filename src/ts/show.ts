@@ -311,11 +311,24 @@ document.addEventListener('DOMContentLoaded', () => {
   function toggleActionButtonsDependingOnState(): void {
     const stateSelect = document.querySelector<HTMLSelectElement>('select[name="state"]');
     if (!stateSelect) return;
-    const isDeleted = stateSelect.value === '3';
-    // we don't need to perform any other action than "Restore" on deleted entities.
+
+    const state = stateSelect.value;
     document.querySelectorAll('[data-action="patch-selected-entities"]').forEach((btn: HTMLButtonElement) => {
-      const isRestore = btn.getAttribute('data-what') === 'restore';
-      const shouldShow = isDeleted ? isRestore : !isRestore;
+      const action = btn.getAttribute('data-what');
+
+      // handle state as array (comma-separated values like '1,2')
+      const stateSet = state.split(',');
+      // show "Restore" button if 'Deleted' (3) is among the selected states
+      const showRestore = stateSet.includes('3') && action === 'restore';
+      // show "Unarchive" button if 'Archived' (2) is among the selected states
+      const showUnarchive = stateSet.includes('2') && action === 'unarchive';
+      // special actions to hide by default unless above conditions apply
+      const isSpecialAction = ['restore', 'unarchive'].includes(action);
+      // show all actions (Delete, Lock, etc.) only when we're not looking at Deleted or Archived states
+      const showDefault = !stateSet.includes('3') && !stateSet.includes('2') && !isSpecialAction;
+
+      // Only show the button if one of the display conditions matched
+      const shouldShow = showRestore || showUnarchive || showDefault;
 
       btn.toggleAttribute('hidden', !shouldShow);
     });

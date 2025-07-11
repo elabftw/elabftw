@@ -50,7 +50,8 @@ final class AnonymousUser extends Users
         $this->userData['pdf_format'] = 'A4';
         $this->userData['userid'] = 0;
         $this->userData['entrypoint'] = 1;
-        $this->userData['initials'] = json_decode('"\u2609"'); // ☉
+        // initials Hex code 2609
+        $this->userData['initials'] = '☉';
         $this->userData['show_weekends'] = 0;
         $this->userData['enforce_exclusive_edit_mode'] = 0;
         $this->userData['scheduler_layout'] = 0;

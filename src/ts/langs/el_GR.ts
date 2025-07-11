@@ -31,6 +31,7 @@ const t = {
     "filename": "Όνομα αρχείου",
     "firstname": "Όνομα",
     "is-admin": "Is Admin",
+    "is-archived": "Is Archived",
     "is-owner": "Είναι ιδιοκτήτης",
     "is-sysadmin": "Είναι ο Sysadmin",
     "last-login": "Τελευταία είσοδος",

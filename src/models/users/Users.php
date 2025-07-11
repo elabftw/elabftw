@@ -652,7 +652,8 @@ class Users extends AbstractRest
                'id',   u2t.teams_id,
                'name', t.name,
                'is_admin', u2t.is_admin,
-               'is_owner', u2t.is_owner
+               'is_owner', u2t.is_owner,
+               'is_archived', u2t.is_archived
              )
            ) AS teams
             FROM users AS u

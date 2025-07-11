@@ -66,15 +66,11 @@
           <button id='disable2faBtn' type='button' class='btn btn-ghost' data-action='remove-user-2fa'>
             <i class='fas fa-fw fa-user-shield mr-1'></i>{{ 'Disable 2FA'|trans }}
           </button>
-          {# ARCHIVE USER #}
-          <button type='button' class='btn btn-ghost' id='toggleArchiveBtn' data-action='toggle-modal' data-target='archiveUserModal'>
-            <i class='fas fa-fw fa-box-archive mr-1'></i>{{ 'Archive user'|trans }}
-          </button>
-          <button type='button' class='btn btn-ghost hover-danger' data-action='destroy-user' data-userid='{{ user.userid }}'>
+          <button type='button' class='btn btn-ghost hover-danger' id='deleteUserBtn' data-action='destroy-user' data-userid='{{ user.userid }}'>
             <i class='fas fa-fw fa-trash-alt mr-1'></i>{{ 'Delete user'|trans }}
           </button>
         {% endif %}
-        <button type='button' class='btn btn-ghost' data-action='validate-user' data-userid='{{ user.userid }}'>
+        <button type='button' class='btn btn-ghost' id='validateUserBtn' data-action='validate-user' data-userid='{{ user.userid }}'>
           <i class='fas fa-fw fa-check mr-1'></i>{{ 'Validate user'|trans }}
         </button>
       </div>

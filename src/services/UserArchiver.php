@@ -42,14 +42,14 @@ final class UserArchiver
     {
         $isArchived->toBoolean() ? $this->archive($lockExp) : $this->unarchive();
         if ($this->toggleArchiveSql($isArchived)) {
-        /** @psalm-suppress PossiblyNullArgument */
-        AuditLogs::create(new TeamStatusModified(
-            $this->target->team,
-            Users2TeamsTargets::IsArchived,
-            $isArchived,
-            $this->requester->userid,
-            $this->target->userid,
-        ));
+            /** @psalm-suppress PossiblyNullArgument */
+            AuditLogs::create(new TeamStatusModified(
+                $this->target->team,
+                Users2TeamsTargets::IsArchived,
+                $isArchived,
+                $this->requester->userid,
+                $this->target->userid,
+            ));
         }
         return $isArchived;
     }

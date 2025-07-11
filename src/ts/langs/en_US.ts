@@ -31,6 +31,7 @@ const t = {
     "filename": "Filename",
     "firstname": "Firstname",
     "is-admin": "Is Admin",
+    "is-archived": "Is Archived",
     "is-owner": "Is Owner",
     "is-sysadmin": "Is Sysadmin",
     "last-login": "Last login",

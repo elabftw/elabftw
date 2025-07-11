@@ -31,6 +31,7 @@ const t = {
     "filename": "Имя файла",
     "firstname": "Имя",
     "is-admin": "Is Admin",
+    "is-archived": "Is Archived",
     "is-owner": "Владелец",
     "is-sysadmin": "Сисадмин",
     "last-login": "Последний Войти",

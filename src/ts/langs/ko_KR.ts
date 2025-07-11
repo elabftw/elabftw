@@ -31,6 +31,7 @@ const t = {
     "filename": "파일 이름",
     "firstname": "이름",
     "is-admin": "Is Admin",
+    "is-archived": "Is Archived",
     "is-owner": "소유자",
     "is-sysadmin": "서버 관리자",
     "last-login": "마지막 로그인",

@@ -31,6 +31,7 @@ const t = {
     "filename": "Ime datoteke",
     "firstname": "Ime",
     "is-admin": "Is Admin",
+    "is-archived": "Is Archived",
     "is-owner": "Je lastnik",
     "is-sysadmin": "Je sistemski skrbnik",
     "last-login": "Zadnja prijava",

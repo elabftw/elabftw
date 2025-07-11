@@ -65,6 +65,7 @@ final class i18n4Js
             'filename' => _('Filename'),
             'firstname' => _('Firstname'),
             'is-admin' => _('Is Admin'),
+            'is-archived' => _('Is Archived'),
             'is-owner' => _('Is Owner'),
             'is-sysadmin' => _('Is Sysadmin'),
             'last-login' => _('Last login'),

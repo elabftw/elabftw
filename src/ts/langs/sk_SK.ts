@@ -31,6 +31,7 @@ const t = {
     "filename": "Názov súboru",
     "firstname": "Krstné meno",
     "is-admin": "Is Admin",
+    "is-archived": "Is Archived",
     "is-owner": "Je majiteľ",
     "is-sysadmin": "Je Sysadmin",
     "last-login": "Posledné prihlásenie",

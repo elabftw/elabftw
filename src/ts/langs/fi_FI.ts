@@ -31,6 +31,7 @@ const t = {
     "filename": "Tiedoston nimi",
     "firstname": "Etunimi",
     "is-admin": "Is Admin",
+    "is-archived": "Is Archived",
     "is-owner": "On omistaja",
     "is-sysadmin": "On Sysadmin",
     "last-login": "Viimeinen kirjautuminen",

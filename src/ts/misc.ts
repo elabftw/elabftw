@@ -798,16 +798,10 @@ export async function populateUserModal(user: Record<string, string|number>) {
     const disable2faBtn = document.getElementById('disable2faBtn');
     disable2faBtn.setAttribute('disabled', 'disabled');
   }
-  const prefix = user.archived === 1 ? 'un' : '';
-  const toggleArchiveBtn = document.getElementById('toggleArchiveBtn');
-  toggleArchiveBtn.innerText = i18next.t(`${prefix}archive-user`);
-  const archiveUserModal = document.getElementById('archiveUserModal');
-  (archiveUserModal.querySelector('.modal-title') as HTMLHeadElement).innerText = i18next.t(`${prefix}archive-user`);
-  const toggleArchiveActionBtn = archiveUserModal.querySelector('[data-action="toggle-archive-user"]') as HTMLButtonElement;
-  toggleArchiveActionBtn.innerText = i18next.t(`${prefix}archive-user`);
-  toggleArchiveActionBtn.dataset.userid = String(user.userid);
-  (archiveUserModal.querySelector('.modal-body p') as HTMLParagraphElement).innerText = i18next.t(`${prefix}archive-user-description`);
-  (document.getElementById('lockSwitchDiv') as HTMLDivElement).hidden = user.archived === 1;
+  const deleteUserBtn = document.getElementById('deleteUserBtn');
+  deleteUserBtn.dataset.userid = String(user.userid);
+  const validateUserBtn = document.getElementById('validateUserBtn');
+  validateUserBtn.dataset.userid = String(user.userid);
 }
 
 // generate the slider element to toggle isAdmin and isOwner for a given user in a given team
@@ -828,7 +822,7 @@ function generateIsSomethingElement(what: string, team: Record<string, string|nu
   isSomethingInput.dataset.customAction = `patch-user2team-is-${what}`;
   isSomethingInput.dataset.userid = String(user.userid);
   isSomethingInput.dataset.team = String(team.id);
-  isSomethingInput.checked = team.is_admin === 1;
+  isSomethingInput.checked = team[`is_${what}`] === 1;
   isSomethingInput.id = `is${what}Team_${team.id}`;
   const slider = document.createElement('span');
   slider.classList.add('slider');

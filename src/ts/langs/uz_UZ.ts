@@ -31,6 +31,7 @@ const t = {
     "filename": "Fayl nomi",
     "firstname": "Ism",
     "is-admin": "Is Admin",
+    "is-archived": "Is Archived",
     "is-owner": "Egasi",
     "is-sysadmin": "Sysadmin",
     "last-login": "Oxirgi login",

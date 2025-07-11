@@ -56,7 +56,7 @@ class EmailNotificationsTest extends \PHPUnit\Framework\TestCase
             'target' => 'team',
             'targetid' => 1,
         ));
-        $this->assertEquals(10, $targetCount);
+        $this->assertEquals(11, $targetCount);
         $this->assertIsArray($Notifications->readOne());
         $this->assertIsArray($Notifications->patch(Action::Update, array()));
         $this->assertIsString($Notifications->getApiPath());

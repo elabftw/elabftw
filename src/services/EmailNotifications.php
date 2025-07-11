@@ -98,7 +98,7 @@ class EmailNotifications
         textdomain($domain);
     }
 
-    protected function getNotificationsToSend(): array
+    private function getNotificationsToSend(): array
     {
         $sql = 'SELECT id, userid, category, body
             FROM notifications

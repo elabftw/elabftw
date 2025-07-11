@@ -172,7 +172,6 @@ users:
   - team: Organic Chemistry lab
   - team: Organic Chemistry lab
   - team: Organic Chemistry lab
-  - team: Organic Chemistry lab
     create_experiments: true
     experiments_iter: 6
   - team: Organic Chemistry lab
@@ -245,7 +244,6 @@ users:
   - team: Quantum light group
     create_items: true
     items_iter: 6
-  - team: Quantum light group
   - team: Quantum light group
   - team: Quantum light group
 

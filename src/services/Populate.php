@@ -54,7 +54,7 @@ final class Populate
     public function generate(Experiments | Items $Entity, ?int $iterations = null): void
     {
         $iterations ??= $this->iter;
-        $Teams = new Teams($Entity->Users, $Entity->Users->team, bypassReadPermission: true, bypassWritePermission: true);
+        $Teams = new Teams($Entity->Users, $Entity->Users->team, bypassWritePermission: true);
         if ($Entity instanceof Experiments) {
             $Category = new ExperimentsCategories($Teams);
             $Status = new ExperimentsStatus($Teams);

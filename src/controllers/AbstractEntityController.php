@@ -189,7 +189,6 @@ abstract class AbstractEntityController implements ControllerInterface
     {
         $RequestActions = new RequestActions($this->App->Users, $this->Entity);
         $ProcurementRequests = new ProcurementRequests($this->App->Teams);
-        $baseQueryParams = new BaseQueryParams($this->App->Request->query);
 
         // the mode parameter is for the uploads tpl
         $renderArr = array(
@@ -204,7 +203,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'pageTitle' => $this->getPageTitle(),
             'mode' => 'view',
             'hideTitle' => true,
-            'teamsArr' => $this->App->Teams->readAll($baseQueryParams),
+            'teamsArr' => $this->App->Teams->readAllVisible(),
             'scopedTeamgroupsArr' => $this->scopedTeamgroupsArr,
             'templatesArr' => $this->templatesArr,
             'timestamperFullname' => $this->Entity->getTimestamperFullname(),
@@ -262,7 +261,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'mode' => 'edit',
             'pageTitle' => $this->getPageTitle(),
             'statusArr' => $this->statusArr,
-            'teamsArr' => $this->App->Teams->readAll($baseQueryParams),
+            'teamsArr' => $this->App->Teams->readAllVisible(),
             'teamTagsArr' => $TeamTags->readAll($baseQueryParams),
             'scopedTeamgroupsArr' => $this->scopedTeamgroupsArr,
             'meaningArr' => $this->meaningArr,

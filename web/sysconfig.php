@@ -54,7 +54,7 @@ try {
     $idpsArr = $Idps->readAllLight();
     $IdpsSources = new IdpsSources($App->Users);
     $idpsSources = $IdpsSources->readAll();
-    $teamsArr = $App->Teams->readAll();
+    $teamsArr = $App->Teams->readAllComplete();
     $Experiments = new Experiments($App->Users);
 
     // Remote directory search

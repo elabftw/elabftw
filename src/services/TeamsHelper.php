@@ -93,16 +93,6 @@ final class TeamsHelper
         return !empty($this->getUserInTeam($userid));
     }
 
-    // just get the id and name array
-    public function getSimple(): array
-    {
-        $sql = 'SELECT id, name FROM teams WHERE id = :team';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->team, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        return $req->fetch();
-    }
-
     /**
      * Get all the userid of active admins of the team
      */

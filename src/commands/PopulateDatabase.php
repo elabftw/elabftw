@@ -103,7 +103,7 @@ final class PopulateDatabase extends Command
         $output->writeln('┌ Creating teams, users, experiments, and resources...');
         // create teams
         $Users = new UltraAdmin();
-        $Teams = new Teams($Users, bypassReadPermission: true, bypassWritePermission: true);
+        $Teams = new Teams($Users, bypassWritePermission: true);
         $Status = new ItemsStatus($Teams);
         $Category = new ExperimentsCategories($Teams);
         $faker = \Faker\Factory::create();

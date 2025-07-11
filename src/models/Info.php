@@ -53,7 +53,7 @@ final class Info extends AbstractRest
     {
         $sql = 'SELECT
         (SELECT COUNT(users.userid) FROM users) AS all_users_count,
-        (SELECT COUNT(users.userid) FROM users WHERE archived = 0 AND validated = 1) AS active_users_count,
+        (SELECT COUNT(u2t.users_id) FROM users2teams AS u2t LEFT JOIN users ON (users.userid = u2t.users_id AND u2t.is_archived = 0) WHERE users.validated = 1) AS active_users_count,
         (SELECT COUNT(items.id) FROM items) AS items_count,
         (SELECT COUNT(teams.id) FROM teams) AS teams_count,
         (SELECT COUNT(experiments.id) FROM experiments) AS experiments_count,

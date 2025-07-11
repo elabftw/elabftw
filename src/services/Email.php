@@ -209,38 +209,34 @@ class Email
 
     private static function getAllEmailAddressesRawData(EmailTarget $target, ?int $targetId = null): array
     {
-        $select = 'SELECT DISTINCT users.userid, email, CONCAT(firstname, " ", lastname) AS fullname FROM users';
+        $select = 'SELECT DISTINCT users.userid, email, CONCAT(firstname, " ", lastname) AS fullname FROM users2teams
+            LEFT JOIN users ON (users2teams.users_id = users.userid AND users2teams.is_archived = 0)
+            LEFT JOIN users2team_groups ON (users2team_groups.userid = users.userid)
+            LEFT JOIN team_events ON (team_events.userid = users.userid)';
         switch ($target) {
             case EmailTarget::Team:
-                $join = 'CROSS JOIN users2teams ON (users2teams.users_id = users.userid)';
                 $filter = 'AND users2teams.teams_id = :id';
                 break;
             case EmailTarget::TeamGroup:
-                $join = 'CROSS JOIN users2team_groups ON (users2team_groups.userid = users.userid)';
                 $filter = 'AND users2team_groups.groupid = :id';
                 break;
             case EmailTarget::Admins:
-                $join = 'CROSS JOIN users2teams ON (users2teams.users_id = users.userid)';
                 $filter = 'AND users2teams.is_admin = 1';
                 break;
             case EmailTarget::AdminsOfTeam:
-                $join = 'CROSS JOIN users2teams ON (users2teams.users_id = users.userid)';
                 $filter = 'AND users2teams.is_admin = 1 AND users2teams.teams_id = :id';
                 break;
             case EmailTarget::Sysadmins:
-                $join = '';
                 $filter = 'AND users.is_sysadmin = 1';
                 break;
             case EmailTarget::BookableItem:
-                $join = 'CROSS JOIN team_events ON (team_events.userid = users.userid)';
                 $filter = 'AND team_events.start BETWEEN NOW() - INTERVAL 2 MONTH AND NOW() + INTERVAL 1 MONTH AND team_events.item = :id';
                 break;
             default:
-                $join = '';
                 $filter = '';
         }
-        $where = 'WHERE users.validated = 1 AND users.archived = 0';
-        $sql = sprintf('%s %s %s %s', $select, $join, $where, $filter);
+        $where = 'WHERE users.validated = 1';
+        $sql = sprintf('%s %s %s', $select, $where, $filter);
         $Db = Db::getConnection();
         $req = $Db->prepare($sql);
         if ($target->needsId()) {

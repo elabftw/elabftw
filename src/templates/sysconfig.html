@@ -261,7 +261,7 @@
               </label>
             </td>
             <td>
-              {% if count.totusers == 0 and team.id != App.Users.userData.team %}
+              {% if count.all_users_count == 0 and team.id != App.Users.userData.team %}
               <span data-id='{{ team.id }}' id='teamsDestroyButton_{{ team.id }}' data-action='destroy-team' class='p-1 rounded hover-danger'>
                 <i class='fas fa-trash-alt'></i>
               </span>

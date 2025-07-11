@@ -91,7 +91,7 @@ class Users extends AbstractRest
         bool $allowTeamCreation = false,
     ): int {
         $Config = Config::getConfig();
-        $Teams = new Teams($this, bypassReadPermission: true);
+        $Teams = new Teams($this);
 
         // make sure that all the teams in which the user will be are created/exist
         // this might throw an exception if the team doesn't exist and we can't create it on the fly

@@ -48,7 +48,7 @@ abstract class AbstractImport implements ImportInterface
         $this->Db = Db::getConnection();
         // yes, the bypassWritePermission opens it up to normal users that normally cannot create status and category,
         // but user experience takes over this consideration here
-        $this->Teams = new Teams($this->requester, $this->requester->team, bypassReadPermission: true, bypassWritePermission: true);
+        $this->Teams = new Teams($this->requester, $this->requester->team, bypassWritePermission: true);
         if ($this->UploadedFile->getError()) {
             throw new ImproperActionException($this->UploadedFile->getErrorMessage());
         }

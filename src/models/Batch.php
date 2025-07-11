@@ -35,8 +35,13 @@ final class Batch extends AbstractRest
     {
         $action = Action::from($reqBody['action']);
         $state = null;
+        // archived elements are not displayed by default. So we need to specify 'archived' here to perform the Unarchive action.
         if ($action === Action::Unarchive) {
             $state = State::Archived;
+        }
+        // same - query for deleted items when we want to Restore them.
+        if ($action === Action::Restore) {
+            $state = State::Deleted;
         }
         if ($reqBody['items_tags']) {
             $this->processTags($reqBody['items_tags'], new Items($this->requester), $action, $reqBody);

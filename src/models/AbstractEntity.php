@@ -370,6 +370,7 @@ abstract class AbstractEntity extends AbstractRest
             Action::ForceLock => $this->lock(),
             Action::ForceUnlock => $this->unlock(),
             Action::Pin => $this->Pins->togglePin(),
+            Action::Restore => $this->restoreEntity(),
             Action::RemoveExclusiveEditMode => $this->ExclusiveEditMode->destroy(),
             Action::SetCanread => $this->update(new EntityParams('canread', $params['can'])),
             Action::SetCanwrite => $this->update(new EntityParams('canwrite', $params['can'])),
@@ -879,6 +880,11 @@ abstract class AbstractEntity extends AbstractRest
     private function unarchiveEntity(): void
     {
         $this->handleArchivedState(State::Archived, State::Normal, fn() => $this->unlock());
+    }
+
+    private function restoreEntity(): void
+    {
+        $this->update(new EntityParams('state', State::Normal->value));
     }
 
     // Archive a normal entity, Unarchive an archived entity.

@@ -198,11 +198,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     // RESTORE ENTITY
     else if (el.matches('[data-action="restore-entity"]')) {
-      // unlock entity and restore it
-      ApiC.patch(`${entity.type}/${entity.id}`, { action: Action.ForceUnlock })
-        .then(() => ApiC.patch(`${entity.type}/${entity.id}`, { state: 1 }))
-        .then(() => { window.location.href = `?mode=view&id=${entity.id}`;
-        });
+      ApiC.patch(`${entity.type}/${entity.id}`, { action: Action.Restore })
+        .then(() => window.location.href = `?mode=view&id=${entity.id}`);
     }
   });
 });

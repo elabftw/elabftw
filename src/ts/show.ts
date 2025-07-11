@@ -308,6 +308,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function toggleActionButtonsDependingOnState(): void {
+    const stateSelect = document.querySelector<HTMLSelectElement>('select[name="state"]');
+    if (!stateSelect) return;
+    const isDeleted = stateSelect.value === '3';
+    // we don't need to perform any other action than "Restore" on deleted entities.
+    document.querySelectorAll('[data-action="patch-selected-entities"]').forEach((btn: HTMLButtonElement) => {
+      const isRestore = btn.getAttribute('data-what') === 'restore';
+      const shouldShow = isDeleted ? isRestore : !isRestore;
+
+      btn.toggleAttribute('hidden', !shouldShow);
+    });
+  }
   /////////////////////////
   // MAIN CLICK LISTENER //
   /////////////////////////
@@ -458,8 +470,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
       if ((el as HTMLInputElement).checked) {
+        toggleActionButtonsDependingOnState();
         (el.closest('.entity') as HTMLElement).style.backgroundColor = bgColor;
       } else {
+        toggleActionButtonsDependingOnState();
         (el.closest('.entity') as HTMLElement).style.backgroundColor = '';
       }
       // show invert select if any checkbox is selected

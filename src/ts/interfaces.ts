@@ -93,6 +93,7 @@ enum Action {
   Pin = 'pin',
   RemoveExclusiveEditMode = 'removeexclusiveeditmode',
   Replace = 'replace',
+  Restore = 'restore',
   RequestAction = 'requestaction',
   Review = 'review',
   SendOnboardingEmails = 'sendonboardingemails',

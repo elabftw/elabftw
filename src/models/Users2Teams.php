@@ -17,7 +17,6 @@ use Elabftw\AuditEvent\TeamAddition;
 use Elabftw\AuditEvent\TeamRemoval;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\BinaryValue;
-use Elabftw\Enums\Usergroup;
 use Elabftw\Enums\Users2TeamsTargets;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -46,17 +45,16 @@ final class Users2Teams
     /**
      * Add one user to one team
      */
-    public function create(int $userid, int $teamid, Usergroup $group = Usergroup::User): bool
+    public function create(int $userid, int $teamid, BinaryValue $isAdmin = BinaryValue::False): bool
     {
-        $isAdmin = ($group === Usergroup::Admin || $group === Usergroup::Sysadmin) ? 1 : 0;
         // primary key will take care of ensuring there are no duplicate tuples
         $sql = 'INSERT IGNORE INTO users2teams (`users_id`, `teams_id`, `is_admin`) VALUES (:userid, :team, :is_admin);';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':userid', $userid, PDO::PARAM_INT);
         $req->bindValue(':team', $teamid, PDO::PARAM_INT);
-        $req->bindValue(':is_admin', $isAdmin, PDO::PARAM_INT);
+        $req->bindValue(':is_admin', $isAdmin->value, PDO::PARAM_INT);
         $res = $this->Db->execute($req);
-        AuditLogs::create(new TeamAddition($teamid, $isAdmin, $this->requester->userid ?? 0, $userid));
+        AuditLogs::create(new TeamAddition($teamid, $isAdmin->value, $this->requester->userid ?? 0, $userid));
 
         // check onboarding email setting for each team
         $Team = new Teams(new Users(), $teamid);
@@ -82,10 +80,10 @@ final class Users2Teams
      *
      * @param array<array-key, int> $teamIdArr this is the validated array of teams that exist
      */
-    public function addUserToTeams(int $userid, array $teamIdArr, Usergroup $group = Usergroup::User): void
+    public function addUserToTeams(int $userid, array $teamIdArr, BinaryValue $isAdmin = BinaryValue::False): void
     {
         foreach ($teamIdArr as $teamId) {
-            $this->create($userid, $teamId, $group);
+            $this->create($userid, $teamId, $isAdmin);
         }
     }
 

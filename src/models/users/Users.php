@@ -22,6 +22,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\IllegalActionException;
@@ -175,9 +176,9 @@ class Users extends AbstractRest
             $userid,
             array_column($teams, 'id'),
             // transform Sysadmin to Admin because users2teams.is_admin is 1 (Admin) or 0 (User)
-            $usergroup === Usergroup::Sysadmin
-                ? Usergroup::Admin
-                : $usergroup,
+            ($usergroup === Usergroup::Sysadmin || $usergroup === Usergroup::Admin)
+                ? BinaryValue::True
+                : BinaryValue::False,
         );
         if ($alertAdmin && !$isFirstUser) {
             $this->notifyAdmins($TeamsHelper->getAllAdminsUserid(), $userid, $isValidated, $teams[0]['name']);

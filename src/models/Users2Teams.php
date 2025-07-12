@@ -67,11 +67,11 @@ final class Users2Teams
         return $res;
     }
 
-    public function patchUser2Team(array $params): int
+    public function patchUser2Team(array $params, int $targetUserid): int
     {
         return $this->patchIsSomething(
             Users2TeamsTargets::from($params['target']),
-            (int) $params['userid'],
+            $targetUserid,
             (int) $params['team'],
             BinaryValue::from((int) $params['content']),
         );

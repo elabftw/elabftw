@@ -939,7 +939,8 @@ document.addEventListener('DOMContentLoaded', () => {
       icon.classList.toggle('fa-eye-slash');
 
       // toggle input type
-      const input = document.getElementById(el.dataset.target) as HTMLInputElement;
+      const input = el.parentElement.parentElement.querySelector('input');
+
       let attribute = 'password';
       if (input.getAttribute('type') === 'password') {
         attribute = 'text';

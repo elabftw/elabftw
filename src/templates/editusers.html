@@ -23,9 +23,6 @@
           <button class='btn btn-primary' type='submit'>{{ 'Search'|trans }}</button>
         </div>
         <div class='input-group-append'>
-          <button class='btn btn-secondary' id='editusersShowAll' type='button'>{{ 'Show all'|trans }}</button>
-        </div>
-        <div class='input-group-append'>
           <div class='input-group-text'>
             <label class='m-0'><input type='checkbox' class='mr-1' {{ App.Request.query.has('onlyAdmins') ? 'checked="checked"' }} name='onlyAdmins'>{{ 'Show only Admins'|trans }}</label>
           </div>

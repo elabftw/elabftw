@@ -54,7 +54,7 @@ class Users2TeamsTest extends \PHPUnit\Framework\TestCase
         // add tata to team alpha
         $this->Users2Teams->addUserToTeams($admin2->userid, array(1));
         // make tata Admin in Alpha
-        $this->Users2Teams->patchUser2Team(array('userid' => $admin2->userid, 'team' => 1, 'target' => 'is_admin', 'content' => 1));
+        $this->Users2Teams->patchUser2Team(array('team' => 1, 'target' => 'is_admin', 'content' => 1), $admin2->userid);
         // and remove tata from team alpha
         $this->Users2Teams->destroy($admin2->userid, 1);
     }
@@ -62,27 +62,25 @@ class Users2TeamsTest extends \PHPUnit\Framework\TestCase
     public function testPatchUser2TeamGroup(): void
     {
         $params = array(
-            'userid' => 2,
             'team' => 1,
             'target' => 'is_admin',
             'content' => 0,
         );
-        $this->assertEquals(0, $this->Users2Teams->patchUser2Team($params));
+        $this->assertEquals(0, $this->Users2Teams->patchUser2Team($params, 2));
     }
 
     public function testPatchIsOwner(): void
     {
         $params = array(
-            'userid' => 3,
             'team' => 1,
             'target' => 'is_owner',
             'content' => '1',
         );
-        $this->assertEquals(1, $this->Users2Teams->patchUser2Team($params));
+        $this->assertEquals(1, $this->Users2Teams->patchUser2Team($params, 3));
         // now do it with a non sysadmin user
         $this->expectException(IllegalActionException::class);
         $Users2Teams = new Users2Teams(new Users(2, 1));
-        $Users2Teams->patchUser2Team($params);
+        $Users2Teams->patchUser2Team($params, 2);
     }
 
     public function testWasAdminAlready(): void
@@ -96,18 +94,16 @@ class Users2TeamsTest extends \PHPUnit\Framework\TestCase
         ));
         // promote to admin in team 2
         $this->Users2Teams->patchUser2Team(array(
-            'userid' => $newUser,
             'team' => 2,
             'target' => 'is_admin',
             'content' => 1,
-        ));
+        ), $newUser);
         // promote to admin in team 1
         $this->assertEquals(1, $this->Users2Teams->patchUser2Team(array(
-            'userid' => $newUser,
             'team' => 1,
             'target' => 'is_admin',
             'content' => 1,
-        )));
+        ), $newUser));
         // remove user again
         (new Users($newUser, 1))->destroy();
     }

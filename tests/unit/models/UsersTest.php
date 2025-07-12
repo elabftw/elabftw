@@ -240,8 +240,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
             'target' => Users2TeamsTargets::IsArchived->value,
             'content' => '1',
             'team' => '2',
-            'userid' => $user2->userid,
-        )));
+        ), $user2->userid));
     }
 
     public function testCreateUser(): void

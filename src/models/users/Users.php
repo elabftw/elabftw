@@ -416,7 +416,7 @@ class Users extends AbstractRest
                 }
             )(),
             Action::Disable2fa => $this->disable2fa(),
-            Action::PatchUser2Team => (new Users2Teams($this->requester))->patchUser2Team($params),
+            Action::PatchUser2Team => (new Users2Teams($this->requester))->patchUser2Team($params, $this->userid ?? 0),
             Action::Unreference => (new Users2Teams($this->requester))->destroy($this->userData['userid'], (int) $params['team']),
             Action::UpdatePassword => $this->updatePassword($params),
             Action::Update => (

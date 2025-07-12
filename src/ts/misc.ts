@@ -62,19 +62,12 @@ function triggerHandler(event: Event, el: HTMLInputElement): void {
   el.classList.remove('is-invalid');
   // for a checkbox element, look at the checked attribute, not the value
   let value = el.type === 'checkbox' ? el.checked ? '1' : '0' : el.value;
+  const userid = document.getElementById('editUserModal').dataset.userid;
 
   // CUSTOM ACTIONS
-  if (el.dataset.customAction === 'patch-user2team-is-owner') {
-    ApiC.patch(`${Model.User}/${el.dataset.userid}`, {action: Action.PatchUser2Team, userid: el.dataset.userid, team: el.dataset.team, target: 'is_owner', content: value});
-    return;
-  }
-  if (el.dataset.customAction === 'patch-user2team-is-admin') {
-    const group = value === '1' ? 2 : 4;
-    ApiC.patch(`${Model.User}/${el.dataset.userid}`, {action: Action.PatchUser2Team, team: el.dataset.team, target: 'is_admin', content: group, userid: el.dataset.userid}).then(() => reloadElements(['editUsersBox']));
-    return;
-  }
-  if (el.dataset.customAction === 'patch-user2team-is-archived') {
-    ApiC.patch(`${Model.User}/${el.dataset.userid}`, {action: Action.PatchUser2Team, team: el.dataset.team, target: 'is_archived', content: value, userid: el.dataset.userid}).then(() => reloadElements(['editUsersBox']));
+  if (el.dataset.customAction === 'patch-user2team-is') {
+    ApiC.patch(`${Model.User}/${userid}`, {action: Action.PatchUser2Team, team: el.dataset.team, target: el.dataset.target, content: value})
+      .then(() => document.dispatchEvent(new CustomEvent('dataReload')));
     return;
   }
   // END CUSTOM ACTIONS
@@ -744,6 +737,8 @@ export async function populateUserModal(user: Record<string, string|number>) {
   const ApiC = new Api();
   const requester = await ApiC.getJson('users/me');
   const userTeams = JSON.parse(String(user.teams));
+  // set a dataset.userid on the modal, that's where all js code will fetch current user, instead of having to set it on every elementel.dataset.
+  document.getElementById('editUserModal').dataset.userid = String(user.userid);
   // manage teams block
   const manageTeamsDiv = document.getElementById('manageTeamsDiv');
   // remove previous content
@@ -759,7 +754,6 @@ export async function populateUserModal(user: Record<string, string|number>) {
       removeTeamBtn.classList.add('hl-hover-gray', 'p-1', 'rounded', 'clickable', 'm-1');
       removeTeamBtn.title = i18next.t('delete');
       removeTeamBtn.dataset.action = 'destroy-user2team';
-      removeTeamBtn.dataset.userid = String(user.userid);
       removeTeamBtn.dataset.teamid = team.id;
       const removeTeamIcon = document.createElement('i');
       removeTeamIcon.classList.add('fas', 'fa-xmark', 'color-blue');
@@ -767,9 +761,9 @@ export async function populateUserModal(user: Record<string, string|number>) {
       teamBadge.appendChild(removeTeamBtn);
     }
 
-    teamBadge.appendChild(generateIsSomethingElement('admin', team, user));
-    teamBadge.appendChild(generateIsSomethingElement('owner', team, user));
-    teamBadge.appendChild(generateIsSomethingElement('archived', team, user));
+    teamBadge.appendChild(generateIsSomethingElement('admin', team));
+    teamBadge.appendChild(generateIsSomethingElement('owner', team));
+    teamBadge.appendChild(generateIsSomethingElement('archived', team));
 
     manageTeamsDiv.appendChild(teamBadge);
     listenTrigger(manageTeamsDiv.id);
@@ -780,7 +774,6 @@ export async function populateUserModal(user: Record<string, string|number>) {
   const userTeamIds = new Set(userTeams.map(t => t.id));
   const addTeamSelect = document.getElementById('addTeamSelect');
   addTeamSelect.innerHTML = '';
-  addTeamSelect.dataset.userid = String(user.userid);
   const available = teams.filter((team: Record<string, string|number>) => !userTeamIds.has(team.id));
   available
     .forEach(({ id, name }) => {
@@ -794,18 +787,20 @@ export async function populateUserModal(user: Record<string, string|number>) {
   addTeamDiv.hidden = available.length === 0;
 
   // actions
+  const disable2faBtn = document.getElementById('disable2faBtn');
+  disable2faBtn.removeAttribute('disabled');
   if (user.has_mfa_enabled === 0) {
-    const disable2faBtn = document.getElementById('disable2faBtn');
     disable2faBtn.setAttribute('disabled', 'disabled');
   }
-  const deleteUserBtn = document.getElementById('deleteUserBtn');
-  deleteUserBtn.dataset.userid = String(user.userid);
   const validateUserBtn = document.getElementById('validateUserBtn');
-  validateUserBtn.dataset.userid = String(user.userid);
+  validateUserBtn.removeAttribute('disabled');
+  if (user.validated !== 0) {
+    validateUserBtn.setAttribute('disabled', 'disabled');
+  }
 }
 
 // generate the slider element to toggle isAdmin and isOwner for a given user in a given team
-function generateIsSomethingElement(what: string, team: Record<string, string|number>, user: Record<string, string|number>) {
+function generateIsSomethingElement(what: string, team: Record<string, string|number>) {
   const isSomething = document.createElement('div');
   isSomething.classList.add('d-flex', 'justify-content-between');
   const isSomethingLabel = document.createElement('label');
@@ -819,8 +814,8 @@ function generateIsSomethingElement(what: string, team: Record<string, string|nu
   isSomethingInput.type = 'checkbox';
   isSomethingInput.autocomplete = 'off';
   isSomethingInput.dataset.trigger = 'change';
-  isSomethingInput.dataset.customAction = `patch-user2team-is-${what}`;
-  isSomethingInput.dataset.userid = String(user.userid);
+  isSomethingInput.dataset.customAction = 'patch-user2team-is';
+  isSomethingInput.dataset.target= `is_${what}`;
   isSomethingInput.dataset.team = String(team.id);
   isSomethingInput.checked = team[`is_${what}`] === 1;
   isSomethingInput.id = `is${what}Team_${team.id}`;

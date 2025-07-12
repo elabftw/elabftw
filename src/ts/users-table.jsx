@@ -57,7 +57,15 @@ if (document.getElementById('users-table')) {
 
   const GridExample = () => {
     const [rowData, setRowData] = useState([]);
+    const [gridApi, setGridApi] = useState(null);
 
+    const onGridReady = (params) => {
+      setGridApi(params.api);
+    };
+    const onQuickFilterChange = (e) => {
+      //gridApi && gridApi.setQuickFilter(e.target.value);
+      gridApi.setGridOption('quickFilterText', e.target.value);
+    };
     // renderer for teams column
     const TeamsRenderer = ({ value }) => {
       try {
@@ -164,6 +172,13 @@ if (document.getElementById('users-table')) {
     };
 
     return (
+      <>
+        <input
+          type="text"
+          placeholder={i18next.t('search')}
+          onChange={onQuickFilterChange}
+          className={'form-control mb-2'}
+        />
       <div
         className={'ag-theme-alpine'}
         style={{ height: 650 }}
@@ -172,6 +187,7 @@ if (document.getElementById('users-table')) {
           rowData={rowData}
           columnDefs={columnDefs}
           defaultColDef={defaultColDef}
+          onGridReady={onGridReady}
           rowSelection={rowSelection}
           onCellDoubleClicked={cellDoubleClicked}
           onSelectionChanged={selectionChanged}
@@ -180,6 +196,7 @@ if (document.getElementById('users-table')) {
           paginationPageSizeSelector={[15, 50, 100, 500]}
         />
       </div>
+    </>
     );
   };
 

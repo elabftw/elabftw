@@ -99,6 +99,7 @@ final class i18n4Js
             'revisions-error' => _('Select two revisions to compare them.'),
             'save' => _('Save'),
             'saved' => _('Saved'),
+            'search' => _('Search'),
             'select-resource' => _('Select a resource'),
             'show-deleted' => _('Show deleted'),
             'sort-by-column' => _('Sort by column'),

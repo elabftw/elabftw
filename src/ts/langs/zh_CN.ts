@@ -63,6 +63,7 @@ const t = {
     "revisions-error": "Select two revisions to compare them.",
     "save": "保存",
     "saved": "已保存",
+    "search": "搜索",
     "select-resource": "选择一个资源",
     "show-deleted": "Show deleted",
     "sort-by-column": "按列排序",

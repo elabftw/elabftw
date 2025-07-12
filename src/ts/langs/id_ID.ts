@@ -63,6 +63,7 @@ const t = {
     "revisions-error": "Select two revisions to compare them.",
     "save": "Simpan",
     "saved": "Tersimpan",
+    "search": "Cari",
     "select-resource": "Memilih sumber daya",
     "show-deleted": "Show deleted",
     "sort-by-column": "Urutkan berdasarkan kolom",

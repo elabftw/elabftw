@@ -1,37 +1,4 @@
 {% include 'edit-user-modal.html' %}
-<h3 class='p-2 pl-3 section-title'>{{ 'Search users'|trans }}</h3>
-<div class='pl-3'>
-  <div class='form-group'>
-    <form method='get' id='userSearchForm' aria-label='{{ 'Search users'|trans }}'>
-      {# stay on correct tab #}
-      <input type='hidden' value='3' name='tab' />
-
-      <div class='input-group mt-3'>
-        <div class='input-group-prepend'>
-          <span class='input-group-text'><i class='fas fa-magnifying-glass'></i></span>
-        </div>
-          <div class='input-group-prepend'>
-            <select class='custom-select brl-none brr-none' name='team' id='teamFilter' aria-label='{{ 'Filter teams'|trans }}'>
-              <option value='' {{- App.Request.getScriptName|split('/')|last == 'sysconfig.php' and not App.Request.query.has('team') ? ' selected' }}>{{ 'All teams'|trans }}</option>
-              {% for team in teamsArr %}
-                <option value='{{ team.id }}' {{- App.Request.query.get('team') == team.id or (App.Users.team == team.id and not App.Request.query.has('team') and App.Request.getScriptName|split('/')|last == 'admin.php') ? ' selected' }}>{{ team.name }}</option>
-              {% endfor %}
-            </select>
-          </div>
-        <input type='text' class='form-control' value='{{ App.Request.query.get('q')|trim|e('html_attr') }}' name='q' id='searchUsers' placeholder='{{ 'Search for user'|trans }}' aria-label='{{ 'User name'|trans }}'>
-        <div class='input-group-append'>
-          <button class='btn btn-primary' type='submit'>{{ 'Search'|trans }}</button>
-        </div>
-        <div class='input-group-append'>
-          <div class='input-group-text'>
-            <label class='m-0'><input type='checkbox' class='mr-1' {{ App.Request.query.has('onlyAdmins') ? 'checked="checked"' }} name='onlyAdmins'>{{ 'Show only Admins'|trans }}</label>
-          </div>
-        </div>
-      </div>
-    </form>
-  </div>
-</div>
-
 <div>
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Users list'|trans }}</h3>
   <div class='pl-3'>
@@ -45,7 +12,7 @@
 
 {% if App.Config.configArr.admins_create_users or App.Request.getScriptName|split('/')|last == 'sysconfig.php' %}
 {# CREATE USER ACCOUNT #}
-<h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Add account'|trans }}</h3>
+<h3 class='my-3 p-2 pl-3 section-title'>{{ 'Add account'|trans }}</h3>
 <div class='pl-3'>
   <p class='smallgray'>{{ 'Note: new user will need to use the "Forgot password" button on the login page to set a password.'|trans }}</p>
   <form class='form-group' id='createUserForm'>

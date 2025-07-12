@@ -63,6 +63,7 @@ const t = {
     "revisions-error": "Select two revisions to compare them.",
     "save": "Uložit",
     "saved": "Uloženo",
+    "search": "Hledat",
     "select-resource": "Vybrat zdroj",
     "show-deleted": "Show deleted",
     "sort-by-column": "Setřídit dle sloupce",

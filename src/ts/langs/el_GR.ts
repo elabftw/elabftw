@@ -63,6 +63,7 @@ const t = {
     "revisions-error": "Select two revisions to compare them.",
     "save": "Αποθήκευση",
     "saved": "Αποθηκεύτηκε",
+    "search": "Αναζήτηση",
     "select-resource": "Επιλέξτε έναν πόρο",
     "show-deleted": "Show deleted",
     "sort-by-column": "Ταξινόμηση ανά στήλη",

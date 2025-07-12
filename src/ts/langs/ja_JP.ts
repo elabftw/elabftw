@@ -63,6 +63,7 @@ const t = {
     "revisions-error": "Select two revisions to compare them.",
     "save": "保存",
     "saved": "保存済み",
+    "search": "検索",
     "select-resource": "リソースを選択",
     "show-deleted": "Show deleted",
     "sort-by-column": "列で並べ替え",

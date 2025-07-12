@@ -63,6 +63,7 @@ const t = {
     "revisions-error": "Select two revisions to compare them.",
     "save": "Сохранить",
     "saved": "Сохранено",
+    "search": "Искать",
     "select-resource": "Выберите ресурс",
     "show-deleted": "Show deleted",
     "sort-by-column": "Сортировать по столбцу",

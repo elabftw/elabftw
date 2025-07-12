@@ -63,6 +63,7 @@ const t = {
     "revisions-error": "Select two revisions to compare them.",
     "save": "Shrani",
     "saved": "Shranjeno",
+    "search": "Išči",
     "select-resource": "Izberite vir",
     "show-deleted": "Show deleted",
     "sort-by-column": "Razvrsti po stolpcu",

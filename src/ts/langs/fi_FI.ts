@@ -63,6 +63,7 @@ const t = {
     "revisions-error": "Select two revisions to compare them.",
     "save": "Tallenna",
     "saved": "Tallennettu",
+    "search": "Hae",
     "select-resource": "Valitse resurssi",
     "show-deleted": "Show deleted",
     "sort-by-column": "Lajittele sarakkeen mukaan",

@@ -63,6 +63,7 @@ const t = {
     "revisions-error": "Select two revisions to compare them.",
     "save": "Saqlash",
     "saved": "Saqlangan",
+    "search": "Qidirmoq",
     "select-resource": "Resurs tanlang",
     "show-deleted": "Show deleted",
     "sort-by-column": "Ustun bo'yicha saralash",

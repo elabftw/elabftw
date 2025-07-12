@@ -63,6 +63,7 @@ const t = {
     "revisions-error": "Select two revisions to compare them.",
     "save": "저장",
     "saved": "저장됨",
+    "search": "검색",
     "select-resource": "리소스 선택",
     "show-deleted": "Show deleted",
     "sort-by-column": "특정 컬럼으로 정렬",

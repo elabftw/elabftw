@@ -63,6 +63,7 @@ const t = {
     "revisions-error": "Select two revisions to compare them.",
     "save": "Guardar",
     "saved": "Guardado",
+    "search": "Buscar",
     "select-resource": "Seleccione un recurso",
     "show-deleted": "Show deleted",
     "sort-by-column": "Ordenar por columna",

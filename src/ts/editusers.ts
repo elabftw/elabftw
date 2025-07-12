@@ -69,8 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
           form.reset();
           document.getElementById('archivedUsersFound').setAttribute('hidden', 'hidden');
           document.getElementById('initialCreateUserBtn').removeAttribute('disabled');
-          // TODO replace with custom event to reload table reloadElements(['editUsersBox']);
-          // also in code below
+          document.dispatchEvent(new CustomEvent('dataReload'));
         });
       } catch (error) {
         el.removeAttribute('disabled');
@@ -113,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
         row.remove();
       });
       users.forEach(user => {
-        ApiC.post('users', {...user});
+        ApiC.post('users', {...user}).then(() => document.dispatchEvent(new CustomEvent('dataReload')));
       });
 
     // UNARCHIVE AND ADD TO TEAM
@@ -125,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         ApiC.patch(`${Model.User}/${el.dataset.userid}`, params).then(() => {
           document.getElementById('archivedUsersFound').remove();
-          // TODO replace with custom event to reload table reloadElements(['editUsersBox']);
+          document.dispatchEvent(new CustomEvent('dataReload'));
         });
       });
 
@@ -140,15 +139,6 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="toggle-admin-user"]')) {
       const group = el.dataset.promote === '1' ? 2 : 4;
       ApiC.patch(`${Model.User}/${userid}`, {action: Action.PatchUser2Team, team: el.dataset.team, target: 'group', content: group, userid: userid}).then(() => document.dispatchEvent(new CustomEvent('dataReload')));
-
-    // ADD TO TEAM
-    } else if (el.matches('[data-action="add-user-to-team"]')) {
-      ApiC.patch(`${Model.User}/${userid}`, {action: Action.Add, team: el.dataset.team})
-        .then(() => document.dispatchEvent(new CustomEvent('dataReload')));
-    // REMOVE FROM TEAM
-    } else if (el.matches('[data-action="rm-user-from-team"]')) {
-      ApiC.patch(`${Model.User}/${userid}`, {action: Action.Unreference, team: el.dataset.team})
-        .then(() => document.dispatchEvent(new CustomEvent('dataReload')));
 
     // VALIDATE USER
     } else if (el.matches('[data-action="validate-user"]')) {

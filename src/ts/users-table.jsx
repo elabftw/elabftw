@@ -17,7 +17,8 @@ import '@ag-grid-community/styles/ag-theme-alpine.css';
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Api } from './Apiv2.class';
-import { populateUserModal, notifError } from './misc';
+import { populateUserModal } from './misc';
+import { Notification } from './Notifications.class';
 import i18next from './i18n';
 import $ from 'jquery';
 
@@ -141,7 +142,7 @@ if (document.getElementById('users-table')) {
         const users = await ApiC.getJson(`users?limit=999999${queryParams}`);
         setRowData(users);
       } catch (error) {
-        notifError(error);
+        (new Notification()).error(error);
         console.error(`Could not load users: ${error}`);
       }
     };
@@ -159,11 +160,11 @@ if (document.getElementById('users-table')) {
     }, []);
 
     // when a row is selected with the checkbox
-    const selectionChanged = (event) => {
+    //const selectionChanged = (event) => {
       // we store the selected rows as data-target string on the delete and restore buttons
-      const selectedRows = event.api.getSelectedRows();
-      const selectedIds = selectedRows.map(c => c.id).join(',');
-    };
+      //const selectedRows = event.api.getSelectedRows();
+      //const selectedIds = selectedRows.map(c => c.id).join(',');
+    //};
 
     const cellDoubleClicked = (event) => {
       ApiC.getJson(`users/${event.data.userid}`).then(json => {
@@ -190,7 +191,7 @@ if (document.getElementById('users-table')) {
           onGridReady={onGridReady}
           rowSelection={rowSelection}
           onCellDoubleClicked={cellDoubleClicked}
-          onSelectionChanged={selectionChanged}
+          //onSelectionChanged={selectionChanged}
           pagination={true}
           paginationPageSize={15}
           paginationPageSizeSelector={[15, 50, 100, 500]}

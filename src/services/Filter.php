@@ -235,7 +235,7 @@ final class Filter
             'language-vhdl',
             'language-yaml',
         ));
-        // note: hypens and word-break are not supported
+        // note: hyphens and word-break are not supported
         $config->set('CSS.AllowedProperties', array(
             'background-color',
             'border',

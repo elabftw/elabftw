@@ -12,14 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
-use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\Sql;
-use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Config;
 use Elabftw\Services\Populate;
-use League\Flysystem\Filesystem as Fs;
-use League\Flysystem\Local\LocalFilesystemAdapter;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -32,6 +26,9 @@ use Symfony\Component\Yaml\Yaml;
 use Override;
 
 use function is_string;
+use function floor;
+use function microtime;
+use function sprintf;
 
 /**
  * Populate the database with example data. Useful to get a fresh dev env.
@@ -78,17 +75,8 @@ final class PopulateDatabase extends Command
             }
         }
 
-        // drop database
-        $output->writeln('▶ Dropping current database and loading structure...');
-        $this->dropAndInitDb();
-
-        // adjust global config
-        $Config = Config::getConfig();
-        $Config->patch(Action::Update, $yaml['config'] ?? array());
-
         $fast = (bool) $input->getOption('fast');
-        $Populate = new Populate($output, $yaml, $fast);
-        $Populate->run();
+        new Populate($output, $yaml, $fast)->run();
 
         $elapsed = (int) (microtime(true) - $start);
         $minutes = floor($elapsed / 60);
@@ -96,17 +84,5 @@ final class PopulateDatabase extends Command
         $output->writeln(sprintf('├ ✓ All done (%dm%ds)', $minutes, $seconds));
         $output->writeln('└' . str_repeat('─', 62));
         return Command::SUCCESS;
-    }
-
-    private function dropAndInitDb(): void
-    {
-        $Db = Db::getConnection();
-        $Db->q('DROP database ' . Config::fromEnv('DB_NAME'));
-        $Db->q('CREATE database ' . Config::fromEnv('DB_NAME'));
-        $Db->q('USE ' . Config::fromEnv('DB_NAME'));
-
-        // load structure
-        $Sql = new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql')));
-        $Sql->execFile('structure.sql');
     }
 }

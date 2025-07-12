@@ -13,16 +13,21 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use DateTimeImmutable;
+use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\Sql;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Models\ApiKeys;
+use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\Items;
 use Elabftw\Models\Items2ExperimentsLinks;
 use Elabftw\Models\Items2ItemsLinks;
+use League\Flysystem\Filesystem as Fs;
+use League\Flysystem\Local\LocalFilesystemAdapter;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Tags;
@@ -60,6 +65,13 @@ final class Populate
 
     public function run(): void
     {
+        // drop database
+        $this->output->writeln('▶ Dropping current database and loading structure...');
+        $this->dropAndInitDb();
+
+        // adjust global config
+        Config::getConfig()->patch(Action::Update, $this->yaml['config'] ?? array());
+
         $this->output->writeln('┌ Creating teams, users, experiments, and resources...');
         $Users = new UltraAdmin();
         $Teams = new Teams($Users, bypassWritePermission: true);
@@ -447,5 +459,17 @@ final class Populate
             }
         }
         $this->output->writeln(sprintf('├ + user: %s %s (%s) in team %d', $firstname, $lastname, $email, $team));
+    }
+
+    private function dropAndInitDb(): void
+    {
+        $Db = Db::getConnection();
+        $Db->q('DROP database ' . Config::fromEnv('DB_NAME'));
+        $Db->q('CREATE database ' . Config::fromEnv('DB_NAME'));
+        $Db->q('USE ' . Config::fromEnv('DB_NAME'));
+
+        // load structure
+        $Sql = new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql')));
+        $Sql->execFile('structure.sql');
     }
 }

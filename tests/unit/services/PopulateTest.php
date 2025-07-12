@@ -25,7 +25,7 @@ class PopulateTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->Users = new Users(1, 1);
-        $this->Populate = new Populate(new ConsoleOutput(), 2);
+        $this->Populate = new Populate(new ConsoleOutput(), array(), 2);
     }
 
     public function testGenerateExperiments(): void

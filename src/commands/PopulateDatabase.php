@@ -15,20 +15,8 @@ namespace Elabftw\Commands;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Enums\Action;
-use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
-use Elabftw\Models\Experiments;
-use Elabftw\Models\ExperimentsCategories;
-use Elabftw\Models\Items;
-use Elabftw\Models\Items2ExperimentsLinks;
-use Elabftw\Models\Items2ItemsLinks;
-use Elabftw\Models\ItemsStatus;
-use Elabftw\Models\ItemsTypes;
-use Elabftw\Models\Teams;
-use Elabftw\Models\Templates;
-use Elabftw\Models\UltraAdmin;
-use Elabftw\Models\Users;
 use Elabftw\Services\Populate;
 use League\Flysystem\Filesystem as Fs;
 use League\Flysystem\Local\LocalFilesystemAdapter;
@@ -43,7 +31,6 @@ use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 use Override;
 
-use function array_key_exists;
 use function is_string;
 
 /**
@@ -68,6 +55,7 @@ final class PopulateDatabase extends Command
     #[Override]
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $start = microtime(true);
         try {
             $file = $input->getArgument('file');
             if (!is_string($file)) {
@@ -100,198 +88,14 @@ final class PopulateDatabase extends Command
         $Config = Config::getConfig();
         $Config->patch(Action::Update, $yaml['config'] ?? array());
 
-        $output->writeln('┌ Creating teams, users, experiments, and resources...');
-        // create teams
-        $Users = new UltraAdmin();
-        $Teams = new Teams($Users, bypassWritePermission: true);
-        $Status = new ItemsStatus($Teams);
-        $Category = new ExperimentsCategories($Teams);
-        $faker = \Faker\Factory::create();
-
         $iterations = $yaml['iterations'] ?? self::DEFAULT_ITERATIONS;
-        $Populate = new Populate($output, (int) $iterations);
+        $Populate = new Populate($output, $yaml, (int) $iterations);
+        $Populate->run();
 
-        foreach ($yaml['teams'] as $team) {
-            $teamid = $Teams->create($team['name']);
-            $output->writeln(sprintf('├ + team: %s (ID: %d)', $team['name'], $teamid));
-            $Teams->setId($teamid);
-
-            // create fake categories and status
-            $Category->postAction(Action::Create, array('name' => 'Cell biology', 'color' => $faker->hexColor(), 'is_default' => 0));
-            $Category->postAction(Action::Create, array('name' => 'Project CRYPTO-COOL', 'color' => $faker->hexColor(), 'is_default' => 0));
-            $Category->postAction(Action::Create, array('name' => 'Project CASIMIR', 'color' => $faker->hexColor(), 'is_default' => 0));
-            $Category->postAction(Action::Create, array('name' => 'Tests', 'color' => $faker->hexColor(), 'is_default' => 0));
-            $Category->postAction(Action::Create, array('name' => 'Demo', 'color' => $faker->hexColor(), 'is_default' => 0));
-            $Category->postAction(Action::Create, array('name' => 'Discussions', 'color' => $faker->hexColor(), 'is_default' => 0));
-            $Category->postAction(Action::Create, array('name' => 'Production', 'color' => $faker->hexColor(), 'is_default' => 0));
-            $Category->postAction(Action::Create, array('name' => 'R&D', 'color' => $faker->hexColor(), 'is_default' => 0));
-            $Category->postAction(Action::Create, array('name' => 'Support ticket', 'color' => $faker->hexColor(), 'is_default' => 0));
-
-            $Status->postAction(Action::Create, array('name' => 'Maintenance mode', 'color' => $faker->hexColor(), 'is_default' => 0));
-            $Status->postAction(Action::Create, array('name' => 'Operational', 'color' => $faker->hexColor(), 'is_default' => 0));
-            $Status->postAction(Action::Create, array('name' => 'In stock', 'color' => $faker->hexColor(), 'is_default' => 0));
-            $Status->postAction(Action::Create, array('name' => 'Need to reorder', 'color' => $faker->hexColor(), 'is_default' => 0));
-            $Status->postAction(Action::Create, array('name' => 'Destroyed', 'color' => $faker->hexColor(), 'is_default' => 0));
-            $Status->postAction(Action::Create, array('name' => 'Processed', 'color' => $faker->hexColor(), 'is_default' => 0));
-            $Status->postAction(Action::Create, array('name' => 'Waiting', 'color' => $faker->hexColor(), 'is_default' => 0));
-            $Status->postAction(Action::Create, array('name' => 'Open', 'color' => $faker->hexColor(), 'is_default' => 0));
-            $Status->postAction(Action::Create, array('name' => 'Closed', 'color' => $faker->hexColor(), 'is_default' => 0));
-
-            $columns = array(
-                'visible',
-                'onboarding_email_body',
-                'onboarding_email_subject',
-                'onboarding_email_active',
-            );
-            foreach ($columns as $column) {
-                if (isset($team[$column])) {
-                    $Teams->patch(Action::Update, array($column => (string) $team[$column]));
-                }
-            }
-            // create users inside that team
-            // all users have the same password to make switching accounts easier
-            // if the password is provided in the config file, it'll be used instead for that user
-            foreach ($team['users'] ?? array() as $user) {
-                $Populate->createUser($teamid, $user);
-            }
-            if (array_key_exists('random_users', $team)) {
-                $iter = (int) $team['random_users'];
-                for ($i = 0; $i < $iter; $i++) {
-                    $Populate->createUser($teamid);
-                }
-            }
-
-            // EXPERIMENTS TEMPLATES
-            foreach ($team['templates'] ?? array() as $template) {
-                $user = new Users((int) ($template['user'] ?? 1), $teamid);
-                $Templates = new Templates($user);
-                $id = $Templates->postAction(Action::Create, array());
-                $Templates->setId($id);
-                $patch = array(
-                    'title' => $template['title'],
-                    'body' => $template['body'] ?? '',
-                    'category' => $template['category'] ?? 2,
-                    'status' => $template['status'] ?? 2,
-                    'metadata' => $template['metadata'] ?? '{}',
-                );
-                $Templates->patch(Action::Update, $patch);
-                if (isset($template['locked'])) {
-                    $Templates->toggleLock();
-                }
-                if (isset($template['tags'])) {
-                    foreach ($template['tags'] as $tag) {
-                        $Templates->Tags->postAction(Action::Create, array('tag' => $tag));
-                    }
-                }
-                if (isset($template['items_links'])) {
-                    foreach ($template['items_links'] as $target) {
-                        $Templates->ItemsLinks->setId($target);
-                        $Templates->ItemsLinks->postAction(Action::Create, array());
-                    }
-                }
-            }
-
-            // EXPERIMENTS
-            foreach ($team['experiments'] ?? array() as $experiment) {
-                $user = new Users((int) ($experiment['user'] ?? 1), $teamid);
-                $Experiments = new Experiments($user);
-                $id = $Experiments->postAction(Action::Create, array());
-                $Experiments->setId($id);
-                $patch = array(
-                    'title' => $experiment['title'],
-                    'body' => $experiment['body'] ?? '',
-                    'date' => $experiment['date'],
-                    'category' => $experiment['category'] ?? 2,
-                    'status' => $experiment['status'] ?? 2,
-                    'metadata' => $experiment['metadata'] ?? '{}',
-                    'rating' => $experiment['rating'] ?? 0,
-                );
-                $Experiments->patch(Action::Update, $patch);
-                if (isset($experiment['locked'])) {
-                    $Experiments->toggleLock();
-                }
-                if (isset($experiment['tags'])) {
-                    foreach ($experiment['tags'] as $tag) {
-                        $Experiments->Tags->postAction(Action::Create, array('tag' => $tag));
-                    }
-                }
-                if (isset($experiment['comments'])) {
-                    foreach ($experiment['comments'] as $comment) {
-                        $Experiments->Comments->postAction(Action::Create, array('comment' => $comment));
-                    }
-                }
-                if (isset($experiment['experiments_links'])) {
-                    foreach ($experiment['experiments_links'] as $target) {
-                        $Experiments->ExperimentsLinks->setId($target);
-                        $Experiments->ExperimentsLinks->postAction(Action::Create, array());
-                    }
-                }
-                if (isset($experiment['items_links'])) {
-                    foreach ($experiment['items_links'] as $target) {
-                        $Experiments->ItemsLinks->setId($target);
-                        $Experiments->ItemsLinks->postAction(Action::Create, array());
-                    }
-                }
-            }
-
-            // add Resources Categories (items types)
-            foreach ($team['items_types'] ?? array() as $items_types) {
-                $team = (int) ($items_types['team'] ?? 1);
-                $user = new Users(1, $team);
-                $ItemsTypes = new ItemsTypes($user);
-                $itemTypeId = $ItemsTypes->create(title: $items_types['name']);
-                $ItemsTypes->setId($itemTypeId);
-                $output->writeln(sprintf('├ + resource category: %s (id: %d in team: %d)', $items_types['name'], $itemTypeId, $team));
-                $ItemsTypes->bypassWritePermission = true;
-                $defaultPermissions = BasePermissions::Team->toJson();
-                $patch = array(
-                    'color' => $items_types['color'],
-                    'body' => $items_types['template'] ?? '',
-                    'canread' => $defaultPermissions,
-                    'canwrite' => $defaultPermissions,
-                    'metadata' => $items_types['metadata'] ?? '{}',
-                );
-                $ItemsTypes->patch(Action::Update, $patch);
-            }
-
-            // randomize the entries so they look like they are not added at once
-            if (isset($team['items'])) {
-                shuffle($team['items']);
-                foreach ($team['items'] as $item) {
-                    $user = new Users((int) ($item['user'] ?? 1), (int) ($item['team'] ?? 1));
-                    $ItemsTypes = new ItemsTypes($user);
-                    $Items = new Items($user);
-                    $id = $Items->create(template: (int) ($item['category'] ?? $ItemsTypes->getDefault()));
-                    $Items->setId($id);
-                    $patch = array(
-                        'title' => $item['title'],
-                        'body' => $item['body'] ?? '',
-                        'date' => $item['date'] ?? date('Ymd'),
-                        'rating' => $item['rating'] ?? 0,
-                    );
-                    // don't override the items type metadata
-                    if (isset($item['metadata'])) {
-                        $patch['metadata'] = $item['metadata'];
-                    }
-                    if (isset($item['experiments_links'])) {
-                        foreach ($item['experiments_links'] as $target) {
-                            $ExperimentsLinks = new Items2ExperimentsLinks($Items, (int) $target);
-                            $ExperimentsLinks->postAction(Action::Create, array());
-                        }
-                    }
-                    if (isset($item['items_links'])) {
-                        foreach ($item['items_links'] as $target) {
-                            $ItemsLinks = new Items2ItemsLinks($Items, (int) $target);
-                            $ItemsLinks->postAction(Action::Create, array());
-                        }
-                    }
-                    $Items->patch(Action::Update, $patch);
-                }
-            }
-        }
-
-
-        $output->writeln('├ ✓ All done');
+        $elapsed = (int) (microtime(true) - $start);
+        $minutes = floor($elapsed / 60);
+        $seconds = floor($elapsed % 60);
+        $output->writeln(sprintf('├ ✓ All done (%dm%ds)', $minutes, $seconds));
         $output->writeln('└' . str_repeat('─', 62));
         return Command::SUCCESS;
     }

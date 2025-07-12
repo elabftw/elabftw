@@ -6,7 +6,7 @@ describe('Test links', () => {
   it('experiments can have links to experiments and resources', () => {
     cy.on('window:confirm', cy.stub().returns(true));
 
-    cy.visit('/experiments.php?mode=edit&id=33');
+    cy.visit('/experiments.php?mode=edit&id=10');
     // link to an experiment
     cy.get('#addLinkExpInput').type('Testing');
     cy.get('.ui-menu-item-wrapper').first().click();

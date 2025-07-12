@@ -21,7 +21,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.querySelector('.real-container').addEventListener('click', async (event) => {
     const el = (event.target as HTMLElement);
-    const userid = document.getElementById('editUserModal')?.dataset.userid;
+    let userid = document.getElementById('editUserModal')?.dataset.userid;
+    if (!userid) {
+      userid = el.dataset.userid;
+    }
     // CREATE USER
     if (el.matches('[data-action="create-user"]')) {
       event.preventDefault();

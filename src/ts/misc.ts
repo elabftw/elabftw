@@ -734,13 +734,16 @@ export function mkSpinStop(el: HTMLElement, oldHTML: string): void {
   el.removeAttribute('disabled');
 }
 export async function populateUserModal(user: Record<string, string|number>) {
+  const manageTeamsDiv = document.getElementById('manageTeamsDiv');
+  if (!manageTeamsDiv) {
+    return;
+  }
   const ApiC = new Api();
   const requester = await ApiC.getJson('users/me');
   const userTeams = JSON.parse(String(user.teams));
   // set a dataset.userid on the modal, that's where all js code will fetch current user, instead of having to set it on every elementel.dataset.
   document.getElementById('editUserModal').dataset.userid = String(user.userid);
   // manage teams block
-  const manageTeamsDiv = document.getElementById('manageTeamsDiv');
   // remove previous content
   manageTeamsDiv.innerHTML = '';
   userTeams.forEach(team => {
@@ -788,9 +791,11 @@ export async function populateUserModal(user: Record<string, string|number>) {
 
   // actions
   const disable2faBtn = document.getElementById('disable2faBtn');
-  disable2faBtn.removeAttribute('disabled');
-  if (user.has_mfa_enabled === 0) {
-    disable2faBtn.setAttribute('disabled', 'disabled');
+  if (disable2faBtn) {
+    disable2faBtn.removeAttribute('disabled');
+    if (user.has_mfa_enabled === 0) {
+      disable2faBtn.setAttribute('disabled', 'disabled');
+    }
   }
   const validateUserBtn = document.getElementById('validateUserBtn');
   validateUserBtn.removeAttribute('disabled');

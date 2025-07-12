@@ -57,13 +57,7 @@ describe('Experiments', () => {
     cy.get('[data-action="destroy-comment"]').click();
     cy.wait('@apiDELETE');
     cy.get('#commentsDiv').contains('Toto Le sysadmin commented').should('not.exist');
-    cy.htmlvalidate(
-      // {
-      //   rules: {
-      //     'prefer-native-element': 'off',
-      //   },
-      // },
-    );
+    cy.htmlvalidate();
   };
 
   const entityDuplicate = () => {

@@ -41,15 +41,21 @@ final class Populate
     // the password to use if none are provided
     private const string DEFAULT_PASSWORD = 'totototototo';
 
+    // number of things to create
+    private const int DEFAULT_ITERATIONS = 50;
+
     // number of templates to generate
     private const int TEMPLATES_ITER = 5;
+
+    private int $iter;
 
     private \Faker\Generator $faker;
 
     // iter: iterations: number of things to generate
-    public function __construct(private OutputInterface $output, private array $yaml, private int $iter = 50)
+    public function __construct(private OutputInterface $output, private array $yaml, private bool $fast = false)
     {
         $this->faker = \Faker\Factory::create();
+        $this->iter = $this->fast ? 2 : $yaml['iterations'] ?? self::DEFAULT_ITERATIONS;
     }
 
     public function run(): void
@@ -102,7 +108,7 @@ final class Populate
             foreach ($team['users'] ?? array() as $user) {
                 $this->createUser($teamid, $user);
             }
-            if (array_key_exists('random_users', $team)) {
+            if (array_key_exists('random_users', $team) && !$this->fast) {
                 $iter = (int) $team['random_users'];
                 for ($i = 0; $i < $iter; $i++) {
                     $this->createUser($teamid);

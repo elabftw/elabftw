@@ -43,7 +43,7 @@ docker exec -it elabtmp chown -R "$worker_user":"$worker_user" cache
 # populate the database
 if [ "${SKIP_POPULATE:-0}" -ne 1 ]; then
     echo "▶ Running populate script. Use SKIP_POPULATE=1 to disable."
-    docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y
+    docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y --fast
 fi
 # RUN TESTS
 # when trying to use a bash variable to hold the skip api options, I ran into issues that this option doesn't exist, so the command is entirely duplicated instead

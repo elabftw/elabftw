@@ -40,14 +40,12 @@ use function is_string;
 #[AsCommand(name: 'db:populate')]
 final class PopulateDatabase extends Command
 {
-    // number of things to create
-    private const int DEFAULT_ITERATIONS = 50;
-
     #[Override]
     protected function configure(): void
     {
         $this->setDescription('Populate the database with fake data')
             ->addOption('yes', 'y', InputOption::VALUE_NONE, 'Skip confirmation question')
+            ->addOption('fast', 'f', InputOption::VALUE_NONE, 'Only populate minimal things (use in CI)')
             ->addArgument('file', InputArgument::REQUIRED, 'Yaml configuration file')
             ->setHelp('This command allows you to populate the database with fake users/experiments/items. The database will be dropped before populating it. The configuration is read from the yaml file passed as first argument.');
     }
@@ -88,8 +86,8 @@ final class PopulateDatabase extends Command
         $Config = Config::getConfig();
         $Config->patch(Action::Update, $yaml['config'] ?? array());
 
-        $iterations = $yaml['iterations'] ?? self::DEFAULT_ITERATIONS;
-        $Populate = new Populate($output, $yaml, (int) $iterations);
+        $fast = (bool) $input->getOption('fast');
+        $Populate = new Populate($output, $yaml, $fast);
         $Populate->run();
 
         $elapsed = (int) (microtime(true) - $start);

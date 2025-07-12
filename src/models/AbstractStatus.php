@@ -15,6 +15,7 @@ namespace Elabftw\Models;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\Orderby;
+use Elabftw\Enums\Sort;
 use Elabftw\Enums\State;
 use Elabftw\Params\BaseQueryParams;
 use Elabftw\Params\OrderingParams;
@@ -40,7 +41,7 @@ abstract class AbstractStatus extends AbstractCategory
     #[Override]
     public function updateOrdering(OrderingParams $params): void
     {
-        $this->Teams->canWriteOrExplode();
+        $this->canWriteOrExplode();
         parent::updateOrdering($params);
     }
 
@@ -85,7 +86,7 @@ abstract class AbstractStatus extends AbstractCategory
     #[Override]
     public function getQueryParams(?InputBag $query = null): QueryParamsInterface
     {
-        return new BaseQueryParams(query: $query, orderby: Orderby::Ordering);
+        return new BaseQueryParams(query: $query, orderby: Orderby::Ordering, sort: Sort::Asc);
     }
 
     /**
@@ -121,7 +122,7 @@ abstract class AbstractStatus extends AbstractCategory
     #[Override]
     public function patch(Action $action, array $params): array
     {
-        $this->Teams->canWriteOrExplode();
+        $this->canWriteOrExplode();
         foreach ($params as $key => $value) {
             $this->update(new StatusParams($key, (string) $value));
         }
@@ -131,7 +132,7 @@ abstract class AbstractStatus extends AbstractCategory
     #[Override]
     public function destroy(): bool
     {
-        $this->Teams->canWriteOrExplode();
+        $this->canWriteOrExplode();
         // TODO fix FK constraints so it sets NULL instead of deleting entries
         // set state to deleted
         return $this->update(new StatusParams('state', (string) State::Deleted->value));
@@ -139,7 +140,7 @@ abstract class AbstractStatus extends AbstractCategory
 
     private function create(string $title, string $color, int $isDefault = 0): int
     {
-        $this->Teams->canWriteOrExplode();
+        $this->canWriteOrExplode();
         $title = Filter::title($title);
         $color = Check::color($color);
         $isDefault = Filter::toBinary($isDefault);

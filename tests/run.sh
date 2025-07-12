@@ -32,7 +32,7 @@ fi
 # we need to add the parser because it's in cache/ and it's tmpfs mounted now
 docker exec -it elabtmp yarn buildparser
 if [ "${SKIP_TWIGCS:-0}" -ne 1 ]; then
-    echo "Running twigcs. Use SKIP_TWIGCS=1 to disable."
+    echo "▶ Running twigcs. Use SKIP_TWIGCS=1 to disable."
     docker exec -it elabtmp yarn twigcs
 fi
 # fix permissions on cache folders
@@ -42,8 +42,8 @@ docker exec -it elabtmp chown -R "$worker_user":"$worker_user" cache
 
 # populate the database
 if [ "${SKIP_POPULATE:-0}" -ne 1 ]; then
-    echo "Running populate script. Use SKIP_POPULATE=1 to disable."
-    docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y
+    echo "▶ Running populate script. Use SKIP_POPULATE=1 to disable."
+    docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y --fast
 fi
 # RUN TESTS
 # when trying to use a bash variable to hold the skip api options, I ran into issues that this option doesn't exist, so the command is entirely duplicated instead
@@ -83,7 +83,6 @@ elif [ "${1:-}" = "cy" ]; then
     docker cp elab-cypress:/home/node/tests/cypress/videos/. ./tests/cypress/videos
     docker cp elab-cypress:/home/node/tests/cypress/screenshots/. ./tests/cypress/screenshots
     # copy codecoverage reports
-    docker exec -it elabtmp bash /elabftw/tests/merge-coverage-reports.sh
     docker cp elabtmp:/elabftw/tests/_output/c3tmp/codecoverage.tar ./tests/_output/cypress-coverage.tar
     mkdir -p ./tests/_output/cypress-coverage-html \
         && tar -xf ./tests/_output/cypress-coverage.tar -C ./tests/_output/cypress-coverage-html

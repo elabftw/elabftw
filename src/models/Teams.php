@@ -37,17 +37,15 @@ final class Teams extends AbstractRest
 {
     use SetIdTrait;
 
-    public bool $bypassWritePermission = false;
+    public array $teamArr = array();
 
-    public bool $bypassReadPermission = false;
-
-    public function __construct(public Users $Users, ?int $id = null)
+    public function __construct(public Users $Users, ?int $id = null, public bool $bypassWritePermission = false)
     {
         parent::__construct();
-        if ($id === null && ($Users->userData['team'] ?? 0) !== 0) {
-            $id = $Users->userData['team'];
-        }
         $this->setId($id);
+        if ($this->id) {
+            $this->teamArr = $this->readOneComplete();
+        }
     }
 
     /**
@@ -68,9 +66,8 @@ final class Teams extends AbstractRest
             // team was not found, we need to create it, but only if we're allowed to
             if ($team === false && $allowTeamCreation === true) {
                 $this->bypassWritePermission = true;
-                $id = $this->create($query);
-                $TeamsHelper = new TeamsHelper($id);
-                $team = $TeamsHelper->getSimple();
+                $freshTeam = new self($this->Users, $this->create($query));
+                $team = $freshTeam->readOneComplete();
             }
             // this prevents adding a bool(false)
             if (is_array($team)) {
@@ -132,7 +129,17 @@ final class Teams extends AbstractRest
     #[Override]
     public function readOne(): array
     {
-        $this->canReadOrExplode();
+        // allow sysadmin to read any team from api, but a non sysadmin can only query a team they are part of
+        $TeamsHelper = new TeamsHelper($this->id ?? -1);
+
+        if (!$TeamsHelper->isUserInTeam($this->Users->userid ?? -1) && !$this->Users->userData['is_sysadmin']) {
+            throw new ImproperActionException('Cannot query team information if not part of that team or not Sysadmin!');
+        }
+        return $this->readOneComplete();
+    }
+
+    public function readOneComplete(): array
+    {
         $sql = 'SELECT * FROM `teams` WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -142,12 +149,20 @@ final class Teams extends AbstractRest
     }
 
     /**
-     * Read all teams (only for sysadmin via api, otherwise set overrideReadPermissions to true)
+     * Read all teams: Sysadmin will get a complete response with all columns, user will get simple result
      */
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        $this->canReadOrExplode();
+        if ($this->Users->requester->userData['is_sysadmin']) {
+            return $this->readAllComplete();
+        }
+        return $this->readAllVisible();
+    }
+
+    // for sysadmin via api or if we need all
+    public function readAllComplete(): array
+    {
         $sql = 'SELECT * FROM teams ORDER BY name ASC';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
@@ -162,6 +177,16 @@ final class Teams extends AbstractRest
         }
         $onlyIds = array_map('intval', $idArr);
         $sql = 'SELECT teams.name FROM teams WHERE id IN (' . implode(',', $onlyIds) . ') ORDER BY name ASC';
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+
+        return $req->fetchAll();
+    }
+
+    // if all you need is a name/id for all visible teams
+    public function readAllVisible(): array
+    {
+        $sql = 'SELECT id, name FROM teams WHERE visible = 1 ORDER BY name ASC';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
 
@@ -197,7 +222,7 @@ final class Teams extends AbstractRest
         // check for stats, should be 0
         $count = $this->getStats($this->id ?? 0);
 
-        if ($count['totxp'] !== 0 || $count['totdb'] !== 0 || $count['totusers'] !== 0) {
+        if ($count['totxp'] !== 0 || $count['totdb'] !== 0 || $count['all_users_count'] !== 0) {
             throw new ImproperActionException('The team is not empty! Aborting deletion!');
         }
 
@@ -229,15 +254,24 @@ final class Teams extends AbstractRest
     /**
      * Get statistics for a team
      */
-    public function getStats(int $team): array
+    public function getStats(?int $team = null): array
     {
         $sql = 'SELECT
+            (
+                SELECT COUNT(users2teams.users_id) FROM users2teams WHERE users2teams.teams_id = :team AND users2teams.is_archived = 0
+            ) AS active_users_count,
             (SELECT COUNT(users.userid)
                 FROM users
                 CROSS JOIN users2teams
                     ON (users2teams.users_id = users.userid)
                 WHERE users2teams.teams_id = :team
-            ) AS totusers,
+            ) AS all_users_count,
+            (SELECT COUNT(users.userid)
+                FROM users
+                CROSS JOIN users2teams
+                    ON (users2teams.users_id = users.userid)
+                WHERE users2teams.teams_id = :team AND users2teams.is_admin = 1
+            ) AS active_admins_count,
             (SELECT COUNT(items.id)
                 FROM items
                 WHERE items.team = :team
@@ -255,7 +289,7 @@ final class Teams extends AbstractRest
                     AND experiments.timestamped = 1
             ) AS totxpts';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $team, PDO::PARAM_INT);
+        $req->bindValue(':team', $team ?? $this->id, PDO::PARAM_INT);
         $req->bindValue(':state_normal', State::Normal->value, PDO::PARAM_INT);
         $req->bindValue(':state_archived', State::Archived->value, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -266,19 +300,6 @@ final class Teams extends AbstractRest
         }
 
         return $res;
-    }
-
-    public function hasCommonTeamWithCurrent(int $userid, ?int $team = null): bool
-    {
-        if ($userid === 0) {
-            return true;
-        }
-        if ($team === null) {
-            $team = $this->Users->userData['team'];
-        }
-        $UsersHelper = new UsersHelper($userid);
-        $teams = $UsersHelper->getTeamsIdFromUserid();
-        return in_array($team, $teams, true);
     }
 
     public function canWriteOrExplode(): void
@@ -297,7 +318,7 @@ final class Teams extends AbstractRest
         throw new IllegalActionException('User tried to update a team setting but they are not admin of that team.');
     }
 
-    private function create(string $name): int
+    public function create(string $name): int
     {
         $name = Filter::title($name);
 
@@ -325,24 +346,6 @@ final class Teams extends AbstractRest
         $req->bindValue(':content', $params->getContent());
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
-    }
-
-    private function canReadOrExplode(): void
-    {
-        if ($this->bypassReadPermission) {
-            return;
-        }
-        if ($this->id === null) {
-            throw new RuntimeException('Cannot check permissions in team because the team id is null.');
-        }
-
-        if ($this->Users->requester->userData['is_sysadmin'] === 1) {
-            return;
-        }
-        if ($this->hasCommonTeamWithCurrent($this->Users->requester->userData['userid'], $this->id)) {
-            return;
-        }
-        throw new IllegalActionException('User tried to read a team setting but they are not part of that team.');
     }
 
     private function sendOnboardingEmails(array $userids): void

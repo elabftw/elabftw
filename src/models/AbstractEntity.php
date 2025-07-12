@@ -76,6 +76,7 @@ use function implode;
 use function is_bool;
 use function json_encode;
 use function ksort;
+use function mb_substr;
 use function sprintf;
 
 use const JSON_HEX_APOS;
@@ -444,7 +445,7 @@ abstract class AbstractEntity extends AbstractRest
         if ($this instanceof AbstractConcreteEntity) {
             $this->entityData['comments'] = $this->Comments->readAll();
         }
-        $this->entityData['page'] = substr($this->entityType->toPage(), 0, -4);
+        $this->entityData['page'] = mb_substr($this->entityType->toPage(), 0, -4);
         $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
         $this->entityData['compounds'] = $CompoundsLinks->readAll();
         $ContainersLinks = LinksFactory::getContainersLinks($this);
@@ -582,7 +583,7 @@ abstract class AbstractEntity extends AbstractRest
             '%s%s - %s',
             $prefix,
             // prevent a zip name with too much characters from the title, see #3966
-            substr(Filter::forFilesystem($this->entityData['title']), 0, 100),
+            mb_substr(Filter::forFilesystem($this->entityData['title']), 0, 100),
             Tools::getShortElabid($this->entityData['elabid'] ?? ''),
         );
     }

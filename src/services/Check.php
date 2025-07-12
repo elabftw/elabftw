@@ -24,6 +24,7 @@ use function array_map;
 use function filter_var;
 use function intval;
 use function mb_strlen;
+use function mb_substr;
 
 /**
  * When values need to be checked
@@ -70,7 +71,7 @@ final class Check
     public static function color(string $color): string
     {
         $length = strlen($color) - 1;
-        $color = substr($color, 1, $length);
+        $color = mb_substr($color, 1, $length);
         if (ctype_xdigit($color) && $length === 6) {
             return $color;
         }

@@ -132,7 +132,7 @@ if ($App->Request->query->has('sls') && ($App->Request->query->has('SAMLRequest'
         } else {
             $error = Tools::error();
             // get more verbose if debug mode is active
-            if ($App->Config->configArr['debug']) {
+            if ($App->Config::boolFromEnv('DEV_MODE')) {
                 $error = implode(', ', $errors);
             }
             throw new UnauthorizedException($error);

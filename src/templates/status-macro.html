@@ -1,0 +1,38 @@
+{% macro render_status(statusArr, entityType) %}
+<div class='mb-5 d-flex justify-content-between'>
+  {% set publicName = entityType == 'items' ? 'resources' : 'experiments' %}
+  <p class='col-form-label'>{{ 'Create and modify the status available to %s.'|trans|format(publicName) }}</p>
+  {# CREATE NEW BUTTON the div around the button is necessary or the button itself gets resized on small viewports #}
+  <div>
+    <button type='button' class='btn btn-primary' data-action='toggle-modal' data-target='create{{ entityType }}_statusModal'>{{ 'Create'|trans }}</button>
+  </div>
+</div>
+<ul class='list-group sortable' data-axis='y' data-table='{{ entityType }}_status' id='statusDiv'>
+  {% for status in statusArr %}
+    {# status_ID is necessary for sortable (re-ordering) #}
+    <li id='status_{{ status.id }}' class='list-group-item'>
+      <ul class='list-inline'>
+        <li class='list-inline-item'>
+          <span class='draggable sortableHandle'>
+            <i class='fas fa-grip-vertical fa-fw'></i>
+          </span>
+        </li>
+
+        <li class='list-inline-item'>
+          <label for='statusName_{{ status.id }}'>{{ 'Name'|trans }}</label>
+          <input class='form-control' required type='text' id='statusName_{{ status.id }}' data-trigger='blur' data-model='teams/current/{{ entityType }}_status/{{ status.id }}' data-target='title' value='{{ status.title|e('html_attr') }}' />
+        </li>
+
+        <li class='list-inline-item col-1 align-top'>
+          <label for='statusColor_{{ status.id }}'>{{ 'Color'|trans }}</label>
+          <input class='form-control' type='color' id='statusColor_{{ status.id }}' data-trigger='blur' data-model='teams/current/{{ entityType }}_status/{{ status.id }}' data-target='color' value='#{{ status.color }}' />
+        </li>
+
+        <li class='list-inline-item'>
+          <button type='button' data-id='{{ status.id }}' data-target='{{ entityType }}_status' data-action='destroy-catstat' class='btn btn-danger' >{{ 'Delete'|trans }}</button>
+        </li>
+      </ul>
+    </li>
+  {% endfor %}
+</ul>
+{% endmacro %}

@@ -12,7 +12,7 @@ import {
   reloadElements,
 } from './misc';
 import { Api } from './Apiv2.class';
-import i18next from 'i18next';
+import i18next from './i18n';
 import $ from 'jquery';
 import { Action, Model } from './interfaces';
 import { Notification } from './Notifications.class';

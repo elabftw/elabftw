@@ -22,10 +22,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Override;
 
+use function basename;
 use function fopen;
 use function in_array;
 use function stream_copy_to_stream;
-use function substr;
+use function mb_substr;
 
 /**
  * To download uploaded files
@@ -47,9 +48,9 @@ final class DownloadController implements ControllerInterface
         // Remove any path info to avoid hacking by adding relative path, etc.
         $this->longName = Filter::forFilesystem(basename($longName));
         // get the first two letters to get the folder
-        $this->filePath = substr($this->longName, 0, 2) . '/' . $this->longName;
+        $this->filePath = mb_substr($this->longName, 0, 2) . '/' . $this->longName;
         $this->realName = $realName ?? $this->realName;
-        $this->realNameFallback = Filter::toAscii($realName ?? '');
+        $this->realNameFallback = Filter::toAsciiSlug($realName ?? '');
         if (empty($this->realName)) {
             $this->realName = 'unnamed_file';
         }

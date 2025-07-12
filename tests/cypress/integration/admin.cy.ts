@@ -12,7 +12,7 @@ describe('admin page', () => {
     cy.get('div.tox-menubar').contains('File').should('exist');
     cy.htmlvalidate();
 
-    for (let i = 1; i <= 7; i++) {
+    for (let i = 1; i <= 6; i++) {
       cy.visit(`/admin.php?tab=${i}`);
       cy.get(`[data-tabtarget="${i}"]`).should('have.class', 'selected');
       cy.get('#loading-spinner').should('not.exist');

@@ -30,7 +30,7 @@ final class AuditLogs
         if (Config::getConfig()->configArr['emit_audit_logs'] === '1') {
             $Logger = new Logger('elabftw');
             $Logger->pushHandler(new ErrorLogHandler());
-            $Logger->notice($event->getJsonBody());
+            $Logger->info($event->getJsonBody());
         }
 
         $Db = Db::getConnection();

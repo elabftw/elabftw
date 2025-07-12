@@ -93,11 +93,10 @@ final class CanSqlBuilder
      */
     protected function canBaseUser(): string
     {
-        // TODO in hypernext OR (users2teams.teams_id = entity.team AND users2teams.is_admin = 1))",
         return sprintf(
             "(entity.%s->'$.base' = %d
                 AND entity.userid = %d
-                OR (users2teams.teams_id = entity.team AND users2teams.groups_id = 2))",
+                OR (users2teams.teams_id = entity.team AND users2teams.is_admin = 1))",
             $this->accessType->value,
             BasePermissions::User->value,
             $this->requester->isAdmin

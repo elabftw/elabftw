@@ -89,7 +89,7 @@ try {
     // throws InvalidSchemaException if schema is incorrect
     $Update->checkSchema();
 
-    $App = new App($Request, $Session, $Config, $Logger, new Users());
+    $App = new App($Request, $Session, $Config, $Logger, new Users(), Config::boolFromEnv('DEV_MODE'));
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-//
     //     ____          _                            //
     //    / ___|___ _ __| |__   ___ _ __ _   _ ___    //

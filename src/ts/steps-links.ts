@@ -9,7 +9,7 @@ import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 import { Malle } from '@deltablot/malle';
 import Step from './Step.class';
-import i18next from 'i18next';
+import i18next from './i18n';
 import {
   addAutocompleteToCompoundsInputs,
   addAutocompleteToLinkInputs,

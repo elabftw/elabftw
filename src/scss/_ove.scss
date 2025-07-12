@@ -6,6 +6,8 @@
  * @package elabftw
  */
 
+@use './variables';
+
 // overwrite ove umd bundle setting
 code {
   display: inline-block;
@@ -13,7 +15,7 @@ code {
 
 .preview-mode-container {
   .bp3-button.bp3-intent-primary {
-    background-color: $elabblue !important;
+    background-color: variables.$elabblue !important;
     border: 1px solid transparent !important;
     border-radius: 5px !important;
     box-shadow: none !important;
@@ -38,7 +40,7 @@ code {
 .veToolbar {
   .bp3-button[class*='bp3-intent-'] .bp3-icon {
     //$elabblue does not look as great here IMHO, it's to light
-    color: #20878f !important;
+    color: variables.$darkblue !important;
   }
 }
 

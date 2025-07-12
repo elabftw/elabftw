@@ -57,13 +57,7 @@ describe('Experiments', () => {
     cy.get('[data-action="destroy-comment"]').click();
     cy.wait('@apiDELETE');
     cy.get('#commentsDiv').contains('Toto Le sysadmin commented').should('not.exist');
-    cy.htmlvalidate(
-      // {
-      //   rules: {
-      //     'prefer-native-element': 'off',
-      //   },
-      // },
-    );
+    cy.htmlvalidate();
   };
 
   const entityDuplicate = () => {
@@ -93,12 +87,12 @@ describe('Experiments', () => {
     cy.wait('@apiGET');
     // change category
     cy.get('.malleableCategory').click();
-    cy.get(`select:has(option:selected:contains("${category}"))`).select(`${categoryTarget}`);
+    cy.get(`select:has(option:selected:contains("${category}"))`).first().select(`${categoryTarget}`);
     cy.get('.form-inline > .btn-primary').click();
     cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
     // change status
     cy.get('.malleableStatus').click();
-    cy.get('select:has(option:selected:contains("Not set"))').select(`${statusTarget}`);
+    cy.get('select:has(option:selected:contains("Not set"))').first().select(`${statusTarget}`);
     cy.get('.form-inline > .btn-primary').click();
     cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
   };

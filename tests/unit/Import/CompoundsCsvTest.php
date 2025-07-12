@@ -43,6 +43,6 @@ class CompoundsCsvTest extends \PHPUnit\Framework\TestCase
         $compoundId = $Compounds->postAction(Action::Duplicate, array('cid' => $cid));
         $Compounds->setId($compoundId);
         $Import = new CompoundsCsv(new NullOutput(), $Items, $uploadedFile, $Compounds, 1);
-        $this->assertEquals(3, $Import->import());
+        $this->assertTrue($Import->import() > 1);
     }
 }

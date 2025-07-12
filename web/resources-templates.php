@@ -32,6 +32,9 @@ $Response->prepare($Request);
 $template = 'error.html';
 
 try {
+    if ($App->Teams->teamArr['users_canwrite_resources_categories'] === 0 && !$App->Users->isAdmin) {
+        throw new ImproperActionException(_('Only a team Admin can edit resources templates'));
+    }
     $Controller = new DatabaseController($App, new ItemsTypes($App->Users, Filter::intOrNull($Request->query->getInt('id'))));
     $Response = $Controller->getResponse();
 } catch (IllegalActionException $e) {

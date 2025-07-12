@@ -32,6 +32,6 @@ final class MakeTeamReport extends MakeReport
     #[Override]
     protected function readUsers(): array
     {
-        return $this->requester->readFromQuery('', includeArchived: true, teamId: $this->requester->userData['team']);
+        return $this->requester->readFromQuery(teamId: $this->requester->userData['team']);
     }
 }

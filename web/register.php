@@ -14,12 +14,11 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Teams;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Create an account
+ * Local account creation page
  */
 require_once 'app/init.inc.php';
 
@@ -34,7 +33,7 @@ try {
     if ($App->Session->has('is_auth')) {
         throw new ImproperActionException(sprintf(
             _('Please %slogout%s before you register another account.'),
-            "<a style='alert-link' href='app/logout.php'>",
+            "<a href='app/logout.php'>",
             '</a>'
         ));
     }
@@ -43,10 +42,6 @@ try {
     if ($App->Config->configArr['local_register'] === '0') {
         throw new ImproperActionException(_('No local account creation is allowed!'));
     }
-
-    $Teams = new Teams($App->Users);
-    $Teams->bypassReadPermission = true;
-    $teamsArr = $Teams->readAll();
 
     $passwordComplexity = PasswordComplexity::from((int) $App->Config->configArr['password_complexity_requirement']);
 
@@ -57,7 +52,7 @@ try {
         'passwordInputHelp' => $passwordComplexity->toHuman(),
         'passwordInputPattern' => $passwordComplexity->toPattern(),
         'privacyPolicy' => $App->Config->configArr['privacy_policy'] ?? '',
-        'teamsArr' => $teamsArr,
+        'teamsArr' => $App->Teams->readAllVisible(),
     );
 } catch (ImproperActionException $e) {
     $renderArr['error'] = $e->getMessage();

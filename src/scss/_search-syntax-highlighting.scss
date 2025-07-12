@@ -7,9 +7,11 @@
  * @package elabftw
  */
 
+@use './variables';
+
 #extendedArea {
   background-color: transparent;
-  caret-color: $mediumstrong;
+  caret-color: variables.$mediumstrong;
   color: transparent;
   position: relative;
   z-index: 1;

@@ -299,6 +299,9 @@ final class StorageUnits extends AbstractRest
     #[Override]
     public function patch(Action $action, array $params): array
     {
+        if (empty($params['name'])) {
+            throw new ImproperActionException('Name must not be empty!');
+        }
         $this->update(new CommentParam($params['name']));
         return $this->readOne();
     }

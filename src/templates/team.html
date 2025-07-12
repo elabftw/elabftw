@@ -15,8 +15,8 @@
 {# TAB 1 MEMBERS #}
 <div data-tabcontent='1' hidden>
   <div class='alert alert-success'><i class='fas fa-info-circle fa-fw color-success'></i>
-  {{ 'You belong to the %s team.'|trans|format(App.teamArr.name) }}
-  {{ 'Members'|trans }}: {{ teamsStats.totusers }} &ndash; {% trans %}Experiment{% plural teamsStats.totxp %}Experiments{% endtrans %}: {{ teamsStats.totxp }} ({{ teamsStats.totxpts }} timestamped) &ndash; {{ 'Resources'|trans }}: {{ teamsStats.totdb }}
+  {{ 'You belong to the %s team.'|trans|format(App.Teams.teamArr.name) }}
+  {{ 'Members'|trans }}: {{ teamsStats.active_users_count }} &ndash; {% trans %}Experiment{% plural teamsStats.totxp %}Experiments{% endtrans %}: {{ teamsStats.totxp }} ({{ teamsStats.totxpts }} timestamped) &ndash; {{ 'Resources'|trans }}: {{ teamsStats.totdb }}
   </div>
 
   <h3 class='p-2 pl-3 mb-3 section-title'>{{ 'Members'|trans }}</h3>
@@ -59,7 +59,7 @@
     <input type='hidden' name='emailUsers' />
     <label>{{ 'Send to'|trans }}</label>
     <div class='form-check'>
-      <input class='form-check-input' type='radio' name='target' value='team' id='targetTeam' checked> <label class='form-check-label' for='targetTeam'>{{ 'Members of team %s'|trans|format(App.teamArr.name) }}</label>
+      <input class='form-check-input' type='radio' name='target' value='team' id='targetTeam' checked> <label class='form-check-label' for='targetTeam'>{{ 'Members of team %s'|trans|format(App.Teams.teamArr.name) }}</label>
     </div>
     {% for teamgroup in teamGroupsArr %}
       <div class='form-check'>

@@ -19,11 +19,12 @@ use Elabftw\Factories\NotificationsFactory;
 use Elabftw\Models\Notifications\StepDeadline;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Users;
+use Exception;
 use PDO;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Mime\Address;
 
 use function bindtextdomain;
-use function count;
 use function dirname;
 use function putenv;
 use function setlocale;
@@ -43,37 +44,43 @@ class EmailNotifications
         $this->Db = Db::getConnection();
     }
 
-    public function sendEmails(): int
+    public function sendEmails(OutputInterface $output): int
     {
         $toSend = $this->getNotificationsToSend();
+        $count = 0;
         foreach ($toSend as $notif) {
-            $targetUser = new Users($notif['userid']);
-            $this->setLang($targetUser->userData['lang']);
-            $to = new Address($targetUser->userData['email'], $targetUser->userData['fullname']);
-            $Factory = new NotificationsFactory($notif['category'], $notif['body']);
-            $email = $Factory->getMailable()->getEmail();
-            $cc = array_key_exists('cc', $email) ? $email['cc'] : null;
-            $htmlBody = array_key_exists('htmlBody', $email) ? (string) $email['htmlBody'] : null;
-            $replyTo = null;
-            if (isset($email['replyTo'])) {
-                $replyTo = new Address($email['replyTo']);
-            }
-            $isEmailSent = $this->emailService->sendEmail(
-                $to,
-                self::BASE_SUBJECT . $email['subject'],
-                $email['body'],
-                $cc,
-                $htmlBody,
-                replyTo: $replyTo,
-            );
-            if ($isEmailSent) {
-                $this->setEmailSent($notif['id']);
-                if (Notifications::tryFrom($notif['category']) === Notifications::OnboardingEmail) {
-                    AuditLogs::create(new OnboardingEmailSent($email['team'], $notif['userid'], $email['forAdmin']));
+            try {
+                $targetUser = new Users($notif['userid']);
+                $this->setLang($targetUser->userData['lang']);
+                $to = new Address($targetUser->userData['email'], $targetUser->userData['fullname']);
+                $Factory = new NotificationsFactory($notif['category'], $notif['body']);
+                $email = $Factory->getMailable()->getEmail();
+                $cc = array_key_exists('cc', $email) ? $email['cc'] : null;
+                $htmlBody = array_key_exists('htmlBody', $email) ? (string) $email['htmlBody'] : null;
+                $replyTo = null;
+                if (isset($email['replyTo'])) {
+                    $replyTo = new Address($email['replyTo']);
                 }
+                $isEmailSent = $this->emailService->sendEmail(
+                    $to,
+                    self::BASE_SUBJECT . $email['subject'],
+                    $email['body'],
+                    $cc,
+                    $htmlBody,
+                    replyTo: $replyTo,
+                );
+                if ($isEmailSent) {
+                    $this->setEmailSent($notif['id']);
+                    if (Notifications::tryFrom($notif['category']) === Notifications::OnboardingEmail) {
+                        AuditLogs::create(new OnboardingEmailSent($email['team'], $notif['userid'], $email['forAdmin']));
+                    }
+                }
+                $count++;
+            } catch (Exception $e) {
+                $output->writeln(sprintf('Error sending notification: %s', $e->getMessage()));
             }
         }
-        return count($toSend);
+        return $count;
     }
 
     /**
@@ -91,7 +98,7 @@ class EmailNotifications
         textdomain($domain);
     }
 
-    protected function getNotificationsToSend(): array
+    private function getNotificationsToSend(): array
     {
         $sql = 'SELECT id, userid, category, body
             FROM notifications

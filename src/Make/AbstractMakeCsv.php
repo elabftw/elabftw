@@ -26,6 +26,8 @@ abstract class AbstractMakeCsv extends AbstractMake implements StringMakerInterf
 {
     protected string $contentType = 'text/csv; charset=UTF-8';
 
+    protected array $rows;
+
     /**
      * Create a CSV file from header and rows
      */
@@ -51,10 +53,10 @@ abstract class AbstractMakeCsv extends AbstractMake implements StringMakerInterf
         return $content;
     }
 
-    /**
-     * Get the column names
-     */
-    abstract protected function getHeader(): array;
+    protected function getHeader(): array
+    {
+        return array_keys($this->rows[0]);
+    }
 
     /**
      * Get all the rows

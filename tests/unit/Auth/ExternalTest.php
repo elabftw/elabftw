@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Elabftw\Auth;
 
 use Elabftw\Elabftw\AuthResponse;
-use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\ImproperActionException;
 use Monolog\Logger;
 
@@ -58,7 +57,7 @@ class ExternalTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(1, $authResponse->userid);
         $this->assertFalse($authResponse->isAnonymous);
         $this->assertEquals(1, $authResponse->selectedTeam);
-        $teams = array(array('id' => 1, 'name' => 'Alpha', 'usergroup' => Usergroup::Admin->value, 'is_owner' => 0));
+        $teams = array(array('id' => 1, 'name' => 'Alpha', 'is_admin' => 1, 'is_owner' => 0));
         $this->assertEquals($teams, $authResponse->selectableTeams);
     }
 

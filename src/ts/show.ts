@@ -17,7 +17,7 @@ import {
 } from './misc';
 import { Action, Model } from './interfaces';
 import 'bootstrap/js/src/modal.js';
-import i18next from 'i18next';
+import i18next from './i18n';
 import FavTag from './FavTag.class';
 import { Api } from './Apiv2.class';
 import { Notification } from './Notifications.class';

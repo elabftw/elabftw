@@ -56,7 +56,7 @@ final class MakeQrPdf extends AbstractMakePdf
             'useCjk' => $this->requester->userData['cjk_fonts'],
         );
         $Config = Config::getConfig();
-        $html = $this->getTwig((bool) $Config->configArr['debug'])->render('qr-pdf.html', $renderArr);
+        $html = $this->getTwig($Config::boolFromEnv('DEV_MODE'))->render('qr-pdf.html', $renderArr);
         $this->mpdf->WriteHTML(html_entity_decode($html, ENT_HTML5, 'UTF-8'));
         $output = $this->mpdf->OutputBinaryData();
         $this->contentSize = strlen($output);

@@ -96,7 +96,7 @@
       {% endif %}
       {{ App.Session.get('csrf')|csrf }}
       <div class='col-md-4 mx-auto mt-4 text-left form-group'>
-        {% if App.Config.configArr.debug -%}
+        {% if App.devMode -%}
           <!-- [html-validate-disable-block input-missing-label, prefer-native-element: suppress errors from tom-select] -->
         {%- endif %}
         <label for='team_selection_select'>{{ 'Your account is linked to several teams. Select in which team you want to log in'|trans }}</label>
@@ -132,7 +132,7 @@
           <div class='input-group'>
             <input class='form-control' id='password' name='password' type='password' autocomplete='current-password' required />
             <div class='input-group-append'>
-              <button type='button' class='btn btn-light input-border' data-action='toggle-password' data-target='password' title='{{ 'Show password'|trans }}' aria-label='{{ 'Show password'|trans }}'><i class='fas fa-eye' aria-hidden='true'></i></button>
+              <button type='button' class='btn btn-light input-border' data-action='toggle-password' title='{{ 'Show password'|trans }}' aria-label='{{ 'Show password'|trans }}'><i class='fas fa-eye' aria-hidden='true'></i></button>
             </div>
           </div>
 
@@ -185,7 +185,7 @@
         <input type='hidden' name='auth_type' value='saml'>
         {{ App.Session.get('csrf')|csrf }}
         <div class='form-group col-md-4 mx-auto'>
-          {% if App.Config.configArr.debug -%}
+          {% if App.devMode -%}
             <!-- [html-validate-disable-block input-missing-label, prefer-native-element: suppress errors from tom-select] -->
           {%- endif %}
           <label for='idp_login_select'>{{ 'Select an identity provider'|trans }}</label>

@@ -24,7 +24,7 @@
 
   <label for='onboarding_email_body'  class='col-form-label'>{{ 'Content'|trans }}</label>
   <div>
-    {% if App.Config.configArr.debug -%}
+    {% if App.devMode -%}
     {# set no-unused-disable and text-content because removing or leaving text-content brings up error #}
       <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element, no-unused-disable, element-permitted-content: suppress errors from tinymce] -->
     {%- endif %}
@@ -67,7 +67,7 @@
 
       <label for='onboarding_email_admins_body'  class='col-form-label'>{{ 'Content'|trans }}</label>
       <div>
-        {% if App.Config.configArr.debug -%}
+        {% if App.devMode -%}
         {# set no-unused-disable and text-content because removing or leaving text-content brings up error #}
           <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element, no-unused-disable, element-permitted-content: suppress errors from tinymce] -->
         {%- endif %}

@@ -17,6 +17,7 @@ import {
   escapeExtendedQuery,
   generateMetadataLink,
   getEntity, handleReloads,
+  getRandomColor,
   listenTrigger,
   makeSortableGreatAgain,
   mkSpin,
@@ -32,7 +33,7 @@ import {
   updateEntityBody,
   updateCatStat,
 } from './misc';
-import i18next from 'i18next';
+import i18next from './i18n';
 import { Metadata } from './Metadata.class';
 import { DateTime } from 'luxon';
 import { Action, EntityType, Model, Target } from './interfaces';
@@ -92,12 +93,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const TableSortingC = new TableSorting();
   TableSortingC.init();
 
-  const userPrefs = document.getElementById('user-prefs').dataset;
-  // set the language for js translated strings
-  i18next.changeLanguage(userPrefs.lang);
-
   makeSortableGreatAgain();
 
+  const userPrefs = document.getElementById('user-prefs').dataset;
   if (userPrefs.scDisabled === '0') {
     const kbd = new KeyboardShortcuts(
       userPrefs.scCreate,
@@ -157,6 +155,13 @@ document.addEventListener('DOMContentLoaded', () => {
   relativeMoment();
 
   replaceWithTitle();
+
+  // set a random color to all the "create new" statuslike modals
+  // from https://www.paulirish.com/2009/random-hex-color-code-snippets/
+  document.querySelectorAll('.randomColor').forEach((input: HTMLInputElement) => {
+    input.value = getRandomColor();
+  });
+
 
   // look for elements that should have focus
   const needFocus = (document.querySelector('[data-focus="1"]') as HTMLInputElement);
@@ -934,7 +939,8 @@ document.addEventListener('DOMContentLoaded', () => {
       icon.classList.toggle('fa-eye-slash');
 
       // toggle input type
-      const input = document.getElementById(el.dataset.target) as HTMLInputElement;
+      const input = el.parentElement.parentElement.querySelector('input');
+
       let attribute = 'password';
       if (input.getAttribute('type') === 'password') {
         attribute = 'text';
@@ -1031,6 +1037,32 @@ document.addEventListener('DOMContentLoaded', () => {
         (document.getElementById('anonymousAccessUrlInput') as HTMLInputElement).value = json.sharelink;
       });
 
+    // CREATE STATUSLIKE
+    } else if (el.matches('[data-action="create-statuslike"]')) {
+      const holder = el.parentElement.parentElement;
+      const colorInput = (holder.querySelector('input[type="color"]') as HTMLInputElement);
+      const nameInput = (holder.querySelector('input[type="text"]') as HTMLInputElement);
+      const name = nameInput.value;
+      if (!name) {
+        notify.error('invalid-info');
+        // set the border in red to bring attention
+        nameInput.style.borderColor = 'red';
+        return;
+      }
+      ApiC.post(`${Model.Team}/current/${el.dataset.target}`, {'name': name, 'color': colorInput.value}).then(() => {
+        // clear the name
+        nameInput.value = '';
+        // assign a new random color
+        colorInput.value = getRandomColor();
+        // display newly added entry
+        reloadElements(['statusDiv']);
+      });
+    // DESTROY CATEGORY/STATUS
+    } else if (el.matches('[data-action="destroy-catstat"]')) {
+      if (confirm(i18next.t('generic-delete-warning'))) {
+        ApiC.delete(`${Model.Team}/current/${el.dataset.target}/${el.dataset.id}`)
+          .then(() => el.parentElement.parentElement.parentElement.remove());
+      }
     // COPY TO CLIPBOARD
     } else if (el.matches('[data-action="copy-to-clipboard"]')) {
       navigator.clipboard.writeText((document.getElementById(el.dataset.target) as HTMLInputElement).value);

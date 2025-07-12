@@ -17,13 +17,10 @@ use Elabftw\Elabftw\PermissionsHelper;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Orderby;
 use Elabftw\Models\Experiments;
-use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsStatus;
-use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Scheduler;
-use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\UserRequestActions;
 use Elabftw\Params\DisplayParams;
@@ -37,7 +34,7 @@ use function array_merge;
  */
 final class DashboardController extends AbstractHtmlController
 {
-    private const int SHOWN_NUMBER = 5;
+    private const int SHOWN_NUMBER = 6;
 
     #[Override]
     protected function getTemplate(): string
@@ -63,7 +60,6 @@ final class DashboardController extends AbstractHtmlController
         $Experiments = new Experiments($this->app->Users);
         $Items = new Items($this->app->Users);
         $Templates = new Templates($this->app->Users);
-        $ItemsTypes = new ItemsTypes($this->app->Users);
         $now = new DateTimeImmutable();
         $Scheduler = new Scheduler($Items, start: $now->format(DateTimeImmutable::ATOM));
         // for items we need to create a new DisplayParams object, otherwise the scope setting will also apply here
@@ -74,19 +70,16 @@ final class DashboardController extends AbstractHtmlController
             orderby: Orderby::Lastchange,
         );
         $PermissionsHelper = new PermissionsHelper();
-        $ExperimentsCategory = new ExperimentsCategories(new Teams($this->app->Users));
-        $ExperimentsStatus = new ExperimentsStatus(new Teams($this->app->Users));
-        $ItemsStatus = new ItemsStatus(new Teams($this->app->Users));
+        $ExperimentsStatus = new ExperimentsStatus($this->app->Teams);
+        $ItemsStatus = new ItemsStatus($this->app->Teams);
         $UserRequestActions = new UserRequestActions($this->app->Users);
 
         return array_merge(
             parent::getData(),
             array(
                 'bookingsArr' => $Scheduler->readAll(),
-                'itemsCategoryArr' => $ItemsTypes->readAll(),
                 'itemsStatusArr' => $ItemsStatus->readAll(),
                 'experimentsArr' => $Experiments->readShow($DisplayParamsExp),
-                'experimentsCategoryArr' => $ExperimentsCategory->readAll($ExperimentsCategory->getQueryParams(new InputBag(array('limit' => 9999)))),
                 'experimentsStatusArr' => $ExperimentsStatus->readAll($ExperimentsStatus->getQueryParams(new InputBag(array('limit' => 9999)))),
                 'itemsArr' => $Items->readShow($DisplayParamsItems),
                 'requestActionsArr' => $UserRequestActions->readAllFull(),

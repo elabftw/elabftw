@@ -7,7 +7,7 @@
  */
 import { clearForm, collectForm, reloadElements } from './misc';
 import { Action, Model } from './interfaces';
-import i18next from 'i18next';
+import i18next from './i18n';
 import tinymce from 'tinymce/tinymce';
 import { getEditor } from './Editor.class';
 import { Notification } from './Notifications.class';
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const input = document.getElementById('newTeamName') as HTMLInputElement;
       ApiC.post(Model.Team, {name: input.value}).then(() => {
         input.value = '';
-        reloadElements(['teamsDiv', 'userSearchForm', 'create-user-team']);
+        reloadElements(['teamsDiv', 'create-user-team']);
       });
     // UPDATE TEAM
     } else if (el.matches('[data-action="patch-team-sysadmin"]')) {
@@ -136,21 +136,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // DESTROY TEAM
     } else if (el.matches('[data-action="destroy-team"]')) {
       ApiC.delete(`${Model.Team}/${el.dataset.id}`).then(() => el.parentElement.parentElement.remove());
-    // ADD USER TO TEAM
-    } else if (el.matches('[data-action="create-user2team"]')) {
-      const selectEl = (el.previousElementSibling as HTMLSelectElement);
-      const team = parseInt(selectEl.options[selectEl.selectedIndex].value, 10);
-      const userid = parseInt(el.dataset.userid, 10);
-      ApiC.patch(`${Model.User}/${userid}`, {'action': Action.Add, 'team': team})
-        .then(() => reloadElements([`manageUsers2teamsModal_${userid}`]));
-    // REMOVE USER FROM TEAM
-    } else if (el.matches('[data-action="destroy-user2team"]')) {
-      if (confirm(i18next.t('generic-delete-warning'))) {
-        const userid = parseInt(el.dataset.userid, 10);
-        const team = parseInt(el.dataset.teamid, 10);
-        ApiC.patch(`${Model.User}/${userid}`, {'action': Action.Unreference, 'team': team})
-          .then(() => reloadElements([`manageUsers2teamsModal_${userid}`]));
-      }
     // PATCH ANNOUNCEMENT - save or clear
     } else if (el.matches('[data-action="patch-announcement"]')) {
       const input = (document.getElementById(el.dataset.inputid) as HTMLInputElement);

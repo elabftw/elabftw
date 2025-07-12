@@ -20,10 +20,13 @@ use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Users;
+use Elabftw\Traits\TestsUtilsTrait;
 use OneLogin\Saml2\Auth as SamlAuthLib;
 
 class SamlTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private array $configArr;
 
     private SamlAuthLib $SamlAuthLib;
@@ -59,7 +62,7 @@ class SamlTest extends \PHPUnit\Framework\TestCase
         ));
 
         $this->configArr = array(
-            'debug' => '0',
+            'saml_debug' => '0',
             'saml_sync_teams' => '0',
             'saml_team_default' => '2',
             'saml_user_default' => '0',
@@ -189,7 +192,7 @@ class SamlTest extends \PHPUnit\Framework\TestCase
         $samlUserdata['User.email'] = 'is_in_alpha_and_bravo@example.com';
         $samlUserdata['User.firstname'] = 'Multiteam';
         $samlUserdata['User.lastname'] = 'User';
-        $samlUserdata['User.team'] = array('Alpha', 'wheel', 'Bravo', 'staff', 'researcher');
+        $samlUserdata['User.team'] = array('Alpha', 'wheel', 'Microscopy platform', 'staff', 'researcher');
         $config = $this->configArr;
         // disable creation of new teams
         $config['saml_team_create'] = '0';
@@ -200,7 +203,7 @@ class SamlTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($authResponse->isInSeveralTeams);
         $this->assertEquals(2, count($authResponse->selectableTeams));
         $this->assertEquals('Alpha', $authResponse->selectableTeams[0]['name']);
-        $this->assertEquals('Bravo', $authResponse->selectableTeams[1]['name']);
+        $this->assertEquals('Microscopy platform', $authResponse->selectableTeams[1]['name']);
     }
 
     /**
@@ -284,10 +287,11 @@ class SamlTest extends \PHPUnit\Framework\TestCase
     public function testMatchUserWithOrgidAndChangeEmail(): void
     {
         $samlUserdata = $this->samlUserdata;
+        $email = 'somesamluser42@example.com';
         // this will match the user with original email "somesamluser@example.com"
         $samlUserdata['internal_id'] = 'internal_id_42';
         // we assign a new email to that user from the idp response
-        $samlUserdata['User.email'] = 'somesamluser42@example.com';
+        $samlUserdata['User.email'] = $email;
         // make sure the orgid is picked up
         $this->settings['idp']['orgidAttr'] = 'internal_id';
         $config = $this->configArr;
@@ -296,7 +300,7 @@ class SamlTest extends \PHPUnit\Framework\TestCase
         $config['saml_sync_email_idp'] = '1';
 
         $authResponse = $this->getAuthResponse($samlUserdata, $config);
-        $this->assertEquals(7, $authResponse->userid);
+        $this->assertEquals($this->getUserIdFromEmail($email), $authResponse->userid);
     }
 
     /**
@@ -387,14 +391,14 @@ class SamlTest extends \PHPUnit\Framework\TestCase
     {
         $samlUserdata = $this->samlUserdata;
         $samlUserdata['User.email'] = 'a_new_never_seen_before_user_for_real@example.com';
-        $samlUserdata['User.team'] = array('Bravo');
+        $samlUserdata['User.team'] = array('Microscopy platform');
 
         // create the user on the fly
         $config = $this->configArr;
         $config['saml_user_default'] = '1';
 
         $authResponse = $this->getAuthResponse($samlUserdata, $config);
-        $this->assertEquals(2, $authResponse->selectedTeam);
+        $this->assertEquals(6, $authResponse->selectedTeam);
     }
 
     public function testCreateUserWithTeamsFromIdpButConfigIsEmpty(): void
@@ -489,7 +493,7 @@ class SamlTest extends \PHPUnit\Framework\TestCase
         $this->SamlAuthLib = $this->createMock(SamlAuthLib::class);
         $this->SamlAuthLib->method('getErrors')->willReturn(array('Error' => 'Something went wrong!'));
         $configArr = $this->configArr;
-        $configArr['debug'] = '1';
+        $configArr['saml_debug'] = '1';
         $AuthService = new SamlAuth($this->SamlAuthLib, $configArr, $this->settings);
         $this->expectException(UnauthorizedException::class);
         $AuthService->assertIdpResponse();

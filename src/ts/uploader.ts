@@ -7,7 +7,7 @@
  */
 import Dropzone from '@deltablot/dropzone';
 import { reloadElements, sizeToMb } from './misc';
-import i18next from 'i18next';
+import i18next from './i18n';
 import { Api } from './Apiv2.class';
 import { Notification } from './Notifications.class';
 

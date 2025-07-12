@@ -18,7 +18,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Api } from './Apiv2.class';
 import { toggleEditCompound } from './misc';
-import i18next from 'i18next';
+import i18next from './i18n';
 
 const ApiC = new Api();
 

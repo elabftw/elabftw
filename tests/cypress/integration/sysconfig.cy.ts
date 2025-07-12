@@ -14,9 +14,5 @@ describe('Sysconfig', () => {
       cy.get(`[data-tabtarget="${i}"]`).should('have.class', 'selected');
       cy.get('#loading-spinner').should('not.exist');
     }
-
-    // Search user
-    cy.visit('/sysconfig.php?tab=3&q=toto');
-    cy.get('#editUsersBox').should('contain', 'Le sysadmin');
   });
 });

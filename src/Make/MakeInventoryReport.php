@@ -40,15 +40,6 @@ class MakeInventoryReport extends AbstractMakeCsv
         return date('Y-m-d') . '-storage.elabftw.csv';
     }
 
-    /**
-     * Here we populate the first row: it will be the column names
-     */
-    #[Override]
-    protected function getHeader(): array
-    {
-        return array_keys($this->rows[0]);
-    }
-
     protected function getData(): array
     {
         return $this->storageUnits->readAll();

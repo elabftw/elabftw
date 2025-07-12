@@ -43,6 +43,7 @@ final class PopulateDatabase extends Command
         $this->setDescription('Populate the database with fake data')
             ->addOption('yes', 'y', InputOption::VALUE_NONE, 'Skip confirmation question')
             ->addOption('fast', 'f', InputOption::VALUE_NONE, 'Only populate minimal things (use in CI)')
+            ->addOption('iterations', 'i', InputOption::VALUE_REQUIRED, 'Number of entities to create for each user')
             ->addArgument('file', InputArgument::REQUIRED, 'Yaml configuration file')
             ->setHelp('This command allows you to populate the database with fake users/experiments/items. The database will be dropped before populating it. The configuration is read from the yaml file passed as first argument.');
     }
@@ -76,7 +77,11 @@ final class PopulateDatabase extends Command
         }
 
         $fast = (bool) $input->getOption('fast');
-        new Populate($output, $yaml, $fast)->run();
+        $iter = null;
+        if ($input->getOption('iterations')) {
+            $iter = (int) $input->getOption('iterations');
+        }
+        new Populate($output, $yaml, $fast, $iter)->run();
 
         $elapsed = (int) (microtime(true) - $start);
         $minutes = floor($elapsed / 60);

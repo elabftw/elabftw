@@ -48,24 +48,21 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 final class Populate
 {
+    private const int DEFAULT_ITERATIONS = 24;
+
     // the password to use if none are provided
     private const string DEFAULT_PASSWORD = 'totototototo';
 
-    // number of things to create
-    private const int DEFAULT_ITERATIONS = 50;
-
     // number of templates to generate
-    private const int TEMPLATES_ITER = 5;
-
-    private int $iter;
+    private const int TEMPLATES_ITER = 6;
 
     private \Faker\Generator $faker;
 
     // iter: iterations: number of things to generate
-    public function __construct(private OutputInterface $output, private array $yaml, private bool $fast = false)
+    public function __construct(private OutputInterface $output, private array $yaml, private bool $fast = false, private ?int $iterations = null)
     {
         $this->faker = \Faker\Factory::create();
-        $this->iter = $this->fast ? 2 : $yaml['iterations'] ?? self::DEFAULT_ITERATIONS;
+        $this->iterations = $this->fast ? 3 : $iterations ?? self::DEFAULT_ITERATIONS;
     }
 
     public function run(): void
@@ -289,7 +286,7 @@ final class Populate
      */
     public function generate(Experiments | Items $Entity, ?int $iterations = null): void
     {
-        $iterations ??= $this->iter;
+        $iterations ??= $this->iterations;
         $Teams = new Teams($Entity->Users, $Entity->Users->team, bypassWritePermission: true);
         if ($Entity instanceof Experiments) {
             $Category = new ExperimentsCategories($Teams);
@@ -368,7 +365,7 @@ final class Populate
             'scientific literature',
         );
 
-        for ($i = 0; $i <= $iterations; $i++) {
+        for ($i = 0; $i < $iterations; $i++) {
             $id = $Entity->create(template: $tpl);
             $Entity->setId($id);
             // variable tag number
@@ -465,11 +462,11 @@ final class Populate
             $MfaHelper->secret = 'EXAMPLE2FASECRET234567ABCDEFGHIJ';
             $MfaHelper->saveSecret();
         }
-        if ($user['create_experiments'] ?? false) {
-            $this->generate(new Experiments($Users), $user['experiments_iter'] ?? $this->iter);
+        if (!$this->fast) {
+            $this->generate(new Experiments($Users));
         }
-        if ($user['create_items'] ?? false) {
-            $this->generate(new Items($Users), $user['items_iter'] ?? $this->iter);
+        if (!$this->fast) {
+            $this->generate(new Items($Users));
         }
         if (array_key_exists('api_key', $user ?? array())) {
             $ApiKeys = new ApiKeys($Users);

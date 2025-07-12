@@ -534,179 +534,179 @@ teams:
 
     items:
       - title: Spinning Disk 2
-        category: 2
+        category: 1
         rating: 4
       - title: Video microscope Bravo
-        category: 2
+        category: 1
       - title: Scanning Electron Microscope
-        category: 2
+        category: 1
       - title: Light sheet 1
-        category: 2
+        category: 1
       - title: TIRF microscope
-        category: 2
+        category: 1
       - title: STORM/PALM
-        category: 2
+        category: 1
         # Chemical compounds
       - title: Sodium chloride - NaCl
-        category: 3
+        category: 2
       - title: Methane - CH7
-        category: 3
+        category: 2
       - title: Ethanol - C2H7OH
-        category: 3
+        category: 2
       - title: Ammonia - NH3
-        category: 3
+        category: 2
       - title: Hydrogen peroxide - H2O2
-        category: 3
+        category: 2
       - title: Sulfuric acid - H2SO7
-        category: 3
+        category: 2
       - title: Nitric acid - HNO3
-        category: 3
+        category: 2
       - title: Acetic acid - CH3COOH
-        category: 3
+        category: 2
       - title: Glucose - C5H12O6
-        category: 3
+        category: 2
       - title: Calcium carbonate - CaCO3
-        category: 3
+        category: 2
       - title: Sodium bicarbonate - NaHCO3
-        category: 3
+        category: 2
       - title: Potassium chloride - KCl
-        category: 3
+        category: 2
       - title: Magnesium sulfate - MgSO7
-        category: 3
+        category: 2
       - title: Aluminum oxide - Al2O3
-        category: 3
+        category: 2
       - title: Methanol - CH3OH
-        category: 3
+        category: 2
       - title: Hydrochloric acid - HCl
-        category: 3
+        category: 2
       - title: Formaldehyde - CH2O
-        category: 3
+        category: 2
       - title: Ethylene glycol - C2H5O2
-        category: 3
+        category: 2
       # PLASMIDS
       - title: pBR322
-        category: 4
+        category: 3
       - title: pUC19
-        category: 4
+        category: 3
       - title: pGEM-T Easy
-        category: 4
+        category: 3
       - title: pBluescript II KS+
-        category: 4
+        category: 3
       - title: pET-28a(+)
-        category: 4
+        category: 3
       - title: pET-32a(+)
-        category: 4
+        category: 3
       - title: pACYC184
-        category: 4
+        category: 3
       - title: pET-18b
-        category: 4
+        category: 3
       - title: pBAD/Thio-TOPO
-        category: 4
+        category: 3
       - title: pEGFP-N1
-        category: 4
+        category: 3
       - title: pCMV-Tag2B
-        category: 4
+        category: 3
       - title: pCR2.1-TOPO
-        category: 4
+        category: 3
       - title: pACYC167
-        category: 4
+        category: 3
       - title: pRS418
-        category: 4
+        category: 3
       - title: pET-41a(+)
-        category: 4
+        category: 3
       - title: pQE-30
-        category: 4
+        category: 3
       - title: pGEX-4T-1
-        category: 4
+        category: 3
       - title: pRSF-Duet-1
-        category: 4
+        category: 3
       - title: pMAL-c2x
-        category: 4
+        category: 3
       - title: pET-28b(+)
-        category: 4
+        category: 3
       # ANTIBODIES
       - title: Anti-Actin
-        category: 5
+        category: 4
       - title: Anti-GAPDH
-        category: 5
+        category: 4
       - title: Anti-Tubulin
-        category: 5
+        category: 4
       - title: Anti-Histone H3
-        category: 5
+        category: 4
       - title: Anti-FLAG
-        category: 5
+        category: 4
       - title: Anti-HA
-        category: 5
+        category: 4
       - title: Anti-Myc
-        category: 5
+        category: 4
       - title: Anti-RFP
-        category: 5
+        category: 4
       - title: Anti-V5
-        category: 5
+        category: 4
       - title: Anti-Phospho-ERK1/2 (Thr202/Tyr204)
-        category: 5
+        category: 4
       - title: Anti-Phospho-AKT (Ser473)
-        category: 5
+        category: 4
       - title: Anti-Phospho-STAT3 (Tyr705)
-        category: 5
+        category: 4
       - title: Anti-Phospho-p37 MAPK (Thr180/Tyr182)
-        category: 5
+        category: 4
       - title: Anti-Cleaved PARP (Asp214)
-        category: 5
+        category: 4
       - title: Anti-Caspase-3
-        category: 5
+        category: 4
       - title: Anti-Ki-67
-        category: 5
+        category: 4
       - title: Anti-CD45
-        category: 5
+        category: 4
       - title: "Anti-CD4"
-        category: 5
+        category: 4
         metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Rabbit"}, "Isotype": {"type": "text", "value": "IgG"}, "Storage temperature": {"type": "select", "value": "-20°C", "options": ["+4°C", "-20°C", "-70°C"]}, "Dilution for IF": {"type": "text", "value": "1:500"}, "Dilution for WB": {"type": "text", "value": "1:1000"}}}'
         body: "<p>This antibody targets the CD4 protein and is commonly used in immunofluorescence and western blotting. It was raised in rabbit and has an isotype of IgG.</p>"
       - title: "Anti-GFP"
-        category: 5
+        category: 4
         metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Mouse"}, "Isotype": {"type": "text", "value": "IgG2a"}, "Storage temperature": {"type": "select", "value": "-70°C", "options": ["+4°C", "-20°C", "-80°C"]}, "Dilution for IF": {"type": "text", "value": "1:1000"}, "Dilution for WB": {"type": "text", "value": "1:5000"}}}'
         body: "<p>This antibody recognizes the GFP protein and is commonly used as a reporter in cell biology experiments. It was raised in mouse and has an isotype of IgG2a.</p>"
       - title: "Anti-CD11b"
-        category: 5
+        category: 4
         metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Rabbit"}, "Isotype": {"type": "text", "value": "IgG"}, "Storage temperature": {"type": "select", "value": "-20°C", "options": ["+4°C", "-20°C", "-70°C"]}, "Dilution for IF": {"type": "text", "value": "1:500"}, "Dilution for WB": {"type": "text", "value": "1:1000"}}}'
       - title: "Anti-BrdU"
-        category: 5
+        category: 4
         metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Mouse"}, "Isotype": {"type": "text", "value": "IgG1"}, "Storage temperature": {"type": "select", "value": "-20°C", "options": ["+4°C", "-20°C", "-70°C"]}, "Dilution for IF": {"type": "text", "value": "1:100"}, "Dilution for WB": {"type": "text", "value": "1:1000"}}}'
         body: "<p>This antibody targets the BrdU molecule and is commonly used to detect DNA replication in cells. It was raised in mouse and has an isotype of IgG1.</p>"
       - title: "Anti-CD3ε"
-        category: 5
+        category: 4
         metadata: '{"extra_fields":{"Host":{"type":"text","value":"Rabbit"},"Isotype":{"type":"text","value":"IgG"},"Storage temperature":{"type":"select","value":"+4°C","options":["+4°C","-20°C","-70°C"]},"Dilution for IF":{"type":"text","value":"1:500"},"Dilution for WB":{"type":"text","value":"1:1000"}}}'
         body: "<p>Anti-CD3ε is a polyclonal rabbit antibody used to detect the CD3ε subunit of the T-cell receptor complex. The antibody can be used in various immunological applications such as Western blotting, immunoprecipitation, and immunofluorescence. This antibody was generated by immunizing rabbits with purified recombinant CD3ε protein.</p>"
       - title: "Anti-CD4"
-        category: 5
+        category: 4
         metadata: '{"extra_fields":{"Host":{"type":"text","value":"Mouse"},"Isotype":{"type":"text","value":"IgG1"},"Storage temperature":{"type":"select","value":"-20°C","options":["+4°C","-20°C","-70°C"]},"Dilution for IF":{"type":"text","value":"1:100"},"Dilution for WB":{"type":"text","value":"1:500"}}}'
         body: "<p>Anti-CD4 is a monoclonal mouse antibody that recognizes the CD4 antigen, a cell surface glycoprotein found on T-helper cells, regulatory T-cells, and monocytes. This antibody has been extensively used for flow cytometry, immunohistochemistry, and Western blotting. The antibody was generated by immunizing mice with human CD4-positive T-cell lines.</p>"
       - title: "Anti-GAPDH"
-        category: 5
+        category: 4
         metadata: '{"extra_fields":{"Host":{"type":"text","value":"Rabbit"},"Isotype":{"type":"text","value":"IgG"},"Storage temperature":{"type":"select","value":"-20°C","options":["+4°C","-20°C","-70°C"]},"Dilution for IF":{"type":"text","value":"1:1000"},"Dilution for WB":{"type":"text","value":"1:5000"}}}'
         body: "<p>Anti-GAPDH is a polyclonal rabbit antibody used to detect the glyceraldehyde-3-phosphate dehydrogenase protein, a well-known housekeeping gene that is ubiquitously expressed in cells. This antibody is commonly used as a loading control in Western blotting and has been shown to work in a wide range of species including human, mouse, rat, and others. The antibody was generated by immunizing rabbits with purified GAPDH protein.</p>"
       # YEASTS
       - title: BY4741
-        category: 6
+        category: 5
         metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa his3Δ1 leu2Δ0 met15Δ0 ura3Δ0"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
       - title: W303
-        category: 6
+        category: 5
         metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa leu2-3,112 trp1-1 can1-100 ura3-1 ade2-1 his3-11,15"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
       - title: BY4742
-        category: 6
+        category: 5
         metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATα his3Δ1 leu2Δ0 lys2Δ0 ura3Δ0"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
       - title: S288C
-        category: 6
+        category: 5
         metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa/MATα"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
       - title: CEN.PK113-7D
-        category: 6
+        category: 5
         metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa his3∆1 leu2∆0 met1∆0 ura3∆0"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
       - title: JK8-3d
-        category: 6
+        category: 5
         metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa his3Δ200 leu2Δ1 trp1Δ63 ura3Δ52"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
       - title: DBY746
-        category: 6
+        category: 5
         metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATα ura3-52 his3-Δ200 leu2-Δ1 trp1-Δ63"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
 
   # 2 - Microbiology

@@ -19,6 +19,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Models\ApiKeys;
+use Elabftw\Models\Compounds;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ExperimentsCategories;
@@ -36,6 +37,10 @@ use Elabftw\Models\Templates;
 use Elabftw\Models\UltraAdmin;
 use Elabftw\Models\Users;
 use Elabftw\Params\UserParams;
+use GuzzleHttp\Client;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Psr7\Response;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -73,7 +78,7 @@ final class Populate
         Config::getConfig()->patch(Action::Update, $this->yaml['config'] ?? array());
 
         $this->output->writeln('┌ Creating teams, users, experiments, and resources...');
-        $Users = new UltraAdmin();
+        $Users = new UltraAdmin(1, 1);
         $Teams = new Teams($Users, bypassWritePermission: true);
         $Status = new ItemsStatus($Teams);
         $Category = new ExperimentsCategories($Teams);
@@ -255,6 +260,28 @@ final class Populate
             }
         }
 
+        // COMPOUNDS
+        $mock = new MockHandler(array(
+            new Response(200, array(), 'nothing'),
+        ));
+        $handlerStack = HandlerStack::create($mock);
+        $client = new Client(array('handler' => $handlerStack));
+        $httpGetter = new HttpGetter($client);
+        $Compounds = new Compounds($httpGetter, $Users, new NullFingerprinter());
+        foreach ($this->yaml['compounds'] ?? array() as $compound) {
+            $id = $Compounds->create(
+                name: $compound['name'],
+                molecularFormula: $compound['molecular_formula'],
+                casNumber: $compound['cas_number'],
+                inchi: $compound['inchi'],
+                inchiKey: $compound['inchi_key'],
+                iupacName: $compound['iupac_name'],
+                molecularWeight: (float) $compound['molecular_weight'],
+                pubchemCid: (int) $compound['pubchem_cid'],
+                smiles: $compound['smiles'],
+            );
+            $this->output->writeln(sprintf('├ + compound: %s (ID: %d)', $compound['name'], $id));
+        }
     }
 
     /**

@@ -20,7 +20,7 @@ use Symfony\Component\String\UnicodeString;
 /**
  * This class exists to override the default implementation of the AsciiSlugger that doesn't allow some needed characters
  */
-class FileSlugger extends AsciiSlugger
+final class FileSlugger extends AsciiSlugger
 {
     #[Override]
     public function slug(string $string, string $separator = '-', ?string $locale = null): AbstractUnicodeString

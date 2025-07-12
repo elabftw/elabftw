@@ -62,7 +62,10 @@ function triggerHandler(event: Event, el: HTMLInputElement): void {
   el.classList.remove('is-invalid');
   // for a checkbox element, look at the checked attribute, not the value
   let value = el.type === 'checkbox' ? el.checked ? '1' : '0' : el.value;
-  const userid = document.getElementById('editUserModal').dataset.userid;
+  let userid = document.getElementById('editUserModal')?.dataset.userid;
+  if (!userid) {
+    userid = el.dataset.userid;
+  }
 
   // CUSTOM ACTIONS
   if (el.dataset.customAction === 'patch-user2team-is') {

@@ -74,7 +74,7 @@
 
           {# STATUS #}
           <select name='status' class='mr-1 form-control filterHelper filterAuto' aria-label='{{ 'Filter status'|trans }}'>
-            <option value='' data-action='clear'>{{ 'Filter status'|trans }}</option>
+            <option value='' class='dropdown-header' data-action='clear'>{{ 'Filter status'|trans }}</option>
             {% for status in statusArr %}
               <option value='{{ status.id }}'
                 {{- App.Request.query.get('status') == status.id ? ' selected' -}}
@@ -85,7 +85,7 @@
 
           {# OWNER filter #}
           <select name='owner' class='form-control filterHelper filterAuto' aria-label='{{ 'Filter owner'|trans }}'>
-            <option value='' data-action='clear'>{{ 'Filter owner'|trans }}</option>
+            <option value='' class='dropdown-header' data-action='clear'>{{ 'Filter owner'|trans }}</option>
             {% for user in usersArr %}
               <option value='{{ user.userid }}' {{- App.Request.query.get('owner') == user.userid ? ' selected' }}>{{ user.fullname }}</option>
             {% endfor %}

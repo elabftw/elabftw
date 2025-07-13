@@ -595,14 +595,16 @@ class Users extends AbstractRest
         $res = $this->Db->execute($req);
 
         $auditLoggableTargets = array(
-            'archived',
             'valid_until',
             'email',
             'orgid',
             'is_sysadmin',
         );
 
-        if ($res && in_array($params->getTarget(), $auditLoggableTargets, true)) {
+        if ($res
+            && in_array($params->getTarget(), $auditLoggableTargets, true)
+            && (string) $this->userData[$params->getTarget()] !== $params->getStringContent()
+        ) {
             AuditLogs::create(new UserAttributeChanged(
                 $this->requester->userid ?? 0,
                 $this->userid ?? 0,

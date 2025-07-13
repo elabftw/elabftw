@@ -95,7 +95,7 @@ UPDATE users2teams ut JOIN users u ON ut.users_id = u.userid SET ut.is_archived 
 -- this FK might still exist in older instances
 CALL DropFK('users', 'fk_users_groups_id');
 CALL DropColumn('users', 'usergroup_old');
--- maybe do that in next version ALTER TABLE users DROP COLUMN archived;
+-- maybe do that in next version ALTER TABLE users DROP COLUMN if exists archived;
 DROP TABLE `groups`;
 -- add team settings for status/categories
 ALTER TABLE teams ADD COLUMN users_canwrite_experiments_categories TINYINT(1) UNSIGNED NOT NULL DEFAULT 1;

@@ -1220,7 +1220,6 @@ CREATE TABLE `users` (
   `inc_files_pdf` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `append_pdfs` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `disable_shortcuts` tinyint UNSIGNED NOT NULL DEFAULT 0,
-  `archived` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `pdf_format` varchar(255) NOT NULL DEFAULT 'A4',
   `display_mode` VARCHAR(2) NOT NULL DEFAULT 'it',
   `last_login` DATETIME NULL DEFAULT NULL,

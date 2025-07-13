@@ -772,8 +772,8 @@ export async function populateUserModal(user: Record<string, string|number>) {
     teamBadge.appendChild(generateIsSomethingElement('archived', team));
 
     manageTeamsDiv.appendChild(teamBadge);
-    listenTrigger(manageTeamsDiv.id);
   });
+  listenTrigger(manageTeamsDiv.id);
   // add team section
   // we need to generate the teams that are addable for this user
   const teams = await ApiC.getJson('teams');

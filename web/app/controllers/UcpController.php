@@ -14,6 +14,7 @@ namespace Elabftw\Elabftw;
 use Elabftw\Auth\Local;
 use Elabftw\Controllers\LoginController;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\Messages;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -89,7 +90,7 @@ try {
     $Response = new RedirectResponse(sprintf('/ucp.php?tab=%d', $tab));
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e->getMessage())));
-    $App->Session->getFlashBag()->add('ko', Tools::error(true));
+    $App->Session->getFlashBag()->add('ko', Messages::InsufficientPermissions->toHuman());
 } catch (ImproperActionException $e) {
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
@@ -97,7 +98,7 @@ try {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
 } catch (Exception $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
-    $App->Session->getFlashBag()->add('ko', Tools::error());
+    $App->Session->getFlashBag()->add('ko', Messages::GenericError->toHuman());
 } finally {
     $Response->send();
 }

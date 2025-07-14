@@ -61,7 +61,7 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
     {
         $ImmutableComments = new ImmutableComments($this->Entity);
         $ImmutableComments->setId($ImmutableComments->create(new CommentParam('An immutable comment')));
-        $this->expectException(ImproperActionException::class);
+        $this->expectException(IllegalActionException::class);
         $ImmutableComments->update(new CommentParam('Nope'));
     }
 

@@ -15,6 +15,7 @@ namespace Elabftw\Elabftw;
 use Elabftw\Enums\AuditCategory;
 use Elabftw\Enums\EnforceMfa;
 use Elabftw\Enums\PasswordComplexity;
+use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\AuthFail;
@@ -34,17 +35,14 @@ use Symfony\Component\HttpFoundation\Response;
 use function array_walk;
 
 /**
- * Administrate elabftw install
+ * Instance level settings and tools
  */
 require_once 'app/init.inc.php';
-/** @psalm-suppress UncaughtThrowInGlobalScope */
+
 $Response = new Response();
-$Response->prepare($App->Request);
-
-$template = 'error.html';
-$renderArr = array();
-
 try {
+    $Response->prepare($App->Request);
+
     if (!$App->Users->userData['is_sysadmin']) {
         throw new IllegalActionException('Non sysadmin user tried to access sysconfig panel.');
     }
@@ -131,12 +129,11 @@ try {
         'enforceMfaArr' => EnforceMfa::getAssociativeArray(),
         'passwordComplexityArr' => PasswordComplexity::getAssociativeArray(),
     );
-} catch (IllegalActionException $e) {
-    $renderArr['error'] = Tools::error(true);
-} catch (Exception $e) {
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
-    $renderArr['error'] = $e->getMessage();
-} finally {
     $Response->setContent($App->render($template, $renderArr));
+} catch (AppException $e) {
+    $Response = $e->getResponseFromException($App);
+} catch (Exception $e) {
+    $Response = $App->getResponseFromException($e);
+} finally {
     $Response->send();
 }

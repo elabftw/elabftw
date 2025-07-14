@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Language;
+use Elabftw\Enums\Messages;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\AnonymousUser;
@@ -24,10 +25,12 @@ use Elabftw\Models\Notifications\UserNotifications;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use Elabftw\Traits\TwigTrait;
+use Exception;
 use Monolog\Logger;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 
 use function basename;
@@ -179,6 +182,20 @@ final class App
         // we want to have a version number like 50100 for 5.1, we do not care about the patch number
         $baseVersion = intdiv($installedVersionInt, 100) * 100;
         return sprintf('https://www.deltablot.com/posts/release-%d', $baseVersion);
+    }
+
+    public function getResponseFromException(Exception $e): Response
+    {
+        // generate a unique error so user can communicate this error to support and it's easy to find in the logs
+        $errorIdent = Tools::getUuidv4();
+        $this->Log->error('', array(array('userid' => $this->Session->get('userid'), 'error-identifier' => $errorIdent), array('Exception' => $e)));
+        $template = 'error.html';
+        $error = Messages::CriticalError;
+        $renderArr = array('error' => sprintf('%s %s', $error->toHuman(), $errorIdent));
+        $Response = new Response();
+        $Response->setContent($this->render($template, $renderArr));
+        $Response->setStatusCode($error->toHttpCode());
+        return $Response;
     }
 
     /**

@@ -14,7 +14,6 @@ namespace Elabftw\Services;
 
 use Elabftw\AuditEvent\TeamStatusModified;
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Users2TeamsTargets;
@@ -106,7 +105,7 @@ final class UserArchiver
     {
         if (Config::getConfig()->configArr['admins_archive_users'] === '0' &&
             $this->requester->userData['is_sysadmin'] !== 1) {
-            throw new ImproperActionException(Tools::error(true));
+            throw new IllegalActionException();
         }
         // make sure requester is admin of target user
         if (!$this->requester->isAdminOf($this->target->userid ?? 0) && $this->requester->userData['can_manage_users2teams'] === 0) {

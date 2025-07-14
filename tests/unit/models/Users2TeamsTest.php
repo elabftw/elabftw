@@ -43,7 +43,7 @@ class Users2TeamsTest extends \PHPUnit\Framework\TestCase
         // user in bravo, adding them to alpha
         $user2 = $this->getUserInTeam(team: 2, admin: 0);
         $Users2Teams->addUserToTeams($user2->userid, array(1));
-        $this->expectException(ImproperActionException::class);
+        $this->expectException(IllegalActionException::class);
         $Users2Teams->destroy(6, 1);
     }
 

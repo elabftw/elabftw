@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\PasswordComplexity;
+use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\ImproperActionException;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,13 +23,10 @@ use Symfony\Component\HttpFoundation\Response;
  */
 require_once 'app/init.inc.php';
 
-/** @psalm-suppress UncaughtThrowInGlobalScope */
 $Response = new Response();
-$Response->prepare($App->Request);
 
-$template = 'error.html';
-$renderArr = array();
 try {
+    $Response->prepare($App->Request);
     // Check if we're logged in
     if ($App->Session->has('is_auth')) {
         throw new ImproperActionException(sprintf(
@@ -54,13 +52,11 @@ try {
         'privacyPolicy' => $App->Config->configArr['privacy_policy'] ?? '',
         'teamsArr' => $App->Teams->readAllVisible(),
     );
-} catch (ImproperActionException $e) {
-    $renderArr['error'] = $e->getMessage();
-} catch (Exception $e) {
-    // log error and show general error message
-    $App->Log->error('', array('Exception' => $e));
-    $renderArr['error'] = Tools::error();
-} finally {
     $Response->setContent($App->render($template, $renderArr));
+} catch (AppException $e) {
+    $Response = $e->getResponseFromException($App);
+} catch (Exception $e) {
+    $Response = $App->getResponseFromException($e);
+} finally {
     $Response->send();
 }

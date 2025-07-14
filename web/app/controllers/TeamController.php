@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\EmailTarget;
+use Elabftw\Enums\Messages;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -64,7 +65,7 @@ try {
     }
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
-    $App->Session->getFlashBag()->add('ko', Tools::error(true));
+    $App->Session->getFlashBag()->add('ko', Messages::InsufficientPermissions->toHuman());
 } catch (ImproperActionException $e) {
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
@@ -73,7 +74,7 @@ try {
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
 } catch (Exception $e) {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
-    $App->Session->getFlashBag()->add('ko', Tools::error());
+    $App->Session->getFlashBag()->add('ko', Messages::GenericError->toHuman());
 } finally {
     $Response->send();
 }

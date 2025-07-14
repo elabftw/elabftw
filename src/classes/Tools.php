@@ -102,19 +102,6 @@ final class Tools
         return $ext;
     }
 
-    /**
-     * Display a generic error message
-     *
-     * @param bool $permission show the out of reach message for permission message
-     */
-    public static function error(bool $permission = false): string
-    {
-        if ($permission) {
-            return _('This section is out of your reach!');
-        }
-        return _('An error occurred!');
-    }
-
     public static function getIdFilterSql(array $idArr): string
     {
         if (!empty($idArr)) {

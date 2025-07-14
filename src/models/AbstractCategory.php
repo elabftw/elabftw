@@ -12,9 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
-use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Traits\EntityTrait;
 use Elabftw\Traits\SortableTrait;
 use PDO;
@@ -72,7 +71,7 @@ abstract class AbstractCategory extends AbstractRest
             return;
         }
         if ($this->Teams->teamArr[$property] === 0 and !$this->Teams->Users->isAdmin) {
-            throw new ImproperActionException(Tools::error(true));
+            throw new IllegalActionException();
         }
     }
 }

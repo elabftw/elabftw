@@ -13,9 +13,8 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\PasswordComplexity;
-use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\ItemsStatus;
@@ -38,13 +37,11 @@ use function array_filter;
  * Administration panel of a team
  */
 require_once 'app/init.inc.php';
-$Response = new Response();
-$Response->prepare($App->Request);
 
-$template = 'error.html';
-$renderArr = array();
+$Response = new Response();
 
 try {
+    $Response->prepare($App->Request);
     if (!$App->Users->isAdmin) {
         throw new IllegalActionException('Non admin user tried to access admin controller.');
     }
@@ -126,16 +123,11 @@ try {
         'unvalidatedUsersArr' => $unvalidatedUsersArr,
         'usersArr' => $usersArr,
     );
-} catch (IllegalActionException $e) {
-    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
-    $renderArr['error'] = Tools::error(true);
-} catch (DatabaseErrorException | ImproperActionException $e) {
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
-    $renderArr['error'] = $e->getMessage();
-} catch (Exception $e) {
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
-    $renderArr['error'] = Tools::error();
-} finally {
     $Response->setContent($App->render($template, $renderArr));
+} catch (AppException $e) {
+    $Response = $e->getResponseFromException($App);
+} catch (Exception $e) {
+    $Response = $App->getResponseFromException($e);
+} finally {
     $Response->send();
 }

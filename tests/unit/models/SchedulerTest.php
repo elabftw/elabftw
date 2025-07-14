@@ -17,6 +17,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Symfony\Component\HttpFoundation\InputBag;
 
@@ -352,7 +353,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $Scheduler = new Scheduler($Items, null, $start, $end);
         $Scheduler->setId($this->testCreate());
         // try write event created by admin as user
-        $this->expectException(ImproperActionException::class);
+        $this->expectException(IllegalActionException::class);
         $Scheduler->patch(Action::Update, array('target' => 'experiment', 'id' => 3));
     }
 

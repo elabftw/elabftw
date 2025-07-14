@@ -13,8 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Controllers\ExperimentsStatusController;
-use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\ImproperActionException;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,44 +23,17 @@ use Symfony\Component\HttpFoundation\Response;
  */
 require_once 'app/init.inc.php';
 
-// default response is error page with general error message
 $Response = new Response();
-$Response->prepare($Request);
-$template = 'error.html';
 
 try {
     if ($App->Teams->teamArr['users_canwrite_experiments_status'] === 0 && !$App->Users->isAdmin) {
-        throw new ImproperActionException(_('Only a team Admin can edit experiments status'));
+        throw new ImproperActionException(_('Sorry, edition of experiments status has been disabled for users by your team Admin.'));
     }
-    $Controller = new ExperimentsStatusController($App);
-    $Response = $Controller->getResponse();
-} catch (IllegalActionException $e) {
-    // log notice and show message
-    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
-    $renderArr = array('error' => Tools::error(true));
-    $Response->setContent($App->render($template, $renderArr));
-} catch (ImproperActionException $e) {
-    // show message to user
-    $renderArr = array('error' => $e->getMessage());
-    $Response->setContent($App->render($template, $renderArr));
-} catch (DatabaseErrorException $e) {
-    // log error and show message
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
-    $renderArr = array('error' => $e->getMessage());
-    $Response->setContent($App->render($template, $renderArr));
+    $Response = new ExperimentsStatusController($App)->getResponse();
+} catch (AppException $e) {
+    $Response = $e->getResponseFromException($App);
 } catch (Exception $e) {
-    // log error and show general error message
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
-    $renderArr = array('error' => Tools::error());
-    $Response->setContent($App->render($template, $renderArr));
+    $Response = $App->getResponseFromException($e);
 } finally {
-    // autologout if there is elabid in view mode
-    // so we don't stay logged in as anon
-    if ($App->Request->query->has('elabid')
-        && $App->Request->query->get('mode') === 'view'
-        && !$App->Request->getSession()->has('is_auth')) {
-        $App->Session->invalidate();
-    }
-
     $Response->send();
 }

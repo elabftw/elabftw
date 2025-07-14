@@ -207,20 +207,22 @@ class Users extends AbstractRest
     ): array {
         $teamFilterSql = '';
         if ($teamId > 0) {
-            $teamFilterSql = 'AND u2t.teams_id = :team';
+            $teamFilterSql = 'JOIN users2teams AS u2t_filter
+                              ON u2t_filter.users_id = u.userid
+                              AND u2t_filter.teams_id = :team';
         }
 
         $archived = '';
         if ($onlyArchived) {
-            $archived = 'AND u2t.is_archived = 1';
+            $archived = 'AND u2t_all.is_archived = 1';
         }
         if ($onlyActive) {
-            $archived = 'AND u2t.is_archived = 0';
+            $archived = 'AND u2t_all.is_archived = 0';
         }
 
         $admins = '';
         if ($onlyAdmins) {
-            $admins = 'AND u2t.is_admin = 1';
+            $admins = 'AND u2t_all.is_admin = 1';
         }
 
         // NOTE: $tmpTable avoids the use of DISTINCT, so we are able to use ORDER BY with teams_id.
@@ -248,11 +250,11 @@ class Users extends AbstractRest
           sk.pubkey                         AS sig_pubkey,
           JSON_ARRAYAGG(
              JSON_OBJECT(
-               'id',   u2t.teams_id,
+               'id',   u2t_all.teams_id,
                'name', t.name,
-               'is_admin', u2t.is_admin,
-               'is_owner', u2t.is_owner,
-               'is_archived', u2t.is_archived
+               'is_admin', u2t_all.is_admin,
+               'is_owner', u2t_all.is_owner,
+               'is_archived', u2t_all.is_archived
              )
            ) AS teams
 
@@ -262,17 +264,19 @@ class Users extends AbstractRest
           ON sk.userid = u.userid
           AND sk.state  = :state
 
-        LEFT JOIN users2teams AS u2t
-          ON u2t.users_id = u.userid
+        " . $teamFilterSql . '
+
+        LEFT JOIN users2teams AS u2t_all
+          ON u2t_all.users_id = u.userid
 
         LEFT JOIN teams AS t
-          ON t.id = u2t.teams_id
+          ON t.id = u2t_all.teams_id
 
         WHERE
           (u.email      LIKE :query
            OR u.firstname LIKE :query
            OR u.lastname  LIKE :query)
-        " . $admins . ' ' . $archived . ' ' . $teamFilterSql . '
+        ' . $admins . ' ' . $archived . '
 
         GROUP BY
           u.userid,
@@ -294,7 +298,7 @@ class Users extends AbstractRest
           sk.pubkey
 
         ORDER BY
-          MIN(u2t.teams_id) ASC,
+          MIN(u2t_all.teams_id) ASC,
           u.lastname       ASC;';
 
         $req = $this->Db->prepare($sql);
@@ -507,8 +511,8 @@ class Users extends AbstractRest
      */
     public function isAdminOf(int $userid): bool
     {
-        // consider that we are admin of ourselves
-        if ($this->userid === $userid || $this->userData['is_sysadmin'] === 1) {
+        // consider that we are admin of ourselves and that if you have can_manage_users2teams you're kinda an Admin of the user
+        if ($this->userid === $userid || $this->userData['is_sysadmin'] === 1 || $this->userData['can_manage_users2teams']) {
             return true;
         }
         // check if in the teams we have in common, the potential admin is admin
@@ -755,6 +759,10 @@ class Users extends AbstractRest
     private function canWriteOrExplode(?Action $action = null): void
     {
         if ($this->requester->userData['is_sysadmin'] === 1) {
+            return;
+        }
+        // if you have can_manage_users2teams you can add/unreference user
+        if (($action === Action::Add || $action === Action::Unreference) && $this->requester->userData['can_manage_users2teams'] === 1) {
             return;
         }
         if (!$this->requester->isAdminOf($this->userData['userid']) && $action !== Action::Add) {

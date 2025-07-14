@@ -68,6 +68,7 @@ final class UserParams extends ContentParams
             'enforce_exclusive_edit_mode',
             'inc_files_pdf',
             'is_sysadmin',
+            'can_manage_users2teams',
             'notif_comment_created_email',
             'notif_comment_created',
             'notif_event_deleted_email',

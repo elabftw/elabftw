@@ -767,8 +767,8 @@ export async function populateUserModal(user: Record<string, string|number>) {
       teamBadge.appendChild(removeTeamBtn);
     }
 
+    teamBadge.appendChild(generateIsSomethingElement('owner', team, Boolean(requester.is_sysadmin)));
     teamBadge.appendChild(generateIsSomethingElement('admin', team));
-    teamBadge.appendChild(generateIsSomethingElement('owner', team));
     teamBadge.appendChild(generateIsSomethingElement('archived', team));
 
     manageTeamsDiv.appendChild(teamBadge);
@@ -808,7 +808,7 @@ export async function populateUserModal(user: Record<string, string|number>) {
 }
 
 // generate the slider element to toggle isAdmin and isOwner for a given user in a given team
-function generateIsSomethingElement(what: string, team: Record<string, string|number>) {
+function generateIsSomethingElement(what: string, team: Record<string, string|number>, isSysadmin: boolean = false) {
   const isSomething = document.createElement('div');
   isSomething.classList.add('d-flex', 'justify-content-between');
   const isSomethingLabel = document.createElement('label');
@@ -821,6 +821,12 @@ function generateIsSomethingElement(what: string, team: Record<string, string|nu
   const isSomethingInput = document.createElement('input');
   isSomethingInput.type = 'checkbox';
   isSomethingInput.autocomplete = 'off';
+  // the is_owner checkbox is disabled if we are not sysadmin
+  if (what === 'owner' && !isSysadmin) {
+    isSomethingInput.disabled = true;
+    isSomethingSwitch.classList.add('disabled');
+    isSomethingSwitch.title = i18next.t('only-a-sysadmin');
+  }
   isSomethingInput.dataset.trigger = 'change';
   isSomethingInput.dataset.customAction = 'patch-user2team-is';
   isSomethingInput.dataset.target= `is_${what}`;

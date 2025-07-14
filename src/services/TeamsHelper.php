@@ -100,10 +100,8 @@ final class TeamsHelper
     {
         $sql = 'SELECT users_id
                 FROM users2teams
-                LEFT JOIN users
-                    ON (users2teams.users_id = users.userid)
-                WHERE is_admin = 1
-                    AND users.archived = 0
+                WHERE users2teams.is_admin = 1
+                    AND users2teams.is_archived = 0
                     AND users2teams.teams_id = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
@@ -117,9 +115,9 @@ final class TeamsHelper
      */
     public function isFirstUserInTeam(): bool
     {
-        $sql = 'SELECT COUNT(userid) AS usernb FROM users
-            CROSS JOIN users2teams ON (users2teams.users_id = users.userid)
-            WHERE users2teams.teams_id = :team';
+        $sql = 'SELECT COUNT(users_id) AS usernb
+                FROM users2teams
+                WHERE users2teams.teams_id = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -133,7 +131,7 @@ final class TeamsHelper
      */
     private function isFirstUser(): bool
     {
-        $sql = 'SELECT COUNT(*) AS usernb FROM users';
+        $sql = 'SELECT COUNT(userid) AS usernb FROM users';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
         $test = $req->fetch();

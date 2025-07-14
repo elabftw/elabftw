@@ -15,7 +15,6 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Compound;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Permissions;
-use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
@@ -518,7 +517,7 @@ final class Compounds extends AbstractRest
         $compound['canwrite'] = BasePermissions::Team->toJson();
         $Permissions = new Permissions($this->requester, $compound);
         $perms = $Permissions->forEntity();
-        return $perms[str_replace('can', '', $accessType->value)] || throw new IllegalActionException(Tools::error(true));
+        return $perms[str_replace('can', '', $accessType->value)] || throw new IllegalActionException();
     }
 
     private function createCompoundFromIdentifier(array $reqBody): int

@@ -37,7 +37,7 @@ class UsersHelperTest extends \PHPUnit\Framework\TestCase
 
     public function testGetTeamsFromUserid(): void
     {
-        $expected = array(array('id' => 1, 'name' => 'Alpha', 'is_admin' => 1, 'is_owner' => 0));
+        $expected = array(array('id' => 1, 'name' => 'Alpha', 'is_admin' => 1, 'is_owner' => 0, 'is_archived' => 0));
         $this->assertEquals($expected, $this->UsersHelper->getTeamsFromUserid());
     }
 

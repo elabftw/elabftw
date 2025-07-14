@@ -104,11 +104,7 @@ final class Users2Teams
      */
     public function destroy(int $userid, int $teamid): array
     {
-        // make sure we are Admin in the team that we are removing the user from
-        $TeamsHelper = new TeamsHelper($teamid);
-        if (!($this->requester->userData['is_sysadmin'] || $TeamsHelper->isAdminInTeam($this->requester->userData['userid']))) {
-            throw new ImproperActionException('Cannot remove user from team if not admin of said user in that team');
-        }
+        $this->requesterCanModifyInTeamOrExplode($teamid);
         return $this->removeUserFromTeam($userid, $teamid);
     }
 
@@ -133,18 +129,23 @@ final class Users2Teams
         return $Users->readOne();
     }
 
+    private function requesterCanModifyInTeamOrExplode(int $teamid): void
+    {
+        $TeamsHelper = new TeamsHelper($teamid);
+        if (!(
+            $this->requester->userData['is_sysadmin']
+            || $this->requester->userData['can_manage_users2teams']
+            || $TeamsHelper->isAdminInTeam($this->requester->userData['userid'])
+        )) {
+            throw new IllegalActionException('User tried to modify a team where they are not admin');
+        }
+    }
+
     private function patchIsAdmin(int $userid, int $teamid, BinaryValue $isAdmin): int
     {
+        $this->requesterCanModifyInTeamOrExplode($teamid);
         $promoteToAdmin = $isAdmin->toBoolean() && !$this->wasAdminAlready($userid);
-        // make sure requester is admin of target user
-        if (!$this->requester->isAdminOf($userid) && $this->requester->userData['is_sysadmin'] !== 1) {
-            throw new IllegalActionException('User tried to patch is_admin of another user but they are not admin');
-        }
 
-        $TeamsHelper = new TeamsHelper($teamid);
-        if (!$TeamsHelper->isAdminInTeam($this->requester->userData['userid']) && $this->requester->userData['is_sysadmin'] !== 1) {
-            throw new IllegalActionException('User tried to patch team group of a team where they are not admin');
-        }
         $sql = 'UPDATE users2teams SET is_admin = :is_admin WHERE `users_id` = :userid AND `teams_id` = :team';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':is_admin', $isAdmin->value, PDO::PARAM_INT);
@@ -166,6 +167,7 @@ final class Users2Teams
 
     private function patchIsArchived(int $userid, int $teamid, BinaryValue $content): int
     {
+        $this->requesterCanModifyInTeamOrExplode($teamid);
         return new UserArchiver($this->requester, new Users($userid, $teamid))
             ->setArchived($content)->value;
     }

@@ -12,7 +12,19 @@ declare(strict_types=1);
 
 namespace Elabftw\Exceptions;
 
+use Elabftw\Elabftw\Tools;
+use Exception;
+
 /**
  * For errors that are suspicious (request has been edited for instance)
  */
-final class IllegalActionException extends ImproperActionException {}
+final class IllegalActionException extends ImproperActionException
+{
+    public function __construct(?string $message = null, int $code = 0, ?Exception $previous = null)
+    {
+        if ($message === null) {
+            $message = Tools::error(true);
+        }
+        parent::__construct($message, $code, $previous);
+    }
+}

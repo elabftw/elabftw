@@ -47,14 +47,16 @@ final class ExpirationNotifier extends EmailNotifications
             $to = new Address($targetUser->userData['email'], $targetUser->userData['fullname']);
             $this->emailService->sendEmail($to, self::BASE_SUBJECT . $emailSubject, $emailBody);
             $UsersHelper = new UsersHelper($userid);
-            $teams = $UsersHelper->getTeamsIdFromUserid();
+            $teams = $UsersHelper->getTeamsFromUserid();
             // add the user in each team for the admin message
             foreach ($teams as $team) {
-                $targets[$team][] = array(
-                    'fullname' => $targetUser->userData['fullname'],
-                    'email' => $targetUser->userData['email'],
-                    'valid_until' => $targetUser->userData['valid_until'],
-                );
+                if ($team['is_archived'] === 0) {
+                    $targets[$team['id']][] = array(
+                        'fullname' => $targetUser->userData['fullname'],
+                        'email' => $targetUser->userData['email'],
+                        'valid_until' => $targetUser->userData['valid_until'],
+                    );
+                }
             }
 
         }
@@ -88,7 +90,7 @@ final class ExpirationNotifier extends EmailNotifications
 
     protected function getExpiringUserids(): array
     {
-        $sql = 'SELECT users.userid FROM users WHERE users.archived = 0 AND users.valid_until BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL :notif_period DAY)';
+        $sql = 'SELECT users.userid FROM users WHERE users.valid_until BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL :notif_period DAY)';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':notif_period', self::NOTIF_PERIOD);
         $this->Db->execute($req);

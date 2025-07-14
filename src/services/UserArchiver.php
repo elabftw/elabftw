@@ -109,13 +109,8 @@ final class UserArchiver
             throw new ImproperActionException(Tools::error(true));
         }
         // make sure requester is admin of target user
-        if (!$this->requester->isAdminOf($this->target->userid ?? 0)) {
+        if (!$this->requester->isAdminOf($this->target->userid ?? 0) && $this->requester->userData['can_manage_users2teams'] === 0) {
             throw new IllegalActionException('User tried to patch is_archived of another user but they are not admin');
-        }
-
-        $TeamsHelper = new TeamsHelper($this->target->team ?? 0);
-        if (!$TeamsHelper->isAdminInTeam($this->requester->userData['userid']) && $this->requester->userData['is_sysadmin'] !== 1) {
-            throw new IllegalActionException('User tried to patch is_archived of a team where they are not admin');
         }
     }
 }

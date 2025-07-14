@@ -19,7 +19,6 @@ use Elabftw\AuditEvent\UserRegister;
 use Elabftw\Auth\Local;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BinaryValue;
@@ -399,14 +398,15 @@ class Users extends AbstractRest
                 function () use ($params) {
                     // check instance config if admins are allowed to do that (if requester is not sysadmin)
                     $Config = Config::getConfig();
-                    if ($this->requester->userData['is_sysadmin'] !== 1 && $Config->configArr['admins_import_users'] !== '1') {
-                        throw new IllegalActionException('A non sysadmin user tried to import a user but admins_import_users is disabled in config.');
+                    $hasPermission = $this->requester->userData['is_sysadmin'] === 1 || $this->requester->userData['can_manage_users2teams'] === 1;
+                    if (!$hasPermission && $Config->configArr['admins_import_users'] === '0') {
+                        throw new IllegalActionException('Adding a user in your team is disabled at the instance level (config: admins_import_users)');
                     }
                     // need to be admin to "import" a user in a team
                     $team = (int) ($params['team'] ?? $this->requester->userData['team']);
                     $TeamsHelper = new TeamsHelper($team);
                     $isAdmin = $TeamsHelper->isAdmin($this->requester->userData['userid']);
-                    if ($isAdmin === false && $this->requester->userData['is_sysadmin'] !== 1) {
+                    if (!$hasPermission && $isAdmin === false) {
                         throw new IllegalActionException('Only Admin can add a user to a team (where they are Admin)');
                     }
                     $Users2Teams = new Users2Teams($this->requester);
@@ -620,7 +620,7 @@ class Users extends AbstractRest
     {
         $Db = Db::getConnection();
         $sql = sprintf(
-            'SELECT userid FROM users WHERE %s = :term AND archived = 0 %s LIMIT 1',
+            'SELECT userid FROM users WHERE %s = :term %s LIMIT 1',
             $column === 'orgid'
                 ? 'orgid'
                 : 'email',
@@ -674,7 +674,6 @@ class Users extends AbstractRest
               u.orgid,
               u.email,
               u.validated,
-              u.archived,
               u.last_login,
               u.valid_until,
               u.is_sysadmin,
@@ -759,7 +758,7 @@ class Users extends AbstractRest
             return;
         }
         if (!$this->requester->isAdminOf($this->userData['userid']) && $action !== Action::Add) {
-            throw new IllegalActionException(Tools::error(true));
+            throw new IllegalActionException();
         }
     }
 

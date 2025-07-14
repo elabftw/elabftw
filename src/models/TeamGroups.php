@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Scope;
@@ -281,7 +280,7 @@ final class TeamGroups extends AbstractRest
     private function create(string $name): int
     {
         if (!$this->Users->isAdmin) {
-            throw new IllegalActionException(Tools::error(true));
+            throw new IllegalActionException();
         }
         $name = Filter::title($name);
         $sql = 'INSERT INTO team_groups(name, team) VALUES(:content, :team)';
@@ -315,7 +314,7 @@ final class TeamGroups extends AbstractRest
         } elseif ($params['how'] === Action::Unreference->value) {
             $sql = 'DELETE FROM users2team_groups WHERE userid = :userid AND groupid = :groupid';
         } else {
-            throw new IllegalActionException('Bad action keyword');
+            throw new ImproperActionException(sprintf('Invalid "how" parameter. Valid values are: %s', implode(',', array(Action::Add->value, Action::Unreference->value))));
         }
         $userid = (int) $params['userid'];
         $req = $this->Db->prepare($sql);
@@ -333,7 +332,7 @@ final class TeamGroups extends AbstractRest
     {
         $teamgroup = $this->readOne();
         if (!($this->Users->isAdmin && $this->Users->userData['team'] === $teamgroup['team'])) {
-            throw new IllegalActionException(Tools::error(true));
+            throw new IllegalActionException();
         }
     }
 

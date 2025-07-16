@@ -17,10 +17,10 @@
       </div>
     </div>
     <hr>
-    {% if experimentsCategoryArr %}
+    {% if App.experimentsCategoryArr %}
       <h5>{{ 'Browse by category'|trans }}</h5>
       <div class='d-flex my-2 flex-wrap lh-150'>
-        {% for category in experimentsCategoryArr -%}
+        {% for category in App.experimentsCategoryArr -%}
           <a href='experiments.php?mode=show&amp;cat={{ category.id }}' class='btn mr-2 catstat-btn category-btn mb-1' style='--bg: #{{ category.color }}'>{{ category.title }}</a>
         {%- endfor %}
       </div>
@@ -58,7 +58,7 @@
     <hr>
     <h5>{{ 'Browse by category'|trans }}</h5>
     <div class='d-flex my-2 flex-wrap lh-150'>
-      {% for category in itemsCategoryArr -%}
+      {% for category in App.itemsCategoryArr -%}
         <a href='database.php?mode=show&amp;cat={{ category.id }}' class='btn mr-2 catstat-btn category-btn lh-normal border-0 mb-1' style='--bg: #{{ category.color }}'>{{ category.title }}</a>
       {%- endfor %}
     </div>

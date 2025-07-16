@@ -29,7 +29,7 @@
         {# note: if autocomplete is set to 'off' here it will trigger infinite save bug in chrome #}
         <input class='form-control' type='password' data-trigger='blur' data-model='config' data-target='ts_password' id='ts_password' autocomplete='new-password' />
         <div class='input-group-append'>
-          <button type='button' class='btn btn-light input-border' data-action='toggle-password' data-target='ts_password' title='{{ 'Show password'|trans }}' aria-label='{{ 'Show password'|trans }}'><i class='fas fa-eye' aria-hidden='true'></i></button>
+          <button type='button' class='btn btn-light input-border' data-action='toggle-password' title='{{ 'Show password'|trans }}' aria-label='{{ 'Show password'|trans }}'><i class='fas fa-eye' aria-hidden='true'></i></button>
         </div>
       </div>
     {% else %}

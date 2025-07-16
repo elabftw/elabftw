@@ -27,6 +27,8 @@ use League\Flysystem\UnableToReadFile;
 use ZipStream\ZipStream;
 use Override;
 
+use function mb_substr;
+
 /**
  * Make an ELN archive
  */
@@ -82,7 +84,7 @@ final class MakeEln extends AbstractMakeEln
             $prefix = Filter::forFilesystem($entityData['category_title']) . ' - ';
         }
         // prevent a zip name with too many characters, see #3966
-        $prefixedTitle = substr($prefix . Filter::forFilesystem($entityData['title']), 0, 100);
+        $prefixedTitle = mb_substr($prefix . Filter::forFilesystem($entityData['title']), 0, 103);
         // SHOULD end with /
         return sprintf('%s - %s/', $prefixedTitle, Tools::getShortElabid($entityData['elabid'] ?? ''));
     }

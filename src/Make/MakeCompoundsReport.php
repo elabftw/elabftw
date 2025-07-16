@@ -24,8 +24,6 @@ use function date;
  */
 final class MakeCompoundsReport extends AbstractMakeCsv
 {
-    protected array $rows;
-
     public function __construct(protected Compounds $compounds)
     {
         parent::__construct();
@@ -36,12 +34,6 @@ final class MakeCompoundsReport extends AbstractMakeCsv
     public function getFileName(): string
     {
         return date('Y-m-d') . '-compounds.elabftw.csv';
-    }
-
-    #[Override]
-    protected function getHeader(): array
-    {
-        return array_keys($this->rows[0]);
     }
 
     protected function getData(): array

@@ -35,7 +35,7 @@
     {{ 'Powered by'|trans }}
     <a href='https://www.elabftw.net' target='_blank' rel='noopener'>eLabFTW</a> {% if App.Session.has('is_auth') %}<a href="{{ App.getWhatsnewLink(constant('Elabftw\\Elabftw\\App::INSTALLED_VERSION_INT')) }}" target='_blank' rel='noopener'>{{ constant('Elabftw\\Elabftw\\App::INSTALLED_VERSION') }}</a>{% endif %}<br>
     Made with ♥ by <a href='https://www.deltablot.com' target='_blank' rel='noopener'>Deltablot</a>
-    {% if App.Config.configArr.debug %}
+    {% if App.devMode -%}
       <br>{{ 'Page generated in' }} {{ generationTime() }} {{ 'seconds'|trans }}
       ({{ numberOfQueries() }} SQL)
       <br>{{ 'Memory usage:'|trans }}
@@ -116,7 +116,7 @@
 </div>
 {# end policies policy modal #}
 {# some 3rd party tools append content to the end but we don't want to see those errors #}
-{%- if App.Config.configArr.debug and mode == 'edit' -%}
+{% if App.devMode and mode == 'edit' -%}
   <!-- [html-validate-disable input-missing-label, heading-level, no-dup-id, prefer-native-element, wcag/h37, no-redundant-role: suppress errors from 3rd party tools] -->
 {%- endif %}
 </body>

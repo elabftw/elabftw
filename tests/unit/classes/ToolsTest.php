@@ -41,12 +41,6 @@ class ToolsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($html, Tools::md2html($md));
     }
 
-    public function testError(): void
-    {
-        $this->assertEquals('An error occurred!', Tools::error());
-        $this->assertEquals('This section is out of your reach!', Tools::error(true));
-    }
-
     public function testGetShortElabid(): void
     {
         $this->assertEquals('7995340c', Tools::getShortElabid('20220627-7995340c1921f38fd833c447be50b7101e4f852c'));

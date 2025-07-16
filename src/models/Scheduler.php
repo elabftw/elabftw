@@ -15,9 +15,9 @@ namespace Elabftw\Models;
 use DateTime;
 use DateTimeImmutable;
 use Elabftw\Elabftw\EntitySqlBuilder;
-use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\Scope;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Notifications\EventDeleted;
@@ -30,7 +30,7 @@ use PDO;
 use function array_walk;
 use function preg_replace;
 use function strlen;
-use function substr;
+use function mb_substr;
 
 /**
  * All about the team's scheduler
@@ -399,7 +399,7 @@ final class Scheduler extends AbstractRest
         $oldEnd = DateTime::createFromFormat(DateTime::ATOM, $event['end']);
         $seconds = '0';
         if (strlen((string) $delta['milliseconds']) > 3) {
-            $seconds = substr((string) $delta['milliseconds'], 0, -3);
+            $seconds = mb_substr((string) $delta['milliseconds'], 0, -3);
         }
         $newStart = $oldStart->modify($delta['days'] . ' day')->modify($seconds . ' seconds'); // @phpstan-ignore-line
         $this->isFutureOrExplode($newStart);
@@ -427,7 +427,7 @@ final class Scheduler extends AbstractRest
         $oldEnd = DateTime::createFromFormat(DateTime::ATOM, $event['end']);
         $seconds = '0';
         if (strlen((string) $delta['milliseconds']) > 3) {
-            $seconds = substr((string) $delta['milliseconds'], 0, -3);
+            $seconds = mb_substr((string) $delta['milliseconds'], 0, -3);
         }
         $newEnd = $oldEnd->modify($delta['days'] . ' day')->modify($seconds . ' seconds'); // @phpstan-ignore-line
         $this->isFutureOrExplode($newEnd);
@@ -609,7 +609,7 @@ final class Scheduler extends AbstractRest
     private function canWriteOrExplode(): void
     {
         if ($this->canWrite() === false) {
-            throw new ImproperActionException(Tools::error(true));
+            throw new IllegalActionException();
         }
     }
 

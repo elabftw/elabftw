@@ -7,7 +7,7 @@
  * @package elabftw
  */
 
-import i18next from 'i18next';
+import i18next from './i18n';
 
 type decoratedRow = {row: HTMLTableRowElement, value: string};
 type getComparerReturnType = (a: decoratedRow, b: decoratedRow) => number;

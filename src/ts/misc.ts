@@ -14,7 +14,7 @@ import { Notification } from './Notifications.class';
 import TableSorting from './TableSorting.class';
 declare const MathJax: MathJaxObject;
 import $ from 'jquery';
-import i18next from 'i18next';
+import i18next from './i18n';
 import { Api } from './Apiv2.class';
 import { getEditor } from './Editor.class';
 import TomSelect from 'tom-select/base';
@@ -62,15 +62,15 @@ function triggerHandler(event: Event, el: HTMLInputElement): void {
   el.classList.remove('is-invalid');
   // for a checkbox element, look at the checked attribute, not the value
   let value = el.type === 'checkbox' ? el.checked ? '1' : '0' : el.value;
+  let userid = document.getElementById('editUserModal')?.dataset.userid;
+  if (!userid) {
+    userid = el.dataset.userid;
+  }
 
   // CUSTOM ACTIONS
-  if (el.dataset.customAction === 'patch-user2team-is-owner') {
-    ApiC.patch(`${Model.User}/${el.dataset.userid}`, {action: Action.PatchUser2Team, userid: el.dataset.userid, team: el.dataset.team, target: 'is_owner', content: value});
-    return;
-  }
-  if (el.dataset.customAction === 'patch-user2team-is-admin') {
-    const group = value === '1' ? 2 : 4;
-    ApiC.patch(`${Model.User}/${el.dataset.userid}`, {action: Action.PatchUser2Team, team: el.dataset.team, target: 'group', content: group, userid: el.dataset.userid}).then(() => reloadElements(['editUsersBox']));
+  if (el.dataset.customAction === 'patch-user2team-is') {
+    ApiC.patch(`${Model.User}/${userid}`, {action: Action.PatchUser2Team, team: el.dataset.team, target: el.dataset.target, content: value})
+      .then(() => document.dispatchEvent(new CustomEvent('dataReload')));
     return;
   }
   // END CUSTOM ACTIONS
@@ -145,6 +145,7 @@ export function collectForm(form: HTMLElement): object {
   inputs.forEach(input => {
     const el = input;
     if (el.reportValidity() === false) {
+      console.error(el);
       throw new Error('Invalid input found! Aborting.');
     }
     let value = el.value;
@@ -664,6 +665,7 @@ export function sizeToMb(size: string): number {
   return value * units[unit];
 }
 
+
 export function toggleEditCompound(json: object): void {
   const textParams = [
     'id',
@@ -733,4 +735,113 @@ export function mkSpin(el: HTMLElement): string {
 export function mkSpinStop(el: HTMLElement, oldHTML: string): void {
   el.innerHTML = oldHTML;
   el.removeAttribute('disabled');
+}
+export async function populateUserModal(user: Record<string, string|number>) {
+  const manageTeamsDiv = document.getElementById('manageTeamsDiv');
+  if (!manageTeamsDiv) {
+    return;
+  }
+  const ApiC = new Api();
+  const requester = await ApiC.getJson('users/me');
+  const userTeams = JSON.parse(String(user.teams));
+  // set a dataset.userid on the modal, that's where all js code will fetch current user, instead of having to set it on every elementel.dataset.
+  document.getElementById('editUserModal').dataset.userid = String(user.userid);
+  // manage teams block
+  // remove previous content
+  manageTeamsDiv.innerHTML = '';
+  userTeams.forEach(team => {
+    const teamBadge = document.createElement('div');
+    teamBadge.classList.add('user-badge', 'm-1');
+    teamBadge.innerText = team.name;
+    // REMOVE TEAM BUTTON
+    // prevent deleting association of the team we are currently logged in, allow it for other users
+    if (team.id !== requester.team || user.userid !== requester.userid) {
+      const removeTeamBtn = document.createElement('span');
+      removeTeamBtn.classList.add('hl-hover-gray', 'p-1', 'rounded', 'clickable', 'm-1');
+      removeTeamBtn.title = i18next.t('delete');
+      removeTeamBtn.dataset.action = 'destroy-user2team';
+      removeTeamBtn.dataset.teamid = team.id;
+      const removeTeamIcon = document.createElement('i');
+      removeTeamIcon.classList.add('fas', 'fa-xmark', 'color-blue');
+      removeTeamBtn.appendChild(removeTeamIcon);
+      teamBadge.appendChild(removeTeamBtn);
+    }
+
+    teamBadge.appendChild(generateIsSomethingElement('owner', team, Boolean(requester.is_sysadmin)));
+    teamBadge.appendChild(generateIsSomethingElement('admin', team));
+    teamBadge.appendChild(generateIsSomethingElement('archived', team));
+
+    manageTeamsDiv.appendChild(teamBadge);
+  });
+  listenTrigger(manageTeamsDiv.id);
+  // add team section
+  // we need to generate the teams that are addable for this user
+  const teams = await ApiC.getJson('teams');
+  const userTeamIds = new Set(userTeams.map(t => t.id));
+  const addTeamSelect = document.getElementById('addTeamSelect');
+  addTeamSelect.innerHTML = '';
+  const available = teams.filter((team: Record<string, string|number>) => !userTeamIds.has(team.id));
+  available
+    .forEach(({ id, name }) => {
+      const opt = document.createElement('option');
+      opt.value = id;
+      opt.textContent = name;
+      addTeamSelect.appendChild(opt);
+    });
+  // don't show it if empty
+  const addTeamDiv = document.getElementById('addTeamDiv');
+  addTeamDiv.hidden = available.length === 0;
+
+  // actions
+  const disable2faBtn = document.getElementById('disable2faBtn');
+  if (disable2faBtn) {
+    disable2faBtn.removeAttribute('disabled');
+    if (user.has_mfa_enabled === 0) {
+      disable2faBtn.setAttribute('disabled', 'disabled');
+    }
+  }
+  const validateUserBtn = document.getElementById('validateUserBtn');
+  validateUserBtn.removeAttribute('disabled');
+  if (user.validated !== 0) {
+    validateUserBtn.setAttribute('disabled', 'disabled');
+  }
+}
+
+// generate the slider element to toggle isAdmin and isOwner for a given user in a given team
+function generateIsSomethingElement(what: string, team: Record<string, string|number>, isSysadmin: boolean = false) {
+  const isSomething = document.createElement('div');
+  isSomething.classList.add('d-flex', 'justify-content-between');
+  const isSomethingLabel = document.createElement('label');
+  isSomethingLabel.htmlFor = `is${what}Team_${team.id}`;
+  isSomethingLabel.classList.add('col-form-label');
+  isSomethingLabel.innerText = i18next.t(`is-${what}`);
+  const isSomethingSwitch = document.createElement('label');
+  isSomethingSwitch.classList.add('switch', 'ucp-align');
+  isSomethingSwitch.id = `is${what}TeamSwitch_${team.id}`;
+  const isSomethingInput = document.createElement('input');
+  isSomethingInput.type = 'checkbox';
+  isSomethingInput.autocomplete = 'off';
+  // the is_owner checkbox is disabled if we are not sysadmin
+  if (what === 'owner' && !isSysadmin) {
+    isSomethingInput.disabled = true;
+    isSomethingSwitch.classList.add('disabled');
+    isSomethingSwitch.title = i18next.t('only-a-sysadmin');
+  }
+  isSomethingInput.dataset.trigger = 'change';
+  isSomethingInput.dataset.customAction = 'patch-user2team-is';
+  isSomethingInput.dataset.target= `is_${what}`;
+  isSomethingInput.dataset.team = String(team.id);
+  isSomethingInput.checked = team[`is_${what}`] === 1;
+  isSomethingInput.id = `is${what}Team_${team.id}`;
+  const slider = document.createElement('span');
+  slider.classList.add('slider');
+  isSomethingSwitch.appendChild(isSomethingInput);
+  isSomethingSwitch.appendChild(slider);
+  isSomething.appendChild(isSomethingLabel);
+  isSomething.appendChild(isSomethingSwitch);
+  return isSomething;
+}
+
+export function getRandomColor(): string {
+  return `#${Math.floor(Math.random()*16777215).toString(16)}`;
 }

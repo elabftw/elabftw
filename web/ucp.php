@@ -15,15 +15,12 @@ namespace Elabftw\Elabftw;
 use Elabftw\Auth\Local;
 use Elabftw\Enums\Classification;
 use Elabftw\Enums\PasswordComplexity;
-use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\AppException;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\TeamGroups;
-use Elabftw\Models\Teams;
 use Elabftw\Models\TeamTags;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,20 +30,18 @@ use Symfony\Component\HttpFoundation\Response;
  */
 require_once 'app/init.inc.php';
 
-/** @psalm-suppress UncaughtThrowInGlobalScope */
 $Response = new Response();
-$Response->prepare($App->Request);
-
 try {
+    $Response->prepare($App->Request);
+
     $ApiKeys = new ApiKeys($App->Users);
     $apiKeysArr = $ApiKeys->readAll();
 
-    $Teams = new Teams($App->Users);
     $TeamGroups = new TeamGroups($App->Users);
     $TeamTags = new TeamTags($App->Users);
 
-    $Category = new ExperimentsCategories($Teams);
-    $Status = new ExperimentsStatus($Teams);
+    $Category = new ExperimentsCategories($App->Teams);
+    $Status = new ExperimentsStatus($App->Teams);
     $entityData = array();
     $changelogData = array();
     $metadataGroups = array();
@@ -103,7 +98,7 @@ try {
         'classificationArr' => Classification::getAssociativeArray(),
         'entityData' => $entityData,
         'itemsCategoryArr' => $itemsCategoryArr,
-        'teamsArr' => $Teams->readAll(),
+        'teamsArr' => $App->Teams->readAllVisible(),
         'metadataGroups' => $metadataGroups,
         'scopedTeamgroupsArr' => $TeamGroups->readScopedTeamgroups(),
         'notificationsSettings' => $notificationsSettings,
@@ -116,29 +111,11 @@ try {
         'showMFA' => $showMfa,
         'usersArr' => $App->Users->readAllActiveFromTeam(),
     );
-} catch (IllegalActionException $e) {
-    // log notice and show message
-    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
-    $template = 'error.html';
-    $renderArr = array('error' => $e->getMessage());
     $Response->setContent($App->render($template, $renderArr));
-} catch (ImproperActionException $e) {
-    // show message to user
-    $template = 'error.html';
-    $renderArr = array('error' => $e->getMessage());
-    $Response->setContent($App->render($template, $renderArr));
-} catch (DatabaseErrorException $e) {
-    // log error and show message
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
-    $template = 'error.html';
-    $renderArr = array('error' => $e->getMessage());
-    $Response->setContent($App->render($template, $renderArr));
+} catch (AppException $e) {
+    $Response = $e->getResponseFromException($App);
 } catch (Exception $e) {
-    // log error and show general error message
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
-    $template = 'error.html';
-    $renderArr = array('error' => Tools::error());
-    $Response->setContent($App->render($template, $renderArr));
+    $Response = $App->getResponseFromException($e);
+} finally {
+    $Response->send();
 }
-$Response->setContent($App->render($template, $renderArr));
-$Response->send();

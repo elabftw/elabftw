@@ -15,7 +15,7 @@ import { ValidMetadata, ExtraFieldInputType } from './metadataInterfaces';
 import JsonEditorHelper from './JsonEditorHelper.class';
 import { JsonEditorActions } from './JsonEditorActions.class';
 import { Api } from './Apiv2.class';
-import i18next from 'i18next';
+import i18next from './i18n';
 import { merge } from 'lodash-es';
 import $ from 'jquery';
 import { Notification } from './Notifications.class';

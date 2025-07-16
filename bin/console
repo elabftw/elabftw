@@ -15,6 +15,7 @@ namespace Elabftw\Commands;
 
 use Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException;
 use Elabftw\Elabftw\FsTools;
+use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Models\Config;
 use Elabftw\Services\Email;
 use Elabftw\Storage\Exports;
@@ -33,10 +34,15 @@ use function dirname;
 require dirname(__DIR__) . '/vendor/autoload.php';
 
 $Application = new Application();
-$Config = Config::getConfig();
 $errorLogLogger = new Logger('elabftw');
 $errorLogLogger->pushHandler(new ErrorLogHandler());
 $logger = new ConsoleLogger(new ConsoleOutput());
+try {
+    $Config = Config::getConfig();
+} catch (DatabaseErrorException $e) {
+    $logger->warning('Database is not yet installed. Run bin/init db:install.');
+    exit;
+}
 try {
     $Email = new Email(
         new Mailer(Transport::fromDsn($Config->getDsn())),

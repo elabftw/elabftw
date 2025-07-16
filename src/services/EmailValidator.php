@@ -72,17 +72,24 @@ final class EmailValidator
     }
 
     /**
-     * Check we have not a duplicate email in DB
-     *
-     * @return bool true if there is a duplicate
+     * Look for users with that email that has at least one team where they are not archived
      */
     private function isDuplicateEmail(): bool
     {
-        $sql = 'SELECT email FROM users WHERE email = :email AND archived = 0';
+        $sql = 'SELECT u.email
+            FROM users AS u
+            WHERE
+              u.email = :email
+              AND EXISTS (
+                SELECT 1
+                FROM users2teams AS u2t
+                WHERE u2t.users_id   = u.userid
+                  AND u2t.is_archived = 0
+              )';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':email', $this->email);
         $this->Db->execute($req);
 
-        return (bool) $req->rowCount();
+        return $req->rowCount() > 0;
     }
 }

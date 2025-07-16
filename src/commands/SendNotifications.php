@@ -42,7 +42,7 @@ final class SendNotifications extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $Notifications = new EmailNotifications($this->Email);
-        $count = $Notifications->sendEmails();
+        $count = $Notifications->sendEmails($output);
         if ($output->isVerbose()) {
             $output->writeln(sprintf('Sent %d emails', $count));
         }

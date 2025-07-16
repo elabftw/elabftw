@@ -39,6 +39,8 @@ use RuntimeException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
 
+use function mb_substr;
+
 /**
  * All about the file uploads
  */
@@ -77,7 +79,7 @@ final class Uploads extends AbstractRest
 
         // name for the stored file, includes folder and extension (ab/ab34[...].ext)
         $someRandomString = FsTools::getUniqueString();
-        $folder = substr($someRandomString, 0, 2);
+        $folder = mb_substr($someRandomString, 0, 2);
         $longName = sprintf('%s/%s.%s', $folder, $someRandomString, $ext);
 
         // where our uploaded file lives

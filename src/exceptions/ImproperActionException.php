@@ -13,14 +13,23 @@ declare(strict_types=1);
 namespace Elabftw\Exceptions;
 
 use Exception;
+use Override;
+use Psr\Log\LoggerInterface;
 
 /**
  * For errors that make the execution halt but can happen and are not malicious
  */
-class ImproperActionException extends Exception
+class ImproperActionException extends AppException
 {
     public function __construct(string $message, int $code = 0, ?Exception $previous = null)
     {
         parent::__construct($message, $code, $previous);
+    }
+
+    #[Override]
+    protected function emitLog(LoggerInterface $logger, int $userid): void
+    {
+        // no need to log something for this
+        return;
     }
 }

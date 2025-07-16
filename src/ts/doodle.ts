@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import { reloadElements } from './misc';
-import i18next from 'i18next';
+import i18next from './i18n';
 import { Action, Model } from './interfaces';
 import { Api } from './Apiv2.class';
 

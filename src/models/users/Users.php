@@ -19,9 +19,9 @@ use Elabftw\AuditEvent\UserRegister;
 use Elabftw\Auth\Local;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\IllegalActionException;
@@ -39,7 +39,6 @@ use Elabftw\Services\EmailValidator;
 use Elabftw\Services\Filter;
 use Elabftw\Services\MfaHelper;
 use Elabftw\Services\TeamsHelper;
-use Elabftw\Services\UserArchiver;
 use Elabftw\Services\UserCreator;
 use Elabftw\Services\UsersHelper;
 use PDO;
@@ -175,10 +174,10 @@ class Users extends AbstractRest
         $Users2Teams->addUserToTeams(
             $userid,
             array_column($teams, 'id'),
-            // transform Sysadmin to Admin because users2teams.groups_id is 2 (Admin) or 4 (User), but never 1 (Sysadmin)
-            $usergroup === Usergroup::Sysadmin
-                ? Usergroup::Admin
-                : $usergroup,
+            // transform Sysadmin to Admin because users2teams.is_admin is 1 (Admin) or 0 (User)
+            ($usergroup === Usergroup::Sysadmin || $usergroup === Usergroup::Admin)
+                ? BinaryValue::True
+                : BinaryValue::False,
         );
         if ($alertAdmin && !$isFirstUser) {
             $this->notifyAdmins($TeamsHelper->getAllAdminsUserid(), $userid, $isValidated, $teams[0]['name']);
@@ -200,56 +199,108 @@ class Users extends AbstractRest
      * @param int $teamId limit search to a given team or search all teams if 0
      */
     public function readFromQuery(
-        string $query,
+        string $query = '',
         int $teamId = 0,
-        bool $includeArchived = false,
         bool $onlyAdmins = false,
         bool $onlyArchived = false,
+        bool $onlyActive = false,
     ): array {
         $teamFilterSql = '';
         if ($teamId > 0) {
-            $teamFilterSql = ' AND users2teams.teams_id = :team';
+            $teamFilterSql = 'JOIN users2teams AS u2t_filter
+                              ON u2t_filter.users_id = u.userid
+                              AND u2t_filter.teams_id = :team';
         }
 
-        // Assures to get every user only once
-        $tmpTable = ' (SELECT users_id, MIN(teams_id) AS teams_id, MIN(groups_id) AS groups_id
-            FROM users2teams
-            GROUP BY users_id) AS';
-        // unless we use a specific team
-        if ($teamId > 0) {
-            $tmpTable = '';
-        }
-
-        $archived = 'users.archived = 0';
-        if ($includeArchived) {
-            $archived .= ' OR users.archived = 1';
-        }
+        $archived = '';
         if ($onlyArchived) {
-            $archived = 'users.archived = 1';
+            $archived = 'AND u2t_all.is_archived = 1';
+        }
+        if ($onlyActive) {
+            $archived = 'AND u2t_all.is_archived = 0';
         }
 
         $admins = '';
         if ($onlyAdmins) {
-            $admins = sprintf(' AND users2teams.groups_id = %d', Usergroup::Admin->value);
+            $admins = 'AND u2t_all.is_admin = 1';
         }
 
         // NOTE: $tmpTable avoids the use of DISTINCT, so we are able to use ORDER BY with teams_id.
         // Side effect: User is shown in team with lowest id
-        $sql = "SELECT users.userid,
-            users.firstname, users.lastname, users.created_at, users.orgid, users.email, users.mfa_secret IS NOT NULL AS has_mfa_enabled,
-            users.validated, users.archived, users.last_login, users.valid_until, users.is_sysadmin,
-            CONCAT(users.firstname, ' ', users.lastname) AS fullname,
-            CONCAT(
-                LEFT(IFNULL(users.firstname, 'Anonymous'), 1),
-                LEFT(IFNULL(users.lastname, 'Anonymous'), 1)
-            ) AS initials,
-            users.orcid, users.auth_service, sig_keys.pubkey AS sig_pubkey
-            FROM users
-            LEFT JOIN sig_keys ON (sig_keys.userid = users.userid AND state = :state)
-            CROSS JOIN" . $tmpTable . ' users2teams ON (users2teams.users_id = users.userid' . $teamFilterSql . $admins . ')
-            WHERE (users.email LIKE :query OR users.firstname LIKE :query OR users.lastname LIKE :query)
-            AND (' . $archived . ')
-            ORDER BY users2teams.teams_id ASC, users.lastname ASC';
+        $sql = "SELECT
+          u.userid,
+          u.firstname,
+          u.lastname,
+          u.created_at,
+          u.orgid,
+          u.email,
+          (u.mfa_secret IS NOT NULL)       AS has_mfa_enabled,
+          u.validated,
+          u.last_login,
+          u.valid_until,
+          u.is_sysadmin,
+          CONCAT(u.firstname, ' ', u.lastname) AS fullname,
+          CONCAT(
+            LEFT(IFNULL(u.firstname, 'Anonymous'),  1),
+            LEFT(IFNULL(u.lastname,  'Anonymous'),  1)
+          ) AS initials,
+          u.orcid,
+          u.validated,
+          u.auth_service,
+          sk.pubkey                         AS sig_pubkey,
+          JSON_ARRAYAGG(
+             JSON_OBJECT(
+               'id',   u2t_all.teams_id,
+               'name', t.name,
+               'is_admin', u2t_all.is_admin,
+               'is_owner', u2t_all.is_owner,
+               'is_archived', u2t_all.is_archived
+             )
+           ) AS teams
+
+        FROM users AS u
+
+        LEFT JOIN sig_keys AS sk
+          ON sk.userid = u.userid
+          AND sk.state  = :state
+
+        " . $teamFilterSql . '
+
+        LEFT JOIN users2teams AS u2t_all
+          ON u2t_all.users_id = u.userid
+
+        LEFT JOIN teams AS t
+          ON t.id = u2t_all.teams_id
+
+        WHERE
+          (u.email      LIKE :query
+           OR u.firstname LIKE :query
+           OR u.lastname  LIKE :query)
+        ' . $admins . ' ' . $archived . '
+
+        GROUP BY
+          u.userid,
+          u.firstname,
+          u.lastname,
+          u.created_at,
+          u.orgid,
+          u.email,
+          has_mfa_enabled,
+          u.validated,
+          u.last_login,
+          u.valid_until,
+          u.is_sysadmin,
+          fullname,
+          initials,
+          u.orcid,
+          u.validated,
+          u.auth_service,
+          sk.pubkey
+
+        ORDER BY
+          MIN(u2t_all.teams_id) ASC,
+          u.lastname       ASC;';
+
         $req = $this->Db->prepare($sql);
         $req->bindValue(':query', '%' . $query . '%');
         $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
@@ -261,20 +312,14 @@ class Users extends AbstractRest
         return $req->fetchAll();
     }
 
-    /**
-     * Read all users from the team
-     */
     public function readAllFromTeam(): array
     {
-        return $this->readFromQuery('', $this->userData['team'], true);
+        return $this->readFromQuery(teamId: $this->userData['team']);
     }
 
     public function readAllActiveFromTeam(): array
     {
-        return array_filter(
-            $this->readAllFromTeam(),
-            fn($u): bool => $u['archived'] === 0,
-        );
+        return $this->readFromQuery(teamId: $this->userData['team'], onlyActive: true);
     }
 
     /**
@@ -284,10 +329,15 @@ class Users extends AbstractRest
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $Request = Request::createFromGlobals();
+
+        $team = $Request->query->getInt('team', 0);
+        $currentTeam = $Request->query->getInt('currentTeam');
+        if ($currentTeam === 1) {
+            $team = $this->requester->team ?? 0;
+        }
         return $this->readFromQuery(
             $Request->query->getString('q'),
-            $Request->query->getInt('team', 0),
-            $Request->query->getBoolean('includeArchived'),
+            $team,
             $Request->query->getBoolean('onlyAdmins'),
             $Request->query->getBoolean('onlyArchived'),
         );
@@ -328,10 +378,8 @@ class Users extends AbstractRest
 
     public function isAdminSomewhere(): bool
     {
-        $sql = sprintf(
-            'SELECT users_id FROM users2teams WHERE users_id = :userid AND groups_id <= %d',
-            Usergroup::Admin->value,
-        );
+        // TODO use the existing userData instead of making a query
+        $sql = 'SELECT users_id FROM users2teams WHERE users_id = :userid AND is_admin = 1';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -354,14 +402,15 @@ class Users extends AbstractRest
                 function () use ($params) {
                     // check instance config if admins are allowed to do that (if requester is not sysadmin)
                     $Config = Config::getConfig();
-                    if ($this->requester->userData['is_sysadmin'] !== 1 && $Config->configArr['admins_import_users'] !== '1') {
-                        throw new IllegalActionException('A non sysadmin user tried to import a user but admins_import_users is disabled in config.');
+                    $hasPermission = $this->requester->userData['is_sysadmin'] === 1 || $this->requester->userData['can_manage_users2teams'] === 1;
+                    if (!$hasPermission && $Config->configArr['admins_import_users'] === '0') {
+                        throw new IllegalActionException('Adding a user in your team is disabled at the instance level (config: admins_import_users)');
                     }
                     // need to be admin to "import" a user in a team
                     $team = (int) ($params['team'] ?? $this->requester->userData['team']);
                     $TeamsHelper = new TeamsHelper($team);
                     $isAdmin = $TeamsHelper->isAdmin($this->requester->userData['userid']);
-                    if ($isAdmin === false && $this->requester->userData['is_sysadmin'] !== 1) {
+                    if (!$hasPermission && $isAdmin === false) {
                         throw new IllegalActionException('Only Admin can add a user to a team (where they are Admin)');
                     }
                     $Users2Teams = new Users2Teams($this->requester);
@@ -372,9 +421,8 @@ class Users extends AbstractRest
                 }
             )(),
             Action::Disable2fa => $this->disable2fa(),
-            Action::PatchUser2Team => (new Users2Teams($this->requester))->patchUser2Team($params),
+            Action::PatchUser2Team => (new Users2Teams($this->requester))->patchUser2Team($params, $this->userid ?? 0),
             Action::Unreference => (new Users2Teams($this->requester))->destroy($this->userData['userid'], (int) $params['team']),
-            Action::Lock, Action::Archive => (new UserArchiver($this->requester, $this))->toggleArchive((bool) ($params['with_exp'] ?? false)),
             Action::UpdatePassword => $this->updatePassword($params),
             Action::Update => (
                 function () use ($params) {
@@ -398,11 +446,8 @@ class Users extends AbstractRest
             Action::Validate => $this->validate(),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
-        // if we remove a user from our team, then we cannot read it anymore, and it makes an error, so skip the readOne in that case
-        if ($action !== Action::Unreference) {
-            return $this->readOne();
-        }
-        return array();
+        // TODO check when admin if unreference doesn't cause issue
+        return $this->readOne();
     }
 
     #[Override]
@@ -466,21 +511,18 @@ class Users extends AbstractRest
      */
     public function isAdminOf(int $userid): bool
     {
-        // consider that we are admin of ourselves
-        if ($this->userid === $userid) {
+        // consider that we are admin of ourselves and that if you have can_manage_users2teams you're kinda an Admin of the user
+        if ($this->userid === $userid || $this->userData['is_sysadmin'] === 1 || $this->userData['can_manage_users2teams']) {
             return true;
         }
         // check if in the teams we have in common, the potential admin is admin
-        $sql = sprintf(
-            'SELECT *
+        $sql = 'SELECT *
                 FROM users2teams u1
                 INNER JOIN users2teams u2
                     ON (u1.teams_id = u2.teams_id)
                 WHERE u1.users_id = :admin_userid
                     AND u2.users_id = :user_userid
-                    AND u1.groups_id <= %d',
-            Usergroup::Admin->value,
-        );
+                    AND u1.is_admin = 1';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':admin_userid', $this->userid, PDO::PARAM_INT);
         $req->bindParam(':user_userid', $userid, PDO::PARAM_INT);
@@ -557,14 +599,16 @@ class Users extends AbstractRest
         $res = $this->Db->execute($req);
 
         $auditLoggableTargets = array(
-            'archived',
             'valid_until',
             'email',
             'orgid',
             'is_sysadmin',
         );
 
-        if ($res && in_array($params->getTarget(), $auditLoggableTargets, true)) {
+        if ($res
+            && in_array($params->getTarget(), $auditLoggableTargets, true)
+            && (string) $this->userData[$params->getTarget()] !== $params->getStringContent()
+        ) {
             AuditLogs::create(new UserAttributeChanged(
                 $this->requester->userid ?? 0,
                 $this->userid ?? 0,
@@ -580,7 +624,7 @@ class Users extends AbstractRest
     {
         $Db = Db::getConnection();
         $sql = sprintf(
-            'SELECT userid FROM users WHERE %s = :term AND archived = 0 %s LIMIT 1',
+            'SELECT userid FROM users WHERE %s = :term %s LIMIT 1',
             $column === 'orgid'
                 ? 'orgid'
                 : 'email',
@@ -603,15 +647,47 @@ class Users extends AbstractRest
      */
     protected function readOneFull(): array
     {
-        $sql = "SELECT users.*, sig_keys.privkey AS sig_privkey, sig_keys.pubkey AS sig_pubkey,
-            CONCAT(users.firstname, ' ', users.lastname) AS fullname,
+        $sql = "SELECT u.*, sig_keys.privkey AS sig_privkey, sig_keys.pubkey AS sig_pubkey,
+            CONCAT(u.firstname, ' ', u.lastname) AS fullname,
             CONCAT(
-                LEFT(IFNULL(users.firstname, 'Anonymous'), 1),
-                LEFT(IFNULL(users.lastname, 'Anonymous'), 1)
-            ) AS initials
-            FROM users
-            LEFT JOIN sig_keys ON (sig_keys.userid = users.userid AND state = :state)
-            WHERE users.userid = :userid";
+                LEFT(IFNULL(u.firstname, 'Anonymous'), 1),
+                LEFT(IFNULL(u.lastname, 'Anonymous'), 1)
+            ) AS initials,
+          (u.mfa_secret IS NOT NULL)       AS has_mfa_enabled,
+          JSON_ARRAYAGG(
+             JSON_OBJECT(
+               'id',   u2t.teams_id,
+               'name', t.name,
+               'is_admin', u2t.is_admin,
+               'is_owner', u2t.is_owner,
+               'is_archived', u2t.is_archived
+             )
+           ) AS teams
+            FROM users AS u
+            LEFT JOIN sig_keys ON (sig_keys.userid = u.userid AND state = :state)
+            LEFT JOIN users2teams AS u2t
+              ON u2t.users_id = :userid
+            LEFT JOIN teams AS t
+              ON t.id = u2t.teams_id
+            WHERE u.userid = :userid
+            GROUP BY
+              u.userid,
+              u.firstname,
+              u.lastname,
+              u.created_at,
+              u.orgid,
+              u.email,
+              u.validated,
+              u.last_login,
+              u.valid_until,
+              u.is_sysadmin,
+              fullname,
+              initials,
+              u.orcid,
+              u.validated,
+              u.auth_service,
+              sig_keys.pubkey,
+              sig_keys.privkey";
         $req = $this->Db->prepare($sql);
         $req->bindValue(':userid', $this->userid, PDO::PARAM_INT);
         $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
@@ -619,8 +695,6 @@ class Users extends AbstractRest
 
         $this->userData = $this->Db->fetch($req);
         $this->userData['team'] = $this->team;
-        $UsersHelper = new UsersHelper($this->userData['userid']);
-        $this->userData['teams'] = $UsersHelper->getTeamsFromUserid();
         return $this->userData;
     }
 
@@ -687,8 +761,12 @@ class Users extends AbstractRest
         if ($this->requester->userData['is_sysadmin'] === 1) {
             return;
         }
+        // if you have can_manage_users2teams you can add/unreference user
+        if (($action === Action::Add || $action === Action::Unreference) && $this->requester->userData['can_manage_users2teams'] === 1) {
+            return;
+        }
         if (!$this->requester->isAdminOf($this->userData['userid']) && $action !== Action::Add) {
-            throw new IllegalActionException(Tools::error(true));
+            throw new IllegalActionException();
         }
     }
 
@@ -727,8 +805,9 @@ class Users extends AbstractRest
         }
 
         // Check setting for each team individually
-        foreach (array_column($this->userData['teams'], 'id') as $teamId) {
-            if ((new Teams($this))->readOne()['onboarding_email_active'] === 1) {
+        $teams = json_decode($this->userData['teams']);
+        foreach (array_column($teams, 'id') as $teamId) {
+            if ((new Teams($this, $this->team))->readOne()['onboarding_email_active'] === 1) {
                 (new OnboardingEmail($teamId))->create($this->userData['userid']);
             }
         }

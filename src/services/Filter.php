@@ -21,9 +21,8 @@ use HTMLPurifier_HTML5Config;
 
 use function checkdate;
 use function filter_var;
-use function htmlspecialchars_decode;
-use function mb_convert_encoding;
 use function mb_strlen;
+use function mb_substr;
 use function strlen;
 use function trim;
 
@@ -42,6 +41,10 @@ final class Filter
 
     public static function toBinary(string|bool|int $input): int
     {
+        // special case for uncheck checkboxes
+        if ($input === 'off') {
+            return 0;
+        }
         return $input ? 1 : 0;
     }
 
@@ -68,9 +71,9 @@ final class Filter
     public static function kdate(string $input): string
     {
         // Check if day/month/year are good
-        $year = (int) substr($input, 0, 4);
-        $month = (int) substr($input, 5, 2);
-        $day = (int) substr($input, 8, 2);
+        $year = (int) mb_substr($input, 0, 4);
+        $month = (int) mb_substr($input, 5, 2);
+        $day = (int) mb_substr($input, 8, 2);
         if (mb_strlen($input) !== 10 || !checkdate($month, $day, $year)) {
             return date('Y-m-d');
         }
@@ -136,31 +139,27 @@ final class Filter
         return str_replace(array("\r\n", "\n", "\r"), ' ', $title);
     }
 
-    /**
-     * Remove all non word characters. Used for files saved on the filesystem (pdf, zip, ...)
-     * This code is from https://developer.wordpress.org/reference/functions/sanitize_file_name/
-     *
-     * @param string $input what to sanitize
-     * @return string the clean string
-     */
-    public static function forFilesystem(string $input): string
+    public static function toAsciiSlug(string $input): string
     {
-        $specialChars = array('?', '[', ']', '/', '\\', '=', '<', '>', ':', ';', ',', "'", '"', '&', '$', '#', '*', '(', ')', '|', '~', '`', '!', '{', '}', '%', '+', chr(0));
-        $input = htmlspecialchars_decode($input, ENT_QUOTES);
-        $input = str_replace("#\x{00a0}#siu", ' ', $input);
-        $input = str_replace($specialChars, '', $input);
-        $input = str_replace(array('%20', '+'), '-', $input);
-        $input = preg_replace('/[\r\n\t -]+/', '-', $input);
-        return trim($input ?? 'file', '.-_');
+        return new FileSlugger()->slug($input)->toString();
     }
 
     /**
-     * This exists because: The filename fallback must only contain ASCII characters. at /elabftw/vendor/symfony/http-foundation/HeaderUtils.php:173
+     * Remove all non ascii characters. Used for files saved on the filesystem (pdf, zip, ...)
+     * FIXME: this should be improved so valid utf-8 strings are still accepted
+     * see: https://github.com/elabftw/elabftw/issues/5783#issuecomment-3043949949
      */
-    public static function toAscii(string $input): string
+    public static function forFilesystem(string $input): string
     {
-        // mb_convert_encoding will replace invalid characters with ?, but we want _ instead
-        return str_replace('?', '_', mb_convert_encoding(self::forFilesystem($input), 'ASCII', 'UTF-8'));
+        // need to split the extension out of it or the . will be replaced, too
+        $safe = self::toAsciiSlug(pathinfo($input, PATHINFO_FILENAME));
+
+        $ext = pathinfo($input, PATHINFO_EXTENSION);
+        if ($ext) {
+            // re-attach extension
+            return $safe . '.' . $ext;
+        }
+        return $safe;
     }
 
     public static function intOrNull(string|int $input): ?int
@@ -209,22 +208,51 @@ final class Filter
         $config->set('Cache.SerializerPath', $tmpDir);
         // allow "display" attribute for centering images
         $config->set('CSS.AllowTricky', true);
-        $config->set('Attr.AllowedClasses', array());
+        $config->set('Attr.AllowedClasses', array(
+            'language-bash',
+            'language-c',
+            'language-cpp',
+            'language-css',
+            'language-diff',
+            'language-fortran',
+            'language-go',
+            'language-igor',
+            'language-java',
+            'language-javascript',
+            'language-json',
+            'language-julia',
+            'language-latex',
+            'language-lua',
+            'language-makefile',
+            'language-matlab',
+            'language-perl',
+            'language-python',
+            'language-r',
+            'language-ruby',
+            'language-rust',
+            'language-sql',
+            'language-tcl',
+            'language-vhdl',
+            'language-yaml',
+        ));
+        // note: hyphens and word-break are not supported
         $config->set('CSS.AllowedProperties', array(
-            'background-color' => true,
-            'border' => true,
-            'border-color' => true,
-            'color' => true,
-            'display' => true, // see #3368
-            'font-family' => true,
-            'height' => true,
-            'line-height' => true,
-            'margin-left' => true,
-            'margin-right' => true,
-            'min-width' => true,
-            'text-align' => true,
-            'text-decoration' => true,
-            'width' => true,
+            'background-color',
+            'border',
+            'border-color',
+            'color',
+            'display', // see #3368
+            'font-family',
+            'height',
+            'line-height',
+            'margin-left',
+            'margin-right',
+            'min-width',
+            'text-align',
+            'text-decoration',
+            'word-spacing',
+            'width',
+            'white-space',
         ));
         // allow any image size, see #3800
         $config->set('CSS.MaxImgLength', null);

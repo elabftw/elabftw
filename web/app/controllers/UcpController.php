@@ -16,7 +16,6 @@ use Elabftw\Controllers\LoginController;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\DemoModeException;
-use Elabftw\Models\Config;
 use Elabftw\Services\Filter;
 use Elabftw\Services\MfaHelper;
 use Exception;
@@ -32,7 +31,7 @@ $tab = 1;
 $Response = new RedirectResponse(sprintf('/ucp.php?tab=%d', $tab));
 
 try {
-    if (Config::boolFromEnv('DEMO_MODE')) {
+    if ($App->demoMode) {
         throw new DemoModeException();
     }
     $postData = $App->Request->request->all();

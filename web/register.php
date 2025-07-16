@@ -16,7 +16,6 @@ use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\DemoModeException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Config;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -43,7 +42,7 @@ try {
         throw new ImproperActionException(_('No local account creation is allowed!'));
     }
     // or we might be in demo mode
-    if (Config::boolFromEnv('DEMO_MODE')) {
+    if ($App->demoMode) {
         throw new DemoModeException();
     }
 

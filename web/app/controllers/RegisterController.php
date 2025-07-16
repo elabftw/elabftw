@@ -15,7 +15,6 @@ use Elabftw\Enums\Messages;
 use Elabftw\Exceptions\DemoModeException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Config;
 use Elabftw\Params\UserParams;
 use Elabftw\Services\Check;
 use Elabftw\Services\TeamsHelper;
@@ -35,7 +34,7 @@ try {
         throw new ImproperActionException(_('Registration is disabled.'));
     }
     // or we might be in demo mode
-    if (Config::boolFromEnv('DEMO_MODE')) {
+    if ($App->demoMode) {
         throw new DemoModeException();
     }
 

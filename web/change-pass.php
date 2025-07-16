@@ -36,7 +36,7 @@ try {
     if ($App->Config->configArr['local_auth_enabled'] === '0') {
         throw new ImproperActionException('This instance has disabled local authentication method, so passwords cannot be reset.');
     }
-    if (Config::boolFromEnv('DEMO_MODE')) {
+    if ($App->demoMode) {
         throw new DemoModeException();
     }
     // make sure this page is accessed with a key

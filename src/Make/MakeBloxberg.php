@@ -106,7 +106,7 @@ final class MakeBloxberg extends AbstractMakeTimestamp
             ), JSON_THROW_ON_ERROR, 4),
         );
 
-        return $this->getter->postJson(self::CERT_URL, $json, array('api_key' => $this->apiKey));
+        return $this->getter->postJson(self::CERT_URL, $json, array('api-key' => $this->apiKey));
     }
 
     /**

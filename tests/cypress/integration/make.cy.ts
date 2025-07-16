@@ -56,8 +56,8 @@ describe('Make', () => {
     cy.get('div.alert.alert-danger').should('contain', 'QR PNG format is only suitable for one ID.');
   });
 
-  it('report', () => {
-    cy.request('/make.php?format=report').then(resp => {
+  it('instance level report', () => {
+    cy.request('/make.php?format=instance').then(resp => {
       expect(resp.status).to.eq(200);
     });
   });

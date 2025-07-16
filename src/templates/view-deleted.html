@@ -62,8 +62,17 @@
   {% include 'metadata-view.html' %}
 
   <div class='entity-deleted-overlay'>
-      <p>This entry has been deleted.</p>
-      <button data-action='patch-selected-entities' data-what='restore' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Restore'|trans }}</button>
+    <p>This entry has been deleted.</p>
+    <button data-action='patch-selected-entities' data-what='restore' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Restore'|trans }}</button>
+    {# BACK TO LINK #}
+    {% if App.Session.has('lastquery') %}
+      {% set lastquery = App.Session.get('lastquery') %}
+    {% else %}
+      {% set lastquery = 'mode=show&state=3' %}
+    {% endif %}
+    <a title='{{ 'Back to listing'|trans }}' aria-label='{{ 'Back to listing'|trans }}' href='?{{ lastquery }}' class='btn btn-sm bgnd-gray hl-hover-superlight p-2'>
+      <i class='fas fa-arrow-left fa-fw'></i>{{ 'Back to listing'|trans }}
+    </a>
   </div>
 
   <div id='info'

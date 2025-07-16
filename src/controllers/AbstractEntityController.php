@@ -21,6 +21,8 @@ use Elabftw\Enums\Meaning;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\Sort;
+use Elabftw\Enums\State;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Changelog;
@@ -183,6 +185,9 @@ abstract class AbstractEntityController implements ControllerInterface
      */
     protected function view(): Response
     {
+        if ($response = $this->gatekeepDeleted()) {
+            return $response;
+        }
         // the items categoryArr for add link input
         $ItemsTypes = new ItemsTypes($this->App->Users);
         $itemsCategoryArr = $ItemsTypes->readAll();
@@ -239,6 +244,22 @@ abstract class AbstractEntityController implements ControllerInterface
         return $Response;
     }
 
+    protected function gatekeepDeleted(): ?Response
+    {
+        if ($this->Entity->entityData['state'] === State::Deleted->value) {
+            if (!isset($this->Entity->id)) {
+                throw new ResourceNotFoundException();
+            }
+            return new RedirectResponse(sprintf(
+                '%s%sid=%d',
+                $this->Entity->entityType->toPage(),
+                '?mode=deleted&',
+                $this->Entity->id,
+            ), Response::HTTP_SEE_OTHER); // 303
+        }
+        return null;
+    }
+
     /**
      * Edit mode
      */
@@ -246,9 +267,15 @@ abstract class AbstractEntityController implements ControllerInterface
     {
         // check permissions
         $this->Entity->canOrExplode('write');
+        // check if deleted
+        if ($response = $this->gatekeepDeleted()) {
+            return $response;
+        }
         // exclusive edit mode
         if ($this->Entity->isReadOnly) {
-            /** @psalm-suppress PossiblyNullArgument */
+            if (!isset($this->Entity->id)) {
+                throw new ResourceNotFoundException();
+            }
             return new RedirectResponse(sprintf(
                 '%s%sid=%d',
                 $this->Entity->entityType->toPage(),

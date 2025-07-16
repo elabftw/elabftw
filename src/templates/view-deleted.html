@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block body %}
+  <div class='align-self-center flex-grow-1 mr-2'>
+    <h1>
+      {# CUSTOM ID #}
+      {% if Entity.entityData.custom_id %}
+        <span title='{{ 'Custom ID'|trans }}' class='custom-id-badge'>{{ Entity.entityData.custom_id }}</span>
+      {% endif %}
+      {# TITLE #}
+      <!-- [html-validate-disable-block prefer-native-element: suppress error from malle] -->
+      <span id='documentTitle' class='rounded py-1'>{{ Entity.entityData.title }}</span>
+    </h1>
+  </div>
+  <section>
+    {# DATE #}
+    {% if Entity.entityType.value != 'experiments_templates' %}
+      <div class='color-medium mb-2'>
+        {{ 'Started on'|trans }} {{ Entity.entityData.date|date('Y-m-d') }}
+      </div>
+    {% endif %}
+
+    {# OWNER #}
+    <div class='d-flex mb-2 align-items-center'>
+      <div class='edit-mode-label'>
+        <i aria-hidden='true' class='fas fa-fw fa-user mr-1'></i>{{ 'Owner'|trans }}
+      </div>
+      {{ Entity.entityData.fullname }}
+    </div>
+
+    {# TEAM #}
+    <div class='d-flex mb-2 align-items-center'>
+      <div class='edit-mode-label'>
+        <i aria-hidden='true' class='fas fa-fw fa-users mr-1'></i>{{ 'Team'|trans }}
+      </div>
+      {{ Entity.entityData.team_name }}
+    </div>
+    <hr>
+
+    <div class='mb-2'>
+      <i aria-hidden='true' class='fas fa-file mr-1'></i>
+      {% trans %}Attached file
+      {% plural Entity.entityData.uploads|length %}
+        Attached files
+      {% endtrans %} (<span id='uploadsCount'>{{ Entity.entityData.uploads|length }}</span>)
+    </div>
+
+    <hr>
+
+    {# BODY (show only if not empty) #}
+    {% set body = Entity.entityData.body_html %}
+    {% if body != '' %}
+      {# do not display body if set in metadata, done via css to avoid delayed disappearance after JS is executed #}
+      {# body in view mode is text-dark for more lisibility see github issue #52 #}
+      <div {{ not displayMainText ? 'hidden' }}>
+        <h3 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='body_view'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
+        <div id='body_view' class='pt-2 ml-3 text-dark' data-save-hidden='body_view'>{{ body|raw }}</div>
+        <hr>
+      </div>
+    {% endif %}
+  </section>
+
+  {% include 'metadata-view.html' %}
+
+  <div class='entity-deleted-overlay'>
+      <p>This entry has been deleted.</p>
+      <button data-action='patch-selected-entities' data-what='restore' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Restore'|trans }}</button>
+  </div>
+
+  <div id='info'
+       data-page='deleted'
+       data-type='{{ Entity.entityType.value }}'
+       data-id='{{ Entity.id }}'
+       data-team='{{ App.Users.userData.team }}'
+       data-isanon='{{ App.Session.get('is_anon') }}'
+  >
+  </div>
+{% endblock body %}

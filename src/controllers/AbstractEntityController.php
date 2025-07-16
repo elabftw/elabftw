@@ -86,6 +86,7 @@ abstract class AbstractEntityController implements ControllerInterface
     {
         return match ($this->App->Request->query->getAlpha('mode')) {
             'view' => $this->view(),
+            'deleted' => $this->viewDeleted(),
             'edit' => $this->edit(),
             'changelog' => $this->changelog(),
             default => $this->show(),
@@ -219,6 +220,21 @@ abstract class AbstractEntityController implements ControllerInterface
         $Response = new Response();
         $Response->prepare($this->App->Request);
         $Response->setContent($this->App->render('view.html', $renderArr));
+
+        return $Response;
+    }
+
+    protected function viewDeleted(): Response
+    {
+        // the mode parameter is for the uploads tpl
+        $renderArr = array(
+            'Entity' => $this->Entity,
+            'displayMainText' => (new Metadata($this->Entity->entityData['metadata']))->getDisplayMainText(),
+            'hideTitle' => true,
+        );
+        $Response = new Response();
+        $Response->prepare($this->App->Request);
+        $Response->setContent($this->App->render('view-deleted.html', $renderArr));
 
         return $Response;
     }

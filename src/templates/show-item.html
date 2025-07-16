@@ -77,7 +77,11 @@
       {% if item.custom_id %}
         <span class='custom-id-badge' title='{{ 'Custom ID'|trans }}'>{{ item.custom_id }}</span>
       {% endif %}
-        <a href='{{ Entity.entityType.toPage }}?mode=view&amp;id={{ item.id }}'>{{ item.title }}</a>
+        {% if item.state == 3 %}
+          <a href='{{ Entity.entityType.toPage }}?mode=deleted&amp;id={{ item.id }}'>{{ item.title }}</a>
+        {% else %}
+          <a href='{{ Entity.entityType.toPage }}?mode=view&amp;id={{ item.id }}'>{{ item.title }}</a>
+        {% endif %}
       </p>
     </div>
     {# owner #}

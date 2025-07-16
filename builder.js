@@ -40,6 +40,7 @@ module.exports = (env) => {
         './src/ts/todolist.ts',
         './src/ts/ucp.ts',
         './src/ts/view.ts',
+        './src/ts/view-deleted.ts',
         './src/ts/revisions.ts',
         './src/ts/toolbar.ts',
         './src/ts/editusers.ts',

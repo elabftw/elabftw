@@ -14,6 +14,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Exceptions\AppException;
+use Elabftw\Exceptions\DemoModeException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
@@ -34,6 +35,9 @@ try {
     $Response->prepare($Request);
     if ($App->Config->configArr['local_auth_enabled'] === '0') {
         throw new ImproperActionException('This instance has disabled local authentication method, so passwords cannot be reset.');
+    }
+    if (Config::boolFromEnv('DEMO_MODE')) {
+        throw new DemoModeException();
     }
     // make sure this page is accessed with a key
     if (!$App->Request->query->has('key')) {

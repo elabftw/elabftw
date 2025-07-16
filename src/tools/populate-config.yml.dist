@@ -727,9 +727,28 @@ teams:
       - email: notyetvalidateduser@yopmail.com
         validated: false
 
+      - email: admin1@demo.elabftw.net
+        password: random
+        create_experiments: true
+        usergroup: 2
+
+      - email: user1@demo.elabftw.net
+        password: random
+        create_experiments: true
+
+
   # OTHER TEAMS
   - name: Organic Chemistry lab
     random_users: 12
+    users:
+      - email: admin2@demo.elabftw.net
+        password: random
+        create_experiments: true
+        usergroup: 2
+
+      - email: user2@demo.elabftw.net
+        password: random
+        create_experiments: true
   - name: Quantum light group
     visible: false
     random_users: 12

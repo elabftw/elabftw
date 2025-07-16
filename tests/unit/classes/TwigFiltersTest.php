@@ -103,4 +103,10 @@ class TwigFiltersTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($secret, TwigFilters::decrypt($encrypted));
         $this->assertEmpty(TwigFilters::decrypt(null));
     }
+
+    public function testJsonDecode(): void
+    {
+        $json = '[]';
+        $this->assertEquals(array(), TwigFilters::jsonDecode($json));
+    }
 }

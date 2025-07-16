@@ -23,6 +23,7 @@ use Elabftw\Models\Config;
 use Elabftw\Models\Users;
 
 use function is_array;
+use function json_decode;
 use function sprintf;
 use function nl2br;
 
@@ -179,6 +180,11 @@ final class TwigFilters
             $final .= '</ul></div>';
         }
         return $final . $Metadata->getAnyContent();
+    }
+
+    public static function jsonDecode(string $json): array
+    {
+        return json_decode($json, true, 3, JSON_THROW_ON_ERROR);
     }
 
     public static function toSymbol(int $currency): string

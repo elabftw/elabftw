@@ -98,7 +98,7 @@ try {
         $App->Session->getFlashBag()->add('ko', _('Your session expired.'));
     }
 
-    $template = 'login.html';
+    $template = 'login-base.html';
     $renderArr = array(
         'idpsArr' => $idpsArr,
         'pageTitle' => _('Login'),

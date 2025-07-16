@@ -14,10 +14,9 @@ namespace Elabftw\Elabftw;
 use Elabftw\Auth\Local;
 use Elabftw\Controllers\LoginController;
 use Elabftw\Enums\Action;
-use Elabftw\Enums\Messages;
-use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\AppException;
+use Elabftw\Exceptions\DemoModeException;
+use Elabftw\Models\Config;
 use Elabftw\Services\Filter;
 use Elabftw\Services\MfaHelper;
 use Exception;
@@ -32,8 +31,11 @@ require_once dirname(__DIR__) . '/init.inc.php';
 $tab = 1;
 $Response = new RedirectResponse(sprintf('/ucp.php?tab=%d', $tab));
 
-$postData = $App->Request->request->all();
 try {
+    if (Config::boolFromEnv('DEMO_MODE')) {
+        throw new DemoModeException();
+    }
+    $postData = $App->Request->request->all();
     // TAB 2 : ACCOUNT
     if ($App->Request->request->getString('origin') === 'ucp_tab_2') {
         $tab = 2;
@@ -88,17 +90,10 @@ try {
 
     $App->Session->getFlashBag()->add('ok', _('Saved'));
     $Response = new RedirectResponse(sprintf('/ucp.php?tab=%d', $tab));
-} catch (IllegalActionException $e) {
-    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e->getMessage())));
-    $App->Session->getFlashBag()->add('ko', Messages::InsufficientPermissions->toHuman());
-} catch (ImproperActionException $e) {
-    // show message to user
-    $App->Session->getFlashBag()->add('ko', $e->getMessage());
-} catch (DatabaseErrorException $e) {
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
+} catch (AppException $e) {
+    $Response = $e->getResponseFromException($App);
 } catch (Exception $e) {
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
-    $App->Session->getFlashBag()->add('ko', Messages::GenericError->toHuman());
+    $Response = $App->getResponseFromException($e);
 } finally {
     $Response->send();
 }

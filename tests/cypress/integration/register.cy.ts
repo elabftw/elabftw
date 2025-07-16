@@ -22,6 +22,6 @@ describe('Register new user', () => {
     cy.get('#lastname').type('User').blur();
     cy.get('form').submit();
 
-    cy.get('div.alert.alert-danger').should('contain', ' This section is out of your reach!');
+    cy.get('div.alert.alert-danger').should('contain', 'Sorry, you are not allowed to perform that action.');
   });
 });

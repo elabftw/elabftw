@@ -34,7 +34,7 @@ class AppException extends Exception
 
     public function getResponseFromException(App $app): Response
     {
-        $this->emitLog($app->Log, $app->Session->get('userid'));
+        $this->emitLog($app->Log, $app->Session->get('userid') ?? -1);
         $template = 'error.html';
         $renderArr = array('error' => $this->getMessage());
         $Response = new Response();

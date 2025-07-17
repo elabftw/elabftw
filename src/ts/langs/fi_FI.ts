@@ -22,6 +22,7 @@ const t = {
     "edit-compound": "Muokkaa yhdistettä",
     "editing-metadata": "Muokkaat tällä hetkellä tähän merkintään liitettyjä metatietoja.",
     "email": "Sähköposti",
+    "enable-permission": "You must allow at least one permission setting.",
     "entity-default-title": "Nimetön",
     "entity-delete-warning": "Valitut kohteet ja kaikki niihin liittyvät tiedot poistetaan pysyvästi. Tätä ei voi peruuttaa. Oletko varma?",
     "entries-processed": "{{num, number}} entries processed",

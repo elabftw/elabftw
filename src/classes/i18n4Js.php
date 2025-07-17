@@ -56,6 +56,7 @@ final class i18n4Js
             'edit-compound' => _('Edit compound'),
             'editing-metadata' => _('You are currently editing the metadata attached to this entry.'),
             'email' => _('Email'),
+            'enable-permission' => _('You must allow at least one permission setting.'),
             'entity-default-title' => _('Untitled'),
             'entity-delete-warning' => _('The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?'),
             'entries-processed' => _('{{num, number}} entries processed'),

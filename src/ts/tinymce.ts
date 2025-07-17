@@ -8,7 +8,7 @@
 import tinymce from 'tinymce/tinymce';
 import { Editor } from 'tinymce/tinymce';
 import { DateTime } from 'luxon';
-import i18next from 'i18next';
+import i18next from './i18n';
 import type { DropzoneFile } from 'dropzone';
 import 'tinymce/models/dom';
 import 'tinymce/icons/default';
@@ -259,6 +259,7 @@ export function getTinymceBaseConfig(page: string): object {
     paste_preprocess: function(plugin, args) {
       args.content = args.content.replaceAll('bgcolor="', 'style="background-color:');
     },
+    // also add it to Filter.php in Attr.AllowedClasses
     codesample_languages: [
       {text: 'Bash', value: 'bash'},
       {text: 'C', value: 'c'},

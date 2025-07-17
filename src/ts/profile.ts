@@ -9,7 +9,7 @@ import { Api } from './Apiv2.class';
 import { Notification } from './Notifications.class';
 import Tab from './Tab.class';
 import { collectForm, relativeMoment, reloadElements } from './misc';
-import i18next from 'i18next';
+import i18next from './i18n';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/profile.php') {

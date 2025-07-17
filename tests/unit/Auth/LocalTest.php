@@ -13,9 +13,12 @@ namespace Elabftw\Auth;
 
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\QuantumException;
+use Elabftw\Traits\TestsUtilsTrait;
 
 class LocalTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private Local $AuthService;
 
     protected function setUp(): void
@@ -54,7 +57,8 @@ class LocalTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($this->AuthService::isMfaEnforced(1, 3));
         $this->assertTrue($this->AuthService::isMfaEnforced(1, 1));
         $this->assertFalse($this->AuthService::isMfaEnforced(4, 1));
-        $this->assertTrue($this->AuthService::isMfaEnforced(5, 2));
+        $admin2 = $this->getUserInTeam(team: 2, admin: 1);
+        $this->assertTrue($this->AuthService::isMfaEnforced($admin2->userid, 2));
         $this->assertFalse($this->AuthService::isMfaEnforced(4, 0));
     }
 }

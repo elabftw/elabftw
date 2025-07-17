@@ -31,6 +31,7 @@ use function is_string;
 use function json_decode;
 use function ksort;
 use function sprintf;
+use function mb_substr;
 
 /**
  * An entity like Experiments or Items. Concrete as opposed to TemplateEntity for experiments templates or items types
@@ -109,7 +110,7 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         $this->entityData['related_items_links'] = $this->ItemsLinks->readRelated();
         $this->entityData['uploads'] = $this->Uploads->readAll($queryParams);
         $this->entityData['comments'] = $this->Comments->readAll();
-        $this->entityData['page'] = substr($this->entityType->toPage(), 0, -4);
+        $this->entityData['page'] = mb_substr($this->entityType->toPage(), 0, -4);
         $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
         $this->entityData['compounds'] = $CompoundsLinks->readAll();
         $ContainersLinks = LinksFactory::getContainersLinks($this);

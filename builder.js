@@ -29,6 +29,7 @@ module.exports = (env) => {
         './src/ts/ketcher.jsx',
         './src/ts/ketcher-editor.jsx',
         './src/ts/compounds-table.jsx',
+        './src/ts/users-table.jsx',
         './src/ts/tags.ts',
         './src/ts/admin.ts',
         './src/ts/profile.ts',

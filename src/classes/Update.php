@@ -22,6 +22,7 @@ use function bin2hex;
 use function random_bytes;
 use function sha1;
 use function sprintf;
+use function mb_substr;
 
 /**
  * Use this to check for latest version or update the database schema
@@ -64,7 +65,7 @@ final class Update
         $warn = array();
 
         // make sure we run MySQL version 8 at least
-        $mysqlVersion = (int) substr($this->Db->getAttribute(PDO::ATTR_SERVER_VERSION) ?? '1', 0, 1);
+        $mysqlVersion = (int) mb_substr($this->Db->getAttribute(PDO::ATTR_SERVER_VERSION) ?? '1', 0, 1);
         if ($mysqlVersion < 8) {
             throw new ImproperActionException('It looks like MySQL server version is less than 8. Update your MySQL server!');
         }

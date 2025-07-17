@@ -99,6 +99,25 @@
     <hr>
 
     <div class='d-flex justify-content-between'>
+      <label for='support_url' class='col-form-label'>{{ 'URL where the Support menu entry from Help dropdown points'|trans }}</label>
+      <input class='form-control col-md-3' type='url' value='{{ App.Config.configArr.support_url }}' data-trigger='blur' data-model='config' data-target='support_url' id='support_url' />
+    </div>
+    <hr>
+
+    <div class='d-flex justify-content-between'>
+      <label for='chat_url' class='col-form-label'>{{ 'URL where the Chat room menu entry from Help dropdown points'|trans }}</label>
+      <input class='form-control col-md-3' type='url' value='{{ App.Config.configArr.chat_url }}' data-trigger='blur' data-model='config' data-target='chat_url' id='chat_url' />
+    </div>
+    <hr>
+
+    {% include 'binary-setting.html' with {'label': 'Allow users to change their first name, last name, or email address'|trans, 'slug': 'allow_users_change_identity', 'help': 'When disabled, only a Sysadmin will be allowed to modify these parameters.'} %}
+
+  </div>
+
+
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Revisions system configuration'|trans }}</h3>
+  <div class='pl-3'>
+    <div class='d-flex justify-content-between'>
       <label for='max_revisions' class='col-form-label'>{{ 'Maximum number of stored revisions per entry'|trans }}</label>
       <input class='form-control col-md-3' data-trigger='blur' data-model='config' data-target='max_revisions' type='number' min='0' max='999' value='{{ App.Config.configArr.max_revisions }}' id='max_revisions' />
     </div>
@@ -118,21 +137,6 @@
     </div>
     <p class='smallgray'>{{ 'If the last change is at least this days old, a revision will be created regardless of the minimum characters setting.'|trans }}</p>
     <hr>
-
-    <div class='d-flex justify-content-between'>
-      <label for='support_url' class='col-form-label'>{{ 'URL where the Support menu entry from Help dropdown points'|trans }}</label>
-      <input class='form-control col-md-3' type='url' value='{{ App.Config.configArr.support_url }}' data-trigger='blur' data-model='config' data-target='support_url' id='support_url' />
-    </div>
-    <hr>
-
-    <div class='d-flex justify-content-between'>
-      <label for='chat_url' class='col-form-label'>{{ 'URL where the Chat room menu entry from Help dropdown points'|trans }}</label>
-      <input class='form-control col-md-3' type='url' value='{{ App.Config.configArr.chat_url }}' data-trigger='blur' data-model='config' data-target='chat_url' id='chat_url' />
-    </div>
-    <hr>
-
-    {% include 'binary-setting.html' with {'label': 'Allow users to change their first name, last name, or email address'|trans, 'slug': 'allow_users_change_identity', 'help': 'When disabled, only a Sysadmin will be allowed to modify these parameters.'} %}
-
   </div>
 
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Permissions settings'|trans }}</h3>
@@ -262,7 +266,7 @@
               </label>
             </td>
             <td>
-              {% if count.totusers == 0 and team.id != App.Users.userData.team %}
+              {% if count.all_users_count == 0 and team.id != App.Users.userData.team %}
               <span data-id='{{ team.id }}' id='teamsDestroyButton_{{ team.id }}' data-action='destroy-team' class='p-1 rounded hover-danger'>
                 <i class='fas fa-trash-alt'></i>
               </span>
@@ -375,7 +379,7 @@
         <div class='input-group col-md-3 p-0'>
           <input class='form-control' type='password' data-trigger='blur' data-model='config' data-target='smtp_password' id='smtp_password' autocomplete='off' />
           <div class='input-group-append'>
-            <button type='button' class='btn btn-light input-border' data-action='toggle-password' data-target='smtp_password' title='{{ 'Show password'|trans }}' aria-label='{{ 'Show password'|trans }}'><i class='fas fa-eye' aria-hidden='true'></i></button>
+            <button type='button' class='btn btn-light input-border' data-action='toggle-password' title='{{ 'Show password'|trans }}' aria-label='{{ 'Show password'|trans }}'><i class='fas fa-eye' aria-hidden='true'></i></button>
           </div>
         </div>
       {% else %}
@@ -479,7 +483,7 @@
 {# TAB 7 POLICIES #}
 <div data-tabcontent='7' hidden>
 
-  {% macro policy(title, slug, configArr) %}
+  {% macro policy(title, slug, configArr, devMode) %}
     <h3 class='mb-3 p-2 pl-3 section-title'>{{ title|trans }}</h3>
     <div class='pl-3'>
       <div class='d-flex justify-content-between'>
@@ -490,7 +494,7 @@
       {% if not configArr[slug] %}
         {{ 'Note: the text below is a template and must be edited and saved.'|trans|msg('ok', false) }}
       {% endif %}
-      {% if configArr.debug -%}
+      {% if devMode -%}
         <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element, no-unused-disable, require-sri: suppress errors from tinymce] -->
       {%- endif %}
       <textarea id='{{ slug }}Input' class='mceditable'>
@@ -503,10 +507,10 @@
     </div>
   {% endmacro %}
 
-  {{ _self.policy('Privacy policy', 'privacy_policy', App.Config.configArr) }}
-  {{ _self.policy('Terms of service', 'terms_of_service', App.Config.configArr) }}
-  {{ _self.policy('Accessibility statement', 'a11y_statement', App.Config.configArr) }}
-  {{ _self.policy('Legal notice', 'legal_notice', App.Config.configArr) }}
+  {{ _self.policy('Privacy policy', 'privacy_policy', App.Config.configArr, App.devMode) }}
+  {{ _self.policy('Terms of service', 'terms_of_service', App.Config.configArr, App.devMode) }}
+  {{ _self.policy('Accessibility statement', 'a11y_statement', App.Config.configArr, App.devMode) }}
+  {{ _self.policy('Legal notice', 'legal_notice', App.Config.configArr, App.devMode) }}
 
 </div>
 
@@ -1048,7 +1052,7 @@
 <div data-tabcontent='14' hidden>
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Audit Logs configuration'|trans }}</h3>
   <div class='pl-3 mb-5'>
-    {% include 'binary-setting.html' with {'label': 'Emit audit logs with PHP error log'|trans, 'slug': 'emit_audit_logs', 'help': 'Enable to include audit logs events as NOTICE error in PHP logs.'|trans} %}
+    {% include 'binary-setting.html' with {'label': 'Emit audit logs with PHP error log'|trans, 'slug': 'emit_audit_logs', 'help': 'Enable to include audit logs events as INFO event in PHP logs.'|trans} %}
   </div>
 
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Audit Logs'|trans }}</h3>

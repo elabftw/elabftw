@@ -14,6 +14,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Auth\Saml as SamlAuth;
 use Elabftw\Enums\Entrypoint;
+use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Idps;
 use Elabftw\Services\LoginHelper;
@@ -25,6 +26,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 require_once 'app/init.inc.php';
+
+$Response = new Response();
 
 try {
     // Note: this code should be in logincontroller!
@@ -96,21 +99,10 @@ try {
     }
     $location = '/' . (Entrypoint::tryFrom($App->Users->userData['entrypoint'] ?? 0) ?? Entrypoint::Dashboard)->toPage();
     $Response = new RedirectResponse($location);
-    $Response->send();
-} catch (ImproperActionException $e) {
-    $template = 'error.html';
-    $renderArr = array('error' => $e->getMessage());
-    $Response = new Response();
-    $Response->prepare($Request);
-    $Response->setContent($App->render($template, $renderArr));
-    $Response->send();
+} catch (AppException $e) {
+    $Response = $e->getResponseFromException($App);
 } catch (Exception $e) {
-    // log error and show general error message
-    $App->Log->error('', array('Exception' => $e));
-    $template = 'error.html';
-    $renderArr = array('error' => Tools::error());
-    $Response = new Response();
-    $Response->prepare($Request);
-    $Response->setContent($App->render($template, $renderArr));
+    $Response = $App->getResponseFromException($e);
+} finally {
     $Response->send();
 }

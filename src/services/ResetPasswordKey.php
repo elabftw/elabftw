@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Defuse\Crypto\Crypto;
+use Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException;
 use Defuse\Crypto\Key;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -56,7 +57,11 @@ final class ResetPasswordKey
 
     public function validate(string $key): Users
     {
-        $decryptedKey = Crypto::decrypt($key, Key::loadFromAsciiSafeString($this->secretKey));
+        try {
+            $decryptedKey = Crypto::decrypt($key, Key::loadFromAsciiSafeString($this->secretKey));
+        } catch (WrongKeyOrModifiedCiphertextException) {
+            throw new ImproperActionException('Error decrypting key. Make sure the URL is correct and complete!');
+        }
         $exploded = explode(self::SEPARATOR, $decryptedKey);
         if (count($exploded) !== 2) {
             throw new IllegalActionException('Something is wrong with the number of exploded values during password reset.');

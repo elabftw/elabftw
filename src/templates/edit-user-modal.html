@@ -1,0 +1,105 @@
+{# Modal for editing a single user #}
+{# data-userid is populated on double click action and everyone gets the userid from that #}
+<div class='modal fade' id='editUserModal' data-userid='' tabindex='-1' role='dialog' aria-labelledby='editUserModalTitle'>
+  <div class='modal-dialog modal-lg' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='editUserModalTitle'><i class='fas fa-fw fa-pencil'></i> {{ 'Edit user'|trans }}</h5>
+        {# the clear-form action is repeated on the x icon or it would only work when clicking just next to the x, on the button element #}
+        <button type='button' class='close' data-dismiss='modal' data-action='clear-form' data-target='editUserInputs' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true' data-action='clear-form' data-target='editUserInputs'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        <div class='mb-2' id='editUserInputs'>
+          {% set disabledForAdmin = App.Users.userData.is_sysadmin == 0 ? 'readonly disabled' : '' %}
+          <label for='userInput-userid'>{{ 'User ID'|trans }}</label>
+          <input name='userid' class='form-control' id='userInput-userid' readonly disabled />
+          <label for='userInput-firstname'>{{ 'Firstname'|trans }}</label>
+          <input name='firstname' class='form-control' id='userInput-firstname' {{ disabledForAdmin }} />
+          <label for='userInput-lastname'>{{ 'Lastname'|trans }}</label>
+          <input name='lastname' class='form-control' id='userInput-lastname' {{ disabledForAdmin }} />
+          <label for='userInput-email'>{{ 'Email'|trans }}</label>
+          <input name='email' type='email' class='form-control' id='userInput-email' {{ disabledForAdmin }} />
+          <label for='userInput-valid_until'>{{ 'Valid until'|trans }}</label>
+          <input name='valid_until' type='date' class='form-control' id='userInput-valid_until' />
+          <label for='userInput-orgid'>{{ 'Internal ID'|trans }}</label>
+          <input name='orgid' class='form-control' id='userInput-orgid' {{ disabledForAdmin }} />
+          {# Toggle is_sysadmin slider #}
+          <div class='d-flex justify-content-between'>
+            <label for='userInput-is_sysadmin' class='col-form-label'>{{ 'Is Sysadmin'|trans }}</label>
+            <label class='switch ucp-align {{- App.Users.userData.is_sysadmin == 0 ? ' disabled' }}' title='{{- App.Users.userData.is_sysadmin == 0 ? 'Only a Sysadmin can modify this.'|trans }}'>
+              <input type='checkbox' id='userInput-is_sysadmin' autocomplete='off' {{ App.Users.userData.is_sysadmin == 0 ? "disabled='disabled'" }} name='is_sysadmin'>
+              <span class='slider'></span>
+            </label>
+          </div>
+          <p class='smallgray'>{{ 'Enabling Sysadmin rights authorizes unrestricted system changes. Exercise due diligence.'|trans }}</p>
+          {# Toggle can_manage_users2teams slider #}
+          <div class='d-flex justify-content-between'>
+            <label for='userInput-can_manage_users2teams' class='col-form-label'>{{ 'Can manage users/teams association'|trans }}</label>
+            <label class='switch ucp-align {{- App.Users.userData.is_sysadmin == 0 ? ' disabled' }}' title='{{- App.Users.userData.is_sysadmin == 0 ? 'Only a Sysadmin can modify this.'|trans }}'>
+              <input type='checkbox' id='userInput-can_manage_users2teams' autocomplete='off' {{ App.Users.userData.is_sysadmin == 0 ? "disabled='disabled'" }} name='can_manage_users2teams'>
+              <span class='slider'></span>
+            </label>
+          </div>
+          <p class='smallgray'>{{ 'Enable this to allow user to manage association between users and teams. Note: user must be Admin in at least one team.'|trans }}</p>
+        </div>
+
+        {% if App.Users.userData.is_sysadmin == 1 or App.Users.userData.can_manage_users2teams %}
+          <hr>
+          <details id='manageUsers2Teams'>
+            <summary>{{ 'Manage teams for user'|trans }}</summary>
+            <div class='pl-3 mt-2'>
+              <div class='d-flex flex-row flex-wrap' id='manageTeamsDiv'></div>
+              <div id='addTeamDiv'>
+                <span class='px-2 py-1 rounded mr-2 mt-2 btn btn-primary' data-action='toggle-next' data-opened-icon='fa-minus-circle' data-closed-icon='fa-plus-circle'><i class='text-light fas fa-plus-circle'></i> {{ 'Add team'|trans }}</span>
+                <span class='form-group form-inline mt-2' hidden>
+                  {# options will be populated by js #}
+                  <select class='form-control' id='addTeamSelect'></select>
+                  <button type='button' data-action='create-user2team' class='btn btn-primary'>{{ 'Go'|trans }}</button>
+                </span>
+              </div>
+            </div>
+          </details>
+
+          <hr>
+          <details>
+            <summary>{{ 'Set user password'|trans }}</summary>
+            <div class='pl-3'>
+              <div class='input-group my-2' id='resetUserPasswordForm'>
+                <input class='form-control' minlength='{{ App.Config.configArr.min_password_length }}' required name='resetPassword' title='{{ 'Minimum password length: %d.'|trans|format(App.Config.configArr.min_password_length) }}' placeholder='{{ 'Set new password'|trans }}' type='password' id='resetUserPasswordInput_{{ userid }}' autocomplete='new-password' pattern='{{ passwordInputPattern|e('html_attr') }}' />
+                <div class='input-group-append'>
+                  <span class='btn btn-light input-border' tabindex='-1' title='{{ 'Toggle visibility'|trans }}' data-action='toggle-password'><i class='fas fa-eye' aria-hidden='true'></i></span>
+                  <span class='btn btn-primary input-border' tabindex='-1' title='{{ 'Save'|trans }}' data-action='reset-user-password'><i class='fas fa-floppy-disk color-white' aria-hidden='true'></i></span>
+                </div>
+              </div>
+              <h6>{{ 'Minimum password length'|trans }}</h6>
+              <p class='smallgray'>{{ App.Config.configArr.min_password_length }}</p>
+              <h6>{{ 'Password complexity requirement'|trans }}</h6>
+              <p class='smallgray'>{{ passwordComplexityArr[App.Config.configArr.password_complexity_requirement] }}</p>
+            </div>
+          </details>
+        {% endif %}
+
+        <hr>
+        <button type='button' class='btn btn-ghost' id='validateUserBtn' data-action='validate-user' data-userid='{{ user.userid }}'>
+          <i class='fas fa-fw fa-check mr-1'></i>{{ 'Validate user'|trans }}
+        </button>
+        {% if App.Users.userData.is_sysadmin %}
+          {# DISABLE 2FA: only for sysadmin if user has 2fa enabled #}
+          <button id='disable2faBtn' type='button' class='btn btn-ghost' data-action='remove-user-2fa'>
+            <i class='fas fa-fw fa-user-shield mr-1'></i>{{ 'Disable 2FA'|trans }}
+          </button>
+          <button type='button' class='btn btn-ghost hover-danger' id='deleteUserBtn' data-action='destroy-user' data-userid='{{ user.userid }}'>
+            <i class='fas fa-fw fa-trash-alt mr-1'></i>{{ 'Delete user'|trans }}
+          </button>
+        {% endif %}
+      </div>
+
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='button' class='btn btn-primary' id='editUserModalSaveBtn' data-action='save-user'>{{ 'Save'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>

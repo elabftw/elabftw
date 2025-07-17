@@ -74,7 +74,7 @@
 
           {# STATUS #}
           <select name='status' class='mr-1 form-control filterHelper filterAuto' aria-label='{{ 'Filter status'|trans }}'>
-            <option value='' data-action='clear'>{{ 'Filter status'|trans }}</option>
+            <option value='' class='dropdown-header' data-action='clear'>{{ 'Filter status'|trans }}</option>
             {% for status in statusArr %}
               <option value='{{ status.id }}'
                 {{- App.Request.query.get('status') == status.id ? ' selected' -}}
@@ -85,7 +85,7 @@
 
           {# OWNER filter #}
           <select name='owner' class='form-control filterHelper filterAuto' aria-label='{{ 'Filter owner'|trans }}'>
-            <option value='' data-action='clear'>{{ 'Filter owner'|trans }}</option>
+            <option value='' class='dropdown-header' data-action='clear'>{{ 'Filter owner'|trans }}</option>
             {% for user in usersArr %}
               <option value='{{ user.userid }}' {{- App.Request.query.get('owner') == user.userid ? ' selected' }}>{{ user.fullname }}</option>
             {% endfor %}
@@ -94,7 +94,7 @@
           {# SEARCH WITH TAG #}
           {# select is hidden to avoid showing the raw list and a layout change, it shows up with TomSelect #}
           <input placeholder='{{ 'Tags'|trans }}' id='tagFilterPlaceholder' class='form-control' aria-label='placeholder for tags input' />
-          {% if App.Config.configArr.debug -%}
+          {% if App.devMode -%}
             <!-- [html-validate-disable-block input-missing-label, prefer-native-element: suppress error from tom-select] -->
           {%- endif %}
           <select hidden
@@ -127,7 +127,7 @@
       {# METADATA SEARCH #}
       <div class='d-flex'>
         <div class='input-group d-flex flex-nowrap'>
-          {% if App.Config.configArr.debug -%}
+          {% if App.devMode -%}
             <!-- [html-validate-disable input-missing-label, prefer-native-element: suppress errors from tom-select] -->
           {%- endif %}
           <select
@@ -143,7 +143,7 @@
               <option value='{{ metakey }}' {{- metakey == App.Request.query.get('metakey') ? ' selected' }}>{{ metakey|raw }}</option>
             {% endfor %}
           </select>
-          {% if App.Config.configArr.debug -%}
+          {% if App.devMode -%}
             <!-- [html-validate-enable input-missing-label, prefer-native-element: suppress errors from tom-select] -->
           {%- endif %}
           <div class='input-group-text px-1 brl-none brr-none' style='margin-left:-1px;margin-right:-1px;'>:</div>
@@ -317,7 +317,7 @@
 
   {% set count = itemsArr|length %}
 
-  {% if App.Users.isAdmin and itemsCategoryArr|length == 0 %}
+  {% if App.Users.isAdmin and App.itemsCategoryArr|length == 0 %}
   {{ 'No resources categories have been defined for your team. Head to the %sAdmin Panel%s to add one.'|trans|format("<a href='resources-templates.php'>", "</a>")|raw|msg('warning', false) }}
   {% endif %}
   <div id='showModeContent'>
@@ -404,7 +404,7 @@
             <div class='input-group-append'>
               <select id='addLinkCatFilter' class='brl-none form-control' aria-label='{{ 'Limit category'|trans }}'>
                 <option selected value=''>{{ 'Any category'|trans }}</option>
-                {% for cat in itemsCategoryArr %}
+                {% for cat in App.itemsCategoryArr %}
                   <option value='{{ cat.id }}'>{{ cat.title }}</option>
                 {% endfor %}
               </select>

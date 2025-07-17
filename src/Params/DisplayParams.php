@@ -141,6 +141,8 @@ final class DisplayParams extends BaseQueryParams
         // cat is for backward compatibility
         $this->filterSql .= $this->getSqlIn('entity.category', $query->getString('cat'));
         $this->filterSql .= $this->getSqlIn('entity.category', $query->getString('category'));
+        // BOOKABLE
+        $this->filterSql .= $this->getSqlIn('entity.is_bookable', $query->getString('bookable'));
         // STATUS FILTER
         $this->filterSql .= $this->getSqlIn('entity.status', $query->getString('status'));
         // OWNER (USERID) FILTER

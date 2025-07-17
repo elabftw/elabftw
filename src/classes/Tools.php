@@ -21,6 +21,7 @@ use function htmlspecialchars;
 use function implode;
 use function pathinfo;
 use function random_bytes;
+use function mb_substr;
 use function sha1;
 use function str_split;
 use function trim;
@@ -101,19 +102,6 @@ final class Tools
         return $ext;
     }
 
-    /**
-     * Display a generic error message
-     *
-     * @param bool $permission show the out of reach message for permission message
-     */
-    public static function error(bool $permission = false): string
-    {
-        if ($permission) {
-            return _('This section is out of your reach!');
-        }
-        return _('An error occurred!');
-    }
-
     public static function getIdFilterSql(array $idArr): string
     {
         if (!empty($idArr)) {
@@ -127,7 +115,7 @@ final class Tools
         if (empty($elabid)) {
             return bin2hex(random_bytes(4));
         }
-        return substr(explode('-', $elabid)[1], 0, 8);
+        return mb_substr(explode('-', $elabid)[1], 0, 8);
     }
 
     public static function printArr(array $arr): string

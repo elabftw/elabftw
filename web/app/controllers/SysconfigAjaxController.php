@@ -85,13 +85,7 @@ try {
         $Db = Db::getConnection();
         $Db->q('DELETE FROM lockout_devices');
     }
-} catch (IllegalActionException $e) {
-    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
-    $Response->setData(array(
-        'res' => false,
-        'msg' => Tools::error(true),
-    ));
-} catch (ImproperActionException | UnauthorizedException $e) {
+} catch (IllegalActionException | ImproperActionException | UnauthorizedException $e) {
     $Response->setData(array(
         'res' => false,
         'msg' => $e->getMessage(),

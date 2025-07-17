@@ -47,7 +47,7 @@
           <p class='smallgray'>{{ 'Selecting a team here will give access to all members of this team.'|trans }}</p>
           {% include 'filter-input-snippet.html' with {'target': identifier ~ '_select_teams', targetType: 'option'} %}
           <select id='{{ identifier }}_select_teams' multiple class='form-control' autocomplete='off'>
-            {% for team in teamsArr|filter(t => t.visible == '1') %}
+            {% for team in teamsArr %}
               <option value='team:{{ team.id }}'
               {{ permissionsJson|isInJsonArray('teams', team.id) ? ' selected' }}
               >{{ 'Team'|trans }} - {{ team.name }}</option>

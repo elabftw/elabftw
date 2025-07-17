@@ -15,7 +15,7 @@ namespace Elabftw\Auth;
 use DateTimeImmutable;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\AuthResponse;
-use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\Messages;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
@@ -141,9 +141,9 @@ final class Saml implements AuthInterface
 
         // Display the errors if we are in debug mode
         if (!empty($errors)) {
-            $error = Tools::error();
+            $error = Messages::GenericError->toHuman();
             // get more verbose if debug mode is active
-            if ($this->configArr['debug']) {
+            if ($this->configArr['saml_debug']) {
                 $error = implode(', ', $errors);
             }
             throw new UnauthorizedException($error);

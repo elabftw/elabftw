@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\AuditEvent\PasswordResetRequested;
+use Elabftw\Enums\Messages;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -123,7 +124,7 @@ try {
     $App->Session->getFlashBag()->add('ok', $e->getMessage());
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
-    $App->Session->getFlashBag()->add('ko', Tools::error(true));
+    $App->Session->getFlashBag()->add('ko', Messages::InsufficientPermissions->toHuman());
 } catch (ImproperActionException $e) {
     // show message to user and redirect to the change pass page
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
@@ -133,7 +134,7 @@ try {
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
 } catch (Exception $e) {
     $App->Log->warning('Reset password failed attempt', array(array('ip' => $App->Request->server->get('REMOTE_ADDR')), array('exception' => $e)));
-    $App->Session->getFlashBag()->add('ko', Tools::error());
+    $App->Session->getFlashBag()->add('ko', Messages::GenericError->toHuman());
 } finally {
     $Response->send();
 }

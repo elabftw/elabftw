@@ -107,7 +107,7 @@
           <div class='input-group'>
             <input class='form-control' type='password' minlength='{{ App.Config.configArr.min_password_length }}' autocomplete='off' id='sigPassphraseInput' />
             <div class='input-group-append'>
-              <span class='btn btn-light input-border' tabindex='-1' data-action='toggle-password' data-target='sigPassphraseInput'><i class='fas fa-eye' aria-hidden='true'></i></span>
+              <span class='btn btn-light input-border' tabindex='-1' data-action='toggle-password'><i class='fas fa-eye' aria-hidden='true'></i></span>
             </div>
           </div>
         {% endif %}
@@ -164,7 +164,7 @@
     <i class='fas fa-arrow-left fa-fw'></i>
   </a>
   {# for templates: create from button #}
-  {% if Entity.entityType.value == 'experiments_templates' %}
+  {% if Entity.entityType.value == 'experiments_templates' or Entity.entityType.value == 'items_types' %}
     <a data-action='create-entity' data-type='experiments' data-tplid='{{ Entity.id }}' href='#' class='btn hl-hover-gray p-2 lh-normal border-0' title='{{ 'Create experiment from template'|trans }}' aria-label='{{ 'Create experiment from template'|trans }}'>
       <i class='color-blue fas fa-file-circle-plus fa-fw'></i>
     </a>

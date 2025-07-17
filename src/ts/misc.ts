@@ -66,7 +66,7 @@ function triggerHandler(event: Event, el: HTMLInputElement): void {
   if (!userid) {
     userid = el.dataset.userid;
   }
-  // keep original value to revert in case we need to
+  // store original value to revert the permission switches
   const originalValue = value;
 
   // CUSTOM ACTIONS
@@ -91,8 +91,7 @@ function triggerHandler(event: Event, el: HTMLInputElement): void {
     }
   }).catch(error => {
     // handle 422: UnprocessableContentException errors
-    const prefix = '422';
-    if (error.message.startsWith(prefix)) {
+    if (error.message.startsWith('422')) {
       if (el.type === 'checkbox') {
         el.checked = Boolean(originalValue);
         return;

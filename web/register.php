@@ -14,6 +14,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Exceptions\AppException;
+use Elabftw\Exceptions\DemoModeException;
 use Elabftw\Exceptions\ImproperActionException;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,6 +40,10 @@ try {
     // local register might be disabled
     if ($App->Config->configArr['local_register'] === '0') {
         throw new ImproperActionException(_('No local account creation is allowed!'));
+    }
+    // or we might be in demo mode
+    if ($App->demoMode) {
+        throw new DemoModeException();
     }
 
     $passwordComplexity = PasswordComplexity::from((int) $App->Config->configArr['password_complexity_requirement']);

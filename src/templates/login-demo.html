@@ -1,0 +1,23 @@
+{% macro loginButton(email, description, csrf) %}
+    <form method='post' action='app/controllers/LoginController.php'>
+      <input type='hidden' name='auth_type' value='demo'>
+      {{ csrf|csrf }}
+      <input type='hidden' name='email' value='{{ email }}'>
+      <button class='btn btn-primary my-2' type='submit'>{{ description|trans }}</button>
+    </form>
+{% endmacro %}
+<h1>{{ 'Welcome to the demo 😀'|trans }}</h1>
+<h2>{{ 'Select a user below'|trans }}</h2>
+<br>
+  <div class='col-md-3 mx-auto'>
+      <div class='d-flex flex-column align-self-start'>
+        {% set csrf = App.Session.get('csrf') %}
+        {{ _self.loginButton('admin1@demo.elabftw.net', 'Admin in Biology team', csrf) }}
+        {{ _self.loginButton('user1@demo.elabftw.net', 'User in Biology team', csrf) }}
+        <hr>
+        {{ _self.loginButton('admin2@demo.elabftw.net', 'Admin in Chemistry team', csrf) }}
+        {{ _self.loginButton('user2@demo.elabftw.net', 'User in Chemistry team', csrf) }}
+      </div>
+    </form>
+  </div>
+</form>

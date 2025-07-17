@@ -18,6 +18,7 @@ enum Messages
     case DatabaseError;
     case GenericError;
     case InsufficientPermissions;
+    case DemoMode;
 
     public function toHttpCode(): int
     {
@@ -26,6 +27,7 @@ enum Messages
             $this::DatabaseError => 500,
             $this::GenericError => 400,
             $this::InsufficientPermissions => 403,
+            $this::DemoMode => 403,
         };
     }
 
@@ -36,6 +38,7 @@ enum Messages
             $this::DatabaseError => _('Sorry, there was an issue executing your request. Please try again later.'),
             $this::GenericError => _('An error occurred!'),
             $this::InsufficientPermissions => _('Sorry, you are not allowed to perform that action.'),
+            $this::DemoMode => _('Sorry, this action is disabled in demo mode.'),
         };
     }
 }

@@ -72,6 +72,7 @@ final class App
         public Logger $Log,
         public Users $Users,
         public bool $devMode = false,
+        public bool $demoMode = false,
     ) {}
 
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-//

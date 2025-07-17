@@ -18,6 +18,7 @@ use Elabftw\Elabftw\Sql;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\FileFromString;
+use Elabftw\Enums\Usergroup;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Compounds;
 use Elabftw\Models\Config;
@@ -120,12 +121,12 @@ final class Populate
             // all users have the same password to make switching accounts easier
             // if the password is provided in the config file, it'll be used instead for that user
             foreach ($team['users'] ?? array() as $user) {
-                $this->createUser($teamid, $user);
+                $this->createUser($teamid, $user ?? array());
             }
             if (array_key_exists('random_users', $team) && !$this->fast) {
                 $iter = (int) $team['random_users'];
                 for ($i = 0; $i < $iter; $i++) {
-                    $this->createUser($teamid);
+                    $this->createUser($teamid, array());
                 }
             }
 
@@ -423,12 +424,21 @@ final class Populate
     }
 
     // create a user based on options provided in yaml file
-    public function createUser(int $team, ?array $user = null): void
+    private function createUser(int $team, array $user): void
     {
         $firstname = $user['firstname'] ?? $this->faker->firstName();
         $lastname = $user['lastname'] ?? $this->faker->lastName();
+        $usergroup = null;
+        if (array_key_exists('usergroup', $user)) {
+            $usergroup = Usergroup::tryFrom($user['usergroup'] ?? Usergroup::User->value);
+        }
         $orgid = $user['orgid'] ?? null;
-        $passwordHash = (new UserParams('password', $user['password'] ?? self::DEFAULT_PASSWORD))->getStringContent();
+        $password = $user['password'] ?? self::DEFAULT_PASSWORD;
+        // special case for "random" value
+        if ($password === 'random') {
+            $password = bin2hex(random_bytes(24));
+        }
+        $passwordHash = new UserParams('password', $password)->getStringContent();
         // use yopmail.com instead of safeEmail() so we don't hard bounce on example.tld domains when testing mass emails
         $email = $user['email'] ?? sprintf('%s-%d@yopmail.com', $this->faker->word, $this->faker->randomNumber(8));
 
@@ -439,7 +449,7 @@ final class Populate
             firstname: $firstname,
             lastname: $lastname,
             passwordHash: $passwordHash,
-            usergroup: null,
+            usergroup: $usergroup,
             automaticValidationEnabled: true,
             alertAdmin: false,
             validUntil: null,
@@ -468,7 +478,7 @@ final class Populate
         if (!$this->fast) {
             $this->generate(new Items($Users));
         }
-        if (array_key_exists('api_key', $user ?? array())) {
+        if (array_key_exists('api_key', $user)) {
             $ApiKeys = new ApiKeys($Users);
             $ApiKeys->createKnown($user['api_key'] ?? 'yep');
         }

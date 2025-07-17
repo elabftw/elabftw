@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Messages;
+use Elabftw\Exceptions\DemoModeException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Params\UserParams;
@@ -31,6 +32,10 @@ try {
     // check for disabled local register
     if ($App->Config->configArr['local_register'] === '0') {
         throw new ImproperActionException(_('Registration is disabled.'));
+    }
+    // or we might be in demo mode
+    if ($App->demoMode) {
+        throw new DemoModeException();
     }
 
     // Stop bot registration by checking if the (invisible to humans) bot input is filled

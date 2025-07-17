@@ -53,6 +53,10 @@ class Email
             $this->Log->warning('', array('Warning' => 'Sending emails is not configured!'));
             return false;
         }
+        // completely disable sending emails in demo mode
+        if (Config::boolFromEnv('DEMO_MODE')) {
+            return false;
+        }
         try {
             $this->Mailer->send($email);
         } catch (TransportExceptionInterface $e) {

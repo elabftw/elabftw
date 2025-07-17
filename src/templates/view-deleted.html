@@ -62,8 +62,8 @@
   {% include 'metadata-view.html' %}
 
   <div class='entity-deleted-overlay'>
-    <p>This entry has been deleted.</p>
-    <button data-action='patch-selected-entities' data-what='restore' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Restore'|trans }}</button>
+    <p>{{ 'This entry has been deleted.'|trans }}</p>
+    <button data-action='restore-entity' type='button' class='btn btn-primary mb-2' data-id='{{ Entity.entityData.id }}'>{{ 'Restore entry'|trans }}</button>
     {# BACK TO LINK #}
     {% if App.Session.has('lastquery') %}
       {% set lastquery = App.Session.get('lastquery') %}

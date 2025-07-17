@@ -16,11 +16,6 @@
   {{ 'This entry is archived: it will not appear in the listings by default.'|trans|msg('ok', false) }}
 {% endif %}
 </div>
-<div id='isDeletedDiv'>
-  {% if Entity.entityData.state == enum('Elabftw\\Enums\\State').Deleted.value %}
-    {{ 'This entry is deleted: it will not appear in the listings by default.'|trans|msg('ok', false) }}
-  {% endif %}
-</div>
 
 {# REQUEST ACTIONS #}
 <div id='requestActionsDiv'>

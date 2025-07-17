@@ -63,6 +63,12 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(1, $exp['locked']);
         $exp = $this->Experiments->toggleLock();
         $this->assertEquals(0, $exp['locked']);
+        // test delete
+        $exp = $this->Experiments->patch(Action::Destroy, array());
+        $this->assertEquals(State::Deleted->value, $exp['state']);
+        // test restore
+        $exp = $this->Experiments->patch(Action::Restore, array());
+        $this->assertEquals(State::Normal->value, $exp['state']);
         $this->Experiments->destroy();
         $Templates = new Templates($this->Users);
         $Templates->create(title: 'my template');

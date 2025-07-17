@@ -90,15 +90,12 @@ function triggerHandler(event: Event, el: HTMLInputElement): void {
       handleReloads(el.dataset.reload);
     }
   }).catch(error => {
-    // handle 422: UnprocessableContentException errors
-    if (error.message.startsWith('422')) {
-      if (el.type === 'checkbox') {
-        el.checked = Boolean(originalValue);
-        return;
-      }
-      el.value = originalValue;
+    // restore the original value for checkboxes
+    if (el.type === 'checkbox') {
+      el.checked = Boolean(originalValue);
       return;
     }
+    el.value = originalValue;
     if (el.dataset.target === Target.Customid && error.message === i18next.t('custom-id-in-use')) {
       el.classList.add('is-invalid');
     }

@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Defuse\Crypto\Crypto;
+use Defuse\Crypto\Key;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
@@ -24,17 +26,16 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->Config = Config::getConfig();
-        // remove sensitive/conflicting values
-        // fixes [Elabftw\Exceptions\DatabaseErrorException] Data too long for column 'conf_value' at row 1
-        $this->setupValues = array_diff_key(
-            $this->Config->configArr,
-            array_flip(array(
-                'smtp_password',
-                'ldap_password',
-                'ts_password',
-                'remote_dir_config',
-            ))
-        );
+        // decrypt encrypted keys from config
+        $encryptedColumns = array('smtp_password', 'ldap_password', 'ts_password', 'remote_dir_config');
+        $secretKey = Config::fromEnv('SECRET_KEY');
+        foreach ($encryptedColumns as $column) {
+            if (!empty($this->Config->configArr[$column])) {
+                $this->Config->configArr[$column] = Crypto::decrypt($this->Config->configArr[$column], Key::loadFromAsciiSafeString($secretKey));
+            }
+        }
+
+        $this->setupValues = $this->Config->configArr;
     }
 
     protected function tearDown(): void

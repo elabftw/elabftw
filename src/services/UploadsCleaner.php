@@ -18,7 +18,7 @@ use Override;
 
 use function basename;
 use function count;
-use function substr;
+use function mb_substr;
 
 /**
  * This is used to find out if there are untracked files that should have been deleted
@@ -71,11 +71,11 @@ final class UploadsCleaner implements CleanerInterface
     private function isInDb(string $filePath): bool
     {
         // don't delete the thumbnails! They are not in the database but still useful!
-        if (substr($filePath, -7) === '_th.jpg') {
+        if (mb_substr($filePath, -7) === '_th.jpg') {
             return true;
         }
         $longName = basename($filePath);
-        $folder = substr($longName, 0, 2);
+        $folder = mb_substr($longName, 0, 2);
         $longNameWithFolder = $folder . '/' . $longName;
         $Db = Db::getConnection();
         $sql = 'SELECT long_name FROM uploads WHERE long_name = :long_name OR long_name = :long_name_with_folder';

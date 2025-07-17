@@ -26,30 +26,36 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Changelog;
+use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\ExtraFieldsKeys;
 use Elabftw\Models\FavTags;
+use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\ProcurementRequests;
 use Elabftw\Models\RequestActions;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Models\TeamGroups;
-use Elabftw\Models\Teams;
 use Elabftw\Models\TeamTags;
 use Elabftw\Models\Templates;
 use Elabftw\Models\UserRequestActions;
-use Elabftw\Models\Users;
 use Elabftw\Params\DisplayParams;
 use Elabftw\Params\BaseQueryParams;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Override;
+use Symfony\Component\HttpFoundation\InputBag;
 
 /**
  * For displaying an entity in show, view or edit mode
  */
 abstract class AbstractEntityController implements ControllerInterface
 {
+    // is the main category of current entity type, can be experimentsCategoryArr or itemsCategoryArr
     protected array $categoryArr = array();
+
+    protected array $experimentsStatusArr = array();
+
+    protected array $itemsStatusArr = array();
 
     protected array $statusArr = array();
 
@@ -81,6 +87,10 @@ abstract class AbstractEntityController implements ControllerInterface
             $Templates = new Templates($this->Entity->Users);
             $this->templatesArr = $Templates->Pins->readAll();
         }
+        $ExperimentsStatus = new ExperimentsStatus($App->Teams);
+        $this->experimentsStatusArr = $ExperimentsStatus->readAll($ExperimentsStatus->getQueryParams(new InputBag(array('limit' => 9999))));
+        $ItemsStatus = new ItemsStatus($this->App->Teams);
+        $this->itemsStatusArr = $ItemsStatus->readAll($ItemsStatus->getQueryParams(new InputBag(array('limit' => 9999))));
     }
 
     #[Override]
@@ -144,10 +154,6 @@ abstract class AbstractEntityController implements ControllerInterface
         $FavTags = new FavTags($this->App->Users);
         $favTagsArr = $FavTags->readAll();
 
-        // the items categoryArr for add link input
-        $ItemsTypes = new ItemsTypes($this->App->Users);
-        $itemsCategoryArr = $ItemsTypes->readAll();
-
         $template = 'show.html';
         $UserRequestActions = new UserRequestActions($this->App->Users);
 
@@ -156,7 +162,6 @@ abstract class AbstractEntityController implements ControllerInterface
             'Entity' => $this->Entity,
             'categoryArr' => $this->categoryArr,
             'statusArr' => $this->statusArr,
-            'itemsCategoryArr' => $itemsCategoryArr,
             'favTagsArr' => $favTagsArr,
             'itemsArr' => $itemsArr,
             'pageTitle' => $this->getPageTitle(),
@@ -188,13 +193,8 @@ abstract class AbstractEntityController implements ControllerInterface
         if ($response = $this->gatekeepDeleted()) {
             return $response;
         }
-        // the items categoryArr for add link input
-        $ItemsTypes = new ItemsTypes($this->App->Users);
-        $itemsCategoryArr = $ItemsTypes->readAll();
-
-        $Teams = new Teams($this->Entity->Users);
         $RequestActions = new RequestActions($this->App->Users, $this->Entity);
-        $ProcurementRequests = new ProcurementRequests($Teams);
+        $ProcurementRequests = new ProcurementRequests($this->App->Teams);
 
         // the mode parameter is for the uploads tpl
         $renderArr = array(
@@ -206,11 +206,10 @@ abstract class AbstractEntityController implements ControllerInterface
             'displayMainText' => (new Metadata($this->Entity->entityData['metadata']))->getDisplayMainText(),
             'entityProcurementRequestsArr' => $ProcurementRequests->readActiveForEntity($this->Entity->id ?? 0),
             'entityRequestActionsArr' => $RequestActions->readAllFull(),
-            'itemsCategoryArr' => $itemsCategoryArr,
             'pageTitle' => $this->getPageTitle(),
             'mode' => 'view',
             'hideTitle' => true,
-            'teamsArr' => $Teams->readAll(),
+            'teamsArr' => $this->App->Teams->readAllVisible(),
             'scopedTeamgroupsArr' => $this->scopedTeamgroupsArr,
             'templatesArr' => $this->templatesArr,
             'timestamperFullname' => $this->Entity->getTimestamperFullname(),
@@ -265,13 +264,11 @@ abstract class AbstractEntityController implements ControllerInterface
      */
     protected function edit(): Response
     {
-        // check permissions
-        $this->Entity->canOrExplode('write');
         // check if deleted
         if ($response = $this->gatekeepDeleted()) {
             return $response;
         }
-        // exclusive edit mode
+        // redirect to view mode if we don't have edit access
         if ($this->Entity->isReadOnly) {
             if (!isset($this->Entity->id)) {
                 throw new ResourceNotFoundException();
@@ -286,22 +283,10 @@ abstract class AbstractEntityController implements ControllerInterface
         // all entities are in exclusive edit mode as of march 2025. See #5568
         $this->Entity->ExclusiveEditMode->activate();
 
-        // last modifier name
-        $lastModifierFullname = '';
-        if ($this->Entity->entityData['lastchangeby'] !== null) {
-            $lastModifier = new Users($this->Entity->entityData['lastchangeby']);
-            $lastModifierFullname = $lastModifier->userData['fullname'];
-        }
-
-        // the items categoryArr for add link input
-        $ItemsTypes = new ItemsTypes($this->App->Users);
-        $itemsCategoryArr = $ItemsTypes->readAll();
-
-        $Teams = new Teams($this->Entity->Users);
         $TeamTags = new TeamTags($this->App->Users);
 
         $RequestActions = new RequestActions($this->App->Users, $this->Entity);
-        $ProcurementRequests = new ProcurementRequests($Teams);
+        $ProcurementRequests = new ProcurementRequests($this->App->Teams);
 
         $Metadata = new Metadata($this->Entity->entityData['metadata']);
         $baseQueryParams = new BaseQueryParams($this->App->Request->query);
@@ -310,20 +295,16 @@ abstract class AbstractEntityController implements ControllerInterface
             'classificationArr' => $this->classificationArr,
             'currencyArr' => $this->currencyArr,
             'Entity' => $this->Entity,
-            // TODO ideally we only send entityData, not both Entity and entityData: check if Entity can be removed
-            'entityData' => $this->Entity->entityData,
             'entityProcurementRequestsArr' => $ProcurementRequests->readActiveForEntity($this->Entity->id ?? 0),
             'entityRequestActionsArr' => $RequestActions->readAllFull(),
             // Do we display the main body of a concrete entity? Default is true
             'displayMainText' => $Metadata->getDisplayMainText(),
             'hideTitle' => true,
-            'itemsCategoryArr' => $itemsCategoryArr,
-            'lastModifierFullname' => $lastModifierFullname,
             'metadataGroups' => $Metadata->getGroups(),
             'mode' => 'edit',
             'pageTitle' => $this->getPageTitle(),
             'statusArr' => $this->statusArr,
-            'teamsArr' => $Teams->readAll($baseQueryParams),
+            'teamsArr' => $this->App->Teams->readAllVisible(),
             'teamTagsArr' => $TeamTags->readAll($baseQueryParams),
             'scopedTeamgroupsArr' => $this->scopedTeamgroupsArr,
             'meaningArr' => $this->meaningArr,

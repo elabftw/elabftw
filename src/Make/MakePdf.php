@@ -256,7 +256,7 @@ class MakePdf extends AbstractMakePdf
         );
 
         $Config = Config::getConfig();
-        return $this->getTwig((bool) $Config->configArr['debug'])->render('pdf.html', $renderArr);
+        return $this->getTwig($Config::boolFromEnv('DEV_MODE'))->render('pdf.html', $renderArr);
     }
 
     /**

@@ -497,31 +497,6 @@ CREATE TABLE `favtags2users` (
   PRIMARY KEY (`users_id`, `tags_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
---
--- Table structure for table `groups`
---
-
-CREATE TABLE `groups` (
-  `id` tinyint UNSIGNED NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  `is_sysadmin` tinyint UNSIGNED NOT NULL,
-  `is_admin` tinyint UNSIGNED NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
-
---
--- RELATIONSHIPS FOR TABLE `groups`:
---
-
---
--- Dumping data for table `groups`
---
-
-INSERT INTO `groups` (`id`, `name`, `is_sysadmin`, `is_admin`) VALUES
-(1, 'Sysadmins', 1, '1'),
-(2, 'Admins', 0, '1'),
-(4, 'Users', 0, '0');
-
 -- --------------------------------------------------------
 
 --
@@ -1080,6 +1055,10 @@ CREATE TABLE `teams` (
   `common_template_md` text,
   `user_create_tag` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `force_exp_tpl` tinyint UNSIGNED NOT NULL DEFAULT 0,
+  `users_canwrite_experiments_categories` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
+  `users_canwrite_experiments_status` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
+  `users_canwrite_resources_categories` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
+  `users_canwrite_resources_status` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `orgid` varchar(255) NULL DEFAULT NULL,
   `visible` tinyint UNSIGNED NOT NULL DEFAULT 1,
@@ -1241,7 +1220,6 @@ CREATE TABLE `users` (
   `inc_files_pdf` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `append_pdfs` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `disable_shortcuts` tinyint UNSIGNED NOT NULL DEFAULT 0,
-  `archived` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `pdf_format` varchar(255) NOT NULL DEFAULT 'A4',
   `display_mode` VARCHAR(2) NOT NULL DEFAULT 'it',
   `last_login` DATETIME NULL DEFAULT NULL,
@@ -1264,6 +1242,7 @@ CREATE TABLE `users` (
   `always_show_owned` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `show_weekends` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `scheduler_layout` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `can_manage_users2teams` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
@@ -1295,8 +1274,9 @@ CREATE TABLE `users2team_groups` (
 CREATE TABLE `users2teams` (
   `users_id` int(10) UNSIGNED NOT NULL,
   `teams_id` int(10) UNSIGNED NOT NULL,
-  `groups_id` TINYINT UNSIGNED NOT NULL DEFAULT 4,
   `is_owner` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_admin` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_archived` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`users_id`, `teams_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 --
@@ -1305,8 +1285,6 @@ CREATE TABLE `users2teams` (
 --       `teams` -> `id`
 --   `users_id`
 --       `users` -> `userid`
---   `groups_id`
---       `groups` -> `id`
 --
 
 -- --------------------------------------------------------
@@ -2120,12 +2098,10 @@ ALTER TABLE `experiments_templates_edit_mode`
 --
 ALTER TABLE `users2teams`
   ADD KEY `fk_users2teams_teams_id` (`teams_id`),
-  ADD KEY `fk_users2teams_users_id` (`users_id`),
-  ADD KEY `fk_users2teams_groups_id` (`groups_id`);
+  ADD KEY `fk_users2teams_users_id` (`users_id`);
 ALTER TABLE `users2teams`
   ADD CONSTRAINT `fk_users2teams_teams_id` FOREIGN KEY (`teams_id`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_users2teams_users_id` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_users2teams_groups_id` FOREIGN KEY (`groups_id`) REFERENCES `groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_users2teams_users_id` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Indexes and Constraints for table `users2team_groups`

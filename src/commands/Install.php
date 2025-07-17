@@ -16,7 +16,6 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Elabftw\Tools;
-use Elabftw\Enums\Action;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Config;
 use Elabftw\Models\Teams;
@@ -94,9 +93,8 @@ final class Install extends Command
         (new Sql($sqlFs))->execFile('structure.sql');
         $output->writeln('<info>✓ Installation successful! Now creating the first team...</info>');
         // now create the default team
-        $Teams = new Teams(new Users());
-        $Teams->bypassWritePermission = true;
-        $Teams->postAction(Action::Create, array('name' => $input->getOption('team') ?? 'Default team'));
+        $Teams = new Teams(new Users(), bypassWritePermission: true);
+        $Teams->create($input->getOption('team') ?? 'Default team');
         if ($input->getOption('email')) {
             $output->writeln('<info>→ Creating Sysadmin user...</info>');
             $Users = new Users();

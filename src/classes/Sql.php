@@ -18,6 +18,7 @@ use PDOException;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use function array_filter;
+use function array_merge;
 use function explode;
 use function str_ends_with;
 use function str_repeat;
@@ -30,6 +31,8 @@ use function trim;
  */
 final class Sql
 {
+    private const string SQL_REGEX = '/^\s*(?:--|#|\/\*(?!!).*\*\/)/';
+
     private Db $Db;
 
     public function __construct(private FilesystemOperator $filesystem, private ?OutputInterface $output = null)
@@ -95,9 +98,20 @@ final class Sql
         $content = $this->filesystem->read($filename);
         $linesArr = explode(PHP_EOL, $content);
         // now filter out the uninteresting lines
-        return array_filter(
+        $lines = array_filter(
             $linesArr,
-            fn(string $v): bool => !empty($v) && !preg_match('/^\s*(?:--|#|\/\*(?!!).*\*\/)/', $v),
+            fn(string $v): bool => !empty($v) && !preg_match(self::SQL_REGEX, $v),
         );
+        // add the procedures on top
+        if ($this->filesystem->fileExists('procedures.sql')) {
+            $proceduresRaw = $this->filesystem->read('procedures.sql');
+            $proceduresArr = explode(PHP_EOL, $proceduresRaw);
+            $procedures = array_filter(
+                $proceduresArr,
+                fn(string $v): bool => !empty($v) && !preg_match(self::SQL_REGEX, $v),
+            );
+            $lines = array_merge($procedures, $lines);
+        }
+        return $lines;
     }
 }

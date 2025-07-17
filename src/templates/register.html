@@ -37,14 +37,14 @@
       <div class='form-group mx-auto col-md-4'>
         {# TEAM #}
         <div class='row'>
-          {% if App.Config.configArr.debug -%}
+          {% if App.devMode -%}
             <!-- [html-validate-disable-block input-missing-label, prefer-native-element: suppress errors from tom-select] -->
           {%- endif %}
           <label for='team'>{{ 'Team'|trans }}</label>
           <select name='team' class='form-control' id='team' required autocomplete='off' placeholder='{{ 'Select a team'|trans }}' aria-label='{{ 'Team'|trans }}'>
             <option value='' selected disabled>{{ 'Select a team'|trans }}</option>
             {# on this page, only show the visible teams #}
-            {% for team in teamsArr|filter(v => v.visible == 1) %}
+            {% for team in teamsArr %}
               <option value='{{ team.id }}' {{ App.Request.query.get('team') == team.id ? 'selected' }}>{{ team.name }}</option>
             {% endfor %}
           </select>
@@ -68,7 +68,7 @@
           <div class='input-group'>
             <input name='password' type='password' class='form-control' minlength='{{ App.Config.configArr.min_password_length }}' title='{{ 'Minimum password length: %d.'|trans|format(App.Config.configArr.min_password_length) }} {{ passwordInputHelp|e('html_attr') }}' pattern='{{ passwordInputPattern|e('html_attr') }}' id='password' autocomplete='new-password' required />
             <div class='input-group-append'>
-              <span class='btn btn-light input-border' tabindex='-1' data-action='toggle-password' data-target='password'><i class='fas fa-eye' aria-hidden='true'></i></span>
+              <span class='btn btn-light input-border' tabindex='-1' data-action='toggle-password'><i class='fas fa-eye' aria-hidden='true'></i></span>
             </div>
           </div>
         </div>

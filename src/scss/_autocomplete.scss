@@ -6,6 +6,8 @@
  * @package elabftw
  */
 
+@use './variables';
+
 .rte-autocomplete {
   border: 1px solid rgba(0, 0, 0, 0.2);
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
@@ -45,7 +47,7 @@
     /* stylelint-disable-next-line selector-no-qualifying-type */
     &.lds-dual-ring::after {
       border: 4px solid currentColor;
-      border-color: $elabblue transparent $elabblue transparent;
+      border-color: variables.$elabblue transparent variables.$elabblue transparent;
       height: 20px;
       margin-left: auto;
       margin-right: auto;
@@ -63,8 +65,8 @@
     > a,
     > a:hover,
     > a:focus {
-      background-color: #e9ecef;
-      color: #16181b;
+      background-color: variables.$superlight;
+      color: variables.$mediumstrong;
       outline: 0;
       text-decoration: none;
     }

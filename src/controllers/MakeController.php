@@ -160,12 +160,7 @@ final class MakeController extends AbstractController
             if (!$this->requester->isAdminOf($this->Request->query->getInt('owner'))) {
                 throw new IllegalActionException('User tried to export another user but is not admin.');
             }
-            // being admin is good, but we also need to be in the same team as the requested user
-            $Teams = new Teams($this->requester);
             $targetUserid = $this->Request->query->getInt('owner');
-            if (!$Teams->hasCommonTeamWithCurrent($targetUserid, $this->requester->userData['team'])) {
-                throw new IllegalActionException('User tried to export another user but is not in same team.');
-            }
             $entity = $entityType->toInstance($this->requester);
             $idArr = $entity->getIdFromUser($targetUserid);
         } elseif ($this->Request->query->has('id')) {

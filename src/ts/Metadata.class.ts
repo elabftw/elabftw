@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import i18next from 'i18next';
+import i18next from './i18n';
 import { Api } from './Apiv2.class';
 import { Action, Entity, EntityType } from './interfaces';
 import JsonEditorHelper from './JsonEditorHelper.class';

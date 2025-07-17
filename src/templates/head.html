@@ -60,27 +60,43 @@
             <a aria-label='{{ 'Go to dashboard'|trans }}' class='nav-item nav-link {{ scriptName == 'dashboard.php' ? 'active' }}'
                 href='dashboard.php' title='{{ 'Go to dashboard'|trans }}'><i class='fas fa-house'></i></a>
             <div class='nav-item dropdown'>
-              {% if App.Config.configArr.debug -%}
+              {% if App.devMode -%}
                 <!-- [html-validate-disable-next prefer-native-element: using a button here will mess up the navbar] -->
               {%- endif %}
               <div class='nav-link dropdown-toggle {{ scriptName == 'experiments.php' or scriptName == 'templates.php' ? 'active' }}' role='button' data-toggle='dropdown' aria-expanded='false'>
               {% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}
               </div>
               <div class='dropdown-menu'>
-                <a class='dropdown-item {{ scriptName == 'experiments.php' ? 'active' }}' href='experiments.php'>{{ 'Experiments'|trans }}</a>
+                <a class='dropdown-item {{ scriptName == 'experiments.php' and not App.Request.query.all ? 'active' }}' href='experiments.php'>{{ 'All experiments'|trans }}</a>
+                <a class='dropdown-item {{ scriptName == 'experiments.php' and App.Request.query.get('scope') == 1 ? 'active' }}' href='experiments.php?scope=1'>{{ 'My experiments'|trans }}</a>
                 <a class='dropdown-item {{ scriptName == 'templates.php' ? 'active' }}' href='templates.php'>{{ 'Templates'|trans }}</a>
+                <div class='dropdown-divider'></div>
+                {% for entity in App.experimentsCategoryArr %}
+                <a class='dropdown-item {{ scriptName == 'experiments.php' and App.Request.query.get('category') == entity.id ? 'active' }}' href='experiments.php?category={{ entity.id }}'><span class='round-spot mr-1' style='background-color: #{{ entity.color }}'></span>{{ entity.title }}</a>
+                {% endfor %}
+                <div class='dropdown-divider'></div>
+                <a class='dropdown-item {{ scriptName == 'experiments-categories.php' ? 'active' }} {{ not App.Teams.teamArr.users_canwrite_experiments_categories and not App.Users.isAdmin ? 'disabled' }}' href='experiments-categories.php'>{{ 'Experiments categories'|trans }}</a>
+                <a class='dropdown-item {{ scriptName == 'experiments-status.php' ? 'active' }} {{ not App.Teams.teamArr.users_canwrite_experiments_status and not App.Users.isAdmin ? 'disabled' }}' href='experiments-status.php'>{{ 'Experiments status'|trans }}</a>
               </div>
             </div>
             <div class='nav-item dropdown'>
-              {% if App.Config.configArr.debug -%}
+              {% if App.devMode -%}
                 <!-- [html-validate-disable-next prefer-native-element: using a button here will mess up the navbar] -->
               {%- endif %}
               <div class='nav-link dropdown-toggle {{ scriptName == 'database.php' or scriptName == 'resources-templates.php' ? 'active' }}' role='button' data-toggle='dropdown' aria-expanded='false'>
                 {{ 'Resources'|trans }}
               </div>
               <div class='dropdown-menu'>
-                <a class='dropdown-item {{ scriptName == 'database.php' ? 'active' }}' href='database.php'>{{ 'Resources'|trans }}</a>
-                <a class='dropdown-item {{ scriptName == 'resources-templates.php' ? 'active' }}' href='resources-templates.php'>{{ 'Templates'|trans }}</a>
+                <a class='dropdown-item {{ scriptName == 'database.php' and not App.Request.query.all ? 'active' }}' href='database.php'>{{ 'All resources'|trans }}</a>
+                <a class='dropdown-item {{ scriptName == 'database.php' and App.Request.query.get('scope') == 1 ? 'active' }}' href='database.php?scope=1'>{{ 'My resources'|trans }}</a>
+                <a class='dropdown-item {{ scriptName == 'database.php' and App.Request.query.get('bookable') == 1 ? 'active' }}' href='database.php?bookable=1'>{{ 'Bookable resources'|trans }}</a>
+                <div class='dropdown-divider'></div>
+                {% for entity in App.itemsCategoryArr %}
+                  <a class='dropdown-item {{ scriptName == 'database.php' and App.Request.query.get('category') == entity.id ? 'active' }}' href='database.php?category={{ entity.id }}'><span class='round-spot mr-1' style='background-color: #{{ entity.color }}'></span>{{ entity.title }}</a>
+                {% endfor %}
+                <div class='dropdown-divider'></div>
+                <a class='dropdown-item {{ scriptName == 'resources-templates.php' ? 'active' }} {{ not App.Teams.teamArr.users_canwrite_resources_categories and not App.Users.isAdmin ? 'disabled' }}' href='resources-templates.php'>{{ 'Resources templates'|trans }}</a>
+                <a class='dropdown-item {{ scriptName == 'resources-status.php' ? 'active' }} {{ not App.Teams.teamArr.users_canwrite_resources_status and not App.Users.isAdmin ? 'disabled' }}' href='resources-status.php'>{{ 'Resources status'|trans }}</a>
               </div>
             </div>
             <a class='nav-item nav-link {{ scriptName == 'scheduler.php' ? 'active' }}'
@@ -92,7 +108,7 @@
             {% endif %}
 
             <div class='nav-item dropdown'>
-              {% if App.Config.configArr.debug -%}
+              {% if App.devMode -%}
                 <!-- [html-validate-disable-next prefer-native-element: using a button here will mess up the navbar] -->
               {%- endif %}
               <div class='nav-link dropdown-toggle' role='button' data-toggle='dropdown' aria-expanded='false'>
@@ -128,7 +144,7 @@
         {% endif %}
 
         {# Help/Community dropdown #}
-        <div class='nav-item dropdown'>
+        <div class='nav-item dropdown {{ App.Session.has('is_anon') ? 'ml-auto' }}'>
           <button class='btn nav-link border-0' id='navbarDropdownHelp' type='button' aria-label='{{ 'Help menu'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fas fa-circle-question fa-2x'></i></button>
           <div class='dropdown-menu dropdown-menu-right' aria-labelledby='navbarDropdownHelp'>
             <a class='dropdown-item' href='{{ App.getWhatsnewLink(constant('Elabftw\\Elabftw\\App::INSTALLED_VERSION_INT')) }}' target='_blank' rel='noopener'><i class='fas fa-newspaper fa-fw'></i> {{ "What's new"|trans }}</a>
@@ -148,7 +164,7 @@
         {# User dropdown #}
         <div class='nav-item dropdown'>
           <button class='btn nav-link border-0' id='navbarDropdown' type='button' aria-label='{{ 'User menu'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><span class='initials'>{{ App.Users.userData.initials }}</span></button>
-          <div class='dropdown-menu dropdown-menu-right' aria-labelledby='navbarDropdown'><h6 class='dropdown-header'>{{ 'Logged in as %s in:'|trans|format(App.Users.userData.firstname|default('Anonymous')) }}<br>{{ App.teamArr.name }}</h6>
+          <div class='dropdown-menu dropdown-menu-right' aria-labelledby='navbarDropdown'><h6 class='dropdown-header'>{{ 'Logged in as %s in:'|trans|format(App.Users.userData.firstname|default('Anonymous')) }}<br>{{ App.Teams.teamArr.name }}</h6>
             {% if App.Users.userData.teams|length > 1 %}
               <a href='login.php?switch_team=1' class='dropdown-item'><i class='fas fa-repeat fa-fw'></i> {{ 'Switch team'|trans }}</a>
             {% endif %}

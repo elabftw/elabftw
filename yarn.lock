@@ -5954,6 +5954,7 @@ __metadata:
     sass-loader: "npm:^16.0.5"
     stylelint: "npm:^16.20.0"
     stylelint-config-sass-guidelines: "npm:^12.1.0"
+    stylelint-declaration-strict-value: "npm:^1.10.11"
     stylelint-order: "npm:^7.0.0"
     terser-webpack-plugin: "npm:^5.3.14"
     tinymce: "npm:^6.8.6"
@@ -12211,6 +12212,15 @@ __metadata:
     postcss: ^8.4.21
     stylelint: ^16.1.0
   checksum: 10c0/622428cae45e2a8d51111ecf3e9eaec5a371735c39634f02a388fc0d3de37774faf48c8954494c3a9b5b10f6fa6630dc41828fa8dc10248750b9ae2eed8b0cd5
+  languageName: node
+  linkType: hard
+
+"stylelint-declaration-strict-value@npm:^1.10.11":
+  version: 1.10.11
+  resolution: "stylelint-declaration-strict-value@npm:1.10.11"
+  peerDependencies:
+    stylelint: ">=7 <=16"
+  checksum: 10c0/bce333ce0ae7229aaf24a868cba7dfa9fc5c584aec441cfc145e72647cd7579e604158a77974758eb0625364b62251fbc85916b31870c1950e8988cfffb02871
   languageName: node
   linkType: hard
 

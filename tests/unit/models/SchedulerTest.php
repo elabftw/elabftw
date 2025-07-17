@@ -17,6 +17,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Symfony\Component\HttpFoundation\InputBag;
 
@@ -139,7 +140,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testReadAllWithFilters(): void
     {
-        $categoryId = 4;
+        $categoryId = 6;
         $Items = $this->createItem(1, 1, $categoryId);
         $Scheduler = new Scheduler($Items);
 
@@ -157,7 +158,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($Items->id, $filteredEvent[0]['items_id'], 'Item ID should match the filtered item');
 
         // Filtering by category
-        $titleItem2 = 'New Item in category 4';
+        $titleItem2 = 'New Item in category 6';
         $Scheduler->postAction(Action::Create, array('start' => $this->start, 'end' => $this->end, 'title' => $titleItem2));
 
         $qCat = $this->Scheduler->getQueryParams(new InputBag(array('category' => $categoryId)));
@@ -352,7 +353,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $Scheduler = new Scheduler($Items, null, $start, $end);
         $Scheduler->setId($this->testCreate());
         // try write event created by admin as user
-        $this->expectException(ImproperActionException::class);
+        $this->expectException(IllegalActionException::class);
         $Scheduler->patch(Action::Update, array('target' => 'experiment', 'id' => 3));
     }
 
@@ -446,11 +447,11 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-    private function createItem(int $userId = 1, int $teamId = 1, int $categoryId = 5): Items
+    private function createItem(int $userId = 1, int $teamId = 1, int $categoryId = 6): Items
     {
         $user = new Users($userId, $teamId);
         $items = new Items($user);
-        $itemId = $items->postAction(Action::Create, array('category_id' => $categoryId));
+        $itemId = $items->create(template: $categoryId);
         $items->setId($itemId);
         return $items;
     }

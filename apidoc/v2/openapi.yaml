@@ -350,8 +350,6 @@ components:
           type: string
         cookie_validity_time:
           type: integer
-        debug:
-          type: string
         email_domain:
           type: string
         extauth_email:
@@ -4019,13 +4017,6 @@ paths:
       description: Get a list of users with an active account on the instance.
       operationId: read-users
       parameters:
-        - name: includeArchived
-          in: query
-          description: Include archived users in the response
-          required: false
-          schema:
-            type: string
-            enum: ['0', '1']
         - name: team
           in: query
           description: Add a filter on the team

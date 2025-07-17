@@ -8,7 +8,7 @@
 import { Metadata } from './Metadata.class';
 import JSONEditor from 'jsoneditor';
 import $ from 'jquery';
-import i18next from 'i18next';
+import i18next from './i18n';
 import { getNewIdFromPostRequest, reloadElements } from './misc';
 import { Action, Entity, Model } from './interfaces';
 import { Api } from './Apiv2.class';

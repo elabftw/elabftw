@@ -11,7 +11,7 @@ import { relativeMoment, makeSortableGreatAgain, escapeHTML } from './misc';
 import FavTag from './FavTag.class';
 import { Api } from './Apiv2.class';
 import { Malle } from '@deltablot/malle';
-import i18next from 'i18next';
+import i18next from './i18n';
 
 export default class Todolist extends SidePanel {
 

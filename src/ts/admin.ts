@@ -15,7 +15,7 @@ import {
 } from './misc';
 import $ from 'jquery';
 import { Malle } from '@deltablot/malle';
-import i18next from 'i18next';
+import i18next from './i18n';
 import { getEditor } from './Editor.class';
 import { Api } from './Apiv2.class';
 import { EntityType, Model, Action, Selected } from './interfaces';
@@ -69,10 +69,6 @@ function getSelected(): Selected {
   };
 }
 
-function getRandomColor(): string {
-  return `#${Math.floor(Math.random()*16777215).toString(16)}`;
-}
-
 
 if (window.location.pathname === '/admin.php') {
 
@@ -105,12 +101,6 @@ if (window.location.pathname === '/admin.php') {
   new MutationObserver(() => {
     malleableGroupname.listen();
   }).observe(document.getElementById('team_groups_div'), {childList: true});
-
-  // set a random color to all the "create new" statuslike modals
-  // from https://www.paulirish.com/2009/random-hex-color-code-snippets/
-  document.querySelectorAll('.randomColor').forEach((input: HTMLInputElement) => {
-    input.value = getRandomColor();
-  });
 
   // CATEGORY SELECT
   $(document).on('change', '.catstatSelect', function() {
@@ -183,48 +173,6 @@ if (window.location.pathname === '/admin.php') {
       if (confirm(i18next.t('generic-delete-warning'))) {
         ApiC.delete(`${Model.Team}/current/${Model.TeamGroup}/${el.dataset.id}`)
           .then(() => el.parentElement.remove());
-      }
-    // CREATE STATUSLIKE
-    } else if (el.matches('[data-action="create-statuslike"]')) {
-      const holder = el.parentElement.parentElement;
-      const colorInput = (holder.querySelector('input[type="color"]') as HTMLInputElement);
-      const nameInput = (holder.querySelector('input[type="text"]') as HTMLInputElement);
-      const name = nameInput.value;
-      if (!name) {
-        notify.error('invalid-info');
-        // set the border in red to bring attention
-        nameInput.style.borderColor = 'red';
-        return;
-      }
-      ApiC.post(`${Model.Team}/current/${el.dataset.target}`, {'name': name, 'color': colorInput.value}).then(() => {
-        // clear the name
-        nameInput.value = '';
-        // assign a new random color
-        colorInput.value = getRandomColor();
-        // display newly added entry
-        reloadElements([`${el.dataset.target}Div`]);
-      });
-    // UPDATE STATUSLIKE
-    } else if (el.matches('[data-action="update-status"]')) {
-      const id = el.dataset.id;
-      let target = Model.ExperimentsStatus;
-      if (el.dataset.target === 'items') {
-        target = Model.ItemsStatus;
-      }
-      if (el.dataset.target === 'expcat') {
-        target = Model.ExperimentsCategories;
-      }
-      const holder = el.parentElement.parentElement;
-      const title = (holder.querySelector('input[type="text"]') as HTMLInputElement).value;
-      const color = (holder.querySelector('input[type="color"]') as HTMLInputElement).value;
-      const isDefault = (holder.querySelector('input[type="radio"]') as HTMLInputElement).checked;
-      const params = {'title': title, 'color': color, 'is_default': Boolean(isDefault)};
-      ApiC.patch(`${Model.Team}/current/${target}/${id}`, params);
-    // DESTROY CATEGORY/STATUS
-    } else if (el.matches('[data-action="destroy-catstat"]')) {
-      if (confirm(i18next.t('generic-delete-warning'))) {
-        ApiC.delete(`${Model.Team}/current/${el.dataset.target}/${el.dataset.id}`)
-          .then(() => el.parentElement.parentElement.parentElement.remove());
       }
     // EXPORT CATEGORY
     } else if (el.matches('[data-action="export-category"]')) {

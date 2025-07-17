@@ -5,7 +5,7 @@
 {% elseif entityPage == 'resources_categories' %}
   {% set createNewCategoryArr = [] %}
 {% else %}
-  {% set createNewCategoryArr = categoryArr|default(itemsCategoryArr) %}
+  {% set createNewCategoryArr = categoryArr|default(App.itemsCategoryArr) %}
 {% endif %}
 
 <div class='modal fade' id='createModal_{{ entityPage }}' tabindex='-1' role='dialog' aria-labelledby='createModalLabel_{{ entityPage }}'>
@@ -26,7 +26,7 @@
         {% else %}
           {% if entityPage == 'experiments' %}
             <div class='d-flex'>
-              {% if not App.teamArr.force_exp_tpl %}
+              {% if not App.Teams.teamArr.force_exp_tpl %}
                 <a style='border: 1px #ccc solid;' class='btn btn-light mt-1' href='#' data-action='create-entity' data-type='{{ entityPage }}' data-tplid='0'>{{ 'Default template'|trans }}</a>
                 <a style='border: 1px #ccc solid;' class='btn btn-light ml-1 mt-1' href='#' data-action='create-entity' data-type='{{ entityPage }}' data-tplid=''>{{ 'Blank experiment'|trans }}</a>
               {% endif %}

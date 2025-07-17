@@ -48,7 +48,9 @@ final class AnonymousUser extends Users
         $this->userData['pdf_format'] = 'A4';
         $this->userData['userid'] = 0;
         $this->userData['entrypoint'] = 1;
-        $this->userData['initials'] = '웃';
+        // use a neutral utf-8 character instead of initials for anonymous user
+        // U+2609 Sun character does the job
+        $this->userData['initials'] = '☉';
         $this->userData['show_weekends'] = 0;
         $this->userData['enforce_exclusive_edit_mode'] = 0;
         $this->userData['scheduler_layout'] = 0;

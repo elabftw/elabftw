@@ -14,9 +14,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Controllers\DatabaseController;
 use Elabftw\Enums\EntityType;
-use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\AppException;
 use Elabftw\Models\Items;
 use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\Filter;
@@ -25,13 +23,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Entry point for database things
- *
  */
 require_once 'app/init.inc.php';
 
-// default response is error page with general error message
 $Response = new Response();
-$Response->prepare($Request);
 
 try {
     $id = Filter::intOrNull($Request->query->getInt('id'));
@@ -45,31 +40,11 @@ try {
             $bypassReadPermission = true;
         }
     }
-    $Controller = new DatabaseController($App, new Items($App->Users, $id, bypassReadPermission: $bypassReadPermission));
-    $Response = $Controller->getResponse();
-} catch (IllegalActionException $e) {
-    // log notice and show message
-    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
-    $template = 'error.html';
-    $renderArr = array('error' => $e->getMessage());
-    $Response->setContent($App->render($template, $renderArr));
-} catch (ImproperActionException $e) {
-    // show message to user
-    $template = 'error.html';
-    $renderArr = array('error' => $e->getMessage());
-    $Response->setContent($App->render($template, $renderArr));
-} catch (DatabaseErrorException $e) {
-    // log error and show message
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
-    $template = 'error.html';
-    $renderArr = array('error' => $e->getMessage());
-    $Response->setContent($App->render($template, $renderArr));
+    $Response = new DatabaseController($App, new Items($App->Users, $id, bypassReadPermission: $bypassReadPermission))->getResponse();
+} catch (AppException $e) {
+    $Response = $e->getResponseFromException($App);
 } catch (Exception $e) {
-    // log error and show general error message
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
-    $template = 'error.html';
-    $renderArr = array('error' => Tools::error());
-    $Response->setContent($App->render($template, $renderArr));
+    $Response = $App->getResponseFromException($e);
 } finally {
     // autologout if there is elabid in view mode
     // so we don't stay logged in as anon
@@ -78,6 +53,5 @@ try {
         && !$App->Request->getSession()->has('is_auth')) {
         $App->Session->invalidate();
     }
-
     $Response->send();
 }

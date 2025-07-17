@@ -245,7 +245,7 @@ blockquote {
 }
 
 blockquote::before {
-  color: #ccc;
+  color: $firstlevel;
   content: open-quote;
   font-size: 4em;
   line-height: 0.1em;
@@ -340,14 +340,23 @@ h5 {
 
 .alert-success {
   background-color: $lightblue;
-  border-color: #36b1c0;
-  color: #36b1c0;
+  border-color: $elabblue;
+  color: $elabblue;
+
+  .close {
+    color: $elabblue;
+  }
 }
 
 .alert-danger {
   background-color: $lightred;
-  border-color: #e6614c;
-  color: #e6614c;
+  border-color: $darkred;
+  color: $darkred;
+
+  .close {
+    color: $orange;
+  }
+
 }
 
 .hover-danger:hover {
@@ -365,15 +374,6 @@ h5 {
   transition: color 0.8s ease;
 }
 
-
-.alert-danger .close {
-  color: #e6614c;
-}
-
-.alert-sucess .close {
-  color: #36b1c0;
-}
-
 button:disabled {
   cursor: not-allowed;
 }
@@ -388,7 +388,7 @@ button:disabled {
 .beta {
   background: $elabblue;
   border-radius: 5px;
-  color: #fff;
+  color: $white;
   display: inline-block;
   font-family: sans-serif;
   font-size: 10px;
@@ -403,6 +403,10 @@ button:disabled {
 }
 
 #body_view {
+  /* https://developer.mozilla.org/en-US/docs/Web/CSS/contain */
+  /* we cannot apply strict here */
+  contain: content;
+
   img {
     max-height: 100%;
     max-width: 100%;
@@ -633,7 +637,7 @@ tr:first-child td {
 }
 
 .overlay p {
-  color: #fff;
+  color: $white;
   font-weight: bold;
   vertical-align: middle;
 }
@@ -669,7 +673,7 @@ tr:first-child td {
   z-index: 1337;
 
   p {
-    color: #fff;
+    color: $white;
     left: 50%;
     opacity: 1;
     position: absolute;
@@ -902,7 +906,7 @@ tr:first-child td {
 
 .item-next {
   .item-next-step {
-    color: #000;
+    color: $strongest;
   }
 }
 
@@ -1041,7 +1045,7 @@ the form-control fails to do that so we do the border ourselves */
 }
 
 .color-warning {
-  color: #856404 !important;
+  color: $gold !important;
 }
 
 .lh-150 {
@@ -1170,7 +1174,7 @@ the form-control fails to do that so we do the border ourselves */
 
 /* background for archived users */
 .bg-medium {
-  background-color: $secondlevel;
+  background-color: $secondlevel !important;
 }
 
 .border-secondlevel {
@@ -1508,7 +1512,7 @@ input[type='color'] {
 
   /* make the up arrow white or we can't see it */
   svg {
-    color: #fff;
+    color: $white;
   }
 }
 
@@ -1656,11 +1660,11 @@ input:user-invalid {
 @keyframes pulse {
   0%,
   100% {
-    color: #ffa500; /* Bright orange */
+    color: $brightorange; /* Bright orange */
   }
 
   50% {
-    color: #ffe6b8; /* Less bright orange */
+    color: $lessbrightorange; /* Less bright orange */
   }
 }
 
@@ -1739,6 +1743,15 @@ input:user-invalid {
   }
 }
 
+.round-spot {
+  border-radius: 50%;
+  display: inline-block;
+  height: 1em;
+  line-height: 1;
+  vertical-align: middle;
+  width: 1em;
+}
+
 .calendar-event-hover {
-  box-shadow: 5px 4px 4px #474747 !important;
+  box-shadow: 5px 4px 4px $medium !important;
 }

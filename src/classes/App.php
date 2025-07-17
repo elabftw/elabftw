@@ -13,18 +13,24 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Language;
+use Elabftw\Enums\Messages;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\AnonymousUser;
 use Elabftw\Models\AuthenticatedUser;
 use Elabftw\Models\Config;
+use Elabftw\Models\ExperimentsCategories;
+use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Notifications\UserNotifications;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users;
 use Elabftw\Traits\TwigTrait;
+use Exception;
 use Monolog\Logger;
 use RuntimeException;
+use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 
 use function basename;
@@ -50,11 +56,14 @@ final class App
     // we should be pretty safe from ever reaching 100 as a minor or patch version!
     public const int INSTALLED_VERSION_INT = 50209;
 
-    // stores the configuration of the current team
-    public array $teamArr = array();
-
     /** @psalm-suppress PossiblyUnusedProperty this property is used in twig templates */
     public array $notifsArr = array();
+
+    public array $experimentsCategoryArr = array();
+
+    public array $itemsCategoryArr = array();
+
+    public Teams $Teams;
 
     public function __construct(
         public Request $Request,
@@ -62,6 +71,7 @@ final class App
         public Config $Config,
         public Logger $Log,
         public Users $Users,
+        public bool $devMode = false,
     ) {}
 
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-//
@@ -111,6 +121,11 @@ final class App
             ));
         }
 
+        $this->Teams = new Teams($this->Users, $this->Users->team);
+        $ItemsTypes = new ItemsTypes($this->Users);
+        $this->itemsCategoryArr = $ItemsTypes->readAll();
+        $ExperimentsCategory = new ExperimentsCategories($this->Teams);
+        $this->experimentsCategoryArr = $ExperimentsCategory->readAll($ExperimentsCategory->getQueryParams(new InputBag(array('limit' => 9999))));
         $this->initi18n();
     }
 
@@ -121,12 +136,13 @@ final class App
     public function render(string $template, array $variables): string
     {
         try {
-            return $this->getTwig(
-                (bool) $this->Config->configArr['debug']
-            )->render(
+            return $this->getTwig($this->devMode)->render(
                 $template,
                 array_merge(
-                    array('App' => $this, 'langsArr' => Language::getAllHuman()),
+                    array(
+                        'App' => $this,
+                        'langsArr' => Language::getAllHuman(),
+                    ),
                     $variables,
                 )
             );
@@ -168,16 +184,26 @@ final class App
         return sprintf('https://www.deltablot.com/posts/release-%d', $baseVersion);
     }
 
+    public function getResponseFromException(Exception $e): Response
+    {
+        // generate a unique error so user can communicate this error to support and it's easy to find in the logs
+        $errorIdent = Tools::getUuidv4();
+        $this->Log->error('', array(array('userid' => $this->Session->get('userid'), 'error-identifier' => $errorIdent), array('Exception' => $e)));
+        $template = 'error.html';
+        $error = Messages::CriticalError;
+        $renderArr = array('error' => sprintf('%s %s', $error->toHuman(), $errorIdent));
+        $Response = new Response();
+        $Response->setContent($this->render($template, $renderArr));
+        $Response->setStatusCode($error->toHttpCode());
+        return $Response;
+    }
+
     /**
      * Load a user object in our user field
      */
     private function loadUser(AuthenticatedUser | AnonymousUser $users): void
     {
         $this->Users = $users;
-        // we have an user in a team, load the top menu link
-        $Teams = new Teams($this->Users);
-        $this->teamArr = $Teams->readOne();
-        // Notifs
         $Notifications = new UserNotifications($this->Users);
         $this->notifsArr = $Notifications->readAll();
     }

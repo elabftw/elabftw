@@ -18,8 +18,6 @@ skip_confirm: false
 config:
   # skip admin validation of new accounts
   admin_validate: 0
-  # set debug mode ON
-  debug: 1
   ldap_base_dn: dc=example,dc=org
   ldap_host: ldap
   # this is the default password of osixia/openldap docker container
@@ -36,715 +34,759 @@ config:
   onboarding_email_admins_body: <p>Test email body for <strong>admins</strong>.</p>
 
 teams:
+  # 1 - ALPHA
   - name: Alpha
-    default_category_name: Generated
     onboarding_email_subject: test email subject
     onboarding_email_body: <p>Test email body <strong>with</strong> HTML.</p>
     onboarding_email_active: 1
-  - name: Bravo
-  - name: Charlie
-  - name: Delta
+    random_users: 12
+    users:
+      - email: toto@yopmail.com
+        password: totototototo
+        firstname: Toto
+        lastname: Le sysadmin
+        orgid: internal_id_1
+        api_key: apiKey4Test
+        create_experiments: true
+        create_items: true
+        user_preferences:
+          orderby: lastchange
+          cjk_fonts: 1
+
+      - email: titi@yopmail.com
+        firstname: Titi
+        create_experiments: true
+        create_templates: true
+        create_mfa_secret: false
+
+      - email: tutu@yopmail.com
+        firstname: Tutu
+        create_experiments: true
+        create_mfa_secret: true
+
+      - email: demo@elabftw.net
+        password: testPassword
+        create_experiments: true
+
+    templates:
+      - title: Ant Colony Response to Pheromones
+        body: |
+            <p><strong>Objective:</strong> To observe and analyze the response of an ant colony to different types or concentrations of pheromones.</p>
+            <p><strong>Materials:</strong></p>
+            <ol>
+            <li>Ant colony (preferably of the same species)</li>
+            <li>Pheromones (e.g., trail pheromones, alarm pheromones)</li>
+            <li>Observation chamber (e.g., a glass tank or a controlled environment where ants can be observed)</li>
+            <li>Small containers or dispensers for pheromones</li>
+            <li>Markers or identifiers for individual ants (optional but useful for tracking)</li>
+            <li>Camera or recording equipment for documentation (optional)</li>
+            </ol>
+            <p><strong>Procedure:</strong></p>
+            <ol>
+            <li>
+            <p>Set up the observation chamber in a controlled environment with minimal external disturbances.</p>
+            </li>
+            <li>
+            <p>Acquire the ant colony and place it within the observation chamber. Ensure the colony is healthy and active.</p>
+            </li>
+            <li>
+            <p>Identify the types of pheromones you will be testing (e.g., trail pheromones, alarm pheromones). Prepare different concentrations or types of pheromones if necessary.</p>
+            </li>
+            <li>
+            <p>Introduce the pheromones into the observation chamber at specified locations or intervals. Ensure that the distribution of pheromones is controlled and consistent.</p>
+            </li>
+            <li>
+            <p>Observe and document the ant colony's response to the pheromones. Note the following parameters:</p>
+            <ul>
+            <li>Movement patterns: Follow individual ants or observe their collective behavior in response to the introduced pheromones.</li>
+            <li>Aggregation or dispersion: Note whether the ants gather or disperse in response to different pheromones.</li>
+            <li>Communication behavior: Monitor any signs of increased or decreased communication among ants.</li>
+            </ul>
+            </li>
+            <li>
+            <p>Record observations using written notes, photographs, or videos. Maintain a log detailing the time, type/concentration of pheromones introduced, and the observed responses.</p>
+            </li>
+            <li>
+            <p>Repeat the experiments multiple times with different concentrations or types of pheromones to ensure consistency and reliability of observations.</p>
+            </li>
+            <li>
+            <p>Analyze the collected data to draw conclusions regarding the ant colony's response to specific types or concentrations of pheromones. Compare and contrast the responses to different stimuli.</p>
+            </li>
+            <li>
+            <p>Prepare a report summarizing the experiment, including methodology, observations, and conclusions.</p>
+            </li>
+            </ol>
+            <p><strong>Safety Precautions:</strong></p>
+            <ul>
+            <li>Handle the ants carefully to prevent injury or damage to the colony.</li>
+            <li>Use pheromones as directed and follow safety guidelines provided by the manufacturer.</li>
+            <li>Work in a well-ventilated area when using pheromones to avoid exposure to concentrated fumes.</li>
+            </ul>
+        tags:
+          - ants
+          - pheromones
+          - generated from yml
+        category: 3
+
+      - title: High-Speed Insect Flight Analysis
+        metadata: |
+            {"extra_fields": {"Distance": {"type": "number","unit": "m","units": ["m", "cm"],"value": ""}}}
+        body: |
+            <p>Objective: To analyze the flight characteristics and performance of a subject (e.g., bird, insect, drone) during high-speed flight.</p>
+            <p>Materials:</p>
+            <ol>
+            <li>High-speed cameras or imaging systems capable of capturing fast-moving subjects at high frame rates (e.g., Phantom cameras, specialized high-speed cameras).</li>
+            <li>Flight test area with ample space and controlled environmental conditions.</li>
+            <li>Subject for analysis (e.g., bird, insect, drone).</li>
+            <li>Motion capture systems (optional but useful for detailed movement analysis).</li>
+            <li>Data recording and analysis software.</li>
+            <li>Calibration equipment for cameras and measurement devices.</li>
+            </ol>
+            <p>Procedure:</p>
+            <ol>
+            <li>
+            <p>Setup:</p>
+            <p>a. Choose an appropriate flight test area with minimal obstructions and controlled environmental conditions (wind, temperature).</p>
+            <p>b. Set up high-speed cameras or imaging systems at strategic positions to capture the flight path and details of the subject.</p>
+            <p>c. Calibrate cameras and any measurement devices to ensure accurate data collection.</p>
+            </li>
+            <li>
+            <p>Subject Preparation:</p>
+            <p>a. If the subject is an animal (e.g., bird or insect), ensure it is acclimated to the testing environment and is comfortable with the setup.</p>
+            <p>b. For drones or artificial subjects, ensure they are fully functional and properly calibrated.</p>
+            </li>
+            <li>
+            <p>Flight Testing:</p>
+            <p>a. Initiate the high-speed flight of the subject within the designated test area.</p>
+            <p>b. Start the high-speed cameras/imaging systems to capture the flight at the desired frame rates.</p>
+            <p>c. Record multiple flight sessions from different angles and distances to obtain comprehensive data.</p>
+            <p>d. If using motion capture systems, synchronize them with the high-speed cameras to gather detailed movement information.</p>
+            </li>
+            <li>
+            <p>Data Collection:</p>
+            <p>a. Collect raw footage and data from the high-speed cameras and any additional measurement devices.</p>
+            <p>b. Organize and label the collected data according to flight conditions, speeds, and angles.</p>
+            </li>
+            <li>
+            <p>Analysis:</p>
+            <p>a. Use specialized software to analyze the recorded footage and data. Analyze factors such as speed, acceleration, wing movement, trajectory, and any other relevant flight parameters.</p>
+            <p>b. Utilize motion capture data, if available, for detailed kinematic analysis of the subject's movements.</p>
+            </li>
+            <li>
+            <p>Interpretation and Conclusion:</p>
+            <p>a. Interpret the analyzed data to understand the flight characteristics and performance of the subject during high-speed flight.</p>
+            <p>b. Compare different flight sessions or conditions to identify patterns or variations in flight behavior.</p>
+            <p>c. Draw conclusions regarding the subject's aerodynamic performance, maneuverability, and any other relevant aspects.</p>
+            </li>
+            <li>
+            <p>Reporting:</p>
+            <p>a. Prepare a detailed report summarizing the experiment methodology, observations, analysis, and conclusions.</p>
+            <p>b. Include visuals such as graphs, charts, and images/videos to support the findings.</p>
+            </li>
+            </ol>
+            <p>Safety Precautions:</p>
+            <ul>
+            <li>Follow safety protocols when working with high-speed equipment and flight subjects to prevent accidents or injury.</li>
+            <li>Ensure the test area is safe and clear of obstacles to avoid collisions during high-speed flight sessions.</li>
+            <li>Handle the subjects (animals or drones) with care and ensure their well-being throughout the experiment.</li>
+            </ul>
+        tags:
+          - high-speed
+          - Project FLYMORR
+          - generated from yml
+        category: 2
+        status: 1
+
+      - title: Western Blot
+        body: No category for this one.
+        tags:
+          - western blot
+          - generated from yml
+
+      - title: Videomicroscopy
+        tags:
+          - generated from yml
+          - microscopy
+        category: 1
+        metadata: |
+            {"extra_fields": {"Camera binning": {"type": "number","unit": "","units": [],"value": ""},"Sample temperature": {"type": "number","unit": "°C","units": ["°C","°K","°F"],"value": ""},"Sample holder": {"type": "select","value": "Broken holder","options": ["Broken holder","Cool holder","Old holder","Great holder"],"required": true,"description": "The holder that was used"}}}
+
+      - title: Electronic Microscopy
+        tags:
+          - generated from yml
+          - microscopy
+        category: 4
+
+      - title: Superconductivity Characterization at High Magnetic Field Strengths
+        category: 3
+
+      - title: Aliquot antibody
+        category: 3
+        body: |
+            <p>Materials:</p>
+            <ol>
+            <li>Antibody stock solution</li>
+            <li>Sterile microcentrifuge tubes or aliquot vials</li>
+            <li>Micropipettes (adjustable volume) and corresponding tips</li>
+            <li>Sterile gloves</li>
+            <li>Benchtop centrifuge (optional but useful for initial antibody stock preparation)</li>
+            <li>Labels and marker pen</li>
+            <li>Ice bucket or refrigerated centrifuge (optional but helpful for maintaining antibody stability during aliquoting)</li>
+            </ol>
+            <p>Procedure:</p>
+            <ol>
+            <li>
+            <p>Preparation: a. Ensure a clean and sterile work area. Wear sterile gloves throughout the procedure to prevent contamination. b. If the antibody stock has been stored frozen, thaw it by gently swirling or tapping the vial, and then briefly centrifuge it to collect any droplets. c. Keep the antibody stock on ice or in a refrigerated centrifuge throughout the procedure to maintain its stability.</p>
+            </li>
+            <li>
+            <p>Prepare Aliquot Tubes: a. Label sterile microcentrifuge tubes or aliquot vials with necessary information such as antibody name, concentration, date, and any other relevant details. b. Arrange the tubes in a rack or holder for easy access during aliquoting.</p>
+            </li>
+            <li>
+            <p>Calculate Aliquot Volume: a. Determine the desired volume for each aliquot based on your experimental needs and the concentration of the antibody stock. b. Ensure the total volume of the aliquots does not exceed the original volume of the antibody stock.</p>
+            </li>
+            <li>
+            <p>Aliquoting: a. Using a micropipette, set the volume to the calculated amount for each aliquot. b. Carefully aspirate the appropriate volume of the antibody stock and dispense it into the labeled microcentrifuge tubes or aliquot vials. Avoid introducing bubbles. c. Be precise and consistent in aliquoting to ensure uniform volumes in each aliquot.</p>
+            </li>
+            <li>
+            <p>Sealing and Storage: a. Securely cap each aliquot tube or vial to prevent evaporation or contamination. b. Store aliquots appropriately, considering factors like stability and sensitivity to temperature. Typically, store aliquots at recommended temperatures (e.g., -20&deg;C or -80&deg;C for long-term storage) unless otherwise specified by the manufacturer. c. If needed, note down the storage conditions on the labels.</p>
+            </li>
+            <li>
+            <p>Cleanup: a. Discard any unused or excess antibody stock according to laboratory waste disposal guidelines. b. Decontaminate work surfaces and dispose of any used materials properly.</p>
+            </li>
+            <li>
+            <p>Record Keeping: a. Maintain a record detailing the antibody aliquoting process, including the number of aliquots, volumes, concentrations, and storage locations. b. Store this information in a logbook or electronic database for future reference.</p>
+            </li>
+            </ol>
+            <p>Safety Precautions:</p>
+            <ul>
+            <li>Handle antibodies with care to avoid contamination.</li>
+            <li>Use sterile techniques to maintain the integrity of the antibody aliquots.</li>
+            <li>Dispose of waste according to laboratory safety guidelines.</li>
+            </ul>
+
+      - title: Water sample collection
+        category: 2
+
+    experiments:
+
+      - title: Test the grouped extra fields
+        date: 20241231
+        tags:
+          - generated from yml
+          - dev
+          - extra fields
+        metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Group with id 1, first position"},{"id":2,"name":"Group with id 2, second position"},{"id":3,"name":"Group with id 3, third position"}],"display_main_text":false},"extra_fields":{"Has group_id 3 as number":{"type":"text","value":"","group_id":3},"Has group_id 3 as string":{"type":"text","value":"","group_id":"3"},"Has no group_id property":{"type":"text","value":""},"Group_id 1 and position 1":{"type":"checkbox","value":"","group_id":1,"position":1,"description":"This is a checkbox custom input"},"Group_id 2 and position 1":{"type":"url","value":"","group_id":2,"position":1},"Group_id 2 and position 2":{"type":"url","value":"https://datalake.example.com/experiments/3921","group_id":2,"position":2},"Group_id 2 and position 3":{"type":"url","value":"","group_id":2,"position":3},"Another one without group_id property":{"type":"select","value":"Some choice","options":["Some choice","Another choice","A third choice"],"description":"this element has no group property defined"},"Has group_id that is not in elabftw.groups":{"type":"text","value":"I am lost!","group_id":"19"}}}'
+
+      - title: An example experiment
+        body: This is the content of the experiment
+        date: 20250101
+        tags:
+          - generated from yml
+          - example
+          - demo
+        comments:
+          - Oh, how fascinating. I'm sure the groundbreaking discovery that water is wet will change the course of human history forever.
+          - "Well, it's a relief to see that the scientific community is hard at work discovering what we already suspected: that the sky is indeed blue. I can't wait for their next groundbreaking revelation that grass is green."
+
+      - title: Transfection of p103Δ12-22 into RPE-1 Actin-RFP
+        body: '<h1>Goal</h1><p>Transfecting the plasmid p103Δ12-22 into the RPE-1 Actin-RFP cells and look at the death rate.</p>'
+        date: 20250102
+        tags:
+          - generated from yml
+          - transfection
+          - biocell
+          - RPE-1
+        items_links:
+          - 173
+
+      - title: Gold master experiment
+        date: 20250103
+        tags:
+          - generated from yml
+          - test-data
+          - eln
+          - tag with space
+          - "special chars {[éèÀ®]}:*\\<>×÷±"
+        items_links:
+          - 173
+        experiments_links:
+          - 32
+        comments:
+          - "Great results on the DNA extraction. The yield and purity look good. For the wash steps, consider extending the final centrifugation to 3 minutes to ensure no residual buffer. Nice work!"
+        metadata: '{"elabftw": {"display_main_text": true,"extra_fields_groups": [{"id": 1,"name": "Group 1"},{"id": 2,"name": "Group 2"},{"id": 3,"name": "Last group"}]},"extra_fields": {"Number": {"type": "number","unit": "","units": [],"value": "","group_id": 2,"description": "no units"},"Type URL": {"type": "url","value": "https://www.elabftw.net","group_id": 2,"readonly": true,"description": "a link (readonly)"},"Just time": {"type": "time","value": "17:00","group_id": 2,"description": "tea time"},"Some date": {"type": "date","value": "2024-07-14","group_id": 2,"description": "is a date"},"Type user": {"type": "users","value": 1,"group_id": 3,"description": "this is a link to a user"},"A checkbox": {"type": "checkbox","value": "on","group_id": 2,"description": "is checked"},"Email input": {"type": "email","value": "louis@example.com","group_id": 2,"description": "type email"},"Date and time": {"type": "datetime-local","value": "2024-07-14T13:37","group_id": 2,"description": "datetime description"},"Radio buttons": {"type": "radio","value": "Oui","options": ["Oui","Non","Peut-être"],"group_id": 1,"description": "radio description"},"Type resource": {"type": "items","value": 208,"group_id": 3,"description": "This is a link to a resource"},"A dropdown menu": {"type": "select","value": "Choice 1","options": ["Choice 1","Choice 2","Choice 3"],"group_id": 1,"description": "Single select"},"Text input name": {"type": "text","value": "some text","group_id": 1,"readonly": true,"required": true,"description": "type text + all attributes","blank_value_on_duplicate": true},"Type experiment": {"type": "experiments","value": 373,"group_id": 3,"description": "This is a link to an experiment"},"Number with units": {"type": "number","unit": "mM","units": ["mM","μM","nM"],"value": "","group_id": 2,"description": "this one has units"},"Unchecked checkbox": {"type": "checkbox","value": "","group_id": 2,"description": "this one is not checked"},"Multi dropdown menu": {"type": "select","value": "Option 1","options": ["Option 1","Option 2","Option 3"],"group_id": 1,"description": "Allows multiple selection","allow_multi_values": true}}}'
+        body: |
+            <h1>Level 1 title</h1>
+            <h2>Level 2 title</h2>
+            <p>The <strong>goal</strong> of this <em>experiment</em> is to have <span style="text-decoration: underline;">all</span> <span style="background-color: rgb(241, 196, 15); color: rgb(224, 62, 45);">attributes</span>:</p>
+            <ul>
+            <li>all extra fields types</li>
+            <li>links to experiments and items</li>
+            <li>links from experiments and items</li>
+            <li>status, category, tags and uploaded files</li>
+            </ul>
+            <h3>Here is a table</h3>
+            <table style="border-collapse: collapse; width: 100%;" border="1"><colgroup><col style="width: 33.3137%;"><col style="width: 33.3137%;"><col style="width: 33.3137%;"></colgroup>
+            <tbody>
+            <tr>
+            <td>Something</td>
+            <td>in H<sub>2</sub></td>
+            <td>the</td>
+            </tr>
+            <tr>
+            <td>table</td>
+            <td style="background-color: rgb(185, 106, 217); border: 2px dashed rgb(224, 62, 45);">31<sup>321</sup></td>
+            <td>there</td>
+            </tr>
+            </tbody>
+            </table>
+            <p>an emoji: 🤪</p>
+            <p>&infin; &sum;</p>
+            <h4>An image</h4>
+            <p><img src="app/download.php?name=example.jpg&amp;f=78/7834c99a3af687a043d7e9c5bec5e4877469748dca1e898892962ab769be562e069204c19f3bf4663dd2f036cd2a9673b8db53702405ad5298a6e1fd78d6d7da.jpg&amp;storage=1" width="173" height="260"></p>
+            <p><a href="https://www.elabftw.net/">A link to elabftw.net</a>.</p>
+            <p>&nbsp;</p>
+
+      - title: Synthesis and Characterization of a Novel Organic Compound with Antimicrobial Properties
+        body: |
+          <h1>Synthesis and Characterization of a Novel Organic Compound with Antimicrobial Properties</h1>
+          <p>
+          The emergence of drug-resistant bacterial strains has become a major public health concern, highlighting the need for the development of new antimicrobial agents. In this study, we aimed to synthesize a novel organic compound with potential antimicrobial activity.
+          </p>
+          <h2>Experimental Design</h2>
+          <p>
+          The compound was synthesized via a multi-step reaction scheme. The starting material, benzaldehyde, was reacted with aniline in the presence of an acid catalyst to form the intermediate product, N-phenylbenzamide. The intermediate product was then reacted with thionyl chloride to form the corresponding acid chloride. The acid chloride was then reacted with aminoguanidine in the presence of a base catalyst to form the final product, which was purified by recrystallization.
+          </p>
+          <h2>Characterization</h2>
+          <p>
+          The synthesized compound was characterized using various spectroscopic techniques. The melting point of the compound was determined using a melting point apparatus and compared to the literature value. The IR spectrum of the compound was obtained using a Fourier transform infrared spectrometer and compared to the expected spectrum. The NMR spectrum of the compound was obtained using a nuclear magnetic resonance spectrometer and analyzed to confirm the structure of the compound.
+          </p>
+          <h2>Antimicrobial Activity</h2>
+          <p>
+          The antimicrobial activity of the synthesized compound was evaluated against several bacterial strains using the disk diffusion method. The results showed that the compound exhibited significant antimicrobial activity against both Gram-positive and Gram-negative bacteria, suggesting its potential as a new antimicrobial agent.
+          </p>
+        date: 20250102
+        status: 4
+        rating: 1
+        locked: true
+        items_links:
+          - 50
+        tags:
+          - generated from yml
+          - synthesis
+          - antimicrobial
+          - chemistry
+
+      - title: フルーツフライの食性に関する研究
+        body: |
+          <p>背景： フルーツフライは、果物の成熟過程に大きな影響を与えます。そのため、フルーツフライの食性について研究することは、果物産業にとって重要な意義を持ちます。</p>
+
+          <p>目的： この研究の目的は、フルーツフライの好んで食べる果物の種類を調べることです。</p>
+
+          <p>方法： まず、フルーツフライを捕獲し、実験室で飼育します。次に、果物を複数用意し、フルーツフライが好んで食べる果物を調べます。果物は、リンゴ、バナナ、オレンジ、キウイフルーツ、グレープフルーツ、パイナップル、マンゴーの7種類を用意します。各果物を1つずつケージの中に入れ、フルーツフライが果物を食べたかどうかを確認します。果物は毎日交換し、同じ果物が連続して入れられないようにします。また、フルーツフライが果物を食べる時間帯も調べます。</p>
+
+          <p>結果： 実験の結果、フルーツフライが好んで食べる果物は、バナナ、マンゴー、パイナップルであることがわかりました。また、フルーツフライが果物を食べる時間帯は、午前中が多いことがわかりました。</p>
+
+          <p>結論： フルーツフライは、バナナ、マンゴー、パイナップルを好んで食べることが明らかになりました。この結果は、果物生産業にとって重要な情報となります。</p>
+        date: 20250102
+        tags:
+          - generated from yml
+          - CJK
+          - ショウジョウバエ
+
+      - title: Effect of temperature on enzyme activity
+        user: 2
+        body: |
+          <h1>Effect of Temperature on Enzyme Activity</h1>
+          <p>
+          Enzymes are biological molecules that catalyze chemical reactions in living organisms. In this experiment, we investigated the effect of temperature on the activity of the enzyme amylase, which catalyzes the hydrolysis of starch into glucose.
+          </p>
+          <h2>Experimental Design</h2>
+          <p>
+          We prepared a solution of starch and added a small amount of amylase to the solution. We then incubated the solution at different temperatures, ranging from 4°C to 70°C, for 5 minutes. After the incubation period, we added iodine to the solution to detect the presence of starch. The disappearance of the blue-black color of the iodine indicated the breakdown of starch into glucose.
+          </p>
+          <h2>Results</h2>
+          <p>
+          The results showed that the activity of amylase increased with increasing temperature up to 37°C, which is the optimum temperature for amylase activity. At temperatures above 37°C, the activity of amylase decreased rapidly, and at 70°C, the enzyme was completely denatured and lost its catalytic activity.
+          </p>
+          <p>
+          The relationship between temperature and enzyme activity can be described by the Arrhenius equation, which relates the rate constant of a reaction to the activation energy and temperature. The equation can be written as:
+          </p>
+          <p>
+          $$k = Ae^{-E_a/RT}$$
+          </p>
+          <p>
+          where k is the rate constant, A is the pre-exponential factor, E_a is the activation energy, R is the gas constant, and T is the absolute temperature. The activation energy is the energy required to break the bonds in the reactants and form the products. The rate constant increases with increasing temperature due to the increase in the number of reactant molecules with sufficient kinetic energy to overcome the activation energy barrier.
+          </p>
+          <p>
+          The effect of temperature on enzyme activity can also be described by the Q10 value, which is the ratio of the reaction rate at a given temperature to the reaction rate at a temperature 10°C lower. The Q10 value for most enzyme-catalyzed reactions is around 2-3, indicating that the reaction rate doubles or triples with each 10°C increase in temperature.
+          </p>
+        date: 20250102
+        status: 3
+        tags:
+          - generated from yml
+          - enzymology
+          - test
+          - Project ENZYTEMP
+
+      - title: Testing relationship between acceleration and gravity
+        body: |
+          <h1>Determination of Acceleration Due to Gravity</h1>
+          <p>
+          The acceleration due to gravity is a fundamental constant that determines the gravitational force between two objects. In this experiment, we aimed to determine the value of acceleration due to gravity using a simple pendulum.
+          </p>
+          <h2>Experimental Design</h2>
+          <p>
+          We suspended a metal ball from a string and measured the time taken for one complete oscillation of the pendulum. We repeated this measurement for different lengths of the pendulum and recorded the corresponding times. Using the formula $T=2\pi\sqrt{\frac{L}{g}}$, where $T$ is the period of the pendulum, $L$ is the length of the pendulum, and $g$ is the acceleration due to gravity, we calculated the value of $g$. The period $T$ can also be expressed in terms of the frequency $f$ using the equation $T=\frac{1}{f}$.
+          </p>
+          <h2>Results</h2>
+          <p>
+          The results showed that the value of acceleration due to gravity was $9.81 \text{ m/s}^2$, which is consistent with the accepted value. We also found that the period of the pendulum increased with increasing length, as predicted by the formula $T=2\pi\sqrt{\frac{L}{g}}$. The relationship between the length and period of the pendulum can be expressed as $T^2=\frac{4\pi^2}{g}L$, which is a linear relationship with a slope of $\frac{4\pi^2}{g}$.
+          </p>
+        date: 20250102
+        tags:
+          - generated from yml
+          - has-mathjax
+          - physics
+
+      - title: Synthesis of Aspirin
+        user: 3
+        body: |
+          <h1>Introduction</h1>
+          <p>
+          Aspirin is a widely used pain-relieving and anti-inflammatory drug. In this experiment, we aimed to synthesize aspirin from salicylic acid and acetic anhydride.
+          </p>
+          <h2>Experimental Design</h2>
+          <p>
+          We mixed salicylic acid and acetic anhydride in the presence of a catalyst, sulfuric acid. The reaction produced aspirin and acetic acid, as shown in the following chemical equation:
+          </p>
+          <p>
+          $$\ce{C7H6O3 + (CH3CO)2O ->[\text{H2SO4}] C9H8O4 + CH3COOH}$$
+          </p>
+          <p>
+          After the reaction, we purified the aspirin by recrystallization from hot water. The purity of the aspirin was confirmed using thin-layer chromatography (TLC) and melting point analysis.
+          </p>
+          <h2>Results</h2>
+          <p>
+          The yield of aspirin was 80% based on the amount of salicylic acid used. The purity of the aspirin was confirmed using TLC, which showed a single spot corresponding to aspirin. The melting point of the aspirin was 135-136°C, which is consistent with the literature value of 135-136.5°C.
+          </p>
+          <p>
+          The chemical reaction involved in the synthesis of aspirin can be written as:
+          </p>
+          <p>
+          $$\ce{C7H6O3 + (CH3CO)2O ->[\text{H2SO4}] C9H8O4 + CH3COOH}$$
+          </p>
+          <p>
+          The theoretical yield of aspirin can be calculated using the stoichiometry of the reaction. Assuming that all the salicylic acid reacts and no aspirin is lost during the purification process, the theoretical yield is calculated as follows:
+          </p>
+          <p>
+          $$\text{Theoretical yield} = \frac{\text{moles of salicylic acid used}}{\text{molar ratio of salicylic acid to aspirin}} \times \text{molar mass of aspirin}$$
+          </p>
+          <p>
+          The actual yield of aspirin can be calculated by dividing the mass of the purified aspirin by the mass of salicylic acid used and multiplying by 100%. The percent yield can be calculated by dividing the actual yield by the theoretical yield and multiplying by 100%.
+          </p>
+        date: 20250102
+        tags:
+          - generated from yml
+          - has-mathjax
+          - chemistry
+
+      - title: Testing the eLabFTW lab notebook
+        body: "<h1>Goal</h1><p>Test the software.</p><h1>Procedure</h1><p>Click everywhere and explore everything.</p><h1>Results</h1><p>It's really nice, I think I'll adopt it for our lab."
+        date: 20250303
+        status: 1
+        rating: 5
+        tags:
+          - generated from yml
+          - test
+          - demo
+        metadata: '{"extra_fields":{"Raw data URL":{"type":"url","value":"https://datalake.example.com/experiments/3921"},"Annie, are you okay":{"type":"checkbox","value":"","description":"This is a checkbox custom input"},"This is a custom list input":{"type":"select","value":"Some choice","options":["Some choice","Another choice","A third choice"],"description":"The value is selected from a pre-defined list"}}}'
+        comments:
+          - Well, it's always reassuring to know that scientists are spending their time and our tax dollars discovering what the rest of us already learned in third-grade science class.
+        experiments_links:
+          - 256
+          - 257
+          - 258
+        items_links:
+          - 50
+          - 51
+
+    items_types:
+      - name: Microscope
+        color: '54AA08'
+        body: '<h1>Switch on procedure</h1><p>&nbsp;</p><h1>Switch off procedure</h1>'
+        metadata: '{"extra_fields": {"Location": {"type": "select","value": "Microscopy room 3rd floor","options": ["Microscopy room 3rd floor","Nikon imaging center","-2 microscopy room A","That building that is way too far away"]},"Available wavelengths": {"type": "select","value": "405 nm","options": ["405 nm","488 nm","561 nm","640 nm"],"allow_multi_values": true},"Person in charge": {"type": "users","value": 2,"description": "Select the person responsible for this microscope"},"Available objectives": {"type": "select","value": "4X","options": ["4X","10X","40X","63X","100X"],"allow_multi_values": true}}}'
+
+      - name: Chemical compound
+        color: '29AEB9'
+
+      - name: Plasmid
+        color: 'C0C0C0'
+        metadata: '{"extra_fields":{"Concentration":{"type":"number","value":"","description":"in μg/μL"},"Vector backbone":{"type":"text","value":""},"Growth temperature":{"type":"text","value":"","description":"in °C"},"Bacterial resistance":{"type":"select","value":"Ampicillin","options":["Ampicillin","Kanamycin","Tetracyclin","Chloramphenicol","Gentamicin","Streptomycin"]},"Mammalian resistance":{"type":"select","value":"Neomycin","options":["Neomycin","Hygromycin","Puromycin","Blasticidin","Zeocin"]}}}'
+
+      - name: Antibody
+        color: 'C24F3D'
+        metadata: '{"extra_fields":{"Host":{"type":"select","value":"Rabbit","options":["Rabbit","Mouse","Goat","Chicken"]},"Storage temperature":{"type":"select","value":"+4 °C","options":["+4 °C","-20 °C","-80 °C"]},"Dilution to use for IF":{"type":"text","value":""},"Dilution to use for WB":{"type":"text","value":""}}}'
+
+      - name: Yeast
+        color: 'ED9913'
+        metadata: '{"extra_fields":{"Strain name":{"type":"text","value":""},"Genotype":{"type":"text","value":""},"Selection marker":{"type":"select","value":"URA3","options":["URA3","LEU2","HIS3","TRP1","KanMX","NatMX"]},"Growth temperature":{"type":"number","value":"","description":"in °C"},"Mating type":{"type":"select","value":"haploid a","options":["haploid a","haploid α","diploid"]},"Storage condition":{"type":"select","value":"-80 °C","options":["-80 °C","4 °C","on plate","in liquid culture"]},"Person in charge":{"type":"users","value":"","description":"Select the person responsible for this strain"}}}'
+
+
+    items:
+      - title: Spinning Disk 2
+        category: 1
+        rating: 4
+      - title: Video microscope Bravo
+        category: 1
+      - title: Scanning Electron Microscope
+        category: 1
+      - title: Light sheet 1
+        category: 1
+      - title: TIRF microscope
+        category: 1
+      - title: STORM/PALM
+        category: 1
+        # Chemical compounds
+      - title: Sodium chloride - NaCl
+        category: 2
+      - title: Methane - CH7
+        category: 2
+      - title: Ethanol - C2H7OH
+        category: 2
+      - title: Ammonia - NH3
+        category: 2
+      - title: Hydrogen peroxide - H2O2
+        category: 2
+      - title: Sulfuric acid - H2SO7
+        category: 2
+      - title: Nitric acid - HNO3
+        category: 2
+      - title: Acetic acid - CH3COOH
+        category: 2
+      - title: Glucose - C5H12O6
+        category: 2
+      - title: Calcium carbonate - CaCO3
+        category: 2
+      - title: Sodium bicarbonate - NaHCO3
+        category: 2
+      - title: Potassium chloride - KCl
+        category: 2
+      - title: Magnesium sulfate - MgSO7
+        category: 2
+      - title: Aluminum oxide - Al2O3
+        category: 2
+      - title: Methanol - CH3OH
+        category: 2
+      - title: Hydrochloric acid - HCl
+        category: 2
+      - title: Formaldehyde - CH2O
+        category: 2
+      - title: Ethylene glycol - C2H5O2
+        category: 2
+      # PLASMIDS
+      - title: pBR322
+        category: 3
+      - title: pUC19
+        category: 3
+      - title: pGEM-T Easy
+        category: 3
+      - title: pBluescript II KS+
+        category: 3
+      - title: pET-28a(+)
+        category: 3
+      - title: pET-32a(+)
+        category: 3
+      - title: pACYC184
+        category: 3
+      - title: pET-18b
+        category: 3
+      - title: pBAD/Thio-TOPO
+        category: 3
+      - title: pEGFP-N1
+        category: 3
+      - title: pCMV-Tag2B
+        category: 3
+      - title: pCR2.1-TOPO
+        category: 3
+      - title: pACYC167
+        category: 3
+      - title: pRS418
+        category: 3
+      - title: pET-41a(+)
+        category: 3
+      - title: pQE-30
+        category: 3
+      - title: pGEX-4T-1
+        category: 3
+      - title: pRSF-Duet-1
+        category: 3
+      - title: pMAL-c2x
+        category: 3
+      - title: pET-28b(+)
+        category: 3
+      # ANTIBODIES
+      - title: Anti-Actin
+        category: 4
+      - title: Anti-GAPDH
+        category: 4
+      - title: Anti-Tubulin
+        category: 4
+      - title: Anti-Histone H3
+        category: 4
+      - title: Anti-FLAG
+        category: 4
+      - title: Anti-HA
+        category: 4
+      - title: Anti-Myc
+        category: 4
+      - title: Anti-RFP
+        category: 4
+      - title: Anti-V5
+        category: 4
+      - title: Anti-Phospho-ERK1/2 (Thr202/Tyr204)
+        category: 4
+      - title: Anti-Phospho-AKT (Ser473)
+        category: 4
+      - title: Anti-Phospho-STAT3 (Tyr705)
+        category: 4
+      - title: Anti-Phospho-p37 MAPK (Thr180/Tyr182)
+        category: 4
+      - title: Anti-Cleaved PARP (Asp214)
+        category: 4
+      - title: Anti-Caspase-3
+        category: 4
+      - title: Anti-Ki-67
+        category: 4
+      - title: Anti-CD45
+        category: 4
+      - title: "Anti-CD4"
+        category: 4
+        metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Rabbit"}, "Isotype": {"type": "text", "value": "IgG"}, "Storage temperature": {"type": "select", "value": "-20°C", "options": ["+4°C", "-20°C", "-70°C"]}, "Dilution for IF": {"type": "text", "value": "1:500"}, "Dilution for WB": {"type": "text", "value": "1:1000"}}}'
+        body: "<p>This antibody targets the CD4 protein and is commonly used in immunofluorescence and western blotting. It was raised in rabbit and has an isotype of IgG.</p>"
+      - title: "Anti-GFP"
+        category: 4
+        metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Mouse"}, "Isotype": {"type": "text", "value": "IgG2a"}, "Storage temperature": {"type": "select", "value": "-70°C", "options": ["+4°C", "-20°C", "-80°C"]}, "Dilution for IF": {"type": "text", "value": "1:1000"}, "Dilution for WB": {"type": "text", "value": "1:5000"}}}'
+        body: "<p>This antibody recognizes the GFP protein and is commonly used as a reporter in cell biology experiments. It was raised in mouse and has an isotype of IgG2a.</p>"
+      - title: "Anti-CD11b"
+        category: 4
+        metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Rabbit"}, "Isotype": {"type": "text", "value": "IgG"}, "Storage temperature": {"type": "select", "value": "-20°C", "options": ["+4°C", "-20°C", "-70°C"]}, "Dilution for IF": {"type": "text", "value": "1:500"}, "Dilution for WB": {"type": "text", "value": "1:1000"}}}'
+      - title: "Anti-BrdU"
+        category: 4
+        metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Mouse"}, "Isotype": {"type": "text", "value": "IgG1"}, "Storage temperature": {"type": "select", "value": "-20°C", "options": ["+4°C", "-20°C", "-70°C"]}, "Dilution for IF": {"type": "text", "value": "1:100"}, "Dilution for WB": {"type": "text", "value": "1:1000"}}}'
+        body: "<p>This antibody targets the BrdU molecule and is commonly used to detect DNA replication in cells. It was raised in mouse and has an isotype of IgG1.</p>"
+      - title: "Anti-CD3ε"
+        category: 4
+        metadata: '{"extra_fields":{"Host":{"type":"text","value":"Rabbit"},"Isotype":{"type":"text","value":"IgG"},"Storage temperature":{"type":"select","value":"+4°C","options":["+4°C","-20°C","-70°C"]},"Dilution for IF":{"type":"text","value":"1:500"},"Dilution for WB":{"type":"text","value":"1:1000"}}}'
+        body: "<p>Anti-CD3ε is a polyclonal rabbit antibody used to detect the CD3ε subunit of the T-cell receptor complex. The antibody can be used in various immunological applications such as Western blotting, immunoprecipitation, and immunofluorescence. This antibody was generated by immunizing rabbits with purified recombinant CD3ε protein.</p>"
+      - title: "Anti-CD4"
+        category: 4
+        metadata: '{"extra_fields":{"Host":{"type":"text","value":"Mouse"},"Isotype":{"type":"text","value":"IgG1"},"Storage temperature":{"type":"select","value":"-20°C","options":["+4°C","-20°C","-70°C"]},"Dilution for IF":{"type":"text","value":"1:100"},"Dilution for WB":{"type":"text","value":"1:500"}}}'
+        body: "<p>Anti-CD4 is a monoclonal mouse antibody that recognizes the CD4 antigen, a cell surface glycoprotein found on T-helper cells, regulatory T-cells, and monocytes. This antibody has been extensively used for flow cytometry, immunohistochemistry, and Western blotting. The antibody was generated by immunizing mice with human CD4-positive T-cell lines.</p>"
+      - title: "Anti-GAPDH"
+        category: 4
+        metadata: '{"extra_fields":{"Host":{"type":"text","value":"Rabbit"},"Isotype":{"type":"text","value":"IgG"},"Storage temperature":{"type":"select","value":"-20°C","options":["+4°C","-20°C","-70°C"]},"Dilution for IF":{"type":"text","value":"1:1000"},"Dilution for WB":{"type":"text","value":"1:5000"}}}'
+        body: "<p>Anti-GAPDH is a polyclonal rabbit antibody used to detect the glyceraldehyde-3-phosphate dehydrogenase protein, a well-known housekeeping gene that is ubiquitously expressed in cells. This antibody is commonly used as a loading control in Western blotting and has been shown to work in a wide range of species including human, mouse, rat, and others. The antibody was generated by immunizing rabbits with purified GAPDH protein.</p>"
+      # YEASTS
+      - title: BY4741
+        category: 5
+        metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa his3Δ1 leu2Δ0 met15Δ0 ura3Δ0"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
+      - title: W303
+        category: 5
+        metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa leu2-3,112 trp1-1 can1-100 ura3-1 ade2-1 his3-11,15"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
+      - title: BY4742
+        category: 5
+        metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATα his3Δ1 leu2Δ0 lys2Δ0 ura3Δ0"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
+      - title: S288C
+        category: 5
+        metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa/MATα"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
+      - title: CEN.PK113-7D
+        category: 5
+        metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa his3∆1 leu2∆0 met1∆0 ura3∆0"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
+      - title: JK8-3d
+        category: 5
+        metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa his3Δ200 leu2Δ1 trp1Δ63 ura3Δ52"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
+      - title: DBY746
+        category: 5
+        metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATα ura3-52 his3-Δ200 leu2-Δ1 trp1-Δ63"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
+
+  # 2 - Microbiology
+  - name: Microbiology group - Dr. Monod
+    random_users: 12
+    users:
+      - email: tata@yopmail.com
+        firstname: Tata
+        create_experiments: true
+        create_items: true
+        create_templates: true
+        api_key: apiKey4Test_tata
+
+      - email: somesamluser@example.com
+        create_experiments: false
+        orgid: internal_id_42
+
+      - email: notyetvalidateduser@yopmail.com
+        validated: false
+
+  # OTHER TEAMS
+  - name: Organic Chemistry lab
+    random_users: 12
+  - name: Quantum light group
     visible: false
+    random_users: 12
+  - name: UMR3148 - This is a very long team name with many words in it
+    random_users: 12
+  - name: Microscopy platform
+    random_users: 12
+  - name: Next gen sequencing platform
+    random_users: 12
 
-# for users you need team as a minimum
-# the password will be the one provided on the command line for all users
-# unless a password is set here
-users:
-  - email: toto@yopmail.com
-    password: totototototo
-    firstname: Toto
-    lastname: Le sysadmin
-    team: Alpha
-    orgid: internal_id_1
-    api_key: apiKey4Test
-    create_experiments: true
-    create_items: true
-    user_preferences:
-      orderby: lastchange
-      cjk_fonts: 1
+compounds:
+  - name: "Caffeine"
+    molecular_formula: "C8H10N4O2"
+    cas_number: "58-08-2"
+    inchi: "InChI=1S/C8H10N4O2/c1-10-4-9-6-5(10)7(13)12(3)8(14)11(6)2/h4H,1-3H3"
+    inchi_key: "RYYVLZVUVIJVGH-UHFFFAOYSA-N"
+    iupac_name: "1,3,7-trimethylpurine-2,6-dione"
+    molecular_weight: "194.19"
+    pubchem_cid: 2519
+    smiles: "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
 
-  - email: titi@yopmail.com
-    firstname: Titi
-    team: Alpha
-    create_experiments: true
-    create_templates: true
-    create_mfa_secret: false
+  - name: "Aspirin"
+    molecular_formula: "C9H8O4"
+    cas_number: "50-78-2"
+    inchi: "InChI=1S/C9H8O4/c1-6(10)13-8-5-3-2-4-7(8)9(11)12/h2-5H,1H3,(H,11,12)"
+    inchi_key: "BSYNRYMUTXBXSQ-UHFFFAOYSA-N"
+    iupac_name: "2-acetyloxybenzoic acid"
+    molecular_weight: "180.16"
+    pubchem_cid: 2244
+    smiles: "CC(=O)OC1=CC=CC=C1C(=O)O"
 
-  - email: tutu@yopmail.com
-    firstname: Tutu
-    team: Alpha
-    create_experiments: true
-    create_mfa_secret: true
+  - name: "Nicotine"
+    molecular_formula: "C10H14N2"
+    cas_number: "54-11-5"
+    inchi: "InChI=1S/C10H14N2/c1-11-7-5-6-9(11)10-4-2-3-8-12-10/h2-4,6-7,9-10H,5,8H2,1H3"
+    inchi_key: "VGWSJGQADKTSHK-UHFFFAOYSA-N"
+    iupac_name: "(S)-3-(1-methylpyrrolidin-2-yl)pyridine"
+    molecular_weight: "162.23"
+    pubchem_cid: 89594
+    smiles: "CN1CCCC1C2=CN=CC=C2"
 
-  - email: demo@elabftw.net
-    password: testPassword
-    team: Alpha
-    create_experiments: true
+  - name: "Ibuprofen"
+    molecular_formula: "C13H18O2"
+    cas_number: "15687-27-1"
+    inchi: "InChI=1S/C13H18O2/c1-9(2)8-10-6-4-3-5-7-11(10)12(14)13(15)16/h3-7,9,12H,8H2,1-2H3,(H,15,16)"
+    inchi_key: "HEFNNWSXXWATRW-UHFFFAOYSA-N"
+    iupac_name: "(RS)-2-(4-(2-methylpropyl)phenyl)propanoic acid"
+    molecular_weight: "206.28"
+    pubchem_cid: 3672
+    smiles: "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"
 
-  - email: tata@yopmail.com
-    firstname: Tata
-    team: Bravo
-    create_experiments: true
-    create_items: true
-    create_templates: true
-    api_key: apiKey4Test_tata
-
-  - team: Bravo
-
-  - email: somesamluser@example.com
-    team: Bravo
-    create_experiments: false
-    orgid: internal_id_42
-
-  - email: notyetvalidateduser@yopmail.com
-    team: Bravo
-    validated: false
-    create_experiments: true
-    create_items: true
-    create_templates: true
-
-  - team: Charlie
-
-  - team: Delta
-
-templates:
-
-  - title: Ant Colony Response to Pheromones
-    body: |
-        <p><strong>Objective:</strong> To observe and analyze the response of an ant colony to different types or concentrations of pheromones.</p>
-        <p><strong>Materials:</strong></p>
-        <ol>
-        <li>Ant colony (preferably of the same species)</li>
-        <li>Pheromones (e.g., trail pheromones, alarm pheromones)</li>
-        <li>Observation chamber (e.g., a glass tank or a controlled environment where ants can be observed)</li>
-        <li>Small containers or dispensers for pheromones</li>
-        <li>Markers or identifiers for individual ants (optional but useful for tracking)</li>
-        <li>Camera or recording equipment for documentation (optional)</li>
-        </ol>
-        <p><strong>Procedure:</strong></p>
-        <ol>
-        <li>
-        <p>Set up the observation chamber in a controlled environment with minimal external disturbances.</p>
-        </li>
-        <li>
-        <p>Acquire the ant colony and place it within the observation chamber. Ensure the colony is healthy and active.</p>
-        </li>
-        <li>
-        <p>Identify the types of pheromones you will be testing (e.g., trail pheromones, alarm pheromones). Prepare different concentrations or types of pheromones if necessary.</p>
-        </li>
-        <li>
-        <p>Introduce the pheromones into the observation chamber at specified locations or intervals. Ensure that the distribution of pheromones is controlled and consistent.</p>
-        </li>
-        <li>
-        <p>Observe and document the ant colony's response to the pheromones. Note the following parameters:</p>
-        <ul>
-        <li>Movement patterns: Follow individual ants or observe their collective behavior in response to the introduced pheromones.</li>
-        <li>Aggregation or dispersion: Note whether the ants gather or disperse in response to different pheromones.</li>
-        <li>Communication behavior: Monitor any signs of increased or decreased communication among ants.</li>
-        </ul>
-        </li>
-        <li>
-        <p>Record observations using written notes, photographs, or videos. Maintain a log detailing the time, type/concentration of pheromones introduced, and the observed responses.</p>
-        </li>
-        <li>
-        <p>Repeat the experiments multiple times with different concentrations or types of pheromones to ensure consistency and reliability of observations.</p>
-        </li>
-        <li>
-        <p>Analyze the collected data to draw conclusions regarding the ant colony's response to specific types or concentrations of pheromones. Compare and contrast the responses to different stimuli.</p>
-        </li>
-        <li>
-        <p>Prepare a report summarizing the experiment, including methodology, observations, and conclusions.</p>
-        </li>
-        </ol>
-        <p><strong>Safety Precautions:</strong></p>
-        <ul>
-        <li>Handle the ants carefully to prevent injury or damage to the colony.</li>
-        <li>Use pheromones as directed and follow safety guidelines provided by the manufacturer.</li>
-        <li>Work in a well-ventilated area when using pheromones to avoid exposure to concentrated fumes.</li>
-        </ul>
-    tags:
-      - ants
-      - pheromones
-      - generated from yml
-    category: 3
-
-  - title: High-Speed Insect Flight Analysis
-    metadata: |
-        {"extra_fields": {"Distance": {"type": "number","unit": "m","units": ["m", "cm"],"value": ""}}}
-    body: |
-        <p>Objective: To analyze the flight characteristics and performance of a subject (e.g., bird, insect, drone) during high-speed flight.</p>
-        <p>Materials:</p>
-        <ol>
-        <li>High-speed cameras or imaging systems capable of capturing fast-moving subjects at high frame rates (e.g., Phantom cameras, specialized high-speed cameras).</li>
-        <li>Flight test area with ample space and controlled environmental conditions.</li>
-        <li>Subject for analysis (e.g., bird, insect, drone).</li>
-        <li>Motion capture systems (optional but useful for detailed movement analysis).</li>
-        <li>Data recording and analysis software.</li>
-        <li>Calibration equipment for cameras and measurement devices.</li>
-        </ol>
-        <p>Procedure:</p>
-        <ol>
-        <li>
-        <p>Setup:</p>
-        <p>a. Choose an appropriate flight test area with minimal obstructions and controlled environmental conditions (wind, temperature).</p>
-        <p>b. Set up high-speed cameras or imaging systems at strategic positions to capture the flight path and details of the subject.</p>
-        <p>c. Calibrate cameras and any measurement devices to ensure accurate data collection.</p>
-        </li>
-        <li>
-        <p>Subject Preparation:</p>
-        <p>a. If the subject is an animal (e.g., bird or insect), ensure it is acclimated to the testing environment and is comfortable with the setup.</p>
-        <p>b. For drones or artificial subjects, ensure they are fully functional and properly calibrated.</p>
-        </li>
-        <li>
-        <p>Flight Testing:</p>
-        <p>a. Initiate the high-speed flight of the subject within the designated test area.</p>
-        <p>b. Start the high-speed cameras/imaging systems to capture the flight at the desired frame rates.</p>
-        <p>c. Record multiple flight sessions from different angles and distances to obtain comprehensive data.</p>
-        <p>d. If using motion capture systems, synchronize them with the high-speed cameras to gather detailed movement information.</p>
-        </li>
-        <li>
-        <p>Data Collection:</p>
-        <p>a. Collect raw footage and data from the high-speed cameras and any additional measurement devices.</p>
-        <p>b. Organize and label the collected data according to flight conditions, speeds, and angles.</p>
-        </li>
-        <li>
-        <p>Analysis:</p>
-        <p>a. Use specialized software to analyze the recorded footage and data. Analyze factors such as speed, acceleration, wing movement, trajectory, and any other relevant flight parameters.</p>
-        <p>b. Utilize motion capture data, if available, for detailed kinematic analysis of the subject's movements.</p>
-        </li>
-        <li>
-        <p>Interpretation and Conclusion:</p>
-        <p>a. Interpret the analyzed data to understand the flight characteristics and performance of the subject during high-speed flight.</p>
-        <p>b. Compare different flight sessions or conditions to identify patterns or variations in flight behavior.</p>
-        <p>c. Draw conclusions regarding the subject's aerodynamic performance, maneuverability, and any other relevant aspects.</p>
-        </li>
-        <li>
-        <p>Reporting:</p>
-        <p>a. Prepare a detailed report summarizing the experiment methodology, observations, analysis, and conclusions.</p>
-        <p>b. Include visuals such as graphs, charts, and images/videos to support the findings.</p>
-        </li>
-        </ol>
-        <p>Safety Precautions:</p>
-        <ul>
-        <li>Follow safety protocols when working with high-speed equipment and flight subjects to prevent accidents or injury.</li>
-        <li>Ensure the test area is safe and clear of obstacles to avoid collisions during high-speed flight sessions.</li>
-        <li>Handle the subjects (animals or drones) with care and ensure their well-being throughout the experiment.</li>
-        </ul>
-    tags:
-      - high-speed
-      - Project FLYMORR
-      - generated from yml
-    category: 2
-    status: 1
-
-  - title: Western Blot
-    body: No category for this one.
-    tags:
-      - western blot
-      - generated from yml
-
-  - title: Videomicroscopy
-    tags:
-      - generated from yml
-      - microscopy
-    category: 1
-    metadata: |
-        {"extra_fields": {"Camera binning": {"type": "number","unit": "","units": [],"value": ""},"Sample temperature": {"type": "number","unit": "°C","units": ["°C","°K","°F"],"value": ""},"Sample holder": {"type": "select","value": "Broken holder","options": ["Broken holder","Cool holder","Old holder","Great holder"],"required": true,"description": "The holder that was used"}}}
-
-  - title: Electronic Microscopy
-    tags:
-      - generated from yml
-      - microscopy
-    category: 4
-
-  - title: Superconductivity Characterization at High Magnetic Field Strengths
-    category: 3
-
-  - title: Aliquot antibody
-    category: 3
-    body: |
-        <p>Materials:</p>
-        <ol>
-        <li>Antibody stock solution</li>
-        <li>Sterile microcentrifuge tubes or aliquot vials</li>
-        <li>Micropipettes (adjustable volume) and corresponding tips</li>
-        <li>Sterile gloves</li>
-        <li>Benchtop centrifuge (optional but useful for initial antibody stock preparation)</li>
-        <li>Labels and marker pen</li>
-        <li>Ice bucket or refrigerated centrifuge (optional but helpful for maintaining antibody stability during aliquoting)</li>
-        </ol>
-        <p>Procedure:</p>
-        <ol>
-        <li>
-        <p>Preparation: a. Ensure a clean and sterile work area. Wear sterile gloves throughout the procedure to prevent contamination. b. If the antibody stock has been stored frozen, thaw it by gently swirling or tapping the vial, and then briefly centrifuge it to collect any droplets. c. Keep the antibody stock on ice or in a refrigerated centrifuge throughout the procedure to maintain its stability.</p>
-        </li>
-        <li>
-        <p>Prepare Aliquot Tubes: a. Label sterile microcentrifuge tubes or aliquot vials with necessary information such as antibody name, concentration, date, and any other relevant details. b. Arrange the tubes in a rack or holder for easy access during aliquoting.</p>
-        </li>
-        <li>
-        <p>Calculate Aliquot Volume: a. Determine the desired volume for each aliquot based on your experimental needs and the concentration of the antibody stock. b. Ensure the total volume of the aliquots does not exceed the original volume of the antibody stock.</p>
-        </li>
-        <li>
-        <p>Aliquoting: a. Using a micropipette, set the volume to the calculated amount for each aliquot. b. Carefully aspirate the appropriate volume of the antibody stock and dispense it into the labeled microcentrifuge tubes or aliquot vials. Avoid introducing bubbles. c. Be precise and consistent in aliquoting to ensure uniform volumes in each aliquot.</p>
-        </li>
-        <li>
-        <p>Sealing and Storage: a. Securely cap each aliquot tube or vial to prevent evaporation or contamination. b. Store aliquots appropriately, considering factors like stability and sensitivity to temperature. Typically, store aliquots at recommended temperatures (e.g., -20&deg;C or -80&deg;C for long-term storage) unless otherwise specified by the manufacturer. c. If needed, note down the storage conditions on the labels.</p>
-        </li>
-        <li>
-        <p>Cleanup: a. Discard any unused or excess antibody stock according to laboratory waste disposal guidelines. b. Decontaminate work surfaces and dispose of any used materials properly.</p>
-        </li>
-        <li>
-        <p>Record Keeping: a. Maintain a record detailing the antibody aliquoting process, including the number of aliquots, volumes, concentrations, and storage locations. b. Store this information in a logbook or electronic database for future reference.</p>
-        </li>
-        </ol>
-        <p>Safety Precautions:</p>
-        <ul>
-        <li>Handle antibodies with care to avoid contamination.</li>
-        <li>Use sterile techniques to maintain the integrity of the antibody aliquots.</li>
-        <li>Dispose of waste according to laboratory safety guidelines.</li>
-        </ul>
-
-  - title: Water sample collection
-    category: 2
-
-experiments:
-
-  - title: Test the grouped extra fields
-    date: 20241231
-    tags:
-      - generated from yml
-      - dev
-      - extra fields
-    metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Group with id 1, first position"},{"id":2,"name":"Group with id 2, second position"},{"id":3,"name":"Group with id 3, third position"}],"display_main_text":false},"extra_fields":{"Has group_id 3 as number":{"type":"text","value":"","group_id":3},"Has group_id 3 as string":{"type":"text","value":"","group_id":"3"},"Has no group_id property":{"type":"text","value":""},"Group_id 1 and position 1":{"type":"checkbox","value":"","group_id":1,"position":1,"description":"This is a checkbox custom input"},"Group_id 2 and position 1":{"type":"url","value":"","group_id":2,"position":1},"Group_id 2 and position 2":{"type":"url","value":"https://datalake.example.com/experiments/3921","group_id":2,"position":2},"Group_id 2 and position 3":{"type":"url","value":"","group_id":2,"position":3},"Another one without group_id property":{"type":"select","value":"Some choice","options":["Some choice","Another choice","A third choice"],"description":"this element has no group property defined"},"Has group_id that is not in elabftw.groups":{"type":"text","value":"I am lost!","group_id":"19"}}}'
-
-  - title: An example experiment
-    body: This is the content of the experiment
-    date: 20250101
-    tags:
-      - generated from yml
-      - example
-      - demo
-    comments:
-      - Oh, how fascinating. I'm sure the groundbreaking discovery that water is wet will change the course of human history forever.
-      - "Well, it's a relief to see that the scientific community is hard at work discovering what we already suspected: that the sky is indeed blue. I can't wait for their next groundbreaking revelation that grass is green."
-
-  - title: Transfection of p103Δ12-22 into RPE-1 Actin-RFP
-    body: '<h1>Goal</h1><p>Transfecting the plasmid p103Δ12-22 into the RPE-1 Actin-RFP cells and look at the death rate.</p>'
-    date: 20250102
-    tags:
-      - generated from yml
-      - transfection
-      - biocell
-      - RPE-1
-    items_links:
-      - 173
-
-  - title: Gold master experiment
-    date: 20250103
-    tags:
-      - generated from yml
-      - test-data
-      - eln
-      - tag with space
-      - "special chars {[éèÀ®]}:*\\<>×÷±"
-    items_links:
-      - 173
-    experiments_links:
-      - 32
-    comments:
-      - "Great results on the DNA extraction. The yield and purity look good. For the wash steps, consider extending the final centrifugation to 3 minutes to ensure no residual buffer. Nice work!"
-    metadata: '{"elabftw": {"display_main_text": true,"extra_fields_groups": [{"id": 1,"name": "Group 1"},{"id": 2,"name": "Group 2"},{"id": 3,"name": "Last group"}]},"extra_fields": {"Number": {"type": "number","unit": "","units": [],"value": "","group_id": 2,"description": "no units"},"Type URL": {"type": "url","value": "https://www.elabftw.net","group_id": 2,"readonly": true,"description": "a link (readonly)"},"Just time": {"type": "time","value": "17:00","group_id": 2,"description": "tea time"},"Some date": {"type": "date","value": "2024-07-14","group_id": 2,"description": "is a date"},"Type user": {"type": "users","value": 1,"group_id": 3,"description": "this is a link to a user"},"A checkbox": {"type": "checkbox","value": "on","group_id": 2,"description": "is checked"},"Email input": {"type": "email","value": "louis@example.com","group_id": 2,"description": "type email"},"Date and time": {"type": "datetime-local","value": "2024-07-14T13:37","group_id": 2,"description": "datetime description"},"Radio buttons": {"type": "radio","value": "Oui","options": ["Oui","Non","Peut-être"],"group_id": 1,"description": "radio description"},"Type resource": {"type": "items","value": 208,"group_id": 3,"description": "This is a link to a resource"},"A dropdown menu": {"type": "select","value": "Choice 1","options": ["Choice 1","Choice 2","Choice 3"],"group_id": 1,"description": "Single select"},"Text input name": {"type": "text","value": "some text","group_id": 1,"readonly": true,"required": true,"description": "type text + all attributes","blank_value_on_duplicate": true},"Type experiment": {"type": "experiments","value": 373,"group_id": 3,"description": "This is a link to an experiment"},"Number with units": {"type": "number","unit": "mM","units": ["mM","μM","nM"],"value": "","group_id": 2,"description": "this one has units"},"Unchecked checkbox": {"type": "checkbox","value": "","group_id": 2,"description": "this one is not checked"},"Multi dropdown menu": {"type": "select","value": "Option 1","options": ["Option 1","Option 2","Option 3"],"group_id": 1,"description": "Allows multiple selection","allow_multi_values": true}}}'
-    body: |
-        <h1>Level 1 title</h1>
-        <h2>Level 2 title</h2>
-        <p>The <strong>goal</strong> of this <em>experiment</em> is to have <span style="text-decoration: underline;">all</span> <span style="background-color: rgb(241, 196, 15); color: rgb(224, 62, 45);">attributes</span>:</p>
-        <ul>
-        <li>all extra fields types</li>
-        <li>links to experiments and items</li>
-        <li>links from experiments and items</li>
-        <li>status, category, tags and uploaded files</li>
-        </ul>
-        <h3>Here is a table</h3>
-        <table style="border-collapse: collapse; width: 100%;" border="1"><colgroup><col style="width: 33.3137%;"><col style="width: 33.3137%;"><col style="width: 33.3137%;"></colgroup>
-        <tbody>
-        <tr>
-        <td>Something</td>
-        <td>in H<sub>2</sub></td>
-        <td>the</td>
-        </tr>
-        <tr>
-        <td>table</td>
-        <td style="background-color: rgb(185, 106, 217); border: 2px dashed rgb(224, 62, 45);">31<sup>321</sup></td>
-        <td>there</td>
-        </tr>
-        </tbody>
-        </table>
-        <p>an emoji: 🤪</p>
-        <p>&infin; &sum;</p>
-        <h4>An image</h4>
-        <p><img src="app/download.php?name=example.jpg&amp;f=78/7834c99a3af687a043d7e9c5bec5e4877469748dca1e898892962ab769be562e069204c19f3bf4663dd2f036cd2a9673b8db53702405ad5298a6e1fd78d6d7da.jpg&amp;storage=1" width="173" height="260"></p>
-        <p><a href="https://www.elabftw.net/">A link to elabftw.net</a>.</p>
-        <p>&nbsp;</p>
-
-  - title: Synthesis and Characterization of a Novel Organic Compound with Antimicrobial Properties
-    body: |
-      <h1>Synthesis and Characterization of a Novel Organic Compound with Antimicrobial Properties</h1>
-      <p>
-      The emergence of drug-resistant bacterial strains has become a major public health concern, highlighting the need for the development of new antimicrobial agents. In this study, we aimed to synthesize a novel organic compound with potential antimicrobial activity.
-      </p>
-      <h2>Experimental Design</h2>
-      <p>
-      The compound was synthesized via a multi-step reaction scheme. The starting material, benzaldehyde, was reacted with aniline in the presence of an acid catalyst to form the intermediate product, N-phenylbenzamide. The intermediate product was then reacted with thionyl chloride to form the corresponding acid chloride. The acid chloride was then reacted with aminoguanidine in the presence of a base catalyst to form the final product, which was purified by recrystallization.
-      </p>
-      <h2>Characterization</h2>
-      <p>
-      The synthesized compound was characterized using various spectroscopic techniques. The melting point of the compound was determined using a melting point apparatus and compared to the literature value. The IR spectrum of the compound was obtained using a Fourier transform infrared spectrometer and compared to the expected spectrum. The NMR spectrum of the compound was obtained using a nuclear magnetic resonance spectrometer and analyzed to confirm the structure of the compound.
-      </p>
-      <h2>Antimicrobial Activity</h2>
-      <p>
-      The antimicrobial activity of the synthesized compound was evaluated against several bacterial strains using the disk diffusion method. The results showed that the compound exhibited significant antimicrobial activity against both Gram-positive and Gram-negative bacteria, suggesting its potential as a new antimicrobial agent.
-      </p>
-    date: 20250102
-    status: 4
-    rating: 1
-    locked: true
-    items_links:
-      - 50
-    tags:
-      - generated from yml
-      - synthesis
-      - antimicrobial
-      - chemistry
-
-  - title: フルーツフライの食性に関する研究
-    body: |
-      <p>背景： フルーツフライは、果物の成熟過程に大きな影響を与えます。そのため、フルーツフライの食性について研究することは、果物産業にとって重要な意義を持ちます。</p>
-
-      <p>目的： この研究の目的は、フルーツフライの好んで食べる果物の種類を調べることです。</p>
-
-      <p>方法： まず、フルーツフライを捕獲し、実験室で飼育します。次に、果物を複数用意し、フルーツフライが好んで食べる果物を調べます。果物は、リンゴ、バナナ、オレンジ、キウイフルーツ、グレープフルーツ、パイナップル、マンゴーの7種類を用意します。各果物を1つずつケージの中に入れ、フルーツフライが果物を食べたかどうかを確認します。果物は毎日交換し、同じ果物が連続して入れられないようにします。また、フルーツフライが果物を食べる時間帯も調べます。</p>
-
-      <p>結果： 実験の結果、フルーツフライが好んで食べる果物は、バナナ、マンゴー、パイナップルであることがわかりました。また、フルーツフライが果物を食べる時間帯は、午前中が多いことがわかりました。</p>
-
-      <p>結論： フルーツフライは、バナナ、マンゴー、パイナップルを好んで食べることが明らかになりました。この結果は、果物生産業にとって重要な情報となります。</p>
-    date: 20250102
-    tags:
-      - generated from yml
-      - CJK
-      - ショウジョウバエ
-
-  - title: Effect of temperature on enzyme activity
-    user: 2
-    body: |
-      <h1>Effect of Temperature on Enzyme Activity</h1>
-      <p>
-      Enzymes are biological molecules that catalyze chemical reactions in living organisms. In this experiment, we investigated the effect of temperature on the activity of the enzyme amylase, which catalyzes the hydrolysis of starch into glucose.
-      </p>
-      <h2>Experimental Design</h2>
-      <p>
-      We prepared a solution of starch and added a small amount of amylase to the solution. We then incubated the solution at different temperatures, ranging from 4°C to 70°C, for 5 minutes. After the incubation period, we added iodine to the solution to detect the presence of starch. The disappearance of the blue-black color of the iodine indicated the breakdown of starch into glucose.
-      </p>
-      <h2>Results</h2>
-      <p>
-      The results showed that the activity of amylase increased with increasing temperature up to 37°C, which is the optimum temperature for amylase activity. At temperatures above 37°C, the activity of amylase decreased rapidly, and at 70°C, the enzyme was completely denatured and lost its catalytic activity.
-      </p>
-      <p>
-      The relationship between temperature and enzyme activity can be described by the Arrhenius equation, which relates the rate constant of a reaction to the activation energy and temperature. The equation can be written as:
-      </p>
-      <p>
-      $$k = Ae^{-E_a/RT}$$
-      </p>
-      <p>
-      where k is the rate constant, A is the pre-exponential factor, E_a is the activation energy, R is the gas constant, and T is the absolute temperature. The activation energy is the energy required to break the bonds in the reactants and form the products. The rate constant increases with increasing temperature due to the increase in the number of reactant molecules with sufficient kinetic energy to overcome the activation energy barrier.
-      </p>
-      <p>
-      The effect of temperature on enzyme activity can also be described by the Q10 value, which is the ratio of the reaction rate at a given temperature to the reaction rate at a temperature 10°C lower. The Q10 value for most enzyme-catalyzed reactions is around 2-3, indicating that the reaction rate doubles or triples with each 10°C increase in temperature.
-      </p>
-    date: 20250102
-    status: 3
-    tags:
-      - generated from yml
-      - enzymology
-      - test
-      - Project ENZYTEMP
-
-  - title: Testing relationship between acceleration and gravity
-    body: |
-      <h1>Determination of Acceleration Due to Gravity</h1>
-      <p>
-      The acceleration due to gravity is a fundamental constant that determines the gravitational force between two objects. In this experiment, we aimed to determine the value of acceleration due to gravity using a simple pendulum.
-      </p>
-      <h2>Experimental Design</h2>
-      <p>
-      We suspended a metal ball from a string and measured the time taken for one complete oscillation of the pendulum. We repeated this measurement for different lengths of the pendulum and recorded the corresponding times. Using the formula $T=2\pi\sqrt{\frac{L}{g}}$, where $T$ is the period of the pendulum, $L$ is the length of the pendulum, and $g$ is the acceleration due to gravity, we calculated the value of $g$. The period $T$ can also be expressed in terms of the frequency $f$ using the equation $T=\frac{1}{f}$.
-      </p>
-      <h2>Results</h2>
-      <p>
-      The results showed that the value of acceleration due to gravity was $9.81 \text{ m/s}^2$, which is consistent with the accepted value. We also found that the period of the pendulum increased with increasing length, as predicted by the formula $T=2\pi\sqrt{\frac{L}{g}}$. The relationship between the length and period of the pendulum can be expressed as $T^2=\frac{4\pi^2}{g}L$, which is a linear relationship with a slope of $\frac{4\pi^2}{g}$.
-      </p>
-    date: 20250102
-    tags:
-      - generated from yml
-      - has-mathjax
-      - physics
-
-  - title: Synthesis of Aspirin
-    user: 3
-    body: |
-      <h1>Introduction</h1>
-      <p>
-      Aspirin is a widely used pain-relieving and anti-inflammatory drug. In this experiment, we aimed to synthesize aspirin from salicylic acid and acetic anhydride.
-      </p>
-      <h2>Experimental Design</h2>
-      <p>
-      We mixed salicylic acid and acetic anhydride in the presence of a catalyst, sulfuric acid. The reaction produced aspirin and acetic acid, as shown in the following chemical equation:
-      </p>
-      <p>
-      $$\ce{C7H6O3 + (CH3CO)2O ->[\text{H2SO4}] C9H8O4 + CH3COOH}$$
-      </p>
-      <p>
-      After the reaction, we purified the aspirin by recrystallization from hot water. The purity of the aspirin was confirmed using thin-layer chromatography (TLC) and melting point analysis.
-      </p>
-      <h2>Results</h2>
-      <p>
-      The yield of aspirin was 80% based on the amount of salicylic acid used. The purity of the aspirin was confirmed using TLC, which showed a single spot corresponding to aspirin. The melting point of the aspirin was 135-136°C, which is consistent with the literature value of 135-136.5°C.
-      </p>
-      <p>
-      The chemical reaction involved in the synthesis of aspirin can be written as:
-      </p>
-      <p>
-      $$\ce{C7H6O3 + (CH3CO)2O ->[\text{H2SO4}] C9H8O4 + CH3COOH}$$
-      </p>
-      <p>
-      The theoretical yield of aspirin can be calculated using the stoichiometry of the reaction. Assuming that all the salicylic acid reacts and no aspirin is lost during the purification process, the theoretical yield is calculated as follows:
-      </p>
-      <p>
-      $$\text{Theoretical yield} = \frac{\text{moles of salicylic acid used}}{\text{molar ratio of salicylic acid to aspirin}} \times \text{molar mass of aspirin}$$
-      </p>
-      <p>
-      The actual yield of aspirin can be calculated by dividing the mass of the purified aspirin by the mass of salicylic acid used and multiplying by 100%. The percent yield can be calculated by dividing the actual yield by the theoretical yield and multiplying by 100%.
-      </p>
-    date: 20250102
-    tags:
-      - generated from yml
-      - has-mathjax
-      - chemistry
-
-  - title: Testing the eLabFTW lab notebook
-    body: "<h1>Goal</h1><p>Test the software.</p><h1>Procedure</h1><p>Click everywhere and explore everything.</p><h1>Results</h1><p>It's really nice, I think I'll adopt it for our lab."
-    date: 20250303
-    status: 1
-    rating: 5
-    tags:
-      - generated from yml
-      - test
-      - demo
-    metadata: '{"extra_fields":{"Raw data URL":{"type":"url","value":"https://datalake.example.com/experiments/3921"},"Annie, are you okay":{"type":"checkbox","value":"","description":"This is a checkbox custom input"},"This is a custom list input":{"type":"select","value":"Some choice","options":["Some choice","Another choice","A third choice"],"description":"The value is selected from a pre-defined list"}}}'
-    comments:
-      - Well, it's always reassuring to know that scientists are spending their time and our tax dollars discovering what the rest of us already learned in third-grade science class.
-    experiments_links:
-      - 256
-      - 257
-      - 258
-    items_links:
-      - 50
-      - 51
-
-items_types:
-  - name: Microscope
-    color: '#54AA08'
-    body: '<h1>Switch on procedure</h1><p>&nbsp;</p><h1>Switch off procedure</h1>'
-    metadata: '{"extra_fields": {"Location": {"type": "select","value": "Microscopy room 3rd floor","options": ["Microscopy room 3rd floor","Nikon imaging center","-2 microscopy room A","That building that is way too far away"]},"Available wavelengths": {"type": "select","value": "405 nm","options": ["405 nm","488 nm","561 nm","640 nm"],"allow_multi_values": true},"Person in charge": {"type": "users","value": 2,"description": "Select the person responsible for this microscope"},"Available objectives": {"type": "select","value": "4X","options": ["4X","10X","40X","63X","100X"],"allow_multi_values": true}}}'
-
-  - name: Chemical compound
-    color: '#29AEB9'
-
-  - name: Plasmid
-    color: '#C0C0C0'
-    metadata: '{"extra_fields":{"Concentration":{"type":"number","value":"","description":"in μg/μL"},"Vector backbone":{"type":"text","value":""},"Growth temperature":{"type":"text","value":"","description":"in °C"},"Bacterial resistance":{"type":"select","value":"Ampicillin","options":["Ampicillin","Kanamycin","Tetracyclin","Chloramphenicol","Gentamicin","Streptomycin"]},"Mammalian resistance":{"type":"select","value":"Neomycin","options":["Neomycin","Hygromycin","Puromycin","Blasticidin","Zeocin"]}}}'
-
-  - name: Antibody
-    color: '#C24F3D'
-    metadata: '{"extra_fields":{"Host":{"type":"select","value":"Rabbit","options":["Rabbit","Mouse","Goat","Chicken"]},"Storage temperature":{"type":"select","value":"+4 °C","options":["+4 °C","-20 °C","-80 °C"]},"Dilution to use for IF":{"type":"text","value":""},"Dilution to use for WB":{"type":"text","value":""}}}'
-
-  - name: Yeast
-    color: '#ED9913'
-    metadata: '{"extra_fields":{"Strain name":{"type":"text","value":""},"Genotype":{"type":"text","value":""},"Selection marker":{"type":"select","value":"URA3","options":["URA3","LEU2","HIS3","TRP1","KanMX","NatMX"]},"Growth temperature":{"type":"number","value":"","description":"in °C"},"Mating type":{"type":"select","value":"haploid a","options":["haploid a","haploid α","diploid"]},"Storage condition":{"type":"select","value":"-80 °C","options":["-80 °C","4 °C","on plate","in liquid culture"]},"Person in charge":{"type":"users","value":"","description":"Select the person responsible for this strain"}}}'
-
-
-items:
-  - title: Spinning Disk 2
-    category: 3
-    rating: 4
-  - title: Video microscope Bravo
-    category: 3
-  - title: Scanning Electron Microscope
-    category: 3
-  - title: Light sheet 1
-    category: 3
-  - title: TIRF microscope
-    category: 3
-  - title: STORM/PALM
-    category: 3
-    # Chemical compounds
-  - title: Sodium chloride - NaCl
-    category: 4
-  - title: Methane - CH4
-    category: 4
-  - title: Ethanol - C2H4OH
-    category: 4
-  - title: Ammonia - NH3
-    category: 4
-  - title: Hydrogen peroxide - H2O2
-    category: 4
-  - title: Sulfuric acid - H2SO4
-    category: 4
-  - title: Nitric acid - HNO3
-    category: 4
-  - title: Acetic acid - CH3COOH
-    category: 4
-  - title: Glucose - C5H12O6
-    category: 4
-  - title: Calcium carbonate - CaCO3
-    category: 4
-  - title: Sodium bicarbonate - NaHCO3
-    category: 4
-  - title: Potassium chloride - KCl
-    category: 4
-  - title: Magnesium sulfate - MgSO4
-    category: 4
-  - title: Aluminum oxide - Al2O3
-    category: 4
-  - title: Methanol - CH3OH
-    category: 4
-  - title: Hydrochloric acid - HCl
-    category: 4
-  - title: Formaldehyde - CH2O
-    category: 4
-  - title: Ethylene glycol - C2H5O2
-    category: 4
-  # PLASMIDS
-  - title: pBR322
-    category: 5
-  - title: pUC19
-    category: 5
-  - title: pGEM-T Easy
-    category: 5
-  - title: pBluescript II KS+
-    category: 5
-  - title: pET-28a(+)
-    category: 5
-  - title: pET-32a(+)
-    category: 5
-  - title: pACYC184
-    category: 5
-  - title: pET-15b
-    category: 5
-  - title: pBAD/Thio-TOPO
-    category: 5
-  - title: pEGFP-N1
-    category: 5
-  - title: pCMV-Tag2B
-    category: 5
-  - title: pCR2.1-TOPO
-    category: 5
-  - title: pACYC167
-    category: 5
-  - title: pRS415
-    category: 5
-  - title: pET-41a(+)
-    category: 5
-  - title: pQE-30
-    category: 5
-  - title: pGEX-4T-1
-    category: 5
-  - title: pRSF-Duet-1
-    category: 5
-  - title: pMAL-c2x
-    category: 5
-  - title: pET-28b(+)
-    category: 5
-  # ANTIBODIES
-  - title: Anti-Actin
-    category: 6
-  - title: Anti-GAPDH
-    category: 6
-  - title: Anti-Tubulin
-    category: 6
-  - title: Anti-Histone H3
-    category: 6
-  - title: Anti-FLAG
-    category: 6
-  - title: Anti-HA
-    category: 6
-  - title: Anti-Myc
-    category: 6
-  - title: Anti-RFP
-    category: 6
-  - title: Anti-V5
-    category: 6
-  - title: Anti-Phospho-ERK1/2 (Thr202/Tyr204)
-    category: 6
-  - title: Anti-Phospho-AKT (Ser473)
-    category: 6
-  - title: Anti-Phospho-STAT3 (Tyr705)
-    category: 6
-  - title: Anti-Phospho-p37 MAPK (Thr180/Tyr182)
-    category: 6
-  - title: Anti-Cleaved PARP (Asp214)
-    category: 6
-  - title: Anti-Caspase-3
-    category: 6
-  - title: Anti-Ki-67
-    category: 6
-  - title: Anti-CD45
-    category: 6
-  - title: "Anti-CD4"
-    category: 6
-    metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Rabbit"}, "Isotype": {"type": "text", "value": "IgG"}, "Storage temperature": {"type": "select", "value": "-20°C", "options": ["+4°C", "-20°C", "-70°C"]}, "Dilution for IF": {"type": "text", "value": "1:500"}, "Dilution for WB": {"type": "text", "value": "1:1000"}}}'
-    body: "<p>This antibody targets the CD4 protein and is commonly used in immunofluorescence and western blotting. It was raised in rabbit and has an isotype of IgG.</p>"
-  - title: "Anti-GFP"
-    category: 6
-    metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Mouse"}, "Isotype": {"type": "text", "value": "IgG2a"}, "Storage temperature": {"type": "select", "value": "-70°C", "options": ["+4°C", "-20°C", "-80°C"]}, "Dilution for IF": {"type": "text", "value": "1:1000"}, "Dilution for WB": {"type": "text", "value": "1:5000"}}}'
-    body: "<p>This antibody recognizes the GFP protein and is commonly used as a reporter in cell biology experiments. It was raised in mouse and has an isotype of IgG2a.</p>"
-  - title: "Anti-CD11b"
-    category: 6
-    metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Rabbit"}, "Isotype": {"type": "text", "value": "IgG"}, "Storage temperature": {"type": "select", "value": "-20°C", "options": ["+4°C", "-20°C", "-70°C"]}, "Dilution for IF": {"type": "text", "value": "1:500"}, "Dilution for WB": {"type": "text", "value": "1:1000"}}}'
-  - title: "Anti-BrdU"
-    category: 6
-    metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Mouse"}, "Isotype": {"type": "text", "value": "IgG1"}, "Storage temperature": {"type": "select", "value": "-20°C", "options": ["+4°C", "-20°C", "-70°C"]}, "Dilution for IF": {"type": "text", "value": "1:100"}, "Dilution for WB": {"type": "text", "value": "1:1000"}}}'
-    body: "<p>This antibody targets the BrdU molecule and is commonly used to detect DNA replication in cells. It was raised in mouse and has an isotype of IgG1.</p>"
-  - title: "Anti-CD3ε"
-    category: 6
-    metadata: '{"extra_fields":{"Host":{"type":"text","value":"Rabbit"},"Isotype":{"type":"text","value":"IgG"},"Storage temperature":{"type":"select","value":"+4°C","options":["+4°C","-20°C","-70°C"]},"Dilution for IF":{"type":"text","value":"1:500"},"Dilution for WB":{"type":"text","value":"1:1000"}}}'
-    body: "<p>Anti-CD3ε is a polyclonal rabbit antibody used to detect the CD3ε subunit of the T-cell receptor complex. The antibody can be used in various immunological applications such as Western blotting, immunoprecipitation, and immunofluorescence. This antibody was generated by immunizing rabbits with purified recombinant CD3ε protein.</p>"
-  - title: "Anti-CD4"
-    category: 6
-    metadata: '{"extra_fields":{"Host":{"type":"text","value":"Mouse"},"Isotype":{"type":"text","value":"IgG1"},"Storage temperature":{"type":"select","value":"-20°C","options":["+4°C","-20°C","-70°C"]},"Dilution for IF":{"type":"text","value":"1:100"},"Dilution for WB":{"type":"text","value":"1:500"}}}'
-    body: "<p>Anti-CD4 is a monoclonal mouse antibody that recognizes the CD4 antigen, a cell surface glycoprotein found on T-helper cells, regulatory T-cells, and monocytes. This antibody has been extensively used for flow cytometry, immunohistochemistry, and Western blotting. The antibody was generated by immunizing mice with human CD4-positive T-cell lines.</p>"
-  - title: "Anti-GAPDH"
-    category: 6
-    metadata: '{"extra_fields":{"Host":{"type":"text","value":"Rabbit"},"Isotype":{"type":"text","value":"IgG"},"Storage temperature":{"type":"select","value":"-20°C","options":["+4°C","-20°C","-70°C"]},"Dilution for IF":{"type":"text","value":"1:1000"},"Dilution for WB":{"type":"text","value":"1:5000"}}}'
-    body: "<p>Anti-GAPDH is a polyclonal rabbit antibody used to detect the glyceraldehyde-3-phosphate dehydrogenase protein, a well-known housekeeping gene that is ubiquitously expressed in cells. This antibody is commonly used as a loading control in Western blotting and has been shown to work in a wide range of species including human, mouse, rat, and others. The antibody was generated by immunizing rabbits with purified GAPDH protein.</p>"
-  # YEASTS
-  - title: BY4741
-    category: 7
-    metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa his3Δ1 leu2Δ0 met15Δ0 ura3Δ0"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
-  - title: W303
-    category: 7
-    metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa leu2-3,112 trp1-1 can1-100 ura3-1 ade2-1 his3-11,15"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
-  - title: BY4742
-    category: 7
-    metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATα his3Δ1 leu2Δ0 lys2Δ0 ura3Δ0"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
-  - title: S288C
-    category: 7
-    metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa/MATα"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
-  - title: CEN.PK113-7D
-    category: 7
-    metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa his3∆1 leu2∆0 met1∆0 ura3∆0"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
-  - title: JK8-3d
-    category: 7
-    metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa his3Δ200 leu2Δ1 trp1Δ63 ura3Δ52"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
-  - title: DBY746
-    category: 7
-    metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATα ura3-52 his3-Δ200 leu2-Δ1 trp1-Δ63"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
+  - name: "Paracetamol"
+    molecular_formula: "C8H9NO2"
+    cas_number: "103-90-2"
+    inchi: "InChI=1S/C8H9NO2/c1-6(10)9-7-4-2-3-5-8(7)11/h2-5,11H,1H3,(H,9,10)"
+    inchi_key: "RZVAJINKPMORJF-UHFFFAOYSA-N"
+    iupac_name: "N-(4-hydroxyphenyl)acetamide"
+    molecular_weight: "151.16"
+    pubchem_cid: 1983
+    smiles: "CC(=O)NC1=CC=C(C=C1)O"

@@ -47,7 +47,7 @@
     {# ADD NEW FILE #}
     {% if mode == 'edit' %}
       <div class='col-md-4 col-sm-6'>
-        {% if App.Config.configArr.debug -%}
+        {% if App.devMode -%}
           <!-- [html-validate-disable-next wcag/h32: no submit button for dropzone input] -->
         {%- endif %}
         <form action='api/v2/{{ Entity.entityType.value }}/{{ Entity.id }}/uploads' class='dropzone hl-hover-gray my-2 rounded' id='elabftw-dropzone' aria-label='file attachment form'></form>

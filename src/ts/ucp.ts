@@ -12,7 +12,7 @@ import {
   saveStringAsFile,
   updateCatStat,
 } from './misc';
-import i18next from 'i18next';
+import i18next from './i18n';
 import { Action, Model } from './interfaces';
 import { getEditor } from './Editor.class';
 import { Notification } from './Notifications.class';

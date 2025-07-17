@@ -11,13 +11,15 @@ declare(strict_types=1);
 
 namespace Elabftw\Exceptions;
 
-use Exception;
+use Elabftw\Enums\Messages;
 
 /**
  * Throw this if the SQL query failed
  */
-final class DatabaseErrorException extends Exception
+final class DatabaseErrorException extends AppException
 {
+    protected Messages $error = Messages::DatabaseError;
+
     private readonly string $sqlstate;
 
     private readonly int $errorCode;
@@ -40,10 +42,5 @@ final class DatabaseErrorException extends Exception
     public function getErrorCode(): int
     {
         return $this->errorCode;
-    }
-
-    public function getErrorMessage(): string
-    {
-        return $this->errorMessage;
     }
 }

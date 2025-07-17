@@ -54,7 +54,7 @@ final class MakeSchedulerReport extends AbstractMakeCsv
     #[Override]
     protected function getHeader(): array
     {
-        $header = array_keys($this->rows[0]);
+        $header = parent::getHeader();
         $header[] = 'team(s)';
         return $header;
     }

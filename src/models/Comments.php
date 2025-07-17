@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Notifications\CommentCreated;
@@ -141,7 +141,7 @@ class Comments extends AbstractRest
     {
         $comment = $this->readOne();
         if ($comment['immutable'] === 1) {
-            throw new ImproperActionException(Tools::error(true));
+            throw new IllegalActionException();
         }
     }
 

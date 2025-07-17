@@ -16,5 +16,4 @@ document.addEventListener('DOMContentLoaded', () => {
   if (about.page !== 'deleted') {
     return;
   }
-  console.log("deleted entity");
 });

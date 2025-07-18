@@ -3238,7 +3238,6 @@ paths:
           schema:
             type: string
             enum: ['instance', 'team']
-            default: json
           description: |
             Select the scope. Instance is for sysadmins only. Team will generate report for the current team.
           examples:

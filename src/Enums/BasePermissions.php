@@ -44,6 +44,17 @@ enum BasePermissions: int
         };
     }
 
+    public function slug(): string
+    {
+        return match ($this) {
+            self::Full => 'public',
+            self::Organization => 'organization',
+            self::Team => 'myteam',
+            self::User => 'user',
+            self::UserOnly => 'useronly',
+        };
+    }
+
     public static function fromKey(string $confName): BasePermissions
     {
         return match ($confName) {

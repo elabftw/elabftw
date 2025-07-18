@@ -67,19 +67,11 @@ final class PermissionsHelper
         $Config = Config::getConfig();
         $active = BasePermissions::getActiveBase($Config->configArr);
 
-        $map = array(
-            BasePermissions::Full->value => 'public',
-            BasePermissions::Organization->value => 'organization',
-            BasePermissions::Team->value => 'myteam',
-            BasePermissions::User->value => 'user',
-            BasePermissions::UserOnly->value => 'useronly',
-        );
-
         // build the associative array with only active permissions
         $englishBase = array();
-        foreach (array_keys($active) as $permValue) {
-            if (isset($map[$permValue])) {
-                $englishBase[$map[$permValue]] = $permValue;
+        foreach(BasePermissions::cases() as $permission) {
+            if (array_key_exists($permission->value, $active)) {
+                $englishBase[$permission->slug()] = $permission->value;
             }
         }
 

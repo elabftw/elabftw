@@ -19,7 +19,7 @@ use Exception;
  * The request is correct but the validation fails due to internal constraint
  * see https://datatracker.ietf.org/doc/html/rfc9110#status.422
  */
-class UnprocessableContentException extends Exception
+class UnprocessableContentException extends AppException
 {
     public function __construct(string $message, int $code = 422, ?Exception $previous = null)
     {

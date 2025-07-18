@@ -95,7 +95,6 @@ function triggerHandler(event: Event, el: HTMLInputElement): void {
       el.checked = Boolean(originalValue);
       return;
     }
-    el.value = originalValue;
     if (el.dataset.target === Target.Customid && error.message === i18next.t('custom-id-in-use')) {
       el.classList.add('is-invalid');
     }

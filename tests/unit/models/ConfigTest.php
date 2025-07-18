@@ -26,6 +26,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->Config = Config::getConfig();
+        // TODO-Config: move to a new Config::getDecrypted() method.
         // decrypt encrypted keys from config
         $encryptedColumns = array('smtp_password', 'ldap_password', 'ts_password', 'remote_dir_config');
         $secretKey = Config::fromEnv('SECRET_KEY');
@@ -68,11 +69,15 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
             'ts_url' => 'https://tsa.example.org',
             'ts_cert' => '/path/to/cert.pem',
             'ts_authority' => 'custom',
+            'allow_permission_team' => '1',
+            'allow_permission_user' => '1',
         );
 
         $configArr = $this->Config->patch(Action::Update, $post);
         $this->assertEquals('/path/to/cert.pem', $configArr['ts_cert']);
         $this->assertEquals('custom', $configArr['ts_authority']);
+        $this->assertEquals('1', $configArr['allow_permission_team']);
+        $this->assertEquals('1', $configArr['allow_permission_user']);
     }
 
     public function testRestoreDefaults(): void
@@ -112,12 +117,6 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
             'allow_permission_full' => '0',
             'allow_permission_organization' => '0',
             'allow_permission_useronly' => '0',
-        ));
-
-        // correct patch
-        $this->Config->patch(Action::Update, array(
-            'allow_permission_team' => '1',
-            'allow_permission_user' => '1',
         ));
     }
 }

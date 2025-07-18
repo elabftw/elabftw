@@ -18,7 +18,6 @@ use Elabftw\Enums\EnforceMfa;
 use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\AuthFail;
 use Elabftw\Models\Experiments;
@@ -135,8 +134,6 @@ try {
     $Response->setContent($App->render($template, $renderArr));
 } catch (AppException $e) {
     $Response = $e->getResponseFromException($App);
-} catch (UnprocessableContentException $e) {
-    return new Response($e->getMessage(), $e->getCode());
 } catch (Exception $e) {
     $Response = $App->getResponseFromException($e);
 } finally {

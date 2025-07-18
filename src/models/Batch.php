@@ -35,11 +35,11 @@ final class Batch extends AbstractRest
     {
         $action = Action::from($reqBody['action']);
         $state = null;
-        // archived elements are not displayed by default. So we need to specify 'archived' here to perform the Unarchive action.
+        // on Unarchive action, search for 'Archived' entities to perform the patch.
         if ($action === Action::Unarchive) {
             $state = State::Archived;
         }
-        // same - query for deleted items when we want to Restore them.
+        // same - search for deleted items when we want to Restore them.
         if ($action === Action::Restore) {
             $state = State::Deleted;
         }

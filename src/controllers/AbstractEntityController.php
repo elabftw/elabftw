@@ -21,7 +21,6 @@ use Elabftw\Enums\Meaning;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\Sort;
-use Elabftw\Enums\State;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractEntity;
@@ -98,7 +97,6 @@ abstract class AbstractEntityController implements ControllerInterface
     {
         return match ($this->App->Request->query->getAlpha('mode')) {
             'view' => $this->view(),
-            'deleted' => $this->viewDeleted(),
             'edit' => $this->edit(),
             'changelog' => $this->changelog(),
             default => $this->show(),
@@ -190,9 +188,6 @@ abstract class AbstractEntityController implements ControllerInterface
      */
     protected function view(): Response
     {
-        if ($response = $this->gatekeepDeleted()) {
-            return $response;
-        }
         $RequestActions = new RequestActions($this->App->Users, $this->Entity);
         $ProcurementRequests = new ProcurementRequests($this->App->Teams);
 
@@ -228,46 +223,11 @@ abstract class AbstractEntityController implements ControllerInterface
         return $Response;
     }
 
-    protected function viewDeleted(): Response
-    {
-        // the mode parameter is for the uploads tpl
-        $renderArr = array(
-            'Entity' => $this->Entity,
-            'displayMainText' => (new Metadata($this->Entity->entityData['metadata']))->getDisplayMainText(),
-            'hideTitle' => true,
-        );
-        $Response = new Response();
-        $Response->prepare($this->App->Request);
-        $Response->setContent($this->App->render('view-deleted.html', $renderArr));
-
-        return $Response;
-    }
-
-    protected function gatekeepDeleted(): ?Response
-    {
-        if ($this->Entity->entityData['state'] === State::Deleted->value) {
-            if (!isset($this->Entity->id)) {
-                throw new ResourceNotFoundException();
-            }
-            return new RedirectResponse(sprintf(
-                '%s%sid=%d',
-                $this->Entity->entityType->toPage(),
-                '?mode=deleted&',
-                $this->Entity->id,
-            ), Response::HTTP_SEE_OTHER); // 303
-        }
-        return null;
-    }
-
     /**
      * Edit mode
      */
     protected function edit(): Response
     {
-        // check if deleted
-        if ($response = $this->gatekeepDeleted()) {
-            return $response;
-        }
         // redirect to view mode if we don't have edit access
         if ($this->Entity->isReadOnly) {
             if (!isset($this->Entity->id)) {

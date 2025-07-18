@@ -127,7 +127,14 @@
 
 </section>
 
-{% include 'metadata-view.html' %}
+{# METADATA view #}
+{% if Entity.entityData.metadata %}
+  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='extraFieldsDiv'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Extra fields'|trans }}</h3>
+  <div class='mt-2 col-md-8' id='extraFieldsDiv' data-save-hidden='extraFieldsDiv'>
+    {{ Entity.entityData.metadata|formatMetadata }}
+  </div>
+  <hr>
+{% endif %}
 
 {% include 'uploads.html' %}
 
@@ -189,6 +196,19 @@
   {% endif %}
 </div>
 
+{#  <div class='entity-deleted-overlay'>#}
+{#    <p>{{ 'This entry has been deleted.'|trans }}</p>#}
+{#    <button data-action='restore-entity' type='button' class='btn btn-primary mb-2' data-id='{{ Entity.entityData.id }}'>{{ 'Restore entry'|trans }}</button>#}
+{#    #}{# BACK TO LINK #}
+{#    {% if App.Session.has('lastquery') %}#}
+{#      {% set lastquery = App.Session.get('lastquery') %}#}
+{#    {% else %}#}
+{#      {% set lastquery = 'mode=show&state=3' %}#}
+{#    {% endif %}#}
+{#    <a title='{{ 'Back to listing'|trans }}' aria-label='{{ 'Back to listing'|trans }}' href='?{{ lastquery }}' class='btn btn-sm bgnd-gray hl-hover-superlight p-2'>#}
+{#      <i class='fas fa-arrow-left fa-fw'></i>{{ 'Back to listing'|trans }}#}
+{#    </a>#}
+{#  </div>#}
 
 <div id='info'
     data-page='view'

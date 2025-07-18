@@ -22,6 +22,7 @@ const t = {
     "edit-compound": "Edytuj związek",
     "editing-metadata": "Aktualnie edytujesz metadane dołączone do tego wpisu.",
     "email": "Email",
+    "enable-permission": "You must allow at least one permission setting.",
     "entity-default-title": "Bez tytułu",
     "entity-delete-warning": "Wybrany element(y) i wszystkie powiązane z nim dane zostaną nieodwracalnie usunięte. Ta operacja nie może być cofnięta. Jesteś pewny?",
     "entries-processed": "{{num, number}} entries processed",

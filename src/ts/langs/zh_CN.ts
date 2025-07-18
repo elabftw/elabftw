@@ -22,6 +22,7 @@ const t = {
     "edit-compound": "编辑化合物",
     "editing-metadata": "当前正在编辑附加到此项的元数据。",
     "email": "Email",
+    "enable-permission": "You must allow at least one permission setting.",
     "entity-default-title": "未命名",
     "entity-delete-warning": "所选项目和所有相关数据将被永久删除。这不能被撤销。您确定吗？",
     "entries-processed": "{{num, number}} entries processed",

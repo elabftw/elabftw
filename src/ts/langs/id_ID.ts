@@ -22,6 +22,7 @@ const t = {
     "edit-compound": "Edit senyawa",
     "editing-metadata": "Anda sedang menyunting metadata yang dilampirkan ke entri ini.",
     "email": "Surel",
+    "enable-permission": "You must allow at least one permission setting.",
     "entity-default-title": "Tanpa Judul",
     "entity-delete-warning": "Komponen terpilih dan data terkait akan dihapus permanen. Ini tidak dapat dibatalkan. Anda yakin?",
     "entries-processed": "{{num, number}} entries processed",

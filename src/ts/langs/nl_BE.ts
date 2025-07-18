@@ -22,6 +22,7 @@ const t = {
     "edit-compound": "Bewerk samenstelling",
     "editing-metadata": "U bewerkt momenteel de metadata die aan dit item gekoppeld zijn.",
     "email": "E-mail",
+    "enable-permission": "You must allow at least one permission setting.",
     "entity-default-title": "Geen titel",
     "entity-delete-warning": "Het geselecteerde item(s) en alle geassocieerde gegevens zullen permanent verwijderd worden. Dit kan niet ongedaan gemaakt worden. Bent u zeker?",
     "entries-processed": "{{num, number}} entries processed",

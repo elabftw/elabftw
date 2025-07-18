@@ -22,6 +22,7 @@ const t = {
     "edit-compound": "Επεξεργασία σύνθετου στοιχείου",
     "editing-metadata": "Αυτήν τη στιγμή επεξεργάζεστε τα μεταδεδομένα που επισυνάπτονται σε αυτήν την καταχώριση.",
     "email": "Ηλεκτρονικό ταχυδρομείο",
+    "enable-permission": "You must allow at least one permission setting.",
     "entity-default-title": "Χωρίς τίτλο",
     "entity-delete-warning": "Τα επιλεγμένα στοιχεία και όλα τα σχετικά δεδομένα θα διαγραφούν οριστικά. Αυτό δεν μπορεί να αναιρεθεί. Είσαι σίγουρος/η;",
     "entries-processed": "{{num, number}} entries processed",

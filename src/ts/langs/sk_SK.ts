@@ -22,6 +22,7 @@ const t = {
     "edit-compound": "Upraviť zlúčeninu",
     "editing-metadata": "Editujete metadáta pripojené k tejto položke.",
     "email": "Email",
+    "enable-permission": "You must allow at least one permission setting.",
     "entity-default-title": "Bez mena",
     "entity-delete-warning": "Vybraté položky a všetky súvisiace údaje sa natrvalo odstránia. To nie je možné vrátiť späť. Si si istý?",
     "entries-processed": "{{num, number}} entries processed",

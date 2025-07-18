@@ -22,6 +22,7 @@ const t = {
     "edit-compound": "Upravit sloučeninu",
     "editing-metadata": "Právě upravujete metadata připojená k tomuto záznamu.",
     "email": "Email",
+    "enable-permission": "You must allow at least one permission setting.",
     "entity-default-title": "Bez názvu",
     "entity-delete-warning": "Vybrané položky a všechna související data budou trvale odstraněny. Tento krok nelze vrátit zpět. Jste si jisti?",
     "entries-processed": "{{num, number}} entries processed",

@@ -66,6 +66,8 @@ function triggerHandler(event: Event, el: HTMLInputElement): void {
   if (!userid) {
     userid = el.dataset.userid;
   }
+  // store original value to revert the permission switches
+  const originalValue = value;
 
   // CUSTOM ACTIONS
   if (el.dataset.customAction === 'patch-user2team-is') {
@@ -88,6 +90,11 @@ function triggerHandler(event: Event, el: HTMLInputElement): void {
       handleReloads(el.dataset.reload);
     }
   }).catch(error => {
+    // restore the original value for checkboxes
+    if (el.type === 'checkbox') {
+      el.checked = Boolean(originalValue);
+      return;
+    }
     if (el.dataset.target === Target.Customid && error.message === i18next.t('custom-id-in-use')) {
       el.classList.add('is-invalid');
     }
@@ -664,7 +671,6 @@ export function sizeToMb(size: string): number {
 
   return value * units[unit];
 }
-
 
 export function toggleEditCompound(json: object): void {
   const textParams = [

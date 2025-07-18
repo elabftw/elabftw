@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\AuditCategory;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EnforceMfa;
 use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Exceptions\AppException;
@@ -128,6 +129,7 @@ try {
         'uploadsStats' => UploadsChecker::getStats(),
         'enforceMfaArr' => EnforceMfa::getAssociativeArray(),
         'passwordComplexityArr' => PasswordComplexity::getAssociativeArray(),
+        'permissions' => BasePermissions::cases(),
     );
     $Response->setContent($App->render($template, $renderArr));
 } catch (AppException $e) {

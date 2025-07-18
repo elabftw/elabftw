@@ -338,7 +338,10 @@ final class Config extends AbstractRest
         $password = '';
         if ($this->configArr['smtp_password']) {
             $username = $this->configArr['smtp_username'];
-            $password = $this->configArr['smtp_password'];
+            $password = Crypto::decrypt(
+                $this->configArr['smtp_password'],
+                Key::loadFromAsciiSafeString(self::fromEnv('SECRET_KEY'))
+            );
         }
 
         return sprintf(

@@ -98,6 +98,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
 
     public function testDsn(): void
     {
+        $this->Config->configArr['smtp_password'] = Crypto::encrypt($this->Config->configArr['smtp_password'], Key::loadFromAsciiSafeString($this->Config::fromEnv('SECRET_KEY')));
         $this->assertIsString($this->Config->getDsn());
     }
 

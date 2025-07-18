@@ -153,16 +153,7 @@
 
 {# TOP TOOLBAR #}
 <div class='d-flex align-items-center flex-wrap' id='topToolbar'>
-  {# BACK TO LINK #}
-  {% if App.Session.has('lastquery') %}
-    {% set lastquery = App.Session.get('lastquery') %}
-  {% else %}
-    {% set lastquery = 'mode=show' %}
-  {% endif %}
-
-  <a title='{{ 'Back to listing'|trans }}' aria-label='{{ 'Back to listing'|trans }}' href='?{{ lastquery }}' class='btn hl-hover-gray p-2 lh-normal border-0'>
-    <i class='fas fa-arrow-left fa-fw'></i>
-  </a>
+  {% include 'back-to-previous.html' %}
   {# for templates: create from button #}
   {% if Entity.entityType.value == 'experiments_templates' or Entity.entityType.value == 'items_types' %}
     <a data-action='create-entity' data-type='experiments' data-tplid='{{ Entity.id }}' href='#' class='btn hl-hover-gray p-2 lh-normal border-0' title='{{ 'Create experiment from template'|trans }}' aria-label='{{ 'Create experiment from template'|trans }}'>

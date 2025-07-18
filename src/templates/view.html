@@ -196,19 +196,13 @@
   {% endif %}
 </div>
 
-{#  <div class='entity-deleted-overlay'>#}
-{#    <p>{{ 'This entry has been deleted.'|trans }}</p>#}
-{#    <button data-action='restore-entity' type='button' class='btn btn-primary mb-2' data-id='{{ Entity.entityData.id }}'>{{ 'Restore entry'|trans }}</button>#}
-{#    #}{# BACK TO LINK #}
-{#    {% if App.Session.has('lastquery') %}#}
-{#      {% set lastquery = App.Session.get('lastquery') %}#}
-{#    {% else %}#}
-{#      {% set lastquery = 'mode=show&state=3' %}#}
-{#    {% endif %}#}
-{#    <a title='{{ 'Back to listing'|trans }}' aria-label='{{ 'Back to listing'|trans }}' href='?{{ lastquery }}' class='btn btn-sm bgnd-gray hl-hover-superlight p-2'>#}
-{#      <i class='fas fa-arrow-left fa-fw'></i>{{ 'Back to listing'|trans }}#}
-{#    </a>#}
-{#  </div>#}
+{% if Entity.entityData.state == enum('Elabftw\\Enums\\State').Deleted.value %}
+  <div class='entity-deleted-overlay'>
+    <p>{{ 'This entry has been deleted.'|trans }}</p>
+    <button data-action='restore-entity' type='button' class='btn btn-primary mb-2' data-id='{{ Entity.entityData.id }}'>{{ 'Restore entry'|trans }}</button>
+    {% include 'back-to-previous.html' with {'type': 'btn'} %}
+  </div>
+{% endif %}
 
 <div id='info'
     data-page='view'

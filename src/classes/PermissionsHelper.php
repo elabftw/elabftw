@@ -69,7 +69,7 @@ final class PermissionsHelper
 
         // build the associative array with only active permissions
         $englishBase = array();
-        foreach(BasePermissions::cases() as $permission) {
+        foreach (BasePermissions::cases() as $permission) {
             if (array_key_exists($permission->value, $active)) {
                 $englishBase[$permission->slug()] = $permission->value;
             }

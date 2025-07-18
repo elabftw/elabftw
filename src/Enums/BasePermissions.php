@@ -44,6 +44,7 @@ enum BasePermissions: int
         };
     }
 
+    // used for extended search (cf. PermissionsHelper::getExtendedSearchAssociativeArray())
     public function slug(): string
     {
         return match ($this) {

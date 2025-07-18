@@ -26,15 +26,14 @@ use function intval;
 use function mb_strlen;
 use function mb_substr;
 use function array_keys;
+use function in_array;
+use function sprintf;
 
 /**
  * When values need to be checked
  */
 final class Check
 {
-    /** the minimum password length */
-    public const MIN_PASSWORD_LENGTH = 8;
-
     /** how deep goes the canread/canwrite json */
     private const PERMISSIONS_JSON_MAX_DEPTH = 3;
 
@@ -122,9 +121,18 @@ final class Check
 
         // Enforce that base is one of the active permissions
         $Config = Config::getConfig();
-        $activeBases = array_keys(BasePermissions::getActiveBase($Config->configArr));
+        // get human readable to display an indicative error
+        $activeBaseAssoc = BasePermissions::getActiveBase($Config->configArr);
+        $activeBases = array_keys($activeBaseAssoc);
         if (!in_array($base->value, $activeBases, true)) {
-            throw new UnprocessableContentException('This base permission is not currently allowed by the system configuration.');
+            $allowed = implode(', ', $activeBaseAssoc);
+            throw new UnprocessableContentException(
+                sprintf(
+                    'This base permission (%d) is not currently allowed by the system configuration. Allowed values are: %s.',
+                    $base->value,
+                    $allowed
+                )
+            );
         }
         $arrayParams = array('teams', 'teamgroups', 'users');
         foreach ($arrayParams as $param) {

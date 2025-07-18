@@ -64,18 +64,26 @@ final class PermissionsHelper
      */
     public function getExtendedSearchAssociativeArray(): array
     {
-        $flipped = array_flip(array_map('strtolower', $this->getAssociativeArray()));
-        $englishBase = array(
-            'public' => BasePermissions::Full->value,
-            'organization' => BasePermissions::Organization->value,
-            'myteam' => BasePermissions::Team->value,
-            'user' => BasePermissions::User->value,
-        );
-        // add the only me setting only if it is allowed by main config
         $Config = Config::getConfig();
-        if ($Config->configArr['allow_permission_useronly'] === '1') {
-            $englishBase['useronly'] = BasePermissions::UserOnly->value;
+        $active = BasePermissions::getActiveBase($Config->configArr);
+
+        $map = array(
+            BasePermissions::Full->value => 'public',
+            BasePermissions::Organization->value => 'organization',
+            BasePermissions::Team->value => 'myteam',
+            BasePermissions::User->value => 'user',
+            BasePermissions::UserOnly->value => 'useronly',
+        );
+
+        // build the associative array with only active permissions
+        $englishBase = array();
+        foreach (array_keys($active) as $permValue) {
+            if (isset($map[$permValue])) {
+                $englishBase[$map[$permValue]] = $permValue;
+            }
         }
+
+        $flipped = array_flip(array_map('strtolower', $this->getAssociativeArray()));
         return $flipped + $englishBase;
     }
 }

@@ -28,13 +28,21 @@ class PermissionsHelperTest extends \PHPUnit\Framework\TestCase
         $this->assertArrayHasKey(BasePermissions::Organization->value, $permissions);
     }
 
-    public function testGetExtendedSearchAssociativeArrayWithUserOnlyDisabled(): void
+    public function testGetExtendedSearchAssociativeArrayWithSomeDisabled(): void
     {
         $Config = Config::getConfig();
-        $Config->patch(Action::Update, array('allow_permission_useronly' => '0'));
+        $setupValues = $Config->configArr;
+        $Config->patch(Action::Update, array(
+            'allow_permission_full' => '1',
+            'allow_permission_useronly' => '0',
+            'allow_permission_organization' => '0',
+        ));
         $permissionHelper = new PermissionsHelper();
         $extendedSearch = $permissionHelper->getExtendedSearchAssociativeArray();
         $this->assertArrayHasKey('public', $extendedSearch);
         $this->assertArrayNotHasKey('useronly', $extendedSearch);
+        $this->assertArrayNotHasKey('organization', $extendedSearch);
+        // reset
+        $Config->patch(Action::Update, $setupValues);
     }
 }

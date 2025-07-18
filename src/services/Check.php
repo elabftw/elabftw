@@ -16,15 +16,16 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\Units;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
 use JsonException;
 
-use function array_map;
 use function filter_var;
 use function intval;
 use function mb_strlen;
 use function mb_substr;
+use function array_keys;
 
 /**
  * When values need to be checked
@@ -113,15 +114,23 @@ final class Check
         } catch (JsonException) {
             throw new ImproperActionException($visibility . ' The visibility parameter is wrong.');
         }
-        // Note: if we want to server-side check for useronly disabled, it would be here, by removing 10
-        $allowedBase = array_map(fn(BasePermissions $case): int => $case->value, BasePermissions::cases());
-        if (!in_array($decoded['base'], $allowedBase, true)) {
-            throw new ImproperActionException('The base visibility parameter is wrong.');
+        // server-side check for allowed base permissions (e.g., 10, 20, 30 etc.)
+        $base = BasePermissions::tryFrom($decoded['base']);
+        if ($base === null) {
+            throw new ImproperActionException('The base visibility parameter is not valid.');
+        }
+
+        // Enforce that base is one of the active permissions
+        $Config = Config::getConfig();
+        $activeBases = array_keys(BasePermissions::getActiveBase($Config->configArr));
+        if (!in_array($base->value, $activeBases, true)) {
+            throw new UnprocessableContentException('This base permission is not currently allowed by the system configuration.');
         }
         $arrayParams = array('teams', 'teamgroups', 'users');
         foreach ($arrayParams as $param) {
             if (!is_array($decoded[$param])) {
                 throw new ImproperActionException(sprintf('The visibility parameter %s is wrong.', $param));
+                // include active base to show user what can be used
             }
         }
         return $visibility;

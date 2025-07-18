@@ -15,6 +15,7 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users;
+use Elabftw\Models\Config;
 
 class CheckTest extends \PHPUnit\Framework\TestCase
 {
@@ -81,5 +82,37 @@ class CheckTest extends \PHPUnit\Framework\TestCase
         $requester = new Users(3, 2);
         $usergroup = Usergroup::Admin;
         $this->assertEquals(Usergroup::User, Check::usergroup($requester, $usergroup));
+    }
+
+    public function testVisibilityBaseNotAllowed(): void
+    {
+        // simulate config with only 'allow_permission_user' enabled
+        $Config = Config::getConfig();
+        $Config->configArr = array(
+            'allow_permission_user' => '1',
+            'allow_permission_team' => '0',
+            'allow_permission_organization' => '0',
+            'allow_permission_full' => '0',
+            'allow_permission_useronly' => '0',
+        );
+        // Team is not in allowed list
+        $json = BasePermissions::Team->toJson();
+        $this->expectException(ImproperActionException::class);
+        Check::visibility($json);
+    }
+
+    public function testVisibilityBaseAllowed(): void
+    {
+        // simulate working config with Team permission enabled
+        $Config = Config::getConfig();
+        $Config->configArr = array(
+            'allow_permission_user' => '0',
+            'allow_permission_team' => '1',
+            'allow_permission_organization' => '0',
+            'allow_permission_full' => '0',
+            'allow_permission_useronly' => '0',
+        );
+        $json = BasePermissions::Team->toJson();
+        $this->assertEquals($json, Check::visibility($json));
     }
 }

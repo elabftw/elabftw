@@ -9,7 +9,7 @@ import i18next from './i18n';
 import { InputType, Malle } from '@deltablot/malle';
 import { Api } from './Apiv2.class';
 import { getEntity, relativeMoment, reloadElements } from './misc';
-import { Model } from './interfaces';
+import { Action, Model } from './interfaces';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -48,6 +48,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (confirm(i18next.t('generic-delete-warning'))) {
         ApiC.delete(`${entity.type}/${entity.id}/${Model.Comment}/${el.dataset.id}`).then(() => el.parentElement.parentElement.remove());
       }
+    // RESTORE ENTITY
+    } else if (el.matches('[data-action="restore-entity"]')) {
+      ApiC.patch(`${entity.type}/${entity.id}`, { action: Action.Restore })
+        .then(() => window.location.href = `?mode=view&id=${entity.id}`);
     }
   });
 

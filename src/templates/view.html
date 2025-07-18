@@ -196,6 +196,13 @@
   {% endif %}
 </div>
 
+{% if Entity.entityData.state == enum('Elabftw\\Enums\\State').Deleted.value %}
+  <div class='entity-deleted-overlay'>
+    <p>{{ 'This entry has been deleted.'|trans }}</p>
+    <button data-action='restore-entity' type='button' class='btn btn-primary mb-2' data-id='{{ Entity.entityData.id }}'>{{ 'Restore entry'|trans }}</button>
+    {% include 'back-to-previous.html' with {'type': 'btn'} %}
+  </div>
+{% endif %}
 
 <div id='info'
     data-page='view'

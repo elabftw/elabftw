@@ -184,6 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
       SearchSyntaxHighlighting.update(searchInput.value);
     });
   });
+  // FILTERS HANDLER FOR THE SHOW PAGE
   document.querySelectorAll('.filterAuto').forEach(el => {
     el.addEventListener('change', event => {
       const url = new URL(window.location.href);
@@ -307,6 +308,31 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function toggleActionButtonsDependingOnState(): void {
+    const stateSelect = document.querySelector<HTMLSelectElement>('select[name="state"]');
+    if (!stateSelect) return;
+
+    const state = stateSelect.value;
+    document.querySelectorAll('[data-action="patch-selected-entities"]').forEach((btn: HTMLButtonElement) => {
+      const action = btn.getAttribute('data-what');
+
+      // handle state as array (comma-separated values like '1,2')
+      const stateSet = state.split(',');
+      // show "Restore" button if 'Deleted' (3) is among the selected states
+      const showRestore = stateSet.includes('3') && action === 'restore';
+      // show "Unarchive" button if 'Archived' (2) is among the selected states
+      const showUnarchive = stateSet.includes('2') && action === 'unarchive';
+      // special actions to hide by default unless above conditions apply
+      const isSpecialAction = ['restore', 'unarchive'].includes(action);
+      // show all actions (Delete, Lock, etc.) only when we're not looking at Deleted or Archived states
+      const showDefault = !stateSet.includes('3') && !stateSet.includes('2') && !isSpecialAction;
+
+      // Only show the button if one of the display conditions matched
+      const shouldShow = showRestore || showUnarchive || showDefault;
+
+      btn.toggleAttribute('hidden', !shouldShow);
+    });
+  }
   /////////////////////////
   // MAIN CLICK LISTENER //
   /////////////////////////
@@ -457,8 +483,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
       if ((el as HTMLInputElement).checked) {
+        toggleActionButtonsDependingOnState();
         (el.closest('.entity') as HTMLElement).style.backgroundColor = bgColor;
       } else {
+        toggleActionButtonsDependingOnState();
         (el.closest('.entity') as HTMLElement).style.backgroundColor = '';
       }
       // show invert select if any checkbox is selected
@@ -503,19 +531,19 @@ document.addEventListener('DOMContentLoaded', () => {
       event.preventDefault();
       if (el.dataset.target === 'select') {
         // check all boxes and set background color
-        document.querySelectorAll('.entity input[type=checkbox]').forEach(box => {
+        document.querySelectorAll('.entity input[type=checkbox]')?.forEach(box => {
           (box as HTMLInputElement).checked = true;
           (box.closest('.entity') as HTMLElement).style.backgroundColor = bgColor;
         });
-        document.getElementById('withSelected').classList.remove('d-none');
+        document.getElementById('withSelected')?.classList.remove('d-none');
         el.dataset.target = 'unselect';
       } else {
-        document.querySelectorAll('.entity input[type=checkbox]').forEach(box => {
+        document.querySelectorAll('.entity input[type=checkbox]')?.forEach(box => {
           (box as HTMLInputElement).checked = false;
           (box.closest('.entity') as HTMLElement).style.backgroundColor = '';
         });
         el.dataset.target = 'select';
-        document.getElementById('withSelected').classList.add('d-none');
+        document.getElementById('withSelected')?.classList.add('d-none');
       }
       const icon = el.querySelector('i');
       icon.classList.toggle('fa-square');
@@ -551,32 +579,30 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       const action = <Action>el.dataset.what;
-      // loop over it and patch with selected action
-      const results = [];
-      checked.forEach(chk => {
-        results.push(ApiC.patch(`${entity.type}/${chk.id}`, {action: action}));
-      });
+      // special case: DELETE request for confirmation & deletes div
+      if (action === Action.Destroy) {
+        if (!confirm(i18next.t('generic-delete-warning'))) {
+          return;
+        }
+        // perform deletes
+        checked.forEach(chk => {
+          ApiC.delete(`${entity.type}/${chk.id}`).then(() => {
+            // use curly braces to avoid implicit return
+            document.getElementById(`parent_${chk.randomid}`)?.remove();
+          });
+        });
+        return;
+      }
+      // handle all other PATCH with selected action
+      const results = checked.map(chk =>
+        ApiC.patch(`${entity.type}/${chk.id}`, {action}),
+      );
       ApiC.notifOnSaved = false;
       Promise.all(results).then(() => {
         notify.success();
         reloadEntitiesShow();
         ApiC.notifOnSaved = true;
       });
-
-    // THE DELETE BUTTON FOR CHECKED BOXES
-    } else if (el.matches('[data-action="destroy-selected-entities"]')) {
-      // get the item id of all checked boxes
-      const checked = getCheckedBoxes();
-      if (checked.length === 0) {
-        notify.error('nothing-selected');
-        return;
-      }
-      // ask for confirmation
-      if (!confirm(i18next.t('generic-delete-warning'))) {
-        return;
-      }
-      // loop on it and delete stuff (use curly braces to avoid implicit return)
-      checked.forEach(chk => {ApiC.delete(`${entity.type}/${chk.id}`).then(() => document.getElementById(`parent_${chk.randomid}`).remove());});
     }
   });
 

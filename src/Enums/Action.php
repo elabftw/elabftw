@@ -34,12 +34,14 @@ enum Action: string
     case Pin = 'pin';
     case RemoveExclusiveEditMode = 'removeexclusiveeditmode';
     case Replace = 'replace';
+    case Restore = 'restore';
     case Review = 'review';
     case SendOnboardingEmails = 'sendonboardingemails';
     case SetCanread = 'setcanread';
     case SetCanwrite = 'setcanwrite';
     case Sign = 'sign';
     case Timestamp = 'timestamp';
+    case Unarchive = 'unarchive';
     case Unreference = 'unreference';
     case Update = 'update';
     case UpdateMetadataField = 'updatemetadatafield';

@@ -71,6 +71,22 @@ class BatchTest extends \PHPUnit\Framework\TestCase
         $this->Batch->postAction(Action::UpdateOwner, $reqBody);
     }
 
+    // test Unarchive & Restore methods
+    public function testSpecialActions(): void
+    {
+        $reqBody = $this->baseReqBody;
+        // unarchive
+        $reqBody['action'] = Action::Unarchive->value;
+        $reqBody['target_owner'] = 3;
+        $this->assertIsInt($this->Batch->postAction(Action::Unarchive, $reqBody));
+        // restore
+        $reqBody['action'] = Action::Destroy->value;
+        $reqBody['target_owner'] = 3;
+        $this->assertIsInt($this->Batch->postAction(Action::Destroy, $reqBody));
+        $reqBody['action'] = Action::Restore->value;
+        $this->assertIsInt($this->Batch->postAction(Action::Restore, $reqBody));
+    }
+
     public function testGetApiPath(): void
     {
         $this->assertEquals('api/v2/batch/', $this->Batch->getApiPath());

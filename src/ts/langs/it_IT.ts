@@ -22,6 +22,7 @@ const t = {
     "edit-compound": "Modifica composto",
     "editing-metadata": "Si stanno modificando i metadati allegati a questa voce.",
     "email": "Indirizzo email",
+    "enable-permission": "You must allow at least one permission setting.",
     "entity-default-title": "Senza titolo",
     "entity-delete-warning": "Quanto è stato selezionato (nonché i dati associati) sarà definitivamente cancellato. Il processo è irreversibile. Si è veramente sicuri?",
     "entries-processed": "{{num, number}} entries processed",

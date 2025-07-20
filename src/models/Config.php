@@ -18,6 +18,8 @@ use Elabftw\AuditEvent\ConfigModified;
 use Elabftw\Elabftw\TwigFilters;
 use Elabftw\Elabftw\Update;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
+use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Services\Filter;
 use PDO;
@@ -156,7 +158,11 @@ final class Config extends AbstractRest
             ('saml_sync_email_idp', '0'),
             ('support_url', 'https://github.com/elabftw/elabftw/issues'),
             ('chat_url', 'https://gitter.im/elabftw/elabftw'),
-            ('allow_useronly', '1'),
+            ('allow_permission_full', '1'),
+            ('allow_permission_organization', '1'),
+            ('allow_permission_team', '1'),
+            ('allow_permission_user', '1'),
+            ('allow_permission_useronly', '1'),
             ('admins_import_users', '0'),
             ('admins_archive_users', '1'),
             ('max_revisions', '10'),
@@ -301,6 +307,10 @@ final class Config extends AbstractRest
                 if ($name === 'login_announcement' || $name === 'announcement') {
                     $value = Filter::body($value);
                 }
+                // for permissions, ensure at least one remains active
+                if (str_starts_with($name, 'allow_permission_') && $value === '0') {
+                    $this->assertAtLeastOneBasePermissionEnabled($name);
+                }
                 $req->bindParam(':value', $value);
                 $req->bindParam(':name', $name);
                 $this->Db->execute($req);
@@ -356,5 +366,16 @@ final class Config extends AbstractRest
         $createResult = $this->create();
         $this->configArr = $this->readAll();
         return $createResult;
+    }
+
+    private function assertAtLeastOneBasePermissionEnabled(string $permissionName): void
+    {
+        // is current permission the one allowed
+        $currentPermission = BasePermissions::fromKey($permissionName);
+        // get the active base permissions
+        $allowedPermissions = BasePermissions::getActiveBase($this->configArr);
+        if (count($allowedPermissions) === 1 && array_key_exists($currentPermission->value, $allowedPermissions)) {
+            throw new UnprocessableContentException('You must have at least one base permission active.');
+        }
     }
 }

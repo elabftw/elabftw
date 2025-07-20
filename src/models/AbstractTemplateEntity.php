@@ -33,7 +33,7 @@ abstract class AbstractTemplateEntity extends AbstractEntity
     public function getIdempotentIdFromTitle(string $title, ?string $color = null): int
     {
         $sql = 'SELECT id
-            FROM items_types WHERE title = :title AND team = :team AND state = :state';
+            FROM ' . $this->entityType->value . ' WHERE title = :title AND team = :team AND state = :state';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':title', $title);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);

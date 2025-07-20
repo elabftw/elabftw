@@ -37,8 +37,12 @@ class Email
 
     private Address $from;
 
-    public function __construct(private MailerInterface $Mailer, private LoggerInterface $Log, private string $mailFrom)
-    {
+    public function __construct(
+        private readonly MailerInterface $Mailer,
+        private readonly LoggerInterface $Log,
+        private readonly string $mailFrom,
+        private readonly bool $demoMode = false,
+    ) {
         $this->footer = $this->makeFooter();
         $this->from = new Address($mailFrom, 'eLabFTW');
     }
@@ -54,7 +58,7 @@ class Email
             return false;
         }
         // completely disable sending emails in demo mode
-        if (Config::boolFromEnv('DEMO_MODE')) {
+        if ($this->demoMode) {
             return false;
         }
         try {

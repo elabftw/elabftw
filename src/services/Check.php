@@ -16,24 +16,24 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\Units;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users;
 use JsonException;
 
-use function array_map;
 use function filter_var;
 use function intval;
 use function mb_strlen;
 use function mb_substr;
+use function array_keys;
+use function in_array;
+use function sprintf;
 
 /**
  * When values need to be checked
  */
 final class Check
 {
-    /** the minimum password length */
-    public const MIN_PASSWORD_LENGTH = 8;
-
     /** how deep goes the canread/canwrite json */
     private const PERMISSIONS_JSON_MAX_DEPTH = 3;
 
@@ -111,12 +111,28 @@ final class Check
         try {
             $decoded = json_decode($visibility, true, self::PERMISSIONS_JSON_MAX_DEPTH, JSON_THROW_ON_ERROR);
         } catch (JsonException) {
-            throw new ImproperActionException($visibility . ' The visibility parameter is wrong.');
+            throw new ImproperActionException('The visibility parameter could not be decoded as JSON.');
         }
-        // Note: if we want to server-side check for useronly disabled, it would be here, by removing 10
-        $allowedBase = array_map(fn(BasePermissions $case): int => $case->value, BasePermissions::cases());
-        if (!in_array($decoded['base'], $allowedBase, true)) {
-            throw new ImproperActionException('The base visibility parameter is wrong.');
+        // server-side check for allowed base permissions (e.g., 10, 20, 30 etc.)
+        $base = BasePermissions::tryFrom($decoded['base']);
+        if ($base === null) {
+            throw new ImproperActionException('The base visibility parameter is not valid.');
+        }
+
+        // Enforce that base is one of the active permissions
+        $Config = Config::getConfig();
+        // get human readable to display an indicative error
+        $activeBaseAssoc = BasePermissions::getActiveBase($Config->configArr);
+        $activeBases = array_keys($activeBaseAssoc);
+        if (!in_array($base->value, $activeBases, true)) {
+            $allowed = implode(', ', $activeBaseAssoc);
+            throw new UnprocessableContentException(
+                sprintf(
+                    'This base permission (%d) is not currently allowed by the system configuration. Allowed values are: %s.',
+                    $base->value,
+                    $allowed
+                )
+            );
         }
         $arrayParams = array('teams', 'teamgroups', 'users');
         foreach ($arrayParams as $param) {

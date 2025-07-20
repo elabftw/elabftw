@@ -337,6 +337,16 @@ components:
           type: string
         admin_validate:
           type: string
+        allow_permission_full:
+          type: string
+        allow_permission_organization:
+          type: string
+        allow_permission_team:
+          type: string
+        allow_permission_user:
+          type: string
+        allow_permission_useronly:
+          type: string
         announcement:
           description: This text will be shown on every page, including login page.
           type: string
@@ -347,6 +357,8 @@ components:
         blox_anon:
           type: string
         blox_enabled:
+          type: string
+        chat_url:
           type: string
         cookie_validity_time:
           type: integer

@@ -3249,8 +3249,7 @@ paths:
           in: query
           schema:
             type: string
-            enum: ['instance', 'team']
-            default: json
+            enum: ['compounds', 'instance', 'inventory', 'stored_compounds', 'team']
           description: |
             Select the scope. Instance is for sysadmins only. Team will generate report for the current team.
           examples:

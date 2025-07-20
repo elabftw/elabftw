@@ -54,6 +54,7 @@ final class Experiments extends AbstractConcreteEntity
         bool $forceExpTpl = false,
         string $defaultTemplateHtml = '',
         string $defaultTemplateMd = '',
+        ?string $color = null,
     ): int {
         $canread ??= $this->Users->userData['default_read'] ?? BasePermissions::Team->toJson();
         $canwrite ??= $this->Users->userData['default_write'] ?? BasePermissions::User->toJson();

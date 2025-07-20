@@ -15,9 +15,12 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\RequestableAction;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Traits\TestsUtilsTrait;
 
 class RequestActionsTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private Experiments $Experiments;
 
     private RequestActions $RequestActions;
@@ -25,7 +28,7 @@ class RequestActionsTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $Users = new Users(1, 1);
-        $this->Experiments = new Experiments($Users, 1);
+        $this->Experiments = $this->getFreshExperiment();
         $this->RequestActions = new RequestActions($Users, $this->Experiments);
     }
 
@@ -67,7 +70,7 @@ class RequestActionsTest extends \PHPUnit\Framework\TestCase
 
     public function testGetApiPath(): void
     {
-        $this->assertEquals('api/v2/experiments/1/request_actions/', $this->RequestActions->getApiPath());
+        $this->assertEquals(sprintf('api/v2/experiments/%d/request_actions/', $this->Experiments->id), $this->RequestActions->getApiPath());
     }
 
     public function testDestroy(): void

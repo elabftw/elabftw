@@ -44,6 +44,7 @@ final class Templates extends AbstractTemplateEntity
 
     public EntityType $entityType = EntityType::Templates;
 
+    // color is here just to be on par with itemstypes
     #[Override]
     public function create(
         ?int $template = -1,
@@ -64,6 +65,7 @@ final class Templates extends AbstractTemplateEntity
         bool $forceExpTpl = false,
         string $defaultTemplateHtml = '',
         string $defaultTemplateMd = '',
+        ?string $color = null,
     ): int {
         $title = Filter::title($title ?? _('Untitled'));
 

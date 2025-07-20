@@ -70,9 +70,11 @@ final class Check
      */
     public static function color(string $color): string
     {
-        $length = strlen($color) - 1;
-        $color = mb_substr($color, 1, $length);
-        if (ctype_xdigit($color) && $length === 6) {
+        if (str_starts_with($color, '#')) {
+            $color = mb_substr($color, 1, strlen($color));
+        }
+
+        if (ctype_xdigit($color) && strlen($color) === 6) {
             return $color;
         }
         throw new ImproperActionException('The color attribute is invalid.');

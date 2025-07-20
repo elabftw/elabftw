@@ -50,6 +50,8 @@ final class Demo implements AuthInterface
             'user1@demo.elabftw.net',
             'admin2@demo.elabftw.net',
             'user2@demo.elabftw.net',
+            'admin3@demo.elabftw.net',
+            'user3@demo.elabftw.net',
         );
         if (!in_array($email, $allowed, true)) {
             throw new QuantumException(_('Invalid email/password combination.'));

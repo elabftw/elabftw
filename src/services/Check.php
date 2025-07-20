@@ -111,7 +111,7 @@ final class Check
         try {
             $decoded = json_decode($visibility, true, self::PERMISSIONS_JSON_MAX_DEPTH, JSON_THROW_ON_ERROR);
         } catch (JsonException) {
-            throw new ImproperActionException($visibility . ' The visibility parameter is wrong.');
+            throw new ImproperActionException('The visibility parameter could not be decoded as JSON.');
         }
         // server-side check for allowed base permissions (e.g., 10, 20, 30 etc.)
         $base = BasePermissions::tryFrom($decoded['base']);
@@ -138,7 +138,6 @@ final class Check
         foreach ($arrayParams as $param) {
             if (!is_array($decoded[$param])) {
                 throw new ImproperActionException(sprintf('The visibility parameter %s is wrong.', $param));
-                // include active base to show user what can be used
             }
         }
         return $visibility;

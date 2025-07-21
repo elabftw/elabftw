@@ -353,6 +353,7 @@ abstract class AbstractEntity extends AbstractRest
             $RequestActions->remove(RequestableAction::Review);
             return $this->readOne();
         }
+        $this->validateStateAllowsAction($action);
         // the toggle pin action doesn't require write access to the entity
         if ($action !== Action::Pin) {
             $this->canOrExplode('write');
@@ -546,7 +547,8 @@ abstract class AbstractEntity extends AbstractRest
         // READ ONLY?
         if (
             ($permissions['read'] && !$permissions['write'])
-            || (array_key_exists('locked', $this->entityData) && $this->entityData['locked'] === 1)
+            || (array_key_exists('locked', $this->entityData) && $this->entityData['locked'] === 1
+            || $this->entityData['state'] === State::Deleted->value)
         ) {
             $this->isReadOnly = true;
         }
@@ -875,6 +877,18 @@ abstract class AbstractEntity extends AbstractRest
             return 'User not found!';
         }
         return $user->userData['fullname'];
+    }
+
+    // allow specific actions (Restore, Unarchive) on entities that are deleted or archived.
+    private function validateStateAllowsAction(Action $action): void
+    {
+        $state = $this->entityData['state'] ?? null;
+        if ($state === State::Deleted->value && $action !== Action::Restore) {
+            throw new IllegalActionException(_('Only the Restore action is allowed on a deleted entity.'));
+        }
+        if ($state === State::Archived->value && $action !== Action::Unarchive) {
+            throw new IllegalActionException(_('Only the Unarchive action is allowed on an archived entity.'));
+        }
     }
 
     // Archive a normal entity, Unarchive an archived entity.

@@ -123,6 +123,28 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->update(new EntityParams('state', '42'));
     }
 
+    public function testCannotUpdateDeletedExperiment(): void
+    {
+        $new = $this->Experiments->create(template: 0);
+        $this->Experiments->setId($new);
+        $this->Experiments->patch(Action::Update, array('state' => State::Deleted->value));
+        $this->assertEquals(State::Deleted->value, $this->Experiments->entityData['state']);
+        // Any other action than Action::Restore returns an IllegalAction
+        $this->expectException(IllegalActionException::class);
+        $this->Experiments->patch(Action::Update, array('title' => 'Changed title'));
+    }
+
+    public function testCannotUpdateArchivedExperiment(): void
+    {
+        $new = $this->Experiments->create(template: 0);
+        $this->Experiments->setId($new);
+        $this->Experiments->patch(Action::Update, array('state' => State::Archived->value));
+        $this->assertEquals(State::Archived->value, $this->Experiments->entityData['state']);
+        // Any other action than Action::Unarchive returns an IllegalAction
+        $this->expectException(IllegalActionException::class);
+        $this->Experiments->patch(Action::Timestamp, array());
+    }
+
     public function testUpdateVisibility(): void
     {
         $this->Experiments->setId(1);

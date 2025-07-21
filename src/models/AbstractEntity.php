@@ -364,20 +364,26 @@ abstract class AbstractEntity extends AbstractRest
         $this->ExclusiveEditMode->canPatchOrExplode($action);
         match ($action) {
             Action::AccessKey => (new AccessKeyHelper($this->entityType, $this->id))->toggleAccessKey(),
-            Action::Archive => $this->archiveEntity(),
+            Action::Archive => (
+                function () {
+                    $this->handleArchivedState(State::Normal, State::Archived, fn() => $this->lock());
+                    $RequestActions = new RequestActions($this->Users, $this);
+                    $RequestActions->remove(RequestableAction::Archive);
+                }
+            )(),
             Action::Bloxberg => $this->bloxberg(),
             Action::Destroy => $this->destroy(),
             Action::Lock => $this->toggleLock(),
             Action::ForceLock => $this->lock(),
             Action::ForceUnlock => $this->unlock(),
             Action::Pin => $this->Pins->togglePin(),
-            Action::Restore => $this->restoreEntity(),
+            Action::Restore => $this->update(new EntityParams('state', State::Normal->value)),
             Action::RemoveExclusiveEditMode => $this->ExclusiveEditMode->destroy(),
             Action::SetCanread => $this->update(new EntityParams('canread', $params['can'])),
             Action::SetCanwrite => $this->update(new EntityParams('canwrite', $params['can'])),
             Action::Sign => $this->sign($params['passphrase'], Meaning::from((int) $params['meaning'])),
             Action::Timestamp => $this->timestamp(),
-            Action::Unarchive => $this->unarchiveEntity(),
+            Action::Unarchive => $this->handleArchivedState(from: State::Archived, to: State::Normal, toggleLock: fn() => $this->unlock()),
             Action::UpdateMetadataField => (
                 function () use ($params) {
                     foreach ($params as $key => $value) {
@@ -869,23 +875,6 @@ abstract class AbstractEntity extends AbstractRest
             return 'User not found!';
         }
         return $user->userData['fullname'];
-    }
-
-    private function archiveEntity(): void
-    {
-        $this->handleArchivedState(State::Normal, State::Archived, fn() => $this->lock());
-        $RequestActions = new RequestActions($this->Users, $this);
-        $RequestActions->remove(RequestableAction::Archive);
-    }
-
-    private function unarchiveEntity(): void
-    {
-        $this->handleArchivedState(State::Archived, State::Normal, fn() => $this->unlock());
-    }
-
-    private function restoreEntity(): void
-    {
-        $this->update(new EntityParams('state', State::Normal->value));
     }
 
     // Archive a normal entity, Unarchive an archived entity.

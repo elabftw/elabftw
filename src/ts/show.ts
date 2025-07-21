@@ -482,11 +482,10 @@ document.addEventListener('DOMContentLoaded', () => {
           window.scrollBy({top: el.offsetHeight, behavior: 'instant'});
         }
       });
+      toggleActionButtonsDependingOnState();
       if ((el as HTMLInputElement).checked) {
-        toggleActionButtonsDependingOnState();
         (el.closest('.entity') as HTMLElement).style.backgroundColor = bgColor;
       } else {
-        toggleActionButtonsDependingOnState();
         (el.closest('.entity') as HTMLElement).style.backgroundColor = '';
       }
       // show invert select if any checkbox is selected

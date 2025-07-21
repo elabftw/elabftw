@@ -353,7 +353,14 @@ abstract class AbstractEntity extends AbstractRest
             $RequestActions->remove(RequestableAction::Review);
             return $this->readOne();
         }
-        $this->validateStateAllowsAction($action);
+        // for deleted or archived entities, allow specific actions (Restore & Unarchive)
+        $state = $this->entityData['state'] ?? null;
+        if ($state === State::Deleted->value && $action !== Action::Restore) {
+            throw new IllegalActionException(_('Only the Restore action is allowed on a deleted entity.'));
+        }
+        if ($state === State::Archived->value && $action !== Action::Unarchive) {
+            throw new IllegalActionException(_('Only the Unarchive action is allowed on an archived entity.'));
+        }
         // the toggle pin action doesn't require write access to the entity
         if ($action !== Action::Pin) {
             $this->canOrExplode('write');
@@ -368,6 +375,7 @@ abstract class AbstractEntity extends AbstractRest
             Action::Archive => (
                 function () {
                     $this->handleArchivedState(State::Normal, State::Archived, fn() => $this->lock());
+                    // clear any request action
                     $RequestActions = new RequestActions($this->Users, $this);
                     $RequestActions->remove(RequestableAction::Archive);
                 }
@@ -877,18 +885,6 @@ abstract class AbstractEntity extends AbstractRest
             return 'User not found!';
         }
         return $user->userData['fullname'];
-    }
-
-    // allow specific actions (Restore, Unarchive) on entities that are deleted or archived.
-    private function validateStateAllowsAction(Action $action): void
-    {
-        $state = $this->entityData['state'] ?? null;
-        if ($state === State::Deleted->value && $action !== Action::Restore) {
-            throw new IllegalActionException(_('Only the Restore action is allowed on a deleted entity.'));
-        }
-        if ($state === State::Archived->value && $action !== Action::Unarchive) {
-            throw new IllegalActionException(_('Only the Unarchive action is allowed on an archived entity.'));
-        }
     }
 
     // Archive a normal entity, Unarchive an archived entity.

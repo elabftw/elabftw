@@ -79,7 +79,7 @@
       {% if item.custom_id %}
         <span class='custom-id-badge mr-1' title='{{ 'Custom ID'|trans }}'>{{ item.custom_id }}</span>
       {% endif %}
-        <a href='{{ Entity.entityType.toPage }}?mode=view&amp;id={{ item.id }}'>{{ item.title }}</a>
+      <a href='{{ Entity.entityType.toPage }}?mode=view&amp;id={{ item.id }}'>{{ item.title }}</a>
     </div>
     {# owner #}
     <div class='owner'>

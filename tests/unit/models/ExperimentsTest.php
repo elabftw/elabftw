@@ -18,6 +18,7 @@ use Elabftw\Enums\Meaning;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Params\DisplayParams;
 use Elabftw\Params\EntityParams;
 use Elabftw\Params\ExtraFieldsOrderingParams;
@@ -129,8 +130,8 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->setId($new);
         $this->Experiments->patch(Action::Update, array('state' => State::Deleted->value));
         $this->assertEquals(State::Deleted->value, $this->Experiments->entityData['state']);
-        // Any other action than Action::Restore returns an IllegalAction
-        $this->expectException(IllegalActionException::class);
+        // Any other action than Action::Restore returns an UnprocessableContent
+        $this->expectException(UnprocessableContentException::class);
         $this->Experiments->patch(Action::Update, array('title' => 'Changed title'));
     }
 
@@ -140,8 +141,8 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->setId($new);
         $this->Experiments->patch(Action::Update, array('state' => State::Archived->value));
         $this->assertEquals(State::Archived->value, $this->Experiments->entityData['state']);
-        // Any other action than Action::Unarchive returns an IllegalAction
-        $this->expectException(IllegalActionException::class);
+        // Any other action than Action::Unarchive returns an UnprocessableContent
+        $this->expectException(UnprocessableContentException::class);
         $this->Experiments->patch(Action::Timestamp, array());
     }
 

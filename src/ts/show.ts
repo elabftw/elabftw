@@ -322,7 +322,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.querySelectorAll<HTMLButtonElement>('[data-action="patch-selected-entities"]').forEach(btn => {
-      const action = btn.getAttribute('data-what');
+      const action = btn.dataset.what;
       // enable "Restore" button if 'Deleted' (3) is among the selected entities' state
       const allowRestore = selectedStates.size === 1 && selectedStates.has('3') && action === 'restore';
       // enable "Unarchive" button if 'Archived' (2) is among the selected entities' state
@@ -335,7 +335,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const shouldEnable = allowRestore || allowUnarchive || allowDefault;
       const buttonLabel = btn.getAttribute('aria-label') ?? action;
       const cannotAction = i18next.t('illegal-action');
-
       if (shouldEnable) {
         btn.disabled = false;
         btn.setAttribute('title', buttonLabel);
@@ -343,7 +342,6 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.disabled = true;
         btn.setAttribute('title', cannotAction);
       }
-
     });
   }
   /////////////////////////

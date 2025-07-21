@@ -36,6 +36,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\SqlBuilderInterface;
@@ -356,10 +357,10 @@ abstract class AbstractEntity extends AbstractRest
         // for deleted or archived entities, allow specific actions (Restore & Unarchive)
         $state = $this->entityData['state'] ?? null;
         if ($state === State::Deleted->value && $action !== Action::Restore) {
-            throw new IllegalActionException(_('Only the Restore action is allowed on a deleted entity.'));
+            throw new UnprocessableContentException(_('Only the Restore action is allowed on a deleted entity.'));
         }
         if ($state === State::Archived->value && $action !== Action::Unarchive) {
-            throw new IllegalActionException(_('Only the Unarchive action is allowed on an archived entity.'));
+            throw new UnprocessableContentException(_('Only the Unarchive action is allowed on an archived entity.'));
         }
         // the toggle pin action doesn't require write access to the entity
         if ($action !== Action::Pin) {

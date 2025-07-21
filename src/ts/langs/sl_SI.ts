@@ -22,6 +22,7 @@ const t = {
     "edit-compound": "Uredi spojino",
     "editing-metadata": "Trenutno urejate metapodatke, priložene temu vnosu.",
     "email": "Elektronska pošta",
+    "enable-permission": "You must allow at least one permission setting.",
     "entity-default-title": "Brez naslova",
     "entity-delete-warning": "Izbrani predmet(i) in vsi pridruženi podatki bodo trajno izbrisani. Tega ni mogoče razveljaviti. Ali si prepričan?",
     "entries-processed": "{{num, number}} entries processed",

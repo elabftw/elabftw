@@ -337,6 +337,16 @@ components:
           type: string
         admin_validate:
           type: string
+        allow_permission_full:
+          type: string
+        allow_permission_organization:
+          type: string
+        allow_permission_team:
+          type: string
+        allow_permission_user:
+          type: string
+        allow_permission_useronly:
+          type: string
         announcement:
           description: This text will be shown on every page, including login page.
           type: string
@@ -347,6 +357,8 @@ components:
         blox_anon:
           type: string
         blox_enabled:
+          type: string
+        chat_url:
           type: string
         cookie_validity_time:
           type: integer
@@ -573,7 +585,7 @@ components:
               type: string
             fullname:
               type: string
-            has_attachement:
+            has_attachment:
               type: integer
             id:
               type: integer
@@ -3237,8 +3249,7 @@ paths:
           in: query
           schema:
             type: string
-            enum: ['instance', 'team']
-            default: json
+            enum: ['compounds', 'instance', 'inventory', 'stored_compounds', 'team']
           description: |
             Select the scope. Instance is for sysadmins only. Team will generate report for the current team.
           examples:

@@ -45,8 +45,6 @@ use PDO;
 use Symfony\Component\HttpFoundation\Request;
 use Override;
 
-use function trim;
-
 /**
  * Users
  */
@@ -100,8 +98,8 @@ class Users extends AbstractRest
         $EmailValidator = new EmailValidator($email, (bool) $Config->configArr['admins_import_users'], $Config->configArr['email_domain']);
         $EmailValidator->validate();
 
-        $firstname = trim($firstname);
-        $lastname = trim($lastname);
+        $firstname = Filter::toPureString($firstname);
+        $lastname = Filter::toPureString($lastname);
 
         // get the user group for the new users
         $usergroup ??= $TeamsHelper->getGroup();

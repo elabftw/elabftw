@@ -308,29 +308,42 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function toggleActionButtonsDependingOnState(): void {
-    const stateSelect = document.querySelector<HTMLSelectElement>('select[name="state"]');
-    if (!stateSelect) return;
+  // dynamically handle the available actions depending the state of selected entities
+  function toggleActionButtonsDependingOnSelected(): void {
+    const selected = Array.from(
+      document.querySelectorAll<HTMLInputElement>('[data-action="checkbox-entity"]:checked'),
+    );
+    // collect all states from selected checkboxes
+    const selectedStates = new Set<string>();
+    selected.forEach((chk) => {
+      if (chk.dataset.state) {
+        selectedStates.add(chk.dataset.state);
+      }
+    });
 
-    const state = stateSelect.value;
-    document.querySelectorAll('[data-action="patch-selected-entities"]').forEach((btn: HTMLButtonElement) => {
+    document.querySelectorAll<HTMLButtonElement>('[data-action="patch-selected-entities"]').forEach(btn => {
       const action = btn.getAttribute('data-what');
-
-      // handle state as array (comma-separated values like '1,2')
-      const stateSet = state.split(',');
-      // show "Restore" button if 'Deleted' (3) is among the selected states
-      const showRestore = stateSet.includes('3') && action === 'restore';
-      // show "Unarchive" button if 'Archived' (2) is among the selected states
-      const showUnarchive = stateSet.includes('2') && action === 'unarchive';
-      // special actions to hide by default unless above conditions apply
+      // enable "Restore" button if 'Deleted' (3) is among the selected entities' state
+      const allowRestore = selectedStates.size === 1 && selectedStates.has('3') && action === 'restore';
+      // enable "Unarchive" button if 'Archived' (2) is among the selected entities' state
+      const allowUnarchive = selectedStates.size === 1 && selectedStates.has('2') && action === 'unarchive';
+      // special actions to disable by default unless above conditions apply
       const isSpecialAction = ['restore', 'unarchive'].includes(action);
-      // show all actions (Delete, Lock, etc.) only when we're not looking at Deleted or Archived states
-      const showDefault = !stateSet.includes('3') && !stateSet.includes('2') && !isSpecialAction;
+      // default enabled actions
+      const allowDefault = !selectedStates.has('2') && !selectedStates.has('3') && !isSpecialAction;
 
-      // Only show the button if one of the display conditions matched
-      const shouldShow = showRestore || showUnarchive || showDefault;
+      const shouldEnable = allowRestore || allowUnarchive || allowDefault;
+      const buttonLabel = btn.getAttribute('aria-label') ?? action;
+      const cannotAction = i18next.t('illegal-action');
 
-      btn.toggleAttribute('hidden', !shouldShow);
+      if (shouldEnable) {
+        btn.disabled = false;
+        btn.setAttribute('title', buttonLabel);
+      } else {
+        btn.disabled = true;
+        btn.setAttribute('title', cannotAction);
+      }
+
     });
   }
   /////////////////////////
@@ -482,7 +495,7 @@ document.addEventListener('DOMContentLoaded', () => {
           window.scrollBy({top: el.offsetHeight, behavior: 'instant'});
         }
       });
-      toggleActionButtonsDependingOnState();
+      toggleActionButtonsDependingOnSelected();
       if ((el as HTMLInputElement).checked) {
         (el.closest('.entity') as HTMLElement).style.backgroundColor = bgColor;
       } else {

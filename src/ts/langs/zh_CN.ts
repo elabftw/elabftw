@@ -32,6 +32,7 @@ const t = {
     "extra-fields": "额外字段",
     "filename": "文件名",
     "firstname": "名",
+    "illegal-action": "This action cannot apply to current selection",
     "is-admin": "Is Admin",
     "is-archived": "Is Archived",
     "is-owner": "所有者",

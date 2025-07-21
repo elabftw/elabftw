@@ -32,6 +32,7 @@ const t = {
     "extra-fields": "Ylimääräiset kentät",
     "filename": "Tiedoston nimi",
     "firstname": "Etunimi",
+    "illegal-action": "This action cannot apply to current selection",
     "is-admin": "Is Admin",
     "is-archived": "Is Archived",
     "is-owner": "On omistaja",

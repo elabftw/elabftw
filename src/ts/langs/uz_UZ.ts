@@ -22,6 +22,7 @@ const t = {
     "edit-compound": "Kompleksni tahrirlash",
     "editing-metadata": "Siz hozirda ushbu yozuvga biriktirilgan metamaʼlumotlarni tahrir qilyapsiz.",
     "email": "Elektron pochta",
+    "enable-permission": "You must allow at least one permission setting.",
     "entity-default-title": "Sarlavhasiz",
     "entity-delete-warning": "Tanlangan element(lar) va barcha bog‘langan ma’lumotlar butunlay o‘chirib tashlanadi. Buni ortga qaytarib bo‘lmaydi. Ishonchingiz komilmi?",
     "entries-processed": "{{num, number}} entries processed",

@@ -22,6 +22,7 @@ const t = {
     "edit-compound": "Verbindung bearbeiten",
     "editing-metadata": "Sie bearbeiten gerade die Metadaten zu diesem Eintrag.",
     "email": "E-Mail",
+    "enable-permission": "You must allow at least one permission setting.",
     "entity-default-title": "Unbenannt",
     "entity-delete-warning": "Die ausgewählten Element(e) und alle zugehörigen Daten werden dauerhaft gelöscht. Das kann nicht rückgängig gemacht werden. Sind Sie sicher?",
     "entries-processed": "{{num, number}} entries processed",

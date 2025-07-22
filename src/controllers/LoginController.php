@@ -305,6 +305,7 @@ final class LoginController implements ControllerInterface
                     (bool) $this->Config->configArr['local_login_hidden_only_sysadmin'],
                     (bool) $this->Config->configArr['local_login_only_sysadmin'],
                     (int) $this->Config->configArr['max_password_age_days'],
+                    (int) $this->Config->configArr['login_tries'],
                 );
 
                 // AUTH WITH SAML

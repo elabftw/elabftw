@@ -14,9 +14,12 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Traits\TestsUtilsTrait;
 
 class StorageUnitsTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private StorageUnits $StorageUnits;
 
     protected function setUp(): void
@@ -60,6 +63,21 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->StorageUnits->readCount());
     }
 
+    public function testReadAllFromStorage(): void
+    {
+        // create 3 containers with the same qty/unit/storage
+        $Item = $this->getFreshItem();
+        $storageId = $this->StorageUnits->create('A place with multiple similar containers');
+        $Container2Items = new Containers2ItemsLinks($Item, $storageId);
+        $Container2Items->createWithQuantity(100.0, 'mL');
+        $Container2Items->createWithQuantity(100.0, 'mL');
+        $Container2Items->createWithQuantity(100.0, 'mL');
+        // now list them and verify we can see them all
+        $res = $this->StorageUnits->readAllFromStorage($storageId);
+        $this->assertCount(3, $res);
+        $this->assertNotEmpty($res[0]['container2item_id']);
+    }
+
     public function testGetApiPath(): void
     {
         $this->assertEquals('api/v2/storage_units/', $this->StorageUnits->getApiPath());
@@ -68,8 +86,8 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
     public function testCreateImmutable(): void
     {
         $locations = array('Parent 1', 'Middle 1', '', 'Leaf 1');
-        $this->assertEquals(9, $this->StorageUnits->createImmutable($locations));
+        $resultsNumber = $this->StorageUnits->createImmutable($locations);
         // a second time to ensure we get the same number
-        $this->assertEquals(9, $this->StorageUnits->createImmutable($locations));
+        $this->assertEquals($resultsNumber, $this->StorageUnits->createImmutable($locations));
     }
 }

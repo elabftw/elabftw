@@ -149,7 +149,7 @@ final class Local implements AuthInterface
 
     private function preventBruteForce(): void
     {
-        $sql = 'SELECT COUNT(*) AS failed_attempts
+        $sql = 'SELECT COUNT(id) AS failed_attempts
             FROM authfail
             WHERE attempt_time >= NOW() - INTERVAL 1 MINUTE';
         $req = $this->Db->prepare($sql);

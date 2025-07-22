@@ -74,7 +74,8 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $Container2Items->createWithQuantity(100.0, 'mL');
         // now list them and verify we can see them all
         $res = $this->StorageUnits->readAllFromStorage($storageId);
-        $this->assertTrue(count($res) === 3);
+        $this->assertCount(3, $res);
+        $this->assertNotEmpty($res[0]['container2item_id']);
     }
 
     public function testGetApiPath(): void

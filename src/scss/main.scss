@@ -762,18 +762,18 @@ tr:first-child td {
 }
 
 .entity-deleted-overlay {
-  height: 100%;
-  width: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
+  align-items: center;
   backdrop-filter: blur(1px);
   background: rgba(0, 0, 0, 0.5);
   color: $white;
   display: flex;
   flex-direction: column;
+  height: 100%;
   justify-content: center;
-  align-items: center;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
   z-index: 19850;
 }
 

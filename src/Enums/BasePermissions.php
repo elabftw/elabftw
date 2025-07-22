@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Enums;
 
+use InvalidArgumentException;
+
 enum BasePermissions: int
 {
     case Full = 50;
@@ -23,12 +25,60 @@ enum BasePermissions: int
     public function toHuman(): string
     {
         return match ($this) {
-            $this::Full => _('Everyone including anonymous users'),
-            $this::Organization => _('Everyone with an account'),
-            $this::Team => _('Only members of the team'),
-            $this::User => _('Only owner and admins'),
-            $this::UserOnly => _('Only owner'),
+            self::Full => _('Everyone including anonymous users'),
+            self::Organization => _('Everyone with an account'),
+            self::Team => _('Only members of the team'),
+            self::User => _('Only owner and admins'),
+            self::UserOnly => _('Only owner'),
         };
+    }
+
+    public function configKey(): string
+    {
+        return match ($this) {
+            self::Full => 'allow_permission_full',
+            self::Organization => 'allow_permission_organization',
+            self::Team => 'allow_permission_team',
+            self::User => 'allow_permission_user',
+            self::UserOnly => 'allow_permission_useronly',
+        };
+    }
+
+    // used for extended search (cf. PermissionsHelper::getExtendedSearchAssociativeArray())
+    public function slug(): string
+    {
+        return match ($this) {
+            self::Full => 'public',
+            self::Organization => 'organization',
+            self::Team => 'myteam',
+            self::User => 'user',
+            self::UserOnly => 'useronly',
+        };
+    }
+
+    public static function fromKey(string $confName): BasePermissions
+    {
+        return match ($confName) {
+            'allow_permission_full' => self::Full,
+            'allow_permission_organization' => self::Organization,
+            'allow_permission_team' => self::Team,
+            'allow_permission_user' => self::User,
+            'allow_permission_useronly' => self::UserOnly,
+            default => throw new InvalidArgumentException("Invalid permission key: $confName"),
+        };
+    }
+
+    // get base permissions that are in active state
+    public static function getActiveBase(array $config): array
+    {
+        $base = array();
+        foreach (self::cases() as $permission) {
+            $key = $permission->configKey();
+            if (!empty($config[$key]) && $config[$key] === '1') {
+                $base[$permission->value] = $permission->toHuman();
+            }
+        }
+        return $base;
     }
 
     public function toJson(): string

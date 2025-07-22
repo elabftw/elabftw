@@ -22,6 +22,7 @@ const t = {
     "edit-compound": "複合を編集",
     "editing-metadata": "現在、このエントリーに添付されているメタデータを編集中です。",
     "email": "Eメールアドレス",
+    "enable-permission": "You must allow at least one permission setting.",
     "entity-default-title": "無題",
     "entity-delete-warning": "選択したアイテムとすべての関連データが完全に削除されます。これは、元に戻すことはできません。実行して良いですか？",
     "entries-processed": "{{num, number}} entries processed",

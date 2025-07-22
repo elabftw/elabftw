@@ -86,7 +86,7 @@ export class Api {
     if ([Method.POST, Method.PATCH].includes(method)) {
       options['body'] = JSON.stringify(params);
     }
-    return fetch(`api/v2/${query}`, options).then(response => {
+    return fetch(`api/v2/${query}`, options).then(async response => {
       if (response.status !== this.getOkStatusFromMethod(method)) {
         // if there is an error we will get the message in the reply body
         return response.json().then(json => { throw new Error(json.description); });

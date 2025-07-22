@@ -22,6 +22,7 @@ const t = {
     "edit-compound": "Редактировать соединение",
     "editing-metadata": "В настоящее время вы редактируете метаданные, прикрепленные к этой записи.",
     "email": "Email",
+    "enable-permission": "You must allow at least one permission setting.",
     "entity-default-title": "Без имени",
     "entity-delete-warning": "Выбранные элементы и все связанные данные будут удалены без возможности восстановления. Это не может быть отменено. Ты уверен?",
     "entries-processed": "{{num, number}} entries processed",

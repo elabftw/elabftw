@@ -98,8 +98,6 @@
     <p class='smallgray'>{{ 'If you are behind a firewall/proxy, enter the address here. Example: http://proxy.example.com:3128'|trans }}</p>
     <hr>
 
-    {% include 'binary-setting.html' with {'label': 'Allow the base permission setting «Only owner»'|trans, 'slug': 'allow_useronly'} %}
-
     <div class='d-flex justify-content-between'>
       <label for='support_url' class='col-form-label'>{{ 'URL where the Support menu entry from Help dropdown points'|trans }}</label>
       <input class='form-control col-md-3' type='url' value='{{ App.Config.configArr.support_url }}' data-trigger='blur' data-model='config' data-target='support_url' id='support_url' />
@@ -139,6 +137,13 @@
     </div>
     <p class='smallgray'>{{ 'If the last change is at least this days old, a revision will be created regardless of the minimum characters setting.'|trans }}</p>
     <hr>
+  </div>
+
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Permissions settings'|trans }}</h3>
+  <div id='permissionsSettingsDiv' class='pl-3'>
+    {% for perm in permissions %}
+      {% include 'binary-setting.html' with {'label': 'Allow the base permission setting «' ~ perm.toHuman|trans ~ '»', 'slug': perm.configKey} %}
+    {% endfor %}
   </div>
 
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Registration and authentication configuration'|trans }}</h3>

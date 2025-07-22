@@ -122,10 +122,12 @@ final class App
         }
 
         $this->Teams = new Teams($this->Users, $this->Users->team);
-        $ItemsTypes = new ItemsTypes($this->Users);
-        $this->itemsCategoryArr = $ItemsTypes->readAll();
-        $ExperimentsCategory = new ExperimentsCategories($this->Teams);
-        $this->experimentsCategoryArr = $ExperimentsCategory->readAll($ExperimentsCategory->getQueryParams(new InputBag(array('limit' => 9999))));
+        if ($this->Users->team) {
+            $ItemsTypes = new ItemsTypes($this->Users);
+            $this->itemsCategoryArr = $ItemsTypes->readAll();
+            $ExperimentsCategory = new ExperimentsCategories($this->Teams);
+            $this->experimentsCategoryArr = $ExperimentsCategory->readAll($ExperimentsCategory->getQueryParams(new InputBag(array('limit' => 9999))));
+        }
         $this->initi18n();
     }
 

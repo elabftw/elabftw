@@ -109,6 +109,7 @@ describe('Experiments', () => {
     entityComment();
     entityDuplicate();
     entityDestroy();
+    entityRestore(endpoint, 'experiments.php');
   });
 
   it('Create and edit an item', () => {
@@ -123,5 +124,19 @@ describe('Experiments', () => {
     entityComment();
     entityDuplicate();
     entityDestroy();
+    entityRestore(endpoint, 'database.php');
   });
+
+  const entityRestore = (endpoint: string, publicUrl: string) => {
+    cy.visit(`/${publicUrl}`);
+    cy.htmlvalidate();
+    cy.get('button[title="Show more filters"]').click();
+    // filter deleted items
+    cy.get('select[name="state"]').select('3');
+    // restore
+    cy.intercept('PATCH', `/api/v2/${endpoint}/**`).as('apiPATCH');
+    cy.get('[data-action="restore-entity"').first().click();
+    cy.wait('@apiPATCH');
+    cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
+  };
 });

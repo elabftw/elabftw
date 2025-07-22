@@ -135,7 +135,7 @@ describe('Experiments', () => {
     cy.get('select[name="state"]').select('3');
     // restore
     cy.intercept('PATCH', `/api/v2/${endpoint}/**`).as('apiPATCH');
-    cy.get('[data-action="restore-entity"').first().click();
+    cy.get('[data-action="restore-entity"]').first().click();
     cy.wait('@apiPATCH');
     cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
   };

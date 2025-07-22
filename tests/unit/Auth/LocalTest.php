@@ -27,6 +27,22 @@ class LocalTest extends \PHPUnit\Framework\TestCase
         $this->AuthService = new Local('toto@yopmail.com', 'totototototo');
     }
 
+    public function testOnlySysadminWhenHidden(): void
+    {
+        $user = $this->getRandomUserInTeam(2);
+        $Local = new Local($user->userData['email'], 'notimportant', isDisplayed: false, isOnlySysadminWhenHidden: true);
+        $this->expectException(ImproperActionException::class);
+        $Local->tryAuth();
+    }
+
+    public function testOnlySysadmin(): void
+    {
+        $user = $this->getRandomUserInTeam(2);
+        $Local = new Local($user->userData['email'], 'notimportant', isOnlySysadmin: true);
+        $this->expectException(ImproperActionException::class);
+        $Local->tryAuth();
+    }
+
     public function testEmptyPassword(): void
     {
         $this->expectException(QuantumException::class);

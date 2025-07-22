@@ -441,6 +441,7 @@ final class StorageUnits extends AbstractRest
                     entity.id AS entity_id,
                     entity.title AS entity_title,
                     'database' AS page,
+                    c2i.id AS container2item_id,
                     c2i.qty_stored,
                     c2i.qty_unit,
                     c2i.created_at,
@@ -497,13 +498,14 @@ final class StorageUnits extends AbstractRest
                     users AS u ON (u.userid = entity.userid)
                 WHERE
                     -- can sql AND query or storage_id
-                    1=1 %s AND %s
+                    1=1 AND %s %s
 
             UNION
                 SELECT
                     entity.id AS entity_id,
                     entity.title AS entity_title,
                     'experiments' AS page,
+                    c2e.id AS container2experiment_id,
                     c2e.qty_stored,
                     c2e.qty_unit,
                     c2e.created_at,
@@ -560,15 +562,15 @@ final class StorageUnits extends AbstractRest
                     users AS u ON (u.userid = entity.userid)
                 WHERE
                     -- can sql AND query or storage_id
-                    1=1 %s AND %s",
+                    1=1 AND %s %s",
             $userid,
             $team,
-            $canFilter,
             $discriminator,
+            $canFilter,
             $userid,
             $team,
-            $canFilter,
             $discriminator,
+            $canFilter,
         );
     }
 }

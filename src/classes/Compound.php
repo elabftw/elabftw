@@ -64,36 +64,47 @@ final class Compound
 
         foreach ($all['Section'] as $section) {
             // Grab the hazard symbols
-            if ($section['TOCHeading'] === 'Chemical Safety') {
-                foreach ($section['Information'] as $subSection) {
-                    if ($subSection['Name'] === 'Chemical Safety') {
-                        foreach ($subSection['Value']['StringWithMarkup'][0]['Markup'] as $ghs) {
-                            if ($ghs['Extra'] === 'Corrosive') {
-                                $compound->isCorrosive = true;
-                            }
-                            if ($ghs['Extra'] === 'Explosive') {
-                                $compound->isExplosive = true;
-                            }
-                            if ($ghs['Extra'] === 'Flammable') {
-                                $compound->isFlammable = true;
-                            }
-                            if ($ghs['Extra'] === 'Compressed Gas') {
-                                $compound->isGasUnderPressure = true;
-                            }
-                            if ($ghs['Extra'] === 'Environmental Hazard') {
-                                $compound->isHazardous2env = true;
-                            }
-                            if ($ghs['Extra'] === 'Irritant') {
-                                $compound->isHazardous2health = true;
-                            }
-                            if ($ghs['Extra'] === 'Health Hazard') {
-                                $compound->isSeriousHealthHazard = true;
-                            }
-                            if ($ghs['Extra'] === 'Oxidizer') {
-                                $compound->isOxidising = true;
-                            }
-                            if ($ghs['Extra'] === 'Acute Toxic') {
-                                $compound->isToxic = true;
+            if ($section['TOCHeading'] === 'Safety and Hazards') {
+                foreach ($section['Section'] as $subSection) {
+                    if ($subSection['TOCHeading'] === 'Hazards Identification') {
+                        foreach ($section['Section'] as $subSection) {
+
+                            if (isset($subSection['Section'][0]['TOCHeading']) && $subSection['Section'][0]['TOCHeading'] === 'GHS Classification') {
+                                foreach ($subSection['Section'][0]['Information'] as $info) {
+                                    if (($info['Name'] ?? '') === 'Pictogram(s)') {
+                                        $markups = $info['Value']['StringWithMarkup'][0]['Markup'] ?? $info['Value']['StringWithMarkup'] ?? array();
+                                        foreach ($markups as $ghs) {
+                                            $extra = is_array($ghs) ? ($ghs['Extra'] ?? null) : $ghs;
+                                            if ($extra === 'Corrosive') {
+                                                $compound->isCorrosive = true;
+                                            }
+                                            if ($extra === 'Explosive') {
+                                                $compound->isExplosive = true;
+                                            }
+                                            if ($extra === 'Flammable') {
+                                                $compound->isFlammable = true;
+                                            }
+                                            if ($extra === 'Compressed Gas') {
+                                                $compound->isGasUnderPressure = true;
+                                            }
+                                            if ($extra === 'Environmental Hazard') {
+                                                $compound->isHazardous2env = true;
+                                            }
+                                            if ($extra === 'Irritant') {
+                                                $compound->isHazardous2health = true;
+                                            }
+                                            if ($extra === 'Health Hazard') {
+                                                $compound->isSeriousHealthHazard = true;
+                                            }
+                                            if ($extra === 'Oxidizer') {
+                                                $compound->isOxidising = true;
+                                            }
+                                            if ($extra === 'Acute Toxic') {
+                                                $compound->isToxic = true;
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

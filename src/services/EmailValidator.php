@@ -28,8 +28,12 @@ final class EmailValidator
 
     private Db $Db;
 
-    public function __construct(private string $email, private bool $adminsImportUsers = false, ?string $emailDomain = null)
-    {
+    public function __construct(
+        private string $email,
+        private bool $adminsImportUsers = false,
+        ?string $emailDomain = null,
+        private readonly bool $skipDomainValidation = false,
+    ) {
         // if it's an empty string, make it null
         if ($emailDomain === '') {
             $emailDomain = null;
@@ -62,7 +66,7 @@ final class EmailValidator
 
     private function validateDomain(): void
     {
-        if ($this->emailDomain !== null) {
+        if ($this->emailDomain !== null && !$this->skipDomainValidation) {
             $splitEmail = explode('@', $this->email);
             $splitDomains = array_map('trim', explode(',', $this->emailDomain));
             if (!in_array($splitEmail[1], $splitDomains, true)) {

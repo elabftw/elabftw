@@ -559,7 +559,8 @@ class Users extends AbstractRest
         if (empty($currentPassword)) {
             throw new ImproperActionException('Current password must be provided by "current_password" parameter.');
         }
-        $LocalAuth = new Local($this->userData['email'], $currentPassword);
+        // set a high maxLoginAttempts because we're just trying to match current password here
+        $LocalAuth = new Local($this->userData['email'], $currentPassword, maxLoginAttempts: 999);
         try {
             $LocalAuth->tryAuth();
         } catch (InvalidCredentialsException) {

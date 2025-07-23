@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\QuantumException;
 use Elabftw\Traits\TestsUtilsTrait;
@@ -24,6 +25,22 @@ class LocalTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->AuthService = new Local('toto@yopmail.com', 'totototototo');
+    }
+
+    public function testOnlySysadminWhenHidden(): void
+    {
+        $user = $this->getRandomUserInTeam(2);
+        $Local = new Local($user->userData['email'], 'notimportant', isDisplayed: false, isOnlySysadminWhenHidden: true);
+        $this->expectException(ImproperActionException::class);
+        $Local->tryAuth();
+    }
+
+    public function testOnlySysadmin(): void
+    {
+        $user = $this->getRandomUserInTeam(2);
+        $Local = new Local($user->userData['email'], 'notimportant', isOnlySysadmin: true);
+        $this->expectException(ImproperActionException::class);
+        $Local->tryAuth();
     }
 
     public function testEmptyPassword(): void
@@ -60,5 +77,13 @@ class LocalTest extends \PHPUnit\Framework\TestCase
         $admin2 = $this->getUserInTeam(team: 2, admin: 1);
         $this->assertTrue($this->AuthService::isMfaEnforced($admin2->userid, 2));
         $this->assertFalse($this->AuthService::isMfaEnforced(4, 0));
+    }
+
+    public function testBruteForce(): void
+    {
+        $user = $this->getRandomUserInTeam(4);
+        $Local = new Local($user->userData['email'], 'thisisnotthecorrectpassword', maxLoginAttempts: -1);
+        $this->expectException(ImproperActionException::class);
+        $Local->tryAuth();
     }
 }

@@ -97,7 +97,7 @@ final class ImportCompoundsCsv extends Command
         $pubChemImporter = null;
         if ($usePubchem) {
             $output->writeln('[info] Using Pubchem to complete data: this might take a long time.');
-            $pubChemImporter = new PubChemImporter($httpGetter);
+            $pubChemImporter = new PubChemImporter($httpGetter, Config::fromEnv('PUBCHEM_PUG_URL'), Config::fromEnv('PUBCHEM_PUG_VIEW_URL'));
         }
         $Items = new Items($user, bypassReadPermission: true, bypassWritePermission: true);
         $Compounds = new Compounds($httpGetter, $user, $Fingerprinter);

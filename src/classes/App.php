@@ -49,12 +49,12 @@ final class App
 {
     use TwigTrait;
 
-    public const string INSTALLED_VERSION = '5.2.9';
+    public const string INSTALLED_VERSION = '5.3.0-alpha';
 
     // this version format is used to compare with last_seen_version of users
     // major is untouched, and minor and patch are padded with one 0 each
     // we should be pretty safe from ever reaching 100 as a minor or patch version!
-    public const int INSTALLED_VERSION_INT = 50209;
+    public const int INSTALLED_VERSION_INT = 50300;
 
     /** @psalm-suppress PossiblyUnusedProperty this property is used in twig templates */
     public array $notifsArr = array();
@@ -123,10 +123,12 @@ final class App
         }
 
         $this->Teams = new Teams($this->Users, $this->Users->team);
-        $ItemsTypes = new ItemsTypes($this->Users);
-        $this->itemsCategoryArr = $ItemsTypes->readAll();
-        $ExperimentsCategory = new ExperimentsCategories($this->Teams);
-        $this->experimentsCategoryArr = $ExperimentsCategory->readAll($ExperimentsCategory->getQueryParams(new InputBag(array('limit' => 9999))));
+        if ($this->Users->team) {
+            $ItemsTypes = new ItemsTypes($this->Users);
+            $this->itemsCategoryArr = $ItemsTypes->readAll();
+            $ExperimentsCategory = new ExperimentsCategories($this->Teams);
+            $this->experimentsCategoryArr = $ExperimentsCategory->readAll($ExperimentsCategory->getQueryParams(new InputBag(array('limit' => 9999))));
+        }
         $this->initi18n();
     }
 

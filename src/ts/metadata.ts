@@ -363,6 +363,8 @@ document.addEventListener('DOMContentLoaded', () => {
           grpSel.value = selectedGroup;
           // and finally close the modal
           $('#fieldBuilderModal').modal('toggle');
+          // focus on the newly added element
+          document.querySelector(`[data-name="${fieldKey}"`).scrollIntoView();
         });
       });
     // EDIT EXTRA FIELD
@@ -445,6 +447,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         MetadataC.update(json as ValidMetadata).then(() => {
           $('#fieldBuilderModal').modal('toggle');
+          // focus on the newly added element
+          document.querySelector(`[data-name="${newFieldKey}"`).scrollIntoView();
         });
       });
     // ADD OPTION FOR SELECT OR RADIO

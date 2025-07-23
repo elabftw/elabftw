@@ -723,6 +723,7 @@ export function toggleEditCompound(json: object): void {
     input.checked = json[param] === 1;
   });
   document.getElementById('editCompoundModalSaveBtn').dataset.compoundId = json['id'];
+  (document.getElementById('compoundLink-pubchem') as HTMLLinkElement).href = `https://pubchem.ncbi.nlm.nih.gov/compound/${json['pubchem_cid']}`;
   $('#editCompoundModal').modal('toggle');
 }
 

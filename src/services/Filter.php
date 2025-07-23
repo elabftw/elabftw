@@ -48,6 +48,14 @@ final class Filter
         return $input ? 1 : 0;
     }
 
+    public static function toPureString(string $input): string
+    {
+        $config = HTMLPurifier_HTML5Config::createDefault();
+        $config->set('HTML.Allowed', '');
+        $config->set('AutoFormat.RemoveEmpty', true);
+        return new HTMLPurifier($config)->purify(trim($input));
+    }
+
     /**
      * Return 0 or 1 if input is on. Used for UCP.
      */

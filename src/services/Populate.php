@@ -46,6 +46,12 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function array_key_exists;
+use function bin2hex;
+use function dirname;
+use function random_bytes;
+use function sprintf;
+
 /**
  * This is used to generate data for dev purposes
  */

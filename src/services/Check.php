@@ -21,6 +21,7 @@ use Elabftw\Models\Config;
 use Elabftw\Models\Users;
 use JsonException;
 
+use function ctype_xdigit;
 use function filter_var;
 use function intval;
 use function mb_strlen;
@@ -28,6 +29,7 @@ use function mb_substr;
 use function array_keys;
 use function in_array;
 use function sprintf;
+use function strlen;
 
 /**
  * When values need to be checked

@@ -30,7 +30,7 @@
 <h1>{{ 'Welcome to the demo!'|trans }}</h1>
 <p>{{ 'Explore real-life examples of teams in eLabFTW. Select a profile suited to your activity below.'|trans }}</p>
 <br>
-  <div class='col-md-4 mx-auto'>
+  <div class='col-md-6 mx-auto'>
       <div class='d-flex flex-column align-self-start'>
         {% set csrf = App.Session.get('csrf') %}
         {{ _self.loginButton('Microbiology group', 'Biology', 'admin1@demo.elabftw.net', 'user1@demo.elabftw.net', 'Explore a microbiology team specializing in plasmid engineering, cell‐culture techniques, and a wide range of molecular biology protocols.', 'dna', '29aeb9', csrf) }}

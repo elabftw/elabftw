@@ -3,7 +3,7 @@ describe('Experiments', () => {
     cy.login();
   });
 
-  const entityEdit = (endpoint: string) => {
+  const entityEdit = () => {
     cy.url().should('include', 'mode=edit');
 
     // update date
@@ -82,34 +82,32 @@ describe('Experiments', () => {
   };
 
   it('Create and edit an experiment', () => {
-    const endpoint = 'experiments';
     cy.visit('/experiments.php');
     cy.htmlvalidate();
     cy.contains('Create').click();
     cy.get('#createModal_experiments').should('be.visible').should('contain', 'Default template').contains('Default template').click();
     entityCatStat('Not set', 'Cell biology', 'Success');
-    entityEdit(endpoint);
+    entityEdit();
     entityComment();
     entityDuplicate();
     entityDestroy();
-    entityRestore(endpoint, 'experiments.php');
+    entityRestore('experiments.php');
   });
 
   it('Create and edit an item', () => {
-    const endpoint = 'items';
     cy.visit('/database.php');
     cy.htmlvalidate();
     cy.contains('Create').click();
     cy.get('#createModal_database').should('be.visible').should('contain', 'Microscope').contains('Microscope').click();
     entityCatStat('Microscope', 'Plasmid', 'In stock');
-    entityEdit(endpoint);
+    entityEdit();
     entityComment();
     entityDuplicate();
     entityDestroy();
-    entityRestore(endpoint, 'database.php');
+    entityRestore('database.php');
   });
 
-  const entityRestore = (endpoint: string, publicUrl: string) => {
+  const entityRestore = (publicUrl: string) => {
     cy.visit(`/${publicUrl}`);
     cy.htmlvalidate();
     cy.get('button[title="Show more filters"]').click();

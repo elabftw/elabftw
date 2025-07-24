@@ -356,7 +356,9 @@ abstract class AbstractEntity extends AbstractRest
         }
         // for deleted or archived entities, allow specific actions (Restore & Unarchive)
         $state = $this->entityData['state'] ?? null;
-        if ($state === State::Deleted->value && $action !== Action::Restore) {
+        // as the patch is kept alive, sometimes the removeExclusiveEditMode performs while/after the delete redirects to show page
+        $allowedActionsOnDeleted = array(Action::Restore, Action::RemoveExclusiveEditMode);
+        if ($state === State::Deleted->value && !in_array($action, $allowedActionsOnDeleted, true)) {
             throw new UnprocessableContentException(_('Only the Restore action is allowed on a deleted entity.'));
         }
         if ($state === State::Archived->value && $action !== Action::Unarchive) {

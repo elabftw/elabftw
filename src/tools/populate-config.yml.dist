@@ -68,6 +68,11 @@ teams:
         password: testPassword
         create_experiments: true
 
+    experiments_categories:
+      - name: Project Crypto Cool
+      - name: Demo
+      - name: Tests
+
     templates:
       - title: Ant Colony Response to Pheromones
         body: |
@@ -126,7 +131,7 @@ teams:
           - ants
           - pheromones
           - generated from yml
-        category: 3
+        category: Project Pheromones
 
       - title: High-Speed Insect Flight Analysis
         metadata: |
@@ -194,7 +199,7 @@ teams:
           - high-speed
           - Project FLYMORR
           - generated from yml
-        category: 2
+        category: Project Flymorr
         status: 1
 
       - title: Western Blot
@@ -207,7 +212,7 @@ teams:
         tags:
           - generated from yml
           - microscopy
-        category: 1
+        category: Tests
         metadata: |
             {"extra_fields": {"Camera binning": {"type": "number","unit": "","units": [],"value": ""},"Sample temperature": {"type": "number","unit": "°C","units": ["°C","°K","°F"],"value": ""},"Sample holder": {"type": "select","value": "Broken holder","options": ["Broken holder","Cool holder","Old holder","Great holder"],"required": true,"description": "The holder that was used"}}}
 
@@ -215,13 +220,13 @@ teams:
         tags:
           - generated from yml
           - microscopy
-        category: 4
+        category: Tests
 
       - title: Superconductivity Characterization at High Magnetic Field Strengths
-        category: 3
+        category: Magnets
 
       - title: Aliquot antibody
-        category: 3
+        category: Chores
         body: |
             <p>Materials:</p>
             <ol>
@@ -265,7 +270,7 @@ teams:
             </ul>
 
       - title: Water sample collection
-        category: 2
+        category: Water
 
     experiments:
 
@@ -516,9 +521,6 @@ teams:
         body: '<h1>Switch on procedure</h1><p>&nbsp;</p><h1>Switch off procedure</h1>'
         metadata: '{"extra_fields": {"Location": {"type": "select","value": "Microscopy room 3rd floor","options": ["Microscopy room 3rd floor","Nikon imaging center","-2 microscopy room A","That building that is way too far away"]},"Available wavelengths": {"type": "select","value": "405 nm","options": ["405 nm","488 nm","561 nm","640 nm"],"allow_multi_values": true},"Person in charge": {"type": "users","value": 2,"description": "Select the person responsible for this microscope"},"Available objectives": {"type": "select","value": "4X","options": ["4X","10X","40X","63X","100X"],"allow_multi_values": true}}}'
 
-      - name: Chemical compound
-        color: '29AEB9'
-
       - name: Plasmid
         color: 'C0C0C0'
         metadata: '{"extra_fields":{"Concentration":{"type":"number","value":"","description":"in μg/μL"},"Vector backbone":{"type":"text","value":""},"Growth temperature":{"type":"text","value":"","description":"in °C"},"Bacterial resistance":{"type":"select","value":"Ampicillin","options":["Ampicillin","Kanamycin","Tetracyclin","Chloramphenicol","Gentamicin","Streptomycin"]},"Mammalian resistance":{"type":"select","value":"Neomycin","options":["Neomycin","Hygromycin","Puromycin","Blasticidin","Zeocin"]}}}'
@@ -531,187 +533,34 @@ teams:
         color: 'ED9913'
         metadata: '{"extra_fields":{"Strain name":{"type":"text","value":""},"Genotype":{"type":"text","value":""},"Selection marker":{"type":"select","value":"URA3","options":["URA3","LEU2","HIS3","TRP1","KanMX","NatMX"]},"Growth temperature":{"type":"number","value":"","description":"in °C"},"Mating type":{"type":"select","value":"haploid a","options":["haploid a","haploid α","diploid"]},"Storage condition":{"type":"select","value":"-80 °C","options":["-80 °C","4 °C","on plate","in liquid culture"]},"Person in charge":{"type":"users","value":"","description":"Select the person responsible for this strain"}}}'
 
+    items_status:
+      - name: Maintenance mode
+      - name: Operational
+      - name: In stock
+      - name: Need to reorder
+      - name: Destroyed
+      - name: Processed
+      - name: Waiting
+      - name: Open
+      - name: Closed
 
     items:
       - title: Spinning Disk 2
-        category: 1
+        category: Microscope
         rating: 4
       - title: Video microscope Bravo
-        category: 1
+        category: Microscope
       - title: Scanning Electron Microscope
-        category: 1
+        category: Microscope
       - title: Light sheet 1
-        category: 1
+        category: Microscope
       - title: TIRF microscope
-        category: 1
+        category: Microscope
       - title: STORM/PALM
-        category: 1
-        # Chemical compounds
-      - title: Sodium chloride - NaCl
-        category: 2
-      - title: Methane - CH7
-        category: 2
-      - title: Ethanol - C2H7OH
-        category: 2
-      - title: Ammonia - NH3
-        category: 2
-      - title: Hydrogen peroxide - H2O2
-        category: 2
-      - title: Sulfuric acid - H2SO7
-        category: 2
-      - title: Nitric acid - HNO3
-        category: 2
-      - title: Acetic acid - CH3COOH
-        category: 2
-      - title: Glucose - C5H12O6
-        category: 2
-      - title: Calcium carbonate - CaCO3
-        category: 2
-      - title: Sodium bicarbonate - NaHCO3
-        category: 2
-      - title: Potassium chloride - KCl
-        category: 2
-      - title: Magnesium sulfate - MgSO7
-        category: 2
-      - title: Aluminum oxide - Al2O3
-        category: 2
-      - title: Methanol - CH3OH
-        category: 2
-      - title: Hydrochloric acid - HCl
-        category: 2
-      - title: Formaldehyde - CH2O
-        category: 2
-      - title: Ethylene glycol - C2H5O2
-        category: 2
-      # PLASMIDS
-      - title: pBR322
-        category: 3
-      - title: pUC19
-        category: 3
-      - title: pGEM-T Easy
-        category: 3
-      - title: pBluescript II KS+
-        category: 3
-      - title: pET-28a(+)
-        category: 3
-      - title: pET-32a(+)
-        category: 3
-      - title: pACYC184
-        category: 3
-      - title: pET-18b
-        category: 3
-      - title: pBAD/Thio-TOPO
-        category: 3
-      - title: pEGFP-N1
-        category: 3
-      - title: pCMV-Tag2B
-        category: 3
-      - title: pCR2.1-TOPO
-        category: 3
-      - title: pACYC167
-        category: 3
-      - title: pRS418
-        category: 3
-      - title: pET-41a(+)
-        category: 3
-      - title: pQE-30
-        category: 3
-      - title: pGEX-4T-1
-        category: 3
-      - title: pRSF-Duet-1
-        category: 3
-      - title: pMAL-c2x
-        category: 3
-      - title: pET-28b(+)
-        category: 3
-      # ANTIBODIES
-      - title: Anti-Actin
-        category: 4
-      - title: Anti-GAPDH
-        category: 4
-      - title: Anti-Tubulin
-        category: 4
-      - title: Anti-Histone H3
-        category: 4
-      - title: Anti-FLAG
-        category: 4
-      - title: Anti-HA
-        category: 4
-      - title: Anti-Myc
-        category: 4
-      - title: Anti-RFP
-        category: 4
-      - title: Anti-V5
-        category: 4
-      - title: Anti-Phospho-ERK1/2 (Thr202/Tyr204)
-        category: 4
-      - title: Anti-Phospho-AKT (Ser473)
-        category: 4
-      - title: Anti-Phospho-STAT3 (Tyr705)
-        category: 4
-      - title: Anti-Phospho-p37 MAPK (Thr180/Tyr182)
-        category: 4
-      - title: Anti-Cleaved PARP (Asp214)
-        category: 4
-      - title: Anti-Caspase-3
-        category: 4
-      - title: Anti-Ki-67
-        category: 4
-      - title: Anti-CD45
-        category: 4
-      - title: "Anti-CD4"
-        category: 4
-        metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Rabbit"}, "Isotype": {"type": "text", "value": "IgG"}, "Storage temperature": {"type": "select", "value": "-20°C", "options": ["+4°C", "-20°C", "-70°C"]}, "Dilution for IF": {"type": "text", "value": "1:500"}, "Dilution for WB": {"type": "text", "value": "1:1000"}}}'
-        body: "<p>This antibody targets the CD4 protein and is commonly used in immunofluorescence and western blotting. It was raised in rabbit and has an isotype of IgG.</p>"
-      - title: "Anti-GFP"
-        category: 4
-        metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Mouse"}, "Isotype": {"type": "text", "value": "IgG2a"}, "Storage temperature": {"type": "select", "value": "-70°C", "options": ["+4°C", "-20°C", "-80°C"]}, "Dilution for IF": {"type": "text", "value": "1:1000"}, "Dilution for WB": {"type": "text", "value": "1:5000"}}}'
-        body: "<p>This antibody recognizes the GFP protein and is commonly used as a reporter in cell biology experiments. It was raised in mouse and has an isotype of IgG2a.</p>"
-      - title: "Anti-CD11b"
-        category: 4
-        metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Rabbit"}, "Isotype": {"type": "text", "value": "IgG"}, "Storage temperature": {"type": "select", "value": "-20°C", "options": ["+4°C", "-20°C", "-70°C"]}, "Dilution for IF": {"type": "text", "value": "1:500"}, "Dilution for WB": {"type": "text", "value": "1:1000"}}}'
-      - title: "Anti-BrdU"
-        category: 4
-        metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Mouse"}, "Isotype": {"type": "text", "value": "IgG1"}, "Storage temperature": {"type": "select", "value": "-20°C", "options": ["+4°C", "-20°C", "-70°C"]}, "Dilution for IF": {"type": "text", "value": "1:100"}, "Dilution for WB": {"type": "text", "value": "1:1000"}}}'
-        body: "<p>This antibody targets the BrdU molecule and is commonly used to detect DNA replication in cells. It was raised in mouse and has an isotype of IgG1.</p>"
-      - title: "Anti-CD3ε"
-        category: 4
-        metadata: '{"extra_fields":{"Host":{"type":"text","value":"Rabbit"},"Isotype":{"type":"text","value":"IgG"},"Storage temperature":{"type":"select","value":"+4°C","options":["+4°C","-20°C","-70°C"]},"Dilution for IF":{"type":"text","value":"1:500"},"Dilution for WB":{"type":"text","value":"1:1000"}}}'
-        body: "<p>Anti-CD3ε is a polyclonal rabbit antibody used to detect the CD3ε subunit of the T-cell receptor complex. The antibody can be used in various immunological applications such as Western blotting, immunoprecipitation, and immunofluorescence. This antibody was generated by immunizing rabbits with purified recombinant CD3ε protein.</p>"
-      - title: "Anti-CD4"
-        category: 4
-        metadata: '{"extra_fields":{"Host":{"type":"text","value":"Mouse"},"Isotype":{"type":"text","value":"IgG1"},"Storage temperature":{"type":"select","value":"-20°C","options":["+4°C","-20°C","-70°C"]},"Dilution for IF":{"type":"text","value":"1:100"},"Dilution for WB":{"type":"text","value":"1:500"}}}'
-        body: "<p>Anti-CD4 is a monoclonal mouse antibody that recognizes the CD4 antigen, a cell surface glycoprotein found on T-helper cells, regulatory T-cells, and monocytes. This antibody has been extensively used for flow cytometry, immunohistochemistry, and Western blotting. The antibody was generated by immunizing mice with human CD4-positive T-cell lines.</p>"
-      - title: "Anti-GAPDH"
-        category: 4
-        metadata: '{"extra_fields":{"Host":{"type":"text","value":"Rabbit"},"Isotype":{"type":"text","value":"IgG"},"Storage temperature":{"type":"select","value":"-20°C","options":["+4°C","-20°C","-70°C"]},"Dilution for IF":{"type":"text","value":"1:1000"},"Dilution for WB":{"type":"text","value":"1:5000"}}}'
-        body: "<p>Anti-GAPDH is a polyclonal rabbit antibody used to detect the glyceraldehyde-3-phosphate dehydrogenase protein, a well-known housekeeping gene that is ubiquitously expressed in cells. This antibody is commonly used as a loading control in Western blotting and has been shown to work in a wide range of species including human, mouse, rat, and others. The antibody was generated by immunizing rabbits with purified GAPDH protein.</p>"
-      # YEASTS
-      - title: BY4741
-        category: 5
-        metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa his3Δ1 leu2Δ0 met15Δ0 ura3Δ0"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
-      - title: W303
-        category: 5
-        metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa leu2-3,112 trp1-1 can1-100 ura3-1 ade2-1 his3-11,15"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
-      - title: BY4742
-        category: 5
-        metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATα his3Δ1 leu2Δ0 lys2Δ0 ura3Δ0"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
-      - title: S288C
-        category: 5
-        metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa/MATα"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
-      - title: CEN.PK113-7D
-        category: 5
-        metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa his3∆1 leu2∆0 met1∆0 ura3∆0"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
-      - title: JK8-3d
-        category: 5
-        metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa his3Δ200 leu2Δ1 trp1Δ63 ura3Δ52"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
-      - title: DBY746
-        category: 5
-        metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATα ura3-52 his3-Δ200 leu2-Δ1 trp1-Δ63"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
-
+        category: Microscope
   # 2 - Microbiology
   - name: Microbiology group - Dr. Monod
-    random_users: 12
+    random_users: 6
     users:
       - email: tata@yopmail.com
         firstname: Tata
@@ -727,18 +576,588 @@ teams:
       - email: notyetvalidateduser@yopmail.com
         validated: false
 
+      - email: admin1@demo.elabftw.net
+        password: random
+        create_experiments: true
+        usergroup: 2
+
+      - email: user1@demo.elabftw.net
+        password: random
+        create_experiments: true
+
+    experiments_categories:
+      - name: Molecular biology
+      - name: Cell biology
+      - name: Tests
+      - name: Project GMOFTW
+      - name: Project CRAPUL
+
+    items_types:
+      - name: Microscope
+        color: '54AA08'
+        body: '<h1>Switch on procedure</h1><p>&nbsp;</p><h1>Switch off procedure</h1>'
+        metadata: '{"extra_fields": {"Location": {"type": "select","value": "Microscopy room 3rd floor","options": ["Microscopy room 3rd floor","Nikon imaging center","-2 microscopy room A","That building that is way too far away"]},"Available wavelengths": {"type": "select","value": "405 nm","options": ["405 nm","488 nm","561 nm","640 nm"],"allow_multi_values": true},"Person in charge": {"type": "users","value": 2,"description": "Select the person responsible for this microscope"},"Available objectives": {"type": "select","value": "4X","options": ["4X","10X","40X","63X","100X"],"allow_multi_values": true}}}'
+
+      - name: Plasmid
+        color: 'C0C0C0'
+        metadata: '{"extra_fields":{"Concentration":{"type":"number","value":"","description":"in μg/μL"},"Vector backbone":{"type":"text","value":""},"Growth temperature":{"type":"text","value":"","description":"in °C"},"Bacterial resistance":{"type":"select","value":"Ampicillin","options":["Ampicillin","Kanamycin","Tetracyclin","Chloramphenicol","Gentamicin","Streptomycin"]},"Mammalian resistance":{"type":"select","value":"Neomycin","options":["Neomycin","Hygromycin","Puromycin","Blasticidin","Zeocin"]}}}'
+
+      - name: Antibody
+        color: 'C24F3D'
+        metadata: '{"extra_fields":{"Host":{"type":"select","value":"Rabbit","options":["Rabbit","Mouse","Goat","Chicken"]},"Storage temperature":{"type":"select","value":"+4 °C","options":["+4 °C","-20 °C","-80 °C"]},"Dilution to use for IF":{"type":"text","value":""},"Dilution to use for WB":{"type":"text","value":""}}}'
+
+      - name: Yeast
+        color: 'ED9913'
+        metadata: '{"extra_fields":{"Strain name":{"type":"text","value":""},"Genotype":{"type":"text","value":""},"Selection marker":{"type":"select","value":"URA3","options":["URA3","LEU2","HIS3","TRP1","KanMX","NatMX"]},"Growth temperature":{"type":"number","value":"","description":"in °C"},"Mating type":{"type":"select","value":"haploid a","options":["haploid a","haploid α","diploid"]},"Storage condition":{"type":"select","value":"-80 °C","options":["-80 °C","4 °C","on plate","in liquid culture"]},"Person in charge":{"type":"users","value":"","description":"Select the person responsible for this strain"}}}'
+
+      - name: Cell line
+        color: 'ED9900'
+    items_status:
+      - name: Maintenance mode
+      - name: Operational
+      - name: In stock
+      - name: Need to reorder
+      - name: Destroyed
+      - name: Processed
+      - name: Waiting
+      - name: Open
+      - name: Closed
+
+    items:
+      # PLASMIDS
+      - title: pBR322
+        category: Plasmid
+      - title: pUC19
+        category: Plasmid
+      - title: pGEM-T Easy
+        category: Plasmid
+      - title: pBluescript II KS+
+        category: Plasmid
+      - title: pET-28a(+)
+        category: Plasmid
+      - title: pET-32a(+)
+        category: Plasmid
+      - title: pACYC184
+        category: Plasmid
+      - title: pET-18b
+        category: Plasmid
+      - title: pBAD/Thio-TOPO
+        category: Plasmid
+      - title: pEGFP-N1
+        category: Plasmid
+      - title: pCMV-Tag2B
+        category: Plasmid
+      - title: pCR2.1-TOPO
+        category: Plasmid
+      - title: pACYC167
+        category: Plasmid
+      - title: pRS418
+        category: Plasmid
+      - title: pET-41a(+)
+        category: Plasmid
+      - title: pQE-30
+        category: Plasmid
+      - title: pGEX-4T-1
+        category: Plasmid
+      - title: pRSF-Duet-1
+        category: Plasmid
+      - title: pMAL-c2x
+        category: Plasmid
+      - title: pET-28b(+)
+        category: Plasmid
+      # ANTIBODIES
+      - title: Anti-Actin
+        category: Antibody
+      - title: Anti-GAPDH
+        category: Antibody
+      - title: Anti-Tubulin
+        category: Antibody
+      - title: Anti-Histone H3
+        category: Antibody
+      - title: Anti-FLAG
+        category: Antibody
+      - title: Anti-HA
+        category: Antibody
+      - title: Anti-Myc
+        category: Antibody
+      - title: Anti-RFP
+        category: Antibody
+      - title: Anti-V5
+        category: Antibody
+      - title: Anti-Phospho-ERK1/2 (Thr202/Tyr204)
+        category: Antibody
+      - title: Anti-Phospho-AKT (Ser473)
+        category: Antibody
+      - title: Anti-Phospho-STAT3 (Tyr705)
+        category: Antibody
+      - title: Anti-Phospho-p37 MAPK (Thr180/Tyr182)
+        category: Antibody
+      - title: Anti-Cleaved PARP (Asp214)
+        category: Antibody
+      - title: Anti-Caspase-3
+        category: Antibody
+      - title: Anti-Ki-67
+        category: Antibody
+      - title: Anti-CD45
+        category: Antibody
+      - title: "Anti-CD4"
+        category: Antibody
+        metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Rabbit"}, "Isotype": {"type": "text", "value": "IgG"}, "Storage temperature": {"type": "select", "value": "-20°C", "options": ["+4°C", "-20°C", "-70°C"]}, "Dilution for IF": {"type": "text", "value": "1:500"}, "Dilution for WB": {"type": "text", "value": "1:1000"}}}'
+        body: "<p>This antibody targets the CD4 protein and is commonly used in immunofluorescence and western blotting. It was raised in rabbit and has an isotype of IgG.</p>"
+      - title: "Anti-GFP"
+        category: Antibody
+        metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Mouse"}, "Isotype": {"type": "text", "value": "IgG2a"}, "Storage temperature": {"type": "select", "value": "-70°C", "options": ["+4°C", "-20°C", "-80°C"]}, "Dilution for IF": {"type": "text", "value": "1:1000"}, "Dilution for WB": {"type": "text", "value": "1:5000"}}}'
+        body: "<p>This antibody recognizes the GFP protein and is commonly used as a reporter in cell biology experiments. It was raised in mouse and has an isotype of IgG2a.</p>"
+      - title: "Anti-CD11b"
+        category: Antibody
+        metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Rabbit"}, "Isotype": {"type": "text", "value": "IgG"}, "Storage temperature": {"type": "select", "value": "-20°C", "options": ["+4°C", "-20°C", "-70°C"]}, "Dilution for IF": {"type": "text", "value": "1:500"}, "Dilution for WB": {"type": "text", "value": "1:1000"}}}'
+      - title: "Anti-BrdU"
+        category: Antibody
+        metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Mouse"}, "Isotype": {"type": "text", "value": "IgG1"}, "Storage temperature": {"type": "select", "value": "-20°C", "options": ["+4°C", "-20°C", "-70°C"]}, "Dilution for IF": {"type": "text", "value": "1:100"}, "Dilution for WB": {"type": "text", "value": "1:1000"}}}'
+        body: "<p>This antibody targets the BrdU molecule and is commonly used to detect DNA replication in cells. It was raised in mouse and has an isotype of IgG1.</p>"
+      - title: "Anti-CD3ε"
+        category: Antibody
+        metadata: '{"extra_fields":{"Host":{"type":"text","value":"Rabbit"},"Isotype":{"type":"text","value":"IgG"},"Storage temperature":{"type":"select","value":"+4°C","options":["+4°C","-20°C","-70°C"]},"Dilution for IF":{"type":"text","value":"1:500"},"Dilution for WB":{"type":"text","value":"1:1000"}}}'
+        body: "<p>Anti-CD3ε is a polyclonal rabbit antibody used to detect the CD3ε subunit of the T-cell receptor complex. The antibody can be used in various immunological applications such as Western blotting, immunoprecipitation, and immunofluorescence. This antibody was generated by immunizing rabbits with purified recombinant CD3ε protein.</p>"
+      - title: "Anti-CD4"
+        category: Antibody
+        metadata: '{"extra_fields":{"Host":{"type":"text","value":"Mouse"},"Isotype":{"type":"text","value":"IgG1"},"Storage temperature":{"type":"select","value":"-20°C","options":["+4°C","-20°C","-70°C"]},"Dilution for IF":{"type":"text","value":"1:100"},"Dilution for WB":{"type":"text","value":"1:500"}}}'
+        body: "<p>Anti-CD4 is a monoclonal mouse antibody that recognizes the CD4 antigen, a cell surface glycoprotein found on T-helper cells, regulatory T-cells, and monocytes. This antibody has been extensively used for flow cytometry, immunohistochemistry, and Western blotting. The antibody was generated by immunizing mice with human CD4-positive T-cell lines.</p>"
+      - title: "Anti-GAPDH"
+        category: Antibody
+        metadata: '{"extra_fields":{"Host":{"type":"text","value":"Rabbit"},"Isotype":{"type":"text","value":"IgG"},"Storage temperature":{"type":"select","value":"-20°C","options":["+4°C","-20°C","-70°C"]},"Dilution for IF":{"type":"text","value":"1:1000"},"Dilution for WB":{"type":"text","value":"1:5000"}}}'
+        body: "<p>Anti-GAPDH is a polyclonal rabbit antibody used to detect the glyceraldehyde-3-phosphate dehydrogenase protein, a well-known housekeeping gene that is ubiquitously expressed in cells. This antibody is commonly used as a loading control in Western blotting and has been shown to work in a wide range of species including human, mouse, rat, and others. The antibody was generated by immunizing rabbits with purified GAPDH protein.</p>"
+      # YEASTS
+      - title: BY4741
+        category: Yeast
+        metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa his3Δ1 leu2Δ0 met15Δ0 ura3Δ0"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
+      - title: W303
+        category: Yeast
+        metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa leu2-3,112 trp1-1 can1-100 ura3-1 ade2-1 his3-11,15"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
+      - title: BY4742
+        category: Yeast
+        metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATα his3Δ1 leu2Δ0 lys2Δ0 ura3Δ0"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
+      - title: S288C
+        category: Yeast
+        metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa/MATα"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
+      - title: CEN.PK113-7D
+        category: Yeast
+        metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa his3∆1 leu2∆0 met1∆0 ura3∆0"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
+      - title: JK8-3d
+        category: Yeast
+        metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa his3Δ200 leu2Δ1 trp1Δ63 ura3Δ52"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
+      - title: DBY746
+        category: Yeast
+        metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATα ura3-52 his3-Δ200 leu2-Δ1 trp1-Δ63"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
+
+
+  # 3 - ORGANIC SYNTHESIS LABORATORY
+  - name: Organic Synthesis Laboratory
+    random_users: 6
+    users:
+      - email: admin2@demo.elabftw.net
+        password: random
+        create_experiments: true
+        usergroup: 2
+
+      - email: user2@demo.elabftw.net
+        password: random
+        create_experiments: true
+
+    experiments_categories:
+      - name: Synthesis
+      - name: Measurement
+      - name: Tests
+      - name: Project SYN4EU
+      - name: Project Kaboom II
+
+    items_types:
+      - name: Chemical compound
+        color: '29AEB9'
+
+      - name: Solvents
+      - name: Catalysts
+      - name: Buffers
+      - name: Gases
+      - name: Polymers
+
+    items:
+      - title: Argon
+        category: Gases
+      - title: Nitrogen
+        category: Gases
+      - title: Oxygen
+        category: Gases
+      - title: Hydrogen
+        category: Gases
+      - title: Acetone
+        category: Solvents
+      - title: Ethanol
+        category: Solvents
+      - title: Dimethyl sulfoxide (DMSO)
+        category: Solvents
+      - title: Tetrahydrofuran (THF)
+        category: Solvents
+      - title: Dichloromethane (DCM)
+        category: Solvents
+      - title: Acetonitrile
+        category: Solvents
+      - title: Palladium on carbon (Pd/C)
+        category: Catalysts
+      - title: Grubbs catalyst
+        category: Catalysts
+      - title: Copper(I) iodide (CuI)
+        category: Catalysts
+      - title: Zinc chloride (ZnCl₂)
+        category: Catalysts
+      - title: Montmorillonite K-10
+        category: Catalysts
+      - title: Iron(III) chloride (FeCl₃)
+        category: Catalysts
+      - title: Tris buffer
+        category: Buffers
+      - title: Phosphate-buffered saline (PBS)
+        category: Buffers
+      - title: HEPES
+        category: Buffers
+      - title: Citrate buffer
+        category: Buffers
+      - title: Acetate buffer
+        category: Buffers
+      - title: Ammonium bicarbonate buffer
+        category: Buffers
+      - title: Polystyrene
+        category: Polymers
+      - title: Polyethylene glycol (PEG)
+        category: Polymers
+      - title: Polyvinyl alcohol (PVA)
+        category: Polymers
+      - title: Poly(methyl methacrylate) (PMMA)
+        category: Polymers
+      - title: Polylactic acid (PLA)
+        category: Polymers
+      - title: Polycaprolactone (PCL)
+        category: Polymers
+        # CHEMICAL COMPOUNDS
+      - title: Sodium chloride - NaCl
+        category: Chemical compound
+      - title: Methane - CH7
+        category: Chemical compound
+      - title: Ethanol - C2H7OH
+        category: Chemical compound
+      - title: Ammonia - NH3
+        category: Chemical compound
+      - title: Hydrogen peroxide - H2O2
+        category: Chemical compound
+      - title: Sulfuric acid - H2SO7
+        category: Chemical compound
+      - title: Nitric acid - HNO3
+        category: Chemical compound
+      - title: Acetic acid - CH3COOH
+        category: Chemical compound
+      - title: Glucose - C5H12O6
+        category: Chemical compound
+      - title: Calcium carbonate - CaCO3
+        category: Chemical compound
+      - title: Sodium bicarbonate - NaHCO3
+        category: Chemical compound
+      - title: Potassium chloride - KCl
+        category: Chemical compound
+      - title: Magnesium sulfate - MgSO7
+        category: Chemical compound
+      - title: Aluminum oxide - Al2O3
+        category: Chemical compound
+      - title: Methanol - CH3OH
+        category: Chemical compound
+      - title: Hydrochloric acid - HCl
+        category: Chemical compound
+      - title: Formaldehyde - CH2O
+        category: Chemical compound
+      - title: Ethylene glycol - C2H5O2
+        category: Chemical compound
+    items_status:
+      - name: Maintenance mode
+      - name: Operational
+      - name: In stock
+      - name: Need to reorder
+      - name: Destroyed
+      - name: Processed
+      - name: Waiting
+      - name: Open
+      - name: Closed
+
+
+
+  # 4 - PLANCK FRONTIER LAB
+  - name: Planck Frontier Lab
+    random_users: 4
+    users:
+      - email: admin3@demo.elabftw.net
+        password: random
+        create_experiments: true
+        usergroup: 2
+
+      - email: user3@demo.elabftw.net
+        password: random
+        create_experiments: true
+
+    items_status:
+      - name: Maintenance mode
+      - name: Operational
+      - name: In stock
+      - name: Need to reorder
+      - name: Destroyed
+      - name: Processed
+      - name: Waiting
+      - name: Open
+      - name: Closed
+
+    experiments_categories:
+      - name: Quantum
+      - name: Theory
+      - name: Project Ant-Man
+      - name: Project Doctor Strange
+
+    experiments:
+      - title: Schrödinger's Cat Thought Experiment
+        tags:
+          - theory
+          - quantum physics
+        body: |
+            <h2>Objective</h2>
+            <p>To conceptually explore the principles of quantum superposition and observation through the Schr&ouml;dinger's cat thought experiment, which illustrates the paradox of a system being in multiple states simultaneously until observed.</p>
+            <h2>Materials (Theoretical)</h2>
+            <ul>
+            <li>A sealed box</li>
+            <li>A cat (hypothetical)</li>
+            <li>A radioactive atom (<em>e.g.</em>, Cesium-137)</li>
+            <li>Geiger counter</li>
+            <li>Hammer mechanism</li>
+            <li>Vial of poison (<em>e.g.</em>, hydrocyanic acid)</li>
+            </ul>
+            <h2>Procedure</h2>
+            <ol>
+            <li>Place the cat, Geiger counter, radioactive atom, hammer, and poison vial inside the sealed box.</li>
+            <li>If the Geiger counter detects a decay event, it triggers the hammer to break the vial, releasing poison.</li>
+            <li>Leave the box sealed to isolate the system from observation.</li>
+            <li>According to quantum mechanics, the cat is simultaneously alive and dead until the box is opened.</li>
+            </ol>
+            <h2>Expected Results</h2>
+            <p>Since the experiment is theoretical, no empirical data is collected. However, it leads to a dual-state interpretation&mdash;alive and dead&mdash;based on the principles of quantum superposition.</p>
+            <h2>Discussion</h2>
+            <p>Schrödinger's cat is not a real experiment but a critique of the Copenhagen interpretation of quantum mechanics. It raises questions about the role of the observer in determining reality and highlights challenges in interpreting quantum states at the macroscopic scale.</p>
+      - title: Quantum Entanglement with Photons
+        body: |
+          <h2>Objective</h2>
+          <p>To generate and measure entangled photon pairs to demonstrate nonlocal correlations violating Bell’s inequalities.</p>
+          <h2>Materials (Theoretical)</h2>
+          <ul>
+            <li>Laser source</li>
+            <li>Nonlinear crystal for SPDC</li>
+            <li>Beam splitters and mirrors</li>
+            <li>Polarizers</li>
+            <li>Single-photon detectors</li>
+            <li>Coincidence counter module</li>
+          </ul>
+          <h2>Procedure</h2>
+          <ol>
+            <li>Direct the laser into the SPDC crystal to produce entangled photons.</li>
+            <li>Separate photon pairs using beam splitters and optical paths.</li>
+            <li>Place polarizers at variable angles before each detector.</li>
+            <li>Record coincidence counts for each polarizer-angle combination.</li>
+          </ol>
+          <h2>Expected Results</h2>
+          <p>Correlation rates that violate classical bounds, confirming the existence of quantum entanglement.</p>
+          <h2>Discussion</h2>
+          <p>This experiment tests the nonlocal nature of quantum mechanics and rules out local hidden-variable models by comparing measured correlations against Bell’s inequalities.</p>
+
+      - title: Double-Slit Experiment with Electrons
+        body: |
+          <h2>Objective</h2>
+          <p>To observe the wave–particle duality of electrons by demonstrating an interference pattern in a double-slit apparatus at low electron flux.</p>
+          <h2>Materials (Theoretical)</h2>
+          <ul>
+            <li>Electron gun</li>
+            <li>Vacuum chamber</li>
+            <li>Double-slit barrier</li>
+            <li>Phosphor screen or CCD detector</li>
+            <li>Electron optics system</li>
+            <li>Data acquisition system</li>
+          </ul>
+          <h2>Procedure</h2>
+          <ol>
+            <li>Evacuate the chamber to high vacuum.</li>
+            <li>Emit electrons one at a time toward the double-slit barrier.</li>
+            <li>Collect arrival positions of electrons on the detector.</li>
+            <li>Aggregate many events to reveal interference fringes.</li>
+          </ol>
+          <h2>Expected Results</h2>
+          <p>An interference pattern emerges over time, indicating wave-like behavior despite discrete detection events.</p>
+          <h2>Discussion</h2>
+          <p>Demonstrates fundamental quantum superposition: each electron interferes with itself, challenging classical intuitions about particle trajectories.</p>
+
+      - title: Quantum Tunneling through a Potential Barrier
+        body: |
+          <h2>Objective</h2>
+          <p>To illustrate quantum tunneling by measuring the transmission probability of particles through a one-dimensional potential barrier.</p>
+          <h2>Materials (Theoretical)</h2>
+          <ul>
+            <li>Particle beam source (e.g., electrons)</li>
+            <li>Vacuum tube with controllable potential barrier</li>
+            <li>Electrostatic barrier plates</li>
+            <li>Particle detectors before and after the barrier</li>
+            <li>Voltage supply</li>
+            <li>Counting electronics</li>
+          </ul>
+          <h2>Procedure</h2>
+          <ol>
+            <li>Set barrier height and width via plate voltages.</li>
+            <li>Direct a low-energy particle beam at the barrier.</li>
+            <li>Measure transmitted and reflected particle counts.</li>
+            <li>Repeat for different barrier parameters.</li>
+          </ol>
+          <h2>Expected Results</h2>
+          <p>Non-zero transmission probability even when particle energy is below barrier height, in agreement with tunneling predictions.</p>
+          <h2>Discussion</h2>
+          <p>Highlights a purely quantum phenomenon where particles penetrate classically forbidden regions, with transmission decreasing exponentially with barrier width.</p>
+
+      - title: Rabi Oscillations in a Two-Level System
+        body: |
+          <h2>Objective</h2>
+          <p>To characterize coherent Rabi oscillations by driving transitions between two quantum states with a resonant electromagnetic field.</p>
+          <h2>Materials (Theoretical)</h2>
+          <ul>
+            <li>Two-level atomic or spin system (e.g., trapped ions, NV centers)</li>
+            <li>Microwave or RF source</li>
+            <li>Pulse generator</li>
+            <li>State detection apparatus</li>
+            <li>Magnetic or optical trapping setup</li>
+            <li>Timing and control electronics</li>
+          </ul>
+          <h2>Procedure</h2>
+          <ol>
+            <li>Prepare the system in the ground state.</li>
+            <li>Apply a resonant pulse of variable duration.</li>
+            <li>Measure population in the excited state after each pulse.</li>
+            <li>Plot excited-state probability vs. pulse duration.</li>
+          </ol>
+          <h2>Expected Results</h2>
+          <p>Oscillatory population transfer (sinusoidal) between states, with frequency proportional to drive amplitude.</p>
+          <h2>Discussion</h2>
+          <p>Demonstrates coherent control of quantum states, fundamental for qubit manipulation in quantum computing.</p>
+
+      - title: Heisenberg Uncertainty Principle Demonstration
+        body: |
+          <h2>Objective</h2>
+          <p>To experimentally illustrate the uncertainty relation between position and momentum measurements of single particles.</p>
+          <h2>Materials (Theoretical)</h2>
+          <ul>
+            <li>Particle beam source</li>
+            <li>Narrow slits of varying widths</li>
+            <li>Position-sensitive detector</li>
+            <li>Vacuum chamber</li>
+            <li>Data acquisition system</li>
+            <li>Precision alignment stages</li>
+          </ul>
+          <h2>Procedure</h2>
+          <ol>
+            <li>Collimate beam and direct through a slit of known width.</li>
+            <li>Measure angular spread (momentum distribution) on detector.</li>
+            <li>Repeat for different slit widths.</li>
+            <li>Analyze variance in position vs. momentum distributions.</li>
+          </ol>
+          <h2>Expected Results</h2>
+          <p>Inverse relationship: narrower slits yield broader momentum spread, illustrating Δx·Δp ≥ ħ/2.</p>
+          <h2>Discussion</h2>
+          <p>Confirms a cornerstone of quantum theory: precise knowledge of one observable limits knowledge of its conjugate.</p>
+
+
+    # ITEMS TYPES
+    items_types:
+      - name: Cat
+        color: '54AA08'
+        body: '<h1>Feeding procedure</h1><p>&nbsp;</p><h1>Sacrifice procedure</h1>'
+        metadata: '{"extra_fields": {"Color": {"type": "select","value": "Black and white","options": ["Black and white","Black","Ginger","Cream","Fawn","Calico"],"required": true,"description": "What color is that cat?"},"Birthday": {"type": "date","value": ""},"Is sterilized": {"type": "checkbox","value": ""},"Sex": {"type": "radio","value": "Male (♂)","options": ["Male (♂)","Something in-between (⚥)","Female (♀)"]}}}'
+
+      - name: Time machine
+        color: 'e48d09'
+        metadata: '{   "extra_fields": {     "Maximum date reachable in the future": {       "type": "date",       "value": ""     },     "Maximum date reachable in the past": {       "type": "date",       "value": ""     },     "Risk associated": {       "type": "radio",       "value": "Low",       "options": [         "Low",         "Medium",         "Risky",         "You will surely die"       ],       "description": "Evaluate the risk associated with using this machine"     }   } }'
+
+      - name: Laser source
+        color: '0033f0'
+        metadata: '{   "extra_fields": {     "Wavelength": {       "type": "number",       "unit": "nm",       "units": [         "nm",         "mm"       ],       "value": "",       "required": true     }   } }'
+
+    # ITEMS
+    items:
+      - title: Fermi
+        category: Cat
+        rating: 4
+        metadata: '{   "extra_fields": {     "Color": {       "type": "select",       "value": "Ginger",       "options": [         "Black and white",         "Black",         "Ginger",         "Cream",         "Fawn",         "Calico"       ],       "required": true,       "description": "What color is that cat?"     },     "Birthday": {       "type": "date",       "value": "2020-07-14"     },"Sex": {"type": "radio","value": "Female (♀)","options": ["Male (♂)","Something in-between (⚥)","Female (♀)"]},     "Is sterilized": {       "type": "checkbox",       "value": "on"     }   } }'
+
+      - title: Quark
+        category: Cat
+        rating: 5
+        metadata: '{   "extra_fields": {     "Color": {       "type": "select",       "value": "Ginger",       "options": [         "Black and white",         "Black",         "Ginger",         "Cream",         "Fawn",         "Calico"       ],       "required": true,       "description": "What color is that cat?"     },     "Birthday": {       "type": "date",       "value": "2019-03-12"     },"Sex": {"type": "radio","value": "Male (♂)","options": ["Male (♂)","Something in-between (⚥)","Female (♀)"]},     "Is sterilized": {       "type": "checkbox",       "value": "on"     }   } }'
+
+      - title: Nova
+        category: Cat
+        rating: 4
+        metadata: '{   "extra_fields": {     "Color": {       "type": "select",       "value": "Cream",       "options": [         "Black and white",         "Black",         "Ginger",         "Cream",         "Fawn",         "Calico"       ],       "required": true,       "description": "What color is that cat?"     },     "Birthday": {       "type": "date",       "value": "2012-12-12"     },"Sex": {"type": "radio","value": "Male (♂)","options": ["Male (♂)","Something in-between (⚥)","Female (♀)"]},     "Is sterilized": {       "type": "checkbox",       "value": "on"     }   } }'
+
+      - title: Stewie Time Machine
+        category: Time machine
+        rating: 5
+        metadata: '{   "extra_fields": {     "Risk associated": {       "type": "radio",       "value": "Medium",       "options": [         "Low",         "Medium",         "Risky",         "You will surely die"       ],       "description": "Evaluate the risk associated with using this machine"     },     "Maximum date reachable in the past": {       "type": "date",       "value": "4050-07-18"     },     "Maximum date reachable in the future": {       "type": "date",       "value": "1000-07-18"     }   } }'
+
+      - title: Blue laser
+        category: Laser source
+        metadata: '{   "extra_fields": {     "Wavelength": {       "type": "number",       "unit": "nm",       "units": [         "nm",         "mm"       ],       "value": "445",       "required": true     }   } }'
   # OTHER TEAMS
-  - name: Organic Chemistry lab
-    random_users: 12
-  - name: Quantum light group
-    visible: false
-    random_users: 12
   - name: UMR3148 - This is a very long team name with many words in it
     random_users: 12
+    experiments_categories:
+      - name: Demo
+    items_types:
+      - name: Default
+    items_status:
+      - name: In stock
+      - name: Operational
+      - name: Broken
+      - name: Need to reorder
   - name: Microscopy platform
     random_users: 12
+    experiments_categories:
+      - name: Demo
+    items_types:
+      - name: Default
+    items_status:
+      - name: In stock
+      - name: Operational
+      - name: Broken
+      - name: Need to reorder
   - name: Next gen sequencing platform
     random_users: 12
+    experiments_categories:
+      - name: Demo
+    items_types:
+      - name: Default
+    items_status:
+      - name: In stock
+      - name: Operational
+      - name: Broken
+      - name: Need to reorder
+  - name: This team is not visible
+    random_users: 2
+    visible: false
+    experiments_categories:
+      - name: Demo
+    items_types:
+      - name: Default
+    items_status:
+      - name: In stock
+      - name: Operational
+      - name: Broken
+      - name: Need to reorder
 
 compounds:
   - name: "Caffeine"

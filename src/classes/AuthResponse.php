@@ -48,7 +48,7 @@ final class AuthResponse
 
     public bool $mustRenewPassword = false;
 
-    public function setTeams(UsersHelper $usersHelper): void
+    public function setTeams(UsersHelper $usersHelper): self
     {
         $this->selectableTeams = $usersHelper->getTeamsFromUserid();
 
@@ -66,5 +66,6 @@ final class AuthResponse
         } else {
             $this->isInSeveralTeams = true;
         }
+        return $this;
     }
 }

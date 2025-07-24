@@ -12,40 +12,27 @@ declare(strict_types=1);
 
 namespace Elabftw\Traits;
 
+use function mt_rand;
+use function sprintf;
+
 trait RandomColorTrait
 {
-    private const string DEFAULT_BLUE = '29AEB9';
+    protected const string DEFAULT_BLUE = '29AEB9';
 
-    private const string DEFAULT_GREEN = '54AA08';
+    protected const string DEFAULT_GREEN = '54AA08';
 
-    private const string DEFAULT_GRAY = 'C0C0C0';
+    protected const string DEFAULT_GRAY = 'C0C0C0';
 
-    private const string DEFAULT_RED = 'C24F3D';
+    protected const string DEFAULT_RED = 'C24F3D';
 
     /**
-     * Get a color that is a good for background
+     * Get a color that is dark but not too dark
      */
-    protected function getSomeColor(): string
+    protected function getRandomDarkColor(): string
     {
-        $colors = array(
-            self::DEFAULT_BLUE,
-            self::DEFAULT_GRAY,
-            self::DEFAULT_GREEN,
-            self::DEFAULT_RED,
-            '0A0A0A',
-            '0B3D91',
-            '4A3F35',
-            '3D0C02',
-            '253529',
-            '3B3C36',
-            '483C32',
-            '0F4C81',
-            '4B0082',
-            '2F4F4F',
-            '321414',
-            '3C1414',
+        return sprintf(
+            '#%06X',
+            (mt_rand(0, 0xFFFFFF) & 0x9F9F9F) | 0x202020
         );
-        $randomKey = array_rand($colors, 1);
-        return $colors[$randomKey];
     }
 }

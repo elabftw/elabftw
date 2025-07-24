@@ -49,6 +49,7 @@ try {
         new Mailer(Transport::fromDsn($App->Config->getDsn())),
         $App->Log,
         $App->Config->configArr['mail_from'],
+        $App->Config::boolFromEnv('DEMO_MODE'),
     );
 
     // PART 1: we receive the email from the login page/forgot password form

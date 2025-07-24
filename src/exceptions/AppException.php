@@ -28,7 +28,6 @@ class AppException extends Exception
     public function __construct(?string $message = null, int $code = 0, ?Exception $previous = null)
     {
         $message ??= $this->error->toHuman();
-        //$code === 0 ? $this->code = $this->error->toHttpCode() : $this->code = $code;
         parent::__construct($message, $code, $previous);
     }
 
@@ -44,15 +43,6 @@ class AppException extends Exception
         return $Response;
     }
 
-    /*
-    protected function getErrorMessage(): string
-    {
-        return $this->error->toHuman();
-    }
-     */
-
-    protected function emitLog(LoggerInterface $logger, int $userid): void
-    {
-        $logger->info('', array(array('userid' => $userid), array('AppException', $this)));
-    }
+    // the default is to not emit log, and some exceptions can override this to log something
+    protected function emitLog(LoggerInterface $logger, int $userid): void {}
 }

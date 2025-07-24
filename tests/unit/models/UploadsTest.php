@@ -19,17 +19,20 @@ use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Storage\Tmp;
+use Elabftw\Traits\TestsUtilsTrait;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Response;
 
 class UploadsTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private Items $Entity;
 
     protected function setUp(): void
     {
-        $this->Entity = new Items(new Users(1, 1), 11);
+        $this->Entity = $this->getFreshItem();
     }
 
     public function testCreate(): void
@@ -187,6 +190,13 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
 
     public function testReadAll(): void
     {
+        // create 2 uploads
+        $this->Entity->Uploads->create(new CreateUploadFromLocalFile('some-file.zip', dirname(__DIR__, 2) . '/_data/importable.zip'));
+        $this->Entity->Uploads->create(new CreateUploadFromLocalFile('some-file.zip', dirname(__DIR__, 2) . '/_data/importable.zip'));
+        // create an archived upload
+        $id = $this->Entity->Uploads->create(new CreateUploadFromLocalFile('some-file.zip', dirname(__DIR__, 2) . '/_data/importable.zip'));
+        $this->Entity->Uploads->setId($id);
+        $this->Entity->Uploads->patch(Action::Archive, array());
         // display only archived uploads
         $q = $this->Entity->Uploads->getQueryParams(new InputBag(array('state' => '2')));
         $archivedUploads = $this->Entity->Uploads->readAll($q);

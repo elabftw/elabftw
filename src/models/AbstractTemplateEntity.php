@@ -13,8 +13,10 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Override;
+use PDO;
 
 use function is_array;
 use function is_string;
@@ -25,6 +27,25 @@ use function json_encode;
  */
 abstract class AbstractTemplateEntity extends AbstractEntity
 {
+    /**
+     * Get an id of an existing one or create it and get its id
+     */
+    public function getIdempotentIdFromTitle(string $title, ?string $color = null): int
+    {
+        $sql = 'SELECT id
+            FROM ' . $this->entityType->value . ' WHERE title = :title AND team = :team AND state = :state';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':title', $title);
+        $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
+        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $res = $req->fetch(PDO::FETCH_COLUMN);
+        if (!is_int($res)) {
+            return $this->create(title: $title, color: $color);
+        }
+        return $res;
+    }
+
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {

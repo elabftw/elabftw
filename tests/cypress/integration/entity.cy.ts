@@ -104,7 +104,7 @@ describe('Experiments', () => {
     cy.contains('Create').click();
     cy.intercept('GET', `/api/v2/${endpoint}/**`).as('apiGET');
     cy.get('#createModal_experiments').should('be.visible').should('contain', 'Default template').contains('Default template').click();
-    entityCatStat('Not set', 'Cell biology', 'Success');
+    entityCatStat('Not set', 'Demo', 'Success');
     entityEdit(endpoint);
     entityComment();
     entityDuplicate();

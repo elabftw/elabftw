@@ -15,6 +15,7 @@ namespace Elabftw\Controllers;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Auth\Anon;
+use Elabftw\Auth\Demo;
 use Elabftw\Auth\External;
 use Elabftw\Auth\Ldap;
 use Elabftw\Auth\Local;
@@ -57,6 +58,8 @@ use function setcookie;
  */
 final class LoginController implements ControllerInterface
 {
+    public const int AUTH_DEMO = 5;
+
     public const int AUTH_LOCAL = 10;
 
     public const int AUTH_SAML = 20;
@@ -73,6 +76,7 @@ final class LoginController implements ControllerInterface
         private readonly FlashBagAwareSessionInterface $Session,
         private readonly Logger $Logger,
         private readonly Users $Users,
+        private readonly bool $demoMode = false,
     ) {}
 
     #[Override]
@@ -249,7 +253,15 @@ final class LoginController implements ControllerInterface
     private function getAuthService(string $authType): AuthInterface
     {
         switch ($authType) {
-            // AUTH WITH LDAP
+            // AUTH WITH DEMO USER
+            case 'demo':
+                $this->Session->set('auth_service', self::AUTH_DEMO);
+                if (!$this->demoMode) {
+                    throw new ImproperActionException('This instance is not in demo mode. Set DEMO_MODE=true to allow demo mode login.');
+                }
+                return new Demo($this->Request->request->getString('email'));
+
+                // AUTH WITH LDAP
             case 'ldap':
                 $this->Session->set('auth_service', self::AUTH_LDAP);
                 $c = $this->Config->configArr;
@@ -293,6 +305,7 @@ final class LoginController implements ControllerInterface
                     (bool) $this->Config->configArr['local_login_hidden_only_sysadmin'],
                     (bool) $this->Config->configArr['local_login_only_sysadmin'],
                     (int) $this->Config->configArr['max_password_age_days'],
+                    (int) $this->Config->configArr['login_tries'],
                 );
 
                 // AUTH WITH SAML

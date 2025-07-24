@@ -31,6 +31,7 @@ use function apcu_fetch;
 use function apcu_store;
 use function apcu_exists;
 use function apcu_delete;
+use function strtolower;
 
 /**
  * The general config table
@@ -239,7 +240,12 @@ final class Config extends AbstractRest
 
     public static function boolFromEnv(string $confName): bool
     {
-        return getenv($confName) !== 'false';
+        $val = getenv($confName);
+        if ($val === false) {
+            // not set will be bool false
+            return false;
+        }
+        return strtolower($val) === 'true';
     }
 
     public function decrementTsBalance(): array

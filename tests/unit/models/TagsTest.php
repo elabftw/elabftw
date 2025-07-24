@@ -13,9 +13,12 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Traits\TestsUtilsTrait;
 
 class TagsTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private Users $Users;
 
     private Experiments $Experiments;
@@ -23,12 +26,12 @@ class TagsTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->Users = new Users(1, 1);
-        $this->Experiments = new Experiments($this->Users, 1);
+        $this->Experiments = $this->getFreshExperiment();
     }
 
     public function testGetApiPath(): void
     {
-        $this->assertEquals('api/v2/experiments/1/tags/', $this->Experiments->Tags->getApiPath());
+        $this->assertEquals(sprintf('api/v2/experiments/%d/tags/', $this->Experiments->id), $this->Experiments->Tags->getApiPath());
     }
 
     public function testCreate(): void

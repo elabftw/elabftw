@@ -19,13 +19,13 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\Sort;
-use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\SqlBuilderInterface;
 use Elabftw\Params\BaseQueryParams;
 use Elabftw\Params\OrderingParams;
+use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\RandomColorTrait;
 use Override;
@@ -68,7 +68,8 @@ final class ItemsTypes extends AbstractTemplateEntity
 
         $title = Filter::title($title ?? _('Default'));
         $defaultPermissions = BasePermissions::Team->toJson();
-        $color ??= $this->getSomeColor();
+        $color ??= $this->getRandomDarkColor();
+        $color = Check::color($color);
         $contentType ??= $this->Users->userData['use_markdown'] === 1 ? AbstractEntity::CONTENT_MD : AbstractEntity::CONTENT_HTML;
 
         $sql = 'INSERT INTO items_types(userid, title, body, team, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canread_target, canwrite_target, color, content_type, status, rating, metadata)
@@ -137,25 +138,6 @@ final class ItemsTypes extends AbstractTemplateEntity
     {
         // TODO: implement
         throw new ImproperActionException('No duplicate action for resources categories.');
-    }
-
-    /**
-     * Get an id of an existing one or create it and get its id
-     */
-    public function getIdempotentIdFromTitle(string $title, ?string $color = null): int
-    {
-        $sql = 'SELECT id
-            FROM items_types WHERE title = :title AND team = :team AND state = :state';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':title', $title);
-        $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
-        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $res = $req->fetch(PDO::FETCH_COLUMN);
-        if (!is_int($res)) {
-            return $this->create(title: $title, color: $color);
-        }
-        return $res;
     }
 
     #[Override]

@@ -43,8 +43,6 @@ class AppException extends Exception
         return $Response;
     }
 
-    protected function emitLog(LoggerInterface $logger, int $userid): void
-    {
-        $logger->info('', array(array('userid' => $userid), array('AppException', $this)));
-    }
+    // the default is to not emit log, and some exceptions can override this to log something
+    protected function emitLog(LoggerInterface $logger, int $userid): void {}
 }

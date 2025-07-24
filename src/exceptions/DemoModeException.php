@@ -13,8 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Exceptions;
 
 use Elabftw\Enums\Messages;
-use Override;
-use Psr\Log\LoggerInterface;
 
 /**
  * For things disabled by demo_mode
@@ -22,10 +20,4 @@ use Psr\Log\LoggerInterface;
 final class DemoModeException extends AppException
 {
     protected Messages $error = Messages::DemoMode;
-
-    #[Override]
-    protected function emitLog(LoggerInterface $logger, int $userid): void
-    {
-        return;
-    }
 }

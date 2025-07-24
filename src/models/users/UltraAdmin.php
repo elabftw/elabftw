@@ -22,5 +22,10 @@ final class UltraAdmin extends Users
         $this->userData['is_sysadmin'] = 1;
         $this->userData['userid'] = $userid;
         $this->userData['team'] = $team;
+        $this->userData['scope_events'] = 3;
+        $this->userData['scope_experiments'] = 3;
+        $this->userData['scope_experiments_templates'] = 3;
+        $this->userData['scope_items'] = 3;
+        $this->userData['scope_teamgroups'] = 3;
     }
 }

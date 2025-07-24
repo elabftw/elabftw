@@ -3001,15 +3001,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/marked@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "@types/marked@npm:6.0.0"
-  dependencies:
-    marked: "npm:*"
-  checksum: 10c0/1a831af52413b1a208c91539d3bdda9be83d5451dc094c3cbc07e3e07186970673b9ec3ad5edd6c136b1249875c41e22c39eacb3c00ea7c59d0873c35c273035
-  languageName: node
-  linkType: hard
-
 "@types/mdast@npm:^3.0.0":
   version: 3.0.15
   resolution: "@types/mdast@npm:3.0.15"
@@ -5909,7 +5900,6 @@ __metadata:
     "@types/jquery": "npm:^3.5.32"
     "@types/jqueryui": "npm:^1.12.24"
     "@types/luxon": "npm:^3.6.2"
-    "@types/marked": "npm:^6.0.0"
     "@typescript-eslint/eslint-plugin": "npm:^8.33.0"
     "@typescript-eslint/parser": "npm:^8.33.0"
     "@yarnpkg/core": "npm:^4.4.1"
@@ -8425,7 +8415,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"marked@npm:*, marked@npm:^15.0.12":
+"marked@npm:^15.0.12":
   version: 15.0.12
   resolution: "marked@npm:15.0.12"
   bin:

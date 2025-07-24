@@ -82,7 +82,6 @@
     "@types/jquery": "^3.5.32",
     "@types/jqueryui": "^1.12.24",
     "@types/luxon": "^3.6.2",
-    "@types/marked": "^6.0.0",
     "@typescript-eslint/eslint-plugin": "^8.33.0",
     "@typescript-eslint/parser": "^8.33.0",
     "babel-loader": "^10.0.0",

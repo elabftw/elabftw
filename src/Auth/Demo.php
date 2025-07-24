@@ -25,6 +25,16 @@ use Override;
  */
 final class Demo implements AuthInterface
 {
+    // let's just keep a hardcoded list of valid emails for demo login for now
+    private const array ALLOWED_EMAILS = array(
+        'admin1@demo.elabftw.net',
+        'user1@demo.elabftw.net',
+        'admin2@demo.elabftw.net',
+        'user2@demo.elabftw.net',
+        'admin3@demo.elabftw.net',
+        'user3@demo.elabftw.net',
+    );
+
     private string $email;
 
     public function __construct(string $email)
@@ -44,16 +54,7 @@ final class Demo implements AuthInterface
 
     private function validateEmail(string $email): string
     {
-        // let's just keep a hardcoded list of valid emails for demo login for now
-        $allowed = array(
-            'admin1@demo.elabftw.net',
-            'user1@demo.elabftw.net',
-            'admin2@demo.elabftw.net',
-            'user2@demo.elabftw.net',
-            'admin3@demo.elabftw.net',
-            'user3@demo.elabftw.net',
-        );
-        if (!in_array($email, $allowed, true)) {
+        if (!in_array($email, self::ALLOWED_EMAILS, true)) {
             throw new QuantumException(_('Invalid email/password combination.'));
         }
         return $email;

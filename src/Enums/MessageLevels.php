@@ -21,18 +21,18 @@ enum MessageLevels: string
     public function toFaIcon(): string
     {
         return match ($this) {
-            $this::Ok => 'fa-info-circle',
-            $this::Warning => 'fa-chevron-right',
-            $this::Error => 'fa-exclamation-triangle',
+            self::Ok => 'fa-info-circle',
+            self::Warning => 'fa-chevron-right',
+            self::Error => 'fa-exclamation-triangle',
         };
     }
 
     public function toAlertClass(): string
     {
         return match ($this) {
-            $this::Ok => 'success',
-            $this::Warning => 'warning',
-            $this::Error => 'danger',
+            self::Ok => 'success',
+            self::Warning => 'warning',
+            self::Error => 'danger',
         };
     }
 }

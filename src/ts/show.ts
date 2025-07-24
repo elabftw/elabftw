@@ -335,6 +335,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const shouldEnable = allowRestore || allowUnarchive || allowDefault;
       const buttonLabel = btn.getAttribute('aria-label') ?? action;
       const cannotAction = i18next.t('illegal-action');
+      // the tooltip when you hover the action, based on the enabled/disabled state
       if (shouldEnable) {
         btn.disabled = false;
         btn.setAttribute('title', buttonLabel);

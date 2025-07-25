@@ -1,0 +1,103 @@
+<!DOCTYPE HTML>
+<html lang='en'>
+<head>
+  <meta http-equiv='Content-type' content='text/html;charset=UTF-8' />
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <meta name='description' content='This is a .eln export from eLabFTW'>
+  <title>ELN archive HTML preview - eLabFTW</title>
+  <script type='application/ld+json'>{{ jsonLd|raw }}</script>
+</head>
+
+<style>
+body {
+  font-family: 'sans-serif';
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: system-ui, sans-serif;
+  margin: 1em 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+th, td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e2e2e2;
+}
+
+thead {
+  background-color: #f7f7f7;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+tbody tr:hover {
+  background-color: #f0f0f0;
+}
+
+th {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* define how much to indent per level */
+:root {
+  --details-indent: 1rem;
+}
+
+/* every <details> gets a depth counter, defaulting to 0 */
+details {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+
+  --depth: 0;
+  margin-inline-start: calc(var(--depth) * var(--details-indent));
+}
+
+/* nested <details> inherit the parent’s --depth, then bump it by 1 */
+details details {
+  --depth: calc(var(--depth) + 1);
+}
+
+details:hover {
+  cursor: pointer;
+  background-color: #ddd;
+}
+</style>
+
+{% macro toTable(data) %}
+  <table>
+    <thead>
+      <tr>
+        <th scope='col'>Property</th>
+        <th scope='col'>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for key, value in data %}
+        <tr>
+          <th scope='row'>{{ key }}</th>
+          <th>{{ value|any2string }}</th>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endmacro %}
+
+<body>
+  <h1>Crate root node</h1>
+  {{ _self.toTable(rootNode) }}
+
+  <h1>Data entities</h1>
+  {% for key, value in entities %}
+    <h2>{{ key }}</h2>
+    {% for key, node in value %}
+      <h3>{{ key }}</h3>
+      {{ _self.toTable(node) }}
+    {% endfor %}
+  {% endfor %}
+</body>
+</html>

@@ -113,13 +113,17 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testEventVisibilityByTeamAccess(): void
     {
-        $Items = $this->getFreshItem(2);
+        $Owner = $this->getUserInTeam(1);
+        $Items = $this->getFreshItemWithGivenUser($Owner);
+
+        // User 2 can read but cannot book
+        $User2 = $this->getUserInTeam(2);
 
         // grant user 2 'canread' permissions only. Prevents 'access entity without permission'
         $Items->patch(Action::Update, array(
             'canread' => json_encode(array(
                 'base' => BasePermissions::User->value,
-                'users' => array(2),
+                'users' => array($User2->userid),
                 'teams' => array(),
                 'teamgroups' => array(),
             )),
@@ -127,11 +131,9 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
         $title = 'Bookable only by user 1';
         // add event to scheduler by user in team 1
-        $Scheduler1 = new Scheduler($this->getFreshItem(1));
-        $Scheduler1->postAction(Action::Create, array('start' => $this->start, 'end' => $this->end, 'title' => $title));
+        $Scheduler1 = new Scheduler($Items);
+        $eventId = $Scheduler1->postAction(Action::Create, array('start' => $this->start, 'end' => $this->end, 'title' => $title));
 
-        // User 2 can read but cannot book
-        $User2 = $this->getUserInTeam(2);
         // Sets scope->Everything and tries to see user 1's booking
         $User2->userData['scope_events'] = Scope::Everything->value;
         $Items2 = new Items($User2, $Items->id);
@@ -139,13 +141,14 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
         $events = $Scheduler2->readAll();
         $this->assertIsArray($events);
-        $this->assertCount(4, $events, 'User 2 should not see events due to lack of book permission.');
+        $eventsIds = array_column($events, 'id');
+        $this->assertNotContains($eventId, $eventsIds, 'User 2 should not see events due to lack of book permission.');
 
         // now make it visible for user in the other team
         $Items->patch(Action::Update, array(
             'canbook' => json_encode(array(
                 'base' => BasePermissions::User->value,
-                'users' => array(2),
+                'users' => array($User2->userid),
                 'teams' => array(),
                 'teamgroups' => array(),
             )),
@@ -155,8 +158,8 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $Scheduler2 = new Scheduler($Items2, null, $this->start, $this->end);
         $eventsAfterGrant = $Scheduler2->readAll();
         $this->assertIsArray($eventsAfterGrant);
-        $this->assertCount(4, $eventsAfterGrant, 'User 2 should now see the event.');
-        //$this->assertEquals($title, $eventsAfterGrant[0]['title_only']);
+        $eventsIds = array_column($eventsAfterGrant, 'id');
+        $this->assertContains($eventId, $eventsIds, 'User 2 should now see the event.');
     }
 
     public function testReadAllWithFilters(): void

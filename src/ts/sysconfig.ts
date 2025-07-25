@@ -179,24 +179,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // TEST MAIL
     } else if (el.matches('[data-action="send-test-email"]')) {
       const button = (el as HTMLButtonElement);
+      const originalText = button.innerText;
       button.disabled = true;
       button.innerText = 'Sending…';
       const email = (document.getElementById('testemailEmail') as HTMLInputElement).value;
       AjaxC.postForm(
         'app/controllers/SysconfigAjaxController.php',
-        { 'testemailSend': '1', 'email': email }).then(resp => handleEmailResponse(resp, button));
+        { 'testemailSend': '1', 'email': email }).then(resp => handleEmailResponse(resp, button, originalText));
     // MASS MAIL
     } else if (el.matches('[data-action="send-mass-email"]')) {
       const massEmailDiv = document.getElementById('massEmailDiv');
       const targetRadio = (massEmailDiv.querySelector('input[name="target"]:checked') as HTMLInputElement);
       const button = (el as HTMLButtonElement);
+      const originalText = button.innerText;
       button.disabled = true;
       button.innerText = 'Sending…';
       const subject = (document.getElementById('massSubject') as HTMLInputElement).value;
       const body = (document.getElementById('massBody') as HTMLInputElement).value;
       AjaxC.postForm(
         'app/controllers/SysconfigAjaxController.php',
-        { massEmail: '1', subject: subject, body: body, target: targetRadio.value }).then(resp => handleEmailResponse(resp, button));
+        { massEmail: '1', subject: subject, body: body, target: targetRadio.value }).then(resp => handleEmailResponse(resp, button, originalText));
     } else if (el.matches('[data-action="destroy-idp"]')) {
       event.preventDefault();
       if (confirm(i18next.t('generic-delete-warning'))) {

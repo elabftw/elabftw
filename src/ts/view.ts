@@ -5,11 +5,13 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+import { Ajax } from "./Ajax.class";
 import i18next from './i18n';
 import { InputType, Malle } from '@deltablot/malle';
 import { Api } from './Apiv2.class';
 import { getEntity, relativeMoment, reloadElements } from './misc';
 import { Model } from './interfaces';
+import { handleEmailResponse } from './sysconfig';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -29,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const entity = getEntity();
   const ApiC = new Api();
+  const AjaxC = new Ajax();
 
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', (event) => {
@@ -48,6 +51,21 @@ document.addEventListener('DOMContentLoaded', () => {
       if (confirm(i18next.t('generic-delete-warning'))) {
         ApiC.delete(`${entity.type}/${entity.id}/${Model.Comment}/${el.dataset.id}`).then(() => el.parentElement.parentElement.remove());
       }
+    } else if (el.matches('[data-action="notify-past-bookers"]')) {
+      const itemid = el.dataset.itemid;
+      const subject = "Update about an item you booked";
+      const body = "Hello! You previously booked this item. Here's something important.";
+      const button = (el as HTMLButtonElement);
+      const originalText = button.innerText;
+      button.disabled = true;
+      button.innerText = 'Sending…';
+
+      AjaxC.postForm('app/controllers/SysconfigAjaxController.php', {
+        notifyPastBookers: '1',
+        itemid: itemid.toString(),
+        subject: subject,
+        body: body
+      }).then(resp => handleEmailResponse(resp, button, originalText));
     }
   });
 

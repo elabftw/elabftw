@@ -17,6 +17,23 @@ import { Api } from './Apiv2.class';
 import $ from 'jquery';
 import { SemverCompare } from './SemverCompare.class';
 
+export function handleEmailResponse(resp: Response, button: HTMLButtonElement, originalText: string): void {
+  resp.json().then(json => {
+    const notify = new Notification();
+    notify.response(json);
+    if (json.res) {
+      button.innerText = 'Sent!';
+      button.disabled = false;
+    } else {
+      button.innerText ='Error';
+      button.style.backgroundColor = '#e6614c';
+    }
+    setTimeout(() => {
+      button.innerText = originalText;
+    }, 2);
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname !== '/sysconfig.php') {
     return;
@@ -267,19 +284,6 @@ document.addEventListener('DOMContentLoaded', () => {
   (document.getElementById('onboarding_email_different_for_admins')).addEventListener('change', () => {
     document.getElementById('onboarding-email-for-admins').toggleAttribute('hidden');
   });
-
-  function handleEmailResponse(resp: Response, button: HTMLButtonElement): void {
-    resp.json().then(json => {
-      notify.response(json);
-      if (json.res) {
-        button.innerText = 'Sent!';
-        button.disabled = false;
-      } else {
-        button.innerText ='Error';
-        button.style.backgroundColor = '#e6614c';
-      }
-    });
-  }
 
   /**
    * Timestamp provider select

@@ -167,6 +167,32 @@ class Email
         return $this->send($message);
     }
 
+    public function getSurroundingBookersWithCount(int $itemId): array
+    {
+        $Db = Db::getConnection();
+        $sql = 'SELECT DISTINCT email, CONCAT(firstname, " ", lastname) AS fullname
+            FROM team_events
+            JOIN users ON users.userid = team_events.userid
+            WHERE team_events.item = :itemid
+              AND team_events.start BETWEEN DATE_SUB(NOW(), INTERVAL 4 MONTH) AND DATE_ADD(NOW(), INTERVAL 4 MONTH)
+              AND users.validated = 1';
+
+        $req = $Db->prepare($sql);
+        $req->bindValue(':itemid', $itemId, PDO::PARAM_INT);
+        $Db->execute($req);
+        $rows = $req->fetchAll();
+
+        $addresses = array_map(
+            fn($row) => new Address($row['email'], $row['fullname']),
+            $rows
+        );
+
+        return [
+            'count' => count($addresses),
+            'emails' => $addresses,
+        ];
+    }
+
     public function notifySysadminsTsBalance(int $tsBalance): bool
     {
         $emails = self::getAllEmailAddresses(EmailTarget::Sysadmins);

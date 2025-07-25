@@ -91,17 +91,29 @@
   <hr>
 
   {# SHOW EVENTS #}
-  {% if Entity.entityData.events_start %}
-    <div class='mb-2'>
+  <div class='mb-2'>
+{#    <pre>#}
+{#    {{ dump(Entity.entityData) }}#}
+{#    </pre>#}
+    {% if Entity.entityData.type == 'items' %}
+    <button title='{{ 'Send an email to users who have booked this resource within the 4 last & upcoming months.'|trans }}' type='button' class='btn btn-primary' data-action='notify-past-bookers' data-itemid='{{ Entity.entityData.id }}'>
+      <i class='fas fa-user fa-fw mr-1 color-white'></i>
+      {{ 'Send an email'|trans }}
+    </button>
+    {% endif %}
+    {% if Entity.entityData.events_start %}
       <i class='far fa-fw fa-calendar-alt'></i>
       {% set splitItemids = Entity.entityData.events_start_itemid|split('|') %}
       {% for event in Entity.entityData.events_start|split('|') %}
         <a href='scheduler.php?items[]={{ splitItemids[loop.index - 1] }}&amp;start={{ event|url_encode }}' class='mx-1 btn btn-neutral relative-moment'  title='{{ event|date('Y-m-d H:i:s') }}' aria-label='{{ event|date('Y-m-d H:i:s') }}'></a>
       {% endfor %}
-    </div>
     <hr>
-  {% endif %}
-
+    {% endif %}
+  </div>
+  {#      modal with subject body#}
+  {#      see if count is easily doable or just do the feature #}
+  {#       (this email is going to be sent to X users) corresponding to who used in the 4 past & future months #}
+  {#      // getPreviousBookers when modal is open #}
 
   {# SHOW NEXT STEP #}
   {% set next_step = Entity.entityData.next_step %}

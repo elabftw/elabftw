@@ -194,6 +194,7 @@ final class Config extends AbstractRest
             ('s3_region', ''),
             ('s3_endpoint', ''),
             ('s3_verify_cert', '1'),
+            ('s3_path_style', '0'),
             ('blox_anon', '0'),
             ('blox_enabled', '1'),
             ('enforce_mfa', '0'),

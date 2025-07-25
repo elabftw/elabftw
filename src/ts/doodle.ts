@@ -11,7 +11,8 @@ import { Action, Model } from './interfaces';
 import { Api } from './Apiv2.class';
 
 document.addEventListener('DOMContentLoaded', () => {
-  if (document.getElementById('info')?.dataset?.page !== 'edit') {
+  const doodleCanvas = document.getElementById('doodleCanvas') as HTMLCanvasElement;
+  if (!doodleCanvas) {
     return;
   }
 
@@ -24,7 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let isPainting: boolean;
   let wasPainting: boolean;
 
-  const doodleCanvas = document.getElementById('doodleCanvas') as HTMLCanvasElement;
   const context: CanvasRenderingContext2D = doodleCanvas.getContext('2d');
 
   function draw(dragging: boolean): void {
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /**
    * mouse events
    */
-  doodleCanvas.addEventListener('mousedown', (e) => {
+  doodleCanvas.addEventListener('pointerdown', (e) => {
     e.preventDefault();
     const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
 
@@ -108,10 +108,11 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       isPainting = true;
       addClick(e.clientX - rect.left, e.clientY - rect.top, false);
+      doodleCanvas.releasePointerCapture(e.pointerId);
     }
   }, {passive: false});
 
-  doodleCanvas.addEventListener('mousemove', (e) => {
+  doodleCanvas.addEventListener('pointermove', (e) => {
     e.preventDefault();
     if (isPainting) {
       const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
@@ -119,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }, {passive: false});
 
-  doodleCanvas.addEventListener('mouseleave', (e) => {
+  doodleCanvas.addEventListener('pointerleave', (e) => {
     e.preventDefault();
     if (isPainting) {
       const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
@@ -131,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }, {passive: false});
 
-  doodleCanvas.addEventListener('mouseenter', (e) => {
+  doodleCanvas.addEventListener('pointerenter', (e) => {
     e.preventDefault();
     if (e.buttons !== 0 && wasPainting) {
       isPainting = true;
@@ -141,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }, {passive: false});
 
-  doodleCanvas.addEventListener('mouseup', (e) => {
+  doodleCanvas.addEventListener('pointerup', (e) => {
     e.preventDefault();
     isPainting = false;
     wasPainting = false;

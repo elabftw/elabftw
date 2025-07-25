@@ -29,6 +29,7 @@ use ZipStream\ZipStream;
 use Override;
 
 use function mb_substr;
+use function ksort;
 
 /**
  * Make an ELN archive
@@ -94,6 +95,7 @@ class MakeEln extends AbstractMakeEln
 
     protected function crateToHtml(string $jsonLd, array $rootNode): string
     {
+        // group the nodes by type and is their id as key
         $grouped = array_reduce(
             $this->dataEntities,
             function (array $carry, array $item) {
@@ -102,7 +104,11 @@ class MakeEln extends AbstractMakeEln
             },
             array()
         );
+
+        // ksort acts on the array itself
+        ksort($grouped, SORT_STRING);
         return $this->getTwig(true)->render('eln-preview.html', array(
+            'createdAt' => new DateTimeImmutable()->format(DateTimeImmutable::ATOM),
             'entities' => $grouped,
             'jsonLd' => $jsonLd,
             'rootNode' => $rootNode,
@@ -181,6 +187,7 @@ class MakeEln extends AbstractMakeEln
                     '@type' => 'File',
                     'name' => $file['real_name'],
                     'alternateName' => $file['long_name'],
+                    'encodingFormat' => $file['content_type'],
                     'contentSize' => $file['filesize'],
                     'sha256' => $file['hash'] ?? hash_file('sha256', $uploadAtId),
                 );

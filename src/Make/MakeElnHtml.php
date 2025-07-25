@@ -37,10 +37,10 @@ final class MakeElnHtml extends MakeEln
 
     #[Override]
     /**
-     * @param array<array-key, array<string, string>> $filesArr the files array
+     * @param resource $stream
      */
-    protected function addAttachedFiles($filesArr): array
+    protected function addAttachedFileInZip(string $path, mixed $stream): void
     {
-        return array();
+        return;
     }
 }

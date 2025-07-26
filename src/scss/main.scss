@@ -633,7 +633,6 @@ tr:first-child td {
 
 /* class for a single notification */
 .overlay {
-  animation: slideInOut 3.5s ease-in-out forwards;
   border-radius: 5px;
   display: flex;
   line-height: 50px;
@@ -648,11 +647,27 @@ tr:first-child td {
 .overlay p {
   color: $white;
   font-weight: bold;
-  vertical-align: middle;
+  margin-bottom: 0;
 }
 
 .overlay-success {
+  animation: slideInOut 3.5s ease-in-out forwards;
   background-color: $elabblue;
+}
+
+.overlay-error,
+.overlay-warning {
+  animation: slideIn 3.5s ease-in forwards;
+
+  span > i {
+    color: $strongest;
+  }
+
+  &:hover {
+    span > i {
+      color: $darkred;
+    }
+  }
 }
 
 .overlay-error {

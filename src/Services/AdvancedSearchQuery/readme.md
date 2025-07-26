@@ -2,7 +2,7 @@
 
 The advanced search query converts user input to a valid SQL where clause. This is achieved with the help of a parser. The parser is generated programmatically with [Peggy](https://github.com/peggyjs/peggy) and the [PHPeggy](https://github.com/marcelbolten/phpeggy) plugin. Peggy uses [parsing expression grammar](http://en.wikipedia.org/wiki/Parsing_expression_grammar) (PEG) formalism.
 
-The grammar file `src/node/grammar/queryGrammar.pegjs` is the input for the parser compilation and uses [Peggy v.1.0.0 grammar syntax and semantics](https://github.com/peggyjs/peggy/tree/v1.0.0#grammar-syntax-and-semantics). The parser is compiled at build-time and located at `cache/advancedSearchQuery/Parser.php`.
+The grammar file `src/node/grammar/queryGrammar.pegjs` is the input for the parser compilation and uses [Peggy v.1.0.0 grammar syntax and semantics](https://github.com/peggyjs/peggy/tree/v1.0.0#grammar-syntax-and-semantics). The parser is compiled at build-time and located at `src/Services/AdvancedSearchQuery/Grammar/Parser.php`.
 
 The parser will build an abstract syntax tree AST with the grammar elements (PHP classes) located in `src/services/advancedSearchQuery/grammar/`: `AndExpression`, `AndOperand`, `DateField`, `Field`, `NotExpression`, `OrExpression`, `OrOperand`, `SimpleValueWrapper`, and `TimestampField`. The grammar file defines the hierarchy of the grammar elements but additionally the hierarchy is reflected by the parameter type hinting.
 

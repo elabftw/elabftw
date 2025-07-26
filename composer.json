@@ -72,10 +72,6 @@
     "psr-4": {
       "Elabftw\\": [
         "src/"
-      ],
-      "Elabftw\\Services\\AdvancedSearchQuery\\Grammar\\": [
-        "src/Services/AdvancedSearchQuery/grammar",
-        "cache/advancedSearchQuery"
       ]
     },
     "classmap": [

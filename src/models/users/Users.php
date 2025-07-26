@@ -580,10 +580,10 @@ class Users extends AbstractRest
             Filter::email($params->getStringContent());
         }
 
-        // special case for is_sysadmin: only a sysadmin can affect this column
-        if ($params->getTarget() === 'is_sysadmin') {
+        // special case for is_sysadmin and can_manage_users2teams: only a sysadmin can affect this column
+        if ($params->getTarget() === 'is_sysadmin' || $params->getTarget() === 'can_manage_users2teams') {
             if ($this->requester->userData['is_sysadmin'] === 0) {
-                throw new IllegalActionException('Non sysadmin user tried to edit the is_sysadmin column of a user');
+                throw new IllegalActionException('Non sysadmin user tried to edit the is_sysadmin or can_manage_users2teams column of a user');
             }
         }
 

@@ -32,6 +32,7 @@ const t = {
     "extra-fields": "Kolom tambahan",
     "filename": "Nama file",
     "firstname": "Nama depan",
+    "illegal-action": "This action cannot apply to current selection",
     "is-admin": "Is Admin",
     "is-archived": "Is Archived",
     "is-owner": "Adalah Pemilik",

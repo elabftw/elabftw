@@ -32,6 +32,7 @@ const t = {
     "extra-fields": "기타 필드",
     "filename": "파일 이름",
     "firstname": "이름",
+    "illegal-action": "This action cannot apply to current selection",
     "is-admin": "Is Admin",
     "is-archived": "Is Archived",
     "is-owner": "소유자",

@@ -115,7 +115,7 @@
 
       {# TOGGLE MORE FILTERS BUTTON #}
       <div class='ml-auto'>
-        <button class='btn btn-secondary btn' type='button' data-action='toggle-next' data-toggle-target='filtersDiv' data-closed-icon='fa-sliders' data-opened-icon='fa-xmark' aria-label='{{ 'Toggle filters'|trans }}' aria-expanded='false' aria-controls='filtersDiv'>
+        <button class='btn btn-secondary btn' type='button' data-action='toggle-next' data-toggle-target='filtersDiv' data-closed-icon='fa-sliders' data-opened-icon='fa-xmark' aria-label='{{ 'Toggle filters'|trans }}' aria-expanded='false' aria-controls='filtersDiv' title='{{ 'Show more filters'|trans }}'>
           <i class='fas fa-sliders color-white'></i>
         </button>
       </div>
@@ -186,6 +186,7 @@
       <input type='hidden' name='mode' value='show' />
 
       <div>
+        {# STATE filter #}
         {% include 'select-state.html' %}
 
         {# LOCK #}
@@ -354,11 +355,13 @@
             <option value='json'>{{ 'JSON'|trans }}</option>
           </select>
           {# Action buttons #}
-          <button data-action='patch-selected-entities' data-what='forcelock' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Lock'|trans }}</button>
-          <button data-action='patch-selected-entities' data-what='forceunlock' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Unlock'|trans }}</button>
-          <button data-action='patch-selected-entities' data-what='timestamp' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Timestamp'|trans }}</button>
-          <button data-action='patch-selected-entities' data-what='archive' type='button' class='btn btn-secondary mr-1 mb-2'>{{ 'Archive'|trans }}</button>
-          <button data-action='destroy-selected-entities' type='button' class='btn btn-danger mr-1 mb-2'>{{ 'Delete'|trans }}</button>
+          <button data-action='patch-selected-entities' data-what='forcelock' type='button' class='btn btn-primary mr-1 mb-2' aria-label='{{ 'Lock the selected entities'|trans }}' title='{{ 'Lock the selected entities'|trans }}'>{{ 'Lock'|trans }}</button>
+          <button data-action='patch-selected-entities' data-what='forceunlock' type='button' class='btn btn-primary mr-1 mb-2' aria-label='{{ 'Unlock the selected entities'|trans }}' title='{{ 'Unlock the selected entities'|trans }}'>{{ 'Unlock'|trans }}</button>
+          <button data-action='patch-selected-entities' data-what='timestamp' type='button' class='btn btn-primary mr-1 mb-2' aria-label='{{ 'Timestamp the selected entities'|trans }}' title='{{ 'Timestamp the selected entities'|trans }}'>{{ 'Timestamp'|trans }}</button>
+          <button data-action='patch-selected-entities' data-what='archive' type='button' class='btn btn-secondary mr-1 mb-2' aria-label='{{ 'Archive the selected entities'|trans }}' title='{{ 'Archive the selected entities'|trans }}'>{{ 'Archive'|trans }}</button>
+          <button data-action='patch-selected-entities' data-what='unarchive' type='button' class='btn btn-secondary mr-1 mb-2' aria-label='{{ 'Unarchive the selected entities'|trans }}' title='{{ 'Unarchive the selected entities'|trans }}'>{{ 'Unarchive'|trans }}</button>
+          <button data-action='patch-selected-entities' data-what='destroy' type='button' class='btn btn-danger mr-1 mb-2' aria-label='{{ 'Delete the selected entities'|trans }}' title='{{ 'Delete the selected entities'|trans }}'>{{ 'Delete'|trans }}</button>
+          <button data-action='patch-selected-entities' data-what='restore' type='button' class='btn btn-primary mr-1 mb-2' aria-label='{{ 'Restore the selected entities'|trans }}' title='{{ 'Restore the selected entities'|trans }}'>{{ 'Restore'|trans }}</button>
         </div>
 
         <form id='multiChangesForm' class='row mx-0 form-inline'>

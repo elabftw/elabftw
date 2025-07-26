@@ -66,6 +66,7 @@ final class i18n4Js
             'extra-fields' => _('Extra fields'),
             'filename' => _('Filename'),
             'firstname' => _('Firstname'),
+            'illegal-action' => _('This action cannot apply to current selection'),
             'is-admin' => _('Is Admin'),
             'is-archived' => _('Is Archived'),
             'is-owner' => _('Is Owner'),

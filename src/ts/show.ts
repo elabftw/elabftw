@@ -184,6 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
       SearchSyntaxHighlighting.update(searchInput.value);
     });
   });
+  // FILTERS HANDLER FOR THE SHOW PAGE
   document.querySelectorAll('.filterAuto').forEach(el => {
     el.addEventListener('change', event => {
       const url = new URL(window.location.href);
@@ -307,6 +308,43 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // dynamically handle the available actions depending the state of selected entities
+  function toggleActionButtonsDependingOnSelected(): void {
+    const selected = Array.from(
+      document.querySelectorAll<HTMLInputElement>('[data-action="checkbox-entity"]:checked'),
+    );
+    // collect all states from selected checkboxes
+    const selectedStates = new Set<string>();
+    selected.forEach((chk) => {
+      if (chk.dataset.state) {
+        selectedStates.add(chk.dataset.state);
+      }
+    });
+
+    document.querySelectorAll<HTMLButtonElement>('[data-action="patch-selected-entities"]').forEach(btn => {
+      const action = btn.dataset.what;
+      // enable "Restore" button if 'Deleted' (3) is among the selected entities' state
+      const allowRestore = selectedStates.size === 1 && selectedStates.has('3') && action === 'restore';
+      // enable "Unarchive" button if 'Archived' (2) is among the selected entities' state
+      const allowUnarchive = selectedStates.size === 1 && selectedStates.has('2') && action === 'unarchive';
+      // special actions to disable by default unless above conditions apply
+      const isSpecialAction = ['restore', 'unarchive'].includes(action);
+      // default enabled actions
+      const allowDefault = !selectedStates.has('2') && !selectedStates.has('3') && !isSpecialAction;
+
+      const shouldEnable = allowRestore || allowUnarchive || allowDefault;
+      const buttonLabel = btn.getAttribute('aria-label') ?? action;
+      const cannotAction = i18next.t('illegal-action');
+      // the tooltip when you hover the action, based on the enabled/disabled state
+      if (shouldEnable) {
+        btn.disabled = false;
+        btn.setAttribute('title', buttonLabel);
+      } else {
+        btn.disabled = true;
+        btn.setAttribute('title', cannotAction);
+      }
+    });
+  }
   /////////////////////////
   // MAIN CLICK LISTENER //
   /////////////////////////
@@ -456,6 +494,7 @@ document.addEventListener('DOMContentLoaded', () => {
           window.scrollBy({top: el.offsetHeight, behavior: 'instant'});
         }
       });
+      toggleActionButtonsDependingOnSelected();
       if ((el as HTMLInputElement).checked) {
         (el.closest('.entity') as HTMLElement).style.backgroundColor = bgColor;
       } else {
@@ -474,7 +513,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // RESTORE ENTITY
     } else if (el.matches('[data-action="restore-entity"]')) {
-      ApiC.patch(`${el.dataset.endpoint}/${el.dataset.id}`, {state: 1}).then(() => reloadEntitiesShow());
+      ApiC.patch(`${el.dataset.endpoint}/${el.dataset.id}`, { action: Action.Restore }).then(() => reloadEntitiesShow());
 
     // EXPAND ALL
     } else if (el.matches('[data-action="expand-all-entities"]')) {
@@ -503,19 +542,19 @@ document.addEventListener('DOMContentLoaded', () => {
       event.preventDefault();
       if (el.dataset.target === 'select') {
         // check all boxes and set background color
-        document.querySelectorAll('.entity input[type=checkbox]').forEach(box => {
+        document.querySelectorAll('.entity input[type=checkbox]')?.forEach(box => {
           (box as HTMLInputElement).checked = true;
           (box.closest('.entity') as HTMLElement).style.backgroundColor = bgColor;
         });
-        document.getElementById('withSelected').classList.remove('d-none');
+        document.getElementById('withSelected')?.classList.remove('d-none');
         el.dataset.target = 'unselect';
       } else {
-        document.querySelectorAll('.entity input[type=checkbox]').forEach(box => {
+        document.querySelectorAll('.entity input[type=checkbox]')?.forEach(box => {
           (box as HTMLInputElement).checked = false;
           (box.closest('.entity') as HTMLElement).style.backgroundColor = '';
         });
         el.dataset.target = 'select';
-        document.getElementById('withSelected').classList.add('d-none');
+        document.getElementById('withSelected')?.classList.add('d-none');
       }
       const icon = el.querySelector('i');
       icon.classList.toggle('fa-square');
@@ -551,32 +590,30 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       const action = <Action>el.dataset.what;
-      // loop over it and patch with selected action
-      const results = [];
-      checked.forEach(chk => {
-        results.push(ApiC.patch(`${entity.type}/${chk.id}`, {action: action}));
-      });
+      // special case: DELETE request for confirmation & deletes div
+      if (action === Action.Destroy) {
+        if (!confirm(i18next.t('generic-delete-warning'))) {
+          return;
+        }
+        // perform deletes
+        checked.forEach(chk => {
+          ApiC.delete(`${entity.type}/${chk.id}`).then(() => {
+            // use curly braces to avoid implicit return
+            document.getElementById(`parent_${chk.randomid}`)?.remove();
+          });
+        });
+        return;
+      }
+      // handle all other PATCH with selected action
+      const results = checked.map(chk =>
+        ApiC.patch(`${entity.type}/${chk.id}`, {action}),
+      );
       ApiC.notifOnSaved = false;
       Promise.all(results).then(() => {
         notify.success();
         reloadEntitiesShow();
         ApiC.notifOnSaved = true;
       });
-
-    // THE DELETE BUTTON FOR CHECKED BOXES
-    } else if (el.matches('[data-action="destroy-selected-entities"]')) {
-      // get the item id of all checked boxes
-      const checked = getCheckedBoxes();
-      if (checked.length === 0) {
-        notify.error('nothing-selected');
-        return;
-      }
-      // ask for confirmation
-      if (!confirm(i18next.t('generic-delete-warning'))) {
-        return;
-      }
-      // loop on it and delete stuff (use curly braces to avoid implicit return)
-      checked.forEach(chk => {ApiC.delete(`${entity.type}/${chk.id}`).then(() => document.getElementById(`parent_${chk.randomid}`).remove());});
     }
   });
 

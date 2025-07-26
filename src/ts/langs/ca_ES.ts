@@ -32,6 +32,7 @@ const t = {
     "extra-fields": "Camps extra",
     "filename": "Nom de l'arxiu",
     "firstname": "Nom",
+    "illegal-action": "This action cannot apply to current selection",
     "is-admin": "Is Admin",
     "is-archived": "Is Archived",
     "is-owner": "És Propietari",

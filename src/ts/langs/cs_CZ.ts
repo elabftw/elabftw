@@ -32,6 +32,7 @@ const t = {
     "extra-fields": "Další pole",
     "filename": "Název souboru",
     "firstname": "Jméno",
+    "illegal-action": "This action cannot apply to current selection",
     "is-admin": "Is Admin",
     "is-archived": "Is Archived",
     "is-owner": "Je vlastníkem",

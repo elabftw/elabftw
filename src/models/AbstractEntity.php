@@ -36,6 +36,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\SqlBuilderInterface;
@@ -354,6 +355,17 @@ abstract class AbstractEntity extends AbstractRest
             $RequestActions->remove(RequestableAction::Review);
             return $this->readOne();
         }
+        // for deleted or archived entities, allow specific actions (Restore & Unarchive)
+        $state = $this->entityData['state'] ?? null;
+        // Allow RemoveExclusiveEditMode even on deleted entities: when navigating away from the edit page, a keepalive PATCH may be sent
+        // after the entity has been deleted. This avoids a race condition where the client tries to remove exclusive edit mode on an already-deleted entity.
+        $allowedActionsOnDeleted = array(Action::Restore, Action::RemoveExclusiveEditMode);
+        if ($state === State::Deleted->value && !in_array($action, $allowedActionsOnDeleted, true)) {
+            throw new UnprocessableContentException(_('Only the Restore action is allowed on a deleted entity.'));
+        }
+        if ($state === State::Archived->value && $action !== Action::Unarchive) {
+            throw new UnprocessableContentException(_('Only the Unarchive action is allowed on an archived entity.'));
+        }
         // the toggle pin action doesn't require write access to the entity
         if ($action !== Action::Pin) {
             $this->canOrExplode('write');
@@ -367,14 +379,7 @@ abstract class AbstractEntity extends AbstractRest
             Action::AccessKey => (new AccessKeyHelper($this->entityType, $this->id))->toggleAccessKey(),
             Action::Archive => (
                 function () {
-                    $targetState = State::Normal;
-                    if ($this->entityData['state'] === $targetState->value) {
-                        $targetState = State::Archived;
-                        if ($this->entityData['locked'] === 0) {
-                            $this->toggleLock();
-                        }
-                    }
-                    $this->update(new EntityParams('state', (string) $targetState->value));
+                    $this->handleArchivedState(State::Normal, State::Archived, fn() => $this->lock());
                     // clear any request action
                     $RequestActions = new RequestActions($this->Users, $this);
                     $RequestActions->remove(RequestableAction::Archive);
@@ -386,11 +391,13 @@ abstract class AbstractEntity extends AbstractRest
             Action::ForceLock => $this->lock(),
             Action::ForceUnlock => $this->unlock(),
             Action::Pin => $this->Pins->togglePin(),
+            Action::Restore => $this->update(new EntityParams('state', State::Normal->value)),
             Action::RemoveExclusiveEditMode => $this->ExclusiveEditMode->destroy(),
             Action::SetCanread => $this->update(new EntityParams('canread', $params['can'])),
             Action::SetCanwrite => $this->update(new EntityParams('canwrite', $params['can'])),
             Action::Sign => $this->sign($params['passphrase'], Meaning::from((int) $params['meaning'])),
             Action::Timestamp => $this->timestamp(),
+            Action::Unarchive => $this->handleArchivedState(from: State::Archived, to: State::Normal, toggleLock: fn() => $this->unlock()),
             Action::UpdateMetadataField => (
                 function () use ($params) {
                     foreach ($params as $key => $value) {
@@ -553,7 +560,8 @@ abstract class AbstractEntity extends AbstractRest
         // READ ONLY?
         if (
             ($permissions['read'] && !$permissions['write'])
-            || (array_key_exists('locked', $this->entityData) && $this->entityData['locked'] === 1)
+            || (array_key_exists('locked', $this->entityData) && $this->entityData['locked'] === 1
+            || $this->entityData['state'] === State::Deleted->value)
         ) {
             $this->isReadOnly = true;
         }
@@ -882,6 +890,17 @@ abstract class AbstractEntity extends AbstractRest
             return 'User not found!';
         }
         return $user->userData['fullname'];
+    }
+
+    // Archive a normal entity, Unarchive an archived entity.
+    private function handleArchivedState(State $from, State $to, callable $toggleLock): void
+    {
+        $targetState = $from;
+        if ($this->entityData['state'] === $from->value) {
+            $targetState = $to;
+            $toggleLock();
+        }
+        $this->update(new EntityParams('state', (string) $targetState->value));
     }
 
     private function addToExtendedFilter(string $extendedFilter, array $extendedValues = array()): void

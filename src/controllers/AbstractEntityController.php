@@ -21,6 +21,7 @@ use Elabftw\Enums\Meaning;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\Sort;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Changelog;
@@ -229,7 +230,9 @@ abstract class AbstractEntityController implements ControllerInterface
     {
         // redirect to view mode if we don't have edit access
         if ($this->Entity->isReadOnly) {
-            /** @psalm-suppress PossiblyNullArgument */
+            if (!isset($this->Entity->id)) {
+                throw new ResourceNotFoundException();
+            }
             return new RedirectResponse(sprintf(
                 '%s%sid=%d',
                 $this->Entity->entityType->toPage(),

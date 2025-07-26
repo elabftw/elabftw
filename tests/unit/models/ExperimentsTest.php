@@ -15,8 +15,10 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Meaning;
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Params\DisplayParams;
 use Elabftw\Params\EntityParams;
 use Elabftw\Params\ExtraFieldsOrderingParams;
@@ -45,17 +47,32 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->setId($new);
         $this->Experiments->canOrExplode('write');
         // test archive too
-        $this->assertIsArray($this->Experiments->patch(Action::Archive, array()));
-        // two times to test unarchive branch
-        $this->assertIsArray($this->Experiments->patch(Action::Archive, array()));
-        $exp = $this->Experiments->toggleLock();
-        $this->assertEquals(0, $exp['locked']);
-        $exp = $this->Experiments->toggleLock();
-        $this->assertEquals(1, $exp['locked']);
+        $exp = $this->Experiments->patch(Action::Archive, array());
+        $this->assertIsArray($exp);
+        $this->assertEquals(State::Archived->value, $exp['state']);
+        $this->assertEquals(1, $exp['locked'], 'Entity should be locked when archived');
+        // unarchive (should also unlock)
+        $exp = $this->Experiments->patch(Action::Unarchive, array());
+        $this->assertIsArray($exp);
+        $this->assertEquals(State::Normal->value, $exp['state']);
+        $this->assertEquals(0, $exp['locked'], 'Entity should be unlocked when unarchived');
+        // lock
         $exp = $this->Experiments->lock();
         $this->assertEquals(1, $exp['locked']);
+        // unlock
         $exp = $this->Experiments->unlock();
         $this->assertEquals(0, $exp['locked']);
+        // toggle locks
+        $exp = $this->Experiments->toggleLock();
+        $this->assertEquals(1, $exp['locked']);
+        $exp = $this->Experiments->toggleLock();
+        $this->assertEquals(0, $exp['locked']);
+        // test delete
+        $exp = $this->Experiments->patch(Action::Destroy, array());
+        $this->assertEquals(State::Deleted->value, $exp['state']);
+        // test restore
+        $exp = $this->Experiments->patch(Action::Restore, array());
+        $this->assertEquals(State::Normal->value, $exp['state']);
         $this->Experiments->destroy();
         $Templates = new Templates($this->Users);
         $Templates->create(title: 'my template');
@@ -108,6 +125,28 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->setId($new);
         $this->expectException(ImproperActionException::class);
         $this->Experiments->update(new EntityParams('state', '42'));
+    }
+
+    public function testCannotUpdateDeletedExperiment(): void
+    {
+        $new = $this->Experiments->create(template: 0);
+        $this->Experiments->setId($new);
+        $this->Experiments->patch(Action::Update, array('state' => State::Deleted->value));
+        $this->assertEquals(State::Deleted->value, $this->Experiments->entityData['state']);
+        // Any other action than Action::Restore returns an UnprocessableContent
+        $this->expectException(UnprocessableContentException::class);
+        $this->Experiments->patch(Action::Update, array('title' => 'Changed title'));
+    }
+
+    public function testCannotUpdateArchivedExperiment(): void
+    {
+        $new = $this->Experiments->create(template: 0);
+        $this->Experiments->setId($new);
+        $this->Experiments->patch(Action::Update, array('state' => State::Archived->value));
+        $this->assertEquals(State::Archived->value, $this->Experiments->entityData['state']);
+        // Any other action than Action::Unarchive returns an UnprocessableContent
+        $this->expectException(UnprocessableContentException::class);
+        $this->Experiments->patch(Action::Timestamp, array());
     }
 
     public function testUpdateVisibility(): void

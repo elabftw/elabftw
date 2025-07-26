@@ -32,6 +32,7 @@ const t = {
     "extra-fields": "Champs supplémentaires",
     "filename": "Nom du fichier",
     "firstname": "Prénom",
+    "illegal-action": "This action cannot apply to current selection",
     "is-admin": "Est Admin",
     "is-archived": "Is Archived",
     "is-owner": "Est propriétaire",

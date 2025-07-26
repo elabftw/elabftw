@@ -24,6 +24,7 @@ use Elabftw\Models\Config;
 use Elabftw\Models\Users;
 
 use function is_array;
+use function is_string;
 use function json_decode;
 use function sprintf;
 use function nl2br;
@@ -190,5 +191,29 @@ final class TwigFilters
             return '';
         }
         return Crypto::decrypt($encrypted, Key::loadFromAsciiSafeString(Config::fromEnv('SECRET_KEY')));
+    }
+
+    public static function array2String(array $input, ?int $depth = null): string
+    {
+        $str = '';
+        foreach ($input as $key => $value) {
+            $depth ??= 0;
+            if (is_array($value)) {
+                $value = self::array2String($value, $depth + 1);
+            }
+            $str .= '<details style="--depth: ' . $depth . '"><summary>' . $key . '</summary>' . $value . '</details>';
+        }
+        return $str;
+    }
+
+    public static function any2string(string|array|null $input): string
+    {
+        if (is_string($input)) {
+            return $input;
+        }
+        if (is_array($input)) {
+            return self::array2String($input);
+        }
+        return '';
     }
 }

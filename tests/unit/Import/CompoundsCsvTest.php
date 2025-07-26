@@ -13,12 +13,16 @@ declare(strict_types=1);
 namespace Elabftw\Import;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\Storage;
 use Elabftw\Models\Compounds;
 use Elabftw\Models\Items;
 use Elabftw\Models\Users;
 use Elabftw\Services\HttpGetter;
 use Elabftw\Services\NullFingerprinter;
 use GuzzleHttp\Client;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Psr7\Response;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -37,7 +41,14 @@ class CompoundsCsvTest extends \PHPUnit\Framework\TestCase
             UPLOAD_ERR_OK,
             true,
         );
-        $httpGetter = new HttpGetter(new Client(), '', false);
+        $fixturesFs = Storage::FIXTURES->getStorage()->getFs();
+        $cidJson = $fixturesFs->read('cid-3345.json');
+        $mock = new MockHandler(array(
+            new Response(200, array(), $cidJson),
+        ));
+        $handlerStack = HandlerStack::create($mock);
+        $client = new Client(array('handler' => $handlerStack));
+        $httpGetter = new HttpGetter($client, '', false);
         $Compounds = new Compounds($httpGetter, $requester, new NullFingerprinter());
         $cid = 3345;
         $compoundId = $Compounds->postAction(Action::Duplicate, array('cid' => $cid));

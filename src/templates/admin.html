@@ -414,7 +414,7 @@
   <hr>
   <button type='button' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Experiments categories'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
   <div hidden class='mt-2'>
-  {% for experimentsCategory in experimentsCategoriesArr %}
+  {% for experimentsCategory in App.experimentsCategoryArr %}
     <div class='d-flex justify-content-between p-1 rounded hl-hover-gray'>
       <label for='batch-experimentsCategories-{{ experimentsCategory.id }}' class='col-form-label clickable'>{{ experimentsCategory.title }}</label>
       <label class='switch ucp-align'>

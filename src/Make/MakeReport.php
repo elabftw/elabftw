@@ -14,7 +14,7 @@ namespace Elabftw\Make;
 
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Elabftw\Services\UsersHelper;
 use PDO;
 use Override;

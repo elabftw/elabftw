@@ -15,6 +15,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Users\Users;
 
 class ExclusiveEditModeTest extends \PHPUnit\Framework\TestCase
 {

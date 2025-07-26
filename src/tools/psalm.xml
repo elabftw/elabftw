@@ -25,7 +25,6 @@
             <directory name="../../vendor" />
             <directory name="../../tests" />
             <file name="../../c3.php" />
-            <file name="rector.php" />
         </ignoreFiles>
     </projectFiles>
     <globals>

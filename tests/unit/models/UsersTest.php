@@ -19,6 +19,7 @@ use Elabftw\Enums\Users2TeamsTargets;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Models\Users\Users;
 use Elabftw\Params\UserParams;
 use Elabftw\Traits\TestsUtilsTrait;
 

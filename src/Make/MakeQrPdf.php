@@ -14,7 +14,7 @@ namespace Elabftw\Make;
 
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Models\Config;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TwigTrait;
 use Override;
 

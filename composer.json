@@ -73,56 +73,9 @@
       "Elabftw\\": [
         "src/"
       ],
-      "Elabftw\\Controllers\\": [
-        "src/controllers"
-      ],
-      "Elabftw\\Elabftw\\": [
-        "src/classes"
-      ],
-      "Elabftw\\Commands\\": [
-        "src/commands"
-      ],
-      "Elabftw\\Exceptions\\": [
-        "src/exceptions"
-      ],
-      "Elabftw\\Factories\\": [
-        "src/factories"
-      ],
-      "Elabftw\\Interfaces\\": [
-        "src/interfaces"
-      ],
-      "Elabftw\\Models\\": [
-        "src/models",
-        "src/models/links",
-        "src/models/users"
-      ],
-      "Elabftw\\Models\\Notifications\\": [
-        "src/models/notifications"
-      ],
-      "Elabftw\\Services\\": [
-        "src/services"
-      ],
-      "Elabftw\\Services\\AdvancedSearchQuery\\Collectors\\": [
-        "src/services/advancedSearchQuery/collectors"
-      ],
-      "Elabftw\\Services\\AdvancedSearchQuery\\Enums\\": [
-        "src/services/advancedSearchQuery/enums"
-      ],
-      "Elabftw\\Services\\AdvancedSearchQuery\\Exceptions\\": [
-        "src/services/advancedSearchQuery/exceptions"
-      ],
       "Elabftw\\Services\\AdvancedSearchQuery\\Grammar\\": [
-        "src/services/advancedSearchQuery/grammar",
+        "src/Services/AdvancedSearchQuery/grammar",
         "cache/advancedSearchQuery"
-      ],
-      "Elabftw\\Services\\AdvancedSearchQuery\\Interfaces\\": [
-        "src/services/advancedSearchQuery/interfaces"
-      ],
-      "Elabftw\\Services\\AdvancedSearchQuery\\Visitors\\": [
-        "src/services/advancedSearchQuery/visitors"
-      ],
-      "Elabftw\\Traits\\": [
-        "src/traits"
       ]
     },
     "classmap": [
@@ -132,6 +85,7 @@
   "license": "AGPL-3.0-or-later",
   "scripts": {
     "psalm": "./vendor/bin/psalm --no-progress -c=src/tools/psalm.xml",
+    "psalm-clear-cache": "./vendor/bin/psalm --clear-cache -c=src/tools/psalm.xml",
     "phpstan": "./vendor/bin/phpstan analyse --no-progress --memory-limit 4G -c src/tools/phpstan.neon"
   },
   "config": {

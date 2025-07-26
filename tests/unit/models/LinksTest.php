@@ -13,6 +13,9 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Models\Links\Items2ItemsLinks;
+use Elabftw\Models\Users\AuthenticatedUser;
+use Elabftw\Models\Users\Users;
 
 class LinksTest extends \PHPUnit\Framework\TestCase
 {

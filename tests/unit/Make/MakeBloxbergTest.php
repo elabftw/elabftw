@@ -14,7 +14,7 @@ namespace Elabftw\Make;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Elabftw\Services\HttpGetter;
 use Elabftw\Traits\TestsUtilsTrait;
 use GuzzleHttp\Client;

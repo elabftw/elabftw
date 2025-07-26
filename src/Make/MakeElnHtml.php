@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use ZipStream\ZipStream;
 use Override;
 use Symfony\Component\HttpFoundation\Response;

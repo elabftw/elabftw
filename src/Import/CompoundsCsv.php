@@ -14,8 +14,8 @@ namespace Elabftw\Import;
 
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Compounds;
-use Elabftw\Models\Compounds2ItemsLinks;
-use Elabftw\Models\Containers2ItemsLinks;
+use Elabftw\Models\Links\Compounds2ItemsLinks;
+use Elabftw\Models\Links\Containers2ItemsLinks;
 use Elabftw\Models\Items;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Params\DisplayParams;

@@ -17,7 +17,7 @@ use Elabftw\Controllers\LoginController;
 use Elabftw\Enums\Messages;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\AuditLogs;
-use Elabftw\Models\AuthenticatedUser;
+use Elabftw\Models\Users\AuthenticatedUser;
 use Elabftw\Models\Idps;
 use Exception;
 use OneLogin\Saml2\Auth as SamlAuthLib;

@@ -15,7 +15,7 @@ namespace Elabftw\Auth;
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Exceptions\InvalidMfaCodeException;
 use Elabftw\Interfaces\AuthInterface;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Elabftw\Services\MfaHelper;
 use Elabftw\Services\UsersHelper;
 use Override;

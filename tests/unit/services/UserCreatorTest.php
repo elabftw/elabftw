@@ -15,7 +15,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\Config;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 
 class UserCreatorTest extends \PHPUnit\Framework\TestCase

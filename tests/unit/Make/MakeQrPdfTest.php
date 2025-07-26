@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 use Elabftw\Models\Experiments;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Elabftw\Services\MpdfProvider;
 
 class MakeQrPdfTest extends \PHPUnit\Framework\TestCase

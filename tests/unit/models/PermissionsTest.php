@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Models\Users\AuthenticatedUser;
 use Elabftw\Traits\TestsUtilsTrait;
 
 class PermissionsTest extends \PHPUnit\Framework\TestCase

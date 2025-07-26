@@ -19,7 +19,7 @@ use League\Flysystem\UnableToReadFile;
 use Elabftw\Services\MpdfProvider;
 use Elabftw\Interfaces\PdfMakerInterface;
 use Elabftw\Models\AbstractEntity;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
 use ZipStream\ZipStream;

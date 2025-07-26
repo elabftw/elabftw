@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Users\Users;
 
 class TeamGroupsTest extends \PHPUnit\Framework\TestCase
 {

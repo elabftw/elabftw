@@ -15,7 +15,7 @@ namespace Elabftw\Import;
 use DateTimeImmutable;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Override;

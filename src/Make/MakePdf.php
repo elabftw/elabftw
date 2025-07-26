@@ -25,7 +25,7 @@ use Elabftw\Models\Config;
 use Elabftw\Models\Notifications\MathjaxFailed;
 use Elabftw\Models\Notifications\PdfAppendmentFailed;
 use Elabftw\Models\Notifications\PdfGenericError;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Elabftw\Services\Filter;
 use Elabftw\Services\Tex2Svg;
 use Elabftw\Traits\TwigTrait;

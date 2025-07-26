@@ -18,6 +18,7 @@ use Elabftw\Enums\State;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Users\Users;
 use Elabftw\Storage\Tmp;
 use Elabftw\Traits\TestsUtilsTrait;
 use RuntimeException;

@@ -14,7 +14,7 @@ namespace Elabftw\Make;
 use Elabftw\Enums\Action;
 use Elabftw\Models\Items;
 use Elabftw\Models\Scheduler;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 
 class MakeSchedulerReportTest extends \PHPUnit\Framework\TestCase
 {

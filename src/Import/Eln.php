@@ -26,7 +26,7 @@ use Elabftw\Models\AbstractTemplateEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Uploads;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Elabftw\Params\EntityParams;
 use Elabftw\Params\TagParam;
 use JsonException;

@@ -21,7 +21,7 @@ use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Teams;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Override;
 

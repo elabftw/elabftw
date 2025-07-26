@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Import;
 
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use League\Csv\Reader;
 use League\Csv\Info as CsvInfo;
 use Symfony\Component\HttpFoundation\File\UploadedFile;

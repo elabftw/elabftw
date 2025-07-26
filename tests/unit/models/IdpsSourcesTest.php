@@ -16,6 +16,7 @@ use DOMDocument;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Users\Users;
 use Elabftw\Services\HttpGetter;
 use Elabftw\Services\Url2Xml;
 use Elabftw\Services\Xml2Idps;

@@ -20,7 +20,7 @@ use Elabftw\Exceptions\QuantumException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Config;
-use Elabftw\Models\ExistingUser;
+use Elabftw\Models\Users\ExistingUser;
 use Elabftw\Services\Email;
 use Elabftw\Services\ResetPasswordKey;
 use Exception;

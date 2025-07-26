@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Users\Users;
 
 class ItemsTypesTest extends \PHPUnit\Framework\TestCase
 {

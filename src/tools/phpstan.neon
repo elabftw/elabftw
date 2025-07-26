@@ -11,8 +11,6 @@ parameters:
       path: %currentWorkingDirectory%/web
     - message: '#.*type has no value type specified.*#'
     - message: '#.*with no value type specified in iterable type array.*#'
-  excludePaths:
-    - %currentWorkingDirectory%/src/tools/rector.php
 
   paths:
     - %currentWorkingDirectory%/src

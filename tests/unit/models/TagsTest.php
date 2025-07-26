@@ -13,6 +13,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 
 class TagsTest extends \PHPUnit\Framework\TestCase

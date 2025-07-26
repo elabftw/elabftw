@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Models\Notifications\StepDeadline;
 use Elabftw\Models\Notifications\UserNotifications;
+use Elabftw\Models\Users\Users;
 
 class UserNotificationsTest extends \PHPUnit\Framework\TestCase
 {

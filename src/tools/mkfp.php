@@ -14,7 +14,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Models\Compounds;
 use Elabftw\Models\Config;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Elabftw\Services\Fingerprinter;
 use Elabftw\Services\HttpGetter;
 use GuzzleHttp\Client;

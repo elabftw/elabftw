@@ -13,9 +13,9 @@ declare(strict_types=1);
 namespace Elabftw\Import;
 
 use Elabftw\Exceptions\ResourceNotFoundException;
-use Elabftw\Models\ExistingUser;
-use Elabftw\Models\Users;
-use Elabftw\Models\ValidatedUser;
+use Elabftw\Models\Users\ExistingUser;
+use Elabftw\Models\Users\Users;
+use Elabftw\Models\Users\ValidatedUser;
 use Override;
 
 use function sprintf;

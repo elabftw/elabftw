@@ -14,7 +14,7 @@ namespace Elabftw\Make;
 use Elabftw\Elabftw\CreateUploadFromLocalFile;
 use Elabftw\Enums\Action;
 use Elabftw\Models\Experiments;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Elabftw\Services\MpdfProvider;
 use Elabftw\Traits\TestsUtilsTrait;
 use Monolog\Handler\NullHandler;

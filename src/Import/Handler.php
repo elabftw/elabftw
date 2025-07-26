@@ -23,7 +23,7 @@ use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\AbstractRest;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Config;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Override;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;

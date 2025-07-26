@@ -16,7 +16,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\Storage;
 use Elabftw\Models\Compounds;
 use Elabftw\Models\Items;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Elabftw\Services\HttpGetter;
 use Elabftw\Services\NullFingerprinter;
 use GuzzleHttp\Client;

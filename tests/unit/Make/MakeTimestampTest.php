@@ -19,7 +19,7 @@ use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 
 class MakeTimestampTest extends \PHPUnit\Framework\TestCase

@@ -13,7 +13,7 @@ namespace Elabftw\Make;
 
 use Elabftw\Elabftw\CreateUploadFromLocalFile;
 use Elabftw\Models\Experiments;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 use ZipStream\ZipStream;
 

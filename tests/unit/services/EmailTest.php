@@ -15,7 +15,7 @@ use Elabftw\Enums\EmailTarget;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Info;
 use Elabftw\Models\Teams;
-use Elabftw\Models\UltraAdmin;
+use Elabftw\Models\Users\UltraAdmin;
 use Monolog\Handler\NullHandler;
 use Monolog\Logger;
 use Symfony\Component\Mailer\Exception\TransportException;

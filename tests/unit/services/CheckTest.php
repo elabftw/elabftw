@@ -16,7 +16,7 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Elabftw\Models\Config;
 
 class CheckTest extends \PHPUnit\Framework\TestCase

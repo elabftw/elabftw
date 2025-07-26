@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Models\Users\AnonymousUser;
+
 class AnonymousUserTest extends \PHPUnit\Framework\TestCase
 {
     public function testAnonymousUser(): void

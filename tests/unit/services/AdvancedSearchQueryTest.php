@@ -14,7 +14,7 @@ namespace Elabftw\Services;
 
 use Elabftw\Enums\Action;
 use Elabftw\Models\TeamGroups;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 
 use function implode;

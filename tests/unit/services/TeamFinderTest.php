@@ -15,7 +15,7 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Entrypoint;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 
 class TeamFinderTest extends \PHPUnit\Framework\TestCase
 {

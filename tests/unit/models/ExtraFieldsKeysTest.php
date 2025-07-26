@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Models\Users\Users;
+
 class ExtraFieldsKeysTest extends \PHPUnit\Framework\TestCase
 {
     private Users $Users;

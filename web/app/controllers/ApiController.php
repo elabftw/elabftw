@@ -15,9 +15,9 @@ use Elabftw\Controllers\Apiv1Controller;
 use Elabftw\Controllers\Apiv2Controller;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Exceptions\WithMessageException;
-use Elabftw\Models\ActiveUser;
+use Elabftw\Models\Users\ActiveUser;
 use Elabftw\Models\ApiKeys;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 

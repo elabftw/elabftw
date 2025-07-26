@@ -13,7 +13,7 @@ const phpeggy = require('phpeggy');
 
 module.exports = {
   input: './src/node/grammar/queryGrammar.pegjs',
-  output: './cache/advancedSearchQuery/Parser.php',
+  output: './src/Services/AdvancedSearchQuery/Grammar/Parser.php',
   cache: true,
   plugins: [phpeggy],
   phpeggy: {

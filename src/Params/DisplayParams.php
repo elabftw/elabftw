@@ -20,7 +20,7 @@ use Elabftw\Enums\Scope;
 use Elabftw\Enums\Sort;
 use Elabftw\Enums\State;
 use Elabftw\Models\Tags2Entity;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Elabftw\Services\Check;
 use Override;
 use Symfony\Component\HttpFoundation\InputBag;

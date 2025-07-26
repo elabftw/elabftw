@@ -16,7 +16,7 @@ use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Exceptions\QuantumException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
-use Elabftw\Models\ExistingUser;
+use Elabftw\Models\Users\ExistingUser;
 use Elabftw\Services\UsersHelper;
 use Override;
 

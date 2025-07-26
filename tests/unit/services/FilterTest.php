@@ -81,4 +81,11 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('abc', Filter::hexits('zzzazzzbzzzczzz'));
         $this->assertEmpty(Filter::hexits('zzzzz'));
     }
+
+    public function testToPureString(): void
+    {
+        $this->assertEquals('Roger', Filter::toPureString('<a href="attacker.com">Roger</a>'));
+        $this->assertEquals('Roger', Filter::toPureString('<script>alert(1)</script><strong>Roger</strong>'));
+        $this->assertEquals('Rabbit', Filter::toPureString('<i onwheel=alert(224)>Rabbit</i>'));
+    }
 }

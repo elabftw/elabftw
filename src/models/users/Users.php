@@ -45,8 +45,6 @@ use PDO;
 use Symfony\Component\HttpFoundation\Request;
 use Override;
 
-use function trim;
-
 /**
  * Users
  */
@@ -88,6 +86,7 @@ class Users extends AbstractRest
         ?string $validUntil = null,
         ?string $orgid = null,
         bool $allowTeamCreation = false,
+        bool $skipDomainValidation = false,
     ): int {
         $Config = Config::getConfig();
         $Teams = new Teams($this);
@@ -97,11 +96,11 @@ class Users extends AbstractRest
         $teams = $Teams->getTeamsFromIdOrNameOrOrgidArray($teams, $allowTeamCreation);
         $TeamsHelper = new TeamsHelper($teams[0]['id']);
 
-        $EmailValidator = new EmailValidator($email, (bool) $Config->configArr['admins_import_users'], $Config->configArr['email_domain']);
+        $EmailValidator = new EmailValidator($email, (bool) $Config->configArr['admins_import_users'], $Config->configArr['email_domain'], skipDomainValidation: $skipDomainValidation);
         $EmailValidator->validate();
 
-        $firstname = trim($firstname);
-        $lastname = trim($lastname);
+        $firstname = Filter::toPureString($firstname);
+        $lastname = Filter::toPureString($lastname);
 
         // get the user group for the new users
         $usergroup ??= $TeamsHelper->getGroup();
@@ -558,7 +557,8 @@ class Users extends AbstractRest
         if (empty($currentPassword)) {
             throw new ImproperActionException('Current password must be provided by "current_password" parameter.');
         }
-        $LocalAuth = new Local($this->userData['email'], $currentPassword);
+        // set a high maxLoginAttempts because we're just trying to match current password here
+        $LocalAuth = new Local($this->userData['email'], $currentPassword, maxLoginAttempts: 999);
         try {
             $LocalAuth->tryAuth();
         } catch (InvalidCredentialsException) {

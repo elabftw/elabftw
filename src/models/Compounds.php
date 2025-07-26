@@ -593,7 +593,7 @@ final class Compounds extends AbstractRest
 
     private function searchPubChem(int $cid): Compound
     {
-        $Importer = new PubChemImporter($this->httpGetter);
+        $Importer = new PubChemImporter($this->httpGetter, Config::fromEnv('PUBCHEM_PUG_URL'), Config::fromEnv('PUBCHEM_PUG_VIEW_URL'));
         return $Importer->fromPugView($cid);
     }
 
@@ -602,7 +602,7 @@ final class Compounds extends AbstractRest
      */
     private function searchPubChemCas(string $cas): array
     {
-        $Importer = new PubChemImporter($this->httpGetter);
+        $Importer = new PubChemImporter($this->httpGetter, Config::fromEnv('PUBCHEM_PUG_URL'), Config::fromEnv('PUBCHEM_PUG_VIEW_URL'));
         $cids = $Importer->getCidFromCas($cas);
         $compounds = array();
         foreach ($cids as $cid) {
@@ -616,7 +616,7 @@ final class Compounds extends AbstractRest
      */
     private function searchPubChemName(string $name): array
     {
-        $Importer = new PubChemImporter($this->httpGetter);
+        $Importer = new PubChemImporter($this->httpGetter, Config::fromEnv('PUBCHEM_PUG_URL'), Config::fromEnv('PUBCHEM_PUG_VIEW_URL'));
         $cids = $Importer->getCidFromName($name);
         $compounds = array();
         foreach ($cids as $cid) {

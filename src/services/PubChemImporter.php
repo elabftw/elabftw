@@ -24,23 +24,23 @@ final class PubChemImporter
     // 300 ms delay before requests, to avoid abuse
     private const int REQ_DELAY = 300000;
 
-    private const string PUG_URL = 'https://pubchem.ncbi.nlm.nih.gov/rest/pug';
-
-    private const string PUG_VIEW_URL = 'https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data';
-
-    public function __construct(private HttpGetter $httpGetter) {}
+    public function __construct(
+        private HttpGetter $httpGetter,
+        private readonly string $pugUrl,
+        private readonly string $pugViewUrl,
+    ) {}
 
     // not used
     public function fromPug(int $cid): Compound
     {
         usleep(self::REQ_DELAY);
-        return Compound::fromPug($this->httpGetter->get(sprintf('%s/compound/cid/%d/json', self::PUG_URL, $cid)));
+        return Compound::fromPug($this->httpGetter->get(sprintf('%s/compound/cid/%d/json', $this->pugUrl, $cid)));
     }
 
     public function getCidFromCas(string $cas): array
     {
         usleep(self::REQ_DELAY);
-        $json = $this->httpGetter->get(sprintf('%s/compound/xref/rn/%s/cids/json', self::PUG_URL, $cas));
+        $json = $this->httpGetter->get(sprintf('%s/compound/xref/rn/%s/cids/json', $this->pugUrl, $cas));
         $decoded = json_decode($json, true, 10);
         return $decoded['IdentifierList']['CID'];
     }
@@ -48,7 +48,7 @@ final class PubChemImporter
     public function getCidFromName(string $name): array
     {
         usleep(self::REQ_DELAY);
-        $json = $this->httpGetter->get(sprintf('%s/compound/name/%s/cids/json', self::PUG_URL, $name));
+        $json = $this->httpGetter->get(sprintf('%s/compound/name/%s/cids/json', $this->pugUrl, $name));
         $decoded = json_decode($json, true, 10);
         return $decoded['IdentifierList']['CID'];
     }
@@ -56,6 +56,6 @@ final class PubChemImporter
     public function fromPugView(int $cid): Compound
     {
         usleep(self::REQ_DELAY);
-        return Compound::fromPugView($this->httpGetter->get(sprintf('%s/compound/%d/json', self::PUG_VIEW_URL, $cid)));
+        return Compound::fromPugView($this->httpGetter->get(sprintf('%s/compound/%d/json', $this->pugViewUrl, $cid)));
     }
 }

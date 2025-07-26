@@ -18,6 +18,7 @@ use Elabftw\Elabftw\Sql;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\FileFromString;
+use Elabftw\Enums\Usergroup;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Compounds;
 use Elabftw\Models\Config;
@@ -37,17 +38,28 @@ use Elabftw\Models\Templates;
 use Elabftw\Models\UltraAdmin;
 use Elabftw\Models\Users;
 use Elabftw\Params\UserParams;
+use Elabftw\Traits\RandomColorTrait;
+use Elabftw\Traits\TestsUtilsTrait;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function array_key_exists;
+use function bin2hex;
+use function dirname;
+use function random_bytes;
+use function sprintf;
+
 /**
  * This is used to generate data for dev purposes
  */
 final class Populate
 {
+    use TestsUtilsTrait;
+    use RandomColorTrait;
+
     private const int DEFAULT_ITERATIONS = 24;
 
     // the password to use if none are provided
@@ -77,33 +89,12 @@ final class Populate
         $this->output->writeln('┌ Creating teams, users, experiments, and resources...');
         $Users = new UltraAdmin(1, 1);
         $Teams = new Teams($Users, bypassWritePermission: true);
-        $Status = new ItemsStatus($Teams);
-        $Category = new ExperimentsCategories($Teams);
+
+        // main loop is on "teams" key
         foreach ($this->yaml['teams'] as $team) {
             $teamid = $Teams->create($team['name']);
             $this->output->writeln(sprintf('├ + team: %s (ID: %d)', $team['name'], $teamid));
             $Teams->setId($teamid);
-
-            // create fake categories and status
-            $Category->postAction(Action::Create, array('name' => 'Cell biology', 'color' => $this->faker->hexColor(), 'is_default' => 0));
-            $Category->postAction(Action::Create, array('name' => 'Project CRYPTO-COOL', 'color' => $this->faker->hexColor(), 'is_default' => 0));
-            $Category->postAction(Action::Create, array('name' => 'Project CASIMIR', 'color' => $this->faker->hexColor(), 'is_default' => 0));
-            $Category->postAction(Action::Create, array('name' => 'Tests', 'color' => $this->faker->hexColor(), 'is_default' => 0));
-            $Category->postAction(Action::Create, array('name' => 'Demo', 'color' => $this->faker->hexColor(), 'is_default' => 0));
-            $Category->postAction(Action::Create, array('name' => 'Discussions', 'color' => $this->faker->hexColor(), 'is_default' => 0));
-            $Category->postAction(Action::Create, array('name' => 'Production', 'color' => $this->faker->hexColor(), 'is_default' => 0));
-            $Category->postAction(Action::Create, array('name' => 'R&D', 'color' => $this->faker->hexColor(), 'is_default' => 0));
-            $Category->postAction(Action::Create, array('name' => 'Support ticket', 'color' => $this->faker->hexColor(), 'is_default' => 0));
-
-            $Status->postAction(Action::Create, array('name' => 'Maintenance mode', 'color' => $this->faker->hexColor(), 'is_default' => 0));
-            $Status->postAction(Action::Create, array('name' => 'Operational', 'color' => $this->faker->hexColor(), 'is_default' => 0));
-            $Status->postAction(Action::Create, array('name' => 'In stock', 'color' => $this->faker->hexColor(), 'is_default' => 0));
-            $Status->postAction(Action::Create, array('name' => 'Need to reorder', 'color' => $this->faker->hexColor(), 'is_default' => 0));
-            $Status->postAction(Action::Create, array('name' => 'Destroyed', 'color' => $this->faker->hexColor(), 'is_default' => 0));
-            $Status->postAction(Action::Create, array('name' => 'Processed', 'color' => $this->faker->hexColor(), 'is_default' => 0));
-            $Status->postAction(Action::Create, array('name' => 'Waiting', 'color' => $this->faker->hexColor(), 'is_default' => 0));
-            $Status->postAction(Action::Create, array('name' => 'Open', 'color' => $this->faker->hexColor(), 'is_default' => 0));
-            $Status->postAction(Action::Create, array('name' => 'Closed', 'color' => $this->faker->hexColor(), 'is_default' => 0));
 
             $columns = array(
                 'visible',
@@ -120,29 +111,55 @@ final class Populate
             // all users have the same password to make switching accounts easier
             // if the password is provided in the config file, it'll be used instead for that user
             foreach ($team['users'] ?? array() as $user) {
-                $this->createUser($teamid, $user);
+                $this->createUser($teamid, $user ?? array());
             }
-            if (array_key_exists('random_users', $team) && !$this->fast) {
-                $iter = (int) $team['random_users'];
-                for ($i = 0; $i < $iter; $i++) {
-                    $this->createUser($teamid);
-                }
+            $iter = (int) ($team['random_users'] ?? 2);
+            if ($this->fast) {
+                $iter = 2;
+            }
+            for ($i = 0; $i <= $iter; $i++) {
+                $this->createUser($teamid, array());
+            }
+
+            // EXPERIMENTS CATEGORIES
+            foreach ($team['experiments_categories'] ?? array() as $category) {
+                $id = new ExperimentsCategories($Teams)->postAction(Action::Create, array(
+                    'name' => $category['name'],
+                    'color' => $category['color'] ?? $this->getRandomDarkColor(),
+                ));
+                $this->output->writeln(sprintf('├ + exp category: %s (id: %d in team: %d)', $category['name'], $id, $teamid));
+            }
+
+            // EXPERIMENTS STATUS
+            foreach ($team['experiments_status'] ?? array() as $status) {
+                $id = new ExperimentsStatus($Teams)->postAction(Action::Create, array(
+                    'name' => $status['name'],
+                    'color' => $status['color'] ?? $this->getRandomDarkColor(),
+                ));
+                $this->output->writeln(sprintf('├ + exp status: %s (id: %d in team: %d)', $status['name'], $id, $teamid));
+            }
+
+            // ITEMS STATUS
+            foreach ($team['items_status'] ?? array() as $status) {
+                $id = new ItemsStatus($Teams)->postAction(Action::Create, array(
+                    'name' => $status['name'],
+                    'color' => $status['color'] ?? $this->getRandomDarkColor(),
+                ));
+                $this->output->writeln(sprintf('├ + resources status: %s (id: %d in team: %d)', $status['name'], $id, $teamid));
             }
 
             // EXPERIMENTS TEMPLATES
             foreach ($team['templates'] ?? array() as $template) {
-                $user = new Users((int) ($template['user'] ?? 1), $teamid);
+                $user = $this->getRandomUserInTeam($teamid);
                 $Templates = new Templates($user);
-                $id = $Templates->postAction(Action::Create, array());
-                $Templates->setId($id);
-                $patch = array(
-                    'title' => $template['title'],
-                    'body' => $template['body'] ?? '',
-                    'category' => $template['category'] ?? 2,
-                    'status' => $template['status'] ?? 2,
-                    'metadata' => $template['metadata'] ?? '{}',
+                $id = $Templates->create(
+                    title: $template['title'],
+                    body: $template['body'] ?? '',
+                    category: $Templates->getIdempotentIdFromTitle($template['category'] ?? 'Project Narwal'),
+                    status: $template['status'] ?? 2,
+                    metadata: $template['metadata'] ?? '{}',
                 );
-                $Templates->patch(Action::Update, $patch);
+                $Templates->setId($id);
                 if (isset($template['locked'])) {
                     $Templates->toggleLock();
                 }
@@ -159,22 +176,43 @@ final class Populate
                 }
             }
 
+            // add Resources Categories (items types)
+            foreach ($team['items_types'] ?? array() as $items_types) {
+                $Admin = $this->getRandomUserInTeam($teamid, admin: 1);
+                $ItemsTypes = new ItemsTypes($Admin);
+                $defaultPermissions = BasePermissions::Team->toJson();
+                $itemTypeId = $ItemsTypes->create(
+                    title: $items_types['name'],
+                    color: $items_types['color'] ?? $this->getRandomDarkColor(),
+                    body: $items_types['template'] ?? '',
+                    date: new DateTimeImmutable($this->faker->dateTimeBetween('-5 years')->format('Ymd')),
+                    canread: $defaultPermissions,
+                    canwrite: $defaultPermissions,
+                    metadata: $items_types['metadata'] ?? '{}',
+                );
+                $this->output->writeln(sprintf('├ + resource category: %s (id: %d in team: %d)', $items_types['name'], $itemTypeId, $teamid));
+            }
+
+            // generate random experiments before the defined ones
+            if (!$this->fast) {
+                $user = $this->getRandomUserInTeam($teamid);
+                $this->generate(new Experiments($user));
+                $this->generate(new Items($user));
+            }
+
             // EXPERIMENTS
             foreach ($team['experiments'] ?? array() as $experiment) {
-                $user = new Users((int) ($experiment['user'] ?? 1), $teamid);
-                $Experiments = new Experiments($user);
-                $id = $Experiments->postAction(Action::Create, array());
-                $Experiments->setId($id);
-                $patch = array(
-                    'title' => $experiment['title'],
-                    'body' => $experiment['body'] ?? '',
-                    'date' => $experiment['date'],
-                    'category' => $experiment['category'] ?? 2,
-                    'status' => $experiment['status'] ?? 2,
-                    'metadata' => $experiment['metadata'] ?? '{}',
-                    'rating' => $experiment['rating'] ?? 0,
+                $Experiments = new Experiments($this->getRandomUserInTeam($teamid));
+                $id = $Experiments->create(
+                    title: $experiment['title'],
+                    body: $experiment['body'] ?? '',
+                    date: new DateTimeImmutable((string) ($experiment['date'] ?? $this->faker->dateTimeBetween('-5 years')->format('Ymd'))),
+                    category: $experiment['category'] ?? 2,
+                    status: $experiment['status'] ?? 2,
+                    metadata: $experiment['metadata'] ?? '{}',
+                    rating: $experiment['rating'] ?? 0,
                 );
-                $Experiments->patch(Action::Update, $patch);
+                $Experiments->setId($id);
                 if (isset($experiment['locked'])) {
                     $Experiments->toggleLock();
                 }
@@ -203,41 +241,24 @@ final class Populate
                 $this->output->writeln(sprintf('├ + experiment: %s (id: %d in team: %d)', $experiment['title'], $id, $teamid));
             }
 
-            // add Resources Categories (items types)
-            foreach ($team['items_types'] ?? array() as $items_types) {
-                $ItemsTypes = new ItemsTypes(new Users(1, $teamid));
-                $defaultPermissions = BasePermissions::Team->toJson();
-                $itemTypeId = $ItemsTypes->create(
-                    title: $items_types['name'],
-                    color: $items_types['color'],
-                    body: $items_types['template'] ?? '',
-                    date: new DateTimeImmutable($this->faker->dateTimeBetween('-5 years')->format('Ymd')),
-                    canread: $defaultPermissions,
-                    canwrite: $defaultPermissions,
-                    metadata: $items_types['metadata'] ?? '{}',
-                );
-                $this->output->writeln(sprintf('├ + resource category: %s (id: %d in team: %d)', $items_types['name'], $itemTypeId, $teamid));
-            }
-
             // randomize the entries so they look like they are not added at once
             if (isset($team['items'])) {
                 shuffle($team['items']);
                 foreach ($team['items'] as $item) {
-                    $user = new Users((int) ($item['user'] ?? 1), $teamid);
+                    $user = $this->getRandomUserInTeam($teamid);
                     $ItemsTypes = new ItemsTypes($user);
                     $Items = new Items($user);
                     $id = $Items->create(
-                        template: (int) ($item['category'] ?? $ItemsTypes->getDefault()),
+                        template: $ItemsTypes->getIdempotentIdFromTitle($item['category'] ?? $ItemsTypes->getDefault()),
                         title: $item['title'],
                         body: $item['body'] ?? '',
                         date: new DateTimeImmutable($this->faker->dateTimeBetween('-5 years')->format('Ymd')),
                         rating: $item['rating'] ?? 0,
                     );
                     $Items->setId($id);
-                    $patch = array();
                     // don't override the items type metadata
                     if (isset($item['metadata'])) {
-                        $patch['metadata'] = $item['metadata'];
+                        $Items->patch(Action::Update, array('metadata' => $item['metadata']));
                     }
                     if (isset($item['experiments_links'])) {
                         foreach ($item['experiments_links'] as $target) {
@@ -251,7 +272,6 @@ final class Populate
                             $ItemsLinks->postAction(Action::Create, array());
                         }
                     }
-                    $Items->patch(Action::Update, $patch);
                     $this->output->writeln(sprintf('├ + resource: %s (id: %d in team: %d)', $item['title'], $id, $teamid));
                 }
             }
@@ -291,7 +311,7 @@ final class Populate
         if ($Entity instanceof Experiments) {
             $Category = new ExperimentsCategories($Teams);
             $Status = new ExperimentsStatus($Teams);
-            $tpl = 0;
+            $tpl = -1;
         } else {
             $Category = new ItemsTypes($Entity->Users, bypassReadPermission: true, bypassWritePermission: true);
             if (empty($Category->readAll())) {
@@ -366,7 +386,16 @@ final class Populate
         );
 
         for ($i = 0; $i < $iterations; $i++) {
-            $id = $Entity->create(template: $tpl);
+            $id = $Entity->create(
+                template: $tpl,
+                category: $this->faker->randomElement($categoryArr)['id'],
+                status: $this->faker->randomElement($statusArr)['id'],
+                canread: $this->faker->randomElement($visibilityArr),
+                canwrite: $this->faker->randomElement($visibilityArr),
+                title: $this->faker->sentence(),
+                date: new DateTimeImmutable($this->faker->dateTimeBetween('-5 years')->format('Ymd')),
+                body: $this->faker->realText(1000),
+            );
             $Entity->setId($id);
             // variable tag number
             $Tags = new Tags($Entity);
@@ -382,22 +411,6 @@ final class Populate
             if ($this->faker->randomDigit() > 8 && $i > 1) {
                 $Entity->toggleLock();
             }
-
-            // change the visibility, but not the first ones as they are often used in tests and this could cause permissions issues
-            if ($this->faker->randomDigit() > 8 && $i > 10) {
-                $Entity->patch(Action::Update, array('canread' => $this->faker->randomElement($visibilityArr)));
-                $Entity->patch(Action::Update, array('canwrite' => $this->faker->randomElement($visibilityArr)));
-            }
-
-            // CATEGORY
-            // blank the custom_id first or we might run into an issue when changing the category because another entry has the same custom_id
-            $Entity->patch(Action::Update, array('custom_id' => ''));
-            $category = $this->faker->randomElement($categoryArr);
-            $Entity->patch(Action::Update, array('category' => (string) $category['id']));
-
-            // STATUS
-            $status = $this->faker->randomElement($statusArr);
-            $Entity->patch(Action::Update, array('status' => (string) $status['id']));
 
             // maybe upload a file but not on the first one
             if ($this->faker->randomDigit() > 7 && $id !== 1) {
@@ -423,12 +436,21 @@ final class Populate
     }
 
     // create a user based on options provided in yaml file
-    public function createUser(int $team, ?array $user = null): void
+    private function createUser(int $team, array $user): void
     {
         $firstname = $user['firstname'] ?? $this->faker->firstName();
         $lastname = $user['lastname'] ?? $this->faker->lastName();
+        $usergroup = null;
+        if (array_key_exists('usergroup', $user)) {
+            $usergroup = Usergroup::tryFrom($user['usergroup'] ?? Usergroup::User->value);
+        }
         $orgid = $user['orgid'] ?? null;
-        $passwordHash = (new UserParams('password', $user['password'] ?? self::DEFAULT_PASSWORD))->getStringContent();
+        $password = $user['password'] ?? self::DEFAULT_PASSWORD;
+        // special case for "random" value
+        if ($password === 'random') {
+            $password = bin2hex(random_bytes(24));
+        }
+        $passwordHash = new UserParams('password', $password)->getStringContent();
         // use yopmail.com instead of safeEmail() so we don't hard bounce on example.tld domains when testing mass emails
         $email = $user['email'] ?? sprintf('%s-%d@yopmail.com', $this->faker->word, $this->faker->randomNumber(8));
 
@@ -439,14 +461,13 @@ final class Populate
             firstname: $firstname,
             lastname: $lastname,
             passwordHash: $passwordHash,
-            usergroup: null,
+            usergroup: $usergroup,
             automaticValidationEnabled: true,
             alertAdmin: false,
             validUntil: null,
             orgid: $orgid
         );
-        $Requester = new Users(1, 1);
-        $Users = new Users($userid, $team, $Requester);
+        $Users = new Users($userid, $team);
 
         if ($user['is_sysadmin'] ?? false) {
             $Users->update(new UserParams('is_sysadmin', 1));
@@ -462,13 +483,7 @@ final class Populate
             $MfaHelper->secret = 'EXAMPLE2FASECRET234567ABCDEFGHIJ';
             $MfaHelper->saveSecret();
         }
-        if (!$this->fast) {
-            $this->generate(new Experiments($Users));
-        }
-        if (!$this->fast) {
-            $this->generate(new Items($Users));
-        }
-        if (array_key_exists('api_key', $user ?? array())) {
+        if (array_key_exists('api_key', $user)) {
             $ApiKeys = new ApiKeys($Users);
             $ApiKeys->createKnown($user['api_key'] ?? 'yep');
         }

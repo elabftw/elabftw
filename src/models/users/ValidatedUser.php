@@ -38,12 +38,13 @@ final class ValidatedUser extends ExistingUser
         return parent::fromScratch($email, $teams, $firstname, $lastname, automaticValidationEnabled: true, orgid: $orgid, allowTeamCreation: $allowTeamCreation);
     }
 
-    public static function fromAdmin(string $email, array $teams, string $firstname, string $lastname, Usergroup $usergroup): Users
+    public static function fromAdmin(string $email, array $teams, string $firstname, string $lastname, Usergroup $usergroup, bool $skipDomainValidation = false): Users
     {
-        return parent::fromScratch($email, $teams, $firstname, $lastname, $usergroup, true, false);
+        return parent::fromScratch($email, $teams, $firstname, $lastname, $usergroup, true, false, skipDomainValidation: $skipDomainValidation);
     }
 
     // create a user from the information provided in a node of type Person (.eln)
+    // skip domain validation here to prevent running into an error while importing trusted eln
     public static function createFromPerson(array $person, int $team): Users
     {
         return self::fromAdmin(
@@ -52,6 +53,7 @@ final class ValidatedUser extends ExistingUser
             $person['givenName'] ?? 'Unknown',
             $person['familyName'] ?? 'Unknown',
             Usergroup::User,
+            skipDomainValidation: true,
         );
     }
 }

@@ -37,8 +37,12 @@ class Email
 
     private Address $from;
 
-    public function __construct(private MailerInterface $Mailer, private LoggerInterface $Log, private string $mailFrom)
-    {
+    public function __construct(
+        private readonly MailerInterface $Mailer,
+        private readonly LoggerInterface $Log,
+        private readonly string $mailFrom,
+        private readonly bool $demoMode = false,
+    ) {
         $this->footer = $this->makeFooter();
         $this->from = new Address($mailFrom, 'eLabFTW');
     }
@@ -51,6 +55,10 @@ class Email
         if ($this->mailFrom === 'notconfigured@example.com') {
             // we don't want to throw an exception here, just fail but log an error
             $this->Log->warning('', array('Warning' => 'Sending emails is not configured!'));
+            return false;
+        }
+        // completely disable sending emails in demo mode
+        if ($this->demoMode) {
             return false;
         }
         try {

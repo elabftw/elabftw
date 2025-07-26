@@ -52,4 +52,12 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
         $this->Templates->setId(1);
         $this->assertTrue($this->Templates->destroy());
     }
+
+    public function testGetIdempotentIdFromTitle(): void
+    {
+        $title = 'Blah blih bluh';
+        $id = $this->Templates->create(title: $title);
+        $this->assertEquals($id, $this->Templates->getIdempotentIdFromTitle($title));
+        $this->assertTrue($this->Templates->getIdempotentIdFromTitle('Géo Trouvetou') > $id);
+    }
 }

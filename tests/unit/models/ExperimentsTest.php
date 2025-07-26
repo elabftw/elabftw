@@ -23,10 +23,13 @@ use Elabftw\Params\DisplayParams;
 use Elabftw\Params\EntityParams;
 use Elabftw\Params\ExtraFieldsOrderingParams;
 use Elabftw\Services\Check;
+use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\HttpFoundation\InputBag;
 
 class ExperimentsTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private Users $Users;
 
     private Experiments $Experiments;
@@ -34,7 +37,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->Users = new Users(1, 1);
-        $this->Experiments = new Experiments($this->Users);
+        $this->Experiments = $this->getFreshExperiment();
     }
 
     public function testCreateAndDestroy(): void
@@ -148,7 +151,6 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdateVisibility(): void
     {
-        $this->Experiments->setId(1);
         $matrix = array('canread', 'canwrite');
         foreach ($matrix as $column) {
             $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::Full->toJson())));
@@ -161,13 +163,11 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdateCategory(): void
     {
-        $this->Experiments->setId(1);
         $this->assertIsArray($this->Experiments->patch(Action::Update, array('category' => '3')));
     }
 
     public function testUpdateWithNegativeInt(): void
     {
-        $this->Experiments->setId(1);
         $this->assertIsArray($this->Experiments->patch(Action::Update, array('category' => '-3', 'custom_id' => '-5')));
         $this->assertNull($this->Experiments->entityData['category']);
         $this->assertNull($this->Experiments->entityData['custom_id']);
@@ -175,13 +175,12 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testSign(): void
     {
-        $this->Experiments->setId(1);
         // we need to generate a key
         $passphrase = 'correct horse battery staple';
-        $SigKeys = new SigKeys($this->Users);
+        $SigKeys = new SigKeys($this->Experiments->Users);
         $SigKeys->postAction(Action::Create, array('passphrase' => $passphrase));
         // reload the Users object because we now have a key
-        $this->Users->readOne();
+        $this->Experiments->Users->readOne();
         $this->assertIsArray($this->Experiments->patch(Action::Sign, array(
             'passphrase' => $passphrase,
             'meaning' => (string) Meaning::Responsibility->value,
@@ -190,7 +189,6 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testDuplicate(): void
     {
-        $this->Experiments->setId(1);
         $this->Experiments->ItemsLinks->setId(1);
         $this->Experiments->ExperimentsLinks->setId(1);
         $this->Experiments->canOrExplode('read');

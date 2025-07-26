@@ -56,7 +56,7 @@ abstract class AbstractStatus extends AbstractCategory
     {
         return $this->create(
             $reqBody['name'] ?? _('Untitled'),
-            $reqBody['color'] ?? '#' . $this->getSomeColor(),
+            $reqBody['color'] ?? $this->getRandomDarkColor(),
             $reqBody['default'] ?? 0,
         );
     }

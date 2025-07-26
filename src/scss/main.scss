@@ -348,13 +348,22 @@ h5 {
   }
 }
 
+.alert-warning {
+  border-color: $darkgold;
+
+  .close {
+    color: $darkgold;
+  }
+
+}
+
 .alert-danger {
   background-color: $lightred;
   border-color: $darkred;
   color: $darkred;
 
   .close {
-    color: $orange;
+    color: $darkred;
   }
 
 }

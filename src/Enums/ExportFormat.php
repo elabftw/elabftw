@@ -21,6 +21,7 @@ enum ExportFormat: string
     case Binary = 'binary';
     case Csv = 'csv';
     case Eln = 'eln';
+    case ElnHtml = 'elnhtml';
     case Json = 'json';
     case QrPdf = 'qrpdf';
     case QrPng = 'qrpng';

@@ -23,6 +23,7 @@ use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Interfaces\ZipMakerInterface;
 use Elabftw\Make\MakeCsv;
 use Elabftw\Make\MakeEln;
+use Elabftw\Make\MakeElnHtml;
 use Elabftw\Make\MakeJson;
 use Elabftw\Make\MakeMultiPdf;
 use Elabftw\Make\MakePdf;
@@ -88,6 +89,9 @@ final class MakeController extends AbstractController
 
             case ExportFormat::Eln:
                 return $this->makeStreamZip(new MakeEln($this->getZipStreamLib(), $this->requester, $this->entityArr));
+
+            case ExportFormat::ElnHtml:
+                return (new MakeElnHtml($this->getZipStreamLib(), $this->requester, $this->entityArr))->getResponse();
 
             case ExportFormat::Json:
                 return (new MakeJson($this->entityArr))->getResponse();

@@ -86,7 +86,7 @@ describe('Experiments', () => {
     cy.htmlvalidate();
     cy.contains('Create').click();
     cy.get('#createModal_experiments').should('be.visible').should('contain', 'Default template').contains('Default template').click();
-    entityCatStat('Not set', 'Cell biology', 'Success');
+    entityCatStat('Not set', 'Demo', 'Success');
     entityEdit();
     entityComment();
     entityDuplicate();

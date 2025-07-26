@@ -46,6 +46,7 @@ try {
         new Mailer(Transport::fromDsn($App->Config->getDsn())),
         $App->Log,
         $App->Config->configArr['mail_from'],
+        $App->Config::boolFromEnv('DEMO_MODE'),
     );
 
     // SEND TEST EMAIL

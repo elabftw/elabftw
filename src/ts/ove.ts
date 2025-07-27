@@ -13,7 +13,6 @@ declare global {
   }
 }
 
-import '@teselagen/ove';
 import '@teselagen/ove/style.css';
 import { anyToJson } from '@teselagen/bio-parsers';
 import { reloadElements } from './misc';
@@ -22,11 +21,16 @@ import { Api } from './Apiv2.class';
 import { Notification } from './Notifications.class';
 
 // DISPLAY Plasmids FILES
-export function displayPlasmidViewer(about: DOMStringMap): void {
+export async function displayPlasmidViewer(about: DOMStringMap): Promise<void> {
+  const elements = document.getElementsByClassName('viewer-ove');
+  if (elements.length < 1) {
+    return;
+  }
+  await import('@teselagen/ove');
   /* eslint-disable-next-line */
   const editor: any = {};
   const ApiC = new Api();
-  Array.from(document.getElementsByClassName('viewer-ove')).forEach(el => {
+  Array.from(elements).forEach(el => {
     const oveDivDataset = (el as HTMLDivElement).dataset;
     const viewerID = el.id;
     const isSnapGeneFile = (new URL(oveDivDataset.href, window.location.origin)).searchParams.get('f').slice(-4) === '.dna';

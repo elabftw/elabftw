@@ -24,6 +24,179 @@ import { Notification } from './Notifications.class';
 import { SearchSyntaxHighlighting } from './SearchSyntaxHighlighting.class';
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
+const ApiC = new Api();
+const entity = getEntity();
+const FavTagC = new FavTag();
+const notify = new Notification();
+const params = new URLSearchParams(document.location.search.slice(1));
+
+// a filter helper can be a select or an input (for date and extrafield), so we need a function to get its value
+function getFilterValueFromElement(element: HTMLElement): string {
+  const escapeDoubleQuotes = (string: string): string => {
+    // escape double quotes if not already escaped
+    return string.replace(/(?<!\\)"/g, '\\"');
+  };
+  const handleDate = (): string => {
+    const date = (document.getElementById('date') as HTMLInputElement).value;
+    const dateTo = (document.getElementById('dateTo') as HTMLInputElement).value;
+    const dateOperatorEl = document.getElementById('dateOperator') as HTMLSelectElement;
+    const dateOperator = dateOperatorEl.options[dateOperatorEl.selectedIndex].value;
+    if (date === '') {
+      return '';
+    }
+    if (dateTo === '') {
+      return dateOperator + date;
+    }
+    return date + '..' + dateTo;
+  };
+  const handleMetadata = (): string => {
+    const metakeyEl = document.getElementById('metakey') as HTMLSelectElement;
+    const metakey = metakeyEl.options[metakeyEl.selectedIndex].value;
+    const metavalue = (document.getElementById('metavalue') as HTMLInputElement).value;
+    if (metakey === '' || metavalue === '') {
+      return '';
+    }
+    const keyQuotes = getQuotes(metakey);
+    const valueQuotes = getQuotes(metavalue);
+    return keyQuotes + escapeDoubleQuotes(metakey) + keyQuotes + ':' + valueQuotes + escapeDoubleQuotes(metavalue) + valueQuotes;
+  };
+  if (element instanceof HTMLSelectElement) {
+    // clear action
+    if (element.options[element.selectedIndex].dataset.action === 'clear') {
+      return '';
+    }
+    if (element.id === 'dateOperator') {
+      return handleDate();
+    }
+    if (element.id === 'metakey') {
+      return handleMetadata();
+    }
+    return escapeDoubleQuotes(element.options[element.selectedIndex].value);
+  }
+  if (element instanceof HTMLInputElement) {
+    if (element.id === 'date') {
+      return handleDate();
+    }
+    if (element.id === 'dateTo') {
+      return handleDate();
+    }
+    if (element.id === 'metavalue') {
+      return handleMetadata();
+    }
+  }
+  return '😶';
+}
+
+// don't add quotes unless we need them (space or some special chars exist)
+function getQuotes(filterValue: string): string {
+  let quotes = '';
+  if ([' ', '&', '|', '!', ':', '(', ')', '\'', '"'].some(value => filterValue.includes(value))) {
+    quotes = '"';
+  }
+  return quotes;
+}
+
+function addHiddenInputToMainSearchForm(name: string, value: string): void
+{
+  const form = document.getElementById('mainSearchForm');
+  const hiddenInputId = `${name}_hiddenInput`;
+  document.getElementById(hiddenInputId)?.remove();
+  const input = document.createElement('input');
+  input.hidden = true;
+  input.name = name;
+  input.value = value;
+  input.id = hiddenInputId;
+  form.appendChild(input);
+}
+
+function setExpandedAndSelectedEntities(): void {
+  const state = JSON.parse(document.getElementById('showModeContent').dataset.expandedAndSelectedEntities);
+  if (state.expanded) {
+    const linkEl = document.querySelector('[data-action="expand-all-entities"]') as HTMLLinkElement;
+    linkEl.dataset.status = 'opened';
+    document.querySelectorAll('[data-action="toggle-body"]').forEach((toggleButton: HTMLButtonElement) => {
+      toggleButton.click();
+    });
+  }
+  if (state.selectedEntities.length > 0) {
+    document.getElementById('withSelected').classList.remove('d-none');
+  }
+  document.querySelectorAll('[data-action="checkbox-entity"]').forEach((item: HTMLInputElement) => {
+    if (state.selectedEntities.includes(item.dataset.id)) {
+      item.click();
+    }
+    if (!state.expanded && state.expendedEntities.includes(item.dataset.id)) {
+      (document.querySelector(`[data-action="toggle-body"][data-id="${item.dataset.id}"]`) as HTMLButtonElement).click();
+    }
+  });
+}
+
+// dynamically handle the available actions depending the state of selected entities
+function toggleActionButtonsDependingOnSelected(): void {
+  const selected = Array.from(
+    document.querySelectorAll<HTMLInputElement>('[data-action="checkbox-entity"]:checked'),
+  );
+  // collect all states from selected checkboxes
+  const selectedStates = new Set<string>();
+  selected.forEach((chk) => {
+    if (chk.dataset.state) {
+      selectedStates.add(chk.dataset.state);
+    }
+  });
+
+  document.querySelectorAll<HTMLButtonElement>('[data-action="patch-selected-entities"]').forEach(btn => {
+    const action = btn.dataset.what;
+    // enable "Restore" button if 'Deleted' (3) is among the selected entities' state
+    const allowRestore = selectedStates.size === 1 && selectedStates.has('3') && action === 'restore';
+    // enable "Unarchive" button if 'Archived' (2) is among the selected entities' state
+    const allowUnarchive = selectedStates.size === 1 && selectedStates.has('2') && action === 'unarchive';
+    // special actions to disable by default unless above conditions apply
+    const isSpecialAction = ['restore', 'unarchive'].includes(action);
+    // default enabled actions
+    const allowDefault = !selectedStates.has('2') && !selectedStates.has('3') && !isSpecialAction;
+
+    const shouldEnable = allowRestore || allowUnarchive || allowDefault;
+    const buttonLabel = btn.getAttribute('aria-label') ?? action;
+    const cannotAction = i18next.t('illegal-action');
+    // the tooltip when you hover the action, based on the enabled/disabled state
+    if (shouldEnable) {
+      btn.disabled = false;
+      btn.setAttribute('title', buttonLabel);
+    } else {
+      btn.disabled = true;
+      btn.setAttribute('title', cannotAction);
+    }
+  });
+}
+
+// get query param value as number
+function getParamNum(param: string): number {
+  const params = new URLSearchParams(document.location.search);
+  let val = params.get(param);
+  if (!val) {
+    val = '0';
+  }
+  return parseInt(val, 10);
+}
+
+// the "load more" button triggers a reloading of div#showModeContent
+// so we keep track of the expanded and selected entities
+function getExpandedAndSelectedEntities(): void {
+  const expanded = (document.querySelector('[data-action="expand-all-entities"]') as HTMLLinkElement).dataset.status === 'opened';
+  const expendedEntities: string[] = [];
+  const selectedEntities: string[] = [];
+  document.querySelectorAll('[data-action="checkbox-entity"]').forEach((item: HTMLInputElement) => {
+    if (item.checked) {
+      selectedEntities.push(item.dataset.id);
+    }
+    if (!document.getElementById(item.dataset.randomid).hidden) {
+      expendedEntities.push(item.dataset.id);
+    }
+  });
+  document.getElementById('showModeContent').dataset.expandedAndSelectedEntities = JSON.stringify({expanded, selectedEntities, expendedEntities});
+}
+
+// DOM
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('info')) {
     return;
@@ -33,13 +206,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (about.page !== 'show') {
     return;
   }
-  const params = new URLSearchParams(document.location.search.slice(1));
 
   // SEARCH RELATED CODE
   const searchInput = document.getElementById('extendedArea') as HTMLInputElement;
   SearchSyntaxHighlighting.init(searchInput);
-
-  const notify = new Notification();
 
   // TomSelect for extra fields search select
   new TomSelect('#metakey', {
@@ -48,72 +218,6 @@ document.addEventListener('DOMContentLoaded', () => {
       'remove_button',
     ],
   });
-  // a filter helper can be a select or an input (for date and extrafield), so we need a function to get its value
-  function getFilterValueFromElement(element: HTMLElement): string {
-    const escapeDoubleQuotes = (string: string): string => {
-      // escape double quotes if not already escaped
-      return string.replace(/(?<!\\)"/g, '\\"');
-    };
-    const handleDate = (): string => {
-      const date = (document.getElementById('date') as HTMLInputElement).value;
-      const dateTo = (document.getElementById('dateTo') as HTMLInputElement).value;
-      const dateOperatorEl = document.getElementById('dateOperator') as HTMLSelectElement;
-      const dateOperator = dateOperatorEl.options[dateOperatorEl.selectedIndex].value;
-      if (date === '') {
-        return '';
-      }
-      if (dateTo === '') {
-        return dateOperator + date;
-      }
-      return date + '..' + dateTo;
-    };
-    const handleMetadata = (): string => {
-      const metakeyEl = document.getElementById('metakey') as HTMLSelectElement;
-      const metakey = metakeyEl.options[metakeyEl.selectedIndex].value;
-      const metavalue = (document.getElementById('metavalue') as HTMLInputElement).value;
-      if (metakey === '' || metavalue === '') {
-        return '';
-      }
-      const keyQuotes = getQuotes(metakey);
-      const valueQuotes = getQuotes(metavalue);
-      return keyQuotes + escapeDoubleQuotes(metakey) + keyQuotes + ':' + valueQuotes + escapeDoubleQuotes(metavalue) + valueQuotes;
-    };
-    if (element instanceof HTMLSelectElement) {
-      // clear action
-      if (element.options[element.selectedIndex].dataset.action === 'clear') {
-        return '';
-      }
-      if (element.id === 'dateOperator') {
-        return handleDate();
-      }
-      if (element.id === 'metakey') {
-        return handleMetadata();
-      }
-      return escapeDoubleQuotes(element.options[element.selectedIndex].value);
-    }
-    if (element instanceof HTMLInputElement) {
-      if (element.id === 'date') {
-        return handleDate();
-      }
-      if (element.id === 'dateTo') {
-        return handleDate();
-      }
-      if (element.id === 'metavalue') {
-        return handleMetadata();
-      }
-    }
-    return '😶';
-  }
-
-  // don't add quotes unless we need them (space or some special chars exist)
-  function getQuotes(filterValue: string): string {
-    let quotes = '';
-    if ([' ', '&', '|', '!', ':', '(', ')', '\'', '"'].some(value => filterValue.includes(value))) {
-      quotes = '"';
-    }
-    return quotes;
-  }
-
   // add a change event listener to all elements that helps constructing the query string
   document.querySelectorAll('.filterHelper').forEach(el => {
     el.addEventListener('change', event => {
@@ -200,23 +304,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   // END SEARCH RELATED CODE
 
-  function addHiddenInputToMainSearchForm(name: string, value: string): void
-  {
-    const form = document.getElementById('mainSearchForm');
-    const hiddenInputId = `${name}_hiddenInput`;
-    document.getElementById(hiddenInputId)?.remove();
-    const input = document.createElement('input');
-    input.hidden = true;
-    input.name = name;
-    input.value = value;
-    input.id = hiddenInputId;
-    form.appendChild(input);
-  }
-
-  const entity = getEntity();
-  const FavTagC = new FavTag();
-  const ApiC = new Api();
-
   // background color for selected entities
   const bgColor = '#c4f9ff';
 
@@ -236,16 +323,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
     });
-  }
-
-  // get query param value as number
-  function getParamNum(param: string): number {
-    const params = new URLSearchParams(document.location.search);
-    let val = params.get(param);
-    if (!val) {
-      val = '0';
-    }
-    return parseInt(val, 10);
   }
 
   /////////////////////////////////////////
@@ -269,82 +346,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // the "load more" button triggers a reloading of div#showModeContent
-  // so we keep track of the expanded and selected entities
-  function getExpandedAndSelectedEntities(): void {
-    const expanded = (document.querySelector('[data-action="expand-all-entities"]') as HTMLLinkElement).dataset.status === 'opened';
-    const expendedEntities: string[] = [];
-    const selectedEntities: string[] = [];
-    document.querySelectorAll('[data-action="checkbox-entity"]').forEach((item: HTMLInputElement) => {
-      if (item.checked) {
-        selectedEntities.push(item.dataset.id);
-      }
-      if (!document.getElementById(item.dataset.randomid).hidden) {
-        expendedEntities.push(item.dataset.id);
-      }
-    });
-    document.getElementById('showModeContent').dataset.expandedAndSelectedEntities = JSON.stringify({expanded, selectedEntities, expendedEntities});
-  }
-
-  function setExpandedAndSelectedEntities(): void {
-    const state = JSON.parse(document.getElementById('showModeContent').dataset.expandedAndSelectedEntities);
-    if (state.expanded) {
-      const linkEl = document.querySelector('[data-action="expand-all-entities"]') as HTMLLinkElement;
-      linkEl.dataset.status = 'opened';
-      document.querySelectorAll('[data-action="toggle-body"]').forEach((toggleButton: HTMLButtonElement) => {
-        toggleButton.click();
-      });
-    }
-    if (state.selectedEntities.length > 0) {
-      document.getElementById('withSelected').classList.remove('d-none');
-    }
-    document.querySelectorAll('[data-action="checkbox-entity"]').forEach((item: HTMLInputElement) => {
-      if (state.selectedEntities.includes(item.dataset.id)) {
-        item.click();
-      }
-      if (!state.expanded && state.expendedEntities.includes(item.dataset.id)) {
-        (document.querySelector(`[data-action="toggle-body"][data-id="${item.dataset.id}"]`) as HTMLButtonElement).click();
-      }
-    });
-  }
-
-  // dynamically handle the available actions depending the state of selected entities
-  function toggleActionButtonsDependingOnSelected(): void {
-    const selected = Array.from(
-      document.querySelectorAll<HTMLInputElement>('[data-action="checkbox-entity"]:checked'),
-    );
-    // collect all states from selected checkboxes
-    const selectedStates = new Set<string>();
-    selected.forEach((chk) => {
-      if (chk.dataset.state) {
-        selectedStates.add(chk.dataset.state);
-      }
-    });
-
-    document.querySelectorAll<HTMLButtonElement>('[data-action="patch-selected-entities"]').forEach(btn => {
-      const action = btn.dataset.what;
-      // enable "Restore" button if 'Deleted' (3) is among the selected entities' state
-      const allowRestore = selectedStates.size === 1 && selectedStates.has('3') && action === 'restore';
-      // enable "Unarchive" button if 'Archived' (2) is among the selected entities' state
-      const allowUnarchive = selectedStates.size === 1 && selectedStates.has('2') && action === 'unarchive';
-      // special actions to disable by default unless above conditions apply
-      const isSpecialAction = ['restore', 'unarchive'].includes(action);
-      // default enabled actions
-      const allowDefault = !selectedStates.has('2') && !selectedStates.has('3') && !isSpecialAction;
-
-      const shouldEnable = allowRestore || allowUnarchive || allowDefault;
-      const buttonLabel = btn.getAttribute('aria-label') ?? action;
-      const cannotAction = i18next.t('illegal-action');
-      // the tooltip when you hover the action, based on the enabled/disabled state
-      if (shouldEnable) {
-        btn.disabled = false;
-        btn.setAttribute('title', buttonLabel);
-      } else {
-        btn.disabled = true;
-        btn.setAttribute('title', cannotAction);
-      }
-    });
-  }
   /////////////////////////
   // MAIN CLICK LISTENER //
   /////////////////////////
@@ -616,13 +617,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   });
-
-  // we don't want the favtags opener on search page
-  // when a search is done, about.page will be show
-  // so check for the type param in url that will be present on search page
-  if (!params.get('type')) {
-    document.getElementById('sidepanel-buttons').removeAttribute('hidden');
-  }
 
   // FAVTAGS PANEL
   if (localStorage.getItem('isfavtagsOpen') === '1') {

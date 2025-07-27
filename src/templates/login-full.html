@@ -12,7 +12,7 @@
       <label for='init_team_select'>{{ 'Select a team'|trans }}</label>
       <select required name='team_id' class='form-control' id='init_team_select' autocomplete='off'>
         <option selected disabled value=''>{{ 'Select a team'|trans }}</option>
-        {% for team in teamsArr|filter(v => v.visible == 1) %}
+        {% for team in teamsArr %}
           <option value='{{ team.id }}'>{{ team.name }}</option>
         {% endfor %}
       </select>
@@ -35,7 +35,7 @@
       <label for='existing_user_team_select'>{{ 'Select a team'|trans }}</label>
       <select required name='team_id' class='form-control selectpicker' id='existing_user_team_select' data-show-subtext='true' data-live-search='true'>
         <option selected disabled value=''>{{ 'Select a team'|trans }}</option>
-        {% for team in teamsArr|filter(v => v.visible == 1) %}
+        {% for team in teamsArr %}
           <option value='{{ team.id }}'>{{ team.name }}</option>
         {% endfor %}
       </select>
@@ -175,7 +175,7 @@
             <div class='input-group-text'>{{ 'Select a team'|trans }}</div>
           </div>
           <select name='team_id' class='form-control' id='anon_login_select'>
-            {% for team in teamsArr|filter(v => v.visible == 1) %}
+            {% for team in teamsArr %}
               <option value='{{ team.id }}'>{{ team.name }}</option>
             {% endfor %}
           </select>

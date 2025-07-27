@@ -142,6 +142,7 @@ class Eln extends AbstractZip
             $linkPreviousId = $this->grabIdFromUrl($linkToCreate['link_previous_url'] ?? '');
             if ($linkPreviousId) {
                 $body = preg_replace(sprintf('/(?:experiments|database)\.php\?mode=view&amp;id=(%d)/', $linkPreviousId), $linkToCreate['link_entity_type']->toPage() . '?mode=view&amp;id=' . $linkToCreate['link_id'], $entity->entityData['body'] ?? '');
+                /** @psalm-suppress PossiblyInvalidCast */
                 $entity->update(new EntityParams('body', (string) $body));
             }
         }

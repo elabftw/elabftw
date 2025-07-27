@@ -131,8 +131,10 @@ class MakePdf extends AbstractMakePdf
         return $this->Entity->entityData['title'] ?? 'eLabFTW PDF';
     }
 
+    /** @psalm-suppress InvalidReturnType */
     protected function getKeywords(): string
     {
+        /** @psalm-suppress InvalidReturnStatement */
         return str_replace('|', ' ', $this->Entity->entityData['tags'] ?? '');
     }
 
@@ -306,6 +308,8 @@ class MakePdf extends AbstractMakePdf
             $body = str_replace($src, "var:$longname", $body);
         }
 
+        /** @psalm-suppress PossiblyInvalidArgument */
+        /** @psalm-suppress PossiblyInvalidCast */
         return $this->fixLocalLinks($body);
     }
 

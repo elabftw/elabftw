@@ -6,14 +6,17 @@
  * @package elabftw
  */
 import { createRoot } from 'react-dom/client'
-import KetcherEditor from './ketcher';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('ketcher-root')) {
-    const root = createRoot(document.getElementById('ketcher-root'));
-    // Note: use <StrictMode> in dev to spot errors
-    root.render(
-      <KetcherEditor />
-    );
+    // only import ketcher if we really need it
+    import('./ketcher.jsx')
+    .then(({ default: KetcherEditor }) => {
+      const root = createRoot(document.getElementById('ketcher-root'));
+      // Note: use <StrictMode> in dev to spot errors
+      root.render(
+        <KetcherEditor />
+      );
+    });
   }
 });

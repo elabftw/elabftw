@@ -10,7 +10,7 @@ import { createRoot } from 'react-dom/client'
 document.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('ketcher-root')) {
     // only import ketcher if we really need it
-    import('./ketcher.jsx')
+    import(/* webpackChunkName: "ketcher" */ './ketcher.jsx')
     .then(({ default: KetcherEditor }) => {
       const root = createRoot(document.getElementById('ketcher-root'));
       // Note: use <StrictMode> in dev to spot errors

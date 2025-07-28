@@ -7,11 +7,11 @@
  */
 import $ from 'jquery';
 import { Action as MalleAction, Malle } from '@deltablot/malle';
-import * as $3Dmol from '3dmol';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
 import { Action, Model } from './interfaces';
 import { getEntity, relativeMoment, reloadElements } from './misc';
 import { displayPlasmidViewer } from './ove';
+import { displayMoleculeViewer, get3dmol } from './3dmol';
 import i18next from './i18n';
 import { Api } from './Apiv2.class';
 import { marked } from 'marked';
@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   displayPlasmidViewer(about);
+  displayMoleculeViewer();
   const entity = getEntity();
   const ApiC = new Api();
 
@@ -179,8 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
         options = { color: 'spectrum' };
       }
       style[targetStyle] = options;
-
-      $3Dmol.viewers[el.dataset.divid].setStyle(style).render();
+      get3dmol().then(($3Dmol) => $3Dmol.viewers[el.dataset.divid].setStyle(style).render());
 
     // ARCHIVE UPLOAD
     } else if (el.matches('[data-action="archive-upload"]')) {
@@ -204,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const uploadsDiv = document.getElementById('uploadsDiv');
   if (uploadsDiv) {
     new MutationObserver(() => {
-      $3Dmol.autoload();
+      displayMoleculeViewer();
       displayPlasmidViewer(about);
       malleableFilecomment.listen();
       if (['edit', 'template-edit'].includes(about.page)) {

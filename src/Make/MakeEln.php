@@ -187,7 +187,8 @@ class MakeEln extends AbstractMakeEln
                     '@type' => 'File',
                     'name' => $file['real_name'],
                     'alternateName' => $file['long_name'],
-                    'encodingFormat' => $file['content_type'],
+                    // TODO actually store content type Mime for uploaded files in that column
+                    'encodingFormat' => $file['content_type'] ?? 'application/octet-stream',
                     'contentSize' => $file['filesize'],
                     'sha256' => $file['hash'] ?? hash_file('sha256', $uploadAtId),
                 );

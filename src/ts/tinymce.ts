@@ -351,6 +351,10 @@ export function getTinymceBaseConfig(page: string): object {
           }
         });
       });
+      // set default line height to 1 (is 1.4 for some reason)
+      editor.on('init', () => {
+        editor.execCommand('lineheight', false, '1');
+      });
       // Hook into the blur event - Finalize potential changes to images if user clicks outside of editor
       editor.on('blur', () => {
         // this will trigger the images_upload_handler event hook defined further above

@@ -8,3 +8,7 @@ figure {
   display: block;
   text-align: center;
 }
+
+body {
+    line-height: 1;
+}

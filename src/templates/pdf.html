@@ -21,25 +21,26 @@
   </htmlpagefooter>
 
   <div id='header'>
-    <h1>{{ entityData.title }}</h1>
-    <p>
-    {{ entityDate }}
-      <strong>{{ 'Date'|trans }}:</strong> {{ date }}<br>
-      {% if entityData.tags %}
-        {% set tags = entityData.tags|split('|') %}
-        <strong>{{ 'Tags'|trans }}:</strong>
-        {% for tag in tags %}
-          <span class='tag'>{{ tag }}</span>
-        {% endfor %}<br>
-      {% endif %}
-      {% if entityData.category_title %}
-      <strong>{{ 'Category'|trans }}:</strong> {{ entityData.category_title }}<br>
-      {% endif %}
-      {% if entityData.status_title %}
-      <strong>{{ 'Status'|trans }}:</strong> {{ entityData.status_title }}<br>
-      {% endif %}
-      <strong>{{ 'Created by'|trans }}:</strong> {{ entityData.fullname }}<br>
-    </p>
+      <h1 class='entry-title'>{{ entityData.title }}</h1>
+    <div class="entry-meta">
+      <p>
+        <strong>{{ 'Date'|trans }}:</strong> {{ date }}<br>
+        {% if entityData.tags %}
+          {% set tags = entityData.tags|split('|') %}
+          <strong>{{ 'Tags'|trans }}:</strong>
+          {% for tag in tags %}
+            <span class='tag'>{{ tag }}</span>
+          {% endfor %}<br>
+        {% endif %}
+        {% if entityData.category_title %}
+          <strong>{{ 'Category'|trans }}:</strong> {{ entityData.category_title }}<br>
+        {% endif %}
+        {% if entityData.status_title %}
+          <strong>{{ 'Status'|trans }}:</strong> {{ entityData.status_title }}<br>
+        {% endif %}
+        <strong>{{ 'Created by'|trans }}:</strong> {{ entityData.fullname }}<br>
+      </p>
+    </div>
   </div>
 
   {% if timestamped %}

@@ -77,7 +77,7 @@
         <span class='round-spot mr-1' style='background-color: #{{ item.color }}'></span>
       {% endif %}
       {% if item.custom_id %}
-        <span class='custom-id-badge mr-1' title='{{ 'Custom ID'|trans }}'>{{ item.custom_id }}</span>
+        <span class='color-medium mr-1' title='{{ 'Custom ID'|trans }}'>{{ item.custom_id }}</span>
       {% endif %}
       <a href='{{ Entity.entityType.toPage }}?mode=view&amp;id={{ item.id }}'>{{ item.title }}</a>
     </div>

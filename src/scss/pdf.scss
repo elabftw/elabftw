@@ -19,6 +19,27 @@ body {
   font-kerning: normal;
 }
 
+/* TITLES */
+h1 {
+  font-size: 150%;
+}
+
+h2 {
+  font-size: 140%;
+}
+
+h3 {
+  font-size: 130%;
+}
+
+h4 {
+  font-size: 120%;
+}
+
+h5 {
+  font-size: 110%;
+}
+
 a {
   color: variables.$elabblue;
   text-decoration: none;
@@ -124,6 +145,22 @@ tr:nth-child(odd) {
 
 #header {
   border-bottom: 1px solid #dcdddc;
+  margin-bottom: 1em;
+  overflow: hidden;
+  position: relative;
+}
+
+// use floats as mPDF does not allow display flex
+.entry-title {
+  float: left;
+  width: 60%;
+}
+
+.entry-meta {
+  float: right;
+  font-size: 90%;
+  text-align: right;
+  width: 35%;
 }
 
 .footer-block {

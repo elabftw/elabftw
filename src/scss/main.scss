@@ -254,36 +254,28 @@ blockquote::before {
 }
 
 /* TITLES */
-h1 {
+h1,
+h2,
+h3,
+h4,
+h5 {
   color: $medium;
-  font-size: 200%;
   font-weight: normal;
   margin-top: 0;
 }
 
-h2 {
-  color: $medium;
-  font-size: 180%;
-  font-weight: normal;
-  margin-top: 0;
-}
+h1 { font-size: 200%; }
+
+h2 { font-size: 180%; }
 
 h3 {
-  color: $medium;
   font-size: 160%;
   margin: 0 auto;
 }
 
-h4 {
-  color: $medium;
-  font-size: 150%;
-  font-weight: normal;
-}
+h4 { font-size: 150%; }
 
-h5 {
-  color: $medium;
-  font-size: 130%;
-}
+h5 { font-size: 130%; }
 
 /* HEAD */
 

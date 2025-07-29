@@ -118,7 +118,7 @@ abstract class AbstractEntityController implements ControllerInterface
         }
 
         // must be before the call to readShow
-        if ($this->App->Users->userData['always_show_owned'] === 1) {
+        if (($this->App->Users->userData['always_show_owned'] ?? null) === 1) {
             $this->Entity->alwaysShowOwned = true;
         }
 

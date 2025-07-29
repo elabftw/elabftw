@@ -25,7 +25,7 @@ export default class SidePanel {
     // hide panel
     document.getElementById(this.panelId).toggleAttribute('hidden', true);
     // store the current state
-    localStorage.setItem(`is${this.model}Open`, '0');
+    localStorage.removeItem('opened-sidepanel');
     const opener = document.getElementById(`${this.panelId}Opener`);
     opener.classList.add('bounce-right');
     opener.classList.remove('bounce-left');
@@ -38,7 +38,7 @@ export default class SidePanel {
     // show panel
     document.getElementById(this.panelId).removeAttribute('hidden');
     // store the current state
-    localStorage.setItem(`is${this.model}Open`, '1');
+    localStorage.setItem('openedSidePanel', this.model);
     const opener = document.getElementById(`${this.panelId}Opener`);
     opener.classList.remove('bounce-right');
     opener.classList.add('bounce-left');

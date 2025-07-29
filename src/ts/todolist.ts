@@ -7,11 +7,9 @@
  */
 import Todolist from './Todolist.class';
 import { Model } from './interfaces';
-import { getPageName } from './misc';
 
 document.addEventListener('DOMContentLoaded', () => {
-  // these are the pages where it's pointless to load todolist code
-  if (['login.php', 'register.php', 'change-pass.php'].includes(getPageName())) {
+  if (!document.getElementById('todolistPanel')) {
     return;
   }
 
@@ -41,11 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const TodolistC = new Todolist();
   TodolistC.unfinishedStepsScope = unfinishedStepsScope;
 
-  // TOGGLE
-  // reopen to-do list panel if it was previously opened
-  if (localStorage.getItem(`is${TodolistC.model}Open`) === '1') {
-    TodolistC.toggle();
-  }
   scopeSwitch = document.getElementById(TodolistC.model + 'StepsShowTeam') as HTMLInputElement;
   scopeSwitch.addEventListener('change', () => {
     if (!document.getElementById(TodolistC.panelId).hasAttribute('hidden')){
@@ -93,10 +86,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // disable the checkbox
         (el as HTMLInputElement).disabled = true;
       });
-
-    // TOGGLE TODOLIST
-    } else if (el.matches('[data-action="toggle-todolist"]')) {
-      TodolistC.toggle();
     }
   });
 });

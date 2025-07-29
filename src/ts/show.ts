@@ -11,14 +11,12 @@ import {
   getCheckedBoxes,
   getEntity,
   permissionsToJson,
-  reloadElements,
   reloadEntitiesShow,
   TomSelect,
 } from './misc';
 import { Action, Model } from './interfaces';
 import 'bootstrap/js/src/modal.js';
 import i18next from './i18n';
-import FavTag from './FavTag.class';
 import { Api } from './Apiv2.class';
 import { Notification } from './Notifications.class';
 import { SearchSyntaxHighlighting } from './SearchSyntaxHighlighting.class';
@@ -26,7 +24,6 @@ declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 const ApiC = new Api();
 const entity = getEntity();
-const FavTagC = new FavTag();
 const notify = new Notification();
 const params = new URLSearchParams(document.location.search.slice(1));
 
@@ -439,10 +436,6 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="clear-form"]')) {
       clearForm(document.getElementById(el.dataset.target));
 
-    // TOGGLE FAVTAGS PANEL
-    } else if (el.matches('[data-action="toggle-favtags"]')) {
-      FavTagC.toggle();
-
     // TOGGLE DISPLAY
     } else if (el.matches('[data-action="toggle-items-layout"]')) {
       ApiC.notifOnSaved = false;
@@ -467,10 +460,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       el.classList.add('selected');
       reloadEntitiesShow(el.dataset.tag);
-
-    // remove a favtag
-    } else if (el.matches('[data-action="destroy-favtags"]')) {
-      FavTagC.destroy(parseInt(el.dataset.id, 10)).then(() => reloadElements(['favtagsTagsDiv']));
 
     // SORT COLUMN IN TABULAR MODE
     } else if (el.matches('[data-action="reorder-entities"]')) {
@@ -617,11 +606,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   });
-
-  // FAVTAGS PANEL
-  if (localStorage.getItem('isfavtagsOpen') === '1') {
-    FavTagC.toggle();
-  }
 
   new TomSelect('#tagFilter', {
     onInitialize: () => {

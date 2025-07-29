@@ -9,6 +9,7 @@ import $ from 'jquery';
 import { Api } from './Apiv2.class';
 import { Malle, InputType, Action as MalleAction, SelectOptions } from '@deltablot/malle';
 import 'bootstrap/js/src/modal.js';
+import FavTag from './FavTag.class';
 import { clearLocalStorage, rememberLastSelected, selectLastSelected } from './localStorage';
 import {
   adjustHiddenState,
@@ -59,6 +60,7 @@ import { KeyboardShortcuts } from './KeyboardShortcuts.class';
 import JsonEditorHelper from './JsonEditorHelper.class';
 import { Counter } from './Counter.class';
 import { getEditor } from './Editor.class';
+import Todolist from './Todolist.class';
 
 // we need to extend the interface from malle to add more properties
 interface Status extends SelectOptions {
@@ -89,6 +91,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const ApiC = new Api();
   const notify = new Notification();
   const entity = getEntity();
+  const FavTagC = new FavTag();
+  const TodolistC = new Todolist();
 
   const TableSortingC = new TableSorting();
   TableSortingC.init();
@@ -105,6 +109,23 @@ document.addEventListener('DOMContentLoaded', () => {
       userPrefs.scSearch,
     );
     kbd.init();
+  }
+
+  // this lives outside of #container, so add their own click listener
+  document.getElementById('sidepanel-buttons')?.addEventListener('click', event => {
+    const el = (event.target as HTMLElement);
+    if (el.matches('[data-action="toggle-sidepanel"]')) {
+      const SidePanelC = el.dataset.sidepanel === Model.FavTag ? FavTagC : TodolistC;
+      SidePanelC.toggle();
+    }
+  });
+  // SIDE PANEL STATE
+  const openedSidePanel = localStorage.getItem('opened-sidepanel');
+  if (openedSidepanel === Model.FavTag) {
+    FavTagC.toggle();
+  }
+  if (openedSidepanel === Model.Todolist) {
+    TodolistC.toggle();
   }
 
   // ACTIVATE REACTIVE COUNT OF .COUNTABLE ITEMS
@@ -478,6 +499,10 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="switch-editor"]')) {
       getEditor().switch(entity).then(() => window.location.reload());
 
+    // REMOVE A FAVTAG
+    } else if (el.matches('[data-action="destroy-favtags"]')) {
+      FavTagC.destroy(parseInt(el.dataset.id, 10)).then(() => reloadElements(['favtagsTagsDiv']));
+
     // SELECT FILTERS - state, orderby...
     } else if (el.matches('[data-action="insert-param-and-reload"]')) {
       const params = new URLSearchParams(document.location.search.slice(1));
@@ -504,6 +529,10 @@ document.addEventListener('DOMContentLoaded', () => {
         top: 0,
         behavior: 'smooth',
       });
+
+    } else if (el.matches('[data-action="close-sidepanel"]')) {
+      const SidePanelC = el.dataset.sidepanel === Model.FavTag ? FavTagC : TodolistC;
+      SidePanelC.hide();
 
     // TOGGLE PINNED
     } else if (el.matches('[data-action="toggle-pin"]')) {

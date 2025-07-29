@@ -49,8 +49,9 @@ describe('Login page', () => {
 
   it ('logs in as anonymous user', () => {
     cy.visit('/login.php');
-    cy.get('button[name="submit"]').last().click();
-    // check we're logged in correctly as anonymous user
+    cy.get('#anon-login').should('exist');
+    cy.get('#anon_login_select').select(0);
+    cy.get('#anon-login button[type="submit"]').click();
     cy.location('pathname').should('eq', '/experiments.php');
     cy.htmlvalidate();
     cy.request('/app/logout.php');

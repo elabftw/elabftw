@@ -38,7 +38,7 @@ export default class SidePanel {
     // show panel
     document.getElementById(this.panelId).removeAttribute('hidden');
     // store the current state
-    localStorage.setItem('opened-sidepanel', this.model);
+    localStorage.setItem('openedSidePanel', this.model);
     const opener = document.getElementById(`${this.panelId}Opener`);
     opener.classList.remove('bounce-right');
     opener.classList.add('bounce-left');

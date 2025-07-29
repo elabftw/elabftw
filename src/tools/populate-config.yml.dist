@@ -20,6 +20,8 @@ config:
   admin_validate: 0
   ldap_base_dn: dc=example,dc=org
   ldap_host: ldap
+  # log in as anonymous users
+  anon_users: 1
   # this is the default password of osixia/openldap docker container
   ldap_password: admin
   ldap_username: cn=admin,dc=example,dc=org

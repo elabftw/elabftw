@@ -46,4 +46,13 @@ describe('Login page', () => {
     fillEmailAddress('toto@yopmail.com{enter}');
     cy.get('div.alert.alert-success').should('contain', answer);
   });
+
+  it ('logs in as anonymous user', () => {
+    cy.visit('/login.php');
+    cy.get('button[name="submit"]').last().click();
+    // check we're logged in correctly as anonymous user
+    cy.location('pathname').should('eq', '/experiments.php');
+    cy.htmlvalidate();
+    cy.request('/app/logout.php');
+  });
 });

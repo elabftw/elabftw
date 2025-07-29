@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
   // SIDE PANEL STATE
-  const openedSidepanel = localStorage.getItem('opened-sidepanel');
+  const openedSidePanel = localStorage.getItem('opened-sidepanel');
   if (openedSidepanel === Model.FavTag) {
     FavTagC.toggle();
   }

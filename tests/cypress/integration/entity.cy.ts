@@ -99,7 +99,7 @@ describe('Experiments', () => {
     cy.htmlvalidate();
     cy.contains('Create').click();
     cy.get('#createModal_database').should('be.visible').should('contain', 'Microscope').contains('Microscope').click();
-    entityCatStat('Microscope', 'Plasmid', 'In stock');
+    entityCatStat('Microscope', 'Yeast', 'In stock');
     entityEdit();
     entityComment();
     entityDuplicate();

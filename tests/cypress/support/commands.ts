@@ -48,3 +48,24 @@ Cypress.Commands.add('login', (email = 'toto@yopmail.com', password = 'totototot
       });
     });
 });
+Cypress.Commands.add('getExperimentId', () => {
+  // Perform a GET request to the experiments endpoint
+  return cy
+    .request({
+      method: 'GET',
+      url: '/api/v2/experiments?scope=1',
+    })
+    .then((response) => {
+      // Assert that the request was successful
+      expect(response.status).to.eq(200);
+
+      const experiments = response.body;
+      // Ensure we have at least one experiment
+      if (!Array.isArray(experiments) || experiments.length === 0) {
+        throw new Error('No experiments found in the response');
+      }
+
+      // Return the ID of the first experiment
+      return experiments[0].id;
+    });
+});

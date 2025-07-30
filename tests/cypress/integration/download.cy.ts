@@ -31,7 +31,7 @@ describe('download.php', () => {
         filename,
       );
       cy.request({
-        url: '/api/v2/experiments/2/uploads',
+        url: `/api/v2/experiments/${cy.getExperimentId()}/uploads`,
         method: 'POST',
         body: formData,
         headers: {

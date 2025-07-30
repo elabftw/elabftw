@@ -1,150 +1,105 @@
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @author Moustapha <Deltablot>
- * @copyright 2024 Nicolas CARPi
+ * @copyright 2025 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
 
-import React, { useRef, useEffect, useCallback } from 'react';
+/**
+ * Code related to the excel tables present on the Edit page of an entity
+ * SheetJs integration (xlsx) with AG-Grid
+ */
+
+import React, { useState, useCallback, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
-import Spreadsheet from 'x-data-spreadsheet';
 import { read, utils, writeFileXLSX } from 'xlsx';
-// CSS loaded via <link> in head.html template
+import { AgGridReact } from '@ag-grid-community/react';
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-alpine.css';
+import { Notification } from './Notifications.class';
 
-// helper: convert AoA (array of arrays) object to x-data-spreadsheet format
-function aoaToGrid(dataObj) {
-  const result = {};
-  Object.entries(dataObj).forEach(([name, aoa]) => {
-    const sheet = { name, rows: {} };
-    aoa.forEach((row, ri) => {
-      const rowObj = { cells: {} };
-      row.forEach((cell, ci) => {
-        rowObj.cells[ci] = { text: cell != null ? String(cell) : '' };
-      });
-      sheet.rows[ri] = rowObj;
-    });
-    result[name] = sheet;
-  });
-  return result;
-}
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-function XSpreadsheetEditor() {
-  const containerRef = useRef(null);
-  const gridRef = useRef(null);
-  const fileInputRef = useRef(null);
+function SheetEditor() {
+  const [columnDefs, setColumnDefs] = useState([]);
+  const [rowData, setRowData] = useState([]);
+  const fileInputRef = useRef();
 
-  // Initialize grid once
-  useEffect(() => {
-    if (containerRef.current) {
-      gridRef.current = new Spreadsheet(containerRef.current, {
-        mode: 'edit',
-        showToolbar: true,
-        showGrid: true,
-        showContextmenu: true,
-        view: {
-          height: () => containerRef.current.clientHeight,
-          width: () => containerRef.current.clientWidth
-        }
-      });
-    }
-  }, []);
-
-  const handleImport = useCallback((e) => {
-    const file = e.target.files && e.target.files[0];
+  // import file
+  const handleFile = useCallback((e) => {
+    const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = (ev) => {
-      const data = ev.target.result;
-      const wb = read(data, { type: 'array' });
-      // build AoA object
-      const aoaObj = {};
-      wb.SheetNames.forEach((name) => {
-        const ws = wb.Sheets[name];
-        aoaObj[name] = utils.sheet_to_json(ws, { header: 1, raw: false });
-      });
-      // convert and load
-      if (containerRef.current) {
-        containerRef.current.innerHTML = '';
-        gridRef.current = new Spreadsheet(containerRef.current, {
-          mode: 'edit',
-          showToolbar: true,
-          showGrid: true,
-          showContextmenu: true,
-          view: {
-            height: () => containerRef.current.clientHeight,
-            width: () => containerRef.current.clientWidth
-          }
+    reader.onload = function(event) {
+      try {
+        const wb = read(event.target.result, { type: 'binary' });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        // array of arrays
+        const aoa = utils.sheet_to_json(ws, { header: 1 });
+        if (!aoa.length) return;
+        // build the grid
+        const headers = aoa[0];
+        const rows = aoa.slice(1).map((r, index) => {
+          const row = {};
+          headers.forEach((h, j) => row[h || `Column${j}`] = r[j] ?? '');
+          return row;
         });
-        gridRef.current.loadData(aoaToGrid(aoaObj));
-        // console.log(aoaObj);
+        const columns = headers.map((header, index) => ({ field: header || `Column${index}`, editable: true}));
+        setColumnDefs(columns);
+        setRowData(rows);
+      } catch (error) {
+        (new Notification()).error(error);
       }
-    };
+    }
     reader.readAsArrayBuffer(file);
   }, []);
 
-  // Export handler
+  // export table to xlsx
   const handleExport = useCallback(() => {
-    if (!gridRef.current) return;
-    const gridData = gridRef.current.getData();
-    const aoaObj = {};
-    Object.entries(gridData).forEach(([name, sheet]) => {
-      const rowsIndex = Object.keys(sheet.rows).map(r => parseInt(r, 10));
-      const maxRow = rowsIndex.length ? Math.max(...rowsIndex) : 0;
-      const colsIndex = sheet.rows[0]
-        ? Object.keys(sheet.rows[0].cells).map(c => parseInt(c, 10))
-        : [];
-      const maxCol = colsIndex.length ? Math.max(...colsIndex) : 0;
-      const aoa = Array.from({ length: maxRow + 1 }, (_, ri) =>
-        Array.from({ length: maxCol + 1 }, (_, ci) =>
-          sheet.rows[ri] && sheet.rows[ri].cells[ci]
-            ? sheet.rows[ri].cells[ci].text
-            : ''
-        )
-      );
-      aoaObj[name] = aoa;
-    });
+    if (!columnDefs.length || !rowData.length) return;
+    const headers = columnDefs.map(col => col.field);
+    const aoa = [headers, ...rowData.map(row => headers.map(h => row[h]))];
+    const ws = utils.aoa_to_sheet(aoa);
     const wb = utils.book_new();
-    Object.entries(aoaObj).forEach(([name, aoa]) => {
-      const ws = utils.aoa_to_sheet(aoa);
-      utils.book_append_sheet(wb, ws, name);
-    });
+    utils.book_append_sheet(wb, ws, 'Sheet1');
     writeFileXLSX(wb, 'export.xlsx');
-  }, []);
+  }, [columnDefs, rowData]);
 
   return (
-    <div style={{ height: '100%', width: '100%' }}>
+    <div className='sheet-editor'>
       <input
-        type="file"
-        accept=".xlsx,.xls"
+        type='file'
+        accept='.xlsx,.xls'
         ref={fileInputRef}
-        style={{ display: 'none' }}
-        onChange={handleImport}
+        className='d-none'
+        onChange={handleFile}
       />
       <button
-        className="btn hl-hover-gray p-2 mr-2"
-        onClick={() => fileInputRef.current && fileInputRef.current.click()}
-        title="Import"
-        aria-label="Import"
-        type="button"
+        className='btn hl-hover-gray p-2 mr-2'
+        onClick={() => fileInputRef.current?.click()}
+        title='Import'
+        type='button'
       >
-        <i className="fas fa-upload fa-fw" />
+        <i className='fas fa-upload fa-fw' />
       </button>
-      <button
-        className="btn hl-hover-gray p-2"
-        onClick={handleExport}
-        title="Export"
-        aria-label="Export"
-        type="button"
-      >
-        <i className="fas fa-download fa-fw" />
-      </button>
-      <div
-        id="xspreadsheet"
-        ref={containerRef}
-        style={{ height: '400px', width: '100%', marginTop: '10px' }}
-      />
+      {columnDefs.length > 0 && rowData.length > 0 && (
+        <>
+          <div className='ag-theme-alpine' style={{ height: 400, marginTop: 10 }}>
+            <AgGridReact
+              rowData={rowData}
+              columnDefs={columnDefs}
+              defaultColDef={{ sortable: true, filter: true, editable: true }}
+            />
+          </div>
+          <button onClick={handleExport} className='btn btn-primary mt-2'>
+            Export XLSX
+          </button>
+        </>
+      )}
     </div>
   );
 }
@@ -153,6 +108,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const el = document.getElementById('sheet-importer-root');
   if (el) {
     const root = createRoot(el);
-    root.render(<XSpreadsheetEditor />);
+    root.render(<SheetEditor />);
   }
 });

@@ -59,6 +59,8 @@ function SheetEditor() {
   const handleExport = useCallback((format) => {
     if (!columnDefs.length || !rowData.length) return;
     const headers = columnDefs.map(col => col.field);
+    // TODO: typescript: when migrating, see https://docs.sheetjs.com/docs/demos/grid/rdg/#integration-details
+    // Array of arraysis the most generic data representation
     const aoa = [headers, ...rowData.map(row => headers.map(h => row[h]))];
     const ws = utils.aoa_to_sheet(aoa);
     const wb = utils.book_new();
@@ -79,7 +81,46 @@ function SheetEditor() {
     }
   }, [columnDefs, rowData]);
 
-  return (
+  const addRow = () => {
+    const newRow = {};
+    columnDefs.forEach(col => {
+      newRow[col.field] = '';
+    });
+    setRowData([...rowData, newRow]);
+  };
+
+  const addColumn = () => {
+    const newField = `Column${columnDefs.length}`;
+    const newCol = { field: newField, editable: true };
+    const updatedColumns = [...columnDefs, newCol];
+    const updatedRows = rowData.map(row => ({ ...row, [newField]: '' }));
+    setColumnDefs(updatedColumns);
+    setRowData(updatedRows);
+  };
+
+  /*
+              // when using f()addColumn, the column is named ColumnX but we might want to rename it.
+              // since ag-grid doesn't allow editing headers, let's use a modal for user input
+              onColumnHeaderClicked={(params) => {
+                if (!params.column) return;
+                const oldField = params.column.getColDef().field;
+                const newField = prompt('Rename column:', oldField);
+                if (!newField || newField === oldField) return;
+
+                const updatedColumns = columnDefs.map(col =>
+                  col.field === oldField ? { ...col, field: newField } : col
+                );
+                const updatedRows = rowData.map(row => {
+                  const newRow = { ...row, [newField]: row[oldField] };
+                  delete newRow[oldField];
+                  return newRow;
+                });
+
+                setColumnDefs(updatedColumns);
+                setRowData(updatedRows);
+              }}
+   */
+   return (
     <div className='sheet-editor'>
       <input
         type='file'
@@ -110,6 +151,8 @@ function SheetEditor() {
             <button onClick={() => handleExport(FileType.Xlsb)} className='btn btn-secondary'>Export XLSB</button>
             <button onClick={() => handleExport(FileType.Csv)} className='btn btn-secondary'>Export CSV</button>
             <button onClick={() => handleExport(FileType.Html)} className='btn btn-secondary'>Export HTML</button>
+            <button onClick={addRow} className='btn btn-success'>Add Row</button>
+            <button onClick={addColumn} className='btn btn-info'>Add Column</button>
           </div>
         </>
       )}

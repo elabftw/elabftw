@@ -49,23 +49,40 @@ Cypress.Commands.add('login', (email = 'toto@yopmail.com', password = 'totototot
     });
 });
 Cypress.Commands.add('getExperimentId', () => {
-  // Perform a GET request to the experiments endpoint
   return cy
     .request({
       method: 'GET',
       url: '/api/v2/experiments?scope=1',
     })
     .then((response) => {
-      // Assert that the request was successful
       expect(response.status).to.eq(200);
 
       const experiments = response.body;
-      // Ensure we have at least one experiment
-      if (!Array.isArray(experiments) || experiments.length === 0) {
-        throw new Error('No experiments found in the response');
+      if (Array.isArray(experiments) && experiments.length > 0) {
+        // Return the ID of the first experiment if it exists
+        return experiments[0].id;
       }
+      // toto won't have any experiment by default
+      return cy
+        .request({ method: 'POST', url: '/api/v2/experiments', body: {} })
+        .then((postRes) => {
+          expect(postRes.status).to.eq(201);
 
-      // Return the ID of the first experiment
-      return experiments[0].id;
+          // Extract Location header
+          const locationHeader = postRes.headers['location'] || postRes.headers['Location'];
+          if (!locationHeader) {
+            throw new Error('Location header not found in create experiment response');
+          }
+
+          // The Location header may include ports and full paths, e.g. https://elab.local:3148/api/v2/experiments/17
+          // Split the URL by '/' and take the last segment as the ID
+          const segments = locationHeader.split('/');
+          const idSegment = segments.pop();
+          const id = idSegment && !isNaN(Number(idSegment)) ? Number(idSegment) : null;
+          if (id === null) {
+            throw new Error(`Cannot parse experiment ID from Location header: ${locationHeader}`);
+          }
+          return id;
+        });
     });
 });

@@ -4,8 +4,10 @@ describe('Revisions', () => {
   });
 
   it('Show revisions page', () => {
-    cy.visit('revisions.php?type=experiments&item_id=1');
-    cy.htmlvalidate();
-    cy.get('h1#pageTitle').should('have.text', 'Revisions');
+    cy.getExperimentId().then(expid => {
+      cy.visit(`revisions.php?type=experiments&item_id=${expid}`);
+      cy.htmlvalidate();
+      cy.get('h1#pageTitle').should('have.text', 'Revisions');
+    });
   });
 });

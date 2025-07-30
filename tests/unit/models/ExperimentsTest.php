@@ -37,8 +37,8 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->Users = new Users(1, 1);
-        $this->Experiments = $this->getFreshExperiment();
+        $this->Users = $this->getRandomUserInTeam(1);
+        $this->Experiments = $this->getFreshExperimentWithGivenUser($this->Users);
     }
 
     public function testCreateAndDestroy(): void
@@ -113,7 +113,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $new = $this->Experiments->create(template: 0);
         $this->Experiments->setId($new);
         $this->assertEquals($new, $this->Experiments->id);
-        $this->assertEquals(1, $this->Experiments->Users->userData['userid']);
+        $this->assertEquals($this->Users->userid, $this->Experiments->Users->userData['userid']);
         $entityData = $this->Experiments->patch(Action::Update, array('title' => 'Untitled', 'date' => '20160729', 'body' => '<p>Body</p>'));
         $this->assertEquals('Untitled', $entityData['title']);
         $this->assertEquals('2016-07-29', $entityData['date']);
@@ -230,7 +230,6 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdateJsonField(): void
     {
-        $this->Experiments->setId(1);
         // set some metadata, spaces after colons and commas are important as this is how metadata gets return from MySQL
         $metadata = '{"extra_fields": {"test": {"type": "text", "value": "%s"}, "multiselect": {"type": "select", "value": ["val1", "val2", "val3"], "options": ["val1", "val2", "val3", "val4"], "allow_multi_values": true}}}';
         $res = $this->Experiments->patch(Action::Update, array('metadata' => $metadata));
@@ -246,12 +245,15 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdateExtraFieldsOrdering(): void
     {
+        // create some metadata first
+        $metadata = '{"extra_fields": {"test": {"type": "text", "value": "%s"}, "multiselect": {"type": "select", "value": ["val1", "val2", "val3"], "options": ["val1", "val2", "val3", "val4"], "allow_multi_values": true}}}';
+        $this->Experiments->patch(Action::Update, array('metadata' => $metadata));
+        // now update ordering of fields
         $OrderingParams = new ExtraFieldsOrderingParams(array(
             'entity' => array('type' => EntityType::Experiments->value, 'id' => '123'),
             'ordering' => array('multiselect', 'test'),
             'table' => 'extra_fields',
         ));
-        $this->Experiments->setId(1);
         $entityData = $this->Experiments->updateExtraFieldsOrdering($OrderingParams);
         $decoded = json_decode($entityData['metadata'], true);
         $this->assertEquals(0, $decoded['extra_fields']['multiselect']['position']);

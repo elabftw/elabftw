@@ -20,7 +20,6 @@ use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Users\Users;
 use Elabftw\Params\EntityParams;
 use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\HttpFoundation\InputBag;
@@ -93,7 +92,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
     public function testReadFromAnItem(): void
     {
         $this->assertIsArray($this->Scheduler->readAll());
-        $Items = new Items(new Users(1, 1), 1);
+        $Items = $this->getFreshBookableItem(1);
         $this->Scheduler = new Scheduler($Items, null, $this->start, $this->end);
         $this->assertIsArray($this->Scheduler->readOne());
     }

@@ -97,7 +97,7 @@
         {% set isImage = false %}
         <tr>
           <th scope='row'>{{ key }}</th>
-          {% if key == '@id' and value matches '/\.(png|jpe?g|bmp|gif)$/i' %}
+          {% if key == '@id' and value matches '/.(png|jpe?g|bmp|gif)$/i' %}
             {% set isImage = true %}
           {% endif %}
           <th>{% if isImage %}<a href='{{ value }}'>{% endif %}{{ value|any2string }}{% if isImage %}</a>{% endif %}</th>

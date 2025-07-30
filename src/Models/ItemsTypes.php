@@ -19,7 +19,6 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\Sort;
-use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\SqlBuilderInterface;
@@ -64,7 +63,7 @@ final class ItemsTypes extends AbstractTemplateEntity
         // specific to items_types
         ?string $color = null,
     ): int {
-        $this->isAdminOrExplode();
+        $this->canWriteOrExplode();
 
         $title = Filter::title($title ?? _('Default'));
         $defaultPermissions = BasePermissions::Team->toJson();
@@ -143,6 +142,7 @@ final class ItemsTypes extends AbstractTemplateEntity
     #[Override]
     public function patch(Action $action, array $params): array
     {
+        $this->canWriteOrExplode();
         // items_types have no category, so allow for calling an update on it but ignore it here so it doesn't cause sql error with unknown column
         unset($params['category']);
         return parent::patch($action, $params);
@@ -153,8 +153,8 @@ final class ItemsTypes extends AbstractTemplateEntity
      */
     public function updateOrdering(OrderingParams $params): void
     {
+        $this->canWriteOrExplode();
         // we'll probably need to extract the ordering column and place it in a team related table
-        $this->isAdminOrExplode();
         $sql = 'UPDATE items_types SET ordering = :ordering WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
@@ -171,10 +171,20 @@ final class ItemsTypes extends AbstractTemplateEntity
         return new ItemsTypesSqlBuilder($this);
     }
 
-    private function isAdminOrExplode(): void
+    #[Override]
+    protected function canWrite(): bool
     {
-        if ($this->bypassWritePermission === false && !$this->Users->isAdmin) {
-            throw new IllegalActionException('User tried to edit items types but is not Admin');
+        $team = new Teams($this->Users, $this->Users->team);
+        return $team->teamArr['users_canwrite_resources_categories'] === 1 || $this->Users->isAdmin;
+    }
+
+    protected function canWriteOrExplode(): void
+    {
+        if ($this->bypassWritePermission) {
+            return;
+        }
+        if (!$this->canWrite()) {
+            throw new ImproperActionException(_('Sorry, edition of resources templates has been disabled for users by your team Admin.'));
         }
     }
 }

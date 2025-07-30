@@ -14,7 +14,7 @@
 
 import React, { useState, useCallback, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
-import { read, utils, writeFileXLSX } from 'xlsx';
+import { read, utils, writeFile, writeFileXLSX } from 'xlsx';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
@@ -29,44 +29,54 @@ function SheetEditor() {
   const [rowData, setRowData] = useState([]);
   const fileInputRef = useRef();
 
-  // import file
   const handleFile = useCallback((e) => {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
     reader.onload = function(event) {
       try {
-        const wb = read(event.target.result, { type: 'binary' });
+        const wb = read(event.target.result, { type: 'array' });
         const ws = wb.Sheets[wb.SheetNames[0]];
         // array of arrays
         const aoa = utils.sheet_to_json(ws, { header: 1 });
         if (!aoa.length) return;
-        // build the grid
         const headers = aoa[0];
         const rows = aoa.slice(1).map((r, index) => {
           const row = {};
           headers.forEach((h, j) => row[h || `Column${j}`] = r[j] ?? '');
           return row;
         });
-        const columns = headers.map((header, index) => ({ field: header || `Column${index}`, editable: true}));
+        const columns = headers.map((header, index) => ({ field: header || `Column${index}`, editable: true }));
         setColumnDefs(columns);
         setRowData(rows);
       } catch (error) {
         (new Notification()).error(error);
       }
-    }
+    };
     reader.readAsArrayBuffer(file);
   }, []);
 
-  // export table to xlsx
-  const handleExport = useCallback(() => {
+  const handleExport = useCallback((format) => {
     if (!columnDefs.length || !rowData.length) return;
     const headers = columnDefs.map(col => col.field);
     const aoa = [headers, ...rowData.map(row => headers.map(h => row[h]))];
     const ws = utils.aoa_to_sheet(aoa);
     const wb = utils.book_new();
     utils.book_append_sheet(wb, ws, 'Sheet1');
-    writeFileXLSX(wb, 'export.xlsx');
+
+    switch (format) {
+      case 'xlsb':
+        writeFile(wb, 'export.xlsb', { bookType: 'xlsb' });
+        break;
+      case 'csv':
+        writeFile(wb, 'export.csv', { bookType: 'csv' });
+        break;
+      case 'html':
+        writeFile(wb, 'export.html', { bookType: 'html' });
+        break;
+      default:
+        writeFileXLSX(wb, 'export.xlsx');
+    }
   }, [columnDefs, rowData]);
 
   return (
@@ -95,9 +105,12 @@ function SheetEditor() {
               defaultColDef={{ sortable: true, filter: true, editable: true }}
             />
           </div>
-          <button onClick={handleExport} className='btn btn-primary mt-2'>
-            Export XLSX
-          </button>
+          <div className='btn-group mt-2'>
+            <button onClick={() => handleExport('xlsx')} className='btn btn-primary'>Export XLSX</button>
+            <button onClick={() => handleExport('xlsb')} className='btn btn-secondary'>Export XLSB</button>
+            <button onClick={() => handleExport('csv')} className='btn btn-secondary'>Export CSV</button>
+            <button onClick={() => handleExport('html')} className='btn btn-secondary'>Export HTML</button>
+          </div>
         </>
       )}
     </div>

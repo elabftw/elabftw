@@ -29,6 +29,7 @@ const t = {
     "error-no-category": "Keyingi Custom IDni olish uchun turkum talab qilinadi",
     "error-fetch-request": "There was an error while fetching the requested data: {{error}}",
     "error-parsing-metadata": "There was an error while parsing metadata (extra fields). Full error has been logged to the browser console.",
+    "export": "Eksport",
     "extra-fields": "Qo'shimcha maydonlar",
     "filename": "Fayl nomi",
     "firstname": "Ism",

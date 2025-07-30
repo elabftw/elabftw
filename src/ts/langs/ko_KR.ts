@@ -29,6 +29,7 @@ const t = {
     "error-no-category": "다음 맞춤 ID를 가져오려면 카테고리가 필요합니다.",
     "error-fetch-request": "There was an error while fetching the requested data: {{error}}",
     "error-parsing-metadata": "There was an error while parsing metadata (extra fields). Full error has been logged to the browser console.",
+    "export": "내보내기",
     "extra-fields": "기타 필드",
     "filename": "파일 이름",
     "firstname": "이름",

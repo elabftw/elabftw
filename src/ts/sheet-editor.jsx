@@ -22,6 +22,7 @@ import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
 import { Notification } from './Notifications.class';
 import { FileType } from './interfaces';
+import i18next from './i18n';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -122,17 +123,11 @@ function SheetEditor() {
    */
    return (
     <div className='sheet-editor'>
-      <input
-        type='file'
-        accept='.xlsx,.xls'
-        ref={fileInputRef}
-        className='d-none'
-        onChange={handleFile}
-      />
+      <input type='file' accept='.xlsx,.xls' ref={fileInputRef} className='d-none' onChange={handleFile} />
       <button
         className='btn hl-hover-gray p-2 mr-2'
         onClick={() => fileInputRef.current?.click()}
-        title='Import'
+        title={i18next.t('hide-deleted')}
         type='button'
       >
         <i className='fas fa-upload fa-fw' />
@@ -147,10 +142,10 @@ function SheetEditor() {
             />
           </div>
           <div className='btn-group mt-2'>
-            <button onClick={() => handleExport(FileType.Xlsx)} className='btn btn-primary'>Export XLSX</button>
-            <button onClick={() => handleExport(FileType.Xlsb)} className='btn btn-secondary'>Export XLSB</button>
-            <button onClick={() => handleExport(FileType.Csv)} className='btn btn-secondary'>Export CSV</button>
-            <button onClick={() => handleExport(FileType.Html)} className='btn btn-secondary'>Export HTML</button>
+            <button onClick={() => handleExport(FileType.Xlsx)} className='btn btn-primary'>{i18next.t('export')} XLSX</button>
+            <button onClick={() => handleExport(FileType.Xlsb)} className='btn btn-secondary'>{i18next.t('export')} XLSB</button>
+            <button onClick={() => handleExport(FileType.Csv)} className='btn btn-secondary'>{i18next.t('export')} CSV</button>
+            <button onClick={() => handleExport(FileType.Html)} className='btn btn-secondary'>{i18next.t('export')} HTML</button>
             <button onClick={addRow} className='btn btn-success'>Add Row</button>
             <button onClick={addColumn} className='btn btn-info'>Add Column</button>
           </div>

@@ -29,6 +29,7 @@ const t = {
     "error-no-category": "次のカスタムIDを取得するにはカテゴリが必要です",
     "error-fetch-request": "There was an error while fetching the requested data: {{error}}",
     "error-parsing-metadata": "There was an error while parsing metadata (extra fields). Full error has been logged to the browser console.",
+    "export": "書き出す",
     "extra-fields": "追加項目",
     "filename": "ファイル名",
     "firstname": "名前",

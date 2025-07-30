@@ -29,6 +29,7 @@ const t = {
     "error-no-category": "È necessaria una categoria per recuperare il successivo ID personalizzato",
     "error-fetch-request": "There was an error while fetching the requested data: {{error}}",
     "error-parsing-metadata": "There was an error while parsing metadata (extra fields). Full error has been logged to the browser console.",
+    "export": "Esporta",
     "extra-fields": "Campi addizionali",
     "filename": "Nome del file",
     "firstname": "Nome",

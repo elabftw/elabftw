@@ -63,6 +63,7 @@ final class i18n4Js
             'error-no-category' => _('A category is required to fetch the next Custom ID'),
             'error-fetch-request' => _('There was an error while fetching the requested data: {{error}}'),
             'error-parsing-metadata' => _('There was an error while parsing metadata (extra fields). Full error has been logged to the browser console.'),
+            'export' => _('Export'),
             'extra-fields' => _('Extra fields'),
             'filename' => _('Filename'),
             'firstname' => _('Firstname'),

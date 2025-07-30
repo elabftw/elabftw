@@ -29,6 +29,7 @@ const t = {
     "error-no-category": "需要一个类别才能获取下一个自定义 ID",
     "error-fetch-request": "There was an error while fetching the requested data: {{error}}",
     "error-parsing-metadata": "There was an error while parsing metadata (extra fields). Full error has been logged to the browser console.",
+    "export": "导出",
     "extra-fields": "额外字段",
     "filename": "文件名",
     "firstname": "名",

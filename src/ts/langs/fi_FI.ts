@@ -29,6 +29,7 @@ const t = {
     "error-no-category": "Seuraavan mukautetun tunnuksen hakemiseen tarvitaan luokka",
     "error-fetch-request": "There was an error while fetching the requested data: {{error}}",
     "error-parsing-metadata": "There was an error while parsing metadata (extra fields). Full error has been logged to the browser console.",
+    "export": "Vie",
     "extra-fields": "Ylimääräiset kentät",
     "filename": "Tiedoston nimi",
     "firstname": "Etunimi",

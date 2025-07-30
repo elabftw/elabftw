@@ -29,6 +29,7 @@ const t = {
     "error-no-category": "Sebuah kategori diperlukan untuk mengambil ID Kustom berikutnya",
     "error-fetch-request": "There was an error while fetching the requested data: {{error}}",
     "error-parsing-metadata": "There was an error while parsing metadata (extra fields). Full error has been logged to the browser console.",
+    "export": "Ekspor",
     "extra-fields": "Kolom tambahan",
     "filename": "Nama file",
     "firstname": "Nama depan",

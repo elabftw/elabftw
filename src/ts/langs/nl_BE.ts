@@ -29,6 +29,7 @@ const t = {
     "error-no-category": "Een categorie is vereist om de volgende aangepaste ID op te halen",
     "error-fetch-request": "There was an error while fetching the requested data: {{error}}",
     "error-parsing-metadata": "There was an error while parsing metadata (extra fields). Full error has been logged to the browser console.",
+    "export": "Exporteer",
     "extra-fields": "Extra velden",
     "filename": "Bestandsnaam",
     "firstname": "Voornaam",

@@ -32,8 +32,14 @@ abstract class AbstractTemplateEntity extends AbstractEntity
      */
     public function getIdempotentIdFromTitle(string $title, ?string $color = null): int
     {
+        // for templates, we actually want to use the Experiments Categories, whereas the Items Types are their own category!
+        $fresh = clone $this;
+        $table = $this->entityType->value;
+        if ($this instanceof Templates) {
+            $table = 'experiments_categories';
+        }
         $sql = 'SELECT id
-            FROM ' . $this->entityType->value . ' WHERE title = :title AND team = :team AND state = :state';
+            FROM ' . $table . ' WHERE title = :title AND team = :team AND state = :state';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':title', $title);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
@@ -41,7 +47,13 @@ abstract class AbstractTemplateEntity extends AbstractEntity
         $this->Db->execute($req);
         $res = $req->fetch(PDO::FETCH_COLUMN);
         if (!is_int($res)) {
-            return $this->create(title: $title, color: $color);
+            // this was done to make static analysis stfu, creating the $fresh in the if above was problematic for some reason
+            if ($this instanceof Templates) {
+                $fresh = new ExperimentsCategories(new Teams($this->Users, $this->Users->team));
+                return $fresh->create(title: $title, color: $color);
+            }
+            return $fresh->create(title: $title, color: $color);
+
         }
         return $res;
     }

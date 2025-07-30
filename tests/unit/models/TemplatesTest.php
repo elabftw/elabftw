@@ -57,8 +57,11 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
     public function testGetIdempotentIdFromTitle(): void
     {
         $title = 'Blah blih bluh';
-        $id = $this->Templates->create(title: $title);
-        $this->assertEquals($id, $this->Templates->getIdempotentIdFromTitle($title));
+        $ExperimentCategories = new ExperimentsCategories(new Teams($this->Templates->Users, 1));
+        $catid = $ExperimentCategories->create($title);
+        $id = $this->Templates->create(title: $title, category: $catid);
+        $this->Templates->setId($id);
+        $this->assertEquals($this->Templates->entityData['category'], $this->Templates->getIdempotentIdFromTitle($title));
         $this->assertTrue($this->Templates->getIdempotentIdFromTitle('Géo Trouvetou') > $id);
     }
 }

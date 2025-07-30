@@ -26,8 +26,8 @@ class TagsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->Users = new Users(1, 1);
-        $this->Experiments = $this->getFreshExperiment();
+        $this->Users = $this->getRandomUserInTeam(1, admin: 1);
+        $this->Experiments = $this->getFreshExperimentWithGivenUser($this->Users);
     }
 
     public function testGetApiPath(): void
@@ -42,8 +42,8 @@ class TagsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsInt($id);
 
         // no admin user
-        $Users = new Users(2, 1);
-        $Items = new Items($Users, 1);
+        $user = $this->getRandomUserInTeam(1);
+        $Items = $this->getFreshItemWithGivenUser($user);
         $Tags = new Tags($Items);
         $id = $Tags->postAction(Action::Create, array('tag' => 'tag2222'));
         $this->assertIsInt($id);
@@ -57,9 +57,10 @@ class TagsTest extends \PHPUnit\Framework\TestCase
     public function testReadAll(): void
     {
         $this->assertIsArray($this->Experiments->Tags->readAll());
-        $this->Experiments->Tags->setId(1);
+        $id = $this->Experiments->Tags->postAction(Action::Create, array('tag' => 'new tag'));
+        $this->Experiments->Tags->setId($id);
         $this->assertIsArray($this->Experiments->Tags->readOne());
-        $Items = new Items($this->Users, 1);
+        $Items = $this->getFreshItemWithGivenUser($this->Users);
         $Tags = new Tags($Items);
         $this->assertIsArray($Tags->readAll());
     }

@@ -138,10 +138,11 @@ abstract class AbstractStatus extends AbstractCategory
         return $this->update(new StatusParams('state', (string) State::Deleted->value));
     }
 
-    private function create(string $title, string $color, int $isDefault = 0): int
+    public function create(string $title = '', ?string $color = null, int $isDefault = 0): int
     {
         $this->canWriteOrExplode();
         $title = Filter::title($title);
+        $color ??= $this->getRandomDarkColor();
         $color = Check::color($color);
         $isDefault = Filter::toBinary($isDefault);
 

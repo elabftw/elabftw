@@ -718,6 +718,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } else if (el.matches('[data-action="rename-storage"]')) {
       const name = prompt('Name');
+      if (!name) {
+        return;
+      }
       const params = {
         parent_id: el.dataset.id,
         name: name,

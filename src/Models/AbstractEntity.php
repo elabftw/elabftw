@@ -146,7 +146,7 @@ abstract class AbstractEntity extends AbstractRest
         $this->Pins = new Pins($this);
         $this->ExclusiveEditMode = new ExclusiveEditMode($this);
         // perform check here once instead of in canreadorexplode to avoid making the same query over and over by child entities
-        $this->isReadOnly = $this->ExclusiveEditMode->isActive();
+        $this->isReadOnly = $this->ExclusiveEditMode->isActive() || $this->canWrite() === false;
         $this->setId($id);
     }
 
@@ -774,6 +774,11 @@ abstract class AbstractEntity extends AbstractRest
         $RequestActions->remove(RequestableAction::Timestamp);
 
         return $this->readOne();
+    }
+
+    protected function canWrite(): bool
+    {
+        return false;
     }
 
     protected function getSqlBuilder(): SqlBuilderInterface

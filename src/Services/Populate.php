@@ -32,11 +32,13 @@ use League\Flysystem\Filesystem as Fs;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Tags;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Users\UltraAdmin;
 use Elabftw\Models\Users\Users;
+use Elabftw\Params\EntityParams;
 use Elabftw\Params\UserParams;
 use Elabftw\Traits\RandomColorTrait;
 use Elabftw\Traits\TestsUtilsTrait;
@@ -203,11 +205,12 @@ final class Populate
             // EXPERIMENTS
             foreach ($team['experiments'] ?? array() as $experiment) {
                 $Experiments = new Experiments($this->getRandomUserInTeam($teamid));
+                $ExperimentsCategories = new ExperimentsCategories($Teams);
                 $id = $Experiments->create(
                     title: $experiment['title'],
                     body: $experiment['body'] ?? '',
                     date: new DateTimeImmutable((string) ($experiment['date'] ?? $this->faker->dateTimeBetween('-5 years')->format('Ymd'))),
-                    category: $experiment['category'] ?? 2,
+                    category: $ExperimentsCategories->getIdempotentIdFromTitle($experiment['category'] ?? 'Demo'),
                     status: $experiment['status'] ?? 2,
                     metadata: $experiment['metadata'] ?? '{}',
                     rating: $experiment['rating'] ?? 0,
@@ -256,6 +259,8 @@ final class Populate
                         rating: $item['rating'] ?? 0,
                     );
                     $Items->setId($id);
+                    // bookable cannot be set in create function
+                    $Items->update(new EntityParams('is_bookable', $item['is_bookable'] ?? '0'));
                     // don't override the items type metadata
                     if (isset($item['metadata'])) {
                         $Items->patch(Action::Update, array('metadata' => $item['metadata']));
@@ -274,6 +279,15 @@ final class Populate
                     }
                     $this->output->writeln(sprintf('├ + resource: %s (id: %d in team: %d)', $item['title'], $id, $teamid));
                 }
+            }
+        }
+
+        // INVENTORY
+        if (isset($this->yaml['inventory'])) {
+            $StorageUnits = new StorageUnits($this->getRandomUserInTeam(1));
+            foreach ($this->yaml['inventory'] as $entry) {
+                $zones = explode('|', $entry);
+                $StorageUnits->createImmutable($zones);
             }
         }
 
@@ -403,9 +417,6 @@ final class Populate
             for ($j = 0; $j <= $tagNb; $j++) {
                 $Tags->postAction(Action::Create, array('tag' => $this->faker->randomElement($tagsArr)));
             }
-            // random date in the past 5 years
-            $date = $this->faker->dateTimeBetween('-5 years')->format('Ymd');
-            $Entity->patch(Action::Update, array('title' => $this->faker->sentence(), 'date' => $date, 'body' => $this->faker->realText(1000)));
 
             // lock 10% of experiments (but not the first one because it is used in tests)
             if ($this->faker->randomDigit() > 8 && $i > 1) {

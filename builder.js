@@ -29,6 +29,7 @@ module.exports = (env) => {
         './src/ts/ketcher-editor.jsx',
         './src/ts/compounds-table.jsx',
         './src/ts/users-table.jsx',
+        './src/ts/sheet-editor.jsx',
         './src/ts/tags.ts',
         './src/ts/admin.ts',
         './src/ts/profile.ts',
@@ -140,6 +141,15 @@ module.exports = (env) => {
         {
           test: /\.jsx?$/,
           use: ["babel-loader"]
+        },
+        // less loader for sheet edfitor
+        {
+          test: /\.less$/,
+          use: [
+            'style-loader',
+            'css-loader',
+            'less-loader'
+          ]
         },
         { // SASS loader
           test: /\.scss$/,

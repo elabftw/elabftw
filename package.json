@@ -53,6 +53,7 @@
     "prismjs": "^1.30.0",
     "process": "^0.11.10",
     "react": "^18.3.1",
+    "react-data-grid": "7.0.0-beta.19",
     "react-dom": "^18.3.1",
     "sass": "^1.89.1",
     "terser-webpack-plugin": "^5.3.14",
@@ -62,7 +63,9 @@
     "typescript": "5.8.3",
     "util": "^0.12.5",
     "webpack": "^5.99.9",
-    "webpack-cli": "^6.0.1"
+    "webpack-cli": "^6.0.1",
+    "x-data-spreadsheet": "^1.1.9",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
   },
   "resolutions": {
     "fast-xml-parser": "^4.4.1",
@@ -90,9 +93,12 @@
     "eslint": "^9.27.0",
     "globals": "^16.2.0",
     "html-validate": "^9.5.5",
+    "less": "^4.4.0",
+    "less-loader": "^12.3.0",
     "postcss": "^8.5.4",
     "postcss-scss": "^4.0.9",
     "sass-loader": "^16.0.5",
+    "style-loader": "^4.0.0",
     "stylelint": "^16.20.0",
     "stylelint-config-sass-guidelines": "^12.1.0",
     "stylelint-declaration-strict-value": "^1.10.11",

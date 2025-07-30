@@ -22,7 +22,7 @@ describe('Test links', () => {
     // link to a resource
     const itemTitle = 'Light sheet 1';
     // create a resource first
-    cy.request({ method: 'POST', url: '/api/v2/items', body: {title: itemTitle} })
+    cy.request({ method: 'POST', url: '/api/v2/items', body: {title: itemTitle} });
     cy.get('#addLinkItemsInput').type(itemTitle);
     cy.get('.ui-menu-item-wrapper').contains(itemTitle).click();
     cy.get('button[aria-label="Add item link"]').click();

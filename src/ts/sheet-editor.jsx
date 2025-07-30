@@ -21,6 +21,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
 import { Notification } from './Notifications.class';
+import { FileType } from './interfaces';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -37,7 +38,6 @@ function SheetEditor() {
       try {
         const wb = read(event.target.result, { type: 'array' });
         const ws = wb.Sheets[wb.SheetNames[0]];
-        // array of arrays
         const aoa = utils.sheet_to_json(ws, { header: 1 });
         if (!aoa.length) return;
         const headers = aoa[0];
@@ -65,13 +65,13 @@ function SheetEditor() {
     utils.book_append_sheet(wb, ws, 'Sheet1');
 
     switch (format) {
-      case 'xlsb':
+      case FileType.Xlsb:
         writeFile(wb, 'export.xlsb', { bookType: 'xlsb' });
         break;
-      case 'csv':
+      case FileType.Csv:
         writeFile(wb, 'export.csv', { bookType: 'csv' });
         break;
-      case 'html':
+      case FileType.Html:
         writeFile(wb, 'export.html', { bookType: 'html' });
         break;
       default:
@@ -106,10 +106,10 @@ function SheetEditor() {
             />
           </div>
           <div className='btn-group mt-2'>
-            <button onClick={() => handleExport('xlsx')} className='btn btn-primary'>Export XLSX</button>
-            <button onClick={() => handleExport('xlsb')} className='btn btn-secondary'>Export XLSB</button>
-            <button onClick={() => handleExport('csv')} className='btn btn-secondary'>Export CSV</button>
-            <button onClick={() => handleExport('html')} className='btn btn-secondary'>Export HTML</button>
+            <button onClick={() => handleExport(FileType.Xlsx)} className='btn btn-primary'>Export XLSX</button>
+            <button onClick={() => handleExport(FileType.Xlsb)} className='btn btn-secondary'>Export XLSB</button>
+            <button onClick={() => handleExport(FileType.Csv)} className='btn btn-secondary'>Export CSV</button>
+            <button onClick={() => handleExport(FileType.Html)} className='btn btn-secondary'>Export HTML</button>
           </div>
         </>
       )}

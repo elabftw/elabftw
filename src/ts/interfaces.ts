@@ -167,6 +167,13 @@ enum Target {
   UserId = 'userid',
 }
 
+enum FileType {
+  Xlsx = 'xlsx',
+  Xlsb = 'xlsb',
+  Csv = 'csv',
+  Html = 'html',
+}
+
 interface Entity {
   type: EntityType;
   id: number;
@@ -179,6 +186,7 @@ export {
   Selected,
   Entity,
   EntityType,
+  FileType,
   Method,
   Model,
   ProcurementState,

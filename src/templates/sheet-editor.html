@@ -1,6 +1,6 @@
 <section id='sheet-editor' aria-label='sheet editor'>
   <h3 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='false' aria-controls='sheetEditorDiv'><i id='sheetEditorIcon' class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Sheet Editor'|trans }}</h3>
-  <div class='m-2'>
+  <div id='sheetEditorDiv' class='m-2' hidden data-save-hidden='sheetEditorDiv'>
     <div id="sheet-importer-root"></div>
   </div>
 </section>

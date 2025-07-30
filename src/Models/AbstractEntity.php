@@ -776,9 +776,28 @@ abstract class AbstractEntity extends AbstractRest
         return $this->readOne();
     }
 
+    // TODO refactor with canOrExplode()
+    // this is bad code, refactor of all this will come later
     protected function canWrite(): bool
     {
-        return false;
+        if ($this->id === null) {
+            return true;
+        }
+        if ($this->bypassWritePermission) {
+            return true;
+        }
+        $permissions = $this->getPermissions();
+
+        // READ ONLY?
+        if (
+            ($permissions['read'] && !$permissions['write'])
+            || (array_key_exists('locked', $this->entityData) && $this->entityData['locked'] === 1
+            || $this->entityData['state'] === State::Deleted->value)
+        ) {
+            $this->isReadOnly = true;
+        }
+
+        return $permissions['write'];
     }
 
     protected function getSqlBuilder(): SqlBuilderInterface

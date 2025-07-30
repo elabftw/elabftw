@@ -65,7 +65,7 @@ describe('Make', () => {
         expect(resp.headers['content-type']).to.eq('image/png');
       });
       // will be status code 400
-      cy.visit(`/make.php?format=qrpng&type=experiments&id=${expid}`, { failOnStatusCode: false });
+      cy.visit(`/make.php?format=qrpng&type=experiments&id=${expid}+${expid}`, { failOnStatusCode: false });
       cy.get('div.alert.alert-danger').should('contain', 'QR PNG format is only suitable for one ID.');
     });
   });

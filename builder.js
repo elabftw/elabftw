@@ -142,15 +142,6 @@ module.exports = (env) => {
           test: /\.jsx?$/,
           use: ["babel-loader"]
         },
-        // less loader for sheet edfitor
-        {
-          test: /\.less$/,
-          use: [
-            'style-loader',
-            'css-loader',
-            'less-loader'
-          ]
-        },
         { // SASS loader
           test: /\.scss$/,
           type: 'asset/resource',

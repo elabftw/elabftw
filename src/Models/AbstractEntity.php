@@ -146,7 +146,7 @@ abstract class AbstractEntity extends AbstractRest
         $this->Pins = new Pins($this);
         $this->ExclusiveEditMode = new ExclusiveEditMode($this);
         // perform check here once instead of in canreadorexplode to avoid making the same query over and over by child entities
-        $this->isReadOnly = $this->ExclusiveEditMode->isActive();
+        $this->isReadOnly = $this->ExclusiveEditMode->isActive() || $this->canWrite() === false;
         $this->setId($id);
     }
 
@@ -774,6 +774,30 @@ abstract class AbstractEntity extends AbstractRest
         $RequestActions->remove(RequestableAction::Timestamp);
 
         return $this->readOne();
+    }
+
+    // TODO refactor with canOrExplode()
+    // this is bad code, refactor of all this will come later
+    protected function canWrite(): bool
+    {
+        if ($this->id === null) {
+            return true;
+        }
+        if ($this->bypassWritePermission) {
+            return true;
+        }
+        $permissions = $this->getPermissions();
+
+        // READ ONLY?
+        if (
+            ($permissions['read'] && !$permissions['write'])
+            || (array_key_exists('locked', $this->entityData) && $this->entityData['locked'] === 1
+            || $this->entityData['state'] === State::Deleted->value)
+        ) {
+            $this->isReadOnly = true;
+        }
+
+        return $permissions['write'];
     }
 
     protected function getSqlBuilder(): SqlBuilderInterface

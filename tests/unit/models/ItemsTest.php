@@ -13,18 +13,21 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
-use Elabftw\Models\Users\Users;
 use Elabftw\Services\Check;
+use Elabftw\Traits\TestsUtilsTrait;
 
 use function date;
 
 class ItemsTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private Items $Items;
 
     protected function setUp(): void
     {
-        $this->Items = new Items(new Users(1, 1));
+        $admin = $this->getRandomUserInTeam(1, admin: 1);
+        $this->Items = $this->getFreshItemWithGivenUser($admin);
     }
 
     public function testCreateAndDestroy(): void
@@ -63,7 +66,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
     public function testCanBookInPast(): void
     {
         // use a normal user
-        $Items = new Items(new Users(2, 1));
+        $Items = new Items($this->getRandomUserInTeam(1));
         $new = $Items->create(template: 1);
         $Items->setId($new);
         $Items->patch(Action::Update, array('book_users_can_in_past' => '1'));
@@ -77,7 +80,6 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
 
     public function testDuplicate(): void
     {
-        $this->Items->setId(1);
         $this->Items->canOrExplode('read');
         $ItemsTypes = new ItemsTypes($this->Items->Users);
         $category = $ItemsTypes->create(title: 'Used in tests');

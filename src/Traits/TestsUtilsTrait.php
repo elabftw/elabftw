@@ -68,6 +68,14 @@ trait TestsUtilsTrait
         return $Entity;
     }
 
+    protected function getFreshExperimentWithGivenUser(Users $users): Experiments
+    {
+        $Entity = new Experiments($users);
+        $id = $Entity->create();
+        $Entity->setId($id);
+        return $Entity;
+    }
+
     protected function getFreshItem(int $team = 1): Items
     {
         $User = $this->getRandomUserInTeam($team);

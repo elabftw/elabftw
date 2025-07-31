@@ -13,15 +13,17 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Users\Users;
+use Elabftw\Traits\TestsUtilsTrait;
 
 class FavTagsTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private FavTags $FavTags;
 
     protected function setUp(): void
     {
-        $this->FavTags = new FavTags(new Users(1, 1));
+        $this->FavTags = new FavTags($this->getRandomUserInTeam(1));
     }
 
     public function testGetApiPath(): void
@@ -31,7 +33,7 @@ class FavTagsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate(): void
     {
-        $Tags = new Tags(new Experiments(new Users(1, 1), 1));
+        $Tags = new Tags($this->getFreshExperiment());
         $Tags->postAction(Action::Create, array('tag' => 'test-tag'));
         $this->assertEquals(1, $this->FavTags->postAction(Action::Create, array('tag' => 'test-tag')));
         // try adding the same tag again

@@ -21,6 +21,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Config;
 use Elabftw\Models\Notifications\NewVersionInstalled;
+use Elabftw\Models\Users\Users;
 use PDO;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
@@ -45,6 +46,7 @@ final class LoginHelper
     public function login(bool $setCookie): void
     {
         $this->checkAccountValidity();
+        $this->checkArchivedStatus();
         $this->populateSession();
         if ($setCookie) {
             $this->setToken();
@@ -138,6 +140,20 @@ final class LoginHelper
         $res = (bool) $req->fetchColumn();
         if ($res === false) {
             throw new ImproperActionException(_('Your account has expired. Contact your team Admin to extend its validity.'));
+        }
+    }
+
+    // maybe this should be part of AuthResponse?
+    private function checkArchivedStatus(): void
+    {
+        if ($this->AuthResponse->isAnonymous) {
+            return;
+        }
+        $user = new Users($this->AuthResponse->userid, $this->AuthResponse->selectedTeam);
+        $teams = json_decode($user->userData['teams'], true, 3);
+        $lookup = array_column($teams, 'is_archived', 'id');
+        if ($lookup[$this->AuthResponse->selectedTeam] === 1) {
+            throw new ImproperActionException(_('This account is archived in this team and cannot login.'));
         }
     }
 

@@ -6,7 +6,9 @@ describe('Test links', () => {
   it('experiments can have links to experiments and resources', () => {
     cy.on('window:confirm', cy.stub().returns(true));
 
-    cy.visit('/experiments.php?mode=edit&id=10');
+    cy.getExperimentId().then(expid => {
+      cy.visit(`/experiments.php?mode=edit&id=${expid}`);
+    });
     // link to an experiment
     cy.get('#addLinkExpInput').type('Testing');
     cy.get('.ui-menu-item-wrapper').first().click();
@@ -19,6 +21,8 @@ describe('Test links', () => {
 
     // link to a resource
     const itemTitle = 'Light sheet 1';
+    // create a resource first
+    cy.request({ method: 'POST', url: '/api/v2/items', body: {title: itemTitle} });
     cy.get('#addLinkItemsInput').type(itemTitle);
     cy.get('.ui-menu-item-wrapper').contains(itemTitle).click();
     cy.get('button[aria-label="Add item link"]').click();

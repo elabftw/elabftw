@@ -12,7 +12,7 @@
  * SheetJs integration (xlsx) with AG-Grid
  */
 
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { read, utils, writeFile, writeFileXLSX } from 'xlsx';
 import { AgGridReact } from '@ag-grid-community/react';
@@ -30,6 +30,18 @@ function SheetEditor() {
   const [columnDefs, setColumnDefs] = useState([]);
   const [rowData, setRowData] = useState([]);
   const fileInputRef = useRef();
+
+  useEffect(() => {
+    const handleData = (e) => {
+      const { cols, rows } = e.detail;
+      setColumnDefs(cols);
+      setRowData(rows);
+    };
+    document.addEventListener('sheet-load-data', handleData);
+    return () => {
+      document.removeEventListener('sheet-load-data', handleData);
+    };
+  }, []);
 
   const handleFile = useCallback((e) => {
     const file = e.target.files?.[0];

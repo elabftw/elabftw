@@ -52,10 +52,17 @@
       </button>
     {% endif %}
 
-    {# LOAD IN JSON EDITOR #}
+    {# LOAD IN JSON EDITOR #}
     {% if ext matches '/(json)$/i' %}
       <button type='button' class='dropdown-item' data-uploadid='{{ upload.id }}' data-name='{{ upload.real_name|e('html_attr') }}' data-link='{{ upload.long_name|e('html_attr') }}' data-action='json-load-file'>
         <i class='fas fa-fw fa-{{ mode == 'edit' ? 'pencil-alt' : 'eye' }} mr-1'></i>{{ 'Load into JSON Editor'|trans }}
+      </button>
+    {% endif %}
+
+    {# LOAD IN SHEET EDITOR #}
+    {% if ext matches '/(xls|xlsx|xlsb|csv|ods|ots|fods)$/i' %}
+      <button type='button' class='dropdown-item' data-uploadid='{{ upload.id }}' data-name='{{ upload.real_name|e('html_attr') }}' data-link='{{ upload.long_name|e('html_attr') }}' data-action='xls-load-file'>
+        <i class='fas fa-fw fa-{{ mode == 'edit' ? 'pencil-alt' : 'eye' }} mr-1'></i>{{ 'Load into Sheet Editor'|trans }}
       </button>
     {% endif %}
 

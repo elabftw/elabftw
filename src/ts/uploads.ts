@@ -16,6 +16,7 @@ import i18next from './i18n';
 import { Api } from './Apiv2.class';
 import { marked } from 'marked';
 import Prism from 'prismjs';
+import { SheetEditorHelper } from './SheetEditorHelper.class';
 import { Uploader } from './uploader';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -34,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
   displayMoleculeViewer();
   const entity = getEntity();
   const ApiC = new Api();
+  const SheetEditorHelperC = new SheetEditorHelper();
 
   // make file comments editable
   const malleableFilecomment = new Malle({
@@ -182,6 +184,9 @@ document.addEventListener('DOMContentLoaded', () => {
       style[targetStyle] = options;
       get3dmol().then(($3Dmol) => $3Dmol.viewers[el.dataset.divid].setStyle(style).render());
 
+      // HANDLE SHEETS
+    } else if (el.matches('[data-action="xls-load-file"]')) {
+      SheetEditorHelperC.loadFile(el.dataset.link, el.dataset.name, el.dataset.uploadid);
     // ARCHIVE UPLOAD
     } else if (el.matches('[data-action="archive-upload"]')) {
       const uploadid = parseInt(el.dataset.uploadid, 10);

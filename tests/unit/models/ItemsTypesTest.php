@@ -28,18 +28,18 @@ class ItemsTypesTest extends \PHPUnit\Framework\TestCase
     public function testCreateUpdateDestroy(): void
     {
         // create
-        $this->ItemsTypes->setId($this->ItemsTypes->create(body: 'body1', color: '29aeb9'));
-        $this->assertEquals('29aeb9', $this->ItemsTypes->entityData['color']);
+        $this->ItemsTypes->setId($this->ItemsTypes->create(body: 'body1', title: 'blah'));
+        $this->assertEquals('blah', $this->ItemsTypes->entityData['title']);
         $this->assertEquals('body1', $this->ItemsTypes->entityData['body']);
         // update
         $params = array(
-            'color' => '#faaccc',
+            'title' => 'oompa',
             'body' => 'body2',
             'canread' => BasePermissions::Team->toJson(),
             'canwrite' => BasePermissions::Team->toJson(),
         );
         $this->ItemsTypes->patch(Action::Update, $params);
-        $this->assertEquals('faaccc', $this->ItemsTypes->entityData['color']);
+        $this->assertEquals('oompa', $this->ItemsTypes->entityData['title']);
         // destroy
         $this->assertTrue($this->ItemsTypes->destroy());
     }

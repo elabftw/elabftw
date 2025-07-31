@@ -603,6 +603,18 @@ CREATE TABLE `items` (
 --
 
 -- --------------------------------------------------------
+CREATE TABLE `items_categories` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `team` int UNSIGNED NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `color` varchar(6) NOT NULL,
+  `is_default` tinyint UNSIGNED DEFAULT NULL,
+  `ordering` int UNSIGNED DEFAULT NULL,
+  `state` INT UNSIGNED NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 --
 -- Table structure for table `items_changelog`
@@ -730,6 +742,7 @@ CREATE TABLE `items_types` (
   `date` date NULL DEFAULT NULL,
   `elabid` varchar(255) NULL DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `category` INT UNSIGNED NULL DEFAULT NULL,
   `color` varchar(6) DEFAULT '29aeb9',
   `custom_id` INT UNSIGNED NULL DEFAULT NULL,
   `body` text NULL DEFAULT NULL,
@@ -963,6 +976,8 @@ CREATE TABLE `experiments_status` (
 CREATE TABLE `experiments_categories` (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
   `team` int UNSIGNED NOT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `title` varchar(255) NOT NULL,
   `color` varchar(6) NOT NULL,
   `is_default` tinyint UNSIGNED DEFAULT NULL,
@@ -1441,10 +1456,12 @@ ALTER TABLE `favtags2users`
 ALTER TABLE `items`
   ADD KEY `fk_items_teams_id` (`team`),
   ADD KEY `idx_items_state` (`state`),
-  ADD KEY `fk_items_items_types_id` (`category`),
   ADD KEY `fk_items_users_userid` (`userid`),
+  ADD KEY `fk_items_category_items_categories_id` (`category`),
   ADD UNIQUE `unique_items_custom_id` (`category`, `custom_id`);
 
+ALTER TABLE `items_categories`
+  ADD KEY `fk_items_categories_teams_id` (`team`);
 --
 -- Indexes and Constraints for table `items_changelog`
 --
@@ -1514,6 +1531,9 @@ ALTER TABLE `items_status`
 --
 ALTER TABLE `experiments_categories`
   ADD KEY `fk_experiments_categories_teams_team_id` (`team`);
+
+ALTER TABLE `items_categories`
+  ADD CONSTRAINT `fk_items_categories_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Indexes for table `sig_keys`
@@ -1693,7 +1713,7 @@ ALTER TABLE `favtags2users`
 --
 ALTER TABLE `items`
   ADD CONSTRAINT `fk_items_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_items_items_types_id` FOREIGN KEY (`category`) REFERENCES `items_types` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_items_category_items_categories_id` FOREIGN KEY (`category`) REFERENCES `items_categories` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_items_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --

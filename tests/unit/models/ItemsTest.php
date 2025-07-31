@@ -81,8 +81,8 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
     public function testDuplicate(): void
     {
         $this->Items->canOrExplode('read');
-        $ItemsTypes = new ItemsTypes($this->Items->Users);
-        $category = $ItemsTypes->create(title: 'Used in tests');
+        $ResourcesCategories = new ResourcesCategories(new Teams($this->Items->Users, $this->Items->Users->team));
+        $category = $ResourcesCategories->create(title: 'Used in tests');
         $this->Items->patch(Action::Update, array('category' => $category));
         $newId = $this->Items->postAction(Action::Duplicate, array());
         $this->assertIsInt($newId);

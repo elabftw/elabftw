@@ -67,7 +67,6 @@ final class Templates extends AbstractTemplateEntity
         bool $forceExpTpl = false,
         string $defaultTemplateHtml = '',
         string $defaultTemplateMd = '',
-        ?string $color = null,
     ): int {
         $title = Filter::title($title ?? _('Untitled'));
 

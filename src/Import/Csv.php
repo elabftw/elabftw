@@ -66,7 +66,7 @@ final class Csv extends AbstractCsv
             $category = $this->category;
             // use the category_title of the row only if we didn't specify a category
             if (array_key_exists('category_title', $row) && $this->category === null) {
-                $category = $this->getCategoryId($this->entityType, $this->requester, $row['category_title']);
+                $category = $this->getCategoryId($this->entityType, $row['category_title']);
             }
             $status = empty($row['status_title']) ? null : $this->getStatusId($this->entityType, $row['status_title']);
             $customId = empty($row['custom_id']) ? null : (int) $row['custom_id'];

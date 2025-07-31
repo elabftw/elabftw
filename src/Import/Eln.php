@@ -284,7 +284,7 @@ class Eln extends AbstractZip
         $categoryId = $this->category;
         if (isset($dataset['about']) && $this->category === null) {
             $categoryNode = $this->getNodeFromId($dataset['about']['@id']);
-            $categoryId = $this->getCategoryId($entityType, $Author, $categoryNode['name'], $categoryNode['color']);
+            $categoryId = $this->getCategoryId($entityType, $categoryNode['name'], $categoryNode['color']);
         }
         // items use the category id for create target
         $createTarget = $categoryId;

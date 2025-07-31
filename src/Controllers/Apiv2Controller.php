@@ -44,11 +44,11 @@ use Elabftw\Models\IdpsSources;
 use Elabftw\Models\Info;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsStatus;
-use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Notifications\EventDeleted;
 use Elabftw\Models\Notifications\UserNotifications;
 use Elabftw\Models\ProcurementRequests;
 use Elabftw\Models\RequestActions;
+use Elabftw\Models\ResourcesCategories;
 use Elabftw\Models\Revisions;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\SigKeys;
@@ -362,8 +362,8 @@ final class Apiv2Controller extends AbstractApiController
                 // backward compatibility: Status == ExperimentsStatus
                 ApiSubModels::Status, ApiSubModels::ExperimentsStatus => new ExperimentsStatus($this->Model, $this->subId),
                 ApiSubModels::ExperimentsCategories => new ExperimentsCategories($this->Model, $this->subId),
+                ApiSubModels::ResourcesCategories => new ResourcesCategories($this->Model, $this->subId),
                 ApiSubModels::ItemsStatus => new ItemsStatus($this->Model, $this->subId),
-                ApiSubModels::ItemsCategories => new ItemsTypes($this->requester, $this->subId),
                 ApiSubModels::ProcurementRequests => new ProcurementRequests($this->Model, $this->subId),
                 ApiSubModels::Tags => new TeamTags($this->requester, $this->subId),
                 ApiSubModels::Teamgroups => new TeamGroups($this->requester, $this->subId),

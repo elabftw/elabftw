@@ -154,7 +154,7 @@ class EntitySqlBuilder implements SqlBuilderInterface
                 ON (categoryt.id = entity.category)',
             $this->entity->entityType === EntityType::Experiments || $this->entity->entityType === EntityType::Templates
                 ? 'experiments_categories'
-                : 'items_types',
+                : 'items_categories',
         );
     }
 

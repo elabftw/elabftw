@@ -28,7 +28,7 @@ final class ItemsTypesSqlBuilder extends EntitySqlBuilder
             entity.modified_at,
             entity.lastchangeby,
             entity.team,
-            entity.color,
+            entity.category,
             entity.title,
             entity.status,
             entity.body,
@@ -69,6 +69,10 @@ final class ItemsTypesSqlBuilder extends EntitySqlBuilder
     #[Override]
     protected function category(): void
     {
+        $this->selectSql[] = 'categoryt.title AS category_title,
+            categoryt.color AS category_color';
+        $this->joinsSql[] = 'LEFT JOIN items_categories AS categoryt
+            ON (categoryt.id = entity.category)';
         return;
     }
 

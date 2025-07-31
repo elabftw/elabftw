@@ -1,12 +1,5 @@
 {# Modal window for creating a new entity #}
 {# requires: entityPage + {experiments,resources}CategoriesArr #}
-{% if entityPage == 'experiments' %}
-  {% set createNewCategoryArr = templatesArr %}
-{% elseif entityPage == 'resources_categories' %}
-  {% set createNewCategoryArr = [] %}
-{% else %}
-  {% set createNewCategoryArr = categoryArr|default(App.itemsCategoryArr) %}
-{% endif %}
 
 <div class='modal fade' id='createModal_{{ entityPage }}' tabindex='-1' role='dialog' aria-labelledby='createModalLabel_{{ entityPage }}'>
   <div class='modal-dialog modal-lg' role='document'>
@@ -37,14 +30,26 @@
           <p class='smallgray'>{{ 'Note: only templates that you have pinned are displayed below.'|trans }}</p>
           {% include 'scope-button.html' with {'btnId': btnId, 'reload': btnId ~ ',tplCreateNewDiv_' ~ entityPage, 'target': 'scope_experiments_templates'} %}
           <div id='tplCreateNewDiv_{{ entityPage }}'>
-            {% for category in createNewCategoryArr %}
-              <a style='color:#{{ category.color }}; border: 1px #ccc solid;' class='btn btn-light mt-1' href='#' data-action='create-entity' data-type='{{ entityPage }}' data-tplid='{{ category.id }}'>
-              {% if category.category %}
-                <span class='catstat-btn category-btn mr-2' style='--bg: #{{ category.category_color|default('bdbdbd') }}'>{{ category.category_title }}</span>
+            {% for template in templatesArr %}
+              <a style='color:#{{ template.color }}; border: 1px #ccc solid;' class='btn btn-light mt-1' href='#' data-action='create-entity' data-type='{{ entityPage }}' data-tplid='{{ template.id }}'>
+              {% if template.template %}
+                <span class='catstat-btn category-btn mr-2' style='--bg: #{{ template.template_color|default('bdbdbd') }}'>{{ template.template_title }}</span>
               {% endif %}
-              {{ category.title }}</a>
+              {{ template.title }}</a>
             {% endfor %}
           </div>
+
+          <hr>
+          <h5>{{ 'Or create a blank entry with a specific category'|trans }}</h5>
+          {% for category in categoryArr %}
+            <a style='color:#{{ category.color }}; border: 1px #ccc solid;' class='btn btn-light mt-1' href='#' data-action='create-entity' data-type='{{ entityPage }}' data-tplid='{{ category.id }}'>
+            {% if category.category %}
+              <span class='catstat-btn category-btn mr-2' style='--bg: #{{ category.category_color|default('bdbdbd') }}'>{{ category.category_title }}</span>
+            {% endif %}
+            {{ category.title }}</a>
+          {% endfor %}
+          <hr>
+
           {# show add button to admin, for items #}
           {% if entityPage == 'database' and App.Users.isAdmin %}
             <a style='color:#343434; border: 1px #ccc solid;' class='btn btn-light mt-1' href='/resources-templates.php'>{{ 'Add template…'|trans }}</a>

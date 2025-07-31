@@ -1768,3 +1768,49 @@ input:user-invalid {
 .calendar-event-hover {
   box-shadow: 5px 4px 4px $medium !important;
 }
+
+.flash:hover {
+  background-color: $elabblue;
+  transition: background-color 0.1s ease;
+}
+
+.color-input {
+  min-width: 116px;
+}
+
+.infotip {
+  display: inline-block;   // shrink-wrap to content
+  position: relative;
+
+  &-icon {
+    cursor: help;          // help cursor on hover
+  }
+
+  &-text {
+    background: rgba(0, 0, 0, 0.9);
+    border-radius: 0.25em;
+    color: $white;
+    left: 50%;
+    line-height: 1.3;
+    margin: 0;
+    max-width: 900px;
+    min-width: 400px;
+    opacity: 0;
+    padding: 0.5em;
+    pointer-events: none;  // doesn’t block mouse events
+    position: absolute;
+    text-align: start;
+    top: 100%;             // just below the icon
+    transform: translateX(-50%);
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    visibility: hidden;
+    z-index: 1985;
+  }
+
+  &:hover {
+    .infotip-text {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+}

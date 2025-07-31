@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block body %}
+{% include 'create-statuslike-modal.html' with {'target': 'resources_categories', 'title': 'Create new resources category'|trans} %}
+
+<div class='mb-5 d-flex justify-content-between'>
+  <div class='d-flex'>
+    <p>{{ 'Create and modify the categories available to resources.'|trans }}</p>
+      <span class='infotip'>
+        <span class='infotip-icon'>
+        <i class='ml-1 fas fa-circle-question'></i>
+      </span>
+      <p class='infotip-text'>{{ 'Resources categories can be associated with a Resource or a Resource Template as a Category. They belong to a team and have two main properties: name and color. Examples: Equipment, Chemical, Cell line, Plasmid, Antibody, Microscope, etc...'|trans }}</p>
+  </div>
+  {# CREATE NEW BUTTON the div around the button is necessary or the button itself gets resized on small viewports #}
+  <div>
+    <button type='button' class='btn btn-primary' data-action='toggle-modal' data-target='createresources_categoriesModal'>{{ 'Create'|trans }}</button>
+  </div>
+</div>
+
+<div id='statusDiv'>
+  {% if App.itemsCategoryArr|length == 0 %}
+    <p>{{ 'No resources categories have been created in this team yet.'|trans|msg('warning', false) }}</p>
+  {% endif %}
+  <ul class='list-group sortable' data-axis='y' data-table='items_categories'>
+    {% for cat in App.itemsCategoryArr %}
+      <li id='expcat_{{ cat.id }}' data-statusid='expcat_{{ cat.id }}' class='list-group-item'>
+        <ul class='list-inline'>
+          <li class='list-inline-item'>
+            <span class='draggable sortableHandle'>
+              <i class='fas fa-grip-vertical fa-fw'></i>
+            </span>
+          </li>
+
+          <li class='list-inline-item'>
+            <label for='expcatName_{{ cat.id }}'>{{ 'Name'|trans }}</label>
+            <input class='form-control' required type='text' id='expcatName_{{ cat.id }}' data-trigger='blur' data-model='teams/current/resources_categories/{{ cat.id }}' data-target='title' value='{{ cat.title|e('html_attr') }}' />
+          </li>
+
+          <li class='list-inline-item align-top'>
+            <label for='expcatColor_{{ cat.id }}'>{{ 'Color'|trans }}</label>
+            <input class='form-control color-input' type='color' id='expcatColor_{{ cat.id }}' data-trigger='blur' data-model='teams/current/resources_categories/{{ cat.id }}' data-target='color' value='#{{ cat.color }}' />
+          </li>
+
+          <li class='list-inline-item'>
+            <button type='button' data-id='{{ cat.id }}' data-target='resources_categories' data-action='destroy-catstat' class='btn btn-danger' >{{ 'Delete'|trans }}</button>
+          </li>
+        </ul>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+
+{% endblock body %}

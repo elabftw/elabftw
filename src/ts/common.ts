@@ -299,8 +299,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // CATEGORY AND STATUS
     const notsetOpts = {id: null, title: i18next.t('not-set'), color: 'bdbdbd'};
 
-    let categoryEndpoint = `${EntityType.ItemType}`;
+    //let categoryEndpoint = `${EntityType.ItemType}`;
     let statusEndpoint = `${Model.Team}/current/items_status`;
+    let categoryEndpoint = `${Model.Team}/current/resources_categories`;
     if (entity.type === EntityType.Experiment || entity.type === EntityType.Template) {
       categoryEndpoint = `${Model.Team}/current/experiments_categories`;
       statusEndpoint = `${Model.Team}/current/experiments_status`;
@@ -1069,26 +1070,31 @@ document.addEventListener('DOMContentLoaded', () => {
         (document.getElementById('anonymousAccessUrlInput') as HTMLInputElement).value = json.sharelink;
       });
 
+    } else if (el.matches('[data-action="reload-color"]')) {
+      el.classList.add('flash');
+      setTimeout(() => {
+        el.classList.remove('flash');
+      }, 100);
+      (el.nextElementSibling as HTMLInputElement).value = getRandomColor();
+
     // CREATE STATUSLIKE
     } else if (el.matches('[data-action="create-statuslike"]')) {
-      const holder = el.parentElement.parentElement;
-      const colorInput = (holder.querySelector('input[type="color"]') as HTMLInputElement);
-      const nameInput = (holder.querySelector('input[type="text"]') as HTMLInputElement);
-      const name = nameInput.value;
-      if (!name) {
-        notify.error('invalid-info');
-        // set the border in red to bring attention
-        nameInput.style.borderColor = 'red';
-        return;
+      const modalId = `create${el.dataset.target}Modal`;
+      const form = document.getElementById(modalId);
+      try {
+        const params = collectForm(form);
+        ApiC.post(`${Model.Team}/current/${el.dataset.target}`, params).then(() => {
+          // display newly added entry
+          $(`#${modalId}`).modal('toggle');
+          reloadElements(['statusDiv']);
+          clearForm(form);
+          // assign a new random color
+          const colorInput = (form.querySelector('input[type="color"]') as HTMLInputElement);
+          colorInput.value = getRandomColor();
+        });
+      } catch (e) {
+        console.error(e);
       }
-      ApiC.post(`${Model.Team}/current/${el.dataset.target}`, {'name': name, 'color': colorInput.value}).then(() => {
-        // clear the name
-        nameInput.value = '';
-        // assign a new random color
-        colorInput.value = getRandomColor();
-        // display newly added entry
-        reloadElements(['statusDiv']);
-      });
     // DESTROY CATEGORY/STATUS
     } else if (el.matches('[data-action="destroy-catstat"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {

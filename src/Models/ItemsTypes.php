@@ -14,7 +14,6 @@ namespace Elabftw\Models;
 
 use DateTimeImmutable;
 use Elabftw\Elabftw\ItemsTypesSqlBuilder;
-use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Orderby;
@@ -33,6 +32,7 @@ use Symfony\Component\HttpFoundation\InputBag;
 
 /**
  * The kind of items you can have in the database for a team
+ * TODO rename ResourcesTemplates
  */
 final class ItemsTypes extends AbstractTemplateEntity
 {
@@ -60,19 +60,15 @@ final class ItemsTypes extends AbstractTemplateEntity
         bool $forceExpTpl = false,
         string $defaultTemplateHtml = '',
         string $defaultTemplateMd = '',
-        // specific to items_types
-        ?string $color = null,
     ): int {
         $this->canWriteOrExplode();
 
         $title = Filter::title($title ?? _('Default'));
         $defaultPermissions = BasePermissions::Team->toJson();
-        $color ??= $this->getRandomDarkColor();
-        $color = Check::color($color);
         $contentType ??= $this->Users->userData['use_markdown'] === 1 ? AbstractEntity::CONTENT_MD : AbstractEntity::CONTENT_HTML;
 
-        $sql = 'INSERT INTO items_types(userid, title, body, team, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canread_target, canwrite_target, color, content_type, status, rating, metadata)
-            VALUES(:userid, :title, :body, :team, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canread_target, :canwrite_target, :color, :content_type, :status, :rating, :metadata)';
+        $sql = 'INSERT INTO items_types(userid, title, body, team, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canread_target, canwrite_target, category, content_type, status, rating, metadata)
+            VALUES(:userid, :title, :body, :team, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canread_target, :canwrite_target, :category, :content_type, :status, :rating, :metadata)';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':userid', $this->Users->userid, PDO::PARAM_INT);
         $req->bindValue(':title', $title);
@@ -84,7 +80,7 @@ final class ItemsTypes extends AbstractTemplateEntity
         $req->bindParam(':canwrite_is_immutable', $canwriteIsImmutable, PDO::PARAM_INT);
         $req->bindParam(':canread_target', $defaultPermissions);
         $req->bindParam(':canwrite_target', $defaultPermissions);
-        $req->bindParam(':color', $color);
+        $req->bindParam(':category', $category);
         $req->bindParam(':content_type', $contentType, PDO::PARAM_INT);
         $req->bindParam(':status', $status);
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
@@ -137,15 +133,6 @@ final class ItemsTypes extends AbstractTemplateEntity
     {
         // TODO: implement
         throw new ImproperActionException('No duplicate action for resources categories.');
-    }
-
-    #[Override]
-    public function patch(Action $action, array $params): array
-    {
-        $this->canWriteOrExplode();
-        // items_types have no category, so allow for calling an update on it but ignore it here so it doesn't cause sql error with unknown column
-        unset($params['category']);
-        return parent::patch($action, $params);
     }
 
     /**

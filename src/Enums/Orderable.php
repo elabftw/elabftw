@@ -18,6 +18,7 @@ namespace Elabftw\Enums;
 enum Orderable: string
 {
     case ExperimentsCategories = 'experiments_categories';
+    case ResourcesCategories = 'items_categories';
     case ItemsTypes = 'items_types';
     case ExperimentsStatus = 'experiments_status';
     case ItemsStatus = 'items_status';

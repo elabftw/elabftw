@@ -28,6 +28,8 @@ final class DatabaseController extends AbstractEntityController
 
         $this->categoryArr = $app->itemsCategoryArr;
         $this->statusArr = $this->itemsStatusArr;
+        $ItemsTypes = new ItemsTypes($app->Users);
+        $this->templatesArr = $ItemsTypes->readAll();
     }
 
     #[Override]

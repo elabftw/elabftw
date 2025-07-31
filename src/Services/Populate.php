@@ -32,6 +32,7 @@ use League\Flysystem\Filesystem as Fs;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\ResourcesCategories;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Tags;
 use Elabftw\Models\Teams;
@@ -185,7 +186,6 @@ final class Populate
                 $defaultPermissions = BasePermissions::Team->toJson();
                 $itemTypeId = $ItemsTypes->create(
                     title: $items_types['name'],
-                    color: $items_types['color'] ?? $this->getRandomDarkColor(),
                     body: $items_types['template'] ?? '',
                     date: new DateTimeImmutable($this->faker->dateTimeBetween('-5 years')->format('Ymd')),
                     canread: $defaultPermissions,
@@ -250,9 +250,10 @@ final class Populate
                 foreach ($team['items'] as $item) {
                     $user = $this->getRandomUserInTeam($teamid);
                     $ItemsTypes = new ItemsTypes($user);
+                    $ResourcesCategories = new ResourcesCategories($Teams);
                     $Items = new Items($user);
                     $id = $Items->create(
-                        template: $ItemsTypes->getIdempotentIdFromTitle($item['category'] ?? $ItemsTypes->getDefault()),
+                        category: $ResourcesCategories->getIdempotentIdFromTitle($item['category'] ?? $ItemsTypes->getDefault()),
                         title: $item['title'],
                         body: $item['body'] ?? '',
                         date: new DateTimeImmutable($this->faker->dateTimeBetween('-5 years')->format('Ymd')),
@@ -325,14 +326,12 @@ final class Populate
         if ($Entity instanceof Experiments) {
             $Category = new ExperimentsCategories($Teams);
             $Status = new ExperimentsStatus($Teams);
-            $tpl = -1;
         } else {
-            $Category = new ItemsTypes($Entity->Users, bypassReadPermission: true, bypassWritePermission: true);
+            $Category = new ResourcesCategories($Teams);
             if (empty($Category->readAll())) {
                 $Category->create();
             }
             $Status = new ItemsStatus($Teams);
-            $tpl = (int) $Category->readAll()[0]['id'];
         }
         $categoryArr = $Category->readAll();
         $statusArr = $Status->readAll();
@@ -401,7 +400,7 @@ final class Populate
 
         for ($i = 0; $i < $iterations; $i++) {
             $id = $Entity->create(
-                template: $tpl,
+                template: -1,
                 category: $this->faker->randomElement($categoryArr)['id'],
                 status: $this->faker->randomElement($statusArr)['id'],
                 canread: $this->faker->randomElement($visibilityArr),

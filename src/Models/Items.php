@@ -92,7 +92,7 @@ final class Items extends AbstractConcreteEntity
         $req->bindParam(':status', $status);
         $req->bindParam(':body', $body);
         $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
-        $req->bindParam(':category', $template, PDO::PARAM_INT);
+        $req->bindParam(':category', $category);
         $req->bindValue(':elabid', Tools::generateElabid());
         $req->bindParam(':canread', $canread);
         $req->bindParam(':canwrite', $canwrite);
@@ -155,7 +155,7 @@ final class Items extends AbstractConcreteEntity
         $newId = $this->create(
             title: $title,
             body: $this->entityData['body'],
-            template: $this->entityData['category'],
+            category: $this->entityData['category'],
             canread: $this->entityData['canread'],
             canwrite: $this->entityData['canwrite'],
             metadata: $metadata,

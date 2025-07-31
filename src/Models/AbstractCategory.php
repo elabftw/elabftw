@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Traits\EntityTrait;
 use Elabftw\Traits\SortableTrait;
@@ -37,7 +36,7 @@ abstract class AbstractCategory extends AbstractRest
     /**
      * Get an id of an existing one or create it and get its id
      */
-    public function getIdempotentIdFromTitle(string $title): int
+    public function getIdempotentIdFromTitle(string $title, ?string $color = null): int
     {
         $sql = sprintf('SELECT id FROM %s WHERE title = :title AND team = :team', $this->table);
         $req = $this->Db->prepare($sql);
@@ -46,10 +45,12 @@ abstract class AbstractCategory extends AbstractRest
         $this->Db->execute($req);
         $res = $req->fetch(PDO::FETCH_COLUMN);
         if (!is_int($res)) {
-            return $this->postAction(Action::Create, array('name' => $title));
+            return $this->create($title, $color);
         }
         return $res;
     }
+
+    abstract public function create(string $title, ?string $color = null): int;
 
     public function getDefault(): ?int
     {

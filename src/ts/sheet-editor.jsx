@@ -53,15 +53,15 @@ function SheetEditor() {
         const ws = wb.Sheets[wb.SheetNames[0]];
         const aoa = utils.sheet_to_json(ws, { header: 1 });
         if (!aoa.length) return;
-        // have a modal pop to ask if the first row should be header
-        // fix Uncaught TypeError: field.indexOf is not a function when first column was already containing data (with integers etc.)
-        const headers = aoa[0];
-        const rows = aoa.slice(1).map((r, index) => {
+        const headerRow = aoa[0].map((h, i) => typeof h === 'string' ? h : `Column${i}`);
+        const rows = aoa.slice(1).map(r => {
           const row = {};
-          headers.forEach((h, j) => row[h || `Column${j}`] = r[j] ?? '');
+          headerRow.forEach((h, i) => {
+            row[h] = String(r[i] ?? '');
+          });
           return row;
         });
-        const columns = headers.map((header, index) => ({ field: header || `Column${index}`, editable: true }));
+        const columns = headerRow.map(h => ({ field: h, editable: true }));
         setColumnDefs(columns);
         setRowData(rows);
       } catch (error) {
@@ -75,13 +75,13 @@ function SheetEditor() {
     if (!columnDefs.length || !rowData.length) return;
     const headers = columnDefs.map(col => col.field);
     // TODO: typescript: when migrating, see https://docs.sheetjs.com/docs/demos/grid/rdg/#integration-details
-    // Array of arraysis the most generic data representation
     const aoa = [headers, ...rowData.map(row => headers.map(h => row[h]))];
     const ws = utils.aoa_to_sheet(aoa);
     const wb = utils.book_new();
     utils.book_append_sheet(wb, ws, 'Sheet1');
 
     switch (format) {
+      // TODO: make a switch to select the export type
       case FileType.Xlsb:
         writeFile(wb, 'export.xlsb', { bookType: 'xlsb' });
         break;
@@ -114,7 +114,7 @@ function SheetEditor() {
   };
    return (
     <div className='sheet-editor'>
-      <input type='file' accept='.csv,.xls,.xlsx' ref={fileInputRef} className='d-none' onChange={handleFile} />
+      <input type='file' accept='.csv,.xls,.xlsx,.ods,.ots,.fods,.xlsb' ref={fileInputRef} className='d-none' onChange={handleFile} />
       <button
         className='btn hl-hover-gray p-2 mr-2'
         onClick={() => fileInputRef.current?.click()}
@@ -137,6 +137,7 @@ function SheetEditor() {
             <button onClick={() => handleExport(FileType.Xlsb)} className='btn btn-secondary'>{i18next.t('export')} XLSB</button>
             <button onClick={() => handleExport(FileType.Csv)} className='btn btn-secondary'>{i18next.t('export')} CSV</button>
             <button onClick={() => handleExport(FileType.Html)} className='btn btn-secondary'>{i18next.t('export')} HTML</button>
+            {/* TODO: styling button in header like json editor*/}
             <button onClick={addRow} className='btn btn-success'>Add Row</button>
             <button onClick={addColumn} className='btn btn-info'>Add Column</button>
           </div>

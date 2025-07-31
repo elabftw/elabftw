@@ -179,18 +179,31 @@ interface Entity {
   id: number;
 }
 
+// for Sheet editor
+interface GridColumn {
+  field: string;
+  editable: boolean;
+}
+
+interface GridRow {
+  [key: string]: string;
+}
+
+
 export {
   Action,
   Categories,
   CheckableItem,
-  Selected,
   Entity,
   EntityType,
   FileType,
+  GridColumn,
+  GridRow,
   Method,
   Model,
   ProcurementState,
   ResponseMsg,
+  Selected,
   Target,
   Todoitem,
   UnfinishedEntities,

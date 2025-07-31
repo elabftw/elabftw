@@ -41,6 +41,8 @@ function SheetEditor() {
         const ws = wb.Sheets[wb.SheetNames[0]];
         const aoa = utils.sheet_to_json(ws, { header: 1 });
         if (!aoa.length) return;
+        // have a modal pop to ask if the first row should be header
+        // fix Uncaught TypeError: field.indexOf is not a function when first column was already containing data (with integers etc.)
         const headers = aoa[0];
         const rows = aoa.slice(1).map((r, index) => {
           const row = {};
@@ -98,32 +100,9 @@ function SheetEditor() {
     setColumnDefs(updatedColumns);
     setRowData(updatedRows);
   };
-
-  /*
-              // when using f()addColumn, the column is named ColumnX but we might want to rename it.
-              // since ag-grid doesn't allow editing headers, let's use a modal for user input
-              onColumnHeaderClicked={(params) => {
-                if (!params.column) return;
-                const oldField = params.column.getColDef().field;
-                const newField = prompt('Rename column:', oldField);
-                if (!newField || newField === oldField) return;
-
-                const updatedColumns = columnDefs.map(col =>
-                  col.field === oldField ? { ...col, field: newField } : col
-                );
-                const updatedRows = rowData.map(row => {
-                  const newRow = { ...row, [newField]: row[oldField] };
-                  delete newRow[oldField];
-                  return newRow;
-                });
-
-                setColumnDefs(updatedColumns);
-                setRowData(updatedRows);
-              }}
-   */
    return (
     <div className='sheet-editor'>
-      <input type='file' accept='.xlsx,.xls' ref={fileInputRef} className='d-none' onChange={handleFile} />
+      <input type='file' accept='.csv,.xls,.xlsx' ref={fileInputRef} className='d-none' onChange={handleFile} />
       <button
         className='btn hl-hover-gray p-2 mr-2'
         onClick={() => fileInputRef.current?.click()}

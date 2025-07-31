@@ -20,19 +20,12 @@
   <link rel='icon' href='/assets/images/favicon.ico' sizes='any'>{# 32×32 #}
   <link rel='icon' href='/assets/images/favicon.svg' type='image/svg+xml'>
   <link rel='apple-touch-icon' href='/assets/images/apple-touch-icon.png'>{# 180×180 #}
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/x-data-spreadsheet@1.1.9/dist/xspreadsheet.css"
-    integrity="sha384-…optional-SRI…"
-    crossorigin="anonymous"
-  />
 
   <title>{{ Entity.entityData.title|default(pageTitle) }} - eLabFTW</title>
   {# see builder.js to see what gets inside these files #}
   {# CSS #}
   <link rel='stylesheet' media='all' href='/assets/vendor.min.css?v={{ v }}' />
   <link rel='stylesheet' media='all' href='/assets/elabftw.min.css?v={{ v }}' />
-  <script defer src="https://unpkg.com/x-data-spreadsheet@1.1.5/dist/xspreadsheet.js"></script>
 
   {# all js dependencies bundled by webpack (see builder.js) #}
   <script defer src='/assets/vendor.bundle.js?v={{ v }}'></script>

@@ -168,10 +168,10 @@ enum Target {
 }
 
 enum FileType {
-  Xlsx = 'xlsx',
-  Xlsb = 'xlsb',
   Csv = 'csv',
   Html = 'html',
+  Xlsb = 'xlsb',
+  Xlsx = 'xlsx',
 }
 
 interface Entity {

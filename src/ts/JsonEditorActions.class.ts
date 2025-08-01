@@ -50,19 +50,22 @@ export class JsonEditorActions {
           document.querySelector('[data-action="json-save"]').classList.remove('border-danger');
           document.getElementById('jsonUnsavedChangesWarningDiv').hidden = true;
         } else if (el.matches('[data-action="json-import-file"]')) {
-          document.getElementById('jsonImportFileDiv').toggleAttribute('hidden');
-        } else if (el.matches('[data-action="json-upload-file"]')) {
-          const file = (document.getElementById('jsonImportFileInput') as HTMLInputElement).files[0];
-          const reader = new FileReader();
-          reader.readAsText(file);
-          reader.onload = function() {
-            // an error here will not bubble up, so add another try catch block
-            // adding an onerror function doesn't seem to work
-            try {
-              JsonEditorHelperC.editor.set(JSON.parse(reader.result as string));
-            } catch (error) {
-              notify.error(error);
-            }
+          const fileInput = document.getElementById('jsonImportFileInput') as HTMLInputElement;
+          fileInput.click();
+          fileInput.onchange = () => {
+            const file = fileInput.files?.[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.readAsText(file);
+            reader.onload = function() {
+              // an error here will not bubble up, so add another try catch block
+              // adding an onerror function doesn't seem to work
+              try {
+                JsonEditorHelperC.editor.set(JSON.parse(reader.result as string));
+              } catch (error) {
+                notify.error(error);
+              }
+            };
           };
         } else if (el.matches('[data-action="json-clear"]')) {
           JsonEditorHelperC.clear();

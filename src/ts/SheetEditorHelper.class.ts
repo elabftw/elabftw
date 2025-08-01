@@ -32,20 +32,7 @@ export class SheetEditorHelper {
 
         if (!aoa.length) return notify.error('Invalid file');
 
-        const headerRow = aoa[0].map((h, i) => typeof h === 'string' ? h : `Column${i}`);
-        const rows: GridRow[] = aoa.slice(1).map(r => {
-          const row: GridRow = {};
-          headerRow.forEach((h, i) => {
-            row[h] = String(r[i] ?? '');
-          });
-          return row;
-        });
-
-        const cols: GridColumn[] = headerRow.map(h => ({
-          field: h,
-          editable: true
-        }));
-
+        const { cols, rows } = SheetEditorHelper.aoaToGrid(aoa);
         const ev = new CustomEvent('sheet-load-data', { detail: { cols, rows, name } });
         document.dispatchEvent(ev);
 
@@ -65,16 +52,7 @@ export class SheetEditorHelper {
         const aoa = utils.sheet_to_json(ws, { header: 1 }) as (string | number | boolean | null)[][];
         if (!aoa.length) return;
 
-        const headerRow = aoa[0].map((h, i) => typeof h === 'string' ? h : `Column${i}`);
-        const rows: GridRow[] = aoa.slice(1).map(r => {
-          const row: GridRow = {};
-          headerRow.forEach((h, i) => {
-            row[h] = String(r[i] ?? '');
-          });
-          return row;
-        });
-
-        const cols: GridColumn[] = headerRow.map(h => ({ field: h, editable: true }));
+        const { cols, rows } = SheetEditorHelper.aoaToGrid(aoa);
         setColumnDefs(cols);
         setRowData(rows);
       } catch (error) {
@@ -105,5 +83,22 @@ export class SheetEditorHelper {
       default:
         writeFileXLSX(wb, 'export.xlsx');
     }
+  }
+
+  // convert array of arrays to grid
+  private static aoaToGrid(aoa: (string | number | boolean | null)[][]): { cols: GridColumn[], rows: GridRow[] } {
+    const headerRow = aoa[0].map((h, i) => typeof h === 'string' ? h : `Column${i}`);
+    const rows: GridRow[] = aoa.slice(1).map(r => {
+      const row: GridRow = {};
+      headerRow.forEach((h, i) => {
+        row[h] = String(r[i] ?? '');
+      });
+      return row;
+    });
+    const cols: GridColumn[] = headerRow.map(h => ({
+      field: h,
+      editable: true
+    }));
+    return { cols, rows };
   }
 }

@@ -14,19 +14,19 @@
 
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
-import { read, utils, writeFile, writeFileXLSX } from 'xlsx';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
-import { Notification } from './Notifications.class';
 import { FileType } from './interfaces';
 import i18next from './i18n';
+import { SheetEditorHelper } from './SheetEditorHelper.class';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 function SheetEditor() {
+  const sheetHelperC = useRef(new SheetEditorHelper()).current;
   const [columnDefs, setColumnDefs] = useState([]);
   const [rowData, setRowData] = useState([]);
   const fileInputRef = useRef();
@@ -46,55 +46,12 @@ function SheetEditor() {
   const handleFile = useCallback((e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function(event) {
-      try {
-        const wb = read(event.target.result, { type: 'array' });
-        const ws = wb.Sheets[wb.SheetNames[0]];
-        const aoa = utils.sheet_to_json(ws, { header: 1 });
-        if (!aoa.length) return;
-        const headerRow = aoa[0].map((h, i) => typeof h === 'string' ? h : `Column${i}`);
-        const rows = aoa.slice(1).map(r => {
-          const row = {};
-          headerRow.forEach((h, i) => {
-            row[h] = String(r[i] ?? '');
-          });
-          return row;
-        });
-        const columns = headerRow.map(h => ({ field: h, editable: true }));
-        setColumnDefs(columns);
-        setRowData(rows);
-      } catch (error) {
-        (new Notification()).error(error);
-      }
-    };
-    reader.readAsArrayBuffer(file);
-  }, []);
+    sheetHelperC.handleImport(file, setColumnDefs, setRowData);
+  }, [sheetHelperC]);
 
   const handleExport = useCallback((format) => {
-    if (!columnDefs.length || !rowData.length) return;
-    const headers = columnDefs.map(col => col.field);
-    // TODO: typescript: when migrating, see https://docs.sheetjs.com/docs/demos/grid/rdg/#integration-details
-    const aoa = [headers, ...rowData.map(row => headers.map(h => row[h]))];
-    const ws = utils.aoa_to_sheet(aoa);
-    const wb = utils.book_new();
-    utils.book_append_sheet(wb, ws, 'Sheet1');
-
-    switch (format) {
-      // TODO: make a switch to select the export type
-      case FileType.Xlsb:
-        writeFile(wb, 'export.xlsb', { bookType: 'xlsb' });
-        break;
-      case FileType.Csv:
-        writeFile(wb, 'export.csv', { bookType: 'csv' });
-        break;
-      case FileType.Html:
-        writeFile(wb, 'export.html', { bookType: 'html' });
-        break;
-      default:
-        writeFileXLSX(wb, 'export.xlsx');
-    }
-  }, [columnDefs, rowData]);
+    sheetHelperC.handleExport(format, columnDefs, rowData);
+  }, [sheetHelperC, columnDefs, rowData]);
 
   const addRow = () => {
     const newRow = {};
@@ -133,6 +90,7 @@ function SheetEditor() {
             />
           </div>
           <div className='btn-group mt-2'>
+            {/* TODO: make a switch to select the export type*/}
             <button onClick={() => handleExport(FileType.Xlsx)} className='btn btn-primary'>{i18next.t('export')} XLSX</button>
             <button onClick={() => handleExport(FileType.Xlsb)} className='btn btn-secondary'>{i18next.t('export')} XLSB</button>
             <button onClick={() => handleExport(FileType.Csv)} className='btn btn-secondary'>{i18next.t('export')} CSV</button>

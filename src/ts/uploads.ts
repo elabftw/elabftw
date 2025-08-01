@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // HANDLE SHEETS
     } else if (el.matches('[data-action="xls-load-file"]')) {
-      SheetEditorHelperC.loadFile(el.dataset.link, el.dataset.name, el.dataset.uploadid);
+      SheetEditorHelperC.loadInSheetEditor(el.dataset.link, el.dataset.name, el.dataset.uploadid);
     // ARCHIVE UPLOAD
     } else if (el.matches('[data-action="archive-upload"]')) {
       const uploadid = parseInt(el.dataset.uploadid, 10);

@@ -44,7 +44,7 @@ export class SheetEditorHelper {
 
   handleImport(file: File, setColumnDefs: (cols: GridColumn[]) => void, setRowData: (rows: GridRow[]) => void): void {
     const reader = new FileReader();
-    reader.onload = function (event) {
+    reader.onload = function(event) {
       try {
         const wb = read(event.target?.result, { type: 'array' });
         const ws = wb.Sheets[wb.SheetNames[0]];
@@ -71,17 +71,17 @@ export class SheetEditorHelper {
     utils.book_append_sheet(wb, ws, 'Sheet1');
 
     switch (format) {
-      case FileType.Xlsb:
-        writeFile(wb, 'export.xlsb', { bookType: 'xlsb' });
-        break;
-      case FileType.Csv:
-        writeFile(wb, 'export.csv', { bookType: 'csv' });
-        break;
-      case FileType.Html:
-        writeFile(wb, 'export.html', { bookType: 'html' });
-        break;
-      default:
-        writeFileXLSX(wb, 'export.xlsx');
+    case FileType.Xlsb:
+      writeFile(wb, 'export.xlsb', { bookType: 'xlsb' });
+      break;
+    case FileType.Csv:
+      writeFile(wb, 'export.csv', { bookType: 'csv' });
+      break;
+    case FileType.Html:
+      writeFile(wb, 'export.html', { bookType: 'html' });
+      break;
+    default:
+      writeFileXLSX(wb, 'export.xlsx');
     }
   }
 
@@ -97,7 +97,7 @@ export class SheetEditorHelper {
     });
     const cols: GridColumn[] = headerRow.map(h => ({
       field: h,
-      editable: true
+      editable: true,
     }));
     return { cols, rows };
   }

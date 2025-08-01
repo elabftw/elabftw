@@ -87,10 +87,6 @@ function SheetEditor() {
         <button className='btn hl-hover-gray p-2 mr-2' onClick={() => fileInputRef.current?.click()} title={i18next.t('import')} type='button'>
           <i className='fas fa-upload fa-fw' />
         </button>
-        {/* DOWNLOAD AS FILE */}
-        <button className='btn hl-hover-gray p-2 mr-2' onClick={handleDownload} title={i18next.t('save')} type='button'>
-          <i className='fas fa-download fa-fw'></i>
-        </button>
         <div className='vertical-separator'></div>
         {/* SAVE AS ATTACHMENT (uploads section) */}
         <button className='btn hl-hover-gray p-2 mr-2' onClick={() => {}} title={i18next.t('save-attachment')} type='button'>
@@ -99,22 +95,51 @@ function SheetEditor() {
       </div>
       {columnDefs.length > 0 && rowData.length > 0 && (
         <>
+          <div className='btn-group mt-2'>
+            <div className='dropdown'>
+              <button className='btn hl-hover-gray d-inline p-2 mr-2' title={i18next.t('export')} data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label={i18next.t('export')} type='button'>
+                <i className='fas fa-download fa-fw'></i>
+              </button>
+              <div className='dropdown-menu'>
+                <button className='dropdown-item' onClick={() => handleExport(FileType.Csv)}>
+                  <i className='fas fa-file-csv fa-fw'></i>{i18next.t('CSV File')}
+                </button>
+                <button className='dropdown-item' onClick={() => handleExport(FileType.Xls)}>
+                  <i className='fas fa-file-excel fa-fw'></i>{i18next.t('XLS File')}
+                </button>
+                <button className='dropdown-item' onClick={() => handleExport(FileType.Xlsx)}>
+                  <i className='fas fa-file-excel fa-fw'></i>{i18next.t('XLSX File')}
+                </button>
+                <button className='dropdown-item' onClick={() => handleExport(FileType.Ods)}>
+                  <i className='fas fa-file-excel fa-fw'></i>{i18next.t('ODS File')}
+                </button>
+                <button className='dropdown-item' onClick={() => handleExport(FileType.Ots)}>
+                  <i className='fas fa-file-excel fa-fw'></i>{i18next.t('OTS File')}
+                </button>
+                <button className='dropdown-item' onClick={() => handleExport(FileType.Fods)}>
+                  <i className='fas fa-file-excel fa-fw'></i>{i18next.t('FODS File')}
+                </button>
+                <button className='dropdown-item' onClick={() => handleExport(FileType.Xlsb)}>
+                  <i className='fas fa-file-excel fa-fw'></i>{i18next.t('XLSB File')}
+                </button>
+                <button className='dropdown-item' onClick={() => handleExport(FileType.Html)}>
+                  <i className='fas fa-file-code fa-fw'></i>{i18next.t('HTML File')}
+                </button>
+              </div>
+            </div>
+            <button onClick={addRow} className='btn hl-hover-gray d-inline p-2 mr-2' title={i18next.t('add-row')}>
+              <i class='fas fa-plus-minus fa-fw'></i>
+            </button>
+            <button onClick={addColumn} className='btn hl-hover-gray d-inline p-2 mr-2' title={i18next.t('add-column')}>
+              <i class='fas fa-plus fa-fw'></i>
+            </button>
+          </div>
           <div className='ag-theme-alpine' style={{ height: 400, marginTop: 10 }}>
             <AgGridReact
               rowData={rowData}
               columnDefs={columnDefs}
               defaultColDef={{ sortable: true, filter: true, editable: true }}
             />
-          </div>
-          <div className='btn-group mt-2'>
-            {/* TODO: make a switch to select the export type*/}
-            <button onClick={() => handleExport(FileType.Xlsx)} className='btn btn-primary'>{i18next.t('export')} XLSX</button>
-            <button onClick={() => handleExport(FileType.Xlsb)} className='btn btn-secondary'>{i18next.t('export')} XLSB</button>
-            <button onClick={() => handleExport(FileType.Csv)} className='btn btn-secondary'>{i18next.t('export')} CSV</button>
-            <button onClick={() => handleExport(FileType.Html)} className='btn btn-secondary'>{i18next.t('export')} HTML</button>
-            {/* TODO: styling button in header like json editor*/}
-            <button onClick={addRow} className='btn btn-success'>Add Row</button>
-            <button onClick={addColumn} className='btn btn-info'>Add Column</button>
           </div>
         </>
       )}

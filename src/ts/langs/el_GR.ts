@@ -67,6 +67,7 @@ const t = {
     "resource-not-found": "Δεν υπάρχει τίποτα για εμφάνιση με αυτό το αναγνωριστικό",
     "revisions-error": "Select two revisions to compare them.",
     "save": "Αποθήκευση",
+    "save-attachment": "Αποθήκευση ως συνημμένο",
     "saved": "Αποθηκεύτηκε",
     "search": "Αναζήτηση",
     "select-resource": "Επιλέξτε έναν πόρο",

@@ -67,6 +67,7 @@ const t = {
     "resource-not-found": "Non vi è nulla con questo ID",
     "revisions-error": "Select two revisions to compare them.",
     "save": "Salva",
+    "save-attachment": "Salva come allegato",
     "saved": "Salvato",
     "search": "Cerca",
     "select-resource": "Seleziona una risorsa",

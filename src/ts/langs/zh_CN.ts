@@ -67,6 +67,7 @@ const t = {
     "resource-not-found": "该 ID 没有任何记录",
     "revisions-error": "Select two revisions to compare them.",
     "save": "保存",
+    "save-attachment": "另存为附件",
     "saved": "已保存",
     "search": "搜索",
     "select-resource": "选择一个资源",

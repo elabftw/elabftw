@@ -67,6 +67,7 @@ const t = {
     "resource-not-found": "Tidak ada yang bisa ditampilkan dengan id ini",
     "revisions-error": "Select two revisions to compare them.",
     "save": "Simpan",
+    "save-attachment": "Simpan sebagai lampiran",
     "saved": "Tersimpan",
     "search": "Cari",
     "select-resource": "Memilih sumber daya",

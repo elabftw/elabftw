@@ -67,6 +67,7 @@ const t = {
     "resource-not-found": "Ei mitään näytettävää tällä tunnuksella",
     "revisions-error": "Select two revisions to compare them.",
     "save": "Tallenna",
+    "save-attachment": "Tallenna liitteenä",
     "saved": "Tallennettu",
     "search": "Hae",
     "select-resource": "Valitse resurssi",

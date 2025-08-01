@@ -67,6 +67,7 @@ const t = {
     "resource-not-found": "Niets te tonen met dit id",
     "revisions-error": "Select two revisions to compare them.",
     "save": "Opslaan",
+    "save-attachment": "Opslaan als bijlage",
     "saved": "Opgeslagen",
     "search": "Zoek",
     "select-resource": "Selecteer een bron",

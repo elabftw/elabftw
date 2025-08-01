@@ -67,6 +67,7 @@ const t = {
     "resource-not-found": "С этим id ничего нет",
     "revisions-error": "Select two revisions to compare them.",
     "save": "Сохранить",
+    "save-attachment": "Сохранить как вложение",
     "saved": "Сохранено",
     "search": "Искать",
     "select-resource": "Выберите ресурс",

@@ -71,15 +71,22 @@ function SheetEditor() {
   };
    return (
     <div className='sheet-editor'>
-      <input type='file' accept='.csv,.xls,.xlsx,.ods,.ots,.fods,.xlsb' ref={fileInputRef} className='d-none' onChange={handleFile} />
-      <button
-        className='btn hl-hover-gray p-2 mr-2'
-        onClick={() => fileInputRef.current?.click()}
-        title={i18next.t('hide-deleted')}
-        type='button'
-      >
-        <i className='fas fa-upload fa-fw' />
-      </button>
+      <div className='d-flex align-items-center'>
+        {/* IMPORT FROM FILE */}
+        <input type='file' accept='.csv,.xls,.xlsx,.ods,.ots,.fods,.xlsb' ref={fileInputRef} className='d-none' onChange={handleFile} />
+        <button className='btn hl-hover-gray p-2 mr-2' onClick={() => fileInputRef.current?.click()} title={i18next.t('import')} type='button'>
+          <i className='fas fa-upload fa-fw' />
+        </button>
+        {/* DOWNLOAD AS FILE */}
+        <button className='btn hl-hover-gray p-2 mr-2' onClick={() => {}} title={i18next.t('save')} type='button'>
+          <i className='fas fa-download fa-fw'></i>
+        </button>
+        <div className='vertical-separator'></div>
+        {/* SAVE AS ATTACHMENT (uploads section) */}
+        <button className='btn hl-hover-gray p-2 mr-2' onClick={() => {}} title={i18next.t('save-attachment')} type='button'>
+          <i className='fas fa-paperclip fa-fw'></i>
+        </button>
+      </div>
       {columnDefs.length > 0 && rowData.length > 0 && (
         <>
           <div className='ag-theme-alpine' style={{ height: 400, marginTop: 10 }}>

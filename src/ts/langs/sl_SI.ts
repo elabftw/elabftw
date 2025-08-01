@@ -67,6 +67,7 @@ const t = {
     "resource-not-found": "Ničesar za prikaz s to identifikacijo",
     "revisions-error": "Select two revisions to compare them.",
     "save": "Shrani",
+    "save-attachment": "Shrani kot prilogo",
     "saved": "Shranjeno",
     "search": "Išči",
     "select-resource": "Izberite vir",

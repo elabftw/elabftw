@@ -67,6 +67,7 @@ const t = {
     "resource-not-found": "このIDで表示可能なものはありません",
     "revisions-error": "Select two revisions to compare them.",
     "save": "保存",
+    "save-attachment": "添付ファイルとして保存",
     "saved": "保存済み",
     "search": "検索",
     "select-resource": "リソースを選択",

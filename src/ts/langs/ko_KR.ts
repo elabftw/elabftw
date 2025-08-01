@@ -67,6 +67,7 @@ const t = {
     "resource-not-found": "이 계정과 관련된 추가 정보는 없습니다",
     "revisions-error": "Select two revisions to compare them.",
     "save": "저장",
+    "save-attachment": "첨부 파일로 저장",
     "saved": "저장됨",
     "search": "검색",
     "select-resource": "리소스 선택",

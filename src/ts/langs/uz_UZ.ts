@@ -67,6 +67,7 @@ const t = {
     "resource-not-found": "Bu identifikator bilan hech narsa ko'rsatilmaydi",
     "revisions-error": "Select two revisions to compare them.",
     "save": "Saqlash",
+    "save-attachment": "Ilova sifatida saqlang",
     "saved": "Saqlangan",
     "search": "Qidirmoq",
     "select-resource": "Resurs tanlang",

@@ -67,6 +67,7 @@ const t = {
     "resource-not-found": "Res a mostrar amb aquest identificador",
     "revisions-error": "Select two revisions to compare them.",
     "save": "Guardar",
+    "save-attachment": "Desa com a fitxer adjunt",
     "saved": "Guardat",
     "search": "Buscar",
     "select-resource": "Seleccioneu un recurs",

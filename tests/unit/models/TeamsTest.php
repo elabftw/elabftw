@@ -45,7 +45,6 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
     {
         $params = array(
             'announcement' => '',
-            'common_template_md' => '# yep',
             'newcomer_threshold' => '12',
             'orgid' => 'Something',
         );

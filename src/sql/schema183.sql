@@ -63,3 +63,7 @@ CREATE TABLE `experiments_templates_status` (
   PRIMARY KEY (`id`),
   CONSTRAINT FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+-- drop the comment template stuff from teams
+CALL DropColumn('teams', 'common_template');
+CALL DropColumn('teams', 'common_template_md');

@@ -1089,8 +1089,6 @@ CREATE TABLE `tags2entity` (
 CREATE TABLE `teams` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
-  `common_template` text,
-  `common_template_md` text,
   `user_create_tag` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `force_exp_tpl` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `users_canwrite_experiments_categories` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,

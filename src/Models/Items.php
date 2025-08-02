@@ -56,8 +56,6 @@ final class Items extends AbstractConcreteEntity
         int $rating = 0,
         ?int $contentType = null,
         bool $forceExpTpl = false,
-        string $defaultTemplateHtml = '',
-        string $defaultTemplateMd = '',
         ?string $color = null,
         // specific to Items
         ?string $canbook = '',

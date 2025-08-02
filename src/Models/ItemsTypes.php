@@ -58,8 +58,6 @@ final class ItemsTypes extends AbstractTemplateEntity
         int $rating = 0,
         ?int $contentType = null,
         bool $forceExpTpl = false,
-        string $defaultTemplateHtml = '',
-        string $defaultTemplateMd = '',
     ): int {
         $this->canWriteOrExplode();
 

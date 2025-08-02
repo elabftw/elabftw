@@ -72,7 +72,7 @@
     {% include 'binary-setting.html' with {'model': model, 'src': src,
       'slug': 'force_exp_tpl',
       'label': 'Force experiment template use'|trans,
-      'help': 'Remove Default Template and Blank Experiment choices from Create menu, and force usage of existing Templates.'|trans} %}
+      'help': 'Users will be forced to select an existing Template, and will not be able to create a blank entry.'|trans} %}
 
     {% include 'binary-setting.html' with {'model': model, 'src': src,
       'slug': 'users_canwrite_experiments_categories',
@@ -90,38 +90,6 @@
       'slug': 'users_canwrite_resources_status',
       'label': 'Allow users to create and edit resources status'|trans} %}
   </div>
-  <h3 class='p-2 pl-3 section-title'>{{ 'Default Template main text'|trans }}</h3>
-
-  <div class='pl-3 mt-2'>
-    <p>{{ 'Set the text included in the main body of an Experiment when the Default Template is selected.'|trans }}</p>
-    <label for='common_template'>{{ 'HTML version'|trans }}</label>
-    <div>
-      {% if App.devMode -%}
-      {# set no-unused-disable and text-content because removing or leaving text-content brings up error #}
-        <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element, no-unused-disable, element-permitted-content: suppress errors from tinymce] -->
-      {%- endif %}
-      <textarea style='height:400px' class='mceditable' name='common_template' id='common_template'>
-        {{ App.Teams.teamArr.common_template|raw }}
-      </textarea>
-    </div>
-    <div class='mt-2 text-center'>
-      <button type='button' data-action='patch-team-common-template' class='btn btn-primary'>{{ 'Save'|trans }}</button>
-    </div>
-    <hr>
-
-    <label for='common_template_md'>{{ 'Markdown version'|trans }}</label>
-    <div>
-      {% if App.devMode -%}
-        <!-- [html-validate-disable-block text-content, no-unused-disable: suppress errors from tinymce] -->
-      {%- endif %}
-      <textarea style='height:400px' class='markdown-textarea form-control mt-2' name='common_template_md' id='common_template_md'>{{ App.Teams.teamArr.common_template_md|raw }}</textarea>
-    </div>
-    <div class='mt-2 text-center'>
-      <button type='button' data-action='patch-team-common-template-md' class='btn btn-primary'>{{ 'Save'|trans }}</button>
-    </div>
-
-  </div>
-  <hr>
 
   {# ONBOARDING EMAIL #}
   {% include 'onboarding-email.html' %}

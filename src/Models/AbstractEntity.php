@@ -167,8 +167,6 @@ abstract class AbstractEntity extends AbstractRest
         int $rating = 0,
         ?int $contentType = null,
         bool $forceExpTpl = false,
-        string $defaultTemplateHtml = '',
-        string $defaultTemplateMd = '',
     ): int;
 
     abstract public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int;

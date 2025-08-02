@@ -53,8 +53,6 @@ final class Experiments extends AbstractConcreteEntity
         int $rating = 0,
         ?int $contentType = null,
         bool $forceExpTpl = false,
-        string $defaultTemplateHtml = '',
-        string $defaultTemplateMd = '',
     ): int {
         $canread ??= $this->Users->userData['default_read'] ?? BasePermissions::Team->toJson();
         $canwrite ??= $this->Users->userData['default_write'] ?? BasePermissions::User->toJson();
@@ -90,15 +88,6 @@ final class Experiments extends AbstractConcreteEntity
         // throw error if no template is used and template is required by admin
         if ($template <= 0 && $forceExpTpl) {
             throw new ImproperActionException(_('Experiments must use a template!'));
-        }
-
-        // load common template
-        if ($template === 0) {
-            $body = $defaultTemplateHtml;
-            // use the markdown template if the user prefers markdown
-            if ($this->Users->userData['use_markdown']) {
-                $body = $defaultTemplateMd;
-            }
         }
 
         // figure out the custom id

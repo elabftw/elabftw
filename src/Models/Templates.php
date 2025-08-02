@@ -35,15 +35,6 @@ final class Templates extends AbstractTemplateEntity
 {
     use SortableTrait;
 
-    public const string defaultBody = '<h1>Goal:</h1>
-    <p>&nbsp;</p>
-    <h1>Procedure:</h1>
-    <p>&nbsp;</p>
-    <h1>Results:</h1>
-    <p>&nbsp;</p>';
-
-    public const string defaultBodyMd = "# Goal\n\n# Procedure\n\n# Results\n\n";
-
     public EntityType $entityType = EntityType::Templates;
 
     // color is here just to be on par with itemstypes
@@ -65,8 +56,6 @@ final class Templates extends AbstractTemplateEntity
         int $rating = 0,
         ?int $contentType = null,
         bool $forceExpTpl = false,
-        string $defaultTemplateHtml = '',
-        string $defaultTemplateMd = '',
     ): int {
         $title = Filter::title($title ?? _('Untitled'));
 

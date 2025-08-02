@@ -64,8 +64,6 @@ abstract class AbstractConcreteEntity extends AbstractEntity
                 status: $status,
                 metadata: $metadata,
                 forceExpTpl: (bool) $teamConfigArr['force_exp_tpl'],
-                defaultTemplateHtml: $teamConfigArr['common_template'] ?? '',
-                defaultTemplateMd: $teamConfigArr['common_template_md'] ?? '',
             ),
             Action::Duplicate => $this->duplicate((bool) ($reqBody['copyFiles'] ?? false), (bool) ($reqBody['linkToOriginal'] ?? false)),
             default => throw new ImproperActionException('Invalid action parameter.'),

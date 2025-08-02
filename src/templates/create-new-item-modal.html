@@ -27,16 +27,38 @@
             <hr>
           {% endif %}
           {% set btnId = 'createNewTemplates_' ~ entityPage %}
-          <p class='smallgray'>{{ 'Note: only templates that you have pinned are displayed below.'|trans }}</p>
           {% include 'scope-button.html' with {'btnId': btnId, 'reload': btnId ~ ',tplCreateNewDiv_' ~ entityPage, 'target': 'scope_experiments_templates'} %}
           <div id='tplCreateNewDiv_{{ entityPage }}'>
-            {% for template in templatesArr %}
-              <a style='color:#{{ template.color }}; border: 1px #ccc solid;' class='btn btn-light mt-1' href='#' data-action='create-entity' data-type='{{ entityPage }}' data-tplid='{{ template.id }}'>
-              {% if template.template %}
-                <span class='catstat-btn category-btn mr-2' style='--bg: #{{ template.template_color|default('bdbdbd') }}'>{{ template.template_title }}</span>
-              {% endif %}
-              {{ template.title }}</a>
-            {% endfor %}
+            <input type='text' aria-label='{{ 'Filter'|trans }}' placeholder='{{ 'Filter'|trans }}' data-filter-target='tplCreateNewTable' data-target-type='tr' class='form-control form-inline'>
+            <table class='table' aria-describedby='createModalLabel_{{ entityPage }}' data-table-sort='true'>
+              <thead>
+                <tr>
+                  <th scope='col'>{{ 'Title'|trans }}</th>
+                  <th scope='col'>{{ 'Owner'|trans }}</th>
+                </tr>
+              </thead>
+              <tbody id='tplCreateNewTable'>
+                {% set label = entityType.value == 'items_types' ? 'Create resource from template'|trans : 'Create experiment from template'|trans %}
+                {% for template in templatesArr %}
+                  <tr>
+                    <td data-label='{{ 'Title'|trans }}'>
+                      <a data-action='create-entity' data-type={{ entityPage }} data-tplid='{{ template.id }}' href='#' class='p-2 rounded mr-2 hl-hover-gray bgnd-blue' title='{{ label }}' aria-label='{{ label }}'>
+                        <i class='fas fa-file-circle-plus fa-fw'></i>
+                      </a>
+                      {% if template.category %}
+                        <span class='catstat-btn category-btn mr-2' style='--bg: #{{ template.category_color|default('bdbdbd') }}'>{{ template.category_title }}</span>
+                      {% endif %}
+                      {% if template.status %}
+                        <span class='catstat-btn status-btn mr-2' style='--bg: #{{ template.status_color|default('bdbdbd') }}'>{{ template.status_title }}</span>
+                      {% endif %}
+                      {{ template.title }}
+                      </a>
+                    </td>
+                    <td data-label='{{ 'Owner'|trans }}'>{{ template.fullname }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
           </div>
 
           <hr>

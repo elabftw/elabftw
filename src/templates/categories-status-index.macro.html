@@ -1,0 +1,86 @@
+{% macro catstatidx(type, table, subtitle, infotip, sourceArr, emptyWarning, modalTitle) %}
+
+<div class='mb-5 d-flex justify-content-between'>
+  <div class='d-flex'>
+    <p>{{ subtitle }}</p>
+      <span class='infotip'>
+        <span class='infotip-icon'>
+        <i class='ml-1 fas fa-circle-question'></i>
+      </span>
+      <p class='infotip-text'>{{ infotip }}</p>
+  </div>
+  {# CREATE NEW BUTTON the div around the button is necessary or the button itself gets resized on small viewports #}
+  <div>
+    <button type='button' class='btn btn-primary' data-action='toggle-modal' data-target='create{{ type }}Modal'>{{ 'Create'|trans }}</button>
+  </div>
+</div>
+
+<div id='statusDiv'>
+  {% if sourceArr|length == 0 %}
+    <p>{{ emptyWarning }}</p>
+  {% endif %}
+  <ul class='list-group sortable' data-axis='y' data-table='{{ table }}'>
+    {% for cat in sourceArr %}
+      <li id='expcat_{{ cat.id }}' data-statusid='expcat_{{ cat.id }}' class='list-group-item'>
+        <ul class='list-inline'>
+          <li class='list-inline-item'>
+            <span class='draggable sortableHandle'>
+              <i class='fas fa-grip-vertical fa-fw'></i>
+            </span>
+          </li>
+
+          <li class='list-inline-item'>
+            <label for='expcatName_{{ cat.id }}'>{{ 'Name'|trans }}</label>
+            <input class='form-control' required type='text' id='expcatName_{{ cat.id }}' data-trigger='blur' data-model='teams/current/{{ type }}/{{ cat.id }}' data-target='title' value='{{ cat.title|e('html_attr') }}' />
+          </li>
+
+          <li class='list-inline-item align-top'>
+            <label for='expcatColor_{{ cat.id }}'>{{ 'Color'|trans }}</label>
+            <input class='form-control color-input' type='color' id='expcatColor_{{ cat.id }}' data-trigger='change' data-model='teams/current/{{ type }}/{{ cat.id }}' data-target='color' value='#{{ cat.color }}' />
+          </li>
+
+          <li class='list-inline-item'>
+            <button type='button' data-id='{{ cat.id }}' data-target='{{ type }}' data-action='destroy-catstat' class='btn btn-danger' >{{ 'Delete'|trans }}</button>
+          </li>
+        </ul>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+
+{# MODAL FOR CREATION #}
+{# create a status or category: only has name and color #}
+<div class='modal fade' id='create{{ table }}Modal' tabindex='-1' role='dialog' aria-labelledby='create{{ table }}ModalLabel'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='create{{ table }}ModalLabel'><i class='fas fa-fw fa-plus-square mr-1'></i>{{ modalTitle }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+          <div class='d-flex justify-content-between mb-2'>
+            <label for='create{{ table }}Name' class='col-form-label'>{{ 'Name'|trans }}</label>
+            <input class='form-control col-md-6' type='text' name='name' placeholder='{{ 'Category name'|trans }}' required id='create{{ table }}Name' />
+          </div>
+          <hr>
+
+          <div class='d-flex justify-content-between'>
+            <label for='create{{ table }}Color' class='col-form-label'>{{ 'Color'|trans }}</label>
+            <div class='d-flex flex-row'>
+              <span class='p-2 rounded hl-hover-gray mr-1' data-action='reload-color'><i class='fas fa-rotate'></i></span>
+              <input class='form-control randomColor col-md-6 color-input' type='color' name='color' id='create{{ table }}Color' />
+            </div>
+          </div>
+      </div>
+
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+        <button type='button' data-target='{{ type }}' data-action='create-statuslike' class='btn btn-primary'>{{ 'Create'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endmacro %}

@@ -301,6 +301,7 @@ export async function reloadElements(elementIds: string[]): Promise<void> {
     listenTrigger(elementId);
   });
   (new TableSorting()).init();
+  makeSortableGreatAgain();
 }
 
 /**

@@ -8,7 +8,7 @@ describe('Exclusive edit mode', () => {
     cy.visit('/experiments.php');
     cy.contains('Create').click();
     cy.intercept('GET', '/api/v2/experiments/**').as('apiGet');
-    cy.get('#createModal_experiments').should('be.visible').should('contain', 'Default template').contains('Default template').click();
+    cy.get('#createModal_experiments').should('be.visible').should('contain', 'Blank experiment').contains('Blank experiment').click();
     cy.url().should('include', 'mode=edit');
     cy.wait('@apiGet');
     cy.wait('@apiGet');

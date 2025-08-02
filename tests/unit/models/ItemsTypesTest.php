@@ -13,7 +13,6 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
 
 class ItemsTypesTest extends \PHPUnit\Framework\TestCase
@@ -46,9 +45,13 @@ class ItemsTypesTest extends \PHPUnit\Framework\TestCase
 
     public function testDuplicate(): void
     {
-        $this->ItemsTypes->setId($this->ItemsTypes->create());
-        $this->expectException(ImproperActionException::class);
-        $this->ItemsTypes->duplicate();
+        $title = 'Serge Gainsbourg';
+        $body = 'Quand Gainsbarre se bourre, Gainsbourg se barre.';
+        $this->ItemsTypes->setId($this->ItemsTypes->create(title: $title, body: $body));
+        $newId = $this->ItemsTypes->duplicate();
+        $this->ItemsTypes->setId($newId);
+        $this->assertEquals($title, $this->ItemsTypes->entityData['title']);
+        $this->assertEquals($body, $this->ItemsTypes->entityData['body']);
     }
 
     public function testGetApiPath(): void

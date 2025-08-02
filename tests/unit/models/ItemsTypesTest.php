@@ -50,7 +50,7 @@ class ItemsTypesTest extends \PHPUnit\Framework\TestCase
         $this->ItemsTypes->setId($this->ItemsTypes->create(title: $title, body: $body));
         $newId = $this->ItemsTypes->duplicate();
         $this->ItemsTypes->setId($newId);
-        $this->assertEquals($title, $this->ItemsTypes->entityData['title']);
+        $this->assertEquals($title . ' I', $this->ItemsTypes->entityData['title']);
         $this->assertEquals($body, $this->ItemsTypes->entityData['body']);
     }
 

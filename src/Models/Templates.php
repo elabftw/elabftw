@@ -14,15 +14,12 @@ namespace Elabftw\Models;
 
 use DateTimeImmutable;
 use Elabftw\Elabftw\TemplatesSqlBuilder;
-use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Scope;
 use Elabftw\Enums\State;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\SqlBuilderInterface;
-use Elabftw\Models\Links\ExperimentsTemplates2ExperimentsLinks;
-use Elabftw\Models\Links\ExperimentsTemplates2ItemsLinks;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SortableTrait;
 use Override;
@@ -97,54 +94,6 @@ final class Templates extends AbstractTemplateEntity
         $Pins = new Pins($fresh);
         $Pins->addToPinned();
         return $id;
-    }
-
-    /**
-     * Duplicate a template from someone else
-     */
-    #[Override]
-    public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int
-    {
-        $this->canOrExplode('read');
-        $title = $this->entityData['title'] . ' I';
-        $newId = $this->create(
-            title: $title,
-            body: $this->entityData['body'],
-            category: $this->entityData['category'],
-            status: $this->entityData['status'],
-            canread: $this->entityData['canread'],
-            canwrite: $this->entityData['canwrite'],
-            metadata: $this->entityData['metadata'],
-            contentType: $this->entityData['content_type'],
-        );
-        // add missing can*_target
-        $fresh = new self($this->Users, $newId);
-        $fresh->patch(Action::Update, array(
-            'canread_target' => $this->entityData['canread_target'],
-            'canwrite_target' => $this->entityData['canwrite_target'],
-        ));
-
-        // copy tags
-        $Tags = new Tags($this);
-        $Tags->copyTags($newId);
-
-        // copy links and steps too
-        $ItemsLinks = new ExperimentsTemplates2ItemsLinks($this);
-        /** @psalm-suppress PossiblyNullArgument */
-        $ItemsLinks->duplicate($this->id, $newId, true);
-        $ExperimentsLinks = new ExperimentsTemplates2ExperimentsLinks($this);
-        $ExperimentsLinks->duplicate($this->id, $newId, true);
-        $Steps = new Steps($this);
-        $Steps->duplicate($this->id, $newId, true);
-        if ($copyFiles) {
-            $this->Uploads->duplicate($fresh);
-        }
-
-        // pin the newly created template so it directly appears in Create menu
-        $Pins = new Pins($fresh);
-        $Pins->addToPinned();
-
-        return $newId;
     }
 
     /**

@@ -23,7 +23,6 @@ use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\SqlBuilderInterface;
 use Elabftw\Params\BaseQueryParams;
 use Elabftw\Params\OrderingParams;
-use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\RandomColorTrait;
 use Override;
@@ -124,13 +123,6 @@ final class ItemsTypes extends AbstractTemplateEntity
         $this->Db->execute($req);
 
         return $req->fetchAll();
-    }
-
-    #[Override]
-    public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int
-    {
-        // TODO: implement
-        throw new ImproperActionException('No duplicate action for resources categories.');
     }
 
     /**

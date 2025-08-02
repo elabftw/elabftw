@@ -50,12 +50,6 @@
       </div>
     </div>
     {% endif %}
-    {% if Entity.entityType.value == 'items_types' %}
-      <div class='form-inline'>
-        <label for='color_input' class='col-form-label mr-3 edit-mode-label justify-content-start d-sm-block d-none'>{{ 'Color'|trans }}</label>
-        <input id='color_input' data-trigger='change' data-model='{{ Entity.entityType.value }}/{{ Entity.entityData.id }}' data-target='color' type='color' value='#{{ Entity.entityData.color }}' class='form-control' style='min-width: 123px' />
-      </div>
-    {% endif %}
   </div>
 
   {# TAGS #}

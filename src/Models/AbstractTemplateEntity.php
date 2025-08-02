@@ -15,6 +15,7 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Factories\LinksFactory;
 use Override;
 use PDO;
 
@@ -78,5 +79,48 @@ abstract class AbstractTemplateEntity extends AbstractEntity
             Action::Duplicate => $this->duplicate((bool) ($reqBody['copyFiles'] ?? false), (bool) ($reqBody['linkToOriginal'] ?? false)),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
+    }
+
+    #[Override]
+    public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int
+    {
+        $this->canOrExplode('read');
+        $title = $this->entityData['title'] . ' I';
+        $newId = $this->create(
+            title: $title,
+            body: $this->entityData['body'],
+            category: $this->entityData['category'],
+            status: $this->entityData['status'],
+            canread: $this->entityData['canread'],
+            canwrite: $this->entityData['canwrite'],
+            metadata: $this->entityData['metadata'],
+            contentType: $this->entityData['content_type'],
+        );
+        // add missing can*_target
+        $fresh = clone $this;
+        $fresh->setId($newId);
+        $fresh->patch(Action::Update, array(
+            'canread_target' => $this->entityData['canread_target'],
+            'canwrite_target' => $this->entityData['canwrite_target'],
+        ));
+
+        // copy tags
+        $Tags = new Tags($this);
+        $Tags->copyTags($newId);
+
+        // copy links and steps too
+        $ItemsLinks = LinksFactory::getItemsLinks($this);
+        /** @psalm-suppress PossiblyNullArgument */
+        $ItemsLinks->duplicate($this->id, $newId, true);
+        $ExperimentsLinks = LinksFactory::getExperimentsLinks($this);
+        $ExperimentsLinks->duplicate($this->id, $newId, true);
+        $Steps = new Steps($this);
+        $Steps->duplicate($this->id, $newId, true);
+        if ($copyFiles) {
+            $fresh->Uploads = new Uploads($fresh);
+            $this->Uploads->duplicate($fresh);
+        }
+
+        return $newId;
     }
 }

@@ -451,10 +451,7 @@ abstract class AbstractEntity extends AbstractRest
         $this->entityData['related_experiments_links'] = $this->ExperimentsLinks->readRelated();
         $this->entityData['related_items_links'] = $this->ItemsLinks->readRelated();
         $this->entityData['uploads'] = $this->Uploads->readAll($queryParams);
-        // no comments on templates for now
-        if ($this instanceof AbstractConcreteEntity) {
-            $this->entityData['comments'] = $this->Comments->readAll();
-        }
+        $this->entityData['comments'] = $this->Comments->readAll();
         $this->entityData['page'] = mb_substr($this->entityType->toPage(), 0, -4);
         $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
         $this->entityData['compounds'] = $CompoundsLinks->readAll();
@@ -517,11 +514,13 @@ abstract class AbstractEntity extends AbstractRest
             categoryt.title AS category_title,
             statust.color AS status_color,
             statust.title AS status_title,
+            CONCAT(users.firstname, " ", users.lastname) AS fullname,
             "' . $this->entityType->value . '" AS type,
             "' . $this->entityType->toPage() . '" AS page
             FROM ' . $this->entityType->value . ' AS entity
             LEFT JOIN ' . $categoryTable . ' AS categoryt ON entity.category = categoryt.id
             LEFT JOIN ' . $this->entityType->value . '_status AS statust ON entity.status = statust.id
+            LEFT JOIN users ON entity.userid = users.userid
             LEFT JOIN
                 users2teams ON (users2teams.users_id = :userid AND users2teams.teams_id = :teamid)
             WHERE

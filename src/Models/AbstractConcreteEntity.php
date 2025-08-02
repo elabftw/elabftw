@@ -12,13 +12,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\EntitySqlBuilder;
-use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\State;
-use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Params\DisplayParams;
@@ -28,10 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Override;
 
 use function is_string;
-use function json_decode;
-use function ksort;
 use function sprintf;
-use function mb_substr;
 
 /**
  * An entity like Experiments or Items. Concrete as opposed to TemplateEntity for experiments templates or items types
@@ -77,67 +70,6 @@ abstract class AbstractConcreteEntity extends AbstractEntity
             Action::Duplicate => $this->duplicate((bool) ($reqBody['copyFiles'] ?? false), (bool) ($reqBody['linkToOriginal'] ?? false)),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
-    }
-
-    /**
-     * Read all from one entity
-     */
-    #[Override]
-    public function readOne(): array
-    {
-        if ($this->id === null) {
-            throw new IllegalActionException('No id was set!');
-        }
-        // build query params for Uploads
-        $queryParams = $this->getQueryParams(Request::createFromGlobals()->query);
-        $EntitySqlBuilder = new EntitySqlBuilder($this);
-        $sql = $EntitySqlBuilder->getReadSqlBeforeWhere(true, true);
-
-        $sql .= sprintf(' WHERE entity.id = %d', $this->id);
-
-        $req = $this->Db->prepare($sql);
-        $this->Db->execute($req);
-        $this->entityData = $this->Db->fetch($req);
-        // Note: this is returning something with all values set to null instead of resource not found exception if the id is incorrect.
-        if ($this->entityData['id'] === null) {
-            throw new ResourceNotFoundException();
-        }
-        $this->canOrExplode('read');
-        $this->entityData['steps'] = $this->Steps->readAll();
-        $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll();
-        $this->entityData['items_links'] = $this->ItemsLinks->readAll();
-        $this->entityData['related_experiments_links'] = $this->ExperimentsLinks->readRelated();
-        $this->entityData['related_items_links'] = $this->ItemsLinks->readRelated();
-        $this->entityData['uploads'] = $this->Uploads->readAll($queryParams);
-        $this->entityData['comments'] = $this->Comments->readAll();
-        $this->entityData['page'] = mb_substr($this->entityType->toPage(), 0, -4);
-        $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
-        $this->entityData['compounds'] = $CompoundsLinks->readAll();
-        $ContainersLinks = LinksFactory::getContainersLinks($this);
-        $this->entityData['containers'] = $ContainersLinks->readAll();
-        $this->entityData['sharelink'] = sprintf(
-            '%s/%s?mode=view&id=%d%s',
-            Config::fromEnv('SITE_URL'),
-            $this->entityType->toPage(),
-            $this->id,
-            // add a share link
-            !empty($this->entityData['access_key'])
-                ? sprintf('&access_key=%s', $this->entityData['access_key'])
-                : '',
-        );
-        // add the body as html
-        $this->entityData['body_html'] = $this->entityData['body'];
-        // convert from markdown only if necessary
-        if ($this->entityData['content_type'] === self::CONTENT_MD) {
-            $this->entityData['body_html'] = Tools::md2html($this->entityData['body'] ?? '');
-        }
-        if (!empty($this->entityData['metadata'])) {
-            $this->entityData['metadata_decoded'] = json_decode($this->entityData['metadata']);
-        }
-        $exclusiveEditMode = $this->ExclusiveEditMode->readOne();
-        $this->entityData['exclusive_edit_mode'] = empty($exclusiveEditMode) ? null : $exclusiveEditMode;
-        ksort($this->entityData);
-        return $this->entityData;
     }
 
     #[Override]

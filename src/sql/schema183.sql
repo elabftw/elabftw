@@ -10,8 +10,7 @@ CREATE TABLE `items_categories` (
   `ordering` int UNSIGNED DEFAULT NULL,
   `state` INT UNSIGNED NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`),
-  KEY `fk_items_categories_teams_id` (`team`),
-  CONSTRAINT `fk_items_categories_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 -- add missing fk on experiments_categories
 CALL DropFK('experiments_categories', 'fk_experiments_categories_teams_id');
@@ -49,3 +48,18 @@ ALTER TABLE `items`
 ALTER TABLE `experiments_categories`
   ADD COLUMN `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   ADD COLUMN `modified_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+-- give status to experiments templates too
+CREATE TABLE `experiments_templates_status` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `team` int UNSIGNED NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `color` varchar(6) NOT NULL,
+  `is_default` tinyint UNSIGNED DEFAULT NULL,
+  `ordering` int UNSIGNED DEFAULT NULL,
+  `state` INT UNSIGNED NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`),
+  CONSTRAINT FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;

@@ -70,10 +70,4 @@ final class TemplatesSqlBuilder extends EntitySqlBuilder
         $this->joinsSql[] = 'LEFT JOIN experiments_status AS statust
             ON (statust.id = entity.status)';
     }
-
-    #[Override]
-    protected function comments(): void
-    {
-        return;
-    }
 }

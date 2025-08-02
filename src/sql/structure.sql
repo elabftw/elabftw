@@ -383,6 +383,19 @@ CREATE TABLE `experiments_templates_revisions` (
 
 -- --------------------------------------------------------
 
+CREATE TABLE `experiments_templates_status` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `team` int UNSIGNED NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `color` varchar(6) NOT NULL,
+  `is_default` tinyint UNSIGNED DEFAULT NULL,
+  `ordering` int UNSIGNED DEFAULT NULL,
+  `state` INT UNSIGNED NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
 --
 -- Table structure for table `experiments_templates_comments`
 --
@@ -792,6 +805,16 @@ CREATE TABLE `items_types_changelog` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+CREATE TABLE `items_types_comments` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `item_id` int(10) UNSIGNED NOT NULL,
+  `comment` text NOT NULL,
+  `userid` int(10) UNSIGNED NOT NULL,
+  `immutable` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 --
 -- Table structure for table `items_types2items`
 --
@@ -1424,6 +1447,9 @@ ALTER TABLE `experiments_templates`
   ADD KEY `fk_experiments_templates_users_userid` (`userid`),
   ADD UNIQUE `unique_experiments_templates_custom_id` (`category`, `custom_id`);
 
+ALTER TABLE `experiments_templates_status`
+  ADD CONSTRAINT FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
 --
 -- Indexes and Constraints for table `experiments_templates_comments`
 --
@@ -1495,6 +1521,9 @@ ALTER TABLE `items_types_changelog`
   ADD CONSTRAINT `fk_items_types_changelog2items_types_id` FOREIGN KEY (`entity_id`) REFERENCES `items_types` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_items_types_changelog2users_userid` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
+ALTER TABLE `items_types_comments`
+  ADD CONSTRAINT FOREIGN KEY (`item_id`) REFERENCES `items_types` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 --
 -- Indexes for table `items_types2items`
 --

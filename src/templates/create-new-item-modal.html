@@ -17,15 +17,6 @@
           <input name='title' required class='form-control' type='text' id='createNewModalTitleInput' />
         </div>
         {% else %}
-          {% if entityPage == 'experiments' %}
-            <div class='d-flex'>
-              {% if not App.Teams.teamArr.force_exp_tpl %}
-                <a style='border: 1px #ccc solid;' class='btn btn-light mt-1' href='#' data-action='create-entity' data-type='{{ entityPage }}' data-tplid='0'>{{ 'Default template'|trans }}</a>
-                <a style='border: 1px #ccc solid;' class='btn btn-light ml-1 mt-1' href='#' data-action='create-entity' data-type='{{ entityPage }}' data-tplid=''>{{ 'Blank experiment'|trans }}</a>
-              {% endif %}
-            </div>
-            <hr>
-          {% endif %}
           {% set btnId = 'createNewTemplates_' ~ entityPage %}
           {% include 'scope-button.html' with {'btnId': btnId, 'reload': btnId ~ ',tplCreateNewDiv_' ~ entityPage, 'target': 'scope_experiments_templates'} %}
           <div id='tplCreateNewDiv_{{ entityPage }}'>
@@ -42,8 +33,11 @@
                 {% for template in templatesArr %}
                   <tr>
                     <td data-label='{{ 'Title'|trans }}'>
-                      <a data-action='create-entity' data-type={{ entityPage }} data-tplid='{{ template.id }}' href='#' class='p-2 rounded mr-2 hl-hover-gray bgnd-blue' title='{{ label }}' aria-label='{{ label }}'>
-                        <i class='fas fa-file-circle-plus fa-fw'></i>
+                      <a data-action='create-entity' data-type={{ entityPage }} data-tplid='{{ template.id }}' href='#' class='p-2 rounded mr-2 hl-hover-gray' title='{{ label }}' aria-label='{{ label }}'>
+                        <i class='fas fa-file-circle-plus fa-fw color-blue'></i>
+                      </a>
+                      <a href='templates.php?mode=view&id={{ template.id }}' class='p-2 rounded mr-2 hl-hover-gray' title='{{ 'View template'|trans }}' aria-label='{{ 'View template'|trans }}'>
+                        <i class='fas fa-eye fa-fw'></i>
                       </a>
                       {% if template.category %}
                         <span class='catstat-btn category-btn mr-2' style='--bg: #{{ template.category_color|default('bdbdbd') }}'>{{ template.category_title }}</span>
@@ -61,16 +55,19 @@
             </table>
           </div>
 
-          <hr>
-          <h5>{{ 'Or create a blank entry with a specific category'|trans }}</h5>
-          {% for category in categoryArr %}
-            <a style='color:#{{ category.color }}; border: 1px #ccc solid;' class='btn btn-light mt-1' href='#' data-action='create-entity' data-type='{{ entityPage }}' data-catid='{{ category.id }}'>
-            {% if category.category %}
-              <span class='catstat-btn category-btn mr-2' style='--bg: #{{ category.category_color|default('bdbdbd') }}'>{{ category.category_title }}</span>
-            {% endif %}
-            {{ category.title }}</a>
-          {% endfor %}
-          <hr>
+          {% if not App.Teams.teamArr.force_exp_tpl %}
+            <hr>
+            <h5>{{ 'Or create a blank entry with a specific category'|trans }}</h5>
+            {% for category in categoryArr %}
+              <a style='color:#{{ category.color }}; border: 1px #ccc solid;' class='btn btn-light mt-1' href='#' data-action='create-entity' data-type='{{ entityPage }}' data-catid='{{ category.id }}'>
+              {% if category.category %}
+                <span class='catstat-btn category-btn mr-2' style='--bg: #{{ category.category_color|default('bdbdbd') }}'>{{ category.category_title }}</span>
+              {% endif %}
+              {{ category.title }}</a>
+            {% endfor %}
+            <a style='border: 1px #ccc solid;' class='btn btn-light ml-1 mt-1' href='#' data-action='create-entity' data-type='{{ entityPage }}' data-tplid='-1'>{{ 'Blank experiment'|trans }}</a>
+            <hr>
+          {% endif %}
 
           {# show add button to admin, for items #}
           {% if entityPage == 'database' and App.Users.isAdmin %}

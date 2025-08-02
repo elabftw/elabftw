@@ -35,7 +35,6 @@ use Elabftw\Models\RequestActions;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\TeamTags;
-use Elabftw\Models\Templates;
 use Elabftw\Models\UserRequestActions;
 use Elabftw\Params\DisplayParams;
 use Elabftw\Params\BaseQueryParams;
@@ -82,10 +81,6 @@ abstract class AbstractEntityController implements ControllerInterface
         $this->requestableActionArr = RequestableAction::getAssociativeArray();
         $this->currencyArr = Currency::getAssociativeArray();
         $this->scopedTeamgroupsArr = $TeamGroups->readScopedTeamgroups();
-        if (!$Entity instanceof ItemsTypes) {
-            $Templates = new Templates($this->Entity->Users);
-            $this->templatesArr = $Templates->readAll();
-        }
         $ExperimentsStatus = new ExperimentsStatus($App->Teams);
         $this->experimentsStatusArr = $ExperimentsStatus->readAll($ExperimentsStatus->getQueryParams(new InputBag(array('limit' => 9999))));
         $ItemsStatus = new ItemsStatus($this->App->Teams);
@@ -166,7 +161,6 @@ abstract class AbstractEntityController implements ControllerInterface
             'metakeyArrForSelect' => array_column($ExtraFieldsKeys->readAll(), 'extra_fields_key'),
             'requestActionsArr' => $UserRequestActions->readAllFull(),
             'scopedTeamgroupsArr' => $this->scopedTeamgroupsArr,
-            // generate light show page
             'tagsArr' => $tagsArr,
             // get all the tags for the top search bar
             'tagsArrForSelect' => $TeamTags->readAll(),

@@ -69,6 +69,7 @@ final class Items extends AbstractConcreteEntity
         }
         $ItemsTypes->setId($template);
         $itemTemplate = $ItemsTypes->readOne();
+        $category ??= $itemTemplate['category'];
         $title = Filter::title($title ?? _('Untitled'));
         $date ??= new DateTimeImmutable();
         $body = Filter::body($body ?? $itemTemplate['body']);
@@ -92,7 +93,7 @@ final class Items extends AbstractConcreteEntity
         $req->bindParam(':status', $status);
         $req->bindParam(':body', $body);
         $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
-        $req->bindParam(':category', $category);
+        $req->bindParam(':category', $category, PDO::PARAM_INT);
         $req->bindValue(':elabid', Tools::generateElabid());
         $req->bindParam(':canread', $canread);
         $req->bindParam(':canwrite', $canwrite);

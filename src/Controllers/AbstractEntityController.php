@@ -84,7 +84,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $this->scopedTeamgroupsArr = $TeamGroups->readScopedTeamgroups();
         if (!$Entity instanceof ItemsTypes) {
             $Templates = new Templates($this->Entity->Users);
-            $this->templatesArr = $Templates->Pins->readAll();
+            $this->templatesArr = $Templates->readAll();
         }
         $ExperimentsStatus = new ExperimentsStatus($App->Teams);
         $this->experimentsStatusArr = $ExperimentsStatus->readAll($ExperimentsStatus->getQueryParams(new InputBag(array('limit' => 9999))));

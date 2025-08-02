@@ -86,7 +86,8 @@ describe('Experiments', () => {
     cy.visit('/resources-categories.php');
     cy.htmlvalidate();
     cy.contains('Create').click();
-    cy.get('#createCatStatName').type(catname);
+    // the wait is necessary or it doesn't have the time to type all
+    cy.get('#createCatStatName').wait(500).type(catname);
     cy.get('[data-action="create-catstat"]').click();
     cy.get('#catStatDiv').should('contain', catname);
   });

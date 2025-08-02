@@ -177,8 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   replaceWithTitle();
 
-  // set a random color to all the "create new" statuslike modals
-  // from https://www.paulirish.com/2009/random-hex-color-code-snippets/
+  // set a random color to all the "create new" catstat modals
   document.querySelectorAll('.randomColor').forEach((input: HTMLInputElement) => {
     input.value = getRandomColor();
   });
@@ -1077,18 +1076,17 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 100);
       (el.nextElementSibling as HTMLInputElement).value = getRandomColor();
 
-    // CREATE STATUSLIKE
-    } else if (el.matches('[data-action="create-statuslike"]')) {
-      const modalId = `create${el.dataset.target}Modal`;
+    // CREATE CATEGORY OR STATUS
+    } else if (el.matches('[data-action="create-catstat"]')) {
+      const modalId = 'createCatStatModal';
       const form = document.getElementById(modalId);
       try {
         const params = collectForm(form);
-        ApiC.post(`${Model.Team}/current/${el.dataset.target}`, params).then(() => {
-          // display newly added entry
+        ApiC.post(`${Model.Team}/current/${el.dataset.endpoint}`, params).then(() => {
           $(`#${modalId}`).modal('toggle');
-          reloadElements(['statusDiv']);
+          reloadElements(['catStatDiv']);
           clearForm(form);
-          // assign a new random color
+          // assign a new random color after clearing the form
           const colorInput = (form.querySelector('input[type="color"]') as HTMLInputElement);
           colorInput.value = getRandomColor();
         });
@@ -1098,7 +1096,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // DESTROY CATEGORY/STATUS
     } else if (el.matches('[data-action="destroy-catstat"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {
-        ApiC.delete(`${Model.Team}/current/${el.dataset.target}/${el.dataset.id}`)
+        ApiC.delete(`${Model.Team}/current/${el.dataset.endpoint}/${el.dataset.id}`)
           .then(() => el.parentElement.parentElement.parentElement.remove());
       }
     // COPY TO CLIPBOARD

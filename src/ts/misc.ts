@@ -850,6 +850,7 @@ function generateIsSomethingElement(what: string, team: Record<string, string|nu
   return isSomething;
 }
 
+// from https://www.paulirish.com/2009/random-hex-color-code-snippets/
 export function getRandomColor(): string {
   return `#${Math.floor(Math.random()*16777215).toString(16)}`;
 }

@@ -29,7 +29,7 @@
                 </tr>
               </thead>
               <tbody id='tplCreateNewTable'>
-                {% set label = entityType.value == 'items_types' ? 'Create resource from template'|trans : 'Create experiment from template'|trans %}
+                {% set label = entityPage == 'database' ? 'Create resource from template'|trans : 'Create experiment from template'|trans %}
                 {% for template in templatesArr %}
                   <tr>
                     <td data-label='{{ 'Title'|trans }}'>
@@ -65,7 +65,7 @@
               {% endif %}
               {{ category.title }}</a>
             {% endfor %}
-            <a style='border: 1px #ccc solid;' class='btn btn-light ml-1 mt-1' href='#' data-action='create-entity' data-type='{{ entityPage }}' data-tplid='-1'>{{ 'Blank experiment'|trans }}</a>
+            <a style='border: 1px #ccc solid;' class='btn btn-light ml-1 mt-1' href='#' data-action='create-entity' data-type='{{ entityPage }}' data-tplid='-1'>{{ 'Blank entry'|trans }}</a>
             <hr>
           {% endif %}
 

@@ -6,7 +6,7 @@ describe('Status', () => {
   it('Create, update and delete a status', () => {
     const newname = 'Cypress :: New status name';
     cy.visit('/experiments-status.php');
-    cy.get('[data-endpoint="createCatStatModal"]').click();
+    cy.get('[data-target="createCatStatModal"]').click();
     cy.get('#createCatStatModal').should('be.visible');
     // the wait is necessary or it doesn't have the time to type all
     cy.get('#createCatStatName').wait(500).type(newname);

@@ -85,7 +85,7 @@ describe('Experiments', () => {
     cy.visit('/experiments.php');
     cy.htmlvalidate();
     cy.contains('Create').click();
-    cy.get('#createModal_experiments').should('be.visible').should('contain', 'Default template').contains('Default template').click();
+    cy.get('#createModal_experiments').should('be.visible').should('contain', 'Blank entry').contains('Blank entry').click();
     entityCatStat('Not set', 'Demo', 'Success');
     entityEdit();
     entityComment();
@@ -98,7 +98,7 @@ describe('Experiments', () => {
     cy.visit('/database.php');
     cy.htmlvalidate();
     cy.contains('Create').click();
-    cy.get('#createModal_database').should('be.visible').should('contain', 'Microscope').contains('Microscope').click();
+    cy.get('#createModal_database').should('be.visible').should('contain', 'Blank entry').contains('Blank entry').click();
     entityCatStat('Microscope', 'Yeast', 'In stock');
     entityEdit();
     entityComment();

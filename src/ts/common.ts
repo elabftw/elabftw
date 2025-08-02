@@ -1033,6 +1033,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (el.dataset.tplid) {
         params['template'] = el.dataset.tplid;
       }
+      if (el.dataset.catid) {
+        params['category'] = el.dataset.catid;
+      }
       // look for any tag present in the url, we will create the entry with these tags
       const urlParams = new URLSearchParams(document.location.search);
       const tags = urlParams.getAll('tags[]');

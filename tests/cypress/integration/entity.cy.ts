@@ -81,6 +81,16 @@ describe('Experiments', () => {
     cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
   };
 
+  it('Create a resource category', () => {
+    const catname = 'Justice';
+    cy.visit('/resources-categories.php');
+    cy.htmlvalidate();
+    cy.contains('Create').click();
+    cy.get('#createCatStatName').type(catname);
+    cy.get('[data-action="create-catstat"]').click();
+    cy.get('#catStatDiv').should('contain', catname);
+  });
+
   it('Create and edit an experiment', () => {
     cy.visit('/experiments.php');
     cy.htmlvalidate();
@@ -99,7 +109,7 @@ describe('Experiments', () => {
     cy.htmlvalidate();
     cy.contains('Create').click();
     cy.get('#createModal_database').should('be.visible').should('contain', 'Blank entry').contains('Blank entry').click();
-    entityCatStat('Microscope', 'Yeast', 'In stock');
+    entityCatStat('Justice', 'Not set', 'In stock');
     entityEdit();
     entityComment();
     entityDuplicate();

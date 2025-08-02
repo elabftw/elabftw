@@ -16,7 +16,7 @@
 
 <div id='catStatDiv'>
   {% if sourceArr|length == 0 %}
-    <p>{{ emptyWarning }}</p>
+    <p>{{ emptyWarning|raw }}</p>
   {% endif %}
   <ul class='list-group sortable' data-axis='y' data-table='{{ table }}'>
     {% for cat in sourceArr %}

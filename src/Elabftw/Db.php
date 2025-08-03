@@ -106,7 +106,9 @@ final class Db
         try {
             $res = $req->execute();
         } catch (PDOException $e) {
-            //debug_print_backtrace();
+            if (Config::boolFromEnv('DEV_MODE')) {
+                debug_print_backtrace();
+            }
             throw new DatabaseErrorException($e->errorInfo ?? array('OOPS', 42, 'where error?'));
         }
         if (!$res) {

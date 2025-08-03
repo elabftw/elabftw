@@ -298,7 +298,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // CATEGORY AND STATUS
     const notsetOpts = {id: null, title: i18next.t('not-set'), color: 'bdbdbd'};
 
-    //let categoryEndpoint = `${EntityType.ItemType}`;
     let statusEndpoint = `${Model.Team}/current/items_status`;
     let categoryEndpoint = `${Model.Team}/current/resources_categories`;
     if (entity.type === EntityType.Experiment || entity.type === EntityType.Template) {

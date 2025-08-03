@@ -496,7 +496,7 @@ abstract class AbstractEntity extends AbstractRest
 
     public function readAllSimple(DisplayParams $displayParams): array
     {
-        $categoryTable = $this instanceof Items ? 'items_types' : 'experiments_categories';
+        $categoryTable = $this instanceof Items ? 'items_categories' : 'experiments_categories';
         $CanSqlBuilder = new CanSqlBuilder($this->Users->requester, AccessType::Read);
         $canFilter = $CanSqlBuilder->getCanFilter();
         $displayParams->skipOrderPinned = true;

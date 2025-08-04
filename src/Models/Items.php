@@ -79,7 +79,7 @@ final class Items extends AbstractConcreteEntity
         $status ??= $itemTemplate['status'];
         $metadata ??= $itemTemplate['metadata'];
         // figure out the custom id
-        $customId = $this->getNextCustomId($template);
+        $customId ??= $this->getNextCustomId($category);
         $contentType = $itemTemplate['content_type'];
 
         $sql = 'INSERT INTO items(team, title, date, status, body, userid, category, elabid, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canbook, metadata, custom_id, content_type, rating)
@@ -157,8 +157,9 @@ final class Items extends AbstractConcreteEntity
             category: $this->entityData['category'],
             canread: $this->entityData['canread'],
             canwrite: $this->entityData['canwrite'],
-            metadata: $metadata,
             contentType: $this->entityData['content_type'],
+            metadata: $metadata,
+            status: $this->entityData['status'],
         );
 
         // add missing canbook

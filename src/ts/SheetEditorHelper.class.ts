@@ -29,7 +29,6 @@ export class SheetEditorHelper {
         const wb = read(buffer, { type: 'array' });
         const ws = wb.Sheets[wb.SheetNames[0]];
         const aoa: (string | number | boolean | null)[][] = utils.sheet_to_json(ws, { header: 1 });
-
         if (!aoa.length) return notify.error('Invalid file');
 
         const { cols, rows } = SheetEditorHelper.aoaToGrid(aoa);
@@ -48,13 +47,13 @@ export class SheetEditorHelper {
       try {
         const wb = read(event.target?.result, { type: 'array' });
         const ws = wb.Sheets[wb.SheetNames[0]];
-        // aoa is the most generic type for sheet data
         const aoa = utils.sheet_to_json(ws, { header: 1 }) as (string | number | boolean | null)[][];
         if (!aoa.length) return;
 
-        const { cols, rows } = SheetEditorHelper.aoaToGrid(aoa);
-        setColumnDefs(cols);
-        setRowData(rows);
+        // Attach the parsed AOA and the callbacks for the modal handler
+        (window as any)._sheetImport = { aoa, setColumnDefs, setRowData };
+        // Show the sheet modal ('use first line as header?')
+        $('#sheetModal').modal('show');
       } catch (error) {
         notify.error(error.message);
       }

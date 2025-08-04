@@ -128,10 +128,10 @@ function SheetEditor() {
               </div>
             </div>
             <button onClick={addRow} className='btn hl-hover-gray d-inline p-2 mr-2' title={i18next.t('add-row')}>
-              <i class='fas fa-plus-minus fa-fw'></i>
+              <i className='fas fa-plus-minus fa-fw'></i>
             </button>
             <button onClick={addColumn} className='btn hl-hover-gray d-inline p-2 mr-2' title={i18next.t('add-column')}>
-              <i class='fas fa-plus fa-fw'></i>
+              <i className='fas fa-plus fa-fw'></i>
             </button>
           </div>
           <div className='ag-theme-alpine' style={{ height: 400, marginTop: 10 }}>
@@ -153,4 +153,36 @@ document.addEventListener('DOMContentLoaded', () => {
     const root = createRoot(el);
     root.render(<SheetEditor />);
   }
+  // handle 'use first line as header' modal
+  document.body.addEventListener('click', event => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) return;
+
+    const action = target.getAttribute('data-action');
+    if (!action || !['use-header-row', 'use-data-as-header'].includes(action)) return;
+
+    const state = window._sheetImport;
+    if (!state) return;
+
+    const { aoa, setColumnDefs, setRowData } = state;
+    delete window._sheetImport;
+
+    const useHeader = action === 'use-header-row';
+    const headerRow = useHeader
+      ? aoa[0].map((h, i) => typeof h === 'string' ? h : `Column${i}`)
+      : aoa[0].map((_, i) => `Column${i}`);
+
+    const dataRows = useHeader ? aoa.slice(1) : aoa;
+    const rows = dataRows.map(r => {
+      const row = {};
+      headerRow.forEach((h, i) => {
+        row[h] = String(r[i] ?? '');
+      });
+      return row;
+    });
+
+    const cols = headerRow.map(h => ({ field: h, editable: true }));
+    setColumnDefs(cols);
+    setRowData(rows);
+  });
 });

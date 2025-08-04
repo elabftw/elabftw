@@ -21,5 +21,6 @@ ALTER TABLE teams
   ADD COLUMN `common_template_md` TEXT;
 
 DROP TABLE IF EXISTS `items_types_comments`;
+DROP TABLE IF EXISTS `pin_items_types2users`;
 
 UPDATE config SET conf_value = 182 WHERE conf_name = 'schema';

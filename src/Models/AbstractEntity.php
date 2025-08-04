@@ -18,7 +18,6 @@ use Elabftw\Elabftw\CreateUploadFromLocalFile;
 use Elabftw\Elabftw\CanSqlBuilder;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\EntitySqlBuilder;
-use Elabftw\Elabftw\ItemsTypesSqlBuilder;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\TemplatesSqlBuilder;
@@ -275,8 +274,6 @@ abstract class AbstractEntity extends AbstractRest
         // TODO inject
         if ($this instanceof Templates) {
             $EntitySqlBuilder = new TemplatesSqlBuilder($this);
-        } elseif ($this instanceof ItemsTypes) {
-            $EntitySqlBuilder = new ItemsTypesSqlBuilder($this);
         } else {
             $EntitySqlBuilder = new EntitySqlBuilder($this);
         }

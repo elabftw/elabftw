@@ -955,6 +955,12 @@ CREATE TABLE `pin_items2users` (
   PRIMARY KEY (`users_id`,`entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+CREATE TABLE `pin_items_types2users` (
+  `users_id` int UNSIGNED NOT NULL,
+  `entity_id` int UNSIGNED NOT NULL,
+  PRIMARY KEY (`users_id`,`entity_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 --
 -- Table structure for table `procurement_requests`
 --
@@ -981,6 +987,8 @@ CREATE TABLE IF NOT EXISTS `procurement_requests` (
 
 CREATE TABLE `experiments_status` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `team` int(10) UNSIGNED NOT NULL,
   `title` varchar(255) NOT NULL,
   `color` varchar(6) NOT NULL,
@@ -1014,6 +1022,21 @@ CREATE TABLE `experiments_categories` (
 
 CREATE TABLE `items_status` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `team` int(10) UNSIGNED NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `color` varchar(6) NOT NULL,
+  `is_default` tinyint UNSIGNED DEFAULT NULL,
+  `ordering` int(10) UNSIGNED DEFAULT NULL,
+  `state` INT UNSIGNED NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+CREATE TABLE `items_types_status` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `team` int(10) UNSIGNED NOT NULL,
   `title` varchar(255) NOT NULL,
   `color` varchar(6) NOT NULL,
@@ -1835,6 +1858,8 @@ ALTER TABLE `items_status`
   ADD CONSTRAINT `fk_items_status_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `experiments_categories`
   ADD CONSTRAINT `fk_experiments_categories_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `items_types_status`
+  ADD CONSTRAINT FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `sig_keys`
@@ -2246,6 +2271,10 @@ ALTER TABLE `pin_items2users`
 ALTER TABLE `pin_items2users`
   ADD CONSTRAINT `fk_pin_items2items_id` FOREIGN KEY (`entity_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_pin_items2users_userid` FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `pin_items_types2users`
+  ADD CONSTRAINT FOREIGN KEY (`entity_id`) REFERENCES `items_types` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Indexes for table `procurement_requests`

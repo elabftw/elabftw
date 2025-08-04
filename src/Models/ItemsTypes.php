@@ -13,14 +13,13 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DateTimeImmutable;
-use Elabftw\Elabftw\ItemsTypesSqlBuilder;
+use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\Sort;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
-use Elabftw\Interfaces\SqlBuilderInterface;
 use Elabftw\Params\BaseQueryParams;
 use Elabftw\Params\OrderingParams;
 use Elabftw\Services\Filter;
@@ -111,7 +110,7 @@ final class ItemsTypes extends AbstractTemplateEntity
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $queryParams ??= $this->getQueryParams();
-        $builder = new ItemsTypesSqlBuilder($this);
+        $builder = new EntitySqlBuilder($this);
         $sql = $builder->getReadSqlBeforeWhere(getTags: false);
         $sql .= ' WHERE 1=1';
         // add the json permissions
@@ -140,12 +139,6 @@ final class ItemsTypes extends AbstractTemplateEntity
             $req->bindParam(':id', $id, PDO::PARAM_INT);
             $this->Db->execute($req);
         }
-    }
-
-    #[Override]
-    protected function getSqlBuilder(): SqlBuilderInterface
-    {
-        return new ItemsTypesSqlBuilder($this);
     }
 
     #[Override]

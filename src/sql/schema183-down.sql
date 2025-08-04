@@ -20,4 +20,6 @@ ALTER TABLE teams
   ADD COLUMN `common_template` TEXT,
   ADD COLUMN `common_template_md` TEXT;
 
+DROP TABLE IF EXISTS `items_types_comments`;
+
 UPDATE config SET conf_value = 182 WHERE conf_name = 'schema';

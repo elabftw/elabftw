@@ -65,3 +65,16 @@ CREATE TABLE `experiments_templates_status` (
 -- drop the comment template stuff from teams
 CALL DropColumn('teams', 'common_template');
 CALL DropColumn('teams', 'common_template_md');
+
+CREATE TABLE `items_types_comments` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `item_id` int(10) UNSIGNED NOT NULL,
+  `comment` text NOT NULL,
+  `userid` int(10) UNSIGNED NOT NULL,
+  `immutable` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  CONSTRAINT FOREIGN KEY (`item_id`) REFERENCES `items_types` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

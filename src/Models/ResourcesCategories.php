@@ -12,10 +12,18 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Override;
+
 /**
  * Categories for items (aka resources)
  */
 final class ResourcesCategories extends AbstractStatus
 {
     protected string $table = 'items_categories';
+
+    #[Override]
+    protected function getUsersCanwriteName(): string
+    {
+        return 'resources_categories';
+    }
 }

@@ -65,9 +65,14 @@ abstract class AbstractCategory extends AbstractRest
         return (int) $req->fetchColumn() ?: null;
     }
 
+    protected function getUsersCanwriteName(): string
+    {
+        return $this->table;
+    }
+
     protected function canWriteOrExplode(): void
     {
-        $property = sprintf('users_canwrite_%s', $this->table);
+        $property = sprintf('users_canwrite_%s', $this->getUsersCanwriteName());
         if ($this->Teams->bypassWritePermission) {
             return;
         }

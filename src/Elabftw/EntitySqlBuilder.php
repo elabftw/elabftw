@@ -29,7 +29,7 @@ use function array_unique;
 use function implode;
 use function sprintf;
 
-class EntitySqlBuilder implements SqlBuilderInterface
+final class EntitySqlBuilder implements SqlBuilderInterface
 {
     protected array $selectSql = array();
 

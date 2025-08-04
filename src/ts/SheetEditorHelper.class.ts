@@ -11,6 +11,16 @@ import { GridColumn, GridRow, FileType } from './interfaces';
 import { Notification } from './Notifications.class';
 import { read, utils, writeFile, writeFileXLSX } from 'xlsx';
 
+declare global {
+  interface Window {
+    _sheetImport?: {
+      aoa: (string | number | boolean | null)[][];
+      setColumnDefs: (cols: GridColumn[]) => void;
+      setRowData: (rows: GridRow[]) => void;
+    };
+  }
+}
+
 const notify = new Notification();
 
 export class SheetEditorHelper {
@@ -43,7 +53,7 @@ export class SheetEditorHelper {
       try {
         const aoa = SheetEditorHelper.parseFileToAOA(event.target!.result as ArrayBuffer);
         // Attach the parsed AOA and the callbacks for the modal handler
-        (window as any)._sheetImport = { aoa, setColumnDefs, setRowData };
+        window._sheetImport = { aoa, setColumnDefs, setRowData };
         // 'use first line as header?' modal
         $('#sheetModal').modal('show');
       } catch (error) {

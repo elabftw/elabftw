@@ -16,11 +16,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Factories\LinksFactory;
-use Elabftw\Interfaces\QueryParamsInterface;
-use Elabftw\Params\DisplayParams;
 use PDO;
-use Symfony\Component\HttpFoundation\InputBag;
-use Symfony\Component\HttpFoundation\Request;
 use Override;
 
 use function is_string;
@@ -68,22 +64,6 @@ abstract class AbstractConcreteEntity extends AbstractEntity
             Action::Duplicate => $this->duplicate((bool) ($reqBody['copyFiles'] ?? false), (bool) ($reqBody['linkToOriginal'] ?? false)),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
-    }
-
-    #[Override]
-    public function getQueryParams(?InputBag $query = null): DisplayParams
-    {
-        return new DisplayParams($this->Users, $this->entityType, $query);
-    }
-
-    #[Override]
-    public function readAll(?QueryParamsInterface $queryParams = null): array
-    {
-        if (!$queryParams instanceof DisplayParams) {
-            $Request = Request::createFromGlobals();
-            $queryParams = $this->getQueryParams($Request->query);
-        }
-        return $this->readShow($queryParams, true);
     }
 
     #[Override]

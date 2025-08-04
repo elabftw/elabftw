@@ -22,5 +22,6 @@ ALTER TABLE teams
 
 DROP TABLE IF EXISTS `items_types_comments`;
 DROP TABLE IF EXISTS `pin_items_types2users`;
+ALTER TABLE `users` DROP COLUMN `scope_items_types`;
 
 UPDATE config SET conf_value = 182 WHERE conf_name = 'schema';

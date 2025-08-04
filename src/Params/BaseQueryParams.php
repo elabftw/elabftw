@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Params;
 
+use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\Sort;
 use Elabftw\Enums\State;
@@ -55,6 +56,45 @@ class BaseQueryParams implements QueryParamsInterface
             }
         }
     }
+
+    #[Override]
+    public function isFast(): bool
+    {
+        return false;
+    }
+
+    #[Override]
+    public function getFastq(): string
+    {
+        return '';
+    }
+
+    #[Override]
+    public function hasUserQuery(): bool
+    {
+        return false;
+    }
+
+    #[Override]
+    public function getUserQuery(): string
+    {
+        return '';
+    }
+
+    #[Override]
+    public function getRelatedOrigin(): ?EntityType
+    {
+        return null;
+    }
+
+    #[Override]
+    public function getFilterSql(): string
+    {
+        return '';
+    }
+
+    #[Override]
+    public function setSkipOrderPinned(bool $value): void {}
 
     #[Override]
     public function getQuery(): InputBag

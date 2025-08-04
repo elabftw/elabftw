@@ -13,13 +13,8 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DateTimeImmutable;
-use Elabftw\Elabftw\TemplatesSqlBuilder;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
-use Elabftw\Enums\Scope;
-use Elabftw\Enums\State;
-use Elabftw\Interfaces\QueryParamsInterface;
-use Elabftw\Interfaces\SqlBuilderInterface;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SortableTrait;
 use Override;
@@ -96,48 +91,10 @@ final class Templates extends AbstractTemplateEntity
         return $id;
     }
 
-    /**
-     * Get a list of fullname + id + title of template
-     * Use this to build a select of the readable templates
-     */
-    #[Override]
-    public function readAll(?QueryParamsInterface $queryParams = null): array
-    {
-        $builder = new TemplatesSqlBuilder($this);
-        $sql = $builder->getReadSqlBeforeWhere(getTags: false, fullSelect: false);
-        // first WHERE is the state, possibly including archived
-        // also add a check for no userid 0 which is the common template (this will need to go away!!)
-        $sql .= sprintf(' WHERE entity.state = %d AND entity.userid != 0', State::Normal->value);
-        // add the json permissions
-        $sql .= $builder->getCanFilter('canread');
-        if ($this->Users->userData['scope_experiments_templates'] === Scope::User->value) {
-            $sql .= 'AND entity.userid = :userid';
-        }
-        if ($this->Users->userData['scope_experiments_templates'] === Scope::Team->value) {
-            $sql .= 'AND entity.team = :team';
-        }
-        $sql .= $this->idFilter;
-
-        $sql .= ' GROUP BY id ORDER BY entity.created_at DESC, fullname DESC, is_pinned DESC, entity.ordering ASC';
-
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
-        $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        return $req->fetchAll();
-    }
-
     #[Override]
     public function destroy(): bool
     {
         // delete from pinned too
         return parent::destroy() && $this->Pins->cleanup();
-    }
-
-    #[Override]
-    protected function getSqlBuilder(): SqlBuilderInterface
-    {
-        return new TemplatesSqlBuilder($this);
     }
 }

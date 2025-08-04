@@ -1263,6 +1263,7 @@ CREATE TABLE `users` (
   `scope_experiments` tinyint UNSIGNED NOT NULL DEFAULT 2,
   `scope_events` tinyint UNSIGNED NOT NULL DEFAULT 3,
   `scope_items` tinyint UNSIGNED NOT NULL DEFAULT 2,
+  `scope_items_types` tinyint UNSIGNED NOT NULL DEFAULT 2,
   `scope_experiments_templates` tinyint UNSIGNED NOT NULL DEFAULT 2,
   `scope_teamgroups` tinyint UNSIGNED NOT NULL DEFAULT 3,
   `use_isodate` tinyint UNSIGNED NOT NULL DEFAULT 0,

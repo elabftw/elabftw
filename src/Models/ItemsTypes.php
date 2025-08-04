@@ -13,20 +13,14 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DateTimeImmutable;
-use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
-use Elabftw\Enums\Orderby;
-use Elabftw\Enums\Sort;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\QueryParamsInterface;
-use Elabftw\Params\BaseQueryParams;
 use Elabftw\Params\OrderingParams;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\RandomColorTrait;
 use Override;
 use PDO;
-use Symfony\Component\HttpFoundation\InputBag;
 
 /**
  * The kind of items you can have in the database for a team
@@ -98,30 +92,6 @@ final class ItemsTypes extends AbstractTemplateEntity
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $this->Db->execute($req);
         return (int) $req->fetchColumn();
-    }
-
-    #[Override]
-    public function getQueryParams(?InputBag $query = null, int $limit = 128): QueryParamsInterface
-    {
-        return new BaseQueryParams(query: $query, orderby: Orderby::Ordering, limit: $limit, sort: Sort::Asc);
-    }
-
-    #[Override]
-    public function readAll(?QueryParamsInterface $queryParams = null): array
-    {
-        $queryParams ??= $this->getQueryParams();
-        $builder = new EntitySqlBuilder($this);
-        $sql = $builder->getReadSqlBeforeWhere(getTags: false);
-        $sql .= ' WHERE 1=1';
-        // add the json permissions
-        $sql .= $builder->getCanFilter('canread');
-        $sql .= $queryParams->getSql();
-
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        return $req->fetchAll();
     }
 
     /**

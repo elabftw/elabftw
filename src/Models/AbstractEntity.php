@@ -20,7 +20,6 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Permissions;
-use Elabftw\Elabftw\TemplatesSqlBuilder;
 use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\AccessType;
@@ -40,6 +39,7 @@ use Elabftw\Factories\LinksFactory;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\SqlBuilderInterface;
 use Elabftw\Interfaces\MakeTrustedTimestampInterface;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Make\MakeBloxberg;
 use Elabftw\Make\MakeCustomTimestamp;
 use Elabftw\Make\MakeDfnTimestamp;
@@ -243,7 +243,7 @@ abstract class AbstractEntity extends AbstractRest
      * The goal here is to decrease the number of read columns to reduce memory footprint
      * The other read function is for view/edit modes where it's okay to fetch more as there is only one ID
      * Only logged in users use this function
-     * @param DisplayParams $displayParams display parameters like sort/limit/order by
+     * @param QueryParamsInterface $displayParams display parameters like sort/limit/order by
      * @param bool $extended use it to get a full reply. used by API to get everything back
      * @psalm-suppress UnusedForeachValue
      *
@@ -261,26 +261,21 @@ abstract class AbstractEntity extends AbstractRest
      *
      *          Here be dragons!
      */
-    public function readShow(DisplayParams $displayParams, bool $extended = false, string $can = 'canread'): array
+    public function readShow(QueryParamsInterface $displayParams, bool $extended = false, string $can = 'canread'): array
     {
-        if (!empty($displayParams->fastq)) {
+        if ($displayParams->isFast()) {
             return $this->readAllSimple($displayParams);
         }
         // (extended) search (block must be before the call to getReadSqlBeforeWhere so extendedValues is filled)
-        if (!empty($displayParams->queryString) || !empty($displayParams->extendedQuery)) {
-            $this->processExtendedQuery(trim($displayParams->queryString . ' ' . $displayParams->extendedQuery));
+        if ($displayParams->hasUserQuery()) {
+            $this->processExtendedQuery($displayParams->getUserQuery());
         }
 
-        // TODO inject
-        if ($this instanceof Templates) {
-            $EntitySqlBuilder = new TemplatesSqlBuilder($this);
-        } else {
-            $EntitySqlBuilder = new EntitySqlBuilder($this);
-        }
+        $EntitySqlBuilder = $this->getSqlBuilder();
         $sql = $EntitySqlBuilder->getReadSqlBeforeWhere(
             $extended,
             $extended,
-            $displayParams->relatedOrigin,
+            $displayParams->getRelatedOrigin(),
         );
 
         $sql .= ' WHERE 1=1 ';
@@ -289,7 +284,7 @@ abstract class AbstractEntity extends AbstractRest
         $sql .= $this->filterSql;
 
         // add filters like related, owner or category
-        $sql .= $displayParams->filterSql;
+        $sql .= $displayParams->getFilterSql();
 
         // add the json permissions
         $sql .= $EntitySqlBuilder->getCanFilter($can);
@@ -418,6 +413,19 @@ abstract class AbstractEntity extends AbstractRest
     }
 
     #[Override]
+    public function getQueryParams(?InputBag $query = null): DisplayParams
+    {
+        return new DisplayParams($this->Users, $this->entityType, $query);
+    }
+
+    #[Override]
+    public function readAll(?QueryParamsInterface $queryParams = null): array
+    {
+        $queryParams ??= $this->getQueryParams();
+        return $this->readShow($queryParams, true);
+    }
+
+    #[Override]
     public function readOne(): array
     {
         if ($this->id === null) {
@@ -491,13 +499,13 @@ abstract class AbstractEntity extends AbstractRest
         return $base;
     }
 
-    public function readAllSimple(DisplayParams $displayParams): array
+    public function readAllSimple(QueryParamsInterface $displayParams): array
     {
         $categoryTable = $this instanceof Items ? 'items_categories' : 'experiments_categories';
         $CanSqlBuilder = new CanSqlBuilder($this->Users->requester, AccessType::Read);
         $canFilter = $CanSqlBuilder->getCanFilter();
-        $displayParams->skipOrderPinned = true;
-        $intQuery = intval($displayParams->fastq);
+        $displayParams->setSkipOrderPinned(true);
+        $intQuery = intval($displayParams->getFastq());
         // if the query has a numeric part, we also try and match the custom_id or id exactly
         $idSql = '';
         if ($intQuery > 0) {
@@ -521,12 +529,12 @@ abstract class AbstractEntity extends AbstractRest
             WHERE
                 entity.title LIKE :query ' . $idSql . '
             ' . $canFilter . '
-            ' . $displayParams->filterSql . '
+            ' . $displayParams->getFilterSql() . '
             ' . $displayParams->getSql();
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->requester->userid, PDO::PARAM_INT);
         $req->bindParam(':teamid', $this->Users->requester->team, PDO::PARAM_INT);
-        $req->bindValue(':query', '%' . $displayParams->fastq . '%');
+        $req->bindValue(':query', '%' . $displayParams->getFastq() . '%');
         if ($intQuery > 0) {
             $req->bindValue(':intQuery', $intQuery, PDO::PARAM_INT);
         }

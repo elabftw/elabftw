@@ -22,6 +22,7 @@ import '@ag-grid-community/styles/ag-theme-alpine.css';
 import { FileType } from './interfaces';
 import i18next from './i18n';
 import { SheetEditorHelper } from './SheetEditorHelper.class';
+import {ColumnHeader} from './sheet-editor-column-header';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -155,9 +156,15 @@ function SheetEditor() {
             <AgGridReact
               ref={gridRef}
               rowData={rowData}
-              columnDefs={columnDefs}
+              columnDefs={columnDefs.map(col => ({
+                ...col,
+                headerComponent: ColumnHeader,
+                headerComponentParams: {
+                  columnDefs, rowData, setColumnDefs, setRowData
+                }
+              }))}
               defaultColDef={{ sortable: true, filter: true, editable: true }}
-              rowSelection="multiple"
+              rowSelection='multiple'
             />
           </div>
           <button onClick={removeSelectedRows} className='btn btn-ghost my-2'>

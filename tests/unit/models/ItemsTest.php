@@ -94,8 +94,8 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
     public function testTemplatePermissionsReported(): void
     {
         $ItemsTypes = new ItemsTypes($this->Items->Users);
-        $category = $ItemsTypes->create(title: 'Used in tests');
-        $ItemsTypes->setId($category);
+        $itemTemplate = $ItemsTypes->create(title: 'Used in tests');
+        $ItemsTypes->setId($itemTemplate);
         // set permissions on template
         $canreadTarget = BasePermissions::Organization->toJson();
         $canwriteTarget = BasePermissions::UserOnly->toJson();
@@ -104,7 +104,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
             'canwrite_target' => $canwriteTarget,
         ));
         // now create an item from that template
-        $newId = $this->Items->create(template: $category);
+        $newId = $this->Items->create(template: $itemTemplate);
         $this->assertIsInt($newId);
         $this->Items->setId($newId);
         // have to decode the json because the keys won't be in the same order, so assertEquals fails

@@ -63,7 +63,7 @@ abstract class AbstractTemplateEntity extends AbstractEntity
         return match ($action) {
             Action::Create => $this->create(
                 title: $reqBody['title'] ?? null,
-                template: $reqBody['template'] ?? -1,
+                template: (int) ($reqBody['template'] ?? -1),
                 body: $reqBody['body'] ?? null,
                 canread: $reqBody['canread'] ?? null,
                 canreadIsImmutable: (bool) ($reqBody['canread_is_immutable'] ?? false),

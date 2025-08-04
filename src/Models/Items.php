@@ -17,6 +17,7 @@ use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FilterableColumn;
 use Elabftw\Factories\LinksFactory;
@@ -60,27 +61,26 @@ final class Items extends AbstractConcreteEntity
         // specific to Items
         ?string $canbook = '',
     ): int {
-        // TODO maybe allow creating an Item without any template, like for experiments
-        $ItemsTypes = new ItemsTypes($this->Users);
-        if ($template < 0 || $template === null) {
-            $template = $ItemsTypes->getDefault();
+        $itemTemplate = array();
+        if ($template > 0) {
+            $ItemsTypes = new ItemsTypes($this->Users);
+            $ItemsTypes->setId($template);
+            $itemTemplate = $ItemsTypes->readOne();
         }
-        $ItemsTypes->setId($template);
-        $itemTemplate = $ItemsTypes->readOne();
-        $category ??= $itemTemplate['category'];
+        $category ??= $itemTemplate['category'] ?? null;
         $title = Filter::title($title ?? _('Untitled'));
         $date ??= new DateTimeImmutable();
-        $body = Filter::body($body ?? $itemTemplate['body']);
-        $canread ??= $itemTemplate['canread_target'];
-        $canwrite ??= $itemTemplate['canwrite_target'];
-        $canreadIsImmutable = $itemTemplate['canread_is_immutable'];
-        $canwriteIsImmutable = $itemTemplate['canwrite_is_immutable'];
+        $body = Filter::body($body ?? $itemTemplate['body'] ?? null);
+        $canread ??= $itemTemplate['canread_target'] ?? BasePermissions::Team->toJson();
+        $canwrite ??= $itemTemplate['canwrite_target'] ?? BasePermissions::Team->toJson();
+        $canreadIsImmutable = $itemTemplate['canread_is_immutable'] ?? 0;
+        $canwriteIsImmutable = $itemTemplate['canwrite_is_immutable'] ?? 0;
         $canbook = $canread;
-        $status ??= $itemTemplate['status'];
-        $metadata ??= $itemTemplate['metadata'];
+        $status ??= $itemTemplate['status'] ?? null;
+        $metadata ??= $itemTemplate['metadata'] ?? null;
         // figure out the custom id
         $customId ??= $this->getNextCustomId($category);
-        $contentType = $itemTemplate['content_type'];
+        $contentType = $itemTemplate['content_type'] ?? 1;
 
         $sql = 'INSERT INTO items(team, title, date, status, body, userid, category, elabid, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canbook, metadata, custom_id, content_type, rating)
             VALUES(:team, :title, :date, :status, :body, :userid, :category, :elabid, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canbook, :metadata, :custom_id, :content_type, :rating)';
@@ -106,9 +106,11 @@ final class Items extends AbstractConcreteEntity
         $newId = $this->Db->lastInsertId();
 
         $this->insertTags($tags, $newId);
-        $this->ItemsLinks->duplicate($itemTemplate['id'], $newId, true);
-        $this->ExperimentsLinks->duplicate($itemTemplate['id'], $newId, true);
-        $this->Steps->duplicate($itemTemplate['id'], $newId, true);
+        if (array_key_exists('id', $itemTemplate)) {
+            $this->ItemsLinks->duplicate($itemTemplate['id'], $newId, true);
+            $this->ExperimentsLinks->duplicate($itemTemplate['id'], $newId, true);
+            $this->Steps->duplicate($itemTemplate['id'], $newId, true);
+        }
 
         return $newId;
     }

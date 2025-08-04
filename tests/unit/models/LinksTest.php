@@ -89,14 +89,14 @@ class LinksTest extends \PHPUnit\Framework\TestCase
     {
         $Templates = new Templates($this->getRandomUserInTeam(1));
         // create a template
-        $id = $Templates->postAction(Action::Create, array('title' => 'some template'));
+        $id = $Templates->create(title: 'some template');
         $Templates->setId($id);
         // add an item link
         $Item = $this->getFreshItemWithGivenUser($Templates->Users);
         $Templates->ItemsLinks->setId($Item->id);
         $Templates->ItemsLinks->postAction(Action::Create, array());
         // now create an experiment from that template
-        $expid = $this->Experiments->postAction(Action::Create, array('category_id' => $id));
+        $expid = $this->Experiments->postAction(Action::Create, array('template' => $id));
         $this->Experiments->setId($expid);
         $this->assertEquals(1, count($this->Experiments->ItemsLinks->readAll()));
     }

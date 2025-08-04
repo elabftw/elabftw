@@ -1030,10 +1030,10 @@ document.addEventListener('DOMContentLoaded', () => {
         params = collectForm(document.getElementById('createNewForm'));
       }
       if (el.dataset.tplid) {
-        params['template'] = el.dataset.tplid;
+        params['template'] = parseInt(el.dataset.tplid, 10);
       }
       if (el.dataset.catid) {
-        params['category'] = el.dataset.catid;
+        params['category'] = parseInt(el.dataset.catid, 10);
       }
       // look for any tag present in the url, we will create the entry with these tags
       const urlParams = new URLSearchParams(document.location.search);
@@ -1048,7 +1048,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (el.dataset.type === 'items_types') {
         page = 'resources-templates.php';
       }
-      if (el.dataset.type === 'database') {
+      if (el.dataset.type === 'database' || el.dataset.type === 'items') {
         el.dataset.type = 'items';
         page = 'database.php';
       }

@@ -172,7 +172,6 @@ enum FileType {
   Fods = 'fods',
   Html = 'html',
   Ods = 'ods',
-  Ots = 'ots',
   Xls = 'Xls',
   Xlsb = 'xlsb',
   Xlsx = 'xlsx',

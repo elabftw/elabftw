@@ -46,7 +46,7 @@ function SheetEditor() {
   const handleFile = useCallback((e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    sheetHelperC.handleImport(file, setColumnDefs, setRowData);
+    sheetHelperC.loadWithHeaderChoice(file, setColumnDefs, setRowData);
   }, [sheetHelperC]);
 
   const handleExport = useCallback((format) => {
@@ -83,7 +83,7 @@ function SheetEditor() {
     <div className='sheet-editor'>
       <div className='d-flex align-items-center'>
         {/* IMPORT FROM FILE */}
-        <input type='file' accept='.csv,.xls,.xlsx,.ods,.ots,.fods,.xlsb' ref={fileInputRef} className='d-none' onChange={handleFile} />
+        <input type='file' accept='.csv,.xls,.xlsx,.ods,.fods,.xlsb' ref={fileInputRef} className='d-none' onChange={handleFile} />
         <button className='btn hl-hover-gray p-2 mr-2' onClick={() => fileInputRef.current?.click()} title={i18next.t('import')} type='button'>
           <i className='fas fa-upload fa-fw' />
         </button>
@@ -112,9 +112,6 @@ function SheetEditor() {
                 </button>
                 <button className='dropdown-item' onClick={() => handleExport(FileType.Ods)}>
                   <i className='fas fa-file-excel fa-fw'></i>{i18next.t('ODS File')}
-                </button>
-                <button className='dropdown-item' onClick={() => handleExport(FileType.Ots)}>
-                  <i className='fas fa-file-excel fa-fw'></i>{i18next.t('OTS File')}
                 </button>
                 <button className='dropdown-item' onClick={() => handleExport(FileType.Fods)}>
                   <i className='fas fa-file-excel fa-fw'></i>{i18next.t('FODS File')}

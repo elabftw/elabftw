@@ -26,11 +26,7 @@ export class SheetEditorHelper {
         return response.arrayBuffer();
       })
       .then(buffer => {
-        const wb = read(buffer, { type: 'array' });
-        const ws = wb.Sheets[wb.SheetNames[0]];
-        const aoa: (string | number | boolean | null)[][] = utils.sheet_to_json(ws, { header: 1 });
-        if (!aoa.length) return notify.error('Invalid file');
-
+        const aoa = SheetEditorHelper.parseFileToAOA(buffer);
         const { cols, rows } = SheetEditorHelper.aoaToGrid(aoa);
         const ev = new CustomEvent('sheet-load-data', { detail: { cols, rows, name } });
         document.dispatchEvent(ev);
@@ -41,18 +37,14 @@ export class SheetEditorHelper {
       .catch(e => notify.error(e.message));
   }
 
-  handleImport(file: File, setColumnDefs: (cols: GridColumn[]) => void, setRowData: (rows: GridRow[]) => void): void {
+  loadWithHeaderChoice(file: File, setColumnDefs: (cols: GridColumn[]) => void, setRowData: (rows: GridRow[]) => void): void {
     const reader = new FileReader();
     reader.onload = function(event) {
       try {
-        const wb = read(event.target?.result, { type: 'array' });
-        const ws = wb.Sheets[wb.SheetNames[0]];
-        const aoa = utils.sheet_to_json(ws, { header: 1 }) as (string | number | boolean | null)[][];
-        if (!aoa.length) return;
-
+        const aoa = SheetEditorHelper.parseFileToAOA(event.target!.result as ArrayBuffer);
         // Attach the parsed AOA and the callbacks for the modal handler
         (window as any)._sheetImport = { aoa, setColumnDefs, setRowData };
-        // Show the sheet modal ('use first line as header?')
+        // 'use first line as header?' modal
         $('#sheetModal').modal('show');
       } catch (error) {
         notify.error(error.message);
@@ -70,14 +62,26 @@ export class SheetEditorHelper {
     utils.book_append_sheet(wb, ws, 'Sheet1');
 
     switch (format) {
-    case FileType.Xlsb:
-      writeFile(wb, 'export.xlsb', { bookType: 'xlsb' });
-      break;
     case FileType.Csv:
       writeFile(wb, 'export.csv', { bookType: 'csv' });
       break;
+    case FileType.Fods:
+      writeFile(wb, 'export.fods', { bookType: 'fods' });
+      break;
     case FileType.Html:
       writeFile(wb, 'export.html', { bookType: 'html' });
+      break;
+    case FileType.Ods:
+      writeFile(wb, 'export.ods', { bookType: 'ods' });
+      break;
+    case FileType.Xls:
+      writeFile(wb, 'export.xls', { bookType: 'xls' });
+      break;
+    case FileType.Xlsb:
+      writeFile(wb, 'export.xlsb', { bookType: 'xlsb' });
+      break;
+    case FileType.Xlsx:
+      writeFile(wb, 'export.xlsx', { bookType: 'xlsx' });
       break;
     default:
       writeFileXLSX(wb, 'export.xlsx');
@@ -99,5 +103,13 @@ export class SheetEditorHelper {
       editable: true,
     }));
     return { cols, rows };
+  }
+
+  private static parseFileToAOA(buffer: ArrayBuffer): (string | number | boolean | null)[][] {
+    const wb = read(buffer, { type: 'array' });
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    const aoa = utils.sheet_to_json(ws, { header: 1 }) as (string | number | boolean | null)[][];
+    if (!aoa.length) throw new Error('Invalid file');
+    return aoa;
   }
 }

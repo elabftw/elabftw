@@ -30,6 +30,7 @@ function SheetEditor() {
   const [columnDefs, setColumnDefs] = useState([]);
   const [rowData, setRowData] = useState([]);
   const fileInputRef = useRef();
+  const gridRef = useRef();
 
   useEffect(() => {
     const handleData = (e) => {
@@ -53,12 +54,31 @@ function SheetEditor() {
     sheetHelperC.handleExport(format, columnDefs, rowData);
   }, [sheetHelperC, columnDefs, rowData]);
 
+
+  // add a row next to the selected line.
+  // If no row is selected, it just adds it at the end
   const addRow = () => {
+    const api = gridRef.current.api;
+    // https://www.ag-grid.com/react-data-grid/data-update-transactions/#transaction-update-api
+    const selectedNodes = api.getSelectedNodes();
     const newRow = {};
     columnDefs.forEach(col => {
       newRow[col.field] = '';
     });
-    setRowData([...rowData, newRow]);
+    const index = selectedNodes.length > 0
+      ? selectedNodes[0].rowIndex + 1
+      : rowData.length;
+    api.applyTransaction({
+      add: [newRow],
+      addIndex: index,
+    });
+  };
+
+  const removeSelectedRows = () => {
+    const api = gridRef.current.api;
+    const selected = api.getSelectedRows();
+    api.applyTransaction({ remove: selected });
+    setRowData(prev => prev.filter(r => !selected.includes(r)));
   };
 
   const addColumn = () => {
@@ -133,11 +153,16 @@ function SheetEditor() {
           </div>
           <div className='ag-theme-alpine' style={{ height: 400, marginTop: 10 }}>
             <AgGridReact
+              ref={gridRef}
               rowData={rowData}
               columnDefs={columnDefs}
               defaultColDef={{ sortable: true, filter: true, editable: true }}
+              rowSelection="multiple"
             />
           </div>
+          <button onClick={removeSelectedRows} className='btn btn-ghost my-2'>
+            Delete Selected Rows
+          </button>
         </>
       )}
     </div>

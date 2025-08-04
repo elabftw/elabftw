@@ -179,20 +179,30 @@ final class Populate
                 }
             }
 
-            // add Resources Categories (items types)
+            $ResourcesCategories = new ResourcesCategories($Teams);
+
+            // add Resources Categories
+            foreach ($team['resources_categories'] ?? array() as $entry) {
+                $id = $ResourcesCategories->create($entry['name'], $entry['color'] ?? $this->getRandomDarkColor());
+                $this->output->writeln(sprintf('├ + resource category: %s (id: %d in team: %d)', $entry['name'], $id, $teamid));
+            }
+
+            // add Resources Templates (items types)
             foreach ($team['items_types'] ?? array() as $items_types) {
                 $Admin = $this->getRandomUserInTeam($teamid, admin: 1);
                 $ItemsTypes = new ItemsTypes($Admin);
                 $defaultPermissions = BasePermissions::Team->toJson();
+                $category = array_key_exists('category', $items_types) ? $ResourcesCategories->getIdempotentIdFromTitle($items_types['category']) : null;
                 $itemTypeId = $ItemsTypes->create(
                     title: $items_types['name'],
                     body: $items_types['template'] ?? '',
+                    category: $category,
                     date: new DateTimeImmutable($this->faker->dateTimeBetween('-5 years')->format('Ymd')),
                     canread: $defaultPermissions,
                     canwrite: $defaultPermissions,
                     metadata: $items_types['metadata'] ?? '{}',
                 );
-                $this->output->writeln(sprintf('├ + resource category: %s (id: %d in team: %d)', $items_types['name'], $itemTypeId, $teamid));
+                $this->output->writeln(sprintf('├ + resource template: %s (id: %d in team: %d)', $items_types['name'], $itemTypeId, $teamid));
             }
 
             // generate random experiments before the defined ones
@@ -328,9 +338,6 @@ final class Populate
             $Status = new ExperimentsStatus($Teams);
         } else {
             $Category = new ResourcesCategories($Teams);
-            if (empty($Category->readAll())) {
-                $Category->create();
-            }
             $Status = new ItemsStatus($Teams);
         }
         $categoryArr = $Category->readAll();
@@ -398,10 +405,11 @@ final class Populate
             'scientific literature',
         );
 
+        $category = empty($categoryArr) ? null : $this->faker->randomElement($categoryArr)['id'];
         for ($i = 0; $i < $iterations; $i++) {
             $id = $Entity->create(
                 template: -1,
-                category: $this->faker->randomElement($categoryArr)['id'],
+                category: $category,
                 status: $this->faker->randomElement($statusArr)['id'],
                 canread: $this->faker->randomElement($visibilityArr),
                 canwrite: $this->faker->randomElement($visibilityArr),

@@ -84,22 +84,28 @@ teams:
       - name: Demo
       - name: Tests
 
-    items_types:
+    resources_categories:
       - name: 🔬 Microscope
-        color: '54AA08'
+      - name: 🧬 Plasmid
+      - name: Antibody
+      - name: Yeast
+
+    items_types:
+      - name: A microscope
+        category: 🔬 Microscope
         body: '<h1>Switch on procedure</h1><p>&nbsp;</p><h1>Switch off procedure</h1>'
         metadata: '{"extra_fields": {"Location": {"type": "select","value": "Microscopy room 3rd floor","options": ["Microscopy room 3rd floor","Nikon imaging center","-2 microscopy room A","That building that is way too far away"]},"Available wavelengths": {"type": "select","value": "405 nm","options": ["405 nm","488 nm","561 nm","640 nm"],"allow_multi_values": true},"Person in charge": {"type": "users","value": 2,"description": "Select the person responsible for this microscope"},"Available objectives": {"type": "select","value": "4X","options": ["4X","10X","40X","63X","100X"],"allow_multi_values": true}}}'
 
-      - name: 🧬 Plasmid
-        color: 'C0C0C0'
+      - name: A plasmid
+        category: 🧬 Plasmid
         metadata: '{"extra_fields":{"Concentration":{"type":"number","value":"","description":"in μg/μL"},"Vector backbone":{"type":"text","value":""},"Growth temperature":{"type":"text","value":"","description":"in °C"},"Bacterial resistance":{"type":"select","value":"Ampicillin","options":["Ampicillin","Kanamycin","Tetracyclin","Chloramphenicol","Gentamicin","Streptomycin"]},"Mammalian resistance":{"type":"select","value":"Neomycin","options":["Neomycin","Hygromycin","Puromycin","Blasticidin","Zeocin"]}}}'
 
-      - name: Antibody
-        color: 'C24F3D'
+      - name: An antibody
+        category: Antibody
         metadata: '{"extra_fields":{"Host":{"type":"select","value":"Rabbit","options":["Rabbit","Mouse","Goat","Chicken"]},"Storage temperature":{"type":"select","value":"+4 °C","options":["+4 °C","-20 °C","-80 °C"]},"Dilution to use for IF":{"type":"text","value":""},"Dilution to use for WB":{"type":"text","value":""}}}'
 
-      - name: Yeast
-        color: 'ED9913'
+      - name: Some yeast
+        category: Yeast
         metadata: '{"extra_fields":{"Strain name":{"type":"text","value":""},"Genotype":{"type":"text","value":""},"Selection marker":{"type":"select","value":"URA3","options":["URA3","LEU2","HIS3","TRP1","KanMX","NatMX"]},"Growth temperature":{"type":"number","value":"","description":"in °C"},"Mating type":{"type":"select","value":"haploid a","options":["haploid a","haploid α","diploid"]},"Storage condition":{"type":"select","value":"-80 °C","options":["-80 °C","4 °C","on plate","in liquid culture"]},"Person in charge":{"type":"users","value":"","description":"Select the person responsible for this strain"}}}'
 
     items_status:
@@ -149,25 +155,25 @@ teams:
       - name: Project CRAPUL
 
     items_types:
-      - name: 🔬 Microscope
-        color: '54AA08'
+      - name: A microscope
+        category: 🔬 Microscope
         body: '<h1>Switch on procedure</h1><p>&nbsp;</p><h1>Switch off procedure</h1>'
         metadata: '{"extra_fields": {"Location": {"type": "select","value": "Microscopy room 3rd floor","options": ["Microscopy room 3rd floor","Nikon imaging center","-2 microscopy room A","That building that is way too far away"]},"Available wavelengths": {"type": "select","value": "405 nm","options": ["405 nm","488 nm","561 nm","640 nm"],"allow_multi_values": true},"Person in charge": {"type": "users","value": 2,"description": "Select the person responsible for this microscope"},"Available objectives": {"type": "select","value": "4X","options": ["4X","10X","40X","63X","100X"],"allow_multi_values": true}}}'
 
-      - name: 🧬 Plasmid
-        color: 'C0C0C0'
+      - name: A plasmid
+        category: 🧬 Plasmid
         metadata: '{"extra_fields":{"Concentration":{"type":"number","value":"","description":"in μg/μL"},"Vector backbone":{"type":"text","value":""},"Growth temperature":{"type":"text","value":"","description":"in °C"},"Bacterial resistance":{"type":"select","value":"Ampicillin","options":["Ampicillin","Kanamycin","Tetracyclin","Chloramphenicol","Gentamicin","Streptomycin"]},"Mammalian resistance":{"type":"select","value":"Neomycin","options":["Neomycin","Hygromycin","Puromycin","Blasticidin","Zeocin"]}}}'
 
-      - name: Antibody
-        color: 'C24F3D'
+      - name: An antibody
+        category: Antibody
         metadata: '{"extra_fields":{"Host":{"type":"select","value":"Rabbit","options":["Rabbit","Mouse","Goat","Chicken"]},"Storage temperature":{"type":"select","value":"+4 °C","options":["+4 °C","-20 °C","-80 °C"]},"Dilution to use for IF":{"type":"text","value":""},"Dilution to use for WB":{"type":"text","value":""}}}'
 
-      - name: Yeast
-        color: 'ED9913'
+      - name: Some yeast
+        category: Yeast
         metadata: '{"extra_fields":{"Strain name":{"type":"text","value":""},"Genotype":{"type":"text","value":""},"Selection marker":{"type":"select","value":"URA3","options":["URA3","LEU2","HIS3","TRP1","KanMX","NatMX"]},"Growth temperature":{"type":"number","value":"","description":"in °C"},"Mating type":{"type":"select","value":"haploid a","options":["haploid a","haploid α","diploid"]},"Storage condition":{"type":"select","value":"-80 °C","options":["-80 °C","4 °C","on plate","in liquid culture"]},"Person in charge":{"type":"users","value":"","description":"Select the person responsible for this strain"}}}'
 
       - name: 🦠 Cell line
-        color: 'ED9900'
+        category: Cells
         metadata: '{"elabftw": {"extra_fields_groups": [{"id": 1,"name": "Basic information"},{"id": 2,"name": "Storage"}]},"extra_fields": {"Species": {"type": "select","value": "Human","options": ["Human","Mouse","Chinese Hamster","Rat","African Green Monkey","Dog","Horse","Klingon","Ewok","Na’vi"],"group_id": 1,"required": true,"description": "What species is it from?"},"Date of acquisition": {"type": "date","value": "","group_id": 1,"required": true},"Number of aliquots left": {"type": "number","unit": "","units": [],"value": "","group_id": 2}}}'
 
     items_status:
@@ -924,14 +930,14 @@ teams:
       - name: Project Kaboom II
 
     items_types:
-      - name: Chemical compound
-        color: '29AEB9'
-
-      - name: Solvents
-      - name: ⚗️ Catalysts
-      - name: Buffers
-      - name: Gases
-      - name: Polymers
+      - name: Buffer template
+        category: Buffers
+        metadata: '{"extra_fields": {"Creation date": {"type": "date", "value": "", "required": true, "description": "When was this buffer made?", "blank_value_on_duplicate": true }, "Storage temperature": {"type": "select", "value": "+4°C", "options": ["+4°C", "+14°C", "Room temperature"], "required": true}}}'
+      - name: Chemical compound template
+      - name: Catalyst template
+      - name: Gas template
+      - name: Solvent template
+      - name: Polymer template
 
     items:
       - title: Argon
@@ -957,17 +963,17 @@ teams:
 
       # CATALYSTS
       - title: Palladium on carbon (Pd/C)
-        category: ⚗️ Catalysts
+        category: ⚗️  Catalysts
       - title: Grubbs catalyst
-        category: ⚗️ Catalysts
+        category: ⚗️  Catalysts
       - title: Copper(I) iodide (CuI)
-        category: ⚗️ Catalysts
+        category: ⚗️  Catalysts
       - title: Zinc chloride (ZnCl₂)
-        category: ⚗️ Catalysts
+        category: ⚗️  Catalysts
       - title: Montmorillonite K-10
-        category: ⚗️ Catalysts
+        category: ⚗️  Catalysts
       - title: Iron(III) chloride (FeCl₃)
-        category: ⚗️ Catalysts
+        category: ⚗️  Catalysts
 
       # BUFFERS
       - title: Tris buffer
@@ -982,6 +988,8 @@ teams:
         category: Buffers
       - title: Ammonium bicarbonate buffer
         category: Buffers
+
+      # POLYMERS
       - title: Polystyrene
         category: Polymers
       - title: Polyethylene glycol (PEG)
@@ -994,7 +1002,8 @@ teams:
         category: Polymers
       - title: Polycaprolactone (PCL)
         category: Polymers
-        # CHEMICAL COMPOUNDS
+
+      # CHEMICAL COMPOUNDS
       - title: Sodium chloride - NaCl
         category: Chemical compound
       - title: Methane - CH7
@@ -1230,33 +1239,33 @@ teams:
 
     # ITEMS TYPES
     items_types:
-      - name: Cat 😺
-        color: '54AA08'
+      - name: Cat template
+        category: Cat 😺
         body: '<h1>Feeding procedure</h1><p>&nbsp;</p><h1>Sacrifice procedure</h1>'
         metadata: '{"extra_fields": {"Color": {"type": "select","value": "Black and white","options": ["Black and white","Black","Ginger","Cream","Fawn","Calico"],"required": true,"description": "What color is that cat?"},"Birthday": {"type": "date","value": ""},"Is sterilized": {"type": "checkbox","value": ""},"Sex": {"type": "radio","value": "Male (♂)","options": ["Male (♂)","Something in-between (⚥)","Female (♀)"]}}}'
 
-      - name: Time machine
-        color: 'e48d09'
+      - name: Time machine template
+        category: Time machine
         metadata: '{   "extra_fields": {     "Maximum date reachable in the future": {       "type": "date",       "value": ""     },     "Maximum date reachable in the past": {       "type": "date",       "value": ""     },     "Risk associated": {       "type": "radio",       "value": "Low",       "options": [         "Low",         "Medium",         "Risky",         "You will surely die"       ],       "description": "Evaluate the risk associated with using this machine"     }   } }'
 
-      - name: Laser source
-        color: '0033f0'
+      - name: Laser source template (edit this title!)
+        category: Laser source
         metadata: '{   "extra_fields": {     "Wavelength": {       "type": "number",       "unit": "nm",       "units": [         "nm",         "mm"       ],       "value": "",       "required": true     }   } }'
 
     # ITEMS
     items:
       - title: Fermi
-        category: Cat
+        category: Cat 😺
         rating: 4
         metadata: '{   "extra_fields": {     "Color": {       "type": "select",       "value": "Ginger",       "options": [         "Black and white",         "Black",         "Ginger",         "Cream",         "Fawn",         "Calico"       ],       "required": true,       "description": "What color is that cat?"     },     "Birthday": {       "type": "date",       "value": "2020-07-14"     },"Sex": {"type": "radio","value": "Female (♀)","options": ["Male (♂)","Something in-between (⚥)","Female (♀)"]},     "Is sterilized": {       "type": "checkbox",       "value": "on"     }   } }'
 
       - title: Quark
-        category: Cat
+        category: Cat 😺
         rating: 5
         metadata: '{   "extra_fields": {     "Color": {       "type": "select",       "value": "Ginger",       "options": [         "Black and white",         "Black",         "Ginger",         "Cream",         "Fawn",         "Calico"       ],       "required": true,       "description": "What color is that cat?"     },     "Birthday": {       "type": "date",       "value": "2019-03-12"     },"Sex": {"type": "radio","value": "Male (♂)","options": ["Male (♂)","Something in-between (⚥)","Female (♀)"]},     "Is sterilized": {       "type": "checkbox",       "value": "on"     }   } }'
 
       - title: Nova
-        category: Cat
+        category: Cat 😺
         rating: 4
         metadata: '{   "extra_fields": {     "Color": {       "type": "select",       "value": "Cream",       "options": [         "Black and white",         "Black",         "Ginger",         "Cream",         "Fawn",         "Calico"       ],       "required": true,       "description": "What color is that cat?"     },     "Birthday": {       "type": "date",       "value": "2012-12-12"     },"Sex": {"type": "radio","value": "Male (♂)","options": ["Male (♂)","Something in-between (⚥)","Female (♀)"]},     "Is sterilized": {       "type": "checkbox",       "value": "on"     }   } }'
 

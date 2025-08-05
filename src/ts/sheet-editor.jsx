@@ -26,6 +26,16 @@ import {ColumnHeader} from './sheet-editor-column-header';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
+const fileExportOptions = [
+  { type: FileType.Csv, icon: 'fa-file-csv', labelKey: 'CSV File' },
+  { type: FileType.Xls, icon: 'fa-file-excel', labelKey: 'XLS File' },
+  { type: FileType.Xlsx, icon: 'fa-file-excel', labelKey: 'XLSX File' },
+  { type: FileType.Ods, icon: 'fa-file-excel', labelKey: 'ODS File' },
+  { type: FileType.Fods, icon: 'fa-file-excel', labelKey: 'FODS File' },
+  { type: FileType.Xlsb, icon: 'fa-file-excel', labelKey: 'XLSB File' },
+  { type: FileType.Html, icon: 'fa-file-code', labelKey: 'HTML File' },
+];
+
 function SheetEditor() {
   const sheetHelperC = useRef(new SheetEditorHelper()).current;
   const [columnDefs, setColumnDefs] = useState([]);
@@ -78,80 +88,47 @@ function SheetEditor() {
   const removeSelectedRows = () => {
     const api = gridRef.current.api;
     const selected = api.getSelectedRows();
+    if (!confirm(`Delete ${selected.length} line(s)?`)) {
+      return;
+    }
     api.applyTransaction({ remove: selected });
     setRowData(prev => prev.filter(r => !selected.includes(r)));
   };
 
-  const addColumn = () => {
-    const newField = `Column${columnDefs.length}`;
-    const newCol = { field: newField, editable: true };
-    const updatedColumns = [...columnDefs, newCol];
-    const updatedRows = rowData.map(row => ({ ...row, [newField]: '' }));
-    setColumnDefs(updatedColumns);
-    setRowData(updatedRows);
-  };
-
-  const handleDownload = () => {
-    if (!columnDefs.length || !rowData.length) return;
-    const headers = columnDefs.map(col => col.field);
-    const aoa = [headers, ...rowData.map(row => headers.map(h => row[h]))];
-    const ws = utils.aoa_to_sheet(aoa);
-    const wb = utils.book_new();
-    utils.book_append_sheet(wb, ws, 'Sheet1');
-    writeFileXLSX(wb, 'sheet-export.xlsx');
-  };
   return (
     <div className='sheet-editor'>
+      <input type='file' accept='.csv,.xls,.xlsx,.ods,.fods,.xlsb' ref={fileInputRef} className='d-none' onChange={handleFile} />
       <div className='d-flex align-items-center'>
-        {/* IMPORT FROM FILE */}
-        <input type='file' accept='.csv,.xls,.xlsx,.ods,.fods,.xlsb' ref={fileInputRef} className='d-none' onChange={handleFile} />
+        {/* IMPORT BUTTON */}
         <button className='btn hl-hover-gray p-2 mr-2' onClick={() => fileInputRef.current?.click()} title={i18next.t('import')} type='button'>
-          <i className='fas fa-upload fa-fw' />
+          <i className='fas fa-upload fa-fw'></i>
         </button>
+        {/* EXPORT BUTTON: Select with different types */}
+        <div className='dropdown' disabled={!columnDefs.length}>
+          <button className='btn hl-hover-gray d-inline p-2 mr-2' title={i18next.t('export')} data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label={i18next.t('export')} type='button'>
+            <i className='fas fa-download fa-fw'></i>
+          </button>
+          <div className='dropdown-menu'>
+            {fileExportOptions.map(({ type, icon, labelKey }) => (
+              <button disabled={!columnDefs.length} key={type} className="dropdown-item" onClick={() => handleExport(type)}>
+                <i className={`fas ${icon} fa-fw`}></i>{i18next.t(labelKey)}
+              </button>
+            ))}
+          </div>
+        </div>
         <div className='vertical-separator'></div>
         {/* SAVE AS ATTACHMENT (uploads section) */}
-        <button className='btn hl-hover-gray p-2 mr-2' onClick={() => {}} title={i18next.t('save-attachment')} type='button'>
+        <button disabled={!columnDefs.length} className='btn hl-hover-gray p-2' onClick={() => {}} title={i18next.t('save-attachment')} type='button'>
           <i className='fas fa-paperclip fa-fw'></i>
         </button>
+        <div className='vertical-separator'></div>
+        <button disabled={!columnDefs.length} onClick={addRow} className='btn hl-hover-gray d-inline p-2' title={i18next.t('add-row')} type='button'>
+          <i className='fas fa-plus-minus fa-fw'></i>
+        </button>
       </div>
+      {!columnDefs.length && <p>{i18next.t('Import a sheet (xls, csv, ods...)')}</p>}
       {columnDefs.length > 0 && rowData.length > 0 && (
         <>
-          <div className='btn-group mt-2'>
-            <div className='dropdown'>
-              <button className='btn hl-hover-gray d-inline p-2 mr-2' title={i18next.t('export')} data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label={i18next.t('export')} type='button'>
-                <i className='fas fa-download fa-fw'></i>
-              </button>
-              <div className='dropdown-menu'>
-                <button className='dropdown-item' onClick={() => handleExport(FileType.Csv)}>
-                  <i className='fas fa-file-csv fa-fw'></i>{i18next.t('CSV File')}
-                </button>
-                <button className='dropdown-item' onClick={() => handleExport(FileType.Xls)}>
-                  <i className='fas fa-file-excel fa-fw'></i>{i18next.t('XLS File')}
-                </button>
-                <button className='dropdown-item' onClick={() => handleExport(FileType.Xlsx)}>
-                  <i className='fas fa-file-excel fa-fw'></i>{i18next.t('XLSX File')}
-                </button>
-                <button className='dropdown-item' onClick={() => handleExport(FileType.Ods)}>
-                  <i className='fas fa-file-excel fa-fw'></i>{i18next.t('ODS File')}
-                </button>
-                <button className='dropdown-item' onClick={() => handleExport(FileType.Fods)}>
-                  <i className='fas fa-file-excel fa-fw'></i>{i18next.t('FODS File')}
-                </button>
-                <button className='dropdown-item' onClick={() => handleExport(FileType.Xlsb)}>
-                  <i className='fas fa-file-excel fa-fw'></i>{i18next.t('XLSB File')}
-                </button>
-                <button className='dropdown-item' onClick={() => handleExport(FileType.Html)}>
-                  <i className='fas fa-file-code fa-fw'></i>{i18next.t('HTML File')}
-                </button>
-              </div>
-            </div>
-            <button onClick={addRow} className='btn hl-hover-gray d-inline p-2 mr-2' title={i18next.t('add-row')}>
-              <i className='fas fa-plus-minus fa-fw'></i>
-            </button>
-            <button onClick={addColumn} className='btn hl-hover-gray d-inline p-2 mr-2' title={i18next.t('add-column')}>
-              <i className='fas fa-plus fa-fw'></i>
-            </button>
-          </div>
           <div className='ag-theme-alpine' style={{ height: 400, marginTop: 10 }}>
             <AgGridReact
               ref={gridRef}
@@ -167,7 +144,7 @@ function SheetEditor() {
               rowSelection='multiple'
             />
           </div>
-          <button onClick={removeSelectedRows} className='btn btn-ghost my-2'>
+          <button type='button' onClick={removeSelectedRows} className='btn btn-danger btn-sm my-2'>
             Delete Selected Rows
           </button>
         </>

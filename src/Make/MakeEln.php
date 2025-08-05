@@ -89,7 +89,7 @@ class MakeEln extends AbstractMakeEln
             'hasPart' => $this->rootParts,
             'name' => 'eLabFTW export',
             'description' => 'This is a .eln export from eLabFTW',
-            'version' => self::INTERNAL_ELN_VERSION,
+            'version' => (string) self::INTERNAL_ELN_VERSION,
             'license' => array('@id' => 'https://creativecommons.org/licenses/by-nc-sa/4.0/'),
         );
     }
@@ -264,6 +264,7 @@ class MakeEln extends AbstractMakeEln
         // RATING
         if (!empty($e['rating'])) {
             $datasetNode['aggregateRating'] = array(
+                '@id' => 'rating://' . Tools::getUuidv4(),
                 '@type' => 'AggregateRating',
                 'ratingValue' => $e['rating'],
                 'reviewCount' => 1,
@@ -297,6 +298,7 @@ class MakeEln extends AbstractMakeEln
         $res = array();
         foreach ($steps as $step) {
             $howToStep = array();
+            $howToStep['@id'] = 'howtostep://' . Tools::getUuidv4();
             $howToStep['@type'] = 'HowToStep';
             $howToStep['position'] = $step['ordering'];
             $howToStep['creativeWorkStatus'] = $step['finished'] === 1 ? 'finished' : 'unfinished';
@@ -318,6 +320,7 @@ class MakeEln extends AbstractMakeEln
         $res = array();
         // add one that contains all the original metadata as string
         $pv = array();
+        $pv['@id'] = 'pv://' . Tools::getUuidv4();
         $pv['propertyID'] = 'elabftw_metadata';
         $pv['description'] = 'eLabFTW metadata JSON as string';
         $pv['value'] = $strMetadata;

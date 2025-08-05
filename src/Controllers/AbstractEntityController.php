@@ -29,7 +29,6 @@ use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\ExtraFieldsKeys;
 use Elabftw\Models\FavTags;
 use Elabftw\Models\ItemsStatus;
-use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\ProcurementRequests;
 use Elabftw\Models\RequestActions;
 use Elabftw\Models\StorageUnits;
@@ -120,9 +119,6 @@ abstract class AbstractEntityController implements ControllerInterface
         // read all based on query parameters or user defaults
         $orderBy = Orderby::tryFrom($this->App->Users->userData['orderby']) ?? Orderby::Lastchange;
         $skipOrderPinned = $this->App->Request->query->getBoolean('skip_pinned');
-        if ($this->Entity instanceof ItemsTypes) {
-            $skipOrderPinned = true;
-        }
         $DisplayParams = new DisplayParams(
             requester: $this->App->Users,
             query: $this->App->Request->query,

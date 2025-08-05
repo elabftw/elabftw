@@ -21,7 +21,6 @@ use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Hash\LocalFileHash;
 use Elabftw\Models\AbstractEntity;
-use Elabftw\Models\Experiments;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\EntityParams;

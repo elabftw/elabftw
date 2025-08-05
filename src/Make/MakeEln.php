@@ -89,6 +89,7 @@ class MakeEln extends AbstractMakeEln
             'hasPart' => $this->rootParts,
             'name' => 'eLabFTW export',
             'description' => 'This is a .eln export from eLabFTW',
+            'version' => self::INTERNAL_ELN_VERSION,
             'license' => array('@id' => 'https://creativecommons.org/licenses/by-nc-sa/4.0/'),
         );
     }

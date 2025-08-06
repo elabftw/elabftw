@@ -50,7 +50,7 @@ const t = {
     "generic-delete-warning": "Deletar isso aqui?",
     "hide-deleted": "Hide deleted",
     "import": "Importar",
-    "import-sheet": "Import a sheet (xls, csv, ods...)",
+    "import-sheet": "Import a spreadsheet (xls, csv, ods...)",
     "import-error": "Error during import. Please check the console for more information.",
     "invalid-info": "Invalid syntax or information provided.",
     "link-delete-warning": "Deletar este link?",

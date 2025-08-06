@@ -50,7 +50,7 @@ const t = {
     "generic-delete-warning": "删除？",
     "hide-deleted": "Hide deleted",
     "import": "导入",
-    "import-sheet": "Import a sheet (xls, csv, ods...)",
+    "import-sheet": "Import a spreadsheet (xls, csv, ods...)",
     "import-error": "Error during import. Please check the console for more information.",
     "invalid-info": "Invalid syntax or information provided.",
     "link-delete-warning": "删除此链接？",

@@ -50,7 +50,7 @@ const t = {
     "generic-delete-warning": "삭제할까요?",
     "hide-deleted": "Hide deleted",
     "import": "읽어 오기",
-    "import-sheet": "Import a spreadsheet (xls, csv, ods...)",
+    "import-spreadsheet": "Import a spreadsheet (xls, csv, ods...)",
     "import-error": "Error during import. Please check the console for more information.",
     "invalid-info": "Invalid syntax or information provided.",
     "link-delete-warning": "링크를 삭제할까요?",

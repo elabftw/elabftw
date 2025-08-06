@@ -57,7 +57,7 @@ export class SheetEditorHelper {
         // Attach the parsed AOA and the callbacks for the modal handler
         window._sheetImport = { aoa, setColumnDefs, setRowData };
         // 'use first line as header?' modal
-        $('#sheetModal').modal('show');
+        $('#spreadsheetModal').modal('show');
       } catch (error) {
         notify.error(error.message);
       }
@@ -71,9 +71,6 @@ export class SheetEditorHelper {
     const realName = askFileName(FileType.Xlsx);
     if (!realName) return;
     switch (format) {
-    case FileType.Csv:
-      writeFile(wb, realName, { bookType: 'csv' });
-      break;
     case FileType.Fods:
       writeFile(wb, realName, { bookType: 'fods' });
       break;
@@ -93,13 +90,14 @@ export class SheetEditorHelper {
       writeFile(wb, realName, { bookType: 'xlsx' });
       break;
     default:
-      writeFileXLSX(wb, realName);
+      writeFile(wb, realName, { bookType: 'csv' });
     }
     notify.success();
   }
 
-  // saves the current sheet as an upload for the entity. (.xlsx)
+  // saves the current sheet as an upload for the entity. (.csv)
   saveAsAttachment(columnDefs: GridColumn[], rowData: GridRow[], entityType: string, entityId: number): void {
+    // should behave the same as Export. Make a modal with grouped input, [input-name, ., FileTypeEnum]
     if (!columnDefs.length || !rowData.length) return;
     const realName = askFileName(FileType.Xlsx);
     if (!realName) return;

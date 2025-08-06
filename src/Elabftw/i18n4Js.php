@@ -84,7 +84,7 @@ final class i18n4Js
             'generic-delete-warning' => _('Delete this?'),
             'hide-deleted' => _('Hide deleted'),
             'import' => _('Import'),
-            'import-sheet' => _('Import a spreadsheet (xls, csv, ods...)'),
+            'import-spreadsheet' => _('Import a spreadsheet (xls, csv, ods...)'),
             // import errors often print html content
             'import-error' => _('Error during import. Please check the console for more information.'),
             'invalid-info' => _('Invalid syntax or information provided.'),

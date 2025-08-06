@@ -22,7 +22,7 @@ import '@ag-grid-community/styles/ag-theme-alpine.css';
 import { FileType } from './interfaces';
 import i18next from './i18n';
 import { SheetEditorHelper } from './SheetEditorHelper.class';
-import {ColumnHeader} from './sheet-editor-column-header';
+import { ColumnHeader } from './spreadsheet-editor-column-header';
 import { getEntity } from './misc';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -38,7 +38,7 @@ const fileExportOptions = [
 ];
 const entity = getEntity();
 
-function SheetEditor() {
+function SpreadsheetEditor() {
   const sheetHelperC = useRef(new SheetEditorHelper()).current;
   const [columnDefs, setColumnDefs] = useState([]);
   const [rowData, setRowData] = useState([]);
@@ -103,7 +103,7 @@ function SheetEditor() {
   };
 
   return (
-    <div className='sheet-editor'>
+    <div className='spreadsheet-editor'>
       <input type='file' accept='.csv,.xls,.xlsx,.ods,.fods,.xlsb' ref={fileInputRef} className='d-none' onChange={handleFile} />
       <div className='d-flex align-items-center'>
         {/* IMPORT BUTTON */}
@@ -142,7 +142,7 @@ function SheetEditor() {
           <i className='fas fa-trash-alt fa-fw'></i>
         </button>
       </div>
-      {isDisabled && <p>{i18next.t('import-sheet')}</p>}
+      {isDisabled && <p>{i18next.t('import-spreadsheet')}</p>}
       {columnDefs.length > 0 && rowData.length > 0 && (
         <>
           <div className='ag-theme-alpine' style={{ height: 400, marginTop: 10 }}>
@@ -170,7 +170,7 @@ function SheetEditor() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  const el = document.getElementById('sheet-importer-root');
+  const el = document.getElementById('spreadsheet-importer-root');
   if (el) {
     const root = createRoot(el);
     root.render(<SheetEditor />);

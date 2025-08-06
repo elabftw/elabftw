@@ -183,7 +183,7 @@ interface Entity {
   id: number;
 }
 
-// for Sheet editor
+// for Spreadsheet editor
 interface GridColumn {
   field: string;
   editable: boolean;

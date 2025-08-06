@@ -17,6 +17,7 @@ import { Api } from './Apiv2.class';
 import { marked } from 'marked';
 import Prism from 'prismjs';
 import { SheetEditorHelper } from './SheetEditorHelper.class';
+import { SpreadsheetEditorHelper } from "./SpreadsheetEditorHelper.class";
 import { Uploader } from './uploader';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -35,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
   displayMoleculeViewer();
   const entity = getEntity();
   const ApiC = new Api();
-  const SheetEditorHelperC = new SheetEditorHelper();
+  const SpreadsheetEditorHelperC = new SpreadsheetEditorHelper();
 
   // make file comments editable
   const malleableFilecomment = new Malle({
@@ -186,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // HANDLE SHEETS
     } else if (el.matches('[data-action="xls-load-file"]')) {
-      SheetEditorHelperC.loadInSheetEditor(el.dataset.link, el.dataset.name, el.dataset.uploadid);
+      SpreadsheetEditorHelperC.loadInSheetEditor(el.dataset.link, el.dataset.name, el.dataset.uploadid);
     // ARCHIVE UPLOAD
     } else if (el.matches('[data-action="archive-upload"]')) {
       const uploadid = parseInt(el.dataset.uploadid, 10);

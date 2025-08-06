@@ -10,7 +10,7 @@
 import { FileType, GridColumn, GridRow, Model } from './interfaces';
 import { askFileName, reloadElements } from './misc';
 import { Notification } from './Notifications.class';
-import { read, utils, write, writeFile, writeFileXLSX, WorkBook } from 'xlsx';
+import { read, utils, write, writeFile, WorkBook } from 'xlsx';
 import { Api } from './Apiv2.class';
 
 declare global {
@@ -25,7 +25,7 @@ declare global {
 
 const notify = new Notification();
 
-export class SheetEditorHelper {
+export class SpreadsheetEditorHelper {
   api: Api;
 
   constructor() {
@@ -41,8 +41,8 @@ export class SheetEditorHelper {
         return response.arrayBuffer();
       })
       .then(buffer => {
-        const aoa = SheetEditorHelper.parseFileToAOA(buffer);
-        const { cols, rows } = SheetEditorHelper.aoaToGrid(aoa);
+        const aoa = SpreadsheetEditorHelper.parseFileToAOA(buffer);
+        const { cols, rows } = SpreadsheetEditorHelper.aoaToGrid(aoa);
         const ev = new CustomEvent('sheet-load-data', { detail: { cols, rows, name, uploadId } });
         document.dispatchEvent(ev);
       })
@@ -53,7 +53,7 @@ export class SheetEditorHelper {
     const reader = new FileReader();
     reader.onload = function(event) {
       try {
-        const aoa = SheetEditorHelper.parseFileToAOA(event.target!.result as ArrayBuffer);
+        const aoa = SpreadsheetEditorHelper.parseFileToAOA(event.target!.result as ArrayBuffer);
         // Attach the parsed AOA and the callbacks for the modal handler
         window._sheetImport = { aoa, setColumnDefs, setRowData };
         // 'use first line as header?' modal
@@ -67,7 +67,7 @@ export class SheetEditorHelper {
 
   handleExport(format: FileType, columnDefs: GridColumn[], rowData: GridRow[]): void {
     if (!columnDefs.length || !rowData.length) return;
-    const wb = SheetEditorHelper.createWorkbookFromGrid(columnDefs, rowData);
+    const wb = SpreadsheetEditorHelper.createWorkbookFromGrid(columnDefs, rowData);
     const realName = askFileName(FileType.Xlsx);
     if (!realName) return;
     switch (format) {
@@ -102,23 +102,23 @@ export class SheetEditorHelper {
     const realName = askFileName(FileType.Xlsx);
     if (!realName) return;
 
-    const wb = SheetEditorHelper.createWorkbookFromGrid(columnDefs, rowData);
+    const wb = SpreadsheetEditorHelper.createWorkbookFromGrid(columnDefs, rowData);
     const wbBinary = write(wb, { bookType: FileType.Xlsx, type: 'array' });
     const file = new File([wbBinary], realName, {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });
-    SheetEditorHelper.uploadWorkbook(file, `api/v2/${entityType}/${entityId}/${Model.Upload}`);
+    SpreadsheetEditorHelper.uploadWorkbook(file, `api/v2/${entityType}/${entityId}/${Model.Upload}`);
   }
 
   replaceExisting(columnDefs: GridColumn[], rowData: GridRow[], entityType: string, entityId: number, currentUploadName: string, currentUploadId: number): void {
     if (!columnDefs.length || !rowData.length || !currentUploadName || !currentUploadId) return;
 
-    const wb = SheetEditorHelper.createWorkbookFromGrid(columnDefs, rowData);
+    const wb = SpreadsheetEditorHelper.createWorkbookFromGrid(columnDefs, rowData);
     const wbBinary = write(wb, { bookType: FileType.Xlsx, type: 'array' });
     const file = new File([wbBinary], currentUploadName, {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });
-    SheetEditorHelper.uploadWorkbook(file, `api/v2/${entityType}/${entityId}/${Model.Upload}/${currentUploadId}`);
+    SpreadsheetEditorHelper.uploadWorkbook(file, `api/v2/${entityType}/${entityId}/${Model.Upload}/${currentUploadId}`);
   }
 
   // convert array of arrays to grid

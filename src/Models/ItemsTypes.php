@@ -18,6 +18,7 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Params\OrderingParams;
 use Elabftw\Services\Filter;
+use Elabftw\Traits\InsertTagsTrait;
 use Elabftw\Traits\RandomColorTrait;
 use Override;
 use PDO;
@@ -29,6 +30,7 @@ use PDO;
 final class ItemsTypes extends AbstractTemplateEntity
 {
     use RandomColorTrait;
+    use InsertTagsTrait;
 
     public EntityType $entityType = EntityType::ItemsTypes;
 
@@ -76,8 +78,11 @@ final class ItemsTypes extends AbstractTemplateEntity
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
         $req->bindParam(':metadata', $metadata);
         $this->Db->execute($req);
+        $id = $this->Db->lastInsertId();
 
-        return $this->Db->lastInsertId();
+        $this->insertTags($tags, $id);
+
+        return $id;
     }
 
     public function getDefault(): int

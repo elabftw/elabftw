@@ -16,6 +16,7 @@ use DateTimeImmutable;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Services\Filter;
+use Elabftw\Traits\InsertTagsTrait;
 use Elabftw\Traits\SortableTrait;
 use Override;
 use PDO;
@@ -26,6 +27,7 @@ use PDO;
 final class Templates extends AbstractTemplateEntity
 {
     use SortableTrait;
+    use InsertTagsTrait;
 
     public EntityType $entityType = EntityType::Templates;
 
@@ -83,11 +85,8 @@ final class Templates extends AbstractTemplateEntity
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
         $req->execute();
         $id = $this->Db->lastInsertId();
+        $this->insertTags($tags, $id);
 
-        // now pin the newly created template so it directly appears in Create menu
-        $fresh = new self($this->Users, $id);
-        $Pins = new Pins($fresh);
-        $Pins->addToPinned();
         return $id;
     }
 

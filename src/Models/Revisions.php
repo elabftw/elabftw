@@ -44,9 +44,6 @@ final class Revisions extends AbstractRest
 
     public function create(string $body): int
     {
-        if ($this->Entity instanceof ItemsTypes) {
-            return 0;
-        }
         $this->Entity->canOrExplode('write');
 
         if (!$this->satisfyDeltaConstraint($body) && !$this->satisfyTimeConstraint() && $this->readCount() > 0) {

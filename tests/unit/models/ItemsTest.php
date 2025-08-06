@@ -13,6 +13,8 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\FileFromString;
+use Elabftw\Params\TeamParam;
 use Elabftw\Services\Check;
 use Elabftw\Traits\TestsUtilsTrait;
 
@@ -32,18 +34,49 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateAndDestroy(): void
     {
-        $new = $this->Items->create(template: 1);
+        $new = $this->Items->create();
         $this->assertTrue((bool) Check::id($new));
         $this->Items->setId($new);
         $this->Items->destroy();
     }
 
+    public function testCreateFromTemplate(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $Teams = new Teams($user, 1);
+        $Teams->update(new TeamParam('user_create_tag', 1));
+
+        $title = 'A resource template';
+        $body = 'A resource template body';
+        $tags = array('tag1', 'tag2');
+        $rcat = new ResourcesCategories($Teams);
+        $categoryTitle = 'A resource category';
+        $categoryId = $rcat->create($categoryTitle);
+        $rstat = new ItemsStatus($Teams);
+        $statusTitle = 'Some status';
+        $statusId = $rstat->create($statusTitle);
+        $ItemsTypes = new ItemsTypes($user);
+        $templateId = $ItemsTypes->create(title: $title, body: $body, tags: $tags, category: $categoryId, status: $statusId);
+        $ItemsTypes->setId($templateId);
+        // add a file too
+        $uploadTitle = 'osef.json';
+        $ItemsTypes->Uploads->createFromString(FileFromString::Json, $uploadTitle, '[1, 2]');
+        $new = $this->Items->create(template: $templateId);
+        $Items = new Items($user, $new);
+        $this->assertSame($title, $Items->entityData['title']);
+        $this->assertSame($body, $Items->entityData['body']);
+        $this->assertEqualsCanonicalizing($tags, array_column($Items->Tags->readAll(), 'tag'));
+        $this->assertSame($categoryId, $Items->entityData['category']);
+        $this->assertSame($statusId, $Items->entityData['status']);
+        $this->assertCount(1, $Items->entityData['uploads']);
+        $this->assertSame($uploadTitle, $Items->entityData['uploads'][0]['real_name']);
+    }
+
     public function testRead(): void
     {
-        $new = $this->Items->create(template: 1);
+        $new = $this->Items->create();
         $this->Items->setId($new);
         $this->Items->canOrExplode('read');
-        $this->assertTrue(is_array($this->Items->entityData));
         $this->assertEquals('Untitled', $this->Items->entityData['title']);
         $this->assertEquals(date('Y-m-d'), $this->Items->entityData['date']);
     }

@@ -147,6 +147,7 @@ CREATE TABLE `experiments_changelog` (
   `entity_id` int(10) unsigned NOT NULL,
   `users_id` int(10) unsigned NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `target` varchar(255) NOT NULL,
   `content` text,
   PRIMARY KEY (`id`)
@@ -238,10 +239,21 @@ CREATE TABLE `experiments_revisions` (
   `body` mediumtext NOT NULL,
   `content_type` tinyint NOT NULL DEFAULT 1,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `userid` int(10) UNSIGNED NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
+CREATE TABLE `items_types_revisions` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `item_id` int(10) UNSIGNED NOT NULL,
+  `body` mediumtext NOT NULL,
+  `content_type` tinyint NOT NULL DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `userid` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 --
 -- RELATIONSHIPS FOR TABLE `experiments_revisions`:
 --   `item_id`
@@ -354,6 +366,7 @@ CREATE TABLE `experiments_templates_changelog` (
   `entity_id` int(10) unsigned NOT NULL,
   `users_id` int(10) unsigned NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `target` varchar(255) NOT NULL,
   `content` text,
   PRIMARY KEY (`id`)
@@ -369,6 +382,7 @@ CREATE TABLE `experiments_templates_revisions` (
   `body` mediumtext NOT NULL,
   `content_type` tinyint NOT NULL DEFAULT 1,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `userid` int(10) UNSIGNED NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
@@ -638,6 +652,7 @@ CREATE TABLE `items_changelog` (
   `entity_id` int(10) unsigned NOT NULL,
   `users_id` int(10) unsigned NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `target` varchar(255) NOT NULL,
   `content` text,
   PRIMARY KEY (`id`)
@@ -712,6 +727,7 @@ CREATE TABLE `items_revisions` (
   `body` mediumtext NOT NULL,
   `content_type` tinyint NOT NULL DEFAULT 1,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `userid` int(10) UNSIGNED NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
@@ -1699,6 +1715,10 @@ ALTER TABLE `experiments2items`
 ALTER TABLE `experiments_revisions`
   ADD CONSTRAINT `fk_experiments_revisions_experiments_id` FOREIGN KEY (`item_id`) REFERENCES `experiments`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_experiments_revisions_users_userid` FOREIGN KEY (`userid`) REFERENCES `users`(`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `items_types_revisions`
+  ADD CONSTRAINT FOREIGN KEY (`item_id`) REFERENCES `items_types`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT FOREIGN KEY (`userid`) REFERENCES `users`(`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `experiments_steps`

@@ -338,7 +338,7 @@ final class Teams extends AbstractRest
         return $newId;
     }
 
-    private function update(TeamParam $params): bool
+    public function update(TeamParam $params): bool
     {
         $sql = 'UPDATE teams SET ' . $params->getColumn() . ' = :content WHERE id = :id';
         $req = $this->Db->prepare($sql);

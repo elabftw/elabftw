@@ -62,10 +62,11 @@ final class Items extends AbstractConcreteEntity
         ?string $canbook = '',
     ): int {
         $itemTemplate = array();
+        $ItemsTypes = new ItemsTypes($this->Users);
         if ($template > 0) {
-            $ItemsTypes = new ItemsTypes($this->Users);
             $ItemsTypes->setId($template);
             $itemTemplate = $ItemsTypes->readOne();
+            $title ??= $itemTemplate['title'];
         }
         $category ??= $itemTemplate['category'] ?? null;
         $title = Filter::title($title ?? _('Untitled'));
@@ -106,10 +107,16 @@ final class Items extends AbstractConcreteEntity
         $newId = $this->Db->lastInsertId();
 
         $this->insertTags($tags, $newId);
-        if (array_key_exists('id', $itemTemplate)) {
+        if (array_key_exists('id', $itemTemplate) && $template !== null) {
+            $Tags = new Tags($ItemsTypes);
+            $Tags->copyTags($newId, toItems: true);
             $this->ItemsLinks->duplicate($itemTemplate['id'], $newId, true);
             $this->ExperimentsLinks->duplicate($itemTemplate['id'], $newId, true);
+            $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
+            $CompoundsLinks->duplicate($template, $newId, fromItemsTypes: true);
             $this->Steps->duplicate($itemTemplate['id'], $newId, true);
+            $freshSelf = new self($this->Users, $newId);
+            $ItemsTypes->Uploads->duplicate($freshSelf);
         }
 
         return $newId;

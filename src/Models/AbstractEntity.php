@@ -488,7 +488,6 @@ abstract class AbstractEntity extends AbstractRest
     public function readOneFull(): array
     {
         $base = $this->readOne();
-        // items types don't have this yet
         $base['revisions'] = (new Revisions($this))->readAll();
         $base['changelog'] = (new Changelog($this))->readAll();
         // we want to include ALL uploaded files

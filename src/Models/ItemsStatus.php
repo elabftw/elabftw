@@ -12,10 +12,18 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Override;
+
 /**
  * Status for items/resources
  */
 final class ItemsStatus extends AbstractStatus
 {
     protected string $table = 'items_status';
+
+    #[Override]
+    protected function getUsersCanwriteName(): string
+    {
+        return 'resources_status';
+    }
 }

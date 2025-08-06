@@ -120,8 +120,11 @@ function SheetEditor() {
         </div>
         <div className='vertical-separator'></div>
         {/* SAVE AS ATTACHMENT (uploads section) */}
-        <button disabled={!columnDefs.length} className='btn hl-hover-gray p-2'   onClick={() => sheetHelperC.saveAsAttachment(columnDefs, rowData, entity.type, entity.id)} title={i18next.t('save-attachment')} type='button'>
+        <button disabled={!columnDefs.length} className='btn hl-hover-gray p-2 mr-2' onClick={() => sheetHelperC.saveAsAttachment(columnDefs, rowData, entity.type, entity.id)} title={i18next.t('save-attachment')} type='button'>
           <i className='fas fa-paperclip fa-fw'></i>
+        </button>
+        <button disabled={!columnDefs.length}  className='btn hl-hover-gray p-2 lh-normal border-0 mr-2' onClick={() => sheetHelperC.replaceExisting(columnDefs, rowData, entity.type, entity.id)} title={i18next.t('save')} aria-label={i18next.t('save')} type='button'>
+          <i className='fas fa-save fa-fw'></i>
         </button>
         <div className='vertical-separator'></div>
         <button disabled={!columnDefs.length} onClick={addRow} className='btn hl-hover-gray d-inline p-2' title={i18next.t('add-row')} type='button'>

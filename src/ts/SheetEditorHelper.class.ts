@@ -27,14 +27,17 @@ const notify = new Notification();
 
 export class SheetEditorHelper {
   api: Api;
-  currentUploadId = '';
-  currentFilename = '';
+  currentUploadId: string;
+  currentFilename: string;
 
   constructor() {
     this.api = new Api();
   }
 
   loadInSheetEditor(link: string, name: string, uploadId: string): void {
+    this.currentUploadId = uploadId;
+    this.currentFilename = name;
+
     const headers = new Headers();
     headers.append('cache-control', 'no-cache');
     fetch(`app/download.php?f=${link}`, { headers })
@@ -47,9 +50,6 @@ export class SheetEditorHelper {
         const { cols, rows } = SheetEditorHelper.aoaToGrid(aoa);
         const ev = new CustomEvent('sheet-load-data', { detail: { cols, rows, name } });
         document.dispatchEvent(ev);
-
-        this.currentUploadId = uploadId;
-        this.currentFilename = name;
       })
       .catch(e => notify.error(e.message));
   }
@@ -105,7 +105,6 @@ export class SheetEditorHelper {
     }
   }
 
-
   saveAsAttachment(columnDefs: GridColumn[], rowData: GridRow[], entityType: string, entityId: number): void {
     if (!columnDefs.length || !rowData.length) return;
     const realName = askFileName(FileType.Xlsx);
@@ -128,8 +127,38 @@ export class SheetEditorHelper {
     this.api.post(`${entityType}/${entityId}/${Model.Upload}`, params)
       .then(resp => {
         this.currentUploadId = String(getNewIdFromPostRequest(resp));
+        this.currentFilename = realName;
         reloadElements(['uploadsDiv']);
       })
+      .catch(e => notify.error(e.message));
+  }
+
+  replaceExisting(columnDefs: GridColumn[], rowData: GridRow[], entityType: string, entityId: number): void {
+    // console.log(this);
+    // console.log(columnDefs.length, rowData.length, this.currentFilename, this.currentUploadId);
+    // TODO: currentFilename & currentUploadId are not persisting, can't see why. It is the same insance of helperClass that I use
+    if (!columnDefs.length || !rowData.length || !this.currentFilename || !this.currentUploadId) return;
+
+    const headers = columnDefs.map(col => col.field);
+    const aoa = [headers, ...rowData.map(row => headers.map(h => row[h]))];
+    const ws = utils.aoa_to_sheet(aoa);
+    const wb = utils.book_new();
+    utils.book_append_sheet(wb, ws, 'Sheet1');
+
+    const fileBlob = new Blob(
+      [write(wb, { bookType: 'xlsx', type: 'binary' })],
+      { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
+    );
+
+    const formData = new FormData();
+    formData.set('file', fileBlob, this.currentFilename);
+    formData.set('extraParam', 'noRedirect');
+
+    fetch(`api/v2/${entityType}/${entityId}/${Model.Upload}/${this.currentUploadId}`, {
+      method: 'POST',
+      body: formData,
+    })
+      .then(() => notify.success())
       .catch(e => notify.error(e.message));
   }
 

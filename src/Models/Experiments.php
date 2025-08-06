@@ -18,7 +18,6 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Models\Links\Experiments2ExperimentsLinks;
 use Elabftw\Services\Filter;
@@ -51,7 +50,6 @@ final class Experiments extends AbstractConcreteEntity
         ?string $metadata = null,
         int $rating = 0,
         ?int $contentType = null,
-        bool $forceExpTpl = false,
     ): int {
         $canread ??= $this->Users->userData['default_read'] ?? BasePermissions::Team->toJson();
         $canwrite ??= $this->Users->userData['default_write'] ?? BasePermissions::User->toJson();
@@ -64,13 +62,6 @@ final class Experiments extends AbstractConcreteEntity
             $body = null;
         }
         $contentType ??= $this->Users->userData['use_markdown'] === 1 ? AbstractEntity::CONTENT_MD : AbstractEntity::CONTENT_HTML;
-
-        // throw error if no template is used and template is required by admin
-        /*
-        if ($template <= 0 && $forceExpTpl) {
-            throw new ImproperActionException(_('Experiments must use a template!'));
-        }
-         */
 
         // figure out the custom id
         $customId ??= $this->getNextCustomId($category);

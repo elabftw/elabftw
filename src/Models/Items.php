@@ -55,8 +55,6 @@ final class Items extends AbstractConcreteEntity
         ?string $metadata = null,
         int $rating = 0,
         ?int $contentType = 1,
-        bool $forceExpTpl = false,
-        ?string $color = null,
         // specific to Items
         ?string $canbook = '',
     ): int {

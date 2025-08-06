@@ -48,7 +48,6 @@ final class Templates extends AbstractTemplateEntity
         ?string $metadata = null,
         int $rating = 0,
         ?int $contentType = null,
-        bool $forceExpTpl = false,
     ): int {
         $title = Filter::title($title ?? _('Untitled'));
 

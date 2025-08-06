@@ -164,7 +164,6 @@ abstract class AbstractEntity extends AbstractRest
         ?string $metadata = null,
         int $rating = 0,
         ?int $contentType = null,
-        bool $forceExpTpl = false,
     ): int;
 
     abstract public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int;
@@ -209,8 +208,11 @@ abstract class AbstractEntity extends AbstractRest
                     if ($reqBody['template']) {
                         return $this->createFromTemplate((int) $reqBody['template']);
                     }
-                    $Teams = new Teams($this->Users, $this->Users->team);
-                    $teamConfigArr = $Teams->readOne();
+                    // check if use of template is enforced at team level for experiments
+                    $teamConfigArr = new Teams($this->Users, $this->Users->team)->readOne();
+                    if ($teamConfigArr['force_exp_tpl'] === 1 && $this instanceof Experiments) {
+                        throw new ImproperActionException(_('Experiments must use a template!'));
+                    }
                     // convert to int only if not empty, otherwise send null: we don't want to convert a null to int, as it would send 0
                     $category = !empty($reqBody['category']) ? (int) $reqBody['category'] : null;
                     $status = !empty($reqBody['status']) ? (int) $reqBody['status'] : null;
@@ -235,7 +237,6 @@ abstract class AbstractEntity extends AbstractRest
                         category: $category,
                         status: $status,
                         metadata: $metadata,
-                        forceExpTpl: (bool) $teamConfigArr['force_exp_tpl'],
                     );
                 }
             )(),

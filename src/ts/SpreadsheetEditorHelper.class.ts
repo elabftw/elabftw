@@ -32,7 +32,7 @@ export class SpreadsheetEditorHelper {
     this.api = new Api();
   }
 
-  loadInSheetEditor(link: string, name: string, uploadId: string): void {
+  loadInSpreadsheetEditor(link: string, name: string, uploadId: string): void {
     const headers = new Headers();
     headers.append('cache-control', 'no-cache');
     fetch(`app/download.php?f=${link}`, { headers })
@@ -68,7 +68,7 @@ export class SpreadsheetEditorHelper {
   handleExport(format: FileType, columnDefs: GridColumn[], rowData: GridRow[]): void {
     if (!columnDefs.length || !rowData.length) return;
     const wb = SpreadsheetEditorHelper.createWorkbookFromGrid(columnDefs, rowData);
-    const realName = askFileName(FileType.Xlsx);
+    const realName = askFileName(FileType.Csv);
     if (!realName) return;
     switch (format) {
     case FileType.Fods:
@@ -99,11 +99,11 @@ export class SpreadsheetEditorHelper {
   saveAsAttachment(columnDefs: GridColumn[], rowData: GridRow[], entityType: string, entityId: number): void {
     // should behave the same as Export. Make a modal with grouped input, [input-name, ., FileTypeEnum]
     if (!columnDefs.length || !rowData.length) return;
-    const realName = askFileName(FileType.Xlsx);
+    const realName = askFileName(FileType.Csv);
     if (!realName) return;
 
     const wb = SpreadsheetEditorHelper.createWorkbookFromGrid(columnDefs, rowData);
-    const wbBinary = write(wb, { bookType: FileType.Xlsx, type: 'array' });
+    const wbBinary = write(wb, { bookType: FileType.Csv, type: 'array' });
     const file = new File([wbBinary], realName, {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });
@@ -114,7 +114,7 @@ export class SpreadsheetEditorHelper {
     if (!columnDefs.length || !rowData.length || !currentUploadName || !currentUploadId) return;
 
     const wb = SpreadsheetEditorHelper.createWorkbookFromGrid(columnDefs, rowData);
-    const wbBinary = write(wb, { bookType: FileType.Xlsx, type: 'array' });
+    const wbBinary = write(wb, { bookType: FileType.Csv, type: 'array' });
     const file = new File([wbBinary], currentUploadName, {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });

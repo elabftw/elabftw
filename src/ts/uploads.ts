@@ -16,8 +16,7 @@ import i18next from './i18n';
 import { Api } from './Apiv2.class';
 import { marked } from 'marked';
 import Prism from 'prismjs';
-import { SheetEditorHelper } from './SheetEditorHelper.class';
-import { SpreadsheetEditorHelper } from "./SpreadsheetEditorHelper.class";
+import { SpreadsheetEditorHelper } from './SpreadsheetEditorHelper.class';
 import { Uploader } from './uploader';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -187,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // HANDLE SHEETS
     } else if (el.matches('[data-action="xls-load-file"]')) {
-      SpreadsheetEditorHelperC.loadInSheetEditor(el.dataset.link, el.dataset.name, el.dataset.uploadid);
+      SpreadsheetEditorHelperC.loadInSpreadsheetEditor(el.dataset.link, el.dataset.name, el.dataset.uploadid);
     // ARCHIVE UPLOAD
     } else if (el.matches('[data-action="archive-upload"]')) {
       const uploadid = parseInt(el.dataset.uploadid, 10);

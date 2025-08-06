@@ -21,7 +21,7 @@ import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
 import { FileType } from './interfaces';
 import i18next from './i18n';
-import { SheetEditorHelper } from './SheetEditorHelper.class';
+import { SpreadsheetEditorHelper } from './SpreadsheetEditorHelper.class';
 import { ColumnHeader } from './spreadsheet-editor-column-header';
 import { getEntity } from './misc';
 
@@ -39,7 +39,7 @@ const fileExportOptions = [
 const entity = getEntity();
 
 function SpreadsheetEditor() {
-  const sheetHelperC = useRef(new SheetEditorHelper()).current;
+  const SpreadsheetHelperC = useRef(new SpreadsheetEditorHelper()).current;
   const [columnDefs, setColumnDefs] = useState([]);
   const [rowData, setRowData] = useState([]);
   const fileInputRef = useRef();
@@ -65,12 +65,12 @@ function SpreadsheetEditor() {
   const handleFile = useCallback((e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    sheetHelperC.loadWithHeaderChoice(file, setColumnDefs, setRowData);
-  }, [sheetHelperC]);
+    SpreadsheetHelperC.loadWithHeaderChoice(file, setColumnDefs, setRowData);
+  }, [SpreadsheetHelperC]);
 
   const handleExport = useCallback((format) => {
-    sheetHelperC.handleExport(format, columnDefs, rowData);
-  }, [sheetHelperC, columnDefs, rowData]);
+    SpreadsheetHelperC.handleExport(format, columnDefs, rowData);
+  }, [SpreadsheetHelperC, columnDefs, rowData]);
 
 
   // add a row next to the selected line.
@@ -125,11 +125,11 @@ function SpreadsheetEditor() {
         </div>
         <div className='vertical-separator'></div>
         {/* SAVE AS ATTACHMENT (uploads section) */}
-        <button disabled={isDisabled} className='btn hl-hover-gray p-2 mr-2' onClick={() => sheetHelperC.saveAsAttachment(columnDefs, rowData, entity.type, entity.id)} title={i18next.t('save-attachment')} type='button'>
+        <button disabled={isDisabled} className='btn hl-hover-gray p-2 mr-2' onClick={() => SpreadsheetHelperC.saveAsAttachment(columnDefs, rowData, entity.type, entity.id)} title={i18next.t('save-attachment')} type='button'>
           <i className='fas fa-paperclip fa-fw'></i>
         </button>
         {/* REPLACE EXISTING FILE WITH CURRENT EDITIONS */}
-        <button disabled={isDisabled} className='btn hl-hover-gray p-2 lh-normal border-0 mr-2' onClick={() => sheetHelperC.replaceExisting(columnDefs, rowData, entity.type, entity.id, currentUploadName, currentUploadId)} title={i18next.t('save')} aria-label={i18next.t('save')} type='button'>
+        <button disabled={isDisabled} className='btn hl-hover-gray p-2 lh-normal border-0 mr-2' onClick={() => SpreadsheetHelperC.replaceExisting(columnDefs, rowData, entity.type, entity.id, currentUploadName, currentUploadId)} title={i18next.t('save')} aria-label={i18next.t('save')} type='button'>
           <i className='fas fa-save fa-fw'></i>
         </button>
         <div className='vertical-separator'></div>
@@ -173,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const el = document.getElementById('spreadsheet-importer-root');
   if (el) {
     const root = createRoot(el);
-    root.render(<SheetEditor />);
+    root.render(<SpreadsheetEditor />);
   }
   // handle 'use first line as header' modal
   document.body.addEventListener('click', event => {

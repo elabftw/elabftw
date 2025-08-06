@@ -173,7 +173,7 @@ enum FileType {
   Html = 'html',
   Json = 'json',
   Ods = 'ods',
-  Xls = 'Xls',
+  Xls = 'xls',
   Xlsb = 'xlsb',
   Xlsx = 'xlsx',
 }

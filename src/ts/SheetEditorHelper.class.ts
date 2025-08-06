@@ -105,6 +105,7 @@ export class SheetEditorHelper {
     }
   }
 
+  // saves the current sheet as an upload for the entity. (.xlsx)
   saveAsAttachment(columnDefs: GridColumn[], rowData: GridRow[], entityType: string, entityId: number): void {
     if (!columnDefs.length || !rowData.length) return;
     const realName = askFileName(FileType.Xlsx);
@@ -116,21 +117,20 @@ export class SheetEditorHelper {
     const wb = utils.book_new();
     utils.book_append_sheet(wb, ws, 'Sheet1');
 
-    const content = write(wb, { bookType: 'xlsx', type: 'array' });
-    const params = {
-      action: Action.CreateFromString,
-      file_type: FileType.Xlsx,
-      real_name: realName,
-      content: `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${content}`,
-    };
+    const wbBinary = write(wb, {bookType: FileType.Xlsx, type: 'array'});
+    const file = new File([wbBinary], realName, {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
 
-    this.api.post(`${entityType}/${entityId}/${Model.Upload}`, params)
-      .then(resp => {
-        this.currentUploadId = String(getNewIdFromPostRequest(resp));
-        this.currentFilename = realName;
-        reloadElements(['uploadsDiv']);
-      })
-      .catch(e => notify.error(e.message));
+    const formData = new FormData();
+    formData.append('file', file);
+    try {
+      fetch(`api/v2/${entityType}/${entityId}/${Model.Upload}`, { method: 'POST', body: formData })
+        .then(() => reloadElements(['uploadsDiv']));
+      notify.success();
+    } catch (error) {
+      notify.error(error.message);
+    }
   }
 
   replaceExisting(columnDefs: GridColumn[], rowData: GridRow[], entityType: string, entityId: number): void {

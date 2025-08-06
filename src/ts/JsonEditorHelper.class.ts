@@ -113,7 +113,7 @@ export default class JsonEditorHelper {
     this.currentUploadId = uploadid;
     this.currentFilename = name;
     this.editorDiv.dataset.what = 'file';
-    document.getElementById('jsonImportFileDiv').toggleAttribute('hidden', true);
+    document.getElementById('jsonImportFileDiv')?.toggleAttribute('hidden', true);
   }
 
   loadMetadata(): void {
@@ -177,7 +177,7 @@ export default class JsonEditorHelper {
     fetch(`api/v2/${this.entity.type}/${this.entity.id}/${Model.Upload}/${this.currentUploadId}`, {
       method: 'POST',
       body: formData,
-    });
+    }).then(() => reloadElements(['uploadsDiv']));
     notify.success();
   }
 

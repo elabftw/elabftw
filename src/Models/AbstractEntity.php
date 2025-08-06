@@ -506,7 +506,6 @@ abstract class AbstractEntity extends AbstractRest
         if ($this->id === null) {
             throw new IllegalActionException('No id was set!');
         }
-        // build query params for Uploads
         $queryParams = $this->getQueryParams(Request::createFromGlobals()->query);
         $sql = $this->getSqlBuilder()->getReadSqlBeforeWhere(true, true);
 
@@ -738,7 +737,7 @@ abstract class AbstractEntity extends AbstractRest
         // remove the custom_id upon deletion
         $this->update(new EntityParams('custom_id', ''));
         // set state to deleted
-        return $this->update(new EntityParams('state', (string) State::Deleted->value));
+        return $this->update(new EntityParams('state', State::Deleted->value));
     }
 
     public function updateExtraFieldsOrdering(ExtraFieldsOrderingParams $params): array

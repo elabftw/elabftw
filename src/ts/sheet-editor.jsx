@@ -45,12 +45,16 @@ function SheetEditor() {
   const fileInputRef = useRef();
   const gridRef = useRef();
   const isDisabled = columnDefs.length === 0;
+  const [currentUploadId, setCurrentUploadId] = useState(0);
+  const [currentUploadName, setCurrentUploadName] = useState('');
 
   useEffect(() => {
     const handleData = (e) => {
-      const { cols, rows } = e.detail;
+      const { cols, rows, name, uploadId } = e.detail;
       setColumnDefs(cols);
       setRowData(rows);
+      setCurrentUploadId(uploadId);
+      setCurrentUploadName(name);
     };
     document.addEventListener('sheet-load-data', handleData);
     return () => {
@@ -125,7 +129,7 @@ function SheetEditor() {
           <i className='fas fa-paperclip fa-fw'></i>
         </button>
         {/* REPLACE EXISTING FILE WITH CURRENT EDITIONS */}
-        <button disabled={isDisabled}  className='btn hl-hover-gray p-2 lh-normal border-0 mr-2' onClick={() => sheetHelperC.replaceExisting(columnDefs, rowData, entity.type, entity.id)} title={i18next.t('save')} aria-label={i18next.t('save')} type='button'>
+        <button disabled={isDisabled} className='btn hl-hover-gray p-2 lh-normal border-0 mr-2' onClick={() => sheetHelperC.replaceExisting(columnDefs, rowData, entity.type, entity.id, currentUploadName, currentUploadId)} title={i18next.t('save')} aria-label={i18next.t('save')} type='button'>
           <i className='fas fa-save fa-fw'></i>
         </button>
         <div className='vertical-separator'></div>

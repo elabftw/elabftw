@@ -15,6 +15,7 @@ namespace Elabftw\Make;
 use DateTimeImmutable;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\Classification;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Storage;
@@ -267,7 +268,7 @@ class MakePdf extends AbstractMakePdf
     private function getBody(): string
     {
         $body = $this->Entity->entityData['body'] ?? '';
-        if ($this->Entity->entityData['content_type'] === AbstractEntity::CONTENT_MD) {
+        if ($this->Entity->entityData['content_type'] === BodyContentType::Markdown->value) {
             // md2html can result in invalid html, see https://github.com/elabftw/elabftw/issues/3076
             // the Filter::body (HTMLPurifier) rescues the invalid parts and thus avoids some MathJax errors
             // the consequence is a slightly different layout

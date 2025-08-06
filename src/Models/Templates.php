@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 
 use DateTimeImmutable;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\InsertTagsTrait;
@@ -47,7 +48,7 @@ final class Templates extends AbstractTemplateEntity
         ?int $customId = null,
         ?string $metadata = null,
         int $rating = 0,
-        ?int $contentType = null,
+        BodyContentType $contentType = BodyContentType::Html,
     ): int {
         $title = Filter::title($title ?? _('Untitled'));
 
@@ -60,8 +61,6 @@ final class Templates extends AbstractTemplateEntity
         }
         $canread ??= BasePermissions::Team->toJson();
         $canwrite ??= BasePermissions::User->toJson();
-
-        $contentType ??= $this->Users->userData['use_markdown'] === 1 ? AbstractEntity::CONTENT_MD : AbstractEntity::CONTENT_HTML;
 
         $sql = 'INSERT INTO experiments_templates(team, title, body, userid, category, status, metadata, canread, canwrite, canread_target, canwrite_target, content_type, rating, canread_is_immutable, canwrite_is_immutable)
             VALUES(:team, :title, :body, :userid, :category, :status, :metadata, :canread, :canwrite, :canread_target, :canwrite_target, :content_type, :rating, :canread_is_immutable, :canwrite_is_immutable)';
@@ -79,7 +78,7 @@ final class Templates extends AbstractTemplateEntity
         $req->bindParam(':canwrite_is_immutable', $canwriteIsImmutable, PDO::PARAM_INT);
         $req->bindParam(':canread_target', $canread);
         $req->bindParam(':canwrite_target', $canwrite);
-        $req->bindParam(':content_type', $contentType, PDO::PARAM_INT);
+        $req->bindValue(':content_type', $contentType->value, PDO::PARAM_INT);
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
         $req->execute();
         $id = $this->Db->lastInsertId();

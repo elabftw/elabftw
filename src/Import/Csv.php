@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Import;
 
 use DateTimeImmutable;
+use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
@@ -70,7 +71,6 @@ final class Csv extends AbstractCsv
             }
             $status = empty($row['status_title']) ? null : $this->getStatusId($this->entityType, $row['status_title']);
             $customId = empty($row['custom_id']) ? null : (int) $row['custom_id'];
-            $contentType = empty($row['content_type']) ? null : (int) $row['content_type'];
             $metadata = empty($row['metadata']) ? null : (string) $row['metadata'];
             if ($metadata === null) {
                 $metadata = $this->collectMetadata($row);
@@ -84,7 +84,7 @@ final class Csv extends AbstractCsv
                 body: $body,
                 canread: $canread,
                 canwrite: $canwrite,
-                contentType: $contentType,
+                contentType: BodyContentType::from((int) ($row['contentType'] ?? BodyContentType::Html->value)),
                 date: $date,
                 tags: $tags,
                 category: $category,

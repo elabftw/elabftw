@@ -18,6 +18,7 @@ use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FilterableColumn;
 use Elabftw\Factories\LinksFactory;
@@ -54,7 +55,7 @@ final class Items extends AbstractConcreteEntity
         ?int $customId = null,
         ?string $metadata = null,
         int $rating = 0,
-        ?int $contentType = 1,
+        BodyContentType $contentType = BodyContentType::Html,
         // specific to Items
         ?string $canbook = '',
     ): int {
@@ -66,7 +67,6 @@ final class Items extends AbstractConcreteEntity
         $canbook = $canread;
         // figure out the custom id
         $customId ??= $this->getNextCustomId($category);
-        $contentType ??= 1;
 
         $sql = 'INSERT INTO items(team, title, date, status, body, userid, category, elabid, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canbook, metadata, custom_id, content_type, rating)
             VALUES(:team, :title, :date, :status, :body, :userid, :category, :elabid, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canbook, :metadata, :custom_id, :content_type, :rating)';
@@ -86,7 +86,7 @@ final class Items extends AbstractConcreteEntity
         $req->bindParam(':canbook', $canbook);
         $req->bindParam(':metadata', $metadata);
         $req->bindParam(':custom_id', $customId, PDO::PARAM_INT);
-        $req->bindParam(':content_type', $contentType, PDO::PARAM_INT);
+        $req->bindValue(':content_type', $contentType->value, PDO::PARAM_INT);
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
         $this->Db->execute($req);
         $newId = $this->Db->lastInsertId();
@@ -140,7 +140,7 @@ final class Items extends AbstractConcreteEntity
             category: $this->entityData['category'],
             canread: $this->entityData['canread'],
             canwrite: $this->entityData['canwrite'],
-            contentType: $this->entityData['content_type'],
+            contentType: BodyContentType::from($this->entityData['content_type']),
             metadata: $metadata,
             status: $this->entityData['status'],
         );

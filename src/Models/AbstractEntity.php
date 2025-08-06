@@ -24,6 +24,7 @@ use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\Meaning;
@@ -92,10 +93,6 @@ abstract class AbstractEntity extends AbstractRest
 {
     use EntityTrait;
 
-    public const int CONTENT_HTML = 1;
-
-    public const int CONTENT_MD = 2;
-
     public Comments $Comments;
 
     public AbstractExperimentsLinks $ExperimentsLinks;
@@ -163,7 +160,7 @@ abstract class AbstractEntity extends AbstractRest
         ?int $customId = null,
         ?string $metadata = null,
         int $rating = 0,
-        ?int $contentType = null,
+        BodyContentType $contentType = BodyContentType::Html,
     ): int;
 
     abstract public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int;
@@ -183,7 +180,7 @@ abstract class AbstractEntity extends AbstractRest
             status: $template['status'],
             metadata: $template['metadata'],
             rating: $template['rating'],
-            contentType: $template['content_type'],
+            contentType: BodyContentType::from($template['content_type']),
         );
         $tags = array_column($TemplateType->Tags->readAll(), 'tag');
         $this->ItemsLinks->duplicate($template['id'], $id, true);
@@ -237,6 +234,7 @@ abstract class AbstractEntity extends AbstractRest
                         category: $category,
                         status: $status,
                         metadata: $metadata,
+                        contentType: $this->Users->userData['use_markdown'] === 1 ? BodyContentType::Markdown : BodyContentType::Html,
                     );
                 }
             )(),
@@ -547,7 +545,7 @@ abstract class AbstractEntity extends AbstractRest
         // add the body as html
         $this->entityData['body_html'] = $this->entityData['body'];
         // convert from markdown only if necessary
-        if ($this->entityData['content_type'] === self::CONTENT_MD) {
+        if ($this->entityData['content_type'] === BodyContentType::Markdown->value) {
             $this->entityData['body_html'] = Tools::md2html($this->entityData['body'] ?? '');
         }
         if (!empty($this->entityData['metadata'])) {

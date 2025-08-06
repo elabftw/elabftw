@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 use DateTimeImmutable;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BodyContentType;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Traits\SetIdTrait;
@@ -133,7 +134,7 @@ final class Revisions extends AbstractRest
         // add the body as html
         $entityData['body_html'] = $entityData['body'];
         // convert from markdown only if necessary
-        if ($entityData['content_type'] === AbstractEntity::CONTENT_MD) {
+        if ($entityData['content_type'] === BodyContentType::Markdown->value) {
             $entityData['body_html'] = Tools::md2html($entityData['body'] ?? '');
         }
         return $entityData;

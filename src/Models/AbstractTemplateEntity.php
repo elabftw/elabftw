@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\State;
 use Elabftw\Factories\LinksFactory;
 use Override;
@@ -55,7 +56,7 @@ abstract class AbstractTemplateEntity extends AbstractEntity
             canread: $this->entityData['canread'],
             canwrite: $this->entityData['canwrite'],
             metadata: $this->entityData['metadata'],
-            contentType: $this->entityData['content_type'],
+            contentType: BodyContentType::from($this->entityData['content_type']),
         );
         // add missing can*_target
         $fresh = clone $this;

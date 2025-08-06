@@ -17,6 +17,7 @@ use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Models\Links\Experiments2ExperimentsLinks;
@@ -49,7 +50,7 @@ final class Experiments extends AbstractConcreteEntity
         ?int $customId = null,
         ?string $metadata = null,
         int $rating = 0,
-        ?int $contentType = null,
+        BodyContentType $contentType = BodyContentType::Html,
     ): int {
         $canread ??= $this->Users->userData['default_read'] ?? BasePermissions::Team->toJson();
         $canwrite ??= $this->Users->userData['default_write'] ?? BasePermissions::User->toJson();
@@ -61,7 +62,6 @@ final class Experiments extends AbstractConcreteEntity
         if (empty($body)) {
             $body = null;
         }
-        $contentType ??= $this->Users->userData['use_markdown'] === 1 ? AbstractEntity::CONTENT_MD : AbstractEntity::CONTENT_HTML;
 
         // figure out the custom id
         $customId ??= $this->getNextCustomId($category);
@@ -84,7 +84,7 @@ final class Experiments extends AbstractConcreteEntity
         $req->bindParam(':metadata', $metadata);
         $req->bindParam(':custom_id', $customId, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        $req->bindParam(':content_type', $contentType, PDO::PARAM_INT);
+        $req->bindValue(':content_type', $contentType->value, PDO::PARAM_INT);
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
         $this->Db->execute($req);
         $newId = $this->Db->lastInsertId();
@@ -123,7 +123,7 @@ final class Experiments extends AbstractConcreteEntity
             canread: $this->entityData['canread'],
             canwrite: $this->entityData['canwrite'],
             metadata: $metadata,
-            contentType: $this->entityData['content_type'],
+            contentType: BodyContentType::from($this->entityData['content_type']),
         );
 
         $fresh = new self($this->Users, $newId);

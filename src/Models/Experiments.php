@@ -37,7 +37,6 @@ final class Experiments extends AbstractConcreteEntity
 
     #[Override]
     public function create(
-        ?int $template = -1,
         ?string $title = null,
         ?string $body = null,
         ?DateTimeImmutable $date = null,
@@ -56,7 +55,6 @@ final class Experiments extends AbstractConcreteEntity
     ): int {
         $canread ??= $this->Users->userData['default_read'] ?? BasePermissions::Team->toJson();
         $canwrite ??= $this->Users->userData['default_write'] ?? BasePermissions::User->toJson();
-        $Templates = new Templates($this->Users);
 
         // defaults
         $title = Filter::title($title ?? _('Untitled'));
@@ -67,28 +65,12 @@ final class Experiments extends AbstractConcreteEntity
         }
         $contentType ??= $this->Users->userData['use_markdown'] === 1 ? AbstractEntity::CONTENT_MD : AbstractEntity::CONTENT_HTML;
 
-        // do we want template ?
-        // $templateId can be a template id, or 0: common template, or -1: null body
-        // only look up the template if category has not been set. When importing a csv, we cannot discriminate between the template or category argument of create function, and use both. This will cause the following code to look up the category id as a template id
-        if ($template > 0 && $category === null) {
-            $Templates->setId($template);
-            $templateArr = $Templates->readOne();
-            $title = $templateArr['title'];
-            $category = $templateArr['category'];
-            $status = $templateArr['status'];
-            $body = $templateArr['body'];
-            $canread = $templateArr['canread_target'];
-            $canwrite = $templateArr['canwrite_target'];
-            $canreadIsImmutable = $templateArr['canread_is_immutable'];
-            $canwriteIsImmutable = $templateArr['canwrite_is_immutable'];
-            $metadata = $templateArr['metadata'];
-            $contentType = $templateArr['content_type'];
-        }
-
         // throw error if no template is used and template is required by admin
+        /*
         if ($template <= 0 && $forceExpTpl) {
             throw new ImproperActionException(_('Experiments must use a template!'));
         }
+         */
 
         // figure out the custom id
         $customId ??= $this->getNextCustomId($category);
@@ -115,19 +97,6 @@ final class Experiments extends AbstractConcreteEntity
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
         $this->Db->execute($req);
         $newId = $this->Db->lastInsertId();
-
-        // insert the tags, steps and links from the template
-        if ($template > 0) {
-            $Tags = new Tags($Templates);
-            $Tags->copyTags($newId, true);
-            $this->Steps->duplicate($template, $newId, true);
-            $this->ItemsLinks->duplicate($template, $newId, true);
-            $this->ExperimentsLinks->duplicate($template, $newId, true);
-            $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
-            $CompoundsLinks->duplicate($template, $newId, true);
-            $freshSelf = new self($this->Users, $newId);
-            $Templates->Uploads->duplicate($freshSelf);
-        }
 
         $this->insertTags($tags, $newId);
 

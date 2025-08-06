@@ -34,7 +34,6 @@ final class Templates extends AbstractTemplateEntity
     // color is here just to be on par with itemstypes
     #[Override]
     public function create(
-        ?int $template = -1,
         ?string $title = null,
         ?string $body = null,
         ?DateTimeImmutable $date = null,

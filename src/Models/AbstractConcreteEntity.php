@@ -12,14 +12,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Enums\Action;
 use Elabftw\Enums\State;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Factories\LinksFactory;
 use PDO;
 use Override;
 
-use function is_string;
 use function sprintf;
 
 /**
@@ -27,44 +24,6 @@ use function sprintf;
  */
 abstract class AbstractConcreteEntity extends AbstractEntity
 {
-    #[Override]
-    public function postAction(Action $action, array $reqBody): int
-    {
-        $Teams = new Teams($this->Users, $this->Users->team);
-        $teamConfigArr = $Teams->readOne();
-        // convert to int only if not empty, otherwise send null: we don't want to convert a null to int, as it would send 0
-        $category = !empty($reqBody['category']) ? (int) $reqBody['category'] : null;
-        $status = !empty($reqBody['status']) ? (int) $reqBody['status'] : null;
-        // force metadata to be a string
-        $metadata = null;
-        if (!empty($reqBody['metadata'])) {
-            $metadata = json_encode($reqBody['metadata'], JSON_THROW_ON_ERROR);
-        }
-        // force tags to be an array
-        $tags = $reqBody['tags'] ?? null;
-        if (is_string($tags)) {
-            $tags = array($tags);
-        }
-        return match ($action) {
-            Action::Create => $this->create(
-                template: (int) ($reqBody['template'] ?? -1),
-                body: $reqBody['body'] ?? null,
-                title: $reqBody['title'] ?? null,
-                canread: $reqBody['canread'] ?? null,
-                canwrite: $reqBody['canwrite'] ?? null,
-                canreadIsImmutable: (bool) ($reqBody['canread_is_immutable'] ?? false),
-                canwriteIsImmutable: (bool) ($reqBody['canwrite_is_immutable'] ?? false),
-                tags: $tags ?? array(),
-                category: $category,
-                status: $status,
-                metadata: $metadata,
-                forceExpTpl: (bool) $teamConfigArr['force_exp_tpl'],
-            ),
-            Action::Duplicate => $this->duplicate((bool) ($reqBody['copyFiles'] ?? false), (bool) ($reqBody['linkToOriginal'] ?? false)),
-            default => throw new ImproperActionException('Invalid action parameter.'),
-        };
-    }
-
     #[Override]
     public function destroy(): bool
     {

@@ -87,8 +87,6 @@ final class Csv extends AbstractCsv
                 contentType: $contentType,
                 date: $date,
                 tags: $tags,
-                template: $category,
-                // use template and category so it works for items and experiments
                 category: $category,
                 status: $status,
                 customId: $customId,

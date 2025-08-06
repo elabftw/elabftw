@@ -41,7 +41,6 @@ final class Items extends AbstractConcreteEntity
 
     #[Override]
     public function create(
-        ?int $template = -1,
         ?string $title = null,
         ?string $body = null,
         ?DateTimeImmutable $date = null,
@@ -55,33 +54,21 @@ final class Items extends AbstractConcreteEntity
         ?int $customId = null,
         ?string $metadata = null,
         int $rating = 0,
-        ?int $contentType = null,
+        ?int $contentType = 1,
         bool $forceExpTpl = false,
         ?string $color = null,
         // specific to Items
         ?string $canbook = '',
     ): int {
-        $itemTemplate = array();
-        $ItemsTypes = new ItemsTypes($this->Users);
-        if ($template > 0) {
-            $ItemsTypes->setId($template);
-            $itemTemplate = $ItemsTypes->readOne();
-            $title ??= $itemTemplate['title'];
-        }
-        $category ??= $itemTemplate['category'] ?? null;
         $title = Filter::title($title ?? _('Untitled'));
         $date ??= new DateTimeImmutable();
-        $body = Filter::body($body ?? $itemTemplate['body'] ?? null);
-        $canread ??= $itemTemplate['canread_target'] ?? BasePermissions::Team->toJson();
-        $canwrite ??= $itemTemplate['canwrite_target'] ?? BasePermissions::Team->toJson();
-        $canreadIsImmutable = $itemTemplate['canread_is_immutable'] ?? 0;
-        $canwriteIsImmutable = $itemTemplate['canwrite_is_immutable'] ?? 0;
+        $body = Filter::body($body);
+        $canread ??= BasePermissions::Team->toJson();
+        $canwrite ??= BasePermissions::Team->toJson();
         $canbook = $canread;
-        $status ??= $itemTemplate['status'] ?? null;
-        $metadata ??= $itemTemplate['metadata'] ?? null;
         // figure out the custom id
         $customId ??= $this->getNextCustomId($category);
-        $contentType = $itemTemplate['content_type'] ?? 1;
+        $contentType ??= 1;
 
         $sql = 'INSERT INTO items(team, title, date, status, body, userid, category, elabid, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canbook, metadata, custom_id, content_type, rating)
             VALUES(:team, :title, :date, :status, :body, :userid, :category, :elabid, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canbook, :metadata, :custom_id, :content_type, :rating)';
@@ -107,17 +94,6 @@ final class Items extends AbstractConcreteEntity
         $newId = $this->Db->lastInsertId();
 
         $this->insertTags($tags, $newId);
-        if (array_key_exists('id', $itemTemplate) && $template !== null) {
-            $Tags = new Tags($ItemsTypes);
-            $Tags->copyTags($newId, toItems: true);
-            $this->ItemsLinks->duplicate($itemTemplate['id'], $newId, true);
-            $this->ExperimentsLinks->duplicate($itemTemplate['id'], $newId, true);
-            $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
-            $CompoundsLinks->duplicate($template, $newId, fromItemsTypes: true);
-            $this->Steps->duplicate($itemTemplate['id'], $newId, true);
-            $freshSelf = new self($this->Users, $newId);
-            $ItemsTypes->Uploads->duplicate($freshSelf);
-        }
 
         return $newId;
     }

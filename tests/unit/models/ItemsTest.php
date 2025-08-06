@@ -61,7 +61,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         // add a file too
         $uploadTitle = 'osef.json';
         $ItemsTypes->Uploads->createFromString(FileFromString::Json, $uploadTitle, '[1, 2]');
-        $new = $this->Items->create(template: $templateId);
+        $new = $this->Items->createFromTemplate($templateId);
         $Items = new Items($user, $new);
         $this->assertSame($title, $Items->entityData['title']);
         $this->assertSame($body, $Items->entityData['body']);
@@ -83,7 +83,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate(): void
     {
-        $new = $this->Items->create(template: 1);
+        $new = $this->Items->create();
         $this->Items->setId($new);
         $entityData = $this->Items->patch(Action::Update, array('title' => 'Untitled', 'date' => '20160729', 'body' => '<p>Body</p>'));
         $this->assertEquals('Untitled', $entityData['title']);
@@ -100,7 +100,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
     {
         // use a normal user
         $Items = new Items($this->getRandomUserInTeam(1));
-        $new = $Items->create(template: 1);
+        $new = $Items->create();
         $Items->setId($new);
         $Items->patch(Action::Update, array('book_users_can_in_past' => '1'));
         $this->assertTrue($Items->canBookInPast());
@@ -137,7 +137,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
             'canwrite_target' => $canwriteTarget,
         ));
         // now create an item from that template
-        $newId = $this->Items->create(template: $itemTemplate);
+        $newId = $this->Items->createFromTemplate($itemTemplate);
         $this->assertIsInt($newId);
         $this->Items->setId($newId);
         // have to decode the json because the keys won't be in the same order, so assertEquals fails
@@ -149,7 +149,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
 
     public function testToggleLock(): void
     {
-        $new = $this->Items->create(template: 1, tags: array('locked'));
+        $new = $this->Items->create(tags: array('locked'));
         $this->Items->setId($new);
 
         // lock

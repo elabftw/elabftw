@@ -150,7 +150,6 @@ abstract class AbstractEntity extends AbstractRest
     }
 
     abstract public function create(
-        ?int $template = -1,
         ?string $title = null,
         ?string $body = null,
         ?DateTimeImmutable $date = null,
@@ -169,6 +168,81 @@ abstract class AbstractEntity extends AbstractRest
     ): int;
 
     abstract public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int;
+
+    public function createFromTemplate(int $templateId, ?string $title = null): int
+    {
+        $TemplateType = $this->entityType->toTemplateType($this->Users, $templateId);
+        $template = $TemplateType->readOne();
+        $id = $this->create(
+            title: $title ?? $template['title'],
+            body: $template['body'],
+            canread: $template['canread_target'],
+            canwrite: $template['canwrite_target'],
+            canreadIsImmutable: (bool) $template['canread_is_immutable'],
+            canwriteIsImmutable: (bool) $template['canwrite_is_immutable'],
+            category: $template['category'],
+            status: $template['status'],
+            metadata: $template['metadata'],
+            rating: $template['rating'],
+            contentType: $template['content_type'],
+        );
+        $tags = array_column($TemplateType->Tags->readAll(), 'tag');
+        $this->ItemsLinks->duplicate($template['id'], $id, true);
+        $this->ExperimentsLinks->duplicate($template['id'], $id, true);
+        $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
+        $CompoundsLinks->duplicate($templateId, $id, fromItemsTypes: true);
+        $this->Steps->duplicate($template['id'], $id, true);
+        $freshSelf = new $this($this->Users, $id);
+        $TemplateType->Uploads->duplicate($freshSelf);
+        foreach ($tags as $tag) {
+            $freshSelf->Tags->postAction(Action::Create, array('tag' => $tag));
+        }
+        return $id;
+    }
+
+    #[Override]
+    public function postAction(Action $action, array $reqBody): int
+    {
+        return match ($action) {
+            Action::Create => (
+                function () use ($reqBody) {
+                    if ($reqBody['template']) {
+                        return $this->createFromTemplate((int) $reqBody['template']);
+                    }
+                    $Teams = new Teams($this->Users, $this->Users->team);
+                    $teamConfigArr = $Teams->readOne();
+                    // convert to int only if not empty, otherwise send null: we don't want to convert a null to int, as it would send 0
+                    $category = !empty($reqBody['category']) ? (int) $reqBody['category'] : null;
+                    $status = !empty($reqBody['status']) ? (int) $reqBody['status'] : null;
+                    // force metadata to be a string
+                    $metadata = null;
+                    if (!empty($reqBody['metadata'])) {
+                        $metadata = json_encode($reqBody['metadata'], JSON_THROW_ON_ERROR);
+                    }
+                    // force tags to be an array
+                    $tags = $reqBody['tags'] ?? null;
+                    if (is_string($tags)) {
+                        $tags = array($tags);
+                    }
+                    return $this->create(
+                        body: $reqBody['body'] ?? null,
+                        title: $reqBody['title'] ?? null,
+                        canread: $reqBody['canread'] ?? null,
+                        canwrite: $reqBody['canwrite'] ?? null,
+                        canreadIsImmutable: (bool) ($reqBody['canread_is_immutable'] ?? false),
+                        canwriteIsImmutable: (bool) ($reqBody['canwrite_is_immutable'] ?? false),
+                        tags: $tags ?? array(),
+                        category: $category,
+                        status: $status,
+                        metadata: $metadata,
+                        forceExpTpl: (bool) $teamConfigArr['force_exp_tpl'],
+                    );
+                }
+            )(),
+            Action::Duplicate => $this->duplicate((bool) ($reqBody['copyFiles'] ?? false), (bool) ($reqBody['linkToOriginal'] ?? false)),
+            default => throw new ImproperActionException('Invalid action parameter.'),
+        };
+    }
 
     #[Override]
     public function getApiPath(): string

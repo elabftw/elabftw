@@ -36,7 +36,6 @@ final class ItemsTypes extends AbstractTemplateEntity
 
     #[Override]
     public function create(
-        ?int $template = -1,
         ?string $title = null,
         ?string $body = null,
         ?DateTimeImmutable $date = null,

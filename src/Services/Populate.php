@@ -408,7 +408,6 @@ final class Populate
         $category = empty($categoryArr) ? null : $this->faker->randomElement($categoryArr)['id'];
         for ($i = 0; $i < $iterations; $i++) {
             $id = $Entity->create(
-                template: -1,
                 category: $category,
                 status: $this->faker->randomElement($statusArr)['id'],
                 canread: $this->faker->randomElement($visibilityArr),

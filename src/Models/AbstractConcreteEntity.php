@@ -12,10 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Enums\State;
-use Elabftw\Factories\LinksFactory;
 use PDO;
-use Override;
 
 use function sprintf;
 
@@ -24,27 +21,6 @@ use function sprintf;
  */
 abstract class AbstractConcreteEntity extends AbstractEntity
 {
-    #[Override]
-    public function destroy(): bool
-    {
-        $this->canOrExplode('write');
-        // mark all uploads related to that entity as deleted
-        $sql = 'UPDATE uploads SET state = :state WHERE item_id = :entity_id AND type = :type';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':entity_id', $this->id, PDO::PARAM_INT);
-        $req->bindValue(':type', $this->entityType->value);
-        $req->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        // do same for compounds links and containers links
-        $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
-        $CompoundsLinks->destroyAll();
-        $ContainersLinks = LinksFactory::getContainersLinks($this);
-        $ContainersLinks->destroyAll();
-
-        return parent::destroy();
-    }
-
     /**
      * Count the number of timestamp archives created during past month (sliding window)
      * Here we merge bloxberg and trusted timestamp methods because there is no way currently to tell them apart

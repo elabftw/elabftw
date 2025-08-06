@@ -28,6 +28,7 @@ const t = {
     "entity-default-title": "Χωρίς τίτλο",
     "entity-delete-warning": "Τα επιλεγμένα στοιχεία και όλα τα σχετικά δεδομένα θα διαγραφούν οριστικά. Αυτό δεν μπορεί να αναιρεθεί. Είσαι σίγουρος/η;",
     "entries-processed": "{{num, number}} entries processed",
+    "error-no-filename": "File name is missing.",
     "error-no-category": "Απαιτείται μια κατηγορία για την ανάκτηση του επόμενου προσαρμοσμένου αναγνωριστικού",
     "error-fetch-request": "There was an error while fetching the requested data: {{error}}",
     "error-parsing-metadata": "There was an error while parsing metadata (extra fields). Full error has been logged to the browser console.",

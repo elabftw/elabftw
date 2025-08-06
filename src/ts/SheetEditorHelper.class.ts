@@ -73,32 +73,34 @@ export class SheetEditorHelper {
   handleExport(format: FileType, columnDefs: GridColumn[], rowData: GridRow[]): void {
     if (!columnDefs.length || !rowData.length) return;
     const wb = SheetEditorHelper.createWorkbookFromGrid(columnDefs, rowData);
-
+    const realName = askFileName(FileType.Xlsx);
+    if (!realName) return;
     switch (format) {
     case FileType.Csv:
-      writeFile(wb, 'export.csv', { bookType: 'csv' });
+      writeFile(wb, realName, { bookType: 'csv' });
       break;
     case FileType.Fods:
-      writeFile(wb, 'export.fods', { bookType: 'fods' });
+      writeFile(wb, realName, { bookType: 'fods' });
       break;
     case FileType.Html:
-      writeFile(wb, 'export.html', { bookType: 'html' });
+      writeFile(wb, realName, { bookType: 'html' });
       break;
     case FileType.Ods:
-      writeFile(wb, 'export.ods', { bookType: 'ods' });
+      writeFile(wb, realName, { bookType: 'ods' });
       break;
     case FileType.Xls:
-      writeFile(wb, 'export.xls', { bookType: 'xls' });
+      writeFile(wb, realName, { bookType: 'xls' });
       break;
     case FileType.Xlsb:
-      writeFile(wb, 'export.xlsb', { bookType: 'xlsb' });
+      writeFile(wb, realName, { bookType: 'xlsb' });
       break;
     case FileType.Xlsx:
-      writeFile(wb, 'export.xlsx', { bookType: 'xlsx' });
+      writeFile(wb, realName, { bookType: 'xlsx' });
       break;
     default:
-      writeFileXLSX(wb, 'export.xlsx');
+      writeFileXLSX(wb, realName);
     }
+    notify.success();
   }
 
   // saves the current sheet as an upload for the entity. (.xlsx)
@@ -138,7 +140,7 @@ export class SheetEditorHelper {
 
     const fileBlob = new Blob(
       [write(wb, { bookType: 'xlsx', type: 'binary' })],
-      { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
+      { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' },
     );
 
     const formData = new FormData();

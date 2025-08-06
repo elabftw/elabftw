@@ -28,6 +28,7 @@ const t = {
     "entity-default-title": "Bez mena",
     "entity-delete-warning": "Vybraté položky a všetky súvisiace údaje sa natrvalo odstránia. To nie je možné vrátiť späť. Si si istý?",
     "entries-processed": "{{num, number}} entries processed",
+    "error-no-filename": "File name is missing.",
     "error-no-category": "Na získanie ďalšieho vlastného ID je potrebná kategória",
     "error-fetch-request": "There was an error while fetching the requested data: {{error}}",
     "error-parsing-metadata": "There was an error while parsing metadata (extra fields). Full error has been logged to the browser console.",

@@ -28,6 +28,7 @@ const t = {
     "entity-default-title": "Unbenannt",
     "entity-delete-warning": "Die ausgewählten Element(e) und alle zugehörigen Daten werden dauerhaft gelöscht. Das kann nicht rückgängig gemacht werden. Sind Sie sicher?",
     "entries-processed": "{{num, number}} entries processed",
+    "error-no-filename": "File name is missing.",
     "error-no-category": "Eine Kategorie ist notwendig um die selbstgewählte ID zu ermitteln",
     "error-fetch-request": "There was an error while fetching the requested data: {{error}}",
     "error-parsing-metadata": "There was an error while parsing metadata (extra fields). Full error has been logged to the browser console.",

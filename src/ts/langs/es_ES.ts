@@ -28,6 +28,7 @@ const t = {
     "entity-default-title": "Sin título",
     "entity-delete-warning": "Los ítem(s) seleccionados y todo los datos asociados serán permanentemente elilminados. Esto no puede deshacerse. Está seguro?",
     "entries-processed": "{{num, number}} entries processed",
+    "error-no-filename": "File name is missing.",
     "error-no-category": "Se requiere una categoría para obtener la siguiente ID personalizada",
     "error-fetch-request": "There was an error while fetching the requested data: {{error}}",
     "error-parsing-metadata": "There was an error while parsing metadata (extra fields). Full error has been logged to the browser console.",

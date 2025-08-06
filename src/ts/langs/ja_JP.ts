@@ -28,6 +28,7 @@ const t = {
     "entity-default-title": "無題",
     "entity-delete-warning": "選択したアイテムとすべての関連データが完全に削除されます。これは、元に戻すことはできません。実行して良いですか？",
     "entries-processed": "{{num, number}} entries processed",
+    "error-no-filename": "File name is missing.",
     "error-no-category": "次のカスタムIDを取得するにはカテゴリが必要です",
     "error-fetch-request": "There was an error while fetching the requested data: {{error}}",
     "error-parsing-metadata": "There was an error while parsing metadata (extra fields). Full error has been logged to the browser console.",

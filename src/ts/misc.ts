@@ -467,7 +467,10 @@ function removeEmpty(params: object): object {
 
 export function askFileName(extension: FileType): string | undefined {
   const realName = prompt(i18next.t('request-filename'));
-  if (realName === null) {
+  // user hits cancel: exit silently
+  if (realName === null) return;
+  if (realName.trim() === '') {
+    (new Notification()).error('error-no-filename');
     return;
   }
   const ext = `.${extension.toLowerCase()}`;

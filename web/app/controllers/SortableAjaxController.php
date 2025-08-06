@@ -73,9 +73,6 @@ try {
         case Orderable::ResourcesCategories:
             $Entity = new ResourcesCategories(new Teams($App->Users));
             break;
-        case Orderable::ItemsTypes:
-            $Entity = new ItemsTypes($App->Users);
-            break;
         case Orderable::ExperimentsStatus:
             $Entity = new ExperimentsStatus(new Teams($App->Users));
             break;

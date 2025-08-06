@@ -86,11 +86,4 @@ final class Templates extends AbstractTemplateEntity
 
         return $id;
     }
-
-    #[Override]
-    public function destroy(): bool
-    {
-        // delete from pinned too
-        return parent::destroy() && $this->Pins->cleanup();
-    }
 }

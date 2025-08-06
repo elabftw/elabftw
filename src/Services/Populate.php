@@ -259,11 +259,10 @@ final class Populate
                 shuffle($team['items']);
                 foreach ($team['items'] as $item) {
                     $user = $this->getRandomUserInTeam($teamid);
-                    $ItemsTypes = new ItemsTypes($user);
                     $ResourcesCategories = new ResourcesCategories($Teams);
                     $Items = new Items($user);
                     $id = $Items->create(
-                        category: $ResourcesCategories->getIdempotentIdFromTitle($item['category'] ?? $ItemsTypes->getDefault()),
+                        category: $ResourcesCategories->getIdempotentIdFromTitle($item['category'] ?? 'Default'),
                         title: $item['title'],
                         body: $item['body'] ?? '',
                         date: new DateTimeImmutable($this->faker->dateTimeBetween('-5 years')->format('Ymd')),

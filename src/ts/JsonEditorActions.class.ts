@@ -7,8 +7,9 @@
  */
 declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
+import { FileType } from './interfaces';
 import JsonEditorHelper from './JsonEditorHelper.class';
-import { saveStringAsFile } from './misc';
+import { askFileName, saveStringAsFile } from './misc';
 import 'jsoneditor/dist/jsoneditor.min.css';
 import { Notification } from './Notifications.class';
 
@@ -41,7 +42,7 @@ export class JsonEditorActions {
         } else if (el.matches('[data-action="json-save-file"]')) {
           JsonEditorHelperC.saveNewFile();
         } else if (el.matches('[data-action="json-saveas-file"]')) {
-          const realName = JsonEditorHelperC.askFilename();
+          const realName = askFileName(FileType.Json);
           if (!realName) return;
           saveStringAsFile(realName, JSON.stringify(JsonEditorHelperC.editor.get()));
         } else if (el.matches('[data-action="json-save"]')) {

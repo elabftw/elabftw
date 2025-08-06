@@ -171,6 +171,7 @@ enum FileType {
   Csv = 'csv',
   Fods = 'fods',
   Html = 'html',
+  Json = 'json',
   Ods = 'ods',
   Xls = 'Xls',
   Xlsb = 'xlsb',

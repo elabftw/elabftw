@@ -9,8 +9,8 @@ import { Metadata } from './Metadata.class';
 import JSONEditor from 'jsoneditor';
 import $ from 'jquery';
 import i18next from './i18n';
-import { getNewIdFromPostRequest, reloadElements } from './misc';
-import { Action, Entity, Model } from './interfaces';
+import { askFileName, getNewIdFromPostRequest, reloadElements } from './misc';
+import { Action, Entity, FileType, Model } from './interfaces';
 import { Api } from './Apiv2.class';
 import { ValidMetadata } from './metadataInterfaces';
 import { Notification } from './Notifications.class';
@@ -150,26 +150,15 @@ export default class JsonEditorHelper {
     }
   }
 
-  askFilename(): string {
-    let realName = prompt(i18next.t('request-filename'));
-    if (realName === null) {
-      return;
-    }
-    // strip the filename of the .json extension from the name if available
-    if (realName.slice(-5).includes('.json')) {
-      realName = realName.slice(0, -5);
-    }
-    return realName += '.json';
-  }
-
   // create a new file
   saveNewFile(): void {
-    const realName = this.askFilename();
+    const realName = askFileName(FileType.Json);
+    if (!realName) return;
     // add the new name for the file as a title
     this.editorTitle.innerText = i18next.t('filename') + ': ' + realName;
     const params = {
       'action': Action.CreateFromString,
-      'file_type': 'json',
+      'file_type': FileType.Json,
       'real_name': realName,
       'content': JSON.stringify(this.editor.get()),
     };

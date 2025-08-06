@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import 'jquery-ui/ui/widgets/sortable';
-import { Action, CheckableItem, EntityType, Entity, Model, Target } from './interfaces';
+import { Action, CheckableItem, EntityType, Entity, Model, Target, FileType } from './interfaces';
 import { DateTime } from 'luxon';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 import tinymce from 'tinymce/tinymce';
@@ -463,6 +463,18 @@ function removeEmpty(params: object): object {
     }
   }
   return params;
+}
+
+export function askFileName(extension: FileType): string | undefined {
+  const realName = prompt(i18next.t('request-filename'));
+  if (realName === null) {
+    return;
+  }
+  const ext = `.${extension.toLowerCase()}`;
+  if (realName.toLowerCase().endsWith(ext)) {
+    return realName;
+  }
+  return realName + ext;
 }
 
 export function permissionsToJson(base: number, extra: string[]): string {

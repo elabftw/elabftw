@@ -7,9 +7,11 @@
  * @package elabftw
  */
 
-import { GridColumn, GridRow, FileType } from './interfaces';
+import { Action, FileType, GridColumn, GridRow, Model } from './interfaces';
+import { askFileName, getNewIdFromPostRequest, reloadElements } from './misc';
 import { Notification } from './Notifications.class';
-import { read, utils, writeFile, writeFileXLSX } from 'xlsx';
+import { read, utils, write, writeFile, writeFileXLSX } from 'xlsx';
+import { Api } from './Apiv2.class';
 
 declare global {
   interface Window {
@@ -24,8 +26,13 @@ declare global {
 const notify = new Notification();
 
 export class SheetEditorHelper {
+  api: Api;
   currentUploadId = '';
   currentFilename = '';
+
+  constructor() {
+    this.api = new Api();
+  }
 
   loadInSheetEditor(link: string, name: string, uploadId: string): void {
     const headers = new Headers();
@@ -96,6 +103,34 @@ export class SheetEditorHelper {
     default:
       writeFileXLSX(wb, 'export.xlsx');
     }
+  }
+
+
+  saveAsAttachment(columnDefs: GridColumn[], rowData: GridRow[], entityType: string, entityId: number): void {
+    if (!columnDefs.length || !rowData.length) return;
+    const realName = askFileName(FileType.Xlsx);
+    if (!realName) return;
+
+    const headers = columnDefs.map(col => col.field);
+    const aoa = [headers, ...rowData.map(row => headers.map(h => row[h]))];
+    const ws = utils.aoa_to_sheet(aoa);
+    const wb = utils.book_new();
+    utils.book_append_sheet(wb, ws, 'Sheet1');
+
+    const content = write(wb, { bookType: 'xlsx', type: 'array' });
+    const params = {
+      action: Action.CreateFromString,
+      file_type: FileType.Xlsx,
+      real_name: realName,
+      content: `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${content}`,
+    };
+
+    this.api.post(`${entityType}/${entityId}/${Model.Upload}`, params)
+      .then(resp => {
+        this.currentUploadId = String(getNewIdFromPostRequest(resp));
+        reloadElements(['uploadsDiv']);
+      })
+      .catch(e => notify.error(e.message));
   }
 
   // convert array of arrays to grid

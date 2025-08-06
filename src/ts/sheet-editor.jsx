@@ -23,6 +23,7 @@ import { FileType } from './interfaces';
 import i18next from './i18n';
 import { SheetEditorHelper } from './SheetEditorHelper.class';
 import {ColumnHeader} from './sheet-editor-column-header';
+import { getEntity } from './misc';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -35,6 +36,7 @@ const fileExportOptions = [
   { type: FileType.Xlsb, icon: 'fa-file-excel', labelKey: 'XLSB' },
   { type: FileType.Html, icon: 'fa-file-code', labelKey: 'HTML' },
 ];
+const entity = getEntity();
 
 function SheetEditor() {
   const sheetHelperC = useRef(new SheetEditorHelper()).current;
@@ -118,7 +120,7 @@ function SheetEditor() {
         </div>
         <div className='vertical-separator'></div>
         {/* SAVE AS ATTACHMENT (uploads section) */}
-        <button disabled={!columnDefs.length} className='btn hl-hover-gray p-2' onClick={() => {}} title={i18next.t('save-attachment')} type='button'>
+        <button disabled={!columnDefs.length} className='btn hl-hover-gray p-2'   onClick={() => sheetHelperC.saveAsAttachment(columnDefs, rowData, entity.type, entity.id)} title={i18next.t('save-attachment')} type='button'>
           <i className='fas fa-paperclip fa-fw'></i>
         </button>
         <div className='vertical-separator'></div>

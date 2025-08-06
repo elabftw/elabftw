@@ -4,6 +4,8 @@ const t = {
   translation: {
     "2FA": "2FA",
     "add-compound": "Přidat sloučeninu",
+    "add-column": "Add column",
+    "add-row": "Add row",
     "add-team": "Přidat tým",
     "archive-user": "Archivovat uživatele",
     "archive-user-description": "Archivace uživatele znamená, že jeho účet bude deaktivován. Tato akce je vratná.",
@@ -47,6 +49,7 @@ const t = {
     "generic-delete-warning": "Vymazat to?",
     "hide-deleted": "Hide deleted",
     "import": "Import",
+    "import-sheet": "Import a sheet (xls, csv, ods...)",
     "import-error": "Error during import. Please check the console for more information.",
     "invalid-info": "Invalid syntax or information provided.",
     "link-delete-warning": "Smazat tento odkaz?",

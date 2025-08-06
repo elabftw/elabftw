@@ -4,6 +4,8 @@ const t = {
   translation: {
     "2FA": "2FA",
     "add-compound": "Murakkab qo'shing",
+    "add-column": "Add column",
+    "add-row": "Add row",
     "add-team": "Jamoa qo'shing",
     "archive-user": "Arxiv foydalanuvchisi",
     "archive-user-description": "Foydalanuvchini arxivlash uning hisobi o'chirilishini anglatadi. Bu harakat qaytarilishi mumkin.",
@@ -47,6 +49,7 @@ const t = {
     "generic-delete-warning": "Bu oʻchirilsinmi?",
     "hide-deleted": "Hide deleted",
     "import": "Import",
+    "import-sheet": "Import a sheet (xls, csv, ods...)",
     "import-error": "Error during import. Please check the console for more information.",
     "invalid-info": "Invalid syntax or information provided.",
     "link-delete-warning": "Bu havola oʻchirilsinmi?",

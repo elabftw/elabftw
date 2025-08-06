@@ -4,6 +4,8 @@ const t = {
   translation: {
     "2FA": "2FA",
     "add-compound": "Aggiungi composto",
+    "add-column": "Add column",
+    "add-row": "Add row",
     "add-team": "Aggiungi team",
     "archive-user": "Archivia utente",
     "archive-user-description": "Archiviare un utente significa che il suo account verrà disabilitato. Questa azione è reversibile.",
@@ -47,6 +49,7 @@ const t = {
     "generic-delete-warning": "Cancellare questo?",
     "hide-deleted": "Hide deleted",
     "import": "Importazione",
+    "import-sheet": "Import a sheet (xls, csv, ods...)",
     "import-error": "Error during import. Please check the console for more information.",
     "invalid-info": "Invalid syntax or information provided.",
     "link-delete-warning": "Eliminare questo collegamento?",

@@ -4,6 +4,8 @@ const t = {
   translation: {
     "2FA": "2FA",
     "add-compound": "Προσθήκη ένωσης",
+    "add-column": "Add column",
+    "add-row": "Add row",
     "add-team": "Προσθήκη Ομάδας",
     "archive-user": "Αρχειοθέτηση χρήστη",
     "archive-user-description": "Η αρχειοθέτηση ενός χρήστη σημαίνει ότι ο λογαριασμός του θα απενεργοποιηθεί. Αυτή η ενέργεια είναι αναστρέψιμη.",
@@ -47,6 +49,7 @@ const t = {
     "generic-delete-warning": "Να διαγραφεί αυτό;",
     "hide-deleted": "Hide deleted",
     "import": "Εισαγωγή",
+    "import-sheet": "Import a sheet (xls, csv, ods...)",
     "import-error": "Error during import. Please check the console for more information.",
     "invalid-info": "Invalid syntax or information provided.",
     "link-delete-warning": "Διαγραφή αυτού του συνδέσμου;",

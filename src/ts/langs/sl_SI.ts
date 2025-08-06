@@ -4,6 +4,8 @@ const t = {
   translation: {
     "2FA": "2FA",
     "add-compound": "Dodaj spojino",
+    "add-column": "Add column",
+    "add-row": "Add row",
     "add-team": "Dodaj ekipo",
     "archive-user": "Arhiviraj uporabnika",
     "archive-user-description": "Arhiviranje uporabnika pomeni, da bo njegov račun onemogočen. To dejanje je reverzibilno.",
@@ -47,6 +49,7 @@ const t = {
     "generic-delete-warning": "Želite izbrisati?",
     "hide-deleted": "Hide deleted",
     "import": "Uvozi",
+    "import-sheet": "Import a sheet (xls, csv, ods...)",
     "import-error": "Error during import. Please check the console for more information.",
     "invalid-info": "Invalid syntax or information provided.",
     "link-delete-warning": "Želite izbrisati to povezavo?",

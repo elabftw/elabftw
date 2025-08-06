@@ -4,6 +4,8 @@ const t = {
   translation: {
     "2FA": "2FA",
     "add-compound": "Lisää yhdiste",
+    "add-column": "Add column",
+    "add-row": "Add row",
     "add-team": "Lisää tiimi",
     "archive-user": "Arkistoi käyttäjä",
     "archive-user-description": "Käyttäjän arkistointi tarkoittaa, että hänen tilinsä poistetaan käytöstä. Tämä toiminto on peruutettava.",
@@ -47,6 +49,7 @@ const t = {
     "generic-delete-warning": "Poistetaanko tämä?",
     "hide-deleted": "Hide deleted",
     "import": "Tuo",
+    "import-sheet": "Import a sheet (xls, csv, ods...)",
     "import-error": "Error during import. Please check the console for more information.",
     "invalid-info": "Invalid syntax or information provided.",
     "link-delete-warning": "Poistetaanko tämä linkki?",

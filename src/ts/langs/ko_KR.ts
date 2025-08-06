@@ -4,6 +4,8 @@ const t = {
   translation: {
     "2FA": "2FA",
     "add-compound": "화합물 추가",
+    "add-column": "Add column",
+    "add-row": "Add row",
     "add-team": "팀 추가",
     "archive-user": "사용자 차단",
     "archive-user-description": "사용자를 보관처리하면 해당 사용자의 계정이 비활성화됩니다. 이 작업은 되돌릴 수 있습니다.",
@@ -47,6 +49,7 @@ const t = {
     "generic-delete-warning": "삭제할까요?",
     "hide-deleted": "Hide deleted",
     "import": "읽어 오기",
+    "import-sheet": "Import a sheet (xls, csv, ods...)",
     "import-error": "Error during import. Please check the console for more information.",
     "invalid-info": "Invalid syntax or information provided.",
     "link-delete-warning": "링크를 삭제할까요?",

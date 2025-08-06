@@ -4,6 +4,8 @@ const t = {
   translation: {
     "2FA": "2FA",
     "add-compound": "添加化合物",
+    "add-column": "Add column",
+    "add-row": "Add row",
     "add-team": "添加团队",
     "archive-user": "归档用户",
     "archive-user-description": "归档用户意味着他们的账户将被禁用。此操作是可逆的。",
@@ -47,6 +49,7 @@ const t = {
     "generic-delete-warning": "删除？",
     "hide-deleted": "Hide deleted",
     "import": "导入",
+    "import-sheet": "Import a sheet (xls, csv, ods...)",
     "import-error": "Error during import. Please check the console for more information.",
     "invalid-info": "Invalid syntax or information provided.",
     "link-delete-warning": "删除此链接？",

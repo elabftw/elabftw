@@ -4,6 +4,8 @@ const t = {
   translation: {
     "2FA": "2FA",
     "add-compound": "Добавить соединение",
+    "add-column": "Add column",
+    "add-row": "Add row",
     "add-team": "Добавить команду",
     "archive-user": "Пользователь в архиве",
     "archive-user-description": "Архивирование пользователя означает, что его учетная запись будет отключена. Это действие обратимо.",
@@ -47,6 +49,7 @@ const t = {
     "generic-delete-warning": "Удалить?",
     "hide-deleted": "Hide deleted",
     "import": "Импортировать",
+    "import-sheet": "Import a sheet (xls, csv, ods...)",
     "import-error": "Error during import. Please check the console for more information.",
     "invalid-info": "Invalid syntax or information provided.",
     "link-delete-warning": "Удалить эту ссылку?",

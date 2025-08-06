@@ -27,13 +27,13 @@ import {ColumnHeader} from './sheet-editor-column-header';
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const fileExportOptions = [
-  { type: FileType.Csv, icon: 'fa-file-csv', labelKey: 'CSV File' },
-  { type: FileType.Xls, icon: 'fa-file-excel', labelKey: 'XLS File' },
-  { type: FileType.Xlsx, icon: 'fa-file-excel', labelKey: 'XLSX File' },
-  { type: FileType.Ods, icon: 'fa-file-excel', labelKey: 'ODS File' },
-  { type: FileType.Fods, icon: 'fa-file-excel', labelKey: 'FODS File' },
-  { type: FileType.Xlsb, icon: 'fa-file-excel', labelKey: 'XLSB File' },
-  { type: FileType.Html, icon: 'fa-file-code', labelKey: 'HTML File' },
+  { type: FileType.Csv, icon: 'fa-file-csv', labelKey: 'CSV' },
+  { type: FileType.Xls, icon: 'fa-file-excel', labelKey: 'XLS' },
+  { type: FileType.Xlsx, icon: 'fa-file-excel', labelKey: 'XLSX' },
+  { type: FileType.Ods, icon: 'fa-file-excel', labelKey: 'ODS' },
+  { type: FileType.Fods, icon: 'fa-file-excel', labelKey: 'FODS' },
+  { type: FileType.Xlsb, icon: 'fa-file-excel', labelKey: 'XLSB' },
+  { type: FileType.Html, icon: 'fa-file-code', labelKey: 'HTML' },
 ];
 
 function SheetEditor() {
@@ -126,7 +126,7 @@ function SheetEditor() {
           <i className='fas fa-plus-minus fa-fw'></i>
         </button>
       </div>
-      {!columnDefs.length && <p>{i18next.t('Import a sheet (xls, csv, ods...)')}</p>}
+      {!columnDefs.length && <p>{i18next.t('import-sheet')}</p>}
       {columnDefs.length > 0 && rowData.length > 0 && (
         <>
           <div className='ag-theme-alpine' style={{ height: 400, marginTop: 10 }}>

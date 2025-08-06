@@ -38,6 +38,8 @@ final class i18n4Js
         return array(
             '2FA' => _('2FA'),
             'add-compound' => _('Add compound'),
+            'add-column' => _('Add column'),
+            'add-row' => _('Add row'),
             'add-team' => _('Add team'),
             'archive-user' => _('Archive user'),
             'archive-user-description' => _('Archiving a user means their account will be disabled. This action is reversible.'),
@@ -81,6 +83,7 @@ final class i18n4Js
             'generic-delete-warning' => _('Delete this?'),
             'hide-deleted' => _('Hide deleted'),
             'import' => _('Import'),
+            'import-sheet' => _('Import a sheet (xls, csv, ods...)'),
             // import errors often print html content
             'import-error' => _('Error during import. Please check the console for more information.'),
             'invalid-info' => _('Invalid syntax or information provided.'),

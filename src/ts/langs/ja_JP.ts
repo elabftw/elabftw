@@ -4,6 +4,8 @@ const t = {
   translation: {
     "2FA": "2FA",
     "add-compound": "化合物を追加する",
+    "add-column": "Add column",
+    "add-row": "Add row",
     "add-team": "チームを追加",
     "archive-user": "アーカイブユーザー",
     "archive-user-description": "ユーザーをアーカイブすると、そのユーザーのアカウントは無効になります。この操作は元に戻すことができます。",
@@ -47,6 +49,7 @@ const t = {
     "generic-delete-warning": "削除しますか？",
     "hide-deleted": "Hide deleted",
     "import": "インポート",
+    "import-sheet": "Import a sheet (xls, csv, ods...)",
     "import-error": "Error during import. Please check the console for more information.",
     "invalid-info": "Invalid syntax or information provided.",
     "link-delete-warning": "このリンクを削除しますか？",

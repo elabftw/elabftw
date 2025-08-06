@@ -4,6 +4,8 @@ const t = {
   translation: {
     "2FA": "2FA",
     "add-compound": "Tambahkan senyawa",
+    "add-column": "Add column",
+    "add-row": "Add row",
     "add-team": "Tambahkan tim",
     "archive-user": "Arsipkan pengguna",
     "archive-user-description": "Mengarsipkan pengguna berarti akun mereka akan dinonaktifkan. Tindakan ini dapat dibatalkan.",
@@ -47,6 +49,7 @@ const t = {
     "generic-delete-warning": "Hapus ini?",
     "hide-deleted": "Hide deleted",
     "import": "Impor",
+    "import-sheet": "Import a sheet (xls, csv, ods...)",
     "import-error": "Error during import. Please check the console for more information.",
     "invalid-info": "Invalid syntax or information provided.",
     "link-delete-warning": "Hapus tautan ini?",

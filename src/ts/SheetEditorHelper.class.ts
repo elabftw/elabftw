@@ -124,30 +124,21 @@ export class SheetEditorHelper {
   replaceExisting(columnDefs: GridColumn[], rowData: GridRow[], entityType: string, entityId: number, currentUploadName: string, currentUploadId: number): void {
     if (!columnDefs.length || !rowData.length || !currentUploadName || !currentUploadId) return;
 
-    const headers = columnDefs.map(col => col.field);
-    const aoa = [headers, ...rowData.map(row => headers.map(h => row[h]))];
-    const ws = utils.aoa_to_sheet(aoa);
-    const wb = utils.book_new();
-    utils.book_append_sheet(wb, ws, 'Sheet1');
-
-    const fileBlob = new Blob(
-      [write(wb, { bookType: 'xlsx', type: 'binary' })],
-      { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' },
-    );
+    const wb = SheetEditorHelper.createWorkbookFromGrid(columnDefs, rowData);
+    const wbBinary = write(wb, { bookType: FileType.Xlsx, type: 'array' });
+    const file = new File([wbBinary], currentUploadName, {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
 
     const formData = new FormData();
-    formData.set('file', fileBlob, currentUploadName);
-    formData.set('extraParam', 'noRedirect');
-
-    fetch(`api/v2/${entityType}/${entityId}/${Model.Upload}/${currentUploadId}`, {
-      method: 'POST',
-      body: formData,
-    })
-      .then(() => {
-        reloadElements(['uploadsDiv']);
-        notify.success();
-      })
-      .catch(e => notify.error(e.message));
+    formData.append('file', file);
+    try {
+      fetch(`api/v2/${entityType}/${entityId}/${Model.Upload}/${currentUploadId}`, { method: 'POST', body: formData })
+        .then(() => reloadElements(['uploadsDiv']));
+      notify.success();
+    } catch (error) {
+      notify.error(error.message);
+    }
   }
 
   // convert array of arrays to grid

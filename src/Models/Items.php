@@ -166,25 +166,4 @@ final class Items extends AbstractConcreteEntity
 
         return $newId;
     }
-
-    #[Override]
-    public function destroy(): bool
-    {
-        parent::destroy();
-
-        // Todo: should this be remove from here as we do soft delete?
-        // delete links of this item in experiments with this item linked
-        $sql = 'DELETE FROM experiments2items WHERE link_id = :link_id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        // same for items_links
-        $sql = 'DELETE FROM items2items WHERE link_id = :link_id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        // delete from pinned
-        return $this->Pins->cleanup();
-    }
 }

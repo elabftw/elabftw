@@ -85,11 +85,4 @@ abstract class AbstractTemplateEntity extends AbstractEntity
 
         return $newId;
     }
-
-    #[Override]
-    public function destroy(): bool
-    {
-        // delete from pinned too
-        return parent::destroy() && $this->Pins->cleanup();
-    }
 }

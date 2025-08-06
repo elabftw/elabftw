@@ -147,14 +147,4 @@ final class Experiments extends AbstractConcreteEntity
 
         return $newId;
     }
-
-    /**
-     * Experiment is not actually deleted but the state is changed from normal to deleted
-     */
-    #[Override]
-    public function destroy(): bool
-    {
-        // delete from pinned too
-        return parent::destroy() && $this->Pins->cleanup();
-    }
 }

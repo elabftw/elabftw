@@ -142,7 +142,7 @@ abstract class AbstractEntity extends AbstractRest
         $this->Pins = new Pins($this);
         $this->ExclusiveEditMode = new ExclusiveEditMode($this);
         // perform check here once instead of in canreadorexplode to avoid making the same query over and over by child entities
-        $this->isReadOnly = $this->ExclusiveEditMode->isActive() || $this->canWrite() === false;
+        $this->isReadOnly = $this->ExclusiveEditMode->isActive();
         $this->setId($id);
     }
 
@@ -202,7 +202,7 @@ abstract class AbstractEntity extends AbstractRest
         return match ($action) {
             Action::Create => (
                 function () use ($reqBody) {
-                    if ($reqBody['template']) {
+                    if ($reqBody['template'] && $reqBody['template'] !== -1) {
                         return $this->createFromTemplate((int) $reqBody['template']);
                     }
                     // check if use of template is enforced at team level for experiments

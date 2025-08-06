@@ -7,10 +7,10 @@
  * @package elabftw
  */
 
-import { Action, FileType, GridColumn, GridRow, Model } from './interfaces';
-import { askFileName, getNewIdFromPostRequest, reloadElements } from './misc';
+import { FileType, GridColumn, GridRow, Model } from './interfaces';
+import { askFileName, reloadElements } from './misc';
 import { Notification } from './Notifications.class';
-import { read, utils, write, writeFile, writeFileXLSX } from 'xlsx';
+import { read, utils, write, writeFile, writeFileXLSX, WorkBook } from 'xlsx';
 import { Api } from './Apiv2.class';
 
 declare global {
@@ -72,11 +72,7 @@ export class SheetEditorHelper {
 
   handleExport(format: FileType, columnDefs: GridColumn[], rowData: GridRow[]): void {
     if (!columnDefs.length || !rowData.length) return;
-    const headers = columnDefs.map(col => col.field);
-    const aoa = [headers, ...rowData.map(row => headers.map(h => row[h]))];
-    const ws = utils.aoa_to_sheet(aoa);
-    const wb = utils.book_new();
-    utils.book_append_sheet(wb, ws, 'Sheet1');
+    const wb = SheetEditorHelper.createWorkbookFromGrid(columnDefs, rowData);
 
     switch (format) {
     case FileType.Csv:
@@ -111,13 +107,8 @@ export class SheetEditorHelper {
     const realName = askFileName(FileType.Xlsx);
     if (!realName) return;
 
-    const headers = columnDefs.map(col => col.field);
-    const aoa = [headers, ...rowData.map(row => headers.map(h => row[h]))];
-    const ws = utils.aoa_to_sheet(aoa);
-    const wb = utils.book_new();
-    utils.book_append_sheet(wb, ws, 'Sheet1');
-
-    const wbBinary = write(wb, {bookType: FileType.Xlsx, type: 'array'});
+    const wb = SheetEditorHelper.createWorkbookFromGrid(columnDefs, rowData);
+    const wbBinary = write(wb, { bookType: FileType.Xlsx, type: 'array' });
     const file = new File([wbBinary], realName, {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });
@@ -185,5 +176,14 @@ export class SheetEditorHelper {
     const aoa = utils.sheet_to_json(ws, { header: 1 }) as (string | number | boolean | null)[][];
     if (!aoa.length) throw new Error('Invalid file');
     return aoa;
+  }
+
+  private static createWorkbookFromGrid(columnDefs: GridColumn[], rowData: GridRow[]): WorkBook {
+    const headers = columnDefs.map(col => col.field);
+    const aoa = [headers, ...rowData.map(row => headers.map(h => row[h] ?? ''))];
+    const ws = utils.aoa_to_sheet(aoa);
+    const wb = utils.book_new();
+    utils.book_append_sheet(wb, ws, 'Sheet1');
+    return wb;
   }
 }

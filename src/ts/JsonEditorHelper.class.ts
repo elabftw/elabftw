@@ -208,6 +208,6 @@ export default class JsonEditorHelper {
     this.currentUploadId = undefined;
     this.editor.set({});
     this.editorDiv.dataset.what = '';
-    document.getElementById('jsonEditorMetadataLoadButton').removeAttribute('disabled');
+    document.getElementById('jsonEditorMetadataLoadButton')?.removeAttribute('disabled');
   }
 }

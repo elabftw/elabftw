@@ -44,6 +44,7 @@ function SheetEditor() {
   const [rowData, setRowData] = useState([]);
   const fileInputRef = useRef();
   const gridRef = useRef();
+  const isDisabled = columnDefs.length === 0;
 
   useEffect(() => {
     const handleData = (e) => {
@@ -106,13 +107,13 @@ function SheetEditor() {
           <i className='fas fa-upload fa-fw'></i>
         </button>
         {/* EXPORT BUTTON: Select with different types */}
-        <div className='dropdown' disabled={!columnDefs.length}>
+        <div className='dropdown' disabled={isDisabled}>
           <button className='btn hl-hover-gray d-inline p-2 mr-2' title={i18next.t('export')} data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label={i18next.t('export')} type='button'>
             <i className='fas fa-download fa-fw'></i>
           </button>
           <div className='dropdown-menu'>
             {fileExportOptions.map(({ type, icon, labelKey }) => (
-              <button disabled={!columnDefs.length} key={type} className="dropdown-item" onClick={() => handleExport(type)}>
+              <button disabled={isDisabled} key={type} className="dropdown-item" onClick={() => handleExport(type)}>
                 <i className={`fas ${icon} fa-fw`}></i>{i18next.t(labelKey)}
               </button>
             ))}
@@ -120,18 +121,24 @@ function SheetEditor() {
         </div>
         <div className='vertical-separator'></div>
         {/* SAVE AS ATTACHMENT (uploads section) */}
-        <button disabled={!columnDefs.length} className='btn hl-hover-gray p-2 mr-2' onClick={() => sheetHelperC.saveAsAttachment(columnDefs, rowData, entity.type, entity.id)} title={i18next.t('save-attachment')} type='button'>
+        <button disabled={isDisabled} className='btn hl-hover-gray p-2 mr-2' onClick={() => sheetHelperC.saveAsAttachment(columnDefs, rowData, entity.type, entity.id)} title={i18next.t('save-attachment')} type='button'>
           <i className='fas fa-paperclip fa-fw'></i>
         </button>
-        <button disabled={!columnDefs.length}  className='btn hl-hover-gray p-2 lh-normal border-0 mr-2' onClick={() => sheetHelperC.replaceExisting(columnDefs, rowData, entity.type, entity.id)} title={i18next.t('save')} aria-label={i18next.t('save')} type='button'>
+        {/* REPLACE EXISTING FILE WITH CURRENT EDITIONS */}
+        <button disabled={isDisabled}  className='btn hl-hover-gray p-2 lh-normal border-0 mr-2' onClick={() => sheetHelperC.replaceExisting(columnDefs, rowData, entity.type, entity.id)} title={i18next.t('save')} aria-label={i18next.t('save')} type='button'>
           <i className='fas fa-save fa-fw'></i>
         </button>
         <div className='vertical-separator'></div>
-        <button disabled={!columnDefs.length} onClick={addRow} className='btn hl-hover-gray d-inline p-2' title={i18next.t('add-row')} type='button'>
+        {/* ADD NEW ROW */}
+        <button disabled={isDisabled} onClick={addRow} className='btn hl-hover-gray d-inline p-2' title={i18next.t('add-row')} type='button'>
           <i className='fas fa-plus-minus fa-fw'></i>
         </button>
+        {/* CLEAR */}
+        <button disabled={isDisabled} title={i18next.t('clear')} aria-label={i18next.t('add-row')} type='button' onClick={() => setColumnDefs([])} className='btn hl-hover-gray p-2 lh-normal border-0 mr-2 ml-auto'>
+          <i className='fas fa-trash-alt fa-fw'></i>
+        </button>
       </div>
-      {!columnDefs.length && <p>{i18next.t('import-sheet')}</p>}
+      {isDisabled && <p>{i18next.t('import-sheet')}</p>}
       {columnDefs.length > 0 && rowData.length > 0 && (
         <>
           <div className='ag-theme-alpine' style={{ height: 400, marginTop: 10 }}>

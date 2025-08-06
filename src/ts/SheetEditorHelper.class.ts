@@ -109,16 +109,7 @@ export class SheetEditorHelper {
     const file = new File([wbBinary], realName, {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });
-
-    const formData = new FormData();
-    formData.append('file', file);
-    try {
-      fetch(`api/v2/${entityType}/${entityId}/${Model.Upload}`, { method: 'POST', body: formData })
-        .then(() => reloadElements(['uploadsDiv']));
-      notify.success();
-    } catch (error) {
-      notify.error(error.message);
-    }
+    SheetEditorHelper.uploadWorkbook(file, `api/v2/${entityType}/${entityId}/${Model.Upload}`);
   }
 
   replaceExisting(columnDefs: GridColumn[], rowData: GridRow[], entityType: string, entityId: number, currentUploadName: string, currentUploadId: number): void {
@@ -129,16 +120,7 @@ export class SheetEditorHelper {
     const file = new File([wbBinary], currentUploadName, {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });
-
-    const formData = new FormData();
-    formData.append('file', file);
-    try {
-      fetch(`api/v2/${entityType}/${entityId}/${Model.Upload}/${currentUploadId}`, { method: 'POST', body: formData })
-        .then(() => reloadElements(['uploadsDiv']));
-      notify.success();
-    } catch (error) {
-      notify.error(error.message);
-    }
+    SheetEditorHelper.uploadWorkbook(file, `api/v2/${entityType}/${entityId}/${Model.Upload}/${currentUploadId}`);
   }
 
   // convert array of arrays to grid
@@ -173,5 +155,14 @@ export class SheetEditorHelper {
     const wb = utils.book_new();
     utils.book_append_sheet(wb, ws, 'Sheet1');
     return wb;
+  }
+
+  private static uploadWorkbook(file: File, url: string): void {
+    const formData = new FormData();
+    formData.append('file', file);
+    fetch(url, { method: 'POST', body: formData })
+      .then(() => reloadElements(['uploadsDiv']))
+      .then(() => notify.success())
+      .catch(e => notify.error(e.message));
   }
 }

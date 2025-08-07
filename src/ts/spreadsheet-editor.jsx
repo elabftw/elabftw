@@ -63,6 +63,13 @@ function SpreadsheetEditor() {
     };
   }, []);
 
+  const clear = () => {
+    setColumnDefs([]);
+    setRowData([]);
+    setCurrentUploadId(0);
+    setCurrentUploadName('');
+  }
+
   const createNewSpreadsheet = () => {
     // reset the counter
     nextColIndex.current = 1;
@@ -163,7 +170,7 @@ function SpreadsheetEditor() {
           <i className='fas fa-plus-minus fa-fw'></i>
         </button>
         {/* CLEAR */}
-        <button disabled={isDisabled} title={i18next.t('clear')} aria-label={i18next.t('add-row')} type='button' onClick={() => setColumnDefs([])} className='btn hl-hover-gray p-2 lh-normal border-0 mr-2 ml-auto'>
+        <button disabled={isDisabled} title={i18next.t('clear')} aria-label={i18next.t('add-row')} type='button' onClick={clear} className='btn hl-hover-gray p-2 lh-normal border-0 mr-2 ml-auto'>
           <i className='fas fa-trash-alt fa-fw'></i>
         </button>
       </div>

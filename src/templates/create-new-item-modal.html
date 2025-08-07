@@ -19,7 +19,7 @@
         {% else %}
           {% set btnId = 'createNewTemplates_' ~ entityPage %}
           {% include 'scope-button.html' with {'btnId': btnId, 'reload': btnId ~ ',tplCreateNewDiv_' ~ entityPage, 'target': 'scope_experiments_templates'} %}
-          <div id='tplCreateNewDiv_{{ entityPage }}'>
+          <div id='tplCreateNewDiv_{{ entityPage }}' class='vertically-limited'>
             <input type='text' aria-label='{{ 'Filter'|trans }}' placeholder='{{ 'Filter'|trans }}' data-filter-target='tplCreateNewTable' data-target-type='tr' class='form-control form-inline'>
             <table class='table' aria-describedby='createModalLabel_{{ entityPage }}' data-table-sort='true'>
               <thead>

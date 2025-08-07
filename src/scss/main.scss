@@ -1814,3 +1814,8 @@ input:user-invalid {
     }
   }
 }
+
+.vertically-limited {
+  max-height: 500px;
+  overflow: scroll;
+}

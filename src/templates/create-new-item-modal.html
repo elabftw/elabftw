@@ -30,13 +30,14 @@
               </thead>
               <tbody id='tplCreateNewTable'>
                 {% set label = entityPage == 'database' ? 'Create resource from template'|trans : 'Create experiment from template'|trans %}
+                {% set templatesPage = entityPage == 'database' ? 'resources-templates' : 'templates' %}
                 {% for template in templatesArr %}
                   <tr>
                     <td data-label='{{ 'Title'|trans }}'>
                       <a data-action='create-entity' data-type={{ entityPage }} data-tplid='{{ template.id }}' href='#' class='p-2 rounded mr-2 hl-hover-gray' title='{{ label }}' aria-label='{{ label }}'>
                         <i class='fas fa-file-circle-plus fa-fw color-blue'></i>
                       </a>
-                      <a href='templates.php?mode=view&id={{ template.id }}' class='p-2 rounded mr-2 hl-hover-gray' title='{{ 'View template'|trans }}' aria-label='{{ 'View template'|trans }}'>
+                      <a href='{{ templatesPage }}.php?mode=view&id={{ template.id }}' class='p-2 rounded mr-2 hl-hover-gray' title='{{ 'View template'|trans }}' aria-label='{{ 'View template'|trans }}'>
                         <i class='fas fa-eye fa-fw'></i>
                       </a>
                       {% if template.category %}

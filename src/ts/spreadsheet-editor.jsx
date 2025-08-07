@@ -47,6 +47,7 @@ function SpreadsheetEditor() {
   const isDisabled = columnDefs.length === 0;
   const [currentUploadId, setCurrentUploadId] = useState(0);
   const [currentUploadName, setCurrentUploadName] = useState('');
+  const nextColIndex = useRef(1);
 
   useEffect(() => {
     const handleData = (e) => {
@@ -63,13 +64,17 @@ function SpreadsheetEditor() {
   }, []);
 
   const createNewSpreadsheet = () => {
-    const hasData = columnDefs.length > 0 || rowData.length > 0;
-    if (hasData) {
-      const confirmed = confirm(i18next.t('confirm-new-spreadsheet'));
-      if (!confirmed) return;
-    }
-    const initialColumn = [{ field: 'Column1', editable: true }];
-    const initialRow = [{ Column1: '' }];
+    // reset the counter
+    nextColIndex.current = 1;
+    // generate a unique field for the first column
+    const firstField = `col${nextColIndex.current++}`;
+    const initialColumn = [{
+      field: firstField,
+      headerName: 'Column0',
+      editable: true,
+      colId: firstField,
+    }];
+    const initialRow = [{ [firstField]: '' }];
     setColumnDefs(initialColumn);
     setRowData(initialRow);
     setCurrentUploadId(0);
@@ -86,25 +91,26 @@ function SpreadsheetEditor() {
     SpreadsheetHelperC.handleExport(format, columnDefs, rowData);
   }, [SpreadsheetHelperC, columnDefs, rowData]);
 
-
-  // add a row next to the selected line.
-  // If no row is selected, it just adds it at the end
-  const addRow = () => {
+  // add a row next to the selected line. When no row is selected, it's added at the bottom line.
+  const addRow = useCallback(() => {
     const api = gridRef.current.api;
     // https://www.ag-grid.com/react-data-grid/data-update-transactions/#transaction-update-api
     const selectedNodes = api.getSelectedNodes();
-    const newRow = {};
-    columnDefs.forEach(col => {
-      newRow[col.field] = '';
-    });
-    const index = selectedNodes.length > 0
+    // figure out the insertion index
+    const insertIndex = selectedNodes.length > 0
       ? selectedNodes[0].rowIndex + 1
       : rowData.length;
-    api.applyTransaction({
-      add: [newRow],
-      addIndex: index,
-    });
-  };
+    // build your new empty row
+    const newRow = {};
+    columnDefs.forEach(col => { newRow[col.field] = '' });
+    // update React state, adding a new column takes into account existing rows.
+    const updated = [
+      ...rowData.slice(0, insertIndex),
+      newRow,
+      ...rowData.slice(insertIndex),
+    ];
+    setRowData(updated);
+  }, [columnDefs, rowData]);
 
   const removeSelectedRows = () => {
     const api = gridRef.current.api;

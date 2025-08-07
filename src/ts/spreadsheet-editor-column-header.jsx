@@ -1,5 +1,17 @@
-// See https://www.ag-grid.com/react-data-grid/column-properties/#reference-header-headerComponent
-// add more actions to the ag-grid column headers (new row, edit title...)
+/**
+ * @author Nicolas CARPi <nico-git@deltablot.email>
+ * @author Moustapha <Deltablot>
+ * @copyright 2025 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+
+/**
+ * add more actions to the ag-grid column headers (new row, edit title...)
+ * See https://www.ag-grid.com/react-data-grid/column-properties/#reference-header-headerComponent
+ */
+
 import React from 'react';
 import i18next from './i18n';
 
@@ -50,7 +62,7 @@ export function ColumnHeader({ displayName, column, setColumnDefs, setRowData, c
 
     const newRows = rowData.map(row => ({
       ...row,
-      [newField]: ''
+      [newField]: '',
     }));
 
     setColumnDefs(newCols);

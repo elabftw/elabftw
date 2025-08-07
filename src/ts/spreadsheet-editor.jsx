@@ -62,7 +62,21 @@ function SpreadsheetEditor() {
     };
   }, []);
 
-  const handleFile = useCallback((e) => {
+  const createNewSpreadsheet = () => {
+    const hasData = columnDefs.length > 0 || rowData.length > 0;
+    if (hasData) {
+      const confirmed = confirm(i18next.t('confirm-new-spreadsheet'));
+      if (!confirmed) return;
+    }
+    const initialColumn = [{ field: 'Column1', editable: true }];
+    const initialRow = [{ Column1: '' }];
+    setColumnDefs(initialColumn);
+    setRowData(initialRow);
+    setCurrentUploadId(0);
+    setCurrentUploadName('');
+  };
+
+  const handleImport = useCallback((e) => {
     const file = e.target.files?.[0];
     if (!file) return;
     SpreadsheetHelperC.loadWithHeaderChoice(file, setColumnDefs, setRowData);
@@ -104,20 +118,25 @@ function SpreadsheetEditor() {
 
   return (
     <div className='spreadsheet-editor'>
-      <input type='file' accept='.csv,.xls,.xlsx,.ods,.fods,.xlsb' ref={fileInputRef} className='d-none' onChange={handleFile} />
+      <input type='file' accept='.csv,.xls,.xlsx,.ods,.fods,.xlsb' ref={fileInputRef} className='d-none' onChange={handleImport} />
       <div className='d-flex align-items-center'>
+        {/* NEW SPREADSHEET BUTTON */}
+        <button className='btn hl-hover-gray p-2 main-action-button lh-normal border-0' onClick={createNewSpreadsheet} title={i18next.t('new-spreadsheet')} aria-label={i18next.t('new-spreadsheet')} type='button'>
+          <i className='fas fa-plus fa-fw'></i>
+        </button>
+        <div className='vertical-separator'></div>
         {/* IMPORT BUTTON */}
         <button className='btn hl-hover-gray p-2 mr-2' onClick={() => fileInputRef.current?.click()} title={i18next.t('import')} type='button'>
           <i className='fas fa-upload fa-fw'></i>
         </button>
         {/* EXPORT BUTTON: Select with different types */}
-        <div className='dropdown' disabled={isDisabled}>
-          <button className='btn hl-hover-gray d-inline p-2 mr-2' title={i18next.t('export')} data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label={i18next.t('export')} type='button'>
+        <div className='dropdown'>
+          <button disabled={isDisabled} className='btn hl-hover-gray d-inline p-2 mr-2' title={i18next.t('export')} data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label={i18next.t('export')} type='button'>
             <i className='fas fa-download fa-fw'></i>
           </button>
           <div className='dropdown-menu'>
             {fileExportOptions.map(({ type, icon, labelKey }) => (
-              <button disabled={isDisabled} key={type} className="dropdown-item" onClick={() => handleExport(type)}>
+              <button key={type} className="dropdown-item" onClick={() => handleExport(type)}>
                 <i className={`fas ${icon} fa-fw`}></i>{i18next.t(labelKey)}
               </button>
             ))}
@@ -129,7 +148,7 @@ function SpreadsheetEditor() {
           <i className='fas fa-paperclip fa-fw'></i>
         </button>
         {/* REPLACE EXISTING FILE WITH CURRENT EDITIONS */}
-        <button disabled={isDisabled} className='btn hl-hover-gray p-2 lh-normal border-0 mr-2' onClick={() => SpreadsheetHelperC.replaceExisting(columnDefs, rowData, entity.type, entity.id, currentUploadName, currentUploadId)} title={i18next.t('save')} aria-label={i18next.t('save')} type='button'>
+        <button disabled={!currentUploadId} className='btn hl-hover-gray p-2 lh-normal border-0 mr-2' onClick={() => SpreadsheetHelperC.replaceExisting(columnDefs, rowData, entity.type, entity.id, currentUploadName, currentUploadId)} title={i18next.t('replace-existing')} aria-label={i18next.t('replace-existing')} type='button'>
           <i className='fas fa-save fa-fw'></i>
         </button>
         <div className='vertical-separator'></div>

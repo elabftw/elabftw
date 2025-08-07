@@ -50,6 +50,7 @@ final class i18n4Js
             'copied' => _('Copied to clipboard.'),
             'check-required' => _('Please check required fields.'),
             'comment-add' => _('Add a comment'),
+            'confirm-new-spreadsheet' => _('Start a new spreadsheet? All unsaved changes will be lost.'),
             'custom-id-in-use' => _('Custom ID is already used! Try another one.'),
             'delete' => _('Delete'),
             'dropzone-upload-area' => _('Drop files here to upload'),
@@ -93,6 +94,7 @@ final class i18n4Js
             // https://www.i18next.com/translation-function/formatting
             'multi-changes-confirm' => _('Apply to {{num, number}} entries?'),
             'name' => _('Name'),
+            'new-spreadsheet' => _('New spreadsheet'),
             'no-self-links' => _('Linking an item to itself is not allowed. Please select a different target.'),
             'not-found' => _('No matching result found.'),
             'not-set' => _('Not set'),
@@ -103,6 +105,7 @@ final class i18n4Js
             'please-wait' => _('Please wait…'),
             'remove' => _('Remove'),
             'replace-edited-file' => _('Do you want to replace the file on the server with this edit?'),
+            'replace-existing' => _('Replace the original uploaded file with your changes'),
             'request-filename' => _('Enter name of the file'),
             'resource-not-found' => _('Nothing to show with this id'),
             'revisions-error' => _('Select two revisions to compare them.'),

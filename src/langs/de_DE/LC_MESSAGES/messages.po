@@ -5461,7 +5461,7 @@ msgstr "Suche %s"
 
 #: src/templates/show.html:191
 msgid "Select state"
-msgstr "Bundesland auswählen"
+msgstr "Status auswählen"
 
 #: src/templates/show.html:193
 msgid "Normal"

@@ -52,8 +52,8 @@ function collectCan(): string {
       .concat(Array.from((document.getElementById('masscan_select_teamgroups') as HTMLSelectElement).selectedOptions).map(v=>v.value))
       .concat(existingUsers),
   );
-
 }
+
 function getSelected(): Selected {
   return {
     items_categories: collectSelectable('items_categories'),
@@ -69,8 +69,10 @@ function getSelected(): Selected {
   };
 }
 
-
-if (window.location.pathname === '/admin.php') {
+document.addEventListener('DOMContentLoaded', async () => {
+  if (window.location.pathname !== '/admin.php') {
+    return;
+  }
 
   const ApiC = new Api();
   const notify = new Notification();
@@ -101,13 +103,6 @@ if (window.location.pathname === '/admin.php') {
   new MutationObserver(() => {
     malleableGroupname.listen();
   }).observe(document.getElementById('team_groups_div'), {childList: true});
-
-  // CATEGORY SELECT
-  $(document).on('change', '.catstatSelect', function() {
-    const url = new URL(window.location.href);
-    const queryParams = new URLSearchParams(url.search);
-    updateCatStat($(this).data('target'), {type: EntityType.ItemType, id: parseInt(queryParams.get('templateid'), 10)}, String($(this).val()));
-  });
 
   document.getElementById('container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
@@ -216,4 +211,4 @@ if (window.location.pathname === '/admin.php') {
       });
     }
   });
-}
+});

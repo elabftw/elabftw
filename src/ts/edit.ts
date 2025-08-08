@@ -206,11 +206,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  // CATEGORY SELECT
-  $(document).on('change', '.catstatSelect', function() {
-    updateCatStat($(this).data('target'), entity, String($(this).val()));
-  });
-
   // REPLACE UPLOADED FILE
   // this should be in uploads but there is no good way so far to interact with the two editors there
   document.getElementById('filesDiv').addEventListener('submit', event => {

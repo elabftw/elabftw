@@ -41,11 +41,6 @@ if (window.location.pathname === '/ucp.php') {
   const editor = getEditor();
   editor.init('ucp');
 
-  // CATEGORY SELECT
-  $(document).on('change', '.catstatSelect', function() {
-    updateCatStat($(this).data('target'), entity, String($(this).val()));
-  });
-
   // MAIN LISTENER
   document.querySelector('.real-container').addEventListener('click', (event) => {
     const el = (event.target as HTMLElement);

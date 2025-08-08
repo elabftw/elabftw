@@ -199,7 +199,7 @@ export function getTinymceBaseConfig(page: string): object {
   let plugins = 'accordion advlist anchor autolink autoresize table searchreplace code fullscreen insertdatetime charmap lists save image media link pagebreak codesample template mention visualblocks visualchars emoticons preview';
   let toolbar1 = 'custom-save preview | undo redo | styles fontsize bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap emoticons adddate | codesample | link | sort-table';
   let removedMenuItems = 'newdocument, image, anchor';
-  if (page === 'edit' || page === 'ucp') {
+  if (page === 'edit') {
     plugins += ' autosave';
     // add Image button in toolbar
     toolbar1 = toolbar1.replace('link |', 'link image |');
@@ -254,7 +254,7 @@ export function getTinymceBaseConfig(page: string): object {
       });
     },
     contextmenu: false,
-    paste_data_images: Boolean(page === 'edit' || page === 'ucp'),
+    paste_data_images: Boolean(page === 'edit'),
     // use the preprocessing function on paste event to fix the bgcolor attribute from libreoffice into proper background-color style
     paste_preprocess: function(plugin, args) {
       args.content = args.content.replaceAll('bgcolor="', 'style="background-color:');
@@ -420,7 +420,7 @@ export function getTinymceBaseConfig(page: string): object {
       editor.addShortcut('ctrl+shift+=', 'superscript', () => editor.execCommand('superscript'));
 
       // on edit page there is an autosave triggered
-      if (page === 'edit' || page === 'ucp') {
+      if (page === 'edit') {
         editor.on('keydown', () => clearTimeout(typingTimer));
         editor.on('keyup', () => {
           clearTimeout(typingTimer);

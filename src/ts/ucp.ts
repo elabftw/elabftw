@@ -7,42 +7,27 @@
  */
 import {
   collectForm,
-  getEntity,
   reloadElements,
   saveStringAsFile,
   updateCatStat,
 } from './misc';
 import i18next from './i18n';
 import { Action, Model } from './interfaces';
-import { getEditor } from './Editor.class';
 import { Notification } from './Notifications.class';
 import Tab from './Tab.class';
 import { Api } from './Apiv2.class';
 import $ from 'jquery';
-import { Uploader } from './uploader';
 
-// only run on ucp page
-if (window.location.pathname === '/ucp.php') {
+document.addEventListener('DOMContentLoaded', async () => {
+  if (window.location.pathname !== '/ucp.php') {
+    return;
+  }
+
   const ApiC = new Api();
-
-  // show the handles to reorder when the menu entry is clicked
-  $('#toggleReorder').on('click', function() {
-    $('.sortableHandle').toggle();
-  });
-
-  // initialize the file uploader
-  (new Uploader()).init();
-
-  const entity = getEntity();
-  const TabMenu = new Tab();
-  TabMenu.init(document.querySelector('.tabbed-menu'));
-
-  // Which editor are we using? md or tiny
-  const editor = getEditor();
-  editor.init('ucp');
+  (new Tab()).init(document.querySelector('.tabbed-menu'));
 
   // MAIN LISTENER
-  document.querySelector('.real-container').addEventListener('click', (event) => {
+  document.getElementById('container').addEventListener('click', event => {
     const el = (event.target as HTMLElement);
     if (el.matches('[data-action="patch-account"]')) {
       const params = collectForm(document.getElementById('ucp-account-form'));
@@ -96,4 +81,4 @@ if (window.location.pathname === '/ucp.php') {
       }
     }
   });
-}
+});

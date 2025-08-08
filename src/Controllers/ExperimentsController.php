@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
+use Elabftw\Enums\EntityType;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Templates;
 use Elabftw\Params\DisplayParams;
@@ -32,7 +33,8 @@ final class ExperimentsController extends AbstractEntityController
         $Templates = new Templates($app->Users);
         $DisplayParams = new DisplayParams(
             $app->Users,
-            $entity->entityType,
+            EntityType::Templates,
+            limit: 9999,
         );
         $this->templatesArr = $Templates->readAllSimple($DisplayParams);
     }

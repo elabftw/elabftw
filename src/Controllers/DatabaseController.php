@@ -13,8 +13,10 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
+use Elabftw\Enums\EntityType;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
+use Elabftw\Params\DisplayParams;
 use Override;
 
 /**
@@ -29,7 +31,12 @@ final class DatabaseController extends AbstractEntityController
         $this->categoryArr = $app->itemsCategoryArr;
         $this->statusArr = $this->itemsStatusArr;
         $ItemsTypes = new ItemsTypes($app->Users);
-        $this->templatesArr = $ItemsTypes->readAll();
+        $DisplayParams = new DisplayParams(
+            $app->Users,
+            EntityType::ItemsTypes,
+            limit: 9999,
+        );
+        $this->templatesArr = $ItemsTypes->readAllSimple($DisplayParams);
     }
 
     #[Override]

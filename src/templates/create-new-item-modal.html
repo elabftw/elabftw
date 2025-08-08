@@ -19,7 +19,8 @@
         {% else %}
           {% set btnId = 'createNewTemplates_' ~ entityPage %}
           <div class='d-flex flex-row justify-content-between mb-2'>
-            {% include 'scope-button.html' with {'btnId': btnId, 'reload': btnId ~ ',tplCreateNewDiv_' ~ entityPage, 'target': 'scope_experiments_templates'} %}
+            {% set scopeTarget = entityPage == 'database' ? 'scope_items_types' : 'scope_experiments_templates' %}
+            {% include 'scope-button.html' with {'btnId': btnId, 'reload': btnId ~ ',tplCreateNewDiv_' ~ entityPage, 'target': scopeTarget} %}
             <a href='{{ entityPage == 'database' ? 'resources-templates' : 'templates' }}.php' class='btn btn-ghost btn-sm'><i class='fas fa-cogs mr-1'></i>{{ 'Manage templates'|trans }}</a>
           </div>
 

@@ -9,14 +9,12 @@ import {
   collectForm,
   reloadElements,
   saveStringAsFile,
-  updateCatStat,
 } from './misc';
 import i18next from './i18n';
 import { Action, Model } from './interfaces';
 import { Notification } from './Notifications.class';
 import Tab from './Tab.class';
 import { Api } from './Apiv2.class';
-import $ from 'jquery';
 
 document.addEventListener('DOMContentLoaded', async () => {
   if (window.location.pathname !== '/ucp.php') {

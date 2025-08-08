@@ -11,14 +11,13 @@ import {
   permissionsToJson,
   reloadElements,
   TomSelect,
-  updateCatStat,
 } from './misc';
 import $ from 'jquery';
 import { Malle } from '@deltablot/malle';
 import i18next from './i18n';
 import { getEditor } from './Editor.class';
 import { Api } from './Apiv2.class';
-import { EntityType, Model, Action, Selected } from './interfaces';
+import { Model, Action, Selected } from './interfaces';
 import tinymce from 'tinymce/tinymce';
 import { Notification } from './Notifications.class';
 import Tab from './Tab.class';

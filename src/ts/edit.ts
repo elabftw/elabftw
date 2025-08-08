@@ -10,7 +10,6 @@ import {
   getEntity,
   getNewIdFromPostRequest,
   reloadElements,
-  updateCatStat,
   updateEntityBody,
 } from './misc';
 import { Target, Model, Action } from './interfaces';

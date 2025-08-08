@@ -160,14 +160,6 @@ module.exports = (env) => {
           options: {
             exposes: ['$', 'jQuery'],
           },
-        },
-        // expose key for keymaster globally
-        {
-          test: /keymaster.js/,
-          loader: 'expose-loader',
-          options: {
-            exposes: 'key',
-          },
         }
       ]
     }

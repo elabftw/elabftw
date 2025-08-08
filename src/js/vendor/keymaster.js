@@ -238,7 +238,7 @@
   function filter(event){
     const tagName = (event.target || event.srcElement).tagName;
     // ignore keypressed in any elements that support keyboard data input
-    return !(tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA');
+    return !(tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA' || (event.target || event.srcElement).hasAttribute('contenteditable'));
   }
 
   // initialize key.<modifier> to false

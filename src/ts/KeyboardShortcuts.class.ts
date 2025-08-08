@@ -34,7 +34,6 @@ export class KeyboardShortcuts {
   init() {
     import(/* webpackChunkName: "keymaster" */ '../js/vendor/keymaster.js')
       .then(({ default: key }) => {
-        console.log(key.filter);
         // CREATE EXPERIMENT or DATABASE item with shortcut
         key(this.create, () => {
           // add current tags in there too

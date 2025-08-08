@@ -5,7 +5,7 @@
   <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
-        <h5 class='modal-title' id='createModalLabel_{{ entityPage }}'>{{ entityPage == 'templates' or entityPage == 'resources-templates' ? 'Create a new template'|trans : 'Select template'|trans }}</h5>
+        <h5 class='modal-title' id='createModalLabel_{{ entityPage }}'>{{ entityPage == 'templates' or entityPage == 'resources-templates' ? 'Create a new template'|trans : 'Select a template below'|trans }}</h5>
         <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
           <span aria-hidden='true'>&times;</span>
         </button>
@@ -18,7 +18,11 @@
         </div>
         {% else %}
           {% set btnId = 'createNewTemplates_' ~ entityPage %}
-          {% include 'scope-button.html' with {'btnId': btnId, 'reload': btnId ~ ',tplCreateNewDiv_' ~ entityPage, 'target': 'scope_experiments_templates'} %}
+          <div class='d-flex flex-row justify-content-between mb-2'>
+            {% include 'scope-button.html' with {'btnId': btnId, 'reload': btnId ~ ',tplCreateNewDiv_' ~ entityPage, 'target': 'scope_experiments_templates'} %}
+            <a href='{{ entityPage == 'database' ? 'resources-templates' : 'templates' }}.php' class='btn btn-ghost btn-sm'><i class='fas fa-cogs mr-1'></i>{{ 'Manage templates'|trans }}</a>
+          </div>
+
           <div id='tplCreateNewDiv_{{ entityPage }}' class='vertically-limited'>
             <input type='text' aria-label='{{ 'Filter'|trans }}' placeholder='{{ 'Filter'|trans }}' data-filter-target='tplCreateNewTable' data-target-type='tr' class='form-control form-inline'>
             <table class='table' aria-describedby='createModalLabel_{{ entityPage }}' data-table-sort='true'>
@@ -58,30 +62,24 @@
 
           {% if not App.Teams.teamArr.force_exp_tpl %}
             <hr>
-            <h5>{{ 'Or create a blank entry with a specific category'|trans }}</h5>
+            <h5>{{ 'Or create a blank entry'|trans }}</h5>
+            <a class='btn btn-ghost mt-1' href='#' data-action='create-entity-ask-title' data-catid='-1'>
+              <span class='round-spot round-spot-ghost mr-1'></span>{{ 'No category'|trans }}
+            </a>
             {% for category in categoryArr %}
-              <a style='color:#{{ category.color }}; border: 1px #ccc solid;' class='btn btn-light mt-1' href='#' data-action='create-entity' data-type='{{ entityPage }}' data-catid='{{ category.id }}'>
-              {% if category.category %}
-                <span class='catstat-btn category-btn mr-2' style='--bg: #{{ category.category_color|default('bdbdbd') }}'>{{ category.category_title }}</span>
-              {% endif %}
-              {{ category.title }}</a>
+              <a class='btn btn-ghost mt-1' href='#' data-action='create-entity-ask-title' data-catid='{{ category.id }}'>
+                <span class='round-spot mr-1' style='background-color: #{{ category.color }};'></span>{{ category.title }}
+              </a>
             {% endfor %}
-            <a style='border: 1px #ccc solid;' class='btn btn-light ml-1 mt-1' href='#' data-action='create-entity' data-type='{{ entityPage }}' data-tplid='-1'>{{ 'Blank entry'|trans }}</a>
-            <hr>
-          {% endif %}
-
-          {# show add button to admin, for items #}
-          {% if entityPage == 'database' and App.Users.isAdmin %}
-            <a style='color:#343434; border: 1px #ccc solid;' class='btn btn-light mt-1' href='/resources-templates.php'>{{ 'Add template…'|trans }}</a>
           {% endif %}
         {% endif %}
       </div>
-      {% if entityPage == 'templates' or entityPage == 'resources-templates' %}
         <div class='modal-footer'>
           <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
-          <button type='button' data-action='create-entity' data-type='{{ Entity.entityType.value }}' data-has-title='1' class='btn btn-primary'>{{ 'Create'|trans }}</button>
+          {% if entityPage == 'templates' or entityPage == 'resources-templates' %}
+            <button type='button' data-action='create-entity' data-type='{{ Entity.entityType.value }}' data-has-title='1' data-form-id='createNewForm' class='btn btn-primary'>{{ 'Create'|trans }}</button>
+          {% endif %}
         </div>
-      {% endif %}
     </div>
   </div>
 </div>

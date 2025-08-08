@@ -1023,11 +1023,20 @@ document.addEventListener('DOMContentLoaded', () => {
       url.searchParams.set('sort', query[1]);
       window.location.href = url.href;
 
+    // this is necessary to convey information between two modals
+    } else if (el.matches('[data-action="create-entity-ask-title"]')) {
+      // hide previous modal first
+      $('.modal.show').modal('hide');
+      // then add the category id to the other create button
+      const targetButton = document.getElementById('askTitleButton') as HTMLButtonElement;
+      targetButton.dataset.catid = el.dataset.catid;
+      $('#askTitleModal').modal('toggle');
+
     // CREATE EXPERIMENT, TEMPLATE or DATABASE item: main create button in top right
     } else if (el.matches('[data-action="create-entity"]')) {
       let params = {};
       if (el.dataset.hasTitle) {
-        params = collectForm(document.getElementById('createNewForm'));
+        params = collectForm(document.getElementById(el.dataset.formId));
       }
       if (el.dataset.tplid) {
         params['template'] = parseInt(el.dataset.tplid, 10);

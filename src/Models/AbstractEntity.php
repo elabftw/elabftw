@@ -202,13 +202,16 @@ abstract class AbstractEntity extends AbstractRest
         return match ($action) {
             Action::Create => (
                 function () use ($reqBody) {
-                    if ($reqBody['template'] && $reqBody['template'] !== -1) {
+                    if (isset($reqBody['template']) && ((int) $reqBody['template']) !== -1) {
                         return $this->createFromTemplate((int) $reqBody['template']);
                     }
                     // check if use of template is enforced at team level for experiments
                     $teamConfigArr = new Teams($this->Users, $this->Users->team)->readOne();
                     if ($teamConfigArr['force_exp_tpl'] === 1 && $this instanceof Experiments) {
                         throw new ImproperActionException(_('Experiments must use a template!'));
+                    }
+                    if ($reqBody['category'] === -1) {
+                        $reqBody['category'] = null;
                     }
                     // convert to int only if not empty, otherwise send null: we don't want to convert a null to int, as it would send 0
                     $category = !empty($reqBody['category']) ? (int) $reqBody['category'] : null;

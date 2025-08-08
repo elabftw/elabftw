@@ -1765,6 +1765,10 @@ input:user-invalid {
   width: 1em;
 }
 
+.round-spot-ghost {
+  border: 1px dashed $medium;
+}
+
 .calendar-event-hover {
   box-shadow: 5px 4px 4px $medium !important;
 }

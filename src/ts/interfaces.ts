@@ -45,8 +45,8 @@ interface CheckableItem {
 interface Selected {
   experiments_categories: number[];
   experiments_status: number[];
+  items_categories: number[];
   items_status: number[];
-  items_types: number[];
   items_tags: number[];
   experiments_tags: number[];
   users: number[];

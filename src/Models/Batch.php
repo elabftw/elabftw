@@ -47,9 +47,9 @@ final class Batch extends AbstractRest
         if ($reqBody['items_tags']) {
             $this->processTags($reqBody['items_tags'], new Items($this->requester), $action, $reqBody);
         }
-        if ($reqBody['items_types']) {
+        if ($reqBody['items_categories']) {
             $model = new Items($this->requester);
-            $this->processEntities($reqBody['items_types'], $model, FilterableColumn::Category, $action, $reqBody, $state);
+            $this->processEntities($reqBody['items_categories'], $model, FilterableColumn::Category, $action, $reqBody, $state);
         }
         if ($reqBody['items_status']) {
             $model = new Items($this->requester);

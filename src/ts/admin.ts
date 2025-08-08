@@ -56,7 +56,7 @@ function collectCan(): string {
 }
 function getSelected(): Selected {
   return {
-    items_types: collectSelectable('items_types'),
+    items_categories: collectSelectable('items_categories'),
     items_status: collectSelectable('items_status'),
     items_tags: collectSelectable('items_tags'),
     experiments_status: collectSelectable('experiments_status'),
@@ -139,14 +139,6 @@ if (window.location.pathname === '/admin.php') {
         count -= 1;
       }
       counterValue.textContent = String(count);
-    // UPDATE ITEMS TYPES
-    } else if (el.matches('[data-action="itemstypes-update"]')) {
-      return ApiC.patch(`${EntityType.ItemType}/${el.dataset.id}`, {'body': getEditor().getContent()});
-    // DESTROY ITEMS TYPES
-    } else if (el.matches('[data-action="itemstypes-destroy"]')) {
-      if (confirm(i18next.t('generic-delete-warning'))) {
-        ApiC.delete(`${EntityType.ItemType}/${el.dataset.id}`).then(() => window.location.href = '?tab=4');
-      }
     } else if (el.matches('[data-action="create-teamgroup"]')) {
       const input = (document.getElementById('teamGroupCreate') as HTMLInputElement);
       ApiC.post(`${Model.Team}/current/${Model.TeamGroup}`, {'name': input.value}).then(() => {

@@ -95,7 +95,9 @@ describe('Experiments', () => {
     cy.visit('/experiments.php');
     cy.htmlvalidate();
     cy.contains('Create').click();
-    cy.get('#createModal_experiments').should('be.visible').should('contain', 'Blank entry').contains('Blank entry').click();
+    cy.get('#createModal_experiments').should('be.visible').should('contain', 'No category').contains('No category').click();
+    cy.get('#askTitleModalTitleInput').should('be.visible').wait(500).type('Cypress created experiment').click();
+    cy.get('#askTitleButton').click();
     entityCatStat('Not set', 'Demo', 'Success');
     entityEdit();
     entityComment();
@@ -108,7 +110,9 @@ describe('Experiments', () => {
     cy.visit('/database.php');
     cy.htmlvalidate();
     cy.contains('Create').click();
-    cy.get('#createModal_database').should('be.visible').should('contain', 'Blank entry').contains('Blank entry').click();
+    cy.get('#createModal_database').should('be.visible').should('contain', 'No category').contains('No category').click();
+    cy.get('#askTitleModalTitleInput').should('be.visible').wait(500).type('Cypress created resource').click();
+    cy.get('#askTitleButton').click();
     entityCatStat('Not set', 'Justice', 'In stock');
     entityEdit();
     entityComment();

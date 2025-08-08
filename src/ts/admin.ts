@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     inputClasses: ['form-control'],
     formClasses: ['mb-3'],
     fun: async (value, original) => {
-      return ApiC.patch(`${Model.Team}/current/${Model.TeamGroup}/${original.dataset.id}`, {'name': value})
+      return ApiC.patch(`${Model.Team}/current/${Model.TeamGroup}/${original.dataset.id}`, {name: value})
         .then(resp => resp.json()).then(json => json.name);
     },
     listenOn: '.malleableTeamgroupName',
@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       counterValue.textContent = String(count);
     } else if (el.matches('[data-action="create-teamgroup"]')) {
       const input = (document.getElementById('teamGroupCreate') as HTMLInputElement);
-      ApiC.post(`${Model.Team}/current/${Model.TeamGroup}`, {'name': input.value}).then(() => {
+      ApiC.post(`${Model.Team}/current/${Model.TeamGroup}`, {name: input.value}).then(() => {
         reloadElements(['team_groups_div']);
         input.value = '';
       });
@@ -149,11 +149,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
       ApiC.patch(
         `${Model.Team}/current/${Model.TeamGroup}/${el.dataset.groupid}`,
-        {'how': Action.Add, 'userid': user},
+        {how: Action.Add, userid: user},
       ).then(() => reloadElements(['team_groups_div']));
     // RM USER FROM TEAM GROUP
     } else if (el.matches('[data-action="rmuser-teamgroup"]')) {
-      ApiC.patch(`${Model.Team}/current/${Model.TeamGroup}/${el.dataset.groupid}`, {'how': Action.Unreference, 'userid': el.dataset.userid})
+      ApiC.patch(`${Model.Team}/current/${Model.TeamGroup}/${el.dataset.groupid}`, {how: Action.Unreference, userid: el.dataset.userid})
         .then(() => el.parentElement.remove());
     // DELETE TEAM GROUP
     } else if (el.matches('[data-action="destroy-teamgroup"]')) {
@@ -173,7 +173,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (!tagInput.value) {
         return;
       }
-      ApiC.post(`${Model.Team}/current/${Model.Tag}`, {'tag': tagInput.value}).then(() => {
+      ApiC.post(`${Model.Team}/current/${Model.Tag}`, {tag: tagInput.value}).then(() => {
         tagInput.value = '';
         reloadElements(['tagMgrDiv']);
       });

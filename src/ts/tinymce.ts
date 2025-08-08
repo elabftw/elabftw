@@ -353,7 +353,10 @@ export function getTinymceBaseConfig(page: string): object {
       });
       // set default line height to 1 (is 1.4 for some reason)
       editor.on('init', () => {
-        editor.execCommand('lineheight', false, '1');
+        // doing this will give focus to the editor, which is OK for entities but on admin page it's not wanted, so avoid it
+        if (page !== 'admin') {
+          editor.execCommand('lineheight', false, '1');
+        }
       });
       // Hook into the blur event - Finalize potential changes to images if user clicks outside of editor
       editor.on('blur', () => {

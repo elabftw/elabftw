@@ -77,7 +77,6 @@ module.exports = (env) => {
         'prismjs/components/prism-tcl.js',
         'prismjs/components/prism-vhdl.js',
         'prismjs/components/prism-yaml.js',
-        './src/js/vendor/keymaster.js',
       ],
     },
     // uncomment this to find where the error is coming from

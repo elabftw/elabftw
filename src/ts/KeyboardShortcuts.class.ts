@@ -10,6 +10,7 @@ import { ApiC } from './api';
 import { EntityType } from './interfaces';
 import FavTag from './FavTag.class';
 import { getNewIdFromPostRequest } from './misc';
+import { assignKey } from './keymaster';
 
 export class KeyboardShortcuts {
 
@@ -30,47 +31,44 @@ export class KeyboardShortcuts {
   }
 
   init() {
-    import(/* webpackChunkName: "keymaster" */ '../js/vendor/keymaster.js')
-      .then(({ default: key }) => {
-        // CREATE EXPERIMENT or DATABASE item with shortcut
-        key(this.create, () => {
-          // add current tags in there too
-          const urlParams = new URLSearchParams(document.location.search);
-          const tags = urlParams.getAll('tags[]');
-          // use default template
-          const params = {category_id: 0, tags: tags};
-          ApiC.post(EntityType.Experiment, params).then(resp => {
-            const newId = getNewIdFromPostRequest(resp);
-            window.location.href = `experiments.php?mode=edit&id=${newId}`;
-          });
-        });
-
-        // EDIT SHORTCUT
-        key(this.edit, () => {
-          const urlParams = new URLSearchParams(document.location.search);
-          const id = parseInt(urlParams.get('id'), 10);
-          if (isNaN(id)) {
-            return;
-          }
-          window.location.href = `?mode=edit&id=${id}`;
-        });
-
-        // TODOLIST TOGGLE
-        key(this.todo, () => (new Todolist()).toggle());
-
-        // FAVORITE TAGS TOGGLE
-        key(this.favorite, () => (new FavTag()).toggle());
-
-        // SEARCH BAR FOCUS
-        key(this.search, (event: Event) => {
-          // search input might not be visible on some pages
-          const qs = document.getElementById('quicksearchInput');
-          if (qs) {
-            // add this or the shortcut key gets written in the input
-            event.preventDefault();
-            qs.focus();
-          }
-        });
+    // CREATE EXPERIMENT or DATABASE item with shortcut
+    assignKey(this.create, () => {
+      // add current tags in there too
+      const urlParams = new URLSearchParams(document.location.search);
+      const tags = urlParams.getAll('tags[]');
+      // use default template
+      const params = {category_id: 0, tags: tags};
+      ApiC.post(EntityType.Experiment, params).then(resp => {
+        const newId = getNewIdFromPostRequest(resp);
+        window.location.href = `experiments.php?mode=edit&id=${newId}`;
       });
+    });
+
+    // EDIT SHORTCUT
+    assignKey(this.edit, () => {
+      const urlParams = new URLSearchParams(document.location.search);
+      const id = parseInt(urlParams.get('id'), 10);
+      if (isNaN(id)) {
+        return;
+      }
+      window.location.href = `?mode=edit&id=${id}`;
+    });
+
+    // TODOLIST TOGGLE
+    assignKey(this.todo, () => (new Todolist()).toggle());
+
+    // FAVORITE TAGS TOGGLE
+    assignKey(this.favorite, () => (new FavTag()).toggle());
+
+    // SEARCH BAR FOCUS
+    assignKey(this.search, (event: Event) => {
+      // search input might not be visible on some pages
+      const qs = document.getElementById('quicksearchInput');
+      if (qs) {
+        // add this or the shortcut key gets written in the input
+        event.preventDefault();
+        qs.focus();
+      }
+    });
   }
 }

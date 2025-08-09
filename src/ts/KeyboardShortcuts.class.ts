@@ -9,7 +9,6 @@ import Todolist from './Todolist.class';
 import { ApiC } from './api';
 import { EntityType } from './interfaces';
 import FavTag from './FavTag.class';
-import { getNewIdFromPostRequest } from './misc';
 import { assignKey } from './keymaster';
 
 export class KeyboardShortcuts {
@@ -38,9 +37,12 @@ export class KeyboardShortcuts {
       const tags = urlParams.getAll('tags[]');
       // use default template
       const params = {category_id: 0, tags: tags};
-      ApiC.post(EntityType.Experiment, params).then(resp => {
-        const newId = getNewIdFromPostRequest(resp);
-        window.location.href = `experiments.php?mode=edit&id=${newId}`;
+      let entityType = EntityType.Experiment;
+      if (document.location.pathname === '/database.php') {
+        entityType = EntityType.Item;
+      }
+      ApiC.post2location(entityType, params).then(id => {
+        window.location.href = `?mode=edit&id=${id}`;
       });
     });
 

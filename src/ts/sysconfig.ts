@@ -10,10 +10,10 @@ import { Action, Model } from './interfaces';
 import i18next from './i18n';
 import tinymce from 'tinymce/tinymce';
 import { getEditor } from './Editor.class';
-import { Notification } from './Notifications.class';
+import { notify } from './notify';
 import Tab from './Tab.class';
 import { Ajax } from './Ajax.class';
-import { Api } from './Apiv2.class';
+import { ApiC } from './api';
 import $ from 'jquery';
 import { SemverCompare } from './SemverCompare.class';
 
@@ -24,8 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const TabMenu = new Tab();
   const AjaxC = new Ajax();
-  const ApiC = new Api();
-  const notify = new Notification();
   TabMenu.init(document.querySelector('.tabbed-menu'));
 
   // GET the latest version information

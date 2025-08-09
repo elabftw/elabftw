@@ -11,11 +11,9 @@ import $ from 'jquery';
 import i18next from './i18n';
 import { getNewIdFromPostRequest, reloadElements } from './misc';
 import { Action, Entity, Model } from './interfaces';
-import { Api } from './Apiv2.class';
+import { ApiC } from './api';
 import { ValidMetadata } from './metadataInterfaces';
-import { Notification } from './Notifications.class';
-
-const notify = new Notification();
+import { notify } from './notify';
 
 // This class is named helper because the jsoneditor lib already exports JSONEditor
 export default class JsonEditorHelper {
@@ -26,7 +24,6 @@ export default class JsonEditorHelper {
   currentUploadId: string;
   currentFilename: string;
   editorTitle: HTMLElement;
-  api: Api;
 
   constructor(entity: Entity) {
     this.entity = entity;
@@ -34,7 +31,6 @@ export default class JsonEditorHelper {
     this.editorDiv = document.getElementById('jsonEditorContainer') as HTMLDivElement;
     this.MetadataC = new Metadata(entity, this);
     this.editorTitle = document.getElementById('jsonEditorTitle');
-    this.api = new Api();
   }
 
   // INIT
@@ -173,7 +169,7 @@ export default class JsonEditorHelper {
       'real_name': realName,
       'content': JSON.stringify(this.editor.get()),
     };
-    this.api.post(`${this.entity.type}/${this.entity.id}/${Model.Upload}`, params)
+    ApiC.post(`${this.entity.type}/${this.entity.id}/${Model.Upload}`, params)
       .then(resp => this.currentUploadId = String(getNewIdFromPostRequest(resp)))
       .then(() => reloadElements(['uploadsDiv']));
   }

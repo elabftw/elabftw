@@ -11,11 +11,10 @@ import FavTag from './FavTag.class';
 import i18next from './i18n';
 import { addAutocompleteToTagInputs, getEntity, reloadElements } from './misc';
 import { Action, Model } from './interfaces';
-import { Api } from './Apiv2.class';
+import { ApiC } from './api';
 
 document.addEventListener('DOMContentLoaded', () => {
   const entity = getEntity();
-  const ApiC = new Api();
 
   // CREATE TAG
   const createTag = (el: HTMLInputElement): void => {

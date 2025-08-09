@@ -5,13 +5,11 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { Api } from './Apiv2.class';
-import { Notification } from './Notifications.class';
+import { ApiC } from './api';
+import { notify } from './notify';
 import Tab from './Tab.class';
 import { collectForm, relativeMoment, reloadElements } from './misc';
 import i18next from './i18n';
-
-const ApiC = new Api();
 
 const clickHandler = (event: MouseEvent) => {
   const el = (event.target as HTMLElement);
@@ -40,7 +38,6 @@ const clickHandler = (event: MouseEvent) => {
 };
 
 if (window.location.pathname === '/profile.php') {
-  const notify = new Notification();
   (new Tab()).init(document.querySelector('.tabbed-menu'));
 
   document.getElementById('importFileInput')?.addEventListener('change', async function(event) {

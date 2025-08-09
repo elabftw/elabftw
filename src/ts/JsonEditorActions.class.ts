@@ -8,9 +8,7 @@
 import JsonEditorHelper from './JsonEditorHelper.class';
 import { saveStringAsFile } from './misc';
 import 'jsoneditor/dist/jsoneditor.min.css';
-import { Notification } from './Notifications.class';
-
-const notify = new Notification();
+import { notify } from './notify';
 
 export class JsonEditorActions {
 

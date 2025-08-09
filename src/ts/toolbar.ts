@@ -10,17 +10,15 @@ import {
   relativeMoment,
   reloadElements,
 } from './misc';
-import { Api } from './Apiv2.class';
 import i18next from './i18n';
 import $ from 'jquery';
 import { Action, Model } from './interfaces';
-import { Notification } from './Notifications.class';
+import { notify } from './notify';
+import { ApiC } from './api';
 
 const clickHandler = (event: Event) => {
   const el = (event.target as HTMLElement);
   const entity = getEntity();
-  const ApiC = new Api();
-  const notify = new Notification();
   // DUPLICATE
   if (el.matches('[data-action="duplicate-entity"]')) {
     const copyFiles = (document.getElementById('duplicateKeepFilesSelect') as HTMLInputElement);

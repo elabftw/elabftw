@@ -7,11 +7,10 @@
  */
 import i18next from './i18n';
 import { InputType, Malle } from '@deltablot/malle';
-import { Api } from './Apiv2.class';
+import { ApiC } from './api';
 import { getEntity, relativeMoment, reloadElements } from './misc';
 import { Action, Model } from './interfaces';
 
-const ApiC = new Api();
 const entity = getEntity();
 
 // UPDATE MALLEABLE COMMENT

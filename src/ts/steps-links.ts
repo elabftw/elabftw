@@ -20,9 +20,8 @@ import {
   reloadElements,
 } from './misc';
 import { Action, Target } from './interfaces';
-import { Api } from './Apiv2.class';
+import { ApiC } from './api';
 
-const ApiC = new Api();
 const entity = getEntity();
 const StepC = new Step(entity);
 

@@ -6,12 +6,12 @@
  * @package elabftw
  */
 import i18next from './i18n';
-import { Api } from './Apiv2.class';
+import { ApiC } from './api';
 import { Action, Entity, EntityType } from './interfaces';
 import JsonEditorHelper from './JsonEditorHelper.class';
 import { ExtraFieldInputType, ExtraFieldProperties, ExtraFieldsGroup, ValidMetadata } from './metadataInterfaces';
 import { adjustHiddenState, makeSortableGreatAgain, reloadElements, replaceWithTitle } from './misc';
-import { Notification } from './Notifications.class';
+import { notify } from './notify';
 
 export function ResourceNotFoundException(message: string): void {
   this.message = message;
@@ -28,14 +28,12 @@ export class Metadata {
   entity: Entity;
   editor: JsonEditorHelper;
   model: EntityType;
-  api: Api;
   metadataDiv: Element;
 
   constructor(entity: Entity, jsonEditor: JsonEditorHelper) {
     this.entity = entity;
     this.editor = jsonEditor;
     this.model = entity.type;
-    this.api = new Api();
     // this is the div that will hold all the generated fields from metadata json
     this.metadataDiv = document.getElementById('metadataDiv');
   }
@@ -44,7 +42,7 @@ export class Metadata {
    * Get the json from the metadata column
    */
   read(): Promise<Record<string, unknown>|ValidMetadata> {
-    return this.api.getJson(`${this.entity.type}/${this.entity.id}`).then(json => {
+    return ApiC.getJson(`${this.entity.type}/${this.entity.id}`).then(json => {
       // if there are no metadata.json file available, return an empty object
       if (typeof json.metadata === 'undefined' || !json.metadata) {
         return {};
@@ -69,7 +67,7 @@ export class Metadata {
     if (el.dataset.completeTarget === document.getElementById('info').dataset.type
       && parseInt(el.value, 10) === parseInt(document.getElementById('info').dataset.id, 10)
     ) {
-      (new Notification()).error('no-self-links');
+      notify.error('no-self-links');
       return false;
     }
 
@@ -92,13 +90,13 @@ export class Metadata {
       }
       // also create a link automatically for experiments and resources
       if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf()].includes(el.dataset.completeTarget)) {
-        this.api.post(`${this.entity.type}/${this.entity.id}/${el.dataset.completeTarget}_links/${value}`).then(() => reloadElements(['linksDiv', 'linksExpDiv']));
+        ApiC.post(`${this.entity.type}/${this.entity.id}/${el.dataset.completeTarget}_links/${value}`).then(() => reloadElements(['linksDiv', 'linksExpDiv']));
       }
     }
     const params = {};
     params['action'] = Action.UpdateMetadataField;
     params[el.dataset.field] = value;
-    this.api.patch(`${this.entity.type}/${this.entity.id}`, params).then(() => {
+    ApiC.patch(`${this.entity.type}/${this.entity.id}`, params).then(() => {
       this.editor.loadMetadata();
     }).catch(() => {
       return;
@@ -123,7 +121,7 @@ export class Metadata {
   }
 
   save(metadata: ValidMetadata): Promise<Response> {
-    return this.api.patch(`${this.entity.type}/${this.entity.id}`, {'metadata': JSON.stringify(metadata)});
+    return ApiC.patch(`${this.entity.type}/${this.entity.id}`, {'metadata': JSON.stringify(metadata)});
   }
 
   /**
@@ -200,7 +198,7 @@ export class Metadata {
     try {
       return this.generateInput(name, properties);
     } catch (err) {
-      (new Notification()).error('error-parsing-metadata');
+      notify.error('error-parsing-metadata');
       console.error(err);
     }
   }

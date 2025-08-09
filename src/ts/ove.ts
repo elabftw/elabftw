@@ -17,8 +17,8 @@ import '@teselagen/ove/style.css';
 import { anyToJson } from '@teselagen/bio-parsers';
 import { reloadElements } from './misc';
 import { Action, Model } from './interfaces';
-import { Api } from './Apiv2.class';
-import { Notification } from './Notifications.class';
+import { ApiC } from './api';
+import { notify } from './notify';
 
 // DISPLAY Plasmids FILES
 export async function displayPlasmidViewer(about: DOMStringMap): Promise<void> {
@@ -29,7 +29,6 @@ export async function displayPlasmidViewer(about: DOMStringMap): Promise<void> {
   await import('@teselagen/ove');
   /* eslint-disable-next-line */
   const editor: any = {};
-  const ApiC = new Api();
   Array.from(elements).forEach(el => {
     const oveDivDataset = (el as HTMLDivElement).dataset;
     const viewerID = el.id;
@@ -72,7 +71,7 @@ export async function displayPlasmidViewer(about: DOMStringMap): Promise<void> {
       }
 
       if (parsedData[0].success === false) {
-        new Notification().error('invalid-info');
+        notify.error('invalid-info');
       }
 
       const parsedSequence = parsedData[0].parsedSequence;

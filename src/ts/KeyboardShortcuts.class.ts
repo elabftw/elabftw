@@ -6,14 +6,13 @@
  * @package elabftw
  */
 import Todolist from './Todolist.class';
-import { Api } from './Apiv2.class';
+import { ApiC } from './api';
 import { EntityType } from './interfaces';
 import FavTag from './FavTag.class';
 import { getNewIdFromPostRequest } from './misc';
 
 export class KeyboardShortcuts {
 
-  api: Api;
   create: string;
   edit: string;
   todo: string;
@@ -27,7 +26,6 @@ export class KeyboardShortcuts {
     this.todo = todo;
     this.favorite = favorite;
     this.search = search;
-    this.api = new Api();
     this.page = document.location.pathname;
   }
 
@@ -41,7 +39,7 @@ export class KeyboardShortcuts {
           const tags = urlParams.getAll('tags[]');
           // use default template
           const params = {category_id: 0, tags: tags};
-          this.api.post(EntityType.Experiment, params).then(resp => {
+          ApiC.post(EntityType.Experiment, params).then(resp => {
             const newId = getNewIdFromPostRequest(resp);
             window.location.href = `experiments.php?mode=edit&id=${newId}`;
           });

@@ -16,10 +16,10 @@ import $ from 'jquery';
 import { Malle } from '@deltablot/malle';
 import i18next from './i18n';
 import { getEditor } from './Editor.class';
-import { Api } from './Apiv2.class';
+import { ApiC } from './api';
 import { Model, Action, Selected } from './interfaces';
 import tinymce from 'tinymce/tinymce';
-import { Notification } from './Notifications.class';
+import { notify } from './notify';
 import Tab from './Tab.class';
 
 function collectSelectable(name: string): number[] {
@@ -69,8 +69,6 @@ function getSelected(): Selected {
 }
 
 const clickHandler = (event: MouseEvent) => {
-  const ApiC = new Api();
-  const notify = new Notification();
   const el = (event.target as HTMLElement);
   // RUN ACTION ON SELECTED (BATCH)
   if (el.matches('[data-action="run-action-selected"]')) {
@@ -189,7 +187,7 @@ if (window.location.pathname === '/admin.php') {
     inputClasses: ['form-control'],
     formClasses: ['mb-3'],
     fun: async (value, original) => {
-      return (new Api()).patch(`${Model.Team}/current/${Model.TeamGroup}/${original.dataset.id}`, {name: value})
+      return ApiC.patch(`${Model.Team}/current/${Model.TeamGroup}/${original.dataset.id}`, {name: value})
         .then(resp => resp.json()).then(json => json.name);
     },
     listenOn: '.malleableTeamgroupName',

@@ -16,13 +16,11 @@ import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Api } from './Apiv2.class';
+import { ApiC } from './api';
 import { populateUserModal } from './misc';
-import { Notification } from './Notifications.class';
+import { notify } from './notify';
 import i18next from './i18n';
 import $ from 'jquery';
-
-const ApiC = new Api();
 
 async function toggleUserModal(user) {
   const textParams = [
@@ -144,7 +142,7 @@ if (document.getElementById('users-table')) {
         const users = await ApiC.getJson(`users?limit=999999${queryParams}`);
         setRowData(users);
       } catch (error) {
-        (new Notification()).error(error);
+        notify.error(error);
         console.error(`Could not load users: ${error}`);
       }
     };

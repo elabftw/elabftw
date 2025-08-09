@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import $ from 'jquery';
-import { Api } from './Apiv2.class';
+import { ApiC } from './api';
 import { Malle, InputType, Action as MalleAction, SelectOptions } from '@deltablot/malle';
 import 'bootstrap/js/src/modal.js';
 import FavTag from './FavTag.class';
@@ -54,7 +54,7 @@ import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.ru.js';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.sl.js';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.sv.js';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.zh.js';
-import { Notification } from './Notifications.class';
+import { notify } from './notify';
 import TableSorting from './TableSorting.class';
 import { KeyboardShortcuts } from './KeyboardShortcuts.class';
 import JsonEditorHelper from './JsonEditorHelper.class';
@@ -87,8 +87,6 @@ if (document.getElementById('is-auth')) {
   }, heartRate);
 }
 
-const ApiC = new Api();
-const notify = new Notification();
 const entity = getEntity();
 const FavTagC = new FavTag();
 const TodolistC = new Todolist();

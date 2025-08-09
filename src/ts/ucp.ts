@@ -12,12 +12,11 @@ import {
 } from './misc';
 import i18next from './i18n';
 import { Action, Model } from './interfaces';
-import { Notification } from './Notifications.class';
+import { notify } from './notify';
 import Tab from './Tab.class';
-import { Api } from './Apiv2.class';
+import { ApiC } from './api';
 
 const clickHandler = (event: MouseEvent) => {
-  const ApiC = new Api();
   const el = (event.target as HTMLElement);
 
   if (el.matches('[data-action="patch-account"]')) {
@@ -50,7 +49,7 @@ const clickHandler = (event: MouseEvent) => {
     const nameInput = (document.getElementById('apikeyName') as HTMLInputElement);
     const content = nameInput.value;
     if (!content) {
-      (new Notification()).error('check-required');
+      notify.error('check-required');
       // set the border in red to bring attention
       nameInput.style.borderColor = 'red';
       return;

@@ -64,7 +64,7 @@ import '../js/tinymce-langs/zh_CN.js';
 import '../js/tinymce-plugins/mention/plugin.js';
 import { EntityType, Model } from './interfaces';
 import { getEntity, reloadElements, escapeExtendedQuery, updateEntityBody, getNewIdFromPostRequest } from './misc';
-import { Api } from './Apiv2.class';
+import { ApiC } from './api';
 import { isSortable } from './TableSorting.class';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
@@ -164,7 +164,6 @@ const imagesUploadHandler = (blobInfo: TinyMCEBlobInfo) => new Promise((resolve,
       }).then(resp => {
         const newId = getNewIdFromPostRequest(resp);
         // fetch info about the newly created upload
-        const ApiC = new Api();
         return ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}/${newId}`);
       }).then(json => {
         resolve(`app/download.php?f=${json.long_name}&storage=${json.storage}`);
@@ -207,7 +206,6 @@ export function getTinymceBaseConfig(page: string): object {
     removedMenuItems = 'newdocument, anchor';
   }
   const entity = getEntity();
-  const ApiC = new Api();
 
   return {
     selector: '.mceditable',

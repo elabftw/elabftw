@@ -148,11 +148,10 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
         ));
 
         $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
-            'itmes',
+            'items',
             $this->groups,
         ));
         $advancedSearchQuery->getWhereClause();
-        $this->assertStringStartsWith('timestamped: is only allowed when searching in experiments.', $advancedSearchQuery->getException());
-        $this->assertStringContainsString('timestamped_at: is only allowed when searching in experiments.', $advancedSearchQuery->getException());
+        $this->assertEmpty($advancedSearchQuery->getException());
     }
 }

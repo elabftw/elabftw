@@ -15,7 +15,6 @@ namespace Elabftw\Services\AdvancedSearchQuery\Visitors;
 
 use Elabftw\Services\AdvancedSearchQuery\Collectors\InvalidFieldCollector;
 use Elabftw\Services\AdvancedSearchQuery\Enums\Fields;
-use Elabftw\Services\AdvancedSearchQuery\Enums\TimestampFields;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\AndExpression;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\AndOperand;
 use Elabftw\Services\AdvancedSearchQuery\Grammar\DateField;
@@ -72,15 +71,6 @@ final class FieldValidatorVisitor implements Visitor
     public function visitTimestampField(TimestampField $timestampField, VisitorParameters $parameters): InvalidFieldCollector
     {
         $messages = array();
-
-        if (!in_array($parameters->getEntityType(), array('experiments', 'items'), true)
-            && $timestampField->getFieldType() === TimestampFields::TimestampedAt
-        ) {
-            $messages[] = sprintf(
-                '%s: is only allowed when searching in experiments.',
-                TimestampFields::TimestampedAt->value,
-            );
-        }
 
         // MySQL range for TIMESTAMP values is '1970-01-01 00:00:01.000000' to '2038-01-19 03:14:07.999999'
         // We use 1970-01-02 and 2038-01-18 because time 00:00:00 and/or 23:59:59 will be added

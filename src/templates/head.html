@@ -218,3 +218,7 @@
         <p class='font-weight-bold'>Javascript is disabled. Please enable Javascript to view eLabFTW in all its glory.</p>
     </div>
 </noscript>
+
+<script type='application/json' id='core'>
+  {"isAnon": {{ App.Session.has('is_anon') ? 'true' : 'false' }} }
+</script>

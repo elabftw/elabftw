@@ -1087,10 +1087,6 @@ components:
           type: integer
         name:
           type: string
-        common_template:
-          type: string
-        common_template_md:
-          type: string
         user_create_tag:
           type: integer
         force_exp_tpl:

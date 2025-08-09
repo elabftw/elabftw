@@ -13,36 +13,28 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DateTimeImmutable;
-use Elabftw\Elabftw\ItemsTypesSqlBuilder;
-use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
-use Elabftw\Enums\Orderby;
-use Elabftw\Enums\Sort;
-use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\QueryParamsInterface;
-use Elabftw\Interfaces\SqlBuilderInterface;
-use Elabftw\Params\BaseQueryParams;
-use Elabftw\Params\OrderingParams;
-use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
+use Elabftw\Traits\InsertTagsTrait;
 use Elabftw\Traits\RandomColorTrait;
 use Override;
 use PDO;
-use Symfony\Component\HttpFoundation\InputBag;
 
 /**
  * The kind of items you can have in the database for a team
+ * TODO rename ResourcesTemplates
  */
 final class ItemsTypes extends AbstractTemplateEntity
 {
     use RandomColorTrait;
+    use InsertTagsTrait;
 
     public EntityType $entityType = EntityType::ItemsTypes;
 
     #[Override]
     public function create(
-        ?int $template = -1,
         ?string $title = null,
         ?string $body = null,
         ?DateTimeImmutable $date = null,
@@ -56,23 +48,13 @@ final class ItemsTypes extends AbstractTemplateEntity
         ?int $customId = null,
         ?string $metadata = null,
         int $rating = 0,
-        ?int $contentType = null,
-        bool $forceExpTpl = false,
-        string $defaultTemplateHtml = '',
-        string $defaultTemplateMd = '',
-        // specific to items_types
-        ?string $color = null,
+        BodyContentType $contentType = BodyContentType::Html,
     ): int {
-        $this->canWriteOrExplode();
-
         $title = Filter::title($title ?? _('Default'));
         $defaultPermissions = BasePermissions::Team->toJson();
-        $color ??= $this->getRandomDarkColor();
-        $color = Check::color($color);
-        $contentType ??= $this->Users->userData['use_markdown'] === 1 ? AbstractEntity::CONTENT_MD : AbstractEntity::CONTENT_HTML;
 
-        $sql = 'INSERT INTO items_types(userid, title, body, team, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canread_target, canwrite_target, color, content_type, status, rating, metadata)
-            VALUES(:userid, :title, :body, :team, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canread_target, :canwrite_target, :color, :content_type, :status, :rating, :metadata)';
+        $sql = 'INSERT INTO items_types(userid, title, body, team, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canread_target, canwrite_target, category, content_type, status, rating, metadata)
+            VALUES(:userid, :title, :body, :team, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canread_target, :canwrite_target, :category, :content_type, :status, :rating, :metadata)';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':userid', $this->Users->userid, PDO::PARAM_INT);
         $req->bindValue(':title', $title);
@@ -84,107 +66,16 @@ final class ItemsTypes extends AbstractTemplateEntity
         $req->bindParam(':canwrite_is_immutable', $canwriteIsImmutable, PDO::PARAM_INT);
         $req->bindParam(':canread_target', $defaultPermissions);
         $req->bindParam(':canwrite_target', $defaultPermissions);
-        $req->bindParam(':color', $color);
-        $req->bindParam(':content_type', $contentType, PDO::PARAM_INT);
+        $req->bindParam(':category', $category);
+        $req->bindValue(':content_type', $contentType->value, PDO::PARAM_INT);
         $req->bindParam(':status', $status);
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
         $req->bindParam(':metadata', $metadata);
         $this->Db->execute($req);
+        $id = $this->Db->lastInsertId();
 
-        return $this->Db->lastInsertId();
-    }
+        $this->insertTags($tags, $id);
 
-    public function getDefault(): int
-    {
-        // there might be none, so create one if needed
-        if (empty($this->readAll())) {
-            return $this->create();
-        }
-        // there are no default items_types, so just pick the first one from the team
-        $sql = 'SELECT id FROM items_types WHERE team = :team LIMIT 1';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        return (int) $req->fetchColumn();
-    }
-
-    #[Override]
-    public function getQueryParams(?InputBag $query = null, int $limit = 128): QueryParamsInterface
-    {
-        return new BaseQueryParams(query: $query, orderby: Orderby::Ordering, limit: $limit, sort: Sort::Asc);
-    }
-
-    #[Override]
-    public function readAll(?QueryParamsInterface $queryParams = null): array
-    {
-        $queryParams ??= $this->getQueryParams();
-        $builder = new ItemsTypesSqlBuilder($this);
-        $sql = $builder->getReadSqlBeforeWhere(getTags: false);
-        $sql .= ' WHERE 1=1';
-        // add the json permissions
-        $sql .= $builder->getCanFilter('canread');
-        $sql .= $queryParams->getSql();
-
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        return $req->fetchAll();
-    }
-
-    #[Override]
-    public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int
-    {
-        // TODO: implement
-        throw new ImproperActionException('No duplicate action for resources categories.');
-    }
-
-    #[Override]
-    public function patch(Action $action, array $params): array
-    {
-        $this->canWriteOrExplode();
-        // items_types have no category, so allow for calling an update on it but ignore it here so it doesn't cause sql error with unknown column
-        unset($params['category']);
-        return parent::patch($action, $params);
-    }
-
-    /**
-     * Use our own function instead of SortableTrait to add the team param and permission check
-     */
-    public function updateOrdering(OrderingParams $params): void
-    {
-        $this->canWriteOrExplode();
-        // we'll probably need to extract the ordering column and place it in a team related table
-        $sql = 'UPDATE items_types SET ordering = :ordering WHERE id = :id AND team = :team';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
-        foreach ($params->ordering as $ordering => $id) {
-            $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
-            $req->bindParam(':id', $id, PDO::PARAM_INT);
-            $this->Db->execute($req);
-        }
-    }
-
-    #[Override]
-    protected function getSqlBuilder(): SqlBuilderInterface
-    {
-        return new ItemsTypesSqlBuilder($this);
-    }
-
-    #[Override]
-    protected function canWrite(): bool
-    {
-        $team = new Teams($this->Users, $this->Users->team);
-        return $team->teamArr['users_canwrite_resources_categories'] === 1 || $this->Users->isAdmin;
-    }
-
-    protected function canWriteOrExplode(): void
-    {
-        if ($this->bypassWritePermission) {
-            return;
-        }
-        if (!$this->canWrite()) {
-            throw new ImproperActionException(_('Sorry, edition of resources templates has been disabled for users by your team Admin.'));
-        }
+        return $id;
     }
 }

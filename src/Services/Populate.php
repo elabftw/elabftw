@@ -32,6 +32,7 @@ use League\Flysystem\Filesystem as Fs;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\ResourcesCategories;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Tags;
 use Elabftw\Models\Teams;
@@ -178,21 +179,30 @@ final class Populate
                 }
             }
 
-            // add Resources Categories (items types)
+            $ResourcesCategories = new ResourcesCategories($Teams);
+
+            // add Resources Categories
+            foreach ($team['resources_categories'] ?? array() as $entry) {
+                $id = $ResourcesCategories->create($entry['name'], $entry['color'] ?? $this->getRandomDarkColor());
+                $this->output->writeln(sprintf('├ + resource category: %s (id: %d in team: %d)', $entry['name'], $id, $teamid));
+            }
+
+            // add Resources Templates (items types)
             foreach ($team['items_types'] ?? array() as $items_types) {
                 $Admin = $this->getRandomUserInTeam($teamid, admin: 1);
                 $ItemsTypes = new ItemsTypes($Admin);
                 $defaultPermissions = BasePermissions::Team->toJson();
+                $category = array_key_exists('category', $items_types) ? $ResourcesCategories->getIdempotentIdFromTitle($items_types['category']) : null;
                 $itemTypeId = $ItemsTypes->create(
                     title: $items_types['name'],
-                    color: $items_types['color'] ?? $this->getRandomDarkColor(),
                     body: $items_types['template'] ?? '',
+                    category: $category,
                     date: new DateTimeImmutable($this->faker->dateTimeBetween('-5 years')->format('Ymd')),
                     canread: $defaultPermissions,
                     canwrite: $defaultPermissions,
                     metadata: $items_types['metadata'] ?? '{}',
                 );
-                $this->output->writeln(sprintf('├ + resource category: %s (id: %d in team: %d)', $items_types['name'], $itemTypeId, $teamid));
+                $this->output->writeln(sprintf('├ + resource template: %s (id: %d in team: %d)', $items_types['name'], $itemTypeId, $teamid));
             }
 
             // generate random experiments before the defined ones
@@ -249,10 +259,10 @@ final class Populate
                 shuffle($team['items']);
                 foreach ($team['items'] as $item) {
                     $user = $this->getRandomUserInTeam($teamid);
-                    $ItemsTypes = new ItemsTypes($user);
+                    $ResourcesCategories = new ResourcesCategories($Teams);
                     $Items = new Items($user);
                     $id = $Items->create(
-                        template: $ItemsTypes->getIdempotentIdFromTitle($item['category'] ?? $ItemsTypes->getDefault()),
+                        category: $ResourcesCategories->getIdempotentIdFromTitle($item['category'] ?? 'Default'),
                         title: $item['title'],
                         body: $item['body'] ?? '',
                         date: new DateTimeImmutable($this->faker->dateTimeBetween('-5 years')->format('Ymd')),
@@ -325,14 +335,9 @@ final class Populate
         if ($Entity instanceof Experiments) {
             $Category = new ExperimentsCategories($Teams);
             $Status = new ExperimentsStatus($Teams);
-            $tpl = -1;
         } else {
-            $Category = new ItemsTypes($Entity->Users, bypassReadPermission: true, bypassWritePermission: true);
-            if (empty($Category->readAll())) {
-                $Category->create();
-            }
+            $Category = new ResourcesCategories($Teams);
             $Status = new ItemsStatus($Teams);
-            $tpl = (int) $Category->readAll()[0]['id'];
         }
         $categoryArr = $Category->readAll();
         $statusArr = $Status->readAll();
@@ -399,10 +404,10 @@ final class Populate
             'scientific literature',
         );
 
+        $category = empty($categoryArr) ? null : $this->faker->randomElement($categoryArr)['id'];
         for ($i = 0; $i < $iterations; $i++) {
             $id = $Entity->create(
-                template: $tpl,
-                category: $this->faker->randomElement($categoryArr)['id'],
+                category: $category,
                 status: $this->faker->randomElement($statusArr)['id'],
                 canread: $this->faker->randomElement($visibilityArr),
                 canwrite: $this->faker->randomElement($visibilityArr),

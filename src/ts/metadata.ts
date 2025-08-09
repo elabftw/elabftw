@@ -14,11 +14,11 @@ import { autoResize, Metadata } from './Metadata.class';
 import { ValidMetadata, ExtraFieldInputType } from './metadataInterfaces';
 import JsonEditorHelper from './JsonEditorHelper.class';
 import { JsonEditorActions } from './JsonEditorActions.class';
-import { Api } from './Apiv2.class';
+import { ApiC } from './api';
 import i18next from './i18n';
 import { merge } from 'lodash-es';
 import $ from 'jquery';
-import { Notification } from './Notifications.class';
+import { notify } from './notify';
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -30,7 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  const notify = new Notification();
   // add extra fields elements from metadata json
   const JsonEditorHelperC = new JsonEditorHelper(entity);
   // only run if there is the json-editor block
@@ -241,7 +240,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('fieldLoaderModal').addEventListener('click', async event => {
     const el = (event.target as HTMLElement);
-    const ApiC = new Api();
     // LOAD METADATA FROM TEMPLATE/CATEGORY
     if (el.matches('[data-action="load-metadata-from"]')) {
       const select = (document.getElementById(`loadMetadataSelect_${el.dataset.target}`) as HTMLSelectElement);

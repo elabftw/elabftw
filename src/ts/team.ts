@@ -10,7 +10,7 @@ import { Malle, InputType, SelectOptions } from '@deltablot/malle';
 import 'jquery-ui/ui/widgets/autocomplete';
 import 'bootstrap/js/src/modal.js';
 import { ProcurementState } from './interfaces';
-import { Api } from './Apiv2.class';
+import { ApiC } from './api';
 import { reloadElements } from './misc';
 import Tab from './Tab.class';
 
@@ -21,8 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const TabMenu = new Tab();
   TabMenu.init(document.querySelector('.tabbed-menu'));
-
-  const ApiC = new Api();
 
   // transform the enum into the kind of object we want
   const procurementStateArr: SelectOptions[] = Object.keys(ProcurementState)

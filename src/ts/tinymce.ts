@@ -64,7 +64,7 @@ import '../js/tinymce-langs/zh_CN.js';
 import '../js/tinymce-plugins/mention/plugin.js';
 import { EntityType, Model } from './interfaces';
 import { getEntity, reloadElements, escapeExtendedQuery, updateEntityBody, getNewIdFromPostRequest } from './misc';
-import { Api } from './Apiv2.class';
+import { ApiC } from './api';
 import { isSortable } from './TableSorting.class';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
@@ -164,7 +164,6 @@ const imagesUploadHandler = (blobInfo: TinyMCEBlobInfo) => new Promise((resolve,
       }).then(resp => {
         const newId = getNewIdFromPostRequest(resp);
         // fetch info about the newly created upload
-        const ApiC = new Api();
         return ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}/${newId}`);
       }).then(json => {
         resolve(`app/download.php?f=${json.long_name}&storage=${json.storage}`);
@@ -199,7 +198,7 @@ export function getTinymceBaseConfig(page: string): object {
   let plugins = 'accordion advlist anchor autolink autoresize table searchreplace code fullscreen insertdatetime charmap lists save image media link pagebreak codesample template mention visualblocks visualchars emoticons preview';
   let toolbar1 = 'custom-save preview | undo redo | styles fontsize bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap emoticons adddate | codesample | link | sort-table';
   let removedMenuItems = 'newdocument, image, anchor';
-  if (page === 'edit' || page === 'ucp') {
+  if (page === 'edit') {
     plugins += ' autosave';
     // add Image button in toolbar
     toolbar1 = toolbar1.replace('link |', 'link image |');
@@ -207,7 +206,6 @@ export function getTinymceBaseConfig(page: string): object {
     removedMenuItems = 'newdocument, anchor';
   }
   const entity = getEntity();
-  const ApiC = new Api();
 
   return {
     selector: '.mceditable',
@@ -254,7 +252,7 @@ export function getTinymceBaseConfig(page: string): object {
       });
     },
     contextmenu: false,
-    paste_data_images: Boolean(page === 'edit' || page === 'ucp'),
+    paste_data_images: Boolean(page === 'edit'),
     // use the preprocessing function on paste event to fix the bgcolor attribute from libreoffice into proper background-color style
     paste_preprocess: function(plugin, args) {
       args.content = args.content.replaceAll('bgcolor="', 'style="background-color:');
@@ -353,7 +351,10 @@ export function getTinymceBaseConfig(page: string): object {
       });
       // set default line height to 1 (is 1.4 for some reason)
       editor.on('init', () => {
-        editor.execCommand('lineheight', false, '1');
+        // doing this will give focus to the editor, which is OK for entities but on admin page it's not wanted, so avoid it
+        if (page !== 'admin' && page !== 'sysconfig') {
+          editor.execCommand('lineheight', false, '1');
+        }
       });
       // Hook into the blur event - Finalize potential changes to images if user clicks outside of editor
       editor.on('blur', () => {
@@ -417,7 +418,7 @@ export function getTinymceBaseConfig(page: string): object {
       editor.addShortcut('ctrl+shift+=', 'superscript', () => editor.execCommand('superscript'));
 
       // on edit page there is an autosave triggered
-      if (page === 'edit' || page === 'ucp') {
+      if (page === 'edit') {
         editor.on('keydown', () => clearTimeout(typingTimer));
         editor.on('keyup', () => {
           clearTimeout(typingTimer);

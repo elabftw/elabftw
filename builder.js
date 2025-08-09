@@ -77,7 +77,6 @@ module.exports = (env) => {
         'prismjs/components/prism-tcl.js',
         'prismjs/components/prism-vhdl.js',
         'prismjs/components/prism-yaml.js',
-        './src/js/vendor/keymaster.js',
       ],
     },
     // uncomment this to find where the error is coming from
@@ -159,14 +158,6 @@ module.exports = (env) => {
           loader: 'expose-loader',
           options: {
             exposes: ['$', 'jQuery'],
-          },
-        },
-        // expose key for keymaster globally
-        {
-          test: /keymaster.js/,
-          loader: 'expose-loader',
-          options: {
-            exposes: 'key',
           },
         }
       ]

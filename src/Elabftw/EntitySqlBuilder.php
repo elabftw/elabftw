@@ -20,6 +20,7 @@ use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\AbstractTemplateEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
+use Elabftw\Models\Templates;
 use Elabftw\Services\UsersHelper;
 use Override;
 
@@ -28,7 +29,7 @@ use function array_unique;
 use function implode;
 use function sprintf;
 
-class EntitySqlBuilder implements SqlBuilderInterface
+final class EntitySqlBuilder implements SqlBuilderInterface
 {
     protected array $selectSql = array();
 
@@ -122,6 +123,7 @@ class EntitySqlBuilder implements SqlBuilderInterface
                 entity.custom_id,
                 entity.date,
                 entity.category,
+                entity.status,
                 entity.team,
                 entity.rating,
                 entity.userid,
@@ -154,7 +156,7 @@ class EntitySqlBuilder implements SqlBuilderInterface
                 ON (categoryt.id = entity.category)',
             $this->entity->entityType === EntityType::Experiments || $this->entity->entityType === EntityType::Templates
                 ? 'experiments_categories'
-                : 'items_types',
+                : 'items_categories',
         );
     }
 
@@ -168,7 +170,7 @@ class EntitySqlBuilder implements SqlBuilderInterface
     {
         $this->selectSql[] = 'statust.title AS status_title,
             statust.color AS status_color';
-        $this->joinsSql[] = 'LEFT JOIN %1$s_status AS statust
+        $this->joinsSql[] = 'LEFT JOIN ' . $this->getStatusTable() . ' AS statust
             ON (statust.id = entity.status)';
     }
 
@@ -370,6 +372,14 @@ class EntitySqlBuilder implements SqlBuilderInterface
     protected function canUsers(string $can): string
     {
         return ":userid MEMBER OF (entity.$can->>'$.users')";
+    }
+
+    private function getStatusTable(): string
+    {
+        if ($this->entity instanceof Experiments || $this->entity instanceof Templates) {
+            return 'experiments_status';
+        }
+        return 'items_status';
     }
 
     private function tags(): void

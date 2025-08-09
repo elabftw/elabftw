@@ -7,16 +7,13 @@
  */
 import $ from 'jquery';
 import { Model } from './interfaces';
-import { Api } from './Apiv2.class';
 
 export default class SidePanel {
   panelId: string;
   model: Model;
-  api: Api;
 
   constructor(model: Model) {
     this.model = model;
-    this.api = new Api();
   }
 
   hide(): void {

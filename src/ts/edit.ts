@@ -10,15 +10,14 @@ import {
   getEntity,
   getNewIdFromPostRequest,
   reloadElements,
-  updateCatStat,
   updateEntityBody,
 } from './misc';
 import { Target, Model, Action } from './interfaces';
 import './doodle';
 import { getEditor } from './Editor.class';
 import $ from 'jquery';
-import { Api } from './Apiv2.class';
-import { Notification } from './Notifications.class';
+import { ApiC } from './api';
+import { notify } from './notify';
 import { Uploader } from './uploader';
 import { clearLocalStorage } from './localStorage';
 
@@ -27,8 +26,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (document.getElementById('info')?.dataset.page !== 'edit') {
     return;
   }
-
-  const ApiC = new Api();
 
   const entity = getEntity();
 
@@ -85,7 +82,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       // fetch the category from the current value of select, as it might be different from the one on page load
       const category = (document.getElementById('categoryBtn') as HTMLButtonElement).dataset.id;
       if (category === '0') {
-        (new Notification()).error('error-no-category');
+        notify.error('error-no-category');
         return;
       }
       const inputEl = document.getElementById('custom_id_input') as HTMLInputElement;
@@ -204,11 +201,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         editor.setContent('<pre>' + fileContent.replace(/[<>]/g, char => specialChars[char]) + '</pre>');
       });
     }
-  });
-
-  // CATEGORY SELECT
-  $(document).on('change', '.catstatSelect', function() {
-    updateCatStat($(this).data('target'), entity, String($(this).val()));
   });
 
   // REPLACE UPLOADED FILE

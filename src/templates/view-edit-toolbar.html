@@ -156,7 +156,7 @@
   {% include 'back-to-previous.html' %}
   {# for templates: create from button #}
   {% if Entity.entityType.value == 'experiments_templates' or Entity.entityType.value == 'items_types' %}
-    <a data-action='create-entity' data-type='experiments' data-tplid='{{ Entity.id }}' href='#' class='btn hl-hover-gray p-2 lh-normal border-0' title='{{ 'Create experiment from template'|trans }}' aria-label='{{ 'Create experiment from template'|trans }}'>
+  <a data-action='create-entity' data-type='{{ Entity.entityType.value == 'experiments_templates' ? 'experiments' : 'items' }}' data-tplid='{{ Entity.id }}' href='#' class='btn hl-hover-gray p-2 lh-normal border-0' title='{{ 'Create entry from template'|trans }}' aria-label='{{ 'Create entry from template'|trans }}'>
       <i class='color-blue fas fa-file-circle-plus fa-fw'></i>
     </a>
   {% endif %}

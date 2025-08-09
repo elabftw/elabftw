@@ -2,7 +2,6 @@ describe('Experiments', () => {
   beforeEach(() => {
     cy.login();
   });
-
   const entityEdit = () => {
     cy.url().should('include', 'mode=edit');
 
@@ -55,7 +54,7 @@ describe('Experiments', () => {
       cy.log(url);
       cy.get('[data-target="duplicateModal"]').click()
         .get('[data-action="duplicate-entity"]').click();
-      cy.get('#documentTitle').should('be.visible').should('contain', 'Untitled I');
+      cy.get('#documentTitle').should('be.visible').should('contain', ' I');
       // destroy the duplicated entity now
       entityDestroy();
       // go back to the original entity
@@ -81,11 +80,24 @@ describe('Experiments', () => {
     cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
   };
 
+  it('Create a resource category', () => {
+    const catname = 'Justice';
+    cy.visit('/resources-categories.php');
+    cy.htmlvalidate();
+    cy.get('[data-target="createCatStatModal"]').click();
+    // the wait is necessary or it doesn't have the time to type all
+    cy.get('#createCatStatName').wait(500).type(catname);
+    cy.get('[data-action="create-catstat"]').click();
+    //cy.get('#catStatDiv').should('contain', catname);
+  });
+
   it('Create and edit an experiment', () => {
     cy.visit('/experiments.php');
     cy.htmlvalidate();
     cy.contains('Create').click();
-    cy.get('#createModal_experiments').should('be.visible').should('contain', 'Default template').contains('Default template').click();
+    cy.get('#createModal_experiments').should('be.visible').should('contain', 'No category').contains('No category').click();
+    cy.get('#askTitleModalTitleInput').should('be.visible').wait(500).type('Cypress created experiment').click();
+    cy.get('#askTitleButton').click();
     entityCatStat('Not set', 'Demo', 'Success');
     entityEdit();
     entityComment();
@@ -98,8 +110,10 @@ describe('Experiments', () => {
     cy.visit('/database.php');
     cy.htmlvalidate();
     cy.contains('Create').click();
-    cy.get('#createModal_database').should('be.visible').should('contain', 'Microscope').contains('Microscope').click();
-    entityCatStat('Microscope', 'Yeast', 'In stock');
+    cy.get('#createModal_database').should('be.visible').should('contain', 'No category').contains('No category').click();
+    cy.get('#askTitleModalTitleInput').should('be.visible').wait(500).type('Cypress created resource').click();
+    cy.get('#askTitleButton').click();
+    entityCatStat('Not set', 'Justice', 'In stock');
     entityEdit();
     entityComment();
     entityDuplicate();

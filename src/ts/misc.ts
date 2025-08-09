@@ -10,12 +10,12 @@ import { Action, CheckableItem, EntityType, Entity, Model, Target } from './inte
 import { DateTime } from 'luxon';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 import tinymce from 'tinymce/tinymce';
-import { Notification } from './Notifications.class';
+import { notify } from './notify';
 import TableSorting from './TableSorting.class';
 declare const MathJax: MathJaxObject;
 import $ from 'jquery';
 import i18next from './i18n';
-import { Api } from './Apiv2.class';
+import { ApiC } from './api';
 import { getEditor } from './Editor.class';
 import TomSelect from 'tom-select/base';
 import TomSelectCheckboxOptions from 'tom-select/dist/esm/plugins/checkbox_options/plugin.js';
@@ -57,7 +57,6 @@ export function relativeMoment(): void {
 // and POST an update request
 // select will be on change, text inputs on blur
 function triggerHandler(event: Event, el: HTMLInputElement): void {
-  const ApiC = new Api();
   event.preventDefault();
   el.classList.remove('is-invalid');
   // for a checkbox element, look at the checked attribute, not the value
@@ -243,7 +242,7 @@ export function makeSortableGreatAgain(): void {
         },
         body: JSON.stringify(params),
       }).then(resp => resp.json()).then(json => {
-        (new Notification()).response(json);
+        notify.response(json);
       });
     },
   });
@@ -301,6 +300,7 @@ export async function reloadElements(elementIds: string[]): Promise<void> {
     listenTrigger(elementId);
   });
   (new TableSorting()).init();
+  makeSortableGreatAgain();
 }
 
 /**
@@ -332,7 +332,6 @@ export function adjustHiddenState(): void {
 // AUTOCOMPLETE
 export function addAutocompleteToLinkInputs(): void {
   const cache = {};
-  const ApiC = new Api();
   [{
     selectElid: 'addLinkCatFilter',
     itemType: EntityType.Item,
@@ -389,7 +388,6 @@ export function addAutocompleteToLinkInputs(): void {
 }
 
 export function addAutocompleteToTagInputs(): void {
-  const ApiC = new Api();
   $('[data-autocomplete="tags"]').autocomplete({
     source: function(request: Record<string, string>, response: (data) => void): void {
       ApiC.getJson(`${Model.Team}/current/${Model.Tag}?q=${request.term}`).then(json => {
@@ -404,7 +402,6 @@ export function addAutocompleteToTagInputs(): void {
 }
 
 export function addAutocompleteToCompoundsInputs(): void {
-  const ApiC = new Api();
   $('[data-autocomplete="compounds"]').autocomplete({
     source: function(request: Record<string, string>, response: (data) => void): void {
       ApiC.getJson(`${Model.Compounds}?q=${request.term}`).then(json => {
@@ -419,7 +416,6 @@ export function addAutocompleteToCompoundsInputs(): void {
 }
 
 export function addAutocompleteToExtraFieldsKeyInputs(): void {
-  const ApiC = new Api();
   $('[data-autocomplete="extraFieldsKeys"]').autocomplete({
     appendTo: '#autocompleteAnchorDiv_extra_fields_keys',
     source: function(request: Record<string, string>, response: (data) => void): void {
@@ -438,7 +434,7 @@ export function addAutocompleteToExtraFieldsKeyInputs(): void {
 export async function updateCatStat(target: string, entity: Entity, value: string): Promise<string> {
   const params = {};
   params[target] = value;
-  const newEntity = await (new Api()).patch(`${entity.type}/${entity.id}`, params).then(resp => resp.json());
+  const newEntity = await ApiC.patch(`${entity.type}/${entity.id}`, params).then(resp => resp.json());
   // return a string separated with | with the id first so we can use it in data-id of new element
   let response = value + '|';
   return response += (target === 'category' ? newEntity.category_color : newEntity.status_color) ?? 'bdbdbd';
@@ -554,7 +550,6 @@ export function escapeExtendedQuery(searchTerm: string): string {
 
 export function replaceWithTitle(): void {
   document.querySelectorAll('[data-replace-with-title="true"]').forEach((el: HTMLElement) => {
-    const ApiC = new Api();
     // mask error notifications
     ApiC.notifOnError = false;
     // view mode is innerText
@@ -603,7 +598,6 @@ export async function saveStringAsFile(filename: string, content: string|Promise
 export async function updateEntityBody(): Promise<void> {
   const editor = getEditor();
   const entity = getEntity();
-  const ApiC = new Api();
   return ApiC.patch(`${entity.type}/${entity.id}`, {body: editor.getContent()}).then(response => response.json()).then(json => {
     if (editor.type === 'tiny') {
       // set the editor as non dirty so we can navigate out without a warning to clear
@@ -748,7 +742,6 @@ export async function populateUserModal(user: Record<string, string|number>) {
   if (!manageTeamsDiv) {
     return;
   }
-  const ApiC = new Api();
   const requester = await ApiC.getJson('users/me');
   const userTeams = JSON.parse(String(user.teams));
   // set a dataset.userid on the modal, that's where all js code will fetch current user, instead of having to set it on every elementel.dataset.
@@ -849,6 +842,7 @@ function generateIsSomethingElement(what: string, team: Record<string, string|nu
   return isSomething;
 }
 
+// from https://www.paulirish.com/2009/random-hex-color-code-snippets/
 export function getRandomColor(): string {
   return `#${Math.floor(Math.random()*16777215).toString(16)}`;
 }

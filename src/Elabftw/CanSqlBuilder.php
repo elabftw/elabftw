@@ -35,8 +35,7 @@ final class CanSqlBuilder
         $sql .= sprintf(
             ' AND (%s)',
             implode(' OR ', array(
-                $this->canBasePub(),
-                $this->canBaseOrg(),
+                $this->canBasePubOrg(),
                 $this->canBaseTeam(),
                 $this->canBaseUser(),
                 $this->canBaseUserOnly(),
@@ -50,25 +49,14 @@ final class CanSqlBuilder
     }
 
     /**
-     * base pub filter
+     * base pub / org filter
      */
-    protected function canBasePub(): string
+    protected function canBasePubOrg(): string
     {
         return sprintf(
-            "entity.%s->'$.base' = %d",
+            "entity.%s->'$.base' IN (%d, %d)",
             $this->accessType->value,
             BasePermissions::Full->value,
-        );
-    }
-
-    /**
-     * base org filter
-     */
-    protected function canBaseOrg(): string
-    {
-        return sprintf(
-            "entity.%s->'$.base' = %d",
-            $this->accessType->value,
             BasePermissions::Organization->value,
         );
     }

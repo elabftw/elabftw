@@ -26,7 +26,6 @@ final class TeamParam extends ContentParams
             'announcement', 'newcomer_banner',
             'onboarding_email_subject',
             'onboarding_email_body' => $this->getNullableContent(),
-            'common_template', 'common_template_md' => $this->getBody(),
             'user_create_tag',
             'force_exp_tpl',
             'users_canwrite_experiments_categories',

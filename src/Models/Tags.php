@@ -76,7 +76,7 @@ final class Tags extends AbstractRest
      * @param int $newId The id of the new experiment/item that will receive the tags
      * @param bool $toExperiments convert to experiments type (when creating from tpl)
      */
-    public function copyTags(int $newId, bool $toExperiments = false): void
+    public function copyTags(int $newId, bool $toExperiments = false, bool $toItems = false): void
     {
         $tags = $this->readAll();
         $insertSql = 'INSERT INTO tags2entity (item_id, item_type, tag_id) VALUES (:item_id, :item_type, :tag_id)';
@@ -85,6 +85,10 @@ final class Tags extends AbstractRest
         // an experiment template transforms into an experiment
         if ($toExperiments) {
             $entityType = EntityType::Experiments;
+        }
+        // same with itemstypes -> items
+        if ($toItems) {
+            $entityType = EntityType::Items;
         }
 
         foreach ($tags as $tag) {

@@ -5,24 +5,14 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-
 import JsonEditorHelper from './JsonEditorHelper.class';
 import { saveStringAsFile } from './misc';
 import 'jsoneditor/dist/jsoneditor.min.css';
-import { Notification } from './Notifications.class';
-
-const notify = new Notification();
+import { notify } from './notify';
 
 export class JsonEditorActions {
 
   init(JsonEditorHelperC: JsonEditorHelper, editable: boolean) {
-    // fix the keymaster shortcut library interfering with the editor
-    key.filter = (event): boolean => {
-      const tagName = (event.target || event.srcElement).tagName;
-      return !(tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA' || (event.target || event.srcElement).hasAttribute('contenteditable'));
-    };
-
     JsonEditorHelperC.init(editable);
 
     const displayMainTextSliderInput = document.getElementById('displayMainTextSliderInput') as HTMLInputElement;

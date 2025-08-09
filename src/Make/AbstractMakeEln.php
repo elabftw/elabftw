@@ -24,6 +24,8 @@ abstract class AbstractMakeEln extends AbstractMakeZip
 {
     protected const string HASH_ALGO = 'sha256';
 
+    protected const int INTERNAL_ELN_VERSION = 102;
+
     protected string $extension = '.eln';
 
     protected array $authors = array();
@@ -50,13 +52,13 @@ abstract class AbstractMakeEln extends AbstractMakeZip
         $this->root = $this->creationDateTime->format('Y-m-d-His') . '-export';
         // initialize the dataArr that contains the full json-ld with the context and graph
         $this->dataArr = array(
-            '@context' => 'https://w3id.org/ro/crate/1.1/context',
+            '@context' => 'https://w3id.org/ro/crate/1.2/context',
             '@graph' => array(
                 array(
                     '@id' => 'ro-crate-metadata.json',
                     '@type' => 'CreativeWork',
                     'about' => array('@id' => './'),
-                    'conformsTo' => array('@id' => 'https://w3id.org/ro/crate/1.1'),
+                    'conformsTo' => array('@id' => 'https://w3id.org/ro/crate/1.2'),
                     'dateCreated' => $this->creationDateTime->format(DateTimeImmutable::ATOM),
                     'sdPublisher' => array('@id' => '#publisher'),
                     'version' => '1.0',

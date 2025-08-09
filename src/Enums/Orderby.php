@@ -41,7 +41,7 @@ enum Orderby: string
             self::Filesize => 'filesize',
             self::Id => 'entity.id',
             self::Lastchange => 'entity.modified_at',
-            self::Ordering => 'ordering',
+            self::Ordering => 'entity.ordering',
             self::Rating => 'entity.rating',
             self::Status => 'statust.title',
             self::Title => 'entity.title',

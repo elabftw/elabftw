@@ -88,6 +88,48 @@ final class DisplayParams extends BaseQueryParams
         );
     }
 
+    #[Override]
+    public function isFast(): bool
+    {
+        return !empty($this->fastq);
+    }
+
+    #[Override]
+    public function getFastq(): string
+    {
+        return $this->fastq;
+    }
+
+    #[Override]
+    public function getUserQuery(): string
+    {
+        return trim($this->queryString . ' ' . $this->extendedQuery);
+    }
+
+    #[Override]
+    public function hasUserQuery(): bool
+    {
+        return !empty($this->queryString) || !empty($this->extendedQuery);
+    }
+
+    #[Override]
+    public function getRelatedOrigin(): ?EntityType
+    {
+        return $this->relatedOrigin;
+    }
+
+    #[Override]
+    public function getFilterSql(): string
+    {
+        return $this->filterSql;
+    }
+
+    #[Override]
+    public function setSkipOrderPinned(bool $value): void
+    {
+        $this->skipOrderPinned = $value;
+    }
+
     /**
      * Adjust the settings based on the Request
      */

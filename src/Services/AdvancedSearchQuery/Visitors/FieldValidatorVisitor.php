@@ -206,9 +206,6 @@ final class FieldValidatorVisitor implements Visitor
 
     private function visitFieldTimestamped(string $searchTerm, string $affix, VisitorParameters $parameters): InvalidFieldCollector
     {
-        if ($parameters->getEntityType() !== 'experiments') {
-            return new InvalidFieldCollector(array('timestamped: is only allowed when searching in experiments.'));
-        }
         return new InvalidFieldCollector();
     }
 

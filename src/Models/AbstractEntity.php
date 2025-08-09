@@ -365,10 +365,15 @@ abstract class AbstractEntity extends AbstractRest
         // add the json permissions
         $sql .= $EntitySqlBuilder->getCanFilter($can);
 
+        // dirty hack so we don't take the state query param into account if state is present in extended query
+        $stateSql = $displayParams->getStatesSql('entity');
+        if (str_contains($this->extendedFilter, 'entity.state')) {
+            $stateSql = '';
+        }
         $sqlArr = array(
             $this->extendedFilter,
             $this->idFilter,
-            $displayParams->getStatesSql('entity'),
+            $stateSql,
             'GROUP BY id',
             $displayParams->getSql(),
         );

@@ -28,6 +28,7 @@ enum Fields: string
     case Locked = 'locked';
     case Owner = 'owner';
     case Rating = 'rating';
+    case State  = 'state';
     case Status = 'status';
     case Timestamped = 'timestamped';
     case Title = 'title';

@@ -22,7 +22,7 @@
     "@ag-grid-community/react": "^32.3.7",
     "@ag-grid-community/styles": "^32.3.7",
     "@deltablot/dropzone": "^7.3.0",
-    "@deltablot/malle": "^2.7.2",
+    "@deltablot/malle": "^2.8.0",
     "@fancyapps/fancybox": "^3.5.7",
     "@fullcalendar/bootstrap": "^6.1.17",
     "@fullcalendar/core": "^6.1.17",

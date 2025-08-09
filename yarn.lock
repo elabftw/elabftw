@@ -1436,10 +1436,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@deltablot/malle@npm:^2.7.2":
-  version: 2.7.2
-  resolution: "@deltablot/malle@npm:2.7.2"
-  checksum: 10c0/c757e29ca3c142fbe91a850c13f4dc977d2c92e77bb02ec825aa2e9d5586161ecec588e6dc8c2587647a194904e4fb93fa916e0c4e2903e0b622cfa7f0bf7d0b
+"@deltablot/malle@npm:^2.8.0":
+  version: 2.8.0
+  resolution: "@deltablot/malle@npm:2.8.0"
+  checksum: 10c0/0f6dad2c779d016917a29c3fdb0b4f5c3ba00f0540dc9022806fe513c802fd1af02523434acdfb57cb093a94986be9014c65128cfe24a4f59709352e6f4feb11
   languageName: node
   linkType: hard
 
@@ -5898,7 +5898,7 @@ __metadata:
     "@babel/preset-env": "npm:^7.27.2"
     "@babel/preset-react": "npm:^7.27.1"
     "@deltablot/dropzone": "npm:^7.3.0"
-    "@deltablot/malle": "npm:^2.7.2"
+    "@deltablot/malle": "npm:^2.8.0"
     "@eslint/eslintrc": "npm:^3.3.1"
     "@eslint/js": "npm:^9.27.0"
     "@fancyapps/fancybox": "npm:^3.5.7"

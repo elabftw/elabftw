@@ -298,6 +298,23 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
     statusEndpoint = `${Model.Team}/current/experiments_status`;
   }
 
+
+  // this is a cache for category or status for malle
+  let optionsPromise: Promise<SelectOptions[]> | null = null;
+
+  const getCatStatArr = (endpoint: string): Promise<SelectOptions[]> => {
+    // Memoize so we only fetch once per page load
+    if (!optionsPromise) {
+      optionsPromise = ApiC.getJson(endpoint)
+        .then(json => {
+          const arr = Array.from(json) as Status[];
+          arr.unshift(notsetOpts);
+          return arr as SelectOptions[];
+        });
+    }
+    return optionsPromise;
+  };
+
   // MALLEABLE STATUS
   new Malle({
     // use the after hook to add the colored circle before text
@@ -332,10 +349,7 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
     inputType: InputType.Select,
     selectOptionsValueKey: 'id',
     selectOptionsTextKey: 'title',
-    selectOptions: ApiC.getJson(statusEndpoint).then(json => Array.from(json)).then((statusArr: Array<Status>) => {
-      statusArr.unshift(notsetOpts);
-      return statusArr;
-    }),
+    selectOptions: () => getCatStatArr(statusEndpoint),
     listenOn: '.malleableStatus',
     returnedValueIsTrustedHtml: false,
     submit : i18next.t('save'),
@@ -361,7 +375,7 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
     inputType: InputType.Select,
     selectOptionsValueKey: 'id',
     selectOptionsTextKey: 'title',
-    selectOptions: ApiC.getJson(categoryEndpoint).then(json => [notsetOpts, ...Array.from(json)]),
+    selectOptions: () => getCatStatArr(categoryEndpoint),
     listenOn: '.malleableCategory',
     returnedValueIsTrustedHtml: false,
     submit : i18next.t('save'),

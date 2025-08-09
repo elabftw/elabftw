@@ -988,18 +988,6 @@ const clickHandler = (event: MouseEvent) => {
   } else if (el.matches('[data-action="destroy-notif"]')) {
     ApiC.delete(`${Model.User}/me/${Model.Notification}`).then(() => reloadElements(['navbarNotifDiv']));
 
-  } else if (el.matches('[data-action="export-user"]')) {
-    let source: string;
-    // profile page will set this attribute on the action button
-    if (el.dataset.userid) {
-      source = el.dataset.userid;
-    } else {
-      // admin page will provide it from a select element
-      source = (document.getElementById('userExport') as HTMLSelectElement).value;
-    }
-    const format = (document.getElementById('userExportFormat') as HTMLSelectElement).value;
-    window.location.href = `make.php?format=${format}&owner=${source}&type=experiments`;
-
   } else if (el.matches('[data-query]')) {
     const url = new URL(window.location.href);
     // query format: order-sort

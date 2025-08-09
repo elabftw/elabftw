@@ -129,7 +129,12 @@ const clickHandler = (event: MouseEvent) => {
   } else if (el.matches('[data-action="export-category"]')) {
     const source = (document.getElementById('categoryExport') as HTMLSelectElement).value;
     const format = (document.getElementById('categoryExportFormat') as HTMLSelectElement).value;
-    window.location.href = `make.php?format=${format}&category=${source}&type=items`;
+    window.location.href = `make.php?format=${encodeURIComponent(format)}&category=${encodeURIComponent(source)}&type=items`;
+  // EXPORT USER EXPERIMENTS
+  } else if (el.matches('[data-action="export-user"]')) {
+    const source = (document.getElementById('userExport') as HTMLSelectElement).value;
+    const format = (document.getElementById('userExportFormat') as HTMLSelectElement).value;
+    window.location.href = `make.php?format=${encodeURIComponent(format)}&owner=${encodeURIComponent(source)}&type=experiments`;
 
   // ADD TAG
   } else if (el.matches('[data-action="admin-add-tag"]')) {
@@ -148,7 +153,7 @@ const clickHandler = (event: MouseEvent) => {
   } else if (el.matches('[data-action="export-scheduler"]')) {
     const from = (document.getElementById('schedulerDateFrom') as HTMLSelectElement).value;
     const to = (document.getElementById('schedulerDateTo') as HTMLSelectElement).value;
-    window.location.href = `make.php?format=schedulerReport&start=${from}&end=${to}`;
+    window.location.href = `make.php?format=schedulerReport&start=${encodeURIComponent(from)}&end=${encodeURIComponent(to)}`;
   // PATCH ONBOARDING EMAIL
   } else if (el.matches('[data-action="patch-onboarding-email"]')) {
     const key = 'onboarding_email_body';

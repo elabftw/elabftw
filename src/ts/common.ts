@@ -256,7 +256,8 @@ new Malle({
 }).listen();
 
 // only on entity page
-if (entity.type !== EntityType.Other) {
+const pageMode = new URLSearchParams(document.location.search).get('mode');
+if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'edit')) {
   // MALLEABLE ENTITY TITLE
   new Malle({
     after: (original, _, value) => {

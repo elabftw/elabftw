@@ -352,7 +352,7 @@ export function getTinymceBaseConfig(page: string): object {
       // set default line height to 1 (is 1.4 for some reason)
       editor.on('init', () => {
         // doing this will give focus to the editor, which is OK for entities but on admin page it's not wanted, so avoid it
-        if (page !== 'admin') {
+        if (page !== 'admin' && page !== 'sysconfig') {
           editor.execCommand('lineheight', false, '1');
         }
       });

@@ -5,6 +5,15 @@
   "directories": {
     "test": "tests"
   },
+  "browserslist": [
+    "last 2 Chrome versions",
+    "last 2 Firefox versions",
+    "last 2 Edge versions",
+    "last 2 Safari versions",
+    "not dead",
+    "not ie <= 99",
+    "not op_mini all"
+  ],
   "dependencies": {
     "3dmol": "^2.4.2",
     "@ag-grid-community/client-side-row-model": "^32.3.7",

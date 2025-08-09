@@ -5923,7 +5923,7 @@ __metadata:
     immutable: "npm:^5.1.2"
     jquery: "npm:^3.7.1"
     jquery-ui: "npm:^1.14.1"
-    jsoneditor: "npm:^10.2.0"
+    jsoneditor: "npm:^10.3.0"
     ketcher-core: "npm:^3.0.1"
     ketcher-react: "npm:^3.0.1"
     lodash-es: "npm:^4.17.21"
@@ -7931,9 +7931,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsoneditor@npm:^10.2.0":
-  version: 10.2.0
-  resolution: "jsoneditor@npm:10.2.0"
+"jsoneditor@npm:^10.3.0":
+  version: 10.3.0
+  resolution: "jsoneditor@npm:10.3.0"
   dependencies:
     ace-builds: "npm:^1.36.2"
     ajv: "npm:^6.12.6"
@@ -7943,7 +7943,7 @@ __metadata:
     jsonrepair: "npm:^3.8.1"
     picomodal: "npm:^3.0.0"
     vanilla-picker: "npm:^2.12.3"
-  checksum: 10c0/6e5700fc0a86b65363c3513e92f0b5de9b269f2f11976fab1501c848db82f2403d3a6301be836af87b9fc0b3cb6e76b91526f079e1a37a27eedb73801e5af6c2
+  checksum: 10c0/ad6ea170cf9b1b20c71f8a8bc08b9a46e277e21e03094c90ae811324e020397e8d0912d3fc803958fc23c7e8f1fcc4f20ee47e4f07bc2e3d4c68c3c435700c69
   languageName: node
   linkType: hard
 

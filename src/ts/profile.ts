@@ -11,15 +11,37 @@ import Tab from './Tab.class';
 import { collectForm, relativeMoment, reloadElements } from './misc';
 import i18next from './i18n';
 
-document.addEventListener('DOMContentLoaded', () => {
-  if (window.location.pathname !== '/profile.php') {
-    return;
-  }
+const ApiC = new Api();
 
-  const ApiC = new Api();
+const clickHandler = (event: MouseEvent) => {
+  const el = (event.target as HTMLElement);
+  if (el.matches('[data-action="show-file-input"]')) {
+    document.getElementById('importFileInput').click();
+  }
+  // CREATE EXPORT
+  if (el.matches('[data-action="create-export"]')) {
+    const params = collectForm(document.getElementById('exportForm'));
+    const urlParams = new URLSearchParams(params as URLSearchParams);
+    ApiC.post('exports', {
+      experiments: urlParams.get('experiments'),
+      experiments_templates: urlParams.get('experiments_templates'),
+      items: urlParams.get('items'),
+      items_types: urlParams.get('items_types'),
+      format: urlParams.get('format'),
+      changelog: urlParams.get('changelog'),
+      pdfa: urlParams.get('pdfa'),
+      json: urlParams.get('json'),
+    }).then(() => reloadElements(['exportedFilesTable']).then(() => relativeMoment()));
+
+  // DESTROY EXPORT
+  } else if (el.matches('[data-action="destroy-export"]')) {
+    ApiC.delete(`exports/${el.dataset.id}`).then(() => reloadElements(['exportedFilesTable']).then(() => relativeMoment()));
+  }
+};
+
+if (window.location.pathname === '/profile.php') {
   const notify = new Notification();
-  const TabMenu = new Tab();
-  TabMenu.init(document.querySelector('.tabbed-menu'));
+  (new Tab()).init(document.querySelector('.tabbed-menu'));
 
   document.getElementById('importFileInput')?.addEventListener('change', async function(event) {
     const importOptionsDiv = document.getElementById('importOptionsDiv') as HTMLElement;
@@ -79,7 +101,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-
   document.getElementById('importFileForm')?.addEventListener('submit', function(event) {
     event.preventDefault();
     // start by making sure the result div is empty
@@ -119,30 +140,5 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  document.getElementById('container').addEventListener('click', event => {
-    const el = (event.target as HTMLElement);
-
-    if (el.matches('[data-action="show-file-input"]')) {
-      document.getElementById('importFileInput').click();
-    }
-    // CREATE EXPORT
-    if (el.matches('[data-action="create-export"]')) {
-      const params = collectForm(document.getElementById('exportForm'));
-      const urlParams = new URLSearchParams(params as URLSearchParams);
-      ApiC.post('exports', {
-        experiments: urlParams.get('experiments'),
-        experiments_templates: urlParams.get('experiments_templates'),
-        items: urlParams.get('items'),
-        items_types: urlParams.get('items_types'),
-        format: urlParams.get('format'),
-        changelog: urlParams.get('changelog'),
-        pdfa: urlParams.get('pdfa'),
-        json: urlParams.get('json'),
-      }).then(() => reloadElements(['exportedFilesTable']).then(() => relativeMoment()));
-
-    // DESTROY EXPORT
-    } else if (el.matches('[data-action="destroy-export"]')) {
-      ApiC.delete(`exports/${el.dataset.id}`).then(() => reloadElements(['exportedFilesTable']).then(() => relativeMoment()));
-    }
-  });
-});
+  document.getElementById('container').addEventListener('click', event => clickHandler(event));
+}

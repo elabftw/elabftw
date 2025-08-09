@@ -101,7 +101,6 @@ final class DownloadController implements ControllerInterface
             'image/jpeg',
             'image/png',
             'video/mp4',
-            'image/svg+xml',
             'text/plain',
         );
         if (!in_array($mime, $safeMimeTypes, true)) {

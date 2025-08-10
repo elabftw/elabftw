@@ -12,7 +12,7 @@ describe('Test links', () => {
     // link to an experiment
     cy.get('#addLinkExpInput').type('Testing');
     cy.get('.ui-menu-item-wrapper').first().click();
-    cy.get('button[aria-label="Add experiment link"]').click();
+    cy.get('button[aria-label="Add link to an experiment"]').click();
     cy.get('#experimentsLinksDiv').should('contain.text', 'Testing');
     cy.intercept('DELETE', '/api/v2/**').as('delete');
     cy.get('[data-action="destroy-link"]').first().click();

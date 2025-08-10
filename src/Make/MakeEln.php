@@ -13,12 +13,12 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 use DateTimeImmutable;
+use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Metadata;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AbstractEntity;
-use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\Users\Users;
@@ -230,7 +230,7 @@ class MakeEln extends AbstractMakeEln
             'temporal' => (new DateTimeImmutable($e['date'] ?? date('Y-m-d')))->format(DateTimeImmutable::ATOM),
             'name' => $e['title'],
             'encodingFormat' => ($e['content_type'] ?? 1) === 1 ? 'text/html' : 'text/markdown',
-            'url' => Config::fromEnv('SITE_URL') . '/' . $entity->entityType->toPage() . ($entity->entityType == EntityType::ItemsTypes ? '&' : '?') . 'mode=view&id=' . $e['id'],
+            'url' => Env::asUrl('SITE_URL') . '/' . $entity->entityType->toPage() . ($entity->entityType == EntityType::ItemsTypes ? '&' : '?') . 'mode=view&id=' . $e['id'],
             'genre' => $entity->entityType->toGenre(),
         );
         $datasetNode = self::addIfNotEmpty(

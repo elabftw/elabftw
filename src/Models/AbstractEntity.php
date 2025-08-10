@@ -18,6 +18,7 @@ use Elabftw\Elabftw\CreateUploadFromLocalFile;
 use Elabftw\Elabftw\CanSqlBuilder;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\EntitySqlBuilder;
+use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\TimestampResponse;
@@ -542,7 +543,7 @@ abstract class AbstractEntity extends AbstractRest
         $this->entityData['containers'] = $ContainersLinks->readAll();
         $this->entityData['sharelink'] = sprintf(
             '%s/%s?mode=view&id=%d%s',
-            Config::fromEnv('SITE_URL'),
+            Env::asUrl('SITE_URL'),
             $this->entityType->toPage(),
             $this->id,
             // add a share link

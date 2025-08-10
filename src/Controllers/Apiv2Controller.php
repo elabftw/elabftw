@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
+use Elabftw\Elabftw\Env;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\ApiEndpoint;
 use Elabftw\Enums\ApiSubModels;
@@ -226,7 +227,7 @@ final class Apiv2Controller extends AbstractApiController
             $this->reqBody['canwrite'] = (BasePermissions::tryFrom($this->Request->request->getInt('canwrite')) ?? BasePermissions::User)->toJson();
         }
         $id = $this->Model->postAction($this->action, $this->reqBody);
-        return new Response('', Response::HTTP_CREATED, array('Location' => sprintf('%s/%s%d', Config::fromEnv('SITE_URL'), $this->Model->getApiPath(), $id)));
+        return new Response('', Response::HTTP_CREATED, array('Location' => sprintf('%s/%s%d', Env::asUrl('SITE_URL'), $this->Model->getApiPath(), $id)));
     }
 
     private function getArray(): array
@@ -281,13 +282,13 @@ final class Apiv2Controller extends AbstractApiController
                 function () {
                     $Config = Config::getConfig();
                     $Fingerprinter = new NullFingerprinter();
-                    if (Config::boolFromEnv('USE_FINGERPRINTER')) {
-                        $proxy = Config::boolFromEnv('FINGERPRINTER_USE_PROXY') ? $Config->configArr['proxy'] : '';
-                        $httpGetter = new HttpGetter(new Client(), $proxy, $Config::boolFromEnv('DEV_MODE'));
-                        $Fingerprinter = new Fingerprinter($httpGetter, Config::fromEnv('FINGERPRINTER_URL'));
+                    if (Env::asBool('USE_FINGERPRINTER')) {
+                        $proxy = Env::asBool('FINGERPRINTER_USE_PROXY') ? $Config->configArr['proxy'] : '';
+                        $httpGetter = new HttpGetter(new Client(), $proxy, Env::asBool('DEV_MODE'));
+                        $Fingerprinter = new Fingerprinter($httpGetter, Env::asUrl('FINGERPRINTER_URL'));
                     }
                     return new Compounds(
-                        new HttpGetter(new Client(), $Config->configArr['proxy'], $Config::boolFromEnv('DEV_MODE')),
+                        new HttpGetter(new Client(), $Config->configArr['proxy'], Env::asBool('DEV_MODE')),
                         $this->requester,
                         $Fingerprinter,
                         $this->id,

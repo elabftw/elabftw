@@ -13,6 +13,7 @@ namespace Elabftw\Models;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
+use Elabftw\Elabftw\Env;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
@@ -29,7 +30,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
         // TODO-Config: move to a new Config::getDecrypted() method.
         // decrypt encrypted keys from config
         $encryptedColumns = array('smtp_password', 'ldap_password', 'ts_password', 'remote_dir_config');
-        $secretKey = Config::fromEnv('SECRET_KEY');
+        $secretKey = Env::asString('SECRET_KEY');
         foreach ($encryptedColumns as $column) {
             if (!empty($this->Config->configArr[$column])) {
                 $this->Config->configArr[$column] = Crypto::decrypt($this->Config->configArr[$column], Key::loadFromAsciiSafeString($secretKey));
@@ -98,7 +99,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
 
     public function testDsn(): void
     {
-        $this->Config->patch(Action::Update, array('smtp_password' => Crypto::encrypt($this->Config->configArr['smtp_password'], Key::loadFromAsciiSafeString($this->Config::fromEnv('SECRET_KEY')))));
+        $this->Config->patch(Action::Update, array('smtp_password' => Crypto::encrypt($this->Config->configArr['smtp_password'], Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY')))));
         $this->assertIsString($this->Config->getDsn());
     }
 

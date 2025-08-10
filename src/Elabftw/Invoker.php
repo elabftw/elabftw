@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Models\Config;
 use RuntimeException;
 
 final class Invoker
@@ -40,6 +39,6 @@ final class Invoker
 
     public function write(string $message): void
     {
-        fwrite($this->socket, sprintf('%s|%s', Config::fromEnv('INVOKER_PSK'), $message));
+        fwrite($this->socket, sprintf('%s|%s', Env::asString('INVOKER_PSK'), $message));
     }
 }

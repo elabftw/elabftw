@@ -14,6 +14,7 @@ namespace Elabftw\Services;
 
 use DateTimeImmutable;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
@@ -519,9 +520,9 @@ final class Populate
     private function dropAndInitDb(): void
     {
         $Db = Db::getConnection();
-        $Db->q('DROP database ' . Config::fromEnv('DB_NAME'));
-        $Db->q('CREATE database ' . Config::fromEnv('DB_NAME'));
-        $Db->q('USE ' . Config::fromEnv('DB_NAME'));
+        $Db->q('DROP database ' . Env::asString('DB_NAME'));
+        $Db->q('CREATE database ' . Env::asString('DB_NAME'));
+        $Db->q('USE ' . Env::asString('DB_NAME'));
 
         // load structure
         $Sql = new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql')));

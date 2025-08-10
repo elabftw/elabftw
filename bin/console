@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Elabftw\Commands;
 
 use Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException;
+use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Models\Config;
@@ -48,7 +49,7 @@ try {
         new Mailer(Transport::fromDsn($Config->getDsn())),
         $errorLogLogger,
         $Config->configArr['mail_from'],
-        $Config::boolFromEnv('DEMO_MODE'),
+        Env::asBool('DEMO_MODE'),
     );
 } catch (WrongKeyOrModifiedCiphertextException $e) {
     $logger->critical("It seems the SMTP password does not correspond to the current SECRET_KEY, and that is something that needs to be fixed. Try setting the 'smtp_password' to an empty string in the 'config' table: update config set conf_value = '' where conf_name = 'smtp_password';\nError message:\n" . $e->getMessage() . "\n");

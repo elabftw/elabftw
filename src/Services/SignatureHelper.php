@@ -14,9 +14,9 @@ namespace Elabftw\Services;
 
 use DateTimeImmutable;
 use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\MinisignKeys;
 use Elabftw\Enums\Meaning;
-use Elabftw\Models\Config;
 use Elabftw\Models\Users\Users;
 use ParagonIE\ConstantTime\Base64;
 
@@ -59,7 +59,7 @@ final class SignatureHelper
             'lastname' => $this->Users->userData['lastname'],
             'email' => $this->Users->userData['email'],
             'created_at' => (new DateTimeImmutable())->format(DateTimeImmutable::ATOM),
-            'site_url' => Config::fromEnv('SITE_URL'),
+            'site_url' => Env::asUrl('SITE_URL'),
             'created_by' => sprintf('eLabFTW %d', App::INSTALLED_VERSION_INT),
             'meaning' => $meaning->name,
         );

@@ -20,7 +20,6 @@ use Elabftw\Enums\MessageLevels;
 use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\ResourceNotFoundException;
-use Elabftw\Models\Config;
 use Elabftw\Models\Users\Users;
 
 use function is_array;
@@ -190,7 +189,7 @@ final class TwigFilters
         if (empty($encrypted)) {
             return '';
         }
-        return Crypto::decrypt($encrypted, Key::loadFromAsciiSafeString(Config::fromEnv('SECRET_KEY')));
+        return Crypto::decrypt($encrypted, Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY')));
     }
 
     public static function array2String(array $input, ?int $depth = null): string

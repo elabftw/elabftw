@@ -13,11 +13,11 @@ declare(strict_types=1);
 namespace Elabftw\Commands;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Models\ApiKeys;
-use Elabftw\Models\Config;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\UserParams;
@@ -57,7 +57,7 @@ final class Install extends Command
     {
         $Db = Db::getConnection();
 
-        $req = $Db->q('SELECT COUNT(*) AS cnt FROM information_schema.tables WHERE table_schema = "' . Config::fromEnv('DB_NAME') . '"');
+        $req = $Db->q('SELECT COUNT(*) AS cnt FROM information_schema.tables WHERE table_schema = "' . Env::asString('DB_NAME') . '"');
         $res = $req->fetch();
         if ((int) $res['cnt'] > 1 && !$input->getOption('reset')) {
             $output->writeln('<info>→ Database structure already present. Skipping initialization.</info>');
@@ -83,9 +83,9 @@ final class Install extends Command
 
         if ($input->getOption('reset')) {
             $output->writeln('<info>→ Resetting MySQL database...</info>');
-            $Db->q('DROP DATABASE ' . Config::fromEnv('DB_NAME'));
-            $Db->q('CREATE DATABASE ' . Config::fromEnv('DB_NAME') . ' CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci');
-            $Db->q('USE ' . Config::fromEnv('DB_NAME'));
+            $Db->q('DROP DATABASE ' . Env::asString('DB_NAME'));
+            $Db->q('CREATE DATABASE ' . Env::asString('DB_NAME') . ' CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci');
+            $Db->q('USE ' . Env::asString('DB_NAME'));
         }
 
         $output->writeln('<info>→ Initializing MySQL database...</info>');
@@ -111,7 +111,7 @@ final class Install extends Command
             $output->writeln('<info>✓ Sysadmin account successfully created.</info>');
             $output->writeln(sprintf('<info>→ Sysadmin API key: %d-%s</info>', $ApiKeys->keyId, $ApiKeys->key));
         } else {
-            $output->writeln('<info>→ Register your Sysadmin account here: ' . Config::fromEnv('SITE_URL') . '/register.php</info>');
+            $output->writeln('<info>→ Register your Sysadmin account here: ' . Env::asUrl('SITE_URL') . '/register.php</info>');
         }
         $output->writeln('<info>→ Subscribe to the low volume newsletter to stay informed about new releases: http://eepurl.com/bTjcMj</info>');
         return Command::SUCCESS;

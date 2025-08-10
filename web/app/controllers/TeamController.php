@@ -51,7 +51,7 @@ try {
             new Mailer(Transport::fromDsn($App->Config->getDsn())),
             $App->Log,
             $App->Config->configArr['mail_from'],
-            $App->Config::boolFromEnv('DEMO_MODE'),
+            $App->demoMode,
         );
         $replyTo = new Address($App->Users->userData['email'], $App->Users->userData['fullname']);
         $sent = $Email->massEmail(

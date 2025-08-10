@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
+use Elabftw\Elabftw\Env;
 use Elabftw\Import\CompoundsCsv;
 use Elabftw\Interfaces\StorageInterface;
 use Elabftw\Models\Compounds;
@@ -85,19 +86,19 @@ final class ImportCompoundsCsv extends Command
         $locationSplitter = $input->getOption('location-splitter');
         $Config = Config::getConfig();
         $Fingerprinter = new NullFingerprinter();
-        $httpGetter = new HttpGetter(new Client(), $Config->configArr['proxy'], $Config::boolFromEnv('DEV_MODE'));
-        if (Config::boolFromEnv('USE_FINGERPRINTER')) {
+        $httpGetter = new HttpGetter(new Client(), $Config->configArr['proxy'], Env::asBool('DEV_MODE'));
+        if (Env::asBool('USE_FINGERPRINTER')) {
             // we use a different httpGetter object so we can configure proxy usage
-            $proxy = Config::boolFromEnv('FINGERPRINTER_USE_PROXY') ? $Config->configArr['proxy'] : '';
-            $fingerPrinterHttpGetter = new HttpGetter(new Client(), $proxy, $Config::boolFromEnv('DEV_MODE'));
-            $Fingerprinter = new Fingerprinter($fingerPrinterHttpGetter, Config::fromEnv('FINGERPRINTER_URL'));
+            $proxy = Env::asBool('FINGERPRINTER_USE_PROXY') ? $Config->configArr['proxy'] : '';
+            $fingerPrinterHttpGetter = new HttpGetter(new Client(), $proxy, Env::asBool('DEV_MODE'));
+            $Fingerprinter = new Fingerprinter($fingerPrinterHttpGetter, Env::asUrl('FINGERPRINTER_URL'));
         }
 
         $usePubchem = (bool) $input->getOption('use-pubchem');
         $pubChemImporter = null;
         if ($usePubchem) {
             $output->writeln('[info] Using Pubchem to complete data: this might take a long time.');
-            $pubChemImporter = new PubChemImporter($httpGetter, Config::fromEnv('PUBCHEM_PUG_URL'), Config::fromEnv('PUBCHEM_PUG_VIEW_URL'));
+            $pubChemImporter = new PubChemImporter($httpGetter, Env::asUrl('PUBCHEM_PUG_URL'), Env::asUrl('PUBCHEM_PUG_VIEW_URL'));
         }
         $Items = new Items($user, bypassReadPermission: true, bypassWritePermission: true);
         $Compounds = new Compounds($httpGetter, $user, $Fingerprinter);

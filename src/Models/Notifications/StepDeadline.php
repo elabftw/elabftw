@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Models\Notifications;
 
+use Elabftw\Elabftw\Env;
 use Elabftw\Enums\Notifications;
 use Elabftw\Interfaces\MailableInterface;
-use Elabftw\Models\Config;
 use PDO;
 use Override;
 
@@ -56,7 +56,7 @@ final class StepDeadline extends AbstractNotifications implements MailableInterf
         $body = sprintf(
             '%s%s/%s?mode=view&id=%d&highlightstep=%d#step_view_%d',
             _('Hello. A step deadline is approaching: '),
-            Config::fromEnv('SITE_URL'),
+            Env::asUrl('SITE_URL'),
             $this->entityPage,
             $this->entityId,
             $this->stepId,

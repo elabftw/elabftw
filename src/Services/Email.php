@@ -13,9 +13,9 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\Env;
 use Elabftw\Enums\EmailTarget;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Config;
 use PDO;
 use Psr\Log\LoggerInterface;
 use Stevebauman\Hypertext\Transformer;
@@ -212,7 +212,7 @@ class Email
 
     private function makeFooter(): string
     {
-        return sprintf("\n\n~~~\n%s %s\n", _('Sent from eLabFTW'), Config::fromEnv('SITE_URL'));
+        return sprintf("\n\n~~~\n%s %s\n", _('Sent from eLabFTW'), Env::asUrl('SITE_URL'));
     }
 
     private static function getAllEmailAddressesRawData(EmailTarget $target, ?int $targetId = null): array

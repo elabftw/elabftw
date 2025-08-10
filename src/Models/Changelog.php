@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\Env;
 use Elabftw\Interfaces\ContentParamsInterface;
 use PDO;
 
@@ -74,7 +75,7 @@ final class Changelog
         foreach ($changes as &$change) {
             // content can be NULL, which will make str_replace explode
             if (is_string($change['content'])) {
-                $change['content'] = str_replace('href="revisions.php?type', sprintf('href="%s/revisions.php?type', Config::fromEnv('SITE_URL')), $change['content']);
+                $change['content'] = str_replace('href="revisions.php?type', sprintf('href="%s/revisions.php?type', Env::asUrl('SITE_URL')), $change['content']);
             }
         }
         return $changes;

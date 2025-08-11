@@ -466,7 +466,7 @@ export function askFileName(extension: FileType): string | undefined {
   // user hits cancel: exit silently
   if (realName === null) return;
   if (realName.trim() === '') {
-    (new Notification()).error('error-no-filename');
+    notify.error('error-no-filename');
     return;
   }
   const ext = `.${extension.toLowerCase()}`;

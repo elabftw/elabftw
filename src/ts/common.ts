@@ -290,7 +290,6 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
 
   // CATEGORY AND STATUS
   const notsetOpts = {id: null, title: i18next.t('not-set'), color: 'bdbdbd'};
-
   let statusEndpoint = `${Model.Team}/current/items_status`;
   let categoryEndpoint = `${Model.Team}/current/resources_categories`;
   if (entity.type === EntityType.Experiment || entity.type === EntityType.Template) {
@@ -298,21 +297,19 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
     statusEndpoint = `${Model.Team}/current/experiments_status`;
   }
 
-
   // this is a cache for category or status for malle
-  let optionsPromise: Promise<SelectOptions[]> | null = null;
-
+  const optionsCache = [];
+  // this promise will fetch the categories or status on click
   const getCatStatArr = (endpoint: string): Promise<SelectOptions[]> => {
-    // Memoize so we only fetch once per page load
-    if (!optionsPromise) {
-      optionsPromise = ApiC.getJson(endpoint)
+    if (!optionsCache[endpoint]) {
+      optionsCache[endpoint] = ApiC.getJson(endpoint)
         .then(json => {
           const arr = Array.from(json) as Status[];
           arr.unshift(notsetOpts);
           return arr as SelectOptions[];
         });
     }
-    return optionsPromise;
+    return optionsCache[endpoint];
   };
 
   // MALLEABLE STATUS

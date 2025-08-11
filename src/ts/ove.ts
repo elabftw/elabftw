@@ -16,12 +16,12 @@ declare global {
 import '@teselagen/ove/style.css';
 import { anyToJson } from '@teselagen/bio-parsers';
 import { reloadElements } from './misc';
-import { Action, Model } from './interfaces';
+import { Action, Entity, Model } from './interfaces';
 import { ApiC } from './api';
 import { notify } from './notify';
 
 // DISPLAY Plasmids FILES
-export async function displayPlasmidViewer(about: DOMStringMap): Promise<void> {
+export async function displayPlasmidViewer(entity: Entity): Promise<void> {
   const elements = document.getElementsByClassName('viewer-ove');
   if (elements.length < 1) {
     return;
@@ -53,7 +53,7 @@ export async function displayPlasmidViewer(about: DOMStringMap): Promise<void> {
           'real_name': realName + '.png',
           'content': reader.result,
         };
-        ApiC.post(`${about.type}/${about.id}/${Model.Upload}`, params).then(() => reloadElements(['uploadsDiv']));
+        ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}`, params).then(() => reloadElements(['uploadsDiv']));
       };
     }
 

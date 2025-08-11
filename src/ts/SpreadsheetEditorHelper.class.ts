@@ -58,32 +58,23 @@ export class SpreadsheetEditorHelper {
     reader.readAsArrayBuffer(file);
   }
 
-  handleExport(format: FileType, columnDefs: GridColumn[], rowData: GridRow[]): Promise<void> {
-    return new Promise((resolve, reject) => {
-      try {
-        if (!columnDefs.length || !rowData.length) {
-          return resolve();
-        }
-        const wb = SpreadsheetEditorHelper.createWorkbookFromGrid(columnDefs, rowData);
-        const realName = askFileName(format);
-        if (!realName) {
-          return resolve();
-        }
+  async handleExport(format: FileType, columnDefs: GridColumn[], rowData: GridRow[]): Promise<void> {
+    if (!columnDefs.length || !rowData.length) {
+      return;
+    }
+    const realName = askFileName(format);
+    if (!realName) {
+      return;
+    }
+    const wb = SpreadsheetEditorHelper.createWorkbookFromGrid(columnDefs, rowData);
 
-        const bookType = getBookType(format);
-        writeFile(wb, realName, { bookType });
-
-        notify.success();
-        resolve();
-      } catch (err) {
-        notify.error((err as Error).message);
-        reject(err);
-      }
-    });
+    const bookType = getBookType(format);
+    writeFile(wb, realName, { bookType });
+    notify.success();
   }
 
   // saves the current sheet as an upload for the entity. (.csv)
-  saveAsAttachment(format: FileType, columnDefs: GridColumn[], rowData: GridRow[], entityType: string, entityId: number): Promise<void> {
+  async saveAsAttachment(format: FileType, columnDefs: GridColumn[], rowData: GridRow[], entityType: string, entityId: number): Promise<void> {
     if (!columnDefs.length || !rowData.length) {
       return Promise.resolve();
     }

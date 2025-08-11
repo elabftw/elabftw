@@ -11,7 +11,7 @@ import { FileType, GridColumn, GridRow, Model } from './interfaces';
 import { getBookType, getMime } from './spreadsheet-formats';
 import { askFileName, reloadElements } from './misc';
 import { notify } from './notify';
-import { read, utils, write, writeFile, WorkBook, BookType } from '@e965/xlsx';
+import { read, utils, write, writeFile, WorkBook } from '@e965/xlsx';
 
 declare global {
   interface Window {
@@ -64,49 +64,33 @@ export class SpreadsheetEditorHelper {
         if (!columnDefs.length || !rowData.length) {
           return resolve();
         }
-
         const wb = SpreadsheetEditorHelper.createWorkbookFromGrid(columnDefs, rowData);
         const realName = askFileName(format);
         if (!realName) {
           return resolve();
         }
 
-        switch (format) {
-        case FileType.Fods:
-          writeFile(wb, realName, { bookType: 'fods' });
-          break;
-        case FileType.Html:
-          writeFile(wb, realName, { bookType: 'html' });
-          break;
-        case FileType.Ods:
-          writeFile(wb, realName, { bookType: 'ods' });
-          break;
-        case FileType.Xls:
-          writeFile(wb, realName, { bookType: 'xls' });
-          break;
-        case FileType.Xlsb:
-          writeFile(wb, realName, { bookType: 'xlsb' });
-          break;
-        case FileType.Xlsx:
-          writeFile(wb, realName, { bookType: 'xlsx' });
-          break;
-        default:
-          writeFile(wb, realName, { bookType: 'csv' });
-        }
+        const bookType = getBookType(format);
+        writeFile(wb, realName, { bookType });
+
         notify.success();
         resolve();
-      } catch (error) {
-        notify.error((error as Error).message);
-        reject(error);
+      } catch (err) {
+        notify.error((err as Error).message);
+        reject(err);
       }
     });
   }
 
   // saves the current sheet as an upload for the entity. (.csv)
   saveAsAttachment(format: FileType, columnDefs: GridColumn[], rowData: GridRow[], entityType: string, entityId: number): Promise<void> {
-    if (!columnDefs.length || !rowData.length) return Promise.resolve();
+    if (!columnDefs.length || !rowData.length) {
+      return Promise.resolve();
+    }
     const realName = askFileName(format);
-    if (!realName) return Promise.resolve();
+    if (!realName) {
+      return Promise.resolve();
+    }
     const wb = SpreadsheetEditorHelper.createWorkbookFromGrid(columnDefs, rowData);
     const bookType = getBookType(format);
     const mime = getMime(format);
@@ -116,7 +100,9 @@ export class SpreadsheetEditorHelper {
   }
 
   replaceExisting(columnDefs: GridColumn[], rowData: GridRow[], entityType: string, entityId: number, currentUploadName: string, currentUploadId: number):  Promise<void> {
-    if (!columnDefs.length || !rowData.length || !currentUploadName || !currentUploadId) return;
+    if (!columnDefs.length || !rowData.length || !currentUploadName || !currentUploadId) {
+      return Promise.resolve();
+    }
 
     const wb = SpreadsheetEditorHelper.createWorkbookFromGrid(columnDefs, rowData);
     const wbBinary = write(wb, { bookType: FileType.Csv, type: 'array' });

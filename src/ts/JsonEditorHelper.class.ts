@@ -9,7 +9,7 @@ import { Metadata } from './Metadata.class';
 import JSONEditor from 'jsoneditor';
 import $ from 'jquery';
 import i18next from './i18n';
-import { askFileName, getNewIdFromPostRequest, reloadElements } from './misc';
+import { askFileName, reloadElements } from './misc';
 import { Action, Entity, FileType, Model } from './interfaces';
 import { ApiC } from './api';
 import { ValidMetadata } from './metadataInterfaces';

@@ -19,7 +19,7 @@ declare global {
       aoa: (string | number | boolean | null)[][];
       setColumnDefs: (cols: GridColumn[]) => void;
       setRowData: (rows: GridRow[]) => void;
-      setCurrentUploadId: (uploadId: Number) => void;
+      setCurrentUploadId: (uploadId: number) => void;
     };
   }
 }
@@ -50,7 +50,7 @@ export class SpreadsheetEditorHelper {
       .catch(e => notify.error(e.message));
   }
 
-  loadWithHeaderChoice(file: File, setColumnDefs: (cols: GridColumn[]) => void, setRowData: (rows: GridRow[]) => void, setCurrentUploadId: (uploadId: Number) => void): void {
+  loadWithHeaderChoice(file: File, setColumnDefs: (cols: GridColumn[]) => void, setRowData: (rows: GridRow[]) => void, setCurrentUploadId: (uploadId: number) => void): void {
     const reader = new FileReader();
     reader.onload = function(event) {
       try {

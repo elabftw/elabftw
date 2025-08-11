@@ -13,8 +13,10 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
+use Elabftw\Enums\EntityType;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Templates;
+use Elabftw\Params\DisplayParams;
 use Override;
 
 /**
@@ -28,6 +30,13 @@ final class ExperimentsController extends AbstractEntityController
 
         $this->categoryArr = $app->experimentsCategoryArr;
         $this->statusArr = $this->experimentsStatusArr;
+        $Templates = new Templates($app->Users);
+        $DisplayParams = new DisplayParams(
+            $app->Users,
+            EntityType::Templates,
+            limit: 9999,
+        );
+        $this->templatesArr = $Templates->readAllSimple($DisplayParams);
     }
 
     #[Override]

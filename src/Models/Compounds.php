@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Compound;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Action;
@@ -594,7 +595,7 @@ final class Compounds extends AbstractRest
 
     private function searchPubChem(int $cid): Compound
     {
-        $Importer = new PubChemImporter($this->httpGetter, Config::fromEnv('PUBCHEM_PUG_URL'), Config::fromEnv('PUBCHEM_PUG_VIEW_URL'));
+        $Importer = new PubChemImporter($this->httpGetter, Env::asUrl('PUBCHEM_PUG_URL'), Env::asUrl('PUBCHEM_PUG_VIEW_URL'));
         return $Importer->fromPugView($cid);
     }
 
@@ -603,7 +604,7 @@ final class Compounds extends AbstractRest
      */
     private function searchPubChemCas(string $cas): array
     {
-        $Importer = new PubChemImporter($this->httpGetter, Config::fromEnv('PUBCHEM_PUG_URL'), Config::fromEnv('PUBCHEM_PUG_VIEW_URL'));
+        $Importer = new PubChemImporter($this->httpGetter, Env::asUrl('PUBCHEM_PUG_URL'), Env::asUrl('PUBCHEM_PUG_VIEW_URL'));
         $cids = $Importer->getCidFromCas($cas);
         $compounds = array();
         foreach ($cids as $cid) {
@@ -617,7 +618,7 @@ final class Compounds extends AbstractRest
      */
     private function searchPubChemName(string $name): array
     {
-        $Importer = new PubChemImporter($this->httpGetter, Config::fromEnv('PUBCHEM_PUG_URL'), Config::fromEnv('PUBCHEM_PUG_VIEW_URL'));
+        $Importer = new PubChemImporter($this->httpGetter, Env::asUrl('PUBCHEM_PUG_URL'), Env::asUrl('PUBCHEM_PUG_VIEW_URL'));
         $cids = $Importer->getCidFromName($name);
         $compounds = array();
         foreach ($cids as $cid) {

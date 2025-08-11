@@ -323,11 +323,9 @@ final class Teams extends AbstractRest
     {
         $name = Filter::title($name);
 
-        $sql = 'INSERT INTO teams (name, common_template, common_template_md) VALUES (:name, :common_template, :common_template_md)';
+        $sql = 'INSERT INTO teams (name) VALUES (:name)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
-        $req->bindValue(':common_template', Templates::defaultBody);
-        $req->bindValue(':common_template_md', Templates::defaultBodyMd);
         $this->Db->execute($req);
         // grab the team ID
         $newId = $this->Db->lastInsertId();
@@ -340,7 +338,7 @@ final class Teams extends AbstractRest
         return $newId;
     }
 
-    private function update(TeamParam $params): bool
+    public function update(TeamParam $params): bool
     {
         $sql = 'UPDATE teams SET ' . $params->getColumn() . ' = :content WHERE id = :id';
         $req = $this->Db->prepare($sql);

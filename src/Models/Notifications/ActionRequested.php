@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace Elabftw\Models\Notifications;
 
+use Elabftw\Elabftw\Env;
 use Elabftw\Enums\Notifications;
 use Elabftw\Enums\RequestableAction;
 use Elabftw\Interfaces\MailableInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Users\Users;
-use Elabftw\Models\Config;
 use Override;
 
 final class ActionRequested extends AbstractNotifications implements MailableInterface
@@ -42,7 +42,7 @@ final class ActionRequested extends AbstractNotifications implements MailableInt
         );
         $body .= ' ' . sprintf(
             _('You can review the request here: %s'),
-            sprintf('%s/%s?mode=view&id=%d', Config::fromEnv('SITE_URL'), $this->entity->entityType->toPage(), $this->entity->id ?? 0)
+            sprintf('%s/%s?mode=view&id=%d', Env::asUrl('SITE_URL'), $this->entity->entityType->toPage(), $this->entity->id ?? 0)
         );
         return array(
             'subject' => _('Action requested'),

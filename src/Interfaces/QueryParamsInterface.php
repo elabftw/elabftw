@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Interfaces;
 
+use Elabftw\Enums\EntityType;
 use Symfony\Component\HttpFoundation\InputBag;
 
 interface QueryParamsInterface
@@ -23,4 +24,18 @@ interface QueryParamsInterface
     public function getLimit(): int;
 
     public function getStatesSql(string $tableName): string;
+
+    public function isFast(): bool;
+
+    public function getFastq(): string;
+
+    public function hasUserQuery(): bool;
+
+    public function getUserQuery(): string;
+
+    public function getRelatedOrigin(): ?EntityType;
+
+    public function getFilterSql(): string;
+
+    public function setSkipOrderPinned(bool $value): void;
 }

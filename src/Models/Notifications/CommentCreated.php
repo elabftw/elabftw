@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Models\Notifications;
 
+use Elabftw\Elabftw\Env;
 use Elabftw\Enums\Notifications;
 use Elabftw\Interfaces\MailableInterface;
-use Elabftw\Models\Config;
 use Elabftw\Models\Users\Users;
 use Override;
 
@@ -33,7 +33,7 @@ final class CommentCreated extends AbstractNotifications implements MailableInte
     public function getEmail(): array
     {
         $commenter = new Users($this->commenterId);
-        $url = sprintf('%s/%s?mode=view&id=%d', Config::fromEnv('SITE_URL'), $this->page, $this->entityId);
+        $url = sprintf('%s/%s?mode=view&id=%d', Env::asUrl('SITE_URL'), $this->page, $this->entityId);
 
         $body = sprintf(
             _('Hi. %s left a comment. Have a look: %s'),

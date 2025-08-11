@@ -39,7 +39,7 @@ final class CompoundsCsv extends AbstractCsv
         protected Items $Items,
         protected UploadedFile $UploadedFile,
         protected Compounds $Compounds,
-        protected ?int $resourceCategory = null,
+        protected ?int $resourceTemplate = null,
         protected ?PubChemImporter $PubChemImporter = null,
         protected string $locationSplitter = '/',
         protected ?string $matchWith = null,
@@ -133,12 +133,12 @@ final class CompoundsCsv extends AbstractCsv
                 }
 
                 // optionally create Resource
-                if ($this->resourceCategory !== null) {
+                if ($this->resourceTemplate !== null) {
                     $title = $row['name'] ?? $row['iupacname'] ?? null;
                     if ($title === null && $compound) {
                         $title = $compound->name ?? $compound->iupacName;
                     }
-                    $resource = $this->Items->create(template: $this->resourceCategory, title: $title ?? 'Unnamed compound');
+                    $resource = $this->Items->createFromTemplate($this->resourceTemplate, title: $title ?? 'Unnamed compound');
                     $this->Items->setId($resource);
                     if (isset($row['comment'])) {
                         $this->Items->update(new EntityParams('body', $row['comment']));

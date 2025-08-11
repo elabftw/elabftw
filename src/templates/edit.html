@@ -50,12 +50,6 @@
       </div>
     </div>
     {% endif %}
-    {% if Entity.entityType.value == 'items_types' %}
-      <div class='form-inline'>
-        <label for='color_input' class='col-form-label mr-3 edit-mode-label justify-content-start d-sm-block d-none'>{{ 'Color'|trans }}</label>
-        <input id='color_input' data-trigger='change' data-model='{{ Entity.entityType.value }}/{{ Entity.entityData.id }}' data-target='color' type='color' value='#{{ Entity.entityData.color }}' class='form-control' style='min-width: 123px' />
-      </div>
-    {% endif %}
   </div>
 
   {# TAGS #}
@@ -138,7 +132,7 @@
   {# templates also have a read/write target #}
   {% if Entity.entityData.canread_target %}
    {# TARGET PERMISSIONS #}
-    <h5>{{ 'Permissions for the derived experiment'|trans }}</h5>
+    <h5>{{ 'Permissions for the derived entry'|trans }}</h5>
     <div class='d-flex mb-2 align-items-center'>
       {# CANREAD #}
       {% set rw = 'canread_target' %}

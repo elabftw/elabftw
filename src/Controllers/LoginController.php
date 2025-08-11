@@ -22,6 +22,7 @@ use Elabftw\Auth\Local;
 use Elabftw\Auth\Mfa;
 use Elabftw\Auth\Saml as SamlAuth;
 use Elabftw\Auth\Team;
+use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\IdpsHelper;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -167,7 +168,7 @@ final class LoginController implements ControllerInterface
             $this->Session->set('auth_userid', $AuthResponse->userid);
             $this->Session->set('rememberme', $icanhazcookies);
             $this->Session->set('renew_password_required', true);
-            $ResetPasswordKey = new ResetPasswordKey(time(), Config::fromEnv('SECRET_KEY'));
+            $ResetPasswordKey = new ResetPasswordKey(time(), Env::asString('SECRET_KEY'));
             $Users = new Users($this->Session->get('auth_userid'));
             $key = $ResetPasswordKey->generate($Users->userData['email']);
             return new RedirectResponse('/change-pass.php?key=' . $key);
@@ -268,7 +269,7 @@ final class LoginController implements ControllerInterface
                 $ldapPassword = null;
                 // assume there is a password to decrypt if username is not null
                 if ($c['ldap_username']) {
-                    $ldapPassword = Crypto::decrypt($c['ldap_password'], Key::loadFromAsciiSafeString(Config::fromEnv('SECRET_KEY')));
+                    $ldapPassword = Crypto::decrypt($c['ldap_password'], Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY')));
                 }
                 $ldapConfig = array(
                     'protocol' => $c['ldap_scheme'] . '://',

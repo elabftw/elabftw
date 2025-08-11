@@ -133,11 +133,11 @@ abstract class AbstractStatus extends AbstractCategory
     public function destroy(): bool
     {
         $this->canWriteOrExplode();
-        // TODO fix FK constraints so it sets NULL instead of deleting entries
         // set state to deleted
         return $this->update(new StatusParams('state', (string) State::Deleted->value));
     }
 
+    #[Override]
     public function create(string $title = '', ?string $color = null, int $isDefault = 0): int
     {
         $this->canWriteOrExplode();

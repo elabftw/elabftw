@@ -14,7 +14,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ResourceNotFoundException;
-use Elabftw\Models\Config;
 use PDO;
 use PDOException;
 use PDOStatement;
@@ -45,19 +44,19 @@ final class Db
         // throw exception if error
         $pdoOptions[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
         // use persistent mode for connection to MySQL
-        $pdoOptions[PDO::ATTR_PERSISTENT] = Config::boolFromEnv('USE_PERSISTENT_MYSQL_CONN');
+        $pdoOptions[PDO::ATTR_PERSISTENT] = Env::asBool('USE_PERSISTENT_MYSQL_CONN');
         // only return a named array
         $pdoOptions[PDO::ATTR_DEFAULT_FETCH_MODE] = PDO::FETCH_ASSOC;
-        if (!empty(Config::fromEnv('DB_CERT_PATH'))) {
+        if (!empty(Env::asString('DB_CERT_PATH'))) {
             /** @psalm-suppress UndefinedConstant */
-            $pdoOptions[PDO::MYSQL_ATTR_SSL_CA] = Config::fromEnv('DB_CERT_PATH');
+            $pdoOptions[PDO::MYSQL_ATTR_SSL_CA] = Env::asString('DB_CERT_PATH');
         }
 
         $this->connection = new PDO(
-            'mysql:host=' . Config::fromEnv('DB_HOST') . ';port=' . Config::fromEnv('DB_PORT') . ';dbname=' .
-            Config::fromEnv('DB_NAME'),
-            Config::fromEnv('DB_USER'),
-            Config::fromEnv('DB_PASSWORD'),
+            'mysql:host=' . Env::asString('DB_HOST') . ';port=' . Env::asString('DB_PORT') . ';dbname=' .
+            Env::asString('DB_NAME'),
+            Env::asString('DB_USER'),
+            Env::asString('DB_PASSWORD'),
             $pdoOptions
         );
     }
@@ -106,6 +105,9 @@ final class Db
         try {
             $res = $req->execute();
         } catch (PDOException $e) {
+            if (Env::asBool('DEV_MODE')) {
+                debug_print_backtrace();
+            }
             throw new DatabaseErrorException($e->errorInfo ?? array('OOPS', 42, 'where error?'));
         }
         if (!$res) {

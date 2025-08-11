@@ -78,13 +78,16 @@ abstract class AbstractCompoundsLinks extends AbstractRest
      * @param int $newId The id of the new entity that will receive the links
      * @param bool $fromTpl do we duplicate from template?
      */
-    public function duplicate(int $id, int $newId, $fromTpl = false): int
+    public function duplicate(int $id, int $newId, bool $fromTpl = false, bool $fromItemsTypes = false): int
     {
         $table = $this->getTable();
         if ($fromTpl) {
             $table = 'compounds2experiments_templates';
             // TODO implement properly, right now items_types have no ui for compounds
             //$table = $this->getTemplateTable();
+        }
+        if ($fromItemsTypes) {
+            $table = 'compounds2items_types';
         }
         $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (entity_id, compound_id)
             SELECT :new_id, compound_id

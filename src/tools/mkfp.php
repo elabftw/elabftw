@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Models\Compounds;
-use Elabftw\Models\Config;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\Fingerprinter;
 use Elabftw\Services\HttpGetter;
@@ -106,7 +105,7 @@ $smiles = array(
 $startTime = microtime(true);
 $requester = new Users(1, 1);
 $httpGetter = new HttpGetter(new Client(), verifyTls: false);
-$Fingerprinter = new Fingerprinter($httpGetter, Config::fromEnv('FINGERPRINTER_URL'));
+$Fingerprinter = new Fingerprinter($httpGetter, Env::asUrl('FINGERPRINTER_URL'));
 $Compounds = new Compounds($httpGetter, $requester, fingerprinter: $Fingerprinter);
 foreach ($smiles as $mol) {
     $Compounds->create(smiles: $mol['smiles'], name: $mol['name']);

@@ -18,14 +18,14 @@ use Elabftw\Elabftw\CreateUploadFromLocalFile;
 use Elabftw\Elabftw\CanSqlBuilder;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\EntitySqlBuilder;
-use Elabftw\Elabftw\ItemsTypesSqlBuilder;
+use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Permissions;
-use Elabftw\Elabftw\TemplatesSqlBuilder;
 use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\Meaning;
@@ -41,6 +41,7 @@ use Elabftw\Factories\LinksFactory;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\SqlBuilderInterface;
 use Elabftw\Interfaces\MakeTrustedTimestampInterface;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Make\MakeBloxberg;
 use Elabftw\Make\MakeCustomTimestamp;
 use Elabftw\Make\MakeDfnTimestamp;
@@ -93,10 +94,6 @@ abstract class AbstractEntity extends AbstractRest
 {
     use EntityTrait;
 
-    public const int CONTENT_HTML = 1;
-
-    public const int CONTENT_MD = 2;
-
     public Comments $Comments;
 
     public AbstractExperimentsLinks $ExperimentsLinks;
@@ -146,12 +143,11 @@ abstract class AbstractEntity extends AbstractRest
         $this->Pins = new Pins($this);
         $this->ExclusiveEditMode = new ExclusiveEditMode($this);
         // perform check here once instead of in canreadorexplode to avoid making the same query over and over by child entities
-        $this->isReadOnly = $this->ExclusiveEditMode->isActive() || $this->canWrite() === false;
+        $this->isReadOnly = $this->ExclusiveEditMode->isActive();
         $this->setId($id);
     }
 
     abstract public function create(
-        ?int $template = -1,
         ?string $title = null,
         ?string $body = null,
         ?DateTimeImmutable $date = null,
@@ -165,14 +161,91 @@ abstract class AbstractEntity extends AbstractRest
         ?int $customId = null,
         ?string $metadata = null,
         int $rating = 0,
-        ?int $contentType = null,
-        bool $forceExpTpl = false,
-        string $defaultTemplateHtml = '',
-        string $defaultTemplateMd = '',
-        ?string $color = null,
+        BodyContentType $contentType = BodyContentType::Html,
     ): int;
 
     abstract public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int;
+
+    public function createFromTemplate(int $templateId, ?string $title = null): int
+    {
+        $TemplateType = $this->entityType->toTemplateType($this->Users, $templateId);
+        $template = $TemplateType->readOne();
+        $id = $this->create(
+            title: $title ?? $template['title'],
+            body: $template['body'],
+            canread: $template['canread_target'],
+            canwrite: $template['canwrite_target'],
+            canreadIsImmutable: (bool) $template['canread_is_immutable'],
+            canwriteIsImmutable: (bool) $template['canwrite_is_immutable'],
+            category: $template['category'],
+            status: $template['status'],
+            metadata: $template['metadata'],
+            rating: $template['rating'],
+            contentType: BodyContentType::from($template['content_type']),
+        );
+        $tags = array_column($TemplateType->Tags->readAll(), 'tag');
+        $this->ItemsLinks->duplicate($templateId, $id, true);
+        $this->ExperimentsLinks->duplicate($templateId, $id, true);
+        $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
+        $CompoundsLinks->duplicate($templateId, $id, fromItemsTypes: true);
+        $this->Steps->duplicate($templateId, $id, true);
+        $freshSelf = new $this($this->Users, $id);
+        $TemplateType->Uploads->duplicate($freshSelf);
+        foreach ($tags as $tag) {
+            $freshSelf->Tags->postAction(Action::Create, array('tag' => $tag));
+        }
+        return $id;
+    }
+
+    #[Override]
+    public function postAction(Action $action, array $reqBody): int
+    {
+        return match ($action) {
+            Action::Create => (
+                function () use ($reqBody) {
+                    if (isset($reqBody['template']) && ((int) $reqBody['template']) !== -1) {
+                        return $this->createFromTemplate((int) $reqBody['template']);
+                    }
+                    // check if use of template is enforced at team level for experiments
+                    $teamConfigArr = new Teams($this->Users, $this->Users->team)->readOne();
+                    if ($teamConfigArr['force_exp_tpl'] === 1 && $this instanceof Experiments) {
+                        throw new ImproperActionException(_('Experiments must use a template!'));
+                    }
+                    if ($reqBody['category'] === -1) {
+                        $reqBody['category'] = null;
+                    }
+                    // convert to int only if not empty, otherwise send null: we don't want to convert a null to int, as it would send 0
+                    $category = !empty($reqBody['category']) ? (int) $reqBody['category'] : null;
+                    $status = !empty($reqBody['status']) ? (int) $reqBody['status'] : null;
+                    // force metadata to be a string
+                    $metadata = null;
+                    if (!empty($reqBody['metadata'])) {
+                        $metadata = json_encode($reqBody['metadata'], JSON_THROW_ON_ERROR);
+                    }
+                    // force tags to be an array
+                    $tags = $reqBody['tags'] ?? null;
+                    if (is_string($tags)) {
+                        $tags = array($tags);
+                    }
+                    return $this->create(
+                        body: $reqBody['body'] ?? null,
+                        title: $reqBody['title'] ?? null,
+                        canread: $reqBody['canread'] ?? null,
+                        canwrite: $reqBody['canwrite'] ?? null,
+                        canreadIsImmutable: (bool) ($reqBody['canread_is_immutable'] ?? false),
+                        canwriteIsImmutable: (bool) ($reqBody['canwrite_is_immutable'] ?? false),
+                        tags: $tags ?? array(),
+                        category: $category,
+                        status: $status,
+                        metadata: $metadata,
+                        contentType: $this->Users->userData['use_markdown'] === 1 ? BodyContentType::Markdown : BodyContentType::Html,
+                    );
+                }
+            )(),
+            Action::Duplicate => $this->duplicate((bool) ($reqBody['copyFiles'] ?? false), (bool) ($reqBody['linkToOriginal'] ?? false)),
+            default => throw new ImproperActionException('Invalid action parameter.'),
+        };
+    }
 
     #[Override]
     public function getApiPath(): string
@@ -247,7 +320,7 @@ abstract class AbstractEntity extends AbstractRest
      * The goal here is to decrease the number of read columns to reduce memory footprint
      * The other read function is for view/edit modes where it's okay to fetch more as there is only one ID
      * Only logged in users use this function
-     * @param DisplayParams $displayParams display parameters like sort/limit/order by
+     * @param QueryParamsInterface $displayParams display parameters like sort/limit/order by
      * @param bool $extended use it to get a full reply. used by API to get everything back
      * @psalm-suppress UnusedForeachValue
      *
@@ -265,28 +338,21 @@ abstract class AbstractEntity extends AbstractRest
      *
      *          Here be dragons!
      */
-    public function readShow(DisplayParams $displayParams, bool $extended = false, string $can = 'canread'): array
+    public function readShow(QueryParamsInterface $displayParams, bool $extended = false, string $can = 'canread'): array
     {
-        if (!empty($displayParams->fastq)) {
+        if ($displayParams->isFast()) {
             return $this->readAllSimple($displayParams);
         }
         // (extended) search (block must be before the call to getReadSqlBeforeWhere so extendedValues is filled)
-        if (!empty($displayParams->queryString) || !empty($displayParams->extendedQuery)) {
-            $this->processExtendedQuery(trim($displayParams->queryString . ' ' . $displayParams->extendedQuery));
+        if ($displayParams->hasUserQuery()) {
+            $this->processExtendedQuery($displayParams->getUserQuery());
         }
 
-        // TODO inject
-        if ($this instanceof Templates) {
-            $EntitySqlBuilder = new TemplatesSqlBuilder($this);
-        } elseif ($this instanceof ItemsTypes) {
-            $EntitySqlBuilder = new ItemsTypesSqlBuilder($this);
-        } else {
-            $EntitySqlBuilder = new EntitySqlBuilder($this);
-        }
+        $EntitySqlBuilder = $this->getSqlBuilder();
         $sql = $EntitySqlBuilder->getReadSqlBeforeWhere(
             $extended,
             $extended,
-            $displayParams->relatedOrigin,
+            $displayParams->getRelatedOrigin(),
         );
 
         $sql .= ' WHERE 1=1 ';
@@ -295,15 +361,20 @@ abstract class AbstractEntity extends AbstractRest
         $sql .= $this->filterSql;
 
         // add filters like related, owner or category
-        $sql .= $displayParams->filterSql;
+        $sql .= $displayParams->getFilterSql();
 
         // add the json permissions
         $sql .= $EntitySqlBuilder->getCanFilter($can);
 
+        // dirty hack so we don't take the state query param into account if state is present in extended query
+        $stateSql = $displayParams->getStatesSql('entity');
+        if (str_contains($this->extendedFilter, 'entity.state')) {
+            $stateSql = '';
+        }
         $sqlArr = array(
             $this->extendedFilter,
             $this->idFilter,
-            $displayParams->getStatesSql('entity'),
+            $stateSql,
             'GROUP BY id',
             $displayParams->getSql(),
         );
@@ -424,12 +495,24 @@ abstract class AbstractEntity extends AbstractRest
     }
 
     #[Override]
+    public function getQueryParams(?InputBag $query = null): DisplayParams
+    {
+        return new DisplayParams($this->Users, $this->entityType, $query);
+    }
+
+    #[Override]
+    public function readAll(?QueryParamsInterface $queryParams = null): array
+    {
+        $queryParams ??= $this->getQueryParams();
+        return $this->readShow($queryParams, true);
+    }
+
+    #[Override]
     public function readOne(): array
     {
         if ($this->id === null) {
             throw new IllegalActionException('No id was set!');
         }
-        // build query params for Uploads
         $queryParams = $this->getQueryParams(Request::createFromGlobals()->query);
         $sql = $this->getSqlBuilder()->getReadSqlBeforeWhere(true, true);
 
@@ -452,10 +535,7 @@ abstract class AbstractEntity extends AbstractRest
         $this->entityData['related_experiments_links'] = $this->ExperimentsLinks->readRelated();
         $this->entityData['related_items_links'] = $this->ItemsLinks->readRelated();
         $this->entityData['uploads'] = $this->Uploads->readAll($queryParams);
-        // no comments on templates for now
-        if ($this instanceof AbstractConcreteEntity) {
-            $this->entityData['comments'] = $this->Comments->readAll();
-        }
+        $this->entityData['comments'] = $this->Comments->readAll();
         $this->entityData['page'] = mb_substr($this->entityType->toPage(), 0, -4);
         $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
         $this->entityData['compounds'] = $CompoundsLinks->readAll();
@@ -463,7 +543,7 @@ abstract class AbstractEntity extends AbstractRest
         $this->entityData['containers'] = $ContainersLinks->readAll();
         $this->entityData['sharelink'] = sprintf(
             '%s/%s?mode=view&id=%d%s',
-            Config::fromEnv('SITE_URL'),
+            Env::asUrl('SITE_URL'),
             $this->entityType->toPage(),
             $this->id,
             // add a share link
@@ -474,7 +554,7 @@ abstract class AbstractEntity extends AbstractRest
         // add the body as html
         $this->entityData['body_html'] = $this->entityData['body'];
         // convert from markdown only if necessary
-        if ($this->entityData['content_type'] === self::CONTENT_MD) {
+        if ($this->entityData['content_type'] === BodyContentType::Markdown->value) {
             $this->entityData['body_html'] = Tools::md2html($this->entityData['body'] ?? '');
         }
         if (!empty($this->entityData['metadata'])) {
@@ -489,7 +569,6 @@ abstract class AbstractEntity extends AbstractRest
     public function readOneFull(): array
     {
         $base = $this->readOne();
-        // items types don't have this yet
         $base['revisions'] = (new Revisions($this))->readAll();
         $base['changelog'] = (new Changelog($this))->readAll();
         // we want to include ALL uploaded files
@@ -500,13 +579,13 @@ abstract class AbstractEntity extends AbstractRest
         return $base;
     }
 
-    public function readAllSimple(DisplayParams $displayParams): array
+    public function readAllSimple(QueryParamsInterface $displayParams): array
     {
-        $categoryTable = $this instanceof Items ? 'items_types' : 'experiments_categories';
+        $categoryTable = $this instanceof Items ? 'items_categories' : 'experiments_categories';
         $CanSqlBuilder = new CanSqlBuilder($this->Users->requester, AccessType::Read);
         $canFilter = $CanSqlBuilder->getCanFilter();
-        $displayParams->skipOrderPinned = true;
-        $intQuery = intval($displayParams->fastq);
+        $displayParams->setSkipOrderPinned(true);
+        $intQuery = intval($displayParams->getFastq());
         // if the query has a numeric part, we also try and match the custom_id or id exactly
         $idSql = '';
         if ($intQuery > 0) {
@@ -518,22 +597,24 @@ abstract class AbstractEntity extends AbstractRest
             categoryt.title AS category_title,
             statust.color AS status_color,
             statust.title AS status_title,
+            CONCAT(users.firstname, " ", users.lastname) AS fullname,
             "' . $this->entityType->value . '" AS type,
             "' . $this->entityType->toPage() . '" AS page
             FROM ' . $this->entityType->value . ' AS entity
             LEFT JOIN ' . $categoryTable . ' AS categoryt ON entity.category = categoryt.id
             LEFT JOIN ' . $this->entityType->value . '_status AS statust ON entity.status = statust.id
+            LEFT JOIN users ON entity.userid = users.userid
             LEFT JOIN
                 users2teams ON (users2teams.users_id = :userid AND users2teams.teams_id = :teamid)
             WHERE
                 entity.title LIKE :query ' . $idSql . '
             ' . $canFilter . '
-            ' . $displayParams->filterSql . '
+            ' . $displayParams->getFilterSql() . '
             ' . $displayParams->getSql();
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->requester->userid, PDO::PARAM_INT);
         $req->bindParam(':teamid', $this->Users->requester->team, PDO::PARAM_INT);
-        $req->bindValue(':query', '%' . $displayParams->fastq . '%');
+        $req->bindValue(':query', '%' . $displayParams->getFastq() . '%');
         if ($intQuery > 0) {
             $req->bindValue(':intQuery', $intQuery, PDO::PARAM_INT);
         }
@@ -662,8 +743,10 @@ abstract class AbstractEntity extends AbstractRest
         $this->canOrExplode('write');
         // remove the custom_id upon deletion
         $this->update(new EntityParams('custom_id', ''));
+        // delete from pinned too
+        $this->Pins->cleanup();
         // set state to deleted
-        return $this->update(new EntityParams('state', (string) State::Deleted->value));
+        return $this->update(new EntityParams('state', State::Deleted->value));
     }
 
     public function updateExtraFieldsOrdering(ExtraFieldsOrderingParams $params): array

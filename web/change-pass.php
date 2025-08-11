@@ -17,7 +17,6 @@ use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\DemoModeException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Config;
 use Elabftw\Services\ResetPasswordKey;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
@@ -45,7 +44,7 @@ try {
     }
 
     // validate the key to show error if the key is expired
-    $ResetPasswordKey = new ResetPasswordKey(time(), Config::fromEnv('SECRET_KEY'));
+    $ResetPasswordKey = new ResetPasswordKey(time(), Env::asString('SECRET_KEY'));
     $ResetPasswordKey->validate($App->Request->query->getAlnum('key'));
 
     $passwordComplexity = PasswordComplexity::from((int) $App->Config->configArr['password_complexity_requirement']);

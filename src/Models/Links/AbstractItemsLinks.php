@@ -31,7 +31,7 @@ abstract class AbstractItemsLinks extends AbstractLinks
     #[Override]
     protected function getCatTable(): string
     {
-        return 'items_types';
+        return 'items_categories';
     }
 
     #[Override]

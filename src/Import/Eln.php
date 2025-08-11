@@ -20,11 +20,7 @@ use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Hash\LocalFileHash;
-use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractEntity;
-use Elabftw\Models\AbstractTemplateEntity;
-use Elabftw\Models\Experiments;
-use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\EntityParams;
@@ -278,49 +274,36 @@ class Eln extends AbstractZip
 
         $this->Entity = $entityType->toInstance($Author, bypassReadPermission: true, bypassWritePermission: true);
 
-        $title = $this->transformIfNecessary($dataset['name'] ?? _('Untitled'));
-
         // CATEGORY
         $categoryId = $this->category;
         if (isset($dataset['about']) && $this->category === null) {
             $categoryNode = $this->getNodeFromId($dataset['about']['@id']);
-            $categoryId = $this->getCategoryId($entityType, $Author, $categoryNode['name'], $categoryNode['color']);
+            $categoryId = $this->getCategoryId($entityType, $categoryNode['name'], $categoryNode['color']);
         }
-        // items use the category id for create target
-        $createTarget = $categoryId;
 
-        if ($this->Entity instanceof AbstractConcreteEntity) {
-            if ($this->Entity instanceof Experiments) {
-                // no template
-                $createTarget = -1;
-            }
-            $this->Entity->setId($this->Entity->create(template: $createTarget));
+        // CREATE ENTITY
+        $this->Entity->setId($this->Entity->create());
 
-            // set the date if we can
-            $date = date('Y-m-d');
-            if (isset($dataset['temporal'])) {
-                $date = (new DateTimeImmutable($dataset['temporal']))->format('Y-m-d');
-            }
-            $this->Entity->patch(Action::Update, array('date' => $date));
-        } elseif ($this->Entity instanceof AbstractTemplateEntity) {
-            if ($this->Entity instanceof ItemsTypes) {
-                // we need to check if an existing items_types exists with same name, and avoid recreating one
-                $cat = new ItemsTypes($Author);
-                $cat->bypassWritePermission = true;
-                $this->Entity->setId($cat->getIdempotentIdFromTitle($title));
-            } else {
-                $this->Entity->setId($this->Entity->create(title: $title, category: $categoryId));
-            }
+        // DATE
+        $date = date('Y-m-d');
+        if (isset($dataset['temporal'])) {
+            $date = (new DateTimeImmutable($dataset['temporal']))->format('Y-m-d');
         }
+        $this->Entity->update(new EntityParams('date', $date));
+
         // keep a reference between the `@id` and the fresh id to resolve links later
         $this->insertedEntities[] = array('item_@id' => $dataset['@id'], 'id' => $this->Entity->id, 'entity_type' => $this->Entity->entityType);
+        // fix issue with immutable permissions
+        $this->Entity->entityData['canread_is_immutable'] = 0;
+        $this->Entity->entityData['canwrite_is_immutable'] = 0;
+        // canread and canwrite patch must happen before bodyappend that contains a readOne()
+        $this->Entity->update(new EntityParams('canread', $this->canread));
+        $this->Entity->update(new EntityParams('canwrite', $this->canwrite));
         // here we use "text" or "description" attribute as main text
-        $this->Entity->patch(Action::Update, array(
-            'title' => $title,
-            'bodyappend' => ($dataset['text'] ?? '') . ($dataset['description'] ?? ''),
-            'canread' => $this->canread,
-            'canwrite' => $this->canwrite,
-        ));
+        $this->Entity->update(new EntityParams('bodyappend', ($dataset['text'] ?? '') . ($dataset['description'] ?? '')));
+        // TITLE
+        $title = $this->transformIfNecessary($dataset['name'] ?? _('Untitled'));
+        $this->Entity->update(new EntityParams('title', $title));
 
         // now we import all the remaining attributes as text/links in the main text
         // we still have an allowlist of attributes imported, which also allows to switch between the kind of values expected

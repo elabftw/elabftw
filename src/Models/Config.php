@@ -15,6 +15,7 @@ namespace Elabftw\Models;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\AuditEvent\ConfigModified;
+use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\TwigFilters;
 use Elabftw\Elabftw\Update;
 use Elabftw\Enums\Action;
@@ -31,7 +32,6 @@ use function apcu_fetch;
 use function apcu_store;
 use function apcu_exists;
 use function apcu_delete;
-use function strtolower;
 
 /**
  * The general config table
@@ -231,24 +231,6 @@ final class Config extends AbstractRest
         return self::$instance;
     }
 
-    /**
-     * Get a core config value from php-fpm env
-     */
-    public static function fromEnv(string $confName): string
-    {
-        return (string) getenv($confName);
-    }
-
-    public static function boolFromEnv(string $confName): bool
-    {
-        $val = getenv($confName);
-        if ($val === false) {
-            // not set will be bool false
-            return false;
-        }
-        return strtolower($val) === 'true';
-    }
-
     public function decrementTsBalance(): array
     {
         $tsBalance = (int) $this->configArr['ts_balance'];
@@ -297,7 +279,7 @@ final class Config extends AbstractRest
 
         foreach ($passwords as $password) {
             if (isset($params[$password]) && !empty($params[$password])) {
-                $params[$password] = Crypto::encrypt($params[$password], Key::loadFromAsciiSafeString(self::fromEnv('SECRET_KEY')));
+                $params[$password] = Crypto::encrypt($params[$password], Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY')));
                 // if it's not changed, it is sent anyway, but we don't want it in the final array as it will blank the existing one
             } elseif (isset($params[$password])) {
                 unset($params[$password]);
@@ -347,7 +329,7 @@ final class Config extends AbstractRest
             $username = $this->configArr['smtp_username'];
             $password = Crypto::decrypt(
                 $this->configArr['smtp_password'],
-                Key::loadFromAsciiSafeString(self::fromEnv('SECRET_KEY'))
+                Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY'))
             );
         }
 

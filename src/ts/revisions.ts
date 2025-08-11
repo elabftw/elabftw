@@ -6,10 +6,10 @@
  * @package elabftw
  */
 
-import { Api } from './Apiv2.class';
+import { ApiC } from './api';
 import { Action } from './interfaces';
 import DiffMatchPatch from 'diff-match-patch';
-import { Notification } from './Notifications.class';
+import { notify } from './notify';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('info')) {
@@ -47,8 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return checkedBoxes.sort((a, b) => a.revid - b.revid);
   }
 
-  const ApiC = new Api();
-
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', async (event) => {
     const el = (event.target as HTMLElement);
@@ -73,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="compare-revisions"]')) {
       const checkedBoxes = getCheckedBoxes();
       if (checkedBoxes.length !== 2) {
-        (new Notification()).error('revisions-error');
+        notify.error('revisions-error');
         return;
       }
       const dmp = new DiffMatchPatch();

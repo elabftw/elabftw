@@ -19,7 +19,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\QuantumException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\AuditLogs;
-use Elabftw\Models\Config;
 use Elabftw\Models\Users\ExistingUser;
 use Elabftw\Services\Email;
 use Elabftw\Services\ResetPasswordKey;
@@ -39,7 +38,7 @@ use function time;
 require_once dirname(__DIR__) . '/init.inc.php';
 
 $Response = new RedirectResponse('/login.php');
-$ResetPasswordKey = new ResetPasswordKey(time(), Config::fromEnv('SECRET_KEY'));
+$ResetPasswordKey = new ResetPasswordKey(time(), Env::asString('SECRET_KEY'));
 
 try {
     if ($App->Config->configArr['local_auth_enabled'] === '0') {
@@ -49,7 +48,7 @@ try {
         new Mailer(Transport::fromDsn($App->Config->getDsn())),
         $App->Log,
         $App->Config->configArr['mail_from'],
-        $App->Config::boolFromEnv('DEMO_MODE'),
+        $App->demoMode,
     );
 
     // PART 1: we receive the email from the login page/forgot password form
@@ -81,7 +80,7 @@ try {
         $key = $ResetPasswordKey->generate($Users->userData['email']);
 
         // build the reset link
-        $resetLink = Config::fromEnv('SITE_URL') . '/change-pass.php?key=' . $key;
+        $resetLink = Env::asUrl('SITE_URL') . '/change-pass.php?key=' . $key;
         $htmlResetLink = '<a href="' . $resetLink . '">' . _('Reset password') . '</a>';
 
         $rawBody = _('Hi. Someone (probably you) requested a new password on eLabFTW.%s Please follow this link to reset your password: %s %sThis link is only valid for %s minutes.');

@@ -34,7 +34,7 @@ import $ from 'jquery';
 import 'bootstrap/js/src/modal.js';
 import { DateTime } from 'luxon';
 import 'jquery-ui/ui/widgets/autocomplete';
-import { Api } from './Apiv2.class';
+import { ApiC } from './api';
 import { Action } from './interfaces';
 import { TomSelect } from './misc';
 
@@ -43,8 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
   document.getElementById('loading-spinner')?.remove();
-
-  const ApiC = new Api();
 
   // TomSelect settings shared on page & modal selects
   const sharedTomSelectOptions = {

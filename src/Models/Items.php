@@ -17,6 +17,8 @@ use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FilterableColumn;
 use Elabftw\Factories\LinksFactory;
@@ -40,7 +42,6 @@ final class Items extends AbstractConcreteEntity
 
     #[Override]
     public function create(
-        ?int $template = -1,
         ?string $title = null,
         ?string $body = null,
         ?DateTimeImmutable $date = null,
@@ -54,34 +55,18 @@ final class Items extends AbstractConcreteEntity
         ?int $customId = null,
         ?string $metadata = null,
         int $rating = 0,
-        ?int $contentType = null,
-        bool $forceExpTpl = false,
-        string $defaultTemplateHtml = '',
-        string $defaultTemplateMd = '',
-        ?string $color = null,
+        BodyContentType $contentType = BodyContentType::Html,
         // specific to Items
         ?string $canbook = '',
     ): int {
-        // TODO maybe allow creating an Item without any template, like for experiments
-        $ItemsTypes = new ItemsTypes($this->Users);
-        if ($template < 0 || $template === null) {
-            $template = $ItemsTypes->getDefault();
-        }
-        $ItemsTypes->setId($template);
-        $itemTemplate = $ItemsTypes->readOne();
         $title = Filter::title($title ?? _('Untitled'));
         $date ??= new DateTimeImmutable();
-        $body = Filter::body($body ?? $itemTemplate['body']);
-        $canread ??= $itemTemplate['canread_target'];
-        $canwrite ??= $itemTemplate['canwrite_target'];
-        $canreadIsImmutable = $itemTemplate['canread_is_immutable'];
-        $canwriteIsImmutable = $itemTemplate['canwrite_is_immutable'];
+        $body = Filter::body($body);
+        $canread ??= BasePermissions::Team->toJson();
+        $canwrite ??= BasePermissions::Team->toJson();
         $canbook = $canread;
-        $status ??= $itemTemplate['status'];
-        $metadata ??= $itemTemplate['metadata'];
         // figure out the custom id
-        $customId = $this->getNextCustomId($template);
-        $contentType = $itemTemplate['content_type'];
+        $customId ??= $this->getNextCustomId($category);
 
         $sql = 'INSERT INTO items(team, title, date, status, body, userid, category, elabid, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canbook, metadata, custom_id, content_type, rating)
             VALUES(:team, :title, :date, :status, :body, :userid, :category, :elabid, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canbook, :metadata, :custom_id, :content_type, :rating)';
@@ -92,7 +77,7 @@ final class Items extends AbstractConcreteEntity
         $req->bindParam(':status', $status);
         $req->bindParam(':body', $body);
         $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
-        $req->bindParam(':category', $template, PDO::PARAM_INT);
+        $req->bindParam(':category', $category, PDO::PARAM_INT);
         $req->bindValue(':elabid', Tools::generateElabid());
         $req->bindParam(':canread', $canread);
         $req->bindParam(':canwrite', $canwrite);
@@ -101,15 +86,12 @@ final class Items extends AbstractConcreteEntity
         $req->bindParam(':canbook', $canbook);
         $req->bindParam(':metadata', $metadata);
         $req->bindParam(':custom_id', $customId, PDO::PARAM_INT);
-        $req->bindParam(':content_type', $contentType, PDO::PARAM_INT);
+        $req->bindValue(':content_type', $contentType->value, PDO::PARAM_INT);
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
         $this->Db->execute($req);
         $newId = $this->Db->lastInsertId();
 
         $this->insertTags($tags, $newId);
-        $this->ItemsLinks->duplicate($itemTemplate['id'], $newId, true);
-        $this->ExperimentsLinks->duplicate($itemTemplate['id'], $newId, true);
-        $this->Steps->duplicate($itemTemplate['id'], $newId, true);
 
         return $newId;
     }
@@ -155,11 +137,12 @@ final class Items extends AbstractConcreteEntity
         $newId = $this->create(
             title: $title,
             body: $this->entityData['body'],
-            template: $this->entityData['category'],
+            category: $this->entityData['category'],
             canread: $this->entityData['canread'],
             canwrite: $this->entityData['canwrite'],
+            contentType: BodyContentType::from($this->entityData['content_type']),
             metadata: $metadata,
-            contentType: $this->entityData['content_type'],
+            status: $this->entityData['status'],
         );
 
         // add missing canbook
@@ -182,26 +165,5 @@ final class Items extends AbstractConcreteEntity
         }
 
         return $newId;
-    }
-
-    #[Override]
-    public function destroy(): bool
-    {
-        parent::destroy();
-
-        // Todo: should this be remove from here as we do soft delete?
-        // delete links of this item in experiments with this item linked
-        $sql = 'DELETE FROM experiments2items WHERE link_id = :link_id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        // same for items_links
-        $sql = 'DELETE FROM items2items WHERE link_id = :link_id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        // delete from pinned
-        return $this->Pins->cleanup();
     }
 }

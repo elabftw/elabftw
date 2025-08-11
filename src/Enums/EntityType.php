@@ -36,6 +36,16 @@ enum EntityType: string
         };
     }
 
+    public function toTemplateType(Users $users, ?int $entityId = null, ?bool $bypassReadPermission = null, ?bool $bypassWritePermission = null): AbstractEntity
+    {
+        return match ($this) {
+            self::Experiments,
+            self::Templates  => new Templates($users, $entityId, $bypassReadPermission, $bypassWritePermission),
+            self::Items,
+            self::ItemsTypes => new ItemsTypes($users, $entityId, $bypassReadPermission, $bypassWritePermission),
+        };
+    }
+
     // for use in the "genre" attribute of .eln node
     public function toGenre(): string
     {

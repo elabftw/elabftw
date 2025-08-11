@@ -14,7 +14,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Config;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\MfaHelper;
@@ -37,7 +36,7 @@ try {
     // if we are not in https, die saying we work only in https
     if (!$App->Request->isSecure() && !$App->Request->server->has('HTTP_X_FORWARDED_PROTO')) {
         // get the url to display a link to click
-        $url = Config::fromEnv('SITE_URL');
+        $url = Env::asString('SITE_URL');
         $message = "eLabFTW works only in HTTPS. Please enable HTTPS on your server or ensure X-Forwarded-Proto header is correctly sent by the load balancer. Or follow this link : <a href='" .
             $url . "'>$url</a>";
         throw new ImproperActionException($message);

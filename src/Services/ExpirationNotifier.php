@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use Elabftw\Models\Config;
+use Elabftw\Elabftw\Env;
 use Elabftw\Models\Users\Users;
 use PDO;
 use Symfony\Component\Mime\Address;
@@ -43,7 +43,7 @@ final class ExpirationNotifier extends EmailNotifications
         foreach ($userids as $userid) {
             $targetUser = new Users($userid);
             $this->setLang($targetUser->userData['lang']);
-            $emailBody = sprintf(_('Your account on %s is due to expire on %s and become inaccessible (archived) passed this date. All your data will still be visible to others, but you will not be able to access it through this account.'), Config::fromEnv('SITE_URL'), $targetUser->userData['valid_until']);
+            $emailBody = sprintf(_('Your account on %s is due to expire on %s and become inaccessible (archived) passed this date. All your data will still be visible to others, but you will not be able to access it through this account.'), Env::asUrl('SITE_URL'), $targetUser->userData['valid_until']);
             $to = new Address($targetUser->userData['email'], $targetUser->userData['fullname']);
             $this->emailService->sendEmail($to, self::BASE_SUBJECT . $emailSubject, $emailBody);
             $UsersHelper = new UsersHelper($userid);

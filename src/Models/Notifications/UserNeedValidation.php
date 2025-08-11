@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Models\Notifications;
 
+use Elabftw\Elabftw\Env;
 use Elabftw\Enums\Notifications;
 use Elabftw\Interfaces\MailableInterface;
-use Elabftw\Models\Config;
 use Elabftw\Models\Users\Users;
 use Override;
 
@@ -39,7 +39,7 @@ final class UserNeedValidation extends UserCreated implements MailableInterface
             $user->userData['fullname'],
             $user->userData['email'],
         );
-        $url = Config::fromEnv('SITE_URL') . '/admin.php';
+        $url = Env::asUrl('SITE_URL') . '/admin.php';
         $body = $base . ' ' . sprintf(_('Head to the admin panel to validate the account: %s'), $url);
 
         return array(

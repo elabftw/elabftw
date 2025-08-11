@@ -20,7 +20,7 @@ use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\AuthenticatedUser;
 use Elabftw\Models\Config;
 use Elabftw\Models\ExperimentsCategories;
-use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\ResourcesCategories;
 use Elabftw\Models\Notifications\UserNotifications;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users\Users;
@@ -124,10 +124,10 @@ final class App
 
         $this->Teams = new Teams($this->Users, $this->Users->team);
         if ($this->Users->team) {
-            $ItemsTypes = new ItemsTypes($this->Users);
-            $this->itemsCategoryArr = $ItemsTypes->readAll();
             $ExperimentsCategory = new ExperimentsCategories($this->Teams);
             $this->experimentsCategoryArr = $ExperimentsCategory->readAll($ExperimentsCategory->getQueryParams(new InputBag(array('limit' => 9999))));
+            $ResourcesCategory = new ResourcesCategories($this->Teams);
+            $this->itemsCategoryArr = $ResourcesCategory->readAll($ResourcesCategory->getQueryParams(new InputBag(array('limit' => 9999))));
         }
         $this->initi18n();
     }

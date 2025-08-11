@@ -13,7 +13,7 @@ import { getEntity, relativeMoment, reloadElements } from './misc';
 import { displayPlasmidViewer } from './ove';
 import { displayMoleculeViewer, get3dmol } from './3dmol';
 import i18next from './i18n';
-import { Api } from './Apiv2.class';
+import { ApiC } from './api';
 import { marked } from 'marked';
 import Prism from 'prismjs';
 import { SpreadsheetEditorHelper } from './SpreadsheetEditorHelper.class';
@@ -34,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
   displayPlasmidViewer(about);
   displayMoleculeViewer();
   const entity = getEntity();
-  const ApiC = new Api();
   const SpreadsheetEditorHelperC = new SpreadsheetEditorHelper();
 
   // make file comments editable

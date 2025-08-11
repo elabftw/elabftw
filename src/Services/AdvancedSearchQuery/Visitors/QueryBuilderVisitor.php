@@ -253,6 +253,7 @@ final class QueryBuilderVisitor implements Visitor
         // Locked:       entity.locked
         // Owner:        CONCAT(users.firstname, ' ', users.lastname)
         // Rating:       entity.rating
+        // State:        entity.state
         // Status:       statust.title
         // Timestamped:  entity.timestamped, if entity == experiment
         // Title:        entity.title
@@ -487,6 +488,15 @@ final class QueryBuilderVisitor implements Visitor
     {
         return $this->getWhereCollector(
             'entity.rating = ',
+            $searchTerm,
+            PDO::PARAM_INT,
+        );
+    }
+
+    private function visitFieldState(string $searchTerm, string $affix, VisitorParameters $parameters): WhereCollector
+    {
+        return $this->getWhereCollector(
+            'entity.state = ',
             $searchTerm,
             PDO::PARAM_INT,
         );

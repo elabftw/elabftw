@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace Elabftw\Models\Notifications;
 
+use Elabftw\Elabftw\Env;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EmailTarget;
 use Elabftw\Enums\Notifications;
 use Elabftw\Interfaces\MailableInterface;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
-use Elabftw\Models\Config;
 use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
 use Override;
@@ -89,7 +89,7 @@ final class EventDeleted extends AbstractNotifications implements MailableInterf
     public function getEmail(): array
     {
         $info = _('A booked slot was deleted from the scheduler.');
-        $url = Config::fromEnv('SITE_URL') . '/team.php?item=' . $this->event['item'];
+        $url = Env::asUrl('SITE_URL') . '/team.php?item=' . $this->event['item'];
         $body = sprintf(_('Hi. %s (%s). See item: %s. It was booked from %s to %s.'), $info, $this->actor, $url, $this->event['start'], $this->event['end']);
         if (!empty($this->msg)) {
             $body .= "\n\n" . _('Message:') . "\n" . $this->msg;

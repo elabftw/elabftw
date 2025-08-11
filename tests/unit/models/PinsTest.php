@@ -44,11 +44,11 @@ class PinsTest extends \PHPUnit\Framework\TestCase
         $this->Items->Pins->togglePin();
         $this->assertCount(0, $this->Items->Pins->readAll());
 
-        $this->assertTrue($this->Templates->Pins->isPinned());
-        $this->assertTrue(count($this->Templates->Pins->readAll()) === 1);
-        $this->Templates->Pins->togglePin();
         $this->assertFalse($this->Templates->Pins->isPinned());
         $this->assertTrue(count($this->Templates->Pins->readAll()) === 0);
+        $this->Templates->Pins->togglePin();
+        $this->assertTrue($this->Templates->Pins->isPinned());
+        $this->assertTrue(count($this->Templates->Pins->readAll()) === 1);
     }
 
     public function testDuplicateIsNotPinned(): void
@@ -60,7 +60,7 @@ class PinsTest extends \PHPUnit\Framework\TestCase
     public function testTemplateIsAlwaysPinnedWhenCreated(): void
     {
         $fresh = $this->duplicateEntity($this->Templates);
-        $this->assertTrue($fresh->Pins->isPinned());
+        $this->assertFalse($fresh->Pins->isPinned());
     }
 
     private function checkDuplicateIsNotPinned(Experiments | Items $entity): void

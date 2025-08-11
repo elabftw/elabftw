@@ -43,7 +43,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateAndDestroy(): void
     {
-        $new = $this->Experiments->create(template: 0);
+        $new = $this->Experiments->create();
         $this->assertTrue((bool) Check::id($new));
         $this->Experiments->setId($new);
         $this->Experiments->canOrExplode('write');
@@ -77,7 +77,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->destroy();
         $Templates = new Templates($this->Users);
         $Templates->create(title: 'my template');
-        $new = $this->Experiments->create(template: 1);
+        $new = $this->Experiments->createFromTemplate(1);
         $this->assertTrue((bool) Check::id($new));
         $this->Experiments = new Experiments($this->Users, $new);
         $this->Experiments->destroy();
@@ -98,7 +98,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         // first search for it before creating it
         $this->assertTrue(empty($all));
         // then create it so we can find it with a search
-        $new = $this->Experiments->create(template: -1, title: $title);
+        $new = $this->Experiments->create(title: $title);
         $all = $this->Experiments->readAll($DisplayParams);
         $this->assertEquals(1, count($all));
         $this->Experiments->setId($new);
@@ -110,7 +110,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate(): void
     {
-        $new = $this->Experiments->create(template: 0);
+        $new = $this->Experiments->create();
         $this->Experiments->setId($new);
         $this->assertEquals($new, $this->Experiments->id);
         $this->assertEquals($this->Users->userid, $this->Experiments->Users->userData['userid']);
@@ -122,7 +122,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdateIncorrectState(): void
     {
-        $new = $this->Experiments->create(template: 0);
+        $new = $this->Experiments->create();
         $this->Experiments->setId($new);
         $this->expectException(ImproperActionException::class);
         $this->Experiments->update(new EntityParams('state', '42'));
@@ -130,7 +130,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testCannotUpdateDeletedExperiment(): void
     {
-        $new = $this->Experiments->create(template: 0);
+        $new = $this->Experiments->create();
         $this->Experiments->setId($new);
         $this->Experiments->patch(Action::Update, array('state' => State::Deleted->value));
         $this->assertEquals(State::Deleted->value, $this->Experiments->entityData['state']);
@@ -141,7 +141,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testCannotUpdateArchivedExperiment(): void
     {
-        $new = $this->Experiments->create(template: 0);
+        $new = $this->Experiments->create();
         $this->Experiments->setId($new);
         $this->Experiments->patch(Action::Update, array('state' => State::Archived->value));
         $this->assertEquals(State::Archived->value, $this->Experiments->entityData['state']);
@@ -212,7 +212,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testInsertTags(): void
     {
-        $this->assertIsInt($this->Experiments->create(template: 0, tags: array('tag-bbbtbtbt', 'tag-auristearuiset')));
+        $this->assertIsInt($this->Experiments->create(tags: array('tag-bbbtbtbt', 'tag-auristearuiset')));
     }
 
     public function testGetTags(): void

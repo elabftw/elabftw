@@ -13,14 +13,11 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\State;
-use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Factories\LinksFactory;
 use Override;
 use PDO;
-
-use function is_array;
-use function is_string;
-use function json_encode;
 
 /**
  * An entity like Templates or ItemsTypes. Template as opposed to Concrete: Experiments and Items
@@ -30,16 +27,10 @@ abstract class AbstractTemplateEntity extends AbstractEntity
     /**
      * Get an id of an existing one or create it and get its id
      */
-    public function getIdempotentIdFromTitle(string $title, ?string $color = null): int
+    public function getIdempotentIdFromTitle(string $title): int
     {
-        // for templates, we actually want to use the Experiments Categories, whereas the Items Types are their own category!
-        $fresh = clone $this;
-        $table = $this->entityType->value;
-        if ($this instanceof Templates) {
-            $table = 'experiments_categories';
-        }
         $sql = 'SELECT id
-            FROM ' . $table . ' WHERE title = :title AND team = :team AND state = :state';
+            FROM ' . $this->entityType->value . ' WHERE title = :title AND team = :team AND state = :state';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':title', $title);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
@@ -47,48 +38,51 @@ abstract class AbstractTemplateEntity extends AbstractEntity
         $this->Db->execute($req);
         $res = $req->fetch(PDO::FETCH_COLUMN);
         if (!is_int($res)) {
-            // this was done to make static analysis stfu, creating the $fresh in the if above was problematic for some reason
-            if ($this instanceof Templates) {
-                $fresh = new ExperimentsCategories(new Teams($this->Users, $this->Users->team));
-                return $fresh->create(title: $title, color: $color);
-            }
-            return $fresh->create(title: $title, color: $color);
-
+            return $this->create(title: $title);
         }
         return $res;
     }
 
     #[Override]
-    public function postAction(Action $action, array $reqBody): int
+    public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int
     {
-        // force tags to be an array
-        $tags = $reqBody['tags'] ?? null;
-        if (is_string($tags)) {
-            $tags = array($tags);
+        $this->canOrExplode('read');
+        $title = $this->entityData['title'] . ' I';
+        $newId = $this->create(
+            title: $title,
+            body: $this->entityData['body'],
+            category: $this->entityData['category'],
+            status: $this->entityData['status'],
+            canread: $this->entityData['canread'],
+            canwrite: $this->entityData['canwrite'],
+            metadata: $this->entityData['metadata'],
+            contentType: BodyContentType::from($this->entityData['content_type']),
+        );
+        // add missing can*_target
+        $fresh = clone $this;
+        $fresh->setId($newId);
+        $fresh->patch(Action::Update, array(
+            'canread_target' => $this->entityData['canread_target'],
+            'canwrite_target' => $this->entityData['canwrite_target'],
+        ));
+
+        // copy tags
+        $Tags = new Tags($this);
+        $Tags->copyTags($newId);
+
+        // copy links and steps too
+        $ItemsLinks = LinksFactory::getItemsLinks($this);
+        /** @psalm-suppress PossiblyNullArgument */
+        $ItemsLinks->duplicate($this->id, $newId, true);
+        $ExperimentsLinks = LinksFactory::getExperimentsLinks($this);
+        $ExperimentsLinks->duplicate($this->id, $newId, true);
+        $Steps = new Steps($this);
+        $Steps->duplicate($this->id, $newId, true);
+        if ($copyFiles) {
+            $fresh->Uploads = new Uploads($fresh);
+            $this->Uploads->duplicate($fresh);
         }
-        // force metadata to be a string
-        $metadata = $reqBody['metadata'] ?? null;
-        if (is_array($metadata)) {
-            $metadata = json_encode($metadata, JSON_THROW_ON_ERROR, 128);
-        }
-        return match ($action) {
-            Action::Create => $this->create(
-                title: $reqBody['title'] ?? null,
-                template: $reqBody['template'] ?? -1,
-                body: $reqBody['body'] ?? null,
-                canread: $reqBody['canread'] ?? null,
-                canreadIsImmutable: (bool) ($reqBody['canread_is_immutable'] ?? false),
-                canwrite: $reqBody['canwrite'] ?? null,
-                canwriteIsImmutable: (bool) ($reqBody['canwrite_is_immutable'] ?? false),
-                tags: $tags ?? array(),
-                category: $reqBody['category'] ?? null,
-                status: $reqBody['status'] ?? null,
-                metadata: $metadata,
-                rating: $reqBody['rating'] ?? 0,
-                contentType: $reqBody['content_type'] ?? null,
-            ),
-            Action::Duplicate => $this->duplicate((bool) ($reqBody['copyFiles'] ?? false), (bool) ($reqBody['linkToOriginal'] ?? false)),
-            default => throw new ImproperActionException('Invalid action parameter.'),
-        };
+
+        return $newId;
     }
 }

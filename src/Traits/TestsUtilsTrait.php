@@ -16,7 +16,8 @@ use Elabftw\Enums\Action;
 use Elabftw\Models\Users\AuthenticatedUser;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
-use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\ResourcesCategories;
+use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Users\Users;
 use PDO;
@@ -96,8 +97,8 @@ trait TestsUtilsTrait
     protected function getFreshBookableItem(int $team): Items
     {
         $Item = $this->getFreshItem($team);
-        $ItemsTypes = new ItemsTypes($Item->Users);
-        $category = (string) $ItemsTypes->readAll()[0]['id'];
+        $ResourcesCategories = new ResourcesCategories(new Teams($Item->Users, $team));
+        $category = (string) $ResourcesCategories->readAll()[0]['id'];
         $Item->patch(Action::Update, array('is_bookable' => '1', 'category' => $category));
         return $Item;
     }

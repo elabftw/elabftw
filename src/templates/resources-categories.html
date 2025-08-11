@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block body %}
+
+{% import 'categories-status-index.macro.html' as idx %}
+{{ idx.catstatidx(
+  'resources_categories',
+  'items_categories',
+  'Create and modify the categories available to resources.'|trans,
+  'Resources categories can be associated with a Resource or a Resource Template as a Category. They belong to a team and have two main properties: name and color. Examples: Equipment, Chemical, Cell line, Plasmid, Antibody, Microscope, etc...'|trans,
+  App.itemsCategoryArr,
+  'No resources categories have been created in this team yet.'|trans|msg('warning', false),
+  'Create new resources category'|trans,
+  'Category name'|trans,
+  ) }}
+
+{% endblock body %}

@@ -8,14 +8,12 @@
 import { reloadElements } from './misc';
 import i18next from './i18n';
 import { Action, Model } from './interfaces';
-import { Api } from './Apiv2.class';
+import { ApiC } from './api';
 
 document.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('info')?.dataset?.page !== 'edit') {
     return;
   }
-
-  const ApiC = new Api();
 
   // store the clicks
   let clickX = [];

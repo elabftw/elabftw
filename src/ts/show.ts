@@ -17,14 +17,11 @@ import {
 import { Action, Model } from './interfaces';
 import 'bootstrap/js/src/modal.js';
 import i18next from './i18n';
-import { Api } from './Apiv2.class';
-import { Notification } from './Notifications.class';
+import { ApiC } from './api';
+import { notify } from './notify';
 import { SearchSyntaxHighlighting } from './SearchSyntaxHighlighting.class';
-declare let key: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
-const ApiC = new Api();
 const entity = getEntity();
-const notify = new Notification();
 const params = new URLSearchParams(document.location.search.slice(1));
 
 // a filter helper can be a select or an input (for date and extrafield), so we need a function to get its value
@@ -261,20 +258,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (filterName === 'extrafield') {
           filter = `${filterName}:${filterValue}`;
         }
-      }
-
-      // add additional filter at cursor position
-      if (key.ctrl || key.command) {
-        const pos = searchInput.selectionStart;
-        const val = searchInput.value;
-        const start = val.substring(0, pos);
-        const end = val.substring(pos, val.length);
-        const hasSpaceBefore = val.substring(pos - 1, pos) === ' ';
-        const hasSpaceAfter = val.substring(pos, pos + 1) === ' ';
-        const insert = (hasSpaceBefore ? '' : pos === 0 ? '' : ' ') + filter + (hasSpaceAfter ? '' : ' ');
-        searchInput.value = start + insert + end;
-        SearchSyntaxHighlighting.update(searchInput.value);
-        return;
       }
 
       if (found) {

@@ -14,7 +14,7 @@ namespace Elabftw\Make;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
-use Elabftw\Models\Config;
+use Elabftw\Elabftw\Env;
 use Override;
 
 /**
@@ -37,7 +37,7 @@ final class MakeCustomTimestamp extends AbstractMakeTrustedTimestamp
 
         $password = '';
         if (($config['ts_password'] ?? '') !== '') {
-            $password = Crypto::decrypt($config['ts_password'], Key::loadFromAsciiSafeString(Config::fromEnv('SECRET_KEY')));
+            $password = Crypto::decrypt($config['ts_password'], Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY')));
         }
 
         $hash = $config['ts_hash'];

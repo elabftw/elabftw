@@ -204,7 +204,6 @@ export function getEntity(): Entity {
   if (params.has('id')) {
     entityId = parseInt(params.get('id'));
   }
-  console.log(entityId + ' - ' + entityType);
   return {
     type: entityType,
     id: entityId,

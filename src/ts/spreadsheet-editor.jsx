@@ -38,205 +38,207 @@ const fileExportOptions = [
 ];
 const entity = getEntity();
 
-function SpreadsheetEditor() {
-  const SpreadsheetHelperC = useRef(new SpreadsheetEditorHelper()).current;
-  const [columnDefs, setColumnDefs] = useState([]);
-  const [rowData, setRowData] = useState([]);
-  const fileInputRef = useRef();
-  const gridRef = useRef();
-  const isDisabled = columnDefs.length === 0;
-  const [currentUploadId, setCurrentUploadId] = useState(0);
-  const [currentUploadName, setCurrentUploadName] = useState('');
-  const nextColIndex = useRef(1);
+if (document.getElementById('spreadsheetEditor')) {
+  function SpreadsheetEditor() {
+    const SpreadsheetHelperC = useRef(new SpreadsheetEditorHelper()).current;
+    const [columnDefs, setColumnDefs] = useState([]);
+    const [rowData, setRowData] = useState([]);
+    const fileInputRef = useRef();
+    const gridRef = useRef();
+    const isDisabled = columnDefs.length === 0;
+    const [currentUploadId, setCurrentUploadId] = useState(0);
+    const [currentUploadName, setCurrentUploadName] = useState('');
+    const nextColIndex = useRef(1);
 
-  useEffect(() => {
-    const handleData = (e) => {
-      const { cols, rows, name, uploadId } = e.detail;
+    useEffect(() => {
+      const handleData = (e) => {
+        const { cols, rows, name, uploadId } = e.detail;
+        setColumnDefs(cols);
+        setRowData(rows);
+        setCurrentUploadId(uploadId);
+        setCurrentUploadName(name);
+      };
+      document.addEventListener('sheet-load-data', handleData);
+      return () => {
+        document.removeEventListener('sheet-load-data', handleData);
+      };
+    }, []);
+
+    const clear = () => {
+      setColumnDefs([]);
+      setRowData([]);
+      setCurrentUploadId(0);
+      setCurrentUploadName('');
+    };
+
+    const createNewSpreadsheet = () => {
+      // reset the counter
+      nextColIndex.current = 1;
+      // generate a unique field for the first column
+      const firstField = `col${nextColIndex.current++}`;
+      const initialColumn = [{
+        field: firstField,
+        headerName: 'Column0',
+        editable: true,
+        colId: firstField,
+      }];
+      const initialRow = [{ [firstField]: '' }];
+      setColumnDefs(initialColumn);
+      setRowData(initialRow);
+      setCurrentUploadId(0);
+      setCurrentUploadName('');
+    };
+
+    const handleImport = useCallback((e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      SpreadsheetHelperC.loadWithHeaderChoice(file, setColumnDefs, setRowData);
+    }, [SpreadsheetHelperC]);
+
+    const handleExport = useCallback((format) => {
+      SpreadsheetHelperC.handleExport(format, columnDefs, rowData);
+    }, [SpreadsheetHelperC, columnDefs, rowData]);
+
+    // add a row next to the selected line. When no row is selected, it's added at the bottom line.
+    const addRow = useCallback(() => {
+      const api = gridRef.current.api;
+      // https://www.ag-grid.com/react-data-grid/data-update-transactions/#transaction-update-api
+      const selectedNodes = api.getSelectedNodes();
+      // figure out the insertion index
+      const insertIndex = selectedNodes.length > 0
+        ? selectedNodes[0].rowIndex + 1
+        : rowData.length;
+      // build your new empty row
+      const newRow = {};
+      columnDefs.forEach(col => { newRow[col.field] = '' });
+      // update React state, adding a new column takes into account existing rows.
+      const updated = [
+        ...rowData.slice(0, insertIndex),
+        newRow,
+        ...rowData.slice(insertIndex),
+      ];
+      setRowData(updated);
+    }, [columnDefs, rowData]);
+
+    const removeSelectedRows = () => {
+      const api = gridRef.current.api;
+      const selected = api.getSelectedRows();
+      if (!confirm(`Delete ${selected.length} line(s)?`)) {
+        return;
+      }
+      api.applyTransaction({ remove: selected });
+      setRowData(prev => prev.filter(r => !selected.includes(r)));
+    };
+
+    return (
+      <div className='spreadsheet-editor'>
+        <input type='file' accept='.csv,.xls,.xlsx,.ods,.fods,.xlsb' ref={fileInputRef} className='d-none' onChange={handleImport} />
+        <div className='d-flex align-items-center'>
+          {/* NEW SPREADSHEET BUTTON */}
+          <button className='btn hl-hover-gray p-2 main-action-button lh-normal border-0' onClick={createNewSpreadsheet} title={i18next.t('new-spreadsheet')} aria-label={i18next.t('new-spreadsheet')} type='button'>
+            <i className='fas fa-plus fa-fw'></i>
+          </button>
+          <div className='vertical-separator'></div>
+          {/* IMPORT BUTTON */}
+          <button className='btn hl-hover-gray p-2 mr-2' onClick={() => fileInputRef.current?.click()} title={i18next.t('import')} type='button'>
+            <i className='fas fa-upload fa-fw'></i>
+          </button>
+          {/* EXPORT BUTTON: Select with different types */}
+          <div className='dropdown'>
+            <button disabled={isDisabled} className='btn hl-hover-gray d-inline p-2 mr-2' title={i18next.t('export')} data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label={i18next.t('export')} type='button'>
+              <i className='fas fa-download fa-fw'></i>
+            </button>
+            <div className='dropdown-menu'>
+              {fileExportOptions.map(({ type, icon, labelKey }) => (
+                <button key={type} className="dropdown-item" onClick={() => handleExport(type)}>
+                  <i className={`fas ${icon} fa-fw`}></i>{i18next.t(labelKey)}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className='vertical-separator'></div>
+          {/* SAVE AS ATTACHMENT (uploads section) */}
+          <button disabled={isDisabled} className='btn hl-hover-gray p-2 mr-2' onClick={() => SpreadsheetHelperC.saveAsAttachment(columnDefs, rowData, entity.type, entity.id)} title={i18next.t('save-attachment')} type='button'>
+            <i className='fas fa-paperclip fa-fw'></i>
+          </button>
+          {/* REPLACE EXISTING FILE WITH CURRENT EDITIONS */}
+          <button disabled={!currentUploadId} className='btn hl-hover-gray p-2 lh-normal border-0 mr-2' onClick={() => SpreadsheetHelperC.replaceExisting(columnDefs, rowData, entity.type, entity.id, currentUploadName, currentUploadId)} title={i18next.t('replace-existing')} aria-label={i18next.t('replace-existing')} type='button'>
+            <i className='fas fa-save fa-fw'></i>
+          </button>
+          <div className='vertical-separator'></div>
+          {/* ADD NEW ROW */}
+          <button disabled={isDisabled} onClick={addRow} className='btn hl-hover-gray d-inline p-2' title={i18next.t('add-row')} type='button'>
+            <i className='fas fa-plus-minus fa-fw'></i>
+          </button>
+          {/* CLEAR */}
+          <button disabled={isDisabled} title={i18next.t('clear')} aria-label={i18next.t('add-row')} type='button' onClick={clear} className='btn hl-hover-gray p-2 lh-normal border-0 mr-2 ml-auto'>
+            <i className='fas fa-trash-alt fa-fw'></i>
+          </button>
+        </div>
+        {isDisabled && <p>{i18next.t('import-spreadsheet')}</p>}
+        {columnDefs.length > 0 && rowData.length > 0 && (
+          <>
+            <div className='ag-theme-alpine' style={{ height: 400, marginTop: 10 }}>
+              <AgGridReact
+                ref={gridRef}
+                rowData={rowData}
+                columnDefs={columnDefs.map(col => ({
+                  ...col,
+                  headerComponent: ColumnHeader,
+                  headerComponentParams: {
+                    columnDefs, rowData, setColumnDefs, setRowData
+                  }
+                }))}
+                defaultColDef={{ sortable: true, filter: true, editable: true }}
+                rowSelection='multiple'
+              />
+            </div>
+            <button type='button' onClick={removeSelectedRows} className='btn btn-danger btn-sm my-2'>
+              Delete Selected Rows
+            </button>
+          </>
+        )}
+      </div>
+    );
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const el = document.getElementById('spreadsheet-importer-root');
+    if (el) {
+      const root = createRoot(el);
+      root.render(<SpreadsheetEditor />);
+    }
+    // handle 'use first line as header' modal
+    document.body.addEventListener('click', event => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+
+      const action = target.getAttribute('data-action');
+      if (!action || !['use-header-row', 'use-data-as-header'].includes(action)) return;
+
+      const state = window._sheetImport;
+      if (!state) return;
+
+      const { aoa, setColumnDefs, setRowData } = state;
+      delete window._sheetImport;
+
+      const useHeader = action === 'use-header-row';
+      const headerRow = useHeader
+        ? aoa[0].map((h, i) => typeof h === 'string' ? h : `Column${i}`)
+        : aoa[0].map((_, i) => `Column${i}`);
+
+      const dataRows = useHeader ? aoa.slice(1) : aoa;
+      const rows = dataRows.map(r => {
+        const row = {};
+        headerRow.forEach((h, i) => {
+          row[h] = String(r[i] ?? '');
+        });
+        return row;
+      });
+
+      const cols = headerRow.map(h => ({ field: h, editable: true }));
       setColumnDefs(cols);
       setRowData(rows);
-      setCurrentUploadId(uploadId);
-      setCurrentUploadName(name);
-    };
-    document.addEventListener('sheet-load-data', handleData);
-    return () => {
-      document.removeEventListener('sheet-load-data', handleData);
-    };
-  }, []);
-
-  const clear = () => {
-    setColumnDefs([]);
-    setRowData([]);
-    setCurrentUploadId(0);
-    setCurrentUploadName('');
-  };
-
-  const createNewSpreadsheet = () => {
-    // reset the counter
-    nextColIndex.current = 1;
-    // generate a unique field for the first column
-    const firstField = `col${nextColIndex.current++}`;
-    const initialColumn = [{
-      field: firstField,
-      headerName: 'Column0',
-      editable: true,
-      colId: firstField,
-    }];
-    const initialRow = [{ [firstField]: '' }];
-    setColumnDefs(initialColumn);
-    setRowData(initialRow);
-    setCurrentUploadId(0);
-    setCurrentUploadName('');
-  };
-
-  const handleImport = useCallback((e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    SpreadsheetHelperC.loadWithHeaderChoice(file, setColumnDefs, setRowData);
-  }, [SpreadsheetHelperC]);
-
-  const handleExport = useCallback((format) => {
-    SpreadsheetHelperC.handleExport(format, columnDefs, rowData);
-  }, [SpreadsheetHelperC, columnDefs, rowData]);
-
-  // add a row next to the selected line. When no row is selected, it's added at the bottom line.
-  const addRow = useCallback(() => {
-    const api = gridRef.current.api;
-    // https://www.ag-grid.com/react-data-grid/data-update-transactions/#transaction-update-api
-    const selectedNodes = api.getSelectedNodes();
-    // figure out the insertion index
-    const insertIndex = selectedNodes.length > 0
-      ? selectedNodes[0].rowIndex + 1
-      : rowData.length;
-    // build your new empty row
-    const newRow = {};
-    columnDefs.forEach(col => { newRow[col.field] = '' });
-    // update React state, adding a new column takes into account existing rows.
-    const updated = [
-      ...rowData.slice(0, insertIndex),
-      newRow,
-      ...rowData.slice(insertIndex),
-    ];
-    setRowData(updated);
-  }, [columnDefs, rowData]);
-
-  const removeSelectedRows = () => {
-    const api = gridRef.current.api;
-    const selected = api.getSelectedRows();
-    if (!confirm(`Delete ${selected.length} line(s)?`)) {
-      return;
-    }
-    api.applyTransaction({ remove: selected });
-    setRowData(prev => prev.filter(r => !selected.includes(r)));
-  };
-
-  return (
-    <div className='spreadsheet-editor'>
-      <input type='file' accept='.csv,.xls,.xlsx,.ods,.fods,.xlsb' ref={fileInputRef} className='d-none' onChange={handleImport} />
-      <div className='d-flex align-items-center'>
-        {/* NEW SPREADSHEET BUTTON */}
-        <button className='btn hl-hover-gray p-2 main-action-button lh-normal border-0' onClick={createNewSpreadsheet} title={i18next.t('new-spreadsheet')} aria-label={i18next.t('new-spreadsheet')} type='button'>
-          <i className='fas fa-plus fa-fw'></i>
-        </button>
-        <div className='vertical-separator'></div>
-        {/* IMPORT BUTTON */}
-        <button className='btn hl-hover-gray p-2 mr-2' onClick={() => fileInputRef.current?.click()} title={i18next.t('import')} type='button'>
-          <i className='fas fa-upload fa-fw'></i>
-        </button>
-        {/* EXPORT BUTTON: Select with different types */}
-        <div className='dropdown'>
-          <button disabled={isDisabled} className='btn hl-hover-gray d-inline p-2 mr-2' title={i18next.t('export')} data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label={i18next.t('export')} type='button'>
-            <i className='fas fa-download fa-fw'></i>
-          </button>
-          <div className='dropdown-menu'>
-            {fileExportOptions.map(({ type, icon, labelKey }) => (
-              <button key={type} className="dropdown-item" onClick={() => handleExport(type)}>
-                <i className={`fas ${icon} fa-fw`}></i>{i18next.t(labelKey)}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className='vertical-separator'></div>
-        {/* SAVE AS ATTACHMENT (uploads section) */}
-        <button disabled={isDisabled} className='btn hl-hover-gray p-2 mr-2' onClick={() => SpreadsheetHelperC.saveAsAttachment(columnDefs, rowData, entity.type, entity.id)} title={i18next.t('save-attachment')} type='button'>
-          <i className='fas fa-paperclip fa-fw'></i>
-        </button>
-        {/* REPLACE EXISTING FILE WITH CURRENT EDITIONS */}
-        <button disabled={!currentUploadId} className='btn hl-hover-gray p-2 lh-normal border-0 mr-2' onClick={() => SpreadsheetHelperC.replaceExisting(columnDefs, rowData, entity.type, entity.id, currentUploadName, currentUploadId)} title={i18next.t('replace-existing')} aria-label={i18next.t('replace-existing')} type='button'>
-          <i className='fas fa-save fa-fw'></i>
-        </button>
-        <div className='vertical-separator'></div>
-        {/* ADD NEW ROW */}
-        <button disabled={isDisabled} onClick={addRow} className='btn hl-hover-gray d-inline p-2' title={i18next.t('add-row')} type='button'>
-          <i className='fas fa-plus-minus fa-fw'></i>
-        </button>
-        {/* CLEAR */}
-        <button disabled={isDisabled} title={i18next.t('clear')} aria-label={i18next.t('add-row')} type='button' onClick={clear} className='btn hl-hover-gray p-2 lh-normal border-0 mr-2 ml-auto'>
-          <i className='fas fa-trash-alt fa-fw'></i>
-        </button>
-      </div>
-      {isDisabled && <p>{i18next.t('import-spreadsheet')}</p>}
-      {columnDefs.length > 0 && rowData.length > 0 && (
-        <>
-          <div className='ag-theme-alpine' style={{ height: 400, marginTop: 10 }}>
-            <AgGridReact
-              ref={gridRef}
-              rowData={rowData}
-              columnDefs={columnDefs.map(col => ({
-                ...col,
-                headerComponent: ColumnHeader,
-                headerComponentParams: {
-                  columnDefs, rowData, setColumnDefs, setRowData
-                }
-              }))}
-              defaultColDef={{ sortable: true, filter: true, editable: true }}
-              rowSelection='multiple'
-            />
-          </div>
-          <button type='button' onClick={removeSelectedRows} className='btn btn-danger btn-sm my-2'>
-            Delete Selected Rows
-          </button>
-        </>
-      )}
-    </div>
-  );
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  const el = document.getElementById('spreadsheet-importer-root');
-  if (el) {
-    const root = createRoot(el);
-    root.render(<SpreadsheetEditor />);
-  }
-  // handle 'use first line as header' modal
-  document.body.addEventListener('click', event => {
-    const target = event.target;
-    if (!(target instanceof HTMLElement)) return;
-
-    const action = target.getAttribute('data-action');
-    if (!action || !['use-header-row', 'use-data-as-header'].includes(action)) return;
-
-    const state = window._sheetImport;
-    if (!state) return;
-
-    const { aoa, setColumnDefs, setRowData } = state;
-    delete window._sheetImport;
-
-    const useHeader = action === 'use-header-row';
-    const headerRow = useHeader
-      ? aoa[0].map((h, i) => typeof h === 'string' ? h : `Column${i}`)
-      : aoa[0].map((_, i) => `Column${i}`);
-
-    const dataRows = useHeader ? aoa.slice(1) : aoa;
-    const rows = dataRows.map(r => {
-      const row = {};
-      headerRow.forEach((h, i) => {
-        row[h] = String(r[i] ?? '');
-      });
-      return row;
     });
-
-    const cols = headerRow.map(h => ({ field: h, editable: true }));
-    setColumnDefs(cols);
-    setRowData(rows);
   });
-});
+}

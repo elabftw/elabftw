@@ -8,9 +8,10 @@
  */
 
 import { FileType, GridColumn, GridRow, Model } from './interfaces';
+import { getBookType, getMime } from './spreadsheet-formats';
 import { askFileName, reloadElements } from './misc';
 import { notify } from './notify';
-import { read, utils, write, writeFile, WorkBook } from '@e965/xlsx';
+import { read, utils, write, writeFile, WorkBook, BookType } from '@e965/xlsx';
 
 declare global {
   interface Window {
@@ -102,17 +103,15 @@ export class SpreadsheetEditorHelper {
   }
 
   // saves the current sheet as an upload for the entity. (.csv)
-  saveAsAttachment(columnDefs: GridColumn[], rowData: GridRow[], entityType: string, entityId: number):  Promise<void> {
-    // should behave the same as Export. Make a modal with grouped input, [input-name, ., FileTypeEnum]
-    if (!columnDefs.length || !rowData.length) return;
-    const realName = askFileName(FileType.Csv);
-    if (!realName) return;
-
+  saveAsAttachment(format: FileType, columnDefs: GridColumn[], rowData: GridRow[], entityType: string, entityId: number): Promise<void> {
+    if (!columnDefs.length || !rowData.length) return Promise.resolve();
+    const realName = askFileName(format);
+    if (!realName) return Promise.resolve();
     const wb = SpreadsheetEditorHelper.createWorkbookFromGrid(columnDefs, rowData);
-    const wbBinary = write(wb, { bookType: FileType.Csv, type: 'array' });
-    const file = new File([wbBinary], realName, {
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    });
+    const bookType = getBookType(format);
+    const mime = getMime(format);
+    const wbBinary = write(wb, { bookType, type: 'array' });
+    const file = new File([wbBinary], realName, { type: mime });
     return SpreadsheetEditorHelper.uploadWorkbook(file, `api/v2/${entityType}/${entityId}/${Model.Upload}`);
   }
 

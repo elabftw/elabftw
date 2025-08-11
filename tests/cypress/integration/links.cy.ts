@@ -1,3 +1,4 @@
+// WARNING flaky test
 describe('Test links', () => {
   beforeEach(() => {
     cy.login();
@@ -13,7 +14,7 @@ describe('Test links', () => {
     cy.get('#addLinkExpInput').type('Testing');
     cy.get('.ui-menu-item-wrapper').first().click();
     cy.get('button[aria-label="Add link to an experiment"]').click();
-    cy.get('#experimentsLinksDiv').wait(500).should('contain.text', 'Testing');
+    cy.get('#experimentsLinksDiv').should('contain.text', 'Testing');
     cy.intercept('DELETE', '/api/v2/**').as('delete');
     cy.get('[data-action="destroy-link"]').first().click();
     cy.wait('@delete').its('response.statusCode').should('eq', 204);

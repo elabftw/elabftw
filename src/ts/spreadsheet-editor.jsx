@@ -68,7 +68,7 @@ function SpreadsheetEditor() {
     setRowData([]);
     setCurrentUploadId(0);
     setCurrentUploadName('');
-  }
+  };
 
   const createNewSpreadsheet = () => {
     // reset the counter

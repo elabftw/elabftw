@@ -17,7 +17,7 @@ import {
   collectForm,
   escapeExtendedQuery,
   generateMetadataLink,
-  getEntity, handleReloads,
+  handleReloads,
   getRandomColor,
   listenTrigger,
   makeSortableGreatAgain,
@@ -61,6 +61,7 @@ import JsonEditorHelper from './JsonEditorHelper.class';
 import { Counter } from './Counter.class';
 import { getEditor } from './Editor.class';
 import Todolist from './Todolist.class';
+import { entity } from './getEntity';
 
 // we need to extend the interface from malle to add more properties
 interface Status extends SelectOptions {
@@ -87,7 +88,6 @@ if (document.getElementById('is-auth')) {
   }, heartRate);
 }
 
-const entity = getEntity();
 const FavTagC = new FavTag();
 const TodolistC = new Todolist();
 

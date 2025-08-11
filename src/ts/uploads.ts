@@ -8,8 +8,8 @@
 import $ from 'jquery';
 import { Action as MalleAction, Malle } from '@deltablot/malle';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
-import { Action, Entity, Model } from './interfaces';
-import { getEntity, relativeMoment, reloadElements } from './misc';
+import { Action, Model } from './interfaces';
+import { relativeMoment, reloadElements } from './misc';
 import { displayPlasmidViewer } from './ove';
 import { displayMoleculeViewer, get3dmol } from './3dmol';
 import i18next from './i18n';
@@ -17,8 +17,9 @@ import { ApiC } from './api';
 import { marked } from 'marked';
 import Prism from 'prismjs';
 import { Uploader } from './uploader';
+import { entity } from './getEntity';
 
-function processNewFilename(entity: Entity, event, original: HTMLElement, parent: HTMLElement): void {
+function processNewFilename(event, original: HTMLElement, parent: HTMLElement): void {
   if (event.key === 'Enter' || event.type === 'blur') {
     const newFilename = (event.target as HTMLInputElement).value;
     ApiC.patch(`${entity.type}/${entity.id}/${Model.Upload}/${event.target.dataset.id}`, {real_name: newFilename}).then(() => {
@@ -31,7 +32,6 @@ function processNewFilename(entity: Entity, event, original: HTMLElement, parent
 }
 
 const clickHandler = async (event: Event) => {
-  const entity = getEntity();
   const el = (event.target as HTMLElement);
   // RENAME UPLOAD
   if (el.matches('[data-action="rename-upload"]')) {
@@ -45,10 +45,10 @@ const clickHandler = async (event: Event) => {
     const parentSpan = filenameLink.parentElement;
     parentSpan.classList.add('form-inline');
     filenameInput.addEventListener('blur', event => {
-      processNewFilename(entity, event, filenameLink, parentSpan);
+      processNewFilename(event, filenameLink, parentSpan);
     });
     filenameInput.addEventListener('keypress', event => {
-      processNewFilename(entity, event, filenameLink, parentSpan);
+      processNewFilename(event, filenameLink, parentSpan);
     });
     filenameLink.replaceWith(filenameInput);
     filenameInput.focus();
@@ -159,7 +159,6 @@ const clickHandler = async (event: Event) => {
 
 const uploadsDiv = document.getElementById('uploadsDiv');
 if (uploadsDiv) {
-  const entity = getEntity();
   displayPlasmidViewer(entity);
   displayMoleculeViewer();
 

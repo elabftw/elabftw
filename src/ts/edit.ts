@@ -7,7 +7,6 @@
  */
 import {
   escapeRegExp,
-  getEntity,
   getNewIdFromPostRequest,
   reloadElements,
   updateEntityBody,
@@ -20,14 +19,13 @@ import { ApiC } from './api';
 import { notify } from './notify';
 import { Uploader } from './uploader';
 import { clearLocalStorage } from './localStorage';
+import { entity } from './getEntity';
 
 document.addEventListener('DOMContentLoaded', async () => {
   // only run in edit mode
   if (document.getElementById('info')?.dataset.page !== 'edit') {
     return;
   }
-
-  const entity = getEntity();
 
   // remove exclusive edit mode when leaving the page
   window.onbeforeunload = function() {

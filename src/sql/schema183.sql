@@ -20,12 +20,14 @@ ALTER TABLE `experiments_categories`
   ADD CONSTRAINT FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 -- now insert items_types into items_categories
 INSERT INTO `items_categories` (
+  `id`,
   `team`,
   `title`,
   `color`,
   `state`
 )
 SELECT
+  `id`,
   `team`,
   `title`,
   `color`,

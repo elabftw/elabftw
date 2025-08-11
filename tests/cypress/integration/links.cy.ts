@@ -11,14 +11,17 @@ describe('Test links', () => {
       cy.visit(`/experiments.php?mode=edit&id=${expid}`);
     });
     // link to an experiment
-    cy.get('#addLinkExpInput').type('Testing');
+    const expTitle = 'Link target';
+    // create an experiment first
+    cy.request({ method: 'POST', url: '/api/v2/experiments', body: {title: expTitle} });
+    cy.get('#addLinkExpInput').type(expTitle);
     cy.get('.ui-menu-item-wrapper').first().click();
     cy.get('button[aria-label="Add link to an experiment"]').click();
-    cy.get('#experimentsLinksDiv').should('contain.text', 'Testing');
+    cy.get('#experimentsLinksDiv').should('contain.text', expTitle);
     cy.intercept('DELETE', '/api/v2/**').as('delete');
     cy.get('[data-action="destroy-link"]').first().click();
     cy.wait('@delete').its('response.statusCode').should('eq', 204);
-    cy.get('#experimentsLinksDiv').should('not.contain.text', 'Testing the eLabFTW');
+    cy.get('#experimentsLinksDiv').should('not.contain.text', expTitle);
 
     // link to a resource
     const itemTitle = 'Light sheet 1';

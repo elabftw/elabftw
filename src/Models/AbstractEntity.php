@@ -211,7 +211,7 @@ abstract class AbstractEntity extends AbstractRest
                     if ($teamConfigArr['force_exp_tpl'] === 1 && $this instanceof Experiments) {
                         throw new ImproperActionException(_('Experiments must use a template!'));
                     }
-                    if ($reqBody['category'] === -1) {
+                    if (!isset($reqBody['category']) || $reqBody['category'] === -1) {
                         $reqBody['category'] = null;
                     }
                     // convert to int only if not empty, otherwise send null: we don't want to convert a null to int, as it would send 0

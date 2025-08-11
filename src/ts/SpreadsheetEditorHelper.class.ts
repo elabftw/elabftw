@@ -10,7 +10,7 @@
 import { FileType, GridColumn, GridRow, Model } from './interfaces';
 import { askFileName, reloadElements } from './misc';
 import { Notification } from './Notifications.class';
-import { read, utils, write, writeFile, WorkBook } from 'xlsx';
+import { read, utils, write, writeFile, WorkBook } from '@e965/xlsx';
 import { Api } from './Apiv2.class';
 
 declare global {
@@ -19,6 +19,7 @@ declare global {
       aoa: (string | number | boolean | null)[][];
       setColumnDefs: (cols: GridColumn[]) => void;
       setRowData: (rows: GridRow[]) => void;
+      setCurrentUploadId: (uploadId: Number) => void;
     };
   }
 }
@@ -49,13 +50,13 @@ export class SpreadsheetEditorHelper {
       .catch(e => notify.error(e.message));
   }
 
-  loadWithHeaderChoice(file: File, setColumnDefs: (cols: GridColumn[]) => void, setRowData: (rows: GridRow[]) => void): void {
+  loadWithHeaderChoice(file: File, setColumnDefs: (cols: GridColumn[]) => void, setRowData: (rows: GridRow[]) => void, setCurrentUploadId: (uploadId: Number) => void): void {
     const reader = new FileReader();
     reader.onload = function(event) {
       try {
         const aoa = SpreadsheetEditorHelper.parseFileToAOA(event.target!.result as ArrayBuffer);
         // Attach the parsed AOA and the callbacks for the modal handler
-        window._sheetImport = { aoa, setColumnDefs, setRowData };
+        window._sheetImport = { aoa, setColumnDefs, setRowData, setCurrentUploadId };
         // 'use first line as header?' modal
         $('#spreadsheetModal').modal('show');
       } catch (error) {

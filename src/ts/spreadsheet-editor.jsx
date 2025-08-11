@@ -92,7 +92,7 @@ if (document.getElementById('spreadsheetEditor')) {
     const handleImport = useCallback((e) => {
       const file = e.target.files?.[0];
       if (!file) return;
-      SpreadsheetHelperC.loadWithHeaderChoice(file, setColumnDefs, setRowData);
+      SpreadsheetHelperC.loadWithHeaderChoice(file, setColumnDefs, setRowData, setCurrentUploadId);
     }, [SpreadsheetHelperC]);
 
     const handleExport = useCallback((format) => {
@@ -219,7 +219,7 @@ if (document.getElementById('spreadsheetEditor')) {
       const state = window._sheetImport;
       if (!state) return;
 
-      const { aoa, setColumnDefs, setRowData } = state;
+      const { aoa, setColumnDefs, setRowData, setCurrentUploadId } = state;
       delete window._sheetImport;
 
       const useHeader = action === 'use-header-row';
@@ -239,6 +239,8 @@ if (document.getElementById('spreadsheetEditor')) {
       const cols = headerRow.map(h => ({ field: h, editable: true }));
       setColumnDefs(cols);
       setRowData(rows);
+      // need to reset the current Upload ID to disable the "Replace existing file" button and prevent rewriting existing file with currently loaded sheet
+      setCurrentUploadId(0);
     });
   });
 }

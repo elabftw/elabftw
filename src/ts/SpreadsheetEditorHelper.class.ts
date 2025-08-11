@@ -9,9 +9,8 @@
 
 import { FileType, GridColumn, GridRow, Model } from './interfaces';
 import { askFileName, reloadElements } from './misc';
-import { Notification } from './Notifications.class';
+import { notify } from './notify';
 import { read, utils, write, writeFile, WorkBook } from '@e965/xlsx';
-import { Api } from './Apiv2.class';
 
 declare global {
   interface Window {
@@ -24,15 +23,7 @@ declare global {
   }
 }
 
-const notify = new Notification();
-
 export class SpreadsheetEditorHelper {
-  api: Api;
-
-  constructor() {
-    this.api = new Api();
-  }
-
   loadInSpreadsheetEditor(link: string, name: string, uploadId: string): void {
     const headers = new Headers();
     headers.append('cache-control', 'no-cache');
@@ -66,38 +57,52 @@ export class SpreadsheetEditorHelper {
     reader.readAsArrayBuffer(file);
   }
 
-  handleExport(format: FileType, columnDefs: GridColumn[], rowData: GridRow[]): void {
-    if (!columnDefs.length || !rowData.length) return;
-    const wb = SpreadsheetEditorHelper.createWorkbookFromGrid(columnDefs, rowData);
-    const realName = askFileName(FileType.Csv);
-    if (!realName) return;
-    switch (format) {
-    case FileType.Fods:
-      writeFile(wb, realName, { bookType: 'fods' });
-      break;
-    case FileType.Html:
-      writeFile(wb, realName, { bookType: 'html' });
-      break;
-    case FileType.Ods:
-      writeFile(wb, realName, { bookType: 'ods' });
-      break;
-    case FileType.Xls:
-      writeFile(wb, realName, { bookType: 'xls' });
-      break;
-    case FileType.Xlsb:
-      writeFile(wb, realName, { bookType: 'xlsb' });
-      break;
-    case FileType.Xlsx:
-      writeFile(wb, realName, { bookType: 'xlsx' });
-      break;
-    default:
-      writeFile(wb, realName, { bookType: 'csv' });
-    }
-    notify.success();
+  handleExport(format: FileType, columnDefs: GridColumn[], rowData: GridRow[]): Promise<void> {
+    return new Promise((resolve, reject) => {
+      try {
+        if (!columnDefs.length || !rowData.length) {
+          return resolve();
+        }
+
+        const wb = SpreadsheetEditorHelper.createWorkbookFromGrid(columnDefs, rowData);
+        const realName = askFileName(format);
+        if (!realName) {
+          return resolve();
+        }
+
+        switch (format) {
+        case FileType.Fods:
+          writeFile(wb, realName, { bookType: 'fods' });
+          break;
+        case FileType.Html:
+          writeFile(wb, realName, { bookType: 'html' });
+          break;
+        case FileType.Ods:
+          writeFile(wb, realName, { bookType: 'ods' });
+          break;
+        case FileType.Xls:
+          writeFile(wb, realName, { bookType: 'xls' });
+          break;
+        case FileType.Xlsb:
+          writeFile(wb, realName, { bookType: 'xlsb' });
+          break;
+        case FileType.Xlsx:
+          writeFile(wb, realName, { bookType: 'xlsx' });
+          break;
+        default:
+          writeFile(wb, realName, { bookType: 'csv' });
+        }
+        notify.success();
+        resolve();
+      } catch (error) {
+        notify.error((error as Error).message);
+        reject(error);
+      }
+    });
   }
 
   // saves the current sheet as an upload for the entity. (.csv)
-  saveAsAttachment(columnDefs: GridColumn[], rowData: GridRow[], entityType: string, entityId: number): void {
+  saveAsAttachment(columnDefs: GridColumn[], rowData: GridRow[], entityType: string, entityId: number):  Promise<void> {
     // should behave the same as Export. Make a modal with grouped input, [input-name, ., FileTypeEnum]
     if (!columnDefs.length || !rowData.length) return;
     const realName = askFileName(FileType.Csv);
@@ -108,10 +113,10 @@ export class SpreadsheetEditorHelper {
     const file = new File([wbBinary], realName, {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });
-    SpreadsheetEditorHelper.uploadWorkbook(file, `api/v2/${entityType}/${entityId}/${Model.Upload}`);
+    return SpreadsheetEditorHelper.uploadWorkbook(file, `api/v2/${entityType}/${entityId}/${Model.Upload}`);
   }
 
-  replaceExisting(columnDefs: GridColumn[], rowData: GridRow[], entityType: string, entityId: number, currentUploadName: string, currentUploadId: number): void {
+  replaceExisting(columnDefs: GridColumn[], rowData: GridRow[], entityType: string, entityId: number, currentUploadName: string, currentUploadId: number):  Promise<void> {
     if (!columnDefs.length || !rowData.length || !currentUploadName || !currentUploadId) return;
 
     const wb = SpreadsheetEditorHelper.createWorkbookFromGrid(columnDefs, rowData);
@@ -119,7 +124,7 @@ export class SpreadsheetEditorHelper {
     const file = new File([wbBinary], currentUploadName, {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });
-    SpreadsheetEditorHelper.uploadWorkbook(file, `api/v2/${entityType}/${entityId}/${Model.Upload}/${currentUploadId}`);
+    return SpreadsheetEditorHelper.uploadWorkbook(file, `api/v2/${entityType}/${entityId}/${Model.Upload}/${currentUploadId}`);
   }
 
   // convert array of arrays to grid
@@ -156,12 +161,13 @@ export class SpreadsheetEditorHelper {
     return wb;
   }
 
-  private static uploadWorkbook(file: File, url: string): void {
+  // return a Promise so we can remove Dirty state on success
+  private static uploadWorkbook(file: File, url: string): Promise<void> {
     const formData = new FormData();
     formData.append('file', file);
-    fetch(url, { method: 'POST', body: formData })
+    return fetch(url, { method: 'POST', body: formData })
       .then(() => reloadElements(['uploadsDiv']))
       .then(() => notify.success())
-      .catch(e => notify.error(e.message));
+      .catch(e => { notify.error(e.message); throw e; });
   }
 }

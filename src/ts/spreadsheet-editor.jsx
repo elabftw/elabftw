@@ -49,6 +49,8 @@ if (document.getElementById('spreadsheetEditor')) {
     const [currentUploadId, setCurrentUploadId] = useState(0);
     const [currentUploadName, setCurrentUploadName] = useState('');
     const nextColIndex = useRef(1);
+    // track unsaved changes
+    const [dirty, setDirty] = useState(false);
 
     useEffect(() => {
       const handleData = (e) => {
@@ -57,12 +59,35 @@ if (document.getElementById('spreadsheetEditor')) {
         setRowData(rows);
         setCurrentUploadId(uploadId);
         setCurrentUploadName(name);
+        setDirty(false);
       };
       document.addEventListener('sheet-load-data', handleData);
       return () => {
         document.removeEventListener('sheet-load-data', handleData);
       };
     }, []);
+
+    // handle dirty state (unsaved changes)
+    useEffect(() => {
+      const saveBtn = document.getElementById('replaceExisting');
+      const exportBtn = document.getElementById('exportBtn');
+      const attachBtn = document.getElementById('saveAsAttachment');
+      const warn = document.getElementById('spreadsheetUnsavedChangesWarningDiv');
+
+      if (dirty) {
+        saveBtn?.classList.add('border-danger');
+        attachBtn?.classList.add('border-danger');
+        exportBtn?.classList.add('border-danger');
+        warn?.removeAttribute('hidden');
+      } else {
+        saveBtn?.classList.remove('border-danger');
+        attachBtn?.classList.remove('border-danger');
+        exportBtn?.classList.remove('border-danger');
+        if (warn) {
+          warn.setAttribute('hidden', 'hidden');
+        }
+      }
+    }, [dirty])
 
     const clear = () => {
       setColumnDefs([]);
@@ -87,6 +112,7 @@ if (document.getElementById('spreadsheetEditor')) {
       setRowData(initialRow);
       setCurrentUploadId(0);
       setCurrentUploadName('');
+      setDirty(true);
     };
 
     const handleImport = useCallback((e) => {
@@ -96,7 +122,7 @@ if (document.getElementById('spreadsheetEditor')) {
     }, [SpreadsheetHelperC]);
 
     const handleExport = useCallback((format) => {
-      SpreadsheetHelperC.handleExport(format, columnDefs, rowData);
+      SpreadsheetHelperC.handleExport(format, columnDefs, rowData).then(() => setDirty(false));
     }, [SpreadsheetHelperC, columnDefs, rowData]);
 
     // add a row next to the selected line. When no row is selected, it's added at the bottom line.
@@ -118,6 +144,7 @@ if (document.getElementById('spreadsheetEditor')) {
         ...rowData.slice(insertIndex),
       ];
       setRowData(updated);
+      setDirty(true);
     }, [columnDefs, rowData]);
 
     const removeSelectedRows = () => {
@@ -127,7 +154,11 @@ if (document.getElementById('spreadsheetEditor')) {
         return;
       }
       api.applyTransaction({ remove: selected });
-      setRowData(prev => prev.filter(r => !selected.includes(r)));
+      setRowData(prev => {
+        const next = prev.filter(r => !selected.includes(r));
+        if (next !== prev) setDirty(true);
+        return next;
+      });
     };
 
     return (
@@ -145,7 +176,7 @@ if (document.getElementById('spreadsheetEditor')) {
           </button>
           {/* EXPORT BUTTON: Select with different types */}
           <div className='dropdown'>
-            <button disabled={isDisabled} className='btn hl-hover-gray d-inline p-2 mr-2' title={i18next.t('export')} data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label={i18next.t('export')} type='button'>
+            <button id='exportBtn' disabled={isDisabled} className='btn hl-hover-gray d-inline p-2 mr-2' title={i18next.t('export')} data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label={i18next.t('export')} type='button'>
               <i className='fas fa-download fa-fw'></i>
             </button>
             <div className='dropdown-menu'>
@@ -158,13 +189,14 @@ if (document.getElementById('spreadsheetEditor')) {
           </div>
           <div className='vertical-separator'></div>
           {/* SAVE AS ATTACHMENT (uploads section) */}
-          <button disabled={isDisabled} className='btn hl-hover-gray p-2 mr-2' onClick={() => SpreadsheetHelperC.saveAsAttachment(columnDefs, rowData, entity.type, entity.id)} title={i18next.t('save-attachment')} type='button'>
+          <button disabled={isDisabled} className='btn hl-hover-gray p-2 mr-2' id='saveAsAttachment' onClick={() => SpreadsheetHelperC.saveAsAttachment(columnDefs, rowData, entity.type, entity.id).then(() => setDirty(false))} title={i18next.t('save-attachment')} type='button'>
             <i className='fas fa-paperclip fa-fw'></i>
           </button>
           {/* REPLACE EXISTING FILE WITH CURRENT EDITIONS */}
-          <button disabled={!currentUploadId} className='btn hl-hover-gray p-2 lh-normal border-0 mr-2' onClick={() => SpreadsheetHelperC.replaceExisting(columnDefs, rowData, entity.type, entity.id, currentUploadName, currentUploadId)} title={i18next.t('replace-existing')} aria-label={i18next.t('replace-existing')} type='button'>
+          <button disabled={!currentUploadId} className='btn hl-hover-gray p-2 lh-normal border-0 mr-2' id='replaceExisting' onClick={() => SpreadsheetHelperC.replaceExisting(columnDefs, rowData, entity.type, entity.id, currentUploadName, currentUploadId).then(() => setDirty(false))} title={i18next.t('replace-existing')} aria-label={i18next.t('replace-existing')} type='button'>
             <i className='fas fa-save fa-fw'></i>
           </button>
+          <span hidden id='spreadsheetUnsavedChangesWarningDiv'>{i18next.t('You have unsaved changes')}</span>
           <div className='vertical-separator'></div>
           {/* ADD NEW ROW */}
           <button disabled={isDisabled} onClick={addRow} className='btn hl-hover-gray d-inline p-2' title={i18next.t('add-row')} type='button'>
@@ -186,11 +218,15 @@ if (document.getElementById('spreadsheetEditor')) {
                   ...col,
                   headerComponent: ColumnHeader,
                   headerComponentParams: {
-                    columnDefs, rowData, setColumnDefs, setRowData
+                    columnDefs,
+                    rowData,
+                    setColumnDefs: (cols) => { setColumnDefs(cols); setDirty(true); },
+                    setRowData: (rows) => { setRowData(rows); setDirty(true); },
                   }
                 }))}
                 defaultColDef={{ sortable: true, filter: true, editable: true }}
                 rowSelection='multiple'
+                onCellValueChanged={() => setDirty(true)}
               />
             </div>
             <button type='button' onClick={removeSelectedRows} className='btn btn-danger btn-sm my-2'>

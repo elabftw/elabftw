@@ -19,12 +19,7 @@ export default class FavTag extends SidePanel {
 
   // ADD A TAG AS FAVORITE
   create(content: string): Promise<Response> {
-    return ApiC.post(Model.FavTag, {'tag': content });
-  }
-
-  // REMOVE A FAVORITE TAG
-  destroy(id: number): Promise<Response> {
-    return ApiC.delete(`${Model.FavTag}/${id}`);
+    return ApiC.post(Model.FavTag, {tag: content });
   }
 
   toggle(): void {

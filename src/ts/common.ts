@@ -62,6 +62,8 @@ import { Counter } from './Counter.class';
 import { getEditor } from './Editor.class';
 import Todolist from './Todolist.class';
 import { entity } from './getEntity';
+import { on, get } from './handlers';
+import Tab from './Tab.class';
 
 // we need to extend the interface from malle to add more properties
 interface Status extends SelectOptions {
@@ -93,6 +95,7 @@ const TodolistC = new Todolist();
 
 const TableSortingC = new TableSorting();
 TableSortingC.init();
+(new Tab()).init(document.querySelector('.tabbed-menu'));
 
 makeSortableGreatAgain();
 
@@ -463,90 +466,703 @@ document.getElementById('container').addEventListener('keydown', event => {
   }
 });
 
+/**
+ * MAIN click listener on container
+ */
+const container = document.getElementById('container');
+container!.addEventListener('click', (event: Event) => {
+  const el: HTMLElement = (event.target as HTMLElement).closest('[data-action]');
+  if (!el || !container.contains(el)) return;
+  const set = get(el.dataset.action!);
+  if (!set) return;
+  for (const fn of set) {
+    fn(el, event);
+  }
+});
+
+on('show-policy', (el: HTMLElement) => {
+  fetch('app/controllers/UnauthRequestHandler.php').then(resp => resp.json()).then(json => {
+    const policy = json[el.dataset.policy];
+    let title: string;
+    // TODO i18n
+    switch (el.dataset.policy) {
+    case 'tos':
+      title = json.tos_name;
+      break;
+    case 'a11y':
+      title = json.a11y_name;
+      break;
+    case 'legal':
+      title = json.legal_name;
+      break;
+    default:
+      title = json.privacy_name;
+    }
+    (document.getElementById('policiesModalLabel') as HTMLHeadElement).innerText = title;
+    (document.getElementById('policiesModalBody') as HTMLDivElement).innerHTML = policy;
+    // modal plugin requires jquery
+    $('#policiesModal').modal('toggle');
+  });
+});
+
+on('reload-on-click', (el: HTMLElement) => reloadElements([el.dataset.target]));
+on('switch-editor', () => getEditor().switch(entity).then(() => window.location.reload()));
+on('destroy-favtags', (el: HTMLElement) => ApiC.delete(`${Model.FavTag}/${el.dataset.id}`).then(() => reloadElements(['favtagsTagsDiv'])));
+
+on('insert-param-and-reload', (el: HTMLElement) => {
+  const params = new URLSearchParams(document.location.search.slice(1));
+  const target = el.dataset.target;
+  const value = (el as HTMLInputElement).value;
+  if (!target) return;
+  if (value) {
+    params.set(target, value);
+  } else {
+    params.delete(target);
+  }
+  window.history.replaceState({}, '', `?${params.toString()}`);
+  handleReloads(el.dataset.reload);
+});
+
+on('add-query-filter', (el: HTMLElement) => {
+  const params = new URLSearchParams(document.location.search.substring(1));
+  params.set(el.dataset.key, el.dataset.value);
+  // make sure to set the offset to 0, see #4826
+  params.set('offset', '0');
+  window.location.href = `?${params.toString()}`;
+});
+
+on('scroll-top', () => {
+  document.documentElement.scrollTo({
+    top: 0,
+    behavior: 'smooth',
+  });
+});
+
+on('close-sidepanel', (el: HTMLElement) => {
+  const SidePanelC = el.dataset.sidepanel === Model.FavTag ? FavTagC : TodolistC;
+  SidePanelC.hide();
+});
+
+on('toggle-pin', (el: HTMLElement) => {
+  let id = entity.id;
+  if (isNaN(id) || id === null) {
+    id = parseInt(el.dataset.id, 10);
+  }
+  ApiC.patch(`${entity.type}/${id}`, {action: Action.Pin}).then(() => {
+    // toggle appearance of button and icon
+    toggleGrayClasses(el.classList);
+    el.querySelector('i').classList.toggle('color-weak');
+  });
+});
+
+on('transfer-ownership', () => {
+  const value = (document.getElementById('target_owner') as HTMLInputElement).value;
+  const params = {};
+  params[Target.UserId] = parseInt(value.split(' ')[0], 10);
+  ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => window.location.reload());
+});
+
+on('add-user-to-permissions', (el: HTMLElement) => {
+  // collect userid + name + email from input
+  const addUserPermissionsInput = (document.getElementById(`${el.dataset.identifier}_select_users`) as HTMLInputElement);
+  const userid = parseInt(addUserPermissionsInput.value, 10);
+  if (isNaN(userid)) {
+    notify.error('add-user-error');
+    return;
+  }
+  const userName = addUserPermissionsInput.value.split(' - ')[1];
+
+  // create a new li element in the list of existing users, so it is collected at Save action
+  const li = document.createElement('li');
+  li.classList.add('list-group-item');
+  li.dataset.id = String(userid);
+
+  // eye or pencil icon
+  const rwIcon = document.createElement('i');
+  rwIcon.classList.add('fas');
+  const iconClass = el.dataset.rw === 'canread' ? 'eye' : 'pencil-alt';
+  rwIcon.classList.add(`fa-${iconClass}`);
+
+  // delete icon
+  const deleteSpan = document.createElement('span');
+  deleteSpan.dataset.action = 'remove-parent';
+  deleteSpan.classList.add('hover-danger');
+  const xIcon = document.createElement('i');
+  xIcon.classList.add('fas');
+  xIcon.classList.add('fa-xmark');
+  deleteSpan.insertAdjacentElement('afterbegin', xIcon);
+
+  // construct the li element with all its content
+  li.insertAdjacentElement('afterbegin', rwIcon);
+  li.insertAdjacentText('beforeend', ' ' + userName + ' ');
+  li.insertAdjacentElement('beforeend', deleteSpan);
+
+  // and insert it into the list
+  document.getElementById(`${el.dataset.identifier}_list_users`).appendChild(li);
+
+  // clear input
+  addUserPermissionsInput.value = '';
+});
+
+on('reload-page', () => location.reload());
+on('remove-parent', (el: HTMLElement) => el.parentElement.remove());
+
+on('clear-form', (el: HTMLElement) => {
+  const target = document.getElementById(el.dataset.target);
+  const inputs = target.querySelectorAll('input');
+  inputs.forEach(input => input.value = '');
+});
+
+on('save-permissions', (el: HTMLElement) => {
+  const params = {};
+  // collect existing users listed in ul->li, and store them in a string[] with user:<userid>
+  const existingUsers = Array.from(document.getElementById(`${el.dataset.identifier}_list_users`).children)
+    .map(u => `user:${(u as HTMLElement).dataset.id}`);
+
+  params[el.dataset.rw] = permissionsToJson(
+    parseInt(($('#' + el.dataset.identifier + '_select_base').val() as string), 10),
+    ($('#' + el.dataset.identifier + '_select_teams').val() as string[])
+      .concat($('#' + el.dataset.identifier + '_select_teamgroups').val() as string[])
+      .concat(existingUsers),
+  );
+  // if we're editing the default read/write permissions for experiments, this data attribute will be set
+  if (el.dataset.isUserDefault) {
+    // we need to replace canread/canwrite with default_read/default_write for user attribute
+    let paramKey = 'default_read';
+    if (el.dataset.rw === 'canwrite') {
+      paramKey = 'default_write';
+    }
+    // create a new key and delete the old one
+    params[paramKey] = params[el.dataset.rw];
+    delete params[el.dataset.rw];
+    ApiC.patch(`${Model.User}/me`, params).then(() => reloadElements([el.dataset.identifier + 'Div']));
+  } else {
+    ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElements([el.dataset.identifier + 'Div']));
+  }
+});
+
+on('select-lang', () => {
+  const select = (document.getElementById('langSelect') as HTMLSelectElement);
+  fetch(`app/controllers/UnauthRequestHandler.php?lang=${select.value}`).then(() => window.location.reload());
+});
+
+/* TOGGLE NEXT ACTION
+ * An element with "toggle-next" as data-action value will appear clickable.
+ * Clicking on it will toggle the "hidden" attribute of the next sibling element by default.
+ */
+on('toggle-next', (el: HTMLElement) => {
+  let targetEl = el.nextElementSibling as HTMLElement;
+  if (el.dataset.toggleTarget) {
+    targetEl = document.getElementById(el.dataset.toggleTarget);
+  }
+  const isHidden = targetEl.toggleAttribute('hidden');
+  el.setAttribute('aria-expanded', String(!isHidden));
+
+  // might want to toggle another element with toggle-extra
+  if (el.dataset.toggleTargetExtra) {
+    document.getElementById(el.dataset.toggleTargetExtra).toggleAttribute('hidden');
+  }
+
+  // save the hidden state of the target element in localStorage
+  if (targetEl.dataset.saveHidden) {
+    localStorage.setItem(`${targetEl.dataset.saveHidden}-isHidden`, isHidden ? '1' : '0');
+  }
+
+  // now deal with icon of executor element
+  toggleIcon(el, isHidden);
+});
+
+// START STORAGE
+on('toggle-all-storage', (el: HTMLElement) => {
+  // expand or collapse all storage nodes
+  const root = document.getElementById('storageDiv');
+  const state = el.dataset.expand === '1';
+  if (root) {
+    const detailsElements = root.querySelectorAll('details');
+    detailsElements.forEach((details: HTMLDetailsElement) => {
+      details.open = state;
+    });
+  }
+});
+
+on('rename-storage', (el: HTMLElement) => {
+  const name = prompt('Name');
+  if (!name) {
+    return;
+  }
+  const params = {
+    parent_id: el.dataset.id,
+    name: name,
+  };
+  ApiC.patch(`storage_units/${el.dataset.id}`, params).then(() => {
+    reloadElements(['storageDiv']).then(() => {
+      const parent: HTMLDetailsElement = document.querySelector(`details[data-id="${params.parent_id}"]`);
+      parent.open = true;
+      // now open ancestors too
+      getAncestorDetails(parent).forEach(details => details.open = true);
+    });
+  });
+});
+on('add-storage', (el: HTMLElement) => {
+  const name = prompt('Name');
+  const params = {
+    parent_id: el.dataset.parentId,
+    name: name,
+  };
+  ApiC.post('storage_units', params).then(() => reloadElements(['storageDiv']));
+});
+on('add-storage-children', (el: HTMLElement) => {
+  const unitName = prompt(i18next.t('location-name'));
+  if (!unitName.length) {
+    return;
+  }
+  const params = {
+    parent_id: el.dataset.parentId,
+    name: unitName,
+  };
+  ApiC.post('storage_units', params).then(() => {
+    reloadElements(['storageDiv']).then(() => {
+      const parent: HTMLDetailsElement = document.querySelector(`details[data-id="${params.parent_id}"]`);
+      parent.open = true;
+      // now open ancestors too
+      getAncestorDetails(parent).forEach(details => details.open = true);
+    });
+  });
+});
+on('create-container', (el: HTMLElement) => {
+  const qty_stored = (document.getElementById('containerQtyStoredInput') as HTMLInputElement).value;
+  const qty_unit = (document.getElementById('containerQtyUnitSelect') as HTMLSelectElement).value;
+  let multiplier = parseInt((document.getElementById('containerMultiplierInput') as HTMLInputElement).value, 10);
+  if (isNaN(multiplier) || multiplier <= 0) {
+    multiplier = 1;
+  }
+
+  const postCalls = Array.from({ length: multiplier }, () =>
+    ApiC.post(`${entity.type}/${entity.id}/containers/${el.dataset.id}`, {
+      qty_stored: qty_stored,
+      qty_unit: qty_unit,
+    }),
+  );
+  // Execute all POST calls and reload elements after all are resolved
+  Promise.all(postCalls)
+    .then(() => reloadElements(['storageDivContent']))
+    .catch((error) => notify.error(error));
+});
+
+on('delete-storage-root', (el: HTMLElement) => ApiC.delete(`storage_units/${el.dataset.id}`).then(() => reloadElements(['storageDiv'])));
+
+on('destroy-container', (el: HTMLElement) => {
+  if (confirm(i18next.t('generic-delete-warning'))) {
+    ApiC.delete(`${entity.type}/${entity.id}/containers/${el.dataset.id}`).then(() => reloadElements(['storageDivContent']));
+  }
+});
+
+on('destroy-storage', (el: HTMLElement) => {
+  if (confirm(i18next.t('generic-delete-warning'))) {
+    ApiC.delete(`storage_units/${el.dataset.id}`).then(() => reloadElements(['storageDiv']));
+  }
+});
+
+on('replace-with-next', (el: HTMLElement) => {
+  const targetEl = el.nextElementSibling as HTMLElement;
+  // show the target
+  targetEl.toggleAttribute('hidden');
+  // hide clicked element
+  el.toggleAttribute('hidden');
+});
+on('toggle-modal', (el: HTMLElement) => {
+  // TODO this requires jquery for now. Not in BS5.
+  $('#' + el.dataset.target).modal('toggle');
+});
+
+on('update-entity-body', (el: HTMLElement) => {
+  updateEntityBody().then(() => {
+    // SAVE AND GO BACK BUTTON
+    if (el.matches('[data-redirect="view"]')) {
+      window.location.replace('?mode=view&id=' + entity.id);
+    }
+  });
+});
+
+on('search-pubchem', (el: HTMLElement) => {
+  const inputEl = el.parentElement.parentElement.querySelector('input') as HTMLInputElement;
+  if (!inputEl.checkValidity()) {
+    inputEl.reportValidity();
+    return;
+  }
+  const elOldHTML = mkSpin(el);
+  const resultTableDiv = document.getElementById('pubChemSearchResultTableDiv');
+  // we will handle errors differently here
+  ApiC.notifOnError = false;
+  ApiC.getJson(`compounds?search_pubchem_${el.dataset.from}=${inputEl.value}`).then(json => {
+    const compounds = Array.isArray(json) ? json : [json];
+    const table = document.createElement('table');
+    table.classList.add('table');
+
+    // a good cas to try this code: 56392-17-7 (has 10 cids)
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    ['CID', 'CAS', i18next.t('name'), i18next.t('import')].forEach(text => {
+      const th = document.createElement('th');
+      th.textContent = text;
+      headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    const tbody = document.createElement('tbody');
+    table.appendChild(tbody);
+    compounds.forEach(compound => {
+      const row = document.createElement('tr');
+      // CID column
+      const cidCell = document.createElement('td');
+      const cidLink = document.createElement('a');
+      cidLink.href = `https://pubchem.ncbi.nlm.nih.gov/compound/${compound.cid}`;
+      cidLink.classList.add('external-link');
+      cidLink.target = '_blank';
+      cidLink.rel = 'noopener';
+      cidLink.textContent = compound.cid;
+      cidCell.appendChild(cidLink);
+      row.appendChild(cidCell);
+
+      // CAS column
+      const casCell = document.createElement('td');
+      casCell.textContent = compound.cas;
+      row.appendChild(casCell);
+
+      // Name column
+      const nameCell = document.createElement('td');
+      nameCell.textContent = compound.name;
+      row.appendChild(nameCell);
+
+      // Import column
+      const importCell = document.createElement('td');
+      const importBtn = document.createElement('button');
+      importBtn.classList.add('btn', 'btn-primary');
+      importBtn.innerText = i18next.t('import');
+      importBtn.dataset.cid = String(compound.cid);
+      importBtn.dataset.action = 'import-compound';
+      importCell.appendChild(importBtn);
+      row.appendChild(importCell);
+
+      tbody.appendChild(row);
+    });
+    // clear any previous result
+    resultTableDiv.innerHTML = '';
+    resultTableDiv.appendChild(table);
+  }).catch(err => {
+    console.error(err);
+    resultTableDiv.innerText = err;
+  }).finally(() => {
+    mkSpinStop(el, elOldHTML);
+  });
+});
+
+on('search-entity-from-compound', (el: HTMLElement) => {
+  // try and grab the CAS for the search
+  let query = (document.getElementById('compoundInput-cas_number') as HTMLInputElement).value;
+  // if no cas, use the name
+  if (!query) {
+    query = (document.getElementById('compoundInput-name') as HTMLInputElement).value;
+  }
+  window.location.href = `${el.dataset.page}.php?q="${encodeURIComponent(query)}"`;
+});
+
+on('import-compound', (el: HTMLElement) => {
+  const elOldHTML = mkSpin(el);
+  const params = {cid: parseInt(el.dataset.cid, 10), action: Action.Duplicate};
+  ApiC.post2location('compounds', params).then(() => {
+    document.dispatchEvent(new CustomEvent('dataReload'));
+  }).catch(err => {
+    console.error(err);
+  }).finally(() => {
+    mkSpinStop(el, elOldHTML);
+    el.setAttribute('disabled', 'disabled');
+  });
+});
+
+on('create-resource-from-compound', (el: HTMLElement) => {
+  const compoundId = (document.getElementById('compoundInput-id') as HTMLInputElement).value;
+  ApiC.post2location('items', {template: el.dataset.tplid}).then(id => {
+    // now create a link with that compound
+    ApiC.post(`items/${id}/compounds/${compoundId}`).then(() => {
+      // also change the title
+      const compoundName = (document.getElementById('compoundInput-name') as HTMLInputElement).value;
+      ApiC.patch(`items/${id}`, {title: compoundName}).then(() => {
+        window.location.href = `/database.php?mode=edit&id=${id}`;
+      });
+    });
+  });
+});
+
+on('save-compound', (el: HTMLElement) => {
+  try {
+    if (el.dataset.compoundId) { // edit
+      const compoundForm = document.getElementById('editCompoundInputs');
+      const params = collectForm(compoundForm);
+      ApiC.patch(`compounds/${el.dataset.compoundId}`, params).then(() => {
+        document.dispatchEvent(new CustomEvent('dataReload'));
+        $('#editCompoundModal').modal('hide');
+        clearForm(compoundForm);
+      });
+    } else { // create
+      const compoundForm = document.getElementById('createCompoundInputs');
+      const params = collectForm(compoundForm);
+      clearForm(compoundForm);
+      ApiC.post2location('compounds', params).then(id => {
+        ApiC.getJson(`compounds/${id}`).then((json) => {
+          setTimeout(() => {
+            toggleEditCompound(json);
+          }, 500);
+          document.dispatchEvent(new CustomEvent('dataReload'));
+        });
+      });
+    }
+  } catch (err) {
+    notify.error(err);
+    return;
+  }
+});
+on('delete-compound', () => {
+  const btn = document.getElementById('deleteCompoundsBtn');
+  const idList = btn.dataset.target.split(',');
+  if (!confirm(`Delete ${idList.length} compound(s)?`)) {
+    return;
+  }
+  idList.forEach(id => ApiC.delete(`compounds/${id}`));
+  document.dispatchEvent(new CustomEvent('dataReload'));
+});
+on('restore-compounds', () => {
+  const btn = document.getElementById('restoreCompoundsBtn');
+  const idList = btn.dataset.target.split(',');
+  idList.forEach(id => ApiC.patch(`compounds/${id}`, {state: 1}));
+  document.dispatchEvent(new CustomEvent('dataReload'));
+});
+
+// PASSWORD VISIBILITY TOGGLE
+on('toggle-password', (el: HTMLElement) => {
+  // toggle eye icon
+  const icon = el.firstChild as HTMLElement;
+  icon.classList.toggle('fa-eye');
+  icon.classList.toggle('fa-eye-slash');
+
+  // toggle input type
+  const input = el.parentElement.parentElement.querySelector('input');
+
+  let attribute = 'password';
+  if (input.getAttribute('type') === 'password') {
+    attribute = 'text';
+  }
+  input.type = attribute;
+});
+
+on('logout', () => {
+  clearLocalStorage();
+  window.location.href = 'app/logout.php';
+});
+
+on('ack-notif', (el: HTMLElement) => {
+  if (el.parentElement.dataset.ack === '0') {
+    ApiC.patch(`${Model.User}/me/${Model.Notification}/${el.dataset.id}`).then(() => {
+      if (el.dataset.href) {
+        window.location.href = el.dataset.href;
+      } else {
+        reloadElements(['navbarNotifDiv']);
+      }
+    });
+  } else {
+    if (el.dataset.href) {
+      window.location.href = el.dataset.href;
+    }
+  }
+});
+
+on('destroy-notif', () => ApiC.delete(`${Model.User}/me/${Model.Notification}`).then(() => reloadElements(['navbarNotifDiv'])));
+
+// this is necessary to convey information between two modals
+on('create-entity-ask-title', (el: HTMLElement) => {
+  // hide previous modal first
+  $('.modal.show').modal('hide');
+  // then add the category id to the other create button
+  const targetButton = document.getElementById('askTitleButton') as HTMLButtonElement;
+  targetButton.dataset.catid = el.dataset.catid;
+  $('#askTitleModal').modal('toggle');
+});
+
+// CREATE EXPERIMENT, TEMPLATE or DATABASE item: main create button in top right
+on('create-entity', (el: HTMLElement) => {
+  let params = {};
+  if (el.dataset.hasTitle) {
+    params = collectForm(document.getElementById(el.dataset.formId));
+  }
+  if (el.dataset.tplid) {
+    params['template'] = parseInt(el.dataset.tplid, 10);
+  }
+  if (el.dataset.catid) {
+    params['category'] = parseInt(el.dataset.catid, 10);
+  }
+  // look for any tag present in the url, we will create the entry with these tags
+  const urlParams = new URLSearchParams(document.location.search);
+  const tags = urlParams.getAll('tags[]');
+  if (tags) {
+    params['tags'] = tags;
+  }
+  let page = 'experiments.php';
+  if (el.dataset.type === 'experiments_templates') {
+    page = 'templates.php';
+  }
+  if (el.dataset.type === 'items_types') {
+    page = 'resources-templates.php';
+  }
+  if (el.dataset.type === 'database' || el.dataset.type === 'items') {
+    el.dataset.type = 'items';
+    page = 'database.php';
+  }
+  ApiC.post2location(`${el.dataset.type}`, params).then(id => {
+    window.location.href = `${page}?mode=edit&id=${id}`;
+  });
+});
+
+on('report-bug', (el: HTMLElement, event: Event) => {
+  event.preventDefault();
+  el.querySelector('i').classList.add('moving-bug');
+  setTimeout(() => window.location.assign('https://github.com/elabftw/elabftw/issues/new/choose'), 3000);
+});
+
+// TOGGLE ANONYMOUS READ ACCESS
+on('toggle-anonymous-access', () => {
+  ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.AccessKey}).then(response => response.json()).then(json => {
+    document.getElementById('anonymousAccessUrlDiv').toggleAttribute('hidden');
+    (document.getElementById('anonymousAccessUrlInput') as HTMLInputElement).value = json.sharelink;
+  });
+});
+
+on('reload-color', (el: HTMLElement) => {
+  el.classList.add('flash');
+  setTimeout(() => {
+    el.classList.remove('flash');
+  }, 100);
+  (el.nextElementSibling as HTMLInputElement).value = getRandomColor();
+});
+
+// CREATE CATEGORY OR STATUS
+on('create-catstat', (el: HTMLElement) => {
+  const modalId = 'createCatStatModal';
+  const form = document.getElementById(modalId);
+  try {
+    const params = collectForm(form);
+    ApiC.post(`${Model.Team}/current/${el.dataset.endpoint}`, params).then(() => {
+      $(`#${modalId}`).modal('toggle');
+      reloadElements(['catStatDiv']);
+      clearForm(form);
+      // assign a new random color after clearing the form
+      const colorInput = (form.querySelector('input[type="color"]') as HTMLInputElement);
+      colorInput.value = getRandomColor();
+    });
+  } catch (e) {
+    console.error(e);
+  }
+});
+// DESTROY CATEGORY/STATUS
+on('destroy-catstat', (el: HTMLElement) => {
+  if (confirm(i18next.t('generic-delete-warning'))) {
+    ApiC.delete(`${Model.Team}/current/${el.dataset.endpoint}/${el.dataset.id}`)
+      .then(() => el.parentElement.parentElement.parentElement.remove());
+  }
+});
+on('copy-to-clipboard', (el: HTMLElement) => {
+  navigator.clipboard.writeText((document.getElementById(el.dataset.target) as HTMLInputElement).value);
+  // indicate that the data was copied by changing the icon into text and back into the icon
+  const previousHTML = el.innerHTML;
+  window.setTimeout(function() {
+    el.innerHTML = previousHTML;
+  }, 1337);
+  el.innerText = i18next.t('copied');
+});
+
+// REMOVE COMPOUND LINK
+on('delete-compound-link', (el: HTMLElement) => ApiC.delete(`${entity.type}/${entity.id}/compounds/${el.dataset.id}`)
+  .then(() => reloadElements(['compoundDiv'])));
+
+// CLICK the NOW button of a time or date extra field
+on('update-to-now', (el: HTMLElement) => {
+  const input = el.closest('.input-group').querySelector('input');
+  // use Luxon lib here
+  const now = DateTime.local();
+  // date format
+  let format = 'yyyy-MM-dd';
+  if (input.type === 'time') {
+    format = 'HH:mm';
+  }
+  if (input.type === 'datetime-local') {
+    /* eslint-disable-next-line quotes */
+    format = "yyyy-MM-dd'T'HH:mm";
+  }
+  input.value = now.toFormat(format);
+  // trigger change event so it is saved
+  input.dispatchEvent(new Event('change'));
+});
+
+// TOGGLE BODY
+on('toggle-body', (el: HTMLElement) => {
+  const randId = el.dataset.randid;
+  const bodyDiv = document.getElementById(randId);
+  let action = 'hide';
+  // transform the + in - and vice versa
+  if (bodyDiv.hasAttribute('hidden')) {
+    action = 'show';
+  }
+  toggleIcon(el, !bodyDiv.hasAttribute('hidden'));
+  // don't reload body if it is already loaded for show action
+  // and the hide action is just toggle hidden attribute and do nothing else
+  if ((action === 'show' && bodyDiv.dataset.bodyLoaded) || action === 'hide') {
+    bodyDiv.toggleAttribute('hidden');
+    return;
+  }
+
+  const contentDiv = bodyDiv.querySelector('div');
+
+  // prepare the get request
+  const entityId = parseInt(el.dataset.id, 10);
+  let queryUrl = `${el.dataset.type}/${entityId}`;
+  // special case for revisions
+  if (el.dataset.revid) {
+    queryUrl += `/revisions/${el.dataset.revid}`;
+  }
+  ApiC.getJson(queryUrl).then(json => {
+    // add extra fields elements from metadata json
+    const entity = {type: el.dataset.type as EntityType, id: entityId};
+    const MetadataC = new Metadata(entity, new JsonEditorHelper(entity));
+    MetadataC.metadataDiv = contentDiv;
+    MetadataC.display('view').then(() => {
+      // go over all the type: url elements and create a link dynamically
+      generateMetadataLink();
+    });
+    // add html content
+    contentDiv.innerHTML = json.body_html;
+
+    // adjust the width of the children
+    // get the width of the parent. The -30 is to make it smaller than parent even with the margins
+    const width = document.getElementById('parent_' + randId).clientWidth - 30;
+    bodyDiv.style.width = String(width);
+
+    // ask mathjax to reparse the page
+    MathJax.typeset();
+
+    TableSortingC.init();
+
+    bodyDiv.toggleAttribute('hidden');
+    bodyDiv.dataset.bodyLoaded = '1';
+  });
+});
+
+/**
+ * @deprecated use on()
+ */
 const clickHandler = (event: MouseEvent) => {
   const el = event.target as HTMLElement;
-  // SHOW PRIVACY POLICY
-  if (el.matches('[data-action="show-policy"]')) {
-    fetch('app/controllers/UnauthRequestHandler.php').then(resp => resp.json()).then(json => {
-      const policy = json[el.dataset.policy];
-      let title: string;
-      // TODO i18n
-      switch (el.dataset.policy) {
-      case 'tos':
-        title = json.tos_name;
-        break;
-      case 'a11y':
-        title = json.a11y_name;
-        break;
-      case 'legal':
-        title = json.legal_name;
-        break;
-      default:
-        title = json.privacy_name;
-      }
-      (document.getElementById('policiesModalLabel') as HTMLHeadElement).innerText = title;
-      (document.getElementById('policiesModalBody') as HTMLDivElement).innerHTML = policy;
-      // modal plugin requires jquery
-      $('#policiesModal').modal('toggle');
-    });
-  } else if (el.matches('[data-reload-on-click]')) {
-    reloadElements([el.dataset.reloadOnClick]).then(() => relativeMoment());
-
-  // SWITCH EDITOR
-  } else if (el.matches('[data-action="switch-editor"]')) {
-    getEditor().switch(entity).then(() => window.location.reload());
-
-  // REMOVE A FAVTAG
-  } else if (el.matches('[data-action="destroy-favtags"]')) {
-    FavTagC.destroy(parseInt(el.dataset.id, 10)).then(() => reloadElements(['favtagsTagsDiv']));
-
-  // SELECT FILTERS - state, orderby...
-  } else if (el.matches('[data-action="insert-param-and-reload"]')) {
-    const params = new URLSearchParams(document.location.search.slice(1));
-    const target = el.dataset.target;
-    const value = (el as HTMLInputElement).value;
-    if (!target) return;
-    if (value) {
-      params.set(target, value);
-    } else {
-      params.delete(target);
-    }
-    window.history.replaceState({}, '', `?${params.toString()}`);
-    handleReloads(el.dataset.reload);
-  } else if (el.matches('[data-action="add-query-filter"]')) {
-    const params = new URLSearchParams(document.location.search.substring(1));
-    params.set(el.dataset.key, el.dataset.value);
-    // make sure to set the offset to 0, see #4826
-    params.set('offset', '0');
-    window.location.href = `?${params.toString()}`;
-
-  // SCROLL TO TOP
-  } else if (el.matches('[data-action="scroll-top"]')) {
-    document.documentElement.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
-
-  } else if (el.matches('[data-action="close-sidepanel"]')) {
-    const SidePanelC = el.dataset.sidepanel === Model.FavTag ? FavTagC : TodolistC;
-    SidePanelC.hide();
-
-  // TOGGLE PINNED
-  } else if (el.matches('[data-action="toggle-pin"]')) {
-    let id = entity.id;
-    if (isNaN(id) || id === null) {
-      id = parseInt(el.dataset.id, 10);
-    }
-
-    ApiC.patch(`${entity.type}/${id}`, {'action': Action.Pin}).then(() => {
-      // toggle appearance of button and icon
-      toggleGrayClasses(el.classList);
-      el.querySelector('i').classList.toggle('color-weak');
-    });
-
-
   // AUTOCOMPLETE
-  } else if (el.matches('[data-complete-target]')) {
+  if (el.matches('[data-complete-target]')) {
     // depending on the type of results, we will want different attributes and formatting
     let transformer = entity => {
       const cat = entity.category_title ? `${entity.category_title} - ` : '';
@@ -577,429 +1193,6 @@ const clickHandler = (event: MouseEvent) => {
       },
     });
 
-  // TRANSFER OWNERSHIP
-  } else if (el.matches('[data-action="transfer-ownership"]')) {
-    const value = (document.getElementById('target_owner') as HTMLInputElement).value;
-    const params = {};
-    params[Target.UserId] = parseInt(value.split(' ')[0], 10);
-    ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => window.location.reload());
-
-  // ADD USER TO PERMISSIONS
-  // create a new li element in the list of existing users, so it is collected at Save action
-  } else if (el.matches('[data-action="add-user-to-permissions"]')) {
-    // collect userid + name + email from input
-    const addUserPermissionsInput = (document.getElementById(`${el.dataset.identifier}_select_users`) as HTMLInputElement);
-    const userid = parseInt(addUserPermissionsInput.value, 10);
-    if (isNaN(userid)) {
-      notify.error('add-user-error');
-      return;
-    }
-    const userName = addUserPermissionsInput.value.split(' - ')[1];
-
-    // create li element
-    const li = document.createElement('li');
-    li.classList.add('list-group-item');
-    li.dataset.id = String(userid);
-
-    // eye or pencil icon
-    const rwIcon = document.createElement('i');
-    rwIcon.classList.add('fas');
-    const iconClass = el.dataset.rw === 'canread' ? 'eye' : 'pencil-alt';
-    rwIcon.classList.add(`fa-${iconClass}`);
-
-    // delete icon
-    const deleteSpan = document.createElement('span');
-    deleteSpan.dataset.action = 'remove-parent';
-    deleteSpan.classList.add('hover-danger');
-    const xIcon = document.createElement('i');
-    xIcon.classList.add('fas');
-    xIcon.classList.add('fa-xmark');
-    deleteSpan.insertAdjacentElement('afterbegin', xIcon);
-
-    // construct the li element with all its content
-    li.insertAdjacentElement('afterbegin', rwIcon);
-    li.insertAdjacentText('beforeend', ' ' + userName + ' ');
-    li.insertAdjacentElement('beforeend', deleteSpan);
-
-    // and insert it into the list
-    document.getElementById(`${el.dataset.identifier}_list_users`).appendChild(li);
-
-    // clear input
-    addUserPermissionsInput.value = '';
-
-  } else if (el.matches('[data-action="remove-parent"]')) {
-    el.parentElement.remove();
-
-  // CLEAR FORM
-  } else if (el.matches('[data-action="clear-form"]')) {
-    const target = document.getElementById(el.dataset.target);
-    const inputs = target.querySelectorAll('input');
-    inputs.forEach(input => input.value = '');
-
-  // REMOVE A QUERY PARAMETER AND RELOAD PAGE
-  } else if (el.matches('[data-action="remove-param-reload"]')) {
-    const params = new URLSearchParams(document.location.search.slice(1));
-    params.delete(el.dataset.target);
-    // reload the page
-    document.location.search = params.toString();
-
-  } else if (el.matches('[data-action="reload-page"]')) {
-    location.reload();
-
-  // SAVE PERMISSIONS
-  } else if (el.matches('[data-action="save-permissions"]')) {
-    const params = {};
-    // collect existing users listed in ul->li, and store them in a string[] with user:<userid>
-    const existingUsers = Array.from(document.getElementById(`${el.dataset.identifier}_list_users`).children)
-      .map(u => `user:${(u as HTMLElement).dataset.id}`);
-
-    params[el.dataset.rw] = permissionsToJson(
-      parseInt(($('#' + el.dataset.identifier + '_select_base').val() as string), 10),
-      ($('#' + el.dataset.identifier + '_select_teams').val() as string[])
-        .concat($('#' + el.dataset.identifier + '_select_teamgroups').val() as string[])
-        .concat(existingUsers),
-    );
-    // if we're editing the default read/write permissions for experiments, this data attribute will be set
-    if (el.dataset.isUserDefault) {
-      // we need to replace canread/canwrite with default_read/default_write for user attribute
-      let paramKey = 'default_read';
-      if (el.dataset.rw === 'canwrite') {
-        paramKey = 'default_write';
-      }
-      // create a new key and delete the old one
-      params[paramKey] = params[el.dataset.rw];
-      delete params[el.dataset.rw];
-      ApiC.patch(`${Model.User}/me`, params).then(() => reloadElements([el.dataset.identifier + 'Div']));
-    } else {
-      ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElements([el.dataset.identifier + 'Div']));
-    }
-
-  } else if (el.matches('[data-action="select-lang"]')) {
-    const select = (document.getElementById('langSelect') as HTMLSelectElement);
-    fetch(`app/controllers/UnauthRequestHandler.php?lang=${select.value}`).then(() => window.location.reload());
-
-  /* TOGGLE NEXT ACTION
-   * An element with "toggle-next" as data-action value will appear clickable.
-   * Clicking on it will toggle the "hidden" attribute of the next sibling element by default.
-   */
-  } else if (el.matches('[data-action="toggle-next"]')) {
-    let targetEl = el.nextElementSibling as HTMLElement;
-    if (el.dataset.toggleTarget) {
-      targetEl = document.getElementById(el.dataset.toggleTarget);
-    }
-    const isHidden = targetEl.toggleAttribute('hidden');
-    el.setAttribute('aria-expanded', String(!isHidden));
-
-    // might want to toggle another element with toggle-extra
-    if (el.dataset.toggleTargetExtra) {
-      document.getElementById(el.dataset.toggleTargetExtra).toggleAttribute('hidden');
-    }
-
-    // save the hidden state of the target element in localStorage
-    if (targetEl.dataset.saveHidden) {
-      localStorage.setItem(`${targetEl.dataset.saveHidden}-isHidden`, isHidden ? '1' : '0');
-    }
-
-    // now deal with icon of executor element
-    toggleIcon(el, isHidden);
-
-  } else if (el.matches('[data-action="toggle-all-storage"]')) {
-    // expand or collapse all storage nodes
-    const root = document.getElementById('storageDiv');
-    const state = el.dataset.expand === '1';
-    if (root) {
-      const detailsElements = root.querySelectorAll('details');
-      detailsElements.forEach((details: HTMLDetailsElement) => {
-        details.open = state;
-      });
-    }
-  } else if (el.matches('[data-action="rename-storage"]')) {
-    const name = prompt('Name');
-    if (!name) {
-      return;
-    }
-    const params = {
-      parent_id: el.dataset.id,
-      name: name,
-    };
-    ApiC.patch(`storage_units/${el.dataset.id}`, params).then(() => {
-      reloadElements(['storageDiv']).then(() => {
-        const parent: HTMLDetailsElement = document.querySelector(`details[data-id="${params.parent_id}"]`);
-        parent.open = true;
-        // now open ancestors too
-        getAncestorDetails(parent).forEach(details => details.open = true);
-      });
-    });
-  } else if (el.matches('[data-action="add-storage"]')) {
-    const name = prompt('Name');
-    const params = {
-      parent_id: el.dataset.parentId,
-      name: name,
-    };
-    ApiC.post('storage_units', params).then(() => reloadElements(['storageDiv']));
-
-  } else if (el.matches('[data-action="add-storage-children"]')) {
-    const unitName = prompt(i18next.t('location-name'));
-    if (!unitName.length) {
-      return;
-    }
-    const params = {
-      parent_id: el.dataset.parentId,
-      name: unitName,
-    };
-    ApiC.post('storage_units', params).then(() => {
-      reloadElements(['storageDiv']).then(() => {
-        const parent: HTMLDetailsElement = document.querySelector(`details[data-id="${params.parent_id}"]`);
-        parent.open = true;
-        // now open ancestors too
-        getAncestorDetails(parent).forEach(details => details.open = true);
-      });
-    });
-  } else if (el.matches('[data-action="create-container"]')) {
-    const qty_stored = (document.getElementById('containerQtyStoredInput') as HTMLInputElement).value;
-    const qty_unit = (document.getElementById('containerQtyUnitSelect') as HTMLSelectElement).value;
-    let multiplier = parseInt((document.getElementById('containerMultiplierInput') as HTMLInputElement).value, 10);
-    if (isNaN(multiplier) || multiplier <= 0) {
-      multiplier = 1;
-    }
-
-    const postCalls = Array.from({ length: multiplier }, () =>
-      ApiC.post(`${entity.type}/${entity.id}/containers/${el.dataset.id}`, {
-        qty_stored: qty_stored,
-        qty_unit: qty_unit,
-      }),
-    );
-    // Execute all POST calls and reload elements after all are resolved
-    Promise.all(postCalls)
-      .then(() => reloadElements(['storageDivContent']))
-      .catch((error) => notify.error(error));
-
-  } else if (el.matches('[data-action="delete-storage-root"]')) {
-    ApiC.delete(`storage_units/${el.dataset.id}`).then(() => reloadElements(['storageDiv']));
-
-  } else if (el.matches('[data-action="destroy-container"]')) {
-    ApiC.delete(`${entity.type}/${entity.id}/containers/${el.dataset.id}`).then(() => reloadElements(['storageDivContent']));
-  } else if (el.matches('[data-action="destroy-storage"]')) {
-    ApiC.delete(`storage_units/${el.dataset.id}`).then(() => reloadElements(['storageDiv']));
-
-  // REPLACE WITH NEXT ACTION
-  } else if (el.matches('[data-action="replace-with-next"]')) {
-    const targetEl = el.nextElementSibling as HTMLElement;
-    // show the target
-    targetEl.toggleAttribute('hidden');
-    // hide clicked element
-    el.toggleAttribute('hidden');
-
-  // TOGGLE MODAL
-  } else if (el.matches('[data-action="toggle-modal"]')) {
-    // TODO this requires jquery for now. Not in BS5.
-    $('#' + el.dataset.target).modal('toggle');
-
-  // UPDATE ENTITY BODY (SAVE BUTTON)
-  } else if (el.matches('[data-action="update-entity-body"]')) {
-    updateEntityBody().then(() => {
-      // SAVE AND GO BACK BUTTON
-      if (el.matches('[data-redirect="view"]')) {
-        window.location.replace('?mode=view&id=' + entity.id);
-      }
-    });
-
-  // SEARCH PUBCHEM
-  } else if (el.matches('[data-action="search-pubchem"]')) {
-    const inputEl = el.parentElement.parentElement.querySelector('input') as HTMLInputElement;
-    if (!inputEl.checkValidity()) {
-      inputEl.reportValidity();
-      return;
-    }
-    const elOldHTML = mkSpin(el);
-    const resultTableDiv = document.getElementById('pubChemSearchResultTableDiv');
-    // we will handle errors differently here
-    ApiC.notifOnError = false;
-    ApiC.getJson(`compounds?search_pubchem_${el.dataset.from}=${inputEl.value}`).then(json => {
-      const compounds = Array.isArray(json) ? json : [json];
-      const table = document.createElement('table');
-      table.classList.add('table');
-
-      // a good cas to try this code: 56392-17-7 (has 10 cids)
-      const thead = document.createElement('thead');
-      const headerRow = document.createElement('tr');
-      ['CID', 'CAS', i18next.t('name'), i18next.t('import')].forEach(text => {
-        const th = document.createElement('th');
-        th.textContent = text;
-        headerRow.appendChild(th);
-      });
-      thead.appendChild(headerRow);
-      table.appendChild(thead);
-
-      const tbody = document.createElement('tbody');
-      table.appendChild(tbody);
-      compounds.forEach(compound => {
-        const row = document.createElement('tr');
-        // CID column
-        const cidCell = document.createElement('td');
-        const cidLink = document.createElement('a');
-        cidLink.href = `https://pubchem.ncbi.nlm.nih.gov/compound/${compound.cid}`;
-        cidLink.classList.add('external-link');
-        cidLink.target = '_blank';
-        cidLink.rel = 'noopener';
-        cidLink.textContent = compound.cid;
-        cidCell.appendChild(cidLink);
-        row.appendChild(cidCell);
-
-        // CAS column
-        const casCell = document.createElement('td');
-        casCell.textContent = compound.cas;
-        row.appendChild(casCell);
-
-        // Name column
-        const nameCell = document.createElement('td');
-        nameCell.textContent = compound.name;
-        row.appendChild(nameCell);
-
-        // Import column
-        const importCell = document.createElement('td');
-        const importBtn = document.createElement('button');
-        importBtn.classList.add('btn', 'btn-primary');
-        importBtn.innerText = i18next.t('import');
-        importBtn.dataset.cid = String(compound.cid);
-        importBtn.dataset.action = 'import-compound';
-        importCell.appendChild(importBtn);
-        row.appendChild(importCell);
-
-        tbody.appendChild(row);
-      });
-      // clear any previous result
-      resultTableDiv.innerHTML = '';
-      resultTableDiv.appendChild(table);
-    }).catch(err => {
-      console.error(err);
-      resultTableDiv.innerText = err;
-    }).finally(() => {
-      mkSpinStop(el, elOldHTML);
-    });
-
-  } else if (el.matches('[data-action="search-entity-from-compound"]')) {
-    // try and grab the CAS for the search
-    let query = (document.getElementById('compoundInput-cas_number') as HTMLInputElement).value;
-    // if no cas, use the name
-    if (!query) {
-      query = (document.getElementById('compoundInput-name') as HTMLInputElement).value;
-    }
-    window.location.href = `${el.dataset.page}.php?q="${encodeURIComponent(query)}"`;
-
-  // IMPORT FROM PUBCHEM
-  } else if (el.matches('[data-action="import-compound"]')) {
-    //el.setAttribute('disabled', 'disabled');
-    const elOldHTML = mkSpin(el);
-    const params = {cid: parseInt(el.dataset.cid, 10), action: Action.Duplicate};
-    ApiC.post2location('compounds', params).then(() => {
-      document.dispatchEvent(new CustomEvent('dataReload'));
-    }).catch(err => {
-      console.error(err);
-    }).finally(() => {
-      mkSpinStop(el, elOldHTML);
-      el.setAttribute('disabled', 'disabled');
-    });
-
-  } else if (el.matches('[data-action="create-resource-from-compound"]')) {
-    const compoundId = (document.getElementById('compoundInput-id') as HTMLInputElement).value;
-    ApiC.post2location('items', {template: el.dataset.tplid}).then(id => {
-      // now create a link with that compound
-      ApiC.post(`items/${id}/compounds/${compoundId}`).then(() => {
-        // also change the title
-        const compoundName = (document.getElementById('compoundInput-name') as HTMLInputElement).value;
-        ApiC.patch(`items/${id}`, {title: compoundName}).then(() => {
-          window.location.href = `/database.php?mode=edit&id=${id}`;
-        });
-      });
-    });
-
-  // CREATE/EDIT COMPOUND MANUALLY
-  } else if (el.matches('[data-action="save-compound"]')) {
-    try {
-      if (el.dataset.compoundId) { // edit
-        const compoundForm = document.getElementById('editCompoundInputs');
-        const params = collectForm(compoundForm);
-        ApiC.patch(`compounds/${el.dataset.compoundId}`, params).then(() => {
-          document.dispatchEvent(new CustomEvent('dataReload'));
-          $('#editCompoundModal').modal('hide');
-          clearForm(compoundForm);
-        });
-      } else { // create
-        const compoundForm = document.getElementById('createCompoundInputs');
-        const params = collectForm(compoundForm);
-        clearForm(compoundForm);
-        ApiC.post2location('compounds', params).then(id => {
-          ApiC.getJson(`compounds/${id}`).then((json) => {
-            setTimeout(() => {
-              toggleEditCompound(json);
-            }, 500);
-            document.dispatchEvent(new CustomEvent('dataReload'));
-          });
-        });
-      }
-    } catch (err) {
-      notify.error(err);
-      return;
-    }
-  // DELETE SELECTED COMPOUNDS
-  } else if (el.matches('[data-action="delete-compounds"]')) {
-    const btn = document.getElementById('deleteCompoundsBtn');
-    const idList = btn.dataset.target.split(',');
-    if (!confirm(`Delete ${idList.length} compound(s)?`)) {
-      return;
-    }
-    idList.forEach(id => ApiC.delete(`compounds/${id}`));
-    document.dispatchEvent(new CustomEvent('dataReload'));
-
-  // RESTORE SELECTED COMPOUNDS
-  } else if (el.matches('[data-action="restore-compounds"]')) {
-    const btn = document.getElementById('restoreCompoundsBtn');
-    const idList = btn.dataset.target.split(',');
-    idList.forEach(id => ApiC.patch(`compounds/${id}`, {state: 1}));
-    document.dispatchEvent(new CustomEvent('dataReload'));
-
-  // PASSWORD VISIBILITY TOGGLE
-  } else if (el.matches('[data-action="toggle-password"]')) {
-    // toggle eye icon
-    const icon = el.firstChild as HTMLElement;
-    icon.classList.toggle('fa-eye');
-    icon.classList.toggle('fa-eye-slash');
-
-    // toggle input type
-    const input = el.parentElement.parentElement.querySelector('input');
-
-    let attribute = 'password';
-    if (input.getAttribute('type') === 'password') {
-      attribute = 'text';
-    }
-    input.type = attribute;
-
-  // LOGOUT
-  } else if (el.matches('[data-action="logout"]')) {
-    clearLocalStorage();
-    window.location.href = 'app/logout.php';
-
-  // ACK NOTIF
-  } else if (el.matches('[data-action="ack-notif"]')) {
-    if (el.parentElement.dataset.ack === '0') {
-      ApiC.patch(`${Model.User}/me/${Model.Notification}/${el.dataset.id}`).then(() => {
-        if (el.dataset.href) {
-          window.location.href = el.dataset.href;
-        } else {
-          reloadElements(['navbarNotifDiv']);
-        }
-      });
-    } else {
-      if (el.dataset.href) {
-        window.location.href = el.dataset.href;
-      }
-    }
-
-  // DESTROY (clear all) NOTIF
-  } else if (el.matches('[data-action="destroy-notif"]')) {
-    ApiC.delete(`${Model.User}/me/${Model.Notification}`).then(() => reloadElements(['navbarNotifDiv']));
-
   } else if (el.matches('[data-query]')) {
     const url = new URL(window.location.href);
     // query format: order-sort
@@ -1008,172 +1201,6 @@ const clickHandler = (event: MouseEvent) => {
     url.searchParams.set('sort', query[1]);
     window.location.href = url.href;
 
-  // this is necessary to convey information between two modals
-  } else if (el.matches('[data-action="create-entity-ask-title"]')) {
-    // hide previous modal first
-    $('.modal.show').modal('hide');
-    // then add the category id to the other create button
-    const targetButton = document.getElementById('askTitleButton') as HTMLButtonElement;
-    targetButton.dataset.catid = el.dataset.catid;
-    $('#askTitleModal').modal('toggle');
-
-  // CREATE EXPERIMENT, TEMPLATE or DATABASE item: main create button in top right
-  } else if (el.matches('[data-action="create-entity"]')) {
-    let params = {};
-    if (el.dataset.hasTitle) {
-      params = collectForm(document.getElementById(el.dataset.formId));
-    }
-    if (el.dataset.tplid) {
-      params['template'] = parseInt(el.dataset.tplid, 10);
-    }
-    if (el.dataset.catid) {
-      params['category'] = parseInt(el.dataset.catid, 10);
-    }
-    // look for any tag present in the url, we will create the entry with these tags
-    const urlParams = new URLSearchParams(document.location.search);
-    const tags = urlParams.getAll('tags[]');
-    if (tags) {
-      params['tags'] = tags;
-    }
-    let page = 'experiments.php';
-    if (el.dataset.type === 'experiments_templates') {
-      page = 'templates.php';
-    }
-    if (el.dataset.type === 'items_types') {
-      page = 'resources-templates.php';
-    }
-    if (el.dataset.type === 'database' || el.dataset.type === 'items') {
-      el.dataset.type = 'items';
-      page = 'database.php';
-    }
-    ApiC.post2location(`${el.dataset.type}`, params).then(id => {
-      window.location.href = `${page}?mode=edit&id=${id}`;
-    });
-
-  } else if (el.matches('[data-action="report-bug"]')) {
-    event.preventDefault();
-    el.querySelector('i').classList.add('moving-bug');
-    setTimeout(() => window.location.assign('https://github.com/elabftw/elabftw/issues/new/choose'), 3000);
-
-  // TOGGLE ANONYMOUS READ ACCESS
-  } else if (el.matches('[data-action="toggle-anonymous-access"]')) {
-    ApiC.patch(`${entity.type}/${entity.id}`, {'action': Action.AccessKey}).then(response => response.json()).then(json => {
-      document.getElementById('anonymousAccessUrlDiv').toggleAttribute('hidden');
-      (document.getElementById('anonymousAccessUrlInput') as HTMLInputElement).value = json.sharelink;
-    });
-
-  } else if (el.matches('[data-action="reload-color"]')) {
-    el.classList.add('flash');
-    setTimeout(() => {
-      el.classList.remove('flash');
-    }, 100);
-    (el.nextElementSibling as HTMLInputElement).value = getRandomColor();
-
-  // CREATE CATEGORY OR STATUS
-  } else if (el.matches('[data-action="create-catstat"]')) {
-    const modalId = 'createCatStatModal';
-    const form = document.getElementById(modalId);
-    try {
-      const params = collectForm(form);
-      ApiC.post(`${Model.Team}/current/${el.dataset.endpoint}`, params).then(() => {
-        $(`#${modalId}`).modal('toggle');
-        reloadElements(['catStatDiv']);
-        clearForm(form);
-        // assign a new random color after clearing the form
-        const colorInput = (form.querySelector('input[type="color"]') as HTMLInputElement);
-        colorInput.value = getRandomColor();
-      });
-    } catch (e) {
-      console.error(e);
-    }
-  // DESTROY CATEGORY/STATUS
-  } else if (el.matches('[data-action="destroy-catstat"]')) {
-    if (confirm(i18next.t('generic-delete-warning'))) {
-      ApiC.delete(`${Model.Team}/current/${el.dataset.endpoint}/${el.dataset.id}`)
-        .then(() => el.parentElement.parentElement.parentElement.remove());
-    }
-  // COPY TO CLIPBOARD
-  } else if (el.matches('[data-action="copy-to-clipboard"]')) {
-    navigator.clipboard.writeText((document.getElementById(el.dataset.target) as HTMLInputElement).value);
-    // indicate that the data was copied by changing the icon into text and back into the icon
-    const previousHTML = el.innerHTML;
-    window.setTimeout(function() {
-      el.innerHTML = previousHTML;
-    }, 1337);
-    el.innerText = i18next.t('copied');
-
-  // REMOVE COMPOUND LINK
-  } else if (el.matches('[data-action="delete-compoundlink"]')) {
-    ApiC.delete(`${entity.type}/${entity.id}/compounds/${el.dataset.id}`).then(() => reloadElements(['compoundDiv']));
-  // CLICK the NOW button of a time or date extra field
-  } else if (el.matches('[data-action="update-to-now"]')) {
-    const input = el.closest('.input-group').querySelector('input');
-    // use Luxon lib here
-    const now = DateTime.local();
-    // date format
-    let format = 'yyyy-MM-dd';
-    if (input.type === 'time') {
-      format = 'HH:mm';
-    }
-    if (input.type === 'datetime-local') {
-      /* eslint-disable-next-line quotes */
-      format = "yyyy-MM-dd'T'HH:mm";
-    }
-    input.value = now.toFormat(format);
-    // trigger change event so it is saved
-    input.dispatchEvent(new Event('change'));
-
-  // TOGGLE BODY
-  } else if (el.matches('[data-action="toggle-body"]')) {
-    const randId = el.dataset.randid;
-    const bodyDiv = document.getElementById(randId);
-    let action = 'hide';
-    // transform the + in - and vice versa
-    if (bodyDiv.hasAttribute('hidden')) {
-      action = 'show';
-    }
-    toggleIcon(el, !bodyDiv.hasAttribute('hidden'));
-    // don't reload body if it is already loaded for show action
-    // and the hide action is just toggle hidden attribute and do nothing else
-    if ((action === 'show' && bodyDiv.dataset.bodyLoaded) || action === 'hide') {
-      bodyDiv.toggleAttribute('hidden');
-      return;
-    }
-
-    const contentDiv = bodyDiv.querySelector('div');
-
-    // prepare the get request
-    const entityId = parseInt(el.dataset.id, 10);
-    let queryUrl = `${el.dataset.type}/${entityId}`;
-    // special case for revisions
-    if (el.dataset.revid) {
-      queryUrl += `/revisions/${el.dataset.revid}`;
-    }
-    ApiC.getJson(queryUrl).then(json => {
-      // add extra fields elements from metadata json
-      const entity = {type: el.dataset.type as EntityType, id: entityId};
-      const MetadataC = new Metadata(entity, new JsonEditorHelper(entity));
-      MetadataC.metadataDiv = contentDiv;
-      MetadataC.display('view').then(() => {
-        // go over all the type: url elements and create a link dynamically
-        generateMetadataLink();
-      });
-      // add html content
-      contentDiv.innerHTML = json.body_html;
-
-      // adjust the width of the children
-      // get the width of the parent. The -30 is to make it smaller than parent even with the margins
-      const width = document.getElementById('parent_' + randId).clientWidth - 30;
-      bodyDiv.style.width = String(width);
-
-      // ask mathjax to reparse the page
-      MathJax.typeset();
-
-      TableSortingC.init();
-
-      bodyDiv.toggleAttribute('hidden');
-      bodyDiv.dataset.bodyLoaded = '1';
-    });
   }
 };
 

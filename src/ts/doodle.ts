@@ -10,11 +10,8 @@ import i18next from './i18n';
 import { Action, Model } from './interfaces';
 import { ApiC } from './api';
 
-document.addEventListener('DOMContentLoaded', () => {
-  if (document.getElementById('info')?.dataset?.page !== 'edit') {
-    return;
-  }
-
+const doodleCanvas = document.getElementById('doodleCanvas') as HTMLCanvasElement;
+if (doodleCanvas) {
   // store the clicks
   let clickX = [];
   let clickY = [];
@@ -22,7 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let isPainting: boolean;
   let wasPainting: boolean;
 
-  const doodleCanvas = document.getElementById('doodleCanvas') as HTMLCanvasElement;
   const context: CanvasRenderingContext2D = doodleCanvas.getContext('2d');
 
   function draw(dragging: boolean): void {
@@ -87,7 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     ApiC.post(`${elDataset.type}/${elDataset.id}/${Model.Upload}`, params).then(() => reloadElements(['uploadsDiv']));
   });
-
 
   /**
    * mouse events
@@ -175,4 +170,4 @@ document.addEventListener('DOMContentLoaded', () => {
   doodleCanvas.addEventListener('touchcancel', () => {
     isPainting = false;
   }, false);
-});
+}

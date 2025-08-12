@@ -11,7 +11,6 @@ import i18next from './i18n';
 import tinymce from 'tinymce/tinymce';
 import { getEditor } from './Editor.class';
 import { notify } from './notify';
-import Tab from './Tab.class';
 import { ApiC } from './api';
 import $ from 'jquery';
 import { SemverCompare } from './SemverCompare.class';
@@ -230,8 +229,6 @@ const clickHandler = (event: Event) => {
 };
 
 if (window.location.pathname === '/sysconfig.php') {
-  (new Tab).init(document.querySelector('.tabbed-menu'));
-
   // GET the latest version information
   const updateUrl = 'https://get.elabftw.net/updates.json';
   const currentVersionDiv = document.getElementById('currentVersion');

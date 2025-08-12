@@ -298,6 +298,7 @@ export async function reloadElements(elementIds: string[]): Promise<void> {
   });
   (new TableSorting()).init();
   makeSortableGreatAgain();
+  relativeMoment();
 }
 
 /**

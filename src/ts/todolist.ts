@@ -8,18 +8,14 @@
 import Todolist from './Todolist.class';
 import { Model } from './interfaces';
 
-document.addEventListener('DOMContentLoaded', () => {
-  if (!document.getElementById('todolistPanel')) {
-    return;
-  }
+const core = document.getElementById('core');
+const isAnon = core ? JSON.parse(core.textContent!).isAnon === true : true;
+
+if (document.getElementById('todolistPanel') && !isAnon) {
 
   let unfinishedStepsScope = 'user';
   // unfinished steps scopeSwitch i.e. user (0) or team (1)
   let scopeSwitch = document.getElementById(Model.Todolist + 'StepsShowTeam') as HTMLInputElement;
-  // anon user
-  if (scopeSwitch === null) {
-    return;
-  }
   const storageScopeSwitch = localStorage.getItem(Model.Todolist + 'StepsShowTeam');
   // adjust scope from localStorage
   if (scopeSwitch.checked && storageScopeSwitch === '0') {
@@ -88,4 +84,4 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   });
-});
+}

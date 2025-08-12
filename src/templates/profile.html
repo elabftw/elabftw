@@ -283,7 +283,7 @@
     <h4 id='exportedFiles'>{{ 'Exported files'|trans }}</h4>
     {# Refresh button #}
     <div class='text-center'>
-      <button type='button' aria-label='{{ 'Refresh'|trans }}' class='btn btn-secondary btn-sm mb-2' data-reload-on-click='exportedFilesTable'><i class='fas fa-rotate color-white mr-1'></i>{{ 'Refresh'|trans }}</button>
+      <button type='button' aria-label='{{ 'Refresh'|trans }}' class='btn btn-secondary btn-sm mb-2' data-action='reload-on-click' data-target='exportedFilesTable'><i class='fas fa-rotate color-white mr-1'></i>{{ 'Refresh'|trans }}</button>
     </div>
     <ul class='list-group' id='exportedFilesTable'>
       {% for file in exportedFiles %}

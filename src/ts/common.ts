@@ -770,11 +770,12 @@ on('replace-with-next', (el: HTMLElement) => {
   // hide clicked element
   el.toggleAttribute('hidden');
 });
+/*
 on('toggle-modal', (el: HTMLElement) => {
-  console.debug('[toggle-modal]', el, '->', el.getAttribute('data-target'));
   // TODO this requires jquery for now. Not in BS5.
   $('#' + el.dataset.target).modal('show');
 });
+*/
 
 on('update-entity-body', (el: HTMLElement) => {
   updateEntityBody().then(() => {
@@ -1193,6 +1194,9 @@ const clickHandler = (event: MouseEvent) => {
         });
       },
     });
+  // TEST WITH OLD CODE
+  } else if (el.matches('[data-action="toggle-modal"]')) {
+    $('#' + el.dataset.target).modal('toggle');
 
   } else if (el.matches('[data-query]')) {
     const url = new URL(window.location.href);

@@ -8,7 +8,7 @@ USER node
 # create cypress output folders
 # this will prevent an error message if tests succeed and no stainer yet — you're deficreenshots are taken
 # use bash so we can expand the command (RUN will use sh)
-RUN bash -c 'mkdir -p tests/cypress/{videos,screenshots}'
+RUN bash -c 'mkdir -m 777 -p tests/cypress/{videos,screenshots}'
 
 # add html validation tools to cypress
 RUN npm install typescript html-validate@^8 cypress-html-validate@^7

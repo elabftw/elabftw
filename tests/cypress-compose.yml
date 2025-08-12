@@ -3,6 +3,8 @@ networks:
 services:
   cypress:
     image: elab-cypress
+    extra_hosts:
+      - "elab.local:host-gateway"
     build:
       context: ..
       dockerfile: ./tests/elab-cypress.Dockerfile

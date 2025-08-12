@@ -19,7 +19,6 @@ import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
-import { FileType } from './interfaces';
 import i18next from './i18n';
 import { SpreadsheetEditorHelper } from './SpreadsheetEditorHelper.class';
 import { ColumnHeader } from './spreadsheet-editor-column-header';

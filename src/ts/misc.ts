@@ -463,7 +463,7 @@ export function askFileName(extension: FileType): string | undefined {
   // user hits cancel: exit silently
   if (realName === null) return;
   if (realName.trim() === '') {
-    throw new Error(i18next.t('error-no-filename'))
+    throw new Error(i18next.t('error-no-filename'));
   }
   const ext = `.${extension.toLowerCase()}`;
   if (realName.toLowerCase().endsWith(ext)) {

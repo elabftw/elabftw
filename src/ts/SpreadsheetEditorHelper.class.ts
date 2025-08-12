@@ -84,18 +84,20 @@ export class SpreadsheetEditorHelper {
     await SpreadsheetEditorHelper.uploadWorkbook(file, url);
   }
 
-  async replaceExisting(format: FileType, columnDefs: GridColumn[], rowData: GridRow[], entityType: string, entityId: number, currentUploadName: string, currentUploadId: number): Promise<void> {
+  async replaceExisting(columnDefs: GridColumn[], rowData: GridRow[], entityType: string, entityId: number, currentUploadName: string, currentUploadId: number):  Promise<void> {
     if (!columnDefs.length || !rowData.length || !currentUploadName || !currentUploadId) {
       return;
     }
     const wb = SpreadsheetEditorHelper.createWorkbookFromGrid(columnDefs, rowData);
-    const file = SpreadsheetEditorHelper.workbookToFile(wb, currentUploadName, format);
-    const url = SpreadsheetEditorHelper.uploadUrl(entityType, entityId, currentUploadId);
-    await SpreadsheetEditorHelper.uploadWorkbook(file, url);
+    const wbBinary = write(wb, { bookType: FileType.Csv, type: 'array' });
+    const file = new File([wbBinary], currentUploadName, {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    await SpreadsheetEditorHelper.uploadWorkbook(file, SpreadsheetEditorHelper.uploadUrl(entityType, entityId, currentUploadId));
   }
 
   private static workbookToFile(wb: WorkBook, name: string, format: FileType): File {
-    const bookType = getBookType(format)!;
+    const bookType = getBookType(format);
     const mime = getMime(format) ?? 'application/octet-stream';
     const bin = write(wb, { bookType, type: 'array' });
     return new File([bin], name, { type: mime });

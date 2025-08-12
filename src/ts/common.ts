@@ -981,16 +981,6 @@ on('ack-notif', (el: HTMLElement) => {
 
 on('destroy-notif', () => ApiC.delete(`${Model.User}/me/${Model.Notification}`).then(() => reloadElements(['navbarNotifDiv'])));
 
-// this is necessary to convey information between two modals
-on('create-entity-ask-title', (el: HTMLElement) => {
-  // hide previous modal first
-  $('.modal.show').modal('hide');
-  // then add the category id to the other create button
-  const targetButton = document.getElementById('askTitleButton') as HTMLButtonElement;
-  targetButton.dataset.catid = el.dataset.catid;
-  $('#askTitleModal').modal('toggle');
-});
-
 // CREATE EXPERIMENT, TEMPLATE or DATABASE item: main create button in top right
 on('create-entity', (el: HTMLElement) => {
   let params = {};
@@ -1197,6 +1187,16 @@ const clickHandler = (event: MouseEvent) => {
   // TEST WITH OLD CODE
   } else if (el.matches('[data-action="toggle-modal"]')) {
     $('#' + el.dataset.target).modal('toggle');
+
+  } else if (el.matches('[data-action="create-entity-ask-title"]')) {
+    // this is necessary to convey information between two modals
+    // hide previous modal first
+    $('.modal.show').modal('hide');
+    // then add the category id to the other create button
+    const targetButton = document.getElementById('askTitleButton') as HTMLButtonElement;
+    targetButton.dataset.catid = el.dataset.catid;
+    $('#askTitleModal').modal('toggle');
+
 
   } else if (el.matches('[data-query]')) {
     const url = new URL(window.location.href);

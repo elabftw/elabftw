@@ -981,6 +981,7 @@ on('ack-notif', (el: HTMLElement) => {
 
 on('destroy-notif', () => ApiC.delete(`${Model.User}/me/${Model.Notification}`).then(() => reloadElements(['navbarNotifDiv'])));
 
+/*
 // CREATE EXPERIMENT, TEMPLATE or DATABASE item: main create button in top right
 on('create-entity', (el: HTMLElement) => {
   let params = {};
@@ -1014,6 +1015,7 @@ on('create-entity', (el: HTMLElement) => {
     window.location.href = `${page}?mode=edit&id=${id}`;
   });
 });
+*/
 
 on('report-bug', (el: HTMLElement, event: Event) => {
   event.preventDefault();
@@ -1196,6 +1198,38 @@ const clickHandler = (event: MouseEvent) => {
     const targetButton = document.getElementById('askTitleButton') as HTMLButtonElement;
     targetButton.dataset.catid = el.dataset.catid;
     $('#askTitleModal').modal('toggle');
+
+  } else if (el.matches('[data-action="create-entity"]')) {
+    let params = {};
+    if (el.dataset.hasTitle) {
+      params = collectForm(document.getElementById(el.dataset.formId));
+    }
+    if (el.dataset.tplid) {
+      params['template'] = parseInt(el.dataset.tplid, 10);
+    }
+    if (el.dataset.catid) {
+      params['category'] = parseInt(el.dataset.catid, 10);
+    }
+    // look for any tag present in the url, we will create the entry with these tags
+    const urlParams = new URLSearchParams(document.location.search);
+    const tags = urlParams.getAll('tags[]');
+    if (tags) {
+      params['tags'] = tags;
+    }
+    let page = 'experiments.php';
+    if (el.dataset.type === 'experiments_templates') {
+      page = 'templates.php';
+    }
+    if (el.dataset.type === 'items_types') {
+      page = 'resources-templates.php';
+    }
+    if (el.dataset.type === 'database' || el.dataset.type === 'items') {
+      el.dataset.type = 'items';
+      page = 'database.php';
+    }
+    ApiC.post2location(`${el.dataset.type}`, params).then(id => {
+      window.location.href = `${page}?mode=edit&id=${id}`;
+    });
 
 
   } else if (el.matches('[data-query]')) {

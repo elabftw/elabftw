@@ -25,21 +25,20 @@ declare global {
 }
 
 export class SpreadsheetEditorHelper {
-  loadInSpreadsheetEditor(link: string, name: string, uploadId: string): void {
-    const headers = new Headers();
-    headers.append('cache-control', 'no-cache');
-    fetch(`app/download.php?f=${link}`, { headers })
-      .then(response => {
-        if (!response.ok) throw new Error('An unexpected error occurred!');
-        return response.arrayBuffer();
-      })
-      .then(buffer => {
-        const aoa = SpreadsheetEditorHelper.parseFileToAOA(buffer);
-        const { cols, rows } = SpreadsheetEditorHelper.aoaToGrid(aoa);
-        const ev = new CustomEvent('sheet-load-data', { detail: { cols, rows, name, uploadId } });
-        document.dispatchEvent(ev);
-      })
-      .catch(e => notify.error(e.message));
+  async loadInSpreadsheetEditor(link: string, name: string, uploadId: number): Promise<void> {
+    try {
+      const res = await fetch(`app/download.php?f=${link}`, {
+        headers: new Headers({ 'cache-control': 'no-cache' }),
+      });
+      if (!res.ok) throw new Error('An unexpected error occurred fetching the file!');
+      const buffer = await res.arrayBuffer();
+      const aoa = SpreadsheetEditorHelper.parseFileToAOA(buffer);
+      const { cols, rows } = SpreadsheetEditorHelper.aoaToGrid(aoa);
+      const ev = new CustomEvent('sheet-load-data', { detail: { cols, rows, name, uploadId } });
+      document.dispatchEvent(ev);
+    } catch (e) {
+      notify.error(e.message);
+    }
   }
 
   loadWithHeaderChoice(file: File, setColumnDefs: (cols: GridColumn[]) => void, setRowData: (rows: GridRow[]) => void, setCurrentUploadId: (uploadId: number) => void): void {
@@ -51,72 +50,80 @@ export class SpreadsheetEditorHelper {
         window._sheetImport = { aoa, setColumnDefs, setRowData, setCurrentUploadId };
         // 'use first line as header?' modal
         $('#spreadsheetModal').modal('show');
-      } catch (error) {
-        notify.error(error.message);
+      } catch (e) {
+        notify.error(e.message);
       }
     };
     reader.readAsArrayBuffer(file);
   }
 
   async handleExport(format: FileType, columnDefs: GridColumn[], rowData: GridRow[]): Promise<void> {
-    if (!columnDefs.length || !rowData.length) {
-      return;
+    try {
+      if (!columnDefs.length || !rowData.length) {
+        return;
+      }
+      const realName = askFileName(format);
+      const wb = SpreadsheetEditorHelper.createWorkbookFromGrid(columnDefs, rowData);
+      const bookType = getBookType(format);
+      writeFile(wb, realName, { bookType });
+      notify.success();
+    } catch (e) {
+      notify.error(e.message);
     }
-    const realName = askFileName(format);
-    if (!realName) {
-      return;
-    }
-    const wb = SpreadsheetEditorHelper.createWorkbookFromGrid(columnDefs, rowData);
-
-    const bookType = getBookType(format);
-    writeFile(wb, realName, { bookType });
-    notify.success();
   }
 
   // saves the current sheet as an upload for the entity. (.csv)
   async saveAsAttachment(format: FileType, columnDefs: GridColumn[], rowData: GridRow[], entityType: string, entityId: number): Promise<void> {
     if (!columnDefs.length || !rowData.length) {
-      return Promise.resolve();
+      return;
     }
     const realName = askFileName(format);
-    if (!realName) {
-      return Promise.resolve();
-    }
     const wb = SpreadsheetEditorHelper.createWorkbookFromGrid(columnDefs, rowData);
-    const bookType = getBookType(format);
-    const mime = getMime(format);
-    const wbBinary = write(wb, { bookType, type: 'array' });
-    const file = new File([wbBinary], realName, { type: mime });
-    return SpreadsheetEditorHelper.uploadWorkbook(file, `api/v2/${entityType}/${entityId}/${Model.Upload}`);
+    const file = SpreadsheetEditorHelper.workbookToFile(wb, realName, format);
+    const url = SpreadsheetEditorHelper.uploadUrl(entityType, entityId);
+    await SpreadsheetEditorHelper.uploadWorkbook(file, url);
   }
 
-  replaceExisting(columnDefs: GridColumn[], rowData: GridRow[], entityType: string, entityId: number, currentUploadName: string, currentUploadId: number):  Promise<void> {
+  async replaceExisting(format: FileType, columnDefs: GridColumn[], rowData: GridRow[], entityType: string, entityId: number, currentUploadName: string, currentUploadId: number): Promise<void> {
     if (!columnDefs.length || !rowData.length || !currentUploadName || !currentUploadId) {
-      return Promise.resolve();
+      return;
     }
-
     const wb = SpreadsheetEditorHelper.createWorkbookFromGrid(columnDefs, rowData);
-    const wbBinary = write(wb, { bookType: FileType.Csv, type: 'array' });
-    const file = new File([wbBinary], currentUploadName, {
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    });
-    return SpreadsheetEditorHelper.uploadWorkbook(file, `api/v2/${entityType}/${entityId}/${Model.Upload}/${currentUploadId}`);
+    const file = SpreadsheetEditorHelper.workbookToFile(wb, currentUploadName, format);
+    const url = SpreadsheetEditorHelper.uploadUrl(entityType, entityId, currentUploadId);
+    await SpreadsheetEditorHelper.uploadWorkbook(file, url);
   }
 
-  // convert array of arrays to grid
-  private static aoaToGrid(aoa: (string | number | boolean | null)[][]): { cols: GridColumn[], rows: GridRow[] } {
-    const headerRow = aoa[0].map((h, i) => typeof h === 'string' ? h : `Column${i}`);
-    const rows: GridRow[] = aoa.slice(1).map(r => {
+  private static workbookToFile(wb: WorkBook, name: string, format: FileType): File {
+    const bookType = getBookType(format)!;
+    const mime = getMime(format) ?? 'application/octet-stream';
+    const bin = write(wb, { bookType, type: 'array' });
+    return new File([bin], name, { type: mime });
+  }
+
+  private static uploadUrl(entityType: string, entityId: number, uploadId?: number): string {
+    const base = `api/v2/${entityType}/${entityId}/${Model.Upload}`;
+    return uploadId ? `${base}/${uploadId}` : base;
+  }
+
+  private static async uploadWorkbook(file: File, url: string): Promise<void> {
+    const formData = new FormData();
+    formData.append('file', file);
+    await fetch(url, { method: 'POST', body: formData });
+    await reloadElements(['uploadsDiv']);
+    notify.success();
+  }
+
+  private static aoaToGrid(aoa: (string | number | boolean | null)[][]): { cols: GridColumn[]; rows: GridRow[] } {
+    const headerRow = aoa[0].map((h, i) => (typeof h === 'string' ? h : `Column${i}`));
+    const rows: GridRow[] = aoa.slice(1).map((r) => {
       const row: GridRow = {};
       headerRow.forEach((h, i) => {
         row[h] = String(r[i] ?? '');
       });
       return row;
     });
-    const cols: GridColumn[] = headerRow.map(h => ({
-      field: h,
-      editable: true,
-    }));
+    const cols: GridColumn[] = headerRow.map((h) => ({ field: h, editable: true }));
     return { cols, rows };
   }
 
@@ -135,15 +142,5 @@ export class SpreadsheetEditorHelper {
     const wb = utils.book_new();
     utils.book_append_sheet(wb, ws, 'Sheet1');
     return wb;
-  }
-
-  // return a Promise so we can remove Dirty state on success
-  private static uploadWorkbook(file: File, url: string): Promise<void> {
-    const formData = new FormData();
-    formData.append('file', file);
-    return fetch(url, { method: 'POST', body: formData })
-      .then(() => reloadElements(['uploadsDiv']))
-      .then(() => notify.success())
-      .catch(e => { notify.error(e.message); throw e; });
   }
 }

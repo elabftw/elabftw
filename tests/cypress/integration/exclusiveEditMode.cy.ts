@@ -7,8 +7,6 @@ describe('Exclusive edit mode', () => {
   const setupEntityWithExclusiveEditMode = () => {
     cy.visit('/experiments.php');
     cy.contains('Create').click();
-    // wait for modal to open
-    cy.wait(500);
     cy.get('#createModal_experiments').should('be.visible').should('contain', 'No category').contains('No category').click();
     cy.get('#askTitleModalTitleInput').should('be.visible').wait(500).type('Cypress created entity').click();
     cy.get('#askTitleButton').click();

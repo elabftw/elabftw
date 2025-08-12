@@ -771,8 +771,9 @@ on('replace-with-next', (el: HTMLElement) => {
   el.toggleAttribute('hidden');
 });
 on('toggle-modal', (el: HTMLElement) => {
+  console.debug('[toggle-modal]', el, '->', el.getAttribute('data-target'));
   // TODO this requires jquery for now. Not in BS5.
-  $('#' + el.dataset.target).modal('toggle');
+  $('#' + el.dataset.target).modal('show');
 });
 
 on('update-entity-body', (el: HTMLElement) => {

@@ -78,7 +78,7 @@ if (document.getElementById('spreadsheetEditor')) {
           warn.setAttribute('hidden', 'hidden');
         }
       }
-    }, [dirty])
+    }, [dirty]);
 
     const clear = () => {
       setColumnDefs([]);

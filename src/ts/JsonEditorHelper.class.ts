@@ -80,7 +80,7 @@ export default class JsonEditorHelper {
     // make sure it's not hidden
     jsonEditorDiv.toggleAttribute('hidden', false);
     // and scroll page into editor view
-    jsonEditorDiv.scrollIntoView();
+    jsonEditorDiv.scrollIntoView({behavior: 'smooth'});
   }
 
   loadFile(link: string, name: string, uploadid: string): void {

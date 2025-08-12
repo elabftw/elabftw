@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
         MetadataC.read().then(metadata => {
           const name = el.parentElement.parentElement.closest('div').querySelector('label').innerText.trim();
           delete metadata.extra_fields[name];
-          MetadataC.update(metadata as ValidMetadata).then(() => document.getElementById('metadataDiv').scrollIntoView());
+          MetadataC.update(metadata as ValidMetadata).then(() => document.getElementById('metadataDiv').scrollIntoView({behavior: 'smooth'}));
         });
       }
     }
@@ -264,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ApiC.patch(`${entity.type}/${entity.id}`, {metadata: JSON.stringify(mergedMetadata)}).then(() => {
         MetadataC.display('edit');
         textarea.value = '';
-      }).then(() => document.getElementById('metadataDiv').scrollIntoView());
+      }).then(() => document.getElementById('metadataDiv').scrollIntoView({behavior: 'smooth'}));
     }
   });
 
@@ -361,7 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
           // and finally close the modal
           $('#fieldBuilderModal').modal('toggle');
           // focus on the newly added element
-          document.querySelector(`[data-name="${fieldKey}"`).scrollIntoView();
+          document.querySelector(`[data-name="${fieldKey}"`).scrollIntoView({behavior: 'smooth'});
         });
       });
     // EDIT EXTRA FIELD
@@ -445,7 +445,7 @@ document.addEventListener('DOMContentLoaded', () => {
         MetadataC.update(json as ValidMetadata).then(() => {
           $('#fieldBuilderModal').modal('toggle');
           // focus on the newly added element
-          document.querySelector(`[data-name="${newFieldKey}"`).scrollIntoView();
+          document.querySelector(`[data-name="${newFieldKey}"`).scrollIntoView({behavior: 'smooth'});
         });
       });
     // ADD OPTION FOR SELECT OR RADIO

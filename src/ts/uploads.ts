@@ -146,7 +146,8 @@ const clickHandler = async (event: Event) => {
 
     // HANDLE SHEETS
   } else if (el.matches('[data-action="xls-load-file"]')) {
-    await SpreadsheetEditorHelperC.loadInSpreadsheetEditor(el.dataset.link, el.dataset.name, Number(el.dataset.uploadid));
+    await SpreadsheetEditorHelperC.loadInSpreadsheetEditor(el.dataset.link, el.dataset.name, Number(el.dataset.uploadid))
+      .then(() => (document.getElementById('spreadsheetEditor'))?.scrollIntoView({ behavior: 'smooth'}));
     // ARCHIVE UPLOAD
   } else if (el.matches('[data-action="archive-upload"]')) {
     const uploadid = parseInt(el.dataset.uploadid, 10);

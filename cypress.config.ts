@@ -25,7 +25,7 @@ export default defineConfig({
             'valid-autocomplete': Severity.DISABLED,
             'require-sri': [Severity.ERROR, {
               target: 'crossorigin',
-              exclude: ['https://elabtmp'], // this is treated as crossorigin so we exclude it
+              exclude: ['https://elabtmp', 'https://elab.local:3148'], // this is treated as crossorigin so we exclude it
             }],
           },
         },

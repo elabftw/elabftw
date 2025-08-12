@@ -290,7 +290,7 @@
         <li class='list-group-item py-3 px-2 m-1'>
           <span class='d-flex flew-wrap'>
             <span>
-              <button class='btn p-2 hl-hover-gray lh-normal border-0 my-n2 mr-2' data-toggle-target='showMoreDiv_{{ file.id }}' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Show more'|trans }}' aria-label='{{ 'Show more'|trans }}'><i class='fas fa-square-plus fa-fw link-like'></i></button>
+              <button type='button' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2 mr-2' data-toggle-target='showMoreDiv_{{ file.id }}' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Show more'|trans }}' aria-label='{{ 'Show more'|trans }}'><i class='fas fa-square-plus fa-fw link-like'></i></button>
               <span class='state-indicator' data-state='{{ file.state }}' data-id='{{ file.id }}'>●</span>
               {% if file.real_name %}
                 <a title='{{ 'Download'|trans }}' class='rounded hl-hover-gray p-1' target='_blank' href='/api/v2/exports/{{ file.id }}?format=binary'>

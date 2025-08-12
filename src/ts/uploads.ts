@@ -16,6 +16,7 @@ import i18next from './i18n';
 import { ApiC } from './api';
 import { marked } from 'marked';
 import Prism from 'prismjs';
+import { SpreadsheetEditorHelper } from './SpreadsheetEditorHelper.class';
 import { Uploader } from './uploader';
 import { entity } from './getEntity';
 
@@ -141,6 +142,9 @@ const clickHandler = async (event: Event) => {
     style[targetStyle] = options;
     get3dmol().then(($3Dmol) => $3Dmol.viewers[el.dataset.divid].setStyle(style).render());
 
+    // HANDLE SHEETS
+  } else if (el.matches('[data-action="xls-load-file"]')) {
+    await SpreadsheetEditorHelperC.loadInSpreadsheetEditor(el.dataset.link, el.dataset.name, Number(el.dataset.uploadid));
     // ARCHIVE UPLOAD
   } else if (el.matches('[data-action="archive-upload"]')) {
     const uploadid = parseInt(el.dataset.uploadid, 10);

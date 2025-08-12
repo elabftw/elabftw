@@ -5,7 +5,7 @@ import { Severity } from 'html-validate';
 export default defineConfig({
   fixturesFolder: 'tests/cypress/fixtures',
   screenshotsFolder: 'tests/cypress/screenshots',
-  video: false,
+  video: true,
   videosFolder: 'tests/cypress/videos',
   viewportWidth: 1440,
   viewportHeight: 900,

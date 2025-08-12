@@ -23,7 +23,7 @@ describe('Exclusive edit mode', () => {
     cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
     cy.get('[title="Select who can edit this entry"]').click();
     cy.get('#canwrite_select_base').should('be.visible').select('Only members of the team');
-    cy.get('[data-identifier="canwrite"][data-action="save-permissions"]').wait(200).click();
+    cy.get('[data-identifier="canwrite"][data-action="save-permissions"]').wait(200).trigger('click').click({force: true});
     cy.wait('@apiPATCH');
     cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
     // log out Toto

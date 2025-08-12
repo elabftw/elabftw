@@ -20,6 +20,8 @@ import { SpreadsheetEditorHelper } from './SpreadsheetEditorHelper.class';
 import { Uploader } from './uploader';
 import { entity } from './getEntity';
 
+const SpreadsheetEditorHelperC = new SpreadsheetEditorHelper();
+
 function processNewFilename(event, original: HTMLElement, parent: HTMLElement): void {
   if (event.key === 'Enter' || event.type === 'blur') {
     const newFilename = (event.target as HTMLInputElement).value;
@@ -54,13 +56,13 @@ const clickHandler = async (event: Event) => {
     filenameLink.replaceWith(filenameInput);
     filenameInput.focus();
 
-    // TOGGLE DISPLAY
+  // TOGGLE DISPLAY
   } else if (el.matches('[data-action="toggle-uploads-layout"]')) {
     ApiC.notifOnSaved = false;
     ApiC.patch(`${Model.User}/me`, {'uploads_layout': el.dataset.targetLayout})
       .then(() => reloadElements(['uploadsDiv', 'uploadsViewToggler']));
 
-    // SHOW CONTENT OF TEXT FILES, MARKDOWN OR JSON
+  // SHOW CONTENT OF TEXT FILES, MARKDOWN OR JSON
   } else if (el.matches('[data-action="toggle-modal"][data-target="plainTextModal"]')) {
     // set the title for modal window
     document.getElementById('plainTextModalLabel').textContent = el.dataset.name;
@@ -86,7 +88,7 @@ const clickHandler = async (event: Event) => {
       response.text().then(content => plainTextContentDiv.innerText = content);
     }
 
-    // TOGGLE SHOW ARCHIVED
+  // TOGGLE SHOW ARCHIVED
   } else if (el.matches('[data-action="toggle-uploads-show-archived"]')) {
     const url = new URL(window.location.href);
     const queryParams = new URLSearchParams(url.search);
@@ -104,15 +106,15 @@ const clickHandler = async (event: Event) => {
     const modifiedUrl = url.toString();
     window.location.replace(modifiedUrl);
 
-    // REPLACE UPLOAD
+  // REPLACE UPLOAD
   } else if (el.matches('[data-action="replace-upload"]')) {
     document.getElementById('replaceUploadForm_' + el.dataset.uploadid).hidden = false;
 
-    // MORE INFORMATION
+  // MORE INFORMATION
   } else if (el.matches('[data-action="more-info-upload"]')) {
     document.getElementById('moreInfo_' + el.dataset.uploadid).classList.remove('d-none');
 
-    // OPEN IN NMRIUM
+  // OPEN IN NMRIUM
   } else if (el.matches('[data-action="open-in-nmrium"]')) {
     ApiC.get(`${entity.type}/${entity.id}/${Model.Upload}/${el.dataset.uploadid}?format=binary`).then(response => {
       response.text().then(content => {
@@ -120,7 +122,7 @@ const clickHandler = async (event: Event) => {
       });
     });
 
-    // SAVE MOL AS PNG
+  // SAVE MOL AS PNG
   } else if (el.matches('[data-action="save-mol-as-png"]')) {
     const params = {
       'action': Action.CreateFromString,
@@ -131,7 +133,7 @@ const clickHandler = async (event: Event) => {
     ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}`, params)
       .then(() => reloadElements(['uploadsDiv']));
 
-    // CHANGE 3DMOL FILES VISUALIZATION STYLE
+  // CHANGE 3DMOL FILES VISUALIZATION STYLE
   } else if (el.matches('[data-action="set-3dmol-style"]')) {
     const targetStyle = el.dataset.style;
     let options = {};
@@ -151,7 +153,7 @@ const clickHandler = async (event: Event) => {
     ApiC.patch(`${entity.type}/${entity.id}/${Model.Upload}/${uploadid}`, {action: Action.Archive})
       .then(() => reloadElements(['uploadsDiv']));
 
-    // DESTROY UPLOAD
+  // DESTROY UPLOAD
   } else if (el.matches('[data-action="destroy-upload"]')) {
     const uploadid = parseInt(el.dataset.uploadid, 10);
     if (confirm(i18next.t('generic-delete-warning'))) {

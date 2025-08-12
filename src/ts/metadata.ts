@@ -6,7 +6,6 @@
  * @package elabftw
  */
 import {
-  getEntity,
   addAutocompleteToExtraFieldsKeyInputs,
   normalizeFieldName,
 } from './misc';
@@ -19,13 +18,13 @@ import i18next from './i18n';
 import { merge } from 'lodash-es';
 import $ from 'jquery';
 import { notify } from './notify';
+import { entity } from './getEntity';
 
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('metadataDiv')) {
     return;
   }
-  const entity = getEntity();
   if (!entity.id) {
     return;
   }

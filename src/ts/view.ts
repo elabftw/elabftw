@@ -8,10 +8,9 @@
 import i18next from './i18n';
 import { InputType, Malle } from '@deltablot/malle';
 import { ApiC } from './api';
-import { getEntity, relativeMoment, reloadElements } from './misc';
+import { relativeMoment, reloadElements } from './misc';
 import { Action, Model } from './interfaces';
-
-const entity = getEntity();
+import { entity } from './getEntity';
 
 // UPDATE MALLEABLE COMMENT
 const malleableComments = new Malle({

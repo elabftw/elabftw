@@ -9,7 +9,6 @@ import {
   clearForm,
   collectForm,
   getCheckedBoxes,
-  getEntity,
   permissionsToJson,
   reloadEntitiesShow,
   TomSelect,
@@ -20,8 +19,8 @@ import i18next from './i18n';
 import { ApiC } from './api';
 import { notify } from './notify';
 import { SearchSyntaxHighlighting } from './SearchSyntaxHighlighting.class';
+import { entity } from './getEntity';
 
-const entity = getEntity();
 const params = new URLSearchParams(document.location.search.slice(1));
 
 // a filter helper can be a select or an input (for date and extrafield), so we need a function to get its value

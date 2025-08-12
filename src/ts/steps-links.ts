@@ -14,15 +14,14 @@ import {
   addAutocompleteToCompoundsInputs,
   addAutocompleteToLinkInputs,
   adjustHiddenState,
-  getEntity,
   makeSortableGreatAgain,
   relativeMoment,
   reloadElements,
 } from './misc';
 import { Action, Target } from './interfaces';
 import { ApiC } from './api';
+import { entity } from './getEntity';
 
-const entity = getEntity();
 const StepC = new Step(entity);
 
 function createStep(input: HTMLInputElement): void {

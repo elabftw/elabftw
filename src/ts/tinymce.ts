@@ -63,11 +63,12 @@ import '../js/tinymce-langs/uz_UZ.js';
 import '../js/tinymce-langs/zh_CN.js';
 import '../js/tinymce-plugins/mention/plugin.js';
 import { EntityType, Model } from './interfaces';
-import { getEntity, reloadElements, escapeExtendedQuery, updateEntityBody, getNewIdFromPostRequest } from './misc';
+import { reloadElements, escapeExtendedQuery, updateEntityBody, getNewIdFromPostRequest } from './misc';
 import { ApiC } from './api';
 import { isSortable } from './TableSorting.class';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
+import { entity } from './getEntity';
 
 // AUTOSAVE
 const doneTypingInterval = 7000;  // time in ms between end of typing and save
@@ -142,7 +143,6 @@ const imagesUploadHandler = (blobInfo: TinyMCEBlobInfo) => new Promise((resolve,
       });
     }
   });
-  const entity = getEntity();
   // Edgecase for editing an image using tinymce ImageTools
   // Check if it was selected. This is set by an event hook below
   if (tinymceEditImage.selected === true) {
@@ -205,7 +205,6 @@ export function getTinymceBaseConfig(page: string): object {
     // let Image in menu
     removedMenuItems = 'newdocument, anchor';
   }
-  const entity = getEntity();
 
   return {
     selector: '.mceditable',

@@ -6,7 +6,6 @@
  * @package elabftw
  */
 import {
-  getEntity,
   relativeMoment,
   reloadElements,
 } from './misc';
@@ -15,10 +14,10 @@ import $ from 'jquery';
 import { Action, Model } from './interfaces';
 import { notify } from './notify';
 import { ApiC } from './api';
+import { entity } from './getEntity';
 
 const clickHandler = (event: Event) => {
   const el = (event.target as HTMLElement);
-  const entity = getEntity();
   // DUPLICATE
   if (el.matches('[data-action="duplicate-entity"]')) {
     const copyFiles = (document.getElementById('duplicateKeepFilesSelect') as HTMLInputElement);

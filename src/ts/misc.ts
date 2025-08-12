@@ -181,31 +181,28 @@ export function clearForm(form: HTMLElement): void {
 
 // for view or edit mode, get type and id from the page to construct the entity object
 export function getEntity(): Entity {
-  if (!document.getElementById('info')) {
-    return {type: EntityType.Other, id: 0};
-  }
-  // holds info about the page through data attributes
-  const about = document.getElementById('info').dataset;
   let entityType: EntityType;
-  switch (about.type) {
-  case 'experiments':
+  let entityId = null;
+
+  switch (window.location.pathname) {
+  case '/experiments.php':
     entityType = EntityType.Experiment;
     break;
-  case 'items':
+  case '/database.php':
     entityType = EntityType.Item;
     break;
-  case 'experiments_templates':
+  case '/templates.php':
     entityType = EntityType.Template;
     break;
-  case 'items_types':
+  case '/resources-templates.php':
     entityType = EntityType.ItemType;
     break;
   default:
-    return {type: EntityType.Other, id: 0};
+    return {type: EntityType.Other, id: entityId};
   }
-  let entityId = null;
-  if (about.id) {
-    entityId = parseInt(about.id);
+  const params = new URLSearchParams(document.location.search);
+  if (params.has('id')) {
+    entityId = parseInt(params.get('id'));
   }
   return {
     type: entityType,

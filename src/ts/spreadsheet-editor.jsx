@@ -194,7 +194,7 @@ if (document.getElementById('spreadsheetEditor')) {
             </button>
             <div className='dropdown-menu'>
               {FILE_EXPORT_OPTIONS.map(({ type, icon, labelKey }) => (
-                <button key={type} className="dropdown-item" onClick={() => handleExport(type)}>
+                <button key={type} className='dropdown-item' onClick={() => handleExport(type)}>
                   <i className={`fas ${icon} fa-fw`}></i>{i18next.t(labelKey)}
                 </button>
               ))}
@@ -206,11 +206,11 @@ if (document.getElementById('spreadsheetEditor')) {
             <button id='saveAsAttachment' disabled={isDisabled} className='btn hl-hover-gray d-inline p-2 mr-2' title={i18next.t('save-attachment')} data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' type='button'>
               <i className='fas fa-paperclip fa-fw'></i>
             </button>
-            <div className='dropdown-menu' data-action="spreadsheet-save-attachment-menu">
+            <div className='dropdown-menu' data-action='spreadsheet-save-attachment-menu'>
               {FILE_EXPORT_OPTIONS.map(({ type, icon, labelKey }) => (
                 <button
                   key={type}
-                  className="dropdown-item"
+                  className='dropdown-item'
                   onClick={() => SpreadsheetHelperC.saveAsAttachment(type, columnDefs, rowData, entity.type, entity.id).then(() => setDirty(false))}>
                   <i className={`fas ${icon} fa-fw`}></i>{i18next.t(labelKey)}
                 </button>

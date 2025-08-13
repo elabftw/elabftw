@@ -9,7 +9,9 @@ import Todolist from './Todolist.class';
 import { Model } from './interfaces';
 
 const core = document.getElementById('core');
-const isAnon = core ? JSON.parse(core.textContent!).isAnon === true : true;
+const isAnon = core?.textContent
+  ? JSON.parse(core.textContent).isAnon === true
+  : true;
 
 if (document.getElementById('todolistPanel') && !isAnon) {
 

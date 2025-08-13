@@ -9,7 +9,7 @@
 import { Ketcher } from 'ketcher-core';
 import $ from 'jquery';
 import { notify } from './notify';
-import {on} from './handlers';
+import { on } from './handlers';
 
 // we add ketcher to window with onInit param during ketcher initialization
 declare global {
@@ -34,11 +34,20 @@ if (window.location.pathname === '/chem-editor.php') {
     });
   });
   on('create-compound-from-editor', async () => {
-    const smilesInput = document.getElementById('createCompound-smiles') as HTMLInputElement;
-    smilesInput.value = await window.ketcher.getSmiles();
-    const inchiInput = document.getElementById('createCompound-inchi') as HTMLInputElement;
-    inchiInput.value = await window.ketcher.getInchi();
-    $('#createCompoundModal').modal('toggle');
+    try {
+      const smilesInput = document.getElementById('createCompound-smiles') as HTMLInputElement;
+      const inchiInput = document.getElementById('createCompound-inchi') as HTMLInputElement;
+      const [smiles, inchi] = await Promise.all([
+        window.ketcher.getSmiles(),
+        window.ketcher.getInchi(),
+      ]);
+      smilesInput.value = smiles;
+      inchiInput.value = inchi;
+      $('#createCompoundModal').modal('toggle');
+    } catch (error) {
+      notify.error('Failed to get molecular data from editor');
+      console.error('Ketcher error:', error);
+    }
   });
   document.getElementById('loading-spinner').remove();
 }

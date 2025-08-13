@@ -2,8 +2,6 @@
 # Dockerfile for CircleCI
 FROM elabtmp
 
-RUN echo "hi mom"
-
 # avoid carry-over from hypernext
 RUN rm -rf /elabftw/*
 

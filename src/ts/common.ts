@@ -672,10 +672,8 @@ on('toggle-all-storage', (el: HTMLElement) => {
 });
 
 on('rename-storage', (el: HTMLElement) => {
-  const name = prompt('Name');
-  if (!name) {
-    return;
-  }
+  const name = prompt('Name')?.trim();
+  if (!name) return;
   const params = {
     parent_id: el.dataset.id,
     name: name,
@@ -1160,8 +1158,7 @@ on('autocomplete', (el: HTMLElement) => {
       if (['experiments', 'items'].includes(el.dataset.completeTarget)) {
         request.term = escapeExtendedQuery(request.term);
       }
-      ApiC.getJson(`${el.dataset.target}/?q=${request.term}`).then(json => {
-        console.log(json);
+      ApiC.getJson(`${el.dataset.target}/?q=${encodeURIComponent(request.term)}`).then(json => {
         response(json.map(entry => transformer(entry)));
       });
     },
@@ -1182,7 +1179,8 @@ on('query', (el: HTMLElement) => {
  */
 const container = document.getElementById('container')!;
 container.addEventListener('click', (event: Event) => {
-  const el = event.target as HTMLElement;
+  const rawTarget = event.target as HTMLElement | null;
+  const el = rawTarget?.closest('[data-action]') as HTMLElement | null;
   if (!el || !container.contains(el)) return;
   const set = get(el.dataset.action);
   if (!set) return;

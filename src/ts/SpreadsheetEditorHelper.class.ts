@@ -33,7 +33,7 @@ export function ensureExtension(name: string, format: FileType): string {
 export class SpreadsheetEditorHelper {
   async loadInSpreadsheetEditor(link: string, name: string, uploadId: number): Promise<void> {
     try {
-      const res = await fetch(`app/download.php?f=${link}`, {
+      const res = await fetch(`app/download.php?f=${encodeURIComponent(link)}`, {
         headers: new Headers({ 'cache-control': 'no-cache' }),
       });
       if (!res.ok) throw new Error('An unexpected error occurred fetching the file!');

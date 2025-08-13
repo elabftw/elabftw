@@ -24,6 +24,12 @@ declare global {
   }
 }
 
+// Reuse this everywhere you need to normalize a name
+export function ensureExtension(name: string, format: FileType): string {
+  const ext = `.${String(format).toLowerCase()}`;
+  return name.toLowerCase().endsWith(ext) ? name : name + ext;
+}
+
 export class SpreadsheetEditorHelper {
   async loadInSpreadsheetEditor(link: string, name: string, uploadId: number): Promise<void> {
     try {
@@ -73,13 +79,18 @@ export class SpreadsheetEditorHelper {
   }
 
   // saves the current sheet as an upload for the entity. (.csv)
-  async saveAsAttachment(format: FileType, columnDefs: GridColumn[], rowData: GridRow[], entityType: string, entityId: number): Promise<void> {
+  async saveAsAttachment(format: FileType, columnDefs: GridColumn[], rowData: GridRow[], entityType: string, entityId: number, fileName: string): Promise<void> {
     if (!columnDefs.length || !rowData.length) {
       return;
     }
-    const realName = askFileName(format);
-    const wb = SpreadsheetEditorHelper.createWorkbookFromGrid(columnDefs, rowData);
-    const file = SpreadsheetEditorHelper.workbookToFile(wb, realName, format);
+    const chosenName = fileName && fileName.trim()
+      ? ensureExtension(fileName.trim(), format)
+      : askFileName(format);
+
+    if (!chosenName) return;
+
+    const wb   = SpreadsheetEditorHelper.createWorkbookFromGrid(columnDefs, rowData);
+    const file = SpreadsheetEditorHelper.workbookToFile(wb, chosenName, format);
     const url = SpreadsheetEditorHelper.uploadUrl(entityType, entityId);
     await SpreadsheetEditorHelper.uploadWorkbook(file, url);
   }

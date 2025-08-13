@@ -295,7 +295,8 @@ const clickHandler = async (event) => {
   const cols = headerRow.map((h) => ({field: h, editable: true}));
   setColumnDefs(cols);
   setRowData(rows);
-  setCurrentUploadId(0); // re-disable 'Save' button
+  // disable Save button
+  setCurrentUploadId(0);
 };
 
 document.getElementById('container').addEventListener('click', event => clickHandler(event));

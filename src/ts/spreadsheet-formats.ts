@@ -9,7 +9,6 @@ export const BOOK_TYPE_MAP: Partial<Record<FileType, BookType>> = {
   [FileType.Ods]:  'ods',
   [FileType.Fods]: 'fods',
   [FileType.Xlsb]: 'xlsb',
-  [FileType.Html]: 'html',
 };
 
 export const MIME_MAP: Partial<Record<FileType, string>> = {
@@ -19,7 +18,6 @@ export const MIME_MAP: Partial<Record<FileType, string>> = {
   [FileType.Ods]:  'application/vnd.oasis.opendocument.spreadsheet',
   [FileType.Fods]: 'application/vnd.oasis.opendocument.spreadsheet',
   [FileType.Xlsb]: 'application/vnd.ms-excel.sheet.binary.macroEnabled.12',
-  [FileType.Html]: 'text/html',
 };
 
 // UI list for dropdowns (See spreadsheet-editor.jsx)
@@ -30,7 +28,6 @@ export const FILE_EXPORT_OPTIONS = [
   { type: FileType.Ods, icon: 'fa-file-excel', labelKey: 'ODS' },
   { type: FileType.Fods, icon: 'fa-file-excel', labelKey: 'FODS' },
   { type: FileType.Xlsb, icon: 'fa-file-excel', labelKey: 'XLSB' },
-  { type: FileType.Html, icon: 'fa-file-code', labelKey: 'HTML' },
 ];
 
 // just some small helpers so call sites stay tiny

@@ -1243,10 +1243,33 @@ const clickHandler = (event: Event) => {
 //const container = document.getElementById('container');
 //container!.addEventListener('click', (event: Event) => {
 document.getElementById('container').addEventListener('click', (event: Event) => {
+  const container = document.getElementById('container')!;
+
+  // Normalize target to an Element
+  const t = event.target as Node | null;
+  const start: Element | null =
+    t instanceof Element ? t :
+    (t && 'parentElement' in t ? (t as any).parentElement : null);
+
+  const el = start?.closest<HTMLElement>('[data-action]');
+  if (!el || !container.contains(el)) return;
+
+  // Use getAttribute to also support SVG elements
+  const action = el.getAttribute('data-action');
+  if (!action) return;
+
+  const set = get(action);
+  if (!set || set.size === 0) {
+    // optional breadcrumb for CI debug
+    (window as any).__lastActionMiss__ = { action, ts: performance.now() };
+    return;
+  }
+  /* original code
   const el: HTMLElement = (event.target as HTMLElement).closest('[data-action]');
   if (!el || !document.getElementById('container').contains(el)) return;
   const set = get(el.dataset.action);
   if (!set) return;
+ */
   for (const fn of set) {
     try {
       fn(el, event);

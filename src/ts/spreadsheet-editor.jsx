@@ -30,6 +30,10 @@ import $ from 'jquery';
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const entity = getEntity();
+const saveBtn = document.getElementById('replaceExisting');
+const exportBtn = document.getElementById('exportBtn');
+const attachBtn = document.getElementById('saveAsAttachment');
+const warn = document.getElementById('spreadsheetUnsavedChangesWarningDiv');
 
 if (document.getElementById('spreadsheetEditor')) {
   function SpreadsheetEditor() {
@@ -62,11 +66,6 @@ if (document.getElementById('spreadsheetEditor')) {
 
     // handle dirty state (unsaved changes)
     useEffect(() => {
-      const saveBtn = document.getElementById('replaceExisting');
-      const exportBtn = document.getElementById('exportBtn');
-      const attachBtn = document.getElementById('saveAsAttachment');
-      const warn = document.getElementById('spreadsheetUnsavedChangesWarningDiv');
-
       if (dirty) {
         saveBtn?.classList.add('border-danger');
         attachBtn?.classList.add('border-danger');
@@ -176,6 +175,31 @@ if (document.getElementById('spreadsheetEditor')) {
       headerComponentParams: headerParams,
     }), [headerParams]);
 
+    function SaveButton() {
+      return (
+        <>
+        {currentUploadId ? (
+            // REPLACE EXISTING FILE WITH CURRENT EDITIONS
+            <button disabled={!currentUploadId} className='btn hl-hover-gray p-2 lh-normal border-0 mr-2' id='replaceExisting' onClick={() => SpreadsheetHelperC.replaceExisting(columnDefs, rowData, entity.type, entity.id, currentUploadName, currentUploadId).then(() => setDirty(false))} title={i18next.t('replace-existing')} aria-label={i18next.t('replace-existing')} type='button'>
+              <i className='fas fa-save fa-fw'></i>
+            </button>
+          ) : (
+            <>
+              {/*SAVE AS ATTACHMENT (Opens modal to save the new Upload*/}
+              <button id='saveAsAttachment' disabled={isDisabled} className='btn hl-hover-gray d-inline p-2 mr-2' title={i18next.t('save-attachment')} aria-label={i18next.t('save-attachment')} type='button' onClick={() => $('#saveNewSpreadsheetModal').modal?.('show')}>
+                <i className='fas fa-save fa-fw' />
+              </button>
+              {/* The modal itself */}
+              <SaveAsAttachmentModal id='saveNewSpreadsheetModal' isDisabled={isDisabled} helper={SpreadsheetHelperC} columnDefs={columnDefs} rowData={rowData} entity={entity} onSaved={() => {
+                setDirty(false);
+                $('#saveNewSpreadsheetModal').modal?.('hide')
+              }}/>
+            </>
+          )}
+        </>
+      )
+    }
+
     return (
       <div className='spreadsheet-editor'>
         <input type='file' accept='.csv,.xls,.xlsx,.ods,.fods,.xlsb' ref={fileInputRef} className='d-none' onChange={handleImport} />
@@ -203,21 +227,8 @@ if (document.getElementById('spreadsheetEditor')) {
             </div>
           </div>
           <div className='vertical-separator'></div>
-          {currentUploadId ? (
-            // REPLACE EXISTING FILE WITH CURRENT EDITIONS
-            <button disabled={!currentUploadId} className='btn hl-hover-gray p-2 lh-normal border-0 mr-2' id='replaceExisting' onClick={() => SpreadsheetHelperC.replaceExisting(columnDefs, rowData, entity.type, entity.id, currentUploadName, currentUploadId).then(() => setDirty(false))} title={i18next.t('replace-existing')} aria-label={i18next.t('replace-existing')} type='button'>
-              <i className='fas fa-save fa-fw'></i>
-            </button>
-          ) : (
-            <>
-            {/*SAVE AS ATTACHMENT (Opens modal to save the new Upload*/}
-            <button id='saveAsAttachment' disabled={isDisabled} className='btn hl-hover-gray d-inline p-2 mr-2' title={i18next.t('save-attachment')} aria-label={i18next.t('save-attachment')} type='button' onClick={() => $('#saveNewSpreadsheetModal').modal?.('show')}>
-              <i className='fas fa-save fa-fw' />
-            </button>
-            {/* The modal itself */}
-            <SaveAsAttachmentModal id='saveNewSpreadsheetModal' isDisabled={isDisabled} helper={SpreadsheetHelperC} columnDefs={columnDefs} rowData={rowData} entity={entity} onSaved={() => setDirty(false)}/>
-            </>
-          )}
+          <SaveButton />
+
           <span hidden id='spreadsheetUnsavedChangesWarningDiv'>{i18next.t('You have unsaved changes')}</span>
           <div className='vertical-separator'></div>
           {/* ADD NEW ROW */}

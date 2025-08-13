@@ -23,7 +23,7 @@ if [ ! -f tests/elabftw-user.env ]; then
 fi
 
 # launch a fresh environment if needed
-if [ ! "$(docker ps -q -f name=mysqltmp)" ] && [ ! "$(docker container ls -q -f name=elab-cypress)" ]; then
+if [ ! "$(docker ps -q -f name=mysqltmp)" ] || [ ! "$(docker container ls -q -f name=elab-cypress)" ]; then
     docker compose -f tests/docker-compose.yml up -d --quiet-pull
     # give some time for containers to start
     echo -n "Waiting for containers to start..."

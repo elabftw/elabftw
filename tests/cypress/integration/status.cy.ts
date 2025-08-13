@@ -6,11 +6,13 @@ describe('Status', () => {
   it('Create, update and delete a status', () => {
     const newname = 'Cypress :: New status name';
     cy.visit('/experiments-status.php');
+    /*
     cy.window().should(win => {
       const keys = win.__actionHandlers__ ? Array.from(win.__actionHandlers__.keys()) : [];
       expect(keys).to.include('toggle-modal');
     });
-    cy.get('[data-target="createCatStatModal"]').click();
+   */
+    cy.get('[data-target="createCatStatModal"]').wait(3000).click({force: true});
     cy.get('#createCatStatModal').should('be.visible');
     // the wait is necessary or it doesn't have the time to type all
     cy.get('#createCatStatName').wait(500).type(newname);

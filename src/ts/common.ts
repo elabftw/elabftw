@@ -689,22 +689,14 @@ on('rename-storage', (el: HTMLElement) => {
     });
   });
 });
-on('add-storage', (el: HTMLElement) => {
-  const name = prompt('Name');
-  const params = {
-    parent_id: el.dataset.parentId,
-    name: name,
-  };
-  ApiC.post('storage_units', params).then(() => reloadElements(['storageDiv']));
-});
 on('add-storage-children', (el: HTMLElement) => {
   const unitName = prompt(i18next.t('location-name'));
-  if (!unitName.length) {
+  if (!unitName || !unitName.trim()) {
     return;
   }
   const params = {
     parent_id: el.dataset.parentId,
-    name: unitName,
+    name: unitName.trim(),
   };
   ApiC.post('storage_units', params).then(() => {
     reloadElements(['storageDiv']).then(() => {

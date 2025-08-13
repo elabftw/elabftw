@@ -469,10 +469,12 @@ document.getElementById('container').addEventListener('keydown', event => {
 /**
  * MAIN click listener on container
  */
-const container = document.getElementById('container');
-container!.addEventListener('click', (event: Event) => {
+// TMP
+//const container = document.getElementById('container');
+//container!.addEventListener('click', (event: Event) => {
+document.getElementById('container').addEventListener('click', (event: Event) => {
   const el: HTMLElement = (event.target as HTMLElement).closest('[data-action]');
-  if (!el || !container.contains(el)) return;
+  //if (!el || !container.contains(el)) return;
   const set = get(el.dataset.action!);
   if (!set) return;
   for (const fn of set) {

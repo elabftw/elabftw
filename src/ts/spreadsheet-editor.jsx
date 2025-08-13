@@ -22,8 +22,10 @@ import '@ag-grid-community/styles/ag-theme-alpine.css';
 import i18next from './i18n';
 import { SpreadsheetEditorHelper } from './SpreadsheetEditorHelper.class';
 import { ColumnHeader } from './spreadsheet-editor-column-header';
+import { SaveAsAttachmentModal } from './spreadsheet-save-new-modal';
 import { getEntity } from './misc';
 import { FILE_EXPORT_OPTIONS } from './spreadsheet-formats';
+import $ from 'jquery';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -201,26 +203,21 @@ if (document.getElementById('spreadsheetEditor')) {
             </div>
           </div>
           <div className='vertical-separator'></div>
-          {/* SAVE AS ATTACHMENT dropdown (Adds the sheet to 'Uploads') */}
-          <div className='dropdown'>
-            <button id='saveAsAttachment' disabled={isDisabled} className='btn hl-hover-gray d-inline p-2 mr-2' title={i18next.t('save-attachment')} data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' type='button'>
-              <i className='fas fa-paperclip fa-fw'></i>
+          {currentUploadId ? (
+            // REPLACE EXISTING FILE WITH CURRENT EDITIONS
+            <button disabled={!currentUploadId} className='btn hl-hover-gray p-2 lh-normal border-0 mr-2' id='replaceExisting' onClick={() => SpreadsheetHelperC.replaceExisting(columnDefs, rowData, entity.type, entity.id, currentUploadName, currentUploadId).then(() => setDirty(false))} title={i18next.t('replace-existing')} aria-label={i18next.t('replace-existing')} type='button'>
+              <i className='fas fa-save fa-fw'></i>
             </button>
-            <div className='dropdown-menu' data-action='spreadsheet-save-attachment-menu'>
-              {FILE_EXPORT_OPTIONS.map(({ type, icon, labelKey }) => (
-                <button
-                  key={type}
-                  className='dropdown-item'
-                  onClick={() => SpreadsheetHelperC.saveAsAttachment(type, columnDefs, rowData, entity.type, entity.id).then(() => setDirty(false))}>
-                  <i className={`fas ${icon} fa-fw`}></i>{i18next.t(labelKey)}
-                </button>
-              ))}
-            </div>
-          </div>
-          {/* REPLACE EXISTING FILE WITH CURRENT EDITIONS */}
-          <button disabled={!currentUploadId} className='btn hl-hover-gray p-2 lh-normal border-0 mr-2' id='replaceExisting' onClick={() => SpreadsheetHelperC.replaceExisting(columnDefs, rowData, entity.type, entity.id, currentUploadName, currentUploadId).then(() => setDirty(false))} title={i18next.t('replace-existing')} aria-label={i18next.t('replace-existing')} type='button'>
-            <i className='fas fa-save fa-fw'></i>
-          </button>
+          ) : (
+            <>
+            {/*SAVE AS ATTACHMENT (Opens modal to save the new Upload*/}
+            <button id='saveAsAttachment' disabled={isDisabled} className='btn hl-hover-gray d-inline p-2 mr-2' title={i18next.t('save-attachment')} aria-label={i18next.t('save-attachment')} type='button' onClick={() => $('#saveNewSpreadsheetModal').modal?.('show')}>
+              <i className='fas fa-save fa-fw' />
+            </button>
+            {/* The modal itself */}
+            <SaveAsAttachmentModal id='saveNewSpreadsheetModal' isDisabled={isDisabled} helper={SpreadsheetHelperC} columnDefs={columnDefs} rowData={rowData} entity={entity} onSaved={() => setDirty(false)}/>
+            </>
+          )}
           <span hidden id='spreadsheetUnsavedChangesWarningDiv'>{i18next.t('You have unsaved changes')}</span>
           <div className='vertical-separator'></div>
           {/* ADD NEW ROW */}
@@ -287,7 +284,7 @@ const clickHandler = async (event) => {
   const cols = headerRow.map((h) => ({field: h, editable: true}));
   setColumnDefs(cols);
   setRowData(rows);
-  setCurrentUploadId(0); // disable "Replace existing file"
+  setCurrentUploadId(0); // re-disable 'Save' button
 };
 
 document.getElementById('container').addEventListener('click', event => clickHandler(event));

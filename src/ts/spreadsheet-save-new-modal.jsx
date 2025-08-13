@@ -11,21 +11,20 @@
  * Modal designed for saving a new spreadsheet to the entity's attachments.
  */
 
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import i18next from './i18n';
-import { SpreadsheetEditorHelper } from './SpreadsheetEditorHelper.class';
-import { FILE_EXPORT_OPTIONS } from './spreadsheet-formats';
 
-export function SaveAsAttachmentModal({columnDefs, rowData, entity, onSaved}) {
-  const SpreadsheetHelperC = useRef(new SpreadsheetEditorHelper()).current;
+export function SaveAsAttachmentModal({columnDefs, rowData, entity, onSaved, helper, exportOptions}) {
   const [fileName, setFileName] = useState('');
-  const [format, setFormat] = useState(FILE_EXPORT_OPTIONS[0].type);
+  const [format, setFormat] = useState(exportOptions?.[0]?.type || 'csv');
 
   const handleSave = async () => {
     if (!fileName.trim()) return;
-    await SpreadsheetHelperC.saveAsAttachment(format, columnDefs, rowData, entity.type, entity.id, fileName);
-    onSaved?.();
-    $('#saveNewSpreadsheetModal').modal('hide');
+    const result = await helper.saveAsAttachment(
+      format, columnDefs, rowData, entity.type, entity.id, fileName
+    );
+    // pass the result to parent component
+    onSaved?.(result);
   };
 
   return (
@@ -46,7 +45,7 @@ export function SaveAsAttachmentModal({columnDefs, rowData, entity, onSaved}) {
             <div className='form-group'>
               <label>{i18next.t('format')}</label>
               <select className='form-control' value={format} onChange={(e) => setFormat(e.target.value)}>
-                {FILE_EXPORT_OPTIONS.map(({ type, labelKey }) => (
+                {exportOptions.map(({ type, labelKey }) => (
                   <option key={type} value={type}>
                     {i18next.t(labelKey)}
                   </option>

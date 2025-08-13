@@ -190,10 +190,23 @@ if (document.getElementById('spreadsheetEditor')) {
                 <i className='fas fa-save fa-fw' />
               </button>
               {/* The modal itself */}
-              <SaveAsAttachmentModal id='saveNewSpreadsheetModal' isDisabled={isDisabled} helper={SpreadsheetHelperC} columnDefs={columnDefs} rowData={rowData} entity={entity} onSaved={() => {
-                setDirty(false);
-                $('#saveNewSpreadsheetModal').modal?.('hide')
-              }}/>
+              <SaveAsAttachmentModal
+                id='saveNewSpreadsheetModal'
+                isDisabled={isDisabled}
+                helper={SpreadsheetHelperC}
+                columnDefs={columnDefs}
+                rowData={rowData}
+                entity={entity}
+                exportOptions={FILE_EXPORT_OPTIONS}
+                onSaved={(result) => {
+                  if (result?.id) {
+                    setCurrentUploadId(result.id);
+                    setCurrentUploadName(result.name || '');
+                  }
+                  setDirty(false);
+                  $('#saveNewSpreadsheetModal').modal?.('hide');
+                }}
+              />
             </>
           )}
         </>

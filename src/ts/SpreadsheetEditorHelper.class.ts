@@ -9,7 +9,7 @@
 
 import { FileType, GridColumn, GridRow, Model } from './interfaces';
 import { getBookType, getMime } from './spreadsheet-formats';
-import { askFileName, reloadElements } from './misc';
+import { askFileName, getNewIdFromPostRequest, reloadElements } from './misc';
 import { notify } from './notify';
 import { read, utils, write, writeFile, WorkBook } from '@e965/xlsx';
 
@@ -78,8 +78,21 @@ export class SpreadsheetEditorHelper {
     }
   }
 
+  static async uploadWorkbookAndReturnId(file: File, url: string): Promise<number> {
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await fetch(url, { method: 'POST', body: formData });
+
+    // keep UI behavior
+    await reloadElements(['uploadsDiv']);
+    notify.success();
+
+    // reuse your parser
+    return getNewIdFromPostRequest(res);
+  }
+
   // saves the current sheet as an upload for the entity. (.csv)
-  async saveAsAttachment(format: FileType, columnDefs: GridColumn[], rowData: GridRow[], entityType: string, entityId: number, fileName: string): Promise<void> {
+  async saveAsAttachment(format: FileType, columnDefs: GridColumn[], rowData: GridRow[], entityType: string, entityId: number, fileName?: string): Promise<{ id: number; name: string } | void>  {
     if (!columnDefs.length || !rowData.length) {
       return;
     }
@@ -92,7 +105,8 @@ export class SpreadsheetEditorHelper {
     const wb   = SpreadsheetEditorHelper.createWorkbookFromGrid(columnDefs, rowData);
     const file = SpreadsheetEditorHelper.workbookToFile(wb, chosenName, format);
     const url = SpreadsheetEditorHelper.uploadUrl(entityType, entityId);
-    await SpreadsheetEditorHelper.uploadWorkbook(file, url);
+    const id = await SpreadsheetEditorHelper.uploadWorkbookAndReturnId(file, url);
+    return { id, name: chosenName };
   }
 
   async replaceExisting(columnDefs: GridColumn[], rowData: GridRow[], entityType: string, entityId: number, currentUploadName: string, currentUploadId: number):  Promise<void> {

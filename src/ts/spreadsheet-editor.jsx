@@ -12,7 +12,7 @@
  * SheetJs integration (xlsx) with AG-Grid
  */
 
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useCallback, useMemo, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ModuleRegistry } from '@ag-grid-community/core';
@@ -152,6 +152,28 @@ if (document.getElementById('spreadsheetEditor')) {
       });
     };
 
+    // helpers that always set dirty (listen to changes)
+    const setColumnDefsDirty = useCallback((cols) => { setColumnDefs(cols); setDirty(true); }, []);
+    const setRowDataDirty   = useCallback((rows) => { setRowData(rows); setDirty(true); }, []);
+
+    // params passed to the header component
+    const headerParams = useMemo(() => ({
+      columnDefs,
+      rowData,
+      setColumnDefs: setColumnDefsDirty,
+      setRowData: setRowDataDirty,
+    }), [columnDefs, rowData, setColumnDefsDirty, setRowDataDirty]);
+
+    // single source of truth for column defaults + header
+    const defaultColDef = useMemo(() => ({
+      sortable: true,
+      filter: true,
+      floatingFilter: true,
+      editable: true,
+      headerComponent: ColumnHeader,
+      headerComponentParams: headerParams,
+    }), [headerParams]);
+
     return (
       <div className='spreadsheet-editor'>
         <input type='file' accept='.csv,.xls,.xlsx,.ods,.fods,.xlsb' ref={fileInputRef} className='d-none' onChange={handleImport} />
@@ -217,23 +239,14 @@ if (document.getElementById('spreadsheetEditor')) {
               <AgGridReact
                 ref={gridRef}
                 rowData={rowData}
-                columnDefs={columnDefs.map(col => ({
-                  ...col,
-                  headerComponent: ColumnHeader,
-                  headerComponentParams: {
-                    columnDefs,
-                    rowData,
-                    setColumnDefs: (cols) => { setColumnDefs(cols); setDirty(true); },
-                    setRowData: (rows) => { setRowData(rows); setDirty(true); },
-                  }
-                }))}
-                defaultColDef={{ sortable: true, filter: true, editable: true }}
+                columnDefs={columnDefs}
+                defaultColDef={defaultColDef}
                 rowSelection='multiple'
                 onCellValueChanged={() => setDirty(true)}
               />
             </div>
             <button type='button' onClick={removeSelectedRows} className='btn btn-danger btn-sm my-2'>
-              Delete Selected Rows
+              {i18next.t('delete-selected')}
             </button>
           </>
         )}

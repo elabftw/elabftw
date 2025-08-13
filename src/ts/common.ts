@@ -1250,9 +1250,14 @@ document.addEventListener('click', (event: Event) => {
   console.log(`debug: action: ${el.dataset.action}`);
   console.log(`debug: el: ${el}`);
   if (!el || !container.contains(el)) return;
+  console.log('debug: after contains check');
   const set = get(el.dataset.action);
   if (!set) return;
+  console.log(set.values);
+  console.log('debug: after set check');
   for (const fn of set) {
+    console.log('debug: now in loop');
+    console.log(fn);
     try {
       fn(el, event);
     } catch (err) {

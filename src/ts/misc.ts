@@ -857,3 +857,15 @@ function generateIsSomethingElement(what: string, team: Record<string, string|nu
 export function getRandomColor(): string {
   return `#${Math.floor(Math.random()*16777215).toString(16)}`;
 }
+
+export function ensureTogglableSectionIsOpen(iconId: string, divId: string): void {
+  // toggle the arrow icon
+  const iconEl = document.getElementById(iconId);
+  iconEl.classList.add('fa-caret-down');
+  iconEl.classList.remove('fa-caret-right');
+  const div = document.getElementById(divId);
+  // make sure it's not hidden
+  div.removeAttribute('hidden');
+  // and scroll page into editor view
+  div.scrollIntoView({ behavior: 'smooth' });
+}

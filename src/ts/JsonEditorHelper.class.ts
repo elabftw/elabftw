@@ -9,7 +9,7 @@ import { Metadata } from './Metadata.class';
 import JSONEditor from 'jsoneditor';
 import $ from 'jquery';
 import i18next from './i18n';
-import { askFileName, reloadElements } from './misc';
+import { askFileName, ensureTogglableSectionIsOpen, reloadElements } from './misc';
 import { Action, Entity, FileType, Model } from './interfaces';
 import { ApiC } from './api';
 import { ValidMetadata } from './metadataInterfaces';
@@ -71,18 +71,6 @@ export default class JsonEditorHelper {
     }
   }
 
-  focus(): void {
-    // toggle the arrow icon
-    const iconEl = document.getElementById('jsonEditorIcon');
-    iconEl.classList.add('fa-caret-down');
-    iconEl.classList.remove('fa-caret-right');
-    const jsonEditorDiv = document.getElementById('jsonEditorDiv');
-    // make sure it's not hidden
-    jsonEditorDiv.toggleAttribute('hidden', false);
-    // and scroll page into editor view
-    jsonEditorDiv.scrollIntoView({behavior: 'smooth'});
-  }
-
   loadFile(link: string, name: string, uploadid: string): void {
     const headers = new Headers();
     headers.append('cache-control', 'no-cache');
@@ -95,7 +83,7 @@ export default class JsonEditorHelper {
       })
       .then(json => {
         this.editor.set(json);
-        this.focus();
+        ensureTogglableSectionIsOpen('jsonEditorIcon', 'jsonEditorDiv');
       })
       .catch(e => {
         if (e instanceof SyntaxError) {

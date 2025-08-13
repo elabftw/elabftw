@@ -263,38 +263,31 @@ if (document.getElementById('spreadsheetEditor')) {
 
 // handle 'use first line as header' modal
 const clickHandler = async (event) => {
-  const el = event.target;
-  if (!el) return;
-
-  const action = el.dataset.action;
+  const action = event.target.dataset.action;
   if (!action || !['use-header-row', 'use-data-as-header'].includes(action)) return;
+  const state = window._sheetImport;
+  if (!state) return;
 
-  if (el.matches('[data-action="use-header-row"], [data-action="use-data-as-header"]')) {
-    const state = window._sheetImport;
-    if (!state) return;
+  const { aoa, setColumnDefs, setRowData, setCurrentUploadId } = state;
+  delete window._sheetImport;
 
-    const { aoa, setColumnDefs, setRowData, setCurrentUploadId } = state;
-    delete window._sheetImport;
-    const useHeader = action === 'use-header-row';
-    const headerRow = useHeader
-      ? aoa[0].map((h, i) => typeof h === 'string' ? h : `Column${i}`)
-      : aoa[0].map((_, i) => `Column${i}`);
+  const useHeader = action === 'use-header-row';
 
-    const dataRows = useHeader ? aoa.slice(1) : aoa;
-    const rows = dataRows.map(r => {
-      const row = {};
-      headerRow.forEach((h, i) => {
-        row[h] = String(r[i] ?? '');
-      });
-      return row;
-    });
+  // build header row (with names or Column{i})
+  const headerRow = useHeader
+    ? aoa[0].map((h, i) => typeof h === 'string' ? h : `Column${i}`)
+    : aoa[0].map((_, i) => `Column${i}`);
+  // Build rows
+  const dataRows = useHeader ? aoa.slice(1) : aoa;
+  const rows = dataRows.map((cells) =>
+    Object.fromEntries(headerRow.map((h, i) => [h, String((cells && cells[i]) ?? '')]))
+  );
 
-    const cols = headerRow.map(h => ({ field: h, editable: true }));
-    setColumnDefs(cols);
-    setRowData(rows);
-    // need to reset the current Upload ID to disable the "Replace existing file" button and prevent rewriting existing file with currently loaded sheet
-    setCurrentUploadId(0);
-  }
-}
+  // Build column defs
+  const cols = headerRow.map((h) => ({field: h, editable: true}));
+  setColumnDefs(cols);
+  setRowData(rows);
+  setCurrentUploadId(0); // disable "Replace existing file"
+};
 
 document.getElementById('container').addEventListener('click', event => clickHandler(event));

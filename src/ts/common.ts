@@ -1248,8 +1248,13 @@ document.getElementById('container').addEventListener('click', (event: Event) =>
   const set = get(el.dataset.action);
   if (!set) return;
   for (const fn of set) {
-    fn(el, event);
+    try {
+      fn(el, event);
+    } catch (err) {
+      console.error('Handler error for action:', el.dataset.action, err);
+      notify.error(err);
+    }
   }
-  //clickHandler(event);
 });
-//document.getElementById('container').addEventListener('click', event => clickHandler(event));
+// old clickHandler, must disappear
+document.getElementById('container').addEventListener('click', event => clickHandler(event));

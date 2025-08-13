@@ -757,11 +757,8 @@ on('replace-with-next', (el: HTMLElement) => {
   el.toggleAttribute('hidden');
 });
 on('toggle-modal', (el: HTMLElement) => {
-  console.log('before toggle-modal');
   // TODO this requires jquery for now. Not in BS5.
   $('#' + el.dataset.target).modal('show');
-  console.log(`target: ${el.dataset.target}`);
-  console.log('after toggle-modal');
 });
 
 on('update-entity-body', (el: HTMLElement) => {
@@ -1145,120 +1142,59 @@ on('toggle-body', (el: HTMLElement) => {
   });
 });
 
-/**
- * @deprecated use on()
- */
-const clickHandler = (event: Event) => {
-  const el = event.target as HTMLElement;
-  // AUTOCOMPLETE
-  if (el.matches('[data-complete-target]')) {
-    // depending on the type of results, we will want different attributes and formatting
-    let transformer = entity => {
-      const cat = entity.category_title ? `${entity.category_title} - ` : '';
-      const stat = entity.status_title ? `${entity.status_title} - ` : '';
-      return `${entity.id} - ${cat}${stat}${entity.title}`;
-    };
-    // useid data attribute is used in admin panel to grab the userid from input
-    if (el.dataset.completeTarget === 'users') {
-      transformer = user => `${user.userid} - ${user.fullname} (${user.email})`;
-    }
-
-    // use autocomplete jquery-ui plugin
-    $(el).autocomplete({
-      // this option is necessary or the autocomplete box will get lost under the permissions modal
-      appendTo: el.dataset.identifier ? `#autocompleteAnchorDiv_${el.dataset.identifier}` : '',
-      source: function(request: Record<string, string>, response: (data: Array<string>) => void): void {
-        if (request.term.length < 3) {
-          // TODO make it unselectable/grayed out or something, maybe once we use homegrown autocomplete
-          response([i18next.t('type-3-chars')]);
-          return;
-        }
-        if (['experiments', 'items'].includes(el.dataset.completeTarget)) {
-          request.term = escapeExtendedQuery(request.term);
-        }
-        ApiC.getJson(`${el.dataset.completeTarget}/?q=${request.term}`).then(json => {
-          response(json.map(entry => transformer(entry)));
-        });
-      },
-    });
-    /*
-  // TEST WITH OLD CODE
-  } else if (el.matches('[data-action="toggle-modal"]')) {
-    $('#' + el.dataset.target).modal('toggle');
-
-  } else if (el.matches('[data-action="create-entity-ask-title"]')) {
-    // this is necessary to convey information between two modals
-    // hide previous modal first
-    $('.modal.show').modal('hide');
-    // then add the category id to the other create button
-    const targetButton = document.getElementById('askTitleButton') as HTMLButtonElement;
-    targetButton.dataset.catid = el.dataset.catid;
-    $('#askTitleModal').modal('toggle');
-
-  } else if (el.matches('[data-action="create-entity"]')) {
-    let params = {};
-    if (el.dataset.hasTitle) {
-      params = collectForm(document.getElementById(el.dataset.formId));
-    }
-    if (el.dataset.tplid) {
-      params['template'] = parseInt(el.dataset.tplid, 10);
-    }
-    if (el.dataset.catid) {
-      params['category'] = parseInt(el.dataset.catid, 10);
-    }
-    // look for any tag present in the url, we will create the entry with these tags
-    const urlParams = new URLSearchParams(document.location.search);
-    const tags = urlParams.getAll('tags[]');
-    if (tags) {
-      params['tags'] = tags;
-    }
-    let page = 'experiments.php';
-    if (el.dataset.type === 'experiments_templates') {
-      page = 'templates.php';
-    }
-    if (el.dataset.type === 'items_types') {
-      page = 'resources-templates.php';
-    }
-    if (el.dataset.type === 'database' || el.dataset.type === 'items') {
-      el.dataset.type = 'items';
-      page = 'database.php';
-    }
-    ApiC.post2location(`${el.dataset.type}`, params).then(id => {
-      window.location.href = `${page}?mode=edit&id=${id}`;
-    });
-
-   */
-
-  } else if (el.matches('[data-query]')) {
-    const url = new URL(window.location.href);
-    // query format: order-sort
-    const query = el.dataset.query.split('-');
-    url.searchParams.set('order', query[0]);
-    url.searchParams.set('sort', query[1]);
-    window.location.href = url.href;
+on('autocomplete', (el: HTMLElement) => {
+  // depending on the type of results, we will want different attributes and formatting
+  let transformer = entity => {
+    const cat = entity.category_title ? `${entity.category_title} - ` : '';
+    const stat = entity.status_title ? `${entity.status_title} - ` : '';
+    return `${entity.id} - ${cat}${stat}${entity.title}`;
+  };
+  // useid data attribute is used in admin panel to grab the userid from input
+  if (el.dataset.target === 'users') {
+    transformer = user => `${user.userid} - ${user.fullname} (${user.email})`;
   }
-};
+
+  // use autocomplete jquery-ui plugin
+  $(el).autocomplete({
+    // this option is necessary or the autocomplete box will get lost under the permissions modal
+    appendTo: el.dataset.identifier ? `#autocompleteAnchorDiv_${el.dataset.identifier}` : '',
+    source: function(request: Record<string, string>, response: (data: Array<string>) => void): void {
+      if (request.term.length < 3) {
+        // TODO make it unselectable/grayed out or something, maybe once we use homegrown autocomplete
+        response([i18next.t('type-3-chars')]);
+        return;
+      }
+      if (['experiments', 'items'].includes(el.dataset.completeTarget)) {
+        request.term = escapeExtendedQuery(request.term);
+      }
+      ApiC.getJson(`${el.dataset.target}/?q=${request.term}`).then(json => {
+        console.log(json);
+        response(json.map(entry => transformer(entry)));
+      });
+    },
+  });
+});
+
+on('query', (el: HTMLElement) => {
+  const url = new URL(window.location.href);
+  // query format: order-sort
+  const query = el.dataset.target.split('-');
+  url.searchParams.set('order', query[0]);
+  url.searchParams.set('sort', query[1]);
+  window.location.href = url.href;
+});
 
 /**
  * MAIN click listener on container
  */
 const container = document.getElementById('container')!;
-document.addEventListener('click', (event: Event) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  console.log('[delegate] target=', event.target, 'nodeType=', (event.target as any)?.nodeType);
+container.addEventListener('click', (event: Event) => {
   const el = event.target as HTMLElement;
-  console.log(`debug: action: ${el.dataset.action}`);
-  console.log(`debug: el: ${el}`);
   if (!el || !container.contains(el)) return;
-  console.log('debug: after contains check');
   const set = get(el.dataset.action);
   if (!set) return;
-  console.log(set.values);
-  console.log('debug: after set check');
+  // do not use for..of here!
   set.forEach(fn => {
-  //for (const fn of set) {
-    console.log('debug: now in loop');
-    console.log(fn);
     try {
       fn(el, event);
     } catch (err) {
@@ -1267,6 +1203,3 @@ document.addEventListener('click', (event: Event) => {
     }
   });
 });
-document.dispatchEvent(new Event('actions:ready'));
-// old clickHandler, must disappear
-container.addEventListener('click', event => clickHandler(event));

@@ -1238,7 +1238,7 @@ document.getElementById('container').addEventListener('click', event => clickHan
 //container!.addEventListener('click', (event: Event) => {
 document.getElementById('container').addEventListener('click', (event: Event) => {
   const el: HTMLElement = (event.target as HTMLElement).closest('[data-action]');
-  if (!el || document.getElementById('container').contains(el)) return;
+  if (!el || !document.getElementById('container').contains(el)) return;
   const set = get(el.dataset.action);
   if (!set) return;
   for (const fn of set) {

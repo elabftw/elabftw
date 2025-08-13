@@ -1241,9 +1241,11 @@ const clickHandler = (event: Event) => {
  */
 const container = document.getElementById('container')!;
 container.addEventListener('click', (event: Event) => {
-  const el: HTMLElement = (event.target as HTMLElement).closest('[data-action]');
+  //const el: HTMLElement = (event.target as HTMLElement).closest('[data-action]');
+  // TMP try without closest
+  const el: HTMLElement = (event.target as HTMLElement);
   if (!el || !container.contains(el)) return;
-  const set = get(el.dataset.action);
+  const set = get(el.getAttribute('action'));
   if (!set) return;
   for (const fn of set) {
     try {

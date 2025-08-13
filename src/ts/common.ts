@@ -1139,7 +1139,7 @@ on('toggle-body', (el: HTMLElement) => {
 /**
  * @deprecated use on()
  */
-const clickHandler = (event: MouseEvent) => {
+const clickHandler = (event: Event) => {
   const el = event.target as HTMLElement;
   // AUTOCOMPLETE
   if (el.matches('[data-complete-target]')) {
@@ -1229,20 +1229,20 @@ const clickHandler = (event: MouseEvent) => {
   }
 };
 
-document.getElementById('container').addEventListener('click', event => {
+document.getElementById('container').addEventListener('click', event => clickHandler(event));
 /**
  * MAIN click listener on container
  */
 // TMP
 //const container = document.getElementById('container');
 //container!.addEventListener('click', (event: Event) => {
-//document.getElementById('container').addEventListener('click', (event: Event) => {
+document.getElementById('container').addEventListener('click', (event: Event) => {
   const el: HTMLElement = (event.target as HTMLElement).closest('[data-action]');
-  //if (!el || !container.contains(el)) return;
-  const set = get(el.dataset.action!);
+  if (!el || document.getElementById('container').contains(el)) return;
+  const set = get(el.dataset.action);
   if (!set) return;
   for (const fn of set) {
     fn(el, event);
   }
-  clickHandler(event);
+//  clickHandler(event);
 });

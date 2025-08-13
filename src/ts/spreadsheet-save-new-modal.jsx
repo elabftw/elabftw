@@ -13,15 +13,23 @@
 
 import React, { useState } from 'react';
 import i18next from './i18n';
+import { FileType } from './interfaces';
+import {notify} from './notify';
 
 export function SaveAsAttachmentModal({columnDefs, rowData, entity, onSaved, helper, exportOptions}) {
   const [fileName, setFileName] = useState('');
-  const [format, setFormat] = useState(exportOptions?.[0]?.type || 'csv');
+  const [format, setFormat] = useState(exportOptions.length > 0 ? exportOptions[0].type : FileType.Csv);
 
   const handleSave = async () => {
-    if (!fileName.trim()) return;
+    const trimmed = fileName.trim();
+    if (!trimmed) {
+      notify.error('error-no-filename');
+      return;
+    }
+    const ext = `.${String(format).toLowerCase()}`;
+    const finalName = trimmed.toLowerCase().endsWith(ext) ? trimmed : trimmed + ext;
     const result = await helper.saveAsAttachment(
-      format, columnDefs, rowData, entity.type, entity.id, fileName
+      format, columnDefs, rowData, entity.type, entity.id, finalName
     );
     // pass the result to parent component
     onSaved?.(result);

@@ -7,12 +7,7 @@
  */
 export type Handler = (el: HTMLElement, e: Event) => void;
 
-//const handlers = new Map<string, Set<Handler>>();
-
-declare global { interface Window { __actionHandlers__?: Map<string, Set<Handler>> } }
-const g = (typeof window !== 'undefined' ? window : globalThis) as any;
-const HANDLERS_KEY = '__actionHandlers__';
-const handlers: Map<string, Set<Handler>> = g[HANDLERS_KEY] ?? (g[HANDLERS_KEY] = new Map());
+const handlers = new Map<string, Set<Handler>>();
 
 export function on(action: string, fn: Handler) {
   let set = handlers.get(action);

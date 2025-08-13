@@ -1255,7 +1255,8 @@ document.addEventListener('click', (event: Event) => {
   if (!set) return;
   console.log(set.values);
   console.log('debug: after set check');
-  for (const fn of set) {
+  set.forEach(fn => {
+  //for (const fn of set) {
     console.log('debug: now in loop');
     console.log(fn);
     try {
@@ -1264,7 +1265,7 @@ document.addEventListener('click', (event: Event) => {
       console.error('Handler error for action:', el.dataset.action, err);
       notify.error(err);
     }
-  }
+  });
 });
 document.dispatchEvent(new Event('actions:ready'));
 // old clickHandler, must disappear

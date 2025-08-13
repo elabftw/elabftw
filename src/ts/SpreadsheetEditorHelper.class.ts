@@ -7,6 +7,7 @@
  * @package elabftw
  */
 
+import $ from 'jquery';
 import { FileType, GridColumn, GridRow, Model } from './interfaces';
 import { getBookType, getMime } from './spreadsheet-formats';
 import { askFileName, getNewIdFromPostRequest, reloadElements } from './misc';
@@ -69,6 +70,7 @@ export class SpreadsheetEditorHelper {
         return;
       }
       const realName = askFileName(format);
+      if (!realName) return;
       const wb = SpreadsheetEditorHelper.createWorkbookFromGrid(columnDefs, rowData);
       const bookType = getBookType(format);
       writeFile(wb, realName, { bookType });

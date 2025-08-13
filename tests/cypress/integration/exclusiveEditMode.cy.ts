@@ -12,7 +12,7 @@ describe('Exclusive edit mode', () => {
     cy.get('#askTitleButton').click();
     cy.url().should('include', 'mode=edit');
     cy.intercept('PATCH', '/api/v2/experiments/**').as('apiPATCH');
-    cy.get('#documentTitle').click();
+    cy.get('#documentTitle').click().wait(500);
     cy.get('h1.text-dark').find('input').clear().type(title).blur();
     cy.wait('@apiPATCH');
     cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');

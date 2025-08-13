@@ -1,5 +1,5 @@
 /**
- * @author Nicolas CARPi <nico-git@deltablot.email>
+ * @author Nicolas CARPi @ Deltablot
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -756,12 +756,10 @@ on('replace-with-next', (el: HTMLElement) => {
   // hide clicked element
   el.toggleAttribute('hidden');
 });
-/*
 on('toggle-modal', (el: HTMLElement) => {
   // TODO this requires jquery for now. Not in BS5.
   $('#' + el.dataset.target).modal('show');
 });
-*/
 
 on('update-entity-body', (el: HTMLElement) => {
   updateEntityBody().then(() => {
@@ -967,7 +965,6 @@ on('ack-notif', (el: HTMLElement) => {
 
 on('destroy-notif', () => ApiC.delete(`${Model.User}/me/${Model.Notification}`).then(() => reloadElements(['navbarNotifDiv'])));
 
-/*
 // CREATE EXPERIMENT, TEMPLATE or DATABASE item: main create button in top right
 on('create-entity', (el: HTMLElement) => {
   let params = {};
@@ -1001,7 +998,16 @@ on('create-entity', (el: HTMLElement) => {
     window.location.href = `${page}?mode=edit&id=${id}`;
   });
 });
-*/
+
+on('create-entity-ask-title', (el: HTMLElement) => {
+  // this is necessary to convey information between two modals
+  // hide previous modal first
+  $('.modal.show').modal('hide');
+  // then add the category id to the other create button
+  const targetButton = document.getElementById('askTitleButton') as HTMLButtonElement;
+  targetButton.dataset.catid = el.dataset.catid;
+  $('#askTitleModal').modal('toggle');
+});
 
 on('report-bug', (el: HTMLElement, event: Event) => {
   event.preventDefault();
@@ -1172,6 +1178,7 @@ const clickHandler = (event: Event) => {
         });
       },
     });
+    /*
   // TEST WITH OLD CODE
   } else if (el.matches('[data-action="toggle-modal"]')) {
     $('#' + el.dataset.target).modal('toggle');
@@ -1217,6 +1224,7 @@ const clickHandler = (event: Event) => {
       window.location.href = `${page}?mode=edit&id=${id}`;
     });
 
+   */
 
   } else if (el.matches('[data-query]')) {
     const url = new URL(window.location.href);
@@ -1225,11 +1233,9 @@ const clickHandler = (event: Event) => {
     url.searchParams.set('order', query[0]);
     url.searchParams.set('sort', query[1]);
     window.location.href = url.href;
-
   }
 };
 
-document.getElementById('container').addEventListener('click', event => clickHandler(event));
 /**
  * MAIN click listener on container
  */
@@ -1244,5 +1250,6 @@ document.getElementById('container').addEventListener('click', (event: Event) =>
   for (const fn of set) {
     fn(el, event);
   }
-//  clickHandler(event);
+  //clickHandler(event);
 });
+//document.getElementById('container').addEventListener('click', event => clickHandler(event));

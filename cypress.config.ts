@@ -1,6 +1,7 @@
 import { defineConfig } from 'cypress';
 import htmlvalidate from 'cypress-html-validate/plugin';
 import { Severity } from 'html-validate';
+import installLogsPrinter from 'cypress-terminal-report/src/installLogsPrinter';
 
 export default defineConfig({
   fixturesFolder: 'tests/cypress/fixtures',
@@ -11,7 +12,7 @@ export default defineConfig({
   viewportHeight: 900,
   e2e: {
     setupNodeEvents(on, config) {
-      require('cypress-terminal-report/src/installLogsPrinter')(on, {printLogsToConsole: 'always'})
+      installLogsPrinter(on, { printLogsToConsole: 'always' });
       htmlvalidate.install(
         on,
         {

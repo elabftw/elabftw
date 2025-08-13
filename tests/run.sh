@@ -23,7 +23,7 @@ if [ ! -f tests/elabftw-user.env ]; then
 fi
 
 # launch a fresh environment if needed
-if [ ! "$(docker ps -q -f name=mysqltmp)" ] || [ ! "$(docker container ls -q -f name=elab-cypress)" ]; then
+if [ -z "$(docker ps -q -f name=mysqltmp)" ]; then
     docker compose -f tests/docker-compose.yml up -d --quiet-pull
     # give some time for containers to start
     echo -n "Waiting for containers to start..."
@@ -69,13 +69,16 @@ elif [ "${1:-}" = "api" ]; then
     docker exec -it elabtmp php vendor/bin/codecept run --skip unit --skip cypress --coverage --coverage-html --coverage-xml
 # acceptance with cypress
 elif [ "${1:-}" = "cy" ]; then
-    if [ ! "$(docker images elab-cypress)" ]; then
+    if [ -z "$(docker images -q elab-cypress 2>/dev/null)" ]; then
         echo "Building fresh cypress image..."
         docker build -q -t elab-cypress -f tests/elab-cypress.Dockerfile .
     fi
-    if [ ! "$(docker container ls -q -f name=elab-cypress)" ]; then
+    if [ -z "$(docker container ls -aq -f name=^elab-cypress$)" ]; then
         echo "Launching fresh cypress container..."
         docker run --name elab-cypress -d elab-cypress
+    elif [ -z "$(docker container ls -q -f name=^elab-cypress$)" ]; then
+        echo "Starting existing cypress container..."
+        docker start elab-cypress
     fi
     echo "Running cypress..."
     docker exec -it elab-cypress cypress run

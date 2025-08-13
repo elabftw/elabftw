@@ -53,7 +53,7 @@ final class i18n4Js
             'confirm-new-spreadsheet' => _('Start a new spreadsheet? All unsaved changes will be lost.'),
             'custom-id-in-use' => _('Custom ID is already used! Try another one.'),
             'delete' => _('Delete'),
-            'delete-selected' => _('Delete selected Rows'),
+            'delete-selected' => _('Delete selected rows'),
             'dropzone-upload-area' => _('Drop files here to upload'),
             'dropzone-filesize-limit' => _('File size limit:'),
             'edit' => _('Edit'),
@@ -88,7 +88,7 @@ final class i18n4Js
             'generic-delete-warning' => _('Delete this?'),
             'hide-deleted' => _('Hide deleted'),
             'import' => _('Import'),
-            'import-spreadsheet' => _('Import a spreadsheet (xls, csv, ods...)'),
+            'import-spreadsheet' => _('Import a spreadsheet (xls, csv, ods, ...)'),
             // import errors often print html content
             'import-error' => _('Error during import. Please check the console for more information.'),
             'invalid-info' => _('Invalid syntax or information provided.'),

@@ -39,7 +39,7 @@ export function SaveAsAttachmentModal({columnDefs, rowData, entity, onSaved, hel
           </div>
           <div className='modal-body'>
             <div className='form-group'>
-              <label>{i18next.t('file-name')}</label>
+              <label>{i18next.t('filename')}</label>
               <input type='text' className='form-control' value={fileName} onChange={(e) => setFileName(e.target.value)} />
             </div>
             <div className='form-group'>

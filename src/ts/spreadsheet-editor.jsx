@@ -254,6 +254,7 @@ if (document.getElementById('spreadsheetEditor')) {
           </button>
         </div>
         {isDisabled && <p>{i18next.t('import-spreadsheet')}</p>}
+        {currentUploadName && <p>{i18next.t('current-edit')}: <span className='font-weight-bold my-2'>{ currentUploadName }</span></p>}
         {columnDefs.length > 0 && rowData.length > 0 && (
           <>
             <div className='ag-theme-alpine' style={{ height: 400, marginTop: 10 }}>

@@ -11,6 +11,7 @@ export default defineConfig({
   viewportHeight: 900,
   e2e: {
     setupNodeEvents(on, config) {
+      require('cypress-terminal-report/src/installLogsPrinter')(on, {printLogsToConsole: 'always'})
       htmlvalidate.install(
         on,
         {

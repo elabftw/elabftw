@@ -12,7 +12,7 @@ describe('Status', () => {
       expect(keys).to.include('toggle-modal');
     });
    */
-    cy.get('[data-target="createCatStatModal"]').wait(3000).click({force: true});
+    cy.get('[data-target="createCatStatModal"]').click();
     cy.get('#createCatStatModal').should('be.visible');
     // the wait is necessary or it doesn't have the time to type all
     cy.get('#createCatStatName').wait(500).type(newname);

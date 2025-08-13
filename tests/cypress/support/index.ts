@@ -16,12 +16,4 @@
 import 'cypress-html-validate/commands';
 
 import './commands';
-/*
-beforeEach(() => {
-  cy.document().then(doc =>
-    new Cypress.Promise<void>(res => {
-      doc.addEventListener('actions:ready', () => res(), { once: true });
-    })
-  );
-});
-*/
+import 'cypress-terminal-report/src/installLogsCollector';

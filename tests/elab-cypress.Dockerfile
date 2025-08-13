@@ -17,7 +17,7 @@ RUN chown -R node:node tests/cypress
 USER node
 
 # add html validation tools to cypress
-RUN npm install typescript html-validate@^8 cypress-html-validate@^7
+RUN npm install typescript html-validate@^8 cypress-html-validate@^7 cypress-terminal-report
 
 # overwrite default 'cypress run' entry point, will call it manually later
 # https://github.com/cypress-io/cypress-docker-images/tree/master/included#keep-the-container

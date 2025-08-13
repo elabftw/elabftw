@@ -254,45 +254,47 @@ if (document.getElementById('spreadsheetEditor')) {
     );
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
-    const el = document.getElementById('spreadsheet-importer-root');
-    if (el) {
-      const root = createRoot(el);
-      root.render(<SpreadsheetEditor />);
-    }
-    // handle 'use first line as header' modal
-    document.body.addEventListener('click', event => {
-      const target = event.target;
-      if (!(target instanceof HTMLElement)) return;
-
-      const action = target.getAttribute('data-action');
-      if (!action || !['use-header-row', 'use-data-as-header'].includes(action)) return;
-
-      const state = window._sheetImport;
-      if (!state) return;
-
-      const { aoa, setColumnDefs, setRowData, setCurrentUploadId } = state;
-      delete window._sheetImport;
-
-      const useHeader = action === 'use-header-row';
-      const headerRow = useHeader
-        ? aoa[0].map((h, i) => typeof h === 'string' ? h : `Column${i}`)
-        : aoa[0].map((_, i) => `Column${i}`);
-
-      const dataRows = useHeader ? aoa.slice(1) : aoa;
-      const rows = dataRows.map(r => {
-        const row = {};
-        headerRow.forEach((h, i) => {
-          row[h] = String(r[i] ?? '');
-        });
-        return row;
-      });
-
-      const cols = headerRow.map(h => ({ field: h, editable: true }));
-      setColumnDefs(cols);
-      setRowData(rows);
-      // need to reset the current Upload ID to disable the "Replace existing file" button and prevent rewriting existing file with currently loaded sheet
-      setCurrentUploadId(0);
-    });
-  });
+  const el = document.getElementById('spreadsheet-importer-root');
+  if (el) {
+    const root = createRoot(el);
+    root.render(<SpreadsheetEditor />);
+  }
 }
+
+// handle 'use first line as header' modal
+const clickHandler = async (event) => {
+  const el = event.target;
+  if (!el) return;
+
+  const action = el.dataset.action;
+  if (!action || !['use-header-row', 'use-data-as-header'].includes(action)) return;
+
+  if (el.matches('[data-action="use-header-row"], [data-action="use-data-as-header"]')) {
+    const state = window._sheetImport;
+    if (!state) return;
+
+    const { aoa, setColumnDefs, setRowData, setCurrentUploadId } = state;
+    delete window._sheetImport;
+    const useHeader = action === 'use-header-row';
+    const headerRow = useHeader
+      ? aoa[0].map((h, i) => typeof h === 'string' ? h : `Column${i}`)
+      : aoa[0].map((_, i) => `Column${i}`);
+
+    const dataRows = useHeader ? aoa.slice(1) : aoa;
+    const rows = dataRows.map(r => {
+      const row = {};
+      headerRow.forEach((h, i) => {
+        row[h] = String(r[i] ?? '');
+      });
+      return row;
+    });
+
+    const cols = headerRow.map(h => ({ field: h, editable: true }));
+    setColumnDefs(cols);
+    setRowData(rows);
+    // need to reset the current Upload ID to disable the "Replace existing file" button and prevent rewriting existing file with currently loaded sheet
+    setCurrentUploadId(0);
+  }
+}
+
+document.getElementById('container').addEventListener('click', event => clickHandler(event));

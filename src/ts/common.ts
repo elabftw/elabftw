@@ -466,22 +466,6 @@ document.getElementById('container').addEventListener('keydown', event => {
   }
 });
 
-/**
- * MAIN click listener on container
- */
-// TMP
-//const container = document.getElementById('container');
-//container!.addEventListener('click', (event: Event) => {
-document.getElementById('container').addEventListener('click', (event: Event) => {
-  const el: HTMLElement = (event.target as HTMLElement).closest('[data-action]');
-  //if (!el || !container.contains(el)) return;
-  const set = get(el.dataset.action!);
-  if (!set) return;
-  for (const fn of set) {
-    fn(el, event);
-  }
-});
-
 on('show-policy', (el: HTMLElement) => {
   fetch('app/controllers/UnauthRequestHandler.php').then(resp => resp.json()).then(json => {
     const policy = json[el.dataset.policy];
@@ -1245,4 +1229,20 @@ const clickHandler = (event: MouseEvent) => {
   }
 };
 
-document.getElementById('container').addEventListener('click', event => clickHandler(event));
+document.getElementById('container').addEventListener('click', event => {
+/**
+ * MAIN click listener on container
+ */
+// TMP
+//const container = document.getElementById('container');
+//container!.addEventListener('click', (event: Event) => {
+//document.getElementById('container').addEventListener('click', (event: Event) => {
+  const el: HTMLElement = (event.target as HTMLElement).closest('[data-action]');
+  //if (!el || !container.contains(el)) return;
+  const set = get(el.dataset.action!);
+  if (!set) return;
+  for (const fn of set) {
+    fn(el, event);
+  }
+  clickHandler(event);
+});

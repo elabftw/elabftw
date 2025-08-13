@@ -222,7 +222,7 @@
               </span>
 
             {# SPREADSHEETS #}
-            {% elseif ext matches '/(xls|xlsx|xlsb|csv|ods|ots|fods)$/i' %}
+            {% elseif ext in constant('Elabftw\\Elabftw\\Extensions::SPREADSHEET') %}
               <span class='eye-overlay' data-uploadid='{{ upload.id }}' data-name='{{ upload.real_name|e('html_attr') }}' data-link='{{ upload.long_name|e('html_attr') }}' data-action='xls-load-file'>
                 <i class='fas fa-file-alt thumb rounded mx-auto d-block text-center'></i>
               </span>

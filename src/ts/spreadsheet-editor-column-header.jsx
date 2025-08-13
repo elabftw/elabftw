@@ -84,7 +84,7 @@ export function ColumnHeader(props) {
 
       {/* Row 2: toolbar with actions */}
       <div>
-        <button onClick={rename} title={i18next.t('rename')} className='border-0 bg-transparent mr-2'>
+        <button onClick={rename} title={i18next.t('rename-column')} className='border-0 bg-transparent mr-2'>
           <i className='fas fa-edit fa-sm' />
         </button>
         <button onClick={remove} title={i18next.t('delete')} className='border-0 bg-transparent mr-2'>

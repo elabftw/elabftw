@@ -42,6 +42,10 @@ export class JsonEditorActions {
           document.getElementById('jsonUnsavedChangesWarningDiv').hidden = true;
         } else if (el.matches('[data-action="json-import-file"]')) {
           const fileInput = document.getElementById('jsonImportFileInput') as HTMLInputElement;
+          if (!fileInput) {
+            notify.error('resource-not-found');
+            return;
+          }
           fileInput.click();
           fileInput.onchange = () => {
             const file = fileInput.files?.[0];
@@ -57,6 +61,9 @@ export class JsonEditorActions {
                 notify.error(error);
               }
             };
+            reader.onerror = () => notify.error('import-error');
+            // allow selecting the same file again
+            fileInput.value = '';
           };
         } else if (el.matches('[data-action="json-clear"]')) {
           JsonEditorHelperC.clear();

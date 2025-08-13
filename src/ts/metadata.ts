@@ -361,7 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
           // and finally close the modal
           $('#fieldBuilderModal').modal('toggle');
           // focus on the newly added element
-          document.querySelector(`[data-name="${fieldKey}"`).scrollIntoView({behavior: 'smooth'});
+          document.querySelector(`[data-name="${fieldKey}"]`)?.scrollIntoView({ behavior: 'smooth' });
         });
       });
     // EDIT EXTRA FIELD
@@ -445,7 +445,7 @@ document.addEventListener('DOMContentLoaded', () => {
         MetadataC.update(json as ValidMetadata).then(() => {
           $('#fieldBuilderModal').modal('toggle');
           // focus on the newly added element
-          document.querySelector(`[data-name="${newFieldKey}"`).scrollIntoView({behavior: 'smooth'});
+          document.querySelector(`[data-name="${newFieldKey}"]`)?.scrollIntoView({ behavior: 'smooth' });
         });
       });
     // ADD OPTION FOR SELECT OR RADIO

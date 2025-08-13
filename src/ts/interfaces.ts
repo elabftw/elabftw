@@ -190,7 +190,7 @@ interface GridColumn {
 }
 
 interface GridRow {
-  [key: string]: string;
+  [key: string]: string | number | boolean | null;
 }
 
 export {

@@ -30,10 +30,6 @@ import $ from 'jquery';
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const entity = getEntity();
-const saveBtn = document.getElementById('replaceExisting');
-const exportBtn = document.getElementById('exportBtn');
-const attachBtn = document.getElementById('saveAsAttachment');
-const warn = document.getElementById('spreadsheetUnsavedChangesWarningDiv');
 
 if (document.getElementById('spreadsheetEditor')) {
   function SpreadsheetEditor() {
@@ -66,6 +62,10 @@ if (document.getElementById('spreadsheetEditor')) {
 
     // handle dirty state (unsaved changes)
     useEffect(() => {
+      const saveBtn = document.getElementById('replaceExisting');
+      const exportBtn = document.getElementById('exportBtn');
+      const attachBtn = document.getElementById('saveAsAttachment');
+      const warn = document.getElementById('spreadsheetUnsavedChangesWarningDiv');
       if (dirty) {
         saveBtn?.classList.add('border-danger');
         attachBtn?.classList.add('border-danger');
@@ -82,10 +82,14 @@ if (document.getElementById('spreadsheetEditor')) {
     }, [dirty]);
 
     const clear = () => {
+      if (dirty && !confirm(i18next.t('confirm-clear-spreadsheet'))) {
+        return;
+      }
       setColumnDefs([]);
       setRowData([]);
       setCurrentUploadId(0);
       setCurrentUploadName('');
+      setDirty(false);
     };
 
     const createNewSpreadsheet = () => {
@@ -142,7 +146,7 @@ if (document.getElementById('spreadsheetEditor')) {
     const removeSelectedRows = () => {
       const api = gridRef.current.api;
       const selected = api.getSelectedRows();
-      if (!confirm(`Delete ${selected.length} line(s)?`)) {
+      if (!confirm(i18next.t('delete-confirmation', { num: selected.length }))) {
         return;
       }
       api.applyTransaction({ remove: selected });
@@ -175,12 +179,13 @@ if (document.getElementById('spreadsheetEditor')) {
       headerComponentParams: headerParams,
     }), [headerParams]);
 
-    // make grid resizeable
-    const fitCols = useCallback(() => {
-      if (!gridRef.current) return;
-      const api = gridRef.current.api;
-      if (api?.sizeColumnsToFit) api.sizeColumnsToFit();
-    }, []);
+    // little issue on create new sheet, it takes the whole space
+    // // make grid resizeable
+    // const fitCols = useCallback(() => {
+    //   if (!gridRef.current) return;
+    //   const api = gridRef.current.api;
+    //   if (api?.sizeColumnsToFit) api.sizeColumnsToFit();
+    // }, []);
 
     function SaveButton() {
       return (
@@ -265,7 +270,7 @@ if (document.getElementById('spreadsheetEditor')) {
         {columnDefs.length > 0 && rowData.length > 0 && (
           <>
           {/* parent div to make it resizeable, as it's not built-in in ag-grid */}
-          <div style={{ resize: "both", overflow: "auto", height: 600 }}>
+          <div style={{ resize: "both", overflow: "auto", height: 600 }} className='mb-2'>
             <div className='ag-theme-alpine' style={{ width: "100%", height: "100%" }}>
               <AgGridReact
                 ref={gridRef}
@@ -274,8 +279,8 @@ if (document.getElementById('spreadsheetEditor')) {
                 defaultColDef={defaultColDef}
                 rowSelection='multiple'
                 onCellValueChanged={() => setDirty(true)}
-                onGridSizeChanged={fitCols}
-                onFirstDataRendered={fitCols}
+                // onGridSizeChanged={fitCols}
+                // onFirstDataRendered={fitCols}
               />
             </div>
           </div>

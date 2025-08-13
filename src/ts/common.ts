@@ -832,6 +832,7 @@ on('search-pubchem', (el: HTMLElement) => {
     console.error(err);
     resultTableDiv.innerText = err;
   }).finally(() => {
+    ApiC.notifOnError = true;
     mkSpinStop(el, elOldHTML);
   });
 });

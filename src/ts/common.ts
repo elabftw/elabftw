@@ -1241,6 +1241,7 @@ const clickHandler = (event: Event) => {
  */
 const container = document.getElementById('container')!;
 document.addEventListener('click', (event: Event) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   console.log('[delegate] target=', event.target, 'nodeType=', (event.target as any)?.nodeType);
   const el = event.target as HTMLElement;
   console.log(`debug: action: ${el.dataset.action}`);

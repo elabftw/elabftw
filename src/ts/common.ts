@@ -1241,7 +1241,10 @@ const clickHandler = (event: Event) => {
  */
 const container = document.getElementById('container')!;
 document.addEventListener('click', (event: Event) => {
+  console.log('[delegate] target=', event.target, 'nodeType=', (event.target as any)?.nodeType);
   const el = event.target as HTMLElement;
+  console.log(`debug: action: ${el.dataset.action}`);
+  console.log(`debug: el: ${el}`);
   if (!el || !container.contains(el)) return;
   const set = get(el.dataset.action);
   if (!set) return;

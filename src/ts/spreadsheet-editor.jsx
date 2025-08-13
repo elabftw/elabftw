@@ -175,6 +175,13 @@ if (document.getElementById('spreadsheetEditor')) {
       headerComponentParams: headerParams,
     }), [headerParams]);
 
+    // make grid resizeable
+    const fitCols = useCallback(() => {
+      if (!gridRef.current) return;
+      const api = gridRef.current.api;
+      if (api?.sizeColumnsToFit) api.sizeColumnsToFit();
+    }, []);
+
     function SaveButton() {
       return (
         <>
@@ -257,7 +264,9 @@ if (document.getElementById('spreadsheetEditor')) {
         {currentUploadName && <p>{i18next.t('current-edit')}: <span className='font-weight-bold my-2'>{ currentUploadName }</span></p>}
         {columnDefs.length > 0 && rowData.length > 0 && (
           <>
-            <div className='ag-theme-alpine' style={{ height: 400, marginTop: 10 }}>
+          {/* parent div to make it resizeable, as it's not built-in in ag-grid */}
+          <div style={{ resize: "both", overflow: "auto", height: 600 }}>
+            <div className='ag-theme-alpine' style={{ width: "100%", height: "100%" }}>
               <AgGridReact
                 ref={gridRef}
                 rowData={rowData}
@@ -265,8 +274,11 @@ if (document.getElementById('spreadsheetEditor')) {
                 defaultColDef={defaultColDef}
                 rowSelection='multiple'
                 onCellValueChanged={() => setDirty(true)}
+                onGridSizeChanged={fitCols}
+                onFirstDataRendered={fitCols}
               />
             </div>
+          </div>
             <button type='button' onClick={removeSelectedRows} className='btn btn-danger btn-sm my-2'>
               {i18next.t('delete-selected')}
             </button>

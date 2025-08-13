@@ -1256,5 +1256,6 @@ document.getElementById('container').addEventListener('click', (event: Event) =>
     }
   }
 });
+document.dispatchEvent(new Event('actions:ready'));
 // old clickHandler, must disappear
 document.getElementById('container').addEventListener('click', event => clickHandler(event));

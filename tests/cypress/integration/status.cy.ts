@@ -10,7 +10,7 @@ describe('Status', () => {
     cy.get('#createCatStatModal').should('be.visible');
     // the wait is necessary or it doesn't have the time to type all
     cy.get('#createCatStatName').wait(500).type(newname);
-    cy.get('[data-action="create-catstat"]').filter(':visible').trigger('click');
+    cy.get('[data-action="create-catstat"]').filter(':visible').trigger('mouseover').wait(1000).click().click({force:true});
     // need to wait for it to appear
     cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
     cy.get('[data-action="destroy-catstat"][data-endpoint="experiments_status"]').then(allBtn => {

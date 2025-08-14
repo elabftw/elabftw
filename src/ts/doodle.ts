@@ -145,12 +145,11 @@ if (doodleCanvas) {
     }, {passive: false});
 
     doodleCanvas.addEventListener('pointerup', (e) => {
-      e.preventDefault();
       isPainting = false;
       wasPainting = false;
       // Release capture if it was set
       doodleCanvas.releasePointerCapture?.(e.pointerId);
-    }, {passive: false});
+    }, {passive: true});
 
     doodleCanvas.addEventListener('pointercancel', (e) => {
       isPainting = false;

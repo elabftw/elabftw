@@ -60,6 +60,11 @@ final class TwigFunctions
         return round(microtime(true) - $Request->server->get('REQUEST_TIME_FLOAT'), 5);
     }
 
+    public static function envAsBool(string $input): bool
+    {
+        return Env::asBool($input);
+    }
+
     public static function getMemoryUsage(): int
     {
         return memory_get_usage();

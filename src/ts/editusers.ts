@@ -12,12 +12,9 @@ import { Action, Model } from './interfaces';
 import $ from 'jquery';
 import { notify } from './notify';
 
-document.addEventListener('DOMContentLoaded', () => {
-  if (!['/sysconfig.php', '/admin.php'].includes(window.location.pathname)) {
-    return;
-  }
+if (document.getElementById('users-table')) {
 
-  document.querySelector('.real-container').addEventListener('click', async (event) => {
+  document.getElementById('container').addEventListener('click', async (event) => {
     const el = (event.target as HTMLElement);
     let userid = document.getElementById('editUserModal')?.dataset.userid;
     if (!userid) {
@@ -183,4 +180,4 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   });
-});
+}

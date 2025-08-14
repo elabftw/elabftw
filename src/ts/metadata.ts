@@ -166,7 +166,7 @@ if (document.getElementById('metadataDiv') && entity.id) {
         MetadataC.read().then(metadata => {
           const name = el.parentElement.parentElement.closest('div').querySelector('label').innerText.trim();
           delete metadata.extra_fields[name];
-          MetadataC.update(metadata as ValidMetadata).then(() => document.getElementById('metadataDiv').scrollIntoView());
+          MetadataC.update(metadata as ValidMetadata).then(() => document.getElementById('metadataDiv').scrollIntoView({behavior: 'smooth'}));
         });
       }
     }
@@ -255,7 +255,7 @@ if (document.getElementById('metadataDiv') && entity.id) {
         ApiC.patch(`${entity.type}/${entity.id}`, {metadata: JSON.stringify(mergedMetadata)}).then(() => {
           MetadataC.display('edit');
           textarea.value = '';
-        }).then(() => document.getElementById('metadataDiv').scrollIntoView());
+        }).then(() => document.getElementById('metadataDiv').scrollIntoView({behavior: 'smooth'}));
       }
     });
 
@@ -352,7 +352,7 @@ if (document.getElementById('metadataDiv') && entity.id) {
             // and finally close the modal
             $('#fieldBuilderModal').modal('toggle');
             // focus on the newly added element
-            document.querySelector(`[data-name="${fieldKey}"`).scrollIntoView();
+            document.querySelector(`[data-name="${fieldKey}"`).scrollIntoView({behavior: 'smooth'});
           });
         });
       // EDIT EXTRA FIELD
@@ -436,7 +436,7 @@ if (document.getElementById('metadataDiv') && entity.id) {
           MetadataC.update(json as ValidMetadata).then(() => {
             $('#fieldBuilderModal').modal('toggle');
             // focus on the newly added element
-            document.querySelector(`[data-name="${newFieldKey}"`).scrollIntoView();
+            document.querySelector(`[data-name="${newFieldKey}"`).scrollIntoView({behavior: 'smooth'});
           });
         });
       // ADD OPTION FOR SELECT OR RADIO

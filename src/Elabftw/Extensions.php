@@ -98,8 +98,13 @@ final class Extensions
     public const array SPREADSHEET = array(
         'xls',
         'xlsx',
-        'ods',
+        'xlsb',
+        'xlsm',
         'csv',
+        'tsv',
+        'ods',
+        'ots',
+        'fods',
     );
 
     public const array VIDEO = array(

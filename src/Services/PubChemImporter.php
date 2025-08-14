@@ -40,7 +40,7 @@ final class PubChemImporter
     public function getCidFromCas(string $cas): array
     {
         usleep(self::REQ_DELAY);
-        $json = $this->httpGetter->get(sprintf('%s/compound/xref/rn/%s/cids/json', $this->pugUrl, $cas));
+        $json = $this->httpGetter->get(sprintf('%s/compound/xref/RegistryID/%s/cids/json', $this->pugUrl, $cas));
         $decoded = json_decode($json, true, 10);
         return $decoded['IdentifierList']['CID'];
     }

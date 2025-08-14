@@ -62,10 +62,9 @@ try {
     }
     $statusArr = $Status->readAll($Status->getQueryParams(new InputBag(array('limit' => 9999))));
     $teamGroupsArr = $TeamGroups->readAll();
-    $allTeamUsersArr = $App->Users->readAllFromTeam();
     // only the unvalidated ones
     $unvalidatedUsersArr = array_filter(
-        $allTeamUsersArr,
+        $App->Users->readAllFromTeam(),
         fn($u): bool => $u['validated'] === 0,
     );
     // Users search
@@ -105,7 +104,6 @@ try {
 
     $template = 'admin.html';
     $renderArr = array(
-        'allTeamUsersArr' => $allTeamUsersArr,
         'tagsArr' => $TeamTags->readAll(),
         'metadataGroups' => $metadataGroups,
         'allTeamgroupsArr' => $TeamGroups->readAllEverything(),
@@ -120,6 +118,7 @@ try {
         'scopedTeamgroupsArr' => $TeamGroups->readScopedTeamgroups(),
         'storageUnitsArr' => (new StorageUnits($App->Users))->readAllRecursive(),
         'teamStats' => $teamStats,
+        'teamsArr' => $App->Teams->readAllComplete(),
         'visibleTeamsArr' => $App->Teams->readAllVisible(),
         'unvalidatedUsersArr' => $unvalidatedUsersArr,
         'usersArr' => $usersArr,

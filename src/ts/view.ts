@@ -12,6 +12,7 @@ import { relativeMoment, reloadElements } from './misc';
 import { Action, Model } from './interfaces';
 import { entity } from './getEntity';
 import { on } from './handlers';
+import { core } from './core';
 
 const mode = new URLSearchParams(window.location.search).get('mode');
 if (mode === 'view') {
@@ -62,10 +63,7 @@ if (mode === 'view') {
   // add the title in the page name (see #324)
   document.title = document.getElementById('documentTitle').textContent + ' - eLabFTW';
 
-  const core = document.getElementById('core');
-  const isAnon = core ? JSON.parse(core.textContent!).isAnon === true : true;
-
-  if (!isAnon) {
+  if (!core.isAnon) {
     // listen on existing comments
     malleableComments.listen();
   }

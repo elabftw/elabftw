@@ -64,6 +64,7 @@ import Todolist from './Todolist.class';
 import { entity } from './getEntity';
 import { on, get } from './handlers';
 import Tab from './Tab.class';
+import { core } from './core';
 
 // we need to extend the interface from malle to add more properties
 interface Status extends SelectOptions {
@@ -75,8 +76,8 @@ interface Status extends SelectOptions {
 // HEARTBEAT
 // this function is to check periodically that we are still authenticated
 // and show a message if we the session is not valid anymore but we are still on a page requiring auth
-// only run if we are an auth user by checking the presence of this element in the footer
-if (document.getElementById('is-auth')) {
+// only run if we are an authenticated user
+if (core.isAuth) {
   // check every 5 minutes
   const heartRate = 300000;
   setInterval(() => {

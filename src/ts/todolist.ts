@@ -7,13 +7,9 @@
  */
 import Todolist from './Todolist.class';
 import { Model } from './interfaces';
+import { core } from './core';
 
-const core = document.getElementById('core');
-const isAnon = core?.textContent
-  ? JSON.parse(core.textContent).isAnon === true
-  : true;
-
-if (document.getElementById('todolistPanel') && !isAnon) {
+if (document.getElementById('todolistPanel') && !core.isAnon) {
 
   let unfinishedStepsScope = 'user';
   // unfinished steps scopeSwitch i.e. user (0) or team (1)

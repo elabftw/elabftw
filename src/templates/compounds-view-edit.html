@@ -1,7 +1,7 @@
 {# COMPOUNDS #}
-<h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Compounds'|trans }} (<span id='compoundsCount'>{{ Entity.entityData.compounds|length }}</span>)</h3>
-<div data-save-hidden='compoundDiv' class='col-md-12 mt-4' data-count-for='compoundsCount'>
-  <div class='mt-3 row' id='compoundDiv'>
+<h4 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='ml-3 d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Compounds'|trans }} (<span id='compoundsCount'>{{ Entity.entityData.compounds|length }}</span>)</h4>
+<div data-save-hidden='compoundDiv' data-count-for='compoundsCount'>
+  <div class='ml-5 mb-2' id='compoundDiv'>
     {% if Entity.entityData.compounds %}
       {% macro fpList(key, label, value) %}
         <li class='list-group-item'><label for='{{ key }}'>{{ label }}</label>
@@ -58,7 +58,7 @@
         {% endfor %}
       {% endmacro %}
       {% for fp in Entity.entityData.compounds %}
-        <div class='col-md-12 mt-3 countable'>
+        <div class='mt-3 countable'>
         <details>
           <summary>
             <h5 class='d-inline togglable-section-title'>{{ fp.name|default('Name unset'|trans) }} {{ _self.compoundPicto(fp) }}</h5>
@@ -90,20 +90,16 @@
         </details>
         </div>
       {% endfor %}
-
     {% endif %}
   </div>
-  <div class='mt-3 row'>
-    {# ADD COMPOUND LINK #}
-    <div class='input-group mt-2'>
-      <div class='input-group-prepend'>
-        <span class='input-group-text'><i class='fas fa-magnifying-glass'></i></span>
-      </div>
-      <input aria-label='{{ 'Link with compound'|trans }}' type='text' data-endpoint='compounds' data-autocomplete='compounds' id='addCompoundInput' class='form-control linkinput' data-id='{{ Entity.id }}' placeholder='{{ 'Search in local compounds database'|trans }}' />
-      <div class='input-group-append'>
-        <button class='btn btn-primary' type='button'>{{ 'Add'|trans }}</button>
-      </div>
+  {# ADD COMPOUND LINK #}
+  <div class='ml-4 input-group'>
+    <div class='input-group-prepend'>
+      <span class='input-group-text'><i class='fas fa-magnifying-glass'></i></span>
+    </div>
+    <input aria-label='{{ 'Link with compound'|trans }}' type='text' data-endpoint='compounds' data-autocomplete='compounds' id='addCompoundInput' class='form-control linkinput' data-id='{{ Entity.id }}' placeholder='{{ 'Search in local compounds database'|trans }}' />
+    <div class='input-group-append'>
+      <button class='btn btn-primary' type='button'>{{ 'Add'|trans }}</button>
     </div>
   </div>
 </div>
-<hr>

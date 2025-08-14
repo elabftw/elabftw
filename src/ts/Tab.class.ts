@@ -13,7 +13,7 @@ export default class Tab {
   }
 
   // display the current tab and add an event listen so we can switch tabs
-  init(menu: HTMLElement): void {
+  init(menu: Element | null): void {
     if (!menu) {
       return;
     }

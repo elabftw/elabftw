@@ -13,7 +13,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Users\AuthenticatedUser;
 use Elabftw\Traits\TestsUtilsTrait;
 
@@ -53,7 +53,7 @@ class PermissionsTest extends \PHPUnit\Framework\TestCase
 
         // reduce to team only, is not readable anymore by user from bravo
         $alphaExp->patch(Action::Update, array('canread' => BasePermissions::Team->toJson()));
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(UnauthorizedException::class);
         $bravoExp->readOne();
     }
 }

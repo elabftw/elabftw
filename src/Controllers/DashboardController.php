@@ -20,6 +20,7 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsStatus;
+use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Templates;
 use Elabftw\Models\UserRequestActions;
@@ -59,6 +60,7 @@ final class DashboardController extends AbstractHtmlController
         );
         $Experiments = new Experiments($this->app->Users);
         $Items = new Items($this->app->Users);
+        $ItemsTypes = new ItemsTypes($this->app->Users);
         $Templates = new Templates($this->app->Users);
         $now = new DateTimeImmutable();
         $Scheduler = new Scheduler($Items, start: $now->format(DateTimeImmutable::ATOM));
@@ -74,6 +76,12 @@ final class DashboardController extends AbstractHtmlController
         $ItemsStatus = new ItemsStatus($this->app->Teams);
         $UserRequestActions = new UserRequestActions($this->app->Users);
 
+        $DisplayParamsTemplates = new DisplayParams(
+            $this->app->Users,
+            EntityType::Templates,
+            limit: 9999,
+        );
+
         return array_merge(
             parent::getData(),
             array(
@@ -82,8 +90,9 @@ final class DashboardController extends AbstractHtmlController
                 'experimentsArr' => $Experiments->readShow($DisplayParamsExp),
                 'experimentsStatusArr' => $ExperimentsStatus->readAll($ExperimentsStatus->getQueryParams(new InputBag(array('limit' => 9999)))),
                 'itemsArr' => $Items->readShow($DisplayParamsItems),
+                'itemsTemplatesArr' => $ItemsTypes->readAll(),
                 'requestActionsArr' => $UserRequestActions->readAllFull(),
-                'templatesArr' => $Templates->Pins->readAll(),
+                'templatesArr' => $Templates->readAllSimple($DisplayParamsTemplates),
                 'usersArr' => $this->app->Users->readAllActiveFromTeam(),
                 'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
             ),

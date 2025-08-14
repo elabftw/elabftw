@@ -998,6 +998,8 @@ on('create-entity-ask-title', (el: HTMLElement) => {
   // then add the category id to the other create button
   const targetButton = document.getElementById('askTitleButton') as HTMLButtonElement;
   targetButton.dataset.catid = el.dataset.catid;
+  // also carry over the type as on Dashboard we have both types, but only one modal to ask title
+  targetButton.dataset.type = el.dataset.type;
   $('#askTitleModal').modal('toggle');
 });
 

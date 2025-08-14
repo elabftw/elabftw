@@ -13,7 +13,7 @@
       <h4>{% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}</h4>
       <div>
         {% include 'scope-button.html' with {'btnId': 'scopeExp', 'reload': 'lastModifiedExp,scopeExp', 'target': 'scope_experiments', 'isSecondary': 0, 'isSmall': 0} %}
-        {% include 'create-new.html' with {'entityPage': 'experiments'} %}
+        {% include 'create-new.html' with {'entityPage': 'experiments', 'isDashboard': true} %}
       </div>
     </div>
     <hr>
@@ -52,7 +52,7 @@
       <h4>{% trans %}Resource{% plural 2 %}Resources{% endtrans %}</h4>
       <div>
         {% include 'scope-button.html' with {'btnId': 'scopeItems', 'reload': 'lastModifiedResources,scopeItems', 'target': 'scope_items', 'isSecondary': 0, 'isSmall': 0} %}
-        {% include 'create-new.html' with {'entityPage': 'database'} %}
+        {% include 'create-new.html' with {'entityPage': 'database', 'isDashboard': true} %}
       </div>
     </div>
     <hr>

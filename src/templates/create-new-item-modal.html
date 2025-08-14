@@ -36,6 +36,9 @@
               <tbody id='tplCreateNewTable'>
                 {% set label = entityPage == 'database' ? 'Create resource from template'|trans : 'Create experiment from template'|trans %}
                 {% set templatesPage = entityPage == 'database' ? 'resources-templates' : 'templates' %}
+                {% if isDashboard %}
+                  {% set templatesArr = entityPage == 'experiments' ? templatesArr : itemsTemplatesArr %}
+                {% endif %}
                 {% for template in templatesArr %}
                   <tr>
                     <td data-label='{{ 'Title'|trans }}'>
@@ -64,11 +67,14 @@
           {% if not App.Teams.teamArr.force_exp_tpl %}
             <hr>
             <h5>{{ 'Or create a blank entry'|trans }}</h5>
-            <a class='btn btn-ghost mt-1' href='#' data-action='create-entity-ask-title' data-catid='-1'>
+            <a class='btn btn-ghost mt-1' href='#' data-action='create-entity-ask-title' data-type='{{ entityPage }}' data-catid='-1'>
               <span class='round-spot round-spot-ghost mr-1'></span>{{ 'No category'|trans }}
             </a>
+            {% if isDashboard %}
+              {% set categoryArr = entityPage == 'experiments' ? App.experimentsCategoryArr : App.itemsCategoryArr %}
+            {% endif %}
             {% for category in categoryArr %}
-              <a class='btn btn-ghost mt-1' href='#' data-action='create-entity-ask-title' data-catid='{{ category.id }}'>
+              <a class='btn btn-ghost mt-1' href='#' data-action='create-entity-ask-title' data-type='{{ entityPage }}' data-catid='{{ category.id }}'>
                 <span class='round-spot mr-1' style='background-color: #{{ category.color }};'></span>{{ category.title }}
               </a>
             {% endfor %}

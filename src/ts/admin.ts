@@ -20,7 +20,7 @@ import { ApiC } from './api';
 import { Model, Action, Selected } from './interfaces';
 import tinymce from 'tinymce/tinymce';
 import { notify } from './notify';
-import Tab from './Tab.class';
+import { on } from './handlers';
 
 function collectSelectable(name: string): number[] {
   const collected = [];
@@ -68,121 +68,135 @@ function getSelected(): Selected {
   };
 }
 
-const clickHandler = (event: MouseEvent) => {
-  const el = (event.target as HTMLElement);
-  // RUN ACTION ON SELECTED (BATCH)
-  if (el.matches('[data-action="run-action-selected"]')) {
-    const btn = el as HTMLButtonElement;
-    const selected = getSelected();
-    if (!Object.values(selected).some(array => array.length > 0)) {
-      notify.error('nothing-selected');
-      return;
-    }
-    const oldHTML = mkSpin(btn);
-    selected['action'] = btn.dataset.what;
-    // we use a custom notif message, so disable the native one
-    ApiC.notifOnSaved = false;
-    ApiC.post('batch', selected).then(res => {
-      const processed = res.headers.get('location').split('/').pop();
-      notify.success('entries-processed', { num: processed });
-    }).finally(() => {
-      mkSpinStop(btn, oldHTML);
-    });
-  } else if (el.matches('[data-action="update-counter-value"]')) {
-    const counterValue = el.parentElement.parentElement.parentElement.previousElementSibling.querySelector('.counterValue');
-    const box = el as HTMLInputElement;
-    let count = parseInt(counterValue.textContent, 10);
-    if (box.checked) {
-      count += 1;
-    } else {
-      count -= 1;
-    }
-    counterValue.textContent = String(count);
-  } else if (el.matches('[data-action="create-teamgroup"]')) {
-    const input = (document.getElementById('teamGroupCreate') as HTMLInputElement);
-    ApiC.post(`${Model.Team}/current/${Model.TeamGroup}`, {name: input.value}).then(() => {
-      reloadElements(['team_groups_div']);
-      input.value = '';
-    });
-  // ADD USER TO TEAM GROUP
-  } else if (el.matches('[data-action="adduser-teamgroup"]')) {
-    const user = parseInt(el.parentNode.parentNode.querySelector('input').value, 10);
-    if (isNaN(user)) {
-      notify.error('add-user-error');
-      return;
-    }
-    ApiC.patch(
-      `${Model.Team}/current/${Model.TeamGroup}/${el.dataset.groupid}`,
-      {how: Action.Add, userid: user},
-    ).then(() => reloadElements(['team_groups_div']));
-  // RM USER FROM TEAM GROUP
-  } else if (el.matches('[data-action="rmuser-teamgroup"]')) {
-    ApiC.patch(`${Model.Team}/current/${Model.TeamGroup}/${el.dataset.groupid}`, {how: Action.Unreference, userid: el.dataset.userid})
-      .then(() => el.parentElement.remove());
-  // DELETE TEAM GROUP
-  } else if (el.matches('[data-action="destroy-teamgroup"]')) {
-    if (confirm(i18next.t('generic-delete-warning'))) {
-      ApiC.delete(`${Model.Team}/current/${Model.TeamGroup}/${el.dataset.id}`)
-        .then(() => el.parentElement.remove());
-    }
-  // EXPORT CATEGORY
-  } else if (el.matches('[data-action="export-category"]')) {
-    const source = (document.getElementById('categoryExport') as HTMLSelectElement).value;
-    const format = (document.getElementById('categoryExportFormat') as HTMLSelectElement).value;
-    window.location.href = `make.php?format=${encodeURIComponent(format)}&category=${encodeURIComponent(source)}&type=items`;
-  // EXPORT USER EXPERIMENTS
-  } else if (el.matches('[data-action="export-user"]')) {
-    const source = (document.getElementById('userExport') as HTMLSelectElement).value;
-    const format = (document.getElementById('userExportFormat') as HTMLSelectElement).value;
-    window.location.href = `make.php?format=${encodeURIComponent(format)}&owner=${encodeURIComponent(source)}&type=experiments`;
-
-  // ADD TAG
-  } else if (el.matches('[data-action="admin-add-tag"]')) {
-    const tagInput = (document.getElementById('adminAddTagInput') as HTMLInputElement);
-    if (!tagInput.value) {
-      return;
-    }
-    ApiC.post(`${Model.Team}/current/${Model.Tag}`, {tag: tagInput.value}).then(() => {
-      tagInput.value = '';
-      reloadElements(['tagMgrDiv']);
-    });
-  } else if (el.matches('[data-action="patch-newcomer_banner"]')) {
-    const params = {};
-    params['newcomer_banner'] = tinymce.get('newcomer_banner').getContent();
-    ApiC.patch(`${Model.Team}/current`, params);
-  } else if (el.matches('[data-action="export-scheduler"]')) {
-    const from = (document.getElementById('schedulerDateFrom') as HTMLSelectElement).value;
-    const to = (document.getElementById('schedulerDateTo') as HTMLSelectElement).value;
-    window.location.href = `make.php?format=schedulerReport&start=${encodeURIComponent(from)}&end=${encodeURIComponent(to)}`;
-  // PATCH ONBOARDING EMAIL
-  } else if (el.matches('[data-action="patch-onboarding-email"]')) {
-    const key = 'onboarding_email_body';
-    ApiC.patch(`${Model.Team}/current`, {
-      [key]: tinymce.get(key).getContent(),
-    });
-  } else if (el.matches('[data-action="open-onboarding-email-modal"]')) {
-    // reload the modal in case the users of the team have changed
-    reloadElements(['sendOnboardingEmailModal'])
-      .then(() => $('#sendOnboardingEmailModal').modal('toggle'))
-      .then(() => new TomSelect('#sendOnboardingEmailToUsers', {
-        plugins: ['dropdown_input', 'no_active_items', 'remove_button'],
-      }));
-  } else if (el.matches('[data-action="send-onboarding-emails"]')) {
-    ApiC.notifOnSaved = false;
-    ApiC.patch(`${Model.Team}/current`, {
-      'action': Action.SendOnboardingEmails,
-      'userids': Array.from((document.getElementById('sendOnboardingEmailToUsers') as HTMLSelectElement).selectedOptions)
-        .map(option => parseInt(option.value, 10)),
-    }).then(response => {
-      if (response.ok) {
-        notify.success('onboarding-email-sent');
-      }
-    });
+// RUN ACTION ON SELECTED (BATCH)
+on('run-action-selected', (el: HTMLElement) => {
+  const btn = el as HTMLButtonElement;
+  const selected = getSelected();
+  if (!Object.values(selected).some(array => array.length > 0)) {
+    notify.error('nothing-selected');
+    return;
   }
-};
+  const oldHTML = mkSpin(btn);
+  selected['action'] = btn.dataset.what;
+  // we use a custom notif message, so disable the native one
+  ApiC.notifOnSaved = false;
+  ApiC.post('batch', selected).then(res => {
+    const processed = res.headers.get('location').split('/').pop();
+    notify.success('entries-processed', { num: processed });
+  }).finally(() => {
+    mkSpinStop(btn, oldHTML);
+  });
+});
+
+on('update-counter-value', (el: HTMLElement) => {
+  const counterValue = el.parentElement.parentElement.parentElement.previousElementSibling.querySelector('.counterValue');
+  const box = el as HTMLInputElement;
+  let count = parseInt(counterValue.textContent, 10);
+  if (box.checked) {
+    count += 1;
+  } else {
+    count -= 1;
+  }
+  counterValue.textContent = String(count);
+});
+
+on('create-teamgroup', () => {
+  const input = (document.getElementById('teamGroupCreate') as HTMLInputElement);
+  ApiC.post(`${Model.Team}/current/${Model.TeamGroup}`, {name: input.value}).then(() => {
+    reloadElements(['team_groups_div']);
+    input.value = '';
+  });
+});
+
+on('adduser-teamgroup', (el: HTMLElement) => {
+  const user = parseInt(el.parentNode.parentNode.querySelector('input').value, 10);
+  if (isNaN(user)) {
+    notify.error('add-user-error');
+    return;
+  }
+  ApiC.patch(
+    `${Model.Team}/current/${Model.TeamGroup}/${el.dataset.groupid}`,
+    {how: Action.Add, userid: user},
+  ).then(() => reloadElements(['team_groups_div']));
+});
+
+on('rmuser-teamgroup', (el: HTMLElement) => {
+  ApiC.patch(`${Model.Team}/current/${Model.TeamGroup}/${el.dataset.groupid}`, {how: Action.Unreference, userid: el.dataset.userid})
+    .then(() => el.parentElement.remove());
+});
+
+on('destroy-teamgroup', (el: HTMLElement) => {
+  if (confirm(i18next.t('generic-delete-warning'))) {
+    ApiC.delete(`${Model.Team}/current/${Model.TeamGroup}/${el.dataset.id}`)
+      .then(() => el.parentElement.remove());
+  }
+});
+
+on('export-category', () => {
+  const source = (document.getElementById('categoryExport') as HTMLSelectElement).value;
+  const format = (document.getElementById('categoryExportFormat') as HTMLSelectElement).value;
+  window.location.href = `make.php?format=${encodeURIComponent(format)}&category=${encodeURIComponent(source)}&type=items`;
+});
+
+on('export-user', () => {
+  const source = (document.getElementById('userExport') as HTMLSelectElement).value;
+  const format = (document.getElementById('userExportFormat') as HTMLSelectElement).value;
+  window.location.href = `make.php?format=${encodeURIComponent(format)}&owner=${encodeURIComponent(source)}&type=experiments`;
+});
+
+on('admin-add-tag', () => {
+  const tagInput = (document.getElementById('adminAddTagInput') as HTMLInputElement);
+  if (!tagInput.value) {
+    return;
+  }
+  ApiC.post(`${Model.Team}/current/${Model.Tag}`, {tag: tagInput.value}).then(() => {
+    tagInput.value = '';
+    reloadElements(['tagMgrDiv']);
+  });
+});
+
+on('patch-newcomer_banner', () => {
+  const params = {};
+  params['newcomer_banner'] = tinymce.get('newcomer_banner').getContent();
+  ApiC.patch(`${Model.Team}/current`, params);
+});
+
+on('export-scheduler', () => {
+  const from = (document.getElementById('schedulerDateFrom') as HTMLSelectElement).value;
+  const to = (document.getElementById('schedulerDateTo') as HTMLSelectElement).value;
+  window.location.href = `make.php?format=schedulerReport&start=${encodeURIComponent(from)}&end=${encodeURIComponent(to)}`;
+});
+
+on('patch-onboarding-email', () => {
+  const key = 'onboarding_email_body';
+  ApiC.patch(`${Model.Team}/current`, {
+    [key]: tinymce.get(key).getContent(),
+  });
+});
+
+on('open-onboarding-email-modal', () => {
+  // reload the modal in case the users of the team have changed
+  reloadElements(['sendOnboardingEmailModal'])
+    .then(() => $('#sendOnboardingEmailModal').modal('toggle'))
+    .then(() => new TomSelect('#sendOnboardingEmailToUsers', {
+      plugins: ['dropdown_input', 'no_active_items', 'remove_button'],
+    }));
+});
+
+on('send-onboarding-emails', () => {
+  ApiC.notifOnSaved = false;
+  ApiC.patch(`${Model.Team}/current`, {
+    'action': Action.SendOnboardingEmails,
+    'userids': Array.from((document.getElementById('sendOnboardingEmailToUsers') as HTMLSelectElement).selectedOptions)
+      .map(option => parseInt(option.value, 10)),
+  }).then(response => {
+    if (response.ok) {
+      notify.success('onboarding-email-sent');
+    }
+  });
+});
 
 if (window.location.pathname === '/admin.php') {
-  (new Tab()).init(document.querySelector('.tabbed-menu'));
   getEditor().init('admin');
 
   // edit the team group name
@@ -206,6 +220,4 @@ if (window.location.pathname === '/admin.php') {
   new MutationObserver(() => {
     malleableGroupname.listen();
   }).observe(document.getElementById('team_groups_div'), {childList: true});
-
-  document.getElementById('container').addEventListener('click', event => clickHandler(event));
 }

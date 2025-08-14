@@ -76,6 +76,7 @@ trait TwigTrait
         $limitOptions = new TwigFunction('limitOptions', '\Elabftw\Elabftw\TwigFunctions::getLimitOptions');
         $generationTime = new TwigFunction('generationTime', '\Elabftw\Elabftw\TwigFunctions::getGenerationTime');
         $memoryUsage = new TwigFunction('memoryUsage', '\Elabftw\Elabftw\TwigFunctions::getMemoryUsage');
+        $envAsBool = new TwigFunction('envAsBool', '\Elabftw\Elabftw\TwigFunctions::envAsBool');
         $numberOfQueries = new TwigFunction('numberOfQueries', '\Elabftw\Elabftw\TwigFunctions::getNumberOfQueries');
         $ext2icon = new TwigFunction('ext2icon', '\Elabftw\Elabftw\Extensions::getIconFromExtension');
         $sortIcon = new TwigFunction('sortIcon', '\Elabftw\Elabftw\TwigFunctions::getSortIcon');
@@ -113,6 +114,7 @@ trait TwigTrait
         $TwigEnvironment->addFunction($limitOptions);
         $TwigEnvironment->addFunction($generationTime);
         $TwigEnvironment->addFunction($memoryUsage);
+        $TwigEnvironment->addFunction($envAsBool);
         $TwigEnvironment->addFunction($numberOfQueries);
         $TwigEnvironment->addFunction($ext2icon);
         $TwigEnvironment->addFunction($sortIcon);

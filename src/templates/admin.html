@@ -166,11 +166,12 @@
             <div class='input-group-prepend'>
               <span class='input-group-text'><i class='fas fa-magnifying-glass'></i></span>
             </div>
-            <input type='text' class='form-control' data-complete-target='users' placeholder='{{ 'User name'|trans }}' aria-label='{{ 'User name'|trans }}'>
+            <input type='text' class='form-control' data-action='autocomplete' data-target='users' data-identifier='teamgroup-{{ teamGroup.id }}' placeholder='{{ 'User name'|trans }}' aria-label='{{ 'User name'|trans }}'>
             <div class='input-group-append'>
               <button class='btn btn-primary' data-action='adduser-teamgroup' data-groupid='{{ teamGroup.id }}' type='button'>{{ 'Add user'|trans }}</button>
             </div>
           </div>
+          <div id='autocompleteAnchorDiv_teamgroup-{{ teamGroup.id }}'></div>
         </div>
       {% endfor %}
     </div>
@@ -481,7 +482,7 @@
       <ul class='list-group mb-1' id='masscan_list_users'></ul>
       {# add user to permissions input #}
       <div class='input-group'>
-        <input id='masscan_select_users' type='text' data-identifier='masscan' data-complete-target='users' class='form-control' placeholder='{{ 'Add user'|trans }}' autocomplete='off'>
+        <input id='masscan_select_users' type='text' data-identifier='masscan' data-action='autocomplete' data-target='users' class='form-control' placeholder='{{ 'Add user'|trans }}' autocomplete='off'>
         <div class='input-group-append'>
           <button class='btn btn-primary' type='button' data-rw='canread' data-identifier='masscan' data-action='add-user-to-permissions'>{{ 'Add'|trans }}</button>
         </div>

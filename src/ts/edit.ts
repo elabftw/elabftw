@@ -20,13 +20,10 @@ import { notify } from './notify';
 import { Uploader } from './uploader';
 import { clearLocalStorage } from './localStorage';
 import { entity } from './getEntity';
+import { on } from './handlers';
 
-document.addEventListener('DOMContentLoaded', async () => {
-  // only run in edit mode
-  if (document.getElementById('info')?.dataset.page !== 'edit') {
-    return;
-  }
-
+const mode = new URLSearchParams(window.location.search).get('mode');
+if (mode === 'edit') {
   // remove exclusive edit mode when leaving the page
   window.onbeforeunload = function() {
     ApiC.notifOnSaved = false;
@@ -72,133 +69,123 @@ document.addEventListener('DOMContentLoaded', async () => {
   // END DATA RECOVERY
   ////////////////////
 
-  // Add click listener and do action based on which element is clicked
-  document.querySelector('.real-container').addEventListener('click', event => {
-    const el = (event.target as HTMLElement);
-    // GET NEXT CUSTOM ID
-    if (el.matches('[data-action="get-next-custom-id"]')) {
-      // fetch the category from the current value of select, as it might be different from the one on page load
-      const category = (document.getElementById('categoryBtn') as HTMLButtonElement).dataset.id;
-      if (category === '0') {
-        notify.error('error-no-category');
-        return;
-      }
-      const inputEl = document.getElementById('custom_id_input') as HTMLInputElement;
-      inputEl.classList.remove('is-invalid');
-      // lock the button
-      const button = el as HTMLButtonElement;
-      button.disabled = true;
-      // make sure the current id is null or it will increment this one
-      const params = {};
-      params[Target.Customid] = null;
-      ApiC.notifOnSaved = false;
-      ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => {
-        ApiC.notifOnSaved = true;
-        // get the entity with highest custom_id
-        return ApiC.getJson(`${el.dataset.endpoint}/?cat=${category}&order=customid&limit=1&sort=desc&scope=3&skip_pinned=1`);
-      }).then(json => {
-        const nextId = json[0].custom_id + 1;
-        inputEl.value = nextId;
-        const params = {};
-        params[Target.Customid] = nextId;
-        return ApiC.patch(`${entity.type}/${entity.id}`, params);
-      }).finally(() => {
-        // unlock the button
-        button.disabled = false;
-      });
-
-    // ANNOTATE IMAGE
-    } else if (el.matches('[data-action="annotate-image"]')) {
-      // show doodle canvas
-      const doodleDiv = document.getElementById('doodleDiv');
-      doodleDiv.removeAttribute('hidden');
-      doodleDiv.scrollIntoView({behavior: 'smooth'});
-      // adjust caret icon
-      const doodleDivIcon = document.getElementById('doodleDivIcon');
-      doodleDivIcon.classList.remove('fa-caret-right');
-      doodleDivIcon.classList.add('fa-caret-down');
-
-      const context: CanvasRenderingContext2D = (document.getElementById('doodleCanvas') as HTMLCanvasElement).getContext('2d');
-      const img = new Image();
-      // set src attribute to image path
-      img.addEventListener('load', function() {
-        // make canvas bigger than image
-        context.canvas.width = (this as HTMLImageElement).width * 2;
-        context.canvas.height = (this as HTMLImageElement).height * 2;
-        // add image to canvas
-        context.drawImage(img, (this as HTMLImageElement).width / 2, (this as HTMLImageElement).height / 2);
-      });
-      img.src = `app/download.php?storage=${el.dataset.storage}&f=${el.dataset.path}`;
-
-    // IMPORT BODY OF LINKED ITEM INTO EDITOR
-    } else if (el.matches('[data-action="import-link-body"]')) {
-      // this is in this file and not in steps-links-edit because here `editor`
-      // exists and is reachable
-      ApiC.getJson(`${el.dataset.endpoint}/${el.dataset.target}`).then(json => {
-        editor.setContent(json.body);
-      });
-
-    // IMPORT STEP INTO BODY
-    } else if (el.matches('[data-action="import-step-body"]')) {
-      ApiC.getJson(`${entity.type}/${entity.id}/${Model.Step}/${el.dataset.stepid}`).then(json => {
-        let content = `<a href='?mode=view&id=${entity.id}&highlightstep=${el.dataset.stepid}#step_view_${el.dataset.stepid}'>${json.body}</a>`;
-        // markdown
-        if (editor.type === 'md') {
-          content = `[${json.body}](?mode=view&id=${entity.id}&highlightstep=${el.dataset.stepid}#step_view_${el.dataset.stepid})`;
-        }
-        return editor.setContent(content);
-      });
-
-    // INSERT IMAGE AT CURSOR POSITION IN TEXT
-    } else if (el.matches('[data-action="insert-image-in-body"]')) {
-      // link to the image
-      const url = `app/download.php?name=${el.dataset.name}&f=${el.dataset.link}&storage=${el.dataset.storage}`;
-      // switch for markdown or tinymce editor
-      let content: string;
-      if (editor.type === 'md') {
-        content = '\n![image](' + url + ')\n';
-      } else if (editor.type === 'tiny') {
-        content = '<img src="' + url + '" />';
-      }
-      editor.setContent(content);
-
-    // INSERT VIDEO AT CURSOR POSITION IN TEXT
-    } else if (el.matches('[data-action="insert-video-in-body"]')) {
-      // link to the video
-      const url = `app/download.php?name=${encodeURIComponent(el.dataset.name)}&f=${encodeURIComponent(el.dataset.link)}&storage=${encodeURIComponent(el.dataset.storage)}`;
-      // no syntax for video in markdown; use plain html in both cases
-      const video = document.createElement('video');
-      const source = document.createElement('source');
-      source.src = url;
-      video.width = 640;
-      video.controls = true;
-      video.appendChild(source);
-      editor.setContent(video.outerHTML);
-
-    // INSERT AUDIO AT CURSOR POSITION IN TEXT
-    } else if (el.matches('[data-action="insert-audio-in-body"]')) {
-      // link to the video
-      const url = `app/download.php?name=${encodeURIComponent(el.dataset.name)}&f=${encodeURIComponent(el.dataset.link)}&storage=${encodeURIComponent(el.dataset.storage)}`;
-      // no syntax for audio in markdown; use plain html in both cases
-      const audio = document.createElement('audio');
-      audio.src = url;
-      audio.controls = true;
-      editor.setContent(audio.outerHTML);
-
-    // ADD CONTENT OF PLAIN TEXT FILES AT CURSOR POSITION IN TEXT
-    } else if (el.matches('[data-action="insert-plain-text"]')) {
-      fetch(`app/download.php?storage=${el.dataset.storage}&f=${el.dataset.path}`).then(response => {
-        return response.text();
-      }).then(fileContent => {
-        const specialChars = {
-          '<': '&lt;',
-          '>': '&gt;',
-        };
-
-        // wrap in pre element to retain whitespace, html encode '<' and '>'
-        editor.setContent('<pre>' + fileContent.replace(/[<>]/g, char => specialChars[char]) + '</pre>');
-      });
+  on('get-next-custom-id', (el: HTMLElement) => {
+    // fetch the category from the current value of select, as it might be different from the one on page load
+    const category = (document.getElementById('categoryBtn') as HTMLButtonElement).dataset.id;
+    if (category === '0') {
+      notify.error('error-no-category');
+      return;
     }
+    const inputEl = document.getElementById('custom_id_input') as HTMLInputElement;
+    inputEl.classList.remove('is-invalid');
+    // lock the button
+    const button = el as HTMLButtonElement;
+    button.disabled = true;
+    // make sure the current id is null or it will increment this one
+    const params = {};
+    params[Target.Customid] = null;
+    ApiC.notifOnSaved = false;
+    ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => {
+      ApiC.notifOnSaved = true;
+      // get the entity with highest custom_id
+      return ApiC.getJson(`${el.dataset.endpoint}/?cat=${category}&order=customid&limit=1&sort=desc&scope=3&skip_pinned=1`);
+    }).then(json => {
+      const nextId = json[0].custom_id + 1;
+      inputEl.value = nextId;
+      const params = {};
+      params[Target.Customid] = nextId;
+      return ApiC.patch(`${entity.type}/${entity.id}`, params);
+    }).finally(() => {
+      // unlock the button
+      button.disabled = false;
+    });
+  });
+
+  on('annotate-image', (el: HTMLElement) => {
+    // show doodle canvas
+    const doodleDiv = document.getElementById('doodleDiv');
+    doodleDiv.removeAttribute('hidden');
+    doodleDiv.scrollIntoView({behavior: 'smooth'});
+    // adjust caret icon
+    const doodleDivIcon = document.getElementById('doodleDivIcon');
+    doodleDivIcon.classList.remove('fa-caret-right');
+    doodleDivIcon.classList.add('fa-caret-down');
+
+    const context: CanvasRenderingContext2D = (document.getElementById('doodleCanvas') as HTMLCanvasElement).getContext('2d');
+    const img = new Image();
+    // set src attribute to image path
+    img.addEventListener('load', function() {
+      // make canvas bigger than image
+      context.canvas.width = (this as HTMLImageElement).width * 2;
+      context.canvas.height = (this as HTMLImageElement).height * 2;
+      // add image to canvas
+      context.drawImage(img, (this as HTMLImageElement).width / 2, (this as HTMLImageElement).height / 2);
+    });
+    img.src = `app/download.php?storage=${el.dataset.storage}&f=${el.dataset.path}`;
+  });
+
+  on('import-link-body', (el: HTMLElement) => {
+    // this is in this file and not in steps-links-edit because here `editor`
+    // exists and is reachable
+    ApiC.getJson(`${el.dataset.endpoint}/${el.dataset.target}`).then(json => {
+      editor.setContent(json.body);
+    });
+  });
+  on('import-step-body', (el: HTMLElement) => {
+    ApiC.getJson(`${entity.type}/${entity.id}/${Model.Step}/${el.dataset.stepid}`).then(json => {
+      let content = `<a href='?mode=view&id=${entity.id}&highlightstep=${el.dataset.stepid}#step_view_${el.dataset.stepid}'>${json.body}</a>`;
+      // markdown
+      if (editor.type === 'md') {
+        content = `[${json.body}](?mode=view&id=${entity.id}&highlightstep=${el.dataset.stepid}#step_view_${el.dataset.stepid})`;
+      }
+      return editor.setContent(content);
+    });
+  });
+  on('insert-image-in-body', (el: HTMLElement) => {
+    // link to the image file
+    const url = `app/download.php?name=${el.dataset.name}&f=${el.dataset.link}&storage=${el.dataset.storage}`;
+    // switch for markdown or tinymce editor
+    let content: string;
+    if (editor.type === 'md') {
+      content = '\n![image](' + url + ')\n';
+    } else if (editor.type === 'tiny') {
+      content = '<img src="' + url + '" />';
+    }
+    editor.setContent(content);
+  });
+  on('insert-video-in-body', (el: HTMLElement) => {
+    // link to the video file
+    const url = `app/download.php?name=${encodeURIComponent(el.dataset.name)}&f=${encodeURIComponent(el.dataset.link)}&storage=${encodeURIComponent(el.dataset.storage)}`;
+    // no syntax for video in markdown; use plain html in both cases
+    const video = document.createElement('video');
+    const source = document.createElement('source');
+    source.src = url;
+    video.width = 640;
+    video.controls = true;
+    video.appendChild(source);
+    editor.setContent(video.outerHTML);
+  });
+  on('insert-audio-in-body', (el: HTMLElement) => {
+    // link to the audio file
+    const url = `app/download.php?name=${encodeURIComponent(el.dataset.name)}&f=${encodeURIComponent(el.dataset.link)}&storage=${encodeURIComponent(el.dataset.storage)}`;
+    // no syntax for audio in markdown; use plain html in both cases
+    const audio = document.createElement('audio');
+    audio.src = url;
+    audio.controls = true;
+    editor.setContent(audio.outerHTML);
+  });
+
+  on('insert-plain-text', (el: HTMLElement) => {
+    fetch(`app/download.php?storage=${el.dataset.storage}&f=${el.dataset.path}`).then(response => {
+      return response.text();
+    }).then(fileContent => {
+      const specialChars = {
+        '<': '&lt;',
+        '>': '&gt;',
+      };
+      // wrap in pre element to retain whitespace, html encode '<' and '>'
+      editor.setContent('<pre>' + fileContent.replace(/[<>]/g, char => specialChars[char]) + '</pre>');
+    });
   });
 
   // REPLACE UPLOADED FILE
@@ -250,4 +237,4 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
     }
   });
-});
+}

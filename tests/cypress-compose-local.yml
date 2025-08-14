@@ -1,3 +1,4 @@
+# use this to run cypress in a container with bind-mounted specs
 networks:
     elabftw-net:
 services:
@@ -9,5 +10,7 @@ services:
       context: ..
       dockerfile: ./tests/elab-cypress.Dockerfile
     container_name: elab-cypress
+    volumes:
+      - ./cypress:/home/node/tests/cypress
     networks:
       - elabftw-net

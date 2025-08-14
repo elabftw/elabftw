@@ -7,19 +7,13 @@
  */
 import Todolist from './Todolist.class';
 import { Model } from './interfaces';
+import { core } from './core';
 
-document.addEventListener('DOMContentLoaded', () => {
-  if (!document.getElementById('todolistPanel')) {
-    return;
-  }
+if (document.getElementById('todolistPanel') && !core.isAnon) {
 
   let unfinishedStepsScope = 'user';
   // unfinished steps scopeSwitch i.e. user (0) or team (1)
   let scopeSwitch = document.getElementById(Model.Todolist + 'StepsShowTeam') as HTMLInputElement;
-  // anon user
-  if (scopeSwitch === null) {
-    return;
-  }
   const storageScopeSwitch = localStorage.getItem(Model.Todolist + 'StepsShowTeam');
   // adjust scope from localStorage
   if (scopeSwitch.checked && storageScopeSwitch === '0') {
@@ -88,4 +82,4 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   });
-});
+}

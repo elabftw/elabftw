@@ -7,17 +7,15 @@
  */
 import { ApiC } from './api';
 import { notify } from './notify';
-import Tab from './Tab.class';
-import { collectForm, relativeMoment, reloadElements } from './misc';
+import { collectForm, reloadElements } from './misc';
 import i18next from './i18n';
+import { on } from './handlers';
 
-const clickHandler = (event: MouseEvent) => {
-  const el = (event.target as HTMLElement);
-  if (el.matches('[data-action="show-file-input"]')) {
-    document.getElementById('importFileInput').click();
-  }
-  // CREATE EXPORT
-  if (el.matches('[data-action="create-export"]')) {
+if (window.location.pathname === '/profile.php') {
+  // we use a normal button to trigger the actual file input
+  on('show-file-input', () => document.getElementById('importFileInput').click());
+
+  on('create-export', () => {
     const params = collectForm(document.getElementById('exportForm'));
     const urlParams = new URLSearchParams(params as URLSearchParams);
     ApiC.post('exports', {
@@ -29,16 +27,11 @@ const clickHandler = (event: MouseEvent) => {
       changelog: urlParams.get('changelog'),
       pdfa: urlParams.get('pdfa'),
       json: urlParams.get('json'),
-    }).then(() => reloadElements(['exportedFilesTable']).then(() => relativeMoment()));
+    }).then(() => reloadElements(['exportedFilesTable']));
+  });
 
-  // DESTROY EXPORT
-  } else if (el.matches('[data-action="destroy-export"]')) {
-    ApiC.delete(`exports/${el.dataset.id}`).then(() => reloadElements(['exportedFilesTable']).then(() => relativeMoment()));
-  }
-};
-
-if (window.location.pathname === '/profile.php') {
-  (new Tab()).init(document.querySelector('.tabbed-menu'));
+  on('destroy-export', (el: HTMLElement) => ApiC.delete(`exports/${el.dataset.id}`)
+    .then(() => reloadElements(['exportedFilesTable'])));
 
   document.getElementById('importFileInput')?.addEventListener('change', async function(event) {
     const importOptionsDiv = document.getElementById('importOptionsDiv') as HTMLElement;
@@ -136,6 +129,4 @@ if (window.location.pathname === '/profile.php') {
       submitBtn.textContent = originalBtnContent;
     });
   });
-
-  document.getElementById('container').addEventListener('click', event => clickHandler(event));
 }

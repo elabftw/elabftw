@@ -85,7 +85,10 @@
   data-sc-disabled='{{ App.Users.userData.disable_shortcuts|default('0') }}'
   ></div>
 
-{% if App.Session.has('is_auth') %}
-  {# this is here for the heartbeat #}
-  <div id='is-auth'></div>
-{% endif %}
+{# this is read by JS to get info about the state of current user #}
+<script type='application/json' id='core'>
+  {
+    "isAnon": {{ App.Session.has('is_anon') ? 'true' : 'false' }},
+    "isAuth": {{ App.Session.has('is_auth') ? 'true' : 'false' }}
+  }
+</script>

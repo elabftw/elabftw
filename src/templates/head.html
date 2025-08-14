@@ -118,7 +118,7 @@
               <div class='dropdown-menu'>
                 <a class='dropdown-item' href='compounds.php'><i class='fas fa-flask fa-fw'></i>{{ 'Compounds'|trans }}</a>
                 <a class='dropdown-item' href='chem-editor.php'><i class='fas fa-pen-to-square fa-fw'></i> {{ 'Chemical Structure Editor'|trans }}</a>
-                <a class='dropdown-item {{ not App.Config.boolFromEnv('USE_OPENCLONING') ? 'disabled' }}' href='syc.php'><i class='fas fa-dna fa-fw'></i> {{ 'OpenCloning'|trans }}</a>
+                <a class='dropdown-item {{ not envAsBool('USE_OPENCLONING') ? 'disabled' }}' href='syc.php'><i class='fas fa-dna fa-fw'></i> {{ 'OpenCloning'|trans }}</a>
                 <a class='dropdown-item' href='inventory.php'><i class='fas fa-warehouse fa-fw'></i> {{ 'Inventory'|trans }}</a>
               </div>
             </div>
@@ -218,7 +218,3 @@
         <p class='font-weight-bold'>Javascript is disabled. Please enable Javascript to view eLabFTW in all its glory.</p>
     </div>
 </noscript>
-
-<script type='application/json' id='core'>
-  {"isAnon": {{ App.Session.has('is_anon') ? 'true' : 'false' }} }
-</script>

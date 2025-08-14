@@ -12,7 +12,7 @@ export default defineConfig({
   viewportHeight: 900,
   e2e: {
     setupNodeEvents(on, config) {
-      installLogsPrinter(on, { printLogsToConsole: 'always' });
+      installLogsPrinter(on, { printLogsToConsole: 'onFail' });
       htmlvalidate.install(
         on,
         {

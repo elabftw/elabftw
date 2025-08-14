@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Compound;
+use JsonException;
 
 use function usleep;
 use function rawurlencode;
@@ -42,21 +43,29 @@ final class PubChemImporter
     {
         usleep(self::REQ_DELAY);
         $json = $this->httpGetter->get(sprintf('%s/compound/xref/RegistryID/%s/cids/json', $this->pugUrl, rawurlencode($cas)));
-        $decoded = json_decode($json, true, 10, JSON_THROW_ON_ERROR);
-        return $decoded['IdentifierList']['CID'] ?? array();
+        return $this->decodeCidList($json);
     }
 
     public function getCidFromName(string $name): array
     {
         usleep(self::REQ_DELAY);
         $json = $this->httpGetter->get(sprintf('%s/compound/name/%s/cids/json', $this->pugUrl, rawurlencode($name)));
-        $decoded = json_decode($json, true, 10, JSON_THROW_ON_ERROR);
-        return $decoded['IdentifierList']['CID'] ?? array();
+        return $this->decodeCidList($json);
     }
 
     public function fromPugView(int $cid): Compound
     {
         usleep(self::REQ_DELAY);
         return Compound::fromPugView($this->httpGetter->get(sprintf('%s/compound/%d/json', $this->pugViewUrl, $cid)));
+    }
+
+    private function decodeCidList(string $json): array
+    {
+        try {
+            $decoded = json_decode($json, true, 10, JSON_THROW_ON_ERROR);
+        } catch (JsonException) {
+            return array();
+        }
+        return $decoded['IdentifierList']['CID'] ?? array();
     }
 }

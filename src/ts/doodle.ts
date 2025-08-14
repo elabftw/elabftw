@@ -15,11 +15,11 @@ if (doodleCanvas) {
 
   const hasPointer = 'onpointerdown' in window;
   // store the clicks
-  let clickX = [];
-  let clickY = [];
+  let clickX: number[] = [];
+  let clickY: number[] = [];
   // bool to store the state of painting
-  let isPainting: boolean;
-  let wasPainting: boolean;
+  let isPainting = false;
+  let wasPainting = false;
 
   const context: CanvasRenderingContext2D = doodleCanvas.getContext('2d');
 
@@ -87,7 +87,7 @@ if (doodleCanvas) {
   });
 
   /**
-   * mouse events
+   * Pointer Events (mouse/pen)
    */
   if (hasPointer) {
     doodleCanvas.addEventListener('pointerdown', (e) => {
@@ -127,7 +127,7 @@ if (doodleCanvas) {
         const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
         addClick(e.clientX - rect.left, e.clientY - rect.top, true);
         isPainting = false;
-        if (e.buttons !== 0) {
+        if (e.buttons !== 0 || e.pressure > 0) {
           wasPainting = true;
         }
       }
@@ -140,6 +140,7 @@ if (doodleCanvas) {
         wasPainting = false;
         const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
         addClick(e.clientX - rect.left, e.clientY - rect.top, false);
+        doodleCanvas.setPointerCapture?.(e.pointerId);
       }
     }, {passive: false});
 
@@ -157,7 +158,10 @@ if (doodleCanvas) {
       doodleCanvas.releasePointerCapture?.(e.pointerId);
     }, {passive: true});
 
-  } else { // touch events
+  /*
+   * Touch events
+   */
+  } else {
     doodleCanvas.addEventListener('touchstart', (e) => {
       if (e.touches.length === 1) {
         e.preventDefault();

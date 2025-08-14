@@ -15,6 +15,7 @@ namespace Elabftw\Services;
 use Elabftw\Elabftw\Compound;
 
 use function usleep;
+use function rawurlencode;
 
 /**
  * Import a compound from PubChem
@@ -40,17 +41,17 @@ final class PubChemImporter
     public function getCidFromCas(string $cas): array
     {
         usleep(self::REQ_DELAY);
-        $json = $this->httpGetter->get(sprintf('%s/compound/xref/RegistryID/%s/cids/json', $this->pugUrl, $cas));
-        $decoded = json_decode($json, true, 10);
-        return $decoded['IdentifierList']['CID'];
+        $json = $this->httpGetter->get(sprintf('%s/compound/xref/RegistryID/%s/cids/json', $this->pugUrl, rawurlencode($cas)));
+        $decoded = json_decode($json, true, 10, JSON_THROW_ON_ERROR);
+        return $decoded['IdentifierList']['CID'] ?? array();
     }
 
     public function getCidFromName(string $name): array
     {
         usleep(self::REQ_DELAY);
-        $json = $this->httpGetter->get(sprintf('%s/compound/name/%s/cids/json', $this->pugUrl, $name));
-        $decoded = json_decode($json, true, 10);
-        return $decoded['IdentifierList']['CID'];
+        $json = $this->httpGetter->get(sprintf('%s/compound/name/%s/cids/json', $this->pugUrl, rawurlencode($name)));
+        $decoded = json_decode($json, true, 10, JSON_THROW_ON_ERROR);
+        return $decoded['IdentifierList']['CID'] ?? array();
     }
 
     public function fromPugView(int $cid): Compound

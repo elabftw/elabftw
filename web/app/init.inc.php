@@ -61,7 +61,7 @@ try {
         $Config = Config::getConfig();
     } catch (DatabaseErrorException | PDOException $e) {
         $Logger->critical('', array('Exception' => $e));
-        throw new ImproperActionException('<html><body style="padding:8vmin;background-color: #dbdbdb;color: #343434;font-family: sans-serif"><h1>Error encountered during MySQL initialization</h1><h2>Possible solutions:</h2><ul style="line-height:150%"><li>Make sure the database is initialized with <code style="background-color: black;color:white;padding:5px;border-radius: 5px;font-weight: bold">docker exec elabftw bin/init db:install</code></li><li>Make sure credentials for MySQL are correct in the YAML config file</li><li>Make sure the database is operational and reachable (firewalls)</li></ul></body></html>');
+        throw new ImproperActionException('<html><body style="padding:8vmin;background-color: #dbdbdb;color: #343434;font-family: sans-serif"><h1>Error encountered during MySQL initialization</h1><h2>Possible solutions:</h2><ul style="line-height:150%"><li>Make sure the database is initialized with <code style="background-color: black;color:white;padding:5px;border-radius: 5px;font-weight: bold">docker exec elabftw bin/init db:install</code></li><li>Make sure hostname and credentials for MySQL are correctly configured through environment variables</li><li>Make sure the database is operational and reachable (firewalls)</li></ul></body></html>');
     }
 
     // CSRF

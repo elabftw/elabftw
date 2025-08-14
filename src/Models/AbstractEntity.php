@@ -29,6 +29,7 @@ use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\Meaning;
+use Elabftw\Enums\Messages;
 use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\State;
@@ -36,6 +37,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Interfaces\ContentParamsInterface;
@@ -651,7 +653,7 @@ abstract class AbstractEntity extends AbstractRest
         }
 
         if (!$permissions[$rw]) {
-            throw new IllegalActionException('User tried to access entity without permission.');
+            throw new UnauthorizedException(Messages::InsufficientPermissions->toHuman());
         }
     }
 

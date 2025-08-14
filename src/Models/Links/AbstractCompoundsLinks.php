@@ -64,6 +64,7 @@ abstract class AbstractCompoundsLinks extends AbstractRest
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
+        $this->Entity->canOrExplode('write');
         return match ($action) {
             Action::Create => $this->create(),
             //Action::Duplicate => $this->import(),

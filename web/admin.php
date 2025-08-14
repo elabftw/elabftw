@@ -120,6 +120,7 @@ try {
         'scopedTeamgroupsArr' => $TeamGroups->readScopedTeamgroups(),
         'storageUnitsArr' => (new StorageUnits($App->Users))->readAllRecursive(),
         'teamStats' => $teamStats,
+        'teamsArr' => $App->Teams->readAllComplete(),
         'visibleTeamsArr' => $App->Teams->readAllVisible(),
         'unvalidatedUsersArr' => $unvalidatedUsersArr,
         'usersArr' => $usersArr,

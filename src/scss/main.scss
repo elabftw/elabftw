@@ -1823,3 +1823,8 @@ input:user-invalid {
   max-height: 500px;
   overflow: scroll;
 }
+
+// disable touch action for doodle canvas
+#doodleCanvas {
+  touch-action: none;
+}

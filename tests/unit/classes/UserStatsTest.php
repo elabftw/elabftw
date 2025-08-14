@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 
 class UserStatsTest extends \PHPUnit\Framework\TestCase
 {

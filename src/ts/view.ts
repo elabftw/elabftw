@@ -7,54 +7,15 @@
  */
 import i18next from './i18n';
 import { InputType, Malle } from '@deltablot/malle';
-import { Api } from './Apiv2.class';
-import { getEntity, relativeMoment, reloadElements } from './misc';
-import { Model } from './interfaces';
+import { ApiC } from './api';
+import { relativeMoment, reloadElements } from './misc';
+import { Action, Model } from './interfaces';
+import { entity } from './getEntity';
+import { on } from './handlers';
+import { core } from './core';
 
-document.addEventListener('DOMContentLoaded', () => {
-
-  if (!document.getElementById('info')) {
-    return;
-  }
-  // holds info about the page through data attributes
-  const about = document.getElementById('info').dataset;
-
-  // only run in view mode
-  if (about.page !== 'view' && about.page !== 'template-view') {
-    return;
-  }
-
-  // add the title in the page name (see #324)
-  document.title = document.getElementById('documentTitle').textContent + ' - eLabFTW';
-
-  const entity = getEntity();
-  const ApiC = new Api();
-
-  // Add click listener and do action based on which element is clicked
-  document.querySelector('.real-container').addEventListener('click', (event) => {
-    const el = (event.target as HTMLElement);
-    // CREATE COMMENT
-    if (el.matches('[data-action="create-comment"]')) {
-      const content = (document.getElementById('commentsCreateArea') as HTMLTextAreaElement).value;
-      ApiC.post(`${entity.type}/${entity.id}/${Model.Comment}`, {'comment': content}).then(() => {
-        reloadElements(['commentsDiv']).then(() => {
-          malleableComments.listen();
-          relativeMoment();
-        });
-      });
-
-    // DESTROY COMMENT
-    } else if (el.matches('[data-action="destroy-comment"]')) {
-      if (confirm(i18next.t('generic-delete-warning'))) {
-        ApiC.delete(`${entity.type}/${entity.id}/${Model.Comment}/${el.dataset.id}`).then(() => el.parentElement.parentElement.remove());
-      }
-    }
-  });
-
-  if (about.isanon) {
-    return;
-  }
-
+const mode = new URLSearchParams(window.location.search).get('mode');
+if (mode === 'view') {
   // UPDATE MALLEABLE COMMENT
   const malleableComments = new Malle({
     cancel : i18next.t('cancel'),
@@ -77,6 +38,33 @@ document.addEventListener('DOMContentLoaded', () => {
     submitClasses: ['button', 'btn', 'btn-primary', 'mt-2'],
     tooltip: i18next.t('click-to-edit'),
   });
-  // listen on existing comments
-  malleableComments.listen();
-});
+
+  on('create-comment', () => {
+    const content = (document.getElementById('commentsCreateArea') as HTMLTextAreaElement).value;
+    ApiC.post(`${entity.type}/${entity.id}/${Model.Comment}`, {comment: content}).then(() => {
+      reloadElements(['commentsDiv']).then(() => {
+        malleableComments.listen();
+        relativeMoment();
+      });
+    });
+  });
+
+  on('destroy-comment', (el: HTMLElement) => {
+    if (confirm(i18next.t('generic-delete-warning'))) {
+      ApiC.delete(`${entity.type}/${entity.id}/${Model.Comment}/${el.dataset.id}`).then(() => el.parentElement.parentElement.remove());
+    }
+  });
+
+  on('restore-entity', () => {
+    ApiC.patch(`${entity.type}/${entity.id}`, { action: Action.Restore })
+      .then(() => window.location.href = `?mode=view&id=${entity.id}`);
+  });
+
+  // add the title in the page name (see #324)
+  document.title = document.getElementById('documentTitle').textContent + ' - eLabFTW';
+
+  if (!core.isAnon) {
+    // listen on existing comments
+    malleableComments.listen();
+  }
+}

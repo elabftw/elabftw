@@ -1,6 +1,7 @@
 import { defineConfig } from 'cypress';
 import htmlvalidate from 'cypress-html-validate/plugin';
 import { Severity } from 'html-validate';
+import installLogsPrinter from 'cypress-terminal-report/src/installLogsPrinter';
 
 export default defineConfig({
   fixturesFolder: 'tests/cypress/fixtures',
@@ -11,6 +12,7 @@ export default defineConfig({
   viewportHeight: 900,
   e2e: {
     setupNodeEvents(on, config) {
+      installLogsPrinter(on, { printLogsToConsole: 'always' });
       htmlvalidate.install(
         on,
         {
@@ -25,7 +27,7 @@ export default defineConfig({
             'valid-autocomplete': Severity.DISABLED,
             'require-sri': [Severity.ERROR, {
               target: 'crossorigin',
-              exclude: ['https://elabtmp'], // this is treated as crossorigin so we exclude it
+              exclude: ['https://elabtmp', 'https://elab.local:3148'], // this is treated as crossorigin so we exclude it
             }],
           },
         },

@@ -19,9 +19,9 @@ use Elabftw\Interfaces\ImportInterface;
 use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\ItemsStatus;
-use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\ResourcesCategories;
 use Elabftw\Models\Teams;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Override;
 
@@ -71,17 +71,14 @@ abstract class AbstractImport implements ImportInterface
         return $Status->getIdempotentIdFromTitle($status);
     }
 
-    protected function getCategoryId(EntityType $type, Users $author, string $category, ?string $color = null): int
+    protected function getCategoryId(EntityType $type, string $title, ?string $color = null): int
     {
         if ($type === EntityType::Experiments || $type === EntityType::Templates) {
             $Category = new ExperimentsCategories($this->Teams);
         } else { // items
-            $Category = new ItemsTypes($author);
-            // yes, this opens it up to normal users that normally cannot create status and category,
-            // but user experience takes over this consideration here
-            $Category->bypassWritePermission = true;
+            $Category = new ResourcesCategories($this->Teams);
         }
-        return $Category->getIdempotentIdFromTitle($category, $color);
+        return $Category->getIdempotentIdFromTitle($title, $color);
     }
 
     /**

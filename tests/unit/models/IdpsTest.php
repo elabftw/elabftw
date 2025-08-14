@@ -13,6 +13,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\IdpsHelper;
 use Elabftw\Enums\Action;
+use Elabftw\Models\Users\Users;
 
 class IdpsTest extends \PHPUnit\Framework\TestCase
 {

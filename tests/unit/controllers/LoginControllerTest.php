@@ -16,7 +16,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\QuantumException;
 use Elabftw\Models\Config;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Monolog\Logger;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -183,5 +183,64 @@ class LoginControllerTest extends \PHPUnit\Framework\TestCase
         $res = $LoginController->getResponse();
         $this->assertInstanceOf(Response::class, $res);
         $this->assertSame('/index.php', $res->headers->get('Location'));
+    }
+
+    public function testAuthDemo(): void
+    {
+        $Request = Request::createFromGlobals();
+        $Request->request->set('auth_type', 'demo');
+        $Request->request->set('email', 'user2@demo.elabftw.net');
+        new LoginController(
+            Config::getConfig(),
+            $Request,
+            new Session(),
+            new Logger('test'),
+            new Users(1, 1),
+            demoMode: true,
+        )->getResponse();
+    }
+
+    public function testAuthDemoNotInDemo(): void
+    {
+        $this->expectException(ImproperActionException::class);
+        new LoginController(
+            Config::getConfig(),
+            Request::createFromGlobals(),
+            new Session(),
+            new Logger('test'),
+            new Users(1, 1),
+        )->getResponse();
+    }
+
+    public function testAuthDemoInvalidEmailUserNotExist(): void
+    {
+        $Request = Request::createFromGlobals();
+        $Request->request->set('auth_type', 'demo');
+        $Request->request->set('email', 'sysadmin@AHAHAHAHAHAHAHAHAHA.com');
+        $this->expectException(QuantumException::class);
+        new LoginController(
+            Config::getConfig(),
+            $Request,
+            new Session(),
+            new Logger('test'),
+            new Users(1, 1),
+            demoMode: true,
+        )->getResponse();
+    }
+
+    public function testAuthDemoInvalidEmail(): void
+    {
+        $Request = Request::createFromGlobals();
+        $Request->request->set('auth_type', 'demo');
+        $Request->request->set('email', 'toto@yopmail.com');
+        $this->expectException(QuantumException::class);
+        new LoginController(
+            Config::getConfig(),
+            $Request,
+            new Session(),
+            new Logger('test'),
+            new Users(1, 1),
+            demoMode: true,
+        )->getResponse();
     }
 }

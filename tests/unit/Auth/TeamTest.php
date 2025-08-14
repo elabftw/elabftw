@@ -13,8 +13,8 @@ namespace Elabftw\Auth;
 
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Enums\Action;
-use Elabftw\Models\UltraAdmin;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\UltraAdmin;
+use Elabftw\Models\Users\Users;
 
 class TeamTest extends \PHPUnit\Framework\TestCase
 {

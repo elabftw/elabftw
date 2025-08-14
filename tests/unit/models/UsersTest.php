@@ -19,6 +19,8 @@ use Elabftw\Enums\Users2TeamsTargets;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Models\Users\Users;
+use Elabftw\Params\UserParams;
 use Elabftw\Traits\TestsUtilsTrait;
 
 class UsersTest extends \PHPUnit\Framework\TestCase
@@ -136,6 +138,13 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         );
         $result = $this->Users->patch(Action::Update, $prefsArr);
         $this->assertEquals(12, $result['limit_nb']);
+    }
+
+    public function testUpdateCanManageUsers2TeamsAsUser(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $this->expectException(IllegalActionException::class);
+        $user->update(new UserParams('can_manage_users2teams', '1'));
     }
 
     public function testReadAll(): void

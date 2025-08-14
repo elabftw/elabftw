@@ -15,16 +15,16 @@ namespace Elabftw\Auth;
 use DateTimeImmutable;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\AuthResponse;
+use Elabftw\Elabftw\Env;
 use Elabftw\Enums\Messages;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthInterface;
-use Elabftw\Models\Config;
-use Elabftw\Models\ExistingUser;
+use Elabftw\Models\Users\ExistingUser;
 use Elabftw\Models\Teams;
-use Elabftw\Models\Users;
-use Elabftw\Models\ValidatedUser;
+use Elabftw\Models\Users\Users;
+use Elabftw\Models\Users\ValidatedUser;
 use Elabftw\Params\UserParams;
 use Elabftw\Services\UsersHelper;
 use Lcobucci\JWT\Configuration;
@@ -64,7 +64,7 @@ final class Saml implements AuthInterface
 
     public static function getJWTConfig(): Configuration
     {
-        $secretKey = Key::loadFromAsciiSafeString(Config::fromEnv('SECRET_KEY'));
+        $secretKey = Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY'));
         /** @psalm-suppress ArgumentTypeCoercion */
         $config = Configuration::forSymmetricSigner(
             new Sha256(),

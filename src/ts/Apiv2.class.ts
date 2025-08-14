@@ -7,9 +7,7 @@
  */
 import { Method } from './interfaces';
 import { getNewIdFromPostRequest } from './misc';
-import { Notification } from './Notifications.class';
-
-const notify = new Notification();
+import { notify } from './notify';
 
 export class Api {
   // set this to false to prevent the "Saved" notification from showing up

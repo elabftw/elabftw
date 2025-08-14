@@ -11,7 +11,7 @@
         {# TITLE #}
         <h1 class='text-dark' >
           {% if Entity.entityData.custom_id %}
-            <span title='{{ 'Custom ID'|trans }}' class='custom-id-badge'>{{ Entity.entityData.custom_id }}</span>
+            <span title='{{ 'Custom ID'|trans }}' class='color-medium'>{{ Entity.entityData.custom_id }}</span>
           {% endif %}
            <!-- [html-validate-disable-block prefer-native-element: suppress error from malle] -->
           <span id='documentTitle' class='breakable malleableTitle hl-hover-gray rounded py-1' data-target='title' data-endpoint='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}'>{{ Entity.entityData.title }}</span>
@@ -49,12 +49,6 @@
         <input id='custom_id_input' class='form-control' data-trigger='change' data-model='{{ Entity.entityType.value }}/{{ Entity.entityData.id }}' data-target='custom_id' type='number' min='0' value='{{ Entity.entityData.custom_id }}' />
       </div>
     </div>
-    {% endif %}
-    {% if Entity.entityType.value == 'items_types' %}
-      <div class='form-inline'>
-        <label for='color_input' class='col-form-label mr-3 edit-mode-label justify-content-start d-sm-block d-none'>{{ 'Color'|trans }}</label>
-        <input id='color_input' data-trigger='change' data-model='{{ Entity.entityType.value }}/{{ Entity.entityData.id }}' data-target='color' type='color' value='#{{ Entity.entityData.color }}' class='form-control' style='min-width: 123px' />
-      </div>
     {% endif %}
   </div>
 
@@ -122,6 +116,8 @@
 
 {% include 'steps-edit.html' %}
 
+{% include 'spreadsheet-editor.html' %}
+
 {% include 'links.html' %}
 
 {% include 'storage-view-edit.html' %}
@@ -138,7 +134,7 @@
   {# templates also have a read/write target #}
   {% if Entity.entityData.canread_target %}
    {# TARGET PERMISSIONS #}
-    <h5>{{ 'Permissions for the derived experiment'|trans }}</h5>
+    <h5>{{ 'Permissions for the derived entry'|trans }}</h5>
     <div class='d-flex mb-2 align-items-center'>
       {# CANREAD #}
       {% set rw = 'canread_target' %}

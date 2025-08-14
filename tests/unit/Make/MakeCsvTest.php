@@ -17,7 +17,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\ProcurementRequests;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Teams;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\HttpFoundation\Response;
 

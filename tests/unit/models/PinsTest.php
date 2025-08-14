@@ -11,22 +11,23 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Traits\TestsUtilsTrait;
+
 class PinsTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private Experiments $Experiments;
 
     private Items $Items;
 
     private Templates $Templates;
 
-    private Users $Users;
-
     protected function setUp(): void
     {
-        $this->Users = new Users(1, 1);
-        $this->Experiments = new Experiments($this->Users, 1);
-        $this->Items = new Items($this->Users, 1);
-        $this->Templates = new Templates($this->Users, 1);
+        $this->Experiments = $this->getFreshExperiment();
+        $this->Items = $this->getFreshItem();
+        $this->Templates = $this->getFreshTemplate();
     }
 
     public function testTogglePin(): void
@@ -44,11 +45,10 @@ class PinsTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(0, $this->Items->Pins->readAll());
 
         $this->assertFalse($this->Templates->Pins->isPinned());
-        // There is already one template from TemplatesTest
-        $this->assertTrue(count($this->Templates->Pins->readAll()) > 1);
+        $this->assertTrue(count($this->Templates->Pins->readAll()) === 0);
         $this->Templates->Pins->togglePin();
         $this->assertTrue($this->Templates->Pins->isPinned());
-        $this->assertTrue(count($this->Templates->Pins->readAll()) > 0);
+        $this->assertTrue(count($this->Templates->Pins->readAll()) === 1);
     }
 
     public function testDuplicateIsNotPinned(): void
@@ -60,7 +60,7 @@ class PinsTest extends \PHPUnit\Framework\TestCase
     public function testTemplateIsAlwaysPinnedWhenCreated(): void
     {
         $fresh = $this->duplicateEntity($this->Templates);
-        $this->assertTrue($fresh->Pins->isPinned());
+        $this->assertFalse($fresh->Pins->isPinned());
     }
 
     private function checkDuplicateIsNotPinned(Experiments | Items $entity): void

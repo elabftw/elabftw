@@ -14,7 +14,7 @@ namespace Elabftw\Services;
 use DateTimeImmutable;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\Usergroup;
-use Elabftw\Models\ValidatedUser;
+use Elabftw\Models\Users\ValidatedUser;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 class ExpirationNotifierTest extends \PHPUnit\Framework\TestCase

@@ -26,10 +26,10 @@ module.exports = (env) => {
         './src/ts/i18n.ts',
         './src/ts/steps-links.ts',
         './src/ts/chem-editor.ts',
-        './src/ts/ketcher.jsx',
         './src/ts/ketcher-editor.jsx',
         './src/ts/compounds-table.jsx',
         './src/ts/users-table.jsx',
+        './src/ts/spreadsheet-editor.jsx',
         './src/ts/tags.ts',
         './src/ts/admin.ts',
         './src/ts/profile.ts',
@@ -78,7 +78,6 @@ module.exports = (env) => {
         'prismjs/components/prism-tcl.js',
         'prismjs/components/prism-vhdl.js',
         'prismjs/components/prism-yaml.js',
-        './src/js/vendor/keymaster.js',
       ],
     },
     // uncomment this to find where the error is coming from
@@ -160,14 +159,6 @@ module.exports = (env) => {
           loader: 'expose-loader',
           options: {
             exposes: ['$', 'jQuery'],
-          },
-        },
-        // expose key for keymaster globally
-        {
-          test: /keymaster.js/,
-          loader: 'expose-loader',
-          options: {
-            exposes: 'key',
           },
         }
       ]

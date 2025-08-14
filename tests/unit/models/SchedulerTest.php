@@ -13,16 +13,21 @@ namespace Elabftw\Models;
 
 use DateInterval;
 use DateTime;
+use DateTimeImmutable;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Params\EntityParams;
+use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\HttpFoundation\InputBag;
 
 class SchedulerTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private Scheduler $Scheduler;
 
     private array $delta;
@@ -33,9 +38,8 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $Users = new Users(1, 1);
-        $Items = new Items($Users, 1);
-        $d = new DateTime('now');
+        $Items = $this->getFreshBookableItem(2);
+        $d = new DateTimeImmutable('+3 hour');
         $this->start = $d->format('c');
         $d->add(new DateInterval('PT2H'));
         $this->end = $d->format('c');
@@ -53,7 +57,24 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('api/v2/event/', $this->Scheduler->getApiPath());
     }
 
-    public function testCreate(): int
+    public function testPostActionWithoutId(): void
+    {
+        $Scheduler = new Scheduler(new Items($this->getRandomUserInTeam(2)));
+        $this->expectException(ImproperActionException::class);
+        $Scheduler->postAction(Action::Create, array());
+    }
+
+    public function testPostActionCannotBook(): void
+    {
+        $RestrictedBookableItem = $this->getFreshBookableItem(2);
+        $RestrictedBookableItem->update(new EntityParams('canread', BasePermissions::Full->toJson()));
+        $RestrictedBookableItem->update(new EntityParams('canbook', BasePermissions::UserOnly->toJson()));
+        $Scheduler = new Scheduler(new Items($this->getRandomUserInTeam(1), $RestrictedBookableItem->id));
+        $this->expectException(ImproperActionException::class);
+        $Scheduler->postAction(Action::Create, array());
+    }
+
+    public function testPostAction(): int
     {
         $id = $this->Scheduler->postAction(Action::Create, array('start' => $this->start, 'end' => $this->end, 'title' => 'Yep'));
         $this->assertIsInt($id);
@@ -62,17 +83,16 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testFailure(): void
     {
-        $Users = new Users(1, 1);
-        $Items = new Items($Users);
+        $Items = $this->getFreshItem();
         $Scheduler = new Scheduler($Items, null, $this->start, $this->end);
         $this->expectException(ImproperActionException::class);
-        $Scheduler->postAction(Action::Create, array());
+        $Scheduler->postAction(Action::Create, array('start' => '', 'end' => ''));
     }
 
     public function testReadFromAnItem(): void
     {
         $this->assertIsArray($this->Scheduler->readAll());
-        $Items = new Items(new Users(1, 1), 1);
+        $Items = $this->getFreshBookableItem(1);
         $this->Scheduler = new Scheduler($Items, null, $this->start, $this->end);
         $this->assertIsArray($this->Scheduler->readOne());
     }
@@ -80,11 +100,12 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
     public function testReadAllWithVariousScopes(): void
     {
         foreach (array(Scope::User->value, Scope::Team->value, Scope::Everything->value) as $scope) {
-            $Users = new Users(1, 1);
+            $Users = $this->getUserInTeam(2, admin: 1);
             $Users->userData['scope_events'] = $scope;
 
-            $Items = new Items($Users, 1);
+            $Items = $this->getFreshItemWithGivenUser($Users);
             $Scheduler = new Scheduler($Items, null, $this->start, $this->end);
+            $Scheduler->postAction(Action::Create, array('start' => $this->start, 'end' => $this->end));
 
             $this->assertReadAllReturnsValidEvents($Scheduler, $scope);
         }
@@ -92,25 +113,27 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testEventVisibilityByTeamAccess(): void
     {
-        $Items = $this->createItem();
+        $Owner = $this->getUserInTeam(1);
+        $Items = $this->getFreshItemWithGivenUser($Owner);
+
+        // User 2 can read but cannot book
+        $User2 = $this->getUserInTeam(2);
 
         // grant user 2 'canread' permissions only. Prevents 'access entity without permission'
         $Items->patch(Action::Update, array(
             'canread' => json_encode(array(
                 'base' => BasePermissions::User->value,
-                'users' => array(2),
+                'users' => array($User2->userid),
                 'teams' => array(),
                 'teamgroups' => array(),
             )),
         ));
 
         $title = 'Bookable only by user 1';
-        // add event to scheduler by user 1
+        // add event to scheduler by user in team 1
         $Scheduler1 = new Scheduler($Items);
-        $Scheduler1->postAction(Action::Create, array('start' => $this->start, 'end' => $this->end, 'title' => $title));
+        $eventId = $Scheduler1->postAction(Action::Create, array('start' => $this->start, 'end' => $this->end, 'title' => $title));
 
-        // User 2 can read but cannot book
-        $User2 = new Users(2, 2);
         // Sets scope->Everything and tries to see user 1's booking
         $User2->userData['scope_events'] = Scope::Everything->value;
         $Items2 = new Items($User2, $Items->id);
@@ -118,13 +141,14 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
         $events = $Scheduler2->readAll();
         $this->assertIsArray($events);
-        $this->assertCount(0, $events, 'User 2 should not see any events due to lack of book permission.');
+        $eventsIds = array_column($events, 'id');
+        $this->assertNotContains($eventId, $eventsIds, 'User 2 should not see events due to lack of book permission.');
 
         // now make it visible for user in the other team
         $Items->patch(Action::Update, array(
             'canbook' => json_encode(array(
                 'base' => BasePermissions::User->value,
-                'users' => array(2),
+                'users' => array($User2->userid),
                 'teams' => array(),
                 'teamgroups' => array(),
             )),
@@ -134,14 +158,14 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $Scheduler2 = new Scheduler($Items2, null, $this->start, $this->end);
         $eventsAfterGrant = $Scheduler2->readAll();
         $this->assertIsArray($eventsAfterGrant);
-        $this->assertCount(1, $eventsAfterGrant, 'User 2 should now see the event.');
-        $this->assertEquals($title, $eventsAfterGrant[0]['title_only']);
+        $eventsIds = array_column($eventsAfterGrant, 'id');
+        $this->assertContains($eventId, $eventsIds, 'User 2 should now see the event.');
     }
 
     public function testReadAllWithFilters(): void
     {
-        $categoryId = 6;
-        $Items = $this->createItem(1, 1, $categoryId);
+        $Items = $this->getFreshBookableItem(2);
+        $categoryId = $Items->entityData['category'];
         $Scheduler = new Scheduler($Items);
 
         $title = 'The filtered event';
@@ -158,12 +182,12 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($Items->id, $filteredEvent[0]['items_id'], 'Item ID should match the filtered item');
 
         // Filtering by category
-        $titleItem2 = 'New Item in category 6';
+        $titleItem2 = sprintf('New Item in category %d', $categoryId);
         $Scheduler->postAction(Action::Create, array('start' => $this->start, 'end' => $this->end, 'title' => $titleItem2));
 
         $qCat = $this->Scheduler->getQueryParams(new InputBag(array('category' => $categoryId)));
         $filteredCatEvents = $this->Scheduler->readAll($qCat);
-        // two events in category 4 now
+        // two events in given category now
         $this->assertCount(2, $filteredCatEvents);
         $this->assertEquals($title, $filteredCatEvents[0]['title_only']);
         $this->assertEquals($titleItem2, $filteredCatEvents[1]['title_only']);
@@ -171,11 +195,10 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testPatchEpoch(): Scheduler
     {
-        $Items = new Items(new Users(1, 1), 1);
-        $id = $this->testCreate();
-        $Scheduler = new Scheduler($Items, $id, $this->start, $this->end);
-        $this->assertIsArray($Scheduler->patch(Action::Update, array('target' => 'start_epoch', 'epoch' => date('U'))));
-        $this->assertIsArray($Scheduler->patch(Action::Update, array('target' => 'end_epoch', 'epoch' => date('U'))));
+        $Scheduler = $this->getFreshSchedulerWithEvent();
+        $newEpoch = new DateTimeImmutable('+6 hour')->format('U');
+        $this->assertIsArray($Scheduler->patch(Action::Update, array('target' => 'start_epoch', 'epoch' => $newEpoch)));
+        $this->assertIsArray($Scheduler->patch(Action::Update, array('target' => 'end_epoch', 'epoch' => $newEpoch)));
         return $Scheduler;
     }
 
@@ -195,16 +218,14 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testPatchTitle(): void
     {
-        $Items = new Items(new Users(1, 1), 1);
-        $id = $this->testCreate();
-        $Scheduler = new Scheduler($Items, $id, $this->start, $this->end);
-        $res = $Scheduler->patch(Action::Update, array('target' => 'title', 'content' => 'new title'));
+        $res = $this->getFreshSchedulerWithEvent()->patch(Action::Update, array('target' => 'title', 'content' => 'new title'));
         $this->assertEquals('new title', $res['title']);
     }
 
     public function testDestroyNonCancellableEvent(): void
     {
-        $Items = $this->createItem(2, 1);
+        $Items = $this->getFreshItem(2);
+        $Items->Users = $this->getRandomUserInTeam(2);
         $Items->patch(Action::Update, array('book_is_cancellable' => 0));
         $Scheduler = new Scheduler($Items);
         $d = new DateTime('tomorrow');
@@ -219,7 +240,8 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testCancelTooClose(): void
     {
-        $Items = $this->createItem(2);
+        $Items = $this->getFreshItem(2);
+        $Items->Users = $this->getRandomUserInTeam(2);
         $Items->patch(Action::Update, array('book_cancel_minutes' => 666));
         $Scheduler = new Scheduler($Items);
         $d = new DateTime('5 minutes');
@@ -234,7 +256,8 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testSlotTime(): void
     {
-        $Items = $this->createItem(2, 1);
+        $Items = $this->getFreshItem(2);
+        $Items->Users = $this->getRandomUserInTeam(2);
         $Items->patch(Action::Update, array('book_max_minutes' => 12));
         $Scheduler = new Scheduler($Items);
         $d = new DateTime('5 minutes');
@@ -247,7 +270,8 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testOverlap(): void
     {
-        $Items = $this->createItem(2, 1);
+        $Items = $this->getFreshItem(2);
+        $Items->Users = $this->getRandomUserInTeam(2);
         $Items->patch(Action::Update, array('book_can_overlap' => 0));
         $Scheduler = new Scheduler($Items);
         // first one
@@ -267,7 +291,8 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testOverlapWhileChangingExisting(): void
     {
-        $Items = $this->createItem(2, 1);
+        $Items = $this->getFreshItem(2);
+        $Items->Users = $this->getRandomUserInTeam(2);
         $Items->patch(Action::Update, array('book_can_overlap' => 0));
         $Scheduler = new Scheduler($Items);
         // first one
@@ -289,7 +314,8 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testCheckMaxSlots(): void
     {
-        $Items = $this->createItem(2, 1);
+        $Items = $this->getFreshItem(2);
+        $Items->Users = $this->getRandomUserInTeam(2);
         $Items->patch(Action::Update, array('book_max_slots' => 2));
         $Scheduler = new Scheduler($Items);
         $d = new DateTime('5 minutes');
@@ -304,29 +330,28 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testBind(): void
     {
-        $this->Scheduler->setId($this->testCreate());
+        $this->Scheduler->setId($this->testPostAction());
         $this->assertIsArray($this->Scheduler->patch(Action::Update, array('target' => 'experiment', 'id' => 3)));
         $this->assertIsArray($this->Scheduler->patch(Action::Update, array('target' => 'item_link', 'id' => 3)));
     }
 
     public function testBindIncorrect(): void
     {
-        $this->Scheduler->setId($this->testCreate());
+        $this->Scheduler->setId($this->testPostAction());
         $this->expectException(DatabaseErrorException::class);
         $this->Scheduler->patch(Action::Update, array('target' => 'experiment', 'id' => -12));
     }
 
     public function testUnbind(): void
     {
-        $this->Scheduler->setId($this->testCreate());
+        $this->Scheduler->setId($this->testPostAction());
         $this->assertIsArray($this->Scheduler->patch(Action::Update, array('target' => 'experiment', 'id' => null)));
         $this->assertIsArray($this->Scheduler->patch(Action::Update, array('target' => 'item_link', 'id' => null)));
     }
 
     public function testCanWriteAndWeAreAdmin(): void
     {
-        $Users = new Users(2, 1);
-        $Items = new Items($Users, 3);
+        $Items = $this->getFreshItem(2);
         $Scheduler = new Scheduler($Items, null, $this->start, $this->end);
         // create with user, make sure it's in the future!
         $d = new DateTime('now');
@@ -336,30 +361,29 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $end = $d->format('c');
         $id = $Scheduler->postAction(Action::Create, array('start' => $start, 'end' => $end, 'title' => 'Yep'));
         // write with admin
-        $this->Scheduler->setId($id);
-        $this->assertTrue($this->Scheduler->destroy());
+        $Admin = $this->getUserInTeam(2, admin: 1);
+        $Scheduler = new Scheduler(new Items($Admin, $Items->id));
+        $Scheduler->setId($id);
+        $this->assertTrue($Scheduler->destroy());
     }
 
     public function testCanNotWrite(): void
     {
-        // normal user
-        $Users = new Users(2, 1);
-        $Items = new Items($Users, 1);
-        $d = new DateTime('now');
-        $d->add(new DateInterval('PT2H'));
-        $start = $d->format('c');
-        $d->add(new DateInterval('PT4H'));
-        $end = $d->format('c');
-        $Scheduler = new Scheduler($Items, null, $start, $end);
-        $Scheduler->setId($this->testCreate());
+        $Admin = $this->getUserInTeam(2, admin: 1);
+        $Items = $this->getFreshItemWithGivenUser($Admin);
+        $AdminScheduler = new Scheduler($Items);
+        $adminEventId = $AdminScheduler->postAction(Action::Create, array('start' => $this->start, 'end' => $this->end));
+        $User = $this->getUserInTeam(2);
+        $UserScheduler = new Scheduler(new Items($User, $Items->id));
+        $UserScheduler->setId($adminEventId);
         // try write event created by admin as user
         $this->expectException(IllegalActionException::class);
-        $Scheduler->patch(Action::Update, array('target' => 'experiment', 'id' => 3));
+        $UserScheduler->patch(Action::Update, array('target' => 'experiment', 'id' => 3));
     }
 
     public function testUpdateStart(): void
     {
-        $this->Scheduler->setId($this->testCreate());
+        $this->Scheduler->setId($this->testPostAction());
         $this->Scheduler->patch(Action::Update, array('target' => 'start', 'delta' => $this->delta));
         $delta = array(
             'years' => '0',
@@ -372,7 +396,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdateEnd(): void
     {
-        $this->Scheduler->setId($this->testCreate());
+        $this->Scheduler->setId($this->testPostAction());
         $this->Scheduler->patch(Action::Update, array('target' => 'end', 'delta' => $this->delta));
         $delta = array(
             'years' => '0',
@@ -385,18 +409,12 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testDestroy(): void
     {
-        $id = $this->Scheduler->postAction(Action::Create, array(
-            'start' => '2016-07-22T19:42:00+02:00',
-            'end' => '2016-07-23T19:42:00+02:00',
-            'title' => 'Yep',
-        ));
-        $this->Scheduler->setId($id);
-        $this->assertTrue($this->Scheduler->destroy());
+        $this->assertTrue($this->getFreshSchedulerWithEvent()->destroy());
     }
 
     public function testCanCancelDuringGracePeriod(): void
     {
-        $Items = $this->createItem(2, 1);
+        $Items = $this->getFreshItem();
         $Scheduler = new Scheduler($Items);
         $d = new DateTime('+1 hour');
         $start = $d->format('c');
@@ -405,6 +423,14 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $id = $Scheduler->postAction(Action::Create, array('start' => $start, 'end' => $end, 'title' => 'test grace period'));
         $Scheduler->setId($id);
         $this->assertTrue($Scheduler->destroy());
+    }
+
+    private function getFreshSchedulerWithEvent(): Scheduler
+    {
+        $Scheduler = new Scheduler($this->getFreshBookableItem(2));
+        $id = $Scheduler->postAction(Action::Create, array('start' => $this->start, 'end' => $this->end));
+        $Scheduler->setId($id);
+        return $Scheduler;
     }
 
     private function assertReadAllReturnsValidEvents(Scheduler $Scheduler, int $scope): void
@@ -419,24 +445,24 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
             $this->assertArrayHasKey('end', $event);
         }
 
-        $this->assertReadAllByScope($events, $scope);
+        $this->assertReadAllByScope($events, $scope, $Scheduler->Items->Users->userid, $Scheduler->Items->Users->team);
     }
 
-    private function assertReadAllByScope(array $events, int $scope): void
+    private function assertReadAllByScope(array $events, int $scope, int $userid, int $team): void
     {
         foreach ($events as $event) {
             switch ($scope) {
                 case Scope::User->value:
-                    $this->assertEquals(1, $event['userid'], 'Event does not belong to user with id 1');
+                    $this->assertEquals($userid, $event['userid'], 'Event does not belong to user');
                     break;
 
                 case Scope::Team->value:
-                    $this->assertEquals(1, $event['team'], 'Event is not from team with id 1');
+                    $this->assertEquals($team, $event['team'], 'Event is not from team');
                     break;
 
                 case Scope::Everything->value:
                     $this->assertTrue(
-                        $event['userid'] === 1 || $event['team'] === 1,
+                        $event['userid'] === $userid || $event['team'] === $team,
                         'Event does not match user or team!'
                     );
                     break;
@@ -445,14 +471,5 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
                     $this->fail("Unknown scope value: $scope");
             }
         }
-    }
-
-    private function createItem(int $userId = 1, int $teamId = 1, int $categoryId = 6): Items
-    {
-        $user = new Users($userId, $teamId);
-        $items = new Items($user);
-        $itemId = $items->create(template: $categoryId);
-        $items->setId($itemId);
-        return $items;
     }
 }

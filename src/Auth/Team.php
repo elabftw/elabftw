@@ -15,7 +15,7 @@ namespace Elabftw\Auth;
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthInterface;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Elabftw\Services\TeamsHelper;
 use Override;
 

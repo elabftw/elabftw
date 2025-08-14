@@ -23,6 +23,7 @@ use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\ResourcesCategories;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Todolist;
@@ -69,8 +70,8 @@ try {
         case Orderable::ExperimentsCategories:
             $Entity = new ExperimentsCategories(new Teams($App->Users));
             break;
-        case Orderable::ItemsTypes:
-            $Entity = new ItemsTypes($App->Users);
+        case Orderable::ResourcesCategories:
+            $Entity = new ResourcesCategories(new Teams($App->Users));
             break;
         case Orderable::ExperimentsStatus:
             $Entity = new ExperimentsStatus(new Teams($App->Users));

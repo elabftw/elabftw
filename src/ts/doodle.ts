@@ -8,16 +8,10 @@
 import { reloadElements } from './misc';
 import i18next from './i18n';
 import { Action, Model } from './interfaces';
-import { Api } from './Apiv2.class';
+import { ApiC } from './api';
 
-document.addEventListener('DOMContentLoaded', () => {
-  const doodleCanvas = document.getElementById('doodleCanvas') as HTMLCanvasElement;
-  if (!doodleCanvas) {
-    return;
-  }
-
-  const ApiC = new Api();
-
+const doodleCanvas = document.getElementById('doodleCanvas') as HTMLCanvasElement;
+if (doodleCanvas) {
   // store the clicks
   let clickX = [];
   let clickY = [];
@@ -89,7 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     ApiC.post(`${elDataset.type}/${elDataset.id}/${Model.Upload}`, params).then(() => reloadElements(['uploadsDiv']));
   });
-
 
   /**
    * mouse events
@@ -178,4 +171,4 @@ document.addEventListener('DOMContentLoaded', () => {
   doodleCanvas.addEventListener('touchcancel', () => {
     isPainting = false;
   }, false);
-});
+}

@@ -17,7 +17,7 @@ use Elabftw\Controllers\LoginController;
 use Elabftw\Enums\Messages;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\AuditLogs;
-use Elabftw\Models\AuthenticatedUser;
+use Elabftw\Models\Users\AuthenticatedUser;
 use Elabftw\Models\Idps;
 use Exception;
 use OneLogin\Saml2\Auth as SamlAuthLib;
@@ -133,7 +133,7 @@ if ($App->Request->query->has('sls') && ($App->Request->query->has('SAMLRequest'
         } else {
             $error = Messages::GenericError->toHuman();
             // get more verbose if debug mode is active
-            if ($App->Config::boolFromEnv('DEV_MODE')) {
+            if (Env::asBool('DEV_MODE')) {
                 $error = implode(', ', $errors);
             }
             throw new UnauthorizedException($error);

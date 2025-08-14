@@ -14,9 +14,8 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Config;
 use Elabftw\Models\Idps;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Elabftw\Services\MfaHelper;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -37,7 +36,7 @@ try {
     // if we are not in https, die saying we work only in https
     if (!$App->Request->isSecure() && !$App->Request->server->has('HTTP_X_FORWARDED_PROTO')) {
         // get the url to display a link to click
-        $url = Config::fromEnv('SITE_URL');
+        $url = Env::asString('SITE_URL');
         $message = "eLabFTW works only in HTTPS. Please enable HTTPS on your server or ensure X-Forwarded-Proto header is correctly sent by the load balancer. Or follow this link : <a href='" .
             $url . "'>$url</a>";
         throw new ImproperActionException($message);
@@ -90,15 +89,19 @@ try {
         $showLocal = false;
     }
 
-    $Idps = new Idps($App->Users);
-    $idpsArr = $Idps->readAllSimpleEnabled();
+    $idpsArr = array();
+    // only make the query to fetch idp list if we actually have enabled saml
+    if ($App->Config->configArr['saml_toggle'] === '1') {
+        $Idps = new Idps($App->Users);
+        $idpsArr = $Idps->readAllSimpleEnabled();
+    }
 
     if ($App->Request->cookies->has('kickreason')) {
         // at the moment there is only one reason
         $App->Session->getFlashBag()->add('ko', _('Your session expired.'));
     }
 
-    $template = 'login.html';
+    $template = 'login-base.html';
     $renderArr = array(
         'idpsArr' => $idpsArr,
         'pageTitle' => _('Login'),

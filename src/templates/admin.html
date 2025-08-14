@@ -72,7 +72,7 @@
     {% include 'binary-setting.html' with {'model': model, 'src': src,
       'slug': 'force_exp_tpl',
       'label': 'Force experiment template use'|trans,
-      'help': 'Remove Default Template and Blank Experiment choices from Create menu, and force usage of existing Templates.'|trans} %}
+      'help': 'Users will be forced to select an existing Template, and will not be able to create a blank entry.'|trans} %}
 
     {% include 'binary-setting.html' with {'model': model, 'src': src,
       'slug': 'users_canwrite_experiments_categories',
@@ -90,38 +90,6 @@
       'slug': 'users_canwrite_resources_status',
       'label': 'Allow users to create and edit resources status'|trans} %}
   </div>
-  <h3 class='p-2 pl-3 section-title'>{{ 'Default Template main text'|trans }}</h3>
-
-  <div class='pl-3 mt-2'>
-    <p>{{ 'Set the text included in the main body of an Experiment when the Default Template is selected.'|trans }}</p>
-    <label for='common_template'>{{ 'HTML version'|trans }}</label>
-    <div>
-      {% if App.devMode -%}
-      {# set no-unused-disable and text-content because removing or leaving text-content brings up error #}
-        <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element, no-unused-disable, element-permitted-content: suppress errors from tinymce] -->
-      {%- endif %}
-      <textarea style='height:400px' class='mceditable' name='common_template' id='common_template'>
-        {{ App.Teams.teamArr.common_template|raw }}
-      </textarea>
-    </div>
-    <div class='mt-2 text-center'>
-      <button type='button' data-action='patch-team-common-template' class='btn btn-primary'>{{ 'Save'|trans }}</button>
-    </div>
-    <hr>
-
-    <label for='common_template_md'>{{ 'Markdown version'|trans }}</label>
-    <div>
-      {% if App.devMode -%}
-        <!-- [html-validate-disable-block text-content, no-unused-disable: suppress errors from tinymce] -->
-      {%- endif %}
-      <textarea style='height:400px' class='markdown-textarea form-control mt-2' name='common_template_md' id='common_template_md'>{{ App.Teams.teamArr.common_template_md|raw }}</textarea>
-    </div>
-    <div class='mt-2 text-center'>
-      <button type='button' data-action='patch-team-common-template-md' class='btn btn-primary'>{{ 'Save'|trans }}</button>
-    </div>
-
-  </div>
-  <hr>
 
   {# ONBOARDING EMAIL #}
   {% include 'onboarding-email.html' %}
@@ -198,11 +166,12 @@
             <div class='input-group-prepend'>
               <span class='input-group-text'><i class='fas fa-magnifying-glass'></i></span>
             </div>
-            <input type='text' class='form-control' data-complete-target='users' placeholder='{{ 'User name'|trans }}' aria-label='{{ 'User name'|trans }}'>
+            <input type='text' class='form-control' data-action='autocomplete' data-target='users' data-identifier='teamgroup-{{ teamGroup.id }}' placeholder='{{ 'User name'|trans }}' aria-label='{{ 'User name'|trans }}'>
             <div class='input-group-append'>
               <button class='btn btn-primary' data-action='adduser-teamgroup' data-groupid='{{ teamGroup.id }}' type='button'>{{ 'Add user'|trans }}</button>
             </div>
           </div>
+          <div id='autocompleteAnchorDiv_teamgroup-{{ teamGroup.id }}'></div>
         </div>
       {% endfor %}
     </div>
@@ -369,13 +338,13 @@
 <div data-tabcontent='6' id='batchActions' hidden>
   <p>{{ 'From here you can perform actions on entire group of entries at once.'|trans }}</p>
   <hr>
-  <button type='button' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Resources categories'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <button type='button' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Resources by category'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
   <div hidden class='mt-2'>
   {% for itemsCategory in App.itemsCategoryArr %}
     <div class='d-flex justify-content-between p-1 rounded hl-hover-gray'>
       <label for='batch-itemsTypes-{{ itemsCategory.id }}' class='col-form-label clickable'>{{ itemsCategory.title }}</label>
       <label class='switch ucp-align'>
-        <input type='checkbox' name='items_types' value='{{ itemsCategory.id }}' autocomplete='off' data-action='update-counter-value' id='batch-itemsTypes-{{ itemsCategory.id }}'>
+        <input type='checkbox' name='items_categories' value='{{ itemsCategory.id }}' autocomplete='off' data-action='update-counter-value' id='batch-itemsTypes-{{ itemsCategory.id }}'>
         <span class='slider'></span>
       </label>
     </div>
@@ -414,7 +383,7 @@
   <hr>
   <button type='button' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Experiments categories'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
   <div hidden class='mt-2'>
-  {% for experimentsCategory in experimentsCategoriesArr %}
+  {% for experimentsCategory in App.experimentsCategoryArr %}
     <div class='d-flex justify-content-between p-1 rounded hl-hover-gray'>
       <label for='batch-experimentsCategories-{{ experimentsCategory.id }}' class='col-form-label clickable'>{{ experimentsCategory.title }}</label>
       <label class='switch ucp-align'>
@@ -477,7 +446,9 @@
     <button data-action='run-action-selected' data-what='forceunlock' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Unlock'|trans }}</button>
     <button data-action='toggle-modal' type='button' class='btn btn-primary mr-1 mb-2' data-target='ownerModal'>{{ 'Transfer ownership'|trans }}</button>
     <button data-action='run-action-selected' data-what='archive' type='button' class='btn btn-secondary mr-1 mb-2'>{{ 'Archive'|trans }}</button>
+    <button data-action='run-action-selected' data-what='unarchive' type='button' class='btn btn-secondary mr-1 mb-2'>{{ 'Unarchive'|trans }}</button>
     <button data-action='run-action-selected' data-what='destroy' type='button' class='btn btn-danger mr-1 mb-2'>{{ 'Delete'|trans }}</button>
+    <button data-action='run-action-selected' data-what='restore' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Restore'|trans }}</button>
   </div>
 
   <h4>{{ 'Set permissions'|trans }}</h4>
@@ -494,7 +465,7 @@
       <label for='masscan_select_teams' class='mt-2'>+ {{ 'Teams'|trans }}</label> <p class='smallgray d-inline'>{{ '(hold %sctrl%s key to select multiple entries, %sctrl%s + click to deselect a selected entry)'|trans|format('<kbd>', '</kbd>', '<kbd>', '</kbd>')|raw }}</p>
       <p class='smallgray'>{{ 'Selecting a team here will give access to all members of this team.'|trans }}</p>
       <select id='masscan_select_teams' multiple class='form-control' autocomplete='off'>
-        {% for team in App.Teams.teamArr|filter(t => t.visible == '1') %}
+        {% for team in visibleTeamsArr %}
           <option value='team:{{ team.id }}'>{{ 'Team'|trans }} - {{ team.name }}</option>
         {% endfor %}
       </select>
@@ -511,7 +482,7 @@
       <ul class='list-group mb-1' id='masscan_list_users'></ul>
       {# add user to permissions input #}
       <div class='input-group'>
-        <input id='masscan_select_users' type='text' data-identifier='masscan' data-complete-target='users' class='form-control' placeholder='{{ 'Add user'|trans }}' autocomplete='off'>
+        <input id='masscan_select_users' type='text' data-identifier='masscan' data-action='autocomplete' data-target='users' class='form-control' placeholder='{{ 'Add user'|trans }}' autocomplete='off'>
         <div class='input-group-append'>
           <button class='btn btn-primary' type='button' data-rw='canread' data-identifier='masscan' data-action='add-user-to-permissions'>{{ 'Add'|trans }}</button>
         </div>
@@ -527,7 +498,5 @@
     </div>
   </div>
 </div>
-
-<div id='info' data-page='template-edit' data-type='items_types' data-id='{{ App.Request.query.get('templateid') }}'></div>
 
 {% endblock body %}

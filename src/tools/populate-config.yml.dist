@@ -20,6 +20,8 @@ config:
   admin_validate: 0
   ldap_base_dn: dc=example,dc=org
   ldap_host: ldap
+  # log in as anonymous users
+  anon_users: 1
   # this is the default password of osixia/openldap docker container
   ldap_password: admin
   ldap_username: cn=admin,dc=example,dc=org
@@ -32,6 +34,15 @@ config:
   onboarding_email_different_for_admins: 1
   onboarding_email_admins_subject: subject for admins
   onboarding_email_admins_body: <p>Test email body for <strong>admins</strong>.</p>
+
+inventory:
+  - Main building | 1st floor | Clean room | Gray room
+  - Main building | 1st floor | Gray room
+  - Main building | 2nd floor | Chemical storage
+  - Main building | 2nd floor | Dangerous Chemicals room
+  - Main building | 3rd floor | Microscopy room | Under the sink cupboard
+  - Hospital | 4th floor | Hidden room | Magic cupboard
+  - Hospital | 7th floor ½ | Timeless drawer
 
 teams:
   # 1 - ALPHA
@@ -67,6 +78,114 @@ teams:
       - email: demo@elabftw.net
         password: testPassword
         create_experiments: true
+
+    experiments_categories:
+      - name: Project Crypto Cool
+      - name: Demo
+      - name: Tests
+
+    resources_categories:
+      - name: 🔬 Microscope
+      - name: 🧬 Plasmid
+      - name: Antibody
+      - name: Yeast
+
+    items_types:
+      - name: A microscope
+        category: 🔬 Microscope
+        body: '<h1>Switch on procedure</h1><p>&nbsp;</p><h1>Switch off procedure</h1>'
+        metadata: '{"extra_fields": {"Location": {"type": "select","value": "Microscopy room 3rd floor","options": ["Microscopy room 3rd floor","Nikon imaging center","-2 microscopy room A","That building that is way too far away"]},"Available wavelengths": {"type": "select","value": "405 nm","options": ["405 nm","488 nm","561 nm","640 nm"],"allow_multi_values": true},"Person in charge": {"type": "users","value": 2,"description": "Select the person responsible for this microscope"},"Available objectives": {"type": "select","value": "4X","options": ["4X","10X","40X","63X","100X"],"allow_multi_values": true}}}'
+
+      - name: A plasmid
+        category: 🧬 Plasmid
+        metadata: '{"extra_fields":{"Concentration":{"type":"number","value":"","description":"in μg/μL"},"Vector backbone":{"type":"text","value":""},"Growth temperature":{"type":"text","value":"","description":"in °C"},"Bacterial resistance":{"type":"select","value":"Ampicillin","options":["Ampicillin","Kanamycin","Tetracyclin","Chloramphenicol","Gentamicin","Streptomycin"]},"Mammalian resistance":{"type":"select","value":"Neomycin","options":["Neomycin","Hygromycin","Puromycin","Blasticidin","Zeocin"]}}}'
+
+      - name: An antibody
+        category: Antibody
+        metadata: '{"extra_fields":{"Host":{"type":"select","value":"Rabbit","options":["Rabbit","Mouse","Goat","Chicken"]},"Storage temperature":{"type":"select","value":"+4 °C","options":["+4 °C","-20 °C","-80 °C"]},"Dilution to use for IF":{"type":"text","value":""},"Dilution to use for WB":{"type":"text","value":""}}}'
+
+      - name: Some yeast
+        category: Yeast
+        metadata: '{"extra_fields":{"Strain name":{"type":"text","value":""},"Genotype":{"type":"text","value":""},"Selection marker":{"type":"select","value":"URA3","options":["URA3","LEU2","HIS3","TRP1","KanMX","NatMX"]},"Growth temperature":{"type":"number","value":"","description":"in °C"},"Mating type":{"type":"select","value":"haploid a","options":["haploid a","haploid α","diploid"]},"Storage condition":{"type":"select","value":"-80 °C","options":["-80 °C","4 °C","on plate","in liquid culture"]},"Person in charge":{"type":"users","value":"","description":"Select the person responsible for this strain"}}}'
+
+    items_status:
+      - name: Maintenance mode
+      - name: Operational
+      - name: In stock
+      - name: Need to reorder
+      - name: Destroyed
+      - name: Processed
+      - name: Waiting
+      - name: Open
+      - name: Closed
+
+
+  # 2 - Microbiology
+  - name: Microbiology group - Dr. Monod
+    random_users: 6
+    users:
+      - email: tata@yopmail.com
+        firstname: Tata
+        create_experiments: true
+        create_items: true
+        create_templates: true
+        api_key: apiKey4Test_tata
+
+      - email: somesamluser@example.com
+        create_experiments: false
+        orgid: internal_id_42
+
+      - email: notyetvalidateduser@yopmail.com
+        validated: false
+
+      - email: admin1@demo.elabftw.net
+        password: random
+        create_experiments: true
+        usergroup: 2
+
+      - email: user1@demo.elabftw.net
+        password: random
+        create_experiments: true
+
+    experiments_categories:
+      - name: Molecular biology
+      - name: Cell biology
+      - name: Tests
+      - name: Project GMOFTW
+      - name: Project CRAPUL
+
+    items_types:
+      - name: A microscope
+        category: 🔬 Microscope
+        body: '<h1>Switch on procedure</h1><p>&nbsp;</p><h1>Switch off procedure</h1>'
+        metadata: '{"extra_fields": {"Location": {"type": "select","value": "Microscopy room 3rd floor","options": ["Microscopy room 3rd floor","Nikon imaging center","-2 microscopy room A","That building that is way too far away"]},"Available wavelengths": {"type": "select","value": "405 nm","options": ["405 nm","488 nm","561 nm","640 nm"],"allow_multi_values": true},"Person in charge": {"type": "users","value": 2,"description": "Select the person responsible for this microscope"},"Available objectives": {"type": "select","value": "4X","options": ["4X","10X","40X","63X","100X"],"allow_multi_values": true}}}'
+
+      - name: A plasmid
+        category: 🧬 Plasmid
+        metadata: '{"extra_fields":{"Concentration":{"type":"number","value":"","description":"in μg/μL"},"Vector backbone":{"type":"text","value":""},"Growth temperature":{"type":"text","value":"","description":"in °C"},"Bacterial resistance":{"type":"select","value":"Ampicillin","options":["Ampicillin","Kanamycin","Tetracyclin","Chloramphenicol","Gentamicin","Streptomycin"]},"Mammalian resistance":{"type":"select","value":"Neomycin","options":["Neomycin","Hygromycin","Puromycin","Blasticidin","Zeocin"]}}}'
+
+      - name: An antibody
+        category: Antibody
+        metadata: '{"extra_fields":{"Host":{"type":"select","value":"Rabbit","options":["Rabbit","Mouse","Goat","Chicken"]},"Storage temperature":{"type":"select","value":"+4 °C","options":["+4 °C","-20 °C","-80 °C"]},"Dilution to use for IF":{"type":"text","value":""},"Dilution to use for WB":{"type":"text","value":""}}}'
+
+      - name: Some yeast
+        category: Yeast
+        metadata: '{"extra_fields":{"Strain name":{"type":"text","value":""},"Genotype":{"type":"text","value":""},"Selection marker":{"type":"select","value":"URA3","options":["URA3","LEU2","HIS3","TRP1","KanMX","NatMX"]},"Growth temperature":{"type":"number","value":"","description":"in °C"},"Mating type":{"type":"select","value":"haploid a","options":["haploid a","haploid α","diploid"]},"Storage condition":{"type":"select","value":"-80 °C","options":["-80 °C","4 °C","on plate","in liquid culture"]},"Person in charge":{"type":"users","value":"","description":"Select the person responsible for this strain"}}}'
+
+      - name: 🦠 Cell line
+        category: Cells
+        metadata: '{"elabftw": {"extra_fields_groups": [{"id": 1,"name": "Basic information"},{"id": 2,"name": "Storage"}]},"extra_fields": {"Species": {"type": "select","value": "Human","options": ["Human","Mouse","Chinese Hamster","Rat","African Green Monkey","Dog","Horse","Klingon","Ewok","Na’vi"],"group_id": 1,"required": true,"description": "What species is it from?"},"Date of acquisition": {"type": "date","value": "","group_id": 1,"required": true},"Number of aliquots left": {"type": "number","unit": "","units": [],"value": "","group_id": 2}}}'
+
+    items_status:
+      - name: Maintenance mode
+      - name: Operational
+      - name: In stock
+      - name: Need to reorder
+      - name: Destroyed
+      - name: Processed
+      - name: Waiting
+      - name: Open
+      - name: Closed
 
     templates:
       - title: Ant Colony Response to Pheromones
@@ -126,7 +245,7 @@ teams:
           - ants
           - pheromones
           - generated from yml
-        category: 3
+        category: Project Pheromones
 
       - title: High-Speed Insect Flight Analysis
         metadata: |
@@ -194,11 +313,76 @@ teams:
           - high-speed
           - Project FLYMORR
           - generated from yml
-        category: 2
+        category: Project Flymorr
         status: 1
 
       - title: Western Blot
-        body: No category for this one.
+        body: |
+            <h2 style="line-height: 1;">1. Materials &amp; Reagents</h2>
+            <table>
+            <tbody>
+            <tr>
+            <th>Reagent</th>
+            <th>Final Concentration / Amount</th>
+            </tr>
+            <tr>
+            <td>Protein sample</td>
+            <td>20&ndash;50 &micro;g per lane</td>
+            </tr>
+            <tr>
+            <td>SDS&ndash;PAGE gel (e.g. 10%)</td>
+            <td>&mdash;</td>
+            </tr>
+            <tr>
+            <td>Transfer buffer (Tris&ndash;Glycine&ndash;Methanol)</td>
+            <td>&mdash;</td>
+            </tr>
+            <tr>
+            <td>Blocking buffer (5% milk in TBST)</td>
+            <td>&mdash;</td>
+            </tr>
+            <tr>
+            <td>Primary antibody</td>
+            <td>1:1,000 in blocking buffer</td>
+            </tr>
+            <tr>
+            <td>Secondary antibody (HRP‑conjugated)</td>
+            <td>1:5,000 in blocking buffer</td>
+            </tr>
+            <tr>
+            <td>ECL substrate</td>
+            <td>As per manufacturer</td>
+            </tr>
+            </tbody>
+            </table>
+            <h2>2. Equipment</h2>
+            <ul>
+            <li>Electrophoresis apparatus</li>
+            <li>Power supply</li>
+            <li>Blotting sandwich (nitrocellulose or PVDF membrane)</li>
+            <li>Wet or semi‑dry transfer system</li>
+            <li>Shaker or rocker</li>
+            <li>Imaging system for chemiluminescence</li>
+            </ul>
+            <h2>3. Procedure</h2>
+            <ol>
+            <li><strong>Sample preparation:</strong> Prepare protein lysates, measure concentration (e.g. BCA assay), and mix with 4&times; SDS sample buffer. Heat at 95 &deg;C for 5 min.</li>
+            <li><strong>Gel electrophoresis:</strong> Load equal amounts (20&ndash;50 &micro;g) into wells. Run at 120 V until dye front reaches bottom (~1 h).</li>
+            <li><strong>Protein transfer:</strong> Assemble transfer sandwich. Transfer proteins to membrane at 100 V for 1 h (wet) or per manufacturer&rsquo;s instructions (semi‑dry).</li>
+            <li><strong>Blocking:</strong> Incubate membrane in blocking buffer for 1 h at room temperature with gentle rocking.</li>
+            <li><strong>Primary antibody incubation:</strong> Dilute primary antibody in blocking buffer. Incubate membrane overnight at 4 &deg;C or 1&ndash;2 h at room temperature.</li>
+            <li><strong>Wash:</strong> Wash membrane 3 &times; 5 min in TBST (Tris‑buffered saline + 0.1% Tween‑20).</li>
+            <li><strong>Secondary antibody incubation:</strong> Incubate with HRP‑conjugated secondary antibody (1:5,000) for 1 h at room temperature.</li>
+            <li><strong>Wash:</strong> Repeat wash step (3 &times; 5 min in TBST).</li>
+            <li><strong>Detection:</strong> Incubate membrane with ECL substrate for 1&ndash;2 min. Image chemiluminescence using a suitable imager.</li>
+            </ol>
+            <h2>4. Notes &amp; Tips</h2>
+            <div>
+            <p><strong>Tip:</strong> If background is high, increase wash stringency or reduce antibody concentration.</p>
+            </div>
+            <div>
+            <p><strong>Alternative:</strong> For fluorescent detection, use fluorescent‑conjugated secondaries and image on a fluorescence scanner.</p>
+            </div>
         tags:
           - western blot
           - generated from yml
@@ -207,7 +391,7 @@ teams:
         tags:
           - generated from yml
           - microscopy
-        category: 1
+        category: Tests
         metadata: |
             {"extra_fields": {"Camera binning": {"type": "number","unit": "","units": [],"value": ""},"Sample temperature": {"type": "number","unit": "°C","units": ["°C","°K","°F"],"value": ""},"Sample holder": {"type": "select","value": "Broken holder","options": ["Broken holder","Cool holder","Old holder","Great holder"],"required": true,"description": "The holder that was used"}}}
 
@@ -215,15 +399,15 @@ teams:
         tags:
           - generated from yml
           - microscopy
-        category: 4
+        category: Tests
 
       - title: Superconductivity Characterization at High Magnetic Field Strengths
-        category: 3
+        category: Magnets
 
       - title: Aliquot antibody
-        category: 3
+        category: Chores
         body: |
-            <p>Materials:</p>
+            <h1>Materials</h1>
             <ol>
             <li>Antibody stock solution</li>
             <li>Sterile microcentrifuge tubes or aliquot vials</li>
@@ -233,7 +417,7 @@ teams:
             <li>Labels and marker pen</li>
             <li>Ice bucket or refrigerated centrifuge (optional but helpful for maintaining antibody stability during aliquoting)</li>
             </ol>
-            <p>Procedure:</p>
+            <h2>Procedure</h2>
             <ol>
             <li>
             <p>Preparation: a. Ensure a clean and sterile work area. Wear sterile gloves throughout the procedure to prevent contamination. b. If the antibody stock has been stored frozen, thaw it by gently swirling or tapping the vial, and then briefly centrifuge it to collect any droplets. c. Keep the antibody stock on ice or in a refrigerated centrifuge throughout the procedure to maintain its stability.</p>
@@ -257,15 +441,15 @@ teams:
             <p>Record Keeping: a. Maintain a record detailing the antibody aliquoting process, including the number of aliquots, volumes, concentrations, and storage locations. b. Store this information in a logbook or electronic database for future reference.</p>
             </li>
             </ol>
-            <p>Safety Precautions:</p>
+            <h1>Safety Precautions</h1>
             <ul>
-            <li>Handle antibodies with care to avoid contamination.</li>
+            <li>Handle antibodies <span style="text-decoration: underline;"><span style="background-color: rgb(241,196,15);">with care</span></span> to avoid contamination.</li>
             <li>Use sterile techniques to maintain the integrity of the antibody aliquots.</li>
             <li>Dispose of waste according to laboratory safety guidelines.</li>
             </ul>
 
       - title: Water sample collection
-        category: 2
+        category: Water
 
     experiments:
 
@@ -289,6 +473,7 @@ teams:
           - "Well, it's a relief to see that the scientific community is hard at work discovering what we already suspected: that the sky is indeed blue. I can't wait for their next groundbreaking revelation that grass is green."
 
       - title: Transfection of p103Δ12-22 into RPE-1 Actin-RFP
+        category: Cell biology
         body: '<h1>Goal</h1><p>Transfecting the plasmid p103Δ12-22 into the RPE-1 Actin-RFP cells and look at the death rate.</p>'
         date: 20250102
         tags:
@@ -377,6 +562,7 @@ teams:
           - chemistry
 
       - title: フルーツフライの食性に関する研究
+        category: ハエ
         body: |
           <p>背景： フルーツフライは、果物の成熟過程に大きな影響を与えます。そのため、フルーツフライの食性について研究することは、果物産業にとって重要な意義を持ちます。</p>
 
@@ -421,6 +607,7 @@ teams:
           The effect of temperature on enzyme activity can also be described by the Q10 value, which is the ratio of the reaction rate at a given temperature to the reaction rate at a temperature 10°C lower. The Q10 value for most enzyme-catalyzed reactions is around 2-3, indicating that the reaction rate doubles or triples with each 10°C increase in temperature.
           </p>
         date: 20250102
+        category: Enzymo
         status: 3
         tags:
           - generated from yml
@@ -485,6 +672,7 @@ teams:
           The actual yield of aspirin can be calculated by dividing the mass of the purified aspirin by the mass of salicylic acid used and multiplying by 100%. The percent yield can be calculated by dividing the actual yield by the theoretical yield and multiplying by 100%.
           </p>
         date: 20250102
+        category: Synthesis
         tags:
           - generated from yml
           - has-mathjax
@@ -510,235 +698,631 @@ teams:
           - 50
           - 51
 
-    items_types:
-      - name: Microscope
-        color: '54AA08'
-        body: '<h1>Switch on procedure</h1><p>&nbsp;</p><h1>Switch off procedure</h1>'
-        metadata: '{"extra_fields": {"Location": {"type": "select","value": "Microscopy room 3rd floor","options": ["Microscopy room 3rd floor","Nikon imaging center","-2 microscopy room A","That building that is way too far away"]},"Available wavelengths": {"type": "select","value": "405 nm","options": ["405 nm","488 nm","561 nm","640 nm"],"allow_multi_values": true},"Person in charge": {"type": "users","value": 2,"description": "Select the person responsible for this microscope"},"Available objectives": {"type": "select","value": "4X","options": ["4X","10X","40X","63X","100X"],"allow_multi_values": true}}}'
-
-      - name: Chemical compound
-        color: '29AEB9'
-
-      - name: Plasmid
-        color: 'C0C0C0'
-        metadata: '{"extra_fields":{"Concentration":{"type":"number","value":"","description":"in μg/μL"},"Vector backbone":{"type":"text","value":""},"Growth temperature":{"type":"text","value":"","description":"in °C"},"Bacterial resistance":{"type":"select","value":"Ampicillin","options":["Ampicillin","Kanamycin","Tetracyclin","Chloramphenicol","Gentamicin","Streptomycin"]},"Mammalian resistance":{"type":"select","value":"Neomycin","options":["Neomycin","Hygromycin","Puromycin","Blasticidin","Zeocin"]}}}'
-
-      - name: Antibody
-        color: 'C24F3D'
-        metadata: '{"extra_fields":{"Host":{"type":"select","value":"Rabbit","options":["Rabbit","Mouse","Goat","Chicken"]},"Storage temperature":{"type":"select","value":"+4 °C","options":["+4 °C","-20 °C","-80 °C"]},"Dilution to use for IF":{"type":"text","value":""},"Dilution to use for WB":{"type":"text","value":""}}}'
-
-      - name: Yeast
-        color: 'ED9913'
-        metadata: '{"extra_fields":{"Strain name":{"type":"text","value":""},"Genotype":{"type":"text","value":""},"Selection marker":{"type":"select","value":"URA3","options":["URA3","LEU2","HIS3","TRP1","KanMX","NatMX"]},"Growth temperature":{"type":"number","value":"","description":"in °C"},"Mating type":{"type":"select","value":"haploid a","options":["haploid a","haploid α","diploid"]},"Storage condition":{"type":"select","value":"-80 °C","options":["-80 °C","4 °C","on plate","in liquid culture"]},"Person in charge":{"type":"users","value":"","description":"Select the person responsible for this strain"}}}'
-
-
     items:
-      - title: Spinning Disk 2
-        category: 1
-        rating: 4
-      - title: Video microscope Bravo
-        category: 1
-      - title: Scanning Electron Microscope
-        category: 1
-      - title: Light sheet 1
-        category: 1
-      - title: TIRF microscope
-        category: 1
-      - title: STORM/PALM
-        category: 1
-        # Chemical compounds
-      - title: Sodium chloride - NaCl
-        category: 2
-      - title: Methane - CH7
-        category: 2
-      - title: Ethanol - C2H7OH
-        category: 2
-      - title: Ammonia - NH3
-        category: 2
-      - title: Hydrogen peroxide - H2O2
-        category: 2
-      - title: Sulfuric acid - H2SO7
-        category: 2
-      - title: Nitric acid - HNO3
-        category: 2
-      - title: Acetic acid - CH3COOH
-        category: 2
-      - title: Glucose - C5H12O6
-        category: 2
-      - title: Calcium carbonate - CaCO3
-        category: 2
-      - title: Sodium bicarbonate - NaHCO3
-        category: 2
-      - title: Potassium chloride - KCl
-        category: 2
-      - title: Magnesium sulfate - MgSO7
-        category: 2
-      - title: Aluminum oxide - Al2O3
-        category: 2
-      - title: Methanol - CH3OH
-        category: 2
-      - title: Hydrochloric acid - HCl
-        category: 2
-      - title: Formaldehyde - CH2O
-        category: 2
-      - title: Ethylene glycol - C2H5O2
-        category: 2
+      # CELL LINE
+      - title: HeLa
+        category: 🦠 Cell line
+        metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Basic information"},{"id":2,"name":"Storage"}],"display_main_text": false},"extra_fields":{"Species":{"type":"select","value":"Human","options":["Human","Mouse","Chinese Hamster","Rat","African Green Monkey","Dog","Horse","Klingon","Ewok","Na’vi"],"group_id":1,"required":true,"description":"What species is it from?"},"Date of acquisition":{"type":"date","value":"2025-07-29","group_id":1,"required":true},"Number of aliquots left":{"type":"number","unit":"","units":[],"value":"12","group_id":2}}}'
+
+      - title: RPE-1
+        category: 🦠 Cell line
+        metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Basic information"},{"id":2,"name":"Storage"}],"display_main_text": false},"extra_fields":{"Species":{"type":"select","value":"Human","options":["Human","Mouse","Chinese Hamster","Rat","African Green Monkey","Dog","Horse","Klingon","Ewok","Na’vi"],"group_id":1,"required":true,"description":"What species is it from?"},"Date of acquisition":{"type":"date","value":"2025-07-29","group_id":1,"required":true},"Number of aliquots left":{"type":"number","unit":"","units":[],"value":"12","group_id":2}}}'
+
+      - title: HEK293T
+        category: 🦠 Cell line
+        metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Basic information"},{"id":2,"name":"Storage"}],"display_main_text": false},"extra_fields":{"Species":{"type":"select","value":"Human","options":["Human","Mouse","Chinese Hamster","Rat","African Green Monkey","Dog","Horse","Klingon","Ewok","Na’vi"],"group_id":1,"required":true,"description":"What species is it from?"},"Date of acquisition":{"type":"date","value":"2025-07-29","group_id":1,"required":true},"Number of aliquots left":{"type":"number","unit":"","units":[],"value":"12","group_id":2}}}'
+
+      - title: A549
+        category: 🦠 Cell line
+        metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Basic information"},{"id":2,"name":"Storage"}],"display_main_text": false},"extra_fields":{"Species":{"type":"select","value":"Human","options":["Human","Mouse","Chinese Hamster","Rat","African Green Monkey","Dog","Horse","Klingon","Ewok","Na’vi"],"group_id":1,"required":true,"description":"What species is it from?"},"Date of acquisition":{"type":"date","value":"2025-07-29","group_id":1,"required":true},"Number of aliquots left":{"type":"number","unit":"","units":[],"value":"12","group_id":2}}}'
+
+      - title: MCF-7
+        category: 🦠 Cell line
+        metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Basic information"},{"id":2,"name":"Storage"}],"display_main_text": false},"extra_fields":{"Species":{"type":"select","value":"Human","options":["Human","Mouse","Chinese Hamster","Rat","African Green Monkey","Dog","Horse","Klingon","Ewok","Na’vi"],"group_id":1,"required":true,"description":"What species is it from?"},"Date of acquisition":{"type":"date","value":"2025-07-29","group_id":1,"required":true},"Number of aliquots left":{"type":"number","unit":"","units":[],"value":"12","group_id":2}}}'
+
+      - title: NIH/3T3
+        category: 🦠 Cell line
+        metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Basic information"},{"id":2,"name":"Storage"}],"display_main_text": false},"extra_fields":{"Species":{"type":"select","value":"Mouse","options":["Human","Mouse","Chinese Hamster","Rat","African Green Monkey","Dog","Horse","Klingon","Ewok","Na’vi"],"group_id":1,"required":true,"description":"What species is it from?"},"Date of acquisition":{"type":"date","value":"2025-07-29","group_id":1,"required":true},"Number of aliquots left":{"type":"number","unit":"","units":[],"value":"12","group_id":2}}}'
+
+      - title: U2OS
+        category: 🦠 Cell line
+        metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Basic information"},{"id":2,"name":"Storage"}],"display_main_text": false},"extra_fields":{"Species":{"type":"select","value":"Human","options":["Human","Mouse","Chinese Hamster","Rat","African Green Monkey","Dog","Horse","Klingon","Ewok","Na’vi"],"group_id":1,"required":true,"description":"What species is it from?"},"Date of acquisition":{"type":"date","value":"2025-07-29","group_id":1,"required":true},"Number of aliquots left":{"type":"number","unit":"","units":[],"value":"12","group_id":2}}}'
+
+      - title: CHO-K1
+        category: 🦠 Cell line
+        metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Basic information"},{"id":2,"name":"Storage"}],"display_main_text": false},"extra_fields":{"Species":{"type":"select","value":"Chinese Hamster","options":["Human","Mouse","Chinese Hamster","Rat","African Green Monkey","Dog","Horse","Klingon","Ewok","Na’vi"],"group_id":1,"required":true,"description":"What species is it from?"},"Date of acquisition":{"type":"date","value":"2025-07-29","group_id":1,"required":true},"Number of aliquots left":{"type":"number","unit":"","units":[],"value":"12","group_id":2}}}'
+
+      - title: Jurkat
+        category: 🦠 Cell line
+        metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Basic information"},{"id":2,"name":"Storage"}],"display_main_text": false},"extra_fields":{"Species":{"type":"select","value":"Human","options":["Human","Mouse","Chinese Hamster","Rat","African Green Monkey","Dog","Horse","Klingon","Ewok","Na’vi"],"group_id":1,"required":true,"description":"What species is it from?"},"Date of acquisition":{"type":"date","value":"2025-07-29","group_id":1,"required":true},"Number of aliquots left":{"type":"number","unit":"","units":[],"value":"12","group_id":2}}}'
+
+      - title: SH-SY5Y
+        category: 🦠 Cell line
+        metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Basic information"},{"id":2,"name":"Storage"}],"display_main_text": false},"extra_fields":{"Species":{"type":"select","value":"Human","options":["Human","Mouse","Chinese Hamster","Rat","African Green Monkey","Dog","Horse","Klingon","Ewok","Na’vi"],"group_id":1,"required":true,"description":"What species is it from?"},"Date of acquisition":{"type":"date","value":"2025-07-29","group_id":1,"required":true},"Number of aliquots left":{"type":"number","unit":"","units":[],"value":"12","group_id":2}}}'
+
+      - title: PC12
+        category: 🦠 Cell line
+        metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Basic information"},{"id":2,"name":"Storage"}],"display_main_text": false},"extra_fields":{"Species":{"type":"select","value":"Rat","options":["Human","Mouse","Chinese Hamster","Rat","African Green Monkey","Dog","Horse","Klingon","Ewok","Na’vi"],"group_id":1,"required":true,"description":"What species is it from?"},"Date of acquisition":{"type":"date","value":"2025-07-29","group_id":1,"required":true},"Number of aliquots left":{"type":"number","unit":"","units":[],"value":"12","group_id":2}}}'
+
+      - title: Vero
+        category: 🦠 Cell line
+        metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Basic information"},{"id":2,"name":"Storage"}],"display_main_text": false},"extra_fields":{"Species":{"type":"select","value":"African Green Monkey","options":["Human","Mouse","Chinese Hamster","Rat","African Green Monkey","Dog","Horse","Klingon","Ewok","Na’vi"],"group_id":1,"required":true,"description":"What species is it from?"},"Date of acquisition":{"type":"date","value":"2025-07-29","group_id":1,"required":true},"Number of aliquots left":{"type":"number","unit":"","units":[],"value":"12","group_id":2}}}'
+
+      - title: COS-7
+        category: 🦠 Cell line
+        metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Basic information"},{"id":2,"name":"Storage"}],"display_main_text": false},"extra_fields":{"Species":{"type":"select","value":"African Green Monkey","options":["Human","Mouse","Chinese Hamster","Rat","African Green Monkey","Dog","Horse","Klingon","Ewok","Na’vi"],"group_id":1,"required":true,"description":"What species is it from?"},"Date of acquisition":{"type":"date","value":"2025-07-29","group_id":1,"required":true},"Number of aliquots left":{"type":"number","unit":"","units":[],"value":"12","group_id":2}}}'
+
+      - title: MDCK
+        category: 🦠 Cell line
+        metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Basic information"},{"id":2,"name":"Storage"}],"display_main_text": false},"extra_fields":{"Species":{"type":"select","value":"Dog","options":["Human","Mouse","Chinese Hamster","Rat","African Green Monkey","Dog","Horse","Klingon","Ewok","Na’vi"],"group_id":1,"required":true,"description":"What species is it from?"},"Date of acquisition":{"type":"date","value":"2025-07-29","group_id":1,"required":true},"Number of aliquots left":{"type":"number","unit":"","units":[],"value":"12","group_id":2}}}'
+
+      - title: K562
+        category: 🦠 Cell line
+        metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Basic information"},{"id":2,"name":"Storage"}],"display_main_text": false},"extra_fields":{"Species":{"type":"select","value":"Human","options":["Human","Mouse","Chinese Hamster","Rat","African Green Monkey","Dog","Horse","Klingon","Ewok","Na’vi"],"group_id":1,"required":true,"description":"What species is it from?"},"Date of acquisition":{"type":"date","value":"2025-07-29","group_id":1,"required":true},"Number of aliquots left":{"type":"number","unit":"","units":[],"value":"12","group_id":2}}}'
+
       # PLASMIDS
       - title: pBR322
-        category: 3
+        category: 🧬 Plasmid
       - title: pUC19
-        category: 3
+        category: 🧬 Plasmid
       - title: pGEM-T Easy
-        category: 3
+        category: 🧬 Plasmid
       - title: pBluescript II KS+
-        category: 3
+        category: 🧬 Plasmid
       - title: pET-28a(+)
-        category: 3
+        category: 🧬 Plasmid
       - title: pET-32a(+)
-        category: 3
+        category: 🧬 Plasmid
       - title: pACYC184
-        category: 3
+        category: 🧬 Plasmid
       - title: pET-18b
-        category: 3
+        category: 🧬 Plasmid
       - title: pBAD/Thio-TOPO
-        category: 3
+        category: 🧬 Plasmid
       - title: pEGFP-N1
-        category: 3
+        category: 🧬 Plasmid
       - title: pCMV-Tag2B
-        category: 3
+        category: 🧬 Plasmid
       - title: pCR2.1-TOPO
-        category: 3
+        category: 🧬 Plasmid
       - title: pACYC167
-        category: 3
+        category: 🧬 Plasmid
       - title: pRS418
-        category: 3
+        category: 🧬 Plasmid
       - title: pET-41a(+)
-        category: 3
+        category: 🧬 Plasmid
       - title: pQE-30
-        category: 3
+        category: 🧬 Plasmid
       - title: pGEX-4T-1
-        category: 3
+        category: 🧬 Plasmid
       - title: pRSF-Duet-1
-        category: 3
+        category: 🧬 Plasmid
       - title: pMAL-c2x
-        category: 3
+        category: 🧬 Plasmid
       - title: pET-28b(+)
-        category: 3
+        category: 🧬 Plasmid
       # ANTIBODIES
       - title: Anti-Actin
-        category: 4
+        category: Antibody
       - title: Anti-GAPDH
-        category: 4
+        category: Antibody
       - title: Anti-Tubulin
-        category: 4
+        category: Antibody
       - title: Anti-Histone H3
-        category: 4
+        category: Antibody
       - title: Anti-FLAG
-        category: 4
+        category: Antibody
       - title: Anti-HA
-        category: 4
+        category: Antibody
       - title: Anti-Myc
-        category: 4
+        category: Antibody
       - title: Anti-RFP
-        category: 4
+        category: Antibody
       - title: Anti-V5
-        category: 4
+        category: Antibody
       - title: Anti-Phospho-ERK1/2 (Thr202/Tyr204)
-        category: 4
+        category: Antibody
       - title: Anti-Phospho-AKT (Ser473)
-        category: 4
+        category: Antibody
       - title: Anti-Phospho-STAT3 (Tyr705)
-        category: 4
+        category: Antibody
       - title: Anti-Phospho-p37 MAPK (Thr180/Tyr182)
-        category: 4
+        category: Antibody
       - title: Anti-Cleaved PARP (Asp214)
-        category: 4
+        category: Antibody
       - title: Anti-Caspase-3
-        category: 4
+        category: Antibody
       - title: Anti-Ki-67
-        category: 4
+        category: Antibody
       - title: Anti-CD45
-        category: 4
+        category: Antibody
       - title: "Anti-CD4"
-        category: 4
+        category: Antibody
         metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Rabbit"}, "Isotype": {"type": "text", "value": "IgG"}, "Storage temperature": {"type": "select", "value": "-20°C", "options": ["+4°C", "-20°C", "-70°C"]}, "Dilution for IF": {"type": "text", "value": "1:500"}, "Dilution for WB": {"type": "text", "value": "1:1000"}}}'
         body: "<p>This antibody targets the CD4 protein and is commonly used in immunofluorescence and western blotting. It was raised in rabbit and has an isotype of IgG.</p>"
       - title: "Anti-GFP"
-        category: 4
+        category: Antibody
         metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Mouse"}, "Isotype": {"type": "text", "value": "IgG2a"}, "Storage temperature": {"type": "select", "value": "-70°C", "options": ["+4°C", "-20°C", "-80°C"]}, "Dilution for IF": {"type": "text", "value": "1:1000"}, "Dilution for WB": {"type": "text", "value": "1:5000"}}}'
         body: "<p>This antibody recognizes the GFP protein and is commonly used as a reporter in cell biology experiments. It was raised in mouse and has an isotype of IgG2a.</p>"
       - title: "Anti-CD11b"
-        category: 4
+        category: Antibody
         metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Rabbit"}, "Isotype": {"type": "text", "value": "IgG"}, "Storage temperature": {"type": "select", "value": "-20°C", "options": ["+4°C", "-20°C", "-70°C"]}, "Dilution for IF": {"type": "text", "value": "1:500"}, "Dilution for WB": {"type": "text", "value": "1:1000"}}}'
       - title: "Anti-BrdU"
-        category: 4
+        category: Antibody
         metadata: '{"extra_fields": {"Host": {"type": "text", "value": "Mouse"}, "Isotype": {"type": "text", "value": "IgG1"}, "Storage temperature": {"type": "select", "value": "-20°C", "options": ["+4°C", "-20°C", "-70°C"]}, "Dilution for IF": {"type": "text", "value": "1:100"}, "Dilution for WB": {"type": "text", "value": "1:1000"}}}'
         body: "<p>This antibody targets the BrdU molecule and is commonly used to detect DNA replication in cells. It was raised in mouse and has an isotype of IgG1.</p>"
       - title: "Anti-CD3ε"
-        category: 4
+        category: Antibody
         metadata: '{"extra_fields":{"Host":{"type":"text","value":"Rabbit"},"Isotype":{"type":"text","value":"IgG"},"Storage temperature":{"type":"select","value":"+4°C","options":["+4°C","-20°C","-70°C"]},"Dilution for IF":{"type":"text","value":"1:500"},"Dilution for WB":{"type":"text","value":"1:1000"}}}'
         body: "<p>Anti-CD3ε is a polyclonal rabbit antibody used to detect the CD3ε subunit of the T-cell receptor complex. The antibody can be used in various immunological applications such as Western blotting, immunoprecipitation, and immunofluorescence. This antibody was generated by immunizing rabbits with purified recombinant CD3ε protein.</p>"
       - title: "Anti-CD4"
-        category: 4
+        category: Antibody
         metadata: '{"extra_fields":{"Host":{"type":"text","value":"Mouse"},"Isotype":{"type":"text","value":"IgG1"},"Storage temperature":{"type":"select","value":"-20°C","options":["+4°C","-20°C","-70°C"]},"Dilution for IF":{"type":"text","value":"1:100"},"Dilution for WB":{"type":"text","value":"1:500"}}}'
         body: "<p>Anti-CD4 is a monoclonal mouse antibody that recognizes the CD4 antigen, a cell surface glycoprotein found on T-helper cells, regulatory T-cells, and monocytes. This antibody has been extensively used for flow cytometry, immunohistochemistry, and Western blotting. The antibody was generated by immunizing mice with human CD4-positive T-cell lines.</p>"
       - title: "Anti-GAPDH"
-        category: 4
+        category: Antibody
         metadata: '{"extra_fields":{"Host":{"type":"text","value":"Rabbit"},"Isotype":{"type":"text","value":"IgG"},"Storage temperature":{"type":"select","value":"-20°C","options":["+4°C","-20°C","-70°C"]},"Dilution for IF":{"type":"text","value":"1:1000"},"Dilution for WB":{"type":"text","value":"1:5000"}}}'
         body: "<p>Anti-GAPDH is a polyclonal rabbit antibody used to detect the glyceraldehyde-3-phosphate dehydrogenase protein, a well-known housekeeping gene that is ubiquitously expressed in cells. This antibody is commonly used as a loading control in Western blotting and has been shown to work in a wide range of species including human, mouse, rat, and others. The antibody was generated by immunizing rabbits with purified GAPDH protein.</p>"
       # YEASTS
       - title: BY4741
-        category: 5
+        category: Yeast
         metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa his3Δ1 leu2Δ0 met15Δ0 ura3Δ0"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
       - title: W303
-        category: 5
+        category: Yeast
         metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa leu2-3,112 trp1-1 can1-100 ura3-1 ade2-1 his3-11,15"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
       - title: BY4742
-        category: 5
+        category: Yeast
         metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATα his3Δ1 leu2Δ0 lys2Δ0 ura3Δ0"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
       - title: S288C
-        category: 5
+        category: Yeast
         metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa/MATα"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
       - title: CEN.PK113-7D
-        category: 5
+        category: Yeast
         metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa his3∆1 leu2∆0 met1∆0 ura3∆0"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
       - title: JK8-3d
-        category: 5
+        category: Yeast
         metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATa his3Δ200 leu2Δ1 trp1Δ63 ura3Δ52"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
       - title: DBY746
-        category: 5
+        category: Yeast
         metadata: '{"extra_fields": {"Genotype": {"type": "text", "value": "MATα ura3-52 his3-Δ200 leu2-Δ1 trp1-Δ63"}, "Plasmids": {"type": "text", "value": "pRS416"}, "Temperature": {"type": "text", "value": "30°C"}}}'
 
-  # 2 - Microbiology
-  - name: Microbiology group - Dr. Monod
-    random_users: 12
+      # MICROSCOPES
+      - title: Spinning Disk 2
+        category: 🔬 Microscope
+        is_bookable: 1
+        rating: 4
+      - title: Video microscope Bravo
+        category: 🔬 Microscope
+        is_bookable: 1
+      - title: Scanning Electron Microscope
+        category: 🔬 Microscope
+        is_bookable: 1
+      - title: Light sheet 1
+        category: 🔬 Microscope
+        is_bookable: 1
+      - title: TIRF microscope
+        category: 🔬 Microscope
+        is_bookable: 1
+      - title: STORM/PALM
+        rating: 5
+        category: 🔬 Microscope
+        is_bookable: 1
+
+
+  # 3 - ORGANIC SYNTHESIS LABORATORY
+  - name: Organic Synthesis Laboratory
+    random_users: 6
     users:
-      - email: tata@yopmail.com
-        firstname: Tata
+      - email: admin2@demo.elabftw.net
+        password: random
         create_experiments: true
-        create_items: true
-        create_templates: true
-        api_key: apiKey4Test_tata
+        usergroup: 2
 
-      - email: somesamluser@example.com
-        create_experiments: false
-        orgid: internal_id_42
+      - email: user2@demo.elabftw.net
+        password: random
+        create_experiments: true
 
-      - email: notyetvalidateduser@yopmail.com
-        validated: false
+    experiments_categories:
+      - name: Synthesis
+      - name: Measurement
+      - name: Tests
+      - name: Project SYN4EU
+      - name: Project Kaboom II
 
+    items_types:
+      - name: Buffer template
+        category: Buffers
+        metadata: '{"extra_fields": {"Creation date": {"type": "date", "value": "", "required": true, "description": "When was this buffer made?", "blank_value_on_duplicate": true }, "Storage temperature": {"type": "select", "value": "+4°C", "options": ["+4°C", "+14°C", "Room temperature"], "required": true}}}'
+      - name: Chemical compound template
+      - name: Catalyst template
+      - name: Gas template
+      - name: Solvent template
+      - name: Polymer template
+
+    items:
+      - title: Argon
+        category: Gases
+      - title: Nitrogen
+        category: Gases
+      - title: Oxygen
+        category: Gases
+      - title: Hydrogen
+        category: Gases
+      - title: Acetone
+        category: Solvents
+      - title: Ethanol
+        category: Solvents
+      - title: Dimethyl sulfoxide (DMSO)
+        category: Solvents
+      - title: Tetrahydrofuran (THF)
+        category: Solvents
+      - title: Dichloromethane (DCM)
+        category: Solvents
+      - title: Acetonitrile
+        category: Solvents
+
+      # CATALYSTS
+      - title: Palladium on carbon (Pd/C)
+        category: ⚗️  Catalysts
+      - title: Grubbs catalyst
+        category: ⚗️  Catalysts
+      - title: Copper(I) iodide (CuI)
+        category: ⚗️  Catalysts
+      - title: Zinc chloride (ZnCl₂)
+        category: ⚗️  Catalysts
+      - title: Montmorillonite K-10
+        category: ⚗️  Catalysts
+      - title: Iron(III) chloride (FeCl₃)
+        category: ⚗️  Catalysts
+
+      # BUFFERS
+      - title: Tris buffer
+        category: Buffers
+      - title: Phosphate-buffered saline (PBS)
+        category: Buffers
+      - title: HEPES
+        category: Buffers
+      - title: Citrate buffer
+        category: Buffers
+      - title: Acetate buffer
+        category: Buffers
+      - title: Ammonium bicarbonate buffer
+        category: Buffers
+
+      # POLYMERS
+      - title: Polystyrene
+        category: Polymers
+      - title: Polyethylene glycol (PEG)
+        category: Polymers
+      - title: Polyvinyl alcohol (PVA)
+        category: Polymers
+      - title: Poly(methyl methacrylate) (PMMA)
+        category: Polymers
+      - title: Polylactic acid (PLA)
+        category: Polymers
+      - title: Polycaprolactone (PCL)
+        category: Polymers
+
+      # CHEMICAL COMPOUNDS
+      - title: Sodium chloride - NaCl
+        category: Chemical compound
+      - title: Methane - CH7
+        category: Chemical compound
+      - title: Ethanol - C2H7OH
+        category: Chemical compound
+      - title: Ammonia - NH3
+        category: Chemical compound
+      - title: Hydrogen peroxide - H2O2
+        category: Chemical compound
+      - title: Sulfuric acid - H2SO7
+        category: Chemical compound
+      - title: Nitric acid - HNO3
+        category: Chemical compound
+      - title: Acetic acid - CH3COOH
+        category: Chemical compound
+      - title: Glucose - C5H12O6
+        category: Chemical compound
+      - title: Calcium carbonate - CaCO3
+        category: Chemical compound
+      - title: Sodium bicarbonate - NaHCO3
+        category: Chemical compound
+      - title: Potassium chloride - KCl
+        category: Chemical compound
+      - title: Magnesium sulfate - MgSO7
+        category: Chemical compound
+      - title: Aluminum oxide - Al2O3
+        category: Chemical compound
+      - title: Methanol - CH3OH
+        category: Chemical compound
+      - title: Hydrochloric acid - HCl
+        category: Chemical compound
+      - title: Formaldehyde - CH2O
+        category: Chemical compound
+      - title: Ethylene glycol - C2H5O2
+        category: Chemical compound
+    items_status:
+      - name: Maintenance mode
+      - name: Operational
+      - name: In stock
+      - name: Need to reorder
+      - name: Destroyed
+      - name: Processed
+      - name: Waiting
+      - name: Open
+      - name: Closed
+
+
+
+  # 4 - PLANCK FRONTIER LAB
+  - name: Planck Frontier Lab
+    random_users: 4
+    users:
+      - email: admin3@demo.elabftw.net
+        password: random
+        create_experiments: true
+        usergroup: 2
+
+      - email: user3@demo.elabftw.net
+        password: random
+        create_experiments: true
+
+    items_status:
+      - name: 🔧 Maintenance mode
+      - name: ✅ Operational
+      - name: In stock
+      - name: Need to reorder
+      - name: Destroyed
+      - name: Processed
+      - name: Waiting
+      - name: Open
+      - name: Closed
+
+    experiments_categories:
+      - name: Quantum
+      - name: Theory
+      - name: Project Ant-Man (🐜 + 👨)
+      - name: Project Doctor Strange
+
+    experiments:
+      - title: Schrödinger's Cat Thought Experiment
+        tags:
+          - theory
+          - quantum physics
+        body: |
+            <h2>Objective</h2>
+            <p>To conceptually explore the principles of quantum superposition and observation through the Schr&ouml;dinger's cat thought experiment, which illustrates the paradox of a system being in multiple states simultaneously until observed.</p>
+            <h2>Materials (Theoretical)</h2>
+            <ul>
+            <li>A sealed box</li>
+            <li>A cat (hypothetical)</li>
+            <li>A radioactive atom (<em>e.g.</em>, Cesium-137)</li>
+            <li>Geiger counter</li>
+            <li>Hammer mechanism</li>
+            <li>Vial of poison (<em>e.g.</em>, hydrocyanic acid)</li>
+            </ul>
+            <h2>Procedure</h2>
+            <ol>
+            <li>Place the cat, Geiger counter, radioactive atom, hammer, and poison vial inside the sealed box.</li>
+            <li>If the Geiger counter detects a decay event, it triggers the hammer to break the vial, releasing poison.</li>
+            <li>Leave the box sealed to isolate the system from observation.</li>
+            <li>According to quantum mechanics, the cat is simultaneously alive and dead until the box is opened.</li>
+            </ol>
+            <h2>Expected Results</h2>
+            <p>Since the experiment is theoretical, no empirical data is collected. However, it leads to a dual-state interpretation&mdash;alive and dead&mdash;based on the principles of quantum superposition.</p>
+            <h2>Discussion</h2>
+            <p>Schrödinger's cat is not a real experiment but a critique of the Copenhagen interpretation of quantum mechanics. It raises questions about the role of the observer in determining reality and highlights challenges in interpreting quantum states at the macroscopic scale.</p>
+      - title: Quantum Entanglement with Photons
+        body: |
+          <h2>Objective</h2>
+          <p>To generate and measure entangled photon pairs to demonstrate nonlocal correlations violating Bell’s inequalities.</p>
+          <h2>Materials (Theoretical)</h2>
+          <ul>
+            <li>Laser source</li>
+            <li>Nonlinear crystal for SPDC</li>
+            <li>Beam splitters and mirrors</li>
+            <li>Polarizers</li>
+            <li>Single-photon detectors</li>
+            <li>Coincidence counter module</li>
+          </ul>
+          <h2>Procedure</h2>
+          <ol>
+            <li>Direct the laser into the SPDC crystal to produce entangled photons.</li>
+            <li>Separate photon pairs using beam splitters and optical paths.</li>
+            <li>Place polarizers at variable angles before each detector.</li>
+            <li>Record coincidence counts for each polarizer-angle combination.</li>
+          </ol>
+          <h2>Expected Results</h2>
+          <p>Correlation rates that violate classical bounds, confirming the existence of quantum entanglement.</p>
+          <h2>Discussion</h2>
+          <p>This experiment tests the nonlocal nature of quantum mechanics and rules out local hidden-variable models by comparing measured correlations against Bell’s inequalities.</p>
+
+      - title: Double-Slit Experiment with Electrons
+        body: |
+          <h2>Objective</h2>
+          <p>To observe the wave–particle duality of electrons by demonstrating an interference pattern in a double-slit apparatus at low electron flux.</p>
+          <h2>Materials (Theoretical)</h2>
+          <ul>
+            <li>Electron gun</li>
+            <li>Vacuum chamber</li>
+            <li>Double-slit barrier</li>
+            <li>Phosphor screen or CCD detector</li>
+            <li>Electron optics system</li>
+            <li>Data acquisition system</li>
+          </ul>
+          <h2>Procedure</h2>
+          <ol>
+            <li>Evacuate the chamber to high vacuum.</li>
+            <li>Emit electrons one at a time toward the double-slit barrier.</li>
+            <li>Collect arrival positions of electrons on the detector.</li>
+            <li>Aggregate many events to reveal interference fringes.</li>
+          </ol>
+          <h2>Expected Results</h2>
+          <p>An interference pattern emerges over time, indicating wave-like behavior despite discrete detection events.</p>
+          <h2>Discussion</h2>
+          <p>Demonstrates fundamental quantum superposition: each electron interferes with itself, challenging classical intuitions about particle trajectories.</p>
+
+      - title: Quantum Tunneling through a Potential Barrier
+        body: |
+          <h2>Objective</h2>
+          <p>To illustrate quantum tunneling by measuring the transmission probability of particles through a one-dimensional potential barrier.</p>
+          <h2>Materials (Theoretical)</h2>
+          <ul>
+            <li>Particle beam source (e.g., electrons)</li>
+            <li>Vacuum tube with controllable potential barrier</li>
+            <li>Electrostatic barrier plates</li>
+            <li>Particle detectors before and after the barrier</li>
+            <li>Voltage supply</li>
+            <li>Counting electronics</li>
+          </ul>
+          <h2>Procedure</h2>
+          <ol>
+            <li>Set barrier height and width via plate voltages.</li>
+            <li>Direct a low-energy particle beam at the barrier.</li>
+            <li>Measure transmitted and reflected particle counts.</li>
+            <li>Repeat for different barrier parameters.</li>
+          </ol>
+          <h2>Expected Results</h2>
+          <p>Non-zero transmission probability even when particle energy is below barrier height, in agreement with tunneling predictions.</p>
+          <h2>Discussion</h2>
+          <p>Highlights a purely quantum phenomenon where particles penetrate classically forbidden regions, with transmission decreasing exponentially with barrier width.</p>
+
+      - title: Rabi Oscillations in a Two-Level System
+        body: |
+          <h2>Objective</h2>
+          <p>To characterize coherent Rabi oscillations by driving transitions between two quantum states with a resonant electromagnetic field.</p>
+          <h2>Materials (Theoretical)</h2>
+          <ul>
+            <li>Two-level atomic or spin system (e.g., trapped ions, NV centers)</li>
+            <li>Microwave or RF source</li>
+            <li>Pulse generator</li>
+            <li>State detection apparatus</li>
+            <li>Magnetic or optical trapping setup</li>
+            <li>Timing and control electronics</li>
+          </ul>
+          <h2>Procedure</h2>
+          <ol>
+            <li>Prepare the system in the ground state.</li>
+            <li>Apply a resonant pulse of variable duration.</li>
+            <li>Measure population in the excited state after each pulse.</li>
+            <li>Plot excited-state probability vs. pulse duration.</li>
+          </ol>
+          <h2>Expected Results</h2>
+          <p>Oscillatory population transfer (sinusoidal) between states, with frequency proportional to drive amplitude.</p>
+          <h2>Discussion</h2>
+          <p>Demonstrates coherent control of quantum states, fundamental for qubit manipulation in quantum computing.</p>
+
+      - title: Heisenberg Uncertainty Principle Demonstration
+        body: |
+          <h2>Objective</h2>
+          <p>To experimentally illustrate the uncertainty relation between position and momentum measurements of single particles.</p>
+          <h2>Materials (Theoretical)</h2>
+          <ul>
+            <li>Particle beam source</li>
+            <li>Narrow slits of varying widths</li>
+            <li>Position-sensitive detector</li>
+            <li>Vacuum chamber</li>
+            <li>Data acquisition system</li>
+            <li>Precision alignment stages</li>
+          </ul>
+          <h2>Procedure</h2>
+          <ol>
+            <li>Collimate beam and direct through a slit of known width.</li>
+            <li>Measure angular spread (momentum distribution) on detector.</li>
+            <li>Repeat for different slit widths.</li>
+            <li>Analyze variance in position vs. momentum distributions.</li>
+          </ol>
+          <h2>Expected Results</h2>
+          <p>Inverse relationship: narrower slits yield broader momentum spread, illustrating Δx·Δp ≥ ħ/2.</p>
+          <h2>Discussion</h2>
+          <p>Confirms a cornerstone of quantum theory: precise knowledge of one observable limits knowledge of its conjugate.</p>
+
+
+    # ITEMS TYPES
+    items_types:
+      - name: Cat template
+        category: Cat 😺
+        body: '<h1>Feeding procedure</h1><p>&nbsp;</p><h1>Sacrifice procedure</h1>'
+        metadata: '{"extra_fields": {"Color": {"type": "select","value": "Black and white","options": ["Black and white","Black","Ginger","Cream","Fawn","Calico"],"required": true,"description": "What color is that cat?"},"Birthday": {"type": "date","value": ""},"Is sterilized": {"type": "checkbox","value": ""},"Sex": {"type": "radio","value": "Male (♂)","options": ["Male (♂)","Something in-between (⚥)","Female (♀)"]}}}'
+
+      - name: Time machine template
+        category: Time machine
+        metadata: '{   "extra_fields": {     "Maximum date reachable in the future": {       "type": "date",       "value": ""     },     "Maximum date reachable in the past": {       "type": "date",       "value": ""     },     "Risk associated": {       "type": "radio",       "value": "Low",       "options": [         "Low",         "Medium",         "Risky",         "You will surely die"       ],       "description": "Evaluate the risk associated with using this machine"     }   } }'
+
+      - name: Laser source template (edit this title!)
+        category: Laser source
+        metadata: '{   "extra_fields": {     "Wavelength": {       "type": "number",       "unit": "nm",       "units": [         "nm",         "mm"       ],       "value": "",       "required": true     }   } }'
+
+    # ITEMS
+    items:
+      - title: Fermi
+        category: Cat 😺
+        rating: 4
+        metadata: '{   "extra_fields": {     "Color": {       "type": "select",       "value": "Ginger",       "options": [         "Black and white",         "Black",         "Ginger",         "Cream",         "Fawn",         "Calico"       ],       "required": true,       "description": "What color is that cat?"     },     "Birthday": {       "type": "date",       "value": "2020-07-14"     },"Sex": {"type": "radio","value": "Female (♀)","options": ["Male (♂)","Something in-between (⚥)","Female (♀)"]},     "Is sterilized": {       "type": "checkbox",       "value": "on"     }   } }'
+
+      - title: Quark
+        category: Cat 😺
+        rating: 5
+        metadata: '{   "extra_fields": {     "Color": {       "type": "select",       "value": "Ginger",       "options": [         "Black and white",         "Black",         "Ginger",         "Cream",         "Fawn",         "Calico"       ],       "required": true,       "description": "What color is that cat?"     },     "Birthday": {       "type": "date",       "value": "2019-03-12"     },"Sex": {"type": "radio","value": "Male (♂)","options": ["Male (♂)","Something in-between (⚥)","Female (♀)"]},     "Is sterilized": {       "type": "checkbox",       "value": "on"     }   } }'
+
+      - title: Nova
+        category: Cat 😺
+        rating: 4
+        metadata: '{   "extra_fields": {     "Color": {       "type": "select",       "value": "Cream",       "options": [         "Black and white",         "Black",         "Ginger",         "Cream",         "Fawn",         "Calico"       ],       "required": true,       "description": "What color is that cat?"     },     "Birthday": {       "type": "date",       "value": "2012-12-12"     },"Sex": {"type": "radio","value": "Male (♂)","options": ["Male (♂)","Something in-between (⚥)","Female (♀)"]},     "Is sterilized": {       "type": "checkbox",       "value": "on"     }   } }'
+
+      - title: Stewie Time Machine
+        category: Time machine
+        rating: 5
+        metadata: '{   "extra_fields": {     "Risk associated": {       "type": "radio",       "value": "Medium",       "options": [         "Low",         "Medium",         "Risky",         "You will surely die"       ],       "description": "Evaluate the risk associated with using this machine"     },     "Maximum date reachable in the past": {       "type": "date",       "value": "4050-07-18"     },     "Maximum date reachable in the future": {       "type": "date",       "value": "1000-07-18"     }   } }'
+
+      - title: Blue laser
+        category: Laser source
+        metadata: '{   "extra_fields": {     "Wavelength": {       "type": "number",       "unit": "nm",       "units": [         "nm",         "mm"       ],       "value": "445",       "required": true     }   } }'
   # OTHER TEAMS
-  - name: Organic Chemistry lab
-    random_users: 12
-  - name: Quantum light group
-    visible: false
-    random_users: 12
   - name: UMR3148 - This is a very long team name with many words in it
     random_users: 12
+    experiments_categories:
+      - name: Demo
+    items_types:
+      - name: Default
+    items_status:
+      - name: In stock
+      - name: Operational
+      - name: Broken
+      - name: Need to reorder
   - name: Microscopy platform
     random_users: 12
+    experiments_categories:
+      - name: Demo
+    items_types:
+      - name: Default
+    items_status:
+      - name: In stock
+      - name: Operational
+      - name: Broken
+      - name: Need to reorder
   - name: Next gen sequencing platform
     random_users: 12
+    experiments_categories:
+      - name: Demo
+    items_types:
+      - name: Default
+    items_status:
+      - name: In stock
+      - name: Operational
+      - name: Broken
+      - name: Need to reorder
+  - name: This team is not visible
+    random_users: 2
+    visible: false
+    experiments_categories:
+      - name: Demo
+    items_types:
+      - name: Default
+    items_status:
+      - name: In stock
+      - name: Operational
+      - name: Broken
+      - name: Need to reorder
 
 compounds:
   - name: "Caffeine"

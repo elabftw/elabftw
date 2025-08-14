@@ -17,7 +17,7 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Templates;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 
 enum EntityType: string
 {
@@ -32,6 +32,16 @@ enum EntityType: string
             self::Experiments => new Experiments($users, $entityId, $bypassReadPermission, $bypassWritePermission),
             self::Items => new Items($users, $entityId, $bypassReadPermission, $bypassWritePermission),
             self::Templates => new Templates($users, $entityId, $bypassReadPermission, $bypassWritePermission),
+            self::ItemsTypes => new ItemsTypes($users, $entityId, $bypassReadPermission, $bypassWritePermission),
+        };
+    }
+
+    public function toTemplateType(Users $users, ?int $entityId = null, ?bool $bypassReadPermission = null, ?bool $bypassWritePermission = null): AbstractEntity
+    {
+        return match ($this) {
+            self::Experiments,
+            self::Templates  => new Templates($users, $entityId, $bypassReadPermission, $bypassWritePermission),
+            self::Items,
             self::ItemsTypes => new ItemsTypes($users, $entityId, $bypassReadPermission, $bypassWritePermission),
         };
     }

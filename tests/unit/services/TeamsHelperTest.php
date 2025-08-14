@@ -14,7 +14,7 @@ namespace Elabftw\Services;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Models\Teams;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 
 class TeamsHelperTest extends \PHPUnit\Framework\TestCase
 {

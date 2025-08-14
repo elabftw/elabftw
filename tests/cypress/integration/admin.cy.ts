@@ -8,7 +8,6 @@ describe('admin page', () => {
     cy.get('h1#pageTitle').should('have.text', 'Admin panel');
     // wait for page and tinymce to load before htmlvalidate
     cy.get('#loading-spinner').should('not.exist');
-    cy.get('#common_template_ifr').should('exist').scrollIntoView({duration: 500}).should('be.visible');
     cy.get('div.tox-menubar').contains('File').should('exist');
     cy.htmlvalidate();
 

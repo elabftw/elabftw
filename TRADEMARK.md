@@ -1,64 +1,68 @@
-# eLabFTW TRADEMARKS POLICY
+# eLabFTW TRADEMARKS POLICY (Commercial Use)
+
+## Scope (Who this applies to)
+
+**This policy applies to commercial entities and commercial activities only.**
+Individuals and organizations engaged in **non-commercial** use (e.g., research labs, universities, open-source contributors, hobby projects, internal deployments without paid offerings) may use the eLabFTW name *nominatively* to describe the software or project, provided they do **not** misrepresent affiliation, sponsorship, or endorsement and do not use eLabFTW logos in a way that implies such affiliation.
+
+> If you are unsure whether your use is commercial, see the definitions below or contact us: https://www.deltablot.com/contact
+
+### Definitions
+- **Commercial Entity**: Any person or organization that markets, sells, or monetizes products or services (including hosting, support, training, consulting, or paid add-ons).
+- **Commercial Activity**: Any activity intended to generate revenue or commercial advantage, including advertising, paid placements, sales, or lead generation associated with eLabFTW.
+
+---
 
 ## The eLabFTW Trademark
 
-The brand and word "eLabFTW" has trade mark protection in many countries around
-the world. Various eLabFTW™ trade marks are owned by Deltablot SASU. The law obligates
-trade mark owners to police their trade marks and prevent the use of
-confusingly similar names by third parties.
+The brand and word “eLabFTW” has trademark protection in many countries. Various eLabFTW™ trademarks are owned by Deltablot SASU. Trademark owners must police their marks and prevent confusingly similar uses.
 
-We need to be clear about use of the word "eLabFTW" and how we restrict its use
-when promoting commercial eLabFTW™ branded services. The proper use of
-trade marks reliably assures consumers about the quality of the associated
-products or services and where they have been derived from. Because eLabFTW
-is made available under the open source ‘GNU Affero General Public License'
-that permits you to modify the copyrighted software, the distribution of such
-modified software in combination with eLabFTW trade marks can potentially
-mislead others in the community. To be clear, the GNU AGPL does not include an
-implied right or licence to use eLabFTW's trade marks.
+Because eLabFTW is open source (GNU AGPL), modified distributions may appear alongside eLabFTW branding. To avoid confusion, note that the GNU AGPL does **not** grant any license to use eLabFTW trademarks. We protect the brand so we can continue developing eLabFTW sustainably.
 
-We do all this to protect the very business model that allows us to continue
-developing eLabFTW for you.
+You can **freely use** everything in this repository under its open-source license for both non-commercial and commercial purposes, **so long as you replace trademarked content** (including, without limitation, the eLabFTW name and logo) when you do not have permission to use the trademarks.
 
-You can **freely use** what is included in this git repository under its
-opensource license, either for a non-commercial purposes, or for commercial purposes
-as long as you replace trademarked content (including without limitation the
-eLabFTW name and logo).
+---
 
-## Allowed uses of "eLabFTW"
+## Allowed uses of “eLabFTW” (No Permission Required)
 
-The following uses don't require any permission at all:
+The following **non-commercial** uses are allowed without permission, provided there is no suggestion of affiliation, sponsorship, or endorsement by Deltablot SASU:
 
-* Referring to the software or the eLabFTW project as the "eLabFTW™ software"
-  or the "eLabFTW™ project"
-* Describing your own implementation of the eLabFTW™ software platform
-  (including within corporate settings).
-* Describing a eLabFTW-based community hub.
-* Describing certain software you've made that integrates with eLabFTW™
-  branded software (e.g. a eLabFTW™ integration feature on another system).
+- Referring to the software or project as the “eLabFTW™ software” or the “eLabFTW™ project”.
+- Describing your own **non-commercial** implementation or deployment of eLabFTW (including within corporate or academic settings when not offering paid services to third parties).
+- Describing a community hub based on eLabFTW.
+- Describing software you made that integrates with eLabFTW™ branded software (e.g., “an eLabFTW™ integration feature in X”), as long as branding is purely descriptive and non-commercial.
 
-## Restricted uses of "eLabFTW"
+> Note: Nominative fair use is allowed. Use only what is reasonably necessary to identify the software (typically the word mark), avoid logos, and add a clarifying statement such as “Not affiliated with or endorsed by Deltablot SASU.”
 
-The following uses are generally prohibited without explicit and direct
-permission being granted to you by Deltablot SASU. We do this to protect the
-eLabFTW™ project from software and sites which could confuse people. If in
-doubt, reach out for clarification: https://www.deltablot.com/contact
+---
 
-* You can't use the word "eLabFTW" or any eLabFTW logos for commercial purposes
-  without prior written permission from Deltablot SASU.
-* You can't use "eLabFTW" in the name of your software (including Mobile apps).
-* You can't use "eLabFTW" in your company name.
-* You can't use "eLabFTW" in your domain name.
-* You can't use "eLabFTW" in advertising-related keywords (such as Adsense).
-* You can't use "eLabFTW" to describe services around eLabFTW
-  (such as hosting, training, support, consulting, course creation services,
-  theme development, customisation, installation, integration, analytics
-  and certification) that cause consumers to be confused that you are
-  associated with Deltablot SASU if you are not.
-  This applies even if you do not charge for the services.
-  Note that usually only eLabFTW Partners have this permission.
+## Restricted uses of “eLabFTW” (Commercial Use Only)
 
+The following uses are **restricted for commercial entities/activities** without prior written permission from Deltablot SASU. These restrictions do **not** apply to purely non-commercial uses as described above.
 
-This Policy is adapted from the MOODLE TRADEMARKS POLICY,
-version 4.5.0, available at
-https://github.com/moodle/moodle/blob/v4.5.0/TRADEMARK.txt
+- **Commercial branding**: Using the word “eLabFTW” or any eLabFTW logo in connection with commercial offerings (including websites, ads, product pages, sales decks, brochures, or paid courses).
+- **Product or company naming**: Using “eLabFTW” in the name of your commercial product, service, company, or mobile app.
+- **Domains**: Registering or using domain names that include “eLabFTW” for commercial purposes.
+- **Advertising keywords**: Bidding on or using “eLabFTW” as an advertising keyword (e.g., in Google Ads) for commercial promotion.
+- **Commercial services around eLabFTW**: Marketing hosting, training, support, consulting, course creation, theme development, customization, installation, integration, analytics, certification, or similar **paid** services using “eLabFTW” in a manner likely to cause confusion about affiliation with Deltablot SASU.
+  *Note: This applies even if some or all services are discounted or temporarily free as part of a commercial lead-gen strategy. Typically, only authorized eLabFTW Partners have this permission.*
+
+If in doubt, reach out for clarification and/or permission: https://www.deltablot.com/contact
+
+---
+
+## Proper Use Notes
+
+- Always use “eLabFTW™” on first prominent mention.
+- Do not alter, stylize, or combine the eLabFTW marks with your own branding.
+- Do not imply sponsorship, endorsement, or official status unless you have written permission.
+
+---
+
+## Attribution
+
+This policy is adapted from the MOODLE TRADEMARKS POLICY, version 4.5.0. The original eLabFTW policy text has been reorganized and clarified to limit restrictions to **commercial** entities and activities while permitting nominative, non-commercial uses that avoid confusion.
+
+---
+
+*Last updated: 10 August 2025*

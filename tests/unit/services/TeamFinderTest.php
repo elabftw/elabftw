@@ -15,7 +15,7 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Entrypoint;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 
 class TeamFinderTest extends \PHPUnit\Framework\TestCase
 {
@@ -32,7 +32,7 @@ class TeamFinderTest extends \PHPUnit\Framework\TestCase
     public function testFindInItems(): void
     {
         $Entity = new Items(new Users(1, 1));
-        $id = $Entity->create(template: 1);
+        $id = $Entity->create();
         $Entity->setId($id);
         $ak = new AccessKeyHelper(EntityType::Items, $id)->toggleAccessKey();
         $finder = new TeamFinder(Entrypoint::Database->toPage(), $ak);

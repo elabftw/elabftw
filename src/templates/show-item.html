@@ -8,7 +8,7 @@
   {# left part, full height: checkbox #}
   <div class='d-flex align-items-center'>
     {# checkbox #}
-    <input autocomplete='off' type='checkbox' data-action='checkbox-entity' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.entityType.value }}' aria-label='{{ 'Select'|trans }}' class='mr-3' />
+    <input autocomplete='off' type='checkbox' data-action='checkbox-entity' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.entityType.value }}' data-state='{{ item.state }}' aria-label='{{ 'Select'|trans }}' class='mr-3' />
     <div class='d-flex'>
 
       {# for templates: create from button #}
@@ -73,11 +73,8 @@
 
     {# second line: title #}
     <div class='d-flex title flex-nowrap'>
-      {% if item.color %}
-        <span class='round-spot mr-1' style='background-color: #{{ item.color }}'></span>
-      {% endif %}
       {% if item.custom_id %}
-        <span class='custom-id-badge mr-1' title='{{ 'Custom ID'|trans }}'>{{ item.custom_id }}</span>
+        <span class='color-medium mr-1' title='{{ 'Custom ID'|trans }}'>{{ item.custom_id }}</span>
       {% endif %}
       <a href='{{ Entity.entityType.toPage }}?mode=view&amp;id={{ item.id }}'>{{ item.title }}</a>
     </div>

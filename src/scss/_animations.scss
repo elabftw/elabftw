@@ -102,6 +102,23 @@
     transform: translateX(-100%);
   }
 }
+/* only slide in */
+@keyframes slideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+
+  10% {
+    opacity: 0.9;
+    transform: translateX(0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
 
 /** small spinner for buttons */
 @keyframes spin {

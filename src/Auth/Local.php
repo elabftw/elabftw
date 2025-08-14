@@ -21,8 +21,8 @@ use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\QuantumException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
-use Elabftw\Models\ExistingUser;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\ExistingUser;
+use Elabftw\Models\Users\Users;
 use Elabftw\Services\Filter;
 use Elabftw\Services\UsersHelper;
 use PDO;
@@ -52,6 +52,7 @@ final class Local implements AuthInterface
         private readonly bool $isOnlySysadminWhenHidden = false,
         private readonly bool $isOnlySysadmin = false,
         private readonly int $maxPasswordAgeDays = 0,
+        private readonly int $maxLoginAttempts = 3,
     ) {
         if (empty($password)) {
             throw new QuantumException(_('Invalid email/password combination.'));
@@ -65,6 +66,8 @@ final class Local implements AuthInterface
     #[Override]
     public function tryAuth(): AuthResponse
     {
+        $this->preventBruteForce();
+
         $sql = 'SELECT is_sysadmin, password_hash, mfa_secret, validated, password_modified_at FROM users WHERE userid = :userid;';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
@@ -141,6 +144,23 @@ final class Local implements AuthInterface
                 return $Users->isAdminSomewhere();
             default:
                 return false;
+        }
+    }
+
+    private function preventBruteForce(): void
+    {
+        $sql = 'SELECT COUNT(id) AS failed_attempts
+            FROM authfail
+            WHERE attempt_time >= NOW() - INTERVAL 1 MINUTE';
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+        $res = $req->fetch();
+        if ($res['failed_attempts'] > $this->maxLoginAttempts) {
+            throw new ImproperActionException(_('Too many authentication tries in the last minute. Please try later.'));
+        }
+        // also make subsequent attempts slower
+        if ($res['failed_attempts'] > 0) {
+            sleep($res['failed_attempts']);
         }
     }
 

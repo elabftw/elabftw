@@ -761,10 +761,6 @@ on('update-entity-body', (el: HTMLElement) => {
   });
 });
 
-on('delete-compoundlink', (el: HTMLElement) => {
-  ApiC.delete(`${entity.type}/${entity.id}/compounds/${el.dataset.id}`).then(() => reloadElements(['compoundDiv']));
-});
-
 on('search-pubchem', (el: HTMLElement) => {
   const inputEl = el.parentElement.parentElement.querySelector('input') as HTMLInputElement;
   if (!inputEl.checkValidity()) {

@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       // show doodle canvas
       const doodleDiv = document.getElementById('doodleDiv');
       doodleDiv.removeAttribute('hidden');
-      doodleDiv.scrollIntoView();
+      doodleDiv.scrollIntoView({behavior: 'smooth'});
       // adjust caret icon
       const doodleDivIcon = document.getElementById('doodleDivIcon');
       doodleDivIcon.classList.remove('fa-caret-right');

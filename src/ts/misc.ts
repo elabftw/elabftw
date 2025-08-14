@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import 'jquery-ui/ui/widgets/sortable';
-import { Action, CheckableItem, EntityType, Entity, Model, Target } from './interfaces';
+import { Action, CheckableItem, EntityType, Entity, Model, Target, FileType } from './interfaces';
 import { DateTime } from 'luxon';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 import tinymce from 'tinymce/tinymce';
@@ -458,6 +458,20 @@ function removeEmpty(params: object): object {
   return params;
 }
 
+export function askFileName(extension: FileType): string | undefined {
+  const realName = prompt(i18next.t('request-filename'));
+  // user hits cancel: exit silently
+  if (realName === null) return;
+  if (realName.trim() === '') {
+    throw new Error(i18next.t('error-no-filename'));
+  }
+  const ext = `.${extension.toLowerCase()}`;
+  if (realName.toLowerCase().endsWith(ext)) {
+    return realName;
+  }
+  return realName + ext;
+}
+
 export function permissionsToJson(base: number, extra: string[]): string {
   const json = {
     'base': 0,
@@ -842,4 +856,16 @@ function generateIsSomethingElement(what: string, team: Record<string, string|nu
 // from https://www.paulirish.com/2009/random-hex-color-code-snippets/
 export function getRandomColor(): string {
   return `#${Math.floor(Math.random()*16777215).toString(16)}`;
+}
+
+export function ensureTogglableSectionIsOpen(iconId: string, divId: string): void {
+  // toggle the arrow icon
+  const iconEl = document.getElementById(iconId);
+  iconEl.classList.add('fa-caret-down');
+  iconEl.classList.remove('fa-caret-right');
+  const div = document.getElementById(divId);
+  // make sure it's not hidden
+  div.removeAttribute('hidden');
+  // and scroll page into editor view
+  div.scrollIntoView({ behavior: 'smooth' });
 }

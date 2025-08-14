@@ -19,6 +19,7 @@ import { createRoot } from 'react-dom/client';
 import { ApiC } from './api';
 import { toggleEditCompound } from './misc';
 import i18next from './i18n';
+import { notify } from './notify';
 
 if (document.getElementById('compounds-table')) {
   ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -112,7 +113,7 @@ if (document.getElementById('compounds-table')) {
         const compounds = await ApiC.getJson(`compounds?limit=999999${searchString}${deletedParam}`);
         setRowData(compounds);
       } catch (error) {
-        (new Notifications()).error(error);
+        notify.error(error);
       }
     };
 

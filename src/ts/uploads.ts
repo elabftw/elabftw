@@ -9,15 +9,18 @@ import $ from 'jquery';
 import { Action as MalleAction, Malle } from '@deltablot/malle';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
 import { Action, Model } from './interfaces';
-import { relativeMoment, reloadElements } from './misc';
+import { ensureTogglableSectionIsOpen, relativeMoment, reloadElements } from './misc';
 import { displayPlasmidViewer } from './ove';
 import { displayMoleculeViewer, get3dmol } from './3dmol';
 import i18next from './i18n';
 import { ApiC } from './api';
 import { marked } from 'marked';
 import Prism from 'prismjs';
+import { SpreadsheetEditorHelper } from './SpreadsheetEditorHelper.class';
 import { Uploader } from './uploader';
 import { entity } from './getEntity';
+
+const SpreadsheetEditorHelperC = new SpreadsheetEditorHelper();
 
 function processNewFilename(event, original: HTMLElement, parent: HTMLElement): void {
   if (event.key === 'Enter' || event.type === 'blur') {
@@ -140,6 +143,12 @@ const clickHandler = async (event: Event) => {
     }
     style[targetStyle] = options;
     get3dmol().then(($3Dmol) => $3Dmol.viewers[el.dataset.divid].setStyle(style).render());
+
+  // LOAD SPREADSHEET FILE
+  } else if (el.matches('[data-action="xls-load-file"]')) {
+    await SpreadsheetEditorHelperC.loadInSpreadsheetEditor(el.dataset.link, el.dataset.name, Number(el.dataset.uploadid));
+    ensureTogglableSectionIsOpen('sheetEditorIcon', 'spreadsheetEditorDiv');
+    document.getElementById('spreadsheetEditor')?.scrollIntoView({ behavior: 'smooth'});
 
   // ARCHIVE UPLOAD
   } else if (el.matches('[data-action="archive-upload"]')) {

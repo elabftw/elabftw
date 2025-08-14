@@ -167,22 +167,46 @@ enum Target {
   UserId = 'userid',
 }
 
+enum FileType {
+  Csv = 'csv',
+  Fods = 'fods',
+  Html = 'html',
+  Json = 'json',
+  Ods = 'ods',
+  Xls = 'xls',
+  Xlsb = 'xlsb',
+  Xlsx = 'xlsx',
+}
+
 interface Entity {
   type: EntityType;
   id: number;
+}
+
+// for Spreadsheet editor
+interface GridColumn {
+  field: string;
+  editable: boolean;
+}
+
+interface GridRow {
+  [key: string]: string | number | boolean | null;
 }
 
 export {
   Action,
   Categories,
   CheckableItem,
-  Selected,
   Entity,
   EntityType,
+  FileType,
+  GridColumn,
+  GridRow,
   Method,
   Model,
   ProcurementState,
   ResponseMsg,
+  Selected,
   Target,
   Todoitem,
   UnfinishedEntities,

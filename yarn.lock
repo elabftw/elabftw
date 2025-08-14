@@ -1464,6 +1464,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@e965/xlsx@npm:^0.20.3":
+  version: 0.20.3
+  resolution: "@e965/xlsx@npm:0.20.3"
+  bin:
+    xlsx: bin/xlsx.njs
+  checksum: 10c0/29416c391f55010af50eab38f8d3d3622e656463edb1670e58071a7ed250888a49e63d61fc6a12ed6e431ea045424868cc488374f3ded841e7ae472fbd0a2720
+  languageName: node
+  linkType: hard
+
 "@emotion/babel-plugin@npm:^11.13.5":
   version: 11.13.5
   resolution: "@emotion/babel-plugin@npm:11.13.5"
@@ -5899,6 +5908,7 @@ __metadata:
     "@babel/preset-react": "npm:^7.27.1"
     "@deltablot/dropzone": "npm:^7.3.0"
     "@deltablot/malle": "npm:^2.8.0"
+    "@e965/xlsx": "npm:^0.20.3"
     "@eslint/eslintrc": "npm:^3.3.1"
     "@eslint/js": "npm:^9.27.0"
     "@fancyapps/fancybox": "npm:^3.5.7"

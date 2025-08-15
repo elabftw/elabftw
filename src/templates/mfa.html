@@ -13,7 +13,7 @@
     <input type='hidden' name='rememberme' value='on'>
   {% endif %}
   {{ App.Session.get('csrf')|csrf }}
-  {% if App.Session.has('enable_mfa') %} {# SETUP MFA #}
+  {% if showQrCode %}
     <div class='col-md-6 text-center mx-auto my-4'>
       <p class='text-muted'>{{ 'Enable two factor authentication for your account to increase its security. %sSee documentation%s.'|trans|format("<a class='external-link' target='_blank' rel='noopener' href='https://doc.elabftw.net/user-guide.html#what-is-two-factor-authentication'>", "</a>")|raw }}</p>
       <p class='my-3'>
@@ -34,7 +34,7 @@
             <div class='input-group-prepend'>
               <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-outline-secondary' type='button' data-action='copy-to-clipboard' data-target='mfa_secret'><i class='fas fa-clone'></i></button>
             </div>
-            <input class='form-control text-center' value='{{ mfaSecret|raw }}' id='mfa_secret' name='mfa_secret' readonly />
+            <input class='form-control text-center' value='{{ formattedSecret }}' id='mfa_secret' name='mfa_secret' readonly />
           </div>
         </div>
       </div>
@@ -58,7 +58,7 @@
   <div class='text-center'>
     <button type='submit' class='btn btn-primary' name='Submit' value='submit'>{{ 'Verify'|trans }}</button>
     {# IMPORTANT: set cancel button after submit button so Enter key submits the form #}
-    {% if App.Session.has('enable_mfa') %}
+    {% if showQrCode %}
       <button type='cancel' class='btn btn-danger mr-2' name='Cancel' value='cancel'>{{ 'Cancel'|trans }}</button>
     {% endif %}
   </div>

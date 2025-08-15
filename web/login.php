@@ -16,6 +16,7 @@ use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Users\Users;
+use Elabftw\Params\UserParams;
 use Elabftw\Services\MfaHelper;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -46,24 +47,25 @@ try {
         $App->Session->remove('teaminit_done');
     }
 
-    // Show MFA if necessary
+    // if user already has an mfa_secret, we ask for it, otherwise they will be shown the QR code
     if ($App->Session->has('mfa_auth_required')) {
-        $template = 'mfa.html';
-        // the title is hidden in the page, but give it nonetheless for the document.title
-        $renderArr = array('hideTitle' => true, 'pageTitle' => _('Two Factor Authentication'));
+        // if no secret exists already, we will need to display a qrcode
+        $showQrCode = $App->Session->get('mfa_secret') === null;
 
-        // If one enables 2FA we need to provide the secret.
-        // For user convenience it is provide as QR code and as plain text.
-        if ($App->Session->has('enable_mfa')) {
-            // User is not fully authenticated, we load the user as we need email
-            if ($App->Session->get('enforce_mfa')) {
-                $App->Users = new Users($App->Session->get('auth_userid'));
-            }
-            $MfaHelper = new MfaHelper($App->Users->userData['userid'], $App->Session->get('mfa_secret'));
-            $renderArr['mfaQRCodeImageDataUri'] = $MfaHelper->getQRCodeImageAsDataUri($App->Users->userData['email']);
-            $renderArr['mfaSecret'] = implode(' ', str_split($App->Session->get('mfa_secret'), 4));
-        }
-        $Response->setContent($App->render($template, $renderArr));
+        $MfaHelper = new MfaHelper($App->Session->get('mfa_secret'));
+        // this will either be the secret from the db or a new one
+        $App->Session->set('mfa_secret', $MfaHelper->secret);
+        // we save it for the user, everytime
+        new Users($App->Session->get('auth_userid'))->update(new UserParams('mfa_secret', $MfaHelper->secret));
+
+        $Response->setContent($App->render('mfa.html', array(
+            'hideTitle' => true,
+            // the title is hidden in the page, but give it nonetheless for the document.title
+            'pageTitle' => _('Two Factor Authentication'),
+            'showQrCode' => $showQrCode,
+            'mfaQRCodeImageDataUri' => $MfaHelper->getQRCodeImageAsDataUri(),
+            'formattedSecret' => implode(' ', str_split($MfaHelper->secret, 4)),
+        )));
         $Response->send();
         exit;
     }

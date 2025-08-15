@@ -33,7 +33,7 @@ use function mb_substr;
 final class UserParams extends ContentParams
 {
     #[Override]
-    public function getContent(): string | int
+    public function getContent(): string | int | null
     {
         return match ($this->target) {
             // checked in update
@@ -86,6 +86,7 @@ final class UserParams extends ContentParams
             'uploads_layout',
             'use_isodate',
             'use_markdown',
+            'mfa_secret' => $this->getNullableString(),
             'validated' => (string) Filter::toBinary($this->content),
             'lang' => (Language::tryFrom($this->content) ?? Language::EnglishGB)->value,
             'entrypoint' => (Entrypoint::tryFrom($this->asInt()) ?? Entrypoint::Dashboard)->value,

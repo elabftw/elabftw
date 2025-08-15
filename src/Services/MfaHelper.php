@@ -13,12 +13,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\Db;
-use Elabftw\Exceptions\ImproperActionException;
-use PDO;
+use Elabftw\Elabftw\Tools;
 use RobThree\Auth\Algorithm;
 use RobThree\Auth\TwoFactorAuth;
-use RuntimeException;
 
 /**
  * Provide methods for multi/two-factor authentication
@@ -40,11 +37,11 @@ final class MfaHelper
     /** @var int MFA_SECRET_BITS entropy for the mfa secret */
     private const SECRET_BITS = 160;
 
-    protected Db $Db;
+    public string $secret;
 
     private TwoFactorAuth $TwoFactorAuth;
 
-    public function __construct(public int $userid, public ?string $secret = null)
+    public function __construct(public ?string $maybeSecret = null)
     {
         $this->TwoFactorAuth = new TwoFactorAuth(
             new MpdfQrProvider(),
@@ -53,37 +50,17 @@ final class MfaHelper
             self::PERIOD,
             Algorithm::Sha1,
         );
-        $this->Db = Db::getConnection();
+        $this->secret = $maybeSecret ?? $this->generateSecret();
     }
 
-    public function getQRCodeImageAsDataUri(string $email): string
+    public function getQRCodeImageAsDataUri(): string
     {
-        if ($this->secret === null) {
-            throw new ImproperActionException('Secret is null!');
-        }
-        return $this->TwoFactorAuth->getQRCodeImageAsDataUri($email, $this->secret);
-    }
-
-    public function generateSecret(): string
-    {
-        return $this->TwoFactorAuth->createSecret(self::SECRET_BITS);
-    }
-
-    public function saveSecret(): bool
-    {
-        return $this->toggleSecret($this->secret);
-    }
-
-    public function removeSecret(): bool
-    {
-        return $this->toggleSecret();
+        // the first arg is a label, we do not use it
+        return $this->TwoFactorAuth->getQRCodeImageAsDataUri(Tools::getUuidv4(), $this->secret);
     }
 
     public function verifyCode(string $code): bool
     {
-        if ($this->secret === null) {
-            throw new RuntimeException('No secret to verify!');
-        }
         return $this->TwoFactorAuth->verifyCode($this->secret, $code, self::DISCREPANCY);
     }
 
@@ -96,12 +73,8 @@ final class MfaHelper
         return $this->TwoFactorAuth->getCode($this->secret);
     }
 
-    private function toggleSecret(?string $secret = null): bool
+    private function generateSecret(): string
     {
-        $sql = 'UPDATE users SET mfa_secret = :secret WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':secret', $secret);
-        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        return $this->TwoFactorAuth->createSecret(self::SECRET_BITS);
     }
 }

@@ -38,40 +38,6 @@ class LoginControllerTest extends \PHPUnit\Framework\TestCase
         $LoginController->getResponse();
     }
 
-    public function testGetResponseMustEnableMfa(): void
-    {
-        $Session = new Session();
-        $Session->set('enable_mfa', 'hell yeah');
-        $Session->set('mfa_secret', 'EXAMPLE2FASECRET234567ABCDEFGHIJ');
-        $LoginController = new LoginController(
-            Config::getConfig(),
-            Request::createFromGlobals(),
-            $Session,
-            new Logger('test'),
-            new Users(1, 1),
-        );
-        $res = $LoginController->getResponse();
-        $this->assertInstanceOf(RedirectResponse::class, $res);
-        $this->assertSame('/login.php', $res->headers->get('Location'));
-    }
-
-    public function testGetResponseCancelMfa(): void
-    {
-        $Session = new Session();
-        $Session->set('enable_mfa', 'hell yeah');
-        $Request = Request::create('/login.php', 'POST', array('Cancel' => 'cancel'));
-        $LoginController = new LoginController(
-            Config::getConfig(),
-            $Request,
-            $Session,
-            new Logger('test'),
-            new Users(1, 1),
-        );
-        $res = $LoginController->getResponse();
-        $this->assertInstanceOf(RedirectResponse::class, $res);
-        $this->assertSame('/login.php', $res->headers->get('Location'));
-    }
-
     public function testAuthLocalButDisabled(): void
     {
         $Request = Request::createFromGlobals();

@@ -42,7 +42,6 @@ use Elabftw\Models\Users2Teams;
 use Elabftw\Params\UserParams;
 use Elabftw\Services\EmailValidator;
 use Elabftw\Services\Filter;
-use Elabftw\Services\MfaHelper;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\UserCreator;
 use Elabftw\Services\UsersHelper;
@@ -436,6 +435,9 @@ class Users extends AbstractRest
                     }
                     $Config = Config::getConfig();
                     foreach ($params as $target => $content) {
+                        if ($target === 'mfa_secret') {
+                            throw new ImproperActionException('Cannot update MFA secret through PATCH');
+                        }
                         // prevent modification of identity fields if we are not sysadmin
                         if (in_array($target, array('email', 'firstname', 'lastname', 'orgid'), true)
                             && $Config->configArr['allow_users_change_identity'] === '0'
@@ -707,7 +709,7 @@ class Users extends AbstractRest
     {
         // only sysadmin or same user can disable 2fa
         if ($this->requester->userData['userid'] === $this->userData['userid'] || $this->requester->userData['is_sysadmin'] === 1) {
-            (new MfaHelper($this->userData['userid']))->removeSecret();
+            $this->update(new UserParams('mfa_secret', null));
             return $this->readOne();
         }
         throw new IllegalActionException('User tried to disable 2fa but is not sysadmin or same user.');

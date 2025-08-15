@@ -48,6 +48,8 @@ final class AuthResponse
 
     public bool $mustRenewPassword = false;
 
+    public bool $isMfaRequired = false;
+
     public function setTeams(UsersHelper $usersHelper): self
     {
         $this->selectableTeams = $usersHelper->getTeamsFromUserid();

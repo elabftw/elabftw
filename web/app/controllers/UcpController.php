@@ -16,8 +16,8 @@ use Elabftw\Controllers\LoginController;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\DemoModeException;
+use Elabftw\Params\UserParams;
 use Elabftw\Services\Filter;
-use Elabftw\Services\MfaHelper;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -56,7 +56,6 @@ try {
 
         // TWO FACTOR AUTHENTICATION
         $useMFA = Filter::onToBinary($postData['use_mfa'] ?? '');
-        $MfaHelper = new MfaHelper($App->Users->userData['userid']);
 
         if ($useMFA && !$App->Users->userData['mfa_secret']) {
             // Need to request verification code to confirm user got secret and can authenticate in the future by MFA
@@ -65,10 +64,8 @@ try {
             // and after that we redirect on ucp back
             // the mfa_secret is not yet saved to the DB
             $App->Session->set('mfa_auth_required', true);
-            $App->Session->set('mfa_secret', $MfaHelper->generateSecret());
-            $App->Session->set('enable_mfa', true);
-            $App->Session->set('mfa_redirect_origin', '/ucp.php?tab=2');
-
+            $App->Session->set('post_login_redirect', '/ucp.php?tab=2');
+            $App->Session->set('auth_userid', $App->Users->userData['userid']);
             // This will redirect user right away to verify mfa code
             $Response = new RedirectResponse('/login.php');
             $Response->send();
@@ -82,7 +79,7 @@ try {
                 (int) $App->Config->configArr['enforce_mfa'],
             )
         ) {
-            $MfaHelper->removeSecret();
+            $App->Users->update(new UserParams('mfa_secret', null));
         }
     }
     // END TAB 2

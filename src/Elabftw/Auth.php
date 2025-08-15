@@ -78,7 +78,6 @@ final class Auth implements AuthInterface
             case 'cookie':
                 return new Cookie(
                     (int) $this->Config->configArr['cookie_validity_time'],
-                    (int) $this->Config->configArr['enforce_mfa'],
                     new CookieToken($this->Request->cookies->getString('token')),
                     $this->Request->cookies->getInt('token_team'),
                 );

@@ -21,33 +21,29 @@ use Elabftw\Services\UsersHelper;
 use Override;
 
 /**
- * Multi Factor Auth service
+ * This class is responsible for verifying that the code sent corresponds to the secret from the user
  */
 final class Mfa implements AuthInterface
 {
-    private AuthResponse $AuthResponse;
-
-    public function __construct(private MfaHelper $MfaHelper, private string $code)
-    {
-        $this->AuthResponse = new AuthResponse();
-    }
+    public function __construct(
+        private readonly MfaHelper $MfaHelper,
+        private readonly int $userid,
+        private readonly string $code,
+    ) {}
 
     #[Override]
     public function tryAuth(): AuthResponse
     {
-        $Users = new Users($this->MfaHelper->userid);
-
         if (!$this->MfaHelper->verifyCode($this->code)) {
-            throw new InvalidMfaCodeException($this->MfaHelper->userid);
+            throw new InvalidMfaCodeException($this->userid);
         }
+        $Users = new Users($this->userid);
+        $AuthResponse = new AuthResponse();
 
-        $this->AuthResponse->hasVerifiedMfa = true;
-        $this->AuthResponse->mfaSecret = $Users->userData['mfa_secret'];
-        $this->AuthResponse->isValidated = (bool) $Users->userData['validated'];
-        $this->AuthResponse->userid = $this->MfaHelper->userid;
-        $UsersHelper = new UsersHelper($this->AuthResponse->userid);
-        $this->AuthResponse->setTeams($UsersHelper);
-
-        return $this->AuthResponse;
+        $AuthResponse->hasVerifiedMfa = true;
+        $AuthResponse->isValidated = (bool) $Users->userData['validated'];
+        $AuthResponse->userid = $this->userid;
+        $UsersHelper = new UsersHelper($AuthResponse->userid);
+        return $AuthResponse->setTeams($UsersHelper);
     }
 }

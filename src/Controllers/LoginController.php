@@ -24,6 +24,8 @@ use Elabftw\Auth\Saml as SamlAuth;
 use Elabftw\Auth\Team;
 use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\IdpsHelper;
+use Elabftw\Enums\AuthType;
+use Elabftw\Enums\EnforceMfa;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidDeviceTokenException;
@@ -83,17 +85,6 @@ final class LoginController implements ControllerInterface
     #[Override]
     public function getResponse(): Response
     {
-        // ENABLE MFA FOR OUR USER
-        if ($this->Session->has('enable_mfa')) {
-            $location = $this->enableMFA();
-            if ($location !== '') {
-                return new RedirectResponse($location);
-            }
-        }
-
-        // get our Auth service
-        $authType = $this->Request->request->getAlpha('auth_type');
-
         // store the rememberme choice in a cookie, not the session as it won't follow up for saml
         $icanhazcookies = '0';
         if ($this->Request->request->has('rememberme') && $this->Config->configArr['remember_me_allowed'] === '1') {
@@ -109,43 +100,17 @@ final class LoginController implements ControllerInterface
         );
         setcookie('icanhazcookies', $icanhazcookies, $cookieOptions);
 
-        // TRY TO AUTHENTICATE
-        $AuthResponse = $this->getAuthService($authType)->tryAuth();
+        // Get an AuthResponse from an AuthService
+        $AuthResponse = $this->getAuthService()->tryAuth();
 
         if ($this->Session->get('mfa_auth_required') === true && !$AuthResponse->hasVerifiedMfa) {
             throw new IllegalActionException('MFA auth is required');
         }
 
-        /////////////////
-        // ENFORCE MFA //
-        /////////////////
-        // If MFA is enforced by Sysadmin (only for local auth) the user has to set it up
-        if ($authType === 'local'
-            && Local::enforceMfa(
-                $AuthResponse,
-                (int) $this->Config->configArr['enforce_mfa']
-            )
-        ) {
-            // Need to request verification code to confirm user got secret and can authenticate in the future by MFA
-            // so we will require mfa, redirect the user to login
-            // which will pickup that enable_mfa is there so it will display the qr code to initialize the process
-            // and after that we redirect back to login to cleanup
-            // the mfa_secret is not yet saved to the DB
-            $this->Session->set('enforce_mfa', true);
-            $this->Session->set('enable_mfa', true);
-            $this->Session->set('mfa_auth_required', true);
-            $this->Session->set('mfa_secret', (new MfaHelper(0))->generateSecret());
-            $this->Session->set('auth_userid', $AuthResponse->userid);
-            $this->Session->set('rememberme', $icanhazcookies);
-
-            return new RedirectResponse('/login.php');
-        }
-
         /////////
-        // MFA //
-        /////////
+        // MFA
         // check if we need to do mfa auth too after a first successful authentication
-        if ($AuthResponse->mfaSecret && !$AuthResponse->hasVerifiedMfa) {
+        if ($AuthResponse->isMfaRequired && !$AuthResponse->hasVerifiedMfa) {
             $this->Session->set('mfa_auth_required', true);
             $this->Session->set('mfa_secret', $AuthResponse->mfaSecret);
             // remember which user is authenticated
@@ -154,7 +119,6 @@ final class LoginController implements ControllerInterface
             return new RedirectResponse('/login.php');
         }
         if ($AuthResponse->hasVerifiedMfa) {
-            $this->Session->remove('enforce_mfa');
             $this->Session->remove('mfa_auth_required');
             $this->Session->remove('mfa_secret');
         }
@@ -218,7 +182,11 @@ final class LoginController implements ControllerInterface
         $this->Session->remove('auth_userid');
 
         // we redirect to index that will then redirect to the correct entrypoint set by user
-        return new RedirectResponse('/index.php');
+        $location = '/index.php';
+        if ($this->Session->has('post_login_redirect')) {
+            $location = $this->Session->get('post_login_redirect');
+        }
+        return new RedirectResponse($location);
     }
 
     /**
@@ -251,11 +219,12 @@ final class LoginController implements ControllerInterface
         }
     }
 
-    private function getAuthService(string $authType): AuthInterface
+    private function getAuthService(): AuthInterface
     {
+        $authType = AuthType::tryFrom($this->Request->request->getAlpha('auth_type'));
         switch ($authType) {
             // AUTH WITH DEMO USER
-            case 'demo':
+            case AuthType::Demo:
                 $this->Session->set('auth_service', self::AUTH_DEMO);
                 if (!$this->demoMode) {
                     throw new ImproperActionException('This instance is not in demo mode. Set DEMO_MODE=true to allow demo mode login.');
@@ -263,7 +232,7 @@ final class LoginController implements ControllerInterface
                 return new Demo($this->Request->request->getString('email'));
 
                 // AUTH WITH LDAP
-            case 'ldap':
+            case AuthType::Ldap:
                 $this->Session->set('auth_service', self::AUTH_LDAP);
                 $c = $this->Config->configArr;
                 $ldapPassword = null;
@@ -291,7 +260,7 @@ final class LoginController implements ControllerInterface
                 );
 
                 // AUTH WITH LOCAL DATABASE
-            case 'local':
+            case AuthType::Local:
                 // make sure local auth is enabled
                 if ($this->Config->configArr['local_auth_enabled'] === '0') {
                     throw new ImproperActionException('Local authentication is disabled on this instance.');
@@ -302,6 +271,7 @@ final class LoginController implements ControllerInterface
                 return new Local(
                     $this->Request->request->getString('email'),
                     $this->Request->request->getString('password'),
+                    EnforceMfa::from((int) $this->Config->configArr['enforce_mfa']),
                     (bool) $this->Config->configArr['local_login'],
                     (bool) $this->Config->configArr['local_login_hidden_only_sysadmin'],
                     (bool) $this->Config->configArr['local_login_only_sysadmin'],
@@ -310,7 +280,7 @@ final class LoginController implements ControllerInterface
                 );
 
                 // AUTH WITH SAML
-            case 'saml':
+            case AuthType::Saml:
                 $this->Session->set('auth_service', self::AUTH_SAML);
                 $IdpsHelper = new IdpsHelper($this->Config, new Idps($this->Users));
                 $idpId = $this->Request->request->getInt('idpId');
@@ -318,7 +288,7 @@ final class LoginController implements ControllerInterface
                 $settings = $IdpsHelper->getSettings($idpId);
                 return new SamlAuth(new SamlAuthLib($settings), $this->Config->configArr, $settings);
 
-            case 'external':
+            case AuthType::External:
                 $this->Session->set('auth_service', self::AUTH_EXTERNAL);
                 return new External(
                     $this->Config->configArr,
@@ -327,36 +297,34 @@ final class LoginController implements ControllerInterface
                 );
 
                 // AUTH AS ANONYMOUS USER
-            case 'anon':
+            case AuthType::Anonymous:
                 $this->Session->set('auth_service', self::AUTH_ANON);
                 return new Anon((bool) $this->Config->configArr['anon_users'], $this->Request->request->getInt('team_id'));
 
                 // AUTH in a team (after the team selection page)
                 // we are already authenticated
-            case 'team':
+            case AuthType::Team:
                 return new Team(
                     $this->Session->get('auth_userid'),
                     $this->Request->request->getInt('selected_team'),
                 );
 
                 // MFA AUTH
-            case 'mfa':
+            case AuthType::Mfa:
                 return new Mfa(
-                    new MfaHelper(
-                        $this->Session->get('auth_userid'),
-                        $this->Session->get('mfa_secret'),
-                    ),
+                    new MfaHelper($this->Session->get('mfa_secret')),
+                    $this->Session->get('auth_userid'),
                     $this->Request->request->getAlnum('mfa_code'),
                 );
-            case 'teaminit':
+            case AuthType::TeamInit:
                 $this->initTeamSelection();
                 exit;
-            case 'teamselection':
+            case AuthType::TeamSelection:
                 $this->teamSelection($this->Session->get('teaminit_userid'), $this->Request->request->getInt('team_id'));
                 exit;
 
             default:
-                throw new ImproperActionException('Could not determine which authentication service to use.');
+                throw new ImproperActionException('Could not determine which authentication service to use from auth_type parameter.');
         }
     }
 
@@ -400,41 +368,5 @@ final class LoginController implements ControllerInterface
         $this->Session->remove('initial_team_selection_required');
         $location = '/login.php';
         echo "<html><head><meta http-equiv='refresh' content='1;url=$location' /><title>You are being redirected...</title></head><body>You are being redirected...</body></html>";
-    }
-
-    private function enableMFA(): string
-    {
-        $flashBag = $this->Session->getFlashBag();
-
-        if ($this->Request->request->get('Cancel') === 'cancel') {
-            $this->Session->clear();
-            $flashBag->add('ko', _('Two Factor Authentication was not enabled!'));
-            return '/login.php';
-        }
-
-        $userid = $this->Users->userData['userid'] ?? $this->Session->get('auth_userid');
-        $MfaHelper = new MfaHelper($userid, $this->Session->get('mfa_secret'));
-
-        // check the input code against the secret stored in session
-        if (!$MfaHelper->verifyCode($this->Request->request->getAlnum('mfa_code'))) {
-            $flashBag->add('ko', _('The code you entered is not valid!'));
-            return '/login.php';
-        }
-
-        // all good, save the secret in the database now that we now the user can authenticate against it
-        $MfaHelper->saveSecret();
-        $this->Session->remove('enable_mfa');
-
-        $flashBag->add('ok', _('Two Factor Authentication is now enabled!'));
-
-        $location = $this->Session->get('mfa_redirect_origin', '');
-
-        if (!$this->Session->get('enforce_mfa')) {
-            $this->Session->remove('mfa_auth_required');
-            $this->Session->remove('mfa_secret');
-            $this->Session->remove('mfa_redirect_origin');
-        }
-
-        return $location;
     }
 }

@@ -495,10 +495,9 @@ final class Populate
         }
 
         if ($user['create_mfa_secret'] ?? false) {
-            $MfaHelper = new MfaHelper($userid);
             // use a fixed secret
-            $MfaHelper->secret = 'EXAMPLE2FASECRET234567ABCDEFGHIJ';
-            $MfaHelper->saveSecret();
+            $secret = 'EXAMPLE2FASECRET234567ABCDEFGHIJ';
+            $Users->update(new UserParams('mfa_secret', $secret));
         }
         if (array_key_exists('api_key', $user)) {
             $ApiKeys = new ApiKeys($Users);

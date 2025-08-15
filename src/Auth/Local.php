@@ -20,9 +20,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\QuantumException;
 use Elabftw\Exceptions\ResourceNotFoundException;
-use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Models\Users\ExistingUser;
-use Elabftw\Models\Users\Users;
 use Elabftw\Services\Filter;
 use Elabftw\Services\UsersHelper;
 use PDO;
@@ -36,7 +34,7 @@ use function password_verify;
 /**
  * Local auth service
  */
-final class Local implements AuthInterface
+final class Local extends AbstractAuth
 {
     private Db $Db;
 
@@ -48,12 +46,14 @@ final class Local implements AuthInterface
         private string $email,
         #[SensitiveParameter]
         private readonly string $password,
+        EnforceMfa $enforceMfa = EnforceMfa::Disabled,
         private readonly bool $isDisplayed = true,
         private readonly bool $isOnlySysadminWhenHidden = false,
         private readonly bool $isOnlySysadmin = false,
         private readonly int $maxPasswordAgeDays = 0,
         private readonly int $maxLoginAttempts = 3,
     ) {
+        parent::__construct($enforceMfa);
         if (empty($password)) {
             throw new QuantumException(_('Invalid email/password combination.'));
         }
@@ -106,45 +106,12 @@ final class Local implements AuthInterface
         }
 
         $this->AuthResponse->userid = $this->userid;
+        $this->AuthResponse->isMfaRequired = $this->isMfaRequired($this->userid);
         $this->AuthResponse->mfaSecret = $res['mfa_secret'];
         $this->AuthResponse->isValidated = (bool) $res['validated'];
         $UsersHelper = new UsersHelper($this->AuthResponse->userid);
         $this->AuthResponse->setTeams($UsersHelper);
         return $this->AuthResponse;
-    }
-
-    /**
-     * Enforce MFA for user if there is no secret stored?
-     */
-    public static function enforceMfa(
-        AuthResponse $AuthResponse,
-        int $enforceMfa
-    ): bool {
-        return !$AuthResponse->mfaSecret
-            && self::isMfaEnforced(
-                $AuthResponse->userid,
-                $enforceMfa,
-            );
-    }
-
-    /**
-     * Is MFA enforced for a given user (SysAdmin or Everyone)?
-     */
-    public static function isMfaEnforced(int $userid, int $enforceMfa): bool
-    {
-        $EnforceMfaSetting = EnforceMfa::tryFrom($enforceMfa);
-        $Users = new Users($userid);
-
-        switch ($EnforceMfaSetting) {
-            case EnforceMfa::Everyone:
-                return true;
-            case EnforceMfa::SysAdmins:
-                return $Users->userData['is_sysadmin'] === 1;
-            case EnforceMfa::Admins:
-                return $Users->isAdminSomewhere();
-            default:
-                return false;
-        }
     }
 
     private function preventBruteForce(): void

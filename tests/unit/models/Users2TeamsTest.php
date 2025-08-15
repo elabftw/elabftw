@@ -12,12 +12,15 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
-use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Users\Users;
+use Elabftw\Traits\TestsUtilsTrait;
 
 class Users2TeamsTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private Users2Teams $Users2Teams;
 
     protected function setUp(): void
@@ -35,48 +38,50 @@ class Users2TeamsTest extends \PHPUnit\Framework\TestCase
 
     public function testRmUserFromTeamButNotAdminInTeam(): void
     {
-        // tata in bravo
-        $Users2Teams = new Users2Teams(new Users(5, 2));
+        // admin in team 2
+        $admin2 = $this->getUserInTeam(team: 2, admin: 1);
+        $Users2Teams = new Users2Teams($admin2);
         // user in bravo, adding them to alpha
-        $Users2Teams->addUserToTeams(6, array(1));
-        $this->expectException(ImproperActionException::class);
+        $user2 = $this->getUserInTeam(team: 2, admin: 0);
+        $Users2Teams->addUserToTeams($user2->userid, array(1));
+        $this->expectException(IllegalActionException::class);
         $Users2Teams->destroy(6, 1);
     }
 
     public function testRmAdminFromTeamAsSysadmin(): void
     {
+        // admin in team 2
+        $admin2 = $this->getUserInTeam(team: 2, admin: 1);
         // add tata to team alpha
-        $this->Users2Teams->addUserToTeams(5, array(1));
+        $this->Users2Teams->addUserToTeams($admin2->userid, array(1));
         // make tata Admin in Alpha
-        $this->Users2Teams->patchUser2Team(array('userid' => 5, 'team' => 1, 'target' => 'group', 'content' => 2));
+        $this->Users2Teams->patchUser2Team(array('team' => 1, 'target' => 'is_admin', 'content' => 1), $admin2->userid);
         // and remove tata from team alpha
-        $this->Users2Teams->destroy(5, 1);
+        $this->Users2Teams->destroy($admin2->userid, 1);
     }
 
     public function testPatchUser2TeamGroup(): void
     {
         $params = array(
-            'userid' => 2,
             'team' => 1,
-            'target' => 'group',
-            'content' => Usergroup::User->value,
+            'target' => 'is_admin',
+            'content' => 0,
         );
-        $this->assertEquals(4, $this->Users2Teams->patchUser2Team($params));
+        $this->assertEquals(0, $this->Users2Teams->patchUser2Team($params, 2));
     }
 
     public function testPatchIsOwner(): void
     {
         $params = array(
-            'userid' => 3,
             'team' => 1,
             'target' => 'is_owner',
             'content' => '1',
         );
-        $this->assertEquals(1, $this->Users2Teams->patchUser2Team($params));
+        $this->assertEquals(1, $this->Users2Teams->patchUser2Team($params, 3));
         // now do it with a non sysadmin user
         $this->expectException(IllegalActionException::class);
         $Users2Teams = new Users2Teams(new Users(2, 1));
-        $Users2Teams->patchUser2Team($params);
+        $Users2Teams->patchUser2Team($params, 2);
     }
 
     public function testWasAdminAlready(): void
@@ -90,18 +95,16 @@ class Users2TeamsTest extends \PHPUnit\Framework\TestCase
         ));
         // promote to admin in team 2
         $this->Users2Teams->patchUser2Team(array(
-            'userid' => $newUser,
             'team' => 2,
-            'target' => 'group',
-            'content' => Usergroup::Admin->value,
-        ));
+            'target' => 'is_admin',
+            'content' => 1,
+        ), $newUser);
         // promote to admin in team 1
-        $this->assertEquals(2, $this->Users2Teams->patchUser2Team(array(
-            'userid' => $newUser,
+        $this->assertEquals(1, $this->Users2Teams->patchUser2Team(array(
             'team' => 1,
-            'target' => 'group',
-            'content' => Usergroup::Admin->value,
-        )));
+            'target' => 'is_admin',
+            'content' => 1,
+        ), $newUser));
         // remove user again
         (new Users($newUser, 1))->destroy();
     }

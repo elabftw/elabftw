@@ -19,13 +19,10 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\AbstractConcreteEntity;
+use Elabftw\Hash\LocalFileHash;
 use Elabftw\Models\AbstractEntity;
-use Elabftw\Models\AbstractTemplateEntity;
-use Elabftw\Models\Experiments;
-use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Uploads;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Elabftw\Params\EntityParams;
 use Elabftw\Params\TagParam;
 use JsonException;
@@ -37,7 +34,6 @@ use Override;
 
 use function array_find;
 use function basename;
-use function hash_file;
 use function json_decode;
 use function sprintf;
 use function strtr;
@@ -76,6 +72,7 @@ class Eln extends AbstractZip
         protected ?EntityType $entityType = null,
         protected ?int $category = null,
         private bool $verifyChecksum = true,
+        private bool $checksumErrorSkip = true,
     ) {
         parent::__construct(
             $requester,
@@ -141,6 +138,7 @@ class Eln extends AbstractZip
             $linkPreviousId = $this->grabIdFromUrl($linkToCreate['link_previous_url'] ?? '');
             if ($linkPreviousId) {
                 $body = preg_replace(sprintf('/(?:experiments|database)\.php\?mode=view&amp;id=(%d)/', $linkPreviousId), $linkToCreate['link_entity_type']->toPage() . '?mode=view&amp;id=' . $linkToCreate['link_id'], $entity->entityData['body'] ?? '');
+                /** @psalm-suppress PossiblyInvalidCast */
                 $entity->update(new EntityParams('body', (string) $body));
             }
         }
@@ -276,49 +274,36 @@ class Eln extends AbstractZip
 
         $this->Entity = $entityType->toInstance($Author, bypassReadPermission: true, bypassWritePermission: true);
 
-        $title = $this->transformIfNecessary($dataset['name'] ?? _('Untitled'));
-
         // CATEGORY
         $categoryId = $this->category;
         if (isset($dataset['about']) && $this->category === null) {
             $categoryNode = $this->getNodeFromId($dataset['about']['@id']);
-            $categoryId = $this->getCategoryId($entityType, $Author, $categoryNode['name'], $categoryNode['color']);
+            $categoryId = $this->getCategoryId($entityType, $categoryNode['name'], $categoryNode['color']);
         }
-        // items use the category id for create target
-        $createTarget = $categoryId;
 
-        if ($this->Entity instanceof AbstractConcreteEntity) {
-            if ($this->Entity instanceof Experiments) {
-                // no template
-                $createTarget = -1;
-            }
-            $this->Entity->setId($this->Entity->create(template: $createTarget));
+        // CREATE ENTITY
+        $this->Entity->setId($this->Entity->create());
 
-            // set the date if we can
-            $date = date('Y-m-d');
-            if (isset($dataset['temporal'])) {
-                $date = (new DateTimeImmutable($dataset['temporal']))->format('Y-m-d');
-            }
-            $this->Entity->patch(Action::Update, array('date' => $date));
-        } elseif ($this->Entity instanceof AbstractTemplateEntity) {
-            if ($this->Entity instanceof ItemsTypes) {
-                // we need to check if an existing items_types exists with same name, and avoid recreating one
-                $cat = new ItemsTypes($Author);
-                $cat->bypassWritePermission = true;
-                $this->Entity->setId($cat->getIdempotentIdFromTitle($title));
-            } else {
-                $this->Entity->setId($this->Entity->create(title: $title, category: $categoryId));
-            }
+        // DATE
+        $date = date('Y-m-d');
+        if (isset($dataset['temporal'])) {
+            $date = (new DateTimeImmutable($dataset['temporal']))->format('Y-m-d');
         }
+        $this->Entity->update(new EntityParams('date', $date));
+
         // keep a reference between the `@id` and the fresh id to resolve links later
         $this->insertedEntities[] = array('item_@id' => $dataset['@id'], 'id' => $this->Entity->id, 'entity_type' => $this->Entity->entityType);
+        // fix issue with immutable permissions
+        $this->Entity->entityData['canread_is_immutable'] = 0;
+        $this->Entity->entityData['canwrite_is_immutable'] = 0;
+        // canread and canwrite patch must happen before bodyappend that contains a readOne()
+        $this->Entity->update(new EntityParams('canread', $this->canread));
+        $this->Entity->update(new EntityParams('canwrite', $this->canwrite));
         // here we use "text" or "description" attribute as main text
-        $this->Entity->patch(Action::Update, array(
-            'title' => $title,
-            'bodyappend' => ($dataset['text'] ?? '') . ($dataset['description'] ?? ''),
-            'canread' => $this->canread,
-            'canwrite' => $this->canwrite,
-        ));
+        $this->Entity->update(new EntityParams('bodyappend', ($dataset['text'] ?? '') . ($dataset['description'] ?? '')));
+        // TITLE
+        $title = $this->transformIfNecessary($dataset['name'] ?? _('Untitled'));
+        $this->Entity->update(new EntityParams('title', $title));
 
         // now we import all the remaining attributes as text/links in the main text
         // we still have an allowlist of attributes imported, which also allows to switch between the kind of values expected
@@ -493,16 +478,18 @@ class Eln extends AbstractZip
         // fix for bloxberg attachments containing : character
         $filepath = strtr($filepath, ':', '_');
 
+        $hasher = new LocalFileHash($filepath);
+        $hash = $hasher->getHash();
         // CHECKSUM
-        if ($this->verifyChecksum) {
-            $hash = hash_file('sha256', $filepath);
-            if ($hash !== $file['sha256']) {
-                $this->logger->error(sprintf(
-                    'Error: %s has incorrect sha256 sum. File was not imported. Expected: %s. Actual: %s',
-                    basename($filepath),
-                    $file['sha256'],
-                    $hash,
-                ));
+        if ($this->verifyChecksum && $hash !== $file['sha256']) {
+            $this->logger->error(sprintf(
+                'Error: %s has incorrect sha256 sum. Expected: %s. Actual: %s',
+                basename($filepath),
+                $file['sha256'],
+                $hash ?? '?',
+            ));
+            if ($this->checksumErrorSkip) {
+                $this->logger->error('File was not imported.');
                 return;
             }
         }
@@ -510,6 +497,7 @@ class Eln extends AbstractZip
         $newUploadId = $this->Entity->Uploads->create(new CreateUpload(
             $file['name'] ?? basename($file['@id']),
             $filepath,
+            $hasher,
             $this->transformIfNecessary($file['description'] ?? '', true) ?: null,
         ));
         // the alternateName holds the previous long_name of the file

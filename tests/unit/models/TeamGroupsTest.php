@@ -13,7 +13,8 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\Scope;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Users\Users;
 
 class TeamGroupsTest extends \PHPUnit\Framework\TestCase
 {
@@ -76,7 +77,7 @@ class TeamGroupsTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($this->TeamGroups->isInTeamGroup(1, 1));
         $this->TeamGroups->patch(Action::Update, array('userid' => 1, 'how' => Action::Unreference->value));
         $this->assertFalse($this->TeamGroups->isInTeamGroup(1, 1));
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ImproperActionException::class);
         $this->TeamGroups->patch(Action::Update, array('userid' => 1, 'how' => 'invalidhow'));
     }
 

@@ -12,9 +12,12 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Idps;
+use Exception;
 use OneLogin\Saml2\Error;
 use OneLogin\Saml2\Settings;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,14 +27,14 @@ use Symfony\Component\HttpFoundation\Response;
  */
 require_once 'app/init.inc.php';
 
-/** @psalm-suppress UncaughtThrowInGlobalScope */
 $Response = new Response();
-$Response->prepare($App->Request);
 
 try {
+    $Response->prepare($App->Request);
     $IdpsHelper = new IdpsHelper(Config::getConfig(), new Idps($App->Users));
-    $settingsArr = $IdpsHelper->getSettings();
-    if (empty($settingsArr['sp']['entityId'])) {
+    try {
+        $settingsArr = $IdpsHelper->getSettings();
+    } catch (ResourceNotFoundException) {
         throw new ImproperActionException('No Service Provider configured. Aborting.');
     }
 
@@ -48,8 +51,10 @@ try {
             Error::METADATA_SP_INVALID
         );
     }
-} catch (ImproperActionException | Error $e) {
-    $Response->setContent($e->getMessage());
+} catch (AppException $e) {
+    $Response = $e->getResponseFromException($App);
+} catch (Exception $e) {
+    $Response = $App->getResponseFromException($e);
 } finally {
     $Response->send();
 }

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block body %}
+
+{% import 'categories-status-index.macro.html' as idx %}
+{{ idx.catstatidx(
+  'experiments_status',
+  'experiments_status',
+  'Create and modify the status available to experiments.'|trans,
+  'Experiments status can be associated with an Experiment or an Experiment Template as a Status. They belong to a team and have two main properties: name and color. Examples: Running, Done, Need to be redone, Failed, etc...'|trans,
+  statusArr,
+  'No experiments status have been created in this team yet.'|trans|msg('warning', false),
+  'Create new experiments status'|trans,
+  'Status name'|trans,
+  ) }}
+
+{% endblock body %}

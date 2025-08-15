@@ -1,0 +1,26 @@
+{# STEPS #}
+<div id='stepsDiv'>
+{% if Entity.entityData.steps %}
+  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='stepsDivContent'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Steps'|trans }} ({{ Entity.entityData.steps|length }})</h3>
+  <div class='row mt-2' id='stepsDivContent' data-save-hidden='stepsDivContent'>
+    <div class='ml-3 mt-3 col-md-12'>
+      {% for step in Entity.entityData.steps %}
+        <div id='step_view_{{ step.id }}' class='countable mb-2 rounded p-1 {{ step.finished ? 'finished' }} {{ App.Request.query.get('highlightstep') == step.id ? 'highlighted' }}'>
+          <input aria-label='{{ 'Toggle completion'|trans }}' type='checkbox' {{ step.finished ? 'checked' }} {{ Entity.entityType.value == 'experiments_templates' ? 'disabled' }} data-id='{{ Entity.id }}' autocomplete='off' data-stepid='{{ step.id }}' class='stepbox mr-2' id='stepCheckbox_{{ step.id }}' />{{ step.body }}
+        {% if step.finished %}
+        <span class='mr-2 text-muted'>
+            {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span>
+        </span>
+        {% endif %}
+        {% if step.deadline %}
+        <span class='mr-2 text-muted'>
+            {{ 'Deadline:'|trans }} {{ step.deadline|format_datetime() }}
+        </span>
+        {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+  <hr>
+{% endif %}
+</div>

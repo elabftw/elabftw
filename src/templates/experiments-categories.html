@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block body %}
+
+{% import 'categories-status-index.macro.html' as idx %}
+{{ idx.catstatidx(
+  'experiments_categories',
+  'experiments_categories',
+  'Create and modify the categories available to experiments.'|trans,
+  'Experiments categories can be associated with an Experiment or an Experiment Template as a Category. They belong to a team and have two main properties: name and color. Examples: Analysis, Measurement, Test, Project XYZ, etc...'|trans,
+  App.experimentsCategoryArr,
+  'No experiments categories have been created in this team yet.'|trans|msg('warning', false),
+  'Create new experiments category'|trans,
+  'Category name'|trans,
+  ) }}
+
+{% endblock body %}

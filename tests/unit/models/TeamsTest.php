@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Users\Users;
 
 class TeamsTest extends \PHPUnit\Framework\TestCase
 {
@@ -44,7 +45,6 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
     {
         $params = array(
             'announcement' => '',
-            'common_template_md' => '# yep',
             'newcomer_threshold' => '12',
             'orgid' => 'Something',
         );
@@ -67,6 +67,7 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertIsArray($this->Teams->readOne());
         $this->assertIsArray($this->Teams->readAll());
+        $this->assertIsArray($this->Teams->readAllVisible());
     }
 
     public function testDestroy(): void
@@ -90,7 +91,7 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
             $userids,
         ));
 
-        $Team = new Teams(new Users(2, 1));
+        $Team = new Teams(new Users(2, 1), 1);
         $this->expectException(IllegalActionException::class);
         $Team->patch(
             Action::SendOnboardingEmails,

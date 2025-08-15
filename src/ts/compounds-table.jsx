@@ -16,11 +16,10 @@ import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Api } from './Apiv2.class';
+import { ApiC } from './api';
 import { toggleEditCompound } from './misc';
-import i18next from 'i18next';
-
-const ApiC = new Api();
+import i18next from './i18n';
+import { notify } from './notify';
 
 if (document.getElementById('compounds-table')) {
   ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -114,7 +113,7 @@ if (document.getElementById('compounds-table')) {
         const compounds = await ApiC.getJson(`compounds?limit=999999${searchString}${deletedParam}`);
         setRowData(compounds);
       } catch (error) {
-        (new Notifications()).error(error);
+        notify.error(error);
       }
     };
 

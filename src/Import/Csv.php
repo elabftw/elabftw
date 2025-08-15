@@ -13,9 +13,10 @@ declare(strict_types=1);
 namespace Elabftw\Import;
 
 use DateTimeImmutable;
+use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Override;
@@ -66,11 +67,10 @@ final class Csv extends AbstractCsv
             $category = $this->category;
             // use the category_title of the row only if we didn't specify a category
             if (array_key_exists('category_title', $row) && $this->category === null) {
-                $category = $this->getCategoryId($this->entityType, $this->requester, $row['category_title']);
+                $category = $this->getCategoryId($this->entityType, $row['category_title']);
             }
             $status = empty($row['status_title']) ? null : $this->getStatusId($this->entityType, $row['status_title']);
             $customId = empty($row['custom_id']) ? null : (int) $row['custom_id'];
-            $contentType = empty($row['content_type']) ? null : (int) $row['content_type'];
             $metadata = empty($row['metadata']) ? null : (string) $row['metadata'];
             if ($metadata === null) {
                 $metadata = $this->collectMetadata($row);
@@ -84,11 +84,9 @@ final class Csv extends AbstractCsv
                 body: $body,
                 canread: $canread,
                 canwrite: $canwrite,
-                contentType: $contentType,
+                contentType: BodyContentType::from((int) ($row['contentType'] ?? BodyContentType::Html->value)),
                 date: $date,
                 tags: $tags,
-                template: $category,
-                // use template and category so it works for items and experiments
                 category: $category,
                 status: $status,
                 customId: $customId,

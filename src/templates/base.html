@@ -22,8 +22,8 @@
 {%- endif -%}
 
 {# team level announcement #}
-{%- if App.teamArr.announcement -%}
-  {{ App.teamArr.announcement|msg('warning', false) }}
+{%- if App.Teams.teamArr.announcement -%}
+  {{ App.Teams.teamArr.announcement|msg('warning', false) }}
 {%- endif -%}
 <div id='output'></div>
 
@@ -40,3 +40,36 @@
 
 {# FOOTER #}
 {% include 'footer.html' %}
+</div>{# end container #}
+</div>{# end real-container #}
+
+
+{% include 'about-elabftw-modal.html' %}
+
+{# Modal for policies #}
+<div class='modal fade' id='policiesModal' tabindex='-1' role='dialog' aria-labelledby='policiesModalLabel'>
+  <div class='modal-dialog modal-xl' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        {# "placeholder" will be replaced with real title by js upon data-action='show-policy' #}
+        <h5 class='modal-title' id='policiesModalLabel'>placeholder</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body' id='policiesModalBody'>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+{# end policies policy modal #}
+{# some 3rd party tools append content to the end but we don't want to see those errors #}
+{% if App.devMode and mode == 'edit' -%}
+  <!-- [html-validate-disable input-missing-label, heading-level, no-dup-id, prefer-native-element, wcag/h37, no-redundant-role: suppress errors from 3rd party tools] -->
+{%- endif %}
+</body>
+</html>
+<!-- Made in France | Liberté, Égalité, Fraternité -->

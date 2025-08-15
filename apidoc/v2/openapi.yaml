@@ -337,6 +337,16 @@ components:
           type: string
         admin_validate:
           type: string
+        allow_permission_full:
+          type: string
+        allow_permission_organization:
+          type: string
+        allow_permission_team:
+          type: string
+        allow_permission_user:
+          type: string
+        allow_permission_useronly:
+          type: string
         announcement:
           description: This text will be shown on every page, including login page.
           type: string
@@ -348,10 +358,10 @@ components:
           type: string
         blox_enabled:
           type: string
+        chat_url:
+          type: string
         cookie_validity_time:
           type: integer
-        debug:
-          type: string
         email_domain:
           type: string
         extauth_email:
@@ -575,7 +585,7 @@ components:
               type: string
             fullname:
               type: string
-            has_attachement:
+            has_attachment:
               type: integer
             id:
               type: integer
@@ -1076,10 +1086,6 @@ components:
         id:
           type: integer
         name:
-          type: string
-        common_template:
-          type: string
-        common_template_md:
           type: string
         user_create_tag:
           type: integer
@@ -1752,7 +1758,7 @@ paths:
           in: query
           schema:
             type: string
-            enum: ['csv', 'eln', 'json', 'qrpdf', 'qrpng', 'pdf', 'pdfa', 'zip', 'zipa']
+            enum: ['csv', 'eln', 'elnhtml', 'json', 'qrpdf', 'qrpng', 'pdf', 'pdfa', 'zip', 'zipa']
             default: json
           description: |
             Get the entity in a different format like csv, pdf, eln or zip. "pdfa" means archive pdf (PDF/A), same with "zipa".
@@ -2208,7 +2214,7 @@ paths:
           in: query
           schema:
             type: string
-            enum: ['csv', 'eln', 'json', 'qrpdf', 'qrpng', 'pdf', 'pdfa', 'zip', 'zipa']
+            enum: ['csv', 'eln', 'elnhtml', 'json', 'qrpdf', 'qrpng', 'pdf', 'pdfa', 'zip', 'zipa']
             default: json
           description: |
             Get the entity in a different format like csv, pdf, eln or zip. "pdfa" means archive pdf (PDF/A), same with "zipa".
@@ -3239,8 +3245,7 @@ paths:
           in: query
           schema:
             type: string
-            enum: ['instance', 'team']
-            default: json
+            enum: ['compounds', 'instance', 'inventory', 'stored_compounds', 'team']
           description: |
             Select the scope. Instance is for sysadmins only. Team will generate report for the current team.
           examples:
@@ -4019,13 +4024,6 @@ paths:
       description: Get a list of users with an active account on the instance.
       operationId: read-users
       parameters:
-        - name: includeArchived
-          in: query
-          description: Include archived users in the response
-          required: false
-          schema:
-            type: string
-            enum: ['0', '1']
         - name: team
           in: query
           description: Add a filter on the team

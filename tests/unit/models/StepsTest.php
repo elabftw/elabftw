@@ -12,16 +12,19 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Traits\TestsUtilsTrait;
 
 class StepsTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private Experiments $Experiments;
 
     private Steps $Steps;
 
     protected function setUp(): void
     {
-        $this->Experiments = new Experiments(new Users(1, 1), 1);
+        $this->Experiments = $this->getFreshExperiment();
         $this->Steps = $this->Experiments->Steps;
     }
 

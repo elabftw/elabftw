@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
+use Elabftw\Elabftw\Env;
 use Elabftw\Interfaces\MpdfProviderInterface;
-use Elabftw\Models\Config;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TwigTrait;
 use Override;
 
@@ -46,7 +46,7 @@ final class MakeQrPdf extends AbstractMakePdf
     public function getFileContent(): string
     {
         // add view URL to entities
-        $siteUrl = Config::fromEnv('SITE_URL');
+        $siteUrl = Env::asUrl('SITE_URL');
         foreach ($this->entityArr as &$entity) {
             $entity->entityData['url'] = sprintf('%s/%s?mode=view&id=%d', $siteUrl, $entity->entityType->toPage(), $entity->id);
         }
@@ -55,8 +55,7 @@ final class MakeQrPdf extends AbstractMakePdf
             'entityArr' => $this->entityArr,
             'useCjk' => $this->requester->userData['cjk_fonts'],
         );
-        $Config = Config::getConfig();
-        $html = $this->getTwig((bool) $Config->configArr['debug'])->render('qr-pdf.html', $renderArr);
+        $html = $this->getTwig(Env::asBool('DEV_MODE'))->render('qr-pdf.html', $renderArr);
         $this->mpdf->WriteHTML(html_entity_decode($html, ENT_HTML5, 'UTF-8'));
         $output = $this->mpdf->OutputBinaryData();
         $this->contentSize = strlen($output);

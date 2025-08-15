@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Models\Users\Users;
 
 class TemplatesTest extends \PHPUnit\Framework\TestCase
 {
@@ -53,8 +54,12 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($this->Templates->destroy());
     }
 
-    public function testGetTimestamperFullname(): void
+    public function testGetIdempotentIdFromTitle(): void
     {
-        $this->assertEquals('', $this->Templates->getTimestamperFullname());
+        $title = 'Blah blih bluh';
+        $id = $this->Templates->create(title: $title);
+        $this->Templates->setId($id);
+        $this->assertEquals($this->Templates->entityData['title'], $title);
+        $this->assertTrue($this->Templates->getIdempotentIdFromTitle('Géo Trouvetou') > $id);
     }
 }

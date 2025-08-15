@@ -28,6 +28,7 @@ use Elabftw\Services\PasswordValidator;
 use Override;
 
 use function trim;
+use function mb_substr;
 
 final class UserParams extends ContentParams
 {
@@ -58,6 +59,7 @@ final class UserParams extends ContentParams
             'scope_experiments',
             'scope_events',
             'scope_items',
+            'scope_items_types',
             'scope_teamgroups' => (string) (Scope::tryFrom($this->asInt()) ?? Scope::Team)->value,
             'sc_create', 'sc_favorite', 'sc_todo', 'sc_edit', 'sc_search' => Filter::firstLetter($this->asString()),
             'always_show_owned',
@@ -67,6 +69,7 @@ final class UserParams extends ContentParams
             'enforce_exclusive_edit_mode',
             'inc_files_pdf',
             'is_sysadmin',
+            'can_manage_users2teams',
             'notif_comment_created_email',
             'notif_comment_created',
             'notif_event_deleted_email',
@@ -119,7 +122,7 @@ final class UserParams extends ContentParams
             throw new ImproperActionException('Incorrect orcid: invalid format.');
         }
         // now check the sum
-        $baseNumbers = str_replace('-', '', substr($input, 0, -1));
+        $baseNumbers = str_replace('-', '', mb_substr($input, 0, -1));
         if (Check::digit($baseNumbers, $this->getChecksumFromOrcid($input)) === false) {
             throw new ImproperActionException('Invalid orcid: checksum failed.');
         }

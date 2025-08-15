@@ -13,7 +13,7 @@ namespace Elabftw\Make;
 
 use Elabftw\Elabftw\EntitySlug;
 use Elabftw\Enums\EntityType;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Elabftw\Services\MpdfProvider;
 use Monolog\Handler\NullHandler;
 use Monolog\Logger;

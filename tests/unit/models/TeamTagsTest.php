@@ -13,9 +13,13 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Models\Users\Users;
+use Elabftw\Traits\TestsUtilsTrait;
 
 class TeamTagsTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private Users $Users;
 
     private TeamTags $TeamTags;
@@ -26,7 +30,7 @@ class TeamTagsTest extends \PHPUnit\Framework\TestCase
     {
         $this->Users = new Users(1, 1);
         $this->TeamTags = new TeamTags($this->Users, 1);
-        $this->Tags = new Tags(new Experiments($this->Users, 1));
+        $this->Tags = new Tags($this->getFreshExperiment());
     }
 
     public function testGetApiPath(): void

@@ -5,23 +5,24 @@ coverage:
     include:
         - src/AuditEvent/*
         - src/Auth/*
-        - src/classes/*
-        - src/commands/*
-        - src/controllers/*
+        - src/Commands/*
+        - src/Controllers/*
+        - src/Elabftw/*
         - src/Enums/*
-        - src/exceptions/*
-        - src/factories/*
+        - src/Exceptions/*
+        - src/Factories/*
+        - src/Hash/*
         - src/Import/*
+        - src/Interfaces/*
         - src/Make/*
-        - src/models/*
+        - src/Models/*
         - src/Params/*
-        - src/services/*
+        - src/Services/*
         - src/Storage/*
-        - src/traits/*
-        - web/*
+        - src/Traits/*
     exclude:
-        - src/commands/PopulateDatabase.php
-        - src/commands/GenI18n4Js.php
+        - src/Commands/PopulateDatabase.php
+        - src/Commands/GenI18n4Js.php
 actor: Tester
 paths:
     tests: tests

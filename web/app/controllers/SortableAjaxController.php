@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Enums\Messages;
 use Elabftw\Enums\Orderable;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -22,6 +23,7 @@ use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\ResourcesCategories;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Todolist;
@@ -68,8 +70,8 @@ try {
         case Orderable::ExperimentsCategories:
             $Entity = new ExperimentsCategories(new Teams($App->Users));
             break;
-        case Orderable::ItemsTypes:
-            $Entity = new ItemsTypes($App->Users);
+        case Orderable::ResourcesCategories:
+            $Entity = new ResourcesCategories(new Teams($App->Users));
             break;
         case Orderable::ExperimentsStatus:
             $Entity = new ExperimentsStatus(new Teams($App->Users));
@@ -107,7 +109,7 @@ try {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e->getMessage())));
     $Response->setData(array(
         'res' => false,
-        'msg' => Tools::error(true),
+        'msg' => Messages::InsufficientPermissions->toHuman(),
     ));
 } catch (ImproperActionException | UnauthorizedException $e) {
     $Response->setData(array(
@@ -124,7 +126,7 @@ try {
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('exception' => $e)));
     $Response->setData(array(
         'res' => false,
-        'msg' => Tools::error(),
+        'msg' => Messages::GenericError->toHuman(),
     ));
 } finally {
     $Response->send();

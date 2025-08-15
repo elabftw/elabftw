@@ -6,6 +6,7 @@
  * @package elabftw
  */
 
+@use './variables';
 /* see documentation: https://mpdf.github.io/paging/using-page.html */
 @page {
   /* stylelint-disable-next-line property-no-unknown */
@@ -18,8 +19,29 @@ body {
   font-kerning: normal;
 }
 
+/* TITLES */
+h1 {
+  font-size: 150%;
+}
+
+h2 {
+  font-size: 140%;
+}
+
+h3 {
+  font-size: 130%;
+}
+
+h4 {
+  font-size: 120%;
+}
+
+h5 {
+  font-size: 110%;
+}
+
 a {
-  color: #29aeb9;
+  color: variables.$elabblue;
   text-decoration: none;
 }
 
@@ -51,8 +73,8 @@ table td {
 }
 
 table th {
-  background-color: #dcdddc;
-  color: #797979;
+  background-color: variables.$firstlevel;
+  color: variables.$medium;
   font-size: 90%;
   padding: 5px;
   text-align: left;
@@ -85,20 +107,20 @@ tr:nth-child(odd) {
 }
 
 .elabid {
-  color: #000;
+  color: variables.$strongest;
   font-size: 8pt;
   text-align: right;
 }
 
 .barcode {
-  color: #000;
+  color: variables.$strongest;
   margin: 0;
   padding: 1.5mm;
   vertical-align: middle;
 }
 
 .attached-image {
-  border: 1px solid #dcdddc;
+  border: 1px solid variables.$firstlevel;
   margin-top: 0.5em;
   max-height: 10cm;
   max-width: 100%;
@@ -123,6 +145,22 @@ tr:nth-child(odd) {
 
 #header {
   border-bottom: 1px solid #dcdddc;
+  margin-bottom: 1em;
+  overflow: hidden;
+  position: relative;
+}
+
+// use floats as mPDF does not allow display flex
+.entry-title {
+  float: left;
+  width: 60%;
+}
+
+.entry-meta {
+  float: right;
+  font-size: 90%;
+  text-align: right;
+  width: 35%;
 }
 
 .footer-block {
@@ -132,13 +170,13 @@ tr:nth-child(odd) {
 }
 
 .timestamped-block {
-  background-color: #f2f2f2;
-  border: 1px solid #797979;
-  color: #797979;
+  background-color: variables.$superlight;
+  border: 1px solid variables.$medium;
   border-radius: 5px;
+  color: variables.$medium;
+  font-size: 80%;
   margin: 7px 0;
   padding-left: 7px;
-  font-size: 80%;
   width: 100%;
 }
 
@@ -150,7 +188,7 @@ tr:nth-child(odd) {
 
 /* caption for tinymce */
 .image figcaption {
-  border: 1px solid #ccc;
+  border: 1px solid variables.$medium;
   /* stylelint-disable-next-line shorthand-property-no-redundant-values */
   margin: 2px 0 6px 0;
   text-align: center;
@@ -166,8 +204,8 @@ img, /* <-- can be removed after PR https://github.com/mpdf/mpdf/pull/1405 is ac
 // quote marks in pdf is not implemented by mpdf
 // https://github.com/mpdf/mpdf/blob/d3ef7689800c6356ab7df7604289f97c17f37c76/src/Tag/BlockQuote.php
 blockquote {
-  background: #f9f9f9;
-  border-left: 10px solid #ccc;
+  background: variables.$firstlevel;
+  border-left: 10px solid variables.$medium;
   margin: 1.5em 10px;
   padding: 0.5em 10px;
 }

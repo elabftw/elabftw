@@ -12,13 +12,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Config;
 use Elabftw\Models\Idps;
-use Elabftw\Models\Teams;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Elabftw\Services\MfaHelper;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -29,7 +26,6 @@ use function str_split;
 
 /**
  * Login page
- *
  */
 require_once 'app/init.inc.php';
 
@@ -40,7 +36,7 @@ try {
     // if we are not in https, die saying we work only in https
     if (!$App->Request->isSecure() && !$App->Request->server->has('HTTP_X_FORWARDED_PROTO')) {
         // get the url to display a link to click
-        $url = Config::fromEnv('SITE_URL');
+        $url = Env::asString('SITE_URL');
         $message = "eLabFTW works only in HTTPS. Please enable HTTPS on your server or ensure X-Forwarded-Proto header is correctly sent by the load balancer. Or follow this link : <a href='" .
             $url . "'>$url</a>";
         throw new ImproperActionException($message);
@@ -93,50 +89,31 @@ try {
         $showLocal = false;
     }
 
-    $Idps = new Idps($App->Users);
-    $idpsArr = $Idps->readAllSimpleEnabled();
-
-    $Teams = new Teams($App->Users);
-    $Teams->bypassReadPermission = true;
-    $teamsArr = $Teams->readAll();
+    $idpsArr = array();
+    // only make the query to fetch idp list if we actually have enabled saml
+    if ($App->Config->configArr['saml_toggle'] === '1') {
+        $Idps = new Idps($App->Users);
+        $idpsArr = $Idps->readAllSimpleEnabled();
+    }
 
     if ($App->Request->cookies->has('kickreason')) {
         // at the moment there is only one reason
         $App->Session->getFlashBag()->add('ko', _('Your session expired.'));
     }
 
-    $template = 'login.html';
+    $template = 'login-base.html';
     $renderArr = array(
         'idpsArr' => $idpsArr,
         'pageTitle' => _('Login'),
-        'teamsArr' => $teamsArr,
+        'teamsArr' => $App->Teams->readAllVisible(),
         'showLocal' => $showLocal,
         'hideTitle' => true,
     );
     $Response->setContent($App->render($template, $renderArr));
-} catch (IllegalActionException $e) {
-    // log notice and show message
-    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
-    $template = 'error.html';
-    $renderArr = array('error' => Tools::error(true));
-    $Response->setContent($App->render($template, $renderArr));
-} catch (ImproperActionException $e) {
-    // show message to user
-    $template = 'error.html';
-    $renderArr = array('error' => $e->getMessage());
-    $Response->setContent($App->render($template, $renderArr));
-} catch (DatabaseErrorException $e) {
-    // log error and show message
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
-    $template = 'error.html';
-    $renderArr = array('error' => $e->getMessage());
-    $Response->setContent($App->render($template, $renderArr));
+} catch (AppException $e) {
+    $Response = $e->getResponseFromException($App);
 } catch (Exception $e) {
-    // log error and show general error message
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
-    $template = 'error.html';
-    $renderArr = array('error' => Tools::error());
-    $Response->setContent($App->render($template, $renderArr));
+    $Response = $App->getResponseFromException($e);
 } finally {
     $Response->send();
 }

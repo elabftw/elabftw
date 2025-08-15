@@ -13,7 +13,8 @@ namespace Elabftw\Services;
 
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 class PopulateTest extends \PHPUnit\Framework\TestCase
 {
@@ -24,7 +25,7 @@ class PopulateTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->Users = new Users(1, 1);
-        $this->Populate = new Populate(2);
+        $this->Populate = new Populate(new ConsoleOutput(), array());
     }
 
     public function testGenerateExperiments(): void

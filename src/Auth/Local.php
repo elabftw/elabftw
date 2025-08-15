@@ -16,13 +16,13 @@ use DateTimeImmutable;
 use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\EnforceMfa;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\QuantumException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
-use Elabftw\Models\Config;
-use Elabftw\Models\ExistingUser;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\ExistingUser;
+use Elabftw\Models\Users\Users;
 use Elabftw\Services\Filter;
 use Elabftw\Services\UsersHelper;
 use PDO;
@@ -40,14 +40,20 @@ final class Local implements AuthInterface
 {
     private Db $Db;
 
-    private string $email = '';
-
     private int $userid;
 
     private AuthResponse $AuthResponse;
 
-    public function __construct(string $email, #[SensitiveParameter] private readonly string $password)
-    {
+    public function __construct(
+        private string $email,
+        #[SensitiveParameter]
+        private readonly string $password,
+        private readonly bool $isDisplayed = true,
+        private readonly bool $isOnlySysadminWhenHidden = false,
+        private readonly bool $isOnlySysadmin = false,
+        private readonly int $maxPasswordAgeDays = 0,
+        private readonly int $maxLoginAttempts = 3,
+    ) {
         if (empty($password)) {
             throw new QuantumException(_('Invalid email/password combination.'));
         }
@@ -60,11 +66,23 @@ final class Local implements AuthInterface
     #[Override]
     public function tryAuth(): AuthResponse
     {
-        $sql = 'SELECT password_hash, mfa_secret, validated, password_modified_at FROM users WHERE userid = :userid;';
+        $this->preventBruteForce();
+
+        $sql = 'SELECT is_sysadmin, password_hash, mfa_secret, validated, password_modified_at FROM users WHERE userid = :userid;';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
         $res = $req->fetch();
+
+        // if local_login is disabled, only a sysadmin can login if local_login_hidden_only_sysadmin is set
+        if (!$this->isDisplayed && $res['is_sysadmin'] === 0 && $this->isOnlySysadminWhenHidden) {
+            throw new ImproperActionException(_('Only a Sysadmin account can use local authentication when it is hidden.'));
+        }
+        // there is also a setting that only allows sysadmins to login
+        if ($this->isOnlySysadmin && $res['is_sysadmin'] === 0) {
+            throw new ImproperActionException(_('Only a Sysadmin account can use local authentication.'));
+        }
+
         // verify password
         if (password_verify($this->password, $res['password_hash']) !== true) {
             throw new InvalidCredentialsException($this->userid);
@@ -79,14 +97,12 @@ final class Local implements AuthInterface
             $this->Db->execute($req);
         }
         // check if last password modification date was too long ago and require changing it if yes
-        $modifiedAt = new DateTimeImmutable($res['password_modified_at']);
-        $now = new DateTimeImmutable();
-        $diff = $now->diff($modifiedAt);
-        $daysDifference = (int) $diff->format('%a');
-        $Config = Config::getConfig();
-        $maxPasswordAgeDays = (int) $Config->configArr['max_password_age_days'];
-        if ($daysDifference > $maxPasswordAgeDays && $maxPasswordAgeDays !== 0) {
-            $this->AuthResponse->mustRenewPassword = true;
+        if ($this->maxPasswordAgeDays > 0) {
+            $modifiedAt = new DateTimeImmutable($res['password_modified_at']);
+            $now = new DateTimeImmutable();
+            $diff = $now->diff($modifiedAt);
+            $daysDifference = (int) $diff->format('%a');
+            $this->AuthResponse->mustRenewPassword = $daysDifference > $this->maxPasswordAgeDays;
         }
 
         $this->AuthResponse->userid = $this->userid;
@@ -128,6 +144,23 @@ final class Local implements AuthInterface
                 return $Users->isAdminSomewhere();
             default:
                 return false;
+        }
+    }
+
+    private function preventBruteForce(): void
+    {
+        $sql = 'SELECT COUNT(id) AS failed_attempts
+            FROM authfail
+            WHERE attempt_time >= NOW() - INTERVAL 1 MINUTE';
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+        $res = $req->fetch();
+        if ($res['failed_attempts'] > $this->maxLoginAttempts) {
+            throw new ImproperActionException(_('Too many authentication tries in the last minute. Please try later.'));
+        }
+        // also make subsequent attempts slower
+        if ($res['failed_attempts'] > 0) {
+            sleep($res['failed_attempts']);
         }
     }
 

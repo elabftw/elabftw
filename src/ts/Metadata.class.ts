@@ -5,31 +5,35 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+import i18next from './i18n';
+import { ApiC } from './api';
 import { Action, Entity, EntityType } from './interfaces';
-import { adjustHiddenState, makeSortableGreatAgain, reloadElements, replaceWithTitle } from './misc';
-import i18next from 'i18next';
-import { Api } from './Apiv2.class';
-import { ValidMetadata, ExtraFieldProperties, ExtraFieldsGroup, ExtraFieldInputType } from './metadataInterfaces';
 import JsonEditorHelper from './JsonEditorHelper.class';
-import { Notification } from './Notifications.class';
+import { ExtraFieldInputType, ExtraFieldProperties, ExtraFieldsGroup, ValidMetadata } from './metadataInterfaces';
+import { adjustHiddenState, makeSortableGreatAgain, reloadElements, replaceWithTitle } from './misc';
+import { notify } from './notify';
 
 export function ResourceNotFoundException(message: string): void {
   this.message = message;
   this.name = 'ResourceNotFoundException';
 }
 
+// Auto-resize the textarea to prevent hidden lines on page load
+export function autoResize(element: HTMLTextAreaElement): void {
+  element.style.height = 'auto';
+  element.style.height = `${element.scrollHeight}px`;
+}
+
 export class Metadata {
   entity: Entity;
   editor: JsonEditorHelper;
   model: EntityType;
-  api: Api;
   metadataDiv: Element;
 
   constructor(entity: Entity, jsonEditor: JsonEditorHelper) {
     this.entity = entity;
     this.editor = jsonEditor;
     this.model = entity.type;
-    this.api = new Api();
     // this is the div that will hold all the generated fields from metadata json
     this.metadataDiv = document.getElementById('metadataDiv');
   }
@@ -38,7 +42,7 @@ export class Metadata {
    * Get the json from the metadata column
    */
   read(): Promise<Record<string, unknown>|ValidMetadata> {
-    return this.api.getJson(`${this.entity.type}/${this.entity.id}`).then(json => {
+    return ApiC.getJson(`${this.entity.type}/${this.entity.id}`).then(json => {
       // if there are no metadata.json file available, return an empty object
       if (typeof json.metadata === 'undefined' || !json.metadata) {
         return {};
@@ -63,7 +67,7 @@ export class Metadata {
     if (el.dataset.completeTarget === document.getElementById('info').dataset.type
       && parseInt(el.value, 10) === parseInt(document.getElementById('info').dataset.id, 10)
     ) {
-      (new Notification()).error('no-self-links');
+      notify.error('no-self-links');
       return false;
     }
 
@@ -86,13 +90,13 @@ export class Metadata {
       }
       // also create a link automatically for experiments and resources
       if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf()].includes(el.dataset.completeTarget)) {
-        this.api.post(`${this.entity.type}/${this.entity.id}/${el.dataset.completeTarget}_links/${value}`).then(() => reloadElements(['linksDiv', 'linksExpDiv']));
+        ApiC.post(`${this.entity.type}/${this.entity.id}/${el.dataset.completeTarget}_links/${value}`).then(() => reloadElements(['linksDiv', 'linksExpDiv']));
       }
     }
     const params = {};
     params['action'] = Action.UpdateMetadataField;
     params[el.dataset.field] = value;
-    this.api.patch(`${this.entity.type}/${this.entity.id}`, params).then(() => {
+    ApiC.patch(`${this.entity.type}/${this.entity.id}`, params).then(() => {
       this.editor.loadMetadata();
     }).catch(() => {
       return;
@@ -117,7 +121,31 @@ export class Metadata {
   }
 
   save(metadata: ValidMetadata): Promise<Response> {
-    return this.api.patch(`${this.entity.type}/${this.entity.id}`, {'metadata': JSON.stringify(metadata)});
+    return ApiC.patch(`${this.entity.type}/${this.entity.id}`, {'metadata': JSON.stringify(metadata)});
+  }
+
+  /**
+   * Build text areas for extra fields (default type)
+   */
+  buildTextArea(name, properties: ExtraFieldProperties): Element {
+    const element = document.createElement('textarea');
+
+    // style it to look like an input & reset height
+    element.classList.add('form-control', 'form-textarea');
+    element.rows = 1;
+
+    // dynamic height on input
+    element.addEventListener('input', () => autoResize(element));
+
+    // resize after rendering: ensures proper height on page load
+    requestAnimationFrame(() => autoResize(element));
+
+    if (properties.value) {
+      element.value = properties.value as string;
+    }
+    element.dataset.field = name;
+    element.addEventListener('change', this, false);
+    return element;
   }
 
   /**
@@ -170,7 +198,7 @@ export class Metadata {
     try {
       return this.generateInput(name, properties);
     } catch (err) {
-      (new Notification()).error('error-parsing-metadata');
+      notify.error('error-parsing-metadata');
       console.error(err);
     }
   }
@@ -267,11 +295,16 @@ export class Metadata {
         element.add(optionEl);
       }
       break;
+    case ExtraFieldInputType.Experiments:
+    case ExtraFieldInputType.Items:
+    case ExtraFieldInputType.Users:
+      element = document.createElement('input');
+      element.type = 'text';
+      break;
     case ExtraFieldInputType.Radio:
       return this.buildRadio(name, properties);
     default:
-      element = document.createElement('input');
-      element.type = 'text';
+      return this.buildTextArea(name, properties);
     }
 
     // add the unique id to the element
@@ -345,11 +378,10 @@ export class Metadata {
       for (const unit of properties.units) {
         const optionEl = document.createElement('option');
         optionEl.text = unit;
-        if (properties.unit === unit) {
-          optionEl.setAttribute('selected', '');
-        }
         unitsSel.add(optionEl);
       }
+      // if no default unit is set, auto-select first option. See #5680
+      unitsSel.value = properties.unit || properties.units[0];
       unitsSel.classList.add('form-control', 'brl-none');
       // add this so we can differentiate the change event from the main input
       unitsSel.dataset.units = '1';
@@ -576,10 +608,12 @@ export class Metadata {
             const badgeContainer = document.createElement('div');
             const badge = document.createElement('span');
             badge.classList.add('badge', 'badge-pill', 'badge-light', 'mr-3');
-            // define input type for badge (sometimes it's input (text, url) sometimes it's an input-group (datetime, search user/experiment etc.)
+            // define input type for badge. This "type" is just indicative for the badge.
             let inputType;
             if (element.element.tagName === 'INPUT' || element.element.tagName === 'SELECT') {
               inputType = element.element.type;
+            } else if (element.element.tagName === 'TEXTAREA') {
+              inputType = 'text';
             } else if (element.element.classList.contains('input-group')) {
               // find the first input element within the input group
               const input = element.element.querySelector('input');

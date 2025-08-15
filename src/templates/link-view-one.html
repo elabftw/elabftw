@@ -1,11 +1,11 @@
 {# required vars:
   link: the link to display
   mode: edit edit-template view etc... #}
-<div class="col-md-12 ">
-  <div class='ml-3 mt-3 countable hl-hover-superlight p-1 rounded'>
-    {% set randomId = random() %}
-    <div class='d-flex mb-1 align-items-center' id='parent_{{ randomId }}'>
-      <i class='fas fa-link fa-fw mr-2'></i>
+<div class='mt-2 countable hl-hover-superlight p-2 rounded'>
+  {% set randomId = random() %}
+  <div class='d-flex mb-1 align-items-center' id='parent_{{ randomId }}'>
+    <a href='{{ link.page }}?mode=view&amp;id={{ link.entityid }}' class='text-dark mr-auto'>
+      <i class='fas fa-arrow-{{ isRelated|default(false) ? 'left' : 'right' }} fa-fw mr-2' aria-hidden='true'></i>
       {% if link.link_state == 2 %}<i class='fas fa-fw fa-box-archive fa-fw mr-1'></i>{% endif %}
       {% if link.category_title %}
         <span class='catstat-btn category-btn mr-1' style='--bg: #{{ link.category_color }}'>{{ link.category_title }}</span>
@@ -14,27 +14,30 @@
         <span class='catstat-btn status-btn mr-1' style='--bg: #{{ link.status_color }}'>{{ link.status_title }}</span>
       {% endif %}
       {% if link.custom_id %}
-        <span class='custom-id-badge' title='{{ 'Custom ID'|trans }}'>{{ link.custom_id }}</span>
+        <span class='color-medium' title='{{ 'Custom ID'|trans }}'>{{ link.custom_id }}</span>
       {% endif %}
-      <a href='{{ link.page }}?mode=view&amp;id={{ link.entityid }}' class='text-dark mr-auto hl-hover-gray p-1 rounded'>{{ link.title }}</a>
-      {# toggle body #}
-      <button type='button' data-type='{{ link.type }}' data-action='toggle-body' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' data-id='{{ link.entityid }}' data-randid='{{ randomId }}' title='{{ 'Toggle content'|trans }}' aria-label='{{ 'Toggle content'|trans }}' class='btn p-2 hl-hover-gray mr-3 lh-normal border-0 my-n2'>
-        <i class='fas fa-fw fa-square-plus'></i>
-      </button>
-      {% if mode == 'edit' %}
-        <button type='button' data-action='import-links' data-target='{{ link.entityid }}' aria-label='{{ 'Import links'|trans }}' title='{{ 'Import links'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2'>
-          <i class='fas fa-fw fa-arrows-down-to-line'></i></button>
-        <button type='button' data-action='import-link-body' data-endpoint='{{ link.type }}' data-target='{{ link.entityid }}' aria-label='{{ 'Import'|trans }}' title='{{ 'Import'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2'>
-          <i class='fas fa-fw fa-lg fa-file-import'></i></button>
-      {% endif %}
+      {{ link.title }}
+    </a>
+    {# toggle body #}
+    <button type='button' data-type='{{ link.type }}' data-action='toggle-body' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' data-id='{{ link.entityid }}' data-randid='{{ randomId }}' title='{{ 'Toggle content'|trans }}' aria-label='{{ 'Toggle content'|trans }}' class='btn p-2 hl-hover-gray mr-3 lh-normal border-0 my-n2'>
+      <i class='fas fa-fw fa-square-plus'></i>
+    </button>
+    {% if mode == 'edit' %}
+      <button type='button' data-action='import-links' data-target='{{ link.entityid }}' aria-label='{{ 'Import links'|trans }}' title='{{ 'Import links'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2'>
+        <i class='fas fa-fw fa-arrows-down-to-line'></i></button>
+      <button type='button' data-action='import-link-body' data-endpoint='{{ link.type }}' data-target='{{ link.entityid }}' aria-label='{{ 'Import'|trans }}' title='{{ 'Import'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2'>
+        <i class='fas fa-fw fa-lg fa-file-import'></i></button>
+    {% endif %}
+    {% if not Entity.isReadOnly %}
       <button type='button' data-action='destroy-{{ isRelated|default(false) ? 'related-' }}link' data-endpoint='{{ link.type }}_links' data-target='{{ link.entityid }}' aria-label='{{ 'Delete'|trans }}' title='{{ 'Delete'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2'>
-        <i class='fas fa-fw fa-lg fa-trash-alt'></i></button>
-    </div>
-    {# container to hold the body of the entity if it is toggled with the +/- icon #}
-    {# a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well #}
-    <div hidden id='{{ randomId }}'>
-      {# this div will hold the content #}
-      <div></div>
-    </div>
+        <i class='fas fa-fw fa-lg fa-trash-alt'></i>
+      </button>
+    {% endif %}
+  </div>
+  {# container to hold the body of the entity if it is toggled with the +/- icon #}
+  {# a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well #}
+  <div hidden id='{{ randomId }}'>
+    {# this div will hold the content #}
+    <div></div>
   </div>
 </div>

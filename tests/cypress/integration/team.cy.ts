@@ -1,7 +1,6 @@
 describe('Team', () => {
   beforeEach(() => {
     cy.login();
-    cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
   });
 
   it('Show team page', () => {

@@ -1,12 +1,9 @@
 {# JSON EDITOR #}
-{% include('field-builder-modal.html') %}
-
-<section id='json-editor' aria-label='json editor'>
+<section id='json-editor' aria-label='{{ 'JSON Editor'|trans }}'>
   {# id for icon is used when focusing after loading from file #}
   <h3 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='false' aria-controls='jsonEditorDiv'><i id='jsonEditorIcon' class='fas fa-caret-right fa-fw mr-2'></i>{{ 'JSON Editor'|trans }}</h3>
 
   <div id='jsonEditorDiv' class='m-2' hidden data-save-hidden='jsonEditorDiv'>
-    <hr>
     {# JSON EDITOR TOOLBAR #}
     <div class='d-flex align-items-center'>
       {# ADD FIELD #}
@@ -20,6 +17,7 @@
       <button title='{{ 'Import from file'|trans }}' aria-label='{{ 'Import from file'|trans }}' type='button' data-action='json-import-file' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
         <i class='fas fa-upload fa-fw'></i>
       </button>
+      <input type='file' id='jsonImportFileInput' accept='.json' class='d-none' />
 
       {# SAVE TO FILE #}
       <button title='{{ 'Save as…'|trans }}' aria-label='{{ 'Save as…'|trans }}' type='button' data-action='json-saveas-file' class='btn hl-hover-gray p-2 lh-normal border-0'>
@@ -45,17 +43,11 @@
         <i class='fas fa-trash-alt fa-fw'></i>
       </button>
     </div>
-
-    <div hidden id='jsonImportFileDiv'>
-      <input type='file' class='form-control col-md-4 form-inline' name='file' accept='.json' id='jsonImportFileInput' />
-      <button type='submit' data-action='json-upload-file' class='btn btn-primary'>{{ 'Import'|trans }}</button>
-    </div>
-
     <hr>
 
     <button class='btn lh-normal border-0 px-0' type='button' data-action='toggle-next' aria-expanded='false' title='{{ 'Information'|trans }}' aria-label='{{ 'Information'|trans }}'><i class='fas fa-fw fa-info-circle'></i></button><span hidden><a target='_blank' class='external-link' rel='noopener' href='https://doc.elabftw.net/metadata.html'>{{ 'See documentation about extra fields.'|trans }}</a></span>
     <h6 id='jsonEditorTitle'></h6>
-    {% if App.Config.configArr.debug -%}
+    {% if App.devMode -%}
       {# set no-unused-disable and text-content because removing or leaving text-content brings up error #}
       <!-- [html-validate-disable-block no-deprecated-attr, text-content, no-unused-disable: suppress errors from jsonEditor] -->
     {%- endif %}

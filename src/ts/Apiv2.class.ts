@@ -7,9 +7,7 @@
  */
 import { Method } from './interfaces';
 import { getNewIdFromPostRequest } from './misc';
-import { Notification } from './Notifications.class';
-
-const notify = new Notification();
+import { notify } from './notify';
 
 export class Api {
   // set this to false to prevent the "Saved" notification from showing up
@@ -86,7 +84,7 @@ export class Api {
     if ([Method.POST, Method.PATCH].includes(method)) {
       options['body'] = JSON.stringify(params);
     }
-    return fetch(`api/v2/${query}`, options).then(response => {
+    return fetch(`api/v2/${query}`, options).then(async response => {
       if (response.status !== this.getOkStatusFromMethod(method)) {
         // if there is an error we will get the message in the reply body
         return response.json().then(json => { throw new Error(json.description); });

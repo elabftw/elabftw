@@ -6,6 +6,7 @@
  * @package elabftw
  */
 /* going from less contrasted to more contrasted */
+$white: #fff;
 $mainbackground: #f2f2f2;
 $superlight: #e6e6e6;
 $firstlevel: #dbdbdb;
@@ -27,10 +28,13 @@ $darkred: #dd1e00;
 $warningbg: #fff3cd;
 
 $green: #54aa08;
+$lessbrightorange: #ffe6b8;
+$brightorange: #ffa500;
 $orange: #ffa500;
 
 $lightgold: #eddec6;
 $gold: #d4ae75;
+$darkgold: #856404;
 
 /* font awesome */
 $fa-font-path: '/assets/fonts';

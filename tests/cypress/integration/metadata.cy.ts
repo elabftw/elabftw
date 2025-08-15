@@ -1,11 +1,8 @@
-describe('Metadata', () => {
-  beforeEach(() => {
-    cy.login();
-    cy.enableCodeCoverage(Cypress.currentTest.titlePath.join(' '));
-  });
-
-  it('Show metadata', () => {
-    cy.visit('/metadata.php');
-    cy.get('body').should('contain', 'Nothing to show with this id');
+describe('Metadata XML', () => {
+  // no need to login first
+  it('Show metadata error', () => {
+    // will reply with status 400
+    cy.visit('/metadata.php', { failOnStatusCode: false });
+    cy.get('body').should('contain', 'No Service Provider configured. Aborting.');
   });
 });

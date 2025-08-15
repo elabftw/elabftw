@@ -13,7 +13,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
-use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Users\Users;
 
 class ItemsTypesTest extends \PHPUnit\Framework\TestCase
 {
@@ -27,27 +27,31 @@ class ItemsTypesTest extends \PHPUnit\Framework\TestCase
     public function testCreateUpdateDestroy(): void
     {
         // create
-        $this->ItemsTypes->setId($this->ItemsTypes->create(body: 'body1', color: '29aeb9'));
-        $this->assertEquals('29aeb9', $this->ItemsTypes->entityData['color']);
+        $this->ItemsTypes->setId($this->ItemsTypes->create(body: 'body1', title: 'blah'));
+        $this->assertEquals('blah', $this->ItemsTypes->entityData['title']);
         $this->assertEquals('body1', $this->ItemsTypes->entityData['body']);
         // update
         $params = array(
-            'color' => '#faaccc',
+            'title' => 'oompa',
             'body' => 'body2',
             'canread' => BasePermissions::Team->toJson(),
             'canwrite' => BasePermissions::Team->toJson(),
         );
         $this->ItemsTypes->patch(Action::Update, $params);
-        $this->assertEquals('faaccc', $this->ItemsTypes->entityData['color']);
+        $this->assertEquals('oompa', $this->ItemsTypes->entityData['title']);
         // destroy
         $this->assertTrue($this->ItemsTypes->destroy());
     }
 
     public function testDuplicate(): void
     {
-        $this->ItemsTypes->setId($this->ItemsTypes->create());
-        $this->expectException(ImproperActionException::class);
-        $this->ItemsTypes->duplicate();
+        $title = 'Serge Gainsbourg';
+        $body = 'Quand Gainsbarre se bourre, Gainsbourg se barre.';
+        $this->ItemsTypes->setId($this->ItemsTypes->create(title: $title, body: $body));
+        $newId = $this->ItemsTypes->duplicate();
+        $this->ItemsTypes->setId($newId);
+        $this->assertEquals($title . ' I', $this->ItemsTypes->entityData['title']);
+        $this->assertEquals($body, $this->ItemsTypes->entityData['body']);
     }
 
     public function testGetApiPath(): void

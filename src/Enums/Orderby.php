@@ -19,6 +19,7 @@ enum Orderby: string
     case CreatedAt = 'created_at';
     case Customid = 'customid';
     case Date = 'date';
+    case Filename = 'filename';
     case Filesize = 'filesize';
     case Id = 'id';
     case Lastchange = 'lastchange';
@@ -36,10 +37,11 @@ enum Orderby: string
             self::CreatedAt => 'created_at',
             self::Customid => 'entity.custom_id',
             self::Date => 'date',
+            self::Filename => 'real_name',
             self::Filesize => 'filesize',
             self::Id => 'entity.id',
             self::Lastchange => 'entity.modified_at',
-            self::Ordering => 'ordering',
+            self::Ordering => 'entity.ordering',
             self::Rating => 'entity.rating',
             self::Status => 'statust.title',
             self::Title => 'entity.title',

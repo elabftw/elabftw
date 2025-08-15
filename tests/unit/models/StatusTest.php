@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Models\Users\Users;
 
 class StatusTest extends \PHPUnit\Framework\TestCase
 {

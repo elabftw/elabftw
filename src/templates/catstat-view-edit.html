@@ -1,0 +1,9 @@
+{% set entityPage = entityPage|default(App.Request.getScriptName|split('/')|last|replace({'.php': ''})) %}
+<div class='d-flex mb-2 align-items-center'>
+  {# ID #}
+  <span class='mr-1'><i class='fas fa-hashtag'></i>{{ Entity.entityData.id }}</span>
+  {# CATEGORY #}
+  <button id='categoryBtn' style='--bg: #{{ Entity.entityData.category_color|default('bdbdbd') }}' type='button' data-target='category' data-id='{{ Entity.entityData.category }}' class='mr-2 btn catstat-btn category-btn malleableCategory lh-normal border-0'>{{ Entity.entityData.category_title|default('Add category'|trans) }}</button>
+  {# STATUS #}
+  <button data-target='status' type='button' class='btn catstat-btn status-btn malleableStatus lh-normal border-0'><i class='fas fa-circle fa-fw' style='--bg: #{{ Entity.entityData.status_color|default('bdbdbd') }}'></i> {{ Entity.entityData.status_title|default('Add status'|trans) }}</button>
+</div>

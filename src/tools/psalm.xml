@@ -25,7 +25,7 @@
             <directory name="../../vendor" />
             <directory name="../../tests" />
             <file name="../../c3.php" />
-            <file name="rector.php" />
+            <file name="../../src/Services/AdvancedSearchQuery/Grammar/Parser.php" />
         </ignoreFiles>
     </projectFiles>
     <globals>

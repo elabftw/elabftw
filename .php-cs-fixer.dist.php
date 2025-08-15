@@ -16,6 +16,7 @@ $finder = Finder::create()
     ->name('/\.php|console|init|\.php.dist$/')
     ->exclude('_output')
     ->exclude('_support')
+    ->notPath('Services/AdvancedSearchQuery/Grammar/Parser.php')
     ->in(['bin', 'src', 'tests', 'web'])
 ;
 

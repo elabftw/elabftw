@@ -15,23 +15,26 @@ use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Params\CommentParam;
+use Elabftw\Traits\TestsUtilsTrait;
 
 class CommentsTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private Experiments $Entity;
 
     private Comments $Comments;
 
     protected function setUp(): void
     {
-        $this->Entity = new Experiments(new Users(2, 1), 1);
+        $this->Entity = $this->getFreshExperiment();
 
         $this->Comments = new Comments($this->Entity);
     }
 
     public function testGetApiPath(): void
     {
-        $this->assertSame('api/v2/experiments/1/comments/', $this->Comments->getApiPath());
+        $this->assertSame(sprintf('api/v2/experiments/%d/comments/', $this->Entity->id), $this->Comments->getApiPath());
     }
 
     public function testCreateAndRead(): void
@@ -61,7 +64,7 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
     {
         $ImmutableComments = new ImmutableComments($this->Entity);
         $ImmutableComments->setId($ImmutableComments->create(new CommentParam('An immutable comment')));
-        $this->expectException(ImproperActionException::class);
+        $this->expectException(IllegalActionException::class);
         $ImmutableComments->update(new CommentParam('Nope'));
     }
 

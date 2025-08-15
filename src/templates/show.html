@@ -74,7 +74,7 @@
 
           {# STATUS #}
           <select name='status' class='mr-1 form-control filterHelper filterAuto' aria-label='{{ 'Filter status'|trans }}'>
-            <option value='' data-action='clear'>{{ 'Filter status'|trans }}</option>
+            <option value='' class='dropdown-header' data-action='clear'>{{ 'Filter status'|trans }}</option>
             {% for status in statusArr %}
               <option value='{{ status.id }}'
                 {{- App.Request.query.get('status') == status.id ? ' selected' -}}
@@ -85,7 +85,7 @@
 
           {# OWNER filter #}
           <select name='owner' class='form-control filterHelper filterAuto' aria-label='{{ 'Filter owner'|trans }}'>
-            <option value='' data-action='clear'>{{ 'Filter owner'|trans }}</option>
+            <option value='' class='dropdown-header' data-action='clear'>{{ 'Filter owner'|trans }}</option>
             {% for user in usersArr %}
               <option value='{{ user.userid }}' {{- App.Request.query.get('owner') == user.userid ? ' selected' }}>{{ user.fullname }}</option>
             {% endfor %}
@@ -94,7 +94,7 @@
           {# SEARCH WITH TAG #}
           {# select is hidden to avoid showing the raw list and a layout change, it shows up with TomSelect #}
           <input placeholder='{{ 'Tags'|trans }}' id='tagFilterPlaceholder' class='form-control' aria-label='placeholder for tags input' />
-          {% if App.Config.configArr.debug -%}
+          {% if App.devMode -%}
             <!-- [html-validate-disable-block input-missing-label, prefer-native-element: suppress error from tom-select] -->
           {%- endif %}
           <select hidden
@@ -115,7 +115,7 @@
 
       {# TOGGLE MORE FILTERS BUTTON #}
       <div class='ml-auto'>
-        <button class='btn btn-secondary btn' type='button' data-action='toggle-next' data-toggle-target='filtersDiv' data-closed-icon='fa-sliders' data-opened-icon='fa-xmark' aria-label='{{ 'Toggle filters'|trans }}' aria-expanded='false' aria-controls='filtersDiv'>
+        <button class='btn btn-secondary btn' type='button' data-action='toggle-next' data-toggle-target='filtersDiv' data-closed-icon='fa-sliders' data-opened-icon='fa-xmark' aria-label='{{ 'Toggle filters'|trans }}' aria-expanded='false' aria-controls='filtersDiv' title='{{ 'Show more filters'|trans }}'>
           <i class='fas fa-sliders color-white'></i>
         </button>
       </div>
@@ -127,7 +127,7 @@
       {# METADATA SEARCH #}
       <div class='d-flex'>
         <div class='input-group d-flex flex-nowrap'>
-          {% if App.Config.configArr.debug -%}
+          {% if App.devMode -%}
             <!-- [html-validate-disable input-missing-label, prefer-native-element: suppress errors from tom-select] -->
           {%- endif %}
           <select
@@ -143,7 +143,7 @@
               <option value='{{ metakey }}' {{- metakey == App.Request.query.get('metakey') ? ' selected' }}>{{ metakey|raw }}</option>
             {% endfor %}
           </select>
-          {% if App.Config.configArr.debug -%}
+          {% if App.devMode -%}
             <!-- [html-validate-enable input-missing-label, prefer-native-element: suppress errors from tom-select] -->
           {%- endif %}
           <div class='input-group-text px-1 brl-none brr-none' style='margin-left:-1px;margin-right:-1px;'>:</div>
@@ -186,21 +186,8 @@
       <input type='hidden' name='mode' value='show' />
 
       <div>
-        {# STATE #}
-        <select name='state' aria-label='{{ 'State'|trans }}' class='form-control filterAuto'>
-          <option value='' data-action='clear'>{{ 'Select state'|trans }}</option>
-          {% set stateValue = enum('Elabftw\\Enums\\State').Normal.value %}
-          <option value='{{ stateValue }}' {{- Request.query.get('state') == stateValue ? ' selected' }}>{{ 'Normal'|trans }}</option>
-          {% set stateValue = enum('Elabftw\\Enums\\State').Archived.value %}
-          <option value='{{ stateValue }}' {{- Request.query.get('state') == stateValue ? ' selected' }}>{{ 'Archived'|trans }}</option>
-          {% set stateValue = enum('Elabftw\\Enums\\State').Deleted.value %}
-          <option value='{{ stateValue }}' {{- Request.query.get('state') == stateValue ? ' selected' }}>{{ 'Deleted'|trans }}</option>
-          {% set stateValue = enum('Elabftw\\Enums\\State').Normal.value ~ ',' ~ enum('Elabftw\\Enums\\State').Archived.value %}
-          <option value='{{ stateValue }}' {{- Request.query.get('state') == stateValue ? ' selected' }}>{{ 'Normal or Archived'|trans }}</option>
-          {% set stateValue = enum('Elabftw\\Enums\\State').Normal.value ~ ',' ~ enum('Elabftw\\Enums\\State').Archived.value ~ ',' ~ enum('Elabftw\\Enums\\State').Deleted.value %}
-          <option value='{{ stateValue }}' {{- Request.query.get('state') == stateValue ? ' selected' }}>{{ 'Any'|trans }}</option>
-        </select>
-        {# END STATE #}
+        {# STATE filter #}
+        {% include 'select-state.html' %}
 
         {# LOCK #}
         <select name='locked' aria-label='{{ 'Select lock status'|trans }}' class='form-control filterHelper'>
@@ -293,25 +280,25 @@
         <button class='btn btn-sm dropdown-toggle hl-hover-gray' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Sort'|trans }}' title='{{ 'Sort'|trans }}'><i class='fas fa-arrow-down-wide-short fa-fw mr-1'></i></button>
         <div class='dropdown-menu dropdown-menu-right'>
           <h6 class='dropdown-header'>{{ 'Sort'|trans }}</h6>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'date' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-query='date-desc'>{{ 'Newest'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'date' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-query='date-asc'>{{ 'Oldest'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'lastchange' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-query='lastchange-desc'>{{ 'Recently modified'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'lastchange' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-query='lastchange-asc'>{{ 'Least recently modified'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'cat' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-query='cat-desc'>{{ 'Category'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'cat' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-query='cat-asc'>{{ 'Category (inverted)'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'status' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-query='status-desc'>{{ 'Status'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'status' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-query='status-asc'>{{ 'Status (inverted)'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'id' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-query='id-desc'>{{ 'Highest ID'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'id' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-query='id-asc'>{{ 'Lowest ID'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'customid' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-query='customid-desc'>{{ 'Highest Custom ID'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'customid' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-query='customid-asc'>{{ 'Lowest Custom ID'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'comment' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-query='comment-desc'>{{ 'Recently commented'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'title' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-query='title-asc'>{{ 'Title (alphabetical)'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'title' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-query='title-desc'>{{ 'Title (inverted)'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'user' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-query='user-asc'>{{ 'User (alphabetical)'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'user' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-query='user-desc'>{{ 'User (inverted)'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'rating' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-query='rating-desc'>{{ 'Highest rating'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'rating' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-query='rating-asc'>{{ 'Lowest rating'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'date' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-action='query' data-target='date-desc'>{{ 'Newest'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'date' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-action='query' data-target='date-asc'>{{ 'Oldest'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'lastchange' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-action='query' data-target='lastchange-desc'>{{ 'Recently modified'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'lastchange' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-action='query' data-target='lastchange-asc'>{{ 'Least recently modified'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'cat' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-action='query' data-target='cat-desc'>{{ 'Category'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'cat' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-action='query' data-target='cat-asc'>{{ 'Category (inverted)'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'status' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-action='query' data-target='status-desc'>{{ 'Status'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'status' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-action='query' data-target='status-asc'>{{ 'Status (inverted)'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'id' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-action='query' data-target='id-desc'>{{ 'Highest ID'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'id' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-action='query' data-target='id-asc'>{{ 'Lowest ID'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'customid' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-action='query' data-target='customid-desc'>{{ 'Highest Custom ID'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'customid' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-action='query' data-target='customid-asc'>{{ 'Lowest Custom ID'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'comment' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-action='query' data-target='comment-desc'>{{ 'Recently commented'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'title' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-action='query' data-target='title-asc'>{{ 'Title (alphabetical)'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'title' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-action='query' data-target='title-desc'>{{ 'Title (inverted)'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'user' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-action='query' data-target='user-asc'>{{ 'User (alphabetical)'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'user' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-action='query' data-target='user-desc'>{{ 'User (inverted)'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'rating' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-action='query' data-target='rating-desc'>{{ 'Highest rating'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'rating' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-action='query' data-target='rating-asc'>{{ 'Lowest rating'|trans }}</button>
         </div>
       </div>
       {# LIMIT if there is nothing in the query params, take the user configured one #}
@@ -320,7 +307,7 @@
         <div class='dropdown-menu dropdown-menu-right'>
           <h6 class='dropdown-header'>{{ 'Results per page'|trans }}</h6>
         {% for option in limitOptions(DisplayParams.limit) %}
-          <button type='button' class='btn btn-dropdown-item dropdown-item' data-action='insert-param-and-reload-show' data-key='limit' data-value='{{ option }}'>{{ option }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item' data-action='insert-param-and-reload' data-target='limit' data-reload='reloadEntitiesShow' value='{{ option }}'>{{ option }}</button>
         {% endfor %}
         </div>
       </div>
@@ -331,8 +318,8 @@
 
   {% set count = itemsArr|length %}
 
-  {% if App.Users.isAdmin and itemsCategoryArr|length == 0 %}
-  {{ 'No resources categories have been defined for your team. Head to the %sAdmin Panel%s to add one.'|trans|format("<a href='admin.php?tab=4#itemsCategoriesAnchor'>", "</a>")|raw|msg('warning', false) }}
+  {% if App.itemsCategoryArr|length == 0 %}
+  {{ 'No resources categories have been defined for your team. Create some from this page: %sResources Categories%s.'|trans|format("<a href='resources-categories.php'>", "</a>")|raw|msg('warning', false) }}
   {% endif %}
   <div id='showModeContent'>
 
@@ -368,11 +355,13 @@
             <option value='json'>{{ 'JSON'|trans }}</option>
           </select>
           {# Action buttons #}
-          <button data-action='patch-selected-entities' data-what='forcelock' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Lock'|trans }}</button>
-          <button data-action='patch-selected-entities' data-what='forceunlock' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Unlock'|trans }}</button>
-          <button data-action='patch-selected-entities' data-what='timestamp' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Timestamp'|trans }}</button>
-          <button data-action='patch-selected-entities' data-what='archive' type='button' class='btn btn-secondary mr-1 mb-2'>{{ 'Archive'|trans }}</button>
-          <button data-action='destroy-selected-entities' type='button' class='btn btn-danger mr-1 mb-2'>{{ 'Delete'|trans }}</button>
+          <button data-action='patch-selected-entities' data-what='forcelock' type='button' class='btn btn-primary mr-1 mb-2' aria-label='{{ 'Lock the selected entities'|trans }}' title='{{ 'Lock the selected entities'|trans }}'>{{ 'Lock'|trans }}</button>
+          <button data-action='patch-selected-entities' data-what='forceunlock' type='button' class='btn btn-primary mr-1 mb-2' aria-label='{{ 'Unlock the selected entities'|trans }}' title='{{ 'Unlock the selected entities'|trans }}'>{{ 'Unlock'|trans }}</button>
+          <button data-action='patch-selected-entities' data-what='timestamp' type='button' class='btn btn-primary mr-1 mb-2' aria-label='{{ 'Timestamp the selected entities'|trans }}' title='{{ 'Timestamp the selected entities'|trans }}'>{{ 'Timestamp'|trans }}</button>
+          <button data-action='patch-selected-entities' data-what='archive' type='button' class='btn btn-secondary mr-1 mb-2' aria-label='{{ 'Archive the selected entities'|trans }}' title='{{ 'Archive the selected entities'|trans }}'>{{ 'Archive'|trans }}</button>
+          <button data-action='patch-selected-entities' data-what='unarchive' type='button' class='btn btn-secondary mr-1 mb-2' aria-label='{{ 'Unarchive the selected entities'|trans }}' title='{{ 'Unarchive the selected entities'|trans }}'>{{ 'Unarchive'|trans }}</button>
+          <button data-action='patch-selected-entities' data-what='destroy' type='button' class='btn btn-danger mr-1 mb-2' aria-label='{{ 'Delete the selected entities'|trans }}' title='{{ 'Delete the selected entities'|trans }}'>{{ 'Delete'|trans }}</button>
+          <button data-action='patch-selected-entities' data-what='restore' type='button' class='btn btn-primary mr-1 mb-2' aria-label='{{ 'Restore the selected entities'|trans }}' title='{{ 'Restore the selected entities'|trans }}'>{{ 'Restore'|trans }}</button>
         </div>
 
         <form id='multiChangesForm' class='row mx-0 form-inline'>
@@ -418,7 +407,7 @@
             <div class='input-group-append'>
               <select id='addLinkCatFilter' class='brl-none form-control' aria-label='{{ 'Limit category'|trans }}'>
                 <option selected value=''>{{ 'Any category'|trans }}</option>
-                {% for cat in itemsCategoryArr %}
+                {% for cat in App.itemsCategoryArr %}
                   <option value='{{ cat.id }}'>{{ cat.title }}</option>
                 {% endfor %}
               </select>

@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Enums\Messages;
+use Elabftw\Exceptions\DemoModeException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Params\UserParams;
@@ -30,6 +32,10 @@ try {
     // check for disabled local register
     if ($App->Config->configArr['local_register'] === '0') {
         throw new ImproperActionException(_('Registration is disabled.'));
+    }
+    // or we might be in demo mode
+    if ($App->demoMode) {
+        throw new DemoModeException();
     }
 
     // Stop bot registration by checking if the (invisible to humans) bot input is filled
@@ -68,7 +74,7 @@ try {
     $App->Session->set('email', $App->Request->request->getString('email'));
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e->getMessage())));
-    $App->Session->getFlashBag()->add('ko', Tools::error(true));
+    $App->Session->getFlashBag()->add('ko', Messages::InsufficientPermissions->toHuman());
     $location = '/register.php';
 } catch (ImproperActionException $e) {
     // show message to user
@@ -77,7 +83,7 @@ try {
 } catch (Exception $e) {
     // log error and show general error message
     $App->Log->error('', array('Exception' => $e));
-    $App->Session->getFlashBag()->add('ko', Tools::error());
+    $App->Session->getFlashBag()->add('ko', Messages::GenericError->toHuman());
     $location = '/register.php';
 } finally {
     $Response = new RedirectResponse($location);

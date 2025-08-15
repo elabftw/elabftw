@@ -15,12 +15,18 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\Scope;
 use Elabftw\Enums\Usergroup;
+use Elabftw\Enums\Users2TeamsTargets;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Models\Users\Users;
+use Elabftw\Params\UserParams;
+use Elabftw\Traits\TestsUtilsTrait;
 
 class UsersTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private Users $Users;
 
     protected function setUp(): void
@@ -60,11 +66,11 @@ class UsersTest extends \PHPUnit\Framework\TestCase
 
     public function testReadFromQuery(): void
     {
-        $this->assertIsArray($this->Users->readFromQuery('', 0, true, true, true));
-        $this->assertIsArray($this->Users->readFromQuery('', 0, true, true, false));
-        $this->assertIsArray($this->Users->readFromQuery('', 0, true, false, false));
-        $this->assertIsArray($this->Users->readFromQuery('', 0, false, false, false));
-        $this->assertIsArray($this->Users->readFromQuery('Toto', 1, false, false, false));
+        $this->assertIsArray($this->Users->readFromQuery('', 0, true, true));
+        $this->assertIsArray($this->Users->readFromQuery('', 0, true, false));
+        $this->assertIsArray($this->Users->readFromQuery('', 0, false, true));
+        $this->assertIsArray($this->Users->readFromQuery('', 0, false, false));
+        $this->assertIsArray($this->Users->readFromQuery('Toto', 1, false, false));
     }
 
     public function testUpdateAccount(): void
@@ -134,6 +140,13 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(12, $result['limit_nb']);
     }
 
+    public function testUpdateCanManageUsers2TeamsAsUser(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $this->expectException(IllegalActionException::class);
+        $user->update(new UserParams('can_manage_users2teams', '1'));
+    }
+
     public function testReadAll(): void
     {
         $this->assertIsArray($this->Users->readAll());
@@ -143,9 +156,9 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertTrue($this->Users->isAdminOf(1));
         $this->assertTrue($this->Users->isAdminOf(2));
-        $this->assertFalse($this->Users->isAdminOf(5));
-        $tata = new Users(4, 2);
-        $this->assertFalse($tata->isAdminOf(2));
+        $admin2 = $this->getUserInTeam(team: 2, admin: 1);
+        $this->assertTrue($this->Users->isAdminOf($admin2->userid));
+        $this->assertFalse($admin2->isAdminOf(2));
     }
 
     public function testGetApiPath(): void
@@ -229,9 +242,14 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     public function testToggleArchive(): void
     {
         // tata in bravo
-        $Admin = new Users(5, 2);
-        $Users = new Users(6, 2, $Admin);
-        $this->assertIsArray($Users->patch(Action::Archive, array()));
+        $Admin = $this->getUserInTeam(team: 2, admin: 1);
+        $user2 = $this->getUserInTeam(team: 2);
+        $Users2Teams = new Users2Teams($Admin);
+        $this->assertEquals(1, $Users2Teams->patchUser2Team(array(
+            'target' => Users2TeamsTargets::IsArchived->value,
+            'content' => '1',
+            'team' => '2',
+        ), $user2->userid));
     }
 
     public function testCreateUser(): void
@@ -244,22 +262,11 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $this->assertIsInt($this->Users->createOne('blahblah2@yop.fr', array('Bravo'), 'blah2', 'yop', 'somePassword!', Usergroup::Admin, true, false));
     }
 
-    public function testUnarchiveButAnotherUserExists(): void
-    {
-        // this user is archived already
-        $Admin = new Users(5, 2);
-        $Users = new Users(6, 2, $Admin);
-        // create another active user with the same email
-        ExistingUser::fromScratch($Users->userData['email'], array('Alpha'), 'f', 'l', Usergroup::User, false, false);
-        // try to unarchive
-        $this->expectException(ImproperActionException::class);
-        $Users->patch(Action::Archive, array());
-    }
-
     public function testArchiveWithoutPermission(): void
     {
-        $Admin = new Users(5, 2);
-        $Users = new Users(6, 2, $Admin);
+        $Admin = $this->getUserInTeam(team: 2, admin: 1);
+        $user2 = $this->getUserInTeam(team: 2);
+        $Users = new Users($user2->userid, 2, $Admin);
         $Config = Config::getConfig();
         $Config->patch(Action::Update, array('admins_archive_users' => 0));
         $this->expectException(ImproperActionException::class);
@@ -270,24 +277,25 @@ class UsersTest extends \PHPUnit\Framework\TestCase
 
     public function testReadAllActiveFromTeam(): void
     {
-        $this->assertCount(9, $this->Users->readAllActiveFromTeam());
+        $this->assertTrue(count($this->Users->readAllActiveFromTeam()) > 3);
     }
 
     public function testAddUserToTeam(): void
     {
         // add a user from team bravo into team alpha
-        $Users = new Users(6, 2, new Users(1, 1));
+        $user2 = $this->getUserInTeam(team: 2);
+        $Users = new Users($user2->userid, 2, new Users(1, 1));
         $this->assertIsArray($Users->patch(Action::Add, array('team' => 1)));
         // try the reverse
-        $Users = new Users(1, 1, new Users(6, 2));
+        $Users = new Users(1, 1, new Users($user2->userid, 2));
         $this->expectException(IllegalActionException::class);
         $Users->patch(Action::Add, array('team' => 2));
     }
 
     public function testDestroy(): void
     {
-        $Admin = new Users(5, 2);
-        $id = $Admin->createOne('testdestroy@a.fr', array('Bravo'), 'Life', 'isShort', 'yololololol', Usergroup::User, false, false);
+        $Admin = $this->getUserInTeam(team: 2, admin: 1);
+        $id = $Admin->createOne('testdestroy@a.fr', array('2'), 'Life', 'isShort', 'yololololol', Usergroup::User, false, false);
         $Target = new Users($id, 2, $Admin);
         $this->assertTrue($Target->destroy());
     }

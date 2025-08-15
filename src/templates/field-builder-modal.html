@@ -2,7 +2,7 @@
 <div class='modal fade' id='fieldBuilderModal' tabindex='-1' role='dialog' aria-labelledby='fieldBuilderLabel'>
   <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content'>
-      {% if App.Config.configArr.debug -%}
+      {% if App.devMode -%}
         <!-- [html-validate-disable-next wcag/h32: no submit button for navbar search field] -->
       {%- endif %}
       <form id ='newFieldForm' class='new-field-form' aria-label='new extra field'>
@@ -76,8 +76,15 @@
           {# DESCRIPTION #}
           <label for='newFieldDescriptionInput'>{{ 'Description'|trans }}</label>
           <input type='text' autocomplete='off' placeholder='{{ 'Enter a description for this field'|trans }}' id='newFieldDescriptionInput' class='form-control'>
-          {# TEXT, URL, NUMBER, DATE #}
-          <div id='newFieldContentDiv_classic'>
+
+          {# TEXTAREA #}
+          <div id='newFieldContentDiv_text'>
+            <label for='newFieldValueTextArea'>{{ 'Default value'|trans }}</label>
+            <textarea id='newFieldValueTextArea' class='form-control form-textarea'></textarea>
+          </div>
+
+          {# URL, NUMBER, DATE #}
+          <div id='newFieldContentDiv_classic' hidden>
             <label for='newFieldValueInput'>{{ 'Default value'|trans }}</label>
             <input type='text' autocomplete='off' placeholder='{{ 'Enter a default value'|trans }}' id='newFieldValueInput' class='form-control'>
           </div>
@@ -173,7 +180,7 @@
         <h5 class='mb-3'>{{ 'Load from a database category'|trans }}</h5>
         <div class='input-group'>
           <select class='form-control' id='loadMetadataSelect_items_types'>
-            {% for itemType in itemsCategoryArr %}
+            {% for itemType in App.itemsCategoryArr %}
               <option value='{{ itemType.id }}'>{{ itemType.title }}</option>
             {% endfor %}
           </select>

@@ -11,10 +11,13 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Users;
+use Elabftw\Exceptions\UnprocessableContentException;
+use Elabftw\Models\Users\Users;
+use Elabftw\Models\Config;
 
 class CheckTest extends \PHPUnit\Framework\TestCase
 {
@@ -36,6 +39,7 @@ class CheckTest extends \PHPUnit\Framework\TestCase
     public function testColor(): void
     {
         $this->assertEquals('AABBCC', Check::color('#AABBCC'));
+        $this->assertEquals('AABBCC', Check::color('AABBCC'));
         $this->expectException(ImproperActionException::class);
         Check::color('pwet');
     }
@@ -81,5 +85,36 @@ class CheckTest extends \PHPUnit\Framework\TestCase
         $requester = new Users(3, 2);
         $usergroup = Usergroup::Admin;
         $this->assertEquals(Usergroup::User, Check::usergroup($requester, $usergroup));
+    }
+
+    public function testVisibilityBaseNotAllowed(): void
+    {
+        // simulate config with only 'allow_permission_user' enabled
+        $Config = Config::getConfig();
+        $Config->patch(Action::Update, array(
+            'allow_permission_user' => '1',
+            'allow_permission_team' => '0',
+            'allow_permission_organization' => '0',
+            'allow_permission_full' => '0',
+            'allow_permission_useronly' => '0',
+        ));
+        // Team is not in allowed list
+        $json = BasePermissions::Team->toJson();
+        $this->expectException(UnprocessableContentException::class);
+        Check::visibility($json);
+    }
+
+    public function testVisibilityBaseAllowed(): void
+    {
+        $Config = Config::getConfig();
+        $Config->patch(Action::Update, array(
+            'allow_permission_user' => '1',
+            'allow_permission_team' => '1',
+            'allow_permission_organization' => '1',
+            'allow_permission_full' => '1',
+            'allow_permission_useronly' => '1',
+        ));
+        $json = BasePermissions::Team->toJson();
+        $this->assertEquals($json, Check::visibility($json));
     }
 }

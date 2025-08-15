@@ -14,9 +14,10 @@ namespace Elabftw\Elabftw;
 use Elabftw\AuditEvent\UserLogout;
 use Elabftw\Auth\Saml as SamlAuth;
 use Elabftw\Controllers\LoginController;
+use Elabftw\Enums\Messages;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\AuditLogs;
-use Elabftw\Models\AuthenticatedUser;
+use Elabftw\Models\Users\AuthenticatedUser;
 use Elabftw\Models\Idps;
 use Exception;
 use OneLogin\Saml2\Auth as SamlAuthLib;
@@ -130,9 +131,9 @@ if ($App->Request->query->has('sls') && ($App->Request->query->has('SAMLRequest'
 
             $destroySession();
         } else {
-            $error = Tools::error();
+            $error = Messages::GenericError->toHuman();
             // get more verbose if debug mode is active
-            if ($App->Config->configArr['debug']) {
+            if (Env::asBool('DEV_MODE')) {
                 $error = implode(', ', $errors);
             }
             throw new UnauthorizedException($error);
@@ -167,7 +168,7 @@ if ($App->Request->query->has('sls') && ($App->Request->query->has('SAMLRequest'
 
         $App->Log->error('', array('Exception' => $e));
         $template = 'error.html';
-        $renderArr = array('error' => Tools::error());
+        $renderArr = array('error' => Messages::GenericError->toHuman());
         $Response = new Response();
         $Response->prepare($Request);
         $Response->setContent($App->render($template, $renderArr));

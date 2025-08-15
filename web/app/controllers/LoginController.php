@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Controllers\LoginController;
+use Elabftw\Enums\Messages;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -33,8 +34,7 @@ $location = '/login.php';
 $Response = new RedirectResponse($location);
 
 try {
-    $Controller = new LoginController($App);
-    $Response = $Controller->getResponse();
+    $Response = new LoginController($App->Config, $App->Request, $App->Session, $App->Log, $App->Users, $App->demoMode)->getResponse();
 } catch (QuantumException | InvalidCredentialsException | InvalidMfaCodeException $e) {
     $loginTries = (int) $App->Config->configArr['login_tries'];
     $AuthFail = new AuthFail($loginTries, $e->getCode(), $App->Request->cookies->getAlnum('devicetoken'));
@@ -42,7 +42,7 @@ try {
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('ip' => $App->Request->server->get('REMOTE_ADDR')), array('IllegalAction' => $e)));
-    $App->Session->getFlashBag()->add('ko', Tools::error(true));
+    $App->Session->getFlashBag()->add('ko', Messages::InsufficientPermissions->toHuman());
 } catch (ImproperActionException | InvalidDeviceTokenException $e) {
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
@@ -51,7 +51,7 @@ try {
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
 } catch (Exception $e) {
     $App->Log->error('', array(array('ip' => $App->Request->server->get('REMOTE_ADDR')), array('Exception' => $e)));
-    $App->Session->getFlashBag()->add('ko', Tools::error());
+    $App->Session->getFlashBag()->add('ko', Messages::GenericError->toHuman());
 } finally {
     $Response->send();
 }

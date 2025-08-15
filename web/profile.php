@@ -13,16 +13,14 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Storage;
-use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\AppException;
 use Elabftw\Make\Exports;
 use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\TeamGroups;
-use Elabftw\Models\Teams;
 use Elabftw\Models\UserUploads;
 use Elabftw\Services\UsersHelper;
 use Exception;
+use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -30,12 +28,10 @@ use Symfony\Component\HttpFoundation\Response;
  */
 require_once 'app/init.inc.php';
 
-/** @psalm-suppress UncaughtThrowInGlobalScope */
 $Response = new Response();
-$Response->prepare($App->Request);
 
-$template = 'profile.html';
 try {
+    $Response->prepare($App->Request);
     $UsersHelper = new UsersHelper($App->Users->userData['userid']);
     // get total number of experiments
     $count = $UsersHelper->countExperiments();
@@ -49,7 +45,7 @@ try {
     // get the team groups in which the user is
     $TeamGroups = new TeamGroups($App->Users);
     $teamGroupsArr = $TeamGroups->readGroupsWithUsersFromUser();
-    $ExperimentsCategories = new ExperimentsCategories(new Teams($App->Users));
+    $ExperimentsCategories = new ExperimentsCategories($App->Teams);
 
     // get the exported files
     $Export = new Exports($App->Users, Storage::EXPORTS->getStorage());
@@ -57,8 +53,10 @@ try {
     $UserUploads = new UserUploads($App->Users);
     $PermissionsHelper = new PermissionsHelper();
 
+    $queryParams = $UserUploads->getQueryParams(new InputBag($App->Request->query->all()));
+    $template = 'profile.html';
     $renderArr = array(
-        'attachedFiles' => $UserUploads->readAll(),
+        'attachedFiles' => $UserUploads->readAll($queryParams),
         'count' => $count,
         'exportedFiles' => $Export->readAll(),
         'experimentsCategoryArr' => $ExperimentsCategories->readAll(),
@@ -68,34 +66,15 @@ try {
         'pieDataCss' => $UserStats->getFormattedPieData(),
         'teamGroupsArr' => $teamGroupsArr,
         'teamsArr' => $teams,
-        'uploadsTotal' => $UserUploads->countAll(),
+        'uploadsTotal' => $UserUploads->countAll($queryParams),
         'usersArr' => $App->Users->readAllActiveFromTeam(),
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
     );
     $Response->setContent($App->render($template, $renderArr));
-} catch (IllegalActionException $e) {
-    $template = 'error.html';
-    // log notice and show message
-    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
-    $renderArr = array('error' => Tools::error(true));
-    $Response->setContent($App->render($template, $renderArr));
-} catch (ImproperActionException $e) {
-    // show message to user
-    $template = 'error.html';
-    $renderArr = array('error' => $e->getMessage());
-    $Response->setContent($App->render($template, $renderArr));
-} catch (DatabaseErrorException $e) {
-    // log error and show message
-    $template = 'error.html';
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
-    $renderArr = array('error' => $e->getMessage());
-    $Response->setContent($App->render($template, $renderArr));
+} catch (AppException $e) {
+    $Response = $e->getResponseFromException($App);
 } catch (Exception $e) {
-    // log error and show general error message
-    $template = 'error.html';
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
-    $renderArr = array('error' => Tools::error());
-    $Response->setContent($App->render($template, $renderArr));
+    $Response = $App->getResponseFromException($e);
 } finally {
     $Response->send();
 }

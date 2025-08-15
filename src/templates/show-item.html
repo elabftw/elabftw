@@ -1,17 +1,19 @@
 {# dim the experiment a bit if it's not yours #}
 {% set randomId = random() %}
+{% set label = Entity.entityType.value == 'items_types' ? 'Create resource from template'|trans : 'Create experiment from template'|trans %}
+{% set dataType = Entity.entityType.value == 'experiments_templates' ? 'experiments' : 'database' %}
 
-<section class='entity {{ Entity.entityType.value == 'experiments_templates' ? 'entity-template' }} pl-3 d-flex' id='parent_{{ randomId }}' style='--left-color: #{{ item.category_color|default('bdbdbd') }};' aria-label='{{ 'Entry'|trans }}_{{ randomId }}'>
+<section class='entity {{ Entity.entityType.value in ['experiments_templates', 'items_types'] ? 'entity-template' }} pl-3 d-flex' id='parent_{{ randomId }}' style='--left-color: #{{ item.category_color|default('bdbdbd') }};' aria-label='{{ 'Entry'|trans }}_{{ randomId }}'>
 
   {# left part, full height: checkbox #}
   <div class='d-flex align-items-center'>
     {# checkbox #}
-    <input autocomplete='off' type='checkbox' data-action='checkbox-entity' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.entityType.value }}' aria-label='{{ 'Select'|trans }}' class='mr-3' />
+    <input autocomplete='off' type='checkbox' data-action='checkbox-entity' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.entityType.value }}' data-state='{{ item.state }}' aria-label='{{ 'Select'|trans }}' class='mr-3' />
     <div class='d-flex'>
 
       {# for templates: create from button #}
-      {% if Entity.entityType.value == 'experiments_templates' %}
-      <a data-action='create-entity' data-type='experiments' data-tplid='{{ item.id }}' href='#' class='left-icon rounded mr-3 my-1 hl-hover-gray bgnd-blue' title='{{ 'Create experiment from template'|trans }}' aria-label='{{ 'Create experiment from template'|trans }}'>
+      {% if Entity.entityType.value in ['experiments_templates', 'items_types'] %}
+      <a data-action='create-entity' data-type={{ dataType }} data-tplid='{{ item.id }}' href='#' class='left-icon rounded mr-3 my-1 hl-hover-gray bgnd-blue' title='{{ label }}' aria-label='{{ label }}'>
         <i class='fas fa-file-circle-plus fa-fw'></i>
       </a>
       {% endif %}
@@ -42,9 +44,9 @@
   </div>
 
   {# middle part: category, title, icons and tags #}
-  <div>
+  <div class='align-self-center'>
     {# first line #}
-    <div class='my-1'>
+    <div>
       {# timestamp icon #}
       {% if item.timestamped %}
         <i style='color:#{{ item.category_color|default('bdbdbd') }}' class='far fa-calendar-check fa-fw'></i>
@@ -64,19 +66,17 @@
       {% endif %}
       {# status #}
       {% if item.status %}
-        <button class='btn catstat-btn status-btn bg-firstlevel' type='button' data-action='add-query-filter' data-key='status' data-value='{{ item.status|e('html_attr') }}' style='line-height:normal;'><i class='fas fa-circle fa-fw' style='--bg: #{{ item.status_color|default('bdbdbd') }}'></i> {{ item.status_title }}</button>
+        <button class='btn catstat-btn status-btn bg-firstlevel mb-1' type='button' data-action='add-query-filter' data-key='status' data-value='{{ item.status|e('html_attr') }}' style='line-height:normal;'><i class='fas fa-circle fa-fw' style='--bg: #{{ item.status_color|default('bdbdbd') }}'></i> {{ item.status_title }}</button>
       {% endif %}
     </div>
     {# end first line #}
 
     {# second line: title #}
-    <div class='d-flex justify-content-between title'>
-      <p>
+    <div class='d-flex title flex-nowrap'>
       {% if item.custom_id %}
-        <span class='custom-id-badge' title='{{ 'Custom ID'|trans }}'>{{ item.custom_id }}</span>
+        <span class='color-medium mr-1' title='{{ 'Custom ID'|trans }}'>{{ item.custom_id }}</span>
       {% endif %}
-        <a href='{{ Entity.entityType.toPage }}?mode=view&amp;id={{ item.id }}'>{{ item.title }}</a>
-      </p>
+      <a href='{{ Entity.entityType.toPage }}?mode=view&amp;id={{ item.id }}'>{{ item.title }}</a>
     </div>
     {# owner #}
     <div class='owner'>

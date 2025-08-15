@@ -13,17 +13,14 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\PasswordComplexity;
-use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Factories\LinksFactory;
-use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Models\TeamGroups;
-use Elabftw\Models\Teams;
 use Elabftw\Models\TeamTags;
 use Elabftw\Services\DummyRemoteDirectory;
 use Elabftw\Services\EairefRemoteDirectory;
@@ -40,29 +37,23 @@ use function array_filter;
  * Administration panel of a team
  */
 require_once 'app/init.inc.php';
-$Response = new Response();
-$Response->prepare($App->Request);
 
-$template = 'error.html';
-$renderArr = array();
+$Response = new Response();
 
 try {
+    $Response->prepare($App->Request);
     if (!$App->Users->isAdmin) {
         throw new IllegalActionException('Non admin user tried to access admin controller.');
     }
 
     $ItemsTypes = new ItemsTypes($App->Users, Filter::intOrNull($Request->query->getInt('templateid')));
-    $Teams = new Teams($App->Users, $App->Users->userData['team']);
-    $Status = new ExperimentsStatus($Teams);
-    $ItemsStatus = new ItemsStatus($Teams);
+    $Status = new ExperimentsStatus($App->Teams);
+    $ItemsStatus = new ItemsStatus($App->Teams);
     $TeamTags = new TeamTags($App->Users);
     $TeamGroups = new TeamGroups($App->Users);
     $PermissionsHelper = new PermissionsHelper();
-    $teamStats = $Teams->getStats($App->Users->userData['team']);
+    $teamStats = $App->Teams->getStats($App->Users->userData['team']);
 
-    $itemsCategoryArr = $ItemsTypes->readAll();
-    $ExperimentsCategories = new ExperimentsCategories($Teams);
-    $experimentsCategoriesArr = $ExperimentsCategories->readAll($ExperimentsCategories->getQueryParams(new InputBag(array('limit' => 9999))));
     if ($App->Request->query->has('templateid')) {
         $ItemsTypes->setId($App->Request->query->getInt('templateid'));
         $ItemsTypes->canOrExplode('write');
@@ -71,7 +62,6 @@ try {
     }
     $statusArr = $Status->readAll($Status->getQueryParams(new InputBag(array('limit' => 9999))));
     $teamGroupsArr = $TeamGroups->readAll();
-    $teamsArr = $Teams->readAll();
     $allTeamUsersArr = $App->Users->readAllFromTeam();
     // only the unvalidated ones
     $unvalidatedUsersArr = array_filter(
@@ -79,14 +69,11 @@ try {
         fn($u): bool => $u['validated'] === 0,
     );
     // Users search
-    $isSearching = false;
     $usersArr = array();
     if ($App->Request->query->has('q')) {
-        $isSearching = true;
         $usersArr = $App->Users->readFromQuery(
             $App->Request->query->getString('q'),
             $App->Request->query->getInt('team'),
-            $App->Request->query->getBoolean('includeArchived'),
             $App->Request->query->getBoolean('onlyAdmins'),
             $App->Request->query->getBoolean('onlyArchived'),
         );
@@ -118,15 +105,11 @@ try {
 
     $template = 'admin.html';
     $renderArr = array(
-        'Entity' => $ItemsTypes,
         'allTeamUsersArr' => $allTeamUsersArr,
         'tagsArr' => $TeamTags->readAll(),
-        'isSearching' => $isSearching,
-        'itemsCategoryArr' => $itemsCategoryArr,
         'metadataGroups' => $metadataGroups,
         'allTeamgroupsArr' => $TeamGroups->readAllEverything(),
         'statusArr' => $statusArr,
-        'experimentsCategoriesArr' => $experimentsCategoriesArr,
         'itemsStatusArr' => $ItemsStatus->readAll(),
         'pageTitle' => _('Admin panel'),
         'passwordInputHelp' => $passwordComplexity->toHuman(),
@@ -136,21 +119,17 @@ try {
         'remoteDirectoryUsersArr' => $remoteDirectoryUsersArr,
         'scopedTeamgroupsArr' => $TeamGroups->readScopedTeamgroups(),
         'storageUnitsArr' => (new StorageUnits($App->Users))->readAllRecursive(),
-        'teamsArr' => $teamsArr,
         'teamStats' => $teamStats,
+        'teamsArr' => $App->Teams->readAllComplete(),
+        'visibleTeamsArr' => $App->Teams->readAllVisible(),
         'unvalidatedUsersArr' => $unvalidatedUsersArr,
         'usersArr' => $usersArr,
     );
-} catch (IllegalActionException $e) {
-    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
-    $renderArr['error'] = Tools::error(true);
-} catch (DatabaseErrorException | ImproperActionException $e) {
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Error', $e)));
-    $renderArr['error'] = $e->getMessage();
-} catch (Exception $e) {
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Exception' => $e)));
-    $renderArr['error'] = Tools::error();
-} finally {
     $Response->setContent($App->render($template, $renderArr));
+} catch (AppException $e) {
+    $Response = $e->getResponseFromException($App);
+} catch (Exception $e) {
+    $Response = $App->getResponseFromException($e);
+} finally {
     $Response->send();
 }

@@ -8,7 +8,7 @@
 import tinymce from 'tinymce/tinymce';
 import { Editor } from 'tinymce/tinymce';
 import { DateTime } from 'luxon';
-import i18next from 'i18next';
+import i18next from './i18n';
 import type { DropzoneFile } from 'dropzone';
 import 'tinymce/models/dom';
 import 'tinymce/icons/default';
@@ -63,11 +63,12 @@ import '../js/tinymce-langs/uz_UZ.js';
 import '../js/tinymce-langs/zh_CN.js';
 import '../js/tinymce-plugins/mention/plugin.js';
 import { EntityType, Model } from './interfaces';
-import { getEntity, reloadElements, escapeExtendedQuery, updateEntityBody, getNewIdFromPostRequest } from './misc';
-import { Api } from './Apiv2.class';
+import { reloadElements, escapeExtendedQuery, updateEntityBody, getNewIdFromPostRequest } from './misc';
+import { ApiC } from './api';
 import { isSortable } from './TableSorting.class';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
+import { entity } from './getEntity';
 
 // AUTOSAVE
 const doneTypingInterval = 7000;  // time in ms between end of typing and save
@@ -142,7 +143,6 @@ const imagesUploadHandler = (blobInfo: TinyMCEBlobInfo) => new Promise((resolve,
       });
     }
   });
-  const entity = getEntity();
   // Edgecase for editing an image using tinymce ImageTools
   // Check if it was selected. This is set by an event hook below
   if (tinymceEditImage.selected === true) {
@@ -164,7 +164,6 @@ const imagesUploadHandler = (blobInfo: TinyMCEBlobInfo) => new Promise((resolve,
       }).then(resp => {
         const newId = getNewIdFromPostRequest(resp);
         // fetch info about the newly created upload
-        const ApiC = new Api();
         return ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}/${newId}`);
       }).then(json => {
         resolve(`app/download.php?f=${json.long_name}&storage=${json.storage}`);
@@ -199,15 +198,13 @@ export function getTinymceBaseConfig(page: string): object {
   let plugins = 'accordion advlist anchor autolink autoresize table searchreplace code fullscreen insertdatetime charmap lists save image media link pagebreak codesample template mention visualblocks visualchars emoticons preview';
   let toolbar1 = 'custom-save preview | undo redo | styles fontsize bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap emoticons adddate | codesample | link | sort-table';
   let removedMenuItems = 'newdocument, image, anchor';
-  if (page === 'edit' || page === 'ucp') {
+  if (page === 'edit') {
     plugins += ' autosave';
     // add Image button in toolbar
     toolbar1 = toolbar1.replace('link |', 'link image |');
     // let Image in menu
     removedMenuItems = 'newdocument, anchor';
   }
-  const entity = getEntity();
-  const ApiC = new Api();
 
   return {
     selector: '.mceditable',
@@ -254,11 +251,12 @@ export function getTinymceBaseConfig(page: string): object {
       });
     },
     contextmenu: false,
-    paste_data_images: Boolean(page === 'edit' || page === 'ucp'),
+    paste_data_images: Boolean(page === 'edit'),
     // use the preprocessing function on paste event to fix the bgcolor attribute from libreoffice into proper background-color style
     paste_preprocess: function(plugin, args) {
       args.content = args.content.replaceAll('bgcolor="', 'style="background-color:');
     },
+    // also add it to Filter.php in Attr.AllowedClasses
     codesample_languages: [
       {text: 'Bash', value: 'bash'},
       {text: 'C', value: 'c'},
@@ -302,9 +300,12 @@ export function getTinymceBaseConfig(page: string): object {
       // get the source from json with get request
       source: function(query: string, process: (data) => void): void {
         query = escapeExtendedQuery(query);
+        if (query.length < 1) {
+          return;
+        }
         // grab experiments and items
-        const expjson = ApiC.getJson(`${EntityType.Experiment}?limit=100&scope=3q=${query}`);
-        const itemjson = ApiC.getJson(`${EntityType.Item}?limit=100&scope=3&q=${query}`);
+        const expjson = ApiC.getJson(`${EntityType.Experiment}?limit=12&scope=3&fastq=${query}`);
+        const itemjson = ApiC.getJson(`${EntityType.Item}?limit=12&scope=3&fastq=${query}`);
         // and merge them into one
         Promise.all([expjson, itemjson]).then(values => {
           process(values[0].concat(values[1]));
@@ -324,7 +325,7 @@ export function getTinymceBaseConfig(page: string): object {
       },
     },
     mobile: {
-      plugins: [ 'autolink', 'image', 'link', 'lists', 'save', 'mention' ],
+      plugins: [ 'autolink', 'image', 'link', 'lists', 'save', 'table', 'mention' ],
     },
     // use a custom function for the save button in toolbar
     save_onsavecallback: (): Promise<void> => updateEntityBody(),
@@ -346,6 +347,13 @@ export function getTinymceBaseConfig(page: string): object {
             skinCSS.insertRule(rule.cssText, index);
           }
         });
+      });
+      // set default line height to 1 (is 1.4 for some reason)
+      editor.on('init', () => {
+        // doing this will give focus to the editor, which is OK for entities but on admin page it's not wanted, so avoid it
+        if (page !== 'admin' && page !== 'sysconfig') {
+          editor.execCommand('lineheight', false, '1');
+        }
       });
       // Hook into the blur event - Finalize potential changes to images if user clicks outside of editor
       editor.on('blur', () => {
@@ -409,7 +417,7 @@ export function getTinymceBaseConfig(page: string): object {
       editor.addShortcut('ctrl+shift+=', 'superscript', () => editor.execCommand('superscript'));
 
       // on edit page there is an autosave triggered
-      if (page === 'edit' || page === 'ucp') {
+      if (page === 'edit') {
         editor.on('keydown', () => clearTimeout(typingTimer));
         editor.on('keyup', () => {
           clearTimeout(typingTimer);

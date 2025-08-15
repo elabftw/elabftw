@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block body %}
+
+{% import 'categories-status-index.macro.html' as idx %}
+{{ idx.catstatidx(
+  'items_status',
+  'items_status',
+  'Create and modify the status available to resources.'|trans,
+  'Resources status can be associated with a Resource or a Resource Template. They belong to a team and have two main properties: name and color. Examples: In stock, Operational, Maintenance, Processed, etc...'|trans,
+  statusArr,
+  'No resources status have been created in this team yet.'|trans|msg('warning', false),
+  'Create new resources status'|trans,
+  'Status name'|trans,
+  ) }}
+
+{% endblock body %}

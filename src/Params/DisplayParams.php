@@ -20,7 +20,7 @@ use Elabftw\Enums\Scope;
 use Elabftw\Enums\Sort;
 use Elabftw\Enums\State;
 use Elabftw\Models\Tags2Entity;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Elabftw\Services\Check;
 use Override;
 use Symfony\Component\HttpFoundation\InputBag;
@@ -39,6 +39,9 @@ final class DisplayParams extends BaseQueryParams
 
     // the search from the top right search bar on experiments/database
     public string $queryString = '';
+
+    // fastq is the quick query string that we use in autocomplete for instance
+    public string $fastq = '';
 
     // the extended search query
     public string $extendedQuery = '';
@@ -60,9 +63,6 @@ final class DisplayParams extends BaseQueryParams
     ) {
         // query parameters will override user defaults
         parent::__construct($query, $orderby, $sort, $limit, $offset, $states);
-        if ($skipOrderPinned === true) {
-            $this->orderIsPinnedSql = '';
-        }
         $this->adjust();
     }
 
@@ -74,6 +74,9 @@ final class DisplayParams extends BaseQueryParams
     #[Override]
     public function getSql(): string
     {
+        if ($this->skipOrderPinned === true) {
+            $this->orderIsPinnedSql = '';
+        }
         return sprintf(
             'ORDER BY %s %s %s, entity.id %s LIMIT %d OFFSET %d',
             $this->orderIsPinnedSql,
@@ -85,6 +88,48 @@ final class DisplayParams extends BaseQueryParams
         );
     }
 
+    #[Override]
+    public function isFast(): bool
+    {
+        return !empty($this->fastq);
+    }
+
+    #[Override]
+    public function getFastq(): string
+    {
+        return $this->fastq;
+    }
+
+    #[Override]
+    public function getUserQuery(): string
+    {
+        return trim($this->queryString . ' ' . $this->extendedQuery);
+    }
+
+    #[Override]
+    public function hasUserQuery(): bool
+    {
+        return !empty($this->queryString) || !empty($this->extendedQuery);
+    }
+
+    #[Override]
+    public function getRelatedOrigin(): ?EntityType
+    {
+        return $this->relatedOrigin;
+    }
+
+    #[Override]
+    public function getFilterSql(): string
+    {
+        return $this->filterSql;
+    }
+
+    #[Override]
+    public function setSkipOrderPinned(bool $value): void
+    {
+        $this->skipOrderPinned = $value;
+    }
+
     /**
      * Adjust the settings based on the Request
      */
@@ -93,6 +138,9 @@ final class DisplayParams extends BaseQueryParams
         $query = $this->getQuery();
         if (!empty($query->get('q'))) {
             $this->queryString = trim($query->getString('q'));
+        }
+        if (!empty($query->get('fastq'))) {
+            $this->fastq = trim($query->getString('fastq'));
         }
         if (!empty($query->get('extended'))) {
             $this->extendedQuery = trim($query->getString('extended'));
@@ -135,6 +183,8 @@ final class DisplayParams extends BaseQueryParams
         // cat is for backward compatibility
         $this->filterSql .= $this->getSqlIn('entity.category', $query->getString('cat'));
         $this->filterSql .= $this->getSqlIn('entity.category', $query->getString('category'));
+        // BOOKABLE
+        $this->filterSql .= $this->getSqlIn('entity.is_bookable', $query->getString('bookable'));
         // STATUS FILTER
         $this->filterSql .= $this->getSqlIn('entity.status', $query->getString('status'));
         // OWNER (USERID) FILTER

@@ -47,7 +47,7 @@
           <p class='smallgray'>{{ 'Selecting a team here will give access to all members of this team.'|trans }}</p>
           {% include 'filter-input-snippet.html' with {'target': identifier ~ '_select_teams', targetType: 'option'} %}
           <select id='{{ identifier }}_select_teams' multiple class='form-control' autocomplete='off'>
-            {% for team in teamsArr|filter(t => t.visible == '1') %}
+            {% for team in teamsArr %}
               <option value='team:{{ team.id }}'
               {{ permissionsJson|isInJsonArray('teams', team.id) ? ' selected' }}
               >{{ 'Team'|trans }} - {{ team.name }}</option>
@@ -88,7 +88,7 @@
           </ul>
           {# add user to permissions input #}
           <div class='input-group'>
-            <input id='{{ identifier }}_select_users' type='text' data-identifier='{{ identifier }}' data-complete-target='users' class='form-control' placeholder='{{ 'Add user'|trans }}' autocomplete='off'>
+            <input id='{{ identifier }}_select_users' type='text' data-identifier='{{ identifier }}' data-action='autocomplete' data-target='users' class='form-control' placeholder='{{ 'Add user'|trans }}' autocomplete='off'>
             <div class='input-group-append'>
               <button class='btn btn-primary' type='button' data-rw='{{ rw }}' data-identifier='{{ identifier }}' data-action='add-user-to-permissions'>{{ 'Add'|trans }}</button>
             </div>

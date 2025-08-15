@@ -8,14 +8,12 @@
 import { Metadata } from './Metadata.class';
 import JSONEditor from 'jsoneditor';
 import $ from 'jquery';
-import i18next from 'i18next';
-import { getNewIdFromPostRequest, reloadElements } from './misc';
-import { Action, Entity, Model } from './interfaces';
-import { Api } from './Apiv2.class';
+import i18next from './i18n';
+import { askFileName, ensureTogglableSectionIsOpen, reloadElements } from './misc';
+import { Action, Entity, FileType, Model } from './interfaces';
+import { ApiC } from './api';
 import { ValidMetadata } from './metadataInterfaces';
-import { Notification } from './Notifications.class';
-
-const notify = new Notification();
+import { notify } from './notify';
 
 // This class is named helper because the jsoneditor lib already exports JSONEditor
 export default class JsonEditorHelper {
@@ -26,7 +24,6 @@ export default class JsonEditorHelper {
   currentUploadId: string;
   currentFilename: string;
   editorTitle: HTMLElement;
-  api: Api;
 
   constructor(entity: Entity) {
     this.entity = entity;
@@ -34,7 +31,6 @@ export default class JsonEditorHelper {
     this.editorDiv = document.getElementById('jsonEditorContainer') as HTMLDivElement;
     this.MetadataC = new Metadata(entity, this);
     this.editorTitle = document.getElementById('jsonEditorTitle');
-    this.api = new Api();
   }
 
   // INIT
@@ -75,18 +71,6 @@ export default class JsonEditorHelper {
     }
   }
 
-  focus(): void {
-    // toggle the arrow icon
-    const iconEl = document.getElementById('jsonEditorIcon');
-    iconEl.classList.add('fa-caret-down');
-    iconEl.classList.remove('fa-caret-right');
-    const jsonEditorDiv = document.getElementById('jsonEditorDiv');
-    // make sure it's not hidden
-    jsonEditorDiv.toggleAttribute('hidden', false);
-    // and scroll page into editor view
-    jsonEditorDiv.scrollIntoView();
-  }
-
   loadFile(link: string, name: string, uploadid: string): void {
     const headers = new Headers();
     headers.append('cache-control', 'no-cache');
@@ -99,7 +83,7 @@ export default class JsonEditorHelper {
       })
       .then(json => {
         this.editor.set(json);
-        this.focus();
+        ensureTogglableSectionIsOpen('jsonEditorIcon', 'jsonEditorDiv');
       })
       .catch(e => {
         if (e instanceof SyntaxError) {
@@ -113,7 +97,7 @@ export default class JsonEditorHelper {
     this.currentUploadId = uploadid;
     this.currentFilename = name;
     this.editorDiv.dataset.what = 'file';
-    document.getElementById('jsonImportFileDiv').toggleAttribute('hidden', true);
+    document.getElementById('jsonImportFileDiv')?.toggleAttribute('hidden', true);
   }
 
   loadMetadata(): void {
@@ -150,31 +134,20 @@ export default class JsonEditorHelper {
     }
   }
 
-  askFilename(): string {
-    let realName = prompt(i18next.t('request-filename'));
-    if (realName === null) {
-      return;
-    }
-    // strip the filename of the .json extension from the name if available
-    if (realName.slice(-5).includes('.json')) {
-      realName = realName.slice(0, -5);
-    }
-    return realName += '.json';
-  }
-
   // create a new file
   saveNewFile(): void {
-    const realName = this.askFilename();
+    const realName = askFileName(FileType.Json);
+    if (!realName) return;
     // add the new name for the file as a title
     this.editorTitle.innerText = i18next.t('filename') + ': ' + realName;
     const params = {
       'action': Action.CreateFromString,
-      'file_type': 'json',
+      'file_type': FileType.Json,
       'real_name': realName,
       'content': JSON.stringify(this.editor.get()),
     };
-    this.api.post(`${this.entity.type}/${this.entity.id}/${Model.Upload}`, params)
-      .then(resp => this.currentUploadId = String(getNewIdFromPostRequest(resp)))
+    ApiC.post2location(`${this.entity.type}/${this.entity.id}/${Model.Upload}`, params)
+      .then(id => this.currentUploadId = String(id))
       .then(() => reloadElements(['uploadsDiv']));
   }
 
@@ -188,7 +161,7 @@ export default class JsonEditorHelper {
     fetch(`api/v2/${this.entity.type}/${this.entity.id}/${Model.Upload}/${this.currentUploadId}`, {
       method: 'POST',
       body: formData,
-    });
+    }).then(() => reloadElements(['uploadsDiv']));
     notify.success();
   }
 
@@ -219,6 +192,6 @@ export default class JsonEditorHelper {
     this.currentUploadId = undefined;
     this.editor.set({});
     this.editorDiv.dataset.what = '';
-    document.getElementById('jsonEditorMetadataLoadButton').removeAttribute('disabled');
+    document.getElementById('jsonEditorMetadataLoadButton')?.removeAttribute('disabled');
   }
 }

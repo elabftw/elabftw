@@ -9,8 +9,6 @@
 .rating {
   .cancel-button {
     cursor: pointer;
-    /* important to get a good alignment with the stars */
-    vertical-align: sub;
 
     &:hover {
       i {
@@ -22,6 +20,7 @@
   label {
     cursor: pointer;
     float: right;
+    margin-bottom: 0;
     position: relative;
 
     &:not(:first-of-type) {

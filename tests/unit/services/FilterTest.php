@@ -69,6 +69,8 @@ class FilterTest extends \PHPUnit\Framework\TestCase
     public function testForFilesystem(): void
     {
         $this->assertEquals('blah', Filter::forFilesystem('=blah/'));
+        $this->assertEquals('.pdf', Filter::forFilesystem("=bl사회과학원 어 학연구소찦차를 타고 온 펲시맨과 쑛다리 똠방각하η†ah/'\n.pdf"));
+        $this->assertEquals('23MJ.gif_th.jpg', Filter::forFilesystem('|23MJ.gif_th.jpg'));
     }
 
     public function testHexits(): void
@@ -78,5 +80,12 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($input, Filter::hexits($input));
         $this->assertEquals('abc', Filter::hexits('zzzazzzbzzzczzz'));
         $this->assertEmpty(Filter::hexits('zzzzz'));
+    }
+
+    public function testToPureString(): void
+    {
+        $this->assertEquals('Roger', Filter::toPureString('<a href="attacker.com">Roger</a>'));
+        $this->assertEquals('Roger', Filter::toPureString('<script>alert(1)</script><strong>Roger</strong>'));
+        $this->assertEquals('Rabbit', Filter::toPureString('<i onwheel=alert(224)>Rabbit</i>'));
     }
 }

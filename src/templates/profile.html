@@ -97,19 +97,55 @@
   <h3 class='p-2 pl-3 section-title' id='attachedFiles'>{{ 'Attached files'|trans }}</h3>
   <div class='pl-3 mt-2'>
     {% set currentLimit = App.Request.query.get('limit')|default(42) %}
-    <p>{{ 'Displaying %d of %d attached files.'|trans|format(min(currentLimit, uploadsTotal), uploadsTotal) }}
-      <a href='?tab=2&limit={{ uploadsTotal }}' class='ml-3 btn btn-sm btn-secondary {{ currentLimit == uploadsTotal ? 'disabled' }}'>
-        {{ 'Show all'|trans }}
-      </a>
-      <a href='?tab=2&limit={{ uploadsTotal }}&order=filesize&sort=desc' class='ml-3 btn btn-sm btn-secondary {{ App.Request.query.get('order') == 'filesize' ? 'disabled' }}'>{{ 'List biggest files first'|trans }}
-      </a>
-    </p>
-    {% include 'filter-input-snippet.html' with {'target': 'attachedFilesTable'} %}
-    <table class='table' aria-describedby='attachedFiles' data-table-sort='true'>
+    {% set currentOrderBy = App.Request.query.get('order')|default('created_at') %}
+    {% set currentSort = App.Request.query.get('sort')|default('desc') %}
+    <p id='countDisplay'>{{ 'Displaying %d of %d attached files.'|trans|format(min(currentLimit, uploadsTotal), uploadsTotal) }}</p>
+    {# FILTERS #}
+    <div class='d-flex form-group form-inline'>
+      {# FILTER BY NAME #}
+      {% include 'filter-input-snippet.html' with {'target': 'attachedFilesTable'} %}
+
+      {# FILTER BY STATE #}
+      <div class="ml-2">
+        {% include 'select-state.html' with {'dataReload': 'attachedFilesTable,countDisplay'} %}
+      </div>
+
+      {# ORDER BY FILTER #}
+      {% set Orderby = enum('Elabftw\\Enums\\Orderby') %}
+      {% set byFilesize = Orderby.Filesize.value %}
+      {% set byCreated = Orderby.CreatedAt.value %}
+      {% set byFilename = Orderby.Filename.value %}
+      <select name='orderby' class='form-control ml-2' aria-label='{{ 'Order by'|trans }}'>
+        <option value='' data-action='clear'>{{ 'Order by'|trans }}</option>
+        <option data-reload='attachedFilesTable,countDisplay' data-action='insert-param-and-reload' data-target='order' value='{{ byFilesize }}' {{ currentOrderBy == byFilesize ? 'selected' }}>{{ 'File size'|trans }}</option>
+        <option data-reload='attachedFilesTable,countDisplay' data-action='insert-param-and-reload' data-target='order' value='{{ byCreated }}' {{ currentOrderBy == byCreated ? 'selected' }}>{{ 'Creation date'|trans }}</option>
+        <option data-reload='attachedFilesTable,countDisplay' data-action='insert-param-and-reload' data-target='order' value='{{ byFilename }}' {{ currentOrderBy == byFilename ? 'selected' }}>{{ 'File name'|trans }}</option>
+      </select>
+
+      {# SORT FILTER #}
+      {% set sortAsc = enum('Elabftw\\Enums\\Sort').Asc.value %}
+      {% set sortDesc = enum('Elabftw\\Enums\\Sort').Desc.value %}
+      <select name='sort' class='form-control ml-2' aria-label='{{ 'Sort'|trans }}'>
+        <option value='' data-action='clear'>{{ 'Sort'|trans }}</option>
+        <option data-reload='attachedFilesTable,countDisplay' data-action='insert-param-and-reload' data-target='sort' value='{{ sortAsc }}' {{ currentSort == sortAsc ? 'selected' }}>{{ 'Asc'|trans }}</option>
+        <option data-reload='attachedFilesTable,countDisplay' data-action='insert-param-and-reload' data-target='sort' value='{{ sortDesc }}' {{ currentSort == sortDesc ? 'selected' }}>{{ 'Desc'|trans }}</option>
+      </select>
+
+      {# LIMIT NUMBER OF RESULTS #}
+      <select name='limit' class='form-control ml-2' aria-label='{{ 'Results per page'|trans }}'>
+        <option value='' data-action='clear'>{{ 'Results per page'|trans }}</option>
+        {% for option in limitOptions(75) %}
+          <option data-reload='attachedFilesTable,countDisplay' data-action='insert-param-and-reload' data-target='limit' value='{{ option }}' {{ currentLimit == option ? 'selected' }}>{{ option }}</option>
+        {% endfor %}
+        <option data-action='insert-param-and-reload' data-target='limit' value='{{ uploadsTotal }}' {{ currentLimit == uploadsTotal ? 'selected' }}>{{ 'Show all'|trans }}</option>
+      </select>
+    </div>
+
+    <table class='table' aria-describedby='attachedFiles' data-table-sort='true' id='attachmentsTable'>
       <thead>
         <tr>
           <th scope='col'>{{ 'File name'|trans }}</th>
-          <th scope='col'>{{ 'Created'|trans }}</th>
+          <th scope='col'>{{ 'Creation date'|trans }}</th>
           <th scope='col'>{{ 'Parent entry'|trans }}</th>
           <th scope='col'>{{ 'File size'|trans }}</th>
         </tr>
@@ -118,20 +154,13 @@
         {% for file in attachedFiles %}
           <tr>
             <td data-label='{{ 'File name'|trans }}'><a target='_blank' href='/api/v2/{{ file.type }}/{{ file.entity_id }}/uploads/{{ file.id }}?format=binary'>{{ file.real_name }}</a><p class='smallgray'>{{ file.comment }}</p></td>
-            <td data-label='{{ 'Created'|trans }}'><span class='relative-moment' title='{{ file.created_at }}'></span></td>
+            <td data-label='{{ 'Creation date'|trans }}'><span class='relative-moment' title='{{ file.created_at }}'></span></td>
             <td data-label='{{ 'Parent entry'|trans }}'><a href='{{ file.page }}.php?mode=view&id={{ file.entity_id }}{{ file.page == 'ucp' ? '&tab=3&templateid=' ~ file.entity_id }}'>{{ file.entity_title }}</a></td>
             <td data-label='{{ 'File size'|trans }}'>{{ file.filesize|default(0)|formatBytes }}</td>
           </tr>
         {% endfor %}
       </tbody>
     </table>
-    {# LOAD MORE button #}
-    <a id='attachementsEnd'></a>
-    {% if currentLimit < uploadsTotal %}
-      <div class='text-center page-buttons mt-2'>
-        <a class='btn btn-primary' href='?tab=2&limit={{ currentLimit * 2 }}#attachementsEnd' class='color-white'>{{ 'Load more'|trans }}</a>
-      </div>
-    {% endif %}
   </div>
 </div>
 
@@ -175,11 +204,11 @@
           <span hidden data-showif='eln'>
             <span class='form-check form-check-inline'>
               <input class='form-check-input' type='radio' name='entity_type' id='entityTypeRadioTemplates' value='experiments_templates'>
-              <label class='form-check-label' for='entityTypeRadioTemplates'>{{ 'Templates'|trans }}</label>
+              <label class='form-check-label' for='entityTypeRadioTemplates'>{{ 'Experiments templates'|trans }}</label>
             </span>
             <span class='form-check form-check-inline'>
               <input class='form-check-input' type='radio' name='entity_type' id='entityTypeRadioItemsTypes' value='items_types'>
-              <label class='form-check-label' for='entityTypeRadioItemsTypes'>{{ 'Resources Categories'|trans }}</label>
+              <label class='form-check-label' for='entityTypeRadioItemsTypes'>{{ 'Resources templates'|trans }}</label>
             </span>
             <span class='form-check form-check-inline'>
               <input class='form-check-input' type='radio' name='entity_type' id='entityTypeRadioNone' value='null'>
@@ -254,14 +283,14 @@
     <h4 id='exportedFiles'>{{ 'Exported files'|trans }}</h4>
     {# Refresh button #}
     <div class='text-center'>
-      <button type='button' aria-label='{{ 'Refresh'|trans }}' class='btn btn-secondary btn-sm mb-2' data-reload-on-click='exportedFilesTable'><i class='fas fa-rotate color-white mr-1'></i>{{ 'Refresh'|trans }}</button>
+      <button type='button' aria-label='{{ 'Refresh'|trans }}' class='btn btn-secondary btn-sm mb-2' data-action='reload-on-click' data-target='exportedFilesTable'><i class='fas fa-rotate color-white mr-1'></i>{{ 'Refresh'|trans }}</button>
     </div>
     <ul class='list-group' id='exportedFilesTable'>
       {% for file in exportedFiles %}
         <li class='list-group-item py-3 px-2 m-1'>
           <span class='d-flex flew-wrap'>
             <span>
-              <button class='btn p-2 hl-hover-gray lh-normal border-0 my-n2 mr-2' data-toggle-target='showMoreDiv_{{ file.id }}' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Show more'|trans }}' aria-label='{{ 'Show more'|trans }}'><i class='fas fa-square-plus fa-fw link-like'></i></button>
+              <button type='button' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2 mr-2' data-toggle-target='showMoreDiv_{{ file.id }}' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Show more'|trans }}' aria-label='{{ 'Show more'|trans }}'><i class='fas fa-square-plus fa-fw link-like'></i></button>
               <span class='state-indicator' data-state='{{ file.state }}' data-id='{{ file.id }}'>●</span>
               {% if file.real_name %}
                 <a title='{{ 'Download'|trans }}' class='rounded hl-hover-gray p-1' target='_blank' href='/api/v2/exports/{{ file.id }}?format=binary'>

@@ -7,7 +7,7 @@
  * @package elabftw
  */
 
-import i18next from 'i18next';
+import i18next from './i18n';
 import { ResponseMsg } from './interfaces';
 
 enum NotificationType {
@@ -66,18 +66,27 @@ export class Notification {
     // create overlay
     const overlay = document.createElement('div');
     overlay.classList.add('overlay', `overlay-${type}`);
+    const closeEl = document.createElement('span');
+    const closeIcon = document.createElement('i');
+    if (type === NotificationType.Success) {
+      // success gets removed on animation end
+      overlay.addEventListener('animationend', () => {
+        overlay.remove();
+      });
+    } else { // warning and error get a button to close them
+      closeEl.classList.add('clickable', 'ml-3', 'float-right');
+      closeIcon.classList.add('fas', 'fa-xmark');
+      closeEl.append(closeIcon);
+      closeEl.addEventListener('click', () => overlay.remove());
+    }
     // create overlay content
     const p = document.createElement('p');
     // "status" role: see WCAG2.1 4.1.3
     p.role = 'status';
     p.innerText = message;
-    // show the overlay
     overlay.appendChild(p);
+    p.appendChild(closeEl);
     container.appendChild(overlay);
 
-    // overlay animation: fades in and out. Remove element when ended
-    overlay.addEventListener('animationend', () => {
-      overlay.remove();
-    });
   }
 }

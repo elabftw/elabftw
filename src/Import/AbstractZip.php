@@ -14,7 +14,7 @@ namespace Elabftw\Import;
 
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Enums\Storage;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use ZipArchive;

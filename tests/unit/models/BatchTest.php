@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Users\Users;
 
 class BatchTest extends \PHPUnit\Framework\TestCase
 {
@@ -69,6 +70,22 @@ class BatchTest extends \PHPUnit\Framework\TestCase
         // On batch, cannot update owner action without 'target_owner'
         $this->expectException(ImproperActionException::class);
         $this->Batch->postAction(Action::UpdateOwner, $reqBody);
+    }
+
+    // test Unarchive & Restore methods
+    public function testSpecialActions(): void
+    {
+        $reqBody = $this->baseReqBody;
+        // unarchive
+        $reqBody['action'] = Action::Unarchive->value;
+        $reqBody['target_owner'] = 3;
+        $this->assertIsInt($this->Batch->postAction(Action::Unarchive, $reqBody));
+        // restore
+        $reqBody['action'] = Action::Destroy->value;
+        $reqBody['target_owner'] = 3;
+        $this->assertIsInt($this->Batch->postAction(Action::Destroy, $reqBody));
+        $reqBody['action'] = Action::Restore->value;
+        $this->assertIsInt($this->Batch->postAction(Action::Restore, $reqBody));
     }
 
     public function testGetApiPath(): void

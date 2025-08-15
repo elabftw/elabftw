@@ -11,13 +11,16 @@
   <div class='col-md-4'>
     <div class='d-flex justify-content-between'>
       <h4>{% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}</h4>
-      {% include 'create-new.html' with {'entityPage': 'experiments'} %}
+      <div>
+        {% include 'scope-button.html' with {'btnId': 'scopeExp', 'reload': 'lastModifiedExp,scopeExp', 'target': 'scope_experiments', 'isSecondary': 0, 'isSmall': 0} %}
+        {% include 'create-new.html' with {'entityPage': 'experiments', 'isDashboard': true} %}
+      </div>
     </div>
     <hr>
-    {% if experimentsCategoryArr %}
+    {% if App.experimentsCategoryArr %}
       <h5>{{ 'Browse by category'|trans }}</h5>
       <div class='d-flex my-2 flex-wrap lh-150'>
-        {% for category in experimentsCategoryArr -%}
+        {% for category in App.experimentsCategoryArr -%}
           <a href='experiments.php?mode=show&amp;cat={{ category.id }}' class='btn mr-2 catstat-btn category-btn mb-1' style='--bg: #{{ category.color }}'>{{ category.title }}</a>
         {%- endfor %}
       </div>
@@ -33,7 +36,7 @@
       <hr>
     {% endif %}
     <h5>{{ 'Last modified experiments'|trans }}</h5>
-    <div class='list-group mt-1'>
+    <div class='list-group mt-1' id='lastModifiedExp'>
       {% for experiment in experimentsArr %}
         <a href='experiments.php?mode=view&amp;id={{ experiment.id }}' class='list-group-item hl-hover-gray breakable'>
           {%- if experiment.category_title -%}
@@ -47,12 +50,15 @@
   <div class='col-md-4 mt-2 mt-md-0'>
     <div class='d-flex justify-content-between'>
       <h4>{% trans %}Resource{% plural 2 %}Resources{% endtrans %}</h4>
-      {% include 'create-new.html' with {'entityPage': 'database'} %}
+      <div>
+        {% include 'scope-button.html' with {'btnId': 'scopeItems', 'reload': 'lastModifiedResources,scopeItems', 'target': 'scope_items', 'isSecondary': 0, 'isSmall': 0} %}
+        {% include 'create-new.html' with {'entityPage': 'database', 'isDashboard': true} %}
+      </div>
     </div>
     <hr>
     <h5>{{ 'Browse by category'|trans }}</h5>
     <div class='d-flex my-2 flex-wrap lh-150'>
-      {% for category in itemsCategoryArr -%}
+      {% for category in App.itemsCategoryArr -%}
         <a href='database.php?mode=show&amp;cat={{ category.id }}' class='btn mr-2 catstat-btn category-btn lh-normal border-0 mb-1' style='--bg: #{{ category.color }}'>{{ category.title }}</a>
       {%- endfor %}
     </div>
@@ -67,7 +73,7 @@
       <hr>
     {% endif %}
     <h5>{{ 'Last modified resources'|trans }}</h5>
-    <div class='list-group mt-1'>
+    <div class='list-group mt-1' id='lastModifiedResources'>
       {% for item in itemsArr %}
         <a href='database.php?mode=view&amp;id={{ item.id }}' class='list-group-item hl-hover-gray breakable'>
           {% if item.category_title %}
@@ -81,11 +87,15 @@
   <div class='col-md-4 mt-2 mt-md-0'>
     <div class='d-flex justify-content-between'>
       <h4>{{ 'Scheduled bookings'|trans }}</h4>
-      <a href='scheduler.php' class='btn btn-secondary'>{{ 'Scheduler'|trans }}</a>
+      <div>
+        {% include 'scope-button.html' with {'btnId': 'scopeEvent', 'reload': 'scheduledBookings,scopeEvent', 'target': 'scope_events', 'isSecondary': 0, 'isSmall': 0} %}
+        <a href='scheduler.php' class='btn btn-secondary'>{{ 'Scheduler'|trans }}</a>
+      </div>
     </div>
-    <div class='list-group mt-1'>
+    <hr>
+    <div class='list-group mt-1' id='scheduledBookings'>
       {% for booking in bookingsArr %}
-        <a href='scheduler.php?item={{ booking.items_id }}&amp;start={{ booking.start|url_encode }}' class='list-group-item hl-hover-gray'><span style='color: {{ booking.color }}'>{{ booking.title }}</span> <span title='{{ booking.start|date('Y-m-d H:i:s') }}' class='relative-moment text-nowrap smallgray'></span></a>
+        <a href='scheduler.php?items[]={{ booking.items_id }}&amp;start={{ booking.start|url_encode }}' class='list-group-item hl-hover-gray'><span style='color: {{ booking.color }}'>{{ booking.title }}</span> <span title='{{ booking.start|date('Y-m-d H:i:s') }}' class='relative-moment text-nowrap smallgray'></span></a>
       {% endfor %}
     </div>
   </div>

@@ -14,7 +14,7 @@ namespace Elabftw\Make;
 
 use Elabftw\Elabftw\Tools;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Elabftw\Services\UsersHelper;
 use PDO;
 use Override;
@@ -32,6 +32,7 @@ class MakeReport extends AbstractMakeCsv
     {
         parent::__construct();
         $this->canReadOrExplode();
+        $this->rows = $this->getRows();
     }
 
     /**
@@ -52,36 +53,7 @@ class MakeReport extends AbstractMakeCsv
 
     protected function readUsers(): array
     {
-        return $this->requester->readFromQuery('', includeArchived: true);
-    }
-
-    /**
-     * Columns of the CSV
-     */
-    #[Override]
-    protected function getHeader(): array
-    {
-        return array(
-            'userid',
-            'firstname',
-            'lastname',
-            'created_at',
-            'orgid',
-            'email',
-            'has_mfa_enabled',
-            'validated',
-            'archived',
-            'last_login',
-            'valid_until',
-            'is_sysadmin',
-            'full_name',
-            'initials',
-            'team(s)',
-            'diskusage_in_bytes',
-            'diskusage_formatted',
-            'exp_total',
-            'exp_timestamped_total',
-        );
+        return $this->requester->readFromQuery();
     }
 
     /**

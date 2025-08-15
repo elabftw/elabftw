@@ -14,7 +14,8 @@ namespace Elabftw\Services;
 use DateTimeImmutable;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\Usergroup;
-use Elabftw\Models\ValidatedUser;
+use Elabftw\Models\Users\ValidatedUser;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 class ExpirationNotifierTest extends \PHPUnit\Framework\TestCase
 {
@@ -29,6 +30,6 @@ class ExpirationNotifierTest extends \PHPUnit\Framework\TestCase
         $stub->method('sendEmail')->willReturn(true);
         $ExpirationNotifier = new ExpirationNotifier($stub);
         // 2 emails should be sent, one for the user, one for the admin, but we only collect the admins email in the function return value
-        $this->assertEquals(1, $ExpirationNotifier->sendEmails());
+        $this->assertEquals(1, $ExpirationNotifier->sendEmails(new ConsoleOutput()));
     }
 }

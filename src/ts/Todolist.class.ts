@@ -9,22 +9,20 @@ import { Model, Todoitem, EntityType, UnfinishedEntities } from './interfaces';
 import SidePanel from './SidePanel.class';
 import { relativeMoment, makeSortableGreatAgain, escapeHTML } from './misc';
 import FavTag from './FavTag.class';
-import { Api } from './Apiv2.class';
+import { ApiC } from './api';
 import { Malle } from '@deltablot/malle';
-import i18next from 'i18next';
+import i18next from './i18n';
 
 export default class Todolist extends SidePanel {
 
   unfinishedStepsScope: string;
   initialLoad = true;
-  api: Api;
   mallemalleable: Malle;
 
   constructor() {
     super(Model.Todolist);
     this.panelId = 'todolistPanel';
     this.unfinishedStepsScope = 'user';
-    this.api = new Api();
 
     // UPDATE TODOITEM
     this.mallemalleable = new Malle({
@@ -34,7 +32,7 @@ export default class Todolist extends SidePanel {
       },
       inputClasses: ['form-control'],
       fun: async (value, original) => {
-        return this.api.patch(`${Model.Todolist}/${original.dataset.todoitemid}`, {'content': value})
+        return ApiC.patch(`${Model.Todolist}/${original.dataset.todoitemid}`, {'content': value})
           .then(resp => resp.json()).then(json => json.body);
       },
       returnedValueIsTrustedHtml: false,
@@ -44,11 +42,11 @@ export default class Todolist extends SidePanel {
   }
 
   create(content: string): Promise<Response> {
-    return this.api.post(`${this.model}`, {'content': content});
+    return ApiC.post(`${this.model}`, {'content': content});
   }
 
   readAll() {
-    return this.api.getJson(`${this.model}`);
+    return ApiC.getJson(`${this.model}`);
   }
 
   display(): Promise<void> {
@@ -84,7 +82,7 @@ export default class Todolist extends SidePanel {
   }
 
   getUnfinishedStep(type: EntityType): Promise<void> {
-    return this.api.getJson(`unfinished_steps?scope=${this.unfinishedStepsScope}`).then(json => {
+    return ApiC.getJson(`unfinished_steps?scope=${this.unfinishedStepsScope}`).then(json => {
       let html = '';
       for (const entity of json[type] as Array<UnfinishedEntities>) {
         html += `<div class='side-panel-item'><p><a href='${type === EntityType.Item ? 'database' : 'experiments'}.php?mode=view&id=${entity.id}'>${escapeHTML(entity.title)}</a></p>`;
@@ -115,6 +113,6 @@ export default class Todolist extends SidePanel {
   }
 
   destroy(id: number): Promise<Response> {
-    return this.api.delete(`${this.model}/${id}`);
+    return ApiC.delete(`${this.model}/${id}`);
   }
 }

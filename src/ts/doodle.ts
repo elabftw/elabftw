@@ -6,25 +6,21 @@
  * @package elabftw
  */
 import { reloadElements } from './misc';
-import i18next from 'i18next';
+import i18next from './i18n';
 import { Action, Model } from './interfaces';
-import { Api } from './Apiv2.class';
+import { ApiC } from './api';
 
-document.addEventListener('DOMContentLoaded', () => {
-  if (document.getElementById('info')?.dataset?.page !== 'edit') {
-    return;
-  }
+const doodleCanvas = document.getElementById('doodleCanvas') as HTMLCanvasElement;
+if (doodleCanvas) {
 
-  const ApiC = new Api();
-
+  const hasPointer = 'onpointerdown' in window;
   // store the clicks
-  let clickX = [];
-  let clickY = [];
+  let clickX: number[] = [];
+  let clickY: number[] = [];
   // bool to store the state of painting
-  let isPainting: boolean;
-  let wasPainting: boolean;
+  let isPainting = false;
+  let wasPainting = false;
 
-  const doodleCanvas = document.getElementById('doodleCanvas') as HTMLCanvasElement;
   const context: CanvasRenderingContext2D = doodleCanvas.getContext('2d');
 
   function draw(dragging: boolean): void {
@@ -90,91 +86,107 @@ document.addEventListener('DOMContentLoaded', () => {
     ApiC.post(`${elDataset.type}/${elDataset.id}/${Model.Upload}`, params).then(() => reloadElements(['uploadsDiv']));
   });
 
-
   /**
-   * mouse events
+   * Pointer Events (mouse/pen)
    */
-  doodleCanvas.addEventListener('mousedown', (e) => {
-    e.preventDefault();
-    const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
+  if (hasPointer) {
+    doodleCanvas.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
 
-    // if ctrl key is pressed, we ask for text to insert
-    if (e.ctrlKey) {
-      const text = prompt('Text to insert:');
-      if (text === null) {
-        return;
+      // if ctrl key is pressed, we ask for text to insert
+      if (e.ctrlKey) {
+        const text = prompt('Text to insert:');
+        if (text === null) {
+          return;
+        }
+        addText(e.clientX - rect.left, e.clientY - rect.top, text);
+      } else {
+        // ignore non-primary mouse buttons
+        if (e.pointerType === 'mouse' && e.button !== 0) {
+          return;
+        }
+        isPainting = true;
+        addClick(e.clientX - rect.left, e.clientY - rect.top, false);
+        // keep receiving moves even when the pointer leaves the canvas
+        doodleCanvas.setPointerCapture(e.pointerId);
       }
-      addText(e.clientX - rect.left, e.clientY - rect.top, text);
-    } else {
-      isPainting = true;
-      addClick(e.clientX - rect.left, e.clientY - rect.top, false);
-    }
-  }, {passive: false});
+    }, {passive: false});
 
-  doodleCanvas.addEventListener('mousemove', (e) => {
-    e.preventDefault();
-    if (isPainting) {
-      const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
-      addClick(e.clientX - rect.left, e.clientY - rect.top, true);
-    }
-  }, {passive: false});
+    doodleCanvas.addEventListener('pointermove', (e) => {
+      e.preventDefault();
+      if (isPainting) {
+        const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
+        addClick(e.clientX - rect.left, e.clientY - rect.top, true);
+      }
+    }, {passive: false});
 
-  doodleCanvas.addEventListener('mouseleave', (e) => {
-    e.preventDefault();
-    if (isPainting) {
-      const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
-      addClick(e.clientX - rect.left, e.clientY - rect.top, true);
+    doodleCanvas.addEventListener('pointerleave', (e) => {
+      e.preventDefault();
+      if (isPainting) {
+        const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
+        addClick(e.clientX - rect.left, e.clientY - rect.top, true);
+        isPainting = false;
+        if (e.buttons !== 0 || e.pressure > 0) {
+          wasPainting = true;
+        }
+      }
+    }, {passive: false});
+
+    doodleCanvas.addEventListener('pointerenter', (e) => {
+      e.preventDefault();
+      if ((e.buttons !== 0 || e.pressure > 0) && wasPainting) {
+        isPainting = true;
+        wasPainting = false;
+        const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
+        addClick(e.clientX - rect.left, e.clientY - rect.top, false);
+        doodleCanvas.setPointerCapture?.(e.pointerId);
+      }
+    }, {passive: false});
+
+    doodleCanvas.addEventListener('pointerup', (e) => {
       isPainting = false;
-      if (e.buttons !== 0) {
-        wasPainting = true;
-      }
-    }
-  }, {passive: false});
-
-  doodleCanvas.addEventListener('mouseenter', (e) => {
-    e.preventDefault();
-    if (e.buttons !== 0 && wasPainting) {
-      isPainting = true;
       wasPainting = false;
-      const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
-      addClick(e.clientX - rect.left, e.clientY - rect.top, false);
-    }
-  }, {passive: false});
+      // Release capture if it was set
+      doodleCanvas.releasePointerCapture?.(e.pointerId);
+    }, {passive: true});
 
-  doodleCanvas.addEventListener('mouseup', (e) => {
-    e.preventDefault();
-    isPainting = false;
-    wasPainting = false;
-  }, {passive: false});
+    doodleCanvas.addEventListener('pointercancel', (e) => {
+      isPainting = false;
+      wasPainting = false;
+      doodleCanvas.releasePointerCapture?.(e.pointerId);
+    }, {passive: true});
 
-  /**
-   * touch events
+  /*
+   * Touch events
    */
-  doodleCanvas.addEventListener('touchstart', (e) => {
-    if (e.touches.length === 1) {
+  } else {
+    doodleCanvas.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        e.preventDefault();
+        const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
+        const touch = e.touches[0];
+        isPainting = true;
+        addClick(touch.clientX - rect.left, touch.clientY - rect.top, false);
+      }
+    }, {capture: false, passive: false});
+
+    doodleCanvas.addEventListener('touchmove', (e) => {
+      if (isPainting) {
+        e.preventDefault();
+        const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
+        const touch = e.touches[0];
+        addClick(touch.clientX - rect.left, touch.clientY - rect.top, true);
+      }
+    }, {capture: false, passive: false});
+
+    doodleCanvas.addEventListener('touchend', (e) => {
       e.preventDefault();
-      const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
-      const touch = e.touches[0];
-      isPainting = true;
-      addClick(touch.clientX - rect.left, touch.clientY - rect.top, false);
-    }
-  }, {capture: false, passive: false});
+      isPainting = false;
+    }, false);
 
-  doodleCanvas.addEventListener('touchmove', (e) => {
-    if (isPainting) {
-      e.preventDefault();
-      const rect = (e.target as HTMLCanvasElement).getBoundingClientRect();
-      const touch = e.touches[0];
-      addClick(touch.clientX - rect.left, touch.clientY - rect.top, true);
-    }
-  }, {capture: false, passive: false});
-
-  doodleCanvas.addEventListener('touchend', (e) => {
-    e.preventDefault();
-    isPainting = false;
-  }, false);
-
-  doodleCanvas.addEventListener('touchcancel', () => {
-    isPainting = false;
-  }, false);
-});
+    doodleCanvas.addEventListener('touchcancel', () => {
+      isPainting = false;
+    }, false);
+  }
+}

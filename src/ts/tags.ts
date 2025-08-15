@@ -8,33 +8,31 @@
 import 'jquery-ui/ui/widgets/autocomplete';
 import { Malle } from '@deltablot/malle';
 import FavTag from './FavTag.class';
-import i18next from 'i18next';
-import { addAutocompleteToTagInputs, getEntity, reloadElements } from './misc';
+import i18next from './i18n';
+import { addAutocompleteToTagInputs, reloadElements } from './misc';
 import { Action, Model } from './interfaces';
-import { Api } from './Apiv2.class';
+import { ApiC } from './api';
+import { entity } from './getEntity';
+
+// CREATE TAG FUNCTION
+const createTag = (el: HTMLInputElement): void => {
+  if (!el.value) {
+    return;
+  }
+  ApiC.post(`${entity.type}/${entity.id}/${Model.Tag}`, {tag: el.value}).then(() => {
+    // instead of reloading the full "tags div", reload only parts which contains tags
+    // so we don't need to reload the input (and need to re-apply listeners)
+    reloadElements([`tags_div_currenttags_${entity.id}`, `tags_div_suggestedtags_${entity.id}`]);
+    el.value = '';
+  });
+};
 
 document.addEventListener('DOMContentLoaded', () => {
-  const entity = getEntity();
-  const ApiC = new Api();
-
-  // CREATE TAG
-  const createTag = (el: HTMLInputElement): void => {
-    if (!el.value) {
-      return;
-    }
-    ApiC.post(`${entity.type}/${entity.id}/${Model.Tag}`, {tag: el.value}).then(() => {
-      // instead of reloading the full "tags div", reload only parts which contains tags
-      // so we don't need to reload the input (and need to re-apply listeners)
-      reloadElements([`tags_div_currenttags_${entity.id}`, `tags_div_suggestedtags_${entity.id}`]);
-      el.value = '';
-    });
-  };
-
+  // START CREATE TAG
   if (document.querySelector('.createTagInput')) {
     document.querySelector('.createTagInput').addEventListener('blur', event => {
       createTag(event.target as HTMLInputElement);
     });
-
     document.querySelector('.createTagInput').addEventListener('keyup', event => {
       if ((event as KeyboardEvent).code === 'Enter') {
         createTag(event.target as HTMLInputElement);
@@ -42,8 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   // END CREATE TAG
-
-  // END CREATE TAG MULTIPLE
 
   // CREATE FAVORITE TAG
   const createTagFavorite = (el: HTMLInputElement): void => {

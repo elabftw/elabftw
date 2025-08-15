@@ -13,22 +13,26 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Users\Users;
+use Elabftw\Traits\TestsUtilsTrait;
 
 class TagsTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private Users $Users;
 
     private Experiments $Experiments;
 
     protected function setUp(): void
     {
-        $this->Users = new Users(1, 1);
-        $this->Experiments = new Experiments($this->Users, 1);
+        $this->Users = $this->getRandomUserInTeam(1, admin: 1);
+        $this->Experiments = $this->getFreshExperimentWithGivenUser($this->Users);
     }
 
     public function testGetApiPath(): void
     {
-        $this->assertEquals('api/v2/experiments/1/tags/', $this->Experiments->Tags->getApiPath());
+        $this->assertEquals(sprintf('api/v2/experiments/%d/tags/', $this->Experiments->id), $this->Experiments->Tags->getApiPath());
     }
 
     public function testCreate(): void
@@ -38,8 +42,8 @@ class TagsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsInt($id);
 
         // no admin user
-        $Users = new Users(2, 1);
-        $Items = new Items($Users, 1);
+        $user = $this->getRandomUserInTeam(1);
+        $Items = $this->getFreshItemWithGivenUser($user);
         $Tags = new Tags($Items);
         $id = $Tags->postAction(Action::Create, array('tag' => 'tag2222'));
         $this->assertIsInt($id);
@@ -53,9 +57,10 @@ class TagsTest extends \PHPUnit\Framework\TestCase
     public function testReadAll(): void
     {
         $this->assertIsArray($this->Experiments->Tags->readAll());
-        $this->Experiments->Tags->setId(1);
+        $id = $this->Experiments->Tags->postAction(Action::Create, array('tag' => 'new tag'));
+        $this->Experiments->Tags->setId($id);
         $this->assertIsArray($this->Experiments->Tags->readOne());
-        $Items = new Items($this->Users, 1);
+        $Items = $this->getFreshItemWithGivenUser($this->Users);
         $Tags = new Tags($Items);
         $this->assertIsArray($Tags->readAll());
     }

@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
-use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\UnauthorizedException;
@@ -51,8 +50,8 @@ class CookieTest extends \PHPUnit\Framework\TestCase
         $CookieAuth = new Cookie(220330, $this->CookieToken, 1);
         $res = $CookieAuth->tryAuth();
         $this->assertInstanceOf(AuthResponse::class, $res);
-        $this->assertEquals(1, $res->userid);
-        $this->assertEquals(1, $res->selectedTeam);
+        $this->assertEquals(1, $res->getAuthUserid());
+        $this->assertEquals(1, $res->getSelectedTeam());
     }
 
     public function testTryAuthFail(): void

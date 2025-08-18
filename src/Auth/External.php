@@ -12,10 +12,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
-use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
+use Elabftw\Interfaces\AuthResponseInterface;
 use Elabftw\Models\Users\ExistingUser;
 use Elabftw\Models\Users\ValidatedUser;
 use Elabftw\Services\UsersHelper;
@@ -27,15 +27,10 @@ use Override;
  */
 final class External implements AuthInterface
 {
-    private AuthResponse $AuthResponse;
-
-    public function __construct(private array $configArr, private array $serverParams, private Logger $log)
-    {
-        $this->AuthResponse = new AuthResponse();
-    }
+    public function __construct(private array $configArr, private array $serverParams, private Logger $log) {}
 
     #[Override]
-    public function tryAuth(): AuthResponse
+    public function tryAuth(): AuthResponseInterface
     {
         $firstname = $this->serverParams[$this->configArr['extauth_firstname']] ?? '?';
         $lastname = $this->serverParams[$this->configArr['extauth_lastname']] ?? '?';
@@ -70,11 +65,9 @@ final class External implements AuthInterface
             $Users = ValidatedUser::fromExternal($email, $teams, $firstname, $lastname);
             $this->log->info('New user (' . $email . ') autocreated from external auth');
         }
-        $this->AuthResponse->userid = $Users->userData['userid'];
-        $this->AuthResponse->isValidated = true;
-        $UsersHelper = new UsersHelper($this->AuthResponse->userid);
-        $this->AuthResponse->setTeams($UsersHelper);
-
-        return $this->AuthResponse;
+        $UsersHelper = new UsersHelper($Users->userData['userid']);
+        return new AuthResponse()
+            ->setAuthenticatedUserid($Users->userData['userid'])
+            ->setTeams($UsersHelper);
     }
 }

@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
-use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
+use Elabftw\Interfaces\AuthResponseInterface;
 use Elabftw\Models\Users\ExistingUser;
 use Elabftw\Models\Users\ValidatedUser;
 use Elabftw\Services\UsersHelper;
@@ -36,18 +36,15 @@ use function is_array;
  */
 final class Ldap implements AuthInterface
 {
-    private AuthResponse $AuthResponse;
-
     public function __construct(Connection $connection, private Entry $entries, private array $configArr, private string $login, #[SensitiveParameter] private string $password)
     {
         // add connection to the Container https://ldaprecord.com/docs/core/v3/connections/#container
         $connection->connect();
         Container::addConnection($connection);
-        $this->AuthResponse = new AuthResponse();
     }
 
     #[Override]
-    public function tryAuth(): AuthResponse
+    public function tryAuth(): AuthResponseInterface
     {
         $record = $this->getRecord();
         $dn = $record->getDn();
@@ -60,6 +57,7 @@ final class Ldap implements AuthInterface
 
         // this->login can also be uid
         $email = $this->getEmailFromRecord($record);
+        $AuthResponse = new AuthResponse();
         try {
             $Users = ExistingUser::fromEmail($email);
         } catch (ResourceNotFoundException) {
@@ -87,14 +85,14 @@ final class Ldap implements AuthInterface
                 }
                 // this setting is when we want to allow the user to make team selection
                 if ($teamId === -1) {
-                    $this->AuthResponse->userid = 0;
-                    $this->AuthResponse->initTeamRequired = true;
-                    $this->AuthResponse->initTeamUserInfo = array(
+                    $AuthResponse->userid = 0;
+                    $AuthResponse->initTeamRequired = true;
+                    $AuthResponse->initTeamUserInfo = array(
                         'email' => $email,
                         'firstname' => $firstname,
                         'lastname' => $lastname,
                     );
-                    return $this->AuthResponse;
+                    return $AuthResponse;
                 }
                 $teamFromLdap = array($teamId);
                 // it is found and it is a string
@@ -113,13 +111,9 @@ final class Ldap implements AuthInterface
             $Users = ValidatedUser::fromExternal($email, $teamFromLdap, $firstname, $lastname, allowTeamCreation: (bool) $this->configArr['saml_team_create']);
         }
 
-        $this->AuthResponse->userid = $Users->userData['userid'];
-        $this->AuthResponse->mfaSecret = $Users->userData['mfa_secret'];
-        $this->AuthResponse->isValidated = (bool) $Users->userData['validated'];
-        $UsersHelper = new UsersHelper($this->AuthResponse->userid);
-        $this->AuthResponse->setTeams($UsersHelper);
-
-        return $this->AuthResponse;
+        $AuthResponse->setAuthenticatedUserid($Users->userData['userid']);
+        $UsersHelper = new UsersHelper($AuthResponse->userid);
+        return $AuthResponse->setTeams($UsersHelper);
     }
 
     // split the search attributes and search the user with them

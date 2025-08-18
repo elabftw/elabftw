@@ -15,9 +15,9 @@ namespace Elabftw\Services;
 use Elabftw\AuditEvent\UserLogin;
 use Elabftw\Auth\CookieToken;
 use Elabftw\Elabftw\App;
-use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\AuthResponseInterface;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Config;
 use Elabftw\Models\Notifications\NewVersionInstalled;
@@ -34,7 +34,7 @@ final class LoginHelper
 {
     private Db $Db;
 
-    public function __construct(private AuthResponse $AuthResponse, private SessionInterface $Session)
+    public function __construct(private AuthResponseInterface $AuthResponse, private SessionInterface $Session)
     {
         $this->Db = Db::getConnection();
     }
@@ -53,9 +53,9 @@ final class LoginHelper
         }
         // if we run a version newer than the last time the user logged in, create a notification
         // but only if it's a minor version
-        if ((App::INSTALLED_VERSION_INT - $this->getLastSeenVersion() >= 100) && $this->AuthResponse->isAnonymous === false) {
+        if ((App::INSTALLED_VERSION_INT - $this->getLastSeenVersion() >= 100) && !$this->AuthResponse->isAnonymous()) {
             $Notifications = new NewVersionInstalled();
-            $Notifications->create($this->AuthResponse->userid);
+            $Notifications->create($this->AuthResponse->getAuthUserid());
         }
         $this->updateLast();
         $this->setDeviceToken();
@@ -63,7 +63,7 @@ final class LoginHelper
         if ($this->Session->has('auth_service')) {
             $this->updateAuthService();
         }
-        AuditLogs::create(new UserLogin($this->AuthResponse->userid, $this->AuthResponse->userid));
+        AuditLogs::create(new UserLogin($this->AuthResponse->getAuthUserid(), $this->AuthResponse->getAuthUserid()));
     }
 
     public function getExpires(): int
@@ -78,7 +78,7 @@ final class LoginHelper
     private function setToken(): void
     {
         $CookieToken = CookieToken::fromScratch();
-        $CookieToken->saveToken($this->AuthResponse->userid);
+        $CookieToken->saveToken($this->AuthResponse->getAuthUserid());
 
         $cookieOptions = array(
             'expires' => $this->getExpires(),
@@ -89,14 +89,14 @@ final class LoginHelper
             'samesite' => 'Lax',
         );
         setcookie('token', $CookieToken->getToken(), $cookieOptions);
-        setcookie('token_team', (string) $this->AuthResponse->selectedTeam, $cookieOptions);
+        setcookie('token_team', (string) $this->AuthResponse->getSelectedTeam(), $cookieOptions);
     }
 
     private function getLastSeenVersion(): int
     {
         $sql = 'SELECT last_seen_version FROM users WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->AuthResponse->userid, PDO::PARAM_INT);
+        $req->bindValue(':userid', $this->AuthResponse->getAuthUserid(), PDO::PARAM_INT);
         $this->Db->execute($req);
         return (int) $req->fetchColumn();
     }
@@ -108,7 +108,7 @@ final class LoginHelper
     {
         $sql = 'UPDATE users SET auth_service = :auth_service WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->AuthResponse->userid, PDO::PARAM_INT);
+        $req->bindValue(':userid', $this->AuthResponse->getAuthUserid(), PDO::PARAM_INT);
         $req->bindValue(':auth_service', $this->Session->get('auth_service'), PDO::PARAM_INT);
         $this->Db->execute($req);
     }
@@ -121,7 +121,7 @@ final class LoginHelper
         $sql = 'UPDATE users SET last_login = NOW(), last_seen_version = :version WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':version', App::INSTALLED_VERSION_INT, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->AuthResponse->userid, PDO::PARAM_INT);
+        $req->bindValue(':userid', $this->AuthResponse->getAuthUserid(), PDO::PARAM_INT);
         $this->Db->execute($req);
     }
 
@@ -130,12 +130,12 @@ final class LoginHelper
      */
     private function checkAccountValidity(): void
     {
-        if ($this->AuthResponse->isAnonymous) {
+        if ($this->AuthResponse->isAnonymous()) {
             return;
         }
         $sql = "SELECT IFNULL(valid_until, '3000-01-01') > NOW() FROM users WHERE userid = :userid";
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->AuthResponse->userid, PDO::PARAM_INT);
+        $req->bindValue(':userid', $this->AuthResponse->getAuthUserid(), PDO::PARAM_INT);
         $this->Db->execute($req);
         $res = (bool) $req->fetchColumn();
         if ($res === false) {
@@ -146,13 +146,13 @@ final class LoginHelper
     // maybe this should be part of AuthResponse?
     private function checkArchivedStatus(): void
     {
-        if ($this->AuthResponse->isAnonymous) {
+        if ($this->AuthResponse->isAnonymous()) {
             return;
         }
-        $user = new Users($this->AuthResponse->userid, $this->AuthResponse->selectedTeam);
+        $user = new Users($this->AuthResponse->getAuthUserid(), $this->AuthResponse->getSelectedTeam());
         $teams = json_decode($user->userData['teams'], true, 3);
         $lookup = array_column($teams, 'is_archived', 'id');
-        if ($lookup[$this->AuthResponse->selectedTeam] === 1) {
+        if ($lookup[$this->AuthResponse->getSelectedTeam()] === 1) {
             throw new ImproperActionException(_('This account is archived in this team and cannot login.'));
         }
     }
@@ -169,7 +169,7 @@ final class LoginHelper
             'samesite' => 'Lax',
         );
 
-        setcookie('devicetoken', DeviceToken::getToken($this->AuthResponse->userid), $cookieOptions);
+        setcookie('devicetoken', DeviceToken::getToken($this->AuthResponse->getAuthUserid()), $cookieOptions);
     }
 
     /**
@@ -181,13 +181,13 @@ final class LoginHelper
         $this->Session->set('is_auth', 1);
 
         // ANY LOGIN needs to have a team
-        $this->Session->set('team', $this->AuthResponse->selectedTeam);
+        $this->Session->set('team', $this->AuthResponse->getSelectedTeam());
 
         // ANON will get userid 0 here
-        $this->Session->set('userid', $this->AuthResponse->userid);
+        $this->Session->set('userid', $this->AuthResponse->getAuthUserid());
 
         // ANON LOGIN
-        if ($this->AuthResponse->isAnonymous) {
+        if ($this->AuthResponse->isAnonymous()) {
             $this->Session->set('is_anon', 1);
         }
     }

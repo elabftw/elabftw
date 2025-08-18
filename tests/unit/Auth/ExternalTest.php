@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
-use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Exceptions\ImproperActionException;
 use Monolog\Logger;
 
@@ -55,10 +54,10 @@ class ExternalTest extends \PHPUnit\Framework\TestCase
         $authResponse = $this->External->tryAuth();
         $this->assertInstanceOf(AuthResponse::class, $authResponse);
         $this->assertEquals(1, $authResponse->userid);
-        $this->assertFalse($authResponse->isAnonymous);
-        $this->assertEquals(1, $authResponse->selectedTeam);
+        $this->assertFalse($authResponse->isAnonymous());
+        $this->assertEquals(1, $authResponse->getSelectedTeam());
         $teams = array(array('id' => 1, 'name' => 'Alpha', 'is_admin' => 1, 'is_owner' => 0, 'is_archived' => 0));
-        $this->assertEquals($teams, $authResponse->selectableTeams);
+        $this->assertEquals($teams, $authResponse->getSelectableTeams());
     }
 
     // now try with a non existing user
@@ -73,7 +72,7 @@ class ExternalTest extends \PHPUnit\Framework\TestCase
             $this->log,
         );
         $authResponse = $External->tryAuth();
-        $this->assertIsInt($authResponse->userid);
+        $this->assertIsInt($authResponse->getAuthUserid());
     }
 
     // now try with a non existing user and config is set to not create the user
@@ -103,7 +102,7 @@ class ExternalTest extends \PHPUnit\Framework\TestCase
             $this->log,
         );
         $authResponse = $External->tryAuth();
-        $this->assertEquals(1, $authResponse->selectedTeam);
+        $this->assertEquals(1, $authResponse->getSelectedTeam());
     }
 
     // now try with throwing exception if no team is found

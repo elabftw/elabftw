@@ -17,6 +17,7 @@ use Elabftw\Enums\Entrypoint;
 use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Idps;
+use Elabftw\Models\Users\Users;
 use Elabftw\Services\LoginHelper;
 use Exception;
 use OneLogin\Saml2\Auth as SamlAuthLib;
@@ -67,24 +68,27 @@ try {
         }
 
         setcookie('saml_token', $AuthService->encodeToken($idpId), $cookieOptions);
+        $loggingInUser = new Users($AuthResponse->getAuthUserid());
 
         // no team was found so user must select one
-        if ($AuthResponse->initTeamRequired) {
+        if ($AuthResponse->initTeamRequired()) {
+            $info = $AuthResponse->getInitTeamInfo();
+            // TODO store the array directly!
             $App->Session->set('initial_team_selection_required', true);
-            $App->Session->set('teaminit_email', $AuthResponse->initTeamUserInfo['email']);
-            $App->Session->set('teaminit_firstname', $AuthResponse->initTeamUserInfo['firstname']);
-            $App->Session->set('teaminit_lastname', $AuthResponse->initTeamUserInfo['lastname']);
-            $App->Session->set('teaminit_orgid', $AuthResponse->initTeamUserInfo['orgid']);
+            $App->Session->set('teaminit_email', $info['email']);
+            $App->Session->set('teaminit_firstname', $info['firstname']);
+            $App->Session->set('teaminit_lastname', $info['lastname']);
+            $App->Session->set('teaminit_orgid', $info['orgid']);
             $location = '/login.php';
 
             // if the user is in several teams, we need to redirect to the team selection
-        } elseif ($AuthResponse->isInSeveralTeams) {
+        } elseif ($AuthResponse->isInSeveralTeams()) {
             $App->Session->set('team_selection_required', true);
-            $App->Session->set('team_selection', $AuthResponse->selectableTeams);
-            $App->Session->set('auth_userid', $AuthResponse->userid);
+            $App->Session->set('team_selection', $AuthResponse->getSelectableTeams());
+            $App->Session->set('auth_userid', $AuthResponse->getAuthUserid());
             $location = '/login.php';
 
-        } elseif ($AuthResponse->isValidated === false) {
+        } elseif ($loggingInUser->userData['validated'] === 0) {
             // send a helpful message if account requires validation, needs to be after team selection
             throw new ImproperActionException(_('Your account is not validated. An admin of your team needs to validate it!'));
         } else {

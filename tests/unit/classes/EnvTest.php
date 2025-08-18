@@ -14,6 +14,8 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
 
+use function putenv;
+
 class EnvTest extends \PHPUnit\Framework\TestCase
 {
     public function testAsString(): void
@@ -35,5 +37,14 @@ class EnvTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(ImproperActionException::class);
         Env::asUrl('FINGERPRINTER_URL');
+    }
+
+    // for context, see: #5866
+    public function testAsUrlWithSpace(): void
+    {
+        $url = 'https://elab.example.com:3148';
+        // note the space before the value
+        putenv(sprintf('FINGERPRINTER_URL= %s', $url));
+        $this->assertSame($url, Env::asUrl('FINGERPRINTER_URL'));
     }
 }

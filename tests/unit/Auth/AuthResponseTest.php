@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
-use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Services\UsersHelper;
 
 class AuthResponseTest extends \PHPUnit\Framework\TestCase
@@ -20,7 +19,7 @@ class AuthResponseTest extends \PHPUnit\Framework\TestCase
     public function testTryButUserHasNoTeam(): void
     {
         $AuthResponse = new AuthResponse();
-        $AuthResponse->userid = 1;
+        $AuthResponse->setAuthenticatedUserid(1);
         // no team
         $UsersHelperStub = $this->createStub(UsersHelper::class);
         $UsersHelperStub->method('getTeamsFromUserid')->willReturn(array());

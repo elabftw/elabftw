@@ -16,7 +16,6 @@ use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Users\Users;
-use Elabftw\Params\UserParams;
 use Elabftw\Services\MfaHelper;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -49,21 +48,20 @@ try {
 
     // if user already has an mfa_secret, we ask for it, otherwise they will be shown the QR code
     if ($App->Session->has('mfa_auth_required')) {
-        // if no secret exists already, we will need to display a qrcode
-        $showQrCode = $App->Session->get('mfa_secret') === null;
 
-        $MfaHelper = new MfaHelper($App->Session->get('mfa_secret'));
+        $halfLoggedInUser = new Users($App->Session->get('auth_userid'));
+        $MfaHelper = new MfaHelper($halfLoggedInUser->userData['mfa_secret']);
         // this will either be the secret from the db or a new one
         $App->Session->set('mfa_secret', $MfaHelper->secret);
-        // we save it for the user, everytime
-        new Users($App->Session->get('auth_userid'))->update(new UserParams('mfa_secret', $MfaHelper->secret));
+        // if no secret exists already, we will need to display a qrcode
+        $showQrCode = $halfLoggedInUser->userData['mfa_secret'] === null;
 
         $Response->setContent($App->render('mfa.html', array(
             'hideTitle' => true,
             // the title is hidden in the page, but give it nonetheless for the document.title
             'pageTitle' => _('Two Factor Authentication'),
             'showQrCode' => $showQrCode,
-            'mfaQRCodeImageDataUri' => $MfaHelper->getQRCodeImageAsDataUri(),
+            'mfaQRCodeImageDataUri' => $MfaHelper->getQRCodeImageAsDataUri($halfLoggedInUser->userData['email']),
             'formattedSecret' => implode(' ', str_split($MfaHelper->secret, 4)),
         )));
         $Response->send();

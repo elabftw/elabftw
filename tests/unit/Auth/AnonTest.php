@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
-use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Exceptions\IllegalActionException;
 
 class AnonTest extends \PHPUnit\Framework\TestCase
@@ -20,7 +19,7 @@ class AnonTest extends \PHPUnit\Framework\TestCase
     {
         $authResponse = new Anon(true, 1)->tryAuth();
         $this->assertInstanceOf(AuthResponse::class, $authResponse);
-        $this->assertTrue($authResponse->isAnonymous);
+        $this->assertTrue($authResponse->isAnonymous());
 
         // now try anon login but it's disabled by sysadmin
         $this->expectException(IllegalActionException::class);

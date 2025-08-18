@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
-use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Enums\Action;
 use Elabftw\Models\Users\UltraAdmin;
 use Elabftw\Models\Users\Users;
@@ -24,8 +23,8 @@ class TeamTest extends \PHPUnit\Framework\TestCase
         $authResponse = $AuthService->tryAuth();
         $this->assertInstanceOf(AuthResponse::class, $authResponse);
         $this->assertEquals(1, $authResponse->userid);
-        $this->assertFalse($authResponse->isAnonymous);
-        $this->assertEquals(1, $authResponse->selectedTeam);
+        $this->assertFalse($authResponse->isAnonymous());
+        $this->assertEquals(1, $authResponse->getSelectedTeam());
     }
 
     public function testTryAuthInvalidUser(): void
@@ -41,8 +40,7 @@ class TeamTest extends \PHPUnit\Framework\TestCase
         $authResponse = $AuthService->tryAuth();
         $this->assertInstanceOf(AuthResponse::class, $authResponse);
         $this->assertEquals($invalidUserId, $authResponse->userid);
-        $this->assertFalse($authResponse->isValidated);
-        $this->assertFalse($authResponse->isAnonymous);
-        $this->assertEquals($team, $authResponse->selectedTeam);
+        $this->assertFalse($authResponse->isAnonymous());
+        $this->assertEquals($team, $authResponse->getSelectedTeam());
     }
 }

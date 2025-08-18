@@ -20,13 +20,13 @@ use Elabftw\Auth\External;
 use Elabftw\Auth\Ldap;
 use Elabftw\Auth\Local;
 use Elabftw\Auth\Mfa;
+use Elabftw\Auth\MfaGate;
 use Elabftw\Auth\Saml as SamlAuth;
 use Elabftw\Auth\Team;
 use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\IdpsHelper;
 use Elabftw\Enums\AuthType;
 use Elabftw\Enums\EnforceMfa;
-use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidDeviceTokenException;
 use Elabftw\Exceptions\QuantumException;
@@ -38,6 +38,7 @@ use Elabftw\Models\Users\ExistingUser;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Users\Users;
 use Elabftw\Models\Users2Teams;
+use Elabftw\Params\UserParams;
 use Elabftw\Services\DeviceToken;
 use Elabftw\Services\DeviceTokenValidator;
 use Elabftw\Services\LoginHelper;
@@ -102,74 +103,78 @@ final class LoginController implements ControllerInterface
 
         // Get an AuthResponse from an AuthService
         $AuthResponse = $this->getAuthService()->tryAuth();
+        // First part of login is done, so we have a userid.
+        // Next, we need to do other steps (possibly), before the full login in app
 
-        if ($this->Session->get('mfa_auth_required') === true && !$AuthResponse->hasVerifiedMfa) {
-            throw new IllegalActionException('MFA auth is required');
+        // Anonymous user has nothing to do with the following code, they don't have a password or anything so just skip all that
+        if ($AuthResponse->isAnonymous()) {
+            return new RedirectResponse('/index.php');
         }
+
+        $loggingInUser = new Users($AuthResponse->getAuthUserid());
 
         /////////
         // MFA
         // check if we need to do mfa auth too after a first successful authentication
-        if ($AuthResponse->isMfaRequired && !$AuthResponse->hasVerifiedMfa) {
-            $this->Session->set('mfa_auth_required', true);
-            $this->Session->set('mfa_secret', $AuthResponse->mfaSecret);
-            // remember which user is authenticated
-            $this->Session->set('auth_userid', $AuthResponse->userid);
-            $this->Session->set('rememberme', $icanhazcookies);
-            return new RedirectResponse('/login.php');
+        $enforceMfa = EnforceMfa::from((int) $this->Config->configArr['enforce_mfa']);
+        // MFA can be required because the user has mfa_secret or because it is enforced for their level
+        if (MfaGate::isMfaRequired($enforceMfa, $loggingInUser)) {
+            if ($AuthResponse->hasVerifiedMfa()) {
+                // save the secret now that it is validated. Maybe it's the same as before but that's okay.
+                $loggingInUser->update(new UserParams('mfa_secret', $this->Session->get('mfa_secret')));
+                $this->Session->remove('mfa_auth_required');
+                $this->Session->remove('mfa_secret');
+            } else {
+                $this->Session->set('mfa_auth_required', true);
+                // remember which user is authenticated in the Session
+                $this->Session->set('auth_userid', $AuthResponse->getAuthUserid());
+                return new RedirectResponse('/login.php');
+            }
         }
-        if ($AuthResponse->hasVerifiedMfa) {
-            $this->Session->remove('mfa_auth_required');
-            $this->Session->remove('mfa_secret');
-        }
+
 
         /////////////////////
         // RENEW PASSWORD //
-        ///////////////////
         // check if we need to renew our local password
-        if ($AuthResponse->mustRenewPassword) {
+        if ($AuthResponse->mustRenewPassword()) {
             // remember which user is authenticated
-            $this->Session->set('auth_userid', $AuthResponse->userid);
-            $this->Session->set('rememberme', $icanhazcookies);
+            $this->Session->set('auth_userid', $AuthResponse->getAuthUserid());
             $this->Session->set('renew_password_required', true);
             $ResetPasswordKey = new ResetPasswordKey(time(), Env::asString('SECRET_KEY'));
-            $Users = new Users($this->Session->get('auth_userid'));
-            $key = $ResetPasswordKey->generate($Users->userData['email']);
+            $key = $ResetPasswordKey->generate($loggingInUser->userData['email']);
             return new RedirectResponse('/change-pass.php?key=' . $key);
         }
 
         ////////////////////
         // TEAM SELECTION //
-        ////////////////////
         // if the user is in several teams, we need to redirect to the team selection
-        if ($AuthResponse->isInSeveralTeams) {
+        if ($AuthResponse->isInSeveralTeams()) {
             $this->Session->set('team_selection_required', true);
-            $this->Session->set('team_selection', $AuthResponse->selectableTeams);
-            $this->Session->set('auth_userid', $AuthResponse->userid);
-            // carry over the cookie
-            $this->Session->set('rememberme', $icanhazcookies);
+            $this->Session->set('team_selection', $AuthResponse->getSelectableTeams());
+            $this->Session->set('auth_userid', $AuthResponse->getAuthUserid());
             return new RedirectResponse('/login.php');
         }
 
         // user does not exist and no team was found so user must select one
-        if ($AuthResponse->initTeamRequired) {
+        $info = $AuthResponse->getInitTeamInfo();
+        if ($AuthResponse->initTeamRequired()) {
             $this->Session->set('initial_team_selection_required', true);
-            $this->Session->set('teaminit_email', $AuthResponse->initTeamUserInfo['email']);
-            $this->Session->set('teaminit_firstname', $AuthResponse->initTeamUserInfo['firstname']);
-            $this->Session->set('teaminit_lastname', $AuthResponse->initTeamUserInfo['lastname']);
-            $this->Session->set('teaminit_orgid', $AuthResponse->initTeamUserInfo['orgid'] ?? '');
+            $this->Session->set('teaminit_email', $info['email']);
+            $this->Session->set('teaminit_firstname', $info['firstname']);
+            $this->Session->set('teaminit_lastname', $info['lastname']);
+            $this->Session->set('teaminit_orgid', $info['orgid'] ?? '');
             return new RedirectResponse('/login.php');
         }
 
         // user exists but no team was found so user must select one
-        if ($AuthResponse->teamRequestSelectionRequired) {
+        if ($AuthResponse->teamRequestSelectionRequired()) {
             $this->Session->set('team_request_selection_required', true);
-            $this->Session->set('teaminit_userid', $AuthResponse->initTeamUserInfo['userid']);
+            $this->Session->set('teaminit_userid', $info['userid']);
             return new RedirectResponse('/login.php');
         }
 
         // send a helpful message if account requires validation, needs to be after team selection
-        if ($AuthResponse->isValidated === false) {
+        if ($loggingInUser->userData['validated'] === 0) {
             throw new ImproperActionException(_('Your account is not validated. An admin of your team needs to validate it!'));
         }
 
@@ -178,7 +183,6 @@ final class LoginController implements ControllerInterface
         $LoginHelper->login((bool) $icanhazcookies);
 
         // cleanup
-        $this->Session->remove('rememberme');
         $this->Session->remove('auth_userid');
 
         // we redirect to index that will then redirect to the correct entrypoint set by user
@@ -271,7 +275,6 @@ final class LoginController implements ControllerInterface
                 return new Local(
                     $this->Request->request->getString('email'),
                     $this->Request->request->getString('password'),
-                    EnforceMfa::from((int) $this->Config->configArr['enforce_mfa']),
                     (bool) $this->Config->configArr['local_login'],
                     (bool) $this->Config->configArr['local_login_hidden_only_sysadmin'],
                     (bool) $this->Config->configArr['local_login_only_sysadmin'],

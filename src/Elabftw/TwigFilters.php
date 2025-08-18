@@ -23,6 +23,8 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\Users\Users;
 
 use function is_array;
+use function implode;
+use function str_split;
 use function is_string;
 use function json_decode;
 use function sprintf;
@@ -182,6 +184,11 @@ final class TwigFilters
     public static function toSymbol(int $currency): string
     {
         return Currency::from($currency)->toSymbol();
+    }
+
+    public static function formatMfaSecret(string $input): string
+    {
+        return implode(' ', str_split($input, 4));
     }
 
     public static function decrypt(?string $encrypted): string

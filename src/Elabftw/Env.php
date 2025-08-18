@@ -17,6 +17,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use function filter_var;
 use function getenv;
 use function strtolower;
+use function trim;
 
 /**
  * For dealing with Environment values passed to php-fpm
@@ -25,17 +26,17 @@ final class Env
 {
     public static function asString(string $key): string
     {
-        return (string) getenv($key);
+        return trim((string) self::get($key));
     }
 
     public static function asInt(string $key): int
     {
-        return (int) getenv($key);
+        return (int) self::get($key);
     }
 
     public static function asBool(string $key): bool
     {
-        $val = getenv($key);
+        $val = self::get($key);
         if ($val === false) {
             // not set will be bool false
             return false;
@@ -50,5 +51,10 @@ final class Env
             throw new ImproperActionException(sprintf('Error fetching %s: malformed URL format.', $key));
         }
         return $key;
+    }
+
+    private static function get(string $key): mixed
+    {
+        return getenv($key);
     }
 }

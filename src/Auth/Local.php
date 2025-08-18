@@ -13,13 +13,13 @@ declare(strict_types=1);
 namespace Elabftw\Auth;
 
 use DateTimeImmutable;
-use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Db;
-use Elabftw\Enums\EnforceMfa;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\QuantumException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Interfaces\AuthInterface;
+use Elabftw\Interfaces\AuthResponseInterface;
 use Elabftw\Models\Users\ExistingUser;
 use Elabftw\Services\Filter;
 use Elabftw\Services\UsersHelper;
@@ -34,41 +34,36 @@ use function password_verify;
 /**
  * Local auth service
  */
-final class Local extends AbstractAuth
+final class Local implements AuthInterface
 {
     private Db $Db;
 
     private int $userid;
 
-    private AuthResponse $AuthResponse;
-
     public function __construct(
         private string $email,
         #[SensitiveParameter]
         private readonly string $password,
-        EnforceMfa $enforceMfa = EnforceMfa::Disabled,
         private readonly bool $isDisplayed = true,
         private readonly bool $isOnlySysadminWhenHidden = false,
         private readonly bool $isOnlySysadmin = false,
         private readonly int $maxPasswordAgeDays = 0,
         private readonly int $maxLoginAttempts = 3,
     ) {
-        parent::__construct($enforceMfa);
         if (empty($password)) {
             throw new QuantumException(_('Invalid email/password combination.'));
         }
         $this->Db = Db::getConnection();
         $this->email = Filter::sanitizeEmail($email);
         $this->userid = $this->getUseridFromEmail();
-        $this->AuthResponse = new AuthResponse();
     }
 
     #[Override]
-    public function tryAuth(): AuthResponse
+    public function tryAuth(): AuthResponseInterface
     {
         $this->preventBruteForce();
 
-        $sql = 'SELECT is_sysadmin, password_hash, mfa_secret, validated, password_modified_at FROM users WHERE userid = :userid;';
+        $sql = 'SELECT is_sysadmin, password_hash, validated, password_modified_at FROM users WHERE userid = :userid;';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -96,22 +91,21 @@ final class Local extends AbstractAuth
             $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
             $this->Db->execute($req);
         }
+
+        $AuthResponse = new AuthResponse();
         // check if last password modification date was too long ago and require changing it if yes
         if ($this->maxPasswordAgeDays > 0) {
             $modifiedAt = new DateTimeImmutable($res['password_modified_at']);
             $now = new DateTimeImmutable();
             $diff = $now->diff($modifiedAt);
             $daysDifference = (int) $diff->format('%a');
-            $this->AuthResponse->mustRenewPassword = $daysDifference > $this->maxPasswordAgeDays;
+            $AuthResponse->mustRenewPassword = $daysDifference > $this->maxPasswordAgeDays;
         }
 
-        $this->AuthResponse->userid = $this->userid;
-        $this->AuthResponse->isMfaRequired = $this->isMfaRequired($this->userid);
-        $this->AuthResponse->mfaSecret = $res['mfa_secret'];
-        $this->AuthResponse->isValidated = (bool) $res['validated'];
-        $UsersHelper = new UsersHelper($this->AuthResponse->userid);
-        $this->AuthResponse->setTeams($UsersHelper);
-        return $this->AuthResponse;
+        $AuthResponse->userid = $this->userid;
+        // TODO maybe auth class shouldn't have the responsability of setting the teams, we can do that in the controller
+        $UsersHelper = new UsersHelper($AuthResponse->userid);
+        return $AuthResponse->setTeams($UsersHelper);
     }
 
     private function preventBruteForce(): void

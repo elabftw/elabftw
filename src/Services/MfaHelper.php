@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\Tools;
+use Elabftw\Elabftw\Env;
 use RobThree\Auth\Algorithm;
 use RobThree\Auth\TwoFactorAuth;
 
@@ -22,30 +22,29 @@ use RobThree\Auth\TwoFactorAuth;
  */
 final class MfaHelper
 {
-    /** @var string ISSUER will be displayed in the app as issuer name */
-    private const ISSUER = 'eLabFTW';
+    // number of digits the resulting codes will be
+    private const int DIGITS = 6;
 
-    /** @var int DIGITS number of digits the resulting codes will be */
-    private const DIGITS = 6;
+    // number of seconds a code will be valid
+    private const int PERIOD = 30;
 
-    /** @var int PERIOD number of seconds a code will be valid */
-    private const PERIOD = 30;
+    // discrepancy parameter to verify the code
+    private const int DISCREPANCY = 2;
 
-    /** @var int DISCREPANCY discrepancy parameter to verify the code */
-    private const DISCREPANCY = 2;
+    // entropy for the mfa secret
+    private const int SECRET_BITS = 160;
 
-    /** @var int MFA_SECRET_BITS entropy for the mfa secret */
-    private const SECRET_BITS = 160;
+    public readonly string $secret;
 
-    public string $secret;
+    private readonly TwoFactorAuth $TwoFactorAuth;
 
-    private TwoFactorAuth $TwoFactorAuth;
-
-    public function __construct(public ?string $maybeSecret = null)
+    public function __construct(?string $maybeSecret = null)
     {
+        $siteUrl = parse_url(Env::asUrl('SITE_URL'));
+
         $this->TwoFactorAuth = new TwoFactorAuth(
             new MpdfQrProvider(),
-            self::ISSUER,
+            sprintf('eLabFTW %s', $siteUrl['host'] ?? ''),
             self::DIGITS,
             self::PERIOD,
             Algorithm::Sha1,
@@ -53,10 +52,9 @@ final class MfaHelper
         $this->secret = $maybeSecret ?? $this->generateSecret();
     }
 
-    public function getQRCodeImageAsDataUri(): string
+    public function getQRCodeImageAsDataUri(string $email): string
     {
-        // the first arg is a label, we do not use it
-        return $this->TwoFactorAuth->getQRCodeImageAsDataUri(Tools::getUuidv4(), $this->secret);
+        return $this->TwoFactorAuth->getQRCodeImageAsDataUri($email, $this->secret);
     }
 
     public function verifyCode(string $code): bool
@@ -66,7 +64,6 @@ final class MfaHelper
 
     /**
      * only used to emulate the phone app (in MfaCode)
-     * @psalm-suppress PossiblyNullArgument
      */
     public function getCode(): string
     {

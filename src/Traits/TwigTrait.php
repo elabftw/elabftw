@@ -71,6 +71,7 @@ trait TwigTrait
         $canToHuman = new TwigFilter('canToHuman', '\Elabftw\Elabftw\TwigFunctions::canToHuman', $filterOptions);
         $decrypt = new TwigFilter('decrypt', '\Elabftw\Elabftw\TwigFilters::decrypt', $filterOptions);
         $toSymbol = new TwigFilter('toSymbol', '\Elabftw\Elabftw\TwigFilters::toSymbol', $filterOptions);
+        $formatMfaSecret = new TwigFilter('formatMfaSecret', '\Elabftw\Elabftw\TwigFilters::formatMfaSecret', $filterOptions);
 
         // custom twig functions
         $limitOptions = new TwigFunction('limitOptions', '\Elabftw\Elabftw\TwigFunctions::getLimitOptions');
@@ -110,6 +111,7 @@ trait TwigTrait
         $TwigEnvironment->addFilter($canToHuman);
         $TwigEnvironment->addFilter($decrypt);
         $TwigEnvironment->addFilter($toSymbol);
+        $TwigEnvironment->addFilter($formatMfaSecret);
         // functions
         $TwigEnvironment->addFunction($limitOptions);
         $TwigEnvironment->addFunction($generationTime);

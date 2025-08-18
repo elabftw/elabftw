@@ -12,10 +12,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
-use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Exceptions\InvalidMfaCodeException;
 use Elabftw\Interfaces\AuthInterface;
-use Elabftw\Models\Users\Users;
+use Elabftw\Interfaces\AuthResponseInterface;
 use Elabftw\Services\MfaHelper;
 use Elabftw\Services\UsersHelper;
 use Override;
@@ -32,17 +31,13 @@ final class Mfa implements AuthInterface
     ) {}
 
     #[Override]
-    public function tryAuth(): AuthResponse
+    public function tryAuth(): AuthResponseInterface
     {
         if (!$this->MfaHelper->verifyCode($this->code)) {
             throw new InvalidMfaCodeException($this->userid);
         }
-        $Users = new Users($this->userid);
-        $AuthResponse = new AuthResponse();
-
-        $AuthResponse->hasVerifiedMfa = true;
-        $AuthResponse->isValidated = (bool) $Users->userData['validated'];
-        $AuthResponse->userid = $this->userid;
+        $AuthResponse = new MfaAuthResponse();
+        $AuthResponse->setAuthenticatedUserid($this->userid);
         $UsersHelper = new UsersHelper($AuthResponse->userid);
         return $AuthResponse->setTeams($UsersHelper);
     }

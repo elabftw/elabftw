@@ -30,8 +30,8 @@ class MfaTest extends \PHPUnit\Framework\TestCase
         $code = $MfaHelper->getCode();
         $AuthService = new Mfa($MfaHelper, 1, $code);
         $authResponse = $AuthService->tryAuth();
-        $this->assertTrue($authResponse->hasVerifiedMfa);
-        $this->assertEquals(1, $authResponse->userid);
-        $this->assertEquals(1, $authResponse->selectedTeam);
+        $this->assertTrue($authResponse->hasVerifiedMfa());
+        $this->assertEquals(1, $authResponse->getAuthUserid());
+        $this->assertEquals(1, $authResponse->getSelectedTeam());
     }
 }

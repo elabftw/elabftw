@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Auth\Local;
 use Elabftw\Enums\Classification;
 use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Exceptions\AppException;
@@ -22,6 +21,7 @@ use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\TeamTags;
+use Elabftw\Services\MfaHelper;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -83,12 +83,11 @@ try {
             );
     }
 
-    $showMfa = !Local::isMfaEnforced(
-        $App->Users->userData['userid'],
-        (int) $App->Config->configArr['enforce_mfa'],
-    );
-
     $passwordComplexity = PasswordComplexity::from((int) $App->Config->configArr['password_complexity_requirement']);
+
+    // MFA
+    $MfaHelper = new MfaHelper($App->Users->userData['mfa_secret']);
+    $mfaNewSecret = $MfaHelper->secret;
 
     $template = 'ucp.html';
     $renderArr = array(
@@ -100,6 +99,8 @@ try {
         'itemsCategoryArr' => $itemsCategoryArr,
         'teamsArr' => $App->Teams->readAllVisible(),
         'metadataGroups' => $metadataGroups,
+        'mfaQRCodeImageDataUri' => $MfaHelper->getQRCodeImageAsDataUri($App->Users->userData['email']),
+        'mfaNewSecret' => $mfaNewSecret,
         'scopedTeamgroupsArr' => $TeamGroups->readScopedTeamgroups(),
         'notificationsSettings' => $notificationsSettings,
         'pageTitle' => _('Settings'),
@@ -108,7 +109,6 @@ try {
         'statusArr' => $Status->readAll(),
         'teamTagsArr' => $TeamTags->readAll(),
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
-        'showMFA' => $showMfa,
         'usersArr' => $App->Users->readAllActiveFromTeam(),
     );
     $Response->setContent($App->render($template, $renderArr));

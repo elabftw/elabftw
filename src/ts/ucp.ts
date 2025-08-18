@@ -26,6 +26,11 @@ if (window.location.pathname === '/ucp.php') {
     ApiC.patch(`${Model.User}/me`, params);
   });
 
+  on('disable-mfa', () => {
+    ApiC.patch(`${Model.User}/me`, {action: Action.Disable2fa})
+      .then(() => reloadElements(['ucp-mfa']));
+  });
+
   on('create-sigkeys', () => {
     const passphraseInput = (document.getElementById('sigPassphraseInput') as HTMLInputElement);
     ApiC.post(`${Model.User}/me/${Model.Sigkeys}`, {action: Action.Create, passphrase: passphraseInput.value})

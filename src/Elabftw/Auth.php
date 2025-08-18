@@ -18,6 +18,7 @@ use Elabftw\Auth\CookieToken;
 use Elabftw\Enums\Entrypoint;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthInterface;
+use Elabftw\Interfaces\AuthResponseInterface;
 use Elabftw\Models\Config;
 use Elabftw\Services\TeamFinder;
 use Symfony\Component\HttpFoundation\Request;
@@ -43,7 +44,7 @@ final class Auth implements AuthInterface
      *
      */
     #[Override]
-    public function tryAuth(): AuthResponse
+    public function tryAuth(): AuthResponseInterface
     {
         $AuthService = $this->getAuthService($this->getAuthType());
         return $AuthService->tryAuth();

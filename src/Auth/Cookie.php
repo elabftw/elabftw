@@ -12,10 +12,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
-use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthInterface;
+use Elabftw\Interfaces\AuthResponseInterface;
 use Elabftw\Services\TeamsHelper;
 use Override;
 
@@ -27,12 +27,12 @@ final class Cookie implements AuthInterface
     public function __construct(private int $validityMinutes, private CookieToken $Token, private int $team) {}
 
     #[Override]
-    public function tryAuth(): AuthResponse
+    public function tryAuth(): AuthResponseInterface
     {
         $Db = Db::getConnection();
         // compare the provided token with the token saved in SQL database
         $sql = sprintf(
-            'SELECT userid, validated
+            'SELECT userid
             FROM users WHERE token = :token AND token_created_at + INTERVAL %d MINUTE > NOW() LIMIT 1',
             $this->validityMinutes
         );
@@ -52,10 +52,8 @@ final class Cookie implements AuthInterface
             throw new UnauthorizedException();
         }
 
-        $AuthResponse = new AuthResponse();
-        $AuthResponse->userid = $userid;
-        $AuthResponse->isValidated = (bool) $res['validated'];
-        $AuthResponse->selectedTeam = $this->team;
-        return $AuthResponse;
+        return new AuthResponse()
+            ->setAuthenticatedUserid($userid)
+            ->setSelectedTeam($this->team);
     }
 }

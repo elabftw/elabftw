@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Controllers\LoginController;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
@@ -113,10 +114,10 @@ try {
     );
 
     if (!in_array(basename($Request->getScriptName()), $nologinArr, true) && !$Session->has('is_auth')) {
-        // try to login our user with session, cookie or other method not requiring a login action
-        $Auth = new Auth($App->Config, $Request);
+        // try to login our cookie or other methods not requiring a login action
+        $LoginController = new LoginController($App->Config, $Request, $App->Session, $App->Log, $App->Users, Env::asBool('DEMO_MODE'));
         // this will throw an UnauthorizedException if we don't have a valid auth
-        $AuthResponse = $Auth->tryAuth();
+        $AuthResponse = $LoginController->getAuthResponse();
         $LoginHelper = new LoginHelper($AuthResponse, $Session);
         $LoginHelper->login(false);
     }

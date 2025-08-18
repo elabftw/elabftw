@@ -15,6 +15,8 @@ namespace Elabftw\Controllers;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Auth\Anon;
+use Elabftw\Auth\Cookie;
+use Elabftw\Auth\CookieToken;
 use Elabftw\Auth\Demo;
 use Elabftw\Auth\External;
 use Elabftw\Auth\Ldap;
@@ -27,11 +29,14 @@ use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\IdpsHelper;
 use Elabftw\Enums\AuthType;
 use Elabftw\Enums\EnforceMfa;
+use Elabftw\Enums\Entrypoint;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidDeviceTokenException;
 use Elabftw\Exceptions\QuantumException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthInterface;
+use Elabftw\Interfaces\AuthResponseInterface;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users\ExistingUser;
@@ -45,6 +50,7 @@ use Elabftw\Services\LoginHelper;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\MfaHelper;
 use Elabftw\Services\ResetPasswordKey;
+use Elabftw\Services\TeamFinder;
 use LdapRecord\Connection;
 use LdapRecord\Models\Entry;
 use Monolog\Logger;
@@ -62,18 +68,6 @@ use function setcookie;
  */
 final class LoginController implements ControllerInterface
 {
-    public const int AUTH_DEMO = 5;
-
-    public const int AUTH_LOCAL = 10;
-
-    public const int AUTH_SAML = 20;
-
-    public const int AUTH_LDAP = 30;
-
-    public const int AUTH_EXTERNAL = 40;
-
-    public const int AUTH_ANON = 50;
-
     public function __construct(
         private readonly Config $Config,
         private readonly Request $Request,
@@ -82,6 +76,11 @@ final class LoginController implements ControllerInterface
         private readonly Users $Users,
         private readonly bool $demoMode = false,
     ) {}
+
+    public function getAuthResponse(): AuthResponseInterface
+    {
+        return $this->getAuthService()->tryAuth();
+    }
 
     #[Override]
     public function getResponse(): Response
@@ -102,7 +101,7 @@ final class LoginController implements ControllerInterface
         setcookie('icanhazcookies', $icanhazcookies, $cookieOptions);
 
         // Get an AuthResponse from an AuthService
-        $AuthResponse = $this->getAuthService()->tryAuth();
+        $AuthResponse = $this->getAuthResponse();
         // First part of login is done, so we have a userid.
         // Next, we need to do other steps (possibly), before the full login in app
 
@@ -225,11 +224,50 @@ final class LoginController implements ControllerInterface
 
     private function getAuthService(): AuthInterface
     {
+        // try to login with the elabid for an entity in view mode
+        $entrypoint = basename($this->Request->getScriptName());
+        if ($this->Request->query->has('access_key')
+            && ($entrypoint === Entrypoint::Experiments->toPage() || $entrypoint === Entrypoint::Database->toPage())
+            && $this->Request->query->get('mode') === 'view') {
+            // ACCESS KEY
+            // now we need to know in which team we autologin the user
+            $TeamFinder = new TeamFinder(basename($this->Request->getScriptName()), $this->Request->query->getString('access_key'));
+            $team = $TeamFinder->findTeam();
+
+            if ($team === 0) {
+                throw new UnauthorizedException();
+            }
+            return new Anon((bool) $this->Config->configArr['anon_users'], $team);
+        }
+
+        // try to login with the cookie if we have one in the request
+        if ($this->Request->cookies->has('token')) {
+            return new Cookie(
+                (int) $this->Config->configArr['cookie_validity_time'],
+                new CookieToken($this->Request->cookies->getString('token')),
+                $this->Request->cookies->getInt('token_team'),
+            );
+        }
+
+        // autologin as anon if it's allowed by sysadmin
+        if ($this->Config->configArr['open_science']) {
+            // don't do it if we have elabid in url
+            // only autologin on selected pages and if we are not authenticated with an account
+            $autoAnon = array(
+                Entrypoint::Experiments->toPage(),
+                Entrypoint::Database->toPage(),
+            );
+            if (in_array(basename($this->Request->getScriptName()), $autoAnon, true)) {
+                return new Anon((bool) $this->Config->configArr['anon_users'], (int) ($this->Config->configArr['open_team'] ?? 1));
+            }
+            throw new UnauthorizedException();
+        }
+
+        // now the other types of Auth like Local, Ldap, Saml, etc...
         $authType = AuthType::tryFrom($this->Request->request->getAlpha('auth_type'));
         switch ($authType) {
             // AUTH WITH DEMO USER
             case AuthType::Demo:
-                $this->Session->set('auth_service', self::AUTH_DEMO);
                 if (!$this->demoMode) {
                     throw new ImproperActionException('This instance is not in demo mode. Set DEMO_MODE=true to allow demo mode login.');
                 }
@@ -237,7 +275,7 @@ final class LoginController implements ControllerInterface
 
                 // AUTH WITH LDAP
             case AuthType::Ldap:
-                $this->Session->set('auth_service', self::AUTH_LDAP);
+                $this->Session->set('auth_service', AuthType::Ldap->asService());
                 $c = $this->Config->configArr;
                 $ldapPassword = null;
                 // assume there is a password to decrypt if username is not null
@@ -269,9 +307,9 @@ final class LoginController implements ControllerInterface
                 if ($this->Config->configArr['local_auth_enabled'] === '0') {
                     throw new ImproperActionException('Local authentication is disabled on this instance.');
                 }
-                $this->Session->set('auth_service', self::AUTH_LOCAL);
                 // only local auth validates device token
                 $this->validateDeviceToken();
+                $this->Session->set('auth_service', AuthType::Local->asService());
                 return new Local(
                     $this->Request->request->getString('email'),
                     $this->Request->request->getString('password'),
@@ -284,7 +322,7 @@ final class LoginController implements ControllerInterface
 
                 // AUTH WITH SAML
             case AuthType::Saml:
-                $this->Session->set('auth_service', self::AUTH_SAML);
+                $this->Session->set('auth_service', AuthType::Saml->asService());
                 $IdpsHelper = new IdpsHelper($this->Config, new Idps($this->Users));
                 $idpId = $this->Request->request->getInt('idpId');
                 // No cookie is required anymore, as entity Id is extracted from response
@@ -292,7 +330,7 @@ final class LoginController implements ControllerInterface
                 return new SamlAuth(new SamlAuthLib($settings), $this->Config->configArr, $settings);
 
             case AuthType::External:
-                $this->Session->set('auth_service', self::AUTH_EXTERNAL);
+                $this->Session->set('auth_service', AuthType::External->asService());
                 return new External(
                     $this->Config->configArr,
                     $this->Request->server->all(),
@@ -301,7 +339,6 @@ final class LoginController implements ControllerInterface
 
                 // AUTH AS ANONYMOUS USER
             case AuthType::Anonymous:
-                $this->Session->set('auth_service', self::AUTH_ANON);
                 return new Anon((bool) $this->Config->configArr['anon_users'], $this->Request->request->getInt('team_id'));
 
                 // AUTH in a team (after the team selection page)

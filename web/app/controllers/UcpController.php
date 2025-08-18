@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Controllers\LoginController;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\AuthType;
 use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\DemoModeException;
 use Elabftw\Params\UserParams;
@@ -36,7 +36,7 @@ try {
     $postData = $App->Request->request->all();
     // TAB 2 : ACCOUNT
     // if user is authenticated through external service we skip the password verification
-    if ($App->Users->userData['auth_service'] === LoginController::AUTH_LOCAL) {
+    if ($App->Users->userData['auth_service'] === AuthType::Local->asService()) {
         $App->Users->checkCurrentPasswordOrExplode($App->Request->request->getString('current_password'));
         // update the email if necessary
         if (isset($postData['email']) && ($postData['email'] !== $App->Users->userData['email'])) {
@@ -46,7 +46,7 @@ try {
 
     // CHANGE PASSWORD (only for local accounts)
     if (!empty($App->Request->request->getString('password'))
-        && $App->Users->userData['auth_service'] === LoginController::AUTH_LOCAL
+        && $App->Users->userData['auth_service'] === AuthType::Local->asService()
     ) {
         $App->Users->patch(Action::UpdatePassword, $postData);
         $okMsg = _('Password successfully changed.');

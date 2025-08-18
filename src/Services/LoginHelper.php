@@ -19,7 +19,6 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\AuthResponseInterface;
 use Elabftw\Models\AuditLogs;
-use Elabftw\Models\Config;
 use Elabftw\Models\Notifications\NewVersionInstalled;
 use Elabftw\Models\Users\Users;
 use PDO;
@@ -34,7 +33,7 @@ final class LoginHelper
 {
     private Db $Db;
 
-    public function __construct(private AuthResponseInterface $AuthResponse, private SessionInterface $Session)
+    public function __construct(private AuthResponseInterface $AuthResponse, private SessionInterface $Session, private int $cookieValidityTime)
     {
         $this->Db = Db::getConnection();
     }
@@ -68,7 +67,7 @@ final class LoginHelper
 
     public function getExpires(): int
     {
-        return time() + 60 * ((int) Config::getConfig()->configArr['cookie_validity_time']);
+        return time() + 60 * $this->cookieValidityTime;
     }
 
     /**

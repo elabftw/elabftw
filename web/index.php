@@ -19,7 +19,6 @@ use Elabftw\Enums\Entrypoint;
 use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Idps;
-use Elabftw\Models\Users\Users;
 use Elabftw\Params\UserParams;
 use Elabftw\Services\LoginHelper;
 use Exception;

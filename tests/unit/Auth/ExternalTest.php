@@ -12,15 +12,12 @@ declare(strict_types=1);
 namespace Elabftw\Auth;
 
 use Elabftw\Exceptions\ImproperActionException;
-use Monolog\Logger;
 
 class ExternalTest extends \PHPUnit\Framework\TestCase
 {
     private array $configArr;
 
     private array $serverParams;
-
-    private Logger $log;
 
     private External $External;
 
@@ -41,11 +38,9 @@ class ExternalTest extends \PHPUnit\Framework\TestCase
             'auth_email' => 'toto@yopmail.com',
             'auth_team' => 'Alpha',
         );
-        $this->log = new Logger('elabftw');
         $this->External = new External(
             $this->configArr,
             $this->serverParams,
-            $this->log,
         );
     }
 
@@ -69,7 +64,6 @@ class ExternalTest extends \PHPUnit\Framework\TestCase
         $External = new External(
             $this->configArr,
             $serverParams,
-            $this->log,
         );
         $authResponse = $External->tryAuth();
         $this->assertIsInt($authResponse->getAuthUserid());
@@ -85,7 +79,6 @@ class ExternalTest extends \PHPUnit\Framework\TestCase
         $External = new External(
             $configArr,
             $serverParams,
-            $this->log,
         );
         $this->expectException(ImproperActionException::class);
         $External->tryAuth();
@@ -99,7 +92,6 @@ class ExternalTest extends \PHPUnit\Framework\TestCase
         $External = new External(
             $this->configArr,
             $this->serverParams,
-            $this->log,
         );
         $authResponse = $External->tryAuth();
         $this->assertEquals(1, $authResponse->getSelectedTeam());
@@ -114,7 +106,6 @@ class ExternalTest extends \PHPUnit\Framework\TestCase
         $External = new External(
             $this->configArr,
             $this->serverParams,
-            $this->log,
         );
         $this->expectException(ImproperActionException::class);
         $External->tryAuth();

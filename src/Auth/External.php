@@ -19,7 +19,6 @@ use Elabftw\Interfaces\AuthResponseInterface;
 use Elabftw\Models\Users\ExistingUser;
 use Elabftw\Models\Users\ValidatedUser;
 use Elabftw\Services\UsersHelper;
-use Monolog\Logger;
 use Override;
 
 /**
@@ -27,7 +26,7 @@ use Override;
  */
 final class External implements AuthInterface
 {
-    public function __construct(private array $configArr, private array $serverParams, private Logger $log) {}
+    public function __construct(private array $configArr, private array $serverParams) {}
 
     #[Override]
     public function tryAuth(): AuthResponseInterface
@@ -63,7 +62,6 @@ final class External implements AuthInterface
             }
             // CREATE USER (and force validation of user)
             $Users = ValidatedUser::fromExternal($email, $teams, $firstname, $lastname);
-            $this->log->info('New user (' . $email . ') autocreated from external auth');
         }
         $UsersHelper = new UsersHelper($Users->userData['userid']);
         return new AuthResponse()

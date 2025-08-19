@@ -53,7 +53,6 @@ use Elabftw\Services\ResetPasswordKey;
 use Elabftw\Services\TeamFinder;
 use LdapRecord\Connection;
 use LdapRecord\Models\Entry;
-use Monolog\Logger;
 use OneLogin\Saml2\Auth as SamlAuthLib;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -72,7 +71,6 @@ final class LoginController implements ControllerInterface
         private readonly Config $Config,
         private readonly Request $Request,
         private readonly FlashBagAwareSessionInterface $Session,
-        private readonly Logger $Logger,
         private readonly Users $Users,
         private readonly bool $demoMode = false,
     ) {}
@@ -334,7 +332,6 @@ final class LoginController implements ControllerInterface
                 return new External(
                     $this->Config->configArr,
                     $this->Request->server->all(),
-                    $this->Logger,
                 );
 
                 // AUTH AS ANONYMOUS USER

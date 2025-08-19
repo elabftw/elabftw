@@ -115,7 +115,7 @@ try {
 
     if (!in_array(basename($Request->getScriptName()), $nologinArr, true) && !$Session->has('is_auth')) {
         // try to login our cookie or other methods not requiring a login action
-        $LoginController = new LoginController($App->Config, $Request, $App->Session, $App->Log, $App->Users, Env::asBool('DEMO_MODE'));
+        $LoginController = new LoginController($App->Config, $Request, $App->Session, $App->Users, Env::asBool('DEMO_MODE'));
         // this will throw an UnauthorizedException if we don't have a valid auth
         $AuthResponse = $LoginController->getAuthResponse();
         $LoginHelper = new LoginHelper($AuthResponse, $Session, (int) $App->Config->configArr['cookie_validity_time']);

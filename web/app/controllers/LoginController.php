@@ -34,7 +34,7 @@ $location = '/login.php';
 $Response = new RedirectResponse($location);
 
 try {
-    $Response = new LoginController($App->Config, $App->Request, $App->Session, $App->Log, $App->Users, $App->demoMode)->getResponse();
+    $Response = new LoginController($App->Config, $App->Request, $App->Session, $App->Users, $App->demoMode)->getResponse();
 } catch (QuantumException | InvalidCredentialsException | InvalidMfaCodeException $e) {
     $loginTries = (int) $App->Config->configArr['login_tries'];
     $AuthFail = new AuthFail($loginTries, $e->getCode(), $App->Request->cookies->getAlnum('devicetoken'));

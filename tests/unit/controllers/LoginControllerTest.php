@@ -17,7 +17,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\QuantumException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users\Users;
-use Monolog\Logger;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,7 +30,6 @@ class LoginControllerTest extends \PHPUnit\Framework\TestCase
             Config::getConfig(),
             Request::createFromGlobals(),
             new Session(),
-            new Logger('test'),
             new Users(1, 1),
         );
         $this->expectException(ImproperActionException::class);
@@ -49,7 +47,6 @@ class LoginControllerTest extends \PHPUnit\Framework\TestCase
             $Config,
             $Request,
             new Session(),
-            new Logger('test'),
             new Users(1, 1),
         );
         $this->expectException(ImproperActionException::class);
@@ -66,7 +63,6 @@ class LoginControllerTest extends \PHPUnit\Framework\TestCase
             $Config,
             $Request,
             new Session(),
-            new Logger('test'),
             new Users(1, 1),
         );
         $this->expectException(QuantumException::class);
@@ -85,7 +81,6 @@ class LoginControllerTest extends \PHPUnit\Framework\TestCase
             $Config,
             $Request,
             new Session(),
-            new Logger('test'),
             new Users(1, 1),
         );
         $res = $LoginController->getResponse();
@@ -105,7 +100,6 @@ class LoginControllerTest extends \PHPUnit\Framework\TestCase
             $Config,
             $Request,
             $Session,
-            new Logger('test'),
             new Users(1, 1),
         );
         $this->expectException(IllegalActionException::class);
@@ -124,7 +118,6 @@ class LoginControllerTest extends \PHPUnit\Framework\TestCase
             $Config,
             $Request,
             $Session,
-            new Logger('test'),
             new Users(1, 1),
         );
         $res = $LoginController->getResponse();
@@ -143,7 +136,6 @@ class LoginControllerTest extends \PHPUnit\Framework\TestCase
             Config::getConfig(),
             $Request,
             $Session,
-            new Logger('test'),
             new Users(1, 1),
         );
         $res = $LoginController->getResponse();
@@ -160,7 +152,6 @@ class LoginControllerTest extends \PHPUnit\Framework\TestCase
             Config::getConfig(),
             $Request,
             new Session(),
-            new Logger('test'),
             new Users(1, 1),
             demoMode: true,
         )->getResponse();
@@ -173,7 +164,6 @@ class LoginControllerTest extends \PHPUnit\Framework\TestCase
             Config::getConfig(),
             Request::createFromGlobals(),
             new Session(),
-            new Logger('test'),
             new Users(1, 1),
         )->getResponse();
     }
@@ -188,7 +178,6 @@ class LoginControllerTest extends \PHPUnit\Framework\TestCase
             Config::getConfig(),
             $Request,
             new Session(),
-            new Logger('test'),
             new Users(1, 1),
             demoMode: true,
         )->getResponse();
@@ -204,7 +193,6 @@ class LoginControllerTest extends \PHPUnit\Framework\TestCase
             Config::getConfig(),
             $Request,
             new Session(),
-            new Logger('test'),
             new Users(1, 1),
             demoMode: true,
         )->getResponse();

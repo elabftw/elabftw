@@ -301,7 +301,7 @@
   <form class='form-group' method='post' action='app/controllers/UcpController.php' aria-label='{{ 'User information'|trans }}'>
     {{ App.Session.get('csrf')|csrf }}
     {# only show the email/password fields for locally authenticated users #}
-    {% if App.Users.userData.auth_service == constant('Elabftw\\Controllers\\LoginController::AUTH_LOCAL') %}
+    {% if isLocalAuth %}
 
     <div class='pl-3 mb-5'>
       <div class='d-flex justify-content-between'>
@@ -334,10 +334,10 @@
         </div>
       </div>
     </div>
-    {% endif %}
     <div class='mt-4 mb-2 text-center'>
       <button type='submit' class='btn btn-primary'>{{ 'Save'|trans }}</button>
     </div>
+    {% endif %}
 
     <h2 class='p-2 pl-3 section-title'>{{ 'Two-factor Authentication'|trans }}</h2>
     <div class='pl-3 mt-2 mb-5' id='ucp-mfa'>

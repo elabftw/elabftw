@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Enums\AuthType;
 use Elabftw\Enums\Classification;
 use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Exceptions\AppException;
@@ -97,6 +98,7 @@ try {
         'classificationArr' => Classification::getAssociativeArray(),
         'entityData' => $entityData,
         'itemsCategoryArr' => $itemsCategoryArr,
+        'isLocalAuth' => $App->Users->userData['auth_service'] === AuthType::Local->asService(),
         'teamsArr' => $App->Teams->readAllVisible(),
         'metadataGroups' => $metadataGroups,
         'mfaQRCodeImageDataUri' => $MfaHelper->getQRCodeImageAsDataUri($App->Users->userData['email']),

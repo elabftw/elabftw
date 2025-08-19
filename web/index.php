@@ -12,12 +12,15 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Auth\MfaGate;
 use Elabftw\Auth\Saml as SamlAuth;
+use Elabftw\Enums\EnforceMfa;
 use Elabftw\Enums\Entrypoint;
 use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Users\Users;
+use Elabftw\Params\UserParams;
 use Elabftw\Services\LoginHelper;
 use Exception;
 use OneLogin\Saml2\Auth as SamlAuthLib;
@@ -45,6 +48,32 @@ try {
         $AuthService = new SamlAuth(new SamlAuthLib($settings), $App->Config->configArr, $settings);
 
         $AuthResponse = $AuthService->assertIdpResponse();
+
+        // START copy pasta from LoginController: there is still more work to be done to improve all this code...
+        $loggingInUser = $AuthResponse->getUser();
+
+        /////////
+        // MFA
+        // check if we need to do mfa auth too after a first successful authentication
+        $enforceMfa = EnforceMfa::from((int) $App->Config->configArr['enforce_mfa']);
+        // MFA can be required because the user has mfa_secret or because it is enforced for their level
+        if (MfaGate::isMfaRequired($enforceMfa, $loggingInUser)) {
+            if ($AuthResponse->hasVerifiedMfa()) {
+                // save the secret now that it is validated. Maybe it's the same as before but that's okay.
+                $loggingInUser->update(new UserParams('mfa_secret', $App->Session->get('mfa_secret')));
+                $App->Session->remove('mfa_auth_required');
+                $App->Session->remove('mfa_secret');
+            } else {
+                $App->Session->set('mfa_auth_required', true);
+                // remember which user is authenticated in the Session
+                $App->Session->set('auth_userid', $AuthResponse->getAuthUserid());
+                $location = '/login.php';
+                echo "<html><head><meta http-equiv='refresh' content='1;url=$location' /><title>You are being redirected...</title></head><body>You are being redirected...</body></html>";
+                exit;
+            }
+        }
+        // END copy pasta from LoginController
+
         $LoginHelper = new LoginHelper($AuthResponse, $App->Session, (int) $App->Config->configArr['cookie_validity_time']);
 
         // the sysconfig option to allow users to set an auth cookie is the

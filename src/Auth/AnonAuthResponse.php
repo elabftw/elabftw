@@ -12,11 +12,14 @@ declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
+use Elabftw\Enums\Language;
+use Elabftw\Models\Users\AnonymousUser;
+use Elabftw\Models\Users\Users;
 use Override;
 
 final class AnonAuthResponse extends AuthResponse
 {
-    public function __construct(int $team)
+    public function __construct(int $team, private Language $lang)
     {
         $this->setSelectedTeam($team);
     }
@@ -31,5 +34,11 @@ final class AnonAuthResponse extends AuthResponse
     public function getAuthUserid(): int
     {
         return 0;
+    }
+
+    #[Override]
+    public function getUser(): Users
+    {
+        return new AnonymousUser($this->selectedTeam, $this->lang);
     }
 }

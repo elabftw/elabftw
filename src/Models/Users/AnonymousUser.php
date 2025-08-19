@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models\Users;
 
+use Elabftw\Enums\Language;
 use Elabftw\Enums\Scope;
 
 /**
@@ -20,7 +21,7 @@ use Elabftw\Enums\Scope;
  */
 final class AnonymousUser extends Users
 {
-    public function __construct(public ?int $team, private string $lang)
+    public function __construct(public ?int $team, private Language $lang)
     {
         parent::__construct(null, $team);
         $this->fillUserData();
@@ -41,7 +42,7 @@ final class AnonymousUser extends Users
         $this->userData['scope_teamgroups'] = Scope::Team->value;
         $this->userData['fullname'] = 'Anon Ymous';
         $this->userData['is_sysadmin'] = 0;
-        $this->userData['lang'] = $this->lang;
+        $this->userData['lang'] = $this->lang->value;
         $this->userData['use_isodate'] = '0';
         $this->userData['uploads_layout'] = '1';
         $this->userData['inc_files_pdf'] = '1';

@@ -58,9 +58,7 @@
   <div class='text-center'>
     <button type='submit' class='btn btn-primary' name='Submit' value='submit'>{{ 'Verify'|trans }}</button>
     {# IMPORTANT: set cancel button after submit button so Enter key submits the form #}
-    {% if showQrCode %}
-      <button type='cancel' class='btn btn-danger mr-2' name='Cancel' value='cancel'>{{ 'Cancel'|trans }}</button>
-    {% endif %}
+    <button type='cancel' class='btn btn-danger mr-2' name='Cancel' value='cancel'>{{ 'Cancel'|trans }}</button>
   </div>
 </form>
 {% endblock body %}

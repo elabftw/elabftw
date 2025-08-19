@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Auth;
 
 use Elabftw\Enums\EnforceMfa;
+use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
 
 /**
@@ -22,8 +23,8 @@ final class MfaGate
 {
     public static function isMfaRequired(EnforceMfa $enforceMfa, Users $loggingInUser): bool
     {
-        // Anonymous user will get this userid from AuthResponse
-        if ($loggingInUser->userid === 0) {
+        // Anonymous user will never need MFA
+        if ($loggingInUser instanceof AnonymousUser) {
             return false;
         }
         // if the user has a value for mfa_secret, then mfa is active for their account

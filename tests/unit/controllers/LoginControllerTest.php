@@ -15,6 +15,7 @@ namespace Elabftw\Controllers;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\QuantumException;
+use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users\Users;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -32,7 +33,7 @@ class LoginControllerTest extends \PHPUnit\Framework\TestCase
             new Session(),
             new Users(1, 1),
         );
-        $this->expectException(ImproperActionException::class);
+        $this->expectException(UnauthorizedException::class);
         $LoginController->getResponse();
     }
 
@@ -159,10 +160,12 @@ class LoginControllerTest extends \PHPUnit\Framework\TestCase
 
     public function testAuthDemoNotInDemo(): void
     {
+        $Request = Request::createFromGlobals();
+        $Request->request->set('auth_type', 'demo');
         $this->expectException(ImproperActionException::class);
         new LoginController(
             Config::getConfig(),
-            Request::createFromGlobals(),
+            $Request,
             new Session(),
             new Users(1, 1),
         )->getResponse();

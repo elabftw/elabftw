@@ -118,7 +118,7 @@ final class App
 
             $this->loadUser(new AnonymousUser(
                 $this->Session->get('team'),
-                $this->getLang(),
+                Language::from($this->getLang()),
             ));
         }
 

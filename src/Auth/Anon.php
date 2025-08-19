@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
+use Elabftw\Enums\Language;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Interfaces\AuthResponseInterface;
@@ -22,7 +23,7 @@ use Override;
  */
 final class Anon implements AuthInterface
 {
-    public function __construct(bool $isAnonAllowed, private int $team)
+    public function __construct(bool $isAnonAllowed, private int $team, private Language $lang)
     {
         if (!$isAnonAllowed) {
             throw new IllegalActionException('Cannot login as anon because it is not allowed by sysadmin!');
@@ -35,6 +36,6 @@ final class Anon implements AuthInterface
     #[Override]
     public function tryAuth(): AuthResponseInterface
     {
-        return new AnonAuthResponse($this->team);
+        return new AnonAuthResponse($this->team, $this->lang);
     }
 }

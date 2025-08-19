@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Interfaces;
 
+use Elabftw\Models\Users\Users;
 use Elabftw\Services\UsersHelper;
 
 interface AuthResponseInterface
@@ -44,4 +45,6 @@ interface AuthResponseInterface
     public function getSelectedTeam(): int;
 
     public function setSelectedTeam(int $team): self;
+
+    public function getUser(): Users;
 }

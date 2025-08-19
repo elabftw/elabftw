@@ -23,6 +23,7 @@ use Elabftw\Auth\Ldap;
 use Elabftw\Auth\Local;
 use Elabftw\Auth\Mfa;
 use Elabftw\Auth\MfaGate;
+use Elabftw\Auth\None;
 use Elabftw\Auth\Saml as SamlAuth;
 use Elabftw\Auth\Team;
 use Elabftw\Elabftw\Env;
@@ -30,6 +31,7 @@ use Elabftw\Elabftw\IdpsHelper;
 use Elabftw\Enums\AuthType;
 use Elabftw\Enums\EnforceMfa;
 use Elabftw\Enums\Entrypoint;
+use Elabftw\Enums\Language;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidDeviceTokenException;
 use Elabftw\Exceptions\QuantumException;
@@ -102,13 +104,7 @@ final class LoginController implements ControllerInterface
         $AuthResponse = $this->getAuthResponse();
         // First part of login is done, so we have a userid.
         // Next, we need to do other steps (possibly), before the full login in app
-
-        // Anonymous user has nothing to do with the following code, they don't have a password or anything so just skip all that
-        if ($AuthResponse->isAnonymous()) {
-            return new RedirectResponse('/index.php');
-        }
-
-        $loggingInUser = new Users($AuthResponse->getAuthUserid());
+        $loggingInUser = $AuthResponse->getUser();
 
         /////////
         // MFA
@@ -222,6 +218,9 @@ final class LoginController implements ControllerInterface
 
     private function getAuthService(): AuthInterface
     {
+        if ($this->Request->request->get('Cancel') === 'cancel') {
+            return new None($this->Session);
+        }
         // try to login with the elabid for an entity in view mode
         $entrypoint = basename($this->Request->getScriptName());
         if ($this->Request->query->has('access_key')
@@ -235,7 +234,7 @@ final class LoginController implements ControllerInterface
             if ($team === 0) {
                 throw new UnauthorizedException();
             }
-            return new Anon((bool) $this->Config->configArr['anon_users'], $team);
+            return new Anon((bool) $this->Config->configArr['anon_users'], $team, Language::EnglishGB);
         }
 
         // try to login with the cookie if we have one in the request
@@ -256,7 +255,7 @@ final class LoginController implements ControllerInterface
                 Entrypoint::Database->toPage(),
             );
             if (in_array(basename($this->Request->getScriptName()), $autoAnon, true)) {
-                return new Anon((bool) $this->Config->configArr['anon_users'], (int) ($this->Config->configArr['open_team'] ?? 1));
+                return new Anon((bool) $this->Config->configArr['anon_users'], (int) ($this->Config->configArr['open_team'] ?? 1), Language::EnglishGB);
             }
             throw new UnauthorizedException();
         }
@@ -336,7 +335,7 @@ final class LoginController implements ControllerInterface
 
                 // AUTH AS ANONYMOUS USER
             case AuthType::Anonymous:
-                return new Anon((bool) $this->Config->configArr['anon_users'], $this->Request->request->getInt('team_id'));
+                return new Anon((bool) $this->Config->configArr['anon_users'], $this->Request->request->getInt('team_id'), Language::EnglishGB);
 
                 // AUTH in a team (after the team selection page)
                 // we are already authenticated
@@ -361,7 +360,7 @@ final class LoginController implements ControllerInterface
                 exit;
 
             default:
-                throw new ImproperActionException('Could not determine which authentication service to use from auth_type parameter.');
+                throw new UnauthorizedException();
         }
     }
 

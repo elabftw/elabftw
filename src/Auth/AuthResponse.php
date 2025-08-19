@@ -38,7 +38,7 @@ class AuthResponse implements AuthResponseInterface
     // info (email/name) about user that needs to request a team
     public array $initTeamUserInfo = array();
 
-    protected int $userid;
+    protected int $userid = 0;
 
     #[Override]
     public function setInitTeamRequired(bool $required): AuthResponseInterface
@@ -69,6 +69,12 @@ class AuthResponse implements AuthResponseInterface
     public function getSelectedTeam(): int
     {
         return $this->selectedTeam;
+    }
+
+    #[Override]
+    public function getUser(): Users
+    {
+        return new Users($this->userid);
     }
 
     #[Override]

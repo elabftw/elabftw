@@ -42,7 +42,7 @@ final class LoginHelper
      * Login means having some anon / auth in session + team + userid
      * and set the cookie "token" if it was requested
      */
-    public function login(bool $setCookie): void
+    public function login(bool $setCookie = false): void
     {
         $this->checkAccountValidity();
         $this->checkArchivedStatus();

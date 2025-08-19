@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -74,7 +75,7 @@ try {
         // or generate a new one and add it into the session
         $Session->set('csrf', $Csrf->getToken());
     }
-    // at the moment we don't validate csrf for saml login FIXME TODO
+    // CSRF doesn't apply to SAML Assertion Consumer Service endpoint
     if (basename($Request->getScriptName()) !== 'index.php') {
         $Csrf->validate();
     }
@@ -98,6 +99,7 @@ try {
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-//
     // pages where you don't need to be logged in
     // only the script name, not the path because we use basename() on it
+    // Note: this should probably be merged into LoginController, maybe create a VisitorUser
     $nologinArr = array(
         // the api can be access with session or token (or only token for v1) so we skip auth here to do it later with custom logic
         'ApiController.php',
@@ -118,11 +120,10 @@ try {
         $LoginController = new LoginController($App->Config, $Request, $App->Session, $App->Users, Env::asBool('DEMO_MODE'));
         // this will throw an UnauthorizedException if we don't have a valid auth
         $AuthResponse = $LoginController->getAuthResponse();
-        $LoginHelper = new LoginHelper($AuthResponse, $Session, (int) $App->Config->configArr['cookie_validity_time']);
-        $LoginHelper->login(false);
+        new LoginHelper($AuthResponse, $Session, (int) $App->Config->configArr['cookie_validity_time'])->login();
     }
-
     $App->boot();
+
 } catch (UnauthorizedException | InvalidCsrfTokenException $e) {
     // KICK USER TO LOGOUT PAGE THAT WILL REDIRECT TO LOGIN PAGE
     $cookieOptions = array(

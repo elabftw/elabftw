@@ -118,7 +118,7 @@ try {
         $LoginController = new LoginController($App->Config, $Request, $App->Session, $App->Log, $App->Users, Env::asBool('DEMO_MODE'));
         // this will throw an UnauthorizedException if we don't have a valid auth
         $AuthResponse = $LoginController->getAuthResponse();
-        $LoginHelper = new LoginHelper($AuthResponse, $Session, $App->Config->configArr['cookie_validity_time']);
+        $LoginHelper = new LoginHelper($AuthResponse, $Session, (int) $App->Config->configArr['cookie_validity_time']);
         $LoginHelper->login(false);
     }
 

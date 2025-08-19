@@ -178,7 +178,7 @@ final class LoginController implements ControllerInterface
         }
 
         // All good now we can login the user
-        $LoginHelper = new LoginHelper($AuthResponse, $this->Session, $this->Config->configArr['cookie_validity_time']);
+        $LoginHelper = new LoginHelper($AuthResponse, $this->Session, (int) $this->Config->configArr['cookie_validity_time']);
         $LoginHelper->login((bool) $icanhazcookies);
 
         // cleanup

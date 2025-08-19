@@ -22,7 +22,7 @@ class TeamTest extends \PHPUnit\Framework\TestCase
         $AuthService = new Team(1, 1);
         $authResponse = $AuthService->tryAuth();
         $this->assertInstanceOf(AuthResponse::class, $authResponse);
-        $this->assertEquals(1, $authResponse->userid);
+        $this->assertEquals(1, $authResponse->getAuthUserid());
         $this->assertFalse($authResponse->isAnonymous());
         $this->assertEquals(1, $authResponse->getSelectedTeam());
     }
@@ -39,7 +39,7 @@ class TeamTest extends \PHPUnit\Framework\TestCase
 
         $authResponse = $AuthService->tryAuth();
         $this->assertInstanceOf(AuthResponse::class, $authResponse);
-        $this->assertEquals($invalidUserId, $authResponse->userid);
+        $this->assertEquals($invalidUserId, $authResponse->getAuthUserid());
         $this->assertFalse($authResponse->isAnonymous());
         $this->assertEquals($team, $authResponse->getSelectedTeam());
     }

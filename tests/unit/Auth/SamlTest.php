@@ -105,7 +105,7 @@ class SamlTest extends \PHPUnit\Framework\TestCase
         $AuthService = new SamlAuth($this->SamlAuthLib, $this->configArr, $this->settings);
         $authResponse = $AuthService->assertIdpResponse();
         $this->assertInstanceOf(AuthResponse::class, $authResponse);
-        $this->assertEquals(1, $authResponse->userid);
+        $this->assertEquals(1, $authResponse->getAuthUserid());
         $this->assertFalse($authResponse->isAnonymous());
         $this->assertEquals(1, $authResponse->getSelectedTeam());
     }

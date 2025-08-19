@@ -85,7 +85,6 @@ final class Ldap implements AuthInterface
                 }
                 // this setting is when we want to allow the user to make team selection
                 if ($teamId === -1) {
-                    $AuthResponse->userid = 0;
                     $AuthResponse->initTeamRequired = true;
                     $AuthResponse->initTeamUserInfo = array(
                         'email' => $email,
@@ -111,9 +110,8 @@ final class Ldap implements AuthInterface
             $Users = ValidatedUser::fromExternal($email, $teamFromLdap, $firstname, $lastname, allowTeamCreation: (bool) $this->configArr['saml_team_create']);
         }
 
-        $AuthResponse->setAuthenticatedUserid($Users->userData['userid']);
-        $UsersHelper = new UsersHelper($AuthResponse->userid);
-        return $AuthResponse->setTeams($UsersHelper);
+        return $AuthResponse->setAuthenticatedUserid($Users->userData['userid'])
+            ->setTeams(new UsersHelper($Users->userData['userid']));
     }
 
     // split the search attributes and search the user with them

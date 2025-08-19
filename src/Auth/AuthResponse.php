@@ -22,8 +22,6 @@ use Override;
  */
 class AuthResponse implements AuthResponseInterface
 {
-    public int $userid;
-
     public array $selectableTeams = array();
 
     public int $selectedTeam;
@@ -40,11 +38,7 @@ class AuthResponse implements AuthResponseInterface
     // info (email/name) about user that needs to request a team
     public array $initTeamUserInfo = array();
 
-    //public bool $isAnonymous = false;
-
-    public bool $hasVerifiedMfa = false;
-
-    public bool $mustRenewPassword = false;
+    protected int $userid;
 
     #[Override]
     public function setInitTeamRequired(bool $required): AuthResponseInterface
@@ -116,7 +110,7 @@ class AuthResponse implements AuthResponseInterface
     #[Override]
     public function mustRenewPassword(): bool
     {
-        return $this->mustRenewPassword;
+        return false;
     }
 
     #[Override]

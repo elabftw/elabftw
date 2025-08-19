@@ -45,7 +45,7 @@ try {
         $AuthService = new SamlAuth(new SamlAuthLib($settings), $App->Config->configArr, $settings);
 
         $AuthResponse = $AuthService->assertIdpResponse();
-        $LoginHelper = new LoginHelper($AuthResponse, $App->Session, $App->Config->configArr['cookie_validity_time']);
+        $LoginHelper = new LoginHelper($AuthResponse, $App->Session, (int) $App->Config->configArr['cookie_validity_time']);
 
         // the sysconfig option to allow users to set an auth cookie is the
         // only toggle for saml login setting cookies or not

@@ -53,7 +53,7 @@ class ExternalTest extends \PHPUnit\Framework\TestCase
     {
         $authResponse = $this->External->tryAuth();
         $this->assertInstanceOf(AuthResponse::class, $authResponse);
-        $this->assertEquals(1, $authResponse->userid);
+        $this->assertEquals(1, $authResponse->getAuthUserid());
         $this->assertFalse($authResponse->isAnonymous());
         $this->assertEquals(1, $authResponse->getSelectedTeam());
         $teams = array(array('id' => 1, 'name' => 'Alpha', 'is_admin' => 1, 'is_owner' => 0, 'is_archived' => 0));

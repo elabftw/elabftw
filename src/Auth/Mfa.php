@@ -36,9 +36,8 @@ final class Mfa implements AuthInterface
         if (!$this->MfaHelper->verifyCode($this->code)) {
             throw new InvalidMfaCodeException($this->userid);
         }
-        $AuthResponse = new MfaAuthResponse();
-        $AuthResponse->setAuthenticatedUserid($this->userid);
-        $UsersHelper = new UsersHelper($AuthResponse->userid);
-        return $AuthResponse->setTeams($UsersHelper);
+        return new MfaAuthResponse()
+            ->setAuthenticatedUserid($this->userid)
+            ->setTeams(new UsersHelper($this->userid));
     }
 }

@@ -379,7 +379,7 @@
         </p>
       </div>
       <div class='mx-auto text-center col-md-3 mb-4'>
-        <input class='form-control text-center increased-spacing' id='mfa_code' name='mfa_code' type='text' pattern='[0-9]{6}' maxlength=6 aria-describedby='mfaCodeLabel' data-focus='1' />
+        <input class='form-control text-center increased-spacing' id='mfa_code' name='mfa_code' type='text' pattern='[0-9]{6}' maxlength=6 aria-describedby='mfaCodeLabel' data-focus='1' inputmode='numeric' autocomplete='one-time-code' />
         <input type='hidden' name='mfa_secret' value='{{ mfaNewSecret }}'>
       </div>
       <div class='mt-4 text-center'>

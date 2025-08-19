@@ -29,7 +29,7 @@ class AuthResponseTest extends \PHPUnit\Framework\TestCase
         $UsersHelperStub = $this->createStub(UsersHelper::class);
         $UsersHelperStub->method('getTeamsFromUserid')->willReturn(array(array('id' => 1)));
         $AuthResponse->setTeams($UsersHelperStub);
-        $this->assertEquals(1, $AuthResponse->selectedTeam);
+        $this->assertEquals(1, $AuthResponse->getSelectedTeam());
         // more than 1 team
         $UsersHelperStub = $this->createStub(UsersHelper::class);
         $UsersHelperStub->method('getTeamsFromUserid')->willReturn(array(array('id' => 3), array('id' => 1)));

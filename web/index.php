@@ -91,7 +91,7 @@ try {
         $sessOptions = session_get_cookie_params();
 
         if ($rememberMe) {
-            $cookieOptions['expires'] = $LoginHelper->getCookieValidityTimeMinutes();
+            $cookieOptions['expires'] = $LoginHelper->getCookieExpiryTimestamp();
         } elseif ($sessOptions['lifetime'] > 0) {
             $cookieOptions['expires'] = time() + $sessOptions['lifetime'];
         }

@@ -34,7 +34,7 @@ final class Mfa implements AuthInterface
     public function tryAuth(): AuthResponseInterface
     {
         if (!$this->MfaHelper->verifyCode($this->code)) {
-            throw new InvalidMfaCodeException($this->userid);
+            throw new InvalidMfaCodeException();
         }
         return new MfaAuthResponse()
             ->setAuthenticatedUserid($this->userid)

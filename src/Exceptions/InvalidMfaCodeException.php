@@ -14,15 +14,14 @@ declare(strict_types=1);
 namespace Elabftw\Exceptions;
 
 use Elabftw\Enums\Messages;
-use Exception;
 
 /**
  * Throw this if the MFA code verification failed
  */
-final class InvalidMfaCodeException extends Exception
+final class InvalidMfaCodeException extends AppException
 {
-    public function __construct(int $userid)
+    public function __construct()
     {
-        parent::__construct(Messages::InvalidAuthenticationCode->toHuman(), $userid);
+        parent::__construct(Messages::InvalidAuthenticationCode->toHuman(), Messages::InvalidAuthenticationCode->toHttpCode());
     }
 }

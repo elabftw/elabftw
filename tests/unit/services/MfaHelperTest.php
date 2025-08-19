@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use function strlen;
+use function str_pad;
 
 class MfaHelperTest extends \PHPUnit\Framework\TestCase
 {
@@ -21,18 +22,18 @@ class MfaHelperTest extends \PHPUnit\Framework\TestCase
     {
         // no secret provided, it'll generate one
         $secret = new MfaHelper()->secret;
-        $this->assertEquals(32, strlen($secret));
+        $this->assertSame(32, strlen($secret));
         // with a secret provided, it must not change
-        $MfaHelper = new MfaHelper($secret);
-        $this->assertSame($secret, $MfaHelper->secret);
+        $helper = new MfaHelper($secret);
+        $this->assertSame($secret, $helper->secret);
     }
 
     public function testVerifyCode(): void
     {
-        $MfaHelper = new MfaHelper();
-        $goodCode = $MfaHelper->getCode();
-        $badCode = ((int) $goodCode) - 1;
-        $this->assertTrue($MfaHelper->verifyCode($goodCode));
-        $this->assertFalse($MfaHelper->verifyCode((string) $badCode));
+        $helper = new MfaHelper();
+        $goodCode = $helper->getCode();
+        $badCode = str_pad((string) (((int) $goodCode + 1) % 1000000), 6, '0', STR_PAD_LEFT);
+        $this->assertTrue($helper->verifyCode($goodCode));
+        $this->assertFalse($helper->verifyCode($badCode));
     }
 }

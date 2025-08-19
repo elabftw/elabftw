@@ -54,12 +54,12 @@
       </p>
     </div>
     <div class='mx-auto text-center col-md-3 mb-4'>
-      <input class='form-control text-center increased-spacing' id='mfa_code' name='mfa_code' type='text' pattern='[0-9]{6}' maxlength=6 aria-describedby='mfaCodeLabel' data-focus='1' />
+      <input class='form-control text-center increased-spacing' id='mfa_code' name='mfa_code' type='text' pattern='[0-9]{6}' maxlength=6 aria-describedby='mfaCodeLabel' data-focus='1' inputmode='numeric' autocomplete='one-time-code' />
     </div>
   <div class='text-center'>
     <button type='submit' class='btn btn-primary' name='Submit' value='submit'>{{ 'Verify'|trans }}</button>
     {# IMPORTANT: set cancel button after submit button so Enter key submits the form #}
-    <button type='cancel' class='btn btn-danger mr-2' name='Cancel' value='cancel'>{{ 'Cancel'|trans }}</button>
+    <button type='submit' class='btn btn-danger mr-2' name='Cancel' value='cancel'>{{ 'Cancel'|trans }}</button>
   </div>
 </form>
 {% endblock body %}

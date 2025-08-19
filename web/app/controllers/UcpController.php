@@ -33,11 +33,9 @@ try {
     if ($App->demoMode) {
         throw new DemoModeException();
     }
-    $okMsg = _('Saved');
-    $allGood = true;
     $postData = $App->Request->request->all();
     // TAB 2 : ACCOUNT
-    // if user is authenticated through external service we skip the password verification
+    // for locally auth users, verify local password was provided
     if ($App->Users->userData['auth_service'] === AuthType::Local->asService()) {
         $App->Users->checkCurrentPasswordOrExplode($App->Request->request->getString('current_password'));
         // update the email if necessary
@@ -51,7 +49,7 @@ try {
         && $App->Users->userData['auth_service'] === AuthType::Local->asService()
     ) {
         $App->Users->patch(Action::UpdatePassword, $postData);
-        $okMsg = _('Password successfully changed.');
+        $App->Session->getFlashBag()->add('ok', _('Password successfully changed.'));
     }
 
     // ENABLE MFA
@@ -59,16 +57,10 @@ try {
         $MfaHelper = new MfaHelper($App->Request->request->getString('mfa_secret'));
         if ($MfaHelper->verifyCode($App->Request->request->getString('mfa_code'))) {
             $App->Users->update(new UserParams('mfa_secret', $App->Request->request->getString('mfa_secret')));
-            $okMsg = _('Two-factor authentication has been successfully enabled for your account.');
+            $App->Session->getFlashBag()->add('ok', _('Two-factor authentication has been successfully enabled for your account.'));
         } else {
             $App->Session->getFlashBag()->add('ko', Messages::InvalidAuthenticationCode->toHuman());
-            $allGood = false;
         }
-    }
-    // END TAB 2
-
-    if ($allGood) {
-        $App->Session->getFlashBag()->add('ok', $okMsg);
     }
 } catch (AppException $e) {
     $Response = $e->getResponseFromException($App);

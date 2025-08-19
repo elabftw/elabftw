@@ -47,13 +47,13 @@ final class Env
 
     public static function asUrl(string $key): string
     {
-        $key = self::asString($key);
+        $val = self::asString($key);
         $validator = Validation::createValidator();
-        $violations = $validator->validate($key, new Url());
+        $violations = $validator->validate($val, new Url());
         if (count($violations) > 0) {
             throw new ImproperActionException(sprintf('Error fetching %s: malformed URL format.', $key));
         }
-        return $key;
+        return $val;
     }
 
     private static function get(string $key): mixed

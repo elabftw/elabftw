@@ -22,15 +22,12 @@ use Override;
  */
 class AuthResponse implements AuthResponseInterface
 {
-    public array $selectableTeams = array();
-
-    public int $selectedTeam = 0;
-
     public bool $isInSeveralTeams = false;
 
-    // when user needs to request access to a team
+    // when a new local user must pick an initial team (no existing local account)
     public bool $initTeamRequired = false;
 
+    // when an existing user has no team and must request one
     public bool $teamSelectionRequired = false;
 
     public bool $teamRequestSelectionRequired = false;
@@ -38,10 +35,14 @@ class AuthResponse implements AuthResponseInterface
     // info (email/name) about user that needs to request a team
     public array $initTeamUserInfo = array();
 
+    protected array $selectableTeams = array();
+
+    protected int $selectedTeam = 0;
+
     protected int $userid = 0;
 
     #[Override]
-    public function setInitTeamRequired(bool $required): AuthResponseInterface
+    public function setInitTeamRequired(bool $required): self
     {
         $this->initTeamRequired = $required;
         return $this;
@@ -120,14 +121,14 @@ class AuthResponse implements AuthResponseInterface
     }
 
     #[Override]
-    public function setSelectedTeam(int $team): AuthResponseInterface
+    public function setSelectedTeam(int $team): self
     {
         $this->selectedTeam = $team;
         return $this;
     }
 
     #[Override]
-    public function setAuthenticatedUserid(int $userid): AuthResponseInterface
+    public function setAuthenticatedUserid(int $userid): self
     {
         $this->userid = $userid;
         return $this;
@@ -143,11 +144,10 @@ class AuthResponse implements AuthResponseInterface
         if ($teamCount === 1) {
             $this->selectedTeam = $this->selectableTeams[0]['id'];
         } elseif ($teamCount === 0) {
-            $Users = new Users($this->userid);
             $this->teamSelectionRequired = true;
             $this->teamRequestSelectionRequired = true;
             $this->initTeamUserInfo = array(
-                'userid' => $Users->userData['userid'],
+                'userid' => $this->userid,
             );
         } else {
             $this->isInSeveralTeams = true;

@@ -594,7 +594,7 @@ abstract class AbstractEntity extends AbstractRest
             $idSql = 'OR entity.id = :intQuery OR entity.custom_id = :intQuery';
         }
 
-        $sql = 'SELECT entity.id, entity.title, entity.custom_id,
+        $sql = 'SELECT entity.id, entity.title, entity.custom_id, entity.state,
             categoryt.color AS category_color,
             categoryt.title AS category_title,
             statust.color AS status_color,
@@ -612,6 +612,7 @@ abstract class AbstractEntity extends AbstractRest
                 entity.title LIKE :query ' . $idSql . '
             ' . $canFilter . '
             ' . $displayParams->getFilterSql() . '
+            ' . $displayParams->getStatesSql('entity') . '
             ' . $displayParams->getSql();
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->requester->userid, PDO::PARAM_INT);

@@ -16,6 +16,7 @@ use DateTimeImmutable;
 use Elabftw\Elabftw\PermissionsHelper;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Orderby;
+use Elabftw\Enums\State;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\Items;
@@ -80,6 +81,7 @@ final class DashboardController extends AbstractHtmlController
             $this->app->Users,
             EntityType::Templates,
             limit: 9999,
+            states: array(State::Normal)
         );
 
         return array_merge(

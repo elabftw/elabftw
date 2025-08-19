@@ -13,8 +13,9 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
+use Symfony\Component\Validator\Constraints\Url;
+use Symfony\Component\Validator\Validation;
 
-use function filter_var;
 use function getenv;
 use function strtolower;
 use function trim;
@@ -47,7 +48,9 @@ final class Env
     public static function asUrl(string $key): string
     {
         $key = self::asString($key);
-        if (filter_var($key, FILTER_VALIDATE_URL) === false) {
+        $validator = Validation::createValidator();
+        $violations = $validator->validate($key, new Url());
+        if (count($violations) > 0) {
             throw new ImproperActionException(sprintf('Error fetching %s: malformed URL format.', $key));
         }
         return $key;

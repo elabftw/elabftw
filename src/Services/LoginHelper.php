@@ -65,7 +65,7 @@ final class LoginHelper
         AuditLogs::create(new UserLogin($this->AuthResponse->getAuthUserid(), $this->AuthResponse->getAuthUserid()));
     }
 
-    public function getExpires(): int
+    public function getCookieValidityTimeMinutes(): int
     {
         return time() + 60 * $this->cookieValidityTime;
     }
@@ -80,7 +80,7 @@ final class LoginHelper
         $CookieToken->saveToken($this->AuthResponse->getAuthUserid());
 
         $cookieOptions = array(
-            'expires' => $this->getExpires(),
+            'expires' => $this->getCookieValidityTimeMinutes(),
             'path' => '/',
             'domain' => '',
             'secure' => true,
@@ -160,7 +160,7 @@ final class LoginHelper
     {
         // set device token as a cookie
         $cookieOptions = array(
-            'expires' => time() + 2592000,
+            'expires' => time() + DeviceToken::DEFAULT_LIFETIME_MINUTES,
             'path' => '/',
             'domain' => '',
             'secure' => true,

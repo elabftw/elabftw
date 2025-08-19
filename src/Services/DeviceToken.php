@@ -25,6 +25,8 @@ use Lcobucci\JWT\Validation\Constraint\SignedWith;
  */
 final class DeviceToken
 {
+    public const int DEFAULT_LIFETIME_MINUTES = 2592000;
+
     public static function getToken(int $userid): string
     {
         $now = new DateTimeImmutable();

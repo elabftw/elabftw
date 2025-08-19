@@ -90,7 +90,7 @@ final class Local implements AuthInterface
             $this->Db->execute($req);
         }
 
-        // TODO maybe auth class shouldn't have the responsability of setting the teams, we can do that in the controller
+        // TODO maybe auth class shouldn't have the responsibility of setting the teams, we can do that in the controller
         $UsersHelper = new UsersHelper($this->userid);
         return new AuthResponse()
             ->setAuthenticatedUserid($this->userid)

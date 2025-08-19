@@ -13,6 +13,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\AuthType;
+use Elabftw\Enums\Messages;
 use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\DemoModeException;
 use Elabftw\Params\UserParams;
@@ -33,6 +34,7 @@ try {
         throw new DemoModeException();
     }
     $okMsg = _('Saved');
+    $allGood = true;
     $postData = $App->Request->request->all();
     // TAB 2 : ACCOUNT
     // if user is authenticated through external service we skip the password verification
@@ -58,11 +60,16 @@ try {
         if ($MfaHelper->verifyCode($App->Request->request->getString('mfa_code'))) {
             $App->Users->update(new UserParams('mfa_secret', $App->Request->request->getString('mfa_secret')));
             $okMsg = _('Two-factor authentication has been successfully enabled for your account.');
+        } else {
+            $App->Session->getFlashBag()->add('ko', Messages::InvalidAuthenticationCode->toHuman());
+            $allGood = false;
         }
     }
     // END TAB 2
 
-    $App->Session->getFlashBag()->add('ok', $okMsg);
+    if ($allGood) {
+        $App->Session->getFlashBag()->add('ok', $okMsg);
+    }
 } catch (AppException $e) {
     $Response = $e->getResponseFromException($App);
 } catch (Exception $e) {

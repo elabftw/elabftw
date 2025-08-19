@@ -91,23 +91,22 @@ try {
         $sessOptions = session_get_cookie_params();
 
         if ($rememberMe) {
-            $cookieOptions['expires'] = $LoginHelper->getExpires();
+            $cookieOptions['expires'] = $LoginHelper->getCookieValidityTimeMinutes();
         } elseif ($sessOptions['lifetime'] > 0) {
             $cookieOptions['expires'] = time() + $sessOptions['lifetime'];
         }
 
         setcookie('saml_token', $AuthService->encodeToken($idpId), $cookieOptions);
-        $loggingInUser = new Users($AuthResponse->getAuthUserid());
 
         // no team was found so user must select one
         if ($AuthResponse->initTeamRequired()) {
             $info = $AuthResponse->getInitTeamInfo();
             // TODO store the array directly!
             $App->Session->set('initial_team_selection_required', true);
-            $App->Session->set('teaminit_email', $info['email']);
-            $App->Session->set('teaminit_firstname', $info['firstname']);
-            $App->Session->set('teaminit_lastname', $info['lastname']);
-            $App->Session->set('teaminit_orgid', $info['orgid']);
+            $App->Session->set('teaminit_email', $info['email'] ?? '');
+            $App->Session->set('teaminit_firstname', $info['firstname'] ?? '');
+            $App->Session->set('teaminit_lastname', $info['lastname'] ?? '');
+            $App->Session->set('teaminit_orgid', $info['orgid'] ?? '');
             $location = '/login.php';
 
             // if the user is in several teams, we need to redirect to the team selection

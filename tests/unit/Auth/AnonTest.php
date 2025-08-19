@@ -13,13 +13,14 @@ namespace Elabftw\Auth;
 
 use Elabftw\Enums\Language;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Interfaces\AuthResponseInterface;
 
 class AnonTest extends \PHPUnit\Framework\TestCase
 {
     public function testTryAuth(): void
     {
         $authResponse = new Anon(true, 1, Language::French)->tryAuth();
-        $this->assertInstanceOf(AuthResponse::class, $authResponse);
+        $this->assertInstanceOf(AuthResponseInterface::class, $authResponse);
         $this->assertTrue($authResponse->isAnonymous());
 
         // now try anon login but it's disabled by sysadmin

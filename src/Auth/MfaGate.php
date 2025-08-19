@@ -17,7 +17,7 @@ use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
 
 /**
- * Determine if the user needs to see to do multi-factor authentication
+ * Determine if the user must perform multi-factor authentication
  */
 final class MfaGate
 {

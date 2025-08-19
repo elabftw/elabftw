@@ -106,6 +106,11 @@ final class LoginController implements ControllerInterface
         // Next, we need to do other steps (possibly), before the full login in app
         $loggingInUser = $AuthResponse->getUser();
 
+        // if we're receiving mfa_secret, it's because we just enabled MFA, so save it for that user
+        if ($this->Request->request->has('mfa_secret')) {
+            $loggingInUser->update(new UserParams('mfa_secret', $this->Request->request->getString('mfa_secret')));
+        }
+
         /////////
         // MFA
         // check if we need to do mfa auth too after a first successful authentication
@@ -113,8 +118,6 @@ final class LoginController implements ControllerInterface
         // MFA can be required because the user has mfa_secret or because it is enforced for their level
         if (MfaGate::isMfaRequired($enforceMfa, $loggingInUser)) {
             if ($AuthResponse->hasVerifiedMfa()) {
-                // save the secret now that it is validated. Maybe it's the same as before but that's okay.
-                $loggingInUser->update(new UserParams('mfa_secret', $this->Session->get('mfa_secret')));
                 $this->Session->remove('mfa_auth_required');
                 $this->Session->remove('mfa_secret');
             } else {
@@ -124,7 +127,6 @@ final class LoginController implements ControllerInterface
                 return new RedirectResponse('/login.php');
             }
         }
-
 
         /////////////////////
         // RENEW PASSWORD //
@@ -348,7 +350,7 @@ final class LoginController implements ControllerInterface
                 // MFA AUTH
             case AuthType::Mfa:
                 return new Mfa(
-                    new MfaHelper($this->Session->get('mfa_secret')),
+                    new MfaHelper($this->Session->get('mfa_secret') ?? $this->Request->request->get('mfa_secret')),
                     $this->Session->get('auth_userid'),
                     $this->Request->request->getAlnum('mfa_code'),
                 );

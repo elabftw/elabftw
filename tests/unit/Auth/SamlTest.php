@@ -1,6 +1,5 @@
 <?php
 
-declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -8,6 +7,8 @@ declare(strict_types=1);
  * @license AGPL-3.0
  * @package elabftw
  */
+
+declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
@@ -96,7 +97,7 @@ class SamlTest extends \PHPUnit\Framework\TestCase
     {
         $AuthService = new SamlAuth($this->SamlAuthLib, $this->configArr, $this->settings);
         $authResponse = $AuthService->tryAuth();
-        $this->assertInstanceOf(AuthResponse::class, $authResponse);
+        $this->assertInstanceOf(AuthResponseInterface::class, $authResponse);
     }
 
     public function testAssertIdpResponse(): void
@@ -104,7 +105,7 @@ class SamlTest extends \PHPUnit\Framework\TestCase
         // happy path
         $AuthService = new SamlAuth($this->SamlAuthLib, $this->configArr, $this->settings);
         $authResponse = $AuthService->assertIdpResponse();
-        $this->assertInstanceOf(AuthResponse::class, $authResponse);
+        $this->assertInstanceOf(AuthResponseInterface::class, $authResponse);
         $this->assertEquals(1, $authResponse->getAuthUserid());
         $this->assertFalse($authResponse->isAnonymous());
         $this->assertEquals(1, $authResponse->getSelectedTeam());
@@ -201,7 +202,7 @@ class SamlTest extends \PHPUnit\Framework\TestCase
 
         $authResponse = $this->getAuthResponse($samlUserdata, $config);
         $this->assertTrue($authResponse->isInSeveralTeams());
-        $this->assertEquals(2, count($authResponse->getSelectableTeams()));
+        $this->assertCount(2, $authResponse->getSelectableTeams());
         $this->assertEquals('Alpha', $authResponse->getSelectableTeams()[0]['name']);
         $this->assertEquals('Microscopy platform', $authResponse->getSelectableTeams()[1]['name']);
     }
@@ -278,7 +279,7 @@ class SamlTest extends \PHPUnit\Framework\TestCase
         $config['saml_fallback_orgid'] = '1';
 
         $authResponse = $this->getAuthResponse($samlUserdata, $config);
-        $this->assertEquals(1, $authResponse->getAuthUserid());
+        $this->assertSame(1, $authResponse->getAuthUserid());
     }
 
     /**

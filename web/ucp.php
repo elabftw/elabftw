@@ -87,8 +87,14 @@ try {
     $passwordComplexity = PasswordComplexity::from((int) $App->Config->configArr['password_complexity_requirement']);
 
     // MFA
-    $MfaHelper = new MfaHelper($App->Users->userData['mfa_secret']);
-    $mfaNewSecret = $MfaHelper->secret;
+    $mfaNewSecret = '';
+    $mfaQRCodeImageDataUri = '';
+    // if mfa is not set yet, we generate a secret, otherwise, there is no need to, and we don't want to, to avoid leak of existing valid secret
+    if ($App->Users->userData['mfa_secret'] === null) {
+        $MfaHelper = new MfaHelper();
+        $mfaNewSecret = $MfaHelper->secret;
+        $mfaQRCodeImageDataUri = $MfaHelper->getQRCodeImageAsDataUri($App->Users->userData['email']);
+    }
 
     $template = 'ucp.html';
     $renderArr = array(
@@ -101,7 +107,7 @@ try {
         'isLocalAuth' => $App->Users->userData['auth_service'] === AuthType::Local->asService(),
         'teamsArr' => $App->Teams->readAllVisible(),
         'metadataGroups' => $metadataGroups,
-        'mfaQRCodeImageDataUri' => $MfaHelper->getQRCodeImageAsDataUri($App->Users->userData['email']),
+        'mfaQRCodeImageDataUri' => $mfaQRCodeImageDataUri,
         'mfaNewSecret' => $mfaNewSecret,
         'scopedTeamgroupsArr' => $TeamGroups->readScopedTeamgroups(),
         'notificationsSettings' => $notificationsSettings,

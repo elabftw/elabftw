@@ -39,6 +39,6 @@ final class AnonAuthResponse extends AuthResponse
     #[Override]
     public function getUser(): Users
     {
-        return new AnonymousUser($this->selectedTeam, $this->lang);
+        return new AnonymousUser($this->getSelectedTeam(), $this->lang);
     }
 }

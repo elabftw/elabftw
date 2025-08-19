@@ -30,6 +30,9 @@ class MfaHelperTest extends \PHPUnit\Framework\TestCase
     public function testVerifyCode(): void
     {
         $MfaHelper = new MfaHelper();
-        $this->assertTrue($MfaHelper->verifyCode($MfaHelper->getCode()));
+        $goodCode = $MfaHelper->getCode();
+        $badCode = ((int) $goodCode) - 1;
+        $this->assertTrue($MfaHelper->verifyCode($goodCode));
+        $this->assertFalse($MfaHelper->verifyCode((string) $badCode));
     }
 }

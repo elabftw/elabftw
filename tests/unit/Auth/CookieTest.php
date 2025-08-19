@@ -1,6 +1,5 @@
 <?php
 
-declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -9,11 +8,14 @@ declare(strict_types=1);
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Auth;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\UnauthorizedException;
+use Elabftw\Interfaces\AuthResponseInterface;
 use PDO;
 
 class CookieTest extends \PHPUnit\Framework\TestCase
@@ -49,7 +51,7 @@ class CookieTest extends \PHPUnit\Framework\TestCase
     {
         $CookieAuth = new Cookie(220330, $this->CookieToken, 1);
         $res = $CookieAuth->tryAuth();
-        $this->assertInstanceOf(AuthResponse::class, $res);
+        $this->assertInstanceOf(AuthResponseInterface::class, $res);
         $this->assertEquals(1, $res->getAuthUserid());
         $this->assertEquals(1, $res->getSelectedTeam());
     }

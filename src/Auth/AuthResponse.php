@@ -24,7 +24,7 @@ class AuthResponse implements AuthResponseInterface
 {
     public array $selectableTeams = array();
 
-    public int $selectedTeam;
+    public int $selectedTeam = 0;
 
     public bool $isInSeveralTeams = false;
 
@@ -43,7 +43,7 @@ class AuthResponse implements AuthResponseInterface
     #[Override]
     public function setInitTeamRequired(bool $required): AuthResponseInterface
     {
-        $this->teamSelectionRequired = $required;
+        $this->initTeamRequired = $required;
         return $this;
     }
 
@@ -74,7 +74,7 @@ class AuthResponse implements AuthResponseInterface
     #[Override]
     public function getUser(): Users
     {
-        return new Users($this->userid);
+        return $this->selectedTeam > 0 ? new Users($this->userid, $this->selectedTeam) : new Users($this->userid);
     }
 
     #[Override]

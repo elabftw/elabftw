@@ -39,11 +39,10 @@ final class Cookie implements AuthInterface
         $req = $Db->prepare($sql);
         $req->bindValue(':token', $this->Token->getToken());
         $Db->execute($req);
-        if ($req->rowCount() !== 1) {
+        $userid = (int) $req->fetchColumn();
+        if ($userid === 0) {
             throw new UnauthorizedException();
         }
-        $res = $req->fetch();
-        $userid = $res['userid'];
 
         // when doing auth with cookie, we take the token_team value
         // make sure user is in team because we can't trust it

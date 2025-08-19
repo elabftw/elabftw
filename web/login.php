@@ -21,9 +21,6 @@ use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-use function implode;
-use function str_split;
-
 /**
  * Login page
  */
@@ -50,19 +47,23 @@ try {
     if ($App->Session->has('mfa_auth_required')) {
 
         $halfLoggedInUser = new Users($App->Session->get('auth_userid'));
-        $MfaHelper = new MfaHelper($halfLoggedInUser->userData['mfa_secret']);
-        // this will either be the secret from the db or a new one
-        $App->Session->set('mfa_secret', $MfaHelper->secret);
+        $mfaQRCodeImageDataUri = '';
+        $mfaNewSecret = '';
+
+        $App->Session->set('mfa_secret', $halfLoggedInUser->userData['mfa_secret']);
         // if no secret exists already, we will need to display a qrcode
-        $showQrCode = $halfLoggedInUser->userData['mfa_secret'] === null;
+        if ($halfLoggedInUser->userData['mfa_secret'] === null) {
+            $MfaHelper = new MfaHelper();
+            $mfaQRCodeImageDataUri = $MfaHelper->getQRCodeImageAsDataUri($halfLoggedInUser->userData['email']);
+            $mfaNewSecret = $MfaHelper->secret;
+        }
 
         $Response->setContent($App->render('mfa.html', array(
             'hideTitle' => true,
             // the title is hidden in the page, but give it nonetheless for the document.title
             'pageTitle' => _('Two Factor Authentication'),
-            'showQrCode' => $showQrCode,
-            'mfaQRCodeImageDataUri' => $MfaHelper->getQRCodeImageAsDataUri($halfLoggedInUser->userData['email']),
-            'formattedSecret' => implode(' ', str_split($MfaHelper->secret, 4)),
+            'mfaQRCodeImageDataUri' => $mfaQRCodeImageDataUri,
+            'mfaNewSecret' => $mfaNewSecret,
         )));
         $Response->send();
         exit;

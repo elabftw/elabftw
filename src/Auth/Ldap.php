@@ -85,12 +85,12 @@ final class Ldap implements AuthInterface
                 }
                 // this setting is when we want to allow the user to make team selection
                 if ($teamId === -1) {
-                    $AuthResponse->initTeamRequired = true;
-                    $AuthResponse->initTeamUserInfo = array(
+                    $AuthResponse->setInitTeamRequired(true);
+                    $AuthResponse->setInitTeamInfo(array(
                         'email' => $email,
                         'firstname' => $firstname,
                         'lastname' => $lastname,
-                    );
+                    ));
                     return $AuthResponse;
                 }
                 $teamFromLdap = array($teamId);

@@ -1,6 +1,5 @@
 <?php
 
-declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -9,9 +8,12 @@ declare(strict_types=1);
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Auth;
 
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\AuthResponseInterface;
 
 class ExternalTest extends \PHPUnit\Framework\TestCase
 {
@@ -47,12 +49,12 @@ class ExternalTest extends \PHPUnit\Framework\TestCase
     public function testTryAuth(): void
     {
         $authResponse = $this->External->tryAuth();
-        $this->assertInstanceOf(AuthResponse::class, $authResponse);
-        $this->assertEquals(1, $authResponse->getAuthUserid());
+        $this->assertInstanceOf(AuthResponseInterface::class, $authResponse);
+        $this->assertSame(1, $authResponse->getAuthUserid());
         $this->assertFalse($authResponse->isAnonymous());
-        $this->assertEquals(1, $authResponse->getSelectedTeam());
+        $this->assertSame(1, $authResponse->getSelectedTeam());
         $teams = array(array('id' => 1, 'name' => 'Alpha', 'is_admin' => 1, 'is_owner' => 0, 'is_archived' => 0));
-        $this->assertEquals($teams, $authResponse->getSelectableTeams());
+        $this->assertSame($teams, $authResponse->getSelectableTeams());
     }
 
     // now try with a non existing user
@@ -94,7 +96,7 @@ class ExternalTest extends \PHPUnit\Framework\TestCase
             $this->serverParams,
         );
         $authResponse = $External->tryAuth();
-        $this->assertEquals(1, $authResponse->getSelectedTeam());
+        $this->assertSame(1, $authResponse->getSelectedTeam());
     }
 
     // now try with throwing exception if no team is found

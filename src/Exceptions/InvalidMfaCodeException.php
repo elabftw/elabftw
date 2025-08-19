@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Exceptions;
 
+use Elabftw\Enums\Messages;
 use Exception;
 
 /**
@@ -22,6 +23,6 @@ final class InvalidMfaCodeException extends Exception
 {
     public function __construct(int $userid)
     {
-        parent::__construct(_('Invalid authentication code.'), $userid);
+        parent::__construct(Messages::InvalidAuthenticationCode->toHuman(), $userid);
     }
 }

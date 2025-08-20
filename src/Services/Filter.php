@@ -251,6 +251,7 @@ final class Filter
             'color',
             'display', // see #3368
             'font-family',
+            'font-size', // see #5873
             'height',
             'line-height',
             'margin-left',

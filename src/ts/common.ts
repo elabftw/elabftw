@@ -97,7 +97,7 @@ const TodolistC = new Todolist();
 const TableSortingC = new TableSorting();
 // for searching inputs, allow specific triggers for East & South East Asian characters
 const hasEastSEAsian = (s: string): boolean => (
-  /\p{Script=Han}|\p{Script=Hiragana}|\p{Script=Katakana}|\p{Script=Hangul}|\p{Script=Thai}|\p{Script=Lao}|\p{Script=Khmer}|\p{Script=Myanmar}/u.test(s)
+  /\p{Script=Han}|\p{Script=Hiragana}|\p{Script=Katakana}|\p{Script=Hangul}|\p{Script=Thai}|\p{Script=Lao}|\p{Script=Khmer}|\p{Script=Myanmar}|\p{Script=Bopomofo}/u.test(s)
 );
 
 const countGraphemes = (text: string): number => {

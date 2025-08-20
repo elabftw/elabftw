@@ -252,6 +252,7 @@ final class Filter
             'display', // see #3368
             'font-family',
             'font-size', // see #5873
+            'font-style',
             'font-weight',
             'font-variant',
             'height',

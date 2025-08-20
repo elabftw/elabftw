@@ -627,32 +627,10 @@ class Users extends AbstractRest
         return $res;
     }
 
-    protected static function search(string $column, string $term, bool $validated = false): self
-    {
-        $Db = Db::getConnection();
-        $sql = sprintf(
-            'SELECT userid FROM users WHERE %s = :term %s LIMIT 1',
-            $column === 'orgid'
-                ? 'orgid'
-                : 'email',
-            $validated
-                ? 'AND validated = 1'
-                : '',
-        );
-        $req = $Db->prepare($sql);
-        $req->bindParam(':term', $term);
-        $Db->execute($req);
-        $res = (int) $req->fetchColumn();
-        if ($res === 0) {
-            throw new ResourceNotFoundException();
-        }
-        return new self($res);
-    }
-
     /**
      * Read all the columns (including sensitive ones) of the current user
      */
-    protected function readOneFull(): array
+    public function readOneFull(): array
     {
         $sql = "SELECT u.*, sig_keys.privkey AS sig_privkey, sig_keys.pubkey AS sig_pubkey,
             CONCAT(u.firstname, ' ', u.lastname) AS fullname,
@@ -703,6 +681,28 @@ class Users extends AbstractRest
         $this->userData = $this->Db->fetch($req);
         $this->userData['team'] = $this->team;
         return $this->userData;
+    }
+
+    protected static function search(string $column, string $term, bool $validated = false): self
+    {
+        $Db = Db::getConnection();
+        $sql = sprintf(
+            'SELECT userid FROM users WHERE %s = :term %s LIMIT 1',
+            $column === 'orgid'
+                ? 'orgid'
+                : 'email',
+            $validated
+                ? 'AND validated = 1'
+                : '',
+        );
+        $req = $Db->prepare($sql);
+        $req->bindParam(':term', $term);
+        $Db->execute($req);
+        $res = (int) $req->fetchColumn();
+        if ($res === 0) {
+            throw new ResourceNotFoundException();
+        }
+        return new self($res);
     }
 
     private function disable2fa(): array

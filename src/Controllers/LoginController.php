@@ -70,10 +70,9 @@ use function setcookie;
 final class LoginController implements ControllerInterface
 {
     public function __construct(
-        private readonly Config $Config,
+        private readonly array $config,
         private readonly Request $Request,
         private readonly FlashBagAwareSessionInterface $Session,
-        private readonly Users $Users,
         private readonly bool $demoMode = false,
     ) {}
 
@@ -87,7 +86,7 @@ final class LoginController implements ControllerInterface
     {
         // store the rememberme choice in a cookie, not the session as it won't follow up for saml
         $icanhazcookies = '0';
-        if ($this->Request->request->has('rememberme') && $this->Config->configArr['remember_me_allowed'] === '1') {
+        if ($this->Request->request->has('rememberme') && $this->config['remember_me_allowed'] === '1') {
             $icanhazcookies = '1';
         }
         $cookieOptions = array(
@@ -114,7 +113,7 @@ final class LoginController implements ControllerInterface
         /////////
         // MFA
         // check if we need to do mfa auth too after a first successful authentication
-        $enforceMfa = EnforceMfa::from((int) $this->Config->configArr['enforce_mfa']);
+        $enforceMfa = EnforceMfa::from((int) $this->config['enforce_mfa']);
         // MFA can be required because the user has mfa_secret or because it is enforced for their level
         if (MfaGate::isMfaRequired($enforceMfa, $loggingInUser)) {
             if ($AuthResponse->hasVerifiedMfa()) {
@@ -174,7 +173,7 @@ final class LoginController implements ControllerInterface
         }
 
         // All good now we can login the user
-        $LoginHelper = new LoginHelper($AuthResponse, $this->Session, (int) $this->Config->configArr['cookie_validity_time']);
+        $LoginHelper = new LoginHelper($AuthResponse, $this->Session, (int) $this->config['cookie_validity_time']);
         $LoginHelper->login((bool) $icanhazcookies);
 
         // cleanup
@@ -236,20 +235,20 @@ final class LoginController implements ControllerInterface
             if ($team === 0) {
                 throw new UnauthorizedException();
             }
-            return new Anon((bool) $this->Config->configArr['anon_users'], $team, Language::EnglishGB);
+            return new Anon((bool) $this->config['anon_users'], $team, Language::EnglishGB);
         }
 
         // try to login with the cookie if we have one in the request
         if ($this->Request->cookies->has('token')) {
             return new Cookie(
-                (int) $this->Config->configArr['cookie_validity_time'],
+                (int) $this->config['cookie_validity_time'],
                 new CookieToken($this->Request->cookies->getString('token')),
                 $this->Request->cookies->getInt('token_team'),
             );
         }
 
         // autologin as anon if it's allowed by sysadmin
-        if ($this->Config->configArr['open_science']) {
+        if ($this->config['open_science']) {
             // don't do it if we have elabid in url
             // only autologin on selected pages and if we are not authenticated with an account
             $autoAnon = array(
@@ -257,7 +256,7 @@ final class LoginController implements ControllerInterface
                 Entrypoint::Database->toPage(),
             );
             if (in_array(basename($this->Request->getScriptName()), $autoAnon, true)) {
-                return new Anon((bool) $this->Config->configArr['anon_users'], (int) ($this->Config->configArr['open_team'] ?? 1), Language::EnglishGB);
+                return new Anon((bool) $this->config['anon_users'], (int) ($this->config['open_team'] ?? 1), Language::EnglishGB);
             }
             throw new UnauthorizedException();
         }
@@ -275,7 +274,7 @@ final class LoginController implements ControllerInterface
                 // AUTH WITH LDAP
             case AuthType::Ldap:
                 $this->Session->set('auth_service', AuthType::Ldap->asService());
-                $c = $this->Config->configArr;
+                $c = $this->config;
                 $ldapPassword = null;
                 // assume there is a password to decrypt if username is not null
                 if ($c['ldap_username']) {
@@ -303,7 +302,7 @@ final class LoginController implements ControllerInterface
                 // AUTH WITH LOCAL DATABASE
             case AuthType::Local:
                 // make sure local auth is enabled
-                if ($this->Config->configArr['local_auth_enabled'] === '0') {
+                if ($this->config['local_auth_enabled'] === '0') {
                     throw new ImproperActionException('Local authentication is disabled on this instance.');
                 }
                 // only local auth validates device token
@@ -312,32 +311,32 @@ final class LoginController implements ControllerInterface
                 return new Local(
                     $this->Request->request->getString('email'),
                     $this->Request->request->getString('password'),
-                    (bool) $this->Config->configArr['local_login'],
-                    (bool) $this->Config->configArr['local_login_hidden_only_sysadmin'],
-                    (bool) $this->Config->configArr['local_login_only_sysadmin'],
-                    (int) $this->Config->configArr['max_password_age_days'],
-                    (int) $this->Config->configArr['login_tries'],
+                    (bool) $this->config['local_login'],
+                    (bool) $this->config['local_login_hidden_only_sysadmin'],
+                    (bool) $this->config['local_login_only_sysadmin'],
+                    (int) $this->config['max_password_age_days'],
+                    (int) $this->config['login_tries'],
                 );
 
                 // AUTH WITH SAML
             case AuthType::Saml:
                 $this->Session->set('auth_service', AuthType::Saml->asService());
-                $IdpsHelper = new IdpsHelper($this->Config, new Idps($this->Users));
+                $IdpsHelper = new IdpsHelper(Config::getConfig(), new Idps(new Users()));
                 $idpId = $this->Request->request->getInt('idpId');
                 // No cookie is required anymore, as entity Id is extracted from response
                 $settings = $IdpsHelper->getSettings($idpId);
-                return new SamlAuth(new SamlAuthLib($settings), $this->Config->configArr, $settings);
+                return new SamlAuth(new SamlAuthLib($settings), $this->config, $settings);
 
             case AuthType::External:
                 $this->Session->set('auth_service', AuthType::External->asService());
                 return new External(
-                    $this->Config->configArr,
+                    $this->config,
                     $this->Request->server->all(),
                 );
 
                 // AUTH AS ANONYMOUS USER
             case AuthType::Anonymous:
-                return new Anon((bool) $this->Config->configArr['anon_users'], $this->Request->request->getInt('team_id'), Language::EnglishGB);
+                return new Anon((bool) $this->config['anon_users'], $this->Request->request->getInt('team_id'), Language::EnglishGB);
 
                 // AUTH in a team (after the team selection page)
                 // we are already authenticated

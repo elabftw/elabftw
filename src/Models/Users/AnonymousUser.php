@@ -55,5 +55,6 @@ final class AnonymousUser extends Users
         $this->userData['show_weekends'] = 0;
         $this->userData['enforce_exclusive_edit_mode'] = 0;
         $this->userData['scheduler_layout'] = 0;
+        $this->userData['validated'] = 1;
     }
 }

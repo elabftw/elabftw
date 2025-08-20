@@ -109,6 +109,7 @@ class LoginControllerTest extends \PHPUnit\Framework\TestCase
         );
         $response = $LoginController->getResponse();
         $this->assertInstanceOf(Response::class, $response);
+        $this->assertTrue($Session->has('has_verified_mfa'));
         $userData = $user->readOneFull();
         $this->assertSame($helper->secret, $userData['mfa_secret']);
         // now try to login with local auth and see that we are being redirected to login page for mfa
@@ -116,6 +117,8 @@ class LoginControllerTest extends \PHPUnit\Framework\TestCase
         $Request->request->set('email', $user->userData['email']);
         // all users have the same password on test instance
         $Request->request->set('password', 'totototototo');
+        // create a new session as we mimic a fresh login
+        $Session->clear();
         $LoginController = new LoginController(
             $config,
             $Request,
@@ -124,6 +127,7 @@ class LoginControllerTest extends \PHPUnit\Framework\TestCase
         $res = $LoginController->getResponse();
         $this->assertInstanceOf(RedirectResponse::class, $res);
         $this->assertSame('/login.php', $res->headers->get('Location'));
+        $this->assertFalse($Session->has('has_verified_mfa'));
         $this->assertTrue($Session->get('mfa_auth_required'));
         $this->assertSame($user->userid, $Session->get('auth_userid'));
         // now remove it so it doesn't cause issues later in other tests

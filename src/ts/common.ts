@@ -96,7 +96,7 @@ const TodolistC = new Todolist();
 
 const TableSortingC = new TableSorting();
 // for searching inputs, allow specific triggers for East & South East Asian characters
-const hasEastSEAsian = (s) => (
+const hasEastSEAsian = (s: string): boolean => (
   /\p{Script=Han}|\p{Script=Hiragana}|\p{Script=Katakana}|\p{Script=Hangul}|\p{Script=Thai}|\p{Script=Lao}|\p{Script=Khmer}|\p{Script=Myanmar}/u.test(s)
 );
 
@@ -1172,19 +1172,19 @@ on('autocomplete', (el: HTMLElement) => {
     appendTo: el.dataset.identifier ? `#autocompleteAnchorDiv_${el.dataset.identifier}` : '',
     source: function(request: Record<string, string>, response: (data: Array<string>) => void): void {
       const term = (request.term || '').trim();
-      // if we're using East/SouthEast Asian terms, we allow search with 1 'letter'
+      // for East/Southeast Asian terms, we allow search with 1 grapheme
       const isShortScript = hasEastSEAsian(term);
       const minChars = isShortScript ? 1 : 3;
       if (countGraphemes(term) < minChars) {
-        response([]);
-        // TODO make it unselectable/grayed out or something, maybe once we use homegrown autocomplete
-        if (!isShortScript) response([i18next.t('type-3-chars')]);
+        const msg = isShortScript ? [] : [i18next.t('type-3-chars')];
+        response(msg);
         return;
+        // TODO make it unselectable/grayed out or something, maybe once we use homegrown autocomplete
       }
-      if (['experiments', 'items'].includes(el.dataset.completeTarget)) {
-        request.term = escapeExtendedQuery(term);
-      }
-      ApiC.getJson(`${el.dataset.target}/?q=${encodeURIComponent(term)}`).then(json => {
+      const queryTerm = ['experiments', 'items'].includes(el.dataset.completeTarget)
+        ? escapeExtendedQuery(term)
+        : term;
+      ApiC.getJson(`${el.dataset.target}/?q=${encodeURIComponent(queryTerm)}`).then(json => {
         response(json.map(entry => transformer(entry)));
       });
     },

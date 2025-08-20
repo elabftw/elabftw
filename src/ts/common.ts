@@ -100,16 +100,9 @@ const hasEastSEAsian = (s: string): boolean => (
   /\p{Script=Han}|\p{Script=Hiragana}|\p{Script=Katakana}|\p{Script=Hangul}|\p{Script=Thai}|\p{Script=Lao}|\p{Script=Khmer}|\p{Script=Myanmar}/u.test(s)
 );
 
-// helper to count how many characters in the string are visible characters (grapheme)
-let graphemeSegmenter: Intl.Segmenter | null = null;
-if (typeof Intl !== 'undefined' && Intl.Segmenter) {
-  graphemeSegmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
-}
-
 const countGraphemes = (text: string): number => {
-  if (!graphemeSegmenter) {
-    return [...text].length;
-  }
+  // use Intl.Segmenter to handle locale-sensitive text segmentation (graphemes, sentences, etc.,)
+  const graphemeSegmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
   return Array.from(graphemeSegmenter.segment(text)).length;
 };
 

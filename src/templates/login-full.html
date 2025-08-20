@@ -64,7 +64,7 @@
       {%- endif %}
       <label for='team_selection_select'>{{ 'Your account is linked to several teams. Select in which team you want to log in'|trans }}</label>
       <select name='selected_team' id='team_selection_select' class='form-control'>
-        {% for team in App.Session.get('team_selection') %}
+        {% for team in App.Session.get('team_selection')|jsonDecode %}
           <option value='{{ team.id }}'>{{ team.name }}</option>
         {% endfor %}
       </select>

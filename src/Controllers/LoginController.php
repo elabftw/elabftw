@@ -106,7 +106,7 @@ final class LoginController implements ControllerInterface
         $loggingInUser = $AuthResponse->getUser();
 
         // if we're receiving mfa_secret, it's because we just enabled MFA, so save it for that user
-        if ($this->Request->request->has('mfa_secret')) {
+        if ($this->Request->request->has('mfa_secret') && $loggingInUser->userData['mfa_secret'] === null) {
             $loggingInUser->update(new UserParams('mfa_secret', $this->Request->request->getString('mfa_secret')));
         }
 
@@ -115,10 +115,12 @@ final class LoginController implements ControllerInterface
         // check if we need to do mfa auth too after a first successful authentication
         $enforceMfa = EnforceMfa::from((int) $this->config['enforce_mfa']);
         // MFA can be required because the user has mfa_secret or because it is enforced for their level
-        if (MfaGate::isMfaRequired($enforceMfa, $loggingInUser)) {
+        // we also track in the session if mfa has been verified because we might have other screens such as team select
+        if (MfaGate::isMfaRequired($enforceMfa, $loggingInUser) && !$this->Session->has('has_verified_mfa')) {
             if ($AuthResponse->hasVerifiedMfa()) {
                 $this->Session->remove('mfa_auth_required');
                 $this->Session->remove('mfa_secret');
+                $this->Session->set('has_verified_mfa', true);
             } else {
                 $this->Session->set('mfa_auth_required', true);
                 // remember which user is authenticated in the Session

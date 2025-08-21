@@ -19,6 +19,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Notifications\EventDeleted;
 use Elabftw\Services\Filter;
@@ -502,6 +503,20 @@ final class Scheduler extends AbstractRest
     {
         $this->checkOverlap($start, $end);
         $this->checkSlotTime($start, $end);
+        $this->checkEndAfterStart($start, $end);
+    }
+
+    private function checkEndAfterStart(string $start, string $end): void
+    {
+        $start = DateTimeImmutable::createFromFormat(self::DATETIME_FORMAT, $start);
+        $end = DateTimeImmutable::createFromFormat(self::DATETIME_FORMAT, $end);
+        if ($end <= $start) {
+            throw new UnprocessableContentException(_(sprintf(
+                'End time %s must be after start time %s.',
+                $end->format(self::DATETIME_FORMAT),
+                $start->format(self::DATETIME_FORMAT)
+            )));
+        }
     }
 
     /**

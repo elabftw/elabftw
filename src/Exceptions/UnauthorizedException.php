@@ -17,7 +17,7 @@ use Exception;
 /**
  * If user is not authorized to access this resource
  */
-final class UnauthorizedException extends Exception
+final class UnauthorizedException extends AppException
 {
     public function __construct(?string $message = null, int $code = 403, ?Exception $previous = null)
     {

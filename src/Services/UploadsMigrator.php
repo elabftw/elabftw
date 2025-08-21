@@ -62,8 +62,14 @@ final class UploadsMigrator
 
     private function fixBody(string $table): bool
     {
-        // explicitely set the modified_at to the same value so we do not impact it with this command
-        $sql = sprintf('UPDATE %s SET body = REPLACE(body, "storage=%d", "storage=%d"), modified_at = modified_at', $table, Storage::LOCAL->value, Storage::S3->value);
+        // explicitly set the modified_at to the same value so we do not impact it with this command
+        $sql = sprintf(
+            "UPDATE %s SET body = REPLACE(body, 'storage=%d', 'storage=%d'), modified_at = modified_at WHERE body LIKE '%%storage=%d%%'",
+            $table,
+            Storage::LOCAL->value,
+            Storage::S3->value,
+            Storage::LOCAL->value,
+        );
         $req = $this->Db->prepare($sql);
         return $this->Db->execute($req);
     }

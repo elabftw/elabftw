@@ -39,9 +39,11 @@ final class Scheduler extends AbstractRest
 {
     use EntityTrait;
 
-    public const string EVENT_START = '2012-31-12T00:00:00+00:00';
+    public const string EVENT_START = '2012-12-31 00:00:00';
 
-    public const string EVENT_END = '2037-31-12T00:00:00+00:00';
+    public const string EVENT_END = '2037-12-31 00:00:00';
+
+    public const string DATETIME_FORMAT = 'Y-m-d H:i:s';
 
     private const int GRACE_PERIOD_MINUTES = 5;
 
@@ -79,7 +81,8 @@ final class Scheduler extends AbstractRest
     /**
      * Add an event for an item in the team
      * No other action than Create
-     * Date format: 2016-07-22T13:37:00+02:00
+     * Date format: 'Y-m-d H:i:s' (self::DATETIME_FORMAT) instead of DateTime::ATOM to comply with MySql format
+     * e.g., 2016-07-22 13:37:00
      * reqBody :
      * - ?title
      * - start
@@ -100,7 +103,7 @@ final class Scheduler extends AbstractRest
         $this->checkMaxSlots();
 
         // users won't be able to create an entry in the past
-        $this->isFutureOrExplode(DateTime::createFromFormat(DateTime::ATOM, $start));
+        $this->isFutureOrExplode(DateTime::createFromFormat(self::DATETIME_FORMAT, $start));
 
         // fix booking at midnight on monday not working. See #2765
         // we add a second so it works
@@ -338,8 +341,7 @@ final class Scheduler extends AbstractRest
         $this->isFutureOrExplode($new);
         $sql = 'UPDATE team_events SET ' . $column . ' = :new WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        // don't use 'c' here but a custom construct so the timezone is correctly registered
-        $req->bindValue(':new', $new->format('Y-m-d\TH:i:s') . date('P'));
+        $req->bindValue(':new', $new->format(self::DATETIME_FORMAT));
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         return $this->Db->execute($req);
@@ -395,8 +397,8 @@ final class Scheduler extends AbstractRest
     private function updateStart(array $delta): bool
     {
         $event = $this->readOne();
-        $oldStart = DateTime::createFromFormat(DateTime::ATOM, $event['start']);
-        $oldEnd = DateTime::createFromFormat(DateTime::ATOM, $event['end']);
+        $oldStart = DateTime::createFromFormat(self::DATETIME_FORMAT, $event['start']);
+        $oldEnd = DateTime::createFromFormat(self::DATETIME_FORMAT, $event['end']);
         $seconds = '0';
         if (strlen((string) $delta['milliseconds']) > 3) {
             $seconds = mb_substr((string) $delta['milliseconds'], 0, -3);
@@ -409,8 +411,8 @@ final class Scheduler extends AbstractRest
 
         $sql = 'UPDATE team_events SET start = :start, end = :end WHERE team = :team AND id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':start', $newStart->format('c'));
-        $req->bindValue(':end', $newEnd->format('c'));
+        $req->bindValue(':start', $newStart->format(self::DATETIME_FORMAT));
+        $req->bindValue(':end', $newEnd->format(self::DATETIME_FORMAT));
         $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
@@ -574,19 +576,24 @@ final class Scheduler extends AbstractRest
      */
     private function normalizeDate(string $date, bool $rmDay = false): string
     {
-        if (DateTime::createFromFormat(DateTime::ATOM, $date) === false) {
-            $dateOnly = DateTime::createFromFormat('Y-m-d', $date);
-            if ($dateOnly === false) {
+        $dateTime = DateTime::createFromFormat(DateTime::ATOM, $date);
+        if ($dateTime === false) {
+            // Try MySQL DATETIME already in correct format
+            $dateTime = DateTime::createFromFormat(self::DATETIME_FORMAT, $date);
+        }
+        if ($dateTime === false) {
+            // Try date only
+            $dateTime = DateTime::createFromFormat('Y-m-d', $date);
+            if ($dateTime === false) {
                 throw new ImproperActionException('Could not understand date format!');
             }
-            $dateOnly->setTime(0, 1);
+            $dateTime->setTime(0, 1);
             // we don't want the end date to go over one day
             if ($rmDay) {
-                $dateOnly->modify('-3min');
+                $dateTime->modify('-3min');
             }
-            return $dateOnly->format(DateTime::ATOM);
         }
-        return $date;
+        return $dateTime->format(self::DATETIME_FORMAT);
     }
 
     /**

@@ -43,6 +43,18 @@ class RevisionsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsInt($this->Revisions->create('Ohaiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii'));
     }
 
+    public function testCreateConstraints(): void
+    {
+        // Test revision creation logic for subsequent revisions
+        // First, create an initial revision to establish baseline
+        $firstRevisionId = $this->Revisions->create('Initial content for testing revision constraints');
+        $this->assertIsInt($firstRevisionId);
+        
+        // Small change, no time passed - should NOT create revision (both constraints fail)
+        $noRevisionId = $this->Revisions->create('Initial content for testing revision constraints modified');
+        $this->assertEquals(0, $noRevisionId, 'Small change with no time passed should not create revision');
+    }
+
     public function testReadAll(): void
     {
         $this->assertIsArray($this->Revisions->readAll());

@@ -47,7 +47,8 @@ final class Revisions extends AbstractRest
     {
         $this->Entity->canOrExplode('write');
 
-        if (!$this->satisfyDeltaConstraint($body) && !$this->satisfyTimeConstraint() && $this->readCount() > 0) {
+        // Always create the first revision, but for subsequent revisions check constraints
+        if ($this->readCount() > 0 && !$this->satisfyDeltaConstraint($body) && !$this->satisfyTimeConstraint()) {
             return 0;
         }
 

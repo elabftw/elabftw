@@ -164,12 +164,14 @@ final class RequestActions extends AbstractRest
         $req->bindValue(':action', $action->value, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->requester->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':entity_id', $this->entity->id, PDO::PARAM_INT);
-        $returnId = $this->Db->execute($req);
+        $res = $this->Db->execute($req);
 
-        $changelogValue = sprintf('Action done: %s by user with ID %d', $action->toHuman(), $this->requester->userData['userid']);
-        new Changelog($this->entity)->create(new ContentParams('action_done', $changelogValue));
+        if ($res && $req->rowCount() > 0) {
+            $changelogValue = sprintf('Action done: %s by user with ID %d', $action->toHuman(), $this->requester->userData['userid']);
+            new Changelog($this->entity)->create(new ContentParams('action_done', $changelogValue));
+        }
 
-        return $returnId;
+        return $res;
     }
 
     #[Override]

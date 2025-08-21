@@ -95,6 +95,17 @@ const FavTagC = new FavTag();
 const TodolistC = new Todolist();
 
 const TableSortingC = new TableSorting();
+// for searching inputs, allow specific triggers for East & South East Asian characters
+const hasEastSEAsian = (s: string): boolean => (
+  /\p{Script=Han}|\p{Script=Hiragana}|\p{Script=Katakana}|\p{Script=Hangul}|\p{Script=Thai}|\p{Script=Lao}|\p{Script=Khmer}|\p{Script=Myanmar}|\p{Script=Bopomofo}/u.test(s)
+);
+
+const countGraphemes = (text: string): number => {
+  // use Intl.Segmenter to handle locale-sensitive text segmentation (graphemes, sentences, etc.,)
+  const graphemeSegmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
+  return Array.from(graphemeSegmenter.segment(text)).length;
+};
+
 TableSortingC.init();
 (new Tab()).init(document.querySelector('.tabbed-menu'));
 
@@ -1153,15 +1164,20 @@ on('autocomplete', (el: HTMLElement) => {
     // this option is necessary or the autocomplete box will get lost under the permissions modal
     appendTo: el.dataset.identifier ? `#autocompleteAnchorDiv_${el.dataset.identifier}` : '',
     source: function(request: Record<string, string>, response: (data: Array<string>) => void): void {
-      if (request.term.length < 3) {
-        // TODO make it unselectable/grayed out or something, maybe once we use homegrown autocomplete
-        response([i18next.t('type-3-chars')]);
+      const term = (request.term || '').trim();
+      // for East/Southeast Asian terms, we allow search with 1 grapheme
+      const isShortScript = hasEastSEAsian(term);
+      const minChars = isShortScript ? 1 : 3;
+      if (countGraphemes(term) < minChars) {
+        const msg = isShortScript ? [] : [i18next.t('type-3-chars')];
+        response(msg);
         return;
+        // TODO make it unselectable/grayed out or something, maybe once we use homegrown autocomplete
       }
-      if (['experiments', 'items'].includes(el.dataset.completeTarget)) {
-        request.term = escapeExtendedQuery(request.term);
-      }
-      ApiC.getJson(`${el.dataset.target}/?q=${encodeURIComponent(request.term)}`).then(json => {
+      const queryTerm = ['experiments', 'items'].includes(el.dataset.completeTarget)
+        ? escapeExtendedQuery(term)
+        : term;
+      ApiC.getJson(`${el.dataset.target}/?q=${encodeURIComponent(queryTerm)}`).then(json => {
         response(json.map(entry => transformer(entry)));
       });
     },

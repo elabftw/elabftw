@@ -16,6 +16,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Storage;
 use League\Flysystem\FilesystemOperator;
 use PDO;
+use Symfony\Component\Console\Output\OutputInterface;
 
 use function count;
 
@@ -26,7 +27,7 @@ final class UploadsMigrator
 {
     private Db $Db;
 
-    public function __construct(private FilesystemOperator $sourceFs, private FilesystemOperator $targetFs)
+    public function __construct(private OutputInterface $output, private FilesystemOperator $sourceFs, private FilesystemOperator $targetFs)
     {
         $this->Db = Db::getConnection();
     }
@@ -39,6 +40,7 @@ final class UploadsMigrator
 
         $localFiles = $this->findLocal();
         foreach ($localFiles as $upload) {
+            $this->output->writeln(sprintf('↑ Uploading %s (%d bytes) ID: %d', $upload['real_name'], $upload['filesize'], $upload['id']));
             $this->targetFs->writeStream($upload['long_name'], $this->sourceFs->readStream($upload['long_name']));
             // also upload the thumbnail if it exists
             if ($this->sourceFs->fileExists($upload['long_name'] . '_th.jpg')) {
@@ -54,11 +56,14 @@ final class UploadsMigrator
     {
         $this->fixBody('experiments');
         $this->fixBody('items');
+        $this->fixBody('experiments_templates');
+        $this->fixBody('items_types');
     }
 
     private function fixBody(string $table): bool
     {
-        $sql = sprintf('UPDATE %s SET body = REPLACE(body, "storage=%d", "storage=%d")', $table, Storage::LOCAL->value, Storage::S3->value);
+        // explicitely set the modified_at to the same value so we do not impact it with this command
+        $sql = sprintf('UPDATE %s SET body = REPLACE(body, "storage=%d", "storage=%d"), modified_at = modified_at', $table, Storage::LOCAL->value, Storage::S3->value);
         $req = $this->Db->prepare($sql);
         return $this->Db->execute($req);
     }
@@ -68,7 +73,7 @@ final class UploadsMigrator
      */
     private function findLocal(): array
     {
-        $sql = 'SELECT long_name, id FROM uploads WHERE storage = :storage';
+        $sql = 'SELECT long_name, id, filesize, real_name FROM uploads WHERE storage = :storage';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':storage', Storage::LOCAL->value);
         $this->Db->execute($req);

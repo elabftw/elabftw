@@ -12,7 +12,10 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\EntityType;
+use Elabftw\Enums\State;
 use Elabftw\Models\Users\Users;
+use Elabftw\Params\DisplayParams;
 
 class TemplatesTest extends \PHPUnit\Framework\TestCase
 {
@@ -32,6 +35,16 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
     {
         $this->Templates->setId(1);
         $this->assertIsArray($this->Templates->readOne());
+    }
+
+    public function testReadAllSimpleReturnsActiveOnly(): void
+    {
+        $DisplayParams = new DisplayParams(new Users(1, 1), EntityType::Experiments);
+        $templates = $this->Templates->readAllSimple($DisplayParams);
+        foreach ($templates as $template) {
+            $this->assertIsArray($template);
+            $this->assertEquals(State::Normal->value, $template['state']);
+        }
     }
 
     public function testDuplicate(): void

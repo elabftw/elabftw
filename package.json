@@ -49,7 +49,7 @@
     "jquery": "^3.7.1",
     "jquery-ui": "^1.14.1",
     "jsoneditor": "^10.3.0",
-    "ketcher-core": "^3.0.1",
+    "ketcher-core": "^3.4.0",
     "ketcher-react": "^3.0.1",
     "lodash-es": "^4.17.21",
     "luxon": "^3.7.1",

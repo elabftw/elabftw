@@ -37,3 +37,7 @@ tests/elabftw-user.env
 /todo
 /ideas
 .yarn
+
+# Node.js dependencies
+node_modules/
+package-lock.json

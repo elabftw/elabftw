@@ -12,5 +12,10 @@ declare namespace Cypress {
      * Sends necessary headers to get codecoverage via codeceptions c3.php.
      */
     enableCodeCoverage(testFile: string): void;
+    /**
+     * Get an experiment ID, creating one if none exists
+     * @return experiment ID
+     */
+    getExperimentId(): Cypress.Chainable<number>;
   }
 }

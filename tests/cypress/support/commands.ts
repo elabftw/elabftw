@@ -76,11 +76,12 @@ Cypress.Commands.add('getExperimentId', () => {
 
           // The Location header may include ports and full paths, e.g. https://elab.local:3148/api/v2/experiments/17
           // Split the URL by '/' and take the last segment as the ID
-          const segments = locationHeader.split('/');
+          const locationHeaderStr = Array.isArray(locationHeader) ? locationHeader[0] : locationHeader;
+          const segments = locationHeaderStr.split('/');
           const idSegment = segments.pop();
           const id = idSegment && !isNaN(Number(idSegment)) ? Number(idSegment) : null;
           if (id === null) {
-            throw new Error(`Cannot parse experiment ID from Location header: ${locationHeader}`);
+            throw new Error(`Cannot parse experiment ID from Location header: ${locationHeaderStr}`);
           }
           return id;
         });

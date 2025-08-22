@@ -66,7 +66,6 @@ final class Local implements AuthInterface
     {
         $this->preventBruteForce();
 
-
         // if local_login is disabled, only a sysadmin can login if local_login_hidden_only_sysadmin is set
         if (!$this->isDisplayed && $this->result['is_sysadmin'] === 0 && $this->isOnlySysadminWhenHidden) {
             throw new ImproperActionException(_('Only a Sysadmin account can use local authentication when it is hidden.'));

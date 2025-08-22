@@ -41,6 +41,7 @@ final class MigrateUploads extends Command
             '=================',
         ));
         $migrator = new UploadsMigrator(
+            $output,
             Storage::LOCAL->getStorage()->getFs(),
             Storage::S3->getStorage()->getFs(),
         );

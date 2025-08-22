@@ -186,10 +186,28 @@ abstract class AbstractEntity extends AbstractRest
             contentType: BodyContentType::from($template['content_type']),
         );
         $tags = array_column($TemplateType->Tags->readAll(), 'tag');
-        $this->ItemsLinks->duplicate($templateId, $id, true);
-        $this->ExperimentsLinks->duplicate($templateId, $id, true);
+        
+        // Copy links from template to new entity
+        // Read the template's links and create corresponding links for the new entity
+        $templateItemsLinks = $TemplateType->ItemsLinks->readAll();
+        foreach ($templateItemsLinks as $link) {
+            $this->ItemsLinks->setId($link['entityid']);
+            $this->ItemsLinks->create();
+        }
+        
+        $templateExperimentsLinks = $TemplateType->ExperimentsLinks->readAll();
+        foreach ($templateExperimentsLinks as $link) {
+            $this->ExperimentsLinks->setId($link['entityid']);
+            $this->ExperimentsLinks->create();
+        }
+        
         $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
-        $CompoundsLinks->duplicate($templateId, $id, fromItemsTypes: true);
+        $templateCompoundsLinks = LinksFactory::getCompoundsLinks($TemplateType);
+        $templateCompoundsArray = $templateCompoundsLinks->readAll();
+        foreach ($templateCompoundsArray as $link) {
+            $CompoundsLinks->setId($link['entityid']);
+            $CompoundsLinks->create();
+        }
         $this->Steps->duplicate($templateId, $id, true);
         $freshSelf = new $this($this->Users, $id);
         $TemplateType->Uploads->duplicate($freshSelf);

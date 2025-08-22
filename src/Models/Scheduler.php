@@ -183,7 +183,7 @@ final class Scheduler extends AbstractRest
                 CONCAT('[', items.title, '] ', team_events.title, ' (', u.firstname, ' ', u.lastname, ')') AS title,
                 items.title AS item_title,
                 items.book_is_cancellable,
-                CONCAT('#', items_types.color) AS color,
+                CONCAT('#', items_categories.color) AS color,
                 team_events.experiment,
                 items.category AS items_category,
                 items.id AS items_id,
@@ -194,7 +194,7 @@ final class Scheduler extends AbstractRest
             LEFT JOIN experiments ON (team_events.experiment = experiments.id)
             LEFT JOIN items ON (team_events.item = items.id)
             LEFT JOIN items AS items_linkt ON (team_events.item_link = items_linkt.id)
-            LEFT JOIN items_types ON (items.category = items_types.id)
+            LEFT JOIN items_categories ON (items.category = items_categories.id)
             LEFT JOIN users AS u ON (team_events.userid = u.userid)
             LEFT JOIN users2teams ON (users2teams.users_id = items.userid AND users2teams.teams_id = :team)
             WHERE 1 = 1
@@ -305,7 +305,7 @@ final class Scheduler extends AbstractRest
         $sql = "SELECT team_events.*,
             CONCAT(team_events.title, ' (', u.firstname, ' ', u.lastname, ') ', COALESCE(experiments.title, '')) AS title,
             team_events.title AS title_only,
-            CONCAT('#', items_types.color) AS color,
+            CONCAT('#', items_categories.color) AS color,
             experiments.title AS experiment_title,
             items_linkt.title AS item_link_title,
             items.title AS item_title, items.book_is_cancellable
@@ -313,7 +313,7 @@ final class Scheduler extends AbstractRest
             LEFT JOIN items ON (team_events.item = items.id)
             LEFT JOIN items AS items_linkt ON (team_events.item_link = items_linkt.id)
             LEFT JOIN experiments ON (experiments.id = team_events.experiment)
-            LEFT JOIN items_types ON (items.category = items_types.id)
+            LEFT JOIN items_categories ON (items.category = items_categories.id)
             LEFT JOIN users AS u ON team_events.userid = u.userid
             WHERE team_events.item = :item
                 AND team_events.start <= :end

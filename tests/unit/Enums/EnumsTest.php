@@ -71,4 +71,10 @@ class EnumsTest extends \PHPUnit\Framework\TestCase
         $this->expectException(ImproperActionException::class);
         $this->assertIsArray(ApiSubModels::validSubModelsForEndpoint(ApiEndpoint::Info));
     }
+
+    public function testMessages(): void
+    {
+        $this->assertSame(500, Messages::CriticalError->toHttpCode());
+        $this->assertSame(403, Messages::DemoMode->toHttpCode());
+    }
 }

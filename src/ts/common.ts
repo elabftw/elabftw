@@ -123,14 +123,6 @@ if (userPrefs.scDisabled === '0') {
   kbd.init();
 }
 
-// this lives outside of #container, so add their own click listener
-document.getElementById('sidepanel-buttons')?.addEventListener('click', event => {
-  const el = (event.target as HTMLElement);
-  if (el.matches('[data-action="toggle-sidepanel"]')) {
-    const SidePanelC = el.dataset.sidepanel === Model.FavTag ? FavTagC : TodolistC;
-    SidePanelC.toggle();
-  }
-});
 // SIDE PANEL STATE
 const openedSidePanel = localStorage.getItem('opened-sidepanel');
 if (openedSidePanel === Model.FavTag) {
@@ -536,9 +528,12 @@ on('scroll-top', () => {
   });
 });
 
-on('close-sidepanel', (el: HTMLElement) => {
+on('toggle-sidepanel', (el: HTMLElement) => {
   const SidePanelC = el.dataset.sidepanel === Model.FavTag ? FavTagC : TodolistC;
-  SidePanelC.hide();
+  if (el.dataset.purpose === 'hide') {
+    return SidePanelC.hide();
+  }
+  SidePanelC.toggle();
 });
 
 on('toggle-pin', (el: HTMLElement) => {

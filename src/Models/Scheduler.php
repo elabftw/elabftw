@@ -528,11 +528,11 @@ final class Scheduler extends AbstractRest
     {
         [$startDate, $endDate] = $this->createFromFormat($start, $end);
         if ($endDate < $startDate) {
-            throw new UnprocessableContentException(_(sprintf(
-                'End time %s cannot be inferior to start time %s.',
+            throw new UnprocessableContentException(sprintf(
+                _('End time %s cannot be before start time %s.'),
                 $endDate->format(self::DATETIME_FORMAT),
                 $startDate->format(self::DATETIME_FORMAT)
-            )));
+            ));
         }
     }
 
@@ -602,7 +602,7 @@ final class Scheduler extends AbstractRest
         $this->isFutureOrExplode($startDate);
     }
 
-    // Date can be 'Y-m-d' or 'Y-m-d H:i:s' (MySQL compatible)
+    // Date can be DateTime::ATOM, 'Y-m-d H:i:s' (MySQL DATETIME), or 'Y-m-d' (date-only)
     private function normalizeDate(string $date, bool $rmDay = false): string
     {
         $dateTime = DateTimeImmutable::createFromFormat(DateTime::ATOM, $date);

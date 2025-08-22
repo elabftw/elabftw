@@ -82,7 +82,6 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         return $id;
     }
 
-
     public function testPostActionWithNegativeTimeSlots(): void
     {
         $this->expectException(UnprocessableContentException::class);

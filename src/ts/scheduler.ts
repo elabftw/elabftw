@@ -358,10 +358,15 @@ if (window.location.pathname === '/scheduler.php') {
           return;
         }
         // Note: valueAsDate was not working on Chromium
-        const dt = DateTime.fromMillis(input.valueAsNumber);
+        const dt = DateTime.fromISO(input.value, { zone: 'system' });
+        if (!dt.isValid) {
+          notify.error('Invalid date/time value.');
+          if (originalValue) input.value = originalValue;
+          return;
+        }
         ApiC.patch(`event/${input.dataset.eventid}`, {'target': input.dataset.what, 'epoch': String(dt.toUnixInteger())})
+          .then(() => calendar.refetchEvents())
           .catch((err) => notify.error(err));
-        calendar.refetchEvents();
       });
     });
 

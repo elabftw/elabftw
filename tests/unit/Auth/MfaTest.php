@@ -11,28 +11,27 @@ declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
+use Elabftw\Exceptions\InvalidMfaCodeException;
 use Elabftw\Services\MfaHelper;
-use RuntimeException;
 
 class MfaTest extends \PHPUnit\Framework\TestCase
 {
     public function testTryAuthWithInvalidCode(): void
     {
-        $MfaHelper = new MfaHelper(1);
-        $AuthService = new Mfa($MfaHelper, '12');
-        $this->expectException(RuntimeException::class);
+        $MfaHelper = new MfaHelper();
+        $AuthService = new Mfa($MfaHelper, 1, '12');
+        $this->expectException(InvalidMfaCodeException::class);
         $AuthService->tryAuth();
     }
 
     public function testTryAuthWithValidCode(): void
     {
-        $secret = (new MfaHelper(1))->generateSecret();
-        $MfaHelper = new MfaHelper(1, $secret);
+        $MfaHelper = new MfaHelper();
         $code = $MfaHelper->getCode();
-        $AuthService = new Mfa($MfaHelper, $code);
+        $AuthService = new Mfa($MfaHelper, 1, $code);
         $authResponse = $AuthService->tryAuth();
-        $this->assertTrue($authResponse->hasVerifiedMfa);
-        $this->assertEquals(1, $authResponse->userid);
-        $this->assertEquals(1, $authResponse->selectedTeam);
+        $this->assertTrue($authResponse->hasVerifiedMfa());
+        $this->assertEquals(1, $authResponse->getAuthUserid());
+        $this->assertEquals(1, $authResponse->getSelectedTeam());
     }
 }

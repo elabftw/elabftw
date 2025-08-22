@@ -14,13 +14,13 @@ namespace Elabftw\Auth;
 
 use DateTimeImmutable;
 use Defuse\Crypto\Key;
-use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Env;
 use Elabftw\Enums\Messages;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthInterface;
+use Elabftw\Interfaces\AuthResponseInterface;
 use Elabftw\Models\Users\ExistingUser;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users\Users;
@@ -51,7 +51,7 @@ final class Saml implements AuthInterface
 
     private const string UNKNOWN_VALUE = 'Unknown';
 
-    private AuthResponse $AuthResponse;
+    private AuthResponseInterface $AuthResponse;
 
     private array $samlUserdata = array();
 
@@ -124,7 +124,7 @@ final class Saml implements AuthInterface
     }
 
     #[Override]
-    public function tryAuth(): AuthResponse
+    public function tryAuth(): AuthResponseInterface
     {
         $returnUrl = $this->settings['baseurl'] . '/index.php?acs';
         // adding stay: true to login() will make psalm/phpstan happy but breaks saml auth
@@ -134,7 +134,7 @@ final class Saml implements AuthInterface
         return $this->AuthResponse; // @phpstan-ignore-line
     }
 
-    public function assertIdpResponse(): AuthResponse
+    public function assertIdpResponse(): AuthResponseInterface
     {
         $this->SamlAuthLib->processResponse();
         $errors = $this->SamlAuthLib->getErrors();
@@ -168,22 +168,20 @@ final class Saml implements AuthInterface
         // GET POPULATED USERS OBJECT
         $Users = $this->getUsers($email, $orgid);
         if (!$Users instanceof Users) {
-            $this->AuthResponse->userid = 0;
-            $this->AuthResponse->initTeamRequired = true;
-            $this->AuthResponse->initTeamUserInfo = array(
+            $this->AuthResponse->setAuthenticatedUserid(0);
+            $this->AuthResponse->setInitTeamRequired(true);
+            $this->AuthResponse->setInitTeamInfo(array(
                 'email' => $email,
                 'firstname' => $this->getName(),
                 'lastname' => $this->getName(true),
                 'orgid' => $orgid,
-            );
+            ));
             return $this->AuthResponse;
         }
 
         $userid = $Users->userData['userid'];
 
-        $this->AuthResponse->userid = $userid;
-        $this->AuthResponse->mfaSecret = $Users->userData['mfa_secret'];
-        $this->AuthResponse->isValidated = (bool) $Users->userData['validated'];
+        $this->AuthResponse->setAuthenticatedUserid($userid);
 
         // synchronize the teams from the IDP
         // because teams can change since the time the user was created
@@ -204,7 +202,7 @@ final class Saml implements AuthInterface
         }
 
         // load the teams from db
-        $UsersHelper = new UsersHelper($this->AuthResponse->userid);
+        $UsersHelper = new UsersHelper($this->AuthResponse->getAuthUserid());
         $this->AuthResponse->setTeams($UsersHelper);
 
         return $this->AuthResponse;

@@ -13,16 +13,15 @@ declare(strict_types=1);
 namespace Elabftw\Auth;
 
 use DateTimeImmutable;
-use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Db;
-use Elabftw\Enums\EnforceMfa;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\QuantumException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
+use Elabftw\Interfaces\AuthResponseInterface;
 use Elabftw\Models\Users\ExistingUser;
-use Elabftw\Models\Users\Users;
 use Elabftw\Services\Filter;
 use Elabftw\Services\UsersHelper;
 use PDO;
@@ -42,7 +41,7 @@ final class Local implements AuthInterface
 
     private int $userid;
 
-    private AuthResponse $AuthResponse;
+    private array $result;
 
     public function __construct(
         private string $email,
@@ -60,35 +59,29 @@ final class Local implements AuthInterface
         $this->Db = Db::getConnection();
         $this->email = Filter::sanitizeEmail($email);
         $this->userid = $this->getUseridFromEmail();
-        $this->AuthResponse = new AuthResponse();
+        $this->result = $this->fetchFromDb();
     }
 
     #[Override]
-    public function tryAuth(): AuthResponse
+    public function tryAuth(): AuthResponseInterface
     {
         $this->preventBruteForce();
 
-        $sql = 'SELECT is_sysadmin, password_hash, mfa_secret, validated, password_modified_at FROM users WHERE userid = :userid;';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $res = $req->fetch();
-
         // if local_login is disabled, only a sysadmin can login if local_login_hidden_only_sysadmin is set
-        if (!$this->isDisplayed && $res['is_sysadmin'] === 0 && $this->isOnlySysadminWhenHidden) {
-            throw new ImproperActionException(_('Only a Sysadmin account can use local authentication when it is hidden.'));
+        if (!$this->isDisplayed && $this->result['is_sysadmin'] === 0 && $this->isOnlySysadminWhenHidden) {
+            throw new IllegalActionException(_('Only a Sysadmin account can use local authentication when it is hidden.'));
         }
         // there is also a setting that only allows sysadmins to login
-        if ($this->isOnlySysadmin && $res['is_sysadmin'] === 0) {
+        if ($this->isOnlySysadmin && $this->result['is_sysadmin'] === 0) {
             throw new ImproperActionException(_('Only a Sysadmin account can use local authentication.'));
         }
 
         // verify password
-        if (password_verify($this->password, $res['password_hash']) !== true) {
+        if (password_verify($this->password, $this->result['password_hash']) !== true) {
             throw new InvalidCredentialsException($this->userid);
         }
         // check if it needs rehash (new algo)
-        if (password_needs_rehash($res['password_hash'], PASSWORD_DEFAULT)) {
+        if (password_needs_rehash($this->result['password_hash'], PASSWORD_DEFAULT)) {
             $passwordHash = password_hash($this->password, PASSWORD_DEFAULT);
             $sql = 'UPDATE users SET password_hash = :password_hash WHERE userid = :userid';
             $req = $this->Db->prepare($sql);
@@ -96,55 +89,33 @@ final class Local implements AuthInterface
             $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
             $this->Db->execute($req);
         }
+
+        // TODO maybe auth class shouldn't have the responsibility of setting the teams, we can do that in the controller
+        return new AuthResponse()
+            ->setAuthenticatedUserid($this->userid)
+            ->setTeams(new UsersHelper($this->userid));
+    }
+
+    public function mustRenewPassword(): bool
+    {
         // check if last password modification date was too long ago and require changing it if yes
         if ($this->maxPasswordAgeDays > 0) {
-            $modifiedAt = new DateTimeImmutable($res['password_modified_at']);
+            $modifiedAt = new DateTimeImmutable($this->result['password_modified_at']);
             $now = new DateTimeImmutable();
             $diff = $now->diff($modifiedAt);
             $daysDifference = (int) $diff->format('%a');
-            $this->AuthResponse->mustRenewPassword = $daysDifference > $this->maxPasswordAgeDays;
+            return $daysDifference > $this->maxPasswordAgeDays;
         }
-
-        $this->AuthResponse->userid = $this->userid;
-        $this->AuthResponse->mfaSecret = $res['mfa_secret'];
-        $this->AuthResponse->isValidated = (bool) $res['validated'];
-        $UsersHelper = new UsersHelper($this->AuthResponse->userid);
-        $this->AuthResponse->setTeams($UsersHelper);
-        return $this->AuthResponse;
+        return false;
     }
 
-    /**
-     * Enforce MFA for user if there is no secret stored?
-     */
-    public static function enforceMfa(
-        AuthResponse $AuthResponse,
-        int $enforceMfa
-    ): bool {
-        return !$AuthResponse->mfaSecret
-            && self::isMfaEnforced(
-                $AuthResponse->userid,
-                $enforceMfa,
-            );
-    }
-
-    /**
-     * Is MFA enforced for a given user (SysAdmin or Everyone)?
-     */
-    public static function isMfaEnforced(int $userid, int $enforceMfa): bool
+    private function fetchFromDb(): array
     {
-        $EnforceMfaSetting = EnforceMfa::tryFrom($enforceMfa);
-        $Users = new Users($userid);
-
-        switch ($EnforceMfaSetting) {
-            case EnforceMfa::Everyone:
-                return true;
-            case EnforceMfa::SysAdmins:
-                return $Users->userData['is_sysadmin'] === 1;
-            case EnforceMfa::Admins:
-                return $Users->isAdminSomewhere();
-            default:
-                return false;
-        }
+        $sql = 'SELECT is_sysadmin, password_hash, validated, password_modified_at FROM users WHERE userid = :userid;';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return $req->fetch();
     }
 
     private function preventBruteForce(): void

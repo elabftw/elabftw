@@ -14,6 +14,8 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
 
+use function putenv;
+
 class EnvTest extends \PHPUnit\Framework\TestCase
 {
     public function testAsString(): void
@@ -33,7 +35,21 @@ class EnvTest extends \PHPUnit\Framework\TestCase
 
     public function testAsUrl(): void
     {
+        // an URL with an _ in it isn't "per spec" but we want to allow it
+        $url = 'http://chem-plugin_demo.elabftw.net/';
+        putenv(sprintf('TEST_URL=%s', $url));
+        $this->assertSame($url, Env::asUrl('TEST_URL'));
         $this->expectException(ImproperActionException::class);
-        Env::asUrl('FINGERPRINTER_URL');
+        putenv('INVALID_URL=!');
+        Env::asUrl('INVALID_URL');
+    }
+
+    // for context, see: #5866
+    public function testAsUrlWithSpace(): void
+    {
+        $url = 'https://elab.example.com:3148';
+        // note the space before the value
+        putenv(sprintf('TEST_URL= %s', $url));
+        $this->assertSame($url, Env::asUrl('TEST_URL'));
     }
 }

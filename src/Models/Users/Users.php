@@ -42,7 +42,6 @@ use Elabftw\Models\Users2Teams;
 use Elabftw\Params\UserParams;
 use Elabftw\Services\EmailValidator;
 use Elabftw\Services\Filter;
-use Elabftw\Services\MfaHelper;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\UserCreator;
 use Elabftw\Services\UsersHelper;
@@ -436,6 +435,9 @@ class Users extends AbstractRest
                     }
                     $Config = Config::getConfig();
                     foreach ($params as $target => $content) {
+                        if ($target === 'mfa_secret') {
+                            throw new ImproperActionException('Cannot update MFA secret through PATCH');
+                        }
                         // prevent modification of identity fields if we are not sysadmin
                         if (in_array($target, array('email', 'firstname', 'lastname', 'orgid'), true)
                             && $Config->configArr['allow_users_change_identity'] === '0'
@@ -625,32 +627,10 @@ class Users extends AbstractRest
         return $res;
     }
 
-    protected static function search(string $column, string $term, bool $validated = false): self
-    {
-        $Db = Db::getConnection();
-        $sql = sprintf(
-            'SELECT userid FROM users WHERE %s = :term %s LIMIT 1',
-            $column === 'orgid'
-                ? 'orgid'
-                : 'email',
-            $validated
-                ? 'AND validated = 1'
-                : '',
-        );
-        $req = $Db->prepare($sql);
-        $req->bindParam(':term', $term);
-        $Db->execute($req);
-        $res = (int) $req->fetchColumn();
-        if ($res === 0) {
-            throw new ResourceNotFoundException();
-        }
-        return new self($res);
-    }
-
     /**
      * Read all the columns (including sensitive ones) of the current user
      */
-    protected function readOneFull(): array
+    public function readOneFull(): array
     {
         $sql = "SELECT u.*, sig_keys.privkey AS sig_privkey, sig_keys.pubkey AS sig_pubkey,
             CONCAT(u.firstname, ' ', u.lastname) AS fullname,
@@ -703,11 +683,33 @@ class Users extends AbstractRest
         return $this->userData;
     }
 
+    protected static function search(string $column, string $term, bool $validated = false): self
+    {
+        $Db = Db::getConnection();
+        $sql = sprintf(
+            'SELECT userid FROM users WHERE %s = :term %s LIMIT 1',
+            $column === 'orgid'
+                ? 'orgid'
+                : 'email',
+            $validated
+                ? 'AND validated = 1'
+                : '',
+        );
+        $req = $Db->prepare($sql);
+        $req->bindParam(':term', $term);
+        $Db->execute($req);
+        $res = (int) $req->fetchColumn();
+        if ($res === 0) {
+            throw new ResourceNotFoundException();
+        }
+        return new self($res);
+    }
+
     private function disable2fa(): array
     {
         // only sysadmin or same user can disable 2fa
         if ($this->requester->userData['userid'] === $this->userData['userid'] || $this->requester->userData['is_sysadmin'] === 1) {
-            (new MfaHelper($this->userData['userid']))->removeSecret();
+            $this->update(new UserParams('mfa_secret', null));
             return $this->readOne();
         }
         throw new IllegalActionException('User tried to disable 2fa but is not sysadmin or same user.');

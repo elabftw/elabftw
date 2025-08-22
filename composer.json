@@ -52,7 +52,8 @@
     "guzzlehttp/psr7": "^2.6",
     "psr/http-message": "^2.0",
     "psr/log": "^3.0",
-    "setasign/fpdi": "^2.6"
+    "setasign/fpdi": "^2.6",
+    "symfony/validator": "^7.3"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",

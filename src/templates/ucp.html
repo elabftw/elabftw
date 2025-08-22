@@ -299,10 +299,9 @@
 {# TAB 2 - USER INFORMATION #}
 <div data-tabcontent='2' hidden>
   <form class='form-group' method='post' action='app/controllers/UcpController.php' aria-label='{{ 'User information'|trans }}'>
-    <input type='hidden' name='origin' value='ucp_tab_2' />
     {{ App.Session.get('csrf')|csrf }}
     {# only show the email/password fields for locally authenticated users #}
-    {% if App.Users.userData.auth_service == constant('Elabftw\\Controllers\\LoginController::AUTH_LOCAL') %}
+    {% if isLocalAuth %}
 
     <div class='pl-3 mb-5'>
       <div class='d-flex justify-content-between'>
@@ -335,25 +334,61 @@
         </div>
       </div>
     </div>
+    <div class='mt-4 mb-2 text-center'>
+      <button type='submit' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+    </div>
     {% endif %}
 
-    {# only show MFA setting if not enforced #}
-    {% if showMFA %}
-      <h2 class='p-2 pl-3 section-title'>{{ 'Two Factor Authentication'|trans }}</h2>
-      <div class='pl-3 mt-2 mb-5'>
-        <div class='d-flex justify-content-between'>
-          <label for='use_mfa' class='col-form-label'>{{ 'Use two-factor authentication?'|trans }}</label>
-          <select class='form-control col-md-3' autocomplete='off' name='use_mfa' id='use_mfa'>
-            <option value='on' {{- App.Users.userData.mfa_secret ? ' selected' }}>{{ 'Yes'|trans }}</option>
-            <option value='off' {{- not App.Users.userData.mfa_secret ? ' selected' }}>{{ 'No'|trans }}</option>
-          </select>
+    <h2 class='p-2 pl-3 section-title'>{{ 'Two-factor Authentication'|trans }}</h2>
+    <div class='pl-3 mt-2 mb-5' id='ucp-mfa'>
+      {% if App.Users.userData.mfa_secret %}
+        <p>{{ 'Two-factor authentication is enabled for your account.'|trans }}</p>
+        <button type='button' data-action='disable-mfa' class='btn btn-secondary btn-sm'>{{ 'Disable two-factor authentication'|trans }}</button>
+
+      {% else %}
+        <p class='text-muted'>{{ 'Enable two factor authentication for your account to increase its security. %sSee documentation%s.'|trans|format("<a class='external-link' target='_blank' rel='noopener' href='https://doc.elabftw.net/user-guide.html#what-is-two-factor-authentication'>", "</a>")|raw }}</p>
+        <div class='mx-auto text-center'>
+          <button type='button' data-action='toggle-next' data-toggle-target='mfaQrcodeDiv' class='btn btn-primary'>{{ 'Setup second factor'|trans }}</button>
+        <div id='mfaQrcodeDiv' class='mt-2' hidden>
+          <div class='mb-2'>
+            <img alt='mfa-qrcode' src='{{ mfaQRCodeImageDataUri|raw }}' />
+          </div>
+          <button type='button' class='btn btn-sm btn-secondary' data-action='toggle-next'>{{ 'Display secret for manual setup'|trans }}</button>
+          <div class='col-md-3 mx-auto mt-2' hidden>
+            <div class='input-group'>
+              <div class='input-group-prepend'>
+                <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-outline-secondary' type='button' data-action='copy-to-clipboard' data-target='mfa_secret'><i class='fas fa-clone'></i></button>
+              </div>
+              <input class='form-control text-center' value='{{ mfaNewSecret|formatMfaSecret }}' id='mfa_secret' disabled readonly />
+            </div>
+          </div>
+          <div class='col-md-3 mx-auto my-4'>
+            <span class='border rounded p-2'><i class='fas fa-1'></i></span>
+            {{ 'Open your authenticator application'|trans }}
+          </div>
+          <div class='col-md-3 mx-auto form-group'>
+            <p class='form-text'>
+              <span class='border rounded p-2'><i class='fas fa-2'></i></span>
+              {{ 'Scan the QR code with the application'|trans }}
+            </p>
+          </div>
+          <div class='col-md-3 mx-auto form-group'>
+            <p id='mfaCodeLabel' class='form-text'>
+              <span class='border rounded p-2'><i class='fas fa-3'></i></span>
+              {{ 'Enter the 6 digits displayed on your phone'|trans }}
+            </p>
+          </div>
+          <div class='mx-auto text-center col-md-3 mb-4'>
+            <input class='form-control text-center increased-spacing' id='mfa_code' name='mfa_code' type='text' pattern='[0-9]{6}' maxlength=6 aria-describedby='mfaCodeLabel' data-focus='1' inputmode='numeric' autocomplete='one-time-code' />
+            <input type='hidden' name='mfa_secret' value='{{ mfaNewSecret }}'>
+          </div>
+          <div class='mt-4 text-center'>
+            <button type='submit' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+          </div>
         </div>
       </div>
     {% endif %}
-    <div class='mt-4 text-center'>
-      <button type='submit' class='btn btn-primary'>{{ 'Save'|trans }}</button>
-    </div>
-  </form>
+  </div>
 
   <hr>
   <h2 class='p-2 pl-3 section-title'>{{ 'Your identity'|trans }}</h2>

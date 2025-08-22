@@ -12,10 +12,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
-use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Exceptions\QuantumException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
+use Elabftw\Interfaces\AuthResponseInterface;
 use Elabftw\Models\Users\ExistingUser;
 use Elabftw\Services\UsersHelper;
 use Override;
@@ -43,13 +43,13 @@ final class Demo implements AuthInterface
     }
 
     #[Override]
-    public function tryAuth(): AuthResponse
+    public function tryAuth(): AuthResponseInterface
     {
-        $AuthResponse = new AuthResponse();
-        $AuthResponse->userid = $this->getUseridFromEmail();
-        $AuthResponse->isValidated = true;
-        $UsersHelper = new UsersHelper($AuthResponse->userid);
-        return $AuthResponse->setTeams($UsersHelper);
+        $userid = $this->getUseridFromEmail();
+        $UsersHelper = new UsersHelper($userid);
+        return new AuthResponse()
+            ->setAuthenticatedUserid($userid)
+            ->setTeams($UsersHelper);
     }
 
     private function validateEmail(string $email): string

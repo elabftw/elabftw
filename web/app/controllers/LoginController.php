@@ -20,6 +20,7 @@ use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\InvalidDeviceTokenException;
 use Elabftw\Exceptions\InvalidMfaCodeException;
 use Elabftw\Exceptions\QuantumException;
+use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\AuthFail;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -34,7 +35,7 @@ $location = '/login.php';
 $Response = new RedirectResponse($location);
 
 try {
-    $Response = new LoginController($App->Config, $App->Request, $App->Session, $App->Log, $App->Users, $App->demoMode)->getResponse();
+    $Response = new LoginController($App->Config->configArr, $App->Request, $App->Session, $App->demoMode)->getResponse();
 } catch (QuantumException | InvalidCredentialsException | InvalidMfaCodeException $e) {
     $loginTries = (int) $App->Config->configArr['login_tries'];
     $AuthFail = new AuthFail($loginTries, $e->getCode(), $App->Request->cookies->getAlnum('devicetoken'));
@@ -43,7 +44,7 @@ try {
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('ip' => $App->Request->server->get('REMOTE_ADDR')), array('IllegalAction' => $e)));
     $App->Session->getFlashBag()->add('ko', Messages::InsufficientPermissions->toHuman());
-} catch (ImproperActionException | InvalidDeviceTokenException $e) {
+} catch (ImproperActionException | InvalidDeviceTokenException | UnauthorizedException $e) {
     // show message to user
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
 } catch (DatabaseErrorException $e) {

@@ -35,8 +35,9 @@ class RequestActionsTest extends \PHPUnit\Framework\TestCase
 
     public function testPostAction(): void
     {
+        $targetUser = $this->getUserInTeam(2);
         $reqBody = array(
-            'target_userid' => 2,
+            'target_userid' => $targetUser->userid,
             'target_action' => RequestableAction::Archive->value,
         );
         $newRequestActionId = $this->RequestActions->postAction(
@@ -60,7 +61,33 @@ class RequestActionsTest extends \PHPUnit\Framework\TestCase
 
     public function testReadAllFull(): void
     {
+        $reqBody = array(
+            'target_userid' => 2,
+            'target_action' => RequestableAction::Archive->value,
+        );
+        $this->RequestActions->postAction(
+            Action::Create,
+            $reqBody,
+        );
         $this->assertIsArray($this->RequestActions->readAllFull());
+    }
+
+    public function testRemove(): void
+    {
+        $targetUser = $this->getUserInTeam(2);
+        $reqBody = array(
+            'target_userid' => $targetUser->userid,
+            'target_action' => RequestableAction::Archive->value,
+        );
+        $this->RequestActions->postAction(
+            Action::Create,
+            $reqBody,
+        );
+        $this->assertCount(1, $this->RequestActions->readAll());
+        // do the action
+        $RequestActions = new RequestActions($targetUser, $this->Experiments);
+        $RequestActions->remove(RequestableAction::Archive);
+        $this->assertEmpty($this->RequestActions->readAll());
     }
 
     public function testReadOne(): void

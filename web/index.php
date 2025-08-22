@@ -25,6 +25,8 @@ use OneLogin\Saml2\Settings as SamlSettings;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
+use function json_encode;
+
 require_once 'app/init.inc.php';
 
 $Response = new Response();
@@ -80,7 +82,7 @@ try {
             // if the user is in several teams, we need to redirect to the team selection
         } elseif ($AuthResponse->isInSeveralTeams) {
             $App->Session->set('team_selection_required', true);
-            $App->Session->set('team_selection', $AuthResponse->selectableTeams);
+            $App->Session->set('team_selection', json_encode($AuthResponse->selectableTeams));
             $App->Session->set('auth_userid', $AuthResponse->userid);
             $location = '/login.php';
 

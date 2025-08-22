@@ -53,6 +53,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 
 use function setcookie;
+use function json_encode;
 
 /**
  * For all your authentication/login needs
@@ -180,7 +181,7 @@ final class LoginController implements ControllerInterface
         // if the user is in several teams, we need to redirect to the team selection
         if ($AuthResponse->isInSeveralTeams) {
             $this->Session->set('team_selection_required', true);
-            $this->Session->set('team_selection', $AuthResponse->selectableTeams);
+            $this->Session->set('team_selection', json_encode($AuthResponse->selectableTeams));
             $this->Session->set('auth_userid', $AuthResponse->userid);
             // carry over the cookie
             $this->Session->set('rememberme', $icanhazcookies);

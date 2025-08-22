@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\QuantumException;
@@ -31,7 +32,7 @@ class LocalTest extends \PHPUnit\Framework\TestCase
     {
         $user = $this->getRandomUserInTeam(2);
         $Local = new Local($user->userData['email'], 'notimportant', isDisplayed: false, isOnlySysadminWhenHidden: true);
-        $this->expectException(ImproperActionException::class);
+        $this->expectException(IllegalActionException::class);
         $Local->tryAuth();
     }
 

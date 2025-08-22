@@ -63,9 +63,8 @@ final class External implements AuthInterface
             // CREATE USER (and force validation of user)
             $Users = ValidatedUser::fromExternal($email, $teams, $firstname, $lastname);
         }
-        $UsersHelper = new UsersHelper($Users->userData['userid']);
         return new AuthResponse()
             ->setAuthenticatedUserid($Users->userData['userid'])
-            ->setTeams($UsersHelper);
+            ->setTeams(new UsersHelper($Users->userData['userid']));
     }
 }

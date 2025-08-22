@@ -408,7 +408,7 @@ final class Scheduler extends AbstractRest
         $this->isFutureOrExplode($newStart);
         $newEnd = $oldEnd->modify($delta['days'] . ' day')->modify($seconds . ' seconds'); // @phpstan-ignore-line
         $this->isFutureOrExplode($newEnd);
-        $this->checkConstraints($newStart->format(DateTime::ATOM), $newEnd->format(DateTime::ATOM));
+        $this->checkConstraints($newStart->format(self::DATETIME_FORMAT), $newEnd->format(self::DATETIME_FORMAT));
 
         $sql = 'UPDATE team_events SET start = :start, end = :end WHERE team = :team AND id = :id';
         $req = $this->Db->prepare($sql);
@@ -427,14 +427,14 @@ final class Scheduler extends AbstractRest
     private function updateEnd(array $delta): bool
     {
         $event = $this->readOne();
-        $oldEnd = DateTime::createFromFormat(DateTime::ATOM, $event['end']);
+        $oldEnd = DateTime::createFromFormat(self::DATETIME_FORMAT, $event['end']);
         $seconds = '0';
         if (strlen((string) $delta['milliseconds']) > 3) {
             $seconds = mb_substr((string) $delta['milliseconds'], 0, -3);
         }
         $newEnd = $oldEnd->modify($delta['days'] . ' day')->modify($seconds . ' seconds'); // @phpstan-ignore-line
         $this->isFutureOrExplode($newEnd);
-        $this->checkConstraints($event['start'], $newEnd->format(DateTime::ATOM));
+        $this->checkConstraints($event['start'], $newEnd->format(self::DATETIME_FORMAT));
 
         $sql = 'UPDATE team_events SET end = :end WHERE team = :team AND id = :id';
         $req = $this->Db->prepare($sql);
@@ -506,15 +506,28 @@ final class Scheduler extends AbstractRest
         $this->checkEndAfterStart($start, $end);
     }
 
+    /*
+     * createFromFormat and check it's not false.
+     * returns an array with $start and $end as 'Y-m-d H:i:s'
+     */
+    private function createFromFormat(string $start, string $end): array
+    {
+        $startDate = DateTimeImmutable::createFromFormat(self::DATETIME_FORMAT, $start);
+        $endDate = DateTimeImmutable::createFromFormat(self::DATETIME_FORMAT, $end);
+        if ($startDate === false || $endDate === false) {
+            throw new ImproperActionException('Could not understand date format!');
+        }
+        return array($startDate, $endDate);
+    }
+
     private function checkEndAfterStart(string $start, string $end): void
     {
-        $start = DateTimeImmutable::createFromFormat(self::DATETIME_FORMAT, $start);
-        $end = DateTimeImmutable::createFromFormat(self::DATETIME_FORMAT, $end);
-        if ($end <= $start) {
+        [$startDate, $endDate] = $this->createFromFormat($start, $end);
+        if ($endDate <= $startDate) {
             throw new UnprocessableContentException(_(sprintf(
-                'End time %s must be after start time %s.',
-                $end->format(self::DATETIME_FORMAT),
-                $start->format(self::DATETIME_FORMAT)
+                'End time %s cannot be inferior/equal to start time %s.',
+                $endDate->format(self::DATETIME_FORMAT),
+                $startDate->format(self::DATETIME_FORMAT)
             )));
         }
     }
@@ -593,11 +606,6 @@ final class Scheduler extends AbstractRest
     {
         $dateTime = DateTime::createFromFormat(DateTime::ATOM, $date);
         if ($dateTime === false) {
-            // Try MySQL DATETIME already in correct format
-            $dateTime = DateTime::createFromFormat(self::DATETIME_FORMAT, $date);
-        }
-        if ($dateTime === false) {
-            // Try date only
             $dateTime = DateTime::createFromFormat('Y-m-d', $date);
             if ($dateTime === false) {
                 throw new ImproperActionException('Could not understand date format!');

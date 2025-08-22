@@ -37,6 +37,7 @@ import 'jquery-ui/ui/widgets/autocomplete';
 import { ApiC } from './api';
 import { Action } from './interfaces';
 import { TomSelect } from './misc';
+import { notify } from './notify';
 
 // transform a Date object into something we can put as a value of an input of type datetime-local
 function toDateTimeInputValueNumber(datetime: Date): number {
@@ -338,14 +339,29 @@ if (window.location.pathname === '/scheduler.php') {
     }
 
     // add on change event listener on datetime inputs
-    [startInput, endInput].forEach(input => {
-      input.addEventListener('change', event => {
-        const input = (event.currentTarget as HTMLInputElement);
+    [startInput, endInput].forEach((input:HTMLInputElement) => {
+      // in case endTime is inferior to startTime, revert to last focus time
+      let originalValue;
+      input.addEventListener('focus', () => {
+        originalValue = input.value;
+      });
+      input.addEventListener('change', () => {
+        const startVal = startInput.valueAsNumber;
+        const endVal = endInput.valueAsNumber;
+        // start must be < end
+        if (!isNaN(startVal) && !isNaN(endVal) && startVal >= endVal) {
+          notify.error(`Start time ${startInput.value} cannot be equal to or after End time ${endInput.value}.`);
+          // revert to value on focus
+          if (originalValue) {
+            input.value = originalValue;
+          }
+          return;
+        }
         // Note: valueAsDate was not working on Chromium
         const dt = DateTime.fromMillis(input.valueAsNumber);
-        ApiC.patch(`event/${input.dataset.eventid}`, {'target': input.dataset.what, 'epoch': String(dt.toUnixInteger())}).then(() => {
-          calendar.refetchEvents();
-        }).catch(() => calendar.refetchEvents());
+        ApiC.patch(`event/${input.dataset.eventid}`, {'target': input.dataset.what, 'epoch': String(dt.toUnixInteger())})
+          .catch((err) => notify.error(err));
+        calendar.refetchEvents();
       });
     });
 

@@ -529,7 +529,7 @@ on('scroll-top', () => {
 });
 
 on('toggle-sidepanel', (el: HTMLElement) => {
-  const SidePanelC = el.dataset.sidepanel === Model.FavTag ? FavTagC : TodolistC;
+  const SidePanelC = el.dataset.target === Model.FavTag ? FavTagC : TodolistC;
   if (el.dataset.purpose === 'hide') {
     return SidePanelC.hide();
   }

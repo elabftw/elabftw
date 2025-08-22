@@ -208,7 +208,15 @@ abstract class AbstractEntity extends AbstractRest
             $CompoundsLinks->setId($link['entityid']);
             $CompoundsLinks->create();
         }
-        $this->Steps->duplicate($templateId, $id, true);
+        
+        // Copy steps from template to new entity
+        $templateSteps = $TemplateType->Steps->readAll();
+        foreach ($templateSteps as $step) {
+            $this->Steps->postAction(Action::Create, array(
+                'body' => $step['body'],
+                'finished' => 0, // Steps should start as unfinished in the new entity
+            ));
+        }
         $freshSelf = new $this($this->Users, $id);
         $TemplateType->Uploads->duplicate($freshSelf);
         foreach ($tags as $tag) {

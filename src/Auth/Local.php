@@ -94,6 +94,7 @@ final class Local implements AuthInterface
         return new AuthResponse()
             ->setAuthenticatedUserid($this->userid)
             ->setTeams(new UsersHelper($this->userid));
+    }
 
     public function mustRenewPassword(): bool
     {

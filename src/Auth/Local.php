@@ -91,11 +91,9 @@ final class Local implements AuthInterface
         }
 
         // TODO maybe auth class shouldn't have the responsibility of setting the teams, we can do that in the controller
-        $UsersHelper = new UsersHelper($this->userid);
         return new AuthResponse()
             ->setAuthenticatedUserid($this->userid)
-            ->setTeams($UsersHelper);
-    }
+            ->setTeams(new UsersHelper($this->userid));
 
     public function mustRenewPassword(): bool
     {

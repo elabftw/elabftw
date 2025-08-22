@@ -14,6 +14,7 @@ namespace Elabftw\Auth;
 
 use DateTimeImmutable;
 use Elabftw\Elabftw\Db;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\QuantumException;

@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\AuditEvent\ActionRequested as AuditEventActionRequested;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\State;
@@ -19,6 +20,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Notifications\ActionRequested;
 use Elabftw\Models\Users\Users;
+use Elabftw\Params\ContentParams;
 use Elabftw\Traits\SetIdTrait;
 use Override;
 use PDO;
@@ -125,12 +127,18 @@ final class RequestActions extends AbstractRest
         $this->Db->execute($req);
         $actionId = $this->Db->lastInsertId();
 
+        $action = RequestableAction::from((int) $reqBody['target_action']);
+
         $Notifications = new ActionRequested(
             $this->requester,
-            RequestableAction::from((int) $reqBody['target_action']),
+            $action,
             $this->entity,
         );
         $Notifications->create((int) $reqBody['target_userid']);
+        $event = new AuditEventActionRequested($this->requester->userData['userid'], (int) $reqBody['target_userid'], $this->entity->id, $this->entity->entityType, $action);
+        AuditLogs::create($event);
+        $changelogValue = sprintf('%s (target userid: %d)', $event->getBody(), (int) $reqBody['target_userid']);
+        new Changelog($this->entity)->create(new ContentParams('action_requested', $changelogValue));
 
         return $actionId;
     }
@@ -156,7 +164,14 @@ final class RequestActions extends AbstractRest
         $req->bindValue(':action', $action->value, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->requester->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':entity_id', $this->entity->id, PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        $res = $this->Db->execute($req);
+
+        if ($res && $req->rowCount() > 0) {
+            $changelogValue = sprintf('Action done: %s by user with ID %d', $action->toHuman(), $this->requester->userData['userid']);
+            new Changelog($this->entity)->create(new ContentParams('action_done', $changelogValue));
+        }
+
+        return $res;
     }
 
     #[Override]

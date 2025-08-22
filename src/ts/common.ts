@@ -528,7 +528,9 @@ on('scroll-top', () => {
   });
 });
 
-on('toggle-sidepanel', (el: HTMLElement) => {
+on('toggle-sidepanel', (el: HTMLElement, event: Event) => {
+  // this action might exist on a link: prevent jump to top
+  event.preventDefault();
   const SidePanelC = el.dataset.target === Model.FavTag ? FavTagC : TodolistC;
   if (el.dataset.purpose === 'hide') {
     return SidePanelC.hide();

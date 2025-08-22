@@ -202,10 +202,10 @@
 {# SHOW FAVTAGS/TODOLIST PANELS #}
 {% if App.Session.has('is_auth') and not App.Session.has('is_anon') %}
   <div class='pr-2 mt-3 float-left' id='sidepanel-buttons'>
-    <div class='bounce-right sidepanel-btn sidepanel-closed' id='favtagsPanelOpener' data-action='toggle-sidepanel' data-target='favtags' title='{{ 'Toggle favorite tags'|trans }}'>
+    <div class='bounce-right sidepanel-btn sidepanel-closed' id='favtagsPanelOpener' data-action='toggle-sidepanel' data-target='favtags' aria-controls='favtagsPanel' title='{{ 'Toggle favorite tags'|trans }}'>
       <i class='fas fa-folder-tree'></i>
     </div>
-    <div class='mt-3 bounce-right sidepanel-btn sidepanel-closed' id='todolistPanelOpener' data-action='toggle-sidepanel' data-target='todolist' title='{{ 'Toggle todolist'|trans }}'>
+    <div class='mt-3 bounce-right sidepanel-btn sidepanel-closed' id='todolistPanelOpener' data-action='toggle-sidepanel' data-target='todolist' aria-controls='todolistPanel' title='{{ 'Toggle todolist'|trans }}'>
       <i class='fas fa-list-check'></i>
     </div>
   </div>

@@ -40,9 +40,13 @@ final class UploadsChecker
             COUNT(id) AS count_all,
             SUM(filesize) AS filesize_all,
             COUNT(CASE WHEN hash IS NULL THEN 1 END) AS count_null_hash,
-            COUNT(CASE WHEN filesize IS NULL THEN 1 END) AS count_null_filesize
+            COUNT(CASE WHEN filesize IS NULL THEN 1 END) AS count_null_filesize,
+            COUNT(CASE WHEN storage = :storage_local THEN 1 END) AS count_storage_local,
+            COUNT(CASE WHEN storage = :storage_s3 THEN 1 END) AS count_storage_s3
             FROM uploads';
         $req = $Db->prepare($sql);
+        $req->bindValue(':storage_local', Storage::LOCAL->value, PDO::PARAM_INT);
+        $req->bindValue(':storage_s3', Storage::S3->value, PDO::PARAM_INT);
         $Db->execute($req);
         return $req->fetch();
     }

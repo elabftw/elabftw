@@ -40,7 +40,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $Items = $this->getFreshBookableItem(2);
-        $d = new DateTimeImmutable('+3 hour');
+        $d = new DateTime('+3 hour');
         $this->start = $d->format('c');
         $d->add(new DateInterval('PT2H'));
         $this->end = $d->format('c');
@@ -82,6 +82,13 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         return $id;
     }
 
+
+    public function testPostActionWithNegativeTimeSlots(): void
+    {
+        $this->expectException(UnprocessableContentException::class);
+        $this->Scheduler->postAction(Action::Create, array('start' => $this->end, 'end' => $this->start, 'title' => 'Yep'));
+    }
+
     public function testFailure(): void
     {
         $Items = $this->getFreshItem();
@@ -95,7 +102,9 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->Scheduler->readAll());
         $Items = $this->getFreshBookableItem(1);
         $this->Scheduler = new Scheduler($Items, null, $this->start, $this->end);
+        $this->Scheduler->postAction(Action::Create, array('start' => $this->start, 'end' => $this->end));
         $this->assertIsArray($this->Scheduler->readOne());
+        $this->assertNotEmpty($this->Scheduler->readOne());
     }
 
     public function testReadAllWithVariousScopes(): void
@@ -198,8 +207,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
     {
         $Scheduler = $this->getFreshSchedulerWithEvent();
         $newEpoch = new DateTimeImmutable('+6 hour')->format('U');
-        // always patch `end` before `start`. if we patch `start` first, it jumps ahead (+6h) while `end` is still unchanged,
-        // which temporarily makes end < start and triggers a validation error (UnprocessableContentException).
+        // patch `end` first to avoid a temporary state where start > end.
         $this->assertIsArray($Scheduler->patch(Action::Update, array('target' => 'end_epoch', 'epoch' => $newEpoch)));
         $this->assertIsArray($Scheduler->patch(Action::Update, array('target' => 'start_epoch', 'epoch' => $newEpoch)));
         return $Scheduler;
@@ -208,7 +216,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
     public function testPatchEpochEndBeforeStart(): void
     {
         $Scheduler = $this->getFreshSchedulerWithEvent();
-        $newEpoch = new DateTimeImmutable('+6 hour')->format('U');
+        $newEpoch = new DateTimeImmutable('+8 hour')->format('U');
         $this->expectException(UnprocessableContentException::class);
         $Scheduler->patch(Action::Update, array('target' => 'start_epoch', 'epoch' => $newEpoch));
     }

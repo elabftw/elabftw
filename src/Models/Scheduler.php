@@ -334,12 +334,16 @@ final class Scheduler extends AbstractRest
     private function updateEpoch(string $column, string $epoch): bool
     {
         $event = $this->readOne();
-        $this->checkConstraints($event['start'], $event['end']);
         $new = DateTimeImmutable::createFromFormat('U', $epoch);
         if ($new === false) {
             throw new ImproperActionException('Invalid date format received.');
         }
         $this->isFutureOrExplode($new);
+        // check constraint with incoming values
+        $newStart = $column === 'start' ? $new->format(self::DATETIME_FORMAT) : $event['start'];
+        $newEnd = $column === 'end' ? $new->format(self::DATETIME_FORMAT) : $event['end'];
+        $this->checkConstraints($newStart, $newEnd);
+
         $sql = 'UPDATE team_events SET ' . $column . ' = :new WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':new', $new->format(self::DATETIME_FORMAT));
@@ -438,7 +442,7 @@ final class Scheduler extends AbstractRest
 
         $sql = 'UPDATE team_events SET end = :end WHERE team = :team AND id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':end', $newEnd->format('c'));
+        $req->bindValue(':end', $newEnd->format(self::DATETIME_FORMAT));
         $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
@@ -523,9 +527,9 @@ final class Scheduler extends AbstractRest
     private function checkEndAfterStart(string $start, string $end): void
     {
         [$startDate, $endDate] = $this->createFromFormat($start, $end);
-        if ($endDate <= $startDate) {
+        if ($endDate < $startDate) {
             throw new UnprocessableContentException(_(sprintf(
-                'End time %s cannot be inferior/equal to start time %s.',
+                'End time %s cannot be inferior to start time %s.',
                 $endDate->format(self::DATETIME_FORMAT),
                 $startDate->format(self::DATETIME_FORMAT)
             )));
@@ -598,22 +602,22 @@ final class Scheduler extends AbstractRest
         $this->isFutureOrExplode($startDate);
     }
 
-    /**
-     * Date can be Y-m-d or ISO::ATOM
-     * Make sure we have the time, too
-     */
+    // Date can be 'Y-m-d' or 'Y-m-d H:i:s' (MySQL compatible)
     private function normalizeDate(string $date, bool $rmDay = false): string
     {
-        $dateTime = DateTime::createFromFormat(DateTime::ATOM, $date);
+        $dateTime = DateTimeImmutable::createFromFormat(DateTime::ATOM, $date);
         if ($dateTime === false) {
-            $dateTime = DateTime::createFromFormat('Y-m-d', $date);
+            $dateTime = DateTimeImmutable::createFromFormat(self::DATETIME_FORMAT, $date);
+        }
+        if ($dateTime === false) {
+            $dateTime = DateTimeImmutable::createFromFormat('Y-m-d', $date);
             if ($dateTime === false) {
                 throw new ImproperActionException('Could not understand date format!');
             }
-            $dateTime->setTime(0, 1);
+            $dateTime = $dateTime->setTime(0, 1);
             // we don't want the end date to go over one day
             if ($rmDay) {
-                $dateTime->modify('-3min');
+                $dateTime = $dateTime->modify('-3min');
             }
         }
         return $dateTime->format(self::DATETIME_FORMAT);

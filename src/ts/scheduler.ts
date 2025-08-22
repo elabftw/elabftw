@@ -349,8 +349,8 @@ if (window.location.pathname === '/scheduler.php') {
         const startVal = startInput.valueAsNumber;
         const endVal = endInput.valueAsNumber;
         // start must be < end
-        if (!isNaN(startVal) && !isNaN(endVal) && startVal >= endVal) {
-          notify.error(`Start time ${startInput.value} cannot be equal to or after End time ${endInput.value}.`);
+        if (!isNaN(startVal) && !isNaN(endVal) && endVal < startVal) {
+          notify.error(`End time ${endInput.value} cannot be inferior to start time ${startInput.value}.`);
           // revert to value on focus
           if (originalValue) {
             input.value = originalValue;

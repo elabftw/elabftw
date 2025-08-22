@@ -20,6 +20,7 @@ use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Params\EntityParams;
 use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\HttpFoundation\InputBag;
@@ -197,9 +198,19 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
     {
         $Scheduler = $this->getFreshSchedulerWithEvent();
         $newEpoch = new DateTimeImmutable('+6 hour')->format('U');
-        $this->assertIsArray($Scheduler->patch(Action::Update, array('target' => 'start_epoch', 'epoch' => $newEpoch)));
+        // always patch `end` before `start`. if we patch `start` first, it jumps ahead (+6h) while `end` is still unchanged,
+        // which temporarily makes end < start and triggers a validation error (UnprocessableContentException).
         $this->assertIsArray($Scheduler->patch(Action::Update, array('target' => 'end_epoch', 'epoch' => $newEpoch)));
+        $this->assertIsArray($Scheduler->patch(Action::Update, array('target' => 'start_epoch', 'epoch' => $newEpoch)));
         return $Scheduler;
+    }
+
+    public function testPatchEpochEndBeforeStart(): void
+    {
+        $Scheduler = $this->getFreshSchedulerWithEvent();
+        $newEpoch = new DateTimeImmutable('+6 hour')->format('U');
+        $this->expectException(UnprocessableContentException::class);
+        $Scheduler->patch(Action::Update, array('target' => 'start_epoch', 'epoch' => $newEpoch));
     }
 
     public function testPatchEpochInvalidTarget(): void

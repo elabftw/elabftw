@@ -13,6 +13,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Links\Items2ItemsLinks;
 use Elabftw\Models\Users\AuthenticatedUser;
 use Elabftw\Models\Users\Users;
@@ -59,13 +60,14 @@ class LinksTest extends \PHPUnit\Framework\TestCase
     public function testImport(): void
     {
         // create a link in a db item
-        $Items = $this->getFreshItem();
-        $Items->ItemsLinks->setId($Items->id);
-        $Items->ItemsLinks->postAction(Action::Create, array());
+        $Items1 = $this->getFreshItem();
+        $Items2 = $this->getFreshItem();
+        $Items1->ItemsLinks->setId($Items2->id);
+        $Items1->ItemsLinks->postAction(Action::Create, array());
         // now import this in our experiment like if we click the import links button
-        $Links = new Items2ItemsLinks($this->Experiments, $Items->id);
+        $Links = new Items2ItemsLinks($this->Experiments, $Items1->id);
         $this->assertIsInt($Links->postAction(Action::Duplicate, array()));
-        $this->Experiments->ItemsLinks->setId($Items->id);
+        $this->Experiments->ItemsLinks->setId($Items1->id);
         $this->assertIsInt($this->Experiments->ItemsLinks->postAction(Action::Duplicate, array()));
         $this->Experiments->ExperimentsLinks->setId($this->Experiments->id);
         $this->assertIsInt($this->Experiments->ExperimentsLinks->postAction(Action::Duplicate, array()));
@@ -210,5 +212,12 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(2, count($titles));
         $this->assertContains($secretTitle, $titles);
         $this->assertContains('Experiment A', $titles);
+    }
+
+    public function testCannotLinkEntityToItself(): void
+    {
+        $this->Experiments->ExperimentsLinks->setId($this->Experiments->id);
+        $this->expectException(ImproperActionException::class);
+        $this->Experiments->ExperimentsLinks->postAction(Action::Create, array());
     }
 }

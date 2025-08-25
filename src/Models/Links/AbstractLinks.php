@@ -21,6 +21,8 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\AbstractRest;
+use Elabftw\Models\Changelog;
+use Elabftw\Params\ContentParams;
 use Elabftw\Traits\SetIdTrait;
 use Override;
 use PDO;
@@ -116,6 +118,9 @@ abstract class AbstractLinks extends AbstractRest
         $req = $this->Db->prepare($sql);
         $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+
+        $Changelog = new Changelog($this->Entity);
+        $Changelog->create(new ContentParams('links', sprintf('Removed link to %s with id: %d', $this->getTargetType()->toGenre(), $this->id)));
         return $this->Db->execute($req);
     }
 
@@ -151,7 +156,7 @@ abstract class AbstractLinks extends AbstractRest
     {
         // don't insert a link to the same entity, make sure we check for the type too
         if ($this->Entity->id === $this->id && $this->Entity->entityType === $this->getTargetType()) {
-            return 0;
+            throw new ImproperActionException(sprintf('Linking the %s to itself is not allowed. Please select a different target.', $this->getTargetType()->toGenre()));
         }
         $this->Entity->touch();
 
@@ -160,6 +165,9 @@ abstract class AbstractLinks extends AbstractRest
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
+
+        $Changelog = new Changelog($this->Entity);
+        $Changelog->create(new ContentParams('links', sprintf('Added link to %s with id: %d', $this->getTargetType()->toGenre(), $this->id)));
 
         $this->Db->execute($req);
 

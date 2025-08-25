@@ -48,7 +48,7 @@
                       <a href='{{ templatesPage }}.php?mode=view&id={{ template.id }}' class='p-2 rounded mr-2 hl-hover-gray' title='{{ 'View template'|trans }}' aria-label='{{ 'View template'|trans }}'>
                         <i class='fas fa-eye fa-fw'></i>
                       </a>
-                      {% if template.category %}
+                      {% if template.category_title %}
                         <span class='catstat-btn category-btn mr-2' style='--bg: #{{ template.category_color|default('bdbdbd') }}'>{{ template.category_title }}</span>
                       {% endif %}
                       {% if template.status %}

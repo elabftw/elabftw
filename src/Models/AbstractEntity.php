@@ -583,7 +583,7 @@ abstract class AbstractEntity extends AbstractRest
 
     public function readAllSimple(QueryParamsInterface $displayParams): array
     {
-        $categoryTable = in_array($this->entityType->value, ['items', 'items_types'], true)
+        $categoryTable = in_array($this->entityType->value, array('items', 'items_types'), true)
             ? 'items_categories'
             : 'experiments_categories';
         $CanSqlBuilder = new CanSqlBuilder($this->Users->requester, AccessType::Read);

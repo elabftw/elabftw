@@ -70,9 +70,10 @@ try {
     }
 
     if ($App->Request->query->get('switch_team') === '1') {
-        $App->Session->set('team_switch_required', true);
-        $App->Session->set('team_selection', $App->Users->userData['teams']);
-        $App->Session->set('auth_userid', $App->Users->userData['userid']);
+        $loggedInUser = new Users($App->Session->get('userid'));
+        $App->Session->set('team_selection_required', true);
+        $App->Session->set('team_selection', json_decode($loggedInUser->userData['teams'], true, 3));
+        $App->Session->set('auth_userid', $loggedInUser->userData['userid']);
         $App->Session->remove('is_auth');
     }
 

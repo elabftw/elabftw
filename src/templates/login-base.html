@@ -15,7 +15,7 @@
       <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
         <form name='resetPass' method='post' action='app/controllers/ResetPasswordController.php' aria-label='{{ 'Reset password'|trans }}'>
           {{ App.Session.get('csrf')|csrf }}
-          <input class='form-control' aria-label='email address' placeholder='{{ 'Enter your email address'|trans }}' name='email' type='email' required />
+          <input class='form-control' aria-label='email address' placeholder='{{ 'Enter your email address'|trans }}' name='email' type='email' autocomplete='email' required />
           <div class='text-center'>
             <button class='btn btn-primary mt-2' type='submit' name='Submit'>{{ 'Send reset link'|trans }}</button>
           </div>

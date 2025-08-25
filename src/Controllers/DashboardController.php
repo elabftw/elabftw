@@ -56,8 +56,8 @@ final class DashboardController extends AbstractHtmlController
         $DisplayParamsExp = new DisplayParams(
             $this->app->Users,
             EntityType::Experiments,
-            limit: self::SHOWN_NUMBER,
             orderby: Orderby::Lastchange,
+            limit: self::SHOWN_NUMBER,
         );
         $Experiments = new Experiments($this->app->Users);
         $Items = new Items($this->app->Users);
@@ -69,8 +69,8 @@ final class DashboardController extends AbstractHtmlController
         $DisplayParamsItems = new DisplayParams(
             $this->app->Users,
             EntityType::Items,
-            limit: self::SHOWN_NUMBER,
             orderby: Orderby::Lastchange,
+            limit: self::SHOWN_NUMBER,
         );
         $PermissionsHelper = new PermissionsHelper();
         $ExperimentsStatus = new ExperimentsStatus($this->app->Teams);
@@ -86,7 +86,7 @@ final class DashboardController extends AbstractHtmlController
 
         $DisplayParamsItemsTypes = new DisplayParams(
             $this->app->Users,
-            EntityType::Templates,
+            EntityType::ItemsTypes,
             limit: 9999,
             states: array(State::Normal)
         );

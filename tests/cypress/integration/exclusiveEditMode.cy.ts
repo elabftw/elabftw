@@ -5,6 +5,13 @@ describe('Exclusive edit mode', () => {
   const title = 'Entity with exclusive edit mode';
   // prepare an experiment with exclusive edit mode
   const setupEntityWithExclusiveEditMode = () => {
+    // ignore window.onbeforeunload so we can keep the exclusive edit mode running
+    cy.on('window:before:load', (win) => {
+      Object.defineProperty(win, 'onbeforeunload', {
+        get: () => null,
+        set: () => {}, // swallow
+      });
+    });
     cy.visit('/experiments.php');
     cy.contains('Create').click();
     cy.get('#createModal_experiments').should('be.visible').should('contain', 'No category').contains('No category').click();
@@ -17,7 +24,6 @@ describe('Exclusive edit mode', () => {
     cy.wait('@apiPATCH');
     cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
     // edit mode is always exclusive as of 2025/03, without clicking on a specific button
-    cy.intercept('GET', '/experiments.php?mode=edit*').as('getPage');
     cy.get('#date_input').type('2024-04-20').blur();
     cy.wait('@apiPATCH');
     cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');

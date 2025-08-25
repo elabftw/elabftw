@@ -84,6 +84,13 @@ final class DashboardController extends AbstractHtmlController
             states: array(State::Normal)
         );
 
+        $DisplayParamsItemsTypes = new DisplayParams(
+            $this->app->Users,
+            EntityType::Templates,
+            limit: 9999,
+            states: array(State::Normal)
+        );
+
         return array_merge(
             parent::getData(),
             array(
@@ -92,7 +99,7 @@ final class DashboardController extends AbstractHtmlController
                 'experimentsArr' => $Experiments->readShow($DisplayParamsExp),
                 'experimentsStatusArr' => $ExperimentsStatus->readAll($ExperimentsStatus->getQueryParams(new InputBag(array('limit' => 9999)))),
                 'itemsArr' => $Items->readShow($DisplayParamsItems),
-                'itemsTemplatesArr' => $ItemsTypes->readAll(),
+                'itemsTemplatesArr' => $ItemsTypes->readAllSimple($DisplayParamsItemsTypes),
                 'requestActionsArr' => $UserRequestActions->readAllFull(),
                 'templatesArr' => $Templates->readAllSimple($DisplayParamsTemplates),
                 'usersArr' => $this->app->Users->readAllActiveFromTeam(),

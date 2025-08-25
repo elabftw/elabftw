@@ -49,6 +49,10 @@ describe('Exclusive edit mode', () => {
     }).as('redirect');
     cy.get('[aria-label="Edit"]').should('have.class', 'disabled');
     cy.get('[class="alert alert-warning"]').should('contain', 'This entry is being edited by Toto Le sysadmin');
+    // now test the button
+    cy.get('[data-action="override-exclusive-edit-lock"]').click();
+    cy.get('body').should('not.contain', 'This entry is being edited by Toto Le sysadmin');
+    cy.get('[aria-label="Edit"]').should('not.have.class', 'disabled');
   };
 
   it('Try to open entity with exclusive edit mode', () => {

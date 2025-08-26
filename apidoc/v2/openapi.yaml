@@ -1225,6 +1225,9 @@ components:
         - $ref: '#/components/schemas/users'
         - type: object
           properties:
+            created_at:
+              type: string
+              description: Account creation timestamp.
             validated:
               type: integer
             valid_until:
@@ -4045,16 +4048,40 @@ paths:
           description: Add a filter on the team
           required: false
           schema:
-            type: number
+            type: integer
+        - name: currentTeam
+          in: query
+          description: If set to 1, use the requester's current team as filter.
+          required: false
+          schema:
+            type: integer
+            enum: [0, 1]
+            default: 0
+        - name: onlyAdmins
+          in: query
+          description: Return only team admins.
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: onlyArchived
+          in: query
+          description: Return only archived users.
+          required: false
+          schema:
+            type: boolean
+            default: false
       responses:
         '200':
           description: A list of users. Returned columns will depend if request is Admin somewhere or not.
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/users'
-                  - $ref: '#/components/schemas/users_full'
+                type: array
+                items:
+                  oneOf:
+                    - $ref: '#/components/schemas/users'
+                    - $ref: '#/components/schemas/users_full'
               examples:
                 asUser:
                   summary: Response given to a regular user

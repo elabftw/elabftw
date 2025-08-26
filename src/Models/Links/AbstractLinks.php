@@ -111,18 +111,7 @@ abstract class AbstractLinks extends AbstractRest
         $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
 
-        // Build the same clickable anchor used in create()
-        $anchor = sprintf(
-            '<a href="%1$s">%2$s</a>',
-            Tools::eLabHtmlspecialchars($this->makeTargetUrl($this->getTargetType(), $this->id)),
-            Tools::eLabHtmlspecialchars($this->getTargetTitle())
-        );
-
-        $Changelog = new Changelog($this->Entity);
-        $Changelog->create(new ContentParams(
-            'links',
-            sprintf('Removed link to %s: %s', $this->getTargetType()->toGenre(), $anchor)
-        ));
+        $this->createChangelog(isDestroy: true);
 
         return $this->Db->execute($req);
     }
@@ -169,21 +158,7 @@ abstract class AbstractLinks extends AbstractRest
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
 
-        // build the changelog message with title + clickable URL
-        $anchor = sprintf(
-            '<a href="%1$s">%2$s</a>',
-            Tools::eLabHtmlspecialchars($this->makeTargetUrl($this->getTargetType(), $this->id)),
-            Tools::eLabHtmlspecialchars($this->getTargetTitle())
-        );
-
-        $Changelog = new Changelog($this->Entity);
-        $Changelog->create(new ContentParams('links',
-            sprintf(
-                'Added link to %s: %s',
-                $this->getTargetType()->toGenre(),
-                $anchor
-            )
-        ));
+        $this->createChangelog();
         $this->Db->execute($req);
 
         return $this->id;
@@ -210,6 +185,23 @@ abstract class AbstractLinks extends AbstractRest
             'item' => '/database.php?mode=view&id=' . $id,
             default => '/?id=' . $id,
         };
+    }
+
+    // create Changelog with link to the entity. Message is different when it's a link removal
+    private function createChangelog(bool $isDestroy = false): void
+    {
+        $verb = $isDestroy ? 'Removed' : 'Added';
+        // build the changelog message with title + clickable URL
+        $anchor = sprintf(
+            '<a href="%1$s">%2$s</a>',
+            Tools::eLabHtmlspecialchars($this->makeTargetUrl($this->getTargetType(), $this->id)),
+            Tools::eLabHtmlspecialchars($this->getTargetTitle() ?? ('#' . $this->id))
+        );
+        $Changelog = new Changelog($this->Entity);
+        $Changelog->create(new ContentParams(
+            'links',
+            sprintf('%s link to %s: %s', $verb, $this->getTargetType()->toGenre(), $anchor)
+        ));
     }
 
     abstract protected function getTargetType(): EntityType;

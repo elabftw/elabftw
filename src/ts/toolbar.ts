@@ -6,6 +6,7 @@
  * @package elabftw
  */
 import {
+  collectForm,
   relativeMoment,
   reloadElements,
 } from './misc';
@@ -74,12 +75,15 @@ const clickHandler = (event: Event) => {
 
   // SIGN ENTITY
   } else if (el.matches('[data-action="sign-entity"]')) {
-    const passphraseInput = (document.getElementById('sigPassphraseInput') as HTMLInputElement);
-    const meaningSelect = (document.getElementById('sigMeaningSelect') as HTMLSelectElement);
-    ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.Sign, passphrase: passphraseInput.value, meaning: meaningSelect.value}).then(() => {
-      reloadElements(['commentsDiv', 'requestActionsDiv'])
-        .then(() => relativeMoment());
+    const form = document.getElementById('sigPassphraseForm') as HTMLFormElement;
+    const params = collectForm(form);
+    params['action'] = Action.Sign;
+    ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => {
+      reloadElements(['commentsDiv', 'requestActionsDiv']);
+      form.reset();
+      $('#addSignatureModal').modal('hide');
     });
+
   // REQUEST ACTION
   } else if (el.matches('[data-action="request-action"]')) {
     const actionSelect = (document.getElementById('requestActionActionSelect') as HTMLSelectElement);

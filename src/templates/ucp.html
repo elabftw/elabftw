@@ -22,15 +22,17 @@
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
-      <div class='modal-body' id='regenerateSigPassphraseForm' data-wait='{{ 'Please wait…'|trans }}'>
+      <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
         <p>{{ 'Warning: regenerating your signature keys means the current key will be archived and will not be available anymore.'|trans }}</p>
-        <label for='regen_sigPassphraseInput'>{{ 'Enter a passphrase:'|trans }}</label>
-        <div class='input-group'>
-          <input type='password' required name='passphrase' class='form-control' autocomplete='new-password' id='regen_sigPassphraseInput' minlength='{{ App.Config.configArr.min_password_length }}' />
-          <div class='input-group-append'>
-            <span class='btn btn-light input-border' tabindex='-1' data-action='toggle-password'><i class='fas fa-eye' aria-hidden='true'></i></span>
+        <form id='regenerateSigPassphraseForm'>
+          <label for='regen_sigPassphraseInput'>{{ 'Enter a passphrase:'|trans }}</label>
+          <div class='input-group'>
+            <input type='password' required name='passphrase' class='form-control' autocomplete='new-password' id='regen_sigPassphraseInput' minlength='{{ App.Config.configArr.min_password_length }}' />
+            <div class='input-group-append'>
+              <span class='btn btn-light input-border' tabindex='-1' data-action='toggle-password'><i class='fas fa-eye' aria-hidden='true'></i></span>
+            </div>
           </div>
-        </div>
+        </form>
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
@@ -438,18 +440,20 @@
     <p>{{ 'Signature keys are a highly secure public-key signature system that allows you to cryptographically sign experiments or resources. Signing an entry will generate an immutable archive.'|trans }}</p>
     <p class='smallgray'>{{ 'To learn more about signature keys, have a look at the %scomplete documentation%s.'|trans|format("<a class='external-link' target='_blank' rel='noopener' href='https://doc.elabftw.net/user-guide.html#signatures'>", "</a>")|raw }}</p>
     {% if not App.Users.userData.sig_privkey %}
-      <p>{{ 'You do not have a key pair associated with your account yet.'|trans|msg('warning', false) }}<p>
-    <label for='sigPassphraseInput'>{{ 'To generate a key pair, enter a passphrase below and click the button:'|trans }}</label>
-    <div class='input-group' id='sigPassphraseForm'>
-      <input type='password' class='form-control' name='passphrase' required autocomplete='new-password' id='sigPassphraseInput' minlength='{{ App.Config.configArr.min_password_length }}' />
-      <div class='input-group-append'>
-        <button type='button' class='btn btn-light input-border' data-action='toggle-password' title='{{ 'Show password'|trans }}' aria-label='{{ 'Show password'|trans }}'><i class='fas fa-eye' aria-hidden='true'></i></button>
-        <button type='button' data-action='create-sigkeys' class='btn btn-primary'>{{ 'Generate signature keys'|trans }}</button>
-      </div>
-    </div>
-    <span class='smallgray d-block mt-1'>
-      {{ 'Note: this passphrase protects your private key and is not your account password. You will need it each time you sign an entry.'|trans }}
-    </span>
+      {{ 'You do not have a key pair associated with your account yet.'|trans|msg('warning', false) }}
+      <form id='sigPassphraseForm'>
+        <label for='sigPassphraseInput'>{{ 'To generate a key pair, enter a passphrase below and click the button:'|trans }}</label>
+        <div class='input-group'>
+          <input type='password' class='form-control' name='passphrase' required autocomplete='new-password' id='sigPassphraseInput' minlength='{{ App.Config.configArr.min_password_length }}' />
+          <div class='input-group-append'>
+            <button type='button' class='btn btn-light input-border' data-action='toggle-password' title='{{ 'Show password'|trans }}' aria-label='{{ 'Show password'|trans }}'><i class='fas fa-eye' aria-hidden='true'></i></button>
+            <button type='button' data-action='create-sigkeys' class='btn btn-primary'>{{ 'Generate signature keys'|trans }}</button>
+          </div>
+        </div>
+      </form>
+      <span class='smallgray d-block mt-1'>
+        {{ 'Note: this passphrase protects your private key and is not your account password. You will need it each time you sign an entry.'|trans }}
+      </span>
       <span class='smallgray'>{{ 'Tip: use a password manager or a passphrase that you can remember, see %sthis XKCD comic%s.'|trans|format("<a target='_blank' rel='noopener' class='external-link' href='https://xkcd.com/936/'>", "</a>")|raw }}</span>
     {% else %}
       <p>{{ 'Your account is already associated with a keypair.'|trans|msg('ok', false) }}<p>

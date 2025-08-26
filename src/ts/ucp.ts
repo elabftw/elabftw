@@ -33,9 +33,14 @@ if (window.location.pathname === '/ucp.php') {
   });
 
   on('create-sigkeys', () => {
-    const params = collectForm(document.getElementById('sigPassphraseForm'));
-    ApiC.post(`${Model.User}/me/${Model.Sigkeys}`, {action: Action.Create, passphrase: params['passphrase']})
-      .then(() => reloadElements(['ucp-sigkeys']));
+    const form = document.getElementById('sigPassphraseForm') as HTMLFormElement;
+    const params = collectForm(form);
+    params['action'] = Action.Create;
+    ApiC.post(`${Model.User}/me/${Model.Sigkeys}`, params)
+      .then(() => {
+        reloadElements(['ucp-sigkeys']);
+        form.reset();
+      });
   });
 
   on('download-sigkey', (el: HTMLElement) => {
@@ -45,11 +50,14 @@ if (window.location.pathname === '/ucp.php') {
   });
 
   on('regenerate-sigkeys', () => {
-    const params = collectForm(document.getElementById('regenerateSigPassphraseForm'));
-    ApiC.patch(`${Model.User}/me/${Model.Sigkeys}`, {action: Action.Update, passphrase: params['passphrase']})
+    const form = document.getElementById('regenerateSigPassphraseForm') as HTMLFormElement;
+    const params = collectForm(form);
+    params['action'] = Action.Update;
+    ApiC.patch(`${Model.User}/me/${Model.Sigkeys}`, params)
       .then(() => {
         $('#regenerateSigkeysModal').modal('hide');
         reloadElements(['ucp-sigkeys']);
+        form.reset();
       });
   });
 

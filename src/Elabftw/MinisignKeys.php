@@ -68,6 +68,9 @@ final readonly class MinisignKeys
 
     public static function generate(#[SensitiveParameter] string $passphrase): self
     {
+        if (empty($passphrase)) {
+            throw new ImproperActionException(_('Empty passphrase provided!'));
+        }
         // Generate a salt for key derivation
         // SCRYPT_SALSA208SHA256 salt should be crypto_pwhash_scryptsalsa208sha256_SALTBYTES bytes
         $salt = random_bytes(SODIUM_CRYPTO_PWHASH_SCRYPTSALSA208SHA256_SALTBYTES);

@@ -14,7 +14,7 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Links\Items2ItemsLinks;
+use Elabftw\Models\Links\Experiments2ItemsLinks;
 use Elabftw\Models\Users\AuthenticatedUser;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
@@ -65,7 +65,7 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         $Items1->ItemsLinks->setId($Items2->id);
         $Items1->ItemsLinks->postAction(Action::Create, array());
         // now import this in our experiment like if we click the import links button
-        $Links = new Items2ItemsLinks($this->Experiments, $Items1->id);
+        $Links = new Experiments2ItemsLinks($this->Experiments, $Items1->id);
         $this->assertIsInt($Links->postAction(Action::Duplicate, array()));
         $this->Experiments->ItemsLinks->setId($Items1->id);
         $this->assertIsInt($this->Experiments->ItemsLinks->postAction(Action::Duplicate, array()));

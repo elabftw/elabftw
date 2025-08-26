@@ -147,10 +147,11 @@ abstract class AbstractLinks extends AbstractRest
      */
     public function create(): int
     {
+        $this->Entity->canOrExplode('write');
         $linkId = $this->requireLinkId();
         // don't insert a link to the same entity, make sure we check for the type too
         if ($this->Entity->id === $linkId && $this->Entity->entityType === $this->getTargetType()) {
-            throw new ImproperActionException(sprintf('Linking the %s to itself is not allowed. Please select a different target.', $this->getTargetType()->toGenre()));
+            throw new ImproperActionException(sprintf(_('Linking the %s to itself is not allowed. Please select a different target.'), $this->getTargetType()->toGenre()));
         }
         $this->Entity->touch();
 
@@ -200,38 +201,26 @@ abstract class AbstractLinks extends AbstractRest
         $sql = 'SELECT title FROM ' . $this->getTargetType()->value . ' WHERE id = :id LIMIT 1';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        if ($this->Db->execute($req) && ($row = $req->fetch(PDO::FETCH_ASSOC))) {
-            return (string) $row['title'];
-        }
-        return null;
-    }
-
-    // builds an url to anchor the new link in Changelog
-    private function makeTargetUrl(EntityType $targetType, int $id): string
-    {
-        $type = strtolower(rtrim($targetType->value, 's'));
-        return match ($type) {
-            'experiment' => '/experiments.php?mode=view&id=' . $id,
-            'item' => '/database.php?mode=view&id=' . $id,
-            default => '/?id=' . $id,
-        };
+        $this->Db->execute($req);
+        $title = $req->fetchColumn();
+        return $title !== false ? (string) $title : null;
     }
 
     // create Changelog with link to the entity. Message is different when it's a link removal
     private function createChangelog(bool $isDestroy = false): void
     {
         $linkId = $this->requireLinkId();
-        $verb = $isDestroy ? 'Removed' : 'Added';
+        $verb = $isDestroy ? _('Removed') : _('Added');
         // build the changelog message with title + clickable URL
         $anchor = sprintf(
             '<a href="%1$s">%2$s</a>',
-            Tools::eLabHtmlspecialchars($this->makeTargetUrl($this->getTargetType(), $linkId)),
+            Tools::eLabHtmlspecialchars(sprintf('/%s?mode=view&id=%d', $this->getTargetType()->toPage(), $linkId)),
             Tools::eLabHtmlspecialchars($this->getTargetTitle() ?? ('#' . $linkId))
         );
         $Changelog = new Changelog($this->Entity);
         $Changelog->create(new ContentParams(
             'links',
-            sprintf('%s link to %s: %s', $verb, $this->getTargetType()->toGenre(), $anchor)
+            sprintf(_('%s link to %s: %s'), $verb, $this->getTargetType()->toGenre(), $anchor)
         ));
     }
 

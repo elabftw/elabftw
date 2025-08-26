@@ -1233,12 +1233,15 @@ components:
             last_login:
               type: string
               nullable: true
+              description: Last time a full authentication happened.
             orgid:
               type: string
               nullable: true
+              description: Internal organization id used to match user with something other than email.
             auth_service:
               type: integer
               nullable: true
+              description: What mechanism was used to login, see AuthType Enum.
             is_sysadmin:
               type: integer
               default: 0
@@ -1251,9 +1254,11 @@ components:
                     type: integer
                   name:
                     type: string
-                  usergroup:
+                  is_admin:
                     type: integer
                   is_owner:
+                    type: integer
+                  is_archived:
                     type: integer
     extra_fields_keys:
       type: object
@@ -4050,20 +4055,34 @@ paths:
                 oneOf:
                   - $ref: '#/components/schemas/users'
                   - $ref: '#/components/schemas/users_full'
-              example:
-                - userid: 4
-                  firstname: Brook
-                  lastname: Hegmann
-                  orgid: "u3051"
-                  email: brook@example.com
-                  validated: 1
-                  archived: 0
-                  last_login: "2023-07-29 20:34:04"
-                  valid_until: null
-                  is_sysadmin: 0
-                  fullname: Brook Hegmann
-                  orcid: "0000-0002-7494-5555"
-                  auth_service: null
+              examples:
+                asUser:
+                  summary: Response given to a regular user
+                  value:
+                    - userid: 4
+                      firstname: Brook
+                      lastname: Hegmann
+                      email: brook@example.com
+                      fullname: Brook Hegmann
+                      initials: "BH"
+                      orcid: "0000-0002-7494-5555"
+                      sig_pubkey: "untrusted comment: elabftw/50300: public key 320dd30997373737\nRWQyDdMJlzc3N2zRpeiHjGYQe4cBYxw6Zh43+zc5Nm4v9gwypeYjSxai\n"
+                asAdmin:
+                  summary: Response given to an Admin
+                  value:
+                    - userid: 5
+                      firstname: Lara
+                      lastname: Croft
+                      email: lara@tombraider.com
+                      validated: 1
+                      created_at: "1996-10-25 20:34:04"
+                      last_login: "2025-02-14 12:23:45"
+                      valid_until: "2025-08-29"
+                      is_sysadmin: 0
+                      fullname: Lara Croft
+                      initials: "LC"
+                      orcid: "0000-0002-7494-5555"
+                      auth_service: 10
     post:
       tags: ['Users']
       summary: Create a new user.

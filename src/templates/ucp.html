@@ -459,8 +459,8 @@
       </span>
       <span class='smallgray'>{{ 'Tip: use a password manager or a passphrase that you can remember, see %sthis XKCD comic%s.'|trans|format("<a target='_blank' rel='noopener' class='external-link' href='https://xkcd.com/936/'>", "</a>")|raw }}</span>
     {% else %}
-      <p>{{ 'Your account is already associated with a keypair.'|trans|msg('ok', false) }}<p>
-      <p>{{ 'Here is your public key. You can share it with the world:'|trans }}<p>
+      {{ 'Your account is already associated with a keypair.'|trans|msg('ok', false) }}
+      <p>{{ 'Here is your public key. You can share it with the world:'|trans }}</p>
       <textarea class='form-control' disabled>{{ App.Users.userData.sig_pubkey }}</textarea>
     {% endif %}
 

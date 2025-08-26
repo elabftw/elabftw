@@ -36,7 +36,7 @@ try {
     $postData = $App->Request->request->all();
     // TAB 2 : ACCOUNT
     // CHANGE PASSWORD (only for local accounts)
-    if (!empty($App->Request->request->getString('password'))
+    if (!empty($App->Request->request->getString('current_password'))
         && $App->Users->userData['auth_service'] === AuthType::Local->asService()
     ) {
         // for locally auth users, verify local password was provided
@@ -46,8 +46,10 @@ try {
             $App->Users->patch(Action::Update, array('email' => $postData['email']));
         }
 
-        $App->Users->patch(Action::UpdatePassword, $postData);
-        $App->Session->getFlashBag()->add('ok', _('Password successfully changed.'));
+        if (!empty($App->Request->request->getString('password'))) {
+            $App->Users->patch(Action::UpdatePassword, $postData);
+            $App->Session->getFlashBag()->add('ok', _('Password successfully changed.'));
+        }
     }
 
     // ENABLE MFA

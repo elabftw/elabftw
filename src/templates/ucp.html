@@ -22,7 +22,7 @@
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
-      <form id='regenerateSigPassphraseForm'>
+      <form id='regenerateSigPassphraseForm' aria-label='{{ 'Regenerate signature keys'|trans }}'>
         <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
           <p>{{ 'Warning: regenerating your signature keys means the current key will be archived and will not be available anymore.'|trans }}</p>
           <label for='regen_sigPassphraseInput'>{{ 'Enter a passphrase:'|trans }}</label>
@@ -302,7 +302,7 @@
 <div data-tabcontent='2' hidden>
   {# only show the email/password fields for locally authenticated users #}
   {% if isLocalAuth %}
-    <form class='form-group' method='post' action='app/controllers/UcpController.php' aria-label='{{ 'User information'|trans }}'>
+    <form class='form-group' method='post' action='app/controllers/UcpController.php' aria-label='{{ 'Personal information'|trans }}'>
       {{ App.Session.get('csrf')|csrf }}
 
       <div class='pl-3 mb-5'>
@@ -444,7 +444,7 @@
     <p class='smallgray'>{{ 'To learn more about signature keys, have a look at the %scomplete documentation%s.'|trans|format("<a class='external-link' target='_blank' rel='noopener' href='https://doc.elabftw.net/user-guide.html#signatures'>", "</a>")|raw }}</p>
     {% if not App.Users.userData.sig_privkey %}
       {{ 'You do not have a key pair associated with your account yet.'|trans|msg('warning', false) }}
-      <form id='sigPassphraseForm'>
+      <form id='sigPassphraseForm' aria-label='{{ 'Generate signature keys'|trans }}'>
         <label for='sigPassphraseInput'>{{ 'To generate a key pair, enter a passphrase below and click the button:'|trans }}</label>
         <div class='input-group'>
           <input type='password' class='form-control' name='passphrase' required autocomplete='new-password' id='sigPassphraseInput' minlength='{{ App.Config.configArr.min_password_length }}' />

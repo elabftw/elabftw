@@ -90,7 +90,7 @@
         </button>
       </div>
       {% if App.Users.userData.sig_privkey %}
-        <form id='sigPassphraseForm'>
+        <form id='sigPassphraseForm' aria-label='{{ 'Add your signature'|trans }}'>
       {% endif %}
         <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
           <p>{{ 'Adding your signature will cryptographically sign the content of this entry, and the signature will be stored alongside the content at the time of signature, in an archive, visible as attachment (masked by default because archived).'|trans }}</p>

@@ -60,6 +60,11 @@ if (mode === 'view') {
       .then(() => window.location.href = `?mode=view&id=${entity.id}`);
   });
 
+  on('override-exclusive-edit-lock', () => {
+    ApiC.patch(`${entity.type}/${entity.id}`, { action: Action.RemoveExclusiveEditMode })
+      .then(() => window.location.href = `?mode=view&id=${entity.id}`);
+  });
+
   // add the title in the page name (see #324)
   document.title = document.getElementById('documentTitle').textContent + ' - eLabFTW';
 

@@ -83,6 +83,7 @@ final class ExclusiveEditMode
             // everyone can ...
             if ($action === Action::Pin
                 || $action === Action::AccessKey
+                || $action === Action::RemoveExclusiveEditMode
             ) {
                 return null;
             }

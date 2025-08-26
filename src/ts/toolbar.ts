@@ -75,6 +75,7 @@ const clickHandler = (event: Event) => {
 
   // SIGN ENTITY
   } else if (el.matches('[data-action="sign-entity"]')) {
+    event.preventDefault();
     const form = document.getElementById('sigPassphraseForm') as HTMLFormElement;
     const params = collectForm(form);
     params['action'] = Action.Sign;

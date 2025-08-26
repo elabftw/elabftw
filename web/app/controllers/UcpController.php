@@ -35,19 +35,17 @@ try {
     }
     $postData = $App->Request->request->all();
     // TAB 2 : ACCOUNT
-    // for locally auth users, verify local password was provided
-    if ($App->Users->userData['auth_service'] === AuthType::Local->asService()) {
+    // CHANGE PASSWORD (only for local accounts)
+    if (!empty($App->Request->request->getString('password'))
+        && $App->Users->userData['auth_service'] === AuthType::Local->asService()
+    ) {
+        // for locally auth users, verify local password was provided
         $App->Users->checkCurrentPasswordOrExplode($App->Request->request->getString('current_password'));
         // update the email if necessary
         if (isset($postData['email']) && ($postData['email'] !== $App->Users->userData['email'])) {
             $App->Users->patch(Action::Update, array('email' => $postData['email']));
         }
-    }
 
-    // CHANGE PASSWORD (only for local accounts)
-    if (!empty($App->Request->request->getString('password'))
-        && $App->Users->userData['auth_service'] === AuthType::Local->asService()
-    ) {
         $App->Users->patch(Action::UpdatePassword, $postData);
         $App->Session->getFlashBag()->add('ok', _('Password successfully changed.'));
     }

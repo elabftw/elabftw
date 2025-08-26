@@ -32,7 +32,8 @@ if (window.location.pathname === '/ucp.php') {
       .then(() => reloadElements(['ucp-mfa']));
   });
 
-  on('create-sigkeys', () => {
+  on('create-sigkeys', (_, event: Event) => {
+    event.preventDefault();
     const form = document.getElementById('sigPassphraseForm') as HTMLFormElement;
     const params = collectForm(form);
     params['action'] = Action.Create;
@@ -49,7 +50,8 @@ if (window.location.pathname === '/ucp.php') {
     });
   });
 
-  on('regenerate-sigkeys', () => {
+  on('regenerate-sigkeys', (_, event: Event) => {
+    event.preventDefault();
     const form = document.getElementById('regenerateSigPassphraseForm') as HTMLFormElement;
     const params = collectForm(form);
     params['action'] = Action.Update;

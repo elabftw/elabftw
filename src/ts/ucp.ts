@@ -15,6 +15,7 @@ import { Action, Model } from './interfaces';
 import { notify } from './notify';
 import { ApiC } from './api';
 import { on } from './handlers';
+import $ from 'jquery';
 
 if (window.location.pathname === '/ucp.php') {
   on('patch-account', () => {
@@ -44,9 +45,12 @@ if (window.location.pathname === '/ucp.php') {
   });
 
   on('regenerate-sigkeys', () => {
-    const passphraseInput = (document.getElementById('regen_sigPassphraseInput') as HTMLInputElement);
-    ApiC.patch(`${Model.User}/me/${Model.Sigkeys}`, {action: Action.Update, passphrase: passphraseInput.value})
-      .then(() => reloadElements(['ucp-sigkeys']));
+    const params = collectForm(document.getElementById('regenerateSigPassphraseForm'));
+    ApiC.patch(`${Model.User}/me/${Model.Sigkeys}`, {action: Action.Update, passphrase: params['passphrase']})
+      .then(() => {
+        $('#regenerateSigkeysModal').modal('toggle');
+        reloadElements(['ucp-sigkeys']);
+      });
   });
 
   on('create-apikey', () => {

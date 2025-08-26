@@ -15,6 +15,7 @@ import { Action, Model } from './interfaces';
 import { notify } from './notify';
 import { ApiC } from './api';
 import { on } from './handlers';
+import $ from 'jquery';
 
 if (window.location.pathname === '/ucp.php') {
   on('patch-account', () => {
@@ -31,10 +32,16 @@ if (window.location.pathname === '/ucp.php') {
       .then(() => reloadElements(['ucp-mfa']));
   });
 
-  on('create-sigkeys', () => {
-    const passphraseInput = (document.getElementById('sigPassphraseInput') as HTMLInputElement);
-    ApiC.post(`${Model.User}/me/${Model.Sigkeys}`, {action: Action.Create, passphrase: passphraseInput.value})
-      .then(() => reloadElements(['ucp-sigkeys']));
+  on('create-sigkeys', (_, event: Event) => {
+    event.preventDefault();
+    const form = document.getElementById('sigPassphraseForm') as HTMLFormElement;
+    const params = collectForm(form);
+    params['action'] = Action.Create;
+    ApiC.post(`${Model.User}/me/${Model.Sigkeys}`, params)
+      .then(() => {
+        reloadElements(['ucp-sigkeys']);
+        form.reset();
+      });
   });
 
   on('download-sigkey', (el: HTMLElement) => {
@@ -43,10 +50,17 @@ if (window.location.pathname === '/ucp.php') {
     });
   });
 
-  on('regenerate-sigkeys', () => {
-    const passphraseInput = (document.getElementById('regen_sigPassphraseInput') as HTMLInputElement);
-    ApiC.patch(`${Model.User}/me/${Model.Sigkeys}`, {action: Action.Update, passphrase: passphraseInput.value})
-      .then(() => reloadElements(['ucp-sigkeys']));
+  on('regenerate-sigkeys', (_, event: Event) => {
+    event.preventDefault();
+    const form = document.getElementById('regenerateSigPassphraseForm') as HTMLFormElement;
+    const params = collectForm(form);
+    params['action'] = Action.Update;
+    ApiC.patch(`${Model.User}/me/${Model.Sigkeys}`, params)
+      .then(() => {
+        $('#regenerateSigkeysModal').modal('hide');
+        reloadElements(['ucp-sigkeys']);
+        form.reset();
+      });
   });
 
   on('create-apikey', () => {

@@ -1195,6 +1195,8 @@ components:
           type: integer
         fullname:
           type: string
+
+    # users seen as a user, with limited columns
     users:
       type: object
       properties:
@@ -1208,42 +1210,51 @@ components:
           type: string
         email:
           type: string
-        validated:
-          type: integer
-        valid_until:
-          type: string
-        archived:
-          type: integer
-        last_login:
-          type: string
         fullname:
           type: string
         orcid:
           type: string
-        orgid:
-          type: string
-        auth_service:
-          type: integer
-        is_sysadmin:
-          type: integer
-        entrypoint:
-          type: integer
+          nullable: true
         sig_pubkey:
           type: string
           description: Public signature key (minisign format)
-        teams:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: integer
-              name:
-                type: string
-              usergroup:
-                type: integer
-              is_owner:
-                type: integer
+          nullable: true
+    # users seen as an admin
+    users_full:
+      allOf:
+        - $ref: '#/components/schemas/users'
+        - type: object
+          properties:
+            validated:
+              type: integer
+            valid_until:
+              type: string
+              nullable: true
+            last_login:
+              type: string
+              nullable: true
+            orgid:
+              type: string
+              nullable: true
+            auth_service:
+              type: integer
+              nullable: true
+            is_sysadmin:
+              type: integer
+              default: 0
+            teams:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  usergroup:
+                    type: integer
+                  is_owner:
+                    type: integer
     extra_fields_keys:
       type: object
       properties:
@@ -4032,45 +4043,13 @@ paths:
             type: number
       responses:
         '200':
-          description: A list of users
+          description: A list of users. Returned columns will depend if request is Admin somewhere or not.
           content:
             application/json:
               schema:
-                type: array
-                items:
-                   type: object
-                   properties:
-                     userid:
-                       type: integer
-                     firstname:
-                       type: string
-                     lastname:
-                       type: string
-                     orgid:
-                       type: string
-                       nullable: true
-                     email:
-                       type: string
-                     validated:
-                       type: integer
-                     archived:
-                       type: integer
-                     last_login:
-                       type: string
-                       nullable: true
-                     valid_until:
-                       type: string
-                       nullable: true
-                     is_sysadmin:
-                       type: integer
-                     fullname:
-                       type: string
-                     orcid:
-                       type: string
-                       nullable: true
-                     auth_service:
-                       type: integer
-                       nullable: true
+                oneOf:
+                  - $ref: '#/components/schemas/users'
+                  - $ref: '#/components/schemas/users_full'
               example:
                 - userid: 4
                   firstname: Brook

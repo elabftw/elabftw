@@ -10,22 +10,21 @@
       </tr>
     </thead>
     <tbody>
-      {% for change in changes %}
+    {% for change in changes %}
       <tr>
         <td>{{ change.created_at }}</td>
         <td>{{ change.fullname }}</td>
         <td>{{ change.target }}</td>
         <td>
-          {# cannot use ternary here as it is an expression and filter is applied after evaluation #}
-          {%- if change.target == 'body' -%}
-            {# use of raw to make the link to revisions page work #}
+          {# render raw HTML for safe, whitelisted targets #}
+          {%- if change.target in ['body', 'links'] -%}
             {{ change.content|raw }}
           {%- else -%}
             {{ change.content }}
           {%- endif -%}
         </td>
       </tr>
-      {% endfor %}
+    {% endfor %}
     </tbody>
   </table>
 </div>

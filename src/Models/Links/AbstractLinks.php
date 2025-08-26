@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models\Links;
 
 use Elabftw\Elabftw\EntitySqlBuilder;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Metadata as MetadataEnum;
@@ -37,14 +38,9 @@ abstract class AbstractLinks extends AbstractRest
 {
     use SetIdTrait;
 
-    /**
-     * The id of the target (link_id)
-     */
+    // The id of the target (link_id)
     public ?int $id;
 
-    /**
-     * @param ?int $id The id of the target (link_id)
-     */
     public function __construct(public AbstractEntity $Entity, ?int $id = null)
     {
         parent::__construct();
@@ -57,18 +53,14 @@ abstract class AbstractLinks extends AbstractRest
         return sprintf('%s%d/%s/', $this->Entity->getApiPath(), $this->Entity->id ?? '', $this->getTable());
     }
 
-    /**
-     * Get links for an entity
-     */
+    // Get links for an entity
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         return $this->prepareBindExecuteFetch($this->getSqlQuery());
     }
 
-    /**
-     * Get related entities
-     */
+    // Get related entities
     public function readRelated(): array
     {
         return $this->prepareBindExecuteFetch($this->getSqlQuery(related: true));
@@ -81,7 +73,7 @@ abstract class AbstractLinks extends AbstractRest
      * @param int $newId The id of the new entity that will receive the links
      * @param bool $fromTpl do we duplicate from template?
      */
-    public function duplicate(int $id, int $newId, $fromTpl = false): int
+    public function duplicate(int $id, int $newId, bool $fromTpl = false): int
     {
         $table = $this->getTable();
         if ($fromTpl) {
@@ -119,8 +111,19 @@ abstract class AbstractLinks extends AbstractRest
         $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
 
+        // Build the same clickable anchor used in create()
+        $anchor = sprintf(
+            '<a href="%1$s">%2$s</a>',
+            Tools::eLabHtmlspecialchars($this->makeTargetUrl($this->getTargetType(), $this->id)),
+            Tools::eLabHtmlspecialchars($this->getTargetTitle())
+        );
+
         $Changelog = new Changelog($this->Entity);
-        $Changelog->create(new ContentParams('links', sprintf('Removed link to %s with id: %d', $this->getTargetType()->toGenre(), $this->id)));
+        $Changelog->create(new ContentParams(
+            'links',
+            sprintf('Removed link to %s: %s', $this->getTargetType()->toGenre(), $anchor)
+        ));
+
         return $this->Db->execute($req);
     }
 
@@ -166,12 +169,47 @@ abstract class AbstractLinks extends AbstractRest
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
 
-        $Changelog = new Changelog($this->Entity);
-        $Changelog->create(new ContentParams('links', sprintf('Added link to %s with id: %d', $this->getTargetType()->toGenre(), $this->id)));
+        // build the changelog message with title + clickable URL
+        $anchor = sprintf(
+            '<a href="%1$s">%2$s</a>',
+            Tools::eLabHtmlspecialchars($this->makeTargetUrl($this->getTargetType(), $this->id)),
+            Tools::eLabHtmlspecialchars($this->getTargetTitle())
+        );
 
+        $Changelog = new Changelog($this->Entity);
+        $Changelog->create(new ContentParams('links',
+            sprintf(
+                'Added link to %s: %s',
+                $this->getTargetType()->toGenre(),
+                $anchor
+            )
+        ));
         $this->Db->execute($req);
 
         return $this->id;
+    }
+
+    // returns title of the new link
+    private function getTargetTitle(): ?string
+    {
+        $sql = 'SELECT title FROM ' . $this->getTargetType()->value . ' WHERE id = :id LIMIT 1';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        if ($this->Db->execute($req) && ($row = $req->fetch(PDO::FETCH_ASSOC))) {
+            return (string) $row['title'];
+        }
+        return null;
+    }
+
+    // builds an url to anchor the new link in Changelog
+    private function makeTargetUrl(EntityType $targetType, int $id): string
+    {
+        $type = strtolower(rtrim($targetType->value, 's'));
+        return match ($type) {
+            'experiment' => '/experiments.php?mode=view&id=' . $id,
+            'item' => '/database.php?mode=view&id=' . $id,
+            default => '/?id=' . $id,
+        };
     }
 
     abstract protected function getTargetType(): EntityType;

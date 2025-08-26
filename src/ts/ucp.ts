@@ -48,7 +48,7 @@ if (window.location.pathname === '/ucp.php') {
     const params = collectForm(document.getElementById('regenerateSigPassphraseForm'));
     ApiC.patch(`${Model.User}/me/${Model.Sigkeys}`, {action: Action.Update, passphrase: params['passphrase']})
       .then(() => {
-        $('#regenerateSigkeysModal').modal('toggle');
+        $('#regenerateSigkeysModal').modal('hide');
         reloadElements(['ucp-sigkeys']);
       });
   });

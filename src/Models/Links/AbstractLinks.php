@@ -110,10 +110,11 @@ abstract class AbstractLinks extends AbstractRest
         $req = $this->Db->prepare($sql);
         $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-
-        $this->createChangelog(isDestroy: true);
-
-        return $this->Db->execute($req);
+        $res = $this->Db->execute($req);
+        if ($res && $req->rowCount() > 0) {
+            $this->createChangelog(isDestroy: true);
+        }
+        return $res;
     }
 
     public function isSelfLinkViaMetadata(string $extraFieldKey, string $targetId): bool
@@ -146,8 +147,9 @@ abstract class AbstractLinks extends AbstractRest
      */
     public function create(): int
     {
+        $linkId = $this->requireLinkId();
         // don't insert a link to the same entity, make sure we check for the type too
-        if ($this->Entity->id === $this->id && $this->Entity->entityType === $this->getTargetType()) {
+        if ($this->Entity->id === $linkId && $this->Entity->entityType === $this->getTargetType()) {
             throw new ImproperActionException(sprintf('Linking the %s to itself is not allowed. Please select a different target.', $this->getTargetType()->toGenre()));
         }
         $this->Entity->touch();
@@ -156,11 +158,39 @@ abstract class AbstractLinks extends AbstractRest
         $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (item_id, link_id) VALUES(:item_id, :link_id)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':link_id', $linkId, PDO::PARAM_INT);
 
-        $this->createChangelog();
-        $this->Db->execute($req);
+        $res = $this->Db->execute($req);
+        if ($res && $req->rowCount() > 0) {
+            $this->createChangelog();
+        }
+        return $linkId;
+    }
 
+    abstract protected function getTargetType(): EntityType;
+
+    abstract protected function getCatTable(): string;
+
+    abstract protected function getStatusTable(): string;
+
+    abstract protected function getTable(): string;
+
+    abstract protected function getOtherImportTypeTable(): string;
+
+    abstract protected function getRelatedTable(): string;
+
+    abstract protected function getTemplateTable(): string;
+
+    abstract protected function getImportTargetTable(): string;
+
+    abstract protected function getOtherImportTargetTable(): string;
+
+    // make sure we have non-null link id
+    private function requireLinkId(): int
+    {
+        if ($this->id === null) {
+            throw new ImproperActionException('Missing link id for links operation.');
+        }
         return $this->id;
     }
 
@@ -190,12 +220,13 @@ abstract class AbstractLinks extends AbstractRest
     // create Changelog with link to the entity. Message is different when it's a link removal
     private function createChangelog(bool $isDestroy = false): void
     {
+        $linkId = $this->requireLinkId();
         $verb = $isDestroy ? 'Removed' : 'Added';
         // build the changelog message with title + clickable URL
         $anchor = sprintf(
             '<a href="%1$s">%2$s</a>',
-            Tools::eLabHtmlspecialchars($this->makeTargetUrl($this->getTargetType(), $this->id)),
-            Tools::eLabHtmlspecialchars($this->getTargetTitle() ?? ('#' . $this->id))
+            Tools::eLabHtmlspecialchars($this->makeTargetUrl($this->getTargetType(), $linkId)),
+            Tools::eLabHtmlspecialchars($this->getTargetTitle() ?? ('#' . $linkId))
         );
         $Changelog = new Changelog($this->Entity);
         $Changelog->create(new ContentParams(
@@ -203,24 +234,6 @@ abstract class AbstractLinks extends AbstractRest
             sprintf('%s link to %s: %s', $verb, $this->getTargetType()->toGenre(), $anchor)
         ));
     }
-
-    abstract protected function getTargetType(): EntityType;
-
-    abstract protected function getCatTable(): string;
-
-    abstract protected function getStatusTable(): string;
-
-    abstract protected function getTable(): string;
-
-    abstract protected function getOtherImportTypeTable(): string;
-
-    abstract protected function getRelatedTable(): string;
-
-    abstract protected function getTemplateTable(): string;
-
-    abstract protected function getImportTargetTable(): string;
-
-    abstract protected function getOtherImportTargetTable(): string;
 
     /**
      * Copy the links of one entity into another entity

@@ -1198,6 +1198,7 @@ components:
 
     # users seen as a user, with limited columns
     users:
+      description: Response for when requester is a regular user.
       type: object
       properties:
         userid:
@@ -1221,6 +1222,7 @@ components:
           nullable: true
     # users seen as an admin
     users_full:
+      description: Response for when requester has Admin privilege.
       allOf:
         - $ref: '#/components/schemas/users'
         - type: object
@@ -4073,7 +4075,7 @@ paths:
             default: false
       responses:
         '200':
-          description: A list of users. Returned columns will depend if request is Admin somewhere or not.
+          description: A list of users. Returned columns will depend if requester is Admin somewhere or not.
           content:
             application/json:
               schema:

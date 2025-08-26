@@ -152,6 +152,7 @@ export function collectForm(form: HTMLElement): object {
     const el = input;
     if (el.reportValidity() === false) {
       console.error(el);
+      el.classList.add('border-danger');
       throw new Error('Invalid input found! Aborting.');
     }
     let value = el.value;

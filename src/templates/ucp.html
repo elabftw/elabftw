@@ -440,8 +440,8 @@
     {% if not App.Users.userData.sig_privkey %}
       <p>{{ 'You do not have a key pair associated with your account yet.'|trans|msg('warning', false) }}<p>
     <label for='sigPassphraseInput'>{{ 'To generate a key pair, enter a passphrase below and click the button:'|trans }}</label>
-    <div class='input-group'>
-      <input type='password' class='form-control' autocomplete='new-password' id='sigPassphraseInput' minlength='{{ App.Config.configArr.min_password_length }}' />
+    <div class='input-group' id='sigPassphraseForm'>
+      <input type='password' class='form-control' name='passphrase' required autocomplete='new-password' id='sigPassphraseInput' minlength='{{ App.Config.configArr.min_password_length }}' />
       <div class='input-group-append'>
         <button type='button' class='btn btn-light input-border' data-action='toggle-password' title='{{ 'Show password'|trans }}' aria-label='{{ 'Show password'|trans }}'><i class='fas fa-eye' aria-hidden='true'></i></button>
         <button type='button' data-action='create-sigkeys' class='btn btn-primary'>{{ 'Generate signature keys'|trans }}</button>

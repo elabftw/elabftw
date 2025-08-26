@@ -32,8 +32,8 @@ if (window.location.pathname === '/ucp.php') {
   });
 
   on('create-sigkeys', () => {
-    const passphraseInput = (document.getElementById('sigPassphraseInput') as HTMLInputElement);
-    ApiC.post(`${Model.User}/me/${Model.Sigkeys}`, {action: Action.Create, passphrase: passphraseInput.value})
+    const params = collectForm(document.getElementById('sigPassphraseForm'));
+    ApiC.post(`${Model.User}/me/${Model.Sigkeys}`, {action: Action.Create, passphrase: params['passphrase']})
       .then(() => reloadElements(['ucp-sigkeys']));
   });
 

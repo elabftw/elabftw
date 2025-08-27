@@ -138,11 +138,7 @@ abstract class AbstractLinks extends AbstractRest
             && $this->Entity->id === intval($targetId);
     }
 
-    /**
-     * Add a link to an entity
-     * Links to Items are possible from all entities
-     * Links to Experiments are only allowed from other Experiments and Items
-     */
+    // Add a link to an entity
     public function create(): int
     {
         $this->Entity->canOrExplode('write');
@@ -222,10 +218,7 @@ abstract class AbstractLinks extends AbstractRest
         ));
     }
 
-    /**
-     * Copy the links of one entity into another entity
-     * The linked entity can have links to experiments and/or resources, both need to be imported
-     */
+    // On duplicate of an entity, copy its links (experiments, resources) into the new entity
     private function import(): int
     {
         $this->Entity->canOrExplode('write');
@@ -256,9 +249,7 @@ abstract class AbstractLinks extends AbstractRest
                 $tables['import-target'],
             );
             $req = $this->Db->prepare($sql);
-            /** @psalm-suppress InaccessibleProperty Seems like a bug as $this->Entity->id is accessible */
             $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-            /** @psalm-suppress InaccessibleProperty Seems like a bug as $this->id is accessible */
             $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
 
             $res[] = $this->Db->execute($req);

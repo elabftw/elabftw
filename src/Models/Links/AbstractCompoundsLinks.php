@@ -122,7 +122,7 @@ abstract class AbstractCompoundsLinks extends AbstractRest
         $this->Entity->canOrExplode('write');
         $this->Entity->touch();
         if ($this->checkCompoundAlreadyLinked()) {
-            throw new ImproperActionException('This compound is already linked to the current entity');
+            throw new ImproperActionException('This compound is already linked to the current entity.');
         }
         // use IGNORE to avoid failure due to a key constraint violations
         $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (compound_id, entity_id) VALUES(:link_id, :item_id)';
@@ -160,7 +160,7 @@ abstract class AbstractCompoundsLinks extends AbstractRest
 
     private function createChangelog(bool $isDestroy = false): void
     {
-        $info = $this->getTargetInfo();
+        $info = $this->getCompoundInfo();
         if ($info === null) {
             throw new ImproperActionException('Compound information is missing or incomplete.');
         }
@@ -175,7 +175,7 @@ abstract class AbstractCompoundsLinks extends AbstractRest
         ));
     }
 
-    private function getTargetInfo(): ?array
+    private function getCompoundInfo(): ?array
     {
         $sql = 'SELECT name, cas_number FROM compounds WHERE id = :id LIMIT 1';
         $req = $this->Db->prepare($sql);

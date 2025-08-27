@@ -142,9 +142,8 @@ abstract class AbstractLinks extends AbstractRest
     public function create(): int
     {
         $this->Entity->canOrExplode('write');
-        $linkId = $this->requireLinkId();
         // don't insert a link to the same entity, make sure we check for the type too
-        if ($this->Entity->id === $linkId && $this->Entity->entityType === $this->getTargetType()) {
+        if ($this->Entity->id === $this->id && $this->Entity->entityType === $this->getTargetType()) {
             throw new ImproperActionException(sprintf(_('Linking the %s to itself is not allowed. Please select a different target.'), $this->getTargetType()->toGenre()));
         }
         $this->Entity->touch();
@@ -153,13 +152,13 @@ abstract class AbstractLinks extends AbstractRest
         $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (item_id, link_id) VALUES(:item_id, :link_id)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':link_id', $linkId, PDO::PARAM_INT);
+        $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
 
         $res = $this->Db->execute($req);
         if ($res && $req->rowCount() > 0) {
             $this->createChangelog();
         }
-        return $linkId;
+        return $this->id;
     }
 
     abstract protected function getTargetType(): EntityType;
@@ -180,15 +179,6 @@ abstract class AbstractLinks extends AbstractRest
 
     abstract protected function getOtherImportTargetTable(): string;
 
-    // make sure we have non-null link id
-    private function requireLinkId(): int
-    {
-        if ($this->id === null) {
-            throw new ImproperActionException('Missing link id for links operation.');
-        }
-        return $this->id;
-    }
-
     // returns title of the new link
     private function getTargetTitle(): ?string
     {
@@ -203,13 +193,15 @@ abstract class AbstractLinks extends AbstractRest
     // create Changelog with link to the entity. Message is different when it's a link removal
     private function createChangelog(bool $isDestroy = false): void
     {
-        $linkId = $this->requireLinkId();
+        if ($this->id === null) {
+            throw new ImproperActionException('Missing link id for links operation.');
+        }
         $verb = $isDestroy ? _('Removed') : _('Added');
         // build the changelog message with title + clickable URL
         $anchor = sprintf(
             '<a href="%1$s">%2$s</a>',
-            Tools::eLabHtmlspecialchars(sprintf('/%s?mode=view&id=%d', $this->getTargetType()->toPage(), $linkId)),
-            Tools::eLabHtmlspecialchars($this->getTargetTitle() ?? ('#' . $linkId))
+            Tools::eLabHtmlspecialchars(sprintf('/%s?mode=view&id=%d', $this->getTargetType()->toPage(), $this->id)),
+            Tools::eLabHtmlspecialchars($this->getTargetTitle() ?? ('#' . $this->id))
         );
         $Changelog = new Changelog($this->Entity);
         $Changelog->create(new ContentParams(

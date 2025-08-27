@@ -19,6 +19,8 @@ use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\AbstractRest;
 use Elabftw\Models\Changelog;
+use Elabftw\Models\Items;
+use Elabftw\Models\ItemsTypes;
 use Elabftw\Params\ContentParams;
 use Elabftw\Traits\SetIdTrait;
 use Override;
@@ -81,16 +83,11 @@ abstract class AbstractCompoundsLinks extends AbstractRest
      * @param int $newId The id of the new entity that will receive the links
      * @param bool $fromTpl do we duplicate from template?
      */
-    public function duplicate(int $id, int $newId, bool $fromTpl = false, bool $fromItemsTypes = false): int
+    public function duplicate(int $id, int $newId, bool $fromTpl = false): int
     {
         $table = $this->getTable();
         if ($fromTpl) {
-            $table = 'compounds2experiments_templates';
-            // TODO implement properly, right now items_types have no ui for compounds
-            //$table = $this->getTemplateTable();
-        }
-        if ($fromItemsTypes) {
-            $table = 'compounds2items_types';
+            $table = $this->getTemplateTable();
         }
         $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (entity_id, compound_id)
             SELECT :new_id, compound_id
@@ -152,6 +149,14 @@ abstract class AbstractCompoundsLinks extends AbstractRest
     }
 
     abstract protected function getTable(): string;
+
+    protected function getTemplateTable(): string
+    {
+        if ($this->Entity instanceof Items || $this->Entity instanceof ItemsTypes) {
+            return 'compounds2items_types';
+        }
+        return 'compounds2experiments_templates';
+    }
 
     private function createChangelog(bool $isDestroy = false): void
     {

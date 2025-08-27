@@ -189,7 +189,7 @@ abstract class AbstractEntity extends AbstractRest
         $this->ItemsLinks->duplicate($templateId, $id, true);
         $this->ExperimentsLinks->duplicate($templateId, $id, true);
         $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
-        $CompoundsLinks->duplicate($templateId, $id, fromItemsTypes: true);
+        $CompoundsLinks->duplicate($templateId, $id, fromTpl: true);
         $this->Steps->duplicate($templateId, $id, true);
         $freshSelf = new $this($this->Users, $id);
         $TemplateType->Uploads->duplicate($freshSelf);
@@ -627,12 +627,7 @@ abstract class AbstractEntity extends AbstractRest
         return $req->fetchAll();
     }
 
-    /**
-     * Check if we have the permission to read/write or throw an exception
-     *
-     * @param string $rw read or write
-     * @throws IllegalActionException
-     */
+    // Check if we have the permission to read/write or throw an exception
     public function canOrExplode(string $rw): void
     {
         if ($this->id === null) {

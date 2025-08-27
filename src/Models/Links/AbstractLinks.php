@@ -64,16 +64,10 @@ abstract class AbstractLinks extends AbstractRest
         return $this->prepareBindExecuteFetch($this->getSqlQuery(related: true));
     }
 
-    /**
-     * Copy the links from one entity to an other
-     *
-     * @param int $id The id of the original entity
-     * @param int $newId The id of the new entity that will receive the links
-     * @param bool $fromTpl do we duplicate from template?
-     */
-    public function duplicate(int $id, int $newId, bool $fromTpl = false): int
+    // Copy links from one entity to another
+    public function duplicate(int $id, int $newId, bool $fromTemplate = false): int
     {
-        $table = $fromTpl ? $this->getTemplateTable() : $this->getTable();
+        $table = $fromTemplate ? $this->getTemplateTable() : $this->getTable();
         $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (item_id, link_id)
             SELECT :new_id, link_id
             FROM ' . $table . '

@@ -189,7 +189,7 @@ abstract class AbstractEntity extends AbstractRest
         $this->ItemsLinks->duplicate($templateId, $id, true);
         $this->ExperimentsLinks->duplicate($templateId, $id, true);
         $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
-        $CompoundsLinks->duplicate($templateId, $id, fromTpl: true);
+        $CompoundsLinks->duplicate($templateId, $id, true);
         $this->Steps->duplicate($templateId, $id, true);
         $freshSelf = new $this($this->Users, $id);
         $TemplateType->Uploads->duplicate($freshSelf);

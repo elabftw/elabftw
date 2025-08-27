@@ -76,16 +76,10 @@ abstract class AbstractCompoundsLinks extends AbstractRest
         };
     }
 
-    /**
-     * Copy the links from one entity to an other
-     *
-     * @param int $id The id of the original entity
-     * @param int $newId The id of the new entity that will receive the links
-     * @param bool $fromTpl do we duplicate from template?
-     */
-    public function duplicate(int $id, int $newId, bool $fromTpl = false): int
+    // Copy Compounds from one entity to another
+    public function duplicate(int $id, int $newId, bool $fromTemplate = false): int
     {
-        $table = $fromTpl ? $this->getTemplateTable() : $this->getTable();
+        $table = $fromTemplate ? $this->getTemplateTable() : $this->getTable();
         $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (entity_id, compound_id)
             SELECT :new_id, compound_id
             FROM ' . $table . '

@@ -111,17 +111,11 @@ abstract class AbstractContainersLinks extends AbstractLinks
         return $req->fetchAll();
     }
 
-    /**
-     * Copy the links from one entity to an other
-     *
-     * @param int $id The id of the original entity
-     * @param int $newId The id of the new entity that will receive the links
-     * @param bool $fromTpl do we duplicate from template?
-     */
+    // Copy Containers from one entity to another
     #[Override]
-    public function duplicate(int $id, int $newId, bool $fromTpl = false): int
+    public function duplicate(int $id, int $newId, bool $fromTemplate = false): int
     {
-        $table = $fromTpl ? $this->getTemplateTable() : $this->getTable();
+        $table = $fromTemplate ? $this->getTemplateTable() : $this->getTable();
         $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (item_id, storage_id, qty_stored, qty_unit)
             SELECT :new_id, storage_id, qty_stored, qty_unit
             FROM ' . $table . '

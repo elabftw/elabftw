@@ -73,10 +73,7 @@ abstract class AbstractLinks extends AbstractRest
      */
     public function duplicate(int $id, int $newId, bool $fromTpl = false): int
     {
-        $table = $this->getTable();
-        if ($fromTpl) {
-            $table = $this->getTemplateTable();
-        }
+        $table = $fromTpl ? $this->getTemplateTable() : $this->getTable();
         $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (item_id, link_id)
             SELECT :new_id, link_id
             FROM ' . $table . '

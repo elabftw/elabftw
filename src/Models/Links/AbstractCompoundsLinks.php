@@ -85,10 +85,7 @@ abstract class AbstractCompoundsLinks extends AbstractRest
      */
     public function duplicate(int $id, int $newId, bool $fromTpl = false): int
     {
-        $table = $this->getTable();
-        if ($fromTpl) {
-            $table = $this->getTemplateTable();
-        }
+        $table = $fromTpl ? $this->getTemplateTable() : $this->getTable();
         $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (entity_id, compound_id)
             SELECT :new_id, compound_id
             FROM ' . $table . '
@@ -120,10 +117,10 @@ abstract class AbstractCompoundsLinks extends AbstractRest
     public function create(): int
     {
         $this->Entity->canOrExplode('write');
-        $this->Entity->touch();
         if ($this->checkCompoundAlreadyLinked()) {
             throw new ImproperActionException('This compound is already linked to the current entity.');
         }
+        $this->Entity->touch();
         // use IGNORE to avoid failure due to a key constraint violations
         $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (compound_id, entity_id) VALUES(:link_id, :item_id)';
         $req = $this->Db->prepare($sql);

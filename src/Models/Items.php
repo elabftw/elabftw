@@ -155,6 +155,8 @@ final class Items extends AbstractConcreteEntity
         $this->Tags->copyTags($newId);
         $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
         $CompoundsLinks->duplicate($this->id, $newId);
+        $ContainersLinks = LinksFactory::getContainersLinks($this);
+        $ContainersLinks->duplicate($this->id, $newId);
         // also add a link to the original resource
         if ($linkToOriginal) {
             $ItemsLinks = new Items2ItemsLinks($fresh);

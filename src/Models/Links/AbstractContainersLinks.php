@@ -119,14 +119,11 @@ abstract class AbstractContainersLinks extends AbstractLinks
      * @param bool $fromTpl do we duplicate from template?
      */
     #[Override]
-    public function duplicate(int $id, int $newId, $fromTpl = false): int
+    public function duplicate(int $id, int $newId, bool $fromTpl = false): int
     {
-        $table = $this->getTable();
-        if ($fromTpl) {
-            $table = $this->getTemplateTable();
-        }
-        $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (item_id, link_id)
-            SELECT :new_id, link_id
+        $table = $fromTpl ? $this->getTemplateTable() : $this->getTable();
+        $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (item_id, storage_id, qty_stored, qty_unit)
+            SELECT :new_id, storage_id, qty_stored, qty_unit
             FROM ' . $table . '
             WHERE item_id = :old_id';
         $req = $this->Db->prepare($sql);

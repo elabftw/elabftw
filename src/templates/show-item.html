@@ -24,7 +24,7 @@
         </div>
       {# deleted entry: show restore icon #}
       {% elseif item.state == 3 %}
-      <div class='left-icon rounded mr-3 my-1 bgnd-dark' data-action='restore-entity' title='{{ 'Restore entry'|trans }}' data-endpoint='{{ Entity.entityType.value }}' data-id='{{ item.id }}'>
+      <div class='left-icon rounded mr-3 my-1 bgnd-dark' data-action='restore-entity-showmode' title='{{ 'Restore entry'|trans }}' data-endpoint='{{ Entity.entityType.value }}' data-id='{{ item.id }}'>
           <i class='fas fa-trash-can-arrow-up fa-fw'></i>
         </div>
       {% else %}

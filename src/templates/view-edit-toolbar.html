@@ -26,7 +26,7 @@
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
-        <button type='button' class='btn btn-primary' data-dismiss='modal' data-action='request-action'>{{ 'Save'|trans }}</button>
+        <button type='button' class='btn btn-primary' data-dismiss='modal' data-action='requestaction'>{{ 'Save'|trans }}</button>
       </div>
     </div>
   </div>
@@ -116,7 +116,7 @@
         <div class='modal-footer'>
           <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
           {% if App.Users.userData.sig_privkey %}
-            <button type='submit' data-action='sign-entity' {{ not App.Users.userData.sig_privkey ? 'disabled' }} class='btn btn-primary'>{{ 'Add your signature'|trans }}</button>
+            <button type='submit' data-action='sign' {{ not App.Users.userData.sig_privkey ? 'disabled' }} class='btn btn-primary'>{{ 'Add your signature'|trans }}</button>
           {% else %}
             <a class='btn btn-primary' href='/ucp.php?tab=2#ucp-sigkeys'>{{ 'Go to Settings'|trans }}</a>
           {% endif %}
@@ -146,7 +146,7 @@
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
-        <button type='button' data-action='create-procurement-request' data-dismiss='modal' class='btn btn-primary'>{{ 'Place order'|trans }}</button>
+        <button type='button' data-action='createprocurementrequest' data-dismiss='modal' class='btn btn-primary'>{{ 'Place order'|trans }}</button>
       </div>
     </div>
   </div>
@@ -199,15 +199,6 @@
       {% endif %}
     {% endif %}
 
-  {% endif %}
-
-  {% if not App.Session.has('is_anon') and App.Config.configArr.anon_users and Entity.entityData.access_key %}
-    {# SHARE #}
-    <button title='{{ 'Share'|trans }}' aria-label='{{ 'Share'|trans }}' data-action='share' class='btn hl-hover-gray p-2 lh-normal border-0'>
-      <i class='fas fa-share-alt fa-fw'></i>
-    </button>
-    <input type='text' class='form-control' aria-label='{{ 'Share'|trans }}' id='shareLinkInput' value='' hidden />
-    <div class='vertical-separator'></div>
   {% endif %}
 
   {# SIGN #}
@@ -321,7 +312,7 @@
         {% if Entity.entityData.state == enum('Elabftw\\Enums\\State').Normal.value %}
           <button type='button' class='dropdown-item hover-danger' data-action='destroy'><i class='fas fa-trash-alt fa-fw' title='{{ 'Delete'|trans }}'></i> {{ 'Delete'|trans }}</button>
         {% elseif Entity.entityData.state == enum('Elabftw\\Enums\\State').Deleted.value %}
-          <button type='button' class='dropdown-item hover-danger' data-action='restore-entity'><i class='fas fa-trash-can-arrow-up fa-fw' title='{{ 'Restore entry'|trans }}'></i> {{ 'Restore entry'|trans }}</button>
+          <button type='button' class='dropdown-item hover-danger' data-action='restore'><i class='fas fa-trash-can-arrow-up fa-fw' title='{{ 'Restore entry'|trans }}'></i> {{ 'Restore entry'|trans }}</button>
         {% endif %}
       </div>
     </div>

@@ -55,11 +55,6 @@ if (mode === 'view') {
     }
   });
 
-  on('restore-entity', () => {
-    ApiC.patch(`${entity.type}/${entity.id}`, { action: Action.Restore })
-      .then(() => window.location.href = `?mode=view&id=${entity.id}`);
-  });
-
   on('override-exclusive-edit-lock', () => {
     ApiC.patch(`${entity.type}/${entity.id}`, { action: Action.RemoveExclusiveEditMode })
       .then(() => window.location.href = `?mode=view&id=${entity.id}`);

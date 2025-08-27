@@ -557,6 +557,11 @@ on('transfer-ownership', () => {
   ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => window.location.reload());
 });
 
+on(Action.Restore, () => {
+  ApiC.patch(`${entity.type}/${entity.id}`, { action: Action.Restore })
+    .then(() => window.location.href = `?mode=view&id=${entity.id}`);
+});
+
 on('add-user-to-permissions', (el: HTMLElement) => {
   // collect userid + name + email from input
   const addUserPermissionsInput = (document.getElementById(`${el.dataset.identifier}_select_users`) as HTMLInputElement);

@@ -149,6 +149,7 @@ final class Items extends AbstractConcreteEntity
         $fresh = new self($this->Users, $newId);
         $fresh->update(new ContentParams('canbook', $this->entityData['canbook']));
         /** @psalm-suppress PossiblyNullArgument */
+        $this->ExperimentsLinks->duplicate($this->id, $newId);
         $this->ItemsLinks->duplicate($this->id, $newId);
         $this->Steps->duplicate($this->id, $newId);
         $this->Tags->copyTags($newId);

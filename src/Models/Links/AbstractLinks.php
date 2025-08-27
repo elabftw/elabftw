@@ -38,12 +38,10 @@ abstract class AbstractLinks extends AbstractRest
 {
     use SetIdTrait;
 
-    // The id of the target (link_id)
-    public ?int $id;
-
     public function __construct(public AbstractEntity $Entity, ?int $id = null)
     {
         parent::__construct();
+        // The id of the target (link_id)
         $this->setId($id);
     }
 

@@ -242,10 +242,7 @@ export function getTinymceBaseConfig(page: string): object {
       ApiC.getJson(`${EntityType.Template}`).then(json => {
         const res = [];
         json.forEach(tpl => {
-          // only display pinned templates
-          if (tpl.is_pinned) {
-            res.push({'title': tpl.title, 'description': '', 'content': tpl.body});
-          }
+          res.push({'title': tpl.title, 'description': '', 'content': tpl.body});
         });
         callback(res);
       });

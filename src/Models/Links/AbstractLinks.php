@@ -19,7 +19,6 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\AbstractRest;
@@ -137,7 +136,7 @@ abstract class AbstractLinks extends AbstractRest
         $this->Entity->canOrExplode('write');
         // don't insert a link to the same entity, make sure we check for the type too
         if ($this->Entity->id === $this->id && $this->Entity->entityType === $this->getTargetType()) {
-            throw new UnprocessableContentException(sprintf(_('Linking the %s to itself is not allowed. Please select a different target.'), $this->getTargetType()->toGenre()));
+            return 0;
         }
 
         // use IGNORE to avoid failure due to a key constraint violations

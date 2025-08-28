@@ -53,7 +53,7 @@ describe('Experiments', () => {
     cy.url().then(url => {
       cy.log(url);
       cy.get('[data-target="duplicateModal"]').click()
-        .get('[data-action="duplicate-entity"]').click();
+        .get('[data-action="duplicate"]').click();
       cy.get('#documentTitle').should('be.visible').should('contain', ' I');
       // destroy the duplicated entity now
       entityDestroy();
@@ -128,7 +128,7 @@ describe('Experiments', () => {
     // filter deleted items
     cy.get('select[name="state"]').select('3');
     // restore
-    cy.get('[data-action="restore-entity"]').first().click();
+    cy.get('[data-action="restore-entity-showmode"]').first().click();
     cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
   };
 });

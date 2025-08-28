@@ -93,7 +93,6 @@ abstract class AbstractLinks extends AbstractRest
     public function destroy(): bool
     {
         $this->Entity->canOrExplode('write');
-        $this->Entity->touch();
 
         $sql = 'DELETE FROM ' . $this->getTable() . ' WHERE link_id = :link_id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
@@ -102,6 +101,7 @@ abstract class AbstractLinks extends AbstractRest
         $res = $this->Db->execute($req);
         if ($res && $req->rowCount() > 0) {
             $this->createChangelog(isDestroy: true);
+            $this->Entity->touch();
         }
         return $res;
     }
@@ -137,7 +137,6 @@ abstract class AbstractLinks extends AbstractRest
         if ($this->Entity->id === $this->id && $this->Entity->entityType === $this->getTargetType()) {
             throw new ImproperActionException(sprintf(_('Linking the %s to itself is not allowed. Please select a different target.'), $this->getTargetType()->toGenre()));
         }
-        $this->Entity->touch();
 
         // use IGNORE to avoid failure due to a key constraint violations
         $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (item_id, link_id) VALUES(:item_id, :link_id)';
@@ -148,6 +147,7 @@ abstract class AbstractLinks extends AbstractRest
         $res = $this->Db->execute($req);
         if ($res && $req->rowCount() > 0) {
             $this->createChangelog();
+            $this->Entity->touch();
         }
         return $this->id;
     }

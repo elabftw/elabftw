@@ -483,8 +483,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('withSelected')?.classList.add('d-none');
       }
 
-    // RESTORE ENTITY
-    } else if (el.matches('[data-action="restore-entity"]')) {
+    // RESTORE ENTITY IN SHOW MODE
+    } else if (el.matches('[data-action="restore-entity-showmode"]')) {
       ApiC.patch(`${el.dataset.endpoint}/${el.dataset.id}`, { action: Action.Restore }).then(() => reloadEntitiesShow());
 
     // EXPAND ALL

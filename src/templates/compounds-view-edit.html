@@ -1,7 +1,7 @@
 {# COMPOUNDS #}
 <h4 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='ml-3 d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Compounds'|trans }} (<span id='compoundsCount'>{{ Entity.entityData.compounds|length }}</span>)</h4>
-<div data-save-hidden='compoundDiv' data-count-for='compoundsCount'>
-  <div class='ml-5 mb-2' id='compoundDiv'>
+<div data-save-hidden='compoundDiv' data-count-for='compoundsCount' class='ml-4'>
+  <div class='mb-2' id='compoundDiv'>
     {% if Entity.entityData.compounds %}
       {% macro fpList(key, label, value) %}
         <li class='list-group-item'><label for='{{ key }}'>{{ label }}</label>
@@ -58,7 +58,7 @@
         {% endfor %}
       {% endmacro %}
       {% for fp in Entity.entityData.compounds %}
-        <div class='mt-3 countable'>
+        <div class='mt-3 p-2 countable hl-hover-superlight rounded d-flex justify-content-between'>
         <details>
           <summary>
             <h5 class='d-inline togglable-section-title'>{{ fp.name|default('Name unset'|trans) }} {{ _self.compoundPicto(fp) }}</h5>
@@ -83,17 +83,21 @@
                   {{ 'View on PubChem'|trans }}
                 </a>
               {% endif %}
-              <button class='btn btn-danger ml-auto' type='button' data-action='delete-compound-link' data-id='{{ fp.id }}'>{{ 'Remove compound'|trans }}</button>
             </div>
           </li>
           </ul>
         </details>
+        {# DELETE #}
+        {% if not Entity.isReadOnly %}
+          <button type='button' data-action='delete-compound-link'  aria-label='{{ 'Remove compound'|trans }}' data-id='{{ fp.id }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2'><i class='fas fa-fw fa-lg fa-trash-alt'></i></button>
+        {% endif %}
         </div>
       {% endfor %}
     {% endif %}
   </div>
   {# ADD COMPOUND LINK #}
-  <div class='ml-4 input-group'>
+  {% if mode == 'edit' %}
+  <div class='input-group'>
     <div class='input-group-prepend'>
       <span class='input-group-text'><i class='fas fa-magnifying-glass'></i></span>
     </div>
@@ -102,4 +106,5 @@
       <button class='btn btn-primary' type='button'>{{ 'Add'|trans }}</button>
     </div>
   </div>
+  {% endif %}
 </div>

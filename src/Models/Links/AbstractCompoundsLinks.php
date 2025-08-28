@@ -111,9 +111,6 @@ abstract class AbstractCompoundsLinks extends AbstractRest
     public function create(): int
     {
         $this->Entity->canOrExplode('write');
-        if ($this->checkCompoundAlreadyLinked()) {
-            throw new ImproperActionException('This compound is already linked to the current entity.');
-        }
         $this->Entity->touch();
         // use IGNORE to avoid failure due to a key constraint violations
         $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (compound_id, entity_id) VALUES(:link_id, :item_id)';
@@ -127,16 +124,6 @@ abstract class AbstractCompoundsLinks extends AbstractRest
         }
 
         return $this->id;
-    }
-
-    public function checkCompoundAlreadyLinked(): bool
-    {
-        $sql = 'SELECT 1 FROM ' . $this->getTable() . ' WHERE compound_id = :link_id AND entity_id = :item_id LIMIT 1';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        return (bool) $req->fetchColumn();
     }
 
     abstract protected function getTable(): string;

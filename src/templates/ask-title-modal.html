@@ -8,16 +8,18 @@
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
-      <div class='modal-body mb-3'>
-        <div id='askTitleForm'>
-          <label for='askTitleModalTitleInput'>{{ 'Enter a title'|trans }}</label>
-          <input autocomplete='off' name='title' required class='form-control' type='text' id='askTitleModalTitleInput' />
+      <form aria-label='{{ 'Enter a title'|trans }}'>
+        <div class='modal-body mb-3'>
+          <div id='askTitleForm'>
+            <label for='askTitleModalTitleInput'>{{ 'Enter a title'|trans }}</label>
+            <input autocomplete='off' name='title' required class='form-control' type='text' id='askTitleModalTitleInput' />
+          </div>
         </div>
-      </div>
-      <div class='modal-footer'>
-        <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
-        <button type='button' id='askTitleButton' data-action='create-entity' data-has-title='1' data-form-id='askTitleForm' class='btn btn-primary'>{{ 'Create'|trans }}</button>
-      </div>
+        <div class='modal-footer'>
+          <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+          <button type='submit' id='askTitleButton' data-action='create-entity' data-has-title='1' data-form-id='askTitleForm' class='btn btn-primary'>{{ 'Create'|trans }}</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

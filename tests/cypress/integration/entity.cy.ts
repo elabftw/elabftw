@@ -20,7 +20,7 @@ describe('Experiments', () => {
     cy.get('div.tags').contains('some tag').should('not.exist');
 
     // create step
-    cy.get('.stepinput').type('some step');
+    cy.get('#addStepInput').type('some step');
     cy.get('[data-action="create-step"').click();
     cy.get('.step-static').should('contain', 'some step');
 

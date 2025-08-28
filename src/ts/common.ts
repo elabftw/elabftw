@@ -971,7 +971,8 @@ on('ack-notif', (el: HTMLElement) => {
 on('destroy-notif', () => ApiC.delete(`${Model.User}/me/${Model.Notification}`).then(() => reloadElements(['navbarNotifDiv'])));
 
 // CREATE EXPERIMENT, TEMPLATE or DATABASE item: main create button in top right
-on('create-entity', (el: HTMLElement) => {
+on('create-entity', (el: HTMLElement, event: Event) => {
+  event.preventDefault();
   let params = {};
   if (el.dataset.hasTitle) {
     params = collectForm(document.getElementById(el.dataset.formId));

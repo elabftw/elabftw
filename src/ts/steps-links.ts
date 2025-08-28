@@ -31,9 +31,10 @@ if (document.getElementById('stepsDiv')) {
     event.preventDefault();
     const form = document.getElementById('addStepForm') as HTMLFormElement;
     const params = collectForm(form);
-    StepC.create(params['step']).then(() => {
+    const content = String(params['step'] ?? '').trim();
+    if (!content) return;
+    StepC.create(content).then(() => {
       reloadElements(['stepsDiv']).then(() => {
-        form.reset();
         (document.getElementById('addStepInput') as HTMLInputElement).focus();
       });
     });

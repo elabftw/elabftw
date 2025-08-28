@@ -77,7 +77,7 @@ abstract class AbstractTemplateEntity extends AbstractEntity
         $ExperimentsLinks = LinksFactory::getExperimentsLinks($this);
         $ExperimentsLinks->duplicate($this->id, $newId, true);
         $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
-        $CompoundsLinks->duplicate($this->id, $newId);
+        $CompoundsLinks->duplicate($this->id, $newId, true);
         $Steps = new Steps($this);
         $Steps->duplicate($this->id, $newId, true);
         if ($copyFiles) {

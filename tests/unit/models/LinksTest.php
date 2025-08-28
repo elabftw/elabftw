@@ -13,7 +13,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
-use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Models\Links\Experiments2ItemsLinks;
 use Elabftw\Models\Users\AuthenticatedUser;
 use Elabftw\Models\Users\Users;
@@ -217,7 +217,7 @@ class LinksTest extends \PHPUnit\Framework\TestCase
     public function testCannotLinkEntityToItself(): void
     {
         $this->Experiments->ExperimentsLinks->setId($this->Experiments->id);
-        $this->expectException(ImproperActionException::class);
+        $this->expectException(UnprocessableContentException::class);
         $this->Experiments->ExperimentsLinks->postAction(Action::Create, array());
     }
 }

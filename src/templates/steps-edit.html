@@ -80,7 +80,7 @@
   {# Add step input #}
   <form aria-label='{{ 'Add a step'|trans }}' id='addStepForm'>
     <div class='input-group mt-4'>
-      <input aria-label='{{ 'Add a step'|trans }}' type='text' size='60' name='step' class='form-control' data-id='{{ Entity.id }}' id='addStepInput' />
+      <input aria-label='{{ 'Add a step'|trans }}' type='text' size='60' name='step' class='form-control' required data-id='{{ Entity.id }}' id='addStepInput' />
       <div class='input-group-append'>
         <button class='btn btn-primary' data-action='create-step' type='submit'>{{ 'Add a step'|trans }}</button>
       </div>

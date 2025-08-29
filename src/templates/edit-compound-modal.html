@@ -20,7 +20,7 @@
 {% endmacro %}
 
 {% macro textParam(target, label, required='', type='', placeholder='', pattern='', title='') %}
-  <label for='compoundInput-{{ target }}'>{{ label }}</label>
+  <label for='compoundInput-{{ target }}' {{ required ? "class='required-label'" }}>{{ label }}</label>
   <div class='input-group mb-2'>
     <div class='input-group-prepend'>
       <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-outline-secondary' type='button' data-action='copy-to-clipboard' data-target='compoundInput-{{ target }}'><i class='fas fa-clone'></i></button>
@@ -47,7 +47,7 @@
             <button type='button' class='ml-2 btn btn-secondary btn-sm' data-action='search-entity-from-compound' data-page='experiments'>{{ 'Search associated experiments'|trans }}</button>
             <button type='button' class='btn btn-primary btn-sm ml-auto' data-action='toggle-modal' data-dismiss='modal' data-target='createResourceFromCompoundModal'>{{ 'Create resource from compound'|trans }}</button>
           </div>
-          <div class='mb-2' id='editCompoundInputs'>
+          <div class='my-2' id='editCompoundInputs'>
             {{ _self.textParam('name', 'Name'|trans, 'required') }}
             {{ _self.textParam('iupac_name', 'IUPAC Name'|trans) }}
             {# special case for CAS and EC numbers, too many specifics to use the macro #}

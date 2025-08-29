@@ -573,13 +573,10 @@ tr:first-child td {
   }
 }
 
-/* required labels/input for extra fields */
-#metadataDiv,
-.new-field-form {
-  .required-label::after {
-    color: $dangerred;
-    content: ' *';
-  }
+/* required labels/input */
+.required-label::after {
+  color: $dangerred;
+  content: ' *';
 }
 
 .margin-1px {

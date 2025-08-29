@@ -24,6 +24,35 @@ import { ApiC } from './api';
 import { entity } from './getEntity';
 import { on } from './handlers';
 
+// FINISH: outside if stepsDiv because can be from Todolist panel
+$(document).on('click', 'input[type=checkbox].stepbox', function(e) {
+  // ask for confirmation before un-finishing a step
+  // this check happens after the browser changed the state, so it is inverted
+  // what we are really checking here is if it was checked before the user clicks on it
+  if (!$(this).is(':checked') && !confirm(i18next.t('step-unfinish-warning'))) {
+    // re-check the box on cancel
+    $(this).prop('checked', true);
+    return;
+  }
+
+  // on the todolist we don't want to grab the type from the page
+  // because it's only steps from experiments
+  // so if the element has a data-type, take that instead
+  const newentity = entity;
+  if (e.currentTarget.dataset.type) {
+    newentity.type = e.currentTarget.dataset.type;
+    newentity.id = e.currentTarget.dataset.id;
+  }
+  const stepId = e.currentTarget.dataset.stepid;
+  const StepNew = new Step(newentity);
+  StepNew.finish(stepId).then(() => {
+    reloadElements(['stepsDiv']).then(() => {
+      // keep to do list in sync
+      $('#todo_step_' + stepId).prop('checked', $('.stepbox[data-stepid="' + stepId + '"]').prop('checked'));
+    });
+  });
+});
+
 if (document.getElementById('stepsDiv')) {
   const StepC = new Step(entity);
 
@@ -118,34 +147,6 @@ if (document.getElementById('stepsDiv')) {
     relativeMoment();
   }).observe(document.getElementById('stepsDiv'), {childList: true});
 
-  // FINISH
-  $(document).on('click', 'input[type=checkbox].stepbox', function(e) {
-    // ask for confirmation before un-finishing a step
-    // this check happens after the browser changed the state, so it is inverted
-    // what we are really checking here is if it was checked before the user clicks on it
-    if (!$(this).is(':checked') && !confirm(i18next.t('step-unfinish-warning'))) {
-      // re-check the box on cancel
-      $(this).prop('checked', true);
-      return;
-    }
-
-    // on the todolist we don't want to grab the type from the page
-    // because it's only steps from experiments
-    // so if the element has a data-type, take that instead
-    const newentity = entity;
-    if (e.currentTarget.dataset.type) {
-      newentity.type = e.currentTarget.dataset.type;
-      newentity.id = e.currentTarget.dataset.id;
-    }
-    const stepId = e.currentTarget.dataset.stepid;
-    const StepNew = new Step(newentity);
-    StepNew.finish(stepId).then(() => {
-      reloadElements(['stepsDiv']).then(() => {
-        // keep to do list in sync
-        $('#todo_step_' + stepId).prop('checked', $('.stepbox[data-stepid="' + stepId + '"]').prop('checked'));
-      });
-    });
-  });
   // END STEPS
 
   // CREATE LINK

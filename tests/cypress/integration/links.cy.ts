@@ -23,7 +23,7 @@ describe('Test links', () => {
     // remove link to the new experiment
     cy.get('[data-action="destroy-link"]').first().click();
     cy.get('#experimentsLinksDiv').should('not.contain.text', title);
-  }
+  };
 
   const linkItem = (title: string) => {
     cy.request({ method: 'POST', url: '/api/v2/items', body: { title } });
@@ -33,7 +33,7 @@ describe('Test links', () => {
     cy.get('#itemsLinksDiv').should('contain.text', title);
     cy.get('#linksDiv [data-action="destroy-link"][data-endpoint="items_links"]').first().click();
     cy.get('#itemsLinksDiv').should('not.contain.text', title);
-  }
+  };
 
   const linkCompound = (title: string) => {
     cy.request({ method: 'POST', url: '/api/v2/compounds', body: { name: title } });
@@ -43,7 +43,7 @@ describe('Test links', () => {
     cy.get('#compoundDiv').should('contain.text', title);
     cy.get('#compoundDiv [data-action="delete-compound-link"]').first().click();
     cy.get('#compoundDiv').should('not.contain.text', title);
-  }
+  };
 
   const verifyChangelog = () => {
     cy.get('button[title="More options"]').click()
@@ -54,5 +54,5 @@ describe('Test links', () => {
     cy.get('#changelogTable').should('contain.text', 'Removed link to experiment');
     cy.get('#changelogTable').should('contain.text', 'Removed link to resource');
     cy.get('#changelogTable').should('contain.text', 'Removed link to compound');
-  }
+  };
 });

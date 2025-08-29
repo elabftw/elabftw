@@ -38,7 +38,8 @@ $(document).on('click', 'input[type=checkbox].stepbox', function(e) {
   // on the todolist we don't want to grab the type from the page
   // because it's only steps from experiments
   // so if the element has a data-type, take that instead
-  const newentity = entity;
+  // clone to avoid mutating shared state
+  const newentity = { ...entity };
   if (e.currentTarget.dataset.type) {
     newentity.type = e.currentTarget.dataset.type;
     newentity.id = e.currentTarget.dataset.id;

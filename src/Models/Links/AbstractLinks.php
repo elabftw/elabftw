@@ -101,7 +101,7 @@ abstract class AbstractLinks extends AbstractRest
         $this->Db->execute($req);
         $deleted = $req->rowCount() > 0;
         if ($deleted) {
-            $this->createChangelog(isDestroy: true);
+            $this->createChangelog(Action::Destroy);
             $this->Entity->touch();
         }
         return $deleted;
@@ -183,12 +183,12 @@ abstract class AbstractLinks extends AbstractRest
     }
 
     // create Changelog with link to the entity. Message is different when it's a link removal
-    private function createChangelog(bool $isDestroy = false): void
+    private function createChangelog(Action $action = Action::Add): void
     {
         if ($this->id === null) {
             throw new ImproperActionException('Missing link id for links operation.');
         }
-        $verb = $isDestroy ? _('Removed') : _('Added');
+        $verb = $action === Action::Destroy ? _('Removed') : _('Added');
         // build the changelog message with title + clickable URL
         $anchor = sprintf(
             '<a href="%1$s">%2$s</a>',

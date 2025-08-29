@@ -186,11 +186,11 @@ abstract class AbstractEntity extends AbstractRest
             contentType: BodyContentType::from($template['content_type']),
         );
         $tags = array_column($TemplateType->Tags->readAll(), 'tag');
-        $this->ItemsLinks->duplicate($templateId, $id, true);
-        $this->ExperimentsLinks->duplicate($templateId, $id, true);
+        $this->ItemsLinks->duplicate($templateId, $id, fromTemplate: true);
+        $this->ExperimentsLinks->duplicate($templateId, $id, fromTemplate: true);
         $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
-        $CompoundsLinks->duplicate($templateId, $id, true);
-        $this->Steps->duplicate($templateId, $id, true);
+        $CompoundsLinks->duplicate($templateId, $id, fromTemplate: true);
+        $this->Steps->duplicate($templateId, $id, fromTemplate: true);
         $freshSelf = new $this($this->Users, $id);
         $TemplateType->Uploads->duplicate($freshSelf);
         foreach ($tags as $tag) {

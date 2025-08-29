@@ -102,7 +102,7 @@ abstract class AbstractCompoundsLinks extends AbstractRest
         $res = $this->Db->execute($req);
         if ($res && $req->rowCount() > 0) {
             $this->Entity->touch();
-            $this->createChangelog(true);
+            $this->createChangelog(Action::Destroy);
         }
         return $res;
     }
@@ -136,16 +136,13 @@ abstract class AbstractCompoundsLinks extends AbstractRest
         return 'compounds2experiments_templates';
     }
 
-    private function createChangelog(bool $isDestroy = false): void
+    private function createChangelog(Action $action = Action::Add): void
     {
         $info = $this->getCompoundInfo();
-        if ($info === null) {
-            throw new ImproperActionException('Compound information is missing or incomplete.');
-        }
         if ($this->id === null) {
             throw new ImproperActionException('Missing link id for links operation.');
         }
-        $verb = $isDestroy ? _('Removed') : _('Added');
+        $verb = $action === Action::Destroy ? _('Removed') : _('Added');
         $Changelog = new Changelog($this->Entity);
         $Changelog->create(new ContentParams(
             'compounds',
@@ -153,13 +150,16 @@ abstract class AbstractCompoundsLinks extends AbstractRest
         ));
     }
 
-    private function getCompoundInfo(): ?array
+    private function getCompoundInfo(): array
     {
         $sql = 'SELECT name, cas_number FROM compounds WHERE id = :id LIMIT 1';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
-        $info = $req->fetch(PDO::FETCH_ASSOC);
-        return $info !== false ? $info : null;
+        $compoundInfo = $req->fetch(PDO::FETCH_ASSOC);
+        if (!$compoundInfo) {
+            throw new ImproperActionException(sprintf(_('Compounds with id: %d not, or some information is missing.'), $this->id));
+        }
+        return $compoundInfo;
     }
 }

@@ -73,13 +73,13 @@ abstract class AbstractTemplateEntity extends AbstractEntity
         // copy links and steps too
         $ItemsLinks = LinksFactory::getItemsLinks($this);
         /** @psalm-suppress PossiblyNullArgument */
-        $ItemsLinks->duplicate($this->id, $newId, true);
+        $ItemsLinks->duplicate($this->id, $newId, fromTemplate: true);
         $ExperimentsLinks = LinksFactory::getExperimentsLinks($this);
-        $ExperimentsLinks->duplicate($this->id, $newId, true);
+        $ExperimentsLinks->duplicate($this->id, $newId, fromTemplate: true);
         $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
-        $CompoundsLinks->duplicate($this->id, $newId, true);
+        $CompoundsLinks->duplicate($this->id, $newId, fromTemplate: true);
         $Steps = new Steps($this);
-        $Steps->duplicate($this->id, $newId, true);
+        $Steps->duplicate($this->id, $newId, fromTemplate: true);
         if ($copyFiles) {
             $fresh->Uploads = new Uploads($fresh);
             $this->Uploads->duplicate($fresh);

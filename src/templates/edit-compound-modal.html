@@ -63,7 +63,7 @@
               <div class='input-group-prepend'>
                 <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-outline-secondary' type='button' data-action='copy-to-clipboard' data-target='compoundInput-ec_number'><i class='fas fa-clone'></i></button>
               </div>
-              <input name='ec_number' pattern='^\d{1,7}-\d{3}-\d$' title='{{ 'Please enter a valid EC number (e.g., 200-362-1)'|trans }}' placeholder='200-362-1' class='form-control' id='compoundInput-ec_number' />
+              <input name='ec_number' pattern='^\d{3}-\d{3}-\d$' title='{{ 'Please enter a valid EC number (e.g., 200-362-1)'|trans }}' placeholder='200-362-1' class='form-control' id='compoundInput-ec_number' />
             </div>
             {{ _self.textParam('molecular_formula', 'Molecular formula'|trans, '', '', 'C8H10N4O2') }}
             {{ _self.textParam('molecular_weight', 'Molecular weight'|trans, '', 'number', '194.19') }}

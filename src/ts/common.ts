@@ -886,26 +886,28 @@ on('create-resource-from-compound', (el: HTMLElement) => {
   });
 });
 
-on('save-compound', (el: HTMLElement) => {
+on('save-compound', (el: HTMLElement, event: Event) => {
+  event.preventDefault();
   try {
     if (el.dataset.compoundId) { // edit
-      const compoundForm = document.getElementById('editCompoundInputs');
-      const params = collectForm(compoundForm);
+      const form = document.getElementById('editCompoundForm') as HTMLFormElement;
+      const params = collectForm(form);
       ApiC.patch(`compounds/${el.dataset.compoundId}`, params).then(() => {
         document.dispatchEvent(new CustomEvent('dataReload'));
         $('#editCompoundModal').modal('hide');
-        clearForm(compoundForm);
+        form.reset();
       });
     } else { // create
-      const compoundForm = document.getElementById('createCompoundInputs');
-      const params = collectForm(compoundForm);
-      clearForm(compoundForm);
+      const form = document.getElementById('createCompoundForm') as HTMLFormElement;
+      const params = collectForm(form);
       ApiC.post2location('compounds', params).then(id => {
         ApiC.getJson(`compounds/${id}`).then((json) => {
           setTimeout(() => {
             toggleEditCompound(json);
           }, 500);
           document.dispatchEvent(new CustomEvent('dataReload'));
+          $('#createCompoundModal').modal('hide');
+          form.reset();
         });
       });
     }

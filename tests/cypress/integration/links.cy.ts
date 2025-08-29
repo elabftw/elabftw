@@ -26,8 +26,9 @@ describe('Test links', () => {
     cy.get('.ui-menu-item-wrapper').contains(itemTitle).click();
     cy.get('button[aria-label="Add link to a resource"]').click();
     cy.get('#itemsLinksDiv').should('contain.text', itemTitle);
-    cy.get('[data-action="destroy-link"]').first().click();
     cy.get('#linksDiv [data-action="destroy-link"][data-endpoint="items_links"]').first().click();
     cy.get('#itemsLinksDiv').should('not.contain.text', itemTitle);
   });
+
+  // TODO: add compound, delete, check logs for all three link additions
 });

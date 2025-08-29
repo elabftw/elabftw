@@ -103,7 +103,7 @@
     </div>
     <input aria-label='{{ 'Link with compound'|trans }}' type='text' data-endpoint='compounds' data-autocomplete='compounds' id='addCompoundInput' class='form-control linkinput' data-id='{{ Entity.id }}' placeholder='{{ 'Search in local compounds database'|trans }}' />
     <div class='input-group-append'>
-      <button class='btn btn-primary' type='button'>{{ 'Add'|trans }}</button>
+      <button class='btn btn-primary' aria-label='{{ 'Add link to a compound'|trans }}' type='button'>{{ 'Add'|trans }}</button>
     </div>
   </div>
   {% endif %}

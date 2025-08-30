@@ -172,14 +172,14 @@ abstract class AbstractLinks extends AbstractRest
     abstract protected function getOtherImportTargetTable(): string;
 
     // returns title of the new link
-    private function getTargetTitle(): ?string
+    private function getTargetTitle(): string
     {
         $sql = 'SELECT title FROM ' . $this->getTargetType()->value . ' WHERE id = :id LIMIT 1';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
-        $title = $req->fetchColumn();
-        return $title !== false ? (string) $title : null;
+        $res = $this->Db->fetch($req);
+        return $res['title'];
     }
 
     // create Changelog with link to the entity. Message is different when it's a link removal
@@ -189,8 +189,8 @@ abstract class AbstractLinks extends AbstractRest
         // build the changelog message with title + clickable URL
         $anchor = sprintf(
             '<a href="%1$s">%2$s</a>',
-            Tools::eLabHtmlspecialchars(sprintf('/%s?mode=view&id=%d', $this->getTargetType()->toPage(), $this->id)),
-            Tools::eLabHtmlspecialchars($this->getTargetTitle() ?? ('#' . $this->id))
+            Tools::eLabHtmlspecialchars(sprintf('/%s?mode=view&id=%d', $this->getTargetType()->toPage(), $this->id ?? 0)),
+            Tools::eLabHtmlspecialchars($this->getTargetTitle())
         );
         $Changelog = new Changelog($this->Entity);
         $Changelog->create(new ContentParams(

@@ -141,7 +141,7 @@ abstract class AbstractCompoundsLinks extends AbstractRest
         $Changelog = new Changelog($this->Entity);
         $Changelog->create(new ContentParams(
             'compounds',
-            sprintf(_('%s link to compound: %s (CAS Number: %s) with id: %d'), $verb, $info['name'], $info['cas_number'], $this->id),
+            sprintf(_('%s link to compound: %s (CAS Number: %s) with id: %d'), $verb, $info['name'], $info['cas_number'], $this->id ?? 0),
         ));
     }
 

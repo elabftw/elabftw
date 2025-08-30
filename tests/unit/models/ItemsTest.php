@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\FileFromString;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Params\TeamParam;
 use Elabftw\Services\Check;
 use Elabftw\Traits\TestsUtilsTrait;
@@ -70,6 +71,21 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($statusId, $Items->entityData['status']);
         $this->assertCount(1, $Items->entityData['uploads']);
         $this->assertSame($uploadTitle, $Items->entityData['uploads'][0]['real_name']);
+    }
+
+    public function testCreateFromTemplateWithImmutablePermissions(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $ItemsTypes = new ItemsTypes($user);
+        $templateId = $ItemsTypes->create(title: 'A resource template');
+        $ItemsTypes->setId($templateId);
+        $ItemsTypes->patch(Action::Update, array('canread_is_immutable' => 1, 'canread' => BasePermissions::Team->toJson()));
+
+        $new = $this->Items->createFromTemplate($templateId);
+        $Items = new Items($user, $new);
+        // we can't update the item's permissions now
+        $this->expectException(ImproperActionException::class);
+        $Items->patch(Action::Update, array('canread' => BasePermissions::UserOnly->toJson()));
     }
 
     public function testRead(): void

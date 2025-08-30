@@ -779,7 +779,7 @@ abstract class AbstractEntity extends AbstractRest
         }
         // ensure no changes happen on entries with immutable permissions
         if ($params->getTarget() === 'canread' || $params->getTarget() === 'canwrite') {
-            if (($this->entityData[$params->getTarget() . '_is_immutable'] ?? 0) === 1) {
+            if (($this->entityData[$params->getTarget() . '_is_immutable'] ?? 0) === 1 && (!($this instanceof AbstractTemplateEntity))) {
                 throw new ImproperActionException(_('Cannot modify permissions on entry with immutable permissions.'));
             }
         }

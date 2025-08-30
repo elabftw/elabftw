@@ -122,7 +122,6 @@ abstract class AbstractCompoundsLinks extends AbstractRest
             $this->Entity->touch();
             $this->createChangelog();
         }
-
         return $this->id;
     }
 
@@ -156,10 +155,6 @@ abstract class AbstractCompoundsLinks extends AbstractRest
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
-        $compoundInfo = $req->fetch(PDO::FETCH_ASSOC);
-        if (!$compoundInfo) {
-            throw new ImproperActionException(sprintf(_('Compounds with id: %d not, or some information is missing.'), $this->id));
-        }
-        return $compoundInfo;
+        return $this->Db->fetch($req);
     }
 }

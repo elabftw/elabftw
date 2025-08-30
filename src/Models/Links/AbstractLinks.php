@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models\Links;
 
 use Elabftw\Elabftw\EntitySqlBuilder;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Metadata as MetadataEnum;
@@ -21,6 +22,8 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\AbstractRest;
+use Elabftw\Models\Changelog;
+use Elabftw\Params\ContentParams;
 use Elabftw\Traits\SetIdTrait;
 use Override;
 use PDO;
@@ -35,17 +38,10 @@ abstract class AbstractLinks extends AbstractRest
 {
     use SetIdTrait;
 
-    /**
-     * The id of the target (link_id)
-     */
-    public ?int $id;
-
-    /**
-     * @param ?int $id The id of the target (link_id)
-     */
     public function __construct(public AbstractEntity $Entity, ?int $id = null)
     {
         parent::__construct();
+        // The id of the target (link_id)
         $this->setId($id);
     }
 
@@ -55,36 +51,23 @@ abstract class AbstractLinks extends AbstractRest
         return sprintf('%s%d/%s/', $this->Entity->getApiPath(), $this->Entity->id ?? '', $this->getTable());
     }
 
-    /**
-     * Get links for an entity
-     */
+    // Get links for an entity
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         return $this->prepareBindExecuteFetch($this->getSqlQuery());
     }
 
-    /**
-     * Get related entities
-     */
+    // Get related entities
     public function readRelated(): array
     {
         return $this->prepareBindExecuteFetch($this->getSqlQuery(related: true));
     }
 
-    /**
-     * Copy the links from one entity to an other
-     *
-     * @param int $id The id of the original entity
-     * @param int $newId The id of the new entity that will receive the links
-     * @param bool $fromTpl do we duplicate from template?
-     */
-    public function duplicate(int $id, int $newId, $fromTpl = false): int
+    // Copy links from one entity to another
+    public function duplicate(int $id, int $newId, bool $fromTemplate = false): int
     {
-        $table = $this->getTable();
-        if ($fromTpl) {
-            $table = $this->getTemplateTable();
-        }
+        $table = $fromTemplate ? $this->getTemplateTable() : $this->getTable();
         $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (item_id, link_id)
             SELECT :new_id, link_id
             FROM ' . $table . '
@@ -110,13 +93,18 @@ abstract class AbstractLinks extends AbstractRest
     public function destroy(): bool
     {
         $this->Entity->canOrExplode('write');
-        $this->Entity->touch();
 
         $sql = 'DELETE FROM ' . $this->getTable() . ' WHERE link_id = :link_id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        $this->Db->execute($req);
+        $deleted = $req->rowCount() > 0;
+        if ($deleted) {
+            $this->createChangelog(Action::Destroy);
+            $this->Entity->touch();
+        }
+        return $deleted;
     }
 
     public function isSelfLinkViaMetadata(string $extraFieldKey, string $targetId): bool
@@ -142,18 +130,14 @@ abstract class AbstractLinks extends AbstractRest
             && $this->Entity->id === intval($targetId);
     }
 
-    /**
-     * Add a link to an entity
-     * Links to Items are possible from all entities
-     * Links to Experiments are only allowed from other Experiments and Items
-     */
+    // Add a link to an entity
     public function create(): int
     {
+        $this->Entity->canOrExplode('write');
         // don't insert a link to the same entity, make sure we check for the type too
         if ($this->Entity->id === $this->id && $this->Entity->entityType === $this->getTargetType()) {
             return 0;
         }
-        $this->Entity->touch();
 
         // use IGNORE to avoid failure due to a key constraint violations
         $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (item_id, link_id) VALUES(:item_id, :link_id)';
@@ -161,8 +145,11 @@ abstract class AbstractLinks extends AbstractRest
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
 
-        $this->Db->execute($req);
-
+        $res = $this->Db->execute($req);
+        if ($res && $req->rowCount() > 0) {
+            $this->createChangelog();
+            $this->Entity->touch();
+        }
         return $this->id;
     }
 
@@ -184,10 +171,35 @@ abstract class AbstractLinks extends AbstractRest
 
     abstract protected function getOtherImportTargetTable(): string;
 
-    /**
-     * Copy the links of one entity into another entity
-     * The linked entity can have links to experiments and/or resources, both need to be imported
-     */
+    // returns title of the new link
+    private function getTargetTitle(): string
+    {
+        $sql = 'SELECT title FROM ' . $this->getTargetType()->value . ' WHERE id = :id LIMIT 1';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $res = $this->Db->fetch($req);
+        return $res['title'];
+    }
+
+    // create Changelog with link to the entity. Message is different when it's a link removal
+    private function createChangelog(Action $action = Action::Add): void
+    {
+        $verb = $action === Action::Destroy ? _('Removed') : _('Added');
+        // build the changelog message with title + clickable URL
+        $anchor = sprintf(
+            '<a href="%1$s">%2$s</a>',
+            Tools::eLabHtmlspecialchars(sprintf('/%s?mode=view&id=%d', $this->getTargetType()->toPage(), $this->id ?? 0)),
+            Tools::eLabHtmlspecialchars($this->getTargetTitle())
+        );
+        $Changelog = new Changelog($this->Entity);
+        $Changelog->create(new ContentParams(
+            'links',
+            sprintf(_('%s link to %s: %s'), $verb, $this->getTargetType()->toGenre(), $anchor)
+        ));
+    }
+
+    // On duplicate of an entity, copy its links (experiments, resources) into the new entity
     private function import(): int
     {
         $this->Entity->canOrExplode('write');
@@ -218,9 +230,7 @@ abstract class AbstractLinks extends AbstractRest
                 $tables['import-target'],
             );
             $req = $this->Db->prepare($sql);
-            /** @psalm-suppress InaccessibleProperty Seems like a bug as $this->Entity->id is accessible */
             $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-            /** @psalm-suppress InaccessibleProperty Seems like a bug as $this->id is accessible */
             $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
 
             $res[] = $this->Db->execute($req);

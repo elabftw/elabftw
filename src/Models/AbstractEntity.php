@@ -186,11 +186,11 @@ abstract class AbstractEntity extends AbstractRest
             contentType: BodyContentType::from($template['content_type']),
         );
         $tags = array_column($TemplateType->Tags->readAll(), 'tag');
-        $this->ItemsLinks->duplicate($templateId, $id, true);
-        $this->ExperimentsLinks->duplicate($templateId, $id, true);
+        $this->ItemsLinks->duplicate($templateId, $id, fromTemplate: true);
+        $this->ExperimentsLinks->duplicate($templateId, $id, fromTemplate: true);
         $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
-        $CompoundsLinks->duplicate($templateId, $id, fromItemsTypes: true);
-        $this->Steps->duplicate($templateId, $id, true);
+        $CompoundsLinks->duplicate($templateId, $id, fromTemplate: true);
+        $this->Steps->duplicate($templateId, $id, fromTemplate: true);
         $freshSelf = new $this($this->Users, $id);
         $TemplateType->Uploads->duplicate($freshSelf);
         foreach ($tags as $tag) {
@@ -627,12 +627,7 @@ abstract class AbstractEntity extends AbstractRest
         return $req->fetchAll();
     }
 
-    /**
-     * Check if we have the permission to read/write or throw an exception
-     *
-     * @param string $rw read or write
-     * @throws IllegalActionException
-     */
+    // Check if we have the permission to read/write or throw an exception
     public function canOrExplode(string $rw): void
     {
         if ($this->id === null) {

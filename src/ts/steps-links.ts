@@ -166,6 +166,7 @@ if (document.getElementById('stepsDiv')) {
           // clear input field
           $(this).val('');
           addAutocompleteToLinkInputs();
+          addAutocompleteToCompoundsInputs();
         });
       });
     }

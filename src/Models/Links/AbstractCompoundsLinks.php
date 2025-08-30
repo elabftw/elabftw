@@ -18,6 +18,10 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\AbstractRest;
+use Elabftw\Models\Changelog;
+use Elabftw\Models\Items;
+use Elabftw\Models\ItemsTypes;
+use Elabftw\Params\ContentParams;
 use Elabftw\Traits\SetIdTrait;
 use Override;
 use PDO;
@@ -67,29 +71,14 @@ abstract class AbstractCompoundsLinks extends AbstractRest
         $this->Entity->canOrExplode('write');
         return match ($action) {
             Action::Create => $this->create(),
-            //Action::Duplicate => $this->import(),
             default => throw new ImproperActionException('Invalid action for links create.'),
         };
     }
 
-    /**
-     * Copy the links from one entity to an other
-     *
-     * @param int $id The id of the original entity
-     * @param int $newId The id of the new entity that will receive the links
-     * @param bool $fromTpl do we duplicate from template?
-     */
-    public function duplicate(int $id, int $newId, bool $fromTpl = false, bool $fromItemsTypes = false): int
+    // Copy Compounds from one entity to another
+    public function duplicate(int $id, int $newId, bool $fromTemplate = false): int
     {
-        $table = $this->getTable();
-        if ($fromTpl) {
-            $table = 'compounds2experiments_templates';
-            // TODO implement properly, right now items_types have no ui for compounds
-            //$table = $this->getTemplateTable();
-        }
-        if ($fromItemsTypes) {
-            $table = 'compounds2items_types';
-        }
+        $table = $fromTemplate ? $this->getTemplateTable() : $this->getTable();
         $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (entity_id, compound_id)
             SELECT :new_id, compound_id
             FROM ' . $table . '
@@ -109,34 +98,59 @@ abstract class AbstractCompoundsLinks extends AbstractRest
         $req = $this->Db->prepare($sql);
         $req->bindParam(':compound_id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        $res = $this->Db->execute($req);
+        if ($res && $req->rowCount() > 0) {
+            $this->Entity->touch();
+            $this->createChangelog(Action::Destroy);
+        }
+        return $res;
     }
 
-    public function destroyAll(): bool
-    {
-        $sql = 'DELETE FROM ' . $this->getTable() . ' WHERE entity_id = :entity_id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
-        return $this->Db->execute($req);
-    }
-
-    /**
-     * Add a link to an entity
-     * Links to Items are possible from all entities
-     * Links to Experiments are only allowed from other Experiments and Items
-     */
+    // Add a compound to an entity
     public function create(): int
     {
+        $this->Entity->canOrExplode('write');
         // use IGNORE to avoid failure due to a key constraint violations
         $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (compound_id, entity_id) VALUES(:link_id, :item_id)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
 
-        $this->Db->execute($req);
-
+        $res = $this->Db->execute($req);
+        if ($res && $req->rowCount() > 0) {
+            $this->Entity->touch();
+            $this->createChangelog();
+        }
         return $this->id;
     }
 
     abstract protected function getTable(): string;
+
+    protected function getTemplateTable(): string
+    {
+        if ($this->Entity instanceof Items || $this->Entity instanceof ItemsTypes) {
+            return 'compounds2items_types';
+        }
+        return 'compounds2experiments_templates';
+    }
+
+    private function createChangelog(Action $action = Action::Add): void
+    {
+        $info = $this->getCompoundInfo();
+        $verb = $action === Action::Destroy ? _('Removed') : _('Added');
+        $Changelog = new Changelog($this->Entity);
+        $Changelog->create(new ContentParams(
+            'compounds',
+            sprintf(_('%s link to compound: %s (CAS Number: %s) with id: %d'), $verb, $info['name'], $info['cas_number'], $this->id ?? 0),
+        ));
+    }
+
+    private function getCompoundInfo(): array
+    {
+        $sql = 'SELECT name, cas_number FROM compounds WHERE id = :id LIMIT 1';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return $this->Db->fetch($req);
+    }
 }

@@ -185,9 +185,6 @@ abstract class AbstractLinks extends AbstractRest
     // create Changelog with link to the entity. Message is different when it's a link removal
     private function createChangelog(Action $action = Action::Add): void
     {
-        if ($this->id === null) {
-            throw new ImproperActionException('Missing link id for links operation.');
-        }
         $verb = $action === Action::Destroy ? _('Removed') : _('Added');
         // build the changelog message with title + clickable URL
         $anchor = sprintf(

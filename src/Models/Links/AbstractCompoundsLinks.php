@@ -71,7 +71,6 @@ abstract class AbstractCompoundsLinks extends AbstractRest
         $this->Entity->canOrExplode('write');
         return match ($action) {
             Action::Create => $this->create(),
-            //Action::Duplicate => $this->import(),
             default => throw new ImproperActionException('Invalid action for links create.'),
         };
     }
@@ -138,9 +137,6 @@ abstract class AbstractCompoundsLinks extends AbstractRest
     private function createChangelog(Action $action = Action::Add): void
     {
         $info = $this->getCompoundInfo();
-        if ($this->id === null) {
-            throw new ImproperActionException('Missing link id for links operation.');
-        }
         $verb = $action === Action::Destroy ? _('Removed') : _('Added');
         $Changelog = new Changelog($this->Entity);
         $Changelog->create(new ContentParams(

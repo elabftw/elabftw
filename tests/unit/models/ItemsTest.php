@@ -14,7 +14,8 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\FileFromString;
-use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\UnprocessableContentException;
+use Elabftw\Models\Users\AuthenticatedUser;
 use Elabftw\Params\TeamParam;
 use Elabftw\Services\Check;
 use Elabftw\Traits\TestsUtilsTrait;
@@ -76,16 +77,18 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
     public function testCreateFromTemplateWithImmutablePermissions(): void
     {
         $user = $this->getRandomUserInTeam(1);
-        $ItemsTypes = new ItemsTypes($user);
-        $templateId = $ItemsTypes->create(title: 'A resource template');
-        $ItemsTypes->setId($templateId);
-        $ItemsTypes->patch(Action::Update, array('canread_is_immutable' => 1, 'canread' => BasePermissions::Team->toJson()));
-
-        $new = $this->Items->createFromTemplate($templateId);
-        $Items = new Items($user, $new);
-        // we can't update the item's permissions now
-        $this->expectException(ImproperActionException::class);
+        $Items = $this->makeItemFromImmutableTemplateFor($user);
+        $this->expectException(UnprocessableContentException::class);
         $Items->patch(Action::Update, array('canread' => BasePermissions::UserOnly->toJson()));
+    }
+
+    public function testAdminCanBypassImmutablePermissions(): void
+    {
+        $admin = $this->getRandomUserInTeam(1, admin: 1);
+        $Items = $this->makeItemFromImmutableTemplateFor($admin);
+        $Items->patch(Action::Update, array('canread' => BasePermissions::UserOnly->toJson()));
+        $canRead = json_decode($Items->readOne()['canread'], true);
+        $this->assertEquals(BasePermissions::UserOnly->value, $canRead['base']);
     }
 
     public function testRead(): void
@@ -174,5 +177,15 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         // unlock
         $item = $this->Items->toggleLock();
         $this->assertFalse((bool) $item['locked']);
+    }
+
+    private function makeItemFromImmutableTemplateFor(AuthenticatedUser $user): Items
+    {
+        $ItemsTypes = new ItemsTypes($user);
+        $templateId = $ItemsTypes->create(title: 'A resource template');
+        $ItemsTypes->setId($templateId);
+        $ItemsTypes->patch(Action::Update, array('canread_is_immutable' => 1, 'canread' => BasePermissions::Team->toJson()));
+        $newId = $this->Items->createFromTemplate($templateId);
+        return new Items($user, $newId);
     }
 }

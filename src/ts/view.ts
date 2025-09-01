@@ -5,7 +5,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { Ajax } from "./Ajax.class";
 import i18next from './i18n';
 import { InputType, Malle } from '@deltablot/malle';
 import { ApiC } from './api';
@@ -14,6 +13,7 @@ import { Action, Model } from './interfaces';
 import { entity } from './getEntity';
 import { on } from './handlers';
 import { core } from './core';
+import { handleEmailResponse, postForm } from "./sysconfig";
 
 const mode = new URLSearchParams(window.location.search).get('mode');
 if (mode === 'view') {
@@ -54,6 +54,23 @@ if (mode === 'view') {
     if (confirm(i18next.t('generic-delete-warning'))) {
       ApiC.delete(`${entity.type}/${entity.id}/${Model.Comment}/${el.dataset.id}`).then(() => el.parentElement.parentElement.remove());
     }
+  });
+
+  on('notify-past-bookers', (el: HTMLElement) => {
+    const itemid = el.dataset.itemid;
+    const subject = "Update about an item you booked";
+    const body = "Hello! You previously booked this item. Here's something important.";
+    const button = (el as HTMLButtonElement);
+    const originalText = button.innerText;
+    button.disabled = true;
+    button.innerText = 'Sending…';
+
+    postForm('app/controllers/SysconfigAjaxController.php', {
+      notifyPastBookers: '1',
+      itemid: itemid.toString(),
+      subject: subject,
+      body: body
+    }).then(resp => handleEmailResponse(resp, button));
   });
 
   on('override-exclusive-edit-lock', () => {

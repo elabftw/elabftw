@@ -631,7 +631,7 @@ abstract class AbstractEntity extends AbstractRest
     public function canOrExplode(string $rw): void
     {
         if ($this->id === null) {
-            throw new ImproperActionException('Cannot check permissions without an id!');
+            throw new IllegalActionException('Cannot check permissions without an id!');
         }
         if ($this->bypassWritePermission && $rw === 'write') {
             return;
@@ -778,14 +778,18 @@ abstract class AbstractEntity extends AbstractRest
             $content = $this->readOne()['body'] . $content;
         }
         // ensure no changes happen on entries with immutable permissions
+        // admins can override the immutability of an entity's permissions. See #5800
         if ($params->getTarget() === 'canread' || $params->getTarget() === 'canwrite') {
-            if (($this->entityData[$params->getTarget() . '_is_immutable'] ?? 0) === 1 && (!($this instanceof AbstractTemplateEntity))) {
-                throw new ImproperActionException(_('Cannot modify permissions on entry with immutable permissions.'));
+            if (($this->entityData[$params->getTarget() . '_is_immutable'] ?? 0) === 1
+                && !($this instanceof AbstractTemplateEntity)
+                && !($this->Users->isAdmin)
+            ) {
+                throw new UnprocessableContentException(_('Cannot modify permissions on entry with immutable permissions.'));
             }
         }
         // also prevent modifying immutability of permissions on concrete entities
         if (str_ends_with($params->getTarget(), '_is_immutable') && $this instanceof AbstractConcreteEntity) {
-            throw new ImproperActionException(_('Cannot modify permissions immutability settings.'));
+            throw new UnprocessableContentException(_('Cannot modify permissions immutability settings.'));
         }
 
         // save a revision for body target

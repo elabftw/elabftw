@@ -20,7 +20,7 @@
 <label class='col-form-label mr-3 edit-mode-label'><i class='fas fa-fw fa-{{ icon }} mr-1' title='{{ label }}'></i>{{ label }}</label>
 {% if not Entity.isReadOnly %}
   {% set permissionsIsDisabled = false %}
-  {% if Entity.entityData[immutableVar] and Entity.entityType.value != 'experiments_templates' and Entity.entityType.value != 'items_types' %}
+  {% if Entity.entityData[immutableVar] and Entity.entityType.value != 'experiments_templates' and Entity.entityType.value != 'items_types' and not App.Users.isAdmin %}
     {% set permissionsIsDisabled = true %}
   {% endif %}
   {# show the button as disabled and without any action related #}

@@ -115,7 +115,7 @@
 
       {# TOGGLE MORE FILTERS BUTTON #}
       <div class='ml-auto'>
-        <button class='btn btn-secondary btn' type='button' data-action='toggle-next' data-toggle-target='filtersDiv' data-closed-icon='fa-sliders' data-opened-icon='fa-xmark' aria-label='{{ 'Toggle filters'|trans }}' aria-expanded='false' aria-controls='filtersDiv'>
+        <button class='btn btn-secondary btn' type='button' data-action='toggle-next' data-toggle-target='filtersDiv' data-closed-icon='fa-sliders' data-opened-icon='fa-xmark' aria-label='{{ 'Toggle filters'|trans }}' aria-expanded='false' aria-controls='filtersDiv' title='{{ 'Show more filters'|trans }}'>
           <i class='fas fa-sliders color-white'></i>
         </button>
       </div>
@@ -186,6 +186,7 @@
       <input type='hidden' name='mode' value='show' />
 
       <div>
+        {# STATE filter #}
         {% include 'select-state.html' %}
 
         {# LOCK #}
@@ -279,25 +280,25 @@
         <button class='btn btn-sm dropdown-toggle hl-hover-gray' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Sort'|trans }}' title='{{ 'Sort'|trans }}'><i class='fas fa-arrow-down-wide-short fa-fw mr-1'></i></button>
         <div class='dropdown-menu dropdown-menu-right'>
           <h6 class='dropdown-header'>{{ 'Sort'|trans }}</h6>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'date' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-query='date-desc'>{{ 'Newest'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'date' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-query='date-asc'>{{ 'Oldest'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'lastchange' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-query='lastchange-desc'>{{ 'Recently modified'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'lastchange' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-query='lastchange-asc'>{{ 'Least recently modified'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'cat' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-query='cat-desc'>{{ 'Category'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'cat' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-query='cat-asc'>{{ 'Category (inverted)'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'status' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-query='status-desc'>{{ 'Status'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'status' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-query='status-asc'>{{ 'Status (inverted)'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'id' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-query='id-desc'>{{ 'Highest ID'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'id' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-query='id-asc'>{{ 'Lowest ID'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'customid' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-query='customid-desc'>{{ 'Highest Custom ID'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'customid' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-query='customid-asc'>{{ 'Lowest Custom ID'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'comment' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-query='comment-desc'>{{ 'Recently commented'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'title' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-query='title-asc'>{{ 'Title (alphabetical)'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'title' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-query='title-desc'>{{ 'Title (inverted)'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'user' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-query='user-asc'>{{ 'User (alphabetical)'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'user' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-query='user-desc'>{{ 'User (inverted)'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'rating' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-query='rating-desc'>{{ 'Highest rating'|trans }}</button>
-          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'rating' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-query='rating-asc'>{{ 'Lowest rating'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'date' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-action='query' data-target='date-desc'>{{ 'Newest'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'date' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-action='query' data-target='date-asc'>{{ 'Oldest'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'lastchange' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-action='query' data-target='lastchange-desc'>{{ 'Recently modified'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'lastchange' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-action='query' data-target='lastchange-asc'>{{ 'Least recently modified'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'cat' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-action='query' data-target='cat-desc'>{{ 'Category'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'cat' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-action='query' data-target='cat-asc'>{{ 'Category (inverted)'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'status' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-action='query' data-target='status-desc'>{{ 'Status'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'status' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-action='query' data-target='status-asc'>{{ 'Status (inverted)'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'id' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-action='query' data-target='id-desc'>{{ 'Highest ID'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'id' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-action='query' data-target='id-asc'>{{ 'Lowest ID'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'customid' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-action='query' data-target='customid-desc'>{{ 'Highest Custom ID'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'customid' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-action='query' data-target='customid-asc'>{{ 'Lowest Custom ID'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'comment' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-action='query' data-target='comment-desc'>{{ 'Recently commented'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'title' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-action='query' data-target='title-asc'>{{ 'Title (alphabetical)'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'title' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-action='query' data-target='title-desc'>{{ 'Title (inverted)'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'user' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-action='query' data-target='user-asc'>{{ 'User (alphabetical)'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'user' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-action='query' data-target='user-desc'>{{ 'User (inverted)'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'rating' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-action='query' data-target='rating-desc'>{{ 'Highest rating'|trans }}</button>
+          <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'rating' and App.Request.query.get('sort') == 'asc') ? ' active' }}' data-action='query' data-target='rating-asc'>{{ 'Lowest rating'|trans }}</button>
         </div>
       </div>
       {# LIMIT if there is nothing in the query params, take the user configured one #}
@@ -317,8 +318,8 @@
 
   {% set count = itemsArr|length %}
 
-  {% if App.Users.isAdmin and App.itemsCategoryArr|length == 0 %}
-  {{ 'No resources categories have been defined for your team. Head to the %sAdmin Panel%s to add one.'|trans|format("<a href='resources-templates.php'>", "</a>")|raw|msg('warning', false) }}
+  {% if App.itemsCategoryArr|length == 0 %}
+  {{ 'No resources categories have been defined for your team. Create some from this page: %sResources Categories%s.'|trans|format("<a href='resources-categories.php'>", "</a>")|raw|msg('warning', false) }}
   {% endif %}
   <div id='showModeContent'>
 
@@ -354,11 +355,13 @@
             <option value='json'>{{ 'JSON'|trans }}</option>
           </select>
           {# Action buttons #}
-          <button data-action='patch-selected-entities' data-what='forcelock' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Lock'|trans }}</button>
-          <button data-action='patch-selected-entities' data-what='forceunlock' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Unlock'|trans }}</button>
-          <button data-action='patch-selected-entities' data-what='timestamp' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Timestamp'|trans }}</button>
-          <button data-action='patch-selected-entities' data-what='archive' type='button' class='btn btn-secondary mr-1 mb-2'>{{ 'Archive'|trans }}</button>
-          <button data-action='destroy-selected-entities' type='button' class='btn btn-danger mr-1 mb-2'>{{ 'Delete'|trans }}</button>
+          <button data-action='patch-selected-entities' data-what='forcelock' type='button' class='btn btn-primary mr-1 mb-2' aria-label='{{ 'Lock the selected entities'|trans }}' title='{{ 'Lock the selected entities'|trans }}'>{{ 'Lock'|trans }}</button>
+          <button data-action='patch-selected-entities' data-what='forceunlock' type='button' class='btn btn-primary mr-1 mb-2' aria-label='{{ 'Unlock the selected entities'|trans }}' title='{{ 'Unlock the selected entities'|trans }}'>{{ 'Unlock'|trans }}</button>
+          <button data-action='patch-selected-entities' data-what='timestamp' type='button' class='btn btn-primary mr-1 mb-2' aria-label='{{ 'Timestamp the selected entities'|trans }}' title='{{ 'Timestamp the selected entities'|trans }}'>{{ 'Timestamp'|trans }}</button>
+          <button data-action='patch-selected-entities' data-what='archive' type='button' class='btn btn-secondary mr-1 mb-2' aria-label='{{ 'Archive the selected entities'|trans }}' title='{{ 'Archive the selected entities'|trans }}'>{{ 'Archive'|trans }}</button>
+          <button data-action='patch-selected-entities' data-what='unarchive' type='button' class='btn btn-secondary mr-1 mb-2' aria-label='{{ 'Unarchive the selected entities'|trans }}' title='{{ 'Unarchive the selected entities'|trans }}'>{{ 'Unarchive'|trans }}</button>
+          <button data-action='patch-selected-entities' data-what='destroy' type='button' class='btn btn-danger mr-1 mb-2' aria-label='{{ 'Delete the selected entities'|trans }}' title='{{ 'Delete the selected entities'|trans }}'>{{ 'Delete'|trans }}</button>
+          <button data-action='patch-selected-entities' data-what='restore' type='button' class='btn btn-primary mr-1 mb-2' aria-label='{{ 'Restore the selected entities'|trans }}' title='{{ 'Restore the selected entities'|trans }}'>{{ 'Restore'|trans }}</button>
         </div>
 
         <form id='multiChangesForm' class='row mx-0 form-inline'>

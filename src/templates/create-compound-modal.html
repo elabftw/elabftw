@@ -9,21 +9,23 @@
           <span aria-hidden='true' data-action='clear-form' data-target='createCompoundInputs'>&times;</span>
         </button>
       </div>
-      <div class='modal-body'>
-        <div class='mb-2' id='createCompoundInputs'>
-          <label for='createCompound-name'>{{ 'Name'|trans }}</label>
-          <input name='name' required class='form-control' id='createCompound-name' />
-          <label for='createCompound-smiles'>SMILES</label>
-          <input name='smiles' class='form-control' id='createCompound-smiles' />
-          <label for='createCompound-inchi'>InChI</label>
-          <input name='inchi' class='form-control' id='createCompound-inchi' />
+      <form aria-label='{{ 'Add compound'|trans }}' id='createCompoundForm'>
+        <div class='modal-body'>
+          <div class='mb-2' id='createCompoundInputs'>
+            <label for='createCompound-name' class='required-label'>{{ 'Name'|trans }}<span class='ml-1 smallgray'>({{ 'required'|trans }})</span></label>
+            <input name='name' required class='form-control' id='createCompound-name' />
+            <label for='createCompound-smiles'>SMILES</label>
+            <input name='smiles' class='form-control' id='createCompound-smiles' />
+            <label for='createCompound-inchi'>InChI</label>
+            <input name='inchi' class='form-control' id='createCompound-inchi' />
+          </div>
         </div>
-      </div>
 
-      <div class='modal-footer'>
-        <button type='button' class='btn btn-ghost' data-action='clear-form' data-target='createCompoundInputs' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
-        <button type='button' class='btn btn-primary' id='createCompoundModalSaveBtn' data-action='save-compound' data-dismiss='modal'>{{ 'Continue'|trans }}</button>
-      </div>
+        <div class='modal-footer'>
+          <button type='button' class='btn btn-ghost' data-action='clear-form' data-target='createCompoundInputs' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+          <button type='submit' class='btn btn-primary' id='createCompoundModalSaveBtn' data-action='save-compound'>{{ 'Continue'|trans }}</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

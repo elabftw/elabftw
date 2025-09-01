@@ -13,7 +13,7 @@
     <input type='hidden' name='rememberme' value='on'>
   {% endif %}
   {{ App.Session.get('csrf')|csrf }}
-  {% if App.Session.has('enable_mfa') %} {# SETUP MFA #}
+  {% if mfaNewSecret %}
     <div class='col-md-6 text-center mx-auto my-4'>
       <p class='text-muted'>{{ 'Enable two factor authentication for your account to increase its security. %sSee documentation%s.'|trans|format("<a class='external-link' target='_blank' rel='noopener' href='https://doc.elabftw.net/user-guide.html#what-is-two-factor-authentication'>", "</a>")|raw }}</p>
       <p class='my-3'>
@@ -34,7 +34,8 @@
             <div class='input-group-prepend'>
               <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-outline-secondary' type='button' data-action='copy-to-clipboard' data-target='mfa_secret'><i class='fas fa-clone'></i></button>
             </div>
-            <input class='form-control text-center' value='{{ mfaSecret|raw }}' id='mfa_secret' name='mfa_secret' readonly />
+            <input class='form-control text-center' value='{{ mfaNewSecret|formatMfaSecret }}' id='mfa_secret' disabled readonly />
+            <input type='hidden' name='mfa_secret' value='{{ mfaNewSecret }}'>
           </div>
         </div>
       </div>
@@ -47,20 +48,18 @@
     </div>
   {% endif %}
     <div class='col-md-3 mx-auto form-group'>
-      <p id='mfa_code_help_block' class='form-text'>
+      <p class='form-text'>
         <span class='border rounded p-2'><i class='fas fa-2'></i></span>
         {{ 'Enter the 6 digits displayed on your phone'|trans }}
       </p>
     </div>
     <div class='mx-auto text-center col-md-3 mb-4'>
-      <input class='form-control text-center increased-spacing' id='mfa_code' name='mfa_code' type='text' pattern='.{6}' maxlength=6 aria-describedby='mfaCodeLabel' data-focus='1' />
+      <input class='form-control text-center increased-spacing' id='mfa_code' name='mfa_code' type='text' pattern='[0-9]{6}' maxlength=6 aria-describedby='mfaCodeLabel' data-focus='1' inputmode='numeric' autocomplete='one-time-code' />
     </div>
   <div class='text-center'>
     <button type='submit' class='btn btn-primary' name='Submit' value='submit'>{{ 'Verify'|trans }}</button>
     {# IMPORTANT: set cancel button after submit button so Enter key submits the form #}
-    {% if App.Session.has('enable_mfa') %}
-      <button type='cancel' class='btn btn-danger mr-2' name='Cancel' value='cancel'>{{ 'Cancel'|trans }}</button>
-    {% endif %}
+    <button type='submit' class='btn btn-danger mr-2' name='Cancel' value='cancel'>{{ 'Cancel'|trans }}</button>
   </div>
 </form>
 {% endblock body %}

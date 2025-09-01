@@ -45,8 +45,8 @@ interface CheckableItem {
 interface Selected {
   experiments_categories: number[];
   experiments_status: number[];
+  items_categories: number[];
   items_status: number[];
-  items_types: number[];
   items_tags: number[];
   experiments_tags: number[];
   users: number[];
@@ -81,6 +81,8 @@ enum Action {
   Add = 'add',
   Archive = 'archive',
   Bloxberg = 'bloxberg',
+  CancelRequestableAction = 'cancelrequestableaction',
+  CreateProcurementRequest = 'createprocurementrequest',
   Disable2fa = 'disable2fa',
   Duplicate = 'duplicate',
   Finish = 'finish',
@@ -93,11 +95,13 @@ enum Action {
   Pin = 'pin',
   RemoveExclusiveEditMode = 'removeexclusiveeditmode',
   Replace = 'replace',
+  Restore = 'restore',
   RequestAction = 'requestaction',
   Review = 'review',
   SendOnboardingEmails = 'sendonboardingemails',
   Sign = 'sign',
   Timestamp = 'timestamp',
+  Unarchive = 'unarchive',
   Unreference = 'unreference',
   UpdateMetadataField = 'updatemetadatafield',
   UpdatePassword = 'updatepassword',
@@ -165,22 +169,46 @@ enum Target {
   UserId = 'userid',
 }
 
+enum FileType {
+  Csv = 'csv',
+  Fods = 'fods',
+  Html = 'html',
+  Json = 'json',
+  Ods = 'ods',
+  Xls = 'xls',
+  Xlsb = 'xlsb',
+  Xlsx = 'xlsx',
+}
+
 interface Entity {
   type: EntityType;
   id: number;
+}
+
+// for Spreadsheet editor
+interface GridColumn {
+  field: string;
+  editable: boolean;
+}
+
+interface GridRow {
+  [key: string]: string | number | boolean | null;
 }
 
 export {
   Action,
   Categories,
   CheckableItem,
-  Selected,
   Entity,
   EntityType,
+  FileType,
+  GridColumn,
+  GridRow,
   Method,
   Model,
   ProcurementState,
   ResponseMsg,
+  Selected,
   Target,
   Todoitem,
   UnfinishedEntities,

@@ -12,10 +12,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
-use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthInterface;
-use Elabftw\Models\Users;
+use Elabftw\Interfaces\AuthResponseInterface;
 use Elabftw\Services\TeamsHelper;
 use Override;
 
@@ -24,27 +23,19 @@ use Override;
  */
 final class Team implements AuthInterface
 {
-    private AuthResponse $AuthResponse;
-
-    public function __construct(int $userid, int $team)
-    {
-        $Users = new Users($userid);
-        $this->AuthResponse = new AuthResponse();
-        $this->AuthResponse->userid = $userid;
-        $this->AuthResponse->isValidated = (bool) $Users->userData['validated'];
-        $this->AuthResponse->selectedTeam = $team;
-    }
+    public function __construct(private int $userid, private int $team) {}
 
     #[Override]
-    public function tryAuth(): AuthResponse
+    public function tryAuth(): AuthResponseInterface
     {
         // we cannot trust the team sent by POST
         // so make sure the user is part of that team
-        $TeamsHelper = new TeamsHelper($this->AuthResponse->selectedTeam);
-        if (!$TeamsHelper->isUserInTeam($this->AuthResponse->userid)) {
+        $TeamsHelper = new TeamsHelper($this->team);
+        if (!$TeamsHelper->isUserInTeam($this->userid)) {
             throw new UnauthorizedException();
         }
-
-        return $this->AuthResponse;
+        return new AuthResponse()
+            ->setAuthenticatedUserid($this->userid)
+            ->setSelectedTeam($this->team);
     }
 }

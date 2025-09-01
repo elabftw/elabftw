@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @package elabftw
  */
 
-namespace Elabftw\Models;
+namespace Elabftw\Models\Users;
 
 use Elabftw\Enums\Usergroup;
 

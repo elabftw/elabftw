@@ -6,22 +6,20 @@
  * @package elabftw
  */
 import { Model, Target, Entity, Action } from './interfaces';
-import { Api } from './Apiv2.class';
+import { ApiC } from './api';
 import { getEditor } from './Editor.class';
 
 export default class Step {
   entity: Entity;
   model: Model;
-  api: Api;
 
   constructor(entity: Entity) {
     this.entity = entity;
     this.model = Model.Step;
-    this.api = new Api();
   }
 
   create(content: string): Promise<Response> {
-    return this.api.post(`${this.entity.type}/${this.entity.id}/${this.model}`, {'body': content});
+    return ApiC.post(`${this.entity.type}/${this.entity.id}/${this.model}`, {body: content});
   }
 
   update(id: number, content: string|null, target = Target.Body): Promise<Response> {
@@ -31,14 +29,14 @@ export default class Step {
     if (target === Target.Body) {
       const editor = getEditor();
       // read the old step and replace it in the entity body
-      this.api.getJson(`${this.entity.type}/${this.entity.id}/${this.model}/${id}`).then(json => {
+      ApiC.getJson(`${this.entity.type}/${this.entity.id}/${this.model}/${id}`).then(json => {
         editor.replaceContent(editor.getContent().replace(json.body, content));
       });
     }
     if (target === Target.Deadline && content === null) {
       this.notifDestroy(id);
     }
-    return this.api.patch(`${this.entity.type}/${this.entity.id}/${this.model}/${id}`, params);
+    return ApiC.patch(`${this.entity.type}/${this.entity.id}/${this.model}/${id}`, params);
   }
 
   finish(id: number): Promise<Response> {
@@ -54,10 +52,10 @@ export default class Step {
   }
 
   genericPatch(id: number, action: Action): Promise<Response> {
-    return this.api.patch(`${this.entity.type}/${this.entity.id}/${this.model}/${id}`, {action});
+    return ApiC.patch(`${this.entity.type}/${this.entity.id}/${this.model}/${id}`, {action});
   }
 
   destroy(id: number): Promise<Response> {
-    return this.api.delete(`${this.entity.type}/${this.entity.id}/${this.model}/${id}`);
+    return ApiC.delete(`${this.entity.type}/${this.entity.id}/${this.model}/${id}`);
   }
 }

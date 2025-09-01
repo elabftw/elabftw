@@ -15,7 +15,7 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Items;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Elabftw\Params\DisplayParams;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;

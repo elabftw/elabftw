@@ -14,6 +14,8 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Links\Containers2ItemsLinks;
+use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 
 class StorageUnitsTest extends \PHPUnit\Framework\TestCase

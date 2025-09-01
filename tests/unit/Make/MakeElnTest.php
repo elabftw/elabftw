@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 use ZipStream\ZipStream;
 

@@ -13,7 +13,7 @@ namespace Elabftw\Services;
 
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 class PopulateTest extends \PHPUnit\Framework\TestCase

@@ -27,7 +27,7 @@ $Response = new Response();
 
 try {
     $Response->prepare($Request);
-    if (!$App->Config->boolFromEnv('USE_OPENCLONING')) {
+    if (!Env::asBool('USE_OPENCLONING')) {
         throw new ImproperActionException('OpenCloning is disabled on this instance! As a Sysadmin, set USE_OPENCLONING to true in container environment to enable it.');
     }
     $Response = new SycController($App)->getResponse();

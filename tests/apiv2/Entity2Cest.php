@@ -13,17 +13,41 @@ use Codeception\Util\HttpCode;
 
 class Entity2Cest
 {
+    private string $expid = '';
+
+    private string $itemid = '';
+
     public function _before(Apiv2Tester $I)
     {
         $I->haveHttpHeader('Authorization', 'apiKey4Test');
         $I->haveHttpHeader('Content-Type', 'application/json');
+        if (empty($this->expid)) {
+            $I->sendPOST('/experiments');
+            $location = $I->grabHttpHeader('Location');
+            $path = parse_url($location, PHP_URL_PATH);
+            $this->expid = basename($path);
+        }
+        if (empty($this->itemid)) {
+            $I->sendPOST('/items');
+            $location = $I->grabHttpHeader('Location');
+            $path = parse_url($location, PHP_URL_PATH);
+            $this->itemid = basename($path);
+        }
     }
 
-    public function getAllExpTest(Apiv2Tester $I)
+    public function getAllExperimentsTest(Apiv2Tester $I)
     {
-        $I->wantTo('Get all visible experiments');
+        $I->wantTo('Get experiments');
         $I->sendGET('/experiments');
         $I->seeResponseCodeIs(HttpCode::OK); // 200
+        $I->seeResponseIsJson();
+    }
+
+    public function getOneExperimentTest(Apiv2Tester $I)
+    {
+        $I->wantTo('Get one experiment');
+        $I->sendGET("/experiments/{$this->expid}");
+        $I->seeResponseCodeIs(HttpCode::OK);
         $I->seeResponseIsJson();
     }
 
@@ -35,67 +59,59 @@ class Entity2Cest
         $I->seeResponseIsJson();
     }
 
-    public function getOneExpTest(Apiv2Tester $I)
-    {
-        $I->wantTo('Get the first experiment');
-        $I->sendGET('/experiments/1');
-        $I->seeResponseCodeIs(HttpCode::OK); // 200
-        $I->seeResponseIsJson();
-    }
-
     public function improperFormatTest(Apiv2Tester $I)
     {
         $I->wantTo('Send an improper format');
-        $I->sendGET('/experiments/1?format=docx');
+        $I->sendGET("/experiments/{$this->expid}?format=docx");
         $I->seeResponseCodeIs(HttpCode::BAD_REQUEST);
     }
 
     public function getCsvTest(Apiv2Tester $I)
     {
-        $I->wantTo('Get the first experiment as csv');
-        $I->sendGET('/experiments/1?format=csv');
+        $I->wantTo('Get an experiment as csv');
+        $I->sendGET("/experiments/{$this->expid}?format=csv");
         $I->seeResponseCodeIs(HttpCode::OK); // 200
     }
 
     public function getElnTest(Apiv2Tester $I)
     {
         $I->wantTo('Get the first experiment as eln');
-        $I->sendGET('/experiments/1?format=eln');
+        $I->sendGET("/experiments/{$this->expid}?format=eln");
         $I->seeResponseCodeIs(HttpCode::OK); // 200
     }
 
     public function getQrPdfTest(Apiv2Tester $I)
     {
         $I->wantTo('Get the first experiment as qrpdf');
-        $I->sendGET('/experiments/1?format=qrpdf');
+        $I->sendGET("/experiments/{$this->expid}?format=qrpdf");
         $I->seeResponseCodeIs(HttpCode::OK); // 200
     }
 
     public function getPdfTest(Apiv2Tester $I)
     {
         $I->wantTo('Get the first experiment as PDF');
-        $I->sendGET('/experiments/1?format=pdf');
+        $I->sendGET("/experiments/{$this->expid}?format=pdf");
         $I->seeResponseCodeIs(HttpCode::OK); // 200
     }
 
     public function getPdfATest(Apiv2Tester $I)
     {
         $I->wantTo('Get the first experiment as PDF/A');
-        $I->sendGET('/experiments/1?format=pdfa');
+        $I->sendGET("/experiments/{$this->expid}?format=pdfa");
         $I->seeResponseCodeIs(HttpCode::OK); // 200
     }
 
     public function getZipTest(Apiv2Tester $I)
     {
         $I->wantTo('Get the first experiment as ZIP');
-        $I->sendGET('/experiments/1?format=zip');
+        $I->sendGET("/experiments/{$this->expid}?format=zip");
         $I->seeResponseCodeIs(HttpCode::OK); // 200
     }
 
     public function getOneItemTest(Apiv2Tester $I)
     {
-        $I->wantTo('Get the first item');
-        $I->sendGET('/items/1');
+        $I->wantTo('Get an item');
+        $I->sendGET("/items/{$this->itemid}");
         $I->seeResponseCodeIs(HttpCode::OK); // 200
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson(array('content_type' => 1));
@@ -104,7 +120,7 @@ class Entity2Cest
     public function updateExpTest(Apiv2Tester $I)
     {
         $I->wantTo('Update an experiment');
-        $I->sendPATCH('/experiments/1', array('title' => 'new title', 'date' => '20191231', 'body' => 'new body', 'metadata' => '{"foo":1}'));
+        $I->sendPATCH("/experiments/{$this->expid}", array('title' => 'new title', 'date' => '20191231', 'body' => 'new body', 'metadata' => '{"foo":1}'));
         $I->seeResponseCodeIs(HttpCode::OK); // 200
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson(array('title' => 'new title'));
@@ -116,14 +132,14 @@ class Entity2Cest
     public function addTagTest(Apiv2Tester $I)
     {
         $I->wantTo('Add a tag to an experiment');
-        $I->sendPOST('/experiments/1/tags', array('tag' => 'some tag'));
+        $I->sendPOST("/experiments/{$this->expid}/tags", array('tag' => 'some tag'));
         $I->seeResponseCodeIs(HttpCode::CREATED); // 201
     }
 
     public function addLinkTest(Apiv2Tester $I)
     {
         $I->wantTo('Add a link to an experiment');
-        $I->sendPOST('/experiments/1/items_links/1', array());
+        $I->sendPOST("/experiments/{$this->expid}/items_links/1", array());
         $I->seeResponseCodeIs(HttpCode::CREATED); // 201
     }
 
@@ -137,14 +153,14 @@ class Entity2Cest
     public function duplicateExpTest(Apiv2Tester $I)
     {
         $I->wantTo('Duplicate an experiment');
-        $I->sendPOST('/experiments/1', array('action' => 'duplicate'));
+        $I->sendPOST("/experiments/{$this->expid}", array('action' => 'duplicate'));
         $I->seeResponseCodeIs(HttpCode::CREATED); // 201
     }
 
     public function duplicateItemTest(Apiv2Tester $I)
     {
         $I->wantTo('Duplicate an item');
-        $I->sendPOST('/items/1', array('action' => 'duplicate'));
+        $I->sendPOST("/items/{$this->itemid}", array('action' => 'duplicate'));
         $I->seeResponseCodeIs(HttpCode::CREATED); // 201
     }
 
@@ -159,49 +175,42 @@ class Entity2Cest
     {
         $I->wantTo('Send an improper request');
         // this should normally be a patch request
-        $I->sendPOST('/experiments/1', array('action' => 'bloxberg'));
+        $I->sendPOST("/experiments/{$this->expid}", array('action' => 'bloxberg'));
         $I->seeResponseCodeIs(HttpCode::BAD_REQUEST);
     }
 
     public function deleteItemTest(Apiv2Tester $I)
     {
         $I->wantTo('Delete an item');
-        $I->sendDELETE('/items/4');
+        $I->sendDELETE("/items/{$this->itemid}");
         $I->seeResponseCodeIs(HttpCode::NO_CONTENT);
     }
 
     public function deleteExperimentTest(Apiv2Tester $I)
     {
         $I->wantTo('Delete an experiment');
-        $I->sendDELETE('/experiments/8');
+        $I->sendDELETE("/experiments/{$this->expid}");
         $I->seeResponseCodeIs(HttpCode::NO_CONTENT);
     }
 
     public function resourceNotFoundTest(Apiv2Tester $I)
     {
         $I->wantTo('Find a non existing item');
-        $I->sendGET('/items/9001');
+        $I->sendGET('/items/196883');
         $I->seeResponseCodeIs(HttpCode::NOT_FOUND);
     }
 
     public function extendedSearchTest(Apiv2Tester $I)
     {
         $I->wantTo('Use extended parameter to get experiments');
+        $I->sendPOST('/experiments');
+        $location = $I->grabHttpHeader('Location');
+        $path = parse_url($location, PHP_URL_PATH);
+        $id = basename($path);
+        $I->sendPatch("/experiments/{$id}", array('metadata' => '{"extra_fields": {"Raw data URL": {"type": "text", "value": "smb://yep"}}}'));
         $I->sendGET('/experiments/?extended=extrafield:"Raw data URL":%');
         $I->seeResponseCodeIs(HttpCode::OK);
         $I->seeResponseIsJson();
-        $I->seeResponseContainsJson(array('title' => 'Testing the eLabFTW lab notebook'));
+        $I->seeResponseContainsJson(array('id' => $id));
     }
-
-    /** TODO FIXME make this (and the whole file eventually) a cypress test
-    public function improperLinkToSelfTest(Apiv2Tester $I)
-    {
-        $I->wantTo('Improperly link an entity to itself');
-        $I->sendPatch('/experiments/1', array('metadata' => '{"extra_fields":{"self-link":{"type":"experiments"}}}'));
-        $I->sendPatch('/experiments/1', array('action' => 'updatemetadatafield', 'self-link' => '1'));
-        $I->seeResponseCodeIs(HttpCode::BAD_REQUEST);
-        $I->seeResponseIsJson();
-        $I->seeResponseContainsJson(array('description' => 'Linking an item to itself is not allowed. Please select a different target.'));
-    }
-     */
 }

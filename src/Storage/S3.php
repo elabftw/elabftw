@@ -59,6 +59,7 @@ final class S3 extends AbstractStorage
             'endpoint' => $this->config->configArr['s3_endpoint'],
             'credentials' => $this->credentials,
             'use_aws_shared_config_files' => false,
+            'use_path_style_endpoint' => ($this->config->configArr['s3_use_path_style_endpoint'] === '1'),
             'http' => array(
                 'verify' => ($this->config->configArr['s3_verify_cert'] === '1'),
             ),

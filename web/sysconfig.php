@@ -32,6 +32,7 @@ use Exception;
 use GuzzleHttp\Client;
 use PDO;
 use Symfony\Component\HttpFoundation\Response;
+use ValueError;
 
 use function array_walk;
 
@@ -100,7 +101,10 @@ try {
     $elabimgVersion = getenv('ELABIMG_VERSION') ?: 'Not in Docker';
     $auditLogsArr = AuditLogs::read($App->Request->query->getInt('limit', AuditLogs::DEFAULT_LIMIT), $App->Request->query->getInt('offset'));
     array_walk($auditLogsArr, function (array &$event) {
-        $event['category'] = AuditCategory::from($event['category'])->name;
+        try {
+            $event['category'] = AuditCategory::from($event['category'])->name;
+        } catch (ValueError) {
+        }
     });
     $passwordComplexity = PasswordComplexity::from((int) $App->Config->configArr['password_complexity_requirement']);
     $StorageUnits = new StorageUnits($App->Users);

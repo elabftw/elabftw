@@ -17,7 +17,7 @@ use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\AbstractRest;
 use Elabftw\Models\Compounds;
 use Elabftw\Models\StorageUnits;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Elabftw\Services\HttpGetter;
 use Elabftw\Services\NullFingerprinter;
 use GuzzleHttp\Client;

@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Models\StorageUnits;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 
 require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 

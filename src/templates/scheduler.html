@@ -63,7 +63,7 @@
               <div class='input-group-prepend'>
                 <span class='input-group-text'>{{ 'Search'|trans }}</span>
               </div>
-              <input type='text' data-complete-target='experiments' data-identifier='binddivexp' class='form-control bindInput' aria-labelledby='bindExpInputLabel' />
+              <input type='text' data-action='autocomplete' data-target='experiments' data-identifier='binddivexp' class='form-control bindInput' aria-labelledby='bindExpInputLabel' />
               <div class='input-group-append'>
                 <button class='btn btn-primary' data-input='bindexpinput' data-action='scheduler-bind-entity' data-type='experiment' type='button'>{{ 'Attach'|trans }}</button>
               </div>
@@ -79,7 +79,7 @@
               <div class='input-group-prepend'>
                 <span class='input-group-text'>{{ 'Search'|trans }}</span>
               </div>
-              <input type='text' data-complete-target='items' data-identifier='binddivdb' class='form-control bindInput' aria-labelledby='bindItemInputLabel' />
+              <input type='text' data-action='autocomplete' data-target='items' data-identifier='binddivdb' class='form-control bindInput' aria-labelledby='bindItemInputLabel' />
               <div class='input-group-append'>
                 <button class='btn btn-primary' data-input='binddbinput' data-action='scheduler-bind-entity' data-type='item_link' type='button'>{{ 'Attach'|trans }}</button>
               </div>
@@ -149,7 +149,7 @@
         {% include 'scope-button.html' with {'btnId': 'scopeEventBtn', 'reload': 'page', 'target': 'scope_events', 'isSecondary': 0, 'isSmall': 0} %}
         <div class='input-group ml-2'>
           {#  FILTER BY OWNER #}
-          <input type='text' aria-label='{{ 'Filter owner'|trans }}' placeholder='{{ 'Filter events by owner'|trans }}' id='eventOwnerSelect' class='form-control' data-identifier='eventOwnerSelect' data-complete-target='users'>
+          <input type='text' aria-label='{{ 'Filter owner'|trans }}' placeholder='{{ 'Filter events by owner'|trans }}' id='eventOwnerSelect' class='form-control' data-identifier='eventOwnerSelect' data-action='autocomplete' data-target='users'>
           <div id='autocompleteAnchorDiv_eventOwnerSelect'></div>
           <div class='input-group-append'>
             <button class='btn btn-secondary' type='button' aria-label='{{ 'Filter owner'|trans }}' data-action='filter-owner' title='{{ 'Filter owner'|trans }}'><i class='color-white fas fa-magnifying-glass'></i></button>

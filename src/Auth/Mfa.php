@@ -12,42 +12,32 @@ declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
-use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Exceptions\InvalidMfaCodeException;
 use Elabftw\Interfaces\AuthInterface;
-use Elabftw\Models\Users;
+use Elabftw\Interfaces\AuthResponseInterface;
 use Elabftw\Services\MfaHelper;
 use Elabftw\Services\UsersHelper;
 use Override;
 
 /**
- * Multi Factor Auth service
+ * This class is responsible for verifying that the code sent corresponds to the secret from the user
  */
 final class Mfa implements AuthInterface
 {
-    private AuthResponse $AuthResponse;
-
-    public function __construct(private MfaHelper $MfaHelper, private string $code)
-    {
-        $this->AuthResponse = new AuthResponse();
-    }
+    public function __construct(
+        private readonly MfaHelper $MfaHelper,
+        private readonly int $userid,
+        private readonly string $code,
+    ) {}
 
     #[Override]
-    public function tryAuth(): AuthResponse
+    public function tryAuth(): AuthResponseInterface
     {
-        $Users = new Users($this->MfaHelper->userid);
-
         if (!$this->MfaHelper->verifyCode($this->code)) {
-            throw new InvalidMfaCodeException($this->MfaHelper->userid);
+            throw new InvalidMfaCodeException();
         }
-
-        $this->AuthResponse->hasVerifiedMfa = true;
-        $this->AuthResponse->mfaSecret = $Users->userData['mfa_secret'];
-        $this->AuthResponse->isValidated = (bool) $Users->userData['validated'];
-        $this->AuthResponse->userid = $this->MfaHelper->userid;
-        $UsersHelper = new UsersHelper($this->AuthResponse->userid);
-        $this->AuthResponse->setTeams($UsersHelper);
-
-        return $this->AuthResponse;
+        return new MfaAuthResponse()
+            ->setAuthenticatedUserid($this->userid)
+            ->setTeams(new UsersHelper($this->userid));
     }
 }

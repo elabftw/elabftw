@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+{# Modal for reset password #}
+<div class='modal fade' id='resetModal' tabindex='-1' role='dialog' aria-labelledby='resetModalLabel'>
+  <div class='modal-dialog modal-dialog-centered' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='resetModalLabel'>{{ 'Reset your password'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
+        <form name='resetPass' method='post' action='app/controllers/ResetPasswordController.php' aria-label='{{ 'Reset password'|trans }}'>
+          {{ App.Session.get('csrf')|csrf }}
+          <input class='form-control' aria-label='email address' placeholder='{{ 'Enter your email address'|trans }}' name='email' type='email' autocomplete='email' required />
+          <div class='text-center'>
+            <button class='btn btn-primary mt-2' type='submit' name='Submit'>{{ 'Send reset link'|trans }}</button>
+          </div>
+        </form>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# LOGIN ANNOUNCEMENT #}
+{% if App.Config.configArr.login_announcement %}
+  {{ App.Config.configArr.login_announcement|msg('warning', false) }}
+{% endif %}
+
+<section class='text-center'>
+  {% if App.demoMode %}
+    {% include 'login-demo.html' %}
+  {% else %}
+    {% include 'login-full.html' %}
+  {% endif %}
+
+</section>
+
+<div id='info' data-page='login'></div>
+{% endblock body %}

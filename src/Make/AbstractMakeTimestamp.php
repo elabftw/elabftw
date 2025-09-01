@@ -19,7 +19,7 @@ use Elabftw\Interfaces\MakeTimestampInterface;
 use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Changelog;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Elabftw\Params\ContentParams;
 use Elabftw\Services\MpdfProvider;
 use GuzzleHttp\Client;

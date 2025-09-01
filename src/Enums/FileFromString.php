@@ -18,9 +18,10 @@ enum FileFromString: string
 {
     use EnumsTrait;
 
-    case Png = 'png';
-    case Mol = 'mol';
-    case Json = 'json';
     case ChemJson = 'chemjson';
+    case Json = 'json';
+    case Mol = 'mol';
+    case Png = 'png';
     case Rxn = 'rxn';
+    case Xlsx = 'xlsx';
 }

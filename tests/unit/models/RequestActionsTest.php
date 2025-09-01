@@ -15,9 +15,13 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\RequestableAction;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Users\Users;
+use Elabftw\Traits\TestsUtilsTrait;
 
 class RequestActionsTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private Experiments $Experiments;
 
     private RequestActions $RequestActions;
@@ -25,14 +29,15 @@ class RequestActionsTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $Users = new Users(1, 1);
-        $this->Experiments = new Experiments($Users, 1);
+        $this->Experiments = $this->getFreshExperiment();
         $this->RequestActions = new RequestActions($Users, $this->Experiments);
     }
 
     public function testPostAction(): void
     {
+        $targetUser = $this->getUserInTeam(2);
         $reqBody = array(
-            'target_userid' => 2,
+            'target_userid' => $targetUser->userid,
             'target_action' => RequestableAction::Archive->value,
         );
         $newRequestActionId = $this->RequestActions->postAction(
@@ -56,7 +61,33 @@ class RequestActionsTest extends \PHPUnit\Framework\TestCase
 
     public function testReadAllFull(): void
     {
+        $reqBody = array(
+            'target_userid' => 2,
+            'target_action' => RequestableAction::Archive->value,
+        );
+        $this->RequestActions->postAction(
+            Action::Create,
+            $reqBody,
+        );
         $this->assertIsArray($this->RequestActions->readAllFull());
+    }
+
+    public function testRemove(): void
+    {
+        $targetUser = $this->getUserInTeam(2);
+        $reqBody = array(
+            'target_userid' => $targetUser->userid,
+            'target_action' => RequestableAction::Archive->value,
+        );
+        $this->RequestActions->postAction(
+            Action::Create,
+            $reqBody,
+        );
+        $this->assertCount(1, $this->RequestActions->readAll());
+        // do the action
+        $RequestActions = new RequestActions($targetUser, $this->Experiments);
+        $RequestActions->remove(RequestableAction::Archive);
+        $this->assertEmpty($this->RequestActions->readAll());
     }
 
     public function testReadOne(): void
@@ -67,7 +98,7 @@ class RequestActionsTest extends \PHPUnit\Framework\TestCase
 
     public function testGetApiPath(): void
     {
-        $this->assertEquals('api/v2/experiments/1/request_actions/', $this->RequestActions->getApiPath());
+        $this->assertEquals(sprintf('api/v2/experiments/%d/request_actions/', $this->Experiments->id), $this->RequestActions->getApiPath());
     }
 
     public function testDestroy(): void

@@ -14,99 +14,111 @@ import {
   addAutocompleteToCompoundsInputs,
   addAutocompleteToLinkInputs,
   adjustHiddenState,
-  getEntity,
+  collectForm,
   makeSortableGreatAgain,
   relativeMoment,
   reloadElements,
 } from './misc';
 import { Action, Target } from './interfaces';
-import { Api } from './Apiv2.class';
+import { ApiC } from './api';
+import { entity } from './getEntity';
+import { on } from './handlers';
 
-document.addEventListener('DOMContentLoaded', () => {
-  if (!document.getElementById('info')) {
+// FINISH: outside if stepsDiv because can be from Todolist panel
+$(document).on('click', 'input[type=checkbox].stepbox', function(e) {
+  // ask for confirmation before un-finishing a step
+  // this check happens after the browser changed the state, so it is inverted
+  // what we are really checking here is if it was checked before the user clicks on it
+  if (!$(this).is(':checked') && !confirm(i18next.t('step-unfinish-warning'))) {
+    // re-check the box on cancel
+    $(this).prop('checked', true);
     return;
   }
-  const entity = getEntity();
-  const ApiC = new Api();
 
-  // STEPS
+  // on the todolist we don't want to grab the type from the page
+  // because it's only steps from experiments
+  // so if the element has a data-type, take that instead
+  // clone to avoid mutating shared state
+  const newentity = { ...entity };
+  if (e.currentTarget.dataset.type) {
+    newentity.type = e.currentTarget.dataset.type;
+    newentity.id = e.currentTarget.dataset.id;
+  }
+  const stepId = e.currentTarget.dataset.stepid;
+  const StepNew = new Step(newentity);
+  StepNew.finish(stepId).then(() => {
+    reloadElements(['stepsDiv']).then(() => {
+      // keep to do list in sync
+      $('#todo_step_' + stepId).prop('checked', $('.stepbox[data-stepid="' + stepId + '"]').prop('checked'));
+    });
+  });
+});
+
+if (document.getElementById('stepsDiv')) {
   const StepC = new Step(entity);
 
-  relativeMoment();
-
-  // MAIN LISTENER for actions
-  document.querySelector('.real-container').addEventListener('click', event => {
-    const el = (event.target as HTMLElement);
-
-    // ADD DEADLINE ON STEP
-    if (el.matches('[data-action="step-update-deadline"]')) {
-      const value = (document.getElementById('stepSelectDeadline_' + el.dataset.stepid) as HTMLSelectElement).value;
-      StepC.update(parseInt(el.dataset.stepid, 10), value, Target.Deadline).then(() => {
-        reloadElements(['stepsDiv']);
+  on('create-step', (_, event: Event) => {
+    event.preventDefault();
+    const form = document.getElementById('addStepForm') as HTMLFormElement;
+    const params = collectForm(form);
+    const content = String(params['step'] ?? '').trim();
+    if (!content) return;
+    StepC.create(content).then(() => {
+      reloadElements(['stepsDiv']).then(() => {
+        (document.getElementById('addStepInput') as HTMLInputElement).focus();
       });
-    // ADD STEP
-    } else if (el.matches('[data-action="create-step"]')) {
-      createStep(el.parentElement.parentElement.querySelector('input'));
-    // TOGGLE DEADLINE NOTIFICATIONS ON STEP
-    } else if (el.matches('[data-action="step-toggle-deadline-notif"]')) {
-      StepC.notif(parseInt(el.dataset.stepid, 10)).then(() => reloadElements(['stepsDiv']));
-    // DESTROY DEADLINE ON STEP
-    } else if (el.matches('[data-action="step-destroy-deadline"]')) {
-      StepC.update(parseInt(el.dataset.stepid, 10), null, Target.Deadline)
-        .then(() => reloadElements(['stepsDiv']));
-    // IMPORT LINK(S) OF LINK
-    } else if (el.matches('[data-action="import-links"]')) {
-      Promise.allSettled(['items_links', 'experiments_links'].map(endpoint => ApiC.post(
-        `${entity.type}/${entity.id}/${endpoint}/${el.dataset.target}`,
-        {'action': Action.Duplicate},
-      ))).then(() => reloadElements(['linksDiv', 'linksExpDiv']));
-    // DESTROY LINK
-    } else if (el.matches('[data-action="destroy-link"]')) {
-      if (confirm(i18next.t('link-delete-warning'))) {
-        ApiC.delete(`${entity.type}/${entity.id}/${el.dataset.endpoint}/${el.dataset.target}`)
-          .then(() => el.parentElement.parentElement.remove());
-      }
-    } else if (el.matches('[data-action="destroy-related-link"]')) {
-      if (confirm(i18next.t('link-delete-warning'))) {
-        ApiC.delete(`${el.dataset.endpoint.split('_')[0]}/${el.dataset.target}/${entity.type}_links/${entity.id}`)
-          .then(() => el.parentElement.parentElement.remove());
-      }
-    } else if (el.matches('[data-action="destroy-step"]')) {
-      if (confirm(i18next.t('step-delete-warning'))) {
-        StepC.destroy(parseInt(el.dataset.id, 10)).then(() => {
-          el.parentElement.parentElement.remove();
-          // keep to do list in sync
-          const todoStep = document.getElementById(`todo_step_${el.dataset.id}`);
-          if (todoStep) {
-            todoStep.parentElement.remove();
-          }
-        });
-      }
+    });
+  });
+
+  on('step-update-deadline', (el: HTMLElement) => {
+    const value = (document.getElementById('stepSelectDeadline_' + el.dataset.stepid) as HTMLSelectElement).value;
+    StepC.update(parseInt(el.dataset.stepid, 10), value, Target.Deadline).then(() => {
+      reloadElements(['stepsDiv']);
+    });
+  });
+
+  on('step-toggle-deadline-notif', (el: HTMLElement) => {
+    StepC.notif(parseInt(el.dataset.stepid, 10)).then(() => reloadElements(['stepsDiv']));
+  });
+
+  on('step-destroy-deadline', (el: HTMLElement) => {
+    StepC.update(parseInt(el.dataset.stepid, 10), null, Target.Deadline)
+      .then(() => reloadElements(['stepsDiv']));
+  });
+
+  on('destroy-step', (el: HTMLElement) => {
+    if (confirm(i18next.t('step-delete-warning'))) {
+      StepC.destroy(parseInt(el.dataset.id, 10)).then(() => {
+        el.parentElement.parentElement.remove();
+        // keep to do list in sync
+        const todoStep = document.getElementById(`todo_step_${el.dataset.id}`);
+        if (todoStep) {
+          todoStep.parentElement.remove();
+        }
+      });
     }
   });
 
+  on('import-links', (el: HTMLElement) => {
+    Promise.allSettled(['items_links', 'experiments_links'].map(endpoint => ApiC.post(
+      `${entity.type}/${entity.id}/${endpoint}/${el.dataset.target}`,
+      {action: Action.Duplicate},
+    ))).then(() => reloadElements(['linksDiv', 'linksExpDiv']));
+  });
 
-  // CREATE
-  $(document).on('keypress', '.stepinput', function(e) {
-    // Enter is ascii code 13
-    if (e.which === 13) {
-      createStep(e.currentTarget);
+  on('destroy-link', (el: HTMLElement) => {
+    if (confirm(i18next.t('link-delete-warning'))) {
+      ApiC.delete(`${entity.type}/${entity.id}/${el.dataset.endpoint}/${el.dataset.target}`)
+        .then(() => el.parentElement.parentElement.remove());
     }
   });
 
-  function createStep(input: HTMLInputElement): void
-  {
-    const content = input.value;
-    if (content.length > 0) {
-      StepC.create(content).then(() => {
-        reloadElements(['stepsDiv']).then(() => {
-          // clear input field
-          input.value = '';
-          input.focus();
-        });
-      });
+  on('destroy-related-link', (el: HTMLElement) => {
+    if (confirm(i18next.t('link-delete-warning'))) {
+      ApiC.delete(`${el.dataset.endpoint.split('_')[0]}/${el.dataset.target}/${entity.type}_links/${entity.id}`)
+        .then(() => el.parentElement.parentElement.remove());
     }
-  }
+  });
 
   // UPDATE MALLEABLE STEP BODY, FINISH TIME OR DEADLINE (data-target attribute)
   const malleableStep = new Malle({
@@ -129,43 +141,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }).listen();
 
   // add an observer so new steps will get an event handler too
-  if (document.getElementById('stepsDiv')) {
-    new MutationObserver(() => {
-      malleableStep.listen();
-      adjustHiddenState();
-      makeSortableGreatAgain();
-      relativeMoment();
-    }).observe(document.getElementById('stepsDiv'), {childList: true});
-  }
+  new MutationObserver(() => {
+    malleableStep.listen();
+    adjustHiddenState();
+    makeSortableGreatAgain();
+    relativeMoment();
+  }).observe(document.getElementById('stepsDiv'), {childList: true});
 
-  // FINISH
-  $(document).on('click', 'input[type=checkbox].stepbox', function(e) {
-    // ask for confirmation before un-finishing a step
-    // this check happens after the browser changed the state, so it is inverted
-    // what we are really checking here is if it was checked before the user clicks on it
-    if (!$(this).is(':checked') && !confirm(i18next.t('step-unfinish-warning'))) {
-      // re-check the box on cancel
-      $(this).prop('checked', true);
-      return;
-    }
-
-    // on the todolist we don't want to grab the type from the page
-    // because it's only steps from experiments
-    // so if the element has a data-type, take that instead
-    const newentity = entity;
-    if (e.currentTarget.dataset.type) {
-      newentity.type = e.currentTarget.dataset.type;
-      newentity.id = e.currentTarget.dataset.id;
-    }
-    const stepId = e.currentTarget.dataset.stepid;
-    const StepNew = new Step(newentity);
-    StepNew.finish(stepId).then(() => {
-      reloadElements(['stepsDiv']).then(() => {
-        // keep to do list in sync
-        $('#todo_step_' + stepId).prop('checked', $('.stepbox[data-stepid="' + stepId + '"]').prop('checked'));
-      });
-    });
-  });
   // END STEPS
 
   // CREATE LINK
@@ -184,6 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
           // clear input field
           $(this).val('');
           addAutocompleteToLinkInputs();
+          addAutocompleteToCompoundsInputs();
         });
       });
     }
@@ -191,4 +174,4 @@ document.addEventListener('DOMContentLoaded', () => {
   // AUTOCOMPLETE
   addAutocompleteToLinkInputs();
   addAutocompleteToCompoundsInputs();
-});
+}

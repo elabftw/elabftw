@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Import;
 
 use Elabftw\AuditEvent\Import as AuditEventImport;
+use Elabftw\Elabftw\Env;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
@@ -22,8 +23,7 @@ use Elabftw\Interfaces\ImportInterface;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\AbstractRest;
 use Elabftw\Models\AuditLogs;
-use Elabftw\Models\Config;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Override;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -45,8 +45,8 @@ final class Handler extends AbstractRest
         return array(
             'allowed_extensions' => self::ALLOWED_EXTENSIONS,
             'max_filesize' => UploadedFile::getMaxFilesize(),
-            'max_upload_size' => Config::fromEnv('MAX_UPLOAD_SIZE'),
-            'max_upload_time' => (int) Config::fromEnv('MAX_UPLOAD_TIME'),
+            'max_upload_size' => Env::asString('MAX_UPLOAD_SIZE'),
+            'max_upload_time' => Env::asInt('MAX_UPLOAD_TIME'),
         );
     }
 

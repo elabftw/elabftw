@@ -68,4 +68,9 @@ class TwigFunctionsTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertIsArray(TwigFunctions::canToHuman(BasePermissions::User->toJson()));
     }
+
+    public function testEnvAsBool(): void
+    {
+        $this->assertFalse(TwigFunctions::envAsBool('this test is useless but we still have it for CoVeRaGe'));
+    }
 }

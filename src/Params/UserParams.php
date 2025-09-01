@@ -33,7 +33,7 @@ use function mb_substr;
 final class UserParams extends ContentParams
 {
     #[Override]
-    public function getContent(): string | int
+    public function getContent(): string | int | null
     {
         return match ($this->target) {
             // checked in update
@@ -59,6 +59,7 @@ final class UserParams extends ContentParams
             'scope_experiments',
             'scope_events',
             'scope_items',
+            'scope_items_types',
             'scope_teamgroups' => (string) (Scope::tryFrom($this->asInt()) ?? Scope::Team)->value,
             'sc_create', 'sc_favorite', 'sc_todo', 'sc_edit', 'sc_search' => Filter::firstLetter($this->asString()),
             'always_show_owned',
@@ -86,6 +87,7 @@ final class UserParams extends ContentParams
             'use_isodate',
             'use_markdown',
             'validated' => (string) Filter::toBinary($this->content),
+            'mfa_secret' => $this->getNullableString(),
             'lang' => (Language::tryFrom($this->content) ?? Language::EnglishGB)->value,
             'entrypoint' => (Entrypoint::tryFrom($this->asInt()) ?? Entrypoint::Dashboard)->value,
             'default_read', 'default_write' => $this->getCanJson(),

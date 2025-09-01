@@ -7,19 +7,14 @@
  */
 import i18next from './i18n';
 import { clearForm, collectForm, populateUserModal, reloadElements } from './misc';
-import { Api } from './Apiv2.class';
+import { ApiC } from './api';
 import { Action, Model } from './interfaces';
 import $ from 'jquery';
-import { Notification } from './Notifications.class';
+import { notify } from './notify';
 
-document.addEventListener('DOMContentLoaded', () => {
-  if (!['/sysconfig.php', '/admin.php'].includes(window.location.pathname)) {
-    return;
-  }
+if (document.getElementById('users-table')) {
 
-  const ApiC = new Api();
-
-  document.querySelector('.real-container').addEventListener('click', async (event) => {
+  document.getElementById('container').addEventListener('click', async (event) => {
     const el = (event.target as HTMLElement);
     let userid = document.getElementById('editUserModal')?.dataset.userid;
     if (!userid) {
@@ -76,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       } catch (error) {
         el.removeAttribute('disabled');
-        new Notification().error(error);
+        notify.error(error);
       }
 
     // EDIT USER
@@ -92,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         }
       } catch (err) {
-        (new Notification()).error('Something went wrong: ', {err});
+        notify.error('Something went wrong: ', {err});
         return;
       }
     // CREATE USER(s) FROM REMOTE DIRECTORY
@@ -185,4 +180,4 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   });
-});
+}

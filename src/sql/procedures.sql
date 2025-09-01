@@ -81,3 +81,32 @@ BEGIN
   END IF; /**/
 END;
 -- END DROP COLUMN PROCEDURE
+
+-- DROP FK IF EXISTS (second procedure when we don't know the name)
+DROP PROCEDURE IF EXISTS `drop_fk_if_exists`;
+CREATE PROCEDURE drop_fk_if_exists(
+    IN tableName VARCHAR(64),
+    IN colName VARCHAR(64)
+)
+MODIFIES SQL DATA
+BEGIN
+    DECLARE fk_name VARCHAR(64); /**/
+
+    -- Find the foreign key constraint name for the given table and column
+    SELECT CONSTRAINT_NAME INTO fk_name
+    FROM information_schema.KEY_COLUMN_USAGE
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = tableName
+      AND COLUMN_NAME = colName
+      AND REFERENCED_TABLE_NAME IS NOT NULL
+    LIMIT 1; /**/
+
+    -- If a foreign key is found, drop it
+    IF fk_name IS NOT NULL THEN
+        SET @sql = CONCAT('ALTER TABLE `', tableName, '` DROP FOREIGN KEY `', fk_name, '`;'); /**/
+        PREPARE stmt FROM @sql; /**/
+        EXECUTE stmt; /**/
+        DEALLOCATE PREPARE stmt; /**/
+    END IF; /**/
+END;
+-- END DROP FK IF EXISTS (second procedure when we don't know the name)

@@ -8,6 +8,7 @@
 import { Model } from './interfaces';
 import SidePanel from './SidePanel.class';
 import TodoList from './Todolist.class';
+import { ApiC } from './api';
 
 export default class FavTag extends SidePanel {
 
@@ -18,12 +19,7 @@ export default class FavTag extends SidePanel {
 
   // ADD A TAG AS FAVORITE
   create(content: string): Promise<Response> {
-    return this.api.post(Model.FavTag, {'tag': content });
-  }
-
-  // REMOVE A FAVORITE TAG
-  destroy(id: number): Promise<Response> {
-    return this.api.delete(`${Model.FavTag}/${id}`);
+    return ApiC.post(Model.FavTag, {tag: content });
   }
 
   toggle(): void {

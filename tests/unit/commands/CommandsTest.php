@@ -13,7 +13,7 @@ namespace Elabftw\Commands;
 
 use Elabftw\Models\Config;
 use Elabftw\Services\Email;
-use Elabftw\Services\MfaHelperTest;
+use Elabftw\Services\MfaHelper;
 use Elabftw\Storage\Fixtures;
 use Elabftw\Storage\Memory;
 use Monolog\Handler\NullHandler;
@@ -36,7 +36,7 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
         // use NullHandler because we don't care about logs here
         $Logger->pushHandler(new NullHandler());
         $MockMailer = $this->createMock(MailerInterface::class);
-        $this->Email = new Email($MockMailer, $Logger, 'toto@yopmail.com');
+        $this->Email = new Email($MockMailer, $Logger, 'toto@yopmail.com', demoMode: false);
     }
 
     public function testCheckTsBalance(): void
@@ -113,7 +113,7 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
     public function testMfaCode(): void
     {
         $commandTester = new CommandTester(new MfaCode());
-        $commandTester->execute(array('secret' => MfaHelperTest::SECRET));
+        $commandTester->execute(array('secret' => new MfaHelper()->secret));
         $commandTester->assertCommandIsSuccessful();
         $this->assertStringContainsString('2FA code:', $commandTester->getDisplay());
     }

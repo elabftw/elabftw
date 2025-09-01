@@ -8,44 +8,32 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
 declare(strict_types=1);
 
 namespace Elabftw\Services;
 
 use function strlen;
+use function str_pad;
 
 class MfaHelperTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var string $secret The 2FA test secret */
-    public const SECRET = 'EXAMPLE2FASECRET234567ABCDEFGHIJ';
-
-    private MfaHelper $MfaHelper;
-
-    protected function setUp(): void
-    {
-        $this->MfaHelper = new MfaHelper(1, self::SECRET);
-    }
-
     public function testGenerateSecret(): void
     {
-        $secret = $this->MfaHelper->generateSecret();
-        $this->assertEquals(32, strlen($secret));
-        $this->MfaHelper->secret = $secret;
-    }
-
-    public function testSaveSecret(): void
-    {
-        $this->assertTrue($this->MfaHelper->saveSecret());
-    }
-
-    public function testRemoveSecret(): void
-    {
-        $this->assertTrue($this->MfaHelper->removeSecret());
+        // no secret provided, it'll generate one
+        $secret = new MfaHelper()->secret;
+        $this->assertSame(32, strlen($secret));
+        // with a secret provided, it must not change
+        $helper = new MfaHelper($secret);
+        $this->assertSame($secret, $helper->secret);
     }
 
     public function testVerifyCode(): void
     {
-        $code = $this->MfaHelper->getCode();
-        $this->assertTrue($this->MfaHelper->verifyCode($code));
+        $helper = new MfaHelper();
+        $goodCode = $helper->getCode();
+        $badCode = str_pad((string) (((int) $goodCode + 1) % 1000000), 6, '0', STR_PAD_LEFT);
+        $this->assertTrue($helper->verifyCode($goodCode));
+        $this->assertFalse($helper->verifyCode($badCode));
     }
 }

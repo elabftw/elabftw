@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Auth\Local;
+use Elabftw\Enums\AuthType;
 use Elabftw\Enums\Classification;
 use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Exceptions\AppException;
@@ -22,6 +22,7 @@ use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\TeamTags;
+use Elabftw\Services\MfaHelper;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -83,12 +84,17 @@ try {
             );
     }
 
-    $showMfa = !Local::isMfaEnforced(
-        $App->Users->userData['userid'],
-        (int) $App->Config->configArr['enforce_mfa'],
-    );
-
     $passwordComplexity = PasswordComplexity::from((int) $App->Config->configArr['password_complexity_requirement']);
+
+    // MFA
+    $mfaNewSecret = '';
+    $mfaQRCodeImageDataUri = '';
+    // if mfa is not set yet, we generate a secret, otherwise, there is no need to, and we don't want to, to avoid leak of existing valid secret
+    if ($App->Users->userData['mfa_secret'] === null) {
+        $MfaHelper = new MfaHelper();
+        $mfaNewSecret = $MfaHelper->secret;
+        $mfaQRCodeImageDataUri = $MfaHelper->getQRCodeImageAsDataUri($App->Users->userData['email']);
+    }
 
     $template = 'ucp.html';
     $renderArr = array(
@@ -98,8 +104,11 @@ try {
         'classificationArr' => Classification::getAssociativeArray(),
         'entityData' => $entityData,
         'itemsCategoryArr' => $itemsCategoryArr,
+        'isLocalAuth' => $App->Users->userData['auth_service'] === AuthType::Local->asService(),
         'teamsArr' => $App->Teams->readAllVisible(),
         'metadataGroups' => $metadataGroups,
+        'mfaQRCodeImageDataUri' => $mfaQRCodeImageDataUri,
+        'mfaNewSecret' => $mfaNewSecret,
         'scopedTeamgroupsArr' => $TeamGroups->readScopedTeamgroups(),
         'notificationsSettings' => $notificationsSettings,
         'pageTitle' => _('Settings'),
@@ -108,7 +117,6 @@ try {
         'statusArr' => $Status->readAll(),
         'teamTagsArr' => $TeamTags->readAll(),
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
-        'showMFA' => $showMfa,
         'usersArr' => $App->Users->readAllActiveFromTeam(),
     );
     $Response->setContent($App->render($template, $renderArr));

@@ -7,16 +7,13 @@
  */
 import $ from 'jquery';
 import { Model } from './interfaces';
-import { Api } from './Apiv2.class';
 
 export default class SidePanel {
   panelId: string;
   model: Model;
-  api: Api;
 
   constructor(model: Model) {
     this.model = model;
-    this.api = new Api();
   }
 
   hide(): void {
@@ -25,7 +22,7 @@ export default class SidePanel {
     // hide panel
     document.getElementById(this.panelId).toggleAttribute('hidden', true);
     // store the current state
-    localStorage.setItem(`is${this.model}Open`, '0');
+    localStorage.removeItem('opened-sidepanel');
     const opener = document.getElementById(`${this.panelId}Opener`);
     opener.classList.add('bounce-right');
     opener.classList.remove('bounce-left');
@@ -38,7 +35,7 @@ export default class SidePanel {
     // show panel
     document.getElementById(this.panelId).removeAttribute('hidden');
     // store the current state
-    localStorage.setItem(`is${this.model}Open`, '1');
+    localStorage.setItem('opened-sidepanel', this.model);
     const opener = document.getElementById(`${this.panelId}Opener`);
     opener.classList.remove('bounce-right');
     opener.classList.add('bounce-left');

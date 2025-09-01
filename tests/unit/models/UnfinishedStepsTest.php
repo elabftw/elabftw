@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Models\Users\Users;
+
 class UnfinishedStepsTest extends \PHPUnit\Framework\TestCase
 {
     private Users $Users;

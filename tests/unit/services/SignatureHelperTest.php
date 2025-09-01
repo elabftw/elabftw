@@ -16,7 +16,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\Meaning;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\SigKeys;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 
 class SignatureHelperTest extends \PHPUnit\Framework\TestCase
 {

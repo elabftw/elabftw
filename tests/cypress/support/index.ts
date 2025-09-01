@@ -16,3 +16,6 @@
 import 'cypress-html-validate/commands';
 
 import './commands';
+// running import here doesn't work as we need to call it, so use require
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+require('cypress-terminal-report/src/installLogsCollector')();

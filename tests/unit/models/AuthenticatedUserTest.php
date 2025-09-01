@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Models\Users\AuthenticatedUser;
+
 class AuthenticatedUserTest extends \PHPUnit\Framework\TestCase
 {
     public function testAuthenticatedUser(): void

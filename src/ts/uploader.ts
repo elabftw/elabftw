@@ -8,13 +8,13 @@
 import Dropzone from '@deltablot/dropzone';
 import { reloadElements, sizeToMb } from './misc';
 import i18next from './i18n';
-import { Api } from './Apiv2.class';
-import { Notification } from './Notifications.class';
+import { ApiC } from './api';
+import { notify } from './notify';
 
 export class Uploader
 {
   async getOptions() {
-    const importInfo = await (new Api()).getJson('import');
+    const importInfo = await ApiC.getJson('import');
     const sizeInMb = sizeToMb(importInfo.max_upload_size);
     return {
       // i18n message to user
@@ -25,7 +25,7 @@ export class Uploader
         // Fires when *any* file errors (validation or server-side)
         this.on('error', (file, errorMessage) => {
           const msg = `Error with file: ${file.name}: [${errorMessage.code}] ${errorMessage.description}`;
-          (new Notification()).error(msg);
+          notify.error(msg);
         });
         // once all files are uploaded
         this.on('queuecomplete', function() {

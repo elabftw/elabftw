@@ -13,35 +13,42 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Models\Links\Experiments2ItemsLinks;
+use Elabftw\Models\Users\AuthenticatedUser;
+use Elabftw\Models\Users\Users;
+use Elabftw\Traits\TestsUtilsTrait;
 
 class LinksTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private Experiments $Experiments;
 
     private Items $Items;
 
     protected function setUp(): void
     {
-        $this->Experiments = new Experiments(new Users(1, 1), 3);
-        $this->Items = new Items(new Users(1, 1), 3);
-        $this->Experiments->ExperimentsLinks->setId(4);
+        $user = $this->getRandomUserInTeam(1);
+        $this->Experiments = $this->getFreshExperimentWithGivenUser($user);
+        $this->Items = $this->getFreshItemWithGivenUser($user);
+        $this->Experiments->ExperimentsLinks->setId($this->Experiments->id);
     }
 
     public function testGetApiPath(): void
     {
-        $this->assertEquals('api/v2/experiments/3/experiments2experiments/', $this->Experiments->ExperimentsLinks->getApiPath());
+        $this->assertEquals(sprintf('api/v2/experiments/%d/experiments2experiments/', $this->Experiments->id), $this->Experiments->ExperimentsLinks->getApiPath());
     }
 
     public function testCreateReadDestroy(): void
     {
-        $this->Experiments->ItemsLinks->setId(1);
+        $this->Experiments->ItemsLinks->setId($this->Items->id);
         $this->Experiments->ItemsLinks->postAction(Action::Create, array());
         $count = count($this->Experiments->ItemsLinks->readAll());
         $this->assertEquals(1, $count);
         $this->Experiments->ItemsLinks->destroy();
         $this->assertEquals(0, count($this->Experiments->ItemsLinks->readAll()));
 
-        $this->Experiments->ExperimentsLinks->setId(4);
+        $this->Experiments->ExperimentsLinks->setId($this->Experiments->id - 1);
         $this->Experiments->ExperimentsLinks->postAction(Action::Create, array());
         $count = count($this->Experiments->ExperimentsLinks->readAll());
         $this->assertEquals(1, $count);
@@ -52,15 +59,16 @@ class LinksTest extends \PHPUnit\Framework\TestCase
     public function testImport(): void
     {
         // create a link in a db item
-        $Items = new Items(new Users(1, 1), 1);
-        $Items->ItemsLinks->setId(1);
-        $Items->ItemsLinks->postAction(Action::Create, array());
+        $Items1 = $this->getFreshItem();
+        $Items2 = $this->getFreshItem();
+        $Items1->ItemsLinks->setId($Items2->id);
+        $Items1->ItemsLinks->postAction(Action::Create, array());
         // now import this in our experiment like if we click the import links button
-        $Links = new Items2ItemsLinks($this->Experiments, $Items->id);
+        $Links = new Experiments2ItemsLinks($this->Experiments, $Items1->id);
         $this->assertIsInt($Links->postAction(Action::Duplicate, array()));
-        $this->Experiments->ItemsLinks->setId(1);
+        $this->Experiments->ItemsLinks->setId($Items1->id);
         $this->assertIsInt($this->Experiments->ItemsLinks->postAction(Action::Duplicate, array()));
-        $this->Experiments->ExperimentsLinks->setId(1);
+        $this->Experiments->ExperimentsLinks->setId($this->Experiments->id);
         $this->assertIsInt($this->Experiments->ExperimentsLinks->postAction(Action::Duplicate, array()));
     }
 
@@ -80,24 +88,27 @@ class LinksTest extends \PHPUnit\Framework\TestCase
 
     public function testLinksFromTemplate(): void
     {
-        $Templates = new Templates(new Users(1, 1));
+        $Templates = new Templates($this->getRandomUserInTeam(1));
         // create a template
-        $id = $Templates->postAction(Action::Create, array('title' => 'some template'));
+        $id = $Templates->create(title: 'some template');
         $Templates->setId($id);
         // add an item link
-        $Templates->ItemsLinks->setId(1);
+        $Item = $this->getFreshItemWithGivenUser($Templates->Users);
+        $Templates->ItemsLinks->setId($Item->id);
         $Templates->ItemsLinks->postAction(Action::Create, array());
         // now create an experiment from that template
-        $expid = $this->Experiments->postAction(Action::Create, array('category_id' => $id));
+        $expid = $this->Experiments->postAction(Action::Create, array('template' => $id));
         $this->Experiments->setId($expid);
         $this->assertEquals(1, count($this->Experiments->ItemsLinks->readAll()));
     }
 
     public function testReadExperimentsLinksFromTemplate(): void
     {
-        $Templates = new Templates(new Users(1, 1), 1);
+        $Templates = new Templates($this->getRandomUserInTeam(1));
+        $tplid = $Templates->create();
+        $Templates->setId($tplid);
         $this->assertEmpty($Templates->ExperimentsLinks->readAll());
-        $Templates->ExperimentsLinks->setId(1);
+        $Templates->ExperimentsLinks->setId($this->Experiments->id);
         $Templates->ExperimentsLinks->postAction(Action::Create, array());
         $this->assertEquals(1, count($Templates->ExperimentsLinks->readAll()));
     }
@@ -108,7 +119,7 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         // In the most simple case, we stay within a given team
 
         // User 1 creates experiment A that is visible to the team
-        $Experiments = new Experiments(new Users(1, 1));
+        $Experiments = $this->getFreshExperiment();
         $ExperimentAId = $Experiments->create(
             title: 'Experiment A',
             canread: BasePermissions::Team->toJson(),
@@ -157,7 +168,7 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         // But perhaps more importantly, we need to make sure that the permissions are obeyed when importing links across teams
 
         // User 1 from team alpha creates experiment A that is visible to the organization
-        $Experiments = new Experiments(new Users(1, 1));
+        $Experiments = $this->getFreshExperiment();
         $ExperimentAId = $Experiments->create(
             title: 'Experiment A',
             canread: BasePermissions::Organization->toJson(),
@@ -200,5 +211,15 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(2, count($titles));
         $this->assertContains($secretTitle, $titles);
         $this->assertContains('Experiment A', $titles);
+    }
+
+    public function testCreateIgnoresSelfLinking(): void
+    {
+        $titles = array_column($this->Experiments->ExperimentsLinks->readAll(), 'title');
+        $this->Experiments->ExperimentsLinks->setId($this->Experiments->id);
+        $result = $this->Experiments->ExperimentsLinks->postAction(Action::Create, array());
+        $this->assertSame(0, $result);
+        $titlesAfter = array_column($this->Experiments->ExperimentsLinks->readAll(), 'title');
+        $this->assertSame(count($titles), count($titlesAfter));
     }
 }

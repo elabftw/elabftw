@@ -1,0 +1,42 @@
+{% macro loginButton(team, field, emailAdmin, emailUser, description, icon, color, csrf) %}
+    <div style='--left-color: #{{ color }}' class='entity d-flex flex-column p-4'>
+      <div class='flex-fill d-flex flex-row justify-content-start align-items-start'>
+        <i class='fas fa-{{ icon }} fa-3x' style='color: #{{ color }}'></i>
+        <div class='d-flex align-items-start justify-content-start flex-column ml-3'>
+          <p class='font-weight-bold' style='color: #{{ color }}'>{{ field|trans }}</p>
+          <h3>{{ team|trans }}</h3>
+        </div>
+      </div>
+      <div class='my-3 d-flex align-items-start justify-content-start color-medium text-left'>
+      <p>{{ description|trans }}</p>
+      </div>
+      <div class='d-flex flex-row justify-content-start'>
+        <form method='post' action='app/controllers/LoginController.php'>
+          <input type='hidden' name='auth_type' value='demo'>
+          {{ csrf|csrf }}
+          <input type='hidden' name='email' value='{{ emailAdmin }}'>
+          <button class='btn my-2' style='background-color: #{{ color }}; color: white' type='submit'>{{ 'Login as Admin'|trans }}</button>
+        </form>
+        <form method='post' action='app/controllers/LoginController.php'>
+          <input type='hidden' name='auth_type' value='demo'>
+          {{ csrf|csrf }}
+          <input type='hidden' name='email' value='{{ emailUser }}'>
+            <button class='btn btn-ghost my-2 ml-2' type='submit'>{{ 'Login as User'|trans }}</button>
+        </form>
+      </div>
+    </div>
+  </form>
+{% endmacro %}
+<h1>{{ 'Welcome to the demo!'|trans }}</h1>
+<p>{{ 'Explore real-life examples of teams in eLabFTW. Select a profile suited to your activity below.'|trans }}</p>
+<br>
+  <div class='col-md-6 mx-auto'>
+      <div class='d-flex flex-column align-self-start'>
+        {% set csrf = App.Session.get('csrf') %}
+        {{ _self.loginButton('Microbiology group', 'Biology', 'admin1@demo.elabftw.net', 'user1@demo.elabftw.net', 'Explore a microbiology team specializing in plasmid engineering, cell‐culture techniques, and a wide range of molecular biology protocols.', 'dna', '29aeb9', csrf) }}
+        {{ _self.loginButton('Organic Synthesis Laboratory', 'Chemistry', 'admin2@demo.elabftw.net', 'user2@demo.elabftw.net', 'Dive into an organic chemistry lab focused on the design, synthesis, and characterization of small‐molecule compounds and reaction methodologies.', 'flask', 'ae00cd', csrf) }}
+        {{ _self.loginButton('Planck Frontier Lab', 'Quantum Physics', 'admin3@demo.elabftw.net', 'user3@demo.elabftw.net', 'Delve into a quantum physics group probing foundational phenomena—coherence, entanglement, and quantum dynamics—at the very edge of theoretical and experimental research.', 'atom', 'cd001c', csrf) }}
+      </div>
+    </form>
+  </div>
+</form>

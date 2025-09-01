@@ -13,11 +13,11 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\AuditEvent\UserLogout;
 use Elabftw\Auth\Saml as SamlAuth;
-use Elabftw\Controllers\LoginController;
+use Elabftw\Enums\AuthType;
 use Elabftw\Enums\Messages;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\AuditLogs;
-use Elabftw\Models\AuthenticatedUser;
+use Elabftw\Models\Users\AuthenticatedUser;
 use Elabftw\Models\Idps;
 use Exception;
 use OneLogin\Saml2\Auth as SamlAuthLib;
@@ -62,7 +62,7 @@ $destroySession = function () use ($App): void {
 };
 
 // now if we are logged in through external auth, hit the external auth url
-if ((int) ($App->Users->userData['auth_service'] ?? 0) === LoginController::AUTH_EXTERNAL) {
+if ((int) ($App->Users->userData['auth_service'] ?? 0) === AuthType::External->asService()) {
     $redirectUrl = $App->Config->configArr['logout_url'];
     if (empty($redirectUrl)) {
         $redirectUrl = '/login.php';
@@ -133,7 +133,7 @@ if ($App->Request->query->has('sls') && ($App->Request->query->has('SAMLRequest'
         } else {
             $error = Messages::GenericError->toHuman();
             // get more verbose if debug mode is active
-            if ($App->Config::boolFromEnv('DEV_MODE')) {
+            if (Env::asBool('DEV_MODE')) {
                 $error = implode(', ', $errors);
             }
             throw new UnauthorizedException($error);

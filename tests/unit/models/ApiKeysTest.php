@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\WithMessageException;
+use Elabftw\Models\Users\Users;
 
 class ApiKeysTest extends \PHPUnit\Framework\TestCase
 {

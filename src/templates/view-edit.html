@@ -36,7 +36,7 @@
                   <button type='button' class='btn btn-primary btn-sm mr-2' data-action='do-requestable-action' data-target='{{ action.target }}'>{{ action.action }}</button>
                 {% endif %}
                 {% if action.requester_userid == App.Users.userData.userid or action.target_userid == App.Users.userData.userid %}
-                  <button type='button' class='btn btn-sm btn-ghost' data-action='cancel-requestable-action' data-id='{{ action.id }}'>{{ 'Cancel'|trans }}</button>
+                  <button type='button' class='btn btn-sm btn-ghost' data-action='cancelrequestableaction' data-id='{{ action.id }}'>{{ 'Cancel'|trans }}</button>
                 {% endif %}
               </div>
             </div>

@@ -1,0 +1,26 @@
+{# same table in changelog.html & pdf.html #}
+<thead>
+  <tr>
+      <th>{{ 'Date'|trans }}</th>
+      <th>{{ 'User'|trans }}</th>
+      <th>{{ 'Property changed'|trans }}</th>
+      <th>{{ 'New value'|trans }}</th>
+  </tr>
+</thead>
+<tbody>
+{% for change in changes %}
+  <tr>
+    <td>{{ change.created_at }}</td>
+    <td>{{ change.fullname }}</td>
+    <td>{{ change.target }}</td>
+    <td>
+      {# render raw HTML for safe, whitelisted targets #}
+      {%- if change.target in ['body', 'links'] -%}
+        {{ change.content|raw }}
+      {%- else -%}
+        {{ change.content }}
+      {%- endif -%}
+    </td>
+  </tr>
+{% endfor %}
+</tbody>

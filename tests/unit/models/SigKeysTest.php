@@ -11,7 +11,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\MinisignKeys;
 use Elabftw\Enums\Action;
+use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Users\Users;
 
 class SigKeysTest extends \PHPUnit\Framework\TestCase
 {
@@ -22,6 +25,12 @@ class SigKeysTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->SigKeys = new SigKeys(new Users(1, 1));
+    }
+
+    public function testCreatEmptyPassphrase(): void
+    {
+        $this->expectException(ImproperActionException::class);
+        MinisignKeys::generate('');
     }
 
     public function testCreateAndDestroy(): void

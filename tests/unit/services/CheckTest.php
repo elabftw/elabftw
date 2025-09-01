@@ -16,7 +16,7 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Elabftw\Models\Config;
 
 class CheckTest extends \PHPUnit\Framework\TestCase
@@ -39,6 +39,7 @@ class CheckTest extends \PHPUnit\Framework\TestCase
     public function testColor(): void
     {
         $this->assertEquals('AABBCC', Check::color('#AABBCC'));
+        $this->assertEquals('AABBCC', Check::color('AABBCC'));
         $this->expectException(ImproperActionException::class);
         Check::color('pwet');
     }

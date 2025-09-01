@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Enums;
 
 use Aws\Credentials\Credentials;
+use Elabftw\Elabftw\Env;
 use Elabftw\Interfaces\StorageInterface;
 use Elabftw\Models\Config;
 use Elabftw\Storage\Cache;
@@ -38,7 +39,7 @@ enum Storage: int
     {
         return match ($this) {
             $this::LOCAL => new Local(),
-            $this::S3 => new S3(Config::getConfig(), new Credentials(Config::fromEnv('ELAB_AWS_ACCESS_KEY'), Config::fromEnv('ELAB_AWS_SECRET_KEY'))),
+            $this::S3 => new S3(Config::getConfig(), new Credentials(Env::asString('ELAB_AWS_ACCESS_KEY'), Env::asString('ELAB_AWS_SECRET_KEY'))),
             $this::MEMORY => new Memory(),
             $this::CACHE => new Cache(),
             $this::FIXTURES => new Fixtures(),

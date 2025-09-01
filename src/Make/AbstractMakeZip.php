@@ -46,6 +46,14 @@ abstract class AbstractMakeZip extends AbstractMake implements ZipMakerInterface
     }
 
     /**
+     * @param resource $stream
+     */
+    protected function addAttachedFileInZip(string $path, mixed $stream): void
+    {
+        $this->Zip->addFileFromStream($path, $stream);
+    }
+
+    /**
      * Add attached files
      *
      * @param array<array-key, array<string, string>> $filesArr the files array
@@ -72,7 +80,7 @@ abstract class AbstractMakeZip extends AbstractMake implements ZipMakerInterface
             }
 
             // add files to archive
-            $this->Zip->addFileFromStream($this->folder . '/' . $realName, $storageFs->readStream($file['long_name']));
+            $this->addAttachedFileInZip($this->folder . '/' . $realName, $storageFs->readStream($file['long_name']));
         }
         return $filesArr;
     }

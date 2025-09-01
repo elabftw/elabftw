@@ -19,6 +19,8 @@ use Elabftw\Enums\Users2TeamsTargets;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Models\Users\Users;
+use Elabftw\Params\UserParams;
 use Elabftw\Traits\TestsUtilsTrait;
 
 class UsersTest extends \PHPUnit\Framework\TestCase
@@ -138,9 +140,23 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(12, $result['limit_nb']);
     }
 
+    public function testUpdateCanManageUsers2TeamsAsUser(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $this->expectException(IllegalActionException::class);
+        $user->update(new UserParams('can_manage_users2teams', '1'));
+    }
+
     public function testReadAll(): void
     {
-        $this->assertIsArray($this->Users->readAll());
+        // read as Admin
+        $res = $this->Users->readAll();
+        $this->assertArrayHasKey('last_login', $res[0]);
+        // now as user
+        $user = $this->getUserInTeam(2);
+        $Users = new Users(null, null, $user);
+        $res = $Users->readAll();
+        $this->assertArrayNotHasKey('auth_service', $res[0]);
     }
 
     public function testIsAdminOf(): void

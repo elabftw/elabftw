@@ -15,17 +15,22 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Traits\TestsUtilsTrait;
 
 class ExclusiveEditModeTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private Experiments $Experiments;
 
     private Experiments $Visitor;
 
     protected function setUp(): void
     {
-        $this->Experiments = new Experiments(new Users(1, 1), 1);
-        $this->Visitor = new Experiments(new Users(2, 1), 1);
+        $owner = $this->getRandomUserInTeam(1, admin: 1);
+        $visitor = $this->getRandomUserInTeam(1);
+        $this->Experiments = $this->getFreshExperimentWithGivenUser($owner);
+        $this->Visitor = new Experiments($visitor, $this->Experiments->id);
     }
 
     public function testLockExperiment(): void

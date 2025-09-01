@@ -14,7 +14,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Controllers\DatabaseController;
 use Elabftw\Exceptions\AppException;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Services\Filter;
 use Exception;
@@ -26,12 +25,8 @@ use Symfony\Component\HttpFoundation\Response;
 require_once 'app/init.inc.php';
 
 $Response = new Response();
-
+$Response->prepare($Request);
 try {
-    $Response->prepare($Request);
-    if ($App->Teams->teamArr['users_canwrite_resources_categories'] === 0 && !$App->Users->isAdmin) {
-        throw new ImproperActionException(_('Sorry, edition of resources templates has been disabled for users by your team Admin.'));
-    }
     $Response = new DatabaseController($App, new ItemsTypes($App->Users, Filter::intOrNull($Request->query->getInt('id'))))->getResponse();
 } catch (AppException $e) {
     $Response = $e->getResponseFromException($App);

@@ -14,9 +14,9 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Exceptions\AppException;
+use Elabftw\Exceptions\DemoModeException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Config;
 use Elabftw\Services\ResetPasswordKey;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,13 +35,16 @@ try {
     if ($App->Config->configArr['local_auth_enabled'] === '0') {
         throw new ImproperActionException('This instance has disabled local authentication method, so passwords cannot be reset.');
     }
+    if ($App->demoMode) {
+        throw new DemoModeException();
+    }
     // make sure this page is accessed with a key
     if (!$App->Request->query->has('key')) {
         throw new IllegalActionException('Bad parameters in url.');
     }
 
     // validate the key to show error if the key is expired
-    $ResetPasswordKey = new ResetPasswordKey(time(), Config::fromEnv('SECRET_KEY'));
+    $ResetPasswordKey = new ResetPasswordKey(time(), Env::asString('SECRET_KEY'));
     $ResetPasswordKey->validate($App->Request->query->getAlnum('key'));
 
     $passwordComplexity = PasswordComplexity::from((int) $App->Config->configArr['password_complexity_requirement']);

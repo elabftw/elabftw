@@ -14,9 +14,8 @@ namespace Elabftw\Services;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 
 class UserCreatorTest extends \PHPUnit\Framework\TestCase
@@ -27,7 +26,7 @@ class UserCreatorTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->UserCreator = new UserCreator(new Users(1, 1), array(
+        $this->UserCreator = new UserCreator($this->getUserInTeam(1, admin: 1), array(
             'team' => 1,
             'email' => 'livelongandprosper@vulcan.gov.vn',
             'firstname' => 'Leonard',
@@ -62,14 +61,14 @@ class UserCreatorTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateSysadminFromAdminUser(): void
     {
-        $UserCreator = new UserCreator(new Users(5, 2), array(
+        $UserCreator = new UserCreator($this->getUserInTeam(2), array(
             'team' => 2,
             'email' => 'vic@holodeck.ds9.bjr',
             'firstname' => 'Vic',
             'lastname' => 'Fontaine',
             'usergroup' => Usergroup::Sysadmin->value,
         ));
-        $this->expectException(ImproperActionException::class);
+        $this->expectException(IllegalActionException::class);
         $UserCreator->create();
     }
 

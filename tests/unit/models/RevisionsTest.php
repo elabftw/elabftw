@@ -13,9 +13,13 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Users\Users;
+use Elabftw\Traits\TestsUtilsTrait;
 
 class RevisionsTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private Users $Users;
 
     private Experiments $Experiments;
@@ -24,14 +28,14 @@ class RevisionsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->Users = new Users(1, 1);
-        $this->Experiments = new Experiments($this->Users, 7);
+        $this->Users = $this->getRandomUserInTeam(1);
+        $this->Experiments = $this->getFreshExperimentWithGivenUser($this->Users);
         $this->Revisions = new Revisions($this->Experiments, 10, 100, 10);
     }
 
     public function testGetApiPath(): void
     {
-        $this->assertSame('api/v2/experiments/7/revisions/', $this->Revisions->getApiPath());
+        $this->assertSame(sprintf('api/v2/experiments/%d/revisions/', $this->Experiments->id), $this->Revisions->getApiPath());
     }
 
     public function testCreate(): void
@@ -46,10 +50,6 @@ class RevisionsTest extends \PHPUnit\Framework\TestCase
 
     public function testRestore(): void
     {
-        $Experiment = new Experiments($this->Users, 1);
-        $new = $Experiment->create(template: 0);
-        $Experiment->setId($new);
-        $this->Revisions = new Revisions($Experiment, 10, 100, 10);
         $id = $this->Revisions->create('Ohai');
         $this->Revisions->setId($id);
         $this->assertIsArray($this->Revisions->patch(Action::Replace, array()));
@@ -57,13 +57,9 @@ class RevisionsTest extends \PHPUnit\Framework\TestCase
 
     public function testRestoreLocked(): void
     {
-        $Experiment = new Experiments($this->Users, 1);
-        $new = $Experiment->create(template: 0);
-        $Experiment->setId($new);
-        $this->Revisions = new Revisions($Experiment, 10, 100, 10);
         $id = $this->Revisions->create('Ohai');
         $this->Revisions->setId($id);
-        $Experiment->patch(Action::Lock, array());
+        $this->Experiments->patch(Action::Lock, array());
         $this->expectException(ImproperActionException::class);
         $this->Revisions->patch(Action::Replace, array());
     }

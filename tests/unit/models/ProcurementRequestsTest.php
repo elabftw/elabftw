@@ -13,6 +13,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\ProcurementState;
+use Elabftw\Models\Users\Users;
 
 class ProcurementRequestsTest extends \PHPUnit\Framework\TestCase
 {

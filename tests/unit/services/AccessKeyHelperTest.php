@@ -13,7 +13,7 @@ namespace Elabftw\Services;
 
 use Elabftw\Enums\EntityType;
 use Elabftw\Models\Experiments;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 
 class AccessKeyHelperTest extends \PHPUnit\Framework\TestCase
 {

@@ -15,7 +15,7 @@ use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\Storage;
 use Elabftw\Make\MakeDfnTimestamp;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;

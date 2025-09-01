@@ -6,9 +6,6 @@
 {{ 'A change of at least %d characters is required to trigger a revision save.'|trans|format(App.Config.configArr.min_delta_revisions) }}</p>
 
 {% set query = '?mode=view&' %}
-{% if Entity.entityType.value == 'experiments_templates' %}
-  {% set query = '&mode=view&template' %}
-{% endif %}
 <a href='{{ Entity.entityType.toPage ~ query }}id={{ Entity.id }}' class='btn hl-hover-gray'>
     <i class='fas fa-chevron-left mr-1'></i>{{ 'Go back'|trans }}
 </a>
@@ -41,5 +38,4 @@
   {% endfor %}
 </ul>
 
-<div id='info' data-page='revisions'></div>
 {% endblock body %}

@@ -14,16 +14,12 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Config;
 use Elabftw\Models\Idps;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Elabftw\Services\MfaHelper;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
-
-use function implode;
-use function str_split;
 
 /**
  * Login page
@@ -37,7 +33,7 @@ try {
     // if we are not in https, die saying we work only in https
     if (!$App->Request->isSecure() && !$App->Request->server->has('HTTP_X_FORWARDED_PROTO')) {
         // get the url to display a link to click
-        $url = Config::fromEnv('SITE_URL');
+        $url = Env::asString('SITE_URL');
         $message = "eLabFTW works only in HTTPS. Please enable HTTPS on your server or ensure X-Forwarded-Proto header is correctly sent by the load balancer. Or follow this link : <a href='" .
             $url . "'>$url</a>";
         throw new ImproperActionException($message);
@@ -47,32 +43,37 @@ try {
         $App->Session->remove('teaminit_done');
     }
 
-    // Show MFA if necessary
+    // if user already has an mfa_secret, we ask for it, otherwise they will be shown the QR code
     if ($App->Session->has('mfa_auth_required')) {
-        $template = 'mfa.html';
-        // the title is hidden in the page, but give it nonetheless for the document.title
-        $renderArr = array('hideTitle' => true, 'pageTitle' => _('Two Factor Authentication'));
 
-        // If one enables 2FA we need to provide the secret.
-        // For user convenience it is provide as QR code and as plain text.
-        if ($App->Session->has('enable_mfa')) {
-            // User is not fully authenticated, we load the user as we need email
-            if ($App->Session->get('enforce_mfa')) {
-                $App->Users = new Users($App->Session->get('auth_userid'));
-            }
-            $MfaHelper = new MfaHelper($App->Users->userData['userid'], $App->Session->get('mfa_secret'));
-            $renderArr['mfaQRCodeImageDataUri'] = $MfaHelper->getQRCodeImageAsDataUri($App->Users->userData['email']);
-            $renderArr['mfaSecret'] = implode(' ', str_split($App->Session->get('mfa_secret'), 4));
+        $halfLoggedInUser = new Users($App->Session->get('auth_userid'));
+        $mfaQRCodeImageDataUri = '';
+        $mfaNewSecret = '';
+
+        $App->Session->set('mfa_secret', $halfLoggedInUser->userData['mfa_secret']);
+        // if no secret exists already, we will need to display a qrcode
+        if ($halfLoggedInUser->userData['mfa_secret'] === null) {
+            $MfaHelper = new MfaHelper();
+            $mfaQRCodeImageDataUri = $MfaHelper->getQRCodeImageAsDataUri($halfLoggedInUser->userData['email']);
+            $mfaNewSecret = $MfaHelper->secret;
         }
-        $Response->setContent($App->render($template, $renderArr));
+
+        $Response->setContent($App->render('mfa.html', array(
+            'hideTitle' => true,
+            // the title is hidden in the page, but give it nonetheless for the document.title
+            'pageTitle' => _('Two Factor Authentication'),
+            'mfaQRCodeImageDataUri' => $mfaQRCodeImageDataUri,
+            'mfaNewSecret' => $mfaNewSecret,
+        )));
         $Response->send();
         exit;
     }
 
     if ($App->Request->query->get('switch_team') === '1') {
-        $App->Session->set('team_switch_required', true);
-        $App->Session->set('team_selection', $App->Users->userData['teams']);
-        $App->Session->set('auth_userid', $App->Users->userData['userid']);
+        $loggedInUser = new Users($App->Session->get('userid'));
+        $App->Session->set('team_selection_required', true);
+        $App->Session->set('team_selection', json_decode($loggedInUser->userData['teams'], true, 3));
+        $App->Session->set('auth_userid', $loggedInUser->userData['userid']);
         $App->Session->remove('is_auth');
     }
 
@@ -90,15 +91,19 @@ try {
         $showLocal = false;
     }
 
-    $Idps = new Idps($App->Users);
-    $idpsArr = $Idps->readAllSimpleEnabled();
+    $idpsArr = array();
+    // only make the query to fetch idp list if we actually have enabled saml
+    if ($App->Config->configArr['saml_toggle'] === '1') {
+        $Idps = new Idps($App->Users);
+        $idpsArr = $Idps->readAllSimpleEnabled();
+    }
 
     if ($App->Request->cookies->has('kickreason')) {
         // at the moment there is only one reason
         $App->Session->getFlashBag()->add('ko', _('Your session expired.'));
     }
 
-    $template = 'login.html';
+    $template = 'login-base.html';
     $renderArr = array(
         'idpsArr' => $idpsArr,
         'pageTitle' => _('Login'),

@@ -14,7 +14,7 @@
         {# this exists so Firefox doesn't process the Search user field as password. No idea why it would do it in the first place though... #}
         {# and autocomplete='off' doesn't work #}
         <input type='password' disabled hidden />
-        <input type='text' placeholder='{{ 'Search user'|trans }}' id='target_owner' class='form-control' data-identifier='targetOwnerInput' data-complete-target='users'>
+        <input type='text' placeholder='{{ 'Search user'|trans }}' id='target_owner' class='form-control' data-identifier='targetOwnerInput' data-action='autocomplete' data-target='users'>
         <div id='autocompleteAnchorDiv_targetOwnerInput'></div>
       </div>
       <div class='modal-footer'>

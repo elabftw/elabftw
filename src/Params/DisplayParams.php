@@ -20,7 +20,7 @@ use Elabftw\Enums\Scope;
 use Elabftw\Enums\Sort;
 use Elabftw\Enums\State;
 use Elabftw\Models\Tags2Entity;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Elabftw\Services\Check;
 use Override;
 use Symfony\Component\HttpFoundation\InputBag;
@@ -86,6 +86,48 @@ final class DisplayParams extends BaseQueryParams
             $this->limit,
             $this->offset,
         );
+    }
+
+    #[Override]
+    public function isFast(): bool
+    {
+        return !empty($this->fastq);
+    }
+
+    #[Override]
+    public function getFastq(): string
+    {
+        return $this->fastq;
+    }
+
+    #[Override]
+    public function getUserQuery(): string
+    {
+        return trim($this->queryString . ' ' . $this->extendedQuery);
+    }
+
+    #[Override]
+    public function hasUserQuery(): bool
+    {
+        return !empty($this->queryString) || !empty($this->extendedQuery);
+    }
+
+    #[Override]
+    public function getRelatedOrigin(): ?EntityType
+    {
+        return $this->relatedOrigin;
+    }
+
+    #[Override]
+    public function getFilterSql(): string
+    {
+        return $this->filterSql;
+    }
+
+    #[Override]
+    public function setSkipOrderPinned(bool $value): void
+    {
+        $this->skipOrderPinned = $value;
     }
 
     /**

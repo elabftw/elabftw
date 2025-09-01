@@ -1,41 +1,16 @@
 {% extends 'base.html' %}
-
 {% block body %}
-{% include 'create-statuslike-modal.html' with {'target': 'experiments_categories', 'title': 'Create new experiments category'|trans} %}
 
-<div class='mb-5 d-flex justify-content-between' id='experiments_categoriesDiv'>
-  <p class='col-form-label'>{{ 'Create and modify the categories available to experiments.'|trans }}</p>
-  {# CREATE NEW BUTTON the div around the button is necessary or the button itself gets resized on small viewports #}
-  <div>
-    <button type='button' class='btn btn-primary' data-action='toggle-modal' data-target='createexperiments_categoriesModal'>{{ 'Create'|trans }}</button>
-  </div>
-</div>
-<ul class='list-group sortable' data-axis='y' data-table='experiments_categories'>
-  {% for cat in App.experimentsCategoryArr %}
-    <li id='expcat_{{ cat.id }}' data-statusid='expcat_{{ status.id }}' class='list-group-item'>
-      <ul class='list-inline'>
-        <li class='list-inline-item'>
-          <span class='draggable sortableHandle'>
-            <i class='fas fa-grip-vertical fa-fw'></i>
-          </span>
-        </li>
-
-        <li class='list-inline-item'>
-          <label for='expcatName_{{ cat.id }}'>{{ 'Name'|trans }}</label>
-          <input class='form-control' required type='text' id='expcatName_{{ cat.id }}' data-trigger='blur' data-model='teams/current/experiments_categories/{{ cat.id }}' data-target='title' value='{{ cat.title|e('html_attr') }}' />
-        </li>
-
-        <li class='list-inline-item col-1 align-top'>
-          <label for='expcatColor_{{ cat.id }}'>{{ 'Color'|trans }}</label>
-          <input class='form-control' type='color' id='expcatColor_{{ cat.id }}' data-trigger='blur' data-model='teams/current/experiments_categories/{{ cat.id }}' data-target='color' value='#{{ cat.color }}' />
-        </li>
-
-        <li class='list-inline-item'>
-          <button type='button' data-id='{{ cat.id }}' data-target='experiments_categories' data-action='destroy-catstat' class='btn btn-danger' >{{ 'Delete'|trans }}</button>
-        </li>
-      </ul>
-    </li>
-  {% endfor %}
-</ul>
+{% import 'categories-status-index.macro.html' as idx %}
+{{ idx.catstatidx(
+  'experiments_categories',
+  'experiments_categories',
+  'Create and modify the categories available to experiments.'|trans,
+  'Experiments categories can be associated with an Experiment or an Experiment Template as a Category. They belong to a team and have two main properties: name and color. Examples: Analysis, Measurement, Test, Project XYZ, etc...'|trans,
+  App.experimentsCategoryArr,
+  'No experiments categories have been created in this team yet.'|trans|msg('warning', false),
+  'Create new experiments category'|trans,
+  'Category name'|trans,
+  ) }}
 
 {% endblock body %}

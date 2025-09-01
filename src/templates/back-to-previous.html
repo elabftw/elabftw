@@ -1,0 +1,13 @@
+{# need type:
+- 'btn' or 'icon'. For view page or view-toolbar.
+- Default is Icon only.
+#}
+{% set type = type|default('icon') %}
+{% if App.Session.has('lastquery') %}
+  {% set lastquery = App.Session.get('lastquery') %}
+{% else %}
+  {% set lastquery = 'mode=show&state=3' %}
+{% endif %}
+<a title='{{ 'Back to listing'|trans }}' aria-label='{{ 'Back to listing'|trans }}' href='?{{ lastquery }}' class='btn p-2 {{ type == 'btn' ? 'btn-sm bgnd-gray hl-hover-superlight' : 'hl-hover-gray lh-normal border-0' }}'>
+  <i class='fas fa-arrow-left fa-fw'></i>{{ type == 'btn' ? 'Back to listing'|trans }}
+</a>

@@ -1,6 +1,5 @@
 <?php
 
-declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -9,19 +8,18 @@ declare(strict_types=1);
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Auth;
 
-use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Exceptions\ImproperActionException;
-use Monolog\Logger;
+use Elabftw\Interfaces\AuthResponseInterface;
 
 class ExternalTest extends \PHPUnit\Framework\TestCase
 {
     private array $configArr;
 
     private array $serverParams;
-
-    private Logger $log;
 
     private External $External;
 
@@ -42,23 +40,21 @@ class ExternalTest extends \PHPUnit\Framework\TestCase
             'auth_email' => 'toto@yopmail.com',
             'auth_team' => 'Alpha',
         );
-        $this->log = new Logger('elabftw');
         $this->External = new External(
             $this->configArr,
             $this->serverParams,
-            $this->log,
         );
     }
 
     public function testTryAuth(): void
     {
         $authResponse = $this->External->tryAuth();
-        $this->assertInstanceOf(AuthResponse::class, $authResponse);
-        $this->assertEquals(1, $authResponse->userid);
-        $this->assertFalse($authResponse->isAnonymous);
-        $this->assertEquals(1, $authResponse->selectedTeam);
+        $this->assertInstanceOf(AuthResponseInterface::class, $authResponse);
+        $this->assertSame(1, $authResponse->getAuthUserid());
+        $this->assertFalse($authResponse->isAnonymous());
+        $this->assertSame(1, $authResponse->getSelectedTeam());
         $teams = array(array('id' => 1, 'name' => 'Alpha', 'is_admin' => 1, 'is_owner' => 0, 'is_archived' => 0));
-        $this->assertEquals($teams, $authResponse->selectableTeams);
+        $this->assertSame($teams, $authResponse->getSelectableTeams());
     }
 
     // now try with a non existing user
@@ -70,10 +66,9 @@ class ExternalTest extends \PHPUnit\Framework\TestCase
         $External = new External(
             $this->configArr,
             $serverParams,
-            $this->log,
         );
         $authResponse = $External->tryAuth();
-        $this->assertIsInt($authResponse->userid);
+        $this->assertIsInt($authResponse->getAuthUserid());
     }
 
     // now try with a non existing user and config is set to not create the user
@@ -86,7 +81,6 @@ class ExternalTest extends \PHPUnit\Framework\TestCase
         $External = new External(
             $configArr,
             $serverParams,
-            $this->log,
         );
         $this->expectException(ImproperActionException::class);
         $External->tryAuth();
@@ -100,10 +94,9 @@ class ExternalTest extends \PHPUnit\Framework\TestCase
         $External = new External(
             $this->configArr,
             $this->serverParams,
-            $this->log,
         );
         $authResponse = $External->tryAuth();
-        $this->assertEquals(1, $authResponse->selectedTeam);
+        $this->assertSame(1, $authResponse->getSelectedTeam());
     }
 
     // now try with throwing exception if no team is found
@@ -115,7 +108,6 @@ class ExternalTest extends \PHPUnit\Framework\TestCase
         $External = new External(
             $this->configArr,
             $this->serverParams,
-            $this->log,
         );
         $this->expectException(ImproperActionException::class);
         $External->tryAuth();

@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Users\Users;
 
 class TeamsTest extends \PHPUnit\Framework\TestCase
 {
@@ -44,7 +45,6 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
     {
         $params = array(
             'announcement' => '',
-            'common_template_md' => '# yep',
             'newcomer_threshold' => '12',
             'orgid' => 'Something',
         );

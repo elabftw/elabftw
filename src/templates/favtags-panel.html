@@ -1,5 +1,5 @@
 <div class='side-panel' id='favtagsPanel' hidden>
-  <button type='button' data-action='toggle-favtags' aria-label='{{ 'Close'|trans }}' title='{{ 'Close'|trans }}' class='btn float-right mr-2'><i class='fas fa-xmark fa-2x'></i></button>
+  <button type='button' data-action='toggle-sidepanel' data-target='favtags' data-purpose='hide' aria-label='{{ 'Close'|trans }}' title='{{ 'Close'|trans }}' class='btn float-right mr-2'><i class='fas fa-xmark fa-2x'></i></button>
   <div class='p-3'>
     <h3 class='mb-3'>{{ 'Favorite tags'|trans }}</h3>
     {% include 'filter-input-snippet.html' with {'target': 'favtagsTagsDiv', 'targetType': 'li'} %}

@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 use Elabftw\Enums\State;
-use Elabftw\Models\UltraAdmin;
+use Elabftw\Models\Users\UltraAdmin;
 use PDO;
 use ZipStream\ZipStream;
 use Override;

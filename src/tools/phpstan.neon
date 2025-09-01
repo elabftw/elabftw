@@ -12,7 +12,7 @@ parameters:
     - message: '#.*type has no value type specified.*#'
     - message: '#.*with no value type specified in iterable type array.*#'
   excludePaths:
-    - %currentWorkingDirectory%/src/tools/rector.php
+    - %currentWorkingDirectory%/src/Services/AdvancedSearchQuery/Grammar/Parser.php
 
   paths:
     - %currentWorkingDirectory%/src

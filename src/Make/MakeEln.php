@@ -13,27 +13,31 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 use DateTimeImmutable;
+use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Metadata;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AbstractEntity;
-use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 use Elabftw\Services\Filter;
+use Elabftw\Traits\TwigTrait;
 use League\Flysystem\UnableToReadFile;
 use ZipStream\ZipStream;
 use Override;
 
 use function mb_substr;
+use function ksort;
 
 /**
  * Make an ELN archive
  */
-final class MakeEln extends AbstractMakeEln
+class MakeEln extends AbstractMakeEln
 {
+    use TwigTrait;
+
     public function __construct(protected ZipStream $Zip, protected Users $requester, protected array $entityArr)
     {
         parent::__construct($Zip);
@@ -45,6 +49,26 @@ final class MakeEln extends AbstractMakeEln
     #[Override]
     public function getStreamZip(): void
     {
+        $this->processEntityArr();
+
+        $rootNode = $this->getRootNode();
+
+        // make a copy because we don't want to append to the instance property variable as it's used in html preview
+        $dataEntitiesFull = $this->dataEntities;
+        $dataEntitiesFull[] = $rootNode;
+        // merge all, including authors
+        $this->dataArr['@graph'] = array_merge($this->dataArr['@graph'], $this->getCreateActionNode(), $dataEntitiesFull, $this->authors);
+
+        // add the metadata json file containing references to all the content of our crate
+        $jsonLd = json_encode($this->dataArr, JSON_THROW_ON_ERROR, 512);
+        $this->Zip->addFile($this->root . '/ro-crate-metadata.json', $jsonLd);
+        // add a HTML preview file
+        $this->Zip->addFile($this->root . '/ro-crate-preview.html', $this->crateToHtml($jsonLd, $rootNode));
+        $this->Zip->finish();
+    }
+
+    protected function processEntityArr(): void
+    {
         foreach ($this->entityArr as $entity) {
             try {
                 $this->processEntity($entity);
@@ -52,8 +76,12 @@ final class MakeEln extends AbstractMakeEln
                 continue;
             }
         }
+    }
+
+    protected function getRootNode(): array
+    {
         // add the description of root with hasPart property
-        $this->dataEntities[] = array(
+        return array(
             '@id' => './',
             'identifier' => Tools::getUuidv4(),
             '@type' => 'Dataset',
@@ -61,23 +89,39 @@ final class MakeEln extends AbstractMakeEln
             'hasPart' => $this->rootParts,
             'name' => 'eLabFTW export',
             'description' => 'This is a .eln export from eLabFTW',
+            'version' => (string) self::INTERNAL_ELN_VERSION,
             'license' => array('@id' => 'https://creativecommons.org/licenses/by-nc-sa/4.0/'),
         );
-
-        // merge all, including authors
-        $this->dataArr['@graph'] = array_merge($this->dataArr['@graph'], $this->getCreateActionNode(), $this->dataEntities, $this->authors);
-
-        // add the metadata json file containing references to all the content of our crate
-        $this->Zip->addFile($this->root . '/ro-crate-metadata.json', json_encode($this->dataArr, JSON_THROW_ON_ERROR, 512));
-        $this->Zip->finish();
     }
 
-    private static function toSlug(AbstractEntity $entity): string
+    protected function crateToHtml(string $jsonLd, array $rootNode): string
+    {
+        // group the nodes by type and is their id as key
+        $grouped = array_reduce(
+            $this->dataEntities,
+            function (array $carry, array $item) {
+                $carry[$item['@type']][$item['@id']] = $item;
+                return $carry;
+            },
+            array()
+        );
+
+        // ksort acts on the array itself
+        ksort($grouped, SORT_STRING);
+        return $this->getTwig(true)->render('eln-preview.html', array(
+            'createdAt' => new DateTimeImmutable()->format(DateTimeImmutable::ATOM),
+            'entities' => $grouped,
+            'jsonLd' => $jsonLd,
+            'rootNode' => $rootNode,
+        ));
+    }
+
+    protected static function toSlug(AbstractEntity $entity): string
     {
         return sprintf('%s:%d', $entity->entityType->value, $entity->id ?? 0);
     }
 
-    private static function getDatasetFolderName(array $entityData): string
+    protected static function getDatasetFolderName(array $entityData): string
     {
         $prefix = '';
         if (!empty($entityData['category_title'])) {
@@ -89,7 +133,7 @@ final class MakeEln extends AbstractMakeEln
         return sprintf('%s - %s/', $prefixedTitle, Tools::getShortElabid($entityData['elabid'] ?? ''));
     }
 
-    private function processEntity(AbstractEntity $entity): bool
+    protected function processEntity(AbstractEntity $entity): bool
     {
         // experiments:123 or items:123
         $slug = self::toSlug($entity);
@@ -144,6 +188,8 @@ final class MakeEln extends AbstractMakeEln
                     '@type' => 'File',
                     'name' => $file['real_name'],
                     'alternateName' => $file['long_name'],
+                    // TODO actually store content type Mime for uploaded files in that column
+                    'encodingFormat' => $file['content_type'] ?? 'application/octet-stream',
                     'contentSize' => $file['filesize'],
                     'sha256' => $file['hash'] ?? hash_file('sha256', $uploadAtId),
                 );
@@ -184,7 +230,7 @@ final class MakeEln extends AbstractMakeEln
             'temporal' => (new DateTimeImmutable($e['date'] ?? date('Y-m-d')))->format(DateTimeImmutable::ATOM),
             'name' => $e['title'],
             'encodingFormat' => ($e['content_type'] ?? 1) === 1 ? 'text/html' : 'text/markdown',
-            'url' => Config::fromEnv('SITE_URL') . '/' . $entity->entityType->toPage() . ($entity->entityType == EntityType::ItemsTypes ? '&' : '?') . 'mode=view&id=' . $e['id'],
+            'url' => Env::asUrl('SITE_URL') . '/' . $entity->entityType->toPage() . ($entity->entityType == EntityType::ItemsTypes ? '&' : '?') . 'mode=view&id=' . $e['id'],
             'genre' => $entity->entityType->toGenre(),
         );
         $datasetNode = self::addIfNotEmpty(
@@ -218,6 +264,7 @@ final class MakeEln extends AbstractMakeEln
         // RATING
         if (!empty($e['rating'])) {
             $datasetNode['aggregateRating'] = array(
+                '@id' => 'rating://' . Tools::getUuidv4(),
                 '@type' => 'AggregateRating',
                 'ratingValue' => $e['rating'],
                 'reviewCount' => 1,
@@ -232,7 +279,7 @@ final class MakeEln extends AbstractMakeEln
         return true;
     }
 
-    private static function addIfNotEmpty(array $datasetNode, array ...$nameValueArr): array
+    protected static function addIfNotEmpty(array $datasetNode, array ...$nameValueArr): array
     {
         foreach ($nameValueArr as $nameValue) {
             $key = array_key_first($nameValue);
@@ -246,11 +293,12 @@ final class MakeEln extends AbstractMakeEln
         return $datasetNode;
     }
 
-    private function stepsToJsonLd(array $steps): array
+    protected function stepsToJsonLd(array $steps): array
     {
         $res = array();
         foreach ($steps as $step) {
             $howToStep = array();
+            $howToStep['@id'] = 'howtostep://' . Tools::getUuidv4();
             $howToStep['@type'] = 'HowToStep';
             $howToStep['position'] = $step['ordering'];
             $howToStep['creativeWorkStatus'] = $step['finished'] === 1 ? 'finished' : 'unfinished';
@@ -266,12 +314,13 @@ final class MakeEln extends AbstractMakeEln
         return $res;
     }
 
-    private function metadataToJsonLd(string $strMetadata): ?array
+    protected function metadataToJsonLd(string $strMetadata): ?array
     {
         $metadata = json_decode($strMetadata, true, 42, JSON_THROW_ON_ERROR);
         $res = array();
         // add one that contains all the original metadata as string
         $pv = array();
+        $pv['@id'] = 'pv://' . Tools::getUuidv4();
         $pv['propertyID'] = 'elabftw_metadata';
         $pv['description'] = 'eLabFTW metadata JSON as string';
         $pv['value'] = $strMetadata;
@@ -308,7 +357,7 @@ final class MakeEln extends AbstractMakeEln
     /**
      * Generate an author node unless it exists already
      */
-    private function getAuthorId(Users $author): string
+    protected function getAuthorId(Users $author): string
     {
         // add firstname and lastname to the hash to get more entropy. Use the userid too so similar names won't collide.
         $hash = hash(

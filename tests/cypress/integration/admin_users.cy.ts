@@ -14,7 +14,8 @@ describe('Users tab in Admin page', () => {
     // Team & Permission group are already filled on this form, by default
     cy.get('#firstname').type('theNewToto');
     cy.get('#lastname').type('notSysAdmin');
-    cy.get('#email').type('totonew@yopmail.com');
+    const randomChars = Math.random().toString(36).slice(2,8);
+    cy.get('#email').type(`totonew-${randomChars}@yopmail.com`);
 
     // create the user
     cy.get('#initialCreateUserBtn').should('exist').click();

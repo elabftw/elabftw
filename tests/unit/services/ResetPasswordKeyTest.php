@@ -14,7 +14,7 @@ namespace Elabftw\Services;
 use Defuse\Crypto\Key;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Users;
+use Elabftw\Models\Users\Users;
 
 use function time;
 

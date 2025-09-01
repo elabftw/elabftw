@@ -133,7 +133,7 @@
   {% if Entity.entityData.canread_target %}
    {# TARGET PERMISSIONS #}
     <h5>{{ 'Permissions for the derived entry'|trans }}</h5>
-    <p class='smallgray col-md-8'>{{ 'All entries created from this experiment will inherit these permissions, which cannot be modified. Only an Admin can override and change them on the derived entry.'|trans }}</p>
+    <p class='smallgray col-md-8'>{{ 'Entries created from this template will inherit these permissions and cannot be modified by Users. Only an Admin can override them on the derived entry.'|trans }}</p>
     <div class='d-flex mb-2 align-items-center'>
       {# CANREAD #}
       {% set rw = 'canread_target' %}

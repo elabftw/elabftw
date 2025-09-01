@@ -90,6 +90,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $Items = $this->makeItemFromImmutableTemplateFor($admin);
         $Items->patch(Action::Update, array('canread' => BasePermissions::UserOnly->toJson()));
         $canRead = json_decode($Items->readOne()['canread'], true);
+        $this->assertSame(1, $Items->readOne()['canread_is_immutable']);
         $this->assertEquals(BasePermissions::UserOnly->value, $canRead['base']);
     }
 

@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\FileFromString;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Models\Users\AuthenticatedUser;
 use Elabftw\Params\TeamParam;
@@ -91,6 +92,14 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(BasePermissions::UserOnly->value, $canRead['base']);
     }
 
+    public function testCannotChangeImmutabilitySettings(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $Items = $this->makeItemFromImmutableTemplateFor($user);
+        $this->expectException(UnprocessableContentException::class);
+        $Items->patch(Action::Update, array('canread_is_immutable' => 1));
+    }
+
     public function testRead(): void
     {
         $new = $this->Items->create();
@@ -108,6 +117,21 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('Untitled', $entityData['title']);
         $this->assertEquals('2016-07-29', $entityData['date']);
         $this->assertEquals('<p>Body</p>', $entityData['body']);
+    }
+
+    public function testWrongActionOnUpdate(): void
+    {
+        $new = $this->Items->create();
+        $this->Items->setId($new);
+        $this->expectException(ImproperActionException::class);
+        $this->Items->patch(Action::NotifDestroy, array('unavailable' => 'action'));
+    }
+
+    public function testReadOneWithoutId(): void
+    {
+        $this->Items->setId(null);
+        $this->expectException(ImproperActionException::class);
+        $this->Items->readOne();
     }
 
     public function testReadBookable(): void

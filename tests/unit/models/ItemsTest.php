@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\FileFromString;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Models\Users\AuthenticatedUser;
@@ -127,11 +128,18 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $this->Items->patch(Action::NotifDestroy, array('unavailable' => 'action'));
     }
 
-    public function testReadOneWithoutId(): void
+    public function testCannotReadOneWithoutId(): void
     {
         $this->Items->setId(null);
-        $this->expectException(ImproperActionException::class);
+        $this->expectException(IllegalActionException::class);
         $this->Items->readOne();
+    }
+
+    public function testCannotCheckPermissionsWithoutId(): void
+    {
+        $this->Items->setId(null);
+        $this->expectException(IllegalActionException::class);
+        $this->Items->canOrExplode('read');
     }
 
     public function testReadBookable(): void

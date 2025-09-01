@@ -631,7 +631,7 @@ abstract class AbstractEntity extends AbstractRest
     public function canOrExplode(string $rw): void
     {
         if ($this->id === null) {
-            throw new ImproperActionException('Cannot check permissions without an id!');
+            throw new IllegalActionException('Cannot check permissions without an id!');
         }
         if ($this->bypassWritePermission && $rw === 'write') {
             return;

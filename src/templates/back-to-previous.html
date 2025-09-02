@@ -3,7 +3,7 @@
 - Default is Icon only.
 #}
 {% set type = type|default('icon') %}
-{% set lastquery = App.Session.get('lastquery')|default(null) %}
+{% set lastquery = App.Session.get('lastquery') %}
 <a title='{{ 'Back to listing'|trans }}' aria-label='{{ 'Back to listing'|trans }}' href='?{{ lastquery }}' class='btn p-2 {{ type == 'btn' ? 'btn-sm bgnd-gray hl-hover-superlight' : 'hl-hover-gray lh-normal border-0' }}'>
   <i class='fas fa-arrow-left fa-fw'></i>{{ type == 'btn' ? 'Back to listing'|trans }}
 </a>

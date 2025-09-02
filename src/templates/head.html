@@ -67,6 +67,14 @@
               {% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}
               </div>
               <div class='dropdown-menu'>
+                <form class='dropdown-item form-inline' action='experiments.php' aria-label='{{ 'Search experiments'|trans }}'>
+                  <div class='input-group'>
+                    <input class='form-control' name='q' placeholder='{{ 'Search'|trans }}' />
+                    <div class='input-group-append'>
+                      <button type='submit' class='btn btn-sm btn-primary'><i class='fas fa-magnifying-glass color-white'></i></button>
+                    </div>
+                  </div>
+                </form>
                 <a class='dropdown-item {{ scriptName == 'experiments.php' and not App.Request.query.all ? 'active' }}' href='experiments.php'>{{ 'All experiments'|trans }}</a>
                 <a class='dropdown-item {{ scriptName == 'experiments.php' and App.Request.query.get('scope') == 1 ? 'active' }}' href='experiments.php?scope=1'>{{ 'My experiments'|trans }}</a>
                 <div class='dropdown-divider'></div>
@@ -87,6 +95,14 @@
                 {{ 'Resources'|trans }}
               </div>
               <div class='dropdown-menu'>
+                <form class='dropdown-item form-inline' action='database.php' aria-label='{{ 'Search resources'|trans }}'>
+                  <div class='input-group'>
+                    <input class='form-control' name='q' placeholder='{{ 'Search'|trans }}' />
+                    <div class='input-group-append'>
+                      <button type='submit' class='btn btn-sm btn-primary'><i class='fas fa-magnifying-glass color-white'></i></button>
+                    </div>
+                  </div>
+                </form>
                 <a class='dropdown-item {{ scriptName == 'database.php' and not App.Request.query.all ? 'active' }}' href='database.php'>{{ 'All resources'|trans }}</a>
                 <a class='dropdown-item {{ scriptName == 'database.php' and App.Request.query.get('scope') == 1 ? 'active' }}' href='database.php?scope=1'>{{ 'My resources'|trans }}</a>
                 <a class='dropdown-item {{ scriptName == 'database.php' and App.Request.query.get('bookable') == 1 ? 'active' }}' href='database.php?bookable=1'>{{ 'Bookable resources'|trans }}</a>

@@ -26,7 +26,7 @@
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
-        <button type='button' class='btn btn-primary' data-dismiss='modal' data-action='request-action'>{{ 'Save'|trans }}</button>
+        <button type='button' class='btn btn-primary' data-dismiss='modal' data-action='requestaction'>{{ 'Save'|trans }}</button>
       </div>
     </div>
   </div>
@@ -89,37 +89,41 @@
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
-      <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
-        <p>{{ 'Adding your signature will cryptographically sign the content of this entry, and the signature will be stored alongside the content at the time of signature, in an archive, visible as attachment (masked by default because archived).'|trans }}</p>
-        {% if not App.Users.userData.sig_privkey %}
-          <p>{{ 'Your account is missing a cryptographic key pair, necessary for signature. You must generate one from your User Control Panel before you can sign an entry.'|trans }}</p>
-          <div class='text-center'>
-          </div>
-        {% else %}
-          <label for='sigMeaningSelect'>{{ 'Select a meaning for this signature'|trans }}</label>
-          <select id='sigMeaningSelect' class='form-control'>
-            {% for meaning, text in meaningArr|default([])|sort %}
-              <option value='{{ meaning }}'>{{ text }}</option>
-            {% endfor %}
-          </select>
+      {% if App.Users.userData.sig_privkey %}
+        <form id='sigPassphraseForm' aria-label='{{ 'Add your signature'|trans }}'>
+      {% endif %}
+        <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
+          <p>{{ 'Adding your signature will cryptographically sign the content of this entry, and the signature will be stored alongside the content at the time of signature, in an archive, visible as attachment (masked by default because archived).'|trans }}</p>
+          {% if not App.Users.userData.sig_privkey %}
+            <p>{{ 'Your account is missing a cryptographic key pair, necessary for signature. You must generate one from your User Control Panel before you can sign an entry.'|trans }}</p>
+          {% else %}
+              <label for='sigMeaningSelect'>{{ 'Select a meaning for this signature'|trans }}</label>
+              <select id='sigMeaningSelect' class='form-control' name='meaning'>
+                {% for meaning, text in meaningArr|default([])|sort %}
+                  <option value='{{ meaning }}'>{{ text }}</option>
+                {% endfor %}
+              </select>
 
-          <label for='sigPassphraseInput'>{{ 'Enter your passphrase to unlock your secret key:'|trans }}</label>
-          <div class='input-group'>
-            <input class='form-control' type='password' minlength='{{ App.Config.configArr.min_password_length }}' autocomplete='off' id='sigPassphraseInput' />
-            <div class='input-group-append'>
-              <span class='btn btn-light input-border' tabindex='-1' data-action='toggle-password'><i class='fas fa-eye' aria-hidden='true'></i></span>
-            </div>
-          </div>
-        {% endif %}
-      </div>
-      <div class='modal-footer'>
-        <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
-        {% if App.Users.userData.sig_privkey %}
-          <button type='button' data-action='sign-entity' data-dismiss='modal' {{ not App.Users.userData.sig_privkey ? 'disabled' }} class='btn btn-primary'>{{ 'Add your signature'|trans }}</button>
-        {% else %}
-          <a class='btn btn-primary' href='/ucp.php?tab=2#ucp-sigkeys'>{{ 'Go to Settings'|trans }}</a>
-        {% endif %}
-      </div>
+              <label for='sigPassphraseInput'>{{ 'Enter your passphrase to unlock your secret key:'|trans }}</label>
+              <div class='input-group'>
+                <input class='form-control' type='password' required name='passphrase' minlength='{{ App.Config.configArr.min_password_length }}' autocomplete='off' id='sigPassphraseInput' />
+                <div class='input-group-append'>
+                  <button type='button' class='btn btn-light input-border' data-action='toggle-password' title='{{ 'Show password'|trans }}' aria-label='{{ 'Show password'|trans }}'><i class='fas fa-eye' aria-hidden='true'></i></button>
+                </div>
+              </div>
+          {% endif %}
+        </div>
+        <div class='modal-footer'>
+          <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+          {% if App.Users.userData.sig_privkey %}
+            <button type='submit' data-action='sign' {{ not App.Users.userData.sig_privkey ? 'disabled' }} class='btn btn-primary'>{{ 'Add your signature'|trans }}</button>
+          {% else %}
+            <a class='btn btn-primary' href='/ucp.php?tab=2#ucp-sigkeys'>{{ 'Go to Settings'|trans }}</a>
+          {% endif %}
+        </div>
+      {% if App.Users.userData.sig_privkey %}
+        </form>
+      {% endif %}
     </div>
   </div>
 </div>
@@ -142,7 +146,7 @@
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
-        <button type='button' data-action='create-procurement-request' data-dismiss='modal' class='btn btn-primary'>{{ 'Place order'|trans }}</button>
+        <button type='button' data-action='createprocurementrequest' data-dismiss='modal' class='btn btn-primary'>{{ 'Place order'|trans }}</button>
       </div>
     </div>
   </div>
@@ -195,15 +199,6 @@
       {% endif %}
     {% endif %}
 
-  {% endif %}
-
-  {% if not App.Session.has('is_anon') and App.Config.configArr.anon_users and Entity.entityData.access_key %}
-    {# SHARE #}
-    <button title='{{ 'Share'|trans }}' aria-label='{{ 'Share'|trans }}' data-action='share' class='btn hl-hover-gray p-2 lh-normal border-0'>
-      <i class='fas fa-share-alt fa-fw'></i>
-    </button>
-    <input type='text' class='form-control' aria-label='{{ 'Share'|trans }}' id='shareLinkInput' value='' hidden />
-    <div class='vertical-separator'></div>
   {% endif %}
 
   {# SIGN #}
@@ -298,7 +293,7 @@
         {# REVISIONS #}
         <a class='dropdown-item' href='revisions.php?type={{ Entity.entityType.value }}&amp;item_id={{ Entity.id }}'><i class='fas fa-history fa-fw'></i> {{ 'See revisions'|trans }}</a>
         {# CHANGELOG #}
-        <a class='dropdown-item' href='?id={{ Entity.id }}&amp;mode=changelog'><i class='fas fa-list fa-fw'></i> {{ 'See changelog'|trans }}</a>
+        <a class='dropdown-item' href='?id={{ Entity.id }}&amp;mode=changelog'><i class='fas fa-list fa-fw' title='{{ 'See changelog'|trans }}'></i> {{ 'See changelog'|trans }}</a>
 
         {% if not App.Session.has('is_anon') %}
           {# ARCHIVE / UNARCHIVE #}
@@ -317,7 +312,7 @@
         {% if Entity.entityData.state == enum('Elabftw\\Enums\\State').Normal.value %}
           <button type='button' class='dropdown-item hover-danger' data-action='destroy'><i class='fas fa-trash-alt fa-fw' title='{{ 'Delete'|trans }}'></i> {{ 'Delete'|trans }}</button>
         {% elseif Entity.entityData.state == enum('Elabftw\\Enums\\State').Deleted.value %}
-          <button type='button' class='dropdown-item hover-danger' data-action='restore-entity'><i class='fas fa-trash-can-arrow-up fa-fw' title='{{ 'Restore entry'|trans }}'></i> {{ 'Restore entry'|trans }}</button>
+          <button type='button' class='dropdown-item hover-danger' data-action='restore'><i class='fas fa-trash-can-arrow-up fa-fw' title='{{ 'Restore entry'|trans }}'></i> {{ 'Restore entry'|trans }}</button>
         {% endif %}
       </div>
     </div>

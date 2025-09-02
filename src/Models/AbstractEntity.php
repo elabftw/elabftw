@@ -186,11 +186,11 @@ abstract class AbstractEntity extends AbstractRest
             contentType: BodyContentType::from($template['content_type']),
         );
         $tags = array_column($TemplateType->Tags->readAll(), 'tag');
-        $this->ItemsLinks->duplicate($templateId, $id, true);
-        $this->ExperimentsLinks->duplicate($templateId, $id, true);
+        $this->ItemsLinks->duplicate($templateId, $id, fromTemplate: true);
+        $this->ExperimentsLinks->duplicate($templateId, $id, fromTemplate: true);
         $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
-        $CompoundsLinks->duplicate($templateId, $id, fromItemsTypes: true);
-        $this->Steps->duplicate($templateId, $id, true);
+        $CompoundsLinks->duplicate($templateId, $id, fromTemplate: true);
+        $this->Steps->duplicate($templateId, $id, fromTemplate: true);
         $freshSelf = new $this($this->Users, $id);
         $TemplateType->Uploads->duplicate($freshSelf);
         foreach ($tags as $tag) {
@@ -583,7 +583,9 @@ abstract class AbstractEntity extends AbstractRest
 
     public function readAllSimple(QueryParamsInterface $displayParams): array
     {
-        $categoryTable = $this instanceof Items ? 'items_categories' : 'experiments_categories';
+        $categoryTable = in_array($this->entityType->value, array('items', 'items_types'), true)
+            ? 'items_categories'
+            : 'experiments_categories';
         $CanSqlBuilder = new CanSqlBuilder($this->Users->requester, AccessType::Read);
         $canFilter = $CanSqlBuilder->getCanFilter();
         $displayParams->setSkipOrderPinned(true);
@@ -625,16 +627,11 @@ abstract class AbstractEntity extends AbstractRest
         return $req->fetchAll();
     }
 
-    /**
-     * Check if we have the permission to read/write or throw an exception
-     *
-     * @param string $rw read or write
-     * @throws IllegalActionException
-     */
+    // Check if we have the permission to read/write or throw an exception
     public function canOrExplode(string $rw): void
     {
         if ($this->id === null) {
-            throw new ImproperActionException('Cannot check permissions without an id!');
+            throw new IllegalActionException('Cannot check permissions without an id!');
         }
         if ($this->bypassWritePermission && $rw === 'write') {
             return;
@@ -781,14 +778,18 @@ abstract class AbstractEntity extends AbstractRest
             $content = $this->readOne()['body'] . $content;
         }
         // ensure no changes happen on entries with immutable permissions
+        // admins can override the immutability of an entity's permissions. See #5800
         if ($params->getTarget() === 'canread' || $params->getTarget() === 'canwrite') {
-            if (($this->entityData[$params->getTarget() . '_is_immutable'] ?? 0) === 1) {
-                throw new ImproperActionException(_('Cannot modify permissions on entry with immutable permissions.'));
+            if (($this->entityData[$params->getTarget() . '_is_immutable'] ?? 0) === 1
+                && !($this instanceof AbstractTemplateEntity)
+                && !($this->Users->isAdmin)
+            ) {
+                throw new UnprocessableContentException(_('Cannot modify permissions on entry with immutable permissions.'));
             }
         }
         // also prevent modifying immutability of permissions on concrete entities
         if (str_ends_with($params->getTarget(), '_is_immutable') && $this instanceof AbstractConcreteEntity) {
-            throw new ImproperActionException(_('Cannot modify permissions immutability settings.'));
+            throw new UnprocessableContentException(_('Cannot modify permissions immutability settings.'));
         }
 
         // save a revision for body target

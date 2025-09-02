@@ -149,11 +149,14 @@ final class Items extends AbstractConcreteEntity
         $fresh = new self($this->Users, $newId);
         $fresh->update(new ContentParams('canbook', $this->entityData['canbook']));
         /** @psalm-suppress PossiblyNullArgument */
+        $this->ExperimentsLinks->duplicate($this->id, $newId);
         $this->ItemsLinks->duplicate($this->id, $newId);
         $this->Steps->duplicate($this->id, $newId);
         $this->Tags->copyTags($newId);
         $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
-        $CompoundsLinks->duplicate($this->id, $newId, false);
+        $CompoundsLinks->duplicate($this->id, $newId);
+        $ContainersLinks = LinksFactory::getContainersLinks($this);
+        $ContainersLinks->duplicate($this->id, $newId);
         // also add a link to the original resource
         if ($linkToOriginal) {
             $ItemsLinks = new Items2ItemsLinks($fresh);

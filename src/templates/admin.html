@@ -131,16 +131,16 @@
   <p><a target='_blank' rel='noopener' class='external-link' href='https://doc.elabftw.net/admin-guide.html#groups-tab'>{{ 'Link to documentation'|trans }}</a></p>
   <h3 class='p-2 pl-3 section-title'>{{ 'Create user group'|trans }}</h3>
 
-  <div class='pl-3 mt-2 mb-5'>
-    {# CREATE A GROUP #}
-    <div class='input-group'>
-      <input type='text' id='teamGroupCreate' class='form-control' placeholder='{{ 'Add a group'|trans }}' aria-label='{{ 'Add a group'|trans }}'>
-      <div class='input-group-append'>
-        <button class='btn btn-primary' data-action='create-teamgroup' type='button'>{{ 'Create'|trans }}</button>
-      </div>
+  {# CREATE A GROUP #}
+  <form class='pl-3 mt-2 mb-5 input-group' id='createGroupForm' aria-label='{{ 'Add a group'|trans }}'>
+    <div class='input-group-prepend'>
+      <span class='input-group-text'>{{ 'Name'|trans }}</span>
     </div>
-    {# END CREATE GROUP #}
-  </div>
+    <input type='text' required name='name' class='form-control' placeholder='{{ 'Project Monoco'|trans }}' aria-label='{{ 'Teamgroup name'|trans }}'>
+    <div class='input-group-append'>
+      <button class='btn btn-primary' data-action='create-teamgroup' type='submit'>{{ 'Create'|trans }}</button>
+    </div>
+  </form>
 
   {# SHOW EXISTING USER GROUPS #}
   <div id='team_groups_div'>
@@ -162,15 +162,15 @@
             {% endfor %}
           </div>
           {# ADD USER #}
-          <div class='input-group mt-3'>
+          <form class='input-group mt-3' aria-label='{{ 'Add user to teamgroup'|trans }}'>
             <div class='input-group-prepend'>
               <span class='input-group-text'><i class='fas fa-magnifying-glass'></i></span>
             </div>
-            <input type='text' class='form-control' data-action='autocomplete' data-target='users' data-identifier='teamgroup-{{ teamGroup.id }}' placeholder='{{ 'User name'|trans }}' aria-label='{{ 'User name'|trans }}'>
+            <input type='text' class='form-control' required name='user' data-action='autocomplete' data-target='users' data-identifier='teamgroup-{{ teamGroup.id }}' placeholder='{{ 'User name'|trans }}' aria-label='{{ 'User name'|trans }}'>
             <div class='input-group-append'>
-              <button class='btn btn-primary' data-action='adduser-teamgroup' data-groupid='{{ teamGroup.id }}' type='button'>{{ 'Add user'|trans }}</button>
+              <button class='btn btn-primary' data-action='adduser-teamgroup' data-groupid='{{ teamGroup.id }}' type='submit'>{{ 'Add user to teamgroup'|trans }}</button>
             </div>
-          </div>
+          </form>
           <div id='autocompleteAnchorDiv_teamgroup-{{ teamGroup.id }}'></div>
         </div>
       {% endfor %}

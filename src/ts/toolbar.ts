@@ -6,6 +6,7 @@
  * @package elabftw
  */
 import {
+  collectForm,
   relativeMoment,
   reloadElements,
 } from './misc';
@@ -15,11 +16,10 @@ import { Action, Model } from './interfaces';
 import { notify } from './notify';
 import { ApiC } from './api';
 import { entity } from './getEntity';
+import { on } from './handlers';
 
-const clickHandler = (event: Event) => {
-  const el = (event.target as HTMLElement);
-  // DUPLICATE
-  if (el.matches('[data-action="duplicate-entity"]')) {
+if (document.getElementById('topToolbar')) {
+  on(Action.Duplicate, () => {
     const copyFiles = (document.getElementById('duplicateKeepFilesSelect') as HTMLInputElement);
     const linkToOriginalExperiment = (document.getElementById('duplicateLinkToOriginal') as HTMLInputElement);
     // Ensure the link to original exists because this feature is not available for Template entities
@@ -30,27 +30,17 @@ const clickHandler = (event: Event) => {
     ).then(id => {
       window.location.href = `?mode=edit&id=${id}`;
     });
+  });
 
-  // SHARE
-  } else if (el.matches('[data-action="share"]')) {
-    ApiC.getJson(`${entity.type}/${entity.id}`).then(json => {
-      const link = (document.getElementById('shareLinkInput') as HTMLInputElement);
-      link.value = json.sharelink;
-      link.toggleAttribute('hidden');
-      link.focus();
-      link.select();
-    });
-
-  // TIMESTAMP button in modal
-  } else if (el.matches(`[data-action="${Action.Timestamp}"]`)) {
+  on(Action.Timestamp, () => {
     ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.Timestamp}).then(() => {
       reloadElements(['requestActionsDiv', 'isTimestampedByInfoDiv']);
     }).catch(error => {
       notify.error(error);
     });
+  });
 
-  // BLOXBERG
-  } else if (el.matches(`[data-action="${Action.Bloxberg}"]`)) {
+  on(Action.Bloxberg, () => {
     const overlay = document.createElement('div');
     overlay.id = 'loadingOverlay';
     const loading = document.createElement('p');
@@ -71,17 +61,21 @@ const clickHandler = (event: Event) => {
       .then(() => reloadElements(['uploadsDiv']))
       // remove overlay in all cases
       .finally(() => document.getElementById('container').removeChild(document.getElementById('loadingOverlay')));
+  });
 
-  // SIGN ENTITY
-  } else if (el.matches('[data-action="sign-entity"]')) {
-    const passphraseInput = (document.getElementById('sigPassphraseInput') as HTMLInputElement);
-    const meaningSelect = (document.getElementById('sigMeaningSelect') as HTMLSelectElement);
-    ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.Sign, passphrase: passphraseInput.value, meaning: meaningSelect.value}).then(() => {
-      reloadElements(['commentsDiv', 'requestActionsDiv'])
-        .then(() => relativeMoment());
+  on(Action.Sign, (_, event: Event) => {
+    event.preventDefault();
+    const form = document.getElementById('sigPassphraseForm') as HTMLFormElement;
+    const params = collectForm(form);
+    params['action'] = Action.Sign;
+    ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => {
+      reloadElements(['commentsDiv', 'requestActionsDiv']);
+      form.reset();
+      $('#addSignatureModal').modal('hide');
     });
-  // REQUEST ACTION
-  } else if (el.matches('[data-action="request-action"]')) {
+  });
+
+  on(Action.RequestAction, () => {
     const actionSelect = (document.getElementById('requestActionActionSelect') as HTMLSelectElement);
     const userSelect = (document.getElementById('requestActionUserSelect') as HTMLSelectElement);
     ApiC.post(`${entity.type}/${entity.id}/request_actions`, {
@@ -92,23 +86,9 @@ const clickHandler = (event: Event) => {
       .then(() => relativeMoment())
       // the request gets rejected if repeated
       .catch(error => console.error(error.message));
-  // SHOW ACTION
-  } else if (el.matches('[data-action="show-action"]')) {
-    const btn = document.getElementById(`actionButton-${el.dataset.target}`);
-    btn.classList.add('border-danger');
-  // CREATE PROCUREMENT REQUEST
-  } else if (el.matches('[data-action="create-procurement-request"]')) {
-    const input = (document.getElementById('procurementRequestQtyInput') as HTMLInputElement);
-    const qty = parseInt(input.value, 10);
-    // sanity check
-    if (qty < 1) {
-      notify.error('invalid-info');
-      return;
-    }
-    ApiC.post(`${Model.Team}/current/procurement_requests`, {entity_id: entity.id, qty_ordered: qty});
+  });
 
-  // DO REQUEST ACTION
-  } else if (el.matches('[data-action="do-requestable-action"]')) {
+  on('do-requestable-action', (el: HTMLElement) => {
     switch (el.dataset.target) {
     case Action.Archive:
       // reload the page to avoid further actions on the entity (in edit mode), also refreshing gets to "You cannot edit it!" page. (See #5552)
@@ -135,8 +115,16 @@ const clickHandler = (event: Event) => {
       $('#addSignatureModal').modal('toggle');
       break;
     }
-  // EXPORT TO (PDF/ZIP)
-  } else if (el.matches('[data-action="export-to"]')) {
+  });
+
+  on(Action.CancelRequestableAction, (el: HTMLElement) => {
+    if (confirm(i18next.t('generic-delete-warning'))) {
+      ApiC.delete(`${entity.type}/${entity.id}/request_actions/${el.dataset.id}`)
+        .then(() => el.parentElement.parentElement.parentElement.parentElement.remove());
+    }
+  });
+
+  on('export-to', (el: HTMLElement) => {
     const format = el.dataset.format;
     const changelog = (document.getElementById(`${format}_exportWithChangelog`) as HTMLInputElement).checked ? 1 : 0;
     const classification = (document.getElementById(`${format}_exportClassification`) as HTMLSelectElement).value;
@@ -146,33 +134,32 @@ const clickHandler = (event: Event) => {
     }
     const finalFormat = (document.getElementById(`${format}_exportPdfa`) as HTMLInputElement).checked ? format + 'a' : format;
     window.open(`/api/v2/${el.dataset.type}/${el.dataset.id}?format=${finalFormat}&changelog=${changelog}&json=${json}&classification=${classification}`, '_blank');
-  } else if (el.matches('[data-action="export-to-qrpng"]')) {
+  });
+
+  on('export-to-qrpng', (el: HTMLElement) => {
     const size = (document.getElementById('qrpng_exportSize') as HTMLInputElement).value;
     const title = (document.getElementById('qrpng_exportTitle') as HTMLInputElement).checked ? 1: 0;
     const titleLines = (document.getElementById('qrpng_exportTitleLines') as HTMLInputElement).value;
     const titleChars = (document.getElementById('qrpng_exportTitleChars') as HTMLInputElement).value;
     window.open(`/api/v2/${el.dataset.type}/${el.dataset.id}?format=qrpng&size=${size}&withTitle=${title}&titleLines=${titleLines}&titleChars=${titleChars}`, '_blank');
-  // CANCEL REQUEST ACTION
-  } else if (el.matches('[data-action="cancel-requestable-action"]')) {
-    if (confirm(i18next.t('generic-delete-warning'))) {
-      ApiC.delete(`${entity.type}/${entity.id}/request_actions/${el.dataset.id}`)
-        .then(() => el.parentElement.parentElement.parentElement.parentElement.remove());
-    }
-  // DESTROY ENTITY
-  } else if (el.matches('[data-action="destroy"]')) {
+  });
+
+  on(Action.Destroy, () => {
     if (confirm(i18next.t('generic-delete-warning'))) {
       const path = window.location.pathname;
       ApiC.delete(`${entity.type}/${entity.id}`).then(
         () => window.location.replace(path.split('/').pop()));
     }
-  }
-  // RESTORE ENTITY
-  else if (el.matches('[data-action="restore-entity"]')) {
-    ApiC.patch(`${entity.type}/${entity.id}`, { action: Action.Restore })
-      .then(() => window.location.href = `?mode=view&id=${entity.id}`);
-  }
-};
+  });
 
-if (document.getElementById('topToolbar')) {
-  document.querySelector('.real-container').addEventListener('click', event => clickHandler(event));
+  on(Action.CreateProcurementRequest, () => {
+    const input = (document.getElementById('procurementRequestQtyInput') as HTMLInputElement);
+    const qty = parseInt(input.value, 10);
+    // sanity check
+    if (qty < 1) {
+      notify.error('invalid-info');
+      return;
+    }
+    ApiC.post(`${Model.Team}/current/procurement_requests`, {entity_id: entity.id, qty_ordered: qty});
+  });
 }

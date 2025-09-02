@@ -20,7 +20,7 @@ describe('Experiments', () => {
     cy.get('div.tags').contains('some tag').should('not.exist');
 
     // create step
-    cy.get('.stepinput').type('some step');
+    cy.get('#addStepInput').type('some step');
     cy.get('[data-action="create-step"').click();
     cy.get('.step-static').should('contain', 'some step');
 
@@ -53,7 +53,7 @@ describe('Experiments', () => {
     cy.url().then(url => {
       cy.log(url);
       cy.get('[data-target="duplicateModal"]').click()
-        .get('[data-action="duplicate-entity"]').click();
+        .get('[data-action="duplicate"]').click();
       cy.get('#documentTitle').should('be.visible').should('contain', ' I');
       // destroy the duplicated entity now
       entityDestroy();
@@ -104,6 +104,7 @@ describe('Experiments', () => {
     entityDuplicate();
     entityDestroy();
     entityRestore('experiments.php');
+    entityList('experiments.php');
   });
 
   it('Create and edit an item', () => {
@@ -119,6 +120,7 @@ describe('Experiments', () => {
     entityDuplicate();
     entityDestroy();
     entityRestore('database.php');
+    entityList('database.php');
   });
 
   const entityRestore = (publicUrl: string) => {
@@ -128,7 +130,17 @@ describe('Experiments', () => {
     // filter deleted items
     cy.get('select[name="state"]').select('3');
     // restore
-    cy.get('[data-action="restore-entity"]').first().click();
+    cy.get('[data-action="restore-entity-showmode"]').first().click();
     cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
+  };
+
+  const entityList = (publicUrl: string) => {
+    cy.visit(`/${publicUrl}`);
+    cy.get('#itemList').should('be.visible').find('a[href*="mode=view"]').first().click();
+    cy.get('a[title="Back to listing"][aria-label="Back to listing"]').should('be.visible').click();
+    // ensure there's no wrong listing
+    cy.get('body').should('not.contain.html',
+      '<div role="status" class="alert alert-danger">',
+    );
   };
 });

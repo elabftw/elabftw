@@ -170,31 +170,6 @@
 {% if includeChangelog %}
   <h3 id='changelogHeader'>{{ 'Changelog'|trans }}</h3>
   <table class='table' aria-labelledby='changelogHeader'>
-    <thead>
-      <tr>
-          <th>{{ 'Date'|trans }}</th>
-          <th>{{ 'User'|trans }}</th>
-          <th>{{ 'Property changed'|trans }}</th>
-          <th>{{ 'New value'|trans }}</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for change in changes %}
-      <tr>
-        <td>{{ change.created_at }}</td>
-        <td>{{ change.fullname }}</td>
-        <td>{{ change.target }}</td>
-        <td>
-          {# cannot use ternary here as it is an expression and filters are applied after evaluation #}
-          {%- if change.target == 'body' -%}
-            {# use of raw to make the link to revisions page work #}
-            {{ change.content|raw }}
-          {%- else -%}
-            {{ change.content }}
-          {%- endif -%}
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
+    {% include 'changelog-table.html' %}
   </table>
 {% endif %}

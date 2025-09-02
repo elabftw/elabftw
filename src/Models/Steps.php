@@ -111,17 +111,11 @@ final class Steps extends AbstractRest
         return $this->Db->fetch($req);
     }
 
-    /**
-     * Copy the steps from one entity to an other
-     *
-     * @param int $id The id of the original entity
-     * @param int $newId The id of the new entity that will receive the steps
-     * @param bool $fromTpl do we duplicate from template?
-     */
-    public function duplicate(int $id, int $newId, $fromTpl = false): void
+    // Copy Steps from one entity to another
+    public function duplicate(int $id, int $newId, bool $fromTemplate = false): void
     {
         $table = $this->Entity->entityType->value;
-        if ($fromTpl) {
+        if ($fromTemplate) {
             $table = ($this->Entity instanceof Experiments || $this->Entity instanceof Templates) ? 'experiments_templates' : 'items_types';
         }
         $stepsql = 'SELECT body, ordering FROM ' . $table . '_steps WHERE item_id = :id';

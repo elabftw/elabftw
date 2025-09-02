@@ -338,12 +338,25 @@ class Users extends AbstractRest
         if ($currentTeam === 1) {
             $team = $this->requester->team ?? 0;
         }
-        return $this->readFromQuery(
+        $users = $this->readFromQuery(
             $Request->query->getString('q'),
             $team,
             $Request->query->getBoolean('onlyAdmins'),
             $Request->query->getBoolean('onlyArchived'),
         );
+        // if the user is Admin somewhere, return a pretty complete response
+        // Note: having something where you get different response depending if the user is part of your team or not seems too complex to implement and maintain
+        if ($this->requester->isAdminSomewhere()) {
+            return $users;
+        }
+        // otherwise, remove some more data, here we want only the super basic data for basic users
+        $removeKeys = array('auth_service', 'created_at', 'orgid', 'has_mfa_enabled', 'validated', 'last_login', 'valid_until', 'is_sysadmin', 'teams');
+        return array_map(function ($user) use ($removeKeys) {
+            foreach ($removeKeys as $k) {
+                unset($user[$k]);
+            }
+            return $user;
+        }, $users);
     }
 
     /**

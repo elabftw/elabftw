@@ -46,6 +46,7 @@ import '../js/tinymce-langs/el_GR.js';
 import '../js/tinymce-langs/en_GB.js';
 import '../js/tinymce-langs/en_US.js';
 import '../js/tinymce-langs/es_ES.js';
+import '../js/tinymce-langs/et_EE.js';
 import '../js/tinymce-langs/fi_FI.js';
 import '../js/tinymce-langs/fr_FR.js';
 import '../js/tinymce-langs/id_ID.js';
@@ -242,10 +243,7 @@ export function getTinymceBaseConfig(page: string): object {
       ApiC.getJson(`${EntityType.Template}`).then(json => {
         const res = [];
         json.forEach(tpl => {
-          // only display pinned templates
-          if (tpl.is_pinned) {
-            res.push({'title': tpl.title, 'description': '', 'content': tpl.body});
-          }
+          res.push({'title': tpl.title, 'description': '', 'content': tpl.body});
         });
         callback(res);
       });

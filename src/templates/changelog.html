@@ -3,13 +3,14 @@
 {% block body %}
 
 {% set query = '?mode=view&' %}
-{% if Entity.entityType.value == 'experiments_templates' %}
-  {% set query = '&mode=view&template' %}
-{% endif %}
 <a href='{{ Entity.entityType.toPage ~ query }}id={{ Entity.id }}' class='btn hl-hover-gray'>
   <i class='fas fa-chevron-left mr-1 fa-fw'></i>{{ 'Go back'|trans }}
 </a>
 
-{% include 'changelog-block.html' %}
-
+<h3 class='my-3 p-2 pl-3 section-title' id='pageSubTitle'>{{ 'Changelog'|trans }}</h3>
+<div class='pl-3'>
+  <table class='table' aria-describedby='pageSubTitle' data-table-sort='true' id='changelogTable'>
+    {% include 'changelog-table.html' %}
+  </table>
+</div>
 {% endblock body %}

@@ -56,8 +56,8 @@ final class DashboardController extends AbstractHtmlController
         $DisplayParamsExp = new DisplayParams(
             $this->app->Users,
             EntityType::Experiments,
-            limit: self::SHOWN_NUMBER,
             orderby: Orderby::Lastchange,
+            limit: self::SHOWN_NUMBER,
         );
         $Experiments = new Experiments($this->app->Users);
         $Items = new Items($this->app->Users);
@@ -69,8 +69,8 @@ final class DashboardController extends AbstractHtmlController
         $DisplayParamsItems = new DisplayParams(
             $this->app->Users,
             EntityType::Items,
-            limit: self::SHOWN_NUMBER,
             orderby: Orderby::Lastchange,
+            limit: self::SHOWN_NUMBER,
         );
         $PermissionsHelper = new PermissionsHelper();
         $ExperimentsStatus = new ExperimentsStatus($this->app->Teams);
@@ -84,6 +84,13 @@ final class DashboardController extends AbstractHtmlController
             states: array(State::Normal)
         );
 
+        $DisplayParamsItemsTypes = new DisplayParams(
+            $this->app->Users,
+            EntityType::ItemsTypes,
+            limit: 9999,
+            states: array(State::Normal)
+        );
+
         return array_merge(
             parent::getData(),
             array(
@@ -92,7 +99,7 @@ final class DashboardController extends AbstractHtmlController
                 'experimentsArr' => $Experiments->readShow($DisplayParamsExp),
                 'experimentsStatusArr' => $ExperimentsStatus->readAll($ExperimentsStatus->getQueryParams(new InputBag(array('limit' => 9999)))),
                 'itemsArr' => $Items->readShow($DisplayParamsItems),
-                'itemsTemplatesArr' => $ItemsTypes->readAll(),
+                'itemsTemplatesArr' => $ItemsTypes->readAllSimple($DisplayParamsItemsTypes),
                 'requestActionsArr' => $UserRequestActions->readAllFull(),
                 'templatesArr' => $Templates->readAllSimple($DisplayParamsTemplates),
                 'usersArr' => $this->app->Users->readAllActiveFromTeam(),

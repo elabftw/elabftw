@@ -123,14 +123,6 @@ if (userPrefs.scDisabled === '0') {
   kbd.init();
 }
 
-// this lives outside of #container, so add their own click listener
-document.getElementById('sidepanel-buttons')?.addEventListener('click', event => {
-  const el = (event.target as HTMLElement);
-  if (el.matches('[data-action="toggle-sidepanel"]')) {
-    const SidePanelC = el.dataset.sidepanel === Model.FavTag ? FavTagC : TodolistC;
-    SidePanelC.toggle();
-  }
-});
 // SIDE PANEL STATE
 const openedSidePanel = localStorage.getItem('opened-sidepanel');
 if (openedSidePanel === Model.FavTag) {
@@ -536,9 +528,14 @@ on('scroll-top', () => {
   });
 });
 
-on('close-sidepanel', (el: HTMLElement) => {
-  const SidePanelC = el.dataset.sidepanel === Model.FavTag ? FavTagC : TodolistC;
-  SidePanelC.hide();
+on('toggle-sidepanel', (el: HTMLElement, event: Event) => {
+  // this action might exist on a link: prevent jump to top
+  event.preventDefault();
+  const SidePanelC = el.dataset.target === Model.FavTag ? FavTagC : TodolistC;
+  if (el.dataset.purpose === 'hide') {
+    return SidePanelC.hide();
+  }
+  SidePanelC.toggle();
 });
 
 on('toggle-pin', (el: HTMLElement) => {
@@ -558,6 +555,11 @@ on('transfer-ownership', () => {
   const params = {};
   params[Target.UserId] = parseInt(value.split(' ')[0], 10);
   ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => window.location.reload());
+});
+
+on(Action.Restore, () => {
+  ApiC.patch(`${entity.type}/${entity.id}`, { action: Action.Restore })
+    .then(() => window.location.href = `?mode=view&id=${entity.id}`);
 });
 
 on('add-user-to-permissions', (el: HTMLElement) => {
@@ -884,26 +886,28 @@ on('create-resource-from-compound', (el: HTMLElement) => {
   });
 });
 
-on('save-compound', (el: HTMLElement) => {
+on('save-compound', (el: HTMLElement, event: Event) => {
+  event.preventDefault();
   try {
     if (el.dataset.compoundId) { // edit
-      const compoundForm = document.getElementById('editCompoundInputs');
-      const params = collectForm(compoundForm);
+      const form = document.getElementById('editCompoundForm') as HTMLFormElement;
+      const params = collectForm(form);
       ApiC.patch(`compounds/${el.dataset.compoundId}`, params).then(() => {
         document.dispatchEvent(new CustomEvent('dataReload'));
         $('#editCompoundModal').modal('hide');
-        clearForm(compoundForm);
+        form.reset();
       });
     } else { // create
-      const compoundForm = document.getElementById('createCompoundInputs');
-      const params = collectForm(compoundForm);
-      clearForm(compoundForm);
+      const form = document.getElementById('createCompoundForm') as HTMLFormElement;
+      const params = collectForm(form);
       ApiC.post2location('compounds', params).then(id => {
         ApiC.getJson(`compounds/${id}`).then((json) => {
           setTimeout(() => {
             toggleEditCompound(json);
           }, 500);
           document.dispatchEvent(new CustomEvent('dataReload'));
+          $('#createCompoundModal').modal('hide');
+          form.reset();
         });
       });
     }
@@ -969,7 +973,8 @@ on('ack-notif', (el: HTMLElement) => {
 on('destroy-notif', () => ApiC.delete(`${Model.User}/me/${Model.Notification}`).then(() => reloadElements(['navbarNotifDiv'])));
 
 // CREATE EXPERIMENT, TEMPLATE or DATABASE item: main create button in top right
-on('create-entity', (el: HTMLElement) => {
+on('create-entity', (el: HTMLElement, event: Event) => {
+  event.preventDefault();
   let params = {};
   if (el.dataset.hasTitle) {
     params = collectForm(document.getElementById(el.dataset.formId));

@@ -16,6 +16,7 @@ use function array_map;
 
 enum Language: string
 {
+    // by alphabetical order of value
     case Catalan = 'ca_ES';
     case Czech = 'cs_CZ';
     case German = 'de_DE';
@@ -23,6 +24,7 @@ enum Language: string
     case EnglishGB = 'en_GB';
     case EnglishUS = 'en_US';
     case Spanish = 'es_ES';
+    case Estonian = 'et_EE';
     case Finnish = 'fi_FI';
     case French = 'fr_FR';
     case Indonesian = 'id_ID';
@@ -50,28 +52,29 @@ enum Language: string
     public function toCalendar(): string
     {
         return match ($this) {
-            $this::Catalan => 'ca',
-            $this::Czech => 'cs',
-            $this::German => 'de',
-            $this::Greek => 'el',
-            $this::EnglishGB => 'en-gb',
-            $this::EnglishUS => 'en-us',
-            $this::Spanish => 'es',
-            $this::Finnish => 'fi',
-            $this::French => 'fr',
-            $this::Indonesian => 'id',
-            $this::Italian => 'it',
-            $this::Japanese => 'ja',
-            $this::Korean => 'ko',
-            $this::Dutch => 'nl',
-            $this::Polish => 'pl',
-            $this::PortugueseBrazilian => 'pt-br',
-            $this::Portuguese => 'pt',
-            $this::Russian => 'ru',
-            $this::Slovenian => 'sl',
-            $this::Slovak => 'sk',
-            $this::Uzbek => 'uz',
-            $this::Chinese => 'zh-cn',
+            self::Catalan => 'ca',
+            self::Czech => 'cs',
+            self::German => 'de',
+            self::Greek => 'el',
+            self::EnglishGB => 'en-gb',
+            self::EnglishUS => 'en-us',
+            self::Spanish => 'es',
+            self::Estonian => 'et',
+            self::Finnish => 'fi',
+            self::French => 'fr',
+            self::Indonesian => 'id',
+            self::Italian => 'it',
+            self::Japanese => 'ja',
+            self::Korean => 'ko',
+            self::Dutch => 'nl',
+            self::Polish => 'pl',
+            self::PortugueseBrazilian => 'pt-br',
+            self::Portuguese => 'pt',
+            self::Russian => 'ru',
+            self::Slovenian => 'sl',
+            self::Slovak => 'sk',
+            self::Uzbek => 'uz',
+            self::Chinese => 'zh-cn',
         };
     }
 
@@ -85,6 +88,7 @@ enum Language: string
             self::EnglishGB => 'English (UK/GB)',
             self::EnglishUS => 'English (US)',
             self::Spanish => 'Spanish',
+            self::Estonian => 'Estonian',
             self::Finnish => 'Finnish',
             self::French => 'French',
             self::Indonesian => 'Indonesian',

@@ -67,6 +67,15 @@
               {% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}
               </div>
               <div class='dropdown-menu'>
+                <form class='dropdown-item form-inline' action='experiments.php' aria-label='{{ 'Quick search experiments'|trans }}'>
+                  <label for='nav-search-experiments' class='sr-only'>{{ 'Search experiments'|trans }}</label>
+                  <div class='input-group'>
+                    <input id='nav-search-experiments' class='form-control' name='q' placeholder='{{ 'Search'|trans }}' aria-label='{{ 'Search'|trans }}' />
+                    <div class='input-group-append'>
+                      <button type='submit' class='btn btn-sm btn-primary' aria-label='{{ 'Search'|trans }}'><i class='fas fa-magnifying-glass color-white' aria-hidden='true'></i></button>
+                    </div>
+                  </div>
+                </form>
                 <a class='dropdown-item {{ scriptName == 'experiments.php' and not App.Request.query.all ? 'active' }}' href='experiments.php'>{{ 'All experiments'|trans }}</a>
                 <a class='dropdown-item {{ scriptName == 'experiments.php' and App.Request.query.get('scope') == 1 ? 'active' }}' href='experiments.php?scope=1'>{{ 'My experiments'|trans }}</a>
                 <div class='dropdown-divider'></div>
@@ -87,6 +96,15 @@
                 {{ 'Resources'|trans }}
               </div>
               <div class='dropdown-menu'>
+                <form class='dropdown-item form-inline' action='database.php' aria-label='{{ 'Quick search resources'|trans }}'>
+                  <label for='nav-search-resources' class='sr-only'>{{ 'Search resources'|trans }}</label>
+                  <div class='input-group'>
+                    <input id='nav-search-resources' class='form-control' name='q' placeholder='{{ 'Search'|trans }}' />
+                    <div class='input-group-append'>
+                      <button type='submit' class='btn btn-sm btn-primary' aria-label='{{ 'Search'|trans }}'><i class='fas fa-magnifying-glass color-white' aria-hidden='true'></i></button>
+                    </div>
+                  </div>
+                </form>
                 <a class='dropdown-item {{ scriptName == 'database.php' and not App.Request.query.all ? 'active' }}' href='database.php'>{{ 'All resources'|trans }}</a>
                 <a class='dropdown-item {{ scriptName == 'database.php' and App.Request.query.get('scope') == 1 ? 'active' }}' href='database.php?scope=1'>{{ 'My resources'|trans }}</a>
                 <a class='dropdown-item {{ scriptName == 'database.php' and App.Request.query.get('bookable') == 1 ? 'active' }}' href='database.php?bookable=1'>{{ 'Bookable resources'|trans }}</a>
@@ -173,7 +191,7 @@
             {% if App.Session.has('is_auth') and not App.Session.has('is_anon') %}
               <a class='dropdown-item' href='/dashboard.php'><i class='fas fa-table-columns fa-fw'></i> {{ 'Dashboard'|trans }}</a>
               <a class='dropdown-item' href='/profile.php'><i class='fas fa-user fa-fw'></i> {{ 'My profile'|trans }}</a>
-              <a class='dropdown-item' data-action='toggle-todolist' href='#'><i class='fas fa-list fa-fw'></i> {{ 'Todolist'|trans }}</a>
+              <a class='dropdown-item' data-action='toggle-sidepanel' data-target='todolist' href='#' aria-controls='todolistPanel'><i class='fas fa-list fa-fw'></i> {{ 'Todolist'|trans }}</a>
               <a class='dropdown-item' href='/profile.php?tab=3'><i class='fas fa-file-arrow-up fa-fw'></i> {{ 'Import'|trans }}</a>
               <a class='dropdown-item' href='/profile.php?tab=4'><i class='fas fa-file-arrow-down fa-fw'></i> {{ 'Export'|trans }}</a>
               <a class='dropdown-item' href='/ucp.php'><i class='fas fa-cogs fa-fw'></i> {{ 'Settings'|trans }}</a>
@@ -202,10 +220,10 @@
 {# SHOW FAVTAGS/TODOLIST PANELS #}
 {% if App.Session.has('is_auth') and not App.Session.has('is_anon') %}
   <div class='pr-2 mt-3 float-left' id='sidepanel-buttons'>
-    <div class='bounce-right sidepanel-btn sidepanel-closed' id='favtagsPanelOpener' data-action='toggle-sidepanel' data-sidepanel='favtags' title='{{ 'Toggle favorite tags'|trans }}'>
+    <div class='bounce-right sidepanel-btn sidepanel-closed' id='favtagsPanelOpener' data-action='toggle-sidepanel' data-target='favtags' aria-controls='favtagsPanel' title='{{ 'Toggle favorite tags'|trans }}'>
       <i class='fas fa-folder-tree'></i>
     </div>
-    <div class='mt-3 bounce-right sidepanel-btn sidepanel-closed' id='todolistPanelOpener' data-action='toggle-sidepanel' data-sidepanel='todolist' title='{{ 'Toggle todolist'|trans }}'>
+    <div class='mt-3 bounce-right sidepanel-btn sidepanel-closed' id='todolistPanelOpener' data-action='toggle-sidepanel' data-target='todolist' aria-controls='todolistPanel' title='{{ 'Toggle todolist'|trans }}'>
       <i class='fas fa-list-check'></i>
     </div>
   </div>

@@ -150,8 +150,12 @@ export function collectForm(form: HTMLElement): object {
   let params = {};
   inputs.forEach(input => {
     const el = input;
+    el.classList.remove('border-danger');
     if (el.reportValidity() === false) {
       console.error(el);
+      el.classList.add('border-danger');
+      el.focus();
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
       throw new Error('Invalid input found! Aborting.');
     }
     let value = el.value;

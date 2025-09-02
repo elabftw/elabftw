@@ -41,7 +41,6 @@ use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Users\UltraAdmin;
 use Elabftw\Models\Users\Users;
-use Elabftw\Params\EntityParams;
 use Elabftw\Params\UserParams;
 use Elabftw\Traits\RandomColorTrait;
 use Elabftw\Traits\TestsUtilsTrait;
@@ -284,7 +283,7 @@ final class Populate
                             $end = new DateTimeImmutable($start)->modify("+{$durationHours} hours")->format('c');
                             $eventId = $Scheduler->postAction(Action::Create, array('start' => $start, 'end' => $end, 'title' => $item['title']));
                             $Scheduler->setId($eventId);
-                            $this->output->writeln(sprintf('├ + event: %s (id: %d in team: %d)', $Scheduler->readOne()['title_only'], $Scheduler->id, $teamid));
+                            $this->output->writeln(sprintf('├ + event: %s (id: %d in team: %d)', $Scheduler->readOne()['title_only'], $eventId, $teamid));
                         }
                     }
                     // don't override the items type metadata

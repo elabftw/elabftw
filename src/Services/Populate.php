@@ -29,6 +29,7 @@ use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\Items;
 use Elabftw\Models\Links\Items2ExperimentsLinks;
 use Elabftw\Models\Links\Items2ItemsLinks;
+use Elabftw\Models\Scheduler;
 use League\Flysystem\Filesystem as Fs;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Elabftw\Models\ItemsStatus;
@@ -90,7 +91,7 @@ final class Populate
         // adjust global config
         Config::getConfig()->patch(Action::Update, $this->yaml['config'] ?? array());
 
-        $this->output->writeln('┌ Creating teams, users, experiments, and resources...');
+        $this->output->writeln('┌ Creating teams, users, experiments, resources and events...');
         $Users = new UltraAdmin(1, 1);
         $Teams = new Teams($Users, bypassWritePermission: true);
 
@@ -271,7 +272,17 @@ final class Populate
                     );
                     $Items->setId($id);
                     // bookable cannot be set in create function
-                    $Items->update(new EntityParams('is_bookable', $item['is_bookable'] ?? '0'));
+                    $Items->patch(Action::Update, array('is_bookable' => $item['is_bookable'] ?? '0'));
+                    if (isset($item['is_bookable']) && $item['is_bookable'] === 1) {
+                        $Scheduler = new Scheduler($Items);
+                        $day = $this->faker->dateTimeBetween('+1 days', '+7 days');
+                        $startHour = $this->faker->numberBetween(8, 16);
+                        $start = new DateTimeImmutable($day->format('Y-m-d') . " $startHour:00")->format('c');
+                        $durationHours = $this->faker->numberBetween(1, 3);
+                        $end = new DateTimeImmutable($start)->modify("+{$durationHours} hours")->format('c');
+                        $Scheduler->postAction(Action::Create, array('start' => $start, 'end' => $end, 'title' => $item['title']));
+                        $this->output->writeln(sprintf('├ + event: %s (id: %d in team: %d)', $item['title'], $id, $teamid));
+                    }
                     // don't override the items type metadata
                     if (isset($item['metadata'])) {
                         $Items->patch(Action::Update, array('metadata' => $item['metadata']));

@@ -273,15 +273,19 @@ final class Populate
                     $Items->setId($id);
                     // bookable cannot be set in create function
                     $Items->patch(Action::Update, array('is_bookable' => $item['is_bookable'] ?? '0'));
+                    // create events in the Scheduler for the next two weeks
                     if (isset($item['is_bookable']) && $item['is_bookable'] === 1) {
                         $Scheduler = new Scheduler($Items);
-                        $day = $this->faker->dateTimeBetween('+1 days', '+7 days');
-                        $startHour = $this->faker->numberBetween(8, 16);
-                        $start = new DateTimeImmutable($day->format('Y-m-d') . " $startHour:00")->format('c');
-                        $durationHours = $this->faker->numberBetween(1, 3);
-                        $end = new DateTimeImmutable($start)->modify("+{$durationHours} hours")->format('c');
-                        $Scheduler->postAction(Action::Create, array('start' => $start, 'end' => $end, 'title' => $item['title']));
-                        $this->output->writeln(sprintf('├ + event: %s (id: %d in team: %d)', $item['title'], $id, $teamid));
+                        for ($i = 0; $i < 10; $i++) {
+                            $day = $this->faker->dateTimeBetween('+1 days', '+14 days');
+                            $startHour = $this->faker->numberBetween(8, 16);
+                            $start = new DateTimeImmutable($day->format('Y-m-d') . " $startHour:00")->format('c');
+                            $durationHours = $this->faker->numberBetween(1, 3);
+                            $end = new DateTimeImmutable($start)->modify("+{$durationHours} hours")->format('c');
+                            $eventId = $Scheduler->postAction(Action::Create, array('start' => $start, 'end' => $end, 'title' => $item['title']));
+                            $Scheduler->setId($eventId);
+                            $this->output->writeln(sprintf('├ + event: %s (id: %d in team: %d)', $Scheduler->readOne()['title_only'], $Scheduler->id, $teamid));
+                        }
                     }
                     // don't override the items type metadata
                     if (isset($item['metadata'])) {

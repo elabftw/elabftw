@@ -37,7 +37,7 @@ describe('Metadata Extra fields', () => {
   };
 
   const createNewField = (fieldName: string, type: string) => {
-    cy.get('[data-target="fieldBuilderModal"][aria-label="Add field"]').first().click();
+    cy.get('[data-cy="addMetadataField"]').first().click();
     cy.get('#fieldBuilderModal').should('be.visible');
     cy.get('#newFieldTypeSelect').select(type);
     cy.get('#newFieldKeyInput').wait(500).type(fieldName);

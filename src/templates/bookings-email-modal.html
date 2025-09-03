@@ -14,6 +14,9 @@
         {# BODY #}
         <label for='bookingsEmailBody' class='col-form-label mt-2'>{{ 'Email Body'|trans }}</label>
         <textarea class='form-control col-md-12' id='bookingsEmailBody'></textarea>
+        {# list of recipients filled by ts #}
+        <button type='button' data-action='get-surrounding-bookers' data-itemid='{{ Entity.entityData.id }}'>{{ 'List recipients' }}</button>
+        <span id='listEmailRecipients'></span>
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>

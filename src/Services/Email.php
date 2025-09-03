@@ -188,13 +188,11 @@ class Email
         $req = $Db->prepare($sql);
         $req->bindValue(':itemid', $itemId, PDO::PARAM_INT);
         $Db->execute($req);
-
         $rows = $req->fetchAll();
-        $addresses = array_map(
-            fn($row) => new Address($row['email'], $row['fullname']),
-            $rows
-        );
-        return array('count' => count($addresses), 'emails' => $addresses);
+        $addresses = array_map(fn($row) => new Address($row['email'], $row['fullname']), $rows);
+        // for API purposes, we keep the raw data
+        $rawEmails = array_map(fn($row) => array('email' => $row['email'], 'fullname' => $row['fullname']), $rows);
+        return array('count' => count($rows), 'emailsRaw' => $rawEmails, 'addressesRaw' => $addresses);
     }
 
     public function notifySysadminsTsBalance(int $tsBalance): bool

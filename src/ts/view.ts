@@ -56,6 +56,18 @@ if (mode === 'view') {
     }
   });
 
+  on('get-surrounding-bookers', (el: HTMLElement) => {
+    postForm('app/controllers/SysconfigAjaxController.php', { listBookers: '1', itemId: el.dataset.itemid })
+      .then(resp => resp.json())
+      .then(json => {
+        // msg is already an object with { count, emails }
+        const count = json.count;
+        const emails = json.emails;
+        const recipientsList = document.getElementById('listEmailRecipients');
+        recipientsList.textContent = `This email will be sent to ${count} users. Emails: ${emails.join(', ')}`;
+      });
+  })
+
   on('notify-surrounding-bookers', (el: HTMLElement) => {
     const itemId = el.dataset.itemid;
     const subject = (document.getElementById('bookingsEmailSubject') as HTMLInputElement).value;

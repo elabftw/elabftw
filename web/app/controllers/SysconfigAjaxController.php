@@ -56,6 +56,16 @@ try {
 
     $subject = $App->Request->request->getString('subject');
     $body = $App->Request->request->getString('body');
+    // get list of recipient
+    if ($App->Request->request->has('listBookers')) {
+        $result = $Email->getSurroundingBookersWithCount($App->Request->request->getInt('itemId'));
+        $emails = $result['emailsRaw'];
+        $emailList = array();
+        foreach ($emails as $email) {
+            $emailList[] = $email['email'];
+        }
+        $Response->setData(array('res' => true, 'emails' => $emailList, 'count' => $result['count']));
+    }
     // SEND MULTIPLE EMAILS (accepts a list of emails)
     if ($App->Request->request->has('notifyPastBookers')) {
         $replyTo = new Address($App->Users->userData['email'], $App->Users->userData['fullname']);

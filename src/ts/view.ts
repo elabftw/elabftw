@@ -56,10 +56,10 @@ if (mode === 'view') {
     }
   });
 
-  on('notify-past-bookers', (el: HTMLElement) => {
+  on('notify-surrounding-bookers', (el: HTMLElement) => {
     const itemId = el.dataset.itemid;
-    const subject = 'Update about an item you booked';
-    const body = 'Hello! You previously booked this item. Here\'s something important.';
+    const subject = (document.getElementById('bookingsEmailSubject') as HTMLInputElement).value;
+    const body = (document.getElementById('bookingsEmailBody') as HTMLInputElement).value;
     const button = (el as HTMLButtonElement);
     button.disabled = true;
     button.innerText = 'Sending…';

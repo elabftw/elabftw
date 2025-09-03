@@ -419,7 +419,6 @@ final class EntitySqlBuilder implements SqlBuilderInterface
                 SEPARATOR '|'
             ) AS events_start_itemid";
 
-
         // only select events from the future
         $this->joinsSql[] = "LEFT JOIN team_events
             ON ((team_events.$eventsColumn = entity.id)

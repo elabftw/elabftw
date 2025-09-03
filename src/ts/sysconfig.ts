@@ -32,7 +32,7 @@ function updateTsFieldsVisibility(select: HTMLSelectElement) {
   }
 }
 
-function handleEmailResponse(resp: Response, button: HTMLButtonElement): void {
+export function handleEmailResponse(resp: Response, button: HTMLButtonElement): void {
   resp.json().then(json => {
     notify.response(json);
     if (json.res) {
@@ -45,7 +45,7 @@ function handleEmailResponse(resp: Response, button: HTMLButtonElement): void {
   });
 }
 
-function postForm(controller: string, params: Record<string, string|Blob>): Promise<Response> {
+export function postForm(controller: string, params: Record<string, string|Blob>): Promise<Response> {
   const formData = new FormData();
   formData.append('csrf', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
   for (const [key, value] of Object.entries(params)) {

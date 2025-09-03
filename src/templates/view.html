@@ -92,9 +92,15 @@
   <hr>
 
   {# SHOW EVENTS #}
+  <div class='mb-2'>
   {% if Entity.entityData.events_start %}
     <div class='mb-2'>
       <i class='far fa-fw fa-calendar-alt'></i>
+      {% if Entity.entityData.type == 'items' %}
+        <button title='{{ 'Send an email to users who have booked this resource within the 4 last & upcoming months.'|trans }}' type='button' class='btn border-0 lh-normal hl-hover-gray' data-action='notify-past-bookers' data-itemid='{{ Entity.entityData.id }}'>
+          <i class='fas fa-fw fa-envelope'></i>
+        </button>
+      {% endif %}
       {% set splitItemids = Entity.entityData.events_start_itemid|split('|') %}
       {% for event in Entity.entityData.events_start|split('|') %}
         <a href='scheduler.php?items[]={{ splitItemids[loop.index - 1] }}&amp;start={{ event|url_encode }}' class='mx-1 btn btn-neutral relative-moment'  title='{{ event|date('Y-m-d H:i:s') }}' aria-label='{{ event|date('Y-m-d H:i:s') }}'></a>
@@ -102,7 +108,7 @@
     </div>
     <hr>
   {% endif %}
-
+  </div>
 
   {# SHOW NEXT STEP #}
   {% set next_step = Entity.entityData.next_step %}

@@ -54,14 +54,35 @@ try {
         $Email->testemailSend($App->Request->request->getString('email'));
     }
 
-    // SEND MASS EMAIL
+    $subject = $App->Request->request->getString('subject');
+    $body = $App->Request->request->getString('body');
+    // SEND MULTIPLE EMAILS (accepts a list of emails)
+    if ($App->Request->request->has('notifyPastBookers')) {
+        $replyTo = new Address($App->Users->userData['email'], $App->Users->userData['fullname']);
+        $result = $Email->getSurroundingBookersWithCount($App->Request->request->getInt('itemId'));
+        $emails = $result['emails'];
+        $count = $result['count'];
+
+        foreach ($emails as $address) {
+            try {
+                $Email->sendEmail($address, $subject, $body, replyTo: $replyTo);
+            } catch (ImproperActionException) {
+                continue;
+            }
+        }
+        $Response->setData(array(
+            'res' => true,
+            'msg' => sprintf('Email has been sent to %d users who booked this item within ±4 months.', $count),
+        ));
+    }
+    // SEND MASS EMAIL (accepts a predefined list of users, admins, etc.)
     if ($App->Request->request->has('massEmail')) {
         $replyTo = new Address($App->Users->userData['email'], $App->Users->userData['fullname']);
         $Email->massEmail(
             EmailTarget::from($App->Request->request->getString('target')),
             null,
-            $App->Request->request->getString('subject'),
-            $App->Request->request->getString('body'),
+            $subject,
+            $body,
             $replyTo,
             (bool) $App->Config->configArr['email_send_grouped'],
         );

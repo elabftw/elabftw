@@ -32,7 +32,7 @@
     "@fullcalendar/timegrid": "^6.1.17",
     "@fullcalendar/timeline": "^6.1.17",
     "@teselagen/bio-parsers": "^0.4.22",
-    "@teselagen/ove": "^0.4.12",
+    "@teselagen/ove": "^0.7.26",
     "@yarnpkg/core": "^4.4.1",
     "@yarnpkg/fslib": "^3.1.2",
     "@yarnpkg/libzip": "^3.2.1",

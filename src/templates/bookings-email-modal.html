@@ -8,12 +8,12 @@
         </button>
       </div>
       <div class='modal-body'>
-        <span id='listEmailRecipients' class='mb-2'></span>
+        <span id='listEmailRecipients' class='mb-2'></span><br>
         {# SUBJECT #}
-        <label for='bookingsEmailSubject' class='col-form-label'>{{ 'Email Subject'|trans }}</label>
+        <label for='bookingsEmailSubject' class='col-form-label font-weight-bold'>{{ 'Subject'|trans }}</label>
         <input class='form-control col-md-12' type='text' id='bookingsEmailSubject' size='45' />
         {# BODY #}
-        <label for='bookingsEmailBody' class='col-form-label mt-2'>{{ 'Email Body'|trans }}</label>
+        <label for='bookingsEmailBody' class='col-form-label mt-2 font-weight-bold'>{{ 'Message'|trans }}</label>
         <textarea class='form-control col-md-12' id='bookingsEmailBody'></textarea>
       </div>
       <div class='modal-footer'>

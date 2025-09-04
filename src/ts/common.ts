@@ -1179,7 +1179,7 @@ on('autocomplete', (el: HTMLElement) => {
         return;
         // TODO make it unselectable/grayed out or something, maybe once we use homegrown autocomplete
       }
-      const queryTerm = ['experiments', 'items'].includes(el.dataset.completeTarget)
+      const queryTerm = ['experiments', 'items'].includes(el.dataset.target)
         ? escapeExtendedQuery(term)
         : term;
       ApiC.getJson(`${el.dataset.target}/?q=${encodeURIComponent(queryTerm)}`).then(json => {

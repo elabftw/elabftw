@@ -321,7 +321,7 @@ const clickHandler = async (event) => {
   const fields = cols.map(c => c.field);
   const dataRows = useHeader ? aoa.slice(1) : aoa;
   const rows = dataRows.map(cells => {
-    const arr = SpreadsheetEditorHelper.normalizeRow(cells);
+    const arr = SpreadsheetEditorHelper.normalizeRow(cells, fields.length);
     const obj = {};
     for (let i = 0; i < fields.length; i++) {
       obj[fields[i]] = arr[i]

@@ -25,6 +25,8 @@ declare global {
   }
 }
 
+type Cell = string | number | boolean | null;
+
 export class SpreadsheetEditorHelper {
   async loadInSpreadsheetEditor(link: string, name: string, uploadId: number): Promise<void> {
     try {
@@ -137,13 +139,13 @@ export class SpreadsheetEditorHelper {
     notify.success();
   }
 
-  private static aoaToGrid(aoa: (string | number | boolean | null)[][]): { cols: GridColumn[]; rows: GridRow[] } {
+  private static aoaToGrid(aoa: Cell[][]): { cols: GridColumn[]; rows: GridRow[] } {
     const headerRaw = Array.isArray(aoa[0]) ? aoa[0] : [];
     const cols = buildSafeColumnDefs(headerRaw);
     const fields = cols.map(c => c.field);
     const width = fields.length;
     const rows: GridRow[] = aoa.slice(1).map(r => {
-      const arr = SpreadsheetEditorHelper.normalizeRow(r as any[], width);
+      const arr = SpreadsheetEditorHelper.normalizeRow(r, width);
       const obj: GridRow = {};
       for (let i = 0; i < width; i++) obj[fields[i]] = arr[i];
       return obj;
@@ -151,7 +153,7 @@ export class SpreadsheetEditorHelper {
     return { cols, rows };
   }
 
-  private static parseFileToAOA(buffer: ArrayBuffer): (string | number | boolean | null)[][] {
+  private static parseFileToAOA(buffer: ArrayBuffer): Cell[][] {
     const wb = read(buffer, { type: 'array' });
     const ws = wb.Sheets[wb.SheetNames[0]];
     // keep empty cells, drop truly empty rows
@@ -161,13 +163,13 @@ export class SpreadsheetEditorHelper {
       // important: we preserve empties so columns stay aligned. We don't want the columns to be under wrong title
       // https://stackoverflow.com/a/66859139
       defval: '',
-    }) as (string | number | boolean | null)[][];
+    }) as Cell[][];
     if (!aoa.length) throw new Error('Invalid file');
     return aoa;
   }
 
   // normalize function
-  private static normalizeRow(cells: any[], width: number): string[] {
+  public static normalizeRow(cells: ReadonlyArray<Cell>, width: number): string[] {
     const out = new Array<string>(width);
     for (let i = 0; i < width; i++) {
       out[i] = String(cells?.[i] ?? '');

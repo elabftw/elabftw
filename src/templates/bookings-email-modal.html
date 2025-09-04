@@ -1,5 +1,5 @@
 <div class='modal fade' id='sendBookingsEmailModal' tabindex='-1' role='dialog' aria-labelledby='sendBookingsEmailModalLabel'>
-  <div class='modal-dialog' role='document'>
+  <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
         <h5 class='modal-title' id='sendBookingsEmailModalLabel'><i class='fas fa-fw fa-envelope'></i> {{ 'Send an email to users who booked this resource'|trans }}</h5>
@@ -8,15 +8,13 @@
         </button>
       </div>
       <div class='modal-body'>
+        <span id='listEmailRecipients' class='mb-2'></span>
         {# SUBJECT #}
         <label for='bookingsEmailSubject' class='col-form-label'>{{ 'Email Subject'|trans }}</label>
         <input class='form-control col-md-12' type='text' id='bookingsEmailSubject' size='45' />
         {# BODY #}
         <label for='bookingsEmailBody' class='col-form-label mt-2'>{{ 'Email Body'|trans }}</label>
         <textarea class='form-control col-md-12' id='bookingsEmailBody'></textarea>
-        {# list of recipients filled by ts #}
-        <button type='button' data-action='get-surrounding-bookers' data-itemid='{{ Entity.entityData.id }}'>{{ 'List recipients' }}</button>
-        <span id='listEmailRecipients'></span>
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>

@@ -14,6 +14,7 @@ import { entity } from './getEntity';
 import { on } from './handlers';
 import { core } from './core';
 import { handleEmailResponse, postForm } from './sysconfig';
+import $ from 'jquery';
 
 const mode = new URLSearchParams(window.location.search).get('mode');
 if (mode === 'view') {
@@ -56,17 +57,17 @@ if (mode === 'view') {
     }
   });
 
-  on('get-surrounding-bookers', (el: HTMLElement) => {
+  on('open-bookings-email-modal', (el: HTMLElement) => {
     postForm('app/controllers/SysconfigAjaxController.php', { listBookers: '1', itemId: el.dataset.itemid })
       .then(resp => resp.json())
       .then(json => {
-        // msg is already an object with { count, fullnames }
         const fullnames = json.fullnames;
         const recipientsList = document.getElementById('listEmailRecipients');
         const count = fullnames.length;
-        recipientsList.textContent = `This email will be sent to ${count} user${count > 1 ? 's' : ''}: ${fullnames.join(', ')}`;
-      });
-  });
+        recipientsList.textContent = `This email will be sent to ${count} user${count > 1 ? 's' : ''}: ${fullnames.join(', ')}.`;
+      })
+      .then(() => $('#sendBookingsEmailModal').modal('toggle'));
+  })
 
   on('notify-surrounding-bookers', (el: HTMLElement) => {
     const itemId = el.dataset.itemid;

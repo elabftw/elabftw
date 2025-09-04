@@ -60,13 +60,13 @@ if (mode === 'view') {
     postForm('app/controllers/SysconfigAjaxController.php', { listBookers: '1', itemId: el.dataset.itemid })
       .then(resp => resp.json())
       .then(json => {
-        // msg is already an object with { count, emails }
-        const count = json.count;
-        const emails = json.emails;
+        // msg is already an object with { count, fullnames }
+        const fullnames = json.fullnames;
         const recipientsList = document.getElementById('listEmailRecipients');
-        recipientsList.textContent = `This email will be sent to ${count} users. Emails: ${emails.join(', ')}`;
+        const count = fullnames.length;
+        recipientsList.textContent = `This email will be sent to ${count} user${count > 1 ? 's' : ''}: ${fullnames.join(', ')}`;
       });
-  })
+  });
 
   on('notify-surrounding-bookers', (el: HTMLElement) => {
     const itemId = el.dataset.itemid;

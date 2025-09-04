@@ -56,22 +56,16 @@ try {
 
     $subject = $App->Request->request->getString('subject');
     $body = $App->Request->request->getString('body');
-    // get list of recipient
+    // GET LIST OF RECIPIENTS' FULL NAMES
     if ($App->Request->request->has('listBookers')) {
-        $result = $Email->getSurroundingBookersWithCount($App->Request->request->getInt('itemId'));
-        $emails = $result['emailsRaw'];
-        $emailList = array();
-        foreach ($emails as $email) {
-            $emailList[] = $email['email'];
-        }
-        $Response->setData(array('res' => true, 'emails' => $emailList, 'count' => $result['count']));
+        $result = $Email->getSurroundingBookers($App->Request->request->getInt('itemId'));
+        $Response->setData(array('res' => true, 'fullnames' => $result['fullnames']));
     }
     // SEND MULTIPLE EMAILS (accepts a list of emails)
     if ($App->Request->request->has('notifyPastBookers')) {
         $replyTo = new Address($App->Users->userData['email'], $App->Users->userData['fullname']);
-        $result = $Email->getSurroundingBookersWithCount($App->Request->request->getInt('itemId'));
-        $emails = $result['emails'];
-        $count = $result['count'];
+        $result = $Email->getSurroundingBookers($App->Request->request->getInt('itemId'));
+        $emails = $result['emailAddresses'];
 
         foreach ($emails as $address) {
             try {
@@ -82,7 +76,11 @@ try {
         }
         $Response->setData(array(
             'res' => true,
-            'msg' => sprintf('Email has been sent to %d users who booked this item within ±4 months.', $count),
+            'msg' => sprintf(
+                _('Email has been sent to %d %s who booked this item within ±4 months.'),
+                count($emails),
+                (count($emails) > 1 ? _('users') : _('user'))
+            ),
         ));
     }
     // SEND MASS EMAIL (accepts a predefined list of users, admins, etc.)

@@ -176,7 +176,7 @@ class Email
     }
 
     // get users who booked current item in the 4 surrounding months
-    public function getSurroundingBookersWithCount(int $itemId): array
+    public function getSurroundingBookers(int $itemId): array
     {
         $Db = Db::getConnection();
         $sql = 'SELECT DISTINCT email, CONCAT(firstname, " ", lastname) AS fullname
@@ -190,9 +190,9 @@ class Email
         $Db->execute($req);
         $rows = $req->fetchAll();
         $addresses = array_map(fn($row) => new Address($row['email'], $row['fullname']), $rows);
-        // for API purposes, we keep the raw data
-        $rawEmails = array_map(fn($row) => array('email' => $row['email'], 'fullname' => $row['fullname']), $rows);
-        return array('count' => count($rows), 'emailsRaw' => $rawEmails, 'addressesRaw' => $addresses);
+        // for listing recipients, keep only count & fullname
+        $fullNames = array_column($rows, 'fullname');
+        return array('fullnames' => $fullNames, 'emailAddresses' => $addresses);
     }
 
     public function notifySysadminsTsBalance(int $tsBalance): bool

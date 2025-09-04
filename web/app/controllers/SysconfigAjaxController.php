@@ -65,8 +65,10 @@ try {
     if ($App->Request->request->has('notifyPastBookers')) {
         $replyTo = new Address($App->Users->userData['email'], $App->Users->userData['fullname']);
         $result = $Email->getSurroundingBookers($App->Request->request->getInt('itemId'));
-        $emails = $result['emailAddresses'];
-
+        $emails = $result['emailAddresses'] ?? array();
+        if (!$emails) {
+            throw new ImproperActionException(_('No users/emails found for this resource\'s events.'));
+        }
         foreach ($emails as $address) {
             try {
                 $Email->sendEmail($address, $subject, $body, replyTo: $replyTo);

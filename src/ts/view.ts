@@ -5,16 +5,16 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import i18next from './i18n';
 import { InputType, Malle } from '@deltablot/malle';
+import $ from 'jquery';
 import { ApiC } from './api';
-import { relativeMoment, reloadElements } from './misc';
-import { Action, Model } from './interfaces';
+import { core } from './core';
 import { entity } from './getEntity';
 import { on } from './handlers';
-import { core } from './core';
+import i18next from './i18n';
+import { Action, Model } from './interfaces';
+import { relativeMoment, reloadElements } from './misc';
 import { handleEmailResponse, postForm } from './sysconfig';
-import $ from 'jquery';
 
 const mode = new URLSearchParams(window.location.search).get('mode');
 if (mode === 'view') {
@@ -63,11 +63,18 @@ if (mode === 'view') {
       .then(json => {
         const fullnames = json.fullnames;
         const recipientsList = document.getElementById('listEmailRecipients');
+        const sendBtn = document.querySelector<HTMLButtonElement>('[data-action="notify-surrounding-bookers"]');
         const count = fullnames.length;
-        recipientsList.textContent = `This email will be sent to ${count} user${count > 1 ? 's' : ''}: ${fullnames.join(', ')}.`;
+        if (count === 0 && sendBtn) {
+          recipientsList.textContent = 'There are no users to email to.';
+          sendBtn.disabled = true;
+        } else {
+          recipientsList.textContent = `This email will be sent to ${count} user${count > 1 ? 's' : ''}: ${fullnames.join(', ')}`;
+          sendBtn.disabled = false;
+        }
       })
       .then(() => $('#sendBookingsEmailModal').modal('toggle'));
-  })
+  });
 
   on('notify-surrounding-bookers', (el: HTMLElement) => {
     const itemId = el.dataset.itemid;

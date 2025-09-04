@@ -93,10 +93,8 @@
 
   {# SHOW EVENTS #}
   {% if Entity.entityData.type == 'items' and Entity.entityData.is_bookable == '1' %}
-    <div class='d-flex align-content-center'>
-      <button title='{{ 'Send an email to users who have booked this resource within the 4 last & upcoming months.'|trans }}' type='button' class='btn border-0 lh-normal hl-hover-gray' data-action='open-bookings-email-modal' data-itemid='{{ Entity.entityData.id }}'><i class='fas fa-fw fa-envelope'></i></button>
-      <div class='vertical-separator'></div>
-      {% if Entity.entityData.events_start %}
+    {% if Entity.entityData.events_start %}
+      <div class='d-flex align-content-center'>
         <div>
           <i class='far fa-fw fa-calendar-alt'></i>
           {% set splitItemids = Entity.entityData.events_start_itemid|split('|') %}
@@ -104,10 +102,10 @@
             <a href='scheduler.php?items[]={{ splitItemids[loop.index - 1] }}&amp;start={{ event|url_encode }}' class='mx-1 btn btn-neutral relative-moment'  title='{{ event|date('Y-m-d H:i:s') }}' aria-label='{{ event|date('Y-m-d H:i:s') }}'></a>
           {% endfor %}
         </div>
-      {% endif %}
-    </div>
+      </div>
+      <hr>
+    {% endif %}
     {% include 'bookings-email-modal.html' %}
-    <hr>
   {% endif %}
 
   {# SHOW NEXT STEP #}

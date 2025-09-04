@@ -163,6 +163,7 @@ export class SpreadsheetEditorHelper {
       // important: we preserve empties so columns stay aligned. We don't want the columns to be under wrong title
       // https://stackoverflow.com/a/66859139
       defval: '',
+      raw: true,
     }) as Cell[][];
     if (!aoa.length) throw new Error('Invalid file');
     return aoa;
@@ -193,7 +194,7 @@ export function ensureExtension(name: string, format: FileType): string {
   return name.toLowerCase().endsWith(ext) ? name : name + ext;
 }
 
-// not part of the helper directly because spreadsheet-editor.jsx clickHandler is using it, and react can't instanciate the helper twice in the same component
+// not part of the helper directly because spreadsheet-editor.jsx clickHandler is using it, and React can't instantiate the helper twice in the same component
 export function buildSafeColumnDefs(rawHeaders: unknown[]): GridColumn[] {
   const used = new Set<string>();
   return rawHeaders.map((val, i) => {

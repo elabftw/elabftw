@@ -62,6 +62,8 @@ final class i18n4Js
             'editing-metadata' => _('You are currently editing the metadata attached to this entry.'),
             'current-edit' => _('Currently editing'),
             'email' => _('Email'),
+            'email-no-recipients' => _('There are no users to email to.'),
+            'email-recipients' => _('This email will be sent to {{num, number }} user(s):'),
             'enable-permission' => _('You must allow at least one permission setting.'),
             'entity-default-title' => _('Untitled'),
             'entity-delete-warning' => _('The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?'),

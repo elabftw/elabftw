@@ -28,6 +28,8 @@ const t = {
     "editing-metadata": "現在、このエントリーに添付されているメタデータを編集中です。",
     "current-edit": "Currently editing",
     "email": "Eメールアドレス",
+    "email-no-recipients": "There are no users to email to.",
+    "email-recipients": "This email will be sent to {{num, number }} user(s):",
     "enable-permission": "You must allow at least one permission setting.",
     "entity-default-title": "無題",
     "entity-delete-warning": "選択したアイテムとすべての関連データが完全に削除されます。これは、元に戻すことはできません。実行して良いですか？",

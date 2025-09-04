@@ -28,6 +28,8 @@ const t = {
     "editing-metadata": "Anda sedang menyunting metadata yang dilampirkan ke entri ini.",
     "current-edit": "Currently editing",
     "email": "Surel",
+    "email-no-recipients": "There are no users to email to.",
+    "email-recipients": "This email will be sent to {{num, number }} user(s):",
     "enable-permission": "You must allow at least one permission setting.",
     "entity-default-title": "Tanpa Judul",
     "entity-delete-warning": "Komponen terpilih dan data terkait akan dihapus permanen. Ini tidak dapat dibatalkan. Anda yakin?",

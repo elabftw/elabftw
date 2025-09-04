@@ -28,6 +28,8 @@ const t = {
     "editing-metadata": "Vous êtes en train de modifier les métadonnées jointes à cette entrée.",
     "current-edit": "Currently editing",
     "email": "Email",
+    "email-no-recipients": "There are no users to email to.",
+    "email-recipients": "This email will be sent to {{num, number }} user(s):",
     "enable-permission": "Vous devez autoriser au moins un paramètre de permission.",
     "entity-default-title": "Sans titre",
     "entity-delete-warning": "Le ou les objet(s) sélectionné(s) ainsi que toutes les données associées seront supprimés définitivement. Cela est irréversible. Êtes-vous sûr(e) ?",

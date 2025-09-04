@@ -28,6 +28,8 @@ const t = {
     "editing-metadata": "현재 이 항목에 첨부된 메타데이터를 편집하고 있습니다.",
     "current-edit": "Currently editing",
     "email": "이메일",
+    "email-no-recipients": "There are no users to email to.",
+    "email-recipients": "This email will be sent to {{num, number }} user(s):",
     "enable-permission": "You must allow at least one permission setting.",
     "entity-default-title": "제목없음",
     "entity-delete-warning": "선택한 항목과 관련된 모든 데이터가 영구적으로 삭제되며 취소할 수 없습니다. 확실합니까?",

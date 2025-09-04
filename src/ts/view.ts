@@ -66,10 +66,10 @@ if (mode === 'view') {
         const sendBtn = document.querySelector<HTMLButtonElement>('[data-action="notify-surrounding-bookers"]');
         const count = fullnames.length;
         if (count === 0 && sendBtn) {
-          recipientsList.textContent = 'There are no users to email to.';
+          recipientsList.textContent = i18next.t('email-no-recipients');
           sendBtn.disabled = true;
         } else {
-          recipientsList.textContent = `This email will be sent to ${count} user${count > 1 ? 's' : ''}: ${fullnames.join(', ')}`;
+          recipientsList.textContent = `${i18next.t('email-recipients', { num: count })} ${fullnames.join(', ')}`;
           sendBtn.disabled = false;
         }
       })

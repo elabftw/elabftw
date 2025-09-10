@@ -65,7 +65,6 @@ import { entity } from './getEntity';
 import { on, get } from './handlers';
 import Tab from './Tab.class';
 import { core } from './core';
-import { handleEmailResponse, postForm } from './sysconfig';
 
 // we need to extend the interface from malle to add more properties
 interface Status extends SelectOptions {
@@ -1199,38 +1198,24 @@ on('query', (el: HTMLElement) => {
   window.location.href = url.href;
 });
 
-on('open-bookings-email-modal', (el: HTMLElement) => {
-  postForm('app/controllers/SysconfigAjaxController.php', { listBookers: '1', itemId: el.dataset.itemid })
-    .then(resp => resp.json())
-    .then(json => {
-      const fullnames = json.fullnames;
-      const recipientsList = document.getElementById('listEmailRecipients');
-      const sendBtn = document.querySelector<HTMLButtonElement>('[data-action="notify-surrounding-bookers"]');
-      const count = fullnames.length;
-      if (count === 0 && sendBtn) {
-        recipientsList.textContent = i18next.t('email-no-recipients');
-        sendBtn.disabled = true;
-      } else {
-        recipientsList.textContent = `${i18next.t('email-recipients', { num: count })} ${fullnames.join(', ')}`;
-        sendBtn.disabled = false;
-      }
-    })
-    .then(() => $('#sendBookingsEmailModal').modal('toggle'));
-});
-
-on('notify-surrounding-bookers', (el: HTMLElement) => {
-  const itemId = el.dataset.itemid;
-  const subject = (document.getElementById('bookingsEmailSubject') as HTMLInputElement).value;
-  const body = (document.getElementById('bookingsEmailBody') as HTMLInputElement).value;
+on('notify-surrounding-bookers', (el: HTMLElement, event: Event) => {
+  event.preventDefault();
+  const form = document.getElementById('notifySurroundingBookersForm') as HTMLFormElement;
+  const params = collectForm(form);
+  params['action'] = Action.Notif;
   const button = (el as HTMLButtonElement);
+  const buttonText = button.innerText;
   button.disabled = true;
-  button.innerText = 'Sending…';
-  postForm('app/controllers/SysconfigAjaxController.php', {
-    notifyPastBookers: '1',
-    itemId: itemId.toString(),
-    subject: subject,
-    body: body,
-  }).then(resp => handleEmailResponse(resp, button));
+  button.innerText = i18next.t('please-wait');
+  ApiC.post(`${entity.type}/${entity.id}`, params).then(() => {
+    form.reset();
+    $('#sendBookingsEmailModal').modal('hide');
+    button.innerText = buttonText;
+  }).catch(() => {
+    button.innerText = i18next.t('error');
+    // TODO don't hardcode colors
+    button.style.backgroundColor = '#e6614c';
+  }).finally(() => button.disabled = false);
 });
 
 /**

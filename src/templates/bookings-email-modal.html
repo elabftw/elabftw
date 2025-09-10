@@ -7,20 +7,22 @@
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
-      <div class='modal-body'>
-        <p>{{ 'Recipients are users with bookings up to 4 months past or future.'|trans }}</p>
-        <div id='listEmailRecipients' class='mb-2'></div>
-        {# SUBJECT #}
-        <label for='bookingsEmailSubject' class='col-form-label font-weight-bold'>{{ 'Subject'|trans }}</label>
-        <input class='form-control col-md-12' type='text' id='bookingsEmailSubject' size='45' />
-        {# BODY #}
-        <label for='bookingsEmailBody' class='col-form-label mt-2 font-weight-bold'>{{ 'Message'|trans }}</label>
-        <textarea class='form-control col-md-12' id='bookingsEmailBody'></textarea>
-      </div>
-      <div class='modal-footer'>
-        <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
-        <button type='button' class='btn btn-primary' data-dismiss='modal' data-action='notify-surrounding-bookers' title='{{ 'Send'|trans }}' data-itemid='{{ Entity.entityData.id }}'>{{ 'Send'|trans }}</button>
-      </div>
+      <form id='notifySurroundingBookersForm' aria-label='{{ 'Send an email to users who booked this resource'|trans }}'>
+        <div class='modal-body'>
+          <p>{{ 'Recipients are users with bookings up to 4 months past or future.'|trans }}</p>
+          <p>{{ 'Email will be sent to %d users.'|trans|format(surroundingBookers|length) }}</p>
+          {# SUBJECT #}
+          <label for='bookingsEmailSubject' class='col-form-label'>{{ 'Subject'|trans }}</label>
+          <input class='form-control' name='subject' type='text' id='bookingsEmailSubject' size='45' required maxlength='200'/>
+          {# BODY #}
+          <label for='bookingsEmailBody' class='col-form-label mt-2'>{{ 'Message'|trans }}</label>
+          <textarea class='form-control' name='body' id='bookingsEmailBody' maxlength='9000'></textarea>
+        </div>
+        <div class='modal-footer'>
+          <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+          <button type='submit' class='btn btn-primary' data-action='notify-surrounding-bookers'>{{ 'Send'|trans }}</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

@@ -34,6 +34,7 @@ const t = {
     "entity-default-title": "Sans titre",
     "entity-delete-warning": "Le ou les objet(s) sélectionné(s) ainsi que toutes les données associées seront supprimés définitivement. Cela est irréversible. Êtes-vous sûr(e) ?",
     "entries-processed": "{{num, number}} entrées traitées",
+    "error": "Erreur",
     "error-no-filename": "File name is missing.",
     "error-no-category": "Une catégorie est nécessaire pour rechercher l'ID personnalisé suivant",
     "error-fetch-request": "Une erreur s'est produite lors de l'extraction des données demandées : {{error}}",

@@ -34,6 +34,7 @@ const t = {
     "entity-default-title": "Sarlavhasiz",
     "entity-delete-warning": "Tanlangan element(lar) va barcha bog‘langan ma’lumotlar butunlay o‘chirib tashlanadi. Buni ortga qaytarib bo‘lmaydi. Ishonchingiz komilmi?",
     "entries-processed": "{{num, number}} entries processed",
+    "error": "Xato",
     "error-no-filename": "File name is missing.",
     "error-no-category": "Keyingi Custom IDni olish uchun turkum talab qilinadi",
     "error-fetch-request": "There was an error while fetching the requested data: {{error}}",

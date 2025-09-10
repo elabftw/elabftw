@@ -32,19 +32,6 @@ function updateTsFieldsVisibility(select: HTMLSelectElement) {
   }
 }
 
-export function handleEmailResponse(resp: Response, button: HTMLButtonElement): void {
-  resp.json().then(json => {
-    notify.response(json);
-    if (json.res) {
-      button.innerText = 'Sent!';
-      button.disabled = false;
-    } else {
-      button.innerText ='Error';
-      button.style.backgroundColor = '#e6614c';
-    }
-  });
-}
-
 export function postForm(controller: string, params: Record<string, string|Blob>): Promise<Response> {
   const formData = new FormData();
   formData.append('csrf', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));

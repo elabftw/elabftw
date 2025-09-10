@@ -175,27 +175,6 @@ class Email
         return $this->send($message);
     }
 
-    // get users who booked current item in the 4 surrounding months
-    public function getSurroundingBookers(int $itemId): array
-    {
-        $Db = Db::getConnection();
-        // Note: this might reach users that had their account fully archived, but the problem will go away after 4 months.
-        $sql = 'SELECT DISTINCT email, CONCAT(firstname, " ", lastname) AS fullname
-            FROM team_events
-            INNER JOIN users ON users.userid = team_events.userid
-            WHERE team_events.item = :itemid
-              AND team_events.start BETWEEN DATE_SUB(NOW(), INTERVAL 4 MONTH) AND DATE_ADD(NOW(), INTERVAL 4 MONTH)
-              AND users.validated = 1';
-        $req = $Db->prepare($sql);
-        $req->bindValue(':itemid', $itemId, PDO::PARAM_INT);
-        $Db->execute($req);
-        $rows = $req->fetchAll();
-        $addresses = array_map(fn($row) => new Address($row['email'], $row['fullname']), $rows);
-        // for listing recipients, keep only count & fullname
-        $fullNames = array_column($rows, 'fullname');
-        return array('fullnames' => $fullNames, 'emailAddresses' => $addresses);
-    }
-
     public function notifySysadminsTsBalance(int $tsBalance): bool
     {
         $emails = self::getAllEmailAddresses(EmailTarget::Sysadmins);

@@ -342,6 +342,7 @@ final class Apiv2Controller extends AbstractApiController
                 ApiSubModels::Comments => new Comments($this->Model, $this->subId),
                 ApiSubModels::Containers => LinksFactory::getContainersLinks($this->Model, $this->subId),
                 ApiSubModels::ExperimentsLinks => LinksFactory::getExperimentsLinks($this->Model, $this->subId),
+                ApiSubModels::Events => new Scheduler($this->Model, $this->subId),
                 ApiSubModels::Compounds => LinksFactory::getCompoundsLinks($this->Model, $this->subId),
                 ApiSubModels::ItemsLinks => LinksFactory::getItemsLinks($this->Model, $this->subId),
                 ApiSubModels::RequestActions => new RequestActions($this->requester, $this->Model, $this->subId),

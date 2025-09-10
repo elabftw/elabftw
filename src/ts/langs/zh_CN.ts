@@ -34,6 +34,7 @@ const t = {
     "entity-default-title": "未命名",
     "entity-delete-warning": "所选项目和所有相关数据将被永久删除。这不能被撤销。您确定吗？",
     "entries-processed": "{{num, number}} entries processed",
+    "error": "错误",
     "error-no-filename": "File name is missing.",
     "error-no-category": "需要一个类别才能获取下一个自定义 ID",
     "error-fetch-request": "There was an error while fetching the requested data: {{error}}",

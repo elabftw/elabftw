@@ -64,17 +64,23 @@ use Elabftw\Params\ExtraFieldsOrderingParams;
 use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
+use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
 use Elabftw\Services\HttpGetter;
 use Elabftw\Services\SignatureHelper;
 use Elabftw\Services\TimestampUtils;
 use Elabftw\Traits\EntityTrait;
 use GuzzleHttp\Client;
+use Monolog\Handler\ErrorLogHandler;
+use Monolog\Logger;
 use PDO;
 use PDOStatement;
 use Override;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mailer\Transport;
+use Symfony\Component\Mime\Address;
 use ZipArchive;
 
 use function array_column;
@@ -245,6 +251,7 @@ abstract class AbstractEntity extends AbstractRest
                 }
             )(),
             Action::Duplicate => $this->duplicate((bool) ($reqBody['copyFiles'] ?? false), (bool) ($reqBody['linkToOriginal'] ?? false)),
+            Action::Notif => $this->notifyBookers($reqBody),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
     }
@@ -267,6 +274,25 @@ abstract class AbstractEntity extends AbstractRest
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->requester->userid, PDO::PARAM_INT);
         return $this->Db->execute($req);
+    }
+
+    // get users who booked current item in the 4 surrounding months
+    public function getSurroundingBookers(): array
+    {
+        if (!$this->entityData['is_bookable']) {
+            return array();
+        }
+        // Note: this might reach users that had their account fully archived, but the problem will go away after 4 months.
+        $sql = 'SELECT DISTINCT email, CONCAT(firstname, " ", lastname) AS fullname
+            FROM team_events
+            INNER JOIN users ON users.userid = team_events.userid
+            WHERE team_events.item = :itemid
+              AND team_events.start BETWEEN DATE_SUB(NOW(), INTERVAL 4 MONTH) AND DATE_ADD(NOW(), INTERVAL 4 MONTH)
+              AND users.validated = 1';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':itemid', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return $req->fetchAll();
     }
 
     public function lock(): array
@@ -1074,5 +1100,35 @@ abstract class AbstractEntity extends AbstractRest
         if (!empty($searchError)) {
             throw new ImproperActionException('Error with extended search: ' . $searchError);
         }
+    }
+
+    private function notifyBookers(array $params): int
+    {
+        $bookers = $this->getSurroundingBookers();
+        $replyTo = new Address($this->Users->userData['email'], $this->Users->userData['fullname']);
+        $addresses = array_map(fn($row) => new Address($row['email'], $row['fullname']), $bookers);
+        if (!$addresses) {
+            return 0;
+        }
+        $errorLogLogger = new Logger('elabftw');
+        $errorLogLogger->pushHandler(new ErrorLogHandler());
+        $Email = new Email(
+            new Mailer(Transport::fromDsn(Config::getConfig()->getDsn())),
+            $errorLogLogger,
+            Config::getConfig()->configArr['mail_from'],
+            Env::asBool('DEMO_MODE'),
+        );
+        $subject = Filter::toPureString($params['subject']);
+        $body = Filter::toPureString($params['body']);
+        $sent = 0;
+        foreach ($addresses as $address) {
+            try {
+                $Email->sendEmail($address, $subject, $body, replyTo: $replyTo);
+                $sent++;
+            } catch (ImproperActionException) {
+                continue;
+            }
+        }
+        return $sent;
     }
 }

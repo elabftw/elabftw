@@ -34,6 +34,7 @@ const t = {
     "entity-default-title": "제목없음",
     "entity-delete-warning": "선택한 항목과 관련된 모든 데이터가 영구적으로 삭제되며 취소할 수 없습니다. 확실합니까?",
     "entries-processed": "{{num, number}} entries processed",
+    "error": "오류",
     "error-no-filename": "File name is missing.",
     "error-no-category": "다음 맞춤 ID를 가져오려면 카테고리가 필요합니다.",
     "error-fetch-request": "There was an error while fetching the requested data: {{error}}",

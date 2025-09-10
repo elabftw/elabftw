@@ -11,13 +11,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use DateInterval;
-use DateTimeImmutable;
-use Elabftw\Enums\Action;
 use Elabftw\Enums\EmailTarget;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Info;
-use Elabftw\Models\Scheduler;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users\UltraAdmin;
 use Elabftw\Traits\TestsUtilsTrait;
@@ -107,23 +103,5 @@ class EmailTest extends \PHPUnit\Framework\TestCase
     public function testNotifySysadminsTsBalance(): void
     {
         $this->assertTrue($this->Email->notifySysadminsTsBalance(12));
-    }
-
-    public function testGetSurroundingBookers(): void
-    {
-        // create an item & an event to get the user's email
-        $Items1 = $this->getFreshItem();
-        $Scheduler1 = new Scheduler($Items1);
-        $d = new DateTimeImmutable('+3 hour');
-        $start = $d->format('c');
-        $d->add(new DateInterval('PT2H'));
-        $end = $d->format('c');
-        $id = $Scheduler1->postAction(Action::Create, array('start' => $start, 'end' => $end, 'title' => 'Mail event'));
-        $result = $this->Email->getSurroundingBookers($Items1->id);
-        $this->assertArrayHasKey('fullnames', $result);
-        $this->assertArrayHasKey('emailAddresses', $result);
-        $this->assertInstanceOf(Address::class, $result['emailAddresses'][0]);
-        $Scheduler1->setId($id);
-        $Scheduler1->destroy();
     }
 }

@@ -34,6 +34,7 @@ const t = {
     "entity-default-title": "Pealkirjata",
     "entity-delete-warning": "Valitud üksus(ed) ja kõik nendega seotud andmed kustutatakse jäädavalt. Seda ei saa tagasi võtta. Kas olete kindel?",
     "entries-processed": "{{num, number}} kirjet töödeldud",
+    "error": "Viga",
     "error-no-filename": "File name is missing.",
     "error-no-category": "Kohandatud ID toomiseks on vajalik kategooria",
     "error-fetch-request": "Taotletud andmete toomisel ilmnes viga: {{error}}",

@@ -192,7 +192,7 @@
         <a class='btn mr-2 hl-hover-gray p-2 lh-normal border-0' title='{{ 'Book item'|trans }}' aria-label='{{ 'Book item'|trans }}' href='scheduler.php?items[]={{ Entity.id }}'>
           <i class='fas fa-calendar-plus fa-fw'></i>
         </a>
-        <button type='button' class='btn border-0 lh-normal hl-hover-gray p-2 mr-2' aria-label='{{ 'Send an email to users who have booked this resource within the 4 last & upcoming months.'|trans }}' title='{{ 'Send an email to users who have booked this resource within the 4 last & upcoming months.'|trans }}' data-action='open-bookings-email-modal' data-itemid='{{ Entity.entityData.id }}'>
+        <button type='button' class='btn border-0 lh-normal hl-hover-gray p-2 mr-2' aria-label='{{ 'Send an email to users who have booked this resource within the 4 last & upcoming months.'|trans }}' title='{{ 'Send an email to users who have booked this resource within the 4 last & upcoming months.'|trans }}' data-action='toggle-modal' data-target='sendBookingsEmailModal'>
           <i class='fas fa-fw fa-envelope'></i>
         </button>
       {% else %}

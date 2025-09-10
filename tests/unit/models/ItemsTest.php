@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use DateTimeImmutable;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\FileFromString;
@@ -210,6 +211,17 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         // unlock
         $item = $this->Items->toggleLock();
         $this->assertFalse((bool) $item['locked']);
+    }
+
+    public function testGetSurroundingBookers(): void
+    {
+        $item = $this->getFreshBookableItem(2);
+        $Scheduler = new Scheduler($item);
+        $start = new DateTimeImmutable('+3 hour');
+        $end = new DateTimeImmutable('+6 hour');
+        $Scheduler->postAction(Action::Create, array('start' => $start->format('c'), 'end' => $end->format('c'), 'title' => 'Mail event'));
+        $result = $item->getSurroundingBookers();
+        $this->assertCount(1, $result);
     }
 
     private function makeItemFromImmutableTemplateFor(AuthenticatedUser $user): Items

@@ -34,6 +34,7 @@ const t = {
     "entity-default-title": "Bez tytułu",
     "entity-delete-warning": "Wybrany element(y) i wszystkie powiązane z nim dane zostaną nieodwracalnie usunięte. Ta operacja nie może być cofnięta. Jesteś pewny?",
     "entries-processed": "{{num, number}} entries processed",
+    "error": "Błąd",
     "error-no-filename": "File name is missing.",
     "error-no-category": "Aby pobrać następny identyfikator niestandardowy, wymagana jest kategoria",
     "error-fetch-request": "There was an error while fetching the requested data: {{error}}",

@@ -25,6 +25,7 @@ enum ApiSubModels: string
     case ExperimentsCategories = 'experiments_categories';
     case ExperimentsLinks = 'experiments_links';
     case ExperimentsStatus = 'experiments_status';
+    case Events = 'events';
     case ResourcesCategories = 'resources_categories';
     case ItemsLinks = 'items_links';
     case ItemsStatus = 'items_status';

@@ -18,6 +18,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Idps;
 use Elabftw\Services\Email;
+use Elabftw\Services\Filter;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Mailer\Mailer;
@@ -54,38 +55,8 @@ try {
         $Email->testemailSend($App->Request->request->getString('email'));
     }
 
-    $subject = $App->Request->request->getString('subject');
-    $body = $App->Request->request->getString('body');
-    // GET LIST OF RECIPIENTS' FULL NAMES
-    if ($App->Request->request->has('listBookers')) {
-        $result = $Email->getSurroundingBookers($App->Request->request->getInt('itemId'));
-        $Response->setData(array('res' => true, 'fullnames' => $result['fullnames']));
-    }
-    // SEND MULTIPLE EMAILS (accepts a list of emails)
-    if ($App->Request->request->has('notifyPastBookers')) {
-        $replyTo = new Address($App->Users->userData['email'], $App->Users->userData['fullname']);
-        $result = $Email->getSurroundingBookers($App->Request->request->getInt('itemId'));
-        $emails = $result['emailAddresses'] ?? array();
-        if (!$emails) {
-            throw new ImproperActionException(_('No users/emails found for this resource\'s events.'));
-        }
-        foreach ($emails as $address) {
-            try {
-                $Email->sendEmail($address, $subject, $body, replyTo: $replyTo);
-            } catch (ImproperActionException) {
-                continue;
-            }
-        }
-        $sent = count($emails);
-        $Response->setData(array(
-            'res' => true,
-            'msg' => sprintf(
-                _('Email has been sent to %d %s.'),
-                $sent,
-                ngettext('user', 'users', $sent),
-            ),
-        ));
-    }
+    $subject = Filter::toPureString($App->Request->request->getString('subject'));
+    $body = Filter::toPureString($App->Request->request->getString('body'));
     // SEND MASS EMAIL (accepts a predefined list of users, admins, etc.)
     if ($App->Request->request->has('massEmail')) {
         $replyTo = new Address($App->Users->userData['email'], $App->Users->userData['fullname']);

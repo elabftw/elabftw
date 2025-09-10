@@ -71,8 +71,6 @@ use Elabftw\Services\SignatureHelper;
 use Elabftw\Services\TimestampUtils;
 use Elabftw\Traits\EntityTrait;
 use GuzzleHttp\Client;
-use Monolog\Handler\ErrorLogHandler;
-use Monolog\Logger;
 use PDO;
 use PDOStatement;
 use Override;
@@ -1110,11 +1108,9 @@ abstract class AbstractEntity extends AbstractRest
         if (!$addresses) {
             return 0;
         }
-        $errorLogLogger = new Logger('elabftw');
-        $errorLogLogger->pushHandler(new ErrorLogHandler());
         $Email = new Email(
             new Mailer(Transport::fromDsn(Config::getConfig()->getDsn())),
-            $errorLogLogger,
+            Email::getDefaultLogger(),
             Config::getConfig()->configArr['mail_from'],
             Env::asBool('DEMO_MODE'),
         );

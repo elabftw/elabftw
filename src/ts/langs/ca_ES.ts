@@ -28,8 +28,6 @@ const t = {
     "editing-metadata": "Actualment esteu editant les metadades adjuntes a aquesta entrada.",
     "current-edit": "Currently editing",
     "email": "Correu electrònic",
-    "email-no-recipients": "There are no users to email to.",
-    "email-recipients": "This email will be sent to {{num, number }} user(s):",
     "enable-permission": "You must allow at least one permission setting.",
     "entity-default-title": "Sense títol",
     "entity-delete-warning": "L’element o els elements seleccionats i totes les dades associades s’eliminaran definitivament. Això no es pot desfer. Estàs segur?",

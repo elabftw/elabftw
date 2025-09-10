@@ -28,8 +28,6 @@ const t = {
     "editing-metadata": "Sa muudad praegu sellele kirjele lisatud metaandmeid.",
     "current-edit": "Currently editing",
     "email": "E-post",
-    "email-no-recipients": "There are no users to email to.",
-    "email-recipients": "This email will be sent to {{num, number }} user(s):",
     "enable-permission": "Peate lubama vähemalt ühe loa seadistuse.",
     "entity-default-title": "Pealkirjata",
     "entity-delete-warning": "Valitud üksus(ed) ja kõik nendega seotud andmed kustutatakse jäädavalt. Seda ei saa tagasi võtta. Kas olete kindel?",

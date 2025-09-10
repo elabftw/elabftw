@@ -28,8 +28,6 @@ const t = {
     "editing-metadata": "You are currently editing the metadata attached to this entry.",
     "current-edit": "Currently editing",
     "email": "Email",
-    "email-no-recipients": "There are no users to email to.",
-    "email-recipients": "This email will be sent to {{num, number }} user(s):",
     "enable-permission": "You must allow at least one permission setting.",
     "entity-default-title": "Untitled",
     "entity-delete-warning": "The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?",

@@ -28,8 +28,6 @@ const t = {
     "editing-metadata": "Sie bearbeiten gerade die Metadaten zu diesem Eintrag.",
     "current-edit": "Currently editing",
     "email": "E-Mail",
-    "email-no-recipients": "There are no users to email to.",
-    "email-recipients": "This email will be sent to {{num, number }} user(s):",
     "enable-permission": "You must allow at least one permission setting.",
     "entity-default-title": "Unbenannt",
     "entity-delete-warning": "Die ausgewählten Element(e) und alle zugehörigen Daten werden dauerhaft gelöscht. Das kann nicht rückgängig gemacht werden. Sind Sie sicher?",

@@ -28,8 +28,6 @@ const t = {
     "editing-metadata": "Siz hozirda ushbu yozuvga biriktirilgan metamaʼlumotlarni tahrir qilyapsiz.",
     "current-edit": "Currently editing",
     "email": "Elektron pochta",
-    "email-no-recipients": "There are no users to email to.",
-    "email-recipients": "This email will be sent to {{num, number }} user(s):",
     "enable-permission": "You must allow at least one permission setting.",
     "entity-default-title": "Sarlavhasiz",
     "entity-delete-warning": "Tanlangan element(lar) va barcha bog‘langan ma’lumotlar butunlay o‘chirib tashlanadi. Buni ortga qaytarib bo‘lmaydi. Ishonchingiz komilmi?",

@@ -28,8 +28,6 @@ const t = {
     "editing-metadata": "Αυτήν τη στιγμή επεξεργάζεστε τα μεταδεδομένα που επισυνάπτονται σε αυτήν την καταχώριση.",
     "current-edit": "Currently editing",
     "email": "Ηλεκτρονικό ταχυδρομείο",
-    "email-no-recipients": "There are no users to email to.",
-    "email-recipients": "This email will be sent to {{num, number }} user(s):",
     "enable-permission": "You must allow at least one permission setting.",
     "entity-default-title": "Χωρίς τίτλο",
     "entity-delete-warning": "Τα επιλεγμένα στοιχεία και όλα τα σχετικά δεδομένα θα διαγραφούν οριστικά. Αυτό δεν μπορεί να αναιρεθεί. Είσαι σίγουρος/η;",

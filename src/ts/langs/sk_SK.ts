@@ -28,8 +28,6 @@ const t = {
     "editing-metadata": "Editujete metadáta pripojené k tejto položke.",
     "current-edit": "Currently editing",
     "email": "Email",
-    "email-no-recipients": "There are no users to email to.",
-    "email-recipients": "This email will be sent to {{num, number }} user(s):",
     "enable-permission": "You must allow at least one permission setting.",
     "entity-default-title": "Bez mena",
     "entity-delete-warning": "Vybraté položky a všetky súvisiace údaje sa natrvalo odstránia. To nie je možné vrátiť späť. Si si istý?",

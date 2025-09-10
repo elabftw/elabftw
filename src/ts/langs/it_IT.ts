@@ -28,8 +28,6 @@ const t = {
     "editing-metadata": "Si stanno modificando i metadati allegati a questa voce.",
     "current-edit": "Currently editing",
     "email": "Indirizzo email",
-    "email-no-recipients": "There are no users to email to.",
-    "email-recipients": "This email will be sent to {{num, number }} user(s):",
     "enable-permission": "You must allow at least one permission setting.",
     "entity-default-title": "Senza titolo",
     "entity-delete-warning": "Quanto è stato selezionato (nonché i dati associati) sarà definitivamente cancellato. Il processo è irreversibile. Si è veramente sicuri?",

@@ -179,9 +179,10 @@ class Email
     public function getSurroundingBookers(int $itemId): array
     {
         $Db = Db::getConnection();
+        // Note: this might reach users that had their account fully archived, but the problem will go away after 4 months.
         $sql = 'SELECT DISTINCT email, CONCAT(firstname, " ", lastname) AS fullname
             FROM team_events
-            JOIN users ON users.userid = team_events.userid
+            INNER JOIN users ON users.userid = team_events.userid
             WHERE team_events.item = :itemid
               AND team_events.start BETWEEN DATE_SUB(NOW(), INTERVAL 4 MONTH) AND DATE_ADD(NOW(), INTERVAL 4 MONTH)
               AND users.validated = 1';

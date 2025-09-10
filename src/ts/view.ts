@@ -6,7 +6,6 @@
  * @package elabftw
  */
 import { InputType, Malle } from '@deltablot/malle';
-import $ from 'jquery';
 import { ApiC } from './api';
 import { core } from './core';
 import { entity } from './getEntity';
@@ -14,7 +13,6 @@ import { on } from './handlers';
 import i18next from './i18n';
 import { Action, Model } from './interfaces';
 import { relativeMoment, reloadElements } from './misc';
-import { handleEmailResponse, postForm } from './sysconfig';
 
 const mode = new URLSearchParams(window.location.search).get('mode');
 if (mode === 'view') {
@@ -55,40 +53,6 @@ if (mode === 'view') {
     if (confirm(i18next.t('generic-delete-warning'))) {
       ApiC.delete(`${entity.type}/${entity.id}/${Model.Comment}/${el.dataset.id}`).then(() => el.parentElement.parentElement.remove());
     }
-  });
-
-  on('open-bookings-email-modal', (el: HTMLElement) => {
-    postForm('app/controllers/SysconfigAjaxController.php', { listBookers: '1', itemId: el.dataset.itemid })
-      .then(resp => resp.json())
-      .then(json => {
-        const fullnames = json.fullnames;
-        const recipientsList = document.getElementById('listEmailRecipients');
-        const sendBtn = document.querySelector<HTMLButtonElement>('[data-action="notify-surrounding-bookers"]');
-        const count = fullnames.length;
-        if (count === 0 && sendBtn) {
-          recipientsList.textContent = i18next.t('email-no-recipients');
-          sendBtn.disabled = true;
-        } else {
-          recipientsList.textContent = `${i18next.t('email-recipients', { num: count })} ${fullnames.join(', ')}`;
-          sendBtn.disabled = false;
-        }
-      })
-      .then(() => $('#sendBookingsEmailModal').modal('toggle'));
-  });
-
-  on('notify-surrounding-bookers', (el: HTMLElement) => {
-    const itemId = el.dataset.itemid;
-    const subject = (document.getElementById('bookingsEmailSubject') as HTMLInputElement).value;
-    const body = (document.getElementById('bookingsEmailBody') as HTMLInputElement).value;
-    const button = (el as HTMLButtonElement);
-    button.disabled = true;
-    button.innerText = 'Sending…';
-    postForm('app/controllers/SysconfigAjaxController.php', {
-      notifyPastBookers: '1',
-      itemId: itemId.toString(),
-      subject: subject,
-      body: body,
-    }).then(resp => handleEmailResponse(resp, button));
   });
 
   on('override-exclusive-edit-lock', () => {

@@ -76,12 +76,13 @@ try {
                 continue;
             }
         }
+        $sent = count($emails);
         $Response->setData(array(
             'res' => true,
             'msg' => sprintf(
-                _('Email has been sent to %d %s who booked this item within ±4 months.'),
-                count($emails),
-                (count($emails) > 1 ? _('users') : _('user'))
+                _('Email has been sent to %d %s.'),
+                $sent,
+                ngettext('user', 'users', $sent),
             ),
         ));
     }

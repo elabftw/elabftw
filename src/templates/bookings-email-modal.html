@@ -8,7 +8,8 @@
         </button>
       </div>
       <div class='modal-body'>
-        <span id='listEmailRecipients' class='mb-2'></span><br>
+        <p>{{ 'Recipients are users with bookings up to 4 months past or future.'|trans }}</p>
+        <div id='listEmailRecipients' class='mb-2'></div>
         {# SUBJECT #}
         <label for='bookingsEmailSubject' class='col-form-label font-weight-bold'>{{ 'Subject'|trans }}</label>
         <input class='form-control col-md-12' type='text' id='bookingsEmailSubject' size='45' />

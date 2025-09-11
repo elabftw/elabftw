@@ -325,7 +325,7 @@
   <h3 class='p-2 pl-3 section-title'>{{ 'Send a Mass Email'|trans }}</h3>
   <form class='pl-3 mt-2 mb-5' aria-label='{{ 'Send a Mass Email'|trans }}' id='massEmailForm'>
     {{ App.Session.get('csrf')|csrf }}
-    <input type='hidden' name='massEmail' value='1'>
+    <input type='hidden' name='action' value='email'>
     <label>{{ 'Send to'|trans }}</label>
     <div class='form-check'>
       <input class='form-check-input' type='radio' name='target' value='active_users' id='targetAll' checked> <label class='form-check-label' for='targetAll'>{{ 'All active users'|trans }}</label>
@@ -407,7 +407,7 @@
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Send a test email'|trans }}</h3>
   <form class='pl-3' aria-label='{{ 'Send a test email'|trans }}' id='testEmailForm'>
     {{ App.Session.get('csrf')|csrf }}
-    <input type='hidden' name='testemailSend' value='1'>
+    <input type='hidden' name='action' value='test'>
     <div class='input-group'>
       <input type='email' name='email' class='form-control col-md-12' value='{{ App.Users.userData.email|e('html_attr') }}' aria-label='{{ 'Email address'|trans }}'>
       <div class='input-group-append'>

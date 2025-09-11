@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
+use Elabftw\Elabftw\App;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\MakeTimestampInterface;
@@ -23,8 +24,6 @@ use Elabftw\Models\Users\Users;
 use Elabftw\Params\ContentParams;
 use Elabftw\Services\MpdfProvider;
 use GuzzleHttp\Client;
-use Monolog\Handler\ErrorLogHandler;
-use Monolog\Logger;
 use PDO;
 use Override;
 
@@ -113,7 +112,7 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
             $userData['pdf_format'],
             true, // PDF/A always for timestamp pdf
         );
-        $log = (new Logger('elabftw'))->pushHandler(new ErrorLogHandler());
+        $log = App::getDefaultLogger();
         $MakePdf = new MakeTimestampPdf(
             log: $log,
             mpdfProvider: $MpdfProvider,

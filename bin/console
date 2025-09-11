@@ -43,7 +43,7 @@ try {
 try {
     $Email = new Email(
         new Mailer(Transport::fromDsn($Config->getDsn())),
-        Email::getDefaultLogger(),
+        App::getDefaultLogger(),
         $Config->configArr['mail_from'],
         Env::asBool('DEMO_MODE'),
     );

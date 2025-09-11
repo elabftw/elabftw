@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 
 use DateTimeImmutable;
 use Elabftw\AuditEvent\SignatureCreated;
+use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\CreateUploadFromLocalFile;
 use Elabftw\Elabftw\CanSqlBuilder;
 use Elabftw\Elabftw\Db;
@@ -1096,7 +1097,7 @@ abstract class AbstractEntity extends AbstractRest
         }
         $Email = new Email(
             new Mailer(Transport::fromDsn(Config::getConfig()->getDsn())),
-            Email::getDefaultLogger(),
+            App::getDefaultLogger(),
             Config::getConfig()->configArr['mail_from'],
             Env::asBool('DEMO_MODE'),
         );

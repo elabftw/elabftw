@@ -16,8 +16,6 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Env;
 use Elabftw\Enums\EmailTarget;
 use Elabftw\Exceptions\ImproperActionException;
-use Monolog\Handler\ErrorLogHandler;
-use Monolog\Logger;
 use PDO;
 use Psr\Log\LoggerInterface;
 use Stevebauman\Hypertext\Transformer;
@@ -47,11 +45,6 @@ class Email
     ) {
         $this->footer = $this->makeFooter();
         $this->from = new Address($mailFrom, 'eLabFTW');
-    }
-
-    public static function getDefaultLogger(): LoggerInterface
-    {
-        return new Logger('elabftw')->pushHandler(new ErrorLogHandler());
     }
 
     /**

@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
+use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\Env;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\ApiEndpoint;
@@ -73,7 +74,6 @@ use Elabftw\Services\NullFingerprinter;
 use Exception;
 use GuzzleHttp\Client;
 use JsonException;
-use Monolog\Logger;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -302,7 +302,7 @@ final class Apiv2Controller extends AbstractApiController
             ApiEndpoint::Config => Config::getConfig(),
             ApiEndpoint::Idps => new Idps($this->requester, $this->id),
             ApiEndpoint::IdpsSources => new IdpsSources($this->requester, $this->id),
-            ApiEndpoint::Import => new ImportHandler($this->requester, new Logger('elabftw')),
+            ApiEndpoint::Import => new ImportHandler($this->requester, App::getDefaultLogger()),
             ApiEndpoint::Info => new Info(),
             ApiEndpoint::Instance => new Instance($this->requester, $this->getEmail(), (bool) Config::getConfig()->configArr['email_send_grouped']),
             ApiEndpoint::Export => new Exports($this->requester, Storage::EXPORTS->getStorage(), $this->id),
@@ -344,7 +344,7 @@ final class Apiv2Controller extends AbstractApiController
         $Config = Config::getConfig();
         return new Email(
             new Mailer(Transport::fromDsn($Config->getDsn())),
-            Email::getDefaultLogger(),
+            App::getDefaultLogger(),
             $Config->configArr['mail_from'],
             Env::asBool('DEMO_MODE'),
         );

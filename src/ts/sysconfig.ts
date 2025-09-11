@@ -84,8 +84,8 @@ if (document.getElementById('ts_authority')) {
 const clickHandler = (event: Event) => {
   const el = (event.target as HTMLElement);
   // CLEAR-LOCKEDUSERS and CLEAR-LOCKOUTDEVICES
-  if (el.matches('[data-action="clear-nologinusers"]') || el.matches('[data-action="clear-lockoutdevices"]')) {
-    ApiC.post('instance', {[el.dataset.action]: true}).then(() => reloadElements(['bruteforceDiv']));
+  if (el.matches('[data-action="allowuntrusted"]') || el.matches('[data-action="clearlockedoutdevices"]')) {
+    ApiC.post('instance', {action: el.dataset.action}).then(() => reloadElements(['bruteforceDiv']));
 
   // CREATE TEAM
   } else if (el.matches('[data-action="create-team"]')) {

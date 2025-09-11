@@ -15,6 +15,7 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EmailTarget;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
@@ -43,32 +44,21 @@ final class Instance extends AbstractRest
         if (!$this->requester->userData['is_sysadmin']) {
             throw new IllegalActionException('Non sysadmin user tried to access sysadmin controller.');
         }
-        // CLEAR NOLOGIN
-        if ($reqBody['clear-nologinusers']) {
-            $this->Db->q('UPDATE users SET allow_untrusted = 1');
-            return 0;
-        }
 
-        // CLEAR LOCKOUT DEVICES
-        if ($reqBody['clear-lockoutdevices']) {
-            $this->Db->q('DELETE FROM lockout_devices');
-            return 0;
-        }
-
-        if ($reqBody['testemailSend']) {
-            $this->email->testemailSend((string) $reqBody['email']);
-            return 0;
-        }
-        if ($reqBody['massEmail']) {
-            $this->email->massEmail(
+        match ($action) {
+            Action::AllowUntrusted => $this->Db->q('UPDATE users SET allow_untrusted = 1'),
+            Action::ClearLockedOutDevices => $this->Db->q('DELETE FROM lockout_devices'),
+            Action::Test => $this->email->testemailSend((string) $reqBody['email']),
+            Action::Email => $this->email->massEmail(
                 EmailTarget::from((string) $reqBody['target']),
                 null,
                 Filter::toPureString($reqBody['subject']),
                 Filter::toPureString($reqBody['body']),
                 new Address($this->requester->userData['email'], $this->requester->userData['fullname']),
                 $this->emailSendGrouped,
-            );
-        }
+            ),
+            default => throw new ImproperActionException('Invalid action parameter sent.'),
+        };
         return 0;
     }
 }

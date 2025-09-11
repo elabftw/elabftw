@@ -13,6 +13,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\Email;
 use Elabftw\Traits\TestsUtilsTrait;
@@ -52,26 +53,27 @@ class InstanceTest extends \PHPUnit\Framework\TestCase
 
     public function testClearNoLogin(): void
     {
-        $this->assertSame(0, $this->Instance->postAction(Action::Create, array('clear-nologinusers' => true)));
+        $this->assertSame(0, $this->Instance->postAction(Action::AllowUntrusted, array()));
     }
 
     public function testClearLockoutDevices(): void
     {
-        $this->assertSame(0, $this->Instance->postAction(Action::Create, array('clear-lockoutdevices' => true)));
+        $this->assertSame(0, $this->Instance->postAction(Action::ClearLockedOutDevices, array()));
     }
 
     public function testEmailTest(): void
     {
-        $this->assertSame(0, $this->Instance->postAction(Action::Create, array('testemailSend' => true, 'email' => 'null@example.com')));
+        $this->assertSame(0, $this->Instance->postAction(Action::Test, array('email' => 'null@example.com')));
     }
 
     public function testMassEmail(): void
     {
-        $this->assertSame(0, $this->Instance->postAction(Action::Create, array('massEmail' => true, 'target' => 'sysadmins', 'subject' => 'a', 'body' => 'a')));
+        $this->assertSame(0, $this->Instance->postAction(Action::Email, array('target' => 'sysadmins', 'subject' => 'a', 'body' => 'a')));
     }
 
-    public function testNothing(): void
+    public function testInvalidAction(): void
     {
-        $this->assertSame(0, $this->Instance->postAction(Action::Create, array()));
+        $this->expectException(ImproperActionException::class);
+        $this->Instance->postAction(Action::Create, array());
     }
 }

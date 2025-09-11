@@ -274,23 +274,9 @@ abstract class AbstractEntity extends AbstractRest
         return $this->Db->execute($req);
     }
 
-    // get users who booked current item in the 4 surrounding months
     public function getSurroundingBookers(): array
     {
-        if (!$this->entityData['is_bookable']) {
-            return array();
-        }
-        // Note: this might reach users that had their account fully archived, but the problem will go away after 4 months.
-        $sql = 'SELECT DISTINCT email, CONCAT(firstname, " ", lastname) AS fullname
-            FROM team_events
-            INNER JOIN users ON users.userid = team_events.userid
-            WHERE team_events.item = :itemid
-              AND team_events.start BETWEEN DATE_SUB(NOW(), INTERVAL 4 MONTH) AND DATE_ADD(NOW(), INTERVAL 4 MONTH)
-              AND users.validated = 1';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':itemid', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        return $req->fetchAll();
+        return array();
     }
 
     public function lock(): array

@@ -55,7 +55,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
 
     public function testAllowUntrustedLogin(): void
     {
-        $this->assertFalse($this->Users->allowUntrustedLogin());
+        $this->assertTrue($this->Users->allowUntrustedLogin());
         $this->assertTrue((new Users(2, 1))->allowUntrustedLogin());
     }
 

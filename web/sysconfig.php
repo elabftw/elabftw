@@ -127,7 +127,7 @@ try {
         // disabled as we don't use getStats here now
         //'Teams' => $Teams,
         'teamsArr' => $teamsArr,
-        'info' => (new Info())->readAll(),
+        'info' => new Info()->readAll(),
         'storageUnitsArr' => $StorageUnits->readAllRecursive(),
         'timestampLastMonth' => $Experiments->getTimestampLastMonth(),
         'uploadsStats' => UploadsChecker::getStats(),

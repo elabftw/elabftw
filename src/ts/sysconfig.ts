@@ -14,6 +14,7 @@ import { notify } from './notify';
 import { ApiC } from './api';
 import $ from 'jquery';
 import { SemverCompare } from './SemverCompare.class';
+import { on } from './handlers';
 
 function updateTsFieldsVisibility(select: HTMLSelectElement) {
   const noAccountTsa = ['dfn', 'digicert', 'sectigo', 'globalsign'];
@@ -32,17 +33,42 @@ function updateTsFieldsVisibility(select: HTMLSelectElement) {
   }
 }
 
-export function postForm(controller: string, params: Record<string, string|Blob>): Promise<Response> {
-  const formData = new FormData();
-  formData.append('csrf', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
-  for (const [key, value] of Object.entries(params)) {
-    formData.append(key, value);
-  }
-  return fetch(controller, {
-    method: 'POST',
-    body: formData,
-  });
-}
+// TEST EMAIL
+on('send-test-email', async (el: HTMLElement, event: Event) => {
+  event.preventDefault();
+  const form = document.getElementById('testEmailForm') as HTMLFormElement;
+  const params = collectForm(form);
+  const button = (el as HTMLButtonElement);
+  button.disabled = true;
+  const buttonText = button.innerText;
+  button.innerText = i18next.t('please-wait');
+  ApiC.post('instance', params).then(() => {
+    button.innerText = buttonText;
+  }).catch(() => {
+    button.innerText = i18next.t('error');
+    // TODO don't hardcode colors
+    button.style.backgroundColor = '#e6614c';
+  }).finally(() => button.disabled = false);
+});
+
+// MASS MAIL
+on('send-mass-email', async (el: HTMLElement, event: Event) => {
+  event.preventDefault();
+  const form = document.getElementById('massEmailForm') as HTMLFormElement;
+  const params = collectForm(form);
+  const button = (el as HTMLButtonElement);
+  button.disabled = true;
+  const buttonText = button.innerText;
+  button.innerText = i18next.t('please-wait');
+  ApiC.post('instance', params).then(() => {
+    button.innerText = buttonText;
+    form.reset();
+  }).catch(() => {
+    button.innerText = i18next.t('error');
+    // TODO don't hardcode colors
+    button.style.backgroundColor = '#e6614c';
+  }).finally(() => button.disabled = false);
+});
 
 // Timestamp provider select
 if (document.getElementById('ts_authority')) {
@@ -59,13 +85,7 @@ const clickHandler = (event: Event) => {
   const el = (event.target as HTMLElement);
   // CLEAR-LOCKEDUSERS and CLEAR-LOCKOUTDEVICES
   if (el.matches('[data-action="clear-nologinusers"]') || el.matches('[data-action="clear-lockoutdevices"]')) {
-    postForm('app/controllers/SysconfigAjaxController.php', { [el.dataset.action]: '1' })
-      .then(res => res.json().then(json => {
-        if (json.res) {
-          reloadElements(['bruteforceDiv']);
-        }
-        notify.response(json);
-      }));
+    ApiC.post('instance', {[el.dataset.action]: true}).then(() => reloadElements(['bruteforceDiv']));
 
   // CREATE TEAM
   } else if (el.matches('[data-action="create-team"]')) {
@@ -113,34 +133,10 @@ const clickHandler = (event: Event) => {
     const params = {};
     params[el.dataset.confname] = content;
     ApiC.patch(Model.Config, params);
-  // TEST MAIL
-  } else if (el.matches('[data-action="send-test-email"]')) {
-    const button = (el as HTMLButtonElement);
-    button.disabled = true;
-    button.innerText = 'Sending…';
-    const email = (document.getElementById('testemailEmail') as HTMLInputElement).value;
-    postForm(
-      'app/controllers/SysconfigAjaxController.php',
-      { testemailSend: '1', email: email }).then(resp => handleEmailResponse(resp, button));
-  // MASS MAIL
-  } else if (el.matches('[data-action="send-mass-email"]')) {
-    const massEmailDiv = document.getElementById('massEmailDiv');
-    const targetRadio = (massEmailDiv.querySelector('input[name="target"]:checked') as HTMLInputElement);
-    const button = (el as HTMLButtonElement);
-    button.disabled = true;
-    button.innerText = 'Sending…';
-    const subject = (document.getElementById('massSubject') as HTMLInputElement).value;
-    const body = (document.getElementById('massBody') as HTMLInputElement).value;
-    postForm(
-      'app/controllers/SysconfigAjaxController.php',
-      { massEmail: '1', subject: subject, body: body, target: targetRadio.value }).then(resp => handleEmailResponse(resp, button));
+
   } else if (el.matches('[data-action="destroy-idp"]')) {
-    event.preventDefault();
     if (confirm(i18next.t('generic-delete-warning'))) {
-      postForm('app/controllers/SysconfigAjaxController.php', {
-        idpsDestroy: '1',
-        id: el.dataset.id,
-      }).then(() => reloadElements(['idpsDiv']));
+      ApiC.delete(`idps/${el.dataset.id}`).then(() => reloadElements(['idpsDiv']));
     }
     // PATCH ONBOARDING EMAIL USERS
   } else if (el.matches('[data-action="patch-onboarding-email"]')) {

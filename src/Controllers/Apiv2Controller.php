@@ -43,6 +43,7 @@ use Elabftw\Models\FavTags;
 use Elabftw\Models\Idps;
 use Elabftw\Models\IdpsSources;
 use Elabftw\Models\Info;
+use Elabftw\Models\Instance;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\Notifications\EventDeleted;
@@ -65,6 +66,7 @@ use Elabftw\Models\Uploads;
 use Elabftw\Models\UserRequestActions;
 use Elabftw\Models\Users\Users;
 use Elabftw\Models\UserUploads;
+use Elabftw\Services\Email;
 use Elabftw\Services\Fingerprinter;
 use Elabftw\Services\HttpGetter;
 use Elabftw\Services\NullFingerprinter;
@@ -77,6 +79,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use ValueError;
 use Override;
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mailer\Transport;
 
 /**
  * For API V2 requests
@@ -300,6 +304,7 @@ final class Apiv2Controller extends AbstractApiController
             ApiEndpoint::IdpsSources => new IdpsSources($this->requester, $this->id),
             ApiEndpoint::Import => new ImportHandler($this->requester, new Logger('elabftw')),
             ApiEndpoint::Info => new Info(),
+            ApiEndpoint::Instance => new Instance($this->requester, $this->getEmail(), (bool) Config::getConfig()->configArr['email_send_grouped']),
             ApiEndpoint::Export => new Exports($this->requester, Storage::EXPORTS->getStorage(), $this->id),
             ApiEndpoint::Experiments,
             ApiEndpoint::Items,
@@ -332,6 +337,17 @@ final class Apiv2Controller extends AbstractApiController
             ),
             ApiEndpoint::Users => new Users($this->id, $this->requester->team, $this->requester),
         };
+    }
+
+    private function getEmail(): Email
+    {
+        $Config = Config::getConfig();
+        return new Email(
+            new Mailer(Transport::fromDsn($Config->getDsn())),
+            Email::getDefaultLogger(),
+            $Config->configArr['mail_from'],
+            Env::asBool('DEMO_MODE'),
+        );
     }
 
     private function getSubModel(?ApiSubModels $submodel): RestInterface

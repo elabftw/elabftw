@@ -143,7 +143,9 @@ export function collectForm(form: HTMLElement): object {
   const inputs = [];
   ['input', 'select', 'textarea'].forEach(inp => {
     form.querySelectorAll(inp).forEach((input: HTMLInputElement) => {
-      inputs.push(input);
+      if (input.type !== 'radio' || input.checked) {
+        inputs.push(input);
+      }
     });
   });
 

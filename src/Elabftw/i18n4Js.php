@@ -66,6 +66,7 @@ final class i18n4Js
             'entity-default-title' => _('Untitled'),
             'entity-delete-warning' => _('The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?'),
             'entries-processed' => _('{{num, number}} entries processed'),
+            'error' => _('Error'),
             'error-no-filename' => _('File name is missing.'),
             'error-no-category' => _('A category is required to fetch the next Custom ID'),
             'error-fetch-request' => _('There was an error while fetching the requested data: {{error}}'),

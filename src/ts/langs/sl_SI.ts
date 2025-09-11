@@ -32,6 +32,7 @@ const t = {
     "entity-default-title": "Brez naslova",
     "entity-delete-warning": "Izbrani predmet(i) in vsi pridruženi podatki bodo trajno izbrisani. Tega ni mogoče razveljaviti. Ali si prepričan?",
     "entries-processed": "{{num, number}} entries processed",
+    "error": "Napaka",
     "error-no-filename": "File name is missing.",
     "error-no-category": "Za pridobitev naslednjega ID-ja po meri je potrebna kategorija",
     "error-fetch-request": "There was an error while fetching the requested data: {{error}}",

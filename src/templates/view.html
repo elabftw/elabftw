@@ -92,17 +92,20 @@
   <hr>
 
   {# SHOW EVENTS #}
-  {% if Entity.entityData.events_start %}
-    <div class='mb-2'>
-      <i class='far fa-fw fa-calendar-alt'></i>
-      {% set splitItemids = Entity.entityData.events_start_itemid|split('|') %}
-      {% for event in Entity.entityData.events_start|split('|') %}
-        <a href='scheduler.php?items[]={{ splitItemids[loop.index - 1] }}&amp;start={{ event|url_encode }}' class='mx-1 btn btn-neutral relative-moment'  title='{{ event|date('Y-m-d H:i:s') }}' aria-label='{{ event|date('Y-m-d H:i:s') }}'></a>
-      {% endfor %}
-    </div>
-    <hr>
+  {% if Entity.entityData.type == 'items' and Entity.entityData.is_bookable == 1 %}
+    {% if Entity.entityData.events_start %}
+      <div class='d-flex align-content-center'>
+        <div>
+          <i class='far fa-fw fa-calendar-alt'></i>
+          {% set splitItemids = Entity.entityData.events_start_itemid|split('|') %}
+          {% for event in Entity.entityData.events_start|split('|') %}
+            <a href='scheduler.php?items[]={{ splitItemids[loop.index - 1] }}&amp;start={{ event|url_encode }}' class='mx-1 btn btn-neutral relative-moment'  title='{{ event|date('Y-m-d H:i:s') }}' aria-label='{{ event|date('Y-m-d H:i:s') }}'></a>
+          {% endfor %}
+        </div>
+      </div>
+      <hr>
+    {% endif %}
   {% endif %}
-
 
   {# SHOW NEXT STEP #}
   {% set next_step = Entity.entityData.next_step %}

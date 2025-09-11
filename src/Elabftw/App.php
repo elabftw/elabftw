@@ -26,7 +26,9 @@ use Elabftw\Models\Teams;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TwigTrait;
 use Exception;
+use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
@@ -69,11 +71,16 @@ final class App
         public Request $Request,
         public FlashBagAwareSessionInterface $Session,
         public Config $Config,
-        public Logger $Log,
+        public LoggerInterface $Log,
         public Users $Users,
         public bool $devMode = false,
         public bool $demoMode = false,
     ) {}
+
+    public static function getDefaultLogger(): LoggerInterface
+    {
+        return new Logger('elabftw')->pushHandler(new ErrorLogHandler());
+    }
 
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-//
     //     _                 _      //

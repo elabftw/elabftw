@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
+use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\Env;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\ApiEndpoint;
@@ -43,6 +44,7 @@ use Elabftw\Models\FavTags;
 use Elabftw\Models\Idps;
 use Elabftw\Models\IdpsSources;
 use Elabftw\Models\Info;
+use Elabftw\Models\Instance;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\Notifications\EventDeleted;
@@ -65,18 +67,20 @@ use Elabftw\Models\Uploads;
 use Elabftw\Models\UserRequestActions;
 use Elabftw\Models\Users\Users;
 use Elabftw\Models\UserUploads;
+use Elabftw\Services\Email;
 use Elabftw\Services\Fingerprinter;
 use Elabftw\Services\HttpGetter;
 use Elabftw\Services\NullFingerprinter;
 use Exception;
 use GuzzleHttp\Client;
 use JsonException;
-use Monolog\Logger;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use ValueError;
 use Override;
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mailer\Transport;
 
 /**
  * For API V2 requests
@@ -298,8 +302,9 @@ final class Apiv2Controller extends AbstractApiController
             ApiEndpoint::Config => Config::getConfig(),
             ApiEndpoint::Idps => new Idps($this->requester, $this->id),
             ApiEndpoint::IdpsSources => new IdpsSources($this->requester, $this->id),
-            ApiEndpoint::Import => new ImportHandler($this->requester, new Logger('elabftw')),
+            ApiEndpoint::Import => new ImportHandler($this->requester, App::getDefaultLogger()),
             ApiEndpoint::Info => new Info(),
+            ApiEndpoint::Instance => new Instance($this->requester, $this->getEmail(), (bool) Config::getConfig()->configArr['email_send_grouped']),
             ApiEndpoint::Export => new Exports($this->requester, Storage::EXPORTS->getStorage(), $this->id),
             ApiEndpoint::Experiments,
             ApiEndpoint::Items,
@@ -334,6 +339,17 @@ final class Apiv2Controller extends AbstractApiController
         };
     }
 
+    private function getEmail(): Email
+    {
+        $Config = Config::getConfig();
+        return new Email(
+            new Mailer(Transport::fromDsn($Config->getDsn())),
+            App::getDefaultLogger(),
+            $Config->configArr['mail_from'],
+            Env::asBool('DEMO_MODE'),
+        );
+    }
+
     private function getSubModel(?ApiSubModels $submodel): RestInterface
     {
         if ($this->Model instanceof AbstractEntity) {
@@ -342,6 +358,7 @@ final class Apiv2Controller extends AbstractApiController
                 ApiSubModels::Comments => new Comments($this->Model, $this->subId),
                 ApiSubModels::Containers => LinksFactory::getContainersLinks($this->Model, $this->subId),
                 ApiSubModels::ExperimentsLinks => LinksFactory::getExperimentsLinks($this->Model, $this->subId),
+                ApiSubModels::Events => new Scheduler($this->Model, $this->subId),
                 ApiSubModels::Compounds => LinksFactory::getCompoundsLinks($this->Model, $this->subId),
                 ApiSubModels::ItemsLinks => LinksFactory::getItemsLinks($this->Model, $this->subId),
                 ApiSubModels::RequestActions => new RequestActions($this->requester, $this->Model, $this->subId),

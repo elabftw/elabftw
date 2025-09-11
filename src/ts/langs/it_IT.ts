@@ -32,6 +32,7 @@ const t = {
     "entity-default-title": "Senza titolo",
     "entity-delete-warning": "Quanto è stato selezionato (nonché i dati associati) sarà definitivamente cancellato. Il processo è irreversibile. Si è veramente sicuri?",
     "entries-processed": "{{num, number}} entries processed",
+    "error": "Errore",
     "error-no-filename": "File name is missing.",
     "error-no-category": "È necessaria una categoria per recuperare il successivo ID personalizzato",
     "error-fetch-request": "There was an error while fetching the requested data: {{error}}",

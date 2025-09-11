@@ -32,6 +32,7 @@ const t = {
     "entity-default-title": "Nimetön",
     "entity-delete-warning": "Valitut kohteet ja kaikki niihin liittyvät tiedot poistetaan pysyvästi. Tätä ei voi peruuttaa. Oletko varma?",
     "entries-processed": "{{num, number}} entries processed",
+    "error": "Virhe",
     "error-no-filename": "File name is missing.",
     "error-no-category": "Seuraavan mukautetun tunnuksen hakemiseen tarvitaan luokka",
     "error-fetch-request": "There was an error while fetching the requested data: {{error}}",

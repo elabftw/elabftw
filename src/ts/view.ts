@@ -5,14 +5,14 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import i18next from './i18n';
 import { InputType, Malle } from '@deltablot/malle';
 import { ApiC } from './api';
-import { relativeMoment, reloadElements } from './misc';
-import { Action, Model } from './interfaces';
+import { core } from './core';
 import { entity } from './getEntity';
 import { on } from './handlers';
-import { core } from './core';
+import i18next from './i18n';
+import { Action, Model } from './interfaces';
+import { relativeMoment, reloadElements } from './misc';
 
 const mode = new URLSearchParams(window.location.search).get('mode');
 if (mode === 'view') {

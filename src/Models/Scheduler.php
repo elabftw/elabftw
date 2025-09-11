@@ -45,6 +45,8 @@ final class Scheduler extends AbstractRest
 
     private const int GRACE_PERIOD_MINUTES = 5;
 
+    public Items $Items;
+
     private string $start = self::EVENT_START;
 
     private string $end = self::EVENT_END;
@@ -54,11 +56,15 @@ final class Scheduler extends AbstractRest
     private array $filterBindings = array();
 
     public function __construct(
-        public Items $Items,
+        AbstractEntity $Items,
         ?int $id = null,
         ?string $start = null,
         ?string $end = null,
     ) {
+        if (!$Items instanceof Items) {
+            throw new ImproperActionException('Scheduler can only work with resources (items).');
+        }
+        $this->Items = $Items;
         parent::__construct();
         $this->setId($id);
         if ($start !== null) {

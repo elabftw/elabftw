@@ -323,9 +323,10 @@
 
   {# MASS EMAIL #}
   <h3 class='p-2 pl-3 section-title'>{{ 'Send a Mass Email'|trans }}</h3>
-  <div class='pl-3 mt-2 mb-5' id='massEmailDiv'>
+  <form class='pl-3 mt-2 mb-5' aria-label='{{ 'Send a Mass Email'|trans }}' id='massEmailForm'>
+    {{ App.Session.get('csrf')|csrf }}
+    <input type='hidden' name='action' value='email'>
     <label>{{ 'Send to'|trans }}</label>
-
     <div class='form-check'>
       <input class='form-check-input' type='radio' name='target' value='active_users' id='targetAll' checked> <label class='form-check-label' for='targetAll'>{{ 'All active users'|trans }}</label>
     </div>
@@ -338,14 +339,14 @@
       <input class='form-check-input' type='radio' name='target' value='sysadmins' id='targetSysadmins'> <label class='form-check-label' for='targetSysadmins'>{{ 'All active sysadmins'|trans }}</label>
     </div>
     <label for='massSubject' class='col-form-label'>{{ 'Email Subject'|trans }}</label>
-    <input class='form-control col-md-12' type='text' id='massSubject' size='45' />
+    <input class='form-control col-md-12' name='subject' type='text' required id='massSubject' size='45' />
 
     <label for='massBody' class='col-form-label mt-2'>{{ 'Email Body'|trans }}</label>
-    <textarea class='form-control col-md-12' id='massBody'></textarea>
+    <textarea class='form-control col-md-12' name='body' id='massBody'></textarea>
     <div class='mt-4 text-center'>
-      <button type='button' data-action='send-mass-email' class='btn btn-primary'>{{ 'Send'|trans }}</button>
+      <button type='submit' data-action='send-mass-email' class='btn btn-primary'>{{ 'Send'|trans }}</button>
     </div>
-  </div>
+  </form>
 </div>
 
 {# TAB 5 EMAIL #}
@@ -404,14 +405,16 @@
 
   {# TEST EMAIL #}
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Send a test email'|trans }}</h3>
-  <div class='pl-3'>
+  <form class='pl-3' aria-label='{{ 'Send a test email'|trans }}' id='testEmailForm'>
+    {{ App.Session.get('csrf')|csrf }}
+    <input type='hidden' name='action' value='test'>
     <div class='input-group'>
-      <input type='email' class='form-control col-md-12' value='{{ App.Users.userData.email|e('html_attr') }}' id='testemailEmail' aria-label='{{ 'Email address'|trans }}'>
+      <input type='email' name='email' class='form-control col-md-12' value='{{ App.Users.userData.email|e('html_attr') }}' aria-label='{{ 'Email address'|trans }}'>
       <div class='input-group-append'>
-        <button type='button' class='btn btn-primary' data-action='send-test-email'>{{ 'Send'|trans }}</button>
+        <button type='submit' class='btn btn-primary' data-action='send-test-email'>{{ 'Send'|trans }}</button>
       </div>
     </div>
-  </div>
+  </form>
 </div>
 
 {# TAB 6 SECURITY #}
@@ -469,13 +472,13 @@
   <div id='bruteforceDiv' class='pl-3'>
     <div class='d-flex justify-content-between'>
       <span>{{ '%d users are currently prevented from logging in from unknown devices.'|trans|format(nologinUsersCount) }}</span>
-      <button type='submit' data-action='clear-nologinusers' {{- nologinUsersCount == 0 ? ' disabled' }} class='btn btn-primary'>{{ 'Clear'|trans }}</button>
+      <button type='submit' data-action='allowuntrusted' {{- nologinUsersCount == 0 ? ' disabled' }} class='btn btn-primary'>{{ 'Clear'|trans }}</button>
     </div>
     <hr>
 
     <div class='d-flex justify-content-between'>
       <span>{{ '%d devices are currently denied authentication.'|trans|format(lockoutDevicesCount) }}</span>
-      <button type='submit' data-action='clear-lockoutdevices' {{- lockoutDevicesCount == 0 ? ' disabled' }} class='btn btn-primary'>{{ 'Clear'|trans }}</button>
+      <button type='submit' data-action='clearlockedoutdevices' {{- lockoutDevicesCount == 0 ? ' disabled' }} class='btn btn-primary'>{{ 'Clear'|trans }}</button>
     </div>
     <hr>
   </div>

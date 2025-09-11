@@ -32,6 +32,7 @@ const t = {
     "entity-default-title": "Без имени",
     "entity-delete-warning": "Выбранные элементы и все связанные данные будут удалены без возможности восстановления. Это не может быть отменено. Ты уверен?",
     "entries-processed": "{{num, number}} entries processed",
+    "error": "Ошибка",
     "error-no-filename": "File name is missing.",
     "error-no-category": "Для получения следующего индивидуального идентификатора требуется категория.",
     "error-fetch-request": "There was an error while fetching the requested data: {{error}}",

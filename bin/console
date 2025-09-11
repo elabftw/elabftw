@@ -20,8 +20,6 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Models\Config;
 use Elabftw\Services\Email;
 use Elabftw\Storage\Exports;
-use Monolog\Handler\ErrorLogHandler;
-use Monolog\Logger;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Mailer\Exception\InvalidArgumentException;
 use Symfony\Component\Mailer\Mailer;
@@ -35,8 +33,6 @@ use function dirname;
 require dirname(__DIR__) . '/vendor/autoload.php';
 
 $Application = new Application();
-$errorLogLogger = new Logger('elabftw');
-$errorLogLogger->pushHandler(new ErrorLogHandler());
 $logger = new ConsoleLogger(new ConsoleOutput());
 try {
     $Config = Config::getConfig();
@@ -47,7 +43,7 @@ try {
 try {
     $Email = new Email(
         new Mailer(Transport::fromDsn($Config->getDsn())),
-        $errorLogLogger,
+        App::getDefaultLogger(),
         $Config->configArr['mail_from'],
         Env::asBool('DEMO_MODE'),
     );

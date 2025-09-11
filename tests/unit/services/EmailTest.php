@@ -16,6 +16,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Info;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users\UltraAdmin;
+use Elabftw\Traits\TestsUtilsTrait;
 use Monolog\Handler\NullHandler;
 use Monolog\Logger;
 use Symfony\Component\Mailer\Exception\TransportException;
@@ -24,6 +25,8 @@ use Symfony\Component\Mime\Address;
 
 class EmailTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private Email $Email;
 
     private Logger $Logger;
@@ -70,8 +73,7 @@ class EmailTest extends \PHPUnit\Framework\TestCase
 
     public function testMassEmail(): void
     {
-        $Info = new Info();
-        $instanceInfo = $Info->readAll();
+        $instanceInfo = new Info()->readAll();
         $Team1 = new Teams(new UltraAdmin(), 1);
         $team1Stats = $Team1->getStats();
         $replyTo = new Address('sender@example.com', 'Sergent Garcia');

@@ -32,6 +32,7 @@ const t = {
     "entity-default-title": "Untitled",
     "entity-delete-warning": "The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?",
     "entries-processed": "{{num, number}} entries processed",
+    "error": "Error",
     "error-no-filename": "File name is missing.",
     "error-no-category": "A category is required to fetch the next Custom ID",
     "error-fetch-request": "There was an error while fetching the requested data: {{error}}",

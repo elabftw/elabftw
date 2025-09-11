@@ -32,6 +32,7 @@ const t = {
     "entity-default-title": "Sense títol",
     "entity-delete-warning": "L’element o els elements seleccionats i totes les dades associades s’eliminaran definitivament. Això no es pot desfer. Estàs segur?",
     "entries-processed": "{{num, number}} entries processed",
+    "error": "Error",
     "error-no-filename": "File name is missing.",
     "error-no-category": "Es requereix una categoria per obtenir el següent ID personalitzat",
     "error-fetch-request": "There was an error while fetching the requested data: {{error}}",

@@ -12,10 +12,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\AuditEventInterface;
-use Monolog\Handler\ErrorLogHandler;
-use Monolog\Logger;
 use PDO;
 
 /**
@@ -28,8 +27,7 @@ final class AuditLogs
     public static function create(AuditEventInterface $event): int
     {
         if (Config::getConfig()->configArr['emit_audit_logs'] === '1') {
-            $Logger = new Logger('elabftw');
-            $Logger->pushHandler(new ErrorLogHandler());
+            $Logger = App::getDefaultLogger();
             $Logger->info($event->getJsonBody());
         }
 

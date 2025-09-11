@@ -222,6 +222,10 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $Scheduler->postAction(Action::Create, array('start' => $start->format('c'), 'end' => $end->format('c'), 'title' => 'Mail event'));
         $result = $item->getSurroundingBookers();
         $this->assertCount(1, $result);
+
+        // now with an unbookable item
+        $item = $this->getFreshItem(2);
+        $this->assertEmpty($item->getSurroundingBookers());
     }
 
     private function makeItemFromImmutableTemplateFor(AuthenticatedUser $user): Items

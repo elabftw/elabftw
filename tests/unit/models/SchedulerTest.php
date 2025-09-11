@@ -20,6 +20,7 @@ use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Users\Users;
 use Elabftw\Params\EntityParams;
 use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\HttpFoundation\InputBag;
@@ -55,6 +56,12 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
     public function testGetApiPath(): void
     {
         $this->assertEquals('api/v2/event/', $this->Scheduler->getApiPath());
+    }
+
+    public function testInstanciationWithExperiments(): void
+    {
+        $this->expectException(ImproperActionException::class);
+        new Scheduler(new Experiments(new Users()));
     }
 
     public function testPostActionWithoutId(): void

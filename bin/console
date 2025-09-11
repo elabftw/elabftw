@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Elabftw\Commands;
 
 use Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException;
+use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Exceptions\DatabaseErrorException;

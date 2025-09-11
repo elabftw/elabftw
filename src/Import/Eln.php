@@ -314,17 +314,6 @@ class Eln extends AbstractZip
                 case 'about':
                     $this->Entity->update(new EntityParams('category', (string) $categoryId));
                     break;
-                    // CUSTOM ID
-                case 'alternateName':
-                    try {
-                        $this->Entity->patch(Action::Update, array('custom_id' => (string) $value));
-                        // prevent abort if the custom id is already used
-                    } catch (ImproperActionException) {
-                        $this->logger->error(
-                            sprintf('Could not add custom_id to entity %s:%d as it is already in use', $this->Entity->entityType->value, (int) $this->Entity->id)
-                        );
-                    }
-                    break;
                     // COMMENTS
                 case 'comment':
                     foreach ($value as $comment) {
@@ -373,11 +362,20 @@ class Eln extends AbstractZip
                     // METADATA
                 case 'variableMeasured':
                     foreach ($value ?? array() as $propval) {
-                        // we look for the special elabftw_metadata property and that's what we import
-                        if ($propval['propertyID'] === 'elabftw_metadata') {
+                        // versions before 103 will not be flattened and hold an array of pv
+                        // (in 103 we have an array of id)
+                        // INTERNAL_ELN_VERSION < 103
+                        if (array_key_exists('propertyID', $propval) && $propval['propertyID'] === 'elabftw_metadata') {
+                            // we look for the special elabftw_metadata property and that's what we import
                             $this->Entity->update(new EntityParams('metadata', $propval['value']));
+                            break;
                         }
-                        break;
+                        // INTERNAL_ELN_VERSION >= 103
+                        $node = $this->getNodeFromId($propval['@id']);
+                        if ($node['propertyID'] === 'elabftw_metadata') {
+                            $this->Entity->update(new EntityParams('metadata', $node['value']));
+                            break;
+                        }
                     }
                     break;
 
@@ -411,6 +409,19 @@ class Eln extends AbstractZip
                 default:
             }
         }
+
+        // do the CUSTOM ID after everything (especially after the category) so we can catch any error when setting it and we also have a chance to set the category before the custom_id is set
+        if (array_key_exists('alternateName', $dataset)) {
+            try {
+                $this->Entity->patch(Action::Update, array('custom_id' => (string) $dataset['alternateName']));
+                // just log the error, don't try and set another custom_id
+            } catch (ImproperActionException) {
+                $this->logger->error(
+                    sprintf('Could not add custom_id to entity %s:%d as it is already in use', $this->Entity->entityType->value, (int) $this->Entity->id)
+                );
+            }
+        }
+
         $this->Entity->patch(Action::Update, array('bodyappend' => $bodyAppend));
 
         // also save the Dataset node as a .json file so we don't lose information with things not imported

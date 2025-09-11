@@ -328,6 +328,7 @@ class MakeEln extends AbstractMakeEln
         $res['ids'][] = array('@id' => $id);
         $res['nodes'][] = array(
             '@id' => $id,
+            '@type' => 'PropertyValue',
             'propertyID' => 'elabftw_metadata',
             'description' => 'eLabFTW metadata JSON as string',
             'value' => $strMetadata,
@@ -339,8 +340,9 @@ class MakeEln extends AbstractMakeEln
         }
         // now add one for all the extra fields
         foreach ($metadata[Metadata::ExtraFields->value] as $name => $props) {
-            // if the value is unset, set it to null
-            if (empty($props['value'])) {
+            if (!array_key_exists('value', $props)) {
+                $props['value'] = null;
+            } elseif ($props['value'] === '') {
                 $props['value'] = null;
             }
             // https://schema.org/PropertyValue

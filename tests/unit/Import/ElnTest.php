@@ -106,6 +106,50 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(1, $Import->getInserted());
     }
 
+    public function testImportV103(): void
+    {
+        $uploadedFile = new UploadedFile(
+            dirname(__DIR__, 2) . '/_data/version-103.eln',
+            'importable.eln',
+            null,
+            UPLOAD_ERR_OK,
+            true,
+        );
+
+        $Import = new Eln(
+            new Users(1, 1),
+            BasePermissions::Team->toJson(),
+            BasePermissions::User->toJson(),
+            $uploadedFile,
+            $this->fs,
+            $this->logger,
+            EntityType::Experiments,
+        );
+        $Import->import();
+        $this->assertEquals(1, $Import->getInserted());
+
+        // run it a second time so we trigger the custom_id exception
+        $uploadedFile = new UploadedFile(
+            dirname(__DIR__, 2) . '/_data/version-103.eln',
+            'importable.eln',
+            null,
+            UPLOAD_ERR_OK,
+            true,
+        );
+
+        $Import = new Eln(
+            new Users(1, 1),
+            BasePermissions::Team->toJson(),
+            BasePermissions::User->toJson(),
+            $uploadedFile,
+            $this->fs,
+            $this->logger,
+            EntityType::Experiments,
+        );
+        $Import->import();
+        $this->assertEquals(1, $Import->getInserted());
+    }
+
     public function testImportTrusted(): void
     {
         $uploadedFile = new UploadedFile(

@@ -40,6 +40,7 @@ if (document.getElementById('compounds-table')) {
           { field: 'smiles', headerName: 'SMILES' },
           { field: 'inchi', headerName: 'InChI' },
           { field: 'inchi_key', headerName: 'InChI Key' },
+          { field: 'molecular_weight', headerName: 'Molecular weight (g/mol)' },
           { field: 'molecular_formula', headerName: 'Molecular formula' },
           { field: 'ec_number', headerName: 'EC Number' },
           { field: 'pubchem_cid', headerName: 'PubChem CID' },

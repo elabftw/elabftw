@@ -20,7 +20,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
 import i18next from './i18n';
-import { SpreadsheetEditorHelper } from './SpreadsheetEditorHelper.class';
+import { buildSafeColumnDefs, SpreadsheetEditorHelper } from './SpreadsheetEditorHelper.class';
 import { ColumnHeader } from './spreadsheet-editor-column-header';
 import { SaveAsAttachmentModal } from './spreadsheet-save-new-modal';
 import { getEntity } from './misc';
@@ -317,16 +317,21 @@ const clickHandler = async (event) => {
 
   // build header row (with names or Column{i})
   const headerRow = useHeader
-    ? aoa[0].map((h, i) => typeof h === 'string' ? h : `Column${i}`)
+    ? aoa[0].map((h, i) => (typeof h === 'string' && h.trim() ? h : `Column${i}`))
     : aoa[0].map((_, i) => `Column${i}`);
-  // Build rows
+  // sanitize and build cols & rows
+  const cols = buildSafeColumnDefs(headerRow);
+  const fields = cols.map(c => c.field);
   const dataRows = useHeader ? aoa.slice(1) : aoa;
-  const rows = dataRows.map((cells) =>
-    Object.fromEntries(headerRow.map((h, i) => [h, String((cells && cells[i]) ?? '')]))
-  );
+  const rows = dataRows.map(cells => {
+    const arr = SpreadsheetEditorHelper.normalizeRow(cells, fields.length);
+    const obj = {};
+    for (let i = 0; i < fields.length; i++) {
+      obj[fields[i]] = arr[i]
+    }
+    return obj;
+  });
 
-  // Build column defs
-  const cols = headerRow.map((h) => ({field: h, editable: true}));
   setColumnDefs(cols);
   setRowData(rows);
   // disable Save button

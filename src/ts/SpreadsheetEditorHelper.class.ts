@@ -25,11 +25,7 @@ declare global {
   }
 }
 
-// Reuse this everywhere you need to normalize a name
-export function ensureExtension(name: string, format: FileType): string {
-  const ext = `.${String(format).toLowerCase()}`;
-  return name.toLowerCase().endsWith(ext) ? name : name + ext;
-}
+type Cell = string | number | boolean | null;
 
 export class SpreadsheetEditorHelper {
   async loadInSpreadsheetEditor(link: string, name: string, uploadId: number): Promise<void> {
@@ -145,25 +141,43 @@ export class SpreadsheetEditorHelper {
     notify.success();
   }
 
-  private static aoaToGrid(aoa: (string | number | boolean | null)[][]): { cols: GridColumn[]; rows: GridRow[] } {
-    const headerRow = aoa[0].map((h, i) => (typeof h === 'string' ? h : `Column${i}`));
-    const rows: GridRow[] = aoa.slice(1).map((r) => {
-      const row: GridRow = {};
-      headerRow.forEach((h, i) => {
-        row[h] = String(r[i] ?? '');
-      });
-      return row;
+  private static aoaToGrid(aoa: Cell[][]): { cols: GridColumn[]; rows: GridRow[] } {
+    const headerRaw = Array.isArray(aoa[0]) ? aoa[0] : [];
+    const cols = buildSafeColumnDefs(headerRaw);
+    const fields = cols.map(c => c.field);
+    const width = fields.length;
+    const rows: GridRow[] = aoa.slice(1).map(r => {
+      const arr = SpreadsheetEditorHelper.normalizeRow(r, width);
+      const obj: GridRow = {};
+      for (let i = 0; i < width; i++) obj[fields[i]] = arr[i];
+      return obj;
     });
-    const cols: GridColumn[] = headerRow.map((h) => ({ field: h, editable: true }));
     return { cols, rows };
   }
 
-  private static parseFileToAOA(buffer: ArrayBuffer): (string | number | boolean | null)[][] {
+  private static parseFileToAOA(buffer: ArrayBuffer): Cell[][] {
     const wb = read(buffer, { type: 'array' });
     const ws = wb.Sheets[wb.SheetNames[0]];
-    const aoa = utils.sheet_to_json(ws, { header: 1 }) as (string | number | boolean | null)[][];
+    // keep empty cells, drop truly empty rows
+    const aoa = utils.sheet_to_json(ws, {
+      header: 1,
+      blankrows: false,
+      // important: we preserve empties so columns stay aligned. We don't want the columns to be under wrong title
+      // https://stackoverflow.com/a/66859139
+      defval: '',
+      raw: true,
+    }) as Cell[][];
     if (!aoa.length) throw new Error('Invalid file');
     return aoa;
+  }
+
+  // normalize function
+  public static normalizeRow(cells: ReadonlyArray<Cell>, width: number): string[] {
+    const out = new Array<string>(width);
+    for (let i = 0; i < width; i++) {
+      out[i] = String(cells?.[i] ?? '');
+    }
+    return out;
   }
 
   private static createWorkbookFromGrid(columnDefs: GridColumn[], rowData: GridRow[]): WorkBook {
@@ -174,4 +188,28 @@ export class SpreadsheetEditorHelper {
     utils.book_append_sheet(wb, ws, 'Sheet1');
     return wb;
   }
+}
+
+// Reuse this everywhere you need to normalize a name
+export function ensureExtension(name: string, format: FileType): string {
+  const ext = `.${String(format).toLowerCase()}`;
+  return name.toLowerCase().endsWith(ext) ? name : name + ext;
+}
+
+// not part of the helper directly because spreadsheet-editor.jsx clickHandler is using it, and React can't instantiate the helper twice in the same component
+export function buildSafeColumnDefs(rawHeaders: unknown[]): GridColumn[] {
+  const used = new Set<string>();
+  return rawHeaders.map((val, i) => {
+    // start from a string
+    let base = (typeof val === 'string' ? val : '').trim();
+    if (!base) base = `Column${i}`;
+    // ag grid dislikes some characters in field ids (e.g., control chars)
+    let id = base.replace(/\s+/g, '_').replace(/[^\w.-]/g, '');
+    if (!id) id = `col_${i}`;
+    // ensure uniqueness (Column1, Column1_2, Column1_3, …) for when we have large databases
+    let unique = id, k = 2;
+    while (used.has(unique)) unique = `${id}_${k++}`;
+    used.add(unique);
+    return { field: unique, colId: unique, headerName: base, editable: true };
+  });
 }

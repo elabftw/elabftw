@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
+use DateTimeImmutable;
 use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
@@ -19,6 +20,9 @@ use Elabftw\Interfaces\MakeTrustedTimestampInterface;
 use ZipArchive;
 use Override;
 
+use function date;
+use function is_array;
+use function implode;
 use function sprintf;
 
 /**
@@ -60,13 +64,34 @@ abstract class AbstractMakeTrustedTimestamp extends AbstractMakeTimestamp implem
 
     /**
      * Convert the time found in the response file to the correct format for sql insertion
+     * PHP will take care of correct timezone conversions (if configured correctly)
      */
     protected function formatResponseTime(string $timestamp): string
     {
-        $time = strtotime($timestamp);
-        if ($time === false) {
-            throw new ImproperActionException(sprintf('Could not format response time from timestamp: %s', $timestamp));
+        // first try with the microtime present
+        $date = DateTimeImmutable::createFromFormat('M j H:i:s.u Y T', $timestamp);
+        if ($date instanceof DateTimeImmutable) {
+            return date('Y-m-d H:i:s', $date->getTimestamp());
         }
-        return date('Y-m-d H:i:s', $time);
+        // try again but this time without microseconds as it might happen in some cases that it's not present
+        $date = DateTimeImmutable::createFromFormat('M j H:i:s Y T', $timestamp);
+        // display a very descriptive error as to why it failed
+        if (!$date instanceof DateTimeImmutable) {
+            $errors = DateTimeImmutable::getLastErrors();
+            $formattedErrors = '';
+            if (is_array($errors)) {
+                $formattedErrors = sprintf(
+                    ' Found %d errors: %s',
+                    $errors['error_count'],
+                    implode(', ', $errors['errors']),
+                );
+            }
+            throw new ImproperActionException(sprintf(
+                'Could not format response time from timestamp: %s.%s',
+                $timestamp,
+                $formattedErrors,
+            ));
+        }
+        return date('Y-m-d H:i:s', $date->getTimestamp());
     }
 }

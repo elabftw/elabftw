@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use DateTimeImmutable;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\Env;
@@ -58,25 +57,5 @@ class MakeUniversignTimestamp extends AbstractMakeTrustedTimestamp
             'ts_cert' => '',
             'ts_chain' => '',
         );
-    }
-
-    /**
-     * Convert the time found in the response file to the correct format for sql insertion
-     */
-    #[Override]
-    protected function formatResponseTime(string $timestamp): string
-    {
-        $date = DateTimeImmutable::createFromFormat('M j H:i:s.u Y T', $timestamp);
-        if ($date instanceof DateTimeImmutable) {
-            // Return formatted time as this is what we will store in the database.
-            // PHP will take care of correct timezone conversions (if configured correctly)
-            return date('Y-m-d H:i:s', $date->getTimestamp());
-        }
-        // try again but this time without microseconds as it might happen in some cases that it's not present for some reason
-        $date = DateTimeImmutable::createFromFormat('M j H:i:s Y T', $timestamp);
-        if ($date instanceof DateTimeImmutable) {
-            return date('Y-m-d H:i:s', $date->getTimestamp());
-        }
-        return parent::formatResponseTime($timestamp);
     }
 }

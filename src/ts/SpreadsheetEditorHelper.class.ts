@@ -111,7 +111,7 @@ export class SpreadsheetEditorHelper {
     return { id, name: chosenName };
   }
 
-  async replaceExisting(columnDefs: GridColumn[], rowData: GridRow[], entityType: string, entityId: number, currentUploadName: string, currentUploadId: number):  Promise<void> {
+  async replaceExisting(columnDefs: GridColumn[], rowData: GridRow[], entityType: string, entityId: number, currentUploadName: string, currentUploadId: number): Promise<{ id: number; name: string } | void> {
     if (!columnDefs.length || !rowData.length || !currentUploadName || !currentUploadId) {
       return;
     }
@@ -120,7 +120,9 @@ export class SpreadsheetEditorHelper {
     const file = new File([wbBinary], currentUploadName, {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });
-    await SpreadsheetEditorHelper.uploadWorkbook(file, SpreadsheetEditorHelper.uploadUrl(entityType, entityId, currentUploadId));
+    const url  = SpreadsheetEditorHelper.uploadUrl(entityType, entityId, currentUploadId);
+    const newId = await SpreadsheetEditorHelper.uploadWorkbookAndReturnId(file, url);
+    return { id: newId, name: currentUploadName };
   }
 
   private static workbookToFile(wb: WorkBook, name: string, format: FileType): File {

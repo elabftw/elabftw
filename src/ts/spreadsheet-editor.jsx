@@ -192,7 +192,10 @@ if (document.getElementById('spreadsheetEditor')) {
         <>
         {currentUploadId ? (
             // REPLACE EXISTING FILE WITH CURRENT EDITIONS
-            <button disabled={!currentUploadId} className='btn hl-hover-gray p-2 lh-normal border-0 mr-2' id='replaceExisting' onClick={() => SpreadsheetHelperC.replaceExisting(columnDefs, rowData, entity.type, entity.id, currentUploadName, currentUploadId).then(() => setDirty(false))} title={i18next.t('replace-existing')} aria-label={i18next.t('replace-existing')} type='button'>
+            <button disabled={!currentUploadId} className='btn hl-hover-gray p-2 lh-normal border-0 mr-2' id='replaceExisting' onClick={() => SpreadsheetHelperC.replaceExisting(columnDefs, rowData, entity.type, entity.id, currentUploadName, currentUploadId).then((res) => {
+              if (res?.id) setCurrentUploadId(res.id); // track the latest subid and prevent duplicating
+              setDirty(false);
+            })} title={i18next.t('replace-existing')} aria-label={i18next.t('replace-existing')} type='button'>
               <i className='fas fa-save fa-fw'></i>
             </button>
           ) : (

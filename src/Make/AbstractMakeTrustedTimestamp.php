@@ -23,7 +23,10 @@ use Override;
 use function date;
 use function is_array;
 use function implode;
+use function preg_last_error_msg;
+use function preg_replace;
 use function sprintf;
+use function trim;
 
 /**
  * Timestamp an experiment with RFC 3161 protocol: https://www.ietf.org/rfc/rfc3161.txt
@@ -68,13 +71,19 @@ abstract class AbstractMakeTrustedTimestamp extends AbstractMakeTimestamp implem
      */
     protected function formatResponseTime(string $timestamp): string
     {
+        // normalize whitespace to handle "Aug  3 ..." cases from OpenSSL
+        $normalized = preg_replace('/\s+/', ' ', trim($timestamp));
+        // Note: not sure how to test this code path...
+        if ($normalized === null) {
+            throw new ImproperActionException(sprintf('Error normalizing the timestamp: %s. %s', $timestamp, preg_last_error_msg()));
+        }
         // first try with the microtime present
-        $date = DateTimeImmutable::createFromFormat('M j H:i:s.u Y T', $timestamp);
+        $date = DateTimeImmutable::createFromFormat('M j H:i:s.u Y T', $normalized);
         if ($date instanceof DateTimeImmutable) {
             return date('Y-m-d H:i:s', $date->getTimestamp());
         }
         // try again but this time without microseconds as it might happen in some cases that it's not present
-        $date = DateTimeImmutable::createFromFormat('M j H:i:s Y T', $timestamp);
+        $date = DateTimeImmutable::createFromFormat('M j H:i:s Y T', $normalized);
         // display a very descriptive error as to why it failed
         if (!$date instanceof DateTimeImmutable) {
             $errors = DateTimeImmutable::getLastErrors();

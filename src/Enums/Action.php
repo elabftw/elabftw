@@ -42,6 +42,7 @@ enum Action: string
     case SendOnboardingEmails = 'sendonboardingemails';
     case SetCanread = 'setcanread';
     case SetCanwrite = 'setcanwrite';
+    case SetNextCustomId = 'setnextcustomid';
     case Sign = 'sign';
     case Test = 'test';
     case Timestamp = 'timestamp';

@@ -99,6 +99,7 @@ enum Action {
   RequestAction = 'requestaction',
   Review = 'review',
   SendOnboardingEmails = 'sendonboardingemails',
+  SetNextCustomId = 'setnextcustomid',
   Sign = 'sign',
   Timestamp = 'timestamp',
   Unarchive = 'unarchive',

@@ -34,7 +34,6 @@ const t = {
     "entries-processed": "{{num, number}} entrées traitées",
     "error": "Erreur",
     "error-no-filename": "File name is missing.",
-    "error-no-category": "Une catégorie est nécessaire pour rechercher l'ID personnalisé suivant",
     "error-fetch-request": "Une erreur s'est produite lors de l'extraction des données demandées : {{error}}",
     "error-parsing-metadata": "Une erreur s'est produite lors de l'analyse des métadonnées (champs supplémentaires). L'erreur complète a été enregistrée dans la console du navigateur.",
     "export": "Export",

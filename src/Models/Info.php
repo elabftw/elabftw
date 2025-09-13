@@ -57,6 +57,7 @@ final class Info extends AbstractRest
         (SELECT COUNT(u2t.users_id) FROM users2teams AS u2t LEFT JOIN users ON (users.userid = u2t.users_id AND u2t.is_archived = 0) WHERE users.validated = 1) AS active_users_count,
         (SELECT COUNT(items.id) FROM items) AS items_count,
         (SELECT COUNT(teams.id) FROM teams) AS teams_count,
+        (SELECT COUNT(compounds.id) FROM compounds) AS compounds_count,
         (SELECT COUNT(experiments.id) FROM experiments) AS experiments_count,
         (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.timestamped = 1) AS experiments_timestamped_count,
         (SELECT COUNT(id) FROM uploads WHERE comment LIKE "Timestamp archive%" = 1 AND created_at > (NOW() - INTERVAL 1 MONTH)) AS entities_timestamped_count_last_30_days';

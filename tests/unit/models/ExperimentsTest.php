@@ -179,6 +179,24 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($this->Experiments->entityData['custom_id']);
     }
 
+    public function testCustomId(): void
+    {
+        // give it a category
+        $this->Experiments->patch(Action::Update, array('category' => 1));
+        $patched = $this->Experiments->patch(Action::SetNextCustomId, array());
+        $this->assertSame(1, $patched['custom_id']);
+        $patched = $this->Experiments->patch(Action::SetNextCustomId, array());
+        $this->assertSame(1, $patched['custom_id']);
+        // now with another one of the same category
+        $fresh = $this->getFreshExperiment();
+        $fresh->patch(Action::Update, array('category' => 1));
+        $patched = $fresh->patch(Action::SetNextCustomId, array());
+        $this->assertSame(2, $patched['custom_id']);
+        // now get an exception without a category set
+        $this->expectException(ImproperActionException::class);
+        $this->getFreshExperiment()->patch(Action::SetNextCustomId, array());
+    }
+
     public function testSign(): void
     {
         // we need to generate a key

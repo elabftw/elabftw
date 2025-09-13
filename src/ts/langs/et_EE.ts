@@ -34,7 +34,6 @@ const t = {
     "entries-processed": "{{num, number}} kirjet töödeldud",
     "error": "Viga",
     "error-no-filename": "File name is missing.",
-    "error-no-category": "Kohandatud ID toomiseks on vajalik kategooria",
     "error-fetch-request": "Taotletud andmete toomisel ilmnes viga: {{error}}",
     "error-parsing-metadata": "Metaandmete (lisaväljade) töötlemisel ilmnes viga. Täielik viga logiti brauseri konsooli.",
     "export": "Ekspordi",

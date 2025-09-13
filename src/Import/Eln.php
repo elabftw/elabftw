@@ -488,6 +488,8 @@ class Eln extends AbstractZip
         $filepath = $this->tmpPath . '/' . basename($this->root) . '/' . $file['@id'];
         // fix for bloxberg attachments containing : character
         $filepath = strtr($filepath, ':', '_');
+        // quick patch to fix issue with | in the title, but we will need a proper fix to avoid the need for such patches...
+        $filepath = strtr($filepath, '|', '_');
 
         $hasher = new LocalFileHash($filepath);
         $hash = $hasher->getHash();

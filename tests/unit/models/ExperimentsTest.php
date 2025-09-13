@@ -192,7 +192,9 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $fresh->patch(Action::Update, array('category' => 1));
         $patched = $fresh->patch(Action::SetNextCustomId, array());
         $this->assertSame(2, $patched['custom_id']);
-
+        // now get an exception without a category set
+        $this->expectException(ImproperActionException::class);
+        $this->getFreshExperiment()->patch(Action::SetNextCustomId, array());
     }
 
     public function testSign(): void

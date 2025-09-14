@@ -49,31 +49,27 @@ enum EntityType: string
     public function toTemplatePage(): string
     {
         return match ($this) {
-            self::Experiments => 'templates.php',
-            self::Items => 'resources-templates.php',
-            self::Templates => 'templates.php',
-            self::ItemsTypes => 'resources-templates.php',
+            self::Items, self::ItemsTypes => 'resources-templates.php',
+            default => 'templates.php',
         };
     }
 
     public function toCategoryPage(): string
     {
-        return match ($this) {
-            self::Experiments => 'experiments-categories.php',
-            self::Items => 'resources-categories.php',
-            self::Templates => 'experiments-categories.php',
-            self::ItemsTypes => 'resources-categories.php',
+        $prefix = match ($this) {
+            self::Items, self::ItemsTypes => 'resources',
+            default => 'experiments',
         };
+        return $prefix . '-categories.php';
     }
 
     public function toStatusPage(): string
     {
-        return match ($this) {
-            self::Experiments => 'experiments-status.php',
-            self::Items => 'resources-status.php',
-            self::Templates => 'experiments-status.php',
-            self::ItemsTypes => 'resources-status.php',
+        $prefix = match ($this) {
+            self::Items, self::ItemsTypes => 'resources',
+            default => 'experiments',
         };
+        return $prefix . '-status.php';
     }
 
     // for use in the "genre" attribute of .eln node

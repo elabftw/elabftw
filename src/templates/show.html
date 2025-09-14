@@ -320,7 +320,7 @@
 
   {% if categoryArr|length == 0 %}
     <div class='d-flex'>
-      {% set categoriesLink = '<a href="%s">'|format(Entity.entityType.toCategoryPage) %}
+      {% set categoriesLink = '<a href="%s">'|format(Entity.entityType.toCategoryPage()) %}
       {{ 'Tip: %screate categories%s to start organizing your work.'|trans|format(categoriesLink, "</a>")|raw|msg('ok', false) }}
     </div>
   {% endif %}

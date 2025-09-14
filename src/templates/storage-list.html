@@ -5,12 +5,8 @@
   <a class='rounded p-1 hl-hover-gray' href='#' data-action='toggle-all-storage' data-expand='1'>{{ 'Expand all'|trans }}</a>
   <a class='rounded p-1 hl-hover-gray' href='#' data-action='toggle-all-storage'>{{ 'Collapse all'|trans }}</a>
 </div>
-{% if App.devMode -%}
-{# set no-unused-disable and text-content because removing or leaving text-content brings up error #}
-  <!-- [html-validate-disable-block prefer-native-element: suppress errors] -->
-{%- endif %}
 <div id='storageDiv'>
-  {% macro render_items(items, groupedItems, storage_editable, parent, is_entity=true) %}
+  {% macro render_items(items, groupedItems, storage_editable, is_entity=true) %}
     <ul class='list-group'>
       {% for item in items %}
         <li class='list-group-item py-1'>
@@ -58,7 +54,7 @@
       </div>
       <hr>
       {# now render the children of this root element #}
-      {{ _self.render_items(storageUnitsArr[root.id], storageUnitsArr, storage_editable, root, is_entity) }}
+      {{ _self.render_items(storageUnitsArr[root.id], storageUnitsArr, storage_editable, is_entity) }}
     </div>
   {% endfor %}
 </div>

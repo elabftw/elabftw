@@ -19,17 +19,17 @@
   </div>
 {% endmacro %}
 
-{% macro textParam(target, label, disabled, required='', type='', placeholder='', pattern='', title='') %}
+{% macro textParam(target, label, disabled, required='', type='', placeholder='') %}
   <label for='compoundInput-{{ target }}' {{ required ? "class='required-label'" }}>{{ label }}</label>
   <div class='input-group mb-2'>
     <div class='input-group-prepend'>
       <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-outline-secondary' type='button' data-action='copy-to-clipboard' data-target='compoundInput-{{ target }}'><i class='fas fa-clone'></i></button>
     </div>
-    <input name='{{ target }}' {{ disabled ? 'readonly' }} {{ type == 'number' ? "type='number' step='0.01'" }} {{ pattern }} {{ title ? "title='#{title}'" }} placeholder='{{ placeholder }}' {{ required }} class='form-control' id='compoundInput-{{ target }}' />
+    <input name='{{ target }}' {{ disabled ? 'readonly' }} {{ type == 'number' ? "type='number' step='0.01'" }} placeholder='{{ placeholder }}' {{ required }} class='form-control' id='compoundInput-{{ target }}' />
   </div>
 {% endmacro %}
 
-{% set disabled = App.User.userData.can_edit_compounds == 0 %}
+{% set disabled = App.User.userData.can_manage_compounds == 0 %}
 
 {# Modal for manual creation/edition of a compound #}
 <div class='modal fade' id='editCompoundModal' tabindex='-1' role='dialog' aria-labelledby='editCompoundModalTitle'>

@@ -21,52 +21,57 @@
           <div class='d-flex flex-row justify-content-between mb-2'>
             {% set scopeTarget = entityPage == 'database' ? 'scope_items_types' : 'scope_experiments_templates' %}
             {% include 'scope-button.html' with {'btnId': btnId, 'reload': btnId ~ ',tplCreateNewDiv_' ~ entityPage, 'target': scopeTarget} %}
-            <a href='{{ entityPage == 'database' ? 'resources-templates' : 'templates' }}.php' class='btn btn-ghost btn-sm'><i class='fas fa-cogs mr-1'></i>{{ 'Manage templates'|trans }}</a>
+            <a href='{{ Entity.entityType.toTemplatePage() }}' class='btn btn-ghost btn-sm'><i class='fas fa-cogs mr-1'></i>{{ 'Manage templates'|trans }}</a>
           </div>
 
           <div id='tplCreateNewDiv_{{ entityPage }}' class='vertically-limited'>
-            <input type='text' aria-label='{{ 'Filter'|trans }}' placeholder='{{ 'Filter'|trans }}' data-filter-target='tplCreateNewTable' data-target-type='tr' class='form-control form-inline'>
-            <table class='table' aria-describedby='createModalLabel_{{ entityPage }}' data-table-sort='true'>
-              <thead>
-                <tr>
-                  <th scope='col'>{{ 'Title'|trans }}</th>
-                  <th scope='col'>{{ 'Owner'|trans }}</th>
-                </tr>
-              </thead>
-              <tbody id='tplCreateNewTable'>
-                {% set label = entityPage == 'database' ? 'Create resource from template'|trans : 'Create experiment from template'|trans %}
-                {% set templatesPage = entityPage == 'database' ? 'resources-templates' : 'templates' %}
-                {% if isDashboard %}
-                  {% set templatesArr = entityPage == 'experiments' ? templatesArr : itemsTemplatesArr %}
-                {% endif %}
-                {% for template in templatesArr %}
+            {% if templatesArr|length == 0 %}
+              {{ 'No templates found.'|trans }}
+            {% else %}
+              <input type='text' aria-label='{{ 'Filter'|trans }}' placeholder='{{ 'Filter'|trans }}' data-filter-target='tplCreateNewTable' data-target-type='tr' class='form-control form-inline'>
+              <table class='table' aria-describedby='createModalLabel_{{ entityPage }}' data-table-sort='true'>
+                <thead>
                   <tr>
-                    <td data-label='{{ 'Title'|trans }}'>
-                      <a data-action='create-entity' data-type='{{ entityPage }}' data-tplid='{{ template.id }}' href='#' class='p-2 rounded mr-2 hl-hover-gray' title='{{ label }}' aria-label='{{ label }}'>
-                        <i class='fas fa-file-circle-plus fa-fw color-blue'></i>
-                      </a>
-                      <a href='{{ templatesPage }}.php?mode=view&id={{ template.id }}' class='p-2 rounded mr-2 hl-hover-gray' title='{{ 'View template'|trans }}' aria-label='{{ 'View template'|trans }}'>
-                        <i class='fas fa-eye fa-fw'></i>
-                      </a>
-                      {% if template.category_title %}
-                        <span class='catstat-btn category-btn mr-2' style='--bg: #{{ template.category_color|default('bdbdbd') }}'>{{ template.category_title }}</span>
-                      {% endif %}
-                      {% if template.status %}
-                        <span class='catstat-btn status-btn mr-2' style='--bg: #{{ template.status_color|default('bdbdbd') }}'>{{ template.status_title }}</span>
-                      {% endif %}
-                      {{ template.title }}
-                      </a>
-                    </td>
-                    <td data-label='{{ 'Owner'|trans }}'>{{ template.fullname }}</td>
+                    <th scope='col'>{{ 'Title'|trans }}</th>
+                    <th scope='col'>{{ 'Owner'|trans }}</th>
                   </tr>
-                {% endfor %}
-              </tbody>
-            </table>
+                </thead>
+                <tbody id='tplCreateNewTable'>
+                  {% set label = entityPage == 'database' ? 'Create resource from template'|trans : 'Create experiment from template'|trans %}
+                  {% if isDashboard %}
+                    {% set templatesArr = entityPage == 'experiments' ? templatesArr : itemsTemplatesArr %}
+                  {% endif %}
+                  {% for template in templatesArr %}
+                    <tr>
+                      <td data-label='{{ 'Title'|trans }}'>
+                        <a data-action='create-entity' data-type='{{ entityPage }}' data-tplid='{{ template.id }}' href='#' class='p-2 rounded mr-2 hl-hover-gray' title='{{ label }}' aria-label='{{ label }}'>
+                          <i class='fas fa-file-circle-plus fa-fw color-blue'></i>
+                        </a>
+                        <a href='{{ Entity.entityType.toTemplatePage() }}?mode=view&id={{ template.id }}' class='p-2 rounded mr-2 hl-hover-gray' title='{{ 'View template'|trans }}' aria-label='{{ 'View template'|trans }}'>
+                          <i class='fas fa-eye fa-fw'></i>
+                        </a>
+                        {% if template.category_title %}
+                          <span class='catstat-btn category-btn mr-2' style='--bg: #{{ template.category_color|default('bdbdbd') }}'>{{ template.category_title }}</span>
+                        {% endif %}
+                        {% if template.status %}
+                          <span class='catstat-btn status-btn mr-2' style='--bg: #{{ template.status_color|default('bdbdbd') }}'>{{ template.status_title }}</span>
+                        {% endif %}
+                        {{ template.title }}
+                      </td>
+                      <td data-label='{{ 'Owner'|trans }}'>{{ template.fullname }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            {% endif %}
           </div>
 
           {% if not App.Teams.teamArr.force_exp_tpl %}
             <hr>
-            <h5>{{ 'Or create a blank entry'|trans }}</h5>
+            <div class='d-flex flex-row justify-content-between mb-2'>
+              <h5 class='modal-title'>{{ 'Or select a category'|trans }}</h5>
+              <a href='{{ Entity.entityType.toCategoryPage() }}' class='btn btn-ghost btn-sm'><i class='fas fa-cogs mr-1'></i>{{ 'Manage categories'|trans }}</a>
+            </div>
             <a class='btn btn-ghost mt-1' href='#' data-action='create-entity-ask-title' data-type='{{ entityPage }}' data-catid='-1'>
               <span class='round-spot round-spot-ghost mr-1'></span>{{ 'No category'|trans }}
             </a>

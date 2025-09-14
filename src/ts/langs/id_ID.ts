@@ -10,6 +10,8 @@ const t = {
     "archive-user": "Arsipkan pengguna",
     "archive-user-description": "Mengarsipkan pengguna berarti akun mereka akan dinonaktifkan. Tindakan ini dapat dibatalkan.",
     "add-user-error": "Use the autocompletion menu to add users.",
+    "can-manage-compounds": "Can manage compounds",
+    "can-manage-inventory-locations": "Can manage inventory locations",
     "can-manage-users2teams": "Can manage users to teams",
     "click-to-edit": "Klik untuk mengedit",
     "cancel": "Batal",

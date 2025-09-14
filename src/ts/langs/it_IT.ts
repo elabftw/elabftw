@@ -10,6 +10,8 @@ const t = {
     "archive-user": "Archivia utente",
     "archive-user-description": "Archiviare un utente significa che il suo account verrà disabilitato. Questa azione è reversibile.",
     "add-user-error": "Use the autocompletion menu to add users.",
+    "can-manage-compounds": "Can manage compounds",
+    "can-manage-inventory-locations": "Can manage inventory locations",
     "can-manage-users2teams": "Can manage users to teams",
     "click-to-edit": "Fare clic per modificare",
     "cancel": "Annulla",

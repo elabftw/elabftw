@@ -695,9 +695,11 @@ on('rename-storage', (el: HTMLElement) => {
   ApiC.patch(`storage_units/${el.dataset.id}`, params).then(() => {
     reloadElements(['storageDiv']).then(() => {
       const parent: HTMLDetailsElement = document.querySelector(`details[data-id="${params.parent_id}"]`);
-      parent.open = true;
-      // now open ancestors too
-      getAncestorDetails(parent).forEach(details => details.open = true);
+      if (parent) {
+        parent.open = true;
+        // now open ancestors too
+        getAncestorDetails(parent).forEach(details => details.open = true);
+      }
     });
   });
 });
@@ -713,9 +715,11 @@ on('add-storage-children', (el: HTMLElement) => {
   ApiC.post('storage_units', params).then(() => {
     reloadElements(['storageDiv']).then(() => {
       const parent: HTMLDetailsElement = document.querySelector(`details[data-id="${params.parent_id}"]`);
-      parent.open = true;
-      // now open ancestors too
-      getAncestorDetails(parent).forEach(details => details.open = true);
+      if (parent) {
+        parent.open = true;
+        // now open ancestors too
+        getAncestorDetails(parent).forEach(details => details.open = true);
+      }
     });
   });
 });

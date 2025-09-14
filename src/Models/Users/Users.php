@@ -91,6 +91,8 @@ class Users extends AbstractRest
         ?string $orgid = null,
         bool $allowTeamCreation = false,
         bool $skipDomainValidation = false,
+        BinaryValue $canManageCompounds = BinaryValue::False,
+        BinaryValue $canManageInventoryLocations = BinaryValue::False,
     ): int {
         $Config = Config::getConfig();
         $Teams = new Teams($this);
@@ -129,7 +131,9 @@ class Users extends AbstractRest
             `is_sysadmin`,
             `default_read`,
             `default_write`,
-            `last_seen_version`
+            `last_seen_version`,
+            `can_manage_compounds`,
+            `can_manage_inventory_locations`
         ) VALUES (
             :email,
             :password_hash,
@@ -142,7 +146,9 @@ class Users extends AbstractRest
             :is_sysadmin,
             :default_read,
             :default_write,
-            :last_seen_version);';
+            :last_seen_version,
+            :can_manage_compounds,
+            :can_manage_inventory_locations);';
         $req = $this->Db->prepare($sql);
 
         $req->bindParam(':email', $email);
@@ -157,6 +163,8 @@ class Users extends AbstractRest
         $req->bindValue(':default_read', $defaultRead);
         $req->bindValue(':default_write', $defaultWrite);
         $req->bindValue(':last_seen_version', App::INSTALLED_VERSION_INT);
+        $req->bindValue(':can_manage_compounds', $canManageCompounds->value);
+        $req->bindValue(':can_manage_inventory_locations', $canManageInventoryLocations->value);
         $this->Db->execute($req);
         $userid = $this->Db->lastInsertId();
 
@@ -242,6 +250,9 @@ class Users extends AbstractRest
           u.last_login,
           u.valid_until,
           u.is_sysadmin,
+          u.can_manage_users2teams,
+          u.can_manage_compounds,
+          u.can_manage_inventory_locations,
           CONCAT(u.firstname, ' ', u.lastname) AS fullname,
           CONCAT(
             LEFT(IFNULL(u.firstname, 'Anonymous'),  1),
@@ -293,6 +304,9 @@ class Users extends AbstractRest
           u.last_login,
           u.valid_until,
           u.is_sysadmin,
+          u.can_manage_users2teams,
+          u.can_manage_compounds,
+          u.can_manage_inventory_locations,
           fullname,
           initials,
           u.orcid,

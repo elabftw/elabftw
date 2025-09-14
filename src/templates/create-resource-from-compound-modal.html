@@ -9,16 +9,17 @@
         </button>
       </div>
       <div class='modal-body'>
-        <div class='mb-2'>
-          <p>{{ 'Select a resource category'|trans }}</p>
-          {% for category in resourceCategoriesArr %}
-          <a style='color:#{{ category.color }}; border: 1px #ccc solid;' class='btn btn-light mt-1' href='#' data-action='create-resource-from-compound' data-tplid='{{ category.id }}'>
-            {% if category.category %}
-              <span class='catstat-btn category-btn mr-2' style='--bg: #{{ category.category_color|default('bdbdbd') }}'>{{ category.category_title }}</span>
-            {% endif %}
-            {{ category.title }}</a>
-          {% endfor %}
+        <div class='d-flex flex-row justify-content-between mb-2'>
+          <p>{{ 'Select a resource template'|trans }}</p>
+          <a href='resources-templates.php' class='btn btn-ghost btn-sm'><i class='fas fa-cogs mr-1'></i>{{ 'Manage templates'|trans }}</a>
         </div>
+        {% for category in resourceCategoriesArr %}
+        <a style='color:#{{ category.color }}; border: 1px #ccc solid;' class='btn btn-light mt-1' href='#' data-action='create-resource-from-compound' data-tplid='{{ category.id }}'>
+          {% if category.category %}
+            <span class='catstat-btn category-btn mr-2' style='--bg: #{{ category.category_color|default('bdbdbd') }}'>{{ category.category_title }}</span>
+          {% endif %}
+          {{ category.title }}</a>
+        {% endfor %}
       </div>
 
       <div class='modal-footer'>

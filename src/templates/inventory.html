@@ -35,12 +35,13 @@
   </div>
 
   <div class='pl-3 mb-5'>
+    <p>{{ 'Note: only users who were given permission to edit the inventory locations can modify the locations (add/edit/remove).'|trans }}</p>
     <div class='d-flex'>
       <h4>{{ 'Browse inventory locations'|trans }}</h4>
       <div class='ml-auto'>
-        <button type='button' class='btn btn-secondary btn-sm' data-parent-id='' data-action='add-storage-children'><i class='fas fa-plus-circle mr-1 color-white'></i>{{ 'Add root element'|trans }}</button>
+        <button type='button' {{ App.Users.userData.can_manage_inventory_locations == 0 ? 'disabled' }} class='btn btn-secondary btn-sm' data-parent-id='' data-action='add-storage-children'><i class='fas fa-plus-circle mr-1 color-white'></i>{{ 'Add root element'|trans }}</button>
       </div>
     </div>
-    {% include 'storage-list.html' with {'storage_editable': true} %}
+    {% include 'storage-list.html' with {'storage_editable': App.Users.userData.can_manage_inventory_locations == 1, 'is_entity': false} %}
   </div>
 {% endblock body %}

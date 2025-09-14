@@ -1,4 +1,5 @@
 {# var: storage_editable bool #}
+{# var: is_entity bool #}
 {# var: storageUnitsArr array #}
 <div class='mb-2'>
   <a class='rounded p-1 hl-hover-gray' href='#' data-action='toggle-all-storage' data-expand='1'>{{ 'Expand all'|trans }}</a>
@@ -9,7 +10,7 @@
   <!-- [html-validate-disable-block prefer-native-element: suppress errors] -->
 {%- endif %}
 <div id='storageDiv'>
-  {% macro render_items(items, groupedItems, storage_editable, parent) %}
+  {% macro render_items(items, groupedItems, storage_editable, parent, is_entity=true) %}
     <ul class='list-group'>
       {% for item in items %}
         <li class='list-group-item py-1'>
@@ -17,18 +18,20 @@
           <details data-id='{{ item.id }}'>
             <summary>{{ item.name }} {% if item.children_count > 0 %}({{ item.children_count }}){% endif %}</summary>
             <div class='mb-1'>
-              {% if storage_editable %}
+              {% if is_entity %}
+                <button type='button' class='btn btn-primary btn-sm' data-id='{{ item.id }}' data-dismiss='modal' data-action='create-container'><i class='fas fa-location-dot mr-1 color-white'></i>{{ 'Store in %s'|trans|format(item.name) }}</button>
+              {% else %}
                 <a class='btn btn-secondary btn-sm' href='?storage_unit={{ item.id }}'><i class='fas fa-magnifying-glass mr-1 color-white'></i>{{ 'Display content'|trans }}</a>
+              {% endif %}
+              {% if storage_editable %}
                 <button type='button' class='btn btn-secondary btn-sm' data-parent-id='{{ item.id }}' data-action='add-storage-children'><i class='fas fa-plus-circle mr-1 color-white'></i>{{ 'Add children to %s'|trans|format(item.name) }}</button>
                 <button type='button' class='btn btn-secondary btn-sm' data-action='rename-storage' data-id='{{ item.id }}'><i class='fas fa-pencil-alt mr-1 color-white'></i>{{ 'Rename'|trans }}</button>
                 <button type='button' class='btn btn-danger btn-sm' data-id='{{ item.id }}' data-action='destroy-storage'><i class='fas fa-minus-circle mr-1 color-white'></i>{{ 'Delete %s and its children'|trans|format(item.name) }}</button>
-              {% else %}
-              <button type='button' class='btn btn-primary btn-sm' data-id='{{ item.id }}' data-dismiss='modal' data-action='create-container'><i class='fas fa-location-dot mr-1 color-white'></i>{{ 'Store in %s'|trans|format(item.name) }}</button>
               {% endif %}
             </div>
             {% if groupedItems[item.id] is defined %}
               {# Recursively render the children #}
-              {{ _self.render_items(groupedItems[item.id], groupedItems, storage_editable) }}
+              {{ _self.render_items(groupedItems[item.id], groupedItems, storage_editable, is_entity) }}
             {% endif %}
           </details>
         </li>
@@ -42,7 +45,7 @@
       <p class='smallgray'>{{ 'Inventory location'|trans }}</p>
       <div class='d-flex'>
         <div>
-            <i class='fas fa-location-dot mr-2'></i><span class='malleableColumn hl-hover-gray p-1 rounded font-weight-bold' data-endpoint='storage_units' data-id='{{ root.id }}' data-target='name'>{{ root.name }}</span>
+          <i class='fas fa-location-dot mr-2'></i><span class='{{ storage_editable ? 'malleableColumn hl-hover-gray' }} p-1 rounded font-weight-bold' data-endpoint='storage_units' data-id='{{ root.id }}' data-target='name'>{{ root.name }}</span>
         </div>
         {% if storage_editable %}
           <div class='ml-auto'>
@@ -55,7 +58,7 @@
       </div>
       <hr>
       {# now render the children of this root element #}
-      {{ _self.render_items(storageUnitsArr[root.id], storageUnitsArr, storage_editable, root) }}
+      {{ _self.render_items(storageUnitsArr[root.id], storageUnitsArr, storage_editable, root, is_entity) }}
     </div>
   {% endfor %}
 </div>

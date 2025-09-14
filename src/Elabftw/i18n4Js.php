@@ -44,6 +44,8 @@ final class i18n4Js
             'archive-user' => _('Archive user'),
             'archive-user-description' => _('Archiving a user means their account will be disabled. This action is reversible.'),
             'add-user-error' => _('Use the autocompletion menu to add users.'),
+            'can-manage-compounds' => _('Can manage compounds'),
+            'can-manage-inventory-locations' => _('Can manage inventory locations'),
             'can-manage-users2teams' => _('Can manage users to teams'),
             'click-to-edit' => _('Click to edit'),
             'cancel' => _('Cancel'),

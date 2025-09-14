@@ -37,6 +37,8 @@ async function toggleUserModal(user) {
   const binaryParams = [
     'is_sysadmin',
     'can_manage_users2teams',
+    'can_manage_compounds',
+    'can_manage_inventory_locations',
   ];
   binaryParams.forEach(param => {
     const input = (document.getElementById(`userInput-${param}`));
@@ -63,7 +65,6 @@ if (document.getElementById('users-table')) {
       setGridApi(params.api);
     };
     const onQuickFilterChange = (e) => {
-      //gridApi && gridApi.setQuickFilter(e.target.value);
       gridApi.setGridOption('quickFilterText', e.target.value);
     };
     // renderer for teams column
@@ -116,12 +117,14 @@ if (document.getElementById('users-table')) {
         { field: 'email', headerName: i18next.t('email') },
         { field: 'last_login', headerName: i18next.t('last-login'), cellRenderer: LastLoginRenderer },
         { field: 'is_sysadmin', headerName: i18next.t('is-sysadmin'), cellRenderer: BinaryRenderer},
-        { field: 'can_manage_users2teams', headerName: i18next.t('can-manage-users2teams'), cellRenderer: BinaryRenderer},
         { field: 'has_mfa_enabled', headerName: i18next.t('2FA'), cellRenderer: HasMfaEnabledRenderer },
         { field: 'valid_until', headerName: i18next.t('Valid until'), cellRenderer: ValidUntilRenderer },
         { field: 'validated', headerName: i18next.t('Validated'), cellRenderer: BinaryRenderer},
         { field: 'orgid', headerName: i18next.t('Internal id') },
         { field: 'orcid', headerName: 'ORCID' },
+        { field: 'can_manage_users2teams', headerName: i18next.t('can-manage-users2teams'), cellRenderer: BinaryRenderer},
+        { field: 'can_manage_compounds', headerName: i18next.t('can-manage-compounds'), cellRenderer: BinaryRenderer},
+        { field: 'can_manage_inventory_locations', headerName: i18next.t('can-manage-inventory-locations'), cellRenderer: BinaryRenderer},
     ]);
 
     // Load data on component mount

@@ -10,6 +10,8 @@ const t = {
     "archive-user": "Archiveer gebruiker",
     "archive-user-description": "Het archiveren van een gebruiker betekent dat zijn/haar account wordt uitgeschakeld. Deze actie is omkeerbaar.",
     "add-user-error": "Use the autocompletion menu to add users.",
+    "can-manage-compounds": "Can manage compounds",
+    "can-manage-inventory-locations": "Can manage inventory locations",
     "can-manage-users2teams": "Can manage users to teams",
     "click-to-edit": "Klik om te bewerken",
     "cancel": "Annuleer",

@@ -70,6 +70,8 @@ final class UserParams extends ContentParams
             'inc_files_pdf',
             'is_sysadmin',
             'can_manage_users2teams',
+            'can_manage_compounds',
+            'can_manage_inventory_locations',
             'notif_comment_created_email',
             'notif_comment_created',
             'notif_event_deleted_email',

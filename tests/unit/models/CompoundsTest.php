@@ -15,9 +15,13 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Storage;
+use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Links\Compounds2ExperimentsLinks;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\HttpGetter;
 use Elabftw\Services\NullFingerprinter;
+use Elabftw\Traits\TestsUtilsTrait;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
@@ -26,6 +30,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 class CompoundsTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private const string FENTANYL_CAS = '437-38-7';
 
     private const string CAFFEINE_CAS = '58-08-2';
@@ -51,7 +57,9 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(array('handler' => $handlerStack));
         $this->httpGetter = new HttpGetter($client);
-        $this->Compounds = new Compounds($this->httpGetter, new Users(1, 1), new NullFingerprinter());
+        // this user has can_manage_compounds
+        $user = new Users(1, 1);
+        $this->Compounds = new Compounds($this->httpGetter, $user, new NullFingerprinter());
     }
 
     public function testCreateSearchAndDestroy(): void
@@ -99,6 +107,11 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('PJMPHNIQZUBGLI-UHFFFAOYSA-N', $compound['inchi_key']);
         $this->assertEquals($this->smiles, $compound['smiles']);
         $this->assertEquals(self::FENTANYL_CAS, $compound['cas_number']);
+        // test with a user without can_manage_compounds
+        $user = $this->getRandomUserInTeam(2);
+        $Compounds = new Compounds($this->httpGetter, $user, new NullFingerprinter());
+        $this->expectException(IllegalActionException::class);
+        $Compounds->postAction(Action::Create, array());
     }
 
     public function testRestoreCompound(): void
@@ -118,6 +131,21 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
         $Compound->setId($restoredCompoundId);
         $restoredCompound = $Compound->readOne();
         $this->assertEquals(State::Normal->value, $restoredCompound['state']);
+    }
+
+    public function testDestroyLinkedCompound(): void
+    {
+        $compoundId = $this->Compounds->create(
+            casNumber: self::CAFFEINE_CAS,
+            pubchemCid: 2519,
+            smiles: $this->smilesCaf,
+        );
+        $this->Compounds->setId($compoundId);
+        $experiment = $this->getFreshExperiment();
+        $linker = new Compounds2ExperimentsLinks($experiment, $compoundId);
+        $linker->postAction(Action::Create, array());
+        $this->expectException(ImproperActionException::class);
+        $this->Compounds->destroy();
     }
 
     public function testGetApiPath(): void

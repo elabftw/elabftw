@@ -10,6 +10,8 @@ const t = {
     "archive-user": "归档用户",
     "archive-user-description": "归档用户意味着他们的账户将被禁用。此操作是可逆的。",
     "add-user-error": "Use the autocompletion menu to add users.",
+    "can-manage-compounds": "Can manage compounds",
+    "can-manage-inventory-locations": "Can manage inventory locations",
     "can-manage-users2teams": "Can manage users to teams",
     "click-to-edit": "单击编辑",
     "cancel": "取消",

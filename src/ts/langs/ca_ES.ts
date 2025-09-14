@@ -10,6 +10,8 @@ const t = {
     "archive-user": "Usuari actiu",
     "archive-user-description": "Arxivar un usuari significa que el seu compte es desactivarà. Aquesta acció és reversible.",
     "add-user-error": "Use the autocompletion menu to add users.",
+    "can-manage-compounds": "Can manage compounds",
+    "can-manage-inventory-locations": "Can manage inventory locations",
     "can-manage-users2teams": "Can manage users to teams",
     "click-to-edit": "Feu clic per editar",
     "cancel": "Cancel·lar",

@@ -10,6 +10,8 @@ const t = {
     "archive-user": "Arhiivi kasutaja",
     "archive-user-description": "Kasutaja arhiveerimine tähendab tema konto sulgemist. See toiming on tagasipööratav.",
     "add-user-error": "Kasutajate lisamiseks kasutage automaatse täitmise menüüd.",
+    "can-manage-compounds": "Can manage compounds",
+    "can-manage-inventory-locations": "Can manage inventory locations",
     "can-manage-users2teams": "Saab kasutajaid meeskondadesse jagada",
     "click-to-edit": "Klõpsake muutmiseks",
     "cancel": "Tühista",

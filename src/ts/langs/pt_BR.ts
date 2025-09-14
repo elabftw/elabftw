@@ -10,6 +10,8 @@ const t = {
     "archive-user": "Arquivar usuário",
     "archive-user-description": "O arquivamento de um usuário significa que sua conta será desativada. Essa ação É reversível.",
     "add-user-error": "Use the autocompletion menu to add users.",
+    "can-manage-compounds": "Can manage compounds",
+    "can-manage-inventory-locations": "Can manage inventory locations",
     "can-manage-users2teams": "Can manage users to teams",
     "click-to-edit": "Clique para editar",
     "cancel": "Cancelar",

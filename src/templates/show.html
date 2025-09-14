@@ -318,11 +318,14 @@
 
   {% set count = itemsArr|length %}
 
-  {% if App.itemsCategoryArr|length == 0 %}
-  {{ 'No resources categories have been defined for your team. Create some from this page: %sResources Categories%s.'|trans|format("<a href='resources-categories.php'>", "</a>")|raw|msg('warning', false) }}
+  {% if categoryArr|length == 0 %}
+    <div class='d-flex'>
+      {% set categoriesLink = '<a href="%s">'|format(Entity.entityType.toCategoryPage) %}
+      {{ 'Tip: %screate categories%s to start organizing your work.'|trans|format(categoriesLink, "</a>")|raw|msg('ok', false) }}
+    </div>
   {% endif %}
-  <div id='showModeContent'>
 
+  <div id='showModeContent'>
     {# Show message if we're looking for something (query parameters are present), but the number of results is 0 #}
     {% if count == 0 and App.Request.query.all|length > 0 %}
     <div class='row display-flex' id='itemList'>
@@ -336,7 +339,7 @@
     </div>
   {% elseif count == 0 and (App.Request.query.all|length == 0) and not App.Session.get('is_anon') and not App.Request.query.get('offset') %}
     <div class='row display-flex' id='itemList'>
-      {{ "Welcome to eLabFTW. Use the 'Create new' button to get started!"|trans|msg('ok', false) }}
+      <h3>{{ 'Nothing here yet. Start by clicking Create (top-right) to add your first %s.'|trans|format(Entity.entityType.toGenre()) }}</h3>
     </div>
   {% else %}
 

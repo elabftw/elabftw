@@ -688,13 +688,9 @@ on('toggle-all-storage', (el: HTMLElement) => {
 on('rename-storage', (el: HTMLElement) => {
   const name = prompt('Name')?.trim();
   if (!name) return;
-  const params = {
-    parent_id: el.dataset.id,
-    name: name,
-  };
-  ApiC.patch(`storage_units/${el.dataset.id}`, params).then(() => {
+  ApiC.patch(`storage_units/${el.dataset.id}`, {name: name}).then(() => {
     reloadElements(['storageDiv']).then(() => {
-      const parent: HTMLDetailsElement = document.querySelector(`details[data-id="${params.parent_id}"]`);
+      const parent: HTMLDetailsElement = document.querySelector(`details[data-id="${el.dataset.id}"]`);
       if (parent) {
         parent.open = true;
         // now open ancestors too

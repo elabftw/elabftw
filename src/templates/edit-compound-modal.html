@@ -13,7 +13,7 @@
       {{ label|trans }}</label>
     </div>
     <label class='switch ucp-align {{ disabled ? 'disabled' }} '>
-      <input name='{{ target }}' type='checkbox' {{ disabled ? 'readonly disabled' }} autocomplete='off' id='addCompound{{ target }}'>
+      <input name='{{ target }}' type='checkbox' {{ disabled ? 'disabled' }} autocomplete='off' id='addCompound{{ target }}'>
       <span class='slider'></span>
     </label>
   </div>
@@ -58,14 +58,14 @@
               <div class='input-group-prepend'>
                 <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-outline-secondary' type='button' data-action='copy-to-clipboard' data-target='compoundInput-cas_number'><i class='fas fa-clone'></i></button>
               </div>
-              <input name='cas_number' {{ disabled ? 'readonly' }} pattern='^\d{2,7}-\d{2}-\d$' title='{{ 'Please enter a valid CAS number (e.g., 58-08-2)'|trans }}' placeholder='58-08-2' class='form-control' id='compoundInput-cas_number' />
+              <input name='cas_number' {{ disabled ? 'readonly' }} pattern='^\d{2,7}-\d{2}-\d$' inputmode='numeric' title='{{ 'Please enter a valid CAS number (e.g., 58-08-2)'|trans }}' placeholder='58-08-2' class='form-control' id='compoundInput-cas_number' />
             </div>
             <label for='compoundInput-ec_number'>{{ 'EC number'|trans }}</label>
             <div class='input-group mb-2'>
               <div class='input-group-prepend'>
                 <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-outline-secondary' type='button' data-action='copy-to-clipboard' data-target='compoundInput-ec_number'><i class='fas fa-clone'></i></button>
               </div>
-              <input name='ec_number' {{ disabled ? 'readonly' }} pattern='^\d{3}-\d{3}-\d$' title='{{ 'Please enter a valid EC number (e.g., 200-362-1)'|trans }}' placeholder='200-362-1' class='form-control' id='compoundInput-ec_number' />
+              <input name='ec_number' {{ disabled ? 'readonly' }} pattern='^\d{3}-\d{3}-\d$' inputmode='numeric' title='{{ 'Please enter a valid EC number (e.g., 200-362-1)'|trans }}' placeholder='200-362-1' class='form-control' id='compoundInput-ec_number' />
             </div>
             {{ _self.textParam('molecular_formula', 'Molecular formula'|trans, disabled, '', '', 'C8H10N4O2') }}
             {{ _self.textParam('molecular_weight', 'Molecular weight'|trans, disabled, '', 'number', '194.19') }}

@@ -166,6 +166,7 @@ if (document.getElementById('compounds-table')) {
       <>
         <input
           type="text"
+          aria-label={i18next.t('search')}
           placeholder={i18next.t('search')}
           onChange={onQuickFilterChange}
           className={'form-control mb-2'}

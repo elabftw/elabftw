@@ -614,11 +614,10 @@ class Users extends AbstractRest
             Filter::email($params->getStringContent());
         }
 
-        // special case for is_sysadmin and can_manage_users2teams: only a sysadmin can affect this column
-        if ($params->getTarget() === 'is_sysadmin' || $params->getTarget() === 'can_manage_users2teams') {
-            if ($this->requester->userData['is_sysadmin'] === 0) {
-                throw new IllegalActionException('Non sysadmin user tried to edit the is_sysadmin or can_manage_users2teams column of a user');
-            }
+        // columns that can only be modified by Sysadmin requester
+        if (in_array($params->getTarget(), array('can_manage_compounds', 'can_manage_inventory_locations', 'can_manage_users2teams', 'is_sysadmin'), true)
+            && $this->requester->userData['is_sysadmin'] === 0) {
+            throw new IllegalActionException();
         }
 
         // early bail out if existing and new values are the same
@@ -637,6 +636,9 @@ class Users extends AbstractRest
             'email',
             'orgid',
             'is_sysadmin',
+            'can_manage_compounds',
+            'can_manage_users2teams',
+            'can_manage_inventory_locations',
         );
 
         if ($res

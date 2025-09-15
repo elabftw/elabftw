@@ -10,6 +10,8 @@ const t = {
     "archive-user": "Αρχειοθέτηση χρήστη",
     "archive-user-description": "Η αρχειοθέτηση ενός χρήστη σημαίνει ότι ο λογαριασμός του θα απενεργοποιηθεί. Αυτή η ενέργεια είναι αναστρέψιμη.",
     "add-user-error": "Use the autocompletion menu to add users.",
+    "can-manage-compounds": "Can manage compounds",
+    "can-manage-inventory-locations": "Can manage inventory locations",
     "can-manage-users2teams": "Can manage users to teams",
     "click-to-edit": "Κάντε κλικ για επεξεργασία",
     "cancel": "Ακύρωση",

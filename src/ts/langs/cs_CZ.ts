@@ -10,6 +10,8 @@ const t = {
     "archive-user": "Archivovat uživatele",
     "archive-user-description": "Archivace uživatele znamená, že jeho účet bude deaktivován. Tato akce je vratná.",
     "add-user-error": "Use the autocompletion menu to add users.",
+    "can-manage-compounds": "Can manage compounds",
+    "can-manage-inventory-locations": "Can manage inventory locations",
     "can-manage-users2teams": "Can manage users to teams",
     "click-to-edit": "Klikněte pro úpravu",
     "cancel": "Zrušit",

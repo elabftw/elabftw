@@ -10,6 +10,8 @@ const t = {
     "archive-user": "Arhiviraj uporabnika",
     "archive-user-description": "Arhiviranje uporabnika pomeni, da bo njegov račun onemogočen. To dejanje je reverzibilno.",
     "add-user-error": "Use the autocompletion menu to add users.",
+    "can-manage-compounds": "Can manage compounds",
+    "can-manage-inventory-locations": "Can manage inventory locations",
     "can-manage-users2teams": "Can manage users to teams",
     "click-to-edit": "Kliknite za urejanje",
     "cancel": "Prekliči",

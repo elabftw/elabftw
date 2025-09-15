@@ -128,7 +128,6 @@ try {
         //'Teams' => $Teams,
         'teamsArr' => $teamsArr,
         'info' => new Info()->readAll(),
-        'storageUnitsArr' => $StorageUnits->readAllRecursive(),
         'timestampLastMonth' => $Experiments->getTimestampLastMonth(),
         'uploadsStats' => UploadsChecker::getStats(),
         'enforceMfaArr' => EnforceMfa::getAssociativeArray(),

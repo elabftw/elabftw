@@ -43,6 +43,26 @@
             </label>
           </div>
           <p class='smallgray'>{{ 'Enable this to allow user to manage association between users and teams. Note: user must be Admin in at least one team.'|trans }}</p>
+
+          {# Toggle can_manage_compounds slider #}
+          <div class='d-flex justify-content-between'>
+            <label for='userInput-can_manage_compounds' class='col-form-label'>{{ 'Can manage compounds'|trans }}</label>
+            <label class='switch ucp-align {{- App.Users.userData.is_sysadmin == 0 ? ' disabled' }}' title='{{- App.Users.userData.is_sysadmin == 0 ? 'Only a Sysadmin can modify this.'|trans }}'>
+              <input type='checkbox' id='userInput-can_manage_compounds' autocomplete='off' {{ App.Users.userData.is_sysadmin == 0 ? "disabled='disabled'" }} name='can_manage_compounds'>
+              <span class='slider'></span>
+            </label>
+          </div>
+          <p class='smallgray'>{{ 'Enable this to allow user to manage compounds.'|trans }}</p>
+
+          {# Toggle can_manage_inventory-locations slider #}
+          <div class='d-flex justify-content-between'>
+            <label for='userInput-can_manage_inventory_locations' class='col-form-label'>{{ 'Can manage inventory locations'|trans }}</label>
+            <label class='switch ucp-align {{- App.Users.userData.is_sysadmin == 0 ? ' disabled' }}' title='{{- App.Users.userData.is_sysadmin == 0 ? 'Only a Sysadmin can modify this.'|trans }}'>
+              <input type='checkbox' id='userInput-can_manage_inventory_locations' autocomplete='off' {{ App.Users.userData.is_sysadmin == 0 ? "disabled='disabled'" }} name='can_manage_inventory_locations'>
+              <span class='slider'></span>
+            </label>
+          </div>
+          <p class='smallgray'>{{ 'Enable this to allow user to manage inventory locations.'|trans }}</p>
         </div>
 
         {% if App.Users.userData.is_sysadmin == 1 or App.Users.userData.can_manage_users2teams %}

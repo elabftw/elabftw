@@ -10,7 +10,7 @@
 <div id='ketcher-root' class='my-2'></div>
 <div id='ketcher-actions'>
   <div class='input-group my-2'>
-    <button type='button' class='btn btn-primary mr-2' data-action='create-compound-from-editor'>{{ 'Add to compounds database'|trans }}</button>
+    <button type='button' {{ App.Users.userData.can_manage_compounds == 0 ? 'disabled' }} class='btn btn-primary mr-2' data-action='create-compound-from-editor'>{{ 'Add to compounds database'|trans }}</button>
     <div class='input-group-append'>
       <button type='button' class='btn btn-primary rounded-left' data-action='search-from-editor'>{{ 'Search similar structures'|trans }}</button>
       <div class='input-group-text rounded-right'>

@@ -10,6 +10,8 @@ const t = {
     "archive-user": "Archiver utilisateur",
     "archive-user-description": "L'archivage d'un utilisateur signifie que son compte sera désactivé. Cette action est réversible.",
     "add-user-error": "Utilisez le menu d'autocomplétion pour ajouter des utilisateurs.",
+    "can-manage-compounds": "Can manage compounds",
+    "can-manage-inventory-locations": "Can manage inventory locations",
     "can-manage-users2teams": "Peut gérer les utilisateurs en équipes",
     "click-to-edit": "Cliquer pour modifier",
     "cancel": "Annuler",

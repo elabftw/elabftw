@@ -66,7 +66,7 @@
           <ul class='mt-2 list-group'>
           {{ _self.fpList('cas_' ~ fp.id, 'CAS', fp.cas_number) }}
           {{ _self.fpList('iupac_name_' ~ fp.id, 'IUPAC Name', fp.iupac_name) }}
-          {{ _self.fpList('molecular_weight_' ~ fp.id, 'Molecular weight|trans', fp.molecular_weight) }}
+          {{ _self.fpList('molecular_weight_' ~ fp.id, 'Molecular weight'|trans, fp.molecular_weight) }}
           {{ _self.fpList('molecular_formula_' ~ fp.id, 'Molecular formula'|trans, fp.molecular_formula) }}
           {{ _self.fpList('inchi_' ~ fp.id, 'InChI', fp.inchi) }}
           {{ _self.fpList('inchi_key_' ~ fp.id, 'InChIKey', fp.inchi_key) }}

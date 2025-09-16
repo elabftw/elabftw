@@ -112,7 +112,7 @@ final class i18n4Js
             'remove' => _('Remove'),
             'rename-column' => _('New title for the column'),
             'replace-edited-file' => _('Do you want to replace the file on the server with this edit?'),
-            'replace-existing' => _('Replace the original uploaded file with your changes'),
+            'replace-existing' => _('Overwrite original file'),
             'request-filename' => _('Enter name of the file'),
             'resource-not-found' => _('Nothing to show with this id'),
             'revisions-error' => _('Select two revisions to compare them.'),

@@ -76,7 +76,7 @@ const t = {
     "remove": "Eemalda",
     "rename-column": "New title for the column",
     "replace-edited-file": "Kas soovite serveris oleva faili selle muudatusega asendada?",
-    "replace-existing": "Replace the original uploaded file with your changes",
+    "replace-existing": "Overwrite original file",
     "request-filename": "Sisesta faili nimi",
     "resource-not-found": "Selle ID-ga pole midagi näidata",
     "revisions-error": "Valige võrdlemiseks kaks redaktsiooni.",

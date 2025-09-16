@@ -76,7 +76,7 @@ const t = {
     "remove": "Eliminar",
     "rename-column": "New title for the column",
     "replace-edited-file": "Vol reemplaçar el fitxer al servidor amb aquesta edicio",
-    "replace-existing": "Replace the original uploaded file with your changes",
+    "replace-existing": "Overwrite original file",
     "request-filename": "Introduïu el nom del fitxer",
     "resource-not-found": "Res a mostrar amb aquest identificador",
     "revisions-error": "Select two revisions to compare them.",

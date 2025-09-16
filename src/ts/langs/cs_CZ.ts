@@ -76,7 +76,7 @@ const t = {
     "remove": "Odstranit",
     "rename-column": "New title for the column",
     "replace-edited-file": "Chcete nahradit soubor na serveru touto úpravou?",
-    "replace-existing": "Replace the original uploaded file with your changes",
+    "replace-existing": "Overwrite original file",
     "request-filename": "Zadejte název souboru",
     "resource-not-found": "Nic, co by se ukázalo s tímto id",
     "revisions-error": "Select two revisions to compare them.",

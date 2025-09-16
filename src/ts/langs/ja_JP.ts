@@ -76,7 +76,7 @@ const t = {
     "remove": "取り除く",
     "rename-column": "New title for the column",
     "replace-edited-file": "この編集したものでサーバー上のファイルを置き換えますか？",
-    "replace-existing": "Replace the original uploaded file with your changes",
+    "replace-existing": "Overwrite original file",
     "request-filename": "ファイルの名前を入力してください",
     "resource-not-found": "このIDで表示可能なものはありません",
     "revisions-error": "Select two revisions to compare them.",

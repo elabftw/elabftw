@@ -76,7 +76,7 @@ const t = {
     "remove": "移除",
     "rename-column": "New title for the column",
     "replace-edited-file": "您要用此编辑替换服务器上的文件吗？",
-    "replace-existing": "Replace the original uploaded file with your changes",
+    "replace-existing": "Overwrite original file",
     "request-filename": "输入文件名",
     "resource-not-found": "该 ID 没有任何记录",
     "revisions-error": "Select two revisions to compare them.",

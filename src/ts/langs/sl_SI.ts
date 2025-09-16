@@ -76,7 +76,7 @@ const t = {
     "remove": "Odstrani",
     "rename-column": "New title for the column",
     "replace-edited-file": "Ali želite zamenjati datoteko na strežniku s tem urejanjem?",
-    "replace-existing": "Replace the original uploaded file with your changes",
+    "replace-existing": "Overwrite original file",
     "request-filename": "Vnesite ime datoteke",
     "resource-not-found": "Ničesar za prikaz s to identifikacijo",
     "revisions-error": "Select two revisions to compare them.",

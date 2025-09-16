@@ -76,7 +76,7 @@ const t = {
     "remove": "Poistaa",
     "rename-column": "New title for the column",
     "replace-edited-file": "Haluatko korvata palvelimella olevan tiedoston tällä muokkauksella?",
-    "replace-existing": "Replace the original uploaded file with your changes",
+    "replace-existing": "Overwrite original file",
     "request-filename": "Anna tiedoston nimi",
     "resource-not-found": "Ei mitään näytettävää tällä tunnuksella",
     "revisions-error": "Select two revisions to compare them.",

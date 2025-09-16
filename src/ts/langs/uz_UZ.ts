@@ -76,7 +76,7 @@ const t = {
     "remove": "O'chirish",
     "rename-column": "New title for the column",
     "replace-edited-file": "Serverdagi faylni ushbu tahrir bilan almashtirmoqchimisiz?",
-    "replace-existing": "Replace the original uploaded file with your changes",
+    "replace-existing": "Overwrite original file",
     "request-filename": "Fayl nomini kiriting",
     "resource-not-found": "Bu identifikator bilan hech narsa ko'rsatilmaydi",
     "revisions-error": "Select two revisions to compare them.",

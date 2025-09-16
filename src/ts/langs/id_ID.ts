@@ -76,7 +76,7 @@ const t = {
     "remove": "Menghapus",
     "rename-column": "New title for the column",
     "replace-edited-file": "Apakah Anda ingin mengganti file di server dengan hasil edit ini?",
-    "replace-existing": "Replace the original uploaded file with your changes",
+    "replace-existing": "Overwrite original file",
     "request-filename": "Masukkan nama file",
     "resource-not-found": "Tidak ada yang bisa ditampilkan dengan id ini",
     "revisions-error": "Select two revisions to compare them.",

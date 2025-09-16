@@ -76,7 +76,7 @@ const t = {
     "remove": "Eliminar",
     "rename-column": "New title for the column",
     "replace-edited-file": "¿Quiere reemplazar el archivo en el servidor por esta edición?",
-    "replace-existing": "Replace the original uploaded file with your changes",
+    "replace-existing": "Overwrite original file",
     "request-filename": "Ingrese el nombre del archivo",
     "resource-not-found": "Nada que mostrar con este identificador",
     "revisions-error": "Select two revisions to compare them.",

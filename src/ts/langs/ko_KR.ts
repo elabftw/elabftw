@@ -76,7 +76,7 @@ const t = {
     "remove": "제거하다",
     "rename-column": "New title for the column",
     "replace-edited-file": "서버에 저장된 파일을 현재 수정본으로 교체할까요?",
-    "replace-existing": "Replace the original uploaded file with your changes",
+    "replace-existing": "Overwrite original file",
     "request-filename": "파일 이름 입력",
     "resource-not-found": "이 계정과 관련된 추가 정보는 없습니다",
     "revisions-error": "Select two revisions to compare them.",

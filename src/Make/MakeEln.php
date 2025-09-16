@@ -275,7 +275,10 @@ class MakeEln extends AbstractMakeEln
         }
         // STEPS
         if (!empty($e['steps'])) {
-            $datasetNode['step'] = $this->stepsToJsonLd($e['steps']);
+            // $datasetNode['step'] = $this->stepsToJsonLd($e['steps']);
+            $processedSteps = $this->stepsToJsonLd($e['steps']);
+            $datasetNode['step'] = $processedSteps['ids'];
+            array_push($this->dataEntities, ...$processedSteps['nodes']);
         }
 
         $this->dataEntities[] = $datasetNode;
@@ -298,21 +301,32 @@ class MakeEln extends AbstractMakeEln
 
     protected function stepsToJsonLd(array $steps): array
     {
-        $res = array();
+        // we will return two arrays, the array of @id, and an array of nodes of @type HowToStep
+        $res = array('ids' => array(), 'nodes' => array());
         foreach ($steps as $step) {
-            $howToStep = array();
-            $howToStep['@id'] = 'howtostep://' . Tools::getUuidv4();
-            $howToStep['@type'] = 'HowToStep';
-            $howToStep['position'] = $step['ordering'];
-            $howToStep['creativeWorkStatus'] = $step['finished'] === 1 ? 'finished' : 'unfinished';
+            $id = 'howtostep://' . Tools::getUuidv4();
+            $res['ids'][] = array('@id' => $id);
+            $node = array(
+                '@id' => $id,
+                '@type' => 'HowToStep',
+                'position' => $step['ordering'],
+                'creativeWorkStatus' => $step['finished'] === 1 ? 'finished' : 'unfinished',
+            );
             if ($step['deadline']) {
-                $howToStep['expires'] = (new DateTimeImmutable($step['deadline']))->format(DateTimeImmutable::ATOM);
+                $node['expires'] = (new DateTimeImmutable($step['deadline']))->format(DateTimeImmutable::ATOM);
             }
             if ($step['finished_time']) {
-                $howToStep['temporal'] = (new DateTimeImmutable($step['finished_time']))->format(DateTimeImmutable::ATOM);
+                $node['temporal'] = (new DateTimeImmutable($step['finished_time']))->format(DateTimeImmutable::ATOM);
             }
-            $howToStep['itemListElement'] = array(array('@type' => 'HowToDirection', 'text' => $step['body']));
-            $res[] = $howToStep;
+            $stepBodyId = 'howtodirection://' . Tools::getUuidv4();
+            $node['itemListElement'] = array('@id' => $stepBodyId);
+            $res['nodes'][] = $node;
+            // step body is in another node
+            $res['nodes'][] = array(
+                '@id' => $stepBodyId,
+                '@type' => 'HowToDirection',
+                'text' => $step['body'],
+            );
         }
         return $res;
     }

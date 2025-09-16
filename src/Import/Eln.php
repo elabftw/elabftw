@@ -61,6 +61,8 @@ class Eln extends AbstractZip
 
     private int $count;
 
+    private int $internalElnVersion = -1;
+
     public function __construct(
         protected Users $requester,
         // TODO nullable and have it in .eln export so it is not lost on import
@@ -214,7 +216,10 @@ class Eln extends AbstractZip
         foreach ($this->graph as $node) {
             // find the node describing the crate
             if ($node['@id'] === './') {
-                $this->crateNodeHasPart = $node['hasPart'];
+                $this->crateNodeHasPart = $node['hasPart'] ?? array();
+                if (array_key_exists('version', $node)) {
+                    $this->internalElnVersion = (int) $node['version'];
+                }
             }
             // detect old elabftw (<5.0.0-beta2) versions where we need to decode characters
             // only newer versions have the areaServed attribute
@@ -365,16 +370,19 @@ class Eln extends AbstractZip
                         // versions before 103 will not be flattened and hold an array of pv
                         // (in 103 we have an array of id)
                         // INTERNAL_ELN_VERSION < 103
-                        if (array_key_exists('propertyID', $propval) && $propval['propertyID'] === 'elabftw_metadata') {
-                            // we look for the special elabftw_metadata property and that's what we import
-                            $this->Entity->update(new EntityParams('metadata', $propval['value']));
-                            break;
-                        }
-                        // INTERNAL_ELN_VERSION >= 103
-                        $node = $this->getNodeFromId($propval['@id']);
-                        if ($node['propertyID'] === 'elabftw_metadata') {
-                            $this->Entity->update(new EntityParams('metadata', $node['value']));
-                            break;
+                        if ($this->internalElnVersion < 103) {
+                            if (array_key_exists('propertyID', $propval) && $propval['propertyID'] === 'elabftw_metadata') {
+                                // we look for the special elabftw_metadata property and that's what we import
+                                $this->Entity->update(new EntityParams('metadata', $propval['value']));
+                                break;
+                            }
+                        } else {
+                            // INTERNAL_ELN_VERSION >= 103
+                            $node = $this->getNodeFromId($propval['@id']);
+                            if ($node['propertyID'] === 'elabftw_metadata') {
+                                $this->Entity->update(new EntityParams('metadata', $node['value']));
+                                break;
+                            }
                         }
                     }
                     break;
@@ -389,8 +397,16 @@ class Eln extends AbstractZip
                     break;
                     // STEPS
                 case 'step':
-                    foreach ($value as $step) {
-                        $this->Entity->Steps->importFromHowToStep($step);
+                    if ($this->internalElnVersion < 104) {
+                        foreach ($value as $step) {
+                            $this->Entity->Steps->importFromHowToStepOld($step);
+                        }
+                    } else {
+                        foreach ($value as $id) {
+                            $step = $this->getNodeFromId($id['@id']);
+                            $body = $this->getNodeFromId($step['itemListElement']['@id'])['text'];
+                            $this->Entity->Steps->importFromHowToStep($step, $body);
+                        }
                     }
                     break;
                     // TAGS: should normally be a comma separated string, but we allow array for BC

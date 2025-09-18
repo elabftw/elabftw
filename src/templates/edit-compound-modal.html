@@ -29,7 +29,7 @@
   </div>
 {% endmacro %}
 
-{% set disabled = App.User.userData.can_manage_compounds == 0 %}
+{% set disabled = App.Users.userData.can_manage_compounds == 0 %}
 
 {# Modal for manual creation/edition of a compound #}
 <div class='modal fade' id='editCompoundModal' tabindex='-1' role='dialog' aria-labelledby='editCompoundModalTitle'>

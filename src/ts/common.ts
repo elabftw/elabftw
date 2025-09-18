@@ -1218,6 +1218,15 @@ on('notify-surrounding-bookers', (el: HTMLElement, event: Event) => {
   }).finally(() => button.disabled = false);
 });
 
+on('delete-compounds', (el: HTMLElement) => {
+  const idList = el.dataset.target.split(',');
+  if (!confirm(i18next.t('multi-changes-confirm', { num: idList.length }))) {
+    return;
+  }
+  idList.forEach(id => ApiC.delete(`compounds/${id}`));
+  document.dispatchEvent(new CustomEvent('dataReload'));
+});
+
 /**
  * MAIN click listener on container
  */

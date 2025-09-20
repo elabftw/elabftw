@@ -14,7 +14,7 @@ The code itself is checked by various static analyzers to try and detect bugs so
 
 If you scan the live demo for good practices and security headers, you'll find that eLabFTW scores very very high:
 
-[![observatory score a+](https://i.imgur.com/mT9GH9I.png)](https://observatory.mozilla.org/analyze/demo.elabftw.net)
+[![observatory score a+](https://i.imgur.com/58rThaM.png)](https://developer.mozilla.org/en-US/observatory/analyze?host=demo.elabftw.net)
 
 ### Best practices
 
@@ -75,10 +75,6 @@ The container image (elabftw/elabimg) is built with many custom instructions. It
 #### Configuration
 
 **nginx** is configured to serve php files from a list of allowed php files, which prevents running php from unknown locations.
-
-### cronie
-
-**cronie** is built from the sources of a specific version, with a custom `APKBUILD` removing unneeded modules and enable security flags (relro, pie).
 
 ### php and php-fpm
 

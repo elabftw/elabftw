@@ -29,7 +29,7 @@
   </div>
 {% endmacro %}
 
-{% set disabled = App.Users.userData.can_manage_compounds == 0 %}
+{% set compoundsDisabled = App.Users.userData.can_manage_compounds == 0 and App.Config.configArr.compounds_require_edit_rights == 1 %}
 
 {# Modal for manual creation/edition of a compound #}
 <div class='modal fade' id='editCompoundModal' tabindex='-1' role='dialog' aria-labelledby='editCompoundModalTitle'>
@@ -50,55 +50,55 @@
             <button type='button' class='btn btn-primary btn-sm ml-auto' data-action='toggle-modal' data-dismiss='modal' data-target='createResourceFromCompoundModal'>{{ 'Create resource from compound'|trans }}</button>
           </div>
           <div class='my-2' id='editCompoundInputs'>
-            {{ _self.textParam('name', 'Name'|trans, disabled, 'required') }}
-            {{ _self.textParam('iupac_name', 'IUPAC Name'|trans, disabled) }}
+            {{ _self.textParam('name', 'Name'|trans, compoundsDisabled, 'required') }}
+            {{ _self.textParam('iupac_name', 'IUPAC Name'|trans, compoundsDisabled) }}
             {# special case for CAS and EC numbers, too many specifics to use the macro #}
             <label for='compoundInput-cas_number'>{{ 'CAS number'|trans }}</label>
             <div class='input-group mb-2'>
               <div class='input-group-prepend'>
                 <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-outline-secondary' type='button' data-action='copy-to-clipboard' data-target='compoundInput-cas_number'><i class='fas fa-clone'></i></button>
               </div>
-              <input name='cas_number' {{ disabled ? 'readonly' }} pattern='^\d{2,7}-\d{2}-\d$' inputmode='numeric' title='{{ 'Please enter a valid CAS number (e.g., 58-08-2)'|trans }}' placeholder='58-08-2' class='form-control' id='compoundInput-cas_number' />
+              <input name='cas_number' {{ compoundsDisabled ? 'readonly' }} pattern='^\d{2,7}-\d{2}-\d$' inputmode='numeric' title='{{ 'Please enter a valid CAS number (e.g., 58-08-2)'|trans }}' placeholder='58-08-2' class='form-control' id='compoundInput-cas_number' />
             </div>
             <label for='compoundInput-ec_number'>{{ 'EC number'|trans }}</label>
             <div class='input-group mb-2'>
               <div class='input-group-prepend'>
                 <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-outline-secondary' type='button' data-action='copy-to-clipboard' data-target='compoundInput-ec_number'><i class='fas fa-clone'></i></button>
               </div>
-              <input name='ec_number' {{ disabled ? 'readonly' }} pattern='^\d{3}-\d{3}-\d$' inputmode='numeric' title='{{ 'Please enter a valid EC number (e.g., 200-362-1)'|trans }}' placeholder='200-362-1' class='form-control' id='compoundInput-ec_number' />
+              <input name='ec_number' {{ compoundsDisabled ? 'readonly' }} pattern='^\d{3}-\d{3}-\d$' inputmode='numeric' title='{{ 'Please enter a valid EC number (e.g., 200-362-1)'|trans }}' placeholder='200-362-1' class='form-control' id='compoundInput-ec_number' />
             </div>
-            {{ _self.textParam('molecular_formula', 'Molecular formula'|trans, disabled, '', '', 'C8H10N4O2') }}
-            {{ _self.textParam('molecular_weight', 'Molecular weight'|trans, disabled, '', 'number', '194.19') }}
-            {{ _self.textParam('smiles', 'SMILES', disabled, '', '', 'CN1C=NC2=C1C(=O)N(C(=O)N2C)C') }}
-            {{ _self.textParam('inchi', 'InChI', disabled, '', '', 'InChI=1S/C8H10N4O2/c1-10-4-9-6-5(10)7(13)12(3)8(14)11(6)2/h4H,1-3H3') }}
-            {{ _self.textParam('inchi_key', 'InChI Key', disabled, '', '', 'RYYVLZVUVIJVGH-UHFFFAOYSA-N') }}
+            {{ _self.textParam('molecular_formula', 'Molecular formula'|trans, compoundsDisabled, '', '', 'C8H10N4O2') }}
+            {{ _self.textParam('molecular_weight', 'Molecular weight'|trans, compoundsDisabled, '', 'number', '194.19') }}
+            {{ _self.textParam('smiles', 'SMILES', compoundsDisabled, '', '', 'CN1C=NC2=C1C(=O)N(C(=O)N2C)C') }}
+            {{ _self.textParam('inchi', 'InChI', compoundsDisabled, '', '', 'InChI=1S/C8H10N4O2/c1-10-4-9-6-5(10)7(13)12(3)8(14)11(6)2/h4H,1-3H3') }}
+            {{ _self.textParam('inchi_key', 'InChI Key', compoundsDisabled, '', '', 'RYYVLZVUVIJVGH-UHFFFAOYSA-N') }}
             <hr>
             <details>
               <summary><h5 class='d-inline'>{{ 'Safety information'|trans }}</h5></summary>
-              {{ _self.binaryParam('is_hazardous2health', 'Hazardous to health', '07', '', disabled) }}
-              {{ _self.binaryParam('is_corrosive', 'Corrosive', '05', '', disabled) }}
-              {{ _self.binaryParam('is_explosive', 'Explosive', '01', '', disabled) }}
-              {{ _self.binaryParam('is_flammable', 'Flammable', '02', '', disabled) }}
-              {{ _self.binaryParam('is_gas_under_pressure', 'Gas under pressure', '04', '', disabled) }}
-              {{ _self.binaryParam('is_hazardous2env', 'Hazardous to environment', '09', '', disabled) }}
-              {{ _self.binaryParam('is_serious_health_hazard', 'Serious health hazard', '08', '', disabled) }}
-              {{ _self.binaryParam('is_oxidising', 'Oxidising', '03', '', disabled) }}
-              {{ _self.binaryParam('is_toxic', 'Toxic', '06', '', disabled) }}
-              {{ _self.binaryParam('is_radioactive', 'Radioactive', '', 'radiation', disabled) }}
-              {{ _self.binaryParam('is_controlled', 'Controlled substance', '', 'shield', disabled) }}
-              {{ _self.binaryParam('is_antibiotic', 'Antibiotic', '', 'bacterium', disabled) }}
-              {{ _self.binaryParam('is_antibiotic_precursor', 'Antibiotic precursor', '', 'bacterium', disabled) }}
-              {{ _self.binaryParam('is_explosive_precursor', 'Explosive precursor', '', 'explosion', disabled) }}
-              {{ _self.binaryParam('is_drug', 'Drug', '', 'pills', disabled) }}
-              {{ _self.binaryParam('is_drug_precursor', 'Drug precursor', '', 'pills', disabled) }}
-              {{ _self.binaryParam('is_cmr', 'Carcinogenic, mutagenic and reprotoxic (CMR)', '', 'skull-crossbones', disabled) }}
-              {{ _self.binaryParam('is_nano', 'Nanomaterial', '', 'atom', disabled) }}
-              {{ _self.binaryParam('is_ed2health', 'Endocrine disruptor for human health', '', 'skull', disabled) }}
-              {{ _self.binaryParam('is_ed2env', 'Endocrine disruptor for the environment', '', 'skull', disabled) }}
-              {{ _self.binaryParam('is_pbt', 'Persistent, bioaccumulative and toxic', '', 'skull', disabled) }}
-              {{ _self.binaryParam('is_pmt', 'Persistent, mobile and toxic', '', 'skull', disabled) }}
-              {{ _self.binaryParam('is_vpvb', 'Very persistent and very bioaccumulative', '', 'skull', disabled) }}
-              {{ _self.binaryParam('is_vpvm', 'Very persistent and very mobile', '', 'skull', disabled) }}
+              {{ _self.binaryParam('is_hazardous2health', 'Hazardous to health', '07', '', compoundsDisabled) }}
+              {{ _self.binaryParam('is_corrosive', 'Corrosive', '05', '', compoundsDisabled) }}
+              {{ _self.binaryParam('is_explosive', 'Explosive', '01', '', compoundsDisabled) }}
+              {{ _self.binaryParam('is_flammable', 'Flammable', '02', '', compoundsDisabled) }}
+              {{ _self.binaryParam('is_gas_under_pressure', 'Gas under pressure', '04', '', compoundsDisabled) }}
+              {{ _self.binaryParam('is_hazardous2env', 'Hazardous to environment', '09', '', compoundsDisabled) }}
+              {{ _self.binaryParam('is_serious_health_hazard', 'Serious health hazard', '08', '', compoundsDisabled) }}
+              {{ _self.binaryParam('is_oxidising', 'Oxidising', '03', '', compoundsDisabled) }}
+              {{ _self.binaryParam('is_toxic', 'Toxic', '06', '', compoundsDisabled) }}
+              {{ _self.binaryParam('is_radioactive', 'Radioactive', '', 'radiation', compoundsDisabled) }}
+              {{ _self.binaryParam('is_controlled', 'Controlled substance', '', 'shield', compoundsDisabled) }}
+              {{ _self.binaryParam('is_antibiotic', 'Antibiotic', '', 'bacterium', compoundsDisabled) }}
+              {{ _self.binaryParam('is_antibiotic_precursor', 'Antibiotic precursor', '', 'bacterium', compoundsDisabled) }}
+              {{ _self.binaryParam('is_explosive_precursor', 'Explosive precursor', '', 'explosion', compoundsDisabled) }}
+              {{ _self.binaryParam('is_drug', 'Drug', '', 'pills', compoundsDisabled) }}
+              {{ _self.binaryParam('is_drug_precursor', 'Drug precursor', '', 'pills', compoundsDisabled) }}
+              {{ _self.binaryParam('is_cmr', 'Carcinogenic, mutagenic and reprotoxic (CMR)', '', 'skull-crossbones', compoundsDisabled) }}
+              {{ _self.binaryParam('is_nano', 'Nanomaterial', '', 'atom', compoundsDisabled) }}
+              {{ _self.binaryParam('is_ed2health', 'Endocrine disruptor for human health', '', 'skull', compoundsDisabled) }}
+              {{ _self.binaryParam('is_ed2env', 'Endocrine disruptor for the environment', '', 'skull', compoundsDisabled) }}
+              {{ _self.binaryParam('is_pbt', 'Persistent, bioaccumulative and toxic', '', 'skull', compoundsDisabled) }}
+              {{ _self.binaryParam('is_pmt', 'Persistent, mobile and toxic', '', 'skull', compoundsDisabled) }}
+              {{ _self.binaryParam('is_vpvb', 'Very persistent and very bioaccumulative', '', 'skull', compoundsDisabled) }}
+              {{ _self.binaryParam('is_vpvm', 'Very persistent and very mobile', '', 'skull', compoundsDisabled) }}
             </details>
 
             <hr>
@@ -119,7 +119,7 @@
 
         <div class='modal-footer'>
           <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
-          <button type='submit' {{ disabled ? 'disabled' }} class='btn btn-primary' id='editCompoundModalSaveBtn' data-action='save-compound'>{{ 'Save'|trans }}</button>
+          <button type='submit' {{ compoundsDisabled ? 'disabled' }} class='btn btn-primary' id='editCompoundModalSaveBtn' data-action='save-compound'>{{ 'Save'|trans }}</button>
         </div>
       </form>
     </div>

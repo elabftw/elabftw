@@ -38,7 +38,7 @@ class CompoundsLinksTest extends \PHPUnit\Framework\TestCase
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(array('handler' => $handlerStack));
         $httpGetter = new HttpGetter($client);
-        $Compounds = new Compounds($httpGetter, $user, new NullFingerprinter());
+        $Compounds = new Compounds($httpGetter, $user, new NullFingerprinter(), false);
         $compoundId = $Compounds->create(name: 'test compound');
         $Links->setId($compoundId);
         $expected = sprintf('api/v2/experiments/%d/compounds2experiments/', $Entity->id);

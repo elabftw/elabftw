@@ -211,7 +211,9 @@ final class Config extends AbstractRest
             ('onboarding_email_different_for_admins', '0'),
             ('onboarding_email_admins_subject', NULL),
             ('onboarding_email_admins_body', NULL),
-            ('allow_users_change_identity', '0')";
+            ('allow_users_change_identity', '0'),
+            ('compounds_require_edit_rights', '0'),
+            ('inventory_require_edit_rights', '0')";
 
         $req = $this->Db->prepare($sql);
         $req->bindValue(':schema', Update::REQUIRED_SCHEMA);

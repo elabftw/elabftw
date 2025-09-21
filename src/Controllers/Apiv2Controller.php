@@ -295,6 +295,7 @@ final class Apiv2Controller extends AbstractApiController
                         new HttpGetter(new Client(), $Config->configArr['proxy'], Env::asBool('DEV_MODE')),
                         $this->requester,
                         $Fingerprinter,
+                        $Config->configArr['compounds_require_edit_rights'] === '1',
                         $this->id,
                     );
                 }
@@ -326,7 +327,7 @@ final class Apiv2Controller extends AbstractApiController
             ),
             ApiEndpoint::FavTags => new FavTags($this->requester, $this->id),
             ApiEndpoint::Reports => new ReportsHandler($this->requester),
-            ApiEndpoint::StorageUnits => new StorageUnits($this->requester, $this->id),
+            ApiEndpoint::StorageUnits => new StorageUnits($this->requester, Config::getConfig()->configArr['inventory_require_edit_rights'] === '1', $this->id),
             // Temporary informational endpoint, can be removed in 5.2
             ApiEndpoint::TeamTags => throw new ImproperActionException('Use api/v2/teams/current/tags endpoint instead.'),
             ApiEndpoint::Teams => new Teams($this->requester, $this->id),

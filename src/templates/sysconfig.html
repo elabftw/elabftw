@@ -109,7 +109,11 @@
     </div>
     <hr>
 
-    {% include 'binary-setting.html' with {'label': 'Allow users to change their first name, last name, internal id or email address'|trans, 'slug': 'allow_users_change_identity', 'help': 'When disabled, only a Sysadmin will be allowed to modify these parameters.'} %}
+    {% include 'binary-setting.html' with {'label': 'Allow users to change their first name, last name, internal id or email address'|trans, 'slug': 'allow_users_change_identity', 'help': 'When disabled, only a Sysadmin will be allowed to modify these parameters.'|trans} %}
+
+    {% include 'binary-setting.html' with {'label': 'Prevent modification of global compounds database unless user is given explicit rights.'|trans, 'slug': 'compounds_require_edit_rights', 'help': 'When enabled, a Sysadmin will need to give edit rights to all users that should be able to edit the common compounds database. All other users will access it in read-only.'|trans} %}
+
+    {% include 'binary-setting.html' with {'label': 'Prevent modification of inventory locations unless user is given explicit rights.'|trans, 'slug': 'inventory_require_edit_rights', 'help': 'When enabled, a Sysadmin will need to give edit rights to all users that should be able to edit the inventory locations. All other users will access it in read-only.'|trans} %}
 
   </div>
 

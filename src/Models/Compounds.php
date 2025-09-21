@@ -64,7 +64,7 @@ final class Compounds extends AbstractRest
         'wikipedia',
     );
 
-    public function __construct(protected HttpGetter $httpGetter, private Users $requester, protected FingerprinterInterface $fingerprinter, ?int $id = null)
+    public function __construct(protected HttpGetter $httpGetter, private Users $requester, protected FingerprinterInterface $fingerprinter, private bool $requireEditRights, ?int $id = null)
     {
         parent::__construct();
         $this->setId($id);
@@ -506,7 +506,7 @@ final class Compounds extends AbstractRest
 
     protected function canWrite(): bool
     {
-        return $this->requester->userData['can_manage_compounds'] === 1;
+        return $this->requester->userData['can_manage_compounds'] === 1 || $this->requireEditRights === false;
     }
 
     protected function canWriteOrExplode(): void

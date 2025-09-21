@@ -106,7 +106,7 @@ $startTime = microtime(true);
 $requester = new Users(1, 1);
 $httpGetter = new HttpGetter(new Client(), verifyTls: false);
 $Fingerprinter = new Fingerprinter($httpGetter, Env::asUrl('FINGERPRINTER_URL'));
-$Compounds = new Compounds($httpGetter, $requester, fingerprinter: $Fingerprinter);
+$Compounds = new Compounds($httpGetter, $requester, fingerprinter: $Fingerprinter, requireEditRights: false);
 foreach ($smiles as $mol) {
     $Compounds->create(smiles: $mol['smiles'], name: $mol['name']);
 }

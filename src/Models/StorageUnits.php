@@ -33,7 +33,7 @@ final class StorageUnits extends AbstractRest
 {
     use SetIdTrait;
 
-    public function __construct(private Users $requester, ?int $id = null)
+    public function __construct(private Users $requester, private bool $requireEditRights, ?int $id = null)
     {
         parent::__construct();
         $this->setId($id);
@@ -378,7 +378,7 @@ final class StorageUnits extends AbstractRest
 
     protected function canWrite(): bool
     {
-        return $this->requester->userData['can_manage_inventory_locations'] === 1;
+        return $this->requester->userData['can_manage_inventory_locations'] === 1 || $this->requireEditRights === false;
     }
 
     protected function canWriteOrExplode(): void

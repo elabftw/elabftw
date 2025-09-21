@@ -52,7 +52,7 @@
               <span class='slider'></span>
             </label>
           </div>
-          <p class='smallgray'>{{ 'Enable this to allow user to manage compounds.'|trans }}</p>
+          <p class='smallgray'>{{ 'Enable this to allow user to manage compounds. This has no effect if compounds edition is not restricted globally.'|trans }}</p>
 
           {# Toggle can_manage_inventory-locations slider #}
           <div class='d-flex justify-content-between'>
@@ -62,7 +62,7 @@
               <span class='slider'></span>
             </label>
           </div>
-          <p class='smallgray'>{{ 'Enable this to allow user to manage inventory locations.'|trans }}</p>
+          <p class='smallgray'>{{ 'Enable this to allow user to manage inventory locations. This has no effect if inventory locations edition is not restricted globally.'|trans }}</p>
         </div>
 
         {% if App.Users.userData.is_sysadmin == 1 or App.Users.userData.can_manage_users2teams %}

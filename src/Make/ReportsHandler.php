@@ -35,11 +35,11 @@ final class ReportsHandler extends AbstractRest
     {
         $httpGetter = new HttpGetter(new Client(), verifyTls: false);
         $Reporter = match ($scope) {
-            ReportScopes::Compounds => (new MakeCompoundsReport(new Compounds($httpGetter, $this->requester, new NullFingerprinter()))),
+            ReportScopes::Compounds => (new MakeCompoundsReport(new Compounds($httpGetter, $this->requester, new NullFingerprinter(), false))),
             ReportScopes::Instance => (new MakeReport($this->requester)),
-            ReportScopes::Inventory => (new MakeInventoryReport(new StorageUnits($this->requester))),
+            ReportScopes::Inventory => (new MakeInventoryReport(new StorageUnits($this->requester, false))),
             ReportScopes::Team => (new MakeTeamReport($this->requester)),
-            ReportScopes::StoredCompounds => (new MakeStoredCompoundsReport(new StorageUnits($this->requester))),
+            ReportScopes::StoredCompounds => (new MakeStoredCompoundsReport(new StorageUnits($this->requester, false))),
         };
         return $Reporter->getResponse();
 

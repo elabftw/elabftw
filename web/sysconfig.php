@@ -107,7 +107,7 @@ try {
         }
     });
     $passwordComplexity = PasswordComplexity::from((int) $App->Config->configArr['password_complexity_requirement']);
-    $StorageUnits = new StorageUnits($App->Users);
+    $StorageUnits = new StorageUnits($App->Users, false);
     $template = 'sysconfig.html';
     $renderArr = array(
         'Request' => $App->Request,

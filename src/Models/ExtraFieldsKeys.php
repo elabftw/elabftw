@@ -62,7 +62,7 @@ final class ExtraFieldsKeys extends AbstractRest
                         )
                     ) AS `extra_fields_keys_table`
                     # Need to CAST here to retain case-insensitive comparison
-                    WHERE CAST(`extra_fields_key` AS CHAR) LIKE :search_term
+                    WHERE CAST(`extra_fields_key` AS CHAR) LIKE :search_term AND entity.state IN (1,2)
                     %s
                     GROUP BY `extra_fields_key`',
                 $entityType->value,

@@ -15,6 +15,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Enums\EntityType;
+use Elabftw\Enums\State;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Users\Users;
 use Override;
@@ -53,7 +54,7 @@ final class ExtraFieldsKeys extends AbstractRest
                     )
                     LEFT JOIN `users2teams` ON (
                         `users2teams`.`users_id` = `users`.`userid`
-                        AND `users2teams`.`teams_id` = %d
+                        AND `users2teams`.`teams_id` = :teamid
                     )
                     JOIN JSON_TABLE (
                         JSON_KEYS(`entity`.`metadata`, "$.extra_fields"),
@@ -62,11 +63,10 @@ final class ExtraFieldsKeys extends AbstractRest
                         )
                     ) AS `extra_fields_keys_table`
                     # Need to CAST here to retain case-insensitive comparison
-                    WHERE CAST(`extra_fields_key` AS CHAR) LIKE :search_term AND entity.state IN (1,2)
+                    WHERE CAST(`extra_fields_key` AS CHAR) LIKE :search_term AND entity.state <> :state_deleted
                     %s
                     GROUP BY `extra_fields_key`',
                 $entityType->value,
-                $this->Users->userData['team'],
                 (new EntitySqlBuilder($entityType->toInstance($this->Users)))->getCanFilter('canread'),
             );
         }
@@ -77,12 +77,14 @@ final class ExtraFieldsKeys extends AbstractRest
                 GROUP BY `extra_fields_key`
                 ORDER BY `frequency` DESC, `extra_fields_key` ASC
                 %s',
-            implode(' UNION ', $sql),
+            implode(' UNION ALL ', $sql),
             $this->limit > 0 ? 'LIMIT :limit' : '',
         );
 
         $req = $this->Db->prepare($finalSql);
         $req->bindValue(':search_term', '%' . $this->searchTerm . '%');
+        $req->bindValue(':state_deleted', State::Deleted->value, PDO::PARAM_INT);
+        $req->bindParam(':teamid', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         if ($this->limit > 0) {
             $req->bindParam(':limit', $this->limit, PDO::PARAM_INT);

@@ -288,7 +288,6 @@ if (document.getElementById('spreadsheetEditor')) {
           <SaveButton />
 
           <span hidden id='spreadsheetUnsavedChangesWarningDiv'>{i18next.t('You have unsaved changes')}</span>
-          <div className='vertical-separator'></div>
           {/* CLEAR */}
           <button disabled={isDisabled} title={i18next.t('clear')} aria-label={i18next.t('clear')} type='button' onClick={clear} className='btn hl-hover-gray p-2 lh-normal border-0 mr-2 ml-auto'>
             <i className='fas fa-trash-alt fa-fw'></i>

@@ -156,7 +156,7 @@ export class SpreadsheetEditorHelper {
   }
 
   private static parseFileToAOA(buffer: ArrayBuffer): Cell[][] {
-    const wb = read(buffer, { type: 'array' });
+    const wb = read(buffer, { type: 'array', codepage: 65001 }); // UTF-8
     const ws = wb.Sheets[wb.SheetNames[0]];
     // keep empty cells, drop truly empty rows
     const aoa = utils.sheet_to_json(ws, {

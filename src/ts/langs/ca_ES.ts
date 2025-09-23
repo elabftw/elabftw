@@ -74,7 +74,7 @@ const t = {
     "only-a-sysadmin": "Only a Sysadmin can modify this.",
     "please-wait": "Espereu...",
     "remove": "Eliminar",
-    "rename-column": "New title for the column",
+    "edit-column": "Edit column name",
     "replace-edited-file": "Vol reemplaçar el fitxer al servidor amb aquesta edicio",
     "replace-existing": "Overwrite original file",
     "request-filename": "Introduïu el nom del fitxer",

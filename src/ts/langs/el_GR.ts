@@ -74,7 +74,7 @@ const t = {
     "only-a-sysadmin": "Only a Sysadmin can modify this.",
     "please-wait": "Παρακαλώ περιμένετε",
     "remove": "Αφαίρεση",
-    "rename-column": "New title for the column",
+    "edit-column": "Edit column name",
     "replace-edited-file": "Θέλετε να αντικαταστήσετε το αρχείο στον διακομιστή με αυτήν την επεξεργασία;",
     "replace-existing": "Overwrite original file",
     "request-filename": "Εισαγάγετε το όνομα του αρχείου",

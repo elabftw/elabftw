@@ -74,7 +74,7 @@ const t = {
     "only-a-sysadmin": "Only a Sysadmin can modify this.",
     "please-wait": "잠시만 기다려주세요…",
     "remove": "제거하다",
-    "rename-column": "New title for the column",
+    "edit-column": "Edit column name",
     "replace-edited-file": "서버에 저장된 파일을 현재 수정본으로 교체할까요?",
     "replace-existing": "Overwrite original file",
     "request-filename": "파일 이름 입력",

@@ -110,7 +110,7 @@ final class i18n4Js
             'only-a-sysadmin' => _('Only a Sysadmin can modify this.'),
             'please-wait' => _('Please wait…'),
             'remove' => _('Remove'),
-            'rename-column' => _('New title for the column'),
+            'edit-column' => _('Edit column name'),
             'replace-edited-file' => _('Do you want to replace the file on the server with this edit?'),
             'replace-existing' => _('Overwrite original file'),
             'request-filename' => _('Enter name of the file'),

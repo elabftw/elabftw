@@ -74,7 +74,7 @@ const t = {
     "only-a-sysadmin": "Only a Sysadmin can modify this.",
     "please-wait": "Iltimos kuting…",
     "remove": "O'chirish",
-    "rename-column": "New title for the column",
+    "edit-column": "Edit column name",
     "replace-edited-file": "Serverdagi faylni ushbu tahrir bilan almashtirmoqchimisiz?",
     "replace-existing": "Overwrite original file",
     "request-filename": "Fayl nomini kiriting",

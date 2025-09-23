@@ -74,7 +74,7 @@ const t = {
     "only-a-sysadmin": "Ainult süsteemiadministraator saab seda muuta.",
     "please-wait": "Palun oodake…",
     "remove": "Eemalda",
-    "rename-column": "New title for the column",
+    "edit-column": "Edit column name",
     "replace-edited-file": "Kas soovite serveris oleva faili selle muudatusega asendada?",
     "replace-existing": "Overwrite original file",
     "request-filename": "Sisesta faili nimi",

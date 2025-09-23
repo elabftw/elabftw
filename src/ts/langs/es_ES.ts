@@ -74,7 +74,7 @@ const t = {
     "only-a-sysadmin": "Only a Sysadmin can modify this.",
     "please-wait": "Por favor espera…",
     "remove": "Eliminar",
-    "rename-column": "New title for the column",
+    "edit-column": "Edit column name",
     "replace-edited-file": "¿Quiere reemplazar el archivo en el servidor por esta edición?",
     "replace-existing": "Overwrite original file",
     "request-filename": "Ingrese el nombre del archivo",

@@ -54,7 +54,7 @@ export function ColumnHeader(props) {
 
   // rename column header
   const rename = () => {
-    const newName = prompt(i18next.t('rename-column'), displayName);
+    const newName = prompt(i18next.t('edit-column'), displayName);
     if (!newName || newName === displayName) return;
     const newCols = columnDefs.map(column => column.field === field ? { ...column, field: newName } : column);
     const newRows = rowData.map(row => {
@@ -84,7 +84,7 @@ export function ColumnHeader(props) {
 
       {/* Row 2: toolbar with actions */}
       <div>
-        <button onClick={rename} title={i18next.t('rename-column')} className='border-0 bg-transparent mr-2'>
+        <button onClick={rename} title={i18next.t('edit-column')} className='border-0 bg-transparent mr-2'>
           <i className='fas fa-edit fa-sm' />
         </button>
         <button onClick={remove} title={i18next.t('delete')} className='border-0 bg-transparent mr-2'>

@@ -184,14 +184,26 @@ if (document.getElementById('spreadsheetEditor')) {
 
       // case 1: User typed in a virtual column → create a real column and move the value there
       if (isPadCol) {
-        const newField = `col${nextColIndex.current++}`;
-        setColumnDefsDirty([...columnDefs, { field: newField, editable: true }]);
-
+        // create a unique real field
+        const existing = new Set(columnDefs.map(c => c.field));
+        let newField;
+        do {
+          newField = `col${nextColIndex.current++}`;
+        } while (existing.has(newField));
+        setColumnDefsDirty([
+          ...columnDefs,
+          {field: newField, colId: newField, headerName: '', editable: true},
+        ]);
         if (rowIndex >= rowData.length) {
-          setRowDataDirty([...rowData, { [newField]: newValue }]);
+          // new row: only write to the real column
+          setRowDataDirty([...rowData, {[newField]: newValue}]);
         } else {
+          // existing row: remove the temp pad value and write once to the real column
           const copy = [...rowData];
-          copy[rowIndex] = { ...copy[rowIndex], [newField]: newValue };
+          const row = {...(copy[rowIndex] || {})};
+          delete row[colDef.field];
+          row[newField] = newValue;
+          copy[rowIndex] = row;
           setRowDataDirty(copy);
         }
         return;

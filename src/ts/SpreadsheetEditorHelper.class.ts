@@ -181,8 +181,9 @@ export class SpreadsheetEditorHelper {
   }
 
   private static createWorkbookFromGrid(columnDefs: GridColumn[], rowData: GridRow[]): WorkBook {
-    const headers = columnDefs.map(col => col.field);
-    const aoa = [headers, ...rowData.map(row => headers.map(h => row[h] ?? ''))];
+    const headerLabels = columnDefs.map(c => (c.headerName && String(c.headerName).trim()) || c.field);
+    const fields = columnDefs.map(c => c.field);
+    const aoa = [headerLabels, ...rowData.map(row => fields.map(f => row[f] ?? ''))];
     const ws = utils.aoa_to_sheet(aoa);
     const wb = utils.book_new();
     utils.book_append_sheet(wb, ws, 'Sheet1');

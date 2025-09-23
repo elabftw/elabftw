@@ -190,6 +190,9 @@ interface Entity {
 interface GridColumn {
   field: string;
   editable: boolean;
+  headerName?: string;
+  colId?: string;
+  sortable?: boolean;
 }
 
 interface GridRow {

@@ -18,6 +18,7 @@ import i18next from './i18n';
 
 export function ColumnHeader(props) {
   const { displayName, column, progressSort, api, columnDefs, rowData, setColumnDefs, setRowData } = props;
+  const liveLabel = (column.getColDef().headerName ?? column.getColDef().field) || displayName;
   const field = column.getColDef().field;
 
   // keep icon in sync with external sort changes
@@ -40,7 +41,7 @@ export function ColumnHeader(props) {
   const insertColumn = () => {
     const idx = columnDefs.findIndex(column => column.field === field);
     const newField = `Column${columnDefs.length}`;
-    const newCol = { field: newField, editable: true, sortable: true };
+    const newCol = { field: newField, colId: newField, headerName: `Column${columnDefs.length}`, editable: true, sortable: true };
 
     const newCols = [
       ...columnDefs.slice(0, idx + 1),
@@ -55,17 +56,11 @@ export function ColumnHeader(props) {
   // rename column header
   const rename = () => {
     const newName = prompt(i18next.t('edit-column'), displayName);
-    if (!newName || newName === displayName) return;
-    const newCols = columnDefs.map(column => column.field === field ? { ...column, field: newName } : column);
-    const newRows = rowData.map(row => {
-      const value = row[field];
-      const nr = { ...row };
-      delete nr[field];
-      nr[newName] = value;
-      return nr;
-    });
+    if (!newName) return;
+    const label = newName.trim();
+    if (!label || label === displayName) return;
+    const newCols = columnDefs.map(column => column.field === field ? { ...column, headerName: label, colId: column.colId ?? column.field } : column);
     setColumnDefs(newCols);
-    setRowData(newRows);
   };
 
   // remove a column
@@ -77,8 +72,8 @@ export function ColumnHeader(props) {
   return (
     <div className='ag-header-cell-label d-flex justify-content-between'>
       {/* row 1: title + default sort behavior */}
-      <span className='d-flex' onClick={(e) => progressSort?.(e.shiftKey)} title={displayName} aria-label={displayName}>
-        <span>{displayName}</span>
+      <span className='d-flex' onClick={(e) => progressSort?.(e.shiftKey)} title={liveLabel} aria-label={liveLabel}>
+        <span>{liveLabel}</span>
         <span className={`ag-icon ${sortIconClass}`} aria-hidden='true' />
       </span>
 

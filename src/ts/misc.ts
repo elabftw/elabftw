@@ -27,10 +27,13 @@ import TomSelectRemoveButton from 'tom-select/dist/esm/plugins/remove_button/plu
 // get html of current page reloaded via get
 function fetchCurrentPage(tag = ''): Promise<Document>{
   const url = new URL(window.location.href);
+  // remove any scope query param present in url, otherwise it gets taken into account for the reload
+  url.searchParams.delete('scope');
   if (tag) {
     url.searchParams.delete('tags[]');
     url.searchParams.set('tags[]', tag);
   }
+  history.replaceState(history.state, '', url.toString());
   return fetch(url.toString()).then(response => {
     return response.text();
   }).then(data => {

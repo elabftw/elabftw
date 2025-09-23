@@ -290,7 +290,7 @@ if (document.getElementById('spreadsheetEditor')) {
             </button>
             <div className='dropdown-menu'>
               {FILE_EXPORT_OPTIONS.map(({ type, icon, labelKey }) => (
-                <button key={type} className='dropdown-item' onClick={() => handleExport(type)}>
+                <button key={type} className='dropdown-item' type='button' onClick={() => handleExport(type)}>
                   <i className={`fas ${icon} fa-fw`}></i>{i18next.t(labelKey)}
                 </button>
               ))}

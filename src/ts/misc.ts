@@ -33,8 +33,12 @@ function fetchCurrentPage(tag = ''): Promise<Document>{
     url.searchParams.delete('tags[]');
     url.searchParams.set('tags[]', tag);
   }
-  history.replaceState(history.state, '', url.toString());
-  return fetch(url.toString()).then(response => {
+  const prevHref = window.location.href;
+  const nextHref = url.toString();
+  if (nextHref !== prevHref) {
+    history.replaceState(history.state, '', nextHref);
+  }
+  return fetch(nextHref).then(response => {
     return response.text();
   }).then(data => {
     const parser = new DOMParser();

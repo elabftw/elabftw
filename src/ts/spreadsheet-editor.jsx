@@ -234,16 +234,16 @@ if (document.getElementById('spreadsheetEditor')) {
         <>
         {currentUploadId ? (
             // REPLACE EXISTING FILE WITH CURRENT EDITIONS
-            <button disabled={!currentUploadId} className='btn hl-hover-gray p-2 lh-normal border-0 mr-2' id='replaceExisting' onClick={() => SpreadsheetHelperC.replaceExisting(columnDefs, rowData, entity.type, entity.id, currentUploadName, currentUploadId).then((res) => {
+            <button type='button' disabled={!currentUploadId} className='btn hl-hover-gray p-2 lh-normal border-0 mr-2' id='replaceExisting' onClick={() => SpreadsheetHelperC.replaceExisting(columnDefs, rowData, entity.type, entity.id, currentUploadName, currentUploadId).then((res) => {
               if (res?.id) setCurrentUploadId(res.id); // track the latest subid and prevent duplicating
               setDirty(false);
-            })} title={i18next.t('replace-existing')} aria-label={i18next.t('replace-existing')} type='button'>
+            })} title={i18next.t('replace-existing')} aria-label={i18next.t('replace-existing')}>
               <i className='fas fa-save fa-fw'></i>
             </button>
           ) : (
             <>
               {/*SAVE AS ATTACHMENT (Opens modal to save the new Upload*/}
-              <button id='saveAsAttachment' disabled={isDisabled} className='btn hl-hover-gray d-inline p-2 mr-2' title={i18next.t('save-attachment')} aria-label={i18next.t('save-attachment')} type='button' onClick={() => $('#saveNewSpreadsheetModal').modal?.('show')}>
+              <button type='button' id='saveAsAttachment' disabled={isDisabled} className='btn hl-hover-gray d-inline p-2 mr-2' title={i18next.t('save-attachment')} aria-label={i18next.t('save-attachment')} onClick={() => $('#saveNewSpreadsheetModal').modal?.('show')}>
                 <i className='fas fa-save fa-fw' />
               </button>
               {/* The modal itself */}
@@ -314,9 +314,6 @@ if (document.getElementById('spreadsheetEditor')) {
             <div className='ag-theme-alpine' style={{ width: "100%", height: "100%" }}>
               <AgGridReact
                 ref={gridRef}
-                // rowData={rowData}
-                // columnDefs={columnDefs}
-                // onCellValueChanged={() => setDirty(true)}
                 rowData={displayRowData}
                 columnDefs={displayColumnDefs}
                 defaultColDef={defaultColDef}

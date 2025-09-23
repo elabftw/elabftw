@@ -169,6 +169,65 @@ if (document.getElementById('spreadsheetEditor')) {
       setRowData: setRowDataDirty,
     }), [columnDefs, rowData, setColumnDefsDirty, setRowDataDirty]);
 
+    // create virtual cols & rows for the empty spreadsheet feeling (spaces to fill)
+    const PAD_ROWS = 10;
+    const PAD_COLS = 10;
+    // display rows: real rows + PAD_ROWS (virtual ones)
+    const displayRowData = useMemo(() => {
+      const pads = Array.from({ length: PAD_ROWS }, () => ({ __virtual: true }));
+      return [...rowData, ...pads];
+    }, [rowData]);
+    // same for cols. real cols + virtual ones
+    const displayColumnDefs = useMemo(() => {
+      const cols = [...columnDefs];
+
+      for (let i = 0; i < PAD_COLS; i++) {
+        const field = `__padcol_${i}`;
+        cols.push({
+          field,
+          headerName: '',
+          editable: true,
+          sortable: false,
+          filter: false,
+          floatingFilter: false,
+          suppressMenu: true,
+          cellClass: 'ag-cell--muted',
+          headerClass: 'ag-header-cell--muted',
+        });
+      }
+      return cols;
+    }, [columnDefs]);
+
+    // now when we edit the cell, we make that virtual col/row exist
+    const onCellValueChanged = useCallback((params) => {
+      const { colDef, rowIndex, newValue } = params;
+      const isPadCol = colDef.field?.startsWith('__padcol_') === true;
+      const isPadRow = displayRowData[rowIndex]?.__virtual === true;
+
+      // case 1: User typed in a virtual column → create a real column and move the value there
+      if (isPadCol) {
+        const newField = `col${nextColIndex.current++}`;
+        setColumnDefsDirty([...columnDefs, { field: newField, editable: true }]);
+
+        if (rowIndex >= rowData.length) {
+          setRowDataDirty([...rowData, { [newField]: newValue }]);
+        } else {
+          const copy = [...rowData];
+          copy[rowIndex] = { ...copy[rowIndex], [newField]: newValue };
+          setRowDataDirty(copy);
+        }
+        return;
+      }
+
+      // case 2: User typed in a virtual row on a real column → append a new real row
+      if (isPadRow && rowIndex >= rowData.length) {
+        setRowDataDirty([...rowData, { [colDef.field]: newValue }]);
+        return;
+      }
+      // Normal edit on real row/col
+      setDirty(true);
+    }, [columnDefs, rowData, displayRowData, setColumnDefsDirty, setRowDataDirty]);
+
     // single source of truth for column defaults + header
     const defaultColDef = useMemo(() => ({
       sortable: true,
@@ -177,6 +236,7 @@ if (document.getElementById('spreadsheetEditor')) {
       editable: true,
       headerComponent: ColumnHeader,
       headerComponentParams: headerParams,
+      cellStyle: { borderRight: '1px solid lightgray'}
     }), [headerParams]);
 
     function SaveButton() {
@@ -269,11 +329,17 @@ if (document.getElementById('spreadsheetEditor')) {
             <div className='ag-theme-alpine' style={{ width: "100%", height: "100%" }}>
               <AgGridReact
                 ref={gridRef}
-                rowData={rowData}
-                columnDefs={columnDefs}
+                // rowData={rowData}
+                // columnDefs={columnDefs}
+                // onCellValueChanged={() => setDirty(true)}
+                rowData={displayRowData}
+                columnDefs={displayColumnDefs}
                 defaultColDef={defaultColDef}
-                rowSelection='multiple'
-                onCellValueChanged={() => setDirty(true)}
+                rowSelection="multiple"
+                suppressFieldDotNotation={true}
+                pagination={true}
+                paginationPageSize={200}
+                onCellValueChanged={onCellValueChanged}
               />
             </div>
           </div>

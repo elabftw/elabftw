@@ -121,28 +121,6 @@ if (document.getElementById('spreadsheetEditor')) {
       SpreadsheetHelperC.handleExport(format, columnDefs, rowData).then(() => setDirty(false));
     }, [SpreadsheetHelperC, columnDefs, rowData]);
 
-    // add a row next to the selected line. When no row is selected, it's added at the bottom line.
-    const addRow = useCallback(() => {
-      const api = gridRef.current.api;
-      // https://www.ag-grid.com/react-data-grid/data-update-transactions/#transaction-update-api
-      const selectedNodes = api.getSelectedNodes();
-      // figure out the insertion index
-      const insertIndex = selectedNodes.length > 0
-        ? selectedNodes[0].rowIndex + 1
-        : rowData.length;
-      // build your new empty row
-      const newRow = {};
-      columnDefs.forEach(col => { newRow[col.field] = '' });
-      // update React state, adding a new column takes into account existing rows.
-      const updated = [
-        ...rowData.slice(0, insertIndex),
-        newRow,
-        ...rowData.slice(insertIndex),
-      ];
-      setRowData(updated);
-      setDirty(true);
-    }, [columnDefs, rowData]);
-
     const removeSelectedRows = () => {
       const api = gridRef.current.api;
       const selected = api.getSelectedRows();
@@ -311,10 +289,6 @@ if (document.getElementById('spreadsheetEditor')) {
 
           <span hidden id='spreadsheetUnsavedChangesWarningDiv'>{i18next.t('You have unsaved changes')}</span>
           <div className='vertical-separator'></div>
-          {/* ADD NEW ROW */}
-          <button disabled={isDisabled} onClick={addRow} className='btn hl-hover-gray d-inline p-2' title={i18next.t('add-row')} type='button'>
-            <i className='fas fa-plus-minus fa-fw'></i>
-          </button>
           {/* CLEAR */}
           <button disabled={isDisabled} title={i18next.t('clear')} aria-label={i18next.t('clear')} type='button' onClick={clear} className='btn hl-hover-gray p-2 lh-normal border-0 mr-2 ml-auto'>
             <i className='fas fa-trash-alt fa-fw'></i>

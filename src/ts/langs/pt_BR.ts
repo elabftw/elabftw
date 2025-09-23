@@ -5,7 +5,6 @@ const t = {
     "2FA": "2FA",
     "add-compound": "Adicionar composto",
     "add-column": "Add column",
-    "add-row": "Add row",
     "add-team": "Adicionar equipe",
     "archive-user": "Arquivar usuário",
     "archive-user-description": "O arquivamento de um usuário significa que sua conta será desativada. Essa ação É reversível.",

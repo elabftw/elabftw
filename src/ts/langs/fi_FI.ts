@@ -5,7 +5,6 @@ const t = {
     "2FA": "2FA",
     "add-compound": "Lisää yhdiste",
     "add-column": "Add column",
-    "add-row": "Add row",
     "add-team": "Lisää tiimi",
     "archive-user": "Arkistoi käyttäjä",
     "archive-user-description": "Käyttäjän arkistointi tarkoittaa, että hänen tilinsä poistetaan käytöstä. Tämä toiminto on peruutettava.",

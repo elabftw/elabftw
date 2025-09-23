@@ -5,7 +5,6 @@ const t = {
     "2FA": "2FA",
     "add-compound": "Murakkab qo'shing",
     "add-column": "Add column",
-    "add-row": "Add row",
     "add-team": "Jamoa qo'shing",
     "archive-user": "Arxiv foydalanuvchisi",
     "archive-user-description": "Foydalanuvchini arxivlash uning hisobi o'chirilishini anglatadi. Bu harakat qaytarilishi mumkin.",

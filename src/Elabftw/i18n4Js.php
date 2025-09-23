@@ -39,7 +39,6 @@ final class i18n4Js
             '2FA' => _('2FA'),
             'add-compound' => _('Add compound'),
             'add-column' => _('Add column'),
-            'add-row' => _('Add row'),
             'add-team' => _('Add team'),
             'archive-user' => _('Archive user'),
             'archive-user-description' => _('Archiving a user means their account will be disabled. This action is reversible.'),

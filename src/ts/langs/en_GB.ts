@@ -5,7 +5,6 @@ const t = {
     "2FA": "2FA",
     "add-compound": "Add compound",
     "add-column": "Add column",
-    "add-row": "Add row",
     "add-team": "Add team",
     "archive-user": "Archive user",
     "archive-user-description": "Archiving a user means their account will be disabled. This action is reversible.",

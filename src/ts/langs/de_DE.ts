@@ -5,7 +5,6 @@ const t = {
     "2FA": "2FA",
     "add-compound": "Verbindung hinzufügen",
     "add-column": "Add column",
-    "add-row": "Add row",
     "add-team": "Team hinzufügen",
     "archive-user": "Nutzer archivieren",
     "archive-user-description": "Die Archivierung eines Nutzers deaktiviert seinen Zugang. Diese Aktion ist umkehrbar.",

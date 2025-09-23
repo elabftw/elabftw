@@ -5,7 +5,6 @@ const t = {
     "2FA": "2FA",
     "add-compound": "Προσθήκη ένωσης",
     "add-column": "Add column",
-    "add-row": "Add row",
     "add-team": "Προσθήκη Ομάδας",
     "archive-user": "Αρχειοθέτηση χρήστη",
     "archive-user-description": "Η αρχειοθέτηση ενός χρήστη σημαίνει ότι ο λογαριασμός του θα απενεργοποιηθεί. Αυτή η ενέργεια είναι αναστρέψιμη.",

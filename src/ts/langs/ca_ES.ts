@@ -5,7 +5,6 @@ const t = {
     "2FA": "2FA",
     "add-compound": "Afegir compost",
     "add-column": "Add column",
-    "add-row": "Add row",
     "add-team": "Afegir equip",
     "archive-user": "Usuari actiu",
     "archive-user-description": "Arxivar un usuari significa que el seu compte es desactivarà. Aquesta acció és reversible.",

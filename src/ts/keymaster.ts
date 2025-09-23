@@ -156,9 +156,12 @@ function resetModifiers() {
 };
 
 function filter(event){
-  const tagName = (event.target || event.srcElement).tagName;
+  const el = event.target as HTMLElement;
+  const tagName = el.tagName;
   // ignore keypressed in any elements that support keyboard data input
-  return !(tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA' || (event.target || event.srcElement).hasAttribute('contenteditable'));
+  const isTyping = tagName === 'INPUT' || tagName === 'SELECT' || tagName === 'TEXTAREA' || el.hasAttribute('contenteditable');
+  const inSpreadsheet = !!el.closest('#spreadsheetGrid');
+  return !(isTyping || inSpreadsheet);
 }
 
 // initialize key.<modifier> to false

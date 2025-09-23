@@ -179,14 +179,6 @@ if (document.getElementById('spreadsheetEditor')) {
       headerComponentParams: headerParams,
     }), [headerParams]);
 
-    // little issue on create new sheet, it takes the whole space
-    // // make grid resizeable
-    // const fitCols = useCallback(() => {
-    //   if (!gridRef.current) return;
-    //   const api = gridRef.current.api;
-    //   if (api?.sizeColumnsToFit) api.sizeColumnsToFit();
-    // }, []);
-
     function SaveButton() {
       return (
         <>
@@ -273,7 +265,7 @@ if (document.getElementById('spreadsheetEditor')) {
         {columnDefs.length > 0 && rowData.length > 0 && (
           <>
           {/* parent div to make it resizeable, as it's not built-in in ag-grid */}
-          <div style={{ resize: "both", overflow: "auto", height: 600 }} className='mb-2'>
+          <div style={{ resize: "both", overflow: "auto", height: 600 }} className='mb-2' id='spreadsheetGrid'>
             <div className='ag-theme-alpine' style={{ width: "100%", height: "100%" }}>
               <AgGridReact
                 ref={gridRef}
@@ -282,8 +274,6 @@ if (document.getElementById('spreadsheetEditor')) {
                 defaultColDef={defaultColDef}
                 rowSelection='multiple'
                 onCellValueChanged={() => setDirty(true)}
-                // onGridSizeChanged={fitCols}
-                // onFirstDataRendered={fitCols}
               />
             </div>
           </div>

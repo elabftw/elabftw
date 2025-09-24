@@ -123,6 +123,18 @@ describe('Experiments', () => {
     entityList('database.php');
   });
 
+  it('Delete a resource category', () => {
+    const catname = 'Justice';
+    cy.visit('/resources-categories.php');
+    cy.htmlvalidate();
+    cy.get(`[data-cy=expcatName][value="${catname}"]`)
+      .closest('li.list-group-item')
+      .find('[data-action="destroy-catstat"]')
+      .wait(500)
+      .click();
+    cy.get('input[data-cy=expcatName][value="Justice"]').should('not.exist');
+  });
+
   const entityRestore = (publicUrl: string) => {
     cy.visit(`/${publicUrl}`);
     cy.htmlvalidate();

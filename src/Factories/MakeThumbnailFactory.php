@@ -15,7 +15,6 @@ namespace Elabftw\Factories;
 use Elabftw\Interfaces\MakeThumbnailInterface;
 use Elabftw\Make\MakeNullThumbnail;
 use Elabftw\Make\MakeThumbnail;
-use Elabftw\Make\MakeThumbnailFromFirstFrame;
 use League\Flysystem\Filesystem;
 
 /**
@@ -30,7 +29,7 @@ final class MakeThumbnailFactory
      * e.g. image/eps may be a valid application/postscript; image/bmp may also be image/x-bmp or
      * image/x-ms-bmp
      */
-    public static function getMaker(string $mime, string $filePath, string $longName, Filesystem $storageFs): MakeThumbnailInterface
+    public static function getMaker(string $mime, $filePath, string $longName, Filesystem $storageFs): MakeThumbnailInterface
     {
         return match ($mime) {
             'application/pdf',
@@ -39,7 +38,7 @@ final class MakeThumbnailFactory
             'image/heic',
             'image/heif',
             'image/tiff',
-            'image/x-eps' => new MakeThumbnailFromFirstFrame($mime, $filePath, $longName, $storageFs),
+            'image/x-eps',
             'image/jpeg',
             'image/png',
             'image/svg+xml' => new MakeThumbnail($mime, $filePath, $longName, $storageFs),

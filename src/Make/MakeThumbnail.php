@@ -21,6 +21,7 @@ use Override;
 
 use function exif_read_data;
 use function in_array;
+use function rewind;
 use function strtolower;
 
 /**
@@ -32,7 +33,7 @@ class MakeThumbnail implements MakeThumbnailInterface
 {
     private const int THUMB_WIDTH = 100;
 
-    public function __construct(private string $mime, protected string $filePath, private string $longName, private Filesystem $storageFs) {}
+    public function __construct(private string $mime, protected $sourceFile, private string $longName, private Filesystem $storageFs) {}
 
     #[Override]
     public function saveThumb(): void
@@ -51,7 +52,8 @@ class MakeThumbnail implements MakeThumbnailInterface
     private function getThumb(): string
     {
         $image = new Imagick();
-        $image->readImage($this->filePath);
+        $image->readImageFile($this->sourceFile);
+        $image->setIteratorIndex(0);
         $image->setBackgroundColor('white');
         // fix pdf with black background and png
         if ($this->mime === 'application/pdf' || $this->mime === 'application/postscript' || $this->mime === 'image/png') {
@@ -82,7 +84,9 @@ class MakeThumbnail implements MakeThumbnailInterface
         $ext = Tools::getExt($this->longName);
         if (in_array(strtolower($ext), Extensions::HAS_EXIF, true)
             && $this->mime === 'image/jpeg') {
-            $exifData = exif_read_data($this->filePath);
+            // be kind rewind: or exif_read_data will fail
+            rewind($this->sourceFile);
+            $exifData = exif_read_data($this->sourceFile);
             if ($exifData !== false) {
                 return $this->readOrientationFromExif($exifData);
             }

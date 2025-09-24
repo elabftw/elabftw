@@ -226,7 +226,7 @@ if (document.getElementById('spreadsheetEditor')) {
       editable: true,
       headerComponent: ColumnHeader,
       headerComponentParams: headerParams,
-      cellStyle: { borderRight: '1px solid lightgray'}
+      cellStyle: { borderRight: '1px solid var(--border-color, lightgray)'}
     }), [headerParams]);
 
     function SaveButton() {
@@ -310,7 +310,7 @@ if (document.getElementById('spreadsheetEditor')) {
         {columnDefs.length > 0 && rowData.length > 0 && (
           <>
           {/* parent div to make it resizeable, as it's not built-in in ag-grid */}
-          <div style={{ resize: "both", overflow: "auto", height: 600 }} className='mb-2' id='spreadsheetGrid'>
+          <div style={{ resize: "both", overflow: "auto", height: 600, minHeight: 300, minWidth: 300 }} className='mb-2' id='spreadsheetGrid'>
             <div className='ag-theme-alpine' style={{ width: "100%", height: "100%" }}>
               <AgGridReact
                 ref={gridRef}

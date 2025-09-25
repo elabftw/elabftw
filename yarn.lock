@@ -2138,6 +2138,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jspreadsheet-ce/react@npm:^5.0.2":
+  version: 5.0.2
+  resolution: "@jspreadsheet-ce/react@npm:5.0.2"
+  dependencies:
+    jspreadsheet-ce: "npm:^5.0.0-beta.2"
+  checksum: 10c0/cabca73d82a31040234ebf9ae7e575a910af87c89b7d61bda7d35e6c046165eb1aada489617949269752946427bce338f7a761bf15180732ef27b25c05148e97
+  languageName: node
+  linkType: hard
+
+"@jspreadsheet/formula@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "@jspreadsheet/formula@npm:2.0.2"
+  checksum: 10c0/657dc75e7b3ec11d8e12e7e8f1821ccfdd5a9f88ec7bb2a00b76faf5f2be7eb373f3f15a4787b282218652378c60eaaa661791ab255a0ae8c51211808bd581cf
+  languageName: node
+  linkType: hard
+
 "@juggle/resize-observer@npm:^3.3.1":
   version: 3.4.0
   resolution: "@juggle/resize-observer@npm:3.4.0"
@@ -6126,6 +6142,7 @@ __metadata:
     "@fullcalendar/list": "npm:^6.1.17"
     "@fullcalendar/timegrid": "npm:^6.1.17"
     "@fullcalendar/timeline": "npm:^6.1.17"
+    "@jspreadsheet-ce/react": "npm:^5.0.2"
     "@teselagen/bio-parsers": "npm:^0.4.28"
     "@teselagen/ove": "npm:^0.7.36"
     "@types/bootstrap": "npm:^5.2.10"
@@ -6158,6 +6175,8 @@ __metadata:
     jquery: "npm:^3.7.1"
     jquery-ui: "npm:^1.14.1"
     jsoneditor: "npm:^10.3.0"
+    jspreadsheet-ce: "npm:^5.0.4"
+    jsuites: "npm:^5.13.3"
     ketcher-core: "npm:^3.0.1"
     ketcher-react: "npm:^3.0.1"
     lodash-es: "npm:^4.17.21"
@@ -8321,6 +8340,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jspreadsheet-ce@npm:^5.0.0-beta.2, jspreadsheet-ce@npm:^5.0.4":
+  version: 5.0.4
+  resolution: "jspreadsheet-ce@npm:5.0.4"
+  dependencies:
+    "@jspreadsheet/formula": "npm:^2.0.2"
+    jsuites: "npm:^5.12.0"
+  checksum: 10c0/f1a45f0aa60a3a2f4eae9734c146da2e7b760db399187a677e71551cf7741dd2b37e1315e91267719a320ddf2979eef0a2c3a33f5813692dc1f2b8f0f344e89f
+  languageName: node
+  linkType: hard
+
 "jsprim@npm:^2.0.2":
   version: 2.0.2
   resolution: "jsprim@npm:2.0.2"
@@ -8330,6 +8359,13 @@ __metadata:
     json-schema: "npm:0.4.0"
     verror: "npm:1.10.0"
   checksum: 10c0/677be2d41df536c92c6d0114a492ef197084018cfbb1a3e10b1fa1aad889564b2e3a7baa6af7949cc2d73678f42368b0be165a26bd4e4de6883a30dd6a24e98d
+  languageName: node
+  linkType: hard
+
+"jsuites@npm:^5.12.0, jsuites@npm:^5.13.3":
+  version: 5.13.3
+  resolution: "jsuites@npm:5.13.3"
+  checksum: 10c0/4204c3ba9581b3b33bde2b8784823e8d94c202fb85ae685ab7611bc1d0bd105f58d589021cc277ffd88db50193d6ce7b0c0df72860abcc4a1df6465f4d63639f
   languageName: node
   linkType: hard
 

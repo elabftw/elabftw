@@ -1,0 +1,10 @@
+<section id='jspreadsheet' aria-label='{{ 'JSpreadsheet'|trans }}'>
+  <h3 data-action='toggle-next' data-toggle-target='jspreadsheetDiv' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title mt-2' tabindex='0' role='button' aria-expanded='false' aria-controls='jspreadsheetDiv'>
+    <i id='sheetEditorIcon' class='fas fa-caret-right fa-fw mr-2'></i>{{ 'JSpreadsheet'|trans }}
+  </h3>
+  <div id='jspreadsheetDiv' class='m-2' hidden data-save-hidden='jspreadsheetDiv'>
+    <div id='jspreadsheet-importer-root'></div>
+  </div>
+</section>
+{% include 'load-spreadsheet-modal.html' %}
+<hr>

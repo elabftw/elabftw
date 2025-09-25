@@ -309,7 +309,7 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
   // this promise will fetch the categories or status on click
   const getCatStatArr = (endpoint: string): Promise<SelectOptions[]> => {
     if (!optionsCache[endpoint]) {
-      optionsCache[endpoint] = ApiC.getJson(endpoint)
+      optionsCache[endpoint] = ApiC.getJson(`${endpoint}?limit=9000`)
         .then(json => {
           const arr = Array.from(json) as Status[];
           arr.unshift(notsetOpts);

@@ -20,13 +20,50 @@ import { Spreadsheet, Worksheet } from "@jspreadsheet-ce/react";
 import "jsuites/dist/jsuites.css";
 import "jspreadsheet-ce/dist/jspreadsheet.css";
 import * as XLSX from "@e965/xlsx";
+import i18next from './i18n';
+import {jssReplaceAttachment, jssSaveAsAttachment} from './jspreadsheet';
+import {getEntity} from './misc';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
+const entity = getEntity();
 
 if (document.getElementById('jspreadsheet')) {
   function JSpreadsheet() {
     const spreadsheetRef = useRef(null);
     const [data, setData] = useState([[]]);
+    const [currentUploadId, setCurrentUploadId] = useState(0);
+
+    // CUSTOM TOOLBAR ICONS
+    const toolbar = (toolbar) => {
+      toolbar.items.push(
+        {
+          type: 'i',
+          tooltip: i18next.t('save-attachment'),
+          content: 'attachment',
+          onclick: onSave
+        },
+        {
+          type: 'i',
+          tooltip: i18next.t('replace-existing'),
+          content: 'upload_file',
+          onclick: onReplace
+        }
+      );
+      return toolbar;
+    }
+
+    const getAOA = () => spreadsheetRef.current?.[0]?.getData?.() ?? data;
+
+    const onSave = async () => {
+      const aoa = getAOA();
+      await jssSaveAsAttachment(aoa, entity.type, entity.id);
+    };
+
+    const onReplace = async () => {
+      const aoa = getAOA();
+      await jssReplaceAttachment(aoa, entity.type, entity.id, currentUploadId, replaceName);
+    };
 
     const handleImportFile = (e) => {
       const file = e.target.files[0];
@@ -53,8 +90,8 @@ if (document.getElementById('jspreadsheet')) {
     return (
       <>
         <input type="file" accept=".xlsx" onChange={handleImportFile} />
-        <Spreadsheet ref={spreadsheetRef} tabs={true} toolbar={true}>
-          <Worksheet data={data} minDimensions={[20, 30]} />
+        <Spreadsheet ref={spreadsheetRef} tabs={true} toolbar={toolbar}>
+          <Worksheet data={data} minDimensions={[20, 15]} />
         </Spreadsheet>
       </>
     );

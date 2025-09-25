@@ -172,6 +172,9 @@ final class Scheduler extends AbstractRest
         // 'canbook' boolean to display events that user can read but not book
         $canBookFilter = str_replace('entity.', 'items.', $builder->getCanFilter('canbook'));
         $canBookExpr = trim(preg_replace('/^\s*AND\s*/', '', $canBookFilter, 1) ?? '');
+        if ($canBookExpr === '') {
+            $canBookExpr = '0';
+        }
 
         // the title of the event is title + Firstname Lastname of the user who booked it
         $sql = sprintf(

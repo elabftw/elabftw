@@ -191,12 +191,10 @@ if (window.location.pathname === '/scheduler.php') {
       eventBackgroundColor: '#bdbdbd',
       // user can see events as disabled if they don't have booking permissions. See #5930
       eventClassNames: (info) => {
-        return info.event.extendedProps.canbook === 0 ? ['calendar-event-disabled'] : '';
+        return Number(info.event.extendedProps.canbook) === 0 ? ['calendar-event-disabled'] : '';
       },
       // prevent any actions on disabled events
-      eventAllow: (dropInfo, draggedEvent) => {
-        return !!draggedEvent.extendedProps.canbook;
-      },
+      eventAllow: (info, event) => Number(event.extendedProps.canbook) === 1,
       // selection
       select: function(info): void {
         const itemSelectEl = document.getElementById('itemSelect') as HTMLSelectElement & { tomselect?: TomSelect };
@@ -297,7 +295,7 @@ if (window.location.pathname === '/scheduler.php') {
       },
       // on click activate modal window
       eventClick: function(info): void {
-        if (info.event.extendedProps.canbook === 0) {
+        if (Number(info.event.extendedProps.canbook) === 0) {
           return; // do nothing if event is disabled
         }
         $('[data-action="scheduler-rm-bind"]').hide();

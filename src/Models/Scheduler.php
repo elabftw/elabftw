@@ -165,9 +165,13 @@ final class Scheduler extends AbstractRest
         }
 
         $builder = new EntitySqlBuilder($this->Items);
-        $this->filterSqlParts[] = str_replace('entity.', 'items.', $builder->getCanFilter('canbook'));
+        $this->filterSqlParts[] = str_replace('entity.', 'items.', $builder->getCanFilter('canread'));
         $this->filterBindings['userid'] = $this->Items->Users->userData['userid']; // needed for :userid in builder SQL
         $this->filterBindings['team'] = $this->Items->Users->userData['team']; // same
+
+        // 'canbook' boolean to display events that user can read but not book
+        $canBookFilter = str_replace('entity.', 'items.', $builder->getCanFilter('canbook'));
+        $canBookExpr = trim(preg_replace('/^\s*AND\s*/', '', $canBookFilter, 1) ?? '');
 
         // the title of the event is title + Firstname Lastname of the user who booked it
         $sql = sprintf(
@@ -191,7 +195,8 @@ final class Scheduler extends AbstractRest
                 items.id AS items_id,
                 experiments.title AS experiment_title,
                 team_events.item_link,
-                items_linkt.title AS item_link_title
+                items_linkt.title AS item_link_title,
+                CASE WHEN %s THEN 1 ELSE 0 END AS canbook
             FROM team_events
             LEFT JOIN experiments ON (team_events.experiment = experiments.id)
             LEFT JOIN items ON (team_events.item = items.id)
@@ -203,6 +208,7 @@ final class Scheduler extends AbstractRest
                 AND team_events.start <= :end
                 AND team_events.end >= :start
                 %s",
+            $canBookExpr,
             implode(' ', $this->filterSqlParts)
         );
         $req = $this->Db->prepare($sql);

@@ -1770,6 +1770,10 @@ input:user-invalid {
   box-shadow: 5px 4px 4px $medium !important;
 }
 
+.calendar-event-disabled {
+  opacity: 0.5;
+}
+
 .flash:hover {
   background-color: $elabblue;
   transition: background-color 0.1s ease;

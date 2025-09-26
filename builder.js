@@ -30,7 +30,7 @@ module.exports = (env) => {
         './src/ts/compounds-table.jsx',
         './src/ts/users-table.jsx',
         './src/ts/spreadsheet-editor.jsx',
-        './src/ts/spreadsheet.utils.ts',
+        './src/ts/spreadsheet-utils.ts',
         './src/ts/tags.ts',
         './src/ts/admin.ts',
         './src/ts/profile.ts',

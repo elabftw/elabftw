@@ -18,7 +18,7 @@ export const MIME_MAP: Partial<Record<FileType, string>> = {
 
 // just some small helpers so call sites stay tiny
 export function getBookType(fileType: FileType = FileType.Csv): BookType {
-  return BOOK_TYPE_MAP[fileType];
+  return BOOK_TYPE_MAP[fileType] ?? 'csv';
 }
 export function getMime(fileType: FileType): string {
   return MIME_MAP[fileType] ?? 'text/csv';

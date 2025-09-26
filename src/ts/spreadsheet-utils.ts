@@ -55,6 +55,11 @@ async function postAndReturnId(file: File, url: string): Promise<number> {
   const fd = new FormData();
   fd.append('file', file);
   const res = await fetch(url, { method: 'POST', body: fd });
+  if (!res.ok) {
+    const msg = `Upload failed (${res.status})`;
+    notify.error(msg);
+    throw new Error(msg);
+  }
   await reloadElements(['uploadsDiv']);
   notify.success();
   return getNewIdFromPostRequest(res);

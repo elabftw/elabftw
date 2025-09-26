@@ -146,7 +146,7 @@ const clickHandler = async (event: Event) => {
   } else if (el.matches('[data-action="xls-load-file"]')) {
     await loadInJSSpreadsheet(el.dataset.link, el.dataset.name, Number(el.dataset.uploadid));
     ensureTogglableSectionIsOpen('sheetEditorIcon', 'spreadsheetEditorDiv');
-    document.getElementById('spreadsheetEditor')?.scrollIntoView({ behavior: 'smooth'});
+    document.getElementById('spreadsheetEditorDiv')?.scrollIntoView({ behavior: 'smooth'});
 
   // ARCHIVE UPLOAD
   } else if (el.matches('[data-action="archive-upload"]')) {

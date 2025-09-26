@@ -12,39 +12,40 @@
  * Jspreadsheet-CE integration
  */
 
-import React, { useEffect, useState, useCallback, useMemo, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { Spreadsheet, Worksheet } from "@jspreadsheet-ce/react";
 import "jsuites/dist/jsuites.css";
 import "jspreadsheet-ce/dist/jspreadsheet.css";
-import * as XLSX from "@e965/xlsx";
 import i18next from './i18n';
-import { replaceAttachment, saveAsAttachment } from './jspreadsheet';
-import {getEntity} from './misc';
+import { fileToAOA, replaceAttachment, saveAsAttachment} from './jspreadsheet.utils';
+import { getEntity } from './misc';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
-
-const entity = getEntity();
 
 if (document.getElementById('jspreadsheet')) {
   function JSpreadsheet() {
     const spreadsheetRef = useRef(null);
     const [data, setData] = useState([[]]);
     const [currentUploadId, setCurrentUploadId] = useState(0);
+    const entity = getEntity();
 
-    // CUSTOM TOOLBAR ICONS
+    // CUSTOM TOOLBAR ICONS (they are placed at the end)
     const toolbar = (toolbar) => {
       toolbar.items.push(
         {
-          type: 'i',
+          tooltip: i18next.t('import'),
+          content: 'upload',
+          onclick: () => document.getElementById('importFileInput').click()
+        },
+        {
           tooltip: i18next.t('save-attachment'),
           content: 'attachment',
           onclick: onSave
         },
         {
-          type: 'i',
           tooltip: i18next.t('replace-existing'),
           content: 'upload_file',
           onclick: onReplace
@@ -60,24 +61,17 @@ if (document.getElementById('jspreadsheet')) {
       await saveAsAttachment(aoa, entity.type, entity.id);
     };
 
+    //TODO: implement replace existing
     const onReplace = async () => {
       const aoa = getAOA();
       await replaceAttachment(aoa, entity.type, entity.id, currentUploadId, replaceName);
     };
 
-    const handleImportFile = (e) => {
-      const file = e.target.files[0];
-      const reader = new FileReader();
-
-      reader.onload = (evt) => {
-        const arr = new Uint8Array(evt.target.result);
-        const workbook = XLSX.read(arr, { type: "array", cellStyles: true });
-        const firstSheet = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[firstSheet];
-        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-        setData(jsonData);
-      };
-      reader.readAsArrayBuffer(file);
+    const handleImportFile = async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const aoa = await fileToAOA(file);
+      setData(aoa);
     };
 
     // Reload the grid when importing data
@@ -86,10 +80,16 @@ if (document.getElementById('jspreadsheet')) {
         spreadsheetRef.current[0].setData(data);
       }
     }, [data]);
-
+    // load an attachment into the editor
+    useEffect(() => {
+      document.addEventListener('jss-load-aoa', (e) => {
+        const { aoa } = e.detail;
+        setData(aoa);
+      });
+    })
     return (
       <>
-        <input type="file" accept=".xlsx" onChange={handleImportFile} />
+        <input type='file' accept='.xlsx,.csv' onChange={handleImportFile} id='importFileInput' hidden name='file' />
         <Spreadsheet id='jspreadsheetDiv' ref={spreadsheetRef} tabs={true} toolbar={toolbar}>
           <Worksheet data={data} minDimensions={[10,10]} />
         </Spreadsheet>

@@ -14,16 +14,12 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { Spreadsheet, Worksheet } from "@jspreadsheet-ce/react";
 import "jsuites/dist/jsuites.css";
 import "jspreadsheet-ce/dist/jspreadsheet.css";
 import i18next from './i18n';
 import { fileToAOA, replaceAttachment, saveAsAttachment} from './spreadsheet-utils';
 import { getEntity } from './misc';
-
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 if (document.getElementById('spreadsheetEditorRoot')) {
   function SpreadsheetEditor() {

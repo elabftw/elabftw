@@ -90,6 +90,7 @@ if (document.getElementById('spreadsheetEditor')) {
 
     // CUSTOM TOOLBAR ICONS (they are placed at the end)
     const toolbar = (toolbar) => {
+
       toolbar.items.push(
         { content: 'upload', tooltip: i18next.t('import'), onclick: () => document.getElementById('importFileInput').click() },
         { content: 'attachment', tooltip: i18next.t('save-attachment'), onclick: onSaveOrReplace }

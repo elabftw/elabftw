@@ -94,6 +94,9 @@ if (document.getElementById('spreadsheetEditorRoot')) {
       // we will replace the save button with ours, and add an export button that has the same behavior as default save button
       const saveBtn = tb.items.find(it => it.content === 'save');
       const originalSave = saveBtn && typeof saveBtn.onclick === 'function' ? saveBtn.onclick : null;
+      // we will also remove the ones that cannot be saved because of CE limitations, just target the indexes directly
+      const indices = new Set([7, 8, 9, 10]);
+      tb.items = tb.items.filter((_, i) => !indices.has(i));
 
       const exportBtn = {
         type: 'icon',

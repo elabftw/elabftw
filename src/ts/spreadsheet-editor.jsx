@@ -91,9 +91,30 @@ if (document.getElementById('spreadsheetEditorRoot')) {
 
     // CUSTOM TOOLBAR ICONS (they are placed at the end)
     const buildToolbar = (tb) => {
+      // we will replace the save button with ours, and add an export button that has the same behavior as default save button
+      const saveBtn = tb.items.find(it => it.content === 'save');
+      const originalSave = saveBtn && typeof saveBtn.onclick === 'function' ? saveBtn.onclick : null;
+
+      const exportBtn = {
+        type: 'icon',
+        class: 'fas fa-download',
+        tooltip: i18next.t('export'),
+        // reuse the same handler signature (itemEl, event, spreadsheetInstance)
+        onclick: (el, ev, inst) => originalSave(el, ev, inst),
+      };
+
+      // replace original save with our custom save function
+      Object.assign(saveBtn, {
+        // need to blank this property
+        content: '',
+        type: 'icon',
+        class: 'fas fa-floppy-disk',
+        tooltip: i18next.t('save-attachment'),
+        onclick: onSaveOrReplace,
+      });
       tb.items.push(
-        { content: 'upload', tooltip: i18next.t('import'), onclick: () => document.getElementById('importFileInput').click() },
-        { content: 'attachment', tooltip: i18next.t('save-attachment'), onclick: onSaveOrReplace }
+        { type: 'icon', class: 'fas fa-upload', tooltip: i18next.t('import'), onclick: () => document.getElementById('importFileInput').click() },
+        exportBtn,
       );
       return tb;
     }
@@ -101,7 +122,7 @@ if (document.getElementById('spreadsheetEditorRoot')) {
     return (
       <>
         <input hidden type='file' accept='.xlsx,.csv' onChange={handleImportFile} id='importFileInput' name='file' />
-        <Spreadsheet id='spreadsheetEditorDiv' ref={spreadsheetRef} tabs={true} toolbar={buildToolbar}>
+        <Spreadsheet ref={spreadsheetRef} tabs={true} toolbar={buildToolbar}>
           <Worksheet data={data} minDimensions={[12,12]} />
         </Spreadsheet>
       </>

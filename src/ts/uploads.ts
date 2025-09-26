@@ -19,6 +19,8 @@ import { marked } from 'marked';
 import Prism from 'prismjs';
 import { Uploader } from './uploader';
 import { entity } from './getEntity';
+import XLSX from '@e965/xlsx';
+type Cell = string | number | boolean | null;
 
 function processNewFilename(event, original: HTMLElement, parent: HTMLElement): void {
   if (event.key === 'Enter' || event.type === 'blur') {
@@ -30,6 +32,37 @@ function processNewFilename(event, original: HTMLElement, parent: HTMLElement): 
       parent.prepend(original);
     });
   }
+}
+
+async function blob2table(blob: Blob, container: HTMLDivElement, sheetName = null) {
+  let wb;
+  if (blob.type.includes('text/csv') || blob.type === '') {
+    const csv = await blob.text();
+    // type string will read it as UTF-8
+    wb = XLSX.read(csv, { type: 'string' });
+  } else {
+    const ab = await blob.arrayBuffer();
+    wb = XLSX.read(ab, { type: 'array' });
+  }
+  const ws = wb.Sheets[sheetName || wb.SheetNames[0]];
+
+  // 2D array: rows of values (strings, numbers, booleans, null)
+  const rows: Cell[][] = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true });
+
+  const table = document.createElement('table');
+  const tbody = document.createElement('tbody');
+
+  for (const row of rows) {
+    const tr = document.createElement('tr');
+    for (const cell of row) {
+      const td = document.createElement('td');
+      td.textContent = cell == null ? '' : String(cell); // SAFE: no HTML parsing
+      tr.appendChild(td);
+    }
+    tbody.appendChild(tr);
+  }
+  table.appendChild(tbody);
+  container.replaceChildren(table);
 }
 
 const clickHandler = async (event: Event) => {
@@ -82,6 +115,9 @@ const clickHandler = async (event: Event) => {
         plainTextContentDiv.innerHTML = '';
         plainTextContentDiv.appendChild(preBlock);
       });
+    } else if (el.dataset.ext === 'table') {
+      const blob = await response.blob();
+      blob2table(blob, plainTextContentDiv as HTMLDivElement);
     } else { // TXT
       response.text().then(content => plainTextContentDiv.innerText = content);
     }

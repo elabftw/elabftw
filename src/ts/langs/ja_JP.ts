@@ -4,8 +4,6 @@ const t = {
   translation: {
     "2FA": "2FA",
     "add-compound": "化合物を追加する",
-    "add-column": "Add column",
-    "add-row": "Add row",
     "add-team": "チームを追加",
     "archive-user": "アーカイブユーザー",
     "archive-user-description": "ユーザーをアーカイブすると、そのユーザーのアカウントは無効になります。この操作は元に戻すことができます。",

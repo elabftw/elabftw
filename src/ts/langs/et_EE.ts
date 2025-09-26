@@ -4,8 +4,6 @@ const t = {
   translation: {
     "2FA": "2FA",
     "add-compound": "Lisa ühend",
-    "add-column": "Add column",
-    "add-row": "Add row",
     "add-team": "Lisa meeskond",
     "archive-user": "Arhiivi kasutaja",
     "archive-user-description": "Kasutaja arhiveerimine tähendab tema konto sulgemist. See toiming on tagasipööratav.",

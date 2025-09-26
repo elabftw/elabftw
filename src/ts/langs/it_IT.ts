@@ -4,8 +4,6 @@ const t = {
   translation: {
     "2FA": "2FA",
     "add-compound": "Aggiungi composto",
-    "add-column": "Add column",
-    "add-row": "Add row",
     "add-team": "Aggiungi team",
     "archive-user": "Archivia utente",
     "archive-user-description": "Archiviare un utente significa che il suo account verrà disabilitato. Questa azione è reversibile.",

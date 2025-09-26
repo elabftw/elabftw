@@ -102,7 +102,7 @@ if (document.getElementById('spreadsheetEditorRoot')) {
       <>
         <input hidden type='file' accept='.xlsx,.csv' onChange={handleImportFile} id='importFileInput' name='file' />
         <Spreadsheet id='spreadsheetEditorDiv' ref={spreadsheetRef} tabs={true} toolbar={buildToolbar}>
-          <Worksheet data={data} minDimensions={[10,10]} />
+          <Worksheet data={data} minDimensions={[12,12]} />
         </Spreadsheet>
       </>
     );

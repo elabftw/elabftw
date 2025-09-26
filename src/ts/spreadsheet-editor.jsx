@@ -20,12 +20,12 @@ import { Spreadsheet, Worksheet } from "@jspreadsheet-ce/react";
 import "jsuites/dist/jsuites.css";
 import "jspreadsheet-ce/dist/jspreadsheet.css";
 import i18next from './i18n';
-import { fileToAOA, replaceAttachment, saveAsAttachment} from './spreadsheet.utils';
+import { fileToAOA, replaceAttachment, saveAsAttachment} from './spreadsheet-utils';
 import { getEntity } from './misc';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-if (document.getElementById('spreadsheetEditor')) {
+if (document.getElementById('spreadsheetEditorRoot')) {
   function SpreadsheetEditor() {
     const spreadsheetRef = useRef(null);
 
@@ -39,6 +39,7 @@ if (document.getElementById('spreadsheetEditor')) {
     useEffect(() => { replaceIdRef.current = currentUploadId; }, [currentUploadId]);
     useEffect(() => { replaceNameRef.current = replaceName; }, [replaceName]);
 
+    // FIXME: see https://github.com/elabftw/elabftw/pull/5995#discussion_r2382856688
     const getAOA = () => spreadsheetRef.current?.[0]?.getData?.() ?? data;
     const entity = getEntity();
 
@@ -73,7 +74,7 @@ if (document.getElementById('spreadsheetEditor')) {
         setCurrentUploadId(typeof uploadId === 'number' ? uploadId : null);
       };
       document.addEventListener('jss-load-aoa', onLoad);
-      return () => document.addEventListener('jss-load-aoa', onLoad);
+      return () => document.removeEventListener('jss-load-aoa', onLoad);
     }, []);
 
     /* actions (import, save, replace) included in the toolbar */
@@ -89,25 +90,25 @@ if (document.getElementById('spreadsheetEditor')) {
     };
 
     // CUSTOM TOOLBAR ICONS (they are placed at the end)
-    const toolbar = (toolbar) => {
-      toolbar.items.push(
+    const buildToolbar = (tb) => {
+      tb.items.push(
         { content: 'upload', tooltip: i18next.t('import'), onclick: () => document.getElementById('importFileInput').click() },
         { content: 'attachment', tooltip: i18next.t('save-attachment'), onclick: onSaveOrReplace }
       );
-      return toolbar;
+      return tb;
     }
 
     return (
       <>
         <input hidden type='file' accept='.xlsx,.csv' onChange={handleImportFile} id='importFileInput' name='file' />
-        <Spreadsheet id='spreadsheetEditorDiv' ref={spreadsheetRef} tabs={true} toolbar={toolbar}>
+        <Spreadsheet id='spreadsheetEditorDiv' ref={spreadsheetRef} tabs={true} toolbar={buildToolbar}>
           <Worksheet data={data} minDimensions={[10,10]} />
         </Spreadsheet>
       </>
     );
   }
 
-  const el = document.getElementById('spreadsheet-importer-root');
+  const el = document.getElementById('spreadsheetEditorRoot');
   if (el) {
     const root = createRoot(el);
     root.render(<SpreadsheetEditor />);

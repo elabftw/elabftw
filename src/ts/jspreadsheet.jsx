@@ -113,3 +113,5 @@ if (document.getElementById('jspreadsheet')) {
     root.render(<JSpreadsheet />);
   }
 }
+
+//TODO: implement Destroying The Data Grid https://bossanova.uk/jspreadsheet/docs/getting-started (new spreadsheet, clear spreadsheets)

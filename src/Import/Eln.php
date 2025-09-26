@@ -274,7 +274,7 @@ class Eln extends AbstractZip
      */
     private function importRootDataset(array $dataset): void
     {
-        if ($dataset['@type'] !== 'Dataset') {
+        if (($dataset['@type'] ?? null) !== 'Dataset') {
             $this->logger->debug(sprintf('Skipping import of non-dataset %s', $dataset['@id'] ?? ''));
             return;
         }

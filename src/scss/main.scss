@@ -46,6 +46,7 @@ $text-muted: $medium;
 @import 'search-syntax-highlighting';
 @import 'tom-select';
 @import 'tinymce-custom';
+@import 'jspreadsheet';
 
 /* Font is Lato */
 @font-face {
@@ -75,27 +76,6 @@ $text-muted: $medium;
   src:
     url('fonts/lato-bold.woff2') format('woff2'),
     url('fonts/lato-bold.ttf') format('truetype');
-}
-
-// jspreadsheet toolbar icons
-@font-face {
-  font-family: 'Material Icons';
-  font-style: normal;
-  font-weight: 400;
-  src: url('fonts/material-icons.woff2') format('woff2');
-}
-
-.material-icons {
-  direction: ltr;
-  display: inline-block;
-  font-family: 'Material Icons';
-  font-size: 24px;
-  font-style: normal;
-  font-weight: normal;
-  letter-spacing: normal;
-  line-height: 1;
-  text-transform: none;
-  white-space: nowrap;
 }
 
 @font-face {

@@ -1826,3 +1826,7 @@ input:user-invalid {
 #doodleCanvas {
   touch-action: none;
 }
+
+#spreadsheetEditorDiv {
+  overflow: scroll;
+}

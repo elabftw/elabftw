@@ -534,7 +534,8 @@ class Eln extends AbstractZip
             // read the newly created upload so we can get the new long_name to replace the old in the body
             $Uploads = new Uploads($this->Entity, $newUploadId);
             $currentBody = $this->Entity->readOne()['body'];
-            $newBody = str_replace($file['alternateName'], $Uploads->uploadData['long_name'], $currentBody);
+            // also search for url encoded filename
+            $newBody = str_replace(array(urlencode($file['alternateName']), $file['alternateName']), $Uploads->uploadData['long_name'], $currentBody);
             $this->Entity->patch(Action::Update, array('body' => $newBody));
         }
     }

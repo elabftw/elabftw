@@ -20,13 +20,13 @@ import { Spreadsheet, Worksheet } from "@jspreadsheet-ce/react";
 import "jsuites/dist/jsuites.css";
 import "jspreadsheet-ce/dist/jspreadsheet.css";
 import i18next from './i18n';
-import { fileToAOA, replaceAttachment, saveAsAttachment} from './jspreadsheet.utils';
+import { fileToAOA, replaceAttachment, saveAsAttachment} from './spreadsheet.utils';
 import { getEntity } from './misc';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-if (document.getElementById('jspreadsheet')) {
-  function JSpreadsheet() {
+if (document.getElementById('spreadsheetEditor')) {
+  function SpreadsheetEditor() {
     const spreadsheetRef = useRef(null);
 
     const [data, setData] = useState([[]]);
@@ -100,18 +100,16 @@ if (document.getElementById('jspreadsheet')) {
     return (
       <>
         <input hidden type='file' accept='.xlsx,.csv' onChange={handleImportFile} id='importFileInput' name='file' />
-        <Spreadsheet id='jspreadsheetDiv' ref={spreadsheetRef} tabs={true} toolbar={toolbar}>
+        <Spreadsheet id='spreadsheetEditorDiv' ref={spreadsheetRef} tabs={true} toolbar={toolbar}>
           <Worksheet data={data} minDimensions={[10,10]} />
         </Spreadsheet>
       </>
     );
   }
 
-  const el = document.getElementById('jspreadsheet-importer-root');
+  const el = document.getElementById('spreadsheet-importer-root');
   if (el) {
     const root = createRoot(el);
-    root.render(<JSpreadsheet />);
+    root.render(<SpreadsheetEditor />);
   }
 }
-
-//TODO: implement Destroying The Data Grid https://bossanova.uk/jspreadsheet/docs/getting-started (new spreadsheet, clear spreadsheets)

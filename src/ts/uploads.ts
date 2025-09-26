@@ -9,7 +9,7 @@ import $ from 'jquery';
 import { Action as MalleAction, Malle } from '@deltablot/malle';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
 import { Action, Model } from './interfaces';
-import { loadInJSSpreadsheet } from './jspreadsheet.utils';
+import { loadInJSSpreadsheet } from './spreadsheet.utils';
 import { ensureTogglableSectionIsOpen, relativeMoment, reloadElements } from './misc';
 import { displayPlasmidViewer } from './ove';
 import { displayMoleculeViewer, get3dmol } from './3dmol';
@@ -145,8 +145,8 @@ const clickHandler = async (event: Event) => {
   // LOAD SPREADSHEET FILE
   } else if (el.matches('[data-action="xls-load-file"]')) {
     await loadInJSSpreadsheet(el.dataset.link, el.dataset.name, Number(el.dataset.uploadid));
-    ensureTogglableSectionIsOpen('sheetEditorIcon', 'jspreadsheetDiv');
-    document.getElementById('jspreadsheet')?.scrollIntoView({ behavior: 'smooth'});
+    ensureTogglableSectionIsOpen('sheetEditorIcon', 'spreadsheetEditorDiv');
+    document.getElementById('spreadsheetEditor')?.scrollIntoView({ behavior: 'smooth'});
 
   // ARCHIVE UPLOAD
   } else if (el.matches('[data-action="archive-upload"]')) {

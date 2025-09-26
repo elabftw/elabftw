@@ -160,7 +160,7 @@ function filter(event){
   const tagName = el.tagName;
   // ignore keypressed in any elements that support keyboard data input
   const isTyping = tagName === 'INPUT' || tagName === 'SELECT' || tagName === 'TEXTAREA' || el.hasAttribute('contenteditable');
-  const inSpreadsheet = !!el.closest('#jspreadsheetDiv');
+  const inSpreadsheet = !!el.closest('#spreadsheetEditorDiv');
   return !(isTyping || inSpreadsheet);
 }
 

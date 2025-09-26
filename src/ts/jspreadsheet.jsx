@@ -21,7 +21,7 @@ import "jsuites/dist/jsuites.css";
 import "jspreadsheet-ce/dist/jspreadsheet.css";
 import * as XLSX from "@e965/xlsx";
 import i18next from './i18n';
-import {jssReplaceAttachment, jssSaveAsAttachment} from './jspreadsheet';
+import { replaceAttachment, saveAsAttachment } from './jspreadsheet';
 import {getEntity} from './misc';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -57,12 +57,12 @@ if (document.getElementById('jspreadsheet')) {
 
     const onSave = async () => {
       const aoa = getAOA();
-      await jssSaveAsAttachment(aoa, entity.type, entity.id);
+      await saveAsAttachment(aoa, entity.type, entity.id);
     };
 
     const onReplace = async () => {
       const aoa = getAOA();
-      await jssReplaceAttachment(aoa, entity.type, entity.id, currentUploadId, replaceName);
+      await replaceAttachment(aoa, entity.type, entity.id, currentUploadId, replaceName);
     };
 
     const handleImportFile = (e) => {
@@ -90,8 +90,8 @@ if (document.getElementById('jspreadsheet')) {
     return (
       <>
         <input type="file" accept=".xlsx" onChange={handleImportFile} />
-        <Spreadsheet ref={spreadsheetRef} tabs={true} toolbar={toolbar}>
-          <Worksheet data={data} minDimensions={[20, 15]} />
+        <Spreadsheet id='jspreadsheetDiv' ref={spreadsheetRef} tabs={true} toolbar={toolbar}>
+          <Worksheet data={data} minDimensions={[10,10]} />
         </Spreadsheet>
       </>
     );
@@ -103,4 +103,3 @@ if (document.getElementById('jspreadsheet')) {
     root.render(<JSpreadsheet />);
   }
 }
-

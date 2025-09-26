@@ -13,12 +13,12 @@ import { reloadElements, askFileName, getNewIdFromPostRequest } from './misc';
 import { notify } from './notify';
 import { FileType, Model } from './interfaces';
 
-const ensureExtension = (name: string, fmt: FileType) => {
-  const ext = '.' + String(fmt).toLowerCase();
+const ensureExtension = (name: string, format: FileType): string => {
+  const ext = `.${String(format).toLowerCase()}`;
   return name.toLowerCase().endsWith(ext) ? name : name + ext;
-};
+}
 
-const uploadUrl = (entityType: string, entityId: number, uploadId?: number) => {
+const uploadUrl = (entityType: string, entityId: number, uploadId?: number): string => {
   const base = `api/v2/${entityType}/${entityId}/${Model.Upload}`;
   return uploadId ? `${base}/${uploadId}` : base;
 };
@@ -30,9 +30,9 @@ const wbFromAOA = (aoa: (string|number|boolean|null)[][]): WorkBook => {
   return wb;
 };
 
-const fileFromWB = (wb: WorkBook, name: string, fmt: FileType) => {
-  const bookType = getBookType(fmt);
-  const mime = getMime(fmt) ?? 'application/octet-stream';
+const fileFromWB = (wb: WorkBook, name: string, format: FileType) => {
+  const bookType = getBookType(format);
+  const mime = getMime(format) ?? 'application/octet-stream';
   const bin = write(wb, { bookType, type: 'array' });
   return new File([bin], name, { type: mime });
 };
@@ -47,27 +47,27 @@ async function postAndReturnId(file: File, url: string): Promise<number> {
 }
 
 // save current spreadsheet as a new attachment
-export async function jssSaveAsAttachment(aoa: (string|number|boolean|null)[][], entityType: string, entityId: number, fmt: FileType = FileType.Xlsx, fileName?: string): Promise<{id:number; name:string} | void> {
-  if (!aoa?.length) return;
+export async function saveAsAttachment(aoa: (string|number|boolean|null)[][], entityType: string, entityId: number, format: FileType = FileType.Xlsx, fileName?: string): Promise<{id:number; name:string} | void> {
   const chosen = fileName?.trim()
-    ? ensureExtension(fileName.trim(), fmt)
-    : askFileName(fmt);
+    ? ensureExtension(fileName.trim(), format)
+    : askFileName(format);
   if (!chosen) return;
-
-  const wb   = wbFromAOA(aoa);
-  const file = fileFromWB(wb, chosen, fmt);
-  const url  = uploadUrl(entityType, entityId);
-  const id   = await postAndReturnId(file, url);
-  return { id, name: chosen };
+  return uploadAOA(aoa, chosen, format, entityType, entityId);
 }
 
 // TODO: wip Replace an existing attachment with current sheet
-export async function jssReplaceAttachment(aoa: (string|number|boolean|null)[][], entityType: string, entityId: number, uploadId: number, currentName: string, fmt: FileType = FileType.Xlsx
+export async function replaceAttachment(aoa: (string|number|boolean|null)[][], entityType: string, entityId: number, uploadId: number, currentName: string, format: FileType = FileType.Xlsx
 ): Promise<{id:number; name:string} | void> {
-  if (!aoa?.length || !uploadId || !currentName) return;
-  const wb   = wbFromAOA(aoa);
-  const file = fileFromWB(wb, currentName, fmt);
-  const url  = uploadUrl(entityType, entityId, uploadId);
-  const id   = await postAndReturnId(file, url);
-  return { id, name: currentName };
+  if (!uploadId || !currentName) return;
+  return uploadAOA(aoa, currentName, format, entityType, entityId, uploadId);
+}
+
+async function uploadAOA(aoa: (string | number | boolean | null)[][], name: string, format: FileType, entityType: string, entityId: number, uploadId?: number
+): Promise<{ id: number; name: string } | void> {
+  if (!aoa?.length) return;
+  const wb = wbFromAOA(aoa);
+  const file = fileFromWB(wb, name, format);
+  const url = uploadUrl(entityType, entityId, uploadId);
+  const id = await postAndReturnId(file, url);
+  return { id, name };
 }

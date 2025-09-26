@@ -15,6 +15,7 @@ namespace Elabftw\Import;
 use DateTimeImmutable;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\State;
@@ -35,6 +36,7 @@ use Override;
 use function array_find;
 use function basename;
 use function json_decode;
+use function rawurlencode;
 use function sprintf;
 use function strtr;
 
@@ -272,6 +274,10 @@ class Eln extends AbstractZip
      */
     private function importRootDataset(array $dataset): void
     {
+        if (($dataset['@type'] ?? null) !== 'Dataset') {
+            $this->logger->debug(sprintf('Skipping import of non-dataset %s', $dataset['@id'] ?? ''));
+            return;
+        }
         $Author = $this->getAuthor($dataset);
 
         // a .eln can contain mixed types: experiments, resources, or templates.
@@ -304,6 +310,9 @@ class Eln extends AbstractZip
         // canread and canwrite patch must happen before bodyappend that contains a readOne()
         $this->Entity->update(new EntityParams('canread', $this->canread));
         $this->Entity->update(new EntityParams('canwrite', $this->canwrite));
+        // content_type
+        $contentType = ($dataset['encodingFormat'] ?? 'text/html') === 'text/markdown' ? BodyContentType::Markdown : BodyContentType::Html;
+        $this->Entity->update(new EntityParams('content_type', $contentType->value));
         // here we use "text" or "description" attribute as main text
         $this->Entity->update(new EntityParams('bodyappend', ($dataset['text'] ?? '') . ($dataset['description'] ?? '')));
         // TITLE
@@ -473,15 +482,15 @@ class Eln extends AbstractZip
 
     private function importPart(array $part): void
     {
-        if (empty($part['@type'])) {
+        if (!array_key_exists('@type', $part) || empty($part['@type'])) {
             return;
         }
 
         switch ($part['@type']) {
             case 'Dataset':
                 $this->Entity->patch(Action::Update, array('bodyappend' => $this->part2html($part)));
-                foreach ($part['hasPart'] as $subpart) {
-                    if ($subpart['@type'] === 'File') {
+                foreach ($part['hasPart'] ?? array() as $subpart) {
+                    if (($subpart['@type'] ?? '') === 'File') {
                         $this->importFile($subpart);
                     }
                 }
@@ -534,7 +543,8 @@ class Eln extends AbstractZip
             // read the newly created upload so we can get the new long_name to replace the old in the body
             $Uploads = new Uploads($this->Entity, $newUploadId);
             $currentBody = $this->Entity->readOne()['body'];
-            $newBody = str_replace($file['alternateName'], $Uploads->uploadData['long_name'], $currentBody);
+            // also search for url encoded filename
+            $newBody = str_replace(array(rawurlencode($file['alternateName']), $file['alternateName']), $Uploads->uploadData['long_name'], $currentBody);
             $this->Entity->patch(Action::Update, array('body' => $newBody));
         }
     }
@@ -543,7 +553,7 @@ class Eln extends AbstractZip
     {
         $html = sprintf('<p>%s<br>%s', $part['name'] ?? '', $part['dateCreated'] ?? '');
         $html .= '<ul>';
-        foreach ($part['hasPart'] as $subpart) {
+        foreach ($part['hasPart'] ?? array() as $subpart) {
             $html .= sprintf(
                 '<li>%s %s</li>',
                 basename($subpart['@id']),

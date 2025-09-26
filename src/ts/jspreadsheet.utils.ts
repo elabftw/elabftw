@@ -24,7 +24,7 @@ export async function saveAsAttachment(aoa: (string|number|boolean|null)[][], en
 }
 
 // replace an existing attachment with current spreadsheet
-export async function replaceAttachment(aoa: (string|number|boolean|null)[][], entityType: string, entityId: number, uploadId: number, currentName: string, format: FileType = FileType.Xlsx
+export async function replaceAttachment(aoa: (string|number|boolean|null)[][], entityType: string, entityId: number, uploadId: number, currentName: string, format: FileType = FileType.Xlsx,
 ): Promise<{id:number; name:string} | void> {
   if (!uploadId || !currentName) return;
   return uploadAOA(aoa, currentName, format, entityType, entityId, uploadId);
@@ -35,8 +35,7 @@ export async function fileToAOA(file: File): Promise<Cell[][]> {
   return parseFileToAOA(buffer);
 }
 
-export async function loadInJSSpreadsheet(link: string, name: string, uploadId: number, onData?: (aoa: Cell[][]) => void
-): Promise<void> {
+export async function loadInJSSpreadsheet(link: string, name: string, uploadId: number): Promise<void> {
   try {
     const res = await fetch(`app/download.php?f=${encodeURIComponent(link)}`, {
       headers: new Headers({ 'cache-control': 'no-cache' }),
@@ -46,7 +45,7 @@ export async function loadInJSSpreadsheet(link: string, name: string, uploadId: 
     const aoa = parseFileToAOA(buffer);
     const ev = new CustomEvent('jss-load-aoa', { detail: { aoa, name, uploadId } });
     document.dispatchEvent(ev);
-  } catch (e: any) {
+  } catch (e) {
     notify.error(e.message || 'Unexpected error while loading spreadsheet.');
   }
 }
@@ -64,7 +63,7 @@ async function postAndReturnId(file: File, url: string): Promise<number> {
 const ensureExtension = (name: string, format: FileType): string => {
   const ext = `.${String(format).toLowerCase()}`;
   return name.toLowerCase().endsWith(ext) ? name : name + ext;
-}
+};
 
 const uploadUrl = (entityType: string, entityId: number, uploadId?: number): string => {
   const base = `api/v2/${entityType}/${entityId}/${Model.Upload}`;
@@ -85,7 +84,7 @@ const fileFromWB = (wb: WorkBook, name: string, format: FileType) => {
   return new File([bin], name, { type: mime });
 };
 
-async function uploadAOA(aoa: (string | number | boolean | null)[][], name: string, format: FileType, entityType: string, entityId: number, uploadId?: number
+async function uploadAOA(aoa: (string | number | boolean | null)[][], name: string, format: FileType, entityType: string, entityId: number, uploadId?: number,
 ): Promise<{ id: number; name: string } | void> {
   if (!aoa?.length) return;
   const wb = wbFromAOA(aoa);
@@ -96,7 +95,7 @@ async function uploadAOA(aoa: (string | number | boolean | null)[][], name: stri
 }
 
 function parseFileToAOA(buffer: ArrayBuffer): Cell[][] {
-  const wb = read(buffer, { type: 'array' });
+  const wb = read(buffer, { type: 'array', codepage: 65001 }); // UTF-8
   const ws = wb.Sheets[wb.SheetNames[0]];
   return utils.sheet_to_json(ws, {header: 1, defval: '', raw: true, blankrows: true}) as Cell[][];
 }

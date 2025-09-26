@@ -28,68 +28,78 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 if (document.getElementById('jspreadsheet')) {
   function JSpreadsheet() {
     const spreadsheetRef = useRef(null);
+
     const [data, setData] = useState([[]]);
     const [currentUploadId, setCurrentUploadId] = useState(0);
-    const entity = getEntity();
+    const [replaceName, setReplaceName] = useState(null);
 
-    // CUSTOM TOOLBAR ICONS (they are placed at the end)
-    const toolbar = (toolbar) => {
-      toolbar.items.push(
-        {
-          tooltip: i18next.t('import'),
-          content: 'upload',
-          onclick: () => document.getElementById('importFileInput').click()
-        },
-        {
-          tooltip: i18next.t('save-attachment'),
-          content: 'attachment',
-          onclick: onSave
-        },
-        {
-          tooltip: i18next.t('replace-existing'),
-          content: 'upload_file',
-          onclick: onReplace
-        }
-      );
-      return toolbar;
-    }
+    // refs that always have the latest values (for toolbar onclick)
+    const replaceIdRef = useRef(null);
+    const replaceNameRef = useRef(null);
+    useEffect(() => { replaceIdRef.current = currentUploadId; }, [currentUploadId]);
+    useEffect(() => { replaceNameRef.current = replaceName; }, [replaceName]);
 
     const getAOA = () => spreadsheetRef.current?.[0]?.getData?.() ?? data;
+    const entity = getEntity();
 
-    const onSave = async () => {
+    const onSaveOrReplace = async () => {
       const aoa = getAOA();
-      await saveAsAttachment(aoa, entity.type, entity.id);
-    };
+      const replaceId = replaceIdRef.current;
+      const replaceName = replaceNameRef.current;
+      if (replaceId && replaceName) {
+        // REPLACE MODE
+        const res = await replaceAttachment(aoa, entity.type, entity.id, replaceId, replaceName);
+        // keep tracking the latest subid
+        if (res?.id) setCurrentUploadId(res.id);
+      } else {
+        // SAVE MODE
+        const res = await saveAsAttachment(aoa, entity.type, entity.id);
+        if (res?.id) { setCurrentUploadId(res.id); setReplaceName(res.name); }
+      }
+    }
 
-    //TODO: implement replace existing
-    const onReplace = async () => {
-      const aoa = getAOA();
-      await replaceAttachment(aoa, entity.type, entity.id, currentUploadId, replaceName);
-    };
+    // reload spreadsheet data after state changes
+    useEffect(() => {
+      const instance = spreadsheetRef.current?.[0];
+      if (instance) instance.setData(data);
+    }, [data]);
 
+    // load an attachment into the editor, capture filename & id
+    useEffect(() => {
+      const onLoad = (e) => {
+        const { aoa, name, uploadId } = e.detail || {};
+        setData(aoa);
+        setReplaceName(name ?? null);
+        setCurrentUploadId(typeof uploadId === 'number' ? uploadId : null);
+      };
+      document.addEventListener('jss-load-aoa', onLoad);
+      return () => document.addEventListener('jss-load-aoa', onLoad);
+    }, []);
+
+    /* actions (import, save, replace) included in the toolbar */
+    // import a new file from computer
     const handleImportFile = async (e) => {
       const file = e.target.files?.[0];
       if (!file) return;
       const aoa = await fileToAOA(file);
       setData(aoa);
+      // clear any current spreadsheet id tracking
+      setCurrentUploadId(null);
+      setReplaceName(null);
     };
 
-    // Reload the grid when importing data
-    useEffect(() => {
-      if (spreadsheetRef.current?.[0]) {
-        spreadsheetRef.current[0].setData(data);
-      }
-    }, [data]);
-    // load an attachment into the editor
-    useEffect(() => {
-      document.addEventListener('jss-load-aoa', (e) => {
-        const { aoa } = e.detail;
-        setData(aoa);
-      });
-    })
+    // CUSTOM TOOLBAR ICONS (they are placed at the end)
+    const toolbar = (toolbar) => {
+      toolbar.items.push(
+        { content: 'upload', tooltip: i18next.t('import'), onclick: () => document.getElementById('importFileInput').click() },
+        { content: 'attachment', tooltip: i18next.t('save-attachment'), onclick: onSaveOrReplace }
+      );
+      return toolbar;
+    }
+
     return (
       <>
-        <input type='file' accept='.xlsx,.csv' onChange={handleImportFile} id='importFileInput' hidden name='file' />
+        <input hidden type='file' accept='.xlsx,.csv' onChange={handleImportFile} id='importFileInput' name='file' />
         <Spreadsheet id='jspreadsheetDiv' ref={spreadsheetRef} tabs={true} toolbar={toolbar}>
           <Worksheet data={data} minDimensions={[10,10]} />
         </Spreadsheet>

@@ -9,7 +9,7 @@ import $ from 'jquery';
 import { Action as MalleAction, Malle } from '@deltablot/malle';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
 import { Action, Model } from './interfaces';
-import { loadInJSSpreadsheet } from "./jspreadsheet.utils";
+import { loadInJSSpreadsheet } from './jspreadsheet.utils';
 import { ensureTogglableSectionIsOpen, relativeMoment, reloadElements } from './misc';
 import { displayPlasmidViewer } from './ove';
 import { displayMoleculeViewer, get3dmol } from './3dmol';
@@ -17,11 +17,8 @@ import i18next from './i18n';
 import { ApiC } from './api';
 import { marked } from 'marked';
 import Prism from 'prismjs';
-import { SpreadsheetEditorHelper } from './SpreadsheetEditorHelper.class';
 import { Uploader } from './uploader';
 import { entity } from './getEntity';
-
-const SpreadsheetEditorHelperC = new SpreadsheetEditorHelper();
 
 function processNewFilename(event, original: HTMLElement, parent: HTMLElement): void {
   if (event.key === 'Enter' || event.type === 'blur') {

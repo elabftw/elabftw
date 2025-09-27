@@ -38,6 +38,6 @@ final class UploadParams extends ContentParams
         if ($ext === 'php') {
             throw new ImproperActionException('No php extension allowed!');
         }
-        return Filter::forFilesystem($this->asString());
+        return Filter::toPureString($this->asString());
     }
 }

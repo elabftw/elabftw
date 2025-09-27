@@ -35,9 +35,9 @@ export async function fileToAOA(file: File): Promise<Cell[][]> {
   return parseFileToAOA(buffer);
 }
 
-export async function loadInJSSpreadsheet(link: string, name: string, uploadId: number): Promise<void> {
+export async function loadInJSSpreadsheet(storage: string, path: string, name: string, uploadId: number): Promise<void> {
   try {
-    const res = await fetch(`app/download.php?f=${encodeURIComponent(link)}`, {
+    const res = await fetch(`app/download.php?f=${encodeURIComponent(path)}&storage=${storage}`, {
       headers: new Headers({ 'cache-control': 'no-cache' }),
     });
     if (!res.ok) throw new Error('Failed to fetch uploaded file.');

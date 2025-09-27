@@ -224,7 +224,12 @@
             {# SPREADSHEETS #}
             {% elseif ext in constant('Elabftw\\Elabftw\\Extensions::SPREADSHEET') %}
               {% if mode == 'edit' %}
-                <span class='icon-overlay edit-overlay' data-uploadid='{{ upload.id }}' data-name='{{ upload.real_name|e('html_attr') }}' data-link='{{ upload.long_name|e('html_attr') }}' data-action='xls-load-file'>
+                <span class='icon-overlay edit-overlay'
+                  data-uploadid='{{ upload.id }}'
+                  data-storage='{{ upload.storage }}'
+                  data-path='{{ upload.long_name|e('html_attr') }}'
+                  data-name='{{ upload.real_name|e('html_attr') }}'
+                  data-action='xls-load-file'>
               {% else %}
               <span class='icon-overlay eye-overlay'
                     data-action='toggle-modal'

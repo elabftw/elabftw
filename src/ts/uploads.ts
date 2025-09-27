@@ -180,7 +180,7 @@ const clickHandler = async (event: Event) => {
 
   // LOAD SPREADSHEET FILE
   } else if (el.matches('[data-action="xls-load-file"]')) {
-    await loadInJSSpreadsheet(el.dataset.link, el.dataset.name, Number(el.dataset.uploadid));
+    await loadInJSSpreadsheet(el.dataset.storage, el.dataset.path, el.dataset.name, Number(el.dataset.uploadid));
     ensureTogglableSectionIsOpen('sheetEditorIcon', 'spreadsheetEditorDiv');
     document.getElementById('spreadsheetEditorDiv')?.scrollIntoView({ behavior: 'smooth'});
 

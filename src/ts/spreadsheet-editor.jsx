@@ -35,8 +35,7 @@ if (document.getElementById('spreadsheetEditorRoot')) {
     useEffect(() => { replaceIdRef.current = currentUploadId; }, [currentUploadId]);
     useEffect(() => { replaceNameRef.current = replaceName; }, [replaceName]);
 
-    // FIXME: see https://github.com/elabftw/elabftw/pull/5995#discussion_r2382856688
-    const getAOA = () => spreadsheetRef.current?.[0]?.getData?.() ?? data;
+    const getAOA = () => spreadsheetRef.current?.getData?.() ?? data;
     const entity = getEntity();
 
     const onSaveOrReplace = async () => {

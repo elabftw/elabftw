@@ -19,7 +19,7 @@ import { marked } from 'marked';
 import Prism from 'prismjs';
 import { Uploader } from './uploader';
 import { entity } from './getEntity';
-import XLSX from '@e965/xlsx';
+import { read as readXlsx, utils as xlsxUtils } from '@e965/xlsx';
 type Cell = string | number | boolean | null;
 
 function processNewFilename(event, original: HTMLElement, parent: HTMLElement): void {
@@ -34,20 +34,20 @@ function processNewFilename(event, original: HTMLElement, parent: HTMLElement): 
   }
 }
 
-async function blob2table(blob: Blob, container: HTMLDivElement, sheetName = null) {
+async function blob2table(blob: Blob, container: HTMLDivElement, sheetName: string | null = null) {
   let wb;
   if (blob.type.includes('text/csv') || blob.type === '') {
     const csv = await blob.text();
     // type string will read it as UTF-8
-    wb = XLSX.read(csv, { type: 'string' });
+    wb = readXlsx(csv, { type: 'string' });
   } else {
     const ab = await blob.arrayBuffer();
-    wb = XLSX.read(ab, { type: 'array' });
+    wb = readXlsx(ab, { type: 'array' });
   }
   const ws = wb.Sheets[sheetName || wb.SheetNames[0]];
 
   // 2D array: rows of values (strings, numbers, booleans, null)
-  const rows: Cell[][] = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: '', blankrows: true });
+  const rows: Cell[][] = xlsxUtils.sheet_to_json(ws, { header: 1, raw: true, defval: '', blankrows: false });
 
   const table = document.createElement('table');
   table.classList.add('table');
@@ -183,7 +183,6 @@ const clickHandler = async (event: Event) => {
   } else if (el.matches('[data-action="xls-load-file"]')) {
     await loadInJSSpreadsheet(el.dataset.storage, el.dataset.path, el.dataset.name, Number(el.dataset.uploadid));
     ensureTogglableSectionIsOpen('sheetEditorIcon', 'spreadsheetEditorDiv');
-    document.getElementById('spreadsheetEditorDiv')?.scrollIntoView({ behavior: 'smooth'});
 
   // ARCHIVE UPLOAD
   } else if (el.matches('[data-action="archive-upload"]')) {

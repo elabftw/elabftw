@@ -13,7 +13,11 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
+use InvalidArgumentException;
 use PDO;
+
+use function array_sum;
+use function count;
 
 /**
  * Fingerprints for compounds
@@ -29,9 +33,13 @@ final class Fingerprints
 
     public function create(array $fp): int
     {
+        $this->assertCompoundSet();
         // it's fine to send us an empty fp, but we won't record it
         if (array_sum($fp) === 0) {
             return 0;
+        }
+        if (count($fp) !== 32) {
+            throw new InvalidArgumentException('Fingerprint payload must contain 32 integers');
         }
         $sql = 'INSERT INTO compounds_fingerprints (id, ';
         for ($i = 0; $i < 32; $i++) {
@@ -50,7 +58,7 @@ final class Fingerprints
             $req->bindParam(":fp$i", $fp[$i], PDO::PARAM_INT);
         }
         $req->bindParam(':id', $this->compound, PDO::PARAM_INT);
-        $req->execute();
+        $this->Db->execute($req);
         return $this->Db->lastInsertId();
     }
 
@@ -63,6 +71,7 @@ final class Fingerprints
 
     public function destroy(): bool
     {
+        $this->assertCompoundSet();
         $sql = 'DELETE FROM compounds_fingerprints WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->compound, PDO::PARAM_INT);
@@ -94,5 +103,12 @@ final class Fingerprints
         $req = $this->Db->prepare($sql);
         $req->execute();
         return $req->fetchAll();
+    }
+
+    private function assertCompoundSet(): void
+    {
+        if ($this->compound === null) {
+            throw new InvalidArgumentException('Compound id is required for this operation');
+        }
     }
 }

@@ -4,8 +4,6 @@ const t = {
   translation: {
     "2FA": "2FA",
     "add-compound": "Tambahkan senyawa",
-    "add-column": "Add column",
-    "add-row": "Add row",
     "add-team": "Tambahkan tim",
     "archive-user": "Arsipkan pengguna",
     "archive-user-description": "Mengarsipkan pengguna berarti akun mereka akan dinonaktifkan. Tindakan ini dapat dibatalkan.",

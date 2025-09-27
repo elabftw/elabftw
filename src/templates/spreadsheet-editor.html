@@ -11,8 +11,10 @@
     <p class='infotip-text' style='left: 200px'>{{ infotip }}</p>
   </div>
   <div id='spreadsheetEditorDiv' class='m-2' hidden data-save-hidden='spreadsheetEditorDiv'>
-    <div id='spreadsheet-importer-root'></div>
+    {% if App.devMode -%}
+      <!-- [html-validate-disable-block unique-landmark, no-deprecated-attr, prefer-native-element: suppress errors from spreadsheet editor] -->
+    {%- endif %}
+    <div id='spreadsheetEditorRoot'></div>
   </div>
 </section>
-{% include 'load-spreadsheet-modal.html' %}
 <hr>

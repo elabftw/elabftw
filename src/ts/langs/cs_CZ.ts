@@ -4,8 +4,6 @@ const t = {
   translation: {
     "2FA": "2FA",
     "add-compound": "Přidat sloučeninu",
-    "add-column": "Add column",
-    "add-row": "Add row",
     "add-team": "Přidat tým",
     "archive-user": "Archivovat uživatele",
     "archive-user-description": "Archivace uživatele znamená, že jeho účet bude deaktivován. Tato akce je vratná.",

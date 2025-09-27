@@ -35,6 +35,7 @@ $text-muted: $medium;
 @import './fontawesome/solid';
 @import './fontawesome/brands';
 @import './fontawesome/regular';
+@import 'material-icons';
 
 @import 'animations';
 @import 'autocomplete';
@@ -1307,26 +1308,34 @@ the form-control fails to do that so we do the border ourselves */
   z-index: 10;
 }
 
-/* eye overlay for uploaded file icons */
-.eye-overlay {
+/* icon overlay for uploaded file icons */
+.icon-overlay {
   display: block;
   position: relative;
 }
 
-.eye-overlay:hover::after {
+.icon-overlay:hover::after {
   background-color: $medium;
   color: $white;
-  content: '\f06e';
   display: block;
   font-family: 'Font Awesome 6 Free';
   font-size: 3em;
   font-weight: 900;
   left: 50%;
-  margin-left: -33px; // half width
   position: absolute;
   text-align: center;
   top: 37px;
+  transform: translateX(-50%);
   width: 66px;
+}
+
+// edit-overlay
+.icon-overlay.edit-overlay:hover::after {
+  content: '\f304';
+}
+// eye-overlay
+.icon-overlay.eye-overlay:hover::after {
+  content: '\f06e';
 }
 
 /* fix the canvas for 3Dmoljs uploaded files */
@@ -1824,4 +1833,8 @@ input:user-invalid {
 // disable touch action for doodle canvas
 #doodleCanvas {
   touch-action: none;
+}
+
+#spreadsheetEditorDiv {
+  overflow: auto;
 }

@@ -99,12 +99,7 @@ final class Extensions
         'xls',
         'xlsx',
         'xlsb',
-        'xlsm',
         'csv',
-        'tsv',
-        'ods',
-        'ots',
-        'fods',
     );
 
     public const array VIDEO = array(

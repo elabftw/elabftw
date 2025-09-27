@@ -47,9 +47,10 @@ async function blob2table(blob: Blob, container: HTMLDivElement, sheetName = nul
   const ws = wb.Sheets[sheetName || wb.SheetNames[0]];
 
   // 2D array: rows of values (strings, numbers, booleans, null)
-  const rows: Cell[][] = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true });
+  const rows: Cell[][] = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: '', blankrows: true });
 
   const table = document.createElement('table');
+  table.classList.add('table');
   const tbody = document.createElement('tbody');
 
   for (const row of rows) {

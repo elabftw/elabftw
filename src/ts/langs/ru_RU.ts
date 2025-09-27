@@ -4,8 +4,6 @@ const t = {
   translation: {
     "2FA": "2FA",
     "add-compound": "Добавить соединение",
-    "add-column": "Add column",
-    "add-row": "Add row",
     "add-team": "Добавить команду",
     "archive-user": "Пользователь в архиве",
     "archive-user-description": "Архивирование пользователя означает, что его учетная запись будет отключена. Это действие обратимо.",

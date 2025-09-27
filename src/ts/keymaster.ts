@@ -156,9 +156,17 @@ function resetModifiers() {
 };
 
 function filter(event){
-  const tagName = (event.target || event.srcElement).tagName;
+  const target = event.target as HTMLElement;
+  if (!(target instanceof HTMLElement)) {
+    return true;
+  }
+  const tagName = target.tagName;
   // ignore keypressed in any elements that support keyboard data input
-  return !(tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA' || (event.target || event.srcElement).hasAttribute('contenteditable'));
+  const isTyping = tagName === 'INPUT' || tagName === 'SELECT' || tagName === 'TEXTAREA' || target.hasAttribute('contenteditable');
+  //const inSpreadsheet = !!target.closest('#spreadsheetEditor');
+  // FIXME: it appears a bit difficult to correctly detect we are using the spreadsheet editor, so just disable stuff if the element is present
+  const inSpreadsheet = !!document.getElementById('spreadsheetEditor');
+  return !(isTyping || inSpreadsheet);
 }
 
 // initialize key.<modifier> to false

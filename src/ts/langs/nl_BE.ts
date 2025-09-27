@@ -4,8 +4,6 @@ const t = {
   translation: {
     "2FA": "2FA",
     "add-compound": "Voeg samenstelling toe",
-    "add-column": "Add column",
-    "add-row": "Add row",
     "add-team": "Team toevoegen",
     "archive-user": "Archiveer gebruiker",
     "archive-user-description": "Het archiveren van een gebruiker betekent dat zijn/haar account wordt uitgeschakeld. Deze actie is omkeerbaar.",

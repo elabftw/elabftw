@@ -149,24 +149,16 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $events = $Scheduler2->readAll();
         $this->assertIsArray($events);
         $eventsIds = array_column($events, 'id');
-        $this->assertNotContains($eventId, $eventsIds, 'User 2 should not see events due to lack of book permission.');
-
-        // now make it visible for user in the other team
-        $Items->patch(Action::Update, array(
-            'canbook' => json_encode(array(
-                'base' => BasePermissions::User->value,
-                'users' => array($User2->userid),
-                'teams' => array(),
-                'teamgroups' => array(),
-            )),
-        ));
-
-        // Refresh scheduler then User 2 retries after being granted book permission
-        $Scheduler2 = new Scheduler($Items2, null, $this->start, $this->end);
-        $eventsAfterGrant = $Scheduler2->readAll();
-        $this->assertIsArray($eventsAfterGrant);
-        $eventsIds = array_column($eventsAfterGrant, 'id');
-        $this->assertContains($eventId, $eventsIds, 'User 2 should now see the event.');
+        $this->assertContains($eventId, $eventsIds, 'User 2 should see the event, but it remains non-bookable.');
+        foreach ($events as $event) {
+            if ($event['id'] === $eventId) {
+                $this->assertSame(0, (int) $event['canbook'], 'User 2 should not be able to book the event.');
+            }
+        }
+        // Ensure User 2 can not perform any action on visible(non-bookable) event.
+        $Scheduler2->setId($eventId);
+        $this->expectException(IllegalActionException::class);
+        $Scheduler2->patch(Action::Update, array('target' => 'end', 'delta' => $this->delta));
     }
 
     public function testReadAllWithFilters(): void

@@ -22,7 +22,7 @@ final class Fingerprints
 {
     protected Db $Db;
 
-    public function __construct(private int $compound)
+    public function __construct(private ?int $compound = null)
     {
         $this->Db = Db::getConnection();
     }
@@ -54,6 +54,13 @@ final class Fingerprints
         return $this->Db->lastInsertId();
     }
 
+    public function upsert(array $fp): int
+    {
+        // destroy first to avoid PK clash
+        $this->destroy();
+        return $this->create($fp);
+    }
+
     public function destroy(): bool
     {
         $sql = 'DELETE FROM compounds_fingerprints WHERE id = :id';
@@ -73,6 +80,18 @@ final class Fingerprints
             $sql .= sprintf(' AND fp%d & %d = %d', $key, $value, $value);
         }
         $req = $this->Db->prepare($sql . ' LIMIT 2');
+        $req->execute();
+        return $req->fetchAll();
+    }
+
+    public function getSmilesMissingFp(bool $all = false): array
+    {
+        $sql = 'SELECT compounds.id, compounds.smiles FROM compounds
+            LEFT JOIN compounds_fingerprints ON (compounds_fingerprints.id = compounds.id)';
+        if (!$all) {
+            $sql .= ' WHERE compounds_fingerprints.id IS NULL';
+        }
+        $req = $this->Db->prepare($sql);
         $req->execute();
         return $req->fetchAll();
     }

@@ -239,4 +239,13 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
         $commandTester->execute(array());
         $commandTester->assertCommandIsSuccessful();
     }
+
+    public function testFingerprintCompounds(): void
+    {
+        $commandTester = new CommandTester(new FingerprintCompounds());
+        $commandTester->execute(array(
+            '--dry-run' => true,
+        ));
+        $commandTester->assertCommandIsSuccessful();
+    }
 }

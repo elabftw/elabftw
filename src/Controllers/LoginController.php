@@ -62,7 +62,9 @@ use Override;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 
+use function rawurldecode;
 use function setcookie;
+use function str_starts_with;
 
 /**
  * For all your authentication/login needs
@@ -184,7 +186,11 @@ final class LoginController implements ControllerInterface
         // we redirect to index that will then redirect to the correct entrypoint set by user
         $location = '/index.php';
         if ($this->Request->cookies->has('elab_redirect')) {
-            $location = $this->Request->cookies->getString('elab_redirect', $location);
+            // make sure we have a relative path
+            $candidate = rawurldecode($this->Request->cookies->getString('elab_redirect', $location));
+            if (str_starts_with($candidate, '/') && !str_starts_with($candidate, '//')) {
+                $location = $candidate;
+            }
         }
         return new RedirectResponse($location);
     }

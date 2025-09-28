@@ -172,16 +172,6 @@ class Users extends AbstractRest
         $isFirstUser = $TeamsHelper->isFirstUserInTeam();
         // now add the user to the team
         $Users2Teams = new Users2Teams($this->requester);
-        // only send onboarding emails for new teams when user is validated
-        if ($isValidated) {
-            // do we send an email for the instance
-            if ($Config->configArr['onboarding_email_active'] === '1') {
-                $isAdmin = $usergroup === Usergroup::Admin || $usergroup === Usergroup::Sysadmin;
-                (new OnboardingEmail(-1, $isAdmin))->create($userid);
-            }
-            // send email for each team
-            $Users2Teams->sendOnboardingEmailOfTeams = true;
-        }
         $Users2Teams->addUserToTeams(
             $userid,
             array_column($teams, 'id'),
@@ -189,11 +179,17 @@ class Users extends AbstractRest
             ($usergroup === Usergroup::Sysadmin || $usergroup === Usergroup::Admin)
                 ? BinaryValue::True
                 : BinaryValue::False,
+            $isValidated,
         );
         if ($alertAdmin && !$isFirstUser) {
             $this->notifyAdmins($TeamsHelper->getAllAdminsUserid(), $userid, $isValidated, $teams[0]['name']);
         }
-        if (!$isValidated) {
+        if ($isValidated) {
+            // send the instance level onboarding email
+            if (Config::getConfig()->configArr['onboarding_email_active'] === '1') {
+                new OnboardingEmail(-1)->create($userid);
+            }
+        } else {
             $Notifications = new SelfNeedValidation();
             $Notifications->create($userid);
             // set a flag to show correct message to user
@@ -443,11 +439,7 @@ class Users extends AbstractRest
                     if (!$hasPermission && $isAdmin === false) {
                         throw new IllegalActionException('Only Admin can add a user to a team (where they are Admin)');
                     }
-                    $Users2Teams = new Users2Teams($this->requester);
-                    if ($this->userData['validated']) {
-                        $Users2Teams->sendOnboardingEmailOfTeams = true;
-                    }
-                    $Users2Teams->create($this->userData['userid'], $team);
+                    new Users2Teams($this->requester)->create($this->userData['userid'], $team, isValidated: $this->userData['validated'] === 1);
                 }
             )(),
             Action::Disable2fa => $this->disable2fa(),
@@ -818,7 +810,16 @@ class Users extends AbstractRest
         $this->Db->execute($req);
         $Notifications = new SelfIsValidated();
         $Notifications->create($this->userData['userid']);
-        $this->sendOnboardingEmailsAfterValidation();
+        // send the instance level onboarding email only once the user is validated (avoid infoleak for untrusted users)
+        if (Config::getConfig()->configArr['onboarding_email_active'] === '1') {
+            new OnboardingEmail(-1)->create($this->userData['userid']);
+        }
+        // now send an email for each team the user is in
+        $teams = json_decode($this->userData['teams'], true, 3, JSON_THROW_ON_ERROR);
+        foreach ($teams as $team) {
+            new Teams($this, $team['id'])
+                ->sendOnboardingEmailToUser($this->userData['userid'], BinaryValue::from($team['is_admin']));
+        }
         return $this->readOne();
     }
 
@@ -830,22 +831,6 @@ class Users extends AbstractRest
         }
         foreach ($admins as $admin) {
             $Notifications->create($admin);
-        }
-    }
-
-    private function sendOnboardingEmailsAfterValidation(): void
-    {
-        // do we send an eamil for the instance
-        if (Config::getConfig()->configArr['onboarding_email_active'] === '1') {
-            (new OnboardingEmail(-1, $this->isAdmin))->create($this->userData['userid']);
-        }
-
-        // Check setting for each team individually
-        $teams = json_decode($this->userData['teams']);
-        foreach (array_column($teams, 'id') as $teamId) {
-            if ((new Teams($this, $this->team))->readOne()['onboarding_email_active'] === 1) {
-                (new OnboardingEmail($teamId))->create($this->userData['userid']);
-            }
         }
     }
 }

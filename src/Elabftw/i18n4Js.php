@@ -39,6 +39,7 @@ final class i18n4Js
             '2FA' => _('2FA'),
             'add-compound' => _('Add compound'),
             'add-team' => _('Add team'),
+            'add-to-team' => _('Add selected users to team'),
             'archive-user' => _('Archive user'),
             'archive-user-description' => _('Archiving a user means their account will be disabled. This action is reversible.'),
             'add-user-error' => _('Use the autocompletion menu to add users.'),

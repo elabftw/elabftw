@@ -11,6 +11,7 @@ import { ApiC } from './api';
 import { Action, Model } from './interfaces';
 import $ from 'jquery';
 import { notify } from './notify';
+import { core } from './core';
 
 if (document.getElementById('users-table')) {
 
@@ -171,6 +172,13 @@ if (document.getElementById('users-table')) {
       const team = parseInt(selectEl.options[selectEl.selectedIndex].value, 10);
       ApiC.patch(`${Model.User}/${userid}`, {action: Action.Add, team: team})
         .then(response => response.json()).then(user => populateUserModal(user));
+    } else if (el.matches('[data-action="import-users-in-team"]')) {
+      const idList = el.dataset.target.split(',');
+      if (!confirm(`Add ${idList.length} user(s) to your team?`)) {
+        return;
+      }
+      idList.forEach(userid => ApiC.patch(`${Model.User}/${userid}`, {action: Action.Add, team: core.currentTeam}));
+      document.dispatchEvent(new CustomEvent('dataReload'));
     // REMOVE USER FROM TEAM
     } else if (el.matches('[data-action="destroy-user2team"]')) {
       if (confirm(i18next.t('generic-delete-warning'))) {

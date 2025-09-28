@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -90,10 +91,6 @@ final class Teams extends AbstractRest
     public function synchronize(int $userid, array $teams): void
     {
         $Users2Teams = new Users2Teams($this->Users);
-        // send onboarding email of teams newly added to a user
-        if ($this->Users->userData['validated']) {
-            $Users2Teams->sendOnboardingEmailOfTeams = true;
-        }
         $teamIdArr = array_column($teams, 'id');
         // get the difference between the teams sent by idp
         // and the teams that the user is in
@@ -101,7 +98,7 @@ final class Teams extends AbstractRest
         $currentTeams = $UsersHelper->getTeamsIdFromUserid();
 
         $addToTeams = array_diff($teamIdArr, $currentTeams);
-        $Users2Teams->addUserToTeams($userid, $addToTeams);
+        $Users2Teams->addUserToTeams($userid, $addToTeams, isValidated: $this->Users->userData['validated'] === 1);
         $currentTeams = $UsersHelper->getTeamsIdFromUserid();
 
         $rmFromTeams = array_diff($currentTeams, $teamIdArr);
@@ -192,6 +189,14 @@ final class Teams extends AbstractRest
         $this->Db->execute($req);
 
         return $req->fetchAll();
+    }
+
+    public function sendOnboardingEmailToUser(int $userid, BinaryValue $forAdmin): int
+    {
+        if ($this->teamArr['onboarding_email_active'] === 1) {
+            return new OnboardingEmail($this->id ?? -1, $forAdmin->toBoolean())->create($userid);
+        }
+        return 0;
     }
 
     #[Override]

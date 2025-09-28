@@ -81,6 +81,11 @@ function triggerHandler(event: Event, el: HTMLInputElement): void {
       .then(() => document.dispatchEvent(new CustomEvent('dataReload')));
     return;
   }
+  // Idea: maybe have a data-dispatch with the custom event name in data-target
+  if (el.dataset.customAction === 'show-all-users') {
+    document.dispatchEvent(new CustomEvent('dataReload'));
+    return;
+  }
   // END CUSTOM ACTIONS
 
   if (el.dataset.transform === 'permissionsToJson') {

@@ -5,6 +5,7 @@ const t = {
     "2FA": "2FA",
     "add-compound": "Murakkab qo'shing",
     "add-team": "Jamoa qo'shing",
+    "add-to-team": "Add selected users to team",
     "archive-user": "Arxiv foydalanuvchisi",
     "archive-user-description": "Foydalanuvchini arxivlash uning hisobi o'chirilishini anglatadi. Bu harakat qaytarilishi mumkin.",
     "add-user-error": "Use the autocompletion menu to add users.",

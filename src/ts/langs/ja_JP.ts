@@ -5,6 +5,7 @@ const t = {
     "2FA": "2FA",
     "add-compound": "化合物を追加する",
     "add-team": "チームを追加",
+    "add-to-team": "Add selected users to team",
     "archive-user": "アーカイブユーザー",
     "archive-user-description": "ユーザーをアーカイブすると、そのユーザーのアカウントは無効になります。この操作は元に戻すことができます。",
     "add-user-error": "Use the autocompletion menu to add users.",

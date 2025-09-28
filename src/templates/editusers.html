@@ -2,7 +2,18 @@
 <div>
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Users list'|trans }}</h3>
   <div class='pl-3'>
-    <p class='smallgray'>{{ 'Double-click a row in the table below to edit user.'|trans }}</p>
+    <div class='d-flex justify-content-between align-items-baseline'>
+      <p>{{ 'Double-click a row in the table below to edit user.'|trans }}</p>
+      {% if scriptName == 'admin.php' and (App.Users.userData.can_manage_users2teams or App.Config.configArr.admins_import_users) %}
+        <div class='d-flex justify-content-between'>
+          <label for='showAllUsers' class='col-form-label'>{{ 'Show users from all teams'|trans }}</label>
+          <label class='switch ucp-align'>
+            <input type='checkbox' autocomplete='off' data-trigger='change' data-custom-action='show-all-users' {{ scriptName == 'sysconfig.php' ? 'checked="checked"' }} id='showAllUsers'>
+            <span class='slider'></span>
+          </label>
+        </div>
+      {% endif %}
+    </div>
     {% if App.devMode -%}
     <!-- [html-validate-disable-block prefer-native-element, element-permitted-content, {{ App.Request.getScriptName|split('/')|last == 'admin.php' ? 'no-missing-references' }}: ag-grid] -->
     {%- endif %}

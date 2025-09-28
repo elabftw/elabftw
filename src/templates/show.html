@@ -178,7 +178,7 @@
       <select name='visibility' class='mx-1 form-control filterHelper' aria-label='{{ 'Filter visibility'|trans }}'>
         <option value=''>{{ 'Filter visibility'|trans }}</option>
         {% for vis in visibilityArr %}
-        <option value='{{ vis|e('html_attr') }}' {{ App.Request.query.get('extended') == 'visibility:"' ~ vis|raw ~ '"' ? ' selected' }}>
+        <option value='{{ vis|e('html_attr') }}' {{ App.Request.query.get('q') == 'visibility:"' ~ vis|raw ~ '"' ? ' selected' }}>
           {{ vis }}</option>
         {% endfor %}
       </select>

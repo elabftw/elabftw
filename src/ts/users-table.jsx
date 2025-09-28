@@ -135,13 +135,13 @@ if (document.getElementById('users-table')) {
     // all the users are loaded in the table, which does client side pagination
     const fetchData = async () => {
       const params = new URLSearchParams(document.location.search);
-      let teamParam = params.get('team');
+      let teamParam = params.get('team') ?? '';
       let currentTeam = 0;
       const showAllUsersInput = document.getElementById('showAllUsers');
-      if (!teamParam && document.location.pathname === '/admin.php') {
+      if (!teamParam && document.location.pathname.endsWith('/admin.php')) {
         currentTeam = 1;
       }
-      if (showAllUsersInput && showAllUsersInput.checked) {
+      if (showAllUsersInput?.checked) {
         teamParam = 0;
         currentTeam = 0;
       }

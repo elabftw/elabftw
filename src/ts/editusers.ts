@@ -177,7 +177,8 @@ if (document.getElementById('users-table')) {
       if (!confirm(`Add ${idList.length} user(s) to your team?`)) {
         return;
       }
-      idList.forEach(userid => ApiC.patch(`${Model.User}/${userid}`, {action: Action.Add, team: core.currentTeam}));
+      const requests = idList.map(userid => ApiC.patch(`${Model.User}/${userid}`, {action: Action.Add, team: core.currentTeam}));
+      await Promise.all(requests);
       document.dispatchEvent(new CustomEvent('dataReload'));
     // REMOVE USER FROM TEAM
     } else if (el.matches('[data-action="destroy-user2team"]')) {

@@ -183,8 +183,8 @@ final class LoginController implements ControllerInterface
 
         // we redirect to index that will then redirect to the correct entrypoint set by user
         $location = '/index.php';
-        if ($this->Session->has('post_login_redirect')) {
-            $location = $this->Session->get('post_login_redirect');
+        if ($this->Request->cookies->has('elab_redirect')) {
+            $location = $this->Request->cookies->getString('elab_redirect', $location);
         }
         return new RedirectResponse($location);
     }

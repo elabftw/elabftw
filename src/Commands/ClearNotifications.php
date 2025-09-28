@@ -29,15 +29,15 @@ final class ClearNotifications extends Command
     protected function configure(): void
     {
         $this->setDescription('Clear all notifications, past and future.')
-            ->setHelp('Will remove all notifications from the notifications mysql table.');
+            ->setHelp('Will remove all notifications from the notifications database table. This operation is destructive.');
     }
 
     #[Override]
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $Db = Db::getConnection();
-        $Db->q('DELETE FROM notifications');
-        $output->writeln('All notifications removed.');
+        $req = $Db->q('DELETE FROM notifications');
+        $output->writeln(sprintf('Removed %d notifications.', $req->rowCount()));
         return Command::SUCCESS;
     }
 }

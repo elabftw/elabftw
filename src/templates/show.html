@@ -62,7 +62,7 @@
 
         <div id='visibleFiltersDiv' class='mt-1 flex-fill'>
           {# CATEGORY #}
-          <select name='category' class='mr-1 form-control filterHelper filterAuto' aria-label='{{ 'Filter category'|trans }}'>
+          <select name='category' class='mr-1 form-control filterAuto' aria-label='{{ 'Filter category'|trans }}'>
             <option value='' class='dropdown-header' data-action='clear'>{{ 'Filter category'|trans }}</option>
             {% for category in categoryArr %}
               <option value='{{ category.id }}'
@@ -73,7 +73,7 @@
           </select>
 
           {# STATUS #}
-          <select name='status' class='mr-1 form-control filterHelper filterAuto' aria-label='{{ 'Filter status'|trans }}'>
+          <select name='status' class='mr-1 form-control filterAuto' aria-label='{{ 'Filter status'|trans }}'>
             <option value='' class='dropdown-header' data-action='clear'>{{ 'Filter status'|trans }}</option>
             {% for status in statusArr %}
               <option value='{{ status.id }}'
@@ -84,7 +84,7 @@
           </select>
 
           {# OWNER filter #}
-          <select name='owner' class='form-control filterHelper filterAuto' aria-label='{{ 'Filter owner'|trans }}'>
+          <select name='owner' class='form-control filterAuto' aria-label='{{ 'Filter owner'|trans }}'>
             <option value='' class='dropdown-header' data-action='clear'>{{ 'Filter owner'|trans }}</option>
             {% for user in usersArr %}
               <option value='{{ user.userid }}' {{- App.Request.query.get('owner') == user.userid ? ' selected' }}>{{ user.fullname }}</option>
@@ -175,10 +175,10 @@
       #}
 
       {# VISIBILITY filter #}
-      <select name='visibility' class='mx-1 form-control filterHelper filterAuto' aria-label='{{ 'Filter visibility'|trans }}'>
+      <select name='visibility' class='mx-1 form-control filterHelper' aria-label='{{ 'Filter visibility'|trans }}'>
         <option value=''>{{ 'Filter visibility'|trans }}</option>
         {% for vis in visibilityArr %}
-        <option value='visibility:"{{ vis|e('html_attr') }}"'{{ App.Request.query.get('extended') == 'visibility:"' ~ vis|raw ~ '"' ? ' selected' }}>
+        <option value='{{ vis|e('html_attr') }}' {{ App.Request.query.get('extended') == 'visibility:"' ~ vis|raw ~ '"' ? ' selected' }}>
           {{ vis }}</option>
         {% endfor %}
       </select>

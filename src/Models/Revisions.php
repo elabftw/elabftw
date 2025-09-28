@@ -55,6 +55,15 @@ final class Revisions extends AbstractRest
         if ($this->maxRevisions !== 0 && ($this->readCount() >= $this->maxRevisions)) {
             $this->destroyOld();
         }
+        return $this->dbInsert($body);
+    }
+
+    public function dbInsert(?string $body): int
+    {
+        // don't bother if the body is empty
+        if (empty($body)) {
+            return 0;
+        }
         $sql = 'INSERT INTO ' . $this->Entity->entityType->value . '_revisions (item_id, body, userid)
             VALUES(:item_id, :body, :userid)';
 

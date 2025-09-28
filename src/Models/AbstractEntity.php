@@ -872,6 +872,15 @@ abstract class AbstractEntity extends AbstractRest
         $RequestActions = new RequestActions($this->Users, $this);
         $RequestActions->remove(RequestableAction::Timestamp);
 
+        // force create a revision
+        $Revisions = new Revisions(
+            $this,
+            (int) $Config->configArr['max_revisions'],
+            (int) $Config->configArr['min_delta_revisions'],
+            (int) $Config->configArr['min_days_revisions'],
+        );
+        $Revisions->dbInsert($this->entityData['body']);
+
         return $this->readOne();
     }
 
@@ -1004,6 +1013,9 @@ abstract class AbstractEntity extends AbstractRest
         $RequestActions = new RequestActions($this->Users, $this);
         $RequestActions->remove(RequestableAction::Sign);
         AuditLogs::create(new SignatureCreated($this->Users->userData['userid'], $this->id ?? 0, $this->entityType));
+        // force create a revision
+        $Revisions = new Revisions($this, 9000, 0, 0);
+        $Revisions->dbInsert($this->entityData['body']);
         return $this->readOne();
     }
 

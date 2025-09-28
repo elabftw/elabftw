@@ -61,7 +61,7 @@ final class Revisions extends AbstractRest
     public function dbInsert(?string $body): int
     {
         // don't bother if the body is empty
-        if (empty($body)) {
+        if ($body === null || $body === '') {
             return 0;
         }
         $sql = 'INSERT INTO ' . $this->Entity->entityType->value . '_revisions (item_id, body, userid)

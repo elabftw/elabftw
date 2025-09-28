@@ -5,6 +5,7 @@ const t = {
     "2FA": "2FA",
     "add-compound": "Dodaj spojino",
     "add-team": "Dodaj ekipo",
+    "add-to-team": "Add selected users to team",
     "archive-user": "Arhiviraj uporabnika",
     "archive-user-description": "Arhiviranje uporabnika pomeni, da bo njegov račun onemogočen. To dejanje je reverzibilno.",
     "add-user-error": "Use the autocompletion menu to add users.",

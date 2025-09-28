@@ -5,6 +5,7 @@ const t = {
     "2FA": "2FA",
     "add-compound": "添加化合物",
     "add-team": "添加团队",
+    "add-to-team": "Add selected users to team",
     "archive-user": "归档用户",
     "archive-user-description": "归档用户意味着他们的账户将被禁用。此操作是可逆的。",
     "add-user-error": "Use the autocompletion menu to add users.",

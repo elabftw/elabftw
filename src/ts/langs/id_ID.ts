@@ -5,6 +5,7 @@ const t = {
     "2FA": "2FA",
     "add-compound": "Tambahkan senyawa",
     "add-team": "Tambahkan tim",
+    "add-to-team": "Add selected users to team",
     "archive-user": "Arsipkan pengguna",
     "archive-user-description": "Mengarsipkan pengguna berarti akun mereka akan dinonaktifkan. Tindakan ini dapat dibatalkan.",
     "add-user-error": "Use the autocompletion menu to add users.",

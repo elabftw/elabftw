@@ -5,6 +5,7 @@ const t = {
     "2FA": "2FA",
     "add-compound": "Προσθήκη ένωσης",
     "add-team": "Προσθήκη Ομάδας",
+    "add-to-team": "Add selected users to team",
     "archive-user": "Αρχειοθέτηση χρήστη",
     "archive-user-description": "Η αρχειοθέτηση ενός χρήστη σημαίνει ότι ο λογαριασμός του θα απενεργοποιηθεί. Αυτή η ενέργεια είναι αναστρέψιμη.",
     "add-user-error": "Use the autocompletion menu to add users.",

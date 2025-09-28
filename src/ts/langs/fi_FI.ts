@@ -5,6 +5,7 @@ const t = {
     "2FA": "2FA",
     "add-compound": "Lisää yhdiste",
     "add-team": "Lisää tiimi",
+    "add-to-team": "Add selected users to team",
     "archive-user": "Arkistoi käyttäjä",
     "archive-user-description": "Käyttäjän arkistointi tarkoittaa, että hänen tilinsä poistetaan käytöstä. Tämä toiminto on peruutettava.",
     "add-user-error": "Use the autocompletion menu to add users.",

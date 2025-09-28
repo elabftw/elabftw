@@ -5,6 +5,7 @@ const t = {
     "2FA": "2FA",
     "add-compound": "화합물 추가",
     "add-team": "팀 추가",
+    "add-to-team": "Add selected users to team",
     "archive-user": "사용자 차단",
     "archive-user-description": "사용자를 보관처리하면 해당 사용자의 계정이 비활성화됩니다. 이 작업은 되돌릴 수 있습니다.",
     "add-user-error": "Use the autocompletion menu to add users.",

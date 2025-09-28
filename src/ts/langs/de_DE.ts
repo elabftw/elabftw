@@ -5,6 +5,7 @@ const t = {
     "2FA": "2FA",
     "add-compound": "Verbindung hinzufügen",
     "add-team": "Team hinzufügen",
+    "add-to-team": "Add selected users to team",
     "archive-user": "Nutzer archivieren",
     "archive-user-description": "Die Archivierung eines Nutzers deaktiviert seinen Zugang. Diese Aktion ist umkehrbar.",
     "add-user-error": "Use the autocompletion menu to add users.",

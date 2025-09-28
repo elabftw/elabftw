@@ -5,6 +5,7 @@ const t = {
     "2FA": "2FA",
     "add-compound": "Lisa ühend",
     "add-team": "Lisa meeskond",
+    "add-to-team": "Add selected users to team",
     "archive-user": "Arhiivi kasutaja",
     "archive-user-description": "Kasutaja arhiveerimine tähendab tema konto sulgemist. See toiming on tagasipööratav.",
     "add-user-error": "Kasutajate lisamiseks kasutage automaatse täitmise menüüd.",

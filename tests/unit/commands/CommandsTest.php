@@ -248,4 +248,11 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
         ));
         $commandTester->assertCommandIsSuccessful();
     }
+
+    public function testClearNotifications(): void
+    {
+        $commandTester = new CommandTester(new ClearNotifications());
+        $commandTester->execute(array());
+        $commandTester->assertCommandIsSuccessful();
+    }
 }

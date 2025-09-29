@@ -354,9 +354,9 @@ class Users extends AbstractRest
             $Request->query->getBoolean('onlyAdmins'),
             $Request->query->getBoolean('onlyArchived'),
         );
-        // if the user is Admin somewhere, return a pretty complete response
+        // if the user is Admin somewhere (or Sysadmin), return a pretty complete response
         // Note: having something where you get different response depending if the user is part of your team or not seems too complex to implement and maintain
-        if ($this->requester->isAdminSomewhere()) {
+        if ($this->requester->isAdminSomewhere() || $this->requester->userData['is_sysadmin'] === 1) {
             return $users;
         }
         // otherwise, remove some more data, here we want only the super basic data for basic users

@@ -76,16 +76,23 @@
                     </div>
                   </div>
                 </form>
-                <a class='dropdown-item {{ scriptName == 'experiments.php' and not App.Request.query.all ? 'active' }}' href='experiments.php'>{{ 'All experiments'|trans }}</a>
-                <a class='dropdown-item {{ scriptName == 'experiments.php' and App.Request.query.get('scope') == 1 ? 'active' }}' href='experiments.php?scope=1'>{{ 'My experiments'|trans }}</a>
+                {% set isActive = scriptName == 'experiments.php' and App.Request.query.get('scope') == 3 %}
+                <a class='dropdown-item {{ isActive ? 'active' }}' href='experiments.php?scope=3'><i class='fas fa-globe fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'All experiments'|trans }}</a>
+                {% set isActive = scriptName == 'experiments.php' and App.Request.query.get('scope') == 2 %}
+                <a class='dropdown-item {{ isActive ? 'active' }}' href='experiments.php?scope=2'><i class='fas fa-users fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Team experiments'|trans }}</a>
+                {% set isActive = scriptName == 'experiments.php' and App.Request.query.get('scope') == 1 %}
+                <a class='dropdown-item {{ isActive ? 'active' }}' href='experiments.php?scope=1'><i class='fas fa-user fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'My experiments'|trans }}</a>
                 <div class='dropdown-divider'></div>
                 {% for entity in App.experimentsCategoryArr %}
                 <a class='dropdown-item {{ scriptName == 'experiments.php' and App.Request.query.get('category') == entity.id ? 'active' }}' href='experiments.php?category={{ entity.id }}'><span class='round-spot mr-1' style='background-color: #{{ entity.color }}'></span>{{ entity.title }}</a>
                 {% endfor %}
                 <div class='dropdown-divider'></div>
-                <a class='dropdown-item {{ scriptName == 'templates.php' ? 'active' }}' href='templates.php'>{{ 'Experiment templates'|trans }}</a>
-                <a class='dropdown-item {{ scriptName == 'experiments-categories.php' ? 'active' }} {{ not App.Teams.teamArr.users_canwrite_experiments_categories and not App.Users.isAdmin ? 'disabled' }}' href='experiments-categories.php'>{{ 'Experiment categories'|trans }}</a>
-                <a class='dropdown-item {{ scriptName == 'experiments-status.php' ? 'active' }} {{ not App.Teams.teamArr.users_canwrite_experiments_status and not App.Users.isAdmin ? 'disabled' }}' href='experiments-status.php'>{{ 'Experiment status'|trans }}</a>
+                {% set isActive = scriptName == 'templates.php' %}
+                <a class='dropdown-item {{ isActive ? 'active' }}' href='templates.php'><i class='fas fa-copy fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Experiment templates'|trans }}</a>
+                {% set isActive = scriptName == 'experiments-categories.php' %}
+                <a class='dropdown-item {{ isActive ? 'active' }} {{ not App.Teams.teamArr.users_canwrite_experiments_categories and not App.Users.isAdmin ? 'disabled' }}' href='experiments-categories.php'><i class='fas fa-rectangle-list fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Experiment categories'|trans }}</a>
+                {% set isActive = scriptName == 'experiments-status.php' %}
+                <a class='dropdown-item {{ isActive ? 'active' }} {{ not App.Teams.teamArr.users_canwrite_experiments_status and not App.Users.isAdmin ? 'disabled' }}' href='experiments-status.php'><i class='fas fa-list-check fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Experiment status'|trans }}</a>
               </div>
             </div>
             <div class='nav-item dropdown'>
@@ -105,17 +112,25 @@
                     </div>
                   </div>
                 </form>
-                <a class='dropdown-item {{ scriptName == 'database.php' and not App.Request.query.all ? 'active' }}' href='database.php'>{{ 'All resources'|trans }}</a>
-                <a class='dropdown-item {{ scriptName == 'database.php' and App.Request.query.get('scope') == 1 ? 'active' }}' href='database.php?scope=1'>{{ 'My resources'|trans }}</a>
-                <a class='dropdown-item {{ scriptName == 'database.php' and App.Request.query.get('bookable') == 1 ? 'active' }}' href='database.php?bookable=1'>{{ 'Bookable resources'|trans }}</a>
+                {% set isActive = scriptName == 'database.php' and App.Request.query.get('scope') == 3 %}
+                <a class='dropdown-item {{ isActive ? 'active' }}' href='database.php?scope=3'><i class='fas fa-globe fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'All resources'|trans }}</a>
+                {% set isActive = scriptName == 'database.php' and App.Request.query.get('scope') == 2 %}
+                <a class='dropdown-item {{ isActive ? 'active' }}' href='database.php?scope=2'><i class='fas fa-users fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Team resources'|trans }}</a>
+                {% set isActive = scriptName == 'database.php' and App.Request.query.get('scope') == 1 %}
+                <a class='dropdown-item {{ isActive ? 'active' }}' href='database.php?scope=1'><i class='fas fa-user fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'My resources'|trans }}</a>
+                {% set isActive = scriptName == 'database.php' and App.Request.query.get('bookable') == 1 %}
+                <a class='dropdown-item {{ isActive ? 'active' }}' href='database.php?bookable=1'><i class='fas fa-calendar-check fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Bookable resources'|trans }}</a>
                 <div class='dropdown-divider'></div>
                 {% for entity in App.itemsCategoryArr %}
                   <a class='dropdown-item {{ scriptName == 'database.php' and App.Request.query.get('category') == entity.id ? 'active' }}' href='database.php?category={{ entity.id }}'><span class='round-spot mr-1' style='background-color: #{{ entity.color }}'></span>{{ entity.title }}</a>
                 {% endfor %}
                 <div class='dropdown-divider'></div>
-                <a class='dropdown-item {{ scriptName == 'resources-templates.php' ? 'active' }}' href='resources-templates.php'>{{ 'Resource templates'|trans }}</a>
-                <a class='dropdown-item {{ scriptName == 'resources-categories.php' ? 'active' }}' href='resources-categories.php'>{{ 'Resource categories'|trans }}</a>
-                <a class='dropdown-item {{ scriptName == 'resources-status.php' ? 'active' }} {{ not App.Teams.teamArr.users_canwrite_resources_status and not App.Users.isAdmin ? 'disabled' }}' href='resources-status.php'>{{ 'Resource status'|trans }}</a>
+                {% set isActive = scriptName == 'resources-templates.php' %}
+                <a class='dropdown-item {{ isActive ? 'active' }}' href='resources-templates.php'><i class='fas fa-copy fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Resource templates'|trans }}</a>
+                {% set isActive = scriptName == 'resources-categories.php' %}
+                <a class='dropdown-item {{ isActive ? 'active' }}' href='resources-categories.php'><i class='fas fa-rectangle-list fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Resource categories'|trans }}</a>
+                {% set isActive = scriptName == 'resources-status.php' %}
+                <a class='dropdown-item {{ isActive ? 'active' }} {{ not App.Teams.teamArr.users_canwrite_resources_status and not App.Users.isAdmin ? 'disabled' }}' href='resources-status.php'><i class='fas fa-list-check fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Resource status'|trans }}</a>
               </div>
             </div>
             <a class='nav-item nav-link {{ scriptName == 'scheduler.php' ? 'active' }}'

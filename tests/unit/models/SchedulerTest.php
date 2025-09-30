@@ -91,8 +91,9 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testPostActionWithNegativeTimeSlots(): void
     {
+        $end = new DateTimeImmutable('-1 hour')->format('c');
         $this->expectException(UnprocessableContentException::class);
-        $this->Scheduler->postAction(Action::Create, array('start' => $this->end, 'end' => $this->start, 'title' => 'Yep'));
+        $this->Scheduler->postAction(Action::Create, array('start' => $this->start, 'end' => $end, 'title' => 'Yep'));
     }
 
     public function testFailure(): void

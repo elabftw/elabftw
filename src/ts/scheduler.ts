@@ -190,6 +190,12 @@ if (window.location.pathname === '/scheduler.php') {
       // background color is $secondlevel for all and it changes after validation of event
       // TODO maybe we could have an automatically generated .ts file exporting colors from _variables.scss
       eventBackgroundColor: '#bdbdbd',
+      // user can see events as disabled if they don't have booking permissions. See #5930
+      eventClassNames: (info) => {
+        return Number(info.event.extendedProps.canbook) === 0 ? ['calendar-event-disabled'] : '';
+      },
+      // prevent any actions on disabled events
+      eventAllow: (info, event) => Number(event.extendedProps.canbook) === 1,
       // selection
       select: function(info): void {
         const itemSelectEl = document.getElementById('itemSelect') as HTMLSelectElement & { tomselect?: TomSelect };
@@ -290,6 +296,9 @@ if (window.location.pathname === '/scheduler.php') {
       },
       // on click activate modal window
       eventClick: function(info): void {
+        if (Number(info.event.extendedProps.canbook) === 0) {
+          return; // do nothing if event is disabled
+        }
         $('[data-action="scheduler-rm-bind"]').hide();
         $('#eventModal').modal('toggle');
         // set the event id on the various elements

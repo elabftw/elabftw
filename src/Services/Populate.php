@@ -18,6 +18,7 @@ use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Models\ApiKeys;
@@ -309,7 +310,7 @@ final class Populate
 
         // INVENTORY
         if (isset($this->yaml['inventory'])) {
-            $StorageUnits = new StorageUnits($this->getRandomUserInTeam(1));
+            $StorageUnits = new StorageUnits($this->getRandomUserInTeam(1), false);
             foreach ($this->yaml['inventory'] as $entry) {
                 $zones = explode('|', $entry);
                 $StorageUnits->createImmutable($zones);
@@ -323,7 +324,7 @@ final class Populate
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(array('handler' => $handlerStack));
         $httpGetter = new HttpGetter($client);
-        $Compounds = new Compounds($httpGetter, $Users, new NullFingerprinter());
+        $Compounds = new Compounds($httpGetter, $Users, new NullFingerprinter(), false);
         foreach ($this->yaml['compounds'] ?? array() as $compound) {
             $id = $Compounds->create(
                 name: $compound['name'],
@@ -476,6 +477,8 @@ final class Populate
             $usergroup = Usergroup::tryFrom($user['usergroup'] ?? Usergroup::User->value);
         }
         $orgid = $user['orgid'] ?? null;
+        $canManageCompounds = BinaryValue::from((int) ($user['can_manage_compounds'] ?? 0));
+        $canManageInventoryLocations = BinaryValue::from((int) ($user['can_manage_inventory_locations'] ?? 0));
         $password = $user['password'] ?? self::DEFAULT_PASSWORD;
         // special case for "random" value
         if ($password === 'random') {
@@ -496,7 +499,9 @@ final class Populate
             automaticValidationEnabled: true,
             alertAdmin: false,
             validUntil: null,
-            orgid: $orgid
+            orgid: $orgid,
+            canManageCompounds: $canManageCompounds,
+            canManageInventoryLocations: $canManageInventoryLocations,
         );
         $Users = new Users($userid, $team);
 

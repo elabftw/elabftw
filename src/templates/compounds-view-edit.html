@@ -64,12 +64,13 @@
             <h5 class='d-inline togglable-section-title'>{{ fp.name|default('Name unset'|trans) }} {{ _self.compoundPicto(fp) }}</h5>
           </summary>
           <ul class='mt-2 list-group'>
-          {{ _self.fpList('cas' ~ fp.id, 'CAS', fp.cas_number) }}
+          {{ _self.fpList('cas_' ~ fp.id, 'CAS', fp.cas_number) }}
           {{ _self.fpList('iupac_name_' ~ fp.id, 'IUPAC Name', fp.iupac_name) }}
+          {{ _self.fpList('molecular_weight_' ~ fp.id, 'Molecular weight'|trans, fp.molecular_weight) }}
+          {{ _self.fpList('molecular_formula_' ~ fp.id, 'Molecular formula'|trans, fp.molecular_formula) }}
           {{ _self.fpList('inchi_' ~ fp.id, 'InChI', fp.inchi) }}
-          {{ _self.fpList('inchi_key' ~ fp.id, 'InChIKey', fp.inchi_key) }}
-          {{ _self.fpList('smiles' ~ fp.id, 'SMILES', fp.smiles) }}
-          {{ _self.fpList('molecular_formula' ~ fp.id, 'Molecular formula'|trans, fp.molecular_formula) }}
+          {{ _self.fpList('inchi_key_' ~ fp.id, 'InChIKey', fp.inchi_key) }}
+          {{ _self.fpList('smiles_' ~ fp.id, 'SMILES', fp.smiles) }}
           <li class='list-group-item'>
             <div class='d-flex justify-content-between'>
               {% if fp.smiles %}

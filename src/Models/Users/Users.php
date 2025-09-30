@@ -91,6 +91,8 @@ class Users extends AbstractRest
         ?string $orgid = null,
         bool $allowTeamCreation = false,
         bool $skipDomainValidation = false,
+        BinaryValue $canManageCompounds = BinaryValue::False,
+        BinaryValue $canManageInventoryLocations = BinaryValue::False,
     ): int {
         $Config = Config::getConfig();
         $Teams = new Teams($this);
@@ -129,7 +131,9 @@ class Users extends AbstractRest
             `is_sysadmin`,
             `default_read`,
             `default_write`,
-            `last_seen_version`
+            `last_seen_version`,
+            `can_manage_compounds`,
+            `can_manage_inventory_locations`
         ) VALUES (
             :email,
             :password_hash,
@@ -142,7 +146,9 @@ class Users extends AbstractRest
             :is_sysadmin,
             :default_read,
             :default_write,
-            :last_seen_version);';
+            :last_seen_version,
+            :can_manage_compounds,
+            :can_manage_inventory_locations);';
         $req = $this->Db->prepare($sql);
 
         $req->bindParam(':email', $email);
@@ -157,6 +163,8 @@ class Users extends AbstractRest
         $req->bindValue(':default_read', $defaultRead);
         $req->bindValue(':default_write', $defaultWrite);
         $req->bindValue(':last_seen_version', App::INSTALLED_VERSION_INT);
+        $req->bindValue(':can_manage_compounds', $canManageCompounds->value);
+        $req->bindValue(':can_manage_inventory_locations', $canManageInventoryLocations->value);
         $this->Db->execute($req);
         $userid = $this->Db->lastInsertId();
 
@@ -164,16 +172,6 @@ class Users extends AbstractRest
         $isFirstUser = $TeamsHelper->isFirstUserInTeam();
         // now add the user to the team
         $Users2Teams = new Users2Teams($this->requester);
-        // only send onboarding emails for new teams when user is validated
-        if ($isValidated) {
-            // do we send an email for the instance
-            if ($Config->configArr['onboarding_email_active'] === '1') {
-                $isAdmin = $usergroup === Usergroup::Admin || $usergroup === Usergroup::Sysadmin;
-                (new OnboardingEmail(-1, $isAdmin))->create($userid);
-            }
-            // send email for each team
-            $Users2Teams->sendOnboardingEmailOfTeams = true;
-        }
         $Users2Teams->addUserToTeams(
             $userid,
             array_column($teams, 'id'),
@@ -181,11 +179,17 @@ class Users extends AbstractRest
             ($usergroup === Usergroup::Sysadmin || $usergroup === Usergroup::Admin)
                 ? BinaryValue::True
                 : BinaryValue::False,
+            $isValidated,
         );
         if ($alertAdmin && !$isFirstUser) {
             $this->notifyAdmins($TeamsHelper->getAllAdminsUserid(), $userid, $isValidated, $teams[0]['name']);
         }
-        if (!$isValidated) {
+        if ($isValidated) {
+            // send the instance level onboarding email
+            if (Config::getConfig()->configArr['onboarding_email_active'] === '1') {
+                new OnboardingEmail(-1)->create($userid);
+            }
+        } else {
             $Notifications = new SelfNeedValidation();
             $Notifications->create($userid);
             // set a flag to show correct message to user
@@ -242,6 +246,9 @@ class Users extends AbstractRest
           u.last_login,
           u.valid_until,
           u.is_sysadmin,
+          u.can_manage_users2teams,
+          u.can_manage_compounds,
+          u.can_manage_inventory_locations,
           CONCAT(u.firstname, ' ', u.lastname) AS fullname,
           CONCAT(
             LEFT(IFNULL(u.firstname, 'Anonymous'),  1),
@@ -293,6 +300,9 @@ class Users extends AbstractRest
           u.last_login,
           u.valid_until,
           u.is_sysadmin,
+          u.can_manage_users2teams,
+          u.can_manage_compounds,
+          u.can_manage_inventory_locations,
           fullname,
           initials,
           u.orcid,
@@ -344,9 +354,9 @@ class Users extends AbstractRest
             $Request->query->getBoolean('onlyAdmins'),
             $Request->query->getBoolean('onlyArchived'),
         );
-        // if the user is Admin somewhere, return a pretty complete response
+        // if the user is Admin somewhere (or Sysadmin), return a pretty complete response
         // Note: having something where you get different response depending if the user is part of your team or not seems too complex to implement and maintain
-        if ($this->requester->isAdminSomewhere()) {
+        if ($this->requester->isAdminSomewhere() || $this->requester->userData['is_sysadmin'] === 1) {
             return $users;
         }
         // otherwise, remove some more data, here we want only the super basic data for basic users
@@ -429,11 +439,7 @@ class Users extends AbstractRest
                     if (!$hasPermission && $isAdmin === false) {
                         throw new IllegalActionException('Only Admin can add a user to a team (where they are Admin)');
                     }
-                    $Users2Teams = new Users2Teams($this->requester);
-                    if ($this->userData['validated']) {
-                        $Users2Teams->sendOnboardingEmailOfTeams = true;
-                    }
-                    $Users2Teams->create($this->userData['userid'], $team);
+                    new Users2Teams($this->requester)->create($this->userData['userid'], $team, isValidated: $this->userData['validated'] === 1);
                 }
             )(),
             Action::Disable2fa => $this->disable2fa(),
@@ -600,11 +606,10 @@ class Users extends AbstractRest
             Filter::email($params->getStringContent());
         }
 
-        // special case for is_sysadmin and can_manage_users2teams: only a sysadmin can affect this column
-        if ($params->getTarget() === 'is_sysadmin' || $params->getTarget() === 'can_manage_users2teams') {
-            if ($this->requester->userData['is_sysadmin'] === 0) {
-                throw new IllegalActionException('Non sysadmin user tried to edit the is_sysadmin or can_manage_users2teams column of a user');
-            }
+        // columns that can only be modified by Sysadmin requester
+        if (in_array($params->getTarget(), array('can_manage_compounds', 'can_manage_inventory_locations', 'can_manage_users2teams', 'is_sysadmin'), true)
+            && $this->requester->userData['is_sysadmin'] === 0) {
+            throw new IllegalActionException();
         }
 
         // early bail out if existing and new values are the same
@@ -623,6 +628,9 @@ class Users extends AbstractRest
             'email',
             'orgid',
             'is_sysadmin',
+            'can_manage_compounds',
+            'can_manage_users2teams',
+            'can_manage_inventory_locations',
         );
 
         if ($res
@@ -802,7 +810,16 @@ class Users extends AbstractRest
         $this->Db->execute($req);
         $Notifications = new SelfIsValidated();
         $Notifications->create($this->userData['userid']);
-        $this->sendOnboardingEmailsAfterValidation();
+        // send the instance level onboarding email only once the user is validated (avoid infoleak for untrusted users)
+        if (Config::getConfig()->configArr['onboarding_email_active'] === '1') {
+            new OnboardingEmail(-1)->create($this->userData['userid']);
+        }
+        // now send an email for each team the user is in
+        $teams = json_decode($this->userData['teams'], true, 3, JSON_THROW_ON_ERROR);
+        foreach ($teams as $team) {
+            new Teams($this, $team['id'])
+                ->sendOnboardingEmailToUser($this->userData['userid'], BinaryValue::from($team['is_admin']));
+        }
         return $this->readOne();
     }
 
@@ -814,22 +831,6 @@ class Users extends AbstractRest
         }
         foreach ($admins as $admin) {
             $Notifications->create($admin);
-        }
-    }
-
-    private function sendOnboardingEmailsAfterValidation(): void
-    {
-        // do we send an eamil for the instance
-        if (Config::getConfig()->configArr['onboarding_email_active'] === '1') {
-            (new OnboardingEmail(-1, $this->isAdmin))->create($this->userData['userid']);
-        }
-
-        // Check setting for each team individually
-        $teams = json_decode($this->userData['teams']);
-        foreach (array_column($teams, 'id') as $teamId) {
-            if ((new Teams($this, $this->team))->readOne()['onboarding_email_active'] === 1) {
-                (new OnboardingEmail($teamId))->create($this->userData['userid']);
-            }
         }
     }
 }

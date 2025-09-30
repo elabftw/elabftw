@@ -27,7 +27,7 @@ trait TestsUtilsTrait
     protected function getUserInTeam(int $team, int $admin = 0, int $archived = 0): AuthenticatedUser
     {
         $Db = Db::getConnection();
-        $sql = 'SELECT * FROM users2teams WHERE teams_id = :team AND is_admin = :admin AND is_archived = :archived LIMIT 1';
+        $sql = 'SELECT * FROM users2teams INNER JOIN users ON users.userid = users2teams.users_id WHERE users.validated = 1 AND teams_id = :team AND is_admin = :admin AND is_archived = :archived LIMIT 1';
         $req = $Db->prepare($sql);
         $req->bindValue(':team', $team, PDO::PARAM_INT);
         $req->bindValue(':admin', $admin, PDO::PARAM_INT);
@@ -40,7 +40,7 @@ trait TestsUtilsTrait
     protected function getRandomUserInTeam(int $team, int $admin = 0, int $archived = 0): AuthenticatedUser
     {
         $Db = Db::getConnection();
-        $sql = 'SELECT * FROM users2teams WHERE teams_id = :team AND is_admin = :admin AND is_archived = :archived';
+        $sql = 'SELECT * FROM users2teams INNER JOIN users ON users.userid = users2teams.users_id WHERE users.validated = 1 AND teams_id = :team AND is_admin = :admin AND is_archived = :archived';
         $req = $Db->prepare($sql);
         $req->bindValue(':team', $team, PDO::PARAM_INT);
         $req->bindValue(':admin', $admin, PDO::PARAM_INT);

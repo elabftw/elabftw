@@ -17,28 +17,40 @@
 {% include('create-resource-from-compound-modal.html') %}
 {% include('edit-compound-modal.html') %}
 <p>{{ 'Compounds are chemical entities associated with properties such as a CAS number, a molecular formula, SMILES or InChI representations, hazardous properties, etc... This page allows you to manage your compounds database, which is shared to everyone on the instance. Once created, a compound can be associated with a Resource (or Experiment).'|trans }}</p>
+{% if App.Config.configArr.compounds_require_edit_rights == 1 %}
+  <p>{{ 'Note: only users who were given permission to edit the common compounds table can modify the compounds (add/edit/remove).'|trans }}</p>
+{% endif %}
+
   <div class='my-3'>
-    <button type='button' data-action='toggle-modal' data-target='importFromPubChemModal' class='btn btn-primary'>{{ 'Import from PubChem'|trans }}</button>
-    <button type='button' data-action='toggle-modal' data-target='createCompoundModal' class='btn btn-secondary'>{{ 'Add compound'|trans }}</button>
+    {% set compoundsDisabled = App.Users.userData.can_manage_compounds == 0 and App.Config.configArr.compounds_require_edit_rights == 1 %}
+    <button type='button' {{ compoundsDisabled ? 'disabled' }} data-action='toggle-modal' data-target='importFromPubChemModal' class='btn btn-primary'>{{ 'Import from PubChem'|trans }}</button>
+    <button type='button' {{ compoundsDisabled ? 'disabled' }} data-action='toggle-modal' data-target='createCompoundModal' class='btn btn-secondary'>{{ 'Add compound'|trans }}</button>
   </div>
-  <form method='GET' action='/compounds.php'>
-  <div class='input-group my-2'>
-    <div class='input-group-prepend'>
-      <span class='btn btn-light input-border' tabindex='-1'><i class='fas fa-magnifying-glass' aria-hidden='true'></i></span>
-    </div>
-    <input name='search_fp_smi' value='{{ App.Request.query.get('search_fp_smi') }}' class='form-control' id='substructureSearchInput' placeholder='O=N(=O)C=1C(F)=CC(F)=CC1Br' title='{{ 'Substructure search from SMILES'|trans }}' autocomplete='off' />
-    <div class='input-group-append'>
-      <button type='submit' data-action='substructure-search' class='btn btn-primary'>{{ 'Search similar compounds'|trans }}</button>
-      <div class='input-group-text'>
-        <input type='checkbox' name='exact' id='search-fp-exact' {{ App.Request.query.get('exact') == 'on' ? 'checked="checked"' }} aria-label='{{ 'Search exact structure'|trans }}'><span class='ml-1'>{{ 'Exact'|trans }}</span>
-      </div>
-    </div>
-  </div>
-  </form>
-  <p class='smallgray'>{{ 'Double-click a row in the table below to edit compound.'|trans }}</p>
+  <p class='smallgray'>{{ 'Double-click a row in the table below to view complete information about a compound.'|trans }}</p>
   <div id='compounds-table'></div>
-  <div class='my-2'>
-    <button type='button' id='deleteCompoundsBtn' disabled data-action='delete-compounds' class='btn btn-danger btn-sm'>{{ 'Delete selected compounds'|trans }}</button>
-    <button type='button' id='restoreCompoundsBtn' disabled data-action='restore-compounds' class='btn btn-primary btn-sm'>{{ 'Restore selected compounds'|trans }}</button>
+  {% if not compoundsDisabled %}
+    <div class='my-2'>
+      <button type='button' id='deleteCompoundsBtn' disabled data-action='delete-compounds' class='btn btn-danger btn-sm'>{{ 'Delete selected compounds'|trans }}</button>
+      <button type='button' id='restoreCompoundsBtn' disabled data-action='restore-compounds' class='btn btn-primary btn-sm'>{{ 'Restore selected compounds'|trans }}</button>
+    </div>
+  {% endif %}
+
+  <div class='mt-5'>
+    <hr>
+    <h3>{{ 'Substructure search from SMILES'|trans }}</h3>
+    <form method='GET' action='/compounds.php'>
+      <div class='input-group my-2'>
+        <div class='input-group-prepend'>
+          <span class='btn btn-light input-border' tabindex='-1'><i class='fas fa-magnifying-glass' aria-hidden='true'></i></span>
+        </div>
+        <input name='search_fp_smi' value='{{ App.Request.query.get('search_fp_smi') }}' class='form-control' id='substructureSearchInput' placeholder='O=N(=O)C=1C(F)=CC(F)=CC1Br' title='{{ 'Substructure search from SMILES'|trans }}' autocomplete='off' />
+        <div class='input-group-append'>
+          <button type='submit' data-action='substructure-search' class='btn btn-primary'>{{ 'Search similar compounds'|trans }}</button>
+          <div class='input-group-text'>
+            <input type='checkbox' name='exact' id='search-fp-exact' {{ App.Request.query.get('exact') == 'on' ? 'checked="checked"' }} aria-label='{{ 'Search exact structure'|trans }}'><span class='ml-1'>{{ 'Exact'|trans }}</span>
+          </div>
+        </div>
+      </div>
+    </form>
   </div>
 {% endblock body %}

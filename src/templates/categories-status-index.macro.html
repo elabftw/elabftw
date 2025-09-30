@@ -31,7 +31,7 @@
 
           <li class='list-inline-item'>
             <label for='expcatName_{{ cat.id }}'>{{ 'Name'|trans }}</label>
-            <input class='form-control' required type='text' id='expcatName_{{ cat.id }}' data-trigger='blur' data-model='teams/current/{{ type }}/{{ cat.id }}' data-target='title' value='{{ cat.title|e('html_attr') }}' />
+            <input class='form-control' required type='text' id='expcatName_{{ cat.id }}' data-trigger='blur' data-model='teams/current/{{ type }}/{{ cat.id }}' data-target='title' data-cy='expcatName' value='{{ cat.title|e('html_attr') }}' />
           </li>
 
           <li class='list-inline-item align-top'>

@@ -15,10 +15,7 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Compound;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Env;
-use Elabftw\Elabftw\Permissions;
-use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Action;
-use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\DatabaseErrorException;
@@ -67,7 +64,7 @@ final class Compounds extends AbstractRest
         'wikipedia',
     );
 
-    public function __construct(protected HttpGetter $httpGetter, private Users $requester, protected FingerprinterInterface $fingerprinter, ?int $id = null)
+    public function __construct(protected HttpGetter $httpGetter, private Users $requester, protected FingerprinterInterface $fingerprinter, private bool $requireEditRights, ?int $id = null)
     {
         parent::__construct();
         $this->setId($id);
@@ -162,7 +159,7 @@ final class Compounds extends AbstractRest
     #[Override]
     public function patch(Action $action, array $params): array
     {
-        $this->canOrExplode(AccessType::Write);
+        $this->canWriteOrExplode();
         foreach ($params as $target => $content) {
             $this->update(new CompoundParams($target, $content));
         }
@@ -183,6 +180,7 @@ final class Compounds extends AbstractRest
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
+        $this->canWriteOrExplode();
         // TODO add action fromCid or fromSmiles
         // and use fingerprinter
         return match ($action) {
@@ -212,6 +210,7 @@ final class Compounds extends AbstractRest
     #[Override]
     public function destroy(): bool
     {
+        $this->canWriteOrExplode();
         // check if the compound is linked somewhere first
         $sql = 'SELECT
           CASE
@@ -505,21 +504,16 @@ final class Compounds extends AbstractRest
         );
     }
 
-    protected function canOrExplode(AccessType $accessType): bool
+    protected function canWrite(): bool
     {
-        if ($this->id === null) {
-            throw new ImproperActionException('No id is set!');
+        return $this->requester->userData['can_manage_compounds'] === 1 || $this->requireEditRights === false;
+    }
+
+    protected function canWriteOrExplode(): void
+    {
+        if (!$this->canWrite()) {
+            throw new IllegalActionException();
         }
-        $sql = 'SELECT team, userid FROM compounds WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $compound = $req->fetch();
-        $compound['canread'] = BasePermissions::Organization->toJson();
-        $compound['canwrite'] = BasePermissions::Team->toJson();
-        $Permissions = new Permissions($this->requester, $compound);
-        $perms = $Permissions->forEntity();
-        return $perms[str_replace('can', '', $accessType->value)] || throw new IllegalActionException();
     }
 
     private function createCompoundFromIdentifier(array $reqBody): int

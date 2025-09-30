@@ -15,6 +15,7 @@ namespace Elabftw\Import;
 use DateTimeImmutable;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\State;
@@ -35,6 +36,7 @@ use Override;
 use function array_find;
 use function basename;
 use function json_decode;
+use function rawurlencode;
 use function sprintf;
 use function strtr;
 
@@ -60,6 +62,8 @@ class Eln extends AbstractZip
     private AbstractEntity $Entity;
 
     private int $count;
+
+    private int $internalElnVersion = -1;
 
     public function __construct(
         protected Users $requester,
@@ -214,7 +218,10 @@ class Eln extends AbstractZip
         foreach ($this->graph as $node) {
             // find the node describing the crate
             if ($node['@id'] === './') {
-                $this->crateNodeHasPart = $node['hasPart'];
+                $this->crateNodeHasPart = $node['hasPart'] ?? array();
+                if (array_key_exists('version', $node)) {
+                    $this->internalElnVersion = (int) $node['version'];
+                }
             }
             // detect old elabftw (<5.0.0-beta2) versions where we need to decode characters
             // only newer versions have the areaServed attribute
@@ -267,6 +274,10 @@ class Eln extends AbstractZip
      */
     private function importRootDataset(array $dataset): void
     {
+        if (($dataset['@type'] ?? null) !== 'Dataset') {
+            $this->logger->debug(sprintf('Skipping import of non-dataset %s', $dataset['@id'] ?? ''));
+            return;
+        }
         $Author = $this->getAuthor($dataset);
 
         // a .eln can contain mixed types: experiments, resources, or templates.
@@ -299,6 +310,9 @@ class Eln extends AbstractZip
         // canread and canwrite patch must happen before bodyappend that contains a readOne()
         $this->Entity->update(new EntityParams('canread', $this->canread));
         $this->Entity->update(new EntityParams('canwrite', $this->canwrite));
+        // content_type
+        $contentType = ($dataset['encodingFormat'] ?? 'text/html') === 'text/markdown' ? BodyContentType::Markdown : BodyContentType::Html;
+        $this->Entity->update(new EntityParams('content_type', $contentType->value));
         // here we use "text" or "description" attribute as main text
         $this->Entity->update(new EntityParams('bodyappend', ($dataset['text'] ?? '') . ($dataset['description'] ?? '')));
         // TITLE
@@ -313,17 +327,6 @@ class Eln extends AbstractZip
                 // CATEGORY
                 case 'about':
                     $this->Entity->update(new EntityParams('category', (string) $categoryId));
-                    break;
-                    // CUSTOM ID
-                case 'alternateName':
-                    try {
-                        $this->Entity->patch(Action::Update, array('custom_id' => (string) $value));
-                        // prevent abort if the custom id is already used
-                    } catch (ImproperActionException) {
-                        $this->logger->error(
-                            sprintf('Could not add custom_id to entity %s:%d as it is already in use', $this->Entity->entityType->value, (int) $this->Entity->id)
-                        );
-                    }
                     break;
                     // COMMENTS
                 case 'comment':
@@ -373,11 +376,23 @@ class Eln extends AbstractZip
                     // METADATA
                 case 'variableMeasured':
                     foreach ($value ?? array() as $propval) {
-                        // we look for the special elabftw_metadata property and that's what we import
-                        if ($propval['propertyID'] === 'elabftw_metadata') {
-                            $this->Entity->update(new EntityParams('metadata', $propval['value']));
+                        // versions before 103 will not be flattened and hold an array of pv
+                        // (in 103 we have an array of id)
+                        // INTERNAL_ELN_VERSION < 103
+                        if ($this->internalElnVersion < 103) {
+                            if (array_key_exists('propertyID', $propval) && $propval['propertyID'] === 'elabftw_metadata') {
+                                // we look for the special elabftw_metadata property and that's what we import
+                                $this->Entity->update(new EntityParams('metadata', $propval['value']));
+                                break;
+                            }
+                        } else {
+                            // INTERNAL_ELN_VERSION >= 103
+                            $node = $this->getNodeFromId($propval['@id']);
+                            if ($node['propertyID'] === 'elabftw_metadata') {
+                                $this->Entity->update(new EntityParams('metadata', $node['value']));
+                                break;
+                            }
                         }
-                        break;
                     }
                     break;
 
@@ -391,8 +406,16 @@ class Eln extends AbstractZip
                     break;
                     // STEPS
                 case 'step':
-                    foreach ($value as $step) {
-                        $this->Entity->Steps->importFromHowToStep($step);
+                    if ($this->internalElnVersion < 104) {
+                        foreach ($value as $step) {
+                            $this->Entity->Steps->importFromHowToStepOld($step);
+                        }
+                    } else {
+                        foreach ($value as $id) {
+                            $step = $this->getNodeFromId($id['@id']);
+                            $body = $this->getNodeFromId($step['itemListElement']['@id'])['text'];
+                            $this->Entity->Steps->importFromHowToStep($step, $body);
+                        }
                     }
                     break;
                     // TAGS: should normally be a comma separated string, but we allow array for BC
@@ -411,6 +434,19 @@ class Eln extends AbstractZip
                 default:
             }
         }
+
+        // do the CUSTOM ID after everything (especially after the category) so we can catch any error when setting it and we also have a chance to set the category before the custom_id is set
+        if (array_key_exists('alternateName', $dataset)) {
+            try {
+                $this->Entity->patch(Action::Update, array('custom_id' => (string) $dataset['alternateName']));
+                // just log the error, don't try and set another custom_id
+            } catch (ImproperActionException) {
+                $this->logger->error(
+                    sprintf('Could not add custom_id to entity %s:%d as it is already in use', $this->Entity->entityType->value, (int) $this->Entity->id)
+                );
+            }
+        }
+
         $this->Entity->patch(Action::Update, array('bodyappend' => $bodyAppend));
 
         // also save the Dataset node as a .json file so we don't lose information with things not imported
@@ -446,15 +482,15 @@ class Eln extends AbstractZip
 
     private function importPart(array $part): void
     {
-        if (empty($part['@type'])) {
+        if (!array_key_exists('@type', $part) || empty($part['@type'])) {
             return;
         }
 
         switch ($part['@type']) {
             case 'Dataset':
                 $this->Entity->patch(Action::Update, array('bodyappend' => $this->part2html($part)));
-                foreach ($part['hasPart'] as $subpart) {
-                    if ($subpart['@type'] === 'File') {
+                foreach ($part['hasPart'] ?? array() as $subpart) {
+                    if (($subpart['@type'] ?? '') === 'File') {
                         $this->importFile($subpart);
                     }
                 }
@@ -477,6 +513,8 @@ class Eln extends AbstractZip
         $filepath = $this->tmpPath . '/' . basename($this->root) . '/' . $file['@id'];
         // fix for bloxberg attachments containing : character
         $filepath = strtr($filepath, ':', '_');
+        // quick patch to fix issue with | in the title, but we will need a proper fix to avoid the need for such patches...
+        $filepath = strtr($filepath, '|', '_');
 
         $hasher = new LocalFileHash($filepath);
         $hash = $hasher->getHash();
@@ -505,7 +543,8 @@ class Eln extends AbstractZip
             // read the newly created upload so we can get the new long_name to replace the old in the body
             $Uploads = new Uploads($this->Entity, $newUploadId);
             $currentBody = $this->Entity->readOne()['body'];
-            $newBody = str_replace($file['alternateName'], $Uploads->uploadData['long_name'], $currentBody);
+            // also search for url encoded filename
+            $newBody = str_replace(array(rawurlencode($file['alternateName']), $file['alternateName']), $Uploads->uploadData['long_name'], $currentBody);
             $this->Entity->patch(Action::Update, array('body' => $newBody));
         }
     }
@@ -514,7 +553,7 @@ class Eln extends AbstractZip
     {
         $html = sprintf('<p>%s<br>%s', $part['name'] ?? '', $part['dateCreated'] ?? '');
         $html .= '<ul>';
-        foreach ($part['hasPart'] as $subpart) {
+        foreach ($part['hasPart'] ?? array() as $subpart) {
             $html .= sprintf(
                 '<li>%s %s</li>',
                 basename($subpart['@id']),

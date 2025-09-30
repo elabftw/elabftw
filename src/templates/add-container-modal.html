@@ -22,7 +22,7 @@
                 <option value='μL'>μL</option>
                 <option value='mL'>mL</option>
                 <option value='L'>L</option>
-                <option value='mg'>μg</option>
+                <option value='μg'>μg</option>
                 <option value='mg'>mg</option>
                 <option value='g'>g</option>
                 <option value='kg'>kg</option>
@@ -34,7 +34,7 @@
           <h5><label for='containerMultiplierInput'>{{ 'Adjust number of containers stored'|trans }}</label></h5>
           <input type='number' value='1' min='1' id='containerMultiplierInput' autocomplete='off' class='form-control' />
           <h5 class='mt-2'>{{ 'Select a storage location below'|trans }}</h5>
-          {% include 'storage-list.html' with {'storage_editable': false} %}
+          {% include 'storage-list.html' with {'storage_editable': false, 'is_entity': true} %}
         </div>
       </div>
 

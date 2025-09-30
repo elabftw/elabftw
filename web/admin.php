@@ -19,7 +19,6 @@ use Elabftw\Factories\LinksFactory;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
-use Elabftw\Models\StorageUnits;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\TeamTags;
 use Elabftw\Services\DummyRemoteDirectory;
@@ -118,7 +117,6 @@ try {
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
         'remoteDirectoryUsersArr' => $remoteDirectoryUsersArr,
         'scopedTeamgroupsArr' => $TeamGroups->readScopedTeamgroups(),
-        'storageUnitsArr' => (new StorageUnits($App->Users))->readAllRecursive(),
         'teamStats' => $teamStats,
         'teamsArr' => $App->Teams->readAllComplete(),
         'visibleTeamsArr' => $App->Teams->readAllVisible(),

@@ -46,6 +46,32 @@ enum EntityType: string
         };
     }
 
+    public function toTemplatePage(): string
+    {
+        return match ($this) {
+            self::Items, self::ItemsTypes => 'resources-templates.php',
+            default => 'templates.php',
+        };
+    }
+
+    public function toCategoryPage(): string
+    {
+        $prefix = match ($this) {
+            self::Items, self::ItemsTypes => 'resources',
+            default => 'experiments',
+        };
+        return $prefix . '-categories.php';
+    }
+
+    public function toStatusPage(): string
+    {
+        $prefix = match ($this) {
+            self::Items, self::ItemsTypes => 'resources',
+            default => 'experiments',
+        };
+        return $prefix . '-status.php';
+    }
+
     // for use in the "genre" attribute of .eln node
     public function toGenre(): string
     {

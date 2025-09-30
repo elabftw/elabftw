@@ -26,7 +26,7 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->StorageUnits = new StorageUnits(new Users(1, 1));
+        $this->StorageUnits = new StorageUnits(new Users(1, 1), true);
     }
 
     public function testCreate(): void

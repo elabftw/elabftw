@@ -309,7 +309,7 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
   // this promise will fetch the categories or status on click
   const getCatStatArr = (endpoint: string): Promise<SelectOptions[]> => {
     if (!optionsCache[endpoint]) {
-      optionsCache[endpoint] = ApiC.getJson(endpoint)
+      optionsCache[endpoint] = ApiC.getJson(`${endpoint}?limit=9000`)
         .then(json => {
           const arr = Array.from(json) as Status[];
           arr.unshift(notsetOpts);
@@ -688,16 +688,14 @@ on('toggle-all-storage', (el: HTMLElement) => {
 on('rename-storage', (el: HTMLElement) => {
   const name = prompt('Name')?.trim();
   if (!name) return;
-  const params = {
-    parent_id: el.dataset.id,
-    name: name,
-  };
-  ApiC.patch(`storage_units/${el.dataset.id}`, params).then(() => {
+  ApiC.patch(`storage_units/${el.dataset.id}`, {name: name}).then(() => {
     reloadElements(['storageDiv']).then(() => {
-      const parent: HTMLDetailsElement = document.querySelector(`details[data-id="${params.parent_id}"]`);
-      parent.open = true;
-      // now open ancestors too
-      getAncestorDetails(parent).forEach(details => details.open = true);
+      const parent: HTMLDetailsElement = document.querySelector(`details[data-id="${el.dataset.id}"]`);
+      if (parent) {
+        parent.open = true;
+        // now open ancestors too
+        getAncestorDetails(parent).forEach(details => details.open = true);
+      }
     });
   });
 });
@@ -713,9 +711,11 @@ on('add-storage-children', (el: HTMLElement) => {
   ApiC.post('storage_units', params).then(() => {
     reloadElements(['storageDiv']).then(() => {
       const parent: HTMLDetailsElement = document.querySelector(`details[data-id="${params.parent_id}"]`);
-      parent.open = true;
-      // now open ancestors too
-      getAncestorDetails(parent).forEach(details => details.open = true);
+      if (parent) {
+        parent.open = true;
+        // now open ancestors too
+        getAncestorDetails(parent).forEach(details => details.open = true);
+      }
     });
   });
 });
@@ -1179,7 +1179,7 @@ on('autocomplete', (el: HTMLElement) => {
         return;
         // TODO make it unselectable/grayed out or something, maybe once we use homegrown autocomplete
       }
-      const queryTerm = ['experiments', 'items'].includes(el.dataset.completeTarget)
+      const queryTerm = ['experiments', 'items'].includes(el.dataset.target)
         ? escapeExtendedQuery(term)
         : term;
       ApiC.getJson(`${el.dataset.target}/?q=${encodeURIComponent(queryTerm)}`).then(json => {
@@ -1196,6 +1196,35 @@ on('query', (el: HTMLElement) => {
   url.searchParams.set('order', query[0]);
   url.searchParams.set('sort', query[1]);
   window.location.href = url.href;
+});
+
+on('notify-surrounding-bookers', (el: HTMLElement, event: Event) => {
+  event.preventDefault();
+  const form = document.getElementById('notifySurroundingBookersForm') as HTMLFormElement;
+  const params = collectForm(form);
+  params['action'] = Action.Notif;
+  const button = (el as HTMLButtonElement);
+  const buttonText = button.innerText;
+  button.disabled = true;
+  button.innerText = i18next.t('please-wait');
+  ApiC.post(`${entity.type}/${entity.id}`, params).then(() => {
+    form.reset();
+    $('#sendBookingsEmailModal').modal('hide');
+    button.innerText = buttonText;
+  }).catch(() => {
+    button.innerText = i18next.t('error');
+    // TODO don't hardcode colors
+    button.style.backgroundColor = '#e6614c';
+  }).finally(() => button.disabled = false);
+});
+
+on('delete-compounds', (el: HTMLElement) => {
+  const idList = el.dataset.target.split(',');
+  if (!confirm(i18next.t('multi-changes-confirm', { num: idList.length }))) {
+    return;
+  }
+  idList.forEach(id => ApiC.delete(`compounds/${id}`));
+  document.dispatchEvent(new CustomEvent('dataReload'));
 });
 
 /**

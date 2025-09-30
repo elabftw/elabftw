@@ -107,7 +107,7 @@ try {
         }
     });
     $passwordComplexity = PasswordComplexity::from((int) $App->Config->configArr['password_complexity_requirement']);
-    $StorageUnits = new StorageUnits($App->Users);
+    $StorageUnits = new StorageUnits($App->Users, false);
     $template = 'sysconfig.html';
     $renderArr = array(
         'Request' => $App->Request,
@@ -127,8 +127,7 @@ try {
         // disabled as we don't use getStats here now
         //'Teams' => $Teams,
         'teamsArr' => $teamsArr,
-        'info' => (new Info())->readAll(),
-        'storageUnitsArr' => $StorageUnits->readAllRecursive(),
+        'info' => new Info()->readAll(),
         'timestampLastMonth' => $Experiments->getTimestampLastMonth(),
         'uploadsStats' => UploadsChecker::getStats(),
         'enforceMfaArr' => EnforceMfa::getAssociativeArray(),

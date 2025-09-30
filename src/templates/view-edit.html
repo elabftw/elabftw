@@ -10,6 +10,10 @@
 {% include('import-pubchem-modal.html') %}
 {# PROCUREMENT PARAMS #}
 {% include('procurement-params-modal.html') %}
+{# BOOKINGS EMAIL #}
+{% if Entity.entityData.type == 'items' and Entity.entityData.is_bookable == 1 %}
+  {% include 'bookings-email-modal.html' %}
+{% endif %}
 
 <div id='isArchivedDiv'>
 {% if Entity.entityData.state == enum('Elabftw\\Enums\\State').Archived.value %}

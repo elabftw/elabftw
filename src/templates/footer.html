@@ -89,6 +89,7 @@
 <script type='application/json' id='core'>
   {
     "isAnon": {{ App.Session.has('is_anon') ? 'true' : 'false' }},
-    "isAuth": {{ App.Session.has('is_auth') ? 'true' : 'false' }}
+    "isAuth": {{ App.Session.has('is_auth') ? 'true' : 'false' }},
+    "currentTeam": {{ App.Users.userData.team|default(-1) }}
   }
 </script>

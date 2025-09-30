@@ -56,5 +56,8 @@ final class AnonymousUser extends Users
         $this->userData['enforce_exclusive_edit_mode'] = 0;
         $this->userData['scheduler_layout'] = 0;
         $this->userData['validated'] = 1;
+        $this->userData['can_manage_users2teams'] = 0;
+        $this->userData['can_manage_compounds'] = 0;
+        $this->userData['can_manage_inventory_locations'] = 0;
     }
 }

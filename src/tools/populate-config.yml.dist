@@ -60,6 +60,8 @@ teams:
         api_key: apiKey4Test
         create_experiments: true
         create_items: true
+        can_manage_compounds: 1
+        can_manage_inventory_locations: 1
         user_preferences:
           orderby: lastchange
           cjk_fonts: 1

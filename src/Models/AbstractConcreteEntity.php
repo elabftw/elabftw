@@ -12,10 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use PDO;
-
-use function sprintf;
-
 /**
  * An entity like Experiments or Items. Concrete as opposed to TemplateEntity for experiments templates or items types
  */
@@ -36,20 +32,12 @@ abstract class AbstractConcreteEntity extends AbstractEntity
     protected function getNextCustomId(?int $category): ?int
     {
         if ($category === null) {
-            return $category;
-        }
-        $sql = sprintf(
-            'SELECT custom_id FROM %s WHERE custom_id IS NOT NULL AND category = :category
-                ORDER BY custom_id DESC LIMIT 1',
-            $this->entityType->value
-        );
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':category', $category, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $res = $req->fetch();
-        if ($res === false || $res['custom_id'] === null) {
             return null;
         }
-        return ++$res['custom_id'];
+        $res = $this->getCurrentHighestCustomId($category);
+        if ($res === 0) {
+            return null;
+        }
+        return $res + 1;
     }
 }

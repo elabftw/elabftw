@@ -72,7 +72,7 @@ abstract class AbstractContainersLinks extends AbstractLinks
 
         $results = $req->fetchAll();
         // Note: currently it's easier to loop on the storage and do a readOne() rather than include the full_path here
-        $StorageUnits = new StorageUnits($this->Entity->Users);
+        $StorageUnits = new StorageUnits($this->Entity->Users, false);
         foreach ($results as &$result) {
             $StorageUnits->setId($result['storage_id']);
             $result['full_path'] = $StorageUnits->readOne()['full_path'];

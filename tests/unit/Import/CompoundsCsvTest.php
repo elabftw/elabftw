@@ -49,7 +49,7 @@ class CompoundsCsvTest extends \PHPUnit\Framework\TestCase
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(array('handler' => $handlerStack));
         $httpGetter = new HttpGetter($client, '', false);
-        $Compounds = new Compounds($httpGetter, $requester, new NullFingerprinter());
+        $Compounds = new Compounds($httpGetter, $requester, new NullFingerprinter(), false);
         $cid = 3345;
         $compoundId = $Compounds->postAction(Action::Duplicate, array('cid' => $cid));
         $Compounds->setId($compoundId);

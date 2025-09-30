@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
+use Elabftw\Models\Config;
 use Elabftw\Models\StorageUnits;
 use Override;
 
@@ -34,7 +35,7 @@ final class InventoryController extends AbstractHtmlController
     #[Override]
     protected function getData(): array
     {
-        $StorageUnits = new StorageUnits($this->app->Users);
+        $StorageUnits = new StorageUnits($this->app->Users, Config::getConfig()->configArr['inventory_require_edit_rights'] === '1');
         $containersArr = array();
         // only make a query if we do a search
         if ($this->app->Request->query->has('q')) {

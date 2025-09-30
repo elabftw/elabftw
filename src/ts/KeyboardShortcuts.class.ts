@@ -53,6 +53,8 @@ export class KeyboardShortcuts {
       if (isNaN(id)) {
         return;
       }
+      // if already in edit mode, do nothing
+      if ((urlParams.get('mode') || '').toLowerCase() === 'edit') return;
       window.location.href = `?mode=edit&id=${id}`;
     });
 

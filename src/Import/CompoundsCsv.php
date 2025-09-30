@@ -151,7 +151,7 @@ final class CompoundsCsv extends AbstractCsv
                     // process localisation
                     if (isset($row['location']) && !empty($row['location']) && !empty($this->locationSplitter)) {
                         $locationSplit = explode($this->locationSplitter, $row['location']);
-                        $StorageUnits = new StorageUnits($this->requester);
+                        $StorageUnits = new StorageUnits($this->requester, requireEditRights: false);
                         $id = $StorageUnits->createImmutable($locationSplit);
                         $Containers2ItemsLinks = new Containers2ItemsLinks($this->Items, $id);
                         $Containers2ItemsLinks->createWithQuantity((float) ($row['quantity'] ?? 1.0), $row['unit'] ?? '•');

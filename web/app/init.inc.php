@@ -22,8 +22,6 @@ use Elabftw\Services\LoginHelper;
 use Exception;
 use League\Flysystem\Filesystem as Fs;
 use League\Flysystem\Local\LocalFilesystemAdapter;
-use Monolog\Handler\ErrorLogHandler;
-use Monolog\Logger;
 use PDOException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -54,8 +52,7 @@ $Request->setSession($Session);
 
 try {
     // this allows us to write to stdout/stderr aka access/error logs of nginx
-    $Logger = new Logger('elabftw');
-    $Logger->pushHandler(new ErrorLogHandler());
+    $Logger = App::getDefaultLogger();
 
     // Config::getConfig() will make the first SQL request
     // PDO will throw an exception if the SQL structure is not imported yet

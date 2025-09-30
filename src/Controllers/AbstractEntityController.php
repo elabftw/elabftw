@@ -25,6 +25,7 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Changelog;
+use Elabftw\Models\Config;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\ExtraFieldsKeys;
 use Elabftw\Models\FavTags;
@@ -201,7 +202,8 @@ abstract class AbstractEntityController implements ControllerInterface
             'lockerFullname' => $this->Entity->getLockerFullname(),
             'meaningArr' => $this->meaningArr,
             'requestableActionArr' => $this->requestableActionArr,
-            'storageUnitsArr' => (new StorageUnits($this->App->Users))->readAllRecursive(),
+            'storageUnitsArr' => new StorageUnits($this->App->Users, Config::getConfig()->configArr['inventory_require_edit_rights'] === '1')->readAllRecursive(),
+            'surroundingBookers' => $this->Entity->getSurroundingBookers(),
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,
         );
@@ -259,7 +261,8 @@ abstract class AbstractEntityController implements ControllerInterface
             'scopedTeamgroupsArr' => $this->scopedTeamgroupsArr,
             'meaningArr' => $this->meaningArr,
             'requestableActionArr' => $this->requestableActionArr,
-            'storageUnitsArr' => (new StorageUnits($this->App->Users))->readAllRecursive(),
+            'storageUnitsArr' => new StorageUnits($this->App->Users, Config::getConfig()->configArr['inventory_require_edit_rights'] === '1')->readAllRecursive(),
+            'surroundingBookers' => $this->Entity->getSurroundingBookers(),
             'templatesArr' => $this->templatesArr,
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,

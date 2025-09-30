@@ -99,6 +99,7 @@ enum Action {
   RequestAction = 'requestaction',
   Review = 'review',
   SendOnboardingEmails = 'sendonboardingemails',
+  SetNextCustomId = 'setnextcustomid',
   Sign = 'sign',
   Timestamp = 'timestamp',
   Unarchive = 'unarchive',
@@ -171,10 +172,8 @@ enum Target {
 
 enum FileType {
   Csv = 'csv',
-  Fods = 'fods',
   Html = 'html',
   Json = 'json',
-  Ods = 'ods',
   Xls = 'xls',
   Xlsb = 'xlsb',
   Xlsx = 'xlsx',
@@ -185,16 +184,6 @@ interface Entity {
   id: number;
 }
 
-// for Spreadsheet editor
-interface GridColumn {
-  field: string;
-  editable: boolean;
-}
-
-interface GridRow {
-  [key: string]: string | number | boolean | null;
-}
-
 export {
   Action,
   Categories,
@@ -202,8 +191,6 @@ export {
   Entity,
   EntityType,
   FileType,
-  GridColumn,
-  GridRow,
   Method,
   Model,
   ProcurementState,

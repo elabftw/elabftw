@@ -28,6 +28,7 @@ use League\Flysystem\UnableToReadFile;
 use ZipStream\ZipStream;
 use Override;
 
+use function array_push;
 use function mb_substr;
 use function ksort;
 
@@ -259,7 +260,9 @@ class MakeEln extends AbstractMakeEln
         }
         // METADATA (extra fields)
         if ($e['metadata']) {
-            $datasetNode['variableMeasured'] = $this->metadataToJsonLd($e['metadata']);
+            $processedMetadata = $this->metadataToJsonLd($e['metadata']);
+            $datasetNode['variableMeasured'] = $processedMetadata['ids'];
+            array_push($this->dataEntities, ...$processedMetadata['nodes']);
         }
         // RATING
         if (!empty($e['rating'])) {
@@ -272,7 +275,10 @@ class MakeEln extends AbstractMakeEln
         }
         // STEPS
         if (!empty($e['steps'])) {
-            $datasetNode['step'] = $this->stepsToJsonLd($e['steps']);
+            // $datasetNode['step'] = $this->stepsToJsonLd($e['steps']);
+            $processedSteps = $this->stepsToJsonLd($e['steps']);
+            $datasetNode['step'] = $processedSteps['ids'];
+            array_push($this->dataEntities, ...$processedSteps['nodes']);
         }
 
         $this->dataEntities[] = $datasetNode;
@@ -295,51 +301,71 @@ class MakeEln extends AbstractMakeEln
 
     protected function stepsToJsonLd(array $steps): array
     {
-        $res = array();
+        // we will return two arrays, the array of @id, and an array of nodes of @type HowToStep
+        $res = array('ids' => array(), 'nodes' => array());
         foreach ($steps as $step) {
-            $howToStep = array();
-            $howToStep['@id'] = 'howtostep://' . Tools::getUuidv4();
-            $howToStep['@type'] = 'HowToStep';
-            $howToStep['position'] = $step['ordering'];
-            $howToStep['creativeWorkStatus'] = $step['finished'] === 1 ? 'finished' : 'unfinished';
+            $id = 'howtostep://' . Tools::getUuidv4();
+            $res['ids'][] = array('@id' => $id);
+            $node = array(
+                '@id' => $id,
+                '@type' => 'HowToStep',
+                'position' => $step['ordering'],
+                'creativeWorkStatus' => $step['finished'] === 1 ? 'finished' : 'unfinished',
+            );
             if ($step['deadline']) {
-                $howToStep['expires'] = (new DateTimeImmutable($step['deadline']))->format(DateTimeImmutable::ATOM);
+                $node['expires'] = (new DateTimeImmutable($step['deadline']))->format(DateTimeImmutable::ATOM);
             }
             if ($step['finished_time']) {
-                $howToStep['temporal'] = (new DateTimeImmutable($step['finished_time']))->format(DateTimeImmutable::ATOM);
+                $node['temporal'] = (new DateTimeImmutable($step['finished_time']))->format(DateTimeImmutable::ATOM);
             }
-            $howToStep['itemListElement'] = array(array('@type' => 'HowToDirection', 'text' => $step['body']));
-            $res[] = $howToStep;
+            $stepBodyId = 'howtodirection://' . Tools::getUuidv4();
+            $node['itemListElement'] = array('@id' => $stepBodyId);
+            $res['nodes'][] = $node;
+            // step body is in another node
+            $res['nodes'][] = array(
+                '@id' => $stepBodyId,
+                '@type' => 'HowToDirection',
+                'text' => $step['body'],
+            );
         }
         return $res;
     }
 
-    protected function metadataToJsonLd(string $strMetadata): ?array
+    protected function metadataToJsonLd(string $strMetadata): array
     {
         $metadata = json_decode($strMetadata, true, 42, JSON_THROW_ON_ERROR);
-        $res = array();
+        // we will return two arrays, the array of @id, and an array of nodes of @type PropertyValue
+        $res = array('ids' => array(), 'nodes' => array());
+
         // add one that contains all the original metadata as string
-        $pv = array();
-        $pv['@id'] = 'pv://' . Tools::getUuidv4();
-        $pv['propertyID'] = 'elabftw_metadata';
-        $pv['description'] = 'eLabFTW metadata JSON as string';
-        $pv['value'] = $strMetadata;
-        $res[] = $pv;
+        $id = 'pv://' . Tools::getUuidv4();
+        $res['ids'][] = array('@id' => $id);
+        $res['nodes'][] = array(
+            '@id' => $id,
+            '@type' => 'PropertyValue',
+            'propertyID' => 'elabftw_metadata',
+            'description' => 'eLabFTW metadata JSON as string',
+            'value' => $strMetadata,
+        );
 
         // stop here if there are no extra fields
         if (empty($metadata[Metadata::ExtraFields->value])) {
-            return null;
+            return $res;
         }
         // now add one for all the extra fields
         foreach ($metadata[Metadata::ExtraFields->value] as $name => $props) {
-            // if the value is unset, skip it
-            if (empty($props['value'])) {
-                continue;
+            if (!array_key_exists('value', $props)) {
+                $props['value'] = null;
+            } elseif ($props['value'] === '') {
+                $props['value'] = null;
             }
             // https://schema.org/PropertyValue
+            $id = 'pv://' . Tools::getUuidv4();
+            $res['ids'][] = array('@id' => $id);
+
             $pv = array();
             $pv['@type'] = 'PropertyValue';
-            $pv['@id'] = 'pv://' . Tools::getUuidv4();
+            $pv['@id'] = $id;
             $pv['propertyID'] = $name;
             $pv['valueReference'] = $props['type'];
             $pv['value'] = $props['value'] ?? '';
@@ -349,7 +375,7 @@ class MakeEln extends AbstractMakeEln
             if (!empty($props['unit'])) {
                 $pv['unitText'] = $props['unit'];
             }
-            $res[] = $pv;
+            $res['nodes'][] = $pv;
         }
         return $res;
     }

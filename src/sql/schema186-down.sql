@@ -1,4 +1,4 @@
--- revert schema 184
+-- revert schema 186
 ALTER TABLE `team_events`
     MODIFY COLUMN `start` varchar(255) NOT NULL,
     MODIFY COLUMN `end` varchar(255) DEFAULT NULL;
@@ -19,4 +19,4 @@ DROP COLUMN `start`,
     CHANGE COLUMN `start_rollback` `start` VARCHAR(255) NOT NULL,
     CHANGE COLUMN `end_rollback`   `end`   VARCHAR(255) NULL;
 
-UPDATE config SET conf_value = 183 WHERE conf_name = 'schema';
+UPDATE config SET conf_value = 185 WHERE conf_name = 'schema';

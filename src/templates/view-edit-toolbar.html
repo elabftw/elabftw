@@ -278,7 +278,7 @@
     <div class='vertical-separator'></div>
     {# MORE OPTIONS #}
     <div class='dropdown'>
-      <button data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' type='button' title='{{ 'Toggle pin'|trans }}' class='btn hl-hover-gray p-2 lh-normal border-0'>
+      <button data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' type='button' class='btn hl-hover-gray p-2 lh-normal border-0'>
         <i class='fas fa-fw fa-ellipsis-v'></i>
       </button>
 
@@ -302,11 +302,11 @@
           {# ARCHIVE / UNARCHIVE #}
           {% if Entity.entityData.state == enum('Elabftw\\Enums\\State').Normal.value %}
             <button type='button' class='dropdown-item hover-warning' data-action='do-requestable-action' data-target='archive'>
-              <i class='fas fa-fw fa-box-archive fa-fw' title='{{ 'Archive'|trans }}'></i> {{ 'Archive'|trans }}
+              <i class='fas fa-fw fa-box-archive' title='{{ 'Archive'|trans }}'></i> {{ 'Archive'|trans }}
             </button>
           {% elseif Entity.entityData.state == enum('Elabftw\\Enums\\State').Archived.value %}
             <button type='button' class='dropdown-item hover-warning' data-action='do-requestable-action' data-target='unarchive'>
-              <i class='fas fa-fw fa-box-archive fa-fw' title='{{ 'Unarchive'|trans }}'></i> {{ 'Unarchive'|trans }}
+              <i class='fas fa-fw fa-box-archive' title='{{ 'Unarchive'|trans }}'></i> {{ 'Unarchive'|trans }}
             </button>
           {% endif %}
         {% endif %}

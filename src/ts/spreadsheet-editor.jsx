@@ -36,7 +36,7 @@ if (document.getElementById('spreadsheetEditorRoot')) {
     useEffect(() => { replaceNameRef.current = replaceName; }, [replaceName]);
 
     const getAOA = () => spreadsheetRef.current?.getData?.() ?? data;
-    const entity = getEntity();
+    const entity = getEntity(true);
 
     const onSaveOrReplace = async () => {
       const aoa = getAOA();
@@ -62,14 +62,16 @@ if (document.getElementById('spreadsheetEditorRoot')) {
 
     // load an attachment into the editor, capture filename & id
     useEffect(() => {
-      const onLoad = (e) => {
-        const { aoa, name, uploadId } = e.detail || {};
-        setData(aoa);
-        setReplaceName(name ?? null);
-        setCurrentUploadId(typeof uploadId === 'number' ? uploadId : null);
-      };
-      document.addEventListener('jss-load-aoa', onLoad);
-      return () => document.removeEventListener('jss-load-aoa', onLoad);
+      const onMessage = (event) => {
+        if (event.data?.type === 'jss-load-aoa') {
+          const { aoa, name, uploadId } = event.data.detail || {};
+          setData(aoa);
+          setReplaceName(name ?? null);
+          setCurrentUploadId(typeof uploadId === 'number' ? uploadId : null);
+        }
+      }
+      window.addEventListener('message', onMessage);
+      return () => window.removeEventListener('message', onMessage);
     }, []);
 
     /* actions (import, save, replace) included in the toolbar */

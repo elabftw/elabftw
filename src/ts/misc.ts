@@ -198,11 +198,13 @@ export function clearForm(form: HTMLElement): void {
 }
 
 // for view or edit mode, get type and id from the page to construct the entity object
-export function getEntity(): Entity {
+// enable getEntity with Parent window for iframe cases (e.g., with spreadsheet editor)
+export function getEntity(useParent: boolean = false): Entity {
   let entityType: EntityType;
-  let entityId = null;
-
-  switch (window.location.pathname) {
+  let entityId: number | null = null;
+  // pick the right location (parent or self)
+  const loc = useParent ? window.parent.location : window.location;
+  switch (loc.pathname) {
   case '/experiments.php':
     entityType = EntityType.Experiment;
     break;
@@ -218,9 +220,9 @@ export function getEntity(): Entity {
   default:
     return {type: EntityType.Other, id: entityId};
   }
-  const params = new URLSearchParams(document.location.search);
+  const params = new URLSearchParams(loc.search);
   if (params.has('id')) {
-    entityId = parseInt(params.get('id'));
+    entityId = parseInt(params.get('id')!, 10);
   }
   return {
     type: entityType,

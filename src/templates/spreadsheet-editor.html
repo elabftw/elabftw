@@ -14,7 +14,7 @@
     {% if App.devMode -%}
       <!-- [html-validate-disable-block unique-landmark, no-deprecated-attr, prefer-native-element: suppress errors from spreadsheet editor] -->
     {%- endif %}
-      <iframe id='spreadsheetIframe' title='{{ 'Spreadsheet Editor'|trans }}' src='/spreadsheet.php' sandbox='allow-scripts allow-same-origin allow-forms allow-downloads'></iframe>
+      <iframe id='spreadsheetIframe' title='{{ 'Spreadsheet Editor'|trans }}' src='/spreadsheet.php' sandbox='allow-scripts allow-same-origin allow-forms allow-downloads allow-modals'></iframe>
   </div>
 </section>
 <hr>

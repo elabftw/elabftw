@@ -35,7 +35,7 @@ export async function fileToAOA(file: File): Promise<Cell[][]> {
   return parseFileToAOA(buffer);
 }
 
-export async function loadInJSSpreadsheet(storage: string, path: string, name: string, uploadId: number): Promise<void> {
+export async function loadInSpreadsheetEditor(storage: string, path: string, name: string, uploadId: number): Promise<void> {
   try {
     const res = await fetch(`app/download.php?f=${encodeURIComponent(path)}&storage=${storage}`, {
       headers: new Headers({ 'cache-control': 'no-cache' }),
@@ -43,8 +43,8 @@ export async function loadInJSSpreadsheet(storage: string, path: string, name: s
     if (!res.ok) throw new Error('Failed to fetch uploaded file.');
     const buffer = await res.arrayBuffer();
     const aoa = parseFileToAOA(buffer);
-    const ev = new CustomEvent('jss-load-aoa', { detail: { aoa, name, uploadId } });
-    document.dispatchEvent(ev);
+    const iframe = document.getElementById('spreadsheetIframe') as HTMLIFrameElement;
+    iframe.contentWindow.postMessage({ type: 'jss-load-aoa', detail: {aoa, name, uploadId} });
   } catch (e) {
     notify.error(e.message || 'Unexpected error while loading spreadsheet.');
   }

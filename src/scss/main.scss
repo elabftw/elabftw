@@ -1754,8 +1754,11 @@ input:user-invalid {
 /* opencloning iframe */
 #syc-root {
   height: 87vh;
-  width: 100%;
+}
 
+#syc-root, #spreadsheetIframe {
+  width: 100%;
+  height: 100%;
   iframe {
     height: 100%;
     width: 100%;

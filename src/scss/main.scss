@@ -1756,10 +1756,11 @@ input:user-invalid {
   height: 87vh;
 }
 
-#syc-root, #spreadsheetIframe {
+/* opencloning iframe */
+#syc-root {
+  height: 87vh;
   width: 100%;
-  height: fit-content;
-  border: none;
+
   iframe {
     height: 100%;
     width: 100%;
@@ -1843,6 +1844,23 @@ input:user-invalid {
   touch-action: none;
 }
 
+/* spreadsheet editor iframe*/
+
+#spreadsheetEditorRoot {
+  border: none;
+  width: 100vw;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  background: $mainbackground;
+}
+
 #spreadsheetEditorDiv {
-  overflow: auto;
+  height: 40vh;
+  overflow-y: hidden;
+  iframe {
+    height: 100%;
+    width: 100%;
+    border: none;
+  }
 }

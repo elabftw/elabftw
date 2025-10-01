@@ -391,7 +391,13 @@ if (document.getElementById('metadataDiv') && entity.id) {
           if (field['type'] === ExtraFieldInputType.Text) {
             field['value'] = textAreaField.value.trim();
           } else if (['date', 'datetime-local', 'email', 'time', 'url'].includes(field['type'])) {
-            field['value'] = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();
+            const val = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();
+            field['value'] = val || json['extra_fields'][newFieldKey]?.value || '';
+          } else if ([ExtraFieldInputType.Users, ExtraFieldInputType.Items, ExtraFieldInputType.Experiments].includes(field['type'])) {
+            const elId = `newField${field['type']}Input`;
+            const el = document.getElementById(elId) as HTMLInputElement | null;
+            const val = (el?.value ?? '').trim();
+            field['value'] = val || json['extra_fields'][newFieldKey]?.value || '';
           } else if (['select', 'radio'].includes(field['type'])) {
             field['options'] = [];
             document.getElementById('choicesInputDiv').querySelectorAll('input').forEach(opt => {
@@ -436,7 +442,7 @@ if (document.getElementById('metadataDiv') && entity.id) {
           MetadataC.update(json as ValidMetadata).then(() => {
             $('#fieldBuilderModal').modal('toggle');
             // focus on the newly added element
-            document.querySelector(`[data-name="${newFieldKey}"`).scrollIntoView({behavior: 'smooth'});
+            document.querySelector(`[data-name="${newFieldKey}"]`).scrollIntoView({behavior: 'smooth'});
           });
         });
       // ADD OPTION FOR SELECT OR RADIO

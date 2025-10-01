@@ -398,24 +398,27 @@ if (document.getElementById('metadataDiv') && entity.id) {
             const el = document.getElementById(elId) as HTMLInputElement | null;
             const val = (el?.value ?? '').trim();
             field['value'] = val || json['extra_fields'][newFieldKey]?.value || '';
-          } else if (['select', 'radio'].includes(field['type'])) {
+          } else if ([ExtraFieldInputType.Select, ExtraFieldInputType.Radio].includes(field['type'])) {
+            const prevVal = json['extra_fields'][newFieldKey]?.value || '';
             field['options'] = [];
             document.getElementById('choicesInputDiv').querySelectorAll('input').forEach(opt => {
-              if (opt.value.trim()) {
-                field['options'].push(opt.value.trim());
-              }
+              const val = (opt as HTMLInputElement).value.trim();
+              if (val) field['options'].push(val);
             });
-            // make sure at least one value is set
-            field['value'] = field['options'][0] || '';
+            // keep old value if no new option is provided
+            field['value'] = field['options'].includes(prevVal) ? prevVal : (field['options'][0] || '');
           } else if (field['type'] === ExtraFieldInputType.Number) {
-            field['value'] = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();
+            const prevVal = json['extra_fields'][newFieldKey]?.value || '';
+            const val = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();
+            field['value'] = val || prevVal;
             field['units'] = [];
             document.getElementById('unitChoicesInputDiv').querySelectorAll('input').forEach(opt => {
               if (opt.value.trim()) {
                 field['units'].push(opt.value.trim());
               }
             });
-            field['unit'] = field['units'].length > 0 ? field['units'][0] : '';
+            const prevUnit = json['extra_fields'][newFieldKey]?.unit || '';
+            field['unit'] = field['units'][0] || prevUnit;
           } else if (field['type'] === ExtraFieldInputType.Checkbox) {
             field['value'] = (document.getElementById('newFieldCheckboxDefaultSelect') as HTMLSelectElement).value === 'checked' ? 'on' : '';
           }

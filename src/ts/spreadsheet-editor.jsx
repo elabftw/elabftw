@@ -22,6 +22,7 @@ import { fileToAOA, replaceAttachment, saveAsAttachment} from './spreadsheet-uti
 import { getEntity } from './misc';
 
 if (document.getElementById('spreadsheetEditorRoot')) {
+  console.log("hi");
   function SpreadsheetEditor() {
     const spreadsheetRef = useRef(null);
 

@@ -1,6 +1,27 @@
-{% extends 'base.html' %}
-{% block body %}
-  <div id='syc-root' class='my-2'>
-    <iframe title='OpenCloning application' src='/spreadsheet.php' sandbox='allow-scripts allow-same-origin allow-forms allow-downloads'></iframe>
-  </div>
-{% endblock body %}
+  {% set infotip = 'Beta Notice: The spreadsheet editor is currently in beta (preview release) and should be used with caution. Please avoid saving any precious data within it. Additionally, files containing formulas or calculations will not be rendered as they originally appear, since the editor functions more as a text-based tool at this stage rather than a full spreadsheet engine. Yes, we will add calculation eventually. As you can imagine, re-implementing a spreadsheet editor takes time.'|trans %}
+  <section id='spreadsheetEditor' aria-label='{{ 'Spreadsheet Editor'|trans }}'>
+    <h3 data-action='toggle-next' data-toggle-target='spreadsheetEditorDiv' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title mt-2' tabindex='0' role='button' aria-expanded='false' aria-controls='spreadsheetEditorDiv'>
+      <i id='sheetEditorIcon' class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Spreadsheet Editor'|trans }}
+    </h3>
+    <span class='beta'>beta</span>
+    <div class='infotip'>
+    <span class='infotip-icon'>
+      <i class='ml-1 fas fa-question-circle' aria-hidden='true'></i>
+    </span>
+      <p class='infotip-text' style='left: 200px'>{{ infotip }}</p>
+    </div>
+    <div id='spreadsheetEditorDiv' class='m-2' hidden data-save-hidden='spreadsheetEditorDiv'>
+      {% if App.devMode -%}
+        <!-- [html-validate-disable-block unique-landmark, no-deprecated-attr, prefer-native-element: suppress errors from spreadsheet editor] -->
+      {%- endif %}
+      <div id='spreadsheetIframe'>
+
+      <iframe
+        title='Spreadsheet application'
+        src='/spreadsheet-editor.html'
+        sandbox='allow-scripts allow-same-origin allow-forms allow-downloads'>
+      </iframe>
+      </div>
+    </div>
+  </section>
+  <hr>

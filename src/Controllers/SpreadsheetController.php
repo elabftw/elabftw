@@ -20,7 +20,6 @@ final class SpreadsheetController extends AbstractHtmlController
     protected function getTemplate(): string
     {
         return 'spreadsheet-editor.html';
-
     }
 
     #[Override]

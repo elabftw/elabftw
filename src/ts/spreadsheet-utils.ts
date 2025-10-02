@@ -11,7 +11,7 @@ import { read, utils, WorkBook, write } from '@e965/xlsx';
 import { FileType, Model } from './interfaces';
 import { askFileName, getNewIdFromPostRequest, reloadElements } from './misc';
 import { notify } from './notify';
-import { getBookType, getMime } from './spreadsheet-formats';
+import { getBookType, getMime, inferFileTypeFromName } from './spreadsheet-formats';
 
 type Cell = string | number | boolean | null;
 // save current spreadsheet as a new attachment
@@ -69,21 +69,9 @@ async function postAndReturnId(file: File, url: string): Promise<number> {
   return getNewIdFromPostRequest(res);
 }
 
-// deduct filetype from the name, default to CSV
-function inferFileTypeFromName(name: string): FileType {
-  const ext = name.split('.').pop()?.toLowerCase();
-  switch (ext) {
-  case 'csv':  return FileType.Csv;
-  case 'xls':  return FileType.Xls;
-  case 'xlsx': return FileType.Xlsx;
-  case 'xlsb': return FileType.Xlsb;
-  default: return FileType.Xlsx;
-  }
-}
-
-// default to csv if extension missing
+// default to xlsx if extension missing
 const ensureExtensionExists = (name: string): string => {
-  return /\.[^./\\]+$/.test(name) ? name : `${name}.csv`;
+  return /\.[^./\\]+$/.test(name) ? name : `${name}.xlsx`;
 };
 
 const uploadUrl = (entityType: string, entityId: number, uploadId?: number): string => {

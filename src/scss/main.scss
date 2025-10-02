@@ -44,6 +44,7 @@ $text-muted: $medium;
 @import 'star-rating';
 @import 'jsoneditor';
 @import 'ove';
+@import 'spreadsheet-editor';
 @import 'search-syntax-highlighting';
 @import 'tom-select';
 @import 'tinymce-custom';
@@ -1837,25 +1838,4 @@ input:user-invalid {
 // disable touch action for doodle canvas
 #doodleCanvas {
   touch-action: none;
-}
-
-/* spreadsheet editor iframe*/
-#spreadsheetEditorRoot {
-  background: $mainbackground;
-  border: 0;
-  height: 100%;
-  inset: 0;
-  position: absolute;
-  width: 100vw;
-}
-
-#spreadsheetEditorDiv {
-  height: 40vh;
-  overflow-y: hidden;
-
-  iframe {
-    border: 0;
-    height: 100%;
-    width: 100%;
-  }
 }

@@ -103,6 +103,16 @@ if (document.getElementById('spreadsheetEditorRoot')) {
       setReplaceName(null);
     };
 
+    const clearSpreadsheet = () => {
+      if (!window.confirm(i18next.t('confirm-clear-spreadsheet'))) return;
+      const inst = spreadsheetRef.current?.[0];
+      const empty = [[]];
+      inst?.setData?.(empty);
+      setData(empty);
+      setCurrentUploadId(null);
+      setReplaceName(null);
+    };
+
     // CUSTOM TOOLBAR ICONS (they are placed at the end)
     const buildToolbar = (tb) => {
       // we will replace the save button with ours, and add an export button that has the same behavior as default save button
@@ -114,24 +124,31 @@ if (document.getElementById('spreadsheetEditorRoot')) {
 
       const exportBtn = {
         type: 'icon',
-        class: 'fas fa-download',
+        class: 'ml-2 fas fa-download',
         tooltip: i18next.t('export'),
         // reuse the same handler signature (itemEl, event, spreadsheetInstance)
         onclick: (el, ev, inst) => originalSave(el, ev, inst),
       };
-
       // replace original save with our custom save function
       Object.assign(saveBtn, {
         // need to blank this property
         content: '',
         type: 'icon',
-        class: isSaving ? 'fas fa-circle-notch fa-spin' : 'fas fa-floppy-disk',
+        class: isSaving ? 'ml-2 fas fa-circle-notch fa-spin' : 'fas fa-floppy-disk',
         tooltip: i18next.t('save-attachment'),
         onclick: isSaving ? undefined : onSaveOrReplace,
       });
+
+      const clearBtn = {
+        type: 'icon',
+        class: 'ml-2 fas fa-trash',
+        tooltip: i18next.t('clear'),
+        onclick: () => clearSpreadsheet(),
+      }
       tb.items.push(
         { type: 'icon', class: 'fas fa-upload', tooltip: i18next.t('import'), onclick: () => document.getElementById('importFileInput').click() },
         exportBtn,
+        clearBtn
       );
       return tb;
     }

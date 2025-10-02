@@ -19,6 +19,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Notifications\EventDeleted;
 use Elabftw\Services\Filter;
@@ -39,9 +40,11 @@ final class Scheduler extends AbstractRest
 {
     use EntityTrait;
 
-    public const string EVENT_START = '2012-31-12T00:00:00+00:00';
+    public const string EVENT_START = '2012-12-31 00:00:00';
 
-    public const string EVENT_END = '2037-31-12T00:00:00+00:00';
+    public const string EVENT_END = '2037-12-31 00:00:00';
+
+    public const string DATETIME_FORMAT = 'Y-m-d H:i:s';
 
     private const int GRACE_PERIOD_MINUTES = 5;
 
@@ -85,7 +88,8 @@ final class Scheduler extends AbstractRest
     /**
      * Add an event for an item in the team
      * No other action than Create
-     * Date format: 2016-07-22T13:37:00+02:00
+     * Date format: 'Y-m-d H:i:s' (self::DATETIME_FORMAT) instead of DateTime::ATOM to comply with MySql format
+     * e.g., 2016-07-22 13:37:00
      * reqBody :
      * - ?title
      * - start
@@ -106,7 +110,7 @@ final class Scheduler extends AbstractRest
         $this->checkMaxSlots();
 
         // users won't be able to create an entry in the past
-        $this->isFutureOrExplode(DateTime::createFromFormat(DateTime::ATOM, $start));
+        $this->isFutureOrExplode(DateTime::createFromFormat(self::DATETIME_FORMAT, $start));
 
         // fix booking at midnight on monday not working. See #2765
         // we add a second so it works
@@ -345,16 +349,19 @@ final class Scheduler extends AbstractRest
     private function updateEpoch(string $column, string $epoch): bool
     {
         $event = $this->readOne();
-        $this->checkConstraints($event['start'], $event['end']);
         $new = DateTimeImmutable::createFromFormat('U', $epoch);
         if ($new === false) {
             throw new ImproperActionException('Invalid date format received.');
         }
         $this->isFutureOrExplode($new);
+        // check constraint with incoming values
+        $newStart = $column === 'start' ? $new->format(self::DATETIME_FORMAT) : $event['start'];
+        $newEnd = $column === 'end' ? $new->format(self::DATETIME_FORMAT) : $event['end'];
+        $this->checkConstraints($newStart, $newEnd);
+
         $sql = 'UPDATE team_events SET ' . $column . ' = :new WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        // don't use 'c' here but a custom construct so the timezone is correctly registered
-        $req->bindValue(':new', $new->format('Y-m-d\TH:i:s') . date('P'));
+        $req->bindValue(':new', $new->format(self::DATETIME_FORMAT));
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         return $this->Db->execute($req);
@@ -410,8 +417,8 @@ final class Scheduler extends AbstractRest
     private function updateStart(array $delta): bool
     {
         $event = $this->readOne();
-        $oldStart = DateTime::createFromFormat(DateTime::ATOM, $event['start']);
-        $oldEnd = DateTime::createFromFormat(DateTime::ATOM, $event['end']);
+        $oldStart = DateTime::createFromFormat(self::DATETIME_FORMAT, $event['start']);
+        $oldEnd = DateTime::createFromFormat(self::DATETIME_FORMAT, $event['end']);
         $seconds = '0';
         if (strlen((string) $delta['milliseconds']) > 3) {
             $seconds = mb_substr((string) $delta['milliseconds'], 0, -3);
@@ -420,12 +427,12 @@ final class Scheduler extends AbstractRest
         $this->isFutureOrExplode($newStart);
         $newEnd = $oldEnd->modify($delta['days'] . ' day')->modify($seconds . ' seconds'); // @phpstan-ignore-line
         $this->isFutureOrExplode($newEnd);
-        $this->checkConstraints($newStart->format(DateTime::ATOM), $newEnd->format(DateTime::ATOM));
+        $this->checkConstraints($newStart->format(self::DATETIME_FORMAT), $newEnd->format(self::DATETIME_FORMAT));
 
         $sql = 'UPDATE team_events SET start = :start, end = :end WHERE team = :team AND id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':start', $newStart->format('c'));
-        $req->bindValue(':end', $newEnd->format('c'));
+        $req->bindValue(':start', $newStart->format(self::DATETIME_FORMAT));
+        $req->bindValue(':end', $newEnd->format(self::DATETIME_FORMAT));
         $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
@@ -439,18 +446,18 @@ final class Scheduler extends AbstractRest
     private function updateEnd(array $delta): bool
     {
         $event = $this->readOne();
-        $oldEnd = DateTime::createFromFormat(DateTime::ATOM, $event['end']);
+        $oldEnd = DateTime::createFromFormat(self::DATETIME_FORMAT, $event['end']);
         $seconds = '0';
         if (strlen((string) $delta['milliseconds']) > 3) {
             $seconds = mb_substr((string) $delta['milliseconds'], 0, -3);
         }
         $newEnd = $oldEnd->modify($delta['days'] . ' day')->modify($seconds . ' seconds'); // @phpstan-ignore-line
         $this->isFutureOrExplode($newEnd);
-        $this->checkConstraints($event['start'], $newEnd->format(DateTime::ATOM));
+        $this->checkConstraints($event['start'], $newEnd->format(self::DATETIME_FORMAT));
 
         $sql = 'UPDATE team_events SET end = :end WHERE team = :team AND id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':end', $newEnd->format('c'));
+        $req->bindValue(':end', $newEnd->format(self::DATETIME_FORMAT));
         $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
@@ -515,6 +522,33 @@ final class Scheduler extends AbstractRest
     {
         $this->checkOverlap($start, $end);
         $this->checkSlotTime($start, $end);
+        $this->checkEndAfterStart($start, $end);
+    }
+
+    /*
+     * createFromFormat and check it's not false.
+     * returns an array with $start and $end as 'Y-m-d H:i:s'
+     */
+    private function createFromFormat(string $start, string $end): array
+    {
+        $startDate = DateTimeImmutable::createFromFormat(self::DATETIME_FORMAT, $start);
+        $endDate = DateTimeImmutable::createFromFormat(self::DATETIME_FORMAT, $end);
+        if ($startDate === false || $endDate === false) {
+            throw new ImproperActionException('Could not understand date format!');
+        }
+        return array($startDate, $endDate);
+    }
+
+    private function checkEndAfterStart(string $start, string $end): void
+    {
+        [$startDate, $endDate] = $this->createFromFormat($start, $end);
+        if ($endDate < $startDate) {
+            throw new UnprocessableContentException(sprintf(
+                _('End time %s cannot be before start time %s.'),
+                $endDate->format(self::DATETIME_FORMAT),
+                $startDate->format(self::DATETIME_FORMAT)
+            ));
+        }
     }
 
     /**
@@ -583,25 +617,25 @@ final class Scheduler extends AbstractRest
         $this->isFutureOrExplode($startDate);
     }
 
-    /**
-     * Date can be Y-m-d or ISO::ATOM
-     * Make sure we have the time, too
-     */
+    // Date can be DateTime::ATOM, 'Y-m-d H:i:s' (MySQL DATETIME), or 'Y-m-d' (date-only)
     private function normalizeDate(string $date, bool $rmDay = false): string
     {
-        if (DateTime::createFromFormat(DateTime::ATOM, $date) === false) {
-            $dateOnly = DateTime::createFromFormat('Y-m-d', $date);
-            if ($dateOnly === false) {
+        $dateTime = DateTimeImmutable::createFromFormat(DateTime::ATOM, $date);
+        if ($dateTime === false) {
+            $dateTime = DateTimeImmutable::createFromFormat(self::DATETIME_FORMAT, $date);
+        }
+        if ($dateTime === false) {
+            $dateTime = DateTimeImmutable::createFromFormat('Y-m-d', $date);
+            if ($dateTime === false) {
                 throw new ImproperActionException('Could not understand date format!');
             }
-            $dateOnly->setTime(0, 1);
+            $dateTime = $dateTime->setTime(0, 1);
             // we don't want the end date to go over one day
             if ($rmDay) {
-                $dateOnly->modify('-3min');
+                $dateTime = $dateTime->modify('-3min');
             }
-            return $dateOnly->format(DateTime::ATOM);
         }
-        return $date;
+        return $dateTime->format(self::DATETIME_FORMAT);
     }
 
     /**

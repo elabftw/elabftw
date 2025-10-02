@@ -81,6 +81,12 @@ teams:
         password: testPassword
         create_experiments: true
 
+    user_groups:
+      - name: Super secret project
+        users: [1, 2, 3]
+      - name: Advanced microscopy users
+        users: [1, 2, 3]
+
     experiments_categories:
       - name: Project Crypto Cool
       - name: Demo

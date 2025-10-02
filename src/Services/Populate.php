@@ -37,6 +37,7 @@ use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\ResourcesCategories;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Tags;
+use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Users\UltraAdmin;
@@ -124,6 +125,20 @@ final class Populate
             }
             for ($i = 0; $i <= $iter; $i++) {
                 $this->createUser($teamid, array());
+            }
+
+            // USER GROUPS
+            foreach ($team['user_groups'] ?? array() as $group) {
+                $Teamgroups = new TeamGroups($Users);
+                $id = $Teamgroups->create($group['name']);
+                $Teamgroups->setId($id);
+                foreach ($group['users'] as $userid) {
+                    $Teamgroups->updateMember(array(
+                        'how' => Action::Add->value,
+                        'userid' => $userid,
+                    ));
+                }
+                $this->output->writeln(sprintf('├ + teamgroup: %s (id: %d in team: %d)', $group['name'], $id, $teamid));
             }
 
             // EXPERIMENTS CATEGORIES

@@ -63,67 +63,86 @@
               {% if App.devMode -%}
                 <!-- [html-validate-disable-next prefer-native-element: using a button here will mess up the navbar] -->
               {%- endif %}
-              <div class='nav-link dropdown-toggle {{ scriptName == 'experiments.php' or scriptName == 'templates.php' ? 'active' }}' role='button' data-toggle='dropdown' aria-expanded='false'>
+              <div class='nav-link dropdown-toggle {{ scriptName == 'experiments.php' or scriptName == 'templates.php' or scriptName == 'experiments-categories.php' or scriptName == 'experiments-status.php' ? 'active' }}' role='button' data-toggle='dropdown' aria-expanded='false'>
               {% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}
               </div>
               <div class='dropdown-menu'>
                 <form class='dropdown-item form-inline' action='experiments.php' aria-label='{{ 'Quick search experiments'|trans }}'>
                   <label for='nav-search-experiments' class='sr-only'>{{ 'Search experiments'|trans }}</label>
                   <div class='input-group'>
-                    <input id='nav-search-experiments' class='form-control' name='q' placeholder='{{ 'Search'|trans }}' aria-label='{{ 'Search'|trans }}' />
+                    <input id='nav-search-experiments' class='form-control' type='search' name='q' placeholder='{{ 'Search'|trans }}' aria-label='{{ 'Search'|trans }}' />
                     <div class='input-group-append'>
                       <button type='submit' class='btn btn-sm btn-primary' aria-label='{{ 'Search'|trans }}'><i class='fas fa-magnifying-glass color-white' aria-hidden='true'></i></button>
                     </div>
                   </div>
                 </form>
-                <a class='dropdown-item {{ scriptName == 'experiments.php' and not App.Request.query.all ? 'active' }}' href='experiments.php'>{{ 'All experiments'|trans }}</a>
-                <a class='dropdown-item {{ scriptName == 'experiments.php' and App.Request.query.get('scope') == 1 ? 'active' }}' href='experiments.php?scope=1'>{{ 'My experiments'|trans }}</a>
+                {% set isActive = scriptName == 'experiments.php' and App.Request.query.get('scope') == 3 %}
+                <a class='dropdown-item {{ isActive ? 'active' }}' href='experiments.php?scope=3' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-globe fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'All experiments'|trans }}</a>
+                {% set isActive = scriptName == 'experiments.php' and App.Request.query.get('scope') == 2 %}
+                <a class='dropdown-item {{ isActive ? 'active' }}' href='experiments.php?scope=2' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-users fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Team experiments'|trans }}</a>
+                {% set isActive = scriptName == 'experiments.php' and App.Request.query.get('scope') == 1 %}
+                <a class='dropdown-item {{ isActive ? 'active' }}' href='experiments.php?scope=1' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-user fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'My experiments'|trans }}</a>
                 <div class='dropdown-divider'></div>
                 {% for entity in App.experimentsCategoryArr %}
-                <a class='dropdown-item {{ scriptName == 'experiments.php' and App.Request.query.get('category') == entity.id ? 'active' }}' href='experiments.php?category={{ entity.id }}'><span class='round-spot mr-1' style='background-color: #{{ entity.color }}'></span>{{ entity.title }}</a>
+                  {% set isActive = scriptName == 'experiments.php' and App.Request.query.get('category') == entity.id %}
+                  <a class='dropdown-item {{ isActive ? 'active' }}' href='experiments.php?category={{ entity.id }}' {{ isActive ? 'aria-current="page"' }}><span class='round-spot mr-1' style='background-color: #{{ entity.color }}'></span>{{ entity.title }}</a>
                 {% endfor %}
                 <div class='dropdown-divider'></div>
-                <a class='dropdown-item {{ scriptName == 'templates.php' ? 'active' }}' href='templates.php'>{{ 'Experiment templates'|trans }}</a>
-                <a class='dropdown-item {{ scriptName == 'experiments-categories.php' ? 'active' }} {{ not App.Teams.teamArr.users_canwrite_experiments_categories and not App.Users.isAdmin ? 'disabled' }}' href='experiments-categories.php'>{{ 'Experiment categories'|trans }}</a>
-                <a class='dropdown-item {{ scriptName == 'experiments-status.php' ? 'active' }} {{ not App.Teams.teamArr.users_canwrite_experiments_status and not App.Users.isAdmin ? 'disabled' }}' href='experiments-status.php'>{{ 'Experiment status'|trans }}</a>
+                {% set isActive = scriptName == 'templates.php' %}
+                <a class='dropdown-item {{ isActive ? 'active' }}' href='templates.php' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-copy fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Experiment templates'|trans }}</a>
+                {% set isActive = scriptName == 'experiments-categories.php' %}
+                <a class='dropdown-item {{ isActive ? 'active' }} {{ not App.Teams.teamArr.users_canwrite_experiments_categories and not App.Users.isAdmin ? 'disabled' }}' href='experiments-categories.php' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-rectangle-list fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Experiment categories'|trans }}</a>
+                {% set isActive = scriptName == 'experiments-status.php' %}
+                <a class='dropdown-item {{ isActive ? 'active' }} {{ not App.Teams.teamArr.users_canwrite_experiments_status and not App.Users.isAdmin ? 'disabled' }}' href='experiments-status.php' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-list-check fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Experiment status'|trans }}</a>
               </div>
             </div>
             <div class='nav-item dropdown'>
               {% if App.devMode -%}
                 <!-- [html-validate-disable-next prefer-native-element: using a button here will mess up the navbar] -->
               {%- endif %}
-              <div class='nav-link dropdown-toggle {{ scriptName == 'database.php' or scriptName == 'resources-templates.php' ? 'active' }}' role='button' data-toggle='dropdown' aria-expanded='false'>
+              <div class='nav-link dropdown-toggle {{ scriptName == 'database.php' or scriptName == 'resources-templates.php' or scriptName == 'resources-categories.php' or scriptName == 'resources-status.php' ? 'active' }}' role='button' data-toggle='dropdown' aria-expanded='false'>
                 {{ 'Resources'|trans }}
               </div>
               <div class='dropdown-menu'>
                 <form class='dropdown-item form-inline' action='database.php' aria-label='{{ 'Quick search resources'|trans }}'>
                   <label for='nav-search-resources' class='sr-only'>{{ 'Search resources'|trans }}</label>
                   <div class='input-group'>
-                    <input id='nav-search-resources' class='form-control' name='q' placeholder='{{ 'Search'|trans }}' />
+                    <input id='nav-search-resources' class='form-control' type='search' name='q' placeholder='{{ 'Search'|trans }}' />
                     <div class='input-group-append'>
                       <button type='submit' class='btn btn-sm btn-primary' aria-label='{{ 'Search'|trans }}'><i class='fas fa-magnifying-glass color-white' aria-hidden='true'></i></button>
                     </div>
                   </div>
                 </form>
-                <a class='dropdown-item {{ scriptName == 'database.php' and not App.Request.query.all ? 'active' }}' href='database.php'>{{ 'All resources'|trans }}</a>
-                <a class='dropdown-item {{ scriptName == 'database.php' and App.Request.query.get('scope') == 1 ? 'active' }}' href='database.php?scope=1'>{{ 'My resources'|trans }}</a>
-                <a class='dropdown-item {{ scriptName == 'database.php' and App.Request.query.get('bookable') == 1 ? 'active' }}' href='database.php?bookable=1'>{{ 'Bookable resources'|trans }}</a>
+                {% set isActive = scriptName == 'database.php' and App.Request.query.get('scope') == 3 %}
+                <a class='dropdown-item {{ isActive ? 'active' }}' href='database.php?scope=3' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-globe fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'All resources'|trans }}</a>
+                {% set isActive = scriptName == 'database.php' and App.Request.query.get('scope') == 2 %}
+                <a class='dropdown-item {{ isActive ? 'active' }}' href='database.php?scope=2' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-users fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Team resources'|trans }}</a>
+                {% set isActive = scriptName == 'database.php' and App.Request.query.get('scope') == 1 %}
+                <a class='dropdown-item {{ isActive ? 'active' }}' href='database.php?scope=1' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-user fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'My resources'|trans }}</a>
+                {% set isActive = scriptName == 'database.php' and App.Request.query.get('bookable') == 1 %}
+                <a class='dropdown-item {{ isActive ? 'active' }}' href='database.php?bookable=1' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-calendar-check fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Bookable resources'|trans }}</a>
                 <div class='dropdown-divider'></div>
                 {% for entity in App.itemsCategoryArr %}
-                  <a class='dropdown-item {{ scriptName == 'database.php' and App.Request.query.get('category') == entity.id ? 'active' }}' href='database.php?category={{ entity.id }}'><span class='round-spot mr-1' style='background-color: #{{ entity.color }}'></span>{{ entity.title }}</a>
+                  {% set isActive = scriptName == 'database.php' and App.Request.query.get('category') == entity.id %}
+                  <a class='dropdown-item {{ isActive ? 'active' }}' href='database.php?category={{ entity.id }}' {{ isActive ? 'aria-current="page"' }}><span class='round-spot mr-1' style='background-color: #{{ entity.color }}'></span>{{ entity.title }}</a>
                 {% endfor %}
                 <div class='dropdown-divider'></div>
-                <a class='dropdown-item {{ scriptName == 'resources-templates.php' ? 'active' }}' href='resources-templates.php'>{{ 'Resource templates'|trans }}</a>
-                <a class='dropdown-item {{ scriptName == 'resources-categories.php' ? 'active' }}' href='resources-categories.php'>{{ 'Resource categories'|trans }}</a>
-                <a class='dropdown-item {{ scriptName == 'resources-status.php' ? 'active' }} {{ not App.Teams.teamArr.users_canwrite_resources_status and not App.Users.isAdmin ? 'disabled' }}' href='resources-status.php'>{{ 'Resource status'|trans }}</a>
+                {% set isActive = scriptName == 'resources-templates.php' %}
+                <a class='dropdown-item {{ isActive ? 'active' }}' href='resources-templates.php' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-copy fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Resource templates'|trans }}</a>
+                {% set isActive = scriptName == 'resources-categories.php' %}
+                <a class='dropdown-item {{ isActive ? 'active' }}' href='resources-categories.php' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-rectangle-list fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Resource categories'|trans }}</a>
+                {% set isActive = scriptName == 'resources-status.php' %}
+                <a class='dropdown-item {{ isActive ? 'active' }} {{ not App.Teams.teamArr.users_canwrite_resources_status and not App.Users.isAdmin ? 'disabled' }}' href='resources-status.php' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-list-check fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Resource status'|trans }}</a>
               </div>
             </div>
-            <a class='nav-item nav-link {{ scriptName == 'scheduler.php' ? 'active' }}'
-                href='scheduler.php'>{{ 'Scheduler'|trans }}</a>
+            {% set isActive = scriptName == 'scheduler.php' %}
+            <a class='nav-item nav-link {{ isActive ? 'active' }}'
+                href='scheduler.php' {{ isActive ? 'aria-current="page"' }}>{{ 'Scheduler'|trans }}</a>
 
             {% if not App.Session.has('is_anon') %}
-            <a class='nav-item nav-link {{ scriptName == 'team.php' ? 'active' }}'
-                href='team.php'>{{ 'Team'|trans }}</a>
+            {% set isActive = scriptName == 'team.php' %}
+            <a class='nav-item nav-link {{ isActive ? 'active' }}'
+                href='team.php' {{ isActive ? 'aria-current="page"' }}>{{ 'Team'|trans }}</a>
             {% endif %}
 
             <div class='nav-item dropdown'>
@@ -134,10 +153,14 @@
               {{ 'Tools'|trans }}
               </div>
               <div class='dropdown-menu'>
-                <a class='dropdown-item' href='compounds.php'><i class='fas fa-flask fa-fw'></i>{{ 'Compounds'|trans }}</a>
-                <a class='dropdown-item' href='chem-editor.php'><i class='fas fa-pen-to-square fa-fw'></i> {{ 'Chemical Structure Editor'|trans }}</a>
-                <a class='dropdown-item {{ not envAsBool('USE_OPENCLONING') ? 'disabled' }}' href='syc.php'><i class='fas fa-dna fa-fw'></i> {{ 'OpenCloning'|trans }}</a>
-                <a class='dropdown-item' href='inventory.php'><i class='fas fa-warehouse fa-fw'></i> {{ 'Inventory'|trans }}</a>
+                {% set isActive = scriptName == 'compounds.php' %}
+                <a class='dropdown-item {{ isActive ? 'active' }}' href='compounds.php' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-flask fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Compounds'|trans }}</a>
+                {% set isActive = scriptName == 'chem-editor.php' %}
+                <a class='dropdown-item {{ isActive ? 'active' }}' href='chem-editor.php' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-pen-to-square fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Chemical Structure Editor'|trans }}</a>
+                {% set isActive = scriptName == 'syc.php' %}
+                <a class='dropdown-item {{ not envAsBool('USE_OPENCLONING') ? 'disabled' }} {{ isActive ? 'active' }}' href='syc.php' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-dna fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'OpenCloning'|trans }}</a>
+                {% set isActive = scriptName == 'inventory.php' %}
+                <a class='dropdown-item {{ isActive ? 'active' }}' href='inventory.php' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-warehouse fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Inventory'|trans }}</a>
               </div>
             </div>
         </div>

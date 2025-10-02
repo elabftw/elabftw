@@ -70,6 +70,7 @@ const t = {
     "not-set": "No establecido",
     "nothing-selected": "¡Nada seleccionado!",
     "now": "Ahora",
+    "oc-version-warning": "Warning: current OpenCloning version is incompatible with this version of eLabFTW.",
     "onboarding-email-sent": "Pronto se enviarán los correos electrónicos de incorporación.",
     "only-a-sysadmin": "Only a Sysadmin can modify this.",
     "please-wait": "Por favor espera…",

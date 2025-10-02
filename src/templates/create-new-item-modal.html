@@ -21,14 +21,15 @@
           <div class='d-flex flex-row justify-content-between mb-2'>
             {% set scopeTarget = entityPage == 'database' ? 'scope_items_types' : 'scope_experiments_templates' %}
             {% include 'scope-button.html' with {'btnId': btnId, 'reload': btnId ~ ',tplCreateNewDiv_' ~ entityPage, 'target': scopeTarget} %}
-            <a href='{{ Entity.entityType.toTemplatePage() }}' class='btn btn-ghost btn-sm'><i class='fas fa-cogs mr-1'></i>{{ 'Manage templates'|trans }}</a>
+            {% set templatesPage = Entity.entityType.toTemplatePage()|default(entityPage == 'database' ? 'resources-templates.php' : 'templates.php') %}
+            <a href='{{ templatesPage }}' class='btn btn-ghost btn-sm'><i class='fas fa-cogs mr-1'></i>{{ 'Manage templates'|trans }}</a>
           </div>
 
           <div id='tplCreateNewDiv_{{ entityPage }}' class='vertically-limited'>
             {% if templatesArr|length == 0 %}
               {{ 'No templates found.'|trans }}
             {% else %}
-              <input type='text' aria-label='{{ 'Filter'|trans }}' placeholder='{{ 'Filter'|trans }}' data-filter-target='tplCreateNewTable' data-target-type='tr' class='form-control form-inline'>
+            <input type='text' aria-label='{{ 'Filter'|trans }}' placeholder='{{ 'Filter'|trans }}' data-filter-target='tplCreateNewTable_{{ entityPage }}' data-target-type='tr' class='form-control form-inline'>
               <table class='table' aria-describedby='createModalLabel_{{ entityPage }}' data-table-sort='true'>
                 <thead>
                   <tr>
@@ -36,7 +37,7 @@
                     <th scope='col'>{{ 'Owner'|trans }}</th>
                   </tr>
                 </thead>
-                <tbody id='tplCreateNewTable'>
+                <tbody id='tplCreateNewTable_{{ entityPage }}'>
                   {% set label = entityPage == 'database' ? 'Create resource from template'|trans : 'Create experiment from template'|trans %}
                   {% if isDashboard %}
                     {% set templatesArr = entityPage == 'experiments' ? templatesArr : itemsTemplatesArr %}
@@ -70,7 +71,8 @@
             <hr>
             <div class='d-flex flex-row justify-content-between mb-2'>
               <h5 class='modal-title'>{{ 'Or select a category'|trans }}</h5>
-              <a href='{{ Entity.entityType.toCategoryPage() }}' class='btn btn-ghost btn-sm'><i class='fas fa-cogs mr-1'></i>{{ 'Manage categories'|trans }}</a>
+            {% set categoryPage = Entity.entityType.toCategoryPage()|default(entityPage == 'database' ? 'resources-categories.php' : 'experiments-categories.php') %}
+              <a href='{{ categoryPage }}' class='btn btn-ghost btn-sm'><i class='fas fa-cogs mr-1'></i>{{ 'Manage categories'|trans }}</a>
             </div>
             <a class='btn btn-ghost mt-1' href='#' data-action='create-entity-ask-title' data-type='{{ entityPage }}' data-catid='-1'>
               <span class='round-spot round-spot-ghost mr-1'></span>{{ 'No category'|trans }}

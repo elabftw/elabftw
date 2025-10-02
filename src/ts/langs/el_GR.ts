@@ -70,6 +70,7 @@ const t = {
     "not-set": "Δεν ρυθμίστηκε",
     "nothing-selected": "Τίποτα επιλεγμένο!",
     "now": "Τώρα",
+    "oc-version-warning": "Warning: current OpenCloning version is incompatible with this version of eLabFTW.",
     "onboarding-email-sent": "Σύντομα θα σταλούν μηνύματα ηλεκτρονικού ταχυδρομείου ενσωμάτωσης.",
     "only-a-sysadmin": "Only a Sysadmin can modify this.",
     "please-wait": "Παρακαλώ περιμένετε",

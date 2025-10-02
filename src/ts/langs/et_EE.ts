@@ -70,6 +70,7 @@ const t = {
     "not-set": "Pole määratud",
     "nothing-selected": "Midagi pole valitud!",
     "now": "Nüüd",
+    "oc-version-warning": "Warning: current OpenCloning version is incompatible with this version of eLabFTW.",
     "onboarding-email-sent": "Sisseelamismeil(id) saadetakse peagi.",
     "only-a-sysadmin": "Ainult süsteemiadministraator saab seda muuta.",
     "please-wait": "Palun oodake…",

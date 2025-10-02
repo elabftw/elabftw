@@ -7,8 +7,7 @@
   position: absolute;
   width: 100vw;
 
-  :focus,
-  :focus-visible {
+  :focus {
     outline: none;
   }
 }

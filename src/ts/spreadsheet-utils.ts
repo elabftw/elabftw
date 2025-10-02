@@ -48,7 +48,7 @@ export async function loadInSpreadsheetEditor(storage: string, path: string, nam
     const buffer = await res.arrayBuffer();
     const aoa = parseFileToAOA(buffer);
     const iframe = document.getElementById('spreadsheetIframe') as HTMLIFrameElement;
-    iframe.contentWindow.postMessage({ type: 'jss-load-aoa', detail: { aoa, name, uploadId } });
+    iframe.contentWindow.postMessage({ type: 'jss-load-aoa', detail: { aoa, name, uploadId } }, window.location.origin);
   } catch (e) {
     notify.error(e.message || 'Unexpected error while loading spreadsheet.');
   }

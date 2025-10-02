@@ -233,6 +233,7 @@ if (uploadsDiv) {
   document.querySelector('.real-container').addEventListener('click', async (event) => clickHandler(event));
   // reload uploads div when using spreadsheet editor (iframe sends message to parent window)
   window.addEventListener('message', (event) => {
+    if (event.origin !== window.location.origin) return;
     if (event.data !== 'uploadsDiv') return;
     reloadElements(['uploadsDiv']);
   });

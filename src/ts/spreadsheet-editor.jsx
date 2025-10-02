@@ -67,7 +67,7 @@ if (document.getElementById('spreadsheetEditorRoot')) {
         }
         keepResult(res);
       } finally {
-        window.parent.postMessage('uploadsDiv');
+        window.parent.postMessage('uploadsDiv', window.location.origin);
         setIsSaving(false);
       }
     }
@@ -81,6 +81,7 @@ if (document.getElementById('spreadsheetEditorRoot')) {
     // load an attachment into the editor, capture filename & id
     useEffect(() => {
       const onMessage = (event) => {
+        if (event.origin !== window.location.origin) return;
         if (event.data?.type === 'jss-load-aoa') {
           const { aoa, name, uploadId } = event.data.detail || {};
           setData(aoa);

@@ -20,11 +20,13 @@ import "jspreadsheet-ce/dist/jspreadsheet.css";
 import i18next from './i18n';
 import { fileToAOA, replaceAttachment, saveAsAttachment} from './spreadsheet-utils';
 import { getEntity } from './misc';
-import {notify} from './notify';
+import { assignKey } from './keymaster';
 
 if (document.getElementById('spreadsheetEditorRoot')) {
   function SpreadsheetEditor() {
     const spreadsheetRef = useRef(null);
+    // disable keyboard shortcuts completely
+    assignKey.filter = () => false;
 
     const [data, setData] = useState([[]]);
     const [currentUploadId, setCurrentUploadId] = useState(0);
@@ -41,8 +43,13 @@ if (document.getElementById('spreadsheetEditorRoot')) {
     const getAOA = () => spreadsheetRef.current?.[0]?.getData?.() ?? data;
     const entity = getEntity(true);
 
-    // TODO: UI/UX: loading button
-    // TODO: fix: keyboard shortcuts on IFRAME
+    // keep tracking the latest upload info
+    const keepResult = (res) => {
+      if (!res) return;
+      if (res.id) setCurrentUploadId(res.id);
+      if (res.name) setReplaceName(res.name);
+    };
+
     const onSaveOrReplace = async () => {
       if (isSaving) return;
       setIsSaving(true);
@@ -50,22 +57,14 @@ if (document.getElementById('spreadsheetEditorRoot')) {
         const aoa = getAOA();
         const replaceId = replaceIdRef.current;
         const replaceName = replaceNameRef.current;
-
         if (replaceId && replaceName) {
           // REPLACE MODE
           const res = await replaceAttachment(aoa, entity.type, entity.id, replaceId, replaceName);
-          // keep tracking the latest upload info
-          if (res?.id) {
-            setCurrentUploadId(res.id);
-            if (res?.name) setReplaceName(res.name);
-          }
+          keepResult(res);
         } else {
           // SAVE MODE
           const res = await saveAsAttachment(aoa, entity.type, entity.id);
-          if (res?.id) {
-            setCurrentUploadId(res.id);
-            if (res?.name) setReplaceName(res.name);
-          }
+          keepResult(res);
         }
       } finally {
         setIsSaving(false);
@@ -127,11 +126,8 @@ if (document.getElementById('spreadsheetEditorRoot')) {
         content: '',
         type: 'icon',
         class: isSaving ? 'fas fa-circle-notch fa-spin' : 'fas fa-floppy-disk',
-        tooltip: isSaving ? i18next.t('saving') : i18next.t('save-attachment'),
+        tooltip: i18next.t('save-attachment'),
         onclick: isSaving ? undefined : onSaveOrReplace,
-        // class: 'fas fa-floppy-disk',
-        // tooltip: i18next.t('save-attachment'),
-        // onclick: onSaveOrReplace,
       });
       tb.items.push(
         { type: 'icon', class: 'fas fa-upload', tooltip: i18next.t('import'), onclick: () => document.getElementById('importFileInput').click() },
@@ -143,7 +139,7 @@ if (document.getElementById('spreadsheetEditorRoot')) {
     return (
       <>
         <input hidden type='file' accept='.xlsx,.csv' onChange={handleImportFile} id='importFileInput' name='file' />
-        <Spreadsheet key={isSaving ? 'saving' : 'idle'}  ref={spreadsheetRef} tabs={true} toolbar={buildToolbar}>
+        <Spreadsheet ref={spreadsheetRef} tabs={true} toolbar={buildToolbar}>
           <Worksheet data={data} minDimensions={[12,12]} />
         </Spreadsheet>
       </>

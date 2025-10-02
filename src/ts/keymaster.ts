@@ -163,10 +163,7 @@ function filter(event){
   const tagName = target.tagName;
   // ignore keypressed in any elements that support keyboard data input
   const isTyping = tagName === 'INPUT' || tagName === 'SELECT' || tagName === 'TEXTAREA' || target.hasAttribute('contenteditable');
-  //const inSpreadsheet = !!target.closest('#spreadsheetEditor');
-  // FIXME: it appears a bit difficult to correctly detect we are using the spreadsheet editor, so just disable stuff if the element is present
-  const inSpreadsheet = !!document.getElementById('spreadsheetEditor');
-  return !(isTyping || inSpreadsheet);
+  return !isTyping;
 }
 
 // initialize key.<modifier> to false

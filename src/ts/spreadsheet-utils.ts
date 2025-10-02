@@ -16,7 +16,7 @@ import { getBookType, getMime } from './spreadsheet-formats';
 type Cell = string | number | boolean | null;
 // save current spreadsheet as a new attachment
 export async function saveAsAttachment(aoa: Cell[][], entityType: string, entityId: number, fileName?: string): Promise<{ id:number; name:string } | void> {
-  const raw = fileName?.trim() || askFileName(FileType.Csv);
+  const raw = fileName?.trim() || askFileName(FileType.Xlsx);
   if (!raw) return;
   return uploadAOA(aoa, ensureExtensionExists(raw), entityType, entityId);
 }
@@ -77,7 +77,7 @@ function inferFileTypeFromName(name: string): FileType {
   case 'xls':  return FileType.Xls;
   case 'xlsx': return FileType.Xlsx;
   case 'xlsb': return FileType.Xlsb;
-  default: return FileType.Csv;
+  default: return FileType.Xlsx;
   }
 }
 
@@ -91,7 +91,7 @@ const uploadUrl = (entityType: string, entityId: number, uploadId?: number): str
   return uploadId ? `${base}/${uploadId}` : base;
 };
 
-// TODO: handle multiple sheets
+// TODO: later - handle multiple sheets
 const wbFromAOA = (aoa: Cell[][]): WorkBook => {
   const ws = utils.aoa_to_sheet(aoa);
   const wb = utils.book_new();
@@ -106,30 +106,10 @@ const fileFromWB = (wb: WorkBook, name: string) => {
   const bin = write(wb, { bookType, type: 'array' });
   return new File([bin], name, { type: mime });
 };
-//
-// function hasAnyValue(aoa: Cell[][]): boolean {
-//   for (const row of aoa ?? []) for (const v of row ?? []) {
-//     if (v !== '' && v !== null && v !== undefined) return true;
-//   }
-//   return false;
-// }
-
 
 // upload to eLab as attachment (save/replace)
 async function uploadAOA(aoa: Cell[][], name: string, entityType: string, entityId: number, uploadId?: number): Promise<{ id: number; name: string } | void> {
   if (!aoa?.length) return;
-  // console.debug('[uploadAOA]', {
-  //   name,
-  //   // csv / xlsx / xls / xlsb
-  //   inferredType: inferFileTypeFromName(name),
-  //   // useful if replaceName has no ext
-  //   hasExtension: /\.[^./\\]+$/.test(name),
-  //   // false for "save as", true for "replace"
-  //   replacing: Boolean(uploadId),
-  //   rows: aoa.length,
-  //   cols: aoa[0]?.length ?? 0,
-  //   nonEmpty: hasAnyValue(aoa),
-  // });
   const wb = wbFromAOA(aoa);
   const file = fileFromWB(wb, name);
   const url = uploadUrl(entityType, entityId, uploadId);

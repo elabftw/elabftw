@@ -20,6 +20,7 @@ import "jspreadsheet-ce/dist/jspreadsheet.css";
 import i18next from './i18n';
 import { fileToAOA, replaceAttachment, saveAsAttachment} from './spreadsheet-utils';
 import { getEntity } from './misc';
+import {notify} from './notify';
 
 if (document.getElementById('spreadsheetEditorRoot')) {
   function SpreadsheetEditor() {
@@ -28,6 +29,8 @@ if (document.getElementById('spreadsheetEditorRoot')) {
     const [data, setData] = useState([[]]);
     const [currentUploadId, setCurrentUploadId] = useState(0);
     const [replaceName, setReplaceName] = useState(null);
+    // loading button when action is performing
+    const [isSaving, setIsSaving] = useState(false);
 
     // refs that always have the latest values (for toolbar onclick)
     const replaceIdRef = useRef(null);
@@ -35,37 +38,37 @@ if (document.getElementById('spreadsheetEditorRoot')) {
     useEffect(() => { replaceIdRef.current = currentUploadId; }, [currentUploadId]);
     useEffect(() => { replaceNameRef.current = replaceName; }, [replaceName]);
 
-    // const getAOA = () => spreadsheetRef.current?.getData?.() ?? data;
     const getAOA = () => spreadsheetRef.current?.[0]?.getData?.() ?? data;
     const entity = getEntity(true);
 
+    // TODO: UI/UX: loading button
+    // TODO: fix: keyboard shortcuts on IFRAME
     const onSaveOrReplace = async () => {
-      const aoa = getAOA();
-      const replaceId = replaceIdRef.current;
-      const replaceName = replaceNameRef.current;
-      // console.debug('[SpreadsheetEditor] action', {
-      //   mode: replaceId && replaceName ? 'replace' : 'save',
-      //   replaceId,
-      //   replaceName,
-      //   rows: aoa.length,
-      //   cols: aoa[0]?.length ?? 0,
-      // });
+      if (isSaving) return;
+      setIsSaving(true);
+      try {
+        const aoa = getAOA();
+        const replaceId = replaceIdRef.current;
+        const replaceName = replaceNameRef.current;
 
-      if (replaceId && replaceName) {
-        // REPLACE MODE
-        const res = await replaceAttachment(aoa, entity.type, entity.id, replaceId, replaceName);
-        // keep tracking the latest subid
-        if (res?.id) {
-          setCurrentUploadId(res.id);
-          if (res?.name) setReplaceName(res.name);
+        if (replaceId && replaceName) {
+          // REPLACE MODE
+          const res = await replaceAttachment(aoa, entity.type, entity.id, replaceId, replaceName);
+          // keep tracking the latest upload info
+          if (res?.id) {
+            setCurrentUploadId(res.id);
+            if (res?.name) setReplaceName(res.name);
+          }
+        } else {
+          // SAVE MODE
+          const res = await saveAsAttachment(aoa, entity.type, entity.id);
+          if (res?.id) {
+            setCurrentUploadId(res.id);
+            if (res?.name) setReplaceName(res.name);
+          }
         }
-      } else {
-        // SAVE MODE
-        const res = await saveAsAttachment(aoa, entity.type, entity.id);
-        if (res?.id) {
-          setCurrentUploadId(res.id);
-          if (res?.name) setReplaceName(res.name);
-        }
+      } finally {
+        setIsSaving(false);
       }
     }
 
@@ -123,9 +126,12 @@ if (document.getElementById('spreadsheetEditorRoot')) {
         // need to blank this property
         content: '',
         type: 'icon',
-        class: 'fas fa-floppy-disk',
-        tooltip: i18next.t('save-attachment'),
-        onclick: onSaveOrReplace,
+        class: isSaving ? 'fas fa-circle-notch fa-spin' : 'fas fa-floppy-disk',
+        tooltip: isSaving ? i18next.t('saving') : i18next.t('save-attachment'),
+        onclick: isSaving ? undefined : onSaveOrReplace,
+        // class: 'fas fa-floppy-disk',
+        // tooltip: i18next.t('save-attachment'),
+        // onclick: onSaveOrReplace,
       });
       tb.items.push(
         { type: 'icon', class: 'fas fa-upload', tooltip: i18next.t('import'), onclick: () => document.getElementById('importFileInput').click() },
@@ -137,7 +143,7 @@ if (document.getElementById('spreadsheetEditorRoot')) {
     return (
       <>
         <input hidden type='file' accept='.xlsx,.csv' onChange={handleImportFile} id='importFileInput' name='file' />
-        <Spreadsheet ref={spreadsheetRef} tabs={true} toolbar={buildToolbar}>
+        <Spreadsheet key={isSaving ? 'saving' : 'idle'}  ref={spreadsheetRef} tabs={true} toolbar={buildToolbar}>
           <Worksheet data={data} minDimensions={[12,12]} />
         </Spreadsheet>
       </>

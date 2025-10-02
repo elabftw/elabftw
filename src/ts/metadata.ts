@@ -373,10 +373,10 @@ if (document.getElementById('metadataDiv') && entity.id) {
           if (metadata) {
             json = metadata;
           }
-          // If the key (name) is being changed, remove the old one to avoid creating two separate entries
-          if (originalFieldKey && originalFieldKey !== newFieldKey) {
-            delete json['extra_fields'][originalFieldKey];
-          }
+          // if the extra field's name (also acting as key) is updated, replace existing entry and keep the content
+          const prevField = json['extra_fields']?.[
+            originalFieldKey && originalFieldKey !== newFieldKey ? originalFieldKey : newFieldKey
+          ];
           const field = {};
           // handle field inputs : type, desc, and different type values
           field['type'] = (document.getElementById('newFieldTypeSelect') as HTMLSelectElement).value;
@@ -392,14 +392,14 @@ if (document.getElementById('metadataDiv') && entity.id) {
             field['value'] = textAreaField.value.trim();
           } else if (['date', 'datetime-local', 'email', 'time', 'url'].includes(field['type'])) {
             const val = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();
-            field['value'] = val || json['extra_fields'][newFieldKey]?.value || '';
+            field['value'] = val || prevField?.value || '';
           } else if ([ExtraFieldInputType.Users, ExtraFieldInputType.Items, ExtraFieldInputType.Experiments].includes(field['type'])) {
             const elId = `newField${field['type']}Input`;
             const el = document.getElementById(elId) as HTMLInputElement | null;
             const val = (el?.value ?? '').trim();
-            field['value'] = val || json['extra_fields'][newFieldKey]?.value || '';
+            field['value'] = val || prevField?.value || '';
           } else if ([ExtraFieldInputType.Select, ExtraFieldInputType.Radio].includes(field['type'])) {
-            const prevVal = json['extra_fields'][newFieldKey]?.value || '';
+            const prevVal = prevField?.value || '';
             field['options'] = [];
             document.getElementById('choicesInputDiv').querySelectorAll('input').forEach(opt => {
               const val = (opt as HTMLInputElement).value.trim();
@@ -408,7 +408,7 @@ if (document.getElementById('metadataDiv') && entity.id) {
             // keep old value if no new option is provided
             field['value'] = field['options'].includes(prevVal) ? prevVal : (field['options'][0] || '');
           } else if (field['type'] === ExtraFieldInputType.Number) {
-            const prevVal = json['extra_fields'][newFieldKey]?.value || '';
+            const prevVal = prevField?.value || '';
             const val = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();
             field['value'] = val || prevVal;
             field['units'] = [];
@@ -417,7 +417,7 @@ if (document.getElementById('metadataDiv') && entity.id) {
                 field['units'].push(opt.value.trim());
               }
             });
-            const prevUnit = json['extra_fields'][newFieldKey]?.unit || '';
+            const prevUnit = prevField?.unit || '';
             field['unit'] = field['units'].length === 0
               ? prevUnit
               : (field['units'].includes(prevUnit) ? prevUnit : field['units'][0]);

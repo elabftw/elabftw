@@ -57,16 +57,17 @@ if (document.getElementById('spreadsheetEditorRoot')) {
         const aoa = getAOA();
         const replaceId = replaceIdRef.current;
         const replaceName = replaceNameRef.current;
+        let res;
         if (replaceId && replaceName) {
           // REPLACE MODE
-          const res = await replaceAttachment(aoa, entity.type, entity.id, replaceId, replaceName);
-          keepResult(res);
+          res = await replaceAttachment(aoa, entity.type, entity.id, replaceId, replaceName);
         } else {
           // SAVE MODE
-          const res = await saveAsAttachment(aoa, entity.type, entity.id);
-          keepResult(res);
+          res = await saveAsAttachment(aoa, entity.type, entity.id);
         }
+        keepResult(res);
       } finally {
+        window.parent.postMessage('uploadsDiv');
         setIsSaving(false);
       }
     }

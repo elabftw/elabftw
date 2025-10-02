@@ -231,6 +231,11 @@ if (uploadsDiv) {
   malleableFilecomment.listen();
 
   document.querySelector('.real-container').addEventListener('click', async (event) => clickHandler(event));
+  // reload uploads div when using spreadsheet editor (iframe sends message to parent window)
+  window.addEventListener('message', (event) => {
+    if (event.data !== 'uploadsDiv') return;
+    reloadElements(['uploadsDiv']);
+  });
 
   // ACTIVATE FANCYBOX
   $('[data-fancybox]').fancybox();

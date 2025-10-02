@@ -9,7 +9,7 @@
 
 import { read, utils, WorkBook, write } from '@e965/xlsx';
 import { FileType, Model } from './interfaces';
-import { askFileName, getNewIdFromPostRequest, reloadElements } from './misc';
+import { askFileName, getNewIdFromPostRequest } from './misc';
 import { notify } from './notify';
 import { getBookType, getMime, inferFileTypeFromName } from './spreadsheet-formats';
 
@@ -64,7 +64,6 @@ async function postAndReturnId(file: File, url: string): Promise<number> {
     notify.error(msg);
     throw new Error(msg);
   }
-  await reloadElements(['uploadsDiv']);
   notify.success();
   return getNewIdFromPostRequest(res);
 }

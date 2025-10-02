@@ -14,6 +14,7 @@ const t = {
     "can-manage-users2teams": "Saab kasutajaid meeskondadesse jagada",
     "click-to-edit": "Klõpsake muutmiseks",
     "cancel": "Tühista",
+    "clear": "Tühjenda",
     "copied": "Lõikelauale kopeeritud.",
     "check-required": "Palun märkige kohustuslikud väljad.",
     "comment-add": "Lisa kommentaar",

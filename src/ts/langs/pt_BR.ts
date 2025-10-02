@@ -14,6 +14,7 @@ const t = {
     "can-manage-users2teams": "Can manage users to teams",
     "click-to-edit": "Clique para editar",
     "cancel": "Cancelar",
+    "clear": "Limpar",
     "copied": "Copied to clipboard.",
     "check-required": "Please check required fields.",
     "comment-add": "Adicionar um comentário",

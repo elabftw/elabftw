@@ -14,6 +14,7 @@ const t = {
     "can-manage-users2teams": "Can manage users to teams",
     "click-to-edit": "单击编辑",
     "cancel": "取消",
+    "clear": "清除",
     "copied": "Copied to clipboard.",
     "check-required": "Please check required fields.",
     "comment-add": "添加评论",

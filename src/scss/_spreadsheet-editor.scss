@@ -6,6 +6,11 @@
   inset: 0;
   position: absolute;
   width: 100vw;
+
+  :focus,
+  :focus-visible {
+    outline: none;
+  }
 }
 
 #spreadsheetEditorDiv {

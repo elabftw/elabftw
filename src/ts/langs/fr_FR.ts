@@ -14,6 +14,7 @@ const t = {
     "can-manage-users2teams": "Peut gérer les utilisateurs en équipes",
     "click-to-edit": "Cliquer pour modifier",
     "cancel": "Annuler",
+    "clear": "Effacer",
     "copied": "Copié dans le presse-papiers.",
     "check-required": "Veuillez vérifier les champs obligatoires.",
     "comment-add": "Ajouter un commentaire",

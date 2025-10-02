@@ -14,6 +14,7 @@ const t = {
     "can-manage-users2teams": "Can manage users to teams",
     "click-to-edit": "수정하려면 클릭",
     "cancel": "취소",
+    "clear": "지우기",
     "copied": "Copied to clipboard.",
     "check-required": "Please check required fields.",
     "comment-add": "의견 추가",

@@ -69,6 +69,7 @@ const t = {
     "not-set": "설정되지 않음",
     "nothing-selected": "아무 것도 선택되지 않았습니다!",
     "now": "지금",
+    "oc-version-warning": "Warning: current OpenCloning version is incompatible with this version of eLabFTW.",
     "onboarding-email-sent": "온보딩 이메일이 곧 전송될 예정입니다.",
     "only-a-sysadmin": "Only a Sysadmin can modify this.",
     "please-wait": "잠시만 기다려주세요…",

@@ -155,6 +155,10 @@ teams:
         password: random
         create_experiments: true
 
+    user_groups:
+      - name: Level 3 lab users
+        users: [1, 3, 4]
+
     experiments_categories:
       - name: Molecular biology
       - name: Cell biology

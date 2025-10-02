@@ -129,7 +129,8 @@ final class Populate
 
             // USER GROUPS
             foreach ($team['user_groups'] ?? array() as $group) {
-                $Teamgroups = new TeamGroups($Users);
+                $teamScopedAdmin = new UltraAdmin($Users->userData['userid'], $teamid);
+                $Teamgroups = new TeamGroups($teamScopedAdmin);
                 $id = $Teamgroups->create($group['name']);
                 $Teamgroups->setId($id);
                 foreach ($group['users'] as $userid) {

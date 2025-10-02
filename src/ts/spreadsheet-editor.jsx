@@ -35,22 +35,37 @@ if (document.getElementById('spreadsheetEditorRoot')) {
     useEffect(() => { replaceIdRef.current = currentUploadId; }, [currentUploadId]);
     useEffect(() => { replaceNameRef.current = replaceName; }, [replaceName]);
 
-    const getAOA = () => spreadsheetRef.current?.getData?.() ?? data;
+    // const getAOA = () => spreadsheetRef.current?.getData?.() ?? data;
+    const getAOA = () => spreadsheetRef.current?.[0]?.getData?.() ?? data;
     const entity = getEntity(true);
 
     const onSaveOrReplace = async () => {
       const aoa = getAOA();
       const replaceId = replaceIdRef.current;
       const replaceName = replaceNameRef.current;
+      // console.debug('[SpreadsheetEditor] action', {
+      //   mode: replaceId && replaceName ? 'replace' : 'save',
+      //   replaceId,
+      //   replaceName,
+      //   rows: aoa.length,
+      //   cols: aoa[0]?.length ?? 0,
+      // });
+
       if (replaceId && replaceName) {
         // REPLACE MODE
         const res = await replaceAttachment(aoa, entity.type, entity.id, replaceId, replaceName);
         // keep tracking the latest subid
-        if (res?.id) setCurrentUploadId(res.id);
+        if (res?.id) {
+          setCurrentUploadId(res.id);
+          if (res?.name) setReplaceName(res.name);
+        }
       } else {
         // SAVE MODE
         const res = await saveAsAttachment(aoa, entity.type, entity.id);
-        if (res?.id) { setCurrentUploadId(res.id); setReplaceName(res.name); }
+        if (res?.id) {
+          setCurrentUploadId(res.id);
+          if (res?.name) setReplaceName(res.name);
+        }
       }
     }
 

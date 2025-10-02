@@ -18,8 +18,7 @@ type Cell = string | number | boolean | null;
 export async function saveAsAttachment(aoa: Cell[][], entityType: string, entityId: number, fileName?: string): Promise<{ id:number; name:string } | void> {
   const raw = fileName?.trim() || askFileName(FileType.Csv);
   if (!raw) return;
-  const chosen = ensureExtensionExists(raw);
-  return uploadAOA(aoa, chosen, entityType, entityId);
+  return uploadAOA(aoa, ensureExtensionExists(raw), entityType, entityId);
 }
 
 // replace an existing attachment with current spreadsheet
@@ -107,14 +106,33 @@ const fileFromWB = (wb: WorkBook, name: string) => {
   const bin = write(wb, { bookType, type: 'array' });
   return new File([bin], name, { type: mime });
 };
+//
+// function hasAnyValue(aoa: Cell[][]): boolean {
+//   for (const row of aoa ?? []) for (const v of row ?? []) {
+//     if (v !== '' && v !== null && v !== undefined) return true;
+//   }
+//   return false;
+// }
+
 
 // upload to eLab as attachment (save/replace)
 async function uploadAOA(aoa: Cell[][], name: string, entityType: string, entityId: number, uploadId?: number): Promise<{ id: number; name: string } | void> {
   if (!aoa?.length) return;
-  const normalized = ensureExtensionExists(name);
+  // console.debug('[uploadAOA]', {
+  //   name,
+  //   // csv / xlsx / xls / xlsb
+  //   inferredType: inferFileTypeFromName(name),
+  //   // useful if replaceName has no ext
+  //   hasExtension: /\.[^./\\]+$/.test(name),
+  //   // false for "save as", true for "replace"
+  //   replacing: Boolean(uploadId),
+  //   rows: aoa.length,
+  //   cols: aoa[0]?.length ?? 0,
+  //   nonEmpty: hasAnyValue(aoa),
+  // });
   const wb = wbFromAOA(aoa);
-  const file = fileFromWB(wb, normalized);
+  const file = fileFromWB(wb, name);
   const url = uploadUrl(entityType, entityId, uploadId);
   const id = await postAndReturnId(file, url);
-  return { id, name: normalized };
+  return { id, name };
 }

@@ -373,7 +373,7 @@ if (document.getElementById('metadataDiv') && entity.id) {
           if (metadata) {
             json = metadata;
           }
-          // If the key (name) is being changed, remove previous field else it will create two separate ones
+          // If the key (name) is being changed, remove the old one to avoid creating two separate entries
           if (originalFieldKey && originalFieldKey !== newFieldKey) {
             delete json['extra_fields'][originalFieldKey];
           }
@@ -418,26 +418,22 @@ if (document.getElementById('metadataDiv') && entity.id) {
               }
             });
             const prevUnit = json['extra_fields'][newFieldKey]?.unit || '';
-            field['unit'] = field['units'][0] || prevUnit;
+            field['unit'] = field['units'].length === 0
+              ? prevUnit
+              : (field['units'].includes(prevUnit) ? prevUnit : field['units'][0]);
           } else if (field['type'] === ExtraFieldInputType.Checkbox) {
             field['value'] = (document.getElementById('newFieldCheckboxDefaultSelect') as HTMLSelectElement).value === 'checked' ? 'on' : '';
           }
-
-          // deal with the blank_on_value
-          if ((document.getElementById('blankValueOnDuplicateSwitch') as HTMLInputElement).checked) {
-            field['blank_value_on_duplicate'] = true;
-          }
-          // deal with the required attribute
-          if ((document.getElementById('requiredSwitch') as HTMLInputElement).checked) {
-            field['required'] = true;
-          }
-          // deal with the readonly attribute
-          if ((document.getElementById('readonlySwitch') as HTMLInputElement).checked) {
-            field['readonly'] = true;
-          }
-          // deal with the multi select
-          if ((document.getElementById('newFieldAllowMultiSelect') as HTMLInputElement).checked) {
-            field['allow_multi_values'] = true;
+          // deal with modal SWITCHES (key: id, value: field's 'value')
+          const switches: Record<string, string> = {
+            blankValueOnDuplicateSwitch: 'blank_value_on_duplicate',
+            requiredSwitch: 'required',
+            readonlySwitch: 'readonly',
+            newFieldAllowMultiSelect: 'allow_multi_values',
+          };
+          for (const [id, key] of Object.entries(switches)) {
+            const el = document.getElementById(id) as HTMLInputElement | null;
+            if (el?.checked) field[key] = true;
           }
 
           json['extra_fields'][newFieldKey] = field;

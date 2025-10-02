@@ -69,6 +69,7 @@ const t = {
     "not-set": "設定されていない",
     "nothing-selected": "何も選択されていません！",
     "now": "現在",
+    "oc-version-warning": "Warning: current OpenCloning version is incompatible with this version of eLabFTW.",
     "onboarding-email-sent": "オンボーディングメールがすぐに送信されます。",
     "only-a-sysadmin": "Only a Sysadmin can modify this.",
     "please-wait": "お待ちください…",

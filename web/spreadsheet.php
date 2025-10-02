@@ -18,7 +18,7 @@ use Elabftw\Exceptions\AppException;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
-/* Spreadsheet editor iFrame */
+// Spreadsheet editor iFrame
 require_once 'app/init.inc.php';
 
 $Response = new Response();

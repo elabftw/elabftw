@@ -1841,20 +1841,21 @@ input:user-invalid {
 
 /* spreadsheet editor iframe*/
 #spreadsheetEditorRoot {
-  border: none;
-  width: 100vw;
-  height: 100%;
-  position: absolute;
-  inset: 0;
   background: $mainbackground;
+  border: 0;
+  height: 100%;
+  inset: 0;
+  position: absolute;
+  width: 100vw;
 }
 
 #spreadsheetEditorDiv {
   height: 40vh;
   overflow-y: hidden;
+
   iframe {
+    border: 0;
     height: 100%;
     width: 100%;
-    border: none;
   }
 }

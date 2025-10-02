@@ -7,32 +7,37 @@
  * @package elabftw
  */
 
-import { utils, write, WorkBook, read } from '@e965/xlsx';
-import { getBookType, getMime } from './spreadsheet-formats';
-import { reloadElements, askFileName, getNewIdFromPostRequest } from './misc';
-import { notify } from './notify';
+import { read, utils, WorkBook, write } from '@e965/xlsx';
 import { FileType, Model } from './interfaces';
+import { askFileName, getNewIdFromPostRequest, reloadElements } from './misc';
+import { notify } from './notify';
+import { getBookType, getMime } from './spreadsheet-formats';
 
 type Cell = string | number | boolean | null;
 // save current spreadsheet as a new attachment
-export async function saveAsAttachment(aoa: (string|number|boolean|null)[][], entityType: string, entityId: number, format: FileType = FileType.Xlsx, fileName?: string): Promise<{id:number; name:string} | void> {
-  const chosen = fileName?.trim()
-    ? ensureExtension(fileName.trim(), format)
-    : askFileName(format);
-  if (!chosen) return;
-  return uploadAOA(aoa, chosen, format, entityType, entityId);
+export async function saveAsAttachment(aoa: Cell[][], entityType: string, entityId: number, fileName?: string): Promise<{ id:number; name:string } | void> {
+  const raw = fileName?.trim() || askFileName(FileType.Csv);
+  if (!raw) return;
+  const chosen = ensureExtensionExists(raw);
+  return uploadAOA(aoa, chosen, entityType, entityId);
 }
 
 // replace an existing attachment with current spreadsheet
-export async function replaceAttachment(aoa: (string|number|boolean|null)[][], entityType: string, entityId: number, uploadId: number, currentName: string, format: FileType = FileType.Xlsx,
-): Promise<{id:number; name:string} | void> {
+export async function replaceAttachment(aoa: Cell[][], entityType: string, entityId: number, uploadId: number, currentName: string): Promise<{id:number; name:string} | void> {
   if (!uploadId || !currentName) return;
-  return uploadAOA(aoa, currentName, format, entityType, entityId, uploadId);
+  return uploadAOA(aoa, currentName, entityType, entityId, uploadId);
 }
 
+// import file from computer: convert to spreadsheet
 export async function fileToAOA(file: File): Promise<Cell[][]> {
   const buffer = await file.arrayBuffer();
   return parseFileToAOA(buffer);
+}
+
+function parseFileToAOA(buffer: ArrayBuffer): Cell[][] {
+  const wb = read(buffer, { type: 'array', codepage: 65001 }); // UTF-8
+  const ws = wb.Sheets[wb.SheetNames[0]];
+  return utils.sheet_to_json(ws, { header: 1, defval: '', raw: true, blankrows: true }) as Cell[][];
 }
 
 export async function loadInSpreadsheetEditor(storage: string, path: string, name: string, uploadId: number): Promise<void> {
@@ -44,7 +49,7 @@ export async function loadInSpreadsheetEditor(storage: string, path: string, nam
     const buffer = await res.arrayBuffer();
     const aoa = parseFileToAOA(buffer);
     const iframe = document.getElementById('spreadsheetIframe') as HTMLIFrameElement;
-    iframe.contentWindow.postMessage({ type: 'jss-load-aoa', detail: {aoa, name, uploadId} });
+    iframe.contentWindow.postMessage({ type: 'jss-load-aoa', detail: { aoa, name, uploadId } });
   } catch (e) {
     notify.error(e.message || 'Unexpected error while loading spreadsheet.');
   }
@@ -65,9 +70,21 @@ async function postAndReturnId(file: File, url: string): Promise<number> {
   return getNewIdFromPostRequest(res);
 }
 
-const ensureExtension = (name: string, format: FileType): string => {
-  const ext = `.${String(format).toLowerCase()}`;
-  return name.toLowerCase().endsWith(ext) ? name : name + ext;
+// deduct filetype from the name, default to CSV
+function inferFileTypeFromName(name: string): FileType {
+  const ext = name.split('.').pop()?.toLowerCase();
+  switch (ext) {
+  case 'csv':  return FileType.Csv;
+  case 'xls':  return FileType.Xls;
+  case 'xlsx': return FileType.Xlsx;
+  case 'xlsb': return FileType.Xlsb;
+  default: return FileType.Csv;
+  }
+}
+
+// default to csv if extension missing
+const ensureExtensionExists = (name: string): string => {
+  return /\.[^./\\]+$/.test(name) ? name : `${name}.csv`;
 };
 
 const uploadUrl = (entityType: string, entityId: number, uploadId?: number): string => {
@@ -75,32 +92,29 @@ const uploadUrl = (entityType: string, entityId: number, uploadId?: number): str
   return uploadId ? `${base}/${uploadId}` : base;
 };
 
-const wbFromAOA = (aoa: (string|number|boolean|null)[][]): WorkBook => {
+// TODO: handle multiple sheets
+const wbFromAOA = (aoa: Cell[][]): WorkBook => {
   const ws = utils.aoa_to_sheet(aoa);
   const wb = utils.book_new();
   utils.book_append_sheet(wb, ws, 'Sheet1');
   return wb;
 };
 
-const fileFromWB = (wb: WorkBook, name: string, format: FileType) => {
-  const bookType = getBookType(format);
-  const mime = getMime(format) ?? 'application/octet-stream';
+const fileFromWB = (wb: WorkBook, name: string) => {
+  const fileType = inferFileTypeFromName(name);
+  const bookType = getBookType(fileType);
+  const mime = getMime(fileType);
   const bin = write(wb, { bookType, type: 'array' });
   return new File([bin], name, { type: mime });
 };
 
-async function uploadAOA(aoa: (string | number | boolean | null)[][], name: string, format: FileType, entityType: string, entityId: number, uploadId?: number,
-): Promise<{ id: number; name: string } | void> {
+// upload to eLab as attachment (save/replace)
+async function uploadAOA(aoa: Cell[][], name: string, entityType: string, entityId: number, uploadId?: number): Promise<{ id: number; name: string } | void> {
   if (!aoa?.length) return;
+  const normalized = ensureExtensionExists(name);
   const wb = wbFromAOA(aoa);
-  const file = fileFromWB(wb, name, format);
+  const file = fileFromWB(wb, normalized);
   const url = uploadUrl(entityType, entityId, uploadId);
   const id = await postAndReturnId(file, url);
-  return { id, name };
-}
-
-function parseFileToAOA(buffer: ArrayBuffer): Cell[][] {
-  const wb = read(buffer, { type: 'array', codepage: 65001 }); // UTF-8
-  const ws = wb.Sheets[wb.SheetNames[0]];
-  return utils.sheet_to_json(ws, {header: 1, defval: '', raw: true, blankrows: true}) as Cell[][];
+  return { id, name: normalized };
 }

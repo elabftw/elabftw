@@ -31,6 +31,6 @@ class SpreadsheetControllerTest extends \PHPUnit\Framework\TestCase
         $getPageTitle = $ref->getMethod('getPageTitle');
         $getPageTitle->setAccessible(true);
         $result = $getPageTitle->invoke($controller);
-        $this->assertSame('Spreadsheet Editor', $result);
+        $this->assertSame(_('Spreadsheet Editor'), $result);
     }
 }

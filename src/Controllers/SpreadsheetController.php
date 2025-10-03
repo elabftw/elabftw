@@ -20,7 +20,8 @@ final class SpreadsheetController extends AbstractHtmlController
     #[Override]
     protected function getTemplate(): string
     {
-        return 'spreadsheet-iframe.html';
+        return 'hi';
+        return '<div id="spreadsheetEditorRoot"></div>';
     }
 
     #[Override]

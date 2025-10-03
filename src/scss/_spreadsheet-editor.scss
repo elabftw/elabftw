@@ -1,24 +1,24 @@
 /* spreadsheet editor iframe*/
-#spreadsheetEditorRoot {
-  background: $mainbackground;
-  border: 0;
-  height: 100%;
-  inset: 0;
-  position: absolute;
-  width: 100vw;
+//#spreadsheetEditorRoot {
+//  background: $mainbackground;
+//  border: 0;
+//  height: 100%;
+//  inset: 0;
+//  position: absolute;
+//  width: 100vw;
+//
+//  :focus {
+//    outline: none;
+//  }
+//}
 
-  :focus {
-    outline: none;
-  }
-}
-
-#spreadsheetEditorDiv {
-  height: 40vh;
-  overflow-y: hidden;
-
-  iframe {
-    border: 0;
-    height: 100%;
-    width: 100%;
-  }
-}
+//#spreadsheetEditorDiv {
+//  height: 40vh;
+//  overflow-y: hidden;
+//
+//  iframe {
+//    border: 0;
+//    height: 100%;
+//    width: 100%;
+//  }
+//}

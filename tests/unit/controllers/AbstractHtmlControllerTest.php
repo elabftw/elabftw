@@ -28,6 +28,8 @@ class AbstractHtmlControllerTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($ref->getMethod('getPageTitle')->isAbstract());
         $this->assertTrue($ref->getMethod('getTemplate')->isAbstract());
         $this->assertTrue($ref->getMethod('getData')->hasReturnType());
-        $this->assertSame('array', $ref->getMethod('getData')->getReturnType());
+        $type = $ref->getMethod('getData')->getReturnType();
+        $this->assertInstanceOf(\ReflectionNamedType::class, $type);
+        $this->assertSame('array', $type->getName());
     }
 }

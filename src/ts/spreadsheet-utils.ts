@@ -35,7 +35,13 @@ export async function fileToAOA(file: File): Promise<Cell[][]> {
 
 function parseFileToAOA(buffer: ArrayBuffer): Cell[][] {
   const wb = read(buffer, { type: 'array', codepage: 65001 }); // UTF-8
+  if (!wb.SheetNames || wb.SheetNames.length === 0) {
+    throw new Error('No sheets found in uploaded file.');
+  }
   const ws = wb.Sheets[wb.SheetNames[0]];
+  if (!ws) {
+    throw new Error('Failed to load the first sheet from the file.');
+  }
   return utils.sheet_to_json(ws, { header: 1, defval: '', raw: true, blankrows: true }) as Cell[][];
 }
 

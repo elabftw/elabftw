@@ -131,6 +131,9 @@ if (document.getElementById('spreadsheetEditorRoot')) {
         // reuse the same handler signature (itemEl, event, spreadsheetInstance)
         onclick: (el, ev, inst) => originalSave(el, ev, inst),
       };
+      const clearBtn = { type: 'icon', class: 'ml-2 fas fa-trash', tooltip: i18next.t('clear'), onclick: clearSpreadsheet };
+      const importBtn = { type: 'icon', class: 'fas fa-upload', tooltip: i18next.t('import'), onclick: () => document.getElementById('importFileInput').click() };
+
       // replace original save with our custom save function
       Object.assign(saveBtn, {
         // need to blank this property
@@ -141,14 +144,8 @@ if (document.getElementById('spreadsheetEditorRoot')) {
         onclick: isSaving ? undefined : onSaveOrReplace,
       });
 
-      const clearBtn = {
-        type: 'icon',
-        class: 'ml-2 fas fa-trash',
-        tooltip: i18next.t('clear'),
-        onclick: () => clearSpreadsheet(),
-      }
       tb.items.push(
-        { type: 'icon', class: 'fas fa-upload', tooltip: i18next.t('import'), onclick: () => document.getElementById('importFileInput').click() },
+        importBtn,
         exportBtn,
         clearBtn
       );

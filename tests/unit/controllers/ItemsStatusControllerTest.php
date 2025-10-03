@@ -14,14 +14,14 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
-use Elabftw\Models\ExperimentsStatus;
+use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\ControllerUtilsTrait;
 use Elabftw\Traits\TestsUtilsTrait;
 use ReflectionClass;
 
-class ExperimentsStatusControllerTest extends \PHPUnit\Framework\TestCase
+class ItemsStatusControllerTest extends \PHPUnit\Framework\TestCase
 {
     use ControllerUtilsTrait;
     use TestsUtilsTrait;
@@ -29,22 +29,22 @@ class ExperimentsStatusControllerTest extends \PHPUnit\Framework\TestCase
     public function testGetTemplate(): void
     {
         $this->assertSame(
-            'experiments-status.html',
-            $this->invokeProtected($this->makeWithoutConstructor(ExperimentsStatusController::class), 'getTemplate')
+            'resources-status.html',
+            $this->invokeProtected($this->makeWithoutConstructor(ItemsStatusController::class), 'getTemplate')
         );
     }
 
     public function testGetPageTitle(): void
     {
         $this->assertSame(
-            'Experiments status',
-            $this->invokeProtected($this->makeWithoutConstructor(ExperimentsStatusController::class), 'getPageTitle')
+            'Resources status',
+            $this->invokeProtected($this->makeWithoutConstructor(ItemsStatusController::class), 'getPageTitle')
         );
     }
 
-    public function testGetModelReturnsExperimentsStatus(): void
+    public function testGetModelReturnsItemsStatus(): void
     {
-        $controller = $this->makeWithoutConstructor(ExperimentsStatusController::class);
+        $controller = $this->makeWithoutConstructor(ItemsStatusController::class);
         // build a minimal $app with a Teams instance. Prevents $app must not be accessed before initialization
         $app = new ReflectionClass(App::class)->newInstanceWithoutConstructor();
         $teams = new Teams(new Users(1, 1), 1);
@@ -54,7 +54,7 @@ class ExperimentsStatusControllerTest extends \PHPUnit\Framework\TestCase
         $this->injectInto($controller, $app, 'app');
 
         $model = $this->invokeProtected($controller, 'getModel');
-        $this->assertInstanceOf(ExperimentsStatus::class, $model);
+        $this->assertInstanceOf(ItemsStatus::class, $model);
     }
 
     protected function injectInto(object $controller, object $entity, string $property): void

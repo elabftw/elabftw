@@ -56,11 +56,4 @@ class ItemsStatusControllerTest extends \PHPUnit\Framework\TestCase
         $model = $this->invokeProtected($controller, 'getModel');
         $this->assertInstanceOf(ItemsStatus::class, $model);
     }
-
-    protected function injectInto(object $controller, object $entity, string $property): void
-    {
-        $rp = new ReflectionClass($controller)->getProperty($property);
-        $rp->setAccessible(true);
-        $rp->setValue($controller, $entity);
-    }
 }

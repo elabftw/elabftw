@@ -40,4 +40,11 @@ trait ControllerUtilsTrait
         $m->setAccessible(true);
         return $m->invoke($class);
     }
+
+    protected function injectInto(object $controller, object $entity, string $property): void
+    {
+        $rp = new ReflectionClass($controller)->getProperty($property);
+        $rp->setAccessible(true);
+        $rp->setValue($controller, $entity);
+    }
 }

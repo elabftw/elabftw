@@ -13,7 +13,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
+use Elabftw\Elabftw\App;
+use Elabftw\Models\Teams;
+use Elabftw\Models\Users\Users;
 use Elabftw\Traits\ControllerUtilsTrait;
+use ReflectionClass;
 
 class DashboardControllerTest extends \PHPUnit\Framework\TestCase
 {
@@ -33,5 +37,29 @@ class DashboardControllerTest extends \PHPUnit\Framework\TestCase
             'Dashboard',
             $this->invokeProtected($this->makeWithoutConstructor(DashboardController::class), 'getPageTitle')
         );
+    }
+
+    public function testGetData(): void
+    {
+        $controller = $this->makeWithoutConstructor(DashboardController::class);
+        $app = new ReflectionClass(App::class)->newInstanceWithoutConstructor();
+        $users = new Users(1, 1);
+        $teams = new Teams($users, 1);
+        $this->injectInto($app, $teams, 'Teams');
+        $this->injectInto($app, $users, 'Users');
+        $this->injectInto($controller, $app, 'app');
+        $data = $this->invokeProtected($controller, 'getData');
+
+        $this->assertIsArray($data);
+        $this->assertArrayHasKey('pageTitle', $data);
+        $this->assertArrayHasKey('bookingsArr', $data);
+        $this->assertArrayHasKey('itemsStatusArr', $data);
+        $this->assertArrayHasKey('experimentsStatusArr', $data);
+        $this->assertArrayHasKey('itemsArr', $data);
+        $this->assertArrayHasKey('templatesArr', $data);
+        $this->assertArrayHasKey('usersArr', $data);
+        $this->assertArrayHasKey('visibilityArr', $data);
+        $this->assertIsArray($data['bookingsArr']);
+        $this->assertIsArray($data['itemsTemplatesArr']);
     }
 }

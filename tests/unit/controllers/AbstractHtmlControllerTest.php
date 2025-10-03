@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
- * @copyright 2024 Nicolas CARPi
+ * @author Moustapha <Deltablot>
+ * @copyright 2025 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
@@ -27,6 +28,6 @@ class AbstractHtmlControllerTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($ref->getMethod('getPageTitle')->isAbstract());
         $this->assertTrue($ref->getMethod('getTemplate')->isAbstract());
         $this->assertTrue($ref->getMethod('getData')->hasReturnType());
-        $this->assertSame('array', $ref->getMethod('getData')->getReturnType()->getName());
+        $this->assertSame('array', $ref->getMethod('getData')->getReturnType());
     }
 }

@@ -13,7 +13,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
+use Elabftw\Elabftw\App;
+use Elabftw\Models\Users\Users;
 use Elabftw\Traits\ControllerUtilsTrait;
+use ReflectionClass;
 
 class CompoundsControllerTest extends \PHPUnit\Framework\TestCase
 {
@@ -33,5 +36,21 @@ class CompoundsControllerTest extends \PHPUnit\Framework\TestCase
             'Compounds',
             $this->invokeProtected($this->makeWithoutConstructor(CompoundsController::class), 'getPageTitle')
         );
+    }
+
+    public function testGetData(): void
+    {
+        $controller = $this->makeWithoutConstructor(CompoundsController::class);
+        $app = new ReflectionClass(App::class)->newInstanceWithoutConstructor();
+        $users = new Users(1, 1);
+
+        $this->injectInto($app, $users, 'Users');
+        $this->injectInto($controller, $app, 'app');
+        $data = $this->invokeProtected($controller, 'getData');
+
+        $this->assertIsArray($data);
+        $this->assertArrayHasKey('pageTitle', $data);
+        $this->assertArrayHasKey('resourceCategoriesArr', $data);
+        $this->assertIsArray($data['resourceCategoriesArr']);
     }
 }

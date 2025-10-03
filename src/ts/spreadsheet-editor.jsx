@@ -31,7 +31,7 @@ if (document.getElementById('spreadsheetEditorRoot')) {
     const [data, setData] = useState([[]]);
     const [currentUploadId, setCurrentUploadId] = useState(0);
     const [replaceName, setReplaceName] = useState(null);
-    // loading button when action is performing
+    // loading state to prevent spamming save btn
     const [isSaving, setIsSaving] = useState(false);
 
     // refs that always have the latest values (for toolbar onclick)
@@ -136,7 +136,7 @@ if (document.getElementById('spreadsheetEditorRoot')) {
         // need to blank this property
         content: '',
         type: 'icon',
-        class: isSaving ? 'ml-2 fas fa-circle-notch fa-spin' : 'fas fa-floppy-disk',
+        class: 'ml-2 fas fa-floppy-disk',
         tooltip: i18next.t('save-attachment'),
         onclick: isSaving ? undefined : onSaveOrReplace,
       });

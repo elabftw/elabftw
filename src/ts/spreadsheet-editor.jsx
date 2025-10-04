@@ -153,7 +153,7 @@ function SpreadsheetEditor() {
 
   return (
     <>
-      <input hidden type='file' accept='.xlsx,.csv' onChange={handleImportFile} id='importFileInput' name='file' />
+      <input hidden type='file' accept='.xlsx,.csv,.ods' onChange={handleImportFile} id='importFileInput' name='file' />
       <Spreadsheet ref={spreadsheetRef} tabs={true} toolbar={buildToolbar}>
         <Worksheet data={data} minDimensions={[12,12]} />
       </Spreadsheet>

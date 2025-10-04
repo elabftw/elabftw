@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\AuditEvent\Export;
+use Elabftw\Elabftw\App;
 use Elabftw\Enums\Classification;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExportFormat;
@@ -40,8 +41,6 @@ use Elabftw\Models\Scheduler;
 use Elabftw\Models\Teams;
 use Elabftw\Services\MpdfProvider;
 use Elabftw\Services\MpdfQrProvider;
-use Monolog\Handler\ErrorLogHandler;
-use Monolog\Logger;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -195,7 +194,7 @@ final class MakeController extends AbstractController
 
     private function makePdf(): Response
     {
-        $log = (new Logger('elabftw'))->pushHandler(new ErrorLogHandler());
+        $log = App::getDefaultLogger();
         $classification = Classification::tryFrom($this->Request->query->getInt('classification', Classification::None->value)) ?? Classification::None;
         if (count($this->entityArr) === 1) {
             return (new MakePdf($log, $this->getMpdfProvider(), $this->requester, $this->entityArr, $this->shouldIncludeChangelog(), $classification))->getResponse();

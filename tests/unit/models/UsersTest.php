@@ -55,7 +55,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
 
     public function testAllowUntrustedLogin(): void
     {
-        $this->assertFalse($this->Users->allowUntrustedLogin());
+        $this->assertTrue($this->Users->allowUntrustedLogin());
         $this->assertTrue((new Users(2, 1))->allowUntrustedLogin());
     }
 
@@ -149,7 +149,14 @@ class UsersTest extends \PHPUnit\Framework\TestCase
 
     public function testReadAll(): void
     {
-        $this->assertIsArray($this->Users->readAll());
+        // read as Admin
+        $res = $this->Users->readAll();
+        $this->assertArrayHasKey('last_login', $res[0]);
+        // now as user
+        $user = $this->getUserInTeam(2);
+        $Users = new Users(null, null, $user);
+        $res = $Users->readAll();
+        $this->assertArrayNotHasKey('auth_service', $res[0]);
     }
 
     public function testIsAdminOf(): void

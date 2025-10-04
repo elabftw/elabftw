@@ -33,7 +33,7 @@ use function mb_substr;
 final class UserParams extends ContentParams
 {
     #[Override]
-    public function getContent(): string | int
+    public function getContent(): string | int | null
     {
         return match ($this->target) {
             // checked in update
@@ -70,6 +70,8 @@ final class UserParams extends ContentParams
             'inc_files_pdf',
             'is_sysadmin',
             'can_manage_users2teams',
+            'can_manage_compounds',
+            'can_manage_inventory_locations',
             'notif_comment_created_email',
             'notif_comment_created',
             'notif_event_deleted_email',
@@ -87,6 +89,7 @@ final class UserParams extends ContentParams
             'use_isodate',
             'use_markdown',
             'validated' => (string) Filter::toBinary($this->content),
+            'mfa_secret' => $this->getNullableString(),
             'lang' => (Language::tryFrom($this->content) ?? Language::EnglishGB)->value,
             'entrypoint' => (Entrypoint::tryFrom($this->asInt()) ?? Entrypoint::Dashboard)->value,
             'default_read', 'default_write' => $this->getCanJson(),

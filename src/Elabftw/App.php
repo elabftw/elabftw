@@ -26,7 +26,9 @@ use Elabftw\Models\Teams;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TwigTrait;
 use Exception;
+use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
@@ -49,7 +51,7 @@ final class App
 {
     use TwigTrait;
 
-    public const string INSTALLED_VERSION = '5.3.0-alpha3';
+    public const string INSTALLED_VERSION = '5.3.0';
 
     // this version format is used to compare with last_seen_version of users
     // major is untouched, and minor and patch are padded with one 0 each
@@ -69,11 +71,16 @@ final class App
         public Request $Request,
         public FlashBagAwareSessionInterface $Session,
         public Config $Config,
-        public Logger $Log,
+        public LoggerInterface $Log,
         public Users $Users,
         public bool $devMode = false,
         public bool $demoMode = false,
     ) {}
+
+    public static function getDefaultLogger(): LoggerInterface
+    {
+        return new Logger('elabftw')->pushHandler(new ErrorLogHandler());
+    }
 
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-//
     //     _                 _      //
@@ -118,7 +125,7 @@ final class App
 
             $this->loadUser(new AnonymousUser(
                 $this->Session->get('team'),
-                $this->getLang(),
+                Language::tryFrom($this->getLang()) ?? Language::EnglishGB,
             ));
         }
 

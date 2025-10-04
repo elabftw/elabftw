@@ -12,6 +12,7 @@ import deDE from './langs/de_DE';
 import elGR from './langs/el_GR';
 import enGB from './langs/en_GB';
 import esES from './langs/es_ES';
+import etEE from './langs/et_EE';
 import fiFI from './langs/fi_FI';
 import frFR from './langs/fr_FR';
 import idID from './langs/id_ID';
@@ -37,6 +38,7 @@ i18next.init({
     'el_GR',
     'en_GB',
     'es_ES',
+    'et_EE',
     'fi_FI',
     'fr_FR',
     'id_ID',
@@ -61,6 +63,7 @@ i18next.init({
     el_GR: elGR,
     en_GB: enGB,
     es_ES: esES,
+    et_EE: etEE,
     fi_FI: fiFI,
     fr_FR: frFR,
     id_ID: idID,
@@ -78,7 +81,11 @@ i18next.init({
     zh_CN: zhCN,
   },
 });
-const userPrefs = document.getElementById('user-prefs').dataset;
+const userPrefs = document.getElementById('user-prefs');
 // set the language for js translated strings
-i18next.changeLanguage(userPrefs.lang);
+let lang = 'en_GB';
+if (userPrefs) {
+  lang = userPrefs.dataset.lang;
+}
+i18next.changeLanguage(lang);
 export default i18next;

@@ -60,6 +60,8 @@ teams:
         api_key: apiKey4Test
         create_experiments: true
         create_items: true
+        can_manage_compounds: 1
+        can_manage_inventory_locations: 1
         user_preferences:
           orderby: lastchange
           cjk_fonts: 1
@@ -78,6 +80,12 @@ teams:
       - email: demo@elabftw.net
         password: testPassword
         create_experiments: true
+
+    user_groups:
+      - name: Super secret project
+        users: [1, 2, 3]
+      - name: Advanced microscopy users
+        users: [1, 2, 3]
 
     experiments_categories:
       - name: Project Crypto Cool
@@ -146,6 +154,10 @@ teams:
       - email: user1@demo.elabftw.net
         password: random
         create_experiments: true
+
+    user_groups:
+      - name: Level 3 lab users
+        users: [1, 3, 4]
 
     experiments_categories:
       - name: Molecular biology

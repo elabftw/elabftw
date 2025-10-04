@@ -1,0 +1,5910 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: elabftw\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: et\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.7\n"
+"X-Poedit-Mapping: php=gettext:PHP;html=twig\n"
+"X-Poedit-Basepath: ../../../..\n"
+"X-Poedit-SearchPath-0: src\n"
+"X-Poedit-SearchPath-1: web\n"
+"X-Poedit-SearchPathExcluded-0: web/assets\n"
+
+#: src/templates/show.html:195 src/templates/show.html:203
+msgid "Yes"
+msgstr "Jah"
+
+#: src/templates/show.html:196 src/templates/show.html:204
+msgid "No"
+msgstr "Ei"
+
+#: web/app/controllers/RegisterController.php:52
+msgid "A mandatory field is missing!"
+msgstr "Kohustuslik väli puudub!"
+
+#: src/templates/login-full.html:94 src/templates/register.html:67
+#: src/templates/sysconfig.html:917
+msgid "Password"
+msgstr "Parool"
+
+#: src/Elabftw/i18n4Js.php:78
+msgid "Firstname"
+msgstr "Eesnimi"
+
+#: src/Elabftw/i18n4Js.php:86
+msgid "Lastname"
+msgstr "Perekonnanimi"
+
+#: src/Elabftw/i18n4Js.php:66
+msgid "Email"
+msgstr "E-post"
+
+#: src/Controllers/ExperimentsController.php:46
+msgid "Experiment"
+msgid_plural "Experiments"
+msgstr[0] "Eksperiment"
+msgstr[1] "Eksperimendid"
+
+#: src/Enums/Scope.php:34 web/team.php:35
+msgid "Team"
+msgstr "Meeskond"
+
+#: src/templates/changelog-table.html:4
+#: src/templates/field-builder-modal.html:59 src/templates/pdf.html:27
+#: src/templates/show.html:449 src/templates/ucp.html:87
+msgid "Date"
+msgstr "Kuupäev"
+
+#: src/templates/create-new-item-modal.html:36
+#: src/templates/create-new-item-modal.html:47 src/templates/show.html:455
+#: src/templates/ucp.html:88
+msgid "Title"
+msgstr "Pealkiri"
+
+#: src/templates/pdf.html:39 src/templates/show.html:289
+#: src/templates/show.html:469
+msgid "Status"
+msgstr "Staatus"
+
+#: src/Elabftw/i18n4Js.php:62
+msgid "Edit"
+msgstr "Redigeeri"
+
+#: src/Elabftw/i18n4Js.php:120
+msgid "Save"
+msgstr "Salvesta"
+
+#: src/Elabftw/i18n4Js.php:122
+#: web/app/controllers/SortableAjaxController.php:46
+msgid "Saved"
+msgstr "Salvestatud"
+
+#: src/Elabftw/i18n4Js.php:50
+msgid "Cancel"
+msgstr "Tühista"
+
+#: src/templates/ucp.html:130 src/templates/ucp.html:518
+#: src/templates/ucp.html:529
+msgid "Action"
+msgstr "Tegevus"
+
+#: src/templates/ucp.html:141
+msgid "Shortcut"
+msgstr "Otsetee"
+
+#: src/templates/admin.html:141 src/templates/ask-title-modal.html:20
+#: src/templates/categories-status-index.macro.html:14
+#: src/templates/categories-status-index.macro.html:79
+#: src/templates/create-new-item-modal.html:94 src/templates/create-new.html:4
+#: src/templates/editusers.html:77 src/templates/export-modal.html:100
+#: src/templates/register.html:102 src/templates/sysconfig.html:23
+#: src/templates/ucp.html:132 src/templates/ucp.html:142
+msgid "Create"
+msgstr "Loo"
+
+#: src/templates/ucp.html:135 src/templates/ucp.html:154
+msgid "TODO list"
+msgstr "Ülesannete nimekiri"
+
+#: src/Elabftw/i18n4Js.php:102
+msgid "Name"
+msgstr "Nimi"
+
+#: src/templates/admin.html:8
+msgid "There are users waiting for validation of their account:"
+msgstr "Kasutajad ootavad oma konto valideerimist:"
+
+#: src/templates/admin.html:24 src/templates/admin.html:484
+#: src/templates/permissions-edit-modal.html:80 src/templates/sysconfig.html:43
+#: src/templates/sysconfig.html:66
+#: src/templates/view-permissions-details.html:23
+msgid "Users"
+msgstr "Kasutajad"
+
+#: src/templates/change-pass.html:31
+msgid "Save new password"
+msgstr "Salvesta uus parool"
+
+#: src/Elabftw/i18n4Js.php:68 src/Import/Eln.php:319
+#: src/Models/AbstractStatus.php:58 src/Models/Experiments.php:59
+#: src/Models/Items.php:62 src/Models/TeamGroups.php:51
+#: src/Models/Templates.php:53 src/Services/Filter.php:144
+msgid "Untitled"
+msgstr "Pealkirjata"
+
+#: src/Models/AbstractEntity.php:922
+msgid "You don't have the rights to lock/unlock this."
+msgstr "Sul pole õigust seda lukustada/avada."
+
+#: web/login.php:109
+msgid "Login"
+msgstr "Sisselogimine"
+
+#: src/templates/login-base.html:18
+msgid "Enter your email address"
+msgstr "Sisesta oma e-posti aadress"
+
+#: web/app/controllers/RegisterController.php:71
+msgid "Registration successful :)<br>Welcome to eLabFTW o/"
+msgstr "Registreerimine õnnestus :)<br>Tere tulemast eLabFTW-sse o/"
+
+#: src/templates/register.html:5
+msgid "go back to login page"
+msgstr "mine tagasi sisselogimislehele"
+
+#: src/templates/register.html:30
+msgid "Create your account"
+msgstr "Loo oma konto"
+
+#: src/templates/admin.html:454 src/templates/revisions.html:33
+#: src/templates/show.html:367
+msgid "Restore"
+msgstr "Taasta"
+
+#: src/Elabftw/i18n4Js.php:123
+msgid "Search"
+msgstr "Otsi"
+
+#: src/templates/show.html:211
+msgid "Unrated"
+msgstr "Hinnanguta"
+
+#: src/templates/show.html:333
+msgid "Sorry. I couldn't find anything :("
+msgstr "Vabandust. Ma ei leidnud midagi :("
+
+#: src/templates/sysconfig.html:41
+msgid "Server"
+msgstr "Server"
+
+#: src/templates/show.html:363 src/templates/sysconfig.html:49
+#: src/templates/view-edit-toolbar.html:52
+#: src/templates/view-edit-toolbar.html:76
+#: src/templates/view-edit-toolbar.html:214
+msgid "Timestamp"
+msgstr "Ajatempel"
+
+#: src/templates/sysconfig.html:46
+msgid "Security"
+msgstr "Turvalisus"
+
+#: src/templates/admin.html:51 src/templates/sysconfig.html:68
+#: src/templates/team.html:5 src/templates/team.html:19
+#: src/templates/team.html:22
+msgid "Members"
+msgstr "Liikmed"
+
+#: src/templates/sysconfig.html:450
+msgid "Number of allowed login attempts:"
+msgstr "Lubatud sisselogimiskatsete arv:"
+
+#: src/templates/sysconfig.html:453
+msgid "3 might be too few. See for yourself :)"
+msgstr "3 võib olla liiga vähe. Vaadake ise :)"
+
+#: src/templates/sysconfig.html:371
+msgid "Default is 587."
+msgstr "Vaikimisi on see 587."
+
+#: src/templates/sysconfig.html:381
+msgid "SMTP password"
+msgstr "SMTP parool"
+
+#: src/templates/ucp.html:5
+msgid "Account"
+msgstr "Konto"
+
+#: src/templates/ucp.html:48
+msgid "Preferences"
+msgstr "Eelistused"
+
+#: src/templates/export-modal.html:21
+msgid "Templates"
+msgstr "Mallid"
+
+#: src/templates/ucp.html:329
+msgid "Modify your password"
+msgstr "Muutke oma parooli"
+
+#: src/templates/change-pass.html:17
+msgid "New password"
+msgstr "Uus parool"
+
+#: src/templates/footer.html:59 src/templates/sysconfig.html:83
+#: src/templates/ucp.html:51
+msgid "Language"
+msgstr "Keel"
+
+#: src/templates/pdf.html:149 src/templates/view.html:197
+msgid "Unique eLabID:"
+msgstr "Unikaalne eLabID:"
+
+#: src/templates/view.html:160
+msgid "Comments"
+msgstr "Kommentaarid"
+
+#: src/Elabftw/i18n4Js.php:54
+msgid "Add a comment"
+msgstr "Lisa kommentaar"
+
+#: src/Elabftw/i18n4Js.php:91
+msgid "Delete this?"
+msgstr "Kustutada see?"
+
+#: src/templates/profile.html:60
+msgid "No statistics available yet."
+msgstr "Statistika pole veel saadaval."
+
+#: src/templates/show.html:76 src/templates/show.html:77
+msgid "Filter status"
+msgstr "Olek"
+
+#: src/templates/edit-tags.html:3 src/templates/pdf.html:30
+#: src/templates/show.html:96 src/templates/show.html:105
+#: src/templates/show.html:106 src/templates/show.html:474
+#: src/templates/view.html:82
+msgid "Tags"
+msgstr "Sildid"
+
+#: src/templates/admin.html:286 src/templates/admin.html:290
+#: src/templates/edit-tags.html:11 src/templates/show.html:406
+msgid "Add a tag"
+msgstr "Lisa silt"
+
+#: src/templates/links.html:37 src/templates/links.html:77
+#: src/templates/show.html:409
+msgid "Add a link"
+msgstr "Lisa link"
+
+#: web/ucp.php:114
+msgid "Settings"
+msgstr "Seaded"
+
+#: src/templates/head.html:230
+msgid "Logout"
+msgstr "Logi välja"
+
+#: src/templates/head.html:225
+msgid "Sysadmin panel"
+msgstr "Süsteemiadministraatori paneel"
+
+#: web/admin.php:113
+msgid "Admin panel"
+msgstr "Administraatori paneel"
+
+#: src/templates/footer.html:35
+msgid "Powered by"
+msgstr "Toetab"
+
+#: src/Elabftw/i18n4Js.php:130
+msgid "Teams"
+msgstr "Meeskonnad"
+
+#: src/templates/ts-config.html:46
+msgid "URL for external timestamping service:"
+msgstr "Välise ajatempliteenuse URL:"
+
+#: web/app/controllers/RegisterController.php:69
+msgid "Registration successful :)<br>Your account must now be validated by an admin.<br>You will receive an email when it is done."
+msgstr "Registreerimine õnnestus :)<br>Teie konto peab nüüd administraatori poolt valideerima.<br>Kui see on tehtud, saate meili."
+
+#: src/templates/pdf.html:105 src/templates/profile.html:183
+#: src/templates/uploads.html:27
+msgid "Attached file"
+msgid_plural "Attached files"
+msgstr[0] "Lisatud fail"
+msgstr[1] "Lisatud failid"
+
+#: src/Elabftw/i18n4Js.php:60
+msgid "Drop files here to upload"
+msgstr "Lohista failid siia üleslaadimiseks"
+
+#: src/Models/Revisions.php:86
+msgid "You cannot restore a revision of a locked item!"
+msgstr "Lukustatud üksuse redaktsiooni ei saa taastada!"
+
+#: src/templates/ts-config.html:49
+msgid "This should be the URL used for %sRFC 3161%s-compliant timestamping requests."
+msgstr "See peaks olema URL, mida kasutatakse %sRFC 3161%s-ühilduvate ajatemplipäringute jaoks."
+
+#: src/templates/sysconfig.html:29
+msgid "Installed version:"
+msgstr "Paigaldatud versioon:"
+
+#: src/templates/ucp.html:230
+msgid "Miscellaneous"
+msgstr "Muu"
+
+#: src/templates/footer.html:40
+msgid "seconds"
+msgstr "sekundid"
+
+#: src/templates/profile.html:128 src/templates/profile.html:129
+#: src/templates/show.html:280 src/templates/show.html:282
+#: src/templates/ucp.html:95
+msgid "Sort"
+msgstr "Sorteeri"
+
+#: src/templates/login-full.html:107
+msgid "Remember me"
+msgstr "Pea mind meeles"
+
+#: web/app/controllers/ResetPasswordController.php:121
+msgid "New password inserted. You can now login."
+msgstr "Uus parool sisestatud. Nüüd saate sisse logida."
+
+#: src/templates/view-edit-toolbar.html:263
+msgid "Lock/Unlock item"
+msgstr "Lukusta/ava üksus"
+
+#: src/templates/sysconfig.html:410 src/templates/sysconfig.html:411
+msgid "Send a test email"
+msgstr "Saada testmeil"
+
+#: src/templates/bookings-email-modal.html:27
+#: src/templates/onboarding-email-modal.html:20
+#: src/templates/sysconfig.html:350 src/templates/sysconfig.html:417
+#: src/templates/team.html:76
+msgid "Send"
+msgstr "Saada"
+
+#: src/templates/pdf.html:36 src/templates/show.html:287
+#: src/templates/show.html:463 src/templates/sysconfig.html:1080
+#: src/templates/ucp.html:86
+msgid "Category"
+msgstr "Kategooria"
+
+#: src/templates/show.html:479
+msgid "Rating"
+msgstr "Hinnang"
+
+#: src/templates/ucp.html:99
+msgid "DESC"
+msgstr "Kahanevalt"
+
+#: src/templates/ucp.html:98
+msgid "ASC"
+msgstr "Kasvavalt"
+
+#: src/templates/categories-status-index.macro.html:38
+#: src/templates/categories-status-index.macro.html:69
+#: src/templates/edit.html:178
+msgid "Color"
+msgstr "Värv"
+
+#: src/Elabftw/i18n4Js.php:57
+msgid "Delete"
+msgstr "Kustuta"
+
+#: src/templates/sysconfig.html:328 src/templates/sysconfig.html:329
+msgid "Send a Mass Email"
+msgstr "Saada massmeil"
+
+#: src/templates/sysconfig.html:344
+msgid "Email Subject"
+msgstr "E-kirja teema"
+
+#: src/templates/sysconfig.html:347
+msgid "Email Body"
+msgstr "E-kirja sisu"
+
+#: src/Enums/Messages.php:43
+msgid "An error occurred!"
+msgstr "Tekkis viga!"
+
+#: src/templates/uploads.html:193
+msgid "Stick"
+msgstr "Pulk"
+
+#: src/templates/uploads.html:175
+msgid "Style"
+msgstr "Stiil"
+
+#: src/Elabftw/i18n4Js.php:118 src/Exceptions/ResourceNotFoundException.php:25
+msgid "Nothing to show with this id"
+msgstr "Selle ID-ga pole midagi näidata"
+
+#: src/templates/changelog.html:7 src/templates/revisions.html:10
+msgid "Go back"
+msgstr "Mine tagasi"
+
+#: web/scheduler.php:52
+msgid "Scheduler"
+msgstr "Broneeri"
+
+#: src/templates/scheduler.html:217
+msgid "No bookable items."
+msgstr "Broneeritavaid esemeid pole."
+
+#: src/templates/ucp.html:64
+msgid "Display"
+msgstr "Ekraan"
+
+#: src/templates/ucp.html:125
+msgid "Keyboard Shortcuts"
+msgstr "Kiirklahvid"
+
+#: src/templates/admin.html:12
+msgid "Validate"
+msgstr "Valideeri"
+
+#: src/templates/profile.html:41 src/templates/view-permissions-details.html:14
+msgid "Groups"
+msgstr "Grupid"
+
+#: src/templates/admin.html:62
+msgid "Configure your Team"
+msgstr "Meeskonna seadistamine"
+
+#: src/templates/change-pass.html:9
+msgid "characters minimum"
+msgstr "tähemärkide miinimum"
+
+#: src/templates/admin.html:490 src/templates/compounds-view-edit.html:107
+#: src/templates/favtags-panel.html:24 src/templates/links.html:39
+#: src/templates/links.html:79 src/templates/permissions-edit-modal.html:93
+#: src/templates/todolist-panel.html:8 src/templates/todolist-panel.html:10
+#: src/templates/todolist-panel.html:11
+msgid "Add"
+msgstr "Lisa"
+
+#: src/templates/admin.html:47 src/templates/sysconfig.html:64
+msgid "Usage Statistics"
+msgstr "Kasutusstatistika"
+
+#: src/templates/sysconfig.html:204
+msgid "Operating System"
+msgstr "Operatsioonisüsteem"
+
+#: src/templates/sysconfig.html:206
+msgid "PHP Version"
+msgstr "PHP versioon"
+
+#: src/templates/sysconfig.html:209
+msgid "Largest integer supported"
+msgstr "Suurim toetatud täisarv"
+
+#: src/templates/sysconfig.html:210
+msgid "PHP configuration directory"
+msgstr "PHP konfiguratsioonikataloog"
+
+#: src/templates/sysconfig.html:584
+msgid "Timestamping Configuration"
+msgstr "Ajatempli konfiguratsioon"
+
+#: src/templates/sysconfig.html:425
+msgid "Security Settings"
+msgstr "Turvaseaded"
+
+#: src/templates/sysconfig.html:358
+msgid "E-mail Settings"
+msgstr "E-posti seaded"
+
+#: src/templates/footer.html:42
+msgid "Memory usage:"
+msgstr "Mälukasutus:"
+
+#: src/templates/footer.html:43
+msgid "bytes"
+msgstr "baidid"
+
+#: src/templates/login-full.html:144
+msgid "Login through your institution"
+msgstr "Logi sisse oma asutuse kaudu"
+
+#: src/templates/ucp.html:504
+msgid "Generate an API Key"
+msgstr "API-võtme genereerimine"
+
+#: src/templates/duplicate-modal.html:34
+#: src/templates/view-edit-toolbar.html:185
+msgid "Duplicate"
+msgstr "Dubleeri"
+
+#: src/templates/show-item.html:98 src/templates/show.html:459
+#: src/templates/view.html:116
+msgid "Next step"
+msgstr "Järgmine samm"
+
+#: src/templates/steps-edit.html:81 src/templates/steps-edit.html:83
+#: src/templates/steps-edit.html:85
+msgid "Add a step"
+msgstr "Lisa samm"
+
+#: src/templates/edit.html:169
+msgid "Draw something"
+msgstr "Joonista midagi"
+
+#: src/Elabftw/i18n4Js.php:51
+msgid "Clear"
+msgstr "Tühjenda"
+
+#: src/templates/sysconfig.html:391 src/templates/sysconfig.html:927
+#: src/templates/ts-config.html:37
+msgid "A password is already set."
+msgstr "Parool on juba määratud."
+
+#: src/templates/ucp.html:97
+msgid "Use default"
+msgstr "Kasuta vaikeseadet"
+
+#: src/templates/pdf.html:129 src/templates/scheduler.html:40
+#: src/templates/team.html:102 src/templates/team.html:125
+#: src/templates/ucp.html:89 src/templates/uploads.html:64
+msgid "Comment"
+msgid_plural "Comments"
+msgstr[0] "Kommentaar"
+msgstr[1] "Kommentaarid"
+
+#: src/templates/ucp.html:164
+msgid "Only lowercase letters are allowed."
+msgstr "Lubatud on ainult väiketähed."
+
+#: src/templates/ucp.html:234
+msgid "Disable the rich text editor and write Markdown directly"
+msgstr "Keela rikkaliku teksti redaktor ja kirjuta otse Markdowni"
+
+#: src/templates/ucp.html:252
+msgid "Default visibility for new experiments"
+msgstr "Uute eksperimentide vaikenähtavus"
+
+#: src/Enums/Usergroup.php:26
+msgid "User"
+msgstr "Kasutaja"
+
+#: src/templates/sysconfig.html:97
+msgid "If you are behind a firewall/proxy, enter the address here. Example: http://proxy.example.com:3128"
+msgstr "Kui asute tulemüüri/proksi taga, sisestage aadress siia. Näide: http://proxy.example.com:3128"
+
+#: src/templates/back-to-previous.html:7 src/templates/back-to-previous.html:8
+msgid "Back to listing"
+msgstr "Tagasi loendisse"
+
+#: src/templates/show.html:250
+msgid "Select all"
+msgstr "Vali kõik"
+
+#: src/templates/show.html:253
+msgid "Invert selection"
+msgstr "Pööra valik"
+
+#: src/templates/admin.html:444 src/templates/show.html:347
+msgid "With selected:"
+msgstr "Valitud:"
+
+#: src/templates/show.html:382 src/templates/show.html:384
+msgid "Change status"
+msgstr "Muuda staatust"
+
+#: src/Models/Uploads.php:318
+msgid "Please make sure to remove any reference to this file in the body!"
+msgstr "Palun eemaldage kindlasti kõik viited sellele failile sisutekstist!"
+
+#: src/templates/upload-dropdown-menu.html:13
+#: src/templates/upload-dropdown-menu.html:20
+#: src/templates/upload-dropdown-menu.html:27
+#: src/templates/upload-dropdown-menu.html:34
+msgid "Insert in text at cursor position"
+msgstr "Lisa tekst kursori asukohta"
+
+#: src/Elabftw/i18n4Js.php:43
+msgid "Archive user"
+msgstr "Arhiivi kasutaja"
+
+#: src/templates/login-full.html:166
+msgid "Login as anonymous visitor"
+msgstr "Logi sisse anonüümse külastajana"
+
+#: src/templates/ucp.html:179
+msgid "PDF configuration"
+msgstr "PDF-i konfiguratsioon"
+
+#: src/templates/ucp.html:182
+msgid "Select paper format for PDF"
+msgstr "Valige PDF-i jaoks paberivorming"
+
+#: src/templates/upload-dropdown-menu.html:72 src/templates/uploads.html:107
+msgid "Upload a new version of this file"
+msgstr "Laadi üles selle faili uus versioon"
+
+#: src/templates/uploads.html:181
+msgid "Cartoon (proteins only)"
+msgstr "Koomiksvaade (ainult valgud)"
+
+#: src/templates/uploads.html:184
+msgid "Cross"
+msgstr "Rist"
+
+#: src/templates/uploads.html:187
+msgid "Line"
+msgstr "Joon"
+
+#: src/templates/uploads.html:190
+msgid "Sphere"
+msgstr "Kera"
+
+#: src/templates/sysconfig.html:211
+msgid "Maximum file size for uploaded files"
+msgstr "Üleslaaditavate failide maksimaalne suurus"
+
+#: src/templates/sysconfig.html:213
+msgid "Timezone"
+msgstr "Ajavöönd"
+
+#: src/templates/json-editor.html:48 src/templates/profile.html:6
+#: src/templates/sysconfig.html:201 src/templates/sysconfig.html:526
+msgid "Information"
+msgstr "Teave"
+
+#: src/templates/steps-edit.html:26 src/templates/steps-view.html:12
+msgid "completed"
+msgstr "lõpetatud"
+
+#: src/templates/view.html:165
+msgid "commented"
+msgstr "kommenteeris"
+
+#: src/templates/about-elabftw-modal.html:7
+#: src/templates/about-elabftw-modal.html:20
+#: src/templates/add-container-modal.html:7
+#: src/templates/add-container-modal.html:42
+#: src/templates/ask-title-modal.html:7 src/templates/base.html:56
+#: src/templates/base.html:63 src/templates/booking-params-modal.html:7
+#: src/templates/booking-params-modal.html:65
+#: src/templates/bookings-email-modal.html:6
+#: src/templates/categories-status-index.macro.html:57
+#: src/templates/categories-status-index.macro.html:78
+#: src/templates/create-compound-modal.html:8
+#: src/templates/create-new-item-modal.html:9
+#: src/templates/create-resource-from-compound-modal.html:7
+#: src/templates/duplicate-modal.html:7
+#: src/templates/edit-compound-modal.html:41
+#: src/templates/edit-user-modal.html:9 src/templates/export-menu.html:7
+#: src/templates/export-menu.html:28 src/templates/export-menu.html:62
+#: src/templates/export-modal.html:7 src/templates/export-modal.html:99
+#: src/templates/favtags-panel.html:2 src/templates/field-builder-modal.html:11
+#: src/templates/field-builder-modal.html:161
+#: src/templates/field-builder-modal.html:175
+#: src/templates/field-builder-modal.html:209 src/templates/footer.html:54
+#: src/templates/idp-modal.html:7 src/templates/import-pubchem-modal.html:7
+#: src/templates/import-pubchem-modal.html:56 src/templates/login-base.html:11
+#: src/templates/login-base.html:25 src/templates/onboarding-email-modal.html:6
+#: src/templates/ownership-transfer-modal.html:7
+#: src/templates/ownership-transfer-modal.html:21
+#: src/templates/permissions-edit-modal.html:30
+#: src/templates/permissions-edit-modal.html:116
+#: src/templates/procurement-params-modal.html:7
+#: src/templates/procurement-params-modal.html:47
+#: src/templates/register.html:14 src/templates/register.html:22
+#: src/templates/scheduler.html:10 src/templates/scheduler.html:23
+#: src/templates/scheduler.html:34 src/templates/scheduler.html:117
+#: src/templates/scheduler.html:181 src/templates/scheduler.html:201
+#: src/templates/search-help-modal.html:6
+#: src/templates/search-help-modal.html:227 src/templates/sysconfig.html:13
+#: src/templates/todolist-panel.html:2 src/templates/ucp.html:21
+#: src/templates/uploads.html:8 src/templates/uploads.html:16
+#: src/templates/view-edit-toolbar.html:7
+#: src/templates/view-edit-toolbar.html:28
+#: src/templates/view-edit-toolbar.html:41
+#: src/templates/view-edit-toolbar.html:64
+#: src/templates/view-edit-toolbar.html:88
+#: src/templates/view-edit-toolbar.html:138
+msgid "Close"
+msgstr "Sulge"
+
+#: src/templates/head.html:217 src/templates/todolist-panel.html:4
+msgid "Todolist"
+msgstr "Ülesannete nimekiri"
+
+#: src/Elabftw/i18n4Js.php:93
+msgid "Import"
+msgstr "Impordi"
+
+#: src/templates/admin.html:26
+msgid "Tag manager"
+msgstr "Sildihaldur"
+
+#: src/templates/admin.html:297
+msgid "Manage tags of the team"
+msgstr "Meeskonna siltide haldamine"
+
+#: src/templates/show.html:210
+msgid "Select number of stars"
+msgstr "Valige tähtede arv"
+
+#: src/templates/login-full.html:12 src/templates/login-full.html:14
+#: src/templates/login-full.html:35 src/templates/login-full.html:37
+#: src/templates/login-full.html:172 src/templates/login-full.html:175
+#: src/templates/register.html:44 src/templates/register.html:45
+msgid "Select a team"
+msgstr "Valige meeskond"
+
+#: src/templates/register.html:13
+msgid "Privacy policy"
+msgstr "Privaatsuspoliitika"
+
+#: src/templates/admin.html:58
+msgid "Generate report"
+msgstr "Aruande genereerimine"
+
+#: src/templates/sysconfig.html:157
+msgid "This allows search engines to crawl the site. Visitors will be automatically logged in in the specified team."
+msgstr "See lubab otsingumootoritel saiti indekseerida. Külastajad logitakse automaatselt määratud meeskonda."
+
+#: src/templates/sysconfig.html:167
+msgid "This has no effect if open science mode is disabled."
+msgstr "Sellel pole mingit mõju, kui avatud teaduse režiim on keelatud."
+
+#: src/templates/sysconfig.html:357
+msgid "Without a valid way to send emails, users won't be able to reset their password. It is recommended to create a specific %ssmtp2go.com%s account and add the information here."
+msgstr "Ilma toimiva e-posti saatmise viisita ei saa kasutajad parooli lähtestada. Soovitatav on luua eraldi %ssmtp2go.com%s konto ja lisada andmed siia."
+
+#: src/templates/sysconfig.html:502
+msgid "Note: the text below is a template and must be edited and saved."
+msgstr "Märkus: allolev tekst on mall ja seda tuleb muuta ning salvestada."
+
+#: src/templates/edit-user-modal.html:16
+msgid "User ID"
+msgstr "Kasutaja ID"
+
+#: src/templates/edit-user-modal.html:114
+msgid "Delete user"
+msgstr "Kustuta kasutaja"
+
+#: src/templates/login-full.html:153
+msgid "Select an identity provider"
+msgstr "Valige identiteedi pakkuja"
+
+#: src/Elabftw/i18n4Js.php:69
+msgid "The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?"
+msgstr "Valitud üksus(ed) ja kõik nendega seotud andmed kustutatakse jäädavalt. Seda ei saa tagasi võtta. Kas olete kindel?"
+
+#: src/Elabftw/i18n4Js.php:129
+msgid "Delete this tag?"
+msgstr "Kas kustutada see silt?"
+
+#: src/templates/revisions.html:30 src/templates/show-item.html:84
+msgid "by"
+msgstr "kõrval"
+
+#: src/templates/scheduler.html:180 src/templates/view-edit-toolbar.html:192
+msgid "Book item"
+msgstr "Broneeri üksus"
+
+#: src/templates/ucp.html:310
+msgid "Enter your password to edit your profile."
+msgstr "Profiili muutmiseks sisestage oma parool."
+
+#: src/templates/ucp.html:6
+msgid "API keys"
+msgstr "API-võtmed"
+
+#: src/templates/ucp.html:509
+msgid "Existing keys"
+msgstr "Olemasolevad võtmed"
+
+#: src/templates/edit.html:126 src/templates/ucp.html:495
+#: src/templates/ucp.html:515 src/templates/ucp.html:526
+#: src/templates/view.html:152
+msgid "Permissions"
+msgstr "Õigused"
+
+#: src/templates/profile.html:121 src/templates/profile.html:148
+#: src/templates/profile.html:157 src/templates/sysconfig.html:238
+#: src/templates/ucp.html:516 src/templates/ucp.html:527
+#: src/templates/uploads.html:65
+msgid "Creation date"
+msgstr "Loomise kuupäev"
+
+#: src/templates/ucp.html:498 src/templates/ucp.html:526
+msgid "Read/Write"
+msgstr "Loetav/kirjutatav"
+
+#: src/templates/ucp.html:497 src/templates/ucp.html:526
+msgid "Read Only"
+msgstr "Kirjutuskaitstud"
+
+#: src/templates/ucp.html:473
+msgid "Create new key"
+msgstr "Loo uus võti"
+
+#: src/templates/team.html:18
+msgid "You belong to the %s team."
+msgstr "Sa kuulud %s meeskonda."
+
+#: src/templates/bookings-email-modal.html:19
+#: src/templates/onboarding-email.html:13
+#: src/templates/onboarding-email.html:56 src/templates/team.html:70
+msgid "Subject"
+msgstr "Teema"
+
+#: src/templates/onboarding-email.html:25
+#: src/templates/onboarding-email.html:68 src/templates/sysconfig.html:1082
+#: src/templates/team.html:72
+msgid "Content"
+msgstr "Sisu"
+
+#: web/app/controllers/TeamController.php:65
+msgid "Email sent to %d users"
+msgstr "E-kiri saadeti %d kasutajatele"
+
+#: web/app/controllers/RegisterController.php:34
+msgid "Registration is disabled."
+msgstr "Registreerimine on keelatud."
+
+#: web/app/controllers/ResetPasswordController.php:60
+msgid "Email provided is invalid."
+msgstr "Esitatud e-posti aadress on kehtetu."
+
+#: src/Params/ContentParams.php:44 src/Params/StepParams.php:39
+#: src/Params/TagParam.php:35
+msgid "Input is too short! (minimum: %d)"
+msgstr "Sisend on liiga lühike! (miinimum: %d)"
+
+#: src/Models/AbstractEntity.php:939
+msgid "This experiment was locked by %s. You don't have the rights to unlock this."
+msgstr "Selle eksperimendi lukustas %s. Sul pole õigusi seda avada."
+
+#: src/Elabftw/i18n4Js.php:136
+msgid "Unarchive user"
+msgstr "Kasutaja arhiivist eemaldamine"
+
+#: src/templates/upload-dropdown-menu.html:51
+msgid "Annotate this image"
+msgstr "Lisa sellele pildile märkused"
+
+#: src/templates/admin.html:66 src/templates/sysconfig.html:294
+msgid "Announcement"
+msgstr "Teadaanne"
+
+#: src/templates/admin.html:69 src/templates/sysconfig.html:296
+msgid "The following text will be displayed to all users on all pages while it's active."
+msgstr "Järgnev tekst kuvatakse kõigile kasutajatele kõigil lehtedel, kui see on aktiivne."
+
+#: src/templates/pdf.html:93 src/templates/steps-edit.html:2
+#: src/templates/steps-view.html:4
+msgid "Steps"
+msgstr "Sammud"
+
+#: src/templates/profile.html:135 src/templates/profile.html:136
+#: src/templates/show.html:306 src/templates/show.html:308
+msgid "Results per page"
+msgstr "Tulemused lehe kohta"
+
+#: src/templates/edit.html:185
+msgid "Stroke width"
+msgstr "Joone laius"
+
+#: src/templates/edit.html:192
+msgid "Eraser"
+msgstr "Kustutuskumm"
+
+#: src/Elabftw/i18n4Js.php:127
+msgid "Delete this step?"
+msgstr "Kas kustutada see samm?"
+
+#: src/Elabftw/i18n4Js.php:98
+msgid "Delete this link?"
+msgstr "Kas kustutada see link?"
+
+#: src/templates/json-editor.html:2 src/templates/json-editor.html:4
+msgid "JSON Editor"
+msgstr "JSON-redaktor"
+
+#: src/templates/create-new-item-modal.html:41 src/templates/show-item.html:3
+msgid "Create experiment from template"
+msgstr "Loo eksperiment malli põhjal"
+
+#: src/templates/admin.html:488 src/templates/permissions-edit-modal.html:91
+msgid "Add user"
+msgstr "Lisa kasutaja"
+
+#: src/templates/storage-list.html:5
+msgid "Expand all"
+msgstr "Laienda kõiki"
+
+#: src/templates/head.html:178
+msgid "Clear all"
+msgstr "Tühjenda kõik"
+
+#: src/templates/sysconfig.html:442
+msgid "Enforce a domain name for emails"
+msgstr "Domeeninime jõustamine meilidele"
+
+#: src/templates/sysconfig.html:445
+msgid "Only email addresses at this domain will be allowed to register an account."
+msgstr "Konto registreerimiseks on lubatud ainult selle domeeni e-posti aadressid."
+
+#: src/templates/editusers.html:26
+msgid "Add account"
+msgstr "Lisa konto"
+
+#: src/templates/scheduler.html:33
+msgid "Edit event"
+msgstr "Muuda sündmust"
+
+#: src/templates/scheduler.html:61 src/templates/scheduler.html:77
+msgid "Unbind"
+msgstr "Vabasta sidumine"
+
+#: src/templates/scheduler.html:59
+msgid "Bind an experiment"
+msgstr "Eksperimendi sidumine"
+
+#: src/templates/scheduler.html:68 src/templates/scheduler.html:84
+msgid "Attach"
+msgstr "Lisanda"
+
+#: src/templates/upload-dropdown-menu.html:58
+msgid "Load into JSON Editor"
+msgstr "Laadi JSON-redaktorisse"
+
+#: src/templates/ucp.html:265
+msgid "Default write permission for new experiments"
+msgstr "Uute eksperimentide vaikekirjutusõigus"
+
+#: src/templates/register.html:60
+msgid "Only emails @%s are authorized to register"
+msgstr "Registreeruda saavad ainult e-posti aadressid @%s"
+
+#: src/Services/Check.php:50 src/Services/PasswordValidator.php:32
+msgid "Password must contain at least %d characters."
+msgstr "Parool peab sisaldama vähemalt %d tähemärki."
+
+#: src/templates/steps-edit.html:30 src/templates/ucp.html:427
+#: src/templates/upload-dropdown-menu.html:3
+#: src/templates/view-edit-toolbar.html:281
+msgid "More options"
+msgstr "Rohkem valikuid"
+
+#: src/templates/login-base.html:10
+msgid "Reset your password"
+msgstr "Lähtesta oma parool"
+
+#: src/templates/login-base.html:20
+msgid "Send reset link"
+msgstr "Saada lähtestamise link"
+
+#: src/templates/login-full.html:90
+msgid "Login to your account"
+msgstr "Logi sisse oma kontole"
+
+#: src/templates/login-full.html:112
+msgid "Forgot password?"
+msgstr "Unustasid parooli?"
+
+#: src/templates/login-full.html:137
+msgid "Don't have an account? %sRegister%s now!"
+msgstr "Sul pole kontot? %sRegistreeru%s kohe!"
+
+#: src/templates/login-full.html:65
+msgid "Your account is linked to several teams. Select in which team you want to log in"
+msgstr "Sinu konto on seotud mitme meeskonnaga. Vali, millises meeskonnas soovid sisse logida."
+
+#: src/Auth/Demo.php:58 src/Auth/Demo.php:69 src/Auth/Local.php:57
+#: src/Auth/Local.php:144 src/Controllers/LoginController.php:218
+#: src/Exceptions/InvalidCredentialsException.php:24
+msgid "Invalid email/password combination."
+msgstr "Kehtetu e-posti aadressi/parooli kombinatsioon."
+
+#: src/Elabftw/i18n4Js.php:41
+msgid "Add team"
+msgstr "Lisa meeskond"
+
+#: src/Exceptions/InvalidCsrfTokenException.php:24 web/login.php:103
+msgid "Your session expired."
+msgstr "Teie seanss aegus."
+
+#: src/templates/footer.html:6
+msgid "Code repository on GitHub"
+msgstr "Koodihoidla GitHubis"
+
+#: src/templates/footer.html:10
+msgid "Join the discussion on Gitter"
+msgstr "Liitu aruteluga Gitteris"
+
+#: src/templates/sysconfig.html:152
+msgid "Registration and authentication configuration"
+msgstr "Registreerimise ja autentimise konfiguratsioon"
+
+#: src/Elabftw/i18n4Js.php:75
+msgid "Export"
+msgstr "Ekspordi"
+
+#: web/app/controllers/ResetPasswordController.php:84 web/change-pass.php:54
+msgid "Reset password"
+msgstr "Parooli lähtestamine"
+
+#: web/register.php:54
+msgid "Register"
+msgstr "Registreeru"
+
+#: web/register.php:34
+msgid "Please %slogout%s before you register another account."
+msgstr "Palun %slogi välja%s enne uue konto registreerimist."
+
+#: web/register.php:42
+msgid "No local account creation is allowed!"
+msgstr "Kohaliku konto loomine pole lubatud!"
+
+#: web/profile.php:64
+msgid "Profile"
+msgstr "Profiil"
+
+#: web/revisions.php:44
+msgid "Revisions"
+msgstr "Parandused"
+
+#: src/templates/ucp.html:85
+msgid "Last modified"
+msgstr "Viimati muudetud"
+
+#: src/templates/register.html:94
+msgid "I agree with the %sPrivacy Policy%s"
+msgstr "Nõustun privaatsuspoliitikaga %s"
+
+#: src/templates/edit.html:82
+msgid "Switch editor"
+msgstr "Redaktori vahetamine"
+
+#: src/templates/related-snippet.html:6
+msgid "Related experiments"
+msgstr "Seotud eksperimendid"
+
+#: src/templates/view-edit-toolbar.html:172
+msgid "View mode"
+msgstr "Vaaterežiim"
+
+#: src/templates/link-view-one.html:22 src/templates/revisions.html:27
+#: src/templates/show-item-table.html:28 src/templates/show-item.html:134
+msgid "Toggle content"
+msgstr "Kuva/peida sisu"
+
+#: src/templates/sysconfig.html:53
+msgid "External auth"
+msgstr "Väline autentimine"
+
+#: src/templates/sysconfig.html:127
+msgid "Setting this to a low value will help keeping the database size small. Setting this to 0 will allow infinite number of revisions stored."
+msgstr "Selle väärtuse madal määramine aitab andmebaasi suurust väikesena hoida. Selle väärtuse 0 määramine võimaldab salvestada lõpmatu arvu parandusi."
+
+#: src/templates/sysconfig.html:996
+msgid "External authentication mapping"
+msgstr "Välise autentimise kaardistamine"
+
+#: src/templates/compounds-view-edit.html:2 src/templates/edit.html:126
+#: src/templates/related-snippet.html:6 src/templates/related-snippet.html:23
+#: src/templates/steps-view.html:4 src/templates/storage-view-edit.html:4
+#: src/templates/todolist-panel.html:4 src/templates/todolist-panel.html:38
+#: src/templates/todolist-panel.html:45 src/templates/uploads.html:26
+#: src/templates/view.html:136 src/templates/view.html:152
+#: src/templates/view.html:160
+msgid "Toggle visibility"
+msgstr "Kuva/peida nähtavus"
+
+#: src/templates/toggle-pin.html:6
+msgid "Toggle pin"
+msgstr "Kinnita/lahti"
+
+#: src/templates/view.html:194
+msgid "Last modified on %s"
+msgstr "Viimati muudetud %s"
+
+#: src/Elabftw/i18n4Js.php:138
+msgid "File comment"
+msgstr "Faili kommentaar"
+
+#: src/Models/Notifications/SelfNeedValidation.php:33
+msgid "Hi. Your account has been created but it is currently inactive (you cannot log in). The team admin has been notified and will validate your account. You will receive an email when it is done."
+msgstr "Tere. Teie konto on loodud, kuid see on hetkel mitteaktiivne (te ei saa sisse logida). Meeskonna administraatorit on teavitatud ja ta valideerib teie konto. Saate meili, kui see on tehtud."
+
+#: src/templates/editusers.html:28
+msgid "Note: new user will need to use the \"Forgot password\" button on the login page to set a password."
+msgstr "Märkus: uus kasutaja peab parooli määramiseks kasutama sisselogimislehel nuppu „Unustasin parooli”."
+
+#: src/templates/sysconfig.html:446
+msgid "You can add several domains by separating them with a comma."
+msgstr "Saate lisada mitu domeeni, eraldades need komaga."
+
+#: src/templates/sysconfig.html:1001
+msgid "Remote user"
+msgstr "Kaugkasutaja"
+
+#: src/templates/sysconfig.html:1032
+msgid "Logout URL"
+msgstr "Väljalogimise URL"
+
+#: src/templates/edit-user-modal.html:79
+msgid "Go"
+msgstr "Mine"
+
+#: src/templates/todolist-panel.html:23
+msgid "Unfinished steps"
+msgstr "Lõpetamata sammud"
+
+#: src/Elabftw/i18n4Js.php:112
+msgid "Please wait…"
+msgstr "Palun oodake…"
+
+#: src/templates/json-editor.html:17 src/templates/profile.html:180
+msgid "Import from file"
+msgstr "Impordi failist"
+
+#: src/Elabftw/i18n4Js.php:77
+msgid "Filename"
+msgstr "Failinimi"
+
+#: src/Elabftw/i18n4Js.php:117
+msgid "Enter name of the file"
+msgstr "Sisesta faili nimi"
+
+#: web/login.php:64
+msgid "Two Factor Authentication"
+msgstr "Kahefaktoriline autentimine"
+
+#: src/templates/mfa.html:60
+msgid "Verify"
+msgstr "Kinnita"
+
+#: src/templates/ucp.html:76
+msgid "Item list (default)"
+msgstr "Üksuste loend (vaikimisi)"
+
+#: src/templates/ucp.html:77
+msgid "Tabular"
+msgstr "Tabeliline"
+
+#: src/templates/sysconfig.html:877
+msgid "Toggle LDAP login"
+msgstr "Luba/keela LDAP-sisselogimine"
+
+#: src/templates/sysconfig.html:888
+msgid "LDAP Host"
+msgstr "LDAP-host"
+
+#: src/templates/sysconfig.html:895
+msgid "LDAP Port"
+msgstr "LDAP-port"
+
+#: src/templates/sysconfig.html:898
+msgid "Default: 389 LDAPS: 636"
+msgstr "Vaikimisi: 389 LDAPS: 636"
+
+#: src/templates/sysconfig.html:910
+msgid "Username"
+msgstr "Kasutajanimi"
+
+#: src/templates/sysconfig.html:901
+msgid "Use TLS"
+msgstr "Kasuta TLS-i"
+
+#: src/templates/login-full.html:80
+msgid "You are already authenticated"
+msgstr "Oled juba autentitud"
+
+#: src/templates/create-compound-modal.html:26 src/templates/login-full.html:51
+#: src/templates/login-full.html:82
+msgid "Continue"
+msgstr "Jätka"
+
+#: src/templates/login-full.html:122
+msgid "Local"
+msgstr "Kohalik"
+
+#: src/templates/admin.html:448 src/templates/show.html:361
+msgid "Lock"
+msgstr "Lukusta"
+
+#: src/templates/sysconfig.html:240 src/templates/team.html:105
+#: src/templates/team.html:135 src/templates/uploads.html:67
+msgid "Actions"
+msgstr "Toimingud"
+
+#: src/Models/Notifications/UserCreated.php:36
+#: src/Models/Notifications/UserNeedValidation.php:38
+msgid "Hi. A new user registered an account on eLabFTW: %s (%s)."
+msgstr "Tere. Uus kasutaja registreeris eLabFTW-s konto: %s (%s)."
+
+#: src/Models/Notifications/UserNeedValidation.php:43
+msgid "Head to the admin panel to validate the account: %s"
+msgstr "Konto valideerimiseks minge administraatori paneelile: %s"
+
+#: src/Enums/Messages.php:44
+msgid "Authentication required"
+msgstr "Autentimine on vajalik"
+
+#: src/Elabftw/i18n4Js.php:107
+msgid "Nothing selected!"
+msgstr "Midagi pole valitud!"
+
+#: src/Elabftw/i18n4Js.php:115
+msgid "Do you want to replace the file on the server with this edit?"
+msgstr "Kas soovite serveris oleva faili selle muudatusega asendada?"
+
+#: src/templates/sysconfig.html:134
+msgid "Setting this to a high value will help keeping the database size small."
+msgstr "Selle väärtuse kõrgeks määramine aitab andmebaasi suurust väikesena hoida."
+
+#: src/templates/sysconfig.html:460 src/templates/sysconfig.html:655
+msgid "Set to 0 to disable this feature."
+msgstr "Selle funktsiooni keelamiseks määrake väärtuseks 0."
+
+#: src/templates/pdf.html:41
+msgid "Created by"
+msgstr "Loonud"
+
+#: src/Services/EmailValidator.php:73
+msgid "This email domain is not allowed. Allowed domains: %s"
+msgstr "See e-posti domeen pole lubatud. Lubatud domeenid: %s"
+
+#: src/Elabftw/i18n4Js.php:76
+msgid "Extra fields"
+msgstr "Lisaväljad"
+
+#: src/Elabftw/i18n4Js.php:131
+msgid "Template title"
+msgstr "Malli pealkiri"
+
+#: src/templates/edit.html:38 src/templates/view.html:58
+msgid "Started on"
+msgstr "Alustatud kuupäeval"
+
+#: src/templates/view-edit-toolbar.html:221
+msgid "Add to blockchain"
+msgstr "Lisa plokiahelasse"
+
+#: src/templates/sysconfig.html:308
+msgid "Login page announcement"
+msgstr "Sisselogimislehe teadaanne"
+
+#: src/templates/sysconfig.html:310
+msgid "The following text will be displayed only on the login page."
+msgstr "Järgnev tekst kuvatakse ainult sisselogimislehel."
+
+#: src/templates/upload-dropdown-menu.html:42 src/templates/uploads.html:103
+msgid "Edit filename"
+msgstr "Muuda failinime"
+
+#: src/Services/Email.php:215
+msgid "Sent from eLabFTW"
+msgstr "Saadetud eLabFTW-st"
+
+#: src/Models/Tags.php:137
+msgid "Users cannot create tags."
+msgstr "Kasutajad ei saa silte luua."
+
+#: src/templates/ucp.html:243
+msgid "Use ISO datetime in the text editor instead of localized one"
+msgstr "Kasutage tekstiredaktoris ISO kuupäeva ja kellaaja asemel lokaliseeritud versiooni"
+
+#: src/templates/admin.html:450 src/templates/ownership-transfer-modal.html:6
+#: src/templates/ownership-transfer-modal.html:23
+#: src/templates/ownership-transfer-modal.html:25
+#: src/templates/view-edit-toolbar.html:294
+msgid "Transfer ownership"
+msgstr "Anna omandiõigus üle"
+
+#: src/templates/ownership-transfer-modal.html:13
+msgid "New owner"
+msgstr "Uus omanik"
+
+#: src/templates/edit.html:65 src/templates/edit.html:71
+msgid "Main content"
+msgstr "Põhisisu"
+
+#: src/templates/steps-edit.html:19 src/templates/steps-view.html:9
+msgid "Toggle completion"
+msgstr "Märgi lõpetatuks / eemalda lõpetatus"
+
+#: src/templates/head.html:208
+msgid "User menu"
+msgstr "Kasutaja menüü"
+
+#: src/Enums/Usergroup.php:25 src/Enums/Users2TeamsTargets.php:24
+msgid "Admin"
+msgstr "Administraator"
+
+#: src/Enums/Users2TeamsTargets.php:26
+msgid "Owner"
+msgstr "Omanik"
+
+#: src/templates/edit.html:94
+msgid "Save and go back"
+msgstr "Salvesta ja mine tagasi"
+
+#: src/templates/profile.html:140
+msgid "Show all"
+msgstr "Näita kõiki"
+
+#: src/templates/upload-replace-form.html:6
+msgid "OK"
+msgstr "OK"
+
+#: src/templates/sysconfig.html:141
+msgid "If the last change is at least this days old, a revision will be created regardless of the minimum characters setting."
+msgstr "Kui viimane muudatus on vähemalt see päev vana, luuakse redaktsioon olenemata minimaalse tähemärkide arvu seadistusest."
+
+#: src/templates/sysconfig.html:477
+msgid "%d users are currently prevented from logging in from unknown devices."
+msgstr "%d kasutajal on hetkel keelatud sisse logida tundmatutest seadmetest."
+
+#: src/templates/sysconfig.html:483
+msgid "%d devices are currently denied authentication."
+msgstr "%d seadmel on autentimine hetkel keelatud."
+
+#: src/templates/ucp.html:85 src/templates/ucp.html:108
+msgid "(default)"
+msgstr "(vaikimisi)"
+
+#: web/app/controllers/ResetPasswordController.php:70
+#: web/app/controllers/ResetPasswordController.php:104
+msgid "If the account exists, an email has been sent."
+msgstr "Kui konto on olemas, on saadetud e-kiri."
+
+#: src/Controllers/LoginController.php:176
+#: web/app/controllers/ResetPasswordController.php:77 web/index.php:122
+msgid "Your account is not validated. An admin of your team needs to validate it!"
+msgstr "Teie konto pole valideeritud. Teie meeskonna administraator peab selle valideerima!"
+
+#: web/app/controllers/ResetPasswordController.php:86
+msgid "Hi. Someone (probably you) requested a new password on eLabFTW.%s Please follow this link to reset your password: %s %sThis link is only valid for %s minutes."
+msgstr "Tere. Keegi (tõenäoliselt sina) küsis eLabFTW-s uut parooli.%s Palun järgi seda linki parooli lähtestamiseks: %s %sSee link kehtib ainult %s minutit."
+
+#: src/Services/ResetPasswordKey.php:73
+msgid "This link has expired! Password reset links are only valid for %s minutes."
+msgstr "See link on aegunud! Parooli lähtestamise lingid kehtivad ainult %s minutit."
+
+#: src/Exceptions/InvalidDeviceTokenException.php:24
+msgid "This browser cannot login anymore because of too many failed attempts."
+msgstr "See brauser ei saa enam sisse logida, kuna on liiga palju ebaõnnestunud katseid."
+
+#: src/Models/AbstractEntity.php:219
+msgid "Experiments must use a template!"
+msgstr "Eksperimendid peavad kasutama malli!"
+
+#: src/templates/show.html:134 src/templates/show.html:140
+msgid "Name of field"
+msgstr "Välja nimi"
+
+#: src/templates/show.html:151 src/templates/show.html:156
+msgid "Value"
+msgstr "Väärtus"
+
+#: src/templates/admin.html:192
+msgid "Export database items"
+msgstr "Andmebaasi üksuste eksportimine"
+
+#: src/templates/ts-config.html:11
+msgid "Custom TSA"
+msgstr "Kohandatud TSA"
+
+#: src/templates/favtags-panel.html:4 src/templates/ucp.html:134
+#: src/templates/ucp.html:150
+msgid "Favorite tags"
+msgstr "Lemmiksildid"
+
+#: src/templates/create-new-item-modal.html:32
+#: src/templates/filter-input-snippet.html:4
+msgid "Filter"
+msgstr "Filter"
+
+#: src/templates/favtags-panel.html:21
+msgid "Add a tag as favorite"
+msgstr "Lisa silt lemmikuks"
+
+#: src/templates/show.html:412
+msgid "Any category"
+msgstr "Kõik kategooriad"
+
+#: src/Elabftw/i18n4Js.php:128
+msgid "Are you sure you want to undo this step?"
+msgstr "Kas oled kindel, et soovid selle sammu tagasi võtta?"
+
+#: src/Services/Email.php:81
+msgid "Test email"
+msgstr "Testi e-post"
+
+#: src/Models/Notifications/CommentCreated.php:44
+msgid "New comment posted"
+msgstr "Uus kommentaar postitatud"
+
+#: src/Services/Transform.php:62
+msgid "New user added to your team"
+msgstr "Teie meeskonda lisati uus kasutaja"
+
+#: src/Models/Notifications/UserNeedValidation.php:35
+msgid "[ACTION REQUIRED]"
+msgstr "[VAJALIK TOIMETUS]"
+
+#: src/Models/Notifications/SelfNeedValidation.php:32
+msgid "Your account has been created"
+msgstr "Teie konto on loodud"
+
+#: src/Models/Notifications/SelfIsValidated.php:31
+msgid "Account validated"
+msgstr "Konto valideeritud"
+
+#: src/Models/Notifications/StepDeadline.php:58
+msgid "Hello. A step deadline is approaching: "
+msgstr "Tere. Etapi tähtaeg läheneb: "
+
+#: src/Services/Transform.php:69
+msgid "A user needs account validation."
+msgstr "Kasutaja vajab konto valideerimist."
+
+#: src/Services/Transform.php:76
+msgid "There was a problem during PDF creation."
+msgstr "PDF-faili loomisel tekkis probleem."
+
+#: src/Services/Transform.php:85
+msgid "Tex rendering failed during PDF generation. The raw tex commands are retained but you might want to carefully check the generated PDF."
+msgstr "PDF-i genereerimisel ebaõnnestus teksti renderdamine. Töötlemata teksti käsud säilivad, kuid loodud PDF-i on soovitatav hoolikalt kontrollida."
+
+#: src/Services/Transform.php:94
+msgid "Some attached PDFs could not be appended."
+msgstr "Mõnda lisatud PDF-faili ei saanud lisada."
+
+#: src/Services/AdvancedSearchQuery/Exceptions/LimitDepthIsExceededException.php:22
+msgid "Query is too complex!"
+msgstr "Päring on liiga keeruline!"
+
+#: web/ucp.php:60
+msgid "New comment notification"
+msgstr "Kommentaari teavitus"
+
+#: web/ucp.php:64
+msgid "Step deadline"
+msgstr "Ülesande tähtaeg"
+
+#: web/ucp.php:72
+msgid "New user created"
+msgstr "Uus kasutaja loodud"
+
+#: web/ucp.php:77
+msgid "New user need validation"
+msgstr "Uus kasutaja vajab valideerimist"
+
+#: src/templates/admin.html:222
+msgid "Export experiments of user"
+msgstr "Kasutaja eksperimentide eksport"
+
+#: src/templates/head.html:171 src/templates/head.html:172
+#: src/templates/ucp.html:7
+msgid "Notifications"
+msgstr "Teavitused"
+
+#: src/templates/head.html:180
+msgid "No new notifications to show."
+msgstr "Uusi teavitusi pole kuvada."
+
+#: src/templates/head.html:183 src/templates/ucp.html:538
+msgid "Notifications settings"
+msgstr "Teavituste seaded"
+
+#: src/templates/login-full.html:6 src/templates/login-full.html:29
+msgid "Request access to a team"
+msgstr "Meeskonnale juurdepääsu taotlemine"
+
+#: src/templates/login-full.html:24 src/templates/login-full.html:42
+msgid "Request access"
+msgstr "Taotle juurdepääsu"
+
+#: src/templates/login-full.html:48
+msgid "Your account has been created and will need to be validated by an admin."
+msgstr "Teie konto on loodud ja administraator peab selle valideerima."
+
+#: src/Services/AdvancedSearchQuery.php:65
+#: src/Services/AdvancedSearchQuery.php:67
+msgid "Search query"
+msgstr "Otsingupäring"
+
+#: src/templates/admin.html:258 src/templates/show.html:222
+msgid "Date from"
+msgstr "Kuupäev alates"
+
+#: src/templates/show.html:226
+msgid "less than"
+msgstr "vähem kui"
+
+#: src/templates/show.html:227
+msgid "less than or equal to"
+msgstr "väiksem või võrdne"
+
+#: src/templates/show.html:228
+msgid "equal to"
+msgstr "võrdne"
+
+#: src/templates/show.html:229
+msgid "greater than or equal to"
+msgstr "suurem või võrdne"
+
+#: src/templates/show.html:230
+msgid "greater than"
+msgstr "suurem kui"
+
+#: src/templates/show.html:231
+msgid "not equal to"
+msgstr "mitte võrdne"
+
+#: src/templates/show.html:236
+msgid "Date to (optional)"
+msgstr "Kuupäev (valikuline)"
+
+#: src/templates/show.html:193 src/templates/show.html:194
+msgid "Select lock status"
+msgstr "Valige lukustuse olek"
+
+#: src/templates/show.html:201
+msgid "Timestamped"
+msgstr "Ajatempliga"
+
+#: src/templates/show.html:202
+msgid "Select timestamp status"
+msgstr "Valige ajatempli olek"
+
+#: src/templates/steps-edit.html:34
+msgid "Completion time:"
+msgstr "Valmimisaeg:"
+
+#: src/templates/steps-edit.html:38
+msgid "Not finished"
+msgstr "Pole lõpetatud"
+
+#: src/templates/steps-edit.html:44 src/templates/steps-view.html:17
+msgid "Deadline:"
+msgstr "Tähtaeg:"
+
+#: src/templates/steps-edit.html:49
+msgid "Toggle notifications"
+msgstr "Luba/keela teavitused"
+
+#: src/templates/steps-edit.html:53
+msgid "Clear deadline"
+msgstr "Selge tähtaeg"
+
+#: src/templates/steps-edit.html:60
+msgid "Set deadline in"
+msgstr "Määrake tähtaeg"
+
+#: src/templates/sysconfig.html:48
+msgid "Uploads"
+msgstr "Üleslaadimised"
+
+#: src/templates/sysconfig.html:590
+msgid "Blockchain timestamp configuration"
+msgstr "Plokiahela ajatempli konfiguratsioon"
+
+#: src/templates/sysconfig.html:543
+msgid "Where user uploaded files are stored:"
+msgstr "Kus kasutaja üleslaaditud faile hoitakse:"
+
+#: src/templates/sysconfig.html:545 src/templates/upload-more-info.html:1
+msgid "Local filesystem"
+msgstr "Kohalik failisüsteem"
+
+#: src/templates/sysconfig.html:546
+msgid "S3 bucket"
+msgstr "S3 andmehoidla"
+
+#: src/templates/sysconfig.html:549
+msgid "You can select where uploaded files will be stored. The default is local storage but you can configure any S3 compatible object storage."
+msgstr "Saate valida, kuhu üleslaaditud failid salvestatakse. Vaikimisi on see kohalik salvestusruum, kuid saate konfigureerida mis tahes S3-ga ühilduva objektisalvestusruumi."
+
+#: src/templates/ucp.html:545
+msgid "Web"
+msgstr "Veeb"
+
+#: src/templates/upload-dropdown-menu.html:95 src/templates/uploads.html:74
+msgid "More information"
+msgstr "Lisateave"
+
+#: src/templates/upload-more-info.html:1
+msgid "Storage:"
+msgstr "Säilitamine:"
+
+#: src/Models/Scheduler.php:560
+msgid "Creation/modification of events in the past is not allowed!"
+msgstr "Sündmuste loomine/muutmine minevikus ei ole lubatud!"
+
+#: src/Models/Notifications/EventDeleted.php:91 src/Services/Transform.php:54
+msgid "A booked slot was deleted from the scheduler."
+msgstr "Broneeritud aeg kustutati ajakavast."
+
+#: src/Models/Notifications/EventDeleted.php:93
+msgid "Hi. %s (%s). See item: %s. It was booked from %s to %s."
+msgstr "Tere. %s (%s). Vaata eset: %s. See broneeriti %s-lt %s-le."
+
+#: web/ucp.php:82
+msgid "Booking event cancelled"
+msgstr "Broneering tühistatud"
+
+#: src/templates/admin.html:254
+msgid "Export bookings"
+msgstr "Ekspordi broneeringud"
+
+#: src/templates/admin.html:264
+msgid "Date to"
+msgstr "Kuupäev kuni"
+
+#: src/templates/link-view-one.html:26
+msgid "Import links"
+msgstr "Impordi lingid"
+
+#: src/Make/AbstractMakeTimestamp.php:138
+msgid "Number of timestamps this past month reached the limit!"
+msgstr "Ajatemplite arv viimase kuu jooksul on saavutanud limiidi!"
+
+#: src/templates/admin.html:307 src/templates/admin.html:319
+#: src/templates/admin.html:320
+msgid "Show tagged experiments"
+msgstr "Näita sildistatud eksperimente"
+
+#: src/templates/admin.html:308 src/templates/admin.html:324
+#: src/templates/admin.html:325
+msgid "Show tagged items"
+msgstr "Näita sildistatud üksusi"
+
+#: src/templates/edit.html:197
+msgid "Use %sCtrl%s + click to add text"
+msgstr "Teksti lisamiseks vajutage %sCtrl%s + klõps"
+
+#: src/templates/json-editor.html:48
+msgid "See documentation about extra fields."
+msgstr "Lisaväljade kohta vaata dokumentatsiooni."
+
+#: src/templates/sysconfig.html:207
+msgid "MySQL Version"
+msgstr "MySQL-i versioon"
+
+#: src/templates/ts-config.html:54
+msgid "Number of allowed timestamps per month (0 means no limit):"
+msgstr "Lubatud ajatemplite arv kuus (0 tähendab piirangu puudumist):"
+
+#: src/Import/Handler.php:104
+msgid "Error: invalid file extension for import. Allowed extensions: %s."
+msgstr "Viga: importimiseks sobimatu faililaiend. Lubatud laiendid: %s."
+
+#: src/Models/AbstractStatus.php:69
+msgid "Running"
+msgstr "Töös"
+
+#: src/Models/AbstractStatus.php:70
+msgid "Success"
+msgstr "Õnnestus"
+
+#: src/Models/AbstractStatus.php:71
+msgid "Need to be redone"
+msgstr "Vaja ümber teha"
+
+#: src/Models/AbstractStatus.php:72
+msgid "Fail"
+msgstr "Ebaõnnestunud"
+
+#: src/Make/MakeBloxberg.php:81 src/Models/AbstractEntity.php:862
+msgid "Timestamp archive by %s"
+msgstr "Ajatempli arhiiv kasutajalt %s"
+
+#: src/Import/Eln.php:265
+msgid "Error: could not read archive file properly! (missing %s)"
+msgstr "Viga: arhiivifaili ei saanud korralikult lugeda! (puudub %s)"
+
+#: src/Services/LoginHelper.php:141
+msgid "Your account has expired. Contact your team Admin to extend its validity."
+msgstr "Teie konto on aegunud. Selle kehtivuse pikendamiseks võtke ühendust oma meeskonna administraatoriga."
+
+#: src/templates/admin.html:207 src/templates/admin.html:238
+#: src/templates/export-menu.html:122 src/templates/show.html:353
+msgid "ELN Archive"
+msgstr "ELN-i arhiiv"
+
+#: src/templates/admin.html:208 src/templates/admin.html:239
+#: src/templates/export-menu.html:121 src/templates/show.html:354
+msgid "ZIP Archive"
+msgstr "ZIP-arhiiv"
+
+#: src/templates/admin.html:209 src/templates/admin.html:240
+#: src/templates/export-menu.html:123 src/templates/show.html:355
+msgid "CSV File"
+msgstr "CSV-fail"
+
+#: src/templates/admin.html:210 src/templates/admin.html:241
+#: src/templates/export-menu.html:120 src/templates/show.html:356
+msgid "PDF File"
+msgstr "PDF-fail"
+
+#: src/templates/admin.html:211 src/templates/admin.html:242
+#: src/templates/show.html:357
+msgid "QR codes PDF"
+msgstr "QR-koodid PDF-vormingus"
+
+#: src/templates/admin.html:212 src/templates/admin.html:243
+#: src/templates/profile.html:307 src/templates/show.html:358
+msgid "JSON"
+msgstr "JSON"
+
+#: src/templates/editusers.html:43
+msgid "Permission group"
+msgstr "Õiguste rühm"
+
+#: src/Elabftw/i18n4Js.php:140
+msgid "Valid until"
+msgstr "Kehtiv kuni"
+
+#: src/templates/scheduler.html:152 src/templates/scheduler.html:155
+#: src/templates/show.html:87 src/templates/show.html:88
+msgid "Filter owner"
+msgstr "Omanik"
+
+#: src/templates/show.html:178 src/templates/show.html:179
+msgid "Filter visibility"
+msgstr "Nähtavus"
+
+#: src/templates/footer.html:14 src/templates/head.html:199
+msgid "Submit feedback"
+msgstr "Esita tagasisidet"
+
+#: src/templates/head.html:190
+msgid "Help menu"
+msgstr "Abimenüü"
+
+#: src/templates/head.html:192
+msgid "What's new"
+msgstr "Mis on uut?"
+
+#: src/templates/head.html:195
+msgid "Support"
+msgstr "Tugi"
+
+#: src/templates/head.html:196
+msgid "Community forum"
+msgstr "Kogukonnafoorum"
+
+#: src/templates/head.html:197
+msgid "Chat room"
+msgstr "Vestlusruum"
+
+#: src/templates/head.html:200
+msgid "Contribute to eLabFTW"
+msgstr "Panusta eLabFTW-sse"
+
+#: src/templates/head.html:209
+msgid "Logged in as %s in:"
+msgstr "Sisse logitud kui %s, kontol:"
+
+#: src/templates/head.html:211
+msgid "Switch team"
+msgstr "Vaheta meeskonda"
+
+#: src/templates/head.html:216
+msgid "My profile"
+msgstr "Minu profiil"
+
+#: src/templates/login-full.html:50
+msgid "Your account has been created and is now active. Try logging in again."
+msgstr "Teie konto on loodud ja aktiivne. Proovige uuesti sisse logida."
+
+#: src/templates/pdf.html:63
+msgid "Linked experiment"
+msgid_plural "Linked experiments"
+msgstr[0] "Lingitud eksperiment"
+msgstr[1] "Lingitud eksperimendid"
+
+#: src/templates/show.html:283
+msgid "Newest"
+msgstr "Uusim"
+
+#: src/templates/show.html:284
+msgid "Oldest"
+msgstr "Vanim"
+
+#: src/templates/show.html:285
+msgid "Recently modified"
+msgstr "Hiljuti muudetud"
+
+#: src/templates/show.html:286
+msgid "Least recently modified"
+msgstr "Kõige varem muudetud"
+
+#: src/templates/show.html:288
+msgid "Category (inverted)"
+msgstr "Kategooria (ümberpööratud)"
+
+#: src/templates/show.html:291
+msgid "Highest ID"
+msgstr "Kõrgeim ID"
+
+#: src/templates/show.html:292
+msgid "Lowest ID"
+msgstr "Madalaim ID"
+
+#: src/templates/show.html:295
+msgid "Recently commented"
+msgstr "Hiljuti kommenteeritud"
+
+#: src/templates/show.html:296
+msgid "Title (alphabetical)"
+msgstr "Pealkiri (tähestikulises järjekorras)"
+
+#: src/templates/show.html:297
+msgid "Title (inverted)"
+msgstr "Pealkiri (pööratud)"
+
+#: src/templates/show.html:298
+msgid "User (alphabetical)"
+msgstr "Kasutaja (tähestikulises järjekorras)"
+
+#: src/templates/show.html:299
+msgid "User (inverted)"
+msgstr "Kasutaja (pööratud)"
+
+#: src/templates/show.html:300
+msgid "Highest rating"
+msgstr "Kõrgeim hinnang"
+
+#: src/templates/show.html:301
+msgid "Lowest rating"
+msgstr "Madalaim hinnang"
+
+#: src/templates/show.html:421
+msgid "Link to an experiment"
+msgstr "Lingi eksperimendile"
+
+#: src/templates/show.html:424
+msgid "Any author"
+msgstr "Kõik autorid"
+
+#: src/templates/scheduler.html:51
+msgid "Start time"
+msgstr "Algusaeg"
+
+#: src/templates/scheduler.html:53
+msgid "End time"
+msgstr "Lõppaeg"
+
+#: src/templates/ts-config.html:57
+msgid "Number of timestamps over the last 30 days: %d"
+msgstr "Ajatemplite arv viimase 30 päeva jooksul: %d"
+
+#: src/templates/upload-comment.html:6
+msgid "Click to add a comment"
+msgstr "Klõpsake kommentaari lisamiseks"
+
+#: src/templates/upload-dropdown-menu.html:81
+msgid "Show content of file"
+msgstr "Kuva faili sisu"
+
+#: src/templates/upload-more-info.html:3
+msgid "Uploaded by %s"
+msgstr "Üles laadis %s"
+
+#: src/templates/view.html:168
+msgid "edited"
+msgstr "muudetud"
+
+#: src/Models/Notifications/StepDeadline.php:67 src/Services/Transform.php:106
+msgid "A step deadline is approaching."
+msgstr "Etapi tähtaeg läheneb."
+
+#: src/templates/head.html:193 src/templates/head.html:194
+#: src/templates/sysconfig.html:224
+msgid "Documentation"
+msgstr "Dokumentatsioon"
+
+#: src/templates/steps-edit.html:73
+msgid "Copy step to cursor position"
+msgstr "Kopeeri samm kursori asukohta"
+
+#: src/templates/upload-dropdown-menu.html:88
+msgid "Open in NMRium"
+msgstr "Ava NMRiumis"
+
+#: src/Models/FavTags.php:84
+msgid "Could not find tag. Please enter an existing tag."
+msgstr "Silti ei leitud. Palun sisesta olemasolev silt."
+
+#: src/templates/changelog.html:10 src/templates/pdf.html:171
+#: src/templates/profile.html:305
+msgid "Changelog"
+msgstr "Muudatuste logi"
+
+#: src/templates/changelog-table.html:6
+msgid "Property changed"
+msgstr "Omadus muudetud"
+
+#: src/templates/changelog-table.html:7
+msgid "New value"
+msgstr "Uus väärtus"
+
+#: src/templates/sysconfig.html:31
+msgid "Latest stable version:"
+msgstr "Viimane stabiilne versioon:"
+
+#: src/templates/admin.html:131 src/templates/sysconfig.html:665
+#: src/templates/sysconfig.html:872 src/templates/ucp.html:472
+msgid "Link to documentation"
+msgstr "Link dokumentatsioonile"
+
+#: src/templates/view-edit-toolbar.html:299
+msgid "See changelog"
+msgstr "Vaata muudatuste logi"
+
+#: src/templates/field-builder-modal.html:10
+#: src/templates/field-builder-modal.html:53
+msgid "Add an extra field"
+msgstr "Lisa täiendav väli"
+
+#: src/templates/field-builder-modal.html:54
+msgid "Field type"
+msgstr "Välja tüüp"
+
+#: src/templates/field-builder-modal.html:56
+msgid "Text"
+msgstr "Tekst"
+
+#: src/templates/field-builder-modal.html:57
+msgid "Dropdown menu"
+msgstr "Rippmenüü"
+
+#: src/templates/field-builder-modal.html:58
+msgid "Radio buttons"
+msgstr "Raadionupud"
+
+#: src/templates/field-builder-modal.html:63
+msgid "Checkbox"
+msgstr "Märkeruut"
+
+#: src/templates/field-builder-modal.html:64
+msgid "Number"
+msgstr "Number"
+
+#: src/templates/create-compound-modal.html:15
+#: src/templates/field-builder-modal.html:72
+msgid "required"
+msgstr "nõutav"
+
+#: src/templates/field-builder-modal.html:77
+msgid "Description"
+msgstr "Kirjeldus"
+
+#: src/templates/field-builder-modal.html:78
+msgid "Enter a description for this field"
+msgstr "Sisesta selle välja kirjeldus"
+
+#: src/templates/field-builder-modal.html:82
+#: src/templates/field-builder-modal.html:88
+#: src/templates/field-builder-modal.html:115
+msgid "Default value"
+msgstr "Vaikimisi väärtus"
+
+#: src/templates/field-builder-modal.html:89
+msgid "Enter a default value"
+msgstr "Sisestage vaikeväärtus"
+
+#: src/templates/field-builder-modal.html:94
+msgid "Choices"
+msgstr "Valikud"
+
+#: src/templates/field-builder-modal.html:100
+#: src/templates/field-builder-modal.html:110
+msgid "Add another choice"
+msgstr "Lisage veel üks valik"
+
+#: src/templates/field-builder-modal.html:117
+msgid "Unchecked"
+msgstr "Märkimata"
+
+#: src/templates/field-builder-modal.html:118
+msgid "Checked"
+msgstr "Kontrollitud"
+
+#: src/templates/edit.html:107 src/templates/json-editor.html:10
+msgid "Add field"
+msgstr "Lisa väli"
+
+#: src/templates/admin.html:460 src/templates/permissions-edit-modal.html:36
+msgid "Base"
+msgstr "Alus"
+
+#: src/templates/admin.html:469 src/templates/permissions-edit-modal.html:47
+msgid "Selecting a team here will give access to all members of this team."
+msgstr "Meeskonna valimine siin annab juurdepääsu kõigile selle liikmetele."
+
+#: src/templates/admin.html:477
+msgid "Selecting a teamgroup here will give access to all users part of this teamgroup."
+msgstr "Meeskonnarühma valimine siin annab juurdepääsu kõigile selle liikmetele."
+
+#: src/templates/admin.html:480
+msgid "Teamgroup"
+msgstr "Meeskonnagrupp"
+
+#: src/templates/permissions-edit-modal.html:102
+msgid "Allow read access for anonymous users"
+msgstr "Luba anonüümsetele kasutajatele lugemisõigus"
+
+#: src/templates/compounds-view-edit.html:10
+#: src/templates/edit-compound-modal.html:26
+#: src/templates/edit-compound-modal.html:59
+#: src/templates/edit-compound-modal.html:66 src/templates/mfa.html:35
+#: src/templates/permissions-edit-modal.html:107 src/templates/ucp.html:364
+#: src/templates/ucp.html:480
+msgid "Copy to clipboard"
+msgstr "Kopeeri lõikelauale"
+
+#: src/templates/permissions-edit-modal.html:111
+msgid "Anyone following this link can access this entry."
+msgstr "Kõik, kes sellele lingile järgnevad, pääsevad sellele kirjele ligi."
+
+#: src/templates/field-builder-modal.html:151
+msgid "Allow selection of multiple values?"
+msgstr "Kas lubada mitme väärtuse valimist?"
+
+#: src/templates/ts-config.html:62
+msgid "Available timestamps left (0 means no balance):"
+msgstr "Saadaval olevad ajatemplid (0 tähendab, et saldo puudub):"
+
+#: src/templates/ts-config.html:65
+msgid "You can set a number of available timestamps here and it will be decremented by 1 on every timestamp."
+msgstr "Siin saate määrata mitu saadaolevat ajatemplit ja iga ajatempli puhul vähendatakse seda ühe võrra."
+
+#: src/Elabftw/Metadata.php:111 src/Elabftw/i18n4Js.php:135
+msgid "Undefined group"
+msgstr "Määratlemata rühm"
+
+#: src/Enums/EnforceMfa.php:30
+msgid "Disabled"
+msgstr "Keelatud"
+
+#: src/Enums/EnforceMfa.php:31
+msgid "Sysadmins"
+msgstr "Süsteemiadministraatorid"
+
+#: src/Enums/EnforceMfa.php:32
+msgid "Admins"
+msgstr "Administraatorid"
+
+#: src/Enums/EnforceMfa.php:33
+msgid "Everyone"
+msgstr "Kõik"
+
+#: src/Enums/Usergroup.php:24
+msgid "Sysadmin"
+msgstr "Süsteemiadministraator"
+
+#: src/Enums/Messages.php:47
+msgid "Invalid authentication code."
+msgstr "Kehtetu autentimiskood."
+
+#: src/Elabftw/i18n4Js.php:61
+msgid "File size limit:"
+msgstr "Faili suuruse piirang:"
+
+#: src/Elabftw/i18n4Js.php:64
+msgid "You are currently editing the metadata attached to this entry."
+msgstr "Sa muudad praegu sellele kirjele lisatud metaandmeid."
+
+#: src/Models/ItemsTypes.php:53
+msgid "Default"
+msgstr "Vaikimisi"
+
+#: src/Models/Notifications/UserCreated.php:41
+#: src/Models/Notifications/UserNeedValidation.php:35
+msgid "New user added to team: %s"
+msgstr "Meeskonda lisati uus kasutaja: %s"
+
+#: web/admin.php:95 web/sysconfig.php:70
+msgid "No users found. Try another search."
+msgstr "Kasutajaid ei leitud. Proovige teist otsingut."
+
+#: src/templates/search-help-modal.html:13
+msgid "Advanced search"
+msgstr "Täpsem otsing"
+
+#: src/templates/admin.html:74
+msgid "Force experiment template use"
+msgstr "Nõua eksperimendi malli kasutamist"
+
+#: src/templates/admin.html:135
+msgid "Add a group"
+msgstr "Lisa grupp"
+
+#: src/templates/admin.html:172
+msgid "User name"
+msgstr "Kasutajanimi"
+
+#: src/templates/admin.html:195
+msgid "Select what to export"
+msgstr "Valige, mida eksportida"
+
+#: src/templates/admin.html:205 src/templates/admin.html:236
+msgid "Select an export format"
+msgstr "Valige ekspordivorming"
+
+#: src/templates/admin.html:226
+msgid "Select user"
+msgstr "Valige kasutaja"
+
+#: src/templates/admin.html:305 src/templates/admin.html:317
+msgid "Tag"
+msgstr "Silt"
+
+#: src/templates/admin.html:306 src/templates/admin.html:318
+msgid "Occurence"
+msgstr "Esinemine"
+
+#: src/templates/sysconfig.html:829
+msgid "Add new IDP"
+msgstr "Lisa uus IDP"
+
+#: src/templates/idp-modal.html:14
+msgid "Friendly name"
+msgstr "Sõbralik nimi"
+
+#: src/templates/editusers.html:3
+msgid "Users list"
+msgstr "Kasutajate loend"
+
+#: src/templates/edit-user-modal.html:71
+msgid "Manage teams for user"
+msgstr "Kasutaja meeskondade haldamine"
+
+#: src/Elabftw/i18n4Js.php:83
+msgid "Is Owner"
+msgstr "Omanik"
+
+#: src/Elabftw/i18n4Js.php:85
+msgid "Last login"
+msgstr "Viimane sisselogimine"
+
+#: src/templates/edit-user-modal.html:26 src/templates/editusers.html:122
+#: src/templates/editusers.html:132
+msgid "Internal ID"
+msgstr "Sisemine ID"
+
+#: src/Elabftw/i18n4Js.php:84
+msgid "Is Sysadmin"
+msgstr "Süsteemiadministraator"
+
+#: src/templates/ucp.html:528
+msgid "never"
+msgstr "mitte kunagi"
+
+#: src/templates/edit-user-modal.html:90
+msgid "Set new password"
+msgstr "Määra uus parool"
+
+#: src/templates/editusers.html:93
+msgid "Add account from external directory"
+msgstr "Lisa konto välisest kataloogist"
+
+#: src/templates/editusers.html:118 src/templates/editusers.html:128
+msgid "Selection"
+msgstr "Valik"
+
+#: src/templates/editusers.html:152
+msgid "Add selected"
+msgstr "Lisa valitud"
+
+#: src/templates/favtags-panel.html:9
+msgid "No favorite tags are present. Add an existing tag with the form below."
+msgstr "Lemmiksilte pole. Lisage olemasolev silt alloleva vormi abil."
+
+#: src/templates/field-builder-modal.html:35
+msgid "Add group"
+msgstr "Lisa grupp"
+
+#: src/templates/field-builder-modal.html:38
+msgid "New group name"
+msgstr "Uue grupi nimi"
+
+#: src/templates/field-builder-modal.html:126
+msgid "Blank value on duplicate"
+msgstr "Tühi väärtus duplikaadil"
+
+#: src/templates/head.html:246
+msgid "Toggle favorite tags"
+msgstr "Lemmiksiltide sisse/välja lülitamine"
+
+#: src/templates/head.html:249
+msgid "Toggle todolist"
+msgstr "Ülesannete nimekirja sisse/välja lülitamine"
+
+#: src/templates/json-editor.html:23
+msgid "Save as…"
+msgstr "Salvesta nimega…"
+
+#: src/Elabftw/i18n4Js.php:121
+msgid "Save as attachment"
+msgstr "Salvesta manusena"
+
+#: src/templates/edit.html:84
+msgid "Display main text"
+msgstr "Kuva põhitekst"
+
+#: src/templates/mfa.html:21
+msgid "It is mandatory to activate 2FA."
+msgstr "2FA aktiveerimine on kohustuslik."
+
+#: src/templates/admin.html:484 src/templates/permissions-edit-modal.html:80
+msgid "Allow individual users to access this entry."
+msgstr "Luba üksikutel kasutajatel sellele kirjele juurde pääseda."
+
+#: src/templates/revisions.html:5
+msgid "This server is configured to store %d revisions per entry maximum."
+msgstr "See server on konfigureeritud salvestama maksimaalselt %d parandust kirje kohta."
+
+#: src/templates/show.html:46
+msgid "Show full syntax"
+msgstr "Näita täielikku süntaksit"
+
+#: src/templates/show-item.html:38
+msgid "View"
+msgstr "Vaade"
+
+#: src/templates/show.html:118
+msgid "Toggle filters"
+msgstr "Filtrite sisse/välja lülitamine"
+
+#: src/templates/steps-edit.html:57
+msgid "Add a deadline"
+msgstr "Lisa tähtaeg"
+
+#: src/templates/steps-edit.html:61
+msgid "%d hour"
+msgstr "%d tund"
+
+#: src/templates/steps-edit.html:62
+msgid "%d day"
+msgstr "%d päev"
+
+#: src/templates/steps-edit.html:63
+msgid "%d week"
+msgstr "%d nädal"
+
+#: src/templates/steps-edit.html:64
+msgid "%d month"
+msgstr "%d kuu"
+
+#: src/templates/steps-edit.html:65
+msgid "%d year"
+msgstr "%d aasta"
+
+#: src/templates/show.html:337
+msgid "Search in experiments"
+msgstr "Otsi eksperimentidest"
+
+#: src/templates/sysconfig.html:12
+msgid "Create team"
+msgstr "Loo meeskond"
+
+#: src/templates/sysconfig.html:19
+msgid "Enter team name"
+msgstr "Sisesta meeskonna nimi"
+
+#: src/templates/sysconfig.html:44
+msgid "Communication"
+msgstr "Kommunikatsioon"
+
+#: src/templates/sysconfig.html:47
+msgid "Policies"
+msgstr "Reeglid"
+
+#: src/templates/sysconfig.html:94
+msgid "Address of the Proxy"
+msgstr "Proxy aadress"
+
+#: src/templates/sysconfig.html:124
+msgid "Maximum number of stored revisions per entry"
+msgstr "Maksimaalne salvestatud paranduste arv kirje kohta"
+
+#: src/templates/sysconfig.html:131
+msgid "Minimum number of characters that need to be changed in order to create a new revision per entry"
+msgstr "Uue redaktsiooni loomiseks vajalik minimaalne märkide arv kirje kohta"
+
+#: src/templates/sysconfig.html:138
+msgid "Number of days between changes to automatically create a revision"
+msgstr "Muudatuste vaheline päevade arv, mille järel redaktsiooni automaatselt luuakse"
+
+#: src/templates/sysconfig.html:101
+msgid "URL where the Support menu entry from Help dropdown points"
+msgstr "URL, kuhu viitab menüü Support (abi) rippmenüü kirje Help (abi)"
+
+#: src/templates/sysconfig.html:155
+msgid "Allow anonymous visitors to login and see Public experiments"
+msgstr "Luba anonüümsetel külastajatel sisse logida ja avalikke eksperimente näha"
+
+#: src/templates/sysconfig.html:157
+msgid "Switch this instance in open science mode"
+msgstr "Lülita see sessioon avatud teaduse režiimi"
+
+#: src/templates/sysconfig.html:160
+msgid "Select which team will be open to the world in open science mode"
+msgstr "Valige, milline meeskond on avatud teadusrežiimis maailmale avatud"
+
+#: src/templates/sysconfig.html:626
+msgid "Enable local account creation"
+msgstr "Luba kohaliku konto loomine"
+
+#: src/templates/sysconfig.html:170
+msgid "Admins can create local accounts"
+msgstr "Administraatorid saavad luua kohalikke kontosid"
+
+#: src/templates/sysconfig.html:627
+msgid "Show local login form"
+msgstr "Kuva kohalik sisselogimisvorm"
+
+#: src/templates/sysconfig.html:182 src/templates/sysconfig.html:193
+msgid "Remote directory configuration"
+msgstr "Kaugkataloogi konfiguratsioon"
+
+#: src/templates/sysconfig.html:184
+msgid "Admins can create local accounts from remote directory"
+msgstr "Administraatorid saavad luua kohalikke kontosid kaugkataloogist"
+
+#: src/templates/sysconfig.html:187
+msgid "Remote directory service"
+msgstr "Kaugkataloogiteenus"
+
+#: src/templates/sysconfig.html:196
+msgid "Use a JSON string for configuration. This setting is stored encrypted."
+msgstr "Kasutage konfigureerimiseks JSON-stringi. See säte salvestatakse krüpteeritult."
+
+#: src/templates/sysconfig.html:205
+msgid "Docker image version"
+msgstr "Dockeri pildiversioon"
+
+#: src/templates/sysconfig.html:208
+msgid "MySQL database structure version"
+msgstr "MySQL-i andmebaasi struktuuri versioon"
+
+#: src/templates/sysconfig.html:221
+msgid "Teams list"
+msgstr "Meeskondade nimekiri"
+
+#: src/templates/sysconfig.html:224
+msgid "This page allows you to edit the teams present on this instance."
+msgstr "Sellel lehel saate muuta selles sessioonis olevaid meeskondi"
+
+#: src/templates/sysconfig.html:227
+msgid "Create a team"
+msgstr "Loo meeskond"
+
+#: src/templates/sysconfig.html:237
+msgid "Organisation ID"
+msgstr "Organisatsiooni ID"
+
+#: src/templates/sysconfig.html:239 src/templates/sysconfig.html:268
+msgid "Visible"
+msgstr "Nähtav"
+
+#: src/Elabftw/UserStats.php:95 src/Elabftw/i18n4Js.php:106
+msgid "Not set"
+msgstr "Pole määratud"
+
+#: src/templates/sysconfig.html:362
+msgid "Address of the SMTP server"
+msgstr "SMTP-serveri aadress"
+
+#: src/templates/sysconfig.html:368
+msgid "SMTP Port"
+msgstr "SMTP-port"
+
+#: src/templates/sysconfig.html:375
+msgid "SMTP username"
+msgstr "SMTP kasutajanimi"
+
+#: src/templates/sysconfig.html:398
+msgid "Sender address"
+msgstr "Saatja aadress"
+
+#: src/templates/sysconfig.html:403 src/templates/sysconfig.html:576
+msgid "Verify TLS certificate"
+msgstr "TLS-sertifikaadi kontrollimine"
+
+#: src/templates/sysconfig.html:428
+msgid "Users need validation by admin after registration"
+msgstr "Kasutajad vajavad pärast registreerimist administraatori kinnitust"
+
+#: src/templates/sysconfig.html:431
+msgid "Enforce 2FA"
+msgstr "Rakenda 2FA-d"
+
+#: src/templates/sysconfig.html:457
+msgid "Time after which inactive sessions are invalidated (force logout) (in seconds)"
+msgstr "Aeg, mille möödudes mitteaktiivsed seansid tühistatakse (sundväljalogimine) (sekundites)"
+
+#: src/templates/sysconfig.html:474
+msgid "Bruteforce login protection"
+msgstr "Bruteforce'i sisselogimiskaitse"
+
+#: src/templates/sysconfig.html:593
+msgid "Enable blockchain timestamping with Bloxberg"
+msgstr "Blokbergi abil plokiahela ajatempli lubamine"
+
+#: src/templates/sysconfig.html:594
+msgid "Anonymize author for GDPR compliance"
+msgstr "Autori anonüümseks muutmine GDPR-i nõuetele vastavuse tagamiseks"
+
+#: src/templates/sysconfig.html:599
+msgid "Keeex configuration"
+msgstr "Keeexi konfiguratsioon"
+
+#: src/templates/sysconfig.html:601
+msgid "Requires a Keeex Fusion daemon running. %sSee documentation%s."
+msgstr "Nõuab töötavat Keeex Fusioni deemonit. %sVaata dokumentatsiooni%s."
+
+#: src/templates/sysconfig.html:603
+msgid "Enable Keeex"
+msgstr "Keeexi lubamine"
+
+#: src/templates/sysconfig.html:606
+msgid "Keeex host"
+msgstr "Keeexi host"
+
+#: src/templates/sysconfig.html:609
+msgid "Address (hostname or IP) of the Keeex service."
+msgstr "Keeexi teenuse aadress (hostinimi või IP)."
+
+#: src/templates/sysconfig.html:613
+msgid "Keeex port"
+msgstr "Keeexi port"
+
+#: src/templates/sysconfig.html:616
+msgid "Default port is 8080."
+msgstr "Vaikimisi port on 8080."
+
+#: src/templates/sysconfig.html:668
+msgid "View metadata.xml"
+msgstr "Kuva metaandmed.xml"
+
+#: src/templates/sysconfig.html:672
+msgid "General settings"
+msgstr "Üldseaded"
+
+#: src/templates/sysconfig.html:675
+msgid "Enable SAML authentication"
+msgstr "SAML-autentimise lubamine"
+
+#: src/templates/sysconfig.html:676
+msgid "Strict mode"
+msgstr "Range režiim"
+
+#: src/templates/sysconfig.html:677
+msgid "Debug mode"
+msgstr "Silumisrežiim"
+
+#: src/templates/sysconfig.html:681
+msgid "Service provider"
+msgstr "Teenusepakkuja"
+
+#: src/templates/sysconfig.html:685
+msgid "Base URL"
+msgstr "Baas-URL"
+
+#: src/templates/sysconfig.html:749
+msgid "Teams settings"
+msgstr "Meeskondade seaded"
+
+#: src/templates/sysconfig.html:752
+msgid "Fallback to internal id if existing user cannot be matched with email"
+msgstr "Kasuta sisemist ID-d, kui olemasolevat kasutajat ei saa e-posti järgi siduda"
+
+#: src/templates/sysconfig.html:753
+msgid "If user is matched with internal id, update the email sent by IDP?"
+msgstr "Kui kasutaja vastab sisemisele ID-le, kas uuendada IDP saadetud e-kirja?"
+
+#: src/templates/sysconfig.html:754
+msgid "Synchronize the local teams with the teams sent by IDP"
+msgstr "Sünkroniseeri kohalikud meeskonnad IDP saadetud meeskondadega"
+
+#: src/templates/sysconfig.html:755
+msgid "Create team sent by IDP if it doesn't exist already"
+msgstr "Loo IDP saadetud meeskond, kui seda veel ei ole"
+
+#: src/templates/sysconfig.html:758 src/templates/sysconfig.html:954
+#: src/templates/sysconfig.html:1038
+msgid "If no team attribute is found, to which team user is assigned?"
+msgstr "Kui meeskonna atribuuti ei leita, siis millisele meeskonna kasutajale see määratakse?"
+
+#: src/templates/sysconfig.html:763 src/templates/sysconfig.html:959
+#: src/templates/sysconfig.html:1043
+msgid "Throw error"
+msgstr "Näita viga"
+
+#: src/templates/sysconfig.html:764 src/templates/sysconfig.html:960
+msgid "Let user select a team"
+msgstr "Luba kasutajal meeskond valida"
+
+#: src/templates/sysconfig.html:770 src/templates/sysconfig.html:966
+#: src/templates/sysconfig.html:1049
+msgid "If the user doesn't exist yet, what to do?"
+msgstr "Kui kasutajat veel pole, mida teha?"
+
+#: src/templates/sysconfig.html:772 src/templates/sysconfig.html:968
+#: src/templates/sysconfig.html:1051
+msgid "Create the user on the fly"
+msgstr "Looge kasutaja jooksvalt"
+
+#: src/templates/sysconfig.html:773 src/templates/sysconfig.html:969
+#: src/templates/sysconfig.html:1052
+msgid "Throw error, allowing a sysadmin to create the user"
+msgstr "Näita viga, võimaldades süsteemiadministraatoril kasutaja luua"
+
+#: src/templates/sysconfig.html:779
+msgid "Security settings"
+msgstr "Turvaseaded"
+
+#: src/templates/sysconfig.html:873
+msgid "LDAP server configuration"
+msgstr "LDAP-serveri konfiguratsioon"
+
+#: src/templates/sysconfig.html:935
+msgid "eLabFTW LDAP configuration"
+msgstr "eLabFTW LDAP-i konfiguratsioon"
+
+#: src/templates/sysconfig.html:939
+msgid "By which LDAP attribute the user will be found (default is 'mail')."
+msgstr "Millise LDAP-atribuudi järgi kasutajat leitakse (vaikimisi on 'mail')."
+
+#: src/templates/sysconfig.html:942
+msgid "You can search for several attributes by separating them with a comma (e.g. uid,mail)."
+msgstr "Saate otsida mitut atribuuti, eraldades need komaga (nt uid, e-post)."
+
+#: src/templates/sysconfig.html:946
+msgid "What attribute to look for the team name"
+msgstr "Millist atribuuti meeskonna nime puhul otsida?"
+
+#: src/templates/sysconfig.html:951 src/templates/sysconfig.html:1057
+msgid "Create team sent by server if it doesn't exist already"
+msgstr "Loo serveri saadetud meeskond, kui seda veel pole"
+
+#: src/templates/sysconfig.html:975
+msgid "What attribute to look for the email"
+msgstr "Millist atribuuti e-kirjas otsida"
+
+#: src/templates/sysconfig.html:981
+msgid "What attribute to look for the firstname"
+msgstr "Millist atribuuti eesnime puhul otsida"
+
+#: src/templates/sysconfig.html:987
+msgid "What attribute to look for the lastname"
+msgstr "Millist atribuuti perekonnanime puhul otsida"
+
+#: src/templates/sysconfig.html:998
+msgid "If authentication is handled by an upstream server, configure here the request headers mappings and behaviors."
+msgstr "Kui autentimist haldab ülesvooluserver, seadistage siin päringu päiste vastendused ja käitumine."
+
+#: src/templates/sysconfig.html:1004
+msgid "Use this to detect if the user is logged in from upstream server (value is not used, only presence)."
+msgstr "Kasutage seda tuvastamaks, kas kasutaja on ülesvooluserverist sisse logitud (väärtust ei kasutata, loeb ainult olemasolu)."
+
+#: src/templates/team.html:56
+msgid "Send an email to users"
+msgstr "Saada kasutajatele e-kiri"
+
+#: src/templates/scheduler.html:96 src/templates/sysconfig.html:332
+#: src/templates/team.html:60
+msgid "Send to"
+msgstr "Saada aadressile"
+
+#: src/templates/scheduler.html:101 src/templates/team.html:62
+msgid "Members of team %s"
+msgstr "Meeskonna %s liikmed"
+
+#: src/templates/scheduler.html:105 src/templates/team.html:66
+msgid "Members of teamgroup %s"
+msgstr "Meeskonnagrupi %s liikmed"
+
+#: src/templates/todolist-panel.html:8
+msgid "Add a new task"
+msgstr "Lisa uus ülesanne"
+
+#: src/templates/todolist-panel.html:30
+msgid "Show steps for team"
+msgstr "Näita meeskonna samme"
+
+#: src/templates/ts-config.html:3
+msgid "Select timestamping authority (TSA)"
+msgstr "Valige ajatempli asutus (TSA)"
+
+#: src/templates/ts-config.html:19
+msgid "Login for external timestamping service"
+msgstr "Sisselogimine välise ajatempliteenuse jaoks"
+
+#: src/templates/ts-config.html:26
+msgid "Password for external timestamping service"
+msgstr "Välise ajatempliteenuse parool"
+
+#: src/templates/ucp.html:4
+msgid "General"
+msgstr "Üldine"
+
+#: src/templates/ucp.html:60
+msgid "Help us translate eLabFTW!"
+msgstr "Aidake meil eLabFTW-d tõlkida!"
+
+#: src/templates/ucp.html:68
+msgid "Items per page"
+msgstr "Üksusi lehel"
+
+#: src/templates/ucp.html:74
+msgid "Display mode"
+msgstr "Kuvarežiim"
+
+#: src/templates/profile.html:118 src/templates/profile.html:119
+#: src/templates/ucp.html:83
+msgid "Order by"
+msgstr "Järjestus"
+
+#: src/templates/ucp.html:193
+msgid "Enable Chinese, Japanese and Korean fonts in PDF generation"
+msgstr "Hiina, Jaapani ja Korea fontide lubamine PDF-i genereerimisel"
+
+#: src/templates/ucp.html:194
+msgid "WARNING: this will dramatically increase the file size unless you disable PDF/A"
+msgstr "HOIATUS: see suurendab faili suurust dramaatiliselt, kui te ei keela PDF/A-d"
+
+#: src/templates/ucp.html:204 src/templates/ucp.html:205
+msgid "Add attached files summary to the PDF"
+msgstr "Lisa PDF-ile lisatud failide kokkuvõte"
+
+#: src/templates/ucp.html:213
+msgid "Append attached PDFs to exported PDF"
+msgstr "Lisa eksporditud PDF-ile lisatud PDF-failid"
+
+#: src/templates/ucp.html:222
+msgid "Enable french style signature block in PDF Export"
+msgstr "Luba PDF-i ekspordis prantsuse stiilis allkirjaplokk"
+
+#: src/templates/ucp.html:399
+msgid "Your identity"
+msgstr "Sinu identiteet"
+
+#: src/templates/export-menu.html:124
+msgid "QR Code"
+msgstr "QR-kood"
+
+#: src/templates/pdf.html:153 src/templates/view.html:50
+msgid "Locked by %s on %s at %s"
+msgstr "Lukustas %s kuupäeval %s kell %s"
+
+#: src/Auth/External.php:57 src/Auth/Ldap.php:67 src/Auth/Saml.php:328
+msgid "Could not find an existing user. Ask a Sysadmin to create your account."
+msgstr "Olemasolevat kasutajat ei leitud. Paluge süsteemiadministraatoril oma konto luua."
+
+#: src/Elabftw/i18n4Js.php:49
+msgid "Click to edit"
+msgstr "Klõpsake muutmiseks"
+
+#: src/Elabftw/i18n4Js.php:108
+msgid "Now"
+msgstr "Nüüd"
+
+#: src/Elabftw/i18n4Js.php:132
+msgid "Today"
+msgstr "Täna"
+
+#: src/Enums/BasePermissions.php:31
+msgid "Only owner and admins"
+msgstr "Ainult omanik ja administraatorid"
+
+#: src/Enums/BasePermissions.php:32
+msgid "Only owner"
+msgstr "Ainult omanik"
+
+#: src/Models/Notifications/SelfIsValidated.php:33
+msgid "Hello. Your account on eLabFTW was validated by an admin. Follow this link to login: %s"
+msgstr "Tere. Teie eLabFTW konto valideeriti administraatori poolt. Sisselogimiseks klõpsake sellel lingil: %s"
+
+#: src/Controllers/DashboardController.php:50
+msgid "Dashboard"
+msgstr "Töölaud"
+
+#: src/Controllers/DatabaseController.php:46
+msgid "Resource"
+msgid_plural "Resources"
+msgstr[0] "Ressurss"
+msgstr[1] "Ressursid"
+
+#: src/Controllers/ResourcesCategoriesController.php:31
+msgid "Resources categories"
+msgstr "Ressursside kategooriad"
+
+#: src/templates/edit.html:108
+msgid "Load fields"
+msgstr "Laadi väljad"
+
+#: src/templates/dashboard.html:6
+msgid "Welcome %s"
+msgstr "Tere tulemast %s"
+
+#: src/templates/edit-tags.html:15
+msgid "Suggested tags"
+msgstr "Soovitatud sildid"
+
+#: src/templates/edit-user-modal.html:106
+msgid "Validate user"
+msgstr "Kasutaja valideerimine"
+
+#: src/templates/field-builder-modal.html:62
+msgid "Time"
+msgstr "Aeg"
+
+#: src/templates/field-builder-modal.html:174
+msgid "Load extra fields"
+msgstr "Laadi lisaväljad"
+
+#: src/templates/field-builder-modal.html:180
+msgid "Load from a database category"
+msgstr "Laadi andmebaasi kategooriast"
+
+#: src/templates/field-builder-modal.html:188
+#: src/templates/field-builder-modal.html:200
+msgid "Load"
+msgstr "Laadimine"
+
+#: src/templates/field-builder-modal.html:192
+msgid "Load from an experiment template"
+msgstr "Laadi eksperiment mallist"
+
+#: src/templates/field-builder-modal.html:204
+msgid "Metadata preview"
+msgstr "Metaandmete eelvaade"
+
+#: src/templates/field-builder-modal.html:210
+msgid "Apply"
+msgstr "Rakenda"
+
+#: src/templates/head.html:54 src/templates/head.html:60
+#: src/templates/head.html:61
+msgid "Go to dashboard"
+msgstr "Mine töölauale"
+
+#: src/templates/admin.html:57 src/templates/export-modal.html:25
+#: src/templates/head.html:104 src/templates/profile.html:202
+#: src/templates/sysconfig.html:68 src/templates/team.html:19
+#: src/templates/todolist-panel.html:45 src/templates/ucp.html:110
+msgid "Resources"
+msgstr "Ressursid"
+
+#: src/templates/revisions.html:6
+msgid "A change of at least %d characters is required to trigger a revision save."
+msgstr "Redaktsiooni salvestamiseks on vaja muuta vähemalt %d tähemärki."
+
+#: src/templates/revisions.html:13 src/templates/revisions.html:14
+msgid "Compare revisions"
+msgstr "Võrdle redaktsioone"
+
+#: src/templates/revisions.html:26
+msgid "Revision ID"
+msgstr "Redaktsiooni ID"
+
+#: src/templates/show.html:271 src/templates/uploads.html:36
+msgid "Switch layout"
+msgstr "Muuda paigutus"
+
+#: src/templates/uploads.html:40
+msgid "Show archived"
+msgstr "Näita arhiveeritud"
+
+#: src/templates/sysconfig.html:176
+msgid "Message shown to user after successful external auth but local account provisioning is required"
+msgstr "Pärast edukat välist autentimist kuvatakse kasutajale teade, kuid kohaliku konto loomine on vajalik"
+
+#: src/templates/sysconfig.html:277
+msgid "None available"
+msgstr "Pole saadaval"
+
+#: src/templates/sysconfig.html:334
+msgid "All active users"
+msgstr "Kõik aktiivsed kasutajad"
+
+#: src/templates/sysconfig.html:338
+msgid "All active admins"
+msgstr "Kõik aktiivsed administraatorid"
+
+#: src/templates/sysconfig.html:342
+msgid "All active sysadmins"
+msgstr "Kõik aktiivsed süsteemiadministraatorid"
+
+#: src/templates/sysconfig.html:463
+msgid "Allow setting an authentication cookie"
+msgstr "Luba autentimisküpsise seadistamine"
+
+#: src/templates/sysconfig.html:463
+msgid "Disabling this setting will hide the \"remember me\" checkbox on login page."
+msgstr "Sätte keelamisel peidetakse sisselogimislehel „Jäta mind meelde” märkeruut."
+
+#: src/templates/sysconfig.html:465
+msgid "Check the \"remember me\" box on login page by default"
+msgstr "Märgi vaikimisi sisselogimislehel „Jäta mind meelde”"
+
+#: src/templates/sysconfig.html:468
+msgid "Validity period of an authentication cookie (in minutes)"
+msgstr "Autentimisküpsise kehtivusaeg (minutites)"
+
+#: src/templates/sysconfig.html:497
+msgid "Link name"
+msgstr "Lingi nimi"
+
+#: src/templates/ucp.html:105
+msgid "Which page will be loaded first"
+msgstr "Milline leht laaditakse esimesena"
+
+#: src/templates/ucp.html:169
+msgid "Disable all shortcuts"
+msgstr "Keela kõik otseteed"
+
+#: src/templates/upload-dropdown-menu.html:103 src/templates/uploads.html:114
+msgid "Archive/Unarchive"
+msgstr "Arhiveeri/Tühista arhiivimine"
+
+#: src/Enums/ProcurementState.php:31 src/Enums/Users2TeamsTargets.php:25
+msgid "Archived"
+msgstr "Arhiveeritud"
+
+#: src/templates/view-edit-toolbar.html:297
+msgid "See revisions"
+msgstr "Vaata parandusi"
+
+#: src/templates/view-edit.html:20
+msgid "This entry is archived: it will not appear in the listings by default."
+msgstr "See kirje on arhiveeritud: see ei ilmu vaikimisi loendites."
+
+#: src/templates/ucp.html:477
+msgid "This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again:"
+msgstr "See on ainus kord, kui võtit kuvatakse! Kopeeri see kindlasti kuhugi turvalisse kohta, muidu sa seda uuesti ei näe:"
+
+#: src/Enums/BasePermissions.php:28
+msgid "Everyone including anonymous users"
+msgstr "Kõik, sealhulgas anonüümsed kasutajad"
+
+#: src/Enums/BasePermissions.php:29
+msgid "Everyone with an account"
+msgstr "Kõik, kellel on konto"
+
+#: src/Models/Scheduler.php:101
+msgid "You do not have the permission to book this entry."
+msgstr "Teil pole selle sissekande broneerimiseks luba."
+
+#: src/Models/Scheduler.php:258
+msgid "Event cancellation is not permitted."
+msgstr "Ürituse tühistamine ei ole lubatud."
+
+#: src/Models/Scheduler.php:266
+msgid "Cannot cancel slot less than %d minutes before its start."
+msgstr "Aega ei saa tühistada vähem kui %d minutit enne selle algust."
+
+#: src/Models/Scheduler.php:492
+msgid "Slot time is limited to %d minutes."
+msgstr "Ajapesa on piiratud %d minutiga."
+
+#: src/Models/Scheduler.php:509
+msgid "You cannot book any more slots. Maximum of %d reached."
+msgstr "Rohkem aegu ei saa broneerida. Maksimaalne lubatud arv (%d) on saavutatud."
+
+#: src/Models/Scheduler.php:541
+msgid "Overlapping booking slots is not permitted."
+msgstr "Kattuvad broneerimisajad ei ole lubatud."
+
+#: src/Models/Notifications/EventDeleted.php:95
+msgid "Message:"
+msgstr "Sõnum:"
+
+#: src/templates/booking-params-modal.html:6
+#: src/templates/view-edit-toolbar.html:199
+#: src/templates/view-edit-toolbar.html:288
+msgid "Modify booking parameters"
+msgstr "Broneerimisparameetrite muutmine"
+
+#: src/templates/booking-params-modal.html:14
+#: src/templates/booking-params-modal.html:15
+msgid "Allow booking this resource"
+msgstr "Luba selle ressursi broneerimine"
+
+#: src/templates/booking-params-modal.html:22
+#: src/templates/booking-params-modal.html:23
+msgid "Allow overlapping slots"
+msgstr "Luba kattuvad pesad"
+
+#: src/templates/booking-params-modal.html:31
+msgid "Maximum slot time (in minutes)"
+msgstr "Maksimaalne ajapesa (minutites)"
+
+#: src/templates/booking-params-modal.html:37
+msgid "Maximum per-user future slot allowed"
+msgstr "Kasutajale lubatud maksimaalne tulevaste ajapesade arv"
+
+#: src/templates/booking-params-modal.html:52
+#: src/templates/booking-params-modal.html:53
+msgid "Allow cancelling a booking slot"
+msgstr "Luba broneeringu tühistamine"
+
+#: src/templates/booking-params-modal.html:59
+msgid "Minimum time before a slot can be cancelled (in minutes)"
+msgstr "Minimaalne aeg enne broneeringu tühistamist (minutites)"
+
+#: src/templates/edit.html:60 src/templates/view.html:126
+msgid "Main text"
+msgstr "Põhitekst"
+
+#: src/templates/field-builder-modal.html:60
+msgid "Date and time"
+msgstr "Kuupäev ja kellaaeg"
+
+#: src/templates/field-builder-modal.html:134
+msgid "Required"
+msgstr "Nõutav"
+
+#: src/templates/permissions-edit-modal.html:22
+#: src/templates/view-permissions.html:16
+msgid "Select who can book this entry"
+msgstr "Valige, kes saab selle sissekande broneerida"
+
+#: src/templates/scheduler.html:93
+msgid "Cancel booking slot"
+msgstr "Tühista broneerimisaeg"
+
+#: src/templates/scheduler.html:94
+msgid "Add a custom message"
+msgstr "Lisa kohandatud sõnum"
+
+#: src/templates/scheduler.html:98
+msgid "Past and future users who booked this resource"
+msgstr "Selle ressursi broneerinud varasemad ja tulevased kasutajad"
+
+#: src/templates/scheduler.html:109
+msgid "Send message and cancel"
+msgstr "Saada sõnum ja tühista"
+
+#: src/templates/permissions-edit-modal.html:21
+#: src/templates/view-permissions.html:15
+msgid "Can book"
+msgstr "Saab broneerida"
+
+#: src/templates/dashboard.html:107
+msgid "Scheduled bookings"
+msgstr "Planeeritud broneeringud"
+
+#: src/templates/field-builder-modal.html:105
+msgid "Available units"
+msgstr "Saadaval olevad ühikud"
+
+#: src/templates/json-editor.html:39
+msgid "You have unsaved changes"
+msgstr "Teil on salvestamata muudatusi"
+
+#: src/templates/permissions-edit-modal.html:13
+#: src/templates/view-permissions.html:6
+msgid "Visibility"
+msgstr "Nähtavus"
+
+#: src/templates/permissions-edit-modal.html:14
+#: src/templates/view-permissions.html:7
+msgid "Select who can see this entry"
+msgstr "Valige, kes seda kirjet näevad"
+
+#: src/templates/permissions-edit-modal.html:17
+#: src/templates/view-permissions.html:11
+msgid "Can write"
+msgstr "Võib kirjutada"
+
+#: src/templates/permissions-edit-modal.html:18
+#: src/templates/view-permissions.html:12
+msgid "Select who can edit this entry"
+msgstr "Valige, kes saab seda kirjet muuta"
+
+#: src/templates/sysconfig.html:90
+msgid "The default language of this instance. It can be overridden by each user."
+msgstr "Selle sessiooni vaikekeel. Iga kasutaja saab seda muuta."
+
+#: src/Make/MakeMultiPdf.php:32
+msgid "Multientry eLabFTW PDF"
+msgstr "Mitmekirjeline eLabFTW PDF"
+
+#: src/templates/experiments-categories.html:12
+msgid "Create new experiments category"
+msgstr "Loo uus eksperimendi kategooria"
+
+#: src/templates/experiments-status.html:12
+msgid "Create new experiments status"
+msgstr "Uute eksperimentide staatuse loomine"
+
+#: src/templates/resources-status.html:12
+msgid "Create new resources status"
+msgstr "Loo uus ressursi staatus"
+
+#: src/Controllers/ExperimentsCategoriesController.php:31
+msgid "Experiments categories"
+msgstr "Eksperimentide kategooriad"
+
+#: src/templates/experiments-categories.html:8
+msgid "Create and modify the categories available to experiments."
+msgstr "Loo ja muuda eksperimentide kategooriaid."
+
+#: src/templates/edit-user-modal.html:111
+msgid "Disable 2FA"
+msgstr "Keela 2FA"
+
+#: src/templates/field-builder-modal.html:142
+msgid "Read-only"
+msgstr "Kirjutuskaitstud"
+
+#: src/templates/links.html:71 src/templates/show.html:65
+#: src/templates/show.html:66
+msgid "Filter category"
+msgstr "Kategooria"
+
+#: src/templates/show.html:372 src/templates/show.html:374
+msgid "Change category"
+msgstr "Muuda kategooriat"
+
+#: src/templates/scheduler.html:75
+msgid "Bind a resource"
+msgstr "Ressursi sidumine"
+
+#: src/templates/ucp.html:517 src/templates/ucp.html:528
+msgid "Last used"
+msgstr "Viimati kasutatud"
+
+#: src/Models/AbstractEntity.php:1046
+msgid "A category is required to fetch the next Custom ID"
+msgstr "Kohandatud ID toomiseks on vajalik kategooria"
+
+#: src/templates/experiments-status.html:8
+msgid "Create and modify the status available to experiments."
+msgstr "Loo ja muuda eksperimentidele saadaolevaid staatuseid."
+
+#: src/templates/resources-status.html:8
+msgid "Create and modify the status available to resources."
+msgstr "Loo ja muuda ressurssidele saadaolevaid staatuseid."
+
+#: src/Elabftw/i18n4Js.php:137
+msgid "Unarchiving a user means their account will be restored. This action is reversible."
+msgstr "Kasutaja arhiivist eemaldamine tähendab tema konto taastamist. See toiming on tagasipööratav."
+
+#: src/Elabftw/i18n4Js.php:44
+msgid "Archiving a user means their account will be disabled. This action is reversible."
+msgstr "Kasutaja arhiveerimine tähendab tema konto sulgemist. See toiming on tagasipööratav."
+
+#: src/templates/dashboard.html:30 src/templates/dashboard.html:77
+msgid "Browse by category"
+msgstr "Sirvi kategooria järgi"
+
+#: src/templates/dashboard.html:39 src/templates/dashboard.html:85
+msgid "Browse by status"
+msgstr "Sirvi oleku järgi"
+
+#: src/templates/dashboard.html:47
+msgid "Last modified experiments"
+msgstr "Viimati muudetud eksperimendid"
+
+#: src/templates/dashboard.html:93
+msgid "Last modified resources"
+msgstr "Viimati muudetud ressursid"
+
+#: src/templates/sysconfig.html:235 src/templates/upload-more-info.html:4
+msgid "ID"
+msgstr "ID-kaart"
+
+#: src/templates/edit.html:14 src/templates/edit.html:44
+#: src/templates/link-view-one.html:17 src/templates/show-item-table.html:30
+#: src/templates/show-item.html:77 src/templates/view.html:14
+msgid "Custom ID"
+msgstr "Kohandatud ID"
+
+#: src/templates/edit.html:47
+msgid "Get next"
+msgstr "Järgmine"
+
+#: src/templates/editusers.html:101
+#: src/templates/ownership-transfer-modal.html:17
+#: src/templates/view-edit-toolbar.html:24
+msgid "Search user"
+msgstr "Otsi kasutajat"
+
+#: src/templates/search-help-modal.html:14
+msgid "field"
+msgstr "väli"
+
+#: src/templates/search-help-modal.html:14
+msgid "value"
+msgstr "väärtus"
+
+#: src/templates/search-help-modal.html:21
+msgid "yes, no, simple or quoted term"
+msgstr "jah, ei, liht- või tsiteeritud termin"
+
+#: src/templates/search-help-modal.html:22
+#: src/templates/search-help-modal.html:23
+#: src/templates/search-help-modal.html:26
+#: src/templates/search-help-modal.html:27
+#: src/templates/search-help-modal.html:33
+#: src/templates/search-help-modal.html:35
+#: src/templates/search-help-modal.html:37
+#: src/templates/search-help-modal.html:39
+#: src/templates/search-help-modal.html:40
+msgid "simple or quoted term"
+msgstr "liht- või tsiteeritud termin"
+
+#: src/templates/search-help-modal.html:25
+msgid "see date format"
+msgstr "vaata kuupäevavormingut"
+
+#: src/templates/search-help-modal.html:34
+#: src/templates/search-help-modal.html:38
+msgid "yes or no"
+msgstr "jah või ei"
+
+#: src/templates/search-help-modal.html:36
+msgid "1, 2, 3, 4, 5, or unrated or 0"
+msgstr "1, 2, 3, 4, 5 või hinnanguta või 0"
+
+#: src/templates/show.html:290
+msgid "Status (inverted)"
+msgstr "Staatus (ümberpööratud)"
+
+#: src/templates/show.html:293
+msgid "Highest Custom ID"
+msgstr "Kõrgeim kohandatud ID"
+
+#: src/templates/show.html:294
+msgid "Lowest Custom ID"
+msgstr "Madalaim kohandatud ID"
+
+#: src/templates/sysconfig.html:171
+msgid "Allow Admins to add existing users to their team"
+msgstr "Luba administraatoritel lisada oma meeskonda olemasolevaid kasutajaid"
+
+#: src/Elabftw/i18n4Js.php:126
+msgid "Sort by column"
+msgstr "Sorteeri veeru järgi"
+
+#: src/Elabftw/i18n4Js.php:56 src/Models/AbstractEntity.php:832
+msgid "Custom ID is already used! Try another one."
+msgstr "Kohandatud ID on juba kasutusel! Proovige teist."
+
+#: src/Services/ExpirationNotifier.php:41
+msgid "Account expiration warning"
+msgstr "Konto aegumise hoiatus"
+
+#: src/Services/ExpirationNotifier.php:46
+msgid "Your account on %s is due to expire on %s and become inaccessible (archived) passed this date. All your data will still be visible to others, but you will not be able to access it through this account."
+msgstr "Teie konto domeenis %s aegub %s ja muutub pärast seda kuupäeva ligipääsmatuks (arhiveeritakse). Kõik teie andmed on teistele endiselt nähtavad, kuid te ei pääse neile selle konto kaudu ligi."
+
+#: src/Services/ExpirationNotifier.php:68
+msgid "Account expiration information"
+msgstr "Konto aegumise teave"
+
+#: src/Services/ExpirationNotifier.php:78
+msgid "One or several user accounts in your team will expire soon. Their account will become inaccessible (archived). All their data will still be visible to others."
+msgstr "Üks või mitu kasutajakontot teie meeskonnas aeguvad peagi. Nende kontod muutuvad ligipääsmatuks (arhiveeritakse). Kõik nende andmed on teistele endiselt nähtavad."
+
+#: src/Services/Transform.php:113
+msgid "A new eLabFTW version has been installed since your last visit.%sRead the release notes by clicking this message."
+msgstr "Pärast teie viimast külastust on installitud uus eLabFTW versioon. %sLugege väljalaskemärkmeid, klõpsates sellel teatel."
+
+#: src/Services/UserArchiver.php:60
+msgid "You are trying to archive an unvalidated user. Maybe you want to delete the account?"
+msgstr "Sa üritad arhiveerida valideerimata kasutajat. Võib-olla soovid konto kustutada?"
+
+#: src/Services/UserArchiver.php:63
+msgid "A sysadmin account cannot be archived."
+msgstr "Süsteemiadministraatori kontot ei saa arhiveerida."
+
+#: src/templates/admin.html:326
+msgid "Permissions for the derived resource"
+msgstr "Tuletatud ressursi õigused"
+
+#: src/templates/admin.html:302
+msgid "Tags of the team"
+msgstr "Meeskonna sildid"
+
+#: src/templates/create-new-item-modal.html:29
+msgid "Blank experiment"
+msgstr "Tühi eksperiment"
+
+#: src/templates/editusers.html:13
+msgid "Filter teams"
+msgstr "Filtreeri meeskondi"
+
+#: src/templates/editusers.html:81
+msgid "Utilize this attribute to specifically identify whether the user holds the primary Admin role within the team. Note that this designation is for informational purposes only."
+msgstr "Kasutage seda atribuuti, et täpselt tuvastada, kas kasutajal on meeskonnas peamine administraatori roll. Pange tähele, et see määratlus on ainult informatiivsel eesmärgil."
+
+#: src/templates/editusers.html:113
+msgid "Users table"
+msgstr "Kasutajate tabel"
+
+#: src/templates/editusers.html:115
+msgid "Remote directory users list"
+msgstr "Kaugkataloogi kasutajate loend"
+
+#: src/templates/footer.html:14
+msgid "Report bug"
+msgstr "Teata veast"
+
+#: src/templates/footer.html:53 src/templates/head.html:237
+msgid "Select language"
+msgstr "Valige keel"
+
+#: src/templates/head.html:46
+msgid "Main menu"
+msgstr "Peamenüü"
+
+#: src/templates/head.html:49
+msgid "Toggle navigation"
+msgstr "Luba/keela navigeerimine"
+
+#: src/templates/head.html:81
+msgid "Quicksearch"
+msgstr "Kiirotsing"
+
+#: src/templates/change-pass.html:21 src/templates/edit-user-modal.html:92
+#: src/templates/login-full.html:98 src/templates/register.html:71
+#: src/templates/sysconfig.html:386 src/templates/sysconfig.html:922
+#: src/templates/ts-config.html:32 src/templates/ucp.html:32
+#: src/templates/ucp.html:314 src/templates/ucp.html:452
+#: src/templates/view-edit-toolbar.html:111
+msgid "Show password"
+msgstr "Näita parooli"
+
+#: src/templates/profile.html:296 src/templates/team.html:88
+#: src/templates/uploads.html:97
+msgid "Download"
+msgstr "Laadi alla"
+
+#: src/templates/register.html:58
+msgid "Display allowed email domains"
+msgstr "Kuva lubatud e-posti domeenid"
+
+#: src/templates/revisions.html:25 src/templates/show-item-table.html:7
+#: src/templates/show-item.html:11
+msgid "Select"
+msgstr "Vali"
+
+#: src/templates/scope-button.html:13 src/templates/scope-button.html:15
+msgid "Scope"
+msgstr "Ulatus"
+
+#: src/Enums/Scope.php:33
+msgid "Self"
+msgstr "Ise"
+
+#: src/Enums/Scope.php:35
+msgid "Everything"
+msgstr "Kõik"
+
+#: src/templates/show.html:225
+msgid "Date operator"
+msgstr "Kuupäevaoperaator"
+
+#: src/templates/show-item-table.html:2 src/templates/show-item.html:6
+msgid "Entry"
+msgstr "Sissepääs"
+
+#: src/templates/show.html:56
+msgid "Query filters"
+msgstr "Päringufiltrid"
+
+#: src/templates/links.html:70 src/templates/show.html:411
+msgid "Limit category"
+msgstr "Piirangukategooria"
+
+#: src/templates/show.html:423
+msgid "Limit author"
+msgstr "Piira autorit"
+
+#: src/templates/show.html:501
+msgid "Load more"
+msgstr "Laadi juurde"
+
+#: src/templates/steps-edit.html:8
+msgid "Drag to reorder"
+msgstr "Lohistage ümberjärjestamiseks"
+
+#: src/templates/sysconfig.html:35
+msgid "Email configuration is required. Consult the documentation (%slink%s) for help."
+msgstr "E-posti seadistamine on kohustuslik. Abi saamiseks vaadake dokumentatsiooni (%slink%s)."
+
+#: src/templates/sysconfig.html:54 src/templates/sysconfig.html:1068
+msgid "Audit Logs"
+msgstr "Auditilogid"
+
+#: src/templates/sysconfig.html:107
+msgid "URL where the Chat room menu entry from Help dropdown points"
+msgstr "URL, kuhu osutab vestlusruumi menüükirje rippmenüüst Abi"
+
+#: src/templates/sysconfig.html:172
+msgid "Allow Admins to archive users"
+msgstr "Luba administraatoritel kasutajaid arhiveerida"
+
+#: src/templates/sysconfig.html:415
+msgid "Email address"
+msgstr "E-posti aadress"
+
+#: src/templates/sysconfig.html:1063
+msgid "Audit Logs configuration"
+msgstr "Auditeerimislogide konfiguratsioon"
+
+#: src/templates/sysconfig.html:1065
+msgid "Emit audit logs with PHP error log"
+msgstr "Auditilogide väljastamine PHP vealogiga"
+
+#: src/templates/sysconfig.html:1070
+msgid "This table lists the most recent events recorded in the application and worth keeping a trace of."
+msgstr "See tabel loetleb rakenduses viimased salvestatud sündmused, mida tasub jälgida."
+
+#: src/templates/profile.html:286 src/templates/sysconfig.html:813
+#: src/templates/sysconfig.html:1073
+msgid "Refresh"
+msgstr "Värskenda"
+
+#: src/templates/sysconfig.html:1081
+msgid "Created at"
+msgstr "Loodud"
+
+#: src/templates/sysconfig.html:1083
+msgid "Actor"
+msgstr "Tegutseja"
+
+#: src/templates/sysconfig.html:1084
+msgid "Target user"
+msgstr "Sihtkasutaja"
+
+#: src/Elabftw/i18n4Js.php:89
+msgid "Filter by category"
+msgstr "Filtreeri kategooria järgi"
+
+#: src/Elabftw/i18n4Js.php:124
+msgid "Select a resource"
+msgstr "Valige ressurss"
+
+#: src/templates/team.html:57
+msgid "Mass email form"
+msgstr "Massmeili vorm"
+
+#: src/templates/ucp.html:351
+msgid "User information"
+msgstr "Kasutaja teave"
+
+#: src/templates/upload-more-info.html:2
+msgid "Not calculated"
+msgstr "Pole arvutatud"
+
+#: src/templates/profile.html:97 src/templates/uploads.html:60
+msgid "Attached files"
+msgstr "Lisatud failid"
+
+#: src/templates/uploads.html:66
+msgid "Filesize"
+msgstr "Faili suurus"
+
+#: src/templates/edit.html:129
+msgid "Permissions for the template"
+msgstr "Malli õigused"
+
+#: src/templates/edit.html:83
+msgid "Permissions for the derived experiment"
+msgstr "Tuletatud eksperimendi õigused"
+
+#: src/templates/view-edit-toolbar.html:40
+#: src/templates/view-edit-toolbar.html:63
+msgid "Timestamp Entry"
+msgstr "Ajatempli kirje"
+
+#: src/templates/view-edit-toolbar.html:46
+#: src/templates/view-edit-toolbar.html:70
+msgid "Timestamping an entry will create an irrefutable proof that the data was present at this point in time. You can timestamp an entry as many times as necessary: an immutable timestamp archive will be created each time, and stored as attachment."
+msgstr "Kirje ajatempli lisamine loob ümberlükkamatu tõendi, et andmed olid sel ajahetkel olemas. Kirjet saab ajatempliga varustada nii mitu korda kui vaja: iga kord luuakse muutumatu ajatempli arhiiv, mis salvestatakse manusena."
+
+#: src/templates/view-edit-toolbar.html:47
+msgid "With Trusted Timestamping (RFC3161), a cryptographic hash of your data is sent to a trusted third party. They reply with a token containing the current time, and they sign the token with their private key."
+msgstr "Usaldusväärse ajatempli (RFC3161) abil saadetakse teie andmete krüptograafiline räsi usaldusväärsele kolmandale osapoolele. Vastuseks saadakse märgis koos ajatempliga, mis allkirjastatakse privaatvõtmega."
+
+#: src/templates/view-edit-toolbar.html:71
+msgid "With Blockchain Timestamping, the cryptographic fingerprint of your data is added to a blockchain that is impossible to modify. This function uses the Bloxberg Consortium blockchain based on Ethereum."
+msgstr "Plokiahela ajatempli abil lisatakse teie andmete krüptograafiline sõrmejälg plokiahelasse, mida on võimatu muuta. See funktsioon kasutab Ethereumil põhinevat Bloxberg Consortiumi plokiahelat."
+
+#: src/templates/view.html:45
+msgid "Entry was timestamped by %s on %s at %s"
+msgstr "Sissekandele pani ajatempli %s kuupäeval %s kell %s"
+
+#: src/Elabftw/i18n4Js.php:104 src/Models/AbstractEntity.php:1078
+msgid "Linking an item to itself is not allowed. Please select a different target."
+msgstr "Üksuse iseendaga linkimine pole lubatud. Palun valige mõni muu sihtmärk."
+
+#: src/Enums/BasePermissions.php:30
+msgid "Only members of the team"
+msgstr "Ainult meeskonna liikmed"
+
+#: src/Enums/PasswordComplexity.php:29
+msgid "Minimum password length"
+msgstr "Parooli minimaalne pikkus"
+
+#: src/Enums/PasswordComplexity.php:30
+msgid "Must have at least one upper and one lower case letter, if your alphabet allows"
+msgstr "Peab sisaldama vähemalt ühte suurt ja ühte väikest tähte"
+
+#: src/Enums/PasswordComplexity.php:31
+msgid "Must have at least one upper and one lower case letter, if your alphabet allows, and one digit"
+msgstr "Peab sisaldama vähemalt ühte suurt ja väikest tähte ning ühte numbrit"
+
+#: src/Enums/PasswordComplexity.php:32
+msgid "Must have at least one upper and one lower case letter, if your alphabet allows, one special character, and one digit"
+msgstr "Peab sisaldama vähemalt ühte suurt ja väikest tähte, ühte erimärki ja ühte numbrit"
+
+#: src/Models/Users/Users.php:570
+msgid "New password must not be the same as the current one."
+msgstr "Uus parool ei tohi olla sama, mis praegune."
+
+#: src/Services/PasswordValidator.php:36
+msgid "Password does not match requirement: %s"
+msgstr "Parool ei vasta nõuetele: %s"
+
+#: src/templates/change-pass.html:19 src/templates/edit-user-modal.html:90
+#: src/templates/register.html:69 src/templates/ucp.html:331
+msgid "Minimum password length: %d."
+msgstr "Parooli minimaalne pikkus: %d."
+
+#: src/templates/search-help-modal.html:24
+msgid "number"
+msgstr "number"
+
+#: src/templates/search.html:212
+msgid "And extra field is"
+msgstr "Ja lisaväli on"
+
+#: src/templates/show.html:141
+msgid "All fields"
+msgstr "Kõik väljad"
+
+#: src/templates/show.html:164
+msgid "Tip: you can use '%' as wildcard in value"
+msgstr "Näpunäide: väärtuses saab metamärgina kasutada '%'"
+
+#: src/templates/links.html:19 src/templates/related-snippet.html:15
+msgid "Show related experiments"
+msgstr "Kuva seotud eksperimente"
+
+#: src/templates/sysconfig.html:632
+msgid "Password policy"
+msgstr "Paroolipoliitika"
+
+#: src/templates/edit-user-modal.html:98 src/templates/sysconfig.html:641
+msgid "Password complexity requirement"
+msgstr "Parooli keerukuse nõue"
+
+#: src/templates/sysconfig.html:648
+msgid "The minimum password length is always enforced."
+msgstr "Parooli minimaalset pikkust järgitakse alati."
+
+#: src/templates/sysconfig.html:652
+msgid "Maximum number of days since last password change"
+msgstr "Maksimaalne päevade arv pärast viimast parooli muutmist"
+
+#: src/templates/ucp.html:305 src/templates/ucp.html:320
+msgid "Personal information"
+msgstr "Isiklik teave"
+
+#: src/Enums/Currency.php:31
+msgid "Canadian Dollar (CAD)"
+msgstr "Kanada dollar (CAD)"
+
+#: src/Enums/Currency.php:32
+msgid "Swiss Franc (CHF)"
+msgstr "Šveitsi frank (CHF)"
+
+#: src/Enums/Currency.php:33
+msgid "Chinese Yuan (CNY)"
+msgstr "Hiina jüaan (CNY)"
+
+#: src/Enums/Currency.php:34
+msgid "Danish Krone (DKK)"
+msgstr "Taani kroon (DKK)"
+
+#: src/Enums/Currency.php:35
+msgid "Euro (EUR)"
+msgstr "Euro (EUR)"
+
+#: src/Enums/Currency.php:36
+msgid "British Pound Sterling (GBP)"
+msgstr "Briti naelsterling (GBP)"
+
+#: src/Enums/Currency.php:37
+msgid "Japanese Yen (JPY)"
+msgstr "Jaapani jeen (JPY)"
+
+#: src/Enums/Currency.php:38
+msgid "United States Dollar (USD)"
+msgstr "Ameerika Ühendriikide dollar (USD)"
+
+#: src/Enums/Currency.php:39
+msgid "Swedish Krona (SEK)"
+msgstr "Rootsi kroon (SEK)"
+
+#: src/Enums/Currency.php:40
+msgid "Norwegian Krone (NOK)"
+msgstr "Norra kroon (NOK)"
+
+#: src/Enums/ProcurementState.php:27
+msgid "Pending"
+msgstr "Ootel"
+
+#: src/Elabftw/i18n4Js.php:141 src/Enums/ProcurementState.php:28
+msgid "Validated"
+msgstr "Valideeritud"
+
+#: src/Enums/ProcurementState.php:29
+msgid "Partially received"
+msgstr "Osaliselt laekunud"
+
+#: src/Enums/ProcurementState.php:30
+msgid "Received"
+msgstr "Saadud"
+
+#: src/Make/MakeCompoundsReport.php:50 src/Make/MakeInventoryReport.php:56
+#: src/Make/MakeProcurementRequestsCsv.php:30
+msgid "Nothing to export!"
+msgstr "Pole midagi eksportida!"
+
+#: src/Elabftw/MinisignKeys.php:107
+msgid "Invalid secret key format!"
+msgstr "Sobimatu salajase võtme vorming!"
+
+#: src/Elabftw/MinisignKeys.php:135
+msgid "Could not decrypt private key. Are you certain of the passphrase?"
+msgstr "Privaatvõtit ei õnnestunud dekrüpteerida. Kas olete paroolis kindel?"
+
+#: src/Elabftw/TwigFilters.php:145
+msgid "User could not be found."
+msgstr "Kasutajat ei leitud."
+
+#: src/Elabftw/i18n4Js.php:110
+msgid "Onboarding email(s) will soon be sent."
+msgstr "Sisseelamismeil(id) saadetakse peagi."
+
+#: src/Controllers/LoginController.php:391
+msgid "Your account has been associated successfully to a team. Please authenticate again."
+msgstr "Teie konto on edukalt meeskonnaga seostatud. Palun autentige end uuesti."
+
+#: src/Models/AbstractEntity.php:998
+msgid "Signed by %s (%s)"
+msgstr "Allkirjastanud %s (%s)"
+
+#: src/Models/AbstractEntity.php:1011
+msgid "Signature archive by %s (%s)"
+msgstr "Allkirjade arhiiv kasutajalt %s (%s)"
+
+#: src/Models/SigKeys.php:45
+msgid "The mandatory \"passphrase\" parameter was not provided!"
+msgstr "Kohustuslikku parameetrit \"parool\" ei esitatud!"
+
+#: src/models/notifications/CommentCreated.php:39
+msgid "Hi. %s left a comment on your entry. Have a look: %s"
+msgstr "Tere. %s jättis teie sissekandele kommentaari. Vaadake: %s"
+
+#: src/Services/Transform.php:46
+msgid "New comment on your entry."
+msgstr "Uus kommentaar teie sissekande kohta."
+
+#: src/templates/booking-params-modal.html:43
+#: src/templates/booking-params-modal.html:44
+msgid "Allow users booking in past"
+msgstr "Luba kasutajatel broneerida minevikus"
+
+#: src/templates/edit.html:77
+msgid "Last saved:"
+msgstr "Viimati salvestatud:"
+
+#: src/templates/onboarding-email-modal.html:5
+msgid "Resend onboarding email"
+msgstr "Taas saada sisseelamiskiri"
+
+#: src/templates/onboarding-email-modal.html:11
+msgid "Select users to whom the onboarding email will be sent."
+msgstr "Valige kasutajad, kellele sisseelamiskiri saadetakse."
+
+#: src/templates/onboarding-email-modal.html:12
+msgid "Search users..."
+msgstr "Otsi kasutajaid..."
+
+#: src/templates/onboarding-email.html:1
+msgid "Onboarding email"
+msgstr "Sisseelamiskiri"
+
+#: src/templates/onboarding-email.html:4
+msgid "This email will be sent to new users."
+msgstr "See e-kiri saadetakse uutele kasutajatele."
+
+#: src/templates/onboarding-email.html:10
+msgid "Send onboarding emails"
+msgstr "Saada sisseelamiskirjad"
+
+#: src/templates/onboarding-email.html:41
+msgid "Resend email to selected users"
+msgstr "Saada e-kiri valitud kasutajatele uuesti"
+
+#: src/templates/onboarding-email.html:51
+msgid "Send a different email for (sys)admins."
+msgstr "Saada (süsteemi)administraatoritele erinev e-kiri."
+
+#: src/templates/onboarding-email.html:54
+msgid "This email will be sent to new (sys)admins."
+msgstr "See e-kiri saadetakse uutele (süsteemi)administraatoritele."
+
+#: src/templates/procurement-params-modal.html:6
+#: src/templates/view-edit-toolbar.html:228
+#: src/templates/view-edit-toolbar.html:290
+msgid "Modify procurement parameters"
+msgstr "Hankeparameetrite muutmine"
+
+#: src/templates/procurement-params-modal.html:14
+#: src/templates/procurement-params-modal.html:15
+msgid "Allow procurement of this resource"
+msgstr "Luba selle ressursi hankimine"
+
+#: src/templates/procurement-params-modal.html:22
+msgid "Packaging quantity"
+msgstr "Pakendi kogus"
+
+#: src/templates/procurement-params-modal.html:27
+msgid "Price without taxes"
+msgstr "Hind ilma maksudeta"
+
+#: src/templates/procurement-params-modal.html:32
+msgid "Price with taxes"
+msgstr "Hind koos maksudega"
+
+#: src/templates/procurement-params-modal.html:37
+msgid "Currency"
+msgstr "Valuuta"
+
+#: src/templates/admin.html:451 src/templates/show.html:364
+#: src/templates/view-edit-toolbar.html:305
+msgid "Archive"
+msgstr "Arhiiv"
+
+#: src/templates/sysconfig.html:155
+msgid "This allows users without an account to login into a team and see the experiments with public visibility. It also enables users to share specific entries with a special link."
+msgstr "See võimaldab kontota kasutajatel meeskonda sisse logida ja eksperimente avalikult näha. Samuti võimaldab see kasutajatel spetsiaalse lingi abil konkreetseid kirjeid jagada."
+
+#: src/templates/team.html:7 src/templates/team.html:83
+#: src/templates/team.html:93
+msgid "Procurement requests"
+msgstr "Hanketaotlused"
+
+#: src/templates/team.html:97 src/templates/team.html:117
+msgid "Requester"
+msgstr "Taotleja"
+
+#: src/templates/team.html:98 src/templates/team.html:119
+msgid "Ordered"
+msgstr "Tellitud"
+
+#: src/templates/team.html:99 src/templates/team.html:121
+msgid "Quantity ordered"
+msgstr "Tellitud kogus"
+
+#: src/templates/team.html:100 src/templates/team.html:123
+msgid "Total"
+msgstr "Kokku"
+
+#: src/templates/team.html:101 src/templates/team.html:124
+msgid "Quantity received"
+msgstr "Saadud kogus"
+
+#: src/templates/team.html:103
+msgid "Quote"
+msgstr "Pakkumine"
+
+#: src/templates/select-state.html:14 src/templates/team.html:104
+#: src/templates/team.html:133
+msgid "State"
+msgstr "Olek"
+
+#: src/templates/team.html:125
+msgid "unset"
+msgstr "tühistatud"
+
+#: src/templates/team.html:137
+msgid "Cancel order"
+msgstr "Tühista tellimus"
+
+#: src/templates/team.html:148
+msgid "No procurement requests have been made yet."
+msgstr "Hanketaotlusi pole veel esitatud."
+
+#: src/templates/ts-config.html:5 src/templates/ts-config.html:8
+#: src/templates/ts-config.html:9 src/templates/ts-config.html:10
+msgid "(free, no account required)"
+msgstr "(tasuta, kontot pole vaja)"
+
+#: src/templates/ts-config.html:6 src/templates/ts-config.html:7
+msgid "(requires account)"
+msgstr "(nõuab kontot)"
+
+#: src/templates/ucp.html:20 src/templates/ucp.html:25
+#: src/templates/ucp.html:38 src/templates/ucp.html:439
+msgid "Regenerate signature keys"
+msgstr "Allkirjavõtmete uuesti genereerimine"
+
+#: src/templates/ucp.html:27
+msgid "Warning: regenerating your signature keys means the current key will be archived and will not be available anymore."
+msgstr "Hoiatus: allkirjavõtmete uuesti genereerimine tähendab, et praegune võti arhiveeritakse ja pole enam saadaval."
+
+#: src/templates/ucp.html:28
+msgid "Enter a passphrase:"
+msgstr "Sisesta parool:"
+
+#: src/templates/ucp.html:424
+msgid "Signature keys"
+msgstr "Allkirjavõtmed"
+
+#: src/templates/ucp.html:432
+msgid "Download private key"
+msgstr "Laadi alla privaatvõti"
+
+#: src/templates/ucp.html:435
+msgid "Download public key"
+msgstr "Laadi alla avalik võti"
+
+#: src/templates/ucp.html:443
+msgid "Signature keys are a highly secure public-key signature system that allows you to cryptographically sign experiments or resources. Signing an entry will generate an immutable archive."
+msgstr "Allkirjavõtmed on üliturvaline avaliku võtme allkirjasüsteem, mis võimaldab teil eksperimente või ressursse krüptograafiliselt allkirjastada. Kirje allkirjastamine loob muutumatu arhiivi."
+
+#: src/templates/ucp.html:444
+msgid "To learn more about signature keys, have a look at the %scomplete documentation%s."
+msgstr "Allkirjavõtmete kohta lisateabe saamiseks vaadake %stäielikku dokumentatsiooni%s."
+
+#: src/templates/ucp.html:446
+msgid "You do not have a key pair associated with your account yet."
+msgstr "Teie kontoga pole veel võtmepaari seotud."
+
+#: src/templates/ucp.html:448
+msgid "To generate a key pair, enter a passphrase below and click the button:"
+msgstr "Võtmepaari genereerimiseks sisestage allpool parool ja klõpsake nuppu:"
+
+#: src/templates/ucp.html:447 src/templates/ucp.html:453
+msgid "Generate signature keys"
+msgstr "Allkirjavõtmete genereerimine"
+
+#: src/templates/ucp.html:460
+msgid "Tip: use a password manager or a passphrase that you can remember, see %sthis XKCD comic%s."
+msgstr "Näpunäide: kasutage paroolihaldurit või paroolifraasi, mida te mäletate, vaadake %seda XKCD koomiksit%s."
+
+#: src/templates/ucp.html:462
+msgid "Your account is already associated with a keypair."
+msgstr "Teie konto on juba võtmepaariga seotud."
+
+#: src/templates/ucp.html:463
+msgid "Here is your public key. You can share it with the world:"
+msgstr "Siin on teie avalik võti. Saate seda maailmaga jagada:"
+
+#: src/templates/view-edit-toolbar.html:6
+#: src/templates/view-edit-toolbar.html:274
+#: src/templates/view-edit-toolbar.html:275
+msgid "Request action"
+msgstr "Toimingu taotlemine"
+
+#: src/templates/view-edit-toolbar.html:13
+msgid "Select action"
+msgstr "Valige toiming"
+
+#: src/templates/view-edit-toolbar.html:20
+msgid "Select collaborator"
+msgstr "Vali kaastöötaja"
+
+#: src/templates/view-edit-toolbar.html:87
+#: src/templates/view-edit-toolbar.html:208
+msgid "Add signature"
+msgstr "Lisa allkiri"
+
+#: src/templates/view-edit-toolbar.html:96
+msgid "Adding your signature will cryptographically sign the content of this entry, and the signature will be stored alongside the content at the time of signature, in an archive, visible as attachment (masked by default because archived)."
+msgstr "Allkirja lisamine krüptograafiliselt allkirjastab selle kirje sisu ning allkiri salvestatakse allkirjastamise ajal sisu kõrval arhiivi, mis on nähtav manusena (vaikimisi maskeeritud, kuna see on arhiveeritud)."
+
+#: src/templates/view-edit-toolbar.html:98
+msgid "Your account is missing a cryptographic key pair, necessary for signature. You must generate one from your User Control Panel before you can sign an entry."
+msgstr "Teie kontolt puudub allkirjastamiseks vajalik krüptograafiline võtmepaar. Enne kirje allkirjastamist peate selle oma kasutaja juhtpaneelil genereerima."
+
+#: src/templates/view-edit-toolbar.html:100
+msgid "Select a meaning for this signature"
+msgstr "Valige selle allkirja tähendus"
+
+#: src/templates/view-edit-toolbar.html:107
+msgid "Enter your passphrase to unlock your secret key:"
+msgstr "Salajase võtme avamiseks sisestage oma parool:"
+
+#: src/templates/view-edit-toolbar.html:93
+#: src/templates/view-edit-toolbar.html:119
+msgid "Add your signature"
+msgstr "Lisa oma allkiri"
+
+#: src/templates/view-edit-toolbar.html:121
+msgid "Go to Settings"
+msgstr "Mine seadetesse"
+
+#: src/templates/view-edit-toolbar.html:137
+msgid "Create procurement request"
+msgstr "Loo hankepäring"
+
+#: src/templates/view-edit-toolbar.html:144
+msgid "Enter a quantity to purchase"
+msgstr "Sisestage ostetav kogus"
+
+#: src/templates/view-edit-toolbar.html:149
+#: src/templates/view-edit-toolbar.html:228
+msgid "Place order"
+msgstr "Esita tellimus"
+
+#: src/Enums/RequestableAction.php:30
+msgid "archiving"
+msgstr "arhiveerimine"
+
+#: src/Enums/RequestableAction.php:31
+msgid "locking"
+msgstr "lukustamine"
+
+#: src/Enums/RequestableAction.php:33
+msgid "signing"
+msgstr "allkirjastamine"
+
+#: src/Enums/RequestableAction.php:34
+msgid "timestamping"
+msgstr "ajatempli lisamine"
+
+#: src/Enums/RequestableAction.php:34
+msgid "removal of exclusive edit mode"
+msgstr "eksklusiivse redigeerimisrežiimi eemaldamine"
+
+#: src/Make/Exports.php:107
+msgid "Cannot store more than %d exports. Delete previous exports to be permitted to create new ones."
+msgstr "Ei saa salvestada rohkem kui %d eksporti. Uute eksportide loomiseks kustuta eelmised."
+
+#: src/Elabftw/i18n4Js.php:101
+msgid "Apply to {{num, number}} entries?"
+msgstr "Rakenda {{num, number}} kirjele?"
+
+#: src/models/ExclusiveEditMode.php:115
+msgid "This entry is opened in exclusive edit mode by %s since %s. You cannot edit it now."
+msgstr "See kirje on alates %s-st avatud eksklusiivses redigeerimisrežiimis. Te ei saa seda praegu muuta."
+
+#: src/Models/RequestActions.php:114
+msgid "This action has been requested already."
+msgstr "Seda toimingut on juba taotletud."
+
+#: src/templates/admin.html:27
+msgid "Batch actions"
+msgstr "Hulgitoimingud"
+
+#: src/templates/admin.html:98 src/templates/show-view-edit.html:6
+msgid "Newcomer banner"
+msgstr "Uue liikme silt"
+
+#: src/templates/admin.html:102
+msgid "Activate newcomer banner"
+msgstr "Aktiveeri uue liikme silt"
+
+#: src/templates/admin.html:103
+msgid "Display a message to users that recently joined the team."
+msgstr "Kuva sõnum kasutajatele, kes on hiljuti meeskonnaga liitunud."
+
+#: src/templates/admin.html:106
+msgid "Number of days after registration where a user is considered a newcomer"
+msgstr "Päevade arv pärast registreerimist, mil kasutajat peetakse uustulnukaks"
+
+#: src/templates/admin.html:111
+msgid "Message to display"
+msgstr "Kuvatav teade"
+
+#: src/templates/admin.html:341 src/templates/view-edit-template.html:119
+#: src/templates/view-edit-toolbar.html:264
+msgid "Enable/Disable exclusive edit mode"
+msgstr "Eksklusiivse redigeerimisrežiimi lubamine/keelamine"
+
+#: src/templates/admin.html:364 src/templates/edit.html:46
+#: src/templates/view-edit-template.html:38
+msgid "You opened this entry in exclusive edit mode at %s."
+msgstr "Avasite selle kirje eksklusiivses redigeerimisrežiimis kell %s."
+
+#: src/templates/admin.html:368
+msgid "This entry is opened by %s in exclusive edit mode since %s. You cannot edit it now but remove the lock or %sRequest exclusive edit mode removal%s."
+msgstr "%s on selle kirje avanud eksklusiivses redigeerimisrežiimis alates %s. Te ei saa seda praegu muuta, vaid eemaldage lukk või %sTaotlege eksklusiivse redigeerimisrežiimi eemaldamist%s."
+
+#: src/templates/admin.html:342
+msgid "From here you can perform actions on entire group of entries at once."
+msgstr "Siit saate toiminguid teha kogu kirjete rühmaga korraga."
+
+#: src/templates/admin.html:344 src/templates/admin.html:358
+#: src/templates/admin.html:372 src/templates/admin.html:387
+#: src/templates/admin.html:401 src/templates/admin.html:415
+#: src/templates/admin.html:429
+msgid "Toggle display"
+msgstr "Kuva/peida ekraan"
+
+#: src/templates/admin.html:344 src/templates/admin.html:358
+#: src/templates/admin.html:372 src/templates/admin.html:387
+#: src/templates/admin.html:401 src/templates/admin.html:415
+#: src/templates/admin.html:429
+msgid "selected"
+msgstr "valitud"
+
+#: src/Controllers/ItemsStatusController.php:32
+msgid "Resources status"
+msgstr "Ressursside olek"
+
+#: src/Controllers/ExperimentsStatusController.php:32
+msgid "Experiments status"
+msgstr "Eksperimentide olek"
+
+#: src/templates/admin.html:449 src/templates/show.html:362
+msgid "Unlock"
+msgstr "Ava"
+
+#: src/templates/admin.html:457
+msgid "Set permissions"
+msgstr "Määra õigused"
+
+#: src/templates/admin.html:498 src/templates/profile.html:245
+msgid "Set read permissions"
+msgstr "Lugemisõiguste määramine"
+
+#: src/templates/admin.html:499 src/templates/profile.html:255
+msgid "Set write permissions"
+msgstr "Kirjutamisõiguste määramine"
+
+#: src/templates/show-view-edit.html:6
+msgid "You are seeing this because your account is less than %d days old."
+msgstr "Näete seda, kuna teie konto on vähem kui %d päeva vana."
+
+#: src/templates/edit.html:51 src/templates/view-edit-template.html:50
+msgid "This entry is opened by %s in exclusive edit mode since %s. You cannot edit it now but remove the lock in the toolbar below or %sRequest exclusive edit mode removal%s."
+msgstr "%s on selle kirje avanud eksklusiivses redigeerimisrežiimis alates %s. Te ei saa seda praegu muuta, vaid eemaldage alloleval tööriistaribal lukk või %sTaotlege eksklusiivse redigeerimisrežiimi eemaldamist%s."
+
+#: src/templates/export-modal.html:6
+msgid "Create export"
+msgstr "Loo eksportfail"
+
+#: src/templates/export-modal.html:12
+msgid "Export source"
+msgstr "Ekspordi allikas"
+
+#: src/templates/export-modal.html:33
+msgid "Export format"
+msgstr "Ekspordi vorming"
+
+#: src/templates/export-modal.html:37
+msgid "Select a format"
+msgstr "Valige vorming"
+
+#: src/templates/export-modal.html:39
+msgid "ELN archive"
+msgstr "ELN-i arhiiv"
+
+#: src/templates/export-modal.html:40
+msgid "JSON file"
+msgstr "JSON-fail"
+
+#: src/templates/export-modal.html:41
+msgid "PDF document"
+msgstr "PDF-dokument"
+
+#: src/templates/export-modal.html:42
+msgid "ZIP archive"
+msgstr "ZIP-arhiiv"
+
+#: src/templates/export-modal.html:46
+msgid "Options"
+msgstr "Valikud"
+
+#: src/templates/export-menu-options.html:5
+#: src/templates/export-menu-options.html:8 src/templates/export-modal.html:51
+#: src/templates/export-modal.html:54
+msgid "Include changelog"
+msgstr "Lisa muudatuste logi"
+
+#: src/templates/export-menu-options.html:6 src/templates/export-modal.html:52
+msgid "The PDF files will contain the changelog."
+msgstr "PDF-failid sisaldavad muudatuste logi."
+
+#: src/templates/export-menu-options.html:17
+#: src/templates/export-menu-options.html:20 src/templates/export-modal.html:63
+#: src/templates/export-modal.html:66
+msgid "Use PDF/A"
+msgstr "Kasutage PDF/A-d"
+
+#: src/templates/export-menu-options.html:18 src/templates/export-modal.html:64
+msgid "For long term archiving. Warning: using this option will make the files much bigger!"
+msgstr "Pikaajaliseks arhiveerimiseks. Hoiatus: selle valiku kasutamine suurendab failide mahtu märkimisväärselt!"
+
+#: src/templates/export-menu.html:38 src/templates/export-menu.html:41
+#: src/templates/export-modal.html:75 src/templates/export-modal.html:78
+msgid "Include JSON"
+msgstr "Lisa JSON"
+
+#: src/templates/export-menu.html:39 src/templates/export-modal.html:76
+msgid "Only for ZIP: include a full JSON export for each entry."
+msgstr "Ainult ZIP-failide puhul: lisage iga kirje jaoks täielik JSON-eksport."
+
+#: src/templates/mfa.html:18 src/templates/ucp.html:353
+msgid "Enable two factor authentication for your account to increase its security. %sSee documentation%s."
+msgstr "Turvalisuse suurendamiseks luba oma kontol kahefaktoriline autentimine. %sVaata dokumentatsiooni%s."
+
+#: src/templates/mfa.html:25
+msgid "Open your authenticator application and scan the QR code"
+msgstr "Ava oma autentimisrakendus ja skanni QR-kood"
+
+#: src/templates/mfa.html:31 src/templates/ucp.html:360
+msgid "Display secret for manual setup"
+msgstr "Kuva käsitsi seadistamise salasõna"
+
+#: src/templates/mfa.html:47 src/templates/ucp.html:371
+msgid "Open your authenticator application"
+msgstr "Avage oma autentimisrakendus"
+
+#: src/templates/mfa.html:53 src/templates/ucp.html:382
+msgid "Enter the 6 digits displayed on your phone"
+msgstr "Sisestage oma telefonis kuvatavad 6 numbrit"
+
+#: src/templates/permissions-edit-modal.html:62
+#: src/templates/permissions-edit-modal.html:63
+msgid "Set scope"
+msgstr "Määra ulatus"
+
+#: src/templates/profile.html:7
+msgid "Attachments"
+msgstr "Manused"
+
+#: src/templates/profile.html:102
+msgid "Displaying %d of %d attached files."
+msgstr "Kuvatakse %d lisatud failist %d-st."
+
+#: src/templates/profile.html:104
+msgid "List biggest files first"
+msgstr "Loetle suurimad failid esimesena"
+
+#: src/templates/profile.html:122 src/templates/profile.html:147
+#: src/templates/profile.html:156
+msgid "File name"
+msgstr "Faili nimi"
+
+#: src/templates/profile.html:112 src/templates/profile.html:121
+msgid "Created"
+msgstr "Loodud"
+
+#: src/templates/profile.html:149 src/templates/profile.html:158
+msgid "Parent entry"
+msgstr "Vanema sissekanne"
+
+#: src/templates/profile.html:120 src/templates/profile.html:150
+#: src/templates/profile.html:159
+msgid "File size"
+msgstr "Faili suurus"
+
+#: src/templates/profile.html:172
+msgid "You can import data from a .eln archive or a .csv file. %sSee documentation %s%s."
+msgstr "Andmeid saab importida .eln-arhiivist või .csv-failist. %sVaata dokumentatsiooni %s%s."
+
+#: src/templates/profile.html:149
+msgid "Select a file to import"
+msgstr "Valige imporditav fail"
+
+#: src/templates/profile.html:186
+msgid "Allowed extensions: .eln, .csv"
+msgstr "Lubatud laiendid: .eln, .csv"
+
+#: src/templates/profile.html:193
+msgid "Select where the entries will be created"
+msgstr "Valige, kuhu kirjed luuakse"
+
+#: src/templates/profile.html:222
+msgid "Select a category"
+msgstr "Valige kategooria"
+
+#: src/templates/profile.html:234
+msgid "Select owner of imported elements"
+msgstr "Valige imporditud elementide omanik"
+
+#: src/templates/profile.html:278
+msgid "This page allows you to export your data in different formats."
+msgstr "See leht võimaldab teil oma andmeid erinevates vormingutes eksportida."
+
+#: src/templates/profile.html:280
+msgid "Create new export"
+msgstr "Loo uus eksport"
+
+#: src/templates/profile.html:283
+msgid "Exported files"
+msgstr "Eksporditud failid"
+
+#: src/templates/profile.html:293
+msgid "Show more"
+msgstr "Näita rohkem"
+
+#: src/templates/profile.html:301 src/templates/profile.html:319
+msgid "File is not ready"
+msgstr "Fail pole valmis"
+
+#: src/templates/profile.html:306
+msgid "PDF/A"
+msgstr "PDF/A"
+
+#: src/Elabftw/i18n4Js.php:71
+msgid "Error"
+msgstr "Viga"
+
+#: src/templates/related-snippet.html:23
+msgid "Related resources"
+msgstr "Seotud ressursid"
+
+#: src/templates/links.html:60 src/templates/related-snippet.html:31
+msgid "Show related resources"
+msgstr "Kuva seotud ressursid"
+
+#: src/templates/request-actions-show.html:9
+msgid "%s is requesting %s for"
+msgstr "%s taotleb %s jaoks"
+
+#: src/templates/show.html:392 src/templates/show.html:393
+msgid "Change read permissions"
+msgstr "Muuda lugemisõigusi"
+
+#: src/templates/show.html:399 src/templates/show.html:400
+msgid "Change write permissions"
+msgstr "Kirjutamisõiguste muutmine"
+
+#: src/templates/show.html:433
+msgid "Reset"
+msgstr "Lähtesta"
+
+#: src/templates/scheduler.html:123
+msgid "Select a resource below in order to book it."
+msgstr "Valige allpool olev ressurss, et seda broneerida."
+
+#: src/templates/ucp.html:278
+msgid "Always display your own entries, regardless of the current team"
+msgstr "Kuva alati oma sissekandeid, olenemata praegusest meeskonnast"
+
+#: src/templates/ucp.html:288
+msgid "Select the scope for teamgroups"
+msgstr "Valige meeskonnarühmade ulatus"
+
+#: src/templates/ucp.html:289
+msgid "This setting controls which teamgroups will be listed in the permission settings window."
+msgstr "See säte kontrollib, millised meeskonnarühmad õiguste sätete aknas kuvatakse."
+
+#: src/templates/view-edit.html:33
+msgid "%s has requested %s for this entity from %s"
+msgstr "%s on selle üksuse jaoks taotlenud %s kasutajalt %s"
+
+#: src/templates/view-edit-template.html:42 src/templates/view.html:29
+msgid "This entry is opened by %s in exclusive edit mode since %s. You cannot edit it now. %sRequest exclusive edit mode removal%s"
+msgstr "%s on selle kirje avanud eksklusiivses redigeerimisrežiimis alates %s. Te ei saa seda praegu muuta. %sTaotle eksklusiivse redigeerimisrežiimi eemaldamist%s"
+
+#: src/templates/duplicate-modal.html:6
+msgid "Duplicate entry"
+msgstr "Duplikaatkirje"
+
+#: src/templates/duplicate-modal.html:12
+msgid "Duplicating an entry will create a new entry with the same attributes."
+msgstr "Kirje dubleerimine loob uue kirje samade atribuutidega."
+
+#: src/templates/duplicate-modal.html:14
+msgid "Copy attached files"
+msgstr "Kopeeri lisatud failid"
+
+#: src/Enums/Classification.php:26
+msgid "None"
+msgstr "Puudub"
+
+#: src/Enums/Classification.php:27
+msgid "Restricted"
+msgstr "Piiratud"
+
+#: src/Enums/Classification.php:28
+msgid "Confidential"
+msgstr "Konfidentsiaalne"
+
+#: src/Enums/Classification.php:29
+msgid "Secret"
+msgstr "Saladus"
+
+#: src/Enums/Classification.php:30
+msgid "Top Secret"
+msgstr "Ülisalajane"
+
+#: src/Enums/RequestableAction.php:32
+msgid "review"
+msgstr "arvustus"
+
+#: src/Elabftw/i18n4Js.php:113
+msgid "Remove"
+msgstr "Eemalda"
+
+#: src/Models/Notifications/ActionRequested.php:39
+#: src/Services/Transform.php:123
+msgid "%s has requested %s from you."
+msgstr "%s on sinult %s taotlenud."
+
+#: src/Models/Notifications/ActionRequested.php:44
+msgid "You can review the request here: %s"
+msgstr "Saate taotlust siin üle vaadata: %s"
+
+#: src/Models/Notifications/ActionRequested.php:48
+msgid "Action requested"
+msgstr "Taotletud toiming"
+
+#: src/templates/admin.html:468 src/templates/admin.html:476
+#: src/templates/permissions-edit-modal.html:46
+#: src/templates/permissions-edit-modal.html:59
+msgid "(hold %sctrl%s key to select multiple entries, %sctrl%s + click to deselect a selected entry)"
+msgstr "(mitme kirje valimiseks hoidke all klahvi %sctrl%s, valitud kirje valiku tühistamiseks hoidke all klahvi %sctrl%s ja klõpsake)"
+
+#: src/templates/export-menu-options.html:28
+msgid "Classification"
+msgstr "Klassifikatsioon"
+
+#: src/templates/export-menu-options.html:29
+msgid "Add a classification level in the footer."
+msgstr "Lisa jalusesse liigitustase."
+
+#: src/templates/export-menu.html:6
+msgid "Export as PDF"
+msgstr "Ekspordi PDF-failina"
+
+#: src/templates/export-menu.html:27
+msgid "Export as ZIP"
+msgstr "Ekspordi ZIP-failina"
+
+#: src/templates/export-menu.html:61
+msgid "Create a QR Code"
+msgstr "Loo QR-kood"
+
+#: src/templates/export-menu.html:67
+msgid "The QR code image will encode the URL of the resource in view mode. It is scannable by any device recognizing QR codes."
+msgstr "QR-koodi pilt kodeerib ressursi URL-i vaatamisrežiimis. Seda saab skannida iga seade, mis QR-koode tuvastab."
+
+#: src/templates/export-menu.html:71
+msgid "Size"
+msgstr "Suurus"
+
+#: src/templates/export-menu.html:72
+msgid "Select image size (in pixels)"
+msgstr "Valige pildi suurus (pikslites)"
+
+#: src/templates/export-menu.html:80 src/templates/export-menu.html:82
+msgid "Include title"
+msgstr "Lisa pealkiri"
+
+#: src/templates/idp-modal.html:6
+msgid "Edit IDP"
+msgstr "Muuda IDP-d"
+
+#: src/templates/profile.html:194
+msgid "A .eln file can contain different types of entries. You can either force them all to be of a given type, or let eLabFTW decide the types, based on the 'genre' attribute of each entry. By default, Resources will be created if no genre can be found and no type has been imposed."
+msgstr ".eln-fail võib sisaldada erinevat tüüpi kirjeid. Saate kas sundida neid kõiki olema kindlat tüüpi või lasta eLabFTW-l tüübid iga kirje atribuudi „žanr” põhjal määrata. Vaikimisi luuakse ressursid, kui žanri ei leita ja tüüpi pole määratud."
+
+#: src/templates/profile.html:182
+msgid "Resources Categories"
+msgstr "Ressursside kategooriad"
+
+#: src/templates/profile.html:215
+msgid "Do not force type"
+msgstr "Ärge sundige tüübistama"
+
+#: src/templates/profile.html:224
+msgid "Do not force a category"
+msgstr "Ära nõua kategooriat"
+
+#: src/templates/show.html:335
+msgid "No resources categories have been defined for your team. Head to the %sAdmin Panel%s to add one."
+msgstr "Teie meeskonnale pole ressursikategooriaid määratletud. Lisage need %sAdmin Panel'i%s."
+
+#: src/templates/sysconfig.html:50
+msgid "Local auth"
+msgstr "Kohalik autentimine"
+
+#: src/templates/sysconfig.html:112
+msgid "Allow users to change their first name, last name, or email address"
+msgstr "Luba kasutajatel muuta oma eesnime, perekonnanime või e-posti aadressi"
+
+#: src/templates/sysconfig.html:405
+msgid "Send mass emails grouped"
+msgstr "Saada masskirju grupeeritult"
+
+#: src/templates/sysconfig.html:534
+msgid "This instance has %d files uploaded using %s of disk space."
+msgstr "Selles sessioonis on üles laaditud %d faili, mis kasutavad %s kettaruumi."
+
+#: src/templates/admin.html:278 src/templates/sysconfig.html:538
+msgid "Configuration"
+msgstr "Konfiguratsioon"
+
+#: src/templates/sysconfig.html:623
+msgid "Local authentication configuration"
+msgstr "Kohaliku autentimise konfiguratsioon"
+
+#: src/templates/sysconfig.html:625
+msgid "Enable local authentication"
+msgstr "Luba kohalik autentimine"
+
+#: src/templates/sysconfig.html:625
+msgid "Toggle local authentication method (email + password). Warning: disabling this method might lock you out!"
+msgstr "Kohaliku autentimismeetodi (e-post + parool) lülitamine/keelamine. Hoiatus: selle meetodi keelamine võib teid kontolt välja lülitada!"
+
+#: src/templates/sysconfig.html:626
+msgid "Allow users to create accounts through the registration page. You probably want to disable this if you use an external authentication/provisioning method."
+msgstr "Luba kasutajatel registreerimislehe kaudu kontosid luua. Tõenäoliselt tasub see keelata, kui kasutate välist autentimis-/ettevalmistusmeetodit."
+
+#: src/templates/sysconfig.html:627
+msgid "This setting will hide the local authentication fields from the login page, but one can still display them by appending ?letmein to the login page URL."
+msgstr "See säte peidab kohalikud autentimisväljad sisselogimislehel, kuid neid saab siiski kuvada, lisades sisselogimislehe URL-ile ?letmein."
+
+#: src/templates/sysconfig.html:787
+msgid "Identity providers"
+msgstr "Identiteedipakkujad"
+
+#: src/templates/sysconfig.html:789
+msgid "Add IDP(s) from URL"
+msgstr "Lisa URL-ilt IDP-d/IDP-sid"
+
+#: src/templates/sysconfig.html:790
+msgid "You can register a remote URL corresponding to an XML metadata file containing a list of IDPs or a single IDP metadata. If Auto-refresh is enabled, the IDPs metadata will be refreshed every 24h automatically."
+msgstr "Saate registreerida kaug-URL-i, mis vastab XML-metaandmete failile, mis sisaldab IDP-de loendit või üksikut IDP metaandmeid. Kui automaatne värskendamine on lubatud, värskendatakse IDP-de metaandmeid automaatselt iga 24 tunni järel."
+
+#: src/templates/sysconfig.html:808
+msgid "Auto-refresh"
+msgstr "Automaatne värskendamine"
+
+#: src/templates/sysconfig.html:814
+msgid "Enable all"
+msgstr "Luba kõik"
+
+#: src/templates/sysconfig.html:815
+msgid "Disable all"
+msgstr "Keela kõik"
+
+#: src/templates/sysconfig.html:819
+msgid "Associated with %d IDPs (%d enabled)"
+msgstr "Seotud %d IDP-ga (%d lubatud)"
+
+#: src/templates/sysconfig.html:825
+msgid "Add IDP manually"
+msgstr "Lisa IDP käsitsi"
+
+#: src/templates/sysconfig.html:826
+msgid "You can also add a new IDP manually. A manually added IDP will not have its metadata automatically refreshed."
+msgstr "Uue IDP saate lisada ka käsitsi. Käsitsi lisatud IDP metaandmeid ei värskendata automaatselt."
+
+#: src/templates/sysconfig.html:834
+msgid "IDPs list"
+msgstr "IDP-de nimekiri"
+
+#: src/templates/sysconfig.html:835
+msgid "Currently %d IDPs are configured."
+msgstr "Praegu on konfigureeritud %d IDP-d."
+
+#: src/templates/sysconfig.html:855
+msgid "Source"
+msgstr "Allikas"
+
+#: src/templates/sysconfig.html:880
+msgid "LDAP Scheme"
+msgstr "LDAP-skeem"
+
+#: src/templates/sysconfig.html:883
+msgid "Ldap scheme can be set regardless of the SSL/TLS settings. Valid values are \"ldap\" or \"ldaps\". Default is \"ldap\"."
+msgstr "LDAP-skeemi saab määrata olenemata SSL/TLS-sätetest. Lubatud väärtused on \"ldap\" või \"ldaps\". Vaikimisi on \"ldap\"."
+
+#: src/templates/sysconfig.html:1041
+msgid "Enable to include audit logs events as NOTICE error in PHP logs."
+msgstr "Luba auditilogide sündmuste lisamine PHP logidesse TEATIS-veana."
+
+#: src/templates/view.html:136
+msgid "Owner:"
+msgstr "Omanik:"
+
+#: src/Enums/ProcurementState.php:32
+msgid "Cancelled"
+msgstr "Tühistatud"
+
+#: src/Elabftw/Metadata.php:81
+msgid "Default group"
+msgstr "Vaikimisi rühm"
+
+#: src/Elabftw/i18n4Js.php:40
+msgid "Add compound"
+msgstr "Lisa ühend"
+
+#: src/Elabftw/i18n4Js.php:63
+msgid "Edit compound"
+msgstr "Redigeeri ühendit"
+
+#: src/Elabftw/i18n4Js.php:99
+msgid "Location name"
+msgstr "Asukoha nimi"
+
+#: src/Elabftw/i18n4Js.php:133
+msgid "At least 3 characters are required to search"
+msgstr "Otsimiseks on vaja vähemalt 3 tähemärki"
+
+#: src/Elabftw/i18n4Js.php:134
+msgid "Unarchive and add to team {{team, string}}"
+msgstr "Tühista arhiivist ja lisa meeskonda {{team, string}}"
+
+#: src/Controllers/ChemEditorController.php:31
+msgid "Chemical Structure Editor"
+msgstr "Keemilise struktuuri redaktor"
+
+#: src/Controllers/CompoundsController.php:31
+msgid "Compounds"
+msgstr "Ühendid"
+
+#: src/Controllers/ExperimentsController.php:48
+msgid "Experiment templates"
+msgstr "Eksperimentide mallid"
+
+#: src/Controllers/InventoryController.php:32
+msgid "Inventory"
+msgstr "Inventuur"
+
+#: src/Controllers/SycController.php:28
+msgid "OpenCloning"
+msgstr "OpenCloning"
+
+#: src/Models/ApiKeys.php:117
+msgid "Unauthorized"
+msgstr "Volitamata"
+
+#: src/Models/ApiKeys.php:117
+msgid "No corresponding API key found!"
+msgstr "Vastavat API-võtit ei leitud!"
+
+#: src/Models/ExclusiveEditMode.php:91
+msgid "This entry is being edited by %s."
+msgstr "Seda kirjet muudab %s."
+
+#: web/sysconfig.php:121
+msgid "Instance settings"
+msgstr "Sessiooni seaded"
+
+#: src/templates/add-container-modal.html:6
+#: src/templates/storage-view-edit.html:29
+msgid "Add container"
+msgstr "Lisa konteiner"
+
+#: src/templates/add-container-modal.html:14
+msgid "Adjust container capacity and unit"
+msgstr "Reguleerige konteineri mahtu ja ühikut"
+
+#: src/templates/add-container-modal.html:19
+msgid "Quantity unit"
+msgstr "Koguseühik"
+
+#: src/templates/add-container-modal.html:34
+msgid "Adjust number of containers stored"
+msgstr "Reguleerige hoiustatud konteinerite arvu"
+
+#: src/templates/add-container-modal.html:36
+msgid "Select a storage location below"
+msgstr "Valige allpool ladustamiskoht"
+
+#: src/templates/admin.html:23 src/templates/admin.html:476
+#: src/templates/permissions-edit-modal.html:57
+msgid "User Groups"
+msgstr "Kasutajagrupid"
+
+#: src/templates/admin.html:77
+msgid "Remove Default Template and Blank Experiment choices from Create menu, and force usage of existing Templates."
+msgstr "Eemalda valikud Vaikimisi mall ja Tühi eksperiment ning sunni kasutama olemasolevaid malle."
+
+#: src/templates/admin.html:79
+msgid "Default Template main text"
+msgstr "Vaikimisi malli põhitekst"
+
+#: src/templates/admin.html:82
+msgid "Set the text included in the main body of an Experiment when the Default Template is selected."
+msgstr "Määrake tekst, mis lisatakse eksperimendi põhiteksti, kui valitakse vaikemall."
+
+#: src/templates/admin.html:83
+msgid "HTML version"
+msgstr "HTML-versioon"
+
+#: src/templates/admin.html:98
+msgid "Markdown version"
+msgstr "Markdowni versioon"
+
+#: src/templates/admin.html:130
+msgid "A User Group can contain users from different teams. Its main use is to later allow giving permissions to this group."
+msgstr "Kasutajarühm võib sisaldada kasutajaid erinevatest meeskondadest. Selle peamine kasutusala on hiljem sellele rühmale õiguste andmine."
+
+#: src/templates/admin.html:132
+msgid "Create user group"
+msgstr "Loo kasutajagrupp"
+
+#: src/templates/admin.html:147
+msgid "Existing user groups"
+msgstr "Olemasolevad kasutajagrupid"
+
+#: src/templates/admin.html:150
+msgid "No user group created yet."
+msgstr "Kasutajagruppi pole veel loodud."
+
+#: src/templates/edit.html:144
+msgid "Lock down read permissions"
+msgstr "Lukusta lugemisõigused"
+
+#: src/templates/edit.html:157
+msgid "Lock down write permissions"
+msgstr "Kirjutamisõiguste lukustamine"
+
+#: src/templates/admin.html:277
+msgid "From here you can add, edit or delete the tags for your team. Click the tag to edit it."
+msgstr "Siit saate oma meeskonna silte lisada, muuta või kustutada. Sildi muutmiseks klõpsake seda."
+
+#: src/templates/admin.html:282
+msgid "Allow users to create new tags"
+msgstr "Luba kasutajatel luua uusi silte"
+
+#: src/templates/admin.html:283
+msgid "An admin account will always be able to create new tags."
+msgstr "Administraatori konto saab alati uusi silte luua."
+
+#: src/templates/admin.html:372
+msgid "Resources tags"
+msgstr "Ressursside sildid"
+
+#: src/templates/admin.html:415
+msgid "Experiments tags"
+msgstr "Eksperimentide sildid"
+
+#: src/templates/admin.html:461 src/templates/permissions-edit-modal.html:37
+msgid "This setting sets a baseline upon which you can add more permissions by selecting teams, user groups or users below."
+msgstr "See säte määrab baasjoone, mille põhjal saate lisada rohkem õigusi, valides allpool meeskondi, kasutajarühmi või kasutajaid."
+
+#: src/templates/chem-editor.html:13
+msgid "Add to compounds database"
+msgstr "Lisa ühendite andmebaasi"
+
+#: src/templates/chem-editor.html:15
+msgid "Search similar structures"
+msgstr "Otsi sarnaseid struktuure"
+
+#: src/templates/chem-editor.html:17 src/templates/compounds.html:50
+msgid "Search exact structure"
+msgstr "Otsi täpset struktuuri"
+
+#: src/templates/chem-editor.html:17
+msgid "Exact structure"
+msgstr "Täpne struktuur"
+
+#: src/templates/chem-editor.html:23
+msgid "Compounds substructure search results"
+msgstr "Ühendite alamstruktuuri otsingutulemused"
+
+#: src/templates/compounds-view-edit.html:64
+msgid "Name unset"
+msgstr "Nimi pole määratud"
+
+#: src/templates/compounds-view-edit.html:70
+#: src/templates/edit-compound-modal.html:70
+msgid "Molecular formula"
+msgstr "Molekulaarne valem"
+
+#: src/templates/compounds-view-edit.html:78 src/templates/compounds.html:48
+msgid "Search similar compounds"
+msgstr "Otsi sarnaseid ühendeid"
+
+#: src/templates/compounds-view-edit.html:81
+msgid "View in JSON"
+msgstr "Kuva JSON-is"
+
+#: src/templates/compounds-view-edit.html:84
+msgid "View on PubChem"
+msgstr "Vaata PubChemis"
+
+#: src/templates/compounds-view-edit.html:93
+msgid "Remove compound"
+msgstr "Eemalda ühend"
+
+#: src/templates/compounds-view-edit.html:105
+msgid "Link with compound"
+msgstr "Seos ühendiga"
+
+#: src/templates/compounds-view-edit.html:105
+msgid "Search in local compounds database"
+msgstr "Otsi kohalikust ühendite andmebaasist"
+
+#: src/templates/compounds.html:7
+msgid "Export to CSV"
+msgstr "Ekspordi CSV-vormingusse"
+
+#: src/templates/compounds.html:19
+msgid "Compounds are chemical entities associated with properties such as a CAS number, a molecular formula, SMILES or InChI representations, hazardous properties, etc... This page allows you to manage your compounds database, which is shared to everyone on the instance. Once created, a compound can be associated with a Resource (or Experiment)."
+msgstr "Ühendid on keemilised üksused, mis on seotud selliste omadustega nagu CAS-number, molekulaarvalem, SMILES- või InChI-esitused, ohtlikud omadused jne. See leht võimaldab teil hallata oma ühendite andmebaasi, mis on jagatud kõigiga eksemplaris. Kui ühend on loodud, saab selle seostada ressursiga (või eksperimentidega)."
+
+#: src/templates/compounds.html:26 src/templates/import-pubchem-modal.html:6
+msgid "Import from PubChem"
+msgstr "Impordi PubChemist"
+
+#: src/templates/compounds.html:40 src/templates/compounds.html:46
+msgid "Substructure search from SMILES"
+msgstr "Alamstruktuuri otsing SMILES-ist"
+
+#: src/templates/compounds.html:50
+msgid "Exact"
+msgstr "Täpne"
+
+#: src/templates/compounds.html:38
+msgid "Double-click a row in the table below to edit compound."
+msgstr "Ühendi muutmiseks topeltklõpsake allolevas tabelis real."
+
+#: src/templates/compounds.html:33
+msgid "Delete selected compounds"
+msgstr "Kustuta valitud ühendid"
+
+#: src/templates/ask-title-modal.html:6
+#: src/templates/create-new-item-modal.html:8
+msgid "Create a new template"
+msgstr "Loo uus mall"
+
+#: src/templates/ask-title-modal.html:11 src/templates/ask-title-modal.html:14
+#: src/templates/create-new-item-modal.html:16
+msgid "Enter a title"
+msgstr "Sisesta pealkiri"
+
+#: src/templates/create-resource-from-compound-modal.html:6
+#: src/templates/edit-compound-modal.html:50
+msgid "Create resource from compound"
+msgstr "Loo ressurss ühendist"
+
+#: src/templates/create-resource-from-compound-modal.html:13
+msgid "Select a resource category"
+msgstr "Valige ressursi kategooria"
+
+#: src/templates/duplicate-modal.html:23
+msgid "Link to original entry"
+msgstr "Link algsele sissekandele"
+
+#: src/templates/edit-compound-modal.html:48
+msgid "Search associated resources"
+msgstr "Otsi seotud ressursse"
+
+#: src/templates/edit-compound-modal.html:49
+msgid "Search associated experiments"
+msgstr "Otsi seotud eksperimente"
+
+#: src/templates/edit-compound-modal.html:54
+msgid "IUPAC Name"
+msgstr "IUPAC-nimetus"
+
+#: src/templates/edit-compound-modal.html:56
+#: src/templates/import-pubchem-modal.html:40
+msgid "CAS number"
+msgstr "CAS-number"
+
+#: src/templates/edit-compound-modal.html:61
+#: src/templates/import-pubchem-modal.html:45
+msgid "Please enter a valid CAS number (e.g., 58-08-2)"
+msgstr "Palun sisestage kehtiv CAS-number (nt 58-08-2)"
+
+#: src/templates/edit-compound-modal.html:63
+msgid "EC number"
+msgstr "EÜ number"
+
+#: src/templates/edit-compound-modal.html:68
+msgid "Please enter a valid EC number (e.g., 200-362-1)"
+msgstr "Palun sisestage kehtiv EÜ number (nt 200-362-1)"
+
+#: src/templates/compounds-view-edit.html:69
+#: src/templates/edit-compound-modal.html:71
+msgid "Molecular weight"
+msgstr "Molekulaarmass"
+
+#: src/templates/edit-compound-modal.html:77
+msgid "Safety information"
+msgstr "Ohutusteave"
+
+#: src/templates/edit-compound-modal.html:106
+msgid "Immutable information"
+msgstr "Muutumatu teave"
+
+#: src/templates/editusers.html:214
+#: src/templates/rm-user-from-team-modal.html:6
+msgid "Remove user from team"
+msgstr "Eemalda kasutaja meeskonnast"
+
+#: src/templates/editusers.html:81
+msgid "Found archived users with same email address:"
+msgstr "Leiti arhiveeritud kasutajad sama e-posti aadressiga:"
+
+#: src/templates/editusers.html:85
+msgid "Create a new account anyway"
+msgstr "Loo ikkagi uus konto"
+
+#: src/templates/export-menu.html:91
+msgid "Number of lines for title"
+msgstr "Pealkirja ridade arv"
+
+#: src/templates/export-menu.html:92
+msgid "Split the title into this many lines"
+msgstr "Jaga pealkiri nii paljudeks ridadeks"
+
+#: src/templates/export-menu.html:100
+msgid "Number of characters per line"
+msgstr "Tähemärkide arv rea kohta"
+
+#: src/templates/export-menu.html:101
+msgid "Adjust how the title is displayed"
+msgstr "Pealkirja kuvamise muutmine"
+
+#: src/templates/field-builder-modal.html:17
+msgid "Manage field groups"
+msgstr "Väljagruppide haldamine"
+
+#: src/templates/field-builder-modal.html:18
+msgid "Use this feature to group related fields."
+msgstr "Selle funktsiooni abil saate rühmitada seotud väljad."
+
+#: src/templates/field-builder-modal.html:24
+#: src/templates/field-builder-modal.html:163
+msgid "Update"
+msgstr "Värskendus"
+
+#: src/templates/field-builder-modal.html:46
+msgid "Selected field group"
+msgstr "Valitud väljarühm"
+
+#: src/templates/footer.html:3
+msgid "Connect with us on the fediverse!"
+msgstr "Võta meiega ühendust Fediverse'is!"
+
+#: src/templates/head.html:38
+msgid "Skip to content"
+msgstr "Liigu sisuni"
+
+#: src/templates/head.html:65
+msgid "Template"
+msgid_plural "Templates"
+msgstr[0] "Mall"
+msgstr[1] "Mallid"
+
+#: src/templates/head.html:153
+msgid "Tools"
+msgstr "Tööriistad"
+
+#: src/templates/head.html:86
+msgid "DNA Cloning"
+msgstr "DNA kloonimine"
+
+#: src/templates/import-pubchem-modal.html:13
+msgid "Import a chemical compound from %sPubChem online database%s: you can specify directly the CID of the compound you wish to import, or search from its CAS number."
+msgstr "Importige keemiline ühend %sPubChemi veebiandmebaasist%s: saate määrata otse imporditava ühendi CID-i või otsida selle CAS-numbri järgi."
+
+#: src/templates/inventory.html:15
+msgid "Search containers or locations"
+msgstr "Otsi konteinereid või asukohti"
+
+#: src/templates/inventory.html:25
+msgid "No results found"
+msgstr "Tulemusi ei leitud"
+
+#: src/templates/inventory.html:43
+msgid "Browse inventory locations"
+msgstr "Sirvi laoseisu"
+
+#: src/templates/inventory.html:45
+msgid "Add root element"
+msgstr "Lisa juurelement"
+
+#: src/templates/pdf.html:48
+msgid "This document has been timestamped by %s on %s."
+msgstr "Sellele dokumendile on %s ajatempli lisanud kuupäeval %s."
+
+#: src/templates/pdf.html:158
+msgid "Timestamped by %s on %s at %s"
+msgstr "Ajatempli lisas %s kuupäeval %s kell %s"
+
+#: src/templates/permissions-edit-modal.html:71
+msgid "Selecting a user group here will give access to all users part of this user group."
+msgstr "Kasutajarühma valimine siin annab juurdepääsu kõigile sellesse kasutajarühma kuuluvatele kasutajatele."
+
+#: src/templates/edit-user-modal.html:87
+msgid "Set user password"
+msgstr "Kasutaja parooli määramine"
+
+#: src/templates/rm-user-from-team-modal.html:12
+msgid "Removing a user association with a team will NOT impact existing experiments or resources. They will still be accessible."
+msgstr "Kasutaja seose eemaldamine meeskonnast EI mõjuta olemasolevaid eksperimente ega ressursse. Neile on endiselt juurdepääs."
+
+#: src/templates/rm-user-from-team-modal.html:13
+msgid "Are you sure you want to remove %s from team %s?"
+msgstr "Kas oled kindel, et tahad %s meeskonnast %s eemaldada?"
+
+#: src/templates/rm-user-from-team-modal.html:18
+msgid "Confirm"
+msgstr "Kinnita"
+
+#: src/templates/scheduler.html:9
+msgid "Scheduler settings"
+msgstr "Broneeringu seaded"
+
+#: src/templates/scheduler.html:17 src/templates/ucp.html:121
+msgid "Show weekends"
+msgstr "Näita nädalavahetusi"
+
+#: src/templates/scheduler.html:18
+msgid "Layout: timeline"
+msgstr "Paigutus: ajajoon"
+
+#: src/templates/scheduler.html:111
+msgid "Cancel booking"
+msgstr "Tühista broneering"
+
+#: src/templates/search-help-modal.html:5
+msgid "Search help"
+msgstr "Otsinguabi"
+
+#: src/templates/search-help-modal.html:11
+msgid "Simple search"
+msgstr "Lihtne otsing"
+
+#: src/templates/search-help-modal.html:12
+msgid "When searching a term in the search bar, results will contain this term in the title, main text, date or elabid."
+msgstr "Otsinguribal termini otsimisel sisaldavad tulemused seda terminit pealkirjas, põhitekstis, kuupäevas või lahtris."
+
+#: src/templates/search-help-modal.html:15
+msgid "The search bar supports searching with specific constraints such as \"title:Something\" and \"category:Tests\" (%s). You can combine them with logical expressions (AND, OR, NOT...) and group with parenthesis."
+msgstr "Otsinguriba toetab otsingut kindlate piirangutega, näiteks \"title:Midagi” AND \"category:Testid” (%s). Neid saab kombineerida loogikaavaldistega (AND, OR, NOT...) ja grupeerida sulgudega."
+
+#: src/templates/search-help-modal.html:16
+msgid "To search in extra fields (metadata), use the dedicated helper to build your query. For example, to search all entries where \"Temperature\" is 37, you would use: \"extrafield:Temperature:37\" in the search bar."
+msgstr "Lisaväljadel (metaandmetes) otsimiseks kasutage päringu koostamiseks spetsiaalset abimeest. Näiteks kõigi kirjete otsimiseks, kus \"Temperatuur\" on 37, peaksite otsinguribal kasutama: \"extrafield:Temperature:37\"."
+
+#: src/templates/search-help-modal.html:17
+msgid "Available fields"
+msgstr "Saadaval olevad väljad"
+
+#: src/templates/show-item.html:27 src/templates/view-edit-toolbar.html:318
+#: src/templates/view.html:204
+msgid "Restore entry"
+msgstr "Taasta kirje"
+
+#: src/templates/show.html:24
+msgid "resources"
+msgstr "ressursid"
+
+#: src/templates/show.html:26 src/templates/show.html:34
+#: src/templates/show.html:36
+msgid "Search %s"
+msgstr "Otsi %s"
+
+#: src/templates/select-state.html:6
+msgid "Select state"
+msgstr "Valige riik"
+
+#: src/templates/select-state.html:7
+msgid "Normal"
+msgstr "Tavaline"
+
+#: src/templates/select-state.html:9
+msgid "Deleted"
+msgstr "Kustutatud"
+
+#: src/templates/select-state.html:10
+msgid "Normal or Archived"
+msgstr "Tavaline või arhiveeritud"
+
+#: src/templates/select-state.html:11
+msgid "Any"
+msgstr "Kõik"
+
+#: src/templates/show.html:257
+msgid "Toggle main text"
+msgstr "Kuva/peida põhitekst"
+
+#: src/templates/show.html:337
+msgid "Search in resources"
+msgstr "Otsi ressurssidest"
+
+#: src/templates/steps-links-edit.html:66
+msgid "+1 hour"
+msgstr "+1 tund"
+
+#: src/templates/steps-links-edit.html:67
+msgid "+1 day"
+msgstr "+1 päev"
+
+#: src/templates/steps-links-edit.html:68
+msgid "+1 week"
+msgstr "+1 nädal"
+
+#: src/templates/steps-links-edit.html:69
+msgid "+1 month"
+msgstr "+1 kuu"
+
+#: src/templates/steps-links-edit.html:70
+msgid "+1 year"
+msgstr "+1 aasta"
+
+#: src/templates/storage-list.html:23 src/templates/storage-list.html:53
+msgid "Display content"
+msgstr "Kuva sisu"
+
+#: src/templates/storage-list.html:26 src/templates/storage-list.html:51
+msgid "Add children to %s"
+msgstr "Lisa alamüksused %s alla"
+
+#: src/templates/storage-list.html:28
+msgid "Delete %s and its children"
+msgstr "Kustuta %s ja selle alamüksused"
+
+#: src/templates/storage-list.html:21
+msgid "Store in %s"
+msgstr "Salvesta %s-s"
+
+#: src/templates/storage-list.html:44
+msgid "Inventory location"
+msgstr "Inventari asukoht"
+
+#: src/templates/storage-view-edit.html:4
+msgid "Containers"
+msgstr "Konteinerid"
+
+#: src/templates/storage-view-edit.html:13
+msgid "in"
+msgstr "sisse"
+
+#: src/templates/storage-view-edit.html:24
+msgid "No containers stored"
+msgstr "Konteinereid ei ole hoiustatud"
+
+#: src/templates/storage-view-edit.html:28
+msgid "Modify storage"
+msgstr "Salvestusruumi muutmine"
+
+#: src/templates/sysconfig.html:69
+msgid "Get users report"
+msgstr "Hankige kasutajate aruanne"
+
+#: src/templates/sysconfig.html:72
+msgid "Stored containers"
+msgstr "Ladustatud konteinerid"
+
+#: src/templates/sysconfig.html:74
+msgid "Stored containers: %d bound to experiments and %d bound to resources"
+msgstr "Salvestatud konteinerid: %d seotud eksperimentidega ja %d seotud ressurssidega"
+
+#: src/templates/sysconfig.html:75
+msgid "Get inventory report"
+msgstr "Hankige laoseisu aruanne"
+
+#: src/templates/sysconfig.html:891
+msgid "Domain name or IP address. You can specify multiple entries for redundancy, separated by commas."
+msgstr "Domeeninimi või IP-aadress. Koondamise tagamiseks võite määrata mitu kirjet, eraldades need komadega."
+
+#: src/templates/sysconfig.html:1114
+msgid "No places have been defined yet. Head to the %sInventory page%s to add places."
+msgstr "Ühtegi kohta pole veel määratletud. Kohtade lisamiseks minge %sInventuuri lehele%s."
+
+#: src/Elabftw/i18n4Js.php:92
+msgid "Hide deleted"
+msgstr "Peida kustutatud"
+
+#: src/Elabftw/i18n4Js.php:125
+msgid "Show deleted"
+msgstr "Kuva kustutatud"
+
+#: src/Models/Notifications/CommentCreated.php:39
+msgid "Hi. %s left a comment. Have a look: %s"
+msgstr "Tere. %s jättis kommentaari. Vaata lähemalt: %s"
+
+#: src/templates/create-new-item-modal.html:35
+msgid "Note: only pinned templates are displayed below."
+msgstr "Märkus: allpool kuvatakse ainult kinnitatud mallid."
+
+#: src/Elabftw/i18n4Js.php:81
+msgid "Is Admin"
+msgstr "On administraator"
+
+#: src/templates/scheduler.html:130
+msgid "Select a scope and search bookable resources."
+msgstr "Valige ulatus ja otsige broneeritavaid ressursse."
+
+#: src/templates/scheduler.html:152
+msgid "Filter events by owner"
+msgstr "Filtreeri sündmusi omaniku järgi"
+
+#: src/templates/scheduler.html:199
+msgid "Selected resource:"
+msgstr "Valitud ressurss:"
+
+#: src/Elabftw/i18n4Js.php:45
+msgid "Use the autocompletion menu to add users."
+msgstr "Kasutajate lisamiseks kasutage automaatse täitmise menüüd."
+
+#: src/Elabftw/i18n4Js.php:52
+msgid "Copied to clipboard."
+msgstr "Lõikelauale kopeeritud."
+
+#: src/Elabftw/i18n4Js.php:53
+msgid "Please check required fields."
+msgstr "Palun märkige kohustuslikud väljad."
+
+#: src/Elabftw/i18n4Js.php:70
+msgid "{{num, number}} entries processed"
+msgstr "{{num, number}} kirjet töödeldud"
+
+#: src/Elabftw/i18n4Js.php:73
+msgid "There was an error while fetching the requested data: {{error}}"
+msgstr "Taotletud andmete toomisel ilmnes viga: {{error}}"
+
+#: src/Elabftw/i18n4Js.php:87
+msgid "File imported successfully"
+msgstr "Fail imporditi edukalt"
+
+#: src/Elabftw/i18n4Js.php:88
+msgid "Error: file is too large!"
+msgstr "Viga: fail on liiga suur!"
+
+#: src/Elabftw/i18n4Js.php:90
+msgid "Error validating the form."
+msgstr "Vormi valideerimisel tekkis viga."
+
+#: src/Elabftw/i18n4Js.php:96
+msgid "Error during import. Please check the console for more information."
+msgstr "Importimisel tekkis viga. Lisateabe saamiseks kontrollige konsooli."
+
+#: src/Elabftw/i18n4Js.php:97
+msgid "Invalid syntax or information provided."
+msgstr "Esitatud süntaks või teave on sobimatu."
+
+#: src/Elabftw/i18n4Js.php:105
+msgid "No matching result found."
+msgstr "Sobivat tulemust ei leitud."
+
+#: src/Elabftw/i18n4Js.php:119
+msgid "Select two revisions to compare them."
+msgstr "Valige võrdlemiseks kaks redaktsiooni."
+
+#: src/Services/EmailValidator.php:50
+msgid "An active account already exists with this email. Use the Sysconfig Panel to add user to the requested team."
+msgstr "Selle e-posti aadressiga on juba aktiivne konto olemas. Kasutaja lisamiseks soovitud meeskonda kasutage süsteemikonfiguratsiooni paneeli."
+
+#: src/Services/EmailValidator.php:52
+msgid "An active account already exists with this email. Search for user in the input above without a team filter and use \"Add to team\" action to add the user to your team."
+msgstr "Selle e-posti aadressiga on juba aktiivne konto olemas. Otsi kasutajat ülaltoodud sisenditest ilma meeskonna filtrita ja lisa kasutaja oma meeskonda toimingu \"Lisa meeskonda\" abil."
+
+#: src/templates/about-elabftw-modal.html:12
+msgid "eLabFTW is a free and open source electronic laboratory notebook crafted by %s and contributors."
+msgstr "eLabFTW on tasuta ja avatud lähtekoodiga elektrooniline laborivihik, mille on loonud %s ja kaastöölised."
+
+#: src/templates/about-elabftw-modal.html:15
+msgid "Running version: %s"
+msgstr "Töötav versioon: %s"
+
+#: src/templates/about-elabftw-modal.html:16
+msgid "License: %s"
+msgstr "Litsents: %s"
+
+#: src/templates/about-elabftw-modal.html:17
+msgid "Source code: %s"
+msgstr "Lähtekood: %s"
+
+#: src/templates/compounds.html:34
+msgid "Restore selected compounds"
+msgstr "Taasta valitud ühendid"
+
+#: src/templates/create-new-item-modal.html:35
+msgid "Note: only templates that you have pinned are displayed below."
+msgstr "Märkus: allpool kuvatakse ainult need mallid, mille olete kinnitanud."
+
+#: src/templates/head.html:202
+msgid "About eLabFTW"
+msgstr "Teave eLabFTW kohta"
+
+#: src/templates/pdf.html:78
+msgid "Linked resource"
+msgid_plural "Linked resources"
+msgstr[0] "Lingitud ressurss"
+msgstr[1] "Lingitud ressursid"
+
+#: src/Auth/Local.php:72
+msgid "Only a Sysadmin account can use local authentication when it is hidden."
+msgstr "Ainult süsteemiadministraatori konto saab kasutada kohalikku autentimist, kui see on peidetud."
+
+#: src/Auth/Local.php:76
+msgid "Only a Sysadmin account can use local authentication."
+msgstr "Kohalikku autentimist saab kasutada ainult süsteemiadministraatori kontoga."
+
+#: src/Auth/Local.php:130
+msgid "Too many authentication tries in the last minute. Please try later."
+msgstr "Liiga palju autentimiskatseid viimasel minutil. Palun proovige hiljem uuesti."
+
+#: src/Controllers/DatabaseController.php:48
+msgid "Resources templates"
+msgstr "Ressursside mallid"
+
+#: src/Elabftw/i18n4Js.php:39
+msgid "2FA"
+msgstr "2FA"
+
+#: src/Elabftw/i18n4Js.php:48
+msgid "Can manage users to teams"
+msgstr "Saab kasutajaid meeskondadesse jagada"
+
+#: src/Elabftw/i18n4Js.php:67
+msgid "You must allow at least one permission setting."
+msgstr "Peate lubama vähemalt ühe loa seadistuse."
+
+#: src/Elabftw/i18n4Js.php:74
+msgid "There was an error while parsing metadata (extra fields). Full error has been logged to the browser console."
+msgstr "Metaandmete (lisaväljade) töötlemisel ilmnes viga. Täielik viga logiti brauseri konsooli."
+
+#: src/Elabftw/i18n4Js.php:80
+msgid "This action cannot apply to current selection"
+msgstr "Seda toimingut ei saa praegusele valikule rakendada"
+
+#: src/Elabftw/i18n4Js.php:82
+msgid "Is Archived"
+msgstr "On arhiveeritud"
+
+#: src/Elabftw/i18n4Js.php:111
+msgid "Only a Sysadmin can modify this."
+msgstr "Ainult süsteemiadministraator saab seda muuta."
+
+#: src/Elabftw/i18n4Js.php:139
+msgid "Userid"
+msgstr "Kasutaja ID"
+
+#: src/Enums/Messages.php:41
+msgid "An internal error occurred. This should never happen! Please contact support with the following identifier:"
+msgstr "Tekkis sisemine viga. Seda ei tohiks kunagi juhtuda! Palun võtke ühendust toega, kasutades järgmist identifikaatorit:"
+
+#: src/Enums/Messages.php:42
+msgid "Sorry, there was an issue executing your request. Please try again later."
+msgstr "Vabandust, teie taotluse täitmisel tekkis probleem. Palun proovige hiljem uuesti."
+
+#: src/Enums/Messages.php:45
+msgid "Sorry, you are not allowed to perform that action."
+msgstr "Vabandust, teil pole lubatud seda toimingut teha."
+
+#: src/Enums/Messages.php:46
+msgid "Sorry, this action is disabled in demo mode."
+msgstr "Vabandust, see toiming on demorežiimis keelatud."
+
+#: src/Models/AbstractEntity.php:451
+msgid "Only the Restore action is allowed on a deleted entity."
+msgstr "Kustutatud üksuse puhul on lubatud ainult taastamistoiming."
+
+#: src/Models/AbstractEntity.php:454
+msgid "Only the Unarchive action is allowed on an archived entity."
+msgstr "Arhiveeritud üksuse puhul on lubatud ainult toiming „Tühista arhiivist”."
+
+#: src/Models/AbstractEntity.php:799
+msgid "Cannot modify permissions on entry with immutable permissions."
+msgstr "Muutmatute õigustega sisenemisel ei saa õigusi muuta."
+
+#: src/Models/AbstractEntity.php:804
+msgid "Cannot modify permissions immutability settings."
+msgstr "Õiguste muutmatuse seadeid ei saa muuta."
+
+#: src/Models/Compounds.php:228
+msgid "Cannot delete a linked compound."
+msgstr "Lingitud ühendit ei saa kustutada."
+
+#: src/Models/StorageUnits.php:367
+msgid "Cannot delete a storage unit with children!"
+msgstr "Alamüksustega salvestusüksust ei saa kustutada!"
+
+#: src/Models/StorageUnits.php:370
+msgid "Cannot delete a storage unit with containers!"
+msgstr "Konteineritega salvestusüksust ei saa kustutada!"
+
+#: src/Services/LoginHelper.php:155
+msgid "This account is archived in this team and cannot login."
+msgstr "See konto on selles meeskonnas arhiveeritud ja sisselogimine pole võimalik."
+
+#: web/experiments-categories.php:30
+msgid "Sorry, edition of experiments categories has been disabled for users by your team Admin."
+msgstr "Vabandust, teie meeskonna administraator on eksperimentide kategooriate väljaandmise kasutajatele keelanud."
+
+#: web/experiments-status.php:30
+msgid "Sorry, edition of experiments status has been disabled for users by your team Admin."
+msgstr "Vabandust, teie meeskonna administraator on eksperimentide väljaande oleku kasutajatele keelanud."
+
+#: web/resources-status.php:31
+msgid "Sorry, edition of resources status has been disabled for users by your team Admin."
+msgstr "Vabandust, teie meeskonna administraator on ressursside väljaande oleku kasutajatele keelanud."
+
+#: src/templates/admin.html:75
+msgid "Users will be forced to select an existing Template, and will not be able to create a blank entry."
+msgstr "Kasutajad on sunnitud valima olemasoleva malli ja nad ei saa luua tühja kirjet."
+
+#: src/templates/admin.html:79
+msgid "Allow users to create and edit experiments categories"
+msgstr "Luba kasutajatel eksperimentide kategooriaid luua ja muuta"
+
+#: src/templates/admin.html:83
+msgid "Allow users to create and edit experiments status"
+msgstr "Luba kasutajatel eksperimente luua ja nende olekut muuta"
+
+#: src/templates/admin.html:87
+msgid "Allow users to create and edit resources categories"
+msgstr "Luba kasutajatel luua ja muuta ressursikategooriaid"
+
+#: src/templates/admin.html:91
+msgid "Allow users to create and edit resources status"
+msgstr "Luba kasutajatel luua ja muuta ressursside olekut"
+
+#: src/templates/admin.html:344
+msgid "Resources by category"
+msgstr "Ressursid kategooria järgi"
+
+#: src/templates/admin.html:452 src/templates/show.html:365
+#: src/templates/view-edit-toolbar.html:309
+msgid "Unarchive"
+msgstr "Tühista arhiiv"
+
+#: src/templates/ask-title-modal.html:6
+msgid "Create a new entry"
+msgstr "Loo uus kirje"
+
+#: src/templates/catstat-view-edit.html:6
+msgid "Add category"
+msgstr "Lisa kategooria"
+
+#: src/templates/catstat-view-edit.html:8
+msgid "Add status"
+msgstr "Lisa staatus"
+
+#: src/templates/create-new-item-modal.html:8
+msgid "Select a template below"
+msgstr "Valige allpool mall"
+
+#: src/templates/create-new-item-modal.html:25
+#: src/templates/create-resource-from-compound-modal.html:14
+msgid "Manage templates"
+msgstr "Mallide haldamine"
+
+#: src/templates/create-new-item-modal.html:41 src/templates/show-item.html:3
+msgid "Create resource from template"
+msgstr "Loo ressurss malli põhjal"
+
+#: src/templates/create-new-item-modal.html:51
+msgid "View template"
+msgstr "Kuva mall"
+
+#: src/templates/create-new-item-modal.html:66
+msgid "Or create a blank entry"
+msgstr "Või loo tühi kirje"
+
+#: src/templates/create-new-item-modal.html:78
+msgid "No category"
+msgstr "Kategooria puudub"
+
+#: src/templates/edit-compound-modal.html:109
+msgid "See on PubChem"
+msgstr "Vaata PubChemist"
+
+#: src/templates/edit-user-modal.html:7
+msgid "Edit user"
+msgstr "Muuda kasutajat"
+
+#: src/templates/edit-user-modal.html:36
+msgid "Enabling Sysadmin rights authorizes unrestricted system changes. Exercise due diligence."
+msgstr "Süsteemiadministraatori õiguste lubamine lubab piiramatuid süsteemimuudatusi. Järgige vajalikku hoolsust."
+
+#: src/templates/edit-user-modal.html:39
+msgid "Can manage users/teams association"
+msgstr "Saab hallata kasutajate/meeskondade seoseid"
+
+#: src/templates/edit-user-modal.html:45
+msgid "Enable this to allow user to manage association between users and teams. Note: user must be Admin in at least one team."
+msgstr "Luba see, et kasutaja saaks hallata kasutajate ja meeskondade vahelisi seoseid. Märkus: kasutaja peab olema vähemalt ühe meeskonna administraator."
+
+#: src/templates/edit.html:135
+msgid "Permissions for the derived entry"
+msgstr "Tuletatud kirje õigused"
+
+#: src/templates/editusers.html:6
+msgid "Double-click a row in the table below to edit user."
+msgstr "Kasutaja muutmiseks topeltklõpsake alloleva tabeli real."
+
+#: src/templates/experiments-categories.html:9
+msgid "Experiments categories can be associated with an Experiment or an Experiment Template as a Category. They belong to a team and have two main properties: name and color. Examples: Analysis, Measurement, Test, Project XYZ, etc..."
+msgstr "Eksperimentide kategooriaid saab kategooriana seostada eksperimendi või eksperimendi malliga. Need kuuluvad meeskonda ja neil on kaks peamist omadust: nimi ja värv. Näited: analüüs, mõõtmine, test, projekt XYZ jne..."
+
+#: src/templates/experiments-categories.html:11
+msgid "No experiments categories have been created in this team yet."
+msgstr "Selles meeskonnas pole veel ühtegi eksperimendikategooriat loodud."
+
+#: src/templates/experiments-categories.html:13
+#: src/templates/resources-categories.html:13
+msgid "Category name"
+msgstr "Kategooria nimi"
+
+#: src/templates/experiments-status.html:9
+msgid "Experiments status can be associated with an Experiment or an Experiment Template as a Status. They belong to a team and have two main properties: name and color. Examples: Running, Done, Need to be redone, Failed, etc..."
+msgstr "Eksperimendi olekut saab olekuna seostada eksperimendi või eksperimendi malliga. Need kuuluvad meeskonda ja neil on kaks peamist omadust: nimi ja värv. Näited: Töötab, Valmis, Vajab uuesti teha, Ebaõnnestus jne..."
+
+#: src/templates/experiments-status.html:11
+msgid "No experiments status have been created in this team yet."
+msgstr "Selles meeskonnas pole veel ühtegi eksperimendi olekut loodud."
+
+#: src/templates/experiments-status.html:13
+#: src/templates/resources-status.html:13
+msgid "Status name"
+msgstr "Staatuse nimi"
+
+#: src/templates/head.html:80
+msgid "All experiments"
+msgstr "Kõik eksperimendid"
+
+#: src/templates/head.html:84
+msgid "My experiments"
+msgstr "Minu eksperimendid"
+
+#: src/templates/profile.html:207
+msgid "Experiments templates"
+msgstr "Eksperimentide mallid"
+
+#: src/templates/head.html:117
+msgid "All resources"
+msgstr "Kõik ressursid"
+
+#: src/templates/head.html:121
+msgid "My resources"
+msgstr "Minu ressursid"
+
+#: src/templates/head.html:123
+msgid "Bookable resources"
+msgstr "Broneeritavad ressursid"
+
+#: src/templates/import-pubchem-modal.html:13
+msgid "Import a chemical compound from %sPubChem online database%s: you can specify directly the CID of the compound you wish to import, or search from its CAS number or name."
+msgstr "Importige keemiline ühend %sPubChemi veebiandmebaasist%s: saate määrata otse imporditava ühendi CID-i või otsida selle CAS-numbri või nime järgi."
+
+#: src/templates/import-pubchem-modal.html:16
+msgid "Compound name"
+msgstr "Ühendi nimetus"
+
+#: src/templates/links.html:2
+msgid "Links"
+msgstr "Lingid"
+
+#: src/templates/links.html:5
+msgid "Experiment links"
+msgstr "Eksperimendi lingid"
+
+#: src/templates/links.html:31
+msgid "Filter author"
+msgstr "Filtreeri autorit"
+
+#: src/templates/links.html:37 src/templates/links.html:39
+msgid "Add link to an experiment"
+msgstr "Lisa link eksperimentidele"
+
+#: src/templates/links.html:46
+msgid "Resource links"
+msgstr "Ressursilingid"
+
+#: src/templates/links.html:77 src/templates/links.html:79
+msgid "Add link to a resource"
+msgstr "Lisa link ressursile"
+
+#: src/templates/links.html:79
+msgid "Add item link"
+msgstr "Lisa üksuse link"
+
+#: src/templates/login-demo.html:18
+msgid "Login as Admin"
+msgstr "Logi sisse administraatorina"
+
+#: src/templates/login-demo.html:24
+msgid "Login as User"
+msgstr "Logi sisse kasutajana"
+
+#: src/templates/login-demo.html:30
+msgid "Welcome to the demo!"
+msgstr "Tere tulemast demosse!"
+
+#: src/templates/login-demo.html:31
+msgid "Explore real-life examples of teams in eLabFTW. Select a profile suited to your activity below."
+msgstr "Uurige eLabFTW meeskondade reaalseid näiteid. Valige allpool oma tegevusele sobiv profiil."
+
+#: src/templates/profile.html:130
+msgid "Asc"
+msgstr "Kasvav"
+
+#: src/templates/profile.html:131
+msgid "Desc"
+msgstr "Kahanev"
+
+#: src/templates/resources-categories.html:8
+msgid "Create and modify the categories available to resources."
+msgstr "Loo ja muuda ressurssidele saadaolevaid kategooriaid."
+
+#: src/templates/resources-categories.html:9
+msgid "Resources categories can be associated with a Resource or a Resource Template as a Category. They belong to a team and have two main properties: name and color. Examples: Equipment, Chemical, Cell line, Plasmid, Antibody, Microscope, etc..."
+msgstr "Ressursikategooriaid saab kategooriana siduda ressursi või ressursimalliga. Need kuuluvad meeskonda ja neil on kaks peamist omadust: nimi ja värv. Näited: seade, kemikaal, rakuliin, plasmiid, antikeha, mikroskoop jne..."
+
+#: src/templates/resources-categories.html:11
+msgid "No resources categories have been created in this team yet."
+msgstr "Selles meeskonnas pole veel ressursikategooriaid loodud."
+
+#: src/templates/resources-categories.html:12
+msgid "Create new resources category"
+msgstr "Loo uus ressursikategooria"
+
+#: src/templates/resources-status.html:9
+msgid "Resources status can be associated with a Resource or a Resource Template. They belong to a team and have two main properties: name and color. Examples: In stock, Operational, Maintenance, Processed, etc..."
+msgstr "Ressursside olekut saab seostada ressursi või ressursimalliga. Need kuuluvad meeskonda ja neil on kaks peamist omadust: nimi ja värv. Näited: laos, töökorras, hoolduses, töödeldud jne..."
+
+#: src/templates/resources-status.html:11
+msgid "No resources status have been created in this team yet."
+msgstr "Selles meeskonnas pole veel ressursside olekut loodud."
+
+#: src/templates/scheduler.html:123
+msgid "Book a resource by clicking on the scheduler."
+msgstr "Ressursi broneerimiseks klõpsake ajakava ikoonil."
+
+#: src/templates/scheduler.html:142
+msgid "Select a scope and search for events."
+msgstr "Valige ulatus ja otsige sündmusi."
+
+#: src/templates/scheduler.html:170
+msgid "Selected items:"
+msgstr "Valitud üksused:"
+
+#: src/templates/scheduler.html:189 src/templates/scheduler.html:211
+msgid "Create event(s)"
+msgstr "Loo sündmus(ed)"
+
+#: src/templates/scheduler.html:200
+msgid "Review selected items"
+msgstr "Valitud üksuste ülevaatamine"
+
+#: src/templates/show.html:118
+msgid "Show more filters"
+msgstr "Näita rohkem filtreid"
+
+#: src/templates/show.html:322
+msgid "No resources categories have been defined for your team. Create some from this page: %sResources Categories%s."
+msgstr "Teie meeskonnale pole ressursside kategooriaid määratletud. Looge need sellelt lehelt: %sRessursside kategooriad%s."
+
+#: src/templates/show.html:361
+msgid "Lock the selected entities"
+msgstr "Lukusta valitud üksused"
+
+#: src/templates/show.html:362
+msgid "Unlock the selected entities"
+msgstr "Ava valitud üksused"
+
+#: src/templates/show.html:363
+msgid "Timestamp the selected entities"
+msgstr "Lisa valitud üksustele ajatempel"
+
+#: src/templates/show.html:364
+msgid "Archive the selected entities"
+msgstr "Arhiveeri valitud üksused"
+
+#: src/templates/show.html:365
+msgid "Unarchive the selected entities"
+msgstr "Tühista valitud üksuste arhiiv"
+
+#: src/templates/show.html:366
+msgid "Delete the selected entities"
+msgstr "Kustuta valitud üksused"
+
+#: src/templates/show.html:367
+msgid "Restore the selected entities"
+msgstr "Taasta valitud üksused"
+
+#: src/templates/storage-list.html:6
+msgid "Collapse all"
+msgstr "Ahenda kõik"
+
+#: src/templates/storage-list.html:27
+msgid "Rename"
+msgstr "Nimeta ümber"
+
+#: src/templates/storage-view-edit.html:4
+msgid "Storage"
+msgstr "Ladustamine"
+
+#: src/templates/sysconfig.html:121
+msgid "Revisions system configuration"
+msgstr "Revisjonide süsteemi konfiguratsioon"
+
+#: src/templates/sysconfig.html:145
+msgid "Permissions settings"
+msgstr "Lubade seaded"
+
+#: src/templates/sysconfig.html:577
+msgid "Use S3 Path-Style endpoint"
+msgstr "Kasuta S3 Path-Style lõpp-punkti"
+
+#: src/templates/sysconfig.html:628
+msgid "Only allow a Sysadmin to login when local login form is hidden"
+msgstr "Luba süsteemiadministraatoril sisse logida ainult siis, kui kohalik sisselogimisvorm on peidetud"
+
+#: src/templates/sysconfig.html:628
+msgid "Enable this setting to prevent non-sysadmin users to authenticate using local auth when the form is hidden."
+msgstr "Lubage see säte, et takistada süsteemiadministraatoritest mittekuuluvate kasutajate autentimist kohaliku autentimise abil, kui vorm on peidetud."
+
+#: src/templates/sysconfig.html:629
+msgid "Only allow a Sysadmin to login with local login form"
+msgstr "Luba süsteemiadministraatoril sisse logida ainult kohaliku sisselogimisvormiga"
+
+#: src/templates/sysconfig.html:629
+msgid "Only a Sysadmin account can use the local login regardless if the local login form is hidden or not. Only activate it if you have another authentication method enabled for users."
+msgstr "Kohalikku sisselogimist saab kasutada ainult süsteemiadministraatori konto, olenemata sellest, kas kohaliku sisselogimise vorm on peidetud või mitte. Aktiveerige see ainult siis, kui teil on kasutajatele lubatud mõni muu autentimismeetod."
+
+#: src/templates/sysconfig.html:1065
+msgid "Enable to include audit logs events as INFO event in PHP logs."
+msgstr "Luba auditilogide sündmuste lisamine PHP logidesse INFO-sündmustena."
+
+#: src/templates/view-edit-toolbar.html:163
+msgid "Create entry from template"
+msgstr "Loo kirje malli põhjal"
+
+#: src/templates/view.html:203
+msgid "This entry has been deleted."
+msgstr "See kirje on kustutatud."
+
+#: src/Auth/None.php:34
+msgid "The authentication was interrupted before completion."
+msgstr "Autentimine katkestati enne lõpetamist."
+
+#: src/Elabftw/MinisignKeys.php:72
+msgid "Empty passphrase provided!"
+msgstr "Parool on tühi!"
+
+#: src/Elabftw/i18n4Js.php:41
+msgid "Add column"
+msgstr "Lisa veerg"
+
+#: src/Elabftw/i18n4Js.php:42
+msgid "Add row"
+msgstr "Lisa rida"
+
+#: src/Elabftw/i18n4Js.php:46
+msgid "Can manage compounds"
+msgstr "Saab ühendeid hallata"
+
+#: src/Elabftw/i18n4Js.php:47
+msgid "Can manage inventory locations"
+msgstr "Saab laoseisu asukohti hallata"
+
+#: src/Elabftw/i18n4Js.php:55
+msgid "Discard current spreadsheet? All unsaved changes will be lost."
+msgstr "Kas tühistada praegune arvutustabel? Kõik salvestamata muudatused kaovad."
+
+#: src/Elabftw/i18n4Js.php:58
+msgid "Delete {{num, number}} line(s)?"
+msgstr "Kustutada {{num, number}} rida?"
+
+#: src/Elabftw/i18n4Js.php:59
+msgid "Delete selected rows"
+msgstr "Kustutada valitud read"
+
+#: src/Elabftw/i18n4Js.php:65
+msgid "Currently editing"
+msgstr "Praegu toimetab"
+
+#: src/Elabftw/i18n4Js.php:72
+msgid "File name is missing."
+msgstr "Failinimi puudub."
+
+#: src/Elabftw/i18n4Js.php:79
+msgid "Format"
+msgstr "Vorming"
+
+#: src/Elabftw/i18n4Js.php:94
+msgid "Import a spreadsheet (xls, csv, ods, ...)"
+msgstr "Impordi arvutustabel (xls, csv, ods, ...)"
+
+#: src/Elabftw/i18n4Js.php:103
+msgid "New spreadsheet"
+msgstr "Uus arvutustabel"
+
+#: src/Elabftw/i18n4Js.php:114
+msgid "New title for the column"
+msgstr "Uus veeru pealkiri"
+
+#: src/Elabftw/i18n4Js.php:116
+msgid "Overwrite original file"
+msgstr "Kirjuta algne fail üle"
+
+#: src/Models/Links/AbstractCompoundsLinks.php:140
+#: src/Models/Links/AbstractLinks.php:188
+msgid "Removed"
+msgstr "Eemaldatud"
+
+#: src/Models/Links/AbstractCompoundsLinks.php:140
+#: src/Models/Links/AbstractLinks.php:188
+msgid "Added"
+msgstr "Lisatud"
+
+#: src/Models/Links/AbstractCompoundsLinks.php:144
+msgid "%s link to compound: %s (CAS Number: %s) with id: %d"
+msgstr "%s link ühendile: %s (CAS-number: %s) ID-ga: %d"
+
+#: src/Models/Links/AbstractLinks.php:198
+msgid "%s link to %s: %s"
+msgstr "%s link %s: %s"
+
+#: web/app/controllers/UcpController.php:51
+msgid "Password successfully changed."
+msgstr "Parool on edukalt muudetud."
+
+#: web/app/controllers/UcpController.php:60
+msgid "Two-factor authentication has been successfully enabled for your account."
+msgstr "Teie konto jaoks on kahefaktoriline autentimine lubatud."
+
+#: src/templates/admin.html:139
+msgid "Project Monoco"
+msgstr "Project Monoco"
+
+#: src/templates/admin.html:139
+msgid "Teamgroup name"
+msgstr "Meeskonnarühma nimi"
+
+#: src/templates/admin.html:168 src/templates/admin.html:174
+msgid "Add user to teamgroup"
+msgstr "Lisa kasutaja meeskonnarühma"
+
+#: src/templates/bookings-email-modal.html:5
+#: src/templates/bookings-email-modal.html:10
+msgid "Send an email to users who booked this resource"
+msgstr "Saada e-kiri kasutajatele, kes selle ressursi broneerisid"
+
+#: src/templates/bookings-email-modal.html:12
+msgid "Recipients are users with bookings up to 4 months past or future."
+msgstr "Saajad on kasutajad, kellel on broneeringuid kuni 4 kuud tagasi või tulevikus."
+
+#: src/templates/bookings-email-modal.html:14
+msgid "There are no bookings associated with this resource."
+msgstr "Selle ressursiga pole seotud ühtegi broneeringut."
+
+#: src/templates/bookings-email-modal.html:16
+msgid "Email will be sent to %d users."
+msgstr "E-kiri saadetakse %d kasutajale."
+
+#: src/templates/bookings-email-modal.html:22
+msgid "Message"
+msgstr "Sõnum"
+
+#: src/templates/compounds-view-edit.html:107
+msgid "Add link to a compound"
+msgstr "Lisa link ühendile"
+
+#: src/templates/compounds.html:21
+msgid "Note: only users who were given permission to edit the common compounds table can modify the compounds (add/edit/remove)."
+msgstr "Märkus: ainult kasutajad, kellel on luba tavaliste ühendite tabelit muuta, saavad ühendeid muuta (lisada/muuta/eemaldada)."
+
+#: src/templates/compounds.html:29
+msgid "Double-click a row in the table below to view complete information about a compound."
+msgstr "Topeltklõpsake alloleva tabeli real, et kuvada ühendi täielik teave."
+
+#: src/templates/create-new-item-modal.html:30
+msgid "No templates found."
+msgstr "Malle ei leitud."
+
+#: src/templates/create-new-item-modal.html:73
+msgid "Or select a category"
+msgstr "Või valige kategooria"
+
+#: src/templates/create-new-item-modal.html:75
+msgid "Manage categories"
+msgstr "Halda kategooriaid"
+
+#: src/templates/create-resource-from-compound-modal.html:13
+msgid "Select a resource template"
+msgstr "Valige ressursi mall"
+
+#: src/templates/edit-user-modal.html:55
+msgid "Enable this to allow user to manage compounds."
+msgstr "Lubage kasutajal ühendeid hallata."
+
+#: src/templates/edit-user-modal.html:65
+msgid "Enable this to allow user to manage inventory locations."
+msgstr "Lubage kasutajatel laoseisu asukohti hallata."
+
+#: src/templates/edit.html:136
+msgid "Entries created from this template will inherit these permissions. If they are locked down, the permissions will not be modifiable by Users, only Admins."
+msgstr "Selle malli põhjal loodud kirjed pärivad need õigused. Kui need on lukustatud, ei saa kasutajad õigusi muuta, ainult administraatorid."
+
+#: src/templates/dashboard.html:19 src/templates/head.html:70
+msgid "Quick search experiments"
+msgstr "Kiirotsinge eksperimentidest"
+
+#: src/templates/dashboard.html:20 src/templates/head.html:71
+msgid "Search experiments"
+msgstr "Otsige eksperimentidest"
+
+#: src/templates/dashboard.html:67 src/templates/head.html:107
+msgid "Quick search resources"
+msgstr "Kiirotsinge ressurssidest"
+
+#: src/templates/dashboard.html:68 src/templates/head.html:108
+msgid "Search resources"
+msgstr "Otsige ressurssidest"
+
+#: src/templates/inventory.html:39
+msgid "Note: only users who were given permission to edit the inventory locations can modify the locations (add/edit/remove)."
+msgstr "Märkus: ainult kasutajad, kellel on luba laoseisu asukohti muuta, saavad asukohti muuta (lisada/muuta/eemaldada)."
+
+#: src/templates/load-spreadsheet-modal.html:6
+msgid "Choose header option"
+msgstr "Valige päise valik"
+
+#: src/templates/load-spreadsheet-modal.html:12
+msgid "Do you want to use the first row of your file as column headers?"
+msgstr "Kas soovite oma faili esimest rida veerupäistena kasutada?"
+
+#: src/templates/show.html:324
+msgid "Tip: %screate categories%s to start organizing your work."
+msgstr "Näpunäide: %slooge kategooriad%s, et alustada oma töö korraldamist."
+
+#: src/templates/show.html:342
+msgid "Nothing here yet. Start by clicking Create (top-right) to add your first %s."
+msgstr "Siin pole veel midagi. Alustage, klõpsates nupul Loo (üleval paremas), et lisada oma esimesed %s."
+
+#: src/templates/spreadsheet-editor.html:1
+msgid "Beta Notice: The spreadsheet editor is currently in beta (preview release) and should be used with caution. Please avoid saving any precious data within it. Additionally, files containing formulas or calculations will not be rendered as they originally appear, since the editor functions more as a text-based tool at this stage rather than a full spreadsheet engine. Yes, we will add calculation eventually. As you can imagine, re-implementing a spreadsheet editor takes time."
+msgstr "Beetaversiooni teade: Arvutustabeli redaktor on praegu beetaversioonis (eelversioon) ja seda tuleks kasutada ettevaatlikult. Palun vältige väärtuslike andmete salvestamist. Lisaks ei kuvata valemeid või arvutusi sisaldavaid faile nii, nagu need algselt välja nägid, kuna redaktor toimib selles etapis pigem tekstipõhise tööriistana kui täieliku arvutustabeli mootorina. Jah, me lisame arvutused lõpuks. Nagu võite ette kujutada, võtab arvutustabeli redaktori uuesti rakendamine aega."
+
+#: src/templates/spreadsheet-editor.html:2
+#: src/templates/spreadsheet-editor.html:4
+#: src/templates/spreadsheet-editor.html:18
+msgid "Spreadsheet Editor"
+msgstr "Arvutustabeli redaktor"
+
+#: src/templates/sysconfig.html:438
+msgid "Force certain accounts to enable multi-factor authentication."
+msgstr "Sundige teatud kontod lubama mitmefaktorilist autentimist."
+
+#: src/templates/sysconfig.html:535
+msgid "%d files are stored on local filesystem and %d files are stored on S3."
+msgstr "%d faili salvestatakse kohalikku failisüsteemi ja %d faili salvestatakse S3-sse."
+
+#: src/templates/ucp.html:344
+msgid "Two-factor Authentication"
+msgstr "Kahefaktoriline autentimine"
+
+#: src/templates/ucp.html:347
+msgid "Two-factor authentication is enabled for your account."
+msgstr "Teie konto jaoks on kahefaktoriline autentimine lubatud."
+
+#: src/templates/ucp.html:348
+msgid "Disable two-factor authentication"
+msgstr "Keela kahefaktoriline autentimine"
+
+#: src/templates/ucp.html:355
+msgid "Setup second factor"
+msgstr "Seadista teine ​​tegur"
+
+#: src/templates/ucp.html:376
+msgid "Scan the QR code with the application"
+msgstr "Skannige QR-koodi rakendusega"
+
+#: src/templates/ucp.html:458
+msgid "Note: this passphrase protects your private key and is not your account password. You will need it each time you sign an entry."
+msgstr "Märkus. See parool kaitseb teie privaatvõtit ja ei ole teie konto parool. Te vajate seda iga kord, kui kirjet allkirjastate."
+
+#: src/templates/upload-dropdown-menu.html:65
+msgid "Load into Spreadsheet Editor"
+msgstr "Laadige arvutustabeli redaktorisse"
+
+#: src/templates/view-edit-toolbar.html:195
+msgid "Send an email to users who have booked this resource within the 4 last & upcoming months."
+msgstr "Saatke e-kiri kasutajatele, kes on selle ressursi broneerinud viimase 4 kuu jooksul ja eelseisvatel kuudel."
+
+#: src/templates/view.html:35
+msgid "Override lock"
+msgstr "Override lock"
+
+#: src/Elabftw/i18n4Js.php:42
+msgid "Add selected users to team"
+msgstr "Valitud kasutajate lisamine meeskonda"
+
+#: src/Elabftw/i18n4Js.php:109
+msgid "Warning: current OpenCloning version is incompatible with this version of eLabFTW."
+msgstr "Hoiatus: praegune OpenCloningi versioon ei ühildu selle eLabFTW versiooniga."
+
+#: src/templates/edit-user-modal.html:55
+msgid "Enable this to allow user to manage compounds. This has no effect if compounds edition is not restricted globally."
+msgstr "Luba see, et võimaldada kasutajal hallata ühendeid. Sellel ei ole mõju, kui ühendite väljaanne ei ole globaalselt piiratud."
+
+#: src/templates/edit-user-modal.html:65
+msgid "Enable this to allow user to manage inventory locations. This has no effect if inventory locations edition is not restricted globally."
+msgstr "Lubage see, et võimaldada kasutajal hallata inventari asukohti. Sellel ei ole mõju, kui inventariakohtade väljaanne ei ole globaalselt piiratud."
+
+#: src/templates/editusers.html:9
+msgid "Show users from all teams"
+msgstr "Näita kõigi meeskondade kasutajaid"
+
+#: src/templates/head.html:82
+msgid "Team experiments"
+msgstr "Meeskonna eksperimendid"
+
+#: src/templates/head.html:94
+msgid "Experiment categories"
+msgstr "Eksperimendi kategooriad"
+
+#: src/templates/head.html:96
+msgid "Experiment status"
+msgstr "Eksperimendi staatus"
+
+#: src/templates/head.html:119
+msgid "Team resources"
+msgstr "Meeskonna ressursid"
+
+#: src/templates/head.html:131
+msgid "Resource templates"
+msgstr "Ressursside mallid"
+
+#: src/templates/head.html:133
+msgid "Resource categories"
+msgstr "Ressursikategooriad"
+
+#: src/templates/head.html:135
+msgid "Resource status"
+msgstr "Ressursi staatus"
+
+#: src/templates/spreadsheet-editor.html:1
+msgid "Beta Notice: The spreadsheet editor is currently in beta (preview release) and should be used with caution. Please avoid storing important data in it. Additionally, files that include styling or advanced features such as graphics may not display as they originally appear. This editor is best suited for simple calculations and handling formulas. We welcome any feedback you may have."
+msgstr "Beeta-teade: Tabelite redaktor on praegu beetaversioonis (eelvaate versioon) ja seda tuleks kasutada ettevaatlikult. Palun vältige oluliste andmete salvestamist selles. Lisaks sellele ei pruugi failid, mis sisaldavad kujundust või täiustatud funktsioone, näiteks graafikat, kuvada nii, nagu need algselt ilmuvad. See toimetaja sobib kõige paremini lihtsate arvutuste tegemiseks ja valemite käsitlemiseks. Ootame igasugust tagasisidet."
+
+#: src/templates/sysconfig.html:112
+msgid "Allow users to change their first name, last name, internal id or email address"
+msgstr "Võimaldab kasutajatel muuta oma eesnime, perekonnanime, sisemist id-d või e-posti aadressi"
+
+#: src/templates/sysconfig.html:112
+msgid "When disabled, only a Sysadmin will be allowed to modify these parameters."
+msgstr "Kui see on keelatud, saab neid parameetreid muuta ainult süsteemiadministraator."
+
+#: src/templates/sysconfig.html:114
+msgid "Prevent modification of global compounds database unless user is given explicit rights."
+msgstr "Vältida globaalsete ühendite andmebaasi muutmist, kui kasutajale ei ole antud selgesõnalisi õigusi."
+
+#: src/templates/sysconfig.html:114
+msgid "When enabled, a Sysadmin will need to give edit rights to all users that should be able to edit the common compounds database. All other users will access it in read-only."
+msgstr "Kui see on lubatud, peab süsteemiadministraator andma redigeerimisõigused kõigile kasutajatele, kes peaksid saama redigeerida ühiste ühendite andmebaasi. Kõik teised kasutajad pääsevad sellele juurde ainult lugemisõigusega."
+
+#: src/templates/sysconfig.html:116
+msgid "Prevent modification of inventory locations unless user is given explicit rights."
+msgstr "Vältida inventari asukohtade muutmist, kui kasutajale ei ole antud selgesõnalisi õigusi."
+
+#: src/templates/sysconfig.html:116
+msgid "When enabled, a Sysadmin will need to give edit rights to all users that should be able to edit the inventory locations. All other users will access it in read-only."
+msgstr "Kui see on lubatud, peab süsteemiadministraator andma redigeerimisõigused kõigile kasutajatele, kes peaksid saama inventuuri asukohti redigeerida. Kõik teised kasutajad pääsevad sellele juurde ainult lugemisõigusega."

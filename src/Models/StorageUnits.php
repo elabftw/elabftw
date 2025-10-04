@@ -15,6 +15,7 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\CanSqlBuilder;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Action;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\QueryParamsInterface;
@@ -32,7 +33,7 @@ final class StorageUnits extends AbstractRest
 {
     use SetIdTrait;
 
-    public function __construct(private Users $requester, ?int $id = null)
+    public function __construct(private Users $requester, private bool $requireEditRights, ?int $id = null)
     {
         parent::__construct();
         $this->setId($id);
@@ -300,6 +301,7 @@ final class StorageUnits extends AbstractRest
     #[Override]
     public function patch(Action $action, array $params): array
     {
+        $this->canWriteOrExplode();
         if (empty($params['name'])) {
             throw new ImproperActionException('Name must not be empty!');
         }
@@ -329,6 +331,7 @@ final class StorageUnits extends AbstractRest
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
+        $this->canWriteOrExplode();
         return $this->create(
             $reqBody['name'] ?? throw new ImproperActionException('Missing value for "name"'),
             Filter::intOrNull($reqBody['parent_id']),
@@ -359,6 +362,7 @@ final class StorageUnits extends AbstractRest
     #[Override]
     public function destroy(): bool
     {
+        $this->canWriteOrExplode();
         if ($this->hasChildren()) {
             throw new ImproperActionException(_('Cannot delete a storage unit with children!'));
         }
@@ -370,6 +374,18 @@ final class StorageUnits extends AbstractRest
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         return $this->Db->execute($req);
+    }
+
+    protected function canWrite(): bool
+    {
+        return $this->requester->userData['can_manage_inventory_locations'] === 1 || $this->requireEditRights === false;
+    }
+
+    protected function canWriteOrExplode(): void
+    {
+        if (!$this->canWrite()) {
+            throw new IllegalActionException();
+        }
     }
 
     private function hasContainers(): bool

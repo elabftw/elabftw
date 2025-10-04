@@ -69,6 +69,29 @@ final class Steps extends AbstractRest
     /**
      * Create a step from https://schema.org/HowToStep
      * Example:
+     * {
+     *  "@id": "howtostep://bde30f48-b16c-4050-ba63-0c34d1bafb7d",
+     *  "@type": "HowToStep",
+     *  "position": 2,
+     *  "creativeWorkStatus": "unfinished",
+     *  "itemListElement": {
+     *    "@id": "howtodirection://7c55611b-3400-48fa-bcc3-db05925b5ab8"
+     *  }
+     * },
+     */
+    public function importFromHowToStep(array $howToStep, string $body): void
+    {
+        $this->import(array(
+            'body' => $body,
+            'finished' => $howToStep['creativeWorkStatus'] === 'finished' ? 1 : 0,
+            'finished_time' => $howToStep['temporal'] ?? null,
+            'ordering' => $howToStep['position'] ?? null,
+        ));
+    }
+
+    /**
+     * Create a step from unflattened step
+     * Example:
      *   "@type": "HowToStep",
      *   "position": 4,
      *   "creativeWorkStatus": "finished",
@@ -79,7 +102,7 @@ final class Steps extends AbstractRest
      *     "text": "finished with deadline"
      *   }
      */
-    public function importFromHowToStep(array $step): void
+    public function importFromHowToStepOld(array $step): void
     {
         $stepArr = array();
         $stepArr['body'] = $step['itemListElement'][0]['text'];
@@ -111,17 +134,11 @@ final class Steps extends AbstractRest
         return $this->Db->fetch($req);
     }
 
-    /**
-     * Copy the steps from one entity to an other
-     *
-     * @param int $id The id of the original entity
-     * @param int $newId The id of the new entity that will receive the steps
-     * @param bool $fromTpl do we duplicate from template?
-     */
-    public function duplicate(int $id, int $newId, $fromTpl = false): void
+    // Copy Steps from one entity to another
+    public function duplicate(int $id, int $newId, bool $fromTemplate = false): void
     {
         $table = $this->Entity->entityType->value;
-        if ($fromTpl) {
+        if ($fromTemplate) {
             $table = ($this->Entity instanceof Experiments || $this->Entity instanceof Templates) ? 'experiments_templates' : 'items_types';
         }
         $stepsql = 'SELECT body, ordering FROM ' . $table . '_steps WHERE item_id = :id';

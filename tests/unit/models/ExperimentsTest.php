@@ -41,6 +41,11 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments = $this->getFreshExperimentWithGivenUser($this->Users);
     }
 
+    public function testGetSurroundingBookers(): void
+    {
+        $this->assertEmpty($this->Experiments->getSurroundingBookers());
+    }
+
     public function testCreateAndDestroy(): void
     {
         $new = $this->Experiments->create();
@@ -172,6 +177,24 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->Experiments->patch(Action::Update, array('category' => '-3', 'custom_id' => '-5')));
         $this->assertNull($this->Experiments->entityData['category']);
         $this->assertNull($this->Experiments->entityData['custom_id']);
+    }
+
+    public function testCustomId(): void
+    {
+        // give it a category
+        $this->Experiments->patch(Action::Update, array('category' => 1));
+        $patched = $this->Experiments->patch(Action::SetNextCustomId, array());
+        $this->assertSame(1, $patched['custom_id']);
+        $patched = $this->Experiments->patch(Action::SetNextCustomId, array());
+        $this->assertSame(1, $patched['custom_id']);
+        // now with another one of the same category
+        $fresh = $this->getFreshExperiment();
+        $fresh->patch(Action::Update, array('category' => 1));
+        $patched = $fresh->patch(Action::SetNextCustomId, array());
+        $this->assertSame(2, $patched['custom_id']);
+        // now get an exception without a category set
+        $this->expectException(ImproperActionException::class);
+        $this->getFreshExperiment()->patch(Action::SetNextCustomId, array());
     }
 
     public function testSign(): void

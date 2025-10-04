@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use DateInterval;
 use DateTimeImmutable;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\Env;
@@ -25,6 +26,9 @@ use Lcobucci\JWT\Validation\Constraint\SignedWith;
  */
 final class DeviceToken
 {
+    // 3 months
+    public const int DEFAULT_LIFETIME_SECONDS = 7_776_000;
+
     public static function getToken(int $userid): string
     {
         $now = new DateTimeImmutable();
@@ -42,7 +46,7 @@ final class DeviceToken
                 //->canOnlyBeUsedAfter($now->modify('+1 minute'))
                 // Configures the expiration time of the token (exp claim)
                 // @psalm-suppress PossiblyFalseArgument
-                ->expiresAt($now->modify('+3 months'))
+                ->expiresAt($now->add(new DateInterval('PT' . self::DEFAULT_LIFETIME_SECONDS . 'S')))
                 // Configures a new claim, called "uid"
                 ->withClaim('userid', $userid)
                 // Builds a new token
@@ -59,8 +63,10 @@ final class DeviceToken
             InMemory::plainText($secretKey->getRawBytes()), // @phpstan-ignore-line
         );
         // TODO validate the userid claim and other stuff
-        $config->setValidationConstraints(new PermittedFor('brute-force-protection'));
-        $config->setValidationConstraints(new SignedWith($config->signer(), $config->signingKey()));
+        $config->setValidationConstraints(
+            new PermittedFor('brute-force-protection'),
+            new SignedWith($config->signer(), $config->signingKey()),
+        );
         return $config;
     }
 }

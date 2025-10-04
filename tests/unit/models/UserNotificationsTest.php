@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Models\Notifications\SelfIsValidated;
 use Elabftw\Models\Notifications\StepDeadline;
 use Elabftw\Models\Notifications\UserNotifications;
 use Elabftw\Models\Users\Users;
@@ -45,11 +46,17 @@ class UserNotificationsTest extends \PHPUnit\Framework\TestCase
 
     public function testReadOne(): void
     {
+        $Notif = new SelfIsValidated();
+        $id = $Notif->create(1);
+        $this->UserNotifications->setId($id);
         $this->assertIsArray($this->UserNotifications->readOne());
     }
 
     public function testPatch(): void
     {
+        $Notif = new SelfIsValidated();
+        $id = $Notif->create(1);
+        $this->UserNotifications->setId($id);
         $this->assertIsArray($this->UserNotifications->patch(Action::Update, array()));
     }
 

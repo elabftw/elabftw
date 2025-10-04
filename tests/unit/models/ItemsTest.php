@@ -11,9 +11,14 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use DateTimeImmutable;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\FileFromString;
+use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\UnprocessableContentException;
+use Elabftw\Models\Users\AuthenticatedUser;
 use Elabftw\Params\TeamParam;
 use Elabftw\Services\Check;
 use Elabftw\Traits\TestsUtilsTrait;
@@ -72,6 +77,32 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($uploadTitle, $Items->entityData['uploads'][0]['real_name']);
     }
 
+    public function testCreateFromTemplateWithImmutablePermissions(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $Items = $this->makeItemFromImmutableTemplateFor($user);
+        $this->expectException(UnprocessableContentException::class);
+        $Items->patch(Action::Update, array('canread' => BasePermissions::UserOnly->toJson()));
+    }
+
+    public function testAdminCanBypassImmutablePermissions(): void
+    {
+        $admin = $this->getRandomUserInTeam(1, admin: 1);
+        $Items = $this->makeItemFromImmutableTemplateFor($admin);
+        $Items->patch(Action::Update, array('canread' => BasePermissions::UserOnly->toJson()));
+        $canRead = json_decode($Items->readOne()['canread'], true);
+        $this->assertSame(1, $Items->readOne()['canread_is_immutable']);
+        $this->assertEquals(BasePermissions::UserOnly->value, $canRead['base']);
+    }
+
+    public function testCannotChangeImmutabilitySettings(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $Items = $this->makeItemFromImmutableTemplateFor($user);
+        $this->expectException(UnprocessableContentException::class);
+        $Items->patch(Action::Update, array('canread_is_immutable' => 1));
+    }
+
     public function testRead(): void
     {
         $new = $this->Items->create();
@@ -89,6 +120,28 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('Untitled', $entityData['title']);
         $this->assertEquals('2016-07-29', $entityData['date']);
         $this->assertEquals('<p>Body</p>', $entityData['body']);
+    }
+
+    public function testWrongActionOnUpdate(): void
+    {
+        $new = $this->Items->create();
+        $this->Items->setId($new);
+        $this->expectException(ImproperActionException::class);
+        $this->Items->patch(Action::NotifDestroy, array('unavailable' => 'action'));
+    }
+
+    public function testCannotReadOneWithoutId(): void
+    {
+        $this->Items->setId(null);
+        $this->expectException(IllegalActionException::class);
+        $this->Items->readOne();
+    }
+
+    public function testCannotCheckPermissionsWithoutId(): void
+    {
+        $this->Items->setId(null);
+        $this->expectException(IllegalActionException::class);
+        $this->Items->canOrExplode('read');
     }
 
     public function testReadBookable(): void
@@ -158,5 +211,30 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         // unlock
         $item = $this->Items->toggleLock();
         $this->assertFalse((bool) $item['locked']);
+    }
+
+    public function testGetSurroundingBookers(): void
+    {
+        $item = $this->getFreshBookableItem(2);
+        $Scheduler = new Scheduler($item);
+        $start = new DateTimeImmutable('+3 hour');
+        $end = new DateTimeImmutable('+6 hour');
+        $Scheduler->postAction(Action::Create, array('start' => $start->format('c'), 'end' => $end->format('c'), 'title' => 'Mail event'));
+        $result = $item->getSurroundingBookers();
+        $this->assertCount(1, $result);
+
+        // now with an unbookable item
+        $item = $this->getFreshItem(2);
+        $this->assertEmpty($item->getSurroundingBookers());
+    }
+
+    private function makeItemFromImmutableTemplateFor(AuthenticatedUser $user): Items
+    {
+        $ItemsTypes = new ItemsTypes($user);
+        $templateId = $ItemsTypes->create(title: 'A resource template');
+        $ItemsTypes->setId($templateId);
+        $ItemsTypes->patch(Action::Update, array('canread_is_immutable' => 1, 'canread' => BasePermissions::Team->toJson()));
+        $newId = $this->Items->createFromTemplate($templateId);
+        return new Items($user, $newId);
     }
 }

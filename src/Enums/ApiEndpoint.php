@@ -31,6 +31,7 @@ enum ApiEndpoint: string
     case IdpsSources = 'idps_sources';
     case Import = 'import';
     case Info = 'info';
+    case Instance = 'instance';
     case Items = 'items';
     case ItemsTypes = 'items_types';
     case Reports = 'reports';

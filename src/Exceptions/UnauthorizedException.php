@@ -12,17 +12,18 @@ declare(strict_types=1);
 
 namespace Elabftw\Exceptions;
 
+use Elabftw\Enums\Messages;
 use Exception;
 
 /**
  * If user is not authorized to access this resource
  */
-final class UnauthorizedException extends Exception
+final class UnauthorizedException extends AppException
 {
-    public function __construct(?string $message = null, int $code = 403, ?Exception $previous = null)
+    public function __construct(?string $message = null, int $code = 401, ?Exception $previous = null)
     {
         if ($message === null) {
-            $message = _('Authentication required');
+            $message = Messages::UnauthorizedError->toHuman();
         }
         parent::__construct($message, $code, $previous);
     }

@@ -10,6 +10,10 @@
 {% include('import-pubchem-modal.html') %}
 {# PROCUREMENT PARAMS #}
 {% include('procurement-params-modal.html') %}
+{# BOOKINGS EMAIL #}
+{% if Entity.entityData.type == 'items' and Entity.entityData.is_bookable == 1 %}
+  {% include 'bookings-email-modal.html' %}
+{% endif %}
 
 <div id='isArchivedDiv'>
 {% if Entity.entityData.state == enum('Elabftw\\Enums\\State').Archived.value %}
@@ -36,7 +40,7 @@
                   <button type='button' class='btn btn-primary btn-sm mr-2' data-action='do-requestable-action' data-target='{{ action.target }}'>{{ action.action }}</button>
                 {% endif %}
                 {% if action.requester_userid == App.Users.userData.userid or action.target_userid == App.Users.userData.userid %}
-                  <button type='button' class='btn btn-sm btn-ghost' data-action='cancel-requestable-action' data-id='{{ action.id }}'>{{ 'Cancel'|trans }}</button>
+                  <button type='button' class='btn btn-sm btn-ghost' data-action='cancelrequestableaction' data-id='{{ action.id }}'>{{ 'Cancel'|trans }}</button>
                 {% endif %}
               </div>
             </div>

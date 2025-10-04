@@ -13,7 +13,7 @@ namespace Elabftw\Commands;
 
 use Elabftw\Models\Config;
 use Elabftw\Services\Email;
-use Elabftw\Services\MfaHelperTest;
+use Elabftw\Services\MfaHelper;
 use Elabftw\Storage\Fixtures;
 use Elabftw\Storage\Memory;
 use Monolog\Handler\NullHandler;
@@ -113,7 +113,7 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
     public function testMfaCode(): void
     {
         $commandTester = new CommandTester(new MfaCode());
-        $commandTester->execute(array('secret' => MfaHelperTest::SECRET));
+        $commandTester->execute(array('secret' => new MfaHelper()->secret));
         $commandTester->assertCommandIsSuccessful();
         $this->assertStringContainsString('2FA code:', $commandTester->getDisplay());
     }
@@ -236,6 +236,22 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
     public function testRefreshIdps(): void
     {
         $commandTester = new CommandTester(new RefreshIdps(''));
+        $commandTester->execute(array());
+        $commandTester->assertCommandIsSuccessful();
+    }
+
+    public function testFingerprintCompounds(): void
+    {
+        $commandTester = new CommandTester(new FingerprintCompounds());
+        $commandTester->execute(array(
+            '--dry-run' => true,
+        ));
+        $commandTester->assertCommandIsSuccessful();
+    }
+
+    public function testClearNotifications(): void
+    {
+        $commandTester = new CommandTester(new ClearNotifications());
         $commandTester->execute(array());
         $commandTester->assertCommandIsSuccessful();
     }

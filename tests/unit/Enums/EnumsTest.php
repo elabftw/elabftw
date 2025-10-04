@@ -57,6 +57,25 @@ class EnumsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray(EnforceMfa::getAssociativeArray());
     }
 
+    public function testEntityType(): void
+    {
+        $this->assertSame('templates.php', EntityType::Experiments->toTemplatePage());
+        $this->assertSame('experiments-categories.php', EntityType::Experiments->toCategoryPage());
+        $this->assertSame('experiments-status.php', EntityType::Experiments->toStatusPage());
+    }
+
+    public function testAuthType(): void
+    {
+        $this->assertIsInt(AuthType::Saml->asService());
+    }
+
+    public function testCurrency(): void
+    {
+        $this->assertIsString(Currency::NOK->toHuman());
+        $this->assertIsString(Currency::DKK->toSymbol());
+        $this->assertIsArray(Currency::getAssociativeArray());
+    }
+
     public function testApiSubModels(): void
     {
         array_map(
@@ -70,5 +89,11 @@ class EnumsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray(ApiSubModels::validSubModelsForEndpoint(ApiEndpoint::Event));
         $this->expectException(ImproperActionException::class);
         $this->assertIsArray(ApiSubModels::validSubModelsForEndpoint(ApiEndpoint::Info));
+    }
+
+    public function testMessages(): void
+    {
+        $this->assertSame(500, Messages::CriticalError->toHttpCode());
+        $this->assertSame(403, Messages::DemoMode->toHttpCode());
     }
 }

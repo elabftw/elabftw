@@ -6,6 +6,7 @@
  * @package elabftw
  */
 import {
+  collectForm,
   mkSpin,
   mkSpinStop,
   permissionsToJson,
@@ -100,15 +101,18 @@ on('update-counter-value', (el: HTMLElement) => {
   counterValue.textContent = String(count);
 });
 
-on('create-teamgroup', () => {
-  const input = (document.getElementById('teamGroupCreate') as HTMLInputElement);
-  ApiC.post(`${Model.Team}/current/${Model.TeamGroup}`, {name: input.value}).then(() => {
+on('create-teamgroup', (_, event: Event) => {
+  event.preventDefault();
+  const form = document.getElementById('createGroupForm') as HTMLFormElement;
+  const params = collectForm(form);
+  ApiC.post(`${Model.Team}/current/${Model.TeamGroup}`, params).then(() => {
     reloadElements(['team_groups_div']);
-    input.value = '';
+    form.reset();
   });
 });
 
-on('adduser-teamgroup', (el: HTMLElement) => {
+on('adduser-teamgroup', (el: HTMLElement, event: Event) => {
+  event.preventDefault();
   const user = parseInt(el.parentNode.parentNode.querySelector('input').value, 10);
   if (isNaN(user)) {
     notify.error('add-user-error');

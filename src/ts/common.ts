@@ -95,6 +95,17 @@ const FavTagC = new FavTag();
 const TodolistC = new Todolist();
 
 const TableSortingC = new TableSorting();
+// for searching inputs, allow specific triggers for East & South East Asian characters
+const hasEastSEAsian = (s: string): boolean => (
+  /\p{Script=Han}|\p{Script=Hiragana}|\p{Script=Katakana}|\p{Script=Hangul}|\p{Script=Thai}|\p{Script=Lao}|\p{Script=Khmer}|\p{Script=Myanmar}|\p{Script=Bopomofo}/u.test(s)
+);
+
+const countGraphemes = (text: string): number => {
+  // use Intl.Segmenter to handle locale-sensitive text segmentation (graphemes, sentences, etc.,)
+  const graphemeSegmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
+  return Array.from(graphemeSegmenter.segment(text)).length;
+};
+
 TableSortingC.init();
 (new Tab()).init(document.querySelector('.tabbed-menu'));
 
@@ -112,14 +123,6 @@ if (userPrefs.scDisabled === '0') {
   kbd.init();
 }
 
-// this lives outside of #container, so add their own click listener
-document.getElementById('sidepanel-buttons')?.addEventListener('click', event => {
-  const el = (event.target as HTMLElement);
-  if (el.matches('[data-action="toggle-sidepanel"]')) {
-    const SidePanelC = el.dataset.sidepanel === Model.FavTag ? FavTagC : TodolistC;
-    SidePanelC.toggle();
-  }
-});
 // SIDE PANEL STATE
 const openedSidePanel = localStorage.getItem('opened-sidepanel');
 if (openedSidePanel === Model.FavTag) {
@@ -306,7 +309,7 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
   // this promise will fetch the categories or status on click
   const getCatStatArr = (endpoint: string): Promise<SelectOptions[]> => {
     if (!optionsCache[endpoint]) {
-      optionsCache[endpoint] = ApiC.getJson(endpoint)
+      optionsCache[endpoint] = ApiC.getJson(`${endpoint}?limit=9000`)
         .then(json => {
           const arr = Array.from(json) as Status[];
           arr.unshift(notsetOpts);
@@ -525,9 +528,14 @@ on('scroll-top', () => {
   });
 });
 
-on('close-sidepanel', (el: HTMLElement) => {
-  const SidePanelC = el.dataset.sidepanel === Model.FavTag ? FavTagC : TodolistC;
-  SidePanelC.hide();
+on('toggle-sidepanel', (el: HTMLElement, event: Event) => {
+  // this action might exist on a link: prevent jump to top
+  event.preventDefault();
+  const SidePanelC = el.dataset.target === Model.FavTag ? FavTagC : TodolistC;
+  if (el.dataset.purpose === 'hide') {
+    return SidePanelC.hide();
+  }
+  SidePanelC.toggle();
 });
 
 on('toggle-pin', (el: HTMLElement) => {
@@ -547,6 +555,11 @@ on('transfer-ownership', () => {
   const params = {};
   params[Target.UserId] = parseInt(value.split(' ')[0], 10);
   ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => window.location.reload());
+});
+
+on(Action.Restore, () => {
+  ApiC.patch(`${entity.type}/${entity.id}`, { action: Action.Restore })
+    .then(() => window.location.href = `?mode=view&id=${entity.id}`);
 });
 
 on('add-user-to-permissions', (el: HTMLElement) => {
@@ -675,16 +688,14 @@ on('toggle-all-storage', (el: HTMLElement) => {
 on('rename-storage', (el: HTMLElement) => {
   const name = prompt('Name')?.trim();
   if (!name) return;
-  const params = {
-    parent_id: el.dataset.id,
-    name: name,
-  };
-  ApiC.patch(`storage_units/${el.dataset.id}`, params).then(() => {
+  ApiC.patch(`storage_units/${el.dataset.id}`, {name: name}).then(() => {
     reloadElements(['storageDiv']).then(() => {
-      const parent: HTMLDetailsElement = document.querySelector(`details[data-id="${params.parent_id}"]`);
-      parent.open = true;
-      // now open ancestors too
-      getAncestorDetails(parent).forEach(details => details.open = true);
+      const parent: HTMLDetailsElement = document.querySelector(`details[data-id="${el.dataset.id}"]`);
+      if (parent) {
+        parent.open = true;
+        // now open ancestors too
+        getAncestorDetails(parent).forEach(details => details.open = true);
+      }
     });
   });
 });
@@ -700,9 +711,11 @@ on('add-storage-children', (el: HTMLElement) => {
   ApiC.post('storage_units', params).then(() => {
     reloadElements(['storageDiv']).then(() => {
       const parent: HTMLDetailsElement = document.querySelector(`details[data-id="${params.parent_id}"]`);
-      parent.open = true;
-      // now open ancestors too
-      getAncestorDetails(parent).forEach(details => details.open = true);
+      if (parent) {
+        parent.open = true;
+        // now open ancestors too
+        getAncestorDetails(parent).forEach(details => details.open = true);
+      }
     });
   });
 });
@@ -873,26 +886,28 @@ on('create-resource-from-compound', (el: HTMLElement) => {
   });
 });
 
-on('save-compound', (el: HTMLElement) => {
+on('save-compound', (el: HTMLElement, event: Event) => {
+  event.preventDefault();
   try {
     if (el.dataset.compoundId) { // edit
-      const compoundForm = document.getElementById('editCompoundInputs');
-      const params = collectForm(compoundForm);
+      const form = document.getElementById('editCompoundForm') as HTMLFormElement;
+      const params = collectForm(form);
       ApiC.patch(`compounds/${el.dataset.compoundId}`, params).then(() => {
         document.dispatchEvent(new CustomEvent('dataReload'));
         $('#editCompoundModal').modal('hide');
-        clearForm(compoundForm);
+        form.reset();
       });
     } else { // create
-      const compoundForm = document.getElementById('createCompoundInputs');
-      const params = collectForm(compoundForm);
-      clearForm(compoundForm);
+      const form = document.getElementById('createCompoundForm') as HTMLFormElement;
+      const params = collectForm(form);
       ApiC.post2location('compounds', params).then(id => {
         ApiC.getJson(`compounds/${id}`).then((json) => {
           setTimeout(() => {
             toggleEditCompound(json);
           }, 500);
           document.dispatchEvent(new CustomEvent('dataReload'));
+          $('#createCompoundModal').modal('hide');
+          form.reset();
         });
       });
     }
@@ -958,7 +973,8 @@ on('ack-notif', (el: HTMLElement) => {
 on('destroy-notif', () => ApiC.delete(`${Model.User}/me/${Model.Notification}`).then(() => reloadElements(['navbarNotifDiv'])));
 
 // CREATE EXPERIMENT, TEMPLATE or DATABASE item: main create button in top right
-on('create-entity', (el: HTMLElement) => {
+on('create-entity', (el: HTMLElement, event: Event) => {
+  event.preventDefault();
   let params = {};
   if (el.dataset.hasTitle) {
     params = collectForm(document.getElementById(el.dataset.formId));
@@ -1153,15 +1169,20 @@ on('autocomplete', (el: HTMLElement) => {
     // this option is necessary or the autocomplete box will get lost under the permissions modal
     appendTo: el.dataset.identifier ? `#autocompleteAnchorDiv_${el.dataset.identifier}` : '',
     source: function(request: Record<string, string>, response: (data: Array<string>) => void): void {
-      if (request.term.length < 3) {
-        // TODO make it unselectable/grayed out or something, maybe once we use homegrown autocomplete
-        response([i18next.t('type-3-chars')]);
+      const term = (request.term || '').trim();
+      // for East/Southeast Asian terms, we allow search with 1 grapheme
+      const isShortScript = hasEastSEAsian(term);
+      const minChars = isShortScript ? 1 : 3;
+      if (countGraphemes(term) < minChars) {
+        const msg = isShortScript ? [] : [i18next.t('type-3-chars')];
+        response(msg);
         return;
+        // TODO make it unselectable/grayed out or something, maybe once we use homegrown autocomplete
       }
-      if (['experiments', 'items'].includes(el.dataset.completeTarget)) {
-        request.term = escapeExtendedQuery(request.term);
-      }
-      ApiC.getJson(`${el.dataset.target}/?q=${encodeURIComponent(request.term)}`).then(json => {
+      const queryTerm = ['experiments', 'items'].includes(el.dataset.target)
+        ? escapeExtendedQuery(term)
+        : term;
+      ApiC.getJson(`${el.dataset.target}/?q=${encodeURIComponent(queryTerm)}`).then(json => {
         response(json.map(entry => transformer(entry)));
       });
     },
@@ -1175,6 +1196,35 @@ on('query', (el: HTMLElement) => {
   url.searchParams.set('order', query[0]);
   url.searchParams.set('sort', query[1]);
   window.location.href = url.href;
+});
+
+on('notify-surrounding-bookers', (el: HTMLElement, event: Event) => {
+  event.preventDefault();
+  const form = document.getElementById('notifySurroundingBookersForm') as HTMLFormElement;
+  const params = collectForm(form);
+  params['action'] = Action.Notif;
+  const button = (el as HTMLButtonElement);
+  const buttonText = button.innerText;
+  button.disabled = true;
+  button.innerText = i18next.t('please-wait');
+  ApiC.post(`${entity.type}/${entity.id}`, params).then(() => {
+    form.reset();
+    $('#sendBookingsEmailModal').modal('hide');
+    button.innerText = buttonText;
+  }).catch(() => {
+    button.innerText = i18next.t('error');
+    // TODO don't hardcode colors
+    button.style.backgroundColor = '#e6614c';
+  }).finally(() => button.disabled = false);
+});
+
+on('delete-compounds', (el: HTMLElement) => {
+  const idList = el.dataset.target.split(',');
+  if (!confirm(i18next.t('multi-changes-confirm', { num: idList.length }))) {
+    return;
+  }
+  idList.forEach(id => ApiC.delete(`compounds/${id}`));
+  document.dispatchEvent(new CustomEvent('dataReload'));
 });
 
 /**

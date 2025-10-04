@@ -16,7 +16,6 @@ import './doodle';
 import { getEditor } from './Editor.class';
 import $ from 'jquery';
 import { ApiC } from './api';
-import { notify } from './notify';
 import { Uploader } from './uploader';
 import { clearLocalStorage } from './localStorage';
 import { entity } from './getEntity';
@@ -70,35 +69,14 @@ if (mode === 'edit') {
   ////////////////////
 
   on('get-next-custom-id', (el: HTMLElement) => {
-    // fetch the category from the current value of select, as it might be different from the one on page load
-    const category = (document.getElementById('categoryBtn') as HTMLButtonElement).dataset.id;
-    if (category === '0') {
-      notify.error('error-no-category');
-      return;
-    }
     const inputEl = document.getElementById('custom_id_input') as HTMLInputElement;
     inputEl.classList.remove('is-invalid');
     // lock the button
     const button = el as HTMLButtonElement;
     button.disabled = true;
-    // make sure the current id is null or it will increment this one
-    const params = {};
-    params[Target.Customid] = null;
-    ApiC.notifOnSaved = false;
-    ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => {
-      ApiC.notifOnSaved = true;
-      // get the entity with highest custom_id
-      return ApiC.getJson(`${el.dataset.endpoint}/?cat=${category}&order=customid&limit=1&sort=desc&scope=3&skip_pinned=1`);
-    }).then(json => {
-      const nextId = json[0].custom_id + 1;
-      inputEl.value = nextId;
-      const params = {};
-      params[Target.Customid] = nextId;
-      return ApiC.patch(`${entity.type}/${entity.id}`, params);
-    }).finally(() => {
-      // unlock the button
-      button.disabled = false;
-    });
+    ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.SetNextCustomId}).then(res => res.json()).then(json => {
+      inputEl.value = String(json.custom_id);
+    }).finally(() => button.disabled = false);
   });
 
   on('annotate-image', (el: HTMLElement) => {

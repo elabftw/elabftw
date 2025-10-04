@@ -9,8 +9,8 @@
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
-      <div class='modal-body row'>
-        <div class='col' id='plainTextContentDiv'></div>
+      <div class='modal-body overflow-auto'>
+        <div id='plainTextContentDiv'></div>
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
@@ -213,7 +213,7 @@
 
             {# TEXT #}
             {% elseif ext matches '/(txt|md|json)$/i' %}
-              <span class='eye-overlay'
+              <span class='icon-overlay eye-overlay'
                 data-action='toggle-modal' data-target='plainTextModal' data-ext='{{ ext }}'
                 data-storage='{{ upload.storage }}'
                 data-path='{{ upload.long_name|e('html_attr') }}'
@@ -223,7 +223,22 @@
 
             {# SPREADSHEETS #}
             {% elseif ext in constant('Elabftw\\Elabftw\\Extensions::SPREADSHEET') %}
-              <span class='eye-overlay' data-uploadid='{{ upload.id }}' data-name='{{ upload.real_name|e('html_attr') }}' data-link='{{ upload.long_name|e('html_attr') }}' data-action='xls-load-file'>
+              {% if mode == 'edit' %}
+                <span class='icon-overlay edit-overlay'
+                  data-uploadid='{{ upload.id }}'
+                  data-storage='{{ upload.storage }}'
+                  data-path='{{ upload.long_name|e('html_attr') }}'
+                  data-name='{{ upload.real_name|e('html_attr') }}'
+                  data-action='xls-load-file'>
+              {% else %}
+              <span class='icon-overlay eye-overlay'
+                    data-action='toggle-modal'
+                    data-target='plainTextModal'
+                    data-ext='table'
+                    data-storage='{{ upload.storage }}'
+                    data-path='{{ upload.long_name|e('html_attr') }}'
+                    data-name='{{ upload.real_name|e('html_attr') }}'>
+              {% endif %}
                 <i class='fas fa-file-alt thumb rounded mx-auto d-block text-center'></i>
               </span>
 

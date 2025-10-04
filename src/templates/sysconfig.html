@@ -52,7 +52,6 @@
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='12'>LDAP</button></li>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='13'>{{ 'External auth'|trans }}</button></li>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='14'>{{ 'Audit Logs'|trans }}</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='15'>{{ 'Inventory'|trans }}</button></li>
 </ul>
 
 {# loading spinner #}
@@ -110,7 +109,11 @@
     </div>
     <hr>
 
-    {% include 'binary-setting.html' with {'label': 'Allow users to change their first name, last name, or email address'|trans, 'slug': 'allow_users_change_identity', 'help': 'When disabled, only a Sysadmin will be allowed to modify these parameters.'} %}
+    {% include 'binary-setting.html' with {'label': 'Allow users to change their first name, last name, internal id or email address'|trans, 'slug': 'allow_users_change_identity', 'help': 'When disabled, only a Sysadmin will be allowed to modify these parameters.'|trans} %}
+
+    {% include 'binary-setting.html' with {'label': 'Prevent modification of global compounds database unless user is given explicit rights.'|trans, 'slug': 'compounds_require_edit_rights', 'help': 'When enabled, a Sysadmin will need to give edit rights to all users that should be able to edit the common compounds database. All other users will access it in read-only.'|trans} %}
+
+    {% include 'binary-setting.html' with {'label': 'Prevent modification of inventory locations unless user is given explicit rights.'|trans, 'slug': 'inventory_require_edit_rights', 'help': 'When enabled, a Sysadmin will need to give edit rights to all users that should be able to edit the inventory locations. All other users will access it in read-only.'|trans} %}
 
   </div>
 
@@ -323,9 +326,10 @@
 
   {# MASS EMAIL #}
   <h3 class='p-2 pl-3 section-title'>{{ 'Send a Mass Email'|trans }}</h3>
-  <div class='pl-3 mt-2 mb-5' id='massEmailDiv'>
+  <form class='pl-3 mt-2 mb-5' aria-label='{{ 'Send a Mass Email'|trans }}' id='massEmailForm'>
+    {{ App.Session.get('csrf')|csrf }}
+    <input type='hidden' name='action' value='email'>
     <label>{{ 'Send to'|trans }}</label>
-
     <div class='form-check'>
       <input class='form-check-input' type='radio' name='target' value='active_users' id='targetAll' checked> <label class='form-check-label' for='targetAll'>{{ 'All active users'|trans }}</label>
     </div>
@@ -338,14 +342,14 @@
       <input class='form-check-input' type='radio' name='target' value='sysadmins' id='targetSysadmins'> <label class='form-check-label' for='targetSysadmins'>{{ 'All active sysadmins'|trans }}</label>
     </div>
     <label for='massSubject' class='col-form-label'>{{ 'Email Subject'|trans }}</label>
-    <input class='form-control col-md-12' type='text' id='massSubject' size='45' />
+    <input class='form-control col-md-12' name='subject' type='text' required id='massSubject' size='45' />
 
     <label for='massBody' class='col-form-label mt-2'>{{ 'Email Body'|trans }}</label>
-    <textarea class='form-control col-md-12' id='massBody'></textarea>
+    <textarea class='form-control col-md-12' name='body' id='massBody'></textarea>
     <div class='mt-4 text-center'>
-      <button type='button' data-action='send-mass-email' class='btn btn-primary'>{{ 'Send'|trans }}</button>
+      <button type='submit' data-action='send-mass-email' class='btn btn-primary'>{{ 'Send'|trans }}</button>
     </div>
-  </div>
+  </form>
 </div>
 
 {# TAB 5 EMAIL #}
@@ -404,14 +408,16 @@
 
   {# TEST EMAIL #}
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Send a test email'|trans }}</h3>
-  <div class='pl-3'>
+  <form class='pl-3' aria-label='{{ 'Send a test email'|trans }}' id='testEmailForm'>
+    {{ App.Session.get('csrf')|csrf }}
+    <input type='hidden' name='action' value='test'>
     <div class='input-group'>
-      <input type='email' class='form-control col-md-12' value='{{ App.Users.userData.email|e('html_attr') }}' id='testemailEmail' aria-label='{{ 'Email address'|trans }}'>
+      <input type='email' name='email' class='form-control col-md-12' value='{{ App.Users.userData.email|e('html_attr') }}' aria-label='{{ 'Email address'|trans }}'>
       <div class='input-group-append'>
-        <button type='button' class='btn btn-primary' data-action='send-test-email'>{{ 'Send'|trans }}</button>
+        <button type='submit' class='btn btn-primary' data-action='send-test-email'>{{ 'Send'|trans }}</button>
       </div>
     </div>
-  </div>
+  </form>
 </div>
 
 {# TAB 6 SECURITY #}
@@ -429,6 +435,7 @@
         {% endfor %}
       </select>
     </div>
+    <p class='smallgray'>{{ 'Force certain accounts to enable multi-factor authentication.'|trans }}</p>
     <hr>
 
     <div class='d-flex justify-content-between'>
@@ -468,13 +475,13 @@
   <div id='bruteforceDiv' class='pl-3'>
     <div class='d-flex justify-content-between'>
       <span>{{ '%d users are currently prevented from logging in from unknown devices.'|trans|format(nologinUsersCount) }}</span>
-      <button type='submit' data-action='clear-nologinusers' {{- nologinUsersCount == 0 ? ' disabled' }} class='btn btn-primary'>{{ 'Clear'|trans }}</button>
+      <button type='submit' data-action='allowuntrusted' {{- nologinUsersCount == 0 ? ' disabled' }} class='btn btn-primary'>{{ 'Clear'|trans }}</button>
     </div>
     <hr>
 
     <div class='d-flex justify-content-between'>
       <span>{{ '%d devices are currently denied authentication.'|trans|format(lockoutDevicesCount) }}</span>
-      <button type='submit' data-action='clear-lockoutdevices' {{- lockoutDevicesCount == 0 ? ' disabled' }} class='btn btn-primary'>{{ 'Clear'|trans }}</button>
+      <button type='submit' data-action='clearlockedoutdevices' {{- lockoutDevicesCount == 0 ? ' disabled' }} class='btn btn-primary'>{{ 'Clear'|trans }}</button>
     </div>
     <hr>
   </div>
@@ -525,6 +532,7 @@
       {{ 'Warning: %d files are missing a filesize value. Fix it with %sbin/console uploads:check%s command.'|format(uploadsStats.count_null_filesize, '<code>', '</code>')|msg('warning', false) }}
     {% endif %}
     {{ 'This instance has %d files uploaded using %s of disk space.'|trans|format(uploadsStats.count_all, uploadsStats.filesize_all|default(0)|formatBytes) }}
+    {{ '%d files are stored on local filesystem and %d files are stored on S3.'|trans|format(uploadsStats.count_storage_local, uploadsStats.count_storage_s3) }}
   </div>
 
   <h3 class='p-2 pl-3 section-title'>{{ 'Configuration'|trans }}</h3>
@@ -1100,19 +1108,6 @@
         {% endfor %}
       </tbody>
     </table>
-  </div>
-</div>
-
-{# INVENTORY #}
-<div data-tabcontent='15' hidden>
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Inventory'|trans }}</h3>
-  <div class='pl-3 mb-5'>
-    {% if storageUnitsArr %}
-      <div><a href='/api/v2/reports?format=csv&scope=stored_compounds' class='btn btn-primary'>{{ 'Get inventory report'|trans }}</a></div>
-      {% include 'storage-list.html' with {'storage_editable': true} %}
-    {% else %}
-      {{ 'No places have been defined yet. Head to the %sInventory page%s to add places.'|trans|format('<a href="/inventory.php">', '</a>')|raw }}
-    {% endif %}
   </div>
 </div>
 

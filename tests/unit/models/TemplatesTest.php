@@ -12,7 +12,11 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\EntityType;
+use Elabftw\Enums\State;
 use Elabftw\Models\Users\Users;
+use Elabftw\Params\DisplayParams;
 
 class TemplatesTest extends \PHPUnit\Framework\TestCase
 {
@@ -34,6 +38,16 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->Templates->readOne());
     }
 
+    public function testReadAllSimpleReturnsActiveOnly(): void
+    {
+        $DisplayParams = new DisplayParams(new Users(1, 1), EntityType::Experiments);
+        $templates = $this->Templates->readAllSimple($DisplayParams);
+        foreach ($templates as $template) {
+            $this->assertIsArray($template);
+            $this->assertEquals(State::Normal->value, $template['state']);
+        }
+    }
+
     public function testDuplicate(): void
     {
         $this->Templates->setId(1);
@@ -46,6 +60,20 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
         $entityData = $this->Templates->patch(Action::Update, array('title' => 'Untitled', 'body' => '<p>Body</p>'));
         $this->assertEquals('Untitled', $entityData['title']);
         $this->assertEquals('<p>Body</p>', $entityData['body']);
+    }
+
+    public function testCanUpdatePermissionsOnImmutableTemplate(): void
+    {
+        $this->Templates->setId(1);
+        $this->Templates->patch(Action::Update, array('canread_is_immutable' => 1));
+        $this->assertEquals(1, $this->Templates->readOne()['canread_is_immutable']);
+        // patch read permissions for this template
+        $canread = BasePermissions::Organization->toJson();
+        $this->Templates->patch(Action::Update, array('canread' => $canread));
+        $this->assertEquals(
+            json_decode($canread),
+            json_decode($this->Templates->readOne()['canread'])
+        );
     }
 
     public function testDestroy(): void

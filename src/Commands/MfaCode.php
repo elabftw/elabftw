@@ -41,9 +41,7 @@ final class MfaCode extends Command
     {
         // remove spaces from input so we don't have to do it manually
         $secret = str_replace(' ', '', (string) $input->getArgument('secret'));
-        $MfaHelper = new MfaHelper(0, $secret);
-
-        $output->writeln(sprintf('2FA code: %s', $MfaHelper->getCode()));
+        $output->writeln(sprintf('2FA code: %s', new MfaHelper($secret)->getCode()));
         return Command::SUCCESS;
     }
 }

@@ -45,6 +45,8 @@ final class Scheduler extends AbstractRest
 
     private const int GRACE_PERIOD_MINUTES = 5;
 
+    public Items $Items;
+
     private string $start = self::EVENT_START;
 
     private string $end = self::EVENT_END;
@@ -54,11 +56,15 @@ final class Scheduler extends AbstractRest
     private array $filterBindings = array();
 
     public function __construct(
-        public Items $Items,
+        AbstractEntity $Items,
         ?int $id = null,
         ?string $start = null,
         ?string $end = null,
     ) {
+        if (!$Items instanceof Items) {
+            throw new ImproperActionException('Scheduler can only work with resources (items).');
+        }
+        $this->Items = $Items;
         parent::__construct();
         $this->setId($id);
         if ($start !== null) {
@@ -159,9 +165,16 @@ final class Scheduler extends AbstractRest
         }
 
         $builder = new EntitySqlBuilder($this->Items);
-        $this->filterSqlParts[] = str_replace('entity.', 'items.', $builder->getCanFilter('canbook'));
+        $this->filterSqlParts[] = str_replace('entity.', 'items.', $builder->getCanFilter('canread'));
         $this->filterBindings['userid'] = $this->Items->Users->userData['userid']; // needed for :userid in builder SQL
         $this->filterBindings['team'] = $this->Items->Users->userData['team']; // same
+
+        // 'canbook' boolean to display events that user can read but not book
+        $canBookFilter = str_replace('entity.', 'items.', $builder->getCanFilter('canbook'));
+        $canBookExpr = trim(preg_replace('/^\s*AND\s*/', '', $canBookFilter, 1) ?? '');
+        if ($canBookExpr === '') {
+            $canBookExpr = '0';
+        }
 
         // the title of the event is title + Firstname Lastname of the user who booked it
         $sql = sprintf(
@@ -179,24 +192,26 @@ final class Scheduler extends AbstractRest
                 CONCAT('[', items.title, '] ', team_events.title, ' (', u.firstname, ' ', u.lastname, ')') AS title,
                 items.title AS item_title,
                 items.book_is_cancellable,
-                CONCAT('#', items_types.color) AS color,
+                CONCAT('#', items_categories.color) AS color,
                 team_events.experiment,
                 items.category AS items_category,
                 items.id AS items_id,
                 experiments.title AS experiment_title,
                 team_events.item_link,
-                items_linkt.title AS item_link_title
+                items_linkt.title AS item_link_title,
+                CASE WHEN %s THEN 1 ELSE 0 END AS canbook
             FROM team_events
             LEFT JOIN experiments ON (team_events.experiment = experiments.id)
             LEFT JOIN items ON (team_events.item = items.id)
             LEFT JOIN items AS items_linkt ON (team_events.item_link = items_linkt.id)
-            LEFT JOIN items_types ON (items.category = items_types.id)
+            LEFT JOIN items_categories ON (items.category = items_categories.id)
             LEFT JOIN users AS u ON (team_events.userid = u.userid)
             LEFT JOIN users2teams ON (users2teams.users_id = items.userid AND users2teams.teams_id = :team)
             WHERE 1 = 1
                 AND team_events.start <= :end
                 AND team_events.end >= :start
                 %s",
+            $canBookExpr,
             implode(' ', $this->filterSqlParts)
         );
         $req = $this->Db->prepare($sql);
@@ -301,7 +316,7 @@ final class Scheduler extends AbstractRest
         $sql = "SELECT team_events.*,
             CONCAT(team_events.title, ' (', u.firstname, ' ', u.lastname, ') ', COALESCE(experiments.title, '')) AS title,
             team_events.title AS title_only,
-            CONCAT('#', items_types.color) AS color,
+            CONCAT('#', items_categories.color) AS color,
             experiments.title AS experiment_title,
             items_linkt.title AS item_link_title,
             items.title AS item_title, items.book_is_cancellable
@@ -309,7 +324,7 @@ final class Scheduler extends AbstractRest
             LEFT JOIN items ON (team_events.item = items.id)
             LEFT JOIN items AS items_linkt ON (team_events.item_link = items_linkt.id)
             LEFT JOIN experiments ON (experiments.id = team_events.experiment)
-            LEFT JOIN items_types ON (items.category = items_types.id)
+            LEFT JOIN items_categories ON (items.category = items_categories.id)
             LEFT JOIN users AS u ON team_events.userid = u.userid
             WHERE team_events.item = :item
                 AND team_events.start <= :end

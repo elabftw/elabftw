@@ -17,6 +17,11 @@ use Elabftw\Elabftw\Env;
 use Elabftw\Interfaces\ContentParamsInterface;
 use PDO;
 
+use function is_string;
+use function rtrim;
+use function sprintf;
+use function strtr;
+
 /**
  * All about changelog tables
  */
@@ -72,10 +77,15 @@ final class Changelog
     public function readAllWithAbsoluteUrls(): array
     {
         $changes = $this->readAll();
+        $base = rtrim(Env::asUrl('SITE_URL'), '/');
         foreach ($changes as &$change) {
             // content can be NULL, which will make str_replace explode
             if (is_string($change['content'])) {
-                $change['content'] = str_replace('href="revisions.php?type', sprintf('href="%s/revisions.php?type', Env::asUrl('SITE_URL')), $change['content']);
+                $change['content'] = strtr($change['content'], array(
+                    'href="revisions.php?type' => sprintf('href="%s/revisions.php?type', $base),
+                    'href="/experiments.php' => sprintf('href="%s/experiments.php', $base),
+                    'href="/database.php' => sprintf('href="%s/database.php', $base),
+                ));
             }
         }
         return $changes;

@@ -60,13 +60,13 @@ class MakeCsvTest extends \PHPUnit\Framework\TestCase
 
     public function testMakeInventoryReport(): void
     {
-        $Maker = new MakeInventoryReport(new StorageUnits(new Users(1, 1)));
+        $Maker = new MakeInventoryReport(new StorageUnits(new Users(1, 1), false));
         $this->assertIsString($Maker->getFileContent());
     }
 
     public function testMakeStoredCompoundsReport(): void
     {
-        $Maker = new MakeStoredCompoundsReport(new StorageUnits(new Users(1, 1)));
+        $Maker = new MakeStoredCompoundsReport(new StorageUnits(new Users(1, 1), false));
         $this->assertIsString($Maker->getFileContent());
     }
 

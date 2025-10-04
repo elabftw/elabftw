@@ -1,6 +1,5 @@
 <?php
 
-declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -9,13 +8,14 @@ declare(strict_types=1);
  * @package elabftw
  */
 
+declare(strict_types=1);
+
 namespace Elabftw\Auth;
 
-use Elabftw\Controllers\LoginController;
-use Elabftw\Elabftw\AuthResponse;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\UnauthorizedException;
+use Elabftw\Interfaces\AuthResponseInterface;
 use PDO;
 
 class CookieTest extends \PHPUnit\Framework\TestCase
@@ -36,7 +36,7 @@ class CookieTest extends \PHPUnit\Framework\TestCase
     public function testTryAuthExpired(): void
     {
         // cookie is valid only one minute
-        $CookieAuth = new Cookie(1, 0, $this->CookieToken, 1);
+        $CookieAuth = new Cookie(1, $this->CookieToken, 1);
         // create a token but 4 minutes in the past
         $req = $this->Db->prepare('UPDATE users SET token = :token, token_created_at = DATE_SUB(NOW(), INTERVAL 4 MINUTE) WHERE userid = :userid');
         $req->bindValue(':token', $this->CookieToken->getToken());
@@ -49,38 +49,26 @@ class CookieTest extends \PHPUnit\Framework\TestCase
 
     public function testTryAuthSuccess(): void
     {
-        $CookieAuth = new Cookie(220330, 0, $this->CookieToken, 1);
+        $CookieAuth = new Cookie(220330, $this->CookieToken, 1);
         $res = $CookieAuth->tryAuth();
-        $this->assertInstanceOf(AuthResponse::class, $res);
-        $this->assertEquals(1, $res->userid);
-        $this->assertEquals(1, $res->selectedTeam);
+        $this->assertInstanceOf(AuthResponseInterface::class, $res);
+        $this->assertEquals(1, $res->getAuthUserid());
+        $this->assertEquals(1, $res->getSelectedTeam());
     }
 
     public function testTryAuthFail(): void
     {
         $token = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-        $CookieAuth = new Cookie(220330, 0, new CookieToken($token), 1);
+        $CookieAuth = new Cookie(220330, new CookieToken($token), 1);
         $this->expectException(UnauthorizedException::class);
         $CookieAuth->tryAuth();
     }
 
     public function testTryAuthBadTeam(): void
     {
-        $CookieAuth = new Cookie(220330, 0, $this->CookieToken, 2);
+        $CookieAuth = new Cookie(220330, $this->CookieToken, 2);
         $req = $this->Db->prepare('UPDATE users SET token = :token WHERE userid = :userid');
         $req->bindValue(':token', $this->CookieToken->getToken());
-        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
-        $req->execute();
-        $this->expectException(UnauthorizedException::class);
-        $CookieAuth->tryAuth();
-    }
-
-    public function testTryAuthEnforceMFA(): void
-    {
-        $CookieAuth = new Cookie(220330, 1, $this->CookieToken, 1);
-        $req = $this->Db->prepare('UPDATE users SET token = :token, auth_service = :auth_service WHERE userid = :userid');
-        $req->bindValue(':token', $this->CookieToken->getToken());
-        $req->bindValue(':auth_service', LoginController::AUTH_LOCAL);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $req->execute();
         $this->expectException(UnauthorizedException::class);

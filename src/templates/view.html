@@ -30,10 +30,11 @@
 {# Exclusive edit mode notification #}
 <div id='exclusiveEditModeInfo'>
   {% if Entity.entityData.exclusive_edit_mode.locked_by > 0 and Entity.entityData.exclusive_edit_mode.locked_by != App.Users.userid and not Entity.entityData.exclusive_edit_mode.is_stale %}
-  {% set writeLockNotice = 'This entry is being edited by %s.'|trans|format(
-      Entity.entityData.exclusive_edit_mode.locked_by_human,
-    )|msg('warning', false) %}
-  {{ writeLockNotice|raw }}
+  {% macro writeLockNotice(locked_by_human) %}
+  {{ 'This entry is being edited by %s.'|trans|format(locked_by_human) }}
+      <button type='button' class='btn btn-sm btn-secondary' data-action='override-exclusive-edit-lock'>{{ 'Override lock'|trans }}</button>
+  {% endmacro %}
+  {{ _self.writeLockNotice(Entity.entityData.exclusive_edit_mode.locked_by_human)|msg('warning', false) }}
 {% endif %}
 </div>
 
@@ -91,17 +92,20 @@
   <hr>
 
   {# SHOW EVENTS #}
-  {% if Entity.entityData.events_start %}
-    <div class='mb-2'>
-      <i class='far fa-fw fa-calendar-alt'></i>
-      {% set splitItemids = Entity.entityData.events_start_itemid|split('|') %}
-      {% for event in Entity.entityData.events_start|split('|') %}
-        <a href='scheduler.php?items[]={{ splitItemids[loop.index - 1] }}&amp;start={{ event|url_encode }}' class='mx-1 btn btn-neutral relative-moment'  title='{{ event|date('Y-m-d H:i:s') }}' aria-label='{{ event|date('Y-m-d H:i:s') }}'></a>
-      {% endfor %}
-    </div>
-    <hr>
+  {% if Entity.entityData.type == 'items' and Entity.entityData.is_bookable == 1 %}
+    {% if Entity.entityData.events_start %}
+      <div class='d-flex align-content-center'>
+        <div>
+          <i class='far fa-fw fa-calendar-alt'></i>
+          {% set splitItemids = Entity.entityData.events_start_itemid|split('|') %}
+          {% for event in Entity.entityData.events_start|split('|') %}
+            <a href='scheduler.php?items[]={{ splitItemids[loop.index - 1] }}&amp;start={{ event|url_encode }}' class='mx-1 btn btn-neutral relative-moment'  title='{{ event|date('Y-m-d H:i:s') }}' aria-label='{{ event|date('Y-m-d H:i:s') }}'></a>
+          {% endfor %}
+        </div>
+      </div>
+      <hr>
+    {% endif %}
   {% endif %}
-
 
   {# SHOW NEXT STEP #}
   {% set next_step = Entity.entityData.next_step %}
@@ -197,7 +201,7 @@
 {% if Entity.entityData.state == enum('Elabftw\\Enums\\State').Deleted.value %}
   <div class='entity-deleted-overlay'>
     <p>{{ 'This entry has been deleted.'|trans }}</p>
-    <button data-action='restore-entity' type='button' class='btn btn-primary mb-2' data-id='{{ Entity.entityData.id }}'>{{ 'Restore entry'|trans }}</button>
+    <button data-action='restore' type='button' class='btn btn-primary mb-2' data-id='{{ Entity.entityData.id }}'>{{ 'Restore entry'|trans }}</button>
     {% include 'back-to-previous.html' with {'type': 'btn'} %}
   </div>
 {% endif %}

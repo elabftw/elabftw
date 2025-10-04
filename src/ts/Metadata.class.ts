@@ -64,7 +64,7 @@ export class Metadata {
     }
 
     // prevent self links
-    if (el.dataset.completeTarget === document.getElementById('info').dataset.type
+    if (el.dataset.target === document.getElementById('info').dataset.type
       && parseInt(el.value, 10) === parseInt(document.getElementById('info').dataset.id, 10)
     ) {
       notify.error('no-self-links');
@@ -83,14 +83,14 @@ export class Metadata {
       value = [...el.selectedOptions].map(option => option.value);
     }
     // special case for Experiment/Resource/User link
-    if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf(), ExtraFieldInputType.Users.valueOf()].includes(el.dataset.completeTarget)) {
+    if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf(), ExtraFieldInputType.Users.valueOf()].includes(el.dataset.target)) {
       value = parseInt(value.split(' ')[0], 10);
       if (isNaN(value)) {
         return false;
       }
       // also create a link automatically for experiments and resources
-      if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf()].includes(el.dataset.completeTarget)) {
-        ApiC.post(`${this.entity.type}/${this.entity.id}/${el.dataset.completeTarget}_links/${value}`).then(() => reloadElements(['linksDiv', 'linksExpDiv']));
+      if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf()].includes(el.dataset.target)) {
+        ApiC.post(`${this.entity.type}/${this.entity.id}/${el.dataset.target}_links/${value}`).then(() => reloadElements(['linksDiv', 'linksExpDiv']));
       }
     }
     const params = {};
@@ -398,7 +398,8 @@ export class Metadata {
     // USERS/EXPERIMENTS/ITEMS input have a prepend to the input with a magnifying glass
     if ([ExtraFieldInputType.Users, ExtraFieldInputType.Experiments, ExtraFieldInputType.Items].includes(properties.type)) {
       // set the target for autocomplete function
-      element.dataset.completeTarget = properties.type;
+      element.dataset.target = properties.type;
+      element.dataset.action = 'autocomplete';
       const inputGroupDiv = document.createElement('div');
       inputGroupDiv.classList.add('input-group');
       const prependDiv = document.createElement('div');

@@ -27,11 +27,18 @@ import TomSelectRemoveButton from 'tom-select/dist/esm/plugins/remove_button/plu
 // get html of current page reloaded via get
 function fetchCurrentPage(tag = ''): Promise<Document>{
   const url = new URL(window.location.href);
+  // remove any scope query param present in url, otherwise it gets taken into account for the reload
+  url.searchParams.delete('scope');
   if (tag) {
     url.searchParams.delete('tags[]');
     url.searchParams.set('tags[]', tag);
   }
-  return fetch(url.toString()).then(response => {
+  const prevHref = window.location.href;
+  const nextHref = url.toString();
+  if (nextHref !== prevHref) {
+    history.replaceState(history.state, '', nextHref);
+  }
+  return fetch(nextHref).then(response => {
     return response.text();
   }).then(data => {
     const parser = new DOMParser();
@@ -72,6 +79,11 @@ function triggerHandler(event: Event, el: HTMLInputElement): void {
   if (el.dataset.customAction === 'patch-user2team-is') {
     ApiC.patch(`${Model.User}/${userid}`, {action: Action.PatchUser2Team, team: el.dataset.team, target: el.dataset.target, content: value})
       .then(() => document.dispatchEvent(new CustomEvent('dataReload')));
+    return;
+  }
+  // Idea: maybe have a data-dispatch with the custom event name in data-target
+  if (el.dataset.customAction === 'show-all-users') {
+    document.dispatchEvent(new CustomEvent('dataReload'));
     return;
   }
   // END CUSTOM ACTIONS
@@ -143,15 +155,21 @@ export function collectForm(form: HTMLElement): object {
   const inputs = [];
   ['input', 'select', 'textarea'].forEach(inp => {
     form.querySelectorAll(inp).forEach((input: HTMLInputElement) => {
-      inputs.push(input);
+      if (input.type !== 'radio' || input.checked) {
+        inputs.push(input);
+      }
     });
   });
 
   let params = {};
   inputs.forEach(input => {
     const el = input;
+    el.classList.remove('border-danger');
     if (el.reportValidity() === false) {
       console.error(el);
+      el.classList.add('border-danger');
+      el.focus();
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
       throw new Error('Invalid input found! Aborting.');
     }
     let value = el.value;
@@ -180,11 +198,13 @@ export function clearForm(form: HTMLElement): void {
 }
 
 // for view or edit mode, get type and id from the page to construct the entity object
-export function getEntity(): Entity {
+// enable usage with parent Window for iframe cases (e.g., with spreadsheet editor)
+export function getEntity(useParent: boolean = false): Entity {
   let entityType: EntityType;
-  let entityId = null;
-
-  switch (window.location.pathname) {
+  let entityId: number | null = null;
+  // pick the right location (parent or self)
+  const loc = useParent ? window.parent.location : window.location;
+  switch (loc.pathname) {
   case '/experiments.php':
     entityType = EntityType.Experiment;
     break;
@@ -200,9 +220,9 @@ export function getEntity(): Entity {
   default:
     return {type: EntityType.Other, id: entityId};
   }
-  const params = new URLSearchParams(document.location.search);
+  const params = new URLSearchParams(loc.search);
   if (params.has('id')) {
-    entityId = parseInt(params.get('id'));
+    entityId = parseInt(params.get('id')!, 10);
   }
   return {
     type: entityType,

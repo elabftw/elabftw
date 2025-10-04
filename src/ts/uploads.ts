@@ -9,6 +9,7 @@ import $ from 'jquery';
 import { Action as MalleAction, Malle } from '@deltablot/malle';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
 import { Action, Model } from './interfaces';
+import { loadInSpreadsheetEditor } from './spreadsheet-utils';
 import { ensureTogglableSectionIsOpen, relativeMoment, reloadElements } from './misc';
 import { displayPlasmidViewer } from './ove';
 import { displayMoleculeViewer, get3dmol } from './3dmol';
@@ -16,11 +17,10 @@ import i18next from './i18n';
 import { ApiC } from './api';
 import { marked } from 'marked';
 import Prism from 'prismjs';
-import { SpreadsheetEditorHelper } from './SpreadsheetEditorHelper.class';
 import { Uploader } from './uploader';
 import { entity } from './getEntity';
-
-const SpreadsheetEditorHelperC = new SpreadsheetEditorHelper();
+import { read as readXlsx, utils as xlsxUtils } from '@e965/xlsx';
+type Cell = string | number | boolean | null;
 
 function processNewFilename(event, original: HTMLElement, parent: HTMLElement): void {
   if (event.key === 'Enter' || event.type === 'blur') {
@@ -32,6 +32,38 @@ function processNewFilename(event, original: HTMLElement, parent: HTMLElement): 
       parent.prepend(original);
     });
   }
+}
+
+async function blob2table(blob: Blob, container: HTMLDivElement, sheetName: string | null = null) {
+  let wb;
+  if (blob.type.includes('text/csv') || blob.type === '') {
+    const csv = await blob.text();
+    // type string will read it as UTF-8
+    wb = readXlsx(csv, { type: 'string' });
+  } else {
+    const ab = await blob.arrayBuffer();
+    wb = readXlsx(ab, { type: 'array' });
+  }
+  const ws = wb.Sheets[sheetName || wb.SheetNames[0]];
+
+  // 2D array: rows of values (strings, numbers, booleans, null)
+  const rows: Cell[][] = xlsxUtils.sheet_to_json(ws, { header: 1, raw: true, defval: '', blankrows: false });
+
+  const table = document.createElement('table');
+  table.classList.add('table');
+  const tbody = document.createElement('tbody');
+
+  for (const row of rows) {
+    const tr = document.createElement('tr');
+    for (const cell of row) {
+      const td = document.createElement('td');
+      td.textContent = cell == null ? '' : String(cell); // SAFE: no HTML parsing
+      tr.appendChild(td);
+    }
+    tbody.appendChild(tr);
+  }
+  table.appendChild(tbody);
+  container.replaceChildren(table);
 }
 
 const clickHandler = async (event: Event) => {
@@ -84,6 +116,9 @@ const clickHandler = async (event: Event) => {
         plainTextContentDiv.innerHTML = '';
         plainTextContentDiv.appendChild(preBlock);
       });
+    } else if (el.dataset.ext === 'table') {
+      const blob = await response.blob();
+      blob2table(blob, plainTextContentDiv as HTMLDivElement);
     } else { // TXT
       response.text().then(content => plainTextContentDiv.innerText = content);
     }
@@ -146,9 +181,8 @@ const clickHandler = async (event: Event) => {
 
   // LOAD SPREADSHEET FILE
   } else if (el.matches('[data-action="xls-load-file"]')) {
-    await SpreadsheetEditorHelperC.loadInSpreadsheetEditor(el.dataset.link, el.dataset.name, Number(el.dataset.uploadid));
+    await loadInSpreadsheetEditor(el.dataset.storage, el.dataset.path, el.dataset.name, Number(el.dataset.uploadid));
     ensureTogglableSectionIsOpen('sheetEditorIcon', 'spreadsheetEditorDiv');
-    document.getElementById('spreadsheetEditor')?.scrollIntoView({ behavior: 'smooth'});
 
   // ARCHIVE UPLOAD
   } else if (el.matches('[data-action="archive-upload"]')) {
@@ -197,6 +231,12 @@ if (uploadsDiv) {
   malleableFilecomment.listen();
 
   document.querySelector('.real-container').addEventListener('click', async (event) => clickHandler(event));
+  // reload uploads div when using spreadsheet editor (iframe sends message to parent window)
+  window.addEventListener('message', (event) => {
+    if (event.origin !== window.location.origin) return;
+    if (event.data !== 'uploadsDiv') return;
+    reloadElements(['uploadsDiv']);
+  });
 
   // ACTIVATE FANCYBOX
   $('[data-fancybox]').fancybox();

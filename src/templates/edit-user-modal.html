@@ -43,6 +43,26 @@
             </label>
           </div>
           <p class='smallgray'>{{ 'Enable this to allow user to manage association between users and teams. Note: user must be Admin in at least one team.'|trans }}</p>
+
+          {# Toggle can_manage_compounds slider #}
+          <div class='d-flex justify-content-between'>
+            <label for='userInput-can_manage_compounds' class='col-form-label'>{{ 'Can manage compounds'|trans }}</label>
+            <label class='switch ucp-align {{- App.Users.userData.is_sysadmin == 0 ? ' disabled' }}' title='{{- App.Users.userData.is_sysadmin == 0 ? 'Only a Sysadmin can modify this.'|trans }}'>
+              <input type='checkbox' id='userInput-can_manage_compounds' autocomplete='off' {{ App.Users.userData.is_sysadmin == 0 ? "disabled='disabled'" }} name='can_manage_compounds'>
+              <span class='slider'></span>
+            </label>
+          </div>
+          <p class='smallgray'>{{ 'Enable this to allow user to manage compounds. This has no effect if compounds edition is not restricted globally.'|trans }}</p>
+
+          {# Toggle can_manage_inventory-locations slider #}
+          <div class='d-flex justify-content-between'>
+            <label for='userInput-can_manage_inventory_locations' class='col-form-label'>{{ 'Can manage inventory locations'|trans }}</label>
+            <label class='switch ucp-align {{- App.Users.userData.is_sysadmin == 0 ? ' disabled' }}' title='{{- App.Users.userData.is_sysadmin == 0 ? 'Only a Sysadmin can modify this.'|trans }}'>
+              <input type='checkbox' id='userInput-can_manage_inventory_locations' autocomplete='off' {{ App.Users.userData.is_sysadmin == 0 ? "disabled='disabled'" }} name='can_manage_inventory_locations'>
+              <span class='slider'></span>
+            </label>
+          </div>
+          <p class='smallgray'>{{ 'Enable this to allow user to manage inventory locations. This has no effect if inventory locations edition is not restricted globally.'|trans }}</p>
         </div>
 
         {% if App.Users.userData.is_sysadmin == 1 or App.Users.userData.can_manage_users2teams %}
@@ -69,7 +89,7 @@
               <div class='input-group my-2' id='resetUserPasswordForm'>
                 <input class='form-control' minlength='{{ App.Config.configArr.min_password_length }}' required name='resetPassword' title='{{ 'Minimum password length: %d.'|trans|format(App.Config.configArr.min_password_length) }}' placeholder='{{ 'Set new password'|trans }}' type='password' id='resetUserPasswordInput_{{ userid }}' autocomplete='new-password' pattern='{{ passwordInputPattern|e('html_attr') }}' />
                 <div class='input-group-append'>
-                  <span class='btn btn-light input-border' tabindex='-1' title='{{ 'Toggle visibility'|trans }}' data-action='toggle-password'><i class='fas fa-eye' aria-hidden='true'></i></span>
+                  <button type='button' class='btn btn-light input-border' data-action='toggle-password' title='{{ 'Show password'|trans }}' aria-label='{{ 'Show password'|trans }}'><i class='fas fa-eye' aria-hidden='true'></i></button>
                   <span class='btn btn-primary input-border' tabindex='-1' title='{{ 'Save'|trans }}' data-action='reset-user-password'><i class='fas fa-floppy-disk color-white' aria-hidden='true'></i></span>
                 </div>
               </div>

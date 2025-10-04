@@ -18,6 +18,7 @@ use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Models\ApiKeys;
@@ -36,6 +37,7 @@ use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\ResourcesCategories;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Tags;
+use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Users\UltraAdmin;
@@ -123,6 +125,21 @@ final class Populate
             }
             for ($i = 0; $i <= $iter; $i++) {
                 $this->createUser($teamid, array());
+            }
+
+            // USER GROUPS
+            foreach ($team['user_groups'] ?? array() as $group) {
+                $teamScopedAdmin = new UltraAdmin($Users->userData['userid'], $teamid);
+                $Teamgroups = new TeamGroups($teamScopedAdmin);
+                $id = $Teamgroups->create($group['name']);
+                $Teamgroups->setId($id);
+                foreach ($group['users'] as $userid) {
+                    $Teamgroups->updateMember(array(
+                        'how' => Action::Add->value,
+                        'userid' => $userid,
+                    ));
+                }
+                $this->output->writeln(sprintf('├ + teamgroup: %s (id: %d in team: %d)', $group['name'], $id, $teamid));
             }
 
             // EXPERIMENTS CATEGORIES
@@ -295,7 +312,7 @@ final class Populate
 
         // INVENTORY
         if (isset($this->yaml['inventory'])) {
-            $StorageUnits = new StorageUnits($this->getRandomUserInTeam(1));
+            $StorageUnits = new StorageUnits($this->getRandomUserInTeam(1), false);
             foreach ($this->yaml['inventory'] as $entry) {
                 $zones = explode('|', $entry);
                 $StorageUnits->createImmutable($zones);
@@ -309,7 +326,7 @@ final class Populate
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(array('handler' => $handlerStack));
         $httpGetter = new HttpGetter($client);
-        $Compounds = new Compounds($httpGetter, $Users, new NullFingerprinter());
+        $Compounds = new Compounds($httpGetter, $Users, new NullFingerprinter(), false);
         foreach ($this->yaml['compounds'] ?? array() as $compound) {
             $id = $Compounds->create(
                 name: $compound['name'],
@@ -462,6 +479,8 @@ final class Populate
             $usergroup = Usergroup::tryFrom($user['usergroup'] ?? Usergroup::User->value);
         }
         $orgid = $user['orgid'] ?? null;
+        $canManageCompounds = BinaryValue::from((int) ($user['can_manage_compounds'] ?? 0));
+        $canManageInventoryLocations = BinaryValue::from((int) ($user['can_manage_inventory_locations'] ?? 0));
         $password = $user['password'] ?? self::DEFAULT_PASSWORD;
         // special case for "random" value
         if ($password === 'random') {
@@ -482,7 +501,9 @@ final class Populate
             automaticValidationEnabled: true,
             alertAdmin: false,
             validUntil: null,
-            orgid: $orgid
+            orgid: $orgid,
+            canManageCompounds: $canManageCompounds,
+            canManageInventoryLocations: $canManageInventoryLocations,
         );
         $Users = new Users($userid, $team);
 
@@ -495,10 +516,9 @@ final class Populate
         }
 
         if ($user['create_mfa_secret'] ?? false) {
-            $MfaHelper = new MfaHelper($userid);
             // use a fixed secret
-            $MfaHelper->secret = 'EXAMPLE2FASECRET234567ABCDEFGHIJ';
-            $MfaHelper->saveSecret();
+            $secret = 'EXAMPLE2FASECRET234567ABCDEFGHIJ';
+            $Users->update(new UserParams('mfa_secret', $secret));
         }
         if (array_key_exists('api_key', $user)) {
             $ApiKeys = new ApiKeys($Users);

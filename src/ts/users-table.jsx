@@ -37,6 +37,8 @@ async function toggleUserModal(user) {
   const binaryParams = [
     'is_sysadmin',
     'can_manage_users2teams',
+    'can_manage_compounds',
+    'can_manage_inventory_locations',
   ];
   binaryParams.forEach(param => {
     const input = (document.getElementById(`userInput-${param}`));
@@ -63,7 +65,6 @@ if (document.getElementById('users-table')) {
       setGridApi(params.api);
     };
     const onQuickFilterChange = (e) => {
-      //gridApi && gridApi.setQuickFilter(e.target.value);
       gridApi.setGridOption('quickFilterText', e.target.value);
     };
     // renderer for teams column
@@ -116,12 +117,14 @@ if (document.getElementById('users-table')) {
         { field: 'email', headerName: i18next.t('email') },
         { field: 'last_login', headerName: i18next.t('last-login'), cellRenderer: LastLoginRenderer },
         { field: 'is_sysadmin', headerName: i18next.t('is-sysadmin'), cellRenderer: BinaryRenderer},
-        { field: 'can_manage_users2teams', headerName: i18next.t('can-manage-users2teams'), cellRenderer: BinaryRenderer},
         { field: 'has_mfa_enabled', headerName: i18next.t('2FA'), cellRenderer: HasMfaEnabledRenderer },
         { field: 'valid_until', headerName: i18next.t('Valid until'), cellRenderer: ValidUntilRenderer },
         { field: 'validated', headerName: i18next.t('Validated'), cellRenderer: BinaryRenderer},
         { field: 'orgid', headerName: i18next.t('Internal id') },
         { field: 'orcid', headerName: 'ORCID' },
+        { field: 'can_manage_users2teams', headerName: i18next.t('can-manage-users2teams'), cellRenderer: BinaryRenderer},
+        { field: 'can_manage_compounds', headerName: i18next.t('can-manage-compounds'), cellRenderer: BinaryRenderer},
+        { field: 'can_manage_inventory_locations', headerName: i18next.t('can-manage-inventory-locations'), cellRenderer: BinaryRenderer},
     ]);
 
     // Load data on component mount
@@ -132,10 +135,15 @@ if (document.getElementById('users-table')) {
     // all the users are loaded in the table, which does client side pagination
     const fetchData = async () => {
       const params = new URLSearchParams(document.location.search);
-      let teamParam = params.get('team');
+      let teamParam = params.get('team') ?? '';
       let currentTeam = 0;
-      if (!teamParam && document.location.pathname === '/admin.php') {
+      const showAllUsersInput = document.getElementById('showAllUsers');
+      if (!teamParam && document.location.pathname.endsWith('/admin.php')) {
         currentTeam = 1;
+      }
+      if (showAllUsersInput?.checked) {
+        teamParam = 0;
+        currentTeam = 0;
       }
       const queryParams = `&onlyArchived=${params.get('onlyArchived')}&team=${teamParam}&currentTeam=${currentTeam}`;
       try {
@@ -160,11 +168,18 @@ if (document.getElementById('users-table')) {
     }, []);
 
     // when a row is selected with the checkbox
-    //const selectionChanged = (event) => {
+    const selectionChanged = (event) => {
       // we store the selected rows as data-target string on the delete and restore buttons
-      //const selectedRows = event.api.getSelectedRows();
-      //const selectedIds = selectedRows.map(c => c.id).join(',');
-    //};
+      const selectedRows = event.api.getSelectedRows();
+      const selectedIds = selectedRows.map(c => c.userid).join(',');
+      const importBtn = document.getElementById('importUsersBtn');
+
+      // buttons are disabled if no rows are selected.
+      if (importBtn) {
+        importBtn.disabled = selectedRows.length === 0;
+        importBtn.dataset.target = selectedIds;
+      }
+    };
 
     const cellDoubleClicked = (event) => {
       ApiC.getJson(`users/${event.data.userid}`).then(json => {
@@ -191,11 +206,22 @@ if (document.getElementById('users-table')) {
           onGridReady={onGridReady}
           rowSelection={rowSelection}
           onCellDoubleClicked={cellDoubleClicked}
-          //onSelectionChanged={selectionChanged}
+          onSelectionChanged={selectionChanged}
           pagination={true}
           paginationPageSize={15}
           paginationPageSizeSelector={[15, 50, 100, 500]}
         />
+      </div>
+      <div className='d-flex justify-content-start my-2'>
+        <button
+          data-action='import-users-in-team'
+          id='importUsersBtn'
+          type='button'
+          disabled='disabled'
+          className={'btn btn-sm btn-secondary'}
+        >
+        {i18next.t('add-to-team')}
+        </button>
       </div>
     </>
     );

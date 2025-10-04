@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 
 use DateTimeImmutable;
 use Elabftw\AuditEvent\SignatureCreated;
+use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\CreateUploadFromLocalFile;
 use Elabftw\Elabftw\CanSqlBuilder;
 use Elabftw\Elabftw\Db;
@@ -64,6 +65,7 @@ use Elabftw\Params\ExtraFieldsOrderingParams;
 use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
+use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
 use Elabftw\Services\HttpGetter;
 use Elabftw\Services\SignatureHelper;
@@ -75,6 +77,9 @@ use PDOStatement;
 use Override;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mailer\Transport;
+use Symfony\Component\Mime\Address;
 use ZipArchive;
 
 use function array_column;
@@ -186,11 +191,11 @@ abstract class AbstractEntity extends AbstractRest
             contentType: BodyContentType::from($template['content_type']),
         );
         $tags = array_column($TemplateType->Tags->readAll(), 'tag');
-        $this->ItemsLinks->duplicate($templateId, $id, true);
-        $this->ExperimentsLinks->duplicate($templateId, $id, true);
+        $this->ItemsLinks->duplicate($templateId, $id, fromTemplate: true);
+        $this->ExperimentsLinks->duplicate($templateId, $id, fromTemplate: true);
         $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
-        $CompoundsLinks->duplicate($templateId, $id, fromItemsTypes: true);
-        $this->Steps->duplicate($templateId, $id, true);
+        $CompoundsLinks->duplicate($templateId, $id, fromTemplate: true);
+        $this->Steps->duplicate($templateId, $id, fromTemplate: true);
         $freshSelf = new $this($this->Users, $id);
         $TemplateType->Uploads->duplicate($freshSelf);
         foreach ($tags as $tag) {
@@ -245,6 +250,7 @@ abstract class AbstractEntity extends AbstractRest
                 }
             )(),
             Action::Duplicate => $this->duplicate((bool) ($reqBody['copyFiles'] ?? false), (bool) ($reqBody['linkToOriginal'] ?? false)),
+            Action::Notif => $this->notifyBookers($reqBody),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
     }
@@ -267,6 +273,11 @@ abstract class AbstractEntity extends AbstractRest
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->requester->userid, PDO::PARAM_INT);
         return $this->Db->execute($req);
+    }
+
+    public function getSurroundingBookers(): array
+    {
+        return array();
     }
 
     public function lock(): array
@@ -471,6 +482,7 @@ abstract class AbstractEntity extends AbstractRest
             Action::RemoveExclusiveEditMode => $this->ExclusiveEditMode->destroy(),
             Action::SetCanread => $this->update(new EntityParams('canread', $params['can'])),
             Action::SetCanwrite => $this->update(new EntityParams('canwrite', $params['can'])),
+            Action::SetNextCustomId => $this->update(new EntityParams('custom_id', $this->getNextIdempotentCustomId())),
             Action::Sign => $this->sign($params['passphrase'], Meaning::from((int) $params['meaning'])),
             Action::Timestamp => $this->timestamp(),
             Action::Unarchive => $this->handleArchivedState(from: State::Archived, to: State::Normal, toggleLock: fn() => $this->unlock()),
@@ -583,7 +595,9 @@ abstract class AbstractEntity extends AbstractRest
 
     public function readAllSimple(QueryParamsInterface $displayParams): array
     {
-        $categoryTable = $this instanceof Items ? 'items_categories' : 'experiments_categories';
+        $categoryTable = in_array($this->entityType->value, array('items', 'items_types'), true)
+            ? 'items_categories'
+            : 'experiments_categories';
         $CanSqlBuilder = new CanSqlBuilder($this->Users->requester, AccessType::Read);
         $canFilter = $CanSqlBuilder->getCanFilter();
         $displayParams->setSkipOrderPinned(true);
@@ -594,7 +608,7 @@ abstract class AbstractEntity extends AbstractRest
             $idSql = 'OR entity.id = :intQuery OR entity.custom_id = :intQuery';
         }
 
-        $sql = 'SELECT entity.id, entity.title, entity.custom_id,
+        $sql = 'SELECT entity.id, entity.title, entity.custom_id, entity.state,
             categoryt.color AS category_color,
             categoryt.title AS category_title,
             statust.color AS status_color,
@@ -612,6 +626,7 @@ abstract class AbstractEntity extends AbstractRest
                 entity.title LIKE :query ' . $idSql . '
             ' . $canFilter . '
             ' . $displayParams->getFilterSql() . '
+            ' . $displayParams->getStatesSql('entity') . '
             ' . $displayParams->getSql();
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->requester->userid, PDO::PARAM_INT);
@@ -624,16 +639,11 @@ abstract class AbstractEntity extends AbstractRest
         return $req->fetchAll();
     }
 
-    /**
-     * Check if we have the permission to read/write or throw an exception
-     *
-     * @param string $rw read or write
-     * @throws IllegalActionException
-     */
+    // Check if we have the permission to read/write or throw an exception
     public function canOrExplode(string $rw): void
     {
         if ($this->id === null) {
-            throw new ImproperActionException('Cannot check permissions without an id!');
+            throw new IllegalActionException('Cannot check permissions without an id!');
         }
         if ($this->bypassWritePermission && $rw === 'write') {
             return;
@@ -780,14 +790,18 @@ abstract class AbstractEntity extends AbstractRest
             $content = $this->readOne()['body'] . $content;
         }
         // ensure no changes happen on entries with immutable permissions
+        // admins can override the immutability of an entity's permissions. See #5800
         if ($params->getTarget() === 'canread' || $params->getTarget() === 'canwrite') {
-            if (($this->entityData[$params->getTarget() . '_is_immutable'] ?? 0) === 1) {
-                throw new ImproperActionException(_('Cannot modify permissions on entry with immutable permissions.'));
+            if (($this->entityData[$params->getTarget() . '_is_immutable'] ?? 0) === 1
+                && !($this instanceof AbstractTemplateEntity)
+                && !($this->Users->isAdmin)
+            ) {
+                throw new UnprocessableContentException(_('Cannot modify permissions on entry with immutable permissions.'));
             }
         }
         // also prevent modifying immutability of permissions on concrete entities
         if (str_ends_with($params->getTarget(), '_is_immutable') && $this instanceof AbstractConcreteEntity) {
-            throw new ImproperActionException(_('Cannot modify permissions immutability settings.'));
+            throw new UnprocessableContentException(_('Cannot modify permissions immutability settings.'));
         }
 
         // save a revision for body target
@@ -857,6 +871,15 @@ abstract class AbstractEntity extends AbstractRest
         // clear any request action
         $RequestActions = new RequestActions($this->Users, $this);
         $RequestActions->remove(RequestableAction::Timestamp);
+
+        // force create a revision
+        $Revisions = new Revisions(
+            $this,
+            (int) $Config->configArr['max_revisions'],
+            (int) $Config->configArr['min_delta_revisions'],
+            (int) $Config->configArr['min_days_revisions'],
+        );
+        $Revisions->dbInsert($this->entityData['body']);
 
         return $this->readOne();
     }
@@ -953,7 +976,7 @@ abstract class AbstractEntity extends AbstractRest
         return match ($config['ts_authority']) {
             'dfn' => new MakeDfnTimestamp($this->Users, $this, $config, $dataFormat),
             'dgn' => new MakeDgnTimestamp($this->Users, $this, $config, $dataFormat),
-            'universign' => $config['debug'] ? new MakeUniversignTimestampDev($this->Users, $this, $config, $dataFormat) : new MakeUniversignTimestamp($this->Users, $this, $config, $dataFormat),
+            'universign' => Env::asBool('DEV_MODE') ? new MakeUniversignTimestampDev($this->Users, $this, $config, $dataFormat) : new MakeUniversignTimestamp($this->Users, $this, $config, $dataFormat),
             'digicert' => new MakeDigicertTimestamp($this->Users, $this, $config, $dataFormat),
             'sectigo' => new MakeSectigoTimestamp($this->Users, $this, $config, $dataFormat),
             'globalsign' => new MakeGlobalSignTimestamp($this->Users, $this, $config, $dataFormat),
@@ -990,6 +1013,9 @@ abstract class AbstractEntity extends AbstractRest
         $RequestActions = new RequestActions($this->Users, $this);
         $RequestActions->remove(RequestableAction::Sign);
         AuditLogs::create(new SignatureCreated($this->Users->userData['userid'], $this->id ?? 0, $this->entityType));
+        // force create a revision
+        $Revisions = new Revisions($this, 9000, 0, 0);
+        $Revisions->dbInsert($this->entityData['body']);
         return $this->readOne();
     }
 
@@ -1002,6 +1028,26 @@ abstract class AbstractEntity extends AbstractRest
             return 'User not found!';
         }
         return $user->userData['fullname'];
+    }
+
+    protected function getCurrentHighestCustomId(int $category): int
+    {
+        $sql = 'SELECT custom_id FROM ' . $this->entityType->value . ' WHERE category = :category AND custom_id IS NOT NULL ORDER BY custom_id DESC LIMIT 1';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':category', $category, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return (int) $req->fetchColumn();
+    }
+
+    // figure out the next custom id for our entity
+    protected function getNextIdempotentCustomId(): int
+    {
+        if ($this->entityData['category'] === null) {
+            throw new ImproperActionException(_('A category is required to fetch the next Custom ID'));
+        }
+        // start by setting our current custom_id null to get idempotency
+        $this->update(new EntityParams('custom_id', null));
+        return $this->getCurrentHighestCustomId($this->entityData['category']) + 1;
     }
 
     // Archive a normal entity, Unarchive an archived entity.
@@ -1072,5 +1118,33 @@ abstract class AbstractEntity extends AbstractRest
         if (!empty($searchError)) {
             throw new ImproperActionException('Error with extended search: ' . $searchError);
         }
+    }
+
+    private function notifyBookers(array $params): int
+    {
+        $bookers = $this->getSurroundingBookers();
+        $replyTo = new Address($this->Users->userData['email'], $this->Users->userData['fullname']);
+        $addresses = array_map(fn($row) => new Address($row['email'], $row['fullname']), $bookers);
+        if (!$addresses) {
+            return 0;
+        }
+        $Email = new Email(
+            new Mailer(Transport::fromDsn(Config::getConfig()->getDsn())),
+            App::getDefaultLogger(),
+            Config::getConfig()->configArr['mail_from'],
+            Env::asBool('DEMO_MODE'),
+        );
+        $subject = Filter::toPureString($params['subject']);
+        $body = Filter::toPureString($params['body']);
+        $sent = 0;
+        foreach ($addresses as $address) {
+            try {
+                $Email->sendEmail($address, $subject, $body, replyTo: $replyTo);
+                $sent++;
+            } catch (ImproperActionException) {
+                continue;
+            }
+        }
+        return $sent;
     }
 }

@@ -101,7 +101,7 @@ final class ImportCompoundsCsv extends Command
             $pubChemImporter = new PubChemImporter($httpGetter, Env::asUrl('PUBCHEM_PUG_URL'), Env::asUrl('PUBCHEM_PUG_VIEW_URL'));
         }
         $Items = new Items($user, bypassReadPermission: true, bypassWritePermission: true);
-        $Compounds = new Compounds($httpGetter, $user, $Fingerprinter);
+        $Compounds = new Compounds($httpGetter, $user, $Fingerprinter, requireEditRights: false);
 
         $matchWith = null;
         if ($input->getOption('match-with')) {

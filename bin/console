@@ -14,14 +14,13 @@ declare(strict_types=1);
 namespace Elabftw\Commands;
 
 use Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException;
+use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Models\Config;
 use Elabftw\Services\Email;
 use Elabftw\Storage\Exports;
-use Monolog\Handler\ErrorLogHandler;
-use Monolog\Logger;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Mailer\Exception\InvalidArgumentException;
 use Symfony\Component\Mailer\Mailer;
@@ -35,8 +34,6 @@ use function dirname;
 require dirname(__DIR__) . '/vendor/autoload.php';
 
 $Application = new Application();
-$errorLogLogger = new Logger('elabftw');
-$errorLogLogger->pushHandler(new ErrorLogHandler());
 $logger = new ConsoleLogger(new ConsoleOutput());
 try {
     $Config = Config::getConfig();
@@ -47,7 +44,7 @@ try {
 try {
     $Email = new Email(
         new Mailer(Transport::fromDsn($Config->getDsn())),
-        $errorLogLogger,
+        App::getDefaultLogger(),
         $Config->configArr['mail_from'],
         Env::asBool('DEMO_MODE'),
     );
@@ -71,6 +68,8 @@ $Application->add(new CacheClear());
 $Application->add(new CheckDatabase((int) $Config->configArr['schema']));
 $Application->add(new CheckTsBalance((int) $Config->configArr['ts_balance'], $Email));
 $Application->add(new CleanDatabase());
+$Application->add(new ClearNotifications());
+$Application->add(new FingerprintCompounds());
 $Application->add(new ExportCommand($exportsFs));
 $Application->add(new ExportEln($exportsFs));
 $Application->add(new ImportEln($exportsFs));

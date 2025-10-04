@@ -13,95 +13,65 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\Db;
-use Elabftw\Exceptions\ImproperActionException;
-use PDO;
+use Elabftw\Elabftw\Env;
 use RobThree\Auth\Algorithm;
 use RobThree\Auth\TwoFactorAuth;
-use RuntimeException;
 
 /**
  * Provide methods for multi/two-factor authentication
  */
 final class MfaHelper
 {
-    /** @var string ISSUER will be displayed in the app as issuer name */
-    private const ISSUER = 'eLabFTW';
+    // number of digits the resulting codes will be
+    private const int DIGITS = 6;
 
-    /** @var int DIGITS number of digits the resulting codes will be */
-    private const DIGITS = 6;
+    // number of seconds a code will be valid
+    private const int PERIOD = 30;
 
-    /** @var int PERIOD number of seconds a code will be valid */
-    private const PERIOD = 30;
+    // discrepancy parameter to verify the code
+    private const int DISCREPANCY = 2;
 
-    /** @var int DISCREPANCY discrepancy parameter to verify the code */
-    private const DISCREPANCY = 2;
+    // entropy for the mfa secret
+    private const int SECRET_BITS = 160;
 
-    /** @var int MFA_SECRET_BITS entropy for the mfa secret */
-    private const SECRET_BITS = 160;
+    public readonly string $secret;
 
-    protected Db $Db;
+    private readonly TwoFactorAuth $TwoFactorAuth;
 
-    private TwoFactorAuth $TwoFactorAuth;
-
-    public function __construct(public int $userid, public ?string $secret = null)
+    public function __construct(?string $maybeSecret = null)
     {
+        $siteUrl = parse_url(Env::asUrl('SITE_URL'));
+
         $this->TwoFactorAuth = new TwoFactorAuth(
             new MpdfQrProvider(),
-            self::ISSUER,
+            sprintf('eLabFTW %s', $siteUrl['host'] ?? ''),
             self::DIGITS,
             self::PERIOD,
             Algorithm::Sha1,
         );
-        $this->Db = Db::getConnection();
+        $this->secret = $maybeSecret ?? $this->generateSecret();
     }
 
     public function getQRCodeImageAsDataUri(string $email): string
     {
-        if ($this->secret === null) {
-            throw new ImproperActionException('Secret is null!');
-        }
         return $this->TwoFactorAuth->getQRCodeImageAsDataUri($email, $this->secret);
-    }
-
-    public function generateSecret(): string
-    {
-        return $this->TwoFactorAuth->createSecret(self::SECRET_BITS);
-    }
-
-    public function saveSecret(): bool
-    {
-        return $this->toggleSecret($this->secret);
-    }
-
-    public function removeSecret(): bool
-    {
-        return $this->toggleSecret();
     }
 
     public function verifyCode(string $code): bool
     {
-        if ($this->secret === null) {
-            throw new RuntimeException('No secret to verify!');
-        }
         return $this->TwoFactorAuth->verifyCode($this->secret, $code, self::DISCREPANCY);
     }
 
     /**
      * only used to emulate the phone app (in MfaCode)
-     * @psalm-suppress PossiblyNullArgument
      */
     public function getCode(): string
     {
         return $this->TwoFactorAuth->getCode($this->secret);
     }
 
-    private function toggleSecret(?string $secret = null): bool
+    private function generateSecret(): string
     {
-        $sql = 'UPDATE users SET mfa_secret = :secret WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':secret', $secret);
-        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        return $this->TwoFactorAuth->createSecret(self::SECRET_BITS);
     }
 }

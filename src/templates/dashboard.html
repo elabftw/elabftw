@@ -16,6 +16,15 @@
         {% include 'create-new.html' with {'entityPage': 'experiments', 'isDashboard': true} %}
       </div>
     </div>
+    <form class='mt-2' action='experiments.php' aria-label='{{ 'Quick search experiments'|trans }}'>
+      <label for='dashboard-search-experiments' class='sr-only'>{{ 'Search experiments'|trans }}</label>
+      <div class='input-group'>
+        <input id='dashboard-search-experiments' class='form-control' type='search' name='q' placeholder='{{ 'Search'|trans }}' aria-label='{{ 'Search'|trans }}' />
+        <div class='input-group-append'>
+          <button type='submit' class='btn btn-sm btn-primary' aria-label='{{ 'Search'|trans }}'><i class='fas fa-magnifying-glass color-white' aria-hidden='true'></i></button>
+        </div>
+      </div>
+    </form>
     <hr>
     {% if App.experimentsCategoryArr %}
       <h5>{{ 'Browse by category'|trans }}</h5>
@@ -55,6 +64,15 @@
         {% include 'create-new.html' with {'entityPage': 'database', 'isDashboard': true} %}
       </div>
     </div>
+    <form class='mt-2' action='database.php' aria-label='{{ 'Quick search resources'|trans }}'>
+      <label for='dashboard-search-resources' class='sr-only'>{{ 'Search resources'|trans }}</label>
+      <div class='input-group'>
+        <input id='dashboard-search-resources' class='form-control' type='search' name='q' placeholder='{{ 'Search'|trans }}' />
+        <div class='input-group-append'>
+          <button type='submit' class='btn btn-sm btn-primary' aria-label='{{ 'Search'|trans }}'><i class='fas fa-magnifying-glass color-white' aria-hidden='true'></i></button>
+        </div>
+      </div>
+    </form>
     <hr>
     <h5>{{ 'Browse by category'|trans }}</h5>
     <div class='d-flex my-2 flex-wrap lh-150'>

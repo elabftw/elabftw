@@ -134,7 +134,7 @@ final class Experiments extends AbstractConcreteEntity
         $this->Steps->duplicate($this->id, $newId);
         $this->Tags->copyTags($newId);
         $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
-        $CompoundsLinks->duplicate($this->id, $newId, false);
+        $CompoundsLinks->duplicate($this->id, $newId);
         // also add a link to the original experiment if requested
         if ($linkToOriginal) {
             $ExperimentsLinks = new Experiments2ExperimentsLinks($fresh);

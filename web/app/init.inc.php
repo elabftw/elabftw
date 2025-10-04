@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -10,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Controllers\LoginController;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCsrfTokenException;
@@ -20,8 +22,6 @@ use Elabftw\Services\LoginHelper;
 use Exception;
 use League\Flysystem\Filesystem as Fs;
 use League\Flysystem\Local\LocalFilesystemAdapter;
-use Monolog\Handler\ErrorLogHandler;
-use Monolog\Logger;
 use PDOException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -52,8 +52,7 @@ $Request->setSession($Session);
 
 try {
     // this allows us to write to stdout/stderr aka access/error logs of nginx
-    $Logger = new Logger('elabftw');
-    $Logger->pushHandler(new ErrorLogHandler());
+    $Logger = App::getDefaultLogger();
 
     // Config::getConfig() will make the first SQL request
     // PDO will throw an exception if the SQL structure is not imported yet
@@ -73,7 +72,7 @@ try {
         // or generate a new one and add it into the session
         $Session->set('csrf', $Csrf->getToken());
     }
-    // at the moment we don't validate csrf for saml login FIXME TODO
+    // CSRF doesn't apply to SAML Assertion Consumer Service endpoint
     if (basename($Request->getScriptName()) !== 'index.php') {
         $Csrf->validate();
     }
@@ -97,6 +96,7 @@ try {
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-//
     // pages where you don't need to be logged in
     // only the script name, not the path because we use basename() on it
+    // Note: this should probably be merged into LoginController, maybe create a VisitorUser
     $nologinArr = array(
         // the api can be access with session or token (or only token for v1) so we skip auth here to do it later with custom logic
         'ApiController.php',
@@ -113,15 +113,14 @@ try {
     );
 
     if (!in_array(basename($Request->getScriptName()), $nologinArr, true) && !$Session->has('is_auth')) {
-        // try to login our user with session, cookie or other method not requiring a login action
-        $Auth = new Auth($App->Config, $Request);
+        // try to login our cookie or other methods not requiring a login action
+        $LoginController = new LoginController($App->Config->configArr, $Request, $App->Session, Env::asBool('DEMO_MODE'));
         // this will throw an UnauthorizedException if we don't have a valid auth
-        $AuthResponse = $Auth->tryAuth();
-        $LoginHelper = new LoginHelper($AuthResponse, $Session);
-        $LoginHelper->login(false);
+        $AuthResponse = $LoginController->getAuthResponse();
+        new LoginHelper($AuthResponse, $Session, (int) $App->Config->configArr['cookie_validity_time'])->login();
     }
-
     $App->boot();
+
 } catch (UnauthorizedException | InvalidCsrfTokenException $e) {
     // KICK USER TO LOGOUT PAGE THAT WILL REDIRECT TO LOGIN PAGE
     $cookieOptions = array(

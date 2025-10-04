@@ -20,8 +20,6 @@ use Elabftw\Services\MpdfProvider;
 use Elabftw\Interfaces\PdfMakerInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Users\Users;
-use Monolog\Handler\ErrorLogHandler;
-use Monolog\Logger;
 use ZipStream\ZipStream;
 use Override;
 
@@ -74,7 +72,7 @@ class MakeStreamZip extends AbstractMakeZip
             $userData['pdf_format'],
             $this->usePdfa,
         );
-        $log = (new Logger('elabftw'))->pushHandler(new ErrorLogHandler());
+        $log = App::getDefaultLogger();
         return new MakePdf(
             log: $log,
             mpdfProvider: $MpdfProvider,

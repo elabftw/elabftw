@@ -104,8 +104,8 @@
   {# this div is filled in JS by Metadata.class.ts edit() #}
   <div id='metadataDiv'></div>
   <div class='mt-3 row'>
-    <button type='button' data-action='toggle-modal' data-target='fieldBuilderModal' class='btn btn-secondary'>{{ 'Add field'|trans }}</button>
-    <button type='button' data-action='toggle-modal' data-target='fieldLoaderModal' class='ml-3 btn hl-hover-gray'>{{ 'Load fields'|trans }}</button>
+    <button type='button' data-action='toggle-modal' data-target='fieldBuilderModal' class='btn btn-secondary' data-cy='addMetadataField'>{{ 'Add field'|trans }}</button>
+    <button type='button' data-action='toggle-modal' data-target='fieldLoaderModal' class='ml-3 btn hl-hover-gray' data-cy='loadMetadataFields'>{{ 'Load fields'|trans }}</button>
   </div>
 </div>
 <hr>
@@ -133,6 +133,7 @@
   {% if Entity.entityData.canread_target %}
    {# TARGET PERMISSIONS #}
     <h5>{{ 'Permissions for the derived entry'|trans }}</h5>
+    <p class='smallgray'>{{ 'Entries created from this template will inherit these permissions. If they are locked down, the permissions will not be modifiable by Users, only Admins.'|trans }}</p>
     <div class='d-flex mb-2 align-items-center'>
       {# CANREAD #}
       {% set rw = 'canread_target' %}

@@ -62,7 +62,7 @@
 
         <div id='visibleFiltersDiv' class='mt-1 flex-fill'>
           {# CATEGORY #}
-          <select name='category' class='mr-1 form-control filterHelper filterAuto' aria-label='{{ 'Filter category'|trans }}'>
+          <select name='category' class='mr-1 form-control filterAuto' aria-label='{{ 'Filter category'|trans }}'>
             <option value='' class='dropdown-header' data-action='clear'>{{ 'Filter category'|trans }}</option>
             {% for category in categoryArr %}
               <option value='{{ category.id }}'
@@ -73,7 +73,7 @@
           </select>
 
           {# STATUS #}
-          <select name='status' class='mr-1 form-control filterHelper filterAuto' aria-label='{{ 'Filter status'|trans }}'>
+          <select name='status' class='mr-1 form-control filterAuto' aria-label='{{ 'Filter status'|trans }}'>
             <option value='' class='dropdown-header' data-action='clear'>{{ 'Filter status'|trans }}</option>
             {% for status in statusArr %}
               <option value='{{ status.id }}'
@@ -84,7 +84,7 @@
           </select>
 
           {# OWNER filter #}
-          <select name='owner' class='form-control filterHelper filterAuto' aria-label='{{ 'Filter owner'|trans }}'>
+          <select name='owner' class='form-control filterAuto' aria-label='{{ 'Filter owner'|trans }}'>
             <option value='' class='dropdown-header' data-action='clear'>{{ 'Filter owner'|trans }}</option>
             {% for user in usersArr %}
               <option value='{{ user.userid }}' {{- App.Request.query.get('owner') == user.userid ? ' selected' }}>{{ user.fullname }}</option>
@@ -175,10 +175,10 @@
       #}
 
       {# VISIBILITY filter #}
-      <select name='visibility' class='mx-1 form-control filterHelper filterAuto' aria-label='{{ 'Filter visibility'|trans }}'>
+      <select name='visibility' class='mx-1 form-control filterHelper' aria-label='{{ 'Filter visibility'|trans }}'>
         <option value=''>{{ 'Filter visibility'|trans }}</option>
         {% for vis in visibilityArr %}
-        <option value='visibility:"{{ vis|e('html_attr') }}"'{{ App.Request.query.get('extended') == 'visibility:"' ~ vis|raw ~ '"' ? ' selected' }}>
+        <option value='{{ vis|e('html_attr') }}' {{ App.Request.query.get('q') == 'visibility:"' ~ vis|raw ~ '"' ? ' selected' }}>
           {{ vis }}</option>
         {% endfor %}
       </select>
@@ -318,11 +318,14 @@
 
   {% set count = itemsArr|length %}
 
-  {% if App.itemsCategoryArr|length == 0 %}
-  {{ 'No resources categories have been defined for your team. Create some from this page: %sResources Categories%s.'|trans|format("<a href='resources-categories.php'>", "</a>")|raw|msg('warning', false) }}
+  {% if categoryArr|length == 0 %}
+    <div class='d-flex'>
+      {% set categoriesLink = '<a href="%s">'|format(Entity.entityType.toCategoryPage()) %}
+      {{ 'Tip: %screate categories%s to start organizing your work.'|trans|format(categoriesLink, "</a>")|raw|msg('ok', false) }}
+    </div>
   {% endif %}
-  <div id='showModeContent'>
 
+  <div id='showModeContent'>
     {# Show message if we're looking for something (query parameters are present), but the number of results is 0 #}
     {% if count == 0 and App.Request.query.all|length > 0 %}
     <div class='row display-flex' id='itemList'>
@@ -336,7 +339,7 @@
     </div>
   {% elseif count == 0 and (App.Request.query.all|length == 0) and not App.Session.get('is_anon') and not App.Request.query.get('offset') %}
     <div class='row display-flex' id='itemList'>
-      {{ "Welcome to eLabFTW. Use the 'Create new' button to get started!"|trans|msg('ok', false) }}
+      <h3>{{ 'Nothing here yet. Start by clicking Create (top-right) to add your first %s.'|trans|format(Entity.entityType.toGenre()) }}</h3>
     </div>
   {% else %}
 

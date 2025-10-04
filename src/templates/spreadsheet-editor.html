@@ -1,9 +1,21 @@
+{% set infotip = 'Beta Notice: The spreadsheet editor is currently in beta (preview release) and should be used with caution. Please avoid storing important data in it. Additionally, files that include styling or advanced features such as graphics may not display as they originally appear. This editor is best suited for simple calculations and handling formulas. We welcome any feedback you may have.'|trans %}
 <section id='spreadsheetEditor' aria-label='{{ 'Spreadsheet Editor'|trans }}'>
-  <h3 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='false' aria-controls='spreadsheetEditorDiv'><i id='sheetEditorIcon' class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Spreadsheet Editor'|trans }}</h3>
+  <h3 data-action='toggle-next' data-toggle-target='spreadsheetEditorDiv' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title mt-2' tabindex='0' role='button' aria-expanded='false' aria-controls='spreadsheetEditorDiv'>
+    <i id='sheetEditorIcon' class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Spreadsheet Editor'|trans }}
+  </h3>
+  <span class='beta'>beta</span>
+  <div class='infotip'>
+    <span class='infotip-icon'>
+      <i class='ml-1 fas fa-question-circle' aria-hidden='true'></i>
+    </span>
+    <p class='infotip-text' style='left: 200px'>{{ infotip }}</p>
+  </div>
   <div id='spreadsheetEditorDiv' class='m-2' hidden data-save-hidden='spreadsheetEditorDiv'>
-    <div id="spreadsheet-importer-root"></div>
+    {% if App.devMode -%}
+      <!-- [html-validate-disable-block unique-landmark, no-deprecated-attr, prefer-native-element: suppress errors from spreadsheet editor] -->
+    {%- endif %}
+      {# allow-modals is needed for prompts asking the filename #}
+      <iframe id='spreadsheetIframe' title='{{ 'Spreadsheet Editor'|trans }}' src='/spreadsheet.html' sandbox='allow-scripts allow-same-origin allow-forms allow-downloads allow-modals'></iframe>
   </div>
 </section>
-{# Asks user if the first row should be used as header, when Importing file directly in spreadsheet editor #}
-{% include 'load-spreadsheet-modal.html' %}
 <hr>

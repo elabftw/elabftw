@@ -69,7 +69,7 @@ function SpreadsheetEditor() {
       window.parent.postMessage('uploadsDiv', window.location.origin);
       setIsSaving(false);
     }
-  }
+  };
 
   // reload spreadsheet data after state changes
   useEffect(() => {

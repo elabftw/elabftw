@@ -44,6 +44,7 @@ $text-muted: $medium;
 @import 'star-rating';
 @import 'jsoneditor';
 @import 'ove';
+@import 'spreadsheet-editor';
 @import 'search-syntax-highlighting';
 @import 'tom-select';
 @import 'tinymce-custom';
@@ -116,11 +117,13 @@ body {
 /* TinyMCE selector for body in preview excluded to prevent flashing */
 body::before,
 .mce-preview-body::before {
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
-  content: '';
-  left: 0;
-  top: -10px;
-  width: 100%;
+  &:not(.no-shadow) {
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+    content: '';
+    left: 0;
+    top: -10px;
+    width: 100%;
+  }
 }
 
 body::before {
@@ -1837,8 +1840,4 @@ input:user-invalid {
 // disable touch action for doodle canvas
 #doodleCanvas {
   touch-action: none;
-}
-
-#spreadsheetEditorDiv {
-  overflow: auto;
 }

@@ -14,6 +14,7 @@ const t = {
     "can-manage-users2teams": "Can manage users to teams",
     "click-to-edit": "Muokkaa napsauttamalla",
     "cancel": "Peruuta",
+    "clear": "Tyhjennä",
     "copied": "Copied to clipboard.",
     "check-required": "Please check required fields.",
     "comment-add": "Lisää kommentti",

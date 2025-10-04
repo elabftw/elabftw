@@ -29,8 +29,6 @@ module.exports = (env) => {
         './src/ts/ketcher-editor.jsx',
         './src/ts/compounds-table.jsx',
         './src/ts/users-table.jsx',
-        './src/ts/spreadsheet-editor.jsx',
-        './src/ts/spreadsheet-utils.ts',
         './src/ts/tags.ts',
         './src/ts/admin.ts',
         './src/ts/profile.ts',
@@ -80,6 +78,10 @@ module.exports = (env) => {
         'prismjs/components/prism-tcl.js',
         'prismjs/components/prism-vhdl.js',
         'prismjs/components/prism-yaml.js',
+      ],
+      spreadsheet: [
+        './src/ts/spreadsheet-editor.jsx',
+        './src/ts/spreadsheet-utils.ts',
       ],
     },
     // uncomment this to find where the error is coming from

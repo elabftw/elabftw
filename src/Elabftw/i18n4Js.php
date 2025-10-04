@@ -48,6 +48,7 @@ final class i18n4Js
             'can-manage-users2teams' => _('Can manage users to teams'),
             'click-to-edit' => _('Click to edit'),
             'cancel' => _('Cancel'),
+            'clear' => _('Clear'),
             'copied' => _('Copied to clipboard.'),
             'check-required' => _('Please check required fields.'),
             'comment-add' => _('Add a comment'),

@@ -14,6 +14,7 @@ const t = {
     "can-manage-users2teams": "Can manage users to teams",
     "click-to-edit": "クリックで編集",
     "cancel": "キャンセル",
+    "clear": "クリア",
     "copied": "Copied to clipboard.",
     "check-required": "Please check required fields.",
     "comment-add": "コメントを追加",

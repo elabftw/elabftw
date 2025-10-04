@@ -14,6 +14,7 @@ const t = {
     "can-manage-users2teams": "Can manage users to teams",
     "click-to-edit": "Tahrirlash uchun bosing",
     "cancel": "Bekor qilish",
+    "clear": "Toza",
     "copied": "Copied to clipboard.",
     "check-required": "Please check required fields.",
     "comment-add": "Fikr qo'shing",

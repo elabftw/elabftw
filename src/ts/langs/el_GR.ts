@@ -14,6 +14,7 @@ const t = {
     "can-manage-users2teams": "Can manage users to teams",
     "click-to-edit": "Κάντε κλικ για επεξεργασία",
     "cancel": "Ακύρωση",
+    "clear": "Εκκαθάριση",
     "copied": "Copied to clipboard.",
     "check-required": "Please check required fields.",
     "comment-add": "Προσθέστε κάποιο σχόλιο",

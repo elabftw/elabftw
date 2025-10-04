@@ -9,7 +9,7 @@ import $ from 'jquery';
 import { Action as MalleAction, Malle } from '@deltablot/malle';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
 import { Action, Model } from './interfaces';
-import { loadInJSSpreadsheet } from './spreadsheet-utils';
+import { loadInSpreadsheetEditor } from './spreadsheet-utils';
 import { ensureTogglableSectionIsOpen, relativeMoment, reloadElements } from './misc';
 import { displayPlasmidViewer } from './ove';
 import { displayMoleculeViewer, get3dmol } from './3dmol';
@@ -181,7 +181,7 @@ const clickHandler = async (event: Event) => {
 
   // LOAD SPREADSHEET FILE
   } else if (el.matches('[data-action="xls-load-file"]')) {
-    await loadInJSSpreadsheet(el.dataset.storage, el.dataset.path, el.dataset.name, Number(el.dataset.uploadid));
+    await loadInSpreadsheetEditor(el.dataset.storage, el.dataset.path, el.dataset.name, Number(el.dataset.uploadid));
     ensureTogglableSectionIsOpen('sheetEditorIcon', 'spreadsheetEditorDiv');
 
   // ARCHIVE UPLOAD
@@ -231,6 +231,12 @@ if (uploadsDiv) {
   malleableFilecomment.listen();
 
   document.querySelector('.real-container').addEventListener('click', async (event) => clickHandler(event));
+  // reload uploads div when using spreadsheet editor (iframe sends message to parent window)
+  window.addEventListener('message', (event) => {
+    if (event.origin !== window.location.origin) return;
+    if (event.data !== 'uploadsDiv') return;
+    reloadElements(['uploadsDiv']);
+  });
 
   // ACTIVATE FANCYBOX
   $('[data-fancybox]').fancybox();

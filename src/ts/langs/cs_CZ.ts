@@ -14,6 +14,7 @@ const t = {
     "can-manage-users2teams": "Can manage users to teams",
     "click-to-edit": "Klikněte pro úpravu",
     "cancel": "Zrušit",
+    "clear": "Vymazat",
     "copied": "Copied to clipboard.",
     "check-required": "Please check required fields.",
     "comment-add": "Přidat komentář",

@@ -149,7 +149,7 @@ function SpreadsheetEditor() {
       clearBtn
     );
     return tb;
-  }
+  };
 
   return (
     <>

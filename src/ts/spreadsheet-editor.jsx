@@ -102,6 +102,8 @@ function SpreadsheetEditor() {
     // clear any current spreadsheet id tracking
     setCurrentUploadId(null);
     setReplaceName(null);
+    // clear input too
+    e.target.value = '';
   };
 
   const clearSpreadsheet = () => {

@@ -45,6 +45,9 @@ final class TeamGroups extends AbstractRest
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
+        if (!$this->Users->isAdmin) {
+            throw new IllegalActionException();
+        }
         return $this->create($reqBody['name'] ?? _('Untitled'));
     }
 
@@ -278,11 +281,8 @@ final class TeamGroups extends AbstractRest
         return $fullGroups;
     }
 
-    private function create(string $name): int
+    public function create(string $name): int
     {
-        if (!$this->Users->isAdmin) {
-            throw new IllegalActionException();
-        }
         $name = Filter::title($name);
         $sql = 'INSERT INTO team_groups(name, team) VALUES(:content, :team)';
         $req = $this->Db->prepare($sql);
@@ -293,22 +293,11 @@ final class TeamGroups extends AbstractRest
         return $this->Db->lastInsertId();
     }
 
-    private function update(TeamGroupParams $params): bool
-    {
-        $sql = 'UPDATE team_groups SET name = :name WHERE id = :id AND team = :team';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':name', $params->getContent());
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-
-        return $this->Db->execute($req);
-    }
-
     /**
      * Add or remove a member from a team group
      * How is add or rm
      */
-    private function updateMember(array $params): array
+    public function updateMember(array $params): array
     {
         if ($params['how'] === Action::Add->value) {
             $sql = 'INSERT IGNORE INTO users2team_groups(userid, groupid) VALUES(:userid, :groupid)';
@@ -323,6 +312,17 @@ final class TeamGroups extends AbstractRest
         $req->bindValue(':groupid', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         return $this->readOne();
+    }
+
+    private function update(TeamGroupParams $params): bool
+    {
+        $sql = 'UPDATE team_groups SET name = :name WHERE id = :id AND team = :team';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':name', $params->getContent());
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+
+        return $this->Db->execute($req);
     }
 
     /**

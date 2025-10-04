@@ -73,7 +73,6 @@ function SpreadsheetEditor() {
 
   // reload spreadsheet data after state changes
   useEffect(() => {
-    console.log("pâge init");
     const instance = spreadsheetRef.current?.[0];
     if (instance) instance.setData(data);
   }, [data]);
@@ -161,19 +160,9 @@ function SpreadsheetEditor() {
     </>
   );
 }
+
 const el = document.getElementById('spreadsheetEditorRoot');
-console.log("hello", el);
-
-console.log("dom loaded");
-// const iframe = document.getElementById('spreadsheetIframe');
-// iframe.addEventListener('load', () => {
-//   console.log("iframe fully loaded");
-//   const el = iframe.contentDocument.getElementById('spreadsheetEditorRoot');
-//   console.log("ELEMENT INSIDE IFRAME: ", el);
-// })
-  if (el) {
-    console.log("on est iciiii")
-    const root = createRoot(el);
-    root.render(<SpreadsheetEditor />);
-  }
-
+if (el) {
+  const root = createRoot(el);
+  root.render(<SpreadsheetEditor />);
+}

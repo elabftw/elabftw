@@ -80,6 +80,7 @@ module.exports = (env) => {
         'prismjs/components/prism-yaml.js',
       ],
       spreadsheet: [
+        './src/ts/spreadsheet-editor.jsx',
         './src/ts/spreadsheet-utils.ts',
       ],
     },

@@ -30,7 +30,6 @@ use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\Items;
 use Elabftw\Models\Links\Items2ExperimentsLinks;
 use Elabftw\Models\Links\Items2ItemsLinks;
-use Elabftw\Models\Scheduler;
 use League\Flysystem\Filesystem as Fs;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Elabftw\Models\ItemsStatus;
@@ -43,6 +42,7 @@ use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Users\UltraAdmin;
 use Elabftw\Models\Users\Users;
+use Elabftw\Params\EntityParams;
 use Elabftw\Params\UserParams;
 use Elabftw\Traits\RandomColorTrait;
 use Elabftw\Traits\TestsUtilsTrait;
@@ -92,7 +92,7 @@ final class Populate
         // adjust global config
         Config::getConfig()->patch(Action::Update, $this->yaml['config'] ?? array());
 
-        $this->output->writeln('┌ Creating teams, users, experiments, resources and events...');
+        $this->output->writeln('┌ Creating teams, users, experiments, and resources...');
         $Users = new UltraAdmin(1, 1);
         $Teams = new Teams($Users, bypassWritePermission: true);
 
@@ -288,21 +288,7 @@ final class Populate
                     );
                     $Items->setId($id);
                     // bookable cannot be set in create function
-                    $Items->patch(Action::Update, array('is_bookable' => $item['is_bookable'] ?? '0'));
-                    // create events in the Scheduler for the next two weeks
-                    if (isset($item['is_bookable']) && $item['is_bookable'] === 1) {
-                        $Scheduler = new Scheduler($Items);
-                        for ($i = 0; $i < 10; $i++) {
-                            $day = $this->faker->dateTimeBetween('+1 days', '+14 days');
-                            $startHour = $this->faker->numberBetween(8, 16);
-                            $start = new DateTimeImmutable($day->format('Y-m-d') . " $startHour:00")->format('c');
-                            $durationHours = $this->faker->numberBetween(1, 3);
-                            $end = new DateTimeImmutable($start)->modify("+{$durationHours} hours")->format('c');
-                            $eventId = $Scheduler->postAction(Action::Create, array('start' => $start, 'end' => $end, 'title' => $item['title']));
-                            $Scheduler->setId($eventId);
-                            $this->output->writeln(sprintf('├ + event: %s (id: %d in team: %d)', $Scheduler->readOne()['title_only'], $eventId, $teamid));
-                        }
-                    }
+                    $Items->update(new EntityParams('is_bookable', $item['is_bookable'] ?? '0'));
                     // don't override the items type metadata
                     if (isset($item['metadata'])) {
                         $Items->patch(Action::Update, array('metadata' => $item['metadata']));

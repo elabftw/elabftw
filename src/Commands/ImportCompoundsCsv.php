@@ -60,7 +60,7 @@ final class ImportCompoundsCsv extends Command
             ->addOption('userid', 'u', InputOption::VALUE_REQUIRED, 'Target user ID')
             ->addOption('dry-run', 'd', InputOption::VALUE_NONE, 'Process the file, but do not actually import things, display what would be done')
             ->addOption('use-pubchem', 'p', InputOption::VALUE_NONE, 'Use PubChem to complete information. Use the CAS number or Pubchem CID to fetch data from PubChem and complement existing data.')
-            ->addOption('create-resource', 'c', InputOption::VALUE_REQUIRED, 'Create a resource linked to that compound with the category ID provided')
+            ->addOption('create-resource', 'c', InputOption::VALUE_REQUIRED, 'Create a resource linked to that compound with the resource template ID provided')
             ->addOption('match-with', 'm', InputOption::VALUE_REQUIRED, 'Match existing resources with the value of the provided extra field. For example: "--match-with cas" will link Compounds to Resources having an extra field "cas" with the same value as the Compound\'s CAS number.')
             ->addOption('location-splitter', 'l', InputOption::VALUE_REQUIRED, 'Set a character to split the location column values on.', '/');
     }

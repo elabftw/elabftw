@@ -497,36 +497,8 @@ tr:first-child td {
 
 /* responsive tables, with a threshold width pretty high */
 @media screen and (max-width: 800px) {
-  .table {
-    /** hide the header completely */
-    thead {
-      display: none;
-    }
-
-    tr {
-      display: block;
-    }
-
-    td,
-    th {
-      border-bottom: 1px solid $firstlevel;
-      display: block;
-      font-size: 0.8em;
-      /** ensure an empty value won't mess the rows */
-      min-height: 50px;
-      text-align: right;
-
-      &::before {
-        content: attr(data-label);
-        float: left;
-        font-weight: bold;
-        text-transform: uppercase;
-      }
-
-      &:last-child {
-        border-bottom: 3px solid $secondlevel;
-      }
-    }
+  .table-container {
+    overflow-x: auto ;
   }
 }
 
@@ -1018,8 +990,10 @@ the form-control fails to do that so we do the border ourselves */
 /* TITLE */
 /* add several rules for the word-wrap, see https://stackoverflow.com/a/36555643 */
 .title {
-  @include breakable;
-  font-size: 160%;
+  .title:not(.table .item) {
+    @include breakable;
+    font-size: 160%;
+  }
 
   a {
     color: $mediumstrong;

@@ -29,21 +29,20 @@ END;
 DROP PROCEDURE IF EXISTS `DropIdx`;
 CREATE PROCEDURE `DropIdx`(
     IN tblName  VARCHAR(64),
-    IN IdxName   VARCHAR(64)
+    IN idxName   VARCHAR(64)
 )
 MODIFIES SQL DATA
 BEGIN
   IF EXISTS (
     SELECT 1
-      FROM information_schema.TABLE_CONSTRAINTS
-     WHERE CONSTRAINT_SCHEMA = DATABASE()
+      FROM information_schema.STATISTICS
+     WHERE TABLE_SCHEMA = DATABASE()
        AND TABLE_NAME        = tblName
-       AND CONSTRAINT_NAME   = IdxName
-       AND CONSTRAINT_TYPE   = 'INDEX'
+       AND INDEX_NAME   = idxName
   ) THEN
     SET @ddl = CONCAT(
       'ALTER TABLE `', tblName,
-      '` DROP INDEX`', fkName, '`'
+      '` DROP INDEX`', idxName, '`'
     ); /**/
     PREPARE stmt FROM @ddl; /**/
     EXECUTE stmt; /**/

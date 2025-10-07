@@ -42,7 +42,7 @@ BEGIN
   ) THEN
     SET @ddl = CONCAT(
       'ALTER TABLE `', tblName,
-      '` DROP INDEX`', idxName, '`'
+      '` DROP INDEX `', idxName, '`'
     ); /**/
     PREPARE stmt FROM @ddl; /**/
     EXECUTE stmt; /**/

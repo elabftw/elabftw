@@ -67,10 +67,11 @@ export class KeyboardShortcuts {
     // SEARCH BAR FOCUS
     assignKey(this.search, (event: Event) => {
       // search input might not be visible on some pages
-      const qs = document.getElementById('quicksearchInput');
+      const qs = document.getElementById('extendedArea');
       if (qs) {
         // add this or the shortcut key gets written in the input
         event.preventDefault();
+        qs.scrollIntoView({ behavior: 'smooth' });
         qs.focus();
       }
     });

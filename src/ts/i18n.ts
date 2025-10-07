@@ -81,7 +81,11 @@ i18next.init({
     zh_CN: zhCN,
   },
 });
-const userPrefs = document.getElementById('user-prefs').dataset;
+const userPrefs = document.getElementById('user-prefs');
 // set the language for js translated strings
-i18next.changeLanguage(userPrefs.lang);
+let lang = 'en_GB';
+if (userPrefs) {
+  lang = userPrefs.dataset.lang;
+}
+i18next.changeLanguage(lang);
 export default i18next;

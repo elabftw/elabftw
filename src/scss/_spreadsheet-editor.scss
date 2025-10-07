@@ -1,0 +1,18 @@
+/* spreadsheet editor iframe*/
+#spreadsheetEditorRoot {
+  background: $mainbackground;
+
+  :focus {
+    outline: none;
+  }
+}
+
+#spreadsheetEditorDiv {
+  height: 467px;
+
+  iframe {
+    border: 0;
+    height: 100%;
+    width: 100%;
+  }
+}

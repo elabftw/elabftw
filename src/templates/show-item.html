@@ -83,6 +83,10 @@
       {% if (Entity.Users.userData.userid != item.userid) and not App.Session.has('is_anon') %}
         {{ 'by'|trans }} <a href='?owner={{ item.userid }}'>{{ item.fullname }}</a>
       {% endif %}
+      {# team #}
+      {% if (Entity.Users.userData.team != item.team) and not App.Session.has('is_anon') %}
+        <span class='badge badge-pill badge-light'>{{ item.team_name }}</span>
+      {% endif %}
     </div>
 
     {# end second line #}

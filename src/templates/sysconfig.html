@@ -229,58 +229,60 @@
     </div>
 
     {% include 'filter-input-snippet.html' with {'target': 'teamsTableBody'} %}
-    <table id='teamsTable' class='table' aria-describedby='teamsSectionTitle' data-table-sort='true'>
-      <thead>
-        <tr>
-          <th scope='col'>{{ 'ID'|trans }}</th>
-          <th scope='col'>{{ 'Name'|trans }}</th>
-          <th scope='col'>{{ 'Organisation ID'|trans }}</th>
-          <th scope='col'>{{ 'Creation date'|trans }}</th>
-          <th scope='col'>{{ 'Visible'|trans }}</th>
-          <th scope='col'>{{ 'Actions'|trans }}</th>
-        </tr>
-      </thead>
-      <!-- [html-validate-disable-block prefer-native-element: suppress error from malle] -->
-      <tbody id='teamsTableBody'>
-        {% for team in teamsArr %}
-        {# commented out because scales very badly obviously and makes loading sysconfig page super slow #}
-        {#{% set count = Teams.getStats(team.id) %}#}
+    <div class='table-container'>
+      <table id='teamsTable' class='table' aria-describedby='teamsSectionTitle' data-table-sort='true'>
+        <thead>
           <tr>
-            <td>{{ team.id }}</td>
-            <td><span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='teams' data-id='{{ team.id }}' data-target='name'>{{ team.name }}</span>
-              {#
-              <p class='smallgray p-1'>{{ 'Members'|trans }}: {{ count.totusers }} &ndash;
-              {% trans %}
-              Experiment
-              {% plural count.totxp %}
-              Experiments
-              {% endtrans %}
-              : {{ count.totxp }} ({{ count.totxpts }} timestamped) &ndash; {{ 'Resources'|trans }}: {{ count.totdb }}<p>
-              #}
-
-            </td>
-            <td><span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='teams' data-id='{{ team.id }}' data-target='orgid'>{{ team.orgid|default('Not set'|trans) }}</span></td>
-            <td>{{ team.created_at }}</td>
-            <td>
-              <label class='switch ucp-align'>
-                <input type='checkbox' data-trigger='change' data-model='teams/{{ team.id }}' data-target='visible' {{ team.visible == 1 ? 'checked="checked"' }}>
-                <span class='slider'></span>
-                <span class='sr-only'>{{ team.name }} - {{ 'Visible'|trans }}</span>
-              </label>
-            </td>
-            <td>
-              {% if count.all_users_count == 0 and team.id != App.Users.userData.team %}
-              <span data-id='{{ team.id }}' id='teamsDestroyButton_{{ team.id }}' data-action='destroy-team' class='p-1 rounded hover-danger'>
-                <i class='fas fa-trash-alt'></i>
-              </span>
-              {% else %}
-                <em class='text-muted'>{{ 'None available'|trans }}</em>
-              {% endif %}
-            </td>
+            <th scope='col'>{{ 'ID'|trans }}</th>
+            <th scope='col'>{{ 'Name'|trans }}</th>
+            <th scope='col'>{{ 'Organisation ID'|trans }}</th>
+            <th scope='col'>{{ 'Creation date'|trans }}</th>
+            <th scope='col'>{{ 'Visible'|trans }}</th>
+            <th scope='col'>{{ 'Actions'|trans }}</th>
           </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+        </thead>
+        <!-- [html-validate-disable-block prefer-native-element: suppress error from malle] -->
+        <tbody id='teamsTableBody'>
+          {% for team in teamsArr %}
+          {# commented out because scales very badly obviously and makes loading sysconfig page super slow #}
+          {#{% set count = Teams.getStats(team.id) %}#}
+            <tr>
+              <td>{{ team.id }}</td>
+              <td><span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='teams' data-id='{{ team.id }}' data-target='name'>{{ team.name }}</span>
+                {#
+                <p class='smallgray p-1'>{{ 'Members'|trans }}: {{ count.totusers }} &ndash;
+                {% trans %}
+                Experiment
+                {% plural count.totxp %}
+                Experiments
+                {% endtrans %}
+                : {{ count.totxp }} ({{ count.totxpts }} timestamped) &ndash; {{ 'Resources'|trans }}: {{ count.totdb }}<p>
+                #}
+
+              </td>
+              <td><span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='teams' data-id='{{ team.id }}' data-target='orgid'>{{ team.orgid|default('Not set'|trans) }}</span></td>
+              <td>{{ team.created_at }}</td>
+              <td>
+                <label class='switch ucp-align'>
+                  <input type='checkbox' data-trigger='change' data-model='teams/{{ team.id }}' data-target='visible' {{ team.visible == 1 ? 'checked="checked"' }}>
+                  <span class='slider'></span>
+                  <span class='sr-only'>{{ team.name }} - {{ 'Visible'|trans }}</span>
+                </label>
+              </td>
+              <td>
+                {% if count.all_users_count == 0 and team.id != App.Users.userData.team %}
+                <span data-id='{{ team.id }}' id='teamsDestroyButton_{{ team.id }}' data-action='destroy-team' class='p-1 rounded hover-danger'>
+                  <i class='fas fa-trash-alt'></i>
+                </span>
+                {% else %}
+                  <em class='text-muted'>{{ 'None available'|trans }}</em>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 
@@ -1074,40 +1076,42 @@
     </div>
     {# Logs are presented in a sortable table #}
     {% include 'filter-input-snippet.html' with {'target': 'auditLogsTable'} %}
-    <table class='table' aria-labelledby='auditLogsTableLabel' data-table-sort='true'>
-      <thead>
-        <tr>
-          <th scope='col'>{{ 'Category'|trans }}</th>
-          <th scope='col'>{{ 'Created at'|trans }}</th>
-          <th scope='col'>{{ 'Content'|trans }}</th>
-          <th scope='col'>{{ 'Actor'|trans }}</th>
-          <th scope='col'>{{ 'Target user'|trans }}</th>
-        </tr>
-      </thead>
-      <tbody id='auditLogsTable'>
-        {% for log in auditLogsArr %}
+    <div class='table-container'>
+      <table class='table' aria-labelledby='auditLogsTableLabel' data-table-sort='true'>
+        <thead>
           <tr>
-            <td>{{ log.category }}</td>
-            <td><span class='relative-moment' title='{{ log.created_at }}'></span></td>
-            <td>{{ log.body }}</td>
-            <td>
-              {%- if log.requester_userid != 0 -%}
-                <a class='p-1 rounded hl-hover-gray' href='?tab=3&amp;q=&amp;userid={{ log.requester_userid }}'>{{ log.requester_userid }}</a>
-              {%- else -%}
-                <span class='p-1'>&ndash;</span>
-              {%- endif -%}
-            </td>
-            <td>
-              {%- if log.target_userid != 0 -%}
-                <a class='p-1 rounded hl-hover-gray' href='?tab=3&amp;q=&amp;userid={{ log.target_userid }}'>{{ log.target_userid }}</a>
-              {%- else -%}
-                <span class='p-1'>&ndash;</span>
-              {%- endif -%}
-            </td>
+            <th scope='col'>{{ 'Category'|trans }}</th>
+            <th scope='col'>{{ 'Created at'|trans }}</th>
+            <th scope='col'>{{ 'Content'|trans }}</th>
+            <th scope='col'>{{ 'Actor'|trans }}</th>
+            <th scope='col'>{{ 'Target user'|trans }}</th>
           </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+        </thead>
+        <tbody id='auditLogsTable'>
+          {% for log in auditLogsArr %}
+            <tr>
+              <td>{{ log.category }}</td>
+              <td><span class='relative-moment' title='{{ log.created_at }}'></span></td>
+              <td>{{ log.body }}</td>
+              <td>
+                {%- if log.requester_userid != 0 -%}
+                  <a class='p-1 rounded hl-hover-gray' href='?tab=3&amp;q=&amp;userid={{ log.requester_userid }}'>{{ log.requester_userid }}</a>
+                {%- else -%}
+                  <span class='p-1'>&ndash;</span>
+                {%- endif -%}
+              </td>
+              <td>
+                {%- if log.target_userid != 0 -%}
+                  <a class='p-1 rounded hl-hover-gray' href='?tab=3&amp;q=&amp;userid={{ log.target_userid }}'>{{ log.target_userid }}</a>
+                {%- else -%}
+                  <span class='p-1'>&ndash;</span>
+                {%- endif -%}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 

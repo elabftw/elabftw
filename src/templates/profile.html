@@ -141,26 +141,28 @@
       </select>
     </div>
 
-    <table class='table' aria-describedby='attachedFiles' data-table-sort='true' id='attachmentsTable'>
-      <thead>
-        <tr>
-          <th scope='col'>{{ 'File name'|trans }}</th>
-          <th scope='col'>{{ 'Creation date'|trans }}</th>
-          <th scope='col'>{{ 'Parent entry'|trans }}</th>
-          <th scope='col'>{{ 'File size'|trans }}</th>
-        </tr>
-      </thead>
-      <tbody id='attachedFilesTable'>
-        {% for file in attachedFiles %}
+    <div class='table-container'>
+      <table class='table' aria-describedby='attachedFiles' data-table-sort='true' id='attachmentsTable'>
+        <thead>
           <tr>
-            <td data-label='{{ 'File name'|trans }}'><a target='_blank' href='/api/v2/{{ file.type }}/{{ file.entity_id }}/uploads/{{ file.id }}?format=binary'>{{ file.real_name }}</a><p class='smallgray'>{{ file.comment }}</p></td>
-            <td data-label='{{ 'Creation date'|trans }}'><span class='relative-moment' title='{{ file.created_at }}'></span></td>
-            <td data-label='{{ 'Parent entry'|trans }}'><a href='{{ file.page }}.php?mode=view&id={{ file.entity_id }}{{ file.page == 'ucp' ? '&tab=3&templateid=' ~ file.entity_id }}'>{{ file.entity_title }}</a></td>
-            <td data-label='{{ 'File size'|trans }}'>{{ file.filesize|default(0)|formatBytes }}</td>
+            <th scope='col'>{{ 'File name'|trans }}</th>
+            <th scope='col'>{{ 'Creation date'|trans }}</th>
+            <th scope='col'>{{ 'Parent entry'|trans }}</th>
+            <th scope='col'>{{ 'File size'|trans }}</th>
           </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+        </thead>
+        <tbody id='attachedFilesTable'>
+          {% for file in attachedFiles %}
+            <tr>
+              <td data-label='{{ 'File name'|trans }}'><a target='_blank' href='/api/v2/{{ file.type }}/{{ file.entity_id }}/uploads/{{ file.id }}?format=binary'>{{ file.real_name }}</a><p class='smallgray'>{{ file.comment }}</p></td>
+              <td data-label='{{ 'Creation date'|trans }}'><span class='relative-moment' title='{{ file.created_at }}'></span></td>
+              <td data-label='{{ 'Parent entry'|trans }}'><a href='{{ file.page }}.php?mode=view&id={{ file.entity_id }}{{ file.page == 'ucp' ? '&tab=3&templateid=' ~ file.entity_id }}'>{{ file.entity_title }}</a></td>
+              <td data-label='{{ 'File size'|trans }}'>{{ file.filesize|default(0)|formatBytes }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 

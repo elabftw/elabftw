@@ -1,4 +1,4 @@
--- schema 186 - convert Events start & end to datetime
+-- schema 187 - convert Events start & end to datetime
 -- first migrate to a datetime column safely
 ALTER TABLE `team_events`
     ADD COLUMN `start_dt` DATETIME NULL AFTER `item`,

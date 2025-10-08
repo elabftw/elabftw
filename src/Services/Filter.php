@@ -21,6 +21,8 @@ use HTMLPurifier_HTML5Config;
 
 use function checkdate;
 use function filter_var;
+use function grapheme_substr;
+use function grapheme_strlen;
 use function mb_strlen;
 use function mb_substr;
 use function strlen;
@@ -144,7 +146,15 @@ final class Filter
             return _('Untitled');
         }
         // remove linebreak to avoid problem in javascript link list generation on editXP
-        return str_replace(array("\r\n", "\n", "\r"), ' ', $title);
+        $title = str_replace(array("\r\n", "\n", "\r"), ' ', $title);
+        $maxCharacters = 255;
+        if (grapheme_strlen($title) > $maxCharacters) {
+            $title = grapheme_substr($title, 0, $maxCharacters);
+            if ($title === false) {
+                throw new ImproperActionException('Error reducing title size!');
+            }
+        }
+        return $title;
     }
 
     public static function toAsciiSlug(string $input): string

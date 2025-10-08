@@ -441,59 +441,61 @@
         {% endfor %}
         </div>
       {% elseif App.Users.userData.display_mode == 'tb' -%}
-        <table id='itemList' class='table item-table mt-2' aria-describedby='pageTitle'>
-          <thead class='with-top'>
-            <tr>
-              <th>
-                <div class='d-flex justify-content-between'>
-                  <span>{{ 'Date'|trans }}</span>
-                  <a href='#' data-action='reorder-entities' data-orderby='date'><i class='fas {{ sortIcon("date") }}'></i></a>
-                </div>
-              </th>
-              <th class='title-item-table col-8'>
-                <div class='d-flex justify-content-between'>
-                  {{ 'Title'|trans }} <a href='#' data-action='reorder-entities' data-orderby='title'><i class='fas {{ sortIcon("title") }}'></i></a>
-                </div>
-              </th>
-              <th class='step-item-table col-2'>
-                {{ 'Next step'|trans }}
-              </th>
-              <th class='category-item-table w-20'>
-                <div class='d-flex justify-content-between'>
-                  <span>{{ 'Category'|trans }}</span>
-                  <a href='#' data-action='reorder-entities' data-orderby='cat'><i class='fas {{ sortIcon("cat") }}'></i></a>
-                </div>
-              </th>
-              <th class='category-item-table w-20'>
-                <div class='d-flex justify-content-between'>
-                  <span>{{ 'Status'|trans }}</span>
-                  <a href='#' data-action='reorder-entities' data-orderby='status'><i class='fas {{ sortIcon("status") }}'></i></a>
-                </div>
-              </th>
-              <th class='tags-item-table w-20'>
-                {{ 'Tags'|trans }}
-              </th>
-              <th class='actions-item-rating w-10'>
-                <div class='d-flex justify-content-between'>
-                  {# add mr-1 here because column is small #}
-                  <span class='mr-1'>{{ 'Rating'|trans }}</span>
-                  <a href='#' data-action='reorder-entities' data-orderby='rating'><i class='fas {{ sortIcon("rating") }}'></i></a>
-                </div>
-              </th>
-              <th class='actions-item-owner col-2'>
-                <div class='d-flex justify-content-between'>
-                  <span>{{ 'Owner'|trans }}</span>
-                  <a href='#' data-action='reorder-entities' data-orderby='user'><i class='fas {{ sortIcon("user") }}'></i></a>
-                </div>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for item in itemsArr|slice(0, DisplayParams.limit) %}
-              {% include 'show-item-table.html' %}
-            {% endfor %}
-          </tbody>
-        </table>
+        <div class='table-container'>
+          <table id='itemList' class='table item-table mt-2' aria-describedby='pageTitle'>
+            <thead class='with-top'>
+              <tr>
+                <th>
+                  <div class='d-flex justify-content-between'>
+                    <span>{{ 'Date'|trans }}</span>
+                    <a href='#' data-action='reorder-entities' data-orderby='date'><i class='fas {{ sortIcon("date") }}'></i></a>
+                  </div>
+                </th>
+                <th class='title-item-table col-8'>
+                  <div class='d-flex justify-content-between'>
+                    {{ 'Title'|trans }} <a href='#' data-action='reorder-entities' data-orderby='title'><i class='fas {{ sortIcon("title") }}'></i></a>
+                  </div>
+                </th>
+                <th class='step-item-table col-2'>
+                  {{ 'Next step'|trans }}
+                </th>
+                <th class='category-item-table w-20'>
+                  <div class='d-flex justify-content-between'>
+                    <span>{{ 'Category'|trans }}</span>
+                    <a href='#' data-action='reorder-entities' data-orderby='cat'><i class='fas {{ sortIcon("cat") }}'></i></a>
+                  </div>
+                </th>
+                <th class='category-item-table w-20'>
+                  <div class='d-flex justify-content-between'>
+                    <span>{{ 'Status'|trans }}</span>
+                    <a href='#' data-action='reorder-entities' data-orderby='status'><i class='fas {{ sortIcon("status") }}'></i></a>
+                  </div>
+                </th>
+                <th class='tags-item-table w-20'>
+                  {{ 'Tags'|trans }}
+                </th>
+                <th class='actions-item-rating w-10'>
+                  <div class='d-flex justify-content-between'>
+                    {# add mr-1 here because column is small #}
+                    <span class='mr-1'>{{ 'Rating'|trans }}</span>
+                    <a href='#' data-action='reorder-entities' data-orderby='rating'><i class='fas {{ sortIcon("rating") }}'></i></a>
+                  </div>
+                </th>
+                <th class='actions-item-owner col-2'>
+                  <div class='d-flex justify-content-between'>
+                    <span>{{ 'Owner'|trans }}</span>
+                    <a href='#' data-action='reorder-entities' data-orderby='user'><i class='fas {{ sortIcon("user") }}'></i></a>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in itemsArr|slice(0, DisplayParams.limit) %}
+                {% include 'show-item-table.html' %}
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
       {% endif %}
 
       {# LOAD MORE button #}

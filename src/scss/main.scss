@@ -495,14 +495,12 @@ tr:first-child td {
   border-top-width: 0;
 }
 
-/* responsive tables, with a threshold width pretty high */
-@media screen and (max-width: 800px) {
-  .table-container {
-    overflow-x: auto;
-  }
+/* enable responsive tables while preserving structure via horizontal scrolling.
+ * See: https://www.w3schools.com/howto/howto_css_table_responsive.asp
+ */
+.table-container {
+  overflow-x: auto;
 }
-
-
 
 /* TABLE SHOW MODE */
 .item-table {

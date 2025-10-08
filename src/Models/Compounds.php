@@ -419,6 +419,7 @@ final class Compounds extends AbstractRest
                 }
                 return $this->upsertCompound($existingId, $compoundData);
             }
+            throw new ImproperActionException(sprintf('Error importing compound: %s', $e->getMessage()));
         }
 
         $compoundId = $this->Db->lastInsertId();

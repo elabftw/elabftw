@@ -495,9 +495,7 @@ tr:first-child td {
   border-top-width: 0;
 }
 
-/* enable responsive tables while preserving structure via horizontal scrolling.
- * See: https://www.w3schools.com/howto/howto_css_table_responsive.asp
- */
+/* enable responsive tables while preserving structure via horizontal scrolling (phone, tablets, etc.) */
 .table-container {
   overflow-x: auto;
 }

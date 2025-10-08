@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use DateTimeImmutable;
 use Elabftw\Exceptions\ImproperActionException;
 
 use function str_repeat;
@@ -47,6 +48,7 @@ class FilterTest extends \PHPUnit\Framework\TestCase
             'time' => '',
         );
         $this->assertEquals($expected, Filter::separateDateAndTime($input));
+        $this->assertSame('Monday, July 14, 2025', Filter::formatLocalDate(new DateTimeImmutable('2025-07-14')));
     }
 
     public function testTitle(): void
@@ -56,6 +58,8 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('Untitled', Filter::title(''));
         $this->assertEquals('Untitled', Filter::title(' '));
         $this->assertEquals('no whitespace around', Filter::title(' no whitespace around '));
+        // test a too long string
+        $this->assertEquals(str_repeat('A', 255), Filter::title(str_repeat('A', 260)));
     }
 
     public function testBody(): void
@@ -87,5 +91,11 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('Roger', Filter::toPureString('<a href="attacker.com">Roger</a>'));
         $this->assertEquals('Roger', Filter::toPureString('<script>alert(1)</script><strong>Roger</strong>'));
         $this->assertEquals('Rabbit', Filter::toPureString('<i onwheel=alert(224)>Rabbit</i>'));
+    }
+
+    public function testIntOrNull(): void
+    {
+        $this->assertNull(Filter::intOrNull(''));
+        $this->assertSame(42, Filter::intOrNull('42'));
     }
 }

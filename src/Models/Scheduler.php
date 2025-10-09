@@ -419,13 +419,16 @@ final class Scheduler extends AbstractRest
         $event = $this->readOne();
         $oldStart = DateTime::createFromFormat(self::DATETIME_FORMAT, $event['start']);
         $oldEnd = DateTime::createFromFormat(self::DATETIME_FORMAT, $event['end']);
+        if (!$oldStart || !$oldEnd) {
+            throw new ImproperActionException('Invalid date format received.');
+        }
         $seconds = '0';
         if (strlen((string) $delta['milliseconds']) > 3) {
             $seconds = mb_substr((string) $delta['milliseconds'], 0, -3);
         }
-        $newStart = $oldStart->modify($delta['days'] . ' day')->modify($seconds . ' seconds'); // @phpstan-ignore-line
+        $newStart = $oldStart->modify($delta['days'] . ' day')->modify($seconds . ' seconds');
         $this->isFutureOrExplode($newStart);
-        $newEnd = $oldEnd->modify($delta['days'] . ' day')->modify($seconds . ' seconds'); // @phpstan-ignore-line
+        $newEnd = $oldEnd->modify($delta['days'] . ' day')->modify($seconds . ' seconds');
         $this->isFutureOrExplode($newEnd);
         $this->checkConstraints($newStart->format(self::DATETIME_FORMAT), $newEnd->format(self::DATETIME_FORMAT));
 
@@ -525,10 +528,7 @@ final class Scheduler extends AbstractRest
         $this->checkEndAfterStart($start, $end);
     }
 
-    /*
-     * createFromFormat and check it's not false.
-     * returns an array with $start and $end as 'Y-m-d H:i:s'
-     */
+    // returns an array with [$startDate, $endDate] as DateTimeImmutable objects.
     private function createFromFormat(string $start, string $end): array
     {
         $startDate = DateTimeImmutable::createFromFormat(self::DATETIME_FORMAT, $start);

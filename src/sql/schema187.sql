@@ -22,6 +22,9 @@ SET `end_dt` =
         ELSE STR_TO_DATE(LEFT(REPLACE(`end`, 'T', ' '), 19), '%Y-%m-%d %H:%i:%s')
         END;
 
+-- Verify no NULLs exist before enforcing NOT NULL
+-- If this query returns rows, the migration will fail
+SELECT id FROM team_events WHERE start_dt IS NULL;
 -- lock nullability once backfill is ok
 ALTER TABLE `team_events`
     MODIFY COLUMN `start_dt` DATETIME NOT NULL,

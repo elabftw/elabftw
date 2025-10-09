@@ -13,6 +13,6 @@ ALTER TABLE `team_events`
     DROP COLUMN `start`,
     DROP COLUMN `end`,
     CHANGE COLUMN `start_rollback` `start` VARCHAR(255) NOT NULL,
-    CHANGE COLUMN `end_rollback`   `end`   VARCHAR(255) NULL;
+    CHANGE COLUMN `end_rollback` `end` VARCHAR(255) NULL;
 
 UPDATE config SET conf_value = 186 WHERE conf_name = 'schema';

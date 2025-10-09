@@ -622,7 +622,6 @@ final class Scheduler extends AbstractRest
     {
         // Try ISO 8601
         $dt = DateTimeImmutable::createFromFormat(DateTime::ATOM, $date);
-
         // fallback: MySQL style DATETIME
         if ($dt === false) {
             $dt = DateTimeImmutable::createFromFormat(self::DATETIME_FORMAT, $date);

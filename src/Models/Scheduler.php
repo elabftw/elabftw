@@ -620,15 +620,24 @@ final class Scheduler extends AbstractRest
     // Date can be DateTime::ATOM, 'Y-m-d H:i:s' (MySQL DATETIME), or 'Y-m-d' (date-only)
     private function normalizeDate(string $date, bool $rmDay = false): string
     {
-        // try ISO 8601 first (includes timezone/offset)
+        // Try ISO 8601
         $dt = DateTimeImmutable::createFromFormat(DateTime::ATOM, $date);
+
+        // fallback: MySQL style DATETIME
         if ($dt === false) {
-            throw new ImproperActionException('Invalid date format: expected ISO 8601.');
+            $dt = DateTimeImmutable::createFromFormat(self::DATETIME_FORMAT, $date);
         }
-        $dt = $dt->setTime(0, 1);
-        // we don't want the end date to go over one day
-        if ($rmDay) {
-            $dt = $dt->modify('-3min');
+        // fallback: date-only
+        if ($dt === false) {
+            $dt = DateTimeImmutable::createFromFormat('Y-m-d', $date);
+            if ($dt === false) {
+                throw new ImproperActionException('Could not understand date format!');
+            }
+            $dt = $dt->setTime(0, 1);
+            // we don't want the end date to go over one day
+            if ($rmDay) {
+                $dt = $dt->modify('-3 minutes');
+            }
         }
         return $dt->format(self::DATETIME_FORMAT);
     }

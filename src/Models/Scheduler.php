@@ -528,20 +528,19 @@ final class Scheduler extends AbstractRest
         $this->checkEndAfterStart($start, $end);
     }
 
-    // returns an array with [$startDate, $endDate] as DateTimeImmutable objects.
-    private function createFromFormat(string $start, string $end): array
+    private function formatDate(string $input): DateTimeImmutable
     {
-        $startDate = DateTimeImmutable::createFromFormat(self::DATETIME_FORMAT, $start);
-        $endDate = DateTimeImmutable::createFromFormat(self::DATETIME_FORMAT, $end);
-        if ($startDate === false || $endDate === false) {
+        $date = DateTimeImmutable::createFromFormat(self::DATETIME_FORMAT, $input);
+        if ($date === false) {
             throw new ImproperActionException('Could not understand date format!');
         }
-        return array($startDate, $endDate);
+        return $date;
     }
 
     private function checkEndAfterStart(string $start, string $end): void
     {
-        [$startDate, $endDate] = $this->createFromFormat($start, $end);
+        $startDate = $this->formatDate($start);
+        $endDate = $this->formatDate($end);
         if ($endDate < $startDate) {
             throw new UnprocessableContentException(sprintf(
                 _('End time %s cannot be before start time %s.'),

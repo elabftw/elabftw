@@ -37,7 +37,7 @@ final class CompoundsController extends AbstractHtmlController
         return array_merge(
             parent::getData(),
             array(
-                'resourceCategoriesArr' => (new ItemsTypes($this->app->Users))->readAll(),
+                'itemsTemplatesArr' => (new ItemsTypes($this->app->Users))->readAll(),
             ),
         );
     }

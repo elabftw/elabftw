@@ -21,12 +21,14 @@
   </htmlpagefooter>
 
   <div id='header'>
-    <h1 class='entry-title'>{{ entityData.title }}</h1>
+    <h1 class='entry-title'>
+      {% if entityData.custom_id %}
+        <span class='customid-badge'>{{ entityData.custom_id }}</span>
+      {% endif %}
+      {{ entityData.title }}
+    </h1>
     <div class="entry-meta">
       <p>
-        {% if entityData.custom_id %}
-          <strong>{{ 'Custom ID'|trans }}:</strong> {{ entityData.custom_id }}<br>
-        {% endif %}
         <strong>{{ 'Date'|trans }}:</strong> {{ date }}<br>
         {% if entityData.tags %}
           {% set tags = entityData.tags|split('|') %}

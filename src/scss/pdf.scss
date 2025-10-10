@@ -209,3 +209,8 @@ blockquote {
   margin: 1.5em 10px;
   padding: 0.5em 10px;
 }
+
+.customid-badge {
+  background-color: variables.$superlight;
+  border: 1px solid variables.$firstlevel;
+}

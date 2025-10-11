@@ -57,74 +57,76 @@
     {# TABLE LAYOUT (0) #}
     {% if App.Users.userData.uploads_layout == 0 and Entity.entityData.uploads %}
       {% include 'filter-input-snippet.html' with {'target': 'uploadsTable'} %}
-      <table class='table mt-3' aria-label='{{ 'Attached files'|trans }}' data-table-sort='true'>
-        <thead>
-          <tr>
-            <th scope='col' class='col-4'>{{ 'Filename'|trans }}</th>
-            <th scope='col'>{{ 'Comment'|trans }}</th>
-            <th scope='col'>{{ 'Creation date'|trans }}</th>
-            <th scope='col'>{{ 'Filesize'|trans }}</th>
-            <th scope='col'>{{ 'Actions'|trans }}</th>
-          </tr>
-        </thead>
-        <tbody id='uploadsTable'>
-          {% for upload in Entity.entityData.uploads %}
-            <tr class='countable' id='uploadDiv_{{ upload.id }}'>
-              <td>
-                <button type='button' class='btn lh-normal hl-hover-gray p-1 mr-1' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-toggle-target='moreinfoDiv_{{ upload.id }}' aria-expanded='false' title='{{ 'More information'|trans }}' aria-label='{{ 'More information'|trans }}'>
-                  <i class='fas fa-caret-right fa-fw'></i>
-                </button>
-                {% if upload.state == enum('Elabftw\\Enums\\State').Archived.value %}
-                  {# use a span as title doesn't work directly on i element #}
-                  <span title='{{ 'Archived'|trans }}'><i class='fas fa-box-archive mr-1'></i></span>
-                {% endif %}
-                <span id='upload-filename_{{ upload.id }}' class='text-break'>{{ upload.real_name }}</span>
-                <div class='mt-2' id='moreinfoDiv_{{ upload.id }}' hidden>
-                  {% include 'upload-more-info.html' %}
-                </div>
-              </td>
-              {# COMMENT #}
-              <td>{% include('upload-comment.html') %}</td>
-              {# CREATED AT #}
-              <td><span class='relative-moment' title='{{ upload.created_at }}'></span></td>
-              {# FILESIZE #}
-              <td>{{ upload.filesize|default('0')|formatBytes }}</td>
-              {# ACTIONS #}
-              <td>
-                {% if loop.first %}
-                  <div id='last-uploaded-link' data-url='app/download.php?f={{ upload.long_name|e('url') }}' hidden></div>
-                {% endif %}
-                <a target='_blank' href='app/download.php?f={{ upload.long_name|e('url') }}&amp;name={{ upload.real_name|e('url') }}&amp;storage={{ upload.storage }}' rel='noopener' title='{{ 'Download'|trans }}' aria-label='{{ 'Download'|trans }}' class='btn hl-hover-gray p-1 mr-1'>
-                  <i class='fas fa-download fa-fw'></i>
-                </a>
-                {% if not upload.immutable %}
-                  {% if mode == 'edit' %}
-                    {# EDIT FILENAME #}
-                    <button type='button' title='{{ 'Edit filename'|trans }}' aria-label='{{ 'Edit filename'|trans }}' class='btn hl-hover-gray p-1 mr-1' data-action='rename-upload' data-id='{{ upload.id }}'>
-                      <i class='fas fa-fw fa-pencil-alt'></i>
-                    </button>
-                    {# UPLOAD NEW VERSION #}
-                    <button type='button' title='{{ 'Upload a new version of this file'|trans }}' aria-label='{{ 'Upload a new version of this file'|trans }}' class='btn hl-hover-gray p-1 mr-1' data-action='replace-upload' data-uploadid='{{ upload.id }}'>
-                      <i class='fas fa-fw fa-sync-alt'></i>
-                    </button>
-                    {% include('upload-replace-form.html') %}
-                  {% endif %}
-                  {% if not Entity.isReadOnly %}
-                    {# ARCHIVE #}
-                    <button type='button' title='{{ 'Archive/Unarchive'|trans }}' aria-label='{{ 'Archive/Unarchive'|trans }}' class='btn hover-warning p-1 mr-1' data-action='archive-upload' data-uploadid='{{ upload.id }}'>
-                      <i class='fas fa-box-archive'></i>
-                    </button>
-                    {# DESTROY #}
-                    <button type='button' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}'class='btn hover-danger p-1 mr-1' data-action='destroy-upload' data-uploadid='{{ upload.id }}'>
-                      <i class='fas fa-trash-alt'></i>
-                    </button>
-                  {% endif %}
-                {% endif %}
-              </td>
+      <div class='table-container'>
+        <table class='table mt-3' aria-label='{{ 'Attached files'|trans }}' data-table-sort='true'>
+          <thead>
+            <tr>
+              <th scope='col' class='col-4'>{{ 'Filename'|trans }}</th>
+              <th scope='col'>{{ 'Comment'|trans }}</th>
+              <th scope='col'>{{ 'Creation date'|trans }}</th>
+              <th scope='col'>{{ 'Filesize'|trans }}</th>
+              <th scope='col'>{{ 'Actions'|trans }}</th>
             </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+          </thead>
+          <tbody id='uploadsTable'>
+            {% for upload in Entity.entityData.uploads %}
+              <tr class='countable' id='uploadDiv_{{ upload.id }}'>
+                <td>
+                  <button type='button' class='btn lh-normal hl-hover-gray p-1 mr-1' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-toggle-target='moreinfoDiv_{{ upload.id }}' aria-expanded='false' title='{{ 'More information'|trans }}' aria-label='{{ 'More information'|trans }}'>
+                    <i class='fas fa-caret-right fa-fw'></i>
+                  </button>
+                  {% if upload.state == enum('Elabftw\\Enums\\State').Archived.value %}
+                    {# use a span as title doesn't work directly on i element #}
+                    <span title='{{ 'Archived'|trans }}'><i class='fas fa-box-archive mr-1'></i></span>
+                  {% endif %}
+                  <span id='upload-filename_{{ upload.id }}' class='text-break'>{{ upload.real_name }}</span>
+                  <div class='mt-2' id='moreinfoDiv_{{ upload.id }}' hidden>
+                    {% include 'upload-more-info.html' %}
+                  </div>
+                </td>
+                {# COMMENT #}
+                <td>{% include('upload-comment.html') %}</td>
+                {# CREATED AT #}
+                <td><span class='relative-moment' title='{{ upload.created_at }}'></span></td>
+                {# FILESIZE #}
+                <td>{{ upload.filesize|default('0')|formatBytes }}</td>
+                {# ACTIONS #}
+                <td>
+                  {% if loop.first %}
+                    <div id='last-uploaded-link' data-url='app/download.php?f={{ upload.long_name|e('url') }}' hidden></div>
+                  {% endif %}
+                  <a target='_blank' href='app/download.php?f={{ upload.long_name|e('url') }}&amp;name={{ upload.real_name|e('url') }}&amp;storage={{ upload.storage }}' rel='noopener' title='{{ 'Download'|trans }}' aria-label='{{ 'Download'|trans }}' class='btn hl-hover-gray p-1 mr-1'>
+                    <i class='fas fa-download fa-fw'></i>
+                  </a>
+                  {% if not upload.immutable %}
+                    {% if mode == 'edit' %}
+                      {# EDIT FILENAME #}
+                      <button type='button' title='{{ 'Edit filename'|trans }}' aria-label='{{ 'Edit filename'|trans }}' class='btn hl-hover-gray p-1 mr-1' data-action='rename-upload' data-id='{{ upload.id }}'>
+                        <i class='fas fa-fw fa-pencil-alt'></i>
+                      </button>
+                      {# UPLOAD NEW VERSION #}
+                      <button type='button' title='{{ 'Upload a new version of this file'|trans }}' aria-label='{{ 'Upload a new version of this file'|trans }}' class='btn hl-hover-gray p-1 mr-1' data-action='replace-upload' data-uploadid='{{ upload.id }}'>
+                        <i class='fas fa-fw fa-sync-alt'></i>
+                      </button>
+                      {% include('upload-replace-form.html') %}
+                    {% endif %}
+                    {% if not Entity.isReadOnly %}
+                      {# ARCHIVE #}
+                      <button type='button' title='{{ 'Archive/Unarchive'|trans }}' aria-label='{{ 'Archive/Unarchive'|trans }}' class='btn hover-warning p-1 mr-1' data-action='archive-upload' data-uploadid='{{ upload.id }}'>
+                        <i class='fas fa-box-archive'></i>
+                      </button>
+                      {# DESTROY #}
+                      <button type='button' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}' class='btn hover-danger p-1 mr-1' data-action='destroy-upload' data-uploadid='{{ upload.id }}'>
+                        <i class='fas fa-trash-alt'></i>
+                      </button>
+                    {% endif %}
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
 
     {# DEFAULT LAYOUT (1) #}
     {% else %}

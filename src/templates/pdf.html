@@ -21,7 +21,12 @@
   </htmlpagefooter>
 
   <div id='header'>
-      <h1 class='entry-title'>{{ entityData.title }}</h1>
+    <h1 class='entry-title'>
+      {% if entityData.custom_id %}
+        <span style='color:#4d4c4c'>{{ entityData.custom_id }}</span>
+      {% endif %}
+      {{ entityData.title }}
+    </h1>
     <div class="entry-meta">
       <p>
         <strong>{{ 'Date'|trans }}:</strong> {{ date }}<br>

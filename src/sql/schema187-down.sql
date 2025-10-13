@@ -1,4 +1,14 @@
 -- revert schema 187
+
+-- drop indexes
+DROP INDEX `idx_team_events_item_start_end` ON `team_events`;
+DROP INDEX `idx_team_events_team_start_end` ON `team_events`;
+DROP INDEX `idx_team_events_user_start_end` ON `team_events`;
+
+-- drop constraint
+ALTER TABLE `team_events`
+    DROP CHECK `chk_end_after_start`;
+
 ALTER TABLE `team_events`
     ADD COLUMN `start_rollback` VARCHAR(255) NULL AFTER `item`,
     ADD COLUMN `end_rollback` VARCHAR(255) NULL AFTER `start_rollback`;

@@ -52,6 +52,6 @@ ALTER TABLE `team_events`
     ADD CONSTRAINT `chk_end_after_start` CHECK (`end` >= `start`);
 
 -- performance: indexes for scheduler queries
-CREATE INDEX IF NOT EXISTS `idx_team_events_item_start_end` ON `team_events` (`item`, `start`, `end`);
-CREATE INDEX IF NOT EXISTS `idx_team_events_team_start_end` ON `team_events` (`team`, `start`, `end`);
-CREATE INDEX IF NOT EXISTS `idx_team_events_user_start_end` ON `team_events` (`userid`, `start`, `end`);
+CREATE INDEX `idx_team_events_item_start_end` ON `team_events` (`item`, `start`, `end`);
+CREATE INDEX `idx_team_events_team_start_end` ON `team_events` (`team`, `start`, `end`);
+CREATE INDEX `idx_team_events_user_start_end` ON `team_events` (`userid`, `start`, `end`);

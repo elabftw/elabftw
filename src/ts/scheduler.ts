@@ -411,8 +411,8 @@ if (window.location.pathname === '/scheduler.php') {
         reloadCalendarEvents();
       // EXPORTS
       } else if (el.matches('[data-action="export-scheduler"]')) {
-        const from = (document.getElementById('schedulerDateFrom') as HTMLSelectElement).value;
-        const to = (document.getElementById('schedulerDateTo') as HTMLSelectElement).value;
+        const from = (document.getElementById('schedulerDateFrom') as HTMLInputElement).value;
+        const to = (document.getElementById('schedulerDateTo') as HTMLInputElement).value;
         const currentParams = new URLSearchParams(window.location.search);
         // make an export based on the scheduler's current filters
         const exportUrl = new URL('make.php', window.location.origin);

@@ -49,8 +49,8 @@
         </div>
       </div>
       <div class='modal-footer'>
-        <button type='button' data-action='export-scheduler' class='btn btn-primary'>{{ 'Export'|trans }}</button>
-        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'></button>
+        <button type='button' class='btn btn-primary' data-action='export-scheduler' aria-label='{{ 'Export'|trans }}'>{{ 'Export'|trans }}</button>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
       </div>
     </div>
   </div>
@@ -191,10 +191,10 @@
     {# RIGHT PART: SETTINGS #}
     {# div is necessary to prevent the link being too high, align-self-end to put it at bottom #}
     <div class='align-self-end'>
-      <button type='button' data-action='toggle-modal' data-target='schedulerExportsModal' class='btn hl-hover-gray d-inline p-2 mr-2'>
+      <button type='button' data-action='toggle-modal' data-target='schedulerExportsModal' class='btn hl-hover-gray d-inline p-2 mr-2' aria-label='{{ 'Export'|trans }}' title='{{ 'Export'|trans }}'>
         <i class='fas fa-download fa-fw'></i>
       </button>
-      <a href='#' data-action='toggle-modal' data-target='schedulerExportsModal' aria-label='{{ 'Settings'|trans }}' title='{{ 'Settings'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0'>
+      <a href='#' data-action='toggle-modal' data-target='schedulerSettingsModal' aria-label='{{ 'Settings'|trans }}' title='{{ 'Settings'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0'>
         <i class='fas fa-cogs fa-fw'></i>
       </a>
     </div>

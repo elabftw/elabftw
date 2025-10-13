@@ -35,6 +35,7 @@ import 'bootstrap/js/src/modal.js';
 import { DateTime } from 'luxon';
 import 'jquery-ui/ui/widgets/autocomplete';
 import { ApiC } from './api';
+import { on } from "./handlers";
 import { Action } from './interfaces';
 import { TomSelect } from './misc';
 
@@ -409,6 +410,30 @@ if (window.location.pathname === '/scheduler.php') {
       // FILTER OWNER
       } else if (el.matches('[data-action="filter-owner"]')) {
         reloadCalendarEvents();
+      // EXPORTS
+      } else if (el.matches('[data-action="export-scheduler"]')) {
+        const from = (document.getElementById('schedulerDateFrom') as HTMLSelectElement).value;
+        const to = (document.getElementById('schedulerDateTo') as HTMLSelectElement).value;
+        const currentParams = new URLSearchParams(window.location.search);
+        // make an export based on the scheduler's current filters
+        const exportUrl = new URL('make.php', window.location.origin);
+        exportUrl.searchParams.set('format', 'schedulerReport');
+        exportUrl.searchParams.set('start', from);
+        exportUrl.searchParams.set('end', to);
+        // append item filters
+        const items = currentParams.getAll('items[]');
+        items.forEach(id => exportUrl.searchParams.append('items[]', id));
+        // append category if present
+        const category = currentParams.get('category');
+        if (category && category !== 'all') {
+          exportUrl.searchParams.set('category', category);
+        }
+        // append owner if present
+        const owner = currentParams.get('eventOwner');
+        if (owner && owner !== 'all') {
+          exportUrl.searchParams.set('eventOwner', owner);
+        }
+        window.location.href = exportUrl.toString();
       }
     });
 

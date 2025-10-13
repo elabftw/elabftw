@@ -35,7 +35,6 @@ import 'bootstrap/js/src/modal.js';
 import { DateTime } from 'luxon';
 import 'jquery-ui/ui/widgets/autocomplete';
 import { ApiC } from './api';
-import { on } from "./handlers";
 import { Action } from './interfaces';
 import { TomSelect } from './misc';
 

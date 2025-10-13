@@ -206,14 +206,14 @@ final class MakeController extends AbstractController
     {
         $defaultStart = '2018-12-23T00:00:00+01:00';
         $defaultEnd = '2119-12-23T00:00:00+01:00';
-        return (new MakeSchedulerReport(
+        return new MakeSchedulerReport(
             new Scheduler(
                 new Items($this->requester),
                 null,
                 $this->Request->query->getString('start', $defaultStart),
                 $this->Request->query->getString('end', $defaultEnd),
             ),
-        ))->getResponse();
+        )->getResponse();
     }
 
     private function makeZip(): Response

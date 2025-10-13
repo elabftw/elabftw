@@ -75,7 +75,7 @@ class MakeSchedulerReportTest extends \PHPUnit\Framework\TestCase
         $csv = $Make->getFileContent();
         $this->assertNotEmpty($csv, 'CSV response should not be empty');
         // normalize and split lines
-        $lines = array_filter(array_map('trim', explode('\n', $csv)));
+        $lines = array_filter(array_map('trim', explode("\n", $csv)));
         $this->assertGreaterThan(1, count($lines), 'CSV should contain header + at least one data line');
         // parse header + first data row
         $header = str_getcsv($lines[0]);

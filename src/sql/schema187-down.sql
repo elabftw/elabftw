@@ -1,9 +1,9 @@
 -- revert schema 187
 
 -- drop indexes
-DROP INDEX `idx_team_events_item_start_end` ON `team_events`;
-DROP INDEX `idx_team_events_team_start_end` ON `team_events`;
-DROP INDEX `idx_team_events_user_start_end` ON `team_events`;
+CALL DropIdx('team_events', 'idx_team_events_item_start_end');
+CALL DropIdx('team_events', 'idx_team_events_team_start_end');
+CALL DropIdx('team_events', 'idx_team_events_user_start_end');
 
 -- drop constraint
 ALTER TABLE `team_events`

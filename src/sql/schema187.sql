@@ -17,7 +17,7 @@ SET `start_dt` =
 UPDATE `team_events`
 SET `end_dt` =
     CASE
-        WHEN `end` IS NULL OR `end` = '' OR `end` = '0000-00-00 00:00:00'
+        WHEN `end` IS NULL OR `end` = '' OR `end` IN ('0000-00-00 00:00:00', '0000-00-00T00:00:00')
             THEN NULL
         ELSE STR_TO_DATE(LEFT(REPLACE(`end`, 'T', ' '), 19), '%Y-%m-%d %H:%i:%s')
         END;
@@ -28,11 +28,11 @@ SELECT id FROM team_events WHERE start_dt IS NULL;
 -- lock nullability once backfill is ok
 ALTER TABLE `team_events`
     MODIFY COLUMN `start_dt` DATETIME NOT NULL,
-    MODIFY COLUMN `end_dt` DATETIME NULL;
+    MODIFY COLUMN `end_dt` DATETIME NOT NULL;
 
 -- finally, Swap columns
 ALTER TABLE `team_events`
     DROP COLUMN `start`,
     DROP COLUMN `end`,
         CHANGE COLUMN `start_dt` `start` DATETIME NOT NULL,
-        CHANGE COLUMN `end_dt` `end` DATETIME NULL;
+        CHANGE COLUMN `end_dt` `end` DATETIME NOT NULL;

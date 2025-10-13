@@ -1162,7 +1162,7 @@ CREATE TABLE `team_events` (
   `team` int(10) UNSIGNED NOT NULL,
   `item` int(10) UNSIGNED NOT NULL,
   `start` DATETIME NOT NULL,
-  `end` DATETIME DEFAULT NULL,
+  `end` DATETIME NOT NULL,
   `title` varchar(255) DEFAULT NULL,
   `userid` int(10) UNSIGNED NOT NULL,
   `experiment` int(10) UNSIGNED DEFAULT NULL,

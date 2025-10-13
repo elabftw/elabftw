@@ -47,10 +47,11 @@
             <input id='schedulerDateTo' name='schedulerDateTo' type='date' class='form-control col-md-6' value='{{ "now"|date('Y-m-d') }}'/>
           </div>
         </div>
+        <p class='smallgray pl-3 mt-4'>{{ 'Note: the export reflects the current scheduler view, including all active filters.'|trans }}</p>
       </div>
       <div class='modal-footer'>
-        <button type='button' class='btn btn-primary' data-action='export-scheduler' aria-label='{{ 'Export'|trans }}'>{{ 'Export'|trans }}</button>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+        <button type='button' class='btn btn-primary' data-action='export-scheduler' aria-label='{{ 'Export'|trans }}'>{{ 'Export'|trans }}</button>
       </div>
     </div>
   </div>

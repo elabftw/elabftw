@@ -168,7 +168,26 @@ on('patch-newcomer_banner', () => {
 on('export-scheduler', () => {
   const from = (document.getElementById('schedulerDateFrom') as HTMLSelectElement).value;
   const to = (document.getElementById('schedulerDateTo') as HTMLSelectElement).value;
-  window.location.href = `make.php?format=schedulerReport&start=${encodeURIComponent(from)}&end=${encodeURIComponent(to)}`;
+  const currentParams = new URLSearchParams(window.location.search);
+  // make an export based on the scheduler's current filters
+  const exportUrl = new URL('make.php', window.location.origin);
+  exportUrl.searchParams.set('format', 'schedulerReport');
+  exportUrl.searchParams.set('start', from);
+  exportUrl.searchParams.set('end', to);
+  // append item filters
+  const items = currentParams.getAll('items[]');
+  items.forEach(id => exportUrl.searchParams.append('items[]', id));
+  // append category if present
+  const category = currentParams.get('category');
+  if (category && category !== 'all') {
+    exportUrl.searchParams.set('category', category);
+  }
+  // append owner if present
+  const owner = currentParams.get('eventOwner');
+  if (owner && owner !== 'all') {
+    exportUrl.searchParams.set('eventOwner', owner);
+  }
+  window.location.href = exportUrl.toString();
 });
 
 on('patch-onboarding-email', () => {

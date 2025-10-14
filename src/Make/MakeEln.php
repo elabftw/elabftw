@@ -17,11 +17,13 @@ use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Metadata;
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\Users\Users;
+use Elabftw\Params\BaseQueryParams;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\TwigTrait;
 use League\Flysystem\UnableToReadFile;
@@ -174,7 +176,8 @@ class MakeEln extends AbstractMakeEln
         }
 
         // UPLOADS
-        $uploadedFilesArr = $e['uploads'] ?? array();
+        // ignore the uploads from entity and fetch a new list including archived uploads
+        $uploadedFilesArr = $entity->Uploads->readAll(new BaseQueryParams(states: array(State::Normal, State::Archived)));
         if (!empty($uploadedFilesArr)) {
             try {
                 // this gets modified by the function so we have the correct real_names

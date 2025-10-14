@@ -104,9 +104,16 @@
   height: auto;
 }
 
+// the input is a two-lined tomSelect, allowing it to behave same as tags input. But we have a Select so this is needed.
+// behavior inspired from https://tom-select.js.org/plugins/no-backspace-delete/
+#itemSelectWrapper .ts-control {
+  display: none !important;
+}
+
 .selected-item-badge {
   border-radius: 999px;
   color: variables.$mainbackground;
+  cursor: pointer;
   display: inline-block;
   font-size: 0.875rem;
   font-weight: 500;

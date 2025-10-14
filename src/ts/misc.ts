@@ -23,6 +23,7 @@ import TomSelectClearButton from 'tom-select/dist/esm/plugins/clear_button/plugi
 import TomSelectDropdownInput from 'tom-select/dist/esm/plugins/dropdown_input/plugin.js';
 import TomSelectNoActiveItems from 'tom-select/dist/esm/plugins/no_active_items/plugin.js';
 import TomSelectRemoveButton from 'tom-select/dist/esm/plugins/remove_button/plugin.js';
+import TomSelectNoBackspaceDelete from 'tom-select/dist/esm/plugins/no_backspace_delete/plugin.js';
 
 // get html of current page reloaded via get
 function fetchCurrentPage(tag = ''): Promise<Document>{
@@ -658,6 +659,7 @@ TomSelect.define('clear_button', TomSelectClearButton);
 TomSelect.define('dropdown_input', TomSelectDropdownInput);
 TomSelect.define('no_active_items', TomSelectNoActiveItems);
 TomSelect.define('remove_button', TomSelectRemoveButton);
+TomSelect.define('no_backspace_delete', TomSelectNoBackspaceDelete);
 export { TomSelect };
 
 // toggle appearance of button

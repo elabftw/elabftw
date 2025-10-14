@@ -35,6 +35,7 @@ import 'bootstrap/js/src/modal.js';
 import { DateTime } from 'luxon';
 import 'jquery-ui/ui/widgets/autocomplete';
 import { ApiC } from './api';
+import i18next from './i18n';
 import { Action } from './interfaces';
 import { TomSelect } from './misc';
 
@@ -63,6 +64,7 @@ if (window.location.pathname === '/scheduler.php') {
       dropdown_input: {},
       no_active_items: {},
       remove_button: {},
+      no_backspace_delete: {},
     },
   };
 
@@ -434,12 +436,17 @@ if (window.location.pathname === '/scheduler.php') {
       const categorySelect = document.getElementById('categorySelect') as HTMLSelectElement;
 
       const urlParams = new URLSearchParams(window.location.search);
-      // load items on page load (e.g. coming from Resource view page)
       const selectedItems = urlParams.getAll('items[]');
+      // clone shared plugins, but remove dropdown_input for THIS instance
+      const plugins = { ...sharedTomSelectOptions.plugins, no_backspace_delete: {} };
+      delete plugins.dropdown_input;
 
       const itemTs = new TomSelect(itemSelect, {
         ...sharedTomSelectOptions,
-        onChange: (selectedItems) => {
+        plugins,
+        controlInput: '#itemSelectInput',
+        dropdownParent: '#itemSelectWrapper',
+        onChange: (selectedItems: string[]) => {
           lockScopeButton(selectedItems);
 
           const container = document.getElementById('selectedItemsContainer')!;
@@ -463,17 +470,20 @@ if (window.location.pathname === '/scheduler.php') {
             const opt = itemSelect.querySelector(`option[value="${id}"]`) as HTMLOptionElement;
             if (!opt) return;
 
-            const badge = document.createElement('a');
-            badge.href = `/database.php?mode=view&id=${id}`;
-            badge.target='_blank';
+            const badge = document.createElement('span');
             badge.textContent = opt.textContent;
             badge.className = 'selected-item-badge';
             const rawColor = opt.dataset.color;
             badge.style.backgroundColor = rawColor?.startsWith('#') ? rawColor : `#${rawColor || '000'}`;
             badge.style.color = 'white';
 
+            badge.addEventListener('click', () => {
+              const confirmRemove = confirm(i18next.t('tag-delete-warning'));
+              if (!confirmRemove) return;
+              itemTs.removeItem(id);
+              badge.remove();
+            });
             display.appendChild(badge);
-
             url.searchParams.append('items[]', id);
             params.append('items[]', id);
           });

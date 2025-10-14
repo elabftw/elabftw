@@ -151,12 +151,22 @@ if (window.location.pathname === '/scheduler.php') {
       badge.style.backgroundColor = rawColor?.startsWith('#') ? rawColor : `#${rawColor || '000'}`;
       badge.style.color = 'white';
 
-      badge.addEventListener('click', () => {
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'ml-2 close text-white';
+      removeBtn.innerHTML = '&times;';
+      removeBtn.style.fontSize = '1.1em';
+      removeBtn.style.lineHeight = '1';
+      removeBtn.style.textDecoration = 'none';
+      removeBtn.style.outline = 'none';
+
+      removeBtn.type = 'button';
+      removeBtn.addEventListener('click', () => {
         const confirmRemove = confirm(i18next.t('filter-delete-warning'));
         if (!confirmRemove) return;
         tomSelect.removeItem(id);
         badge.remove();
       });
+      badge.appendChild(removeBtn);
       wrapper.appendChild(badge);
     };
 
@@ -448,10 +458,6 @@ if (window.location.pathname === '/scheduler.php') {
       // FILTER OWNER
       } else if (el.matches('[data-action="filter-owner"]')) {
         reloadCalendarEvents();
-      // FILTER OWNER
-      } else if (el.matches('[data-action="clear-selected-items"]')) {
-        const itemSelect = document.getElementById('itemSelect') as HTMLSelectElement & { tomselect?: TomSelect };
-        itemSelect.tomselect.clear();
       }
     });
 

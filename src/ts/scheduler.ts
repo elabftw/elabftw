@@ -452,7 +452,6 @@ if (window.location.pathname === '/scheduler.php') {
       } else if (el.matches('[data-action="clear-selected-items"]')) {
         const itemSelect = document.getElementById('itemSelect') as HTMLSelectElement & { tomselect?: TomSelect };
         itemSelect.tomselect.clear();
-        console.log('cleared');
       }
     });
 

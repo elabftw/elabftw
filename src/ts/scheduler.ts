@@ -152,14 +152,11 @@ if (window.location.pathname === '/scheduler.php') {
       badge.style.color = 'white';
 
       const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
       removeBtn.className = 'ml-2 close text-white';
       removeBtn.innerHTML = '&times;';
       removeBtn.style.fontSize = '1.1em';
-      removeBtn.style.lineHeight = '1';
-      removeBtn.style.textDecoration = 'none';
-      removeBtn.style.outline = 'none';
 
-      removeBtn.type = 'button';
       removeBtn.addEventListener('click', () => {
         const confirmRemove = confirm(i18next.t('filter-delete-warning'));
         if (!confirmRemove) return;

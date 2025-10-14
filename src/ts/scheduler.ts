@@ -307,7 +307,10 @@ if (window.location.pathname === '/scheduler.php') {
                 const container = document.getElementById('selectedItemsContainerModal')!;
                 const display = document.getElementById('selectedItemsDisplayModal')!;
                 display.innerHTML = '';
-                if (selectedItems.length === 0) container.classList.add('d-none');
+                if (selectedItems.length === 0) {
+                  container.classList.add('d-none');
+                  return;
+                }
                 container.classList.remove('d-none');
                 selectedItems.forEach(id => {
                   createBadge(itemSelectModalEl, manualSelect, display, id);
@@ -445,6 +448,11 @@ if (window.location.pathname === '/scheduler.php') {
       // FILTER OWNER
       } else if (el.matches('[data-action="filter-owner"]')) {
         reloadCalendarEvents();
+      // FILTER OWNER
+      } else if (el.matches('[data-action="clear-selected-items"]')) {
+        const itemSelect = document.getElementById('itemSelect') as HTMLSelectElement & { tomselect?: TomSelect };
+        itemSelect.tomselect.clear();
+        console.log('cleared');
       }
     });
 

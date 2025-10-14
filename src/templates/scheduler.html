@@ -166,9 +166,14 @@
       </a>
     </div>
   </div>
-  <div id='selectedItemsContainer' class='mt-2 d-none'>
-    <strong class='d-block mb-1'>{{ 'Selected items:'|trans }}</strong>
-    <div id='selectedItemsDisplay' class='d-flex flex-wrap gap-2'></div>
+  <div id='selectedItemsContainer' class='m-4 d-none'>
+    <div class='d-flex mb-4'>
+      <strong class='d-block'>{{ 'Selected items:'|trans }}</strong>
+      <button type='button' data-action='clear-selected-items' aria-label='{{ 'Clear all'|trans }}' title='{{ 'Clear all'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2 ml-2'>
+        <i class='fas fa-fw fa-lg fa-trash-alt'></i>
+      </button>
+    </div>
+    <div id='selectedItemsDisplay' class='d-flex flex-wrap'></div>
   </div>
 
   <hr>
@@ -183,7 +188,7 @@
           </button>
         </div>
         <div class='modal-body mr-2'>
-          {% include 'scheduler-filter-items.html' with {'categorySelectId': 'categorySelectModal', 'itemSelectId': 'itemSelectModal', 'itemSelectWrapperId' : 'itemSelectWrapperModal', 'itemSelectInputId': 'itemSelectInputModal'} %}
+          {% include 'scheduler-filter-items.html' with {'categorySelectId': 'categorySelectModal', 'itemSelectId': 'itemSelectModal', 'itemSelectWrapperId': 'itemSelectWrapperModal', 'itemSelectInputId': 'itemSelectInputModal'} %}
           <div id='selectedItemsContainerModal' class='mt-2 d-none'>
             <strong class='d-block mb-1'>{{ 'Selected items:'|trans }}</strong>
             <div id='selectedItemsDisplayModal' class='d-flex flex-wrap gap-2'></div>

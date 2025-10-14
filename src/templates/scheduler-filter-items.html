@@ -5,7 +5,7 @@
   {% if App.devMode -%}
     <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
   {%- endif %}
-  <select id='{{ categorySelectId|default('categorySelect') }}' aria-label='{{ 'Filter by category'|trans }}' class='form-control'>
+  <select id='{{ categorySelectId|default('categorySelect') }}' aria-label='{{ 'Filter by category'|trans }}' class='form-control col-md-6'>
     <option value=''>{{ 'Filter by category'|trans }}</option>
     {% for category in bookableItemsTypes %}
       <option value='{{ category.id }}'>{{ category.team_name }} - {{ category.title }}</option>
@@ -15,7 +15,7 @@
     <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
   {%- endif %}
   {# minimal wrapper just for the resource select + its control input #}
-  <div id='{{ itemSelectWrapperId|default('itemSelectWrapper') }}' class='input-group-append'>
+  <div id='{{ itemSelectWrapperId|default('itemSelectWrapper') }}' class='input-group-append col-md-6 ml-n3'>
     <select hidden id='{{ itemSelectId|default('itemSelect') }}' name='items[]' aria-label='{{ 'Select a resource'|trans }}' class='form-control form-inline'>
       <option value=''>{{ 'Select a resource'|trans }}</option>
       {% for item in itemsArr %}

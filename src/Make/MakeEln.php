@@ -177,7 +177,10 @@ class MakeEln extends AbstractMakeEln
 
         // UPLOADS
         // ignore the uploads from entity and fetch a new list including archived uploads
-        $uploadedFilesArr = $entity->Uploads->readAll(new BaseQueryParams(states: array(State::Normal, State::Archived)));
+        $uploadedFilesArr = $entity->Uploads->readAll(new BaseQueryParams(
+            limit: PHP_INT_MAX,
+            states: array(State::Normal, State::Archived),
+        ));
         if (!empty($uploadedFilesArr)) {
             try {
                 // this gets modified by the function so we have the correct real_names

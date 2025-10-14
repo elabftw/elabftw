@@ -56,6 +56,7 @@ const t = {
     "form-validation-error": "フォームの検証エラー。",
     "generic-delete-warning": "削除しますか？",
     "hide-deleted": "削除を隠す",
+    "filter-delete-warning": "Remove this filter?",
     "import": "インポート",
     "import-spreadsheet": "スプレッドシート（xls、csv、ods、...）のインポート",
     "import-error": "インポート中にエラーが発生しました。コンソールで詳細を確認してください。",

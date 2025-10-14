@@ -56,6 +56,7 @@ const t = {
     "form-validation-error": "表单验证错误。",
     "generic-delete-warning": "删除？",
     "hide-deleted": "隐藏已删除",
+    "filter-delete-warning": "Remove this filter?",
     "import": "导入",
     "import-spreadsheet": "导入电子表格（xls, csv, ods, ...）",
     "import-error": "导入过程中发生错误。请检查控制台以获取更多信息。",

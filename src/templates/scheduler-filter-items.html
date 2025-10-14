@@ -15,7 +15,7 @@
     <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
   {%- endif %}
   {# minimal wrapper just for the resource select + its control input #}
-  <div id='itemSelectWrapper' class='input-group-append'>
+  <div id='{{ itemSelectWrapperId|default('itemSelectWrapper') }}' class='input-group-append'>
     <select hidden id='{{ itemSelectId|default('itemSelect') }}' name='items[]' aria-label='{{ 'Select a resource'|trans }}' class='form-control form-inline'>
       <option value=''>{{ 'Select a resource'|trans }}</option>
       {% for item in itemsArr %}
@@ -25,6 +25,6 @@
       {% endfor %}
     </select>
     {# external control input that clears when an item is selected #}
-    <input type='text' id='itemSelectInput' class='form-control' autocomplete='off' placeholder='{{ 'Type to filter…'|trans }}'>
+    <input type='text' id='{{ itemSelectInputId|default('itemSelectInput') }}' class='form-control' autocomplete='off' placeholder='{{ 'Type to filter…'|trans }}'>
   </div>
 </div>

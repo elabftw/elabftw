@@ -106,7 +106,8 @@
 
 // the input is a two-lined tomSelect, allowing it to behave same as tags input. But we have a Select so this is needed.
 // behavior inspired from https://tom-select.js.org/plugins/no-backspace-delete/
-#itemSelectWrapper {
+#itemSelectWrapper,
+#itemSelectWrapperModal {
   .ts-control,
   .ts-wrapper {
     display: none !important;

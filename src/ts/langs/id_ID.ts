@@ -56,6 +56,7 @@ const t = {
     "form-validation-error": "Kesalahan memvalidasi formulir.",
     "generic-delete-warning": "Hapus ini?",
     "hide-deleted": "Sembunyikan terhapus",
+    "filter-delete-warning": "Remove this filter?",
     "import": "Impor",
     "import-spreadsheet": "Mengimpor spreadsheet (xls, csv, ods, ...)",
     "import-error": "Kesalahan selama impor. Silakan periksa konsol untuk informasi lebih lanjut.",

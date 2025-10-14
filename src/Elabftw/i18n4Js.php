@@ -90,6 +90,7 @@ final class i18n4Js
             'form-validation-error' => _('Error validating the form.'),
             'generic-delete-warning' => _('Delete this?'),
             'hide-deleted' => _('Hide deleted'),
+            'filter-delete-warning' => _('Remove this filter?'),
             'import' => _('Import'),
             'import-spreadsheet' => _('Import a spreadsheet (xls, csv, ods, ...)'),
             // import errors often print html content

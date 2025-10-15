@@ -80,6 +80,9 @@ if (window.location.pathname === '/profile.php') {
     if (el.value === 'experiments_templates') {
       entityType = 'experiments';
     }
+    if (el.value === 'items') {
+      entityType = 'resources';
+    }
     ApiC.getJson(`teams/current/${entityType}_categories`).then(categories => {
       // Append new options
       categories.forEach(category => {

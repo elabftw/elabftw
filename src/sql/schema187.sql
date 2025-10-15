@@ -30,6 +30,20 @@ UPDATE `team_events`
 SET `end_dt` = `start_dt`
 WHERE `end_dt` IS NULL;
 
+-- ensure start_dt is not NULL (derive from end_dt, else created_at)
+UPDATE `team_events`
+SET `start_dt` = COALESCE(
+    `start_dt`,
+    CASE WHEN `end_dt` IS NOT NULL THEN DATE_SUB(`end_dt`, INTERVAL 1 HOUR) END,
+    `created_at`
+)
+WHERE `start_dt` IS NULL;
+
+-- fix legacy data: end < start becomes end = start + 1 hour
+UPDATE `team_events`
+SET `end_dt` = DATE_ADD(`start_dt`, INTERVAL 1 HOUR)
+WHERE `end_dt` < `start_dt`;
+
 -- Verify before locking nullability (should return zero rows)
 SELECT id FROM team_events WHERE start_dt IS NULL
 UNION ALL
@@ -40,12 +54,15 @@ ALTER TABLE `team_events`
     MODIFY COLUMN `start_dt` DATETIME NOT NULL,
     MODIFY COLUMN `end_dt` DATETIME NOT NULL;
 
--- finally, Swap columns
+-- drop the old VARCHARs
 ALTER TABLE `team_events`
     DROP COLUMN `start`,
-    DROP COLUMN `end`,
-        CHANGE COLUMN `start_dt` `start` DATETIME NOT NULL,
-        CHANGE COLUMN `end_dt` `end` DATETIME NOT NULL;
+    DROP COLUMN `end`;
+
+-- then rename the *_dt
+ALTER TABLE `team_events`
+    CHANGE COLUMN `start_dt` `start` DATETIME NOT NULL,
+    CHANGE COLUMN `end_dt`   `end`   DATETIME NOT NULL;
 
 -- Constraints
 ALTER TABLE `team_events`

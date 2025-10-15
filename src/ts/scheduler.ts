@@ -153,9 +153,8 @@ if (window.location.pathname === '/scheduler.php') {
 
       const removeBtn = document.createElement('button');
       removeBtn.type = 'button';
-      removeBtn.className = 'ml-2 close text-white';
+      removeBtn.className = 'ml-2 close text-white text-big';
       removeBtn.innerHTML = '&times;';
-      removeBtn.style.fontSize = '1.1em';
 
       removeBtn.addEventListener('click', () => {
         const confirmRemove = confirm(i18next.t('filter-delete-warning'));

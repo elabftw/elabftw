@@ -148,8 +148,7 @@ if (window.location.pathname === '/scheduler.php') {
       badge.textContent = opt.textContent;
       badge.className = 'selected-item-badge';
       const rawColor = opt.dataset.color;
-      badge.style.backgroundColor = rawColor?.startsWith('#') ? rawColor : `#${rawColor || '000'}`;
-      badge.style.color = 'white';
+      badge.style.setProperty('--badge-color', rawColor?.startsWith('#') ? rawColor : `#${rawColor || '000'}`);
 
       const removeBtn = document.createElement('button');
       removeBtn.type = 'button';

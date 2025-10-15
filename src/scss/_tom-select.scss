@@ -115,6 +115,7 @@
 }
 
 .selected-item-badge {
+  background-color: var(--badge-color, #000);
   border-radius: 999px;
   color: variables.$mainbackground;
   cursor: pointer;

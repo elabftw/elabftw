@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Import;
 
-use Countable;
 use DateTimeImmutable;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Enums\Action;
@@ -36,6 +35,7 @@ use Override;
 
 use function array_find;
 use function basename;
+use function is_array;
 use function json_decode;
 use function rawurlencode;
 use function sprintf;
@@ -363,7 +363,7 @@ class Eln extends AbstractZip
                         // for backward compatibility with elabftw's .eln from before 4.9, the "mention" attribute MAY contain all, instead of just being a link with an @id
                         // after 4.9 the "mention" attribute contains only a link to an @type: Dataset node
                         // after 5.1 the "mention" will point to a Dataset contained in the .eln
-                        if ($mention instanceof Countable && count($mention) === 1) {
+                        if (is_array($mention) && count($mention) === 1) {
                             // store a reference for the link to create. We cannot create it now as link might or might not exist yet.
                             $this->linksToCreate[] = array(
                                 'origin_entity_type' => $this->Entity->entityType,

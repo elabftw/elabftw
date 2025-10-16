@@ -1126,14 +1126,17 @@ on('toggle-body', (el: HTMLElement) => {
     queryUrl += `/revisions/${el.dataset.revid}`;
   }
   ApiC.getJson(queryUrl).then(json => {
-    // add extra fields elements from metadata json
-    const entity = {type: el.dataset.type as EntityType, id: entityId};
-    const MetadataC = new Metadata(entity, new JsonEditorHelper(entity));
-    MetadataC.metadataDiv = contentDiv;
-    MetadataC.display('view').then(() => {
-      // go over all the type: url elements and create a link dynamically
-      generateMetadataLink();
-    });
+    // skip extra fields on the revisions page (focus remains on body). See #6053
+    if (window.location.pathname !== '/revisions.php') {
+      // add extra fields elements from metadata json
+      const entity = {type: el.dataset.type as EntityType, id: entityId};
+      const MetadataC = new Metadata(entity, new JsonEditorHelper(entity));
+      MetadataC.metadataDiv = contentDiv;
+      MetadataC.display('view').then(() => {
+        // go over all the type: url elements and create a link dynamically
+        generateMetadataLink();
+      });
+    }
     // add html content
     contentDiv.innerHTML = json.body_html;
 

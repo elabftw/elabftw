@@ -155,16 +155,29 @@ if (window.location.pathname === '/scheduler.php') {
       removeBtn.className = 'ml-2 close text-white text-big';
       removeBtn.innerHTML = '&times;';
 
-      removeBtn.addEventListener('click', () => {
-        const confirmRemove = confirm(i18next.t('filter-delete-warning'));
-        if (!confirmRemove) return;
-        tomSelect.removeItem(id);
-        badge.remove();
-      });
+      removeBtn.addEventListener('click', () => removeBadge(badge, tomSelect, id));
       badge.appendChild(removeBtn);
       wrapper.appendChild(badge);
+
+      // Make badge keyboard-accessible
+      badge.setAttribute('tabindex', '0');
+      badge.setAttribute('role', 'button');
+      badge.setAttribute('aria-label', `Remove ${opt.textContent}`);
+
+      badge.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          removeBadge(badge, tomSelect, id);
+        }
+      });
     };
 
+    const removeBadge = (badge, tomSelect, id) => {
+      const confirmRemove = confirm(i18next.t('filter-delete-warning'));
+      if (!confirmRemove) return;
+      tomSelect.removeItem(id);
+      badge.remove();
+    };
     // SCHEDULER
     const calendar = new Calendar(calendarEl, {
       schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',

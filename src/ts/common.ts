@@ -874,8 +874,7 @@ on('import-compound', (el: HTMLElement) => {
 
 on('create-resource-from-compound', (el: HTMLElement) => {
   const compoundId = (document.getElementById('compoundInput-id') as HTMLInputElement).value;
-  const type = el.dataset.tplid ?? el.dataset.catid;
-  ApiC.post2location('items', {template: type}).then(id => {
+  ApiC.post2location('items', {template: el.dataset.tplid}).then(id => {
     // now create a link with that compound
     ApiC.post(`items/${id}/compounds/${compoundId}`).then(() => {
       // also change the title
@@ -1003,7 +1002,6 @@ on('create-entity', (el: HTMLElement, event: Event) => {
     el.dataset.type = 'items';
     page = 'database.php';
   }
-  console.log(el.dataset.type);
   ApiC.post2location(`${el.dataset.type}`, params).then(id => {
     window.location.href = `${page}?mode=edit&id=${id}`;
   });

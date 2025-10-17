@@ -35,6 +35,7 @@ import 'bootstrap/js/src/modal.js';
 import { DateTime } from 'luxon';
 import 'jquery-ui/ui/widgets/autocomplete';
 import { ApiC } from './api';
+import i18next from './i18n';
 import { Action } from './interfaces';
 import { TomSelect } from './misc';
 
@@ -60,9 +61,9 @@ if (window.location.pathname === '/scheduler.php') {
     maxItems: null,
     plugins: {
       clear_button: {},
-      dropdown_input: {},
       no_active_items: {},
       remove_button: {},
+      no_backspace_delete: {},
     },
   };
 
@@ -138,6 +139,48 @@ if (window.location.pathname === '/scheduler.php') {
       }
     }
 
+    // create self-removable badge for selected items (in scheduler & modal)
+    const createBadge = (selectInput, tomSelect, wrapper, id) => {
+      const opt = selectInput.querySelector(`option[value="${id}"]`) as HTMLOptionElement;
+      if (!opt) return;
+
+      const badge = document.createElement('span');
+      badge.textContent = opt.textContent;
+      badge.className = 'selected-item-badge';
+      const rawColor = opt.dataset.color;
+      badge.style.setProperty('--badge-color', rawColor?.startsWith('#') ? rawColor : `#${rawColor || '000'}`);
+
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'ml-2 close';
+      const removeBtnIcon = document.createElement('i');
+      removeBtnIcon.classList.add('fas', 'fa-xmark', 'fa-fw', 'color-white');
+      removeBtn.appendChild(removeBtnIcon);
+
+      badge.appendChild(removeBtn);
+      wrapper.appendChild(badge);
+
+      // Make badge keyboard-accessible
+      badge.setAttribute('tabindex', '0');
+      badge.setAttribute('role', 'button');
+      badge.setAttribute('aria-label', `Remove ${opt.textContent}`);
+      // also handle keydown (enter)
+      const removeBadgeHandler = e => {
+        e.preventDefault();
+        removeBadge(badge, tomSelect, id);
+      };
+      removeBtn.addEventListener('click', removeBadgeHandler);
+      removeBtn.addEventListener('keydown', e =>
+        ['Enter', ' '].includes(e.key) && removeBadgeHandler(e),
+      );
+    };
+
+    const removeBadge = (badge, tomSelect, id) => {
+      const confirmRemove = confirm(i18next.t('filter-delete-warning'));
+      if (!confirmRemove) return;
+      tomSelect.removeItem(id);
+      badge.remove();
+    };
     // SCHEDULER
     const calendar = new Calendar(calendarEl, {
       schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
@@ -277,7 +320,24 @@ if (window.location.pathname === '/scheduler.php') {
 
           // init TomSelect if not already
           if (!itemSelectModalEl.tomselect) {
-            manualSelect = new TomSelect(itemSelectModalEl, { ...sharedTomSelectOptions });
+            manualSelect = new TomSelect(itemSelectModalEl, {
+              ...sharedTomSelectOptions,
+              dropdownParent: '#itemSelectWrapperModal',
+              controlInput: '#itemSelectInputModal',
+              onChange: (selectedItems: string[]) => {
+                const container = document.getElementById('selectedItemsContainerModal')!;
+                const display = document.getElementById('selectedItemsDisplayModal')!;
+                display.innerHTML = '';
+                if (selectedItems.length === 0) {
+                  container.classList.add('d-none');
+                  return;
+                }
+                container.classList.remove('d-none');
+                selectedItems.forEach(id => {
+                  createBadge(itemSelectModalEl, manualSelect, display, id);
+                });
+              },
+            });
 
             categorySelectModalEl.addEventListener('change', () => {
               const selectedCategory = categorySelectModalEl.value;
@@ -458,14 +518,14 @@ if (window.location.pathname === '/scheduler.php') {
       const categorySelect = document.getElementById('categorySelect') as HTMLSelectElement;
 
       const urlParams = new URLSearchParams(window.location.search);
-      // load items on page load (e.g. coming from Resource view page)
       const selectedItems = urlParams.getAll('items[]');
 
       const itemTs = new TomSelect(itemSelect, {
         ...sharedTomSelectOptions,
-        onChange: (selectedItems) => {
+        controlInput: '#itemSelectInput',
+        dropdownParent: '#itemSelectWrapper',
+        onChange: (selectedItems: string[]) => {
           lockScopeButton(selectedItems);
-
           const container = document.getElementById('selectedItemsContainer')!;
           const display = document.getElementById('selectedItemsDisplay')!;
           display.innerHTML = '';
@@ -484,22 +544,7 @@ if (window.location.pathname === '/scheduler.php') {
           container.classList.remove('d-none');
 
           selectedItems.forEach(id => {
-            const opt = itemSelect.querySelector(`option[value="${id}"]`) as HTMLOptionElement;
-            if (!opt) return;
-
-            const badge = document.createElement('a');
-            badge.href = `/database.php?mode=view&id=${id}`;
-            badge.target='_blank';
-            badge.textContent = opt.textContent;
-            badge.className = 'selected-item-badge';
-            const rawColor = opt.dataset.color;
-            badge.style.backgroundColor = rawColor?.startsWith('#') ? rawColor : `#${rawColor || '000'}`;
-            badge.style.color = 'white';
-
-            display.appendChild(badge);
-
-            url.searchParams.append('items[]', id);
-            params.append('items[]', id);
+            createBadge(itemSelect, itemTs, display, id);
           });
 
           window.history.replaceState({}, '', url.toString());

@@ -200,9 +200,9 @@
       </button>
     </div>
   </div>
-  <div id='selectedItemsContainer' class='mt-2 d-none'>
-    <strong class='d-block mb-1'>{{ 'Selected items:'|trans }}</strong>
-    <div id='selectedItemsDisplay' class='d-flex flex-wrap gap-2'></div>
+  <div id='selectedItemsContainer' class='m-4 d-none'>
+    <strong class='d-block mb-2'>{{ 'Selected items:'|trans }}</strong>
+    <div id='selectedItemsDisplay' class='d-flex flex-wrap'></div>
   </div>
 
   <hr>
@@ -217,7 +217,11 @@
           </button>
         </div>
         <div class='modal-body mr-2'>
-          {% include 'scheduler-filter-items.html' with {'categorySelectId': 'categorySelectModal', 'itemSelectId': 'itemSelectModal'} %}
+          {% include 'scheduler-filter-items.html' with {'categorySelectId': 'categorySelectModal', 'itemSelectId': 'itemSelectModal', 'itemSelectWrapperId': 'itemSelectWrapperModal', 'itemSelectInputId': 'itemSelectInputModal'} %}
+          <div id='selectedItemsContainerModal' class='mt-2 d-none'>
+            <strong class='d-block mb-1'>{{ 'Selected items:'|trans }}</strong>
+            <div id='selectedItemsDisplayModal' class='d-flex flex-wrap gap-2'></div>
+          </div>
         </div>
         <div class='modal-footer'>
           <button type='button' class='btn btn-primary' id='confirmItemSelect'>{{ 'Create event(s)'|trans }}</button>

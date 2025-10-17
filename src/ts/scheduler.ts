@@ -323,8 +323,8 @@ if (window.location.pathname === '/scheduler.php') {
         const cancelDiv = document.getElementById('isCancellableDiv') as HTMLElement;
         if (!cancelDiv) return;
         const isAdmin = cancelDiv.dataset.isAdmin === 'true';
-        const bookIsCancellable = info.event.extendedProps.book_is_cancellable;
-        const isCancellable = isAdmin === true || bookIsCancellable === 1;
+        const bookIsCancellable = Number(info.event.extendedProps.book_is_cancellable);
+        const isCancellable = isAdmin || bookIsCancellable === 1;
         cancelDiv.classList.toggle('d-none', !isCancellable);
         // add event owner's id as target for cancel message
         const targetCancel = document.getElementById('targetCancelEventUsers');

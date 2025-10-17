@@ -152,8 +152,10 @@ if (window.location.pathname === '/scheduler.php') {
 
       const removeBtn = document.createElement('button');
       removeBtn.type = 'button';
-      removeBtn.className = 'ml-2 close text-white text-big';
-      removeBtn.innerHTML = '&times;';
+      removeBtn.className = 'ml-2 close';
+      const removeBtnIcon = document.createElement('i');
+      removeBtnIcon.classList.add('fas', 'fa-xmark', 'fa-fw', 'color-white');
+      removeBtn.appendChild(removeBtnIcon);
 
       badge.appendChild(removeBtn);
       wrapper.appendChild(badge);

@@ -874,7 +874,14 @@ on('import-compound', (el: HTMLElement) => {
 
 on('create-resource-from-compound', (el: HTMLElement) => {
   const compoundId = (document.getElementById('compoundInput-id') as HTMLInputElement).value;
-  ApiC.post2location('items', {template: el.dataset.tplid}).then(id => {
+  // create either from template or category
+  let payload = {};
+  if (el.dataset.tplid) {
+    payload = { template: el.dataset.tplid };
+  } else if (el.dataset.catid) {
+    payload = { category: el.dataset.catid };
+  }
+  ApiC.post2location('items', payload).then(id => {
     // now create a link with that compound
     ApiC.post(`items/${id}/compounds/${compoundId}`).then(() => {
       // also change the title

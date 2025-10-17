@@ -1,4 +1,6 @@
 {# Modal for creation of a resource attached to a compound #}
+{# we only create resources from this modal #}
+{% set entityPage = 'database' %}
 <div class='modal fade' id='createResourceFromCompoundModal' tabindex='-1' role='dialog' aria-labelledby='createResourceFromCompoundModalTitle'>
   <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content'>
@@ -13,13 +15,13 @@
           <p>{{ 'Select a resource template'|trans }}</p>
           <a href='resources-templates.php' class='btn btn-ghost btn-sm'><i class='fas fa-cogs mr-1'></i>{{ 'Manage templates'|trans }}</a>
         </div>
-        {% for category in resourceCategoriesArr %}
-        <a style='color:#{{ category.color }}; border: 1px #ccc solid;' class='btn btn-light mt-1' href='#' data-action='create-resource-from-compound' data-tplid='{{ category.id }}'>
-          {% if category.category %}
-            <span class='catstat-btn category-btn mr-2' style='--bg: #{{ category.category_color|default('bdbdbd') }}'>{{ category.category_title }}</span>
-          {% endif %}
-          {{ category.title }}</a>
-        {% endfor %}
+        {# adapt inputs expected by modal.html #}
+        {% set templatesArr = itemsTemplatesArr %}
+        {% set categoryArr = App.itemsCategoryArr %}
+        {% include 'create-new-item-modal-body.html' with {'actionName': 'create-resource-from-compound',
+          'templatesPageOverride': 'resources-templates.php', 'categoryPageOverride': 'resources-categories.php',
+          'alwaysShowCategories': true
+        } %}
       </div>
 
       <div class='modal-footer'>

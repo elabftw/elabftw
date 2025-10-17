@@ -30,12 +30,6 @@ try {
     $Response->prepare($Request);
     $Items = new Items($App->Users);
     $ItemsTypes = new ItemsTypes($App->Users);
-    $bookableItemData = array();
-    $Scheduler = new Scheduler($Items);
-    if ($App->Request->query->has('item') && $App->Request->query->get('item') !== 'all' && !empty($App->Request->query->get('item'))) {
-        $Scheduler->Items->setId($App->Request->query->getInt('item'));
-        $bookableItemData = $Scheduler->Items->readOne();
-    }
     // only the bookable categories
     $bookableItemsArr = $Items->readBookable();
     $categoriesOfBookableItems = array_column($bookableItemsArr, 'category');
@@ -46,7 +40,6 @@ try {
     );
     $template = 'scheduler.html';
     $renderArr = array(
-        'bookableItemData' => $bookableItemData,
         'bookableItemsTypes' => $bookableItemsTypes,
         'itemsArr' => $bookableItemsArr,
         'pageTitle' => _('Scheduler'),

@@ -318,6 +318,14 @@ if (window.location.pathname === '/scheduler.php') {
         startInput.dataset.eventid = info.event.id;
         endInput.dataset.eventid = info.event.id;
         refreshBoundDivs(info.event.extendedProps);
+
+        // cancel block: show if event is cancellable OR user is Admin)
+        const cancelDiv = document.getElementById('isCancellableDiv') as HTMLElement;
+        if (!cancelDiv) return;
+        const isAdmin = cancelDiv.dataset.isAdmin === 'true';
+        const bookIsCancellable = info.event.extendedProps.book_is_cancellable;
+        const isCancellable = isAdmin === true || bookIsCancellable === 1;
+        cancelDiv.classList.toggle('d-none', !isCancellable);
       },
       // on mouse enter add shadow and show title
       eventMouseEnter: function(info): void {

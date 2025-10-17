@@ -56,6 +56,7 @@ const t = {
     "form-validation-error": "Errore nella convalida del modulo.",
     "generic-delete-warning": "Cancellare questo?",
     "hide-deleted": "Nascondi cancellato",
+    "filter-delete-warning": "Remove this filter?",
     "import": "Importazione",
     "import-spreadsheet": "Importare un foglio di calcolo (xls, csv, ods, ...)",
     "import-error": "Errore durante l'importazione. Controllare la console per ulteriori informazioni.",

@@ -25,6 +25,37 @@
     </div>
   </div>
 </div>
+{# Exports modal #}
+<div class='modal fade' id='schedulerExportsModal' tabindex='-1' role='dialog' aria-labelledby='schedulerExportsModalLabel'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h4 class='modal-title' id='schedulerExportsModalLabel'><i class='fas fa-fw fa-calendar-days'></i>{{ 'Export bookings'|trans }}</h4>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        {# schedulerExports #}
+        <div class='pl-3'>
+          <div class='d-flex justify-content-between'>
+            <label for='schedulerDateFrom' class='col-form-label'>{{ 'Start date'|trans }}</label>
+            <input id='schedulerDateFrom' name='schedulerDateFrom' type='date' class='form-control col-md-6' value='{{ "1 month ago"|date('Y-m-d') }}'/>
+          </div>
+          <div class='d-flex justify-content-between mt-2'>
+            <label for='schedulerDateTo' class='col-form-label'>{{ 'End date'|trans }}</label>
+            <input id='schedulerDateTo' name='schedulerDateTo' type='date' class='form-control col-md-6' value='{{ "now"|date('Y-m-d') }}'/>
+          </div>
+        </div>
+        <p class='smallgray pl-3 mt-4'>{{ 'Note: the export reflects the current scheduler view, including all active filters.'|trans }}</p>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+        <button type='button' class='btn btn-primary' data-action='export-scheduler' aria-label='{{ 'Export'|trans }}'>{{ 'Export'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
 {# Modal for event click #}
 <div class='modal fade' id='eventModal' tabindex='-1' role='dialog' aria-labelledby='eventModalLabel'>
   <div class='modal-dialog modal-lg' role='document'>
@@ -88,30 +119,29 @@
         </div>
 
         {# only show the cancel block if item is cancellable or user is admin #}
-        {% if bookableItemData.book_is_cancellable == 1 or App.Users.isAdmin %}
-          <div>
-            <h5>{{ 'Cancel booking slot'|trans }}</h5>
-            <h6><label for='cancelEventTextarea'>{{ 'Add a custom message'|trans }}</label></h6>
-              <textarea id='cancelEventTextarea' class='form-control'></textarea>
-              <label>{{ 'Send to'|trans }}</label>
-              <div class='form-check'>
-                <input class='form-check-input' type='radio' name='targetCancelEvent' data-targetid='{{ App.Request.query.get('item') }}' value='bookable_item' id='targetCancelEventUsers' checked> <label class='form-check-label' for='targetCancelEventUsers'>{{ 'Past and future users who booked this resource'|trans }}</label>
-              </div>
-              <div class='form-check'>
-                <input class='form-check-input' type='radio' name='targetCancelEvent' data-targetid='{{ App.Teams.teamArr.id }}' value='team' id='targetCancelEventTeam'> <label class='form-check-label' for='targetCancelEventTeam'>{{ 'Members of team %s'|trans|format(App.Teams.teamArr.name) }}</label>
-              </div>
-              {% for teamgroup in teamGroupsArr %}
-                <div class='form-check'>
-                  <input class='form-check-input' type='radio' name='targetCancelEvent' data-targetid='{{ teamgroup.id }}' value='teamgroup' id='targetCancelEventTeamgroup_{{ teamgroup.id }}'> <label class='form-check-label' for='targetCancelEventTeamgroup_{{ teamgroup.id }}'>{{ 'Members of teamgroup %s'|trans|format(teamgroup.name) }}</label>
-                </div>
-              {% endfor %}
-              <div class='mt-2'>
-                <button type='button' data-action='cancel-event-with-message' data-dismiss='modal' data-id='' class='btn btn-danger cancelEventBtn'>{{ 'Send message and cancel'|trans }}</button>
-                {# here we use Cancel booking instead of just Cancel so we can have a specific translated term in German #}
-                <button type='button' data-action='cancel-event' data-dismiss='modal' data-id='' class='btn btn-danger cancelEventBtn'>{{ 'Cancel booking'|trans }}</button>
+        <div id='isCancellableDiv' data-is-admin='{{ App.Users.isAdmin ? 'true' : 'false' }}'>
+          <h5>{{ 'Cancel booking slot'|trans }}</h5>
+          <h6><label for='cancelEventTextarea'>{{ 'Add a custom message'|trans }}</label></h6>
+            <textarea id='cancelEventTextarea' class='form-control'></textarea>
+            <label>{{ 'Send to'|trans }}</label>
+            <div class='form-check'>
+              {# data targetid is populated when the modal is open, for each event #}
+              <input class='form-check-input' type='radio' name='targetCancelEvent' data-targetid='' value='bookable_item' id='targetCancelEventUsers' checked> <label class='form-check-label' for='targetCancelEventUsers'>{{ 'Past and future users who booked this resource'|trans }}</label>
             </div>
+            <div class='form-check'>
+              <input class='form-check-input' type='radio' name='targetCancelEvent' data-targetid='{{ App.Teams.teamArr.id }}' value='team' id='targetCancelEventTeam'> <label class='form-check-label' for='targetCancelEventTeam'>{{ 'Members of team %s'|trans|format(App.Teams.teamArr.name) }}</label>
+            </div>
+            {% for teamgroup in teamGroupsArr %}
+              <div class='form-check'>
+                <input class='form-check-input' type='radio' name='targetCancelEvent' data-targetid='{{ teamgroup.id }}' value='teamgroup' id='targetCancelEventTeamgroup_{{ teamgroup.id }}'> <label class='form-check-label' for='targetCancelEventTeamgroup_{{ teamgroup.id }}'>{{ 'Members of teamgroup %s'|trans|format(teamgroup.name) }}</label>
+              </div>
+            {% endfor %}
+            <div class='mt-2'>
+              <button type='button' data-action='cancel-event-with-message' data-dismiss='modal' data-id='' class='btn btn-danger cancelEventBtn'>{{ 'Send message and cancel'|trans }}</button>
+              {# here we use Cancel booking instead of just Cancel so we can have a specific translated term in German #}
+              <button type='button' data-action='cancel-event' data-dismiss='modal' data-id='' class='btn btn-danger cancelEventBtn'>{{ 'Cancel booking'|trans }}</button>
           </div>
-        {% endif %}
+        </div>
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
@@ -164,11 +194,14 @@
       <a href='#' data-action='toggle-modal' data-target='schedulerSettingsModal' aria-label='{{ 'Settings'|trans }}' title='{{ 'Settings'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0'>
         <i class='fas fa-cogs fa-fw'></i>
       </a>
+      <button type='button' data-action='toggle-modal' data-target='schedulerExportsModal' class='btn btn-secondary' aria-label='{{ 'Export'|trans }}' title='{{ 'Export'|trans }}'>
+        {{ 'Export'|trans }}
+      </button>
     </div>
   </div>
-  <div id='selectedItemsContainer' class='mt-2 d-none'>
-    <strong class='d-block mb-1'>{{ 'Selected items:'|trans }}</strong>
-    <div id='selectedItemsDisplay' class='d-flex flex-wrap gap-2'></div>
+  <div id='selectedItemsContainer' class='m-4 d-none'>
+    <strong class='d-block mb-2'>{{ 'Selected items:'|trans }}</strong>
+    <div id='selectedItemsDisplay' class='d-flex flex-wrap'></div>
   </div>
 
   <hr>
@@ -183,7 +216,11 @@
           </button>
         </div>
         <div class='modal-body mr-2'>
-          {% include 'scheduler-filter-items.html' with {'categorySelectId': 'categorySelectModal', 'itemSelectId': 'itemSelectModal'} %}
+          {% include 'scheduler-filter-items.html' with {'categorySelectId': 'categorySelectModal', 'itemSelectId': 'itemSelectModal', 'itemSelectWrapperId': 'itemSelectWrapperModal', 'itemSelectInputId': 'itemSelectInputModal'} %}
+          <div id='selectedItemsContainerModal' class='mt-2 d-none'>
+            <strong class='d-block mb-1'>{{ 'Selected items:'|trans }}</strong>
+            <div id='selectedItemsDisplayModal' class='d-flex flex-wrap gap-2'></div>
+          </div>
         </div>
         <div class='modal-footer'>
           <button type='button' class='btn btn-primary' id='confirmItemSelect'>{{ 'Create event(s)'|trans }}</button>

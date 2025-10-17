@@ -144,7 +144,9 @@ if (window.location.pathname === '/scheduler.php') {
       const opt = selectInput.querySelector(`option[value="${id}"]`) as HTMLOptionElement;
       if (!opt) return;
 
-      const badge = document.createElement('span');
+      const badge = document.createElement('a');
+      badge.href = `/database.php?mode=view&id=${id}`;
+      badge.target='_blank';
       badge.textContent = opt.textContent;
       badge.className = 'selected-item-badge';
       const rawColor = opt.dataset.color;
@@ -155,7 +157,6 @@ if (window.location.pathname === '/scheduler.php') {
       removeBtn.className = 'ml-2 close text-white text-big';
       removeBtn.innerHTML = '&times;';
 
-      removeBtn.addEventListener('click', () => removeBadge(badge, tomSelect, id));
       badge.appendChild(removeBtn);
       wrapper.appendChild(badge);
 
@@ -163,13 +164,15 @@ if (window.location.pathname === '/scheduler.php') {
       badge.setAttribute('tabindex', '0');
       badge.setAttribute('role', 'button');
       badge.setAttribute('aria-label', `Remove ${opt.textContent}`);
-
-      badge.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          removeBadge(badge, tomSelect, id);
-        }
-      });
+      // also handle keydown (enter)
+      const removeBadgeHandler = e => {
+        e.preventDefault();
+        removeBadge(badge, tomSelect, id);
+      };
+      removeBtn.addEventListener('click', removeBadgeHandler);
+      removeBtn.addEventListener('keydown', e =>
+        ['Enter', ' '].includes(e.key) && removeBadgeHandler(e),
+      );
     };
 
     const removeBadge = (badge, tomSelect, id) => {

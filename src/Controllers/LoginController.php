@@ -103,6 +103,18 @@ final class LoginController implements ControllerInterface
 
         // Get an AuthResponse from an AuthService
         $AuthResponse = $this->getAuthResponse();
+
+        // user does not exist and no team was found so user must select one
+        $info = $AuthResponse->getInitTeamInfo();
+        if ($AuthResponse->initTeamRequired()) {
+            $this->Session->set('initial_team_selection_required', true);
+            $this->Session->set('teaminit_email', $info['email']);
+            $this->Session->set('teaminit_firstname', $info['firstname']);
+            $this->Session->set('teaminit_lastname', $info['lastname']);
+            $this->Session->set('teaminit_orgid', $info['orgid'] ?? '');
+            return new RedirectResponse('/login.php');
+        }
+
         // First part of login is done, so we have a userid.
         // Next, we need to do other steps (possibly), before the full login in app
         $loggingInUser = $AuthResponse->getUser();
@@ -150,17 +162,6 @@ final class LoginController implements ControllerInterface
             $this->Session->set('team_selection_required', true);
             $this->Session->set('team_selection', $AuthResponse->getSelectableTeams());
             $this->Session->set('auth_userid', $AuthResponse->getAuthUserid());
-            return new RedirectResponse('/login.php');
-        }
-
-        // user does not exist and no team was found so user must select one
-        $info = $AuthResponse->getInitTeamInfo();
-        if ($AuthResponse->initTeamRequired()) {
-            $this->Session->set('initial_team_selection_required', true);
-            $this->Session->set('teaminit_email', $info['email']);
-            $this->Session->set('teaminit_firstname', $info['firstname']);
-            $this->Session->set('teaminit_lastname', $info['lastname']);
-            $this->Session->set('teaminit_orgid', $info['orgid'] ?? '');
             return new RedirectResponse('/login.php');
         }
 

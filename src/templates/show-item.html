@@ -74,7 +74,7 @@
     {# second line: title #}
     <div class='d-flex title flex-nowrap'>
       {% if item.custom_id %}
-        <span class='color-medium mr-1' title='{{ 'Custom ID'|trans }}'>{{ item.custom_id }}</span>
+        <span class='color-medium mr-1 text-nowrap' title='{{ 'Custom ID'|trans }}'>{{ item.custom_id }}</span>
       {% endif %}
       <a href='{{ Entity.entityType.toPage }}?mode=view&amp;id={{ item.id }}'>{{ item.title }}</a>
     </div>

@@ -21,6 +21,8 @@ use League\Flysystem\Local\LocalFilesystemAdapter;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
+use function dirname;
+
 use const UPLOAD_ERR_INI_SIZE;
 use const UPLOAD_ERR_OK;
 
@@ -337,5 +339,29 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         );
         $Import->import();
         $this->assertEquals(9, $Import->getInserted());
+    }
+
+    public function testImportSampledb(): void
+    {
+        $uploadedFile = new UploadedFile(
+            dirname(__DIR__, 2) . '/_data/sampledb.eln',
+            'sampledb.eln',
+            null,
+            UPLOAD_ERR_OK,
+            true,
+        );
+
+        $Import = new Eln(
+            new Users(1, 1),
+            BasePermissions::Team->toJson(),
+            BasePermissions::User->toJson(),
+            $uploadedFile,
+            $this->fs,
+            $this->logger,
+            EntityType::Items,
+            category: 1,
+        );
+        $Import->import();
+        $this->assertEquals(2, $Import->getInserted());
     }
 }

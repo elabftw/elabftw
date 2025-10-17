@@ -1101,6 +1101,10 @@ the form-control fails to do that so we do the border ourselves */
   font-size: 80%;
 }
 
+.text-big {
+  font-size: 120%;
+}
+
 /* ucp.php */
 #currpass {
   background-color: $lightblue;

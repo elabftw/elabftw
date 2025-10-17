@@ -56,6 +56,7 @@ const t = {
     "form-validation-error": "Erreur de validation du formulaire.",
     "generic-delete-warning": "Supprimer ça ?",
     "hide-deleted": "Masquer les données supprimées",
+    "filter-delete-warning": "Remove this filter?",
     "import": "Import",
     "import-spreadsheet": "Importer une feuille de calcul (xls, csv, ods, ...)",
     "import-error": "Erreur lors de l'importation. Veuillez consulter la console pour plus d'informations.",

@@ -94,7 +94,8 @@
             <textarea id='cancelEventTextarea' class='form-control'></textarea>
             <label>{{ 'Send to'|trans }}</label>
             <div class='form-check'>
-              <input class='form-check-input' type='radio' name='targetCancelEvent' data-targetid='{{ App.Request.query.get('item') }}' value='bookable_item' id='targetCancelEventUsers' checked> <label class='form-check-label' for='targetCancelEventUsers'>{{ 'Past and future users who booked this resource'|trans }}</label>
+              {# data targetid is populated when the modal is open, for each event #}
+              <input class='form-check-input' type='radio' name='targetCancelEvent' data-targetid='' value='bookable_item' id='targetCancelEventUsers' checked> <label class='form-check-label' for='targetCancelEventUsers'>{{ 'Past and future users who booked this resource'|trans }}</label>
             </div>
             <div class='form-check'>
               <input class='form-check-input' type='radio' name='targetCancelEvent' data-targetid='{{ App.Teams.teamArr.id }}' value='team' id='targetCancelEventTeam'> <label class='form-check-label' for='targetCancelEventTeam'>{{ 'Members of team %s'|trans|format(App.Teams.teamArr.name) }}</label>

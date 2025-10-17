@@ -21,6 +21,8 @@ use League\Flysystem\Local\LocalFilesystemAdapter;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
+use function dirname;
+
 use const UPLOAD_ERR_INI_SIZE;
 use const UPLOAD_ERR_OK;
 

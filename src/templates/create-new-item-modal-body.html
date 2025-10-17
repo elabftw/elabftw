@@ -1,4 +1,4 @@
-{# shared block for listing templates + categories #}
+{# shared block for listing templates + categories in 'create-new-item-...-modal.html' #}
 {# expects: entityPage, templatesArr, (optional) categoryArr, (optional) isDashboard #}
 {# optional overrides: actionName, templatesPageOverride, categoryPageOverride, alwaysShowCategories #}
 <div id='tplCreateNewDiv_{{ entityPage }}' class='vertically-limited'>
@@ -56,7 +56,9 @@
     {% set categoryArr = entityPage == 'experiments' ? App.experimentsCategoryArr : App.itemsCategoryArr %}
   {% endif %}
   {% for category in categoryArr %}
-    <a class='btn btn-ghost mt-1' href='#' data-action='create-entity-ask-title' data-type='{{ entityPage }}' data-catid='{{ category.id }}'>
+    {# if we're creating item from compounds page or chem-editor page, use 'create-from-compounds' action. #}
+    {% set action = (scriptName == 'compounds.php' or scriptName == 'chem-editor.php') ? actionName : 'create-entity-ask-title' %}
+    <a class='btn btn-ghost mt-1' href='#' data-action='{{ action }}' data-type='{{ entityPage }}' data-catid='{{ category.id }}'>
       <span class='round-spot mr-1' style='background-color: #{{ category.color }};'></span>{{ category.title }}
     </a>
   {% endfor %}

@@ -1,26 +1,52 @@
 {# STEPS #}
 <h3 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='stepsDiv'><i class='fas fa-caret-down mr-2 fa-fw'></i> {{ 'Steps'|trans }} (<span id='stepsCount'>{{ Entity.entityData.steps|length }}</span>)</h3>
 <div id='stepsDiv' class='mt-2' data-count-for='stepsCount' data-save-hidden='stepsDiv'>
-  <div class='sortable' id='steps_div_{{ Entity.id }}' data-axis='y' data-table='{{ Entity.entityType.value ? Entity.entityType.value : 'items_types' }}_steps'>
+  <div class='sortable' id='steps_div_{{ Entity.id }}' data-axis='y' data-table='{{ Entity.entityType.value }}_steps'>
     {% for step in Entity.entityData.steps %}
+      {# DRAG AND DROP #}
       <div class='input-group mb-2 countable' id='step_{{ step.id }}'>
         <div class='input-group-prepend'>
-          <button type='button' class='btn draggable sortableHandle input-group-text' title='{{ 'Drag to reorder'|trans }}' aria-label='{{ 'Drag to reorder'|trans }}'>
+          {% set disabled = step.is_immutable == 1 and (Entity.entityType.value in ['experiments', 'items']) %}
+          <button {{ disabled ? 'disabled="disabled"' : '' }} type='button' class='btn draggable sortableHandle input-group-text' title='{{ 'Drag to reorder'|trans }}' aria-label='{{ 'Drag to reorder'|trans }}'>
             <i class='fas fa-sort'></i>
           </button>
         </div>
+        {# LOCK/UNLOCK A STEP #}
+        {% set steps_table = Entity.entityType.value ~ '/' ~ Entity.id ~ '/steps' %}
+        {% set isLocked = step.is_immutable == 1 %}
+        {% if Entity.entityType.value in ['experiments_templates', 'items_types'] %}
         <div class='input-group-prepend'>
-          <button class='btn input-group-text' data-action='destroy-step' data-id='{{ step.id }}' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}' type='button'>
+          <button
+            {{ disabled ? 'disabled="disabled"' : '' }}
+            type='button'
+            class='btn input-group-text'
+            title='{{ isLocked ? 'Unlock step'|trans : 'Lock step'|trans }}'
+            aria-label='{{ isLocked ? 'Unlock step'|trans : 'Lock step'|trans }}'
+            aria-pressed='{{ isLocked ? 'true' : 'false' }}'
+            data-trigger='click'
+            data-model='{{ steps_table ~ '/' ~ step.id }}'
+            data-target='is_immutable'
+            data-value='{{ isLocked ? '0' : '1' }}'
+            data-reload='stepsDiv'
+          >
+            <i class='fas {{ isLocked ? 'fa-lock' : 'fa-lock-open' }}'></i>
+          </button>
+        </div>
+        {% endif %}
+        {# DESTROY #}
+        <div class='input-group-prepend'>
+          <button {{ disabled ? 'disabled="disabled"' : '' }} class='btn input-group-text' data-action='destroy-step' data-id='{{ step.id }}' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}' type='button'>
             <i class='fas fa-trash-alt'></i>
           </button>
         </div>
+        {# COMPLETE/UNCOMPLETE #}
         <div class='input-group-prepend'>
           <div class='input-group-text'>
             <input aria-label='{{ 'Toggle completion'|trans }}' type='checkbox' {{ step.finished ? 'checked' }} data-stepid='{{ step.id }}' data-id='{{ Entity.id }}' class='stepbox'>
           </div>
         </div>
         <div class='pl-2 step-static form-control-plaintext d-flex flex-wrap'>
-          <span class='step editable hl-hover align-self-center {{- step.finished ? ' finished' }}' data-target='body' data-stepid='{{ step.id }}'>{{ step.body }}</span>
+          <span class='step {{ not disabled ? 'editable hl-hover' }} align-self-center {{- step.finished ? ' finished' }}' data-target='body' data-stepid='{{ step.id }}'>{{ step.body }}</span>
           {% if step.finished %}
           <span class='mx-2 text-muted align-self-center'>
             {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span>

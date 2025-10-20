@@ -16,7 +16,7 @@
         </div>
         <div class='input-group-prepend'>
           <div class='input-group-text'>
-            <input aria-label='{{ 'Toggle completion'|trans }}' type='checkbox' {{ mode == 'edit-template' ? 'disabled' }} {{ step.finished ? 'checked' }} data-stepid='{{ step.id }}' data-id='{{ Entity.id }}' class='stepbox'>
+            <input aria-label='{{ 'Toggle completion'|trans }}' type='checkbox' {{ step.finished ? 'checked' }} data-stepid='{{ step.id }}' data-id='{{ Entity.id }}' class='stepbox'>
           </div>
         </div>
         <div class='pl-2 step-static form-control-plaintext d-flex flex-wrap'>
@@ -26,53 +26,51 @@
             {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span>
           </span>
           {% endif %}
-          {% if mode != 'edit-template' %}
-            <button class='btn lh-normal hl-hover-gray p-1 ml-auto mr-1' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' type='button' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}'>
-              <i class='fas fa-caret-right fa-fw'></i>
-            </button>
-            <div hidden data-save-hidden='extendedStep_{{ step.id }}' class='w-100'>
-            {{ 'Completion time:'|trans }}
-            {% if step.finished %}
-              <span data-stepid='{{ step.id }}' data-target='finished_time' data-ma-type='datetime-local' data-ma-input-value='{{ step.finished_time|date('Y-m-d\\TH:i') }}' class='step editable p-1 rounded hl-hover'>{{ step.finished_time|format_datetime() }}</span>
-            {% else %}
-              {{ 'Not finished'|trans }}
-            {% endif %}
-            <br>
-
-            <div id='stepDeadlineDiv_{{ step.id }}'>
-              {% if step.deadline %}
-                {{ 'Deadline:'|trans }}
-                {# here the data-ma-input-value is formatted so it works with the datetime-local input type, and the displayed one is formatted differently to be more readable #}
-                <span data-stepid='{{ step.id }}' data-target='deadline' data-ma-type='datetime-local' data-ma-input-value='{{ step.deadline|date('Y-m-d\\TH:i') }}' class='step editable hl-hover-gray p-1 rounded'>{{ step.deadline|format_datetime() }}</span>
-                {# notification bell is only shown if the user has at least one notification setting activated for that type of notif #}
-                {% if App.Users.userData.notif_step_deadline or App.Users.userData.notif_step_deadline_email %}
-                  <button class='btn my-n1 hl-hover-gray p-1 lh-normal border-0' data-action='step-toggle-deadline-notif' data-stepid='{{ step.id }}' title='{{ 'Toggle notifications'|trans }}' aria-label='{{ 'Toggle notifications'|trans }}'>
-                    <i class='far fa-bell {{- step.deadline_notif ? ' active' }}'></i>
-                  </button>
-                {% endif %}
-                <button class='btn my-n1 hl-hover-gray p-1 lh-normal border-0' data-action='step-destroy-deadline' data-stepid='{{ step.id }}' title='{{ 'Clear deadline'|trans }}' aria-label='{{ 'Clear deadline'|trans }}'>
-                  <i class='fas fa-trash-alt'></i>
-                </span>
-              {% else %}
-                <button data-action='replace-with-next' type='button' class='btn btn-sm btn-secondary'>{{ 'Add a deadline'|trans }}</button>
-                <div hidden class='input-group'>
-                  <select class='custom-select col-md-3' id='stepSelectDeadline_{{ step.id }}'>
-                    <option disabled>{{ 'Set deadline in'|trans }}</option>
-                    <option value='{{ '+1 hour'|toDatetime }}'>{{ '%d hour'|trans|format(1) }}</option>
-                    <option value='{{ '+1 day'|toDatetime }}'>{{ '%d day'|trans|format(1) }}</option>
-                    <option value='{{ '+1 week'|toDatetime }}'>{{ '%d week'|trans|format(1) }}</option>
-                    <option value='{{ '+1 month'|toDatetime }}'>{{ '%d month'|trans|format(1) }}</option>
-                    <option value='{{ '+1 year'|toDatetime }}'>{{ '%d year'|trans|format(1) }}</option>
-                  </select>
-                  <div class='input-group-append'>
-                    <button class='btn btn-primary' type='button' data-action='step-update-deadline' data-stepid='{{ step.id }}'>{{ 'Save'|trans }}</button>
-                  </div>
-                </div>
-              {% endif %}
-              </div>
-              <div data-action='import-step-body' data-stepid='{{ step.id }}'><i class='fas fa-file-import'></i> {{ 'Copy step to cursor position'|trans }}</div>
-            </div>
+          <button class='btn lh-normal hl-hover-gray p-1 ml-auto mr-1' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' type='button' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}'>
+            <i class='fas fa-caret-right fa-fw'></i>
+          </button>
+          <div hidden data-save-hidden='extendedStep_{{ step.id }}' class='w-100'>
+          {{ 'Completion time:'|trans }}
+          {% if step.finished %}
+            <span data-stepid='{{ step.id }}' data-target='finished_time' data-ma-type='datetime-local' data-ma-input-value='{{ step.finished_time|date('Y-m-d\\TH:i') }}' class='step editable p-1 rounded hl-hover'>{{ step.finished_time|format_datetime() }}</span>
+          {% else %}
+            {{ 'Not finished'|trans }}
           {% endif %}
+          <br>
+
+          <div id='stepDeadlineDiv_{{ step.id }}'>
+            {% if step.deadline %}
+              {{ 'Deadline:'|trans }}
+              {# here the data-ma-input-value is formatted so it works with the datetime-local input type, and the displayed one is formatted differently to be more readable #}
+              <span data-stepid='{{ step.id }}' data-target='deadline' data-ma-type='datetime-local' data-ma-input-value='{{ step.deadline|date('Y-m-d\\TH:i') }}' class='step editable hl-hover-gray p-1 rounded'>{{ step.deadline|format_datetime() }}</span>
+              {# notification bell is only shown if the user has at least one notification setting activated for that type of notif #}
+              {% if App.Users.userData.notif_step_deadline or App.Users.userData.notif_step_deadline_email %}
+                <button class='btn my-n1 hl-hover-gray p-1 lh-normal border-0' data-action='step-toggle-deadline-notif' data-stepid='{{ step.id }}' title='{{ 'Toggle notifications'|trans }}' aria-label='{{ 'Toggle notifications'|trans }}'>
+                  <i class='far fa-bell {{- step.deadline_notif ? ' active' }}'></i>
+                </button>
+              {% endif %}
+              <button class='btn my-n1 hl-hover-gray p-1 lh-normal border-0' data-action='step-destroy-deadline' data-stepid='{{ step.id }}' title='{{ 'Clear deadline'|trans }}' aria-label='{{ 'Clear deadline'|trans }}'>
+                <i class='fas fa-trash-alt'></i>
+              </button>
+            {% else %}
+              <button data-action='replace-with-next' type='button' class='btn btn-sm btn-secondary'>{{ 'Add a deadline'|trans }}</button>
+              <div hidden class='input-group'>
+                <select class='custom-select col-md-3' id='stepSelectDeadline_{{ step.id }}'>
+                  <option disabled>{{ 'Set deadline in'|trans }}</option>
+                  <option value='{{ '+1 hour'|toDatetime }}'>{{ '%d hour'|trans|format(1) }}</option>
+                  <option value='{{ '+1 day'|toDatetime }}'>{{ '%d day'|trans|format(1) }}</option>
+                  <option value='{{ '+1 week'|toDatetime }}'>{{ '%d week'|trans|format(1) }}</option>
+                  <option value='{{ '+1 month'|toDatetime }}'>{{ '%d month'|trans|format(1) }}</option>
+                  <option value='{{ '+1 year'|toDatetime }}'>{{ '%d year'|trans|format(1) }}</option>
+                </select>
+                <div class='input-group-append'>
+                  <button class='btn btn-primary' type='button' data-action='step-update-deadline' data-stepid='{{ step.id }}'>{{ 'Save'|trans }}</button>
+                </div>
+              </div>
+            {% endif %}
+            </div>
+            <div data-action='import-step-body' data-stepid='{{ step.id }}'><i class='fas fa-file-import'></i> {{ 'Copy step to cursor position'|trans }}</div>
+          </div>
         </div>
       </div>
     {% endfor %}

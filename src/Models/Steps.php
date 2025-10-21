@@ -174,8 +174,11 @@ final class Steps extends AbstractRest
                 function () use ($params) {
                     // prevent updates to protected fields on immutable steps
                     $protected = array('body', 'ordering', 'is_immutable');
-                    // we can change the 'is_immutable' from templates only. Prevent on other entities
                     $enforceImmutability = in_array($this->Entity->entityType->value, array('experiments', 'items'), true);
+                    // if we're on experiments/items, prevent any change to is_immutable. It is only allowed on templates
+                    if ($enforceImmutability && array_key_exists('is_immutable', $params)) {
+                        throw new ImproperActionException(_('This step is immutable: immutability cannot be modified from experiments/items.'));
+                    }
                     if ($enforceImmutability && $this->isStepImmutable()
                         && array_intersect(array_keys($params), $protected)) {
                         throw new ImproperActionException(_('This step is immutable: body, ordering, and immutability cannot be modified.'));

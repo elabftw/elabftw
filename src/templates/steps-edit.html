@@ -4,8 +4,7 @@
   <div class='sortable' id='steps_div_{{ Entity.id }}' data-axis='y' data-table='{{ Entity.entityType.value }}_steps'>
     {# LOCK ALL STEPS #}
     {% if Entity.entityType.value in ['experiments_templates', 'items_types'] and (Entity.entityData.steps|length > 0) %}
-    {% set allLocked = (Entity.entityData.steps|length > 0)
-      and (Entity.entityData.steps|filter(s => s.is_immutable == 1)|length == Entity.entityData.steps|length) %}
+    {% set allLocked = (Entity.entityData.steps|length > 0) and (Entity.entityData.steps|filter(s => s.is_immutable == 1)|length == Entity.entityData.steps|length) %}
     <div class='d-flex'>
       <label for='toggle-all-steps' class='col-form-label mr-2'>{{ 'Lock / Unlock all steps'|trans }}</label>
       <label class='switch ucp-align'>
@@ -25,7 +24,6 @@
         </div>
         {# LOCK/UNLOCK A STEP #}
         {% set steps_table = Entity.entityType.value ~ '/' ~ Entity.id ~ '/steps' %}
-        {% set isLocked = step.is_immutable == 1 %}
         {% if Entity.entityType.value in ['experiments_templates', 'items_types'] %}
         <div class='input-group-prepend'>
           <label class='btn input-group-text'>

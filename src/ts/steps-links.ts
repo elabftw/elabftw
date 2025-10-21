@@ -100,7 +100,7 @@ if (document.getElementById('stepsDiv')) {
   });
 
   on('toggle-all-immutable', (el: HTMLInputElement) => {
-    const container = document.querySelector(el.dataset.scope);
+    const container = document.getElementById('stepsDiv');
     if (!container) return;
     const checked = el.checked;
     const inputs = container.querySelectorAll('input[type="checkbox"][data-target="is_immutable"]');

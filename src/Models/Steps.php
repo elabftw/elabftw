@@ -26,7 +26,6 @@ use PDO;
 
 use function array_intersect;
 use function array_keys;
-use function count;
 
 /**
  * All about the steps
@@ -180,7 +179,7 @@ final class Steps extends AbstractRest
                         throw new ImproperActionException(_('The immutability parameter cannot be modified from experiments/items.'));
                     }
                     if ($enforceImmutability && $this->isStepImmutable()
-                        && array_intersect(array_keys($params), $protected)) {
+                        && count(array_intersect(array_keys($params), $protected)) > 0) {
                         throw new ImproperActionException(_('This step is immutable: body, ordering, and immutability cannot be modified.'));
                     }
                     foreach ($params as $key => $value) {

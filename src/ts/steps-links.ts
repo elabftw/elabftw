@@ -99,14 +99,12 @@ if (document.getElementById('stepsDiv')) {
     }
   });
 
-  on('toggle-all-immutable', (el: HTMLElement) => {
-    const container = document.querySelector(el.dataset.scope || 'body');
+  on('toggle-all-immutable', (el: HTMLInputElement) => {
+    const container = document.querySelector(el.dataset.scope);
     if (!container) return;
     const checked = el.checked;
-    const inputs = container.querySelectorAll(
-      'input[data-trigger="change"][data-target="is_immutable"]',
-    );
-    inputs.forEach((input) => {
+    const inputs = container.querySelectorAll('input[type="checkbox"][data-target="is_immutable"]');
+    inputs.forEach((input: HTMLInputElement) => {
       // only toggle if it’s not already
       if (input.checked !== checked) {
         input.checked = checked;

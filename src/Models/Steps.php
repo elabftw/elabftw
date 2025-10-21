@@ -177,7 +177,7 @@ final class Steps extends AbstractRest
                     $enforceImmutability = in_array($this->Entity->entityType->value, array('experiments', 'items'), true);
                     // if we're on experiments/items, prevent any change to is_immutable. It is only allowed on templates
                     if ($enforceImmutability && array_key_exists('is_immutable', $params)) {
-                        throw new ImproperActionException(_('This step is immutable: immutability cannot be modified from experiments/items.'));
+                        throw new ImproperActionException(_('The immutability parameter cannot be modified from experiments/items.'));
                     }
                     if ($enforceImmutability && $this->isStepImmutable()
                         && array_intersect(array_keys($params), $protected)) {

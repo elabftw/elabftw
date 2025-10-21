@@ -27,7 +27,7 @@
         {% if Entity.entityType.value in ['experiments_templates', 'items_types'] %}
         <div class='input-group-prepend'>
           <label class='btn input-group-text'>
-            <input type='checkbox'  autocomplete='off'  data-trigger='change'  data-model='{{ steps_table ~ '/' ~ step.id }}' data-target='is_immutable'  id='stepIsImmutable_{{ step.id }}' {{ step.is_immutable ? 'checked' }} data-reload='step_{{ step.id }}' class='d-none'>
+            <input type='checkbox' autocomplete='off' data-trigger='change' data-model='{{ steps_table ~ '/' ~ step.id }}' data-target='is_immutable' id='stepIsImmutable_{{ step.id }}' {{ step.is_immutable ? 'checked' }} data-reload='step_{{ step.id }}' class='d-none'>
             <i class='fas fa-lock {{ not step.is_immutable ? 'd-none' }}'></i>
             <i class='fas fa-lock-open {{ step.is_immutable ? 'd-none' }}'></i>
           </label>
@@ -39,7 +39,7 @@
             <i class='fas fa-trash-alt'></i>
           </button>
         </div>
-        {# COMPLETE/UNCOMPLETE #}
+        {# FINISH/UNFINISH #}
         <div class='input-group-prepend'>
           <div class='input-group-text'>
             <input aria-label='{{ 'Toggle completion'|trans }}' type='checkbox' {{ step.finished ? 'checked' }} data-stepid='{{ step.id }}' data-id='{{ Entity.id }}' class='stepbox'>

@@ -593,6 +593,9 @@ class Users extends AbstractRest
         }
     }
 
+    /**
+     * Make an update directly, bypassing all checks, useful for Populate script and other internal calls with trusted values
+     */
     public function rawUpdate(UsersColumn $column, string | int | null $content): bool
     {
         $sql = sprintf('UPDATE users SET %s = :content WHERE userid = :userid', $column->value);
@@ -629,7 +632,7 @@ class Users extends AbstractRest
 
         $column = UsersColumn::tryFrom($params->getColumn());
         if ($column === null) {
-            throw new ImproperActionException('Invalid column for updating users table.');
+            throw new ImproperActionException(sprintf('Invalid column for updating users table: %s', $params->getColumn()));
         }
         $res = $this->rawUpdate($column, $params->getContent());
 

@@ -139,7 +139,7 @@ final class StorageUnits extends AbstractRest
             compounds.iupac_name LIKE :query OR
             sh.full_path LIKE :query)',
         ) . sprintf(
-            ' ORDER BY storage_id, entity_title LIMIT %d',
+            ' ORDER BY storage_name, entity_title LIMIT %d',
             $queryParams->getLimit(),
         );
 
@@ -286,7 +286,7 @@ final class StorageUnits extends AbstractRest
         FROM
             storage_hierarchy
         ORDER BY
-            parent_id";
+            storage_hierarchy.name, parent_id";
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
 

@@ -4641,6 +4641,14 @@ paths:
                 action:
                   type: string
                   enum: ['finish', 'notif', 'update']
+                is_immutable:
+                  type: integer
+                  enum: [ 0, 1 ]
+                body:
+                  type: string
+                  description: The text content of the step.
+                finished:
+                  type: integer
             examples:
               first:
                 summary: Make a step "immutable"

@@ -592,6 +592,15 @@ class Users extends AbstractRest
         }
     }
 
+    public function rawUpdate(string $column, string | int | null $content): bool
+    {
+        $sql = 'UPDATE users SET ' . $column . ' = :content WHERE userid = :userid';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':content', $content);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
+        return $this->Db->execute($req);
+    }
+
     public function update(UserParams $params): bool
     {
         if ($params->getTarget() === 'password') {
@@ -617,11 +626,7 @@ class Users extends AbstractRest
             return true;
         }
 
-        $sql = 'UPDATE users SET ' . $params->getColumn() . ' = :content WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':content', $params->getContent());
-        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        $res = $this->Db->execute($req);
+        $res = $this->rawUpdate($params->getColumn(), $params->getContent());
 
         $auditLoggableTargets = array(
             'valid_until',

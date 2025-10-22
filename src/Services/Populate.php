@@ -508,11 +508,11 @@ final class Populate
         $Users = new Users($userid, $team);
 
         if ($user['is_sysadmin'] ?? false) {
-            $Users->update(new UserParams('is_sysadmin', 1));
+            $Users->rawUpdate('is_sysadmin', 1);
         }
 
         if (isset($user['validated']) && !$user['validated']) {
-            $Users->update(new UserParams('validated', 0));
+            $Users->rawUpdate('validated', 0);
         }
 
         if ($user['create_mfa_secret'] ?? false) {

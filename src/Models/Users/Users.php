@@ -24,6 +24,7 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Usergroup;
+use Elabftw\Enums\UsersColumn;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
@@ -592,9 +593,9 @@ class Users extends AbstractRest
         }
     }
 
-    public function rawUpdate(string $column, string | int | null $content): bool
+    public function rawUpdate(UsersColumn $column, string | int | null $content): bool
     {
-        $sql = 'UPDATE users SET ' . $column . ' = :content WHERE userid = :userid';
+        $sql = sprintf('UPDATE users SET %s = :content WHERE userid = :userid', $column->value);
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $content);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
@@ -626,7 +627,11 @@ class Users extends AbstractRest
             return true;
         }
 
-        $res = $this->rawUpdate($params->getColumn(), $params->getContent());
+        $column = UsersColumn::tryFrom($params->getColumn());
+        if ($column === null) {
+            throw new ImproperActionException('Invalid column for updating users table.');
+        }
+        $res = $this->rawUpdate($column, $params->getContent());
 
         $auditLoggableTargets = array(
             'valid_until',

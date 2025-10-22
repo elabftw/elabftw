@@ -595,6 +595,9 @@ class Users extends AbstractRest
 
     /**
      * Make an update directly, bypassing all checks, useful for Populate script and other internal calls with trusted values
+     * WARNING: This method is intended ONLY for internal scripts (e.g., Populate) with trusted values.
+     * Callers MUST ensure proper authorization before calling this method.
+     * Using this method with user-controlled input may create a security vulnerability.
      */
     public function rawUpdate(UsersColumn $column, string | int | null $content): bool
     {
@@ -602,7 +605,32 @@ class Users extends AbstractRest
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $content);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        $res = $this->Db->execute($req);
+
+        // create audit event
+        $auditLoggableTargets = array(
+            'valid_until',
+            'email',
+            'orgid',
+            'is_sysadmin',
+            'can_manage_compounds',
+            'can_manage_users2teams',
+            'can_manage_inventory_locations',
+        );
+
+        if ($res
+            && in_array($column->value, $auditLoggableTargets, true)
+            && (string) $this->userData[$column->value] !== (string) $content
+        ) {
+            AuditLogs::create(new UserAttributeChanged(
+                $this->requester->userid ?? 0,
+                $this->userid ?? 0,
+                $column->value,
+                (string) $this->userData[$column->value],
+                (string) $content,
+            ));
+        }
+        return $res;
     }
 
     public function update(UserParams $params): bool
@@ -634,31 +662,7 @@ class Users extends AbstractRest
         if ($column === null) {
             throw new ImproperActionException(sprintf('Invalid column for updating users table: %s', $params->getColumn()));
         }
-        $res = $this->rawUpdate($column, $params->getContent());
-
-        $auditLoggableTargets = array(
-            'valid_until',
-            'email',
-            'orgid',
-            'is_sysadmin',
-            'can_manage_compounds',
-            'can_manage_users2teams',
-            'can_manage_inventory_locations',
-        );
-
-        if ($res
-            && in_array($params->getTarget(), $auditLoggableTargets, true)
-            && (string) $this->userData[$params->getTarget()] !== $params->getStringContent()
-        ) {
-            AuditLogs::create(new UserAttributeChanged(
-                $this->requester->userid ?? 0,
-                $this->userid ?? 0,
-                $params->getTarget(),
-                (string) $this->userData[$params->getTarget()],
-                $params->getStringContent(),
-            ));
-        }
-        return $res;
+        return $this->rawUpdate($column, $params->getContent());
     }
 
     /**

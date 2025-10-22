@@ -609,13 +609,14 @@ class Users extends AbstractRest
 
         // create audit event
         $auditLoggableTargets = array(
-            'valid_until',
-            'email',
-            'orgid',
-            'is_sysadmin',
             'can_manage_compounds',
             'can_manage_users2teams',
             'can_manage_inventory_locations',
+            'email',
+            'is_sysadmin',
+            'orgid',
+            'valid_until',
+            'validated',
         );
 
         if ($res
@@ -821,10 +822,7 @@ class Users extends AbstractRest
      */
     private function validate(): array
     {
-        $sql = 'UPDATE users SET validated = 1 WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        $this->Db->execute($req);
+        $this->rawUpdate(UsersColumn::Validated, 1);
         $Notifications = new SelfIsValidated();
         $Notifications->create($this->userData['userid']);
         // send the instance level onboarding email only once the user is validated (avoid infoleak for untrusted users)

@@ -722,17 +722,19 @@ class Users extends AbstractRest
         return $this->userData;
     }
 
-    protected static function search(string $column, string $term, bool $validated = false): self
+    protected static function search(UsersColumn $column, string $term, bool $filterValidated = false): self
     {
         $Db = Db::getConnection();
+        // make sure we select only a user with at least one active team
         $sql = sprintf(
-            'SELECT userid FROM users WHERE %s = :term %s LIMIT 1',
-            $column === 'orgid'
-                ? 'orgid'
-                : 'email',
-            $validated
-                ? 'AND validated = 1'
-                : '',
+            'SELECT userid FROM users WHERE %s = :term %s AND EXISTS (
+              SELECT 1
+              FROM users2teams AS ut
+              WHERE ut.users_id = users.userid
+                AND ut.is_archived = 0
+            ) LIMIT 1',
+            $column->value,
+            $filterValidated ? 'AND validated = 1' : 'AND 1=1',
         );
         $req = $Db->prepare($sql);
         $req->bindParam(':term', $term);

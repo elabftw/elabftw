@@ -24,6 +24,9 @@ use Elabftw\Traits\SortableTrait;
 use Override;
 use PDO;
 
+use function array_intersect;
+use function array_keys;
+
 /**
  * All about the steps
  */
@@ -141,17 +144,18 @@ final class Steps extends AbstractRest
         if ($fromTemplate) {
             $table = ($this->Entity instanceof Experiments || $this->Entity instanceof Templates) ? 'experiments_templates' : 'items_types';
         }
-        $stepsql = 'SELECT body, ordering FROM ' . $table . '_steps WHERE item_id = :id';
+        $stepsql = 'SELECT body, ordering, is_immutable FROM ' . $table . '_steps WHERE item_id = :id';
         $stepreq = $this->Db->prepare($stepsql);
         $stepreq->bindParam(':id', $id, PDO::PARAM_INT);
         $this->Db->execute($stepreq);
 
-        $sql = 'INSERT INTO ' . $this->Entity->entityType->value . '_steps (item_id, body, ordering) VALUES(:item_id, :body, :ordering)';
+        $sql = 'INSERT INTO ' . $this->Entity->entityType->value . '_steps (item_id, body, ordering, is_immutable) VALUES(:item_id, :body, :ordering, :is_immutable)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $newId, PDO::PARAM_INT);
         while ($steps = $stepreq->fetch()) {
             $req->bindParam(':body', $steps['body']);
             $req->bindParam(':ordering', $steps['ordering'], PDO::PARAM_INT);
+            $req->bindParam(':is_immutable', $steps['is_immutable'], PDO::PARAM_INT);
             $this->Db->execute($req);
         }
     }
@@ -167,6 +171,17 @@ final class Steps extends AbstractRest
             Action::NotifDestroy => $this->destroyNotif(),
             Action::Update => (
                 function () use ($params) {
+                    // prevent updates to protected fields on immutable steps
+                    $protected = array('body', 'ordering', 'is_immutable');
+                    $enforceImmutability = in_array($this->Entity->entityType->value, array('experiments', 'items'), true);
+                    // if we're on experiments/items, prevent any change to is_immutable. It is only allowed on templates
+                    if ($enforceImmutability && array_key_exists('is_immutable', $params)) {
+                        throw new ImproperActionException(_('The immutability parameter cannot be modified from experiments/items.'));
+                    }
+                    if ($enforceImmutability && $this->isStepImmutable()
+                        && count(array_intersect(array_keys($params), $protected)) > 0) {
+                        throw new ImproperActionException(_('This step is immutable: body, ordering, and immutability cannot be modified.'));
+                    }
                     foreach ($params as $key => $value) {
                         // value can be null with deadline removal
                         $this->update(new StepParams($key, $value ?? ''));
@@ -304,5 +319,14 @@ final class Steps extends AbstractRest
             $this->Entity->entityType->toPage(),
             $deadline,
         );
+    }
+
+    private function isStepImmutable(): bool
+    {
+        $sql = 'SELECT is_immutable FROM ' . $this->Entity->entityType->value . '_steps WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return (bool) $req->fetchColumn();
     }
 }

@@ -21,10 +21,11 @@ use function str_replace;
 final class StepParams extends ContentParams
 {
     #[Override]
-    public function getContent(): ?string
+    public function getContent(): string | int |null
     {
         return match ($this->target) {
             'body' => $this->getStep(),
+            'is_immutable' => $this->getBool(),
             'deadline', 'finished_time' => $this->getNullableString(),
             default => throw new ImproperActionException('Incorrect parameter for steps.'),
         };

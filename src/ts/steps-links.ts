@@ -99,6 +99,20 @@ if (document.getElementById('stepsDiv')) {
     }
   });
 
+  on('toggle-all-immutable', (el: HTMLInputElement) => {
+    const container = document.getElementById('stepsDiv');
+    if (!container) return;
+    const checked = el.checked;
+    const inputs = container.querySelectorAll('input[type="checkbox"][data-target="is_immutable"]');
+    inputs.forEach((input: HTMLInputElement) => {
+      // only toggle if it’s not already
+      if (input.checked !== checked) {
+        input.checked = checked;
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    });
+  });
+
   on('import-links', (el: HTMLElement) => {
     Promise.allSettled(['items_links', 'experiments_links'].map(endpoint => ApiC.post(
       `${entity.type}/${entity.id}/${endpoint}/${el.dataset.target}`,

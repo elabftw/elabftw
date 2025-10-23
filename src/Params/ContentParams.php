@@ -22,6 +22,7 @@ use InvalidArgumentException;
 use Override;
 
 use function mb_strlen;
+use function filter_var;
 
 class ContentParams implements ContentParamsInterface
 {
@@ -91,6 +92,11 @@ class ContentParams implements ContentParamsInterface
     protected function getPositiveIntOrNull(): ?int
     {
         return $this->asInt() <= 0 ? null : $this->asInt();
+    }
+
+    protected function getBool(): int
+    {
+        return (int) filter_var($this->asInt(), FILTER_VALIDATE_BOOLEAN);
     }
 
     protected function getNullableString(): ?string

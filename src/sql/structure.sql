@@ -278,8 +278,7 @@ CREATE TABLE `experiments_steps` (
   `deadline` datetime DEFAULT NULL,
   `deadline_notif` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `is_immutable` tinyint UNSIGNED NOT NULL DEFAULT 0,
-  PRIMARY KEY (`id`),
-  KEY `idx_experiments_steps_is_immutable` (`is_immutable`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 --
@@ -859,8 +858,7 @@ CREATE TABLE `items_types_steps` (
   `deadline` datetime DEFAULT NULL,
   `deadline_notif` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `is_immutable` tinyint UNSIGNED NOT NULL DEFAULT 0,
-  PRIMARY KEY (`id`),
-  KEY `idx_items_types_steps_is_immutable` (`is_immutable`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -1480,7 +1478,8 @@ ALTER TABLE `experiments2items`
 -- Indexes for table `experiments_steps`
 --
 ALTER TABLE `experiments_steps`
-  ADD KEY `fk_experiments_steps_experiments_id` (`item_id`);
+  ADD KEY `fk_experiments_steps_experiments_id` (`item_id`),
+  ADD KEY `idx_experiments_steps_is_immutable` (`is_immutable`);
 
 --
 -- Indexes for table `experiments_templates`
@@ -1579,7 +1578,8 @@ ALTER TABLE `items_types2items`
 -- Indexes for table `items_types_steps`
 --
 ALTER TABLE `items_types_steps`
-  ADD KEY `fk_items_types_steps_items_id` (`item_id`);
+  ADD KEY `fk_items_types_steps_items_id` (`item_id`),
+  ADD KEY `idx_items_types_steps_is_immutable` (`is_immutable`);
 
 --
 -- Indexes for table `notifications`
@@ -1942,9 +1942,14 @@ CREATE TABLE `items_steps` (
     `is_immutable` tinyint UNSIGNED NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`),
     KEY `fk_items_steps_items_id` (`item_id`),
-    KEY `idx_items_steps_is_immutable` (`is_immutable`),
     CONSTRAINT `fk_items_steps_items_id` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+--
+-- Indexes for table `items_steps`
+--
+ALTER TABLE `items_steps`
+  ADD KEY `idx_items_steps_is_immutable` (`is_immutable`);
 
 CREATE TABLE `experiments_templates_steps` (
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -1958,9 +1963,14 @@ CREATE TABLE `experiments_templates_steps` (
     `is_immutable` tinyint UNSIGNED NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`),
     KEY `fk_experiments_templates_steps_items_id` (`item_id`),
-    KEY `idx_experiments_templates_steps_is_immutable` (`is_immutable`),
     CONSTRAINT `fk_experiments_templates_steps_items_id` FOREIGN KEY (`item_id`) REFERENCES `experiments_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+--
+-- Indexes for table `experiments_templates_steps`
+--
+ALTER TABLE `experiments_templates_steps`
+    ADD KEY `idx_experiments_templates_steps_is_immutable` (`is_immutable`);
 
 CREATE TABLE `items2items` (
     `item_id` int(10) unsigned NOT NULL,

@@ -66,7 +66,7 @@ final class PopulateDatabase extends Command
         // ask confirmation before deleting all the database
         $helper = $this->getHelper('question');
         // the -y flag overrides the config value
-        if ($yaml['skip_confirm'] === false && !$input->getOption('yes')) {
+        if (($yaml['skip_confirm'] ?? false) === false && !$input->getOption('yes')) {
             $question = new ConfirmationQuestion("WARNING: this command will completely ERASE your current database!\nAre you sure you want to continue? (y/n)\n", false);
 
             /** @phpstan-ignore-next-line ask method is part of QuestionHelper which extends HelperInterface */
@@ -78,7 +78,8 @@ final class PopulateDatabase extends Command
 
         $fast = (bool) $input->getOption('fast');
         $iter = null;
-        if ($input->getOption('iterations')) {
+        // string 0 is falsy in php!
+        if ($input->getOption('iterations') || $input->getOption('iterations') === '0') {
             $iter = (int) $input->getOption('iterations');
         }
         new Populate($output, $yaml, $fast, $iter)->run();

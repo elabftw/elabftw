@@ -124,7 +124,7 @@ final class Populate
             if ($this->fast) {
                 $iter = 2;
             }
-            for ($i = 0; $i <= $iter; $i++) {
+            for ($i = 0; $i < $iter; $i++) {
                 $this->createUser($teamid, array());
             }
 

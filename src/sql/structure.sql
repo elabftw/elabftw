@@ -2189,10 +2189,17 @@ ALTER TABLE `experiments_templates_edit_mode`
     ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
+-- Indexes and Constraints for table `users`
+--
+ALTER TABLE `users` ADD INDEX `idx_users_email_userid` (email, userid);
+ALTER TABLE `users` ADD INDEX `idx_users_orgid_userid` (orgid, userid);
+
+--
 -- Indexes and Constraints for table `users2teams`
 --
 ALTER TABLE `users2teams`
   ADD KEY `fk_users2teams_teams_id` (`teams_id`),
+  ADD KEY `idx_users_id_is_archived` (`users_id`, `is_archived`),
   ADD KEY `fk_users2teams_users_id` (`users_id`);
 ALTER TABLE `users2teams`
   ADD CONSTRAINT `fk_users2teams_teams_id` FOREIGN KEY (`teams_id`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,

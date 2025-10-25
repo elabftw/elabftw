@@ -2815,6 +2815,91 @@ paths:
         '204':
           description: The link was deleted.
 
+  # COMPOUNDS LINKS
+  /{entity_type}/{id}/compounds:
+    summary: Compounds linked to that entity.
+    parameters:
+      - name: entity_type
+        in: path
+        description: Entity type
+        required: true
+        schema:
+          type: string
+          enum: ['experiments', 'items']
+      - name: id
+        in: path
+        description: ID of the entity
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Links to compounds']
+      summary: Read all compounds links of that entity.
+      operationId: read-entity-compounds-links
+      responses:
+        '200':
+          description: A list of links
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/link'
+  /{entity_type}/{id}/compounds/{subid}:
+    summary: Actions on compounds link of an entity
+    parameters:
+      - name: entity_type
+        in: path
+        description: Entity type
+        required: true
+        schema:
+          type: string
+          enum: ['experiments', 'items']
+      - name: id
+        in: path
+        description: ID of the entity
+        required: true
+        schema:
+          type: integer
+      - name: subid
+        in: path
+        description: ID of the compound linked
+        required: true
+        schema:
+          type: integer
+    post:
+      tags: ['Links to compounds']
+      summary: Link an entity to a compound.
+      operationId: post-entity-compounds-links
+      requestBody:
+        description: Parameters for creating a link.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: ['create']
+                  description: |
+                    The `create` action will create the link.
+      responses:
+        '201':
+          description: The link has been created.
+          headers:
+            location:
+              description: An URL to the link that was created.
+              schema:
+                type: string
+    delete:
+      tags: ['Links to compounds']
+      summary: Delete a compound link.
+      description: The link gets deleted.
+      operationId: delete-entity-compounds-link
+      responses:
+        '204':
+          description: The link was deleted.
+
   # EXPERIMENTS_TEMPLATES
   /experiments_templates:
     summary: Actions on experiments_templates

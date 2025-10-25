@@ -24,6 +24,7 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Usergroup;
+use Elabftw\Enums\UsersColumn;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
@@ -592,6 +593,47 @@ class Users extends AbstractRest
         }
     }
 
+    /**
+     * Make an update directly, bypassing all checks, useful for Populate script and other internal calls with trusted values
+     * WARNING: This method is intended ONLY for internal scripts (e.g., Populate) with trusted values.
+     * Callers MUST ensure proper authorization before calling this method.
+     * Using this method with user-controlled input may create a security vulnerability.
+     */
+    public function rawUpdate(UsersColumn $column, string | int | null $content): bool
+    {
+        $sql = sprintf('UPDATE users SET %s = :content WHERE userid = :userid', $column->value);
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':content', $content);
+        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
+        $res = $this->Db->execute($req);
+
+        // create audit event
+        $auditLoggableTargets = array(
+            'can_manage_compounds',
+            'can_manage_users2teams',
+            'can_manage_inventory_locations',
+            'email',
+            'is_sysadmin',
+            'orgid',
+            'valid_until',
+            'validated',
+        );
+
+        if ($res
+            && in_array($column->value, $auditLoggableTargets, true)
+            && (string) $this->userData[$column->value] !== (string) $content
+        ) {
+            AuditLogs::create(new UserAttributeChanged(
+                $this->requester->userid ?? 0,
+                $this->userid ?? 0,
+                $column->value,
+                (string) $this->userData[$column->value],
+                (string) $content,
+            ));
+        }
+        return $res;
+    }
+
     public function update(UserParams $params): bool
     {
         if ($params->getTarget() === 'password') {
@@ -617,35 +659,11 @@ class Users extends AbstractRest
             return true;
         }
 
-        $sql = 'UPDATE users SET ' . $params->getColumn() . ' = :content WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':content', $params->getContent());
-        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        $res = $this->Db->execute($req);
-
-        $auditLoggableTargets = array(
-            'valid_until',
-            'email',
-            'orgid',
-            'is_sysadmin',
-            'can_manage_compounds',
-            'can_manage_users2teams',
-            'can_manage_inventory_locations',
-        );
-
-        if ($res
-            && in_array($params->getTarget(), $auditLoggableTargets, true)
-            && (string) $this->userData[$params->getTarget()] !== $params->getStringContent()
-        ) {
-            AuditLogs::create(new UserAttributeChanged(
-                $this->requester->userid ?? 0,
-                $this->userid ?? 0,
-                $params->getTarget(),
-                (string) $this->userData[$params->getTarget()],
-                $params->getStringContent(),
-            ));
+        $column = UsersColumn::tryFrom($params->getColumn());
+        if ($column === null) {
+            throw new ImproperActionException(sprintf('Invalid column for updating users table: %s', $params->getColumn()));
         }
-        return $res;
+        return $this->rawUpdate($column, $params->getContent());
     }
 
     /**
@@ -704,17 +722,19 @@ class Users extends AbstractRest
         return $this->userData;
     }
 
-    protected static function search(string $column, string $term, bool $validated = false): self
+    protected static function search(UsersColumn $column, string $term, bool $filterValidated = false): self
     {
         $Db = Db::getConnection();
+        // make sure we select only a user with at least one active team
         $sql = sprintf(
-            'SELECT userid FROM users WHERE %s = :term %s LIMIT 1',
-            $column === 'orgid'
-                ? 'orgid'
-                : 'email',
-            $validated
-                ? 'AND validated = 1'
-                : '',
+            'SELECT userid FROM users WHERE %s = :term %s AND EXISTS (
+              SELECT 1
+              FROM users2teams AS ut
+              WHERE ut.users_id = users.userid
+                AND ut.is_archived = 0
+            ) LIMIT 1',
+            $column->value,
+            $filterValidated ? 'AND validated = 1' : 'AND 1=1',
         );
         $req = $Db->prepare($sql);
         $req->bindParam(':term', $term);
@@ -804,10 +824,7 @@ class Users extends AbstractRest
      */
     private function validate(): array
     {
-        $sql = 'UPDATE users SET validated = 1 WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        $this->Db->execute($req);
+        $this->rawUpdate(UsersColumn::Validated, 1);
         $Notifications = new SelfIsValidated();
         $Notifications->create($this->userData['userid']);
         // send the instance level onboarding email only once the user is validated (avoid infoleak for untrusted users)

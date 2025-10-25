@@ -789,7 +789,7 @@ components:
               description: Set to 1 to prevent further changes to the permissions setting for write access
               default: 0
     entity_template:
-      description: For experiments templates and items types (resources categories)
+      description: For experiments templates and items types (resources templates)
       allOf:
         - $ref: '#/components/schemas/entity_template_editable'
         - $ref: '#/components/schemas/entity'
@@ -906,27 +906,6 @@ components:
               type: integer
             book_cancel_minutes:
               type: integer
-    items_type:
-      type: object
-      properties:
-        id:
-          type: integer
-        title:
-          type: string
-        status:
-          type: integer
-        color:
-          type: string
-        body:
-          type: string
-        ordering:
-          type: integer
-        canread:
-          type: string
-        canwrite:
-          type: string
-        metadata:
-          $ref: '#/components/schemas/metadata'
     link:
       type: object
       properties:
@@ -1036,7 +1015,7 @@ components:
           type: string
         userid:
           type: integer
-    # experiments_status, experiments_categories and items_status are statuslike
+    # experiments_status, experiments_categories, resources_categories and items_status are statuslike
     statuslike:
       type: object
       properties:
@@ -1066,6 +1045,10 @@ components:
         deadline:
           type: string
         deadline_notif:
+          type: integer
+        is_immutable:
+          description: Only editable via templates. Immutability persists on derived experiments or resources.
+          enum: [ 0, 1 ]
           type: integer
     tag:
       type: object
@@ -2832,6 +2815,91 @@ paths:
         '204':
           description: The link was deleted.
 
+  # COMPOUNDS LINKS
+  /{entity_type}/{id}/compounds:
+    summary: Compounds linked to that entity.
+    parameters:
+      - name: entity_type
+        in: path
+        description: Entity type
+        required: true
+        schema:
+          type: string
+          enum: ['experiments', 'items']
+      - name: id
+        in: path
+        description: ID of the entity
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Links to compounds']
+      summary: Read all compounds links of that entity.
+      operationId: read-entity-compounds-links
+      responses:
+        '200':
+          description: A list of links
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/link'
+  /{entity_type}/{id}/compounds/{subid}:
+    summary: Actions on compounds link of an entity
+    parameters:
+      - name: entity_type
+        in: path
+        description: Entity type
+        required: true
+        schema:
+          type: string
+          enum: ['experiments', 'items']
+      - name: id
+        in: path
+        description: ID of the entity
+        required: true
+        schema:
+          type: integer
+      - name: subid
+        in: path
+        description: ID of the compound linked
+        required: true
+        schema:
+          type: integer
+    post:
+      tags: ['Links to compounds']
+      summary: Link an entity to a compound.
+      operationId: post-entity-compounds-links
+      requestBody:
+        description: Parameters for creating a link.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: ['create']
+                  description: |
+                    The `create` action will create the link.
+      responses:
+        '201':
+          description: The link has been created.
+          headers:
+            location:
+              description: An URL to the link that was created.
+              schema:
+                type: string
+    delete:
+      tags: ['Links to compounds']
+      summary: Delete a compound link.
+      description: The link gets deleted.
+      operationId: delete-entity-compounds-link
+      responses:
+        '204':
+          description: The link was deleted.
+
   # EXPERIMENTS_TEMPLATES
   /experiments_templates:
     summary: Actions on experiments_templates
@@ -2958,93 +3026,131 @@ paths:
         '204':
           description: The entry was deleted.
 
-  # ITEMS_TYPES
+  # ITEMS_TYPES (Resources Templates)
   /items_types:
-    summary: Actions on resources categories, aka items types
+    summary: Actions on items_types (resources templates)
+    # POST EXPERIMENTS TEMPLATES
     post:
-      tags: ['Items types']
-      summary: Create a resource category
+      tags: ['Items types (Resources Templates)']
+      summary: Create a resource template
       operationId: post-items_types
       requestBody:
-        description: Parameters for creating a resource category
+        description: Parameters for creating a resource template
         content:
           application/json:
             schema:
-              allOf:
-                - $ref: '#/components/schemas/entity_template_editable'
-                - type: object
-                  properties:
-                    color:
-                      type: string
-                      description: Hexadecimal color code for the category
-                      nullable: true
-                      default: A random suitable color
-                      example: 29AEB9
+              $ref: '#/components/schemas/entity_template_editable'
       responses:
         '201':
-          description: The items type has been created.
+          description: The resource template has been created.
           headers:
             location:
-              description: An URL to the items type that was created.
+              description: An URL to the resource template that was created.
               schema:
                 type: string
+    # END POST ITEMS TYPES
+
+    # GET ITEMS TYPES
     get:
-      tags: ['Items types']
-      summary: Read all resources categories that are accessible.
+      tags: ['Items types (Resources Templates)']
+      summary: Read all resources templates that are accessible
       operationId: read-items_types
       responses:
         '200':
-          description: A list of resources categories.
+          description: A list of resources templates.
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/items_type'
+                  $ref: '#/components/schemas/entity_template'
   /items_types/{id}:
-    summary: Actions on a resource category.
+    summary: Actions on a specific resource template
     parameters:
       - name: id
         in: path
-        description: ID of the resource category.
+        description: ID of the resource template
         required: true
         schema:
           type: integer
-    get:
-      tags: ['Items types']
-      summary: Read a resource category.
-      operationId: get-items_type
-      responses:
-        '200':
-          description: A resource category.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/items_type'
-    patch:
-      tags: ['Items types']
-      summary: Modify a resource category.
-      operationId: patch-items_type
+    post:
+      tags: ['Items types (Resources Templates)']
+      summary: Duplicate a resource template with its ID
+      operationId: post-items_types-by-id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique identifier of the resource template to duplicate.
+          schema:
+            type: integer
       requestBody:
+        description: Parameters for duplicating a resource template
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/items_type'
+              type: object
+              properties:
+                action:
+                  type: string
+                  description: |
+                    The "duplicate" action creates a new entity based from the given entity id.
+                  default: 'duplicate'
+                copyFiles:
+                  type: boolean
+                  default: false
+                  description: |
+                    If "true", the action will import the files of the original entity.
+      responses:
+        '201':
+          description: The resource template has been duplicated.
+          headers:
+            location:
+              description: An URL to the resource template that was duplicated.
+              schema:
+                type: string
+    get:
+      tags: ['Items types (Resources Templates)']
+      summary: Read a resource template
+      operationId: get-items_type
       responses:
         '200':
-          description: The patched resource category.
+          description: A resource template
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/items_type'
+                $ref: '#/components/schemas/entity_template'
+    patch:
+      tags: ['Items types (Resources Templates)']
+      summary: Modify a resource template
+      operationId: patch-items_type
+      requestBody:
+        description: Parameters for modifying a resource template
+        content:
+          application/json:
+            schema:
+              anyOf:
+                - type: object
+                  properties:
+                    action:
+                      type: string
+                      enum: ['lock', 'pin', 'update']
+                - $ref: '#/components/schemas/entity_template_editable'
+      responses:
+        '200':
+          description: The patched resource template
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/entity_template'
     delete:
-      tags: ['Items types']
-      summary: Delete a resource category.
-      description: The resource category gets soft-deleted.
+      tags: ['Items types (Resources Templates)']
+      summary: Delete a resource template.
+      description: The resource template gets soft-deleted.
       operationId: delete-items_type
       responses:
         '204':
-          description: The resource category was marked as deleted.
+          description: The entry was deleted.
 
   # EVENTS
   /events:
@@ -3602,6 +3708,108 @@ paths:
       tags: ['Experiments categories']
       summary: Delete a category.
       operationId: delete-expcat
+      responses:
+        '204':
+          description: The category was removed.
+
+  # RESOURCES CATEGORIES
+  /teams/{id}/resources_categories:
+    parameters:
+      - name: id
+        in: path
+        description: ID of the team.
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: [ 'Resources categories' ]
+      summary: Read resources categories of a team.
+      operationId: read-team-resources-categories
+      responses:
+        '200':
+          description: A list of resources categories for the team.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/statuslike'
+    post:
+      tags: [ 'Resources categories' ]
+      operationId: post-team-one-rescat
+      summary: Create a new category for resources.
+      requestBody:
+        description: Parameters for creating a resource category.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Category name
+                color:
+                  type: string
+                  description: |
+                    Hex color without leading \#.
+                default:
+                  type: integer
+                  description: Is it the default category for the team?
+      responses:
+        '201':
+          description: Create a resource category.
+          headers:
+            location:
+              description: An URL to the category that was created.
+              schema:
+                type: string
+  # ONE RESOURCE CATEGORY
+  /teams/{id}/resources_categories/{subid}:
+    parameters:
+      - name: id
+        in: path
+        description: ID of the team.
+        required: true
+        schema:
+          type: integer
+      - name: subid
+        in: path
+        description: ID of the category.
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: [ 'Resources categories' ]
+      operationId: read-team-one-rescat
+      summary: Read a category.
+      responses:
+        '200':
+          description: Read a resource category.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/statuslike'
+    patch:
+      tags: [ 'Resources categories' ]
+      operationId: patch-rescat
+      summary: Modify a category.
+      requestBody:
+        description: Parameters for modifying a resource category.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/statuslike'
+      responses:
+        '200':
+          description: The updated resource category.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/statuslike'
+    delete:
+      tags: [ 'Resources categories' ]
+      summary: Delete a category.
+      operationId: delete-rescat
       responses:
         '204':
           description: The category was removed.
@@ -4518,6 +4726,23 @@ paths:
                 action:
                   type: string
                   enum: ['finish', 'notif', 'update']
+                is_immutable:
+                  type: integer
+                  enum: [ 0, 1 ]
+                body:
+                  type: string
+                  description: The text content of the step.
+                finished:
+                  type: integer
+            examples:
+              first:
+                summary: Make a step "immutable"
+                value:
+                  is_immutable: 1
+              second:
+                summary: Edit the body of a step
+                value:
+                  body: Put on the safety gloves first.
       responses:
         '200':
           description: The updated step.

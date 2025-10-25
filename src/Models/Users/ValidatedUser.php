@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models\Users;
 
 use Elabftw\Enums\Usergroup;
+use Elabftw\Enums\UsersColumn;
 use Elabftw\Exceptions\ImproperActionException;
 use Override;
 
@@ -24,13 +25,13 @@ final class ValidatedUser extends ExistingUser
     #[Override]
     public static function fromEmail(string $email): Users
     {
-        return self::search('email', $email, true);
+        return self::search(UsersColumn::Email, $email, true);
     }
 
     #[Override]
     public static function fromOrgid(string $orgid): Users
     {
-        return self::search('orgid', $orgid, true);
+        return self::search(UsersColumn::Orgid, $orgid, true);
     }
 
     public static function fromExternal(string $email, array $teams, string $firstname, string $lastname, ?string $orgid = null, bool $allowTeamCreation = false): Users

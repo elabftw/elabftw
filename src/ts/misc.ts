@@ -167,6 +167,7 @@ export function listenTrigger(elementId: string = ''): void {
  * Loop over all the input and select elements of an element and collect their value
  * Returns an object with name => value
  * Add data-ignore='1' to elements that should not be considered
+ * Add data-allow-empty='1' to elements that can be empty (e.g. orgid)
  */
 export function collectForm(form: HTMLElement): object {
   const inputs = [];
@@ -193,12 +194,12 @@ export function collectForm(form: HTMLElement): object {
     if (el.type === 'checkbox') {
       value = el.checked ? 'on' : 'off';
     }
-    if (el.dataset.ignore !== '1' && el.disabled === false) {
+    if (el.dataset.ignore !== '1' && el.disabled === false && (el.value !== '' || el.dataset.allowEmpty === '1')) {
       params = Object.assign(params, {[input.name]: value});
     }
   });
 
-  return removeEmpty(params);
+  return params;
 }
 
 export function clearForm(form: HTMLElement): void {
@@ -485,15 +486,6 @@ export function escapeRegExp(string: string): string {
 // used in metadata.ts to normalize field names only by trimming out double and simple quotes, causing to SQL issues
 export function normalizeFieldName(input: string): string {
   return input.replace(/['"]/g, '').trim().replace(/\s+/g, ' ');
-}
-
-function removeEmpty(params: object): object {
-  for (const [key, value] of Object.entries(params)) {
-    if (value === '') {
-      delete params[key];
-    }
-  }
-  return params;
 }
 
 export function askFileName(extension: FileType): string | undefined {

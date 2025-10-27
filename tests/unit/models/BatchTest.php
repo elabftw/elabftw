@@ -66,8 +66,8 @@ class BatchTest extends \PHPUnit\Framework\TestCase
     {
         $reqBody = $this->baseReqBody;
         $reqBody['action'] = Action::UpdateOwner->value;
-        $reqBody['users'] = array(1, 2);
-        // On batch, cannot update owner action without 'target_owner'
+        $reqBody['users_experiments'] = array(1, 2);
+        // Can't post action 'UpdateOwner' without a 'target_owner'
         $this->expectException(ImproperActionException::class);
         $this->Batch->postAction(Action::UpdateOwner, $reqBody);
     }

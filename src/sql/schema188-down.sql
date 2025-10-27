@@ -16,4 +16,4 @@ ALTER TABLE `items_steps`
 ALTER TABLE `experiments_steps`
     DROP COLUMN `is_immutable`;
 
-UPDATE config SET conf_value = 186 WHERE conf_name = 'schema';
+UPDATE config SET conf_value = 187 WHERE conf_name = 'schema';

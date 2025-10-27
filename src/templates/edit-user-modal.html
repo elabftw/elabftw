@@ -24,7 +24,7 @@
           <label for='userInput-valid_until'>{{ 'Valid until'|trans }}</label>
           <input name='valid_until' type='date' class='form-control' id='userInput-valid_until' />
           <label for='userInput-orgid'>{{ 'Internal ID'|trans }}</label>
-          <input name='orgid' class='form-control' id='userInput-orgid' {{ disabledForAdmin }} />
+          <input name='orgid' class='form-control' data-allow-empty='1' id='userInput-orgid' {{ disabledForAdmin }} />
           {# Toggle is_sysadmin slider #}
           <div class='d-flex justify-content-between'>
             <label for='userInput-is_sysadmin' class='col-form-label'>{{ 'Is Sysadmin'|trans }}</label>

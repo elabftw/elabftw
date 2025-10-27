@@ -21,6 +21,7 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\Usergroup;
+use Elabftw\Enums\UsersColumn;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Compounds;
 use Elabftw\Models\Config;
@@ -123,7 +124,7 @@ final class Populate
             if ($this->fast) {
                 $iter = 2;
             }
-            for ($i = 0; $i <= $iter; $i++) {
+            for ($i = 0; $i < $iter; $i++) {
                 $this->createUser($teamid, array());
             }
 
@@ -508,11 +509,11 @@ final class Populate
         $Users = new Users($userid, $team);
 
         if ($user['is_sysadmin'] ?? false) {
-            $Users->update(new UserParams('is_sysadmin', 1));
+            $Users->rawUpdate(UsersColumn::IsSysadmin, 1);
         }
 
         if (isset($user['validated']) && !$user['validated']) {
-            $Users->update(new UserParams('validated', 0));
+            $Users->rawUpdate(UsersColumn::Validated, 0);
         }
 
         if ($user['create_mfa_secret'] ?? false) {

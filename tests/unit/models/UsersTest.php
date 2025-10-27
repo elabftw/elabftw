@@ -222,6 +222,12 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($Users->resetPassword('demodemodemo'));
     }
 
+    public function testInvalidColumn(): void
+    {
+        $this->expectException(ImproperActionException::class);
+        $this->Users->update(new UserParams('invalid_column', 23));
+    }
+
     public function testUpdatePasswordAsSysadmin(): void
     {
         $Users = new Users(4, 2, new Users(1, 1));

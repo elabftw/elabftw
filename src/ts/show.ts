@@ -609,6 +609,11 @@ document.addEventListener('DOMContentLoaded', () => {
       window.history.replaceState({}, '', url.toString());
       reloadEntitiesShow();
     },
+    onItemAdd() {
+      this.setTextboxValue('');
+      // refresh the dropdown so it shows suggestions for new input
+      this.refreshOptions();
+    },
     plugins: {
       clear_button: {},
       dropdown_input: {},

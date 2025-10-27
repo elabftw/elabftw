@@ -60,7 +60,9 @@ class BatchTest extends \PHPUnit\Framework\TestCase
     {
         $reqBody = $this->baseReqBody;
         $reqBody['action'] = Action::UpdateOwner->value;
-        $reqBody['target_owner'] = 2;
+        $reqBody['users_experiments'] = array(1, 2);
+        $reqBody['users_resources'] = array(1, 2);
+        $reqBody['target_owner'] = 3;
         $this->assertIsInt($this->Batch->postAction(Action::UpdateOwner, $reqBody));
     }
 

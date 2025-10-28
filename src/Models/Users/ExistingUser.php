@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models\Users;
 
 use Elabftw\Enums\Usergroup;
+use Elabftw\Enums\UsersColumn;
 
 /**
  * A user that exists in the db, so we have a userid but not necessarily a team, and they might not be validated
@@ -21,12 +22,12 @@ class ExistingUser extends Users
 {
     public static function fromEmail(string $email): Users
     {
-        return self::search('email', $email);
+        return self::search(UsersColumn::Email, $email);
     }
 
     public static function fromOrgid(string $orgid): Users
     {
-        return self::search('orgid', $orgid);
+        return self::search(UsersColumn::Orgid, $orgid);
     }
 
     public static function fromScratch(

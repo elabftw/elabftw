@@ -23,6 +23,7 @@ import TomSelectClearButton from 'tom-select/dist/esm/plugins/clear_button/plugi
 import TomSelectDropdownInput from 'tom-select/dist/esm/plugins/dropdown_input/plugin.js';
 import TomSelectNoActiveItems from 'tom-select/dist/esm/plugins/no_active_items/plugin.js';
 import TomSelectRemoveButton from 'tom-select/dist/esm/plugins/remove_button/plugin.js';
+import TomSelectNoBackspaceDelete from 'tom-select/dist/esm/plugins/no_backspace_delete/plugin.js';
 
 // get html of current page reloaded via get
 function fetchCurrentPage(tag = ''): Promise<Document>{
@@ -63,24 +64,19 @@ export function relativeMoment(): void {
 // Add a listener for all elements triggered by an event
 // and POST an update request
 // select will be on change, text inputs on blur
-function triggerHandler(event: Event, el: HTMLInputElement): void {
+async function triggerHandler(event: Event, el: HTMLInputElement): Promise<void> {
   event.preventDefault();
   el.classList.remove('is-invalid');
+  const isCheckbox = el.type === 'checkbox';
+  // save the real boolean state so we can revert correctly on error
+  // use the inverse of the checked state because it's already changed!
+  const originalChecked = isCheckbox ? !el.checked : undefined;
   // for a checkbox element, look at the checked attribute, not the value
-  let value = el.type === 'checkbox' ? el.checked ? '1' : '0' : el.value;
-  let userid = document.getElementById('editUserModal')?.dataset.userid;
-  if (!userid) {
-    userid = el.dataset.userid;
-  }
-  // store original value to revert the permission switches
-  const originalValue = value;
+  let value: string | number = isCheckbox ? (el.checked ? '1' : '0') : el.value;
 
-  // CUSTOM ACTIONS
-  if (el.dataset.customAction === 'patch-user2team-is') {
-    ApiC.patch(`${Model.User}/${userid}`, {action: Action.PatchUser2Team, team: el.dataset.team, target: el.dataset.target, content: value})
-      .then(() => document.dispatchEvent(new CustomEvent('dataReload')));
-    return;
-  }
+  const userid = document.getElementById('editUserModal')?.dataset.userid ?? el.dataset.userid;
+
+  // CUSTOM ACTIONS not doing API calls
   // Idea: maybe have a data-dispatch with the custom event name in data-target
   if (el.dataset.customAction === 'show-all-users') {
     document.dispatchEvent(new CustomEvent('dataReload'));
@@ -94,22 +90,43 @@ function triggerHandler(event: Event, el: HTMLInputElement): void {
   if (el.dataset.value) {
     value = el.dataset.value;
   }
-  const params = {};
-  params[el.dataset.target] = value;
-  ApiC.patch(`${el.dataset.model}`, params).then(() => {
+
+  // use a run function to be able to have a single error handler
+  const run = async () => {
+    if (el.dataset.customAction === 'patch-user2team-is') {
+      await ApiC.patch(`${Model.User}/${userid}`, {
+        action: Action.PatchUser2Team,
+        team: el.dataset.team,
+        target: el.dataset.target,
+        content: value,
+      });
+      // success side-effect for this path
+      document.dispatchEvent(new CustomEvent('dataReload'));
+      return;
+    }
+
+    const params: Record<string, unknown> = {};
+    params[el.dataset.target as string] = value;
+
+    await ApiC.patch(`${el.dataset.model}`, params);
+
+    // success side-effect for the generic path
     if (el.dataset.reload) {
       handleReloads(el.dataset.reload);
     }
-  }).catch(error => {
-    // restore the original value for checkboxes
-    if (el.type === 'checkbox') {
-      el.checked = Boolean(originalValue);
-      return;
+  };
+
+  try {
+    await run();
+  } catch (error) {
+    // if input is a checkbox we revert the change
+    if (isCheckbox && originalChecked !== undefined) {
+      el.checked = originalChecked;
     }
-    if (el.dataset.target === Target.Customid && error.message === i18next.t('custom-id-in-use')) {
+    if (el.dataset.target === Target.Customid && error?.message === i18next.t('custom-id-in-use')) {
       el.classList.add('is-invalid');
     }
-  });
+  }
 }
 
 // data-reload can be "page" for full page, "reloadEntitiesShow" for entities in show mode,
@@ -150,6 +167,7 @@ export function listenTrigger(elementId: string = ''): void {
  * Loop over all the input and select elements of an element and collect their value
  * Returns an object with name => value
  * Add data-ignore='1' to elements that should not be considered
+ * Add data-allow-empty='1' to elements that can be empty (e.g. orgid)
  */
 export function collectForm(form: HTMLElement): object {
   const inputs = [];
@@ -176,12 +194,12 @@ export function collectForm(form: HTMLElement): object {
     if (el.type === 'checkbox') {
       value = el.checked ? 'on' : 'off';
     }
-    if (el.dataset.ignore !== '1' && el.disabled === false) {
+    if (el.dataset.ignore !== '1' && el.disabled === false && (el.value !== '' || el.dataset.allowEmpty === '1')) {
       params = Object.assign(params, {[input.name]: value});
     }
   });
 
-  return removeEmpty(params);
+  return params;
 }
 
 export function clearForm(form: HTMLElement): void {
@@ -470,15 +488,6 @@ export function normalizeFieldName(input: string): string {
   return input.replace(/['"]/g, '').trim().replace(/\s+/g, ' ');
 }
 
-function removeEmpty(params: object): object {
-  for (const [key, value] of Object.entries(params)) {
-    if (value === '') {
-      delete params[key];
-    }
-  }
-  return params;
-}
-
 export function askFileName(extension: FileType): string | undefined {
   const realName = prompt(i18next.t('request-filename'));
   // user hits cancel: exit silently
@@ -658,6 +667,7 @@ TomSelect.define('clear_button', TomSelectClearButton);
 TomSelect.define('dropdown_input', TomSelectDropdownInput);
 TomSelect.define('no_active_items', TomSelectNoActiveItems);
 TomSelect.define('remove_button', TomSelectRemoveButton);
+TomSelect.define('no_backspace_delete', TomSelectNoBackspaceDelete);
 export { TomSelect };
 
 // toggle appearance of button

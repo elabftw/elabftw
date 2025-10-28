@@ -14,6 +14,7 @@ namespace Elabftw\Make;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Scheduler;
 use Elabftw\Services\UsersHelper;
 use Override;
@@ -30,10 +31,10 @@ final class MakeSchedulerReport extends AbstractMakeCsv
 
     protected array $rows;
 
-    public function __construct(Scheduler $scheduler)
+    public function __construct(Scheduler $scheduler, ?QueryParamsInterface $queryParams = null)
     {
         $this->Db = Db::getConnection();
-        $this->rows = $scheduler->readAll();
+        $this->rows = $scheduler->readAll($queryParams);
         if (empty($this->rows)) {
             throw(new ImproperActionException('There are no events to report'));
         }

@@ -56,6 +56,7 @@ const t = {
     "form-validation-error": "Vormi valideerimisel tekkis viga.",
     "generic-delete-warning": "Kustutada see?",
     "hide-deleted": "Peida kustutatud",
+    "filter-delete-warning": "Remove this filter?",
     "import": "Impordi",
     "import-spreadsheet": "Impordi arvutustabel (xls, csv, ods, ...)",
     "import-error": "Importimisel tekkis viga. Lisateabe saamiseks kontrollige konsooli.",

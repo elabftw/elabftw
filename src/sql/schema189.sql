@@ -1,4 +1,4 @@
--- schema 188
+-- schema 189
 ALTER TABLE `experiments_templates_steps`
     ADD COLUMN `is_immutable` tinyint UNSIGNED NOT NULL DEFAULT 0,
     ADD INDEX `idx_experiments_templates_steps_is_immutable` (`is_immutable`);

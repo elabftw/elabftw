@@ -1,4 +1,4 @@
--- schema 187 - convert Events start & end to datetime
+-- schema 188 - convert Events start & end to datetime
 -- add indexes
 -- add constraint for end > start
 

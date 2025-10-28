@@ -1,4 +1,4 @@
--- revert schema 187
+-- revert schema 188
 
 -- drop indexes
 CALL DropIdx('team_events', 'idx_team_events_item_start_end');
@@ -25,4 +25,4 @@ ALTER TABLE `team_events`
     CHANGE COLUMN `start_rollback` `start` VARCHAR(255) NOT NULL,
     CHANGE COLUMN `end_rollback` `end` VARCHAR(255) NULL;
 
-UPDATE config SET conf_value = 186 WHERE conf_name = 'schema';
+UPDATE config SET conf_value = 187 WHERE conf_name = 'schema';

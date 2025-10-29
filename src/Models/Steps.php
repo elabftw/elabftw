@@ -188,11 +188,16 @@ final class Steps extends AbstractRest
                     }
                 }
             )(),
+            Action::ForceLock => $this->setImmutable(1),
+            Action::ForceUnlock => $this->setImmutable(0),
             default => throw new ImproperActionException('Invalid action for steps.'),
         };
         $Changelog = new Changelog($this->Entity);
         $Changelog->create(new ContentParams('steps', $action->value));
-        return $this->readOne();
+        if ($this->id) {
+            return $this->readOne();
+        }
+        return $this->readAll();
     }
 
     #[Override]
@@ -203,6 +208,18 @@ final class Steps extends AbstractRest
         $Changelog = new Changelog($this->Entity);
         $Changelog->create(new ContentParams('steps', $action->value));
         return $this->create($reqBody['body'] ?? 'RTFM');
+    }
+
+    private function setImmutable(int $value): bool
+    {
+        $sql = sprintf(
+            'UPDATE %s_steps SET is_immutable = :content WHERE item_id = :item_id',
+            $this->Entity->entityType->value,
+        );
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':content', $value, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        return $this->Db->execute($req);
     }
 
     #[Override]

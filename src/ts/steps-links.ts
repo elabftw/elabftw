@@ -108,7 +108,7 @@ if (document.getElementById('stepsDiv')) {
       // only toggle if it’s not already
       if (input.checked !== checked) {
         input.checked = checked;
-        input.dispatchEvent(new Event('change', { bubbles: true }));
+        input.dispatchEvent(new Event('change'));
       }
     });
   });

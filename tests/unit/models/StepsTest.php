@@ -67,11 +67,25 @@ class StepsTest extends \PHPUnit\Framework\TestCase
         $Steps->patch(Action::Update, array('is_immutable' => '1'));
     }
 
+    public function testBatchPatchImmutableSteps(): void
+    {
+        $this->Steps->postAction(Action::Create, array('body' => 'step1'));
+        $this->Steps->postAction(Action::Create, array('body' => 'step2'));
+        $Copy = new Steps($this->Experiments);
+        $Copy->patch(Action::ForceLock, array());
+        $immutableSteps = $Copy->readAll();
+        $this->assertIsArray($immutableSteps);
+        foreach ($immutableSteps as $i => $step) {
+            $this->assertArrayHasKey('is_immutable', $step);
+            $this->assertSame(1, (int) $step['is_immutable'], "Step $i not immutable");
+        }
+    }
+
     public function testCannotPatchImmutableStepsFromExperiment(): void
     {
         // create a template step and make it immutable
         $immutableStepId = $this->Templates->Steps->postAction(Action::Create, array('body' => 'locked from template', 'ordering' => 1));
-        $templateStep   = new Steps($this->Templates, $immutableStepId);
+        $templateStep = new Steps($this->Templates, $immutableStepId);
         $templateStep->patch(Action::Update, array('is_immutable' => '1'));
         // duplicate steps from template -> experiment
         $this->Experiments->Steps->duplicate($this->Templates->id, $this->Experiments->id, true);

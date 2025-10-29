@@ -94,11 +94,6 @@ class ContentParams implements ContentParamsInterface
         return $this->asInt() <= 0 ? null : $this->asInt();
     }
 
-    protected function getBool(): int
-    {
-        return (int) filter_var($this->asInt(), FILTER_VALIDATE_BOOLEAN);
-    }
-
     protected function getNullableString(): ?string
     {
         if (empty($this->content)) {

@@ -100,17 +100,7 @@ if (document.getElementById('stepsDiv')) {
   });
 
   on('toggle-all-immutable', (el: HTMLInputElement) => {
-    const container = document.getElementById('stepsDiv');
-    if (!container) return;
-    const checked = el.checked;
-    const inputs = container.querySelectorAll('input[type="checkbox"][data-target="is_immutable"]');
-    inputs.forEach((input: HTMLInputElement) => {
-      // only toggle if it’s not already
-      if (input.checked !== checked) {
-        input.checked = checked;
-        input.dispatchEvent(new Event('change', { bubbles: true }));
-      }
-    });
+    ApiC.patch(`${entity.type}/${entity.id}/steps`, {action: el.checked ? Action.ForceLock : Action.ForceUnlock}).then(() => reloadElements(['stepsDiv']));
   });
 
   on('import-links', (el: HTMLElement) => {

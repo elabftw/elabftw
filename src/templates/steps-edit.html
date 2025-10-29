@@ -23,7 +23,7 @@
           </button>
         </div>
         {# LOCK/UNLOCK A STEP #}
-        {% set steps_table = Entity.entityType.value ~ '/' ~ Entity.id ~ '/steps' %}
+        {% set steps_table = '%s/%d/steps'|format(Entity.entityType.value, Entity.id) %}
         {% if Entity.entityType.value in ['experiments_templates', 'items_types'] %}
         <div class='input-group-prepend'>
           <label class='btn input-group-text'>

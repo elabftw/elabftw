@@ -176,11 +176,11 @@ final class Steps extends AbstractRest
                     $enforceImmutability = in_array($this->Entity->entityType->value, array('experiments', 'items'), true);
                     // if we're on experiments/items, prevent any change to is_immutable. It is only allowed on templates
                     if ($enforceImmutability && array_key_exists('is_immutable', $params)) {
-                        throw new ImproperActionException(_('The immutability parameter cannot be modified from experiments/items.'));
+                        throw new ImproperActionException(_('The immutability parameter cannot be modified from experiments or resources.'));
                     }
-                    if ($enforceImmutability && $this->isStepImmutable()
+                    if ($enforceImmutability && $this->readOne()['is_immutable'] === 1
                         && count(array_intersect(array_keys($params), $protected)) > 0) {
-                        throw new ImproperActionException(_('This step is immutable: body, ordering, and immutability cannot be modified.'));
+                        throw new ImproperActionException(_('This step is immutable: it cannot be modified.'));
                     }
                     foreach ($params as $key => $value) {
                         // value can be null with deadline removal
@@ -319,14 +319,5 @@ final class Steps extends AbstractRest
             $this->Entity->entityType->toPage(),
             $deadline,
         );
-    }
-
-    private function isStepImmutable(): bool
-    {
-        $sql = 'SELECT is_immutable FROM ' . $this->Entity->entityType->value . '_steps WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        return (bool) $req->fetchColumn();
     }
 }

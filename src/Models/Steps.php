@@ -210,18 +210,6 @@ final class Steps extends AbstractRest
         return $this->create($reqBody['body'] ?? 'RTFM');
     }
 
-    private function setImmutable(int $value): bool
-    {
-        $sql = sprintf(
-            'UPDATE %s_steps SET is_immutable = :content WHERE item_id = :item_id',
-            $this->Entity->entityType->value,
-        );
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':content', $value, PDO::PARAM_INT);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        return $this->Db->execute($req);
-    }
-
     #[Override]
     public function destroy(): bool
     {
@@ -236,6 +224,18 @@ final class Steps extends AbstractRest
         $sql = 'DELETE FROM ' . $this->Entity->entityType->value . '_steps WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        return $this->Db->execute($req);
+    }
+
+    private function setImmutable(int $value): bool
+    {
+        $sql = sprintf(
+            'UPDATE %s_steps SET is_immutable = :content WHERE item_id = :item_id',
+            $this->Entity->entityType->value,
+        );
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':content', $value, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }

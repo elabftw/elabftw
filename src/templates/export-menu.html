@@ -111,6 +111,7 @@
     </div>
   </div>
 </div>
+
 {# requires Entity #}
 <div class='dropdown'>
   <button class='btn hl-hover-gray d-inline p-2 mr-2' title='{{ 'Export'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Export'|trans }}' type='button'>
@@ -122,6 +123,53 @@
     <a class='dropdown-item' href='api/v2/{{ Entity.entityType.value }}/{{ Entity.id }}?format=eln'><i class='fas fa-box-archive fa-fw'></i> {{ 'ELN Archive'|trans }}</a>
     <a class='dropdown-item' href='api/v2/{{ Entity.entityType.value }}/{{ Entity.id }}?format=csv'><i class='fas fa-file-csv fa-fw'></i> {{ 'CSV File'|trans }}</a>
     <div class='dropdown-item' data-action='toggle-modal' data-target='qrpngExportModal'><i class='fas fa-qrcode fa-fw'></i> {{ 'QR Code'|trans }}</div>
-    <a class='dropdown-item' href='api/v2/{{ Entity.entityType.value }}/{{ Entity.id }}' target='_blank'><i class='fas fa-code fa-fw'></i> JSON</a>
+    <a class='dropdown-item' href='api/v2/{{ Entity.entityType.value }}/{{ Entity.id }}' target='_blank'><i class='fas fa-code fa-fw'></i>{{ 'JSON'|trans }}</a>
+    <hr>
+    <div class='dropdown-item' data-action='toggle-modal' data-target='dspaceExportModal'><i class='fas fa-file-export fa-fw'></i> {{ 'Export to DSpace'|trans }}</div>
+  </div>
+</div>
+
+{# Modal for DSPACE export #}
+<div class='modal fade' id='dspaceExportModal' tabindex='-1' role='dialog' aria-labelledby='dspaceExportModalLabel'>
+{#<div class='' id='dspaceExportModal' tabindex='-1' role='dialog' aria-labelledby='dspaceExportModalLabel'>#}
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='dspaceExportModalLabel'><i class='fas fa-fw fa-file-archive mr-1'></i>{{ 'Export to DSpace'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+{#      <div class='modal-body'>#}
+{#        <button type='button' class='btn btn-primary' data-action='get-collections'>{{ 'Get collections'|trans }}</button>#}
+{#        <div id='dspaceCollections'></div>#}
+
+{#      </div>#}
+      <div class='modal-body'>
+        <form id='dspaceExportForm'>
+          <div class='form-group'>
+            <label for='dspaceCollection'>{{ 'Target Collection'|trans }}</label>
+            <select class='form-control' id='dspaceCollection' name='collection' required></select>
+          </div>
+          <div class='form-group'>
+            <label for='dspaceTitle'>{{ 'Title'|trans }}</label>
+            <input type='text' class='form-control' id='dspaceTitle' name='title' required>
+          </div>
+          <div class='form-group'>
+            <label for='dspaceAbstract'>{{ 'Abstract'|trans }}</label>
+            <textarea class='form-control' id='dspaceAbstract' name='abstract' required></textarea>
+          </div>
+          <div class='form-group'>
+            <label for='dspaceFile'>{{ 'Upload Archive'|trans }}</label>
+            <input type='file' class='form-control-file' id='dspaceFile' name='file' accept='.zip' required>
+          </div>
+        </form>
+      </div>
+
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='button' class='btn btn-primary' data-dismiss='modal' data-action='export-to' data-format='zip' data-type='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}'>{{ 'Export'|trans }}</button>
+      </div>
+    </div>
   </div>
 </div>

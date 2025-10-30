@@ -144,6 +144,17 @@ if (document.getElementById('topToolbar')) {
     window.open(`/api/v2/${el.dataset.type}/${el.dataset.id}?format=qrpng&size=${size}&withTitle=${title}&titleLines=${titleLines}&titleChars=${titleChars}`, '_blank');
   });
 
+
+  on('get-collections', (el: HTMLElement) => {
+
+    listCollections().then(res => console.log(res));
+    // console.log(el);
+    // fetch('/dspace/').then(res => res.json()).then(data => console.log(data));
+    // fetch('/dspace/server/api/core/collections')
+    //   .then(res => res.json())
+    //   .then(data => console.log(data));
+  });
+
   on(Action.Destroy, () => {
     if (confirm(i18next.t('generic-delete-warning'))) {
       const path = window.location.pathname;
@@ -163,3 +174,34 @@ if (document.getElementById('topToolbar')) {
     ApiC.post(`${Model.Team}/current/procurement_requests`, {entity_id: entity.id, qty_ordered: qty});
   });
 }
+
+export async function listCollections(): Promise<any> {
+  const res = await fetch('/dspace/api/core/collections');
+  if (!res.ok) throw new Error(`DSpace error ${res.status}`);
+  return res.json();
+}
+
+// Called when modal is shown
+$('#dspaceExportModal').on('shown.bs.modal', async () => {
+  console.log("hi modal is up");
+  const select = document.getElementById('dspaceCollection') as HTMLSelectElement;
+  select.innerHTML = '<option disabled selected>Loading...</option>';
+
+  try {
+    const res = await fetch('/dspace/api/core/collections');
+    if (!res.ok) throw new Error(`DSpace error ${res.status}`);
+    const json = await res.json();
+
+    const collections = json._embedded.collections;
+    select.innerHTML = '';
+    collections.forEach((col: any) => {
+      const opt = document.createElement('option');
+      opt.value = col.uuid;
+      opt.textContent = `${col.name} (${col.uuid})`;
+      select.appendChild(opt);
+    });
+  } catch (e) {
+    select.innerHTML = '<option disabled>Error loading collections</option>';
+    console.error(e);
+  }
+});

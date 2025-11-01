@@ -18,6 +18,7 @@ use Elabftw\Enums\Scope;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\DisplayParams;
 use Override;
@@ -66,10 +67,13 @@ final class Batch extends AbstractRest
         if ($reqBody['experiments_tags']) {
             $this->processTags($reqBody['experiments_tags'], new Experiments($this->requester), $action, $reqBody);
         }
-        if ($reqBody['users']) {
-            // only process experiments
+        if ($reqBody['users_experiments']) {
             $model = new Experiments($this->requester);
-            $this->processEntities($reqBody['users'], $model, FilterableColumn::Owner, $action, $reqBody, $state);
+            $this->processEntities($reqBody['users_experiments'], $model, FilterableColumn::Owner, $action, $reqBody, $state);
+        }
+        if ($reqBody['users_resources']) {
+            $model = new Items($this->requester);
+            $this->processEntities($reqBody['users_resources'], $model, FilterableColumn::Owner, $action, $reqBody, $state);
         }
         return $this->processed;
     }
@@ -126,7 +130,7 @@ final class Batch extends AbstractRest
                 $model->setId($entry['id']);
                 $model->patch($action, $params);
                 $this->processed++;
-            } catch (IllegalActionException) {
+            } catch (UnauthorizedException | ImproperActionException | IllegalActionException) {
                 continue;
             }
         }

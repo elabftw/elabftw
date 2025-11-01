@@ -34,7 +34,8 @@ class BatchTest extends \PHPUnit\Framework\TestCase
             'experiments_categories' => array(),
             'experiments_status' => array(),
             'experiments_tags' => array(),
-            'users' => array(),
+            'users_experiments' => array(),
+            'users_resources' => array(),
             // Only used if Action::UpdateOwner
             'target_owner' => null,
         );
@@ -50,7 +51,8 @@ class BatchTest extends \PHPUnit\Framework\TestCase
         $reqBody['experiments_categories'] = array(1, 2);
         $reqBody['experiments_status'] = array(1, 2);
         $reqBody['experiments_tags'] = array(1, 2);
-        $reqBody['users'] = array(1, 2);
+        $reqBody['users_experiments'] = array(1, 2);
+        $reqBody['users_resources'] = array(1, 2);
         $this->assertIsInt($this->Batch->postAction(Action::Create, $reqBody));
     }
 
@@ -58,7 +60,9 @@ class BatchTest extends \PHPUnit\Framework\TestCase
     {
         $reqBody = $this->baseReqBody;
         $reqBody['action'] = Action::UpdateOwner->value;
-        $reqBody['target_owner'] = 2;
+        $reqBody['users_experiments'] = array(1, 2);
+        $reqBody['users_resources'] = array(1, 2);
+        $reqBody['target_owner'] = 3;
         $this->assertIsInt($this->Batch->postAction(Action::UpdateOwner, $reqBody));
     }
 
@@ -66,8 +70,8 @@ class BatchTest extends \PHPUnit\Framework\TestCase
     {
         $reqBody = $this->baseReqBody;
         $reqBody['action'] = Action::UpdateOwner->value;
-        $reqBody['users'] = array(1, 2);
-        // On batch, cannot update owner action without 'target_owner'
+        $reqBody['users_experiments'] = array(1, 2);
+        // Can't post action 'UpdateOwner' without a 'target_owner'
         $this->expectException(ImproperActionException::class);
         $this->Batch->postAction(Action::UpdateOwner, $reqBody);
     }

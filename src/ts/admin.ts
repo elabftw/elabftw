@@ -63,7 +63,8 @@ function getSelected(): Selected {
     experiments_categories: collectSelectable('experiments_categories'),
     experiments_tags: collectSelectable('experiments_tags'),
     tags: collectSelectable('tags'),
-    users: collectSelectable('users'),
+    users_experiments: collectSelectable('users-experiments'),
+    users_resources: collectSelectable('users-resources'),
     target_owner: collectTargetOwner(),
     can: collectCan(),
   };

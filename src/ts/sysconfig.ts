@@ -39,7 +39,7 @@ if (window.location.pathname === '/sysconfig.php') {
     event.preventDefault();
     const form = document.getElementById('testEmailForm') as HTMLFormElement;
     const params = collectForm(form);
-    const button = (el as HTMLButtonElement);
+    const button = el as HTMLButtonElement;
     button.disabled = true;
     const buttonText = button.innerText;
     button.innerText = i18next.t('please-wait');
@@ -150,10 +150,10 @@ if (window.location.pathname === '/sysconfig.php') {
     event.preventDefault();
     const form = document.getElementById('createTeamForm') as HTMLFormElement;
     const params = collectForm(form);
-    form.reset();
     const content = String(params['name'] ?? '').trim();
     ApiC.post(Model.Team, {name: content}).then(() => {
       $('#createTeamModal').modal('hide');
+      form.reset();
       reloadElements(['teamsDiv', 'create-user-team']);
     });
   });
@@ -268,10 +268,11 @@ if (window.location.pathname === '/sysconfig.php') {
   });
 
   on('refresh-idps-source', (el: HTMLElement) => {
-    (el as HTMLButtonElement).disabled = true;
-    ApiC.patch(`${Model.IdpsSources}/${el.dataset.id}`, {action: Action.Replace}).then(() => reloadElements(['idpsSourcesDiv', 'idpsDiv']).then(() => {
-      (el as HTMLButtonElement).disabled = false;
-    }));
+    const button = el as HTMLButtonElement;
+    button.disabled = true;
+    ApiC.patch(`${Model.IdpsSources}/${el.dataset.id}`, {action: Action.Replace})
+      .then(() => reloadElements(['idpsSourcesDiv', 'idpsDiv']))
+      .finally(() => button.disabled = false);
   });
 
   on('enable-idps-with-source', (el: HTMLElement) => {

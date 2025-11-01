@@ -33,56 +33,8 @@ function updateTsFieldsVisibility(select: HTMLSelectElement) {
   }
 }
 
-if (window.location.pathname === '/sysconfig.php') {
-  // TEST EMAIL
-  on('send-test-email', async (el: HTMLElement, event: Event) => {
-    event.preventDefault();
-    const form = document.getElementById('testEmailForm') as HTMLFormElement;
-    const params = collectForm(form);
-    const button = el as HTMLButtonElement;
-    button.disabled = true;
-    const buttonText = button.innerText;
-    button.innerText = i18next.t('please-wait');
-    ApiC.post('instance', params).then(() => {
-      button.innerText = buttonText;
-    }).catch(() => {
-      button.innerText = i18next.t('error');
-      // TODO don't hardcode colors
-      button.style.backgroundColor = '#e6614c';
-    }).finally(() => button.disabled = false);
-  });
-
-  // MASS MAIL
-  on('send-mass-email', async (el: HTMLElement, event: Event) => {
-    event.preventDefault();
-    const form = document.getElementById('massEmailForm') as HTMLFormElement;
-    const params = collectForm(form);
-    const button = (el as HTMLButtonElement);
-    button.disabled = true;
-    const buttonText = button.innerText;
-    button.innerText = i18next.t('please-wait');
-    ApiC.post('instance', params).then(() => {
-      button.innerText = buttonText;
-      form.reset();
-    }).catch(() => {
-      button.innerText = i18next.t('error');
-      // TODO don't hardcode colors
-      button.style.backgroundColor = '#e6614c';
-    }).finally(() => button.disabled = false);
-  });
-
-  // Timestamp provider select
-  if (document.getElementById('ts_authority')) {
-    const select = (document.getElementById('ts_authority') as HTMLSelectElement);
-    // trigger the function when the value is changed
-    select.addEventListener('change', () => {
-      updateTsFieldsVisibility(select);
-    });
-    // and also on page load
-    updateTsFieldsVisibility(select);
-  }
-
-  // GET the latest version information
+// GET the latest version information
+function checkForUpdate() {
   const updateUrl = 'https://get.elabftw.net/updates.json';
   const currentVersionDiv = document.getElementById('currentVersion');
   const latestVersionDiv = document.getElementById('latestVersion');
@@ -134,16 +86,62 @@ if (window.location.pathname === '/sysconfig.php') {
       latestVersionDiv.appendChild(successIcon);
     }
   }).catch(error => latestVersionDiv.append(error));
+}
 
-  const postInstanceAction = (action: Action): Promise<Response> =>  {
-    return ApiC.post('instance', {action: action});
-  };
+if (window.location.pathname === '/sysconfig.php') {
 
-  on('allowuntrusted', (el: HTMLElement) => {
-    postInstanceAction(el.dataset.action as Action).then(() => reloadElements(['bruteforceDiv']));
+  checkForUpdate();
+
+  // TEST EMAIL
+  on('send-test-email', async (el: HTMLElement, event: Event) => {
+    event.preventDefault();
+    const form = document.getElementById('testEmailForm') as HTMLFormElement;
+    const params = collectForm(form);
+    const button = el as HTMLButtonElement;
+    button.disabled = true;
+    const buttonText = button.innerText;
+    button.innerText = i18next.t('please-wait');
+    ApiC.post('instance', params).then(() => {
+      button.innerText = buttonText;
+    }).catch(() => {
+      button.innerText = i18next.t('error');
+      // TODO don't hardcode colors
+      button.style.backgroundColor = '#e6614c';
+    }).finally(() => button.disabled = false);
   });
-  on('clearlockedoutdevices', (el: HTMLElement) => {
-    postInstanceAction(el.dataset.action as Action).then(() => reloadElements(['bruteforceDiv']));
+
+  // MASS MAIL
+  on('send-mass-email', async (el: HTMLElement, event: Event) => {
+    event.preventDefault();
+    const form = document.getElementById('massEmailForm') as HTMLFormElement;
+    const params = collectForm(form);
+    const button = (el as HTMLButtonElement);
+    button.disabled = true;
+    const buttonText = button.innerText;
+    button.innerText = i18next.t('please-wait');
+    ApiC.post('instance', params).then(() => {
+      button.innerText = buttonText;
+      form.reset();
+    }).catch(() => {
+      button.innerText = i18next.t('error');
+      // TODO don't hardcode colors
+      button.style.backgroundColor = '#e6614c';
+    }).finally(() => button.disabled = false);
+  });
+
+  // Timestamp provider select
+  if (document.getElementById('ts_authority')) {
+    const select = (document.getElementById('ts_authority') as HTMLSelectElement);
+    // trigger the function when the value is changed
+    select.addEventListener('change', () => {
+      updateTsFieldsVisibility(select);
+    });
+    // and also on page load
+    updateTsFieldsVisibility(select);
+  }
+
+  on('post2instance', (el: HTMLElement) => {
+    ApiC.post('instance', {action: el.dataset.target as Action}).then(() => reloadElements(['bruteforceDiv']));
   });
 
   on('create-team', (_, event: Event) => {

@@ -479,13 +479,13 @@
   <div id='bruteforceDiv' class='pl-3'>
     <div class='d-flex justify-content-between'>
       <span>{{ '%d users are currently prevented from logging in from unknown devices.'|trans|format(nologinUsersCount) }}</span>
-      <button type='submit' data-action='allowuntrusted' {{- nologinUsersCount == 0 ? ' disabled' }} class='btn btn-primary'>{{ 'Clear'|trans }}</button>
+      <button type='submit' data-action='post2instance' data-target='allowuntrusted' {{- nologinUsersCount == 0 ? ' disabled' }} class='btn btn-primary'>{{ 'Clear'|trans }}</button>
     </div>
     <hr>
 
     <div class='d-flex justify-content-between'>
       <span>{{ '%d devices are currently denied authentication.'|trans|format(lockoutDevicesCount) }}</span>
-      <button type='submit' data-action='clearlockedoutdevices' {{- lockoutDevicesCount == 0 ? ' disabled' }} class='btn btn-primary'>{{ 'Clear'|trans }}</button>
+      <button type='submit' data-action='post2instance' data-target='clearlockedoutdevices' {{- lockoutDevicesCount == 0 ? ' disabled' }} class='btn btn-primary'>{{ 'Clear'|trans }}</button>
     </div>
     <hr>
   </div>

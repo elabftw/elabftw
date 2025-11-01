@@ -1,78 +1,102 @@
 {# STEPS #}
 <h3 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='stepsDiv'><i class='fas fa-caret-down mr-2 fa-fw'></i> {{ 'Steps'|trans }} (<span id='stepsCount'>{{ Entity.entityData.steps|length }}</span>)</h3>
 <div id='stepsDiv' class='mt-2' data-count-for='stepsCount' data-save-hidden='stepsDiv'>
-  <div class='sortable' id='steps_div_{{ Entity.id }}' data-axis='y' data-table='{{ Entity.entityType.value ? Entity.entityType.value : 'items_types' }}_steps'>
+  <div class='sortable' id='steps_div_{{ Entity.id }}' data-axis='y' data-table='{{ Entity.entityType.value }}_steps'>
+    {# LOCK ALL STEPS #}
+    {% if Entity.entityType.value in ['experiments_templates', 'items_types'] and (Entity.entityData.steps|length > 0) %}
+    {% set allLocked = (Entity.entityData.steps|length > 0) and (Entity.entityData.steps|filter(s => s.is_immutable == 1)|length == Entity.entityData.steps|length) %}
+    <div class='d-flex'>
+      <label for='toggle-all-steps' class='col-form-label mr-2'>{{ 'Lock / Unlock all steps'|trans }}</label>
+      <label class='switch ucp-align'>
+        <input {{ allLocked ? 'checked' }} data-action='toggle-all-immutable' type='checkbox' autocomplete='off' id='toggle-all-steps'>
+        <span class='slider'></span>
+      </label>
+    </div>
+    {% endif %}
     {% for step in Entity.entityData.steps %}
+      {# DRAG AND DROP #}
       <div class='input-group mb-2 countable' id='step_{{ step.id }}'>
         <div class='input-group-prepend'>
-          <button type='button' class='btn draggable sortableHandle input-group-text' title='{{ 'Drag to reorder'|trans }}' aria-label='{{ 'Drag to reorder'|trans }}'>
+          {% set disabled = step.is_immutable == 1 and (Entity.entityType.value in ['experiments', 'items']) %}
+          <button {{ disabled ? 'disabled="disabled"' : '' }} type='button' class='btn draggable sortableHandle input-group-text' title='{{ 'Drag to reorder'|trans }}' aria-label='{{ 'Drag to reorder'|trans }}'>
             <i class='fas fa-sort'></i>
           </button>
         </div>
+        {# LOCK/UNLOCK A STEP #}
+        {% set steps_table = '%s/%d/steps'|format(Entity.entityType.value, Entity.id) %}
+        {% if Entity.entityType.value in ['experiments_templates', 'items_types'] %}
         <div class='input-group-prepend'>
-          <button class='btn input-group-text' data-action='destroy-step' data-id='{{ step.id }}' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}' type='button'>
+          <label class='btn input-group-text'>
+            <input type='checkbox' autocomplete='off' data-trigger='change' data-model='{{ steps_table ~ '/' ~ step.id }}' data-target='is_immutable' id='stepIsImmutable_{{ step.id }}' {{ step.is_immutable ? 'checked' }} data-reload='step_{{ step.id }}' class='d-none'>
+            <i class='fas fa-lock {{ not step.is_immutable ? 'd-none' }}'></i>
+            <i class='fas fa-lock-open {{ step.is_immutable ? 'd-none' }}'></i>
+          </label>
+        </div>
+        {% endif %}
+        {# DESTROY #}
+        <div class='input-group-prepend'>
+          <button {{ disabled ? 'disabled="disabled"' : '' }} class='btn input-group-text' data-action='destroy-step' data-id='{{ step.id }}' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}' type='button'>
             <i class='fas fa-trash-alt'></i>
           </button>
         </div>
+        {# FINISH/UNFINISH #}
         <div class='input-group-prepend'>
           <div class='input-group-text'>
-            <input aria-label='{{ 'Toggle completion'|trans }}' type='checkbox' {{ mode == 'edit-template' ? 'disabled' }} {{ step.finished ? 'checked' }} data-stepid='{{ step.id }}' data-id='{{ Entity.id }}' class='stepbox'>
+            <input aria-label='{{ 'Toggle completion'|trans }}' type='checkbox' {{ step.finished ? 'checked' }} data-stepid='{{ step.id }}' data-id='{{ Entity.id }}' class='stepbox'>
           </div>
         </div>
         <div class='pl-2 step-static form-control-plaintext d-flex flex-wrap'>
-          <span class='step editable hl-hover align-self-center {{- step.finished ? ' finished' }}' data-target='body' data-stepid='{{ step.id }}'>{{ step.body }}</span>
+          <span class='step {{ not disabled ? 'editable hl-hover' }} align-self-center {{- step.finished ? ' finished' }}' data-target='body' data-stepid='{{ step.id }}'>{{ step.body }}</span>
           {% if step.finished %}
           <span class='mx-2 text-muted align-self-center'>
             {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span>
           </span>
           {% endif %}
-          {% if mode != 'edit-template' %}
-            <button class='btn lh-normal hl-hover-gray p-1 ml-auto mr-1' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' type='button' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}'>
-              <i class='fas fa-caret-right fa-fw'></i>
-            </button>
-            <div hidden data-save-hidden='extendedStep_{{ step.id }}' class='w-100'>
-            {{ 'Completion time:'|trans }}
-            {% if step.finished %}
-              <span data-stepid='{{ step.id }}' data-target='finished_time' data-ma-type='datetime-local' data-ma-input-value='{{ step.finished_time|date('Y-m-d\\TH:i') }}' class='step editable p-1 rounded hl-hover'>{{ step.finished_time|format_datetime() }}</span>
-            {% else %}
-              {{ 'Not finished'|trans }}
-            {% endif %}
-            <br>
-
-            <div id='stepDeadlineDiv_{{ step.id }}'>
-              {% if step.deadline %}
-                {{ 'Deadline:'|trans }}
-                {# here the data-ma-input-value is formatted so it works with the datetime-local input type, and the displayed one is formatted differently to be more readable #}
-                <span data-stepid='{{ step.id }}' data-target='deadline' data-ma-type='datetime-local' data-ma-input-value='{{ step.deadline|date('Y-m-d\\TH:i') }}' class='step editable hl-hover-gray p-1 rounded'>{{ step.deadline|format_datetime() }}</span>
-                {# notification bell is only shown if the user has at least one notification setting activated for that type of notif #}
-                {% if App.Users.userData.notif_step_deadline or App.Users.userData.notif_step_deadline_email %}
-                  <button class='btn my-n1 hl-hover-gray p-1 lh-normal border-0' data-action='step-toggle-deadline-notif' data-stepid='{{ step.id }}' title='{{ 'Toggle notifications'|trans }}' aria-label='{{ 'Toggle notifications'|trans }}'>
-                    <i class='far fa-bell {{- step.deadline_notif ? ' active' }}'></i>
-                  </button>
-                {% endif %}
-                <button class='btn my-n1 hl-hover-gray p-1 lh-normal border-0' data-action='step-destroy-deadline' data-stepid='{{ step.id }}' title='{{ 'Clear deadline'|trans }}' aria-label='{{ 'Clear deadline'|trans }}'>
-                  <i class='fas fa-trash-alt'></i>
-                </span>
-              {% else %}
-                <button data-action='replace-with-next' type='button' class='btn btn-sm btn-secondary'>{{ 'Add a deadline'|trans }}</button>
-                <div hidden class='input-group'>
-                  <select class='custom-select col-md-3' id='stepSelectDeadline_{{ step.id }}'>
-                    <option disabled>{{ 'Set deadline in'|trans }}</option>
-                    <option value='{{ '+1 hour'|toDatetime }}'>{{ '%d hour'|trans|format(1) }}</option>
-                    <option value='{{ '+1 day'|toDatetime }}'>{{ '%d day'|trans|format(1) }}</option>
-                    <option value='{{ '+1 week'|toDatetime }}'>{{ '%d week'|trans|format(1) }}</option>
-                    <option value='{{ '+1 month'|toDatetime }}'>{{ '%d month'|trans|format(1) }}</option>
-                    <option value='{{ '+1 year'|toDatetime }}'>{{ '%d year'|trans|format(1) }}</option>
-                  </select>
-                  <div class='input-group-append'>
-                    <button class='btn btn-primary' type='button' data-action='step-update-deadline' data-stepid='{{ step.id }}'>{{ 'Save'|trans }}</button>
-                  </div>
-                </div>
-              {% endif %}
-              </div>
-              <div data-action='import-step-body' data-stepid='{{ step.id }}'><i class='fas fa-file-import'></i> {{ 'Copy step to cursor position'|trans }}</div>
-            </div>
+          <button class='btn lh-normal hl-hover-gray p-1 ml-auto mr-1' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' type='button' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}'>
+            <i class='fas fa-caret-right fa-fw'></i>
+          </button>
+          <div hidden data-save-hidden='extendedStep_{{ step.id }}' class='w-100'>
+          {{ 'Completion time:'|trans }}
+          {% if step.finished %}
+            <span data-stepid='{{ step.id }}' data-target='finished_time' data-ma-type='datetime-local' data-ma-input-value='{{ step.finished_time|date('Y-m-d\\TH:i') }}' class='step editable p-1 rounded hl-hover'>{{ step.finished_time|format_datetime() }}</span>
+          {% else %}
+            {{ 'Not finished'|trans }}
           {% endif %}
+          <br>
+
+          <div id='stepDeadlineDiv_{{ step.id }}'>
+            {% if step.deadline %}
+              {{ 'Deadline:'|trans }}
+              {# here the data-ma-input-value is formatted so it works with the datetime-local input type, and the displayed one is formatted differently to be more readable #}
+              <span data-stepid='{{ step.id }}' data-target='deadline' data-ma-type='datetime-local' data-ma-input-value='{{ step.deadline|date('Y-m-d\\TH:i') }}' class='step editable hl-hover-gray p-1 rounded'>{{ step.deadline|format_datetime() }}</span>
+              {# notification bell is only shown if the user has at least one notification setting activated for that type of notif #}
+              {% if App.Users.userData.notif_step_deadline or App.Users.userData.notif_step_deadline_email %}
+                <button class='btn my-n1 hl-hover-gray p-1 lh-normal border-0' data-action='step-toggle-deadline-notif' data-stepid='{{ step.id }}' title='{{ 'Toggle notifications'|trans }}' aria-label='{{ 'Toggle notifications'|trans }}'>
+                  <i class='far fa-bell {{- step.deadline_notif ? ' active' }}'></i>
+                </button>
+              {% endif %}
+              <button class='btn my-n1 hl-hover-gray p-1 lh-normal border-0' data-action='step-destroy-deadline' data-stepid='{{ step.id }}' title='{{ 'Clear deadline'|trans }}' aria-label='{{ 'Clear deadline'|trans }}'>
+                <i class='fas fa-trash-alt'></i>
+              </button>
+            {% else %}
+              <button data-action='replace-with-next' type='button' class='btn btn-sm btn-secondary'>{{ 'Add a deadline'|trans }}</button>
+              <div hidden class='input-group'>
+                <select class='custom-select col-md-3' id='stepSelectDeadline_{{ step.id }}'>
+                  <option disabled>{{ 'Set deadline in'|trans }}</option>
+                  <option value='{{ '+1 hour'|toDatetime }}'>{{ '%d hour'|trans|format(1) }}</option>
+                  <option value='{{ '+1 day'|toDatetime }}'>{{ '%d day'|trans|format(1) }}</option>
+                  <option value='{{ '+1 week'|toDatetime }}'>{{ '%d week'|trans|format(1) }}</option>
+                  <option value='{{ '+1 month'|toDatetime }}'>{{ '%d month'|trans|format(1) }}</option>
+                  <option value='{{ '+1 year'|toDatetime }}'>{{ '%d year'|trans|format(1) }}</option>
+                </select>
+                <div class='input-group-append'>
+                  <button class='btn btn-primary' type='button' data-action='step-update-deadline' data-stepid='{{ step.id }}'>{{ 'Save'|trans }}</button>
+                </div>
+              </div>
+            {% endif %}
+            </div>
+            <div data-action='import-step-body' data-stepid='{{ step.id }}'><i class='fas fa-file-import'></i> {{ 'Copy step to cursor position'|trans }}</div>
+          </div>
         </div>
       </div>
     {% endfor %}

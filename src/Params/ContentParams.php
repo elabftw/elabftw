@@ -22,6 +22,7 @@ use InvalidArgumentException;
 use Override;
 
 use function mb_strlen;
+use function filter_var;
 
 class ContentParams implements ContentParamsInterface
 {

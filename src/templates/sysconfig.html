@@ -14,14 +14,16 @@
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
-      <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
-        <label for='newTeamName'>{{ 'Name'|trans }}</label>
-        <input type='text' placeholder='{{ 'Enter team name'|trans }}' id='newTeamName' class='form-control' aria-label='{{ 'Enter team name'|trans }}'>
-      </div>
-      <div class='modal-footer'>
-        <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
-        <button type='button' data-action='create-team' class='btn btn-primary' data-dismiss='modal'>{{ 'Create'|trans }}</button>
-      </div>
+      <form aria-label='{{ 'Create team'|trans }}' id='createTeamForm'>
+        <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
+          <label for='newTeamName'>{{ 'Name'|trans }}</label>
+          <input type='text' required placeholder='{{ 'Enter team name'|trans }}' name='name' id='newTeamName' class='form-control' aria-label='{{ 'Enter team name'|trans }}'>
+        </div>
+        <div class='modal-footer'>
+          <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+          <button type='submit' data-action='create-team' class='btn btn-primary'>{{ 'Create'|trans }}</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

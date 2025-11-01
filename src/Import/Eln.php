@@ -516,6 +516,7 @@ class Eln extends AbstractZip
         $filepath = strtr($filepath, ':', '_');
         // quick patch to fix issue with | in the title, but we will need a proper fix to avoid the need for such patches...
         $filepath = strtr($filepath, '|', '_');
+        $filepath = strtr($filepath, '"', '_');
 
         $hasher = new LocalFileHash($filepath);
         $hash = $hasher->getHash();

@@ -166,11 +166,6 @@ if (window.location.pathname === '/sysconfig.php') {
     ApiC.patch(`${Model.Team}/${id}`, params);
   });
 
-  on('archive-team', (el: HTMLElement) => {
-    ApiC.patch(`${Model.Team}/${el.dataset.id}`, {'action': Action.Archive});
-
-  });
-
   on('destroy-team', (el: HTMLElement) => {
     ApiC.delete(`${Model.Team}/${el.dataset.id}`).then(() => el.parentElement.parentElement.remove());
   });

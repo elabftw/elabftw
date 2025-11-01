@@ -18,6 +18,7 @@ use Elabftw\Enums\Scope;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\DisplayParams;
 use Override;
@@ -129,7 +130,7 @@ final class Batch extends AbstractRest
                 $model->setId($entry['id']);
                 $model->patch($action, $params);
                 $this->processed++;
-            } catch (IllegalActionException) {
+            } catch (UnauthorizedException | ImproperActionException | IllegalActionException) {
                 continue;
             }
         }

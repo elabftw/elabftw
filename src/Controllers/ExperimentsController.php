@@ -14,7 +14,9 @@ namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
 use Elabftw\Enums\EntityType;
+use Elabftw\Enums\State;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Templates;
 use Elabftw\Params\DisplayParams;
 use Override;
@@ -30,13 +32,25 @@ final class ExperimentsController extends AbstractEntityController
 
         $this->categoryArr = $app->experimentsCategoryArr;
         $this->statusArr = $this->experimentsStatusArr;
+        $ItemsTypes = new ItemsTypes($app->Users);
         $Templates = new Templates($app->Users);
-        $DisplayParams = new DisplayParams(
+
+        $DisplayParamsTemplates = new DisplayParams(
             $app->Users,
             EntityType::Templates,
             limit: 9999,
+            states: array(State::Normal)
         );
-        $this->templatesArr = $Templates->readAllSimple($DisplayParams);
+
+        $DisplayParamsItemsTypes = new DisplayParams(
+            $app->Users,
+            EntityType::ItemsTypes,
+            limit: 9999,
+            states: array(State::Normal)
+        );
+
+        $this->itemsTemplatesArr = $ItemsTypes->readAllSimple($DisplayParamsItemsTypes);
+        $this->templatesArr = $Templates->readAllSimple($DisplayParamsTemplates);
     }
 
     #[Override]

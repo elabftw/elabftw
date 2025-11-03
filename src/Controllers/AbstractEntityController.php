@@ -69,6 +69,8 @@ abstract class AbstractEntityController implements ControllerInterface
 
     protected array $templatesArr = array();
 
+    protected array $itemsTemplatesArr = array();
+
     protected array $scopedTeamgroupsArr = array();
 
     public function __construct(protected App $App, protected AbstractEntity $Entity)
@@ -162,6 +164,7 @@ abstract class AbstractEntityController implements ControllerInterface
             // get all the tags for the top search bar
             'tagsArrForSelect' => $TeamTags->readAll(),
             'templatesArr' => $this->templatesArr,
+            'itemsTemplatesArr' => $this->itemsTemplatesArr,
             'usersArr' => $this->App->Users->readAllFromTeam(),
             'visibilityArr' => $this->visibilityArr,
         );
@@ -198,6 +201,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'teamsArr' => $this->App->Teams->readAllVisible(),
             'scopedTeamgroupsArr' => $this->scopedTeamgroupsArr,
             'templatesArr' => $this->templatesArr,
+            'itemsTemplatesArr' => $this->itemsTemplatesArr,
             'timestamperFullname' => $this->Entity->getTimestamperFullname(),
             'lockerFullname' => $this->Entity->getLockerFullname(),
             'meaningArr' => $this->meaningArr,
@@ -264,6 +268,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'storageUnitsArr' => new StorageUnits($this->App->Users, Config::getConfig()->configArr['inventory_require_edit_rights'] === '1')->readAllRecursive(),
             'surroundingBookers' => $this->Entity->getSurroundingBookers(),
             'templatesArr' => $this->templatesArr,
+            'itemsTemplatesArr' => $this->itemsTemplatesArr,
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,
         );

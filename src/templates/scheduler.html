@@ -221,12 +221,14 @@
             <strong class='d-block mb-1'>{{ 'Selected items:'|trans }}</strong>
             <div id='selectedItemsDisplayModal' class='d-flex flex-wrap gap-2'></div>
           </div>
+          <hr>
           <div class='form-group mt-2'>
-            <label for='eventTitleInputModal'>{{ 'Title'|trans }}</label>
-            <input class='form-control' type='text' id='eventTitleInputModal' placeholder='{{ 'Comment'|trans }}' />
+            <label for='eventTitleInputModal'>{{ 'Comment'|trans }}</label>
+            <input class='form-control' type='text' id='eventTitleInputModal' placeholder='{{ 'Add details (optional)…'|trans }}' />
           </div>
         </div>
         <div class='modal-footer'>
+          <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
           <button type='button' class='btn btn-primary' id='confirmItemSelect'>{{ 'Create event(s)'|trans }}</button>
         </div>
       </div>

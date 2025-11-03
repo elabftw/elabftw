@@ -101,16 +101,6 @@ abstract class AbstractEntityController implements ControllerInterface
         $this->itemsTemplatesArr = $ItemsTypes->readAllSimple($DisplayParamsItemsTypes);
     }
 
-    protected function makeDisplayParams(EntityType $entityType): DisplayParams
-    {
-        return new DisplayParams(
-            $this->App->Users,
-            $entityType,
-            limit: 9999,
-            states: array(State::Normal)
-        );
-    }
-
     #[Override]
     public function getResponse(): Response
     {
@@ -195,6 +185,16 @@ abstract class AbstractEntityController implements ControllerInterface
         $Response->setContent($this->App->render($template, $renderArr));
 
         return $Response;
+    }
+
+    protected function makeDisplayParams(EntityType $entityType): DisplayParams
+    {
+        return new DisplayParams(
+            $this->App->Users,
+            $entityType,
+            limit: 9999,
+            states: array(State::Normal)
+        );
     }
 
     abstract protected function getPageTitle(): string;

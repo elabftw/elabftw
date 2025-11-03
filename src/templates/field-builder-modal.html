@@ -177,11 +177,11 @@
         </button>
       </div>
       <div class='modal-body'>
-        <h5 class='mb-3'>{{ 'Load from a database category'|trans }}</h5>
+        <h5 class='mb-3'>{{ 'Load from a resource template'|trans }}</h5>
         <div class='input-group'>
           <select class='form-control' id='loadMetadataSelect_items_types'>
-            {% for itemType in App.itemsCategoryArr %}
-              <option value='{{ itemType.id }}'>{{ itemType.title }}</option>
+            {% for template in itemsTemplatesArr %}
+              <option value='{{ template.id }}'>{{ template.title }}</option>
             {% endfor %}
           </select>
           <div class='input-group-append'>

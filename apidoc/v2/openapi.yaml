@@ -3171,13 +3171,25 @@ paths:
                 items:
                   $ref: '#/components/schemas/event'
   /events/{id}:
+    summary: Actions on a specific event
     parameters:
       - name: id
         in: path
-        description: ID of the item to book.
+        description: ID of the event
         required: true
         schema:
           type: integer
+    get:
+      tags: ['Events']
+      summary: Read a booking slot.
+      operationId: read-event
+      responses:
+        '200':
+          description: A particular event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/event'
     post:
       tags: ['Events']
       summary: Create an event for the item specified as id.
@@ -3207,28 +3219,6 @@ paths:
               description: An URL to the booking slot that was created.
               schema:
                 type: string
-
-  # EVENT
-  /event/{id}:
-    summary: For scheduler booking.
-    parameters:
-      - name: id
-        in: path
-        description: ID of the event to modify.
-        required: true
-        schema:
-          type: integer
-    get:
-      tags: ['Events']
-      summary: Read a booking slot.
-      operationId: read-event
-      responses:
-        '200':
-          description: A particular event
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/event'
     patch:
       tags: ['Events']
       summary: |

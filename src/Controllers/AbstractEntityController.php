@@ -49,6 +49,7 @@ use Symfony\Component\HttpFoundation\InputBag;
 
 /**
  * For displaying an entity in show, view or edit mode
+ * Preloads shared data like templates (experiments/items), statuses, team info.
  */
 abstract class AbstractEntityController implements ControllerInterface
 {
@@ -94,20 +95,20 @@ abstract class AbstractEntityController implements ControllerInterface
         $ItemsStatus = new ItemsStatus($this->App->Teams);
         $this->itemsStatusArr = $ItemsStatus->readAll($ItemsStatus->getQueryParams(new InputBag(array('limit' => 9999))));
         // common DisplayParams for both Experiments templates and Items types
-        $DisplayParamsTemplates = new DisplayParams(
-            $this->App->Users,
-            EntityType::Templates,
-            limit: 9999,
-            states: array(State::Normal)
-        );
-        $DisplayParamsItemsTypes = new DisplayParams(
-            $this->App->Users,
-            EntityType::ItemsTypes,
-            limit: 9999,
-            states: array(State::Normal)
-        );
+        $DisplayParamsTemplates = $this->makeDisplayParams(EntityType::Templates);
+        $DisplayParamsItemsTypes = $this->makeDisplayParams(EntityType::ItemsTypes);
         $this->templatesArr = $Templates->readAllSimple($DisplayParamsTemplates);
         $this->itemsTemplatesArr = $ItemsTypes->readAllSimple($DisplayParamsItemsTypes);
+    }
+
+    protected function makeDisplayParams(EntityType $entityType): DisplayParams
+    {
+        return new DisplayParams(
+            $this->App->Users,
+            $entityType,
+            limit: 9999,
+            states: array(State::Normal)
+        );
     }
 
     #[Override]

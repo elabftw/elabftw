@@ -983,6 +983,11 @@ the form-control fails to do that so we do the border ourselves */
   @include breakable;
 }
 
+/* links in tables (view mode) often contain long-name files. See #6137 */
+#body_view a {
+  @include breakable;
+}
+
 /* TITLE */
 /* add several rules for the word-wrap, see https://stackoverflow.com/a/36555643 */
 .title {

@@ -13,12 +13,8 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
-use Elabftw\Enums\EntityType;
-use Elabftw\Enums\State;
 use Elabftw\Models\Experiments;
-use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Templates;
-use Elabftw\Params\DisplayParams;
 use Override;
 
 /**

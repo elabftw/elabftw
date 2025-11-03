@@ -17,10 +17,12 @@ use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\PermissionsHelper;
 use Elabftw\Enums\Classification;
 use Elabftw\Enums\Currency;
+use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Meaning;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\Sort;
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractEntity;
@@ -30,11 +32,13 @@ use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\ExtraFieldsKeys;
 use Elabftw\Models\FavTags;
 use Elabftw\Models\ItemsStatus;
+use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\ProcurementRequests;
 use Elabftw\Models\RequestActions;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\TeamTags;
+use Elabftw\Models\Templates;
 use Elabftw\Models\UserRequestActions;
 use Elabftw\Params\DisplayParams;
 use Elabftw\Params\BaseQueryParams;
@@ -76,6 +80,8 @@ abstract class AbstractEntityController implements ControllerInterface
     public function __construct(protected App $App, protected AbstractEntity $Entity)
     {
         $TeamGroups = new TeamGroups($this->Entity->Users);
+        $Templates = new Templates($this->App->Users);
+        $ItemsTypes = new ItemsTypes($this->App->Users);
         $PermissionsHelper = new PermissionsHelper();
         $this->visibilityArr = $PermissionsHelper->getAssociativeArray();
         $this->classificationArr = Classification::getAssociativeArray();
@@ -87,6 +93,21 @@ abstract class AbstractEntityController implements ControllerInterface
         $this->experimentsStatusArr = $ExperimentsStatus->readAll($ExperimentsStatus->getQueryParams(new InputBag(array('limit' => 9999))));
         $ItemsStatus = new ItemsStatus($this->App->Teams);
         $this->itemsStatusArr = $ItemsStatus->readAll($ItemsStatus->getQueryParams(new InputBag(array('limit' => 9999))));
+        // common DisplayParams for both Experiments templates and Items types
+        $DisplayParamsTemplates = new DisplayParams(
+            $this->App->Users,
+            EntityType::Templates,
+            limit: 9999,
+            states: array(State::Normal)
+        );
+        $DisplayParamsItemsTypes = new DisplayParams(
+            $this->App->Users,
+            EntityType::ItemsTypes,
+            limit: 9999,
+            states: array(State::Normal)
+        );
+        $this->templatesArr = $Templates->readAllSimple($DisplayParamsTemplates);
+        $this->itemsTemplatesArr = $ItemsTypes->readAllSimple($DisplayParamsItemsTypes);
     }
 
     #[Override]

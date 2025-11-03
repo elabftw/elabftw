@@ -32,25 +32,6 @@ final class DatabaseController extends AbstractEntityController
 
         $this->categoryArr = $app->itemsCategoryArr;
         $this->statusArr = $this->itemsStatusArr;
-        $ItemsTypes = new ItemsTypes($app->Users);
-        $Templates = new Templates($app->Users);
-
-        $DisplayParamsTemplates = new DisplayParams(
-            $app->Users,
-            EntityType::Templates,
-            limit: 9999,
-            states: array(State::Normal)
-        );
-
-        $DisplayParamsItemsTypes = new DisplayParams(
-            $app->Users,
-            EntityType::ItemsTypes,
-            limit: 9999,
-            states: array(State::Normal)
-        );
-
-        $this->itemsTemplatesArr = $ItemsTypes->readAllSimple($DisplayParamsItemsTypes);
-        $this->templatesArr = $Templates->readAllSimple($DisplayParamsTemplates);
     }
 
     #[Override]

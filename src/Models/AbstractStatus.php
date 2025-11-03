@@ -97,7 +97,7 @@ abstract class AbstractStatus extends AbstractCategory
     {
         $sql = sprintf('SELECT entity.id, entity.title, entity.color, entity.is_default, entity.ordering,
             entity.state, entity.team, teams.name AS team_name
-            FROM %s AS entity LEFT JOIN teams ON teams.id = entity.team WHERE entity.team = :team', $this->table);
+            FROM %s AS entity INNER JOIN teams ON teams.id = entity.team WHERE entity.team = :team', $this->table);
 
         $queryParams ??= $this->getQueryParams();
         $sql .= $queryParams->getSql();

@@ -94,7 +94,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $this->experimentsStatusArr = $ExperimentsStatus->readAll($ExperimentsStatus->getQueryParams(new InputBag(array('limit' => 9999))));
         $ItemsStatus = new ItemsStatus($this->App->Teams);
         $this->itemsStatusArr = $ItemsStatus->readAll($ItemsStatus->getQueryParams(new InputBag(array('limit' => 9999))));
-        // common DisplayParams for both Experiments templates and Items types
+        // create DisplayParams for Experiments/Resources templates
         $DisplayParamsTemplates = $this->makeDisplayParams(EntityType::Templates);
         $DisplayParamsItemsTypes = $this->makeDisplayParams(EntityType::ItemsTypes);
         $this->templatesArr = $Templates->readAllSimple($DisplayParamsTemplates);

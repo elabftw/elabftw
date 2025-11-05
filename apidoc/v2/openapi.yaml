@@ -7,6 +7,8 @@ info:
 servers:
   - url: https://elab.local:3148/api/v2
     description: Local dev server
+  - url: https://demo.elabftw.net/api/v2
+    description: Official demo server
   - url: https://eln.example.org/api/v2
     description: Example base URL
 components:

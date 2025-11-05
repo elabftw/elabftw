@@ -85,6 +85,7 @@ use ZipArchive;
 use function array_column;
 use function array_merge;
 use function implode;
+use function in_array;
 use function is_bool;
 use function json_encode;
 use function ksort;
@@ -453,10 +454,14 @@ abstract class AbstractEntity extends AbstractRest
         if ($state === State::Archived->value && $action !== Action::Unarchive) {
             throw new UnprocessableContentException(_('Only the Unarchive action is allowed on an archived entity.'));
         }
-        // the toggle pin action doesn't require write access to the entity
-        if ($action !== Action::Pin) {
-            $this->canOrExplode('write');
+
+        $requiredAccess = 'write';
+        // some actions only require read access even if they are using PATCH verb
+        $readAccessActions = array(Action::Pin, Action::Sign, Action::Timestamp, Action::Bloxberg);
+        if (in_array($action, $readAccessActions, true)) {
+            $requiredAccess = 'read';
         }
+        $this->canOrExplode($requiredAccess);
         // if there is an active exclusive edit mode, entity cannot be modified
         // only user who locked can do everything
         // (sys)admin can remove locks

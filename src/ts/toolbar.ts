@@ -173,6 +173,7 @@ if (document.getElementById('topToolbar')) {
     }
     ApiC.post(`${Model.Team}/current/procurement_requests`, {entity_id: entity.id, qty_ordered: qty});
   });
+
   on('export-to-dspace', async (el: HTMLElement) => {
     const form = document.getElementById('dspaceExportForm') as HTMLFormElement;
     const collection = form.collection.value;
@@ -199,72 +200,74 @@ if (document.getElementById('topToolbar')) {
       ]
     };
 
-    try {
-      // 1. Create a WorkspaceItem in the collection (assuming your version supports it)
-      const createRes = await fetch(`/dspace/api/submission/workspaceitems?embed=item,sections,collection&owningCollection=${collection}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(metadata)
-      });
-      console.log(createRes);
-      if (!createRes.ok) {
-        const errorText = await createRes.text();
-        throw new Error(`Create failed: ${createRes.status} - ${errorText}`);
-      }
-
-      const item = await createRes.json();
-      if (!item._links?.self?.href) {
-        console.warn('Unexpected response format:', item);
-        throw new Error('Invalid DSpace response: no self link');
-      }
-
-      const itemId = item.id;
-
-      // 2. Accept license
-      await fetch(`/dspace/api/submission/workspaceitems/${itemId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json-patch+json',
-          // 'X-XSRF-TOKEN': csrfToken,
-          // 'Authorization': `Bearer ${token}`
-        },
-        credentials: 'include',
-        body: JSON.stringify([
-          { op: 'add', path: '/sections/license/granted', value: 'true' }
-        ])
-      });
-
-      // 3. Upload bitstream
-      const bitstreamUrl = item._links.self.href + '/bitstreams';
-      const fd = new FormData();
-      fd.append('file', file);
-
-      const uploadRes = await fetch(bitstreamUrl, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          // 'X-XSRF-TOKEN': csrfToken,
-          // 'Authorization': `Bearer ${token}`
-        },
-        body: fd
-      });
-
-      if (!uploadRes.ok) throw new Error('Bitstream upload failed');
-
-      alert('Export to DSpace successful!');
-    } catch (e) {
-      console.error(e);
-      alert(`Export failed: ${e.message}`);
-    }
+    // try {
+    //   // 1. Create a WorkspaceItem in the collection (assuming your version supports it)
+    //   const createRes = await fetch(`/dspace/api/submission/workspaceitems?embed=item,sections,collection&owningCollection=${collection}`, {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify(metadata)
+    //   });
+    //   console.log(createRes);
+    //   if (!createRes.ok) {
+    //     const errorText = await createRes.text();
+    //     throw new Error(`Create failed: ${createRes.status} - ${errorText}`);
+    //   }
+    //
+    //   const item = await createRes.json();
+    //   if (!item._links?.self?.href) {
+    //     console.warn('Unexpected response format:', item);
+    //     throw new Error('Invalid DSpace response: no self link');
+    //   }
+    //
+    //   const itemId = item.id;
+    //
+    //   // 2. Accept license
+    //   await fetch(`/dspace/api/submission/workspaceitems/${itemId}`, {
+    //     method: 'PATCH',
+    //     headers: {
+    //       'Content-Type': 'application/json-patch+json',
+    //       // 'X-XSRF-TOKEN': csrfToken,
+    //       // 'Authorization': `Bearer ${token}`
+    //     },
+    //     credentials: 'include',
+    //     body: JSON.stringify([
+    //       { op: 'add', path: '/sections/license/granted', value: 'true' }
+    //     ])
+    //   });
+    //
+    //   // 3. Upload bitstream
+    //   const bitstreamUrl = item._links.self.href + '/bitstreams';
+    //   const fd = new FormData();
+    //   fd.append('file', file);
+    //
+    //   const uploadRes = await fetch(bitstreamUrl, {
+    //     method: 'POST',
+    //     credentials: 'include',
+    //     headers: {
+    //       // 'X-XSRF-TOKEN': csrfToken,
+    //       // 'Authorization': `Bearer ${token}`
+    //     },
+    //     body: fd
+    //   });
+    //
+    //   if (!uploadRes.ok) throw new Error('Bitstream upload failed');
+    //
+    //   alert('Export to DSpace successful!');
+    // } catch (e) {
+    //   console.error(e);
+    //   alert(`Export failed: ${e.message}`);
+    // }
   })
 }
 
 export async function listCollections(): Promise<any> {
   const res = await fetch('/dspace/api/core/collections');
   if (!res.ok) throw new Error(`DSpace error ${res.status}`);
-  return res.json();
+  const json = await res.json();
+  console.log(res, json);
+  return json;
 }
 
 // Called when modal is shown
@@ -274,10 +277,7 @@ $('#dspaceExportModal').on('shown.bs.modal', async () => {
   select.innerHTML = '<option disabled selected>Loading...</option>';
 
   try {
-    const res = await fetch('/dspace/api/core/collections');
-    if (!res.ok) throw new Error(`DSpace error ${res.status}`);
-    const json = await res.json();
-
+    const json = await listCollections();
     const collections = json._embedded.collections;
     select.innerHTML = '';
     collections.forEach((col: any) => {

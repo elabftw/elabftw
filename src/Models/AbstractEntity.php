@@ -460,6 +460,8 @@ abstract class AbstractEntity extends AbstractRest
         $readAccessActions = array(Action::Pin, Action::Sign, Action::Timestamp, Action::Bloxberg);
         if (in_array($action, $readAccessActions, true)) {
             $requiredAccess = 'read';
+            // allow uploading a file to that entity too
+            $this->Uploads->Entity->bypassWritePermission = true;
         }
         $this->canOrExplode($requiredAccess);
         // if there is an active exclusive edit mode, entity cannot be modified
@@ -1011,8 +1013,6 @@ abstract class AbstractEntity extends AbstractRest
         $ZipArchive->addFromString('key.pub', $this->Users->userData['sig_pubkey']);
         $ZipArchive->addFromString('verify.sh', "#!/bin/sh\nminisign -H -V -p key.pub -m data.json\n");
         $ZipArchive->close();
-        // allow uploading a file to that entity because sign action only requires read access
-        $this->Uploads->Entity->bypassWritePermission = true;
         $comment = sprintf(_('Signature archive by %s (%s)'), $this->Users->userData['fullname'], $meaning->name);
         $this->Uploads->create(new CreateUploadFromLocalFile('signature archive.zip', $zipPath, $comment, immutable: 1, state: State::Archived));
         $RequestActions = new RequestActions($this->Users, $this);

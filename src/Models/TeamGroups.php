@@ -83,9 +83,6 @@ final class TeamGroups extends AbstractRest
                 u.firstname,
                 u.lastname';
 
-        //team_groups.name ASC";
-        //GROUP BY team_groups.id
-
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);

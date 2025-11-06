@@ -5,20 +5,17 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import {
-  collectForm,
-  relativeMoment,
-  reloadElements,
-} from './misc';
-import i18next from './i18n';
 import $ from 'jquery';
-import { Action, Model } from './interfaces';
-import { notify } from './notify';
 import { ApiC } from './api';
 import { entity } from './getEntity';
 import { on } from './handlers';
+import i18next from './i18n';
+import { Action, Model } from './interfaces';
+import { collectForm, relativeMoment, reloadElements, } from './misc';
+import { notify } from './notify';
 
 if (document.getElementById('topToolbar')) {
+
   on(Action.Duplicate, () => {
     const copyFiles = (document.getElementById('duplicateKeepFilesSelect') as HTMLInputElement);
     const linkToOriginalExperiment = (document.getElementById('duplicateLinkToOriginal') as HTMLInputElement);
@@ -144,17 +141,6 @@ if (document.getElementById('topToolbar')) {
     window.open(`/api/v2/${el.dataset.type}/${el.dataset.id}?format=qrpng&size=${size}&withTitle=${title}&titleLines=${titleLines}&titleChars=${titleChars}`, '_blank');
   });
 
-
-  on('get-collections', (el: HTMLElement) => {
-
-    listCollections().then(res => console.log(res));
-    // console.log(el);
-    // fetch('/dspace/').then(res => res.json()).then(data => console.log(data));
-    // fetch('/dspace/server/api/core/collections')
-    //   .then(res => res.json())
-    //   .then(data => console.log(data));
-  });
-
   on(Action.Destroy, () => {
     if (confirm(i18next.t('generic-delete-warning'))) {
       const path = window.location.pathname;
@@ -200,65 +186,69 @@ if (document.getElementById('topToolbar')) {
       ]
     };
 
-    // try {
-    //   // 1. Create a WorkspaceItem in the collection (assuming your version supports it)
-    //   const createRes = await fetch(`/dspace/api/submission/workspaceitems?embed=item,sections,collection&owningCollection=${collection}`, {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify(metadata)
-    //   });
-    //   console.log(createRes);
-    //   if (!createRes.ok) {
-    //     const errorText = await createRes.text();
-    //     throw new Error(`Create failed: ${createRes.status} - ${errorText}`);
-    //   }
-    //
-    //   const item = await createRes.json();
-    //   if (!item._links?.self?.href) {
-    //     console.warn('Unexpected response format:', item);
-    //     throw new Error('Invalid DSpace response: no self link');
-    //   }
-    //
-    //   const itemId = item.id;
-    //
-    //   // 2. Accept license
-    //   await fetch(`/dspace/api/submission/workspaceitems/${itemId}`, {
-    //     method: 'PATCH',
-    //     headers: {
-    //       'Content-Type': 'application/json-patch+json',
-    //       // 'X-XSRF-TOKEN': csrfToken,
-    //       // 'Authorization': `Bearer ${token}`
-    //     },
-    //     credentials: 'include',
-    //     body: JSON.stringify([
-    //       { op: 'add', path: '/sections/license/granted', value: 'true' }
-    //     ])
-    //   });
-    //
-    //   // 3. Upload bitstream
-    //   const bitstreamUrl = item._links.self.href + '/bitstreams';
-    //   const fd = new FormData();
-    //   fd.append('file', file);
-    //
-    //   const uploadRes = await fetch(bitstreamUrl, {
-    //     method: 'POST',
-    //     credentials: 'include',
-    //     headers: {
-    //       // 'X-XSRF-TOKEN': csrfToken,
-    //       // 'Authorization': `Bearer ${token}`
-    //     },
-    //     body: fd
-    //   });
-    //
-    //   if (!uploadRes.ok) throw new Error('Bitstream upload failed');
-    //
-    //   alert('Export to DSpace successful!');
-    // } catch (e) {
-    //   console.error(e);
-    //   alert(`Export failed: ${e.message}`);
-    // }
+    // sync with dspace - oauth modal
+    // 3rd party co
+    // see for persistent api key from dspace
+    const token = await fetchXsrfToken();
+    await loginToDspace('toto@yopmail.com', 'totototototo');
+    try {
+      const createRes = await postToDspace({
+        url: `/dspace/api/submission/workspaceitems?embed=item,sections,collection&owningCollection=${collection}`,
+        method: 'POST',
+        token,
+        contentType: 'application/json',
+        body: JSON.stringify(metadata)
+      })
+      console.log('create res \n', createRes);
+      if (!createRes.ok) {
+        const errorText = await createRes.text();
+        throw new Error(`Create failed: ${createRes.status} - ${errorText}`);
+      }
+
+      const item = await createRes.json();
+      if (!item._links?.self?.href) {
+        console.warn('Unexpected response format:', item);
+        throw new Error('Invalid DSpace response: no self link');
+      }
+
+      const itemId = item.id;
+
+      // 2. Accept license
+      await fetch(`/dspace/api/submission/workspaceitems/${itemId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json-patch+json',
+          // 'X-XSRF-TOKEN': csrfToken,
+          // 'Authorization': `Bearer ${token}`
+        },
+        credentials: 'include',
+        body: JSON.stringify([
+          { op: 'add', path: '/sections/license/granted', value: 'true' }
+        ])
+      });
+
+      // 3. Upload bitstream
+      const bitstreamUrl = item._links.self.href + '/bitstreams';
+      const fd = new FormData();
+      fd.append('file', file);
+
+      const uploadRes = await fetch(bitstreamUrl, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          // 'X-XSRF-TOKEN': csrfToken,
+          // 'Authorization': `Bearer ${token}`
+        },
+        body: fd
+      });
+
+      if (!uploadRes.ok) throw new Error('Bitstream upload failed');
+
+      alert('Export to DSpace successful!');
+    } catch (e) {
+      console.error(e);
+      alert(`Export failed: ${e.message}`);
+    }
   })
 }
 
@@ -270,11 +260,84 @@ export async function listCollections(): Promise<any> {
   return json;
 }
 
+async function fetchXsrfToken(): Promise<string> {
+  const saved = localStorage.getItem('dspaceXsrfToken');
+  const loggedIn = localStorage.getItem('dspaceLoggedIn');
+  console.log("saved: \n", saved, 'logged in: \n', loggedIn)
+  // reuse if logged in and token exists
+  if (saved && loggedIn) return saved;
+  const res = await fetch('dspace/api/security/csrf', {
+    method: 'GET',
+    credentials: 'include',
+  });
+  const token = res.headers.get('dspace-xsrf-token');
+  if (!token) throw new Error('No CSRF token found');
+  localStorage.setItem('dspaceXsrfToken', token);
+  return token;
+}
+
+async function loginToDspace(user: string, password: string) {
+  const token = await fetchXsrfToken();
+  console.log('token', token);
+  // DSpace expects classic form-urlencoded fields, no formData
+  const body = new URLSearchParams({ user, password }).toString();
+  const res = await postToDspace({url: 'dspace/api/authn/login', method: 'POST', token, body});
+  if (!res.ok) {
+    localStorage.removeItem('dspaceXsrfToken'); // clear stale token
+    const error = await res.text();
+    throw new Error(`Login failed: ${res.status} - ${error}`);
+  }
+  console.log('Logged in successfully!');
+  localStorage.setItem('dspaceLoggedIn', 'true');
+}
+
+async function isDspaceSessionActive(): Promise<boolean> {
+  try {
+    const res = await fetch('dspace/api/authn/status', { credentials: 'include' });
+    if (!res.ok) return false;
+    const data = await res.json();
+    return !!data?.authenticated;
+  } catch {
+    return false;
+  }
+}
+
+interface DspaceFetchOptions {
+  url: string;
+  method: string;
+  token: string;
+  body?: BodyInit | null;
+  contentType?: string;
+}
+
+const postToDspace = async ({ url, method, body = null, token, contentType = 'application/x-www-form-urlencoded' }: DspaceFetchOptions) => {
+
+  return await fetch(url, {
+    method,
+    headers: {
+      'Content-Type': contentType,
+      'X-XSRF-TOKEN': token,
+      'DSPACE-XSRF-COOKIE': token,
+    },
+    credentials: 'include',
+    body,
+  });
+};
+// 1. get xsrf token
+// 2. auth (login via email/password OR other methods)
+// 3. post/patch etc (for 30 mins) & refresh if method is not Shibboleth
+// s i shibboleth, est-ce que même idp que auth dans elab (cookie serait valide donc utilisable) ou il faut config new idp
+// LOGIN: TODO: ask client their auth methods
 // Called when modal is shown
 $('#dspaceExportModal').on('shown.bs.modal', async () => {
-  console.log("hi modal is up");
   const select = document.getElementById('dspaceCollection') as HTMLSelectElement;
   select.innerHTML = '<option disabled selected>Loading...</option>';
+
+  const active = await isDspaceSessionActive();
+  console.log('active', active);
+  if (!active) {
+    await loginToDspace('toto@yopmail.com', 'totototototo');
+  }
 
   try {
     const json = await listCollections();

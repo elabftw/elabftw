@@ -140,28 +140,29 @@
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
-{#      <div class='modal-body'>#}
-{#        <button type='button' class='btn btn-primary' data-action='get-collections'>{{ 'Get collections'|trans }}</button>#}
-{#        <div id='dspaceCollections'></div>#}
-
-{#      </div>#}
       <div class='modal-body'>
+{#        <pre>#}
+{#          {{ dump(Entity.entityData) }}#}
+{#        </pre>#}
         <form id='dspaceExportForm'>
           <div class='form-group'>
             <label for='dspaceCollection'>Target Collection</label>
             <select class='form-control' id='dspaceCollection' name='collection' required></select>
           </div>
+{#          title : prefill with elab exp title #}
+{#          date and other fields same #}
+{#          .eln pushed at the moment of the request #}
           <div class='form-group'>
             <label for='dspaceAuthor'>{{ 'Author'|trans }}</label>
-            <input type='text' class='form-control' id='dspaceAuthor' name='author' required>
+            <input type='text' class='form-control' id='dspaceAuthor' name='author' required disabled value='{{ Entity.entityData.userid }}'>
           </div>
           <div class='form-group'>
             <label for='dspaceTitle'>{{ 'Title'|trans }}</label>
-            <input type='text' class='form-control' id='dspaceTitle' name='title' required>
+            <input type='text' class='form-control' id='dspaceTitle' name='title' required disabled value='{{ Entity.entityData.title }}'>
           </div>
           <div class='form-group'>
             <label for='dspaceDate'>{{ 'Date of Issue'|trans }}</label>
-            <input type='date' class='form-control' id='dspaceDate' name='date' required>
+            <input type='date' class='form-control' id='dspaceDate' name='date' required disabled value='{{ Entity.entityData.date }}'>
           </div>
           <div class='form-group'>
             <label for='dspaceType'>{{ 'Type'|trans }}</label>
@@ -182,7 +183,7 @@
             <input type='file' class='form-control-file' id='dspaceFile' name='file' accept='.zip' required>
           </div>
           <div class='form-check'>
-            <input type='checkbox' class='form-check-input' id='dspaceLicense' required>
+            <input type='checkbox' class='form-check-input' id='dspaceLicense' required checked>
             <label class='form-check-label' for='dspaceLicense'>{{ 'I accept the DSpace license'|trans }}</label>
           </div>
         </form>

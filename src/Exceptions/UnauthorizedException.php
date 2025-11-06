@@ -25,7 +25,6 @@ final class UnauthorizedException extends AppException
         if ($message === null) {
             $message = Messages::UnauthorizedError->toHuman();
         }
-        error_log(json_encode(debug_backtrace()));
         parent::__construct($message, $code, $previous);
     }
 

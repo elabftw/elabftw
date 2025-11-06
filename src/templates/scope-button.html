@@ -2,6 +2,7 @@
 - reload for the data-reload content
 - target: scope_experiments, scope_items, etc...
 - optional btnId: to change the id attr of main div
+- optional setQueryParam: to add scope=X in query params upon change through a data attribute
 #}
 {% set scopeValue = App.Request.query.has('scope') ? App.Request.query.getInt('scope') : App.Users.userData[target] %}
 {% set setQueryParam = setQueryParam|default(0) %}

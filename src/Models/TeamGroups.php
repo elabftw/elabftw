@@ -36,6 +36,8 @@ final class TeamGroups extends AbstractRest
 {
     use SetIdTrait;
 
+    private const int GROUP_CONCAT_MAX_LEN = 1000000;
+
     public function __construct(private Users $Users, ?int $id = null)
     {
         parent::__construct();
@@ -65,10 +67,12 @@ final class TeamGroups extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
+        // increase GROUP_CONCAT length for this session. see #6155
+        $this->Db->q(sprintf('SET SESSION group_concat_max_len = %d', self::GROUP_CONCAT_MAX_LEN));
         $sql = "SELECT team_groups.id,
                 team_groups.name,
                 GROUP_CONCAT(users.userid ORDER BY users.firstname, users.lastname) AS userids,
-                GROUP_CONCAT(CONCAT(users.firstname, ' ', users.lastname) ORDER BY users.firstname, users.lastname SEPARATOR '|') AS fullnames
+                GROUP_CONCAT(CONCAT_WS(' ', users.firstname, users.lastname) ORDER BY users.firstname, users.lastname SEPARATOR '|') AS fullnames
             FROM team_groups
             LEFT JOIN users2team_groups ON (
                 users2team_groups.groupid = team_groups.id
@@ -99,6 +103,8 @@ final class TeamGroups extends AbstractRest
                     : array(),
             );
         }
+        // reset GROUP_CONCAT length after this query
+        $this->Db->q('SET SESSION group_concat_max_len = 1024');
 
         return $fullGroups;
     }

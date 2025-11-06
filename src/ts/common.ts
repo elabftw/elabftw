@@ -1237,6 +1237,20 @@ on('delete-compounds', (el: HTMLElement) => {
   document.dispatchEvent(new CustomEvent('dataReload'));
 });
 
+on('scope-change', (el: HTMLElement) => {
+  // only set it in query if we want to, which prevents an issue on dashboard where value was taken from query param "scope"
+  if (el.dataset.setQueryParam === '1') {
+    const params = new URLSearchParams(document.location.search);
+    params.set('scope', el.dataset.value);
+    history.pushState(null, '', `?${params.toString()}`);
+  }
+  const userParams = {};
+  userParams[el.dataset.target] = el.dataset.value;
+  ApiC.patch('users/me', userParams).then(() => {
+    handleReloads(el.dataset.reload);
+  });
+});
+
 /**
  * MAIN click listener on container
  */

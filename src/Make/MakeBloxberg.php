@@ -15,6 +15,7 @@ namespace Elabftw\Make;
 use Elabftw\Elabftw\CreateUploadFromLocalFile;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Enums\ExportFormat;
+use Elabftw\Enums\Messages;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
@@ -62,6 +63,9 @@ final class MakeBloxberg extends AbstractMakeTimestamp
 
         // first request sends the hash to the certify endpoint
         $certifyResponse = json_decode($this->certify($dataHash), true);
+        if ($certifyResponse === null) {
+            throw new ImproperActionException(Messages::GenericError->toHuman());
+        }
         if (isset($certifyResponse['errors'])) {
             throw new ImproperActionException(implode(', ', $certifyResponse['errors']));
         }

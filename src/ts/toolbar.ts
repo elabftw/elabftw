@@ -186,19 +186,25 @@ if (document.getElementById('topToolbar')) {
       ]
     };
 
-    // sync with dspace - oauth modal
-    // 3rd party co
-    // see for persistent api key from dspace
-    const token = await fetchXsrfToken();
-    await loginToDspace('toto@yopmail.com', 'totototototo');
     try {
+      // only login if not already logged in
+      // const loggedIn = localStorage.getItem('dspaceLoggedIn');
+      // if (!loggedIn) {
+        await loginToDspace('toto@yopmail.com', 'totototototo');
+      // }
+
+      const token = await fetchXsrfToken();
+
+      console.log('token from export-to-dspace', token);
       const createRes = await postToDspace({
-        url: `/dspace/api/submission/workspaceitems?embed=item,sections,collection&owningCollection=${collection}`,
+        // url: `/dspace/api/submission/workspaceitems?embed=item,sections,collection&owningCollection=${collection}`,
+        url: `/dspace/api/submission/workspaceitems?owningCollection=${collection}`,
         method: 'POST',
         token,
         contentType: 'application/json',
         body: JSON.stringify(metadata)
-      })
+      });
+
       console.log('create res \n', createRes);
       if (!createRes.ok) {
         const errorText = await createRes.text();
@@ -212,83 +218,99 @@ if (document.getElementById('topToolbar')) {
       }
 
       const itemId = item.id;
-
-      // 2. Accept license
-      await fetch(`/dspace/api/submission/workspaceitems/${itemId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json-patch+json',
-          // 'X-XSRF-TOKEN': csrfToken,
-          // 'Authorization': `Bearer ${token}`
-        },
-        credentials: 'include',
-        body: JSON.stringify([
-          { op: 'add', path: '/sections/license/granted', value: 'true' }
-        ])
-      });
-
-      // 3. Upload bitstream
-      const bitstreamUrl = item._links.self.href + '/bitstreams';
-      const fd = new FormData();
-      fd.append('file', file);
-
-      const uploadRes = await fetch(bitstreamUrl, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          // 'X-XSRF-TOKEN': csrfToken,
-          // 'Authorization': `Bearer ${token}`
-        },
-        body: fd
-      });
-
-      if (!uploadRes.ok) throw new Error('Bitstream upload failed');
+      //
+      // // 2. Accept license
+      // await fetch(`/dspace/api/submission/workspaceitems/${itemId}`, {
+      //   method: 'PATCH',
+      //   headers: { 'Content-Type': 'application/json-patch+json' },
+      //   credentials: 'include',
+      //   body: JSON.stringify([
+      //     { op: 'add', path: '/sections/license/granted', value: 'true' }
+      //   ])
+      // });
+      //
+      // // 3. Upload bitstream
+      // const bitstreamUrl = item._links.self.href + '/bitstreams';
+      // const fd = new FormData();
+      // fd.append('file', file);
+      //
+      // const uploadRes = await fetch(bitstreamUrl, {
+      //   method: 'POST',
+      //   credentials: 'include',
+      //   body: fd
+      // });
+      //
+      // if (!uploadRes.ok) throw new Error('Bitstream upload failed');
 
       alert('Export to DSpace successful!');
     } catch (e) {
       console.error(e);
       alert(`Export failed: ${e.message}`);
     }
-  })
+  });
 }
 
+let dspaceLoginInFlight: Promise<void> | null = null;
+
+// export async function listCollections(): Promise<any> {
+//   // const res = await fetch('/dspace/api/core/collections');
+//   const res = await postToDspace({url: '/dspace/api/core/collections', method: 'GET'});
+//   if (!res.ok) throw new Error(`DSpace error ${res.status}`);
+//   const json = await res.json();
+//   return json;
+// }
 export async function listCollections(): Promise<any> {
-  const res = await fetch('/dspace/api/core/collections');
+  const token = await fetchXsrfToken();
+  const res = await postToDspace({url: '/dspace/api/core/collections', method: 'GET', token});
   if (!res.ok) throw new Error(`DSpace error ${res.status}`);
-  const json = await res.json();
-  console.log(res, json);
-  return json;
+  return res.json();
 }
+// async function fetchXsrfToken(): Promise<string> {
+//   const saved = localStorage.getItem('dspaceXsrfToken');
+//   if (saved) return saved; // reuse cached token even if not logged in yet
+//   const res = await fetch('dspace/api/security/csrf', {
+//     method: 'GET',
+//     credentials: 'include',
+//   });
+//   const token = res.headers.get('dspace-xsrf-token');
+//   if (!token) throw new Error('No CSRF token found');
+//   localStorage.setItem('dspaceXsrfToken', token);
+//   console.log("token in fetch :", token);
+//   return token;
+// }
 
 async function fetchXsrfToken(): Promise<string> {
-  const saved = localStorage.getItem('dspaceXsrfToken');
-  const loggedIn = localStorage.getItem('dspaceLoggedIn');
-  console.log("saved: \n", saved, 'logged in: \n', loggedIn)
-  // reuse if logged in and token exists
-  if (saved && loggedIn) return saved;
   const res = await fetch('dspace/api/security/csrf', {
     method: 'GET',
     credentials: 'include',
   });
   const token = res.headers.get('dspace-xsrf-token');
   if (!token) throw new Error('No CSRF token found');
-  localStorage.setItem('dspaceXsrfToken', token);
+  localStorage.setItem('dspaceXsrfToken', token); // keep latest copy
   return token;
 }
 
 async function loginToDspace(user: string, password: string) {
-  const token = await fetchXsrfToken();
-  console.log('token', token);
-  // DSpace expects classic form-urlencoded fields, no formData
-  const body = new URLSearchParams({ user, password }).toString();
-  const res = await postToDspace({url: 'dspace/api/authn/login', method: 'POST', token, body});
-  if (!res.ok) {
-    localStorage.removeItem('dspaceXsrfToken'); // clear stale token
-    const error = await res.text();
-    throw new Error(`Login failed: ${res.status} - ${error}`);
-  }
-  console.log('Logged in successfully!');
-  localStorage.setItem('dspaceLoggedIn', 'true');
+  if (localStorage.getItem('dspaceLoggedIn') === 'true') return; // ✅ already logged in
+  if (dspaceLoginInFlight) { await dspaceLoginInFlight; return; } // ✅ dedupe concurrent calls
+
+  dspaceLoginInFlight = (async () => {
+    const token = await fetchXsrfToken();
+    console.log("token in login :", token);
+    const body = new URLSearchParams({ user, password }).toString();
+    const res = await postToDspace({url: 'dspace/api/authn/login', method: 'POST', token, body});
+    if (!res.ok) {
+      localStorage.removeItem('dspaceLoggedIn');
+      localStorage.removeItem('dspaceXsrfToken');
+      const error = await res.text();
+      throw new Error(`Login failed: ${res.status} - ${error}`);
+    }
+    await res.text();
+    console.log('Logged in successfully!');
+    localStorage.setItem('dspaceLoggedIn', 'true');
+  })();
+
+  try { await dspaceLoginInFlight; } finally { dspaceLoginInFlight = null; }
 }
 
 async function isDspaceSessionActive(): Promise<boolean> {
@@ -296,7 +318,12 @@ async function isDspaceSessionActive(): Promise<boolean> {
     const res = await fetch('dspace/api/authn/status', { credentials: 'include' });
     if (!res.ok) return false;
     const data = await res.json();
-    return !!data?.authenticated;
+    if (!data?.authenticated) {
+      localStorage.removeItem('dspaceLoggedIn');
+      localStorage.removeItem('dspaceXsrfToken');
+      return false;
+    }
+    return true;
   } catch {
     return false;
   }
@@ -305,24 +332,49 @@ async function isDspaceSessionActive(): Promise<boolean> {
 interface DspaceFetchOptions {
   url: string;
   method: string;
-  token: string;
+  token?: string | null;
   body?: BodyInit | null;
   contentType?: string;
 }
 
-const postToDspace = async ({ url, method, body = null, token, contentType = 'application/x-www-form-urlencoded' }: DspaceFetchOptions) => {
+const postToDspace = async ({ url, method, body = null, token = null, contentType = 'application/x-www-form-urlencoded' }: DspaceFetchOptions) => {
+  const headers: Record<string,string> = { 'Content-Type': contentType };
+  if (token) { headers['X-XSRF-TOKEN'] = token; headers['DSPACE-XSRF-COOKIE'] = token; } // ← only when present
 
-  return await fetch(url, {
+  const res = await fetch(url, {
     method,
-    headers: {
-      'Content-Type': contentType,
-      'X-XSRF-TOKEN': token,
-      'DSPACE-XSRF-COOKIE': token,
-    },
+    headers,
     credentials: 'include',
     body,
   });
+
+  const next = res.headers.get('dspace-xsrf-token');
+  if (next) localStorage.setItem('dspaceXsrfToken', next); // keep latest token from server
+
+  if (res.status === 401 || res.status === 403) {
+    localStorage.removeItem('dspaceLoggedIn');
+    localStorage.removeItem('dspaceXsrfToken');
+  }
+  return res;
 };
+
+// const postToDspace = async ({ url, method, body = null, token = null, contentType = 'application/x-www-form-urlencoded' }: DspaceFetchOptions) => {
+//   const res = await fetch(url, {
+//     method,
+//     headers: {
+//       'Content-Type': contentType,
+//       'X-XSRF-TOKEN': token,
+//       'DSPACE-XSRF-COOKIE': token,
+//     },
+//     credentials: 'include',
+//     body,
+//   });
+//   // if (res.status === 401 || res.status === 403) {
+//   //   localStorage.removeItem('dspaceLoggedIn');
+//   //   localStorage.removeItem('dspaceXsrfToken');
+//   // }
+//   return res;
+// };
 // 1. get xsrf token
 // 2. auth (login via email/password OR other methods)
 // 3. post/patch etc (for 30 mins) & refresh if method is not Shibboleth
@@ -333,10 +385,10 @@ $('#dspaceExportModal').on('shown.bs.modal', async () => {
   const select = document.getElementById('dspaceCollection') as HTMLSelectElement;
   select.innerHTML = '<option disabled selected>Loading...</option>';
 
-  const active = await isDspaceSessionActive();
-  console.log('active', active);
+  let active = await isDspaceSessionActive();
   if (!active) {
-    await loginToDspace('toto@yopmail.com', 'totototototo');
+    await loginToDspace('toto@yopmail.com', 'totototototo'); // keeps { user, password }
+    active = await isDspaceSessionActive();
   }
 
   try {

@@ -25,6 +25,7 @@
             <a href='{{ templatesPage }}' class='btn btn-ghost btn-sm'><i class='fas fa-cogs mr-1'></i>{{ 'Manage templates'|trans }}</a>
           </div>
 
+          {% set templatesArr = entityPage == 'experiments' ? templatesArr : itemsTemplatesArr %}
           {% include 'create-new-item-modal-body.html' %}
         {% endif %}
       </div>

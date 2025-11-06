@@ -1,5 +1,5 @@
 {# shared block for listing templates + categories in 'create-new-item-...-modal.html' #}
-{# expects: entityPage, templatesArr, (optional) categoryArr, (optional) isDashboard #}
+{# expects: entityPage, templatesArr, itemsTemplatesArr, (optional) categoryArr #}
 {# optional overrides: actionName, templatesPageOverride, categoryPageOverride, alwaysShowCategories #}
 <div id='tplCreateNewDiv_{{ entityPage }}' class='vertically-limited'>
   {% if templatesArr|length == 0 %}
@@ -15,9 +15,7 @@
       </thead>
       <tbody id='tplCreateNewTable_{{ entityPage }}'>
       {% set label = entityPage == 'database' ? 'Create resource from template'|trans : 'Create experiment from template'|trans %}
-      {% if isDashboard %}
-        {% set templatesArr = entityPage == 'experiments' ? templatesArr : itemsTemplatesArr %}
-      {% endif %}
+      {% set templatesArr = entityPage == 'experiments' ? templatesArr : itemsTemplatesArr %}
       {% for template in templatesArr %}
         <tr>
           <td data-label='{{ 'Title'|trans }}'>
@@ -52,9 +50,7 @@
   <a class='btn btn-ghost mt-1' href='#' data-action='create-entity-ask-title' data-type='{{ entityPage }}' data-catid='-1'>
     <span class='round-spot round-spot-ghost mr-1'></span>{{ 'No category'|trans }}
   </a>
-  {% if isDashboard %}
-    {% set categoryArr = entityPage == 'experiments' ? App.experimentsCategoryArr : App.itemsCategoryArr %}
-  {% endif %}
+  {% set categoryArr = entityPage == 'experiments' ? App.experimentsCategoryArr : App.itemsCategoryArr %}
   {% for category in categoryArr %}
     {# if we're creating item from compounds page or chem-editor page, use 'create-from-compounds' action. #}
     {% set action = (scriptName == 'compounds.php' or scriptName == 'chem-editor.php') ? actionName : 'create-entity-ask-title' %}

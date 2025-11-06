@@ -89,6 +89,37 @@ class TeamGroupsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->TeamGroups->readAllEverything());
     }
 
+    public function testReadAllDisplaysFullNames(): void
+    {
+        $groups = $this->TeamGroups->readAll();
+        $this->assertIsArray($groups, 'readAll() should return an array of groups.');
+        foreach ($groups as $group) {
+            $this->assertArrayHasKey('users', $group, 'Each group should have a "users" key.');
+            $this->assertIsArray($group['users'], 'Group "users" should be an array.');
+            // for each user entry, ensure 'userid' and 'fullname' exist
+            foreach ($group['users'] as $user) {
+                $this->assertArrayHasKey('userid', $user, 'Each user should have a "userid"');
+                $this->assertArrayHasKey('fullname', $user, 'Each user should have a "fullname" key');
+            }
+            // ensure number of fullnames matches number of userids
+            $userIds = array_column($group['users'], 'userid');
+            $fullnames = array_column($group['users'], 'fullname');
+            $this->assertSameSize(
+                $userIds,
+                $fullnames,
+                sprintf(
+                    'group "%s" has mismatched count of userids (%d) and fullnames (%d).',
+                    $group['name'],
+                    count($userIds),
+                    count($fullnames)
+                )
+            );
+            foreach ($fullnames as $fullname) {
+                $this->assertNotNull($fullname, 'User fullname should not be null.');
+            }
+        }
+    }
+
     public function testDestroy(): void
     {
         $this->TeamGroups->setId(1);

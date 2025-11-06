@@ -68,6 +68,7 @@ final class TeamGroups extends AbstractRest
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         // increase GROUP_CONCAT length for this session. see #6155
+        $originalLimit = $this->Db->q('SELECT @@session.group_concat_max_len')->fetchColumn();
         $this->Db->q(sprintf('SET SESSION group_concat_max_len = %d', self::GROUP_CONCAT_MAX_LEN));
         $sql = "SELECT team_groups.id,
                 team_groups.name,
@@ -104,8 +105,7 @@ final class TeamGroups extends AbstractRest
             );
         }
         // reset GROUP_CONCAT length after this query
-        $this->Db->q('SET SESSION group_concat_max_len = 1024');
-
+        $this->Db->q(sprintf('SET SESSION group_concat_max_len = %d', $originalLimit));
         return $fullGroups;
     }
 

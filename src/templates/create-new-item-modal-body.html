@@ -15,7 +15,6 @@
       </thead>
       <tbody id='tplCreateNewTable_{{ entityPage }}'>
       {% set label = entityPage == 'database' ? 'Create resource from template'|trans : 'Create experiment from template'|trans %}
-      {% set templatesArr = entityPage == 'experiments' ? templatesArr : itemsTemplatesArr %}
       {% for template in templatesArr %}
         <tr>
           <td data-label='{{ 'Title'|trans }}'>

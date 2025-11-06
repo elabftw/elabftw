@@ -161,7 +161,7 @@
       <div class='d-flex flex-row'>
         {#  TODO: make scopeBtn work without full page reload #}
         {# RESOURCES SCOPE #}
-        {% include 'scope-button.html' with {'reload': 'page', 'target': 'scope_items', 'isSecondary': 0, 'isSmall': 0} %}
+        {% include 'scope-button.html' with {'reload': 'page', 'target': 'scope_items'} %}
         {# FILTERS GROUP CATEGORY AND RESOURCE #}
         {% include 'scheduler-filter-items.html' %}
       </div>
@@ -176,7 +176,7 @@
         <div id='scopeLocked' class='btn-group' hidden>
           <button disabled class='btn dropdown-toggle' type='button' aria-label='Scope' title='Scope'><i class='fas fa-globe fa-fw mr-1'></i></button>
         </div>
-        {% include 'scope-button.html' with {'btnId': 'scopeEventBtn', 'reload': 'page', 'target': 'scope_events', 'isSecondary': 0, 'isSmall': 0} %}
+        {% include 'scope-button.html' with {'btnId': 'scopeEventBtn', 'reload': 'page', 'target': 'scope_events'} %}
         <div class='input-group ml-2'>
           {#  FILTER BY OWNER #}
           <input type='text' aria-label='{{ 'Filter owner'|trans }}' placeholder='{{ 'Filter events by owner'|trans }}' id='eventOwnerSelect' class='form-control' data-identifier='eventOwnerSelect' data-action='autocomplete' data-target='users'>

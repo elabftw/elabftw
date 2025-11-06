@@ -210,14 +210,14 @@
   </button>
 
   {# TIMESTAMP #}
-  {% if not App.Session.has('is_anon') and not Entity.isReadOnly %}
+  {% if not App.Session.has('is_anon') %}
     <button type='button' title='{{ 'Timestamp'|trans }}' aria-label='{{ 'Timestamp'|trans }}' data-action='do-requestable-action' data-target='timestamp' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
       <i class='fas fa-calendar-check fa-fw'></i>
     </button>
   {% endif %}
 
   {# BLOXBERG TIMESTAMP #}
-  {% if not Entity.isReadOnly and App.Config.configArr.blox_enabled %}
+  {% if App.Config.configArr.blox_enabled %}
     <button type='button' title='{{ 'Add to blockchain'|trans }}' aria-label='{{ 'Add to blockchain'|trans }}' data-action='toggle-modal' data-target='blocktimestampModal' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
       <i class='fas fa-cubes fa-fw'></i>
     </button>

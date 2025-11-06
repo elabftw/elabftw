@@ -16,6 +16,8 @@ use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
 
+use function trim;
+
 class TeamGroupsTest extends \PHPUnit\Framework\TestCase
 {
     private TeamGroups $TeamGroups;
@@ -115,7 +117,7 @@ class TeamGroupsTest extends \PHPUnit\Framework\TestCase
                 )
             );
             foreach ($fullnames as $fullname) {
-                $this->assertNotNull($fullname, 'User fullname should not be null.');
+                $this->assertNotEmpty(trim($fullname), 'User fullname should not be empty.');
             }
         }
     }

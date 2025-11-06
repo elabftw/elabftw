@@ -32,6 +32,7 @@ use Elabftw\Enums\AuthType;
 use Elabftw\Enums\EnforceMfa;
 use Elabftw\Enums\Entrypoint;
 use Elabftw\Enums\Language;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidDeviceTokenException;
 use Elabftw\Exceptions\QuantumException;
@@ -90,7 +91,7 @@ final class LoginController implements ControllerInterface
                     $this->Request->cookies->getInt('token_team'),
                 )->tryAuth();
             }
-        } catch (UnauthorizedException) {
+        } catch (UnauthorizedException | IllegalActionException) {
         }
 
         return $this->getAuthService()->tryAuth();

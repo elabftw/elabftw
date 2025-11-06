@@ -21,7 +21,6 @@ use Elabftw\Models\AbstractTemplateEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\Templates;
-use Elabftw\Services\UsersHelper;
 use Override;
 
 use function array_column;
@@ -331,9 +330,8 @@ final class EntitySqlBuilder implements SqlBuilderInterface
         // ultra admin has userid=null during cli eln export so we use the team id
         $teamsOfUser = array($this->entity->Users->userData['team']);
 
-        if ($this->entity->Users->userData['userid'] !== null) {
-            $UsersHelper = new UsersHelper($this->entity->Users->userData['userid']);
-            $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
+        if (!empty($this->entity->Users->userData['teams'])) {
+            $teamsOfUser = array_column($this->entity->Users->userData['teams'], 'id');
         }
 
         if (!empty($teamsOfUser)) {

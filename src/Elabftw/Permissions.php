@@ -18,7 +18,6 @@ use Elabftw\Models\Users\AuthenticatedUser;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\TeamsHelper;
-use Elabftw\Services\UsersHelper;
 
 /**
  * Determine read and write access for a user and an entity
@@ -91,8 +90,7 @@ final class Permissions
 
         // check for teams
         if (!empty($can['teams'])) {
-            $UsersHelper = new UsersHelper($this->Users->userData['userid']);
-            $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
+            $teamsOfUser = array_column($this->Users->userData['teams'], 'id');
             foreach ($can['teams'] as $team) {
                 if (in_array($team, $teamsOfUser, true)) {
                     return true;

@@ -16,7 +16,6 @@ use Elabftw\Enums\AccessType;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Users\Users;
-use Elabftw\Services\UsersHelper;
 
 use function array_column;
 use function implode;
@@ -113,15 +112,13 @@ final class CanSqlBuilder
      */
     protected function canTeams(): string
     {
-        $UsersHelper = new UsersHelper($this->requester->userid ?? 0);
-        $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
-        if (!empty($teamsOfUser)) {
+        if (!empty($this->requester->userData['teams'])) {
             // JSON_OVERLAPS checks for the intersection of two arrays
             // for instance [4,5,6] vs [2,6] has 6 in common -> 1 (true)
             return sprintf(
                 "JSON_OVERLAPS(entity.%s->'$.teams', CAST('[%s]' AS JSON))",
                 $this->accessType->value,
-                implode(', ', $teamsOfUser),
+                implode(', ', array_column($this->requester->userData['teams'], 'id')),
             );
         }
         return '1=2';
@@ -132,6 +129,7 @@ final class CanSqlBuilder
      */
     protected function canTeamGroups(): string
     {
+        // TODO include the teamgroups in Users->readOneFull
         $TeamGroups = new TeamGroups($this->requester);
         $teamgroupsOfUser = array_column($TeamGroups->readGroupsFromUser(), 'id');
         if (!empty($teamgroupsOfUser)) {

@@ -50,8 +50,9 @@ final class Revisions extends AbstractRest
             return 0;
         }
 
+        $inserted = $this->dbInsert($body);
         $this->destroyOld();
-        return $this->dbInsert($body);
+        return $inserted;
     }
 
     public function dbInsert(?string $body): int
@@ -167,7 +168,7 @@ final class Revisions extends AbstractRest
             ) AS ranked
               ON ranked.id = r.id
             WHERE r.item_id = :item_id
-              AND ranked.rn >= :keep';
+              AND ranked.rn > :keep';
 
         $req = $this->Db->prepare($sql);
         $req->bindValue(':item_id', $this->Entity->id, PDO::PARAM_INT);

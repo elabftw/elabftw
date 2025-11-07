@@ -27,6 +27,8 @@ use PDO;
 
 use function array_map;
 use function json_decode;
+use function trim;
+use function sprintf;
 
 /**
  * Everything related to the team groups
@@ -70,7 +72,6 @@ final class TeamGroups extends AbstractRest
               u.userid,
               u.firstname,
               u.lastname
-
             FROM team_groups AS tg
             LEFT JOIN users2team_groups AS ug ON (
                 ug.groupid = tg.id
@@ -98,7 +99,7 @@ final class TeamGroups extends AbstractRest
                 );
             }
             if ($group['userid'] !== null) {
-                $fullname = ($group['firstname'] ?? '') . ' ' . ($group['lastname'] ?? '');
+                $fullname = trim(sprintf('%s %s', $group['firstname'] ?? '', $group['lastname'] ?? ''));
                 $groups[$gid]['users'][] = array(
                     'userid'   => $group['userid'],
                     'fullname' => $fullname,

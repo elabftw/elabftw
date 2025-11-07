@@ -16,6 +16,8 @@ use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
 
+use function trim;
+
 class TeamGroupsTest extends \PHPUnit\Framework\TestCase
 {
     private TeamGroups $TeamGroups;

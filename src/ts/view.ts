@@ -61,7 +61,7 @@ if (mode === 'view') {
   });
 
   // add the title in the page name (see #324)
-  document.title = document.getElementById('documentTitle').textContent + ' - eLabFTW';
+  document.title = document.getElementById('documentTitle')?.textContent + ' - eLabFTW';
 
   if (!core.isAnon) {
     // listen on existing comments

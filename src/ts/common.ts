@@ -879,7 +879,7 @@ on('create-resource-from-compound', (el: HTMLElement) => {
   if (el.dataset.tplid) {
     payload = { template: el.dataset.tplid };
   } else if (el.dataset.catid) {
-    payload = { category: el.dataset.catid };
+    payload = { category: parseInt(el.dataset.catid, 10) };
   }
   ApiC.post2location('items', payload).then(id => {
     // now create a link with that compound

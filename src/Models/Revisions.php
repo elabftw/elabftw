@@ -123,7 +123,7 @@ final class Revisions extends AbstractRest
         $numberToRemove = 0;
         $current = count($this->readAll());
         if ($current > $this->maxRevisions) {
-            $numberToRemove = $this->maxRevisions - $current;
+            $numberToRemove = $current - $this->maxRevisions;
             $this->destroyOld($numberToRemove);
         }
         return $numberToRemove;

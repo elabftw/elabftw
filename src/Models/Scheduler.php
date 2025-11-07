@@ -185,6 +185,7 @@ final class Scheduler extends AbstractRest
             "SELECT
                 team_events.id,
                 team_events.team,
+                teams.name AS team_name,
                 team_events.title AS title_only,
                 team_events.start,
                 team_events.end,
@@ -205,6 +206,7 @@ final class Scheduler extends AbstractRest
                 items_linkt.title AS item_link_title,
                 CASE WHEN %s THEN 1 ELSE 0 END AS canbook
             FROM team_events
+            LEFT JOIN teams ON (team_events.team = teams.id)
             LEFT JOIN experiments ON (team_events.experiment = experiments.id)
             LEFT JOIN items ON (team_events.item = items.id)
             LEFT JOIN items AS items_linkt ON (team_events.item_link = items_linkt.id)

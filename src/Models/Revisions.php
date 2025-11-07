@@ -21,7 +21,6 @@ use Elabftw\Traits\SetIdTrait;
 use Override;
 use PDO;
 
-use function count;
 use function mb_strlen;
 
 /**
@@ -51,11 +50,9 @@ final class Revisions extends AbstractRest
             return 0;
         }
 
-        // destroy the oldest revision if we're reaching the max count
-        if ($this->maxRevisions !== 0 && ($this->readCount() >= $this->maxRevisions)) {
-            $this->destroyOld();
-        }
-        return $this->dbInsert($body);
+        $inserted = $this->dbInsert($body);
+        $this->destroyOld();
+        return $inserted;
     }
 
     public function dbInsert(?string $body): int
@@ -115,20 +112,6 @@ final class Revisions extends AbstractRest
         return $req->fetchAll();
     }
 
-    /**
-     * Make sure we don't store too many
-     */
-    public function prune(): int
-    {
-        $numberToRemove = 0;
-        $current = count($this->readAll());
-        if ($current > $this->maxRevisions) {
-            $numberToRemove = $this->maxRevisions - $current;
-            $this->destroyOld($numberToRemove);
-        }
-        return $numberToRemove;
-    }
-
     #[Override]
     public function readOne(): array
     {
@@ -164,19 +147,33 @@ final class Revisions extends AbstractRest
     }
 
     /**
-     * Destroy old revisions
-     *
-     * @param int $num number of old revisions to destroy
+     * Destroy old revisions when number of revisions is more than maxRevisions
      */
-    private function destroyOld(int $num = 1): void
+    private function destroyOld(): bool
     {
-        $oldestRevisions = array_slice(array_reverse($this->readAll()), 0, $num);
-        $sql = 'DELETE FROM ' . $this->Entity->entityType->value . '_revisions WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        foreach ($oldestRevisions as $revision) {
-            $req->bindParam(':id', $revision['id'], PDO::PARAM_INT);
-            $this->Db->execute($req);
+        // skip if we allow infinite revisions
+        if ($this->maxRevisions === 0) {
+            return true;
         }
+        $table = $this->Entity->entityType->value . '_revisions';
+        $sql = 'DELETE r FROM ' . $table . ' AS r
+            JOIN (
+                SELECT id,
+                       ROW_NUMBER() OVER (
+                           PARTITION BY item_id
+                           ORDER BY id DESC
+                       ) AS rn
+                FROM ' . $table . '
+                WHERE item_id = :item_id
+            ) AS ranked
+              ON ranked.id = r.id
+            WHERE r.item_id = :item_id
+              AND ranked.rn > :keep';
+
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindValue(':keep', $this->maxRevisions, PDO::PARAM_INT);
+        return $this->Db->execute($req);
     }
 
     /**

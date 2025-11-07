@@ -192,8 +192,8 @@ export function collectForm(form: HTMLElement): object {
     if (el.type === 'checkbox') {
       value = el.checked ? 'on' : 'off';
     }
-    if (el.dataset.ignore !== '1' && el.disabled === false && (el.value !== '' || el.dataset.allowEmpty === '1')) {
-      params = Object.assign(params, {[input.name]: value});
+    if (el.dataset.ignore !== '1' && el.disabled === false && (value !== '' || el.dataset.allowEmpty === '1')) {
+      params = Object.assign(params, {[el.name]: value});
     }
   });
 

@@ -262,7 +262,7 @@
     {# RIGHT #}
     <div class='ml-auto'>
       {# SCOPE FILTER #}
-      {% include 'scope-button.html' with {'reload': 'reloadEntitiesShow,scopeBtn', 'target': 'scope_' ~ Entity.entityType.value, 'isSmall': 0, 'isSecondary': 0} %}
+      {% include 'scope-button.html' with {'reload': 'reloadEntitiesShow,scopeBtn', 'target': 'scope_' ~ Entity.entityType.value, 'setQueryParam': 1} %}
     </div>
 
     <div class='vertical-separator'></div>

@@ -32,6 +32,7 @@ use Elabftw\Enums\AuthType;
 use Elabftw\Enums\EnforceMfa;
 use Elabftw\Enums\Entrypoint;
 use Elabftw\Enums\Language;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidDeviceTokenException;
 use Elabftw\Exceptions\QuantumException;
@@ -80,6 +81,19 @@ final class LoginController implements ControllerInterface
 
     public function getAuthResponse(): AuthResponseInterface
     {
+        // try to login with the cookie if we have one in the request
+        // but don't let the exception bubble up if the cookie is invalid
+        try {
+            if ($this->Request->cookies->has('token')) {
+                return new Cookie(
+                    (int) $this->config['cookie_validity_time'],
+                    new CookieToken($this->Request->cookies->getString('token')),
+                    $this->Request->cookies->getInt('token_team'),
+                )->tryAuth();
+            }
+        } catch (UnauthorizedException | IllegalActionException) {
+        }
+
         return $this->getAuthService()->tryAuth();
     }
 
@@ -247,15 +261,6 @@ final class LoginController implements ControllerInterface
             return new Anon((bool) $this->config['anon_users'], $team, Language::EnglishGB);
         }
 
-        // try to login with the cookie if we have one in the request
-        if ($this->Request->cookies->has('token')) {
-            return new Cookie(
-                (int) $this->config['cookie_validity_time'],
-                new CookieToken($this->Request->cookies->getString('token')),
-                $this->Request->cookies->getInt('token_team'),
-            );
-        }
-
         // autologin as anon if it's allowed by sysadmin
         if ($this->config['open_science']) {
             // don't do it if we have elabid in url
@@ -267,7 +272,6 @@ final class LoginController implements ControllerInterface
             if (in_array(basename($this->Request->getScriptName()), $autoAnon, true)) {
                 return new Anon((bool) $this->config['anon_users'], (int) ($this->config['open_team'] ?? 1), Language::EnglishGB);
             }
-            throw new UnauthorizedException();
         }
 
         // now the other types of Auth like Local, Ldap, Saml, etc...

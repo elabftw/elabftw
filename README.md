@@ -112,6 +112,7 @@ This project is backed by [Deltablot](https://www.deltablot.com) company.
 * Vrije Universiteit Brussel
 * Institute of Medical Biometry and Statistics, Faculty of Medicine and Medical Center – University of Freiburg, Germany
 * Georg-August-University Goettingen - Institute of Inorganic Chemistry
+* [Lablynx](https://www.lablynx.com/)
 
 # Related projects
 

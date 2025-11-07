@@ -28,8 +28,6 @@ import TomSelectNoBackspaceDelete from 'tom-select/dist/esm/plugins/no_backspace
 // get html of current page reloaded via get
 function fetchCurrentPage(tag = ''): Promise<Document>{
   const url = new URL(window.location.href);
-  // remove any scope query param present in url, otherwise it gets taken into account for the reload
-  url.searchParams.delete('scope');
   if (tag) {
     url.searchParams.delete('tags[]');
     url.searchParams.set('tags[]', tag);
@@ -785,7 +783,8 @@ export async function populateUserModal(user: Record<string, string|number>) {
     return;
   }
   const requester = await ApiC.getJson('users/me');
-  const userTeams = JSON.parse(String(user.teams));
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const userTeams = user.teams as any;
   // set a dataset.userid on the modal, that's where all js code will fetch current user, instead of having to set it on every elementel.dataset.
   document.getElementById('editUserModal').dataset.userid = String(user.userid);
   // manage teams block

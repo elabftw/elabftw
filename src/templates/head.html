@@ -76,12 +76,12 @@
                     </div>
                   </div>
                 </form>
-                {% set isActive = scriptName == 'experiments.php' and App.Request.query.get('scope') == 3 %}
-                <a class='dropdown-item {{ isActive ? 'active' }}' href='experiments.php?scope=3' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-globe fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'All experiments'|trans }}</a>
-                {% set isActive = scriptName == 'experiments.php' and App.Request.query.get('scope') == 2 %}
-                <a class='dropdown-item {{ isActive ? 'active' }}' href='experiments.php?scope=2' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-users fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Team experiments'|trans }}</a>
                 {% set isActive = scriptName == 'experiments.php' and App.Request.query.get('scope') == 1 %}
                 <a class='dropdown-item {{ isActive ? 'active' }}' href='experiments.php?scope=1' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-user fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'My experiments'|trans }}</a>
+                {% set isActive = scriptName == 'experiments.php' and App.Request.query.get('scope') == 2 %}
+                <a class='dropdown-item {{ isActive ? 'active' }}' href='experiments.php?scope=2' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-users fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Team experiments'|trans }}</a>
+                {% set isActive = scriptName == 'experiments.php' and App.Request.query.get('scope') == 3 %}
+                <a class='dropdown-item {{ isActive ? 'active' }}' href='experiments.php?scope=3' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-globe fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'All experiments'|trans }}</a>
                 <div class='dropdown-divider'></div>
                 {% for entity in App.experimentsCategoryArr %}
                   {% set isActive = scriptName == 'experiments.php' and App.Request.query.get('category') == entity.id %}
@@ -113,12 +113,12 @@
                     </div>
                   </div>
                 </form>
-                {% set isActive = scriptName == 'database.php' and App.Request.query.get('scope') == 3 %}
-                <a class='dropdown-item {{ isActive ? 'active' }}' href='database.php?scope=3' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-globe fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'All resources'|trans }}</a>
-                {% set isActive = scriptName == 'database.php' and App.Request.query.get('scope') == 2 %}
-                <a class='dropdown-item {{ isActive ? 'active' }}' href='database.php?scope=2' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-users fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Team resources'|trans }}</a>
                 {% set isActive = scriptName == 'database.php' and App.Request.query.get('scope') == 1 %}
                 <a class='dropdown-item {{ isActive ? 'active' }}' href='database.php?scope=1' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-user fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'My resources'|trans }}</a>
+                {% set isActive = scriptName == 'database.php' and App.Request.query.get('scope') == 2 %}
+                <a class='dropdown-item {{ isActive ? 'active' }}' href='database.php?scope=2' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-users fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Team resources'|trans }}</a>
+                {% set isActive = scriptName == 'database.php' and App.Request.query.get('scope') == 3 %}
+                <a class='dropdown-item {{ isActive ? 'active' }}' href='database.php?scope=3' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-globe fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'All resources'|trans }}</a>
                 {% set isActive = scriptName == 'database.php' and App.Request.query.get('bookable') == 1 %}
                 <a class='dropdown-item {{ isActive ? 'active' }}' href='database.php?bookable=1' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-calendar-check fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Bookable resources'|trans }}</a>
                 <div class='dropdown-divider'></div>
@@ -207,7 +207,7 @@
         <div class='nav-item dropdown'>
           <button class='btn nav-link border-0' id='navbarDropdown' type='button' aria-label='{{ 'User menu'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><span class='initials'>{{ App.Users.userData.initials }}</span></button>
           <div class='dropdown-menu dropdown-menu-right' aria-labelledby='navbarDropdown'><h6 class='dropdown-header'>{{ 'Logged in as %s in:'|trans|format(App.Users.userData.firstname|default('Anonymous')) }}<br>{{ App.Teams.teamArr.name }}</h6>
-            {% if App.Users.userData.teams|default('[]')|jsonDecode|length > 1 %}
+            {% if App.Users.userData.teams|default([])|length > 1 %}
               <a href='login.php?switch_team=1' class='dropdown-item'><i class='fas fa-repeat fa-fw'></i> {{ 'Switch team'|trans }}</a>
             {% endif %}
             <div class='dropdown-divider'></div>
@@ -253,6 +253,12 @@
 {% endif %}
 
 <div class='real-container'>
+
+{# TEMPORARY notice for deprecation of open_science #}
+{% if App.Config.configArr.open_science == '1' %}
+{{ 'You are using a deprecated configuration option "open science". Please read <a target="_blank" href="https://github.com/elabftw/elabftw/discussions/6164">this Discussion</a>.'|msg('ko') }}
+{% endif %}
+{# END TEMPORARY notice for deprecation of open_science #}
 
 <noscript>{# show warning if javascript is disabled #}
     <div class='alert alert-danger'>

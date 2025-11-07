@@ -719,6 +719,7 @@ class Users extends AbstractRest
 
         $this->userData = $this->Db->fetch($req);
         $this->userData['team'] = $this->team;
+        $this->userData['teams'] = json_decode($this->userData['teams'], true, 3, JSON_THROW_ON_ERROR);
         return $this->userData;
     }
 
@@ -832,8 +833,7 @@ class Users extends AbstractRest
             new OnboardingEmail(-1)->create($this->userData['userid']);
         }
         // now send an email for each team the user is in
-        $teams = json_decode($this->userData['teams'], true, 3, JSON_THROW_ON_ERROR);
-        foreach ($teams as $team) {
+        foreach ($this->userData['teams'] as $team) {
             new Teams($this, $team['id'])
                 ->sendOnboardingEmailToUser($this->userData['userid'], BinaryValue::from($team['is_admin']));
         }

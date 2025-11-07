@@ -14,8 +14,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\AppException;
 use Elabftw\Models\Items;
-use Elabftw\Models\ItemsTypes;
-use Elabftw\Models\Scheduler;
+use Elabftw\Models\ResourcesCategories;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -29,18 +28,18 @@ $Response = new Response();
 try {
     $Response->prepare($Request);
     $Items = new Items($App->Users);
-    $ItemsTypes = new ItemsTypes($App->Users);
+    $ResourcesCategories = new ResourcesCategories($App->Teams);
     // only the bookable categories
     $bookableItemsArr = $Items->readBookable();
     $categoriesOfBookableItems = array_column($bookableItemsArr, 'category');
-    $allItemsTypes = $ItemsTypes->readAll();
-    $bookableItemsTypes = array_filter(
-        $allItemsTypes,
+    $allCategories = $ResourcesCategories->readAll();
+    $bookableCategories = array_filter(
+        $allCategories,
         fn($a): bool => in_array($a['id'], $categoriesOfBookableItems, true),
     );
     $template = 'scheduler.html';
     $renderArr = array(
-        'bookableItemsTypes' => $bookableItemsTypes,
+        'bookableCategories' => $bookableCategories,
         'itemsArr' => $bookableItemsArr,
         'pageTitle' => _('Scheduler'),
     );

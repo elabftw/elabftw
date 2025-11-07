@@ -436,6 +436,11 @@ if (document.getElementById('metadataDiv') && entity.id) {
             if (el?.checked) field[key] = true;
           }
 
+          // ensure the old extra field is replaced
+          if (!json['extra_fields']) json['extra_fields'] = {};
+          if (originalFieldKey && originalFieldKey !== newFieldKey) {
+            delete json['extra_fields'][originalFieldKey];
+          }
           json['extra_fields'][newFieldKey] = field;
 
           MetadataC.update(json as ValidMetadata).then(() => {

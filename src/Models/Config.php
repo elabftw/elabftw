@@ -197,6 +197,7 @@ final class Config extends AbstractRest
             ('s3_verify_cert', '1'),
             ('s3_use_path_style_endpoint', '0'),
             ('s3_exports_toggle', '0'),
+            ('s3_exports_use_dedicated_bucket', '0'),
             ('s3_exports_bucket_name', ''),
             ('s3_exports_path_prefix', 'exports'),
             ('s3_exports_region', ''),

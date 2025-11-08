@@ -579,6 +579,18 @@
 
     {% include 'binary-setting.html' with {'label': 'Verify TLS certificate'|trans, 'slug': 's3_verify_cert'} %}
     {% include 'binary-setting.html' with {'label': 'Use S3 Path-Style endpoint'|trans, 'slug': 's3_use_path_style_endpoint'} %}
+  </div>
+
+  <h3 class='p-2 pl-3 section-title'>{{ 'Exports configuration'|trans }}</h3>
+
+  <div class='pl-3 mt-2 mb-5'>
+    {% include 'binary-setting.html' with {'label': 'Use S3 for exports'|trans, 'slug': 's3_exports', 'help': 'Save user created export files to S3'|trans} %}
+    <div class='d-flex justify-content-between'>
+      <label for='s3_exports_path' class='col-form-label'>{{ 'S3 exports path'|trans }}</label>
+      <input class='form-control col-md-3' type='text' id='s3_exports_path' placeholder='exports' data-trigger='blur' data-model='config' data-target='s3_exports_path' value='{{ App.Config.configArr.s3_exports_path }}' />
+    </div>
+    <hr>
+
 
   </div>
 </div>

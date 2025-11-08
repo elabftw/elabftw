@@ -309,7 +309,7 @@ final class Apiv2Controller extends AbstractApiController
             ApiEndpoint::Export => (
                 function () {
                     $Config = Config::getConfig();
-                    $storage = $Config->configArr['s3_exports'] ? Storage::S3EXPORTS : Storage::EXPORTS;
+                    $storage = $Config->configArr['s3_exports'] === '1' ? Storage::S3EXPORTS : Storage::EXPORTS;
                     return new Exports($this->requester, $storage->getStorage(), $this->id);
                 }
             )(),

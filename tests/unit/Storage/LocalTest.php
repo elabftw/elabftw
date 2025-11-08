@@ -19,5 +19,6 @@ class LocalTest extends \PHPUnit\Framework\TestCase
     {
         $Storage = new Local();
         $this->assertInstanceOf(Filesystem::class, $Storage->getFs());
+        $this->assertSame('', $Storage->getBucketName());
     }
 }

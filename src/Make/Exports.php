@@ -207,7 +207,6 @@ final class Exports extends AbstractRest
         $this->requester = new Users($request['requester_userid'], $request['team']);
         $this->update('state', State::Processing->value);
         $longName = Tools::getUuidv4();
-        $absolutePath = $this->storage->getPath($longName);
         try {
             $format = ExportFormat::from($request['format']);
         } catch (ValueError $e) {
@@ -244,13 +243,15 @@ final class Exports extends AbstractRest
             }
         }
 
+        $absolutePath = $this->storage->getPath($longName);
+        if ($this->storage instanceof S3Exports) {
+            // https://maennchen.dev/ZipStream-PHP/guide/StreamOutput.html#stream-to-s3-bucket
+            $absolutePath = 's3://' . $this->storage->getBucketName() . '/' . $absolutePath;
+        }
+
         switch ($format) {
             case ExportFormat::Eln:
             case ExportFormat::Zip:
-                if ($this->storage instanceof S3Exports) {
-                    // https://maennchen.dev/ZipStream-PHP/guide/StreamOutput.html#stream-to-s3-bucket
-                    $absolutePath = 's3://' . $this->storage->getBucketName() . '/' . $absolutePath;
-                }
                 $fileStream = fopen($absolutePath, 'wb');
                 if ($fileStream === false) {
                     throw new RuntimeException('Could not open output stream!');

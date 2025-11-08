@@ -28,7 +28,6 @@ use Elabftw\Models\AbstractRest;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\Filter;
 use Elabftw\Services\MpdfProvider;
-use Elabftw\Storage\S3Exports;
 use Elabftw\Traits\SetIdTrait;
 use Exception;
 use League\Flysystem\Filesystem;
@@ -243,11 +242,7 @@ final class Exports extends AbstractRest
             }
         }
 
-        $absolutePath = $this->storage->getPath($longName);
-        if ($this->storage instanceof S3Exports) {
-            // https://maennchen.dev/ZipStream-PHP/guide/StreamOutput.html#stream-to-s3-bucket
-            $absolutePath = 's3://' . $this->storage->getBucketName() . '/' . $absolutePath;
-        }
+        $absolutePath = $this->storage->getAbsoluteUri($longName);
 
         switch ($format) {
             case ExportFormat::Eln:

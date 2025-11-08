@@ -23,5 +23,5 @@ interface StorageInterface
 
     public function getPath(string $relativePath = ''): string;
 
-    public function getBucketName(): string;
+    public function getAbsoluteUri(string $path): string;
 }

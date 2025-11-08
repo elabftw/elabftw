@@ -15,7 +15,7 @@ namespace Elabftw\Storage;
 use Aws\Credentials\CredentialsInterface;
 use Aws\S3\S3Client;
 use Aws\S3\S3ClientInterface;
-use Elabftw\Models\Config;
+use Elabftw\Elabftw\S3Config;
 use League\Flysystem\AwsS3V3\AwsS3V3Adapter;
 use League\Flysystem\AwsS3V3\PortableVisibilityConverter;
 use League\Flysystem\FilesystemAdapter;
@@ -32,23 +32,22 @@ class S3 extends AbstractStorage
     // 100 Mb
     protected const int PART_SIZE = 104857600;
 
-    public function __construct(protected Config $config, protected CredentialsInterface $credentials) {}
-
-    #[Override]
-    public function getBucketName(): string
-    {
-        return $this->config->configArr['s3_bucket_name'];
-    }
+    public function __construct(
+        protected readonly CredentialsInterface $credentials,
+        protected readonly S3Config $config,
+    ) {}
 
     #[Override]
     public function getPath(string $relativePath = ''): string
     {
-        return $this->getPathPrefix() . ($relativePath !== '' ? '/' . $relativePath : '');
+        return $this->config->pathPrefix . ($relativePath !== '' ? '/' . $relativePath : '');
     }
 
-    protected function getPathPrefix(): string
+    #[Override]
+    public function getAbsoluteUri(string $path): string
     {
-        return $this->config->configArr['s3_path_prefix'];
+        // https://maennchen.dev/ZipStream-PHP/guide/StreamOutput.html#stream-to-s3-bucket
+        return 's3://' . $this->config->bucketName . '/' . $this->getPath($path);
     }
 
     #[Override]
@@ -61,9 +60,9 @@ class S3 extends AbstractStorage
             // S3Client
             $client,
             // Bucket name
-            $this->config->configArr['s3_bucket_name'],
+            $this->config->bucketName,
             // Optional path prefix
-            $this->getPathPrefix(),
+            $this->config->pathPrefix,
             // Visibility converter (League\Flysystem\AwsS3V3\VisibilityConverter)
             new PortableVisibilityConverter(Visibility::PRIVATE),
             // set a larger part size for multipart upload or we hit the max number of parts (1000)
@@ -75,13 +74,13 @@ class S3 extends AbstractStorage
     {
         return new S3Client(array(
             'version' => self::S3_VERSION,
-            'region' => $this->config->configArr['s3_region'],
-            'endpoint' => $this->config->configArr['s3_endpoint'],
+            'region' => $this->config->region,
+            'endpoint' => $this->config->endpoint,
             'credentials' => $this->credentials,
             'use_aws_shared_config_files' => false,
-            'use_path_style_endpoint' => ($this->config->configArr['s3_use_path_style_endpoint'] === '1'),
+            'use_path_style_endpoint' => $this->config->usePathStyleEndpoint,
             'http' => array(
-                'verify' => ($this->config->configArr['s3_verify_cert'] === '1'),
+                'verify' => $this->config->verifyCert,
             ),
         ));
     }

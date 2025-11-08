@@ -48,7 +48,8 @@ try {
     $ExperimentsCategories = new ExperimentsCategories($App->Teams);
 
     // get the exported files
-    $Export = new Exports($App->Users, Storage::EXPORTS->getStorage());
+    $storage = $App->Config->configArr['s3_exports'] === '1' ? Storage::S3EXPORTS : Storage::EXPORTS;
+    $Export = new Exports($App->Users, $storage->getStorage());
 
     $UserUploads = new UserUploads($App->Users);
     $PermissionsHelper = new PermissionsHelper();

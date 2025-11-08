@@ -17,10 +17,10 @@ use Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\FsTools;
+use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Models\Config;
 use Elabftw\Services\Email;
-use Elabftw\Storage\Exports;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Mailer\Exception\InvalidArgumentException;
 use Symfony\Component\Mailer\Mailer;
@@ -59,7 +59,8 @@ try {
     exit;
 }
 
-$exportsFs = new Exports();
+$exportsFsInterface = $Config->configArr['s3_exports'] === '1' ? Storage::S3EXPORTS : Storage::EXPORTS;
+$exportsFs = $exportsFsInterface->getStorage();
 $sqlFs = FsTools::getFs(dirname(__DIR__) . '/src/sql');
 
 $Application->add(new InstallRedir());

@@ -15,8 +15,8 @@ namespace Elabftw\Make;
 use Elabftw\Controllers\DownloadController;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\EntitySlugsSqlBuilder;
-use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Invoker;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\State;
@@ -28,6 +28,7 @@ use Elabftw\Models\AbstractRest;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\Filter;
 use Elabftw\Services\MpdfProvider;
+use Elabftw\Storage\S3Exports;
 use Elabftw\Traits\SetIdTrait;
 use Exception;
 use League\Flysystem\Filesystem;
@@ -205,7 +206,7 @@ final class Exports extends AbstractRest
         $this->setId($request['id']);
         $this->requester = new Users($request['requester_userid'], $request['team']);
         $this->update('state', State::Processing->value);
-        $longName = FsTools::getUniqueString();
+        $longName = Tools::getUuidv4();
         $absolutePath = $this->storage->getPath($longName);
         try {
             $format = ExportFormat::from($request['format']);
@@ -246,6 +247,10 @@ final class Exports extends AbstractRest
         switch ($format) {
             case ExportFormat::Eln:
             case ExportFormat::Zip:
+                if ($this->storage instanceof S3Exports) {
+                    // https://maennchen.dev/ZipStream-PHP/guide/StreamOutput.html#stream-to-s3-bucket
+                    $absolutePath = 's3://' . $this->storage->getBucketName() . '/' . $absolutePath;
+                }
                 $fileStream = fopen($absolutePath, 'wb');
                 if ($fileStream === false) {
                     throw new RuntimeException('Could not open output stream!');

@@ -41,5 +41,11 @@ abstract class AbstractStorage implements StorageInterface
         return '/elabftw/' . static::FOLDER . ($relativePath !== '' ? '/' . $relativePath : '');
     }
 
+    #[Override]
+    public function getBucketName(): string
+    {
+        return '';
+    }
+
     abstract protected function getAdapter(): FilesystemAdapter;
 }

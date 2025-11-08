@@ -25,25 +25,45 @@ use Override;
 /**
  * Provide a League\Filesystem adapter for S3 buckets file uploads
  */
-final class S3 extends AbstractStorage
+class S3 extends AbstractStorage
 {
-    private const string S3_VERSION = '2006-03-01';
+    protected const string S3_VERSION = '2006-03-01';
 
     // 100 Mb
-    private const int PART_SIZE = 104857600;
+    protected const int PART_SIZE = 104857600;
 
-    public function __construct(private Config $config, private CredentialsInterface $credentials) {}
+    public function __construct(protected Config $config, protected CredentialsInterface $credentials) {}
+
+    #[Override]
+    public function getBucketName(): string
+    {
+        return $this->config->configArr['s3_bucket_name'];
+    }
+
+    #[Override]
+    public function getPath(string $relativePath = ''): string
+    {
+        return $this->getPathPrefix() . ($relativePath !== '' ? '/' . $relativePath : '');
+    }
+
+    protected function getPathPrefix(): string
+    {
+        return $this->config->configArr['s3_path_prefix'];
+    }
 
     #[Override]
     protected function getAdapter(): FilesystemAdapter
     {
+        $client = $this->getClient();
+        // we register the wrapper here so we can do fopen() calls to s3
+        $client->registerStreamWrapper();
         return new AwsS3V3Adapter(
             // S3Client
-            $this->getClient(),
+            $client,
             // Bucket name
             $this->config->configArr['s3_bucket_name'],
             // Optional path prefix
-            $this->config->configArr['s3_path_prefix'],
+            $this->getPathPrefix(),
             // Visibility converter (League\Flysystem\AwsS3V3\VisibilityConverter)
             new PortableVisibilityConverter(Visibility::PRIVATE),
             // set a larger part size for multipart upload or we hit the max number of parts (1000)
@@ -51,7 +71,7 @@ final class S3 extends AbstractStorage
         );
     }
 
-    private function getClient(): S3ClientInterface
+    protected function getClient(): S3ClientInterface
     {
         return new S3Client(array(
             'version' => self::S3_VERSION,

@@ -28,6 +28,7 @@ use Override;
 use Symfony\Component\HttpFoundation\InputBag;
 
 use function sprintf;
+use function trim;
 
 /**
  * Import a CSV into compounds
@@ -55,7 +56,11 @@ final class CompoundsCsv extends AbstractCsv
         $this->output->writeln(sprintf('[info] Found %d rows to import', $count));
 
         $loopIndex = 0;
-        foreach ($this->reader->getRecords() as $row) {
+        // firt row is header
+        $this->reader->setHeaderOffset(0);
+        // and we want everything lowercase
+        $lower = array_map('strtolower', $this->reader->getHeader());
+        foreach ($this->reader->getRecords($lower) as $row) {
             // this might store the compound from pubchem
             $compound = false;
             $ids = array();
@@ -69,7 +74,7 @@ final class CompoundsCsv extends AbstractCsv
 
                     // cas will likely return several compounds cid !
                     if (empty($cid) && !empty($row['cas'])) {
-                        $cids = $this->PubChemImporter->getCidFromCas($row['cas']);
+                        $cids = $this->PubChemImporter->getCidFromCas(trim($row['cas']));
                     }
 
                     foreach ($cids as $cid) {
@@ -156,6 +161,14 @@ final class CompoundsCsv extends AbstractCsv
                         $Containers2ItemsLinks = new Containers2ItemsLinks($this->Items, $id);
                         $Containers2ItemsLinks->createWithQuantity((float) ($row['quantity'] ?? 1.0), $row['unit'] ?? '•');
                     }
+                    // process custom_id
+                    if (isset($row['custom_id']) && !empty($row['custom_id'])) {
+                        try {
+                            $this->Items->update(new EntityParams('custom_id', (int) $row['custom_id']));
+                        } catch (ImproperActionException $e) {
+                            $this->output->writeln(sprintf('[error] Custom id %s: ' . $e->getMessage(), $row['custom_id']));
+                        }
+                    }
                 }
 
                 // optionally link with an existing Resource that we match with the extra field
@@ -211,6 +224,7 @@ final class CompoundsCsv extends AbstractCsv
             'name',
             'title',
             'comment',
+            'custom_id',
             'chebi_id',
             'chembl_id',
             'dea_number',

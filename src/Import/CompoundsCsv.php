@@ -94,7 +94,7 @@ final class CompoundsCsv extends AbstractCsv
                     }
                 } else {
                     $ids[] = $this->Compounds->create(
-                        casNumber: isset($row['cas']) ? trim($row['cas']) : null,
+                        casNumber: $casKey !== null && isset($row[$casKey]) ? trim($row[$casKey]) : null,
                         ecNumber: $row['ec_number'] ?? null,
                         inchi: $row['inchi'] ?? null,
                         inchiKey: $row['inchikey'] ?? null,

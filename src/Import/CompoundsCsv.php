@@ -80,8 +80,11 @@ final class CompoundsCsv extends AbstractCsv
                     }
 
                     // cas will likely return several compounds cid !
-                    if (empty($cid) && !empty($row[$casKey])) {
-                        $cids = $this->PubChemImporter->getCidFromCas(trim($row[$casKey]));
+                    if ($casKey !== null) {
+                        $casValue = trim($row[$casKey] ?? '');
+                        if ($casValue !== '' && empty($cid)) {
+                            $cids = $this->PubChemImporter->getCidFromCas($casValue);
+                        }
                     }
 
                     foreach ($cids as $cid) {

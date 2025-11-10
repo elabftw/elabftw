@@ -28,6 +28,7 @@ use Override;
 use Symfony\Component\HttpFoundation\InputBag;
 
 use function sprintf;
+use function strcasecmp;
 use function trim;
 
 /**
@@ -56,11 +57,17 @@ final class CompoundsCsv extends AbstractCsv
         $this->output->writeln(sprintf('[info] Found %d rows to import', $count));
 
         $loopIndex = 0;
-        // firt row is header
-        $this->reader->setHeaderOffset(0);
-        // and we want everything lowercase
-        $lower = array_map('strtolower', $this->reader->getHeader());
-        foreach ($this->reader->getRecords($lower) as $row) {
+
+        // find out the correct case for CAS and keep it so if it's imported as custom field it has correct case
+        // but do this so we can match any case for pubchem import
+        $casKey = null;
+        foreach ($this->reader->getHeader() as $h) {
+            if (strcasecmp($h, 'cas') === 0) {
+                $casKey = $h;
+                break;
+            }
+        }
+        foreach ($this->reader->getRecords() as $row) {
             // this might store the compound from pubchem
             $compound = false;
             $ids = array();
@@ -73,8 +80,8 @@ final class CompoundsCsv extends AbstractCsv
                     }
 
                     // cas will likely return several compounds cid !
-                    if (empty($cid) && !empty($row['cas'])) {
-                        $cids = $this->PubChemImporter->getCidFromCas(trim($row['cas']));
+                    if (empty($cid) && !empty($row[$casKey])) {
+                        $cids = $this->PubChemImporter->getCidFromCas(trim($row[$casKey]));
                     }
 
                     foreach ($cids as $cid) {
@@ -84,7 +91,7 @@ final class CompoundsCsv extends AbstractCsv
                     }
                 } else {
                     $ids[] = $this->Compounds->create(
-                        casNumber: $row['cas'] ?? null,
+                        casNumber: isset($row['cas']) ? trim($row['cas']) : null,
                         ecNumber: $row['ec_number'] ?? null,
                         inchi: $row['inchi'] ?? null,
                         inchiKey: $row['inchikey'] ?? null,
@@ -166,7 +173,7 @@ final class CompoundsCsv extends AbstractCsv
                         try {
                             $this->Items->update(new EntityParams('custom_id', (int) $row['custom_id']));
                         } catch (ImproperActionException $e) {
-                            $this->output->writeln(sprintf('[error] Custom id %s: ' . $e->getMessage(), $row['custom_id']));
+                            $this->output->writeln(sprintf('[error] Custom id %s: %s', $row['custom_id'], $e->getMessage()));
                         }
                     }
                 }

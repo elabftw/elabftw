@@ -28,7 +28,7 @@
     <ul class='list-group mt-2'>
     {# If an entity has multiple compounds, it will appear several times in the sql output, and this is fine because we actually would like to have a row for each compound in each container, even if it's a mix #}
     {# so here we filter on the view by showing only a single Resource/Experiment #}
-    {% set uniqueById = containersArr|reduce((acc, r) => acc|merge((acc[(r.page ~ ':' ~ (r.entity_id|trim))] is defined) ? {} : {(r.page ~ ':' ~ (r.entity_id|trim)): r}), {}) %}
+    {% set uniqueById = containersArr|reduce((acc, r) => acc|merge((acc[(r.page ~ ':' ~ r.entity_id ~ ':' ~ r.storage_id)] is defined) ? {} : {(r.page ~ ':' ~ r.entity_id ~ ':' ~ r.storage_id): r}), {}) %}
     {% for container in uniqueById %}
       <li class='list-group-item'>
         {% if container.entity_custom_id %}<span class='mr-1 color-medium'>{{ container.entity_custom_id }}</span>{% endif %}<a href='{{ container.page }}.php?mode=view&id={{ container.entity_id }}'>{{ container.entity_title }}</a> {{ container.qty_stored }} {{ container.qty_unit }} in {{ container.full_path }}

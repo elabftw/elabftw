@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Import;
 
-use Elabftw\Elabftw\FsTools;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Storage;
 use Elabftw\Models\Users\Users;
 use League\Flysystem\FilesystemOperator;
@@ -49,7 +49,7 @@ abstract class AbstractZip extends AbstractImport
     ) {
         parent::__construct($requester, $UploadedFile);
         // set up a temporary directory in the cache to extract the archive to
-        $this->tmpDir = FsTools::getUniqueString();
+        $this->tmpDir = Tools::getUuidv4();
         // do not use Storage::CACHE here, but the possibly bind-mounted exports folder instead
         $cacheStorage = Storage::EXPORTS->getStorage();
         $this->tmpPath = $cacheStorage->getPath() . '/' . $this->tmpDir;

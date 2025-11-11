@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\Env;
+use Elabftw\Elabftw\S3Config;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
@@ -120,5 +121,12 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
             'allow_permission_organization' => '0',
             'allow_permission_useronly' => '0',
         ));
+    }
+
+    public function testGetS3ExportsConfig(): void
+    {
+        $S3Config = $this->Config->getS3ExportsConfig();
+        $this->assertInstanceOf(S3Config::class, $S3Config);
+        $this->assertSame('exports', $S3Config->pathPrefix);
     }
 }

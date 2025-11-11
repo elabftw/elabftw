@@ -79,6 +79,7 @@ final class Config extends AbstractRest
     {
         $sql = "INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
             ('admin_validate', '1'),
+            ('admin_panel_custom_msg', ''),
             ('autologout_time', '0'),
             ('cookie_validity_time', '43200'),
             ('remember_me_checked', '1'),
@@ -222,7 +223,8 @@ final class Config extends AbstractRest
             ('onboarding_email_admins_body', NULL),
             ('allow_users_change_identity', '0'),
             ('compounds_require_edit_rights', '0'),
-            ('inventory_require_edit_rights', '0')";
+            ('inventory_require_edit_rights', '0'),
+            ('users_validity_is_externally_managed', '0')";
 
         $req = $this->Db->prepare($sql);
         $req->bindValue(':schema', Update::REQUIRED_SCHEMA);

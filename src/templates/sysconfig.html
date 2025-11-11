@@ -179,6 +179,14 @@
       <input class='form-control col-md-3' data-trigger='blur' data-model='config' data-target='user_msg_need_local_account_created' type='text' autocomplete='off' value='{{ App.Config.configArr.user_msg_need_local_account_created }}' id='user_msg_need_local_account_created' />
     </div>
     <hr>
+
+    {% include 'binary-setting.html' with {'label': 'Users validity date is externally managed: make "Valid until" attribute read-only'|trans, 'slug': 'users_validity_is_externally_managed', 'help': 'If you manage the validity date of user accounts externally, enable this option to make this attribute read-only on the user modal window.'|trans} %}
+
+    <div class='d-flex justify-content-between'>
+      <label for='admin_panel_custom_msg' class='col-form-label'>{{ 'Message displayed on Admin Panel for all Admins'|trans }}</label>
+      <input class='form-control col-md-3' data-trigger='blur' data-model='config' data-target='admin_panel_custom_msg' type='text' autocomplete='off' value='{{ App.Config.configArr.admin_panel_custom_msg }}' id='admin_panel_custom_msg' />
+    </div>
+    <hr>
   </div>
 
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Remote directory configuration'|trans }}</h3>

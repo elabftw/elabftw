@@ -155,6 +155,10 @@ body::before {
   }
 }
 
+.max-width-70 {
+  max-width: 70%;
+}
+
 /* LINKS */
 a,
 .link-like {
@@ -572,7 +576,7 @@ tr:first-child td {
 /* SHOW MODE */
 .rating-show {
   background-color: $lightgold;
-  font-size: 70%;
+  font-size: 75%;
 
   i {
     color: $gold;
@@ -688,10 +692,6 @@ tr:first-child td {
     margin-bottom: 0;
   }
 
-  .fa-square-plus {
-    color: $medium;
-  }
-
   .fa-comments,
   .fa-paperclip,
   .fa-tags {
@@ -713,8 +713,6 @@ tr:first-child td {
   }
 
   .left-icon {
-    padding: 8px 10px;
-
     i:not(.fa-lock) {
       color: $white;
     }
@@ -1019,6 +1017,10 @@ the form-control fails to do that so we do the border ourselves */
   color: $disabled !important;
 }
 
+.color-thirdlevel {
+  color: $thirdlevel !important;
+}
+
 .color-medium {
   color: $medium;
 }
@@ -1186,6 +1188,10 @@ the form-control fails to do that so we do the border ourselves */
 
 .bg-firstlevel {
   background-color: $firstlevel;
+}
+
+.bg-superlight {
+  background-color: $superlight;
 }
 
 /* print only the main div */

@@ -252,7 +252,12 @@
   </div>
 {% endif %}
 
-<div class='real-container'>
+{% set realContainerClass = '' %}
+{% if App.Request.query.get('mode') == 'show' or (scriptName in ['experiments.php', 'database.php', 'templates.php', 'experiments-categories.php', 'experiments-status.php', 'resources-templates.php', 'resources-categories.php', 'resources-status.php'] and not App.Request.query.has('mode')) %}
+  {% set realContainerClass = 'max-width-70' %}
+{% endif %}
+
+<div class='real-container {{ realContainerClass }}'>
 
 {# TEMPORARY notice for deprecation of open_science #}
 {% if App.Config.configArr.open_science == '1' %}

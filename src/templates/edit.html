@@ -57,42 +57,52 @@
 
   {# BODY #}
   <hr>
-  <h3 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-toggle-target='mainTextDiv' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-{{ displayMainText ? 'down' : 'right' }} fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
-  <div data-save-hidden='mainTextDiv' {{ not displayMainText ? 'hidden' }} id='mainTextDiv'>
-    <div class='mt-2' id='entityBodyEditorDiv' data-content-type='{{ Entity.entityData.content_type }}'>{# << this div is important around the textarea to fix an issue on mobile editor. See #3107 #}
-      {# tinymce or markdown? #}
-      {% if Entity.entityData.content_type == '2' %}
-        <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' data-language='{{ App.getJsLang }}' name='body'>{{ Entity.entityData.body }}</textarea>
-      {% else %}
-      {# do not display body if set in metadata, done via css to avoid delayed disappearance after JS is executed #}
-        {% if App.devMode -%}
-          <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element: suppress errors from tinymce] -->
-        {%- endif %}
-        <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='mceditable invisible' name='body'>{{ Entity.entityData.body }}</textarea>
-      {% endif %}
-    </div>
-    <div class='d-flex ml-1'>
-      {# LAST SAVED #}
+    <div class='d-flex justify-content-between'>
       <div>
-        <span class='smallgray'>{{ 'Last saved:'|trans }}</span>
-        <span id='lastSavedAt' class='ml-1 relative-moment smallgray' title='{{ Entity.entityData.modified_at }}'></span>
+        <h3 data-action='toggle-next' data-toggle-target-extra='mainTextEllipsis' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-toggle-target='mainTextDiv' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-{{ displayMainText ? 'down' : 'right' }} fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
       </div>
-      {# SWITCH EDITOR #}
-      <div class='ml-auto'>
-        <button type='button' class='btn btn-sm hl-hover-gray p-1 rounded' data-action='switch-editor'><i class='fas fa-pencil-alt fa-fw'></i> {{ 'Switch editor'|trans }}</button>
-        {# Display main text switch #}
-        <label class='ml-1 small' for='displayMainTextSliderInput'>{{ 'Display main text'|trans }}</label>
-        <label class='switch'>
-          <input type='checkbox' {{ Entity.entityData.metadata|extractDisplayMainText() ? 'checked="checked"' }} id='displayMainTextSliderInput'>
-          <span class='slider'></span>
-        </label>
+      <div class='dropdown' id='mainTextEllipsis'>
+        <button class='btn p-2 hl-hover-gray' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'Main text options'|trans }}' aria-label='{{ 'Main text options'|trans }}' type='button'>
+          <i class='fas fa-ellipsis-v fa-fw'></i>
+        </button>
+        <div class='dropdown-menu dropdown-menu-right'>
+          {# SWITCH EDITOR #}
+          <button type='button' class='btn btn-dropdown-item dropdown-item' data-action='switch-editor'>
+            <i class='mr-1 fas fa-pencil-alt fa-fw'></i> {{ Entity.entityData.content_type == 1 ? 'Switch to markdown editor'|trans : 'Switch to rich text editor'|trans }}
+          </button>
+          {# Display main text switch #}
+          <button type='button' class='btn btn-dropdown-item dropdown-item' id='toggleDisplayMainTextBtn' data-action='toggle-display-main-text'>
+            <i class='mr-1 fas fa-eye fa-fw'></i>{{ Entity.entityData.metadata|extractDisplayMainText() ? 'Hide main text in view mode'|trans : 'Display main text in view mode'|trans }}
+          </button>
+        </div>
       </div>
     </div>
 
-    <div class='mt-1 text-center'>
-      <button type='button' {{ not displayMainText ? 'hidden' }} data-action='update-entity-body' class='btn btn-primary'>{{ 'Save'|trans }}</button>
-      <button type='button' data-action='update-entity-body' data-redirect='view' class='btn btn-secondary'>{{ 'Save and go back'|trans }}</button>
-    </div>
+    <div data-save-hidden='mainTextDiv' id='mainTextDiv'>
+      <div {{ not displayMainText ? 'hidden' }} class='mt-2' id='entityBodyEditorDiv' data-content-type='{{ Entity.entityData.content_type }}'>{# << this div is important around the textarea to fix an issue on mobile editor. See #3107 #}
+        {# tinymce or markdown? #}
+        {% if Entity.entityData.content_type == '2' %}
+          <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' data-language='{{ App.getJsLang }}' name='body'>{{ Entity.entityData.body }}</textarea>
+        {% else %}
+        {# do not display body if set in metadata, done via css to avoid delayed disappearance after JS is executed #}
+          {% if App.devMode -%}
+            <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element: suppress errors from tinymce] -->
+          {%- endif %}
+          <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='mceditable invisible' name='body'>{{ Entity.entityData.body }}</textarea>
+        {% endif %}
+      </div>
+      <div class='d-flex ml-1'>
+        {# LAST SAVED #}
+        <div>
+          <span class='smallgray'>{{ 'Last saved:'|trans }}</span>
+          <span id='lastSavedAt' class='ml-1 relative-moment smallgray' title='{{ Entity.entityData.modified_at }}'></span>
+        </div>
+      </div>
+
+      <div class='mt-1 text-center'>
+        <button type='button' {{ not displayMainText ? 'hidden' }} data-action='update-entity-body' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+        <button type='button' data-action='update-entity-body' data-redirect='view' class='btn btn-secondary'>{{ 'Save and go back'|trans }}</button>
+      </div>
   </div>
 </section>
 

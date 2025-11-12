@@ -22,4 +22,6 @@ interface StorageInterface
     public function getFs(): Filesystem;
 
     public function getPath(string $relativePath = ''): string;
+
+    public function getAbsoluteUri(string $path): string;
 }

@@ -37,13 +37,28 @@ enum Storage: int
 
     public function getStorage(): StorageInterface
     {
+        $config = Config::getConfig();
         return match ($this) {
             $this::LOCAL => new Local(),
-            $this::S3 => new S3(Config::getConfig(), new Credentials(Env::asString('ELAB_AWS_ACCESS_KEY'), Env::asString('ELAB_AWS_SECRET_KEY'))),
+            $this::S3 => new S3(
+                new Credentials(Env::asString('ELAB_AWS_ACCESS_KEY'), Env::asString('ELAB_AWS_SECRET_KEY')),
+                $config->getS3Config(),
+            ),
             $this::MEMORY => new Memory(),
             $this::CACHE => new Cache(),
             $this::FIXTURES => new Fixtures(),
-            $this::EXPORTS => new Exports(),
+            $this::EXPORTS => self::getExports($config),
         };
+    }
+
+    private static function getExports(Config $config): StorageInterface
+    {
+        if ($config->configArr['s3_exports_toggle'] === '1') {
+            return new S3(
+                new Credentials(Env::asString('ELAB_AWS_ACCESS_KEY'), Env::asString('ELAB_AWS_SECRET_KEY')),
+                $config->getS3ExportsConfig(),
+            );
+        }
+        return new Exports();
     }
 }

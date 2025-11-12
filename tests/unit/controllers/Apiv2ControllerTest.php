@@ -90,4 +90,20 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
         $res = $Controller->getResponse();
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $res->getStatusCode());
     }
+
+    public function testGetCompounds(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $Controller = new Apiv2Controller($user, Request::create('/?req=/api/v2/compounds', 'GET'));
+        $res = $Controller->getResponse();
+        $this->assertEquals(Response::HTTP_OK, $res->getStatusCode());
+    }
+
+    public function testGetExports(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $Controller = new Apiv2Controller($user, Request::create('/?req=/api/v2/exports', 'GET'));
+        $res = $Controller->getResponse();
+        $this->assertEquals(Response::HTTP_OK, $res->getStatusCode());
+    }
 }

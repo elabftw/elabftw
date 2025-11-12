@@ -49,7 +49,7 @@ final class Tags extends AbstractRest
         $TeamsHelper = new TeamsHelper($this->Entity->Users->team ?? 0);
         $canCreate = $teamConfigArr['user_create_tag'] === 1 || $TeamsHelper->isAdminInTeam($this->Entity->Users->userData['userid']);
         $tags = array();
-        if (isset($reqBody['tag'])  && is_string($reqBody['tag'])) {
+        if (isset($reqBody['tag']) && is_string($reqBody['tag'])) {
             $tags = array($reqBody['tag']);
         }
         if (isset($reqBody['tags']) && is_array($reqBody['tags'])) {

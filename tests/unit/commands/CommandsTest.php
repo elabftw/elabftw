@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
+use Elabftw\Elabftw\Db;
 use Elabftw\Models\Config;
 use Elabftw\Services\Email;
 use Elabftw\Services\MfaHelper;
@@ -28,10 +29,13 @@ use Symfony\Component\Mailer\MailerInterface;
  */
 class CommandsTest extends \PHPUnit\Framework\TestCase
 {
+    private Db $Db;
+
     private Email $Email;
 
     protected function setUp(): void
     {
+        $this->Db = Db::getConnection();
         $Logger = new Logger('elabftw');
         // use NullHandler because we don't care about logs here
         $Logger->pushHandler(new NullHandler());
@@ -147,6 +151,34 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
         $commandTester = new CommandTester(new RevertSchema((new Fixtures())->getFs()));
         $commandTester->execute(array('number' => '42'));
         $commandTester->assertCommandIsSuccessful();
+    }
+
+    public function testRevertToSchema(): void
+    {
+        // Try reverting from 44 to 42
+        $Config = Config::getConfig();
+        // keep original schema to prevent breaking other tests
+        // not doing it on setup/teardown as it's the only need
+        $originalSchema = $Config->configArr['schema'];
+        try {
+            $Config->configArr['schema'] = 44;
+            $commandTester = new CommandTester(new RevertToSchema((new Fixtures())->getFs()));
+
+            $commandTester->execute(array('target' => 42));
+            $output = $commandTester->getDisplay();
+
+            $commandTester->assertCommandIsSuccessful();
+            $this->assertStringContainsString('Reverting schema 44', $output);
+            $this->assertStringContainsString('Reverting schema 43', $output);
+            $this->assertStringContainsString('Reverting schema 42', $output);
+            $success = sprintf('Successfully reverted from schema: %d to schema: %d included.', $Config->configArr['schema'], 42);
+            $this->assertStringContainsString($success, $output);
+
+            $req = $this->Db->q("SELECT config.conf_value FROM config WHERE config.conf_name = 'schema'");
+            $this->assertEquals(41, $req->fetchColumn());
+        } finally {
+            $Config->configArr['schema'] = $originalSchema;
+        }
     }
 
     public function testExecuteCacheClear(): void

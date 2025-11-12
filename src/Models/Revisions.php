@@ -45,9 +45,10 @@ final class Revisions extends AbstractRest
     public function create(string $body): int
     {
         $this->Entity->canOrExplode('write');
-
+        
+        // Overwrite the latest revision if constraints aren't satisfied
         if (!$this->satisfyDeltaConstraint($body) && !$this->satisfyTimeConstraint() && $this->readCount() > 0) {
-            return 0;
+            return $this->atomicUpdate($body);
         }
 
         $inserted = $this->dbInsert($body);
@@ -55,6 +56,10 @@ final class Revisions extends AbstractRest
         return $inserted;
     }
 
+    /**
+     * Insert a new revision into the database
+     * Returns the new revision ID
+     */
     public function dbInsert(?string $body): int
     {
         // don't bother if the body is empty
@@ -72,7 +77,81 @@ final class Revisions extends AbstractRest
         $this->Db->execute($req);
         return $this->Db->lastInsertId();
     }
+    /**
+     * Atomically update the latest revision
+     * This overwrites the most recent revision instead of creating a new one
+     */
+    private function atomicUpdate(string $body): int
+    {
+        // don't bother if the body is empty
+        if ($body === '') {
+            return 0;
+        }
 
+        $contentType = $this->Entity->Users->userData['use_markdown'] ?? true 
+            ? BodyContentType::Markdown->value 
+            : BodyContentType::Html->value;
+
+        // Use atomic UPDATE with subquery to update the latest revision
+        // The derived table is needed to avoid MySQL's "can't update table being selected from" limitation
+        $sql = 'UPDATE ' . $this->Entity->entityType->value . '_revisions 
+            SET body = :body, userid = :userid, content_type = :content_type 
+            WHERE id = (
+                SELECT id FROM (
+                    SELECT id FROM ' . $this->Entity->entityType->value . '_revisions 
+                    WHERE item_id = :item_id 
+                    ORDER BY created_at DESC 
+                    LIMIT 1
+                ) AS latest_revision
+            )';
+
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':body', $body);
+        $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':content_type', $contentType, PDO::PARAM_INT);
+        
+        $this->Db->execute($req);
+        
+        // Check if any rows were affected
+        if ($req->rowCount() > 0) {
+            // Fetch the revision ID that was just updated
+            $sql = 'SELECT id FROM ' . $this->Entity->entityType->value . '_revisions 
+                WHERE item_id = :item_id 
+                ORDER BY created_at DESC 
+                LIMIT 1';
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+            $this->Db->execute($req);
+            
+            $result = $req->fetchColumn();
+            if ($result !== false) {
+                // Update the entity data to match the overwritten revision
+                $this->updateEntityData($body);
+                return (int) $result;
+            }
+        }
+        
+        return 0;
+    }
+
+    /**
+     * Update the entity's body and modified_at in the database
+     */
+    private function updateEntityData(string $body): void
+    {
+        $sql = 'UPDATE ' . $this->Entity->entityType->value . ' 
+            SET body = :body, modified_at = NOW() 
+            WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':body', $body);
+        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        
+        // Update in-memory entity data
+        $this->Entity->entityData['body'] = $body;
+        $this->Entity->entityData['modified_at'] = (new DateTimeImmutable())->format('Y-m-d H:i:s');
+    }
     // the Action should be Replace, but we have only one so we don't check for it
     #[Override]
     public function patch(Action $action, array $params): array

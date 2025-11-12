@@ -337,6 +337,8 @@ components:
           type: string
         admins_create_users_remote_dir:
           type: string
+        admin_panel_custom_msg:
+          type: string
         admin_validate:
           type: string
         allow_permission_full:
@@ -545,6 +547,8 @@ components:
         ts_url:
           type: string
         uploads_storage:
+          type: string
+        users_validity_is_externally_managed:
           type: string
     # ENTITY COMPONENT: EXTENDS ENTITY_EDITABLE
     entity:

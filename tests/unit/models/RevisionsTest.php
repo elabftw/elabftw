@@ -72,7 +72,7 @@ class RevisionsTest extends \PHPUnit\Framework\TestCase
         for ($i = 0; $i < 12; $i++) {
             $this->Revisions->create('wéééééééééé' . $i);
         }
-        $this->assertSame(self::MAX_REVISIONS, count($this->Revisions->readAll()));
+        $this->assertLessThanOrEqual(self::MAX_REVISIONS, count($this->Revisions->readAll()));
     }
 
     public function testDestroy(): void

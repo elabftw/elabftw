@@ -724,15 +724,6 @@ components:
           description: Cannot be negative nor empty string. Can be reset with "0" and null.
           default: null
           example: 1
-        tags:
-          type: array
-          nullable: true
-          description: |
-            An array of tags to assign to the created entry.
-          items:
-            type: string
-          default: []
-          example: ["test", "confidential", "replication"]
         title:
           type: string
           nullable: true
@@ -1507,15 +1498,6 @@ paths:
                   description: The experiment status ID
                   default: null
                   example: 1
-                tags:
-                  type: array
-                  nullable: true
-                  description: |
-                    An array of tags to assign to the created entry.
-                  items:
-                    type: string
-                  default: []
-                  example: ["test", "confidential", "replication"]
                 title:
                   type: string
                   nullable: true
@@ -4805,11 +4787,21 @@ paths:
           application/json:
             schema:
               type: object
-              properties:
-                tag:
-                  type: string
-                  description: |
-                    The text content of the tag.
+              oneOf:
+                - properties:
+                    tag:
+                      type: string
+                      description: The text content of a single tag.
+                  required: [tag]
+                - properties:
+                    tags:
+                      type: array
+                      description: A list of tags to create.
+                      items:
+                        type: string
+                  required: [tags]
+              example:
+                tags: ["Project Lambda", "Cell culture"]
       responses:
         '201':
           description: The tag has been created.

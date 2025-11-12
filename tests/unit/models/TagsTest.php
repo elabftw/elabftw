@@ -40,6 +40,9 @@ class TagsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->Tags->postAction(Action::Create, array('tag' => 'my tag'));
         $id = $this->Experiments->Tags->postAction(Action::Create, array('tag' => 'new tag'));
         $this->assertIsInt($id);
+        // multi tags
+        $id = $this->Experiments->Tags->postAction(Action::Create, array('tags' => array('tag A', 'tag B')));
+        $this->assertIsInt($id);
 
         // no admin user
         $user = $this->getRandomUserInTeam(1);

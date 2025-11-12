@@ -167,7 +167,15 @@
 
         {# Notification bell #}
         {% if App.Session.has('is_auth') and not App.Session.has('is_anon') %}
-        <div class='nav-item dropdown ml-auto' id='navbarNotifDiv'>
+        <div class='nav-item dropdown ml-auto'>
+          <button class='btn nav-link' id='createNewDropdown' type='button' aria-label='{{ 'Create new...'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='far fa-plus fa-2x'></i></button>
+          <div class='dropdown-menu dropdown-menu-right' id='navbar-create-dropdown' aria-labelledby='createNewDropdown'><span class='dropdown-header'>{{ 'Create new...'|trans }}</span>
+            <div data-action='toggle-modal' data-target='createModal' class='dropdown-item'><i class='fas fa-flask fa-fw mr-1'></i>{{ 'Experiment'|trans }}</div>
+            <div data-action='toggle-modal' data-target='createModal' class='dropdown-item'><i class='fas fa-cubes-stacked fa-fw mr-1'></i>{{ 'Resource'|trans }}</div>
+          </div>
+        </div>
+
+        <div class='nav-item dropdown' id='navbarNotifDiv'>
           <button class='btn nav-link' id='navbarNotifDropdown' type='button' aria-label='{{ 'Notifications'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='far fa-bell fa-2x {{ App.notifsArr|filter(n => n.is_ack == 0)|length ? 'active' }}'></i></button>
           <div class='dropdown-menu dropdown-menu-right' id='navbar-notif-dropdown' aria-labelledby='navbarNotifDropdown'><span class='dropdown-header'>{{ 'Notifications'|trans }}</span>
             {% if App.notifsArr %}

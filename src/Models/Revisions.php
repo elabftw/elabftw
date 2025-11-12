@@ -52,6 +52,7 @@ final class Revisions extends AbstractRest
         }
 
         $inserted = $this->dbInsert($body);
+        $this->updateEntityData($body);
         $this->destroyOld();
         return $inserted;
     }
@@ -88,9 +89,8 @@ final class Revisions extends AbstractRest
             return 0;
         }
 
-        $contentType = $this->Entity->Users->userData['use_markdown'] ?? true 
-            ? BodyContentType::Markdown->value 
-            : BodyContentType::Html->value;
+        $useMarkdown = $this->Entity->Users->userData['use_markdown'] ?? false;
+        $contentType = $useMarkdown ? BodyContentType::Markdown->value : BodyContentType::Html->value;
 
         // Use atomic UPDATE with subquery to update the latest revision
         // The derived table is needed to avoid MySQL's "can't update table being selected from" limitation

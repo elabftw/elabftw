@@ -149,7 +149,7 @@
               {% if App.devMode -%}
                 <!-- [html-validate-disable-next prefer-native-element: using a button here will mess up the navbar] -->
               {%- endif %}
-              <div class='nav-link dropdown-toggle' role='button' data-toggle='dropdown' aria-expanded='false'>
+              <div class='nav-link dropdown-toggle {{ scriptName == 'compounds.php' or scriptName == 'chem-editor.php' or scriptName == 'syc.php' or scriptName == 'inventory.php' ? 'active' }}' role='button' data-toggle='dropdown' aria-expanded='false'>
               {{ 'Tools'|trans }}
               </div>
               <div class='dropdown-menu'>

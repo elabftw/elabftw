@@ -25,14 +25,4 @@ enum State: int
     case Pending = 4;
     case Processing = 5;
     case Error = 6;
-
-    public static function fromString(string $value): self
-    {
-        foreach (self::cases() as $case) {
-            if ($case->name === $value) {
-                return $case;
-            }
-        }
-        throw new InvalidArgumentException("Invalid state: $value");
-    }
 }

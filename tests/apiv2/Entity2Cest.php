@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 
 use Codeception\Util\HttpCode;
+
 use function usleep;
 
 class Entity2Cest

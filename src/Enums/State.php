@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Enums;
 
 use Elabftw\Traits\EnumsTrait;
-use InvalidArgumentException;
 
 enum State: int
 {

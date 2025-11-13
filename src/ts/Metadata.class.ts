@@ -83,14 +83,18 @@ export class Metadata {
       value = [...el.selectedOptions].map(option => option.value);
     }
     // special case for Experiment/Resource/User link
-    if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf(), ExtraFieldInputType.Users.valueOf()].includes(el.dataset.target)) {
+    if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf(), ExtraFieldInputType.Users.valueOf(), ExtraFieldInputType.Compounds.valueOf()].includes(el.dataset.target)) {
       value = parseInt(value.split(' ')[0], 10);
       if (isNaN(value)) {
         return false;
       }
-      // also create a link automatically for experiments and resources
-      if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf()].includes(el.dataset.target)) {
-        ApiC.post(`${this.entity.type}/${this.entity.id}/${el.dataset.target}_links/${value}`).then(() => reloadElements(['linksDiv', 'linksExpDiv']));
+      // also create a link automatically for experiments, resources and compounds. For compounds, no '_links' on the endpoint.
+      const isCompound = el.dataset.target === ExtraFieldInputType.Compounds.valueOf();
+      const endpoint = isCompound
+        ? `${this.entity.type}/${this.entity.id}/${el.dataset.target}/${value}`
+        : `${this.entity.type}/${this.entity.id}/${el.dataset.target}_links/${value}`;
+      if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf(), ExtraFieldInputType.Compounds.valueOf()].includes(el.dataset.target)) {
+        ApiC.post(endpoint).then(() => reloadElements(['linksDiv', 'linksExpDiv']));
       }
     }
     const params = {};
@@ -240,7 +244,7 @@ export class Metadata {
       if (properties.type === ExtraFieldInputType.Url) {
         valueEl.dataset.genLink = 'true';
       }
-      if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf(), ExtraFieldInputType.Users.valueOf()].includes(properties.type)) {
+      if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf(), ExtraFieldInputType.Users.valueOf(), ExtraFieldInputType.Compounds.valueOf()].includes(properties.type)) {
         valueEl.dataset.replaceWithTitle = 'true';
         valueEl.dataset.endpoint = properties.type;
         valueEl.dataset.id = properties.value as string;
@@ -298,6 +302,7 @@ export class Metadata {
     case ExtraFieldInputType.Experiments:
     case ExtraFieldInputType.Items:
     case ExtraFieldInputType.Users:
+    case ExtraFieldInputType.Compounds:
       element = document.createElement('input');
       element.type = 'text';
       break;
@@ -396,7 +401,7 @@ export class Metadata {
     }
 
     // USERS/EXPERIMENTS/ITEMS input have a prepend to the input with a magnifying glass
-    if ([ExtraFieldInputType.Users, ExtraFieldInputType.Experiments, ExtraFieldInputType.Items].includes(properties.type)) {
+    if ([ExtraFieldInputType.Users, ExtraFieldInputType.Experiments, ExtraFieldInputType.Items, ExtraFieldInputType.Compounds].includes(properties.type)) {
       // set the target for autocomplete function
       element.dataset.target = properties.type;
       element.dataset.action = 'autocomplete';

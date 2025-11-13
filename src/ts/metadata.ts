@@ -208,6 +208,7 @@ if (document.getElementById('metadataDiv') && entity.id) {
       case ExtraFieldInputType.Experiments:
       case ExtraFieldInputType.Items:
       case ExtraFieldInputType.Users:
+      case ExtraFieldInputType.Compounds:
         valueInput.setAttribute('type', fieldType);
         toggleContentDiv('classic');
         break;
@@ -393,7 +394,7 @@ if (document.getElementById('metadataDiv') && entity.id) {
           } else if (['date', 'datetime-local', 'email', 'time', 'url'].includes(field['type'])) {
             const val = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();
             field['value'] = val || prevField?.value || '';
-          } else if ([ExtraFieldInputType.Users, ExtraFieldInputType.Items, ExtraFieldInputType.Experiments].includes(field['type'])) {
+          } else if ([ExtraFieldInputType.Users, ExtraFieldInputType.Items, ExtraFieldInputType.Experiments, ExtraFieldInputType.Compounds].includes(field['type'])) {
             const elId = `newField${field['type']}Input`;
             const el = document.getElementById(elId) as HTMLInputElement | null;
             const val = (el?.value ?? '').trim();

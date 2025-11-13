@@ -1156,6 +1156,9 @@ on('autocomplete', (el: HTMLElement) => {
   if (el.dataset.target === 'users') {
     transformer = user => `${user.userid} - ${user.fullname} (${user.email})`;
   }
+  if (el.dataset.target === 'compounds') {
+    transformer = compound => `${compound.id} - ${compound.name}`;
+  }
 
   // use autocomplete jquery-ui plugin
   $(el).autocomplete({

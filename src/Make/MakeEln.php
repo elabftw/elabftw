@@ -195,7 +195,9 @@ class MakeEln extends AbstractMakeEln
                     '@type' => 'File',
                     'name' => $file['real_name'],
                     'alternateName' => $file['long_name'],
-                    'creativeWorkStatus' => $file['state'],
+                    'creativeWorkStatus' => $file['state'] instanceof State
+                        ? $file['state']->name
+                        : State::from($file['state'])->name,
                     // TODO actually store content type Mime for uploaded files in that column
                     'encodingFormat' => $file['content_type'] ?? 'application/octet-stream',
                     'contentSize' => $file['filesize'],

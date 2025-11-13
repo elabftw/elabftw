@@ -539,7 +539,9 @@ class Eln extends AbstractZip
             $filepath,
             $hasher,
             $this->transformIfNecessary($file['description'] ?? '', true) ?: null,
-            state: $file['creativeWorkStatus'] == 2 ? State::Archived : State::Normal,
+            state: isset($file['creativeWorkStatus'])
+                ? State::fromString($file['creativeWorkStatus'])
+                : State::Normal,
         ));
         // the alternateName holds the previous long_name of the file
         if (!empty($file['alternateName'])) {

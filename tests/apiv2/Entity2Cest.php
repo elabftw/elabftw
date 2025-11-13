@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 
 use Codeception\Util\HttpCode;
+use function usleep;
 
 class Entity2Cest
 {
@@ -209,6 +210,7 @@ class Entity2Cest
         $path = parse_url($location, PHP_URL_PATH);
         $id = basename($path);
         $I->sendPatch("/experiments/{$id}", array('metadata' => '{"extra_fields": {"Raw data URL": {"type": "text", "value": "smb://yep"}}}'));
+        usleep(300000);
         $I->sendGET('/experiments/?extended=extrafield:"Raw data URL":%');
         $I->seeResponseCodeIs(HttpCode::OK);
         $I->seeResponseIsJson();

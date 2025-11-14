@@ -88,13 +88,9 @@ export class Metadata {
       if (isNaN(value)) {
         return false;
       }
-      // also create a link automatically for experiments, resources and compounds. For compounds, no '_links' on the endpoint.
-      const isCompound = el.dataset.target === ExtraFieldInputType.Compounds.valueOf();
-      const endpoint = isCompound
-        ? `${this.entity.type}/${this.entity.id}/${el.dataset.target}/${value}`
-        : `${this.entity.type}/${this.entity.id}/${el.dataset.target}_links/${value}`;
+      // also create a link automatically for experiments, resources and compounds.
       if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf(), ExtraFieldInputType.Compounds.valueOf()].includes(el.dataset.target)) {
-        ApiC.post(endpoint).then(() => reloadElements(['linksDiv', 'linksExpDiv']));
+        ApiC.post(`${this.entity.type}/${this.entity.id}/${el.dataset.target}_links/${value}`).then(() => reloadElements(['linksDiv', 'linksExpDiv']));
       }
     }
     const params = {};

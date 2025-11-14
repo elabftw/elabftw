@@ -37,7 +37,7 @@ import {
 import i18next from './i18n';
 import { Metadata } from './Metadata.class';
 import { DateTime } from 'luxon';
-import { Action, EntityType, Model, Target } from './interfaces';
+import { Action, EntityType, Model, SubModel, Target } from './interfaces';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
 import 'bootstrap-markdown-fa5/js/bootstrap-markdown';
@@ -866,7 +866,7 @@ on('create-resource-from-compound', (el: HTMLElement) => {
   }
   ApiC.post2location('items', payload).then(id => {
     // now create a link with that compound
-    ApiC.post(`items/${id}/compounds/${compoundId}`).then(() => {
+    ApiC.post(`items/${id}/${SubModel.CompoundsLinks}/${compoundId}`).then(() => {
       // also change the title
       const compoundName = (document.getElementById('compoundInput-name') as HTMLInputElement).value;
       ApiC.patch(`items/${id}`, {title: compoundName}).then(() => {
@@ -1067,7 +1067,7 @@ on('copy-to-clipboard', (el: HTMLElement) => {
 });
 
 // REMOVE COMPOUND LINK
-on('delete-compound-link', (el: HTMLElement) => ApiC.delete(`${entity.type}/${entity.id}/compounds/${el.dataset.id}`)
+on('delete-compound-link', (el: HTMLElement) => ApiC.delete(`${entity.type}/${entity.id}/${SubModel.CompoundsLinks}/${el.dataset.id}`)
   .then(() => reloadElements(['compoundDiv'])));
 
 // CLICK the NOW button of a time or date extra field
@@ -1157,7 +1157,7 @@ on('autocomplete', (el: HTMLElement) => {
     transformer = user => `${user.userid} - ${user.fullname} (${user.email})`;
   }
   if (el.dataset.target === 'compounds') {
-    transformer = compound => `${compound.id} - ${compound.name}`;
+    transformer = compound => `${compound.id} - ${compound.name} ${compound.cas_number ? ` (CAS: ${compound.cas_number})` : ''}`;
   }
 
   // use autocomplete jquery-ui plugin

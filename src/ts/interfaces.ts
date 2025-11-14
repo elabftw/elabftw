@@ -137,6 +137,12 @@ enum Model {
   User2Team = 'user2team',
 }
 
+enum SubModel {
+  CompoundsLinks = 'compounds_links',
+  ExperimentsLinks = 'experiments_links',
+  ItemsLinks = 'items_links',
+}
+
 // Match php enum EntityType
 enum EntityType {
   Experiment = 'experiments',
@@ -198,6 +204,7 @@ export {
   ProcurementState,
   ResponseMsg,
   Selected,
+  SubModel,
   Target,
   Todoitem,
   UnfinishedEntities,

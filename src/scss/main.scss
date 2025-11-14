@@ -683,6 +683,10 @@ tr:first-child td {
   opacity: var(--opacity);
   padding: 5px 10px 5px 5px;
 
+  &:hover {
+    background-color: $highlighted;
+  }
+
   img {
     max-width: 100%;
   }

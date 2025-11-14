@@ -17,6 +17,7 @@ export interface ExtraField {
 
 export enum ExtraFieldInputType {
   Checkbox = 'checkbox',
+  Compounds = 'compounds',
   Date = 'date',
   DateTime = 'datetime-local',
   Email = 'email',

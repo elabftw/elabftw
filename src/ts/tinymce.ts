@@ -328,6 +328,9 @@ export function getTinymceBaseConfig(page: string): object {
     // use a custom function for the save button in toolbar
     save_onsavecallback: (): Promise<void> => updateEntityBody(),
     // keyboard shortcut to insert today's date at cursor in editor
+    menu: {
+      file: { title: 'File', items: 'restoredraft | preview saveAndGoBack | print' },
+    },
     setup: (editor: Editor): void => {
       // holds the timer setTimeout function
       let typingTimer;
@@ -407,6 +410,16 @@ export function getTinymceBaseConfig(page: string): object {
         tooltip: 'Save',
         onAction: function() {
           editor.execCommand('mceSave');
+        },
+      });
+      // save and go back button for toolbar, inside "File" menu.
+      editor.ui.registry.addMenuItem('saveAndGoBack', {
+        text: i18next.t('Save and go back'),
+        icon: 'customSave',
+        onAction: () => {
+          const btn = document.querySelector<HTMLButtonElement>('[data-action=\'update-entity-body\'][data-redirect=\'view\']');
+          // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+          btn ? btn.click() : editor.execCommand('mceSave');
         },
       });
       // some shortcuts

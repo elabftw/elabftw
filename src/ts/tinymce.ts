@@ -417,7 +417,7 @@ export function getTinymceBaseConfig(page: string): object {
         text: i18next.t('Save and go back'),
         icon: 'customSave',
         onAction: () => {
-          const btn = document.querySelector<HTMLButtonElement>('[data-action=\'update-entity-body\'][data-redirect=\'view\']');
+          const btn = document.querySelector('[data-action="update-entity-body"][data-redirect="view"]') as HTMLButtonElement;
           // eslint-disable-next-line @typescript-eslint/no-unused-expressions
           btn ? btn.click() : editor.execCommand('mceSave');
         },

@@ -20,7 +20,6 @@ use function array_map;
 enum ApiSubModels: string
 {
     case Comments = 'comments';
-    case Compounds = 'compounds';
     case CompoundsLinks = 'compounds_links';
     case Containers = 'containers';
     case ExperimentsCategories = 'experiments_categories';

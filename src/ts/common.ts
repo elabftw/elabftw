@@ -965,15 +965,10 @@ on('destroy-notif', () => ApiC.delete(`${Model.User}/me/${Model.Notification}`).
 // CREATE EXPERIMENT, TEMPLATE or DATABASE item: main create button in top right
 on('create-entity', (el: HTMLElement, event: Event) => {
   event.preventDefault();
-  let params = {};
-  if (el.dataset.hasTitle) {
-    params = collectForm(document.getElementById(el.dataset.formId));
-  }
+  const form = document.getElementById('createNewForm') as HTMLFormElement;
+  const params = collectForm(form);
   if (el.dataset.tplid) {
     params['template'] = parseInt(el.dataset.tplid, 10);
-  }
-  if (el.dataset.catid) {
-    params['category'] = parseInt(el.dataset.catid, 10);
   }
   // look for any tag present in the url, we will create the entry with these tags
   const urlParams = new URLSearchParams(document.location.search);
@@ -1232,6 +1227,24 @@ on('scope-change', (el: HTMLElement) => {
   ApiC.patch('users/me', userParams).then(() => {
     handleReloads(el.dataset.reload);
   });
+});
+
+on('filter-category', (el: HTMLElement) => {
+  const table = document.getElementById(el.dataset.target);
+  table.querySelectorAll('tr').forEach((row: HTMLTableRowElement|HTMLUListElement) => {
+    if (row.dataset.catid === el.dataset.catid) {
+      row.removeAttribute('hidden');
+    } else {
+      row.hidden = true;
+    }
+  });
+  document.querySelector('[data-action="reset-filter-category"]').removeAttribute('hidden');
+});
+
+on('reset-filter-category', (el: HTMLElement) => {
+  const table = document.getElementById(el.dataset.target);
+  table.querySelectorAll('tr').forEach((row: HTMLTableRowElement|HTMLUListElement) => row.removeAttribute('hidden'));
+  document.querySelector('[data-action="reset-filter-category"]').setAttribute('hidden', 'hidden');
 });
 
 /**

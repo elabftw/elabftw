@@ -63,7 +63,7 @@
               {% if App.devMode -%}
                 <!-- [html-validate-disable-next prefer-native-element: using a button here will mess up the navbar] -->
               {%- endif %}
-              <div class='nav-link dropdown-toggle {{ scriptName == 'experiments.php' or scriptName == 'templates.php' or scriptName == 'experiments-categories.php' or scriptName == 'experiments-status.php' ? 'active' }}' role='button' data-toggle='dropdown' aria-expanded='false'>
+              <div class='nav-link dropdown-toggle {{ scriptName in ['experiments.php', 'templates.php', 'experiments-categories.php', 'experiments-status.php'] ? 'active' }}' role='button' data-toggle='dropdown' aria-expanded='false'>
               {% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}
               </div>
               <div class='dropdown-menu'>
@@ -100,7 +100,7 @@
               {% if App.devMode -%}
                 <!-- [html-validate-disable-next prefer-native-element: using a button here will mess up the navbar] -->
               {%- endif %}
-              <div class='nav-link dropdown-toggle {{ scriptName == 'database.php' or scriptName == 'resources-templates.php' or scriptName == 'resources-categories.php' or scriptName == 'resources-status.php' ? 'active' }}' role='button' data-toggle='dropdown' aria-expanded='false'>
+              <div class='nav-link dropdown-toggle {{ scriptName in ['database.php', 'resources-templates.php', 'resources-categories.php', 'resources-status.php'] ? 'active' }}' role='button' data-toggle='dropdown' aria-expanded='false'>
                 {{ 'Resources'|trans }}
               </div>
               <div class='dropdown-menu'>
@@ -149,7 +149,7 @@
               {% if App.devMode -%}
                 <!-- [html-validate-disable-next prefer-native-element: using a button here will mess up the navbar] -->
               {%- endif %}
-              <div class='nav-link dropdown-toggle {{ scriptName == 'compounds.php' or scriptName == 'chem-editor.php' or scriptName == 'syc.php' or scriptName == 'inventory.php' ? 'active' }}' role='button' data-toggle='dropdown' aria-expanded='false'>
+              <div class='nav-link dropdown-toggle {{ scriptName in ['compounds.php', 'chem-editor.php', 'syc.php', 'inventory.php'] ? 'active' }}' role='button' data-toggle='dropdown' aria-expanded='false'>
               {{ 'Tools'|trans }}
               </div>
               <div class='dropdown-menu'>

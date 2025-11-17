@@ -199,7 +199,9 @@ export function getTinymceBaseConfig(page: string): object {
   let plugins = 'accordion advlist anchor autolink autoresize table searchreplace code fullscreen insertdatetime charmap lists save image media link pagebreak codesample template mention visualblocks visualchars emoticons preview';
   let toolbar1 = 'custom-save preview | undo redo | styles fontsize bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap emoticons adddate | codesample | link | sort-table';
   let removedMenuItems = 'newdocument, image, anchor';
+  let fileMenuItems = 'preview | print';
   if (page === 'edit') {
+    fileMenuItems = 'restoredraft | saveAndGoBack ' + fileMenuItems;
     plugins += ' autosave';
     // add Image button in toolbar
     toolbar1 = toolbar1.replace('link |', 'link image |');
@@ -329,7 +331,7 @@ export function getTinymceBaseConfig(page: string): object {
     save_onsavecallback: (): Promise<void> => updateEntityBody(),
     // keyboard shortcut to insert today's date at cursor in editor
     menu: {
-      file: { title: 'File', items: 'restoredraft | preview saveAndGoBack | print' },
+      file: { title: 'File', items: fileMenuItems },
     },
     setup: (editor: Editor): void => {
       // holds the timer setTimeout function

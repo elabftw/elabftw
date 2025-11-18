@@ -1,0 +1,64 @@
+{# Modal for IDP certificates #}
+<div class='modal fade' id='idpCertsModal' tabindex='-1' role='dialog' aria-labelledby='idpCertsModalLabel'>
+  <div class='modal-dialog modal-xl' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='idpCertsModalLabel'>{{ 'Edit IDP associated certificates'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
+        <h6>{{ 'Certificates associated with this IDP'|trans }}</h6>
+        <p class='smallgray'>{{ 'A single IDP can have multiple valid certificates at the same time.'|trans }}
+        <div class='table-container'>
+          <table class='table' aria-describedby='idpCertsTableLabel' data-table-sort='true'>
+            <thead>
+            <tr>
+              <th scope='col'>{{ 'ID'|trans }}</th>
+              <th scope='col'>{{ 'Purpose'|trans }}</th>
+              <th scope='col'>{{ 'Not before'|trans }}</th>
+              <th scope='col'>{{ 'Not after'|trans }}</th>
+              <th scope='col'>{{ 'Created at'|trans }}</th>
+              <th scope='col'>{{ 'Modified at'|trans }}</th>
+              <th scope='col'>{{ 'Fingerprint (sha256)'|trans }}</th>
+              <th scope='col'>{{ 'Certificate'|trans }}</th>
+            </tr>
+            </thead>
+            <tbody id='idpCertsTableBody'>
+            </tbody>
+          </table>
+        </div>
+        <template id='certRow'>
+          <tr>
+            <td data-col='id'></td>
+            <td data-col='purpose'></td>
+            <td data-col='not_before'></td>
+            <td data-col='not_after'></td>
+            <td data-col='created_at'></td>
+            <td data-col='modified_at'></td>
+            <td data-col='sha256'></td>
+            <td data-col='x509'></td>
+          </tr>
+        </template>
+        <hr>
+        <label for='idpCertsModalNew'><h6>{{ 'Add a certificate'|trans }}</h6></label>
+        <p class='smallgray'>{{ 'Upload a certificate in .pem format or paste it in the box on the right.'|trans }}</p>
+        <form id='idpCertForm'>
+          <div class='d-flex justify-content-between'>
+            <div>
+              <input type='file' data-action='load-file-on-change' data-ignore='1' data-target='idpCertsModalNew' class='form-control' aria-label='File upload: x509 Certificate in PEM format' />
+            </div>
+            <textarea class='form-control col-md-4' id='idpCertsModalNew' placeholder='-----BEGIN CERTIFICATE-----MIIELDCC...' name='x509'></textarea>
+          </div>
+          <div class='d-flex justify-content-between'>
+          <button type='submit' data-action='save-idp-cert' id='idpCertsModalSaveButton' data-dismiss='modal' class='btn btn-primary ml-auto mb-2 mt-1'>{{ 'Save'|trans }}</button>
+          </div>
+        </form>
+        <div class='modal-footer'>
+          <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

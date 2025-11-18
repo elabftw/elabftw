@@ -290,4 +290,17 @@ final class Filter
         $purifier = new HTMLPurifier($config);
         return $purifier->purify($input);
     }
+
+    public static function pem(string $pem): string
+    {
+        // Trim outer whitespace
+        $pem = trim($pem);
+
+        // Drop the header and footer lines if present
+        $pem = preg_replace('/-----BEGIN CERTIFICATE-----/', '', $pem);
+        $pem = preg_replace('/-----END CERTIFICATE-----/', '', $pem ?? '');
+
+        // Remove all whitespace (newlines, spaces, tabs)
+        return str_replace(array("\r", "\n", ' ', "\t"), '', $pem ?? '');
+    }
 }

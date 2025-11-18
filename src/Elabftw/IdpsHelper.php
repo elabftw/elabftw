@@ -14,6 +14,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Models\Config;
 use Elabftw\Models\Idps;
+use Elabftw\Models\IdpsCerts;
 
 use function rtrim;
 
@@ -53,10 +54,10 @@ final class IdpsHelper
 
     private function getSettingsByIdp(array $idp): array
     {
-        $idpSigningCerts = array($idp['x509']);
-
-        if (!empty($idp['x509_new'])) {
-            $idpSigningCerts[] = $idp['x509_new'];
+        $idpSigningCerts = array();
+        $certs = IdpsCerts::readFromIdp($idp['id']);
+        foreach ($certs as $cert) {
+            $idpSigningCerts[] = $cert['x509'];
         }
 
         return array(
@@ -179,11 +180,12 @@ final class IdpsHelper
                     // HTTP-Redirect binding only
                     'binding' => $idp['slo_binding'],
                 ),
-                // Public x509 certificate of the IdP
+                // Public x509 certificates of the IdP
                 'x509certMulti' => array(
                     'signing' => $idpSigningCerts,
+                    // TODO use encryption ones
                     'encryption' => array(
-                        $idp['x509'],
+                        $idpSigningCerts,
                     ),
                 ),
                 'emailAttr' => $idp['email_attr'],

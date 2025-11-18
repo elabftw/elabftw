@@ -37,8 +37,6 @@ class IdpCest
             'sso_binding' => 'u',
             'slo_url' => 'https://idp.example.com/saml/slo',
             'slo_binding' => 'u',
-            'x509' => 'a',
-            'x509_new' => 'a',
             'email_attr' => 'mail',
             'team_attr' => '',
             'fname_attr' => 'givenname',

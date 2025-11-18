@@ -851,6 +851,40 @@ components:
         format:
           type: string
           example: "pdf"
+    idp_cert:
+      type: object
+      description: X.509 certificate associated with a SAML IdP
+      properties:
+        x509:
+          type: string
+          description: >
+            Base64 encoded DER representation of the X.509 certificate
+            (as stored in the database).
+          example: MIIGRzCCBC+gAwIBAgIUMeJZCXrKxA9Mc9Yam8Ni6OrvwQQwDQYJKoZIhvcNAQELBQAw...
+        sha256:
+          type: string
+          description: Hex encoded SHA 256 fingerprint of the certificate.
+          pattern: '^[0-9a-f]{64}$'
+          example: d789916e2e44323c91119bf4676e9d8bba3609d4ee50d8cb6367591dd4276c7e
+        purpose:
+          type: integer
+          description: >
+            Usage of the certificate. 0 for signing, 1 for encryption.
+          example: 0
+        created_at:
+          type: string
+          description: Timestamp when the certificate was created.
+          example: '2025-11-16 21:00:23.000000'
+        modified_at:
+          type: string
+          description: Timestamp when the certificate was last modified.
+          example: '2025-11-16 21:00:23.000000'
+      required:
+        - x509
+        - sha256
+        - purpose
+        - created_at
+        - modified_at
     idp:
       type: object
       properties:
@@ -868,10 +902,6 @@ components:
           type: string
         slo_binding:
           type: string
-        x509:
-          type: string
-        x509_new:
-          type: string
         enabled:
           type: integer
         email_attr:
@@ -882,6 +912,11 @@ components:
           type: string
         lname_attr:
           type: string
+        certs:
+          type: array
+          description: Certificates associated with this IdP.
+          items:
+            $ref: '#/components/schemas/idp_cert'
     item:
       allOf:
         - $ref: '#/components/schemas/entity'

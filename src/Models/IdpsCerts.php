@@ -1,0 +1,164 @@
+<?php
+
+/**
+ * @author Nicolas CARPi <nico-git@deltablot.email>
+ * @copyright 2025 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+
+declare(strict_types=1);
+
+namespace Elabftw\Models;
+
+use DateTimeImmutable;
+use Elabftw\Elabftw\Db;
+use Elabftw\Enums\Action;
+use Elabftw\Enums\CertPurpose;
+use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\QueryParamsInterface;
+use Elabftw\Models\Users\Users;
+use Elabftw\Services\Filter;
+use Elabftw\Services\Xml2Idps;
+use Elabftw\Traits\SetIdTrait;
+use Override;
+use PDO;
+
+/**
+ * For IDPS certificates
+ */
+final class IdpsCerts extends AbstractRest
+{
+    use SetIdTrait;
+
+    private const string DATETIME_FORMAT = 'Y-m-d H:i:s';
+
+    public function __construct(private Users $requester, public ?int $idpId = null, public ?int $id = null)
+    {
+        parent::__construct();
+        $this->setId($id);
+    }
+
+    #[Override]
+    public function getApiPath(): string
+    {
+        return sprintf('api/v2/idps/%d/certs/%d', $this->idpId ?? 0, $this->id ?? 0);
+    }
+
+    #[Override]
+    public function readAll(?QueryParamsInterface $queryParams = null): array
+    {
+        $this->ensureIsSysadmin();
+        $sql = 'SELECT * FROM idps_certs WHERE idp = :idp';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':idp', $this->idpId, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return $req->fetchAll();
+    }
+
+    #[Override]
+    public function readOne(): array
+    {
+        $this->ensureIsSysadmin();
+        $sql = 'SELECT * FROM idps_certs WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return $this->Db->fetch($req);
+    }
+
+    public static function readFromIdp(int $idpId): array
+    {
+        $Db = Db::getConnection();
+        $sql = 'SELECT * FROM idps_certs WHERE idp = :idp';
+        $req = $Db->prepare($sql);
+        $req->bindParam(':idp', $idpId, PDO::PARAM_INT);
+        $Db->execute($req);
+        return $req->fetchAll();
+    }
+
+    #[Override]
+    public function postAction(Action $action, array $reqBody): int
+    {
+        $this->ensureIsSysadmin();
+        if ($this->idpId === null) {
+            throw new ImproperActionException('No IDP id provided!');
+        }
+        [$pem, $sha256, $notBefore, $notAfter] = Xml2Idps::processCert($reqBody['x509']);
+        return $this->create(
+            $this->idpId,
+            CertPurpose::tryFrom((int) ($reqBody['purpose'] ?? 0)) ?? CertPurpose::Signing,
+            $pem,
+            $sha256,
+            $notBefore,
+            $notAfter,
+        );
+    }
+
+    public function upsert(int $idpId, array $idp): bool
+    {
+        foreach ($idp['certs'] as $cert) {
+            $this->create(
+                $idpId,
+                $cert['purpose'],
+                $cert['x509'],
+                $cert['sha256'],
+                $cert['not_before'],
+                $cert['not_after'],
+            );
+        }
+        return true;
+    }
+
+    #[Override]
+    public function destroy(): bool
+    {
+        $this->ensureIsSysadmin();
+        $sql = 'DELETE FROM idps_certs WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':id', $this->id, PDO::PARAM_INT);
+        return $this->Db->execute($req);
+    }
+
+    public function create(int $idp, CertPurpose $purpose, string $x509, string $sha256, DateTimeImmutable $notBefore, DateTimeImmutable $notAfter): int
+    {
+        $id = $this->readFromCert($sha256);
+        if ($id === null) {
+            $sql = 'INSERT INTO idps_certs (idp, purpose, x509, sha256, not_before, not_after)
+                VALUES (:idp, :purpose, :x509, :sha256, :not_before, :not_after)';
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':idp', $idp, PDO::PARAM_INT);
+            $req->bindValue(':purpose', $purpose->value);
+            $req->bindValue(':x509', Filter::pem($x509));
+            $req->bindParam(':sha256', $sha256);
+            $req->bindValue(':not_before', $notBefore->format(self::DATETIME_FORMAT));
+            $req->bindValue(':not_after', $notAfter->format(self::DATETIME_FORMAT));
+            $this->Db->execute($req);
+            return $this->Db->lastInsertId();
+        }
+        // TODO touch()
+        return $id;
+    }
+
+    private function ensureIsSysadmin(): void
+    {
+        if ($this->requester->userData['is_sysadmin'] !== 1) {
+            throw new IllegalActionException('Only a Sysadmin can access this endpoint!');
+        }
+    }
+
+    private function readFromCert(string $sha256): ?int
+    {
+        $sql = 'SELECT id FROM idps_certs WHERE sha256 = :sha256 AND idp = :idp';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':sha256', $sha256);
+        $req->bindValue(':idp', $this->idpId);
+        $this->Db->execute($req);
+        if ($req->rowCount() > 0) {
+            return (int) $req->fetchColumn();
+        }
+        return null;
+    }
+}

@@ -69,8 +69,6 @@ final class Idps extends AbstractRest
             sso_binding: $reqBody['sso_binding'],
             slo_url: $reqBody['slo_url'],
             slo_binding: $reqBody['slo_binding'],
-            x509: $reqBody['x509'],
-            x509_new: $reqBody['x509_new'] ?? $reqBody['x509'],
             email_attr: $reqBody['email_attr'],
             team_attr: $reqBody['team_attr'] ?? null,
             fname_attr: $reqBody['fname_attr'],
@@ -82,23 +80,49 @@ final class Idps extends AbstractRest
     #[Override]
     public function readOne(): array
     {
-        $sql = 'SELECT * FROM idps WHERE id = :id';
+        $sql = "SELECT idps.*, idps_sources.url AS source_url,
+            JSON_ARRAYAGG(JSON_OBJECT(
+                'x509', idps_certs.x509,
+                'sha256', idps_certs.sha256,
+                'purpose', idps_certs.purpose,
+                'created_at', idps_certs.created_at,
+                'modified_at', idps_certs.modified_at)) AS certs
+            FROM idps
+            LEFT JOIN idps_sources ON idps.source = idps_sources.id
+            LEFT JOIN idps_certs ON idps.id = idps_certs.idp
+            WHERE idps.id = :id
+            GROUP BY idps.id
+            ORDER BY name ASC";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
-
-        return $this->Db->fetch($req);
+        $res = $this->Db->fetch($req);
+        $res['certs'] = json_decode($res['certs'], true, 3, JSON_THROW_ON_ERROR);
+        return $res;
     }
 
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        $sql = 'SELECT idps.*, idps_sources.url AS source_url
-            FROM idps LEFT JOIN idps_sources ON idps.source = idps_sources.id ORDER BY name ASC';
+        $sql = "SELECT idps.*, idps_sources.url AS source_url,
+                JSON_ARRAYAGG(JSON_OBJECT(
+                    'x509', idps_certs.x509,
+                    'sha256', idps_certs.sha256,
+                    'purpose', idps_certs.purpose,
+                    'created_at', idps_certs.created_at,
+                    'modified_at', idps_certs.modified_at)) AS certs
+            FROM idps
+            LEFT JOIN idps_sources ON idps.source = idps_sources.id
+            LEFT JOIN idps_certs ON idps.id = idps_certs.idp
+            GROUP BY idps.id
+            ORDER BY name ASC";
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
-
-        return $req->fetchAll();
+        $res = $req->fetchAll();
+        foreach ($res as &$idp) {
+            $idp['certs'] = json_decode($idp['certs'], true, 3, JSON_THROW_ON_ERROR);
+        }
+        return $res;
     }
 
     /**
@@ -131,31 +155,33 @@ final class Idps extends AbstractRest
     {
         $this->canWriteOrExplode();
         foreach ($params as $key => $value) {
+            if ($key === 'certs') {
+                continue;
+            }
             $this->update($key, $value);
         }
         return $this->readOne();
     }
 
-    public function upsert(int $sourceId, Xml2Idps $xml2Idps): int
+    public function upsert(int $sourceId, Xml2Idps $xml2Idps, IdpsCerts $idpsCerts): int
     {
         $idps = $xml2Idps->getIdpsFromDom();
 
         foreach ($idps as $idp) {
             $id = $this->findByEntityId($idp['entityid']);
             if ($id === 0) {
-                $this->create(
+                $id = $this->create(
                     name: $idp['name'],
                     entityid: $idp['entityid'],
                     sso_url: $idp['sso_url'],
                     slo_url: $idp['slo_url'] ?? '',
-                    x509: $idp['x509'],
                     enabled: 0,
                     source: $sourceId,
                 );
-                continue;
             }
             $this->setId($id);
             $this->patch(Action::Update, $idp);
+            $idpsCerts->upsert($id, $idp);
         }
         return count($idps);
     }
@@ -211,8 +237,6 @@ final class Idps extends AbstractRest
         string $name,
         string $entityid,
         string $sso_url,
-        string $x509,
-        string $x509_new = '',
         ?string $slo_url = '',
         string $sso_binding = self::SSO_BINDING_POST,
         string $slo_binding = self::SLO_BINDING_REDIRECT,
@@ -225,11 +249,8 @@ final class Idps extends AbstractRest
         ?int $source = null,
     ): int {
         $this->canWriteOrExplode();
-        if (empty($x509_new)) {
-            $x509_new = $x509;
-        }
-        $sql = 'INSERT INTO idps(name, entityid, sso_url, sso_binding, slo_url, slo_binding, x509, x509_new, email_attr, team_attr, fname_attr, lname_attr, orgid_attr, enabled, source)
-            VALUES(:name, :entityid, :sso_url, :sso_binding, :slo_url, :slo_binding, :x509, :x509_new, :email_attr, :team_attr, :fname_attr, :lname_attr, :orgid_attr, :enabled, :source)';
+        $sql = 'INSERT INTO idps(name, entityid, sso_url, sso_binding, slo_url, slo_binding, email_attr, team_attr, fname_attr, lname_attr, orgid_attr, enabled, source)
+            VALUES(:name, :entityid, :sso_url, :sso_binding, :slo_url, :slo_binding, :email_attr, :team_attr, :fname_attr, :lname_attr, :orgid_attr, :enabled, :source)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':entityid', $entityid);
@@ -237,8 +258,6 @@ final class Idps extends AbstractRest
         $req->bindParam(':sso_binding', $sso_binding);
         $req->bindParam(':slo_url', $slo_url);
         $req->bindParam(':slo_binding', $slo_binding);
-        $req->bindParam(':x509', $x509);
-        $req->bindParam(':x509_new', $x509_new);
         $req->bindParam(':email_attr', $email_attr);
         $req->bindParam(':team_attr', $team_attr);
         $req->bindParam(':fname_attr', $fname_attr);

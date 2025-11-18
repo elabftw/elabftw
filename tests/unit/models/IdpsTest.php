@@ -38,8 +38,6 @@ class IdpsTest extends \PHPUnit\Framework\TestCase
             'sso_binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
             'slo_url' => 'https://onelogin.com/',
             'slo_binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-            'x509' => 'yep',
-            'x509_new' => '',
             'email_attr' => 'User.email',
             'team_attr' => 'User.team',
             'fname_attr' => 'User.FirstName',

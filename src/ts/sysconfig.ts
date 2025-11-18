@@ -33,6 +33,65 @@ function updateTsFieldsVisibility(select: HTMLSelectElement) {
   }
 }
 
+interface Cert {
+  id: number;
+  idp: number;
+  purpose: number;
+  x509: string;
+  sha256: string;
+  not_before: string;
+  not_after: string;
+  is_active: number;
+  created_at: string;
+  modified_at: string;
+}
+
+function purposeLabel(purpose: number): string {
+  switch (purpose) {
+  case 0:
+    return i18next.t('signing');
+  case 1:
+    return i18next.t('encryption');
+  default:
+    return '??';
+  }
+}
+
+const cols: (keyof Cert)[] = [
+  'id',
+  'purpose',
+  'not_before',
+  'not_after',
+  'created_at',
+  'modified_at',
+  'sha256',
+  'x509',
+];
+
+const shorten = (s: string, n = 16) =>
+  s.length <= 2 * n ? s : s.slice(0, n) + '...' + s.slice(-n);
+
+function renderCerts(certs: Cert[]): void {
+  const tbody = document.getElementById('idpCertsTableBody') as HTMLTableSectionElement;
+  const template = document.getElementById('certRow') as HTMLTemplateElement;
+
+  tbody.replaceChildren(
+    ...certs.map(cert => {
+      const row = template.content.firstElementChild!.cloneNode(true) as HTMLTableRowElement;
+      const cells = Array.from(row.children) as HTMLTableCellElement[];
+
+      cols.forEach((key, i) => {
+        let value: unknown = cert[key];
+        if (key === 'purpose') value = purposeLabel(cert.purpose);
+        if (key === 'sha256' || key === 'x509') value = shorten(String(value));
+        cells[i].textContent = String(value);
+      });
+
+      return row;
+    }),
+  );
+}
+
 // GET the latest version information
 function checkForUpdate() {
   const updateUrl = 'https://get.elabftw.net/updates.json';
@@ -219,8 +278,6 @@ if (window.location.pathname === '/sysconfig.php') {
       (document.getElementById('idpModal_sso_binding') as HTMLSelectElement).value = idp.sso_binding;
       (document.getElementById('idpModal_slo_url') as HTMLInputElement).value = idp.slo_url;
       (document.getElementById('idpModal_slo_binding') as HTMLSelectElement).value = idp.slo_binding;
-      (document.getElementById('idpModal_x509_idp') as HTMLInputElement).value = idp.x509;
-      (document.getElementById('idpModal_x509_new_idp') as HTMLInputElement).value = idp.x509_new;
       (document.getElementById('idpModal_email_attr') as HTMLInputElement).value = idp.email_attr;
       (document.getElementById('idpModal_fname_attr') as HTMLInputElement).value = idp.fname_attr;
       (document.getElementById('idpModal_lname_attr') as HTMLInputElement).value = idp.lname_attr;
@@ -228,6 +285,15 @@ if (window.location.pathname === '/sysconfig.php') {
       (document.getElementById('idpModal_orgid_attr') as HTMLInputElement).value = idp.orgid_attr;
       document.getElementById('idpModalSaveButton').dataset.id = idp.id;
       $('#idpModal').modal('show');
+    });
+  });
+
+  on('display-idp-certs-modal', (el: HTMLElement) => {
+    ApiC.getJson(`${Model.Idp}/${el.dataset.id}/certs`).then(certs => {
+      renderCerts(certs);
+      // add idp id to Add cert save button
+      document.getElementById('idpCertsModalSaveButton').dataset.idp = el.dataset.id;
+      $('#idpCertsModal').modal('show');
     });
   });
 
@@ -258,6 +324,19 @@ if (window.location.pathname === '/sysconfig.php') {
   on('save-idps-source', (el: HTMLElement) => {
     const url = el.parentElement.parentElement.querySelector('input').value.trim();
     ApiC.post(`${Model.IdpsSources}`, {url: url}).then(() => reloadElements(['idpsSourcesDiv']));
+  });
+
+  on('save-idp-cert', (el: HTMLElement, event: Event) => {
+    event.preventDefault();
+    try {
+      const form = document.getElementById('idpCertForm');
+      const params = collectForm(form);
+      clearForm(form);
+      ApiC.post(`${Model.Idp}/${el.dataset.idp}/certs`, params).then(() => reloadElements(['idpsDiv']));
+    } catch (e) {
+      notify.error(e);
+      return;
+    }
   });
 
   on('refresh-idps-source', (el: HTMLElement) => {

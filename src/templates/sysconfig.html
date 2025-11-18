@@ -3,6 +3,7 @@
 {% block body %}
 
 {% include('idp-modal.html') %}
+{% include('idp-certs-modal.html') %}
 
 {# Modal for team creation #}
 <div class='modal fade' id='createTeamModal' tabindex='-1' role='dialog' aria-labelledby='createTeamModalLabel'>
@@ -890,9 +891,9 @@
               </label>
               {{ idp.name|upper }} ({{ idp.entityid }})
             </h4>
-
             <div class='pl-3 m-2' hidden>
               <button type='button' class='btn btn-primary' data-action='display-idp-modal' data-id='{{ idp.id }}'>{{ 'Edit'|trans }}</button>
+              <button type='button' class='btn btn-primary' data-action='display-idp-certs-modal' data-id='{{ idp.id }}'>{{ 'Edit certificates'|trans }}</button>
               <button type='button' class='btn btn-danger' data-action='destroy-idp' data-id='{{ idp.id }}'>{{ 'Delete'|trans }}</button>
 
               {% if idp.source_url %}

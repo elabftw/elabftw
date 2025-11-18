@@ -27,6 +27,7 @@ enum ApiSubModels: string
     case ExperimentsStatus = 'experiments_status';
     case Events = 'events';
     case ResourcesCategories = 'resources_categories';
+    case IdpsCerts = 'certs';
     case ItemsLinks = 'items_links';
     case ItemsStatus = 'items_status';
     case Notifications = 'notifications';
@@ -50,6 +51,7 @@ enum ApiSubModels: string
             ApiEndpoint::Teams => self::getTeamsCases(),
             ApiEndpoint::Users => self::getUsersCases(),
             ApiEndpoint::Event => self::getSchedulerCases(),
+            ApiEndpoint::Idps => self::getIdpsCases(),
             default => throw new ImproperActionException('Incorrect endpoint.'),
         };
     }
@@ -109,6 +111,16 @@ enum ApiSubModels: string
             fn(self $case): string => $case->value,
             array(
                 self::Notifications,
+            ),
+        );
+    }
+
+    private static function getIdpsCases(): array
+    {
+        return array_map(
+            fn(self $case): string => $case->value,
+            array(
+                self::IdpsCerts,
             ),
         );
     }

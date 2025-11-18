@@ -585,8 +585,6 @@ components:
               type: string
             fullname:
               type: string
-            has_attachment:
-              type: integer
             id:
               type: integer
             items_links:
@@ -657,9 +655,6 @@ components:
               nullable: true
             type:
               type: string
-            up_item_id:
-              type: integer
-              nullable: true
             uploads:
               type: array
               items:

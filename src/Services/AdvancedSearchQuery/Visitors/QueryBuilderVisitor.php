@@ -243,7 +243,6 @@ final class QueryBuilderVisitor implements Visitor
     #[Override]
     public function visitField(Field $field, VisitorParameters $parameters): WhereCollector
     {
-        // Attachment:   uploads.has_attachment
         // Author:       CONCAT(users.firstname, ' ', users.lastname)
         // Body:         entity.body
         // Category:     categoryt.title
@@ -365,30 +364,6 @@ final class QueryBuilderVisitor implements Visitor
                 'param' => $param,
                 'value' => $searchTerm,
                 'type' => $PdoParamConst,
-            )),
-        );
-    }
-
-    private function visitFieldAttachment(string $searchTerm, string $affix, VisitorParameters $parameters): WhereCollector
-    {
-        // Are we checking if there is any attachment at all
-        if ($searchTerm === '0' || $searchTerm === '1') {
-            return $this->getWhereCollector(
-                'IFNULL(uploads.has_attachment, 0) = ',
-                $searchTerm,
-                PDO::PARAM_INT,
-            );
-        }
-
-        // Or are we searching in comments or real_names
-        $param = $this->getUniqueID();
-
-        return new WhereCollector(
-            '(uploads.comments LIKE ' . $param . ' OR uploads.real_names LIKE ' . $param . ')',
-            array(array(
-                'param' => $param,
-                'value' => $affix . $searchTerm . $affix,
-                'searchAttachments' => true,
             )),
         );
     }

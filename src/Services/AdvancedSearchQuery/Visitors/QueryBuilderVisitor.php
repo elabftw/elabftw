@@ -48,7 +48,6 @@ final class QueryBuilderVisitor implements Visitor
     {
         $param = $this->getUniqueID();
         $paramBody = $this->getUniqueID();
-        $paramCustomId = $this->getUniqueID();
         $query = sprintf(
             '(entity.title LIKE %1$s
                 OR entity.date LIKE %1$s
@@ -59,11 +58,9 @@ final class QueryBuilderVisitor implements Visitor
                 OR compounds.iupac_name LIKE %1$s
                 OR compounds.inchi_key LIKE %1$s
                 OR compounds.molecular_formula LIKE %1$s
-                OR entity.body LIKE %2$s
-                OR entity.custom_id = %3$s)',
+                OR entity.body LIKE %2$s)',
             $param,
             $paramBody,
-            $paramCustomId,
         );
 
         $bindValues = array();
@@ -76,11 +73,6 @@ final class QueryBuilderVisitor implements Visitor
         $bindValues[] = array(
             'param' => $paramBody,
             'value' => '%' . htmlspecialchars($simpleValueWrapper->getValue(), ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML401) . '%',
-        );
-        $bindValues[] = array(
-            'param' => $paramCustomId,
-            'value' => $simpleValueWrapper->getValue(),
-            'type' => PDO::PARAM_INT,
         );
 
         return new WhereCollector($query, $bindValues);

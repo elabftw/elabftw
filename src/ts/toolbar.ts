@@ -171,6 +171,15 @@ if (document.getElementById('topToolbar')) {
     const file = form.file.files[0];
     const licenseAccepted = form.querySelector<HTMLInputElement>('#dspaceLicense')!.checked;
 
+    /**
+     * The license is a patch to the created item. On Dspace, when you start creating an item, it gets an id directly. Then the license being accepted is a patch to the item's endpoint like this one
+     *
+     * /server/api/submission/workspaceitems/12
+     * body is stg like
+     * [{"op":"add","path":"/sections/license/granted","value":"true"}]
+     * on un-accepting;
+     * [{"op":"add","path":"/sections/license/granted","value":"false"}]
+     */
     if (!licenseAccepted) {
       alert('You must accept the license.');
       return;
@@ -190,7 +199,7 @@ if (document.getElementById('topToolbar')) {
       // only login if not already logged in
       // const loggedIn = localStorage.getItem('dspaceLoggedIn');
       // if (!loggedIn) {
-        await loginToDspace('toto@yopmail.com', 'totototototo');
+      //   await loginToDspace('toto@yopmail.com', 'totototototo');
       // }
 
       const token = await fetchXsrfToken();
@@ -198,11 +207,12 @@ if (document.getElementById('topToolbar')) {
       console.log('token from export-to-dspace', token);
       const createRes = await postToDspace({
         // url: `/dspace/api/submission/workspaceitems?embed=item,sections,collection&owningCollection=${collection}`,
-        url: `/dspace/api/submission/workspaceitems?owningCollection=${collection}`,
+        // url: `/dspace/api/submission/workspaceitems?owningCollection=${collection}`,
+        url: `/dspace/api/submission/workspaceitems`,
         method: 'POST',
         token,
         contentType: 'application/json',
-        body: JSON.stringify(metadata)
+        // body: JSON.stringify(metadata)
       });
 
       console.log('create res \n', createRes);
@@ -252,14 +262,6 @@ if (document.getElementById('topToolbar')) {
 
 let dspaceLoginInFlight: Promise<void> | null = null;
 
-// export async function listCollections(): Promise<any> {
-//   // const res = await fetch('/dspace/api/core/collections');
-//   const res = await postToDspace({url: '/dspace/api/core/collections', method: 'GET'});
-//   if (!res.ok) throw new Error(`DSpace error ${res.status}`);
-//   const json = await res.json();
-//   return json;
-// }
-
 // helper: get collections from DSpace
 export async function listCollections(): Promise<any> {
   const token = await fetchXsrfToken();
@@ -278,21 +280,37 @@ export async function listTypes(): Promise<any> {
   return res.json();
 }
 
+// helper: get license
+export async function getLicense(): Promise<any> {
+  const token = await fetchXsrfToken();
+  const res = await postToDspace({
+    // url: '/dspace/api/submission/vocabularies/common_types/entries', method: 'GET', token
+    url: `/dspace/api/core/collections/${token}/license`, method: 'GET', token
+  })
+  if (!res.ok) throw new Error(`DSpace error ${res.status}`);
+  return res.json();
+}
+
 async function fetchXsrfToken(): Promise<string> {
+  const cached = localStorage.getItem('dspaceXsrfToken');
+  console.log('cached:', cached);
+  if (cached && await isDspaceSessionActive()) return cached;
+  console.log("fetching cuz not cached...")
   const res = await fetch('dspace/api/security/csrf', {
     method: 'GET',
     credentials: 'include',
   });
   const token = res.headers.get('dspace-xsrf-token');
   if (!token) throw new Error('No CSRF token found');
-  localStorage.setItem('dspaceXsrfToken', token); // keep latest copy
+  localStorage.setItem('dspaceXsrfToken', token);
   return token;
 }
 
 async function loginToDspace(user: string, password: string) {
-  // already logged in
-  if (localStorage.getItem('dspaceLoggedIn') === 'true') return;
-  // dedupe concurrent calls
+  if (await isDspaceSessionActive()) {
+    localStorage.setItem('dspaceLoggedIn', 'true');
+    return;
+  }
   if (dspaceLoginInFlight) { await dspaceLoginInFlight; return; }
 
   dspaceLoginInFlight = (async () => {
@@ -375,11 +393,13 @@ $('#dspaceExportModal').on('shown.bs.modal', async () => {
     active = await isDspaceSessionActive();
   }
   try {
-    const [collectionsJson, typesJson] = await Promise.all([
+    const [collectionsJson, typesJson, licenseJson] = await Promise.all([
       listCollections(),
-      listTypes()
+      listTypes(),
+      // getLicense()
     ]);
 
+    // console.log(licenseJson);
     const collections = collectionsJson._embedded.collections;
     const types = typesJson._embedded.entries;
     // populate collections

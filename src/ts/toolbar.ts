@@ -196,12 +196,6 @@ if (document.getElementById('topToolbar')) {
     };
 
     try {
-      // only login if not already logged in
-      // const loggedIn = localStorage.getItem('dspaceLoggedIn');
-      // if (!loggedIn) {
-      //   await loginToDspace('toto@yopmail.com', 'totototototo');
-      // }
-
       const token = await fetchXsrfToken();
 
       console.log('token from export-to-dspace', token);
@@ -212,7 +206,7 @@ if (document.getElementById('topToolbar')) {
         method: 'POST',
         token,
         contentType: 'application/json',
-        // body: JSON.stringify(metadata)
+        body: JSON.stringify(metadata)
       });
 
       console.log('create res \n', createRes);
@@ -226,19 +220,23 @@ if (document.getElementById('topToolbar')) {
         console.warn('Unexpected response format:', item);
         throw new Error('Invalid DSpace response: no self link');
       }
-
       const itemId = item.id;
-      //
-      // // 2. Accept license
-      // await fetch(`/dspace/api/submission/workspaceitems/${itemId}`, {
-      //   method: 'PATCH',
-      //   headers: { 'Content-Type': 'application/json-patch+json' },
-      //   credentials: 'include',
-      //   body: JSON.stringify([
-      //     { op: 'add', path: '/sections/license/granted', value: 'true' }
-      //   ])
-      // });
-      //
+      // 2. Accept license (PATCH workspaceitem)
+      console.log("posting license..")
+      const licenseRes = await postToDspace({
+        url: `/dspace/api/submission/workspaceitems/${itemId}`,
+        method: 'PATCH',
+        token,
+        contentType: 'application/json-patch+json',
+        body: JSON.stringify([
+          { op: 'add', path: '/sections/license/granted', value: 'true' }
+        ])
+      });
+      console.log(licenseRes);
+      if (!licenseRes.ok) {
+        const errorText = await licenseRes.text();
+        throw new Error(`License patch failed: ${licenseRes.status} - ${errorText}`);
+      }
       // // 3. Upload bitstream
       // const bitstreamUrl = item._links.self.href + '/bitstreams';
       // const fd = new FormData();

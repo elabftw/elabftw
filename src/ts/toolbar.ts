@@ -293,15 +293,9 @@ export async function getLicense(): Promise<any> {
 
 async function fetchXsrfToken(): Promise<string> {
   const cached = localStorage.getItem('dspaceXsrfToken');
-  console.log('cached:', cached);
   if (cached && await isDspaceSessionActive()) return cached;
-  console.log("fetching cuz not cached...")
-  const res = await fetch('dspace/api/security/csrf', {
-    method: 'GET',
-    credentials: 'include',
-  });
-  const token = res.headers.get('dspace-xsrf-token');
-  if (!token) throw new Error('No CSRF token found');
+  const res = await fetch('dspace/api/security/csrf', { method: 'GET', credentials: 'include' });
+  const token = res.headers.get('dspace-xsrf-token'); if (!token) throw new Error('No CSRF token found');
   localStorage.setItem('dspaceXsrfToken', token);
   return token;
 }
@@ -321,8 +315,13 @@ async function loginToDspace(user: string, password: string) {
     if (!res.ok) {
       localStorage.removeItem('dspaceLoggedIn');
       localStorage.removeItem('dspaceXsrfToken');
+      localStorage.removeItem('dspaceAuth');
       const error = await res.text();
       throw new Error(`Login failed: ${res.status} - ${error}`);
+    }
+    const auth = res.headers.get('Authorization');
+    if (auth) {
+      localStorage.setItem('dspaceAuth', auth)
     }
     await res.text();
     console.log('Logged in successfully!');
@@ -334,12 +333,15 @@ async function loginToDspace(user: string, password: string) {
 
 async function isDspaceSessionActive(): Promise<boolean> {
   try {
-    const res = await fetch('dspace/api/authn/status', { credentials: 'include' });
+    const auth = localStorage.getItem('dspaceAuth');
+    const headers: Record<string,string> = {}; if (auth) headers['Authorization'] = auth;
+    const res = await fetch('dspace/api/authn/status', { credentials: 'include', headers });
     if (!res.ok) return false;
     const data = await res.json();
     if (!data?.authenticated) {
       localStorage.removeItem('dspaceLoggedIn');
       localStorage.removeItem('dspaceXsrfToken');
+      localStorage.removeItem('dspaceAuth');
       return false;
     }
     return true;
@@ -358,21 +360,20 @@ interface DspaceFetchOptions {
 
 const postToDspace = async ({ url, method, body = null, token = null, contentType = 'application/x-www-form-urlencoded' }: DspaceFetchOptions) => {
   const headers: Record<string,string> = { 'Content-Type': contentType };
-  if (token) { headers['X-XSRF-TOKEN'] = token; headers['DSPACE-XSRF-COOKIE'] = token; }
+  const auth = localStorage.getItem('dspaceAuth');
+  if (auth) headers['Authorization'] = auth;
+  // `DSPACE-XSRF-COOKIE` is a cookie, no need as a header
+  if (token) {
+    headers['X-XSRF-TOKEN'] = token;
+  }
 
-  const res = await fetch(url, {
-    method,
-    headers,
-    credentials: 'include',
-    body,
-  });
+  const res = await fetch(url, { method, headers, credentials: 'include', body });
 
-  const next = res.headers.get('dspace-xsrf-token');
-  if (next) localStorage.setItem('dspaceXsrfToken', next); // keep latest token from server
-
+  const next = res.headers.get('dspace-xsrf-token'); if (next) localStorage.setItem('dspaceXsrfToken', next);
   if (res.status === 401 || res.status === 403) {
     localStorage.removeItem('dspaceLoggedIn');
     localStorage.removeItem('dspaceXsrfToken');
+    localStorage.removeItem('dspaceAuth');
   }
   return res;
 };
@@ -393,7 +394,7 @@ $('#dspaceExportModal').on('shown.bs.modal', async () => {
     active = await isDspaceSessionActive();
   }
   try {
-    const [collectionsJson, typesJson, licenseJson] = await Promise.all([
+    const [collectionsJson, typesJson] = await Promise.all([
       listCollections(),
       listTypes(),
       // getLicense()

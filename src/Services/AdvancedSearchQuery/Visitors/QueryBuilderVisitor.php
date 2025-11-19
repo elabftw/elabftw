@@ -48,7 +48,6 @@ final class QueryBuilderVisitor implements Visitor
     {
         $param = $this->getUniqueID();
         $paramBody = $this->getUniqueID();
-        $paramCustomId = $this->getUniqueID();
         $query = sprintf(
             '(entity.title LIKE %1$s
                 OR entity.date LIKE %1$s
@@ -59,11 +58,9 @@ final class QueryBuilderVisitor implements Visitor
                 OR compounds.iupac_name LIKE %1$s
                 OR compounds.inchi_key LIKE %1$s
                 OR compounds.molecular_formula LIKE %1$s
-                OR entity.body LIKE %2$s
-                OR entity.custom_id = %3$s)',
+                OR entity.body LIKE %2$s)',
             $param,
             $paramBody,
-            $paramCustomId,
         );
 
         $bindValues = array();
@@ -76,11 +73,6 @@ final class QueryBuilderVisitor implements Visitor
         $bindValues[] = array(
             'param' => $paramBody,
             'value' => '%' . htmlspecialchars($simpleValueWrapper->getValue(), ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML401) . '%',
-        );
-        $bindValues[] = array(
-            'param' => $paramCustomId,
-            'value' => $simpleValueWrapper->getValue(),
-            'type' => PDO::PARAM_INT,
         );
 
         return new WhereCollector($query, $bindValues);
@@ -243,7 +235,6 @@ final class QueryBuilderVisitor implements Visitor
     #[Override]
     public function visitField(Field $field, VisitorParameters $parameters): WhereCollector
     {
-        // Attachment:   uploads.has_attachment
         // Author:       CONCAT(users.firstname, ' ', users.lastname)
         // Body:         entity.body
         // Category:     categoryt.title
@@ -365,30 +356,6 @@ final class QueryBuilderVisitor implements Visitor
                 'param' => $param,
                 'value' => $searchTerm,
                 'type' => $PdoParamConst,
-            )),
-        );
-    }
-
-    private function visitFieldAttachment(string $searchTerm, string $affix, VisitorParameters $parameters): WhereCollector
-    {
-        // Are we checking if there is any attachment at all
-        if ($searchTerm === '0' || $searchTerm === '1') {
-            return $this->getWhereCollector(
-                'IFNULL(uploads.has_attachment, 0) = ',
-                $searchTerm,
-                PDO::PARAM_INT,
-            );
-        }
-
-        // Or are we searching in comments or real_names
-        $param = $this->getUniqueID();
-
-        return new WhereCollector(
-            '(uploads.comments LIKE ' . $param . ' OR uploads.real_names LIKE ' . $param . ')',
-            array(array(
-                'param' => $param,
-                'value' => $affix . $searchTerm . $affix,
-                'searchAttachments' => true,
             )),
         );
     }

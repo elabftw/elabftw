@@ -65,20 +65,22 @@
           <p class='smallgray'>{{ 'Enable this to allow user to manage inventory locations. This has no effect if inventory locations edition is not restricted globally.'|trans }}</p>
         </div>
 
-        {% if App.Users.userData.is_sysadmin == 1 or App.Users.userData.can_manage_users2teams %}
           <hr>
           <details id='manageUsers2Teams'>
             <summary>{{ 'Manage teams for user'|trans }}</summary>
             <div class='pl-3 mt-2'>
               <div class='d-flex flex-row flex-wrap' id='manageTeamsDiv'></div>
-              <div id='addTeamDiv'>
-                <span class='px-2 py-1 rounded mr-2 mt-2 btn btn-primary' data-action='toggle-next' data-opened-icon='fa-minus-circle' data-closed-icon='fa-plus-circle'><i class='text-light fas fa-plus-circle'></i> {{ 'Add team'|trans }}</span>
-                <span class='form-group form-inline mt-2' hidden>
-                  {# options will be populated by js #}
-                  <select class='form-control' id='addTeamSelect'></select>
-                  <button type='button' data-action='create-user2team' class='btn btn-primary'>{{ 'Go'|trans }}</button>
-                </span>
-              </div>
+
+              {% if App.Users.userData.is_sysadmin == 1 or App.Users.userData.can_manage_users2teams %}
+                <div id='addTeamDiv'>
+                  <span class='px-2 py-1 rounded mr-2 mt-2 btn btn-primary' data-action='toggle-next' data-opened-icon='fa-minus-circle' data-closed-icon='fa-plus-circle'><i class='text-light fas fa-plus-circle'></i> {{ 'Add team'|trans }}</span>
+                  <span class='form-group form-inline mt-2' hidden>
+                    {# options will be populated by js #}
+                    <select class='form-control' id='addTeamSelect'></select>
+                    <button type='button' data-action='create-user2team' class='btn btn-primary'>{{ 'Go'|trans }}</button>
+                  </span>
+                </div>
+              {% endif %}
             </div>
           </details>
 
@@ -99,7 +101,6 @@
               <p class='smallgray'>{{ passwordComplexityArr[App.Config.configArr.password_complexity_requirement] }}</p>
             </div>
           </details>
-        {% endif %}
 
         <hr>
         <button type='button' class='btn btn-ghost' id='validateUserBtn' data-action='validate-user' data-userid='{{ user.userid }}'>

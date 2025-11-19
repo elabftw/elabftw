@@ -259,25 +259,24 @@ let dspaceLoginInFlight: Promise<void> | null = null;
 //   const json = await res.json();
 //   return json;
 // }
+
+// helper: get collections from DSpace
 export async function listCollections(): Promise<any> {
   const token = await fetchXsrfToken();
   const res = await postToDspace({url: '/dspace/api/core/collections', method: 'GET', token});
   if (!res.ok) throw new Error(`DSpace error ${res.status}`);
   return res.json();
 }
-// async function fetchXsrfToken(): Promise<string> {
-//   const saved = localStorage.getItem('dspaceXsrfToken');
-//   if (saved) return saved; // reuse cached token even if not logged in yet
-//   const res = await fetch('dspace/api/security/csrf', {
-//     method: 'GET',
-//     credentials: 'include',
-//   });
-//   const token = res.headers.get('dspace-xsrf-token');
-//   if (!token) throw new Error('No CSRF token found');
-//   localStorage.setItem('dspaceXsrfToken', token);
-//   console.log("token in fetch :", token);
-//   return token;
-// }
+
+// helper: get types from DSpace
+export async function listTypes(): Promise<any> {
+  const token = await fetchXsrfToken();
+  const res = await postToDspace({
+    url: '/dspace/api/submission/vocabularies/common_types/entries', method: 'GET', token
+  })
+  if (!res.ok) throw new Error(`DSpace error ${res.status}`);
+  return res.json();
+}
 
 async function fetchXsrfToken(): Promise<string> {
   const res = await fetch('dspace/api/security/csrf', {
@@ -291,8 +290,10 @@ async function fetchXsrfToken(): Promise<string> {
 }
 
 async function loginToDspace(user: string, password: string) {
-  if (localStorage.getItem('dspaceLoggedIn') === 'true') return; // ✅ already logged in
-  if (dspaceLoginInFlight) { await dspaceLoginInFlight; return; } // ✅ dedupe concurrent calls
+  // already logged in
+  if (localStorage.getItem('dspaceLoggedIn') === 'true') return;
+  // dedupe concurrent calls
+  if (dspaceLoginInFlight) { await dspaceLoginInFlight; return; }
 
   dspaceLoginInFlight = (async () => {
     const token = await fetchXsrfToken();
@@ -339,7 +340,7 @@ interface DspaceFetchOptions {
 
 const postToDspace = async ({ url, method, body = null, token = null, contentType = 'application/x-www-form-urlencoded' }: DspaceFetchOptions) => {
   const headers: Record<string,string> = { 'Content-Type': contentType };
-  if (token) { headers['X-XSRF-TOKEN'] = token; headers['DSPACE-XSRF-COOKIE'] = token; } // ← only when present
+  if (token) { headers['X-XSRF-TOKEN'] = token; headers['DSPACE-XSRF-COOKIE'] = token; }
 
   const res = await fetch(url, {
     method,
@@ -358,51 +359,50 @@ const postToDspace = async ({ url, method, body = null, token = null, contentTyp
   return res;
 };
 
-// const postToDspace = async ({ url, method, body = null, token = null, contentType = 'application/x-www-form-urlencoded' }: DspaceFetchOptions) => {
-//   const res = await fetch(url, {
-//     method,
-//     headers: {
-//       'Content-Type': contentType,
-//       'X-XSRF-TOKEN': token,
-//       'DSPACE-XSRF-COOKIE': token,
-//     },
-//     credentials: 'include',
-//     body,
-//   });
-//   // if (res.status === 401 || res.status === 403) {
-//   //   localStorage.removeItem('dspaceLoggedIn');
-//   //   localStorage.removeItem('dspaceXsrfToken');
-//   // }
-//   return res;
-// };
 // 1. get xsrf token
 // 2. auth (login via email/password OR other methods)
-// 3. post/patch etc (for 30 mins) & refresh if method is not Shibboleth
-// s i shibboleth, est-ce que même idp que auth dans elab (cookie serait valide donc utilisable) ou il faut config new idp
-// LOGIN: TODO: ask client their auth methods
-// Called when modal is shown
-$('#dspaceExportModal').on('shown.bs.modal', async () => {
-  const select = document.getElementById('dspaceCollection') as HTMLSelectElement;
-  select.innerHTML = '<option disabled selected>Loading...</option>';
+// 3. post/patch etc (for 30 mins) & refresh
 
+// On modal show
+$('#dspaceExportModal').on('shown.bs.modal', async () => {
+  const collectionSelect = document.getElementById('dspaceCollection') as HTMLSelectElement;
+  const typeSelect = document.getElementById('dspaceType') as HTMLSelectElement;
+  collectionSelect.innerHTML = '<option disabled selected>' + i18next.t('loading') + '...</option>';
+  typeSelect.innerHTML = '<option disabled selected>' + i18next.t('loading') + '...</option>';
   let active = await isDspaceSessionActive();
   if (!active) {
-    await loginToDspace('toto@yopmail.com', 'totototototo'); // keeps { user, password }
+    await loginToDspace('toto@yopmail.com', 'totototototo');
     active = await isDspaceSessionActive();
   }
-
   try {
-    const json = await listCollections();
-    const collections = json._embedded.collections;
-    select.innerHTML = '';
+    const [collectionsJson, typesJson] = await Promise.all([
+      listCollections(),
+      listTypes()
+    ]);
+
+    const collections = collectionsJson._embedded.collections;
+    const types = typesJson._embedded.entries;
+    // populate collections
+    collectionSelect.innerHTML = '';
     collections.forEach((col: any) => {
       const opt = document.createElement('option');
       opt.value = col.uuid;
       opt.textContent = `${col.name} (${col.uuid})`;
-      select.appendChild(opt);
+      collectionSelect.appendChild(opt);
     });
+
+    // populate types
+    typeSelect.innerHTML = '';
+    types.forEach((type: any) => {
+      const opt = document.createElement('option');
+      opt.value = type.value;
+      opt.textContent = type.display;
+      typeSelect.appendChild(opt);
+    });
+
   } catch (e) {
-    select.innerHTML = '<option disabled>Error loading collections</option>';
+    collectionSelect.innerHTML = '<option disabled>Error loading collections</option>';
+    typeSelect.innerHTML = '<option disabled>Error loading types</option>';
     console.error(e);
   }
 });

@@ -61,6 +61,7 @@ const t = {
     "import-spreadsheet": "导入电子表格（xls, csv, ods, ...）",
     "import-error": "导入过程中发生错误。请检查控制台以获取更多信息。",
     "invalid-info": "提供的语法或信息无效。",
+    "loading": "Loading",
     "link-delete-warning": "删除此链接？",
     "location-name": "地点名称",
     "multi-changes-confirm": "应用到 {{num, number}} 个条目？",

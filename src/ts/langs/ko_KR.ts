@@ -61,6 +61,7 @@ const t = {
     "import-spreadsheet": "Import a spreadsheet (xls, csv, ods, ...)",
     "import-error": "Error during import. Please check the console for more information.",
     "invalid-info": "Invalid syntax or information provided.",
+    "loading": "Loading",
     "link-delete-warning": "링크를 삭제할까요?",
     "location-name": "위치 이름",
     "multi-changes-confirm": "{{num, number}}개 항목에 지원하시겠습니까?",

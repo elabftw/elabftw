@@ -61,6 +61,7 @@ const t = {
     "import-spreadsheet": "Mengimpor spreadsheet (xls, csv, ods, ...)",
     "import-error": "Kesalahan selama impor. Silakan periksa konsol untuk informasi lebih lanjut.",
     "invalid-info": "Sintaks atau informasi yang diberikan tidak valid.",
+    "loading": "Loading",
     "link-delete-warning": "Hapus tautan ini?",
     "location-name": "Nama lokasi",
     "multi-changes-confirm": "Berlaku untuk entri {{num, number}}?",

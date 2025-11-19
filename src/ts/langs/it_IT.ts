@@ -61,6 +61,7 @@ const t = {
     "import-spreadsheet": "Importare un foglio di calcolo (xls, csv, ods, ...)",
     "import-error": "Errore durante l'importazione. Controllare la console per ulteriori informazioni.",
     "invalid-info": "Sintassi o informazioni fornite non valide.",
+    "loading": "Loading",
     "link-delete-warning": "Eliminare questo collegamento?",
     "location-name": "Nome della posizione",
     "multi-changes-confirm": "Si applica a {{num, number}} voci?",

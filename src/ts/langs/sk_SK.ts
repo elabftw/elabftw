@@ -61,6 +61,7 @@ const t = {
     "import-spreadsheet": "Import a spreadsheet (xls, csv, ods, ...)",
     "import-error": "Error during import. Please check the console for more information.",
     "invalid-info": "Invalid syntax or information provided.",
+    "loading": "Loading",
     "link-delete-warning": "Odstrániť tento odkaz?",
     "location-name": "Názov lokality",
     "multi-changes-confirm": "Použiť na {{num, number}} položiek?",

@@ -61,6 +61,7 @@ const t = {
     "import-spreadsheet": "Import a spreadsheet (xls, csv, ods, ...)",
     "import-error": "Error during import. Please check the console for more information.",
     "invalid-info": "Invalid syntax or information provided.",
+    "loading": "Loading",
     "link-delete-warning": "Delete this link?",
     "location-name": "Location name",
     "multi-changes-confirm": "Apply to {{num, number}} entries?",

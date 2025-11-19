@@ -262,7 +262,11 @@ if (window.location.pathname === '/scheduler.php') {
               return;
             }
 
-            const postParams = { start: info.startStr, end: info.endStr };
+            const modal = confirmBtn.closest('.modal');
+            const titleInput = modal?.querySelector<HTMLInputElement>('input[id^="eventTitleInput"]');
+            const eventTitle = titleInput ? titleInput.value.trim() : '';
+
+            const postParams = { start: info.startStr, end: info.endStr, title: eventTitle };
             Promise.all(
               itemIdsToPost.map(itemId => ApiC.post(`events/${itemId}`, postParams)),
             ).then(() => {

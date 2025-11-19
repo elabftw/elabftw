@@ -160,6 +160,7 @@ final class StorageUnits extends AbstractRest
             storage_units.name AS storage_name,
             items.id AS entity_id,
             items.title AS entity_title,
+            items.custom_id AS entity_custom_id,
             c2i.qty_stored,
             c2i.qty_unit,
             compounds.cas_number,
@@ -202,6 +203,7 @@ final class StorageUnits extends AbstractRest
             storage_units.name AS storage_name,
             experiments.id AS entity_id,
             experiments.title AS entity_title,
+            experiments.custom_id AS entity_custom_id,
             c2e.qty_stored,
             c2e.qty_unit,
             compounds.cas_number,
@@ -457,6 +459,7 @@ final class StorageUnits extends AbstractRest
                 SELECT
                     entity.id AS entity_id,
                     entity.title AS entity_title,
+                    entity.custom_id AS entity_custom_id,
                     'database' AS page,
                     c2i.id AS container2item_id,
                     c2i.qty_stored,
@@ -521,6 +524,7 @@ final class StorageUnits extends AbstractRest
                 SELECT
                     entity.id AS entity_id,
                     entity.title AS entity_title,
+                    entity.custom_id AS entity_custom_id,
                     'experiments' AS page,
                     c2e.id AS container2experiment_id,
                     c2e.qty_stored,

@@ -7,7 +7,7 @@
   {%- endif %}
   <select id='{{ categorySelectId|default('categorySelect') }}' aria-label='{{ 'Filter by category'|trans }}' class='form-control col-md-6'>
     <option value=''>{{ 'Filter by category'|trans }}</option>
-    {% for category in bookableItemsTypes %}
+    {% for category in bookableCategories %}
       <option value='{{ category.id }}'>{{ category.team_name }} - {{ category.title }}</option>
     {% endfor %}
   </select>

@@ -48,7 +48,19 @@ final class Tags extends AbstractRest
         $teamConfigArr = (new Teams($this->Entity->Users, $this->Entity->Users->team))->readOne();
         $TeamsHelper = new TeamsHelper($this->Entity->Users->team ?? 0);
         $canCreate = $teamConfigArr['user_create_tag'] === 1 || $TeamsHelper->isAdminInTeam($this->Entity->Users->userData['userid']);
-        return $this->create(new TagParam($reqBody['tag'] ?? ''), $canCreate);
+        $tags = array();
+        if (isset($reqBody['tag']) && is_string($reqBody['tag'])) {
+            $tags = array($reqBody['tag']);
+        }
+        if (isset($reqBody['tags']) && is_array($reqBody['tags'])) {
+            $tags = $reqBody['tags'];
+        }
+
+        $id = 0;
+        foreach ($tags as $tag) {
+            $id = $this->create(new TagParam($tag), $canCreate);
+        }
+        return $id;
     }
 
     #[Override]

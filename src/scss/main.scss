@@ -274,7 +274,6 @@ h2 { font-size: 180%; }
 
 h3 {
   font-size: 160%;
-  margin: 0 auto;
 }
 
 h4 { font-size: 150%; }
@@ -980,6 +979,11 @@ the form-control fails to do that so we do the border ourselves */
 }
 
 .breakable {
+  @include breakable;
+}
+
+/* links in tables (view mode) often contain long-name files. See #6137 */
+#body_view a {
   @include breakable;
 }
 

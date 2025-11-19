@@ -53,6 +53,9 @@ final class Filter
     public static function toPureString(string $input): string
     {
         $config = HTMLPurifier_HTML5Config::createDefault();
+        // configure the cache for htmlpurifier
+        $tmpDir = FsTools::getCacheFolder('purifier');
+        $config->set('Cache.SerializerPath', $tmpDir);
         $config->set('HTML.Allowed', '');
         $config->set('AutoFormat.RemoveEmpty', true);
         return new HTMLPurifier($config)->purify(trim($input));

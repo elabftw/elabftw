@@ -20,8 +20,10 @@
     {# SEARCH BAR #}
     {% set pageName = scriptName|replace({'.php': ''}) %}
     {% set searchTarget = pageName %}
+    {% set searchPlaceholder = 'Search in experiments'|trans %}
     {% if pageName == 'database' %}
       {% set searchTarget = 'resources'|trans %}
+      {% set searchPlaceholder = 'Search in resources'|trans %}
     {% endif %}
     <form id='mainSearchForm' aria-label='{{ 'Search %s'|trans|format(searchTarget) }}' class='mb-2 flex-fill' method='get'>
       {# next div is wrapper to position pre below textarea #}
@@ -31,9 +33,9 @@
           name='q'
           type='text'
           class='form-control'
-          placeholder="{{ 'Search %s'|trans|format(searchTarget) }}"
+          placeholder="{{ searchPlaceholder }}"
           spellcheck='false'
-          aria-label="{{ 'Search %s'|trans|format(searchTarget) }}"
+          aria-label="{{ searchPlaceholder }}"
           value='{{ App.Request.query.get('q') ? App.Request.query.get('q')|trim|e('html_attr') }}' />
         <pre id='search-highlighting' class='form-control d-none' aria-hidden='true'><code></code></pre>
         <div class='input-group-append'>
@@ -262,7 +264,7 @@
     {# RIGHT #}
     <div class='ml-auto'>
       {# SCOPE FILTER #}
-      {% include 'scope-button.html' with {'reload': 'reloadEntitiesShow,scopeBtn', 'target': 'scope_' ~ Entity.entityType.value, 'isSmall': 0, 'isSecondary': 0} %}
+      {% include 'scope-button.html' with {'reload': 'reloadEntitiesShow,scopeBtn', 'target': 'scope_' ~ Entity.entityType.value, 'setQueryParam': 1} %}
     </div>
 
     <div class='vertical-separator'></div>

@@ -95,8 +95,10 @@ abstract class AbstractStatus extends AbstractCategory
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        $sql = sprintf('SELECT id, title, color, is_default, ordering, state, team
-            FROM %s AS entity WHERE team = :team', $this->table);
+        $sql = sprintf('SELECT entity.id, entity.title, entity.color, entity.is_default, entity.ordering,
+            entity.state, entity.team, teams.name AS team_name
+            FROM %s AS entity INNER JOIN teams ON teams.id = entity.team WHERE entity.team = :team', $this->table);
+
         $queryParams ??= $this->getQueryParams();
         $sql .= $queryParams->getSql();
 

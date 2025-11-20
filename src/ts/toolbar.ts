@@ -11,7 +11,7 @@ import { entity } from './getEntity';
 import { on } from './handlers';
 import i18next from './i18n';
 import { Action, Model } from './interfaces';
-import { collectForm, relativeMoment, reloadElements, } from './misc';
+import { collectForm, relativeMoment, reloadElements } from './misc';
 import { notify } from './notify';
 
 if (document.getElementById('topToolbar')) {
@@ -171,15 +171,6 @@ if (document.getElementById('topToolbar')) {
     const file = form.file.files[0];
     const licenseAccepted = form.querySelector<HTMLInputElement>('#dspaceLicense')!.checked;
 
-    /**
-     * The license is a patch to the created item. On Dspace, when you start creating an item, it gets an id directly. Then the license being accepted is a patch to the item's endpoint like this one
-     *
-     * /server/api/submission/workspaceitems/12
-     * body is stg like
-     * [{"op":"add","path":"/sections/license/granted","value":"true"}]
-     * on un-accepting;
-     * [{"op":"add","path":"/sections/license/granted","value":"false"}]
-     */
     if (!licenseAccepted) {
       alert('You must accept the license.');
       return;
@@ -191,25 +182,22 @@ if (document.getElementById('topToolbar')) {
         { key: 'dc.title', value: title },
         { key: 'dc.date.issued', value: date },
         { key: 'dc.type', value: type },
-        { key: 'dc.description.abstract', value: abstract }
-      ]
+        { key: 'dc.description.abstract', value: abstract },
+      ],
     };
 
     try {
       const token = await fetchXsrfToken();
 
-      console.log('token from export-to-dspace', token);
       const createRes = await postToDspace({
-        // url: `/dspace/api/submission/workspaceitems?embed=item,sections,collection&owningCollection=${collection}`,
-        // url: `/dspace/api/submission/workspaceitems?owningCollection=${collection}`,
-        url: `/dspace/api/submission/workspaceitems`,
+        url: `/dspace/api/submission/workspaceitems?owningCollection=${collection}`,
+        // url: `/dspace/api/submission/workspaceitems`,
         method: 'POST',
         token,
         contentType: 'application/json',
-        body: JSON.stringify(metadata)
+        body: JSON.stringify(metadata),
       });
 
-      console.log('create res \n', createRes);
       if (!createRes.ok) {
         const errorText = await createRes.text();
         throw new Error(`Create failed: ${createRes.status} - ${errorText}`);
@@ -221,8 +209,7 @@ if (document.getElementById('topToolbar')) {
         throw new Error('Invalid DSpace response: no self link');
       }
       const itemId = item.id;
-      // 2. Accept license (PATCH workspaceitem)
-      console.log("posting license..")
+      // 2. Accept license
       const licenseRes = await postToDspace({
         url: `/dspace/api/submission/workspaceitems/${itemId}`,
         method: 'PATCH',
@@ -232,23 +219,44 @@ if (document.getElementById('topToolbar')) {
           { op: 'add', path: '/sections/license/granted', value: 'true' }
         ])
       });
-      console.log(licenseRes);
       if (!licenseRes.ok) {
         const errorText = await licenseRes.text();
         throw new Error(`License patch failed: ${licenseRes.status} - ${errorText}`);
       }
-      // // 3. Upload bitstream
-      // const bitstreamUrl = item._links.self.href + '/bitstreams';
-      // const fd = new FormData();
-      // fd.append('file', file);
-      //
-      // const uploadRes = await fetch(bitstreamUrl, {
-      //   method: 'POST',
-      //   credentials: 'include',
-      //   body: fd
+      // 3. fill required metadata in traditionalpageone
+      const metaPatch = [
+        {op: 'add', path: '/sections/traditionalpageone/dc.title', value: [{value: title, language: null}]},
+        {op: 'add', path: '/sections/traditionalpageone/dc.date.issued', value: [{value: date, language: null}]},
+        {op: 'add', path: '/sections/traditionalpageone/dc.type', value: [{value: type, language: null}]},
+      ];
+      // see if mandatory, for the time being no
+      // const metaRes = await postToDspace({
+      //   url: `/dspace/api/submission/workspaceitems/${itemId}`,
+      //   method: 'PATCH',
+      //   token,
+      //   contentType: 'application/json-patch+json',
+      //   body: JSON.stringify(metaPatch),
       // });
-      //
-      // if (!uploadRes.ok) throw new Error('Bitstream upload failed');
+      // if (!metaRes.ok) {
+      //   const errorText = await metaRes.text();
+      //   throw new Error(`Metadata patch failed: ${metaRes.status} - ${errorText}`);
+      // }
+
+      // 4. Upload file to satisfy /sections/upload
+      const fd = new FormData();
+      // field name must be "file" for this endpoint
+      fd.append('file', file);
+      const uploadRes = await postToDspace({
+        url: `/dspace/api/submission/workspaceitems/${itemId}`,
+        method: 'POST',
+        token,
+        contentType: null, // let browser set multipart/form-data boundary
+        body: fd,
+      });
+      if (!uploadRes.ok) {
+        const errorText = await uploadRes.text();
+        throw new Error(`File upload failed: ${uploadRes.status} - ${errorText}`);
+      }
 
       alert('Export to DSpace successful!');
     } catch (e) {
@@ -272,8 +280,8 @@ export async function listCollections(): Promise<any> {
 export async function listTypes(): Promise<any> {
   const token = await fetchXsrfToken();
   const res = await postToDspace({
-    url: '/dspace/api/submission/vocabularies/common_types/entries', method: 'GET', token
-  })
+    url: '/dspace/api/submission/vocabularies/common_types/entries', method: 'GET', token,
+  });
   if (!res.ok) throw new Error(`DSpace error ${res.status}`);
   return res.json();
 }
@@ -283,8 +291,8 @@ export async function getLicense(): Promise<any> {
   const token = await fetchXsrfToken();
   const res = await postToDspace({
     // url: '/dspace/api/submission/vocabularies/common_types/entries', method: 'GET', token
-    url: `/dspace/api/core/collections/${token}/license`, method: 'GET', token
-  })
+    url: `/dspace/api/core/collections/${token}/license`, method: 'GET', token,
+  });
   if (!res.ok) throw new Error(`DSpace error ${res.status}`);
   return res.json();
 }
@@ -307,7 +315,6 @@ async function loginToDspace(user: string, password: string) {
 
   dspaceLoginInFlight = (async () => {
     const token = await fetchXsrfToken();
-    console.log("token in login :", token);
     const body = new URLSearchParams({ user, password }).toString();
     const res = await postToDspace({url: 'dspace/api/authn/login', method: 'POST', token, body});
     if (!res.ok) {
@@ -319,10 +326,9 @@ async function loginToDspace(user: string, password: string) {
     }
     const auth = res.headers.get('Authorization');
     if (auth) {
-      localStorage.setItem('dspaceAuth', auth)
+      localStorage.setItem('dspaceAuth', auth);
     }
     await res.text();
-    console.log('Logged in successfully!');
     localStorage.setItem('dspaceLoggedIn', 'true');
   })();
 
@@ -357,13 +363,12 @@ interface DspaceFetchOptions {
 }
 
 const postToDspace = async ({ url, method, body = null, token = null, contentType = 'application/x-www-form-urlencoded' }: DspaceFetchOptions) => {
-  const headers: Record<string,string> = { 'Content-Type': contentType };
+  const headers: Record<string,string> = {};
+  if (contentType) headers['Content-Type'] = contentType;
   const auth = localStorage.getItem('dspaceAuth');
   if (auth) headers['Authorization'] = auth;
   // `DSPACE-XSRF-COOKIE` is a cookie, no need as a header
-  if (token) {
-    headers['X-XSRF-TOKEN'] = token;
-  }
+  if (token) headers['X-XSRF-TOKEN'] = token;
 
   const res = await fetch(url, { method, headers, credentials: 'include', body });
 
@@ -398,7 +403,6 @@ $('#dspaceExportModal').on('shown.bs.modal', async () => {
       // getLicense()
     ]);
 
-    // console.log(licenseJson);
     const collections = collectionsJson._embedded.collections;
     const types = typesJson._embedded.entries;
     // populate collections

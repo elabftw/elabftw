@@ -160,11 +160,12 @@ if (document.getElementById('topToolbar')) {
     ApiC.post(`${Model.Team}/current/procurement_requests`, {entity_id: entity.id, qty_ordered: qty});
   });
 
-  on('export-to-dspace', async (el: HTMLElement) => {
+  on('export-to-dspace', async () => {
     const form = document.getElementById('dspaceExportForm') as HTMLFormElement;
+    console.log(form);
     const collection = form.collection.value;
     const author = form.author.value;
-    const title = form.title;
+    const title = form.title as unknown as HTMLInputElement;
     const date = form.date.value;
     const type = form.type.value;
     const abstract = form.abstract.value;
@@ -178,26 +179,28 @@ if (document.getElementById('topToolbar')) {
 
     const metadata = {
       metadata: [
-        { key: 'dc.creator', value: author },
-        { key: 'dc.title', value: title },
-        { key: 'dc.date.issued', value: date },
-        { key: 'dc.type', value: type },
-        { key: 'dc.description.abstract', value: abstract },
+        {key: 'dc.creator', value: author},
+        {key: 'dc.title', value: title.value},         // ← use string
+        {key: 'dc.date.issued', value: date},
+        {key: 'dc.type', value: type},
+        {key: 'dc.description.abstract', value: abstract},
       ],
     };
 
+    console.log('metadata', metadata);
     try {
       const token = await fetchXsrfToken();
 
+      console.log('token from export-to-dspace', token);
       const createRes = await postToDspace({
         url: `/dspace/api/submission/workspaceitems?owningCollection=${collection}`,
-        // url: `/dspace/api/submission/workspaceitems`,
         method: 'POST',
         token,
         contentType: 'application/json',
         body: JSON.stringify(metadata),
       });
 
+      console.log('create res \n', createRes);
       if (!createRes.ok) {
         const errorText = await createRes.text();
         throw new Error(`Create failed: ${createRes.status} - ${errorText}`);
@@ -209,48 +212,48 @@ if (document.getElementById('topToolbar')) {
         throw new Error('Invalid DSpace response: no self link');
       }
       const itemId = item.id;
+
       // 2. Accept license
+      console.log('posting license..');
       const licenseRes = await postToDspace({
         url: `/dspace/api/submission/workspaceitems/${itemId}`,
         method: 'PATCH',
         token,
         contentType: 'application/json-patch+json',
         body: JSON.stringify([
-          { op: 'add', path: '/sections/license/granted', value: 'true' }
-        ])
+          {op: 'add', path: '/sections/license/granted', value: 'true'},
+        ]),
       });
       if (!licenseRes.ok) {
         const errorText = await licenseRes.text();
         throw new Error(`License patch failed: ${licenseRes.status} - ${errorText}`);
       }
-      // 3. fill required metadata in traditionalpageone
+      // 3. Fill required metadata in traditionalpageone
       const metaPatch = [
-        {op: 'add', path: '/sections/traditionalpageone/dc.title', value: [{value: title, language: null}]},
+        {op: 'add', path: '/sections/traditionalpageone/dc.title', value: [{value: title.value, language: null}]},
         {op: 'add', path: '/sections/traditionalpageone/dc.date.issued', value: [{value: date, language: null}]},
         {op: 'add', path: '/sections/traditionalpageone/dc.type', value: [{value: type, language: null}]},
       ];
-      // see if mandatory, for the time being no
-      // const metaRes = await postToDspace({
-      //   url: `/dspace/api/submission/workspaceitems/${itemId}`,
-      //   method: 'PATCH',
-      //   token,
-      //   contentType: 'application/json-patch+json',
-      //   body: JSON.stringify(metaPatch),
-      // });
-      // if (!metaRes.ok) {
-      //   const errorText = await metaRes.text();
-      //   throw new Error(`Metadata patch failed: ${metaRes.status} - ${errorText}`);
-      // }
+      const metaRes = await postToDspace({
+        url: `/dspace/api/submission/workspaceitems/${itemId}`,
+        method: 'PATCH',
+        token,
+        contentType: 'application/json-patch+json',
+        body: JSON.stringify(metaPatch),
+      });
+      if (!metaRes.ok) {
+        const errorText = await metaRes.text();
+        throw new Error(`Metadata patch failed: ${metaRes.status} - ${errorText}`);
+      }
 
-      // 4. Upload file to satisfy /sections/upload
+      // Upload file (adds to /sections/upload)
       const fd = new FormData();
-      // field name must be "file" for this endpoint
       fd.append('file', file);
       const uploadRes = await postToDspace({
         url: `/dspace/api/submission/workspaceitems/${itemId}`,
         method: 'POST',
         token,
-        contentType: null, // let browser set multipart/form-data boundary
+        contentType: null,
         body: fd,
       });
       if (!uploadRes.ok) {
@@ -258,6 +261,18 @@ if (document.getElementById('topToolbar')) {
         throw new Error(`File upload failed: ${uploadRes.status} - ${errorText}`);
       }
 
+      // move workspaceitem to workflow (deposit)
+      const submitRes = await postToDspace({
+        url: '/dspace/api/workflow/workflowitems',
+        method: 'POST',
+        token,
+        contentType: 'text/uri-list',
+        body: `/api/submission/workspaceitems/${itemId}`,
+      });
+      if (!submitRes.ok) {
+        const errorText = await submitRes.text();
+        throw new Error(`Submit to workflow failed: ${submitRes.status} - ${errorText}`);
+      }
       alert('Export to DSpace successful!');
     } catch (e) {
       console.error(e);

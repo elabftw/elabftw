@@ -84,6 +84,7 @@ const t = {
     "resource-not-found": "该 ID 没有任何记录",
     "revisions-error": "选择两个修订版进行比较。",
     "save": "保存",
+    "save-and-go-back": "保存并返回",
     "save-attachment": "另存为附件",
     "saved": "已保存",
     "search": "搜索",

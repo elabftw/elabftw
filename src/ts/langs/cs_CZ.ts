@@ -84,6 +84,7 @@ const t = {
     "resource-not-found": "Nic, co by se ukázalo s tímto id",
     "revisions-error": "Select two revisions to compare them.",
     "save": "Uložit",
+    "save-and-go-back": "Uložit a vrátit se zpět",
     "save-attachment": "Uložit jako přílohu",
     "saved": "Uloženo",
     "search": "Hledat",

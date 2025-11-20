@@ -84,6 +84,7 @@ const t = {
     "resource-not-found": "Nič sa nezobrazí s týmto identifikátorom",
     "revisions-error": "Select two revisions to compare them.",
     "save": "Uložiť",
+    "save-and-go-back": "Uložiť a ísť späť",
     "save-attachment": "Uložiť ako prílohu",
     "saved": "Uložené",
     "search": "Vyhľadávanie",

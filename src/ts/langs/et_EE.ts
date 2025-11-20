@@ -84,6 +84,7 @@ const t = {
     "resource-not-found": "Selle ID-ga pole midagi näidata",
     "revisions-error": "Valige võrdlemiseks kaks redaktsiooni.",
     "save": "Salvesta",
+    "save-and-go-back": "Salvesta ja mine tagasi",
     "save-attachment": "Salvesta manusena",
     "saved": "Salvestatud",
     "search": "Otsi",

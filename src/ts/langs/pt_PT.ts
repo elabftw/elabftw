@@ -84,6 +84,7 @@ const t = {
     "resource-not-found": "Nada a exibir com este id",
     "revisions-error": "Select two revisions to compare them.",
     "save": "Guardar",
+    "save-and-go-back": "Guardar e regressar",
     "save-attachment": "Guardar como anexo",
     "saved": "Guardado",
     "search": "Procurar",

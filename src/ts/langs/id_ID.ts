@@ -84,6 +84,7 @@ const t = {
     "resource-not-found": "Tidak ada yang bisa ditampilkan dengan id ini",
     "revisions-error": "Pilih dua revisi untuk membandingkannya.",
     "save": "Simpan",
+    "save-and-go-back": "Simpan dan kembali ke halaman sebelumnya",
     "save-attachment": "Simpan sebagai lampiran",
     "saved": "Tersimpan",
     "search": "Cari",

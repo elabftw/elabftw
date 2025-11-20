@@ -84,6 +84,7 @@ const t = {
     "resource-not-found": "このIDで表示可能なものはありません",
     "revisions-error": "2つのリビジョンを選んで比較する。",
     "save": "保存",
+    "save-and-go-back": "保存して戻る",
     "save-attachment": "添付ファイルとして保存",
     "saved": "保存済み",
     "search": "検索",

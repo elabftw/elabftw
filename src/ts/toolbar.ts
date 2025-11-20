@@ -162,117 +162,42 @@ if (document.getElementById('topToolbar')) {
 
   on('export-to-dspace', async () => {
     const form = document.getElementById('dspaceExportForm') as HTMLFormElement;
-    console.log(form);
     const collection = form.collection.value;
     const author = form.author.value;
-    const title = form.title as unknown as HTMLInputElement;
+    const title = (document.getElementById('dspaceTitle') as HTMLInputElement)?.value;
     const date = form.date.value;
     const type = form.type.value;
     const abstract = form.abstract.value;
     const file = form.file.files[0];
-    const licenseAccepted = form.querySelector<HTMLInputElement>('#dspaceLicense')!.checked;
-
-    if (!licenseAccepted) {
-      alert('You must accept the license.');
-      return;
-    }
 
     const metadata = {
       metadata: [
         {key: 'dc.creator', value: author},
-        {key: 'dc.title', value: title.value},         // ← use string
+        {key: 'dc.title', value: title},
         {key: 'dc.date.issued', value: date},
         {key: 'dc.type', value: type},
         {key: 'dc.description.abstract', value: abstract},
       ],
     };
 
-    console.log('metadata', metadata);
     try {
       const token = await fetchXsrfToken();
-
-      console.log('token from export-to-dspace', token);
-      const createRes = await postToDspace({
-        url: `/dspace/api/submission/workspaceitems?owningCollection=${collection}`,
-        method: 'POST',
-        token,
-        contentType: 'application/json',
-        body: JSON.stringify(metadata),
-      });
-
-      console.log('create res \n', createRes);
-      if (!createRes.ok) {
-        const errorText = await createRes.text();
-        throw new Error(`Create failed: ${createRes.status} - ${errorText}`);
-      }
-
-      const item = await createRes.json();
-      if (!item._links?.self?.href) {
-        console.warn('Unexpected response format:', item);
-        throw new Error('Invalid DSpace response: no self link');
-      }
+      // create the item in DSpace
+      const item = await createWorkspaceItem(collection, metadata, token);
       const itemId = item.id;
 
-      // 2. Accept license
-      console.log('posting license..');
-      const licenseRes = await postToDspace({
-        url: `/dspace/api/submission/workspaceitems/${itemId}`,
-        method: 'PATCH',
-        token,
-        contentType: 'application/json-patch+json',
-        body: JSON.stringify([
-          {op: 'add', path: '/sections/license/granted', value: 'true'},
-        ]),
-      });
-      if (!licenseRes.ok) {
-        const errorText = await licenseRes.text();
-        throw new Error(`License patch failed: ${licenseRes.status} - ${errorText}`);
-      }
-      // 3. Fill required metadata in traditionalpageone
-      const metaPatch = [
-        {op: 'add', path: '/sections/traditionalpageone/dc.title', value: [{value: title.value, language: null}]},
-        {op: 'add', path: '/sections/traditionalpageone/dc.date.issued', value: [{value: date, language: null}]},
-        {op: 'add', path: '/sections/traditionalpageone/dc.type', value: [{value: type, language: null}]},
-      ];
-      const metaRes = await postToDspace({
-        url: `/dspace/api/submission/workspaceitems/${itemId}`,
-        method: 'PATCH',
-        token,
-        contentType: 'application/json-patch+json',
-        body: JSON.stringify(metaPatch),
-      });
-      if (!metaRes.ok) {
-        const errorText = await metaRes.text();
-        throw new Error(`Metadata patch failed: ${metaRes.status} - ${errorText}`);
-      }
+      // accept license
+      await acceptWorkspaceItemLicense(itemId, token);
 
-      // Upload file (adds to /sections/upload)
-      const fd = new FormData();
-      fd.append('file', file);
-      const uploadRes = await postToDspace({
-        url: `/dspace/api/submission/workspaceitems/${itemId}`,
-        method: 'POST',
-        token,
-        contentType: null,
-        body: fd,
-      });
-      if (!uploadRes.ok) {
-        const errorText = await uploadRes.text();
-        throw new Error(`File upload failed: ${uploadRes.status} - ${errorText}`);
-      }
+      // patch required metadata to be in traditionalpageone
+      await updateWorkspaceItemMetadata(itemId, token, title, date, type, abstract);
+
+      // upload file (adds to /sections/upload)
+      await uploadWorkspaceItemFile(itemId, file, token);
 
       // move workspaceitem to workflow (deposit)
-      const submitRes = await postToDspace({
-        url: '/dspace/api/workflow/workflowitems',
-        method: 'POST',
-        token,
-        contentType: 'text/uri-list',
-        body: `/api/submission/workspaceitems/${itemId}`,
-      });
-      if (!submitRes.ok) {
-        const errorText = await submitRes.text();
-        throw new Error(`Submit to workflow failed: ${submitRes.status} - ${errorText}`);
-      }
+      await submitWorkspaceItemToWorkflow(itemId, token);
+
       alert('Export to DSpace successful!');
     } catch (e) {
       console.error(e);
@@ -310,6 +235,96 @@ export async function getLicense(): Promise<any> {
   });
   if (!res.ok) throw new Error(`DSpace error ${res.status}`);
   return res.json();
+}
+
+// helper: create an item in DSpace
+async function createWorkspaceItem(collection: string, metadata: any, token: string) {
+  const res = await postToDspace({
+    url: `/dspace/api/submission/workspaceitems?owningCollection=${collection}`,
+    method: 'POST',
+    token,
+    contentType: 'application/json',
+    body: JSON.stringify(metadata),
+  });
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`Create failed: ${res.status} - ${errorText}`);
+  }
+  return res.json();
+}
+
+// helper: accept license
+async function acceptWorkspaceItemLicense(itemId: number | string, token: string) {
+  const res = await postToDspace({
+    url: `/dspace/api/submission/workspaceitems/${itemId}`,
+    method: 'PATCH',
+    token,
+    contentType: 'application/json-patch+json',
+    body: JSON.stringify([
+      {op: 'add', path: '/sections/license/granted', value: 'true'},
+    ]),
+  });
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`License patch failed: ${res.status} - ${errorText}`);
+  }
+  return res;
+}
+
+// helper: patch metadata in traditionalpage (1st page of the item)
+async function updateWorkspaceItemMetadata(itemId: number | string, token: string, title: string, date: string, type: string, abstract: string) {
+  const metaPatch = [
+    { op: 'add', path: '/sections/traditionalpageone/dc.title', value: [{value: title, language: null}] },
+    { op: 'add', path: '/sections/traditionalpageone/dc.date.issued', value: [{value: date, language: null}] },
+    { op: 'add', path: '/sections/traditionalpageone/dc.type', value: [{value: type, language: null}] },
+    { op: 'add', path: '/sections/traditionalpagetwo/dc.description.abstract', value: [{value: abstract, language: null}] },
+  ];
+  const res = await postToDspace({
+    url: `/dspace/api/submission/workspaceitems/${itemId}`,
+    method: 'PATCH',
+    token,
+    contentType: 'application/json-patch+json',
+    body: JSON.stringify(metaPatch),
+  });
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`Metadata patch failed: ${res.status} - ${errorText}`);
+  }
+  return res;
+}
+
+// helper: upload a file to the created item in DSpace
+async function uploadWorkspaceItemFile(itemId: number | string, file: File, token: string) {
+  const fd = new FormData();
+  fd.append('file', file);
+  const res = await postToDspace({
+    url: `/dspace/api/submission/workspaceitems/${itemId}`,
+    method: 'POST',
+    token,
+    contentType: null,
+    body: fd,
+  });
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`File upload failed: ${res.status} - ${errorText}`);
+  }
+  return res;
+}
+
+// helper: publish the workspaceitem to workflow (deposit)
+async function submitWorkspaceItemToWorkflow(itemId: number | string, token: string) {
+  const res = await postToDspace({
+    url: '/dspace/api/workflow/workflowitems',
+    method: 'POST',
+    token,
+    contentType: 'text/uri-list',
+    body: `/api/submission/workspaceitems/${itemId}`,
+  });
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`Submit to workflow failed: ${res.status} - ${errorText}`);
+  }
+  return res;
 }
 
 async function fetchXsrfToken(): Promise<string> {

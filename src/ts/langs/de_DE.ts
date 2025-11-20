@@ -83,6 +83,7 @@ const t = {
     "resource-not-found": "Nichts zum Anzeigen mit dieser ID",
     "revisions-error": "Wählen Sie zwei Revisionen aus, um sie zu vergleichen.",
     "save": "Speichern",
+    "save-and-go-back": "Speichern und zurückgehen",
     "save-attachment": "Als Anhang speichern",
     "saved": "Gespeichert",
     "search": "Suche",

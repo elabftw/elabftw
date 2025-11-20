@@ -416,7 +416,7 @@ export function getTinymceBaseConfig(page: string): object {
       });
       // save and go back button for toolbar, inside "File" menu.
       editor.ui.registry.addMenuItem('saveAndGoBack', {
-        text: i18next.t('Save and go back'),
+        text: i18next.t('save-and-go-back'),
         icon: 'customSave',
         onAction: () => {
           const btn = document.querySelector('[data-action="update-entity-body"][data-redirect="view"]') as HTMLButtonElement;

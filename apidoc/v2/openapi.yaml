@@ -5122,7 +5122,7 @@ paths:
           application/json:
             schema:
               type: object
-              required: ['name', 'entityid', 'sso_url', 'sso_binding', 'slo_url', 'slo_binding', 'x509', 'x509_new', 'email_attr']
+              required: ['name', 'entityid', 'sso_url', 'sso_binding', 'slo_url', 'slo_binding', 'email_attr']
               properties:
                 name:
                   type: string
@@ -5142,12 +5142,6 @@ paths:
                 slo_binding:
                   type: string
                   description: Binding for SLO.
-                x509:
-                  type: string
-                  description: Certificate in PEM format.
-                x509_new:
-                  type: string
-                  description: Certificate in PEM format for renewal period.
                 email_attr:
                   type: string
                   description: What attribute to look for the email.

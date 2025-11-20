@@ -172,11 +172,11 @@ if (document.getElementById('topToolbar')) {
 
     const metadata = {
       metadata: [
-        {key: 'dc.creator', value: author},
-        {key: 'dc.title', value: title},
-        {key: 'dc.date.issued', value: date},
-        {key: 'dc.type', value: type},
-        {key: 'dc.description.abstract', value: abstract},
+        { key: 'dc.creator', value: author },
+        { key: 'dc.title', value: title },
+        { key: 'dc.date.issued', value: date },
+        { key: 'dc.type', value: type },
+        { key: 'dc.description.abstract', value: abstract },
       ],
     };
 
@@ -221,17 +221,6 @@ export async function listTypes(): Promise<any> {
   const token = await fetchXsrfToken();
   const res = await postToDspace({
     url: '/dspace/api/submission/vocabularies/common_types/entries', method: 'GET', token,
-  });
-  if (!res.ok) throw new Error(`DSpace error ${res.status}`);
-  return res.json();
-}
-
-// helper: get license
-export async function getLicense(): Promise<any> {
-  const token = await fetchXsrfToken();
-  const res = await postToDspace({
-    // url: '/dspace/api/submission/vocabularies/common_types/entries', method: 'GET', token
-    url: `/dspace/api/core/collections/${token}/license`, method: 'GET', token,
   });
   if (!res.ok) throw new Error(`DSpace error ${res.status}`);
   return res.json();
@@ -397,7 +386,6 @@ const postToDspace = async ({ url, method, body = null, token = null, contentTyp
   if (contentType) headers['Content-Type'] = contentType;
   const auth = localStorage.getItem('dspaceAuth');
   if (auth) headers['Authorization'] = auth;
-  // `DSPACE-XSRF-COOKIE` is a cookie, no need as a header
   if (token) headers['X-XSRF-TOKEN'] = token;
 
   const res = await fetch(url, { method, headers, credentials: 'include', body });
@@ -411,11 +399,6 @@ const postToDspace = async ({ url, method, body = null, token = null, contentTyp
   return res;
 };
 
-// 1. get xsrf token
-// 2. auth (login via email/password OR other methods)
-// 3. post/patch etc (for 30 mins) & refresh
-
-// On modal show
 $('#dspaceExportModal').on('shown.bs.modal', async () => {
   const collectionSelect = document.getElementById('dspaceCollection') as HTMLSelectElement;
   const typeSelect = document.getElementById('dspaceType') as HTMLSelectElement;
@@ -424,13 +407,11 @@ $('#dspaceExportModal').on('shown.bs.modal', async () => {
   let active = await isDspaceSessionActive();
   if (!active) {
     await loginToDspace('toto@yopmail.com', 'totototototo');
-    active = await isDspaceSessionActive();
   }
   try {
     const [collectionsJson, typesJson] = await Promise.all([
       listCollections(),
-      listTypes(),
-      // getLicense()
+      listTypes()
     ]);
 
     const collections = collectionsJson._embedded.collections;

@@ -6,6 +6,8 @@
  * @package elabftw
  */
 
+type BinaryValue = 0 | 1;
+
 interface ResponseMsg {
   res: boolean;
   msg: string;
@@ -188,6 +190,7 @@ interface Entity {
 
 export {
   Action,
+  BinaryValue,
   Categories,
   CheckableItem,
   Entity,

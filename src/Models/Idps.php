@@ -97,7 +97,17 @@ final class Idps extends AbstractRest
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         $res = $this->Db->fetch($req);
-        $res['certs'] = json_decode($res['certs'], true, 3, JSON_THROW_ON_ERROR);
+        // make sure we return an empty array if no certs are associated with it
+        $decoded = json_decode($res['certs'] ?? 'null', true, 3, JSON_THROW_ON_ERROR);
+        if (!is_array($decoded)) {
+            $decoded = array();
+        } else {
+            $decoded = array_values(array_filter(
+                $decoded,
+                static fn(array $cert): bool => array_key_exists('x509', $cert) && $cert['x509'] !== null,
+            ));
+        }
+        $res['certs'] = $decoded;
         return $res;
     }
 
@@ -120,7 +130,16 @@ final class Idps extends AbstractRest
         $this->Db->execute($req);
         $res = $req->fetchAll();
         foreach ($res as &$idp) {
-            $idp['certs'] = json_decode($idp['certs'], true, 3, JSON_THROW_ON_ERROR);
+            $decoded = json_decode($idp['certs'] ?? 'null', true, 3, JSON_THROW_ON_ERROR);
+            if (!is_array($decoded)) {
+                $decoded = array();
+            } else {
+                $decoded = array_values(array_filter(
+                    $decoded,
+                    static fn(array $cert): bool => array_key_exists('x509', $cert) && $cert['x509'] !== null,
+                ));
+            }
+            $idp['certs'] = $decoded;
         }
         return $res;
     }
@@ -196,9 +215,9 @@ final class Idps extends AbstractRest
         return $this->Db->execute($req);
     }
 
-    public function getEnabled(?int $id = null): array
+    public function getEnabled(?int $id = null): int
     {
-        $sql = 'SELECT * FROM idps WHERE enabled = 1';
+        $sql = 'SELECT id FROM idps WHERE enabled = 1';
         if ($id !== null) {
             $sql .= ' AND id = :id';
         }
@@ -207,19 +226,16 @@ final class Idps extends AbstractRest
             $req->bindParam(':id', $id, PDO::PARAM_INT);
         }
         $this->Db->execute($req);
-
-        return $this->Db->fetch($req);
+        return (int) $req->fetchColumn();
     }
 
-    public function getEnabledByEntityId(string $entId): array
+    public function getEnabledByEntityId(string $entId): int
     {
-        $sql = 'SELECT * FROM idps WHERE enabled = 1 AND entityid = :entId';
+        $sql = 'SELECT id FROM idps WHERE enabled = 1 AND entityid = :entId';
         $req = $this->Db->prepare($sql);
-
         $req->bindParam(':entId', $entId);
         $this->Db->execute($req);
-
-        return $this->Db->fetch($req);
+        return (int) $req->fetchColumn();
     }
 
     #[Override]

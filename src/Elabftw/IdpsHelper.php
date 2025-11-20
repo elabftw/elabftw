@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Enums\CertPurpose;
 use Elabftw\Models\Config;
 use Elabftw\Models\Idps;
-use Elabftw\Models\IdpsCerts;
 
 use function rtrim;
 
@@ -35,9 +35,9 @@ final class IdpsHelper
      */
     public function getSettings(?int $id = null): array
     {
-        $idp = $this->Idps->getEnabled($id);
+        $idpId = $this->Idps->getEnabled($id);
 
-        return $this->getSettingsByIdp($idp);
+        return $this->getSettingsByIdp($idpId);
     }
 
     /**
@@ -47,16 +47,22 @@ final class IdpsHelper
      */
     public function getSettingsByEntityId(string $entId): array
     {
-        $idp = $this->Idps->getEnabledByEntityId($entId);
+        $idpId = $this->Idps->getEnabledByEntityId($entId);
 
-        return $this->getSettingsByIdp($idp);
+        return $this->getSettingsByIdp($idpId);
     }
 
-    private function getSettingsByIdp(array $idp): array
+    private function getSettingsByIdp(int $idpId): array
     {
+        $this->Idps->setId($idpId);
+        $idp = $this->Idps->readOne();
         $idpSigningCerts = array();
-        $certs = IdpsCerts::readFromIdp($idp['id']);
-        foreach ($certs as $cert) {
+        $idpEncryptionCerts = array();
+        foreach ($idp['certs'] as $cert) {
+            if ($cert['purpose'] === CertPurpose::Encryption->value) {
+                $idpEncryptionCerts[] = $cert['x509'];
+                continue;
+            }
             $idpSigningCerts[] = $cert['x509'];
         }
 
@@ -183,10 +189,7 @@ final class IdpsHelper
                 // Public x509 certificates of the IdP
                 'x509certMulti' => array(
                     'signing' => $idpSigningCerts,
-                    // TODO use encryption ones
-                    'encryption' => array(
-                        $idpSigningCerts,
-                    ),
+                    'encryption' => $idpEncryptionCerts,
                 ),
                 'emailAttr' => $idp['email_attr'],
                 'teamAttr' => $idp['team_attr'],

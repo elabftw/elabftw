@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DateTimeImmutable;
-use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\CertPurpose;
 use Elabftw\Exceptions\IllegalActionException;
@@ -69,16 +68,6 @@ final class IdpsCerts extends AbstractRest
         return $this->Db->fetch($req);
     }
 
-    public static function readFromIdp(int $idpId): array
-    {
-        $Db = Db::getConnection();
-        $sql = 'SELECT * FROM idps_certs WHERE idp = :idp';
-        $req = $Db->prepare($sql);
-        $req->bindParam(':idp', $idpId, PDO::PARAM_INT);
-        $Db->execute($req);
-        return $req->fetchAll();
-    }
-
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
@@ -88,7 +77,6 @@ final class IdpsCerts extends AbstractRest
         }
         [$pem, $sha256, $notBefore, $notAfter] = Xml2Idps::processCert($reqBody['x509']);
         return $this->create(
-            $this->idpId,
             CertPurpose::tryFrom((int) ($reqBody['purpose'] ?? 0)) ?? CertPurpose::Signing,
             $pem,
             $sha256,
@@ -99,9 +87,9 @@ final class IdpsCerts extends AbstractRest
 
     public function upsert(int $idpId, array $idp): bool
     {
+        $this->idpId = $idpId;
         foreach ($idp['certs'] as $cert) {
             $this->create(
-                $idpId,
                 $cert['purpose'],
                 $cert['x509'],
                 $cert['sha256'],
@@ -122,14 +110,14 @@ final class IdpsCerts extends AbstractRest
         return $this->Db->execute($req);
     }
 
-    public function create(int $idp, CertPurpose $purpose, string $x509, string $sha256, DateTimeImmutable $notBefore, DateTimeImmutable $notAfter): int
+    public function create(CertPurpose $purpose, string $x509, string $sha256, DateTimeImmutable $notBefore, DateTimeImmutable $notAfter): int
     {
-        $id = $this->readFromCert($sha256);
+        $id = $this->findCertByHash($sha256, $purpose);
         if ($id === null) {
             $sql = 'INSERT INTO idps_certs (idp, purpose, x509, sha256, not_before, not_after)
                 VALUES (:idp, :purpose, :x509, :sha256, :not_before, :not_after)';
             $req = $this->Db->prepare($sql);
-            $req->bindParam(':idp', $idp, PDO::PARAM_INT);
+            $req->bindParam(':idp', $this->idpId, PDO::PARAM_INT);
             $req->bindValue(':purpose', $purpose->value);
             $req->bindValue(':x509', Filter::pem($x509));
             $req->bindParam(':sha256', $sha256);
@@ -149,12 +137,13 @@ final class IdpsCerts extends AbstractRest
         }
     }
 
-    private function readFromCert(string $sha256): ?int
+    private function findCertByHash(string $sha256, CertPurpose $purpose): ?int
     {
-        $sql = 'SELECT id FROM idps_certs WHERE sha256 = :sha256 AND idp = :idp';
+        $sql = 'SELECT id FROM idps_certs WHERE sha256 = :sha256 AND idp = :idp AND purpose = :purpose';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':sha256', $sha256);
         $req->bindValue(':idp', $this->idpId);
+        $req->bindValue(':purpose', $purpose->value);
         $this->Db->execute($req);
         if ($req->rowCount() > 0) {
             return (int) $req->fetchColumn();

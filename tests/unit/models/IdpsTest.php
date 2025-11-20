@@ -64,7 +64,7 @@ class IdpsTest extends \PHPUnit\Framework\TestCase
 
     public function testGetActiveByEntityId(): void
     {
-        $this->assertIsArray($this->Idps->getEnabledByEntityId('https://app.onelogin.com/'));
+        $this->assertIsInt($this->Idps->getEnabledByEntityId('https://app.onelogin.com/'));
     }
 
     public function testDestroy(): void

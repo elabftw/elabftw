@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import { clearForm, collectForm, reloadElements } from './misc';
-import { Action, Model } from './interfaces';
+import { Action, BinaryValue, Model } from './interfaces';
 import i18next from './i18n';
 import tinymce from 'tinymce/tinymce';
 import { getEditor } from './Editor.class';
@@ -36,12 +36,12 @@ function updateTsFieldsVisibility(select: HTMLSelectElement) {
 interface Cert {
   id: number;
   idp: number;
-  purpose: number;
+  purpose: BinaryValue;
   x509: string;
   sha256: string;
   not_before: string;
   not_after: string;
-  is_active: number;
+  is_active: BinaryValue;
   created_at: string;
   modified_at: string;
 }

@@ -41,6 +41,9 @@ final class Xml2Idps
         }
         $pem = '';
         openssl_x509_export($OpenSSLCertificate, $pem);
+        if (empty($pem)) {
+            throw new ValueError('Error exporting x509 cert!');
+        }
         $data = openssl_x509_parse($OpenSSLCertificate);
         if ($data === false) {
             throw new ValueError('Invalid x509 cert value!');
@@ -111,23 +114,30 @@ final class Xml2Idps
 
             // X509
             $idpSSODescriptors = $entity->getElementsByTagNameNS('*', 'IDPSSODescriptor');
+            error_log('IDPSSODescriptor count: ' . $idpSSODescriptors->length);
             foreach ($idpSSODescriptors as $descriptor) {
-                $use = $descriptor->getAttribute('use'); // "signing", "encryption", or empty
-                $purpose = CertPurpose::Signing;
-                if ($use === 'encryption') {
-                    $purpose = CertPurpose::Encryption;
-                }
-                $x509Nodes = $descriptor->getElementsByTagNameNS('*', 'X509Certificate');
-                foreach ($x509Nodes as $node) {
-                    $cert = $node->nodeValue;
-                    [$pem, $sha256, $notBefore, $notAfter] = self::processCert($cert);
-                    $idp['certs'][] = array(
-                        'purpose' => $purpose,
-                        'x509'    => $pem,
-                        'sha256' => $sha256,
-                        'not_before' => $notBefore,
-                        'not_after' => $notAfter,
-                    );
+                $keyDescriptors = $descriptor->getElementsByTagNameNS('*', 'KeyDescriptor');
+                error_log('KeyDescriptor count in this IDPSSODescriptor: ' . $keyDescriptors->length);
+                foreach ($keyDescriptors as $keyDescriptor) {
+                    $use = $keyDescriptor->getAttribute('use'); // "signing", "encryption", or empty
+                    $purpose = CertPurpose::Signing;
+                    if ($use === 'encryption') {
+                        $purpose = CertPurpose::Encryption;
+                    }
+                    $x509Nodes = $keyDescriptor->getElementsByTagNameNS('*', 'X509Certificate');
+                    error_log('X509Certificate count in this KeyDescriptor: ' . $x509Nodes->length);
+                    foreach ($x509Nodes as $node) {
+                        error_log('Raw X509 text: ' . substr($node->textContent, 0, 40) . '...');
+                        $cert = $node->textContent;
+                        [$pem, $sha256, $notBefore, $notAfter] = self::processCert($cert);
+                        $idp['certs'][] = array(
+                            'purpose' => $purpose,
+                            'x509'    => $pem,
+                            'sha256' => $sha256,
+                            'not_before' => $notBefore,
+                            'not_after' => $notAfter,
+                        );
+                    }
                 }
             }
             $res[] = $idp;

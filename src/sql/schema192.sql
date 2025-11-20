@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS `idps_certs`
     sha256              CHAR(64) NOT NULL,
     not_before          DATETIME NULL,
     not_after           DATETIME NULL,
-    is_active           TINYINT(1) NOT NULL DEFAULT 1,
+    is_active           TINYINT UNSIGNED NOT NULL DEFAULT 1,
     created_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     modified_at         TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
                         ON UPDATE CURRENT_TIMESTAMP,

@@ -68,7 +68,7 @@ class IdpsCertsTest extends \PHPUnit\Framework\TestCase
         $id2 = $this->IdpsCerts->postAction(Action::Create, array('x509' => $cert));
         $this->assertSame($id, $id2);
         $this->assertCount(1, $this->IdpsCerts->readAll());
-        $IdpsCert = new IdpsCerts($this->requester, 1, $id);
+        $IdpsCert = new IdpsCerts($this->requester, $this->IdpsCerts->idpId, $id);
         $idp = $IdpsCert->readOne();
         $this->assertSame(Filter::pem($cert), $idp['x509']);
         $this->assertTrue($IdpsCert->destroy());

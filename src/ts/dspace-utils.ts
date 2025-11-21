@@ -10,25 +10,29 @@
 let dspaceLoginInFlight: Promise<void> | null = null;
 
 // helper: get collections from DSpace
-export async function listCollections(): Promise<any> {
+export async function listCollections(): Promise<DspaceCollectionList> {
   const token = await fetchXsrfToken();
   const res = await postToDspace({url: '/dspace/api/core/collections', method: 'GET', token});
   if (!res.ok) throw new Error(`DSpace error ${res.status}`);
-  return res.json();
+  return await res.json() as Promise<DspaceCollectionList>;
 }
 
 // helper: get types from DSpace
-export async function listTypes(): Promise<any> {
+export async function listTypes(): Promise<DspaceVocabularyEntryList> {
   const token = await fetchXsrfToken();
   const res = await postToDspace({
     url: '/dspace/api/submission/vocabularies/common_types/entries', method: 'GET', token,
   });
   if (!res.ok) throw new Error(`DSpace error ${res.status}`);
-  return res.json();
+  return await res.json() as Promise<DspaceVocabularyEntryList>;
 }
 
 // helper: create an item in DSpace
-export async function createWorkspaceItem(collection: string, metadata: any, token: string) {
+export async function createWorkspaceItem(
+  collection: string,
+  metadata: DspaceWorkspaceItemMetadata,
+  token: string,
+): Promise<DspaceWorkspaceItem> {
   const res = await postToDspace({
     url: `/dspace/api/submission/workspaceitems?owningCollection=${collection}`,
     method: 'POST',
@@ -40,7 +44,7 @@ export async function createWorkspaceItem(collection: string, metadata: any, tok
     const errorText = await res.text();
     throw new Error(`Create failed: ${res.status} - ${errorText}`);
   }
-  return res.json();
+  return await res.json() as Promise<DspaceWorkspaceItem>;
 }
 
 // helper: accept license
@@ -116,7 +120,6 @@ export async function submitWorkspaceItemToWorkflow(itemId: number | string, tok
   }
   return res;
 }
-
 export async function fetchXsrfToken(): Promise<string> {
   const cached = localStorage.getItem('dspaceXsrfToken');
   if (cached && await isDspaceSessionActive()) return cached;
@@ -174,14 +177,6 @@ export async function isDspaceSessionActive(): Promise<boolean> {
   }
 }
 
-interface DspaceFetchOptions {
-  url: string;
-  method: string;
-  token?: string | null;
-  body?: BodyInit | null;
-  contentType?: string;
-}
-
 export const postToDspace = async ({ url, method, body = null, token = null, contentType = 'application/x-www-form-urlencoded' }: DspaceFetchOptions) => {
   const headers: Record<string,string> = {};
   if (contentType) headers['Content-Type'] = contentType;
@@ -199,3 +194,57 @@ export const postToDspace = async ({ url, method, body = null, token = null, con
   }
   return res;
 };
+
+interface DspaceFetchOptions {
+  url: string;
+  method: string;
+  token?: string | null;
+  body?: BodyInit | null;
+  contentType?: string | null;
+}
+
+interface DspaceCollection {
+  uuid: string;
+  name: string;
+  [key: string]: unknown;
+}
+
+interface DspaceCollectionList {
+  _embedded: {
+    collections: DspaceCollection[];
+  };
+  [key: string]: unknown;
+}
+
+interface DspaceVocabularyEntry {
+  value: string;
+  display: string;
+  [key: string]: unknown;
+}
+
+interface DspaceVocabularyEntryList {
+  _embedded: {
+    entries: DspaceVocabularyEntry[];
+  };
+  [key: string]: unknown;
+}
+
+interface DspaceMetadataEntry {
+  key: string;
+  value: string;
+}
+
+export interface DspaceWorkspaceItemMetadata {
+  metadata: DspaceMetadataEntry[];
+}
+
+interface DspaceWorkspaceItemLinks {
+  self?: { href: string };
+  [key: string]: unknown;
+}
+
+export interface DspaceWorkspaceItem {
+  id: number;
+  _links?: DspaceWorkspaceItemLinks;
+  [key: string]: unknown;
+}

@@ -126,8 +126,17 @@ final class IdpsCerts extends AbstractRest
             $this->Db->execute($req);
             return $this->Db->lastInsertId();
         }
-        // TODO touch()
-        return $id;
+        $this->id = $id;
+        return $this->touch();
+    }
+
+    private function touch(): int
+    {
+        $sql = 'UPDATE idps_certs SET modified_at = NOW() WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return $this->id ?? 0;
     }
 
     private function ensureIsSysadmin(): void

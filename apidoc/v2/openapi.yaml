@@ -866,6 +866,14 @@ components:
           description: >
             Usage of the certificate. 0 for signing, 1 for encryption.
           example: 0
+        not_before:
+          type: string
+          description: Validity starting date for certificate
+          example: '2019-04-15 18:18:00.000000'
+        not_after:
+          type: string
+          description: Validity end date for certificate
+          example: '2038-01-19 03:47:07.000000'
         created_at:
           type: string
           description: Timestamp when the certificate was created.

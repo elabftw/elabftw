@@ -85,6 +85,8 @@ final class Idps extends AbstractRest
                 'x509', idps_certs.x509,
                 'sha256', idps_certs.sha256,
                 'purpose', idps_certs.purpose,
+                'not_before', idps_certs.not_before,
+                'not_after', idps_certs.not_after,
                 'created_at', idps_certs.created_at,
                 'modified_at', idps_certs.modified_at)) AS certs
             FROM idps
@@ -119,6 +121,8 @@ final class Idps extends AbstractRest
                     'x509', idps_certs.x509,
                     'sha256', idps_certs.sha256,
                     'purpose', idps_certs.purpose,
+                    'not_before', idps_certs.not_before,
+                    'not_after', idps_certs.not_after,
                     'created_at', idps_certs.created_at,
                     'modified_at', idps_certs.modified_at)) AS certs
             FROM idps

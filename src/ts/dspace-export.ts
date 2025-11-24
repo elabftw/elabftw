@@ -14,9 +14,10 @@ import { acceptWorkspaceItemLicense, createWorkspaceItem, fetchXsrfToken, isDspa
 } from './dspace-utils';
 import { on } from './handlers';
 import i18next from './i18n';
+import { notify } from "./notify";
 
 if (document.getElementById('dspaceExportModal')) {
-  on('export-to-dspace', async () => {
+  on('export-to-dspace', async (el: HTMLElement, event: Event) => {
     const form = document.getElementById('dspaceExportForm') as HTMLFormElement;
     const collection = form.collection.value;
     const author = form.author.value;
@@ -26,6 +27,12 @@ if (document.getElementById('dspaceExportModal')) {
     const abstract = form.abstract.value;
     const file = form.file.files[0];
     // TODO: add the file directly from the experiment/resource's ELN
+    // in dspace, license is a default.license file: there's only one. Only possible action is accept: yes or no -> checkbox
+    const licenseAccepted = form.querySelector<HTMLInputElement>('#dspaceLicense')!.checked;
+    if (!licenseAccepted) {
+      alert(i18next.t('license-error'));
+      return;
+    }
 
     const metadata = {
       metadata: [
@@ -38,23 +45,25 @@ if (document.getElementById('dspaceExportModal')) {
     };
 
     try {
+      // prevent modal from closing when license has not been accepted
+      event.preventDefault();
+      event.stopPropagation();
       const token = await fetchXsrfToken();
-      // create the item in DSpace
+      // create the item workspace in DSpace
       const item = await createWorkspaceItem(collection, metadata, token);
       const itemId = item.id;
-      // accept license
+      // accept license (only reached if checkbox was checked)
       await acceptWorkspaceItemLicense(itemId, token);
-      // patch required metadata to be in traditionalpageone
+      // metadata section
       await updateWorkspaceItemMetadata(itemId, token, title, date, type, abstract);
-      // upload file (adds to /sections/upload)
+      // mandatory file upload
       await uploadWorkspaceItemFile(itemId, file, token);
-      // move workspaceitem to workflow (deposit)
-      await submitWorkspaceItemToWorkflow(itemId, token);
-
-      alert('Export to DSpace successful!');
+      // submit (deposit) to workflow. Catch here if the POST is not sent, otherwise the response time being >120sec we don't await it.
+      submitWorkspaceItemToWorkflow(itemId, token).catch(() => notify.error('submission-error'));
+      notify.success('export-success');
     } catch (e) {
+      notify.error('submission-error');
       console.error(e);
-      alert(`Export failed: ${e.message}`);
     }
   });
 }

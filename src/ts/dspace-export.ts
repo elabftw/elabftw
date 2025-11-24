@@ -9,15 +9,14 @@
  * All logic related to DSpace export modal. Located in toolbar on view/edit pages
  */
 
-import { acceptWorkspaceItemLicense, createWorkspaceItem, fetchXsrfToken, isDspaceSessionActive, listCollections,
-  listTypes, loginToDspace, submitWorkspaceItemToWorkflow, updateWorkspaceItemMetadata, uploadWorkspaceItemFile
+import { acceptWorkspaceItemLicense, createWorkspaceItem, fetchXsrfToken, getItemUuidFromDspace, isDspaceSessionActive, listCollections, listTypes, loginToDspace, submitWorkspaceItemToWorkflow, updateWorkspaceItemMetadata, uploadWorkspaceItemFile
 } from './dspace-utils';
 import { on } from './handlers';
 import i18next from './i18n';
 import { notify } from "./notify";
 
 if (document.getElementById('dspaceExportModal')) {
-  on('export-to-dspace', async (el: HTMLElement, event: Event) => {
+  on('export-to-dspace', async () => {
     const form = document.getElementById('dspaceExportForm') as HTMLFormElement;
     const collection = form.collection.value;
     const author = form.author.value;
@@ -45,21 +44,21 @@ if (document.getElementById('dspaceExportModal')) {
     };
 
     try {
-      // prevent modal from closing when license has not been accepted
-      event.preventDefault();
-      event.stopPropagation();
       const token = await fetchXsrfToken();
-      // create the item workspace in DSpace
-      const item = await createWorkspaceItem(collection, metadata, token);
-      const itemId = item.id;
+      // create the item's WORKSPACE in DSpace
+      const workspace = await createWorkspaceItem(collection, metadata, token);
+      const workspaceId = workspace.id;
+      // get real DSpace item UUID to store be stored in elab)
+      const itemUuid = await getItemUuidFromDspace(workspaceId, token);
+      console.log('DSpace item UUID:', itemUuid);
       // accept license (only reached if checkbox was checked)
-      await acceptWorkspaceItemLicense(itemId, token);
+      await acceptWorkspaceItemLicense(workspaceId, token);
       // metadata section
-      await updateWorkspaceItemMetadata(itemId, token, title, date, type, abstract);
+      await updateWorkspaceItemMetadata(workspaceId, token, title, date, type, abstract);
       // mandatory file upload
-      await uploadWorkspaceItemFile(itemId, file, token);
+      await uploadWorkspaceItemFile(workspaceId, file, token);
       // submit (deposit) to workflow. Catch here if the POST is not sent, otherwise the response time being >120sec we don't await it.
-      submitWorkspaceItemToWorkflow(itemId, token).catch(() => notify.error('submission-error'));
+      submitWorkspaceItemToWorkflow(workspaceId, token).catch(() => notify.error('submission-error'));
       notify.success('export-success');
     } catch (e) {
       notify.error('submission-error');

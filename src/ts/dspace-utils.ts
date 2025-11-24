@@ -120,6 +120,21 @@ export async function submitWorkspaceItemToWorkflow(itemId: number | string, tok
   }
   return res;
 }
+
+export async function getItemUuidFromDspace(workspaceId: number | string, token: string): Promise<string> {
+  const res = await postToDspace({
+    url: `/dspace/api/submission/workspaceitems/${workspaceId}/item`,
+    method: 'GET',
+    token,
+  });
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`Get item from workspaceitem failed: ${res.status} - ${errorText}`);
+  }
+  const item = await res.json() as DspaceItem;
+  return item.uuid;
+}
+
 export async function fetchXsrfToken(): Promise<string> {
   const cached = localStorage.getItem('dspaceXsrfToken');
   if (cached && await isDspaceSessionActive()) return cached;
@@ -246,5 +261,11 @@ interface DspaceWorkspaceItemLinks {
 export interface DspaceWorkspaceItem {
   id: number;
   _links?: DspaceWorkspaceItemLinks;
+  [key: string]: unknown;
+}
+
+interface DspaceItem {
+  uuid: string;
+  handle?: string;
   [key: string]: unknown;
 }

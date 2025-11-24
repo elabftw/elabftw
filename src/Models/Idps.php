@@ -73,20 +73,30 @@ final class Idps extends AbstractRest
     public function readOne(): array
     {
         $sql = "SELECT idps.*, idps_sources.url AS source_url,
-            JSON_ARRAYAGG(JSON_OBJECT(
-                'x509', idps_certs.x509,
-                'sha256', idps_certs.sha256,
-                'purpose', idps_certs.purpose,
-                'not_before', idps_certs.not_before,
-                'not_after', idps_certs.not_after,
-                'created_at', idps_certs.created_at,
-                'modified_at', idps_certs.modified_at)) AS certs,
-            JSON_ARRAYAGG(JSON_OBJECT(
-                'binding', idps_endpoints.binding,
-                'location', idps_endpoints.location,
-                'is_slo', idps_endpoints.is_slo,
-                'created_at', idps_endpoints.created_at,
-                'modified_at', idps_endpoints.modified_at)) AS endpoints
+            COALESCE(
+                (SELECT JSON_ARRAYAGG(JSON_OBJECT(
+                    'x509', ic.x509,
+                    'sha256', ic.sha256,
+                    'purpose', ic.purpose,
+                    'not_before', ic.not_before,
+                    'not_after', ic.not_after,
+                    'created_at', ic.created_at,
+                    'modified_at', ic.modified_at))
+                FROM idps_certs AS ic
+                WHERE ic.idp = idps.id),
+            JSON_ARRAY()
+            ) AS certs,
+            COALESCE(
+                (SELECT JSON_ARRAYAGG(JSON_OBJECT(
+                    'binding', ie.binding,
+                    'location', ie.location,
+                    'is_slo', ie.is_slo,
+                    'created_at', ie.created_at,
+                    'modified_at', ie.modified_at))
+                FROM idps_endpoints AS ie
+                WHERE ie.idp = idps.id),
+            JSON_ARRAY()
+            ) AS endpoints
             FROM idps
             LEFT JOIN idps_sources ON idps.source = idps_sources.id
             LEFT JOIN idps_certs ON idps.id = idps_certs.idp
@@ -97,95 +107,45 @@ final class Idps extends AbstractRest
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
-        $res = $this->Db->fetch($req);
-        // make sure we return an empty array if no certs are associated with it
-        $decoded = json_decode($res['certs'] ?? 'null', true, 3, JSON_THROW_ON_ERROR);
-        if (!is_array($decoded)) {
-            $decoded = array();
-        } else {
-            $decoded = array_values(array_filter(
-                $decoded,
-                static fn(array $cert): bool => array_key_exists('x509', $cert) && $cert['x509'] !== null,
-            ));
-            foreach ($decoded as &$cert) {
-                $cert['purpose_human'] = CertPurpose::from($cert['purpose'])->name;
-            }
-        }
-        $res['certs'] = $decoded;
-
-        $endpointsDecoded = json_decode($res['endpoints'] ?? 'null', true, 3, JSON_THROW_ON_ERROR);
-        if (!is_array($endpointsDecoded)) {
-            $endpointsDecoded = array();
-        } else {
-            $endpointsDecoded = array_values(array_filter(
-                $endpointsDecoded,
-                static fn(array $endpoint): bool => array_key_exists('location', $endpoint) && $endpoint['location'] !== null,
-            ));
-            foreach ($endpointsDecoded as &$endpoint) {
-                $endpoint['binding_urn'] = SamlBinding::from($endpoint['binding'])->toUrn();
-            }
-        }
-        $res['endpoints'] = $endpointsDecoded;
-        return $res;
+        return $this->hydrate($this->Db->fetch($req));
     }
 
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = "SELECT idps.*, idps_sources.url AS source_url,
-                JSON_ARRAYAGG(JSON_OBJECT(
-                    'x509', idps_certs.x509,
-                    'sha256', idps_certs.sha256,
-                    'purpose', idps_certs.purpose,
-                    'not_before', idps_certs.not_before,
-                    'not_after', idps_certs.not_after,
-                    'created_at', idps_certs.created_at,
-                    'modified_at', idps_certs.modified_at)) AS certs,
-                JSON_ARRAYAGG(JSON_OBJECT(
-                    'binding', idps_endpoints.binding,
-                    'location', idps_endpoints.location,
-                    'is_slo', idps_endpoints.is_slo,
-                    'created_at', idps_endpoints.created_at,
-                    'modified_at', idps_endpoints.modified_at)) AS endpoints
+            COALESCE(
+                (SELECT JSON_ARRAYAGG(JSON_OBJECT(
+                    'x509', ic.x509,
+                    'sha256', ic.sha256,
+                    'purpose', ic.purpose,
+                    'not_before', ic.not_before,
+                    'not_after', ic.not_after,
+                    'created_at', ic.created_at,
+                    'modified_at', ic.modified_at))
+                FROM idps_certs AS ic
+                WHERE ic.idp = idps.id),
+                JSON_ARRAY()
+            ) AS certs,
+            COALESCE(
+                (SELECT JSON_ARRAYAGG(JSON_OBJECT(
+                    'binding', ie.binding,
+                    'location', ie.location,
+                    'is_slo', ie.is_slo,
+                    'created_at', ie.created_at,
+                    'modified_at', ie.modified_at))
+                FROM idps_endpoints AS ie
+                WHERE ie.idp = idps.id),
+                JSON_ARRAY()
+            ) AS endpoints
             FROM idps
             LEFT JOIN idps_sources ON idps.source = idps_sources.id
-            LEFT JOIN idps_certs ON idps.id = idps_certs.idp
-            LEFT JOIN idps_endpoints ON idps.id = idps_endpoints.idp
             GROUP BY idps.id
             ORDER BY name ASC";
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
         $res = $req->fetchAll();
-        foreach ($res as &$idp) {
-            $decoded = json_decode($idp['certs'] ?? 'null', true, 3, JSON_THROW_ON_ERROR);
-            if (!is_array($decoded)) {
-                $decoded = array();
-            } else {
-                $decoded = array_values(array_filter(
-                    $decoded,
-                    static fn(array $cert): bool => array_key_exists('x509', $cert) && $cert['x509'] !== null,
-                ));
-                foreach ($decoded as &$cert) {
-                    $cert['purpose_human'] = CertPurpose::from($cert['purpose'])->name;
-                }
-            }
-            $idp['certs'] = $decoded;
-
-            $endpointsDecoded = json_decode($idp['endpoints'] ?? 'null', true, 3, JSON_THROW_ON_ERROR);
-            if (!is_array($endpointsDecoded)) {
-                $endpointsDecoded = array();
-            } else {
-                $endpointsDecoded = array_values(array_filter(
-                    $endpointsDecoded,
-                    static fn(array $endpoint): bool => array_key_exists('location', $endpoint) && $endpoint['location'] !== null,
-                ));
-                foreach ($endpointsDecoded as &$endpoint) {
-                    $endpoint['binding_urn'] = SamlBinding::from($endpoint['binding'])->toUrn();
-                }
-            }
-            $idp['endpoints'] = $endpointsDecoded;
-        }
-        return $res;
+        return array_map(array($this, 'hydrate'), $res);
     }
 
     /**
@@ -339,6 +299,24 @@ final class Idps extends AbstractRest
             return 0;
         }
         return (int) $res;
+    }
+
+    private function hydrate(array $idp): array
+    {
+        $idp['certs'] = array_map(
+            static fn(array $cert): array => $cert + array(
+                'purpose_human' => CertPurpose::from($cert['purpose'])->name,
+            ),
+            json_decode($idp['certs'] ?? 'null', true, 3, JSON_THROW_ON_ERROR) ?? array()
+        );
+
+        $idp['endpoints'] = array_map(
+            static fn(array $endpoint): array => $endpoint + array(
+                'binding_urn' => SamlBinding::from($endpoint['binding'])->toUrn(),
+            ),
+            json_decode($idp['endpoints'] ?? 'null', true, 3, JSON_THROW_ON_ERROR) ?? array()
+        );
+        return $idp;
     }
 
     private function createIdp(

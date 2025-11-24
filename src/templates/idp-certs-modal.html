@@ -42,20 +42,24 @@
           </tr>
         </template>
         <hr>
-        <label for='idpCertsModalNew'><h6>{{ 'Add a certificate'|trans }}</h6></label>
-        <p class='smallgray'>{{ 'Upload a certificate in .pem format or paste it in the box on the right.'|trans }}</p>
-        <form id='idpCertForm'>
-          <div class='d-flex justify-content-between'>
+        <button class='btn btn-secondary bg-superlight btn-sm' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right'>
+          <i class='fas fa-caret-right color-white mr-1'></i>{{ 'Add a certificate'|trans }}
+        </button>
+        <div hidden>
+          <form id='idpCertForm'>
+            <label for='idpCertsModalNew' class='col-form-label'>{{ 'x509 certificate'|trans }}</label>
+            <textarea class='form-control' id='idpCertsModalNew' required placeholder='-----BEGIN CERTIFICATE-----MIIELDCC...CRGEJtD-----END CERTIFICATE-----' name='x509'></textarea>
+            <p class='smallgray'>{{ 'Paste PEM'|trans }}</p>
             <div>
               <input type='file' data-action='load-file-on-change' data-ignore='1' data-target='idpCertsModalNew' class='form-control' aria-label='File upload: x509 Certificate in PEM format' />
+              <p class='smallgray'>{{ 'Or upload PEM file'|trans }}</p>
             </div>
-            <textarea class='form-control col-md-4' id='idpCertsModalNew' placeholder='-----BEGIN CERTIFICATE-----MIIELDCC...' name='x509'></textarea>
-          </div>
-          <div class='d-flex justify-content-between'>
-          <button type='submit' data-action='save-idp-cert' id='idpCertsModalSaveButton' data-dismiss='modal' class='btn btn-primary ml-auto mb-2 mt-1'>{{ 'Save'|trans }}</button>
-          </div>
-        </form>
-        <div class='modal-footer'>
+            <div class='text-center'>
+            <button type='submit' data-action='save-idp-cert' id='idpCertsModalSaveButton' class='btn btn-primary ml-auto mb-2 mt-1'>{{ 'Save certificate'|trans }}</button>
+            </div>
+          </form>
+        </div>
+        <div class='modal-footer mt-2'>
           <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Close'|trans }}</button>
         </div>
       </div>

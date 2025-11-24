@@ -364,6 +364,7 @@ if (window.location.pathname === '/sysconfig.php') {
       const params = collectForm(form);
       clearForm(form);
       ApiC.post(`${Model.Idp}/${el.dataset.idp}/certs`, params).then(() => reloadElements(['idpsDiv']));
+      $('#idpCertsModal').modal('hide');
     } catch (e) {
       notify.error(e);
       return;

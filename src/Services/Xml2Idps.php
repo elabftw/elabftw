@@ -18,7 +18,6 @@ use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\CertPurpose;
 use Elabftw\Enums\SamlBinding;
 use Elabftw\Exceptions\ImproperActionException;
-use ValueError;
 
 use function openssl_x509_parse;
 
@@ -38,16 +37,16 @@ final class Xml2Idps
         $OpenSSLCertificate = openssl_x509_read($x509PemWithHeaders);
 
         if ($OpenSSLCertificate === false) {
-            throw new ValueError(sprintf('Invalid x509 cert value: %s', openssl_error_string()));
+            throw new ImproperActionException(sprintf('Invalid x509 cert value: %s', openssl_error_string()));
         }
         $pem = '';
         openssl_x509_export($OpenSSLCertificate, $pem);
         if (empty($pem)) {
-            throw new ValueError('Error exporting x509 cert!');
+            throw new ImproperActionException('Error exporting x509 cert!');
         }
         $data = openssl_x509_parse($OpenSSLCertificate);
         if ($data === false) {
-            throw new ValueError('Invalid x509 cert value!');
+            throw new ImproperActionException('Invalid x509 cert value!');
         }
         return array(
             $pem,

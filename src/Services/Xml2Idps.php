@@ -14,9 +14,10 @@ namespace Elabftw\Services;
 
 use DateTimeImmutable;
 use DOMDocument;
+use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\CertPurpose;
+use Elabftw\Enums\SamlBinding;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Idps;
 use ValueError;
 
 use function openssl_x509_parse;
@@ -58,9 +59,6 @@ final class Xml2Idps
 
     public function getIdpsFromDom(): array
     {
-        $ssoBindings = array(Idps::SSO_BINDING_POST, Idps::SSO_BINDING_REDIRECT);
-        $sloBindings = array(Idps::SLO_BINDING_POST, Idps::SSO_BINDING_REDIRECT);
-
         $res = array();
         $entities = $this->dom->getElementsByTagNameNS('*', 'EntityDescriptor');
         if (count($entities) === 0) {
@@ -68,14 +66,14 @@ final class Xml2Idps
         }
 
         foreach ($entities as $entity) {
-            $idp = array('certs' => array());
+            $idp = array('certs' => array(), 'endpoints' => array());
 
             // NAME
             $names = $entity->getElementsByTagNameNS('*', 'DisplayName');
             foreach ($names as $node) {
                 // TODO use server lang
                 if ($node->getAttribute('xml:lang') === 'en') {
-                    $idp['name'] = $node->nodeValue;
+                    $idp['name'] = $node->textContent;
                 }
             }
 
@@ -96,28 +94,36 @@ final class Xml2Idps
             // SSO
             $ssoServiceNodes = $entity->getElementsByTagNameNS('*', 'SingleSignOnService');
             foreach ($ssoServiceNodes as $node) {
-                if (in_array($node->getAttribute('Binding'), $ssoBindings, true)) {
-                    $idp['sso_url'] = $node->getAttribute('Location');
+                $binding = SamlBinding::fromUrn($node->getAttribute('Binding'));
+                if ($binding === null) {
+                    continue;
                 }
-            }
-            // no sso_url found means we skip it
-            if (empty($idp['sso_url'])) {
-                continue;
+                $endpoint = array(
+                    'binding' => $binding,
+                    'location' => $node->getAttribute('Location'),
+                    'is_slo' => BinaryValue::False,
+                );
+                $idp['endpoints'][] = $endpoint;
             }
             // SLO
             $sloServiceNodes = $entity->getElementsByTagNameNS('*', 'SingleLogoutService');
             foreach ($sloServiceNodes as $node) {
-                if (in_array($node->getAttribute('Binding'), $sloBindings, true)) {
-                    $idp['slo_url'] = $node->getAttribute('Location');
+                $binding = SamlBinding::fromUrn($node->getAttribute('Binding'));
+                if ($binding === null) {
+                    continue;
                 }
+                $endpoint = array(
+                    'binding' => $binding,
+                    'location' => $node->getAttribute('Location'),
+                    'is_slo' => BinaryValue::True,
+                );
+                $idp['endpoints'][] = $endpoint;
             }
 
             // X509
             $idpSSODescriptors = $entity->getElementsByTagNameNS('*', 'IDPSSODescriptor');
-            error_log('IDPSSODescriptor count: ' . $idpSSODescriptors->length);
             foreach ($idpSSODescriptors as $descriptor) {
                 $keyDescriptors = $descriptor->getElementsByTagNameNS('*', 'KeyDescriptor');
-                error_log('KeyDescriptor count in this IDPSSODescriptor: ' . $keyDescriptors->length);
                 foreach ($keyDescriptors as $keyDescriptor) {
                     $use = $keyDescriptor->getAttribute('use'); // "signing", "encryption", or empty
                     $purpose = CertPurpose::Signing;
@@ -125,9 +131,7 @@ final class Xml2Idps
                         $purpose = CertPurpose::Encryption;
                     }
                     $x509Nodes = $keyDescriptor->getElementsByTagNameNS('*', 'X509Certificate');
-                    error_log('X509Certificate count in this KeyDescriptor: ' . $x509Nodes->length);
                     foreach ($x509Nodes as $node) {
-                        error_log('Raw X509 text: ' . substr($node->textContent, 0, 40) . '...');
                         $cert = $node->textContent;
                         [$pem, $sha256, $notBefore, $notAfter] = self::processCert($cert);
                         $idp['certs'][] = array(

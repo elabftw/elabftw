@@ -37,6 +37,7 @@ interface Cert {
   id: number;
   idp: number;
   purpose: BinaryValue;
+  purpose_human: string;
   x509: string;
   sha256: string;
   not_before: string;
@@ -46,20 +47,30 @@ interface Cert {
   modified_at: string;
 }
 
-function purposeLabel(purpose: number): string {
-  switch (purpose) {
-  case 0:
-    return i18next.t('signing');
-  case 1:
-    return i18next.t('encryption');
-  default:
-    return '??';
-  }
+interface Endpoint {
+  id: number;
+  idp: number;
+  binding: BinaryValue;
+  binding_urn: string;
+  is_slo: BinaryValue;
+  service_type: string;
+  location: string;
+  created_at: string;
+  modified_at: string;
 }
+
+const endpointCols: (keyof Endpoint)[] = [
+  'id',
+  'binding_urn',
+  'location',
+  'service_type',
+  'created_at',
+  'modified_at',
+];
 
 const cols: (keyof Cert)[] = [
   'id',
-  'purpose',
+  'purpose_human',
   'not_before',
   'not_after',
   'created_at',
@@ -82,9 +93,26 @@ function renderCerts(certs: Cert[]): void {
 
       cols.forEach((key, i) => {
         let value: unknown = cert[key];
-        if (key === 'purpose') value = purposeLabel(cert.purpose);
         if (key === 'sha256' || key === 'x509') value = shorten(String(value));
         cells[i].textContent = String(value);
+      });
+
+      return row;
+    }),
+  );
+}
+
+function renderEndpoints(endpoints: Endpoint[]): void {
+  const tbody = document.getElementById('idpEndpointsTableBody') as HTMLTableSectionElement;
+  const template = document.getElementById('endpointRow') as HTMLTemplateElement;
+
+  tbody.replaceChildren(
+    ...endpoints.map(endpoint => {
+      const row = template.content.firstElementChild!.cloneNode(true) as HTMLTableRowElement;
+      const cells = Array.from(row.children) as HTMLTableCellElement[];
+
+      endpointCols.forEach((key, i) => {
+        cells[i].textContent = String(endpoint[key]);
       });
 
       return row;
@@ -274,10 +302,6 @@ if (window.location.pathname === '/sysconfig.php') {
     ApiC.getJson(`${Model.Idp}/${el.dataset.id}`).then(idp => {
       (document.getElementById('idpModal_name') as HTMLInputElement).value = idp.name;
       (document.getElementById('idpModal_entityid') as HTMLInputElement).value = idp.entityid;
-      (document.getElementById('idpModal_sso_url') as HTMLInputElement).value = idp.sso_url;
-      (document.getElementById('idpModal_sso_binding') as HTMLSelectElement).value = idp.sso_binding;
-      (document.getElementById('idpModal_slo_url') as HTMLInputElement).value = idp.slo_url;
-      (document.getElementById('idpModal_slo_binding') as HTMLSelectElement).value = idp.slo_binding;
       (document.getElementById('idpModal_email_attr') as HTMLInputElement).value = idp.email_attr;
       (document.getElementById('idpModal_fname_attr') as HTMLInputElement).value = idp.fname_attr;
       (document.getElementById('idpModal_lname_attr') as HTMLInputElement).value = idp.lname_attr;
@@ -294,6 +318,13 @@ if (window.location.pathname === '/sysconfig.php') {
       // add idp id to Add cert save button
       document.getElementById('idpCertsModalSaveButton').dataset.idp = el.dataset.id;
       $('#idpCertsModal').modal('show');
+    });
+  });
+
+  on('display-idp-endpoints-modal', (el: HTMLElement) => {
+    ApiC.getJson(`${Model.Idp}/${el.dataset.id}/endpoints`).then(endpoints => {
+      renderEndpoints(endpoints);
+      $('#idpEndpointsModal').modal('show');
     });
   });
 

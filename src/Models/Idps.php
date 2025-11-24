@@ -13,6 +13,8 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\CertPurpose;
+use Elabftw\Enums\SamlBinding;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Users\Users;
@@ -27,14 +29,6 @@ use PDO;
 final class Idps extends AbstractRest
 {
     use SetIdTrait;
-
-    public const string SSO_BINDING_POST = 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST';
-
-    public const string SSO_BINDING_REDIRECT = 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect';
-
-    public const string SLO_BINDING_POST = 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST';
-
-    public const string SLO_BINDING_REDIRECT = 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect';
 
     private const string EMAIL_ATTR = 'urn:oid:0.9.2342.19200300.100.1.3';
 
@@ -65,15 +59,13 @@ final class Idps extends AbstractRest
         return $this->create(
             name: $reqBody['name'],
             entityid: $reqBody['entityid'],
-            sso_url: $reqBody['sso_url'],
-            sso_binding: $reqBody['sso_binding'],
-            slo_url: $reqBody['slo_url'],
-            slo_binding: $reqBody['slo_binding'],
             email_attr: $reqBody['email_attr'],
             team_attr: $reqBody['team_attr'] ?? null,
             fname_attr: $reqBody['fname_attr'],
             lname_attr: $reqBody['lname_attr'],
             orgid_attr: $reqBody['orgid_attr'] ?? null,
+            certs: $reqBody['certs'] ?? array(),
+            endpoints: $reqBody['endpoints'] ?? array(),
         );
     }
 
@@ -88,10 +80,17 @@ final class Idps extends AbstractRest
                 'not_before', idps_certs.not_before,
                 'not_after', idps_certs.not_after,
                 'created_at', idps_certs.created_at,
-                'modified_at', idps_certs.modified_at)) AS certs
+                'modified_at', idps_certs.modified_at)) AS certs,
+            JSON_ARRAYAGG(JSON_OBJECT(
+                'binding', idps_endpoints.binding,
+                'location', idps_endpoints.location,
+                'is_slo', idps_endpoints.is_slo,
+                'created_at', idps_endpoints.created_at,
+                'modified_at', idps_endpoints.modified_at)) AS endpoints
             FROM idps
             LEFT JOIN idps_sources ON idps.source = idps_sources.id
             LEFT JOIN idps_certs ON idps.id = idps_certs.idp
+            LEFT JOIN idps_endpoints ON idps.id = idps_endpoints.idp
             WHERE idps.id = :id
             GROUP BY idps.id
             ORDER BY name ASC";
@@ -108,8 +107,25 @@ final class Idps extends AbstractRest
                 $decoded,
                 static fn(array $cert): bool => array_key_exists('x509', $cert) && $cert['x509'] !== null,
             ));
+            foreach ($decoded as &$cert) {
+                $cert['purpose_human'] = CertPurpose::from($cert['purpose'])->name;
+            }
         }
         $res['certs'] = $decoded;
+
+        $endpointsDecoded = json_decode($res['endpoints'] ?? 'null', true, 3, JSON_THROW_ON_ERROR);
+        if (!is_array($endpointsDecoded)) {
+            $endpointsDecoded = array();
+        } else {
+            $endpointsDecoded = array_values(array_filter(
+                $endpointsDecoded,
+                static fn(array $endpoint): bool => array_key_exists('location', $endpoint) && $endpoint['location'] !== null,
+            ));
+            foreach ($endpointsDecoded as &$endpoint) {
+                $endpoint['binding_urn'] = SamlBinding::from($endpoint['binding'])->toUrn();
+            }
+        }
+        $res['endpoints'] = $endpointsDecoded;
         return $res;
     }
 
@@ -124,10 +140,17 @@ final class Idps extends AbstractRest
                     'not_before', idps_certs.not_before,
                     'not_after', idps_certs.not_after,
                     'created_at', idps_certs.created_at,
-                    'modified_at', idps_certs.modified_at)) AS certs
+                    'modified_at', idps_certs.modified_at)) AS certs,
+                JSON_ARRAYAGG(JSON_OBJECT(
+                    'binding', idps_endpoints.binding,
+                    'location', idps_endpoints.location,
+                    'is_slo', idps_endpoints.is_slo,
+                    'created_at', idps_endpoints.created_at,
+                    'modified_at', idps_endpoints.modified_at)) AS endpoints
             FROM idps
             LEFT JOIN idps_sources ON idps.source = idps_sources.id
             LEFT JOIN idps_certs ON idps.id = idps_certs.idp
+            LEFT JOIN idps_endpoints ON idps.id = idps_endpoints.idp
             GROUP BY idps.id
             ORDER BY name ASC";
         $req = $this->Db->prepare($sql);
@@ -142,8 +165,25 @@ final class Idps extends AbstractRest
                     $decoded,
                     static fn(array $cert): bool => array_key_exists('x509', $cert) && $cert['x509'] !== null,
                 ));
+                foreach ($decoded as &$cert) {
+                    $cert['purpose_human'] = CertPurpose::from($cert['purpose'])->name;
+                }
             }
             $idp['certs'] = $decoded;
+
+            $endpointsDecoded = json_decode($idp['endpoints'] ?? 'null', true, 3, JSON_THROW_ON_ERROR);
+            if (!is_array($endpointsDecoded)) {
+                $endpointsDecoded = array();
+            } else {
+                $endpointsDecoded = array_values(array_filter(
+                    $endpointsDecoded,
+                    static fn(array $endpoint): bool => array_key_exists('location', $endpoint) && $endpoint['location'] !== null,
+                ));
+                foreach ($endpointsDecoded as &$endpoint) {
+                    $endpoint['binding_urn'] = SamlBinding::from($endpoint['binding'])->toUrn();
+                }
+            }
+            $idp['endpoints'] = $endpointsDecoded;
         }
         return $res;
     }
@@ -178,7 +218,7 @@ final class Idps extends AbstractRest
     {
         $this->canWriteOrExplode();
         foreach ($params as $key => $value) {
-            if ($key === 'certs') {
+            if ($key === 'certs' || $key === 'endpoints') {
                 continue;
             }
             $this->update($key, $value);
@@ -186,7 +226,7 @@ final class Idps extends AbstractRest
         return $this->readOne();
     }
 
-    public function upsert(int $sourceId, Xml2Idps $xml2Idps, IdpsCerts $idpsCerts): int
+    public function upsert(int $sourceId, Xml2Idps $xml2Idps): int
     {
         $idps = $xml2Idps->getIdpsFromDom();
 
@@ -196,15 +236,19 @@ final class Idps extends AbstractRest
                 $id = $this->create(
                     name: $idp['name'],
                     entityid: $idp['entityid'],
-                    sso_url: $idp['sso_url'],
-                    slo_url: $idp['slo_url'] ?? '',
                     enabled: 0,
                     source: $sourceId,
+                    certs: $idp['certs'],
+                    endpoints: $idp['endpoints'],
                 );
             }
             $this->setId($id);
+            // when coming from XML, we do not overwrite these attributes
+            unset($idp['email_attr']);
+            unset($idp['fname_attr']);
+            unset($idp['team_attr']);
+            unset($idp['orgid_attr']);
             $this->patch(Action::Update, $idp);
-            $idpsCerts->upsert($id, $idp);
         }
         return count($idps);
     }
@@ -256,10 +300,6 @@ final class Idps extends AbstractRest
     public function create(
         string $name,
         string $entityid,
-        string $sso_url,
-        ?string $slo_url = '',
-        string $sso_binding = self::SSO_BINDING_POST,
-        string $slo_binding = self::SLO_BINDING_REDIRECT,
         string $email_attr = self::EMAIL_ATTR,
         ?string $team_attr = self::TEAM_ATTR,
         string $fname_attr = self::FNAME_ATTR,
@@ -267,27 +307,25 @@ final class Idps extends AbstractRest
         ?string $orgid_attr = self::ORGID_ATTR,
         int $enabled = 1,
         ?int $source = null,
+        ?array $certs = array(),
+        ?array $endpoints = array(),
     ): int {
         $this->canWriteOrExplode();
-        $sql = 'INSERT INTO idps(name, entityid, sso_url, sso_binding, slo_url, slo_binding, email_attr, team_attr, fname_attr, lname_attr, orgid_attr, enabled, source)
-            VALUES(:name, :entityid, :sso_url, :sso_binding, :slo_url, :slo_binding, :email_attr, :team_attr, :fname_attr, :lname_attr, :orgid_attr, :enabled, :source)';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':name', $name);
-        $req->bindParam(':entityid', $entityid);
-        $req->bindParam(':sso_url', $sso_url);
-        $req->bindParam(':sso_binding', $sso_binding);
-        $req->bindParam(':slo_url', $slo_url);
-        $req->bindParam(':slo_binding', $slo_binding);
-        $req->bindParam(':email_attr', $email_attr);
-        $req->bindParam(':team_attr', $team_attr);
-        $req->bindParam(':fname_attr', $fname_attr);
-        $req->bindParam(':lname_attr', $lname_attr);
-        $req->bindParam(':orgid_attr', $orgid_attr);
-        $req->bindParam(':enabled', $enabled, PDO::PARAM_INT);
-        $req->bindParam(':source', $source);
-        $this->Db->execute($req);
+        $idpId = $this->createIdp($name, $entityid, $email_attr, $team_attr, $fname_attr, $lname_attr, $orgid_attr, $enabled, $source);
+        if (!empty($certs)) {
+            $IdpsCerts = new IdpsCerts($this->requester, $idpId);
+            foreach ($certs as $cert) {
+                $IdpsCerts->create($cert['purpose'], $cert['x509'], $cert['sha256'], $cert['not_before'], $cert['not_after']);
+            }
+        }
+        if (!empty($endpoints)) {
+            $IdpsEndpoints = new IdpsEndpoints($this->requester, $idpId);
+            foreach ($endpoints as $endpoint) {
+                $IdpsEndpoints->create($endpoint['binding'], $endpoint['location'], $endpoint['is_slo']);
+            }
+        }
 
-        return $this->Db->lastInsertId();
+        return $idpId;
     }
 
     public function findByEntityId(string $entityId): int
@@ -301,6 +339,34 @@ final class Idps extends AbstractRest
             return 0;
         }
         return (int) $res;
+    }
+
+    private function createIdp(
+        string $name,
+        string $entityid,
+        string $email_attr = self::EMAIL_ATTR,
+        ?string $team_attr = self::TEAM_ATTR,
+        string $fname_attr = self::FNAME_ATTR,
+        string $lname_attr = self::LNAME_ATTR,
+        ?string $orgid_attr = self::ORGID_ATTR,
+        int $enabled = 1,
+        ?int $source = null,
+    ): int {
+        $sql = 'INSERT INTO idps(name, entityid, email_attr, team_attr, fname_attr, lname_attr, orgid_attr, enabled, source)
+            VALUES(:name, :entityid, :email_attr, :team_attr, :fname_attr, :lname_attr, :orgid_attr, :enabled, :source)';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':name', $name);
+        $req->bindParam(':entityid', $entityid);
+        $req->bindParam(':email_attr', $email_attr);
+        $req->bindParam(':team_attr', $team_attr);
+        $req->bindParam(':fname_attr', $fname_attr);
+        $req->bindParam(':lname_attr', $lname_attr);
+        $req->bindParam(':orgid_attr', $orgid_attr);
+        $req->bindParam(':enabled', $enabled, PDO::PARAM_INT);
+        $req->bindParam(':source', $source);
+        $this->Db->execute($req);
+
+        return $this->Db->lastInsertId();
     }
 
     private function canWriteOrExplode(): void

@@ -35,10 +35,6 @@ class IdpsCertsTest extends \PHPUnit\Framework\TestCase
         $params = array(
             'name' => 'testidp',
             'entityid' => 'https://app.onelogin.com/',
-            'sso_url' => 'https://onelogin.com/',
-            'sso_binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
-            'slo_url' => 'https://onelogin.com/',
-            'slo_binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
             'email_attr' => 'User.email',
             'team_attr' => 'User.team',
             'fname_attr' => 'User.FirstName',

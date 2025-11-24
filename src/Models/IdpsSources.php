@@ -141,7 +141,7 @@ final class IdpsSources extends AbstractRest
 
     public function refresh(Xml2Idps $Xml2Idps, Idps $Idps): array
     {
-        $Idps->upsert($this->id ?? 0, $Xml2Idps, new IdpsCerts($this->requester));
+        $Idps->upsert($this->id ?? 0, $Xml2Idps);
         $this->touch();
         return $this->readOne();
     }

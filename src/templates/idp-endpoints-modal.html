@@ -1,0 +1,45 @@
+{# Modal for IDP endpoints #}
+<div class='modal fade' id='idpEndpointsModal' tabindex='-1' role='dialog' aria-labelledby='idpEndpointsModalLabel'>
+  <div class='modal-dialog modal-xl' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='idpEndpointsModalLabel'>{{ 'Edit IDP associated endpoints'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
+        <h6>{{ 'Endpoints associated with this IDP'|trans }}</h6>
+        <div class='table-container'>
+          <table class='table' aria-describedby='idpEndpointsTableLabel' data-table-sort='true'>
+            <thead>
+            <tr>
+              <th scope='col'>{{ 'ID'|trans }}</th>
+              <th scope='col'>{{ 'Binding'|trans }}</th>
+              <th scope='col'>{{ 'Location'|trans }}</th>
+              <th scope='col'>{{ 'Service type'|trans }}</th>
+              <th scope='col'>{{ 'Created at'|trans }}</th>
+              <th scope='col'>{{ 'Modified at'|trans }}</th>
+            </tr>
+            </thead>
+            <tbody id='idpEndpointsTableBody'>
+            </tbody>
+          </table>
+        </div>
+        <template id='endpointRow'>
+          <tr>
+            <td data-col='id'></td>
+            <td data-col='binding_urn'></td>
+            <td data-col='location'></td>
+            <td data-col='service_type'></td>
+            <td data-col='created_at'></td>
+            <td data-col='modified_at'></td>
+          </tr>
+        </template>
+        <div class='modal-footer'>
+          <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

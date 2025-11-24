@@ -43,6 +43,7 @@ use Elabftw\Models\ExtraFieldsKeys;
 use Elabftw\Models\FavTags;
 use Elabftw\Models\Idps;
 use Elabftw\Models\IdpsCerts;
+use Elabftw\Models\IdpsEndpoints;
 use Elabftw\Models\IdpsSources;
 use Elabftw\Models\Info;
 use Elabftw\Models\Instance;
@@ -409,6 +410,7 @@ final class Apiv2Controller extends AbstractApiController
         if ($this->Model instanceof Idps) {
             return match ($submodel) {
                 ApiSubModels::IdpsCerts => new IdpsCerts($this->requester, $this->id, $this->subId),
+                ApiSubModels::IdpsEndpoints => new IdpsEndpoints($this->requester, $this->id, $this->subId),
                 default => throw new InvalidApiSubModelException(ApiEndpoint::Idps),
             };
         }

@@ -28,6 +28,7 @@ enum ApiSubModels: string
     case Events = 'events';
     case ResourcesCategories = 'resources_categories';
     case IdpsCerts = 'certs';
+    case IdpsEndpoints = 'endpoints';
     case ItemsLinks = 'items_links';
     case ItemsStatus = 'items_status';
     case Notifications = 'notifications';
@@ -121,6 +122,7 @@ enum ApiSubModels: string
             fn(self $case): string => $case->value,
             array(
                 self::IdpsCerts,
+                self::IdpsEndpoints,
             ),
         );
     }

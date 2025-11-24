@@ -15,6 +15,7 @@ namespace Elabftw\Auth;
 use Elabftw\Auth\Saml as SamlAuth;
 use Elabftw\Elabftw\IdpsHelper;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\SamlBinding;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
@@ -22,6 +23,7 @@ use Elabftw\Interfaces\AuthResponseInterface;
 use Elabftw\Models\Config;
 use Elabftw\Models\Idps;
 use Elabftw\Models\IdpsCerts;
+use Elabftw\Models\IdpsEndpoints;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 use OneLogin\Saml2\Auth as SamlAuthLib;
@@ -52,10 +54,6 @@ class SamlTest extends \PHPUnit\Framework\TestCase
         $this->idpId = $Idps->postAction(Action::Create, array(
             'name' => 'testidp',
             'entityid' => 'https://app.onelogin.com/',
-            'sso_url' => 'https://onelogin.com/',
-            'sso_binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
-            'slo_url' => 'https://onelogin.com/',
-            'slo_binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
             'email_attr' => 'User.email',
             'team_attr' => 'User.team',
             'fname_attr' => 'User.FirstName',
@@ -64,6 +62,8 @@ class SamlTest extends \PHPUnit\Framework\TestCase
         ));
         $IdpsCerts = new IdpsCerts($requester, $this->idpId);
         $IdpsCerts->postAction(Action::Create, array('x509' => $cert));
+        $IdpsEndpoints = new IdpsEndpoints($requester, $this->idpId);
+        $IdpsEndpoints->create(SamlBinding::HttpRedirect, 'https://example.com');
 
         $this->configArr = array(
             'saml_debug' => '0',

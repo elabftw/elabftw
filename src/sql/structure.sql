@@ -535,10 +535,6 @@ CREATE TABLE `idps` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `entityid` varchar(255) NOT NULL,
-  `sso_url` varchar(255) NOT NULL,
-  `sso_binding` varchar(255) NOT NULL,
-  `slo_url` varchar(255) NOT NULL,
-  `slo_binding` varchar(255) NOT NULL,
   `enabled` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `source` tinyint UNSIGNED NULL DEFAULT NULL,
   `email_attr` varchar(255) NOT NULL,
@@ -591,6 +587,29 @@ CREATE TABLE `idps_certs` (
     UNIQUE KEY uniq_idp_purpose_fpr (idp, purpose, sha256),
     KEY idx_idp_purpose_active (idp, purpose, is_active, not_before, not_after)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `idps_endpoints`
+--
+
+CREATE TABLE `idps_endpoints` (
+    id                  INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    idp                 INT UNSIGNED NOT NULL,
+    binding             TINYINT UNSIGNED NOT NULL,
+    location            VARCHAR(255) NOT NULL,
+    is_slo              TINYINT UNSIGNED NOT NULL DEFAULT 0,
+    created_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    modified_at         TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    CONSTRAINT fk_idps_endpoints_idp_id
+        FOREIGN KEY (idp)
+        REFERENCES idps(id)
+        ON DELETE CASCADE,
+    UNIQUE KEY uniq_idp_bdg_loc (idp, binding, location)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `items`

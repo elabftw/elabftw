@@ -54,7 +54,11 @@ final class IdpsCerts extends AbstractRest
         $req = $this->Db->prepare($sql);
         $req->bindParam(':idp', $this->idpId, PDO::PARAM_INT);
         $this->Db->execute($req);
-        return $req->fetchAll();
+        $res = $req->fetchAll();
+        foreach ($res as &$cert) {
+            $cert['purpose_human'] = CertPurpose::from($cert['purpose'])->name;
+        }
+        return $res;
     }
 
     #[Override]
@@ -65,7 +69,9 @@ final class IdpsCerts extends AbstractRest
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
-        return $this->Db->fetch($req);
+        $cert = $this->Db->fetch($req);
+        $cert['purpose_human'] = CertPurpose::from($cert['purpose'])->name;
+        return $cert;
     }
 
     #[Override]

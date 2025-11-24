@@ -43,3 +43,65 @@ WHERE   x509_new IS NOT NULL
 
 CALL DropColumn('idps', 'x509');
 CALL DropColumn('idps', 'x509_new');
+
+-- IDP ENDPOINTS
+CREATE TABLE IF NOT EXISTS `idps_endpoints`
+(
+    id                  INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    idp                 INT UNSIGNED NOT NULL,
+    binding             TINYINT UNSIGNED NOT NULL,
+    location            VARCHAR(255) NOT NULL,
+    is_slo              TINYINT UNSIGNED NOT NULL DEFAULT 0,
+    created_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    modified_at         TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                        ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+
+    CONSTRAINT fk_idps_endpoints_idp_id
+        FOREIGN KEY (idp)
+        REFERENCES idps(id)
+        ON DELETE CASCADE,
+
+    UNIQUE KEY uniq_idp_bdg_loc (idp, binding, location)
+);
+-- SSO
+INSERT IGNORE INTO idps_endpoints (idp, binding, location)
+(
+SELECT  id       AS idp,
+        0        AS binding,
+        sso_url  AS location
+FROM    idps
+WHERE sso_binding = 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST'
+);
+INSERT IGNORE INTO idps_endpoints (idp, binding, location)
+(
+SELECT  id       AS idp,
+        1        AS binding,
+        sso_url  AS location
+FROM    idps
+WHERE sso_binding = 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect'
+);
+-- SLO
+INSERT IGNORE INTO idps_endpoints (idp, binding, is_slo, location)
+(
+SELECT  id       AS idp,
+        0        AS binding,
+        1        AS is_slo,
+        slo_url  AS location
+FROM    idps
+WHERE slo_binding = 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST'
+);
+INSERT IGNORE INTO idps_endpoints (idp, binding, is_slo, location)
+(
+SELECT  id       AS idp,
+        1        AS binding,
+        1        AS is_slo,
+        slo_url  AS location
+FROM    idps
+WHERE slo_binding = 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect'
+);
+
+CALL DropColumn('idps', 'sso_url');
+CALL DropColumn('idps', 'sso_binding');
+CALL DropColumn('idps', 'slo_url');
+CALL DropColumn('idps', 'slo_binding');

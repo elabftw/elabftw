@@ -18,7 +18,6 @@ use Elabftw\Enums\SamlBinding;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Users\Users;
-use Elabftw\Services\Xml2Idps;
 use Elabftw\Traits\SetIdTrait;
 use Override;
 use PDO;
@@ -186,14 +185,29 @@ final class Idps extends AbstractRest
         return $this->readOne();
     }
 
-    public function upsert(int $sourceId, Xml2Idps $xml2Idps): int
+    public function fullUpdate(array $idp): array
     {
-        $idps = $xml2Idps->getIdpsFromDom();
+        $this->canWriteOrExplode();
+        $IdpsCerts = new IdpsCerts($this->requester, $this->id);
+        $IdpsCerts->upsert($this->id ?? 0, $idp);
+        $IdpsEndpoints = new IdpsEndpoints($this->requester, $this->id);
+        foreach ($idp['endpoints'] as $endpoint) {
+            $IdpsEndpoints->create($endpoint['binding'], $endpoint['location'], $endpoint['is_slo']);
+        }
+        unset($idp['certs']);
+        unset($idp['endpoints']);
+        foreach ($idp as $key => $value) {
+            $this->update($key, $value);
+        }
+        return $this->readOne();
+    }
 
+    public function upsert(int $sourceId, array $idps): int
+    {
         foreach ($idps as $idp) {
             $id = $this->findByEntityId($idp['entityid']);
             if ($id === 0) {
-                $id = $this->create(
+                $this->create(
                     name: $idp['name'],
                     entityid: $idp['entityid'],
                     enabled: 0,
@@ -201,6 +215,7 @@ final class Idps extends AbstractRest
                     certs: $idp['certs'],
                     endpoints: $idp['endpoints'],
                 );
+                continue;
             }
             $this->setId($id);
             // when coming from XML, we do not overwrite these attributes
@@ -208,7 +223,7 @@ final class Idps extends AbstractRest
             unset($idp['fname_attr']);
             unset($idp['team_attr']);
             unset($idp['orgid_attr']);
-            $this->patch(Action::Update, $idp);
+            $this->fullUpdate($idp);
         }
         return count($idps);
     }

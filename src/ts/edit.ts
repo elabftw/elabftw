@@ -21,6 +21,7 @@ import { clearLocalStorage } from './localStorage';
 import { entity } from './getEntity';
 import { on } from './handlers';
 import { notify } from './notify';
+import i18next from './i18n';
 
 const mode = new URLSearchParams(window.location.search).get('mode');
 if (mode === 'edit') {
@@ -31,16 +32,28 @@ if (mode === 'edit') {
     // Select all extra fields with attribute data-required to true
     document.querySelectorAll('[data-required="true"]').forEach(el => {
       const field = el as HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement;
-      const defaultValue = field.value?.trim() ?? "";
-      // If defaultValue is empty on a required extra field, set defaultValueIsEmpty to true
-      if (!defaultValue) {
+      let isEmpty = false;
+      // Handle checkbox and radio button
+      if (field instanceof HTMLInputElement && field.type == 'checkbox') {
+        isEmpty = !field.checked;
+      } else if (field instanceof HTMLInputElement && field.type == 'radio') {
+        const radio = document.querySelectorAll<HTMLInputElement>(`input[type="radio"][name="${field.name}"]`);
+        const oneChecked = Array.from(radio).some(r => r.checked);
+        isEmpty = !oneChecked;
+      } else {
+          const defaultValue = field.value?.trim() ?? '';
+          isEmpty = defaultValue == '';
+      }
+      // If isEmpty on a required extra field, set defaultValueIsEmpty to true
+      if (isEmpty) {
         defaultValueIsEmpty = true;
       }
     });
-    // If defaultValueIsEmpty is true, display warning message and return
+    // If defaultValueIsEmpty display warning message, remove exclusive mode and return
     if (defaultValueIsEmpty) {
-      notify.error("Some mandatory fields are not filled, are you sure you want to continue away?");
-      return "";
+      notify.error('required-fields-warning');
+      ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.RemoveExclusiveEditMode});
+      return '';
     }
     ApiC.notifOnSaved = false;
     ApiC.keepalive = true;

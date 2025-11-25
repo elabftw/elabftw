@@ -30,7 +30,7 @@ if (mode === 'edit') {
     let defaultValueIsEmpty = false;
     // Select all extra field with attribute data-required to true
     document.querySelectorAll('[data-required="true"').forEach(el => {
-      const field = el as HTMLInputElement|HTMLAreaElement|HTMLSelectElement;
+      const field = el as HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement;
       const defaultValue = field.value?.trim() ?? "";
       // If defaultValue is empty on an required extra field, set defaultValueIsEmpty to true
       if (!defaultValue) {

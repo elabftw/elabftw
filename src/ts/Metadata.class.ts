@@ -598,6 +598,8 @@ export class Metadata {
             label.innerText = element.name as string;
             if (element.required) {
               label.classList.add('required-label');
+              // set attribut to retrieve data
+              element.element.setAttribute('data-required', 'true');
             }
             label.classList.add('py-2');
 

@@ -20,11 +20,28 @@ import { Uploader } from './uploader';
 import { clearLocalStorage } from './localStorage';
 import { entity } from './getEntity';
 import { on } from './handlers';
+import { notify } from './notify';
 
 const mode = new URLSearchParams(window.location.search).get('mode');
 if (mode === 'edit') {
   // remove exclusive edit mode when leaving the page
   window.onbeforeunload = function() {
+    // At first, we assume that each defaultValue is filled in
+    let defaultValueIsEmpty = false;
+    // Select all extra field with attribute data-required to true
+    document.querySelectorAll('[data-required="true"').forEach(el => {
+      const field = el as HTMLInputElement|HTMLAreaElement|HTMLSelectElement;
+      const defaultValue = field.value?.trim() ?? "";
+      // If defaultValue is empty on an required extra field, set defaultValueIsEmpty to true
+      if (!defaultValue) {
+        defaultValueIsEmpty = true;
+      }
+    });
+    // If defaultValueIsEmpty is true, display warning and return
+    if (defaultValueIsEmpty) {
+      notify.error("Some mandatory fields are not filled, are you sure you want to continue away?");
+      return "";
+    }
     ApiC.notifOnSaved = false;
     ApiC.keepalive = true;
     ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.RemoveExclusiveEditMode});

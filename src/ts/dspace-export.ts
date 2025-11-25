@@ -9,11 +9,23 @@
  * All logic related to DSpace export modal. Located in toolbar on view/edit pages
  */
 
-import { acceptWorkspaceItemLicense, createWorkspaceItem, fetchXsrfToken, getItemUuidFromDspace, isDspaceSessionActive, listCollections, listTypes, loginToDspace, submitWorkspaceItemToWorkflow, updateWorkspaceItemMetadata, uploadWorkspaceItemFile
+import {
+  acceptWorkspaceItemLicense,
+  createWorkspaceItem,
+  DspaceCollectionList, DspaceVocabularyEntryList,
+  fetchXsrfToken,
+  getItemUuidFromDspace,
+  isDspaceSessionActive,
+  listCollections,
+  listTypes,
+  loginToDspace,
+  submitWorkspaceItemToWorkflow,
+  updateWorkspaceItemMetadata,
+  uploadWorkspaceItemFile,
 } from './dspace-utils';
 import { on } from './handlers';
 import i18next from './i18n';
-import { notify } from "./notify";
+import { notify } from './notify';
 
 if (document.getElementById('dspaceExportModal')) {
   on('export-to-dspace', async () => {
@@ -72,21 +84,21 @@ $('#dspaceExportModal').on('shown.bs.modal', async () => {
   const typeSelect = document.getElementById('dspaceType') as HTMLSelectElement;
   collectionSelect.innerHTML = '<option disabled selected>' + i18next.t('loading') + '...</option>';
   typeSelect.innerHTML = '<option disabled selected>' + i18next.t('loading') + '...</option>';
-  let active = await isDspaceSessionActive();
+  const active = await isDspaceSessionActive();
   if (!active) {
     await loginToDspace('toto@yopmail.com', 'totototototo');
   }
   try {
     const [collectionsJson, typesJson] = await Promise.all([
       listCollections(),
-      listTypes()
+      listTypes(),
     ]);
 
     const collections = collectionsJson._embedded.collections;
     const types = typesJson._embedded.entries;
     // populate collections
     collectionSelect.innerHTML = '';
-    collections.forEach((col: any) => {
+    collections.forEach((col: DspaceCollectionList) => {
       const opt = document.createElement('option');
       opt.value = col.uuid;
       opt.textContent = `${col.name} (${col.uuid})`;
@@ -95,7 +107,7 @@ $('#dspaceExportModal').on('shown.bs.modal', async () => {
 
     // populate types
     typeSelect.innerHTML = '';
-    types.forEach((type: any) => {
+    types.forEach((type: DspaceVocabularyEntryList) => {
       const opt = document.createElement('option');
       opt.value = type.value;
       opt.textContent = type.display;

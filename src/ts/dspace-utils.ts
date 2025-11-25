@@ -218,26 +218,26 @@ interface DspaceFetchOptions {
   contentType?: string | null;
 }
 
-interface DspaceCollection {
+export interface DspaceCollection {
   uuid: string;
   name: string;
   [key: string]: unknown;
 }
 
-interface DspaceCollectionList {
+export interface DspaceCollectionList {
   _embedded: {
     collections: DspaceCollection[];
   };
   [key: string]: unknown;
 }
 
-interface DspaceVocabularyEntry {
+export interface DspaceVocabularyEntry {
   value: string;
   display: string;
   [key: string]: unknown;
 }
 
-interface DspaceVocabularyEntryList {
+export interface DspaceVocabularyEntryList {
   _embedded: {
     entries: DspaceVocabularyEntry[];
   };

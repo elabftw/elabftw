@@ -366,6 +366,12 @@ components:
           type: string
         cookie_validity_time:
           type: integer
+        dspace_host:
+          type: string
+        dspace_user:
+          type: string
+        dspace_password:
+          type: string
         email_domain:
           type: string
         extauth_email:

@@ -6,6 +6,10 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+import { entity } from './getEntity';
+import JsonEditorHelper from './JsonEditorHelper.class';
+import { Metadata } from './Metadata.class';
+import { ExtraFieldInputType, ValidMetadata } from './metadataInterfaces';
 
 let dspaceLoginInFlight: Promise<void> | null = null;
 
@@ -209,6 +213,43 @@ export const postToDspace = async ({ url, method, body = null, token = null, con
   }
   return res;
 };
+
+export async function saveDspaceIdAsExtraField(itemUuid: string): Promise<void> {
+  const MetadataC = new Metadata(entity, new JsonEditorHelper(entity));
+  const raw = await MetadataC.read();
+  const metadata = (raw || {}) as ValidMetadata;
+  if (!metadata.extra_fields) {
+    metadata.extra_fields = {};
+  }
+
+  metadata.extra_fields['DSpace id'] = {
+    type: ExtraFieldInputType.Text,
+    value: itemUuid,
+    description: 'Uuid handle from DSpace',
+    readonly: true,
+  };
+
+  const mode = new URLSearchParams(window.location.search).get('mode');
+  await MetadataC.save(metadata).then(() => MetadataC.display(mode === 'edit' ? 'edit' : 'view'));
+}
+
+export async function buildCurrentEntryEln(): Promise<File> {
+  const res = await fetch(`/api/v2/${entity.type}/${entity.id}?format=eln`, {
+    method: 'GET',
+    credentials: 'include',
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`ELN export failed: ${res.status} - ${text}`);
+  }
+
+  const blob = await res.blob();
+  const filename = `elabftw-${entity.type}-${entity.id}.eln`;
+
+  return new File([blob], filename, {
+    type: 'application/vnd.eln+zip',
+  });
+}
 
 interface DspaceFetchOptions {
   url: string;

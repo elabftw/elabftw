@@ -37,6 +37,7 @@ use Elabftw\Models\Batch;
 use Elabftw\Models\Comments;
 use Elabftw\Models\Compounds;
 use Elabftw\Models\Config;
+use Elabftw\Models\Dspace;
 use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\ExtraFieldsKeys;
@@ -301,6 +302,7 @@ final class Apiv2Controller extends AbstractApiController
                 }
             )(),
             ApiEndpoint::Config => Config::getConfig(),
+            ApiEndpoint::Dspace => new Dspace(),
             ApiEndpoint::Idps => new Idps($this->requester, $this->id),
             ApiEndpoint::IdpsSources => new IdpsSources($this->requester, $this->id),
             ApiEndpoint::Import => new ImportHandler($this->requester, App::getDefaultLogger()),

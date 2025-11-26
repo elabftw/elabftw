@@ -16,7 +16,9 @@
           </div>
           <div class='form-group'>
             <label for='dspaceAuthor'>{{ 'Author'|trans }}</label>
-            <input type='text' class='form-control' id='dspaceAuthor' name='author' required disabled value='{{ Entity.entityData.userid }}'>
+            <input type='hidden' class='form-control' name='author' required disabled value='{{ Entity.entityData.userid }}'>
+            {# visible field: display the author's full name #}
+            <input id='dspaceAuthor' type='text' class='form-control' disabled value='{{ Entity.entityData.fullname }}'>
           </div>
           <div class='form-group'>
             <label for='dspaceTitle'>{{ 'Title'|trans }}</label>
@@ -53,4 +55,5 @@
       </div>
     </div>
   </div>
+{#  <div id='dspace-config' data-host='{{ App.Config.configArr.dspace_host }}' data-user='{{ App.Config.configArr.dspace_user }}'></div>#}
 </div>

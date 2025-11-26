@@ -70,8 +70,9 @@ export async function acceptWorkspaceItemLicense(itemId: number | string, token:
 }
 
 // helper: patch metadata in traditionalpage (1st page of the item)
-export async function updateWorkspaceItemMetadata(itemId: number | string, token: string, title: string, date: string, type: string, abstract: string) {
+export async function updateWorkspaceItemMetadata(itemId: number | string, token: string, author: string, title: string, date: string, type: string, abstract: string) {
   const metaPatch = [
+    { op: 'add', path: '/sections/traditionalpageone/dc.contributor.author', value: [{value: author, language: null}] },
     { op: 'add', path: '/sections/traditionalpageone/dc.title', value: [{value: title, language: null}] },
     { op: 'add', path: '/sections/traditionalpageone/dc.date.issued', value: [{value: date, language: null}] },
     { op: 'add', path: '/sections/traditionalpageone/dc.type', value: [{value: type, language: null}] },

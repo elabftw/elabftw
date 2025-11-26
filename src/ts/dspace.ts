@@ -44,7 +44,7 @@ if (document.getElementById('dspaceExportModal')) {
 
     const metadata = {
       metadata: [
-        { key: 'dc.creator', value: author },
+        { key: 'dc.contributor.author', value: author },
         { key: 'dc.title', value: title },
         { key: 'dc.date.issued', value: date },
         { key: 'dc.type', value: type },
@@ -64,7 +64,7 @@ if (document.getElementById('dspaceExportModal')) {
       // accept license (only reached if checkbox was checked)
       await acceptWorkspaceItemLicense(workspaceId, token);
       // patch DSpace's metadata section
-      await updateWorkspaceItemMetadata(workspaceId, token, title, date, type, abstract);
+      await updateWorkspaceItemMetadata(workspaceId, token, author, title, date, type, abstract);
       // mandatory file upload -> build ELN for current entry
       const elnFile = await buildCurrentEntryEln();
       await uploadWorkspaceItemFile(workspaceId, elnFile, token);

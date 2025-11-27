@@ -12,12 +12,11 @@
 import {
   acceptWorkspaceItemLicense, buildCurrentEntryEln,
   createWorkspaceItem, DspaceCollection,
-  DspaceVocabularyEntry, fetchXsrfToken,
+  DspaceVocabularyEntry, ensureDspaceAuthFromBackend, fetchXsrfToken,
   getItemUuidFromDspace,
-  isDspaceSessionActive,
   listCollections,
   listTypes,
-  loginToDspace, saveDspaceIdAsExtraField,
+  saveDspaceIdAsExtraField,
   submitWorkspaceItemToWorkflow,
   updateWorkspaceItemMetadata,
   uploadWorkspaceItemFile,
@@ -84,11 +83,9 @@ $('#dspaceExportModal').on('shown.bs.modal', async () => {
   const typeSelect = document.getElementById('dspaceType') as HTMLSelectElement;
   collectionSelect.innerHTML = '<option disabled selected>' + i18next.t('loading') + '...</option>';
   typeSelect.innerHTML = '<option disabled selected>' + i18next.t('loading') + '...</option>';
-  const active = await isDspaceSessionActive();
-  if (!active) {
-    await loginToDspace('toto@yopmail.com', 'totototototo');
-  }
+
   try {
+    await ensureDspaceAuthFromBackend();
     const [collectionsJson, typesJson] = await Promise.all([
       listCollections(),
       listTypes(),

@@ -16,7 +16,8 @@ let dspaceLoginInFlight: Promise<void> | null = null;
 // helper: get collections from DSpace
 export async function listCollections(): Promise<DspaceCollectionList> {
   const token = await fetchXsrfToken();
-  const res = await postToDspace({url: '/dspace/api/core/collections', method: 'GET', token});
+  console.log(token);
+  const res = await postToDspace({url: 'https://demo.dspace.org/server/api/core/collections', method: 'GET', token});
   if (!res.ok) throw new Error(`DSpace error ${res.status}`);
   return await res.json() as Promise<DspaceCollectionList>;
 }
@@ -25,7 +26,7 @@ export async function listCollections(): Promise<DspaceCollectionList> {
 export async function listTypes(): Promise<DspaceVocabularyEntryList> {
   const token = await fetchXsrfToken();
   const res = await postToDspace({
-    url: '/dspace/api/submission/vocabularies/common_types/entries', method: 'GET', token,
+    url: 'https://demo.dspace.org/server/api/submission/vocabularies/common_types/entries', method: 'GET', token,
   });
   if (!res.ok) throw new Error(`DSpace error ${res.status}`);
   return await res.json() as Promise<DspaceVocabularyEntryList>;
@@ -38,7 +39,7 @@ export async function createWorkspaceItem(
   token: string,
 ): Promise<DspaceWorkspaceItem> {
   const res = await postToDspace({
-    url: `/dspace/api/submission/workspaceitems?owningCollection=${collection}`,
+    url: `https://demo.dspace.org/server/api/submission/workspaceitems?owningCollection=${collection}`,
     method: 'POST',
     token,
     contentType: 'application/json',
@@ -54,7 +55,7 @@ export async function createWorkspaceItem(
 // helper: accept license
 export async function acceptWorkspaceItemLicense(itemId: number | string, token: string) {
   const res = await postToDspace({
-    url: `/dspace/api/submission/workspaceitems/${itemId}`,
+    url: `https://demo.dspace.org/server/api/submission/workspaceitems/${itemId}`,
     method: 'PATCH',
     token,
     contentType: 'application/json-patch+json',
@@ -79,7 +80,7 @@ export async function updateWorkspaceItemMetadata(itemId: number | string, token
     { op: 'add', path: '/sections/traditionalpagetwo/dc.description.abstract', value: [{value: abstract, language: null}] },
   ];
   const res = await postToDspace({
-    url: `/dspace/api/submission/workspaceitems/${itemId}`,
+    url: `https://demo.dspace.org/server/api/submission/workspaceitems/${itemId}`,
     method: 'PATCH',
     token,
     contentType: 'application/json-patch+json',
@@ -97,7 +98,7 @@ export async function uploadWorkspaceItemFile(itemId: number | string, file: Fil
   const fd = new FormData();
   fd.append('file', file);
   const res = await postToDspace({
-    url: `/dspace/api/submission/workspaceitems/${itemId}`,
+    url: `https://demo.dspace.org/server/api/submission/workspaceitems/${itemId}`,
     method: 'POST',
     token,
     contentType: null,
@@ -113,7 +114,7 @@ export async function uploadWorkspaceItemFile(itemId: number | string, file: Fil
 // helper: publish the workspaceitem to workflow (deposit)
 export async function submitWorkspaceItemToWorkflow(itemId: number | string, token: string) {
   const res = await postToDspace({
-    url: '/dspace/api/workflow/workflowitems',
+    url: 'https://demo.dspace.org/server/api/workflow/workflowitems',
     method: 'POST',
     token,
     contentType: 'text/uri-list',
@@ -128,7 +129,7 @@ export async function submitWorkspaceItemToWorkflow(itemId: number | string, tok
 
 export async function getItemUuidFromDspace(workspaceId: number | string, token: string): Promise<string> {
   const res = await postToDspace({
-    url: `/dspace/api/submission/workspaceitems/${workspaceId}/item`,
+    url: `https://demo.dspace.org/server/api/submission/workspaceitems/${workspaceId}/item`,
     method: 'GET',
     token,
   });
@@ -140,61 +141,28 @@ export async function getItemUuidFromDspace(workspaceId: number | string, token:
   return item.uuid;
 }
 
+export async function ensureDspaceAuthFromBackend(): Promise<void> {
+  const res = await fetch('/api/v2/dspace', {
+    method: 'GET',
+    credentials: 'include',
+    headers: {'Accept': 'application/json'},
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`DSpace backend login failed: ${res.status} - ${text}`);
+  }
+  const json = await res.json() as {auth: string};
+  console.log(json.auth);
+  localStorage.setItem('dspaceAuth', json.auth);
+}
+
 export async function fetchXsrfToken(): Promise<string> {
   const cached = localStorage.getItem('dspaceXsrfToken');
-  if (cached && await isDspaceSessionActive()) return cached;
+  if (cached) return cached;
   const res = await fetch('dspace/api/security/csrf', { method: 'GET', credentials: 'include' });
   const token = res.headers.get('dspace-xsrf-token'); if (!token) throw new Error('No CSRF token found');
   localStorage.setItem('dspaceXsrfToken', token);
   return token;
-}
-
-export async function loginToDspace(user: string, password: string) {
-  if (await isDspaceSessionActive()) {
-    localStorage.setItem('dspaceLoggedIn', 'true');
-    return;
-  }
-  if (dspaceLoginInFlight) { await dspaceLoginInFlight; return; }
-
-  dspaceLoginInFlight = (async () => {
-    const token = await fetchXsrfToken();
-    const body = new URLSearchParams({ user, password }).toString();
-    const res = await postToDspace({url: 'dspace/api/authn/login', method: 'POST', token, body});
-    if (!res.ok) {
-      localStorage.removeItem('dspaceLoggedIn');
-      localStorage.removeItem('dspaceXsrfToken');
-      localStorage.removeItem('dspaceAuth');
-      const error = await res.text();
-      throw new Error(`Login failed: ${res.status} - ${error}`);
-    }
-    const auth = res.headers.get('Authorization');
-    if (auth) {
-      localStorage.setItem('dspaceAuth', auth);
-    }
-    await res.text();
-    localStorage.setItem('dspaceLoggedIn', 'true');
-  })();
-
-  try { await dspaceLoginInFlight; } finally { dspaceLoginInFlight = null; }
-}
-
-export async function isDspaceSessionActive(): Promise<boolean> {
-  try {
-    const auth = localStorage.getItem('dspaceAuth');
-    const headers: Record<string,string> = {}; if (auth) headers['Authorization'] = auth;
-    const res = await fetch('dspace/api/authn/status', { credentials: 'include', headers });
-    if (!res.ok) return false;
-    const data = await res.json();
-    if (!data?.authenticated) {
-      localStorage.removeItem('dspaceLoggedIn');
-      localStorage.removeItem('dspaceXsrfToken');
-      localStorage.removeItem('dspaceAuth');
-      return false;
-    }
-    return true;
-  } catch {
-    return false;
-  }
 }
 
 export const postToDspace = async ({ url, method, body = null, token = null, contentType = 'application/x-www-form-urlencoded' }: DspaceFetchOptions) => {

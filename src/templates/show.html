@@ -20,7 +20,7 @@
     {# SEARCH BAR #}
     {% set pageName = scriptName|replace({'.php': ''}) %}
     {% set searchTarget = pageName %}
-    {% set searchPlaceholder = ('Search in'|trans ~ ' ' ~ pageTitle)|lower %}
+    {% set searchPlaceholder = 'Search in %s'|trans|format(pageTitle|lower) %}
     {% if pageName == 'database' %}
       {% set searchTarget = 'resources'|trans %}
     {% endif %}

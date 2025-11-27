@@ -71,6 +71,7 @@ if (document.getElementById('dspaceExportModal')) {
       // submit (deposit) to workflow. Catch here if the POST is not sent, otherwise the response time being >120sec we don't await it.
       submitWorkspaceItemToWorkflow(workspaceId, token).catch(() => notify.error('submission-error'));
       notify.success('export-success');
+      $('#dspaceExportModal').modal('hide');
     } catch (e) {
       notify.error('submission-error');
       console.error(e);

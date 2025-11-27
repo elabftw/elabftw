@@ -235,7 +235,7 @@ export async function saveDspaceIdAsExtraField(itemUuid: string): Promise<void> 
 }
 
 export async function buildCurrentEntryEln(): Promise<File> {
-  const res = await fetch(`/api/v2/${entity.type}/${entity.id}?format=eln`, {
+  const res = await fetch(`api/v2/${entity.type}/${entity.id}?format=eln`, {
     method: 'GET',
     credentials: 'include',
   });

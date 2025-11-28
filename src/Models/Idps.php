@@ -133,9 +133,7 @@ final class Idps extends AbstractRest
         $IdpsCerts = new IdpsCerts($this->requester, $this->id);
         $IdpsCerts->sync($this->id ?? 0, $idp);
         $IdpsEndpoints = new IdpsEndpoints($this->requester, $this->id);
-        foreach ($idp['endpoints'] as $endpoint) {
-            $IdpsEndpoints->create($endpoint['binding'], $endpoint['location'], $endpoint['is_slo']);
-        }
+        $IdpsEndpoints->sync($this->id ?? 0, $idp);
         unset($idp['certs']);
         unset($idp['endpoints']);
         foreach ($idp as $key => $value) {

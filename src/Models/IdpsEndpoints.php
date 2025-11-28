@@ -81,9 +81,44 @@ final class IdpsEndpoints extends AbstractRest
         }
         return $this->create(
             SamlBinding::tryFrom((int) ($reqBody['binding'] ?? 0)) ?? throw new ImproperActionException('Incorrect binding value'),
-            $reqBody['location'],
+            $reqBody['location'] ?? throw new ImproperActionException('Missing location value'),
             BinaryValue::tryFrom((int) ($reqBody['is_slo'] ?? 0)) ?? BinaryValue::False,
         );
+    }
+
+    public function sync(int $idpId, array $idp): bool
+    {
+        $this->idpId = $idpId;
+        // if the endpoint already exists, it will simply "touch" it: update modified_at
+        foreach ($idp['endpoints'] as $endpoint) {
+            $this->create(
+                $endpoint['binding'],
+                $endpoint['location'],
+                $endpoint['is_slo'],
+            );
+        }
+        // now we want to prune endpoints that are no longer in the source
+        $allEndpoints = $this->readAll();
+        $stay = array_fill_keys(
+            array_filter(
+                array_map(
+                    static fn(array $c) => $c['location'],
+                    $idp['endpoints'] ?? array()
+                )
+            ),
+            true
+        );
+
+        $toPrune = array_values(array_filter(
+            $allEndpoints,
+            static fn(array $db) => !isset($stay[$db['location'] ?? ''])
+        ));
+        foreach ($toPrune as $endpoint) {
+            $this->id = $endpoint['id'];
+            $this->destroy();
+        }
+
+        return true;
     }
 
     #[Override]

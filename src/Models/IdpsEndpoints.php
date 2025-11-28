@@ -103,7 +103,7 @@ final class IdpsEndpoints extends AbstractRest
         $stay = array_fill_keys(
             array_filter(
                 array_map(
-                    static fn(array $c) => $c['location'],
+                    static fn(array $c) => sprintf('%s|%d|%d', $c['location'], $c['binding']->value, $c['is_slo']->value),
                     $idp['endpoints'] ?? array()
                 )
             ),
@@ -112,7 +112,7 @@ final class IdpsEndpoints extends AbstractRest
 
         $toPrune = array_values(array_filter(
             $allEndpoints,
-            static fn(array $db) => !isset($stay[$db['location'] ?? ''])
+            static fn(array $db) => !isset($stay[sprintf('%s|%s|%s', $db['location'] ?? '', $db['binding'] ?? '', $db['is_slo'] ?? '')])
         ));
         foreach ($toPrune as $endpoint) {
             $this->id = $endpoint['id'];

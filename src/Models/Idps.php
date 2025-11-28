@@ -293,7 +293,6 @@ final class Idps extends AbstractRest
             FROM idps
             LEFT JOIN idps_sources ON idps.source = idps_sources.id
             %s
-            GROUP BY idps.id
             ORDER BY name ASC";
     }
 

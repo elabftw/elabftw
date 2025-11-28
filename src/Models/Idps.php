@@ -162,6 +162,7 @@ final class Idps extends AbstractRest
             // when coming from XML, we do not overwrite these attributes
             unset($idp['email_attr']);
             unset($idp['fname_attr']);
+            unset($idp['lname_attr']);
             unset($idp['team_attr']);
             unset($idp['orgid_attr']);
             $this->fullUpdate($idp);

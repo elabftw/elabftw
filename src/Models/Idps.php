@@ -64,8 +64,6 @@ final class Idps extends AbstractRest
             fname_attr: $reqBody['fname_attr'],
             lname_attr: $reqBody['lname_attr'],
             orgid_attr: $reqBody['orgid_attr'] ?? null,
-            certs: $reqBody['certs'] ?? array(),
-            endpoints: $reqBody['endpoints'] ?? array(),
         );
     }
 

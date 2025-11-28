@@ -62,9 +62,10 @@ final class IdpsEndpoints extends AbstractRest
     public function readOne(): array
     {
         $this->ensureIsSysadmin();
-        $sql = 'SELECT * FROM idps_endpoints WHERE id = :id';
+        $sql = 'SELECT * FROM idps_endpoints WHERE id = :id AND idp = :idp';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':idp', $this->idpId, PDO::PARAM_INT);
         $this->Db->execute($req);
         $res = $this->Db->fetch($req);
         $res['binding_urn'] = SamlBinding::from($res['binding'])->toUrn();

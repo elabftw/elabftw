@@ -21,8 +21,8 @@
           <input name='lastname' class='form-control' id='userInput-lastname' {{ disabledForAdmin }} />
           <label for='userInput-email'>{{ 'Email'|trans }}</label>
           <input name='email' type='email' class='form-control' id='userInput-email' {{ disabledForAdmin }} />
-          <label for='userInput-valid_until'>{{ 'Valid until'|trans }}</label>
-          <input name='valid_until' type='date' class='form-control' id='userInput-valid_until' />
+          <label for='userInput-valid_until'>{{ 'Valid until'|trans }}{{ App.Config.configArr.users_validity_is_externally_managed == '1' ? ' (' ~ 'externally managed'|trans ~ ')' }}</label>
+          <input name='valid_until' type='date' class='form-control' id='userInput-valid_until' {{ App.Config.configArr.users_validity_is_externally_managed == '1' ? 'disabled' }} />
           <label for='userInput-orgid'>{{ 'Internal ID'|trans }}</label>
           <input name='orgid' class='form-control' data-allow-empty='1' id='userInput-orgid' {{ disabledForAdmin }} />
           {# Toggle is_sysadmin slider #}

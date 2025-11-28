@@ -7,6 +7,8 @@ info:
 servers:
   - url: https://elab.local:3148/api/v2
     description: Local dev server
+  - url: https://demo.elabftw.net/api/v2
+    description: Official demo server
   - url: https://eln.example.org/api/v2
     description: Example base URL
 components:
@@ -335,6 +337,8 @@ components:
           type: string
         admins_create_users_remote_dir:
           type: string
+        admin_panel_custom_msg:
+          type: string
         admin_validate:
           type: string
         allow_permission_full:
@@ -544,6 +548,8 @@ components:
           type: string
         uploads_storage:
           type: string
+        users_validity_is_externally_managed:
+          type: string
     # ENTITY COMPONENT: EXTENDS ENTITY_EDITABLE
     entity:
       description: The complete representation of an entity
@@ -713,15 +719,6 @@ components:
           description: Cannot be negative nor empty string. Can be reset with "0" and null.
           default: null
           example: 1
-        tags:
-          type: array
-          nullable: true
-          description: |
-            An array of tags to assign to the created entry.
-          items:
-            type: string
-          default: []
-          example: ["test", "confidential", "replication"]
         title:
           type: string
           nullable: true
@@ -1496,15 +1493,6 @@ paths:
                   description: The experiment status ID
                   default: null
                   example: 1
-                tags:
-                  type: array
-                  nullable: true
-                  description: |
-                    An array of tags to assign to the created entry.
-                  items:
-                    type: string
-                  default: []
-                  example: ["test", "confidential", "replication"]
                 title:
                   type: string
                   nullable: true
@@ -4794,11 +4782,21 @@ paths:
           application/json:
             schema:
               type: object
-              properties:
-                tag:
-                  type: string
-                  description: |
-                    The text content of the tag.
+              oneOf:
+                - properties:
+                    tag:
+                      type: string
+                      description: The text content of a single tag.
+                  required: [tag]
+                - properties:
+                    tags:
+                      type: array
+                      description: A list of tags to create.
+                      items:
+                        type: string
+                  required: [tags]
+              example:
+                tags: ["Project Lambda", "Cell culture"]
       responses:
         '201':
           description: The tag has been created.

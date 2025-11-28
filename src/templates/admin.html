@@ -17,6 +17,11 @@
 {% endif %}
 </div>
 
+{# ADMIN PANEL CUSTOM MESSAGE #}
+{% if App.Config.configArr.admin_panel_custom_msg %}
+  {{ App.Config.configArr.admin_panel_custom_msg|msg('ok', false) }}
+{% endif %}
+
 {# ADMIN PANEL MAIN MENU #}
 <ul class='tabbed-menu'>
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='1'>{{ 'Team'|trans }}</button></li>
@@ -407,19 +412,23 @@
   </div>
   <hr>
 
-  <button type='button' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Owner'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  {% macro batchTransferOwnership(target, param, users) %}
+  <button type='button' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ target|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
   <div hidden class='mt-2'>
-    {% for user in allTeamUsersArr %}
+    {% for user in users %}
       <div class='d-flex justify-content-between p-1 rounded hl-hover-gray'>
-        <label for='batch-users-{{ user.userid }}' class='col-form-label clickable'>{{ user.fullname }} ({{ user.email }})</label>
+        <label for='batch-{{ param }}-{{ user.userid }}' class='col-form-label clickable'>{{ user.fullname }} ({{ user.email }})</label>
         <label class='switch ucp-align'>
-          <input type='checkbox' name='users' value='{{ user.userid }}' autocomplete='off' data-action='update-counter-value' id='batch-users-{{ user.userid }}'>
+          <input type='checkbox' name='{{ param }}' value='{{ user.userid }}' autocomplete='off' data-action='update-counter-value' id='batch-{{ param }}-{{ user.userid }}'>
           <span class='slider'></span>
         </label>
       </div>
     {% endfor %}
   </div>
   <hr>
+  {% endmacro %}
+  {{ _self.batchTransferOwnership('Experiments owner', 'users-experiments', allTeamUsersArr) }}
+  {{ _self.batchTransferOwnership('Resources owner', 'users-resources', allTeamUsersArr) }}
   </section>
 
   <div class='row mx-0 mt-3'><p>{{ 'With selected:'|trans }}</p></div>

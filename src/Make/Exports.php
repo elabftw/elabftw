@@ -15,8 +15,8 @@ namespace Elabftw\Make;
 use Elabftw\Controllers\DownloadController;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\EntitySlugsSqlBuilder;
-use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Invoker;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\State;
@@ -205,8 +205,7 @@ final class Exports extends AbstractRest
         $this->setId($request['id']);
         $this->requester = new Users($request['requester_userid'], $request['team']);
         $this->update('state', State::Processing->value);
-        $longName = FsTools::getUniqueString();
-        $absolutePath = $this->storage->getPath($longName);
+        $longName = Tools::getUuidv4();
         try {
             $format = ExportFormat::from($request['format']);
         } catch (ValueError $e) {
@@ -242,6 +241,8 @@ final class Exports extends AbstractRest
                 continue;
             }
         }
+
+        $absolutePath = $this->storage->getAbsoluteUri($longName);
 
         switch ($format) {
             case ExportFormat::Eln:

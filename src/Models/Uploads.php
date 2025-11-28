@@ -78,7 +78,7 @@ final class Uploads extends AbstractRest
         $ext = $this->getExtensionOrExplode($realName);
 
         // name for the stored file, includes folder and extension (ab/ab34[...].ext)
-        $someRandomString = FsTools::getUniqueString();
+        $someRandomString = Tools::getUuidv4();
         $folder = mb_substr($someRandomString, 0, 2);
         $longName = sprintf('%s/%s.%s', $folder, $someRandomString, $ext);
 

@@ -40,11 +40,11 @@
         <div class='pl-3'>
           <div class='d-flex justify-content-between'>
             <label for='schedulerDateFrom' class='col-form-label'>{{ 'Start date'|trans }}</label>
-            <input id='schedulerDateFrom' name='schedulerDateFrom' type='date' class='form-control col-md-6' value='{{ "1 month ago"|date('Y-m-d') }}'/>
+            <input id='schedulerDateFrom' name='schedulerDateFrom' type='date' class='form-control col-md-6' value='{{ '1 month ago'|date('Y-m-d') }}'/>
           </div>
           <div class='d-flex justify-content-between mt-2'>
             <label for='schedulerDateTo' class='col-form-label'>{{ 'End date'|trans }}</label>
-            <input id='schedulerDateTo' name='schedulerDateTo' type='date' class='form-control col-md-6' value='{{ "now"|date('Y-m-d') }}'/>
+            <input id='schedulerDateTo' name='schedulerDateTo' type='date' class='form-control col-md-6' value='{{ 'now'|date('Y-m-d') }}'/>
           </div>
         </div>
         <p class='smallgray pl-3 mt-4'>{{ 'Note: the export reflects the current scheduler view, including all active filters.'|trans }}</p>
@@ -221,8 +221,14 @@
             <strong class='d-block mb-1'>{{ 'Selected items:'|trans }}</strong>
             <div id='selectedItemsDisplayModal' class='d-flex flex-wrap gap-2'></div>
           </div>
+          <hr>
+          <div class='form-group mt-2'>
+            <label for='eventTitleInputModal'>{{ 'Comment'|trans }}</label>
+            <input class='form-control' type='text' id='eventTitleInputModal' placeholder='{{ 'Add details (optional)…'|trans }}' />
+          </div>
         </div>
         <div class='modal-footer'>
+          <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
           <button type='button' class='btn btn-primary' id='confirmItemSelect'>{{ 'Create event(s)'|trans }}</button>
         </div>
       </div>
@@ -240,8 +246,12 @@
           </button>
         </div>
         <div class='modal-body'>
-          <div id="selectedItemsCheckboxes">
+          <div id='selectedItemsCheckboxes'>
             {# filled dynamically in JS #}
+          </div>
+          <div class='form-group mt-2'>
+            <label for='eventTitleInputReview'>{{ 'Title'|trans }}</label>
+            <input class='form-control' type='text' id='eventTitleInputReview' placeholder='{{ 'Comment'|trans }}' />
           </div>
         </div>
         <div class='modal-footer'>

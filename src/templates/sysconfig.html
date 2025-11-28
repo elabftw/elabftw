@@ -14,14 +14,16 @@
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
-      <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
-        <label for='newTeamName'>{{ 'Name'|trans }}</label>
-        <input type='text' placeholder='{{ 'Enter team name'|trans }}' id='newTeamName' class='form-control' aria-label='{{ 'Enter team name'|trans }}'>
-      </div>
-      <div class='modal-footer'>
-        <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
-        <button type='button' data-action='create-team' class='btn btn-primary' data-dismiss='modal'>{{ 'Create'|trans }}</button>
-      </div>
+      <form aria-label='{{ 'Create team'|trans }}' id='createTeamForm'>
+        <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
+          <label for='newTeamName'>{{ 'Name'|trans }}</label>
+          <input type='text' required placeholder='{{ 'Enter team name'|trans }}' name='name' id='newTeamName' class='form-control' aria-label='{{ 'Enter team name'|trans }}'>
+        </div>
+        <div class='modal-footer'>
+          <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+          <button type='submit' data-action='create-team' class='btn btn-primary'>{{ 'Create'|trans }}</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
@@ -175,6 +177,14 @@
     <div class='d-flex justify-content-between'>
       <label for='user_msg_need_local_account_created' class='col-form-label'>{{ 'Message shown to user after successful external auth but local account provisioning is required'|trans }}</label>
       <input class='form-control col-md-3' data-trigger='blur' data-model='config' data-target='user_msg_need_local_account_created' type='text' autocomplete='off' value='{{ App.Config.configArr.user_msg_need_local_account_created }}' id='user_msg_need_local_account_created' />
+    </div>
+    <hr>
+
+    {% include 'binary-setting.html' with {'label': 'Users validity date is externally managed: make "Valid until" attribute read-only'|trans, 'slug': 'users_validity_is_externally_managed', 'help': 'If you manage the validity date of user accounts externally, enable this option to make this attribute read-only on the user modal window.'|trans} %}
+
+    <div class='d-flex justify-content-between'>
+      <label for='admin_panel_custom_msg' class='col-form-label'>{{ 'Message displayed on Admin Panel for all Admins'|trans }}</label>
+      <input class='form-control col-md-3' data-trigger='blur' data-model='config' data-target='admin_panel_custom_msg' type='text' autocomplete='off' value='{{ App.Config.configArr.admin_panel_custom_msg }}' id='admin_panel_custom_msg' />
     </div>
     <hr>
   </div>
@@ -477,13 +487,13 @@
   <div id='bruteforceDiv' class='pl-3'>
     <div class='d-flex justify-content-between'>
       <span>{{ '%d users are currently prevented from logging in from unknown devices.'|trans|format(nologinUsersCount) }}</span>
-      <button type='submit' data-action='allowuntrusted' {{- nologinUsersCount == 0 ? ' disabled' }} class='btn btn-primary'>{{ 'Clear'|trans }}</button>
+      <button type='submit' data-action='post2instance' data-target='allowuntrusted' {{- nologinUsersCount == 0 ? ' disabled' }} class='btn btn-primary'>{{ 'Clear'|trans }}</button>
     </div>
     <hr>
 
     <div class='d-flex justify-content-between'>
       <span>{{ '%d devices are currently denied authentication.'|trans|format(lockoutDevicesCount) }}</span>
-      <button type='submit' data-action='clearlockedoutdevices' {{- lockoutDevicesCount == 0 ? ' disabled' }} class='btn btn-primary'>{{ 'Clear'|trans }}</button>
+      <button type='submit' data-action='post2instance' data-target='clearlockedoutdevices' {{- lockoutDevicesCount == 0 ? ' disabled' }} class='btn btn-primary'>{{ 'Clear'|trans }}</button>
     </div>
     <hr>
   </div>
@@ -537,7 +547,7 @@
     {{ '%d files are stored on local filesystem and %d files are stored on S3.'|trans|format(uploadsStats.count_storage_local, uploadsStats.count_storage_s3) }}
   </div>
 
-  <h3 class='p-2 pl-3 section-title'>{{ 'Configuration'|trans }}</h3>
+  <h3 class='p-2 pl-3 section-title'>{{ 'File upload configuration'|trans }}</h3>
 
   <div class='pl-3 mt-2 mb-5'>
 
@@ -577,6 +587,39 @@
 
     {% include 'binary-setting.html' with {'label': 'Verify TLS certificate'|trans, 'slug': 's3_verify_cert'} %}
     {% include 'binary-setting.html' with {'label': 'Use S3 Path-Style endpoint'|trans, 'slug': 's3_use_path_style_endpoint'} %}
+  </div>
+
+  <h3 class='p-2 pl-3 section-title'>{{ 'Exports configuration'|trans }}</h3>
+
+  <div class='pl-3 mt-2 mb-5'>
+    {% include 'binary-setting.html' with {'label': 'Use S3 for exports'|trans, 'slug': 's3_exports_toggle', 'help': 'Save user created export files to S3'|trans} %}
+    {% include 'binary-setting.html' with {'label': 'Use a dedicated bucket'|trans, 'slug': 's3_exports_use_dedicated_bucket', 'help': 'Active this option and configure another bucket below if your main uploads bucket has object locking enabled or retention policy that makes it unsuitable for short-lived objects such as user exports.'} %}
+    <div class='d-flex justify-content-between'>
+      <label for='s3_exports_bucket_name' class='col-form-label'>S3 bucket name</label>
+      <input class='form-control col-md-3' type='text' id='s3_exports_bucket_name' placeholder='some-bucket-name' data-trigger='blur' data-model='config' data-target='s3_exports_bucket_name' value='{{ App.Config.configArr.s3_exports_bucket_name }}' />
+    </div>
+    <hr>
+
+    <div class='d-flex justify-content-between'>
+      <label for='s3_exports_region' class='col-form-label'>S3 region</label>
+      <input class='form-control col-md-3' type='text' id='s3_exports_region' placeholder='fr-par' data-trigger='blur' data-model='config' data-target='s3_exports_region' value='{{ App.Config.configArr.s3_exports_region }}' />
+    </div>
+    <hr>
+
+    <div class='d-flex justify-content-between'>
+      <label for='s3_exports_endpoint' class='col-form-label'>S3 endpoint</label>
+      <input class='form-control col-md-3' type='url' id='s3_exports_endpoint' placeholder='https://s3.example.org' data-trigger='blur' data-model='config' data-target='s3_exports_endpoint' value='{{ App.Config.configArr.s3_exports_endpoint }}' />
+    </div>
+    <hr>
+
+    <div class='d-flex justify-content-between'>
+      <label for='s3_exports_path_prefix' class='col-form-label'>S3 path prefix (optional)</label>
+      <input class='form-control col-md-3' type='text' id='s3_exports_path_prefix' placeholder='uploads' data-trigger='blur' data-model='config' data-target='s3_exports_path_prefix' value='{{ App.Config.configArr.s3_exports_path_prefix }}' />
+    </div>
+    <hr>
+
+    {% include 'binary-setting.html' with {'label': 'Verify TLS certificate'|trans, 'slug': 's3_exports_verify_cert'} %}
+    {% include 'binary-setting.html' with {'label': 'Use S3 Path-Style endpoint'|trans, 'slug': 's3_exports_use_path_style_endpoint'} %}
 
   </div>
 </div>

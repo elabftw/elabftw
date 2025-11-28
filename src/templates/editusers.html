@@ -25,7 +25,9 @@
 {# CREATE USER ACCOUNT #}
 <h3 class='my-3 p-2 pl-3 section-title'>{{ 'Add account'|trans }}</h3>
 <div class='pl-3'>
-  <p class='smallgray'>{{ 'Note: new user will need to use the "Forgot password" button on the login page to set a password.'|trans }}</p>
+  {% if App.Config.configArr.saml_toggle == '0' and App.Config.configArr.ldap_toggle == '0' %}
+    <p class='smallgray'>{{ 'Note: new users will need to use the "Forgot password" button on the login page to set a password.'|trans }}</p>
+  {% endif %}
   <form class='form-group' id='createUserForm'>
     <div class='row mb-2'>
       {# TEAM #}

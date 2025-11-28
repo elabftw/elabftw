@@ -20,10 +20,9 @@
     {# SEARCH BAR #}
     {% set pageName = scriptName|replace({'.php': ''}) %}
     {% set searchTarget = pageName %}
-    {% set searchPlaceholder = 'Search in experiments'|trans %}
+    {% set searchPlaceholder = 'Search in %s'|trans|format(pageTitle|lower) %}
     {% if pageName == 'database' %}
       {% set searchTarget = 'resources'|trans %}
-      {% set searchPlaceholder = 'Search in resources'|trans %}
     {% endif %}
     <form id='mainSearchForm' aria-label='{{ 'Search %s'|trans|format(searchTarget) }}' class='mb-2 flex-fill' method='get'>
       {# next div is wrapper to position pre below textarea #}

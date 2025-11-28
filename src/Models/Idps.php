@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\CertPurpose;
+use Elabftw\Enums\IdpsPatchableColumns;
 use Elabftw\Enums\SamlBinding;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
@@ -122,7 +123,7 @@ final class Idps extends AbstractRest
             if ($key === 'certs' || $key === 'endpoints') {
                 continue;
             }
-            $this->update($key, $value);
+            $this->update(IdpsPatchableColumns::from($key), $value);
         }
         return $this->readOne();
     }
@@ -137,7 +138,7 @@ final class Idps extends AbstractRest
         unset($idp['certs']);
         unset($idp['endpoints']);
         foreach ($idp as $key => $value) {
-            $this->update($key, $value);
+            $this->update(IdpsPatchableColumns::from($key), $value);
         }
         return $this->readOne();
     }
@@ -347,9 +348,9 @@ final class Idps extends AbstractRest
         }
     }
 
-    private function update(string $target, string $value): array
+    private function update(IdpsPatchableColumns $target, string $value): array
     {
-        $sql = 'UPDATE idps SET ' . $target . ' = :value WHERE id = :id';
+        $sql = sprintf('UPDATE idps SET %s = :value WHERE id = :id', $target->value);
         $req = $this->Db->prepare($sql);
         $req->bindParam(':value', $value);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);

@@ -90,43 +90,6 @@ final class Idps extends AbstractRest
     }
 
     /**
-     * Returns a formatable string with a placeholder for the WHERE
-     */
-    private function getReadSql(): string
-    {
-       return "SELECT idps.*, idps_sources.url AS source_url,
-            COALESCE(
-                (SELECT JSON_ARRAYAGG(JSON_OBJECT(
-                    'x509', ic.x509,
-                    'sha256', ic.sha256,
-                    'purpose', ic.purpose,
-                    'not_before', ic.not_before,
-                    'not_after', ic.not_after,
-                    'created_at', ic.created_at,
-                    'modified_at', ic.modified_at))
-                FROM idps_certs AS ic
-                WHERE ic.idp = idps.id),
-                JSON_ARRAY()
-            ) AS certs,
-            COALESCE(
-                (SELECT JSON_ARRAYAGG(JSON_OBJECT(
-                    'binding', ie.binding,
-                    'location', ie.location,
-                    'is_slo', ie.is_slo,
-                    'created_at', ie.created_at,
-                    'modified_at', ie.modified_at))
-                FROM idps_endpoints AS ie
-                WHERE ie.idp = idps.id),
-                JSON_ARRAY()
-            ) AS endpoints
-            FROM idps
-            LEFT JOIN idps_sources ON idps.source = idps_sources.id
-            %s
-            GROUP BY idps.id
-            ORDER BY name ASC";
-    }
-
-    /**
      * Used to get a list of enabled IDP for the login page, without having to load too much data
      */
     public function readAllSimpleEnabled(): array
@@ -168,7 +131,7 @@ final class Idps extends AbstractRest
     {
         $this->canWriteOrExplode();
         $IdpsCerts = new IdpsCerts($this->requester, $this->id);
-        $IdpsCerts->upsert($this->id ?? 0, $idp);
+        $IdpsCerts->sync($this->id ?? 0, $idp);
         $IdpsEndpoints = new IdpsEndpoints($this->requester, $this->id);
         foreach ($idp['endpoints'] as $endpoint) {
             $IdpsEndpoints->create($endpoint['binding'], $endpoint['location'], $endpoint['is_slo']);
@@ -293,6 +256,45 @@ final class Idps extends AbstractRest
             return 0;
         }
         return (int) $res;
+    }
+
+    /**
+     * Returns a formatable string with a placeholder for the WHERE
+     */
+    private function getReadSql(): string
+    {
+        return "SELECT idps.*, idps_sources.url AS source_url,
+            COALESCE(
+                (SELECT JSON_ARRAYAGG(JSON_OBJECT(
+                    'id', ic.id,
+                    'x509', ic.x509,
+                    'sha256', ic.sha256,
+                    'purpose', ic.purpose,
+                    'not_before', ic.not_before,
+                    'not_after', ic.not_after,
+                    'created_at', ic.created_at,
+                    'modified_at', ic.modified_at))
+                FROM idps_certs AS ic
+                WHERE ic.idp = idps.id),
+                JSON_ARRAY()
+            ) AS certs,
+            COALESCE(
+                (SELECT JSON_ARRAYAGG(JSON_OBJECT(
+                    'id', ie.id,
+                    'binding', ie.binding,
+                    'location', ie.location,
+                    'is_slo', ie.is_slo,
+                    'created_at', ie.created_at,
+                    'modified_at', ie.modified_at))
+                FROM idps_endpoints AS ie
+                WHERE ie.idp = idps.id),
+                JSON_ARRAY()
+            ) AS endpoints
+            FROM idps
+            LEFT JOIN idps_sources ON idps.source = idps_sources.id
+            %s
+            GROUP BY idps.id
+            ORDER BY name ASC";
     }
 
     private function hydrate(array $idp): array

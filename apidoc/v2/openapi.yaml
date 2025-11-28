@@ -850,6 +850,9 @@ components:
       type: object
       description: X.509 certificate associated with a SAML IdP
       properties:
+        id:
+          type: integer
+          example: 42
         x509:
           type: string
           description: >
@@ -883,11 +886,48 @@ components:
           description: Timestamp when the certificate was last modified.
           example: '2025-11-16 21:00:23.000000'
       required:
+        - id
         - x509
         - sha256
         - purpose
         - created_at
         - modified_at
+    idp_endpoint:
+      type: object
+      description: SAML2 endpoint
+      properties:
+        id:
+          type: integer
+          example: 42
+        is_slo:
+          type: integer
+          description: >
+            Will be 1 if the endpoint is for SLO (otherwise it means it's SSO)
+          example: 0
+          enum: [ 0, 1 ]
+        binding:
+          type: integer
+          description: |
+            The type of binding: POST or redirect(see SamlBinding enum)
+          enum: [ 0, 1 ]
+          example: 0
+        location:
+          type: string
+          description: >
+            Actual URL
+          example: https://idp.uni-example.de/idp/profile/SAML2/POST/SLO
+        binding_urn:
+          type: string
+          description: URN corresponding to the `binding` field
+          example: 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST'
+        created_at:
+          type: string
+          description: Timestamp when the certificate was created.
+          example: '2025-11-16 21:00:23.000000'
+        modified_at:
+          type: string
+          description: Timestamp when the certificate was last modified.
+          example: '2025-11-16 21:00:23.000000'
     idp:
       type: object
       properties:
@@ -912,6 +952,11 @@ components:
           description: Certificates associated with this IdP.
           items:
             $ref: '#/components/schemas/idp_cert'
+        endpoints:
+          type: array
+          description: Endpoints associated with this IdP.
+          items:
+            $ref: '#/components/schemas/idp_endpoint'
     item:
       allOf:
         - $ref: '#/components/schemas/entity'

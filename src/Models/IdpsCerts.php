@@ -91,9 +91,10 @@ final class IdpsCerts extends AbstractRest
         );
     }
 
-    public function upsert(int $idpId, array $idp): bool
+    public function sync(int $idpId, array $idp): bool
     {
         $this->idpId = $idpId;
+        // if the cert already exists, it will simply "touch" it: update modified_at
         foreach ($idp['certs'] as $cert) {
             $this->create(
                 $cert['purpose'],
@@ -103,6 +104,27 @@ final class IdpsCerts extends AbstractRest
                 $cert['not_after'],
             );
         }
+        // now we want to prune certs that are no longer in the source
+        $allCerts = $this->readAll();
+        $stayHashes = array_fill_keys(
+            array_filter(
+                array_map(
+                    static fn(array $c) => $c['sha256'],
+                    $idp['certs'] ?? array()
+                )
+            ),
+            true
+        );
+
+        $certsToPrune = array_values(array_filter(
+            $allCerts,
+            static fn(array $dbCert) => !isset($stayHashes[$dbCert['sha256'] ?? ''])
+        ));
+        foreach ($certsToPrune as $cert) {
+            $this->id = $cert['id'];
+            $this->destroy();
+        }
+
         return true;
     }
 

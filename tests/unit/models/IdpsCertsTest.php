@@ -13,11 +13,13 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\CertPurpose;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\Filter;
+use Elabftw\Services\Xml2Idps;
 use Elabftw\Traits\TestsUtilsTrait;
 
 class IdpsCertsTest extends \PHPUnit\Framework\TestCase
@@ -74,5 +76,33 @@ class IdpsCertsTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(ImproperActionException::class);
         new IdpsCerts($this->requester)->postAction(Action::Create, array());
+    }
+
+    public function testSync(): void
+    {
+        // first create a cert for our idp
+        $cert = Storage::FIXTURES->getStorage()->getFs()->read('x509.crt');
+        $this->IdpsCerts->postAction(Action::Create, array('x509' => $cert));
+        // now we will simulate the XML providing a new cert
+        $cert = Storage::FIXTURES->getStorage()->getFs()->read('x509-new.crt');
+        [$pem, $sha256, $notBefore, $notAfter] = Xml2Idps::processCert($cert);
+        $idpFromXml = array(
+            'name' => 'idp',
+            'entityid' => 'https://app.onelogin.com',
+            'certs' => array(
+                array(
+                    'purpose' => CertPurpose::Signing,
+                    'x509' => $pem,
+                    'sha256' => $sha256,
+                    'not_before' => $notBefore,
+                    'not_after' => $notAfter,
+                ),
+            ),
+        );
+        // this should replace the existing cert with the provided one
+        $this->IdpsCerts->sync($this->IdpsCerts->idpId, $idpFromXml);
+        $afterSync = $this->IdpsCerts->readAll();
+        $this->assertCount(1, $afterSync);
+        $this->assertSame($sha256, $afterSync[0]['sha256']);
     }
 }

@@ -71,38 +71,7 @@ final class Idps extends AbstractRest
     #[Override]
     public function readOne(): array
     {
-        $sql = "SELECT idps.*, idps_sources.url AS source_url,
-            COALESCE(
-                (SELECT JSON_ARRAYAGG(JSON_OBJECT(
-                    'x509', ic.x509,
-                    'sha256', ic.sha256,
-                    'purpose', ic.purpose,
-                    'not_before', ic.not_before,
-                    'not_after', ic.not_after,
-                    'created_at', ic.created_at,
-                    'modified_at', ic.modified_at))
-                FROM idps_certs AS ic
-                WHERE ic.idp = idps.id),
-            JSON_ARRAY()
-            ) AS certs,
-            COALESCE(
-                (SELECT JSON_ARRAYAGG(JSON_OBJECT(
-                    'binding', ie.binding,
-                    'location', ie.location,
-                    'is_slo', ie.is_slo,
-                    'created_at', ie.created_at,
-                    'modified_at', ie.modified_at))
-                FROM idps_endpoints AS ie
-                WHERE ie.idp = idps.id),
-            JSON_ARRAY()
-            ) AS endpoints
-            FROM idps
-            LEFT JOIN idps_sources ON idps.source = idps_sources.id
-            LEFT JOIN idps_certs ON idps.id = idps_certs.idp
-            LEFT JOIN idps_endpoints ON idps.id = idps_endpoints.idp
-            WHERE idps.id = :id
-            GROUP BY idps.id
-            ORDER BY name ASC";
+        $sql = sprintf($this->getReadSql(), 'WHERE idps.id = :id');
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -112,7 +81,20 @@ final class Idps extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        $sql = "SELECT idps.*, idps_sources.url AS source_url,
+        // no WHERE clause in readAll
+        $sql = sprintf($this->getReadSql(), '');
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+        $res = $req->fetchAll();
+        return array_map(array($this, 'hydrate'), $res);
+    }
+
+    /**
+     * Returns a formatable string with a placeholder for the WHERE
+     */
+    private function getReadSql(): string
+    {
+       return "SELECT idps.*, idps_sources.url AS source_url,
             COALESCE(
                 (SELECT JSON_ARRAYAGG(JSON_OBJECT(
                     'x509', ic.x509,
@@ -139,12 +121,9 @@ final class Idps extends AbstractRest
             ) AS endpoints
             FROM idps
             LEFT JOIN idps_sources ON idps.source = idps_sources.id
+            %s
             GROUP BY idps.id
             ORDER BY name ASC";
-        $req = $this->Db->prepare($sql);
-        $this->Db->execute($req);
-        $res = $req->fetchAll();
-        return array_map(array($this, 'hydrate'), $res);
     }
 
     /**

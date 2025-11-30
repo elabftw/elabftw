@@ -315,7 +315,7 @@ if (window.location.pathname === '/sysconfig.php') {
   on('display-idp-certs-modal', (el: HTMLElement) => {
     ApiC.getJson(`${Model.Idp}/${el.dataset.id}/certs`).then(certs => {
       renderCerts(certs);
-      // add idp id to Add cert save button
+      // add idp id to Add cert/endpoint save button
       document.getElementById('idpCertsModalSaveButton').dataset.idp = el.dataset.id;
       $('#idpCertsModal').modal('show');
     });
@@ -324,6 +324,7 @@ if (window.location.pathname === '/sysconfig.php') {
   on('display-idp-endpoints-modal', (el: HTMLElement) => {
     ApiC.getJson(`${Model.Idp}/${el.dataset.id}/endpoints`).then(endpoints => {
       renderEndpoints(endpoints);
+      document.getElementById('idpEndpointsModalSaveButton').dataset.idp = el.dataset.id;
       $('#idpEndpointsModal').modal('show');
     });
   });
@@ -365,6 +366,20 @@ if (window.location.pathname === '/sysconfig.php') {
       clearForm(form);
       ApiC.post(`${Model.Idp}/${el.dataset.idp}/certs`, params).then(() => reloadElements(['idpsDiv']));
       $('#idpCertsModal').modal('hide');
+    } catch (e) {
+      notify.error(e);
+      return;
+    }
+  });
+
+  on('save-idp-endpoint', (el: HTMLElement, event: Event) => {
+    event.preventDefault();
+    try {
+      const form = document.getElementById('idpEndpointForm');
+      const params = collectForm(form);
+      clearForm(form);
+      ApiC.post(`${Model.Idp}/${el.dataset.idp}/endpoints`, params).then(() => reloadElements(['idpsDiv']));
+      $('#idpEndpointsModal').modal('hide');
     } catch (e) {
       notify.error(e);
       return;

@@ -105,3 +105,5 @@ CALL DropColumn('idps', 'sso_url');
 CALL DropColumn('idps', 'sso_binding');
 CALL DropColumn('idps', 'slo_url');
 CALL DropColumn('idps', 'slo_binding');
+DELETE FROM config WHERE conf_name = 'saml_acs_binding';
+DELETE FROM config WHERE conf_name = 'saml_slo_binding';

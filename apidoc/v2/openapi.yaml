@@ -460,8 +460,6 @@ components:
           type: string
         s3_verify_cert:
           type: string
-        saml_acs_binding:
-          type: string
         saml_allowrepeatattributename:
           type: string
         saml_authnrequestssigned:
@@ -487,8 +485,6 @@ components:
         saml_relaxdestinationvalidation:
           type: string
         saml_signmetadata:
-          type: string
-        saml_slo_binding:
           type: string
         saml_strict:
           type: string

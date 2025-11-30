@@ -741,24 +741,6 @@
     <hr>
 
     <div class='d-flex justify-content-between'>
-      <label for='saml_acs_binding' class='col-form-label'>Assertion Consumer Service binding (only POST supported)</label>
-      <select class='form-control col-md-3' id='saml_acs_binding' data-trigger='change' data-model='config' data-target='saml_acs_binding'>
-        <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' {{ App.Config.configArr.saml_acs_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' ? 'selected' }}>Redirect</option>
-        <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' {{ App.Config.configArr.saml_acs_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' ? 'selected' }}>POST</option>
-      </select>
-    </div>
-    <hr>
-
-    <div class='d-flex justify-content-between'>
-      <label for='saml_slo_binding' class='col-form-label'>Single Logout Service binding (only Redirect supported)</label>
-      <select class='form-control col-md-3' id='saml_slo_binding' data-trigger='change' data-model='config' data-target='saml_slo_binding'>
-        <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' {{ App.Config.configArr.saml_slo_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' ? 'selected' }}>Redirect</option>
-        <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' {{ App.Config.configArr.saml_slo_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' ? 'selected' }}>POST</option>
-      </select>
-    </div>
-    <hr>
-
-    <div class='d-flex justify-content-between'>
       <label for='saml_nameidformat' class='col-form-label'>NameIDFormat. Default is "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress".</label>
       <input class='form-control col-md-3' type='text' id='saml_nameidformat' data-trigger='blur' data-model='config' data-target='saml_nameidformat' placeholder='urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress' value='{{ App.Config.configArr.saml_nameidformat }}' />
     </div>

@@ -109,10 +109,8 @@ final class IdpsHelper
                 'assertionConsumerService' => array(
                     // URL Location where the <Response> from the IdP will be returned
                     'url' => rtrim($this->Config->configArr['saml_baseurl'] ?? '', '/') . '/index.php?acs',
-                    // SAML protocol binding to be used when returning the <Response>
-                    // message.  Onelogin Toolkit supports for this endpoint the
-                    // HTTP-Redirect binding only
-                    'binding' => $this->Config->configArr['saml_acs_binding'],
+                    // Only HTTP-POST binding is supported
+                    'binding' => SamlBinding::HttpPost->toUrn(),
                 ),
                 // If you need to specify requested attributes, set a
                 // attributeConsumingService. nameFormat, attributeValue and

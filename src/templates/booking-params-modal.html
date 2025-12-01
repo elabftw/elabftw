@@ -28,7 +28,7 @@
 
         {# MAX BOOK TIME #}
         <div class='d-flex justify-content-between mb-2'>
-          <label for='book_max_minutes' class='col-form-label'>{{ 'Maximum slot time (in minutes)'|trans }}</label>
+          <label for='book_max_minutes' class='col-form-label'>{{ 'Maximum time per slot (in minutes)'|trans }}</label>
           <input class='form-control col-md-4' data-trigger='blur' data-model='items/{{ Entity.id }}' data-target='book_max_minutes' type='number' value='{{ Entity.entityData.book_max_minutes }}' id='book_max_minutes' />
         </div>
 

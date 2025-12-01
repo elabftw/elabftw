@@ -9,8 +9,8 @@
         </button>
       </div>
       <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
-        <h6>{{ 'Certificates associated with this IDP'|trans }}</h6>
-        <p class='smallgray'>{{ 'A single IDP can have multiple valid certificates at the same time.'|trans }}
+        <h6 id='idpCertsTableLabel'>{{ 'Certificates associated with this IDP'|trans }}</h6>
+        <p class='smallgray'>{{ 'A single IDP can have multiple valid certificates at the same time.'|trans }}</p>
         <div class='table-container'>
           <table class='table' aria-describedby='idpCertsTableLabel' data-table-sort='true'>
             <thead>

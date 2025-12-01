@@ -15,6 +15,7 @@ namespace Elabftw\Services;
 use Elabftw\Exceptions\ImproperActionException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * HTTP wrapper
@@ -25,6 +26,8 @@ class HttpGetter
     private const int REQUEST_TIMEOUT = 100;
 
     private const int SUCCESS = 200;
+
+    private const int SUCCESS_NO_CONTENT = 204;
 
     public function __construct(public Client $client, private string $proxy = '', private bool $verifyTls = true) {}
 
@@ -46,6 +49,26 @@ class HttpGetter
         return (string) $res->getBody();
     }
 
+    public function getHeaders(string $url): array
+    {
+        try {
+            $res = $this->client->get($url, array(
+                'proxy' => $this->proxy,
+                'timeout' => self::REQUEST_TIMEOUT,
+                'verify' => $this->verifyTls,
+            ));
+        } catch (ConnectException $e) {
+            throw new ImproperActionException(sprintf('Error connecting to remote server: %s', $url), $e->getCode(), $e);
+        }
+        if (!in_array($res->getStatusCode(), array(self::SUCCESS, self::SUCCESS_NO_CONTENT), true)) {
+            throw new ImproperActionException(sprintf('Error fetching remote content (%d).', $res->getStatusCode()));
+        }
+        return array(
+            'status'  => $res->getStatusCode(),
+            'headers' => $res->getHeaders(),
+        );
+    }
+
     public function postJson(string $url, array $json, array $headers = array()): string
     {
         try {
@@ -64,5 +87,28 @@ class HttpGetter
             throw new ImproperActionException(sprintf('Error fetching remote content (%d).', $res->getStatusCode()));
         }
         return $res->getBody()->getContents();
+    }
+
+    public function post(string $url, array $options = array()): ResponseInterface
+    {
+        try {
+            $res = $this->client->post($url, array_merge(
+                array(
+                    'proxy'   => $this->proxy,
+                    'timeout' => self::REQUEST_TIMEOUT,
+                    'verify'  => $this->verifyTls,
+                ),
+                $options,
+            ));
+        } catch (ConnectException $e) {
+            throw new ImproperActionException(
+                sprintf('Error connecting to remote server: %s', $url),
+                $e->getCode(),
+                $e
+            );
+        }
+
+        // Let the caller decide what status codes are acceptable
+        return $res;
     }
 }

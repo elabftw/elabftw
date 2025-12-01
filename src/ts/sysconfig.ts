@@ -100,6 +100,15 @@ function renderCerts(certs: Cert[]): void {
       return row;
     }),
   );
+  // now the delete cert select element
+  const select = document.getElementById('idpCertDeleteSelect');
+  select.innerHTML = '';
+  certs.forEach(cert => {
+    const option = document.createElement('option');
+    option.value = String(cert.id);
+    option.textContent = `${cert.id} - ${cert.purpose_human} - ${cert.not_after} - ${cert.sha256}`;
+    select.appendChild(option);
+  });
 }
 
 function renderEndpoints(endpoints: Endpoint[]): void {
@@ -118,6 +127,15 @@ function renderEndpoints(endpoints: Endpoint[]): void {
       return row;
     }),
   );
+  // now the delete endpoint select element
+  const select = document.getElementById('idpEndpointDeleteSelect');
+  select.innerHTML = '';
+  endpoints.forEach(endpoint => {
+    const option = document.createElement('option');
+    option.value = String(endpoint.id);
+    option.textContent = `${endpoint.id} - ${endpoint.binding_urn} - ${endpoint.service_type} - ${endpoint.location}`;
+    select.appendChild(option);
+  });
 }
 
 // GET the latest version information
@@ -317,6 +335,13 @@ if (window.location.pathname === '/sysconfig.php') {
       renderCerts(certs);
       // add idp id to Add cert/endpoint save button
       document.getElementById('idpCertsModalSaveButton').dataset.idp = el.dataset.id;
+      document.getElementById('idpCertsModalDeleteButton').dataset.idp = el.dataset.id;
+      const deleteACertificateToggleBtn = document.getElementById('deleteACertificateToggleBtn');
+      deleteACertificateToggleBtn.removeAttribute('disabled');
+      if (certs.length === 0) {
+        deleteACertificateToggleBtn.setAttribute('disabled', 'disabled');
+        deleteACertificateToggleBtn.nextElementSibling.setAttribute('hidden', 'hidden');
+      }
       $('#idpCertsModal').modal('show');
     });
   });
@@ -325,6 +350,13 @@ if (window.location.pathname === '/sysconfig.php') {
     ApiC.getJson(`${Model.Idp}/${el.dataset.id}/endpoints`).then(endpoints => {
       renderEndpoints(endpoints);
       document.getElementById('idpEndpointsModalSaveButton').dataset.idp = el.dataset.id;
+      document.getElementById('idpEndpointsModalDeleteButton').dataset.idp = el.dataset.id;
+      const deleteAnEndpointToggleBtn = document.getElementById('deleteAnEndpointToggleBtn');
+      deleteAnEndpointToggleBtn.removeAttribute('disabled');
+      if (endpoints.length === 0) {
+        deleteAnEndpointToggleBtn.setAttribute('disabled', 'disabled');
+        deleteAnEndpointToggleBtn.nextElementSibling.setAttribute('hidden', 'hidden');
+      }
       $('#idpEndpointsModal').modal('show');
     });
   });
@@ -365,9 +397,20 @@ if (window.location.pathname === '/sysconfig.php') {
       const params = collectForm(form);
       ApiC.post(`${Model.Idp}/${el.dataset.idp}/certs`, params).then(() => {
         clearForm(form);
-        reloadElements(['idpsDiv']);
         $('#idpCertsModal').modal('hide');
       });
+    } catch (e) {
+      notify.error(e);
+      return;
+    }
+  });
+
+  on('delete-idp-cert', (el: HTMLElement, event: Event) => {
+    event.preventDefault();
+    try {
+      const form = document.getElementById('idpCertDeleteForm');
+      const params = collectForm(form);
+      ApiC.delete(`${Model.Idp}/${el.dataset.idp}/certs/${params['cert']}`).then(() => $('#idpCertsModal').modal('hide'));
     } catch (e) {
       notify.error(e);
       return;
@@ -381,9 +424,20 @@ if (window.location.pathname === '/sysconfig.php') {
       const params = collectForm(form);
       ApiC.post(`${Model.Idp}/${el.dataset.idp}/endpoints`, params).then(() => {
         clearForm(form);
-        reloadElements(['idpsDiv']);
         $('#idpEndpointsModal').modal('hide');
       });
+    } catch (e) {
+      notify.error(e);
+      return;
+    }
+  });
+
+  on('delete-idp-endpoint', (el: HTMLElement, event: Event) => {
+    event.preventDefault();
+    try {
+      const form = document.getElementById('idpEndpointDeleteForm');
+      const params = collectForm(form);
+      ApiC.delete(`${Model.Idp}/${el.dataset.idp}/endpoints/${params['endpoint']}`).then(() => $('#idpEndpointsModal').modal('hide'));
     } catch (e) {
       notify.error(e);
       return;

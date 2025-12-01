@@ -31,14 +31,10 @@
         </div>
         <template id='certRow'>
           <tr>
-            <td data-col='id'></td>
-            <td data-col='purpose_human'></td>
-            <td data-col='not_before'></td>
-            <td data-col='not_after'></td>
-            <td data-col='created_at'></td>
-            <td data-col='modified_at'></td>
-            <td data-col='sha256'></td>
-            <td data-col='x509'></td>
+            {% for _ in 0..7 %}
+              {# twigcs use-var _ #}
+              <td></td>
+            {% endfor %}
           </tr>
         </template>
         <hr>
@@ -57,6 +53,17 @@
             <div class='text-center'>
             <button type='submit' data-action='save-idp-cert' id='idpCertsModalSaveButton' class='btn btn-primary ml-auto mb-2 mt-1'>{{ 'Save certificate'|trans }}</button>
             </div>
+          </form>
+        </div>
+        <button type='button' class='btn btn-danger btn-sm' id='deleteACertificateToggleBtn' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right'>
+          <i class='fas fa-caret-right color-white mr-1'></i>{{ 'Delete a certificate'|trans }}
+        </button>
+        <div hidden>
+          <form id='idpCertDeleteForm'>
+            <label for='idpCertDeleteSelect' class='col-form-label'>{{ 'Select a certificate to delete'|trans }}</label>
+            <select id='idpCertDeleteSelect' name='cert' class='form-control'>
+            </select>
+            <button type='submit' data-action='delete-idp-cert' id='idpCertsModalDeleteButton' class='btn btn-danger ml-auto mb-2 mt-1'>{{ 'Delete certificate'|trans }}</button>
           </form>
         </div>
         <div class='modal-footer mt-2'>

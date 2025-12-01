@@ -28,12 +28,10 @@
         </div>
         <template id='endpointRow'>
           <tr>
-            <td data-col='id'></td>
-            <td data-col='binding_urn'></td>
-            <td data-col='location'></td>
-            <td data-col='service_type'></td>
-            <td data-col='created_at'></td>
-            <td data-col='modified_at'></td>
+            {% for _ in 0..5 %}
+              {# twigcs use-var _ #}
+              <td></td>
+            {% endfor %}
           </tr>
         </template>
 
@@ -45,7 +43,7 @@
           <p class='smallgray mt-2'>{{ 'Note: use HTTP-POST for SSO and HTTP-Redirect for SLO, they are the only bindings supported by eLabFTW. Only an SSO endpoint is strictly required.'|trans }}</p>
           <form id='idpEndpointForm'>
             <label for='idpEndpointsModalNew' class='col-form-label'>{{ 'SAML Endpoint'|trans }}</label>
-            <input class='form-control' id='idpEndpointsModalNew' required placeholder='https://idp.example.fr/idp/profile/SAML2/POST/SSO' name='location' />
+            <input class='form-control' type='url' id='idpEndpointsModalNew' required placeholder='https://idp.example.fr/idp/profile/SAML2/POST/SSO' name='location' />
             <p class='mt-2'>{{ 'Service type'|trans }}</p>
             <div class='form-check form-check-inline'>
               <input class='form-check-input' type='radio' name='is_slo' value='0' id='idpEndpointIsSloSso' checked> <label class='form-check-label' for='idpEndpointIsSloSso'>{{ 'Single Sign-On (SSO)'|trans }}</label>
@@ -63,6 +61,17 @@
             <div class='text-center'>
             <button type='submit' data-action='save-idp-endpoint' id='idpEndpointsModalSaveButton' class='btn btn-primary ml-auto mb-2 mt-1'>{{ 'Save endpoint'|trans }}</button>
             </div>
+          </form>
+        </div>
+        <button type='button' class='btn btn-danger btn-sm' id='deleteAnEndpointToggleBtn' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right'>
+          <i class='fas fa-caret-right color-white mr-1'></i>{{ 'Delete an endpoint'|trans }}
+        </button>
+        <div hidden>
+          <form id='idpEndpointDeleteForm'>
+            <label for='idpEndpointDeleteSelect' class='col-form-label'>{{ 'Select an endpoint to delete'|trans }}</label>
+            <select id='idpEndpointDeleteSelect' name='endpoint' class='form-control'>
+            </select>
+            <button type='submit' data-action='delete-idp-endpoint' id='idpEndpointsModalDeleteButton' class='btn btn-danger ml-auto mb-2 mt-1'>{{ 'Delete endpoint'|trans }}</button>
           </form>
         </div>
         <div class='modal-footer mt-2'>

@@ -2899,7 +2899,7 @@ msgid "Cannot cancel slot less than %d minutes before its start."
 msgstr "Tidak dapat membatalkan slot kurang dari %d menit sebelum dimulai."
 
 #: src/Models/Scheduler.php:492
-msgid "Slot time is limited to %d minutes."
+msgid "Time slot is limited to %d minutes."
 msgstr "Waktu slot dibatasi hingga %d menit."
 
 #: src/Models/Scheduler.php:509
@@ -2931,7 +2931,7 @@ msgid "Allow overlapping slots"
 msgstr "Izinkan slot yang tumpang tindih"
 
 #: src/templates/booking-params-modal.html:31
-msgid "Maximum slot time (in minutes)"
+msgid "Maximum time slot (in minutes)"
 msgstr "Waktu slot maksimum (dalam menit)"
 
 #: src/templates/booking-params-modal.html:37

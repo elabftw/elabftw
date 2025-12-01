@@ -3405,7 +3405,7 @@ msgid "Cannot cancel slot less than %d minutes before its start."
 msgstr "Nie można anulować przedziału na mniej niż %d minut przed jego rozpoczęciem."
 
 #: src/models/Scheduler.php:424
-msgid "Slot time is limited to %d minutes."
+msgid "Time slot is limited to %d minutes."
 msgstr "Czas przedziału jest ograniczony do %d minut."
 
 #: src/models/Scheduler.php:441
@@ -3437,7 +3437,7 @@ msgid "Allow overlapping slots"
 msgstr "Zezwalaj na nakładające się szczeliny"
 
 #: src/templates/booking-params-modal.html:31
-msgid "Maximum slot time (in minutes)"
+msgid "Maximum time slot (in minutes)"
 msgstr "Maksymalny czas slotu (w minutach)"
 
 #: src/templates/booking-params-modal.html:37

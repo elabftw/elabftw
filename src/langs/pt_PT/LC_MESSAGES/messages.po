@@ -3390,7 +3390,7 @@ msgid "Cannot cancel slot less than %d minutes before its start."
 msgstr "Não é possível cancelar a faixa horária menos de %d minutos antes do seu início."
 
 #: src/models/Scheduler.php:424
-msgid "Slot time is limited to %d minutes."
+msgid "Time slot is limited to %d minutes."
 msgstr "O intervalo de tempo é limitado a %d minutos."
 
 #: src/models/Scheduler.php:441
@@ -3422,7 +3422,7 @@ msgid "Allow overlapping slots"
 msgstr "Permitir a sobreposição de intervalos de agendamento"
 
 #: src/templates/booking-params-modal.html:31
-msgid "Maximum slot time (in minutes)"
+msgid "Maximum time slot (in minutes)"
 msgstr "Tempo máximo do intervalo de agendamento (em minutos)"
 
 #: src/templates/booking-params-modal.html:37

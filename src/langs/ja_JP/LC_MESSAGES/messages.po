@@ -2897,7 +2897,7 @@ msgid "Cannot cancel slot less than %d minutes before its start."
 msgstr "開始時刻の %d 分前にはスロットをキャンセルできません。"
 
 #: src/Models/Scheduler.php:492
-msgid "Slot time is limited to %d minutes."
+msgid "Time slot is limited to %d minutes."
 msgstr "スロット時間は %d 分に制限されています。"
 
 #: src/Models/Scheduler.php:509
@@ -2929,7 +2929,7 @@ msgid "Allow overlapping slots"
 msgstr "重複スロットの許可"
 
 #: src/templates/booking-params-modal.html:31
-msgid "Maximum slot time (in minutes)"
+msgid "Maximum time slot (in minutes)"
 msgstr "最大スロット時間（分）"
 
 #: src/templates/booking-params-modal.html:37

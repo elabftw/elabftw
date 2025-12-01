@@ -3391,7 +3391,7 @@ msgid "Cannot cancel slot less than %d minutes before its start."
 msgstr "No es pot cancel·lar l'espai amb menys de %d minuts abans del seu inici."
 
 #: src/models/Scheduler.php:424
-msgid "Slot time is limited to %d minutes."
+msgid "Time slot is limited to %d minutes."
 msgstr "El temps d'espai està limitat a %d minuts."
 
 #: src/models/Scheduler.php:441
@@ -3423,7 +3423,7 @@ msgid "Allow overlapping slots"
 msgstr "Permetre ranures superposades"
 
 #: src/templates/booking-params-modal.html:31
-msgid "Maximum slot time (in minutes)"
+msgid "Maximum time slot (in minutes)"
 msgstr "Temps màxim de ranura (en minuts)"
 
 #: src/templates/booking-params-modal.html:37

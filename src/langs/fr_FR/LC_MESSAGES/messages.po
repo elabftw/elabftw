@@ -1087,7 +1087,7 @@ msgstr "Impossible d'annuler un créneau moins de %d minutes avant son début."
 
 #: src/Models/Scheduler.php:492
 #, php-format
-msgid "Slot time is limited to %d minutes."
+msgid "Time slot is limited to %d minutes."
 msgstr "La durée du créneau est limitée à %d minutes."
 
 #: src/Models/Scheduler.php:509
@@ -1977,7 +1977,7 @@ msgid "Allow overlapping slots"
 msgstr "Autoriser le chevauchement des créneaux"
 
 #: src/templates/booking-params-modal.html:31
-msgid "Maximum slot time (in minutes)"
+msgid "Maximum time slot (in minutes)"
 msgstr "Durée maximale du créneau (en minutes)"
 
 #: src/templates/booking-params-modal.html:37

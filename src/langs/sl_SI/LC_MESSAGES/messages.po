@@ -3403,7 +3403,7 @@ msgid "Cannot cancel slot less than %d minutes before its start."
 msgstr "Reže ni mogoče preklicati manj kot %d minut pred začetkom."
 
 #: src/models/Scheduler.php:424
-msgid "Slot time is limited to %d minutes."
+msgid "Time slot is limited to %d minutes."
 msgstr "Čas reže je omejen na %d minut."
 
 #: src/models/Scheduler.php:441
@@ -3435,7 +3435,7 @@ msgid "Allow overlapping slots"
 msgstr "Dovolite prekrivajoče se reže"
 
 #: src/templates/booking-params-modal.html:31
-msgid "Maximum slot time (in minutes)"
+msgid "Maximum time slot (in minutes)"
 msgstr "Največji čas reže (v minutah)"
 
 #: src/templates/booking-params-modal.html:37

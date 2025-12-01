@@ -2902,7 +2902,7 @@ msgid "Cannot cancel slot less than %d minutes before its start."
 msgstr "Das Stornieren von Buchungen weniger als %d Minuten vor Beginn der Buchung ist nicht gestattet."
 
 #: src/Models/Scheduler.php:492
-msgid "Slot time is limited to %d minutes."
+msgid "Time slot is limited to %d minutes."
 msgstr "Die Zeitfensterlänge ist auf %d Minuten begrenzt."
 
 #: src/Models/Scheduler.php:509
@@ -2934,7 +2934,7 @@ msgid "Allow overlapping slots"
 msgstr "Sich überschneidende Zeitfenster erlauben"
 
 #: src/templates/booking-params-modal.html:31
-msgid "Maximum slot time (in minutes)"
+msgid "Maximum time slot (in minutes)"
 msgstr "Maximale Zeitfensterlänge (in Minuten)"
 
 #: src/templates/booking-params-modal.html:37

@@ -2897,7 +2897,7 @@ msgid "Cannot cancel slot less than %d minutes before its start."
 msgstr "预订时段在开始前 %d 分钟内不能被取消。"
 
 #: src/Models/Scheduler.php:492
-msgid "Slot time is limited to %d minutes."
+msgid "Time slot is limited to %d minutes."
 msgstr "预订时段被限制小于 %d 分钟。"
 
 #: src/Models/Scheduler.php:509
@@ -2929,7 +2929,7 @@ msgid "Allow overlapping slots"
 msgstr "允许预订时段重叠"
 
 #: src/templates/booking-params-modal.html:31
-msgid "Maximum slot time (in minutes)"
+msgid "Maximum time slot (in minutes)"
 msgstr "预订时段最大时长（分钟）"
 
 #: src/templates/booking-params-modal.html:37

@@ -2902,7 +2902,7 @@ msgid "Cannot cancel slot less than %d minutes before its start."
 msgstr "Aega ei saa tühistada vähem kui %d minutit enne selle algust."
 
 #: src/Models/Scheduler.php:492
-msgid "Slot time is limited to %d minutes."
+msgid "Time slot is limited to %d minutes."
 msgstr "Ajapesa on piiratud %d minutiga."
 
 #: src/Models/Scheduler.php:509
@@ -2934,7 +2934,7 @@ msgid "Allow overlapping slots"
 msgstr "Luba kattuvad pesad"
 
 #: src/templates/booking-params-modal.html:31
-msgid "Maximum slot time (in minutes)"
+msgid "Maximum time slot (in minutes)"
 msgstr "Maksimaalne ajapesa (minutites)"
 
 #: src/templates/booking-params-modal.html:37

@@ -3404,7 +3404,7 @@ msgid "Cannot cancel slot less than %d minutes before its start."
 msgstr "Невозможно отменить слот менее чем за %d минут до его начала."
 
 #: src/models/Scheduler.php:424
-msgid "Slot time is limited to %d minutes."
+msgid "Time slot is limited to %d minutes."
 msgstr "Время слота ограничено %d минутами."
 
 #: src/models/Scheduler.php:441
@@ -3436,7 +3436,7 @@ msgid "Allow overlapping slots"
 msgstr "Разрешить перекрытие слотов"
 
 #: src/templates/booking-params-modal.html:31
-msgid "Maximum slot time (in minutes)"
+msgid "Maximum time slot (in minutes)"
 msgstr "Максимальное время слота (в минутах)"
 
 #: src/templates/booking-params-modal.html:37

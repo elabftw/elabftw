@@ -3399,7 +3399,7 @@ msgid "Cannot cancel slot less than %d minutes before its start."
 msgstr "Δεν είναι δυνατή η ακύρωση της θέσης λιγότερο από %d λεπτά πριν από την έναρξή της."
 
 #: src/models/Scheduler.php:424
-msgid "Slot time is limited to %d minutes."
+msgid "Time slot is limited to %d minutes."
 msgstr "Ο χρόνος υποδοχής περιορίζεται σε %d λεπτά."
 
 #: src/models/Scheduler.php:441
@@ -3431,7 +3431,7 @@ msgid "Allow overlapping slots"
 msgstr "Να επιτρέπονται αλληλοεπικαλυπτόμενες κρατήσεις"
 
 #: src/templates/booking-params-modal.html:31
-msgid "Maximum slot time (in minutes)"
+msgid "Maximum time slot (in minutes)"
 msgstr "Μέγιστος χρόνος υποδοχής (σε λεπτά)"
 
 #: src/templates/booking-params-modal.html:37

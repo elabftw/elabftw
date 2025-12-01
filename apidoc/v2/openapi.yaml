@@ -918,11 +918,11 @@ components:
           example: 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST'
         created_at:
           type: string
-          description: Timestamp when the certificate was created.
+          description: Timestamp when the endpoint was created.
           example: '2025-11-16 21:00:23.000000'
         modified_at:
           type: string
-          description: Timestamp when the certificate was last modified.
+          description: Timestamp when the endpoint was last modified.
           example: '2025-11-16 21:00:23.000000'
     idp:
       type: object
@@ -942,6 +942,8 @@ components:
         fname_attr:
           type: string
         lname_attr:
+          type: string
+        orgid_attr:
           type: string
         certs:
           type: array

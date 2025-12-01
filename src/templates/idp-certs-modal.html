@@ -61,7 +61,7 @@
         <div hidden>
           <form id='idpCertDeleteForm'>
             <label for='idpCertDeleteSelect' class='col-form-label'>{{ 'Select a certificate to delete'|trans }}</label>
-            <select id='idpCertDeleteSelect' name='cert' class='form-control'>
+            <select id='idpCertDeleteSelect' name='cert' class='form-control' required>
             </select>
             <button type='submit' data-action='delete-idp-cert' id='idpCertsModalDeleteButton' class='btn btn-danger ml-auto mb-2 mt-1'>{{ 'Delete certificate'|trans }}</button>
           </form>

@@ -363,9 +363,11 @@ if (window.location.pathname === '/sysconfig.php') {
     try {
       const form = document.getElementById('idpCertForm');
       const params = collectForm(form);
-      clearForm(form);
-      ApiC.post(`${Model.Idp}/${el.dataset.idp}/certs`, params).then(() => reloadElements(['idpsDiv']));
-      $('#idpCertsModal').modal('hide');
+      ApiC.post(`${Model.Idp}/${el.dataset.idp}/certs`, params).then(() => {
+        clearForm(form);
+        reloadElements(['idpsDiv']);
+        $('#idpCertsModal').modal('hide');
+      });
     } catch (e) {
       notify.error(e);
       return;
@@ -377,9 +379,11 @@ if (window.location.pathname === '/sysconfig.php') {
     try {
       const form = document.getElementById('idpEndpointForm');
       const params = collectForm(form);
-      clearForm(form);
-      ApiC.post(`${Model.Idp}/${el.dataset.idp}/endpoints`, params).then(() => reloadElements(['idpsDiv']));
-      $('#idpEndpointsModal').modal('hide');
+      ApiC.post(`${Model.Idp}/${el.dataset.idp}/endpoints`, params).then(() => {
+        clearForm(form);
+        reloadElements(['idpsDiv']);
+        $('#idpEndpointsModal').modal('hide');
+      });
     } catch (e) {
       notify.error(e);
       return;

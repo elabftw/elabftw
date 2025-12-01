@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-17 22:30+0200\n"
+"POT-Creation-Date: 2025-11-13 11:01+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Nicolas CARPi\n"
 "Language-Team: \n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 3.7\n"
+"X-Generator: Poedit 3.8\n"
 "X-Poedit-Mapping: php=gettext:PHP;html=twig\n"
 "X-Poedit-Basepath: ../../../..\n"
 "X-Poedit-SearchPath-0: src\n"
@@ -19,7 +19,7 @@ msgstr ""
 "X-Poedit-SearchPathExcluded-0: web/assets\n"
 
 #: src/Auth/Demo.php:58 src/Auth/Demo.php:69 src/Auth/Local.php:57
-#: src/Auth/Local.php:144 src/Controllers/LoginController.php:218
+#: src/Auth/Local.php:144 src/Controllers/LoginController.php:233
 #: src/Exceptions/InvalidCredentialsException.php:24
 msgid "Invalid email/password combination."
 msgstr "Combinaison email/mot de passe invalide."
@@ -62,13 +62,13 @@ msgstr "Composés"
 msgid "Dashboard"
 msgstr "Tableau de bord"
 
-#: src/Controllers/DatabaseController.php:46
+#: src/Controllers/DatabaseController.php:37
 msgid "Resource"
 msgid_plural "Resources"
 msgstr[0] "Ressource"
 msgstr[1] "Ressources"
 
-#: src/Controllers/DatabaseController.php:48
+#: src/Controllers/DatabaseController.php:39
 msgid "Resources templates"
 msgstr "Modèles de ressources"
 
@@ -76,13 +76,13 @@ msgstr "Modèles de ressources"
 msgid "Experiments categories"
 msgstr "Catégories d'expériences"
 
-#: src/Controllers/ExperimentsController.php:46
+#: src/Controllers/ExperimentsController.php:37
 msgid "Experiment"
 msgid_plural "Experiments"
 msgstr[0] "Expérience"
 msgstr[1] "Expériences"
 
-#: src/Controllers/ExperimentsController.php:48
+#: src/Controllers/ExperimentsController.php:39
 msgid "Experiment templates"
 msgstr "Modèles d'expériences"
 
@@ -98,15 +98,15 @@ msgstr "Inventaire"
 msgid "Resources status"
 msgstr "Statut des ressources"
 
-#: src/Controllers/LoginController.php:176
-#: web/app/controllers/ResetPasswordController.php:77 web/index.php:122
+#: src/Controllers/LoginController.php:191
+#: web/app/controllers/ResetPasswordController.php:77 web/index.php:126
 msgid ""
 "Your account is not validated. An admin of your team needs to validate it!"
 msgstr ""
 "Votre compte n'est pas validé. Un admin de votre équipe a besoin de le "
 "valider!"
 
-#: src/Controllers/LoginController.php:391
+#: src/Controllers/LoginController.php:396
 msgid ""
 "Your account has been associated successfully to a team. Please authenticate "
 "again."
@@ -226,7 +226,7 @@ msgstr ""
 "Abandonner la feuille de calcul actuelle ? Toutes les modifications non "
 "enregistrées seront perdues."
 
-#: src/Elabftw/i18n4Js.php:56 src/Models/AbstractEntity.php:832
+#: src/Elabftw/i18n4Js.php:56 src/Models/AbstractEntity.php:839
 msgid "Custom ID is already used! Try another one."
 msgstr "L'identifiant personnalisé est déjà utilisé ! Essayez-en un autre."
 
@@ -276,8 +276,8 @@ msgstr "Vous devez autoriser au moins un paramètre de permission."
 
 #: src/Elabftw/i18n4Js.php:68 src/Import/Eln.php:320
 #: src/Models/AbstractStatus.php:58 src/Models/Experiments.php:59
-#: src/Models/Items.php:62 src/Models/TeamGroups.php:51
-#: src/Models/Templates.php:53 src/Services/Filter.php:146
+#: src/Models/Items.php:62 src/Models/TeamGroups.php:52
+#: src/Models/Templates.php:53 src/Services/Filter.php:149
 msgid "Untitled"
 msgstr "Sans titre"
 
@@ -430,7 +430,7 @@ msgstr "Nom"
 msgid "New spreadsheet"
 msgstr "Nouvelle feuille de calcul"
 
-#: src/Elabftw/i18n4Js.php:105 src/Models/AbstractEntity.php:1078
+#: src/Elabftw/i18n4Js.php:105 src/Models/AbstractEntity.php:1083
 msgid ""
 "Linking an item to itself is not allowed. Please select a different target."
 msgstr ""
@@ -847,7 +847,7 @@ msgstr ""
 "Vous ne pouvez pas stocker plus de %d exports. Supprimez les exports "
 "précédents pour pouvoir en créer de nouveaux."
 
-#: src/Make/MakeBloxberg.php:81 src/Models/AbstractEntity.php:862
+#: src/Make/MakeBloxberg.php:85 src/Models/AbstractEntity.php:869
 #, php-format
 msgid "Timestamp archive by %s"
 msgstr "Archive d'horodatage par %s"
@@ -861,33 +861,33 @@ msgstr "Rien à exporter !"
 msgid "Multientry eLabFTW PDF"
 msgstr "PDF multientrées eLabFTW"
 
-#: src/Models/AbstractEntity.php:219
+#: src/Models/AbstractEntity.php:220
 msgid "Experiments must use a template!"
 msgstr "Les expériences doivent utiliser un modèle !"
 
-#: src/Models/AbstractEntity.php:451
+#: src/Models/AbstractEntity.php:452
 msgid "Only the Restore action is allowed on a deleted entity."
 msgstr "Seule l'action Restaurer est autorisée sur une entité supprimée."
 
-#: src/Models/AbstractEntity.php:454
+#: src/Models/AbstractEntity.php:455
 msgid "Only the Unarchive action is allowed on an archived entity."
 msgstr "Seule l'action Désarchiver est autorisée sur une entité archivée."
 
-#: src/Models/AbstractEntity.php:799
+#: src/Models/AbstractEntity.php:806
 msgid "Cannot modify permissions on entry with immutable permissions."
 msgstr ""
 "Impossible de modifier les autorisations d'une entrée dont les autorisations "
 "sont immuables."
 
-#: src/Models/AbstractEntity.php:804
+#: src/Models/AbstractEntity.php:811
 msgid "Cannot modify permissions immutability settings."
 msgstr "Impossible de modifier les paramètres d'immuabilité des autorisations."
 
-#: src/Models/AbstractEntity.php:922
+#: src/Models/AbstractEntity.php:929
 msgid "You don't have the rights to lock/unlock this."
 msgstr "Vous n'avez pas les droits suffisants pour vérouiller/déverouiller."
 
-#: src/Models/AbstractEntity.php:939
+#: src/Models/AbstractEntity.php:946
 #, php-format
 msgid ""
 "This experiment was locked by %s. You don't have the rights to unlock this."
@@ -895,17 +895,17 @@ msgstr ""
 "Cette expérience a été verrouillée par %s. Vous n'avez pas les droits "
 "nécessaire pour la déverrouiller."
 
-#: src/Models/AbstractEntity.php:998
+#: src/Models/AbstractEntity.php:1005
 #, php-format
 msgid "Signed by %s (%s)"
 msgstr "Signé par %s (%s)"
 
-#: src/Models/AbstractEntity.php:1011
+#: src/Models/AbstractEntity.php:1016
 #, php-format
 msgid "Signature archive by %s (%s)"
 msgstr "Signature archive par %s (%s)"
 
-#: src/Models/AbstractEntity.php:1046
+#: src/Models/AbstractEntity.php:1051
 msgid "A category is required to fetch the next Custom ID"
 msgstr "Une catégorie est nécessaire pour rechercher l'ID personnalisé suivant"
 
@@ -1108,11 +1108,11 @@ msgstr ""
 msgid "The mandatory \"passphrase\" parameter was not provided!"
 msgstr "Le paramètre obligatoire \"passphrase\" n'a pas été fourni !"
 
-#: src/Models/StorageUnits.php:367
+#: src/Models/StorageUnits.php:369
 msgid "Cannot delete a storage unit with children!"
 msgstr "Impossible de supprimer une unité de stockage avec des enfants !"
 
-#: src/Models/StorageUnits.php:370
+#: src/Models/StorageUnits.php:372
 msgid "Cannot delete a storage unit with containers!"
 msgstr "Impossible de supprimer une unité de stockage avec des conteneurs !"
 
@@ -1124,7 +1124,7 @@ msgstr "Les utilisateurs ne peuvent pas créer de tags."
 msgid "Please make sure to remove any reference to this file in the body!"
 msgstr "Soyez sûr de retirer toute référence à ce fichier dans l'expérience !"
 
-#: src/Models/Users/Users.php:570
+#: src/Models/Users/Users.php:571
 msgid "New password must not be the same as the current one."
 msgstr ""
 "Le nouveau mot de passe ne doit pas être identique au mot de passe actuel."
@@ -1172,7 +1172,7 @@ msgid ""
 "user to your team."
 msgstr ""
 "Un compte actif existe déjà avec cet email. Recherchez l'utilisateur dans le "
-"champs de recherche ci-dessus, sans filtre d'équipe, et utilisez l'action "
+"champ de recherche ci-dessus, sans filtre d'équipe, et utilisez l'action "
 "\"Ajouter à l'équipe\" pour ajouter l'utilisateur à votre équipe."
 
 #: src/Services/EmailValidator.php:73
@@ -1216,7 +1216,7 @@ msgstr ""
 "Votre compte a expiré. Contactez votre Admin d'équipe pour étendre sa "
 "validité."
 
-#: src/Services/LoginHelper.php:155
+#: src/Services/LoginHelper.php:154
 msgid "This account is archived in this team and cannot login."
 msgstr "Ce compte est archivé dans cette équipe et ne peut pas se connecter."
 
@@ -1270,7 +1270,7 @@ msgstr ""
 "Une nouvelle version d'eLabFTW a été installée depuis votre dernière visite."
 "%sLire les notes de version en cliquant sur ce message."
 
-#: src/Services/UserArchiver.php:60
+#: src/Services/UserArchiver.php:61
 msgid ""
 "You are trying to archive an unvalidated user. Maybe you want to delete the "
 "account?"
@@ -1278,7 +1278,7 @@ msgstr ""
 "Vous essayez d'archiver un utilisateur non validé. Peut-être souhaitez-vous "
 "supprimer le compte ?"
 
-#: src/Services/UserArchiver.php:63
+#: src/Services/UserArchiver.php:64
 msgid "A sysadmin account cannot be archived."
 msgstr "Un compte sysadmin ne peut pas être archivé."
 
@@ -1296,7 +1296,7 @@ msgstr "L'enregistrement est désactivé."
 
 #: web/app/controllers/RegisterController.php:52
 msgid "A mandatory field is missing!"
-msgstr "Un champs obligatoire est manquant!"
+msgstr "Un champ obligatoire est manquant!"
 
 #: web/app/controllers/RegisterController.php:69
 msgid ""
@@ -1407,7 +1407,7 @@ msgstr ""
 msgid "Revisions"
 msgstr "Versions précédentes"
 
-#: web/scheduler.php:45
+#: web/scheduler.php:44
 msgid "Scheduler"
 msgstr "Planificateur"
 
@@ -1684,7 +1684,7 @@ msgstr "Nom du groupe d'équipe"
 #: src/templates/admin.html:141 src/templates/ask-title-modal.html:20
 #: src/templates/categories-status-index.macro.html:14
 #: src/templates/categories-status-index.macro.html:79
-#: src/templates/create-new-item-modal.html:34 src/templates/create-new.html:4
+#: src/templates/create-new-item-modal.html:35 src/templates/create-new.html:4
 #: src/templates/editusers.html:77 src/templates/export-modal.html:100
 #: src/templates/register.html:102 src/templates/sysconfig.html:23
 #: src/templates/ucp.html:132 src/templates/ucp.html:142
@@ -1720,32 +1720,32 @@ msgid "Select an export format"
 msgstr "Sélectionner le format d'export"
 
 #: src/templates/admin.html:207 src/templates/admin.html:238
-#: src/templates/export-menu.html:122 src/templates/show.html:353
+#: src/templates/export-menu.html:122 src/templates/show.html:355
 msgid "ELN Archive"
 msgstr "Archive ELN"
 
 #: src/templates/admin.html:208 src/templates/admin.html:239
-#: src/templates/export-menu.html:121 src/templates/show.html:354
+#: src/templates/export-menu.html:121 src/templates/show.html:356
 msgid "ZIP Archive"
 msgstr "Archive ZIP"
 
 #: src/templates/admin.html:209 src/templates/admin.html:240
-#: src/templates/export-menu.html:123 src/templates/show.html:355
+#: src/templates/export-menu.html:123 src/templates/show.html:357
 msgid "CSV File"
 msgstr "Fichier CSV"
 
 #: src/templates/admin.html:210 src/templates/admin.html:241
-#: src/templates/export-menu.html:120 src/templates/show.html:356
+#: src/templates/export-menu.html:120 src/templates/show.html:358
 msgid "PDF File"
 msgstr "Fichier PDF"
 
 #: src/templates/admin.html:211 src/templates/admin.html:242
-#: src/templates/show.html:357
+#: src/templates/show.html:359
 msgid "QR codes PDF"
 msgstr "PDF de QR codes"
 
 #: src/templates/admin.html:212 src/templates/admin.html:243
-#: src/templates/profile.html:309 src/templates/show.html:358
+#: src/templates/profile.html:309 src/templates/show.html:360
 msgid "JSON"
 msgstr "JSON"
 
@@ -1780,7 +1780,7 @@ msgstr ""
 "étiquettes."
 
 #: src/templates/admin.html:267 src/templates/admin.html:271
-#: src/templates/edit-tags.html:11 src/templates/show.html:406
+#: src/templates/edit-tags.html:11 src/templates/show.html:408
 msgid "Add a tag"
 msgstr "Ajouter un tag"
 
@@ -1842,15 +1842,15 @@ msgstr "Étiquettes de ressources"
 msgid "Experiments tags"
 msgstr "Étiquettes d'expériences"
 
-#: src/templates/admin.html:425 src/templates/show.html:347
+#: src/templates/admin.html:425 src/templates/show.html:349
 msgid "With selected:"
 msgstr "Avec sélection :"
 
-#: src/templates/admin.html:429 src/templates/show.html:361
+#: src/templates/admin.html:429 src/templates/show.html:363
 msgid "Lock"
 msgstr "Verrouiller"
 
-#: src/templates/admin.html:430 src/templates/show.html:362
+#: src/templates/admin.html:430 src/templates/show.html:364
 msgid "Unlock"
 msgstr "Déverrouiller"
 
@@ -1861,18 +1861,18 @@ msgstr "Déverrouiller"
 msgid "Transfer ownership"
 msgstr "Transférer la possession"
 
-#: src/templates/admin.html:432 src/templates/show.html:364
+#: src/templates/admin.html:432 src/templates/show.html:366
 #: src/templates/view-edit-toolbar.html:305
 msgid "Archive"
 msgstr "Archive"
 
-#: src/templates/admin.html:433 src/templates/show.html:365
+#: src/templates/admin.html:433 src/templates/show.html:367
 #: src/templates/view-edit-toolbar.html:309
 msgid "Unarchive"
 msgstr "Désarchiver"
 
 #: src/templates/admin.html:435 src/templates/revisions.html:33
-#: src/templates/show.html:367
+#: src/templates/show.html:369
 msgid "Restore"
 msgstr "Restaurer"
 
@@ -2076,7 +2076,7 @@ msgstr "Enregistrer le nouveau mot de passe"
 
 #: src/templates/changelog-table.html:4
 #: src/templates/field-builder-modal.html:59 src/templates/pdf.html:32
-#: src/templates/show.html:450 src/templates/ucp.html:87
+#: src/templates/show.html:452 src/templates/ucp.html:87
 msgid "Date"
 msgstr "Date"
 
@@ -2267,7 +2267,7 @@ msgid "Filter"
 msgstr "Filtre"
 
 #: src/templates/create-new-item-modal-body.html:12
-#: src/templates/create-new-item-modal-body.html:23 src/templates/show.html:456
+#: src/templates/create-new-item-modal-body.html:20 src/templates/show.html:458
 #: src/templates/ucp.html:88
 msgid "Title"
 msgstr "Titre"
@@ -2282,19 +2282,19 @@ msgstr "Créer une ressource à partir d'un modèle"
 msgid "Create experiment from template"
 msgstr "Créer une expérience depuis ce modèle"
 
-#: src/templates/create-new-item-modal-body.html:27
+#: src/templates/create-new-item-modal-body.html:24
 msgid "View template"
 msgstr "Voir le modèle"
 
-#: src/templates/create-new-item-modal-body.html:48
+#: src/templates/create-new-item-modal-body.html:45
 msgid "Or select a category"
 msgstr "Ou sélectionnez une catégorie"
 
-#: src/templates/create-new-item-modal-body.html:50
+#: src/templates/create-new-item-modal-body.html:47
 msgid "Manage categories"
 msgstr "Gérer les catégories"
 
-#: src/templates/create-new-item-modal-body.html:53
+#: src/templates/create-new-item-modal-body.html:52
 msgid "No category"
 msgstr "Aucune catégorie"
 
@@ -2306,19 +2306,19 @@ msgstr "Sélectionnez un modèle ci-dessous"
 msgid "Welcome %s"
 msgstr "Bienvenue %s"
 
-#: src/templates/dashboard.html:19 src/templates/head.html:70
+#: src/templates/dashboard.html:18 src/templates/head.html:70
 msgid "Quick search experiments"
 msgstr "Recherche rapide dans les expériences"
 
-#: src/templates/dashboard.html:20 src/templates/head.html:71
+#: src/templates/dashboard.html:19 src/templates/head.html:71
 msgid "Search experiments"
 msgstr "Rechercher dans les expériences"
 
-#: src/templates/dashboard.html:30 src/templates/dashboard.html:77
+#: src/templates/dashboard.html:29 src/templates/dashboard.html:78
 msgid "Browse by category"
 msgstr "Parcourir par catégorie"
 
-#: src/templates/dashboard.html:39 src/templates/dashboard.html:85
+#: src/templates/dashboard.html:38 src/templates/dashboard.html:86
 msgid "Browse by status"
 msgstr "Parcourir par statut"
 
@@ -2326,19 +2326,19 @@ msgstr "Parcourir par statut"
 msgid "Last modified experiments"
 msgstr "Dernières expériences modifiées"
 
-#: src/templates/dashboard.html:67 src/templates/head.html:107
+#: src/templates/dashboard.html:68 src/templates/head.html:107
 msgid "Quick search resources"
 msgstr "Rechercher rapidement dans les ressources"
 
-#: src/templates/dashboard.html:68 src/templates/head.html:108
+#: src/templates/dashboard.html:69 src/templates/head.html:108
 msgid "Search resources"
 msgstr "Rechercher dans les ressources"
 
-#: src/templates/dashboard.html:93
+#: src/templates/dashboard.html:95
 msgid "Last modified resources"
 msgstr "Dernières ressources modifiées"
 
-#: src/templates/dashboard.html:107
+#: src/templates/dashboard.html:111
 msgid "Scheduled bookings"
 msgstr "Réservations programmées"
 
@@ -2408,8 +2408,8 @@ msgid "See on PubChem"
 msgstr "Voir sur PubChem"
 
 #: src/templates/edit-tags.html:3 src/templates/pdf.html:35
-#: src/templates/show.html:96 src/templates/show.html:105
-#: src/templates/show.html:106 src/templates/show.html:475
+#: src/templates/show.html:98 src/templates/show.html:107
+#: src/templates/show.html:108 src/templates/show.html:477
 #: src/templates/view.html:82
 msgid "Tags"
 msgstr "Tags"
@@ -2542,7 +2542,7 @@ msgstr "Enregistrer et revenir en arrière"
 
 #: src/templates/edit.html:107 src/templates/json-editor.html:10
 msgid "Add field"
-msgstr "Ajouter un champs"
+msgstr "Ajouter un champ"
 
 #: src/templates/edit.html:108
 msgid "Load fields"
@@ -2867,7 +2867,7 @@ msgstr "Ajouter un tag comme favori"
 #: src/templates/field-builder-modal.html:10
 #: src/templates/field-builder-modal.html:53
 msgid "Add an extra field"
-msgstr "Ajouter un champs supplémentaire"
+msgstr "Ajouter un champ supplémentaire"
 
 #: src/templates/field-builder-modal.html:17
 msgid "Manage field groups"
@@ -2986,8 +2986,8 @@ msgid "Load extra fields"
 msgstr "Charger les champs supplémentaires"
 
 #: src/templates/field-builder-modal.html:180
-msgid "Load from a database category"
-msgstr "Chargement à partir d'une catégorie de base de données"
+msgid "Load from a resource template"
+msgstr "Charger à partir d'un modèle de ressource"
 
 #: src/templates/field-builder-modal.html:188
 #: src/templates/field-builder-modal.html:200
@@ -3069,16 +3069,16 @@ msgid "Go to dashboard"
 msgstr "Aller au tableau de bord"
 
 #: src/templates/head.html:80
-msgid "All experiments"
-msgstr "Toutes les expériences"
+msgid "My experiments"
+msgstr "Mes expériences"
 
 #: src/templates/head.html:82
 msgid "Team experiments"
 msgstr "Expériences en équipe"
 
 #: src/templates/head.html:84
-msgid "My experiments"
-msgstr "Mes expériences"
+msgid "All experiments"
+msgstr "Toutes les expériences"
 
 #: src/templates/head.html:94
 msgid "Experiment categories"
@@ -3089,16 +3089,16 @@ msgid "Experiment status"
 msgstr "Statut de l'expérience"
 
 #: src/templates/head.html:117
-msgid "All resources"
-msgstr "Toutes les ressources"
+msgid "My resources"
+msgstr "Mes ressources"
 
 #: src/templates/head.html:119
 msgid "Team resources"
 msgstr "Ressources de l'équipe"
 
 #: src/templates/head.html:121
-msgid "My resources"
-msgstr "Mes ressources"
+msgid "All resources"
+msgstr "Toutes les ressources"
 
 #: src/templates/head.html:123
 msgid "Bookable resources"
@@ -3237,7 +3237,7 @@ msgstr "Recherche de conteneurs ou de lieux"
 msgid "No results found"
 msgstr "Aucun résultat trouvé"
 
-#: src/templates/inventory.html:39
+#: src/templates/inventory.html:42
 msgid ""
 "Note: only users who were given permission to edit the inventory locations "
 "can modify the locations (add/edit/remove)."
@@ -3245,11 +3245,11 @@ msgstr ""
 "Remarque : seuls les utilisateurs autorisés à modifier les emplacements de "
 "l'inventaire peuvent modifier les emplacements (ajouter/modifier/supprimer)."
 
-#: src/templates/inventory.html:43
+#: src/templates/inventory.html:46
 msgid "Browse inventory locations"
 msgstr "Parcourir les lieux de l'inventaire"
 
-#: src/templates/inventory.html:45
+#: src/templates/inventory.html:48
 msgid "Add root element"
 msgstr "Ajouter un élément racine"
 
@@ -3304,7 +3304,7 @@ msgid "Filter author"
 msgstr "Filtrer par auteur"
 
 #: src/templates/links.html:37 src/templates/links.html:77
-#: src/templates/show.html:409
+#: src/templates/show.html:411
 msgid "Add a link"
 msgstr "Ajouter un lien"
 
@@ -3320,12 +3320,12 @@ msgstr "Liens vers des ressources"
 msgid "Show related resources"
 msgstr "Afficher les ressources connexes"
 
-#: src/templates/links.html:70 src/templates/show.html:411
+#: src/templates/links.html:70 src/templates/show.html:413
 msgid "Limit category"
 msgstr "Limite de catégories"
 
-#: src/templates/links.html:71 src/templates/show.html:65
-#: src/templates/show.html:66
+#: src/templates/links.html:71 src/templates/show.html:67
+#: src/templates/show.html:68
 msgid "Filter category"
 msgstr "Filtrer catégorie"
 
@@ -3518,14 +3518,14 @@ msgstr "Cet e-mail sera envoyé aux nouveaux (sys)admins."
 msgid "New owner"
 msgstr "Nouveau possesseur"
 
-#: src/templates/pdf.html:41 src/templates/show.html:287
-#: src/templates/show.html:464 src/templates/sysconfig.html:1083
+#: src/templates/pdf.html:41 src/templates/show.html:289
+#: src/templates/show.html:466 src/templates/sysconfig.html:1083
 #: src/templates/ucp.html:86
 msgid "Category"
 msgstr "Catégorie"
 
-#: src/templates/pdf.html:44 src/templates/show.html:289
-#: src/templates/show.html:470
+#: src/templates/pdf.html:44 src/templates/show.html:291
+#: src/templates/show.html:472
 msgid "Status"
 msgstr "Statut"
 
@@ -3702,7 +3702,7 @@ msgid "File name"
 msgstr "Nom du fichier"
 
 #: src/templates/profile.html:128 src/templates/profile.html:129
-#: src/templates/show.html:280 src/templates/show.html:282
+#: src/templates/show.html:282 src/templates/show.html:284
 #: src/templates/ucp.html:95
 msgid "Sort"
 msgstr "Ordre"
@@ -3716,7 +3716,7 @@ msgid "Desc"
 msgstr "Décroissant"
 
 #: src/templates/profile.html:135 src/templates/profile.html:136
-#: src/templates/show.html:306 src/templates/show.html:308
+#: src/templates/show.html:308 src/templates/show.html:310
 msgid "Results per page"
 msgstr "Résultats par page"
 
@@ -4029,7 +4029,7 @@ msgid "Select a scope and search for events."
 msgstr "Sélectionnez un champ d'application et recherchez des événements."
 
 #: src/templates/scheduler.html:182 src/templates/scheduler.html:185
-#: src/templates/show.html:87 src/templates/show.html:88
+#: src/templates/show.html:89 src/templates/show.html:90
 msgid "Filter owner"
 msgstr "Filtrer propriétaire"
 
@@ -4187,7 +4187,7 @@ msgstr "Rétablir l'entrée"
 msgid "View"
 msgstr "Voir"
 
-#: src/templates/show-item.html:98 src/templates/show.html:460
+#: src/templates/show-item.html:98 src/templates/show.html:462
 #: src/templates/view.html:116
 msgid "Next step"
 msgstr "Étape suivante"
@@ -4196,303 +4196,302 @@ msgstr "Étape suivante"
 msgid "You are seeing this because your account is less than %d days old."
 msgstr "Vous voyez ceci parce que votre compte date de moins de %d jours."
 
-#: src/templates/show.html:24
+#: src/templates/show.html:23 src/templates/show.html:339
+msgid "Search in experiments"
+msgstr "Rechercher dans les expériences"
+
+#: src/templates/show.html:25
 msgid "resources"
 msgstr "ressources"
 
-#: src/templates/show.html:26 src/templates/show.html:34
-#: src/templates/show.html:36
+#: src/templates/show.html:26 src/templates/show.html:339
+msgid "Search in resources"
+msgstr "Rechercher dans les ressources"
+
+#: src/templates/show.html:28
 msgid "Search %s"
 msgstr "Rechercher %s"
 
-#: src/templates/show.html:46
+#: src/templates/show.html:48
 msgid "Show full syntax"
 msgstr "Afficher la syntaxe complète"
 
-#: src/templates/show.html:56
+#: src/templates/show.html:58
 msgid "Query filters"
 msgstr "Filtres d'interrogation"
 
-#: src/templates/show.html:76 src/templates/show.html:77
+#: src/templates/show.html:78 src/templates/show.html:79
 msgid "Filter status"
 msgstr "Filtrer les statuts"
 
-#: src/templates/show.html:118
+#: src/templates/show.html:120
 msgid "Toggle filters"
 msgstr "Basculer les filtres"
 
-#: src/templates/show.html:118
+#: src/templates/show.html:120
 msgid "Show more filters"
 msgstr "Plus de filtres"
 
-#: src/templates/show.html:134 src/templates/show.html:140
+#: src/templates/show.html:136 src/templates/show.html:142
 msgid "Name of field"
 msgstr "Nom du champ"
 
-#: src/templates/show.html:141
+#: src/templates/show.html:143
 msgid "All fields"
 msgstr "Tous les champs"
 
-#: src/templates/show.html:151 src/templates/show.html:156
+#: src/templates/show.html:153 src/templates/show.html:158
 msgid "Value"
 msgstr "Valeur"
 
-#: src/templates/show.html:164
+#: src/templates/show.html:166
 msgid "Tip: you can use '%' as wildcard in value"
 msgstr "Astuce : vous pouvez utiliser '%' comme joker dans la valeur"
 
-#: src/templates/show.html:178 src/templates/show.html:179
+#: src/templates/show.html:180 src/templates/show.html:181
 msgid "Filter visibility"
 msgstr "Filtrer la visibilité"
 
-#: src/templates/show.html:193 src/templates/show.html:194
+#: src/templates/show.html:195 src/templates/show.html:196
 msgid "Select lock status"
 msgstr "Choisir un statut de vérouillage"
 
-#: src/templates/show.html:195 src/templates/show.html:203
+#: src/templates/show.html:197 src/templates/show.html:205
 msgid "Yes"
 msgstr "Oui"
 
-#: src/templates/show.html:196 src/templates/show.html:204
+#: src/templates/show.html:198 src/templates/show.html:206
 msgid "No"
 msgstr "Non"
 
-#: src/templates/show.html:201
+#: src/templates/show.html:203
 msgid "Timestamped"
 msgstr "Horodaté"
 
-#: src/templates/show.html:202
+#: src/templates/show.html:204
 msgid "Select timestamp status"
 msgstr "Choisir un statut d'horodatage"
 
-#: src/templates/show.html:210
+#: src/templates/show.html:212
 msgid "Select number of stars"
 msgstr "Choisir le nombre d'étoiles"
 
-#: src/templates/show.html:211
+#: src/templates/show.html:213
 msgid "Unrated"
 msgstr "Pas d'étoiles"
 
-#: src/templates/show.html:222
+#: src/templates/show.html:224
 msgid "Date from"
 msgstr "Date de"
 
-#: src/templates/show.html:225
+#: src/templates/show.html:227
 msgid "Date operator"
 msgstr "Opérateur de date"
 
-#: src/templates/show.html:226
+#: src/templates/show.html:228
 msgid "less than"
 msgstr "moins que"
 
-#: src/templates/show.html:227
+#: src/templates/show.html:229
 msgid "less than or equal to"
 msgstr "moins que ou égal à"
 
-#: src/templates/show.html:228
+#: src/templates/show.html:230
 msgid "equal to"
 msgstr "égal à"
 
-#: src/templates/show.html:229
+#: src/templates/show.html:231
 msgid "greater than or equal to"
 msgstr "plus grand ou égal à"
 
-#: src/templates/show.html:230
+#: src/templates/show.html:232
 msgid "greater than"
 msgstr "plus grand que"
 
-#: src/templates/show.html:231
+#: src/templates/show.html:233
 msgid "not equal to"
 msgstr "non égal à"
 
-#: src/templates/show.html:236
+#: src/templates/show.html:238
 msgid "Date to (optional)"
 msgstr "Date à (optionnel)"
 
-#: src/templates/show.html:250
+#: src/templates/show.html:252
 msgid "Select all"
 msgstr "Sélectionner tout"
 
-#: src/templates/show.html:253
+#: src/templates/show.html:255
 msgid "Invert selection"
 msgstr "Inverser la sélection"
 
-#: src/templates/show.html:257
+#: src/templates/show.html:259
 msgid "Toggle main text"
 msgstr "Afficher le texte principal"
 
-#: src/templates/show.html:271 src/templates/uploads.html:36
+#: src/templates/show.html:273 src/templates/uploads.html:36
 msgid "Switch layout"
 msgstr "Changer la mise en page"
 
-#: src/templates/show.html:283
+#: src/templates/show.html:285
 msgid "Newest"
 msgstr "Plus récent"
 
-#: src/templates/show.html:284
+#: src/templates/show.html:286
 msgid "Oldest"
 msgstr "Plus ancien"
 
-#: src/templates/show.html:285
+#: src/templates/show.html:287
 msgid "Recently modified"
 msgstr "Modification récente"
 
-#: src/templates/show.html:286
+#: src/templates/show.html:288
 msgid "Least recently modified"
 msgstr "Modification ancienne"
 
-#: src/templates/show.html:288
+#: src/templates/show.html:290
 msgid "Category (inverted)"
 msgstr "Catégorie (inversé)"
 
-#: src/templates/show.html:290
+#: src/templates/show.html:292
 msgid "Status (inverted)"
 msgstr "Statut (inversé)"
 
-#: src/templates/show.html:291
+#: src/templates/show.html:293
 msgid "Highest ID"
 msgstr "ID décroissante"
 
-#: src/templates/show.html:292
+#: src/templates/show.html:294
 msgid "Lowest ID"
 msgstr "ID croissante"
 
-#: src/templates/show.html:293
+#: src/templates/show.html:295
 msgid "Highest Custom ID"
 msgstr "ID personnalisé décroissant"
 
-#: src/templates/show.html:294
+#: src/templates/show.html:296
 msgid "Lowest Custom ID"
 msgstr "ID personnalisé croissant"
 
-#: src/templates/show.html:295
+#: src/templates/show.html:297
 msgid "Recently commented"
 msgstr "Commenté récemment"
 
-#: src/templates/show.html:296
+#: src/templates/show.html:298
 msgid "Title (alphabetical)"
 msgstr "Titre (alphabetique)"
 
-#: src/templates/show.html:297
+#: src/templates/show.html:299
 msgid "Title (inverted)"
 msgstr "Titre (inversé)"
 
-#: src/templates/show.html:298
+#: src/templates/show.html:300
 msgid "User (alphabetical)"
 msgstr "Utilisateur (alphabétique)"
 
-#: src/templates/show.html:299
+#: src/templates/show.html:301
 msgid "User (inverted)"
 msgstr "Utilisateur (inversé)"
 
-#: src/templates/show.html:300
+#: src/templates/show.html:302
 msgid "Highest rating"
 msgstr "Note décroissante"
 
-#: src/templates/show.html:301
+#: src/templates/show.html:303
 msgid "Lowest rating"
 msgstr "Note croissante"
 
-#: src/templates/show.html:324
+#: src/templates/show.html:326
 msgid "Tip: %screate categories%s to start organizing your work."
 msgstr ""
 "Conseil : %scréez des catégories%s pour commencer à organiser votre travail."
 
-#: src/templates/show.html:333
+#: src/templates/show.html:335
 msgid "Sorry. I couldn't find anything :("
 msgstr "Désolé, aucun résultat pour ces critères :("
 
-#: src/templates/show.html:337
-msgid "Search in experiments"
-msgstr "Rechercher dans les expériences"
-
-#: src/templates/show.html:337
-msgid "Search in resources"
-msgstr "Rechercher dans les ressources"
-
-#: src/templates/show.html:342
+#: src/templates/show.html:344
 msgid ""
 "Nothing here yet. Start by clicking Create (top-right) to add your first %s."
 msgstr ""
 "Il n'y a encore rien ici. Commencez par cliquer sur Créer (en haut à droite) "
 "pour ajouter votre premier %s."
 
-#: src/templates/show.html:361
+#: src/templates/show.html:363
 msgid "Lock the selected entities"
 msgstr "Verrouiller les entités sélectionnées"
 
-#: src/templates/show.html:362
+#: src/templates/show.html:364
 msgid "Unlock the selected entities"
 msgstr "Déverrouiller les entités sélectionnées"
 
-#: src/templates/show.html:363
+#: src/templates/show.html:365
 msgid "Timestamp the selected entities"
 msgstr "Horodater les entités sélectionnées"
 
-#: src/templates/show.html:363 src/templates/sysconfig.html:49
+#: src/templates/show.html:365 src/templates/sysconfig.html:49
 #: src/templates/view-edit-toolbar.html:52
 #: src/templates/view-edit-toolbar.html:76
 #: src/templates/view-edit-toolbar.html:214
 msgid "Timestamp"
 msgstr "Horodatage"
 
-#: src/templates/show.html:364
+#: src/templates/show.html:366
 msgid "Archive the selected entities"
 msgstr "Archiver les entités sélectionnées"
 
-#: src/templates/show.html:365
+#: src/templates/show.html:367
 msgid "Unarchive the selected entities"
 msgstr "Désarchiver les entités sélectionnées"
 
-#: src/templates/show.html:366
+#: src/templates/show.html:368
 msgid "Delete the selected entities"
 msgstr "Supprimer les entités sélectionnées"
 
-#: src/templates/show.html:367
+#: src/templates/show.html:369
 msgid "Restore the selected entities"
 msgstr "Restaurer les entités sélectionnées"
 
-#: src/templates/show.html:372 src/templates/show.html:374
+#: src/templates/show.html:374 src/templates/show.html:376
 msgid "Change category"
 msgstr "Changez de catégorie"
 
-#: src/templates/show.html:382 src/templates/show.html:384
+#: src/templates/show.html:384 src/templates/show.html:386
 msgid "Change status"
 msgstr "Changer le statut"
 
-#: src/templates/show.html:392 src/templates/show.html:393
+#: src/templates/show.html:394 src/templates/show.html:395
 msgid "Change read permissions"
 msgstr "Modifier les autorisations de lecture"
 
-#: src/templates/show.html:399 src/templates/show.html:400
+#: src/templates/show.html:401 src/templates/show.html:402
 msgid "Change write permissions"
 msgstr "Modifier les droits d'écriture"
 
-#: src/templates/show.html:412
+#: src/templates/show.html:414
 msgid "Any category"
 msgstr "N'importe quelle catégorie"
 
-#: src/templates/show.html:421
+#: src/templates/show.html:423
 msgid "Link to an experiment"
 msgstr "Attacher une expérience"
 
-#: src/templates/show.html:423
+#: src/templates/show.html:425
 msgid "Limit author"
 msgstr "Limiter l'auteur"
 
-#: src/templates/show.html:424
+#: src/templates/show.html:426
 msgid "Any author"
 msgstr "N'importe quel auteur"
 
-#: src/templates/show.html:433
+#: src/templates/show.html:435
 msgid "Reset"
 msgstr "Réinitialiser"
 
-#: src/templates/show.html:480
+#: src/templates/show.html:482
 msgid "Rating"
 msgstr "Note"
 
-#: src/templates/show.html:503
+#: src/templates/show.html:505
 msgid "Load more"
 msgstr "Charger plus"
 
@@ -6367,6 +6366,9 @@ msgstr "Dernière modification le %s"
 #: src/templates/view.html:203
 msgid "This entry has been deleted."
 msgstr "Cette entrée a été supprimée."
+
+#~ msgid "Load from a database category"
+#~ msgstr "Chargement à partir d'une catégorie de base de données"
 
 #~ msgid "Date to"
 #~ msgstr "Date à"

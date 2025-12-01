@@ -182,11 +182,13 @@ if (document.getElementById('users-table')) {
       document.dispatchEvent(new CustomEvent('dataReload'));
     // REMOVE USER FROM TEAM
     } else if (el.matches('[data-action="destroy-user2team"]')) {
-      if (confirm(i18next.t('generic-delete-warning'))) {
+      alert('It is currently not recommended to remove a user from a team. Use the "Is Archived" property instead to mark them as inactive.');
+      /*
         const team = parseInt(el.dataset.teamid, 10);
         ApiC.patch(`${Model.User}/${userid}`, {action: Action.Unreference, team: team})
           .then(response => response.json()).then(user => populateUserModal(user));
       }
+     */
     }
   });
 }

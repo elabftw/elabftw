@@ -22,20 +22,36 @@ CREATE TABLE IF NOT EXISTS `idps_certs`
     UNIQUE KEY uniq_idp_purpose_fpr (idp, purpose, sha256),
     KEY idx_idp_purpose_active (idp, purpose, is_active, not_before, not_after)
 );
-INSERT IGNORE INTO idps_certs (idp, purpose, x509)
+INSERT IGNORE INTO idps_certs (idp, purpose, x509, sha256)
 (
 SELECT  id       AS idp,
         0        AS purpose,
-        x509     AS x509
+        x509     AS x509,
+        LEFT(
+          CONCAT(
+            'legacy_unfingerprinted_cert_',
+            REPLACE(UUID(), '-', ''),
+            REPLACE(UUID(), '-', '')
+          ),
+          64
+        ) AS sha256
 FROM    idps
 WHERE   x509 IS NOT NULL
   AND   x509 != ''
 );
-INSERT IGNORE INTO idps_certs (idp, purpose, x509)
+INSERT IGNORE INTO idps_certs (idp, purpose, x509, sha256)
 (
 SELECT  id         AS idp,
         0          AS purpose,
-        x509_new   AS x509
+        x509_new   AS x509,
+        LEFT(
+          CONCAT(
+            'legacy_unfingerprinted_cert_',
+            REPLACE(UUID(), '-', ''),
+            REPLACE(UUID(), '-', '')
+          ),
+          64
+        ) AS sha256
 FROM    idps
 WHERE   x509_new IS NOT NULL
   AND   x509_new != ''

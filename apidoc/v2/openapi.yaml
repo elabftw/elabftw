@@ -1325,12 +1325,12 @@ components:
           type: string
           format: date-time
           description: When the container entry was created
-          example: "2024-05-28 02:42:19"
+          example: "2024-05-28T02:42:19Z"
         modified_at:
           type: string
           format: date-time
           description: When the container entry was last modified
-          example: "2024-05-28 02:42:31"
+          example: "2024-05-28T02:42:31Z"
         storage_name:
           type: string
           description: Name of the storage unit

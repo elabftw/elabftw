@@ -110,8 +110,6 @@ class HttpGetter
                 $e
             );
         }
-
-        // Let the caller decide what status codes are acceptable
         return $res;
     }
 }

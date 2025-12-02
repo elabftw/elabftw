@@ -142,12 +142,6 @@ final class Dspace extends AbstractRest
         $loginRes = $this->HttpGetter->post($this->baseUrl . 'authn/login', array(
             'headers' => $headers, 'form_params' => array('user' => $user, 'password' => $password),
         ));
-        if ($loginRes->getStatusCode() < 200 || $loginRes->getStatusCode() >= 300) {
-            $body = (string) $loginRes->getBody();
-            throw new ImproperActionException(sprintf(_('DSpace login failed: %s - %s'), $loginRes->getStatusCode(), $body));
-        }
-
-        // now Dspace returns an Authorization header we can re-use from JS
         $auth = $loginRes->getHeaderLine('Authorization');
         if ($auth === '') {
             throw new ImproperActionException(_('DSpace login did not return an Authorization header.'));
@@ -206,11 +200,12 @@ final class Dspace extends AbstractRest
         }
         $headers = $this->getDspaceToken();
         $headers['Content-Type'] = 'application/json';
-        return $this->createItem(array(
-            'collection' => $collection,
-            'metadata' => $metadata,
-            'headers' => $headers,
-        ));
+        $url = $this->baseUrl . 'submission/workspaceitems?owningCollection=' . $collection;
+
+        $res = $this->HttpGetter->post($url, array('headers' => $headers, 'json' => $metadata));
+        $body = $res->getBody()->getContents();
+        $data = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
+        return (int) $data['id'];
 //        // - Accept license
 //        $this->acceptLicense($workspaceId, $headers);
 //
@@ -222,39 +217,5 @@ final class Dspace extends AbstractRest
 //
 //        // - Submit to workflow
 //        $this->submitItem($workspaceId, $headers);
-    }
-
-    private function createItem(array $reqBody): int
-    {
-        $collection = $reqBody['collection'] ?? '';
-        $metadata = $reqBody['metadata'] ?? array();
-        $incomingHeaders = $reqBody['headers'] ?? array();
-
-        if ($collection === '' || empty($metadata)) {
-            throw new ImproperActionException('Missing collection or metadata for workspace item creation.');
-        }
-
-        $url = $this->baseUrl . 'submission/workspaceitems?owningCollection=' . $collection;
-
-        $headers = array(
-            'Authorization' => $incomingHeaders['Authorization'] ?? '',
-            'X-XSRF-TOKEN' => $incomingHeaders['X-XSRF-TOKEN'] ?? '',
-            'Content-Type' => 'application/json',
-            'Cookie' => $incomingHeaders['Cookie'] ?? '',
-        );
-
-        $res = $this->HttpGetter->post($url, array(
-            'headers' => $headers,
-            'json'    => $metadata,
-        ));
-
-        $body = $res->getBody()->getContents();
-        $data = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
-
-        if (!isset($data['id'])) {
-            throw new ImproperActionException('DSpace response did not return a workspace item ID.');
-        }
-
-        return (int) $data['id'];
     }
 }

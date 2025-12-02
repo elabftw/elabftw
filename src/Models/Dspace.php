@@ -81,6 +81,7 @@ final class Dspace extends AbstractRest
         $workspaceId = $this->postAction($action, $params);
         $uuid = $this->getItemUuid($workspaceId);
         $this->acceptLicense($workspaceId);
+        $this->updateMetadata($workspaceId, $params['metadata'] ?? array());
 
         return array('id' => $workspaceId, 'uuid' => $uuid);
     }
@@ -234,5 +235,37 @@ final class Dspace extends AbstractRest
         //
         //        // - Submit to workflow
         //        $this->submitItem($workspaceId, $headers);
+    }
+
+    private function updateMetadata(int $workspaceId, array $metadata): void
+    {
+        $headers = $this->getDspaceToken();
+        $headers['Content-Type'] = 'application/json-patch+json';
+
+        $url = $this->baseUrl . 'submission/workspaceitems/' . $workspaceId;
+        $patchBody = array();
+
+        foreach ($metadata as $item) {
+            if (!isset($item['key'], $item['value'])) {
+                continue; // skip invalid entries
+            }
+
+            $section = str_contains($item['key'], 'description.abstract') ? 'traditionalpagetwo' : 'traditionalpageone';
+
+            $patchBody[] = array(
+                'op' => 'add',
+                'path' => "/sections/{$section}/" . $item['key'],
+                'value' => array(
+                    array('value' => $item['value'], 'language' => null),
+                ),
+            );
+        }
+        if (empty($patchBody)) {
+            throw new ImproperActionException('No valid metadata fields to update.');
+        }
+        $this->HttpGetter->patch($url, array(
+            'headers' => $headers,
+            'json'    => $patchBody,
+        ));
     }
 }

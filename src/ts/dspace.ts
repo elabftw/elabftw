@@ -32,15 +32,14 @@ if (document.getElementById('dspaceExportModal')) {
       return;
     }
 
-    const metadata = {
-      metadata: [
+    const metadata = [
         { key: 'dc.contributor.author', value: author },
         { key: 'dc.title', value: title },
         { key: 'dc.date.issued', value: date },
         { key: 'dc.type', value: type },
         { key: 'dc.description.abstract', value: abstract },
-      ],
-    };
+      ]
+    ;
     try {
       const res = await ApiC.send(Method.PATCH, 'dspace', {
         action: 'export',

@@ -9,6 +9,7 @@
  * All logic related to DSpace export modal. Located in toolbar on view/edit pages
  */
 
+import { ApiC } from "./api";
 import {
   acceptWorkspaceItemLicense, buildCurrentEntryEln,
   createWorkspaceItem, DspaceCollection,
@@ -25,6 +26,7 @@ import {
 } from './dspaceUtils';
 import { on } from './handlers';
 import i18next from './i18n';
+import { Method } from "./interfaces";
 import { notify } from './notify';
 
 if (document.getElementById('dspaceExportModal')) {
@@ -52,33 +54,47 @@ if (document.getElementById('dspaceExportModal')) {
         { key: 'dc.description.abstract', value: abstract },
       ],
     };
-
     try {
-      // create the item's WORKSPACE in DSpace
-      const workspace = await createWorkspaceItem(collection, metadata);
-      console.log('workspace', workspace);
-      return;
-      const workspaceId = workspace.id;
-      // get real DSpace item UUID to store be stored in elab)
-      const itemUuid = await getItemUuidFromDspace(workspaceId);
-      // patch eLabFTW metadata with the uuid
-      await saveDspaceIdAsExtraField(itemUuid);
-      // accept license (only reached if checkbox was checked)
-      await acceptWorkspaceItemLicense(workspaceId);
-      // patch DSpace's metadata section
-      await updateWorkspaceItemMetadata(workspaceId, author, title, date, type, abstract);
-      // mandatory file upload -> build ELN for current entry
-      const elnFile = await buildCurrentEntryEln();
-      await uploadWorkspaceItemFile(workspaceId, elnFile);
-      // submit (deposit) to workflow. Catch here if the POST is not sent, otherwise the response time being >120sec we don't await it.
-      // submitWorkspaceItemToWorkflow(workspaceId, token).catch(() => notify.error('submission-error'));
-      await submitWorkspaceItemToWorkflow(workspaceId);
+      const res = await ApiC.send(Method.POST, 'dspace', {
+        action: 'export',
+        collection,
+        metadata,
+      });
+
       notify.success('export-success');
       $('#dspaceExportModal').modal('hide');
+      console.log(res);
     } catch (e) {
       notify.error('submission-error');
       console.error(e);
     }
+    //
+    // try {
+    //   // create the item's WORKSPACE in DSpace
+    //   const workspace = await createWorkspaceItem(collection, metadata);
+    //   console.log('workspace', workspace);
+    //   return;
+    //   const workspaceId = workspace.id;
+    //   // get real DSpace item UUID to store be stored in elab)
+    //   const itemUuid = await getItemUuidFromDspace(workspaceId);
+    //   // patch eLabFTW metadata with the uuid
+    //   await saveDspaceIdAsExtraField(itemUuid);
+    //   // accept license (only reached if checkbox was checked)
+    //   await acceptWorkspaceItemLicense(workspaceId);
+    //   // patch DSpace's metadata section
+    //   await updateWorkspaceItemMetadata(workspaceId, author, title, date, type, abstract);
+    //   // mandatory file upload -> build ELN for current entry
+    //   const elnFile = await buildCurrentEntryEln();
+    //   await uploadWorkspaceItemFile(workspaceId, elnFile);
+    //   // submit (deposit) to workflow. Catch here if the POST is not sent, otherwise the response time being >120sec we don't await it.
+    //   // submitWorkspaceItemToWorkflow(workspaceId, token).catch(() => notify.error('submission-error'));
+    //   await submitWorkspaceItemToWorkflow(workspaceId);
+    //   notify.success('export-success');
+    //   $('#dspaceExportModal').modal('hide');
+    // } catch (e) {
+    //   notify.error('submission-error');
+    //   console.error(e);
+    // }
   });
 }
 

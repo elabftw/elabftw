@@ -129,11 +129,9 @@ final class Dspace extends AbstractRest
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
-        if ($action !== Action::Create) {
-            throw new ImproperActionException('Only update action is supported here.');
-        }
         return match ($action) {
             Action::Create => $this->createItem($reqBody),
+            Action::UpdateMetadataField => $this->updateMetadata($reqBody),
             default => throw new ImproperActionException('Unsupported DSpace postAction.'),
         };
         //        return match ($reqBody['dspace_action'] ?? '') {
@@ -148,66 +146,67 @@ final class Dspace extends AbstractRest
     public function createItem(array $reqBody): int
     {
         $collection = $reqBody['collection'] ?? '';
-        $metadata = $reqBody['metadata'] ?? [];
-        $incomingHeaders = $reqBody['headers'] ?? [];
-
-        $headers = array(
-            'Authorization' => $incomingHeaders['Authorization'] ?? '',
-            'X-XSRF-TOKEN'  => $incomingHeaders['X-XSRF-TOKEN'] ?? '',
-            'Content-Type'  => 'application/json',
-        );
-
-        if (!empty($incomingHeaders['Cookie'])) {
-            $headers['Cookie'] = $incomingHeaders['Cookie'];
-        }
+        $metadata = $reqBody['metadata'] ?? array();
 
         if ($collection === '' || empty($metadata)) {
             throw new ImproperActionException('Missing collection or metadata for workspace item creation.');
         }
+
+        $authHeaders = $this->getDspaceToken();
+        $headers = array(
+            'Authorization' => $authHeaders['auth'],
+            'X-XSRF-TOKEN'  => $authHeaders['xsrf'],
+            'Cookie'        => 'DSPACE-XSRF-COOKIE=' . $authHeaders['xsrf'],
+            'Content-Type'  => 'application/json',
+        );
         $url = $this->baseUrl . 'submission/workspaceitems?owningCollection=' . $collection;
 
-//        dd($headers);
-        $res = $this->HttpGetter->post($url, [
+        $res = $this->HttpGetter->post($url, array(
             'headers' => $headers,
             'json' => $metadata,
-        ]);
+        ));
 
-        dd($res);
-        $data = json_decode($res->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+        $body = $res->getBody()->getContents();
+        $data = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
 
         if (!isset($data['id'])) {
             throw new ImproperActionException('DSpace response did not return a workspace item ID.');
         }
-
         return (int) $data['id'];
     }
-//
-//    public function createWorkspaceItem(array $reqBody): int
-//    {
-//        $collection = $reqBody['collection'] ?? '';
-//        $metadata = $reqBody['metadata'] ?? [];
-//        if ($collection === '' || empty($metadata)) {
-//            throw new ImproperActionException('Missing collection or metadata for workspace item creation.');
-//        }
-//        $res = $this->HttpGetter->post(
-//            $this->baseUrl . 'submission/workspaceitems?owningCollection=' . urlencode($collection),
-//            [
-//                'headers' => array_merge($this->getAuthHeaders(), [
-//                    'Content-Type' => 'application/json',
-//                ]),
-//                'json' => $metadata,
-//            ]
-//        );
-//
-//        $data = json_decode((string) $res->getBody(), true);
-//        if (!isset($data['id'])) {
-//            throw new ImproperActionException('DSpace response missing workspace item ID.');
-//        }
-//
-//        // return full object to frontend if needed
-//        echo json_encode($data);
-//        exit;
-//    }
+
+    public function updateMetadata(array $reqBody): int
+    {
+        return 1;
+    }
+
+    //
+    //    public function createWorkspaceItem(array $reqBody): int
+    //    {
+    //        $collection = $reqBody['collection'] ?? '';
+    //        $metadata = $reqBody['metadata'] ?? [];
+    //        if ($collection === '' || empty($metadata)) {
+    //            throw new ImproperActionException('Missing collection or metadata for workspace item creation.');
+    //        }
+    //        $res = $this->HttpGetter->post(
+    //            $this->baseUrl . 'submission/workspaceitems?owningCollection=' . urlencode($collection),
+    //            [
+    //                'headers' => array_merge($this->getAuthHeaders(), [
+    //                    'Content-Type' => 'application/json',
+    //                ]),
+    //                'json' => $metadata,
+    //            ]
+    //        );
+    //
+    //        $data = json_decode((string) $res->getBody(), true);
+    //        if (!isset($data['id'])) {
+    //            throw new ImproperActionException('DSpace response missing workspace item ID.');
+    //        }
+    //
+    //        // return full object to frontend if needed
+    //        echo json_encode($data);
+    //        exit;
+    //    }
     // all GET actions for DSpace
     //    public function listCollections(?QueryParamsInterface $queryParams = null): array
     #[Override]

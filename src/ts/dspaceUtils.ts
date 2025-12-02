@@ -6,9 +6,9 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { ApiC } from "./api";
+import { ApiC } from './api';
 import { entity } from './getEntity';
-import { Method } from "./interfaces";
+import { Method } from './interfaces';
 import JsonEditorHelper from './JsonEditorHelper.class';
 import { Metadata } from './Metadata.class';
 import { ExtraFieldInputType, ValidMetadata } from './metadataInterfaces';
@@ -24,24 +24,24 @@ function buildDspaceUrl(action: string): URL {
   return url;
 }
 
-// GET Dspace token
-export async function ensureDspaceAuthFromBackend(): Promise<string> {
-  if (localStorage.getItem('dspaceAuth') && localStorage.getItem('dspaceXsrfToken')) {
-    return localStorage.getItem('dspaceAuth')!;
-  }
-  const res = await fetch(buildDspaceUrl('auth'), {
-    method: 'GET',
-    credentials: 'include',
-  });
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`DSpace backend login failed: ${res.status} - ${text}`);
-  }
-  const { auth, xsrf } = await res.json();
-  localStorage.setItem('dspaceAuth', auth);
-  localStorage.setItem('dspaceXsrfToken', xsrf);
-  return auth;
-}
+// // GET Dspace token
+// export async function ensureDspaceAuthFromBackend(): Promise<string> {
+//   if (localStorage.getItem('dspaceAuth') && localStorage.getItem('dspaceXsrfToken')) {
+//     return localStorage.getItem('dspaceAuth')!;
+//   }
+//   const res = await fetch(buildDspaceUrl('auth'), {
+//     method: 'GET',
+//     credentials: 'include',
+//   });
+//   if (!res.ok) {
+//     const text = await res.text();
+//     throw new Error(`DSpace backend login failed: ${res.status} - ${text}`);
+//   }
+//   const { auth, xsrf } = await res.json();
+//   localStorage.setItem('dspaceAuth', auth);
+//   localStorage.setItem('dspaceXsrfToken', xsrf);
+//   return auth;
+// }
 
 
 // GET list of collections
@@ -79,16 +79,10 @@ export async function createWorkspaceItem(
   collection: string,
   metadata: DspaceWorkspaceItemMetadata,
 ): Promise<DspaceWorkspaceItem> {
-  await ensureDspaceAuthFromBackend();
   const res = await ApiC.send(Method.POST, 'dspace', {
     action: 'create',
     collection,
     metadata,
-    headers: {
-      Authorization: localStorage.getItem('dspaceAuth') || '',
-      'X-XSRF-TOKEN': localStorage.getItem('dspaceXsrfToken') || '',
-      Cookie: `DSPACE-XSRF-COOKIE=${localStorage.getItem('dspaceXsrfToken') || ''}`,
-    },
   });
 
   return res.json() as Promise<DspaceWorkspaceItem>;

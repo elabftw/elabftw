@@ -12,7 +12,9 @@
 import {
   acceptWorkspaceItemLicense, buildCurrentEntryEln,
   createWorkspaceItem, DspaceCollection,
-  DspaceVocabularyEntry, ensureDspaceAuthFromBackend, fetchXsrfToken,
+  DspaceVocabularyEntry,
+  // ensureDspaceAuthFromBackend,
+  // fetchXsrfToken,
   getItemUuidFromDspace,
   listCollections,
   listTypes,
@@ -87,7 +89,7 @@ $('#dspaceExportModal').on('shown.bs.modal', async () => {
   typeSelect.innerHTML = '<option disabled selected>' + i18next.t('loading') + '...</option>';
 
   try {
-    await ensureDspaceAuthFromBackend();
+    // await ensureDspaceAuthFromBackend();
     const [collectionsJson, typesJson] = await Promise.all([
       listCollections(),
       listTypes(),

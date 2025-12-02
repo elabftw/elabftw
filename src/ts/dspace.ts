@@ -10,20 +10,7 @@
  */
 
 import { ApiC } from "./api";
-import {
-  acceptWorkspaceItemLicense, buildCurrentEntryEln,
-  createWorkspaceItem, DspaceCollection,
-  DspaceVocabularyEntry,
-  // ensureDspaceAuthFromBackend,
-  // fetchXsrfToken,
-  getItemUuidFromDspace,
-  listCollections,
-  listTypes,
-  saveDspaceIdAsExtraField,
-  submitWorkspaceItemToWorkflow,
-  updateWorkspaceItemMetadata,
-  uploadWorkspaceItemFile,
-} from './dspaceUtils';
+import { DspaceCollection, DspaceVocabularyEntry, listCollections, listTypes, saveDspaceIdAsExtraField } from './dspaceUtils';
 import { on } from './handlers';
 import i18next from './i18n';
 import { Method } from "./interfaces";
@@ -71,15 +58,15 @@ if (document.getElementById('dspaceExportModal')) {
     }
     //
     // try {
-    //   // create the item's WORKSPACE in DSpace
-    //   const workspace = await createWorkspaceItem(collection, metadata);
-    //   console.log('workspace', workspace);
-    //   return;
-    //   const workspaceId = workspace.id;
-    //   // get real DSpace item UUID to store be stored in elab)
-    //   const itemUuid = await getItemUuidFromDspace(workspaceId);
-    //   // patch eLabFTW metadata with the uuid
-    //   await saveDspaceIdAsExtraField(itemUuid);
+                      //   // create the item's WORKSPACE in DSpace
+                      //   const workspace = await createWorkspaceItem(collection, metadata);
+                      //   console.log('workspace', workspace);
+                      //   return;
+                      //   const workspaceId = workspace.id;
+                      //   // get real DSpace item UUID to store be stored in elab)
+                      //   const itemUuid = await getItemUuidFromDspace(workspaceId);
+                      //   // patch eLabFTW metadata with the uuid
+                      //   await saveDspaceIdAsExtraField(itemUuid);
     //   // accept license (only reached if checkbox was checked)
     //   await acceptWorkspaceItemLicense(workspaceId);
     //   // patch DSpace's metadata section

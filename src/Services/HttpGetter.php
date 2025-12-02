@@ -112,4 +112,9 @@ class HttpGetter
         }
         return $res;
     }
+
+    public function patch(string $url, array $options = array()): ResponseInterface
+    {
+        return $this->client->request('PATCH', $url, $options);
+    }
 }

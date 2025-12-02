@@ -78,9 +78,11 @@ final class Dspace extends AbstractRest
     #[Override]
     public function patch(Action $action, array $params): array
     {
-        $id = $this->postAction($action, $params);
-        $uuid = $this->getItemUuid($id);
-        return array('id' => $id, 'uuid' => $uuid);
+        $workspaceId = $this->postAction($action, $params);
+        $uuid = $this->getItemUuid($workspaceId);
+        $this->acceptLicense($workspaceId);
+
+        return array('id' => $workspaceId, 'uuid' => $uuid);
     }
 
     #[Override]
@@ -93,6 +95,24 @@ final class Dspace extends AbstractRest
     public function destroy(): bool
     {
         throw new ImproperActionException('Not supported for DSpace.');
+    }
+
+    private function acceptLicense(int $workspaceId): void
+    {
+        $headers = $this->getDspaceToken();
+        $headers['Content-Type'] = 'application/json-patch+json';
+        $url = $this->baseUrl . 'submission/workspaceitems/' . $workspaceId;
+        $patchBody = array(
+            array(
+                'op' => 'add',
+                'path' => '/sections/license/granted',
+                'value' => 'true',
+            ),
+        );
+        $this->HttpGetter->patch($url, array(
+            'headers' => $headers,
+            'json' => $patchBody,
+        ));
     }
 
     /*
@@ -206,16 +226,13 @@ final class Dspace extends AbstractRest
         $body = $res->getBody()->getContents();
         $data = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
         return (int) $data['id'];
-//        // - Accept license
-//        $this->acceptLicense($workspaceId, $headers);
-//
-//        // - Update metadata
-//        $this->updateMetadata($workspaceId, $metadata, $headers);
-//
-//        // - Upload ELN file (to be implemented)
-//        $this->uploadEntryAsFile($workspaceId, $headers);
-//
-//        // - Submit to workflow
-//        $this->submitItem($workspaceId, $headers);
+        //        // - Update metadata
+        //        $this->updateMetadata($workspaceId, $metadata, $headers);
+        //
+        //        // - Upload ELN file (to be implemented)
+        //        $this->uploadEntryAsFile($workspaceId, $headers);
+        //
+        //        // - Submit to workflow
+        //        $this->submitItem($workspaceId, $headers);
     }
 }

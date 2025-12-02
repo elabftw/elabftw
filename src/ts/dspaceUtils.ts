@@ -29,7 +29,10 @@ export async function ensureDspaceAuthFromBackend(): Promise<string> {
   if (localStorage.getItem('dspaceAuth') && localStorage.getItem('dspaceXsrfToken')) {
     return localStorage.getItem('dspaceAuth')!;
   }
-  const res = await fetch(buildDspaceUrl('auth'));
+  const res = await fetch(buildDspaceUrl('auth'), {
+    method: 'GET',
+    credentials: 'include',
+  });
   if (!res.ok) {
     const text = await res.text();
     throw new Error(`DSpace backend login failed: ${res.status} - ${text}`);
@@ -40,16 +43,17 @@ export async function ensureDspaceAuthFromBackend(): Promise<string> {
   return auth;
 }
 
+
 // GET list of collections
 export async function listCollections(): Promise<DspaceCollectionList> {
-  const res = await fetch(buildDspaceUrl('collections'));
+  const res = await fetch(buildDspaceUrl('collections'), { credentials: 'include' });
   if (!res.ok) throw new Error(`DSpace collections error: ${res.status}`);
   return await res.json() as DspaceCollectionList;
 }
 
 // GET list of types
 export async function listTypes(): Promise<DspaceVocabularyEntryList> {
-  const res = await fetch(buildDspaceUrl('types'));
+  const res = await fetch(buildDspaceUrl('types'), { credentials: 'include' });
   if (!res.ok) throw new Error(`DSpace types error: ${res.status}`);
   return await res.json() as DspaceVocabularyEntryList;
 }
@@ -59,7 +63,7 @@ export async function getItemUuidFromDspace(workspaceId: number | string): Promi
   const url = buildDspaceUrl('itemUuid');
   url.searchParams.set('workspaceId', String(workspaceId));
 
-  const res = await fetch(url.toString());
+  const res = await fetch(url.toString(), { credentials: 'include' });
   if (!res.ok) {
     const text = await res.text();
     throw new Error(`DSpace UUID fetch failed: ${res.status} - ${text}`);
@@ -75,17 +79,15 @@ export async function createWorkspaceItem(
   collection: string,
   metadata: DspaceWorkspaceItemMetadata,
 ): Promise<DspaceWorkspaceItem> {
-  const auth = localStorage.getItem('dspaceAuth');
-  const xsrf = localStorage.getItem('dspaceXsrfToken');
-
+  await ensureDspaceAuthFromBackend();
   const res = await ApiC.send(Method.POST, 'dspace', {
     action: 'create',
     collection,
     metadata,
-    // keep headers inside body for now
     headers: {
-      Authorization: auth,
-      'X-XSRF-TOKEN': xsrf,
+      Authorization: localStorage.getItem('dspaceAuth') || '',
+      'X-XSRF-TOKEN': localStorage.getItem('dspaceXsrfToken') || '',
+      Cookie: `DSPACE-XSRF-COOKIE=${localStorage.getItem('dspaceXsrfToken') || ''}`,
     },
   });
 

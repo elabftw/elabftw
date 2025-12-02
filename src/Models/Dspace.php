@@ -157,11 +157,16 @@ final class Dspace extends AbstractRest
             'Content-Type'  => 'application/json',
         );
 
+        if (!empty($incomingHeaders['Cookie'])) {
+            $headers['Cookie'] = $incomingHeaders['Cookie'];
+        }
+
         if ($collection === '' || empty($metadata)) {
             throw new ImproperActionException('Missing collection or metadata for workspace item creation.');
         }
         $url = $this->baseUrl . 'submission/workspaceitems?owningCollection=' . $collection;
 
+//        dd($headers);
         $res = $this->HttpGetter->post($url, [
             'headers' => $headers,
             'json' => $metadata,

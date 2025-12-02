@@ -1266,6 +1266,80 @@ components:
           type: integer
           description: Is 1 when the exclusive edit lock is longer than ExclusiveEditMode::EXPIRATION_MINUTES
 
+    # STORAGE UNIT
+    storage_unit:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The storage unit ID
+          example: 1
+        name:
+          type: string
+          description: Name of the storage unit
+          example: "Freezer A"
+        parent_id:
+          type: integer
+          nullable: true
+          description: ID of the parent storage unit (null for root level)
+          example: null
+        full_path:
+          type: string
+          description: Full hierarchical path from root to this unit
+          example: "Building A > Room 101 > Freezer A"
+        level_depth:
+          type: integer
+          description: Depth level in the hierarchy (0 for root)
+          example: 2
+        children_count:
+          type: integer
+          description: Number of child storage units
+          example: 3
+
+    # CONTAINER
+    container:
+      type: object
+      description: A container represents the storage of an entity in a specific storage unit
+      properties:
+        id:
+          type: integer
+          description: The container link ID
+          example: 1
+        qty_stored:
+          type: number
+          description: Quantity stored in this container
+          example: 10.5
+        qty_unit:
+          type: string
+          description: Unit of the quantity stored
+          example: "mL"
+        storage_id:
+          type: integer
+          description: ID of the storage unit
+          example: 5
+        item_id:
+          type: integer
+          description: ID of the entity (experiment or resource)
+          example: 42
+        created_at:
+          type: string
+          format: date-time
+          description: When the container entry was created
+          example: "2024-05-28 02:42:19"
+        modified_at:
+          type: string
+          format: date-time
+          description: When the container entry was last modified
+          example: "2024-05-28 02:42:31"
+        storage_name:
+          type: string
+          description: Name of the storage unit
+          example: "Freezer A"
+        full_path:
+          type: string
+          description: Full hierarchical path of the storage unit
+          example: "Building A > Room 101 > Freezer A"
+
 security:
   - token:
       - token
@@ -5316,3 +5390,244 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/extra_fields_keys'
+
+  # STORAGE UNITS
+  /storage_units:
+    summary: Manage storage units for the inventory feature.
+    get:
+      tags: ['Storage units']
+      summary: Read all storage units.
+      description: Get the full hierarchy of storage units. Results are grouped by parent_id.
+      operationId: read-storage-units
+      responses:
+        '200':
+          description: A list of storage units grouped by parent_id.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/storage_unit'
+    post:
+      tags: ['Storage units']
+      summary: Create a new storage unit.
+      description: Create a new storage unit. Requires permission to manage inventory locations.
+      operationId: post-storage-unit
+      requestBody:
+        description: Parameters for creating a storage unit.
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ['name']
+              properties:
+                name:
+                  type: string
+                  description: Name of the storage unit.
+                  example: "Freezer A"
+                parent_id:
+                  type: integer
+                  nullable: true
+                  description: ID of the parent storage unit. Set to null for a top-level unit.
+                  example: 1
+      responses:
+        '201':
+          description: The storage unit has been created.
+          headers:
+            location:
+              description: An URL to the storage unit that was created.
+              schema:
+                type: string
+
+  /storage_units/{id}:
+    summary: Actions on a specific storage unit.
+    parameters:
+      - name: id
+        in: path
+        description: ID of the storage unit.
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Storage units']
+      summary: Read a storage unit.
+      description: Get details of a specific storage unit including its full hierarchical path.
+      operationId: read-storage-unit
+      responses:
+        '200':
+          description: A storage unit.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/storage_unit'
+    patch:
+      tags: ['Storage units']
+      summary: Modify a storage unit.
+      description: Update the name of a storage unit. Requires permission to manage inventory locations.
+      operationId: patch-storage-unit
+      requestBody:
+        description: Parameters for modifying a storage unit.
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ['name']
+              properties:
+                name:
+                  type: string
+                  description: New name for the storage unit.
+                  example: "Freezer B"
+      responses:
+        '200':
+          description: The updated storage unit.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/storage_unit'
+    delete:
+      tags: ['Storage units']
+      summary: Delete a storage unit.
+      description: |
+        Delete a storage unit. Requires permission to manage inventory locations.
+        Cannot delete a storage unit that has children or containers.
+      operationId: delete-storage-unit
+      responses:
+        '204':
+          description: The storage unit was deleted.
+
+  # CONTAINERS
+  /{entity_type}/{id}/containers:
+    summary: Manage containers for an entity in the inventory.
+    parameters:
+      - name: entity_type
+        in: path
+        description: Entity type
+        required: true
+        schema:
+          type: string
+          enum: ['experiments', 'items', 'experiments_templates', 'items_types']
+      - name: id
+        in: path
+        description: ID of the entity
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Containers']
+      summary: Read all containers for this entity.
+      description: Get a list of all storage locations (containers) where this entity is stored.
+      operationId: read-containers
+      responses:
+        '200':
+          description: A list of containers.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/container'
+    post:
+      tags: ['Containers']
+      summary: Create a container for this entity.
+      description: Store this entity in a storage unit with a specified quantity.
+      operationId: post-container
+      requestBody:
+        description: Parameters for creating a container.
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ['storage_id', 'qty_stored']
+              properties:
+                storage_id:
+                  type: integer
+                  description: ID of the storage unit where the entity is stored.
+                  example: 5
+                qty_stored:
+                  type: number
+                  description: Quantity stored.
+                  example: 10.5
+                qty_unit:
+                  type: string
+                  description: Unit of the quantity. Defaults to "unit" if not provided.
+                  example: "mL"
+      responses:
+        '201':
+          description: The container has been created.
+          headers:
+            location:
+              description: An URL to the container that was created.
+              schema:
+                type: string
+
+  /{entity_type}/{id}/containers/{subid}:
+    summary: Actions on a specific container.
+    parameters:
+      - name: entity_type
+        in: path
+        description: Entity type
+        required: true
+        schema:
+          type: string
+          enum: ['experiments', 'items', 'experiments_templates', 'items_types']
+      - name: id
+        in: path
+        description: ID of the entity
+        required: true
+        schema:
+          type: integer
+      - name: subid
+        in: path
+        description: ID of the container
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Containers']
+      summary: Read a container.
+      description: Get details of a specific container entry.
+      operationId: read-container
+      responses:
+        '200':
+          description: A container.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/container'
+    patch:
+      tags: ['Containers']
+      summary: Modify a container.
+      description: Update the quantity stored or the unit of a container.
+      operationId: patch-container
+      requestBody:
+        description: Parameters for modifying a container.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                qty_stored:
+                  type: number
+                  description: New quantity stored.
+                  example: 15.0
+                qty_unit:
+                  type: string
+                  description: New unit of the quantity.
+                  example: "g"
+      responses:
+        '200':
+          description: The updated container.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/container'
+    delete:
+      tags: ['Containers']
+      summary: Delete a container.
+      description: Remove an entity from a storage unit.
+      operationId: delete-container
+      responses:
+        '204':
+          description: The container was deleted.

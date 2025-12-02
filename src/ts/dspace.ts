@@ -52,9 +52,10 @@ if (document.getElementById('dspaceExportModal')) {
     };
 
     try {
-      await ensureDspaceAuthFromBackend();
       // create the item's WORKSPACE in DSpace
       const workspace = await createWorkspaceItem(collection, metadata);
+      console.log('workspace', workspace);
+      return;
       const workspaceId = workspace.id;
       // get real DSpace item UUID to store be stored in elab)
       const itemUuid = await getItemUuidFromDspace(workspaceId);

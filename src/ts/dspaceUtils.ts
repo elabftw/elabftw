@@ -6,14 +6,18 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+import { ApiC } from "./api";
 import { entity } from './getEntity';
+import { Method } from "./interfaces";
 import JsonEditorHelper from './JsonEditorHelper.class';
 import { Metadata } from './Metadata.class';
 import { ExtraFieldInputType, ValidMetadata } from './metadataInterfaces';
 
 const apiUrl = '';
 
-// all GET methods first
+/*
+ * ALL Dspace GET METHODS
+ */
 function buildDspaceUrl(action: string): URL {
   const url = new URL('/api/v2/dspace', window.location.origin);
   url.searchParams.set('dspace_action', action);
@@ -22,6 +26,9 @@ function buildDspaceUrl(action: string): URL {
 
 // GET Dspace token
 export async function ensureDspaceAuthFromBackend(): Promise<string> {
+  if (localStorage.getItem('dspaceAuth') && localStorage.getItem('dspaceXsrfToken')) {
+    return localStorage.getItem('dspaceAuth')!;
+  }
   const res = await fetch(buildDspaceUrl('auth'));
   if (!res.ok) {
     const text = await res.text();
@@ -61,27 +68,50 @@ export async function getItemUuidFromDspace(workspaceId: number | string): Promi
   return json.uuid;
 }
 
-// helper: create an item in DSpace
+/**
+ * ALL POST METHODS
+ */
 export async function createWorkspaceItem(
   collection: string,
   metadata: DspaceWorkspaceItemMetadata,
 ): Promise<DspaceWorkspaceItem> {
-  const token = await fetchXsrfToken();
-  const url = `${apiUrl}submission/workspaceitems?owningCollection=${collection}`;
-  const res = await postToDspace({
-    url,
-    method: 'POST',
-    token,
-    contentType: 'application/json',
-    body: JSON.stringify(metadata),
+  const auth = localStorage.getItem('dspaceAuth');
+  const xsrf = localStorage.getItem('dspaceXsrfToken');
+
+  const res = await ApiC.send(Method.POST, 'dspace', {
+    action: 'create',
+    collection,
+    metadata,
+    // keep headers inside body for now
+    headers: {
+      Authorization: auth,
+      'X-XSRF-TOKEN': xsrf,
+    },
   });
-  console.log('res', res);
-  if (!res.ok) {
-    const errorText = await res.text();
-    throw new Error(`Create failed: ${res.status} - ${errorText}`);
-  }
-  return await res.json() as Promise<DspaceWorkspaceItem>;
+
+  return res.json() as Promise<DspaceWorkspaceItem>;
 }
+
+// export async function createWorkspaceItem(
+//   collection: string,
+//   metadata: DspaceWorkspaceItemMetadata,
+// ): Promise<DspaceWorkspaceItem> {
+//   const token = await fetchXsrfToken();
+//   const url = `${apiUrl}submission/workspaceitems?owningCollection=${collection}`;
+//   const res = await postToDspace({
+//     url,
+//     method: 'POST',
+//     token,
+//     contentType: 'application/json',
+//     body: JSON.stringify(metadata),
+//   });
+//   console.log('res', res);
+//   if (!res.ok) {
+//     const errorText = await res.text();
+//     throw new Error(`Create failed: ${res.status} - ${errorText}`);
+//   }
+//   return await res.json() as Promise<DspaceWorkspaceItem>;
+// }
 
 // helper: accept license
 export async function acceptWorkspaceItemLicense(itemId: number | string) {

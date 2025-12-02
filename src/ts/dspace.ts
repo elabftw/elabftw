@@ -55,15 +55,16 @@ if (document.getElementById('dspaceExportModal')) {
       ],
     };
     try {
-      const res = await ApiC.send(Method.POST, 'dspace', {
+      const res = await ApiC.send(Method.PATCH, 'dspace', {
         action: 'export',
         collection,
         metadata,
       });
-
+      const data = await res.json();
+      const itemUuid = data.uuid;
+      await saveDspaceIdAsExtraField(itemUuid);
       notify.success('export-success');
       $('#dspaceExportModal').modal('hide');
-      console.log(res);
     } catch (e) {
       notify.error('submission-error');
       console.error(e);

@@ -68,6 +68,33 @@ final class Dspace extends AbstractRest
             default => throw new ImproperActionException('Unknown DSpace GET action.'),
         };
     }
+
+    #[Override]
+    public function postAction(Action $action, array $reqBody): int
+    {
+        return $this->createWorkspaceItem($reqBody);
+    }
+
+    #[Override]
+    public function patch(Action $action, array $params): array
+    {
+        $id = $this->postAction($action, $params);
+        $uuid = $this->getItemUuid($id);
+        return array('id' => $id, 'uuid' => $uuid);
+    }
+
+    #[Override]
+    public function readOne(): array
+    {
+        return array();
+    }
+
+    #[Override]
+    public function destroy(): bool
+    {
+        throw new ImproperActionException('Not supported for DSpace.');
+    }
+
     /*
      * GET METHODS
      * getDspaceToken, listCollections, listTypes, getItemUuid
@@ -125,7 +152,11 @@ final class Dspace extends AbstractRest
         if ($auth === '') {
             throw new ImproperActionException(_('DSpace login did not return an Authorization header.'));
         }
-        return array('auth' => $auth, 'xsrf' => $xsrfToken);
+        return array(
+            'Authorization' => $auth,
+            'X-XSRF-TOKEN' => $xsrfToken,
+            'Cookie' => 'DSPACE-XSRF-COOKIE=' . $xsrfToken,
+        );
     }
 
     private function listCollections(): array
@@ -144,11 +175,10 @@ final class Dspace extends AbstractRest
         return json_decode($res['body'], true);
     }
 
-    private function getItemUuid(array $reqBody): int
+    private function getItemUuid(int $workspaceId): string
     {
-        $workspaceId = $reqBody['workspaceId'] ?? '';
-        $headers = $reqBody['headers'] ?? array();
-        if ($workspaceId === '') {
+        $headers = $this->getDspaceToken();
+        if (!$workspaceId) {
             throw new ImproperActionException('Missing workspaceId');
         }
         $res = $this->HttpGetter->getWithHeaders(
@@ -159,20 +189,14 @@ final class Dspace extends AbstractRest
         if (!isset($data['uuid'])) {
             throw new ImproperActionException('DSpace did not return an item UUID.');
         }
-        return (int) $data['uuid'];
-    }
-
-    #[Override]
-    public function postAction(Action $action, array $reqBody): int
-    {
-        return $this->exportItem($reqBody);
+        return $data['uuid'];
     }
 
     /*
      * POST METHODS
-     * exportItem, createItem, saveToEntry, acceptLicense, updateMetadata, uploadEntryAsFile, submitItem
+     * exportItem, createItem, acceptLicense, updateMetadata, uploadEntryAsFile, submitItem
      */
-    private function exportItem(array $reqBody): int
+    private function createWorkspaceItem(array $reqBody): int
     {
         $collection = $reqBody['collection'] ?? '';
         $metadata = $reqBody['metadata'] ?? array();
@@ -180,49 +204,25 @@ final class Dspace extends AbstractRest
         if ($collection === '' || empty($metadata)) {
             throw new ImproperActionException('Missing required export fields.');
         }
-
-        // Step 1: Authenticate with DSpace
-        $authHeaders = $this->getDspaceToken();
-        $headers = array(
-            'Authorization' => $authHeaders['auth'],
-            'X-XSRF-TOKEN' => $authHeaders['xsrf'],
-            'Content-Type' => 'application/json',
-            'Cookie' => 'DSPACE-XSRF-COOKIE=' . $authHeaders['xsrf'],
-        );
-
-        // Step 2: Create workspace item
-        $workspaceId = $this->createItem(array(
+        $headers = $this->getDspaceToken();
+        $headers['Content-Type'] = 'application/json';
+        return $this->createItem(array(
             'collection' => $collection,
             'metadata' => $metadata,
             'headers' => $headers,
         ));
-
-        $headersFormatted = array(
-            'Authorization'   => $authHeaders['auth'],
-            'X-XSRF-TOKEN'    => $authHeaders['xsrf'],
-            'Cookie'          => 'DSPACE-XSRF-COOKIE=' . $authHeaders['xsrf'],
-        );
-        // Step 3: Get item UUID
-        return $this->getItemUuid(array('workspaceId' => $workspaceId, 'headers' => $headersFormatted));
-        // Step 4: Save UUID to eLabFTW entry (to be implemented)
-        $this->saveToEntry($uuid);
-
-        // Step 5: Accept license
-        $this->acceptLicense($workspaceId, $headers);
-
-        // Step 6: Update metadata
-        $this->updateMetadata($workspaceId, $metadata, $headers);
-
-        // Step 7: Upload ELN file (to be implemented)
-        $this->uploadEntryAsFile($workspaceId, $headers);
-
-        // Step 8: Submit to workflow
-        $this->submitItem($workspaceId, $headers);
+//        // - Accept license
+//        $this->acceptLicense($workspaceId, $headers);
+//
+//        // - Update metadata
+//        $this->updateMetadata($workspaceId, $metadata, $headers);
+//
+//        // - Upload ELN file (to be implemented)
+//        $this->uploadEntryAsFile($workspaceId, $headers);
+//
+//        // - Submit to workflow
+//        $this->submitItem($workspaceId, $headers);
     }
-    //    private function acceptLicense(int $workspaceId, array $headers): void { /* ... */ }
-    //    private function updateMetadata(int $workspaceId, array $metadata, array $headers): void { /* ... */ }
-    //    private function uploadEntryAsFile(int $workspaceId, array $headers): void { /* ... */ }
-    //    private function submitItem(int $workspaceId, array $headers): void { /* ... */ }
 
     private function createItem(array $reqBody): int
     {
@@ -256,45 +256,5 @@ final class Dspace extends AbstractRest
         }
 
         return (int) $data['id'];
-    }
-
-    private function updateMetadata(array $reqBody): int
-    {
-        return 1;
-    }
-
-    #[Override]
-    public function readOne(): array
-    {
-        return array();
-    }
-
-    #[Override]
-    public function patch(Action $action, array $params): array
-    {
-        return array();
-    }
-
-    #[Override]
-    public function destroy(): bool
-    {
-        throw new ImproperActionException('Not supported for DSpace.');
-    }
-
-    private function saveToEntry(string $uuid): void
-    {
-        $Entry = new Entries(Users::getCurrentUser());
-        $entryId = $this->Request->getQuery()->getInt('id'); // assuming ?id=123 in the request
-
-        if ($entryId === 0) {
-            throw new ImproperActionException('Missing entry ID in request');
-        }
-
-        $entry = $Entry->readOne($entryId);
-
-        $extra = $entry['extra'] ?? [];
-        $extra['dspace_uuid'] = $uuid;
-
-        $Entry->update($entryId, ['extra' => $extra]);
     }
 }

@@ -49,23 +49,26 @@ class HttpGetter
         return (string) $res->getBody();
     }
 
-    public function getHeaders(string $url): array
+    public function getWithHeaders(string $url, array $headers = array()): array
     {
         try {
             $res = $this->client->get($url, array(
                 'proxy' => $this->proxy,
                 'timeout' => self::REQUEST_TIMEOUT,
                 'verify' => $this->verifyTls,
+                'headers' => $headers,
             ));
         } catch (ConnectException $e) {
             throw new ImproperActionException(sprintf('Error connecting to remote server: %s', $url), $e->getCode(), $e);
         }
-        if (!in_array($res->getStatusCode(), array(self::SUCCESS, self::SUCCESS_NO_CONTENT), true)) {
-            throw new ImproperActionException(sprintf('Error fetching remote content (%d).', $res->getStatusCode()));
+        $status = $res->getStatusCode();
+        if (!in_array($status, array(self::SUCCESS, self::SUCCESS_NO_CONTENT), true)) {
+            throw new ImproperActionException(sprintf('Error fetching remote content (%d).', $status));
         }
         return array(
-            'status'  => $res->getStatusCode(),
+            'status' => $status,
             'headers' => $res->getHeaders(),
+            'body' => (string) $res->getBody(),
         );
     }
 

@@ -52,23 +52,24 @@ if (document.getElementById('dspaceExportModal')) {
     };
 
     try {
-      const token = await fetchXsrfToken();
+      await ensureDspaceAuthFromBackend();
       // create the item's WORKSPACE in DSpace
-      const workspace = await createWorkspaceItem(collection, metadata, token);
+      const workspace = await createWorkspaceItem(collection, metadata);
       const workspaceId = workspace.id;
       // get real DSpace item UUID to store be stored in elab)
-      const itemUuid = await getItemUuidFromDspace(workspaceId, token);
+      const itemUuid = await getItemUuidFromDspace(workspaceId);
       // patch eLabFTW metadata with the uuid
       await saveDspaceIdAsExtraField(itemUuid);
       // accept license (only reached if checkbox was checked)
-      await acceptWorkspaceItemLicense(workspaceId, token);
+      await acceptWorkspaceItemLicense(workspaceId);
       // patch DSpace's metadata section
-      await updateWorkspaceItemMetadata(workspaceId, token, author, title, date, type, abstract);
+      await updateWorkspaceItemMetadata(workspaceId, author, title, date, type, abstract);
       // mandatory file upload -> build ELN for current entry
       const elnFile = await buildCurrentEntryEln();
-      await uploadWorkspaceItemFile(workspaceId, elnFile, token);
+      await uploadWorkspaceItemFile(workspaceId, elnFile);
       // submit (deposit) to workflow. Catch here if the POST is not sent, otherwise the response time being >120sec we don't await it.
-      submitWorkspaceItemToWorkflow(workspaceId, token).catch(() => notify.error('submission-error'));
+      // submitWorkspaceItemToWorkflow(workspaceId, token).catch(() => notify.error('submission-error'));
+      await submitWorkspaceItemToWorkflow(workspaceId);
       notify.success('export-success');
       $('#dspaceExportModal').modal('hide');
     } catch (e) {

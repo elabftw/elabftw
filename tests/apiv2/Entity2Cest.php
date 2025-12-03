@@ -201,6 +201,8 @@ class Entity2Cest
         $I->seeResponseCodeIs(HttpCode::NOT_FOUND);
     }
 
+    /**
+     @mouss this needs cypressification
     public function extendedSearchTest(Apiv2Tester $I)
     {
         $I->wantTo('Use extended parameter to get experiments');
@@ -214,4 +216,5 @@ class Entity2Cest
         $I->seeResponseIsJson();
         $I->seeResponseContainsJson(array('id' => $id));
     }
+     */
 }

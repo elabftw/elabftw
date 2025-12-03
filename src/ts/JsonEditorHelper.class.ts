@@ -108,9 +108,9 @@ export default class JsonEditorHelper {
     this.editorDiv.dataset.what = 'metadata';
   }
 
-  saveMetadata(): void {
+  saveMetadata(): Promise<void> {
     try {
-      this.MetadataC.update(this.editor.get());
+      return this.MetadataC.update(this.editor.get());
     } catch (error) {
       notify.error(error);
     }
@@ -183,7 +183,7 @@ export default class JsonEditorHelper {
         json['elabftw']['display_main_text'] = !json['elabftw']['display_main_text'];
       }
       this.editor.set(json);
-      this.saveMetadata();
+      this.saveMetadata().then(() => reloadElements(['toggleDisplayMainTextBtn']));
     });
   }
 

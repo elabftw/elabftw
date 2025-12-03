@@ -277,6 +277,7 @@ CREATE TABLE `experiments_steps` (
   `finished_time` datetime DEFAULT NULL,
   `deadline` datetime DEFAULT NULL,
   `deadline_notif` tinyint UNSIGNED NOT NULL DEFAULT 0,
+  `is_immutable` tinyint UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
@@ -856,6 +857,7 @@ CREATE TABLE `items_types_steps` (
   `finished_time` datetime DEFAULT NULL,
   `deadline` datetime DEFAULT NULL,
   `deadline_notif` tinyint UNSIGNED NOT NULL DEFAULT 0,
+  `is_immutable` tinyint UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
@@ -1161,16 +1163,24 @@ CREATE TABLE `team_events` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `team` int(10) UNSIGNED NOT NULL,
   `item` int(10) UNSIGNED NOT NULL,
-  `start` varchar(255) NOT NULL,
-  `end` varchar(255) DEFAULT NULL,
+  `start` DATETIME NOT NULL,
+  `end` DATETIME NOT NULL,
   `title` varchar(255) DEFAULT NULL,
   `userid` int(10) UNSIGNED NOT NULL,
   `experiment` int(10) UNSIGNED DEFAULT NULL,
   `item_link` int(10) UNSIGNED DEFAULT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modified_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  CONSTRAINT `chk_end_after_start` CHECK (`end` >= `start`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+--
+-- Indexes for table `team_events`
+--
+CREATE INDEX `idx_team_events_item_start_end` ON `team_events` (`item`, `start`, `end`);
+CREATE INDEX `idx_team_events_team_start_end` ON `team_events` (`team`, `start`, `end`);
+CREATE INDEX `idx_team_events_user_start_end` ON `team_events` (`userid`, `start`, `end`);
 
 --
 -- RELATIONSHIPS FOR TABLE `team_events`:
@@ -1935,6 +1945,7 @@ CREATE TABLE `items_steps` (
     `finished_time` datetime DEFAULT NULL,
     `deadline` datetime DEFAULT NULL,
     `deadline_notif` tinyint UNSIGNED NOT NULL DEFAULT 0,
+    `is_immutable` tinyint UNSIGNED NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`),
     KEY `fk_items_steps_items_id` (`item_id`),
     CONSTRAINT `fk_items_steps_items_id` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -1949,6 +1960,7 @@ CREATE TABLE `experiments_templates_steps` (
     `finished_time` datetime DEFAULT NULL,
     `deadline` datetime DEFAULT NULL,
     `deadline_notif` tinyint UNSIGNED NOT NULL DEFAULT 0,
+    `is_immutable` tinyint UNSIGNED NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`),
     KEY `fk_experiments_templates_steps_items_id` (`item_id`),
     CONSTRAINT `fk_experiments_templates_steps_items_id` FOREIGN KEY (`item_id`) REFERENCES `experiments_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE

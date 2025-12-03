@@ -16,11 +16,9 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Scheduler;
-use Elabftw\Services\UsersHelper;
 use Override;
 
 use function date;
-use function implode;
 
 /**
  * Create a report of scheduler bookings
@@ -50,28 +48,11 @@ final class MakeSchedulerReport extends AbstractMakeCsv
     }
 
     /**
-     * Columns of the CSV
-     */
-    #[Override]
-    protected function getHeader(): array
-    {
-        $header = parent::getHeader();
-        $header[] = 'team(s)';
-        return $header;
-    }
-
-    /**
      * Get the rows for each users
      */
     #[Override]
     protected function getRows(): array
     {
-        foreach ($this->rows as $key => $entry) {
-            // append the team(s) of user
-            $UsersHelper = new UsersHelper($entry['userid']);
-            $teams = implode(',', $UsersHelper->getTeamsNameFromUserid());
-            $this->rows[$key]['team(s)'] = $teams;
-        }
         return $this->rows;
     }
 }

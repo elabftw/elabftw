@@ -16,6 +16,7 @@ use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\AuditEvent\ConfigModified;
 use Elabftw\Elabftw\Env;
+use Elabftw\Elabftw\S3Config;
 use Elabftw\Elabftw\TwigFilters;
 use Elabftw\Elabftw\Update;
 use Elabftw\Enums\Action;
@@ -32,6 +33,7 @@ use function apcu_fetch;
 use function apcu_store;
 use function apcu_exists;
 use function apcu_delete;
+use function in_array;
 
 /**
  * The general config table
@@ -78,6 +80,7 @@ final class Config extends AbstractRest
     {
         $sql = "INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
             ('admin_validate', '1'),
+            ('admin_panel_custom_msg', ''),
             ('autologout_time', '0'),
             ('cookie_validity_time', '43200'),
             ('remember_me_checked', '1'),
@@ -195,6 +198,14 @@ final class Config extends AbstractRest
             ('s3_endpoint', ''),
             ('s3_verify_cert', '1'),
             ('s3_use_path_style_endpoint', '0'),
+            ('s3_exports_toggle', '0'),
+            ('s3_exports_use_dedicated_bucket', '0'),
+            ('s3_exports_bucket_name', ''),
+            ('s3_exports_path_prefix', 'exports'),
+            ('s3_exports_region', ''),
+            ('s3_exports_endpoint', ''),
+            ('s3_exports_verify_cert', '1'),
+            ('s3_exports_use_path_style_endpoint', '0'),
             ('blox_anon', '0'),
             ('blox_enabled', '1'),
             ('enforce_mfa', '0'),
@@ -213,7 +224,8 @@ final class Config extends AbstractRest
             ('onboarding_email_admins_body', NULL),
             ('allow_users_change_identity', '0'),
             ('compounds_require_edit_rights', '0'),
-            ('inventory_require_edit_rights', '0')";
+            ('inventory_require_edit_rights', '0'),
+            ('users_validity_is_externally_managed', '0')";
 
         $req = $this->Db->prepare($sql);
         $req->bindValue(':schema', Update::REQUIRED_SCHEMA);
@@ -295,7 +307,7 @@ final class Config extends AbstractRest
         foreach ($params as $name => $value) {
             if ($this->configArr[$name] !== $value) {
                 // prevent incorrect html in these two things
-                if ($name === 'login_announcement' || $name === 'announcement') {
+                if (in_array($name, array('login_announcement', 'announcement', 'admin_panel_custom_msg'), true)) {
                     $value = Filter::body($value);
                 }
                 // for permissions, ensure at least one remains active
@@ -343,6 +355,32 @@ final class Config extends AbstractRest
             $this->configArr['smtp_port'],
             $this->configArr['smtp_verify_cert'],
         );
+    }
+
+    public function getS3Config(): S3Config
+    {
+        return new S3Config(
+            bucketName: $this->configArr['s3_bucket_name'],
+            region: $this->configArr['s3_region'],
+            endpoint: $this->configArr['s3_endpoint'],
+            pathPrefix: $this->configArr['s3_path_prefix'],
+            usePathStyleEndpoint: $this->configArr['s3_use_path_style_endpoint'] === '1',
+            verifyCert: $this->configArr['s3_verify_cert'] === '1',
+        );
+    }
+
+    public function getS3ExportsConfig(): S3Config
+    {
+        $S3Config = $this->getS3Config();
+        $S3Config->pathPrefix = $this->configArr['s3_exports_path_prefix'];
+        if ($this->configArr['s3_exports_use_dedicated_bucket']) {
+            $S3Config->bucketName = $this->configArr['s3_exports_bucket_name'];
+            $S3Config->region = $this->configArr['s3_exports_region'];
+            $S3Config->endpoint = $this->configArr['s3_exports_endpoint'];
+            $S3Config->usePathStyleEndpoint = $this->configArr['s3_exports_use_path_style_endpoint'] === '1';
+            $S3Config->verifyCert = $this->configArr['s3_exports_verify_cert'] === '1';
+        }
+        return $S3Config;
     }
 
     /**

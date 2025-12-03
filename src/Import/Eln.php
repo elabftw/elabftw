@@ -294,7 +294,9 @@ class Eln extends AbstractZip
         }
 
         // CREATE ENTITY
-        $this->Entity->setId($this->Entity->create());
+        $entityId = $this->Entity->create();
+        $this->Entity->setId($entityId);
+        $this->logger->debug(sprintf('Created %s with id: %d', $this->Entity->entityType->value, $entityId));
 
         // DATE
         $date = date('Y-m-d');

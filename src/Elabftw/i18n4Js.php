@@ -119,6 +119,7 @@ final class i18n4Js
             'resource-not-found' => _('Nothing to show with this id'),
             'revisions-error' => _('Select two revisions to compare them.'),
             'save' => _('Save'),
+            'save-and-go-back' => _('Save and go back'),
             'save-attachment' => _('Save as attachment'),
             'saved' => _('Saved'),
             'search' => _('Search'),

@@ -20,7 +20,6 @@ import { Uploader } from './uploader';
 import { clearLocalStorage } from './localStorage';
 import { entity } from './getEntity';
 import { on } from './handlers';
-import 'bootstrap/js/src/modal.js';
 
 const mode = new URLSearchParams(window.location.search).get('mode');
 if (mode === 'edit') {

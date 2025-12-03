@@ -143,6 +143,9 @@ export class Metadata {
     if (properties.value) {
       element.value = properties.value as string;
     }
+    if (Object.prototype.hasOwnProperty.call(properties, 'required')) {
+      element.required = true;
+    }
     element.dataset.field = name;
     element.addEventListener('change', this, false);
     return element;
@@ -598,9 +601,6 @@ export class Metadata {
             label.innerText = element.name as string;
             if (element.required) {
               label.classList.add('required-label');
-              // mark the underlying input/textare/select so edit.ts can read its value
-              const control = element.element.matches('input, textarea, select') ? element.element : element.element.querySelector('input, textarea, select');
-              control?.setAttribute('required', '');
             }
             label.classList.add('py-2');
 

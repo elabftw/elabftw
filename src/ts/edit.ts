@@ -20,40 +20,19 @@ import { Uploader } from './uploader';
 import { clearLocalStorage } from './localStorage';
 import { entity } from './getEntity';
 import { on } from './handlers';
-import { notify } from './notify';
-import i18next from './i18n';
+import 'bootstrap/js/src/modal.js';
 
 const mode = new URLSearchParams(window.location.search).get('mode');
 if (mode === 'edit') {
   // remove exclusive edit mode when leaving the page
   window.onbeforeunload = function() {
-    // At first, we assume that each defaultValue is filled in
-    let defaultValueIsEmpty = false;
-    // Select all extra fields with attribute data-required to true
-    document.querySelectorAll('[data-required="true"]').forEach(el => {
-      const field = el as HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement;
-      let isEmpty = false;
-      // Handle checkbox and radio button
-      if (field instanceof HTMLInputElement && field.type == 'checkbox') {
-        isEmpty = !field.checked;
-      } else if (field instanceof HTMLInputElement && field.type == 'radio') {
-        const radio = document.querySelectorAll<HTMLInputElement>(`input[type="radio"][name="${field.name}"]`);
-        const oneChecked = Array.from(radio).some(r => r.checked);
-        isEmpty = !oneChecked;
-      } else {
-          const defaultValue = field.value?.trim() ?? '';
-          isEmpty = defaultValue == '';
-      }
-      // If isEmpty on a required extra field, set defaultValueIsEmpty to true
-      if (isEmpty) {
-        defaultValueIsEmpty = true;
-      }
+    let isEmpty = false;
+    document.querySelectorAll('[data-required="true"]').forEach((field: HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement) => {
+      const defaultValue = field.value?.trim() ?? '';
+      isEmpty = defaultValue == '';
     });
-    // If defaultValueIsEmpty display warning message, remove exclusive mode and return
-    if (defaultValueIsEmpty) {
-      notify.error('required-fields-warning');
-      ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.RemoveExclusiveEditMode});
-      return '';
+    if (isEmpty) {
+      $('#policiesModal').modal('toggle');
     }
     ApiC.notifOnSaved = false;
     ApiC.keepalive = true;

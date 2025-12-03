@@ -26,14 +26,6 @@ const mode = new URLSearchParams(window.location.search).get('mode');
 if (mode === 'edit') {
   // remove exclusive edit mode when leaving the page
   window.onbeforeunload = function() {
-    let isEmpty = false;
-    document.querySelectorAll('[data-required="true"]').forEach((field: HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement) => {
-      const defaultValue = field.value?.trim() ?? '';
-      isEmpty = defaultValue == '';
-    });
-    if (isEmpty) {
-      $('#policiesModal').modal('toggle');
-    }
     ApiC.notifOnSaved = false;
     ApiC.keepalive = true;
     ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.RemoveExclusiveEditMode});

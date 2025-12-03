@@ -600,7 +600,7 @@ export class Metadata {
               label.classList.add('required-label');
               // mark the underlying input/textare/select so edit.ts can read its value
               const control = element.element.matches('input, textarea, select') ? element.element : element.element.querySelector('input, textarea, select');
-              control?.setAttribute('data-required', 'true');
+              control?.setAttribute('required', '');
             }
             label.classList.add('py-2');
 

@@ -5539,10 +5539,6 @@ paths:
               type: object
               required: ['storage_id', 'qty_stored']
               properties:
-                storage_id:
-                  type: integer
-                  description: ID of the storage unit where the entity is stored.
-                  example: 5
                 qty_stored:
                   type: number
                   description: Quantity stored.
@@ -5551,6 +5547,8 @@ paths:
                   type: string
                   description: Unit of the quantity. Defaults to "unit" if not provided.
                   example: "mL"
+                  # see Units enum
+                  enum: ['bar', '•', 'm', 'μL', 'mL', 'L', 'μg', 'mg', 'g', 'kg']
       responses:
         '201':
           description: The container has been created.

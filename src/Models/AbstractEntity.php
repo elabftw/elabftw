@@ -559,7 +559,7 @@ abstract class AbstractEntity extends AbstractRest
         $this->entityData['comments'] = $this->Comments->readAll();
         $this->entityData['page'] = mb_substr($this->entityType->toPage(), 0, -4);
         $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
-        $this->entityData['compounds'] = $CompoundsLinks->readAll();
+        $this->entityData['compounds_links'] = $CompoundsLinks->readAll();
         $ContainersLinks = LinksFactory::getContainersLinks($this);
         $this->entityData['containers'] = $ContainersLinks->readAll();
         $this->entityData['sharelink'] = sprintf(

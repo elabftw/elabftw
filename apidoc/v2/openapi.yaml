@@ -573,7 +573,7 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/comment'
-            compounds:
+            compounds_links:
               type: array
               items:
                 $ref: '#/components/schemas/compound'

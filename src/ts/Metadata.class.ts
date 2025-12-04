@@ -127,7 +127,7 @@ export class Metadata {
   /**
    * Build text areas for extra fields (default type)
    */
-  buildTextArea(name, properties: ExtraFieldProperties): Element {
+  buildTextArea(name, properties: ExtraFieldProperties): HTMLTextAreaElement {
     const element = document.createElement('textarea');
 
     // style it to look like an input & reset height
@@ -260,7 +260,7 @@ export class Metadata {
    */
   generateInput(name: string, properties: ExtraFieldProperties): Element {
     // we don't know yet which kind of element it will be
-    let element: HTMLInputElement|HTMLSelectElement;
+    let element: HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement;
     // generate a unique id for the element so we can associate the label properly
     const uniqid = this.getRandomId();
 
@@ -305,7 +305,7 @@ export class Metadata {
     case ExtraFieldInputType.Radio:
       return this.buildRadio(name, properties);
     default:
-      return this.buildTextArea(name, properties);
+      element = this.buildTextArea(name, properties);
     }
 
     // add the unique id to the element

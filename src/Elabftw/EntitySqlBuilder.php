@@ -66,7 +66,6 @@ final class EntitySqlBuilder implements SqlBuilderInterface
             $this->links($relatedOrigin);
         }
         $this->usersTeams();
-        $this->uploads();
 
         $sql = array(
             'SELECT',
@@ -171,30 +170,6 @@ final class EntitySqlBuilder implements SqlBuilderInterface
             statust.color AS status_color';
         $this->joinsSql[] = 'LEFT JOIN ' . $this->getStatusTable() . ' AS statust
             ON (statust.id = entity.status)';
-    }
-
-    protected function uploads(): void
-    {
-        $this->selectSql[] = 'uploads.up_item_id,
-            uploads.has_attachment';
-
-        // only include columns if actually searching for comments/filenames
-        $searchAttachments = '';
-        if (!empty(array_column($this->entity->extendedValues, 'searchAttachments'))) {
-            $searchAttachments = ', GROUP_CONCAT(comment) AS comments
-                , GROUP_CONCAT(real_name) AS real_names';
-        }
-
-        $this->joinsSql[] = 'LEFT JOIN (
-                SELECT item_id AS up_item_id,
-                    (item_id IS NOT NULL) AS has_attachment,
-                    type
-                    ' . $searchAttachments . '
-                FROM uploads
-                GROUP BY item_id, type
-            ) AS uploads
-                ON (uploads.up_item_id = entity.id
-                    AND uploads.type = \'%1$s\')';
     }
 
     protected function links(EntityType $relatedOrigin): void

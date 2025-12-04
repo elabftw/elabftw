@@ -20,6 +20,7 @@
     {# SEARCH BAR #}
     {% set pageName = scriptName|replace({'.php': ''}) %}
     {% set searchTarget = pageName %}
+    {% set searchPlaceholder = 'Search in %s'|trans|format(pageTitle|lower) %}
     {% if pageName == 'database' %}
       {% set searchTarget = 'resources'|trans %}
     {% endif %}
@@ -31,9 +32,9 @@
           name='q'
           type='text'
           class='form-control'
-          placeholder="{{ 'Search %s'|trans|format(searchTarget) }}"
+          placeholder="{{ searchPlaceholder }}"
           spellcheck='false'
-          aria-label="{{ 'Search %s'|trans|format(searchTarget) }}"
+          aria-label="{{ searchPlaceholder }}"
           value='{{ App.Request.query.get('q') ? App.Request.query.get('q')|trim|e('html_attr') }}' />
         <pre id='search-highlighting' class='form-control d-none' aria-hidden='true'><code></code></pre>
         <div class='input-group-append'>

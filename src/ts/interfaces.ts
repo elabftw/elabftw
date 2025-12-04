@@ -137,7 +137,7 @@ enum Model {
   User2Team = 'user2team',
 }
 
-enum SubModel {
+enum LinkSubModel {
   CompoundsLinks = 'compounds_links',
   ExperimentsLinks = 'experiments_links',
   ItemsLinks = 'items_links',
@@ -204,7 +204,7 @@ export {
   ProcurementState,
   ResponseMsg,
   Selected,
-  SubModel,
+  LinkSubModel,
   Target,
   Todoitem,
   UnfinishedEntities,

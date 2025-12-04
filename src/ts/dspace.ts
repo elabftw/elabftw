@@ -9,18 +9,20 @@
  * All logic related to DSpace export modal. Located in toolbar on view/edit pages
  */
 
-import { ApiC } from "./api";
+import { ApiC } from './api';
 import { DspaceCollection, DspaceVocabularyEntry, listCollections, listTypes, saveDspaceIdAsExtraField } from './dspaceUtils';
 import { on } from './handlers';
 import i18next from './i18n';
-import { Method } from "./interfaces";
+import { Method } from './interfaces';
 import { notify } from './notify';
+import { entity } from './getEntity';
 
 if (document.getElementById('dspaceExportModal')) {
   on('export-to-dspace', async () => {
     const form = document.getElementById('dspaceExportForm') as HTMLFormElement;
     const collection = form.collection.value;
     const author = form.author.value;
+    const authorId = form.dspaceAuthorId.value;
     const title = (document.getElementById('dspaceTitle') as HTMLInputElement)?.value;
     const date = form.date.value;
     const type = form.type.value;
@@ -33,18 +35,20 @@ if (document.getElementById('dspaceExportModal')) {
     }
 
     const metadata = [
-        { key: 'dc.contributor.author', value: author },
-        { key: 'dc.title', value: title },
-        { key: 'dc.date.issued', value: date },
-        { key: 'dc.type', value: type },
-        { key: 'dc.description.abstract', value: abstract },
-      ]
+      { key: 'dc.contributor.author', value: author },
+      { key: 'dc.title', value: title },
+      { key: 'dc.date.issued', value: date },
+      { key: 'dc.type', value: type },
+      { key: 'dc.description.abstract', value: abstract },
+    ]
     ;
     try {
       const res = await ApiC.send(Method.PATCH, 'dspace', {
         action: 'export',
         collection,
         metadata,
+        authorId,
+        entity,
       });
       const data = await res.json();
       const itemUuid = data.uuid;
@@ -57,15 +61,15 @@ if (document.getElementById('dspaceExportModal')) {
     }
     //
     // try {
-                      //   // create the item's WORKSPACE in DSpace
-                      //   const workspace = await createWorkspaceItem(collection, metadata);
-                      //   console.log('workspace', workspace);
-                      //   return;
-                      //   const workspaceId = workspace.id;
-                      //   // get real DSpace item UUID to store be stored in elab)
-                      //   const itemUuid = await getItemUuidFromDspace(workspaceId);
-                      //   // patch eLabFTW metadata with the uuid
-                      //   await saveDspaceIdAsExtraField(itemUuid);
+    //   // create the item's WORKSPACE in DSpace
+    //   const workspace = await createWorkspaceItem(collection, metadata);
+    //   console.log('workspace', workspace);
+    //   return;
+    //   const workspaceId = workspace.id;
+    //   // get real DSpace item UUID to store be stored in elab)
+    //   const itemUuid = await getItemUuidFromDspace(workspaceId);
+    //   // patch eLabFTW metadata with the uuid
+    //   await saveDspaceIdAsExtraField(itemUuid);
     //   // accept license (only reached if checkbox was checked)
     //   await acceptWorkspaceItemLicense(workspaceId);
     //   // patch DSpace's metadata section

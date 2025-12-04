@@ -8,15 +8,15 @@
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
+      <form id='dspaceExportForm'>
       <div class='modal-body'>
-        <form id='dspaceExportForm'>
           <div class='form-group'>
             <label for='dspaceCollection'>{{ 'Target Collection'|trans }}</label>
             <select class='form-control' id='dspaceCollection' name='collection' required></select>
           </div>
           <div class='form-group'>
             <label for='dspaceAuthor'>{{ 'Author'|trans }}</label>
-            <input type='hidden' class='form-control' required disabled value='{{ Entity.entityData.userid }}'>
+            <input id='dspaceAuthorId' type='hidden' class='form-control' required disabled value='{{ Entity.entityData.userid }}'>
             {# visible field: display the author's full name #}
             <input id='dspaceAuthor' type='text' name='author' class='form-control' disabled value='{{ Entity.entityData.fullname }}'>
           </div>
@@ -42,13 +42,12 @@
               {{ 'I accept the DSpace license'|trans }}
             </label>
           </div>
-        </form>
       </div>
-
       <div class='modal-footer'>
         <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
         <button type='submit' class='btn btn-primary' data-action='export-to-dspace' data-format='zip' data-type='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}'>{{ 'Export'|trans }}</button>
       </div>
+      </form>
     </div>
   </div>
 </div>

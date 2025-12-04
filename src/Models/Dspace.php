@@ -14,13 +14,16 @@ namespace Elabftw\Models;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
+use Elabftw\Controllers\MakeController;
 use Elabftw\Elabftw\Env;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
+use Elabftw\Models\Users\Users;
 use Elabftw\Services\HttpGetter;
 use GuzzleHttp\Client;
 use Override;
+use Symfony\Component\HttpFoundation\Request;
 
 use function str_starts_with;
 use function rtrim;
@@ -78,11 +81,15 @@ final class Dspace extends AbstractRest
     #[Override]
     public function patch(Action $action, array $params): array
     {
-        $workspaceId = $this->postAction($action, $params);
+        $workspaceId = $this->postAction(Action::Create, $params);
         $uuid = $this->getItemUuid($workspaceId);
         $this->acceptLicense($workspaceId);
         $this->updateMetadata($workspaceId, $params['metadata'] ?? array());
 
+        $requester = new Users((int) $params['authorId']);
+        $this->uploadEntryAsFile($workspaceId, $requester);
+        $this->submitToWorkflow($workspaceId);
+        // return id and uuid for elab entry metadata
         return array('id' => $workspaceId, 'uuid' => $uuid);
     }
 
@@ -96,6 +103,45 @@ final class Dspace extends AbstractRest
     public function destroy(): bool
     {
         throw new ImproperActionException('Not supported for DSpace.');
+    }
+
+    private function submitToWorkflow(int $workspaceId): void
+    {
+        $headers = $this->getDspaceToken();
+        $this->HttpGetter->post($this->baseUrl . 'workflow/workflowitems', array(
+            'headers' => array_merge($headers, array(
+                'Content-Type' => 'text/uri-list',
+            )),
+            'body' => '/api/submission/workspaceitems/' . $workspaceId,
+        ));
+    }
+
+    private function uploadEntryAsFile(int $workspaceId, Users $requester): void
+    {
+        $params = array('format' => 'eln');
+        $Request = new Request($params);
+        $MakeController = new MakeController($requester, $Request);
+        $Response = $MakeController->getResponse();
+
+        ob_start();
+        $Response->sendContent();
+        $elnContent = ob_get_clean();
+
+        $headers = $this->getDspaceToken();
+        $this->HttpGetter->post($this->baseUrl . 'submission/workspaceitems/' . $workspaceId, array(
+            'headers' => $headers,
+            'multipart' => array(
+                array(
+                    'name'     => 'file',
+                    'contents' => $elnContent,
+                    'filename' => 'elabftw-entry.eln',
+                    'headers'  => array(
+                        'Content-Type' => 'application/zip',
+                    ),
+                ),
+            ),
+        ));
+
     }
 
     private function acceptLicense(int $workspaceId): void
@@ -227,14 +273,6 @@ final class Dspace extends AbstractRest
         $body = $res->getBody()->getContents();
         $data = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
         return (int) $data['id'];
-        //        // - Update metadata
-        //        $this->updateMetadata($workspaceId, $metadata, $headers);
-        //
-        //        // - Upload ELN file (to be implemented)
-        //        $this->uploadEntryAsFile($workspaceId, $headers);
-        //
-        //        // - Submit to workflow
-        //        $this->submitItem($workspaceId, $headers);
     }
 
     private function updateMetadata(int $workspaceId, array $metadata): void

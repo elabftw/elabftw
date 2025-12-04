@@ -2799,7 +2799,7 @@ paths:
           description: The link was deleted.
 
   # COMPOUNDS LINKS
-  /{entity_type}/{id}/compounds:
+  /{entity_type}/{id}/compounds_links:
     summary: Compounds linked to that entity.
     parameters:
       - name: entity_type
@@ -2828,7 +2828,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/link'
-  /{entity_type}/{id}/compounds/{subid}:
+  /{entity_type}/{id}/compounds_links/{subid}:
     summary: Actions on compounds link of an entity
     parameters:
       - name: entity_type

@@ -14,12 +14,14 @@ namespace Elabftw\Elabftw;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
+use Elabftw\Enums\ApiEndpoint;
 use Elabftw\Enums\Currency;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\MessageLevels;
 use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Models\Compounds;
 use Elabftw\Models\Users\Users;
 
 use function is_array;
@@ -65,7 +67,7 @@ final class TwigFilters
     }
 
     /**
-     * Process the metadata json string into html
+     * Process the metadata json string into html, for extra fields view mode
      * @psalm-suppress PossiblyUnusedMethod this method is used in twig templates
      */
     public static function formatMetadata(string $json): string
@@ -97,16 +99,16 @@ final class TwigFilters
                     : '';
                 $value = $field[MetadataEnum::Value->value] ?? '';
                 $metadataType = $field[MetadataEnum::Type->value] ?? 'text';
-                // type:checkbox is a special case
+                // special case: type:checkbox
                 if ($metadataType === 'checkbox') {
                     $checked = $field[MetadataEnum::Value->value] === 'on' ? ' checked="checked"' : '';
                     $value = '<input class="d-block" disabled type="checkbox"' . $checked . '>';
                 }
-                // type:text is another special case that becomes textarea, handles multiple lines
+                // special case: type:text (becomes a textarea, handling multiple lines)
                 elseif ($metadataType === 'text') {
                     $value = nl2br(Tools::eLabHtmlspecialchars($value));
                 }
-                // type:url is another special case
+                // special case: type:url
                 elseif ($metadataType === 'url') {
                     $value = sprintf(
                         '<a href="%1$s"%2$s>%1$s</a>',
@@ -114,14 +116,14 @@ final class TwigFilters
                         $newTab,
                     );
                 }
-                // type:email is another special case
+                // special case: type:email (creates a mailto link)
                 elseif ($metadataType === 'email') {
                     $value = sprintf(
                         '<a href="mailto:%1$s">%1$s</a>',
                         Tools::eLabHtmlspecialchars($value),
                     );
                 }
-                // type:exp/items is another special case
+                // special case: type:exp/items (displays the title with a link to the entity)
                 elseif (in_array($metadataType, array(EntityType::Experiments->value, EntityType::Items->value), true)) {
                     $id = isset($field[MetadataEnum::Value->value]) ? (int) $field[MetadataEnum::Value->value] : 0;
                     $page = $metadataType === EntityType::Items->value ? EntityType::Items->toPage() : EntityType::Experiments->toPage();
@@ -136,7 +138,7 @@ final class TwigFilters
                         Tools::eLabHtmlspecialchars($value),
                     );
                 }
-                // type:users is also a special case where we go fetch the name of the user
+                // special case: type:users (displays the full name of the user)
                 elseif ($metadataType === 'users' && !empty($value)) {
                     try {
                         $linkedUser = new Users((int) $field[MetadataEnum::Value->value]);
@@ -144,6 +146,17 @@ final class TwigFilters
                     } catch (ResourceNotFoundException) {
                         $value = _('User could not be found.');
                     }
+                }
+                // special case: type:compounds (displays the name and CAS number if available)
+                elseif ($metadataType === ApiEndpoint::Compounds->value && !empty($value)) {
+                    $id = (int) ($field[MetadataEnum::Value->value] ?? 0);
+                    $value = sprintf(
+                        '<span %s data-id="%d" data-endpoint="%s">%s</span>',
+                        $id !== 0 ? 'data-replace-with-title="true"' : '',
+                        $id,
+                        ApiEndpoint::Compounds->value,
+                        Tools::eLabHtmlspecialchars($value),
+                    );
                 }
                 // multi select will be an array of options
                 elseif (is_array($value)) {

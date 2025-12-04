@@ -13,7 +13,7 @@ import {
   reloadEntitiesShow,
   TomSelect,
 } from './misc';
-import { Action, Model } from './interfaces';
+import { Action, Model, LinkSubModel } from './interfaces';
 import 'bootstrap/js/src/modal.js';
 import i18next from './i18n';
 import { ApiC } from './api';
@@ -398,7 +398,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (key === 'tags') {
             ajaxs.push(ApiC.post(`${entity.type}/${chk.id}/${Model.Tag}`, {tag: paramsCopy[key]}));
             delete paramsCopy[key];
-          } else if (['items_links', 'experiments_links'].includes(key)) {
+          } else if (Object.values(LinkSubModel).includes(key as LinkSubModel)) {
             ajaxs.push(ApiC.post(`${entity.type}/${chk.id}/${key}/${parseInt(paramsCopy[key], 10)}`));
             delete paramsCopy[key];
           }

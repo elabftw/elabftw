@@ -598,13 +598,31 @@ export function replaceWithTitle(): void {
       changedAttribute = 'value';
     }
     ApiC.getJson(`${el.dataset.endpoint}/${el.dataset.id}`).then(json => {
-      // view mode for Experiments or Resources
-      let value = el.dataset.endpoint === Model.User ? json.fullname : json.title;
-      // edit mode
-      if (el instanceof HTMLInputElement) {
-        value = `${json.id} - ${json.title}`;
-        if (el.dataset.endpoint === Model.User) {
+      // VIEW MODE (non-input): default = 'entity title'
+      let value;
+      const casNumber = json.cas_number ? ` - CAS: (${json.cas_number})` : '';
+      if (!(el instanceof HTMLInputElement)) {
+        switch (el.dataset.endpoint) {
+        case Model.User:
+          value = json.fullname;
+          break;
+        case Model.Compounds:
+          value = json.name + casNumber;
+          break;
+        default:
+          value = json.title ?? json.name;
+        }
+      } else {
+        // EDIT MODE (input): default = 'id - entity title'
+        switch (el.dataset.endpoint) {
+        case Model.User:
           value = `${json.userid} - ${json.fullname}`;
+          break;
+        case Model.Compounds:
+          value = `${json.id} - ${json.name}` + casNumber;
+          break;
+        default:
+          value = `${json.id} - ${json.title ?? json.name}`;
         }
       }
       el[changedAttribute] = value;

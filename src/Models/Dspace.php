@@ -182,22 +182,25 @@ final class Dspace extends AbstractRest
     // https://demo.dspace.org/communities/48921ed4-84f0-4110-9d02-022f3bf2307a/search
     private function listOneCollection(): array
     {
-        $res = $this->httpGetter->getWithHeaders(
+        $res  = $this->httpGetter->get(
             $this->host . 'core/collections/26d67c5e-1515-4d55-b979-b0a1ad66af1b',
         );
-        $collection = json_decode($res['body'], true);
+        $body = $res->getBody()->getContents();
+        $collection = json_decode($body, true);
         return array(
             '_embedded' => array(
                 'collections' => array($collection),
             ),
         );
+
     }
 
     private function fetchXsrfTokenAndCookieHeader(): array
     {
-        $csrfRes = $this->httpGetter->getWithHeaders($this->host . 'security/csrf');
-        $xsrfToken = $csrfRes['headers']['DSPACE-XSRF-TOKEN'][0] ?? '';
-        $cookies = $csrfRes['headers']['Set-Cookie'] ?? array();
+        $res = $this->httpGetter->get($this->host . 'security/csrf');
+        $xsrfHeader = $res->getHeader('DSPACE-XSRF-TOKEN');
+        $xsrfToken  = $xsrfHeader[0] ?? '';
+        $cookies = $res->getHeader('Set-Cookie');
         $cookieHeader = array();
         $xsrfCookie = null;
         foreach ($cookies as $cookieLine) {
@@ -243,7 +246,7 @@ final class Dspace extends AbstractRest
 
     //    private function listCollections(): array
     //    {
-    //        $res = $this->httpGetter->getWithHeaders(
+    //        $res = $this->httpGetter->get(
     //            $this->host . 'core/collections',
     //        );
     //        return json_decode($res['body'], true);
@@ -251,10 +254,11 @@ final class Dspace extends AbstractRest
 
     private function listTypes(): array
     {
-        $res = $this->httpGetter->getWithHeaders(
+        $res = $this->httpGetter->get(
             $this->host . 'submission/vocabularies/common_types/entries',
         );
-        return json_decode($res['body'], true);
+        $body = $res->getBody()->getContents();
+        return json_decode($body, true);
     }
 
     private function getItemUuid(int $workspaceId): string
@@ -264,8 +268,9 @@ final class Dspace extends AbstractRest
             throw new ImproperActionException('Missing workspaceId');
         }
         $url = sprintf('%ssubmission/workspaceitems/%d/item', $this->host, $workspaceId);
-        $res = $this->httpGetter->getWithHeaders($url, $headers);
-        $data = json_decode($res['body'], true, 512, JSON_THROW_ON_ERROR);
+        $res  = $this->httpGetter->get($url, $headers);
+        $body = $res->getBody()->getContents();
+        $data = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
         if (!isset($data['uuid'])) {
             throw new ImproperActionException('DSpace did not return an item UUID.');
         }

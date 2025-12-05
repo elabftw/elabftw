@@ -31,65 +31,26 @@ class HttpGetter
 
     public function __construct(public Client $client, private string $proxy = '', private bool $verifyTls = true) {}
 
-    public function get(string $url): string
+    public function get(string $url, ?array $headers = array()): ResponseInterface
     {
-        try {
-            $res = $this->client->get($url, array(
-                // add proxy if there is one
-                'proxy' => $this->proxy,
-                'timeout' => self::REQUEST_TIMEOUT,
-                'verify' => $this->verifyTls,
-            ));
-        } catch (ConnectException $e) {
-            throw new ImproperActionException(sprintf('Error connecting to remote server: %s', $url), $e->getCode(), $e);
+        $options = array(
+            'proxy'   => $this->proxy,
+            'timeout' => self::REQUEST_TIMEOUT,
+            'verify'  => $this->verifyTls,
+        );
+        if ($headers !== null) {
+            $options['headers'] = $headers;
         }
-        if ($res->getStatusCode() !== self::SUCCESS) {
-            throw new ImproperActionException(sprintf('Error fetching remote content (%d).', $res->getStatusCode()));
-        }
-        return (string) $res->getBody();
-    }
-
-    public function getWithHeaders(string $url, array $headers = array()): array
-    {
         try {
-            $res = $this->client->get($url, array(
-                'proxy' => $this->proxy,
-                'timeout' => self::REQUEST_TIMEOUT,
-                'verify' => $this->verifyTls,
-                'headers' => $headers,
-            ));
+            $res = $this->client->get($url, $options);
         } catch (ConnectException $e) {
             throw new ImproperActionException(sprintf('Error connecting to remote server: %s', $url), $e->getCode(), $e);
         }
         $status = $res->getStatusCode();
         if (!in_array($status, array(self::SUCCESS, self::SUCCESS_NO_CONTENT), true)) {
-            throw new ImproperActionException(sprintf('Error fetching remote content (%d).', $status));
-        }
-        return array(
-            'status' => $status,
-            'headers' => $res->getHeaders(),
-            'body' => (string) $res->getBody(),
-        );
-    }
-
-    public function postJson(string $url, array $json, array $headers = array()): string
-    {
-        try {
-            $res = $this->client->post($url, array(
-                // add proxy if there is one
-                'proxy' => $this->proxy,
-                'timeout' => self::REQUEST_TIMEOUT,
-                'headers' => $headers,
-                'json' => $json,
-                'verify' => $this->verifyTls,
-            ));
-        } catch (ConnectException $e) {
-            throw new ImproperActionException(sprintf('Error connecting to remote server: %s', $url), $e->getCode(), $e);
-        }
-        if ($res->getStatusCode() !== self::SUCCESS) {
             throw new ImproperActionException(sprintf('Error fetching remote content (%d).', $res->getStatusCode()));
         }
-        return $res->getBody()->getContents();
+        return $res;
     }
 
     public function post(string $url, array $options = array()): ResponseInterface
@@ -97,24 +58,32 @@ class HttpGetter
         try {
             $res = $this->client->post($url, array_merge(
                 array(
-                    'proxy'   => $this->proxy,
+                    'proxy' => $this->proxy,
                     'timeout' => self::REQUEST_TIMEOUT,
-                    'verify'  => $this->verifyTls,
+                    'verify' => $this->verifyTls,
                 ),
                 $options,
             ));
         } catch (ConnectException $e) {
-            throw new ImproperActionException(
-                sprintf('Error connecting to remote server: %s', $url),
-                $e->getCode(),
-                $e
-            );
+            throw new ImproperActionException(sprintf('Error connecting to remote server: %s', $url), $e->getCode(), $e);
         }
         return $res;
     }
 
     public function patch(string $url, array $options = array()): ResponseInterface
     {
-        return $this->client->request('PATCH', $url, $options);
+        try {
+            $res = $this->client->request('PATCH', $url, array_merge(
+                array(
+                    'proxy' => $this->proxy,
+                    'timeout' => self::REQUEST_TIMEOUT,
+                    'verify' => $this->verifyTls,
+                ),
+                $options,
+            ));
+        } catch (ConnectException $e) {
+            throw new ImproperActionException(sprintf('Error connecting to remote server: %s', $url), $e->getCode(), $e);
+        }
+        return $res;
     }
 }

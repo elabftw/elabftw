@@ -37,7 +37,7 @@ use function json_decode;
  */
 final class Dspace extends AbstractRest
 {
-    private ?array $dspaceHeaders = null;
+    private ?array $headers = null;
 
     // rename host to host
     public function __construct(
@@ -109,7 +109,7 @@ final class Dspace extends AbstractRest
     // Cache auth information
     private function getAuthHeaders(): array
     {
-        return $this->dspaceHeaders ??= $this->getDspaceToken();
+        return $this->headers ??= $this->getToken();
     }
 
     private function submitToWorkflow(int $workspaceId): void
@@ -158,10 +158,10 @@ final class Dspace extends AbstractRest
         $this->httpGetter->patch($url, array('headers' => $headers, 'json' => $patchBody));
     }
 
-    private function getDspaceToken(): array
+    private function getToken(): array
     {
         if ($this->host === '' || $this->user === '' || $this->encPassword === '') {
-            throw new ImproperActionException('DSpace config is incomplete.');
+            throw new ImproperActionException('DSpace configuration is incomplete.');
         }
         $password = Crypto::decrypt($this->encPassword, Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY')));
         // GET CSRF TOKEN
@@ -169,7 +169,7 @@ final class Dspace extends AbstractRest
         $xsrfToken = $csrfRes['headers']['DSPACE-XSRF-TOKEN'][0] ?? '';
         $cookies = $csrfRes['headers']['Set-Cookie'] ?? array();
         $cookieHeader = array();
-        $dspaceXsrfCookie = null;
+        $xsrfCookie = null;
 
         foreach ($cookies as $cookieLine) {
             $parts = explode(';', $cookieLine);
@@ -177,10 +177,10 @@ final class Dspace extends AbstractRest
                 continue;
             }
             $nv = trim($parts[0]);
-            // Deduplicate DSPACE cookie
+            // Deduplicate cookie
             if (str_starts_with($nv, 'DSPACE-XSRF-COOKIE=')) {
-                if ($dspaceXsrfCookie === null) {
-                    $dspaceXsrfCookie = $nv;
+                if ($xsrfCookie === null) {
+                    $xsrfCookie = $nv;
                     $cookieHeader[] = $nv;
                 }
             }

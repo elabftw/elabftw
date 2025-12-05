@@ -302,7 +302,7 @@ final class Apiv2Controller extends AbstractApiController
                 }
             )(),
             ApiEndpoint::Config => Config::getConfig(),
-            ApiEndpoint::Dspace => new Dspace(),
+            ApiEndpoint::Dspace => new Dspace($this->requester),
             ApiEndpoint::Idps => new Idps($this->requester, $this->id),
             ApiEndpoint::IdpsSources => new IdpsSources($this->requester, $this->id),
             ApiEndpoint::Import => new ImportHandler($this->requester, App::getDefaultLogger()),

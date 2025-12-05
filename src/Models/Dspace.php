@@ -38,7 +38,7 @@ final class Dspace extends AbstractRest
 
     private HttpGetter $HttpGetter;
 
-    public function __construct()
+    public function __construct(private Users $requester)
     {
         parent::__construct();
         $Config = Config::getConfig();
@@ -86,8 +86,7 @@ final class Dspace extends AbstractRest
         $this->acceptLicense($workspaceId);
         $this->updateMetadata($workspaceId, $params['metadata'] ?? array());
 
-        $requester = new Users((int) $params['authorId']);
-        $this->uploadEntryAsFile($workspaceId, $requester);
+        $this->uploadEntryAsFile($workspaceId, $this->requester);
         $this->submitToWorkflow($workspaceId);
         // return id and uuid for elab entry metadata
         return array('id' => $workspaceId, 'uuid' => $uuid);

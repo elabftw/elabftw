@@ -22,7 +22,6 @@ if (document.getElementById('dspaceExportModal')) {
     const form = document.getElementById('dspaceExportForm') as HTMLFormElement;
     const collection = form.collection.value;
     const author = form.author.value;
-    const authorId = form.dspaceAuthorId.value;
     const title = (document.getElementById('dspaceTitle') as HTMLInputElement)?.value;
     const date = form.date.value;
     const type = form.type.value;
@@ -47,7 +46,6 @@ if (document.getElementById('dspaceExportModal')) {
         action: 'export',
         collection,
         metadata,
-        authorId,
         entity,
       });
       const data = await res.json();

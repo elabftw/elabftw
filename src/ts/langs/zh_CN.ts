@@ -39,7 +39,7 @@ const t = {
     "error-fetch-request": "在获取请求的数据时发生错误：{{error}}",
     "error-parsing-metadata": "解析元数据（额外字段）时发生错误。完整错误已记录到浏览器控制台。",
     "export": "导出",
-    "export-success": "Export successfully.",
+    "export-success": "Export successful.",
     "extra-fields": "额外字段",
     "filename": "文件名",
     "firstname": "名字",

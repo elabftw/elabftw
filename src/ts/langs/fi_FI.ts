@@ -39,7 +39,7 @@ const t = {
     "error-fetch-request": "There was an error while fetching the requested data: {{error}}",
     "error-parsing-metadata": "There was an error while parsing metadata (extra fields). Full error has been logged to the browser console.",
     "export": "Vie",
-    "export-success": "Export successfully.",
+    "export-success": "Export successful.",
     "extra-fields": "Ylimääräiset kentät",
     "filename": "Tiedoston nimi",
     "firstname": "Etunimi",

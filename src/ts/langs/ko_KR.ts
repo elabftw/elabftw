@@ -39,7 +39,7 @@ const t = {
     "error-fetch-request": "There was an error while fetching the requested data: {{error}}",
     "error-parsing-metadata": "There was an error while parsing metadata (extra fields). Full error has been logged to the browser console.",
     "export": "내보내기",
-    "export-success": "Export successfully.",
+    "export-success": "Export successful.",
     "extra-fields": "기타 필드",
     "filename": "파일 이름",
     "firstname": "이름",

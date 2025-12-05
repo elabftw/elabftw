@@ -37,15 +37,13 @@ use function json_decode;
  */
 final class Dspace extends AbstractRest
 {
-    private string $host;
-
     private ?array $dspaceHeaders = null;
 
     // rename host to host
     public function __construct(
         private readonly Users $requester,
         private readonly HttpGetter $httpGetter,
-        string $host
+        private string $host,
     ) {
         parent::__construct();
         $this->host = rtrim($host, '/') . '/';
@@ -60,13 +58,11 @@ final class Dspace extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        // default to Listing collections
-        $raw = DspaceAction::ListCollections->value;
+        $action = DspaceAction::ListCollections;
         if ($queryParams !== null && $queryParams->getQuery()->has('dspace_action')) {
-            $raw = $queryParams->getQuery()->getString('dspace_action');
+            $action = DspaceAction::tryFrom($queryParams->getQuery()->getString('dspace_action'))
+                ?? throw new ImproperActionException('Unknown GET action for DSpace endpoint.');
         }
-        $action = DspaceAction::tryFrom($raw)
-            ?? throw new ImproperActionException('Unknown GET action for DSpace endpoint.');
         return match ($action) {
             DspaceAction::ListCollections => $this->listOneCollection(),
             DspaceAction::ListTypes => $this->listTypes(),

@@ -39,7 +39,7 @@ const t = {
     "error-fetch-request": "Beim Abrufen der angeforderten Daten ist ein Fehler aufgetreten: {{error}}",
     "error-parsing-metadata": "Beim Verarbeiten der Metadaten (zusätzliche Felder) ist ein Fehler aufgetreten. Die vollständige Fehlermeldung wurde in der Browserkonsole geloggt.",
     "export": "Exportieren",
-    "export-success": "Export successfully.",
+    "export-success": "Export successful.",
     "extra-fields": "Zusätzliche Felder",
     "filename": "Dateiname",
     "firstname": "Vorname",

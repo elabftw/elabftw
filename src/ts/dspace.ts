@@ -47,8 +47,7 @@ if (document.getElementById('dspaceExportModal')) {
       notify.success('export-success');
       $('#dspaceExportModal').modal('hide');
     } catch (e) {
-      notify.error('submission-error');
-      console.error(e);
+      notify.error(e);
     }
   });
 }

@@ -73,7 +73,7 @@ final class i18n4Js
             'error-fetch-request' => _('There was an error while fetching the requested data: {{error}}'),
             'error-parsing-metadata' => _('There was an error while parsing metadata (extra fields). Full error has been logged to the browser console.'),
             'export' => _('Export'),
-            'export-success' => _('Export successfully.'),
+            'export-success' => _('Export successful.'),
             'extra-fields' => _('Extra fields'),
             'filename' => _('Filename'),
             'firstname' => _('Firstname'),

@@ -39,7 +39,7 @@ const t = {
     "error-fetch-request": "Terjadi kesalahan saat mengambil data yang diminta: {{error}}",
     "error-parsing-metadata": "Terjadi kesalahan saat mem-parsing metadata (bidang tambahan). Kesalahan lengkap telah dicatat ke konsol browser.",
     "export": "Ekspor",
-    "export-success": "Export successfully.",
+    "export-success": "Export successful.",
     "extra-fields": "Kolom tambahan",
     "filename": "Nama file",
     "firstname": "Nama depan",

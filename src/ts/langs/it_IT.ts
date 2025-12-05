@@ -39,7 +39,7 @@ const t = {
     "error-fetch-request": "Si è verificato un errore durante il recupero dei dati richiesti: {{error}}",
     "error-parsing-metadata": "Si è verificato un errore durante l'analisi dei metadati (campi extra). L'errore completo è stato registrato nella console del browser.",
     "export": "Esporta",
-    "export-success": "Export successfully.",
+    "export-success": "Export successful.",
     "extra-fields": "Campi addizionali",
     "filename": "Nome del file",
     "firstname": "Nome",

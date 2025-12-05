@@ -39,7 +39,7 @@ const t = {
     "error-fetch-request": "Taotletud andmete toomisel ilmnes viga: {{error}}",
     "error-parsing-metadata": "Metaandmete (lisaväljade) töötlemisel ilmnes viga. Täielik viga logiti brauseri konsooli.",
     "export": "Ekspordi",
-    "export-success": "Export successfully.",
+    "export-success": "Export successful.",
     "extra-fields": "Lisaväljad",
     "filename": "Failinimi",
     "firstname": "Eesnimi",

@@ -39,7 +39,7 @@ const t = {
     "error-fetch-request": "要求されたデータのフェッチ中にエラーが発生しました：{{error}}",
     "error-parsing-metadata": "メタデータ（余分なフィールド）の解析中にエラーが発生しました。完全なエラーがブラウザコンソールに記録されました。",
     "export": "書き出す",
-    "export-success": "Export successfully.",
+    "export-success": "Export successful.",
     "extra-fields": "追加項目",
     "filename": "ファイル名",
     "firstname": "名前",

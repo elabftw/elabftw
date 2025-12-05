@@ -63,7 +63,6 @@ $('#dspaceExportModal').on('shown.bs.modal', async () => {
       listCollections(),
       listTypes(),
     ]);
-
     // populate collections and types select for modal
     const collections = collectionsJson._embedded.collections;
     const types = typesJson._embedded.entries;
@@ -75,7 +74,6 @@ $('#dspaceExportModal').on('shown.bs.modal', async () => {
       opt.textContent = `${col.name} (${col.uuid})`;
       collectionSelect.appendChild(opt);
     });
-
     typeSelect.innerHTML = '';
     types.forEach((type: DspaceVocabularyEntry) => {
       const opt = document.createElement('option');
@@ -84,8 +82,8 @@ $('#dspaceExportModal').on('shown.bs.modal', async () => {
       typeSelect.appendChild(opt);
     });
   } catch (e) {
-    collectionSelect.innerHTML = '<option disabled>Error loading collections</option>';
-    typeSelect.innerHTML = '<option disabled>Error loading types</option>';
+    collectionSelect.innerHTML = `<option disabled selected>${i18next.t('error-fetch-request', { error: 'Collections' })}</option>`;
+    typeSelect.innerHTML = `<option disabled selected>${i18next.t('error-fetch-request', { error: 'Types' })}</option>`;
     console.error(e);
   }
 });

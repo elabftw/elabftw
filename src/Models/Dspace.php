@@ -44,6 +44,8 @@ final class Dspace extends AbstractRest
         private readonly Users $requester,
         private readonly HttpGetter $httpGetter,
         private string $host,
+        private readonly string $user,
+        private readonly string $encPassword,
     ) {
         parent::__construct();
         $this->host = rtrim($host, '/') . '/';
@@ -107,10 +109,7 @@ final class Dspace extends AbstractRest
     // Cache auth information
     private function getAuthHeaders(): array
     {
-        if ($this->dspaceHeaders === null) {
-            $this->dspaceHeaders = $this->getDspaceToken();
-        }
-        return $this->dspaceHeaders;
+        return $this->dspaceHeaders ??= $this->getDspaceToken();
     }
 
     private function submitToWorkflow(int $workspaceId): void
@@ -161,13 +160,10 @@ final class Dspace extends AbstractRest
 
     private function getDspaceToken(): array
     {
-        $Config = Config::getConfig();
-        $user = $Config->configArr['dspace_user'] ?? '';
-        $encPassword = $Config->configArr['dspace_password'] ?? '';
-        if ($this->host === '' || $user === '' || $encPassword === '') {
+        if ($this->host === '' || $this->user === '' || $this->encPassword === '') {
             throw new ImproperActionException('DSpace config is incomplete.');
         }
-        $password = Crypto::decrypt($encPassword, Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY')));
+        $password = Crypto::decrypt($this->encPassword, Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY')));
         // GET CSRF TOKEN
         $csrfRes = $this->httpGetter->getWithHeaders($this->host . 'security/csrf');
         $xsrfToken = $csrfRes['headers']['DSPACE-XSRF-TOKEN'][0] ?? '';
@@ -199,7 +195,7 @@ final class Dspace extends AbstractRest
         }
         // POST: login and get auth token
         $loginRes = $this->httpGetter->post($this->host . 'authn/login', array(
-            'headers' => $headers, 'form_params' => array('user' => $user, 'password' => $password),
+            'headers' => $headers, 'form_params' => array('user' => $this->user, 'password' => $password),
         ));
         $auth = $loginRes->getHeaderLine('Authorization');
         if ($auth === '') {

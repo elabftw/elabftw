@@ -651,7 +651,7 @@ class Users extends AbstractRest
 
         // columns that can only be modified by Sysadmin requester
         if (in_array($params->getTarget(), array('can_manage_compounds', 'can_manage_inventory_locations', 'can_manage_users2teams', 'is_sysadmin'), true)) {
-            $this->isSysadminOrExplode();
+            $this->requester->isSysadminOrExplode();
         }
 
         // early bail out if existing and new values are the same

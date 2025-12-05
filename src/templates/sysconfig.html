@@ -881,11 +881,11 @@
               <button type='button' class='btn btn-danger' data-action='destroy-idp' data-id='{{ idp.id }}'>{{ 'Delete'|trans }}</button>
 
               {% if idp.source_url %}
+                <hr>
                 <div class='d-flex justify-content-between'>
                   <label for='source_{{ idp.id }}' class='col-form-label'>{{ 'Source'|trans }}</label>
                   <input class='form-control col-md-3' type='url' disabled readonly id='source_{{ idp.id }}' value='{{ idp.source_url }}' />
                 </div>
-                <hr>
               {% endif %}
 
             </div>

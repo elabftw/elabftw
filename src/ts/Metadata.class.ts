@@ -143,6 +143,9 @@ export class Metadata {
     if (properties.value) {
       element.value = properties.value as string;
     }
+    if (Object.prototype.hasOwnProperty.call(properties, 'required')) {
+      element.required = true;
+    }
     element.dataset.field = name;
     element.addEventListener('change', this, false);
     return element;

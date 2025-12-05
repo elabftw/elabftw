@@ -43,6 +43,8 @@ use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\ExtraFieldsKeys;
 use Elabftw\Models\FavTags;
 use Elabftw\Models\Idps;
+use Elabftw\Models\IdpsCerts;
+use Elabftw\Models\IdpsEndpoints;
 use Elabftw\Models\IdpsSources;
 use Elabftw\Models\Info;
 use Elabftw\Models\Instance;
@@ -372,7 +374,7 @@ final class Apiv2Controller extends AbstractApiController
                 ApiSubModels::Containers => LinksFactory::getContainersLinks($this->Model, $this->subId),
                 ApiSubModels::ExperimentsLinks => LinksFactory::getExperimentsLinks($this->Model, $this->subId),
                 ApiSubModels::Events => new Scheduler($this->Model, $this->subId),
-                ApiSubModels::Compounds => LinksFactory::getCompoundsLinks($this->Model, $this->subId),
+                ApiSubModels::CompoundsLinks => LinksFactory::getCompoundsLinks($this->Model, $this->subId),
                 ApiSubModels::ItemsLinks => LinksFactory::getItemsLinks($this->Model, $this->subId),
                 ApiSubModels::RequestActions => new RequestActions($this->requester, $this->Model, $this->subId),
                 ApiSubModels::Revisions => new Revisions(
@@ -415,6 +417,13 @@ final class Apiv2Controller extends AbstractApiController
             return match ($submodel) {
                 ApiSubModels::Notifications => new EventDeleted($this->Model->readOne(), $this->requester->userData['fullname']),
                 default => throw new InvalidApiSubModelException(ApiEndpoint::Event),
+            };
+        }
+        if ($this->Model instanceof Idps) {
+            return match ($submodel) {
+                ApiSubModels::IdpsCerts => new IdpsCerts($this->requester, $this->id, $this->subId),
+                ApiSubModels::IdpsEndpoints => new IdpsEndpoints($this->requester, $this->id, $this->subId),
+                default => throw new InvalidApiSubModelException(ApiEndpoint::Idps),
             };
         }
         throw new ImproperActionException('Incorrect endpoint.');

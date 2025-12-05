@@ -13,10 +13,11 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Enums\CertPurpose;
+use Elabftw\Enums\IdpsPatchableColumns;
+use Elabftw\Enums\SamlBinding;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Users\Users;
-use Elabftw\Services\Xml2Idps;
 use Elabftw\Traits\SetIdTrait;
 use Override;
 use PDO;
@@ -27,14 +28,6 @@ use PDO;
 final class Idps extends AbstractRest
 {
     use SetIdTrait;
-
-    public const string SSO_BINDING_POST = 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST';
-
-    public const string SSO_BINDING_REDIRECT = 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect';
-
-    public const string SLO_BINDING_POST = 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST';
-
-    public const string SLO_BINDING_REDIRECT = 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect';
 
     private const string EMAIL_ATTR = 'urn:oid:0.9.2342.19200300.100.1.3';
 
@@ -61,16 +54,10 @@ final class Idps extends AbstractRest
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
-        $this->canWriteOrExplode();
+        $this->requester->isSysadminOrExplode();
         return $this->create(
             name: $reqBody['name'],
             entityid: $reqBody['entityid'],
-            sso_url: $reqBody['sso_url'],
-            sso_binding: $reqBody['sso_binding'],
-            slo_url: $reqBody['slo_url'],
-            slo_binding: $reqBody['slo_binding'],
-            x509: $reqBody['x509'],
-            x509_new: $reqBody['x509_new'] ?? $reqBody['x509'],
             email_attr: $reqBody['email_attr'],
             team_attr: $reqBody['team_attr'] ?? null,
             fname_attr: $reqBody['fname_attr'],
@@ -82,23 +69,24 @@ final class Idps extends AbstractRest
     #[Override]
     public function readOne(): array
     {
-        $sql = 'SELECT * FROM idps WHERE id = :id';
+        $this->requester->isSysadminOrExplode();
+        $sql = sprintf($this->getReadSql(), 'WHERE idps.id = :id');
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
-
-        return $this->Db->fetch($req);
+        return $this->hydrate($this->Db->fetch($req));
     }
 
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        $sql = 'SELECT idps.*, idps_sources.url AS source_url
-            FROM idps LEFT JOIN idps_sources ON idps.source = idps_sources.id ORDER BY name ASC';
+        $this->requester->isSysadminOrExplode();
+        // no WHERE clause in readAll
+        $sql = sprintf($this->getReadSql(), '');
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
-
-        return $req->fetchAll();
+        $res = $req->fetchAll();
+        return array_map(array($this, 'hydrate'), $res);
     }
 
     /**
@@ -129,50 +117,59 @@ final class Idps extends AbstractRest
     #[Override]
     public function patch(Action $action, array $params): array
     {
-        $this->canWriteOrExplode();
+        $this->requester->isSysadminOrExplode();
         foreach ($params as $key => $value) {
-            $this->update($key, $value);
+            if ($key === 'certs' || $key === 'endpoints') {
+                continue;
+            }
+            $this->update(IdpsPatchableColumns::from($key), $value);
         }
         return $this->readOne();
     }
 
-    public function upsert(int $sourceId, Xml2Idps $xml2Idps): int
+    public function fullUpdate(array $idp): array
     {
-        $idps = $xml2Idps->getIdpsFromDom();
+        $IdpsCerts = new IdpsCerts($this->requester, $this->id);
+        $IdpsCerts->sync($this->id ?? 0, $idp);
+        $IdpsEndpoints = new IdpsEndpoints($this->requester, $this->id);
+        $IdpsEndpoints->sync($this->id ?? 0, $idp);
+        unset($idp['certs']);
+        unset($idp['endpoints']);
+        foreach ($idp as $key => $value) {
+            $this->update(IdpsPatchableColumns::from($key), $value);
+        }
+        return $this->readOne();
+    }
 
+    public function upsert(int $sourceId, array $idps): int
+    {
         foreach ($idps as $idp) {
             $id = $this->findByEntityId($idp['entityid']);
             if ($id === 0) {
                 $this->create(
                     name: $idp['name'],
                     entityid: $idp['entityid'],
-                    sso_url: $idp['sso_url'],
-                    slo_url: $idp['slo_url'] ?? '',
-                    x509: $idp['x509'],
                     enabled: 0,
                     source: $sourceId,
+                    certs: $idp['certs'],
+                    endpoints: $idp['endpoints'],
                 );
                 continue;
             }
             $this->setId($id);
-            $this->patch(Action::Update, $idp);
+            // when coming from XML, we do not overwrite these attributes
+            $immutableFields = array('email_attr', 'fname_attr', 'lname_attr', 'team_attr', 'orgid_attr');
+            foreach ($immutableFields as $key) {
+                unset($idp[$key]);
+            }
+            $this->fullUpdate($idp);
         }
         return count($idps);
     }
 
-    public function toggleEnabledFromSource(int $sourceId, int $enabled): bool
+    public function getEnabled(?int $id = null): int
     {
-        $this->canWriteOrExplode();
-        $sql = 'UPDATE idps SET enabled = :enabled WHERE source = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $sourceId, PDO::PARAM_INT);
-        $req->bindParam(':enabled', $enabled, PDO::PARAM_INT);
-        return $this->Db->execute($req);
-    }
-
-    public function getEnabled(?int $id = null): array
-    {
-        $sql = 'SELECT * FROM idps WHERE enabled = 1';
+        $sql = 'SELECT id FROM idps WHERE enabled = 1';
         if ($id !== null) {
             $sql .= ' AND id = :id';
         }
@@ -181,25 +178,22 @@ final class Idps extends AbstractRest
             $req->bindParam(':id', $id, PDO::PARAM_INT);
         }
         $this->Db->execute($req);
-
-        return $this->Db->fetch($req);
+        return (int) $req->fetchColumn();
     }
 
-    public function getEnabledByEntityId(string $entId): array
+    public function getEnabledByEntityId(string $entId): int
     {
-        $sql = 'SELECT * FROM idps WHERE enabled = 1 AND entityid = :entId';
+        $sql = 'SELECT id FROM idps WHERE enabled = 1 AND entityid = :entId';
         $req = $this->Db->prepare($sql);
-
         $req->bindParam(':entId', $entId);
         $this->Db->execute($req);
-
-        return $this->Db->fetch($req);
+        return (int) $req->fetchColumn();
     }
 
     #[Override]
     public function destroy(): bool
     {
-        $this->canWriteOrExplode();
+        $this->requester->isSysadminOrExplode();
         $sql = 'DELETE FROM idps WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -210,12 +204,6 @@ final class Idps extends AbstractRest
     public function create(
         string $name,
         string $entityid,
-        string $sso_url,
-        string $x509,
-        string $x509_new = '',
-        ?string $slo_url = '',
-        string $sso_binding = self::SSO_BINDING_POST,
-        string $slo_binding = self::SLO_BINDING_REDIRECT,
         string $email_attr = self::EMAIL_ATTR,
         ?string $team_attr = self::TEAM_ATTR,
         string $fname_attr = self::FNAME_ATTR,
@@ -223,32 +211,24 @@ final class Idps extends AbstractRest
         ?string $orgid_attr = self::ORGID_ATTR,
         int $enabled = 1,
         ?int $source = null,
+        ?array $certs = array(),
+        ?array $endpoints = array(),
     ): int {
-        $this->canWriteOrExplode();
-        if (empty($x509_new)) {
-            $x509_new = $x509;
+        $idpId = $this->createIdp($name, $entityid, $email_attr, $team_attr, $fname_attr, $lname_attr, $orgid_attr, $enabled, $source);
+        if (!empty($certs)) {
+            $IdpsCerts = new IdpsCerts($this->requester, $idpId);
+            foreach ($certs as $cert) {
+                $IdpsCerts->create($cert['purpose'], $cert['x509'], $cert['sha256'], $cert['not_before'], $cert['not_after']);
+            }
         }
-        $sql = 'INSERT INTO idps(name, entityid, sso_url, sso_binding, slo_url, slo_binding, x509, x509_new, email_attr, team_attr, fname_attr, lname_attr, orgid_attr, enabled, source)
-            VALUES(:name, :entityid, :sso_url, :sso_binding, :slo_url, :slo_binding, :x509, :x509_new, :email_attr, :team_attr, :fname_attr, :lname_attr, :orgid_attr, :enabled, :source)';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':name', $name);
-        $req->bindParam(':entityid', $entityid);
-        $req->bindParam(':sso_url', $sso_url);
-        $req->bindParam(':sso_binding', $sso_binding);
-        $req->bindParam(':slo_url', $slo_url);
-        $req->bindParam(':slo_binding', $slo_binding);
-        $req->bindParam(':x509', $x509);
-        $req->bindParam(':x509_new', $x509_new);
-        $req->bindParam(':email_attr', $email_attr);
-        $req->bindParam(':team_attr', $team_attr);
-        $req->bindParam(':fname_attr', $fname_attr);
-        $req->bindParam(':lname_attr', $lname_attr);
-        $req->bindParam(':orgid_attr', $orgid_attr);
-        $req->bindParam(':enabled', $enabled, PDO::PARAM_INT);
-        $req->bindParam(':source', $source);
-        $this->Db->execute($req);
+        if (!empty($endpoints)) {
+            $IdpsEndpoints = new IdpsEndpoints($this->requester, $idpId);
+            foreach ($endpoints as $endpoint) {
+                $IdpsEndpoints->create($endpoint['binding'], $endpoint['location'], $endpoint['is_slo']);
+            }
+        }
 
-        return $this->Db->lastInsertId();
+        return $idpId;
     }
 
     public function findByEntityId(string $entityId): int
@@ -264,16 +244,93 @@ final class Idps extends AbstractRest
         return (int) $res;
     }
 
-    private function canWriteOrExplode(): void
+    /**
+     * Returns a formatable string with a placeholder for the WHERE
+     */
+    private function getReadSql(): string
     {
-        if ($this->requester->userData['is_sysadmin'] !== 1) {
-            throw new IllegalActionException('Only a Sysadmin can modify this!');
-        }
+        return "SELECT idps.*, idps_sources.url AS source_url,
+            COALESCE(
+                (SELECT JSON_ARRAYAGG(JSON_OBJECT(
+                    'id', ic.id,
+                    'x509', ic.x509,
+                    'sha256', ic.sha256,
+                    'purpose', ic.purpose,
+                    'not_before', ic.not_before,
+                    'not_after', ic.not_after,
+                    'created_at', ic.created_at,
+                    'modified_at', ic.modified_at))
+                FROM idps_certs AS ic
+                WHERE ic.idp = idps.id),
+                JSON_ARRAY()
+            ) AS certs,
+            COALESCE(
+                (SELECT JSON_ARRAYAGG(JSON_OBJECT(
+                    'id', ie.id,
+                    'binding', ie.binding,
+                    'location', ie.location,
+                    'is_slo', ie.is_slo,
+                    'created_at', ie.created_at,
+                    'modified_at', ie.modified_at))
+                FROM idps_endpoints AS ie
+                WHERE ie.idp = idps.id),
+                JSON_ARRAY()
+            ) AS endpoints
+            FROM idps
+            LEFT JOIN idps_sources ON idps.source = idps_sources.id
+            %s
+            ORDER BY name ASC";
     }
 
-    private function update(string $target, string $value): array
+    private function hydrate(array $idp): array
     {
-        $sql = 'UPDATE idps SET ' . $target . ' = :value WHERE id = :id';
+        $idp['certs'] = array_map(
+            static fn(array $cert): array => $cert + array(
+                'purpose_human' => CertPurpose::from($cert['purpose'])->name,
+            ),
+            json_decode($idp['certs'] ?? 'null', true, 3, JSON_THROW_ON_ERROR) ?? array()
+        );
+
+        $idp['endpoints'] = array_map(
+            static fn(array $endpoint): array => $endpoint + array(
+                'binding_urn' => SamlBinding::from($endpoint['binding'])->toUrn(),
+            ),
+            json_decode($idp['endpoints'] ?? 'null', true, 3, JSON_THROW_ON_ERROR) ?? array()
+        );
+        return $idp;
+    }
+
+    private function createIdp(
+        string $name,
+        string $entityid,
+        string $email_attr = self::EMAIL_ATTR,
+        ?string $team_attr = self::TEAM_ATTR,
+        string $fname_attr = self::FNAME_ATTR,
+        string $lname_attr = self::LNAME_ATTR,
+        ?string $orgid_attr = self::ORGID_ATTR,
+        int $enabled = 1,
+        ?int $source = null,
+    ): int {
+        $sql = 'INSERT INTO idps(name, entityid, email_attr, team_attr, fname_attr, lname_attr, orgid_attr, enabled, source)
+            VALUES(:name, :entityid, :email_attr, :team_attr, :fname_attr, :lname_attr, :orgid_attr, :enabled, :source)';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':name', $name);
+        $req->bindParam(':entityid', $entityid);
+        $req->bindParam(':email_attr', $email_attr);
+        $req->bindParam(':team_attr', $team_attr);
+        $req->bindParam(':fname_attr', $fname_attr);
+        $req->bindParam(':lname_attr', $lname_attr);
+        $req->bindParam(':orgid_attr', $orgid_attr);
+        $req->bindParam(':enabled', $enabled, PDO::PARAM_INT);
+        $req->bindParam(':source', $source);
+        $this->Db->execute($req);
+
+        return $this->Db->lastInsertId();
+    }
+
+    private function update(IdpsPatchableColumns $target, string $value): array
+    {
+        $sql = sprintf('UPDATE idps SET %s = :value WHERE id = :id', $target->value);
         $req = $this->Db->prepare($sql);
         $req->bindParam(':value', $value);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);

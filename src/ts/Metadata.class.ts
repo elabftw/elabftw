@@ -83,13 +83,13 @@ export class Metadata {
       value = [...el.selectedOptions].map(option => option.value);
     }
     // special case for Experiment/Resource/User link
-    if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf(), ExtraFieldInputType.Users.valueOf()].includes(el.dataset.target)) {
+    if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf(), ExtraFieldInputType.Users.valueOf(), ExtraFieldInputType.Compounds.valueOf()].includes(el.dataset.target)) {
       value = parseInt(value.split(' ')[0], 10);
       if (isNaN(value)) {
         return false;
       }
-      // also create a link automatically for experiments and resources
-      if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf()].includes(el.dataset.target)) {
+      // also create a link automatically for experiments, resources and compounds.
+      if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf(), ExtraFieldInputType.Compounds.valueOf()].includes(el.dataset.target)) {
         ApiC.post(`${this.entity.type}/${this.entity.id}/${el.dataset.target}_links/${value}`).then(() => reloadElements(['linksDiv', 'linksExpDiv']));
       }
     }
@@ -127,7 +127,7 @@ export class Metadata {
   /**
    * Build text areas for extra fields (default type)
    */
-  buildTextArea(name, properties: ExtraFieldProperties): Element {
+  buildTextArea(name, properties: ExtraFieldProperties): HTMLTextAreaElement {
     const element = document.createElement('textarea');
 
     // style it to look like an input & reset height
@@ -142,6 +142,9 @@ export class Metadata {
 
     if (properties.value) {
       element.value = properties.value as string;
+    }
+    if (Object.prototype.hasOwnProperty.call(properties, 'required')) {
+      element.required = true;
     }
     element.dataset.field = name;
     element.addEventListener('change', this, false);
@@ -240,7 +243,7 @@ export class Metadata {
       if (properties.type === ExtraFieldInputType.Url) {
         valueEl.dataset.genLink = 'true';
       }
-      if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf(), ExtraFieldInputType.Users.valueOf()].includes(properties.type)) {
+      if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf(), ExtraFieldInputType.Users.valueOf(), ExtraFieldInputType.Compounds.valueOf()].includes(properties.type)) {
         valueEl.dataset.replaceWithTitle = 'true';
         valueEl.dataset.endpoint = properties.type;
         valueEl.dataset.id = properties.value as string;
@@ -260,7 +263,7 @@ export class Metadata {
    */
   generateInput(name: string, properties: ExtraFieldProperties): Element {
     // we don't know yet which kind of element it will be
-    let element: HTMLInputElement|HTMLSelectElement;
+    let element: HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement;
     // generate a unique id for the element so we can associate the label properly
     const uniqid = this.getRandomId();
 
@@ -298,13 +301,14 @@ export class Metadata {
     case ExtraFieldInputType.Experiments:
     case ExtraFieldInputType.Items:
     case ExtraFieldInputType.Users:
+    case ExtraFieldInputType.Compounds:
       element = document.createElement('input');
       element.type = 'text';
       break;
     case ExtraFieldInputType.Radio:
       return this.buildRadio(name, properties);
     default:
-      return this.buildTextArea(name, properties);
+      element = this.buildTextArea(name, properties);
     }
 
     // add the unique id to the element
@@ -396,7 +400,7 @@ export class Metadata {
     }
 
     // USERS/EXPERIMENTS/ITEMS input have a prepend to the input with a magnifying glass
-    if ([ExtraFieldInputType.Users, ExtraFieldInputType.Experiments, ExtraFieldInputType.Items].includes(properties.type)) {
+    if ([ExtraFieldInputType.Users, ExtraFieldInputType.Experiments, ExtraFieldInputType.Items, ExtraFieldInputType.Compounds].includes(properties.type)) {
       // set the target for autocomplete function
       element.dataset.target = properties.type;
       element.dataset.action = 'autocomplete';

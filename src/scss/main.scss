@@ -1820,6 +1820,15 @@ input:user-invalid {
   overflow: scroll;
 }
 
+#metadataDiv {
+  textarea,
+  input {
+    &:required:invalid {
+      background-color: $mediumyellow;
+    }
+  }
+}
+
 // disable touch action for doodle canvas
 #doodleCanvas {
   touch-action: none;

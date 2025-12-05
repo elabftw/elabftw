@@ -13,6 +13,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\IdpsHelper;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\SamlBinding;
 use Elabftw\Models\Users\Users;
 
 class IdpsTest extends \PHPUnit\Framework\TestCase
@@ -34,18 +35,14 @@ class IdpsTest extends \PHPUnit\Framework\TestCase
         $params = array(
             'name' => 'testidp',
             'entityid' => 'https://app.onelogin.com/',
-            'sso_url' => 'https://onelogin.com/',
-            'sso_binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
-            'slo_url' => 'https://onelogin.com/',
-            'slo_binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-            'x509' => 'yep',
-            'x509_new' => '',
             'email_attr' => 'User.email',
             'team_attr' => 'User.team',
             'fname_attr' => 'User.FirstName',
             'lname_attr' => 'User.LastName',
         );
         $id = $this->Idps->postAction(Action::Create, $params);
+        $IdpsEndpoints = new IdpsEndpoints(new Users(1, 1), $id);
+        $IdpsEndpoints->create(SamlBinding::HttpRedirect, 'https://example.com');
         $this->assertIsInt($id);
         $this->Idps->setId($id);
         $newValue = 'new idp name';
@@ -66,7 +63,7 @@ class IdpsTest extends \PHPUnit\Framework\TestCase
 
     public function testGetActiveByEntityId(): void
     {
-        $this->assertIsArray($this->Idps->getEnabledByEntityId('https://app.onelogin.com/'));
+        $this->assertIsInt($this->Idps->getEnabledByEntityId('https://app.onelogin.com/'));
     }
 
     public function testDestroy(): void

@@ -9,6 +9,8 @@
 
 #spreadsheetEditorDiv {
   height: 467px;
+  overflow: auto;
+  resize: both;
 
   iframe {
     border: 0;

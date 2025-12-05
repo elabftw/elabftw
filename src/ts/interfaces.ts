@@ -6,6 +6,8 @@
  * @package elabftw
  */
 
+type BinaryValue = 0 | 1;
+
 interface ResponseMsg {
   res: boolean;
   msg: string;
@@ -140,6 +142,12 @@ enum Model {
   User2Team = 'user2team',
 }
 
+enum LinkSubModel {
+  CompoundsLinks = 'compounds_links',
+  ExperimentsLinks = 'experiments_links',
+  ItemsLinks = 'items_links',
+}
+
 // Match php enum EntityType
 enum EntityType {
   Experiment = 'experiments',
@@ -192,6 +200,7 @@ interface Entity {
 
 export {
   Action,
+  BinaryValue,
   Categories,
   CheckableItem,
   Entity,
@@ -202,6 +211,7 @@ export {
   ProcurementState,
   ResponseMsg,
   Selected,
+  LinkSubModel,
   Target,
   Todoitem,
   UnfinishedEntities,

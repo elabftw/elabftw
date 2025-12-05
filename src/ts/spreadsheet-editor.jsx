@@ -122,7 +122,8 @@ function SpreadsheetEditor() {
     const saveBtn = tb.items.find(it => it.content === 'save');
     const originalSave = saveBtn && typeof saveBtn.onclick === 'function' ? saveBtn.onclick : null;
     // we will also remove the ones that cannot be saved because of CE limitations, just target the indexes directly
-    const indices = new Set([7, 8, 9, 10]);
+    // 7,8,9,10,14 indexes are for: format_bold, format_color_text, format_color_fill, select, fullscreen
+    const indices = new Set([7, 8, 9, 10, 14]);
     tb.items = tb.items.filter((_, i) => !indices.has(i));
 
     const exportBtn = {

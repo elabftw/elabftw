@@ -170,11 +170,11 @@ final class Check
 
     public static function usergroup(Users $requester, Usergroup $group): Usergroup
     {
-        if ($group === Usergroup::Sysadmin && $requester->userData['is_sysadmin'] === 0) {
+        if ($group === Usergroup::Sysadmin && !$requester->isSysadmin()) {
             throw new ImproperActionException('Only a sysadmin can promote another user to sysadmin.');
         }
         // if requester is not Admin (and not Sysadmin either), the only valid usergroup is User
-        if (!$requester->isAdmin && $requester->userData['is_sysadmin'] === 0) {
+        if (!$requester->isAdmin && !$requester->isSysadmin()) {
             return Usergroup::User;
         }
         return $group;

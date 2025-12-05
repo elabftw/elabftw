@@ -112,6 +112,26 @@ final class Dspace extends AbstractRest
         return $this->headers ??= $this->getToken();
     }
 
+    private function getToken(): array
+    {
+        if ($this->host === '' || $this->user === '' || $this->encPassword === '') {
+            throw new ImproperActionException('DSpace configuration is incomplete.');
+        }
+        $password = Crypto::decrypt($this->encPassword, Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY')));
+        // CSRF request + cookie parsing
+        [$xsrfToken, $cookieHeader] = $this->fetchXsrfTokenAndCookieHeader();
+
+        $headers = $this->buildLoginHeaders($xsrfToken, $cookieHeader);
+
+        // login and get Authorization header
+        $auth = $this->loginAndGetAuthHeader($headers, $password);
+        return array(
+            'Authorization' => $auth,
+            'X-XSRF-TOKEN' => $xsrfToken,
+            'Cookie' => 'DSPACE-XSRF-COOKIE=' . $xsrfToken,
+        );
+    }
+
     private function submitToWorkflow(int $workspaceId): void
     {
         $headers = $this->getAuthHeaders();
@@ -158,19 +178,28 @@ final class Dspace extends AbstractRest
         $this->httpGetter->patch($url, array('headers' => $headers, 'json' => $patchBody));
     }
 
-    private function getToken(): array
+    // TODO: remove when done with dev. faster to target specific collection and submit
+    // https://demo.dspace.org/communities/48921ed4-84f0-4110-9d02-022f3bf2307a/search
+    private function listOneCollection(): array
     {
-        if ($this->host === '' || $this->user === '' || $this->encPassword === '') {
-            throw new ImproperActionException('DSpace configuration is incomplete.');
-        }
-        $password = Crypto::decrypt($this->encPassword, Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY')));
-        // GET CSRF TOKEN
+        $res = $this->httpGetter->getWithHeaders(
+            $this->host . 'core/collections/26d67c5e-1515-4d55-b979-b0a1ad66af1b',
+        );
+        $collection = json_decode($res['body'], true);
+        return array(
+            '_embedded' => array(
+                'collections' => array($collection),
+            ),
+        );
+    }
+
+    private function fetchXsrfTokenAndCookieHeader(): array
+    {
         $csrfRes = $this->httpGetter->getWithHeaders($this->host . 'security/csrf');
         $xsrfToken = $csrfRes['headers']['DSPACE-XSRF-TOKEN'][0] ?? '';
         $cookies = $csrfRes['headers']['Set-Cookie'] ?? array();
         $cookieHeader = array();
         $xsrfCookie = null;
-
         foreach ($cookies as $cookieLine) {
             $parts = explode(';', $cookieLine);
             if (!isset($parts[0])) {
@@ -185,7 +214,11 @@ final class Dspace extends AbstractRest
                 }
             }
         }
-        // Build headers
+        return array($xsrfToken, $cookieHeader);
+    }
+
+    private function buildLoginHeaders(string $xsrfToken, array $cookieHeader): array
+    {
         $headers = array('Content-Type' => 'application/x-www-form-urlencoded');
         if ($cookieHeader) {
             $headers['Cookie'] = implode('; ', $cookieHeader);
@@ -193,7 +226,11 @@ final class Dspace extends AbstractRest
         if ($xsrfToken !== '') {
             $headers['X-XSRF-TOKEN'] = $xsrfToken;
         }
-        // POST: login and get auth token
+        return $headers;
+    }
+
+    private function loginAndGetAuthHeader(array $headers, string $password): string
+    {
         $loginRes = $this->httpGetter->post($this->host . 'authn/login', array(
             'headers' => $headers, 'form_params' => array('user' => $this->user, 'password' => $password),
         ));
@@ -201,26 +238,7 @@ final class Dspace extends AbstractRest
         if ($auth === '') {
             throw new ImproperActionException(_('DSpace login did not return an Authorization header.'));
         }
-        return array(
-            'Authorization' => $auth,
-            'X-XSRF-TOKEN' => $xsrfToken,
-            'Cookie' => 'DSPACE-XSRF-COOKIE=' . $xsrfToken,
-        );
-    }
-
-    // TODO: remove when done with dev. faster to target specific collection and submit
-    // https://demo.dspace.org/communities/48921ed4-84f0-4110-9d02-022f3bf2307a/search
-    private function listOneCollection(): array
-    {
-        $res = $this->httpGetter->getWithHeaders(
-            $this->host . 'core/collections/26d67c5e-1515-4d55-b979-b0a1ad66af1b',
-        );
-        $collection = json_decode($res['body'], true);
-        return array(
-            '_embedded' => array(
-                'collections' => array($collection),
-            ),
-        );
+        return $auth;
     }
 
     //    private function listCollections(): array
@@ -277,7 +295,6 @@ final class Dspace extends AbstractRest
         $headers['Content-Type'] = 'application/json-patch+json';
         $url = sprintf('%ssubmission/workspaceitems/%d', $this->host, $workspaceId);
         $patchBody = array();
-
         foreach ($metadata as $item) {
             if (!isset($item['key'], $item['value'])) {
                 continue; // skip invalid entries

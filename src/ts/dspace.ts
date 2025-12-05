@@ -12,7 +12,7 @@ import { ApiC } from './api';
 import { DspaceCollection, DspaceVocabularyEntry, listCollections, listTypes, saveDspaceIdAsExtraField } from './dspaceUtils';
 import { on } from './handlers';
 import i18next from './i18n';
-import { Method } from './interfaces';
+import { FileType, Method } from './interfaces';
 import { notify } from './notify';
 import { entity } from './getEntity';
 
@@ -31,7 +31,7 @@ if (document.getElementById('dspaceExportModal')) {
       alert(i18next.t('license-error'));
       return;
     }
-
+    const format = FileType.Eln;
     const metadata = [
       { key: 'dc.contributor.author', value: author },
       { key: 'dc.title', value: title },
@@ -40,7 +40,7 @@ if (document.getElementById('dspaceExportModal')) {
       { key: 'dc.description.abstract', value: abstract },
     ];
     try {
-      const res = await ApiC.send(Method.PATCH, 'dspace', { collection,  metadata,  entity });
+      const res = await ApiC.send(Method.PATCH, 'dspace', { collection,  metadata,  entity, format });
       const data = await res.json();
       const itemUuid = data.uuid;
       await saveDspaceIdAsExtraField(itemUuid);

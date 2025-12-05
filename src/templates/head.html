@@ -254,12 +254,6 @@
 
 <div class='real-container'>
 
-{# TEMPORARY notice for deprecation of open_science #}
-{% if App.Config.configArr.open_science == '1' %}
-{{ 'You are using a deprecated configuration option "open science". Please read <a target="_blank" href="https://github.com/elabftw/elabftw/discussions/6164">this Discussion</a>.'|msg('ko') }}
-{% endif %}
-{# END TEMPORARY notice for deprecation of open_science #}
-
 <noscript>{# show warning if javascript is disabled #}
     <div class='alert alert-danger'>
         <p class='font-weight-bold'>Javascript is disabled. Please enable Javascript to view eLabFTW in all its glory.</p>

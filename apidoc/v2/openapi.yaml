@@ -438,10 +438,6 @@ components:
           type: string
         onboarding_email_subject:
           type: string
-        open_science:
-          type: string
-        open_team:
-          type: string
         privacy_policy:
           type: string
         proxy:

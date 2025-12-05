@@ -158,23 +158,9 @@
 
     {% include 'binary-setting.html' with {'label': 'Allow anonymous visitors to login and see Public experiments'|trans, 'slug': 'anon_users', 'help': 'This allows users without an account to login into a team and see the experiments with public visibility. It also enables users to share specific entries with a special link.'|trans} %}
 
-    {% include 'binary-setting.html' with {'label': 'Switch this instance in open science mode'|trans, 'slug': 'open_science', 'help': 'This allows search engines to crawl the site. Visitors will be automatically logged in in the specified team.'|trans} %}
-
-    <div class='d-flex justify-content-between'>
-      <label for='open_team' class='col-form-label'>{{ 'Select which team will be open to the world in open science mode'|trans }}</label>
-      <select id='open_team' data-trigger='change' data-model='config' data-target='open_team' class='form-control col-md-3'>
-        {% for team in teamsArr %}
-          <option {{ App.Config.configArr.open_team == team.id ? ' selected' }} value='{{ team.id }}'>{{ team.name }}</option>
-        {% endfor %}
-      </select>
-    </div>
-    <p class='smallgray'>{{ 'This has no effect if open science mode is disabled.'|trans }}</p>
-    <hr>
-
     {% include 'binary-setting.html' with {'label': 'Admins can create local accounts'|trans, 'slug': 'admins_create_users'} %}
     {% include 'binary-setting.html' with {'label': 'Allow Admins to add existing users to their team'|trans, 'slug': 'admins_import_users'} %}
     {% include 'binary-setting.html' with {'label': 'Allow Admins to archive users'|trans, 'slug': 'admins_archive_users'} %}
-
 
     <div class='d-flex justify-content-between'>
       <label for='user_msg_need_local_account_created' class='col-form-label'>{{ 'Message shown to user after successful external auth but local account provisioning is required'|trans }}</label>

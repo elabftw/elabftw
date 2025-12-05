@@ -839,7 +839,7 @@ class Users extends AbstractRest
             return;
         }
         if (!$this->requester->isAdminOf($this->userData['userid']) && $action !== Action::Add) {
-            throw new IllegalActionException();
+            throw new IllegalActionException(Messages::InsufficientPermissions->value);
         }
     }
 

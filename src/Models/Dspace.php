@@ -39,6 +39,8 @@ final class Dspace extends AbstractRest
 {
     private string $baseUrl;
 
+    private ?array $dspaceHeaders = null;
+
     public function __construct(
         private readonly Users $requester,
         private readonly HttpGetter $httpGetter,
@@ -105,9 +107,18 @@ final class Dspace extends AbstractRest
         throw new ImproperActionException('Not supported for DSpace.');
     }
 
+    // Cache auth information
+    private function getAuthHeaders(): array
+    {
+        if ($this->dspaceHeaders === null) {
+            $this->dspaceHeaders = $this->getDspaceToken();
+        }
+        return $this->dspaceHeaders;
+    }
+
     private function submitToWorkflow(int $workspaceId): void
     {
-        $headers = $this->getDspaceToken();
+        $headers = $this->getAuthHeaders();
         $this->httpGetter->post($this->baseUrl . 'workflow/workflowitems', array(
             'headers' => array_merge($headers, array('Content-Type' => 'text/uri-list')),
             'body' => sprintf('/api/submission/workspaceitems/%d', $workspaceId),
@@ -125,7 +136,7 @@ final class Dspace extends AbstractRest
         $Response->sendContent();
         $elnContent = ob_get_clean();
 
-        $headers = $this->getDspaceToken();
+        $headers = $this->getAuthHeaders();
         $url = sprintf('%ssubmission/workspaceitems/%d', $this->baseUrl, $workspaceId);
         $this->httpGetter->post($url, array(
             'headers' => $headers,
@@ -142,7 +153,7 @@ final class Dspace extends AbstractRest
 
     private function acceptLicense(int $workspaceId): void
     {
-        $headers = $this->getDspaceToken();
+        $headers = $this->getAuthHeaders();
         $headers['Content-Type'] = 'application/json-patch+json';
         $url = sprintf('%ssubmission/workspaceitems/%d', $this->baseUrl, $workspaceId);
         $patchBody = array(
@@ -237,7 +248,7 @@ final class Dspace extends AbstractRest
 
     private function getItemUuid(int $workspaceId): string
     {
-        $headers = $this->getDspaceToken();
+        $headers = $this->getAuthHeaders();
         if (!$workspaceId) {
             throw new ImproperActionException('Missing workspaceId');
         }
@@ -257,7 +268,7 @@ final class Dspace extends AbstractRest
         if ($collection === '' || empty($metadata)) {
             throw new ImproperActionException('Missing required export fields.');
         }
-        $headers = $this->getDspaceToken();
+        $headers = $this->getAuthHeaders();
         $headers['Content-Type'] = 'application/json';
 
         $url = sprintf('%ssubmission/workspaceitems?owningCollection=%s', $this->baseUrl, $collection);
@@ -269,7 +280,7 @@ final class Dspace extends AbstractRest
 
     private function updateMetadata(int $workspaceId, array $metadata): void
     {
-        $headers = $this->getDspaceToken();
+        $headers = $this->getAuthHeaders();
         $headers['Content-Type'] = 'application/json-patch+json';
         $url = sprintf('%ssubmission/workspaceitems/%d', $this->baseUrl, $workspaceId);
         $patchBody = array();

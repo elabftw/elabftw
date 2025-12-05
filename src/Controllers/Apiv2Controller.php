@@ -307,11 +307,11 @@ final class Apiv2Controller extends AbstractApiController
                     $Config = Config::getConfig();
                     $proxy = Env::asBool('DSPACE_USE_PROXY') ? $Config->configArr['proxy'] : '';
                     $httpGetter = new HttpGetter(new Client(), $proxy, Env::asBool('DEV_MODE'));
-                    $baseUrl = $Config->configArr['dspace_host'] ?? '';
+                    $dspaceHost = $Config->configArr['dspace_host'] ?? '';
                     return new Dspace(
                         $this->requester,
                         $httpGetter,
-                        $baseUrl,
+                        $dspaceHost,
                     );
                 }
             )(),

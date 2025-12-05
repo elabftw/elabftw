@@ -37,17 +37,18 @@ use function json_decode;
  */
 final class Dspace extends AbstractRest
 {
-    private string $baseUrl;
+    private string $host;
 
     private ?array $dspaceHeaders = null;
 
+    // rename host to host
     public function __construct(
         private readonly Users $requester,
         private readonly HttpGetter $httpGetter,
-        string $baseUrl
+        string $host
     ) {
         parent::__construct();
-        $this->baseUrl = rtrim($baseUrl, '/') . '/';
+        $this->host = rtrim($host, '/') . '/';
     }
 
     #[Override]
@@ -119,7 +120,7 @@ final class Dspace extends AbstractRest
     private function submitToWorkflow(int $workspaceId): void
     {
         $headers = $this->getAuthHeaders();
-        $this->httpGetter->post($this->baseUrl . 'workflow/workflowitems', array(
+        $this->httpGetter->post($this->host . 'workflow/workflowitems', array(
             'headers' => array_merge($headers, array('Content-Type' => 'text/uri-list')),
             'body' => sprintf('/api/submission/workspaceitems/%d', $workspaceId),
         ));
@@ -137,7 +138,7 @@ final class Dspace extends AbstractRest
         $elnContent = ob_get_clean();
 
         $headers = $this->getAuthHeaders();
-        $url = sprintf('%ssubmission/workspaceitems/%d', $this->baseUrl, $workspaceId);
+        $url = sprintf('%ssubmission/workspaceitems/%d', $this->host, $workspaceId);
         $this->httpGetter->post($url, array(
             'headers' => $headers,
             'multipart' => array(
@@ -155,7 +156,7 @@ final class Dspace extends AbstractRest
     {
         $headers = $this->getAuthHeaders();
         $headers['Content-Type'] = 'application/json-patch+json';
-        $url = sprintf('%ssubmission/workspaceitems/%d', $this->baseUrl, $workspaceId);
+        $url = sprintf('%ssubmission/workspaceitems/%d', $this->host, $workspaceId);
         $patchBody = array(
             array('op' => 'add', 'path' => '/sections/license/granted', 'value' => 'true'),
         );
@@ -167,12 +168,12 @@ final class Dspace extends AbstractRest
         $Config = Config::getConfig();
         $user = $Config->configArr['dspace_user'] ?? '';
         $encPassword = $Config->configArr['dspace_password'] ?? '';
-        if ($this->baseUrl === '' || $user === '' || $encPassword === '') {
+        if ($this->host === '' || $user === '' || $encPassword === '') {
             throw new ImproperActionException('DSpace config is incomplete.');
         }
         $password = Crypto::decrypt($encPassword, Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY')));
         // GET CSRF TOKEN
-        $csrfRes = $this->httpGetter->getWithHeaders($this->baseUrl . 'security/csrf');
+        $csrfRes = $this->httpGetter->getWithHeaders($this->host . 'security/csrf');
         $xsrfToken = $csrfRes['headers']['DSPACE-XSRF-TOKEN'][0] ?? '';
         $cookies = $csrfRes['headers']['Set-Cookie'] ?? array();
         $cookieHeader = array();
@@ -201,7 +202,7 @@ final class Dspace extends AbstractRest
             $headers['X-XSRF-TOKEN'] = $xsrfToken;
         }
         // POST: login and get auth token
-        $loginRes = $this->httpGetter->post($this->baseUrl . 'authn/login', array(
+        $loginRes = $this->httpGetter->post($this->host . 'authn/login', array(
             'headers' => $headers, 'form_params' => array('user' => $user, 'password' => $password),
         ));
         $auth = $loginRes->getHeaderLine('Authorization');
@@ -220,7 +221,7 @@ final class Dspace extends AbstractRest
     private function listOneCollection(): array
     {
         $res = $this->httpGetter->getWithHeaders(
-            $this->baseUrl . 'core/collections/26d67c5e-1515-4d55-b979-b0a1ad66af1b',
+            $this->host . 'core/collections/26d67c5e-1515-4d55-b979-b0a1ad66af1b',
         );
         $collection = json_decode($res['body'], true);
         return array(
@@ -233,7 +234,7 @@ final class Dspace extends AbstractRest
     //    private function listCollections(): array
     //    {
     //        $res = $this->httpGetter->getWithHeaders(
-    //            $this->baseUrl . 'core/collections',
+    //            $this->host . 'core/collections',
     //        );
     //        return json_decode($res['body'], true);
     //    }
@@ -241,7 +242,7 @@ final class Dspace extends AbstractRest
     private function listTypes(): array
     {
         $res = $this->httpGetter->getWithHeaders(
-            $this->baseUrl . 'submission/vocabularies/common_types/entries',
+            $this->host . 'submission/vocabularies/common_types/entries',
         );
         return json_decode($res['body'], true);
     }
@@ -252,7 +253,7 @@ final class Dspace extends AbstractRest
         if (!$workspaceId) {
             throw new ImproperActionException('Missing workspaceId');
         }
-        $url = sprintf('%ssubmission/workspaceitems/%d/item', $this->baseUrl, $workspaceId);
+        $url = sprintf('%ssubmission/workspaceitems/%d/item', $this->host, $workspaceId);
         $res = $this->httpGetter->getWithHeaders($url, $headers);
         $data = json_decode($res['body'], true, 512, JSON_THROW_ON_ERROR);
         if (!isset($data['uuid'])) {
@@ -271,7 +272,7 @@ final class Dspace extends AbstractRest
         $headers = $this->getAuthHeaders();
         $headers['Content-Type'] = 'application/json';
 
-        $url = sprintf('%ssubmission/workspaceitems?owningCollection=%s', $this->baseUrl, $collection);
+        $url = sprintf('%ssubmission/workspaceitems?owningCollection=%s', $this->host, $collection);
         $res = $this->httpGetter->post($url, array('headers' => $headers, 'json' => $metadata));
         $body = $res->getBody()->getContents();
         $data = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
@@ -282,7 +283,7 @@ final class Dspace extends AbstractRest
     {
         $headers = $this->getAuthHeaders();
         $headers['Content-Type'] = 'application/json-patch+json';
-        $url = sprintf('%ssubmission/workspaceitems/%d', $this->baseUrl, $workspaceId);
+        $url = sprintf('%ssubmission/workspaceitems/%d', $this->host, $workspaceId);
         $patchBody = array();
 
         foreach ($metadata as $item) {

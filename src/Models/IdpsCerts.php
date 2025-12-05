@@ -15,7 +15,6 @@ namespace Elabftw\Models;
 use DateTimeImmutable;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\CertPurpose;
-use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Users\Users;
@@ -49,7 +48,7 @@ final class IdpsCerts extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        $this->ensureIsSysadmin();
+        $this->requester->isSysadminOrExplode();
         $sql = 'SELECT * FROM idps_certs WHERE idp = :idp';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':idp', $this->idpId, PDO::PARAM_INT);
@@ -64,7 +63,7 @@ final class IdpsCerts extends AbstractRest
     #[Override]
     public function readOne(): array
     {
-        $this->ensureIsSysadmin();
+        $this->requester->isSysadminOrExplode();
         $sql = 'SELECT * FROM idps_certs WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -77,7 +76,7 @@ final class IdpsCerts extends AbstractRest
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
-        $this->ensureIsSysadmin();
+        $this->requester->isSysadminOrExplode();
         if ($this->idpId === null) {
             throw new ImproperActionException('No IDP id provided!');
         }
@@ -131,7 +130,7 @@ final class IdpsCerts extends AbstractRest
     #[Override]
     public function destroy(): bool
     {
-        $this->ensureIsSysadmin();
+        $this->requester->isSysadminOrExplode();
         $sql = 'DELETE FROM idps_certs WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':id', $this->id, PDO::PARAM_INT);
@@ -165,13 +164,6 @@ final class IdpsCerts extends AbstractRest
         $req->bindValue(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         return $this->id ?? 0;
-    }
-
-    private function ensureIsSysadmin(): void
-    {
-        if ($this->requester->userData['is_sysadmin'] !== 1) {
-            throw new IllegalActionException('Only a Sysadmin can access this endpoint!');
-        }
     }
 
     private function findCertByHash(string $sha256, CertPurpose $purpose): ?int

@@ -16,7 +16,6 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\CertPurpose;
 use Elabftw\Enums\IdpsPatchableColumns;
 use Elabftw\Enums\SamlBinding;
-use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\SetIdTrait;
@@ -55,7 +54,7 @@ final class Idps extends AbstractRest
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
-        $this->canWriteOrExplode();
+        $this->requester->isSysadminOrExplode();
         return $this->create(
             name: $reqBody['name'],
             entityid: $reqBody['entityid'],
@@ -70,6 +69,7 @@ final class Idps extends AbstractRest
     #[Override]
     public function readOne(): array
     {
+        $this->requester->isSysadminOrExplode();
         $sql = sprintf($this->getReadSql(), 'WHERE idps.id = :id');
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -80,6 +80,7 @@ final class Idps extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
+        $this->requester->isSysadminOrExplode();
         // no WHERE clause in readAll
         $sql = sprintf($this->getReadSql(), '');
         $req = $this->Db->prepare($sql);
@@ -116,7 +117,7 @@ final class Idps extends AbstractRest
     #[Override]
     public function patch(Action $action, array $params): array
     {
-        $this->canWriteOrExplode();
+        $this->requester->isSysadminOrExplode();
         foreach ($params as $key => $value) {
             if ($key === 'certs' || $key === 'endpoints') {
                 continue;
@@ -128,7 +129,6 @@ final class Idps extends AbstractRest
 
     public function fullUpdate(array $idp): array
     {
-        $this->canWriteOrExplode();
         $IdpsCerts = new IdpsCerts($this->requester, $this->id);
         $IdpsCerts->sync($this->id ?? 0, $idp);
         $IdpsEndpoints = new IdpsEndpoints($this->requester, $this->id);
@@ -168,16 +168,6 @@ final class Idps extends AbstractRest
         return count($idps);
     }
 
-    public function toggleEnabledFromSource(int $sourceId, int $enabled): bool
-    {
-        $this->canWriteOrExplode();
-        $sql = 'UPDATE idps SET enabled = :enabled WHERE source = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $sourceId, PDO::PARAM_INT);
-        $req->bindParam(':enabled', $enabled, PDO::PARAM_INT);
-        return $this->Db->execute($req);
-    }
-
     public function getEnabled(?int $id = null): int
     {
         $sql = 'SELECT id FROM idps WHERE enabled = 1';
@@ -204,7 +194,7 @@ final class Idps extends AbstractRest
     #[Override]
     public function destroy(): bool
     {
-        $this->canWriteOrExplode();
+        $this->requester->isSysadminOrExplode();
         $sql = 'DELETE FROM idps WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -225,7 +215,6 @@ final class Idps extends AbstractRest
         ?array $certs = array(),
         ?array $endpoints = array(),
     ): int {
-        $this->canWriteOrExplode();
         $idpId = $this->createIdp($name, $entityid, $email_attr, $team_attr, $fname_attr, $lname_attr, $orgid_attr, $enabled, $source);
         if (!empty($certs)) {
             $IdpsCerts = new IdpsCerts($this->requester, $idpId);
@@ -338,13 +327,6 @@ final class Idps extends AbstractRest
         $this->Db->execute($req);
 
         return $this->Db->lastInsertId();
-    }
-
-    private function canWriteOrExplode(): void
-    {
-        if ($this->requester->userData['is_sysadmin'] !== 1) {
-            throw new IllegalActionException('Only a Sysadmin can modify this!');
-        }
     }
 
     private function update(IdpsPatchableColumns $target, string $value): array

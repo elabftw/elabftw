@@ -22,6 +22,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BinaryValue;
+use Elabftw\Enums\Messages;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Enums\UsersColumn;
@@ -721,6 +722,18 @@ class Users extends AbstractRest
         $this->userData['team'] = $this->team;
         $this->userData['teams'] = json_decode($this->userData['teams'], true, 3, JSON_THROW_ON_ERROR);
         return $this->userData;
+    }
+
+    public function isSysadmin(): bool
+    {
+        return $this->userData['is_sysadmin'] === 1;
+    }
+
+    public function isSysadminOrExplode(): void
+    {
+        if ($this->isSysadmin() === false) {
+            throw new IllegalActionException(Messages::InsufficientPermissions->toHuman());
+        }
     }
 
     protected static function search(UsersColumn $column, string $term, bool $filterValidated = false): self

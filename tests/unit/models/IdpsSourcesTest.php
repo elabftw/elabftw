@@ -40,8 +40,9 @@ class IdpsSourcesTest extends \PHPUnit\Framework\TestCase
 
     public function testNotSysadmin(): void
     {
+        $IdpsSources = new IdpsSources(new Users(2, 1));
         $this->expectException(IllegalActionException::class);
-        new IdpsSources(new Users(2, 1));
+        $IdpsSources->readAll();
     }
 
     public function testPatchNoId(): void

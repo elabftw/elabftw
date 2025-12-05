@@ -128,7 +128,7 @@ final class Users2Teams
     {
         $TeamsHelper = new TeamsHelper($teamid);
         if (!(
-            $this->requester->userData['is_sysadmin']
+            $this->requester->isSysadmin()
             || $this->requester->userData['can_manage_users2teams']
             || $TeamsHelper->isAdminInTeam($this->requester->userData['userid'])
         )) {
@@ -176,7 +176,7 @@ final class Users2Teams
             return $this->patchIsArchived($userid, $teamid, $content);
         }
         // only sysdamin can do that
-        if ($this->requester->userData['is_sysadmin'] === 0) {
+        if (!$this->requester->isSysadmin()) {
             throw new IllegalActionException('Only a sysadmin can modify is_owner value.');
         }
         $sql = 'UPDATE users2teams SET ' . $what->value . ' = :content WHERE `users_id` = :userid AND `teams_id` = :team';

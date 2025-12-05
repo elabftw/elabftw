@@ -159,7 +159,7 @@ final class Idps extends AbstractRest
             $this->setId($id);
             // when coming from XML, we do not overwrite these attributes
             $immutableFields = array('email_attr', 'fname_attr', 'lname_attr', 'team_attr', 'orgid_attr');
-            foreach($immutableFields as $key) {
+            foreach ($immutableFields as $key) {
                 unset($idp[$key]);
             }
             $this->fullUpdate($idp);

@@ -342,7 +342,7 @@ if (window.location.pathname === '/sysconfig.php') {
         deleteACertificateToggleBtn.setAttribute('disabled', 'disabled');
         deleteACertificateToggleBtn.nextElementSibling.setAttribute('hidden', 'hidden');
       }
-      $('#idpCertsModal').modal('show');
+      $('#idpModal_certs').modal('show');
     });
   });
 
@@ -357,7 +357,7 @@ if (window.location.pathname === '/sysconfig.php') {
         deleteAnEndpointToggleBtn.setAttribute('disabled', 'disabled');
         deleteAnEndpointToggleBtn.nextElementSibling.setAttribute('hidden', 'hidden');
       }
-      $('#idpEndpointsModal').modal('show');
+      $('#idpModal_endpoints').modal('show');
     });
   });
 
@@ -390,14 +390,15 @@ if (window.location.pathname === '/sysconfig.php') {
     ApiC.post(`${Model.IdpsSources}`, {url: url}).then(() => reloadElements(['idpsSourcesDiv']));
   });
 
-  on('save-idp-cert', (el: HTMLElement, event: Event) => {
+  on('save-idp-submodel', (el: HTMLElement, event: Event) => {
     event.preventDefault();
+    const submodel = el.dataset.submodel;
     try {
-      const form = document.getElementById('idpCertForm');
+      const form = document.getElementById(`idpForm_${submodel}`);
       const params = collectForm(form);
-      ApiC.post(`${Model.Idp}/${el.dataset.idp}/certs`, params).then(() => {
+      ApiC.post(`${Model.Idp}/${el.dataset.idp}/${submodel}`, params).then(() => {
         clearForm(form);
-        $('#idpCertsModal').modal('hide');
+        $(`#idpModal_${submodel}`).modal('hide');
       });
     } catch (e) {
       notify.error(e);
@@ -405,39 +406,13 @@ if (window.location.pathname === '/sysconfig.php') {
     }
   });
 
-  on('delete-idp-cert', (el: HTMLElement, event: Event) => {
+  on('delete-idp-submodel', (el: HTMLElement, event: Event) => {
     event.preventDefault();
+    const submodel = el.dataset.submodel;
     try {
-      const form = document.getElementById('idpCertDeleteForm');
+      const form = document.getElementById(`idpDeleteForm_${submodel}`);
       const params = collectForm(form);
-      ApiC.delete(`${Model.Idp}/${el.dataset.idp}/certs/${params['cert']}`).then(() => $('#idpCertsModal').modal('hide'));
-    } catch (e) {
-      notify.error(e);
-      return;
-    }
-  });
-
-  on('save-idp-endpoint', (el: HTMLElement, event: Event) => {
-    event.preventDefault();
-    try {
-      const form = document.getElementById('idpEndpointForm');
-      const params = collectForm(form);
-      ApiC.post(`${Model.Idp}/${el.dataset.idp}/endpoints`, params).then(() => {
-        clearForm(form);
-        $('#idpEndpointsModal').modal('hide');
-      });
-    } catch (e) {
-      notify.error(e);
-      return;
-    }
-  });
-
-  on('delete-idp-endpoint', (el: HTMLElement, event: Event) => {
-    event.preventDefault();
-    try {
-      const form = document.getElementById('idpEndpointDeleteForm');
-      const params = collectForm(form);
-      ApiC.delete(`${Model.Idp}/${el.dataset.idp}/endpoints/${params['endpoint']}`).then(() => $('#idpEndpointsModal').modal('hide'));
+      ApiC.delete(`${Model.Idp}/${el.dataset.idp}/${submodel}/${params[submodel.slice(0, -1)]}`).then(() => $(`#idpModal_${submodel}`).modal('hide'));
     } catch (e) {
       notify.error(e);
       return;

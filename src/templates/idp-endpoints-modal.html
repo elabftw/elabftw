@@ -1,5 +1,5 @@
 {# Modal for IDP endpoints #}
-<div class='modal fade' id='idpEndpointsModal' tabindex='-1' role='dialog' aria-labelledby='idpEndpointsModalLabel'>
+<div class='modal fade' id='idpModal_endpoints' tabindex='-1' role='dialog' aria-labelledby='idpEndpointsModalLabel'>
   <div class='modal-dialog modal-xl' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
@@ -41,7 +41,7 @@
         </button>
         <div hidden>
           <p class='smallgray mt-2'>{{ 'Note: use HTTP-POST for SSO and HTTP-Redirect for SLO, they are the only bindings supported by eLabFTW. Only an SSO endpoint is strictly required.'|trans }}</p>
-          <form id='idpEndpointForm'>
+          <form id='idpForm_endpoints'>
             <label for='idpEndpointsModalNew' class='col-form-label'>{{ 'SAML Endpoint'|trans }}</label>
             <input class='form-control' type='url' id='idpEndpointsModalNew' required placeholder='https://idp.example.fr/idp/profile/SAML2/POST/SSO' name='location' />
             <p class='mt-2'>{{ 'Service type'|trans }}</p>
@@ -59,7 +59,7 @@
               <input class='form-check-input' type='radio' name='binding' value='{{ enum('Elabftw\\Enums\\SamlBinding').HttpRedirect.value }}' id='idpEndpointBindingRedirect'> <label class='form-check-label' for='idpEndpointBindingRedirect'>{{ enum('Elabftw\\Enums\\SamlBinding').HttpRedirect.toUrn() }}</label>
             </div>
             <div class='text-center'>
-            <button type='submit' data-action='save-idp-endpoint' id='idpEndpointsModalSaveButton' class='btn btn-primary ml-auto mb-2 mt-1'>{{ 'Save endpoint'|trans }}</button>
+            <button type='submit' data-action='save-idp-submodel' data-submodel='endpoints' id='idpEndpointsModalSaveButton' class='btn btn-primary ml-auto mb-2 mt-1'>{{ 'Save endpoint'|trans }}</button>
             </div>
           </form>
         </div>
@@ -67,11 +67,11 @@
           <i class='fas fa-caret-right color-white mr-1'></i>{{ 'Delete an endpoint'|trans }}
         </button>
         <div hidden>
-          <form id='idpEndpointDeleteForm'>
+          <form id='idpDeleteForm_endpoints'>
             <label for='idpEndpointDeleteSelect' class='col-form-label'>{{ 'Select an endpoint to delete'|trans }}</label>
             <select id='idpEndpointDeleteSelect' name='endpoint' class='form-control' required>
             </select>
-            <button type='submit' data-action='delete-idp-endpoint' id='idpEndpointsModalDeleteButton' class='btn btn-danger ml-auto mb-2 mt-1'>{{ 'Delete endpoint'|trans }}</button>
+            <button type='submit' data-action='delete-idp-submodel' data-submodel='endpoints' id='idpEndpointsModalDeleteButton' class='btn btn-danger ml-auto mb-2 mt-1'>{{ 'Delete endpoint'|trans }}</button>
           </form>
         </div>
         <div class='modal-footer mt-2'>

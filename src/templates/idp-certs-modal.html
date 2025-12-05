@@ -1,5 +1,5 @@
 {# Modal for IDP certificates #}
-<div class='modal fade' id='idpCertsModal' tabindex='-1' role='dialog' aria-labelledby='idpCertsModalLabel'>
+<div class='modal fade' id='idpModal_certs' tabindex='-1' role='dialog' aria-labelledby='idpCertsModalLabel'>
   <div class='modal-dialog modal-xl' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
@@ -42,7 +42,7 @@
           <i class='fas fa-caret-right color-white mr-1'></i>{{ 'Add a certificate'|trans }}
         </button>
         <div hidden>
-          <form id='idpCertForm'>
+          <form id='idpForm_certs'>
             <label for='idpCertsModalNew' class='col-form-label'>{{ 'x509 certificate'|trans }}</label>
             <textarea class='form-control' id='idpCertsModalNew' required placeholder='-----BEGIN CERTIFICATE-----MIIELDCC...CRGEJtD-----END CERTIFICATE-----' name='x509'></textarea>
             <p class='smallgray'>{{ 'Paste PEM'|trans }}</p>
@@ -51,7 +51,7 @@
               <p class='smallgray'>{{ 'Or upload PEM file'|trans }}</p>
             </div>
             <div class='text-center'>
-            <button type='submit' data-action='save-idp-cert' id='idpCertsModalSaveButton' class='btn btn-primary ml-auto mb-2 mt-1'>{{ 'Save certificate'|trans }}</button>
+            <button type='submit' data-action='save-idp-submodel' data-submodel='certs' id='idpCertsModalSaveButton' class='btn btn-primary ml-auto mb-2 mt-1'>{{ 'Save certificate'|trans }}</button>
             </div>
           </form>
         </div>
@@ -59,11 +59,11 @@
           <i class='fas fa-caret-right color-white mr-1'></i>{{ 'Delete a certificate'|trans }}
         </button>
         <div hidden>
-          <form id='idpCertDeleteForm'>
+          <form id='idpDeleteForm_certs'>
             <label for='idpCertDeleteSelect' class='col-form-label'>{{ 'Select a certificate to delete'|trans }}</label>
             <select id='idpCertDeleteSelect' name='cert' class='form-control' required>
             </select>
-            <button type='submit' data-action='delete-idp-cert' id='idpCertsModalDeleteButton' class='btn btn-danger ml-auto mb-2 mt-1'>{{ 'Delete certificate'|trans }}</button>
+            <button type='submit' data-action='delete-idp-submodel' data-submodel='certs' id='idpCertsModalDeleteButton' class='btn btn-danger ml-auto mb-2 mt-1'>{{ 'Delete certificate'|trans }}</button>
           </form>
         </div>
         <div class='modal-footer mt-2'>

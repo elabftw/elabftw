@@ -17,6 +17,7 @@ use Defuse\Crypto\Key;
 use Elabftw\Controllers\MakeController;
 use Elabftw\Elabftw\Env;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\DspaceAction;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Users\Users;
@@ -52,23 +53,27 @@ final class Dspace extends AbstractRest
 
     /**
      * Get method for /api/v2/dspace
-     * $queryParams 'dspace_action' can be auth, collections, types.
      */
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        $action = 'auth';
+        // default to Listing collections
+        $raw = DspaceAction::ListCollections->value;
         if ($queryParams !== null && $queryParams->getQuery()->has('dspace_action')) {
-            $action = $queryParams->getQuery()->getString('dspace_action');
+            $raw = $queryParams->getQuery()->getString('dspace_action');
         }
+        $action = DspaceAction::tryFrom($raw)
+            ?? throw new ImproperActionException('Unknown GET action for DSpace endpoint.');
         return match ($action) {
-            'auth' => $this->getDspaceToken(),
-            'collections' => $this->listOneCollection(),
-            'types' => $this->listTypes(),
-            default => throw new ImproperActionException('Unknown DSpace GET action.'),
+            DspaceAction::ListCollections => $this->listOneCollection(),
+            DspaceAction::ListTypes => $this->listTypes(),
         };
     }
 
+    /*
+     * Create a new workspace in DSpace and return its Id.
+     * It will allow for creation of the item inside that workspace.
+     */
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
@@ -157,10 +162,6 @@ final class Dspace extends AbstractRest
         ));
     }
 
-    /*
-     * GET METHODS
-     * getDspaceToken, listCollections, listTypes, getItemUuid
-     */
     private function getDspaceToken(): array
     {
         $Config = Config::getConfig();
@@ -263,10 +264,6 @@ final class Dspace extends AbstractRest
         return $data['uuid'];
     }
 
-    /*
-     * POST METHODS
-     * exportItem, createItem, acceptLicense, updateMetadata, uploadEntryAsFile, submitItem
-     */
     private function createWorkspaceItem(array $reqBody): int
     {
         $collection = $reqBody['collection'] ?? '';

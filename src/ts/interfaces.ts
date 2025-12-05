@@ -109,6 +109,9 @@ enum Action {
   UpdatePassword = 'updatepassword',
   UpdateTag = 'updatetag',
   Validate = 'validate',
+  // Dspace Actions
+  ListCollections = 'listcollections',
+  ListTypes = 'listtypes',
 }
 
 enum Model {

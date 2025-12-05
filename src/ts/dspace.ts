@@ -8,7 +8,6 @@
  *
  * All logic related to DSpace export modal. Located in toolbar on view/edit pages
  */
-
 import { ApiC } from './api';
 import { DspaceCollection, DspaceVocabularyEntry, listCollections, listTypes, saveDspaceIdAsExtraField } from './dspaceUtils';
 import { on } from './handlers';
@@ -39,15 +38,9 @@ if (document.getElementById('dspaceExportModal')) {
       { key: 'dc.date.issued', value: date },
       { key: 'dc.type', value: type },
       { key: 'dc.description.abstract', value: abstract },
-    ]
-    ;
+    ];
     try {
-      const res = await ApiC.send(Method.PATCH, 'dspace', {
-        action: 'export',
-        collection,
-        metadata,
-        entity,
-      });
+      const res = await ApiC.send(Method.PATCH, 'dspace', { collection,  metadata,  entity });
       const data = await res.json();
       const itemUuid = data.uuid;
       await saveDspaceIdAsExtraField(itemUuid);
@@ -57,33 +50,6 @@ if (document.getElementById('dspaceExportModal')) {
       notify.error('submission-error');
       console.error(e);
     }
-    //
-    // try {
-    //   // create the item's WORKSPACE in DSpace
-    //   const workspace = await createWorkspaceItem(collection, metadata);
-    //   console.log('workspace', workspace);
-    //   return;
-    //   const workspaceId = workspace.id;
-    //   // get real DSpace item UUID to store be stored in elab)
-    //   const itemUuid = await getItemUuidFromDspace(workspaceId);
-    //   // patch eLabFTW metadata with the uuid
-    //   await saveDspaceIdAsExtraField(itemUuid);
-    //   // accept license (only reached if checkbox was checked)
-    //   await acceptWorkspaceItemLicense(workspaceId);
-    //   // patch DSpace's metadata section
-    //   await updateWorkspaceItemMetadata(workspaceId, author, title, date, type, abstract);
-    //   // mandatory file upload -> build ELN for current entry
-    //   const elnFile = await buildCurrentEntryEln();
-    //   await uploadWorkspaceItemFile(workspaceId, elnFile);
-    //   // submit (deposit) to workflow. Catch here if the POST is not sent, otherwise the response time being >120sec we don't await it.
-    //   // submitWorkspaceItemToWorkflow(workspaceId, token).catch(() => notify.error('submission-error'));
-    //   await submitWorkspaceItemToWorkflow(workspaceId);
-    //   notify.success('export-success');
-    //   $('#dspaceExportModal').modal('hide');
-    // } catch (e) {
-    //   notify.error('submission-error');
-    //   console.error(e);
-    // }
   });
 }
 
@@ -94,15 +60,15 @@ $('#dspaceExportModal').on('shown.bs.modal', async () => {
   typeSelect.innerHTML = '<option disabled selected>' + i18next.t('loading') + '...</option>';
 
   try {
-    // await ensureDspaceAuthFromBackend();
     const [collectionsJson, typesJson] = await Promise.all([
       listCollections(),
       listTypes(),
     ]);
 
+    // populate collections and types select for modal
     const collections = collectionsJson._embedded.collections;
     const types = typesJson._embedded.entries;
-    // populate collections
+
     collectionSelect.innerHTML = '';
     collections.forEach((col: DspaceCollection) => {
       const opt = document.createElement('option');
@@ -111,7 +77,6 @@ $('#dspaceExportModal').on('shown.bs.modal', async () => {
       collectionSelect.appendChild(opt);
     });
 
-    // populate types
     typeSelect.innerHTML = '';
     types.forEach((type: DspaceVocabularyEntry) => {
       const opt = document.createElement('option');
@@ -119,7 +84,6 @@ $('#dspaceExportModal').on('shown.bs.modal', async () => {
       opt.textContent = type.display;
       typeSelect.appendChild(opt);
     });
-
   } catch (e) {
     collectionSelect.innerHTML = '<option disabled>Error loading collections</option>';
     typeSelect.innerHTML = '<option disabled>Error loading types</option>';

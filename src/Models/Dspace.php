@@ -21,7 +21,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\HttpGetter;
-use GuzzleHttp\Client;
 use Override;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -36,15 +35,13 @@ final class Dspace extends AbstractRest
 {
     private string $baseUrl;
 
-    private HttpGetter $HttpGetter;
-
-    public function __construct(private Users $requester)
-    {
+    public function __construct(
+        private readonly Users $requester,
+        private readonly HttpGetter $httpGetter,
+        string $baseUrl
+    ) {
         parent::__construct();
-        $Config = Config::getConfig();
-        $this->baseUrl = rtrim($Config->configArr['dspace_host'] ?? '', '/') . '/';
-        $proxy = Env::asBool('DSPACE_USE_PROXY') ? $Config->configArr['proxy'] : '';
-        $this->HttpGetter = new HttpGetter(new Client(), $proxy, Env::asBool('DEV_MODE'));
+        $this->baseUrl = rtrim($baseUrl, '/') . '/';
     }
 
     #[Override]
@@ -66,7 +63,7 @@ final class Dspace extends AbstractRest
         }
         return match ($action) {
             'auth' => $this->getDspaceToken(),
-            'collections' => $this->listCollections(),
+            'collections' => $this->listOneCollection(),
             'types' => $this->listTypes(),
             default => throw new ImproperActionException('Unknown DSpace GET action.'),
         };
@@ -85,8 +82,7 @@ final class Dspace extends AbstractRest
         $uuid = $this->getItemUuid($workspaceId);
         $this->acceptLicense($workspaceId);
         $this->updateMetadata($workspaceId, $params['metadata'] ?? array());
-
-        $this->uploadEntryAsFile($workspaceId, $this->requester);
+        $this->uploadEntryAsFile($workspaceId);
         $this->submitToWorkflow($workspaceId);
         // return id and uuid for elab entry metadata
         return array('id' => $workspaceId, 'uuid' => $uuid);
@@ -107,7 +103,7 @@ final class Dspace extends AbstractRest
     private function submitToWorkflow(int $workspaceId): void
     {
         $headers = $this->getDspaceToken();
-        $this->HttpGetter->post($this->baseUrl . 'workflow/workflowitems', array(
+        $this->httpGetter->post($this->baseUrl . 'workflow/workflowitems', array(
             'headers' => array_merge($headers, array(
                 'Content-Type' => 'text/uri-list',
             )),
@@ -115,11 +111,11 @@ final class Dspace extends AbstractRest
         ));
     }
 
-    private function uploadEntryAsFile(int $workspaceId, Users $requester): void
+    private function uploadEntryAsFile(int $workspaceId): void
     {
         $params = array('format' => 'eln');
         $Request = new Request($params);
-        $MakeController = new MakeController($requester, $Request);
+        $MakeController = new MakeController($this->requester, $Request);
         $Response = $MakeController->getResponse();
 
         ob_start();
@@ -127,7 +123,7 @@ final class Dspace extends AbstractRest
         $elnContent = ob_get_clean();
 
         $headers = $this->getDspaceToken();
-        $this->HttpGetter->post($this->baseUrl . 'submission/workspaceitems/' . $workspaceId, array(
+        $this->httpGetter->post($this->baseUrl . 'submission/workspaceitems/' . $workspaceId, array(
             'headers' => $headers,
             'multipart' => array(
                 array(
@@ -155,7 +151,7 @@ final class Dspace extends AbstractRest
                 'value' => 'true',
             ),
         );
-        $this->HttpGetter->patch($url, array(
+        $this->httpGetter->patch($url, array(
             'headers' => $headers,
             'json' => $patchBody,
         ));
@@ -175,7 +171,7 @@ final class Dspace extends AbstractRest
         }
         $password = Crypto::decrypt($encPassword, Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY')));
         // first, get CSRF token
-        $csrfRes = $this->HttpGetter->getWithHeaders($this->baseUrl . 'security/csrf');
+        $csrfRes = $this->httpGetter->getWithHeaders($this->baseUrl . 'security/csrf');
         $xsrfToken = $csrfRes['headers']['DSPACE-XSRF-TOKEN'][0] ?? '';
         $cookies = $csrfRes['headers']['Set-Cookie'] ?? array();
         $cookieHeader = array();
@@ -205,7 +201,7 @@ final class Dspace extends AbstractRest
         }
 
         // second, Login
-        $loginRes = $this->HttpGetter->post($this->baseUrl . 'authn/login', array(
+        $loginRes = $this->httpGetter->post($this->baseUrl . 'authn/login', array(
             'headers' => $headers, 'form_params' => array('user' => $user, 'password' => $password),
         ));
         $auth = $loginRes->getHeaderLine('Authorization');
@@ -219,17 +215,32 @@ final class Dspace extends AbstractRest
         );
     }
 
-    private function listCollections(): array
+    // TODO: remove when done with dev. faster to target specific collection and submit
+    // https://demo.dspace.org/communities/48921ed4-84f0-4110-9d02-022f3bf2307a/search
+    private function listOneCollection(): array
     {
-        $res = $this->HttpGetter->getWithHeaders(
-            $this->baseUrl . 'core/collections',
+        $res = $this->httpGetter->getWithHeaders(
+            $this->baseUrl . 'core/collections/26d67c5e-1515-4d55-b979-b0a1ad66af1b',
         );
-        return json_decode($res['body'], true);
+        $collection = json_decode($res['body'], true);
+        return array(
+            '_embedded' => array(
+                'collections' => array($collection),
+            ),
+        );
     }
+
+    //    private function listCollections(): array
+    //    {
+    //        $res = $this->httpGetter->getWithHeaders(
+    //            $this->baseUrl . 'core/collections',
+    //        );
+    //        return json_decode($res['body'], true);
+    //    }
 
     private function listTypes(): array
     {
-        $res = $this->HttpGetter->getWithHeaders(
+        $res = $this->httpGetter->getWithHeaders(
             $this->baseUrl . 'submission/vocabularies/common_types/entries',
         );
         return json_decode($res['body'], true);
@@ -241,7 +252,7 @@ final class Dspace extends AbstractRest
         if (!$workspaceId) {
             throw new ImproperActionException('Missing workspaceId');
         }
-        $res = $this->HttpGetter->getWithHeaders(
+        $res = $this->httpGetter->getWithHeaders(
             $this->baseUrl . 'submission/workspaceitems/' . ($workspaceId) . '/item',
             $headers
         );
@@ -268,7 +279,7 @@ final class Dspace extends AbstractRest
         $headers['Content-Type'] = 'application/json';
         $url = $this->baseUrl . 'submission/workspaceitems?owningCollection=' . $collection;
 
-        $res = $this->HttpGetter->post($url, array('headers' => $headers, 'json' => $metadata));
+        $res = $this->httpGetter->post($url, array('headers' => $headers, 'json' => $metadata));
         $body = $res->getBody()->getContents();
         $data = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
         return (int) $data['id'];
@@ -300,7 +311,7 @@ final class Dspace extends AbstractRest
         if (empty($patchBody)) {
             throw new ImproperActionException('No valid metadata fields to update.');
         }
-        $this->HttpGetter->patch($url, array(
+        $this->httpGetter->patch($url, array(
             'headers' => $headers,
             'json'    => $patchBody,
         ));

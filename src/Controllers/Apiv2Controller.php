@@ -302,7 +302,19 @@ final class Apiv2Controller extends AbstractApiController
                 }
             )(),
             ApiEndpoint::Config => Config::getConfig(),
-            ApiEndpoint::Dspace => new Dspace($this->requester),
+            ApiEndpoint::Dspace => (
+                function () {
+                    $Config = Config::getConfig();
+                    $proxy = Env::asBool('DSPACE_USE_PROXY') ? $Config->configArr['proxy'] : '';
+                    $httpGetter = new HttpGetter(new Client(), $proxy, Env::asBool('DEV_MODE'));
+                    $baseUrl = $Config->configArr['dspace_host'] ?? '';
+                    return new Dspace(
+                        $this->requester,
+                        $httpGetter,
+                        $baseUrl,
+                    );
+                }
+            )(),
             ApiEndpoint::Idps => new Idps($this->requester, $this->id),
             ApiEndpoint::IdpsSources => new IdpsSources($this->requester, $this->id),
             ApiEndpoint::Import => new ImportHandler($this->requester, App::getDefaultLogger()),

@@ -14,7 +14,6 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EmailTarget;
-use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\Email;
@@ -41,10 +40,7 @@ final class Instance extends AbstractRest
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
-        if (!$this->requester->userData['is_sysadmin']) {
-            throw new IllegalActionException('Non sysadmin user tried to access sysadmin controller.');
-        }
-
+        $this->requester->isSysadminOrExplode();
         match ($action) {
             Action::AllowUntrusted => $this->Db->q('UPDATE users SET allow_untrusted = 1'),
             Action::ClearLockedOutDevices => $this->Db->q('DELETE FROM lockout_devices'),

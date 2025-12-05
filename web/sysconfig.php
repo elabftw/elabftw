@@ -17,7 +17,6 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EnforceMfa;
 use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Exceptions\AppException;
-use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\AuthFail;
 use Elabftw\Models\Experiments;
@@ -45,9 +44,7 @@ $Response = new Response();
 try {
     $Response->prepare($App->Request);
 
-    if (!$App->Users->userData['is_sysadmin']) {
-        throw new IllegalActionException('Non sysadmin user tried to access sysconfig panel.');
-    }
+    $App->Users->isSysadminOrExplode();
 
     $AuthFail = new AuthFail();
     $Idps = new Idps($App->Users);

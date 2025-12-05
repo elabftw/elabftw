@@ -1824,7 +1824,7 @@ input:user-invalid {
   textarea,
   input {
     &:required:invalid {
-      background-color: $lightyellow;
+      background-color: $mediumyellow;
     }
   }
 }

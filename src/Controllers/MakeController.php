@@ -76,12 +76,13 @@ final class MakeController extends AbstractController
             case ExportFormat::Csv:
                 if (str_starts_with($this->Request->getPathInfo(), '/api/v2/teams/current/procurement_requests')) {
                     $ProcurementRequests = new ProcurementRequests(new Teams($this->requester), 1);
-                    return (new MakeProcurementRequestsCsv($ProcurementRequests))->getResponse();
+                    return new MakeProcurementRequestsCsv($ProcurementRequests)->getResponse();
                 }
                 if (str_starts_with($this->Request->getPathInfo(), '/api/v2/reports')) {
-                    return (new ReportsHandler($this->requester))->getResponse(
+                    return new ReportsHandler($this->requester)->getResponse(
                         ReportScopes::tryFrom($this->Request->query->getString('scope')) ??
-                        throw new ImproperActionException(sprintf('Invalid scope query parameter. Possible values are: %s.', ReportScopes::toCsList()))
+                                throw new ImproperActionException(sprintf('Invalid scope query parameter. Possible values are: %s.', ReportScopes::toCsList())),
+                        $this->Request->query,
                     );
                 }
                 return (new MakeCsv($this->entityArr))->getResponse();

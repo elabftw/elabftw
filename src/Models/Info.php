@@ -165,6 +165,10 @@ final class Info extends AbstractRest
 
         $req = $this->Db->prepare($sql);
         $numBuckets ??= self::DEFAULT_HIST_BUCKET_SIZE;
+        // avoid division by zero
+        if ($numBuckets < 1) {
+            $numBuckets = self::DEFAULT_HIST_BUCKET_SIZE;
+        }
         $req->bindParam(':num_buckets', $numBuckets, PDO::PARAM_INT);
         $this->Db->execute($req);
         $res = $req->fetch();

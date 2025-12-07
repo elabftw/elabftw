@@ -25,11 +25,13 @@
 }
 
 .bar {
+  /* Ensure --max has a minimum value, fallback to 1 if not set */
+  --safe-max: max(var(--max, 1), 1);
   background: hsl(0 0%
-  calc(90% - (var(--v) / var(--max)) * 90%));
+  calc(90% - (var(--v) / var(--safe-max)) * 90%));
   border-radius: 4px 4px 0 0;
   flex: 1 0 auto;
-  height: calc((var(--v) / var(--max)) * 100%);
+  height: calc((var(--v) / var(--safe-max)) * 100%);
   position: relative;
   transition: transform 120ms ease, filter 120ms ease;
 }

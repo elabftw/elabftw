@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { clearForm, collectForm, reloadElements } from './misc';
+import { clearForm, collectForm, reloadElements, toggleIcon } from './misc';
 import { Action, BinaryValue, Model } from './interfaces';
 import i18next from './i18n';
 import tinymce from 'tinymce/tinymce';
@@ -437,6 +437,23 @@ if (window.location.pathname === '/sysconfig.php') {
 
   on('delete-idps-source', (el: HTMLElement) => {
     ApiC.delete(`${Model.IdpsSources}/${el.dataset.id}`).then(() => reloadElements(['idpsSourcesDiv', 'idpsDiv']));
+  });
+
+  on('toggle-histograms', async (el: HTMLElement) => {
+    const histDiv = document.getElementById('histograms');
+    histDiv.toggleAttribute('hidden');
+    toggleIcon(el, histDiv.hasAttribute('hidden'));
+    const data = await ApiC.getJson('info?hist=1');
+    const plot = (el: HTMLElement, rows) => {
+      el.innerHTML = '';
+      rows.forEach(row => {
+        const div = document.createElement('div');
+        div.classList.add('bar');
+        div.setAttribute('style', `--v: ${row.total};  --label:"${row.bucket_start} | ${row.total}";`);
+        el.appendChild(div);
+      });
+    };
+    ['experiments', 'items', 'users'].forEach(kind => plot(document.getElementById(`histDiv_${kind}`), data[kind]));
   });
   document.querySelectorAll('[data-action="load-file-on-change"]').forEach(input => {
     input.addEventListener('change', (event) => {

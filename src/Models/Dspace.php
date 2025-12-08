@@ -230,12 +230,24 @@ final class Dspace extends AbstractRest
         return $auth;
     }
 
-        private function listCollections(): array
-        {
-            $res = $this->httpGetter->get($this->host . 'core/collections');
-            $body = $res->getBody()->getContents();
-            return json_decode($body, true);
-        }
+    private function listCollections(): array
+    {
+        $collections = [];
+        $page = 0;
+        $pageSize = 20;
+        do {
+            $res = $this->httpGetter->get($this->host . 'core/collections?page=' . $page . '&size=' . $pageSize);
+            $body = json_decode($res->getBody()->getContents(), true);
+            // append collections from each page
+            if (isset($body['_embedded']['collections'])) {
+                $collections = array_merge($collections, $body['_embedded']['collections']);
+            }
+            // stop if we're on the last page
+            $totalPages = $body['page']['totalPages'] ?? 1;
+            $page++;
+        } while ($page < $totalPages);
+        return $collections;
+    }
 
     private function listTypes(): array
     {

@@ -13,10 +13,10 @@ import { Metadata } from './Metadata.class';
 import { ExtraFieldInputType, ValidMetadata } from './metadataInterfaces';
 
 // GET list of collections
-export async function listCollections(): Promise<DspaceCollectionList> {
+export async function listCollections(): Promise<DspaceCollection[]> {
   const res = await fetch(`/api/v2/dspace?dspace_action=${Action.ListCollections}`, { credentials: 'include' });
   if (!res.ok) throw new Error(`DSpace collections error: ${res.status}`);
-  return await res.json() as DspaceCollectionList;
+  return await res.json() as DspaceCollection[];
 }
 
 // GET list of types
@@ -49,13 +49,6 @@ export async function saveDspaceIdAsExtraField(itemUuid: string): Promise<void> 
 export interface DspaceCollection {
   uuid: string;
   name: string;
-  [key: string]: unknown;
-}
-
-export interface DspaceCollectionList {
-  _embedded: {
-    collections: DspaceCollection[];
-  };
   [key: string]: unknown;
 }
 

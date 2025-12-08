@@ -233,7 +233,8 @@ final class Dspace extends AbstractRest
         private function listCollections(): array
         {
             $res = $this->httpGetter->get($this->host . 'core/collections');
-            return json_decode($res['body'], true);
+            $body = $res->getBody()->getContents();
+            return json_decode($body, true);
         }
 
     private function listTypes(): array

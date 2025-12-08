@@ -1978,10 +1978,9 @@ paths:
           name: hist
           required: false
           description: |
-            Get information about the instance.
+            Get usage information about the instance.
 
-            If the `hist` query parameter is absent, returns basic instance info.
-            If `hist` is present, returns cumulative histogram data for experiments, items, and users.
+            If `hist` is present, returns cumulative histogram data for experiments, items (resources), and users.
           schema:
             type: boolean
           allowEmptyValue: true

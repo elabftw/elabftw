@@ -41,7 +41,7 @@ final class ReportsHandler extends AbstractRest
             ReportScopes::Compounds => new MakeCompoundsReport(new Compounds($httpGetter, $this->requester, new NullFingerprinter(), false)),
             ReportScopes::CompoundsHistory => (
                 function () use ($httpGetter, $query) {
-                    $start = self::extractDateFromQuery($query, 'start', '10 year ago');
+                    $start = self::extractDateFromQuery($query, 'start', '10 years ago');
                     $end = self::extractDateFromQuery($query, 'end', 'now');
                     return new MakeCompoundsHistoryReport(
                         new Compounds($httpGetter, $this->requester, new NullFingerprinter(), false),

@@ -30,13 +30,14 @@ final class MakeCompoundsHistoryReport extends MakeCompoundsReport
     #[Override]
     protected function getData(): array
     {
-        $sql = 'SELECT c.*, e.created_at AS experiment_created_at
+        $sql = 'SELECT c.*, e.created_at AS experiment_created_at, e.title AS experiment_title
             FROM compounds AS c
             JOIN compounds2experiments AS c2e
               ON c.id = c2e.compound_id
             JOIN experiments AS e
               ON e.id = c2e.entity_id
-            WHERE e.userid = :userid AND e.created_at >= :start AND e.created_at <= :end';
+            WHERE e.userid = :userid AND DATE(e.created_at) >= :start AND DATE(e.created_at) <= :end
+            ORDER BY e.created_at DESC, c.name ASC';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->compounds->requester->userid, PDO::PARAM_INT);
         $req->bindValue(':start', $this->start->format('Y-m-d'));

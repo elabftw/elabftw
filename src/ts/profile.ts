@@ -37,7 +37,7 @@ if (window.location.pathname === '/profile.php') {
     event.preventDefault();
     const form = document.getElementById('compoundsHistoryForm');
     const params = collectForm(form);
-    window.location.href = `/api/v2/reports?scope=compounds_history&format=csv&start=${params['start']}&end=${params['end']}`;
+    window.location.href = `/api/v2/reports?scope=compounds_history&format=csv&start=${encodeURIComponent(params['start'])}&end=${encodeURIComponent(params['end'])}`;
   });
 
   document.getElementById('importFileInput')?.addEventListener('change', async function(event) {

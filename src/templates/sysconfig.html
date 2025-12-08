@@ -78,6 +78,19 @@
       <div>{{ 'Stored containers: %d bound to experiments and %d bound to resources'|trans|format(containersCount.experiments, containersCount.items) }}</div>
       <div><a href='/api/v2/reports?format=csv&scope=stored_compounds' class='btn btn-primary'>{{ 'Get inventory report'|trans }}</a></div>
     </div>
+
+    <h4>{{ 'Graphics'|trans }}</h4>
+    <button type='button' class='btn btn-secondary bg-superlight btn-sm' data-action='toggle-histograms' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right'>
+      <i class='fas fa-caret-right color-white mr-1'></i>{{ 'Show usage histograms'|trans }}
+    </button>
+    <div hidden id='histograms'>
+      <h5 class='mt-3'>{{ 'Experiments creation over time'|trans }}</h5>
+      <div id='histDiv_experiments' class='chart' style='--max: {{ info.experiments_count }};'></div>
+      <h5 class='mt-3'>{{ 'Resources creation over time'|trans }}</h5>
+      <div id='histDiv_items' class='chart' style='--max: {{ info.items_count }};'></div>
+      <h5 class='mt-3'>{{ 'Users creation over time'|trans }}</h5>
+      <div id='histDiv_users' class='chart' style='--max: {{ info.all_users_count }};'></div>
+    </div>
   </div>
 
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Settings'|trans }}</h3>

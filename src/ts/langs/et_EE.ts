@@ -52,7 +52,7 @@ const t = {
     "is-sysadmin": "Süsteemiadministraator",
     "last-login": "Viimane sisselogimine",
     "lastname": "Perekonnanimi",
-    "license-error": "You must accept the Dspace license to complete your submission.",
+    "license-error": "You must accept the license to complete your submission.",
     "file-imported": "Fail imporditi edukalt",
     "file-too-large": "Viga: fail on liiga suur!",
     "filter-by-category": "Filtreeri kategooria järgi",

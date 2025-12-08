@@ -52,7 +52,7 @@ const t = {
     "is-sysadmin": "Adalah Sysadmin",
     "last-login": "Masuk terakhir",
     "lastname": "Nama belakang",
-    "license-error": "You must accept the Dspace license to complete your submission.",
+    "license-error": "You must accept the license to complete your submission.",
     "file-imported": "File berhasil diimpor",
     "file-too-large": "Kesalahan: file terlalu besar!",
     "filter-by-category": "Saring berdasarkan kategori",

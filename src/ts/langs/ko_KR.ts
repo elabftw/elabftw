@@ -52,7 +52,7 @@ const t = {
     "is-sysadmin": "서버 관리자",
     "last-login": "마지막 로그인",
     "lastname": "성",
-    "license-error": "You must accept the Dspace license to complete your submission.",
+    "license-error": "You must accept the license to complete your submission.",
     "file-imported": "File imported successfully",
     "file-too-large": "Error: file is too large!",
     "filter-by-category": "카테고리로 필터",

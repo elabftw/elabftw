@@ -52,7 +52,7 @@ const t = {
     "is-sysadmin": "システム管理者",
     "last-login": "最終ログイン",
     "lastname": "名字",
-    "license-error": "You must accept the Dspace license to complete your submission.",
+    "license-error": "You must accept the license to complete your submission.",
     "file-imported": "ファイルのインポートに成功",
     "file-too-large": "エラー：ファイルが大きすぎます！",
     "filter-by-category": "カテゴリーで絞り込む",

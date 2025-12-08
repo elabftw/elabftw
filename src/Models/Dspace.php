@@ -66,7 +66,7 @@ final class Dspace extends AbstractRest
                 ?? throw new ImproperActionException('Unknown GET action for DSpace endpoint.');
         }
         return match ($action) {
-            DspaceAction::ListCollections => $this->listOneCollection(),
+            DspaceAction::ListCollections => $this->listCollections(),
             DspaceAction::ListTypes => $this->listTypes(),
         };
     }
@@ -84,6 +84,9 @@ final class Dspace extends AbstractRest
     #[Override]
     public function patch(Action $action, array $params): array
     {
+        if (!isset($params['entity']['type'], $params['entity']['id'])) {
+            throw new ImproperActionException('Missing entity type or id for DSpace export.');
+        }
         $workspaceId = $this->postAction(Action::Create, $params);
         $uuid = $this->getItemUuid($workspaceId);
         $this->acceptLicense($workspaceId);
@@ -114,7 +117,7 @@ final class Dspace extends AbstractRest
 
     private function getToken(): array
     {
-        if ($this->host === '' || $this->user === '' || $this->encPassword === '') {
+        if ($this->user === '' || $this->encPassword === '') {
             throw new ImproperActionException('DSpace configuration is incomplete.');
         }
         $password = Crypto::decrypt($this->encPassword, Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY')));
@@ -178,23 +181,6 @@ final class Dspace extends AbstractRest
         $this->httpGetter->patch($url, array('headers' => $headers, 'json' => $patchBody));
     }
 
-    // TODO: remove when done with dev. faster to target specific collection and submit
-    // https://demo.dspace.org/communities/48921ed4-84f0-4110-9d02-022f3bf2307a/search
-    private function listOneCollection(): array
-    {
-        $res  = $this->httpGetter->get(
-            $this->host . 'core/collections/26d67c5e-1515-4d55-b979-b0a1ad66af1b',
-        );
-        $body = $res->getBody()->getContents();
-        $collection = json_decode($body, true);
-        return array(
-            '_embedded' => array(
-                'collections' => array($collection),
-            ),
-        );
-
-    }
-
     private function fetchXsrfTokenAndCookieHeader(): array
     {
         $res = $this->httpGetter->get($this->host . 'security/csrf');
@@ -244,19 +230,15 @@ final class Dspace extends AbstractRest
         return $auth;
     }
 
-    //    private function listCollections(): array
-    //    {
-    //        $res = $this->httpGetter->get(
-    //            $this->host . 'core/collections',
-    //        );
-    //        return json_decode($res['body'], true);
-    //    }
+        private function listCollections(): array
+        {
+            $res = $this->httpGetter->get($this->host . 'core/collections');
+            return json_decode($res['body'], true);
+        }
 
     private function listTypes(): array
     {
-        $res = $this->httpGetter->get(
-            $this->host . 'submission/vocabularies/common_types/entries',
-        );
+        $res = $this->httpGetter->get($this->host . 'submission/vocabularies/common_types/entries');
         $body = $res->getBody()->getContents();
         return json_decode($body, true);
     }

@@ -25,7 +25,6 @@ final class Url2Xml
     public function getXmlDocument(): DOMDocument
     {
         $xml = $this->getter->get($this->url)->getBody()->getContents();
-        ;
         if (empty($xml)) {
             throw new ImproperActionException('Could not get XML content!');
         }

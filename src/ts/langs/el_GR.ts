@@ -52,7 +52,7 @@ const t = {
     "is-sysadmin": "Είναι ο Sysadmin",
     "last-login": "Τελευταία είσοδος",
     "lastname": "Επώνυμο",
-    "license-error": "You must accept the Dspace license to complete your submission.",
+    "license-error": "You must accept the license to complete your submission.",
     "file-imported": "File imported successfully",
     "file-too-large": "Error: file is too large!",
     "filter-by-category": "Φίλτρο ανά κατηγορία",

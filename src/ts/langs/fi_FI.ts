@@ -52,7 +52,7 @@ const t = {
     "is-sysadmin": "On Sysadmin",
     "last-login": "Viimeinen kirjautuminen",
     "lastname": "Sukunimi",
-    "license-error": "You must accept the Dspace license to complete your submission.",
+    "license-error": "You must accept the license to complete your submission.",
     "file-imported": "File imported successfully",
     "file-too-large": "Error: file is too large!",
     "filter-by-category": "Suodata luokan mukaan",

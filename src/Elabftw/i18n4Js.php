@@ -86,7 +86,7 @@ final class i18n4Js
             'is-sysadmin' => _('Is Sysadmin'),
             'last-login' => _('Last login'),
             'lastname' => _('Lastname'),
-            'license-error' => _('You must accept the Dspace license to complete your submission.'),
+            'license-error' => _('You must accept the license to complete your submission.'),
             'file-imported' => _('File imported successfully'),
             'file-too-large' => _('Error: file is too large!'),
             'filter-by-category' => _('Filter by category'),

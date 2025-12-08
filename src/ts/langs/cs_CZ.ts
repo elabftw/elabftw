@@ -52,7 +52,7 @@ const t = {
     "is-sysadmin": "Je systémový správce",
     "last-login": "Poslední přihlášení",
     "lastname": "Příjmení",
-    "license-error": "You must accept the Dspace license to complete your submission.",
+    "license-error": "You must accept the license to complete your submission.",
     "file-imported": "File imported successfully",
     "file-too-large": "Error: file is too large!",
     "filter-by-category": "Filtrovat dle kategorie",

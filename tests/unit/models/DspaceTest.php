@@ -43,9 +43,9 @@ class DspaceTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('api/v2/dspace', $this->dspace->getApiPath());
     }
 
-    public function testReadAllDefaultsToGetCollections(): void
+    public function testReadAllWithGetCollections(): void
     {
-        $collectionsData = array(
+        $result = $this->runReadAllTest(DspaceAction::GetCollections, array(
             '_embedded' => array(
                 'collections' => array(
                     array('uuid' => 'abc-123', 'name' => 'Collection One'),
@@ -53,12 +53,7 @@ class DspaceTest extends \PHPUnit\Framework\TestCase
                 ),
             ),
             'page' => array('totalPages' => 1),
-        );
-        $this->setMockResponses(array(
-            new Response(200, array(), json_encode($collectionsData) ?: '{}'),
         ));
-
-        $result = $this->dspace->readAll();
         $this->assertIsArray($result);
         $this->assertCount(2, $result);
         $this->assertEquals('abc-123', $result[0]['uuid']);
@@ -67,21 +62,14 @@ class DspaceTest extends \PHPUnit\Framework\TestCase
 
     public function testReadAllWithGetTypesAction(): void
     {
-        $typesData = array(
+        $result = $this->runReadAllTest(DspaceAction::GetTypes, array(
             '_embedded' => array(
                 'entries' => array(
                     array('value' => 'article', 'display' => 'Article'),
                     array('value' => 'book', 'display' => 'Book'),
                 ),
             ),
-        );
-        $this->setMockResponses(array(
-            new Response(200, array(), json_encode($typesData) ?: '{}'),
         ));
-
-        $queryParams = new InputBag(array('dspace_action' => DspaceAction::GetTypes->value));
-        $q = $this->dspace->getQueryParams($queryParams);
-        $result = $this->dspace->readAll($q);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('_embedded', $result);
         $this->assertCount(2, $result['_embedded']['entries']);
@@ -111,6 +99,14 @@ class DspaceTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(ImproperActionException::class);
         $this->dspace->destroy();
+    }
+
+    private function runReadAllTest(DspaceAction $action, array $responseBody): array
+    {
+        $this->setMockResponses(array(new Response(200, array(), json_encode($responseBody) ?: '{}')));
+        $queryParams = new InputBag(array('dspace_action' => $action->value));
+        $q = $this->dspace->getQueryParams($queryParams);
+        return $this->dspace->readAll($q);
     }
 
     // create a mocked Dspace instance with custom HTTP responses

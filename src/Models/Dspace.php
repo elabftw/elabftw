@@ -57,7 +57,7 @@ final class Dspace extends AbstractRest
         private readonly string $encPassword,
     ) {
         parent::__construct();
-        $this->host = rtrim($host, '/') . '/';
+        $this->host = rtrim($host, '/') . '/server/api/';
     }
 
     #[Override]
@@ -267,9 +267,7 @@ final class Dspace extends AbstractRest
         $headers = $this->getAuthHeaders();
         $headers['Content-Type'] = 'application/json-patch+json';
         $url = sprintf('%ssubmission/workspaceitems/%d', $this->host, $workspaceId);
-        $patchBody = array(
-            array('op' => 'add', 'path' => '/sections/license/granted', 'value' => 'true'),
-        );
+        $patchBody = array(array('op' => 'add', 'path' => '/sections/license/granted', 'value' => 'true'));
         $this->httpGetter->patch($url, array('headers' => $headers, 'json' => $patchBody));
     }
 

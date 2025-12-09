@@ -39,6 +39,14 @@ final class Dspace extends AbstractRest
 {
     private ?array $headers = null;
 
+    private const METADATA_SECTIONS = array(
+        'dc.contributor.author' => 'publicationStep',
+        'dc.title' => 'publicationStep',
+        'dc.date.issued' => 'publicationStep',
+        'dc.type' => 'publicationStep',
+        'dc.description.abstract' => 'traditionalpagetwo',
+    );
+
     // rename host to host
     public function __construct(
         private readonly Users $requester,
@@ -266,39 +274,13 @@ final class Dspace extends AbstractRest
     // 4. update item's metadata
     private function updateMetadata(int $workspaceId, array $metadata): void
     {
-        // first we map each dc.key to its DSpace section (they don't have the same 'destination'!)
-        $keyToSection = array(
-            'dc.contributor.author' => 'publicationStep',
-            'dc.title' => 'publicationStep',
-            'dc.date.issued' => 'publicationStep',
-            'dc.type' => 'publicationStep',
-            'dc.description.abstract' => 'traditionalpagetwo',
-        );
-        $headers = $this->getAuthHeaders();
-        $headers['Content-Type'] = 'application/json-patch+json';
-        $url = sprintf('%ssubmission/workspaceitems/%d?embed=item', $this->host, $workspaceId);
-        $patchBody = array();
-        foreach ($metadata as $item) {
-            $key = $item['key']   ?? null;
-            $value = $item['value'] ?? null;
-            if ($key === null || $value === null || $value === '' || !isset($keyToSection[$key])) {
-                continue;
-            }
-            $section = $keyToSection[$key];
-            $patchBody[] = array(
-                'op'   => 'add',
-                'path' => sprintf('/sections/%s/%s', $section, $key),
-                'value' => array(
-                    array(
-                        'value' => $value,
-                        'language' => null,
-                    ),
-                ),
-            );
-        }
+        $patchBody = $this->buildMetadataPatch($metadata);
         if (empty($patchBody)) {
             throw new ImproperActionException('No valid metadata fields to update.');
         }
+        $headers = $this->getAuthHeaders();
+        $headers['Content-Type'] = 'application/json-patch+json';
+        $url = $this->workspaceUrl($workspaceId, '?embed=item');
         $bodyJson = json_encode($patchBody, JSON_THROW_ON_ERROR);
         $this->httpGetter->patch($url, array('headers' => $headers, 'body' => $bodyJson));
     }
@@ -327,5 +309,33 @@ final class Dspace extends AbstractRest
                 ),
             ),
         ));
+    }
+
+    private function workspaceUrl(int $workspaceId, string $suffix = ''): string
+    {
+        return sprintf('%ssubmission/workspaceitems/%d%s', $this->host, $workspaceId, $suffix);
+    }
+
+    private function buildMetadataPatch(array $metadata): array
+    {
+        $patch = [];
+        foreach ($metadata as $item) {
+            $key   = $item['key']   ?? null;
+            $value = $item['value'] ?? null;
+            if ($key === null || $value === null || $value === '') {
+                continue;
+            }
+            if (!isset(self::METADATA_SECTIONS[$key])) {
+                continue;
+            }
+            $patch[] = [
+                'op'    => 'add',
+                'path'  => sprintf('/sections/%s/%s', self::METADATA_SECTIONS[$key], $key),
+                'value' => [
+                    ['value' => $value, 'language' => null],
+                ],
+            ];
+        }
+        return $patch;
     }
 }

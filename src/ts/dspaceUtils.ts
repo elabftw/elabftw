@@ -41,8 +41,8 @@ export async function saveDspaceIdAsExtraField(itemUuid: string): Promise<void> 
     readonly: true,
   };
 
-  const mode = new URLSearchParams(window.location.search).get('mode');
-  await MetadataC.save(metadata).then(() => MetadataC.display(mode === 'edit' ? 'edit' : 'view'));
+  // const mode = new URLSearchParams(window.location.search).get('mode');
+  await MetadataC.save(metadata);
 }
 
 

@@ -291,26 +291,129 @@ final class Dspace extends AbstractRest
 
     private function updateMetadata(int $workspaceId, array $metadata): void
     {
-        $headers = $this->getAuthHeaders();
-        $headers['Content-Type'] = 'application/json-patch+json';
-        $url = sprintf('%ssubmission/workspaceitems/%d', $this->host, $workspaceId);
-        $patchBody = array();
+        if (!$workspaceId) {
+            throw new ImproperActionException('Missing workspaceId');
+        }
+        $metaByKey = array();
         foreach ($metadata as $item) {
             if (!isset($item['key'], $item['value'])) {
-                continue; // skip invalid entries
+                continue;
             }
-            $section = str_contains($item['key'], 'description.abstract') ? 'traditionalpagetwo' : 'traditionalpageone';
+            $metaByKey[$item['key']] = $item['value'];
+        }
+        $headers = $this->getAuthHeaders();
+        $headers['Content-Type'] = 'application/json-patch+json';
+
+        $url = sprintf('%ssubmission/workspaceitems/%d?embed=item', $this->host, $workspaceId);
+
+        $patchBody = array();
+
+        // all four "describe" fields go in publicationStep
+        if (isset($metaByKey['dc.contributor.author'])) {
             $patchBody[] = array(
-                'op' => 'add',
-                'path' => "/sections/{$section}/" . $item['key'],
+                'op'   => 'add',
+                'path' => '/sections/publicationStep/dc.contributor.author',
                 'value' => array(
-                    array('value' => $item['value'], 'language' => null),
+                    array(
+                        'value'    => $metaByKey['dc.contributor.author'],
+                        'language' => null,
+                    ),
                 ),
             );
         }
+
+        if (isset($metaByKey['dc.title'])) {
+            $patchBody[] = array(
+                'op'   => 'add',
+                'path' => '/sections/publicationStep/dc.title',
+                'value' => array(
+                    array(
+                        'value'    => $metaByKey['dc.title'],
+                        'language' => null,
+                    ),
+                ),
+            );
+        }
+
+        if (isset($metaByKey['dc.date.issued'])) {
+            $patchBody[] = array(
+                'op'   => 'add',
+                'path' => '/sections/publicationStep/dc.date.issued',
+                'value' => array(
+                    array(
+                        'value'    => $metaByKey['dc.date.issued'],
+                        'language' => null,
+                    ),
+                ),
+            );
+        }
+
+        if (isset($metaByKey['dc.type'])) {
+            $patchBody[] = array(
+                'op'   => 'add',
+                'path' => '/sections/publicationStep/dc.type',
+                'value' => array(
+                    array(
+                        'value'    => $metaByKey['dc.type'],
+                        'language' => null,
+                    ),
+                ),
+            );
+        }
+
+        // Abstract goes in traditionalpagetwo
+        if (isset($metaByKey['dc.description.abstract'])) {
+            $patchBody[] = array(
+                'op'   => 'add',
+                'path' => '/sections/traditionalpagetwo/dc.description.abstract',
+                'value' => array(
+                    array(
+                        'value'    => $metaByKey['dc.description.abstract'],
+                        'language' => null,
+                    ),
+                ),
+            );
+        }
+
         if (empty($patchBody)) {
             throw new ImproperActionException('No valid metadata fields to update.');
         }
-        $this->httpGetter->patch($url, array('headers' => $headers, 'json' => $patchBody));
+
+        $bodyJson = json_encode($patchBody, JSON_THROW_ON_ERROR);
+
+        error_log('DSpace PATCH URL: ' . $url);
+        error_log('DSpace PATCH headers: ' . json_encode($headers, JSON_THROW_ON_ERROR));
+        error_log('DSpace PATCH body: ' . $bodyJson);
+
+        // IMPORTANT: we use "body" (raw JSON) with our own Content-Type
+        $res = $this->httpGetter->patch($url, array(
+            'headers' => $headers,
+            'body'    => $bodyJson,
+        ));
+
+        error_log('DSpace PATCH status: ' . $res->getStatusCode());
+//
+//
+//        $headers = $this->getAuthHeaders();
+//        $headers['Content-Type'] = 'application/json-patch+json';
+//        $url = sprintf('%ssubmission/workspaceitems/%d?embed=item', $this->host, $workspaceId);
+//        $patchBody = array();
+//        foreach ($metadata as $item) {
+//            if (!isset($item['key'], $item['value'])) {
+//                continue; // skip invalid entries
+//            }
+//            $section = str_contains($item['key'], 'description.abstract') ? 'traditionalpagetwo' : 'traditionalpageone';
+//            $patchBody[] = array(
+//                'op' => 'add',
+//                'path' => "/sections/publicationStep/" . $item['key'],
+//                'value' => array(
+//                    array('value' => $item['value'], 'language' => null),
+//                ),
+//            );
+//        }
+//        if (empty($patchBody)) {
+//            throw new ImproperActionException('No valid metadata fields to update.');
+//        }
+//        $this->httpGetter->patch($url, array('headers' => $headers, 'json' => $patchBody));
     }
 }

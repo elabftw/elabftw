@@ -85,9 +85,6 @@ final class Dspace extends AbstractRest
     public function patch(Action $action, array $params): array
     {
         $workspaceId = $this->postAction(Action::Create, $params);
-        if ($workspaceId <= 0) {
-            throw new ImproperActionException('Invalid workspaceId returned from DSpace.');
-        }
         $uuid = $this->getItemUuid($workspaceId);
         $this->acceptLicense($workspaceId);
         $this->updateMetadata($workspaceId, $params['metadata'] ?? array());
@@ -234,7 +231,10 @@ final class Dspace extends AbstractRest
         $res = $this->httpGetter->post($url, array('headers' => $headers, 'json' => $metadata));
         $body = $res->getBody()->getContents();
         $data = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
-        return (int) $data['id'];
+        if (!isset($data['id']) || !is_int($data['id']) || $data['id'] <= 0) {
+            throw new ImproperActionException('DSpace did not return a valid workspace ID.');
+        }
+        return $data['id'];
     }
 
     // 2. create the workspace in DSpace, returns the $workspaceId

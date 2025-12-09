@@ -11,6 +11,7 @@ import { Action } from './interfaces';
 import JsonEditorHelper from './JsonEditorHelper.class';
 import { Metadata } from './Metadata.class';
 import { ExtraFieldInputType, ValidMetadata } from './metadataInterfaces';
+import { reloadElements } from './misc';
 
 // GET list of collections
 export async function listCollections(): Promise<DspaceCollection[]> {
@@ -41,8 +42,10 @@ export async function saveDspaceIdAsExtraField(itemUuid: string): Promise<void> 
     readonly: true,
   };
 
-  // const mode = new URLSearchParams(window.location.search).get('mode');
-  await MetadataC.save(metadata);
+  const mode = new URLSearchParams(window.location.search).get('mode');
+  await MetadataC.save(metadata).then(() => mode === 'edit'
+    ? MetadataC.display('edit')
+    : reloadElements(['extraFieldsDiv']));
 }
 
 

@@ -31,6 +31,8 @@ class DspaceTest extends \PHPUnit\Framework\TestCase
 
     private Users $requester;
 
+    private Client $client;
+
     private HttpGetter $httpGetter;
 
     private Dspace $dspace;
@@ -38,12 +40,11 @@ class DspaceTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->requester = new Users(1, 1);
-        $this->httpGetter = $this->createMock(HttpGetter::class);
-        $this->dspace = new Dspace($this->requester, $this->httpGetter, 'https://dspace.example.org/', 'user', 'encPasswordToto');
     }
 
     public function testGetApiPath(): void
     {
+        $this->setMockResponses(array());
         $this->assertSame('api/v2/dspace', $this->dspace->getApiPath());
     }
 
@@ -58,16 +59,11 @@ class DspaceTest extends \PHPUnit\Framework\TestCase
             ),
             'page' => array('totalPages' => 1),
         );
-        $mock = new MockHandler(array(
+        $this->setMockResponses(array(
             new Response(200, array(), json_encode($collectionsData) ?: '{}'),
         ));
-        $handlerStack = HandlerStack::create($mock);
-        $client = new Client(array('handler' => $handlerStack));
 
-        $httpGetter = new HttpGetter($client);
-        $dspace = new Dspace($this->requester, $httpGetter, 'https://dspace.example.org/', 'user', 'encPasswordDummy');
-
-        $result = $dspace->readAll();
+        $result = $this->dspace->readAll();
         $this->assertIsArray($result);
         $this->assertCount(2, $result);
         $this->assertEquals('abc-123', $result[0]['uuid']);
@@ -84,18 +80,13 @@ class DspaceTest extends \PHPUnit\Framework\TestCase
                 ),
             ),
         );
-        $mock = new MockHandler(array(
+        $this->setMockResponses(array(
             new Response(200, array(), json_encode($typesData) ?: '{}'),
         ));
-        $handlerStack = HandlerStack::create($mock);
-        $client = new Client(array('handler' => $handlerStack));
-
-        $httpGetter = new HttpGetter($client);
-        $dspace = new Dspace($this->requester, $httpGetter, 'https://dspace.example.org/', 'user', 'encPasswordDummy');
 
         $queryParams = new InputBag(array('dspace_action' => DspaceAction::ListTypes->value));
-        $q = $dspace->getQueryParams($queryParams);
-        $result = $dspace->readAll($q);
+        $q = $this->dspace->getQueryParams($queryParams);
+        $result = $this->dspace->readAll($q);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('_embedded', $result);
         $this->assertCount(2, $result['_embedded']['entries']);
@@ -103,10 +94,19 @@ class DspaceTest extends \PHPUnit\Framework\TestCase
 
     public function testPostActionThrowsWhenMissingRequiredFields(): void
     {
-        $httpGetter = new HttpGetter(new Client());
-        $dspace = new Dspace($this->requester, $httpGetter, 'https://dspace.example.org/', 'user', 'encPasswordDummy');
-
+        $this->setMockResponses([]);
         $this->expectException(ImproperActionException::class);
-        $dspace->postAction(Action::Create, array());
+        $this->dspace->postAction(Action::Create, []);
+    }
+
+
+    // create a mocked Dspace instance with custom HTTP responses
+    private function setMockResponses(array $responses): void
+    {
+        $mock = new MockHandler($responses);
+        $handlerStack = HandlerStack::create($mock);
+        $this->client = new Client(array('handler' => $handlerStack));
+        $this->httpGetter = new HttpGetter($this->client);
+        $this->dspace = new Dspace($this->requester, $this->httpGetter, 'https://dspace.example.org/', 'user', 'encPasswordDummy');
     }
 }

@@ -1,6 +1,5 @@
 <?php
 
-
 declare(strict_types=1);
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
@@ -10,7 +9,6 @@ declare(strict_types=1);
  * @license AGPL-3.0
  * @package elabftw
  */
-
 namespace Elabftw\Models;
 
 use GuzzleHttp\Handler\MockHandler;
@@ -40,11 +38,11 @@ class DspaceTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->requester = new Users(1, 1);
+        $this->initDspace(new Client());
     }
 
     public function testGetApiPath(): void
     {
-        $this->setMockResponses(array());
         $this->assertSame('api/v2/dspace', $this->dspace->getApiPath());
     }
 
@@ -105,7 +103,12 @@ class DspaceTest extends \PHPUnit\Framework\TestCase
     {
         $mock = new MockHandler($responses);
         $handlerStack = HandlerStack::create($mock);
-        $this->client = new Client(array('handler' => $handlerStack));
+        $this->initDspace(new Client(['handler' => $handlerStack]));
+    }
+
+    private function initDspace(Client $client): void
+    {
+        $this->client = $client;
         $this->httpGetter = new HttpGetter($this->client);
         $this->dspace = new Dspace($this->requester, $this->httpGetter, 'https://dspace.example.org/', 'user', 'encPasswordDummy');
     }

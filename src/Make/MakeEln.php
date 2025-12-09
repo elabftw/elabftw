@@ -30,6 +30,7 @@ use League\Flysystem\Filesystem;
 use League\Flysystem\UnableToReadFile;
 use ZipStream\ZipStream;
 use Override;
+use RuntimeException;
 
 use function array_push;
 use function ksort;
@@ -71,6 +72,17 @@ class MakeEln extends AbstractMakeEln
         // add a HTML preview file
         $this->Zip->addFile($this->root . '/ro-crate-preview.html', $this->crateToHtml($jsonLd, $rootNode));
         $this->Zip->finish();
+    }
+
+    public function writeToFile(string $absolutePath): void
+    {
+        $fileStream = fopen($absolutePath, 'wb');
+        if ($fileStream === false) {
+            throw new RuntimeException('Could not open output stream!');
+        }
+        $this->Zip = new ZipStream(outputStream: $fileStream, sendHttpHeaders: false);
+        $this->getStreamZip();
+        fclose($fileStream);
     }
 
     protected function processEntityArr(): void

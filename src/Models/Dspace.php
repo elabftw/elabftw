@@ -25,7 +25,6 @@ use Elabftw\Make\MakeEln;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\HttpGetter;
 use Override;
-use RuntimeException;
 use ZipStream\ZipStream;
 
 use function str_starts_with;
@@ -293,15 +292,9 @@ final class Dspace extends AbstractRest
         $fileName = sprintf('export-elabftw-%s.eln', date('Y-m-d_H-i-s'));
         $storage = Storage::EXPORTS->getStorage();
         $absolutePath = $storage->getAbsoluteUri($fileName);
-        $fileStream = fopen($absolutePath, 'wb');
-        if ($fileStream === false) {
-            throw new RuntimeException('Could not open output stream!');
-        }
-        $ZipStream = new ZipStream(outputStream: $fileStream, sendHttpHeaders: false);
         $Entity = EntityType::from($entity['type'])->toInstance($this->requester, $entity['id']);
-        $Maker = new MakeEln($ZipStream, $this->requester, $storage, array($Entity));
-        $Maker->getStreamZip();
-        fclose($fileStream);
+        $maker = new MakeEln(new ZipStream(sendHttpHeaders: false), $this->requester, $storage, array($Entity));
+        $maker->writeToFile($absolutePath);
         $headers = $this->getAuthHeaders();
         $url = sprintf('%ssubmission/workspaceitems/%d', $this->host, $workspaceId);
         $this->httpGetter->post($url, array(

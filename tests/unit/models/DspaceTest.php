@@ -12,6 +12,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Defuse\Crypto\Crypto;
+use Defuse\Crypto\Key;
+use Elabftw\Elabftw\Env;
+use Elabftw\Enums\EntityType;
 use GuzzleHttp\Handler\MockHandler;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\DspaceAction;
@@ -101,6 +105,37 @@ class DspaceTest extends \PHPUnit\Framework\TestCase
         $this->dspace->destroy();
     }
 
+    public function testPatchCreatesAndSubmitsItem(): void
+    {
+        $secretKey = Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY'));
+        $encPassword = Crypto::encrypt('pass', $secretKey);
+        $this->setMockResponses(array(
+            new Response(200, array('DSPACE-XSRF-TOKEN' => array('abc'))), // csrf token
+            new Response(200, array('Authorization' => 'Bearer abc')), // login
+            new Response(200, array(), json_encode(array('id' => 123)) ?: '{}'), // create workspace
+            new Response(200, array(), json_encode(array('uuid' => '1234-uuid')) ?: '{}'), // get UUID
+            new Response(200), // accept license
+            new Response(200), // update metadata
+            new Response(200), // upload file
+            new Response(200), // submit to workflow
+        ), $encPassword);
+        $experiment = $this->getFreshExperiment();
+        $params = array(
+            'collection' => '1234',
+            'metadata' => array(
+                array('key' => 'dc.title', 'value' => 'Test Title'),
+                array('key' => 'dc.date.issued', 'value' => '2025-12-09'),
+            ),
+            'entity' => array(
+                'type' => EntityType::Experiments->value,
+                'id' => $experiment->id,
+            ),
+        );
+        $res = $this->dspace->patch(Action::Create, $params);
+        $this->assertSame(123, $res['id']);
+        $this->assertSame('1234-uuid', $res['uuid']);
+    }
+
     private function runReadAllTest(DspaceAction $action, array $responseBody): array
     {
         $this->setMockResponses(array(new Response(200, array(), json_encode($responseBody) ?: '{}')));
@@ -110,16 +145,18 @@ class DspaceTest extends \PHPUnit\Framework\TestCase
     }
 
     // create a mocked Dspace instance with custom HTTP responses
-    private function setMockResponses(array $responses): void
+    // optional password to test patch method
+    private function setMockResponses(array $responses, ?string $password = null): void
     {
         $mock = new MockHandler($responses);
         $handlerStack = HandlerStack::create($mock);
-        $this->initDspace(new Client(array('handler' => $handlerStack)));
+        $encPassword = $password ?? 'encPasswordDummy';
+        $this->initDspace(new Client(array('handler' => $handlerStack)), $encPassword);
     }
 
-    private function initDspace(Client $client): void
+    private function initDspace(Client $client, string $password = 'encPasswordDummy'): void
     {
         $httpGetter = new HttpGetter($client);
-        $this->dspace = new Dspace($this->requester, $httpGetter, 'https://dspace.example.org/', 'user', 'encPasswordDummy');
+        $this->dspace = new Dspace($this->requester, $httpGetter, 'https://dspace.example.org/', 'user', $password);
     }
 }

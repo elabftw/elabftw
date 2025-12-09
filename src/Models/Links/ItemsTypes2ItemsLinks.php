@@ -30,4 +30,18 @@ final class ItemsTypes2ItemsLinks extends AbstractItemsLinks
     {
         return 'items_types2experiments';
     }
+
+    # ensure importing links uses the correct table. See #5875
+    #[Override]
+    protected function getImportTargetTable(): string
+    {
+        return 'items_types2items';
+    }
+
+    # ensure related links use the correct table
+    #[Override]
+    protected function getRelatedTable(): string
+    {
+        return 'items_types2items';
+    }
 }

@@ -10,7 +10,6 @@
  */
 import { ApiC } from './api';
 import { DspaceCollection, DspaceVocabularyEntry, getCollections, getTypes, saveDspaceIdAsExtraField } from './dspaceUtils';
-import { on } from './handlers';
 import i18next from './i18n';
 import { FileType, Method } from './interfaces';
 import { rememberLastSelected, selectLastSelected } from './localStorage';

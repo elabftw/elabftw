@@ -48,6 +48,8 @@ final class Dspace extends AbstractRest
 
     private ?array $headers = null;
 
+    private string $host;
+
     // rename host to host
     public function __construct(
         private readonly Users $requester,

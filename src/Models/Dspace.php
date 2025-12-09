@@ -14,17 +14,18 @@ namespace Elabftw\Models;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
-use Elabftw\Controllers\MakeController;
 use Elabftw\Elabftw\Env;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\DspaceAction;
+use Elabftw\Enums\EntityType;
+use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
+use Elabftw\Make\MakeEln;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\HttpGetter;
 use Override;
-use Symfony\Component\HttpFoundation\Request;
-use DateTimeImmutable;
+use ZipStream\ZipStream;
 
 use function str_starts_with;
 use function rtrim;
@@ -280,7 +281,7 @@ final class Dspace extends AbstractRest
         }
         $headers = $this->getAuthHeaders();
         $headers['Content-Type'] = 'application/json-patch+json';
-        $url = $this->workspaceUrl($workspaceId, '?embed=item');
+        $url = sprintf('%ssubmission/workspaceitems/%d', $this->host, $workspaceId);
         $bodyJson = json_encode($patchBody, JSON_THROW_ON_ERROR);
         $this->httpGetter->patch($url, array('headers' => $headers, 'body' => $bodyJson));
     }
@@ -288,14 +289,15 @@ final class Dspace extends AbstractRest
     // 5. Send eLabFTW entry's .eln to DSpace as an upload (bitstream)
     private function uploadEntryAsFile(int $workspaceId, array $entity): void
     {
-        $entity['format'] = 'eln';
-        $Request = new Request($entity, array(), array('entityType' => $entity['type'], 'entityId' => $entity['id']));
-        $MakeController = new MakeController($this->requester, $Request);
-        $Response = $MakeController->getResponse();
-        $elnFileName = new DateTimeImmutable()->format('Y-m-d-His') . '-export.eln';
-        ob_start();
-        $Response->sendContent();
-        $elnContent = ob_get_clean();
+        $fileName = sprintf('export-elabftw-%s.eln', date('Y-m-d_H-i-s'));
+        $storage = Storage::EXPORTS->getStorage();
+        $absolutePath = $storage->getAbsoluteUri($fileName);
+        $fileStream = fopen($absolutePath, 'wb');
+        $ZipStream = new ZipStream(outputStream: $fileStream, sendHttpHeaders: false);
+        $Entity = EntityType::from($entity['type'])->toInstance($this->requester, $entity['id']);
+        $Maker = new MakeEln($ZipStream, $this->requester, $storage, array($Entity));
+        $Maker->getStreamZip();
+        fclose($fileStream);
         $headers = $this->getAuthHeaders();
         $url = sprintf('%ssubmission/workspaceitems/%d', $this->host, $workspaceId);
         $this->httpGetter->post($url, array(
@@ -303,17 +305,12 @@ final class Dspace extends AbstractRest
             'multipart' => array(
                 array(
                     'name' => 'file',
-                    'contents' => $elnContent,
-                    'filename' => $elnFileName,
-                    'headers'  => array('Content-Type' => 'application/zip'),
+                    'contents' => fopen($absolutePath, 'rb'),
+                    'filename' => $fileName,
+                    'headers' => array('Content-Type' => 'application/zip'),
                 ),
             ),
         ));
-    }
-
-    private function workspaceUrl(int $workspaceId, string $suffix = ''): string
-    {
-        return sprintf('%ssubmission/workspaceitems/%d%s', $this->host, $workspaceId, $suffix);
     }
 
     private function buildMetadataPatch(array $metadata): array

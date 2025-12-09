@@ -87,6 +87,14 @@ class DspaceTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(2, $result['_embedded']['entries']);
     }
 
+    public function testReadAllWithUnhandledAction(): void
+    {
+        $queryParams = new InputBag(array('dspace_action' => 'somerandomaction'));
+        $q = $this->dspace->getQueryParams($queryParams);
+        $this->expectException(ImproperActionException::class);
+        $this->dspace->readAll($q);
+    }
+
     public function testPostActionThrowsWhenMissingRequiredFields(): void
     {
         $this->setMockResponses(array());

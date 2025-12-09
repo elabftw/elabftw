@@ -240,7 +240,8 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         // force template ID to collide with ItemA ID by manually setting ID
         $ItemsTypes->id = $ItemA->id;
         // before fix #5875, this returned the link from items2items. Now, must return ZERO links
-        $this->assertEmpty($ItemsTypes->ItemsLinks->readAll(),
+        $this->assertEmpty(
+            $ItemsTypes->ItemsLinks->readAll(),
             'ItemsTypes must NOT read links from items2items even when IDs collide'
         );
     }

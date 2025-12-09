@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @license AGPL-3.0
  * @package elabftw
  */
+
 namespace Elabftw\Models;
 
 use GuzzleHttp\Handler\MockHandler;
@@ -28,10 +29,6 @@ class DspaceTest extends \PHPUnit\Framework\TestCase
     use TestsUtilsTrait;
 
     private Users $requester;
-
-    private Client $client;
-
-    private HttpGetter $httpGetter;
 
     private Dspace $dspace;
 
@@ -92,24 +89,22 @@ class DspaceTest extends \PHPUnit\Framework\TestCase
 
     public function testPostActionThrowsWhenMissingRequiredFields(): void
     {
-        $this->setMockResponses([]);
+        $this->setMockResponses(array());
         $this->expectException(ImproperActionException::class);
-        $this->dspace->postAction(Action::Create, []);
+        $this->dspace->postAction(Action::Create, array());
     }
-
 
     // create a mocked Dspace instance with custom HTTP responses
     private function setMockResponses(array $responses): void
     {
         $mock = new MockHandler($responses);
         $handlerStack = HandlerStack::create($mock);
-        $this->initDspace(new Client(['handler' => $handlerStack]));
+        $this->initDspace(new Client(array('handler' => $handlerStack)));
     }
 
     private function initDspace(Client $client): void
     {
-        $this->client = $client;
-        $this->httpGetter = new HttpGetter($this->client);
-        $this->dspace = new Dspace($this->requester, $this->httpGetter, 'https://dspace.example.org/', 'user', 'encPasswordDummy');
+        $httpGetter = new HttpGetter($client);
+        $this->dspace = new Dspace($this->requester, $httpGetter, 'https://dspace.example.org/', 'user', 'encPasswordDummy');
     }
 }

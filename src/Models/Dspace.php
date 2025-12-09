@@ -24,8 +24,8 @@ use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Make\MakeEln;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\HttpGetter;
-use http\Exception\RuntimeException;
 use Override;
+use RuntimeException;
 use ZipStream\ZipStream;
 
 use function str_starts_with;

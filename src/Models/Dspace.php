@@ -24,6 +24,7 @@ use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Make\MakeEln;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\HttpGetter;
+use http\Exception\RuntimeException;
 use Override;
 use ZipStream\ZipStream;
 
@@ -293,6 +294,9 @@ final class Dspace extends AbstractRest
         $storage = Storage::EXPORTS->getStorage();
         $absolutePath = $storage->getAbsoluteUri($fileName);
         $fileStream = fopen($absolutePath, 'wb');
+        if ($fileStream === false) {
+            throw new RuntimeException('Could not open output stream!');
+        }
         $ZipStream = new ZipStream(outputStream: $fileStream, sendHttpHeaders: false);
         $Entity = EntityType::from($entity['type'])->toInstance($this->requester, $entity['id']);
         $Maker = new MakeEln($ZipStream, $this->requester, $storage, array($Entity));

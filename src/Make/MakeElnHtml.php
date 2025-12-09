@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 final class MakeElnHtml extends MakeEln
 {
-    public function __construct(protected ZipStream $Zip, protected Users $requester, private StorageInterface $storage, protected array $entityArr)
+    public function __construct(protected ZipStream $Zip, protected Users $requester, StorageInterface $storage, protected array $entityArr)
     {
         parent::__construct($Zip, $requester, $storage, $entityArr);
     }

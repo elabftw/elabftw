@@ -43,7 +43,7 @@ class MakeEln extends AbstractMakeEln
 
     private Filesystem $fs;
 
-    public function __construct(protected ZipStream $Zip, protected Users $requester, private StorageInterface $storage, protected array $entityArr)
+    public function __construct(protected ZipStream $Zip, protected Users $requester, StorageInterface $storage, protected array $entityArr)
     {
         parent::__construct($Zip);
         $this->fs = $storage->getFs();

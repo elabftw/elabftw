@@ -5436,3 +5436,61 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/extra_fields_keys'
+  # DSPACE
+  /dspace:
+    summary: Interact with the connected DSpace repository.
+    parameters:
+      - name: dspace_action
+        in: query
+        description: |
+          Action to perform:
+            - `GetCollections`: list available DSpace collections.
+            - `GetTypes`: list DSpace item types (submission vocabularies).
+          If omitted, the endpoint returns an empty array.
+        required: false
+        schema:
+          type: string
+          enum: ['getcollections', 'gettypes']
+
+    get:
+      tags: ['Dspace']
+      summary: Read DSpace information.
+      operationId: dspace-read
+      responses:
+        '200':
+          description: |
+            Result depends on the `dspace_action` parameter:
+              - `GetCollections`: list of collections.
+              - `GetTypes`: list of vocabulary entries.
+              - No action: empty array.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: array
+                    description: Empty array when no action is given.
+                    items: {}
+                  - type: array
+                    description: Collections array returned by DSpace.
+                    items:
+                      type: object
+                      properties:
+                        uuid:
+                          type: string
+                        name:
+                          type: string
+                  - type: object
+                    description: Types returned by DSpace vocabulary endpoint.
+                    properties:
+                      _embedded:
+                        type: object
+                        properties:
+                          entries:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                value:
+                                  type: string
+                                display:
+                                  type: string

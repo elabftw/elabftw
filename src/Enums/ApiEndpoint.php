@@ -20,6 +20,7 @@ enum ApiEndpoint: string
     case Batch = 'batch';
     case Compounds = 'compounds';
     case Config = 'config';
+    case Dspace = 'dspace';
     case Experiments = 'experiments';
     case ExperimentsTemplates = 'experiments_templates';
     case Export = 'exports';

@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
+use Elabftw\Enums\Storage;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 use ZipStream\ZipStream;
@@ -30,7 +31,7 @@ class MakeElnTest extends \PHPUnit\Framework\TestCase
         );
         $Users = new Users(1, 1);
         $Zip = $this->createMock(ZipStream::class);
-        $this->Make = new MakeEln($Zip, $Users, $targets);
+        $this->Make = new MakeEln($Zip, $Users, Storage::EXPORTS->getStorage(), $targets);
     }
 
     public function testGetFileName(): void

@@ -221,7 +221,10 @@ final class Config extends AbstractRest
             ('allow_users_change_identity', '0'),
             ('compounds_require_edit_rights', '0'),
             ('inventory_require_edit_rights', '0'),
-            ('users_validity_is_externally_managed', '0')";
+            ('users_validity_is_externally_managed', '0'),
+            ('dspace_host', ''),
+            ('dspace_user', ''),
+            ('dspace_password', '')";
 
         $req = $this->Db->prepare($sql);
         $req->bindValue(':schema', Update::REQUIRED_SCHEMA);
@@ -285,7 +288,7 @@ final class Config extends AbstractRest
     #[Override]
     public function patch(Action $action, array $params): array
     {
-        $passwords = array('smtp_password', 'ldap_password', 'ts_password', 'remote_dir_config');
+        $passwords = array('smtp_password', 'ldap_password', 'ts_password', 'remote_dir_config', 'dspace_password');
 
         foreach ($passwords as $password) {
             if (isset($params[$password]) && !empty($params[$password])) {

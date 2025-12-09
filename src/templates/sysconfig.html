@@ -208,6 +208,39 @@
     <hr>
   </div>
 
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'DSpace repository configuration'|trans }}</h3>
+  <div class='pl-3' id='dspaceSettings'>
+    <div class='d-flex justify-content-between'>
+      <label for='dspace_host' class='col-form-label'>DSpace {{ 'Host'|trans }}</label>
+      <input class='form-control col-md-3' type='text' data-trigger='blur' data-model='config' data-target='dspace_host' autocomplete='off' placeholder='https://example.dspace.org/' value='{{ App.Config.configArr.dspace_host }}' id='dspace_host' />
+    </div>
+    <p class='smallgray'>{{ 'Base URL of your DSpace instance, e.g., https://elab.dspace.org'|trans }}</p>
+    <hr>
+
+    <div class='d-flex justify-content-between'>
+      <label for='dspace_user' class='col-form-label'>DSpace {{ 'Username'|trans }}</label>
+      <input class='form-control col-md-3' type='text' data-trigger='blur' data-model='config' data-target='dspace_user' autocomplete='off' placeholder='dspacedemo+admin@example.com' value='{{ App.Config.configArr.dspace_user }}' id='dspace_user' />
+    </div>
+    <hr>
+
+    <div class='d-flex justify-content-between'>
+      <!-- [html-validate-disable no-missing-references: if there is a dspace_password, the input is not shown] -->
+      <label for='dspace_password' class='col-form-label'>DSpace {{ 'Password'|trans }}</label>
+      {% if App.Config.configArr.dspace_password|length == 0 %}
+        <div class='input-group col-md-3 p-0'>
+          <input class='form-control' type='password' data-trigger='blur' data-model='config' data-target='dspace_password' id='dspace_password' autocomplete='off' />
+          <div class='input-group-append'>
+            <button type='button' class='btn btn-light input-border' data-action='toggle-password' data-target='dspace_password' title='{{ 'Show password'|trans }}' aria-label='{{ 'Show password'|trans }}'><i class='fas fa-eye' aria-hidden='true'></i></button>
+          </div>
+        </div>
+      {% else %}
+        <p>
+          {{ 'A password is already set.'|trans }} <button type='button' class='btn btn-danger btn-sm' data-action='clear-password' data-target='dspace' data-reload='dspaceSettings'>{{ 'Clear'|trans }}</button>
+        </p>
+      {% endif %}
+    </div>
+    <hr>
+  </div>
 
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Information'|trans }}</h3>
   <div class='pl-3'>

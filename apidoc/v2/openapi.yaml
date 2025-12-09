@@ -366,6 +366,12 @@ components:
           type: string
         cookie_validity_time:
           type: integer
+        dspace_host:
+          type: string
+        dspace_user:
+          type: string
+        dspace_password:
+          type: string
         email_domain:
           type: string
         extauth_email:
@@ -5430,3 +5436,175 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/extra_fields_keys'
+  # DSPACE
+  /dspace:
+    summary: Interact with the connected DSpace repository.
+
+    get:
+      tags: ['Dspace']
+      summary: Read DSpace information.
+      operationId: dspace-read
+      parameters:
+        - name: dspace_action
+          in: query
+          description: |
+            Action to perform:
+              - `GetCollections`: list available DSpace collections.
+              - `GetTypes`: list DSpace item types (submission vocabularies).
+            If omitted, the endpoint returns an empty array.
+          required: false
+          schema:
+            type: string
+            enum: [ 'getcollections', 'gettypes' ]
+      responses:
+        '200':
+          description: |
+            Result depends on the `dspace_action` parameter:
+              - `GetCollections`: list of collections.
+              - `GetTypes`: list of vocabulary entries.
+              - No action: empty array.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: array
+                    description: Empty array when no action is given.
+                    items: {}
+                  - type: array
+                    description: Collections array returned by DSpace.
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: The workspace ID.
+                          example: "1abcd2c3-45db-6a7-aeee-8d932f883d70"
+                        uuid:
+                          type: string
+                          description: The workspace UUID.
+                          example: "1abcd2c3-45db-6a7-aeee-8d932f883d70"
+                        name:
+                          type: string
+                          example: "Collection One"
+                  - type: object
+                    description: Types returned by DSpace vocabulary endpoint.
+                    properties:
+                      _embedded:
+                        type: object
+                        properties:
+                          entries:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                value:
+                                  type: string
+                                  description: The type of item to create.
+                                  example: "Animation"
+                                display:
+                                  type: string
+                                  description: The type of item to create.
+                                  example: "Animation"
+                                type:
+                                  type: string
+                                  example: "vocalubaryEntry"
+    post:
+      tags: ['Dspace']
+      summary: Create a new DSpace workspace item.
+      operationId: dspace-create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ['collection', 'metadata']
+              properties:
+                collection:
+                  type: string
+                  description: UUID of the DSpace collection to submit to.
+                  example: "1abcd2c3-45db-6a7-aeee-8d932f883d70"
+                metadata:
+                  type: array
+                  description: Metadata fields to populate the submission.
+                  items:
+                    type: object
+                    required: ['key', 'value']
+                    properties:
+                      key:
+                        type: string
+                        example: "dc.title"
+                      value:
+                        type: string
+                        example: "The role of science in modern society"
+      responses:
+        '200':
+          description: ID of the newly created DSpace workspace item.
+          content:
+            application/json:
+              schema:
+                type: integer
+                example: 123
+
+    patch:
+      tags: ['Dspace']
+      summary: Submit an eLabFTW entry to DSpace.
+      operationId: dspace-submit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ['collection', 'metadata', 'entity']
+              properties:
+                collection:
+                  type: string
+                  description: UUID of the collection.
+                  example: "1abcd2c3-45db-6a7-aeee-8d932f883d70"
+                metadata:
+                  type: array
+                  items:
+                    type: object
+                    required: ['key', 'value']
+                    properties:
+                      key:
+                        type: string
+                        example: "dc.description.abstract"
+                      value:
+                        type: string
+                        example: "This entry explores the impact of photonic materials."
+                entity:
+                  type: object
+                  required: ['type', 'id']
+                  properties:
+                    type:
+                      type: string
+                      description: eLabFTW entity type.
+                      example: "experiments"
+                    id:
+                      type: integer
+                      description: ID of the entity to export.
+                      example: 42
+      responses:
+        '200':
+          description: Submission was successful; returns the internal ID and UUID from DSpace.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 123
+                  uuid:
+                    type: string
+                    example: "1abcd2c3-45db-6a7-aeee-8d932f883d70"
+
+    delete:
+      tags: ['Dspace']
+      summary: Not supported for eLabFTW/DSpace API interactions.
+      operationId: dspace-delete
+      responses:
+        '400':
+          description: eLabFTW does not support delete operations for DSpace via API.

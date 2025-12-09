@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 use Elabftw\Enums\State;
+use Elabftw\Enums\Storage;
 use Elabftw\Models\Users\UltraAdmin;
 use PDO;
 use ZipStream\ZipStream;
@@ -40,7 +41,7 @@ final class MakeTeamEln extends AbstractMakeEln
         foreach ($targets as $slug) {
             $entityArr[] = $slug->type->toInstance($requester, $slug->id, bypassReadPermission: true, bypassWritePermission: true);
         }
-        $Maker = new MakeEln($this->Zip, $requester, $entityArr);
+        $Maker = new MakeEln($this->Zip, $requester, Storage::EXPORTS->getStorage(), $entityArr);
         $Maker->bypassReadPermission = true;
         $Maker->getStreamZip();
     }

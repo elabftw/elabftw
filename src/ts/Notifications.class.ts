@@ -35,8 +35,8 @@ export class Notification {
 
   // log the error in console and show a translated readable notification.
   public error(msg: string|Error, options?: I18nOptions): void {
-    console.error(msg);
     const translated = i18next.t(String(msg), options);
+    console.error(translated);
     this.notify(translated, NotificationType.Error);
   }
 

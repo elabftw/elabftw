@@ -18,17 +18,19 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Metadata;
 use Elabftw\Enums\State;
-use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Interfaces\StorageInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\BaseQueryParams;
 use Elabftw\Traits\TwigTrait;
+use League\Flysystem\Filesystem;
 use League\Flysystem\UnableToReadFile;
 use ZipStream\ZipStream;
 use Override;
+use RuntimeException;
 
 use function array_push;
 use function ksort;
@@ -40,9 +42,12 @@ class MakeEln extends AbstractMakeEln
 {
     use TwigTrait;
 
-    public function __construct(protected ZipStream $Zip, protected Users $requester, protected array $entityArr)
+    private Filesystem $fs;
+
+    public function __construct(protected ZipStream $Zip, protected Users $requester, StorageInterface $storage, protected array $entityArr)
     {
         parent::__construct($Zip);
+        $this->fs = $storage->getFs();
     }
 
     /**
@@ -67,6 +72,17 @@ class MakeEln extends AbstractMakeEln
         // add a HTML preview file
         $this->Zip->addFile($this->root . '/ro-crate-preview.html', $this->crateToHtml($jsonLd, $rootNode));
         $this->Zip->finish();
+    }
+
+    public function writeToFile(string $absolutePath): void
+    {
+        $fileStream = fopen($absolutePath, 'wb');
+        if ($fileStream === false) {
+            throw new RuntimeException('Could not open output stream!');
+        }
+        $this->Zip = new ZipStream(outputStream: $fileStream, sendHttpHeaders: false);
+        $this->getStreamZip();
+        fclose($fileStream);
     }
 
     protected function processEntityArr(): void
@@ -292,16 +308,13 @@ class MakeEln extends AbstractMakeEln
     protected function addAttachedFiles($filesArr): array
     {
         foreach ($filesArr as &$file) {
-            $storageFs = Storage::from($file['storage'])->getStorage()->getFs();
-
             // make sure we have a hash
             if (empty($file['hash'])) {
-                $file['hash'] = hash($this->hashAlgorithm, $storageFs->read($file['long_name']));
+                $file['hash'] = hash($this->hashAlgorithm, $this->fs->read($file['long_name']));
             }
-
             // add files to archive
             $file['uuid'] = Tools::getUuidv4();
-            $this->addAttachedFileInZip($this->folder . '/' . $file['uuid'], $storageFs->readStream($file['long_name']));
+            $this->addAttachedFileInZip($this->folder . '/' . $file['uuid'], $this->fs->readStream($file['long_name']));
         }
         return $filesArr;
     }

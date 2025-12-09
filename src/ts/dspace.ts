@@ -19,41 +19,40 @@ import { entity } from './getEntity';
 import { TomSelect } from './misc';
 
 if (document.getElementById('dspaceExportModal')) {
-  on('export-to-dspace', async () => {
-    const form = document.getElementById('dspaceExportForm') as HTMLFormElement;
-    form.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      const collection = form.collection.value;
-      const author = form.author.value;
-      const title = (document.getElementById('dspaceTitle') as HTMLInputElement)?.value;
-      const date = form.date.value;
-      const type = form.type.value;
-      const abstract = form.abstract.value;
-      // in dspace, license is a default.license file: there's only one. Only possible action is accept: yes or no -> checkbox
-      const licenseAccepted = form.querySelector<HTMLInputElement>('#dspaceLicense')!.checked;
-      if (!licenseAccepted) {
-        alert(i18next.t('license-error'));
-        return;
-      }
-      const format = FileType.Eln;
-      const metadata = [
-        { key: 'dc.contributor.author', value: author },
-        { key: 'dc.title', value: title },
-        { key: 'dc.date.issued', value: date },
-        { key: 'dc.type', value: type },
-        { key: 'dc.description.abstract', value: abstract },
-      ];
-      try {
-        const res = await ApiC.send(Method.PATCH, 'dspace', { collection,  metadata,  entity, format });
-        const data = await res.json();
-        const itemUuid = data.uuid;
-        await saveDspaceIdAsExtraField(itemUuid);
-        notify.success('export-success');
-        $('#dspaceExportModal').modal('hide');
-      } catch (e) {
-        notify.error(e);
-      }
-    });
+  const form = document.getElementById('dspaceExportForm') as HTMLFormElement;
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const collection = form.collection.value;
+    const author = form.author.value;
+    const title = (document.getElementById('dspaceTitle') as HTMLInputElement)?.value;
+    const date = form.date.value;
+    const type = form.type.value;
+    const abstract = form.abstract.value;
+    const licenseAccepted = form.querySelector<HTMLInputElement>('#dspaceLicense')!.checked;
+    // in dspace, license is a default.license file: there's only one. Only possible action is accept: yes or no -> checkbox
+    if (!licenseAccepted) {
+      notify.error(i18next.t('license-error'));
+      return;
+    }
+    const format = FileType.Eln;
+    const metadata = [
+      { key: 'dc.contributor.author', value: author },
+      { key: 'dc.title', value: title },
+      { key: 'dc.date.issued', value: date },
+      { key: 'dc.type', value: type },
+      { key: 'dc.description.abstract', value: abstract },
+    ];
+
+    try {
+      const res = await ApiC.send(Method.PATCH, 'dspace', { collection, metadata, entity, format });
+      const data = await res.json();
+      const itemUuid = data.uuid;
+      await saveDspaceIdAsExtraField(itemUuid);
+      notify.success('export-success');
+      $('#dspaceExportModal').modal('hide');
+    } catch (e) {
+      notify.error(e);
+    }
   });
 }
 

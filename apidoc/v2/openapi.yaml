@@ -5450,7 +5450,7 @@ paths:
         required: false
         schema:
           type: string
-          enum: ['getcollections', 'gettypes']
+          enum: ['GetCollections', 'GetTypes']
 
     get:
       tags: ['Dspace']
@@ -5475,10 +5475,17 @@ paths:
                     items:
                       type: object
                       properties:
+                        id:
+                          type: string
+                          description: The workspace ID.
+                          example: "1abcd2c3-45db-6a7-aeee-8d932f883d70"
                         uuid:
                           type: string
+                          description: The workspace UUID.
+                          example: "1abcd2c3-45db-6a7-aeee-8d932f883d70"
                         name:
                           type: string
+                          example: "Collection One"
                   - type: object
                     description: Types returned by DSpace vocabulary endpoint.
                     properties:
@@ -5492,5 +5499,12 @@ paths:
                               properties:
                                 value:
                                   type: string
+                                  description: The type of item to create.
+                                  example: "Animation"
                                 display:
                                   type: string
+                                  description: The type of item to create.
+                                  example: "Animation"
+                                type:
+                                  type: string
+                                  example: "vocalubaryEntry"

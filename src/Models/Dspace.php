@@ -37,8 +37,6 @@ use function json_decode;
  */
 final class Dspace extends AbstractRest
 {
-    private ?array $headers = null;
-
     private const METADATA_SECTIONS = array(
         'dc.contributor.author' => 'publicationStep',
         'dc.title' => 'publicationStep',
@@ -46,6 +44,8 @@ final class Dspace extends AbstractRest
         'dc.type' => 'publicationStep',
         'dc.description.abstract' => 'traditionalpagetwo',
     );
+
+    private ?array $headers = null;
 
     // rename host to host
     public function __construct(
@@ -318,7 +318,7 @@ final class Dspace extends AbstractRest
 
     private function buildMetadataPatch(array $metadata): array
     {
-        $patch = [];
+        $patch = array();
         foreach ($metadata as $item) {
             $key   = $item['key']   ?? null;
             $value = $item['value'] ?? null;
@@ -328,13 +328,13 @@ final class Dspace extends AbstractRest
             if (!isset(self::METADATA_SECTIONS[$key])) {
                 continue;
             }
-            $patch[] = [
+            $patch[] = array(
                 'op'    => 'add',
                 'path'  => sprintf('/sections/%s/%s', self::METADATA_SECTIONS[$key], $key),
-                'value' => [
-                    ['value' => $value, 'language' => null],
-                ],
-            ];
+                'value' => array(
+                    array('value' => $value, 'language' => null),
+                ),
+            );
         }
         return $patch;
     }

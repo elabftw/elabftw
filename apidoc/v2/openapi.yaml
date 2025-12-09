@@ -444,10 +444,6 @@ components:
           type: string
         onboarding_email_subject:
           type: string
-        open_science:
-          type: string
-        open_team:
-          type: string
         privacy_policy:
           type: string
         proxy:
@@ -1979,59 +1975,119 @@ paths:
       summary: Get information about the instance.
       description: Get information about the instance.
       operationId: get-info
+      parameters:
+        - in: query
+          name: hist
+          required: false
+          description: |
+            Get usage information about the instance.
+
+            If `hist` is present, returns cumulative histogram data for experiments, items (resources), and users.
+          schema:
+            type: boolean
+          allowEmptyValue: true
+          example: true
+        - in: query
+          name: columns
+          required: false
+          description: Number of columns (buckets) to display in histogram outputs.
+          schema:
+            type: integer
+            minimum: 1
+          example: 120
       responses:
         '200':
           description: Information about the instance
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  elabftw_version:
-                    type: string
-                    description: Current eLabFTW version
-                    example: 4.8.0
-                  elabftw_version_int:
-                    type: integer
-                    description: Current eLabFTW version as an integer
-                    example: 50102
-                  ts_balance:
-                    type: integer
-                    description: Number of timestamp tokens left
-                    example: 461
-                  all_users_count:
-                    type: integer
-                    description: Total count of all users
-                    example: 389
-                  active_users_count:
-                    type: integer
-                    description: Total count of active users
-                    example: 311
-                  items_count:
-                    type: integer
-                    description: Total count of items
-                    example: 666
-                  teams_count:
-                    type: integer
-                    description: Total count of teams
-                    example: 18
-                  experiments_count:
-                    type: integer
-                    description: Total count of experiments
-                    example: 10189
-                  experiments_timestamped_count:
-                    type: integer
-                    description: Total count of experiments with timestamps
-                    example: 1601
-                  uploads_filesize_sum:
-                    type: integer
-                    description: Sum of stored filesize in MySQL for all uploads of the instance.
-                    example: 25681672
-                    format: int64
-                  uploads_filesize_sum_formatted:
-                    type: string
-                    description: Sum of stored filesize in MySQL for all uploads of the instance, formatted
-                    example: "24.49 MiB"
+                oneOf:
+                  - type: object
+                    properties:
+                      elabftw_version:
+                        type: string
+                        description: Current eLabFTW version
+                        example: 4.8.0
+                      elabftw_version_int:
+                        type: integer
+                        description: Current eLabFTW version as an integer
+                        example: 50102
+                      ts_balance:
+                        type: integer
+                        description: Number of timestamp tokens left
+                        example: 461
+                      all_users_count:
+                        type: integer
+                        description: Total count of all users
+                        example: 389
+                      active_users_count:
+                        type: integer
+                        description: Total count of active users
+                        example: 311
+                      items_count:
+                        type: integer
+                        description: Total count of items
+                        example: 666
+                      teams_count:
+                        type: integer
+                        description: Total count of teams
+                        example: 18
+                      experiments_count:
+                        type: integer
+                        description: Total count of experiments
+                        example: 10189
+                      experiments_timestamped_count:
+                        type: integer
+                        description: Total count of experiments with timestamps
+                        example: 1601
+                      uploads_filesize_sum:
+                        type: integer
+                        description: Sum of stored filesize in MySQL for all uploads of the instance.
+                        example: 25681672
+                        format: int64
+                      uploads_filesize_sum_formatted:
+                        type: string
+                        description: Sum of stored filesize in MySQL for all uploads of the instance, formatted
+                        example: "24.49 MiB"
+                  - type: object
+                    description: Histogram data (when `hist` is present).
+                    properties:
+                      experiments:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            bucket_start:
+                              type: string
+                              format: date
+                              example: "2020-01-01"
+                            total:
+                              type: integer
+                              example: 120
+                      items:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            bucket_start:
+                              type: string
+                              format: date
+                              example: "2020-01-01"
+                            total:
+                              type: integer
+                              example: 55
+                      users:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            bucket_start:
+                              type: string
+                              format: date
+                              example: "2020-01-01"
+                            total:
+                              type: integer
+                              example: 10
 
   # ITEMS
   /items:

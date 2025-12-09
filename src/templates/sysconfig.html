@@ -78,6 +78,19 @@
       <div>{{ 'Stored containers: %d bound to experiments and %d bound to resources'|trans|format(containersCount.experiments, containersCount.items) }}</div>
       <div><a href='/api/v2/reports?format=csv&scope=stored_compounds' class='btn btn-primary'>{{ 'Get inventory report'|trans }}</a></div>
     </div>
+
+    <h4>{{ 'Graphics'|trans }}</h4>
+    <button type='button' class='btn btn-secondary bg-superlight btn-sm' data-action='toggle-histograms' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right'>
+      <i class='fas fa-caret-right color-white mr-1'></i>{{ 'Show usage histograms'|trans }}
+    </button>
+    <div hidden id='histograms'>
+      <h5 class='mt-3'>{{ 'Experiments creation over time'|trans }}</h5>
+      <div id='histDiv_experiments' class='chart' style='--max: {{ info.experiments_count }};'></div>
+      <h5 class='mt-3'>{{ 'Resources creation over time'|trans }}</h5>
+      <div id='histDiv_items' class='chart' style='--max: {{ info.items_count }};'></div>
+      <h5 class='mt-3'>{{ 'Users creation over time'|trans }}</h5>
+      <div id='histDiv_users' class='chart' style='--max: {{ info.all_users_count }};'></div>
+    </div>
   </div>
 
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Settings'|trans }}</h3>
@@ -158,23 +171,9 @@
 
     {% include 'binary-setting.html' with {'label': 'Allow anonymous visitors to login and see Public experiments'|trans, 'slug': 'anon_users', 'help': 'This allows users without an account to login into a team and see the experiments with public visibility. It also enables users to share specific entries with a special link.'|trans} %}
 
-    {% include 'binary-setting.html' with {'label': 'Switch this instance in open science mode'|trans, 'slug': 'open_science', 'help': 'This allows search engines to crawl the site. Visitors will be automatically logged in in the specified team.'|trans} %}
-
-    <div class='d-flex justify-content-between'>
-      <label for='open_team' class='col-form-label'>{{ 'Select which team will be open to the world in open science mode'|trans }}</label>
-      <select id='open_team' data-trigger='change' data-model='config' data-target='open_team' class='form-control col-md-3'>
-        {% for team in teamsArr %}
-          <option {{ App.Config.configArr.open_team == team.id ? ' selected' }} value='{{ team.id }}'>{{ team.name }}</option>
-        {% endfor %}
-      </select>
-    </div>
-    <p class='smallgray'>{{ 'This has no effect if open science mode is disabled.'|trans }}</p>
-    <hr>
-
     {% include 'binary-setting.html' with {'label': 'Admins can create local accounts'|trans, 'slug': 'admins_create_users'} %}
     {% include 'binary-setting.html' with {'label': 'Allow Admins to add existing users to their team'|trans, 'slug': 'admins_import_users'} %}
     {% include 'binary-setting.html' with {'label': 'Allow Admins to archive users'|trans, 'slug': 'admins_archive_users'} %}
-
 
     <div class='d-flex justify-content-between'>
       <label for='user_msg_need_local_account_created' class='col-form-label'>{{ 'Message shown to user after successful external auth but local account provisioning is required'|trans }}</label>

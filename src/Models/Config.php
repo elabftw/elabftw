@@ -128,8 +128,6 @@ final class Config extends AbstractRest
             ('admins_create_users', '1'),
             ('anon_users', '0'),
             ('schema', :schema),
-            ('open_science', '0'),
-            ('open_team', NULL),
             ('privacy_policy', NULL),
             ('privacy_policy_name', 'Privacy policy'),
             ('terms_of_service', NULL),

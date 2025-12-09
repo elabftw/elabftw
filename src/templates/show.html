@@ -65,6 +65,10 @@
           {# CATEGORY #}
           <select name='category' class='mr-1 form-control filterAuto' aria-label='{{ 'Filter category'|trans }}'>
             <option value='' class='dropdown-header' data-action='clear'>{{ 'Filter category'|trans }}</option>
+            <option value='null'
+              {{- App.Request.query.get('category') == 'null' ? ' selected' -}}
+            >
+            {{ 'No category set'|trans }}</option>
             {% for category in categoryArr %}
               <option value='{{ category.id }}'
                 {{- App.Request.query.get('category') == category.id ? ' selected' -}}
@@ -76,6 +80,10 @@
           {# STATUS #}
           <select name='status' class='mr-1 form-control filterAuto' aria-label='{{ 'Filter status'|trans }}'>
             <option value='' class='dropdown-header' data-action='clear'>{{ 'Filter status'|trans }}</option>
+            <option value='null'
+              {{- App.Request.query.get('status') == 'null' ? ' selected' -}}
+            >
+            {{ 'No status set'|trans }}</option>
             {% for status in statusArr %}
               <option value='{{ status.id }}'
                 {{- App.Request.query.get('status') == status.id ? ' selected' -}}

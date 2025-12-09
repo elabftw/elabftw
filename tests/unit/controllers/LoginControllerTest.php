@@ -39,8 +39,6 @@ class LoginControllerTest extends \PHPUnit\Framework\TestCase
             'enforce_mfa' => '0',
             'cookie_validity_time' => '300',
             'anon_users' => '1',
-            'open_science' => '0',
-            'open_team' => '1',
             'ldap_username' => 'admin',
             'ldap_password' => 'adm1n',
             'ldap_scheme' => 'http',

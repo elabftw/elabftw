@@ -84,14 +84,14 @@ final class Dspace extends AbstractRest
     #[Override]
     public function patch(Action $action, array $params): array
     {
-        if (!isset($params['entity']['type'], $params['entity']['id'])) {
-            throw new ImproperActionException('Missing entity type or id for DSpace export.');
-        }
         $workspaceId = $this->postAction(Action::Create, $params);
+        if ($workspaceId <= 0) {
+            throw new ImproperActionException('Invalid workspaceId returned from DSpace.');
+        }
         $uuid = $this->getItemUuid($workspaceId);
         $this->acceptLicense($workspaceId);
         $this->updateMetadata($workspaceId, $params['metadata'] ?? array());
-        $this->uploadEntryAsFile($workspaceId, $params['entity']);
+        $this->uploadEntryAsFile($workspaceId, $params['entity'] ?? array());
         $this->submitToWorkflow($workspaceId);
         // return id and uuid for elab entry metadata
         return array('id' => $workspaceId, 'uuid' => $uuid);
@@ -142,43 +142,6 @@ final class Dspace extends AbstractRest
             'headers' => array_merge($headers, array('Content-Type' => 'text/uri-list')),
             'body' => sprintf('/api/submission/workspaceitems/%d', $workspaceId),
         ));
-    }
-
-    private function uploadEntryAsFile(int $workspaceId, array $query): void
-    {
-        $query['format'] = 'eln';
-        $Request = new Request($query, array(), array('entityType' => $query['type'], 'entityId' => $query['id']));
-        $MakeController = new MakeController($this->requester, $Request);
-        $Response = $MakeController->getResponse();
-        $elnFileName = new DateTimeImmutable()->format('Y-m-d-His') . '-export.eln';
-        ob_start();
-        $Response->sendContent();
-        $elnContent = ob_get_clean();
-
-        $headers = $this->getAuthHeaders();
-        $url = sprintf('%ssubmission/workspaceitems/%d', $this->host, $workspaceId);
-        $this->httpGetter->post($url, array(
-            'headers' => $headers,
-            'multipart' => array(
-                array(
-                    'name' => 'file',
-                    'contents' => $elnContent,
-                    'filename' => $elnFileName,
-                    'headers'  => array('Content-Type' => 'application/zip'),
-                ),
-            ),
-        ));
-    }
-
-    private function acceptLicense(int $workspaceId): void
-    {
-        $headers = $this->getAuthHeaders();
-        $headers['Content-Type'] = 'application/json-patch+json';
-        $url = sprintf('%ssubmission/workspaceitems/%d', $this->host, $workspaceId);
-        $patchBody = array(
-            array('op' => 'add', 'path' => '/sections/license/granted', 'value' => 'true'),
-        );
-        $this->httpGetter->patch($url, array('headers' => $headers, 'json' => $patchBody));
     }
 
     private function fetchXsrfTokenAndCookieHeader(): array
@@ -232,7 +195,7 @@ final class Dspace extends AbstractRest
 
     private function listCollections(): array
     {
-        $collections = [];
+        $collections = array();
         $page = 0;
         $pageSize = 20;
         do {
@@ -256,22 +219,7 @@ final class Dspace extends AbstractRest
         return json_decode($body, true);
     }
 
-    private function getItemUuid(int $workspaceId): string
-    {
-        $headers = $this->getAuthHeaders();
-        if (!$workspaceId) {
-            throw new ImproperActionException('Missing workspaceId');
-        }
-        $url = sprintf('%ssubmission/workspaceitems/%d/item', $this->host, $workspaceId);
-        $res  = $this->httpGetter->get($url, $headers);
-        $body = $res->getBody()->getContents();
-        $data = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
-        if (!isset($data['uuid'])) {
-            throw new ImproperActionException('DSpace did not return an item UUID.');
-        }
-        return $data['uuid'];
-    }
-
+    // 1. create the workspace in DSpace, returns the $workspaceId
     private function createWorkspaceItem(array $reqBody): int
     {
         $collection = $reqBody['collection'] ?? '';
@@ -289,131 +237,95 @@ final class Dspace extends AbstractRest
         return (int) $data['id'];
     }
 
-    private function updateMetadata(int $workspaceId, array $metadata): void
+    // 2. create the workspace in DSpace, returns the $workspaceId
+    private function getItemUuid(int $workspaceId): string
     {
-        if (!$workspaceId) {
-            throw new ImproperActionException('Missing workspaceId');
+        $headers = $this->getAuthHeaders();
+        $url = sprintf('%ssubmission/workspaceitems/%d/item', $this->host, $workspaceId);
+        $res  = $this->httpGetter->get($url, $headers);
+        $body = $res->getBody()->getContents();
+        $data = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
+        if (!isset($data['uuid'])) {
+            throw new ImproperActionException('DSpace did not return an item UUID.');
         }
-        $metaByKey = array();
-        foreach ($metadata as $item) {
-            if (!isset($item['key'], $item['value'])) {
-                continue;
-            }
-            $metaByKey[$item['key']] = $item['value'];
-        }
+        return $data['uuid'];
+    }
+
+    // 3. accept DSpace License, mandatory for submitting item
+    private function acceptLicense(int $workspaceId): void
+    {
         $headers = $this->getAuthHeaders();
         $headers['Content-Type'] = 'application/json-patch+json';
+        $url = sprintf('%ssubmission/workspaceitems/%d', $this->host, $workspaceId);
+        $patchBody = array(
+            array('op' => 'add', 'path' => '/sections/license/granted', 'value' => 'true'),
+        );
+        $this->httpGetter->patch($url, array('headers' => $headers, 'json' => $patchBody));
+    }
 
+    // 4. update item's metadata
+    private function updateMetadata(int $workspaceId, array $metadata): void
+    {
+        // first we map each dc.key to its DSpace section (they don't have the same 'destination'!)
+        $keyToSection = array(
+            'dc.contributor.author' => 'publicationStep',
+            'dc.title' => 'publicationStep',
+            'dc.date.issued' => 'publicationStep',
+            'dc.type' => 'publicationStep',
+            'dc.description.abstract' => 'traditionalpagetwo',
+        );
+        $headers = $this->getAuthHeaders();
+        $headers['Content-Type'] = 'application/json-patch+json';
         $url = sprintf('%ssubmission/workspaceitems/%d?embed=item', $this->host, $workspaceId);
-
         $patchBody = array();
-
-        // all four "describe" fields go in publicationStep
-        if (isset($metaByKey['dc.contributor.author'])) {
+        foreach ($metadata as $item) {
+            $key = $item['key']   ?? null;
+            $value = $item['value'] ?? null;
+            if ($key === null || $value === null || $value === '' || !isset($keyToSection[$key])) {
+                continue;
+            }
+            $section = $keyToSection[$key];
             $patchBody[] = array(
                 'op'   => 'add',
-                'path' => '/sections/publicationStep/dc.contributor.author',
+                'path' => sprintf('/sections/%s/%s', $section, $key),
                 'value' => array(
                     array(
-                        'value'    => $metaByKey['dc.contributor.author'],
+                        'value' => $value,
                         'language' => null,
                     ),
                 ),
             );
         }
-
-        if (isset($metaByKey['dc.title'])) {
-            $patchBody[] = array(
-                'op'   => 'add',
-                'path' => '/sections/publicationStep/dc.title',
-                'value' => array(
-                    array(
-                        'value'    => $metaByKey['dc.title'],
-                        'language' => null,
-                    ),
-                ),
-            );
-        }
-
-        if (isset($metaByKey['dc.date.issued'])) {
-            $patchBody[] = array(
-                'op'   => 'add',
-                'path' => '/sections/publicationStep/dc.date.issued',
-                'value' => array(
-                    array(
-                        'value'    => $metaByKey['dc.date.issued'],
-                        'language' => null,
-                    ),
-                ),
-            );
-        }
-
-        if (isset($metaByKey['dc.type'])) {
-            $patchBody[] = array(
-                'op'   => 'add',
-                'path' => '/sections/publicationStep/dc.type',
-                'value' => array(
-                    array(
-                        'value'    => $metaByKey['dc.type'],
-                        'language' => null,
-                    ),
-                ),
-            );
-        }
-
-        // Abstract goes in traditionalpagetwo
-        if (isset($metaByKey['dc.description.abstract'])) {
-            $patchBody[] = array(
-                'op'   => 'add',
-                'path' => '/sections/traditionalpagetwo/dc.description.abstract',
-                'value' => array(
-                    array(
-                        'value'    => $metaByKey['dc.description.abstract'],
-                        'language' => null,
-                    ),
-                ),
-            );
-        }
-
         if (empty($patchBody)) {
             throw new ImproperActionException('No valid metadata fields to update.');
         }
-
         $bodyJson = json_encode($patchBody, JSON_THROW_ON_ERROR);
+        $this->httpGetter->patch($url, array('headers' => $headers, 'body' => $bodyJson));
+    }
 
-        error_log('DSpace PATCH URL: ' . $url);
-        error_log('DSpace PATCH headers: ' . json_encode($headers, JSON_THROW_ON_ERROR));
-        error_log('DSpace PATCH body: ' . $bodyJson);
-
-        // IMPORTANT: we use "body" (raw JSON) with our own Content-Type
-        $res = $this->httpGetter->patch($url, array(
+    // 5. Send eLabFTW entry's .eln to DSpace as an upload (bitstream)
+    private function uploadEntryAsFile(int $workspaceId, array $entity): void
+    {
+        $entity['format'] = 'eln';
+        $Request = new Request($entity, array(), array('entityType' => $entity['type'], 'entityId' => $entity['id']));
+        $MakeController = new MakeController($this->requester, $Request);
+        $Response = $MakeController->getResponse();
+        $elnFileName = new DateTimeImmutable()->format('Y-m-d-His') . '-export.eln';
+        ob_start();
+        $Response->sendContent();
+        $elnContent = ob_get_clean();
+        $headers = $this->getAuthHeaders();
+        $url = sprintf('%ssubmission/workspaceitems/%d', $this->host, $workspaceId);
+        $this->httpGetter->post($url, array(
             'headers' => $headers,
-            'body'    => $bodyJson,
+            'multipart' => array(
+                array(
+                    'name' => 'file',
+                    'contents' => $elnContent,
+                    'filename' => $elnFileName,
+                    'headers'  => array('Content-Type' => 'application/zip'),
+                ),
+            ),
         ));
-
-        error_log('DSpace PATCH status: ' . $res->getStatusCode());
-//
-//
-//        $headers = $this->getAuthHeaders();
-//        $headers['Content-Type'] = 'application/json-patch+json';
-//        $url = sprintf('%ssubmission/workspaceitems/%d?embed=item', $this->host, $workspaceId);
-//        $patchBody = array();
-//        foreach ($metadata as $item) {
-//            if (!isset($item['key'], $item['value'])) {
-//                continue; // skip invalid entries
-//            }
-//            $section = str_contains($item['key'], 'description.abstract') ? 'traditionalpagetwo' : 'traditionalpageone';
-//            $patchBody[] = array(
-//                'op' => 'add',
-//                'path' => "/sections/publicationStep/" . $item['key'],
-//                'value' => array(
-//                    array('value' => $item['value'], 'language' => null),
-//                ),
-//            );
-//        }
-//        if (empty($patchBody)) {
-//            throw new ImproperActionException('No valid metadata fields to update.');
-//        }
-//        $this->httpGetter->patch($url, array('headers' => $headers, 'json' => $patchBody));
     }
 }

@@ -41,7 +41,6 @@ if (document.getElementById('dspaceExportModal')) {
         { key: 'dc.type', value: type },
         { key: 'dc.description.abstract', value: abstract },
       ];
-      console.log('metdata', metadata);
       try {
         const res = await ApiC.send(Method.PATCH, 'dspace', { collection,  metadata,  entity, format });
         const data = await res.json();
@@ -52,7 +51,7 @@ if (document.getElementById('dspaceExportModal')) {
       } catch (e) {
         notify.error(e);
       }
-    })
+    });
   });
 }
 

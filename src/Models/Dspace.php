@@ -52,12 +52,13 @@ final class Dspace extends AbstractRest
     public function __construct(
         private readonly Users $requester,
         private readonly HttpGetter $httpGetter,
-        private string $host,
+        string $host,
         private readonly string $user,
         private readonly string $encPassword,
     ) {
         parent::__construct();
-        $this->host = rtrim($host, '/') . '/server/api/';
+        $host = rtrim($host, '/');
+        $this->host = $host === '' ? '' : $host . '/server/api/';
     }
 
     #[Override]

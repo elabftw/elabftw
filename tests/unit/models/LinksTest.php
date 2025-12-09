@@ -222,4 +222,26 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         $titlesAfter = array_column($this->Experiments->ExperimentsLinks->readAll(), 'title');
         $this->assertSame(count($titles), count($titlesAfter));
     }
+
+    public function testItemsTypesNeverLeakItemsLinks(): void
+    {
+        // ensure links are not bound to wrong entities. See #5875
+        $ItemA = $this->getFreshItem();
+        $ItemB = $this->getFreshItem();
+
+        // create a link A → B (in items2items)
+        $ItemA->ItemsLinks->setId($ItemB->id);
+        $ItemA->ItemsLinks->postAction(Action::Create, array());
+
+        // now create a resource template
+        $ItemsTypes = new ItemsTypes($this->getRandomUserInTeam(1));
+        $tplId = $ItemsTypes->create(title: 'Template X');
+        $ItemsTypes->setId($tplId);
+        // force template ID to collide with ItemA ID by manually setting ID
+        $ItemsTypes->id = $ItemA->id;
+        // before fix #5875, this returned the link from items2items. Now, must return ZERO links
+        $this->assertEmpty($ItemsTypes->ItemsLinks->readAll(),
+            'ItemsTypes must NOT read links from items2items even when IDs collide'
+        );
+    }
 }

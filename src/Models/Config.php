@@ -40,6 +40,8 @@ use function in_array;
  */
 final class Config extends AbstractRest
 {
+    public const array ENCRYPTED_KEYS = array('smtp_password', 'ldap_password', 'ts_password', 'remote_dir_config');
+
     private const string CACHE_KEY = 'config_table';
 
     private const int CACHE_TTL_SECONDS = 9001;
@@ -391,6 +393,17 @@ final class Config extends AbstractRest
         $createResult = $this->create();
         $this->configArr = $this->readAll();
         return $createResult;
+    }
+
+    public function getDecrypted(): array
+    {
+        $result = $this->readAll();
+        foreach (self::ENCRYPTED_KEYS as $column) {
+            if (!empty($result[$column])) {
+                $result[$column] = TwigFilters::decrypt($result[$column]);
+            }
+        }
+        return $result;
     }
 
     private function assertAtLeastOneBasePermissionEnabled(string $permissionName): void

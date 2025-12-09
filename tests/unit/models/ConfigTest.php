@@ -28,17 +28,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->Config = Config::getConfig();
-        // TODO-Config: move to a new Config::getDecrypted() method.
-        // decrypt encrypted keys from config
-        $encryptedColumns = array('smtp_password', 'ldap_password', 'ts_password', 'remote_dir_config');
-        $secretKey = Env::asString('SECRET_KEY');
-        foreach ($encryptedColumns as $column) {
-            if (!empty($this->Config->configArr[$column])) {
-                $this->Config->configArr[$column] = Crypto::decrypt($this->Config->configArr[$column], Key::loadFromAsciiSafeString($secretKey));
-            }
-        }
-
-        $this->setupValues = $this->Config->configArr;
+        $this->setupValues = $this->Config->getDecrypted();
     }
 
     protected function tearDown(): void

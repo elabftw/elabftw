@@ -287,9 +287,7 @@ final class Config extends AbstractRest
     #[Override]
     public function patch(Action $action, array $params): array
     {
-        $passwords = array('smtp_password', 'ldap_password', 'ts_password', 'remote_dir_config');
-
-        foreach ($passwords as $password) {
+        foreach (self::ENCRYPTED_KEYS as $password) {
             if (isset($params[$password]) && !empty($params[$password])) {
                 $params[$password] = Crypto::encrypt($params[$password], Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY')));
                 // if it's not changed, it is sent anyway, but we don't want it in the final array as it will blank the existing one

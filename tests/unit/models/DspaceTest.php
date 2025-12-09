@@ -94,6 +94,17 @@ class DspaceTest extends \PHPUnit\Framework\TestCase
         $this->dspace->postAction(Action::Create, array());
     }
 
+    public function testReadOne(): void
+    {
+        $this->assertIsArray($this->dspace->readOne());
+    }
+
+    public function testDestroy(): void
+    {
+        $this->expectException(ImproperActionException::class);
+        $this->dspace->destroy();
+    }
+
     // create a mocked Dspace instance with custom HTTP responses
     private function setMockResponses(array $responses): void
     {

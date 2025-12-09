@@ -14,15 +14,15 @@ import { ExtraFieldInputType, ValidMetadata } from './metadataInterfaces';
 import { reloadElements } from './misc';
 
 // GET list of collections
-export async function listCollections(): Promise<DspaceCollection[]> {
-  const res = await fetch(`/api/v2/dspace?dspace_action=${Action.ListCollections}`, { credentials: 'include' });
+export async function getCollections(): Promise<DspaceCollection[]> {
+  const res = await fetch(`/api/v2/dspace?dspace_action=${Action.GetCollections}`, { credentials: 'include' });
   if (!res.ok) throw new Error(`DSpace collections error: ${res.status}`);
   return await res.json() as DspaceCollection[];
 }
 
 // GET list of types
-export async function listTypes(): Promise<DspaceVocabularyEntryList> {
-  const res = await fetch(`/api/v2/dspace?dspace_action=${Action.ListTypes}`, { credentials: 'include' });
+export async function getTypes(): Promise<DspaceVocabularyEntryList> {
+  const res = await fetch(`/api/v2/dspace?dspace_action=${Action.GetTypes}`, { credentials: 'include' });
   if (!res.ok) throw new Error(`DSpace types error: ${res.status}`);
   return await res.json() as DspaceVocabularyEntryList;
 }

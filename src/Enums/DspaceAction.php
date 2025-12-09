@@ -14,6 +14,6 @@ namespace Elabftw\Enums;
 
 enum DspaceAction: string
 {
-    case ListCollections = 'listcollections';
-    case ListTypes = 'listtypes';
+    case GetCollections = 'getcollections';
+    case GetTypes = 'gettypes';
 }

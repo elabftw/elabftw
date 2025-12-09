@@ -43,7 +43,7 @@ class DspaceTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('api/v2/dspace', $this->dspace->getApiPath());
     }
 
-    public function testReadAllDefaultsToListCollections(): void
+    public function testReadAllDefaultsToGetCollections(): void
     {
         $collectionsData = array(
             '_embedded' => array(
@@ -65,7 +65,7 @@ class DspaceTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('Collection One', $result[0]['name']);
     }
 
-    public function testReadAllWithListTypesAction(): void
+    public function testReadAllWithGetTypesAction(): void
     {
         $typesData = array(
             '_embedded' => array(
@@ -79,7 +79,7 @@ class DspaceTest extends \PHPUnit\Framework\TestCase
             new Response(200, array(), json_encode($typesData) ?: '{}'),
         ));
 
-        $queryParams = new InputBag(array('dspace_action' => DspaceAction::ListTypes->value));
+        $queryParams = new InputBag(array('dspace_action' => DspaceAction::GetTypes->value));
         $q = $this->dspace->getQueryParams($queryParams);
         $result = $this->dspace->readAll($q);
         $this->assertIsArray($result);

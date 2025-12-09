@@ -112,8 +112,8 @@ enum Action {
   UpdateTag = 'updatetag',
   Validate = 'validate',
   // Dspace Actions
-  ListCollections = 'listcollections',
-  ListTypes = 'listtypes',
+  GetCollections = 'getcollections',
+  GetTypes = 'gettypes',
 }
 
 enum Model {

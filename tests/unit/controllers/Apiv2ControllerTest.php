@@ -106,4 +106,12 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
         $res = $Controller->getResponse();
         $this->assertEquals(Response::HTTP_OK, $res->getStatusCode());
     }
+
+    public function testGetDspace(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $Controller = new Apiv2Controller($user, Request::create('/?req=/api/v2/dspace', 'GET'));
+        $res = $Controller->getResponse();
+        $this->assertEquals(Response::HTTP_OK, $res->getStatusCode());
+    }
 }

@@ -9,7 +9,7 @@
  * All logic related to DSpace export modal. Located in toolbar on view/edit pages
  */
 import { ApiC } from './api';
-import { DspaceCollection, DspaceVocabularyEntry, listCollections, listTypes, saveDspaceIdAsExtraField } from './dspaceUtils';
+import { DspaceCollection, DspaceVocabularyEntry, getCollections, getTypes, saveDspaceIdAsExtraField } from './dspaceUtils';
 import { on } from './handlers';
 import i18next from './i18n';
 import { FileType, Method } from './interfaces';
@@ -65,8 +65,8 @@ $('#dspaceExportModal').on('shown.bs.modal', async () => {
 
   try {
     const [collectionsJson, typesJson] = await Promise.all([
-      listCollections(),
-      listTypes(),
+      getCollections(),
+      getTypes(),
     ]);
     const collections = collectionsJson as DspaceCollection[];
     const types = typesJson._embedded.entries;

@@ -69,14 +69,15 @@ final class Dspace extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        $action = DspaceAction::ListCollections;
-        if ($queryParams !== null && $queryParams->getQuery()->has('dspace_action')) {
-            $action = DspaceAction::tryFrom($queryParams->getQuery()->getString('dspace_action'))
-                ?? throw new ImproperActionException('Unknown GET action for DSpace endpoint.');
+        if ($queryParams === null || !$queryParams->getQuery()->has('dspace_action')) {
+            return array();
         }
+        $action = DspaceAction::tryFrom($queryParams->getQuery()->getString('dspace_action'))
+            ?? throw new ImproperActionException('Unknown GET action for DSpace endpoint.');
+
         return match ($action) {
-            DspaceAction::ListCollections => $this->listCollections(),
-            DspaceAction::ListTypes => $this->listTypes(),
+            DspaceAction::GetCollections => $this->getCollections(),
+            DspaceAction::GetTypes => $this->getTypes(),
         };
     }
 
@@ -199,7 +200,7 @@ final class Dspace extends AbstractRest
         return $auth;
     }
 
-    private function listCollections(): array
+    private function getCollections(): array
     {
         $collections = array();
         $page = 0;
@@ -218,7 +219,7 @@ final class Dspace extends AbstractRest
         return $collections;
     }
 
-    private function listTypes(): array
+    private function getTypes(): array
     {
         $res = $this->httpGetter->get($this->host . 'submission/vocabularies/common_types/entries');
         $body = $res->getBody()->getContents();

@@ -89,23 +89,23 @@ Cypress.Commands.add('getExperimentId', () => {
 // create new entity (experiment or item. default: experiment)
 Cypress.Commands.add('createEntity', (
   type: 'experiment' | 'item' = 'experiment',
-  title = `Cypress ${type} ${Date.now()}`
-  ) => {
-    const config = {
-      experiment: { page: '/experiments.php', modal: '#createModal_experiments' },
-      item: { page: '/database.php', modal: '#createModal_database' },
-    }[type];
-    cy.visit(config.page);
-    cy.htmlvalidate();
-    cy.contains('Create').click();
-    // create modal -> enter title & confirm
-    cy.get(config.modal).should('be.visible').should('contain', 'No category').contains('No category').click();
-    cy.get('#askTitleModalTitleInput').should('be.visible').wait(300).type(title).click();
-    cy.get('#askTitleButton').click();
-    // ensure we navigated to the new experiment
-    cy.get('#documentTitle').should('contain', title);
-    cy.url().should('include', 'mode=edit');
-  }
+  title = `Cypress ${type} ${Date.now()}`,
+) => {
+  const config = {
+    experiment: { page: '/experiments.php', modal: '#createModal_experiments' },
+    item: { page: '/database.php', modal: '#createModal_database' },
+  }[type];
+  cy.visit(config.page);
+  cy.htmlvalidate();
+  cy.contains('Create').click();
+  // create modal -> enter title & confirm
+  cy.get(config.modal).should('be.visible').should('contain', 'No category').contains('No category').click();
+  cy.get('#askTitleModalTitleInput').should('be.visible').wait(300).type(title).click();
+  cy.get('#askTitleButton').click();
+  // ensure we navigated to the new experiment
+  cy.get('#documentTitle').should('contain', title);
+  cy.url().should('include', 'mode=edit');
+},
 );
 // metadata helpers
 Cypress.Commands.add('addMetadataField', (fieldName: string, type: string) => {

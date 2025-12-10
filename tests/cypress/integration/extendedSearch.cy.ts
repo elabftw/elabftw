@@ -17,7 +17,7 @@ describe('Search', () => {
         cy.url().should('include', 'q=');
         // Assert the experiment is visible
         cy.get('#itemList').should('be.visible').contains(trimmedTitle).should('exist');
-        });
+      });
     });
   });
 });

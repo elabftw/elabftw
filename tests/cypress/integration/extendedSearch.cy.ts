@@ -6,7 +6,7 @@ describe('Search', () => {
   it('Searches an experiment using extended metadata syntax', () => {
     const fieldName = 'Raw data URL';
     // create new experiment
-    cy.createExperiment().then(() => {
+    cy.createEntity().then(() => {
       cy.get('#documentTitle').invoke('text').then((title) => {
         const trimmedTitle = title.trim();
         cy.addTextMetadataField(fieldName);

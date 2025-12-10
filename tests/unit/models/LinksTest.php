@@ -261,21 +261,22 @@ class LinksTest extends \PHPUnit\Framework\TestCase
     }
 
     /*
-     * ensure links to resources are not bound to wrong entities. See #5875
-     * An issue occured where newly created resources templates, having an ID colliding with existing item, would have
-     * its links copied to the template.
+     * Ensure ItemsTypes related links are not bound to wrong entities (see #5875).
+     *
+     * Before fix #6280, creating an ItemsType whose ID collided with an existing Item
+     * caused ItemsTypes->ItemsLinks->readRelated() to return the Item’s links.
+     * We reproduce this by force-inserting a template with the exact same ID as ItemB.
      */
     public function testItemsTypesRelatedLinksAreNotCorrupted(): void
     {
-        // we'll inspect links in ItemB because we're testing Related links
+        // create A → B link so ItemB has related links for the collision test.
         $ItemA = $this->getFreshItem();
         $ItemB = $this->getFreshItem();
         $ItemA->ItemsLinks->setId($ItemB->id);
         $ItemA->ItemsLinks->postAction(Action::Create, array());
 
-        // we need to force-CREATE a template with exact ID as ItemB, so sql is mandatory.
-        // classic create() will "Nothing to show with this Id".
-        // It also won't work if we create the template then Patch its ID with itemB's id.
+        // insert an ItemsType with the exact same ID as ItemB.
+        // We must insert manually: create() cannot create entities with a preassigned ID.
         $User = $this->getRandomUserInTeam(1);
         $defaultPermissions = BasePermissions::Team->toJson();
         $req = $this->Db->prepare('INSERT INTO items_types (id, title, userid, team, canread, canwrite, canread_target, canwrite_target) VALUES (:id, :title, :userid, :team, :canread, :canwrite, :canread_target, :canwrite_target)');

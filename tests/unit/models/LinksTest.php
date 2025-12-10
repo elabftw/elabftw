@@ -15,6 +15,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Models\Links\Experiments2ItemsLinks;
+use Elabftw\Models\Links\ItemsTypes2ItemsLinks;
 use Elabftw\Models\Users\AuthenticatedUser;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
@@ -107,6 +108,13 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         $this->assertIsInt($this->Experiments->ItemsLinks->postAction(Action::Duplicate, array()));
         $this->Experiments->ExperimentsLinks->setId($this->Experiments->id);
         $this->assertIsInt($this->Experiments->ExperimentsLinks->postAction(Action::Duplicate, array()));
+        // try with a resource template
+        $Links = new ItemsTypes2ItemsLinks($this->Experiments, $Items1->id);
+        $this->assertIsInt($Links->postAction(Action::Duplicate, array()));
+        $this->ItemsTypes->ItemsLinks->setId($Items1->id);
+        $this->assertIsInt($this->ItemsTypes->ItemsLinks->postAction(Action::Duplicate, array()));
+        $this->ItemsTypes->ExperimentsLinks->setId($this->Experiments->id);
+        $this->assertIsInt($this->ItemsTypes->ExperimentsLinks->postAction(Action::Duplicate, array()));
     }
 
     public function testReadOne(): void

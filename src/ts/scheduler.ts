@@ -36,8 +36,9 @@ import { DateTime } from 'luxon';
 import 'jquery-ui/ui/widgets/autocomplete';
 import { ApiC } from './api';
 import i18next from './i18n';
-import { Action } from './interfaces';
-import { TomSelect } from './misc';
+import { Action, Entity } from './interfaces';
+import { getNewIdFromPostRequest, TomSelect } from './misc';
+import { initMetadataUi, MetadataUiContext } from './metadata';
 
 // transform a Date object into something we can put as a value of an input of type datetime-local
 function toDateTimeInputValueNumber(datetime: Date): number {
@@ -51,6 +52,59 @@ function lockScopeButton(selectedItems: string[]): void {
   const showLocked = selectedItems.length > 0;
   scopeBtn?.toggleAttribute('hidden', showLocked);
   lockedBtn?.toggleAttribute('hidden', !showLocked);
+}
+
+interface EventModalData {
+  id: number;
+  title_only: string;
+  start: string | Date;
+  end: string | Date;
+  experiment?: number | null;
+  experiment_title?: string;
+  item_link?: number | null;
+  item_link_title?: string;
+  items_id?: number;
+  item?: number;
+  book_is_cancellable?: number;
+  book_cancel_minutes?: number;
+}
+
+type EventBindingProps = Pick<EventModalData, 'experiment' | 'experiment_title' | 'item_link' | 'item_link_title'>;
+
+function refreshBoundDivs(extendedProps: EventBindingProps): void {
+  // start by clearing the divs
+  $('#eventBoundExp').html('');
+  $('#eventBoundDb').html('');
+  if (extendedProps.experiment != null) {
+    $('#eventBoundExp').html(`Event is bound to an experiment: <a href="experiments.php?mode=view&id=${extendedProps.experiment}">${extendedProps.experiment_title}</a>.`);
+    $('[data-action="scheduler-rm-bind"][data-type="experiment"]').show();
+  }
+  if (extendedProps.item_link != null) {
+    $('#eventBoundDb').html(`Event is bound to an item: <a href="database.php?mode=view&id=${extendedProps.item_link}">${extendedProps.item_link_title}</a>.`);
+    $('[data-action="scheduler-rm-bind"][data-type="item_link"]').show();
+  }
+}
+
+const eventMetadataSection = document.getElementById('eventMetadataSection');
+let eventMetadataContext: MetadataUiContext | null = null;
+
+function loadEventMetadataFor(eventId: number): Promise<void> {
+  const eventEntity: Entity = { type: 'event', id: eventId };
+  if (!eventMetadataContext) {
+    eventMetadataContext = initMetadataUi(eventEntity, {
+      containerSelector: '#eventModal',
+      allowJsonEditor: true,
+      reloadGroupElements: false,
+      autoDisplayMode: null,
+    }) ?? null;
+  } else {
+    eventMetadataContext.setEntity(eventEntity);
+  }
+  if (!eventMetadataContext) {
+    return Promise.resolve();
+  }
+  eventMetadataSection?.classList.remove('d-none');
+  return eventMetadataContext.display('edit');
 }
 
 if (window.location.pathname === '/scheduler.php') {
@@ -70,6 +124,86 @@ if (window.location.pathname === '/scheduler.php') {
   // start and end inputs
   const startInput = (document.getElementById('schedulerEventModalStart') as HTMLInputElement);
   const endInput = (document.getElementById('schedulerEventModalEnd') as HTMLInputElement);
+
+  function mapCalendarEvent(event: any): EventModalData {
+    return {
+      id: Number(event.id),
+      title_only: event.extendedProps.title_only ?? '',
+      start: event.start,
+      end: event.end ?? event.start,
+      experiment: event.extendedProps.experiment ?? null,
+      experiment_title: event.extendedProps.experiment_title,
+      item_link: event.extendedProps.item_link ?? null,
+      item_link_title: event.extendedProps.item_link_title,
+      items_id: event.extendedProps.items_id,
+      book_is_cancellable: event.extendedProps.book_is_cancellable,
+      book_cancel_minutes: event.extendedProps.book_cancel_minutes,
+    };
+  }
+
+  function mapApiEvent(event: any): EventModalData {
+    return {
+      id: Number(event.id),
+      title_only: event.title ?? '',
+      start: event.start,
+      end: event.end,
+      experiment: event.experiment ?? null,
+      experiment_title: event.experiment_title,
+      item_link: event.item_link ?? null,
+      item_link_title: event.item_link_title,
+      items_id: event.item,
+      book_is_cancellable: event.book_is_cancellable,
+      book_cancel_minutes: event.book_cancel_minutes,
+    };
+  }
+
+  function showEventModal(data: EventModalData, shouldOpen = false): void {
+    if (shouldOpen) {
+      $('#eventModal').modal('show');
+    }
+    const eventId = String(data.id);
+    document.querySelectorAll('[data-action="scheduler-bind-entity"]').forEach((btn: HTMLButtonElement) => btn.dataset.id = eventId);
+    document.querySelectorAll('[data-action="scheduler-rm-bind"]').forEach((btn: HTMLButtonElement) => btn.dataset.eventid = eventId);
+    document.querySelectorAll('.cancelEventBtn').forEach((btn: HTMLButtonElement) => btn.dataset.id = eventId);
+
+    const eventTitleInput = document.getElementById('eventTitle') as HTMLInputElement;
+    eventTitleInput.value = data.title_only ?? '';
+    eventTitleInput.dataset.eventid = eventId;
+
+    const startDate = data.start instanceof Date ? data.start : new Date(data.start);
+    const endDate = data.end instanceof Date ? data.end : new Date(data.end);
+    startInput.valueAsNumber = toDateTimeInputValueNumber(startDate);
+    endInput.valueAsNumber = toDateTimeInputValueNumber(endDate);
+    startInput.dataset.eventid = eventId;
+    endInput.dataset.eventid = eventId;
+
+    refreshBoundDivs({
+      experiment: data.experiment,
+      experiment_title: data.experiment_title,
+      item_link: data.item_link,
+      item_link_title: data.item_link_title,
+    });
+
+    const cancelDiv = document.getElementById('isCancellableDiv');
+    if (cancelDiv) {
+      const isAdmin = cancelDiv.dataset.isAdmin === 'true';
+      const isCancellable = isAdmin || Number(data.book_is_cancellable) === 1;
+      cancelDiv.classList.toggle('d-none', !isCancellable);
+    }
+    const targetCancel = document.getElementById('targetCancelEventUsers') as HTMLInputElement;
+    if (targetCancel) {
+      targetCancel.dataset.targetid = String(data.items_id ?? data.item ?? '');
+    }
+
+    loadEventMetadataFor(data.id);
+  }
+
+  function openEventModalById(eventId: number): void {
+    $('[data-action="scheduler-rm-bind"]').hide();
+    ApiC.getJson(`event/${eventId}`).then(json => {
+      showEventModal(mapApiEvent(json), true);
+    });
+  }
 
   const params = new URLSearchParams(document.location.search.substring(1));
   // get the start parameter from url and use that as start time if it's there
@@ -123,20 +257,6 @@ if (window.location.pathname === '/scheduler.php') {
       calendar.addEventSource({ url: newQuery });
       calendar.refetchEvents();
       window.history.replaceState({}, '', `${location.pathname}?${params.toString()}`);
-    }
-
-    function refreshBoundDivs(extendedProps) {
-      // start by clearing the divs
-      $('#eventBoundExp').html('');
-      $('#eventBoundDb').html('');
-      if (extendedProps.experiment != null) {
-        $('#eventBoundExp').html(`Event is bound to an experiment: <a href="experiments.php?mode=view&id=${extendedProps.experiment}">${extendedProps.experiment_title}</a>.`);
-        $('[data-action="scheduler-rm-bind"][data-type="experiment"]').show();
-      }
-      if (extendedProps.item_link != null) {
-        $('#eventBoundDb').html(`Event is bound to an item: <a href="database.php?mode=view&id=${extendedProps.item_link}">${extendedProps.item_link_title}</a>.`);
-        $('[data-action="scheduler-rm-bind"][data-type="item_link"]').show();
-      }
     }
 
     // create self-removable badge for selected items (in scheduler & modal)
@@ -263,12 +383,15 @@ if (window.location.pathname === '/scheduler.php') {
 
             const postParams = { start: info.startStr, end: info.endStr };
             Promise.all(
-              itemIdsToPost.map(itemId => ApiC.post(`events/${itemId}`, postParams)),
-            ).then(() => {
+              itemIdsToPost.map(itemId => ApiC.post(`events/${itemId}`, postParams).then(resp => getNewIdFromPostRequest(resp))),
+            ).then((createdIds: number[]) => {
               calendar.refetchEvents();
               // refresh item with its title by triggering unselect (see #5265)
               calendar.unselect();
               $('.modal').modal('hide');
+              if (createdIds.length > 0) {
+                openEventModalById(createdIds[0]);
+              }
             }).catch(() => {
               calendar.unselect();
               $('.modal').modal('hide');
@@ -359,38 +482,7 @@ if (window.location.pathname === '/scheduler.php') {
           return; // do nothing if event is disabled
         }
         $('[data-action="scheduler-rm-bind"]').hide();
-        $('#eventModal').modal('toggle');
-        // set the event id on the various elements
-        document.querySelectorAll('[data-action="scheduler-bind-entity"]').forEach((btn: HTMLButtonElement) => btn.dataset.id = info.event.id);
-        document.querySelectorAll('[data-action="scheduler-rm-bind"]').forEach((btn:HTMLButtonElement) => btn.dataset.eventid = info.event.id);
-        document.querySelectorAll('.cancelEventBtn').forEach((btn: HTMLButtonElement) => btn.dataset.id = info.event.id);
-
-        // title
-        const eventTitle = document.getElementById('eventTitle') as HTMLInputElement;
-        eventTitle.value = info.event.extendedProps.title_only;
-        // set the event id on the title
-        eventTitle.dataset.eventid = info.event.id;
-
-        // start and end inputs values
-        startInput.valueAsNumber = toDateTimeInputValueNumber(info.event.start);
-        endInput.valueAsNumber = toDateTimeInputValueNumber(info.event.end);
-        // also adjust the event id so the change listener will send a correct query
-        startInput.dataset.eventid = info.event.id;
-        endInput.dataset.eventid = info.event.id;
-        refreshBoundDivs(info.event.extendedProps);
-
-        // cancel block: show if event is cancellable OR user is Admin)
-        const cancelDiv = document.getElementById('isCancellableDiv') as HTMLElement;
-        if (!cancelDiv) return;
-        const isAdmin = cancelDiv.dataset.isAdmin === 'true';
-        const bookIsCancellable = Number(info.event.extendedProps.book_is_cancellable);
-        const isCancellable = isAdmin || bookIsCancellable === 1;
-        cancelDiv.classList.toggle('d-none', !isCancellable);
-        // add event owner's id as target for cancel message
-        const targetCancel = document.getElementById('targetCancelEventUsers');
-        if (targetCancel) {
-          targetCancel.dataset.targetid = info.event.extendedProps.items_id;
-        }
+        showEventModal(mapCalendarEvent(info.event), true);
       },
       // on mouse enter add shadow and show title
       eventMouseEnter: function(info): void {

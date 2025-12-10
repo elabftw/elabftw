@@ -11,27 +11,38 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Models\Links\Experiments2ItemsLinks;
 use Elabftw\Models\Users\AuthenticatedUser;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
+use PDO;
 
 class LinksTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;
 
+    private Db $Db;
+
     private Experiments $Experiments;
 
     private Items $Items;
 
+    private Templates $Templates;
+
+    private ItemsTypes $ItemsTypes;
+
     protected function setUp(): void
     {
+        $this->Db = Db::getConnection();
         $user = $this->getRandomUserInTeam(1);
         $this->Experiments = $this->getFreshExperimentWithGivenUser($user);
         $this->Items = $this->getFreshItemWithGivenUser($user);
         $this->Experiments->ExperimentsLinks->setId($this->Experiments->id);
+        $this->Templates = $this->getFreshTemplate();
+        $this->ItemsTypes = $this->getFreshItemType();
     }
 
     public function testGetApiPath(): void
@@ -41,6 +52,7 @@ class LinksTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateReadDestroy(): void
     {
+        // Experiment with links to resources
         $this->Experiments->ItemsLinks->setId($this->Items->id);
         $this->Experiments->ItemsLinks->postAction(Action::Create, array());
         $count = count($this->Experiments->ItemsLinks->readAll());
@@ -48,12 +60,37 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->ItemsLinks->destroy();
         $this->assertEquals(0, count($this->Experiments->ItemsLinks->readAll()));
 
+        // Experiment with links to other experiments
         $this->Experiments->ExperimentsLinks->setId($this->Experiments->id - 1);
         $this->Experiments->ExperimentsLinks->postAction(Action::Create, array());
         $count = count($this->Experiments->ExperimentsLinks->readAll());
         $this->assertEquals(1, $count);
         $this->Experiments->ExperimentsLinks->destroy();
         $this->assertEquals(0, count($this->Experiments->ExperimentsLinks->readAll()));
+
+        // Exp Templates with links to experiments
+        $this->Templates->ExperimentsLinks->setId($this->Experiments->id);
+        $this->Templates->ExperimentsLinks->postAction(Action::Create, array());
+        $count = count($this->Templates->ExperimentsLinks->readAll());
+        $this->assertEquals(1, $count);
+        $this->Templates->ExperimentsLinks->destroy();
+        $this->assertEquals(0, count($this->Templates->ExperimentsLinks->readAll()));
+
+        // Resource Template with links to experiments
+        $this->ItemsTypes->ExperimentsLinks->setId($this->Experiments->id);
+        $this->ItemsTypes->ExperimentsLinks->postAction(Action::Create, array());
+        $count = count($this->ItemsTypes->ExperimentsLinks->readAll());
+        $this->assertEquals(1, $count);
+        $this->ItemsTypes->ExperimentsLinks->destroy();
+        $this->assertEquals(0, count($this->ItemsTypes->ExperimentsLinks->readAll()));
+
+        // Resource Template with links to items
+        $this->ItemsTypes->ItemsLinks->setId($this->Items->id);
+        $this->ItemsTypes->ItemsLinks->postAction(Action::Create, array());
+        $count = count($this->ItemsTypes->ItemsLinks->readAll());
+        $this->assertEquals(1, $count);
+        $this->ItemsTypes->ItemsLinks->destroy();
+        $this->assertEquals(0, count($this->ItemsTypes->ItemsLinks->readAll()));
     }
 
     public function testImport(): void
@@ -223,26 +260,42 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(count($titles), count($titlesAfter));
     }
 
-    public function testItemsTypesNeverLeakItemsLinks(): void
+    /*
+     * ensure links to resources are not bound to wrong entities. See #5875
+     * An issue occured where newly created resources templates, having an ID colliding with existing item, would have
+     * its links copied to the template.
+     */
+    public function testItemsTypesRelatedLinksAreNotCorrupted(): void
     {
-        // ensure links are not bound to wrong entities. See #5875
+        // we'll inspect links in ItemB because we're testing Related links
         $ItemA = $this->getFreshItem();
         $ItemB = $this->getFreshItem();
-
-        // create a link A → B (in items2items)
         $ItemA->ItemsLinks->setId($ItemB->id);
         $ItemA->ItemsLinks->postAction(Action::Create, array());
 
-        // now create a resource template
-        $ItemsTypes = new ItemsTypes($this->getRandomUserInTeam(1));
-        $tplId = $ItemsTypes->create(title: 'Template X');
-        $ItemsTypes->setId($tplId);
-        // force template ID to collide with ItemA ID by manually setting ID
-        $ItemsTypes->id = $ItemA->id;
-        // before fix #5875, this returned the link from items2items. Now, must return ZERO links
-        $this->assertEmpty(
-            $ItemsTypes->ItemsLinks->readAll(),
-            'ItemsTypes must NOT read links from items2items even when IDs collide'
-        );
+        // we need to force-CREATE a template with exact ID as ItemB, so sql is mandatory.
+        // classic create() will "Nothing to show with this Id".
+        // It also won't work if we create the template then Patch its ID with itemB's id.
+        $User = $this->getRandomUserInTeam(1);
+        $defaultPermissions = BasePermissions::Team->toJson();
+        $req = $this->Db->prepare('INSERT INTO items_types (id, title, userid, team, canread, canwrite, canread_target, canwrite_target) VALUES (:id, :title, :userid, :team, :canread, :canwrite, :canread_target, :canwrite_target)');
+        $req->bindValue(':id', $ItemB->id, PDO::PARAM_INT);
+        $req->bindValue(':title', 'Template X');
+        $req->bindValue(':userid', $User->userData['userid'], PDO::PARAM_INT);
+        $req->bindValue(':team', $User->team, PDO::PARAM_INT);
+        $req->bindValue(':canread', $defaultPermissions);
+        $req->bindValue(':canwrite', $defaultPermissions);
+        $req->bindValue(':canread_target', $defaultPermissions);
+        $req->bindValue(':canwrite_target', $defaultPermissions);
+        $req->execute();
+
+        $ItemsTypes = new ItemsTypes($User, $ItemB->id);
+        $this->assertSame($ItemsTypes->id, $ItemB->id);
+
+        // before fix #5875, this returned the link from items2items. Now, must return ZERO links.
+        $itemsLinks = $ItemB->ItemsLinks->readRelated();
+        $templateLinks = $ItemsTypes->ItemsLinks->readRelated();
+        $this->assertNotEquals($itemsLinks, $templateLinks);
+        $this->assertEmpty($ItemsTypes->ItemsLinks->readAll());
     }
 }

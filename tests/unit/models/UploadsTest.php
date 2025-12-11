@@ -131,13 +131,14 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         $this->Entity->Uploads->patch(Action::Archive, array());
         $ownerId = $this->Entity->Uploads->readOne()['userid'];
         $newOwner = new Users(2, 1);
-        $this->Entity->Uploads->patch(Action::Update, array(
+        $updated = $this->Entity->Uploads->patch(Action::Update, array(
             'real_name' => 'new real name',
             'comment' => 'new file comment',
             'state' => (string) State::Deleted->value,
             'userid' => $newOwner->userid,
         ));
-        $this->assertNotEquals($ownerId, $newOwner->userid);
+        $this->assertNotEquals($ownerId, $updated['userid']);
+        $this->assertEquals($newOwner->userid, $updated['userid']);
     }
 
     public function testGetApiPath(): void

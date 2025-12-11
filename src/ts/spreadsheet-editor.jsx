@@ -116,6 +116,14 @@ function SpreadsheetEditor() {
     setReplaceName(null);
   };
 
+  const toggleFullscreen = () => {
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    } else {
+      const el = document.documentElement;
+      if (el.requestFullscreen) el.requestFullscreen();
+    }
+  }
   // CUSTOM TOOLBAR ICONS (they are placed at the end)
   const buildToolbar = (tb) => {
     // we will replace the save button with ours, and add an export button that has the same behavior as default save button
@@ -133,12 +141,12 @@ function SpreadsheetEditor() {
       // reuse the same handler signature (itemEl, event, spreadsheetInstance)
       onclick: (el, ev, inst) => originalSave(el, ev, inst),
     };
+    // we render the spreadsheet in an iframe, so we'll also use a custom fullscreen button
+    const fullscreenBtn = { type: 'icon', class: 'mx-2 fas fa-expand', tooltip: i18next.t('fullscreen'), onclick: () => toggleFullscreen()};
     const clearBtn = { type: 'icon', class: 'ml-2 fas fa-trash', tooltip: i18next.t('clear'), onclick: clearSpreadsheet };
     const importBtn = { type: 'icon', class: 'fas fa-upload', tooltip: i18next.t('import'), onclick: () => document.getElementById('importFileInput').click() };
-
-    // replace original save with our custom save function
+    // replace original save & fullscreen buttons with our custom functions
     Object.assign(saveBtn, {
-      // need to blank this property
       content: '',
       type: 'icon',
       class: 'ml-2 fas fa-floppy-disk',
@@ -146,11 +154,7 @@ function SpreadsheetEditor() {
       onclick: isSaving ? undefined : onSaveOrReplace,
     });
 
-    tb.items.push(
-      importBtn,
-      exportBtn,
-      clearBtn
-    );
+    tb.items.push(fullscreenBtn, importBtn, exportBtn, clearBtn );
     return tb;
   };
 

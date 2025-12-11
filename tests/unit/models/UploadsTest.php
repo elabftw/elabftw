@@ -128,11 +128,15 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         $id = $this->Entity->Uploads->create(new CreateUploadFromLocalFile('some-file.zip', dirname(__DIR__, 2) . '/_data/importable.zip'));
         $this->Entity->Uploads->setId($id);
         $this->Entity->Uploads->patch(Action::Archive, array());
+        $ownerId = $this->Entity->Uploads->readOne()['userid'];
+        $newOwner = $this->getRandomUserInTeam(1);
         $this->Entity->Uploads->patch(Action::Update, array(
             'real_name' => 'new real name',
             'comment' => 'new file comment',
             'state' => (string) State::Deleted->value,
+            'userid' => $newOwner->userid,
         ));
+        $this->assertNotEquals($ownerId, $newOwner->userid);
     }
 
     public function testGetApiPath(): void

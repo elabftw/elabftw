@@ -13,6 +13,7 @@ namespace Elabftw\Traits;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
+use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Users\AuthenticatedUser;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
@@ -106,6 +107,14 @@ trait TestsUtilsTrait
     protected function getFreshTemplate(): Templates
     {
         $Entity = new Templates(new Users(1, 1));
+        $id = $Entity->create();
+        $Entity->setId($id);
+        return $Entity;
+    }
+
+    protected function getFreshItemType(): ItemsTypes
+    {
+        $Entity = new ItemsTypes(new Users(1, 1));
         $id = $Entity->create();
         $Entity->setId($id);
         return $Entity;

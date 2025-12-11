@@ -33,7 +33,8 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->Entity = $this->getFreshItem();
+        $user = new Users(1, 1);
+        $this->Entity = $this->getFreshItemWithGivenUser($user);
     }
 
     public function testCreate(): void
@@ -129,7 +130,7 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         $this->Entity->Uploads->setId($id);
         $this->Entity->Uploads->patch(Action::Archive, array());
         $ownerId = $this->Entity->Uploads->readOne()['userid'];
-        $newOwner = $this->getRandomUserInTeam(1);
+        $newOwner = new Users(2, 1);
         $this->Entity->Uploads->patch(Action::Update, array(
             'real_name' => 'new real name',
             'comment' => 'new file comment',

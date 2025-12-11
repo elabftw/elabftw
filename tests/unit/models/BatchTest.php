@@ -12,12 +12,17 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\CreateUploadFromLocalFile;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
+use Elabftw\Traits\TestsUtilsTrait;
 
 class BatchTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private Batch $Batch;
 
     private array $baseReqBody;
@@ -60,6 +65,36 @@ class BatchTest extends \PHPUnit\Framework\TestCase
         $reqBody['action'] = Action::UpdateOwner->value;
         $reqBody['target_owner'] = 2;
         $this->assertIsInt($this->Batch->postAction(Action::UpdateOwner, $reqBody));
+    }
+
+    public function testBatchOwnershipTransferAlsoTransfersUploads(): void
+    {
+        $User1 = $this->getRandomUserInTeam(1);
+        $User2 = $this->getRandomUserInTeam(2);
+        $Experiment = $this->getFreshExperimentWithGivenUser($User1);
+        // new upload
+        $fixturesFs = Storage::FIXTURES->getStorage();
+        $uploadPath = $fixturesFs->getPath() . '/example.png';
+        $uploadId = $Experiment->Uploads->create(new CreateUploadFromLocalFile('example.png', $uploadPath));
+        $this->assertIsInt($uploadId);
+
+        // Initial upload owner should match experiment owner
+        $Upload = new Uploads($Experiment, $uploadId);
+        $this->assertEquals($User1->userid, $Upload->uploadData['userid']);
+        // batch transfer user 1's experiments to user 2
+        $reqBody = $this->baseReqBody;
+        $reqBody['action'] = Action::UpdateOwner->value;
+        $reqBody['users'] = array($User1->userid);
+        $reqBody['target_owner'] = $User2->userid;
+
+        $result = $this->Batch->postAction(Action::UpdateOwner, $reqBody);
+        $this->assertIsInt($result);
+
+        // reload Experiment & Upload
+        $Experiment->setId($Experiment->id);
+        $this->assertEquals($User2->userid, $Experiment->entityData['userid']);
+        $UploadAfter = new Uploads($Experiment, $uploadId);
+        $this->assertEquals($User2->userid, $UploadAfter->uploadData['userid']);
     }
 
     public function testInvalidPostAction(): void

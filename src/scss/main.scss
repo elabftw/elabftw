@@ -1076,6 +1076,7 @@ the form-control fails to do that so we do the border ourselves */
   &.category-btn {
     background-color: var(--bg);
     color: $white;
+    white-space: normal;
 
     &:hover {
       background-color: $secondlevel;

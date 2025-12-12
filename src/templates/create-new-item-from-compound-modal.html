@@ -17,7 +17,6 @@
         </div>
         {# adapt inputs expected by modal.html #}
         {% set templatesArr = itemsTemplatesArr %}
-        {% set categoryArr = App.itemsCategoryArr %}
         {% include 'create-new-item-modal-body.html' with {'actionName': 'create-resource-from-compound',
           'templatesPageOverride': 'resources-templates.php', 'categoryPageOverride': 'resources-categories.php',
           'alwaysShowCategories': true

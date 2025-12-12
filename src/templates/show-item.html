@@ -3,47 +3,15 @@
 {% set label = Entity.entityType.value == 'items_types' ? 'Create resource from template'|trans : 'Create experiment from template'|trans %}
 {% set dataType = Entity.entityType.value == 'experiments_templates' ? 'experiments' : 'database' %}
 
-<section class='entity {{ Entity.entityType.value in ['experiments_templates', 'items_types'] ? 'entity-template' }} pl-3 d-flex' id='parent_{{ randomId }}' style='--left-color: #{{ item.category_color|default('bdbdbd') }};' aria-label='{{ 'Entry'|trans }}_{{ randomId }}'>
+<section class='entity {{ Entity.entityType.value in ['experiments_templates', 'items_types'] ? 'entity-template' }} pl-3 py-3 d-flex' id='parent_{{ randomId }}' style='--left-color: #{{ item.category_color|default('bdbdbd') }};' aria-label='{{ 'Entry'|trans }}_{{ randomId }}'>
 
   {# left part, full height: checkbox #}
-  <div class='d-flex align-items-center'>
+  <div class='d-flex align-items-start mt-1'>
     {# checkbox #}
     <input autocomplete='off' type='checkbox' data-action='checkbox-entity' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.entityType.value }}' data-state='{{ item.state }}' aria-label='{{ 'Select'|trans }}' class='mr-3' />
-    <div class='d-flex'>
-
-      {# for templates: create from button #}
-      {% if Entity.entityType.value in ['experiments_templates', 'items_types'] %}
-      <a data-action='create-entity' data-type={{ dataType }} data-tplid='{{ item.id }}' href='#' class='left-icon rounded mr-3 my-1 hl-hover-gray bgnd-blue' title='{{ label }}' aria-label='{{ label }}'>
-        <i class='fas fa-file-circle-plus fa-fw'></i>
-      </a>
-      {% endif %}
-      {# lock icon #}
-      {% if item.locked %}
-        <div class='left-icon rounded mr-3 my-1 bgnd-gray'>
-          <i class='fas fa-lock fa-fw'></i>
-        </div>
-      {# deleted entry: show restore icon #}
-      {% elseif item.state == 3 %}
-      <div class='left-icon rounded mr-3 my-1 bgnd-dark' data-action='restore-entity-showmode' title='{{ 'Restore entry'|trans }}' data-endpoint='{{ Entity.entityType.value }}' data-id='{{ item.id }}'>
-          <i class='fas fa-trash-can-arrow-up fa-fw'></i>
-        </div>
-      {% else %}
-        {# edit icon #}
-        {% if (item.userid == App.Users.userData.userid or Entity.entityType.value == 'items' or App.Users.isAdmin) %}
-          <a href='{{ Entity.entityType.toPage }}?mode=edit&amp;id={{ item.id }}' class='left-icon rounded mr-3 my-1 bgnd-dark' title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}'>
-            <i class='fas fa-pencil fa-fw'></i>
-          </a>
-        {% else %}
-        {# eye icon #}
-          <a href='{{ Entity.entityType.toPage }}?mode=view&amp;id={{ item.id }}' class='left-icon rounded mr-3 my-1 bgnd-dark' title='{{ 'View'|trans }}' aria-label='{{ 'View'|trans }}'>
-            <i class='fas fa-eye fa-fw'></i>
-          </a>
-        {% endif %}
-      {% endif %}
-    </div>
   </div>
 
-  {# middle part: category, title, icons and tags #}
+  {# middle part: category, status, title, icons and tags #}
   <div class='align-self-center'>
     {# first line #}
     <div>
@@ -62,17 +30,21 @@
       {# category #}
       {% if item.category %}
       {# Note: there might be something to do with mix-blend-mode: difference to get white text on dark bg et vice-versa #}
-        <button class='btn catstat-btn category-btn mr-2' type='button' style='--bg: #{{ item.category_color|default('bdbdbd') }};line-height:normal;' data-action='add-query-filter' data-key='category' data-value='{{ item.category|e('html_attr') }}'>{{ item.category_title }}</button>
+        <button class='btn catstat-btn category-btn mr-1' type='button' style='--bg: #{{ item.category_color|default('bdbdbd') }};line-height:normal;' data-action='add-query-filter' data-key='category' data-value='{{ item.category|e('html_attr') }}'>{{ item.category_title }}</button>
       {% endif %}
       {# status #}
       {% if item.status %}
-        <button class='btn catstat-btn status-btn bg-firstlevel mb-1' type='button' data-action='add-query-filter' data-key='status' data-value='{{ item.status|e('html_attr') }}' style='line-height:normal;'><i class='fas fa-circle fa-fw' style='--bg: #{{ item.status_color|default('bdbdbd') }}'></i> {{ item.status_title }}</button>
+        <button class='btn catstat-btn mr-1 status-btn bg-firstlevel' type='button' data-action='add-query-filter' data-key='status' data-value='{{ item.status|e('html_attr') }}' style='line-height:normal;'><i class='fas fa-circle fa-fw' style='--bg: #{{ item.status_color|default('bdbdbd') }}'></i> {{ item.status_title }}</button>
+      {% endif %}
+      {# rating #}
+      {% if item.rating > 0 %}
+        <span class='rating-show rounded p-1 font-weight-bold'><i class='fas fa-star mr-1' title='☻'></i>{{ item.rating }}</span>
       {% endif %}
     </div>
     {# end first line #}
 
     {# second line: title #}
-    <div class='d-flex title flex-nowrap'>
+    <div class='d-flex title flex-nowrap my-2'>
       {% if item.custom_id %}
         <span class='color-medium mr-1 text-nowrap' title='{{ 'Custom ID'|trans }}'>{{ item.custom_id }}</span>
       {% endif %}
@@ -99,7 +71,7 @@
       </p>
     {% endif %}
 
-    <p class='my-1'>
+    <p class='my-2'>
       {% set itemtagsArr = tagsArr[item.id] %}
       {% if itemtagsArr|length > 0 %}
         <span class='d-inline-flex flex-wrap'><i class='fas fa-tags mr-1 fa-fw'></i>
@@ -109,6 +81,19 @@
         </span>
       {% endif %}
     </p>
+    {# toggle body #}
+    <div class='d-flex flex-row'>
+      <button type='button' class='btn border-0 mr-2 lh-normal bg-superlight' data-type='{{ Entity.entityType.value }}' data-id='{{ item.id }}' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}' aria-label='{{ 'Toggle content'|trans }}'>
+        <i class='fas fa-caret-right color-thirdlevel'></i>
+      </button>
+      {# date #}
+      <div class='d-flex flex-column small'>
+       <span class='item-date color-medium'>{{ 'Started on'|trans }} {{ item.date|date('Y-m-d') }}</span>
+        <span>
+        <span class='item-date color-medium relative-moment'>{{ 'Last modified'|trans }}</span> <span title='{{ item.modified_at }}' class='color-medium relative-moment'></span>
+        </span>
+      </div>
+    </div>
 
     {# container to hold the body of the entity if it is toggled with the +/- icon #}
     {# a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well #}
@@ -117,24 +102,38 @@
   </div>
 
   {# third part: end container #}
-  <div class='d-flex justify-content-end ml-auto'>
-    {# column for date and icons #}
-    <div class='d-flex flex-column ml-auto'>
-      {# rating, date and pinned icon #}
-      <div>
-        {# rating #}
-        {% if item.rating > 0 %}
-          <span class='rating-show rounded px-1 mr-1 font-weight-bold'><i class='fas fa-star mr-1' title='☻'></i>{{ item.rating }}</span>
+  <div class='d-flex justify-content-end ml-auto text-nowrap'>
+    <div>
+      {# for templates: create from button #}
+      {% if Entity.entityType.value in ['experiments_templates', 'items_types'] %}
+      <a data-action='create-entity' data-type={{ dataType }} data-tplid='{{ item.id }}' href='#' class='btn left-icon mr-1 lh-normal p-2 border-0 hl-hover-gray bgnd-blue' title='{{ label }}' aria-label='{{ label }}'>
+        <i class='fas fa-file-circle-plus fa-fw'></i>
+      </a>
+      {% endif %}
+      {# lock icon #}
+      {% if item.locked %}
+        <div class='btn left-icon mr-1 lh-normal p-2 border-0 bgnd-gray disabled'>
+          <i class='fas fa-lock fa-fw'></i>
+        </div>
+      {# deleted entry: show restore icon #}
+      {% elseif item.state == 3 %}
+      <div class='left-icon rounded mr-3 my-1 bgnd-dark' data-action='restore-entity-showmode' title='{{ 'Restore entry'|trans }}' data-endpoint='{{ Entity.entityType.value }}' data-id='{{ item.id }}'>
+          <i class='fas fa-trash-can-arrow-up fa-fw'></i>
+        </div>
+      {% else %}
+        {# edit icon #}
+        {% if (item.userid == App.Users.userData.userid or Entity.entityType.value == 'items' or App.Users.isAdmin) %}
+          <a href='{{ Entity.entityType.toPage }}?mode=edit&amp;id={{ item.id }}' class='btn left-icon mr-1 lh-normal p-2 border-0 hl-hover-gray bgnd-dark' title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}'>
+            <i class='fas fa-pencil fa-fw'></i>
+          </a>
+        {% else %}
+        {# eye icon #}
+          <a href='{{ Entity.entityType.toPage }}?mode=view&amp;id={{ item.id }}' class='btn left-icon mr-1 lh-normal p-2 border-0 hl-hover-gray bgnd-dark' title='{{ 'View'|trans }}' aria-label='{{ 'View'|trans }}'>
+            <i class='fas fa-eye fa-fw'></i>
+          </a>
         {% endif %}
-        <span class='item-date color-medium'>{{ item.date|date('Y-m-d') }}</span>
-        {% include 'toggle-pin.html' with {'padding': 1, 'is_pinned': item.is_pinned, 'id': item.id} %}
-      </div>
-      <div class='ml-auto'>
-        {# toggle body #}
-        <button type='button' class=' btn p-1 hl-hover-gray' data-type='{{ Entity.entityType.value }}' data-id='{{ item.id }}' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}' aria-label='{{ 'Toggle content'|trans }}'>
-          <i class='fas fa-square-plus fa-fw'></i>
-        </button>
-      </div>
+      {% endif %}
+      {% include 'toggle-pin.html' with {'padding': 2, 'is_pinned': item.is_pinned, 'id': item.id} %}
     </div>
   </div>
 </section>

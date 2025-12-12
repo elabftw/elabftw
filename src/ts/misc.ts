@@ -307,6 +307,8 @@ export async function reloadEntitiesShow(tag = ''): Promise<void | Response> {
   addAutocompleteToTagInputs();
   // listen to data-trigger elements
   listenTrigger();
+  // and set relative moments
+  relativeMoment();
 }
 
 export async function reloadElements(elementIds: string[]): Promise<void> {

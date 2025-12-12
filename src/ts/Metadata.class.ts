@@ -169,6 +169,7 @@ export class Metadata {
       radioInput.id = this.getRandomId();
       // add a data-field attribute so we know what to update on change
       radioInput.dataset.field = name;
+      radioInput.disabled = properties.readonly === true;
       radioInputs.push(radioInput);
     }
 
@@ -322,12 +323,13 @@ export class Metadata {
     if (Object.prototype.hasOwnProperty.call(properties, 'required')) {
       element.required = true;
     }
+    const mustDisable = element instanceof HTMLSelectElement ||
+      (element instanceof HTMLInputElement && ['checkbox', 'radio'].includes(element.type));
     if (Object.prototype.hasOwnProperty.call(properties, 'readonly') && properties.readonly === true) {
-      // readonly is not supported by select elements, but disabled is
-      if (element instanceof HTMLSelectElement) {
+      if (mustDisable) {
         element.disabled = true;
       } else {
-        element.readOnly = true;
+        (element as HTMLInputElement | HTMLTextAreaElement).readOnly = true;
       }
     }
 
@@ -387,6 +389,7 @@ export class Metadata {
       unitsSel.dataset.units = '1';
       unitsSel.addEventListener('change', this, false);
       appendDiv.appendChild(unitsSel);
+      unitsSel.disabled = properties.readonly === true;
       // input first, then append div
       inputGroupDiv.appendChild(element);
       inputGroupDiv.appendChild(appendDiv);

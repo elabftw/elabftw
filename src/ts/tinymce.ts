@@ -386,9 +386,11 @@ export function getTinymceBaseConfig(page: string): object {
           }, 50);
         }
       });
-      // prevent tables width from being set to "auto" and cause pdf export issues (see #5601)
       editor.on('GetContent', (e) => {
+        // prevent tables width from being set to "auto" and cause pdf export issues (see #5601)
         e.content = e.content.replace(/(<table[^>]*?)\sstyle="[^"]*?width\s*:\s*auto;?[^"]*?"([^>]*?>)/gi, '$1$2');
+        // fix internal links on pasting with shortcut (&amp; → &). see #6291
+        e.content = e.content.replace(/href="([^"]*\.php\?mode=(?:view|edit)[^"]*?)&amp;([^"]*?)"/g, 'href="$1&$2"');
       });
 
       // floppy disk icon from COLLECTION: Zest Interface Icons LICENSE: MIT License AUTHOR: zest

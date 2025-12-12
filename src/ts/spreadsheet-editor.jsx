@@ -21,6 +21,7 @@ import i18next from './i18n';
 import { fileToAOA, replaceAttachment, saveAsAttachment} from './spreadsheet-utils';
 import { getEntity } from './misc';
 import { assignKey } from './keymaster';
+import {notify} from './notify';
 
 function SpreadsheetEditor() {
   const spreadsheetRef = useRef(null);
@@ -121,9 +122,11 @@ function SpreadsheetEditor() {
       document.exitFullscreen();
     } else {
       const el = document.documentElement;
-      if (el.requestFullscreen) el.requestFullscreen();
+      if (el.requestFullscreen) {
+        el.requestFullscreen().catch(err => notify.error('Failed to enter fullscreen mode:', err));
+      }
     }
-  }
+  };
   // CUSTOM TOOLBAR ICONS (they are placed at the end)
   const buildToolbar = (tb) => {
     // we will replace the save button with ours, and add an export button that has the same behavior as default save button

@@ -200,6 +200,14 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
+  // Preserve filters from navbar dropdown (e.g., category, scope, bookable) when performing a search. #6284
+  const searchParams = new URLSearchParams(window.location.search);
+  ['category', 'scope', 'bookable'].forEach(param => {
+    if (searchParams.has(param)) {
+      addHiddenInputToMainSearchForm(param, searchParams.get(param));
+    }
+  });
+
   // SEARCH RELATED CODE
   const searchInput = document.getElementById('extendedArea') as HTMLInputElement;
   SearchSyntaxHighlighting.init(searchInput);

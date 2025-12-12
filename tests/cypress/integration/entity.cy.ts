@@ -92,35 +92,27 @@ describe('Experiments', () => {
   });
 
   it('Create and edit an experiment', () => {
-    cy.visit('/experiments.php');
-    cy.htmlvalidate();
-    cy.contains('Create').click();
-    cy.get('#createModal_experiments').should('be.visible').should('contain', 'No category').contains('No category').click();
-    cy.get('#askTitleModalTitleInput').should('be.visible').wait(500).type('Cypress created experiment').click();
-    cy.get('#askTitleButton').click();
-    entityCatStat('Not set', 'Demo', 'Success');
-    entityEdit();
-    entityComment();
-    entityDuplicate();
-    entityDestroy();
-    entityRestore('experiments.php');
-    entityList('experiments.php');
+    cy.createEntity('experiment', 'Cypress created experiment').then(() => {
+      entityCatStat('Not set', 'Demo', 'Success');
+      entityEdit();
+      entityComment();
+      entityDuplicate();
+      entityDestroy();
+      entityRestore('experiments.php');
+      entityList('experiments.php');
+    });
   });
 
   it('Create and edit an item', () => {
-    cy.visit('/database.php');
-    cy.htmlvalidate();
-    cy.contains('Create').click();
-    cy.get('#createModal_database').should('be.visible').should('contain', 'No category').contains('No category').click();
-    cy.get('#askTitleModalTitleInput').should('be.visible').wait(500).type('Cypress created resource').click();
-    cy.get('#askTitleButton').click();
-    entityCatStat('Not set', 'Justice', 'In stock');
-    entityEdit();
-    entityComment();
-    entityDuplicate();
-    entityDestroy();
-    entityRestore('database.php');
-    entityList('database.php');
+    cy.createEntity('item', 'Cypress created resource').then(() => {
+      entityCatStat('Not set', 'Justice', 'In stock');
+      entityEdit();
+      entityComment();
+      entityDuplicate();
+      entityDestroy();
+      entityRestore('database.php');
+      entityList('database.php');
+    });
   });
 
   it('Delete a resource category', () => {

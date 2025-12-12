@@ -21,7 +21,7 @@ import i18next from './i18n';
 import { fileToAOA, replaceAttachment, saveAsAttachment} from './spreadsheet-utils';
 import { getEntity } from './misc';
 import { assignKey } from './keymaster';
-import {notify} from './notify';
+import { notify } from './notify';
 
 function SpreadsheetEditor() {
   const spreadsheetRef = useRef(null);
@@ -119,11 +119,11 @@ function SpreadsheetEditor() {
 
   const toggleFullscreen = () => {
     if (document.fullscreenElement) {
-      document.exitFullscreen();
+      document.exitFullscreen().catch(err => notify.error(err));
     } else {
       const el = document.documentElement;
       if (el.requestFullscreen) {
-        el.requestFullscreen().catch(err => notify.error('Failed to enter fullscreen mode:', err));
+        el.requestFullscreen().catch(err => notify.error(err));
       }
     }
   };

@@ -553,8 +553,15 @@ on('toggle-pin', (el: HTMLElement) => {
 on('transfer-ownership', () => {
   const value = (document.getElementById('target_owner') as HTMLInputElement).value;
   const params = {};
-  params[Target.UserId] = parseInt(value.split(' ')[0], 10);
-  ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => window.location.reload());
+  const newUserId = parseInt(value.split(' ')[0], 10);
+  params[Target.UserId] = newUserId;
+  ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => {
+    // get all entry's uploads to transfer their ownership as well
+    ApiC.getJson(`${entity.type}/${entity.id}`).then(entry => {
+      const patches = (entry.uploads || []).map(upload => ApiC.patch(`${entity.type}/${entity.id}/uploads/${upload.id}`, { userid: newUserId }));
+      Promise.all(patches).then(() =>  window.location.reload());
+    });
+  });
 });
 
 on(Action.Restore, () => {

@@ -126,9 +126,23 @@ final class Batch extends AbstractRest
                 $model->setId($entry['id']);
                 $model->patch($action, $params);
                 $this->processed++;
+                // Transfer uploads ownership as well
+                if (isset($params['userid'])) {
+                    $this->transferUploadsOwnership($model, (int) $params['userid']);
+                }
             } catch (IllegalActionException) {
                 continue;
             }
+        }
+    }
+
+    private function transferUploadsOwnership(AbstractConcreteEntity $model, int $newUserId): void
+    {
+        $Uploads = new Uploads($model);
+        $uploadList = $Uploads->readAll();
+        foreach ($uploadList as $upload) {
+            $Upload = new Uploads($model, (int) $upload['id']);
+            $Upload->patch(Action::Update, array('userid' => $newUserId));
         }
     }
 }

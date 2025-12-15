@@ -37,7 +37,7 @@ import {
 import i18next from './i18n';
 import { Metadata } from './Metadata.class';
 import { DateTime } from 'luxon';
-import { Action, EntityType, Model, LinkSubModel, Target } from './interfaces';
+import { Action, EntityType, Model, LinkSubModel } from './interfaces';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
 import 'bootstrap-markdown-fa5/js/bootstrap-markdown';
@@ -531,13 +531,6 @@ on('toggle-pin', (el: HTMLElement) => {
     toggleGrayClasses(el.classList);
     el.querySelector('i').classList.toggle('color-weak');
   });
-});
-
-on('transfer-ownership', () => {
-  const value = (document.getElementById('target_owner') as HTMLInputElement).value;
-  const params = {};
-  params[Target.UserId] = parseInt(value.split(' ')[0], 10);
-  ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => window.location.reload());
 });
 
 on(Action.Restore, () => {

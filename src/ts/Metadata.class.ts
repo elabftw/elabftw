@@ -53,6 +53,7 @@ export class Metadata {
 
   toggleReadonly(fieldName: string, readonly: boolean): Promise<void> {
     return this.read().then(metadata => {
+      if (!metadata.extra_fields || !metadata.extra_fields[fieldName]) return;
       metadata.extra_fields[fieldName].readonly = readonly;
       return this.save(metadata as ValidMetadata).then(() => this.display('edit'));
     });

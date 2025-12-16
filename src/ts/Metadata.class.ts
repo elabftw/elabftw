@@ -51,6 +51,13 @@ export class Metadata {
     });
   }
 
+  toggleReadonly(fieldName: string, readonly: boolean): Promise<void> {
+    return this.read().then(metadata => {
+      metadata.extra_fields[fieldName].readonly = readonly;
+      return this.save(metadata as ValidMetadata).then(() => this.display('edit'));
+    });
+  }
+
   /**
    * Only save a single field value after a change
    */
@@ -652,6 +659,26 @@ export class Metadata {
             editIcon.classList.add('fas', 'fa-pencil-alt');
             editBtn.appendChild(editIcon);
 
+            // add a button to toggle read-only
+            const readonlyBtn = document.createElement('button');
+            readonlyBtn.classList.add('btn', 'p-2', 'mr-2', 'hl-hover-gray', 'border-0', 'lh-normal');
+            readonlyBtn.type = 'button';
+            readonlyBtn.setAttribute('aria-label', i18next.t('readonly'));
+            readonlyBtn.setAttribute('title', i18next.t('readonly'));
+            const readonlyIcon = document.createElement('i');
+            readonlyIcon.classList.add('fas');
+            readonlyBtn.appendChild(readonlyIcon);
+            let isReadonly = (json as ValidMetadata)
+              .extra_fields[element.name]?.readonly === true;
+            readonlyIcon.classList.toggle('fa-lock', isReadonly);
+            readonlyIcon.classList.toggle('fa-lock-open', !isReadonly);
+            readonlyBtn.addEventListener('click', () => {
+              isReadonly = !isReadonly;
+              this.toggleReadonly(element.name, isReadonly).catch(() => {
+                notify.error('error-saving-metadata');
+              });
+            });
+
             // add a button to delete the field
             const deleteBtn = document.createElement('button');
             deleteBtn.dataset.action = 'metadata-rm-field';
@@ -663,7 +690,7 @@ export class Metadata {
             deleteIcon.classList.add('fas', 'fa-trash-alt');
             deleteBtn.appendChild(deleteIcon);
 
-            fieldActionsDiv.append(badgeContainer, handle, editBtn, deleteBtn);
+            fieldActionsDiv.append(badgeContainer, handle, editBtn, readonlyBtn, deleteBtn);
 
             labelDiv.append(label, fieldActionsDiv);
 

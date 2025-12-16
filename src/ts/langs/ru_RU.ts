@@ -75,6 +75,7 @@ const t = {
     "onboarding-email-sent": "Скоро будут отправлены электронные письма.",
     "only-a-sysadmin": "Only a Sysadmin can modify this.",
     "please-wait": "Пожалуйста, подождите…",
+    "readonly": "Только чтение",
     "remove": "Удалять",
     "rename-column": "New title for the column",
     "replace-edited-file": "Вы хотите заменить файл на сервере этим редактированием?",

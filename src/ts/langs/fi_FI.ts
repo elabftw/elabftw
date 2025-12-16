@@ -75,6 +75,7 @@ const t = {
     "onboarding-email-sent": "Aloitussähköposti(t) lähetetään pian.",
     "only-a-sysadmin": "Only a Sysadmin can modify this.",
     "please-wait": "Odota…",
+    "readonly": "Lukuoikeus",
     "remove": "Poistaa",
     "rename-column": "New title for the column",
     "replace-edited-file": "Haluatko korvata palvelimella olevan tiedoston tällä muokkauksella?",

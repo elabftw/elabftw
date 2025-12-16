@@ -75,6 +75,7 @@ const t = {
     "onboarding-email-sent": "即将发送入职电子邮件。",
     "only-a-sysadmin": "只有系统管理员可以修改。",
     "please-wait": "请稍候…",
+    "readonly": "只读",
     "remove": "移除",
     "rename-column": "新列名",
     "replace-edited-file": "您要用此编辑替换服务器上的文件吗？",

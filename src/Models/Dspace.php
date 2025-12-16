@@ -54,8 +54,7 @@ final class Dspace extends AbstractRest
         private readonly string $encPassword,
     ) {
         parent::__construct();
-        $host = rtrim($host, '/');
-        $this->host = $host === '' ? '' : $host . '/server/api/';
+        $this->host = $this->host2ApiUrl($host);
     }
 
     #[Override]
@@ -117,6 +116,15 @@ final class Dspace extends AbstractRest
     public function destroy(): bool
     {
         throw new ImproperActionException('Not supported for DSpace.');
+    }
+
+    private function host2ApiUrl(string $host): string
+    {
+        $host = rtrim($host, '/');
+        if ($host === '') {
+            throw new ImproperActionException('DSpace host is not configured. Unable to build API URL.');
+        }
+        return $host . '/server/api/';
     }
 
     // Cache auth information

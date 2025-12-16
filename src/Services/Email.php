@@ -146,7 +146,7 @@ class Email
         ->subject($subject)
         ->from($this->from)
         ->to($to)
-        ->text($body . $this->footer);
+        ->text($body);
 
         if (!empty($cc)) {
             $message->cc(...$cc);
@@ -157,7 +157,7 @@ class Email
         }
 
         if (!empty($htmlBody)) {
-            $message->html($htmlBody . $this->footer);
+            $message->html($htmlBody);
 
             if (empty($body)) {
                 $textWithLinks = (new Transformer())
@@ -168,7 +168,7 @@ class Email
                 // <a href="url">link text</a> => link text (url)
                 $plainText = preg_replace('/<a href="([^"]*)">([^<]*)<\/a>/iu', '$2 ($1)', $textWithLinks);
 
-                $message->text($plainText . $this->footer);
+                $message->text($plainText);
             }
         }
 

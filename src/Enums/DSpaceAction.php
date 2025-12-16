@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Enums;
 
-enum DspaceAction: string
+enum DSpaceAction: string
 {
     case GetCollections = 'getcollections';
     case GetTypes = 'gettypes';

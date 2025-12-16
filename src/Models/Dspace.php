@@ -16,7 +16,7 @@ use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\Env;
 use Elabftw\Enums\Action;
-use Elabftw\Enums\DspaceAction;
+use Elabftw\Enums\DSpaceAction;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ImproperActionException;
@@ -46,7 +46,6 @@ final class Dspace extends AbstractRest
 
     private string $host;
 
-    // rename host to host
     public function __construct(
         private readonly Users $requester,
         private readonly HttpGetter $httpGetter,
@@ -68,15 +67,15 @@ final class Dspace extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        if ($queryParams === null || !$queryParams->getQuery()->has('dspace_action')) {
+        if ($queryParams === null || !$queryParams->getQuery()->has('action')) {
             return array();
         }
-        $action = DspaceAction::tryFrom($queryParams->getQuery()->getString('dspace_action'))
+        $action = DSpaceAction::tryFrom($queryParams->getQuery()->getString('action'))
             ?? throw new ImproperActionException('Unknown GET action for DSpace endpoint.');
 
         return match ($action) {
-            DspaceAction::GetCollections => $this->getCollections(),
-            DspaceAction::GetTypes => $this->getTypes(),
+            DSpaceAction::GetCollections => $this->getCollections(),
+            DSpaceAction::GetTypes => $this->getTypes(),
         };
     }
 

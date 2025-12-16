@@ -18,7 +18,7 @@ use Elabftw\Elabftw\Env;
 use Elabftw\Enums\EntityType;
 use GuzzleHttp\Handler\MockHandler;
 use Elabftw\Enums\Action;
-use Elabftw\Enums\DspaceAction;
+use Elabftw\Enums\DSpaceAction;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
@@ -49,7 +49,7 @@ class DspaceTest extends \PHPUnit\Framework\TestCase
 
     public function testReadAllWithGetCollections(): void
     {
-        $result = $this->runReadAllTest(DspaceAction::GetCollections, array(
+        $result = $this->runReadAllTest(DSpaceAction::GetCollections, array(
             '_embedded' => array(
                 'collections' => array(
                     array('uuid' => 'abc-123', 'name' => 'Collection One'),
@@ -66,7 +66,7 @@ class DspaceTest extends \PHPUnit\Framework\TestCase
 
     public function testReadAllWithGetTypesAction(): void
     {
-        $result = $this->runReadAllTest(DspaceAction::GetTypes, array(
+        $result = $this->runReadAllTest(DSpaceAction::GetTypes, array(
             '_embedded' => array(
                 'entries' => array(
                     array('value' => 'article', 'display' => 'Article'),
@@ -81,7 +81,7 @@ class DspaceTest extends \PHPUnit\Framework\TestCase
 
     public function testReadAllWithUnhandledAction(): void
     {
-        $queryParams = new InputBag(array('dspace_action' => 'somerandomaction'));
+        $queryParams = new InputBag(array('action' => 'somerandomaction'));
         $q = $this->dspace->getQueryParams($queryParams);
         $this->expectException(ImproperActionException::class);
         $this->dspace->readAll($q);
@@ -136,10 +136,10 @@ class DspaceTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('1234-uuid', $res['uuid']);
     }
 
-    private function runReadAllTest(DspaceAction $action, array $responseBody): array
+    private function runReadAllTest(DSpaceAction $action, array $responseBody): array
     {
         $this->setMockResponses(array(new Response(200, array(), json_encode($responseBody) ?: '{}')));
-        $queryParams = new InputBag(array('dspace_action' => $action->value));
+        $queryParams = new InputBag(array('action' => $action->value));
         $q = $this->dspace->getQueryParams($queryParams);
         return $this->dspace->readAll($q);
     }

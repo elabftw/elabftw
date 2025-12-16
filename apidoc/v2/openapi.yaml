@@ -5441,11 +5441,11 @@ paths:
     summary: Interact with the connected DSpace repository.
 
     get:
-      tags: ['Dspace']
+      tags: ['DSpace']
       summary: Read DSpace information.
       operationId: dspace-read
       parameters:
-        - name: dspace_action
+        - name: action
           in: query
           description: |
             Action to perform:
@@ -5459,7 +5459,7 @@ paths:
       responses:
         '200':
           description: |
-            Result depends on the `dspace_action` parameter:
+            Result depends on the `action` parameter:
               - `GetCollections`: list of collections.
               - `GetTypes`: list of vocabulary entries.
               - No action: empty array.
@@ -5509,7 +5509,7 @@ paths:
                                   type: string
                                   example: "vocalubaryEntry"
     post:
-      tags: ['Dspace']
+      tags: ['DSpace']
       summary: Create a new DSpace workspace item.
       operationId: dspace-create
       requestBody:
@@ -5547,7 +5547,7 @@ paths:
                 example: 123
 
     patch:
-      tags: ['Dspace']
+      tags: ['DSpace']
       summary: Submit an eLabFTW entry to DSpace.
       operationId: dspace-submit
       requestBody:
@@ -5600,11 +5600,3 @@ paths:
                   uuid:
                     type: string
                     example: "1abcd2c3-45db-6a7-aeee-8d932f883d70"
-
-    delete:
-      tags: ['Dspace']
-      summary: Not supported for eLabFTW/DSpace API interactions.
-      operationId: dspace-delete
-      responses:
-        '400':
-          description: eLabFTW does not support delete operations for DSpace via API.

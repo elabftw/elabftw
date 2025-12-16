@@ -1907,6 +1907,8 @@ paths:
                       enum: [
                         'bloxberg',
                         'exclusiveeditmode',
+                        'forcelock',
+                        'forceunlock',
                         'lock',
                         'pin',
                         'sign',
@@ -2432,6 +2434,8 @@ paths:
                       enum: [
                         'bloxberg',
                         'exclusiveeditmode',
+                        'forcelock',
+                        'forceunlock',
                         'lock',
                         'pin',
                         'sign',

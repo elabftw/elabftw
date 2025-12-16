@@ -1945,6 +1945,14 @@ paths:
                 summary: Create a timestamp archive
                 value:
                   action: timestamp
+              lock:
+                summary: Lock an entry (idempotent)
+                value:
+                  action: forcelock
+              togglelock:
+                summary: Toggle lock state
+                value:
+                  action: lock
       responses:
         '200':
           description: The patched experiment
@@ -2462,6 +2470,14 @@ paths:
                 summary: Create a timestamp archive
                 value:
                   action: timestamp
+              lock:
+                summary: Lock an entry (idempotent)
+                value:
+                  action: forcelock
+              togglelock:
+                summary: Toggle lock state
+                value:
+                  action: lock
       responses:
         '200':
           description: The patched item

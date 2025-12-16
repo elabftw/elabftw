@@ -5461,6 +5461,11 @@ paths:
             Result depends on the `action` parameter:
               - `GetCollections`: list of collections.
               - `GetTypes`: list of vocabulary entries.
+
+            **DSpace REST API documentation**
+            - https://wiki.lyrasis.org/display/DSDOC9x/Community+and+Collection+management
+            - https://github.com/DSpace/RestContract/blob/main/collections.md
+            - https://github.com/DSpace/RestContract/blob/main/entitytypes.md
           content:
             application/json:
               schema:

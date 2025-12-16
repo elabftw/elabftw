@@ -38,13 +38,9 @@ use function json_decode;
  */
 final class Dspace extends AbstractRest
 {
-    private const METADATA_SECTIONS = array(
-        'dc.contributor.author' => 'publicationStep',
-        'dc.title' => 'publicationStep',
-        'dc.date.issued' => 'publicationStep',
-        'dc.type' => 'publicationStep',
-        'dc.description.abstract' => 'traditionalpagetwo',
-    );
+    private const string DEFAULT_SECTION = 'traditionalpageone';
+
+    private const string ABSTRACT_SECTION = 'traditionalpagetwo';
 
     private ?array $headers = null;
 
@@ -316,20 +312,16 @@ final class Dspace extends AbstractRest
     {
         $patch = array();
         foreach ($metadata as $item) {
-            $key   = $item['key']   ?? null;
+            $key = $item['key']   ?? null;
             $value = $item['value'] ?? null;
             if ($key === null || $value === null || $value === '') {
                 continue;
             }
-            if (!isset(self::METADATA_SECTIONS[$key])) {
-                continue;
-            }
+            $section = ($key === 'dc.description.abstract') ? self::ABSTRACT_SECTION : self::DEFAULT_SECTION;
             $patch[] = array(
-                'op'    => 'add',
-                'path'  => sprintf('/sections/%s/%s', self::METADATA_SECTIONS[$key], $key),
-                'value' => array(
-                    array('value' => $value, 'language' => null),
-                ),
+                'op' => 'add',
+                'path' => sprintf('/sections/%s/%s', $section, $key),
+                'value' => array(array('value' => $value, 'language' => null)),
             );
         }
         return $patch;

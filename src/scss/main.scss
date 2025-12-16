@@ -1071,12 +1071,12 @@ the form-control fails to do that so we do the border ourselves */
   line-height: normal;
   padding: 0.25rem;
   text-transform: uppercase;
+  white-space: normal;
 
   /* Only Category */
   &.category-btn {
     background-color: var(--bg);
     color: $white;
-    white-space: normal;
 
     &:hover {
       background-color: $secondlevel;

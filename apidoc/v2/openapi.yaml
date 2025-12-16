@@ -5439,7 +5439,6 @@ paths:
   # DSPACE
   /dspace:
     summary: Interact with the connected DSpace repository.
-
     get:
       tags: ['DSpace']
       summary: Read DSpace information.
@@ -5451,7 +5450,7 @@ paths:
             Action to perform:
               - `GetCollections`: list available DSpace collections.
               - `GetTypes`: list DSpace item types (submission vocabularies).
-            If omitted, the endpoint returns an empty array.
+            If omitted or invalid, the endpoint returns an error explaining valid usage.
           required: false
           schema:
             type: string
@@ -5462,14 +5461,10 @@ paths:
             Result depends on the `action` parameter:
               - `GetCollections`: list of collections.
               - `GetTypes`: list of vocabulary entries.
-              - No action: empty array.
           content:
             application/json:
               schema:
                 oneOf:
-                  - type: array
-                    description: Empty array when no action is given.
-                    items: {}
                   - type: array
                     description: Collections array returned by DSpace.
                     items:

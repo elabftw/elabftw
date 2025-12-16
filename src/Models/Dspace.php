@@ -67,12 +67,17 @@ final class Dspace extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        if ($queryParams === null || !$queryParams->getQuery()->has('action')) {
-            return array();
+        $actionValue = $queryParams?->getQuery()->getString('action');
+        $expectedActions = implode(', ', array_column(DSpaceAction::cases(), 'value'));
+        if ($actionValue === '') {
+            throw new ImproperActionException(
+                sprintf('Missing required "action" query parameter. Expected one of: %s.', $expectedActions)
+            );
         }
-        $action = DSpaceAction::tryFrom($queryParams->getQuery()->getString('action'))
-            ?? throw new ImproperActionException('Unknown GET action for DSpace endpoint.');
-
+        $action = DSpaceAction::tryFrom($actionValue)
+            ?? throw new ImproperActionException(
+                sprintf('Unknown "action" value. Expected one of: %s.', $expectedActions)
+            );
         return match ($action) {
             DSpaceAction::GetCollections => $this->getCollections(),
             DSpaceAction::GetTypes => $this->getTypes(),

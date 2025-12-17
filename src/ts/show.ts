@@ -204,12 +204,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const searchInput = document.getElementById('extendedArea') as HTMLInputElement;
   SearchSyntaxHighlighting.init(searchInput);
 
-  // TomSelect for extra fields search select
-  new TomSelect('#metakey', {
-    plugins: [
-      'dropdown_input',
-      'remove_button',
-    ],
+  // TomSelect for extra fields & owner search select
+  ['filterOwner', 'metakey'].forEach(id =>{
+    if (document.getElementById(id)) {
+      new TomSelect(`#${id}`, {
+        plugins: [
+          'dropdown_input',
+          'remove_button',
+        ],
+      });
+    }
   });
   // add a change event listener to all elements that helps constructing the query string
   document.querySelectorAll('.filterHelper').forEach(el => {

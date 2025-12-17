@@ -93,7 +93,7 @@
           </select>
 
           {# OWNER filter #}
-          <select name='owner' class='form-control filterAuto' aria-label='{{ 'Filter owner'|trans }}'>
+          <select id='filterOwner' name='owner' class='form-control filterAuto' aria-label='{{ 'Filter owner'|trans }}'>
             <option value='' class='dropdown-header' data-action='clear'>{{ 'Filter owner'|trans }}</option>
             {% for user in usersArr %}
               <option value='{{ user.userid }}' {{- App.Request.query.get('owner') == user.userid ? ' selected' }}>{{ user.fullname }}</option>

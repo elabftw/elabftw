@@ -15,10 +15,11 @@ import { FileType, Method } from './interfaces';
 import { rememberLastSelected, selectLastSelected } from './localStorage';
 import { notify } from './notify';
 import { entity } from './getEntity';
-import { TomSelect, collectForm } from './misc';
+import { TomSelect, collectForm, mkSpin, mkSpinStop } from './misc';
 import { on } from './handlers';
 
-on('export-to-dspace', async (_el, event: Event) => {
+on('export-to-dspace', async (el, event: Event) => {
+  const btn = el as HTMLButtonElement;
   event.preventDefault();
   const form = document.getElementById('dspaceExportForm') as HTMLFormElement;
   const params = collectForm(form);
@@ -35,7 +36,7 @@ on('export-to-dspace', async (_el, event: Event) => {
     { key: 'dc.type', value: params['type'] },
     { key: 'dc.description.abstract', value: params['abstract'] },
   ];
-
+  const oldHTML = mkSpin(btn);
   try {
     const res = await ApiC.send(Method.PATCH, 'dspace', { collection: params['collection'], metadata, entity, format});
     const data = await res.json();
@@ -45,6 +46,8 @@ on('export-to-dspace', async (_el, event: Event) => {
     $('#dspaceExportModal').modal('hide');
   } catch (e) {
     notify.error(e);
+  } finally {
+    mkSpinStop(btn, oldHTML);
   }
 });
 

@@ -127,6 +127,6 @@
     <div class='dropdown-item' data-action='toggle-modal' data-target='qrpngExportModal'><i class='fas fa-qrcode fa-fw'></i> {{ 'QR Code'|trans }}</div>
     <a class='dropdown-item' href='api/v2/{{ Entity.entityType.value }}/{{ Entity.id }}' target='_blank'><i class='fas fa-code fa-fw'></i>{{ 'JSON'|trans }}</a>
     <hr>
-    <div class='dropdown-item' data-action='open-dspace-modal'><i class='fas fa-file-export fa-fw'></i> {{ 'Export to DSpace'|trans }}</div>
+    <div class='dropdown-item {{ Entity.isReadOnly ? 'disabled' }}' data-action='open-dspace-modal'><i class='fas fa-file-export fa-fw'></i> {{ 'Export to DSpace'|trans }}</div>
   </div>
 </div>

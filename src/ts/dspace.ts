@@ -40,8 +40,8 @@ on('export-to-dspace', async (el, event: Event) => {
   try {
     const res = await ApiC.send(Method.PATCH, 'dspace', { collection: params['collection'], metadata, entity, format});
     const data = await res.json();
-    const itemUuid = data.uuid;
-    await saveDspaceIdAsExtraField(itemUuid);
+    const itemPublicUrl = data.publicUrl;
+    await saveDspaceIdAsExtraField(itemPublicUrl);
     notify.success('export-success');
     $('#dspaceExportModal').modal('hide');
   } catch (e) {

@@ -35,10 +35,10 @@ export async function saveDspaceIdAsExtraField(itemUuid: string): Promise<void> 
     metadata.extra_fields = {};
   }
 
-  metadata.extra_fields['DSpace id'] = {
+  metadata.extra_fields['DSpace Item Public URL'] = {
     type: ExtraFieldInputType.Text,
     value: itemUuid,
-    description: 'Uuid handle from DSpace',
+    description: 'Link to item in DSpace repository',
     readonly: true,
   };
 
@@ -47,7 +47,6 @@ export async function saveDspaceIdAsExtraField(itemUuid: string): Promise<void> 
     ? MetadataC.display('edit')
     : reloadElements(['extraFieldsDiv']));
 }
-
 
 export interface DspaceCollection {
   uuid: string;

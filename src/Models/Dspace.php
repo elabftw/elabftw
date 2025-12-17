@@ -102,8 +102,9 @@ final class Dspace extends AbstractRest
         $this->updateMetadata($workspaceId, $params['metadata'] ?? array());
         $this->uploadEntryAsFile($workspaceId, $params['entity'] ?? array());
         $this->submitToWorkflow($workspaceId);
-        // return id and uuid for elab entry metadata
-        return array('id' => $workspaceId, 'uuid' => $uuid);
+        // return external info for eLabFTW entry's metadata
+        $publicUrl = sprintf('%sitems/%s', rtrim(str_replace('/server/api', '', $this->host)), $uuid);
+        return array('id' => $workspaceId, 'uuid' => $uuid, 'publicUrl' => $publicUrl);
     }
 
     #[Override]

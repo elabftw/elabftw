@@ -15,52 +15,45 @@ import { FileType, Method } from './interfaces';
 import { rememberLastSelected, selectLastSelected } from './localStorage';
 import { notify } from './notify';
 import { entity } from './getEntity';
-import { TomSelect } from './misc';
+import { TomSelect, collectForm } from './misc';
+import { on } from './handlers';
 
-if (document.getElementById('dspaceExportModal')) {
+on('export-to-dspace', async (_el, event: Event) => {
+  event.preventDefault();
   const form = document.getElementById('dspaceExportForm') as HTMLFormElement;
-  form.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    const collection = form.collection.value;
-    const author = form.author.value;
-    const title = (document.getElementById('dspaceTitle') as HTMLInputElement)?.value;
-    const date = form.date.value;
-    const type = form.type.value;
-    const abstract = form.abstract.value;
-    const licenseAccepted = form.querySelector<HTMLInputElement>('#dspaceLicense')!.checked;
-    // in dspace, license is a default.license file: there's only one. Only possible action is accept: yes or no -> checkbox
-    if (!licenseAccepted) {
-      notify.error(i18next.t('license-error'));
-      return;
-    }
-    const format = FileType.Eln;
-    const metadata = [
-      { key: 'dc.contributor.author', value: author },
-      { key: 'dc.title', value: title },
-      { key: 'dc.date.issued', value: date },
-      { key: 'dc.type', value: type },
-      { key: 'dc.description.abstract', value: abstract },
-    ];
+  const params = collectForm(form);
+  const licenseAccepted = form.querySelector<HTMLInputElement>('#dspaceLicense')!.checked;
+  if (!licenseAccepted) {
+    notify.error(i18next.t('license-error'));
+    return;
+  }
+  const format = FileType.Eln;
+  const metadata = [
+    { key: 'dc.contributor.author', value: params['author'] || '' },
+    { key: 'dc.title', value: params['title'] },
+    { key: 'dc.date.issued', value: params['date'] || '' },
+    { key: 'dc.type', value: params['type'] },
+    { key: 'dc.description.abstract', value: params['abstract'] },
+  ];
 
-    try {
-      const res = await ApiC.send(Method.PATCH, 'dspace', { collection, metadata, entity, format });
-      const data = await res.json();
-      const itemUuid = data.uuid;
-      await saveDspaceIdAsExtraField(itemUuid);
-      notify.success('export-success');
-      $('#dspaceExportModal').modal('hide');
-    } catch (e) {
-      notify.error(e);
-    }
-  });
-}
+  try {
+    const res = await ApiC.send(Method.PATCH, 'dspace', { collection: params['collection'], metadata, entity, format});
+    const data = await res.json();
+    const itemUuid = data.uuid;
+    await saveDspaceIdAsExtraField(itemUuid);
+    notify.success('export-success');
+    $('#dspaceExportModal').modal('hide');
+  } catch (e) {
+    notify.error(e);
+  }
+});
 
+// populate lists with tomSelect on modal show
 $('#dspaceExportModal').on('shown.bs.modal', async () => {
   const collectionSelect = document.getElementById('dspaceCollection') as HTMLSelectElement & { tomselect?: TomSelect };
   const typeSelect = document.getElementById('dspaceType') as HTMLSelectElement & { tomselect?: TomSelect };
   collectionSelect.innerHTML = `<option disabled selected>${i18next.t('loading')}...</option>`;
   typeSelect.innerHTML = `<option disabled selected>${i18next.t('loading')}...</option>`;
-
   try {
     const [collectionsJson, typesJson] = await Promise.all([
       getCollections(),
@@ -87,7 +80,6 @@ $('#dspaceExportModal').on('shown.bs.modal', async () => {
       opt.textContent = type.display;
       typeSelect.appendChild(opt);
     });
-    // Initialize TomSelect
     ['dspaceCollection','dspaceType'].forEach(id => {
       new TomSelect(`#${id}`, {
         plugins: ['dropdown_input', 'no_active_items'],

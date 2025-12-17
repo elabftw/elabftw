@@ -16,17 +16,20 @@
             </div>
             <div class='form-group'>
               <label for='dspaceAuthor'>{{ 'Author'|trans }}</label>
-              <input id='dspaceAuthorId' type='hidden' class='form-control' required disabled value='{{ Entity.entityData.userid }}'>
+              <input id='dspaceAuthor' type='text' name='author' class='form-control' readonly value='{{ Entity.entityData.fullname }}'>
+{#              <input id='dspaceAuthorId' type='hidden' class='form-control' required disabled value='{{ Entity.entityData.userid }}'>#}
               {# visible field: display the author's full name #}
-              <input id='dspaceAuthor' type='text' name='author' class='form-control' disabled value='{{ Entity.entityData.fullname }}'>
+{#              <input id='dspaceAuthor' type='text' name='author' class='form-control' disabled value='{{ Entity.entityData.fullname }}'>#}
             </div>
             <div class='form-group'>
               <label for='dspaceTitle'>{{ 'Title'|trans }}</label>
-              <input type='text' class='form-control' id='dspaceTitle' name='title' required disabled value='{{ Entity.entityData.title }}'>
+{#              <input type='text' class='form-control' id='dspaceTitle' name='title' required disabled value='{{ Entity.entityData.title }}'>#}
+              <input type='text' class='form-control' id='dspaceTitle' name='title' required readonly value='{{ Entity.entityData.title }}'>
             </div>
             <div class='form-group'>
               <label for='dspaceDate'>{{ 'Date of Issue'|trans }}</label>
-              <input type='date' class='form-control' id='dspaceDate' name='date' required disabled value='{{ Entity.entityData.date }}'>
+{#              <input type='date' class='form-control' id='dspaceDate' name='date' required disabled value='{{ Entity.entityData.date }}'>#}
+              <input type='date' class='form-control' id='dspaceDate' name='date' required readonly value='{{ Entity.entityData.date }}'>
             </div>
             <div class='form-group'>
               <label for='dspaceType'>{{ 'Type'|trans }}</label>
@@ -45,7 +48,7 @@
         </div>
         <div class='modal-footer'>
           <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
-          <button type='submit' class='btn btn-primary' data-action='export-to-dspace' data-format='zip' data-type='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}'>{{ 'Export'|trans }}</button>
+          <button type='submit' class='btn btn-primary' data-action='export-to-dspace' data-type='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}'>{{ 'Export'|trans }}</button>
         </div>
       </form>
     </div>

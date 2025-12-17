@@ -49,7 +49,8 @@ on('export-to-dspace', async (_el, event: Event) => {
 });
 
 // populate lists with tomSelect on modal show
-$('#dspaceExportModal').on('shown.bs.modal', async () => {
+on('open-dspace-modal', async () => {
+  $('#dspaceExportModal').modal('toggle');
   const collectionSelect = document.getElementById('dspaceCollection') as HTMLSelectElement & { tomselect?: TomSelect };
   const typeSelect = document.getElementById('dspaceType') as HTMLSelectElement & { tomselect?: TomSelect };
   collectionSelect.innerHTML = `<option disabled selected>${i18next.t('loading')}...</option>`;

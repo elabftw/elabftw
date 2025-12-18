@@ -95,6 +95,14 @@ class CheckTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(Usergroup::User, Check::usergroup($requester, $usergroup));
     }
 
+    public function testUsergroupPromotionThrows(): void
+    {
+        // simulate a non-sysadmin trying to promote to sysadmin
+        $requester = new Users(3, 2);
+        $this->expectException(ImproperActionException::class);
+        Check::usergroup($requester, Usergroup::Sysadmin);
+    }
+
     public function testVisibilityBaseNotAllowed(): void
     {
         // simulate config with only 'allow_permission_user' enabled

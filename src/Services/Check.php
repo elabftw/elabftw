@@ -36,6 +36,12 @@ use function strlen;
  */
 final class Check
 {
+    public const int DEFAULT_LIMIT = 15;
+
+    public const int MIN_RANGE = 0;
+
+    public const int MAX_RANGE = 9999999;
+
     /** how deep goes the canread/canwrite json */
     private const PERMISSIONS_JSON_MAX_DEPTH = 3;
 
@@ -89,9 +95,9 @@ final class Check
     {
         $filterOptions = array(
             'options' => array(
-                'default' => 15,
-                'min_range' => 0,
-                'max_range' => 9999999,
+                'default' => self::DEFAULT_LIMIT,
+                'min_range' => self::MIN_RANGE,
+                'max_range' => self::MAX_RANGE,
             ),
             'flags' => FILTER_NULL_ON_FAILURE,
         );

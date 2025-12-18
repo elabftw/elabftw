@@ -5507,7 +5507,7 @@ paths:
                                   example: "Animation"
                                 type:
                                   type: string
-                                  example: "vocalubaryEntry"
+                                  example: "vocabularyEntry"
     post:
       tags: ['DSpace']
       summary: Create a new DSpace workspace item.

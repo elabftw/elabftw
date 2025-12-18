@@ -9,14 +9,15 @@
  * All logic related to DSpace export modal. Located in toolbar on view/edit pages
  */
 import { ApiC } from './api';
-import { DspaceCollection, DspaceVocabularyEntry, getCollections, getTypes, saveDspaceIdAsExtraField } from './dspaceUtils';
+import { DspaceCollection, DspaceVocabularyEntryList, DspaceVocabularyEntry, saveDspaceIdAsExtraField } from './dspaceUtils';
 import i18next from './i18n';
-import { FileType, Method } from './interfaces';
+import { Action, FileType, Method } from './interfaces';
 import { rememberLastSelected, selectLastSelected } from './localStorage';
 import { notify } from './notify';
 import { entity } from './getEntity';
 import { TomSelect, collectForm, mkSpin, mkSpinStop } from './misc';
 import { on } from './handlers';
+import $ from 'jquery';
 
 on('export-to-dspace', async (el, event: Event) => {
   const btn = el as HTMLButtonElement;
@@ -59,11 +60,10 @@ on('open-dspace-modal', async () => {
   collectionSelect.innerHTML = `<option disabled selected>${i18next.t('loading')}...</option>`;
   typeSelect.innerHTML = `<option disabled selected>${i18next.t('loading')}...</option>`;
   try {
-    const [collectionsJson, typesJson] = await Promise.all([
-      getCollections(),
-      getTypes(),
+    const [collections, typesJson] = await Promise.all([
+      ApiC.getJson<DspaceCollection[]>('dspace', {action: Action.GetCollections}),
+      ApiC.getJson<DspaceVocabularyEntryList>('dspace', {action: Action.GetTypes}),
     ]);
-    const collections = collectionsJson as DspaceCollection[];
     const types = typesJson._embedded.entries;
 
     // clear existing TomSelect if any

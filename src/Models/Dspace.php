@@ -93,7 +93,12 @@ final class Dspace extends AbstractRest
         $uuid = $this->getItemUuid($workspaceId);
         $this->acceptLicense($workspaceId);
         $this->updateMetadata($workspaceId, $params['metadata'] ?? array());
-        $this->uploadEntryAsFile($workspaceId, $params['entity'] ?? array());
+        if (!isset($params['entity']['type'], $params['entity']['id'])) {
+            throw new ImproperActionException('Missing entity type or id for DSpace export.');
+        }
+        $entityType = EntityType::tryFrom((string) $params['entity']['type']) ?? throw new ImproperActionException('Invalid value for entity.type');
+        $entity = $entityType->toInstance($this->requester, (int) $params['entity']['id']);
+        $this->uploadEntryAsFile($workspaceId, $entity);
         $this->submitToWorkflow($workspaceId);
         // return external info for eLabFTW entry's metadata
         $publicUrl = sprintf('%sitems/%s', rtrim(str_replace('/server/api', '', $this->host)), $uuid);
@@ -279,14 +284,13 @@ final class Dspace extends AbstractRest
     }
 
     // 5. Send eLabFTW entry's .eln to DSpace as an upload (bitstream)
-    private function uploadEntryAsFile(int $workspaceId, array $entity): void
+    private function uploadEntryAsFile(int $workspaceId, AbstractEntity $entity): void
     {
         $fileName = sprintf('export-elabftw-%s.eln', date('Y-m-d_H-i-s'));
         $tmpFileName = Tools::getUuidv4();
         $storage = Storage::EXPORTS->getStorage();
         $absolutePath = $storage->getAbsoluteUri($tmpFileName);
-        $Entity = EntityType::from($entity['type'])->toInstance($this->requester, $entity['id']);
-        $maker = new MakeEln(new ZipStream(sendHttpHeaders: false), $this->requester, $storage, array($Entity));
+        $maker = new MakeEln(new ZipStream(sendHttpHeaders: false), $this->requester, $storage, array($entity));
         $maker->writeToFile($absolutePath);
         $headers = $this->getAuthHeaders();
         $url = sprintf('%ssubmission/workspaceitems/%d', $this->host, $workspaceId);

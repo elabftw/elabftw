@@ -15,6 +15,7 @@ namespace Elabftw\Models;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\Env;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\DSpaceAction;
 use Elabftw\Enums\EntityType;
@@ -281,24 +282,29 @@ final class Dspace extends AbstractRest
     private function uploadEntryAsFile(int $workspaceId, array $entity): void
     {
         $fileName = sprintf('export-elabftw-%s.eln', date('Y-m-d_H-i-s'));
+        $tmpFileName = Tools::getUuidv4();
         $storage = Storage::EXPORTS->getStorage();
-        $absolutePath = $storage->getAbsoluteUri($fileName);
+        $absolutePath = $storage->getAbsoluteUri($tmpFileName);
         $Entity = EntityType::from($entity['type'])->toInstance($this->requester, $entity['id']);
         $maker = new MakeEln(new ZipStream(sendHttpHeaders: false), $this->requester, $storage, array($Entity));
         $maker->writeToFile($absolutePath);
         $headers = $this->getAuthHeaders();
         $url = sprintf('%ssubmission/workspaceitems/%d', $this->host, $workspaceId);
-        $this->httpGetter->post($url, array(
-            'headers' => $headers,
-            'multipart' => array(
-                array(
-                    'name' => 'file',
-                    'contents' => fopen($absolutePath, 'rb'),
-                    'filename' => $fileName,
-                    'headers' => array('Content-Type' => 'application/zip'),
+        try {
+            $this->httpGetter->post($url, array(
+                'headers' => $headers,
+                'multipart' => array(
+                    array(
+                        'name' => 'file',
+                        'contents' => fopen($absolutePath, 'rb'),
+                        'filename' => $fileName,
+                        'headers' => array('Content-Type' => 'application/zip'),
+                    ),
                 ),
-            ),
-        ));
+            ));
+        } finally {
+            $storage->getFs()->delete($absolutePath);
+        }
     }
 
     private function buildMetadataPatch(array $metadata): array

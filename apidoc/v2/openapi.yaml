@@ -5448,8 +5448,8 @@ paths:
           in: query
           description: |
             Action to perform:
-              - `GetCollections`: list available DSpace collections.
-              - `GetTypes`: list DSpace item types (submission vocabularies).
+              - `getcollections`: list available DSpace collections.
+              - `gettypes`: list DSpace item types (submission vocabularies).
             If omitted or invalid, the endpoint returns an error explaining valid usage.
           required: false
           schema:

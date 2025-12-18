@@ -63,7 +63,6 @@ const t = {
     "import-spreadsheet": "Import a spreadsheet (xls, csv, ods, ...)",
     "import-error": "Error during import. Please check the console for more information.",
     "invalid-info": "Invalid syntax or information provided.",
-    "license-error": "You must accept the license to complete your submission.",
     "loading": "Loading",
     "link-delete-warning": "Deletar este link?",
     "location-name": "Nome do local",

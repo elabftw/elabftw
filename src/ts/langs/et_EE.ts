@@ -63,7 +63,6 @@ const t = {
     "import-spreadsheet": "Impordi arvutustabel (xls, csv, ods, ...)",
     "import-error": "Importimisel tekkis viga. Lisateabe saamiseks kontrollige konsooli.",
     "invalid-info": "Esitatud süntaks või teave on sobimatu.",
-    "license-error": "You must accept the license to complete your submission.",
     "loading": "Loading",
     "link-delete-warning": "Kas kustutada see link?",
     "location-name": "Asukoha nimi",

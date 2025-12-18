@@ -63,7 +63,6 @@ const t = {
     "import-spreadsheet": "スプレッドシート（xls、csv、ods、...）のインポート",
     "import-error": "インポート中にエラーが発生しました。コンソールで詳細を確認してください。",
     "invalid-info": "無効な構文または情報。",
-    "license-error": "You must accept the license to complete your submission.",
     "loading": "Loading",
     "link-delete-warning": "このリンクを削除しますか？",
     "location-name": "場所名",

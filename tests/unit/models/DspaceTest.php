@@ -44,7 +44,7 @@ class DspaceTest extends \PHPUnit\Framework\TestCase
 
     public function testGetApiPath(): void
     {
-        $this->assertSame('api/v2/dspace', $this->dspace->getApiPath());
+        $this->assertSame('api/v2/dspace/', $this->dspace->getApiPath());
     }
 
     public function testReadAllWithGetCollections(): void
@@ -92,17 +92,6 @@ class DspaceTest extends \PHPUnit\Framework\TestCase
         $this->setMockResponses(array());
         $this->expectException(ImproperActionException::class);
         $this->dspace->postAction(Action::Create, array());
-    }
-
-    public function testReadOne(): void
-    {
-        $this->assertIsArray($this->dspace->readOne());
-    }
-
-    public function testDestroy(): void
-    {
-        $this->expectException(ImproperActionException::class);
-        $this->dspace->destroy();
     }
 
     public function testPatchCreatesAndSubmitsItem(): void

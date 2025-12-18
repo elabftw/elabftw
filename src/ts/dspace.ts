@@ -24,11 +24,6 @@ on('export-to-dspace', async (el, event: Event) => {
   event.preventDefault();
   const form = document.getElementById('dspaceExportForm') as HTMLFormElement;
   const params = collectForm(form);
-  const licenseAccepted = form.querySelector<HTMLInputElement>('#dspaceLicense')!.checked;
-  if (!licenseAccepted) {
-    notify.error(i18next.t('license-error'));
-    return;
-  }
   const format = FileType.Eln;
   const metadata = [
     { key: 'dc.contributor.author', value: params['author'] || '' },

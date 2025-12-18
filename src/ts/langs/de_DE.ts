@@ -63,7 +63,6 @@ const t = {
     "import-spreadsheet": "Importiere Tabelle (xls, csv, ods, ...)",
     "import-error": "Fehler beim Import. Bitte überprüfen Sie die Konsole für weitere Informationen.",
     "invalid-info": "Ungültige Syntax oder Angaben.",
-    "license-error": "You must accept the license to complete your submission.",
     "loading": "Loading",
     "link-delete-warning": "Diesen Link löschen?",
     "location-name": "Standortname",

@@ -36,7 +36,7 @@ export async function saveDspaceIdAsExtraField(itemUuid: string): Promise<void> 
   }
 
   metadata.extra_fields['DSpace Item Public URL'] = {
-    type: ExtraFieldInputType.Text,
+    type: ExtraFieldInputType.Url,
     value: itemUuid,
     description: 'Link to item in DSpace repository',
     readonly: true,

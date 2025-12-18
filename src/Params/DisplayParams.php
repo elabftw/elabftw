@@ -56,7 +56,7 @@ final class DisplayParams extends BaseQueryParams
         protected ?InputBag $query = null,
         public Orderby $orderby = Orderby::Lastchange,
         public Sort $sort = Sort::Desc,
-        public int $limit = 15,
+        public int $limit = 0,
         public int $offset = 0,
         public array $states = array(State::Normal),
         public bool $skipOrderPinned = false,
@@ -77,15 +77,17 @@ final class DisplayParams extends BaseQueryParams
         if ($this->skipOrderPinned === true) {
             $this->orderIsPinnedSql = '';
         }
-        return sprintf(
-            'ORDER BY %s %s %s, entity.id %s LIMIT %d OFFSET %d',
+        $sql = sprintf(
+            'ORDER BY %s %s %s, entity.id %s',
             $this->orderIsPinnedSql,
             $this->orderby->toSql(),
             $this->sort->value,
             $this->sort->value,
-            $this->limit,
-            $this->offset,
         );
+        if ($this->limit > 0) {
+            $sql .= sprintf(' LIMIT %d OFFSET %d', $this->limit, $this->offset);
+        }
+        return $sql;
     }
 
     #[Override]

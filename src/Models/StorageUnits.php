@@ -138,11 +138,11 @@ final class StorageUnits extends AbstractRest
             compounds.name LIKE :query OR
             compounds.iupac_name LIKE :query OR
             sh.full_path LIKE :query)',
-        ) . sprintf(
-            ' ORDER BY storage_name, entity_title LIMIT %d',
-            $queryParams->getLimit(),
-        );
+        ) . ' ORDER BY storage_name, entity_title';
 
+        if ($queryParams->getLimit() > 0) {
+            $sql .= sprintf(' LIMIT %d', $queryParams->getLimit());
+        }
         $req = $this->Db->prepare($sql);
         $req->bindValue(':query', '%' . $queryParams->getQuery()->getString('q') . '%');
         $this->Db->execute($req);

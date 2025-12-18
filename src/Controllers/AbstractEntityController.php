@@ -22,7 +22,6 @@ use Elabftw\Enums\Meaning;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\Sort;
-use Elabftw\Enums\State;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractEntity;
@@ -95,8 +94,8 @@ abstract class AbstractEntityController implements ControllerInterface
         $ItemsStatus = new ItemsStatus($this->App->Teams);
         $this->itemsStatusArr = $ItemsStatus->readAll($ItemsStatus->getQueryParams(new InputBag(array('limit' => 9999))));
         // create DisplayParams for Experiments/Resources templates
-        $DisplayParamsTemplates = $this->makeDisplayParams(EntityType::Templates);
-        $DisplayParamsItemsTypes = $this->makeDisplayParams(EntityType::ItemsTypes);
+        $DisplayParamsTemplates = new DisplayParams($this->App->Users, EntityType::Templates);
+        $DisplayParamsItemsTypes = new DisplayParams($this->App->Users, EntityType::ItemsTypes);
         $this->templatesArr = $Templates->readAllSimple($DisplayParamsTemplates);
         $this->itemsTemplatesArr = $ItemsTypes->readAllSimple($DisplayParamsItemsTypes);
     }
@@ -136,11 +135,11 @@ abstract class AbstractEntityController implements ControllerInterface
         $skipOrderPinned = $this->App->Request->query->getBoolean('skip_pinned');
         $DisplayParams = new DisplayParams(
             requester: $this->App->Users,
-            query: $this->App->Request->query,
             entityType: $this->Entity->entityType,
-            limit: $this->App->Users->userData['limit_nb'],
+            query: $this->App->Request->query,
             orderby: $orderBy,
             sort: Sort::tryFrom($this->App->Users->userData['sort']) ?? Sort::Desc,
+            limit: $this->App->Users->userData['limit_nb'],
             skipOrderPinned: $skipOrderPinned,
         );
         $itemsArr = $this->Entity->readShow($DisplayParams);
@@ -185,16 +184,6 @@ abstract class AbstractEntityController implements ControllerInterface
         $Response->setContent($this->App->render($template, $renderArr));
 
         return $Response;
-    }
-
-    protected function makeDisplayParams(EntityType $entityType): DisplayParams
-    {
-        return new DisplayParams(
-            $this->App->Users,
-            $entityType,
-            limit: 9999,
-            states: array(State::Normal)
-        );
     }
 
     abstract protected function getPageTitle(): string;

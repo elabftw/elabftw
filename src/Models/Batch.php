@@ -108,7 +108,6 @@ final class Batch extends AbstractRest
                 // this is needed so psalm is happy (might be a bug in psalm)
                 entityType: $model->entityType,
                 query: null,
-                limit: 100000,
                 states: $state ? array($state) : array(State::Normal),
             );
             $DisplayParams->appendFilterSql($column, $id);

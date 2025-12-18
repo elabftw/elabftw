@@ -33,7 +33,11 @@ on('export-to-dspace', async (el, event: Event) => {
     { key: 'dc.description.abstract', value: params['abstract'] },
   ];
   const oldHTML = mkSpin(btn);
+  const prevNotifOnSaved = ApiC.notifOnSaved;
+  const prevNotifOnError = ApiC.notifOnError;
   try {
+    ApiC.notifOnSaved = false;
+    ApiC.notifOnError = false;
     const res = await ApiC.send(Method.PATCH, 'dspace', { collection: params['collection'], metadata, entity, format});
     const data = await res.json();
     const itemPublicUrl = data.publicUrl;
@@ -43,6 +47,8 @@ on('export-to-dspace', async (el, event: Event) => {
   } catch (e) {
     notify.error(e);
   } finally {
+    ApiC.notifOnSaved = prevNotifOnSaved;
+    ApiC.notifOnError = prevNotifOnError;
     mkSpinStop(btn, oldHTML);
   }
 });

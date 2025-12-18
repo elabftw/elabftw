@@ -5450,8 +5450,9 @@ paths:
             Action to perform:
               - `getcollections`: list available DSpace collections.
               - `gettypes`: list DSpace item types (submission vocabularies).
+
             If omitted or invalid, the endpoint returns an error explaining valid usage.
-          required: false
+          required: true
           schema:
             type: string
             enum: [ 'getcollections', 'gettypes' ]

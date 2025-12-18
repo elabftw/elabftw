@@ -90,7 +90,7 @@ final class Check
         $filterOptions = array(
             'options' => array(
                 'default' => 15,
-                'min_range' => 1,
+                'min_range' => 0,
                 'max_range' => 9999999,
             ),
             'flags' => FILTER_NULL_ON_FAILURE,

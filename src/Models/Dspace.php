@@ -60,7 +60,7 @@ final class Dspace extends AbstractRest
     #[Override]
     public function getApiPath(): string
     {
-        return 'api/v2/dspace';
+        return 'api/v2/dspace/';
     }
 
     #[Override]
@@ -105,18 +105,6 @@ final class Dspace extends AbstractRest
         // return external info for eLabFTW entry's metadata
         $publicUrl = sprintf('%sitems/%s', rtrim(str_replace('/server/api', '', $this->host)), $uuid);
         return array('id' => $workspaceId, 'uuid' => $uuid, 'publicUrl' => $publicUrl);
-    }
-
-    #[Override]
-    public function readOne(): array
-    {
-        return array();
-    }
-
-    #[Override]
-    public function destroy(): bool
-    {
-        throw new ImproperActionException('Not supported for DSpace.');
     }
 
     private function host2ApiUrl(string $host): string

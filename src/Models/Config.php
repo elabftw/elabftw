@@ -397,9 +397,7 @@ final class Config extends AbstractRest
     {
         $result = $this->readAll();
         foreach (self::ENCRYPTED_KEYS as $column) {
-            if (!empty($result[$column])) {
-                $result[$column] = TwigFilters::decrypt($result[$column]);
-            }
+            $result[$column] = TwigFilters::decrypt($result[$column]);
         }
         return $result;
     }

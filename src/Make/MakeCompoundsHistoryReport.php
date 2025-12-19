@@ -30,7 +30,7 @@ final class MakeCompoundsHistoryReport extends MakeCompoundsReport
     #[Override]
     protected function getData(): array
     {
-        $sql = 'SELECT c.*, e.created_at AS experiment_created_at, e.title AS experiment_title
+        $sql = 'SELECT c.*, e.created_at AS experiment_created_at, e.title AS experiment_title, e.id AS experiment_id
             FROM compounds AS c
             JOIN compounds2experiments AS c2e
               ON c.id = c2e.compound_id

@@ -11,6 +11,8 @@ servers:
     description: Official demo server
   - url: https://eln.example.org/api/v2
     description: Example base URL
+
+# COMPONENTS
 components:
   requestBodies:
     PatchEntity:
@@ -20,62 +22,18 @@ components:
         application/json:
           schema:
             anyOf:
-              - type: object
-                properties:
-                  action:
-                    type: string
-                    enum:
-                      - bloxberg
-                      - exclusiveeditmode
-                      - forcelock
-                      - forceunlock
-                      - lock
-                      - pin
-                      - sign
-                      - timestamp
-                      - updatemetadatafield
-                      - update
-                  passphrase:
-                    type: string
-                    description: >
-                      The passphrase corresponding to your signature key.
-                      Required when action is "sign".
-                    example: hunter2
-                  meaning:
-                    type: integer
-                    enum: [10, 20, 30, 40, 50]
-                    description: |
-                      Meaning of the signature (required when action is "sign"):
-                      - 10: Approval
-                      - 20: Authorship
-                      - 30: Responsibility
-                      - 40: Review
-                      - 50: Safety
-                    example: 40
-              - $ref: '#/components/schemas/entity_editable'
-          examples:
-            signature:
-              summary: Sign an entry with meaning "Approval"
-              value:
-                action: sign
-                passphrase: hunter2
-                meaning: 10
-            bloxberg:
-              summary: Create a Bloxberg blockchain timestamp
-              value:
-                action: bloxberg
-            timestamp:
-              summary: Create a timestamp archive
-              value:
-                action: timestamp
-            lock:
-              summary: Lock an entry (idempotent)
-              value:
-                action: forcelock
-            togglelock:
-              summary: Toggle lock state
-              value:
-                action: lock
+              - $ref: "#/components/schemas/PatchAction"
+              - $ref: "#/components/schemas/entity_editable"
+
+    PatchItem:
+      description: Parameters for patching an item
+      required: true
+      content:
+        application/json:
+          schema:
+            anyOf:
+              - $ref: "#/components/schemas/PatchAction"
+              - $ref: "#/components/schemas/EntityAndItemEditable"
   securitySchemes:
     token:
       in: header
@@ -83,6 +41,46 @@ components:
       name: Authorization
       description: The Authorization header value must contain an API Key.
   schemas:
+    PatchAction:
+      type: object
+      properties:
+        action:
+          type: string
+          enum:
+            - bloxberg
+            - exclusiveeditmode
+            - forcelock
+            - forceunlock
+            - lock
+            - pin
+            - sign
+            - timestamp
+            - updatemetadatafield
+            - update
+        passphrase:
+          type: string
+          description: >
+            The passphrase corresponding to your signature key.
+            Required when action is "sign".
+          example: hunter2
+        meaning:
+          type: integer
+          enum: [10, 20, 30, 40, 50]
+          description: |
+            Meaning of the signature (required when action is "sign"):
+            - 10: Approval
+            - 20: Authorship
+            - 30: Responsibility
+            - 40: Review
+            - 50: Safety
+          example: 40
+      required: [action]
+
+    EntityAndItemEditable:
+      allOf:
+        - $ref: "#/components/schemas/entity_editable"
+        - $ref: "#/components/schemas/item_editable"
+
     apikey:
       type: object
       properties:
@@ -1015,27 +1013,30 @@ components:
           description: Endpoints associated with this IdP.
           items:
             $ref: '#/components/schemas/idp_endpoint'
+    item_editable:
+      type: object
+      properties:
+        is_bookable:
+          type: integer
+        canbook:
+          type: string
+        book_max_minutes:
+          type: integer
+        book_max_slots:
+          type: integer
+        book_can_overlap:
+          type: integer
+        book_users_can_in_past:
+          type: integer
+        book_is_cancellable:
+          type: integer
+        book_cancel_minutes:
+          type: integer
+
     item:
       allOf:
         - $ref: '#/components/schemas/entity'
-        - type: object
-          properties:
-            is_bookable:
-              type: integer
-            canbook:
-              type: string
-            book_max_minutes:
-              type: integer
-            book_max_slots:
-              type: integer
-            book_can_overlap:
-              type: integer
-            book_users_can_in_past:
-              type: integer
-            book_is_cancellable:
-              type: integer
-            book_cancel_minutes:
-              type: integer
+        - $ref: '#/components/schemas/item_editable'
     link:
       type: object
       properties:
@@ -2427,7 +2428,7 @@ paths:
       summary: Modify an item
       operationId: patch-item
       requestBody:
-        $ref: '#/components/requestBodies/PatchEntity'
+        $ref: '#/components/requestBodies/PatchItem'
       responses:
         '200':
           description: The patched item

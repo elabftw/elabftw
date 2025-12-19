@@ -19,12 +19,14 @@ export class Api {
   // 2. This bug: https://bugzilla.mozilla.org/show_bug.cgi?id=1926042
   keepalive = false;
 
-  get(query: string): Promise<Response> {
-    return this.send(Method.GET, query);
+  get(query: string, params = {}): Promise<Response> {
+    return this.send(Method.GET, query, params);
   }
 
-  getJson(query: string) {
-    return this.get(query).then(resp => resp.json());
+  // TODO remove any default type and type all calls to getJson
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async getJson<T = any>(query: string, params = {}): Promise<T> {
+    return this.get(query, params).then(resp => resp.json());
   }
 
   // fetch a binary file from a GET request, and make client download it
@@ -84,7 +86,11 @@ export class Api {
     if ([Method.POST, Method.PATCH].includes(method)) {
       options['body'] = JSON.stringify(params);
     }
-    return fetch(`api/v2/${query}`, options).then(async response => {
+    let urlParams = '';
+    if (method === Method.GET && Object.keys(params).length > 0) {
+      urlParams = `?${new URLSearchParams(params).toString()}`;
+    }
+    return fetch(`api/v2/${query}${urlParams}`, options).then(async response => {
       if (response.status !== this.getOkStatusFromMethod(method)) {
         // if there is an error we will get the message in the reply body
         return response.json().then(json => { throw new Error(json.description); });

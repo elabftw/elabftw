@@ -14,6 +14,7 @@ namespace Elabftw\Models\Links;
 
 use Elabftw\Enums\EntityType;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\Items;
 use Elabftw\Models\Templates;
 use Override;
 
@@ -64,9 +65,9 @@ abstract class AbstractItemsLinks extends AbstractLinks
     #[Override]
     protected function getRelatedTable(): string
     {
-        if ($this->Entity instanceof Experiments) {
-            return 'items2experiments';
+        if ($this->Entity instanceof Items) {
+            return 'items2items';
         }
-        return 'items2items';
+        return 'items2experiments';
     }
 }

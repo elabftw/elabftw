@@ -11,7 +11,214 @@ servers:
     description: Official demo server
   - url: https://eln.example.org/api/v2
     description: Example base URL
+
+# COMPONENTS
 components:
+  parameters:
+
+    SearchQ:
+      name: q
+      in: query
+      schema:
+        type: string
+      description: |
+        Search for a term in title, body or elabid.
+      examples:
+        first:
+          summary: Search for all results with the word "test".
+          value: test
+
+    SearchExtended:
+      name: extended
+      in: query
+      schema:
+        type: string
+      description: |
+        Extended search (advanced query).
+      examples:
+        first:
+          summary: Search for all results with a rating of 2.
+          value: "rating:2"
+
+    SearchRelated:
+      name: related
+      in: query
+      schema:
+        type: integer
+      description: |
+        Look only for entries linked to this entry id.
+      examples:
+        first:
+          summary: Look for entries linked to entry with id 42.
+          value: 42
+
+    SearchRelatedOrigin:
+      name: related_origin
+      in: query
+      schema:
+        type: string
+        enum: ['experiments', 'items']
+      description: |
+        When using the "related" query parameter, select the type of the related ID (experiments or items)
+      examples:
+        items:
+          summary: The related entry is a resource.
+          value: items
+        experiments:
+          summary: The related entry is an experiment.
+          value: experiments
+
+    Category:
+      name: cat
+      in: query
+      schema:
+        type: string
+      description: |
+        Add a filter on the Category. Supports comma separated list of numbers, including "null".
+      examples:
+        first:
+          summary: Only display results with category ID 2
+          value: "2"
+        second:
+          summary: Display results with category ID 3 or 4 or not set (null)
+          value: "3,4,null"
+
+    Status:
+      name: status
+      in: query
+      schema:
+        type: string
+      description: |
+        Add a filter on the Status. Supports comma separated list of numbers, including "null".
+      examples:
+        first:
+          summary: Only display results with status ID 2
+          value: "2"
+        second:
+          summary: Display results with status ID 3 or 4 or not set (null)
+          value: "3,4,null"
+
+    Tags:
+      name: tags[]
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      description: |
+        An array of tags for filtering results containing all of these tags.
+
+    Limit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        default: 15
+      description: |
+        Limit the number of results.
+      examples:
+        first:
+          summary: Limit number of results to 5.
+          value: 5
+    Offset:
+      name: offset
+      in: query
+      schema:
+        type: integer
+        default: 0
+      description: |
+        Skip a number of results. Use with limit to work the pagination.
+      examples:
+        first:
+          summary: Skip 3 first results.
+          value: 3
+
+    Owner:
+      name: owner
+      in: query
+      schema:
+        type: string
+      description: |
+        Filter results by author (user id)
+      examples:
+        first:
+          summary: Only display results from user with id 2
+          value: "2"
+        second:
+          summary: Only display results from user with id 2 or 3
+          value: "2,3"
+
+    Scope:
+      name: scope
+      in: query
+      schema:
+        type: integer
+        enum: [1, 2, 3]
+      description: |
+        Set the scope for the results. 1: self, 2: team, 3: everything. It defaults to the user value stored in preferences.
+
+    Order:
+      name: order
+      in: query
+      schema:
+        type: string
+        enum: ["cat", "comment", "customid", "date", "id", "lastchange", "rating", "status", "title", "user"]
+      description: |
+        Change the ordering of the results.
+      examples:
+        first:
+          summary: Order by category
+          value: cat
+        second:
+          summary: Order by custom ID
+          value: customid
+
+    Sort:
+      name: sort
+      in: query
+      schema:
+        type: string
+        enum: ["asc", "desc"]
+      description: |
+        Change the sorting of results: ascending or descending.
+
+    State:
+      name: state
+      in: query
+      schema:
+        type: string
+        default: "1"
+      examples:
+        first:
+          summary: Display only archived entries
+          value: "2"
+        second:
+          summary: Display archived and deleted entries
+          value: "2,3"
+      description: |
+        Filter results based on their state: 1 (Normal), 2 (Archived), 3 (Deleted). Supports comma separated values.
+  # end query parameters for entity
+
+  requestBodies:
+    PatchEntity:
+      description: Parameters for patching an entity
+      required: true
+      content:
+        application/json:
+          schema:
+            anyOf:
+              - $ref: "#/components/schemas/PatchAction"
+              - $ref: "#/components/schemas/entity_editable"
+
+    PatchItem:
+      description: Parameters for patching an item
+      required: true
+      content:
+        application/json:
+          schema:
+            anyOf:
+              - $ref: "#/components/schemas/PatchAction"
+              - $ref: "#/components/schemas/EntityAndItemEditable"
   securitySchemes:
     token:
       in: header
@@ -19,6 +226,46 @@ components:
       name: Authorization
       description: The Authorization header value must contain an API Key.
   schemas:
+    PatchAction:
+      type: object
+      properties:
+        action:
+          type: string
+          enum:
+            - bloxberg
+            - exclusiveeditmode
+            - forcelock
+            - forceunlock
+            - lock
+            - pin
+            - sign
+            - timestamp
+            - updatemetadatafield
+            - update
+        passphrase:
+          type: string
+          description: >
+            The passphrase corresponding to your signature key.
+            Required when action is "sign".
+          example: hunter2
+        meaning:
+          type: integer
+          enum: [10, 20, 30, 40, 50]
+          description: |
+            Meaning of the signature (required when action is "sign"):
+            - 10: Approval
+            - 20: Authorship
+            - 30: Responsibility
+            - 40: Review
+            - 50: Safety
+          example: 40
+      required: [action]
+
+    EntityAndItemEditable:
+      allOf:
+        - $ref: "#/components/schemas/entity_editable"
+        - $ref: "#/components/schemas/item_editable"
+
     apikey:
       type: object
       properties:
@@ -366,6 +613,19 @@ components:
           type: string
         cookie_validity_time:
           type: integer
+        dspace_host:
+          description: URL for dspace host
+          example: "https://dspace.example.org"
+          type: string
+          format: uri
+        dspace_user:
+          description: Username for dspace integration
+          example: "dspace+user@example.org"
+          type: string
+        dspace_password:
+          description: Password for the corresponding dspace user
+          example: baguette1789
+          type: string
         email_domain:
           type: string
         extauth_email:
@@ -951,27 +1211,30 @@ components:
           description: Endpoints associated with this IdP.
           items:
             $ref: '#/components/schemas/idp_endpoint'
+    item_editable:
+      type: object
+      properties:
+        is_bookable:
+          type: integer
+        canbook:
+          type: string
+        book_max_minutes:
+          type: integer
+        book_max_slots:
+          type: integer
+        book_can_overlap:
+          type: integer
+        book_users_can_in_past:
+          type: integer
+        book_is_cancellable:
+          type: integer
+        book_cancel_minutes:
+          type: integer
+
     item:
       allOf:
         - $ref: '#/components/schemas/entity'
-        - type: object
-          properties:
-            is_bookable:
-              type: integer
-            canbook:
-              type: string
-            book_max_minutes:
-              type: integer
-            book_max_slots:
-              type: integer
-            book_can_overlap:
-              type: integer
-            book_users_can_in_past:
-              type: integer
-            book_is_cancellable:
-              type: integer
-            book_cancel_minutes:
-              type: integer
+        - $ref: '#/components/schemas/item_editable'
     link:
       type: object
       properties:
@@ -1337,6 +1600,23 @@ components:
           type: integer
           description: Is 1 when the exclusive edit lock is longer than ExclusiveEditMode::EXPIRATION_MINUTES
 
+x-parameterGroups:
+  searchParams: &searchParams
+    - $ref: "#/components/parameters/SearchQ"
+    - $ref: "#/components/parameters/SearchExtended"
+    - $ref: '#/components/parameters/SearchRelated'
+    - $ref: '#/components/parameters/SearchRelatedOrigin'
+    - $ref: '#/components/parameters/Category'
+    - $ref: '#/components/parameters/Status'
+    - $ref: '#/components/parameters/Tags'
+    - $ref: '#/components/parameters/Limit'
+    - $ref: '#/components/parameters/Offset'
+    - $ref: '#/components/parameters/Owner'
+    - $ref: '#/components/parameters/Scope'
+    - $ref: '#/components/parameters/Order'
+    - $ref: '#/components/parameters/Sort'
+    - $ref: '#/components/parameters/State'
+
 security:
   - token:
       - token
@@ -1592,165 +1872,7 @@ paths:
       tags: ['Experiments']
       summary: Read all experiments that are accessible
       operationId: read-experiments
-      # Note: this has to be repeated manually for now
-      # See https://github.com/OAI/OpenAPI-Specification/issues/445
-      parameters:
-        - name: q
-          in: query
-          schema:
-            type: string
-          description: |
-            Search for a term in title, body or elabid.
-          examples:
-            first:
-              summary: Search for all results with the word "test".
-              value: test
-        - name: extended
-          in: query
-          schema:
-            type: string
-          description: |
-            Extended search (advanced query).
-          examples:
-            first:
-              summary: Search for all results with a rating of 2.
-              value: "rating:2"
-        - name: related
-          in: query
-          schema:
-            type: integer
-          description: |
-            Look only for entries linked to this entry id.
-          examples:
-            first:
-              summary: Look for entries linked to entry with id 42.
-              value: 42
-        - name: related_origin
-          in: query
-          schema:
-            type: string
-            enum: ['experiments', 'items']
-          description: |
-            When using the "related" query parameter, select the type of the related ID (experiments or items)
-          examples:
-            items:
-              summary: The related entry is a resource.
-              value: items
-            experiments:
-              summary: The related entry is an experiment.
-              value: experiments
-        - name: cat
-          in: query
-          schema:
-            type: string
-          description: |
-            Add a filter on the Category. Supports comma separated list of numbers, including "null".
-          examples:
-            first:
-              summary: Only display results with category ID 2
-              value: "2"
-            second:
-              summary: Display results with category ID 3 or 4 or not set (null)
-              value: "3,4,null"
-        - name: status
-          in: query
-          schema:
-            type: string
-          description: |
-            Add a filter on the Status. Supports comma separated list of numbers, including "null".
-          examples:
-            first:
-              summary: Only display results with status ID 2
-              value: "2"
-            second:
-              summary: Display results with status ID 3 or 4 or not set (null)
-              value: "3,4,null"
-        - name: tags[]
-          in: query
-          schema:
-            type: array
-            items:
-              type: string
-          description: |
-            An array of tags for filtering results containing all of these tags.
-        - name: limit
-          in: query
-          schema:
-            type: integer
-            default: 15
-          description: |
-            Limit the number of results.
-          examples:
-            first:
-              summary: Limit number of results to 5.
-              value: 5
-        - name: offset
-          in: query
-          schema:
-            type: integer
-            default: 0
-          description: |
-            Skip a number of results. Use with limit to work the pagination.
-          examples:
-            first:
-              summary: Skip 3 first results.
-              value: 3
-        - name: owner
-          in: query
-          schema:
-            type: string
-          description: |
-            Filter results by author (user id)
-          examples:
-            first:
-              summary: Only display results from user with id 2
-              value: "2"
-            second:
-              summary: Only display results from user with id 2 or 3
-              value: "2,3"
-        - name: scope
-          in: query
-          schema:
-            type: integer
-            enum: [1, 2, 3]
-          description: |
-            Set the scope for the results. 1: self, 2: team, 3: everything. It defaults to the user value stored in preferences.
-        - name: order
-          in: query
-          schema:
-            type: string
-            enum: ["cat", "comment", "customid", "date", "id", "lastchange", "rating", "status", "title", "user"]
-          description: |
-            Change the ordering of the results.
-          examples:
-            first:
-              summary: Order by category
-              value: cat
-            second:
-              summary: Order by custom ID
-              value: customid
-        - name: sort
-          in: query
-          schema:
-            type: string
-            enum: ["asc", "desc"]
-          description: |
-            Change the sorting of results: ascending or descending.
-        - name: state
-          in: query
-          schema:
-            type: string
-            default: "1"
-          examples:
-            first:
-              summary: Display only archived entries
-              value: "2"
-            second:
-              summary: Display archived and deleted entries
-              value: "2,3"
-          description: |
-            Filter results based on their state: 1 (Normal), 2 (Archived), 3 (Deleted). Supports comma separated values.
-      # END need to copy part to items/
+      parameters: *searchParams
       responses:
         '200':
           description: A list of experiments
@@ -1895,66 +2017,7 @@ paths:
       summary: Modify an experiment
       operationId: patch-experiment
       requestBody:
-        description: Parameters for patching an experiment
-        content:
-          application/json:
-            schema:
-              anyOf:
-                - type: object
-                  properties:
-                    action:
-                      type: string
-                      enum: [
-                        'bloxberg',
-                        'exclusiveeditmode',
-                        'forcelock',
-                        'forceunlock',
-                        'lock',
-                        'pin',
-                        'sign',
-                        'timestamp',
-                        'updatemetadatafield',
-                        'update',
-                      ]
-                    passphrase:
-                      type: string
-                      description: The passphrase corresponding to your signature key. This parameter is required when Action is "sign"
-                      example: hunter2
-                    meaning:
-                      type: integer
-                      enum: [ 10, 20, 30, 40, 50 ]
-                      description: |
-                        Meaning of the signature. This parameter is required when Action is "sign"
-                        - 10: Approval
-                        - 20: Authorship
-                        - 30: Responsibility
-                        - 40: Review
-                        - 50: Safety
-                      example: 40
-                - $ref: '#/components/schemas/entity_editable'
-            examples:
-              signature:
-                summary: Sign an entry with meaning "Approval"
-                value:
-                  action: sign
-                  passphrase: hunter2
-                  meaning: 10
-              bloxberg:
-                summary: Create a Bloxberg blockchain timestamp
-                value:
-                  action: bloxberg
-              timestamp:
-                summary: Create a timestamp archive
-                value:
-                  action: timestamp
-              lock:
-                summary: Lock an entry (idempotent)
-                value:
-                  action: forcelock
-              togglelock:
-                summary: Toggle lock state
-                value:
-                  action: lock
+        $ref: '#/components/requestBodies/PatchEntity'
       responses:
         '200':
           description: The patched experiment
@@ -2118,164 +2181,7 @@ paths:
       tags: ['Items']
       summary: Read all items that are accessible
       operationId: read-items
-      # start duplicate from GET /experiments
-      parameters:
-        - name: q
-          in: query
-          schema:
-            type: string
-          description: |
-            Search for a term in title, body or elabid.
-          examples:
-            first:
-              summary: Search for all results with the word "test".
-              value: test
-        - name: extended
-          in: query
-          schema:
-            type: string
-          description: |
-            Extended search (advanced query).
-          examples:
-            first:
-              summary: Search for all items with a rating of 2.
-              value: "rating:2"
-        - name: related
-          in: query
-          schema:
-            type: integer
-          description: |
-            Look only for entries linked to this item id.
-          examples:
-            first:
-              summary: Look for entries linked to item with id 42.
-              value: 42
-        - name: related_origin
-          in: query
-          schema:
-            type: string
-            enum: ['experiments', 'items']
-          description: |
-            When using the "related" query parameter, select the type of the related ID (experiments or items)
-          examples:
-            items:
-              summary: The related entry is a resource.
-              value: items
-            experiments:
-              summary: The related entry is an experiment.
-              value: experiments
-        - name: cat
-          in: query
-          schema:
-            type: string
-          description: |
-            Add a filter on the Category. Supports comma separated list of numbers, including "null".
-          examples:
-            first:
-              summary: Only display results with category ID 2
-              value: "2"
-            second:
-              summary: Display results with category ID 3 or 4 or not set (null)
-              value: "3,4,null"
-        - name: status
-          in: query
-          schema:
-            type: string
-          description: |
-            Add a filter on the Status. Supports comma separated list of numbers, including "null".
-          examples:
-            first:
-              summary: Only display results with status ID 2
-              value: "2"
-            second:
-              summary: Display results with status ID 3 or 4 or not set (null)
-              value: "3,4,null"
-        - name: tags[]
-          in: query
-          schema:
-            type: array
-            items:
-              type: string
-          description: |
-            An array of tags for filtering results containing all of these tags.
-        - name: limit
-          in: query
-          schema:
-            type: integer
-            default: 15
-          description: |
-            Limit the number of results.
-          examples:
-            first:
-              summary: Limit number of results to 5.
-              value: 5
-        - name: offset
-          in: query
-          schema:
-            type: integer
-            default: 0
-          description: |
-            Skip a number of results. Use with limit to work the pagination.
-          examples:
-            first:
-              summary: Skip 3 first results.
-              value: 3
-        - name: owner
-          in: query
-          schema:
-            type: string
-          description: |
-            Filter results by author (user id)
-          examples:
-            first:
-              summary: Only display results from user with id 2
-              value: "2"
-            second:
-              summary: Only display results from user with id 2 or 3
-              value: "2,3"
-        - name: scope
-          in: query
-          schema:
-            type: integer
-            enum: [1, 2, 3]
-          description: |
-            Set the scope for the results. 1: self, 2: team, 3: everything. It defaults to the user value stored in preferences.
-        - name: order
-          in: query
-          schema:
-            type: string
-            enum: ["cat", "comment", "customid", "date", "id", "lastchange", "rating", "status", "title", "user"]
-          description: |
-            Change the ordering of the results.
-          examples:
-            first:
-              summary: Order by category
-              value: cat
-            second:
-              summary: Order by custom ID
-              value: customid
-        - name: sort
-          in: query
-          schema:
-            type: string
-            enum: ["asc", "desc"]
-          description: |
-            Change the sorting of results: ascending or descending.
-        - name: state
-          in: query
-          schema:
-            type: string
-            default: "1"
-          examples:
-            first:
-              summary: Display only archived entries
-              value: "2"
-            second:
-              summary: Display archived and deleted entries
-              value: "2,3"
-          description: |
-            Filter results based on their state: 1 (Normal), 2 (Archived), 3 (Deleted). Supports comma separated values.
-      # end duplicate from GET /experiments
+      parameters: *searchParams
       responses:
         '200':
           description: A list of items
@@ -2422,66 +2328,7 @@ paths:
       summary: Modify an item
       operationId: patch-item
       requestBody:
-        description: Parameters for patching an item
-        content:
-          application/json:
-            schema:
-              anyOf:
-                - type: object
-                  properties:
-                    action:
-                      type: string
-                      enum: [
-                        'bloxberg',
-                        'exclusiveeditmode',
-                        'forcelock',
-                        'forceunlock',
-                        'lock',
-                        'pin',
-                        'sign',
-                        'updatemetadatafield',
-                        'update',
-                      ]
-                      example: sign
-                    passphrase:
-                      type: string
-                      description: The passphrase corresponding to your signature key. This parameter is required when Action is "sign"
-                      example: hunter2
-                    meaning:
-                      type: integer
-                      enum: [ 10, 20, 30, 40, 50 ]
-                      description: |
-                        Meaning of the signature. This parameter is required when Action is "sign"
-                        - 10: Approval
-                        - 20: Authorship
-                        - 30: Responsibility
-                        - 40: Review
-                        - 50: Safety
-                      example: 40
-                - $ref: '#/components/schemas/entity_editable'
-            examples:
-              signature:
-                summary: Sign an entry with meaning "Approval"
-                value:
-                  action: sign
-                  passphrase: hunter2
-                  meaning: 10
-              bloxberg:
-                summary: Create a Bloxberg blockchain timestamp
-                value:
-                  action: bloxberg
-              timestamp:
-                summary: Create a timestamp archive
-                value:
-                  action: timestamp
-              lock:
-                summary: Lock an entry (idempotent)
-                value:
-                  action: forcelock
-              togglelock:
-                summary: Toggle lock state
-                value:
-                  action: lock
+        $ref: '#/components/requestBodies/PatchItem'
       responses:
         '200':
           description: The patched item
@@ -3066,6 +2913,7 @@ paths:
       tags: ['Experiments templates']
       summary: Read all experiments_templates that are accessible
       operationId: read-experiments_templates
+      parameters: *searchParams
       responses:
         '200':
           description: A list of experiments_templates
@@ -3192,6 +3040,7 @@ paths:
       tags: ['Items types (Resources Templates)']
       summary: Read all resources templates that are accessible
       operationId: read-items_types
+      parameters: *searchParams
       responses:
         '200':
           description: A list of resources templates.
@@ -3509,9 +3358,10 @@ paths:
           in: query
           schema:
             type: string
-            enum: ['compounds', 'instance', 'inventory', 'stored_compounds', 'team']
+            enum: ['compounds', 'compounds_history', 'instance', 'inventory', 'stored_compounds', 'team']
           description: |
             Select the scope. Instance is for sysadmins only. Team will generate report for the current team.
+            If scope is `compounds_history`, you can also provide `start` and `end` (format `YYYY-MM-DD`).
           examples:
             instance:
               summary: Get instance level report
@@ -3519,6 +3369,25 @@ paths:
             team:
               summary: Get team level report
               value: team
+        - name: start
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+            example: '2012-01-01'
+          description: |
+            Start date (YYYY-MM-DD). Only used when scope is `compounds_history`.
+        - name: end
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+            example: '2038-01-19'
+          description: |
+            End date (YYYY-MM-DD). Only used when scope is `compounds_history`.
+
       responses:
         '200':
           description: Get usage reports
@@ -5450,3 +5319,291 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/extra_fields_keys'
+  # DSPACE
+  /dspace:
+    summary: Interact with the connected DSpace repository.
+    get:
+      tags: ['DSpace']
+      summary: Read DSpace information.
+      operationId: dspace-read
+      parameters:
+        - name: action
+          in: query
+          description: |
+            Action to perform:
+              - `getcollections`: list available DSpace collections.
+              - `gettypes`: list DSpace item types (submission vocabularies).
+
+            If omitted or invalid, the endpoint returns an error explaining valid usage.
+          required: true
+          schema:
+            type: string
+            enum: ['getcollections', 'gettypes']
+      responses:
+        '200':
+          description: |
+            Result depends on the `action` parameter:
+              - `getcollections`: list of collections.
+              - `gettypes`: list of vocabulary entries.
+
+            **DSpace REST API documentation**
+            - https://wiki.lyrasis.org/display/DSDOC9x/Community+and+Collection+management
+            - https://github.com/DSpace/RestContract/blob/main/collections.md
+            - https://github.com/DSpace/RestContract/blob/main/entitytypes.md
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: array
+                    description: Collections array returned by DSpace.
+                    items:
+                      type: object
+                      required:
+                        - id
+                        - uuid
+                        - name
+                        - type
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                          description: Collection identifier.
+                          example: "1abcd2c3-45db-6a7-aeee-8d932f883d70"
+
+                        uuid:
+                          type: string
+                          format: uuid
+                          description: Collection UUID (same value as id).
+                          example: "1abcd2c3-45db-6a7-aeee-8d932f883d70"
+                        name:
+                          type: string
+                          description: Human-readable collection name.
+                          example: "your-collection"
+                        handle:
+                          type: string
+                          description: Persistent DSpace handle.
+                          example: "10673/1221"
+                        archivedItemsCount:
+                          type: integer
+                          description: Number of archived items in the collection.
+                          example: 27
+                        type:
+                          type: string
+                          example: "collection"
+                        metadata:
+                          type: object
+                          description: DSpace metadata fields grouped by key.
+                          additionalProperties:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                value:
+                                  type: string
+                                  example: "your-collection"
+                                language:
+                                  type: string
+                                  nullable: true
+                                  example: null
+                                authority:
+                                  type: string
+                                  nullable: true
+                                  example: null
+                                confidence:
+                                  type: integer
+                                  example: -1
+                                place:
+                                  type: integer
+                                  example: 0
+                        _links:
+                          type: object
+                          description: HAL links for the collection.
+                          properties:
+                            self:
+                              type: object
+                              properties:
+                                href:
+                                  type: string
+                                  format: uri
+                            parentCommunity:
+                              type: object
+                              properties:
+                                href:
+                                  type: string
+                                  format: uri
+                            workflowGroups:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  name:
+                                    type: string
+                                    example: "reviewer"
+                                  href:
+                                    type: string
+                                    format: uri
+                  - type: object
+                    description: Types returned by DSpace vocabulary endpoint.
+                    properties:
+                      _embedded:
+                        type: object
+                        properties:
+                          entries:
+                            type: array
+                            items:
+                              type: object
+                              required:
+                                - value
+                                - display
+                                - type
+                              properties:
+                                value:
+                                  type: string
+                                  description: Internal type value.
+                                  example: "Animation"
+                                display:
+                                  type: string
+                                  description: Human-readable label.
+                                  example: "Animation"
+                                type:
+                                  type: string
+                                  example: "vocabularyEntry"
+              example:
+                - id: "1abcd2c3-45db-6a7-aeee-8d932f883d70"
+                  uuid: "1abcd2c3-45db-6a7-aeee-8d932f883d70"
+                  name: "your-collection"
+                  handle: "10673/1221"
+                  archivedItemsCount: 27
+                  type: "collection"
+                  metadata:
+                    dc.title:
+                      - value: "your-collection"
+                        language: null
+                        authority: null
+                        confidence: -1
+                        place: 0
+                  _links:
+                    self:
+                      href: "https://demo.dspace.org/server/api/core/collections/1abcd2c3-45db-6a7-aeee-8d932f883d70"
+                    workflowGroups:
+                      - name: "reviewer"
+                        href: "https://demo.dspace.org/server/api/core/collections/1abcd2c3-45db-6a7-aeee-8d932f883d70/workflowGroups/reviewer"
+    post:
+      tags: ['DSpace']
+      summary: Create a new DSpace workspace item.
+      operationId: dspace-create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ['collection', 'metadata']
+              properties:
+                collection:
+                  type: string
+                  description: UUID of the DSpace collection to submit to.
+                  example: "1abcd2c3-45db-6a7-aeee-8d932f883d70"
+                metadata:
+                  type: array
+                  description: Metadata fields to populate the submission.
+                  items:
+                    type: object
+                    required: ['key', 'value']
+                    properties:
+                      key:
+                        type: string
+                        example: "dc.title"
+                      value:
+                        type: string
+                        example: "The role of science in modern society"
+      responses:
+        '201':
+          description: The workspace was successfully created.
+          headers:
+            Location:
+              description: Last part of the URL is the workspace ID
+              schema:
+                type: string
+                format: uri
+              example: https://elab.local:3148/api/v2/dspace/1799
+            Cache-Control:
+              description: Cache policy applied to this response
+              schema:
+                type: string
+              example: max-age=0, private, must-revalidate, no-cache, private
+          content:
+            text/html:
+              schema:
+                type: string
+
+    patch:
+      tags: ['DSpace']
+      summary: Submit an eLabFTW entry to DSpace.
+      operationId: dspace-submit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ['collection', 'metadata', 'entity']
+              properties:
+                collection:
+                  type: string
+                  description: UUID of the collection.
+                  example: "1abcd2c3-45db-6a7-aeee-8d932f883d70"
+
+                metadata:
+                  type: array
+                  description: >
+                    DSpace metadata entries. At minimum, dc.title is required
+                    by most DSpace configurations.
+                  items:
+                    type: object
+                    required: ['key', 'value']
+                    properties:
+                      key:
+                        type: string
+                        example: "dc.title"
+                      value:
+                        type: string
+                        example: "Ipsum quidem excepturi aut et aut sit vitae."
+                  example:
+                    - key: "dc.title"
+                      value: "Ipsum quidem excepturi aut et aut sit vitae."
+                    - key: "dc.type"
+                      value: "Dataset"
+                    - key: "dc.date.issued"
+                      value: "2025-12-19"
+                    - key: "dc.description.abstract"
+                      value: "This entry explores the impact of photonic materials."
+                entity:
+                  type: object
+                  required: ['type', 'id']
+                  properties:
+                    type:
+                      type: string
+                      description: eLabFTW entity type.
+                      example: "experiments"
+                    id:
+                      type: integer
+                      description: ID of the entity to export.
+                      example: 42
+      responses:
+        '200':
+          description: Submission was successful.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 123
+                  uuid:
+                    type: string
+                    example: "1abcd2c3-45db-6a7-aeee-8d932f883d70"
+                  publicUrl:
+                    type: string
+                    example: "https://demo.dspace.org/items/67e4e922-1d80-489f-9fd9-afba71ce6283"

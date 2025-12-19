@@ -1,0 +1,51 @@
+{# Modal for DSPACE export #}
+<div class='modal fade' id='dspaceExportModal' tabindex='-1' role='dialog' aria-labelledby='dspaceExportModalLabel'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='dspaceExportModalLabel'><i class='fas fa-fw fa-file-archive mr-1'></i>{{ 'Export to DSpace'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <form id='dspaceExportForm'>
+        <div class='modal-body'>
+            <div class='form-group'>
+              <label for='dspaceCollection'>{{ 'Target Collection'|trans }}</label>
+              <select class='form-control' id='dspaceCollection' name='collection' required></select>
+            </div>
+            <div class='form-group'>
+              <label for='dspaceAuthor'>{{ 'Author'|trans }}</label>
+              <input id='dspaceAuthor' type='text' name='author' class='form-control' readonly value='{{ Entity.entityData.fullname }}'>
+            </div>
+            <div class='form-group'>
+              <label for='dspaceTitle'>{{ 'Title'|trans }}</label>
+              <input type='text' class='form-control' id='dspaceTitle' name='title' required readonly value='{{ Entity.entityData.title }}'>
+            </div>
+            <div class='form-group'>
+              <label for='dspaceDate'>{{ 'Date of Issue'|trans }}</label>
+              <input type='date' class='form-control' id='dspaceDate' name='date' required readonly value='{{ Entity.entityData.date }}'>
+            </div>
+            <div class='form-group'>
+              <label for='dspaceType'>{{ 'Type'|trans }}</label>
+              <select class='form-control' id='dspaceType' name='type' required></select>
+            </div>
+            <div class='form-group'>
+              <label for='dspaceAbstract'>{{ 'Abstract'|trans }}</label>
+              <textarea class='form-control' id='dspaceAbstract' name='abstract' required></textarea>
+            </div>
+            <div class='form-check'>
+              <input type='checkbox' class='form-check-input' id='dspaceLicense' required>
+              <label class='form-check-label' for='dspaceLicense'>
+                {{ 'I accept the DSpace license'|trans }}
+              </label>
+            </div>
+        </div>
+        <div class='modal-footer'>
+          <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+          <button type='submit' class='btn btn-primary' data-action='export-to-dspace' data-type='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}'>{{ 'Export'|trans }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

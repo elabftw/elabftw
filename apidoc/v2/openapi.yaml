@@ -366,6 +366,19 @@ components:
           type: string
         cookie_validity_time:
           type: integer
+        dspace_host:
+          description: URL for dspace host
+          example: "https://dspace.example.org"
+          type: string
+          format: uri
+        dspace_user:
+          description: Username for dspace integration
+          example: "dspace+user@example.org"
+          type: string
+        dspace_password:
+          description: Password for the corresponding dspace user
+          example: baguette1789
+          type: string
         email_domain:
           type: string
         extauth_email:
@@ -5430,3 +5443,291 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/extra_fields_keys'
+  # DSPACE
+  /dspace:
+    summary: Interact with the connected DSpace repository.
+    get:
+      tags: ['DSpace']
+      summary: Read DSpace information.
+      operationId: dspace-read
+      parameters:
+        - name: action
+          in: query
+          description: |
+            Action to perform:
+              - `getcollections`: list available DSpace collections.
+              - `gettypes`: list DSpace item types (submission vocabularies).
+
+            If omitted or invalid, the endpoint returns an error explaining valid usage.
+          required: true
+          schema:
+            type: string
+            enum: ['getcollections', 'gettypes']
+      responses:
+        '200':
+          description: |
+            Result depends on the `action` parameter:
+              - `getcollections`: list of collections.
+              - `gettypes`: list of vocabulary entries.
+
+            **DSpace REST API documentation**
+            - https://wiki.lyrasis.org/display/DSDOC9x/Community+and+Collection+management
+            - https://github.com/DSpace/RestContract/blob/main/collections.md
+            - https://github.com/DSpace/RestContract/blob/main/entitytypes.md
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: array
+                    description: Collections array returned by DSpace.
+                    items:
+                      type: object
+                      required:
+                        - id
+                        - uuid
+                        - name
+                        - type
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                          description: Collection identifier.
+                          example: "1abcd2c3-45db-6a7-aeee-8d932f883d70"
+
+                        uuid:
+                          type: string
+                          format: uuid
+                          description: Collection UUID (same value as id).
+                          example: "1abcd2c3-45db-6a7-aeee-8d932f883d70"
+                        name:
+                          type: string
+                          description: Human-readable collection name.
+                          example: "your-collection"
+                        handle:
+                          type: string
+                          description: Persistent DSpace handle.
+                          example: "10673/1221"
+                        archivedItemsCount:
+                          type: integer
+                          description: Number of archived items in the collection.
+                          example: 27
+                        type:
+                          type: string
+                          example: "collection"
+                        metadata:
+                          type: object
+                          description: DSpace metadata fields grouped by key.
+                          additionalProperties:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                value:
+                                  type: string
+                                  example: "your-collection"
+                                language:
+                                  type: string
+                                  nullable: true
+                                  example: null
+                                authority:
+                                  type: string
+                                  nullable: true
+                                  example: null
+                                confidence:
+                                  type: integer
+                                  example: -1
+                                place:
+                                  type: integer
+                                  example: 0
+                        _links:
+                          type: object
+                          description: HAL links for the collection.
+                          properties:
+                            self:
+                              type: object
+                              properties:
+                                href:
+                                  type: string
+                                  format: uri
+                            parentCommunity:
+                              type: object
+                              properties:
+                                href:
+                                  type: string
+                                  format: uri
+                            workflowGroups:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  name:
+                                    type: string
+                                    example: "reviewer"
+                                  href:
+                                    type: string
+                                    format: uri
+                  - type: object
+                    description: Types returned by DSpace vocabulary endpoint.
+                    properties:
+                      _embedded:
+                        type: object
+                        properties:
+                          entries:
+                            type: array
+                            items:
+                              type: object
+                              required:
+                                - value
+                                - display
+                                - type
+                              properties:
+                                value:
+                                  type: string
+                                  description: Internal type value.
+                                  example: "Animation"
+                                display:
+                                  type: string
+                                  description: Human-readable label.
+                                  example: "Animation"
+                                type:
+                                  type: string
+                                  example: "vocabularyEntry"
+              example:
+                - id: "1abcd2c3-45db-6a7-aeee-8d932f883d70"
+                  uuid: "1abcd2c3-45db-6a7-aeee-8d932f883d70"
+                  name: "your-collection"
+                  handle: "10673/1221"
+                  archivedItemsCount: 27
+                  type: "collection"
+                  metadata:
+                    dc.title:
+                      - value: "your-collection"
+                        language: null
+                        authority: null
+                        confidence: -1
+                        place: 0
+                  _links:
+                    self:
+                      href: "https://demo.dspace.org/server/api/core/collections/1abcd2c3-45db-6a7-aeee-8d932f883d70"
+                    workflowGroups:
+                      - name: "reviewer"
+                        href: "https://demo.dspace.org/server/api/core/collections/1abcd2c3-45db-6a7-aeee-8d932f883d70/workflowGroups/reviewer"
+    post:
+      tags: ['DSpace']
+      summary: Create a new DSpace workspace item.
+      operationId: dspace-create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ['collection', 'metadata']
+              properties:
+                collection:
+                  type: string
+                  description: UUID of the DSpace collection to submit to.
+                  example: "1abcd2c3-45db-6a7-aeee-8d932f883d70"
+                metadata:
+                  type: array
+                  description: Metadata fields to populate the submission.
+                  items:
+                    type: object
+                    required: ['key', 'value']
+                    properties:
+                      key:
+                        type: string
+                        example: "dc.title"
+                      value:
+                        type: string
+                        example: "The role of science in modern society"
+      responses:
+        '201':
+          description: The workspace was successfully created.
+          headers:
+            Location:
+              description: Last part of the URL is the workspace ID
+              schema:
+                type: string
+                format: uri
+              example: https://elab.local:3148/api/v2/dspace/1799
+            Cache-Control:
+              description: Cache policy applied to this response
+              schema:
+                type: string
+              example: max-age=0, private, must-revalidate, no-cache, private
+          content:
+            text/html:
+              schema:
+                type: string
+
+    patch:
+      tags: ['DSpace']
+      summary: Submit an eLabFTW entry to DSpace.
+      operationId: dspace-submit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ['collection', 'metadata', 'entity']
+              properties:
+                collection:
+                  type: string
+                  description: UUID of the collection.
+                  example: "1abcd2c3-45db-6a7-aeee-8d932f883d70"
+
+                metadata:
+                  type: array
+                  description: >
+                    DSpace metadata entries. At minimum, dc.title is required
+                    by most DSpace configurations.
+                  items:
+                    type: object
+                    required: ['key', 'value']
+                    properties:
+                      key:
+                        type: string
+                        example: "dc.title"
+                      value:
+                        type: string
+                        example: "Ipsum quidem excepturi aut et aut sit vitae."
+                  example:
+                    - key: "dc.title"
+                      value: "Ipsum quidem excepturi aut et aut sit vitae."
+                    - key: "dc.type"
+                      value: "Dataset"
+                    - key: "dc.date.issued"
+                      value: "2025-12-19"
+                    - key: "dc.description.abstract"
+                      value: "This entry explores the impact of photonic materials."
+                entity:
+                  type: object
+                  required: ['type', 'id']
+                  properties:
+                    type:
+                      type: string
+                      description: eLabFTW entity type.
+                      example: "experiments"
+                    id:
+                      type: integer
+                      description: ID of the entity to export.
+                      example: 42
+      responses:
+        '200':
+          description: Submission was successful.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 123
+                  uuid:
+                    type: string
+                    example: "1abcd2c3-45db-6a7-aeee-8d932f883d70"
+                  publicUrl:
+                    type: string
+                    example: "https://demo.dspace.org/items/67e4e922-1d80-489f-9fd9-afba71ce6283"

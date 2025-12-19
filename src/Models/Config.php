@@ -40,7 +40,7 @@ use function in_array;
  */
 final class Config extends AbstractRest
 {
-    public const array ENCRYPTED_KEYS = array('smtp_password', 'ldap_password', 'ts_password', 'remote_dir_config');
+    public const array ENCRYPTED_KEYS = array('smtp_password', 'ldap_password', 'ts_password', 'remote_dir_config', 'dspace_password');
 
     private const string CACHE_KEY = 'config_table';
 
@@ -223,7 +223,10 @@ final class Config extends AbstractRest
             ('allow_users_change_identity', '0'),
             ('compounds_require_edit_rights', '0'),
             ('inventory_require_edit_rights', '0'),
-            ('users_validity_is_externally_managed', '0')";
+            ('users_validity_is_externally_managed', '0'),
+            ('dspace_host', ''),
+            ('dspace_user', ''),
+            ('dspace_password', '')";
 
         $req = $this->Db->prepare($sql);
         $req->bindValue(':schema', Update::REQUIRED_SCHEMA);

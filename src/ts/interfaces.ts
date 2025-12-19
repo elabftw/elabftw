@@ -111,6 +111,9 @@ enum Action {
   UpdatePassword = 'updatepassword',
   UpdateTag = 'updatetag',
   Validate = 'validate',
+  // Dspace Actions
+  GetCollections = 'getcollections',
+  GetTypes = 'gettypes',
 }
 
 enum Model {
@@ -181,6 +184,7 @@ enum Target {
 
 enum FileType {
   Csv = 'csv',
+  Eln = 'eln',
   Html = 'html',
   Json = 'json',
   Ods = 'ods',

@@ -28,10 +28,6 @@ use Override;
 
 use function array_map;
 use function urlencode;
-use function apcu_fetch;
-use function apcu_store;
-use function apcu_exists;
-use function apcu_delete;
 use function in_array;
 
 /**
@@ -40,10 +36,6 @@ use function in_array;
 final class Config extends AbstractRest
 {
     public const array ENCRYPTED_KEYS = array('smtp_password', 'ldap_password', 'ts_password', 'remote_dir_config', 'dspace_password');
-
-    private const string CACHE_KEY = 'config_table';
-
-    private const int CACHE_TTL_SECONDS = 9001;
 
     // the array with all config
     public array $configArr = array();
@@ -59,12 +51,6 @@ final class Config extends AbstractRest
     private function __construct()
     {
         parent::__construct();
-        $this->configArr = $this->readAll();
-    }
-
-    public function bustCache(): void
-    {
-        apcu_delete(self::CACHE_KEY);
         $this->configArr = $this->readAll();
     }
 
@@ -252,20 +238,13 @@ final class Config extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        // this select is executed every query, so we cache the result in memory
-        if (apcu_exists(self::CACHE_KEY)) {
-            return apcu_fetch(self::CACHE_KEY);
-        }
-
         $config = $this->sqlSelect();
         if (empty($config)) {
             $this->create();
             $config = $this->sqlSelect();
         }
 
-        $deciphered = $this->decipherSecrets($config);
-        apcu_store(self::CACHE_KEY, $deciphered, self::CACHE_TTL_SECONDS);
-        return $deciphered;
+        return $this->decipherSecrets($config);
     }
 
     /**
@@ -312,7 +291,6 @@ final class Config extends AbstractRest
             }
         }
 
-        $this->bustCache();
         return $this->readAll();
     }
 

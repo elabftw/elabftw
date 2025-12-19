@@ -5636,16 +5636,23 @@ paths:
                         example: "The role of science in modern society"
       responses:
         '201':
-          description: >
-            Submission successful. The resource was created in DSpace.
-            The Location header contains the URL of the created item.
+          description: ID of the newly created DSpace workspace item.
           headers:
             Location:
-              description: URL of the newly created DSpace Workspace for your item.
+              description: Last part of the URL is the workspace ID
               schema:
                 type: string
                 format: uri
-                example: https://elab.local:3148/api/v2/dspace/1878
+              example: https://elab.local:3148/api/v2/dspace/1799
+            Cache-Control:
+              description: Cache policy applied to this response
+              schema:
+                type: string
+              example: max-age=0, private, must-revalidate, no-cache, private
+          content:
+            text/html:
+              schema:
+                type: string
 
     patch:
       tags: ['DSpace']

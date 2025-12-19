@@ -17,7 +17,6 @@ use Defuse\Crypto\Key;
 use Elabftw\AuditEvent\ConfigModified;
 use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\S3Config;
-use Elabftw\Elabftw\TwigFilters;
 use Elabftw\Elabftw\Update;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
@@ -61,11 +60,6 @@ final class Config extends AbstractRest
     {
         parent::__construct();
         $this->configArr = $this->readAll();
-        // this should only run once: just after a fresh install
-        if (empty($this->configArr)) {
-            $this->create();
-            $this->configArr = $this->readAll();
-        }
     }
 
     public function bustCache(): void
@@ -263,21 +257,15 @@ final class Config extends AbstractRest
             return apcu_fetch(self::CACHE_KEY);
         }
 
-        // cache miss, do sql query
-        $sql = 'SELECT * FROM config';
-        $req = $this->Db->prepare($sql);
-        $this->Db->execute($req);
-        $config = $req->fetchAll(PDO::FETCH_COLUMN | PDO::FETCH_GROUP);
-
-        // special case for remote_dir_config where we decrypt it in output so it can be used by external scripts
-        if (!empty($config['remote_dir_config'])) {
-            $config['remote_dir_config'][0] = TwigFilters::decrypt($config['remote_dir_config'][0]);
+        $config = $this->sqlSelect();
+        if (empty($config)) {
+            $this->create();
+            $config = $this->sqlSelect();
         }
 
-        // we want key => value array
-        $result = array_map(fn($v): mixed => $v[0], $config);
-        apcu_store(self::CACHE_KEY, $result, self::CACHE_TTL_SECONDS);
-        return $result;
+        $deciphered = $this->decipherSecrets($config);
+        apcu_store(self::CACHE_KEY, $deciphered, self::CACHE_TTL_SECONDS);
+        return $deciphered;
     }
 
     /**
@@ -396,13 +384,30 @@ final class Config extends AbstractRest
         return $createResult;
     }
 
-    public function getDecrypted(): array
+    private function sqlSelect(): array
     {
-        $result = $this->readAll();
+        $sql = 'SELECT * FROM config';
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+        $res = $req->fetchAll(PDO::FETCH_COLUMN | PDO::FETCH_GROUP);
+        // we want key => value array
+        return array_map(fn($v): mixed => $v[0], $res);
+    }
+
+    private function decipherSecrets(array $config): array
+    {
         foreach (self::ENCRYPTED_KEYS as $column) {
-            $result[$column] = TwigFilters::decrypt($result[$column]);
+            $config[$column] = self::decrypt($config[$column]);
         }
-        return $result;
+        return $config;
+    }
+
+    private static function decrypt(?string $encrypted): string
+    {
+        if (empty($encrypted)) {
+            return '';
+        }
+        return Crypto::decrypt($encrypted, Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY')));
     }
 
     private function assertAtLeastOneBasePermissionEnabled(string $permissionName): void

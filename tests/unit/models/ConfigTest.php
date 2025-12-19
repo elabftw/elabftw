@@ -28,7 +28,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->Config = Config::getConfig();
-        $this->setupValues = $this->Config->getDecrypted();
+        $this->setupValues = $this->Config->readAll();
     }
 
     protected function tearDown(): void

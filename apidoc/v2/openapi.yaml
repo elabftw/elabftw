@@ -367,10 +367,16 @@ components:
         cookie_validity_time:
           type: integer
         dspace_host:
+          description: URL for dspace host
+          example: "https://dspace.example.org"
           type: string
         dspace_user:
+          description: Username for dspace integration
+          example: "dspace+user@example.org"
           type: string
         dspace_password:
+          description: Password for the corresponding dspace user
+          example: baguette1789
           type: string
         email_domain:
           type: string

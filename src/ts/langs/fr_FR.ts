@@ -78,6 +78,7 @@ const t = {
     "onboarding-email-sent": "Le(s) courriel(s) d'accueil sera(ont) bientôt envoyé(s).",
     "only-a-sysadmin": "Seul un administrateur système peut le modifier.",
     "please-wait": "Patientez…",
+    "readonly": "Lecture seule",
     "remove": "Supprimer",
     "rename-column": "Nouveau titre pour la colonne",
     "replace-edited-file": "Souhaitez-vous remplacer le fichier sur le serveur avec ce changement ?",

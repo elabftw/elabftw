@@ -78,6 +78,7 @@ const t = {
     "onboarding-email-sent": "Tez orada ishga kirish haqidagi e-pochta(lar) yuboriladi.",
     "only-a-sysadmin": "Only a Sysadmin can modify this.",
     "please-wait": "Iltimos kuting…",
+    "readonly": "Faqat o'qish",
     "remove": "O'chirish",
     "rename-column": "New title for the column",
     "replace-edited-file": "Serverdagi faylni ushbu tahrir bilan almashtirmoqchimisiz?",

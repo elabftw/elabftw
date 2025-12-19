@@ -78,6 +78,7 @@ const t = {
     "onboarding-email-sent": "Sisseelamismeil(id) saadetakse peagi.",
     "only-a-sysadmin": "Ainult süsteemiadministraator saab seda muuta.",
     "please-wait": "Palun oodake…",
+    "readonly": "Kirjutuskaitstud",
     "remove": "Eemalda",
     "rename-column": "Uus veeru pealkiri",
     "replace-edited-file": "Kas soovite serveris oleva faili selle muudatusega asendada?",

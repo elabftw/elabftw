@@ -78,6 +78,7 @@ const t = {
     "onboarding-email-sent": "Registračný e-mail (e-maily) budú čoskoro odoslané.",
     "only-a-sysadmin": "Only a Sysadmin can modify this.",
     "please-wait": "Prosím počkajte…",
+    "readonly": "Iba na čítanie",
     "remove": "Odstrániť",
     "rename-column": "New title for the column",
     "replace-edited-file": "Chcete touto úpravou nahradiť súbor na servery?",

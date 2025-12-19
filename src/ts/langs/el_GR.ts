@@ -78,6 +78,7 @@ const t = {
     "onboarding-email-sent": "Σύντομα θα σταλούν μηνύματα ηλεκτρονικού ταχυδρομείου ενσωμάτωσης.",
     "only-a-sysadmin": "Only a Sysadmin can modify this.",
     "please-wait": "Παρακαλώ περιμένετε",
+    "readonly": "Μόνο για ανάγνωση",
     "remove": "Αφαίρεση",
     "rename-column": "New title for the column",
     "replace-edited-file": "Θέλετε να αντικαταστήσετε το αρχείο στον διακομιστή με αυτήν την επεξεργασία;",

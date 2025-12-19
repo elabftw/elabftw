@@ -78,6 +78,7 @@ const t = {
     "onboarding-email-sent": "オンボーディングメールがすぐに送信されます。",
     "only-a-sysadmin": "システム管理者のみ変更可能な項目です。",
     "please-wait": "お待ちください…",
+    "readonly": "Read-only",
     "remove": "取り除く",
     "rename-column": "コラムの新しいタイトル",
     "replace-edited-file": "この編集したものでサーバー上のファイルを置き換えますか？",

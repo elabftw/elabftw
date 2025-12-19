@@ -78,6 +78,7 @@ const t = {
     "onboarding-email-sent": "Email orientasi akan segera dikirimkan.",
     "only-a-sysadmin": "Hanya Sysadmin yang dapat memodifikasi ini.",
     "please-wait": "Mohon tunggu…",
+    "readonly": "Hanya baca",
     "remove": "Menghapus",
     "rename-column": "Judul baru untuk kolom",
     "replace-edited-file": "Apakah Anda ingin mengganti file di server dengan hasil edit ini?",

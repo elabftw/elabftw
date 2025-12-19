@@ -18,6 +18,7 @@ use Elabftw\Enums\Classification;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\ReportScopes;
+use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\MpdfProviderInterface;
@@ -85,16 +86,16 @@ final class MakeController extends AbstractController
                         $this->Request->query,
                     );
                 }
-                return (new MakeCsv($this->entityArr))->getResponse();
+                return new MakeCsv($this->entityArr)->getResponse();
 
             case ExportFormat::Eln:
-                return $this->makeStreamZip(new MakeEln($this->getZipStreamLib(), $this->requester, $this->entityArr));
+                return $this->makeStreamZip(new MakeEln($this->getZipStreamLib(), $this->requester, Storage::EXPORTS->getStorage(), $this->entityArr));
 
             case ExportFormat::ElnHtml:
-                return (new MakeElnHtml($this->getZipStreamLib(), $this->requester, $this->entityArr))->getResponse();
+                return new MakeElnHtml($this->getZipStreamLib(), $this->requester, Storage::EXPORTS->getStorage(), $this->entityArr)->getResponse();
 
             case ExportFormat::Json:
-                return (new MakeJson($this->entityArr))->getResponse();
+                return new MakeJson($this->entityArr)->getResponse();
 
             case ExportFormat::PdfA:
                 $this->pdfa = true;

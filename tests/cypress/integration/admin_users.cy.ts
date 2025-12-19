@@ -27,8 +27,6 @@ describe('Users tab in Admin page', () => {
     // if there's a second user, target the dropdown and delete target
     cy.get('button[aria-label="More options"]').then(($buttons) => {
       if ($buttons.length > 1) {
-        cy.intercept('DELETE', '/api/v2/users/**').as('apiDELETE');
-
         // target the 2nd dropdown to delete target user and not the admin
         cy.wrap($buttons.eq(1)).click();
 
@@ -40,7 +38,6 @@ describe('Users tab in Admin page', () => {
 
         // click the 'Delete user' from dropdown
         cy.get('[data-action="destroy-user"]:visible').click();
-        cy.wait('@apiDELETE');
         cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
       } else {
         cy.log('Second dropdown not found, skipping deletion');

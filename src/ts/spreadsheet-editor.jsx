@@ -153,14 +153,28 @@ function SpreadsheetEditor() {
     );
     return tb;
   };
+  // pass a dynamic key to force SpreadsheetInner to remount when data shape changes
+  const spreadsheetKey = `${data.length}-${data[0]?.length || 0}`;
 
   return (
     <>
       <input hidden type='file' accept='.xlsx,.csv,.ods' onChange={handleImportFile} id='importFileInput' name='file' />
-      <Spreadsheet ref={spreadsheetRef} tabs={true} toolbar={buildToolbar}>
-        <Worksheet data={data} minDimensions={[12,12]} />
-      </Spreadsheet>
+      {/* move Spreadsheet into a child component to safely re-init on file uploads */}
+      <SpreadsheetInner key={spreadsheetKey} data={data} buildToolbar={buildToolbar} />
     </>
+  );
+}
+
+function SpreadsheetInner({ data, buildToolbar }) {
+  const spreadsheetRef = useRef(null);
+  return (
+    <Spreadsheet ref={spreadsheetRef} tabs={true} toolbar={buildToolbar}>
+      <Worksheet data={data} minDimensions={[
+          Math.max(12, data[0]?.length || 0),
+          Math.max(12, data.length)
+        ]}
+      />
+    </Spreadsheet>
   );
 }
 

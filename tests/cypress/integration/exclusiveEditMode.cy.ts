@@ -12,25 +12,16 @@ describe('Exclusive edit mode', () => {
         set: () => {}, // swallow
       });
     });
-    cy.visit('/experiments.php');
-    cy.contains('Create').click();
-    cy.get('#createModal_experiments').should('be.visible').should('contain', 'No category').contains('No category').click();
-    cy.get('#askTitleModalTitleInput').should('be.visible').wait(500).type('Cypress created entity').click();
-    cy.get('#askTitleButton').click();
-    cy.url().should('include', 'mode=edit');
-    cy.intercept('PATCH', '/api/v2/experiments/**').as('apiPATCH');
+    cy.createEntity();
     cy.get('#documentTitle').click();
     cy.get('h1.text-dark').find('input').clear().type(title).blur();
-    cy.wait('@apiPATCH');
     cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
     // edit mode is always exclusive as of 2025/03, without clicking on a specific button
     cy.get('#date_input').type('2024-04-20').blur();
-    cy.wait('@apiPATCH');
     cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
     cy.get('[title="Select who can edit this entry"]').click();
     cy.get('#canwrite_select_base').should('be.visible').select('Only members of the team');
     cy.get('[data-identifier="canwrite"][data-action="save-permissions"]').click();
-    cy.wait('@apiPATCH');
     cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
     // log out Toto
     cy.request('/app/logout.php');

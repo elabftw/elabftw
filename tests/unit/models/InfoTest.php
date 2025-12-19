@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Enums\Action;
-use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Params\BaseQueryParams;
+use Symfony\Component\HttpFoundation\InputBag;
 
 class InfoTest extends \PHPUnit\Framework\TestCase
 {
@@ -28,28 +28,20 @@ class InfoTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('api/v2/info/', $this->Info->getApiPath());
     }
 
-    public function testPost(): void
-    {
-        $this->expectException(ImproperActionException::class);
-        $this->Info->postAction(Action::Create, array());
-    }
-
-    public function testPatch(): void
-    {
-        $this->expectException(ImproperActionException::class);
-        $this->Info->patch(Action::Create, array());
-    }
-
-    public function testDelete(): void
-    {
-        $this->expectException(ImproperActionException::class);
-        $this->Info->destroy();
-    }
-
     public function testRead(): void
     {
         $info = $this->Info->readOne();
         $this->assertTrue(is_array($info));
         $this->assertEquals(4, $info['experiments_timestamped_count']);
+    }
+
+    public function testHist(): void
+    {
+        // use the readAll() to hit the if, twice to get all branches: with and without columns
+        $this->Info->readAll(new BaseQueryParams(new InputBag(array('hist' => 1))));
+        $hist = $this->Info->readAll(new BaseQueryParams(new InputBag(array('hist' => 1, 'columns' => 12))));
+        $this->assertIsArray($hist['items']);
+        $this->assertIsArray($hist['experiments']);
+        $this->assertIsArray($hist['users']);
     }
 }

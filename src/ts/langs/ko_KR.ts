@@ -75,6 +75,7 @@ const t = {
     "onboarding-email-sent": "온보딩 이메일이 곧 전송될 예정입니다.",
     "only-a-sysadmin": "Only a Sysadmin can modify this.",
     "please-wait": "잠시만 기다려주세요…",
+    "readonly": "읽기 전용",
     "remove": "제거하다",
     "rename-column": "New title for the column",
     "replace-edited-file": "서버에 저장된 파일을 현재 수정본으로 교체할까요?",

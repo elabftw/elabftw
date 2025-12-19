@@ -75,6 +75,7 @@ const t = {
     "onboarding-email-sent": "E-poštna sporočila za pripravo bodo kmalu poslana.",
     "only-a-sysadmin": "Only a Sysadmin can modify this.",
     "please-wait": "Prosim počakaj…",
+    "readonly": "Le za branje",
     "remove": "Odstrani",
     "rename-column": "New title for the column",
     "replace-edited-file": "Ali želite zamenjati datoteko na strežniku s tem urejanjem?",

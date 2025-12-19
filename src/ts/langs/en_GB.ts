@@ -75,6 +75,7 @@ const t = {
     "onboarding-email-sent": "Onboarding email(s) will soon be sent.",
     "only-a-sysadmin": "Only a Sysadmin can modify this.",
     "please-wait": "Please wait…",
+    "readonly": "Read-only",
     "remove": "Remove",
     "rename-column": "New title for the column",
     "replace-edited-file": "Do you want to replace the file on the server with this edit?",

@@ -370,6 +370,7 @@ components:
           description: URL for dspace host
           example: "https://dspace.example.org"
           type: string
+          format: uri
         dspace_user:
           description: Username for dspace integration
           example: "dspace+user@example.org"

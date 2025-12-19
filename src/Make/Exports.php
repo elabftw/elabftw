@@ -20,6 +20,7 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\State;
+use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
@@ -253,7 +254,7 @@ final class Exports extends AbstractRest
                 }
                 $ZipStream = new ZipStream(sendHttpHeaders: false, outputStream: $fileStream);
                 if ($format === ExportFormat::Eln) {
-                    $Maker = new MakeEln($ZipStream, $this->requester, $entityArr);
+                    $Maker = new MakeEln($ZipStream, $this->requester, Storage::EXPORTS->getStorage(), $entityArr);
                 } else {
                     $Maker = new MakeBackupZip($ZipStream, $this->requester, $entityArr, $usePdfa, $includeChangelog, $includeJson);
                 };

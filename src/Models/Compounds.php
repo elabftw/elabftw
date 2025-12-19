@@ -64,7 +64,7 @@ final class Compounds extends AbstractRest
         'wikipedia',
     );
 
-    public function __construct(protected HttpGetter $httpGetter, private Users $requester, protected FingerprinterInterface $fingerprinter, private bool $requireEditRights, ?int $id = null)
+    public function __construct(protected HttpGetter $httpGetter, public Users $requester, protected FingerprinterInterface $fingerprinter, private bool $requireEditRights, ?int $id = null)
     {
         parent::__construct();
         $this->setId($id);

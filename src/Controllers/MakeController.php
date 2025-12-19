@@ -82,7 +82,8 @@ final class MakeController extends AbstractController
                 if (str_starts_with($this->Request->getPathInfo(), '/api/v2/reports')) {
                     return new ReportsHandler($this->requester)->getResponse(
                         ReportScopes::tryFrom($this->Request->query->getString('scope')) ??
-                        throw new ImproperActionException(sprintf('Invalid scope query parameter. Possible values are: %s.', ReportScopes::toCsList()))
+                                throw new ImproperActionException(sprintf('Invalid scope query parameter. Possible values are: %s.', ReportScopes::toCsList())),
+                        $this->Request->query,
                     );
                 }
                 return new MakeCsv($this->entityArr)->getResponse();

@@ -3502,9 +3502,10 @@ paths:
           in: query
           schema:
             type: string
-            enum: ['compounds', 'instance', 'inventory', 'stored_compounds', 'team']
+            enum: ['compounds', 'compounds_history', 'instance', 'inventory', 'stored_compounds', 'team']
           description: |
             Select the scope. Instance is for sysadmins only. Team will generate report for the current team.
+            If scope is `compounds_history`, you can also provide `start` and `end` (format `YYYY-MM-DD`).
           examples:
             instance:
               summary: Get instance level report
@@ -3512,6 +3513,25 @@ paths:
             team:
               summary: Get team level report
               value: team
+        - name: start
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+            example: '2012-01-01'
+          description: |
+            Start date (YYYY-MM-DD). Only used when scope is `compounds_history`.
+        - name: end
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+            example: '2038-01-19'
+          description: |
+            End date (YYYY-MM-DD). Only used when scope is `compounds_history`.
+
       responses:
         '200':
           description: Get usage reports

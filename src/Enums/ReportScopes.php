@@ -19,6 +19,7 @@ enum ReportScopes: string
     use EnumsTrait;
 
     case Compounds = 'compounds';
+    case CompoundsHistory = 'compounds_history';
     case Instance = 'instance';
     case Inventory = 'inventory';
     case StoredCompounds = 'stored_compounds';

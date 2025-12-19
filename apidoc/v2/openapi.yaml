@@ -5455,13 +5455,13 @@ paths:
           required: true
           schema:
             type: string
-            enum: [ 'getcollections', 'gettypes' ]
+            enum: ['getcollections', 'gettypes']
       responses:
         '200':
           description: |
             Result depends on the `action` parameter:
-              - `GetCollections`: list of collections.
-              - `GetTypes`: list of vocabulary entries.
+              - `getcollections`: list of collections.
+              - `gettypes`: list of vocabulary entries.
 
             **DSpace REST API documentation**
             - https://wiki.lyrasis.org/display/DSDOC9x/Community+and+Collection+management
@@ -5475,18 +5475,90 @@ paths:
                     description: Collections array returned by DSpace.
                     items:
                       type: object
+                      required:
+                        - id
+                        - uuid
+                        - name
+                        - type
                       properties:
                         id:
                           type: string
-                          description: The workspace ID.
+                          format: uuid
+                          description: Collection identifier.
                           example: "1abcd2c3-45db-6a7-aeee-8d932f883d70"
+
                         uuid:
                           type: string
-                          description: The workspace UUID.
+                          format: uuid
+                          description: Collection UUID (same value as id).
                           example: "1abcd2c3-45db-6a7-aeee-8d932f883d70"
                         name:
                           type: string
-                          example: "Collection One"
+                          description: Human-readable collection name.
+                          example: "your-collection"
+                        handle:
+                          type: string
+                          description: Persistent DSpace handle.
+                          example: "10673/1221"
+                        archivedItemsCount:
+                          type: integer
+                          description: Number of archived items in the collection.
+                          example: 27
+                        type:
+                          type: string
+                          example: "collection"
+                        metadata:
+                          type: object
+                          description: DSpace metadata fields grouped by key.
+                          additionalProperties:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                value:
+                                  type: string
+                                  example: "your-collection"
+                                language:
+                                  type: string
+                                  nullable: true
+                                  example: null
+                                authority:
+                                  type: string
+                                  nullable: true
+                                  example: null
+                                confidence:
+                                  type: integer
+                                  example: -1
+                                place:
+                                  type: integer
+                                  example: 0
+                        _links:
+                          type: object
+                          description: HAL links for the collection.
+                          properties:
+                            self:
+                              type: object
+                              properties:
+                                href:
+                                  type: string
+                                  format: uri
+                            parentCommunity:
+                              type: object
+                              properties:
+                                href:
+                                  type: string
+                                  format: uri
+                            workflowGroups:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  name:
+                                    type: string
+                                    example: "reviewer"
+                                  href:
+                                    type: string
+                                    format: uri
                   - type: object
                     description: Types returned by DSpace vocabulary endpoint.
                     properties:
@@ -5497,18 +5569,42 @@ paths:
                             type: array
                             items:
                               type: object
+                              required:
+                                - value
+                                - display
+                                - type
                               properties:
                                 value:
                                   type: string
-                                  description: The type of item to create.
+                                  description: Internal type value.
                                   example: "Animation"
                                 display:
                                   type: string
-                                  description: The type of item to create.
+                                  description: Human-readable label.
                                   example: "Animation"
                                 type:
                                   type: string
                                   example: "vocabularyEntry"
+              example:
+                - id: "1abcd2c3-45db-6a7-aeee-8d932f883d70"
+                  uuid: "1abcd2c3-45db-6a7-aeee-8d932f883d70"
+                  name: "your-collection"
+                  handle: "10673/1221"
+                  archivedItemsCount: 27
+                  type: "collection"
+                  metadata:
+                    dc.title:
+                      - value: "your-collection"
+                        language: null
+                        authority: null
+                        confidence: -1
+                        place: 0
+                  _links:
+                    self:
+                      href: "https://demo.dspace.org/server/api/core/collections/1abcd2c3-45db-6a7-aeee-8d932f883d70"
+                    workflowGroups:
+                      - name: "reviewer"
+                        href: "https://demo.dspace.org/server/api/core/collections/1abcd2c3-45db-6a7-aeee-8d932f883d70/workflowGroups/reviewer"
     post:
       tags: ['DSpace']
       summary: Create a new DSpace workspace item.

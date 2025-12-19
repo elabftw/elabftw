@@ -5636,23 +5636,16 @@ paths:
                         example: "The role of science in modern society"
       responses:
         '201':
-          description: ID of the newly created DSpace workspace item.
+          description: >
+            Submission successful. The resource was created in DSpace.
+            The Location header contains the URL of the created item.
           headers:
             Location:
-              description: Last part of the URL is the workspace ID
+              description: URL of the newly created DSpace Workspace for your item.
               schema:
                 type: string
                 format: uri
-              example: https://elab.local:3148/api/v2/dspace/1799
-            Cache-Control:
-              description: Cache policy applied to this response
-              schema:
-                type: string
-              example: max-age=0, private, must-revalidate, no-cache, private
-          content:
-            text/html:
-              schema:
-                type: string
+                example: https://elab.local:3148/api/v2/dspace/1878
 
     patch:
       tags: ['DSpace']
@@ -5670,18 +5663,31 @@ paths:
                   type: string
                   description: UUID of the collection.
                   example: "1abcd2c3-45db-6a7-aeee-8d932f883d70"
+
                 metadata:
                   type: array
+                  description: >
+                    DSpace metadata entries. At minimum, dc.title is required
+                    by most DSpace configurations.
                   items:
                     type: object
                     required: ['key', 'value']
                     properties:
                       key:
                         type: string
-                        example: "dc.description.abstract"
+                        example: "dc.title"
                       value:
                         type: string
-                        example: "This entry explores the impact of photonic materials."
+                        example: "Ipsum quidem excepturi aut et aut sit vitae."
+                  example:
+                    - key: "dc.title"
+                      value: "Ipsum quidem excepturi aut et aut sit vitae."
+                    - key: "dc.type"
+                      value: "Dataset"
+                    - key: "dc.date.issued"
+                      value: "2025-12-19"
+                    - key: "dc.description.abstract"
+                      value: "This entry explores the impact of photonic materials."
                 entity:
                   type: object
                   required: ['type', 'id']

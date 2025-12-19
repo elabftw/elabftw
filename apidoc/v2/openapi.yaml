@@ -1600,6 +1600,23 @@ components:
           type: integer
           description: Is 1 when the exclusive edit lock is longer than ExclusiveEditMode::EXPIRATION_MINUTES
 
+x-parameterGroups:
+  searchParams: &searchParams
+    - $ref: "#/components/parameters/SearchQ"
+    - $ref: "#/components/parameters/SearchExtended"
+    - $ref: '#/components/parameters/SearchRelated'
+    - $ref: '#/components/parameters/SearchRelatedOrigin'
+    - $ref: '#/components/parameters/Category'
+    - $ref: '#/components/parameters/Status'
+    - $ref: '#/components/parameters/Tags'
+    - $ref: '#/components/parameters/Limit'
+    - $ref: '#/components/parameters/Offset'
+    - $ref: '#/components/parameters/Owner'
+    - $ref: '#/components/parameters/Scope'
+    - $ref: '#/components/parameters/Order'
+    - $ref: '#/components/parameters/Sort'
+    - $ref: '#/components/parameters/State'
+
 security:
   - token:
       - token
@@ -1855,23 +1872,7 @@ paths:
       tags: ['Experiments']
       summary: Read all experiments that are accessible
       operationId: read-experiments
-      parameters:
-      # Note: this has to be repeated manually for items
-        - $ref: '#/components/parameters/SearchQ'
-        - $ref: '#/components/parameters/SearchExtended'
-        - $ref: '#/components/parameters/SearchRelated'
-        - $ref: '#/components/parameters/SearchRelatedOrigin'
-        - $ref: '#/components/parameters/Category'
-        - $ref: '#/components/parameters/Status'
-        - $ref: '#/components/parameters/Tags'
-        - $ref: '#/components/parameters/Limit'
-        - $ref: '#/components/parameters/Offset'
-        - $ref: '#/components/parameters/Owner'
-        - $ref: '#/components/parameters/Scope'
-        - $ref: '#/components/parameters/Order'
-        - $ref: '#/components/parameters/Sort'
-        - $ref: '#/components/parameters/State'
-      # END need to copy part to items/
+      parameters: *searchParams
       responses:
         '200':
           description: A list of experiments
@@ -2180,24 +2181,7 @@ paths:
       tags: ['Items']
       summary: Read all items that are accessible
       operationId: read-items
-      # start duplicate from GET /experiments
-      parameters:
-      # Note: this has to be repeated manually for items
-        - $ref: '#/components/parameters/SearchQ'
-        - $ref: '#/components/parameters/SearchExtended'
-        - $ref: '#/components/parameters/SearchRelated'
-        - $ref: '#/components/parameters/SearchRelatedOrigin'
-        - $ref: '#/components/parameters/Category'
-        - $ref: '#/components/parameters/Status'
-        - $ref: '#/components/parameters/Tags'
-        - $ref: '#/components/parameters/Limit'
-        - $ref: '#/components/parameters/Offset'
-        - $ref: '#/components/parameters/Owner'
-        - $ref: '#/components/parameters/Scope'
-        - $ref: '#/components/parameters/Order'
-        - $ref: '#/components/parameters/Sort'
-        - $ref: '#/components/parameters/State'
-      # END copied from experiments
+      parameters: *searchParams
       responses:
         '200':
           description: A list of items
@@ -2929,6 +2913,7 @@ paths:
       tags: ['Experiments templates']
       summary: Read all experiments_templates that are accessible
       operationId: read-experiments_templates
+      parameters: *searchParams
       responses:
         '200':
           description: A list of experiments_templates
@@ -3055,6 +3040,7 @@ paths:
       tags: ['Items types (Resources Templates)']
       summary: Read all resources templates that are accessible
       operationId: read-items_types
+      parameters: *searchParams
       responses:
         '200':
           description: A list of resources templates.

@@ -5636,7 +5636,7 @@ paths:
                         example: "The role of science in modern society"
       responses:
         '201':
-          description: ID of the newly created DSpace workspace item.
+          description: The workspace was successfully created.
           headers:
             Location:
               description: Last part of the URL is the workspace ID
@@ -5709,7 +5709,7 @@ paths:
                       example: 42
       responses:
         '200':
-          description: Submission was successful; returns the internal ID and UUID from DSpace.
+          description: Submission was successful.
           content:
             application/json:
               schema:

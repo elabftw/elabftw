@@ -5,18 +5,14 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import {
-  collectForm,
-  relativeMoment,
-  reloadElements,
-} from './misc';
-import i18next from './i18n';
 import $ from 'jquery';
-import { Action, Model } from './interfaces';
-import { notify } from './notify';
 import { ApiC } from './api';
 import { entity } from './getEntity';
 import { on } from './handlers';
+import i18next from './i18n';
+import { Action, Model } from './interfaces';
+import { collectForm, relativeMoment, reloadElements } from './misc';
+import { notify } from './notify';
 
 if (document.getElementById('topToolbar')) {
   on(Action.Duplicate, () => {

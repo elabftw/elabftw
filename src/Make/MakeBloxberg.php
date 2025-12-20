@@ -53,7 +53,7 @@ final class MakeBloxberg extends AbstractMakeTimestamp
         if ($configArr['blox_enabled'] !== '1') {
             throw new ImproperActionException('Bloxberg timestamping is disabled on this instance.');
         }
-        $this->apiKey = $getter->get(self::API_KEY_URL);
+        $this->apiKey = trim($getter->get(self::API_KEY_URL)->getBody()->getContents());
     }
 
     public function timestamp(): int
@@ -71,7 +71,9 @@ final class MakeBloxberg extends AbstractMakeTimestamp
         }
         // now we send the previous response to another endpoint to get the pdf back in a zip archive
         // the binary response is a zip archive that contains the certificate in pdf format
-        $zip = $this->getter->postJson(self::PROOF_URL, $certifyResponse, array('api-key' => $this->apiKey));
+        $zip = $this->getter->post(self::PROOF_URL, array(
+            'headers' => array('api-key' => $this->apiKey), 'json' => $certifyResponse))
+            ->getBody()->getContents();
 
         // add the data to the zipfile and get the path to where it is stored in cache
         $tmpFilePath = $this->addToZip($zip, $data);
@@ -110,7 +112,11 @@ final class MakeBloxberg extends AbstractMakeTimestamp
             ), JSON_THROW_ON_ERROR, 4),
         );
 
-        return $this->getter->postJson(self::CERT_URL, $json, array('api-key' => $this->apiKey));
+        return $this->getter
+            ->post(self::CERT_URL, array(
+                'headers' => array('api-key' => $this->apiKey), 'json' => $json))
+            ->getBody()
+            ->getContents();
     }
 
     /**

@@ -37,7 +37,7 @@ use function mb_substr;
 final class Update
 {
     /** @var int REQUIRED_SCHEMA the current version of the database structure */
-    public const int REQUIRED_SCHEMA = 193;
+    public const int REQUIRED_SCHEMA = 195;
 
     private Db $Db;
 

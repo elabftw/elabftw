@@ -41,6 +41,7 @@ final class ConfigModified extends AbstractAuditEvent
             'smtp_password',
             'ts_password',
             'saml_privatekey',
+            'dspace_password',
             // not sensitive but we don't want to log it in full
             'saml_x509',
             'saml_x509_new',

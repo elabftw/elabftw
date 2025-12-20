@@ -51,6 +51,14 @@ export class Metadata {
     });
   }
 
+  toggleReadonly(fieldName: string, readonly: boolean): Promise<void> {
+    return this.read().then(metadata => {
+      if (!metadata.extra_fields || !metadata.extra_fields[fieldName]) return;
+      metadata.extra_fields[fieldName].readonly = readonly;
+      return this.save(metadata as ValidMetadata).then(() => this.display('edit'));
+    });
+  }
+
   /**
    * Only save a single field value after a change
    */
@@ -172,6 +180,7 @@ export class Metadata {
       radioInput.id = this.getRandomId();
       // add a data-field attribute so we know what to update on change
       radioInput.dataset.field = name;
+      radioInput.disabled = properties.readonly === true;
       radioInputs.push(radioInput);
     }
 
@@ -326,12 +335,13 @@ export class Metadata {
     if (Object.prototype.hasOwnProperty.call(properties, 'required')) {
       element.required = true;
     }
+    const mustDisable = element instanceof HTMLSelectElement ||
+      (element instanceof HTMLInputElement && ['checkbox', 'radio'].includes(element.type));
     if (Object.prototype.hasOwnProperty.call(properties, 'readonly') && properties.readonly === true) {
-      // readonly is not supported by select elements, but disabled is
-      if (element instanceof HTMLSelectElement) {
+      if (mustDisable) {
         element.disabled = true;
       } else {
-        element.readOnly = true;
+        (element as HTMLInputElement | HTMLTextAreaElement).readOnly = true;
       }
     }
 
@@ -391,6 +401,7 @@ export class Metadata {
       unitsSel.dataset.units = '1';
       unitsSel.addEventListener('change', this, false);
       appendDiv.appendChild(unitsSel);
+      unitsSel.disabled = properties.readonly === true;
       // input first, then append div
       inputGroupDiv.appendChild(element);
       inputGroupDiv.appendChild(appendDiv);
@@ -653,6 +664,26 @@ export class Metadata {
             editIcon.classList.add('fas', 'fa-pencil-alt');
             editBtn.appendChild(editIcon);
 
+            // add a button to toggle read-only
+            const readonlyBtn = document.createElement('button');
+            readonlyBtn.classList.add('btn', 'p-2', 'mr-2', 'hl-hover-gray', 'border-0', 'lh-normal');
+            readonlyBtn.type = 'button';
+            readonlyBtn.setAttribute('aria-label', i18next.t('readonly'));
+            readonlyBtn.setAttribute('title', i18next.t('readonly'));
+            const readonlyIcon = document.createElement('i');
+            readonlyIcon.classList.add('fas');
+            readonlyBtn.appendChild(readonlyIcon);
+            let isReadonly = (json as ValidMetadata)
+              .extra_fields[element.name]?.readonly === true;
+            readonlyIcon.classList.toggle('fa-lock', isReadonly);
+            readonlyIcon.classList.toggle('fa-lock-open', !isReadonly);
+            readonlyBtn.addEventListener('click', () => {
+              isReadonly = !isReadonly;
+              this.toggleReadonly(element.name, isReadonly).catch(() => {
+                notify.error('error-saving-metadata');
+              });
+            });
+
             // add a button to delete the field
             const deleteBtn = document.createElement('button');
             deleteBtn.dataset.action = 'metadata-rm-field';
@@ -664,7 +695,7 @@ export class Metadata {
             deleteIcon.classList.add('fas', 'fa-trash-alt');
             deleteBtn.appendChild(deleteIcon);
 
-            fieldActionsDiv.append(badgeContainer, handle, editBtn, deleteBtn);
+            fieldActionsDiv.append(badgeContainer, handle, editBtn, readonlyBtn, deleteBtn);
 
             labelDiv.append(label, fieldActionsDiv);
 

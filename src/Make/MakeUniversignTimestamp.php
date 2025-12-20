@@ -42,11 +42,10 @@ class MakeUniversignTimestamp extends AbstractMakeTrustedTimestamp
         if (empty($config['ts_password'])) {
             throw new ImproperActionException('Universign timestamping requires a password!');
         }
-        $password = $config['ts_password'];
 
         return array(
             'ts_login' => $config['ts_login'],
-            'ts_password' => $password,
+            'ts_password' => $config['ts_password'],
             // use static here so the dev class ts_url override is taken into account
             'ts_url' => static::TS_URL,
             'ts_hash' => self::TS_HASH,

@@ -274,8 +274,7 @@ final class LoginController implements ControllerInterface
                 $this->Session->set('auth_service', AuthType::Ldap->asService());
                 $c = $this->config;
                 $ldapPassword = null;
-                // assume there is a password to decrypt if username is not null
-                if ($c['ldap_username']) {
+                if (!empty($c['ldap_password'])) {
                     $ldapPassword = $c['ldap_password'];
                 }
                 $ldapConfig = array(

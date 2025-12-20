@@ -36,27 +36,27 @@ final class PubChemImporter
     public function fromPug(int $cid): Compound
     {
         usleep(self::REQ_DELAY);
-        return Compound::fromPug($this->httpGetter->get(sprintf('%s/compound/cid/%d/json', $this->pugUrl, $cid)));
+        return Compound::fromPug($this->httpGetter->get(sprintf('%s/compound/cid/%d/json', $this->pugUrl, $cid))->getBody()->getContents());
     }
 
     public function getCidFromCas(string $cas): array
     {
         usleep(self::REQ_DELAY);
-        $json = $this->httpGetter->get(sprintf('%s/compound/xref/RegistryID/%s/cids/json', $this->pugUrl, rawurlencode($cas)));
+        $json = $this->httpGetter->get(sprintf('%s/compound/xref/RegistryID/%s/cids/json', $this->pugUrl, rawurlencode($cas)))->getBody()->getContents();
         return $this->decodeCidList($json);
     }
 
     public function getCidFromName(string $name): array
     {
         usleep(self::REQ_DELAY);
-        $json = $this->httpGetter->get(sprintf('%s/compound/name/%s/cids/json', $this->pugUrl, rawurlencode($name)));
+        $json = $this->httpGetter->get(sprintf('%s/compound/name/%s/cids/json', $this->pugUrl, rawurlencode($name)))->getBody()->getContents();
         return $this->decodeCidList($json);
     }
 
     public function fromPugView(int $cid): Compound
     {
         usleep(self::REQ_DELAY);
-        return Compound::fromPugView($this->httpGetter->get(sprintf('%s/compound/%d/json', $this->pugViewUrl, $cid)));
+        return Compound::fromPugView($this->httpGetter->get(sprintf('%s/compound/%d/json', $this->pugViewUrl, $cid))->getBody()->getContents());
     }
 
     private function decodeCidList(string $json): array

@@ -74,6 +74,7 @@ final class i18n4Js
             'error-fetch-request' => _('There was an error while fetching the requested data: {{error}}'),
             'error-parsing-metadata' => _('There was an error while parsing metadata (extra fields). Full error has been logged to the browser console.'),
             'export' => _('Export'),
+            'export-success' => _('Export successful.'),
             'extra-fields' => _('Extra fields'),
             'filename' => _('Filename'),
             'firstname' => _('Firstname'),
@@ -97,6 +98,7 @@ final class i18n4Js
             // import errors often print html content
             'import-error' => _('Error during import. Please check the console for more information.'),
             'invalid-info' => _('Invalid syntax or information provided.'),
+            'loading' => _('Loading'),
             'link-delete-warning' => _('Delete this link?'),
             'location-name' => _('Location name'),
             // https://www.i18next.com/translation-function/formatting
@@ -112,6 +114,7 @@ final class i18n4Js
             'onboarding-email-sent' => _('Onboarding email(s) will soon be sent.'),
             'only-a-sysadmin' => _('Only a Sysadmin can modify this.'),
             'please-wait' => _('Please wait…'),
+            'readonly' => _('Read-only'),
             'remove' => _('Remove'),
             'rename-column' => _('New title for the column'),
             'replace-edited-file' => _('Do you want to replace the file on the server with this edit?'),

@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Defuse\Crypto\Crypto;
+use Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException;
 use Defuse\Crypto\Key;
 use Elabftw\AuditEvent\ConfigModified;
 use Elabftw\Elabftw\Env;
@@ -20,6 +21,7 @@ use Elabftw\Elabftw\S3Config;
 use Elabftw\Elabftw\Update;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Services\Filter;
@@ -372,7 +374,12 @@ final class Config extends AbstractRest
     private function decipherSecrets(array $config): array
     {
         foreach (self::ENCRYPTED_KEYS as $column) {
-            $config[$column] = self::decrypt($config[$column]);
+            try {
+                $config[$column] = self::decrypt($config[$column]);
+            } catch (WrongKeyOrModifiedCiphertextException $e) {
+                $err = "Error decrypting config value %s: %s. This can be caused by having a different SECRET_KEY than the one that was used to encrypt this value. Try setting the value to an empty string in the 'config' table, with the SQL query: update config set conf_value = '' where conf_name = '%s';";
+                throw new AppException(sprintf($err, $column, $e->getMessage(), $column), 500);
+            }
         }
         return $config;
     }

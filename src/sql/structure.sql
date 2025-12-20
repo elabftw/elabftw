@@ -317,7 +317,7 @@ CREATE TABLE `experiments_edit_mode` (
 CREATE TABLE `experiments_templates` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `team` int(10) UNSIGNED NOT NULL,
-  `body` mediumtext,
+  `body` mediumtext NULL DEFAULT NULL,
   `category` INT UNSIGNED NULL DEFAULT NULL,
   `custom_id` INT UNSIGNED NULL DEFAULT NULL,
   `date` date NULL DEFAULT NULL,

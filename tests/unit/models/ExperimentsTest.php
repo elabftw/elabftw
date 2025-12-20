@@ -111,6 +111,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $experiment = $this->Experiments->readOne();
         $this->assertTrue(is_array($experiment));
         $this->assertEquals($title, $experiment['title']);
+        $this->assertEquals(State::Normal->value, $experiment['state']);
     }
 
     public function testUpdate(): void

@@ -28,6 +28,7 @@ class DisplayParamsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsString($params->getSql());
         $this->assertTrue($params->skipOrderPinned);
         $this->assertSame('a', $params->getFastq());
+        $this->assertEquals(0, $params->getLimit());
         // another one to get to the owner filter
         $params = new DisplayParams($user, EntityType::Experiments, new InputBag(array('scope' => 1, 'cat' => 'null')), skipOrderPinned: true);
         $this->assertStringContainsString('entity.userid', $params->filterSql);

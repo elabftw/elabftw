@@ -105,13 +105,11 @@ final class Items extends AbstractConcreteEntity
         $DisplayParams = new DisplayParams($this->Users, EntityType::Items, $Request->query);
         // we only want the bookable type of items
         $DisplayParams->appendFilterSql(FilterableColumn::Bookable, 1);
-        // make limit very big because we want to see ALL the bookable items here
-        $DisplayParams->limit = 900000;
         // filter on the canbook or canread depending on query param
         if ($Request->query->has('canbook')) {
             return $this->readShow($DisplayParams, true, 'canbook');
         }
-        return $this->readShow($DisplayParams, true, 'canread');
+        return $this->readShow($DisplayParams, true);
     }
 
     public function canBook(): bool

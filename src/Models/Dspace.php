@@ -12,9 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Defuse\Crypto\Crypto;
-use Defuse\Crypto\Key;
-use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\DSpaceAction;
@@ -52,7 +49,7 @@ final class Dspace extends AbstractRest
         private readonly HttpGetter $httpGetter,
         string $host,
         private readonly string $user,
-        private readonly string $encPassword,
+        private readonly string $password,
     ) {
         parent::__construct();
         $this->host = $this->host2ApiUrl($host);
@@ -122,17 +119,16 @@ final class Dspace extends AbstractRest
 
     private function getToken(): array
     {
-        if ($this->user === '' || $this->encPassword === '') {
+        if ($this->user === '' || $this->password === '') {
             throw new ImproperActionException('DSpace configuration is incomplete.');
         }
-        $password = Crypto::decrypt($this->encPassword, Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY')));
         // CSRF request + cookie parsing
         [$xsrfToken, $cookieHeader] = $this->fetchXsrfTokenAndCookieHeader();
 
         $headers = $this->buildLoginHeaders($xsrfToken, $cookieHeader);
 
         // login and get Authorization header
-        $auth = $this->loginAndGetAuthHeader($headers, $password);
+        $auth = $this->loginAndGetAuthHeader($headers, $this->password);
         return array(
             'Authorization' => $auth,
             'X-XSRF-TOKEN' => $xsrfToken,

@@ -287,11 +287,11 @@ final class Config extends AbstractRest
                 if ($name !== 'ts_balance') {
                     AuditLogs::create(new ConfigModified($name, (string) $this->configArr[$name], (string) $value));
                 }
-                $this->configArr[$name] = (string) $value;
             }
         }
 
-        return $this->readAll();
+        $this->configArr = $this->readAll();
+        return $this->configArr;
     }
 
     #[Override]
@@ -306,10 +306,7 @@ final class Config extends AbstractRest
         $password = '';
         if ($this->configArr['smtp_password']) {
             $username = $this->configArr['smtp_username'];
-            $password = Crypto::decrypt(
-                $this->configArr['smtp_password'],
-                Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY'))
-            );
+            $password = $this->configArr['smtp_password'];
         }
 
         return sprintf(
@@ -393,7 +390,7 @@ final class Config extends AbstractRest
         // is current permission the one allowed
         $currentPermission = BasePermissions::fromKey($permissionName);
         // get the active base permissions
-        $allowedPermissions = BasePermissions::getActiveBase($this->configArr);
+        $allowedPermissions = BasePermissions::getActiveBase($this->readAll());
         if (count($allowedPermissions) === 1 && array_key_exists($currentPermission->value, $allowedPermissions)) {
             throw new UnprocessableContentException('You must have at least one base permission active.');
         }

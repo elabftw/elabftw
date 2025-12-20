@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
-use Defuse\Crypto\Crypto;
-use Defuse\Crypto\Key;
 use Elabftw\Auth\Anon;
 use Elabftw\Auth\Cookie;
 use Elabftw\Auth\CookieToken;
@@ -278,7 +276,7 @@ final class LoginController implements ControllerInterface
                 $ldapPassword = null;
                 // assume there is a password to decrypt if username is not null
                 if ($c['ldap_username']) {
-                    $ldapPassword = Crypto::decrypt($c['ldap_password'], Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY')));
+                    $ldapPassword = $c['ldap_password'];
                 }
                 $ldapConfig = array(
                     'protocol' => $c['ldap_scheme'] . '://',

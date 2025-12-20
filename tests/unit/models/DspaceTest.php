@@ -12,9 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Defuse\Crypto\Crypto;
-use Defuse\Crypto\Key;
-use Elabftw\Elabftw\Env;
 use Elabftw\Enums\EntityType;
 use GuzzleHttp\Handler\MockHandler;
 use Elabftw\Enums\Action;
@@ -96,8 +93,6 @@ class DspaceTest extends \PHPUnit\Framework\TestCase
 
     public function testPatchCreatesAndSubmitsItem(): void
     {
-        $secretKey = Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY'));
-        $encPassword = Crypto::encrypt('pass', $secretKey);
         $this->setMockResponses(array(
             new Response(200, array('DSPACE-XSRF-TOKEN' => array('abc'))), // csrf token
             new Response(200, array('Authorization' => 'Bearer abc')), // login
@@ -107,7 +102,7 @@ class DspaceTest extends \PHPUnit\Framework\TestCase
             new Response(200), // update metadata
             new Response(200), // upload file
             new Response(200), // submit to workflow
-        ), $encPassword);
+        ), 'some-password');
         $experiment = $this->getFreshExperiment();
         $params = array(
             'collection' => '1234',

@@ -13,14 +13,15 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Defuse\Crypto\Crypto;
+use Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException;
 use Defuse\Crypto\Key;
 use Elabftw\AuditEvent\ConfigModified;
 use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\S3Config;
-use Elabftw\Elabftw\TwigFilters;
 use Elabftw\Elabftw\Update;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Services\Filter;
@@ -29,10 +30,6 @@ use Override;
 
 use function array_map;
 use function urlencode;
-use function apcu_fetch;
-use function apcu_store;
-use function apcu_exists;
-use function apcu_delete;
 use function in_array;
 
 /**
@@ -40,9 +37,7 @@ use function in_array;
  */
 final class Config extends AbstractRest
 {
-    private const string CACHE_KEY = 'config_table';
-
-    private const int CACHE_TTL_SECONDS = 9001;
+    public const array ENCRYPTED_KEYS = array('smtp_password', 'ldap_password', 'ts_password', 'remote_dir_config', 'dspace_password');
 
     // the array with all config
     public array $configArr = array();
@@ -58,17 +53,6 @@ final class Config extends AbstractRest
     private function __construct()
     {
         parent::__construct();
-        $this->configArr = $this->readAll();
-        // this should only run once: just after a fresh install
-        if (empty($this->configArr)) {
-            $this->create();
-            $this->configArr = $this->readAll();
-        }
-    }
-
-    public function bustCache(): void
-    {
-        apcu_delete(self::CACHE_KEY);
         $this->configArr = $this->readAll();
     }
 
@@ -256,26 +240,13 @@ final class Config extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        // this select is executed every query, so we cache the result in memory
-        if (apcu_exists(self::CACHE_KEY)) {
-            return apcu_fetch(self::CACHE_KEY);
+        $config = $this->sqlSelect();
+        if (empty($config)) {
+            $this->create();
+            $config = $this->sqlSelect();
         }
 
-        // cache miss, do sql query
-        $sql = 'SELECT * FROM config';
-        $req = $this->Db->prepare($sql);
-        $this->Db->execute($req);
-        $config = $req->fetchAll(PDO::FETCH_COLUMN | PDO::FETCH_GROUP);
-
-        // special case for remote_dir_config where we decrypt it in output so it can be used by external scripts
-        if (!empty($config['remote_dir_config'])) {
-            $config['remote_dir_config'][0] = TwigFilters::decrypt($config['remote_dir_config'][0]);
-        }
-
-        // we want key => value array
-        $result = array_map(fn($v): mixed => $v[0], $config);
-        apcu_store(self::CACHE_KEY, $result, self::CACHE_TTL_SECONDS);
-        return $result;
+        return $this->decipherSecrets($config);
     }
 
     /**
@@ -288,9 +259,7 @@ final class Config extends AbstractRest
     #[Override]
     public function patch(Action $action, array $params): array
     {
-        $passwords = array('smtp_password', 'ldap_password', 'ts_password', 'remote_dir_config', 'dspace_password');
-
-        foreach ($passwords as $password) {
+        foreach (self::ENCRYPTED_KEYS as $password) {
             if (isset($params[$password]) && !empty($params[$password])) {
                 $params[$password] = Crypto::encrypt($params[$password], Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY')));
                 // if it's not changed, it is sent anyway, but we don't want it in the final array as it will blank the existing one
@@ -320,12 +289,11 @@ final class Config extends AbstractRest
                 if ($name !== 'ts_balance') {
                     AuditLogs::create(new ConfigModified($name, (string) $this->configArr[$name], (string) $value));
                 }
-                $this->configArr[$name] = (string) $value;
             }
         }
 
-        $this->bustCache();
-        return $this->readAll();
+        $this->configArr = $this->readAll();
+        return $this->configArr;
     }
 
     #[Override]
@@ -340,10 +308,7 @@ final class Config extends AbstractRest
         $password = '';
         if ($this->configArr['smtp_password']) {
             $username = $this->configArr['smtp_username'];
-            $password = Crypto::decrypt(
-                $this->configArr['smtp_password'],
-                Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY'))
-            );
+            $password = $this->configArr['smtp_password'];
         }
 
         return sprintf(
@@ -396,12 +361,43 @@ final class Config extends AbstractRest
         return $createResult;
     }
 
+    private function sqlSelect(): array
+    {
+        $sql = 'SELECT * FROM config';
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+        $res = $req->fetchAll(PDO::FETCH_COLUMN | PDO::FETCH_GROUP);
+        // we want key => value array
+        return array_map(fn($v): mixed => $v[0], $res);
+    }
+
+    private function decipherSecrets(array $config): array
+    {
+        foreach (self::ENCRYPTED_KEYS as $column) {
+            try {
+                $config[$column] = self::decrypt($config[$column]);
+            } catch (WrongKeyOrModifiedCiphertextException $e) {
+                $err = "Error decrypting config value %s: %s. This can be caused by having a different SECRET_KEY than the one that was used to encrypt this value. Try setting the value to an empty string in the 'config' table, with the SQL query: update config set conf_value = '' where conf_name = '%s';";
+                throw new AppException(sprintf($err, $column, $e->getMessage(), $column), 500);
+            }
+        }
+        return $config;
+    }
+
+    private static function decrypt(?string $encrypted): string
+    {
+        if (empty($encrypted)) {
+            return '';
+        }
+        return Crypto::decrypt($encrypted, Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY')));
+    }
+
     private function assertAtLeastOneBasePermissionEnabled(string $permissionName): void
     {
         // is current permission the one allowed
         $currentPermission = BasePermissions::fromKey($permissionName);
         // get the active base permissions
-        $allowedPermissions = BasePermissions::getActiveBase($this->configArr);
+        $allowedPermissions = BasePermissions::getActiveBase($this->readAll());
         if (count($allowedPermissions) === 1 && array_key_exists($currentPermission->value, $allowedPermissions)) {
             throw new UnprocessableContentException('You must have at least one base permission active.');
         }

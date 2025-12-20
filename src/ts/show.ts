@@ -189,6 +189,13 @@ function getExpandedAndSelectedEntities(): void {
   document.getElementById('showModeContent').dataset.expandedAndSelectedEntities = JSON.stringify({expanded, selectedEntities, expendedEntities});
 }
 
+type AnyTS = TomSelect & {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  _allOptions?: any[];
+  _showArchived?: boolean;
+};
+const bound = new WeakSet<Element>();
+
 // DOM
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('info')) {
@@ -212,17 +219,101 @@ document.addEventListener('DOMContentLoaded', () => {
   SearchSyntaxHighlighting.init(searchInput);
 
   // TomSelect for extra fields & owner search select
-  ['filterOwner', 'metakey'].forEach(id =>{
-    if (document.getElementById(id)) {
-      new TomSelect(`#${id}`, {
-        maxOptions: 512,
-        plugins: [
-          'dropdown_input',
-          'remove_button',
-        ],
-      });
+  if (document.getElementById('metakey')) {
+    new TomSelect('#metakey', {
+      maxOptions: 512,
+      plugins: [
+        'dropdown_input',
+        'remove_button',
+      ],
+    });
+  }
+  if (document.getElementById('filterOwner')) {
+    const tsFilterOwner = new TomSelect('#filterOwner', {
+      maxOptions: 512,
+      plugins: {
+        'dropdown_header': {
+          title: 'Users',
+          html(data) {
+            return `
+              <div class="${data.headerClass}">
+                <div class="${data.titleRowClass}" style="display:flex; align-items:center; gap:12px;">
+                  <label style="margin-left:auto; display:flex; align-items:center; gap:6px; font-weight:normal;">
+                    <input type="checkbox" class="ts-toggle-archived">
+                    Show archived
+                  </label>
+                </div>
+              </div>
+            `;
+          },
+        },
+        dropdown_input: {},
+        remove_button: {},
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any,
+      onInitialize() {
+        this._allOptions = Object.values(this.options);
+        this._showArchived = false;
+        applyArchivedFilter(this);
+      },
+      render: {
+        option(data: AnyTS, escape: (s: string) => string) {
+          const optEl = data.$option as HTMLOptionElement | undefined;
+          const isArchived = optEl?.getAttribute('data-is-archived') === '1';
+          const icon = isArchived ? '<i class=\'fas fa-box-archive mr-1\'></i>' : '';
+          return `<div>${icon}${escape(data.text ?? data.name ?? '')}</div>`;
+        },
+
+        // item is the selected option
+        item(data: AnyTS, escape: (s: string) => string) {
+          const optEl = data.$option as HTMLOptionElement | undefined;
+          const isArchived = optEl?.getAttribute('data-is-archived') === '1';
+          const icon = isArchived ? '<i class=\'fas fa-box-archive mr-1\'></i>' : '';
+          return `<div>${icon}${escape(data.text ?? data.name ?? '')}</div>`;
+        },
+      },
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    function isArchivedOption(opt: any): boolean {
+      const el = opt?.$option as HTMLOptionElement | undefined;
+      const raw = el?.getAttribute('data-is-archived') ?? '0';
+      return raw === '1';
     }
-  });
+
+    function applyArchivedFilter(control: AnyTS): void {
+      const selected = new Set(control.items.map(String));
+
+      if (control._showArchived) {
+        for (const opt of control._allOptions ?? []) control.addOption(opt);
+      } else {
+        for (const opt of control._allOptions ?? []) {
+          const id = String(opt[control.settings.valueField]);
+          if (isArchivedOption(opt) && !selected.has(id)) {
+            control.removeOption(id);
+          }
+        }
+      }
+
+      control.refreshOptions(false);
+    }
+
+    tsFilterOwner.on('dropdown_open', () => {
+      const cb = tsFilterOwner.dropdown.querySelector('.ts-toggle-archived') as HTMLInputElement|null;
+      if (!cb) return;
+      if (bound.has(cb)) return;
+      bound.add(cb);
+
+      cb.checked = tsFilterOwner._showArchived;
+      cb.addEventListener('change', (ev) => {
+        tsFilterOwner._showArchived = (ev.currentTarget as HTMLInputElement).checked;
+        applyArchivedFilter(tsFilterOwner);
+        tsFilterOwner.open();
+      });
+    });
+  }
+
+
   // add a change event listener to all elements that helps constructing the query string
   document.querySelectorAll('.filterHelper').forEach(el => {
     el.addEventListener('change', event => {
@@ -282,6 +373,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // FILTERS HANDLER FOR THE SHOW PAGE
   document.querySelectorAll('.filterAuto').forEach(el => {
     el.addEventListener('change', event => {
+      // prevent this listener to be active when toggling archived users
+      if ((event.target as HTMLElement).classList.contains('ts-toggle-archived')) return;
       const url = new URL(window.location.href);
       const elem = event.target as HTMLSelectElement;
       const elemValue = elem.options[elem.selectedIndex].value;

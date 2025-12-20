@@ -20,6 +20,7 @@ import { getEditor } from './Editor.class';
 import TomSelect from 'tom-select/base';
 import TomSelectCheckboxOptions from 'tom-select/dist/esm/plugins/checkbox_options/plugin.js';
 import TomSelectClearButton from 'tom-select/dist/esm/plugins/clear_button/plugin.js';
+import TomSelectDropdownHeader from 'tom-select/dist/esm/plugins/dropdown_header/plugin.js';
 import TomSelectDropdownInput from 'tom-select/dist/esm/plugins/dropdown_input/plugin.js';
 import TomSelectNoActiveItems from 'tom-select/dist/esm/plugins/no_active_items/plugin.js';
 import TomSelectRemoveButton from 'tom-select/dist/esm/plugins/remove_button/plugin.js';
@@ -680,6 +681,7 @@ export async function updateEntityBody(): Promise<void> {
 // bind used plugins to TomSelect
 TomSelect.define('checkbox_options', TomSelectCheckboxOptions);
 TomSelect.define('clear_button', TomSelectClearButton);
+TomSelect.define('dropdown_header', TomSelectDropdownHeader);
 TomSelect.define('dropdown_input', TomSelectDropdownInput);
 TomSelect.define('no_active_items', TomSelectNoActiveItems);
 TomSelect.define('remove_button', TomSelectRemoveButton);

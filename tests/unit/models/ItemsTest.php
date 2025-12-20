@@ -15,6 +15,7 @@ use DateTimeImmutable;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\FileFromString;
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
@@ -110,6 +111,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $this->Items->canOrExplode('read');
         $this->assertEquals('Untitled', $this->Items->entityData['title']);
         $this->assertEquals(date('Y-m-d'), $this->Items->entityData['date']);
+        $this->assertEquals(State::Normal->value, $this->Items->entityData['state']);
     }
 
     public function testUpdate(): void

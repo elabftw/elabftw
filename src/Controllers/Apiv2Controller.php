@@ -37,11 +37,14 @@ use Elabftw\Models\Batch;
 use Elabftw\Models\Comments;
 use Elabftw\Models\Compounds;
 use Elabftw\Models\Config;
+use Elabftw\Models\Dspace;
 use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\ExtraFieldsKeys;
 use Elabftw\Models\FavTags;
 use Elabftw\Models\Idps;
+use Elabftw\Models\IdpsCerts;
+use Elabftw\Models\IdpsEndpoints;
 use Elabftw\Models\IdpsSources;
 use Elabftw\Models\Info;
 use Elabftw\Models\Instance;
@@ -301,6 +304,17 @@ final class Apiv2Controller extends AbstractApiController
                 }
             )(),
             ApiEndpoint::Config => Config::getConfig(),
+            ApiEndpoint::Dspace => (
+                function () {
+                    $Config = Config::getConfig();
+                    $proxy = Env::asBool('DSPACE_USE_PROXY') ? $Config->configArr['proxy'] : '';
+                    $httpGetter = new HttpGetter(new Client(), $proxy, !Env::asBool('DEV_MODE'));
+                    $host = $Config->configArr['dspace_host'] ?? '';
+                    $user = $Config->configArr['dspace_user'] ?? '';
+                    $password = $Config->configArr['dspace_password'] ?? '';
+                    return new Dspace($this->requester, $httpGetter, $host, $user, $password);
+                }
+            )(),
             ApiEndpoint::Idps => new Idps($this->requester, $this->id),
             ApiEndpoint::IdpsSources => new IdpsSources($this->requester, $this->id),
             ApiEndpoint::Import => new ImportHandler($this->requester, App::getDefaultLogger()),
@@ -360,7 +374,7 @@ final class Apiv2Controller extends AbstractApiController
                 ApiSubModels::Containers => LinksFactory::getContainersLinks($this->Model, $this->subId),
                 ApiSubModels::ExperimentsLinks => LinksFactory::getExperimentsLinks($this->Model, $this->subId),
                 ApiSubModels::Events => new Scheduler($this->Model, $this->subId),
-                ApiSubModels::Compounds => LinksFactory::getCompoundsLinks($this->Model, $this->subId),
+                ApiSubModels::CompoundsLinks => LinksFactory::getCompoundsLinks($this->Model, $this->subId),
                 ApiSubModels::ItemsLinks => LinksFactory::getItemsLinks($this->Model, $this->subId),
                 ApiSubModels::RequestActions => new RequestActions($this->requester, $this->Model, $this->subId),
                 ApiSubModels::Revisions => new Revisions(
@@ -403,6 +417,13 @@ final class Apiv2Controller extends AbstractApiController
             return match ($submodel) {
                 ApiSubModels::Notifications => new EventDeleted($this->Model->readOne(), $this->requester->userData['fullname']),
                 default => throw new InvalidApiSubModelException(ApiEndpoint::Event),
+            };
+        }
+        if ($this->Model instanceof Idps) {
+            return match ($submodel) {
+                ApiSubModels::IdpsCerts => new IdpsCerts($this->requester, $this->id, $this->subId),
+                ApiSubModels::IdpsEndpoints => new IdpsEndpoints($this->requester, $this->id, $this->subId),
+                default => throw new InvalidApiSubModelException(ApiEndpoint::Idps),
             };
         }
         throw new ImproperActionException('Incorrect endpoint.');

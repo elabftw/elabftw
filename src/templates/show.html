@@ -65,6 +65,10 @@
           {# CATEGORY #}
           <select name='category' class='mr-1 form-control filterAuto' aria-label='{{ 'Filter category'|trans }}'>
             <option value='' class='dropdown-header' data-action='clear'>{{ 'Filter category'|trans }}</option>
+            <option value='null'
+              {{- App.Request.query.get('category') == 'null' ? ' selected' -}}
+            >
+            {{ 'No category set'|trans }}</option>
             {% for category in categoryArr %}
               <option value='{{ category.id }}'
                 {{- App.Request.query.get('category') == category.id ? ' selected' -}}
@@ -76,6 +80,10 @@
           {# STATUS #}
           <select name='status' class='mr-1 form-control filterAuto' aria-label='{{ 'Filter status'|trans }}'>
             <option value='' class='dropdown-header' data-action='clear'>{{ 'Filter status'|trans }}</option>
+            <option value='null'
+              {{- App.Request.query.get('status') == 'null' ? ' selected' -}}
+            >
+            {{ 'No status set'|trans }}</option>
             {% for status in statusArr %}
               <option value='{{ status.id }}'
                 {{- App.Request.query.get('status') == status.id ? ' selected' -}}
@@ -85,10 +93,11 @@
           </select>
 
           {# OWNER filter #}
-          <select name='owner' class='form-control filterAuto' aria-label='{{ 'Filter owner'|trans }}'>
+          <!-- [html-validate-disable-block input-missing-label, prefer-native-element: suppress error from tom-select] -->
+          <select id='filterOwner' name='owner' class='form-control filterAuto' aria-label='{{ 'Filter owner'|trans }}'>
             <option value='' class='dropdown-header' data-action='clear'>{{ 'Filter owner'|trans }}</option>
             {% for user in usersArr %}
-              <option value='{{ user.userid }}' {{- App.Request.query.get('owner') == user.userid ? ' selected' }}>{{ user.fullname }}</option>
+            <option data-is-archived='{{ user.is_archived_in_current_team }}' value='{{ user.userid }}' {{- App.Request.query.get('owner') == user.userid ? ' selected' }}>{{ user.fullname }}</option>
             {% endfor %}
           </select>
 
@@ -407,7 +416,7 @@
           <input type='text' aria-label='{{ 'Add a tag'|trans }}' id='createTagInputMultiple' name='tags' class='createTagInputMultiple mr-1 mb-2 form-control' data-autocomplete='tags' placeholder='{{ 'Add a tag'|trans }}' />
           {# ADD A RESOURCE LINK #}
           <div class='input-group mb-2 mr-2'>
-            <input type='text' aria-label='{{ 'Add a link'|trans }}' id='addLinkItemsInput' name='items_links' class='form-control' placeholder='{{ 'Add a link'|trans }}' />
+            <input type='text' aria-label='{{ 'Link to a resource'|trans }}' id='addLinkItemsInput' name='items_links' class='form-control' placeholder='{{ 'Link to a resource'|trans }}' />
             <div class='input-group-append'>
               <select id='addLinkCatFilter' class='brl-none form-control' aria-label='{{ 'Limit category'|trans }}'>
                 <option selected value=''>{{ 'Any category'|trans }}</option>

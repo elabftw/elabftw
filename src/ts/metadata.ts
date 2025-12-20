@@ -102,7 +102,6 @@ if (document.getElementById('metadataDiv') && entity.id) {
         // prefill switches
         (document.getElementById('blankValueOnDuplicateSwitch') as HTMLInputElement).checked = !!fieldData.blank_value_on_duplicate;
         (document.getElementById('requiredSwitch') as HTMLInputElement).checked = !!fieldData.required;
-        (document.getElementById('readonlySwitch') as HTMLInputElement).checked = !!fieldData.readonly;
         (document.getElementById('newFieldAllowMultiSelect') as HTMLInputElement).checked = !!fieldData.allow_multi_values;
 
         let containerId, sourceArray, toggleDiv;
@@ -208,6 +207,7 @@ if (document.getElementById('metadataDiv') && entity.id) {
       case ExtraFieldInputType.Experiments:
       case ExtraFieldInputType.Items:
       case ExtraFieldInputType.Users:
+      case ExtraFieldInputType.Compounds:
         valueInput.setAttribute('type', fieldType);
         toggleContentDiv('classic');
         break;
@@ -330,9 +330,6 @@ if (document.getElementById('metadataDiv') && entity.id) {
           if ((document.getElementById('requiredSwitch') as HTMLInputElement).checked) {
             field['required'] = true;
           }
-          if ((document.getElementById('readonlySwitch') as HTMLInputElement).checked) {
-            field['readonly'] = true;
-          }
           if ((document.getElementById('newFieldAllowMultiSelect') as HTMLInputElement).checked) {
             field['allow_multi_values'] = true;
           }
@@ -393,7 +390,7 @@ if (document.getElementById('metadataDiv') && entity.id) {
           } else if (['date', 'datetime-local', 'email', 'time', 'url'].includes(field['type'])) {
             const val = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();
             field['value'] = val || prevField?.value || '';
-          } else if ([ExtraFieldInputType.Users, ExtraFieldInputType.Items, ExtraFieldInputType.Experiments].includes(field['type'])) {
+          } else if ([ExtraFieldInputType.Users, ExtraFieldInputType.Items, ExtraFieldInputType.Experiments, ExtraFieldInputType.Compounds].includes(field['type'])) {
             const elId = `newField${field['type']}Input`;
             const el = document.getElementById(elId) as HTMLInputElement | null;
             const val = (el?.value ?? '').trim();
@@ -428,14 +425,14 @@ if (document.getElementById('metadataDiv') && entity.id) {
           const switches: Record<string, string> = {
             blankValueOnDuplicateSwitch: 'blank_value_on_duplicate',
             requiredSwitch: 'required',
-            readonlySwitch: 'readonly',
             newFieldAllowMultiSelect: 'allow_multi_values',
           };
           for (const [id, key] of Object.entries(switches)) {
             const el = document.getElementById(id) as HTMLInputElement | null;
             if (el?.checked) field[key] = true;
           }
-
+          // preserve readonly
+          if (prevField?.readonly === true) field['readonly'] = true;
           // ensure the old extra field is replaced
           if (!json['extra_fields']) json['extra_fields'] = {};
           if (originalFieldKey && originalFieldKey !== newFieldKey) {

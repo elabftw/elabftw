@@ -21,6 +21,7 @@ import i18next from './i18n';
 import { fileToAOA, replaceAttachment, saveAsAttachment} from './spreadsheet-utils';
 import { getEntity } from './misc';
 import { assignKey } from './keymaster';
+import { notify } from './notify';
 
 function SpreadsheetEditor() {
   const spreadsheetRef = useRef(null);
@@ -116,13 +117,24 @@ function SpreadsheetEditor() {
     setReplaceName(null);
   };
 
+  const toggleFullscreen = () => {
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(err => notify.error(err));
+    } else {
+      const el = document.documentElement;
+      if (el.requestFullscreen) {
+        el.requestFullscreen().catch(err => notify.error(err));
+      }
+    }
+  };
   // CUSTOM TOOLBAR ICONS (they are placed at the end)
   const buildToolbar = (tb) => {
     // we will replace the save button with ours, and add an export button that has the same behavior as default save button
     const saveBtn = tb.items.find(it => it.content === 'save');
     const originalSave = saveBtn && typeof saveBtn.onclick === 'function' ? saveBtn.onclick : null;
     // we will also remove the ones that cannot be saved because of CE limitations, just target the indexes directly
-    const indices = new Set([7, 8, 9, 10]);
+    // 7,8,9,10,14 indexes are for: format_bold, format_color_text, format_color_fill, select, fullscreen
+    const indices = new Set([7, 8, 9, 10, 14]);
     tb.items = tb.items.filter((_, i) => !indices.has(i));
 
     const exportBtn = {
@@ -132,12 +144,12 @@ function SpreadsheetEditor() {
       // reuse the same handler signature (itemEl, event, spreadsheetInstance)
       onclick: (el, ev, inst) => originalSave(el, ev, inst),
     };
+    // we render the spreadsheet in an iframe, so we'll also use a custom fullscreen button
+    const fullscreenBtn = { type: 'icon', class: 'mx-2 fas fa-expand', tooltip: i18next.t('fullscreen'), onclick: () => toggleFullscreen()};
     const clearBtn = { type: 'icon', class: 'ml-2 fas fa-trash', tooltip: i18next.t('clear'), onclick: clearSpreadsheet };
     const importBtn = { type: 'icon', class: 'fas fa-upload', tooltip: i18next.t('import'), onclick: () => document.getElementById('importFileInput').click() };
-
-    // replace original save with our custom save function
+    // replace original save & fullscreen buttons with our custom functions
     Object.assign(saveBtn, {
-      // need to blank this property
       content: '',
       type: 'icon',
       class: 'ml-2 fas fa-floppy-disk',
@@ -145,21 +157,31 @@ function SpreadsheetEditor() {
       onclick: isSaving ? undefined : onSaveOrReplace,
     });
 
-    tb.items.push(
-      importBtn,
-      exportBtn,
-      clearBtn
-    );
+    tb.items.push(fullscreenBtn, importBtn, exportBtn, clearBtn );
     return tb;
   };
+  // pass a dynamic key to force SpreadsheetInner to remount when data shape changes
+  const spreadsheetKey = `${data.length}-${data[0]?.length || 0}`;
 
   return (
     <>
       <input hidden type='file' accept='.xlsx,.csv,.ods' onChange={handleImportFile} id='importFileInput' name='file' />
-      <Spreadsheet ref={spreadsheetRef} tabs={true} toolbar={buildToolbar}>
-        <Worksheet data={data} minDimensions={[12,12]} />
-      </Spreadsheet>
+      {/* move Spreadsheet into a child component to safely re-init on file uploads */}
+      <SpreadsheetInner key={spreadsheetKey} data={data} buildToolbar={buildToolbar} />
     </>
+  );
+}
+
+function SpreadsheetInner({ data, buildToolbar }) {
+  const spreadsheetRef = useRef(null);
+  return (
+    <Spreadsheet ref={spreadsheetRef} tabs={true} toolbar={buildToolbar}>
+      <Worksheet data={data} minDimensions={[
+          Math.max(12, data[0]?.length || 0),
+          Math.max(12, data.length)
+        ]}
+      />
+    </Spreadsheet>
   );
 }
 

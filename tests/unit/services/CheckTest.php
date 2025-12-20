@@ -36,6 +36,14 @@ class CheckTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(42, Check::id(42));
     }
 
+    public function testUnit(): void
+    {
+        $this->assertEquals('g', Check::unit('g'));
+        $this->assertEquals('mg', Check::unit('mg'));
+        $this->expectException(ImproperActionException::class);
+        Check::unit('invalid_unit');
+    }
+
     public function testColor(): void
     {
         $this->assertEquals('AABBCC', Check::color('#AABBCC'));
@@ -85,6 +93,14 @@ class CheckTest extends \PHPUnit\Framework\TestCase
         $requester = new Users(3, 2);
         $usergroup = Usergroup::Admin;
         $this->assertEquals(Usergroup::User, Check::usergroup($requester, $usergroup));
+    }
+
+    public function testUsergroupPromotionThrows(): void
+    {
+        // simulate a non-sysadmin trying to promote to sysadmin
+        $requester = new Users(3, 2);
+        $this->expectException(ImproperActionException::class);
+        Check::usergroup($requester, Usergroup::Sysadmin);
     }
 
     public function testVisibilityBaseNotAllowed(): void

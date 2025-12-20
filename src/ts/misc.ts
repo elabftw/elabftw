@@ -20,6 +20,7 @@ import { getEditor } from './Editor.class';
 import TomSelect from 'tom-select/base';
 import TomSelectCheckboxOptions from 'tom-select/dist/esm/plugins/checkbox_options/plugin.js';
 import TomSelectClearButton from 'tom-select/dist/esm/plugins/clear_button/plugin.js';
+import TomSelectDropdownHeader from 'tom-select/dist/esm/plugins/dropdown_header/plugin.js';
 import TomSelectDropdownInput from 'tom-select/dist/esm/plugins/dropdown_input/plugin.js';
 import TomSelectNoActiveItems from 'tom-select/dist/esm/plugins/no_active_items/plugin.js';
 import TomSelectRemoveButton from 'tom-select/dist/esm/plugins/remove_button/plugin.js';
@@ -403,7 +404,7 @@ export function addAutocompleteToLinkInputs(): void {
             response(res);
             return;
           }
-          ApiC.getJson(`${object.itemType}/?${object.filterFamily}=${filterEl.value}&q=${escapeExtendedQuery(request.term)}&scope=3`).then(json => {
+          ApiC.getJson(`${object.itemType}/?${object.filterFamily}=${filterEl.value}&fastq=${escapeExtendedQuery(request.term)}&scope=3`).then(json => {
             cache[object.selectElid][term] = json;
             const res = [];
             json.forEach(entity => {
@@ -600,13 +601,31 @@ export function replaceWithTitle(): void {
       changedAttribute = 'value';
     }
     ApiC.getJson(`${el.dataset.endpoint}/${el.dataset.id}`).then(json => {
-      // view mode for Experiments or Resources
-      let value = el.dataset.endpoint === Model.User ? json.fullname : json.title;
-      // edit mode
-      if (el instanceof HTMLInputElement) {
-        value = `${json.id} - ${json.title}`;
-        if (el.dataset.endpoint === Model.User) {
+      // VIEW MODE (non-input): default = 'entity title'
+      let value;
+      const casNumber = json.cas_number ? ` - CAS: (${json.cas_number})` : '';
+      if (!(el instanceof HTMLInputElement)) {
+        switch (el.dataset.endpoint) {
+        case Model.User:
+          value = json.fullname;
+          break;
+        case Model.Compounds:
+          value = json.name + casNumber;
+          break;
+        default:
+          value = json.title ?? json.name;
+        }
+      } else {
+        // EDIT MODE (input): default = 'id - entity title'
+        switch (el.dataset.endpoint) {
+        case Model.User:
           value = `${json.userid} - ${json.fullname}`;
+          break;
+        case Model.Compounds:
+          value = `${json.id} - ${json.name}` + casNumber;
+          break;
+        default:
+          value = `${json.id} - ${json.title ?? json.name}`;
         }
       }
       el[changedAttribute] = value;
@@ -664,6 +683,7 @@ export async function updateEntityBody(): Promise<void> {
 // bind used plugins to TomSelect
 TomSelect.define('checkbox_options', TomSelectCheckboxOptions);
 TomSelect.define('clear_button', TomSelectClearButton);
+TomSelect.define('dropdown_header', TomSelectDropdownHeader);
 TomSelect.define('dropdown_input', TomSelectDropdownInput);
 TomSelect.define('no_active_items', TomSelectNoActiveItems);
 TomSelect.define('remove_button', TomSelectRemoveButton);

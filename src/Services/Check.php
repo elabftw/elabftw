@@ -36,6 +36,12 @@ use function strlen;
  */
 final class Check
 {
+    public const int DEFAULT_LIMIT = 15;
+
+    public const int MIN_RANGE = 0;
+
+    public const int MAX_RANGE = 9999999;
+
     /** how deep goes the canread/canwrite json */
     private const PERMISSIONS_JSON_MAX_DEPTH = 3;
 
@@ -89,9 +95,9 @@ final class Check
     {
         $filterOptions = array(
             'options' => array(
-                'default' => 15,
-                'min_range' => 1,
-                'max_range' => 9999999,
+                'default' => self::DEFAULT_LIMIT,
+                'min_range' => self::MIN_RANGE,
+                'max_range' => self::MAX_RANGE,
             ),
             'flags' => FILTER_NULL_ON_FAILURE,
         );
@@ -170,11 +176,11 @@ final class Check
 
     public static function usergroup(Users $requester, Usergroup $group): Usergroup
     {
-        if ($group === Usergroup::Sysadmin && $requester->userData['is_sysadmin'] === 0) {
+        if ($group === Usergroup::Sysadmin && !$requester->isSysadmin()) {
             throw new ImproperActionException('Only a sysadmin can promote another user to sysadmin.');
         }
         // if requester is not Admin (and not Sysadmin either), the only valid usergroup is User
-        if (!$requester->isAdmin && $requester->userData['is_sysadmin'] === 0) {
+        if (!$requester->isAdmin && !$requester->isSysadmin()) {
             return Usergroup::User;
         }
         return $group;

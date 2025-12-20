@@ -16,7 +16,6 @@ use DateTimeImmutable;
 use Elabftw\Elabftw\PermissionsHelper;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Orderby;
-use Elabftw\Enums\State;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\Items;
@@ -77,19 +76,8 @@ final class DashboardController extends AbstractHtmlController
         $ItemsStatus = new ItemsStatus($this->app->Teams);
         $UserRequestActions = new UserRequestActions($this->app->Users);
 
-        $DisplayParamsTemplates = new DisplayParams(
-            $this->app->Users,
-            EntityType::Templates,
-            limit: 9999,
-            states: array(State::Normal)
-        );
-
-        $DisplayParamsItemsTypes = new DisplayParams(
-            $this->app->Users,
-            EntityType::ItemsTypes,
-            limit: 9999,
-            states: array(State::Normal)
-        );
+        $DisplayParamsTemplates = new DisplayParams($this->app->Users, EntityType::Templates);
+        $DisplayParamsItemsTypes = new DisplayParams($this->app->Users, EntityType::ItemsTypes);
 
         return array_merge(
             parent::getData(),

@@ -22,7 +22,7 @@ use function date;
 /**
  * Make a CSV file with all the compounds
  */
-final class MakeCompoundsReport extends AbstractMakeCsv
+class MakeCompoundsReport extends AbstractMakeCsv
 {
     public function __construct(protected Compounds $compounds)
     {

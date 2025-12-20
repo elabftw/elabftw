@@ -12,6 +12,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Enums\CertPurpose;
+use Elabftw\Enums\SamlBinding;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Idps;
 
@@ -34,9 +37,9 @@ final class IdpsHelper
      */
     public function getSettings(?int $id = null): array
     {
-        $idp = $this->Idps->getEnabled($id);
+        $idpId = $this->Idps->getEnabled($id);
 
-        return $this->getSettingsByIdp($idp);
+        return $this->getSettingsByIdp($idpId);
     }
 
     /**
@@ -46,20 +49,39 @@ final class IdpsHelper
      */
     public function getSettingsByEntityId(string $entId): array
     {
-        $idp = $this->Idps->getEnabledByEntityId($entId);
+        $idpId = $this->Idps->getEnabledByEntityId($entId);
 
-        return $this->getSettingsByIdp($idp);
+        return $this->getSettingsByIdp($idpId);
     }
 
-    private function getSettingsByIdp(array $idp): array
+    private function getSettingsByIdp(int $idpId): array
     {
-        $idpSigningCerts = array($idp['x509']);
-
-        if (!empty($idp['x509_new'])) {
-            $idpSigningCerts[] = $idp['x509_new'];
+        $this->Idps->setId($idpId);
+        $idp = $this->Idps->readOne();
+        $idpSigningCerts = array();
+        $idpEncryptionCerts = array();
+        foreach ($idp['certs'] as $cert) {
+            if ($cert['purpose'] === CertPurpose::Encryption->value) {
+                $idpEncryptionCerts[] = $cert['x509'];
+                continue;
+            }
+            $idpSigningCerts[] = $cert['x509'];
+        }
+        $ssoUrl = null;
+        $sloUrl = null;
+        foreach ($idp['endpoints'] as $endpoint) {
+            if ($endpoint['is_slo'] === 0 && $endpoint['binding'] === SamlBinding::HttpRedirect->value) {
+                $ssoUrl = $endpoint['location'];
+            }
+            if ($endpoint['is_slo'] === 1 && $endpoint['binding'] === SamlBinding::HttpRedirect->value) {
+                $sloUrl = $endpoint['location'];
+            }
+        }
+        if ($ssoUrl === null) {
+            throw new ImproperActionException('Could not find HTTP-Redirect URL for this IdP!');
         }
 
-        return array(
+        $config = array(
             // If 'strict' is True, then the PHP Toolkit will reject unsigned
             // or unencrypted messages if it expects them signed or encrypted
             // Also will reject the messages if not strictly follow the SAML
@@ -87,10 +109,8 @@ final class IdpsHelper
                 'assertionConsumerService' => array(
                     // URL Location where the <Response> from the IdP will be returned
                     'url' => rtrim($this->Config->configArr['saml_baseurl'] ?? '', '/') . '/index.php?acs',
-                    // SAML protocol binding to be used when returning the <Response>
-                    // message.  Onelogin Toolkit supports for this endpoint the
-                    // HTTP-Redirect binding only
-                    'binding' => $this->Config->configArr['saml_acs_binding'],
+                    // Only HTTP-POST binding is supported
+                    'binding' => SamlBinding::HttpPost->toUrn(),
                 ),
                 // If you need to specify requested attributes, set a
                 // attributeConsumingService. nameFormat, attributeValue and
@@ -140,7 +160,7 @@ final class IdpsHelper
                     // SAML protocol binding to be used when returning the <Response>
                     // message.  Onelogin Toolkit supports for this endpoint the
                     // HTTP-Redirect binding only
-                    'binding' => $this->Config->configArr['saml_slo_binding'],
+                    'binding' => SamlBinding::HttpRedirect->toUrn(),
                 ),
                 // Specifies constraints on the name identifier to be used to
                 // represent the requested subject.
@@ -164,27 +184,14 @@ final class IdpsHelper
                 // SSO endpoint info of the IdP. (Authentication Request protocol)
                 'singleSignOnService' => array(
                     // URL Target of the IdP where the SP will send the Authentication Request Message
-                    'url' => $idp['sso_url'],
-                    // SAML protocol binding to be used when returning the <Response>
-                    // message.  Onelogin Toolkit supports for this endpoint the
-                    // HTTP-POST binding only
-                    'binding' => $idp['sso_binding'],
+                    'url' => $ssoUrl,
+                    // SAML library only supports HTTP-Redirect binding
+                    'binding' => SamlBinding::HttpRedirect->toUrn(),
                 ),
-                // SLO endpoint info of the IdP.
-                'singleLogoutService' => array(
-                    // URL Location of the IdP where the SP will send the SLO Request
-                    'url' => $idp['slo_url'],
-                    // SAML protocol binding to be used when returning the <Response>
-                    // message.  Onelogin Toolkit supports for this endpoint the
-                    // HTTP-Redirect binding only
-                    'binding' => $idp['slo_binding'],
-                ),
-                // Public x509 certificate of the IdP
+                // Public x509 certificates of the IdP
                 'x509certMulti' => array(
                     'signing' => $idpSigningCerts,
-                    'encryption' => array(
-                        $idp['x509'],
-                    ),
+                    'encryption' => $idpEncryptionCerts,
                 ),
                 'emailAttr' => $idp['email_attr'],
                 'teamAttr' => $idp['team_attr'],
@@ -286,5 +293,17 @@ final class IdpsHelper
                 'lowercaseUrlencoding' => (bool) $this->Config->configArr['saml_lowercaseurlencoding'],
             ),
         );
+
+        // only add SLO url config if we have an SLO endpoint for that IdP
+        if ($sloUrl) {
+            // SLO endpoint info of the IdP.
+            $config['idp']['singleLogoutService'] = array(
+                // URL Location of the IdP where the SP will send the SLO Request
+                'url' => $sloUrl,
+                // SAML library only supports HTTP-Redirect binding
+                'binding' => SamlBinding::HttpRedirect->toUrn(),
+            );
+        }
+        return $config;
     }
 }

@@ -6,6 +6,8 @@
  * @package elabftw
  */
 
+type BinaryValue = 0 | 1;
+
 interface ResponseMsg {
   res: boolean;
   msg: string;
@@ -109,6 +111,9 @@ enum Action {
   UpdatePassword = 'updatepassword',
   UpdateTag = 'updatetag',
   Validate = 'validate',
+  // Dspace Actions
+  GetCollections = 'getcollections',
+  GetTypes = 'gettypes',
 }
 
 enum Model {
@@ -135,6 +140,12 @@ enum Model {
   Upload = 'uploads',
   User = 'users',
   User2Team = 'user2team',
+}
+
+enum LinkSubModel {
+  CompoundsLinks = 'compounds_links',
+  ExperimentsLinks = 'experiments_links',
+  ItemsLinks = 'items_links',
 }
 
 // Match php enum EntityType
@@ -173,6 +184,7 @@ enum Target {
 
 enum FileType {
   Csv = 'csv',
+  Eln = 'eln',
   Html = 'html',
   Json = 'json',
   Ods = 'ods',
@@ -188,6 +200,7 @@ interface Entity {
 
 export {
   Action,
+  BinaryValue,
   Categories,
   CheckableItem,
   Entity,
@@ -198,6 +211,7 @@ export {
   ProcurementState,
   ResponseMsg,
   Selected,
+  LinkSubModel,
   Target,
   Todoitem,
   UnfinishedEntities,

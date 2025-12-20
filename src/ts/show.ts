@@ -249,8 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         dropdown_input: {},
         remove_button: {},
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } as any,
+      },
       onInitialize() {
         this._allOptions = Object.values(this.options);
         this._showArchived = false;
@@ -274,8 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
       },
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    function isArchivedOption(opt: any): boolean {
+    function isArchivedOption(opt): boolean {
       const el = opt?.$option as HTMLOptionElement | undefined;
       const raw = el?.getAttribute('data-is-archived') ?? '0';
       return raw === '1';

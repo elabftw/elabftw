@@ -12,9 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use Defuse\Crypto\Crypto;
-use Defuse\Crypto\Key;
-use Elabftw\Elabftw\Env;
 use Elabftw\Exceptions\ImproperActionException;
 use Override;
 
@@ -45,11 +42,10 @@ class MakeUniversignTimestamp extends AbstractMakeTrustedTimestamp
         if (empty($config['ts_password'])) {
             throw new ImproperActionException('Universign timestamping requires a password!');
         }
-        $password = Crypto::decrypt($config['ts_password'], Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY')));
 
         return array(
             'ts_login' => $config['ts_login'],
-            'ts_password' => $password,
+            'ts_password' => $config['ts_password'],
             // use static here so the dev class ts_url override is taken into account
             'ts_url' => static::TS_URL,
             'ts_hash' => self::TS_HASH,

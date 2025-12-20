@@ -111,6 +111,9 @@
     </div>
   </div>
 </div>
+
+{% include 'export-menu-dspace-modal.html' %}
+
 {# requires Entity #}
 <div class='dropdown'>
   <button class='btn hl-hover-gray d-inline p-2 mr-2' title='{{ 'Export'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Export'|trans }}' type='button'>
@@ -122,6 +125,8 @@
     <a class='dropdown-item' href='api/v2/{{ Entity.entityType.value }}/{{ Entity.id }}?format=eln'><i class='fas fa-box-archive fa-fw'></i> {{ 'ELN Archive'|trans }}</a>
     <a class='dropdown-item' href='api/v2/{{ Entity.entityType.value }}/{{ Entity.id }}?format=csv'><i class='fas fa-file-csv fa-fw'></i> {{ 'CSV File'|trans }}</a>
     <div class='dropdown-item' data-action='toggle-modal' data-target='qrpngExportModal'><i class='fas fa-qrcode fa-fw'></i> {{ 'QR Code'|trans }}</div>
-    <a class='dropdown-item' href='api/v2/{{ Entity.entityType.value }}/{{ Entity.id }}' target='_blank'><i class='fas fa-code fa-fw'></i> JSON</a>
+    <a class='dropdown-item' href='api/v2/{{ Entity.entityType.value }}/{{ Entity.id }}' target='_blank'><i class='fas fa-code fa-fw'></i>{{ 'JSON'|trans }}</a>
+    <hr>
+    <div class='dropdown-item {{ Entity.isReadOnly ? 'disabled' }}' data-action='open-dspace-modal'><i class='fas fa-file-export fa-fw'></i> {{ 'Export to DSpace'|trans }}</div>
   </div>
 </div>

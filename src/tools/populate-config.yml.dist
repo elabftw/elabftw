@@ -34,6 +34,8 @@ config:
   onboarding_email_different_for_admins: 1
   onboarding_email_admins_subject: subject for admins
   onboarding_email_admins_body: <p>Test email body for <strong>admins</strong>.</p>
+  dspace_host: https://demo.dspace.org/
+  dspace_user: dspacedemo+admin@gmail.com
 
 inventory:
   - Main building | 1st floor | Clean room | Gray room

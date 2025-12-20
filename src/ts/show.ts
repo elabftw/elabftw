@@ -215,6 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
   ['filterOwner', 'metakey'].forEach(id =>{
     if (document.getElementById(id)) {
       new TomSelect(`#${id}`, {
+        maxOptions: 512,
         plugins: [
           'dropdown_input',
           'remove_button',

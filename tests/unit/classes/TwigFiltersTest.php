@@ -11,8 +11,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Defuse\Crypto\Crypto;
-use Defuse\Crypto\Key;
 use Elabftw\Enums\MessageLevels;
 
 class TwigFiltersTest extends \PHPUnit\Framework\TestCase
@@ -117,15 +115,6 @@ class TwigFiltersTest extends \PHPUnit\Framework\TestCase
     {
         $metadata = '{"hello": "friend"}';
         $this->assertIsString(TwigFilters::formatMetadata($metadata));
-    }
-
-    public function testDecrypt(): void
-    {
-        $secret = 'Section 31';
-        $key = Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY'));
-        $encrypted = Crypto::encrypt($secret, $key);
-        $this->assertEquals($secret, TwigFilters::decrypt($encrypted));
-        $this->assertEmpty(TwigFilters::decrypt(null));
     }
 
     public function testToSymbol(): void

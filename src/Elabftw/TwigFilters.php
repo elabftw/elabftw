@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Defuse\Crypto\Crypto;
-use Defuse\Crypto\Key;
 use Elabftw\Enums\ApiEndpoint;
 use Elabftw\Enums\Currency;
 use Elabftw\Enums\EntityType;
@@ -21,7 +19,6 @@ use Elabftw\Enums\MessageLevels;
 use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\ResourceNotFoundException;
-use Elabftw\Models\Compounds;
 use Elabftw\Models\Users\Users;
 
 use function is_array;
@@ -202,14 +199,6 @@ final class TwigFilters
     public static function formatMfaSecret(string $input): string
     {
         return implode(' ', str_split($input, 4));
-    }
-
-    public static function decrypt(?string $encrypted): string
-    {
-        if (empty($encrypted)) {
-            return '';
-        }
-        return Crypto::decrypt($encrypted, Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY')));
     }
 
     public static function array2String(array $input, ?int $depth = null): string

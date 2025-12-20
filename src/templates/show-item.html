@@ -83,27 +83,6 @@
     </p>
     {# toggle body #}
     <div class='d-flex flex-row'>
-      <button type='button' class='btn border-0 mr-2 lh-normal bg-superlight' data-type='{{ Entity.entityType.value }}' data-id='{{ item.id }}' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}' aria-label='{{ 'Toggle content'|trans }}'>
-        <i class='fas fa-caret-right color-thirdlevel'></i>
-      </button>
-      {# date #}
-      <div class='d-flex flex-column small'>
-       <span class='item-date color-medium'>{{ 'Started on'|trans }} {{ item.date|date('Y-m-d') }}</span>
-        <span>
-        <span class='item-date color-medium relative-moment'>{{ 'Last modified'|trans }}</span> <span title='{{ item.modified_at }}' class='color-medium relative-moment'></span>
-        </span>
-      </div>
-    </div>
-
-    {# container to hold the body of the entity if it is toggled with the +/- icon #}
-    {# a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well #}
-    {# with a div inside to hold the content, similar to how it is in table mode #}
-    <div hidden id='{{ randomId }}' style='overflow:auto;margin: 10px 0 0 20px'><div></div></div>
-  </div>
-
-  {# third part: end container #}
-  <div class='d-flex justify-content-end ml-auto text-nowrap'>
-    <div>
       {# for templates: create from button #}
       {% if Entity.entityType.value in ['experiments_templates', 'items_types'] %}
       <a data-action='create-entity' data-type={{ dataType }} data-tplid='{{ item.id }}' href='#' class='btn left-icon mr-1 lh-normal p-2 border-0 hl-hover-gray bgnd-blue' title='{{ label }}' aria-label='{{ label }}'>
@@ -133,6 +112,27 @@
           </a>
         {% endif %}
       {% endif %}
+      <button type='button' class='btn border-0 mr-2 lh-normal bg-superlight' data-type='{{ Entity.entityType.value }}' data-id='{{ item.id }}' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}' aria-label='{{ 'Toggle content'|trans }}'>
+        <i class='fas fa-caret-right color-thirdlevel'></i>
+      </button>
+      {# date #}
+      <div class='d-flex flex-column small'>
+       <span class='item-date color-medium'>{{ 'Started on'|trans }} {{ item.date|date('Y-m-d') }}</span>
+        <span>
+        <span class='item-date color-medium relative-moment'>{{ 'Last modified'|trans }}</span> <span title='{{ item.modified_at }}' class='color-medium relative-moment'></span>
+        </span>
+      </div>
+    </div>
+
+    {# container to hold the body of the entity if it is toggled with the +/- icon #}
+    {# a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well #}
+    {# with a div inside to hold the content, similar to how it is in table mode #}
+    <div hidden id='{{ randomId }}' style='overflow:auto;margin: 10px 0 0 20px'><div></div></div>
+  </div>
+
+  {# third part: end container #}
+  <div class='d-flex justify-content-end ml-auto text-nowrap'>
+    <div>
       {% include 'toggle-pin.html' with {'padding': 2, 'is_pinned': item.is_pinned, 'id': item.id} %}
     </div>
   </div>

@@ -69,20 +69,13 @@ if (document.getElementById('users-table')) {
     };
     // renderer for teams column
     const TeamsRenderer = ({ value }) => {
-      try {
-        const teamsArray = JSON.parse(value);
-        const items = teamsArray
-          .map(team => (
-            <span className={`mr-2 ${team.is_admin ? 'admin' : 'user'}-badge ${team.is_archived ? 'bg-medium' : ''}`} key={team.id} data-id={team.id}>
-              {team.name}
-            </span>
-          ));
-        return <span>{items}</span>;
-
-      } catch (e) {
-        console.warn('Invalid teams JSON:', value);
-        return null;
-      }
+      const items = value
+        .map(team => (
+          <span className={`mr-2 ${team.is_admin ? 'admin' : 'user'}-badge ${team.is_archived ? 'bg-medium' : ''}`} key={team.id} data-id={team.id}>
+            {team.name}
+          </span>
+        ));
+      return <span>{items}</span>;
     };
 
     const LastLoginRenderer = ({ value }) => {

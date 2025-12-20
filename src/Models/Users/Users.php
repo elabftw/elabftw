@@ -324,12 +324,29 @@ class Users extends AbstractRest
         }
         $this->Db->execute($req);
 
-        return $req->fetchAll();
+        $res = $req->fetchAll();
+        return array_map(function (array $user): array {
+            $user['teams'] = json_decode($user['teams'], true, 3, JSON_THROW_ON_ERROR);
+            return $user;
+        }, $res);
     }
 
     public function readAllFromTeam(): array
     {
-        return $this->readFromQuery(teamId: $this->userData['team']);
+        $teamId = $this->userData['team'];
+        $users = $this->readFromQuery(teamId: $teamId);
+        // add a key to know if user is archived in current team
+        return array_map(function (array $user) use ($teamId): array {
+            $isArchivedInCurrentTeam = 0;
+            foreach ($user['teams'] as $team) {
+                if ($team['id'] === $teamId) {
+                    $isArchivedInCurrentTeam = $team['is_archived'];
+                    break;
+                }
+            }
+            $user['is_archived_in_current_team'] = $isArchivedInCurrentTeam;
+            return $user;
+        }, $users);
     }
 
     public function readAllActiveFromTeam(): array

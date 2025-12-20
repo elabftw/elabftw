@@ -317,7 +317,7 @@ CREATE TABLE `experiments_edit_mode` (
 CREATE TABLE `experiments_templates` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `team` int(10) UNSIGNED NOT NULL,
-  `body` text,
+  `body` mediumtext NULL DEFAULT NULL,
   `category` INT UNSIGNED NULL DEFAULT NULL,
   `custom_id` INT UNSIGNED NULL DEFAULT NULL,
   `date` date NULL DEFAULT NULL,
@@ -816,7 +816,7 @@ CREATE TABLE `items_types` (
   `category` INT UNSIGNED NULL DEFAULT NULL,
   `color` varchar(6) DEFAULT '29aeb9',
   `custom_id` INT UNSIGNED NULL DEFAULT NULL,
-  `body` text NULL DEFAULT NULL,
+  `body` mediumtext NULL DEFAULT NULL,
   `ordering` int(10) UNSIGNED DEFAULT NULL,
   `content_type` tinyint NOT NULL DEFAULT 1,
   `canread` JSON NOT NULL,

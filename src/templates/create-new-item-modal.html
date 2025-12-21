@@ -1,7 +1,7 @@
 {# Modal window for creating a new entity #}
 {# requires: entityPage + {experiments,resources}CategoriesArr #}
 
-<div class='modal fade' id='createModal_{{ entityPage }}' tabindex='-1' role='dialog' aria-labelledby='createModalLabel'>
+<div class='modal fade' id='createModal' tabindex='-1' role='dialog' aria-labelledby='createModalLabel'>
   <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
@@ -38,8 +38,6 @@
                 {% include 'scope-button.html' with {'btnId': btnId, 'reload': btnId ~ ',tplCreateNewDiv_' ~ entityPage, 'target': scopeTarget} %}
               </div>
 
-              {# if we're creating item from compounds page or chem-editor page, use 'create-resource-from-compound' action. #}
-              {# set action = (scriptName == 'compounds.php' or scriptName == 'chem-editor.php') ? actionName : 'create-entity-ask-title' #}
               <div class='d-flex text-nowrap flex-wrap'>
                 <a class='btn btn-ghost m-1' href='#' data-action='filter-category' data-target='tplCreateNewTable_{{ entityPage }}' data-catid='-1'>
                   <span class='round-spot round-spot-ghost mr-1'></span>{{ 'No category'|trans }}
@@ -57,7 +55,11 @@
 
               <input type='text' aria-label='{{ 'Filter'|trans }}' placeholder='{{ 'Search a template...'|trans }}' data-filter-target='tplCreateNewTable_{{ entityPage }}' data-target-type='tr' class='form-control form-inline my-1'>
               <div id='tplCreateNewDiv_{{ entityPage }}' class='vertically-limited'>
-                {% if templatesArr|length == 0 %}
+                {% set templates = experimentsTemplatesArr %}
+                {% if entityPage == 'database' %}
+                  {% set templates = itemsTemplatesArr %}
+                {% endif %}
+                {% if templates|length == 0 %}
                   {{ 'No templates found.'|trans }}
                 {% else %}
                   <table class='table' aria-describedby='createModalLabel_{{ entityPage }}' data-table-sort='true'>
@@ -70,7 +72,7 @@
                     </thead>
                     <tbody id='tplCreateNewTable_{{ entityPage }}'>
                     {% set label = entityPage == 'database' ? 'Create resource from template'|trans : 'Create experiment from template'|trans %}
-                    {% for template in templatesArr %}
+                    {% for template in templates %}
                       <tr data-catid='{{ template.category|default('-1') }}'>
                         <td data-label='{{ 'Title'|trans }}'>
                           {% if template.category_title %}

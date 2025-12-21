@@ -992,18 +992,6 @@ on('create-entity', (el: HTMLElement, event: Event) => {
   });
 });
 
-on('create-entity-ask-title', (el: HTMLElement) => {
-  // this is necessary to convey information between two modals
-  // hide previous modal first
-  $('.modal.show').modal('hide');
-  // then add the category id to the other create button
-  const targetButton = document.getElementById('askTitleButton') as HTMLButtonElement;
-  targetButton.dataset.catid = el.dataset.catid;
-  // also carry over the type as on Dashboard we have both types, but only one modal to ask title
-  targetButton.dataset.type = el.dataset.type;
-  $('#askTitleModal').modal('toggle');
-});
-
 on('report-bug', (el: HTMLElement, event: Event) => {
   event.preventDefault();
   el.querySelector('i').classList.add('moving-bug');

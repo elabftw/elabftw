@@ -1217,26 +1217,42 @@ on('scope-change', (el: HTMLElement) => {
   userParams[el.dataset.target] = el.dataset.value;
   ApiC.patch('users/me', userParams).then(() => {
     handleReloads(el.dataset.reload);
-  });
-});
-
-on('filter-category', (el: HTMLElement) => {
-  const table = document.getElementById(el.dataset.target);
-  table.querySelectorAll('tr').forEach((row: HTMLTableRowElement|HTMLUListElement) => {
-    if (row.dataset.catid === el.dataset.catid) {
-      row.removeAttribute('hidden');
-    } else {
-      row.hidden = true;
+    /*
+    if (el.dataset.setInJs) {
+      document.getElementById(el.dataset.setInJs).querySelector('i').classList.value = `fas ${getScopeIcon(Number(el.dataset.value))}`;
+      document.getElementById(el.dataset.setInJs).querySelectorAll('button[data-action="scope-change"]').forEach((btn: HTMLButtonElement) => {
+        btn.classList.remove('active');
+        btn.querySelector('i').classList.remove('color-white');
+        if (btn.dataset.value === el.dataset.value) {
+          btn.classList.add('active');
+          btn.querySelector('i').classList.add('color-white');
+        }
+      });
+      // figure out the current type
+      let type = EntityType.Experiment;
+      document.querySelectorAll(`input[type="radio"][name="type"]`).forEach((radio: HTMLInputElement)=> {
+        if (radio.checked === true) {
+          type = radio.value as EntityType;
+        }
+      });
+      setTypeRadio(type, el.dataset.value);
     }
+     */
   });
-  document.querySelector('[data-action="reset-filter-category"]').removeAttribute('hidden');
 });
 
-on('reset-filter-category', (el: HTMLElement) => {
-  const table = document.getElementById(el.dataset.target);
-  table.querySelectorAll('tr').forEach((row: HTMLTableRowElement|HTMLUListElement) => row.removeAttribute('hidden'));
-  document.querySelector('[data-action="reset-filter-category"]').setAttribute('hidden', 'hidden');
-});
+/*
+function getScopeIcon(value: number) {
+  switch (value) {
+    case 1:
+      return 'fa-user';
+    case 2:
+      return 'fa-users';
+    default:
+      return 'fa-globe';
+  }
+}
+*/
 
 /**
  * MAIN click listener on container

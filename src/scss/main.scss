@@ -1836,3 +1836,9 @@ input:user-invalid {
 #doodleCanvas {
   touch-action: none;
 }
+
+.btnPressed,
+.btnPressed:hover {
+  background-color: $thirdlevel;
+  color: $white;
+}

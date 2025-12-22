@@ -3,7 +3,6 @@
 - target: scope_experiments, scope_items, etc...
 - optional btnId: to change the id attr of main div
 - optional setQueryParam: to add scope=X in query params upon change through a data attribute
-- optional setInJs: element id of the selected scope button that will have its icon modified in js
 #}
 {% set scopeValue = App.Request.query.has('scope') ? App.Request.query.getInt('scope') : App.Users.userData[target] %}
 {% set setQueryParam = setQueryParam|default(0) %}
@@ -15,15 +14,15 @@
   <button class='btn hl-hover-gray dropdown-toggle' type='button' id='{{ btnId ~ '_selected' }}' data-toggle='dropdown' aria-haspopup='true' aria-label='{{ 'Scope'|trans }}' title='{{ 'Scope'|trans }}' aria-expanded='false'><i class='fas fa-{{ scopeValue|toIcon }} fa-fw mr-1'></i></button>
   <div class='dropdown-menu'>
     <h6 class='dropdown-header'>{{ 'Scope'|trans }}</h6>
-    <button type='button' data-target='{{ target }}' data-action='scope-change' data-set-in-js='{{ setInJs }}' data-reload='{{ reload }}' data-value='1' data-set-query-param='{{ setQueryParam }}' class='btn btn-dropdown-item dropdown-item {{ scopeValue == 1 ? 'active' }}'>
+    <button type='button' data-target='{{ target }}' data-action='scope-change' data-reload='{{ reload }}' data-value='1' data-set-query-param='{{ setQueryParam }}' class='btn btn-dropdown-item dropdown-item {{ scopeValue == 1 ? 'active' }}'>
       <i class='fas fa-user fa-fw mr-1 {{ scopeValue == 1 ? 'color-white' }}'></i>{{ 'Self'|trans }}
     </button>
 
-    <button type='button' data-target='{{ target }}' data-action='scope-change' data-set-in-js='{{ setInJs }}' data-reload='{{ reload }}'  data-value='2' data-set-query-param='{{ setQueryParam }}' class='btn btn-dropdown-item dropdown-item {{ scopeValue == 2 ? 'active' }}'>
+    <button type='button' data-target='{{ target }}' data-action='scope-change' data-reload='{{ reload }}'  data-value='2' data-set-query-param='{{ setQueryParam }}' class='btn btn-dropdown-item dropdown-item {{ scopeValue == 2 ? 'active' }}'>
       <i class='fas fa-users fa-fw mr-1 {{ scopeValue == 2 ? 'color-white' }}'></i>{{ 'Team'|trans }}
     </button>
 
-    <button type='button' data-target='{{ target }}' data-action='scope-change' data-set-in-js='{{ setInJs }}' data-reload='{{ reload }}' data-value='3' data-set-query-param='{{ setQueryParam }}' class='btn btn-dropdown-item dropdown-item {{ scopeValue == 3 ? 'active' }}'>
+    <button type='button' data-target='{{ target }}' data-action='scope-change' data-reload='{{ reload }}' data-value='3' data-set-query-param='{{ setQueryParam }}' class='btn btn-dropdown-item dropdown-item {{ scopeValue == 3 ? 'active' }}'>
       <i class='fas fa-globe fa-fw mr-1 {{ scopeValue == 3 ? 'color-white' }}'></i>{{ 'Everything'|trans }}
     </button>
   </div>

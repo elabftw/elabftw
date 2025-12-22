@@ -217,16 +217,16 @@ export function clearForm(form: HTMLElement): void {
 export function getEntityTypeFromPage(): EntityType {
   const scriptName = location.pathname.split('/').pop() || '';
   switch (scriptName) {
-    case 'experiments.php':
-      return EntityType.Experiment;
-    case 'database.php':
-      return EntityType.Item;
-    case 'templates.php':
-      return EntityType.Template;
-    case 'resources-templates.php':
-      return EntityType.ItemType;
-    default:
-      return EntityType.Other;
+  case 'experiments.php':
+    return EntityType.Experiment;
+  case 'database.php':
+    return EntityType.Item;
+  case 'templates.php':
+    return EntityType.Template;
+  case 'resources-templates.php':
+    return EntityType.ItemType;
+  default:
+    return EntityType.Other;
   }
 }
 

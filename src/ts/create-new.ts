@@ -21,22 +21,16 @@ import { on } from './handlers';
 // code related to create new modal //
 //////////////////////////////////////
 function setTypeRadio(type: EntityType, scope: string = '') {
+  // change text of create button
   const createBtn = document.getElementById('createNoTplBtn');
-  if (!scope) {
-    scope = (document.querySelector('#createNewTemplateScope button[data-action="scope-change"].active') as HTMLButtonElement).dataset.value;
-  }
-  document.getElementById('createNoTplBtn').dataset.type = type;
   createBtn.innerText = i18next.t(`create-one-${type}`);
+  // set type on create button
+  createBtn.dataset.type = type;
   const templateToggleBtn = document.getElementById('createTplToggleBtn');
   const createNewTemplatesDiv = document.getElementById('createNewTemplatesDiv');
   templateToggleBtn.removeAttribute('disabled');
-  // scope
-  document.getElementById('createNewTemplateScope').querySelectorAll('button').forEach(btn => {
-    btn.dataset.target = `scope_${type}`;
-    btn.dataset.setInJs = 'createNewTemplateScope_selected';
-  });
   // set radio button checked
-  document.querySelectorAll(`input[type="radio"][name="type"]`).forEach((radio: HTMLInputElement)=> {
+  document.querySelectorAll('input[type="radio"][name="type"]').forEach((radio: HTMLInputElement)=> {
     radio.removeAttribute('checked');
     if (radio.value === type) {
       radio.checked = true;
@@ -61,6 +55,7 @@ function toggleCategoryList(type: EntityType) {
   document.querySelectorAll('.createNewCategoryList').forEach(el => el.setAttribute('hidden', 'hidden'));
   document.getElementById(`createNewCategoryList_${type}`).removeAttribute('hidden');
 }
+
 function onTypeChange(ev: Event) {
   const el = ev.currentTarget;
   if (!(el instanceof HTMLInputElement)) return;
@@ -68,10 +63,62 @@ function onTypeChange(ev: Event) {
   setTypeRadio(el.value as EntityType);
 }
 
+function getScopeIcon(value: number) {
+  switch (value) {
+  case 1:
+    return 'fa-user';
+  case 2:
+    return 'fa-users';
+  default:
+    return 'fa-globe';
+  }
+}
+
+function getScopeValue() {
+  const scopeSelect = document.getElementById('createNewScopeSelect');
+  return (scopeSelect.querySelector('button.active') as HTMLButtonElement).dataset.value;
+}
+
+// figure out which endpoint is active (not hidden)
+function getActiveTemplateEndpoint(): string {
+  let endpoint = '';
+  document.querySelectorAll('.createNewCategoryList').forEach((select: HTMLSelectElement) => {
+    if (!select.getAttribute('hidden')) {
+      endpoint = select.dataset.endpoint;
+    }
+  });
+  return endpoint;
+}
+
+function onScopeChange(ev: Event) {
+  const el = ev.currentTarget;
+  if (!(el instanceof HTMLButtonElement)) return;
+  const scope = el.dataset.value;
+  const scopeSelect = document.getElementById('createNewScopeSelect');
+  scopeSelect.querySelector('i').classList.value = `fas ${getScopeIcon(Number(scope))} fa-fw mx-1`;
+  scopeSelect.querySelectorAll('button.createNewScopeBtn').forEach((btn: HTMLButtonElement) => {
+    btn.classList.remove('active');
+    btn.querySelector('i').classList.remove('color-white');
+    if (btn.dataset.value === scope) {
+      btn.classList.add('active');
+      btn.querySelector('i').classList.add('color-white');
+    }
+  });
+  ApiC.getJson(`${getActiveTemplateEndpoint()}/?fastq&scope=${scope}`).then(templates => {
+    renderTemplates(templates);
+  });
+}
+
+function onCategoryChange(ev: Event) {
+  const el = ev.currentTarget;
+  if (!(el instanceof HTMLSelectElement)) return;
+  ApiC.getJson(`${el.dataset.endpoint}/?fastq&scope=${getScopeValue()}&cat=${el.selectedOptions[0].value}`).then(templates => {
+    renderTemplates(templates);
+  });
+}
+
 on('filter-category', (el: HTMLElement) => {
   const table = document.getElementById(el.dataset.target);
-  document.querySelectorAll('[data-action="filter-category"]').forEach(btn => btn.classList.remove('btnPressed'));
-  el.classList.add('btnPressed');
   table.querySelectorAll('tr').forEach((row: HTMLTableRowElement|HTMLUListElement) => {
     if (row.dataset.catid === el.dataset.catid) {
       row.removeAttribute('hidden');
@@ -79,14 +126,6 @@ on('filter-category', (el: HTMLElement) => {
       row.hidden = true;
     }
   });
-  document.querySelector('[data-action="reset-filter-category"]').removeAttribute('disabled');
-});
-
-on('reset-filter-category', () => {
-  const table = document.getElementById('tplCreateNewTable');
-  table.querySelectorAll('tr')?.forEach((row: HTMLTableRowElement|HTMLUListElement) => row.removeAttribute('hidden'));
-  document.querySelector('[data-action="reset-filter-category"]').setAttribute('disabled', 'disabled');
-  document.querySelectorAll('[data-action="filter-category"]').forEach(btn => btn.classList.remove('btnPressed'));
 });
 
 on('toggle-create-modal', (el: HTMLElement) => {
@@ -169,9 +208,25 @@ function renderTemplates(templates: Templates[]): void {
 }
 
 const typeRadios = document.querySelectorAll<HTMLInputElement>(
-  'input[type="radio"][name="type"]'
+  'input[type="radio"][name="type"]',
 );
 
 typeRadios.forEach(radio => {
   radio.addEventListener('change', onTypeChange);
+});
+
+const categorySelects = document.querySelectorAll<HTMLSelectElement>(
+  '.createNewCategoryList',
+);
+
+categorySelects.forEach(select => {
+  select.addEventListener('change', onCategoryChange);
+});
+
+const scopeBtns = document.querySelectorAll<HTMLButtonElement>(
+  '.createNewScopeBtn',
+);
+
+scopeBtns.forEach(btn => {
+  btn.addEventListener('click', onScopeChange);
 });

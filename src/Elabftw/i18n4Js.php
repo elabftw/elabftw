@@ -111,6 +111,7 @@ final class i18n4Js
             'onboarding-email-sent' => _('Onboarding email(s) will soon be sent.'),
             'only-a-sysadmin' => _('Only a Sysadmin can modify this.'),
             'please-wait' => _('Please wait…'),
+            'readonly' => _('Read-only'),
             'remove' => _('Remove'),
             'rename-column' => _('New title for the column'),
             'replace-edited-file' => _('Do you want to replace the file on the server with this edit?'),

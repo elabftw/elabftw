@@ -75,6 +75,7 @@ const t = {
     "onboarding-email-sent": "E-mails de integração serão enviados em breve.",
     "only-a-sysadmin": "Only a Sysadmin can modify this.",
     "please-wait": "Por favor, aguarde...",
+    "readonly": "Somente leitura",
     "remove": "Remoção",
     "rename-column": "New title for the column",
     "replace-edited-file": "Você gostaria de substituir o arquivo no servidor por esta versão editada?",

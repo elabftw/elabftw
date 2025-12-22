@@ -13,7 +13,7 @@ import {
   toggleIcon,
 } from './misc';
 import i18next from './i18n';
-import { EntityType } from './interfaces';
+import { EntityType, Model } from './interfaces';
 import { on } from './handlers';
 
 //////////////////////////////////////
@@ -128,10 +128,18 @@ on('filter-category', (el: HTMLElement) => {
   });
 });
 
-on('toggle-create-modal', (el: HTMLElement) => {
+on('toggle-create-modal', async (el: HTMLElement) => {
   // allow data-type to override selected type (for instance on dashboard)
   const entityType = el.dataset.type ? el.dataset.type as EntityType : getEntityTypeFromPage();
   setTypeRadio(entityType);
+  if (el.dataset.getCompoundIdFrom) {
+    const compoundId = (document.getElementById(el.dataset.getCompoundIdFrom) as HTMLElement).dataset.compoundId;
+    (document.getElementById('createNewCompoundInput') as HTMLInputElement).value = compoundId;
+    const compound = await ApiC.getJson(`${Model.Compounds}/${compoundId}`);
+    (document.getElementById('createNewFormTitle') as HTMLInputElement).value = compound.name;
+    $('#editCompoundModal').modal('hide');
+  }
+
   $('#createModal').modal('toggle');
 });
 

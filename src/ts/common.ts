@@ -963,7 +963,7 @@ on('ack-notif', (el: HTMLElement) => {
 on('destroy-notif', () => ApiC.delete(`${Model.User}/me/${Model.Notification}`).then(() => reloadElements(['navbarNotifDiv'])));
 
 // CREATE EXPERIMENT, TEMPLATE or DATABASE item: main create button in top right
-on('create-entity', (el: HTMLElement, event: Event) => {
+on('create-entity', async (el: HTMLElement, event: Event) => {
   event.preventDefault();
   const form = document.getElementById('createNewForm') as HTMLFormElement;
   const params = collectForm(form);
@@ -987,9 +987,11 @@ on('create-entity', (el: HTMLElement, event: Event) => {
     el.dataset.type = 'items';
     page = 'database.php';
   }
-  ApiC.post2location(`${el.dataset.type}`, params).then(id => {
-    window.location.href = `${page}?mode=edit&id=${id}`;
-  });
+  const id = await ApiC.post2location(`${el.dataset.type}`, params);
+  if (params['compound']) {
+    await ApiC.post(`${el.dataset.type}/${id}/compounds_links/${params['compound']}`, {});
+  }
+  window.location.href = `${page}?mode=edit&id=${id}`;
 });
 
 on('report-bug', (el: HTMLElement, event: Event) => {

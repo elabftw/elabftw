@@ -83,8 +83,8 @@
                 {# end code duplication #}
               </div>
 
-              <input type='text' aria-label='{{ 'Filter'|trans }}' placeholder='{{ 'Search a template...'|trans }}' data-filter-target='tplCreateNewTable' data-target-type='tr' class='form-control form-inline my-1'>
-              <div id='tplCreateNewDiv' class='vertically-limited'>
+              {% include 'filter-input-snippet.html' with {'target': 'tplCreateNewTable', 'placeholder': 'Search a template...'|trans } %}
+              <div id='tplCreateNewDiv' class='vertically-limited mt-2'>
                 <table class='table' aria-describedby='createModalLabel' data-table-sort='true'>
                   <thead>
                   <tr>

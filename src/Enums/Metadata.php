@@ -16,7 +16,6 @@ enum Metadata: string
 {
     case Elabftw = 'elabftw'; // namespace in metadata root
     case ExtraFields = 'extra_fields'; // holds the extra fields
-    case DisplayMainText = 'display_main_text'; // key in elabftw namespace
     case Type = 'type'; // the type of an extra field
     case Description = 'description';
     case Value = 'value'; // holds the selected/input value of an extra field

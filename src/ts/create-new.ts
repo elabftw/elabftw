@@ -129,8 +129,8 @@ on('filter-category', (el: HTMLElement) => {
 });
 
 on('toggle-create-modal', (el: HTMLElement) => {
-  // if a data-page is present, force type
-  const entityType = el.dataset.entityType ? el.dataset.entityType as EntityType : getEntityTypeFromPage();
+  // allow data-type to override selected type (for instance on dashboard)
+  const entityType = el.dataset.type ? el.dataset.type as EntityType : getEntityTypeFromPage();
   setTypeRadio(entityType);
   $('#createModal').modal('toggle');
 });

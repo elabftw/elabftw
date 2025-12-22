@@ -153,6 +153,14 @@ interface Templates {
   id: number;
   title: string;
   fullname: string;
+  category: number;
+  category_title: string;
+  category_color: string;
+  page: string;
+  status: number;
+  status_title: string;
+  status_color: string;
+  type: EntityType;
 }
 
 const templateCols: (keyof Templates)[] = [
@@ -168,17 +176,17 @@ function renderTemplates(templates: Templates[]): void {
   tbody.replaceChildren(
     ...templates.map(template => {
       const row = templateRow.content.firstElementChild!.cloneNode(true) as HTMLTableRowElement;
-      row.dataset.catid = String(template['category'] ?? -1);
+      row.dataset.catid = String(template.category ?? -1);
       const cells = Array.from(row.children) as HTMLTableCellElement[];
 
       templateCols.forEach((key, i) => {
         // ACTIONS
         if (key === 'id') {
           const createBtn = cells[i].querySelector('button[data-action="create-entity"]') as HTMLButtonElement;
-          createBtn.dataset.type = template['type'];
+          createBtn.dataset.type = template.type;
           createBtn.dataset.tplid = String(template[key]);
           const viewLink = cells[i].querySelector('a') as HTMLAnchorElement;
-          viewLink.href = `${template['page']}?mode=view&id=${template['id']}`;
+          viewLink.href = `${template.page}?mode=view&id=${template.id}`;
           viewLink.classList.add('btn', 'btn-ghost');
           viewLink.title = i18next.t('view-template');
           viewLink.ariaLabel = i18next.t('view-template');
@@ -186,20 +194,20 @@ function renderTemplates(templates: Templates[]): void {
         // TITLE
         } else if (key === 'title') {
           const catspan = document.createElement('span');
-          if (template['category_title']) {
+          if (template.category_title) {
             catspan.classList.add('catstat-btn', 'category-btn', 'mr-2');
             catspan.title = i18next.t('filter-category');
-            catspan.dataset.action='filter-category';
-            catspan.dataset.target='tplCreateNewTable';
-            catspan.dataset.catid=String(template['category']);
-            catspan.style.setProperty('--bg', `#${template['category_color']}`);
-            catspan.innerText = template['category_title'];
+            catspan.dataset.action = 'filter-category';
+            catspan.dataset.target = 'tplCreateNewTable';
+            catspan.dataset.catid = String(template.category);
+            catspan.style.setProperty('--bg', `#${template.category_color}`);
+            catspan.innerText = template.category_title;
           }
           const statusspan = document.createElement('span');
-          if (template['status_title']) {
+          if (template.status_title) {
             statusspan.classList.add('catstat-btn', 'status-btn', 'mr-2');
-            statusspan.style.setProperty('--bg', `#${template['status_color']}`);
-            statusspan.innerText = template['status_title'];
+            statusspan.style.setProperty('--bg', `#${template.status_color}`);
+            statusspan.innerText = template.status_title;
           }
           cells[i].textContent = String(template[key]);
           cells[i].prepend(statusspan);

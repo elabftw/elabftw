@@ -96,11 +96,11 @@ Cypress.Commands.add('createEntity', (
     item: { page: '/database.php', modal: '#createModal' },
   }[type];
   cy.visit(config.page);
-  cy.contains('Create').click();
+  cy.get('[data-action="toggle-create-modal"]').click();
   cy.get(config.modal).should('be.visible');
   // create modal -> enter title & confirm
   cy.get('#createNewFormTitle').type(title);
-  cy.get('Create without template').click();
+  cy.get('[data-action="create-entity"]').click();
   // ensure we navigated to the new entry
   cy.get('#documentTitle').should('contain', title);
   cy.url().should('include', 'mode=edit');

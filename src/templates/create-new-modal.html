@@ -83,14 +83,14 @@
                 {# end code duplication #}
               </div>
 
-              {% include 'filter-input-snippet.html' with {'target': 'tplCreateNewTable', 'placeholder': 'Search a template...'|trans } %}
+              {% include 'filter-input-snippet.html' with {'target': 'tplCreateNewTable', 'placeholder': 'Search a template...'|trans} %}
               <div id='tplCreateNewDiv' class='vertically-limited mt-2'>
                 <table class='table' aria-describedby='createModalLabel' data-table-sort='true'>
                   <thead>
                   <tr>
                     <th scope='col'>{{ 'Title'|trans }}</th>
                     <th scope='col'>{{ 'Owner'|trans }}</th>
-                    <th class='no-sort'></th>
+                    <th scope='col' class='no-sort'></th>
                   </tr>
                   </thead>
                   <tbody id='tplCreateNewTable'>

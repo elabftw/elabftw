@@ -7,7 +7,7 @@
  */
 import i18next from './i18n';
 import { ApiC } from './api';
-import { Action, Entity, EntityType } from './interfaces';
+import { Action, Entity, EntityModel } from './interfaces';
 import JsonEditorHelper from './JsonEditorHelper.class';
 import { ExtraFieldInputType, ExtraFieldProperties, ExtraFieldsGroup, ValidMetadata } from './metadataInterfaces';
 import { adjustHiddenState, makeSortableGreatAgain, reloadElements, replaceWithTitle } from './misc';
@@ -26,16 +26,26 @@ export function autoResize(element: HTMLTextAreaElement): void {
 
 export class Metadata {
   entity: Entity;
-  editor: JsonEditorHelper;
-  model: EntityType;
-  metadataDiv: Element;
+  editor: JsonEditorHelper | null;
+  model: EntityModel;
+  metadataDiv: HTMLElement;
+  reloadGroups: boolean;
 
-  constructor(entity: Entity, jsonEditor: JsonEditorHelper) {
+  constructor(entity: Entity, jsonEditor?: JsonEditorHelper | null, metadataDivId = 'metadataDiv', reloadGroups = true) {
     this.entity = entity;
-    this.editor = jsonEditor;
+    this.editor = jsonEditor ?? null;
     this.model = entity.type;
-    // this is the div that will hold all the generated fields from metadata json
-    this.metadataDiv = document.getElementById('metadataDiv');
+    this.reloadGroups = reloadGroups;
+    const container = document.getElementById(metadataDivId);
+    if (!container) {
+      throw new Error(`Metadata container with id "${metadataDivId}" not found.`);
+    }
+    this.metadataDiv = container;
+  }
+
+  setEntity(entity: Entity): void {
+    this.entity = entity;
+    this.model = entity.type;
   }
 
   /**
@@ -97,7 +107,7 @@ export class Metadata {
     params['action'] = Action.UpdateMetadataField;
     params[el.dataset.field] = value;
     ApiC.patch(`${this.entity.type}/${this.entity.id}`, params).then(() => {
-      this.editor.loadMetadata();
+      this.editor?.loadMetadata();
     }).catch(() => {
       return;
     });
@@ -488,7 +498,9 @@ export class Metadata {
         this.metadataDiv.append(groupWrapperDiv);
       });
       // refresh the existing groups select on update (see 5611)
-      reloadElements(['newFieldGroupSelect', 'fieldsGroup']);
+      if (this.reloadGroups) {
+        reloadElements(['newFieldGroupSelect', 'fieldsGroup']);
+      }
     }).then (() => {
       replaceWithTitle();
     });
@@ -555,10 +567,12 @@ export class Metadata {
    */
   edit(): Promise<void> {
     return this.read().then(json => {
-      this.editor.refresh(json as ValidMetadata);
+      this.editor?.refresh(json as ValidMetadata);
       // clean groups field if they're removed via json editor
       if (!Object.prototype.hasOwnProperty.call(json, 'extra_fields')) {
-        reloadElements(['newFieldGroupSelect', 'fieldsGroup']);
+        if (this.reloadGroups) {
+          reloadElements(['newFieldGroupSelect', 'fieldsGroup']);
+        }
         return;
       }
 
@@ -695,7 +709,9 @@ export class Metadata {
       });
 
       this.metadataDiv.append(wrapperDiv);
-      reloadElements(['newFieldGroupSelect', 'fieldsGroup']);
+      if (this.reloadGroups) {
+        reloadElements(['newFieldGroupSelect', 'fieldsGroup']);
+      }
     }).then(() => {
       makeSortableGreatAgain();
       replaceWithTitle();

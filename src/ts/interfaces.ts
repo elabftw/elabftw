@@ -189,8 +189,10 @@ enum FileType {
   Xlsx = 'xlsx',
 }
 
+type EntityModel = EntityType | 'event';
+
 interface Entity {
-  type: EntityType;
+  type: EntityModel;
   id: number;
 }
 
@@ -200,6 +202,7 @@ export {
   Categories,
   CheckableItem,
   Entity,
+  EntityModel,
   EntityType,
   FileType,
   Method,

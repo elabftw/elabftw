@@ -10,6 +10,7 @@ import {
   normalizeFieldName,
 } from './misc';
 import { autoResize, Metadata } from './Metadata.class';
+import { Entity } from './interfaces';
 import { ValidMetadata, ExtraFieldInputType } from './metadataInterfaces';
 import JsonEditorHelper from './JsonEditorHelper.class';
 import { JsonEditorActions } from './JsonEditorActions.class';
@@ -45,24 +46,55 @@ function toggleContentDiv(key: string) {
   });
 }
 
-if (document.getElementById('metadataDiv') && entity.id) {
+export interface MetadataUiOptions {
+  metadataDivId?: string;
+  containerSelector?: string;
+  allowJsonEditor?: boolean;
+  reloadGroupElements?: boolean;
+  autoDisplayMode?: 'edit' | 'view' | null;
+}
+
+export interface MetadataUiContext {
+  MetadataC: Metadata;
+  setEntity(entity: Entity): void;
+  display(mode?: 'edit' | 'view'): Promise<void>;
+}
+
+export function initMetadataUi(initEntity: Entity, options: MetadataUiOptions = {}): MetadataUiContext | null {
+  const metadataDivId = options.metadataDivId ?? 'metadataDiv';
+  const metadataContainer = document.getElementById(metadataDivId);
+  if (!metadataContainer || !initEntity?.id) {
+    return null;
+  }
+  const containerSelector = options.containerSelector ?? '.real-container';
+  const container = document.querySelector(containerSelector);
+  if (!container) {
+    return null;
+  }
+  const allowJsonEditor = options.allowJsonEditor ?? true;
+  const reloadGroupElements = options.reloadGroupElements ?? true;
+  const autoDisplayMode = options.autoDisplayMode ?? 'edit';
+
+  let activeEntity = initEntity;
 
   // add extra fields elements from metadata json
-  const JsonEditorHelperC = new JsonEditorHelper(entity);
+  const JsonEditorHelperC = allowJsonEditor ? new JsonEditorHelper(activeEntity, metadataDivId) : null;
   // only run if there is the json-editor block
-  if (document.getElementById('json-editor')) {
+  if (JsonEditorHelperC && document.getElementById('json-editor')) {
     const JsonEditorActionsC = new JsonEditorActions();
     JsonEditorActionsC.init(JsonEditorHelperC, true);
   }
-  const MetadataC = new Metadata(entity, JsonEditorHelperC);
-  MetadataC.display('edit');
+  const MetadataC = new Metadata(activeEntity, JsonEditorHelperC, metadataDivId, reloadGroupElements);
+  if (autoDisplayMode) {
+    MetadataC.display(autoDisplayMode);
+  }
 
   const saveButton = document.querySelector('[data-action="save-new-field"]') as HTMLButtonElement;
   const editButton = document.querySelector('[data-action="edit-extra-field"]') as HTMLButtonElement;
   const multiSelectDiv = document.getElementById('allowMultiSelectDiv');
 
   // Add click listener and do action based on which element is clicked
-  document.querySelector('.real-container').addEventListener('click', event => {
+  container.addEventListener('click', event => {
     const el = (event.target as HTMLElement);
     if (el.matches('[data-action="metadata-edit-field"]')) {
       $('#' + el.dataset.target).modal('toggle');
@@ -166,7 +198,7 @@ if (document.getElementById('metadataDiv') && entity.id) {
         MetadataC.read().then(metadata => {
           const name = el.parentElement.parentElement.closest('div').querySelector('label').innerText.trim();
           delete metadata.extra_fields[name];
-          MetadataC.update(metadata as ValidMetadata).then(() => document.getElementById('metadataDiv').scrollIntoView({behavior: 'smooth'}));
+          MetadataC.update(metadata as ValidMetadata).then(() => metadataContainer.scrollIntoView({behavior: 'smooth'}));
         });
       }
     }
@@ -249,14 +281,13 @@ if (document.getElementById('metadataDiv') && entity.id) {
         });
       } else if (el.matches('[data-action="load-metadata-from-textarea"]')) {
         const textarea = (document.getElementById('loadMetadataTextarea') as HTMLInputElement);
-        const MetadataC = new Metadata(entity, new JsonEditorHelper(entity));
-        const currentMetadata = await ApiC.getJson(`${entity.type}/${entity.id}`).then(json => JSON.parse(json.metadata));
+        const currentMetadata = await ApiC.getJson(`${activeEntity.type}/${activeEntity.id}`).then(json => JSON.parse(json.metadata));
         // we need to use lodash's merge because Object.assign() or spread operator will only do shallow merge
         const mergedMetadata = merge(JSON.parse(textarea.value), currentMetadata);
-        ApiC.patch(`${entity.type}/${entity.id}`, {metadata: JSON.stringify(mergedMetadata)}).then(() => {
+        ApiC.patch(`${activeEntity.type}/${activeEntity.id}`, {metadata: JSON.stringify(mergedMetadata)}).then(() => {
           MetadataC.display('edit');
           textarea.value = '';
-        }).then(() => document.getElementById('metadataDiv').scrollIntoView({behavior: 'smooth'}));
+        }).then(() => metadataContainer.scrollIntoView({behavior: 'smooth'}));
       }
     });
 
@@ -596,4 +627,19 @@ if (document.getElementById('metadataDiv') && entity.id) {
       }
     });
   }
+
+  return {
+    MetadataC,
+    setEntity(entityToSet: Entity) {
+      activeEntity = entityToSet;
+      MetadataC.setEntity(entityToSet);
+    },
+    display(mode: 'edit' | 'view' = 'edit') {
+      return MetadataC.display(mode);
+    },
+  };
+}
+
+if (document.getElementById('metadataDiv') && entity.id) {
+  initMetadataUi(entity);
 }

@@ -117,6 +117,27 @@
             </div>
             <div id='autocompleteAnchorDiv_binddivdb'></div>
         </div>
+        {# EXTRA FIELDS #}
+        <div class='mt-3 d-none' id='eventMetadataSection' data-save-hidden='eventMetadata'>
+          <div class='d-flex justify-content-between align-items-center mb-2'>
+            <h5 class='mb-0'>{{ 'Extra fields'|trans }}</h5>
+            <div class='d-flex gap-2'>
+              <button type='button' class='btn btn-secondary btn-sm' data-action='toggle-modal' data-target='fieldBuilderModal'>
+                <i class='fas fa-plus fa-fw'></i>{{ 'Add custom field'|trans }}
+              </button>
+              <button type='button' class='btn hl-hover-gray btn-sm ml-2' data-action='toggle-modal' data-target='fieldLoaderModal'>
+                <i class='fas fa-truck-ramp-box fa-fw'></i>{{ 'Load fields'|trans }}
+              </button>
+            </div>
+          </div>
+          <div id='metadataDiv' class='mb-3'></div>
+          <small class='text-muted d-block mb-3'>{{ 'Use custom fields to store structured information with this booking.'|trans }}</small>
+          <div class='json-editor-wrapper'>
+            {% include 'json-editor.html' %}
+          </div>
+        </div>
+
+        {% include 'field-builder-modal.html' %}
 
         {# only show the cancel block if item is cancellable or user is admin #}
         <div id='isCancellableDiv' data-is-admin='{{ App.Users.isAdmin ? 'true' : 'false' }}'>

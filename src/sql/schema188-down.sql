@@ -10,6 +10,9 @@ ALTER TABLE `team_events`
     DROP CHECK `chk_end_after_start`;
 
 ALTER TABLE `team_events`
+    DROP COLUMN `metadata`;
+
+ALTER TABLE `team_events`
     ADD COLUMN `start_rollback` VARCHAR(255) NULL AFTER `item`,
     ADD COLUMN `end_rollback` VARCHAR(255) NULL AFTER `start_rollback`;
 

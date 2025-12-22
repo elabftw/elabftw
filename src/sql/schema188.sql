@@ -72,3 +72,5 @@ ALTER TABLE `team_events`
 CREATE INDEX `idx_team_events_item_start_end` ON `team_events` (`item`, `start`, `end`);
 CREATE INDEX `idx_team_events_team_start_end` ON `team_events` (`team`, `start`, `end`);
 CREATE INDEX `idx_team_events_user_start_end` ON `team_events` (`userid`, `start`, `end`);
+
+ALTER TABLE `team_events` ADD `metadata` JSON NULL AFTER `item_link`;

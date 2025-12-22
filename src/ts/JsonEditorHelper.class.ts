@@ -25,11 +25,11 @@ export default class JsonEditorHelper {
   currentFilename: string;
   editorTitle: HTMLElement;
 
-  constructor(entity: Entity) {
+  constructor(entity: Entity, metadataDivId = 'metadataDiv') {
     this.entity = entity;
     // this is the div that will hold the editor
     this.editorDiv = document.getElementById('jsonEditorContainer') as HTMLDivElement;
-    this.MetadataC = new Metadata(entity, this);
+    this.MetadataC = new Metadata(entity, this, metadataDivId);
     this.editorTitle = document.getElementById('jsonEditorTitle');
   }
 

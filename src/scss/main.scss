@@ -8,6 +8,7 @@
 
 @import 'variables';
 /* import this first to be able to modify bootstrap theme */
+@import 'sass-compat';
 @import 'bootstrap/scss/functions';
 @import 'bootstrap/scss/variables';
 /* override bootstrap theme */

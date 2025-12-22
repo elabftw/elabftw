@@ -1,0 +1,7 @@
+@use 'sass:map';
+
+// Re-implement the deprecated global map-merge helper using map.merge so
+// Bootstrap 4 SCSS stops emitting deprecation warnings.
+@function map-merge($map1, $map2) {
+  @return map.merge($map1, $map2);
+}

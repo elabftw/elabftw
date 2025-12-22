@@ -16,6 +16,7 @@ use DateTime;
 use DateTimeImmutable;
 use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -25,13 +26,16 @@ use Elabftw\Models\Notifications\EventDeleted;
 use Elabftw\Services\Filter;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\EntityTrait;
+use JsonException;
 use Override;
 use PDO;
 
+use function array_key_exists;
 use function array_walk;
+use function is_array;
+use function mb_substr;
 use function preg_replace;
 use function strlen;
-use function mb_substr;
 
 /**
  * All about the team's scheduler
@@ -116,8 +120,9 @@ final class Scheduler extends AbstractRest
         // we add a second so it works
         $start = preg_replace('/00:00:00/', '00:00:01', $start);
 
-        $sql = 'INSERT INTO team_events(team, item, start, end, userid, title)
-            VALUES(:team, :item, :start, :end, :userid, :title)';
+        $metadata = $this->normalizeMetadataPayload($reqBody['metadata'] ?? null);
+        $sql = 'INSERT INTO team_events(team, item, start, end, userid, title, metadata)
+            VALUES(:team, :item, :start, :end, :userid, :title, :metadata)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':item', $this->Items->id, PDO::PARAM_INT);
@@ -125,6 +130,7 @@ final class Scheduler extends AbstractRest
         $req->bindParam(':end', $end);
         $req->bindValue(':title', $this->filterTitle($reqBody['title'] ?? ''));
         $req->bindParam(':userid', $this->Items->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindValue(':metadata', $metadata, $metadata === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
         $this->Db->execute($req);
 
         return $this->Db->lastInsertId();
@@ -204,6 +210,7 @@ final class Scheduler extends AbstractRest
                 experiments.title AS experiment_title,
                 team_events.item_link,
                 items_linkt.title AS item_link_title,
+                team_events.metadata,
                 CASE WHEN %s THEN 1 ELSE 0 END AS canbook
             FROM team_events
             LEFT JOIN teams ON (team_events.team = teams.id)
@@ -234,6 +241,23 @@ final class Scheduler extends AbstractRest
     public function patch(Action $action, array $params): array
     {
         $this->canWriteOrExplode();
+
+        if ($action === Action::UpdateMetadataField) {
+            foreach ($params as $key => $value) {
+                if ($key !== 'action') {
+                    $this->updateMetadataField((string) $key, $value);
+                }
+            }
+            return $this->readOne();
+        }
+
+        if ($action === Action::Update && array_key_exists('metadata', $params)) {
+            $this->replaceMetadata($params['metadata']);
+            unset($params['metadata']);
+            if (empty($params)) {
+                return $this->readOne();
+            }
+        }
 
         match ($params['target']) {
             'start' => $this->updateStart($params['delta']),
@@ -393,6 +417,7 @@ final class Scheduler extends AbstractRest
                 team_events.item_link,
                 team_events.created_at,
                 team_events.modified_at,
+                team_events.metadata,
                 items.book_is_cancellable,
                 items.book_cancel_minutes,
                 team_events.title AS title_only,
@@ -503,6 +528,81 @@ final class Scheduler extends AbstractRest
         if ($totalMinutes > $this->Items->entityData['book_max_minutes']) {
             throw new ImproperActionException(sprintf(_('Each time slot is limited to %d minutes.'), $this->Items->entityData['book_max_minutes']));
         }
+    }
+
+    private function normalizeMetadataPayload(string|array|null $metadata): ?string
+    {
+        if ($metadata === null || $metadata === '') {
+            return null;
+        }
+        try {
+            if (is_array($metadata)) {
+                return json_encode($metadata, JSON_THROW_ON_ERROR);
+            }
+            $decoded = json_decode($metadata, true, 512, JSON_THROW_ON_ERROR);
+            if ($decoded === null) {
+                return null;
+            }
+            return $metadata;
+        } catch (JsonException) {
+            throw new ImproperActionException('Invalid metadata payload.');
+        }
+    }
+
+    private function replaceMetadata(string|array|null $metadata): void
+    {
+        $encoded = $this->normalizeMetadataPayload($metadata);
+        $sql = 'UPDATE team_events SET metadata = :metadata WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':metadata', $encoded, $encoded === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+    }
+
+    private function updateMetadataField(string $field, string|array|int $value): void
+    {
+        $metadata = $this->decodeMetadata();
+        if (!isset($metadata[MetadataEnum::ExtraFields->value][$field])) {
+            throw new ImproperActionException('Unknown metadata field.');
+        }
+        $metadata[MetadataEnum::ExtraFields->value][$field]['value'] = $value;
+        $this->replaceMetadata($metadata);
+    }
+
+    private function decodeMetadata(): array
+    {
+        $json = $this->fetchMetadata();
+        if ($json === null || $json === '') {
+            return array(MetadataEnum::ExtraFields->value => array());
+        }
+        try {
+            $decoded = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+        } catch (JsonException) {
+            throw new ImproperActionException('Invalid metadata payload.');
+        }
+        if (!is_array($decoded)) {
+            $decoded = array();
+        }
+        if (!isset($decoded[MetadataEnum::ExtraFields->value]) || !is_array($decoded[MetadataEnum::ExtraFields->value])) {
+            $decoded[MetadataEnum::ExtraFields->value] = array();
+        }
+        return $decoded;
+    }
+
+    private function fetchMetadata(): ?string
+    {
+        if ($this->id === null) {
+            throw new ImproperActionException('Invalid event id.');
+        }
+        $sql = 'SELECT metadata FROM team_events WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $result = $req->fetchColumn();
+        if ($result === false) {
+            throw new ImproperActionException('Invalid event id.');
+        }
+        return $result ?: null;
     }
 
     private function checkMaxSlots(): void

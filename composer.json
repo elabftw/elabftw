@@ -89,9 +89,6 @@
     "allow-plugins": {
       "pyrech/composer-changelogs": true,
       "codeception/c3": true
-    },
-    "platform": {
-      "php": "8.4.0"
     }
   }
 }

@@ -2,4 +2,3 @@
 {% if not App.Session.get('is_anon') %}
 <button type='button' data-action='toggle-create-modal' data-type='{{ entityType|default('') }}' class='btn btn-primary'>{{ 'Create'|trans }}</button>
 {% endif %}
-{% include 'create-new-modal.html' %}

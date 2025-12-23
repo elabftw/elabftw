@@ -30,17 +30,14 @@ WHERE JSON_EXTRACT(metadata, '$.elabftw.display_main_text') = false;
 UPDATE experiments
 SET metadata = JSON_REMOVE(metadata, '$.elabftw.display_main_text')
 WHERE JSON_EXTRACT(metadata, '$.elabftw.display_main_text') IS NOT NULL;
-
 -- resources
 UPDATE items
 SET metadata = JSON_REMOVE(metadata, '$.elabftw.display_main_text')
 WHERE JSON_EXTRACT(metadata, '$.elabftw.display_main_text') IS NOT NULL;
-
 -- experiment templates
 UPDATE experiments_templates
 SET metadata = JSON_REMOVE(metadata, '$.elabftw.display_main_text')
 WHERE JSON_EXTRACT(metadata, '$.elabftw.display_main_text') IS NOT NULL;
-
 -- resource templates
 UPDATE items_types
 SET metadata = JSON_REMOVE(metadata, '$.elabftw.display_main_text')

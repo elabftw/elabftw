@@ -57,6 +57,13 @@
 
   {# BODY #}
   <hr>
+    {% if hideMainText %}
+    <div>
+      <h3 data-toggle-target='mainTextDiv' class='d-inline togglable-section-title {{ hideMainText ? 'color-disabled'}}' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-right color-disabled fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
+      {% set text = 'The Main Text feature has been disabled. If you wish to reactivate it, see the three dots menu on the top-right menu.' %}
+      {% include 'infotip.html' with { text, left: 200 } %}
+    </div>
+    {% else %}
     <div class='d-flex justify-content-between'>
       <div>
         <h3 data-action='toggle-next' data-toggle-target-extra='mainTextEllipsis' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-toggle-target='mainTextDiv' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-{{ hideMainText ? 'right' : 'down' }} fa-fw mr-2'></i>{{ 'Main text'|trans }} {{ hideMainText ? ('(' ~ 'Hidden'|trans ~ ')') }}</h3>
@@ -73,6 +80,7 @@
         </div>
       </div>
     </div>
+    {% endif %}
 
     <div data-save-hidden='mainTextDiv' id='mainTextDiv'>
       <div {{ hideMainText ? 'hidden' }} class='mt-2' id='entityBodyEditorDiv' data-content-type='{{ Entity.entityData.content_type }}'>{# << this div is important around the textarea to fix an issue on mobile editor. See #3107 #}

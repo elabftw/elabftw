@@ -96,7 +96,7 @@ Cypress.Commands.add('createEntity', (
     item: { page: '/database.php', modal: '#createModal' },
   }[type];
   cy.visit(config.page);
-  cy.get('[data-action="toggle-create-modal"]').click();
+  cy.get('[data-action="toggle-create-modal"]').last().click();
   cy.get(config.modal).should('be.visible');
   // create modal -> enter title & confirm
   cy.get('#createNewFormTitle').type(title);

@@ -844,10 +844,10 @@ components:
             fullname:
               type: string
             hide_main_text:
-              type: boolean
-              nullable: true
+              type: integer
+              enum: [ 0, 1 ]
               description: Hide the main text of an entry. When applied to templates, this setting also applies to derived entries.
-              default: false
+              default: 0
             id:
               type: integer
             items_links:

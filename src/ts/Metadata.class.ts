@@ -165,9 +165,6 @@ export class Metadata {
     if (metadata.elabftw && Object.keys(metadata.elabftw).length === 0) {
       delete metadata.elabftw;
     }
-    if (metadata.elabftw && Object.keys(metadata.elabftw).length === 0) {
-      delete metadata.elabftw;
-    }
   }
 
   /**

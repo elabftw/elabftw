@@ -18,7 +18,6 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
     {
         $metadata = new Metadata(null);
         $this->assertEmpty($metadata->getExtraFields());
-        $this->assertTrue($metadata->getDisplayMainText());
     }
 
     public function testGetRaw(): void
@@ -31,12 +30,6 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
     {
         $metadata = new Metadata('{"extra_fields":{"foo":{"type":"text","value":"bar"}}}');
         $this->assertIsArray($metadata->getExtraFields());
-    }
-
-    public function testGetDisplayMainText(): void
-    {
-        $metadata = new Metadata('{"elabftw": {"display_main_text": false}}');
-        $this->assertFalse($metadata->getDisplayMainText());
     }
 
     public function testGetGroups(): void

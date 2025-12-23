@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 
 use DateTimeImmutable;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Services\Filter;
@@ -47,14 +48,15 @@ final class ItemsTypes extends AbstractTemplateEntity
         ?int $status = null,
         ?int $customId = null,
         ?string $metadata = null,
+        BinaryValue $hideMainText = BinaryValue::False,
         int $rating = 0,
         BodyContentType $contentType = BodyContentType::Html,
     ): int {
         $title = Filter::title($title ?? _('Default'));
         $defaultPermissions = BasePermissions::Team->toJson();
 
-        $sql = 'INSERT INTO items_types(userid, title, body, team, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canread_target, canwrite_target, category, content_type, status, rating, metadata)
-            VALUES(:userid, :title, :body, :team, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canread_target, :canwrite_target, :category, :content_type, :status, :rating, :metadata)';
+        $sql = 'INSERT INTO items_types(userid, title, body, team, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canread_target, canwrite_target, category, content_type, status, rating, metadata, hide_main_text)
+            VALUES(:userid, :title, :body, :team, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canread_target, :canwrite_target, :category, :content_type, :status, :rating, :metadata, :hide_main_text)';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':userid', $this->Users->userid, PDO::PARAM_INT);
         $req->bindValue(':title', $title);
@@ -71,6 +73,7 @@ final class ItemsTypes extends AbstractTemplateEntity
         $req->bindParam(':status', $status);
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
         $req->bindParam(':metadata', $metadata);
+        $req->bindValue(':hide_main_text', $hideMainText->value, PDO::PARAM_INT);
         $this->Db->execute($req);
         $id = $this->Db->lastInsertId();
 

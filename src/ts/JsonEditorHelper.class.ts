@@ -165,28 +165,6 @@ export default class JsonEditorHelper {
     notify.success();
   }
 
-  toggleDisplayMainText(): void {
-    let json = {};
-    // get the current metadata
-    this.MetadataC.read().then(metadata => {
-      if (metadata) {
-        json = metadata;
-      }
-      // add the namespace object 'elabftw' if it's not there
-      if (!Object.prototype.hasOwnProperty.call(json, 'elabftw')) {
-        json['elabftw'] = {};
-      }
-      // if it's not present, set it to false
-      if (!Object.prototype.hasOwnProperty.call(json['elabftw'], 'display_main_text')) {
-        json['elabftw']['display_main_text'] = false;
-      } else {
-        json['elabftw']['display_main_text'] = !json['elabftw']['display_main_text'];
-      }
-      this.editor.set(json);
-      this.saveMetadata().then(() => reloadElements(['toggleDisplayMainTextBtn']));
-    });
-  }
-
   clear(): void {
     this.editorTitle.innerText = '';
     this.currentUploadId = undefined;

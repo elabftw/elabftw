@@ -10,14 +10,11 @@ import JsonEditorHelper from './JsonEditorHelper.class';
 import { askFileName, saveStringAsFile } from './misc';
 import 'jsoneditor/dist/jsoneditor.min.css';
 import { notify } from './notify';
-import { on } from './handlers';
 
 export class JsonEditorActions {
 
   init(JsonEditorHelperC: JsonEditorHelper, editable: boolean) {
     JsonEditorHelperC.init(editable);
-
-    on('toggle-display-main-text', () => JsonEditorHelperC.toggleDisplayMainText());
 
     // LISTENERS
     document.querySelector('.real-container').addEventListener('click', (event) => {

@@ -26,6 +26,7 @@ use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExportFormat;
@@ -168,6 +169,7 @@ abstract class AbstractEntity extends AbstractRest
         ?int $status = null,
         ?int $customId = null,
         ?string $metadata = null,
+        BinaryValue $hideMainText = BinaryValue::False,
         int $rating = 0,
         BodyContentType $contentType = BodyContentType::Html,
     ): int;
@@ -188,6 +190,7 @@ abstract class AbstractEntity extends AbstractRest
             category: $template['category'],
             status: $template['status'],
             metadata: $template['metadata'],
+            hideMainText: BinaryValue::from($template['hide_main_text']),
             rating: $template['rating'],
             contentType: BodyContentType::from($template['content_type']),
         );

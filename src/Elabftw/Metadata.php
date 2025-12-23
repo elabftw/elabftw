@@ -67,14 +67,6 @@ final class Metadata
         return $extraFields;
     }
 
-    public function getDisplayMainText(): bool
-    {
-        if (isset($this->metadata[MetadataEnum::Elabftw->value][MetadataEnum::DisplayMainText->value])) {
-            return !$this->metadata[MetadataEnum::Elabftw->value][MetadataEnum::DisplayMainText->value] === false;
-        }
-        return true;
-    }
-
     public function getGroups(): array
     {
         // we always have a Default group

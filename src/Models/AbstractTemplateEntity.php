@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\State;
 use Elabftw\Factories\LinksFactory;
@@ -51,11 +52,12 @@ abstract class AbstractTemplateEntity extends AbstractEntity
         $newId = $this->create(
             title: $title,
             body: $this->entityData['body'],
-            category: $this->entityData['category'],
-            status: $this->entityData['status'],
             canread: $this->entityData['canread'],
             canwrite: $this->entityData['canwrite'],
+            category: $this->entityData['category'],
+            status: $this->entityData['status'],
             metadata: $this->entityData['metadata'],
+            hideMainText: BinaryValue::from($this->entityData['hide_main_text']),
             contentType: BodyContentType::from($this->entityData['content_type']),
         );
         // add missing can*_target

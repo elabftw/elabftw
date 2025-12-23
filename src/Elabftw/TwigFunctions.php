@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use DateTime;
-use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\Sort;
 use Elabftw\Models\TeamGroups;
@@ -105,18 +104,6 @@ final class TwigFunctions
             return (int) $decoded[$key];
         }
         return false;
-    }
-
-    public static function extractDisplayMainText(?string $json): bool
-    {
-        if ($json === null) {
-            return true;
-        }
-        $decoded = json_decode($json, true, 42, JSON_THROW_ON_ERROR);
-        if (isset($decoded[MetadataEnum::Elabftw->value][MetadataEnum::DisplayMainText->value])) {
-            return (bool) $decoded[MetadataEnum::Elabftw->value][MetadataEnum::DisplayMainText->value];
-        }
-        return true;
     }
 
     public static function isInJsonArray(string $json, string $key, int $target): bool

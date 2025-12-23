@@ -59,11 +59,14 @@
   <hr>
   {% if Entity.entityData.hide_main_text == 1 %}
     <div>
-      <h3 data-toggle-target='mainTextDiv' class='d-inline togglable-section-title color-disabled' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-right color-disabled fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
-      {% set text = 'The Main Text feature has been disabled. If you wish to reactivate it, see the three dots menu on the top-right menu.' %}
-      {% include 'infotip.html' with {text} %}
+      <h3 class='d-inline togglable-section-title color-disabled'><i class='fas fa-caret-right color-disabled fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
+      {% set text = 'The Main Text feature has been disabled. Click the eye icon to re-enable it.'|trans %}
+      {% set label = Entity.entityData.hide_main_text == 1 ? 'Show main text'|trans : 'Hide main text'|trans %}
+      <span class='ml-1 infotip' aria-label='{{ label }}' data-trigger='click' data-reload='page' data-model='{{ Entity.entityType.value ~ '/' ~ Entity.id }}' data-target='hide_main_text' data-value='0'>
+      {% include 'infotip.html' with {icon: 'fa-eye-slash', text} %}
+    </span>
     </div>
-    {% else %}
+  {% else %}
     <div class='d-flex justify-content-between'>
       <div>
         <h3 data-action='toggle-next' data-toggle-target-extra='mainTextEllipsis' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-toggle-target='mainTextDiv' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>

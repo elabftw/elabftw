@@ -47,6 +47,7 @@ final class Templates extends AbstractTemplateEntity
         ?int $status = null,
         ?int $customId = null,
         ?string $metadata = null,
+        ?int $hideMainText = 0,
         int $rating = 0,
         BodyContentType $contentType = BodyContentType::Html,
     ): int {
@@ -62,8 +63,8 @@ final class Templates extends AbstractTemplateEntity
         $canread ??= BasePermissions::Team->toJson();
         $canwrite ??= BasePermissions::User->toJson();
 
-        $sql = 'INSERT INTO experiments_templates(team, title, body, userid, category, status, metadata, canread, canwrite, canread_target, canwrite_target, content_type, rating, canread_is_immutable, canwrite_is_immutable)
-            VALUES(:team, :title, :body, :userid, :category, :status, :metadata, :canread, :canwrite, :canread_target, :canwrite_target, :content_type, :rating, :canread_is_immutable, :canwrite_is_immutable)';
+        $sql = 'INSERT INTO experiments_templates(team, title, body, userid, category, status, metadata, canread, canwrite, canread_target, canwrite_target, content_type, rating, canread_is_immutable, canwrite_is_immutable, hide_main_text)
+            VALUES(:team, :title, :body, :userid, :category, :status, :metadata, :canread, :canwrite, :canread_target, :canwrite_target, :content_type, :rating, :canread_is_immutable, :canwrite_is_immutable, :hide_main_text)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindParam(':title', $title);
@@ -80,6 +81,7 @@ final class Templates extends AbstractTemplateEntity
         $req->bindParam(':canwrite_target', $canwrite);
         $req->bindValue(':content_type', $contentType->value, PDO::PARAM_INT);
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
+        $req->bindParam(':hide_main_text', $hideMainText, PDO::PARAM_INT);
         $req->execute();
         $id = $this->Db->lastInsertId();
         $this->insertTags($tags, $id);

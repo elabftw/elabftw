@@ -54,6 +54,7 @@ final class Items extends AbstractConcreteEntity
         ?int $status = null,
         ?int $customId = null,
         ?string $metadata = null,
+        ?int $hideMainText = 0,
         int $rating = 0,
         BodyContentType $contentType = BodyContentType::Html,
         // specific to Items
@@ -68,8 +69,8 @@ final class Items extends AbstractConcreteEntity
         // figure out the custom id
         $customId ??= $this->getNextCustomId($category);
 
-        $sql = 'INSERT INTO items(team, title, date, status, body, userid, category, elabid, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canbook, metadata, custom_id, content_type, rating)
-            VALUES(:team, :title, :date, :status, :body, :userid, :category, :elabid, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canbook, :metadata, :custom_id, :content_type, :rating)';
+        $sql = 'INSERT INTO items(team, title, date, status, body, userid, category, elabid, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canbook, metadata, custom_id, content_type, rating, hide_main_text)
+            VALUES(:team, :title, :date, :status, :body, :userid, :category, :elabid, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canbook, :metadata, :custom_id, :content_type, :rating, :hide_main_text)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindParam(':title', $title);
@@ -88,6 +89,7 @@ final class Items extends AbstractConcreteEntity
         $req->bindParam(':custom_id', $customId, PDO::PARAM_INT);
         $req->bindValue(':content_type', $contentType->value, PDO::PARAM_INT);
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
+        $req->bindParam(':hide_main_text', $hideMainText, PDO::PARAM_INT);
         $this->Db->execute($req);
         $newId = $this->Db->lastInsertId();
 
@@ -135,12 +137,13 @@ final class Items extends AbstractConcreteEntity
         $newId = $this->create(
             title: $title,
             body: $this->entityData['body'],
-            category: $this->entityData['category'],
             canread: $this->entityData['canread'],
             canwrite: $this->entityData['canwrite'],
-            contentType: BodyContentType::from($this->entityData['content_type']),
-            metadata: $metadata,
+            category: $this->entityData['category'],
             status: $this->entityData['status'],
+            metadata: $metadata,
+            hideMainText: $this->entityData['hide_main_text'],
+            contentType: BodyContentType::from($this->entityData['content_type']),
         );
 
         // add missing canbook

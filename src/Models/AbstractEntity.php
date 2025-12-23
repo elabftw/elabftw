@@ -168,6 +168,7 @@ abstract class AbstractEntity extends AbstractRest
         ?int $status = null,
         ?int $customId = null,
         ?string $metadata = null,
+        ?int $hideMainText = 0,
         int $rating = 0,
         BodyContentType $contentType = BodyContentType::Html,
     ): int;
@@ -188,6 +189,7 @@ abstract class AbstractEntity extends AbstractRest
             category: $template['category'],
             status: $template['status'],
             metadata: $template['metadata'],
+            hideMainText: $template['hide_main_text'],
             rating: $template['rating'],
             contentType: BodyContentType::from($template['content_type']),
         );

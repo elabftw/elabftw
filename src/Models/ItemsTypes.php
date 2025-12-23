@@ -47,14 +47,15 @@ final class ItemsTypes extends AbstractTemplateEntity
         ?int $status = null,
         ?int $customId = null,
         ?string $metadata = null,
+        ?int $hideMainText = 0,
         int $rating = 0,
         BodyContentType $contentType = BodyContentType::Html,
     ): int {
         $title = Filter::title($title ?? _('Default'));
         $defaultPermissions = BasePermissions::Team->toJson();
 
-        $sql = 'INSERT INTO items_types(userid, title, body, team, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canread_target, canwrite_target, category, content_type, status, rating, metadata)
-            VALUES(:userid, :title, :body, :team, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canread_target, :canwrite_target, :category, :content_type, :status, :rating, :metadata)';
+        $sql = 'INSERT INTO items_types(userid, title, body, team, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canread_target, canwrite_target, category, content_type, status, rating, metadata, hide_main_text)
+            VALUES(:userid, :title, :body, :team, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canread_target, :canwrite_target, :category, :content_type, :status, :rating, :metadata, :hide_main_text)';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':userid', $this->Users->userid, PDO::PARAM_INT);
         $req->bindValue(':title', $title);
@@ -71,6 +72,7 @@ final class ItemsTypes extends AbstractTemplateEntity
         $req->bindParam(':status', $status);
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
         $req->bindParam(':metadata', $metadata);
+        $req->bindParam(':hide_main_text', $hideMainText, PDO::PARAM_INT);
         $this->Db->execute($req);
         $id = $this->Db->lastInsertId();
 

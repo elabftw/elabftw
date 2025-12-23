@@ -298,10 +298,10 @@
         {# CHANGELOG #}
         <a class='dropdown-item' href='?id={{ Entity.id }}&amp;mode=changelog'><i class='fas fa-list fa-fw' title='{{ 'See changelog'|trans }}'></i> {{ 'See changelog'|trans }}</a>
         {# HIDE MAIN TEXT #}
-        {% set icon = Entity.entityData.hide_main_text == 1 ? 'fa-eye' : 'fa-eye-slash' %}
-        <button type='button' class='dropdown-item' data-trigger='blur' data-reload='page' data-model='{{ Entity.entityType.value ~ '/' ~ Entity.id }}' data-target='hide_main_text' data-value='{{ Entity.entityData.hide_main_text == 1 ? 0 : 1 }}'>
+        {% set icon = Entity.entityData.hide_main_text ? 'fa-eye' : 'fa-eye-slash' %}
+        <button type='button' class='dropdown-item' data-trigger='blur' data-reload='page' data-model='{{ Entity.entityType.value ~ '/' ~ Entity.id }}' data-target='hide_main_text' data-value='{{ Entity.entityData.hide_main_text ? 0 : 1 }}'>
           <i class='fas {{ icon }}'></i>
-          {{ Entity.entityData.hide_main_text == 1 ? 'Show main text'|trans : 'Hide main text'|trans }}
+          {{ Entity.entityData.hide_main_text ? 'Show main text'|trans : 'Hide main text'|trans }}
         </button>
 
         {% if not App.Session.has('is_anon') %}

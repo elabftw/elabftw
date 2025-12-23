@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 
 use DateTimeImmutable;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Services\Filter;
@@ -47,7 +48,7 @@ final class Templates extends AbstractTemplateEntity
         ?int $status = null,
         ?int $customId = null,
         ?string $metadata = null,
-        ?int $hideMainText = 0,
+        BinaryValue $hideMainText = BinaryValue::False,
         int $rating = 0,
         BodyContentType $contentType = BodyContentType::Html,
     ): int {
@@ -81,7 +82,7 @@ final class Templates extends AbstractTemplateEntity
         $req->bindParam(':canwrite_target', $canwrite);
         $req->bindValue(':content_type', $contentType->value, PDO::PARAM_INT);
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
-        $req->bindParam(':hide_main_text', $hideMainText, PDO::PARAM_INT);
+        $req->bindValue(':hide_main_text', $hideMainText->value, PDO::PARAM_INT);
         $req->execute();
         $id = $this->Db->lastInsertId();
         $this->insertTags($tags, $id);

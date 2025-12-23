@@ -1,0 +1,244 @@
+diff --git a/src/Models/AbstractEntity.php b/src/Models/AbstractEntity.php
+index 312cf7057..0607185c2 100644
+--- a/src/Models/AbstractEntity.php
++++ b/src/Models/AbstractEntity.php
+@@ -26,6 +26,7 @@ use Elabftw\Elabftw\TimestampResponse;
+ use Elabftw\Elabftw\Tools;
+ use Elabftw\Enums\AccessType;
+ use Elabftw\Enums\Action;
++use Elabftw\Enums\BinaryValue;
+ use Elabftw\Enums\BodyContentType;
+ use Elabftw\Enums\EntityType;
+ use Elabftw\Enums\ExportFormat;
+@@ -168,7 +169,7 @@ abstract class AbstractEntity extends AbstractRest
+         ?int $status = null,
+         ?int $customId = null,
+         ?string $metadata = null,
+-        ?int $hideMainText = 0,
++        BinaryValue $hideMainText = BinaryValue::False,
+         int $rating = 0,
+         BodyContentType $contentType = BodyContentType::Html,
+     ): int;
+@@ -189,7 +190,7 @@ abstract class AbstractEntity extends AbstractRest
+             category: $template['category'],
+             status: $template['status'],
+             metadata: $template['metadata'],
+-            hideMainText: $template['hide_main_text'],
++            hideMainText: BinaryValue::from($template['hide_main_text']),
+             rating: $template['rating'],
+             contentType: BodyContentType::from($template['content_type']),
+         );
+diff --git a/src/Models/AbstractTemplateEntity.php b/src/Models/AbstractTemplateEntity.php
+index 39d211e80..bbb175d4e 100644
+--- a/src/Models/AbstractTemplateEntity.php
++++ b/src/Models/AbstractTemplateEntity.php
+@@ -13,6 +13,7 @@ declare(strict_types=1);
+ namespace Elabftw\Models;
+ 
+ use Elabftw\Enums\Action;
++use Elabftw\Enums\BinaryValue;
+ use Elabftw\Enums\BodyContentType;
+ use Elabftw\Enums\State;
+ use Elabftw\Factories\LinksFactory;
+@@ -51,11 +52,12 @@ abstract class AbstractTemplateEntity extends AbstractEntity
+         $newId = $this->create(
+             title: $title,
+             body: $this->entityData['body'],
+-            category: $this->entityData['category'],
+-            status: $this->entityData['status'],
+             canread: $this->entityData['canread'],
+             canwrite: $this->entityData['canwrite'],
++            category: $this->entityData['category'],
++            status: $this->entityData['status'],
+             metadata: $this->entityData['metadata'],
++            hideMainText: BinaryValue::from($this->entityData['hide_main_text']),
+             contentType: BodyContentType::from($this->entityData['content_type']),
+         );
+         // add missing can*_target
+diff --git a/src/Models/Experiments.php b/src/Models/Experiments.php
+index 8f39179ff..9492e892c 100644
+--- a/src/Models/Experiments.php
++++ b/src/Models/Experiments.php
+@@ -17,6 +17,7 @@ use Elabftw\Elabftw\Metadata;
+ use Elabftw\Elabftw\Tools;
+ use Elabftw\Enums\Action;
+ use Elabftw\Enums\BasePermissions;
++use Elabftw\Enums\BinaryValue;
+ use Elabftw\Enums\BodyContentType;
+ use Elabftw\Enums\EntityType;
+ use Elabftw\Factories\LinksFactory;
+@@ -49,7 +50,7 @@ final class Experiments extends AbstractConcreteEntity
+         ?int $status = null,
+         ?int $customId = null,
+         ?string $metadata = null,
+-        ?int $hideMainText = 0,
++        BinaryValue $hideMainText = BinaryValue::False,
+         int $rating = 0,
+         BodyContentType $contentType = BodyContentType::Html,
+     ): int {
+@@ -87,7 +88,7 @@ final class Experiments extends AbstractConcreteEntity
+         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+         $req->bindValue(':content_type', $contentType->value, PDO::PARAM_INT);
+         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
+-        $req->bindParam(':hide_main_text', $hideMainText, PDO::PARAM_INT);
++        $req->bindValue(':hide_main_text', $hideMainText->value, PDO::PARAM_INT);
+         $this->Db->execute($req);
+         $newId = $this->Db->lastInsertId();
+ 
+@@ -125,7 +126,7 @@ final class Experiments extends AbstractConcreteEntity
+             // use default status instead of copying the current one
+             status: $Status->getDefault(),
+             metadata: $metadata,
+-            hideMainText: $this->entityData['hide_main_text'],
++            hideMainText: BinaryValue::from($this->entityData['hide_main_text']),
+             contentType: BodyContentType::from($this->entityData['content_type']),
+         );
+ 
+diff --git a/src/Models/Items.php b/src/Models/Items.php
+index 37dc2aa7e..c34c860da 100644
+--- a/src/Models/Items.php
++++ b/src/Models/Items.php
+@@ -18,6 +18,7 @@ use Elabftw\Elabftw\Permissions;
+ use Elabftw\Elabftw\Tools;
+ use Elabftw\Enums\Action;
+ use Elabftw\Enums\BasePermissions;
++use Elabftw\Enums\BinaryValue;
+ use Elabftw\Enums\BodyContentType;
+ use Elabftw\Enums\EntityType;
+ use Elabftw\Enums\FilterableColumn;
+@@ -54,7 +55,7 @@ final class Items extends AbstractConcreteEntity
+         ?int $status = null,
+         ?int $customId = null,
+         ?string $metadata = null,
+-        ?int $hideMainText = 0,
++        BinaryValue $hideMainText = BinaryValue::False,
+         int $rating = 0,
+         BodyContentType $contentType = BodyContentType::Html,
+         // specific to Items
+@@ -89,7 +90,7 @@ final class Items extends AbstractConcreteEntity
+         $req->bindParam(':custom_id', $customId, PDO::PARAM_INT);
+         $req->bindValue(':content_type', $contentType->value, PDO::PARAM_INT);
+         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
+-        $req->bindParam(':hide_main_text', $hideMainText, PDO::PARAM_INT);
++        $req->bindValue(':hide_main_text', $hideMainText->value, PDO::PARAM_INT);
+         $this->Db->execute($req);
+         $newId = $this->Db->lastInsertId();
+ 
+@@ -142,7 +143,7 @@ final class Items extends AbstractConcreteEntity
+             category: $this->entityData['category'],
+             status: $this->entityData['status'],
+             metadata: $metadata,
+-            hideMainText: $this->entityData['hide_main_text'],
++            hideMainText: BinaryValue::from($this->entityData['hide_main_text']),
+             contentType: BodyContentType::from($this->entityData['content_type']),
+         );
+ 
+diff --git a/src/Models/ItemsTypes.php b/src/Models/ItemsTypes.php
+index 746c26bbb..34cc83555 100644
+--- a/src/Models/ItemsTypes.php
++++ b/src/Models/ItemsTypes.php
+@@ -14,6 +14,7 @@ namespace Elabftw\Models;
+ 
+ use DateTimeImmutable;
+ use Elabftw\Enums\BasePermissions;
++use Elabftw\Enums\BinaryValue;
+ use Elabftw\Enums\BodyContentType;
+ use Elabftw\Enums\EntityType;
+ use Elabftw\Services\Filter;
+@@ -47,7 +48,7 @@ final class ItemsTypes extends AbstractTemplateEntity
+         ?int $status = null,
+         ?int $customId = null,
+         ?string $metadata = null,
+-        ?int $hideMainText = 0,
++        BinaryValue $hideMainText = BinaryValue::False,
+         int $rating = 0,
+         BodyContentType $contentType = BodyContentType::Html,
+     ): int {
+@@ -72,7 +73,7 @@ final class ItemsTypes extends AbstractTemplateEntity
+         $req->bindParam(':status', $status);
+         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
+         $req->bindParam(':metadata', $metadata);
+-        $req->bindParam(':hide_main_text', $hideMainText, PDO::PARAM_INT);
++        $req->bindValue(':hide_main_text', $hideMainText->value, PDO::PARAM_INT);
+         $this->Db->execute($req);
+         $id = $this->Db->lastInsertId();
+ 
+diff --git a/src/Models/Templates.php b/src/Models/Templates.php
+index cb339a1ed..d3d6ca4dc 100644
+--- a/src/Models/Templates.php
++++ b/src/Models/Templates.php
+@@ -14,6 +14,7 @@ namespace Elabftw\Models;
+ 
+ use DateTimeImmutable;
+ use Elabftw\Enums\BasePermissions;
++use Elabftw\Enums\BinaryValue;
+ use Elabftw\Enums\BodyContentType;
+ use Elabftw\Enums\EntityType;
+ use Elabftw\Services\Filter;
+@@ -47,7 +48,7 @@ final class Templates extends AbstractTemplateEntity
+         ?int $status = null,
+         ?int $customId = null,
+         ?string $metadata = null,
+-        ?int $hideMainText = 0,
++        BinaryValue $hideMainText = BinaryValue::False,
+         int $rating = 0,
+         BodyContentType $contentType = BodyContentType::Html,
+     ): int {
+@@ -81,7 +82,7 @@ final class Templates extends AbstractTemplateEntity
+         $req->bindParam(':canwrite_target', $canwrite);
+         $req->bindValue(':content_type', $contentType->value, PDO::PARAM_INT);
+         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
+-        $req->bindParam(':hide_main_text', $hideMainText, PDO::PARAM_INT);
++        $req->bindValue(':hide_main_text', $hideMainText->value, PDO::PARAM_INT);
+         $req->execute();
+         $id = $this->Db->lastInsertId();
+         $this->insertTags($tags, $id);
+diff --git a/src/templates/edit.html b/src/templates/edit.html
+index 7fddaceba..7f96a01cc 100644
+--- a/src/templates/edit.html
++++ b/src/templates/edit.html
+@@ -57,11 +57,11 @@
+ 
+   {# BODY #}
+   <hr>
+-  {% if Entity.entityData.hide_main_text == 1 %}
++  {% if Entity.entityData.hide_main_text %}
+     <div>
+       <h3 class='d-inline togglable-section-title color-disabled'><i class='fas fa-caret-right color-disabled fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
+       {% set text = 'The Main Text feature has been disabled. Click the eye icon to re-enable it.'|trans %}
+-      {% set label = Entity.entityData.hide_main_text == 1 ? 'Show main text'|trans : 'Hide main text'|trans %}
++      {% set label = Entity.entityData.hide_main_text ? 'Show main text'|trans : 'Hide main text'|trans %}
+       <span class='ml-1 infotip' aria-label='{{ label }}' data-trigger='click' data-reload='page' data-model='{{ Entity.entityType.value ~ '/' ~ Entity.id }}' data-target='hide_main_text' data-value='0'>
+       {% include 'infotip.html' with {icon: 'fa-eye-slash', text} %}
+     </span>
+diff --git a/src/templates/view-edit-toolbar.html b/src/templates/view-edit-toolbar.html
+index 3aa51eddc..17f687753 100644
+--- a/src/templates/view-edit-toolbar.html
++++ b/src/templates/view-edit-toolbar.html
+@@ -298,10 +298,10 @@
+         {# CHANGELOG #}
+         <a class='dropdown-item' href='?id={{ Entity.id }}&amp;mode=changelog'><i class='fas fa-list fa-fw' title='{{ 'See changelog'|trans }}'></i> {{ 'See changelog'|trans }}</a>
+         {# HIDE MAIN TEXT #}
+-        {% set icon = Entity.entityData.hide_main_text == 1 ? 'fa-eye' : 'fa-eye-slash' %}
+-        <button type='button' class='dropdown-item' data-trigger='blur' data-reload='page' data-model='{{ Entity.entityType.value ~ '/' ~ Entity.id }}' data-target='hide_main_text' data-value='{{ Entity.entityData.hide_main_text == 1 ? 0 : 1 }}'>
++        {% set icon = Entity.entityData.hide_main_text ? 'fa-eye' : 'fa-eye-slash' %}
++        <button type='button' class='dropdown-item' data-trigger='blur' data-reload='page' data-model='{{ Entity.entityType.value ~ '/' ~ Entity.id }}' data-target='hide_main_text' data-value='{{ Entity.entityData.hide_main_text ? 0 : 1 }}'>
+           <i class='fas {{ icon }}'></i>
+-          {{ Entity.entityData.hide_main_text == 1 ? 'Show main text'|trans : 'Hide main text'|trans }}
++          {{ Entity.entityData.hide_main_text ? 'Show main text'|trans : 'Hide main text'|trans }}
+         </button>
+ 
+         {% if not App.Session.has('is_anon') %}
+diff --git a/src/templates/view.html b/src/templates/view.html
+index 9acc5c653..156e84450 100644
+--- a/src/templates/view.html
++++ b/src/templates/view.html
+@@ -121,7 +121,7 @@
+   {% set body = Entity.entityData.body_html %}
+   {% if body != '' %}
+       {# body in view mode is text-dark for more lisibility see github issue #52 #}
+-      <div {% if Entity.entityData.hide_main_text == 1 %}hidden='hidden'{% endif %}>
++      <div {% if Entity.entityData.hide_main_text %}hidden='hidden'{% endif %}>
+         <h3 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='body_view'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
+         <div id='body_view' class='pt-2 ml-3 text-dark overflow-auto' data-save-hidden='body_view'>{{ body|raw }}</div>
+         <hr>

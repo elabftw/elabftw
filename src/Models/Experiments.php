@@ -17,6 +17,7 @@ use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Factories\LinksFactory;
@@ -49,7 +50,7 @@ final class Experiments extends AbstractConcreteEntity
         ?int $status = null,
         ?int $customId = null,
         ?string $metadata = null,
-        ?int $hideMainText = 0,
+        BinaryValue $hideMainText = BinaryValue::False,
         int $rating = 0,
         BodyContentType $contentType = BodyContentType::Html,
     ): int {
@@ -87,7 +88,7 @@ final class Experiments extends AbstractConcreteEntity
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindValue(':content_type', $contentType->value, PDO::PARAM_INT);
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
-        $req->bindParam(':hide_main_text', $hideMainText, PDO::PARAM_INT);
+        $req->bindValue(':hide_main_text', $hideMainText->value, PDO::PARAM_INT);
         $this->Db->execute($req);
         $newId = $this->Db->lastInsertId();
 
@@ -125,7 +126,7 @@ final class Experiments extends AbstractConcreteEntity
             // use default status instead of copying the current one
             status: $Status->getDefault(),
             metadata: $metadata,
-            hideMainText: $this->entityData['hide_main_text'],
+            hideMainText: BinaryValue::from($this->entityData['hide_main_text']),
             contentType: BodyContentType::from($this->entityData['content_type']),
         );
 

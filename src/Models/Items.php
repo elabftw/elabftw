@@ -18,6 +18,7 @@ use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FilterableColumn;
@@ -54,7 +55,7 @@ final class Items extends AbstractConcreteEntity
         ?int $status = null,
         ?int $customId = null,
         ?string $metadata = null,
-        ?int $hideMainText = 0,
+        BinaryValue $hideMainText = BinaryValue::False,
         int $rating = 0,
         BodyContentType $contentType = BodyContentType::Html,
         // specific to Items
@@ -89,7 +90,7 @@ final class Items extends AbstractConcreteEntity
         $req->bindParam(':custom_id', $customId, PDO::PARAM_INT);
         $req->bindValue(':content_type', $contentType->value, PDO::PARAM_INT);
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
-        $req->bindParam(':hide_main_text', $hideMainText, PDO::PARAM_INT);
+        $req->bindValue(':hide_main_text', $hideMainText->value, PDO::PARAM_INT);
         $this->Db->execute($req);
         $newId = $this->Db->lastInsertId();
 
@@ -142,7 +143,7 @@ final class Items extends AbstractConcreteEntity
             category: $this->entityData['category'],
             status: $this->entityData['status'],
             metadata: $metadata,
-            hideMainText: $this->entityData['hide_main_text'],
+            hideMainText: BinaryValue::from($this->entityData['hide_main_text']),
             contentType: BodyContentType::from($this->entityData['content_type']),
         );
 

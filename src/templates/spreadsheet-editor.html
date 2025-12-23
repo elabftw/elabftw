@@ -4,7 +4,7 @@
     <i id='sheetEditorIcon' class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Spreadsheet Editor'|trans }}
   </h3>
   <span class='beta'>beta</span>
-  {% include 'infotip.html' with { text, left: 200 } %}
+  {% include 'infotip.html' with {text} %}
   <div id='spreadsheetEditorDiv' class='m-2' hidden data-save-hidden='spreadsheetEditorDiv'>
     {% if App.devMode -%}
       <!-- [html-validate-disable-block unique-landmark, no-deprecated-attr, prefer-native-element: suppress errors from spreadsheet editor] -->

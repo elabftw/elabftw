@@ -57,16 +57,16 @@
 
   {# BODY #}
   <hr>
-    {% if hideMainText %}
+  {% if Entity.entityData.hide_main_text == 1 %}
     <div>
-      <h3 data-toggle-target='mainTextDiv' class='d-inline togglable-section-title {{ hideMainText ? 'color-disabled'}}' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-right color-disabled fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
+      <h3 data-toggle-target='mainTextDiv' class='d-inline togglable-section-title color-disabled' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-right color-disabled fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
       {% set text = 'The Main Text feature has been disabled. If you wish to reactivate it, see the three dots menu on the top-right menu.' %}
-      {% include 'infotip.html' with { text, left: 200 } %}
+      {% include 'infotip.html' with {text} %}
     </div>
     {% else %}
     <div class='d-flex justify-content-between'>
       <div>
-        <h3 data-action='toggle-next' data-toggle-target-extra='mainTextEllipsis' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-toggle-target='mainTextDiv' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-{{ hideMainText ? 'right' : 'down' }} fa-fw mr-2'></i>{{ 'Main text'|trans }} {{ hideMainText ? ('(' ~ 'Hidden'|trans ~ ')') }}</h3>
+        <h3 data-action='toggle-next' data-toggle-target-extra='mainTextEllipsis' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-toggle-target='mainTextDiv' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
       </div>
       <div class='dropdown' id='mainTextEllipsis'>
         <button class='btn p-2 hl-hover-gray' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'Main text options'|trans }}' aria-label='{{ 'Main text options'|trans }}' type='button'>
@@ -80,10 +80,9 @@
         </div>
       </div>
     </div>
-    {% endif %}
 
     <div data-save-hidden='mainTextDiv' id='mainTextDiv'>
-      <div {{ hideMainText ? 'hidden' }} class='mt-2' id='entityBodyEditorDiv' data-content-type='{{ Entity.entityData.content_type }}'>{# << this div is important around the textarea to fix an issue on mobile editor. See #3107 #}
+      <div class='mt-2' id='entityBodyEditorDiv' data-content-type='{{ Entity.entityData.content_type }}'>{# << this div is important around the textarea to fix an issue on mobile editor. See #3107 #}
         {# tinymce or markdown? #}
         {% if Entity.entityData.content_type == '2' %}
           <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' data-language='{{ App.getJsLang }}' name='body'>{{ Entity.entityData.body }}</textarea>
@@ -97,17 +96,18 @@
       </div>
       <div class='d-flex ml-1'>
         {# LAST SAVED #}
-        <div {{ hideMainText ? 'hidden' }}>
+        <div>
           <span class='smallgray'>{{ 'Last saved:'|trans }}</span>
           <span id='lastSavedAt' class='ml-1 relative-moment smallgray' title='{{ Entity.entityData.modified_at }}'></span>
         </div>
       </div>
 
-      <div class='mt-1 text-center' {{ hideMainText ? 'hidden' }}>
+      <div class='mt-1 text-center'>
         <button type='button' data-action='update-entity-body' class='btn btn-primary'>{{ 'Save'|trans }}</button>
         <button type='button' data-action='update-entity-body' data-redirect='view' class='btn btn-secondary'>{{ 'Save and go back'|trans }}</button>
       </div>
   </div>
+  {% endif %}
 </section>
 
 <hr>

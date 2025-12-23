@@ -1,13 +1,13 @@
 -- schema 196
-ALTER TABLE `experiments` ADD COLUMN `hide_main_text` TINYINT UNSIGNED NULL DEFAULT NULL;
-ALTER TABLE `items` ADD COLUMN `hide_main_text` TINYINT UNSIGNED NULL DEFAULT NULL;
-ALTER TABLE `experiments_templates` ADD COLUMN `hide_main_text` TINYINT UNSIGNED NULL DEFAULT NULL;
-ALTER TABLE `items_types` ADD COLUMN `hide_main_text` TINYINT UNSIGNED NULL DEFAULT NULL;
+ALTER TABLE `experiments` ADD COLUMN `hide_main_text` TINYINT UNSIGNED NOT NULL DEFAULT 0;
+ALTER TABLE `items` ADD COLUMN `hide_main_text` TINYINT UNSIGNED NOT NULL DEFAULT 0;
+ALTER TABLE `experiments_templates` ADD COLUMN `hide_main_text` TINYINT UNSIGNED NOT NULL DEFAULT 0;
+ALTER TABLE `items_types` ADD COLUMN `hide_main_text` TINYINT UNSIGNED NOT NULL DEFAULT 0;
 
 -- migrate legacy entries:
 -- display_main_text = false -> hide_main_text = 1
--- display_main_text = true -> hide_main_text = NULL
--- missing key (no metadata or no elabftw object) -> hide_main_text = NULL
+-- display_main_text = true -> hide_main_text = 0
+-- missing key (no metadata or no elabftw object) -> hide_main_text = 0
 -- experiments
 UPDATE experiments
 SET hide_main_text = 1

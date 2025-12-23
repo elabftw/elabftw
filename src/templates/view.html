@@ -120,9 +120,8 @@
   {# BODY (show only if not empty) #}
   {% set body = Entity.entityData.body_html %}
   {% if body != '' %}
-      {# do not display body if set in metadata, done via css to avoid delayed disappearance after JS is executed #}
       {# body in view mode is text-dark for more lisibility see github issue #52 #}
-      <div {{ hideMainText ? 'hidden' }}>
+      <div {% if Entity.entityData.hide_main_text == 1 %}hidden='hidden'{% endif %}>
         <h3 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='body_view'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
         <div id='body_view' class='pt-2 ml-3 text-dark overflow-auto' data-save-hidden='body_view'>{{ body|raw }}</div>
         <hr>

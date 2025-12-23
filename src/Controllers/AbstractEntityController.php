@@ -202,8 +202,6 @@ abstract class AbstractEntityController implements ControllerInterface
             'classificationArr' => $this->classificationArr,
             'currencyArr' => $this->currencyArr,
             'Entity' => $this->Entity,
-            // Do we display the main body of a concrete entity? Default is true
-            'hideMainText' => $this->Entity->entityData['hide_main_text'] === 1,
             'entityProcurementRequestsArr' => $ProcurementRequests->readActiveForEntity($this->Entity->id ?? 0),
             'entityRequestActionsArr' => $RequestActions->readAllFull(),
             'pageTitle' => $this->getPageTitle(),
@@ -264,8 +262,6 @@ abstract class AbstractEntityController implements ControllerInterface
             'Entity' => $this->Entity,
             'entityProcurementRequestsArr' => $ProcurementRequests->readActiveForEntity($this->Entity->id ?? 0),
             'entityRequestActionsArr' => $RequestActions->readAllFull(),
-            // Do we display the main body of a concrete entity? Default is true
-            'hideMainText' => $this->Entity->entityData['hide_main_text'] === 1,
             'hideTitle' => true,
             'metadataGroups' => $Metadata->getGroups(),
             'mode' => 'edit',

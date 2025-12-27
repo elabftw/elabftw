@@ -212,7 +212,7 @@ abstract class AbstractEntity extends AbstractRest
             Action::Create => (
                 function () use ($reqBody) {
                     if (isset($reqBody['template']) && ((int) $reqBody['template']) !== -1) {
-                        return $this->createFromTemplate((int) $reqBody['template'], $reqBody['title']);
+                        return $this->createFromTemplate((int) $reqBody['template'], $reqBody['title'] ?? null);
                     }
                     // check if use of template is enforced at team level for experiments
                     $teamConfigArr = new Teams($this->Users, $this->Users->team)->readOne();

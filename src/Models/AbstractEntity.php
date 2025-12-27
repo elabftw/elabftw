@@ -212,7 +212,7 @@ abstract class AbstractEntity extends AbstractRest
             Action::Create => (
                 function () use ($reqBody) {
                     if (isset($reqBody['template']) && ((int) $reqBody['template']) !== -1) {
-                        return $this->createFromTemplate((int) $reqBody['template']);
+                        return $this->createFromTemplate((int) $reqBody['template'], $reqBody['title'] ?? null);
                     }
                     // check if use of template is enforced at team level for experiments
                     $teamConfigArr = new Teams($this->Users, $this->Users->team)->readOne();
@@ -525,6 +525,9 @@ abstract class AbstractEntity extends AbstractRest
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $queryParams ??= $this->getQueryParams();
+        if ($queryParams->getFastq()) {
+            return $this->readAllSimple($queryParams);
+        }
         return $this->readShow($queryParams, true);
     }
 
@@ -615,7 +618,7 @@ abstract class AbstractEntity extends AbstractRest
             $idSql = 'OR entity.id = :intQuery OR entity.custom_id = :intQuery';
         }
 
-        $sql = 'SELECT entity.id, entity.title, entity.custom_id, entity.state,
+        $sql = 'SELECT entity.id, entity.title, entity.custom_id, entity.state, entity.category,
             categoryt.color AS category_color,
             categoryt.title AS category_title,
             statust.color AS status_color,

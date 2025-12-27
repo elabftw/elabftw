@@ -112,6 +112,10 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(is_array($experiment));
         $this->assertEquals($title, $experiment['title']);
         $this->assertEquals(State::Normal->value, $experiment['state']);
+        // do a fastq read
+        $DisplayParams->getQuery()->add(array('fastq' => 1));
+        $fast = $this->Experiments->readAll($DisplayParams);
+        $this->assertNotEmpty($fast);
     }
 
     public function testUpdate(): void

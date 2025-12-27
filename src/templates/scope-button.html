@@ -6,11 +6,12 @@
 #}
 {% set scopeValue = App.Request.query.has('scope') ? App.Request.query.getInt('scope') : App.Users.userData[target] %}
 {% set setQueryParam = setQueryParam|default(0) %}
+{% set setInJs = setInJs|default('') %}
 {% if not scopeValue %}
   {% set scopeValue = 2 %}
 {% endif %}
 <div id='{{ btnId|default('scopeBtn') }}' class='btn-group'>
-  <button class='btn hl-hover-gray dropdown-toggle' type='button' data-toggle='dropdown' aria-haspopup='true' aria-label='{{ 'Scope'|trans }}' title='{{ 'Scope'|trans }}' aria-expanded='false'><i class='fas fa-{{ scopeValue|toIcon }} fa-fw mr-1'></i></button>
+  <button class='btn hl-hover-gray dropdown-toggle' type='button' id='{{ btnId ~ '_selected' }}' data-toggle='dropdown' aria-haspopup='true' aria-label='{{ 'Scope'|trans }}' title='{{ 'Scope'|trans }}' aria-expanded='false'><i class='fas fa-{{ scopeValue|toIcon }} fa-fw mr-1'></i></button>
   <div class='dropdown-menu'>
     <h6 class='dropdown-header'>{{ 'Scope'|trans }}</h6>
     <button type='button' data-target='{{ target }}' data-action='scope-change' data-reload='{{ reload }}' data-value='1' data-set-query-param='{{ setQueryParam }}' class='btn btn-dropdown-item dropdown-item {{ scopeValue == 1 ? 'active' }}'>

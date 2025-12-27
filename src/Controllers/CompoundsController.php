@@ -12,10 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
-use Elabftw\Models\ItemsTypes;
 use Override;
-
-use function array_merge;
 
 final class CompoundsController extends AbstractHtmlController
 {
@@ -29,16 +26,5 @@ final class CompoundsController extends AbstractHtmlController
     protected function getPageTitle(): string
     {
         return _('Compounds');
-    }
-
-    #[Override]
-    protected function getData(): array
-    {
-        return array_merge(
-            parent::getData(),
-            array(
-                'itemsTemplatesArr' => (new ItemsTypes($this->app->Users))->readAll(),
-            ),
-        );
     }
 }

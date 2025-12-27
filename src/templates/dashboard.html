@@ -12,7 +12,7 @@
     <div class='d-flex justify-content-between'>
       <h4><a href='experiments.php' class='color-medium'><i class='fas fa-flask mr-1'></i>{% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}</a></h4>
       <div>
-        {% include 'create-new.html' with {'entityPage': 'experiments'} %}
+        {% include 'create-new.html' with {'entityType': 'experiments'} %}
       </div>
     </div>
     <form class='mt-2' action='experiments.php' aria-label='{{ 'Quick search experiments'|trans }}'>
@@ -62,7 +62,7 @@
     <div class='d-flex justify-content-between'>
       <h4><a href='database.php' class='color-medium'><i class='fas fa-cubes-stacked mr-1'></i>{% trans %}Resource{% plural 2 %}Resources{% endtrans %}</a></h4>
       <div>
-        {% include 'create-new.html' with {'entityPage': 'database'} %}
+        {% include 'create-new.html' with {'entityType': 'items'} %}
       </div>
     </div>
     <form class='mt-2' action='database.php' aria-label='{{ 'Quick search resources'|trans }}'>

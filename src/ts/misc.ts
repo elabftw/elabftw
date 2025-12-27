@@ -214,29 +214,30 @@ export function clearForm(form: HTMLElement): void {
   });
 }
 
+export function getEntityTypeFromPage(): EntityType {
+  const scriptName = location.pathname.split('/').pop() || '';
+  switch (scriptName) {
+  case 'experiments.php':
+    return EntityType.Experiment;
+  case 'database.php':
+    return EntityType.Item;
+  case 'templates.php':
+    return EntityType.Template;
+  case 'resources-templates.php':
+    return EntityType.ItemType;
+  default:
+    return EntityType.Other;
+  }
+}
+
+
 // for view or edit mode, get type and id from the page to construct the entity object
 // enable usage with parent Window for iframe cases (e.g., with spreadsheet editor)
 export function getEntity(useParent: boolean = false): Entity {
-  let entityType: EntityType;
   let entityId: number | null = null;
+  const entityType: EntityType = getEntityTypeFromPage();
   // pick the right location (parent or self)
   const loc = useParent ? window.parent.location : window.location;
-  switch (loc.pathname) {
-  case '/experiments.php':
-    entityType = EntityType.Experiment;
-    break;
-  case '/database.php':
-    entityType = EntityType.Item;
-    break;
-  case '/templates.php':
-    entityType = EntityType.Template;
-    break;
-  case '/resources-templates.php':
-    entityType = EntityType.ItemType;
-    break;
-  default:
-    return {type: EntityType.Other, id: entityId};
-  }
   const params = new URLSearchParams(loc.search);
   if (params.has('id')) {
     entityId = parseInt(params.get('id')!, 10);
@@ -308,6 +309,8 @@ export async function reloadEntitiesShow(tag = ''): Promise<void | Response> {
   addAutocompleteToTagInputs();
   // listen to data-trigger elements
   listenTrigger();
+  // and set relative moments
+  relativeMoment();
 }
 
 export async function reloadElements(elementIds: string[]): Promise<void> {

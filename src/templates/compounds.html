@@ -14,8 +14,6 @@
 {# IMPORT FROM PUBCHEM #}
 {% include('import-pubchem-modal.html') %}
 {% include('create-compound-modal.html') %}
-{% include('create-new-item-from-compound-modal.html') %}
-{% include 'ask-title-modal.html' %}
 {% include('edit-compound-modal.html') %}
 <p>{{ 'Compounds are chemical entities associated with properties such as a CAS number, a molecular formula, SMILES or InChI representations, hazardous properties, etc... This page allows you to manage your compounds database, which is shared to everyone on the instance. Once created, a compound can be associated with a Resource (or Experiment).'|trans }}</p>
 {% if App.Config.configArr.compounds_require_edit_rights == 1 %}

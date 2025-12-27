@@ -99,7 +99,10 @@ Cypress.Commands.add('createEntity', (
   cy.get('[data-action="toggle-create-modal"]').last().click();
   cy.get(config.modal).should('be.visible');
   // create modal -> enter title & confirm
-  cy.get('#createNewFormTitle').type(title);
+  // do not use .type() here or for some reason the title won't be complete...
+  cy.get('#createNewFormTitle')
+    .invoke('val', title)
+    .trigger('input');
   cy.get('[data-cy="create-entity"]').click();
   // ensure we navigated to the new entry
   cy.get('#documentTitle').should('contain', title);

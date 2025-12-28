@@ -224,7 +224,8 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         // add specific permissions so we can check it later in the duplicated entry
         $canread = BasePermissions::Organization->toJson();
         $canwrite = BasePermissions::UserOnly->toJson();
-        $this->Experiments->patch(Action::Update, array('canread' => $canread, 'canwrite' => $canwrite));
+        // also add some custom settings like hiding main text
+        $this->Experiments->patch(Action::Update, array('canread' => $canread, 'canwrite' => $canwrite, 'hide_main_text' => 1));
         // add some steps and links in there, too
         $this->Experiments->Steps->postAction(Action::Create, array('body' => 'some step'));
         $this->Experiments->ItemsLinks->postAction(Action::Create, array());
@@ -236,6 +237,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $actualCanwrite = json_decode($new->entityData['canwrite'], true);
         $this->assertEquals(BasePermissions::Organization->value, $actualCanread['base']);
         $this->assertEquals(BasePermissions::UserOnly->value, $actualCanwrite['base']);
+        $this->assertEquals(1, $new->entityData['hide_main_text']);
     }
 
     public function testInsertTags(): void

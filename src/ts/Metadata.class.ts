@@ -133,6 +133,41 @@ export class Metadata {
   }
 
   /**
+   * Cleanup extra fields and group of extra fields
+   */
+  cleanupMetadata(metadata: ValidMetadata): void {
+    // remove empty extra_fields
+    if (metadata.extra_fields && Object.keys(metadata.extra_fields).length === 0) {
+      delete metadata.extra_fields;
+    }
+    // clean extra_fields_groups
+    if (metadata.elabftw?.extra_fields_groups) {
+      // when there are no fields, all groups are unused
+      if (!metadata.extra_fields) {
+        delete metadata.elabftw.extra_fields_groups;
+      } else {
+        // otherwise, keep only groups still referenced
+        const usedGroupIds = new Set<number>(
+          Object.values(metadata.extra_fields)
+            .map(f => f.group_id)
+            .filter((id): id is number => typeof id === 'number'),
+        );
+        metadata.elabftw.extra_fields_groups =
+          metadata.elabftw.extra_fields_groups.filter(group =>
+            usedGroupIds.has(group.id),
+          );
+        if (metadata.elabftw.extra_fields_groups.length === 0) {
+          delete metadata.elabftw.extra_fields_groups;
+        }
+      }
+    }
+    // final cleanup: remove empty elabftw object
+    if (metadata.elabftw && Object.keys(metadata.elabftw).length === 0) {
+      delete metadata.elabftw;
+    }
+  }
+
+  /**
    * Build text areas for extra fields (default type)
    */
   buildTextArea(name, properties: ExtraFieldProperties): HTMLTextAreaElement {

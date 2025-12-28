@@ -50,7 +50,6 @@ export interface ExtraFieldProperties {
 
 export interface MetadataElabftw {
   extra_fields_groups?: Array<ExtraFieldsGroup>,
-  display_main_text?: boolean,
 }
 
 export interface ExtraFieldsGroup {

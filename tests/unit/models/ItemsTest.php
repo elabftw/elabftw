@@ -171,11 +171,12 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $this->Items->canOrExplode('read');
         $ResourcesCategories = new ResourcesCategories(new Teams($this->Items->Users, $this->Items->Users->team));
         $category = $ResourcesCategories->create(title: 'Used in tests');
-        $this->Items->patch(Action::Update, array('category' => $category));
+        $this->Items->patch(Action::Update, array('category' => $category, 'hide_main_text' => 1));
         $newId = $this->Items->postAction(Action::Duplicate, array());
         $this->assertIsInt($newId);
         $this->Items->setId($newId);
         $this->assertEquals($category, $this->Items->entityData['category']);
+        $this->assertEquals(1, $this->Items->entityData['hide_main_text']);
     }
 
     // make sure the item inherits the permissions from the template target permissions

@@ -843,6 +843,11 @@ components:
               type: string
             fullname:
               type: string
+            hide_main_text:
+              type: integer
+              enum: [ 0, 1 ]
+              description: Hide the main text of an entry. When applied to templates, this setting also applies to derived entries.
+              default: 0
             id:
               type: integer
             items_links:
@@ -1270,11 +1275,6 @@ components:
           type: object
           nullable: true
           properties:
-            display_main_text:
-              type: boolean
-              nullable: true
-              description: The main text will be hidden if set to false. Use it on templates to force the use of extra fields, and only them for the reports.
-              default: true
             extra_fields_groups:
               type: array
               nullable: true

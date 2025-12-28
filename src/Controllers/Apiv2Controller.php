@@ -295,7 +295,7 @@ final class Apiv2Controller extends AbstractApiController
                         $Fingerprinter = new Fingerprinter($httpGetter, Env::asUrl('FINGERPRINTER_URL'));
                     }
                     return new Compounds(
-                        new HttpGetter(new Client(), $Config->configArr['proxy'], Env::asBool('DEV_MODE')),
+                        new HttpGetter(new Client(), $Config->configArr['proxy'], !Env::asBool('DEV_MODE')),
                         $this->requester,
                         $Fingerprinter,
                         $Config->configArr['compounds_require_edit_rights'] === '1',

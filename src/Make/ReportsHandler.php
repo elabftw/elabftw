@@ -14,6 +14,7 @@ namespace Elabftw\Make;
 
 use DateTimeImmutable;
 use DateTimeZone;
+use Elabftw\Elabftw\Env;
 use Elabftw\Enums\ReportScopes;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\AbstractRest;
@@ -36,7 +37,7 @@ final class ReportsHandler extends AbstractRest
 
     public function getResponse(ReportScopes $scope, ?InputBag $query = null): Response
     {
-        $httpGetter = new HttpGetter(new Client(), verifyTls: false);
+        $httpGetter = new HttpGetter(new Client(), verifyTls: !Env::asBool('DEV_MODE'));
         $Reporter = match ($scope) {
             ReportScopes::Compounds => new MakeCompoundsReport(new Compounds($httpGetter, $this->requester, new NullFingerprinter(), false)),
             ReportScopes::CompoundsHistory => (

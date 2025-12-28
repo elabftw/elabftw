@@ -973,7 +973,7 @@ abstract class AbstractEntity extends AbstractRest
     protected function bloxberg(): array
     {
         $configArr = Config::getConfig()->configArr;
-        $HttpGetter = new HttpGetter(new Client(), $configArr['proxy']);
+        $HttpGetter = new HttpGetter(new Client(), $configArr['proxy'], !Env::asBool('DEV_MODE'));
         $Maker = new MakeBloxberg(
             $this->Users,
             $this,

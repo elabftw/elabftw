@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Exceptions;
 
 use Elabftw\Enums\Messages;
-use Exception;
 use Override;
 use Psr\Log\LoggerInterface;
 
@@ -23,14 +22,6 @@ use Psr\Log\LoggerInterface;
 final class IllegalActionException extends AppException
 {
     protected Messages $error = Messages::InsufficientPermissions;
-
-    public function __construct(?string $message = null, int $code = 0, ?Exception $previous = null)
-    {
-        if ($message === null) {
-            $message = $this->error->toHuman();
-        }
-        parent::__construct($message, $code, $previous);
-    }
 
     #[Override]
     protected function emitLog(LoggerInterface $logger, int $userid): void

@@ -32,8 +32,8 @@ use Elabftw\Enums\Entrypoint;
 use Elabftw\Enums\Language;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\InvalidDeviceTokenException;
-use Elabftw\Exceptions\QuantumException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthInterface;
@@ -228,7 +228,7 @@ final class LoginController implements ControllerInterface
             try {
                 $Users = ExistingUser::fromEmail($this->Request->request->getString('email'));
             } catch (ResourceNotFoundException) {
-                throw new QuantumException(_('Invalid email/password combination.'));
+                throw new InvalidCredentialsException();
             }
             // check if authentication is locked for untrusted clients for that user
             if ($Users->allowUntrustedLogin() === false) {

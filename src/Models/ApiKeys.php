@@ -15,7 +15,7 @@ namespace Elabftw\Models;
 use Elabftw\AuditEvent\ApiKeyCreated;
 use Elabftw\AuditEvent\ApiKeyDeleted;
 use Elabftw\Enums\Action;
-use Elabftw\Exceptions\WithMessageException;
+use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\Filter;
@@ -114,7 +114,7 @@ final class ApiKeys extends AbstractRest
                 return $key;
             }
         }
-        throw new WithMessageException(_('Unauthorized'), 401, description: _('No corresponding API key found!'));
+        throw new UnauthorizedException(description: _('No corresponding API key found!'));
     }
 
     #[Override]

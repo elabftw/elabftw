@@ -19,12 +19,9 @@ use Elabftw\Models\Config;
 use HTMLPurifier;
 use HTMLPurifier_HTML5Config;
 
-use function checkdate;
 use function filter_var;
 use function grapheme_substr;
 use function grapheme_strlen;
-use function mb_strlen;
-use function mb_substr;
 use function strlen;
 use function trim;
 
@@ -76,21 +73,6 @@ final class Filter
             return $key;
         }
         throw new ImproperActionException('Incorrect value: must be a letter.');
-    }
-
-    /**
-     * Make sure the date is correct (YYYY-MM-DD)
-     */
-    public static function kdate(string $input): string
-    {
-        // Check if day/month/year are good
-        $year = (int) mb_substr($input, 0, 4);
-        $month = (int) mb_substr($input, 5, 2);
-        $day = (int) mb_substr($input, 8, 2);
-        if (mb_strlen($input) !== 10 || !checkdate($month, $day, $year)) {
-            return date('Y-m-d');
-        }
-        return $input;
     }
 
     /**

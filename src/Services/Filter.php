@@ -23,6 +23,7 @@ use function filter_var;
 use function grapheme_substr;
 use function grapheme_strlen;
 use function strlen;
+use function strtolower;
 use function trim;
 
 /**
@@ -107,15 +108,8 @@ final class Filter
         if ($output === false) {
             return '';
         }
-        return $output;
-    }
-
-    public static function email(string $input): string
-    {
-        // if the sent email is different from the existing one, check it's valid (not duplicate and respects domain constraint)
-        $Config = Config::getConfig();
-        $EmailValidator = new EmailValidator($input, (bool) $Config->configArr['admins_import_users'], $Config->configArr['email_domain']);
-        return $EmailValidator->validate();
+        // make it lowercase every time
+        return trim(strtolower($output));
     }
 
     /**

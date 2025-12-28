@@ -51,8 +51,6 @@ use PDO;
 use Symfony\Component\HttpFoundation\Request;
 use Override;
 
-use function strtolower;
-
 /**
  * Users
  */
@@ -192,7 +190,7 @@ class Users extends AbstractRest
         }
         if ($isValidated) {
             // send the instance level onboarding email
-            if (Config::getConfig()->configArr['onboarding_email_active'] === '1') {
+            if ($Config->configArr['onboarding_email_active'] === '1') {
                 new OnboardingEmail(-1)->create($userid);
             }
         } else {
@@ -667,7 +665,10 @@ class Users extends AbstractRest
             if (!$this->isSelf() && !$this->requester->isSysadmin()) {
                 throw new IllegalActionException('User tried to edit email of another user but is not sysadmin.');
             }
-            Filter::email($params->getStringContent());
+            // run email validator
+            $Config = Config::getConfig();
+            $EmailValidator = new EmailValidator($params->getStringContent(), (bool) $Config->configArr['admins_import_users'], $Config->configArr['email_domain']);
+            $EmailValidator->validate();
         }
 
         // columns that can only be modified by Sysadmin requester

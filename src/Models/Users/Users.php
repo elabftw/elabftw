@@ -51,6 +51,8 @@ use PDO;
 use Symfony\Component\HttpFoundation\Request;
 use Override;
 
+use function strtolower;
+
 /**
  * Users
  */
@@ -104,6 +106,8 @@ class Users extends AbstractRest
         $teams = $Teams->getTeamsFromIdOrNameOrOrgidArray($teams, $allowTeamCreation);
         $TeamsHelper = new TeamsHelper($teams[0]['id']);
 
+        // make email lowercase everytime
+        $email = strtolower($email);
         $EmailValidator = new EmailValidator($email, (bool) $Config->configArr['admins_import_users'], $Config->configArr['email_domain'], skipDomainValidation: $skipDomainValidation);
         $EmailValidator->validate();
 

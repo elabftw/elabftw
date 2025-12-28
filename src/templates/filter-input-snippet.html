@@ -1,7 +1,8 @@
 {# filter input. requires var target: the id of the table's tbody or ul element
  # optional targetType var tr or li #}
+ {% set placeholder = placeholder|default('Filter'|trans) %}
 <div class='input-group'>
-  <input type='text' aria-label='{{ 'Filter'|trans }}' placeholder='{{ 'Filter'|trans }}' data-filter-target='{{ target }}' data-target-type='{{ targetType|default('tr') }}' class='form-control form-inline' />
+  <input type='text' aria-label='{{ 'Filter'|trans }}' placeholder='{{ placeholder }}' data-filter-target='{{ target }}' data-target-type='{{ targetType|default('tr') }}' class='form-control form-inline' />
   <div class='input-group-append'>
     <button type='button' class='btn btn-secondary bg-medium border-secondlevel' title='{{ 'Clear'|trans }}' aria-label='{{ 'Clear'|trans }}'><i class='color-white fas fa-times fa-fw'></i></button>
   </div>

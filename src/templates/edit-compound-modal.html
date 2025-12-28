@@ -44,11 +44,16 @@
       </div>
       <form aria-label='{{ 'Edit compound'|trans }}' id='editCompoundForm'>
         <div class='modal-body'>
-          <div class='d-flex justify-content-between'>
+          <div>
             <button type='button' class='btn btn-secondary btn-sm' data-action='search-entity-from-compound' data-page='database'>{{ 'Search associated resources'|trans }}</button>
-            <button type='button' class='ml-2 btn btn-secondary btn-sm' data-action='search-entity-from-compound' data-page='experiments'>{{ 'Search associated experiments'|trans }}</button>
-            <button type='button' class='btn btn-primary btn-sm ml-auto' data-action='toggle-modal' data-dismiss='modal' data-target='createResourceFromCompoundModal'>{{ 'Create resource from compound'|trans }}</button>
+            <button type='button' class='btn btn-secondary btn-sm' data-action='search-entity-from-compound' data-page='experiments'>{{ 'Search associated experiments'|trans }}</button>
           </div>
+
+          <div class='mt-1'>
+            <button type='button' class='btn btn-primary btn-sm' data-action='toggle-create-modal' data-type='items' data-get-compound-id-from='editCompoundModalSaveBtn'><i class='fas fa-cubes-stacked fa-fw mr-1 color-white'></i>{{ 'Create resource linked to compound'|trans }}</button>
+            <button type='button' class='btn btn-primary btn-sm' data-action='toggle-create-modal' data-type='experiments' data-get-compound-id-from='editCompoundModalSaveBtn'><i class='fas fa-flask fa-fw mr-1 color-white'></i>{{ 'Create experiment linked to compound'|trans }}</button>
+          </div>
+          <hr>
           <div class='my-2' id='editCompoundInputs'>
             {{ _self.textParam('name', 'Name'|trans, compoundsDisabled, 'required') }}
             {{ _self.textParam('iupac_name', 'IUPAC Name'|trans, compoundsDisabled) }}

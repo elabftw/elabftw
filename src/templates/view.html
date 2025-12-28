@@ -17,9 +17,6 @@
         <span id='documentTitle' class='breakable {{ not Entity.isReadOnly ? 'malleableTitle hl-hover-gray' }} rounded py-1' data-target='title' data-endpoint='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}'>{{ Entity.entityData.title }}</span>
       </h1>
     </div>
-    <div class='ml-auto'>
-      {% include 'create-new.html' %}
-    </div>
   </div>
   {% endblock %}
   {% block createmodal %}
@@ -140,13 +137,21 @@
   <hr>
 {% endif %}
 
-{% include 'uploads.html' %}
+{% if Entity.entityData.uploads %}
+  {% include 'uploads.html' %}
+{% endif %}
 
 {% include 'steps-view.html' %}
 
-{% include 'links.html' %}
+{# we only show this section in view mode if there are at least one link #}
+{% if Entity.entityData.experiments_links or Entity.entityData.items_links or Entity.entityData.compounds_links %}
+  {% include 'links.html' %}
+{% endif %}
 
-{% include 'storage-view-edit.html' %}
+{# same for storage #}
+{% if Entity.entityData.containers %}
+  {% include 'storage-view-edit.html' %}
+{% endif %}
 
 {# PERMISSIONS #}
 <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='permissionsDiv'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Permissions'|trans }}</h3>

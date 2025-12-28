@@ -41,6 +41,9 @@ try {
         $tmpSettings = $IdpsHelper->getSettings(); // get temporary settings to decode message
         $resp = new SamlResponse(new SamlSettings($tmpSettings), $App->Request->request->getString('SAMLResponse'));
         $entId = $resp->getIssuers()[0]; // getIssuers returns always one or two entity ids
+        if (empty($entId)) {
+            throw new ImproperActionException('Could not find an Issuer in the response sent by the IdP!');
+        }
 
         $settings = $IdpsHelper->getSettingsByEntityId($entId);
         $idpId = $settings['idp_id'];

@@ -18,7 +18,7 @@ use Override;
 /**
  * Throw this if the MFA code verification failed
  */
-final class InvalidMfaCodeException extends ForbiddenException
+final class InvalidMfaCodeException extends UnauthorizedException
 {
     #[Override]
     protected function getErrorMessage(): string

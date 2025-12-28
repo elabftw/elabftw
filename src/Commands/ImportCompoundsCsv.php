@@ -86,11 +86,11 @@ final class ImportCompoundsCsv extends Command
         $locationSplitter = $input->getOption('location-splitter');
         $Config = Config::getConfig();
         $Fingerprinter = new NullFingerprinter();
-        $httpGetter = new HttpGetter(new Client(), $Config->configArr['proxy'], Env::asBool('DEV_MODE'));
+        $httpGetter = new HttpGetter(new Client(), $Config->configArr['proxy'], !Env::asBool('DEV_MODE'));
         if (Env::asBool('USE_FINGERPRINTER')) {
             // we use a different httpGetter object so we can configure proxy usage
             $proxy = Env::asBool('FINGERPRINTER_USE_PROXY') ? $Config->configArr['proxy'] : '';
-            $fingerPrinterHttpGetter = new HttpGetter(new Client(), $proxy, Env::asBool('DEV_MODE'));
+            $fingerPrinterHttpGetter = new HttpGetter(new Client(), $proxy, !Env::asBool('DEV_MODE'));
             $Fingerprinter = new Fingerprinter($fingerPrinterHttpGetter, Env::asUrl('FINGERPRINTER_URL'));
         }
 

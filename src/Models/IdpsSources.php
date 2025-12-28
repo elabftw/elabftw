@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DOMDocument;
+use Elabftw\Elabftw\Env;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BinaryValue;
 use Elabftw\Exceptions\ImproperActionException;
@@ -60,7 +61,7 @@ final class IdpsSources extends AbstractRest
                 function () {
                     $source = $this->readOne();
                     $Config = Config::getConfig();
-                    $getter = new HttpGetter(new Client(), $Config->configArr['proxy']);
+                    $getter = new HttpGetter(new Client(), $Config->configArr['proxy'], !Env::asBool('DEV_MODE'));
                     $Url2Xml = new Url2Xml($getter, $source['url'], new DOMDocument());
                     $dom = $Url2Xml->getXmlDocument();
                     $Xml2Idps = new Xml2Idps($dom);

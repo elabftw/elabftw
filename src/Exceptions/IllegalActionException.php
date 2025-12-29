@@ -12,17 +12,14 @@ declare(strict_types=1);
 
 namespace Elabftw\Exceptions;
 
-use Elabftw\Enums\Messages;
 use Override;
 use Psr\Log\LoggerInterface;
 
 /**
  * For permissions issues
  */
-final class IllegalActionException extends AppException
+final class IllegalActionException extends ForbiddenException
 {
-    protected Messages $error = Messages::InsufficientPermissions;
-
     #[Override]
     protected function emitLog(LoggerInterface $logger, int $userid): void
     {

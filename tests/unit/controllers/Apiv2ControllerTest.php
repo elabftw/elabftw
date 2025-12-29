@@ -120,10 +120,9 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
         $this->assertIsString($content);
         $data = json_decode($content, true);
         $this->assertSame(400, $data['code']);
-        $this->assertSame('Bad Request', $data['message']);
         $this->assertSame(
             'Unknown "action" value. Expected one of: getcollections, gettypes.',
-            $data['description']
+            $data['message']
         );
     }
 }

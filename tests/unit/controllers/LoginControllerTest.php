@@ -15,7 +15,7 @@ namespace Elabftw\Controllers;
 use Elabftw\Auth\CookieToken;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\QuantumException;
+use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Params\UserParams;
 use Elabftw\Services\MfaHelper;
@@ -156,7 +156,7 @@ class LoginControllerTest extends \PHPUnit\Framework\TestCase
             $Request,
             new Session(),
         );
-        $this->expectException(QuantumException::class);
+        $this->expectException(InvalidCredentialsException::class);
         $LoginController->getResponse();
     }
 
@@ -256,7 +256,7 @@ class LoginControllerTest extends \PHPUnit\Framework\TestCase
         $Request = Request::createFromGlobals();
         $Request->request->set('auth_type', 'demo');
         $Request->request->set('email', 'sysadmin@AHAHAHAHAHAHAHAHAHA.com');
-        $this->expectException(QuantumException::class);
+        $this->expectException(InvalidCredentialsException::class);
         new LoginController(
             $this->config,
             $Request,
@@ -270,7 +270,7 @@ class LoginControllerTest extends \PHPUnit\Framework\TestCase
         $Request = Request::createFromGlobals();
         $Request->request->set('auth_type', 'demo');
         $Request->request->set('email', 'toto@yopmail.com');
-        $this->expectException(QuantumException::class);
+        $this->expectException(InvalidCredentialsException::class);
         new LoginController(
             $this->config,
             $Request,

@@ -21,11 +21,10 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\Storage;
+use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidApiSubModelException;
-use Elabftw\Exceptions\ResourceNotFoundException;
-use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Import\Handler as ImportHandler;
 use Elabftw\Interfaces\RestInterface;
@@ -122,33 +121,11 @@ final class Apiv2Controller extends AbstractApiController
                 // Note: can only be triggered with a HEAD because the allowed methods are filtered at nginx level too
                 default => new Response('Invalid HTTP request method!', Response::HTTP_METHOD_NOT_ALLOWED, array('Allow' => implode(', ', $this->allowedMethods)))
             };
-        } catch (IllegalActionException $e) {
-            $error = array(
-                'code' => 403,
-                'message' => 'Access Forbidden',
-                'description' => $e->getMessage(),
-            );
-            return new JsonResponse($error, $error['code']);
-        } catch (UnprocessableContentException $e) {
+        } catch (AppException $e) {
             $error = array(
                 'code' => $e->getCode(),
-                'message' => 'Unprocessable Request',
-                'description' => $e->getMessage(),
-            );
-            return new JsonResponse($error, $error['code']);
-        } catch (ResourceNotFoundException $e) {
-            $error = array(
-                'code' => 404,
-                'message' => 'Resource Not Found',
-                'description' => 'The resource was not found.',
-            );
-            return new JsonResponse($error, $error['code']);
-            // must be after the catch ResourceNotFound because it's their parent
-        } catch (ImproperActionException $e) {
-            $error = array(
-                'code' => 400,
-                'message' => 'Bad Request',
-                'description' => $e->getMessage(),
+                'message' => $e->getMessage(),
+                'description' => $e->getDescription(),
             );
             return new JsonResponse($error, $error['code']);
         } catch (Exception $e) {

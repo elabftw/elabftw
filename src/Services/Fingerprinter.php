@@ -39,7 +39,7 @@ final class Fingerprinter implements FingerprinterInterface
         try {
             return json_decode($response, true, 512, JSON_THROW_ON_ERROR);
         } catch (JsonException $e) {
-            throw new ImproperActionException('Invalid JSON from fingerprinting service', 0, $e);
+            throw new ImproperActionException('Invalid JSON from fingerprinting service', 400, $e);
         }
     }
 }

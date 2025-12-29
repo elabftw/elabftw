@@ -14,7 +14,6 @@ namespace Elabftw\Elabftw;
 use Elabftw\Controllers\LoginController;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users\Users;
@@ -119,7 +118,7 @@ try {
     }
     $App->boot();
 
-} catch (UnauthorizedException | InvalidCsrfTokenException $e) {
+} catch (UnauthorizedException $e) {
     // KICK USER TO LOGOUT PAGE THAT WILL REDIRECT TO LOGIN PAGE
     $cookieOptions = array(
         'expires' => time() + 30,

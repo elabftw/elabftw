@@ -39,6 +39,8 @@ final class Templates extends AbstractTemplateEntity
         ?string $title = null,
         ?string $body = null,
         ?DateTimeImmutable $date = null,
+        ?BasePermissions $canreadBase = BasePermissions::User,
+        ?BasePermissions $canwriteBase = BasePermissions::User,
         ?string $canread = null,
         ?string $canwrite = null,
         ?bool $canreadIsImmutable = false,
@@ -61,11 +63,13 @@ final class Templates extends AbstractTemplateEntity
         if (isset($this->Users->userData['default_write']) && $canwrite === null) {
             $canwrite = $this->Users->userData['default_write'];
         }
+        $canreadBase ??= $this->Users->userData['default_read_base'] ?? BasePermissions::Team->value;
+        $canwriteBase ??= $this->Users->userData['default_write_base'] ?? BasePermissions::User->value;
         $canread ??= BasePermissions::Team->toJson();
         $canwrite ??= BasePermissions::User->toJson();
 
-        $sql = 'INSERT INTO experiments_templates(team, title, body, userid, category, status, metadata, canread, canwrite, canread_target, canwrite_target, content_type, rating, canread_is_immutable, canwrite_is_immutable, hide_main_text)
-            VALUES(:team, :title, :body, :userid, :category, :status, :metadata, :canread, :canwrite, :canread_target, :canwrite_target, :content_type, :rating, :canread_is_immutable, :canwrite_is_immutable, :hide_main_text)';
+        $sql = 'INSERT INTO experiments_templates(team, title, body, userid, category, status, metadata, canread_base, canwrite_base, canread, canwrite, canread_target, canwrite_target, content_type, rating, canread_is_immutable, canwrite_is_immutable, hide_main_text)
+            VALUES(:team, :title, :body, :userid, :category, :status, :metadata, :canread_base, :canwrite_base, :canread, :canwrite, :canread_target, :canwrite_target, :content_type, :rating, :canread_is_immutable, :canwrite_is_immutable, :hide_main_text)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindParam(':title', $title);
@@ -74,6 +78,8 @@ final class Templates extends AbstractTemplateEntity
         $req->bindParam(':category', $category, PDO::PARAM_INT);
         $req->bindParam(':status', $status, PDO::PARAM_INT);
         $req->bindParam(':metadata', $metadata);
+        $req->bindParam(':canread_base', $canreadBase);
+        $req->bindParam(':canwrite_base', $canwriteBase);
         $req->bindParam(':canread', $canread);
         $req->bindParam(':canwrite', $canwrite);
         $req->bindParam(':canread_is_immutable', $canreadIsImmutable, PDO::PARAM_INT);

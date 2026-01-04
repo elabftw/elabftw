@@ -56,6 +56,7 @@ interface Selected {
   tags: number[];
   target_owner: number;
   can: string;
+  can_base: number;
 }
 
 enum Method {

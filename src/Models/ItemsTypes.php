@@ -39,6 +39,8 @@ final class ItemsTypes extends AbstractTemplateEntity
         ?string $title = null,
         ?string $body = null,
         ?DateTimeImmutable $date = null,
+        ?BasePermissions $canreadBase = BasePermissions::User,
+        ?BasePermissions $canwriteBase = BasePermissions::User,
         ?string $canread = null,
         ?string $canwrite = null,
         ?bool $canreadIsImmutable = false,
@@ -54,14 +56,18 @@ final class ItemsTypes extends AbstractTemplateEntity
     ): int {
         $title = Filter::title($title ?? _('Default'));
         $defaultPermissions = BasePermissions::Team->toJson();
+        $canreadBase ??= $this->Users->userData['default_read_base'] ?? BasePermissions::Team->value;
+        $canwriteBase ??= $this->Users->userData['default_write_base'] ?? BasePermissions::User->value;
 
-        $sql = 'INSERT INTO items_types(userid, title, body, team, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canread_target, canwrite_target, category, content_type, status, rating, metadata, hide_main_text)
-            VALUES(:userid, :title, :body, :team, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canread_target, :canwrite_target, :category, :content_type, :status, :rating, :metadata, :hide_main_text)';
+        $sql = 'INSERT INTO items_types(userid, title, body, team, canread_base, canwrite_base, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canread_target, canwrite_target, category, content_type, status, rating, metadata, hide_main_text)
+            VALUES(:userid, :title, :body, :team, :canread_base, :canwrite_base, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canread_target, :canwrite_target, :category, :content_type, :status, :rating, :metadata, :hide_main_text)';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':userid', $this->Users->userid, PDO::PARAM_INT);
         $req->bindValue(':title', $title);
         $req->bindValue(':body', $body);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
+        $req->bindParam(':canread_base', $canreadBase);
+        $req->bindParam(':canwrite_base', $canwriteBase);
         $req->bindParam(':canread', $defaultPermissions);
         $req->bindParam(':canwrite', $defaultPermissions);
         $req->bindParam(':canread_is_immutable', $canreadIsImmutable, PDO::PARAM_INT);

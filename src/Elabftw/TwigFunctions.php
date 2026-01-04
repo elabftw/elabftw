@@ -97,15 +97,6 @@ final class TwigFunctions
         return (new DateTime())->modify($input)->format('Y-m-d H:i:s');
     }
 
-    public static function extractJson(string $json, string $key): bool|int
-    {
-        $decoded = json_decode($json, true, 3, JSON_THROW_ON_ERROR);
-        if (isset($decoded[$key])) {
-            return (int) $decoded[$key];
-        }
-        return false;
-    }
-
     public static function isInJsonArray(string $json, string $key, int $target): bool
     {
         $decoded = json_decode($json, true, 3, JSON_THROW_ON_ERROR);

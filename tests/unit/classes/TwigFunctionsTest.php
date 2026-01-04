@@ -48,14 +48,6 @@ class TwigFunctionsTest extends \PHPUnit\Framework\TestCase
         $this->assertMatchesRegularExpression('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', TwigFunctions::toDatetime('2023-02-01'));
     }
 
-    public function testExtractJson(): void
-    {
-        $json = BasePermissions::Organization->toJson();
-        $key = 'base';
-        $this->assertEquals(BasePermissions::Organization->value, TwigFunctions::extractJson($json, $key));
-        $this->assertFalse(TwigFunctions::extractJson($json, 'unknown_key'));
-    }
-
     public function testIsInJsonArray(): void
     {
         $json = '{"my_arr": [ 4, 5, 6 ]}';

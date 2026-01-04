@@ -27,18 +27,19 @@ final class Permissions
 {
     private TeamGroups $TeamGroups;
 
+    private BasePermissions $canreadBase;
+
+    private BasePermissions $canwriteBase;
+
     private array $canread;
 
     private array $canwrite;
 
-    /**
-     * Constructor
-     *
-     * @param array<string, mixed> $item
-     */
     public function __construct(private Users $Users, private array $item)
     {
         $this->TeamGroups = new TeamGroups($this->Users);
+        $this->canreadBase = BasePermissions::from($item['canread_base']);
+        $this->canwriteBase = BasePermissions::from($item['canwrite_base']);
         $this->canread = json_decode($item['canread'], true, 512, JSON_THROW_ON_ERROR);
         $this->canwrite = json_decode($item['canwrite'], true, 512, JSON_THROW_ON_ERROR);
     }
@@ -53,13 +54,13 @@ final class Permissions
             return array('read' => true, 'write' => true);
         }
 
-        return array('read' => $this->getCan($this->canread), 'write' => false);
+        return array('read' => $this->getCan($this->canreadBase, $this->canread), 'write' => false);
     }
 
-    public function getCan(array $can): bool
+    public function getCan(BasePermissions $base, array $can): bool
     {
         // if base permission is public, we can
-        if ($can['base'] === BasePermissions::Full->value) {
+        if ($base === BasePermissions::Full) {
             return true;
         }
 
@@ -68,12 +69,12 @@ final class Permissions
             return false;
         }
 
-        if ($can['base'] === BasePermissions::Organization->value && $this->Users instanceof AuthenticatedUser) {
+        if ($base === BasePermissions::Organization && $this->Users instanceof AuthenticatedUser) {
             return true;
         }
 
         // if the base setting is teams, check we are in the same team than the $item
-        if ($can['base'] === BasePermissions::Team->value) {
+        if ($base === BasePermissions::Team) {
             // items will have a team, make sure it's the same as the one we are logged in
             if (isset($this->item['team']) && ($this->item['team'] === $this->Users->userData['team'])) {
                 return true;
@@ -81,7 +82,7 @@ final class Permissions
         }
 
         // if the setting is 'user' (meaning user + admin(s)) check we are admin in the same team as the entity team column
-        if ($can['base'] === BasePermissions::User->value) {
+        if ($base === BasePermissions::User) {
             $TeamsHelper = new TeamsHelper($this->item['team']);
             if ($this->Users->isAdmin && $TeamsHelper->isAdminInTeam($this->Users->userData['userid'])) {
                 return true;
@@ -130,6 +131,6 @@ final class Permissions
         if (($this->item['locked'] ?? false) && ($this->item['lockedby'] !== $this->Users->userData['userid']) && !$this->Users->isAdmin) {
             return false;
         }
-        return $this->getCan($this->canwrite);
+        return $this->getCan($this->canwriteBase, $this->canwrite);
     }
 }

@@ -6,6 +6,12 @@
 {% else %}
   {% set identifier = rw %}
   {% set permissionsJson = Entity.entityData[rw] %}
+  {% set can_base = Entity.entityData.canread_base %}
+  {% if rw == 'canwrite' or rw == 'canwrite_target' %}
+    {% set can_base = Entity.entityData.canwrite_base %}
+  {% elseif rw == 'canbook' %}
+    {% set can_base = Entity.entityData.canbook_base %}
+  {% endif %}
 {% endif %}
 
 {# default icon/label are for canread #}
@@ -35,10 +41,10 @@
         <div data-rw={{ rw }}>
           <label for='{{ identifier }}_select_base'>{{ 'Base'|trans }}</label>
           <p class='smallgray'>{{ 'This setting sets a baseline upon which you can add more permissions by selecting teams, user groups or users below.'|trans }}</p>
-          <select id='{{ identifier }}_select_base' class='form-control'>
+          <select id='{{ identifier }}_select_base' class='form-control' data-trigger='change' data-model='{{ Entity.entityType.value }}/{{ Entity.id }}' data-target='{{ rw }}_base'>
             {% for key, value in visibilityArr %}
               <option value='{{ key }}'
-              {{ permissionsJson|extractJson('base') == key ? ' selected' }}
+              {{ can_base == key ? ' selected' }}
               >{{ value|trans }}</option>
             {% endfor %}
           </select>

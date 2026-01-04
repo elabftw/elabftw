@@ -26,6 +26,7 @@ use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
@@ -160,6 +161,8 @@ abstract class AbstractEntity extends AbstractRest
         ?string $title = null,
         ?string $body = null,
         ?DateTimeImmutable $date = null,
+        ?BasePermissions $canreadBase = BasePermissions::User,
+        ?BasePermissions $canwriteBase = BasePermissions::User,
         ?string $canread = null,
         ?string $canwrite = null,
         ?bool $canreadIsImmutable = false,
@@ -183,6 +186,8 @@ abstract class AbstractEntity extends AbstractRest
         $id = $this->create(
             title: $title ?? $template['title'],
             body: $template['body'],
+            canreadBase: BasePermissions::from($template['canread_base']),
+            canwriteBase: BasePermissions::from($template['canwrite_base']),
             canread: $template['canread_target'],
             canwrite: $template['canwrite_target'],
             canreadIsImmutable: (bool) $template['canread_is_immutable'],
@@ -241,6 +246,8 @@ abstract class AbstractEntity extends AbstractRest
                     return $this->create(
                         body: $reqBody['body'] ?? null,
                         title: $reqBody['title'] ?? null,
+                        canreadBase: BasePermissions::tryFrom((int) ($reqBody['canread_base'] ?? 0)),
+                        canwriteBase: BasePermissions::tryFrom((int) ($reqBody['canwrite_base'] ?? 0)),
                         canread: $reqBody['canread'] ?? null,
                         canwrite: $reqBody['canwrite'] ?? null,
                         canreadIsImmutable: (bool) ($reqBody['canread_is_immutable'] ?? false),
@@ -589,6 +596,12 @@ abstract class AbstractEntity extends AbstractRest
         }
         $exclusiveEditMode = $this->ExclusiveEditMode->readOne();
         $this->entityData['exclusive_edit_mode'] = empty($exclusiveEditMode) ? null : $exclusiveEditMode;
+        $this->entityData['canread_base_human'] = BasePermissions::from($this->entityData['canread_base'])->toHuman();
+        $this->entityData['canwrite_base_human'] = BasePermissions::from($this->entityData['canwrite_base'])->toHuman();
+        if (isset($this->entityData['canbook_base'])) {
+            $this->entityData['canbook_base_human'] = BasePermissions::from($this->entityData['canbook_base'])->toHuman();
+        }
+
         ksort($this->entityData);
         return $this->entityData;
     }
@@ -804,8 +817,9 @@ abstract class AbstractEntity extends AbstractRest
         }
         // ensure no changes happen on entries with immutable permissions
         // admins can override the immutability of an entity's permissions. See #5800
-        if ($params->getTarget() === 'canread' || $params->getTarget() === 'canwrite') {
-            if (($this->entityData[$params->getTarget() . '_is_immutable'] ?? 0) === 1
+        if ($params->getTarget() === 'canread' || $params->getTarget() === 'canwrite' || $params->getTarget() === 'canread_base' || $params->getTarget() === 'canwrite_base') {
+            $immutableKey = str_replace('_base', '', $params->getTarget()) . '_is_immutable';
+            if (($this->entityData[$immutableKey] ?? 0) === 1
                 && !($this instanceof AbstractTemplateEntity)
                 && !($this->Users->isAdmin)
             ) {

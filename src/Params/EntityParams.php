@@ -31,6 +31,7 @@ final class EntityParams extends ContentParams implements ContentParamsInterface
             'proc_currency' => Currency::from($this->asInt())->value,
             'body', 'bodyappend' => $this->getBody(),
             'canread', 'canwrite', 'canbook', 'canread_target', 'canwrite_target' => $this->getCanJson(),
+            'canread_base', 'canwrite_base', 'canbook_base', 'canread_base_target', 'canwrite_base_target' => $this->getCanBase(),
             'color' => Check::color($this->asString()),
             'book_max_minutes', 'book_max_slots', 'book_is_cancellable', 'book_cancel_minutes', 'content_type', 'proc_pack_qty', 'rating', 'userid' => $this->asInt(),
             'state' => $this->getState(),

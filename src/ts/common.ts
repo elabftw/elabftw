@@ -603,7 +603,6 @@ on('save-permissions', (el: HTMLElement) => {
     .map(u => `user:${(u as HTMLElement).dataset.id}`);
 
   params[el.dataset.rw] = permissionsToJson(
-    parseInt(($('#' + el.dataset.identifier + '_select_base').val() as string), 10),
     ($('#' + el.dataset.identifier + '_select_teams').val() as string[])
       .concat($('#' + el.dataset.identifier + '_select_teamgroups').val() as string[])
       .concat(existingUsers),

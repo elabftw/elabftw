@@ -398,15 +398,15 @@
                 <option value='{{ status.id }}'>{{ status.title }}</option>
             {% endfor %}
           </select>
-          {# CANREAD #}
-          <select aria-label='{{ 'Change read permissions'|trans }}' name='canread' autocomplete='off' class='mr-1 mb-2 form-control'>
+          {# CANREAD BASE #}
+          <select aria-label='{{ 'Change read permissions'|trans }}' name='canread_base' autocomplete='off' class='mr-1 mb-2 form-control'>
             <option selected disabled value=''>{{ 'Change read permissions'|trans }}</option>
             {% for key, value in visibilityArr %}
               <option value='{{ key }}'>{{ value }}</option>
             {% endfor %}
           </select>
-          {# CANWRITE #}
-          <select aria-label='{{ 'Change write permissions'|trans }}' name='canwrite' autocomplete='off' class='mr-1 mb-2 form-control'>
+          {# CANWRITE BASE #}
+          <select aria-label='{{ 'Change write permissions'|trans }}' name='canwrite_base' autocomplete='off' class='mr-1 mb-2 form-control'>
             <option selected disabled value=''>{{ 'Change write permissions'|trans }}</option>
             {% for key, value in visibilityArr %}
               <option value='{{ key }}'>{{ value }}</option>

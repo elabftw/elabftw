@@ -11,15 +11,20 @@ import { ApiC } from './api';
 import { entity } from './getEntity';
 import { on } from './handlers';
 import { Target } from './interfaces';
-// import { TomSelect } from './misc';
-// import $ from 'jquery';
+import $ from 'jquery';
+import { TomSelect } from './misc';
 
 on('transfer-ownership', () => {
-  const value = (document.getElementById('target_owner') as HTMLInputElement).value;
-  console.log(value);
+  const userId = (document.getElementById('targetOwnerSelect') as HTMLInputElement).value;
+  const teamId = (document.getElementById('team') as HTMLSelectElement).value;
   const params = {};
-  params[Target.UserId] = parseInt(value.split(' ')[0], 10);
-  ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => window.location.reload());
+  params[Target.UserId] = parseInt(userId.split(' ')[0], 10);
+  params[Target.Team] = parseInt(teamId.split(' ')[0], 10);
+  // ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => window.location.reload());
+  ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => {
+    const path = window.location.pathname;
+    window.location.replace(path.split('/').pop());
+  });
 });
 
 function filterUsersByTeam(
@@ -47,4 +52,25 @@ on('change-team', (el) => {
   const selectedTeamId = (el as HTMLSelectElement).value;
   const userSelect = document.getElementById('target_owner') as HTMLSelectElement;
   filterUsersByTeam(userSelect, selectedTeamId);
+});
+
+// when a user is selected, we prevent the team selection change in order to
+// avoid discrepancy (.e.g, selecting Toto in team 1, then changing Team to 2)
+function setupUserInputWatcher() {
+  const userInput = document.getElementById('targetOwnerSelect') as HTMLInputElement;
+  const teamSelectEl = document.getElementById('team') as HTMLSelectElement & { tomselect?: TomSelect };
+  if (!userInput || !teamSelectEl || !teamSelectEl.tomselect) return;
+  const teamTomSelect = teamSelectEl.tomselect;
+  userInput.addEventListener('input', () => {
+    const hasValue = userInput.value.trim().length > 0;
+    if (hasValue) {
+      teamTomSelect.disable();
+    } else {
+      teamTomSelect.enable();
+    }
+  });
+}
+
+$('#ownerModal').on('shown.bs.modal', () => {
+  setupUserInputWatcher();
 });

@@ -1,6 +1,5 @@
 {# Modal for ownership transfer #}
-<div class='' id='ownerModal' tabindex='-1' role='dialog' aria-labelledby='ownerModalLabel'>
-{#<div class='modal fade' id='ownerModal' tabindex='-1' role='dialog' aria-labelledby='ownerModalLabel'>#}
+<div class='modal fade' id='ownerModal' tabindex='-1' role='dialog' aria-labelledby='ownerModalLabel'>
   <div class='modal-dialog' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
@@ -11,8 +10,8 @@
       </div>
       <div class='modal-body'>
         {# SELECT TEAM #}
-        <label for='team_select'>{{ 'Select a team'|trans }}</label>
-        <select required name='team_id' class='form-control' id='team_select' data-action='change-team' autocomplete='off'>
+        <label for='team'>{{ 'Select a team'|trans }}</label>
+        <select required name='team_id' class='form-control' id='team' data-action='change-team' autocomplete='off'>
           <option selected disabled value=''>{{ 'Select a team'|trans }}</option>
           {% for team in teamsArr %}
             <option value='{{ team.id }}'>{{ team.name }}</option>
@@ -30,17 +29,8 @@
           {# this exists so Firefox doesn't process the Search user field as password. No idea why it would do it in the first place though... #}
           {# and autocomplete='off' doesn't work #}
           <label hidden for='target_owner'>{{ 'Search user'|trans }}</label>
-          <select class='form-control' id='target_owner' name='owner'>
-            {% for user in usersArr %}
-              {% set teamIds = [] %}
-              {% for team in user.teams %}
-                {% set teamIds = teamIds|merge([team.id]) %}
-              {% endfor %}
-              <option
-                value='{{ user.userid }}' data-teams='{{ teamIds|join(',') }}' {{ user.userid == App.Users.userid ? 'selected' }}> {{ user.fullname }}
-              </option>
-            {% endfor %}
-          </select>
+          <input type='text' placeholder='{{ 'Search user'|trans }}' id='targetOwnerSelect' class='form-control' data-identifier='targetOwnerSelect' data-action='autocomplete' data-target='users' data-team='team'>
+          <div id='autocompleteAnchorDiv_targetOwnerSelect'></div>
         </div>
       </div>
       <div class='modal-footer'>

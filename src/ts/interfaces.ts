@@ -180,6 +180,7 @@ enum Target {
   State = 'state',
   Title = 'title',
   UserId = 'userid',
+  Team = 'team',
 }
 
 enum FileType {

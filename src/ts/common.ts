@@ -1156,7 +1156,18 @@ on('autocomplete', (el: HTMLElement) => {
       const queryTerm = ['experiments', 'items'].includes(el.dataset.target)
         ? escapeExtendedQuery(term)
         : term;
-      ApiC.getJson(`${el.dataset.target}/?q=${encodeURIComponent(queryTerm)}`).then(json => {
+
+      const params = new URLSearchParams();
+      params.set('q', queryTerm);
+
+      // allow filtering users within a specific team
+      if (el.dataset.team) {
+        const teamId = document.getElementById(el.dataset.team) as HTMLInputElement | HTMLSelectElement;
+        if (teamId?.value) {
+          params.set(el.dataset.team, teamId.value);
+        }
+      }
+      ApiC.getJson(`${el.dataset.target}/?${params.toString()}`).then(json => {
         response(json.map(entry => transformer(entry)));
       });
     },

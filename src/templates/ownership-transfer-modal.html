@@ -1,5 +1,6 @@
 {# Modal for ownership transfer #}
-<div class='modal fade' id='ownerModal' tabindex='-1' role='dialog' aria-labelledby='ownerModalLabel'>
+<div class='' id='ownerModal' tabindex='-1' role='dialog' aria-labelledby='ownerModalLabel'>
+{#<div class='modal fade' id='ownerModal' tabindex='-1' role='dialog' aria-labelledby='ownerModalLabel'>#}
   <div class='modal-dialog' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
@@ -32,7 +33,7 @@
           <select class='form-control' id='target_owner' name='owner'>
             {% for user in usersArr %}
               {% set teamIds = [] %}
-              {% for team in user.teams|jsonDecode %}
+              {% for team in user.teams %}
                 {% set teamIds = teamIds|merge([team.id]) %}
               {% endfor %}
               <option

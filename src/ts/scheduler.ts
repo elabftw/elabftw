@@ -153,6 +153,7 @@ if (window.location.pathname === '/scheduler.php') {
 
       const removeBtn = document.createElement('button');
       removeBtn.type = 'button';
+      removeBtn.ariaLabel = i18next.t('filter-delete-warning');
       removeBtn.className = 'ml-2 close';
       const removeBtnIcon = document.createElement('i');
       removeBtnIcon.classList.add('fas', 'fa-xmark', 'fa-fw', 'color-white');
@@ -161,19 +162,12 @@ if (window.location.pathname === '/scheduler.php') {
       badge.appendChild(removeBtn);
       wrapper.appendChild(badge);
 
-      // Make badge keyboard-accessible
-      badge.setAttribute('tabindex', '0');
-      badge.setAttribute('role', 'button');
-      badge.setAttribute('aria-label', `Remove ${opt.textContent}`);
       // also handle keydown (enter)
       const removeBadgeHandler = e => {
         e.preventDefault();
         removeBadge(badge, tomSelect, id);
       };
       removeBtn.addEventListener('click', removeBadgeHandler);
-      removeBtn.addEventListener('keydown', e =>
-        ['Enter', ' '].includes(e.key) && removeBadgeHandler(e),
-      );
     };
 
     const removeBadge = (badge, tomSelect, id) => {

@@ -18,6 +18,7 @@ use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FilterableColumn;
@@ -54,6 +55,7 @@ final class Items extends AbstractConcreteEntity
         ?int $status = null,
         ?int $customId = null,
         ?string $metadata = null,
+        BinaryValue $hideMainText = BinaryValue::False,
         int $rating = 0,
         BodyContentType $contentType = BodyContentType::Html,
         // specific to Items
@@ -68,8 +70,8 @@ final class Items extends AbstractConcreteEntity
         // figure out the custom id
         $customId ??= $this->getNextCustomId($category);
 
-        $sql = 'INSERT INTO items(team, title, date, status, body, userid, category, elabid, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canbook, metadata, custom_id, content_type, rating)
-            VALUES(:team, :title, :date, :status, :body, :userid, :category, :elabid, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canbook, :metadata, :custom_id, :content_type, :rating)';
+        $sql = 'INSERT INTO items(team, title, date, status, body, userid, category, elabid, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canbook, metadata, custom_id, content_type, rating, hide_main_text)
+            VALUES(:team, :title, :date, :status, :body, :userid, :category, :elabid, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canbook, :metadata, :custom_id, :content_type, :rating, :hide_main_text)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindParam(':title', $title);
@@ -88,6 +90,7 @@ final class Items extends AbstractConcreteEntity
         $req->bindParam(':custom_id', $customId, PDO::PARAM_INT);
         $req->bindValue(':content_type', $contentType->value, PDO::PARAM_INT);
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
+        $req->bindValue(':hide_main_text', $hideMainText->value, PDO::PARAM_INT);
         $this->Db->execute($req);
         $newId = $this->Db->lastInsertId();
 
@@ -105,13 +108,11 @@ final class Items extends AbstractConcreteEntity
         $DisplayParams = new DisplayParams($this->Users, EntityType::Items, $Request->query);
         // we only want the bookable type of items
         $DisplayParams->appendFilterSql(FilterableColumn::Bookable, 1);
-        // make limit very big because we want to see ALL the bookable items here
-        $DisplayParams->limit = 900000;
         // filter on the canbook or canread depending on query param
         if ($Request->query->has('canbook')) {
             return $this->readShow($DisplayParams, true, 'canbook');
         }
-        return $this->readShow($DisplayParams, true, 'canread');
+        return $this->readShow($DisplayParams, true);
     }
 
     public function canBook(): bool
@@ -137,12 +138,13 @@ final class Items extends AbstractConcreteEntity
         $newId = $this->create(
             title: $title,
             body: $this->entityData['body'],
-            category: $this->entityData['category'],
             canread: $this->entityData['canread'],
             canwrite: $this->entityData['canwrite'],
-            contentType: BodyContentType::from($this->entityData['content_type']),
-            metadata: $metadata,
+            category: $this->entityData['category'],
             status: $this->entityData['status'],
+            metadata: $metadata,
+            hideMainText: BinaryValue::from($this->entityData['hide_main_text']),
+            contentType: BodyContentType::from($this->entityData['content_type']),
         );
 
         // add missing canbook

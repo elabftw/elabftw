@@ -13,7 +13,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\AuthType;
-use Elabftw\Enums\Messages;
 use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\DemoModeException;
 use Elabftw\Params\UserParams;
@@ -59,7 +58,7 @@ try {
             $App->Users->update(new UserParams('mfa_secret', $App->Request->request->getString('mfa_secret')));
             $App->Session->getFlashBag()->add('ok', _('Two-factor authentication has been successfully enabled for your account.'));
         } else {
-            $App->Session->getFlashBag()->add('ko', Messages::InvalidAuthenticationCode->toHuman());
+            $App->Session->getFlashBag()->add('ko', _('Invalid authentication code.'));
         }
     }
 } catch (AppException $e) {

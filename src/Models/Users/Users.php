@@ -104,6 +104,8 @@ class Users extends AbstractRest
         $teams = $Teams->getTeamsFromIdOrNameOrOrgidArray($teams, $allowTeamCreation);
         $TeamsHelper = new TeamsHelper($teams[0]['id']);
 
+        // make email lowercase every time
+        $email = strtolower($email);
         $EmailValidator = new EmailValidator($email, (bool) $Config->configArr['admins_import_users'], $Config->configArr['email_domain'], skipDomainValidation: $skipDomainValidation);
         $EmailValidator->validate();
 
@@ -188,7 +190,7 @@ class Users extends AbstractRest
         }
         if ($isValidated) {
             // send the instance level onboarding email
-            if (Config::getConfig()->configArr['onboarding_email_active'] === '1') {
+            if ($Config->configArr['onboarding_email_active'] === '1') {
                 new OnboardingEmail(-1)->create($userid);
             }
         } else {
@@ -324,12 +326,29 @@ class Users extends AbstractRest
         }
         $this->Db->execute($req);
 
-        return $req->fetchAll();
+        $res = $req->fetchAll();
+        return array_map(function (array $user): array {
+            $user['teams'] = json_decode($user['teams'], true, 3, JSON_THROW_ON_ERROR);
+            return $user;
+        }, $res);
     }
 
     public function readAllFromTeam(): array
     {
-        return $this->readFromQuery(teamId: $this->userData['team']);
+        $teamId = $this->userData['team'];
+        $users = $this->readFromQuery(teamId: $teamId);
+        // add a key to know if user is archived in current team
+        return array_map(function (array $user) use ($teamId): array {
+            $isArchivedInCurrentTeam = 0;
+            foreach ($user['teams'] as $team) {
+                if ($team['id'] === $teamId) {
+                    $isArchivedInCurrentTeam = $team['is_archived'];
+                    break;
+                }
+            }
+            $user['is_archived_in_current_team'] = $isArchivedInCurrentTeam;
+            return $user;
+        }, $users);
     }
 
     public function readAllActiveFromTeam(): array
@@ -646,7 +665,10 @@ class Users extends AbstractRest
             if (!$this->isSelf() && !$this->requester->isSysadmin()) {
                 throw new IllegalActionException('User tried to edit email of another user but is not sysadmin.');
             }
-            Filter::email($params->getStringContent());
+            // run email validator
+            $Config = Config::getConfig();
+            $EmailValidator = new EmailValidator($params->getStringContent(), (bool) $Config->configArr['admins_import_users'], $Config->configArr['email_domain']);
+            $EmailValidator->validate();
         }
 
         // columns that can only be modified by Sysadmin requester

@@ -330,5 +330,25 @@
       {% endfor %}
     </ul>
   </div>
+
+  <h3 class='p-2 pl-3 section-title' id='compoundsUsageTitle'>{{ 'Compounds usage'|trans }}</h3>
+  <div class='pl-3 mt-2'>
+    <p class='smallgrey'>{{ 'Generate a CSV export of all compounds linked to experiments you own over a period of time.'|trans }}</p>
+    <form id='compoundsHistoryForm' aria-labelledby='compoundsUsageTitle'>
+      <div class='row'>
+        <div class='col-md-6'>
+        <label for='compoundsHistoryStart' class='col-form-label mr-3 required-label'>{{ 'Start date'|trans }}</label>
+        <input id='compoundsHistoryStart' type='date' name='start' class='form-control' required />
+        </div>
+        <div class='col-md-6'>
+          <label for='compoundsHistoryEnd' class='col-form-label mr-3 required-label'>{{ 'End date'|trans }}</label>
+          <input id='compoundsHistoryEnd' type='date' name='end' class='form-control' required />
+        </div>
+      </div>
+      <div class='mt-3 text-center'>
+        <button type='submit' data-action='get-compounds-history' class='btn btn-secondary'>{{ 'Generate CSV file'|trans }}</button>
+      </div>
+    </form>
+  </div>
 </div>
 {% endblock body %}

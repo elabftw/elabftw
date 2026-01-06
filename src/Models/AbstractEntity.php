@@ -26,6 +26,7 @@ use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExportFormat;
@@ -168,6 +169,7 @@ abstract class AbstractEntity extends AbstractRest
         ?int $status = null,
         ?int $customId = null,
         ?string $metadata = null,
+        BinaryValue $hideMainText = BinaryValue::False,
         int $rating = 0,
         BodyContentType $contentType = BodyContentType::Html,
     ): int;
@@ -188,6 +190,7 @@ abstract class AbstractEntity extends AbstractRest
             category: $template['category'],
             status: $template['status'],
             metadata: $template['metadata'],
+            hideMainText: BinaryValue::from($template['hide_main_text']),
             rating: $template['rating'],
             contentType: BodyContentType::from($template['content_type']),
         );
@@ -212,7 +215,7 @@ abstract class AbstractEntity extends AbstractRest
             Action::Create => (
                 function () use ($reqBody) {
                     if (isset($reqBody['template']) && ((int) $reqBody['template']) !== -1) {
-                        return $this->createFromTemplate((int) $reqBody['template']);
+                        return $this->createFromTemplate((int) $reqBody['template'], $reqBody['title'] ?? null);
                     }
                     // check if use of template is enforced at team level for experiments
                     $teamConfigArr = new Teams($this->Users, $this->Users->team)->readOne();
@@ -525,6 +528,9 @@ abstract class AbstractEntity extends AbstractRest
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $queryParams ??= $this->getQueryParams();
+        if ($queryParams->getFastq()) {
+            return $this->readAllSimple($queryParams);
+        }
         return $this->readShow($queryParams, true);
     }
 
@@ -615,7 +621,7 @@ abstract class AbstractEntity extends AbstractRest
             $idSql = 'OR entity.id = :intQuery OR entity.custom_id = :intQuery';
         }
 
-        $sql = 'SELECT entity.id, entity.title, entity.custom_id, entity.state,
+        $sql = 'SELECT entity.id, entity.title, entity.custom_id, entity.state, entity.category,
             categoryt.color AS category_color,
             categoryt.title AS category_title,
             statust.color AS status_color,
@@ -967,7 +973,7 @@ abstract class AbstractEntity extends AbstractRest
     protected function bloxberg(): array
     {
         $configArr = Config::getConfig()->configArr;
-        $HttpGetter = new HttpGetter(new Client(), $configArr['proxy']);
+        $HttpGetter = new HttpGetter(new Client(), $configArr['proxy'], !Env::asBool('DEV_MODE'));
         $Maker = new MakeBloxberg(
             $this->Users,
             $this,

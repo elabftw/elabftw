@@ -956,17 +956,12 @@ on('ack-notif', (el: HTMLElement) => {
 on('destroy-notif', () => ApiC.delete(`${Model.User}/me/${Model.Notification}`).then(() => reloadElements(['navbarNotifDiv'])));
 
 // CREATE EXPERIMENT, TEMPLATE or DATABASE item: main create button in top right
-on('create-entity', (el: HTMLElement, event: Event) => {
+on('create-entity', async (el: HTMLElement, event: Event) => {
   event.preventDefault();
-  let params = {};
-  if (el.dataset.hasTitle) {
-    params = collectForm(document.getElementById(el.dataset.formId));
-  }
+  const form = document.getElementById('createNewForm') as HTMLFormElement;
+  const params = collectForm(form);
   if (el.dataset.tplid) {
     params['template'] = parseInt(el.dataset.tplid, 10);
-  }
-  if (el.dataset.catid) {
-    params['category'] = parseInt(el.dataset.catid, 10);
   }
   // look for any tag present in the url, we will create the entry with these tags
   const urlParams = new URLSearchParams(document.location.search);
@@ -985,21 +980,11 @@ on('create-entity', (el: HTMLElement, event: Event) => {
     el.dataset.type = 'items';
     page = 'database.php';
   }
-  ApiC.post2location(`${el.dataset.type}`, params).then(id => {
-    window.location.href = `${page}?mode=edit&id=${id}`;
-  });
-});
-
-on('create-entity-ask-title', (el: HTMLElement) => {
-  // this is necessary to convey information between two modals
-  // hide previous modal first
-  $('.modal.show').modal('hide');
-  // then add the category id to the other create button
-  const targetButton = document.getElementById('askTitleButton') as HTMLButtonElement;
-  targetButton.dataset.catid = el.dataset.catid;
-  // also carry over the type as on Dashboard we have both types, but only one modal to ask title
-  targetButton.dataset.type = el.dataset.type;
-  $('#askTitleModal').modal('toggle');
+  const id = await ApiC.post2location(`${el.dataset.type}`, params);
+  if (params['compound']) {
+    await ApiC.post(`${el.dataset.type}/${id}/compounds_links/${params['compound']}`, {});
+  }
+  window.location.href = `${page}?mode=edit&id=${id}`;
 });
 
 on('report-bug', (el: HTMLElement, event: Event) => {

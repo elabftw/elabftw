@@ -27,7 +27,6 @@ use Elabftw\Services\Filter;
 use Elabftw\Services\PasswordValidator;
 use Override;
 
-use function trim;
 use function mb_substr;
 
 final class UserParams extends ContentParams
@@ -37,7 +36,7 @@ final class UserParams extends ContentParams
     {
         return match ($this->target) {
             // checked in update
-            'email' => trim($this->asString()),
+            'email' => Filter::sanitizeEmail($this->asString()),
             'firstname', 'lastname', 'orgid' => $this->content,
             'valid_until' => (
                 function () {

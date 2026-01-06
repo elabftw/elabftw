@@ -52,7 +52,7 @@ final class Ldap implements AuthInterface
             throw new ImproperActionException('Error finding the dn!');
         }
         if (!Container::getConnection()->auth()->attempt($dn, $this->password)) {
-            throw new InvalidCredentialsException(0);
+            throw new InvalidCredentialsException();
         }
 
         // this->login can also be uid
@@ -126,7 +126,7 @@ final class Ldap implements AuthInterface
                 continue;
             }
         }
-        throw new InvalidCredentialsException(0);
+        throw new InvalidCredentialsException();
     }
 
     private function getEmailFromRecord(Model $record): string

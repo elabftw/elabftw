@@ -14,7 +14,6 @@ namespace Elabftw\Auth;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
-use Elabftw\Exceptions\QuantumException;
 use Elabftw\Traits\TestsUtilsTrait;
 
 class LocalTest extends \PHPUnit\Framework\TestCase
@@ -46,7 +45,7 @@ class LocalTest extends \PHPUnit\Framework\TestCase
 
     public function testEmptyPassword(): void
     {
-        $this->expectException(QuantumException::class);
+        $this->expectException(InvalidCredentialsException::class);
         new Local('toto@yopmail.com', '');
     }
 
@@ -59,7 +58,7 @@ class LocalTest extends \PHPUnit\Framework\TestCase
 
     public function testTryAuthWithInvalidEmail(): void
     {
-        $this->expectException(QuantumException::class);
+        $this->expectException(InvalidCredentialsException::class);
         new Local('invalid@example.com', 'nopenope');
     }
 

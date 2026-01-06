@@ -15,6 +15,7 @@ use DateTimeImmutable;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\FileFromString;
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
@@ -110,6 +111,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $this->Items->canOrExplode('read');
         $this->assertEquals('Untitled', $this->Items->entityData['title']);
         $this->assertEquals(date('Y-m-d'), $this->Items->entityData['date']);
+        $this->assertEquals(State::Normal->value, $this->Items->entityData['state']);
     }
 
     public function testUpdate(): void
@@ -169,11 +171,12 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $this->Items->canOrExplode('read');
         $ResourcesCategories = new ResourcesCategories(new Teams($this->Items->Users, $this->Items->Users->team));
         $category = $ResourcesCategories->create(title: 'Used in tests');
-        $this->Items->patch(Action::Update, array('category' => $category));
+        $this->Items->patch(Action::Update, array('category' => $category, 'hide_main_text' => 1));
         $newId = $this->Items->postAction(Action::Duplicate, array());
         $this->assertIsInt($newId);
         $this->Items->setId($newId);
         $this->assertEquals($category, $this->Items->entityData['category']);
+        $this->assertEquals(1, $this->Items->entityData['hide_main_text']);
     }
 
     // make sure the item inherits the permissions from the template target permissions

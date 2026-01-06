@@ -2,12 +2,7 @@
 <div class='mb-5 d-flex justify-content-between'>
   <div class='d-flex'>
     <p>{{ subtitle }}</p>
-    <div class='infotip'>
-      <span class='infotip-icon'>
-        <i class='ml-1 fas fa-circle-question'></i>
-      </span>
-      <p class='infotip-text'>{{ infotip }}</p>
-    </div>
+    {% include 'infotip.html' with {text: infotip} %}
   </div>
   {# CREATE NEW BUTTON the div around the button is necessary or the button itself gets resized on small viewports #}
   <div>
@@ -75,7 +70,7 @@
       </div>
 
       <div class='modal-footer'>
-        <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+        <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
         <button type='button' data-endpoint='{{ type }}' data-action='create-catstat' class='btn btn-primary'>{{ 'Create'|trans }}</button>
       </div>
     </div>

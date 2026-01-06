@@ -32,11 +32,14 @@ final class Fingerprinter implements FingerprinterInterface
     #[Override]
     public function calculate(string $fmt, string $data): array
     {
-        $response = $this->httpGetter->postJson($this->url, array('fmt' => $fmt, 'data' => $data));
+        $response = $this->httpGetter
+            ->post($this->url, array('json' => array('fmt' => $fmt, 'data' => $data)))
+            ->getBody()
+            ->getContents();
         try {
-            return json_decode($response, true, 42, JSON_THROW_ON_ERROR);
+            return json_decode($response, true, 512, JSON_THROW_ON_ERROR);
         } catch (JsonException $e) {
-            throw new ImproperActionException('Invalid JSON from fingerprinting service', 0, $e);
+            throw new ImproperActionException('Invalid JSON from fingerprinting service', 400, $e);
         }
     }
 }

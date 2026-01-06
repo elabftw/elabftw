@@ -25,16 +25,18 @@
 }
 
 .bar {
-  /* Ensure --max has a minimum value, fallback to 1 if not set */
   --safe-max: max(var(--max, 1), 1);
-  background: hsl(0 0%
-  calc(90% - (var(--v) / var(--safe-max)) * 90%));
+  --t: calc(var(--v) / var(--safe-max));
+  --h: calc(var(--t) * 280deg);
+
+  background: linear-gradient(to top, hsl(var(--h) 90% 45%), hsl(var(--h) 95% 65%));
   border-radius: 4px 4px 0 0;
   flex: 1 0 auto;
-  height: calc((var(--v) / var(--safe-max)) * 100%);
+  height: calc(var(--t) * 100%);
   max-width: 42px;
   position: relative;
-  transition: transform 120ms ease, filter 120ms ease;
+  transition: transform 140ms ease, filter 140ms ease, box-shadow 140ms ease;
+  will-change: transform, filter;
 }
 
 /* hover tooltip */
@@ -56,8 +58,9 @@
 }
 
 .bar:hover {
-  background: $elabblue;
-  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(255, 255, 255, 0.35) inset;
+  filter: brightness(1.12) saturate(1.18);
+  transform: translateY(-4px) scale(1.03);
 }
 
 .bar:hover::after {

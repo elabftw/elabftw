@@ -130,7 +130,7 @@
                 {% set isActive = scriptName == 'resources-templates.php' %}
                 <a class='dropdown-item {{ isActive ? 'active' }}' href='resources-templates.php' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-copy fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Resource templates'|trans }}</a>
                 {% set isActive = scriptName == 'resources-categories.php' %}
-                <a class='dropdown-item {{ isActive ? 'active' }}' href='resources-categories.php' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-rectangle-list fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Resource categories'|trans }}</a>
+                <a class='dropdown-item {{ isActive ? 'active' }} {{ not App.Teams.teamArr.users_canwrite_resources_categories and not App.Users.isAdmin ? 'disabled' }}' href='resources-categories.php' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-rectangle-list fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Resource categories'|trans }}</a>
                 {% set isActive = scriptName == 'resources-status.php' %}
                 <a class='dropdown-item {{ isActive ? 'active' }} {{ not App.Teams.teamArr.users_canwrite_resources_status and not App.Users.isAdmin ? 'disabled' }}' href='resources-status.php' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-list-check fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Resource status'|trans }}</a>
               </div>

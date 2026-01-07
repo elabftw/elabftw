@@ -52,4 +52,7 @@ CALL DropColumn('items_types',           'canread_base');
 CALL DropColumn('items_types',           'canbook_base');
 CALL DropColumn('items_types',           'canwrite_base');
 
+CALL DropColumn('users',           'default_read_base');
+CALL DropColumn('users',           'default_write_base');
+
 UPDATE config SET conf_value = 196 WHERE conf_name = 'schema';

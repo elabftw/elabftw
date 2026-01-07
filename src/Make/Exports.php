@@ -13,14 +13,12 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 use Elabftw\Controllers\DownloadController;
-use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\EntitySlugsSqlBuilder;
 use Elabftw\Elabftw\Invoker;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\State;
-use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
@@ -34,6 +32,7 @@ use Exception;
 use League\Flysystem\Filesystem;
 use Override;
 use PDO;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Response;
 use ValueError;
@@ -55,7 +54,7 @@ final class Exports extends AbstractRest
 
     private Filesystem $fs;
 
-    public function __construct(private Users $requester, private StorageInterface $storage, public ?int $id = null)
+    public function __construct(private LoggerInterface $logger, private Users $requester, private StorageInterface $storage, public ?int $id = null)
     {
         parent::__construct();
         $this->fs = $storage->getFs();
@@ -254,7 +253,7 @@ final class Exports extends AbstractRest
                 }
                 $ZipStream = new ZipStream(sendHttpHeaders: false, outputStream: $fileStream);
                 if ($format === ExportFormat::Eln) {
-                    $Maker = new MakeEln($ZipStream, $this->requester, Storage::EXPORTS->getStorage(), $entityArr);
+                    $Maker = new MakeEln($this->logger, $ZipStream, $this->requester, $entityArr);
                 } else {
                     $Maker = new MakeBackupZip($ZipStream, $this->requester, $entityArr, $usePdfa, $includeChangelog, $includeJson);
                 };
@@ -262,13 +261,12 @@ final class Exports extends AbstractRest
                 fclose($fileStream);
                 break;
             case ExportFormat::Pdf:
-                $log = App::getDefaultLogger();
                 $mpdfProvider = new MpdfProvider(
                     $this->requester->userData['fullname'],
                     $this->requester->userData['pdf_format'],
                     $usePdfa,
                 );
-                $Maker = new MakeMultiPdf($log, $mpdfProvider, $this->requester, $entityArr, $includeChangelog);
+                $Maker = new MakeMultiPdf($this->logger, $mpdfProvider, $this->requester, $entityArr, $includeChangelog);
                 $this->fs->write($longName, $Maker->getFileContent());
                 break;
             case ExportFormat::Json:

@@ -297,7 +297,7 @@ final class Apiv2Controller extends AbstractApiController
             ApiEndpoint::Import => new ImportHandler($this->requester, App::getDefaultLogger()),
             ApiEndpoint::Info => new Info(),
             ApiEndpoint::Instance => new Instance($this->requester, $this->getEmail(), (bool) Config::getConfig()->configArr['email_send_grouped']),
-            ApiEndpoint::Export => new Exports($this->requester, Storage::EXPORTS->getStorage(), $this->id),
+            ApiEndpoint::Export => new Exports(App::getDefaultLogger(), $this->requester, Storage::EXPORTS->getStorage(), $this->id),
             ApiEndpoint::Experiments,
             ApiEndpoint::Items,
             ApiEndpoint::ExperimentsTemplates,

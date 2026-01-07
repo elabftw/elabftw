@@ -21,6 +21,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Override;
+use Symfony\Component\Console\Logger\ConsoleLogger;
 
 /**
  * Trigger the process of export requests
@@ -44,7 +45,7 @@ final class ExportCommand extends Command
     #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $Exports = new Exports(new UltraAdmin(), $this->fs);
+        $Exports = new Exports(new ConsoleLogger($output), new UltraAdmin(), $this->fs);
         if ($input->getArgument('id')) {
             $Exports->setId((int) $input->getArgument('id'));
             return $Exports->process();

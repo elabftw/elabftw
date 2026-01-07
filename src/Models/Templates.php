@@ -63,8 +63,8 @@ final class Templates extends AbstractTemplateEntity
         if (isset($this->Users->userData['default_write']) && $canwrite === null) {
             $canwrite = $this->Users->userData['default_write'];
         }
-        $canreadBase ??= $this->Users->userData['default_read_base'] ?? BasePermissions::Team->value;
-        $canwriteBase ??= $this->Users->userData['default_write_base'] ?? BasePermissions::User->value;
+        $canreadBase ??= BasePermissions::tryFrom($this->Users->userData['default_read_base']) ?? BasePermissions::Team;
+        $canwriteBase ??= BasePermissions::tryFrom($this->Users->userData['default_write_base']) ?? BasePermissions::User;
         $canread ??= BasePermissions::Team->toJson();
         $canwrite ??= BasePermissions::User->toJson();
 
@@ -78,8 +78,8 @@ final class Templates extends AbstractTemplateEntity
         $req->bindParam(':category', $category, PDO::PARAM_INT);
         $req->bindParam(':status', $status, PDO::PARAM_INT);
         $req->bindParam(':metadata', $metadata);
-        $req->bindParam(':canread_base', $canreadBase);
-        $req->bindParam(':canwrite_base', $canwriteBase);
+        $req->bindValue(':canread_base', $canreadBase->value, PDO::PARAM_INT);
+        $req->bindValue(':canwrite_base', $canwriteBase->value, PDO::PARAM_INT);
         $req->bindParam(':canread', $canread);
         $req->bindParam(':canwrite', $canwrite);
         $req->bindParam(':canread_is_immutable', $canreadIsImmutable, PDO::PARAM_INT);

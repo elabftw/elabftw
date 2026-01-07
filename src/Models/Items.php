@@ -66,8 +66,8 @@ final class Items extends AbstractConcreteEntity
         $title = Filter::title($title ?? _('Untitled'));
         $date ??= new DateTimeImmutable();
         $body = Filter::body($body);
-        $canreadBase ??= $this->Users->userData['default_read_base'] ?? BasePermissions::Team->value;
-        $canwriteBase ??= $this->Users->userData['default_write_base'] ?? BasePermissions::User->value;
+        $canreadBase ??= BasePermissions::tryFrom($this->Users->userData['default_read_base']) ?? BasePermissions::Team;
+        $canwriteBase ??= BasePermissions::tryFrom($this->Users->userData['default_write_base']) ?? BasePermissions::User;
         $canread ??= BasePermissions::Team->toJson();
         $canwrite ??= BasePermissions::Team->toJson();
         $canbook = $canread;
@@ -85,8 +85,8 @@ final class Items extends AbstractConcreteEntity
         $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
         $req->bindParam(':category', $category, PDO::PARAM_INT);
         $req->bindValue(':elabid', Tools::generateElabid());
-        $req->bindParam(':canread_base', $canreadBase);
-        $req->bindParam(':canwrite_base', $canwriteBase);
+        $req->bindValue(':canread_base', $canreadBase->value, PDO::PARAM_INT);
+        $req->bindValue(':canwrite_base', $canwriteBase->value, PDO::PARAM_INT);
         $req->bindParam(':canread', $canread);
         $req->bindParam(':canwrite', $canwrite);
         $req->bindParam(':canread_is_immutable', $canreadIsImmutable, PDO::PARAM_INT);

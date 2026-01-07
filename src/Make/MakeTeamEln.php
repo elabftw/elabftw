@@ -13,18 +13,18 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 use Elabftw\Enums\State;
-use Elabftw\Enums\Storage;
 use Elabftw\Models\Users\UltraAdmin;
 use PDO;
 use ZipStream\ZipStream;
 use Override;
+use Psr\Log\LoggerInterface;
 
 /**
  * Make an ELN archive for a full team. Only accessible from command line.
  */
 final class MakeTeamEln extends AbstractMakeEln
 {
-    public function __construct(ZipStream $Zip, protected int $teamId, protected array $users = array(), protected array $resourcesCategories = array())
+    public function __construct(protected LoggerInterface $logger, protected Zipstream $Zip, protected int $teamId, protected array $users = array(), protected array $resourcesCategories = array())
     {
         parent::__construct($Zip);
     }
@@ -41,7 +41,7 @@ final class MakeTeamEln extends AbstractMakeEln
         foreach ($targets as $slug) {
             $entityArr[] = $slug->type->toInstance($requester, $slug->id, bypassReadPermission: true, bypassWritePermission: true);
         }
-        $Maker = new MakeEln($this->Zip, $requester, Storage::EXPORTS->getStorage(), $entityArr);
+        $Maker = new MakeEln($this->logger, $this->Zip, $requester, $entityArr);
         $Maker->bypassReadPermission = true;
         $Maker->getStreamZip();
     }

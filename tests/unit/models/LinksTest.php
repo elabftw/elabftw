@@ -174,6 +174,7 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         $secretTitle = 'Experiment B - This title shall not be visible to user 2 after importing links';
         $ExperimentBId = $Experiments->create(
             title: $secretTitle,
+            canreadBase: BasePermissions::User,
             canread: BasePermissions::User->toJson(),
         );
 
@@ -186,6 +187,7 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         $Experiments = new Experiments(new Users(2, 1));
         $ExperimentCId = $Experiments->create(
             title: 'Experiment C',
+            canreadBase: BasePermissions::Team,
             canread: BasePermissions::Team->toJson(),
         );
         $Experiments->setId($ExperimentCId);
@@ -223,6 +225,7 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         $secretTitle = 'Experiment B - This title shall not be visible to user 5 after importing links';
         $ExperimentBId = $Experiments->create(
             title: $secretTitle,
+            canreadBase: BasePermissions::Team,
             canread: BasePermissions::Team->toJson(),
         );
 
@@ -235,6 +238,7 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         $Experiments = new Experiments(new Users(5, 2));
         $ExperimentCId = $Experiments->create(
             title: 'Experiment C',
+            canreadBase: BasePermissions::Organization,
             canread: BasePermissions::Organization->toJson(),
         );
         $Experiments->setId($ExperimentCId);

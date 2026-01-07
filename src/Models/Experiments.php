@@ -56,8 +56,8 @@ final class Experiments extends AbstractConcreteEntity
         int $rating = 0,
         BodyContentType $contentType = BodyContentType::Html,
     ): int {
-        $canreadBase ??= $this->Users->userData['default_read_base'] ?? BasePermissions::Team->value;
-        $canwriteBase ??= $this->Users->userData['default_write_base'] ?? BasePermissions::User->value;
+        $canreadBase ??= BasePermissions::tryFrom($this->Users->userData['default_read_base']) ?? BasePermissions::Team;
+        $canwriteBase ??= BasePermissions::tryFrom($this->Users->userData['default_write_base']) ?? BasePermissions::User;
         $canread ??= $this->Users->userData['default_read'] ?? BasePermissions::Team->toJson();
         $canwrite ??= $this->Users->userData['default_write'] ?? BasePermissions::User->toJson();
 
@@ -83,10 +83,10 @@ final class Experiments extends AbstractConcreteEntity
         $req->bindValue(':category', $category);
         $req->bindValue(':status', $status);
         $req->bindValue(':elabid', Tools::generateElabid());
-        $req->bindParam(':canread_base', $canreadBase);
-        $req->bindParam(':canwrite_base', $canwriteBase);
-        $req->bindParam(':canread', $canread);
-        $req->bindParam(':canwrite', $canwrite);
+        $req->bindValue(':canread_base', $canreadBase->value, PDO::PARAM_INT);
+        $req->bindValue(':canwrite_base', $canwriteBase->value, PDO::PARAM_INT);
+        $req->bindValue(':canread', $canread);
+        $req->bindValue(':canwrite', $canwrite);
         $req->bindParam(':canread_is_immutable', $canreadIsImmutable, PDO::PARAM_INT);
         $req->bindParam(':canwrite_is_immutable', $canwriteIsImmutable, PDO::PARAM_INT);
         $req->bindParam(':metadata', $metadata);

@@ -11,7 +11,7 @@
       <div class='modal-body'>
         {# SELECT TEAM #}
         <label for='team'>{{ 'Select a team'|trans }}</label>
-        <select required name='team_id' class='form-control' id='team' data-action='change-team' autocomplete='off'>
+        <select required name='team_id' class='form-control mb-2' id='team' data-action='change-team' autocomplete='off'>
           <option selected disabled value=''>{{ 'Select a team'|trans }}</option>
           {% for team in teamsArr %}
             <option value='{{ team.id }}'>{{ team.name }}</option>

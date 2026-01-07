@@ -117,7 +117,11 @@
       </button>
       {# date #}
       <div class='d-flex flex-column small'>
-       <span class='item-date color-medium'>{{ 'Started on'|trans }} {{ item.date|date('Y-m-d') }}</span>
+       {% if Entity.entityType.value in ['experiments_templates', 'items_types'] %}
+        <span class='item-date color-medium'>{{ 'Created at'|trans }} {{ item.created_at|date('Y-m-d') }}</span>
+       {% else %}
+        <span class='item-date color-medium'>{{ 'Started on'|trans }} {{ item.date|date('Y-m-d') }}</span>
+       {% endif %}
         <span>
         <span class='item-date color-medium'>{{ 'Last modified'|trans }}</span> <span title='{{ item.modified_at }}' class='color-medium relative-moment'></span>
         </span>

@@ -516,7 +516,6 @@ tr:first-child td {
   .tags {
     max-width: 20ch;
     overflow-wrap: normal;  // don't force per-character wrapping
-    white-space: normal;
     word-break: keep-all;
   }
 

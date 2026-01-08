@@ -230,6 +230,18 @@ export function getEntityTypeFromPage(): EntityType {
   }
 }
 
+export function getCurrentListPage(): string {
+  const page = window.location.pathname.split('/').pop();
+  switch (page) {
+  case 'experiments.php':
+  case 'templates.php':
+  case 'database.php':
+  case 'resources-templates.php':
+    return `/${page}`;
+  default:
+    return '/';
+  }
+}
 
 // for view or edit mode, get type and id from the page to construct the entity object
 // enable usage with parent Window for iframe cases (e.g., with spreadsheet editor)

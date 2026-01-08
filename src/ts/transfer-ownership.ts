@@ -12,18 +12,26 @@ import { entity } from './getEntity';
 import { on } from './handlers';
 import { Target } from './interfaces';
 import $ from 'jquery';
-import { TomSelect } from './misc';
+import { getCurrentListPage, TomSelect } from './misc';
+import { notify } from './notify';
 
 on('transfer-ownership', () => {
   const userId = (document.getElementById('targetOwnerSelect') as HTMLInputElement).value;
   const teamId = (document.getElementById('team') as HTMLSelectElement).value;
+  const parsedUserId = parseInt(userId.split(' ')[0], 10);
+  const parsedTeamId = parseInt(teamId.split(' ')[0], 10);
+  if (isNaN(parsedUserId) || isNaN(parsedTeamId)) {
+    notify.error('invalid-info');
+    return;
+  }
   const params = {};
-  params[Target.UserId] = parseInt(userId.split(' ')[0], 10);
-  params[Target.Team] = parseInt(teamId.split(' ')[0], 10);
-  // ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => window.location.reload());
+  params[Target.UserId] = parsedUserId;
+  params[Target.Team] = parsedTeamId;
   ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => {
-    const path = window.location.pathname;
-    window.location.replace(path.split('/').pop());
+    // in case we transfer ownership to another team, reload location won't work (permission issues).
+    ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => {
+      window.location.href = getCurrentListPage();
+    });
   });
 });
 

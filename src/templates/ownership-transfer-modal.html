@@ -19,17 +19,13 @@
         </select>
         {# SELECT USER #}
         <label for='source_owner'>{{ 'Current owner'|trans }}</label>
-        <input type="password" disabled hidden />
         <div class="d-flex align-items-center gap-2">
           {# CURRENT Owner #}
           <input type='text' id='source_owner' disabled value='{{ Entity.entityData.fullname }}' class='form-control'/>
           <div id="autocompleteAnchorDiv_sourceOwnerInput"></div>
           <i class="fas fa-caret-right fa-fw mx-2"></i>
           {# TARGET user #}
-          {# this exists so Firefox doesn't process the Search user field as password. No idea why it would do it in the first place though... #}
-          {# and autocomplete='off' doesn't work #}
-          <label hidden for='target_owner'>{{ 'Search user'|trans }}</label>
-          <input type='text' placeholder='{{ 'Search user'|trans }}' id='targetOwnerSelect' class='form-control' data-identifier='targetOwnerSelect' data-action='autocomplete' data-target='users' data-team='team'>
+          <input type='text' placeholder='{{ 'Search user'|trans }}' id='targetOwnerSelect' class='form-control' data-identifier='targetOwnerSelect' data-action='autocomplete' data-target='users' data-team='team' aria-label='{{ 'Search user'|trans }}'>
           <div id='autocompleteAnchorDiv_targetOwnerSelect'></div>
         </div>
       </div>

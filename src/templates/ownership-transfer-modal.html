@@ -14,7 +14,7 @@
           {% if App.devMode -%}<!-- [html-validate-disable-block input-missing-label, prefer-native-element: suppress error from tom-select] -->{%- endif %}
           <label for='targetTeamSelect'>{{ 'Select a team'|trans }}</label>
           <select required name='targetTeamSelect' class='form-control mb-2' id='targetTeamSelect' autocomplete='off'>
-            <option selected disabled value=''>{{ 'Select a team'|trans }}</option>
+            <option selected value=''>{{ 'Select a team'|trans }}</option>
             {% for team in teamsArr %}
               <option value='{{ team.id }}'>{{ team.name }}</option>
             {% endfor %}

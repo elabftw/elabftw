@@ -26,7 +26,7 @@ function setupUserInputWatcher() {
   const teamSelectEl = document.getElementById('targetTeamSelect') as HTMLSelectElement;
   if (!userInput || !teamSelectEl) return;
   userInput.addEventListener('input', () => {
-    teamSelectEl.disabled = userInput.value.trim().length > 0;
+    teamSelectEl.classList.toggle('color-disabled', userInput.value.trim().length > 0);
   });
 }
 

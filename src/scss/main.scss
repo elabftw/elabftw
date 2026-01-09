@@ -1010,6 +1010,7 @@ the form-control fails to do that so we do the border ourselves */
 
 .color-disabled {
   color: $disabled !important;
+  pointer-events: none;
 }
 
 .color-thirdlevel {

@@ -3,7 +3,7 @@
 {% set label = Entity.entityType.value == 'items_types' ? 'Create resource from template'|trans : 'Create experiment from template'|trans %}
 {% set dataType = Entity.entityType.value == 'experiments_templates' ? 'experiments' : 'database' %}
 {% set isTemplate = Entity.entityType.value in ['experiments_templates', 'items_types'] %}
-{% set statusDateLabel = isTemplate ? 'Created at' : 'Started on' %}
+{% set statusDateLabel = isTemplate ? 'Created on' : 'Started on' %}
 {% set dateValue = isTemplate ? item.created_at : item.date %}
 
 <section class='entity {{ isTemplate ? 'entity-template' }} pl-3 py-3 d-flex' id='parent_{{ randomId }}' style='--left-color: #{{ item.category_color|default('bdbdbd') }};' aria-label='{{ 'Entry'|trans }}_{{ randomId }}'>
@@ -118,13 +118,11 @@
         <i class='fas fa-caret-right color-thirdlevel'></i>
       </button>
       {# date #}
-      <div class='d-flex flex-column small'>
-          <div class='item-dates color-medium'>
-              <span class='item-date'>{{ statusDateLabel|trans }} {{ dateValue|date('Y-m-d') }}</span>
-              <span class='item-date'>
-                  {{ 'Last modified '|trans }}<span title='{{ item.modified_at }}' class='color-medium relative-moment'></span>
-              </span>
-          </div>
+      <div class='d-flex flex-column color-medium small'>
+          <span class='item-date'>{{ statusDateLabel|trans }} {{ dateValue|date('Y-m-d') }}</span>
+          <span class='item-date'>
+              {{ 'Last modified '|trans }}<span title='{{ item.modified_at }}' class='color-medium relative-moment'></span>
+          </span>
       </div>
     </div>
 

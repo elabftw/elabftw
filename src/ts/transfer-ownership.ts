@@ -10,23 +10,11 @@
 import { ApiC } from './api';
 import { entity } from './getEntity';
 import { on } from './handlers';
-import { Target } from './interfaces';
 import { TomSelect } from './misc';
-import { notify } from './notify';
 
 on('transfer-ownership', () => {
-  const userId = (document.getElementById('targetOwnerSelect') as HTMLInputElement).value;
-  const teamId = (document.getElementById('team') as HTMLSelectElement).value;
-  const parsedUserId = parseInt(userId.split(' ')[0], 10);
-  const parsedTeamId = parseInt(teamId.split(' ')[0], 10);
-  if (isNaN(parsedUserId) || isNaN(parsedTeamId)) {
-    notify.error('invalid-info');
-    return;
-  }
-  const params = {};
-  params[Target.UserId] = parsedUserId;
-  params[Target.Team] = parsedTeamId;
-  ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => {
+  const payload = getOwnershipTransferPayload();
+  ApiC.patch(`${entity.type}/${entity.id}`, { userid: payload.target_owner, team: payload.team }).then(() => {
     window.location.href = location.pathname;
   });
 });
@@ -83,3 +71,18 @@ on('toggle-modal', (el: HTMLElement) => {
     document.getElementById('current_owner_div')?.classList.toggle('d-none', isBatch);
   }
 });
+
+type OwnershipTransferPayload = {
+  target_owner: number;
+  team: number;
+};
+
+export function getOwnershipTransferPayload(): OwnershipTransferPayload | null {
+  const userValue = (document.getElementById('targetOwnerSelect') as HTMLInputElement | null)?.value;
+  const teamValue = (document.getElementById('team') as HTMLSelectElement | null)?.value;
+  const targetOwner = parseInt(userValue?.split(' ')[0] ?? '', 10);
+  const team = parseInt(teamValue ?? '', 10);
+  if (!Number.isInteger(targetOwner) || targetOwner <= 0) return null;
+  if (!Number.isInteger(team) || team <= 0) return null;
+  return { target_owner: targetOwner, team };
+}

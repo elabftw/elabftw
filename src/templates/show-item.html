@@ -2,9 +2,11 @@
 {% set randomId = random() %}
 {% set label = Entity.entityType.value == 'items_types' ? 'Create resource from template'|trans : 'Create experiment from template'|trans %}
 {% set dataType = Entity.entityType.value == 'experiments_templates' ? 'experiments' : 'database' %}
+{% set isTemplate = Entity.entityType.value in ['experiments_templates', 'items_types'] %}
+{% set statusDateLabel = isTemplate ? 'Created at' : 'Started on' %}
+{% set dateValue = isTemplate ? item.created_at : item.date %}
 
-<section class='entity {{ Entity.entityType.value in ['experiments_templates', 'items_types'] ? 'entity-template' }} pl-3 py-3 d-flex' id='parent_{{ randomId }}' style='--left-color: #{{ item.category_color|default('bdbdbd') }};' aria-label='{{ 'Entry'|trans }}_{{ randomId }}'>
-
+<section class='entity {{ isTemplate ? 'entity-template' }} pl-3 py-3 d-flex' id='parent_{{ randomId }}' style='--left-color: #{{ item.category_color|default('bdbdbd') }};' aria-label='{{ 'Entry'|trans }}_{{ randomId }}'>
   {# left part, full height: checkbox #}
   <div class='d-flex align-items-start mt-1'>
     {# checkbox #}
@@ -84,7 +86,7 @@
     {# toggle body #}
     <div class='d-flex flex-row'>
       {# for templates: create from button #}
-      {% if Entity.entityType.value in ['experiments_templates', 'items_types'] %}
+      {% if isTemplate %}
       <a data-action='create-entity' data-type={{ dataType }} data-tplid='{{ item.id }}' href='#' class='btn left-icon mr-1 lh-normal p-2 border-0 hl-hover-gray bgnd-blue' title='{{ label }}' aria-label='{{ label }}'>
         <i class='fas fa-file-circle-plus fa-fw'></i>
       </a>
@@ -117,14 +119,12 @@
       </button>
       {# date #}
       <div class='d-flex flex-column small'>
-       {% if Entity.entityType.value in ['experiments_templates', 'items_types'] %}
-        <span class='item-date color-medium'>{{ 'Created at'|trans }} {{ item.created_at|date('Y-m-d') }}</span>
-       {% else %}
-        <span class='item-date color-medium'>{{ 'Started on'|trans }} {{ item.date|date('Y-m-d') }}</span>
-       {% endif %}
-        <span>
-        <span class='item-date color-medium'>{{ 'Last modified'|trans }}</span> <span title='{{ item.modified_at }}' class='color-medium relative-moment'></span>
-        </span>
+          <div class='item-dates color-medium'>
+              <span class='item-date'>{{ statusDateLabel|trans }} {{ dateValue|date('Y-m-d') }}</span>
+              <span class='item-date'>
+                  {{ 'Last modified '|trans }}<span title='{{ item.modified_at }}' class='color-medium relative-moment'></span>
+              </span>
+          </div>
       </div>
     </div>
 

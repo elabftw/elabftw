@@ -540,6 +540,10 @@ tr:first-child td {
   }
 }
 
+.item-dates {
+  display: flex; flex-direction: column !important;
+}
+
 /* required labels/input */
 .required-label::after {
   color: $dangerred;

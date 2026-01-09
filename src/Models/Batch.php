@@ -120,7 +120,7 @@ final class Batch extends AbstractRest
     private function loopOverEntries(array $entries, AbstractConcreteEntity $model, Action $action, array $params): void
     {
         // On transfer of ownership, only the target owner is required in params
-        if ($params['action'] === Action::UpdateOwner->value) {
+        if ($action === Action::UpdateOwner) {
             $params = array('userid' => $params['target_owner'] ?? throw new ImproperActionException('Target owner is missing!'));
             $action = Action::Update;
         }

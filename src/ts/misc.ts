@@ -230,7 +230,6 @@ export function getEntityTypeFromPage(): EntityType {
   }
 }
 
-
 // for view or edit mode, get type and id from the page to construct the entity object
 // enable usage with parent Window for iframe cases (e.g., with spreadsheet editor)
 export function getEntity(useParent: boolean = false): Entity {

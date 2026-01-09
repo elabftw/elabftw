@@ -37,7 +37,7 @@ import {
 import i18next from './i18n';
 import { Metadata } from './Metadata.class';
 import { DateTime } from 'luxon';
-import { Action, EntityType, Model, LinkSubModel, Target } from './interfaces';
+import { Action, EntityType, Model, LinkSubModel } from './interfaces';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
 import 'bootstrap-markdown-fa5/js/bootstrap-markdown';
@@ -531,13 +531,6 @@ on('toggle-pin', (el: HTMLElement) => {
     toggleGrayClasses(el.classList);
     el.querySelector('i').classList.toggle('color-weak');
   });
-});
-
-on('transfer-ownership', () => {
-  const value = (document.getElementById('target_owner') as HTMLInputElement).value;
-  const params = {};
-  params[Target.UserId] = parseInt(value.split(' ')[0], 10);
-  ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => window.location.reload());
 });
 
 on(Action.Restore, () => {
@@ -1163,7 +1156,22 @@ on('autocomplete', (el: HTMLElement) => {
       const queryTerm = ['experiments', 'items'].includes(el.dataset.target)
         ? escapeExtendedQuery(term)
         : term;
-      ApiC.getJson(`${el.dataset.target}/?q=${encodeURIComponent(queryTerm)}`).then(json => {
+
+      const params = new URLSearchParams();
+      params.set('q', queryTerm);
+
+      // allow filtering users within a specific team
+      if (el.dataset.team) {
+        const teamId = document.getElementById(el.dataset.team) as HTMLInputElement | HTMLSelectElement;
+        if (teamId?.value) {
+          params.set('team', teamId.value);
+        }
+      }
+      ApiC.getJson(`${el.dataset.target}/?${params.toString()}`).then(json => {
+        if (!Array.isArray(json) || json.length === 0) {
+          response([i18next.t('not-found')]);
+          return;
+        }
         response(json.map(entry => transformer(entry)));
       });
     },

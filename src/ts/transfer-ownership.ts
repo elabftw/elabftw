@@ -28,10 +28,8 @@ on('transfer-ownership', () => {
   params[Target.UserId] = parsedUserId;
   params[Target.Team] = parsedTeamId;
   ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => {
-    // in case we transfer ownership to another team, reload location won't work (permission issues).
-    ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => {
-      window.location.href = getCurrentListPage();
-    });
+    // we relocate to listing page
+    window.location.href = getCurrentListPage();
   });
 });
 

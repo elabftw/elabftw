@@ -10,6 +10,7 @@
       </div>
       <div class='modal-body'>
         {# SELECT TEAM #}
+        {% if App.devMode -%}<!-- [html-validate-disable-block input-missing-label, prefer-native-element: suppress error from tom-select] -->{%- endif %}
         <label for='team'>{{ 'Select a team'|trans }}</label>
         <select required name='team_id' class='form-control mb-2' id='team' data-action='change-team' autocomplete='off'>
           <option selected disabled value=''>{{ 'Select a team'|trans }}</option>

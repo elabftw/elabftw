@@ -1,0 +1,43 @@
+name: Selective mirror to Codeberg
+
+on:
+  push:
+    branches:
+      - master
+      - next
+      - hypernext
+      - ird
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout full history (required for tags + full refs)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Start SSH agent and add key
+        uses: webfactory/ssh-agent@v0.9
+        with:
+          ssh-private-key: ${{ secrets.CODEBERG_SSH_KEY }}
+
+      - name: Add Codeberg to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H codeberg.org >> ~/.ssh/known_hosts
+
+      - name: Add Codeberg remote (SSH)
+        run: |
+          git remote remove codeberg 2>/dev/null || true
+          git remote add codeberg git@codeberg.org:deltablot/elabftw.git
+
+      - name: Selective mirror branches + tags to Codeberg (with pruning)
+        run: |
+          git push --prune --force codeberg \
+            +refs/heads/master:refs/heads/master \
+            +refs/heads/next:refs/heads/next \
+            +refs/heads/hypernext:refs/heads/hypernext \
+            +refs/heads/ird:refs/heads/ird \
+            +refs/tags/*:refs/tags/*
+

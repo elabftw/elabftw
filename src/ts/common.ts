@@ -1164,10 +1164,14 @@ on('autocomplete', (el: HTMLElement) => {
       if (el.dataset.team) {
         const teamId = document.getElementById(el.dataset.team) as HTMLInputElement | HTMLSelectElement;
         if (teamId?.value) {
-          params.set(el.dataset.team, teamId.value);
+          params.set('team', teamId.value);
         }
       }
       ApiC.getJson(`${el.dataset.target}/?${params.toString()}`).then(json => {
+        if (!Array.isArray(json) || json.length === 0) {
+          response([i18next.t('not-found')]);
+          return;
+        }
         response(json.map(entry => transformer(entry)));
       });
     },

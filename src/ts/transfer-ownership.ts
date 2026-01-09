@@ -19,38 +19,11 @@ on('transfer-ownership', () => {
   });
 });
 
-function filterUsersByTeam(
-  selectEl: HTMLSelectElement,
-  teamId: string,
-): void {
-  const options = Array.from(selectEl.options);
-  let hasVisible = false;
-  options.forEach(option => {
-    const teams = option.dataset.teams?.split(',') ?? [];
-    const matches = teams.includes(teamId);
-    option.hidden = !matches;
-    if (matches) hasVisible = true;
-  });
-  // reset selection if current one is hidden
-  if (!hasVisible || selectEl.selectedOptions[0]?.hidden) {
-    const firstVisible = options.find(o => !o.hidden);
-    if (firstVisible) {
-      selectEl.value = firstVisible.value;
-    }
-  }
-}
-
-on('change-team', (el) => {
-  const selectedTeamId = (el as HTMLSelectElement).value;
-  const userSelect = document.getElementById('target_owner') as HTMLSelectElement;
-  filterUsersByTeam(userSelect, selectedTeamId);
-});
-
 // when a user is selected, we prevent the team selection change in order to
 // avoid discrepancy (.e.g, selecting Toto in team 1, then changing Team to 2)
 function setupUserInputWatcher() {
   const userInput = document.getElementById('targetOwnerSelect') as HTMLInputElement;
-  const teamSelectEl = document.getElementById('team') as HTMLSelectElement & { tomselect?: TomSelect };
+  const teamSelectEl = document.getElementById('targetTeamSelect') as HTMLSelectElement & { tomselect?: TomSelect };
   if (!userInput || !teamSelectEl || !teamSelectEl.tomselect) return;
   const teamTomSelect = teamSelectEl.tomselect;
   userInput.addEventListener('input', () => {
@@ -77,11 +50,15 @@ type OwnershipTransferPayload = {
   team: number;
 };
 
-export function getOwnershipTransferPayload(): OwnershipTransferPayload | null {
+export function getOwnershipTransferPayload(): OwnershipTransferPayload {
   const userValue = (document.getElementById('targetOwnerSelect') as HTMLInputElement | null)?.value;
-  const teamValue = (document.getElementById('team') as HTMLSelectElement | null)?.value;
+  const teamValue = (document.getElementById('targetTeamSelect') as HTMLSelectElement | null)?.value;
+  console.log(document.getElementById('targetTeamSelect'));
+  console.log('user value', userValue, 'team value',teamValue);
+
   const targetOwner = parseInt(userValue?.split(' ')[0] ?? '', 10);
   const team = parseInt(teamValue ?? '', 10);
+  console.log('target owner', targetOwner, 'team', team);
   if (!Number.isInteger(targetOwner) || targetOwner <= 0) return null;
   if (!Number.isInteger(team) || team <= 0) return null;
   return { target_owner: targetOwner, team };

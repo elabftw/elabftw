@@ -1010,7 +1010,6 @@ the form-control fails to do that so we do the border ourselves */
 
 .color-disabled {
   color: $disabled !important;
-  pointer-events: none;
 }
 
 .color-thirdlevel {
@@ -1451,6 +1450,12 @@ input[type='color'] {
 /* give the togglePassword some borders like input */
 .input-border {
   border: 1px solid #ced4da;
+}
+
+/* disable input (only visually), because disabled attribute prevents collectForm() usage */
+.input-disabled {
+  color: $disabled !important;
+  pointer-events: none;
 }
 
 /* bring the search and user menu a bit more on the left

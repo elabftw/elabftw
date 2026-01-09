@@ -32,12 +32,15 @@ jobs:
           git remote remove codeberg 2>/dev/null || true
           git remote add codeberg git@codeberg.org:deltablot/elabftw.git
 
-      - name: Selective mirror branches + tags to Codeberg (with pruning)
+      - name: Fetch triggering branch + tags
         run: |
-          git push --prune --force codeberg \
-            +refs/heads/master:refs/heads/master \
-            +refs/heads/next:refs/heads/next \
-            +refs/heads/hypernext:refs/heads/hypernext \
-            +refs/heads/ird:refs/heads/ird \
-            +refs/tags/*:refs/tags/*
+          git fetch origin "${GITHUB_REF_NAME}" --tags --prune
 
+      - name: Push triggering branch to Codeberg (force update)
+        run: |
+          git push --force codeberg \
+            "refs/remotes/origin/${GITHUB_REF_NAME}:refs/heads/${GITHUB_REF_NAME}"
+
+      - name: Push tags to Codeberg
+        run: |
+          git push --force --tags codeberg

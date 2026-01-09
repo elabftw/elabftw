@@ -214,33 +214,16 @@ export function clearForm(form: HTMLElement): void {
   });
 }
 
+const PAGE_ENTITY_MAP: Record<string, EntityType> = {
+  'experiments.php': EntityType.Experiment,
+  'database.php': EntityType.Item,
+  'templates.php': EntityType.Template,
+  'resources-templates.php': EntityType.ItemType,
+};
+
 export function getEntityTypeFromPage(): EntityType {
   const scriptName = location.pathname.split('/').pop() || '';
-  switch (scriptName) {
-  case 'experiments.php':
-    return EntityType.Experiment;
-  case 'database.php':
-    return EntityType.Item;
-  case 'templates.php':
-    return EntityType.Template;
-  case 'resources-templates.php':
-    return EntityType.ItemType;
-  default:
-    return EntityType.Other;
-  }
-}
-
-export function getCurrentListPage(): string {
-  const page = window.location.pathname.split('/').pop();
-  switch (page) {
-  case 'experiments.php':
-  case 'templates.php':
-  case 'database.php':
-  case 'resources-templates.php':
-    return `/${page}`;
-  default:
-    return '/';
-  }
+  return PAGE_ENTITY_MAP[scriptName] ?? EntityType.Other;
 }
 
 // for view or edit mode, get type and id from the page to construct the entity object

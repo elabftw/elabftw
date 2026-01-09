@@ -12,7 +12,7 @@ import { entity } from './getEntity';
 import { on } from './handlers';
 import { Target } from './interfaces';
 import $ from 'jquery';
-import { getCurrentListPage, TomSelect } from './misc';
+import { TomSelect } from './misc';
 import { notify } from './notify';
 
 on('transfer-ownership', () => {
@@ -28,8 +28,7 @@ on('transfer-ownership', () => {
   params[Target.UserId] = parsedUserId;
   params[Target.Team] = parsedTeamId;
   ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => {
-    // we relocate to listing page
-    window.location.href = getCurrentListPage();
+    window.location.href = location.pathname;
   });
 });
 

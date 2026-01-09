@@ -10,7 +10,7 @@
 import { ApiC } from './api';
 import { entity } from './getEntity';
 import { on } from './handlers';
-import { TomSelect } from './misc';
+import { collectForm, TomSelect } from './misc';
 
 on('transfer-ownership', () => {
   const payload = getOwnershipTransferPayload();
@@ -51,15 +51,8 @@ type OwnershipTransferPayload = {
 };
 
 export function getOwnershipTransferPayload(): OwnershipTransferPayload {
-  const userValue = (document.getElementById('targetOwnerSelect') as HTMLInputElement | null)?.value;
-  const teamValue = (document.getElementById('targetTeamSelect') as HTMLSelectElement | null)?.value;
-  console.log(document.getElementById('targetTeamSelect'));
-  console.log('user value', userValue, 'team value',teamValue);
-
-  const targetOwner = parseInt(userValue?.split(' ')[0] ?? '', 10);
-  const team = parseInt(teamValue ?? '', 10);
-  console.log('target owner', targetOwner, 'team', team);
-  if (!Number.isInteger(targetOwner) || targetOwner <= 0) return null;
-  if (!Number.isInteger(team) || team <= 0) return null;
+  const params = collectForm(document.getElementById('ownershipTransferForm'));
+  const targetOwner = parseInt(params['targetOwnerSelect'].split(' ')[0] ?? '', 10);
+  const team = parseInt(params['targetTeamSelect'] ?? '', 10);
   return { target_owner: targetOwner, team };
 }

@@ -10,7 +10,7 @@
 import { ApiC } from './api';
 import { entity } from './getEntity';
 import { on } from './handlers';
-import { collectForm, TomSelect } from './misc';
+import { collectForm } from './misc';
 
 on('transfer-ownership', () => {
   const payload = getOwnershipTransferPayload();
@@ -23,16 +23,10 @@ on('transfer-ownership', () => {
 // avoid discrepancy (.e.g, selecting Toto in team 1, then changing Team to 2)
 function setupUserInputWatcher() {
   const userInput = document.getElementById('targetOwnerSelect') as HTMLInputElement;
-  const teamSelectEl = document.getElementById('targetTeamSelect') as HTMLSelectElement & { tomselect?: TomSelect };
-  if (!userInput || !teamSelectEl || !teamSelectEl.tomselect) return;
-  const teamTomSelect = teamSelectEl.tomselect;
+  const teamSelectEl = document.getElementById('targetTeamSelect') as HTMLSelectElement;
+  if (!userInput || !teamSelectEl) return;
   userInput.addEventListener('input', () => {
-    const hasValue = userInput.value.trim().length > 0;
-    if (hasValue) {
-      teamTomSelect.disable();
-    } else {
-      teamTomSelect.enable();
-    }
+    teamSelectEl.disabled = userInput.value.trim().length > 0;
   });
 }
 

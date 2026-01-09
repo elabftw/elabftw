@@ -11,7 +11,6 @@ import { ApiC } from './api';
 import { entity } from './getEntity';
 import { on } from './handlers';
 import { Target } from './interfaces';
-import $ from 'jquery';
 import { TomSelect } from './misc';
 import { notify } from './notify';
 
@@ -76,6 +75,11 @@ function setupUserInputWatcher() {
   });
 }
 
-$('#ownerModal').on('shown.bs.modal', () => {
-  setupUserInputWatcher();
+on('toggle-modal', (el: HTMLElement) => {
+  const target = el.dataset.target;
+  if (target === 'ownerModal') {
+    setupUserInputWatcher();
+    const isBatch = el.dataset.isbatch === 'true';
+    document.getElementById('current_owner_div')?.classList.toggle('d-none', isBatch);
+  }
 });

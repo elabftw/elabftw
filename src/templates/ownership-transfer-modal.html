@@ -19,16 +19,16 @@
           {% endfor %}
         </select>
         {# SELECT USER #}
-        <label for='source_owner'>{{ 'Current owner'|trans }}</label>
-        <div class="d-flex align-items-center gap-2">
-          {# CURRENT Owner #}
-          <input type='text' id='source_owner' disabled value='{{ Entity.entityData.fullname }}' class='form-control'/>
-          <div id="autocompleteAnchorDiv_sourceOwnerInput"></div>
-          <i class="fas fa-caret-right fa-fw mx-2"></i>
-          {# TARGET user #}
-          <input type='text' placeholder='{{ 'Search user'|trans }}' id='targetOwnerSelect' class='form-control' data-identifier='targetOwnerSelect' data-action='autocomplete' data-target='users' data-team='team' aria-label='{{ 'Search user'|trans }}'>
-          <div id='autocompleteAnchorDiv_targetOwnerSelect'></div>
+        {# CURRENT Owner #}
+        <div id='current_owner_div'>
+        <label for='source_owner' id='source_owner_label'>{{ 'Current owner'|trans }}</label>
+        <input type='text' id='source_owner' disabled value='{{ Entity.entityData.fullname }}' class='form-control'/>
+        <div id='autocompleteAnchorDiv_sourceOwnerInput'></div>
+        <i id='owner_transfer_arrow' class='fas fa-caret-down fa-fw mx-2'></i>
         </div>
+        {# TARGET user #}
+        <input type='text' placeholder='{{ 'Search user'|trans }}' id='targetOwnerSelect' class='form-control' data-identifier='targetOwnerSelect' data-action='autocomplete' data-target='users' data-team='team' aria-label='{{ 'Search user'|trans }}'>
+        <div id='autocompleteAnchorDiv_targetOwnerSelect'></div>
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>

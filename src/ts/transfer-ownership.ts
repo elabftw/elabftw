@@ -34,7 +34,7 @@ on('toggle-modal', (el: HTMLElement) => {
   if (target === 'ownerModal') {
     setupUserInputWatcher();
     const isBatch = el.dataset.isbatch === 'true';
-    document.getElementById('current_owner_div')?.classList.toggle('d-none', isBatch);
+    document.getElementById('currentOwnerDiv')?.classList.toggle('d-none', isBatch);
   }
 });
 

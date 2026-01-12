@@ -20,8 +20,8 @@
             {% endfor %}
           </select>
           {# SELECT USER #}
-          {# CURRENT Owner #}
-          <div id='current_owner_div'>
+          {# 1 - CURRENT Owner #}
+          <div id='currentOwnerDiv'>
             <label for='source_owner' id='source_owner_label'>{{ 'Current owner'|trans }}</label>
             <input type='text' id='source_owner' aria-disabled='true' readonly value='{{ Entity.entityData.fullname }}' class='form-control'/>
             <div id='autocompleteAnchorDiv_sourceOwnerInput'></div>
@@ -29,7 +29,7 @@
               <i class='fas fa-caret-down fa-fw m-2 text-big' aria-hidden='true' role='presentation'></i>
             </div>
           </div>
-          {# TARGET user #}
+          {# 2 - TARGET Owner #}
           <label for='targetOwnerSelect'>{{ 'Select new owner'|trans }}</label>
           <input required type='text' placeholder='{{ 'Search user'|trans }}' name='targetOwnerSelect' id='targetOwnerSelect' class='form-control' data-identifier='targetOwnerSelect' data-action='autocomplete' data-target='users' data-team='targetTeamSelect'>
           <div id='autocompleteAnchorDiv_targetOwnerSelect'></div>

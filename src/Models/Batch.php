@@ -21,6 +21,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\DisplayParams;
+use Elabftw\Services\ApiParamsValidator;
 use Override;
 
 /**
@@ -121,11 +122,10 @@ final class Batch extends AbstractRest
     {
         // On transfer of ownership, required parameters are target owner's id and team id.
         if ($action === Action::UpdateOwner) {
-            $targetOwner = $params['target_owner']
-                ?? throw new ImproperActionException('Target owner is missing!');
-            $targetTeam = $params['target_team']
-                ?? throw new ImproperActionException("Target owner's team is missing!");
-            $params = array('target_owner' => $targetOwner, 'target_team' => $targetTeam);
+            ApiParamsValidator::ensureRequiredKeysPresent(
+                array('target_owner', 'target_team'),
+                $params,
+            );
             $action = Action::Update;
         }
         foreach ($entries as $entry) {

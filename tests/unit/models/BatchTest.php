@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\MissingRequiredKeyException;
 use Elabftw\Models\Users\Users;
 
 class BatchTest extends \PHPUnit\Framework\TestCase
@@ -65,6 +66,16 @@ class BatchTest extends \PHPUnit\Framework\TestCase
         $reqBody['target_owner'] = 3;
         $reqBody['target_team'] = 1;
         $this->assertIsInt($this->Batch->postAction(Action::UpdateOwner, $reqBody));
+    }
+
+    public function testPostActionWithWrongOwnershipUpdate(): void
+    {
+        $reqBody = $this->baseReqBody;
+        $reqBody['action'] = Action::UpdateOwner->value;
+        $reqBody['users_experiments'] = array(1, 2);
+        $reqBody['target_team'] = 1;
+        $this->expectException(MissingRequiredKeyException::class);
+        $this->Batch->postAction(Action::UpdateOwner, $reqBody);
     }
 
     public function testInvalidPostAction(): void

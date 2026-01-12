@@ -267,6 +267,9 @@
 {% endif %}
 
 <div class='real-container {{ realContainerClass }}'>
+<div id='safari-warning' hidden>
+    {{ 'Warning: Safari is not supported. Consult the documentation (%sFAQ%s, %sSafari errors%s) for help.'|trans|format("<a href='https://doc.elabftw.net/faq.html#requirements-for-the-clients-users'>", "</a>", "<a href=https://github.com/elabftw/elabftw/issues?q=label%3A%22Safari%3A%20why%20are%20you%20like%20this%3F%22'>", "</a>")|msg('ko') }}
+</div>
 
 <noscript>{# show warning if javascript is disabled #}
     <div class='alert alert-danger'>

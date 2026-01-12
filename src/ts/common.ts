@@ -73,6 +73,57 @@ interface Status extends SelectOptions {
   title: string;
 }
 
+// safari token a la place
+// webkit
+const APPLE_VENDOR = 'Apple Computer, Inc.';
+
+const FORBIDDEN_UA_TOKENS = [
+  'Chrome',
+  'CriOS',
+  'Edg',
+  'EdgiOS',
+  'OPR',
+  'OPiOS',
+  'Firefox',
+  'FxiOS',
+  'SamsungBrowser',
+] as const;
+
+const DISMISS_KEY = 'dismiss_safari_warning_v1';
+
+const isSafari = (): boolean => {
+  const ua = navigator.userAgent ?? '';
+  const vendor = navigator.vendor ?? '';
+
+  if (vendor !== APPLE_VENDOR) return false;
+  if (!contains(ua, 'Safari/') == false) return false;
+  if (!contains(ua, 'Version/') == false) return false;
+
+  for (const token of FORBIDDEN_UA_TOKENS) {
+    if (ua.includes(token)) return false;
+  }
+  return true;
+};
+
+const initSafariWarning = () => {
+  const el = document.getElementById('safari-warning');
+  if (!el) return;
+  let dismissed = false;
+  try {
+    dismissed = localStorage.getItem(DISMISS_KEY) === '1';
+  } catch {
+    dismissed = false;
+  }
+  if (isSafari() && !dismissed) {
+    el.removeAttribute('hidden');
+  }
+  el.setAttribute('hidden', '');
+};
+
+document.addEventListener('DOMContentLoaded', initSafariWarning, { once: true });
+if (document.readyState !== 'loading')
+  initSafariWarning();
+
 // HEARTBEAT
 // this function is to check periodically that we are still authenticated
 // and show a message if we the session is not valid anymore but we are still on a page requiring auth

@@ -12,13 +12,12 @@ import { entity } from './getEntity';
 import { on } from './handlers';
 import { collectForm } from './misc';
 
-on('transfer-ownership', () => {
+on('transfer-ownership', async () => {
   const payload = getOwnershipTransferPayload();
-  ApiC.patch(`${entity.type}/${entity.id}`, { userid: payload.target_owner, team: payload.team }).then(() => {
-    window.location.href = location.pathname;
-  });
+  ApiC.keepalive = true;
+  await ApiC.patch(`${entity.type}/${entity.id}`, { userid: payload.target_owner, team: payload.team });
+  ApiC.keepalive = false;
 });
-
 // when a user is selected, we prevent the team selection change in order to
 // avoid discrepancy (.e.g, selecting Toto in team 1, then changing Team to 2)
 function setupUserInputWatcher() {

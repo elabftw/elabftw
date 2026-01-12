@@ -41,6 +41,11 @@ function collectTargetOwner(): number {
   return collected ? parseInt(collected.value, 10) || 0 : 0;
 }
 
+function collectTargetTeam(): number {
+  const collected = document.getElementById('targetOwnerSelect') as HTMLSelectElement;
+  return collected ? parseInt(collected.value, 10) || 0 : 0;
+}
+
 function collectCan(): string {
   // Warning: copy pasta from common.ts save-permissions action
   // collect existing users listed in ul->li, and store them in a string[] with user:<userid>
@@ -67,6 +72,7 @@ function getSelected(): Selected {
     users_experiments: collectSelectable('users-experiments'),
     users_resources: collectSelectable('users-resources'),
     target_owner: collectTargetOwner(),
+    target_team: collectTargetTeam(),
     can: collectCan(),
   };
 }

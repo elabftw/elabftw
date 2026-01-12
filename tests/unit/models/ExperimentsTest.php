@@ -177,6 +177,11 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->Experiments->patch(Action::Update, array('category' => '3')));
     }
 
+    public function testUpdateOwnership(): void
+    {
+        $this->assertIsArray($this->Experiments->patch(Action::Update, array('userid' => '2')));
+    }
+
     public function testUpdateWithNegativeInt(): void
     {
         $this->assertIsArray($this->Experiments->patch(Action::Update, array('category' => '-3', 'custom_id' => '-5')));

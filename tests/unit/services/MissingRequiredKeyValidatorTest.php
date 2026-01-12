@@ -38,7 +38,6 @@ class MissingRequiredKeyValidatorTest extends \PHPUnit\Framework\TestCase
     public function testNullValueIsConsideredMissing(): void
     {
         $this->expectException(MissingRequiredKeyException::class);
-
         ApiParamsValidator::ensureRequiredKeysPresent(
             array('target_owner', 'target_team'),
             array(

@@ -1454,7 +1454,7 @@ input[type='color'] {
 
 /* disable input (only visually), because disabled attribute prevents collectForm() usage */
 .input-disabled {
-  color: $disabled !important;
+  background-color: $superlight !important;
   pointer-events: none;
 }
 

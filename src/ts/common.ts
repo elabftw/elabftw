@@ -96,8 +96,8 @@ const isSafari = (): boolean => {
   const vendor = navigator.vendor ?? '';
 
   if (vendor !== APPLE_VENDOR) return false;
-  if (!ua,includes('Safari/')) return false;
-  if (!ua,includes('Version/')) return false;
+  if (!ua.includes('Safari/')) return false;
+  if (!ua.includes('Version/')) return false;
 
   for (const token of FORBIDDEN_UA_TOKENS) {
     if (ua.includes(token)) return false;

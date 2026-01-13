@@ -73,15 +73,15 @@ interface Status extends SelectOptions {
   title: string;
 }
 
-// safari token a la place
-// webkit
+// iOS browsers often look like Safari UA; exclude by tokens:
+// https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/User-Agent
 
 const FORBIDDEN_UA_TOKENS = [
   'Chrome',
   'CriOS',
   'Edg',
   'EdgiOS',
-  'OPR',
+  'OPT',
   'OPiOS',
   'Firefox',
   'FxiOS',

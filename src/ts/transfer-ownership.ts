@@ -18,23 +18,18 @@ on('transfer-ownership', async () => {
   await ApiC.patch(`${entity.type}/${entity.id}`, { userid: payload.target_owner, team: payload.team });
   ApiC.keepalive = false;
 });
-// when a user is selected, we prevent the team selection change in order to
-// avoid discrepancy (.e.g, selecting Toto in team 1, then changing Team to 2)
-function setupUserInputWatcher() {
-  const userInput = document.getElementById('targetOwnerSelect') as HTMLInputElement;
+// when a team is selected, refresh the user input with users from that team.
+function filterUsersByTeamSelected() {
   const teamSelectEl = document.getElementById('targetTeamSelect') as HTMLSelectElement;
-  if (!userInput || !teamSelectEl) return;
-  userInput.addEventListener('input', () => {
-    teamSelectEl.classList.toggle('input-disabled', userInput.value.trim().length > 0);
-  });
+  const userInput = document.getElementById('targetOwnerSelect') as HTMLInputElement;
+  if (!teamSelectEl || !userInput) return;
+  teamSelectEl.addEventListener('change', () => userInput.value = '');
 }
 
 on('toggle-modal', (el: HTMLElement) => {
   const target = el.dataset.target;
   if (target === 'ownerModal') {
-    setupUserInputWatcher();
-    const isBatch = el.dataset.isbatch === 'true';
-    document.getElementById('currentOwnerDiv')?.classList.toggle('d-none', isBatch);
+    filterUsersByTeamSelected();
   }
 });
 
@@ -47,5 +42,6 @@ export function getOwnershipTransferPayload(): OwnershipTransferPayload {
   const params = collectForm(document.getElementById('ownershipTransferForm')!);
   const targetOwner = parseInt(params['targetOwnerSelect'].split(' ')[0] ?? '', 10);
   const team = parseInt(params['targetTeamSelect'] ?? '', 10);
+  console.log(targetOwner, team);
   return { target_owner: targetOwner, team };
 }

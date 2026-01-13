@@ -42,7 +42,7 @@ function collectTargetOwner(): number {
 }
 
 function collectTargetTeam(): number {
-  const collected = document.getElementById('targetOwnerSelect') as HTMLSelectElement;
+  const collected = document.getElementById('targetTeamSelect') as HTMLSelectElement;
   return collected ? parseInt(collected.value, 10) || 0 : 0;
 }
 

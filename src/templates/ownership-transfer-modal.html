@@ -21,14 +21,16 @@
           </select>
           {# SELECT USER #}
           {# 1 - CURRENT Owner #}
-          <div id='currentOwnerDiv'>
-            <label for='sourceOwner'>{{ 'Current owner'|trans }}</label>
-            <input type='text' id='sourceOwner' aria-disabled='true' readonly value='{{ Entity.entityData.fullname }}' class='form-control'/>
-            <div id='autocompleteAnchorDiv_sourceOwnerInput'></div>
-            <div class='d-flex justify-content-center'>
-              <i class='fas fa-caret-down fa-fw m-2 text-big' aria-hidden='true' role='presentation'></i>
+          {% if App.Request.getScriptName|split('/')|last != 'admin.php' %}
+            <div id='currentOwnerDiv'>
+              <label for='sourceOwner'>{{ 'Current owner'|trans }}</label>
+              <input type='text' id='sourceOwner' aria-disabled='true' readonly value='{{ Entity.entityData.fullname }}' class='form-control'/>
+              <div id='autocompleteAnchorDiv_sourceOwnerInput'></div>
+              <div class='d-flex justify-content-center'>
+                <i class='fas fa-caret-down fa-fw m-2 text-big' aria-hidden='true' role='presentation'></i>
+              </div>
             </div>
-          </div>
+          {% endif %}
           {# 2 - TARGET Owner #}
           <label for='targetOwnerSelect'>{{ 'Select new owner'|trans }}</label>
           <input required type='text' placeholder='{{ 'Search user'|trans }}' name='targetOwnerSelect' id='targetOwnerSelect' class='form-control' data-identifier='targetOwnerSelect' data-action='autocomplete' data-target='users' data-team='targetTeamSelect'>

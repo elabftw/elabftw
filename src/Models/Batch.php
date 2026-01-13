@@ -122,10 +122,8 @@ final class Batch extends AbstractRest
     {
         // On transfer of ownership, required parameters are target owner's id and team id.
         if ($action === Action::UpdateOwner) {
-            ApiParamsValidator::ensureRequiredKeysPresent(
-                array('target_owner', 'target_team'),
-                $params,
-            );
+            ApiParamsValidator::ensureRequiredKeysPresent(array('target_owner', 'target_team'), $params);
+            $params = array('userid' => (int) $params['target_owner'], 'team' => (int) $params['target_team']);
             $action = Action::Update;
         }
         foreach ($entries as $entry) {

@@ -1454,12 +1454,6 @@ input[type='color'] {
   border: 1px solid #ced4da;
 }
 
-/* disable input (only visually), because disabled attribute prevents collectForm() usage */
-.input-disabled {
-  background-color: $superlight !important;
-  pointer-events: none;
-}
-
 /* bring the search and user menu a bit more on the left
  * this is the only way I found that works
  * adding row/columns will mess up the left alignment of the navbar

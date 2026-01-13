@@ -131,6 +131,7 @@ final class EntitySqlBuilder implements SqlBuilderInterface
                 entity.canwrite,
                 entity.canread_is_immutable,
                 entity.canwrite_is_immutable,
+                entity.created_at,
                 entity.modified_at,
                 entity.timestamped';
             // only include columns (created_at, locked_at, timestamped_at, entity.metadata) if actually searching for it

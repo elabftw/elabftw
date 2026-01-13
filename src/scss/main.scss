@@ -515,6 +515,8 @@ tr:first-child td {
 
   .tags {
     max-width: 20ch;
+    overflow-wrap: normal;  // don't force per-character wrapping
+    word-break: keep-all;
   }
 
   .item-rating {

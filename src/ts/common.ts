@@ -75,7 +75,6 @@ interface Status extends SelectOptions {
 
 // safari token a la place
 // webkit
-const APPLE_VENDOR = 'Apple Computer, Inc.';
 
 const FORBIDDEN_UA_TOKENS = [
   'Chrome',
@@ -95,7 +94,7 @@ const isSafari = (): boolean => {
   const ua = navigator.userAgent ?? '';
   const vendor = navigator.vendor ?? '';
 
-  if (vendor !== APPLE_VENDOR) return false;
+  if (vendor !== 'Apple Computer, Inc.') return false;
   if (!ua.includes('Safari/')) return false;
   if (!ua.includes('Version/')) return false;
 
@@ -106,7 +105,7 @@ const isSafari = (): boolean => {
 };
 
 const initSafariWarning = () => {
-  const el = document.getElementById('safari-warning');
+  const el = document.getElementById('safariWarning');
   if (!el) return;
   let dismissed = false;
   try {
@@ -116,12 +115,24 @@ const initSafariWarning = () => {
   }
   if (isSafari() && !dismissed) {
     el.removeAttribute('hidden');
+    const closeEl = el.querySelector<HTMLAnchorElement>('a.close, [data-dismiss="alert"]');
+    if (!closeEl) return;
+    closeEl.addEventListener(
+      'click', (e) => {
+        try {
+          localStorage.setItem(DISMISS_KEY, '1');
+        } catch {
+          // localStorage may be unavailable (private mode / blocked), ignore
+        }
+        el.setAttribute('hidden', '');
+        e.preventDefault();
+      },
+      { once: true },
+    );
   }
 };
 
-document.addEventListener('DOMContentLoaded', initSafariWarning, { once: true });
-if (document.readyState !== 'loading')
-  initSafariWarning();
+initSafariWarning();
 
 // HEARTBEAT
 // this function is to check periodically that we are still authenticated

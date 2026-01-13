@@ -1,18 +1,23 @@
 {# Modal for ownership transfer #}
-<div class='modal fade' id='ownerModal' tabindex='-1' role='dialog' aria-labelledby='ownerModalLabel'>
+{#<div class='modal fade' id='ownerModal' tabindex='-1' role='dialog' aria-labelledby='ownerModalLabel'>#}
+<div class='' id='ownerModal' tabindex='-1' role='dialog' aria-labelledby='ownerModalLabel'>
   <div class='modal-dialog' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
-        <h5 class='modal-title' id='ownerModalLabel'>{{ 'Transfer ownership'|trans }}</h5>
+        <div>
+          <h5 class='modal-title' id='ownerModalLabel'>{{ 'Transfer ownership'|trans }}</h5>
+          <div class='smallgray mt-2'>{{ 'You are about to transfer ownership of this entry to another user. After the transfer, they will become the owner, and you may lose access if you do not have permission to view it.'|trans }}</div>
+        </div>
         <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
       <form id='ownershipTransferForm' aria-label='{{ 'Transfer ownership'|trans }}'>
         <div class='modal-body'>
-          <div class='smallgray mb-2'>{{ 'Select the team associated with the user who will receive ownership.'|trans }}</div>
           {# SELECT TEAM #}
+          {% set infotip = 'Select the team associated with the user who will receive ownership.' %}
           <label for='targetTeamSelect'>{{ 'Select a team'|trans }}</label>
+          {% include 'infotip.html' with {text: infotip} %}
           <select required name='targetTeamSelect' class='form-control mb-2' id='targetTeamSelect'>
             <option selected disabled value=''>{{ 'Select a team'|trans }}</option>
             {% for team in teamsArr %}

@@ -42,6 +42,5 @@ export function getOwnershipTransferPayload(): OwnershipTransferPayload {
   const params = collectForm(document.getElementById('ownershipTransferForm')!);
   const targetOwner = parseInt(params['targetOwnerSelect'].split(' ')[0] ?? '', 10);
   const team = parseInt(params['targetTeamSelect'] ?? '', 10);
-  console.log(targetOwner, team);
   return { target_owner: targetOwner, team };
 }

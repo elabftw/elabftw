@@ -66,10 +66,12 @@ use Elabftw\Params\ExtraFieldsOrderingParams;
 use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
+use Elabftw\Services\ApiParamsValidator;
 use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
 use Elabftw\Services\HttpGetter;
 use Elabftw\Services\SignatureHelper;
+use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\TimestampUtils;
 use Elabftw\Traits\EntityTrait;
 use GuzzleHttp\Client;
@@ -513,6 +515,7 @@ abstract class AbstractEntity extends AbstractRest
                     }
                 }
             )(),
+//            Action::UpdateOwner => $this->updateOwner($params),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
         return $this->readOne();
@@ -1070,6 +1073,24 @@ abstract class AbstractEntity extends AbstractRest
             $toggleLock();
         }
         $this->update(new EntityParams('state', (string) $targetState->value));
+    }
+
+    private function updateOwner(array $params): void
+    {
+        ApiParamsValidator::ensureRequiredKeysPresent(array('target_owner', 'target_team'), $params);
+        $params = array('userid' => (int) $params['target_owner'], 'team' => (int) $params['target_team']);
+        $action = Action::Update;
+
+        // user must belong to the team
+//        $TeamsHelper = new TeamsHelper($this->Teams->id);
+//        if (!$TeamsHelper->isUserInTeam($userid)) {
+//            throw new UnauthorizedException();
+//        }
+//        if (!$this->Users->isUserInTeam($userId, $teamId)) {
+//            throw new ImproperActionException('User does not belong to the selected team.');
+//        }
+//        // performsql
+//        $this->setOwner($userId, $teamId);
     }
 
     private function addToExtendedFilter(string $extendedFilter, array $extendedValues = array()): void

@@ -111,6 +111,7 @@ enum Action {
   UpdateMetadataField = 'updatemetadatafield',
   UpdatePassword = 'updatepassword',
   UpdateTag = 'updatetag',
+  UpdateOwner = 'updateowner',
   Validate = 'validate',
   // Dspace Actions
   GetCollections = 'getcollections',

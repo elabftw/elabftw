@@ -1083,6 +1083,19 @@ abstract class AbstractEntity extends AbstractRest
         }
         $this->update(new EntityParams('userid', $userid));
         $this->update(new EntityParams('team', $team));
+        // transfer uploads ownership as well
+        $this->transferUploadsOwnership($userid);
+    }
+
+    private function transferUploadsOwnership(int $userid): void
+    {
+        foreach ($this->Uploads->readAll() as $upload) {
+            $this->Uploads->setId((int) $upload['id']);
+            $this->Uploads->patch(
+                Action::Update,
+                array('userid' => $userid),
+            );
+        }
     }
 
     private function addToExtendedFilter(string $extendedFilter, array $extendedValues = array()): void

@@ -545,9 +545,7 @@ on('transfer-ownership', async () => {
   const params = collectForm(document.getElementById('ownershipTransferForm')!);
   const userid = Number.parseInt(params['targetUserId']?.split(' ')[0] ?? '', 10);
   const team = Number.parseInt(params['targetTeamId'] ?? '', 10);
-  ApiC.keepalive = true;
-  await ApiC.patch(`${entity.type}/${entity.id}`, { userid, team });
-  ApiC.keepalive = false;
+  await ApiC.patch(`${entity.type}/${entity.id}`, { action: Action.UpdateOwner, userid, team }).then(() => window.location.reload());
 });
 
 on(Action.Restore, () => {

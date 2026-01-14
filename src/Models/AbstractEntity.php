@@ -1089,7 +1089,8 @@ abstract class AbstractEntity extends AbstractRest
 
     private function transferUploadsOwnership(int $userid): void
     {
-        foreach ($this->Uploads->readAll() as $upload) {
+        $uploads = $this->Uploads->readAll($this->getQueryParams(new InputBag(array('state' => '1,2,3'))));
+        foreach ($uploads as $upload) {
             $this->Uploads->setId((int) $upload['id']);
             $this->Uploads->patch(
                 Action::Update,

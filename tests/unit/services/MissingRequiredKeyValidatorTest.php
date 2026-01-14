@@ -17,10 +17,17 @@ use Elabftw\Exceptions\MissingRequiredKeyException;
 
 class MissingRequiredKeyValidatorTest extends \PHPUnit\Framework\TestCase
 {
+    private array $expectedKeys;
+
+    protected function setUp(): void
+    {
+        $this->expectedKeys = array('userid', 'team');
+    }
+
     public function testAllRequiredKeysPresent(): void
     {
         ApiParamsValidator::ensureRequiredKeysPresent(
-            array('userid', 'team'),
+            $this->expectedKeys,
             array('userid' => 3, 'team' => 1),
         );
         $this->assertTrue(true);
@@ -30,7 +37,7 @@ class MissingRequiredKeyValidatorTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(MissingRequiredKeyException::class);
         ApiParamsValidator::ensureRequiredKeysPresent(
-            array('userid', 'team'),
+            $this->expectedKeys,
             array('userid' => 3),
         );
     }
@@ -39,11 +46,8 @@ class MissingRequiredKeyValidatorTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(MissingRequiredKeyException::class);
         ApiParamsValidator::ensureRequiredKeysPresent(
-            array('userid', 'team'),
-            array(
-                'userid' => 3,
-                'team' => null,
-            ),
+            $this->expectedKeys,
+            array('userid' => 3, 'team' => null),
         );
     }
 
@@ -51,7 +55,7 @@ class MissingRequiredKeyValidatorTest extends \PHPUnit\Framework\TestCase
     {
         try {
             ApiParamsValidator::ensureRequiredKeysPresent(
-                array('userid', 'team'),
+                $this->expectedKeys,
                 array(),
             );
             $this->fail('Expected MissingRequiredKeyException was not thrown');

@@ -179,7 +179,14 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdateOwnership(): void
     {
-        $this->assertIsArray($this->Experiments->patch(Action::Update, array('userid' => '2')));
+        $user1 = $this->getRandomUserInTeam(1);
+        $user2 = $this->getRandomUserInTeam(1);
+        $this->assertNotEquals($user1->userid, $user2->userid);
+        $exp = $this->getFreshExperimentWithGivenUser($user1);
+        $params = array('users_experiments' => array($user1->userid), 'userid' => $user2->userid, 'team' => $user2->team);
+        $exp->patch(Action::UpdateOwner, $params);
+        $this->assertEquals($exp->entityData['userid'], $user2->userid);
+        $this->assertEquals($exp->entityData['team'], $user2->team);
     }
 
     public function testUpdateWithNegativeInt(): void

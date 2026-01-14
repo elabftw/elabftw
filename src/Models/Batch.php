@@ -123,12 +123,6 @@ final class Batch extends AbstractRest
 
     private function loopOverEntries(array $entries, AbstractConcreteEntity $model, Action $action, array $params): void
     {
-        // On transfer of ownership, required parameters are target owner's id and team id.
-        if ($action === Action::UpdateOwner) {
-            ApiParamsValidator::ensureRequiredKeysPresent(array('userid', 'teamid'), $params);
-            $params = array_intersect_key($params, array_flip(['userid', 'teamid']));
-            $action = Action::Update;
-        }
         foreach ($entries as $entry) {
             try {
                 $model->setId($entry['id']);

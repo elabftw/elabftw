@@ -88,9 +88,9 @@ on('run-action-selected', (el: HTMLElement) => {
   selected['action'] = btn.dataset.what;
   // we use a custom notif message, so disable the native one
   ApiC.notifOnSaved = false;
-  if (btn.dataset.what === 'updateowner') {
-    Object.assign(selected, getOwnershipTransferPayload());
-  }
+  // if (btn.dataset.what === 'updateowner') {
+  //   Object.assign(selected, getOwnershipTransferPayload());
+  // }
   ApiC.post('batch', selected).then(res => {
     const processed = res.headers.get('location').split('/').pop();
     notify.success('entries-processed', { num: processed });

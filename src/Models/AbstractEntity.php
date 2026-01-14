@@ -508,6 +508,7 @@ abstract class AbstractEntity extends AbstractRest
                     }
                 }
             )(),
+            Action::UpdateOwner => $this->updateOwner($params),
             Action::Update => (
                 function () use ($params) {
                     foreach ($params as $key => $value) {
@@ -515,7 +516,6 @@ abstract class AbstractEntity extends AbstractRest
                     }
                 }
             )(),
-//            Action::UpdateOwner => $this->updateOwner($params),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
         return $this->readOne();
@@ -1078,19 +1078,8 @@ abstract class AbstractEntity extends AbstractRest
     private function updateOwner(array $params): void
     {
         ApiParamsValidator::ensureRequiredKeysPresent(array('userid', 'teamid'), $params);
-        $params = array('userid' => (int) $params['userid'], 'team' => (int) $params['teamid']);
-        $action = Action::Update;
-
-        // user must belong to the team
-//        $TeamsHelper = new TeamsHelper($this->Teams->id);
-//        if (!$TeamsHelper->isUserInTeam($userid)) {
-//            throw new UnauthorizedException();
-//        }
-//        if (!$this->Users->isUserInTeam($userId, $teamId)) {
-//            throw new ImproperActionException('User does not belong to the selected team.');
-//        }
-//        // performsql
-//        $this->setOwner($userId, $teamId);
+        $this->update(new EntityParams('userid', (int) $params['userid']));
+        $this->update(new EntityParams('team', (int) $params['teamid']));
     }
 
     private function addToExtendedFilter(string $extendedFilter, array $extendedValues = array()): void

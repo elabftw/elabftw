@@ -12,7 +12,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\CreateUploadFromLocalFile;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\MissingRequiredKeyException;
 use Elabftw\Exceptions\UnauthorizedException;
@@ -62,9 +64,7 @@ class BatchTest extends \PHPUnit\Framework\TestCase
         $this->baseReqBody['experiments_tags'] = array(1, 2);
         $this->baseReqBody['users_experiments'] = array(1, 2);
         $this->baseReqBody['users_resources'] = array(1, 2);
-        $processed = $this->Batch->postAction(Action::UpdateOwner, $this->baseReqBody);
-        $this->assertIsInt($processed);
-        $this->assertGreaterThan(0, $processed);
+        $this->assertBatchProcessed(Action::UpdateOwner, $this->baseReqBody);
     }
 
     public function testPostActionWithOwnershipUpdate(): void
@@ -76,9 +76,7 @@ class BatchTest extends \PHPUnit\Framework\TestCase
         $this->baseReqBody['users_experiments'] = array($user->userid);
         $this->baseReqBody['userid'] = $user->userid;
         $this->baseReqBody['team'] = $user->team;
-        $processed = $this->Batch->postAction(Action::UpdateOwner, $this->baseReqBody);
-        $this->assertIsInt($processed);
-        $this->assertGreaterThan(0, $processed);
+        $this->assertBatchProcessed(Action::UpdateOwner, $this->baseReqBody);
     }
 
     public function testPostActionTransferOwnerToWrongUserTeamCombination(): void
@@ -112,20 +110,60 @@ class BatchTest extends \PHPUnit\Framework\TestCase
     // test Unarchive & Restore methods
     public function testSpecialActions(): void
     {
-        // unarchive
+        $user = $this->getRandomUserInTeam(1);
+        $exp = $this->getFreshExperimentWithGivenUser($user);
+        // unarchive. First, archive the experiment
+        $exp->patch(Action::Archive, array());
         $this->baseReqBody['action'] = Action::Unarchive->value;
-        $this->baseReqBody['userid'] = 3;
-        $this->assertIsInt($this->Batch->postAction(Action::Unarchive, $this->baseReqBody));
-        // restore
-        $this->baseReqBody['action'] = Action::Destroy->value;
-        $this->baseReqBody['userid'] = 3;
-        $this->assertIsInt($this->Batch->postAction(Action::Destroy, $this->baseReqBody));
+        $this->baseReqBody['users_experiments'] = array($user->userid);
+        $this->assertBatchProcessed(Action::Unarchive, $this->baseReqBody);
+        // restore. First, delete the experiment
+        $exp->destroy();
         $this->baseReqBody['action'] = Action::Restore->value;
-        $this->assertIsInt($this->Batch->postAction(Action::Restore, $this->baseReqBody));
+        $this->baseReqBody['users_experiments'] = array($user->userid);
+        $this->assertBatchProcessed(Action::Restore, $this->baseReqBody);
+    }
+
+    public function testBatchOwnershipTransferAlsoTransfersUploads(): void
+    {
+        $User1 = $this->getRandomUserInTeam(1);
+        $User2 = $this->getRandomUserInTeam(1);
+        $Experiment = $this->getFreshExperimentWithGivenUser($User1);
+        // new upload
+        $fixturesFs = Storage::FIXTURES->getStorage();
+        $uploadPath = $fixturesFs->getPath() . '/example.png';
+        $uploadId = $Experiment->Uploads->create(new CreateUploadFromLocalFile('example.png', $uploadPath));
+        $this->assertIsInt($uploadId);
+        // Initial upload owner should match experiment owner
+        $Upload = new Uploads($Experiment, $uploadId);
+        $this->assertEquals($User1->userid, $Upload->uploadData['userid']);
+        // batch transfer user 1's experiments to user 2
+        $this->baseReqBody['action'] = Action::UpdateOwner->value;
+        $this->baseReqBody['users_experiments'] = array($User1->userid);
+        $this->baseReqBody['userid'] = $User2->userid;
+        $this->baseReqBody['team'] = $User1->team;
+        $this->assertBatchProcessed(Action::UpdateOwner, $this->baseReqBody);
+        // reload exp & upload
+        $Experiment->setId($Experiment->id);
+        $this->assertEquals($User2->userid, $Experiment->entityData['userid']);
+        $UploadAfter = new Uploads($Experiment, $uploadId);
+        $this->assertEquals($User2->userid, $UploadAfter->uploadData['userid']);
     }
 
     public function testGetApiPath(): void
     {
         $this->assertEquals('api/v2/batch/', $this->Batch->getApiPath());
+    }
+
+    // assert Batch action processes more than one entity. Tests must reflect useful situations
+    protected function assertBatchProcessed(Action $action, array $reqBody): void
+    {
+        $processed = $this->Batch->postAction($action, $reqBody);
+        $this->assertIsInt($processed);
+        $this->assertGreaterThan(
+            0,
+            $processed,
+            sprintf('Expected batch action %s to process at least one entity. Processed: %d', $action->value, $processed)
+        );
     }
 }

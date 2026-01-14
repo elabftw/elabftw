@@ -194,7 +194,7 @@ const filterUsersByTeamSelected = () => {
   const userInput = document.getElementById('targetUserId') as HTMLInputElement;
   if (!teamSelectEl || !userInput) return;
   teamSelectEl.addEventListener('change', () => userInput.value = '');
-}
+};
 
 // Listen for malleable columns
 new Malle({

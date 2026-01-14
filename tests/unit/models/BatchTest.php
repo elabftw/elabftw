@@ -55,7 +55,7 @@ class BatchTest extends \PHPUnit\Framework\TestCase
     {
         $this->baseReqBody['action'] = Action::ForceUnlock->value;
         $this->baseReqBody['items_tags'] = array(1, 2);
-        $this->baseReqBody['items_types'] = array(1, 2);
+        $this->baseReqBody['items_categories'] = array(1, 2);
         $this->baseReqBody['items_status'] = array(1, 2);
         $this->baseReqBody['experiments_categories'] = array(1, 2);
         $this->baseReqBody['experiments_status'] = array(1, 2);

@@ -66,7 +66,6 @@ use Elabftw\Params\ExtraFieldsOrderingParams;
 use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
-use Elabftw\Services\ApiParamsValidator;
 use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
 use Elabftw\Services\HttpGetter;
@@ -508,7 +507,7 @@ abstract class AbstractEntity extends AbstractRest
                     }
                 }
             )(),
-            Action::UpdateOwner => $this->updateOwner($params),
+            Action::UpdateOwner => $this->updateOwner((int) $params['userid'], (int) $params['team']),
             Action::Update => (
                 function () use ($params) {
                     foreach ($params as $key => $value) {
@@ -1075,11 +1074,15 @@ abstract class AbstractEntity extends AbstractRest
         $this->update(new EntityParams('state', (string) $targetState->value));
     }
 
-    private function updateOwner(array $params): void
+    private function updateOwner(int $userid, int $team): void
     {
-        ApiParamsValidator::ensureRequiredKeysPresent(array('userid', 'teamid'), $params);
-        $this->update(new EntityParams('userid', (int) $params['userid']));
-        $this->update(new EntityParams('team', (int) $params['teamid']));
+        // validate that the target user belongs to the target team
+        $TeamsHelper = new TeamsHelper($team);
+        if (!$TeamsHelper->isUserInTeam($userid)) {
+            throw new UnauthorizedException(sprintf('The user with id: %d does not belong to the selected team %d.', $userid, $team));
+        }
+        $this->update(new EntityParams('userid', $userid));
+        $this->update(new EntityParams('team', $team));
     }
 
     private function addToExtendedFilter(string $extendedFilter, array $extendedValues = array()): void

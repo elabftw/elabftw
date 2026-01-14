@@ -18,14 +18,10 @@ use Elabftw\Enums\Scope;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\DisplayParams;
 use Elabftw\Services\ApiParamsValidator;
 use Override;
-
-use function array_intersect_key;
-use function array_flip;
 
 /**
  * Process a single request targeting multiple entities
@@ -40,14 +36,14 @@ final class Batch extends AbstractRest
     public function postAction(Action $action, array $reqBody): int
     {
         $action = Action::from($reqBody['action']);
-        $state = null;
-        // on Unarchive action, search for 'Archived' entities to perform the patch.
-        if ($action === Action::Unarchive) {
-            $state = State::Archived;
-        }
-        // same - search for deleted items when we want to Restore them.
-        if ($action === Action::Restore) {
-            $state = State::Deleted;
+        // Unarchive action: search for 'Archived' entries to patch. For 'Restore' action, look for 'deleted' entries.
+        $state = match ($action) {
+            Action::Unarchive => State::Archived,
+            Action::Restore => State::Deleted,
+            default => null,
+        };
+        if ($action === Action::UpdateOwner) {
+            ApiParamsValidator::ensureRequiredKeysPresent(array('userid', 'team'), $reqBody);
         }
         if ($reqBody['items_tags']) {
             $this->processTags($reqBody['items_tags'], new Items($this->requester), $action, $reqBody);
@@ -128,7 +124,7 @@ final class Batch extends AbstractRest
                 $model->setId($entry['id']);
                 $model->patch($action, $params);
                 $this->processed++;
-            } catch (UnauthorizedException | ImproperActionException | IllegalActionException) {
+            } catch (ImproperActionException | IllegalActionException) {
                 continue;
             }
         }

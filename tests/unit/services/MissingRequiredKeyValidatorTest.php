@@ -20,8 +20,8 @@ class MissingRequiredKeyValidatorTest extends \PHPUnit\Framework\TestCase
     public function testAllRequiredKeysPresent(): void
     {
         ApiParamsValidator::ensureRequiredKeysPresent(
-            array('userid', 'teamid'),
-            array('userid' => 3, 'teamid' => 1),
+            array('userid', 'team'),
+            array('userid' => 3, 'team' => 1),
         );
         $this->assertTrue(true);
     }
@@ -30,7 +30,7 @@ class MissingRequiredKeyValidatorTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(MissingRequiredKeyException::class);
         ApiParamsValidator::ensureRequiredKeysPresent(
-            array('userid', 'teamid'),
+            array('userid', 'team'),
             array('userid' => 3),
         );
     }
@@ -39,10 +39,10 @@ class MissingRequiredKeyValidatorTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(MissingRequiredKeyException::class);
         ApiParamsValidator::ensureRequiredKeysPresent(
-            array('userid', 'teamid'),
+            array('userid', 'team'),
             array(
                 'userid' => 3,
-                'teamid' => null,
+                'team' => null,
             ),
         );
     }
@@ -51,13 +51,13 @@ class MissingRequiredKeyValidatorTest extends \PHPUnit\Framework\TestCase
     {
         try {
             ApiParamsValidator::ensureRequiredKeysPresent(
-                array('userid', 'teamid'),
+                array('userid', 'team'),
                 array(),
             );
             $this->fail('Expected MissingRequiredKeyException was not thrown');
         } catch (MissingRequiredKeyException $e) {
             $this->assertStringContainsString('userid', $e->getMessage());
-            $this->assertStringContainsString('teamid', $e->getMessage());
+            $this->assertStringContainsString('team', $e->getMessage());
         }
     }
 }

@@ -15,10 +15,14 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\MissingRequiredKeyException;
+use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Users\Users;
+use Elabftw\Traits\TestsUtilsTrait;
 
 class BatchTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private Batch $Batch;
 
     private array $baseReqBody;
@@ -26,82 +30,98 @@ class BatchTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->Batch = new Batch(new Users(1, 1));
-        // Default values for $reqBody
+        // Init parameters for batch actions
         $this->baseReqBody = array(
             'action' => Action::Create->value,
             'items_tags' => array(),
-            'items_types' => array(),
+            'items_categories' => array(),
             'items_status' => array(),
             'experiments_categories' => array(),
             'experiments_status' => array(),
             'experiments_tags' => array(),
             'users_experiments' => array(),
             'users_resources' => array(),
-            // Only used if Action::UpdateOwner
+            'team' => null,
             'userid' => null,
         );
     }
 
+    protected function tearDown(): void
+    {
+        $this->baseReqBody = array();
+    }
+
     public function testPostAction(): void
     {
-        $reqBody = $this->baseReqBody;
-        $reqBody['action'] = Action::ForceUnlock->value;
-        $reqBody['items_tags'] = array(1, 2);
-        $reqBody['items_types'] = array(1, 2);
-        $reqBody['items_status'] = array(1, 2);
-        $reqBody['experiments_categories'] = array(1, 2);
-        $reqBody['experiments_status'] = array(1, 2);
-        $reqBody['experiments_tags'] = array(1, 2);
-        $reqBody['users_experiments'] = array(1, 2);
-        $reqBody['users_resources'] = array(1, 2);
-        $this->assertIsInt($this->Batch->postAction(Action::Create, $reqBody));
+        $this->baseReqBody['action'] = Action::ForceUnlock->value;
+        $this->baseReqBody['items_tags'] = array(1, 2);
+        $this->baseReqBody['items_types'] = array(1, 2);
+        $this->baseReqBody['items_status'] = array(1, 2);
+        $this->baseReqBody['experiments_categories'] = array(1, 2);
+        $this->baseReqBody['experiments_status'] = array(1, 2);
+        $this->baseReqBody['experiments_tags'] = array(1, 2);
+        $this->baseReqBody['users_experiments'] = array(1, 2);
+        $this->baseReqBody['users_resources'] = array(1, 2);
+        $processed = $this->Batch->postAction(Action::UpdateOwner, $this->baseReqBody);
+        $this->assertIsInt($processed);
+        $this->assertGreaterThan(0, $processed);
     }
 
     public function testPostActionWithOwnershipUpdate(): void
     {
-        $reqBody = $this->baseReqBody;
-        $reqBody['action'] = Action::UpdateOwner->value;
-        $reqBody['users_experiments'] = array(1, 2);
-        $reqBody['users_resources'] = array(1, 2);
-        $reqBody['userid'] = 3;
-        $reqBody['teamid'] = 1;
-        $this->assertIsInt($this->Batch->postAction(Action::UpdateOwner, $reqBody));
+        // create an experiment to transfer
+        $user = $this->getRandomUserInTeam(1);
+        $this->getFreshExperimentWithGivenUser($user);
+        $this->baseReqBody['action'] = Action::UpdateOwner->value;
+        $this->baseReqBody['users_experiments'] = array($user->userid);
+        $this->baseReqBody['userid'] = $user->userid;
+        $this->baseReqBody['team'] = $user->team;
+        $processed = $this->Batch->postAction(Action::UpdateOwner, $this->baseReqBody);
+        $this->assertIsInt($processed);
+        $this->assertGreaterThan(0, $processed);
     }
 
-    public function testPostActionWithWrongOwnershipUpdate(): void
+    public function testPostActionTransferOwnerToWrongUserTeamCombination(): void
     {
-        $reqBody = $this->baseReqBody;
-        $reqBody['action'] = Action::UpdateOwner->value;
-        $reqBody['users_experiments'] = array(1, 2);
-        $reqBody['teamid'] = 1;
-        $this->expectException(MissingRequiredKeyException::class);
-        $this->Batch->postAction(Action::UpdateOwner, $reqBody);
+        $user = $this->getRandomUserInTeam(1);
+        $this->getFreshExperimentWithGivenUser($user);
+        $this->baseReqBody['action'] = Action::UpdateOwner->value;
+        $this->baseReqBody['users_experiments'] = array($user->userid);
+        $this->baseReqBody['userid'] = $user->userid;
+        $this->baseReqBody['team'] = 99;
+        $this->expectException(UnauthorizedException::class);
+        $this->Batch->postAction(Action::UpdateOwner, $this->baseReqBody);
     }
 
     public function testInvalidPostAction(): void
     {
-        $reqBody = $this->baseReqBody;
-        $reqBody['action'] = Action::UpdateOwner->value;
-        $reqBody['users_experiments'] = array(1, 2);
-        // Can't post action 'UpdateOwner' without a 'userid'
+        $this->baseReqBody['action'] = Action::UpdateOwner->value;
+        $this->baseReqBody['users_experiments'] = array(1, 2);
         $this->expectException(ImproperActionException::class);
-        $this->Batch->postAction(Action::UpdateOwner, $reqBody);
+        $this->Batch->postAction(Action::UpdateOwner, $this->baseReqBody);
+    }
+
+    public function testPostActionWithWrongOwnershipUpdate(): void
+    {
+        $this->baseReqBody['action'] = Action::UpdateOwner->value;
+        $this->baseReqBody['userid'] = null;
+        $this->expectException(MissingRequiredKeyException::class);
+        $this->Batch->postAction(Action::UpdateOwner, $this->baseReqBody);
     }
 
     // test Unarchive & Restore methods
     public function testSpecialActions(): void
     {
-        $reqBody = $this->baseReqBody;
         // unarchive
-        $reqBody['action'] = Action::Unarchive->value;
-        $reqBody['userid'] = 3;
-        $this->assertIsInt($this->Batch->postAction(Action::Unarchive, $reqBody));
+        $this->baseReqBody['action'] = Action::Unarchive->value;
+        $this->baseReqBody['userid'] = 3;
+        $this->assertIsInt($this->Batch->postAction(Action::Unarchive, $this->baseReqBody));
         // restore
-        $reqBody['action'] = Action::Destroy->value;
-        $reqBody['userid'] = 3;
-        $this->assertIsInt($this->Batch->postAction(Action::Destroy, $reqBody));
-        $reqBody['action'] = Action::Restore->value;
-        $this->assertIsInt($this->Batch->postAction(Action::Restore, $reqBody));
+        $this->baseReqBody['action'] = Action::Destroy->value;
+        $this->baseReqBody['userid'] = 3;
+        $this->assertIsInt($this->Batch->postAction(Action::Destroy, $this->baseReqBody));
+        $this->baseReqBody['action'] = Action::Restore->value;
+        $this->assertIsInt($this->Batch->postAction(Action::Restore, $this->baseReqBody));
     }
 
     public function testGetApiPath(): void

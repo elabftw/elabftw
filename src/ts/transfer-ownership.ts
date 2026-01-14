@@ -13,9 +13,11 @@ import { on } from './handlers';
 import { collectForm } from './misc';
 
 on('transfer-ownership', async () => {
-  const { userid, teamid } = getOwnershipTransferPayload();
+  const params = collectForm(document.getElementById('ownershipTransferForm')!);
+  const userid = Number.parseInt(params['targetUserId']?.split(' ')[0] ?? '', 10);
+  const team = Number.parseInt(params['targetTeamId'] ?? '', 10);
   ApiC.keepalive = true;
-  await ApiC.patch(`${entity.type}/${entity.id}`, { userid, teamid });
+  await ApiC.patch(`${entity.type}/${entity.id}`, { userid, team });
   ApiC.keepalive = false;
 });
 // when a team is selected, refresh the user input with users from that team.
@@ -32,11 +34,3 @@ on('toggle-modal', (el: HTMLElement) => {
     filterUsersByTeamSelected();
   }
 });
-
-export function getOwnershipTransferPayload(): { userid: number, teamid: number } {
-  const params = collectForm(document.getElementById('ownershipTransferForm')!);
-  return {
-    userid: Number.parseInt(params['targetUserId']?.split(' ')[0] ?? '', 10),
-    teamid: Number.parseInt(params['targetTeamId'] ?? '', 10),
-  };
-}

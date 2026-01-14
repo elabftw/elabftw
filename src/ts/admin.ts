@@ -22,7 +22,6 @@ import { Model, Action, Selected } from './interfaces';
 import tinymce from 'tinymce/tinymce';
 import { notify } from './notify';
 import { on } from './handlers';
-import { getOwnershipTransferPayload } from './transfer-ownership';
 
 function collectSelectable(name: string): number[] {
   const collected = [];
@@ -71,7 +70,7 @@ function getSelected(): Selected {
     users_experiments: collectSelectable('users-experiments'),
     users_resources: collectSelectable('users-resources'),
     userid: collectTargetUserId(),
-    teamid: collectTargetTeamId(),
+    team: collectTargetTeamId(),
     can: collectCan(),
   };
 }
@@ -88,9 +87,6 @@ on('run-action-selected', (el: HTMLElement) => {
   selected['action'] = btn.dataset.what;
   // we use a custom notif message, so disable the native one
   ApiC.notifOnSaved = false;
-  // if (btn.dataset.what === 'updateowner') {
-  //   Object.assign(selected, getOwnershipTransferPayload());
-  // }
   ApiC.post('batch', selected).then(res => {
     const processed = res.headers.get('location').split('/').pop();
     notify.success('entries-processed', { num: processed });

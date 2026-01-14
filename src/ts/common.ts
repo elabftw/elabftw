@@ -188,6 +188,14 @@ if (needFocus) {
   needFocus.focus();
 }
 
+// Listen for team changes in a select, and refresh user input with users from that team. transfer-ownership modal
+const filterUsersByTeamSelected = () => {
+  const teamSelectEl = document.getElementById('targetTeamId') as HTMLSelectElement;
+  const userInput = document.getElementById('targetUserId') as HTMLInputElement;
+  if (!teamSelectEl || !userInput) return;
+  teamSelectEl.addEventListener('change', () => userInput.value = '');
+}
+
 // Listen for malleable columns
 new Malle({
   onEdit: (original, _, input) => {
@@ -533,6 +541,15 @@ on('toggle-pin', (el: HTMLElement) => {
   });
 });
 
+on('transfer-ownership', async () => {
+  const params = collectForm(document.getElementById('ownershipTransferForm')!);
+  const userid = Number.parseInt(params['targetUserId']?.split(' ')[0] ?? '', 10);
+  const team = Number.parseInt(params['targetTeamId'] ?? '', 10);
+  ApiC.keepalive = true;
+  await ApiC.patch(`${entity.type}/${entity.id}`, { userid, team });
+  ApiC.keepalive = false;
+});
+
 on(Action.Restore, () => {
   ApiC.patch(`${entity.type}/${entity.id}`, { action: Action.Restore })
     .then(() => window.location.href = `?mode=view&id=${entity.id}`);
@@ -739,6 +756,9 @@ on('replace-with-next', (el: HTMLElement) => {
 on('toggle-modal', (el: HTMLElement) => {
   // TODO this requires jquery for now. Not in BS5.
   $('#' + el.dataset.target).modal('show');
+  if (el.dataset.target === 'ownerModal') {
+    filterUsersByTeamSelected();
+  }
 });
 
 on('update-entity-body', (el: HTMLElement) => {

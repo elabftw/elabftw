@@ -1,6 +1,6 @@
 {# Modal for ownership transfer #}
-{#<div class='modal fade' id='ownerModal' tabindex='-1' role='dialog' aria-labelledby='ownerModalLabel'>#}
-<div class='' id='ownerModal' tabindex='-1' role='dialog' aria-labelledby='ownerModalLabel'>
+<div class='modal fade' id='ownerModal' tabindex='-1' role='dialog' aria-labelledby='ownerModalLabel'>
+{#<div class='' id='ownerModal' tabindex='-1' role='dialog' aria-labelledby='ownerModalLabel'>#}
   <div class='modal-dialog' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
@@ -16,9 +16,9 @@
         <div class='modal-body'>
           {# SELECT TEAM #}
           {% set infotip = 'Select the team associated with the user who will receive ownership.' %}
-          <label for='targetTeamSelect'>{{ 'Select a team'|trans }}</label>
+          <label for='targetTeamId'>{{ 'Select a team'|trans }}</label>
           {% include 'infotip.html' with {text: infotip} %}
-          <select required name='targetTeamSelect' class='form-control mb-2' id='targetTeamSelect'>
+          <select required name='targetTeamId' class='form-control mb-2' id='targetTeamId'>
             <option selected disabled value=''>{{ 'Select a team'|trans }}</option>
             {% for team in teamsArr %}
               <option value='{{ team.id }}'>{{ team.name }}</option>
@@ -37,9 +37,9 @@
             </div>
           {% endif %}
           {# 2 - TARGET Owner #}
-          <label for='targetOwnerSelect'>{{ 'Select new owner'|trans }}</label>
-          <input required type='text' placeholder='{{ 'Search user'|trans }}' name='targetOwnerSelect' id='targetOwnerSelect' class='form-control' data-identifier='targetOwnerSelect' data-action='autocomplete' data-target='users' data-team='targetTeamSelect'>
-          <div id='autocompleteAnchorDiv_targetOwnerSelect'></div>
+          <label for='targetUserId'>{{ 'Select new owner'|trans }}</label>
+          <input required type='text' placeholder='{{ 'Search user'|trans }}' name='targetUserId' id='targetUserId' class='form-control' data-identifier='targetUserId' data-action='autocomplete' data-target='users' data-team='targetTeamId'>
+          <div id='autocompleteAnchorDiv_targetUserId'></div>
         </div>
         <div class='modal-footer'>
           <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>

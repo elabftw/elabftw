@@ -1077,8 +1077,8 @@ abstract class AbstractEntity extends AbstractRest
 
     private function updateOwner(array $params): void
     {
-        ApiParamsValidator::ensureRequiredKeysPresent(array('target_owner', 'target_team'), $params);
-        $params = array('userid' => (int) $params['target_owner'], 'team' => (int) $params['target_team']);
+        ApiParamsValidator::ensureRequiredKeysPresent(array('userid', 'teamid'), $params);
+        $params = array('userid' => (int) $params['userid'], 'team' => (int) $params['teamid']);
         $action = Action::Update;
 
         // user must belong to the team

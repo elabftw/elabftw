@@ -20,8 +20,8 @@ class MissingRequiredKeyValidatorTest extends \PHPUnit\Framework\TestCase
     public function testAllRequiredKeysPresent(): void
     {
         ApiParamsValidator::ensureRequiredKeysPresent(
-            array('target_owner', 'target_team'),
-            array('target_owner' => 3, 'target_team' => 1),
+            array('userid', 'teamid'),
+            array('userid' => 3, 'teamid' => 1),
         );
         $this->assertTrue(true);
     }
@@ -30,8 +30,8 @@ class MissingRequiredKeyValidatorTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(MissingRequiredKeyException::class);
         ApiParamsValidator::ensureRequiredKeysPresent(
-            array('target_owner', 'target_team'),
-            array('target_owner' => 3),
+            array('userid', 'teamid'),
+            array('userid' => 3),
         );
     }
 
@@ -39,10 +39,10 @@ class MissingRequiredKeyValidatorTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(MissingRequiredKeyException::class);
         ApiParamsValidator::ensureRequiredKeysPresent(
-            array('target_owner', 'target_team'),
+            array('userid', 'teamid'),
             array(
-                'target_owner' => 3,
-                'target_team' => null,
+                'userid' => 3,
+                'teamid' => null,
             ),
         );
     }
@@ -51,13 +51,13 @@ class MissingRequiredKeyValidatorTest extends \PHPUnit\Framework\TestCase
     {
         try {
             ApiParamsValidator::ensureRequiredKeysPresent(
-                array('target_owner', 'target_team'),
+                array('userid', 'teamid'),
                 array(),
             );
             $this->fail('Expected MissingRequiredKeyException was not thrown');
         } catch (MissingRequiredKeyException $e) {
-            $this->assertStringContainsString('target_owner', $e->getMessage());
-            $this->assertStringContainsString('target_team', $e->getMessage());
+            $this->assertStringContainsString('userid', $e->getMessage());
+            $this->assertStringContainsString('teamid', $e->getMessage());
         }
     }
 }

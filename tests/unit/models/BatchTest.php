@@ -38,7 +38,7 @@ class BatchTest extends \PHPUnit\Framework\TestCase
             'users_experiments' => array(),
             'users_resources' => array(),
             // Only used if Action::UpdateOwner
-            'target_owner' => null,
+            'userid' => null,
         );
     }
 
@@ -63,8 +63,8 @@ class BatchTest extends \PHPUnit\Framework\TestCase
         $reqBody['action'] = Action::UpdateOwner->value;
         $reqBody['users_experiments'] = array(1, 2);
         $reqBody['users_resources'] = array(1, 2);
-        $reqBody['target_owner'] = 3;
-        $reqBody['target_team'] = 1;
+        $reqBody['userid'] = 3;
+        $reqBody['teamid'] = 1;
         $this->assertIsInt($this->Batch->postAction(Action::UpdateOwner, $reqBody));
     }
 
@@ -73,7 +73,7 @@ class BatchTest extends \PHPUnit\Framework\TestCase
         $reqBody = $this->baseReqBody;
         $reqBody['action'] = Action::UpdateOwner->value;
         $reqBody['users_experiments'] = array(1, 2);
-        $reqBody['target_team'] = 1;
+        $reqBody['teamid'] = 1;
         $this->expectException(MissingRequiredKeyException::class);
         $this->Batch->postAction(Action::UpdateOwner, $reqBody);
     }
@@ -83,7 +83,7 @@ class BatchTest extends \PHPUnit\Framework\TestCase
         $reqBody = $this->baseReqBody;
         $reqBody['action'] = Action::UpdateOwner->value;
         $reqBody['users_experiments'] = array(1, 2);
-        // Can't post action 'UpdateOwner' without a 'target_owner'
+        // Can't post action 'UpdateOwner' without a 'userid'
         $this->expectException(ImproperActionException::class);
         $this->Batch->postAction(Action::UpdateOwner, $reqBody);
     }
@@ -94,11 +94,11 @@ class BatchTest extends \PHPUnit\Framework\TestCase
         $reqBody = $this->baseReqBody;
         // unarchive
         $reqBody['action'] = Action::Unarchive->value;
-        $reqBody['target_owner'] = 3;
+        $reqBody['userid'] = 3;
         $this->assertIsInt($this->Batch->postAction(Action::Unarchive, $reqBody));
         // restore
         $reqBody['action'] = Action::Destroy->value;
-        $reqBody['target_owner'] = 3;
+        $reqBody['userid'] = 3;
         $this->assertIsInt($this->Batch->postAction(Action::Destroy, $reqBody));
         $reqBody['action'] = Action::Restore->value;
         $this->assertIsInt($this->Batch->postAction(Action::Restore, $reqBody));

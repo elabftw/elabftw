@@ -35,14 +35,13 @@ function collectSelectable(name: string): number[] {
   return collected;
 }
 
-function collectTargetOwner(): number {
-  const collected = document.getElementById('target_owner') as HTMLInputElement;
-  // Convert element to an int
+function collectTargetUserId(): number {
+  const collected = document.getElementById('targetUserId') as HTMLInputElement;
   return collected ? parseInt(collected.value, 10) || 0 : 0;
 }
 
-function collectTargetTeam(): number {
-  const collected = document.getElementById('targetTeamSelect') as HTMLSelectElement;
+function collectTargetTeamId(): number {
+  const collected = document.getElementById('targetTeamId') as HTMLSelectElement;
   return collected ? parseInt(collected.value, 10) || 0 : 0;
 }
 
@@ -71,8 +70,8 @@ function getSelected(): Selected {
     tags: collectSelectable('tags'),
     users_experiments: collectSelectable('users-experiments'),
     users_resources: collectSelectable('users-resources'),
-    target_owner: collectTargetOwner(),
-    target_team: collectTargetTeam(),
+    userid: collectTargetUserId(),
+    teamid: collectTargetTeamId(),
     can: collectCan(),
   };
 }
@@ -90,9 +89,7 @@ on('run-action-selected', (el: HTMLElement) => {
   // we use a custom notif message, so disable the native one
   ApiC.notifOnSaved = false;
   if (btn.dataset.what === 'updateowner') {
-    const payload = getOwnershipTransferPayload();
-    selected['target_owner'] = payload.target_owner;
-    selected['team'] = payload.team;
+    Object.assign(selected, getOwnershipTransferPayload());
   }
   ApiC.post('batch', selected).then(res => {
     const processed = res.headers.get('location').split('/').pop();

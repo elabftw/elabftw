@@ -24,6 +24,9 @@ use Elabftw\Params\DisplayParams;
 use Elabftw\Services\ApiParamsValidator;
 use Override;
 
+use function array_intersect_key;
+use function array_flip;
+
 /**
  * Process a single request targeting multiple entities
  */
@@ -122,8 +125,8 @@ final class Batch extends AbstractRest
     {
         // On transfer of ownership, required parameters are target owner's id and team id.
         if ($action === Action::UpdateOwner) {
-            ApiParamsValidator::ensureRequiredKeysPresent(array('target_owner', 'target_team'), $params);
-            $params = array('userid' => (int) $params['target_owner'], 'team' => (int) $params['target_team']);
+            ApiParamsValidator::ensureRequiredKeysPresent(array('userid', 'teamid'), $params);
+            $params = array_intersect_key($params, array_flip(['userid', 'teamid']));
             $action = Action::Update;
         }
         foreach ($entries as $entry) {

@@ -54,8 +54,8 @@ interface Selected {
   users_experiments: number[];
   users_resources: number[];
   tags: number[];
-  target_owner: number;
-  target_team: number;
+  userid: number;
+  teamid: number;
   can: string;
 }
 

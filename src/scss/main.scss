@@ -492,7 +492,11 @@ tr:first-child td {
 
 /* enable responsive tables while preserving structure via horizontal scrolling (phone, tablets, etc.) */
 .table-container {
+  /* break out of centered container */
+  margin-left: calc(50% - 42vw);
+  max-width: 84vw;
   overflow-x: auto;
+  width: 84vw;
 }
 
 /* TABLE SHOW MODE */

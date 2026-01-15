@@ -189,12 +189,17 @@ if (needFocus) {
 }
 
 // Listen for team changes in a select, and refresh user input with users from that team. transfer-ownership modal
-const filterUsersByTeamSelected = () => {
-  const teamSelectEl = document.getElementById('targetTeamId') as HTMLSelectElement;
-  const userInput = document.getElementById('targetUserId') as HTMLInputElement;
-  if (!teamSelectEl || !userInput) return;
-  teamSelectEl.addEventListener('change', () => userInput.value = '');
-};
+const filterUsersByTeamSelected = (() => {
+  let initialized = false;
+  return () => {
+    if (initialized) return;
+    const teamSelectEl = document.getElementById('targetTeamId') as HTMLSelectElement;
+    const userInput = document.getElementById('targetUserId') as HTMLInputElement;
+    if (!teamSelectEl || !userInput) return;
+    teamSelectEl.addEventListener('change', () => userInput.value = '');
+    initialized = true;
+  };
+})();
 
 // Listen for malleable columns
 new Malle({

@@ -361,9 +361,8 @@ components:
           type: string
           nullable: true
         molecular_weight:
-          type: number
           # it's a string, see #5733
-          format: string
+          type: string
           example: "177.02"
         nci_code:
           type: string
@@ -396,77 +395,53 @@ components:
           type: string
           nullable: true
         is_corrosive:
-          type: integer
-          enum: [0, 1]
+          type: boolean
         is_explosive:
-          type: integer
-          enum: [0, 1]
+          type: boolean
         is_flammable:
-          type: integer
-          enum: [0, 1]
+          type: boolean
         is_gas_under_pressure:
-          type: integer
-          enum: [0, 1]
+          type: boolean
         is_hazardous2env:
-          type: integer
-          enum: [0, 1]
+          type: boolean
         is_hazardous2health:
-          type: integer
-          enum: [0, 1]
+          type: boolean
         is_serious_health_hazard:
-          type: integer
-          enum: [0, 1]
+          type: boolean
         is_oxidising:
-          type: integer
-          enum: [0, 1]
+          type: boolean
         is_toxic:
-          type: integer
-          enum: [0, 1]
+          type: boolean
         is_radioactive:
-          type: integer
-          enum: [0, 1]
+          type: boolean
         is_antibiotic:
-          type: integer
-          enum: [0, 1]
+          type: boolean
         is_antibiotic_precursor:
-          type: integer
-          enum: [0, 1]
+          type: boolean
         is_drug:
-          type: integer
-          enum: [0, 1]
+          type: boolean
         is_drug_precursor:
-          type: integer
-          enum: [0, 1]
+          type: boolean
         is_explosive_precursor:
-          type: integer
-          enum: [0, 1]
+          type: boolean
         is_cmr:
-          type: integer
-          enum: [0, 1]
+          type: boolean
         is_nano:
-          type: integer
-          enum: [0, 1]
+          type: boolean
         is_controlled:
-          type: integer
-          enum: [0, 1]
+          type: boolean
         is_ed2health:
-          type: integer
-          enum: [0, 1]
+          type: boolean
         is_ed2env:
-          type: integer
-          enum: [0, 1]
+          type: boolean
         is_pbt:
-          type: integer
-          enum: [0, 1]
+          type: boolean
         is_pmt:
-          type: integer
-          enum: [0, 1]
+          type: boolean
         is_vpvb:
-          type: integer
-          enum: [0, 1]
+          type: boolean
         is_vpvm:
-          type: integer
-          enum: [0, 1]
+          type: boolean
         fp2_base64:
           type: string
           description: Base64-encoded fingerprint
@@ -490,25 +465,19 @@ components:
             - duplicate
         cid:
           type: integer
-          description: PubChem ID of the compound to import from PubChem
+          description: PubChem ID. If provided, CID lookup is used instead of CAS
           example: 2519
         cas:
           type: string
-          description: CAS number of the compound to import from PubChem
-          example: 58-08-2
+          description: CAS number used for PubChem lookup if CID is not provided
+          example: "58-08-2"
       oneOf:
         - required: [cid]
         - required: [cas]
-
+      additionalProperties: false
     CompoundCreateRequest:
       type: object
-      required:
-        - action
       properties:
-        action:
-          type: string
-          enum:
-            - create
         name:
           type: string
         inchi:
@@ -526,32 +495,24 @@ components:
         pubchem_cid:
           type: integer
         is_corrosive:
-          type: integer
-          enum: [0, 1]
+          type: boolean
         is_serious_health_hazard:
-          type: integer
-          enum: [0, 1]
+          type: boolean
         is_explosive:
-          type: integer
-          enum: [0, 1]
+          type: boolean
         is_flammable:
-          type: integer
-          enum: [0, 1]
+          type: boolean
         is_gas_under_pressure:
-          type: integer
-          enum: [0, 1]
+          type: boolean
         is_hazardous2env:
-          type: integer
-          enum: [0, 1]
+          type: boolean
         is_hazardous2health:
-          type: integer
-          enum: [0, 1]
+          type: boolean
         is_oxidising:
-          type: integer
-          enum: [0, 1]
+          type: boolean
         is_toxic:
-          type: integer
-          enum: [0, 1]
+          type: boolean
+      additionalProperties: false
 
     # COMMENT
     comment:
@@ -1638,6 +1599,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/apikey'
+        '401':
+          description: Unauthorized (Authentication required)
     post:
       tags: ['Api keys']
       summary: Create an API key
@@ -1668,6 +1631,8 @@ paths:
               description: A fake URL that contains the API key in cleartext
               schema:
                 type: string
+        '401':
+          description: Unauthorized (Authentication required)
   /apikeys/{id}:
     summary: Actions on an api key
     parameters:
@@ -1685,6 +1650,8 @@ paths:
       responses:
         '204':
           description: The key was deleted
+        '401':
+          description: Unauthorized (Authentication required)
 
   # COMPOUNDS
   /compounds:
@@ -1692,7 +1659,7 @@ paths:
     get:
       tags: ['Compounds']
       summary: Read compounds
-      description: Get a list of compounds
+      description: Get the list of all compounds
       operationId: get-compounds
       responses:
         '200':
@@ -1703,11 +1670,16 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/compound'
+        '401':
+          description: Unauthorized (Authentication required)
     post:
       tags: ['Compounds']
       summary: Create or import a compound
       description: |
-        Add a compound to the database. Add action => duplicate parameter with a CAS or PubChem CID to import from PubChem. If the action parameter is something else, the compound will be created directly.
+        - If `action=duplicate`, imports (or matches) a compound from PubChem using `cid` and/or `cas`
+        - Otherwise, creates a compound directly from the provided fields.
+        - Note, `cid` and `cas` are ignored in direct create. Use `pubchem_cid` and `cas_number` instead
+        - If a compound with the same unique identifier already exists (e.g `cas_number`, `pubchem_cid`), the API may return the existing compound in the location header
       operationId: post-compounds
       requestBody:
         required: true
@@ -1719,12 +1691,16 @@ paths:
                 - $ref: '#/components/schemas/CompoundCreateRequest'
       responses:
         '201':
-          description: The compound has been created.
+          description: Created compound or existing compound returned (match on unique identifier)
           headers:
             location:
-              description: URL to the created compound
+              description: URL to the created or matched compound
               schema:
                 type: string
+        '400':
+          description: Bad request (missing or invalid fields)
+        '401':
+          description: Unauthorized (Authentication required)
   # COMPOUND
   /compounds/{id}:
     parameters:
@@ -1746,6 +1722,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/compound'
+        '404':
+          description: The compound does not exist
+        '401':
+          description: Unauthorized (Authentication required)
     delete:
       tags: ['Compounds']
       summary: Soft-delete a compound
@@ -1754,6 +1734,8 @@ paths:
       responses:
         '204':
           description: The compound was soft-deleted
+        '401':
+          description: Unauthorized (Authentication required)
 
   # CONFIG
   /config:

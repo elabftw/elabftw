@@ -511,9 +511,6 @@ abstract class AbstractEntity extends AbstractRest
                 function () use ($params) {
                     if (isset($params['team'])) {
                         // Cross-team ownership transfer is only allowed in admin (batch) context
-                        if (!$this->Users->isAdmin) {
-                            throw new UnauthorizedException(_('Only administrators can transfer entries across teams.'));
-                        }
                         $this->updateOwnerFromBatch((int) $params['userid'], (int) $params['team']);
                     } else {
                         $this->updateOwner((int) $params['userid']);

@@ -18,6 +18,7 @@ use Elabftw\Enums\Scope;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\DisplayParams;
 use Elabftw\Services\ApiParamsValidator;
@@ -42,7 +43,11 @@ final class Batch extends AbstractRest
             default => null,
         };
         if ($action === Action::UpdateOwner) {
+            if ($this->requester->isAdmin === false) {
+                throw new UnauthorizedException(_('Only administrators can transfer entries across teams.'));
+            }
             ApiParamsValidator::ensureRequiredKeysPresent(array('userid', 'team'), $reqBody);
+            ApiParamsValidator::ensurePositiveInts(array('userid', 'team'), $reqBody);
         }
         if ($reqBody['items_tags']) {
             $this->processTags($reqBody['items_tags'], new Items($this->requester), $action, $reqBody);

@@ -34,4 +34,13 @@ final class ApiParamsValidator
             );
         }
     }
+
+    public static function ensurePositiveInts(array $keys, array $params): void
+    {
+        foreach ($keys as $key) {
+            if ((int) $params[$key] <= 0) {
+                throw new MissingRequiredKeyException(array($key), $keys);
+            }
+        }
+    }
 }

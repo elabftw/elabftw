@@ -1,12 +1,17 @@
 {# Modal for ownership transfer #}
 {% set isAdminPage = App.Request.getScriptName|split('/')|last == 'admin.php' %}
+{% if isAdminPage %}
+  {% set description = 'You are about to transfer ownership of the selected entries to another user. Ownership of the entries and all associated content (including uploads, comments, and links) will be transferred.'|trans %}
+{% else %}
+  {% set description = 'You are about to transfer ownership of this entry to another user. After the transfer, they will become the owner, and you may lose access if you do not have permission to view it.'|trans %}
+{% endif %}
 <div class='modal fade' id='ownerModal' tabindex='-1' role='dialog' aria-labelledby='ownerModalLabel'>
   <div class='modal-dialog' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
         <div>
           <h5 class='modal-title' id='ownerModalLabel'>{{ 'Transfer ownership'|trans }}</h5>
-          <div class='smallgray mt-2'>{{ 'You are about to transfer ownership of this entry to another user. After the transfer, they will become the owner, and you may lose access if you do not have permission to view it.'|trans }}</div>
+          <div class='smallgray mt-2'>{{ description }}</div>
         </div>
         <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
           <span aria-hidden='true'>&times;</span>
@@ -16,7 +21,7 @@
         <div class='modal-body'>
           {% if isAdminPage %}
             {# SELECT TEAM #}
-            {% set infotip = 'Select the team associated with the user who will receive ownership.' %}
+            {% set infotip = 'As an admin, you can select the team associated with the user who will receive ownership. Please note that once transferred to another team, the entry is managed by that team’s administrators.'|trans %}
             <label for='targetTeamId'>{{ 'Select a team'|trans }}</label>
             {% include 'infotip.html' with {text: infotip} %}
             <select required name='targetTeamId' class='form-control mb-2' id='targetTeamId'>

@@ -35,7 +35,6 @@ final class Batch extends AbstractRest
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
-        $action = Action::from($reqBody['action']);
         // Unarchive action: search for 'Archived' entries to patch. For 'Restore' action, look for 'deleted' entries.
         $state = match ($action) {
             Action::Unarchive => State::Archived,

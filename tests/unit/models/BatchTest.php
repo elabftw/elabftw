@@ -55,7 +55,6 @@ class BatchTest extends \PHPUnit\Framework\TestCase
 
     public function testPostAction(): void
     {
-        $this->baseReqBody['action'] = Action::ForceUnlock->value;
         $this->baseReqBody['items_tags'] = array(1, 2);
         $this->baseReqBody['experiments_categories'] = array(1, 2);
         $this->baseReqBody['experiments_status'] = array(1, 2);
@@ -67,7 +66,6 @@ class BatchTest extends \PHPUnit\Framework\TestCase
         // create an experiment to transfer
         $user = $this->getRandomUserInTeam(1);
         $this->getFreshExperimentWithGivenUser($user);
-        $this->baseReqBody['action'] = Action::UpdateOwner->value;
         $this->baseReqBody['users_experiments'] = array($user->userid);
         $this->baseReqBody['userid'] = $user->userid;
         $this->baseReqBody['team'] = $user->team;
@@ -78,7 +76,6 @@ class BatchTest extends \PHPUnit\Framework\TestCase
     {
         $user = $this->getRandomUserInTeam(1);
         $this->getFreshExperimentWithGivenUser($user);
-        $this->baseReqBody['action'] = Action::UpdateOwner->value;
         $this->baseReqBody['users_experiments'] = array($user->userid);
         $this->baseReqBody['userid'] = $user->userid;
         $this->baseReqBody['team'] = 99;
@@ -91,7 +88,6 @@ class BatchTest extends \PHPUnit\Framework\TestCase
         $user = $this->getRandomUserInTeam(1);
         $user->isAdmin = false;
         $this->Batch = new Batch($user);
-        $this->baseReqBody['action'] = Action::UpdateOwner->value;
         $this->baseReqBody['users_experiments'] = array($user->userid);
         $this->baseReqBody['userid'] = $user->userid;
         $this->baseReqBody['team'] = $user->team;
@@ -101,7 +97,6 @@ class BatchTest extends \PHPUnit\Framework\TestCase
 
     public function testInvalidPostAction(): void
     {
-        $this->baseReqBody['action'] = Action::UpdateOwner->value;
         $this->baseReqBody['users_experiments'] = array(1, 2);
         $this->expectException(ImproperActionException::class);
         $this->Batch->postAction(Action::UpdateOwner, $this->baseReqBody);
@@ -109,7 +104,6 @@ class BatchTest extends \PHPUnit\Framework\TestCase
 
     public function testPostActionWithWrongOwnershipUpdate(): void
     {
-        $this->baseReqBody['action'] = Action::UpdateOwner->value;
         $this->baseReqBody['userid'] = null;
         $this->expectException(MissingRequiredKeyException::class);
         $this->Batch->postAction(Action::UpdateOwner, $this->baseReqBody);
@@ -122,12 +116,10 @@ class BatchTest extends \PHPUnit\Framework\TestCase
         $exp = $this->getFreshExperimentWithGivenUser($user);
         // unarchive. First, archive the experiment
         $exp->patch(Action::Archive, array());
-        $this->baseReqBody['action'] = Action::Unarchive->value;
         $this->baseReqBody['users_experiments'] = array($user->userid);
         $this->assertBatchProcessed(Action::Unarchive, $this->baseReqBody);
         // restore. First, delete the experiment
         $exp->destroy();
-        $this->baseReqBody['action'] = Action::Restore->value;
         $this->baseReqBody['users_experiments'] = array($user->userid);
         $this->assertBatchProcessed(Action::Restore, $this->baseReqBody);
     }
@@ -146,7 +138,6 @@ class BatchTest extends \PHPUnit\Framework\TestCase
         $Upload = new Uploads($Experiment, $uploadId);
         $this->assertEquals($User1->userid, $Upload->uploadData['userid']);
         // batch transfer user 1's experiments to user 2
-        $this->baseReqBody['action'] = Action::UpdateOwner->value;
         $this->baseReqBody['users_experiments'] = array($User1->userid);
         $this->baseReqBody['userid'] = $User2->userid;
         $this->baseReqBody['team'] = $User1->team;

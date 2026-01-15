@@ -1631,6 +1631,8 @@ paths:
               description: A fake URL that contains the API key in cleartext
               schema:
                 type: string
+        '400':
+          description: Bad request (Syntax error, invalid request or missing field)
         '401':
           description: Unauthorized (Authentication required)
   /apikeys/{id}:
@@ -1698,7 +1700,7 @@ paths:
               schema:
                 type: string
         '400':
-          description: Bad request (missing or invalid fields)
+          description: Bad request (Syntax error, invalid request or missing field)
         '401':
           description: Unauthorized (Authentication required)
   # COMPOUND
@@ -1723,7 +1725,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/compound'
         '404':
-          description: The compound does not exist
+          description: Compound not found
         '401':
           description: Unauthorized (Authentication required)
     delete:

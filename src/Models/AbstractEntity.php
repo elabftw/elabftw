@@ -507,7 +507,19 @@ abstract class AbstractEntity extends AbstractRest
                     }
                 }
             )(),
-            Action::UpdateOwner => $this->updateOwner((int) $params['userid'], (int) $params['team']),
+            Action::UpdateOwner => (
+                function () use ($params) {
+                    if (isset($params['team'])) {
+                        // Cross-team ownership transfer is only allowed in admin (batch) context
+                        if (!$this->Users->isAdmin) {
+                            throw new UnauthorizedException(_('Only administrators can transfer entries across teams.'));
+                        }
+                        $this->updateOwnerFromBatch((int) $params['userid'], (int) $params['team']);
+                    } else {
+                        $this->updateOwner((int) $params['userid']);
+                    }
+                }
+            )(),
             Action::Update => (
                 function () use ($params) {
                     foreach ($params as $key => $value) {
@@ -1074,28 +1086,45 @@ abstract class AbstractEntity extends AbstractRest
         $this->update(new EntityParams('state', (string) $targetState->value));
     }
 
-    private function updateOwner(int $userid, int $team): void
+    /*
+     * For single-entity UpdateOwner, $team is always the current user's team
+     * For batch UpdateOwner, $team is explicitly provided (admin context)
+     */
+    private function updateOwner(int $userid): void
     {
-        // validate that the target user belongs to the target team
+        if ($this->Users->team === null) {
+            throw new IllegalActionException('Current user has no team context.');
+        }
+        $TeamsHelper = new TeamsHelper($this->Users->team);
+        if (!$TeamsHelper->isUserInTeam($userid)) {
+            throw new UnauthorizedException(
+                _('The user you want to transfer ownership to is not part of your team. Please contact an administrator if you need to transfer entries across teams.')
+            );
+        }
+        $this->update(new EntityParams('userid', $userid));
+        // transfer uploads ownership as well
+        $this->transferUploadsOwnership($userid);
+    }
+
+    private function updateOwnerFromBatch(int $userid, int $team): void
+    {
         $TeamsHelper = new TeamsHelper($team);
         if (!$TeamsHelper->isUserInTeam($userid)) {
-            throw new UnauthorizedException(sprintf('The user with id: %d does not belong to the selected team %d.', $userid, $team));
+            $message = sprintf('The user with id %d does not belong to team %d.', $userid, $team);
+            throw new UnauthorizedException($message);
         }
         $this->update(new EntityParams('userid', $userid));
         $this->update(new EntityParams('team', $team));
-        // transfer uploads ownership as well
         $this->transferUploadsOwnership($userid);
     }
 
     private function transferUploadsOwnership(int $userid): void
     {
+        $this->bypassWritePermission = true;
         $uploads = $this->Uploads->readAll($this->getQueryParams(new InputBag(array('state' => '1,2,3'))));
         foreach ($uploads as $upload) {
             $this->Uploads->setId((int) $upload['id']);
-            $this->Uploads->patch(
-                Action::Update,
-                array('userid' => $userid),
-            );
+            $this->Uploads->patch(Action::Update, array('userid' => $userid));
         }
     }
 

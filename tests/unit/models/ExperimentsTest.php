@@ -18,6 +18,7 @@ use Elabftw\Enums\Meaning;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\DisplayParams;
@@ -179,14 +180,24 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdateOwnership(): void
     {
-        $user1 = $this->getRandomUserInTeam(1);
-        $user2 = $this->getRandomUserInTeam(1);
-        $this->assertNotEquals($user1->userid, $user2->userid);
+        $user1 = new Users(1, 1);
+        $user2 = new Users(2, 1);
         $exp = $this->getFreshExperimentWithGivenUser($user1);
-        $params = array('users_experiments' => array($user1->userid), 'userid' => $user2->userid, 'team' => $user2->team);
+        $params = array('users_experiments' => array($user1->userid), 'userid' => $user2->userid);
         $exp->patch(Action::UpdateOwner, $params);
         $this->assertEquals($exp->entityData['userid'], $user2->userid);
         $this->assertEquals($exp->entityData['team'], $user2->team);
+    }
+
+    public function testUpdateOwnershipToDifferentTeamIsRestrictedToAdmins(): void
+    {
+        $user1 = new Users(1, 1);
+        $user1->isAdmin = false;
+        $user2 = new Users(2, 2);
+        $exp = $this->getFreshExperimentWithGivenUser($user1);
+        $params = array('users_experiments' => array($user1->userid), 'userid' => $user2->userid, 'team' => $user2->team);
+        $this->expectException(UnauthorizedException::class);
+        $exp->patch(Action::UpdateOwner, $params);
     }
 
     public function testUpdateWithNegativeInt(): void

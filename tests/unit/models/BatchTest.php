@@ -57,14 +57,9 @@ class BatchTest extends \PHPUnit\Framework\TestCase
     {
         $this->baseReqBody['action'] = Action::ForceUnlock->value;
         $this->baseReqBody['items_tags'] = array(1, 2);
-        $this->baseReqBody['items_categories'] = array(1, 2);
-        $this->baseReqBody['items_status'] = array(1, 2);
         $this->baseReqBody['experiments_categories'] = array(1, 2);
         $this->baseReqBody['experiments_status'] = array(1, 2);
-        $this->baseReqBody['experiments_tags'] = array(1, 2);
-        $this->baseReqBody['users_experiments'] = array(1, 2);
-        $this->baseReqBody['users_resources'] = array(1, 2);
-        $this->assertBatchProcessed(Action::UpdateOwner, $this->baseReqBody);
+        $this->assertBatchProcessed(Action::ForceUnlock, $this->baseReqBody);
     }
 
     public function testPostActionWithOwnershipUpdate(): void
@@ -87,6 +82,19 @@ class BatchTest extends \PHPUnit\Framework\TestCase
         $this->baseReqBody['users_experiments'] = array($user->userid);
         $this->baseReqBody['userid'] = $user->userid;
         $this->baseReqBody['team'] = 99;
+        $this->expectException(UnauthorizedException::class);
+        $this->Batch->postAction(Action::UpdateOwner, $this->baseReqBody);
+    }
+
+    public function testBatchUpdateOwnershipIsRestrictedToAdmins(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $user->isAdmin = false;
+        $this->Batch = new Batch($user);
+        $this->baseReqBody['action'] = Action::UpdateOwner->value;
+        $this->baseReqBody['users_experiments'] = array($user->userid);
+        $this->baseReqBody['userid'] = $user->userid;
+        $this->baseReqBody['team'] = $user->team;
         $this->expectException(UnauthorizedException::class);
         $this->Batch->postAction(Action::UpdateOwner, $this->baseReqBody);
     }
@@ -126,8 +134,8 @@ class BatchTest extends \PHPUnit\Framework\TestCase
 
     public function testBatchOwnershipTransferAlsoTransfersUploads(): void
     {
-        $User1 = $this->getRandomUserInTeam(1);
-        $User2 = $this->getRandomUserInTeam(1);
+        $User1 = new Users(1, 1);
+        $User2 = new Users(2, 1);
         $Experiment = $this->getFreshExperimentWithGivenUser($User1);
         // new upload
         $fixturesFs = Storage::FIXTURES->getStorage();

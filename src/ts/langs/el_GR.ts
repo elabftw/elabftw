@@ -81,6 +81,7 @@ const t = {
     "oc-version-warning": "Warning: current OpenCloning version is incompatible with this version of eLabFTW.",
     "onboarding-email-sent": "Σύντομα θα σταλούν μηνύματα ηλεκτρονικού ταχυδρομείου ενσωμάτωσης.",
     "only-a-sysadmin": "Only a Sysadmin can modify this.",
+    "ownership-transfer": "Your entry has been successfully transferred to {{user, string}}.",
     "please-wait": "Παρακαλώ περιμένετε",
     "readonly": "Μόνο για ανάγνωση",
     "remove": "Αφαίρεση",

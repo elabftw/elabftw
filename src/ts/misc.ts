@@ -921,3 +921,9 @@ export function ensureTogglableSectionIsOpen(iconId: string, divId: string): voi
   // and scroll page into editor view
   div.scrollIntoView({ behavior: 'smooth' });
 }
+
+export function extractFullName(value: string): string | null {
+  // "1 - Toto Le sysadmin (toto@yopmail.com)" -> "Toto Le sysadmin"
+  const match = value.match(/^\d+\s-\s(.+?)\s\(/);
+  return match ? match[1] : null;
+}

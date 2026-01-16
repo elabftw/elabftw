@@ -33,6 +33,7 @@ import {
   TomSelect,
   updateEntityBody,
   updateCatStat,
+  extractFullName,
 } from './misc';
 import i18next from './i18n';
 import { Metadata } from './Metadata.class';
@@ -277,6 +278,9 @@ new Malle({
 
 // only on entity page
 const pageMode = new URLSearchParams(document.location.search).get('mode');
+
+notify.flashSuccess();
+
 if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'edit')) {
   // MALLEABLE ENTITY TITLE
   new Malle({
@@ -550,8 +554,11 @@ on('transfer-ownership', async () => {
   const userIdInput = document.getElementById('targetUserId') as HTMLInputElement;
   const userid = parseInt(userIdInput?.value, 10);
   if (!userid) return;
-  await ApiC.patch(`${entity.type}/${entity.id}`, { action: Action.UpdateOwner, userid})
-    .then(() => window.location.reload());
+  ApiC.notifOnSaved = false;
+  await ApiC.patch(`${entity.type}/${entity.id}`, { action: Action.UpdateOwner, userid});
+  const userFullName = extractFullName(userIdInput.value);
+  sessionStorage.setItem('flash_ownershipTransfer', i18next.t('ownership-transfer', { user: userFullName }));
+  window.location.reload();
 });
 
 on(Action.Restore, () => {

@@ -268,7 +268,7 @@
 
 <div class='real-container {{ realContainerClass }}'>
 <div id='safariWarning' hidden>
-    {{ 'Warning: you are using an unsupported browser known to cause issues (Safari). Please use a supported browser (see %sdocumentation%s).'|trans|format("<a href='https://doc.elabftw.net/faq.html#requirements-for-the-clients-users'>", "</a>")|msg('warning') }}
+    {{ 'Warning: you are using an unsupported browser known to cause issues (Safari). Please use a supported browser (see %sdocumentation%s).'|trans|format("<a href='https://doc.elabftw.net/faq.html#requirements-for-the-clients-users'>", "</a>")|msg('warning', true, 'initSafariWarning') }}
 </div>
 
 <noscript>{# show warning if javascript is disabled #}

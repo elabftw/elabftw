@@ -104,35 +104,14 @@ const isSafari = (): boolean => {
   return true;
 };
 
-const initSafariWarning = () => {
-  const el = document.getElementById('safariWarning');
-  if (!el) return;
-  let dismissed = false;
-  try {
-    dismissed = localStorage.getItem(DISMISS_KEY) === '1';
-  } catch {
-    dismissed = false;
-  }
-  if (isSafari() && !dismissed) {
-    el.removeAttribute('hidden');
-    const closeEl = el.querySelector<HTMLAnchorElement>('a.close, [data-dismiss="alert"]');
-    if (!closeEl) return;
-    closeEl.addEventListener(
-      'click', (e) => {
-        try {
-          localStorage.setItem(DISMISS_KEY, '1');
-        } catch {
-          // localStorage may be unavailable (private mode / blocked), ignore
-        }
-        el.setAttribute('hidden', '');
-        e.preventDefault();
-      },
-      { once: true },
-    );
-  }
-};
-
-initSafariWarning();
+const  dismissed = localStorage.getItem(DISMISS_KEY) === '1';
+if (isSafari() && !dismissed) {
+  document.getElementById('safariWarning').removeAttribute('hidden');
+}
+on('initSafariWarning', (el: HTMLElement) => {
+  el.setAttribute('hidden', '');
+  localStorage.setItem(DISMISS_KEY, '1');
+});
 
 // HEARTBEAT
 // this function is to check periodically that we are still authenticated

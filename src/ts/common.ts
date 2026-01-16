@@ -188,6 +188,41 @@ if (needFocus) {
   needFocus.focus();
 }
 
+// START SAFARI DETECTION
+// iOS browsers often look like Safari UA; exclude by tokens:
+// https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/User-Agent
+const FORBIDDEN_UA_TOKENS = [
+  'Chrome',
+  'CriOS',
+  'Edg',
+  'EdgiOS',
+  'OPT',
+  'OPiOS',
+  'Firefox',
+  'FxiOS',
+  'SamsungBrowser',
+];
+
+const isSafari = (): boolean => {
+  const ua = navigator.userAgent ?? '';
+  const vendor = navigator.vendor ?? '';
+
+  if (vendor !== 'Apple Computer, Inc.') return false;
+  if (!ua.includes('Safari/')) return false;
+  if (!ua.includes('Version/')) return false;
+
+  for (const token of FORBIDDEN_UA_TOKENS) {
+    if (ua.includes(token)) return false;
+  }
+  return true;
+};
+
+const isDismissedSafari = localStorage.getItem('dismiss_safari_warning_v1') === '1';
+if (isSafari() && !isDismissedSafari) {
+  document.getElementById('safariWarning').removeAttribute('hidden');
+}
+// END SAFARI DETECTION
+
 // Listen for malleable columns
 new Malle({
   onEdit: (original, _, input) => {
@@ -494,6 +529,13 @@ on('insert-param-and-reload', (el: HTMLElement) => {
   }
   window.history.replaceState({}, '', `?${params.toString()}`);
   handleReloads(el.dataset.reload);
+});
+
+// used on displayMessage divs: we save the fact that it was closed
+on('save-dismiss', (el: HTMLElement) => {
+  if (el.dataset.dismissKey) {
+    localStorage.setItem(`dismiss_${el.dataset.dismissKey}`, '1');
+  }
 });
 
 on('add-query-filter', (el: HTMLElement) => {

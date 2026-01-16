@@ -100,7 +100,7 @@ final class TwigFunctions
     public static function isInJsonArray(string $json, string $key, int $target): bool
     {
         $decoded = json_decode($json, true, 3, JSON_THROW_ON_ERROR);
-        if (in_array($target, $decoded[$key], true)) {
+        if (in_array($target, $decoded[$key] ?? array(), true)) {
             return true;
         }
         return false;

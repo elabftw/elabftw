@@ -1075,6 +1075,26 @@ abstract class AbstractEntity extends AbstractRest
         return $this->getCurrentHighestCustomId($this->entityData['category']) + 1;
     }
 
+    /**
+     * This function exists for backward compatibility for older permissions
+     * JSON with base key. It allows extracting the base param from that JSON.
+     * Base permission is now in a dedicated parameter.
+     */
+    protected function getCanBaseFromJson(?string $can, ?BasePermissions $base): ?BasePermissions
+    {
+        if ($base !== null) {
+            return $base;
+        }
+        if ($can === null) {
+            return null;
+        }
+        $decoded = json_decode($can, true, 3);
+        if ($base === null && array_key_exists('base', $decoded)) {
+            return BasePermissions::tryFrom($decoded['base'] ?? array());
+        }
+        return null;
+    }
+
     // Archive a normal entity, Unarchive an archived entity.
     private function handleArchivedState(State $from, State $to, callable $toggleLock): void
     {

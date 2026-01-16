@@ -26,7 +26,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 require_once 'app/init.inc.php';
 $Response = new Response();
-
 try {
     $id = Filter::intOrNull($Request->query->getInt('id'));
     $bypassReadPermission = false;

@@ -57,6 +57,10 @@ final class Templates extends AbstractTemplateEntity
         $title = Filter::title($title ?? _('Untitled'));
 
         // CANREAD/CANWRITE
+        // this is for backward compatibility only and should be null in modern cases
+        $canreadBase = $this->getCanBaseFromJson($canread, $canreadBase);
+        $canwriteBase = $this->getCanBaseFromJson($canwrite, $canwriteBase);
+
         if (isset($this->Users->userData['default_read']) && $canread === null) {
             $canread = $this->Users->userData['default_read'];
         }

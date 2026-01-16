@@ -55,6 +55,10 @@ final class ItemsTypes extends AbstractTemplateEntity
         BodyContentType $contentType = BodyContentType::Html,
     ): int {
         $title = Filter::title($title ?? _('Default'));
+        // this is for backward compatibility only and should be null in modern cases
+        $canreadBase = $this->getCanBaseFromJson($canread, $canreadBase);
+        $canwriteBase = $this->getCanBaseFromJson($canwrite, $canwriteBase);
+
         $defaultPermissions = BasePermissions::Team->toJson();
         $canreadBase ??= BasePermissions::tryFrom($this->Users->userData['default_read_base']) ?? BasePermissions::Team;
         $canwriteBase ??= BasePermissions::tryFrom($this->Users->userData['default_write_base']) ?? BasePermissions::User;

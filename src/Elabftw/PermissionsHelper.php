@@ -34,9 +34,9 @@ final class PermissionsHelper
         $permArr = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
         $result = array();
 
-        $result['teams'] = $Teams->readNamesFromIds($permArr['teams']);
-        $result['teamgroups'] = $TeamGroups->readNamesFromIds($permArr['teamgroups']);
-        $result['users'] = $Teams->Users->readNamesFromIds($permArr['users']);
+        $result['teams'] = $Teams->readNamesFromIds($permArr['teams'] ?? array());
+        $result['teamgroups'] = $TeamGroups->readNamesFromIds($permArr['teamgroups'] ?? array());
+        $result['users'] = $Teams->Users->readNamesFromIds($permArr['users'] ?? array());
 
         return $result;
     }

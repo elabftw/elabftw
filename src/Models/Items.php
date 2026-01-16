@@ -66,6 +66,10 @@ final class Items extends AbstractConcreteEntity
         $title = Filter::title($title ?? _('Untitled'));
         $date ??= new DateTimeImmutable();
         $body = Filter::body($body);
+        // this is for backward compatibility only and should be null in modern cases
+        $canreadBase = $this->getCanBaseFromJson($canread, $canreadBase);
+        $canwriteBase = $this->getCanBaseFromJson($canwrite, $canwriteBase);
+
         $canreadBase ??= BasePermissions::tryFrom($this->Users->userData['default_read_base']) ?? BasePermissions::Team;
         $canwriteBase ??= BasePermissions::tryFrom($this->Users->userData['default_write_base']) ?? BasePermissions::User;
         $canread ??= BasePermissions::Team->toJson();

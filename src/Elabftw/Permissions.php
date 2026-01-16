@@ -109,7 +109,7 @@ final class Permissions
         }
 
         // check for users
-        if (in_array($this->Users->userData['userid'], $can['users'], true)) {
+        if (in_array($this->Users->userData['userid'], $can['users'] ?? array(), true)) {
             return true;
         }
 

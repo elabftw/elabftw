@@ -13,6 +13,7 @@ namespace Elabftw\Traits;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Users\AuthenticatedUser;
 use Elabftw\Models\Experiments;
@@ -65,7 +66,7 @@ trait TestsUtilsTrait
     protected function getFreshExperiment(): Experiments
     {
         $Entity = new Experiments(new Users(1, 1));
-        $id = $Entity->create();
+        $id = $Entity->create(canreadBase: BasePermissions::Team);
         $Entity->setId($id);
         return $Entity;
     }
@@ -73,7 +74,7 @@ trait TestsUtilsTrait
     protected function getFreshExperimentWithGivenUser(Users $users): Experiments
     {
         $Entity = new Experiments($users);
-        $id = $Entity->create();
+        $id = $Entity->create(canreadBase: BasePermissions::Team);
         $Entity->setId($id);
         return $Entity;
     }
@@ -82,7 +83,7 @@ trait TestsUtilsTrait
     {
         $User = $this->getRandomUserInTeam($team);
         $Entity = new Items($User);
-        $id = $Entity->create();
+        $id = $Entity->create(canreadBase: BasePermissions::Team);
         $Entity->setId($id);
         return $Entity;
     }
@@ -90,7 +91,7 @@ trait TestsUtilsTrait
     protected function getFreshItemWithGivenUser(Users $users): Items
     {
         $Entity = new Items($users);
-        $id = $Entity->create();
+        $id = $Entity->create(canreadBase: BasePermissions::Team);
         $Entity->setId($id);
         return $Entity;
     }
@@ -107,7 +108,7 @@ trait TestsUtilsTrait
     protected function getFreshTemplate(): Templates
     {
         $Entity = new Templates(new Users(1, 1));
-        $id = $Entity->create();
+        $id = $Entity->create(canreadBase: BasePermissions::Team);
         $Entity->setId($id);
         return $Entity;
     }
@@ -115,7 +116,7 @@ trait TestsUtilsTrait
     protected function getFreshItemType(): ItemsTypes
     {
         $Entity = new ItemsTypes(new Users(1, 1));
-        $id = $Entity->create();
+        $id = $Entity->create(canreadBase: BasePermissions::Team);
         $Entity->setId($id);
         return $Entity;
     }

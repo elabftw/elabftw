@@ -2,6 +2,12 @@ describe('Login page', () => {
   beforeEach(() => {
   });
 
+  it ('does not show Safari warning on non-Safari browsers', () => {
+    cy.visit('/login.php');
+    cy.get('#safariWarning').should('exist');
+    cy.get('#safariWarning').should('have.attr', 'hidden');
+  });
+
   it('sets auth cookie when logging in via form submission', () => {
     const email = 'toto@yopmail.com';
     const password = 'totototototo';

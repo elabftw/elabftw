@@ -38,14 +38,13 @@ final class TwigFilters
      * For displaying messages using bootstrap alerts
      * $level can be a string when coming from a twig template
      */
-    public static function displayMessage(string $message, string|MessageLevels $level, bool $closable = true, ?string $dataAction = null): string
+    public static function displayMessage(string $message, string|MessageLevels $level, bool $closable = true, string $dismissKey = ''): string
     {
-        $action = $dataAction === null ? '' : sprintf('data-action="%s"', $dataAction);
         $level = $level instanceof MessageLevels ? $level : MessageLevels::from($level);
 
         $crossLink = '';
         if ($closable) {
-            $crossLink = "<a href='#' class='close' data-dismiss='alert' $action>&times;</a>";
+            $crossLink = sprintf("<a href='#' class='close' data-dismiss='alert' data-action='save-dismiss' data-dismiss-key='%s'>&times;</a>", $dismissKey);
         }
 
         // "status" role: see WCAG2.1 4.1.3

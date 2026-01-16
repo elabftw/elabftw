@@ -34,7 +34,6 @@ class BatchTest extends \PHPUnit\Framework\TestCase
         $this->Batch = new Batch(new Users(1, 1));
         // Init parameters for batch actions
         $this->baseReqBody = array(
-            'action' => Action::Create->value,
             'items_tags' => array(),
             'items_categories' => array(),
             'items_status' => array(),

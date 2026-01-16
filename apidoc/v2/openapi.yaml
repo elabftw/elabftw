@@ -1772,8 +1772,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/config'
+        '400':
+          description: Bad request (Syntax error, invalid request or missing field)
         '401':
           description: Unauthorized (Authentication required)
+        '422':
+          description: Unprocessable content (Active at least one permission)
     delete:
       tags: ['Config']
       summary: Reset the config to default values

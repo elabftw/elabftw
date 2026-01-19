@@ -20,6 +20,7 @@
   --strongest: #000;
 
   /* COLORS */
+  --primary: #29aeb9;
   --elabblue: #29aeb9;
   --lightblue: #c4f9ff;
   --darkblue: #1f8591;
@@ -40,7 +41,7 @@
 
 html.dark-mode {
   /* GitHub-ish / your screenshot-ish dark palette */
-  --white: #2f2f2f;
+  --white: #131313;
   --mainbackground: #1e1e1e;
   --highlighted: #2a2a2a;
   --superlight: #2d2d2d;
@@ -53,8 +54,9 @@ html.dark-mode {
   --mediumstrong: #cccccc;
   --strongest: #f0f6fc;
 
+  --primary: #2196f3;
+  //--primary: #A9C5EC;
   --elabblue: #29aeb9;
-
   --lightblue: #79c0ff;
   --darkblue: #1f6feb;
 
@@ -86,7 +88,11 @@ $theme-colors: (
   'danger': $dangerred,
   'neutral': $medium,
 );
-$dropdown-link-active-bg: var(--elabblue);
+.btn-primary {
+  background-color: var(--primary) !important;
+  border-color: var(--primary) !important;
+}
+$dropdown-link-active-bg: var(--primary);
 /* make the non active link in navbar have slightly more contrast */
 $navbar-dark-color: var(--secondlevel);
 $text-muted: var(--medium);
@@ -224,13 +230,13 @@ body::before {
 /* LINKS */
 a,
 .link-like {
-  color: var(--elabblue);
+  color: var(--primary);
   text-decoration: none;
 }
 
 a:hover,
 .link-like:hover {
-  color: var(--elabblue);
+  color: var(--primary);
   text-decoration: none;
 }
 
@@ -260,7 +266,7 @@ a:hover,
 
 /* a toolbar button in blue */
 .main-action-button {
-  background-color: var(--elabblue);
+  background-color: var(--primary);
 
   i {
     color: var(--white);
@@ -272,6 +278,9 @@ select:not([multiple]) {
   background: var(--white) url('images/ico-arrow.png') no-repeat 97% 56%;
 }
 
+.form-control {
+  background-color: var(--white);
+}
 /* prevent the caret from being too close from text */
 /* stylelint-disable-next-line selector-no-qualifying-type */
 select.form-control {
@@ -279,7 +288,8 @@ select.form-control {
 }
 
 .form-control:focus {
-  border-color: var(--elabblue);
+  background-color: var(--white);
+  border-color: var(--primary);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(41, 174, 185, 0.6);
   z-index: 3;
 }
@@ -297,12 +307,20 @@ select.form-control {
   white-space: normal;
 }
 
+.dropdown-menu {
+  background: var(--white);
+}
+
+.dropdown-item {
+  color: var(--medium);
+}
 .dropdown-item > a {
   color: var(--strongest);
 }
 
 .dropdown-item:hover a {
-  color: var(--elabblue);
+
+  color: var(--primary);
 }
 
 /* BLOCKQUOTE */
@@ -350,7 +368,7 @@ h5 { font-size: 130%; }
 
 /* BEGIN HELP CONTAINER */
 .tip::before {
-  color: var(--elabblue);
+  color: var(--primary);
   content: '☺ ';
   font-size: 120%;
 }
@@ -383,7 +401,7 @@ h5 { font-size: 130%; }
     }
 
     .selected {
-      border-bottom: 6px solid var(--elabblue);
+      border-bottom: 6px solid var(--primary);
       margin-bottom: 0;
     }
   }
@@ -401,11 +419,11 @@ h5 { font-size: 130%; }
 
 .alert-success {
   background-color: var(--lightblue);
-  border-color: var(--elabblue);
-  color: var(--elabblue);
+  border-color: var(--primary);
+  color: var(--primary);
 
   .close {
-    color: var(--elabblue);
+    color: var(--primary);
   }
 }
 
@@ -440,7 +458,7 @@ h5 { font-size: 130%; }
 }
 
 .hover-action:hover {
-  color: var(--elabblue);
+  color: var(--primary);
   transition: color 0.8s ease;
 }
 
@@ -456,7 +474,7 @@ button:disabled {
 
 /* beta ribbon */
 .beta {
-  background: var(--elabblue);
+  background: var(--primary);
   border-radius: 5px;
   color: var(--white);
   display: inline-block;
@@ -680,7 +698,7 @@ tr:first-child td {
 
 .overlay-success {
   animation: slideInOut 3.5s ease-in-out forwards;
-  background-color: var(--elabblue);
+  background-color: var(--primary);
 }
 
 .overlay-error,
@@ -790,7 +808,7 @@ tr:first-child td {
     }
 
     &.bgnd-blue {
-      background-color: var(--elabblue);
+      background-color: var(--primary);
 
       &:hover {
         background-color: var(--secondlevel);
@@ -883,6 +901,9 @@ tr:first-child td {
   }
 }
 
+.list-group-item {
+  background-color: var(--white);
+}
 .side-panel {
   background: var(--mediumstrong);
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
@@ -917,7 +938,7 @@ tr:first-child td {
 
     /* Favtags will show up as selected */
     &.selected {
-      background-color: var(--elabblue);
+      background-color: var(--primary);
       cursor: initial;
     }
 
@@ -953,7 +974,7 @@ tr:first-child td {
 
 /* for steps highlight, because .active only works on list-group-item */
 .highlighted {
-  border: 1px solid var(--elabblue);
+  border: 1px solid var(--primary);
 }
 
 .item-next {
@@ -963,7 +984,7 @@ tr:first-child td {
 }
 
 .item a p:hover {
-  color: var(--elabblue);
+  color: var(--primary);
 }
 
 .box {
@@ -1010,7 +1031,7 @@ the form-control fails to do that so we do the border ourselves */
 }
 
 /* highlight on hover: for editable/malleable elements
- * it's $elabblue but less opaque
+ * it's $primary but less opaque
  */
 .hl-hover:hover {
   background-color: rgba(41, 174, 185, 0.5);
@@ -1018,6 +1039,7 @@ the form-control fails to do that so we do the border ourselves */
 
 .hl-hover-gray:hover {
   background-color: var(--firstlevel);
+  color: var(--medium);
 }
 
 .hl-hover-superlight:hover {
@@ -1097,11 +1119,11 @@ the form-control fails to do that so we do the border ourselves */
 }
 
 .color-blue {
-  color: var(--elabblue) !important;
+  color: var(--primary) !important;
 }
 
 .color-success {
-  color: var(--elabblue) !important;
+  color: var(--primary) !important;
 }
 
 .color-danger {
@@ -1183,7 +1205,7 @@ the form-control fails to do that so we do the border ourselves */
 /* ucp.php */
 #currpass {
   background-color: var(--lightblue);
-  border: 1px solid var(--elabblue);
+  border: 1px solid var(--primary);
 }
 
 .edit-mode-label {
@@ -1442,7 +1464,7 @@ the form-control fails to do that so we do the border ourselves */
 }
 
 .fa-bell.active {
-  color: var(--elabblue);
+  color: var(--primary);
 }
 
 /* caption for tinymce */
@@ -1625,7 +1647,7 @@ input[type='color'] {
 }
 
 .notification[data-ack='0'] {
-  background-color: var(--elabblue);
+  background-color: var(--primary);
 
   span {
     color: var(--mainbackground);
@@ -1687,11 +1709,11 @@ input[type='color'] {
 }
 
 input:checked + .slider {
-  background-color: var(--elabblue);
+  background-color: var(--primary);
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 8px var(--elabblue);
+  box-shadow: 0 0 8px var(--primary);
 }
 
 input:checked + .slider::before {
@@ -1845,7 +1867,7 @@ input:user-invalid {
 }
 
 .flash:hover {
-  background-color: var(--elabblue);
+  background-color: var(--primary);
   transition: background-color 0.1s ease;
 }
 

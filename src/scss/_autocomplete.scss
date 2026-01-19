@@ -47,7 +47,7 @@
     /* stylelint-disable-next-line selector-no-qualifying-type */
     &.lds-dual-ring::after {
       border: 4px solid currentColor;
-      border-color: variables.$elabblue transparent variables.$elabblue transparent;
+      border-color: var(--primary) transparent var(--primary) transparent;
       height: 20px;
       margin-left: auto;
       margin-right: auto;

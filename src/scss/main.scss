@@ -5,78 +5,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-
-:root {
-  --mainbackground: #f2f2f2; // original light background
-  --white: #fff;
-  --highlighted: #ebfbff;
-  --superlight: #e6e6e6;
-  --firstlevel: #dbdbdb;
-  --disabled: #868585;
-  --secondlevel: #bdbdbd;
-  --thirdlevel: #6f6f6f;
-  --medium: #4d4c4c;
-  --mediumstrong: #343434;
-  --strongest: #000;
-
-  /* COLORS */
-  --primary: #29aeb9;
-  --elabblue: #29aeb9;
-  --lightblue: #c4f9ff;
-  --darkblue: #1f8591;
-  --lightred: #ffc1b7;
-  --dangerred: #e6614c;
-  --darkred: #dd1e00;
-  --warningbg: #fff3cd;
-  --green: #54aa08;
-  --lessbrightorange: #ffe6b8;
-  --brightorange: #ffa500;
-  --orange: #ffa500;
-  --mediumyellow: #fae588;
-
-  --lightgold: #eddec6;
-  --gold: #d4ae75;
-  --darkgold: #856404;
-}
-
-html.dark-mode {
-  /* GitHub-ish / your screenshot-ish dark palette */
-  --white: #131313;
-  --mainbackground: #1e1e1e;
-  --highlighted: #2a2a2a;
-  --superlight: #2d2d2d;
-  --firstlevel: #13181c;
-  --disabled: #888;
-  --secondlevel: #bdbdbd;
-  //--secondlevel: #e5e5e5;
-  --thirdlevel: #666;
-  --medium: #d8dae0;
-  --mediumstrong: #cccccc;
-  --strongest: #f0f6fc;
-
-  --primary: #2196f3;
-  //--primary: #A9C5EC;
-  --elabblue: #29aeb9;
-  --lightblue: #79c0ff;
-  --darkblue: #1f6feb;
-
-  --lightred: #ff7b72;
-  --dangerred: #f85149;
-  --darkred: #da3633;
-
-  --warningbg: #d29922;
-
-  --green: #81c784;
-  --lessbrightorange: #e3b341;
-  --brightorange: #d18616;
-  --orange: #f0883e;
-  --mediumyellow: #f2cc60;
-
-  --lightgold: #e3b341;
-  --gold: #c69026;
-  --darkgold: #bc8c00;
-}
-
 @import 'variables';
 /* import this first to be able to modify bootstrap theme */
 @import 'bootstrap/scss/functions';
@@ -280,7 +208,13 @@ select:not([multiple]) {
 
 .form-control {
   background-color: var(--white);
+  border: 1px solid var(--secondlevel);
 }
+html.dark-mode .form-control {
+  background-color: var(--mainbackground);
+  border: 1px solid var(--thirdlevel);
+}
+
 /* prevent the caret from being too close from text */
 /* stylelint-disable-next-line selector-no-qualifying-type */
 select.form-control {
@@ -288,7 +222,6 @@ select.form-control {
 }
 
 .form-control:focus {
-  background-color: var(--white);
   border-color: var(--primary);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(41, 174, 185, 0.6);
   z-index: 3;
@@ -318,9 +251,16 @@ select.form-control {
   color: var(--strongest);
 }
 
-.dropdown-item:hover a {
+.dropdown-item:hover {
+  color: var(--strongest);
+  background-color: var(--superlight);
+}
 
-  color: var(--primary);
+.dropdown-item {
+  a,
+  i {
+    color: var(--strongest);
+  }
 }
 
 /* BLOCKQUOTE */
@@ -903,6 +843,7 @@ tr:first-child td {
 
 .list-group-item {
   background-color: var(--white);
+  border: 1px solid var(--secondary-muted);
 }
 .side-panel {
   background: var(--mediumstrong);
@@ -1116,6 +1057,11 @@ the form-control fails to do that so we do the border ourselves */
 
 .color-white {
   color: var(--white) !important;
+}
+
+/* white in both dark & light mode. Useful for buttons for example. */
+.always-white {
+  color: var(--chrome-fg) !important;
 }
 
 .color-blue {

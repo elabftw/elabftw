@@ -15,7 +15,7 @@ code {
 
 .preview-mode-container {
   .bp3-button.bp3-intent-primary {
-    background-color: variables.$elabblue !important;
+    background-color: var(--primary) !important;
     border: 1px solid transparent !important;
     border-radius: 5px !important;
     box-shadow: none !important;

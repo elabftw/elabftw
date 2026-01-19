@@ -5,6 +5,86 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+:root {
+  --mainbackground: #f2f2f2; // original light background
+  --white: #fff;
+  --highlighted: #ebfbff;
+  --superlight: #e6e6e6;
+  --firstlevel: #dbdbdb;
+  --disabled: #868585;
+  --secondlevel: #bdbdbd;
+  --thirdlevel: #6f6f6f;
+  --medium: #4d4c4c;
+  --mediumstrong: #343434;
+  --strongest: #000;
+
+  /* COLORS */
+  --primary: #29aeb9;
+  --secondary-muted: rgba(77, 76, 76, 0.30);
+  --elabblue: #29aeb9;
+  --lightblue: #c4f9ff;
+  --darkblue: #1f8591;
+  --lightred: #ffc1b7;
+  --dangerred: #e6614c;
+  --darkred: #dd1e00;
+  --warningbg: #fff3cd;
+  --green: #54aa08;
+  --lessbrightorange: #ffe6b8;
+  --brightorange: #ffa500;
+  --orange: #ffa500;
+  --mediumyellow: #fae588;
+
+  --lightgold: #eddec6;
+  --gold: #d4ae75;
+  --darkgold: #856404;
+
+  /* Always-dark UI surfaces like navbar */
+  --chrome-bg: #2b2b2b;
+  --chrome-fg: #e6e6e6;
+  --chrome-muted: #9aa0a6;
+}
+
+html.dark-mode {
+  /* GitHub-ish / your screenshot-ish dark palette */
+  --white: #131313;
+  --mainbackground: #1e1e1e;
+  --highlighted: #2a2a2a;
+  --superlight: #2d2d2d;
+  --firstlevel: #13181c;
+  --disabled: #888;
+  --secondlevel: #bdbdbd;
+  //--secondlevel: #e5e5e5;
+  --thirdlevel: #666;
+  --medium: #d8dae0;
+  --mediumstrong: #cccccc;
+  --strongest: #f0f6fc;
+
+  --primary: #2196f3;
+  // secondary with opacity for borders of inputs
+  --secondary-muted: rgba(146, 146, 146, 0.34);
+  //--primary: #A9C5EC;
+  --elabblue: #29aeb9;
+  --lightblue: #79c0ff;
+  --darkblue: #1f6feb;
+
+  --lightred: #ff7b72;
+  --dangerred: #f85149;
+  --darkred: #da3633;
+
+  --warningbg: #d29922;
+
+  --green: #81c784;
+  --lessbrightorange: #e3b341;
+  --brightorange: #d18616;
+  --orange: #f0883e;
+  --mediumyellow: #f2cc60;
+
+  --lightgold: #e3b341;
+  --gold: #c69026;
+  --darkgold: #bc8c00;
+}
+
 /* going from less contrasted to more contrasted */
 $white: #fff;
 //$mainbackground: #f2f2f2;

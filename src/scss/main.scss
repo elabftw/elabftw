@@ -52,7 +52,8 @@ html.dark-mode {
   --mediumstrong: #cccccc;
   --strongest: #f0f6fc;
 
-  --elabblue: #2196f3;
+  --elabblue: #29aeb9;
+
   --lightblue: #79c0ff;
   --darkblue: #1f6feb;
 
@@ -87,7 +88,7 @@ $theme-colors: (
 $dropdown-link-active-bg: $elabblue;
 /* make the non active link in navbar have slightly more contrast */
 $navbar-dark-color: $secondlevel;
-$text-muted: $medium;
+$text-muted: var(--medium);
 @import 'bootstrap/scss/bootstrap';
 @import 'prismjs/themes/prism';
 @import '@deltablot/dropzone/src/dropzone';
@@ -327,7 +328,7 @@ h2,
 h3,
 h4,
 h5 {
-  color: $medium;
+  color: var(--medium);
   font-weight: normal;
   margin-top: 0;
 }
@@ -372,7 +373,7 @@ h5 { font-size: 130%; }
     button {
       border: 0;
       border-radius: 0;
-      color: $medium;
+      color: var(--medium);
       font-weight: 500;
       margin: 0;
       margin-bottom: 6px;
@@ -593,7 +594,7 @@ tr:first-child td {
   }
 
   .item-owner a {
-    color: $medium;
+    color: var(--medium);
 
     &:hover {
       color: $secondlevel;
@@ -769,7 +770,7 @@ tr:first-child td {
 
   .owner {
     a {
-      color: $medium;
+      color: var(--medium);
 
       &:hover {
         color: $secondlevel;
@@ -784,7 +785,7 @@ tr:first-child td {
 
     .fa-lock {
       background-color: $firstlevel;
-      color: $medium;
+      color: var(--medium);
     }
 
     &.bgnd-blue {
@@ -796,7 +797,7 @@ tr:first-child td {
     }
 
     &.bgnd-dark {
-      background-color: $medium;
+      background-color: var(--medium);
 
       &:hover {
         background-color: $secondlevel;
@@ -876,7 +877,7 @@ tr:first-child td {
     }
 
     &:hover {
-      background-color: $medium;
+      background-color: var(--medium);
     }
   }
 }
@@ -920,7 +921,7 @@ tr:first-child td {
     }
 
     &:hover:not(.selected) {
-      background-color: $medium;
+      background-color: var(--medium);
     }
 
     i {
@@ -935,7 +936,7 @@ tr:first-child td {
 
   /* Make the titles that you can click on to toggle the steps visibly clickable */
   [data-action='toggle-next']:hover {
-    background-color: $medium;
+    background-color: var(--medium);
   }
 }
 
@@ -944,7 +945,7 @@ tr:first-child td {
 }
 
 .next-step-text {
-  color: $medium;
+  color: var(--medium);
   font-size: 80%;
   text-transform: uppercase;
 }
@@ -1087,7 +1088,7 @@ the form-control fails to do that so we do the border ourselves */
 }
 
 .color-medium {
-  color: $medium;
+  color: var(--medium);
 }
 
 .color-white {
@@ -1123,7 +1124,7 @@ the form-control fails to do that so we do the border ourselves */
 }
 
 .togglable-section-title {
-  color: $medium;
+  color: var(--medium);
   font-size: 100%;
   font-weight: bold;
   text-transform: uppercase;
@@ -1166,7 +1167,7 @@ the form-control fails to do that so we do the border ourselves */
 }
 
 .smallgray {
-  color: $medium;
+  color: var(--medium);
   font-size: 80%;
 }
 
@@ -1194,7 +1195,7 @@ the form-control fails to do that so we do the border ourselves */
 
 /* elabid */
 .elabid {
-  color: $medium;
+  color: var(--medium);
   overflow-wrap: break-word;
 }
 
@@ -1374,7 +1375,7 @@ the form-control fails to do that so we do the border ourselves */
 }
 
 .icon-overlay:hover::after {
-  background-color: $medium;
+  background-color: var(--medium);
   color: $white;
   display: block;
   font-family: 'Font Awesome 6 Free';
@@ -1411,7 +1412,7 @@ the form-control fails to do that so we do the border ourselves */
   border: 3px dashed $secondlevel;
 
   &:hover {
-    border: 3px dashed $medium;
+    border: 3px dashed var(--medium);
   }
 }
 
@@ -1435,7 +1436,7 @@ the form-control fails to do that so we do the border ourselves */
 .far,
 .fas,
 .fab {
-  color: $medium;
+  color: var(--medium);
   pointer-events: none;
 }
 
@@ -1446,7 +1447,7 @@ the form-control fails to do that so we do the border ourselves */
 /* caption for tinymce */
 .image {
   background: #f5f2f0;
-  border: 1px solid $medium;
+  border: 1px solid var(--medium);
   display: inline-block;
   margin: 0 2px 0 1px;
 }
@@ -1617,7 +1618,7 @@ input[type='color'] {
   border-top: 1px solid $mainbackground;
 
   .relative-moment {
-    color: $medium;
+    color: var(--medium);
     font-size: 80%;
   }
 }
@@ -1661,7 +1662,7 @@ input[type='color'] {
 
 /* The slider */
 .slider {
-  background-color: $medium;
+  background-color: var(--medium);
   border-radius: 34px;
   bottom: 0;
   cursor: pointer;
@@ -1711,7 +1712,7 @@ input:user-invalid {
 
 /* PROFILE page */
 .counter {
-  color: $medium;
+  color: var(--medium);
 }
 
 /* see Enums/State */
@@ -1831,11 +1832,11 @@ input:user-invalid {
 }
 
 .round-spot-ghost {
-  border: 1px dashed $medium;
+  border: 1px dashed var(--medium);
 }
 
 .calendar-event-hover {
-  box-shadow: 5px 4px 4px $medium !important;
+  box-shadow: 5px 4px 4px var(--medium) !important;
 }
 
 .calendar-event-disabled {

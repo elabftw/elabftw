@@ -6,6 +6,14 @@
  * @package elabftw
  */
 
+:root {
+  --mainbackground: #f2f2f2; // original light background
+}
+
+body.dark-mode {
+  --mainbackground: #0d1117; // dark background (GitHub-style)
+}
+
 @import 'variables';
 /* import this first to be able to modify bootstrap theme */
 @import 'bootstrap/scss/functions';

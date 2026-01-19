@@ -7,7 +7,8 @@
  */
 /* going from less contrasted to more contrasted */
 $white: #fff;
-$mainbackground: #f2f2f2;
+//$mainbackground: #f2f2f2;
+$mainbackground: var(--mainbackground);
 /* super light blue */
 $highlighted: #ebfbff;
 $superlight: #e6e6e6;

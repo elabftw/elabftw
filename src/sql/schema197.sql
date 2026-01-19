@@ -1,0 +1,2 @@
+-- schema 197
+ALTER TABLE `users` ADD `dark_mode` TINYINT UNSIGNED NOT NULL DEFAULT 0;

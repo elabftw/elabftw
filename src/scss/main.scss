@@ -8,10 +8,22 @@
 
 :root {
   --mainbackground: #f2f2f2; // original light background
+  --white: #fff;
+  --elabblue: #29aeb9;
+  --medium: #4d4c4c;
+  --mediumstrong: #343434;
+  --dangerred: #e6614c;
+  --secondlevel: #bdbdbd;
 }
 
-body.dark-mode {
+html.dark-mode {
   --mainbackground: #0d1117; // dark background (GitHub-style)
+  --white: #c9d1d9;
+  --elabblue: #58a6ff;
+  --medium: #8b949e;
+  --mediumstrong: #b1bac4;
+  --dangerred: #f85149;
+  --secondlevel: #30363d;
 }
 
 @import 'variables';
@@ -107,7 +119,7 @@ $text-muted: $medium;
 }
 
 body {
-  background: $mainbackground;
+  background: var(--mainbackground);
 }
 
 /* little shadow on top of the screen for no reasons */

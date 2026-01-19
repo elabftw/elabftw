@@ -73,6 +73,13 @@ interface Status extends SelectOptions {
   title: string;
 }
 
+// dark mode
+document.querySelector('[data-action="toggle-dark-mode"]')?.addEventListener('click', () => {
+  const enabled = document.documentElement.classList.toggle('dark-mode');
+  // cookie so that Twig can render correct theme on all pages, even logged out
+  document.cookie = `elab_theme=${enabled ? 'dark' : 'light'}; Path=/; Max-Age=31536000; SameSite=Lax`;
+});
+
 // HEARTBEAT
 // this function is to check periodically that we are still authenticated
 // and show a message if we the session is not valid anymore but we are still on a page requiring auth

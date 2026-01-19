@@ -43,6 +43,7 @@ use function intdiv;
 use function putenv;
 use function setlocale;
 use function textdomain;
+use function is_string;
 
 /**
  * This is a super class holding various global objects
@@ -136,6 +137,7 @@ final class App
             $ResourcesCategory = new ResourcesCategories($this->Teams);
             $this->itemsCategoryArr = $ResourcesCategory->readAll($ResourcesCategory->getQueryParams(new InputBag(array('limit' => 9999))));
         }
+        $this->getThemeClass();
         $this->initi18n();
     }
 
@@ -179,6 +181,22 @@ final class App
         // default lang is the server configured one
         return $this->Config->configArr['lang'];
     }
+
+    public function getThemeClass(): string
+    {
+        // 1. authenticated user preference
+        if ($this->Users instanceof AuthenticatedUser) {
+            $darkMode = $this->Users->userData['dark_mode'] ?? '0';
+            return $darkMode === 1 ? 'dark-mode' : '';
+        }
+        // 2. anon & guest preference (cookie)
+        $cookie = $this->Request->cookies->get('elab_theme'); // 'dark' | 'light'
+        if (is_string($cookie) && $cookie === 'dark') {
+            return 'dark-mode';
+        }
+        return '';
+    }
+
 
     /** @psalm-suppress PossiblyUnusedMethod this method is used in twig templates */
     public function getJsLang(): string

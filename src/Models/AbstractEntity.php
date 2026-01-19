@@ -1118,11 +1118,7 @@ abstract class AbstractEntity extends AbstractRest
     private function transferUploadsOwnership(int $userid): void
     {
         $this->bypassWritePermission = true;
-        $uploads = $this->Uploads->readAll($this->getQueryParams(new InputBag(array('state' => '1,2,3'))));
-        foreach ($uploads as $upload) {
-            $this->Uploads->setId((int) $upload['id']);
-            $this->Uploads->patch(Action::Update, array('userid' => $userid));
-        }
+        $this->Uploads->transferOwnership($userid);
     }
 
     private function addToExtendedFilter(string $extendedFilter, array $extendedValues = array()): void

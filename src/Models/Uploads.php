@@ -37,6 +37,7 @@ use Override;
 use PDO;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Response;
 
 use function mb_substr;
@@ -384,6 +385,16 @@ final class Uploads extends AbstractRest
     {
         $this->archive();
         return $this->create($params);
+    }
+
+    // transfer ownership of all uploaded files for an entity
+    public function transferOwnership(int $userid): void
+    {
+        $uploadArr = $this->readAll($this->getQueryParams(new InputBag(array('state' => '1,2,3'))));
+        foreach ($uploadArr as $upload) {
+            $this->setId($upload['id']);
+            $this->patch(Action::Update, array('userid' => $userid));
+        }
     }
 
     private function update(UploadParams $params): bool

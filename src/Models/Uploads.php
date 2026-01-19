@@ -37,6 +37,7 @@ use Override;
 use PDO;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Response;
 
 use function mb_substr;
@@ -341,6 +342,17 @@ final class Uploads extends AbstractRest
         foreach ($uploadArr as $upload) {
             $this->setId($upload['id']);
             $this->nuke();
+        }
+        return true;
+    }
+
+    // restore all uploaded files for an entity (exclude archived, keeps consistency)
+    public function restoreAll(): bool
+    {
+        $uploadArr = $this->readAll($this->getQueryParams(new InputBag(array('state' => '1,3'))));
+        foreach ($uploadArr as $upload) {
+            $this->setId($upload['id']);
+            $this->update(new UploadParams('state', State::Normal->value));
         }
         return true;
     }

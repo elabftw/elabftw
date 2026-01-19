@@ -225,7 +225,20 @@ components:
       type: apiKey
       name: Authorization
       description: The Authorization header value must contain an API Key.
+
   schemas:
+    Error:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+          example: '401'
+        message:
+          type: string
+          example: Authentication required
+
+
     PatchAction:
       type: object
       properties:
@@ -395,53 +408,77 @@ components:
           type: string
           nullable: true
         is_corrosive:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_explosive:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_flammable:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_gas_under_pressure:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_hazardous2env:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_hazardous2health:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_serious_health_hazard:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_oxidising:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_toxic:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_radioactive:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_antibiotic:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_antibiotic_precursor:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_drug:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_drug_precursor:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_explosive_precursor:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_cmr:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_nano:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_controlled:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_ed2health:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_ed2env:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_pbt:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_pmt:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_vpvb:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_vpvm:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         fp2_base64:
           type: string
           description: Base64-encoded fingerprint
@@ -465,16 +502,15 @@ components:
             - duplicate
         cid:
           type: integer
-          description: PubChem ID. If provided, CID lookup is used instead of CAS
+          description: pubchem_cid. Use it exclusively.
           example: 2519
         cas:
           type: string
-          description: CAS number used for PubChem lookup if CID is not provided
+          description: cas_number used for pubchem_cid lookup if pubchem_cid is not provided
           example: "58-08-2"
       oneOf:
         - required: [cid]
         - required: [cas]
-      additionalProperties: false
     CompoundCreateRequest:
       type: object
       properties:
@@ -1561,6 +1597,20 @@ components:
           type: integer
           description: Is 1 when the exclusive edit lock is longer than ExclusiveEditMode::EXPIRATION_MINUTES
 
+  responses:
+    Unauthorized:
+      description: Unauthorized (Authentication required)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: Bad request (Syntax error, invalid request or missing        field)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
 x-parameterGroups:
   searchParams: &searchParams
     - $ref: "#/components/parameters/SearchQ"
@@ -1600,7 +1650,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/apikey'
         '401':
-          description: Unauthorized (Authentication required)
+           $ref: '#/components/responses/Unauthorized'
     post:
       tags: ['Api keys']
       summary: Create an API key
@@ -1634,7 +1684,7 @@ paths:
         '400':
           description: Bad request (Syntax error, invalid request or missing field)
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
   /apikeys/{id}:
     summary: Actions on an api key
     parameters:
@@ -1653,7 +1703,7 @@ paths:
         '204':
           description: The key was deleted
         '401':
-          description: Unauthorized (Authentication required)
+           $ref: '#/components/responses/Unauthorized'
 
   # COMPOUNDS
   /compounds:
@@ -1673,7 +1723,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/compound'
         '401':
-          description: Unauthorized (Authentication required)
+           $ref: '#/components/responses/Unauthorized'
     post:
       tags: ['Compounds']
       summary: Create or import a compound
@@ -1702,7 +1752,7 @@ paths:
         '400':
           description: Bad request (Syntax error, invalid request or missing field)
         '401':
-          description: Unauthorized (Authentication required)
+           $ref: '#/components/responses/Unauthorized'
   # COMPOUND
   /compounds/{id}:
     parameters:
@@ -1727,7 +1777,7 @@ paths:
         '404':
           description: Compound not found
         '401':
-          description: Unauthorized (Authentication required)
+           $ref: '#/components/responses/Unauthorized'
     delete:
       tags: ['Compounds']
       summary: Soft-delete a compound
@@ -1737,7 +1787,7 @@ paths:
         '204':
           description: The compound was soft-deleted
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
 
   # CONFIG
   /config:
@@ -1754,7 +1804,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/config'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     patch:
       tags: ['Config']
       summary: Modify the config
@@ -1775,7 +1825,7 @@ paths:
         '400':
           description: Bad request (Syntax error, invalid request or missing field)
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
         '422':
           description: Unprocessable content (Active at least one permission)
     delete:
@@ -1786,7 +1836,7 @@ paths:
         '204':
           description: The config was reset.
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
   /experiments:
     summary: Actions on experiments
     post:
@@ -1863,7 +1913,7 @@ paths:
               schema:
                 type: string
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     get:
       tags: ['Experiments']
       summary: Read all experiments that are accessible
@@ -1879,7 +1929,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/experiment'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
   /experiments/{id}:
     summary: Actions on a specific experiment
     parameters:
@@ -1931,7 +1981,7 @@ paths:
               schema:
                 type: string
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     get:
       tags: ['Experiments']
       summary: Read an experiment
@@ -2013,7 +2063,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/entity'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     patch:
       tags: ['Experiments']
       summary: Modify an experiment
@@ -2028,7 +2078,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/experiment'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     delete:
       tags: ['Experiments']
       summary: Delete an experiment.
@@ -2038,7 +2088,7 @@ paths:
         '204':
           description: The experiment was deleted
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
 
   # INFO
   /info:
@@ -2162,7 +2212,7 @@ paths:
                               type: integer
                               example: 10
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
 
   # ITEMS
   /items:
@@ -2186,7 +2236,7 @@ paths:
               schema:
                 type: string
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     get:
       tags: ['Items']
       summary: Read all items that are accessible
@@ -2202,7 +2252,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/item'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
   /items/{id}:
     summary: Actions on a specific item
     parameters:
@@ -2254,7 +2304,7 @@ paths:
               schema:
                 type: string
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     get:
       tags: ['Items']
       summary: Read an item
@@ -2338,7 +2388,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/entity'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     patch:
       tags: ['Items']
       summary: Modify an item
@@ -2353,7 +2403,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/item'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     delete:
       tags: ['Items']
       summary: Delete an item.
@@ -2363,7 +2413,7 @@ paths:
         '204':
           description: The key was deleted
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
 
   # IMPORT
   /import:
@@ -2399,7 +2449,7 @@ paths:
                     type: integer
                     example: 900000
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     post:
       tags: ['Import']
       summary: Send a file to import
@@ -2443,7 +2493,7 @@ paths:
               schema:
                 type: string
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
   # EXPORT
   /exports:
     summary: Exported files
@@ -2461,7 +2511,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/export'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     post:
       tags: ['Exports']
       summary: Register an export request
@@ -2515,7 +2565,7 @@ paths:
               schema:
                 type: string
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
   /exports/{id}:
     summary: An export request
     parameters:
@@ -2539,7 +2589,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/export'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     delete:
       tags: ['Exports']
       summary: Remove an export request and its associated file
@@ -2549,7 +2599,7 @@ paths:
         '204':
           description: The file was deleted
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
   # COMMENTS
   /{entity_type}/{id}/comments:
     summary: Actions on comments of an entity
@@ -2590,7 +2640,7 @@ paths:
               schema:
                 type: string
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     get:
       tags: ['Comments']
       summary: Read all comments of that entity.
@@ -2605,7 +2655,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/comment'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
   /{entity_type}/{id}/comments/{subid}:
     summary: Actions on comment of an entity
     parameters:
@@ -2640,7 +2690,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/comment'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     patch:
       tags: ['Comments']
       summary: Modify an entity comment.
@@ -2659,7 +2709,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/comment'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     delete:
       tags: ['Comments']
       summary: Delete an entity comment.
@@ -2669,7 +2719,7 @@ paths:
         '204':
           description: The comment was deleted
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
 
   # ITEMS LINKS
   /{entity_type}/{id}/items_links:
@@ -2702,7 +2752,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/link'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
   /{entity_type}/{id}/items_links/{subid}:
     summary: Actions on items link of an entity
     parameters:
@@ -2750,7 +2800,7 @@ paths:
               schema:
                 type: string
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     delete:
       tags: ['Links to items']
       summary: Delete an item link.
@@ -2760,7 +2810,7 @@ paths:
         '204':
           description: The link was deleted.
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
 
   # EXPERIMENTS LINKS
   /{entity_type}/{id}/experiments_links:
@@ -2793,7 +2843,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/link'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
   /{entity_type}/{id}/experiments_links/{subid}:
     summary: Actions on experiments link of an entity
     parameters:
@@ -2841,7 +2891,7 @@ paths:
               schema:
                 type: string
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     delete:
       tags: ['Links to experiments']
       summary: Delete an experiment link.
@@ -2851,7 +2901,7 @@ paths:
         '204':
           description: The link was deleted.
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
 
   # COMPOUNDS LINKS
   /{entity_type}/{id}/compounds_links:
@@ -2884,7 +2934,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/link'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
   /{entity_type}/{id}/compounds_links/{subid}:
     summary: Actions on compounds link of an entity
     parameters:
@@ -2932,7 +2982,7 @@ paths:
               schema:
                 type: string
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     delete:
       tags: ['Links to compounds']
       summary: Delete a compound link.
@@ -2942,7 +2992,7 @@ paths:
         '204':
           description: The link was deleted.
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
 
   # EXPERIMENTS_TEMPLATES
   /experiments_templates:
@@ -2967,7 +3017,7 @@ paths:
               schema:
                 type: string
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     # END POST EXPERIMENTS TEMPLATES
 
     # GET EXPERIMENTS TEMPLATES
@@ -2986,7 +3036,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/entity_template'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
   /experiments_templates/{id}:
     summary: Actions on a specific experiment template
     parameters:
@@ -3033,7 +3083,7 @@ paths:
               schema:
                 type: string
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     get:
       tags: ['Experiments templates']
       summary: Read an experiment template
@@ -3046,7 +3096,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/entity_template'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     patch:
       tags: ['Experiments templates']
       summary: Modify an experiment template
@@ -3071,7 +3121,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/entity_template'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     delete:
       tags: ['Experiments templates']
       summary: Delete an experiment template.
@@ -3081,7 +3131,7 @@ paths:
         '204':
           description: The entry was deleted.
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
 
   # ITEMS_TYPES (Resources Templates)
   /items_types:
@@ -3106,7 +3156,7 @@ paths:
               schema:
                 type: string
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     # END POST ITEMS TYPES
 
     # GET ITEMS TYPES
@@ -3125,7 +3175,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/entity_template'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
   /items_types/{id}:
     summary: Actions on a specific resource template
     parameters:
@@ -3172,7 +3222,7 @@ paths:
               schema:
                 type: string
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     get:
       tags: ['Items types (Resources Templates)']
       summary: Read a resource template
@@ -3185,7 +3235,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/entity_template'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     patch:
       tags: ['Items types (Resources Templates)']
       summary: Modify a resource template
@@ -3210,7 +3260,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/entity_template'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     delete:
       tags: ['Items types (Resources Templates)']
       summary: Delete a resource template.
@@ -3220,7 +3270,7 @@ paths:
         '204':
           description: The entry was deleted.
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
 
   # EVENTS
   /events:
@@ -3239,7 +3289,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/event'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
   /events/{id}:
     parameters:
       - name: id
@@ -3278,7 +3328,7 @@ paths:
               schema:
                 type: string
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
 
   # EVENT
   /event/{id}:
@@ -3302,7 +3352,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/event'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     patch:
       tags: ['Events']
       summary: |
@@ -3355,7 +3405,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/event'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     delete:
       tags: ['Events']
       summary: Delete a booking slot.
@@ -3364,7 +3414,7 @@ paths:
         '204':
           description: The event was deleted.
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
 
   # FAVTAGS
   /favtags:
@@ -3388,7 +3438,7 @@ paths:
                   tag:
                     type: string
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     post:
       tags: ['Favorite tags']
       summary: Add a tag as favorite.
@@ -3413,7 +3463,7 @@ paths:
               schema:
                 type: string
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
   /favtags/{id}:
     summary: A particular favorite tag.
     parameters:
@@ -3431,7 +3481,7 @@ paths:
         '204':
           description: The favorite tag was removed.
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
 
   # REPORTS
   /reports:
@@ -3511,7 +3561,7 @@ paths:
               schema:
                 type: string
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
   # TEAM TAGS
   /teams/{id}/tags:
     summary: Manage tags at the team level.
@@ -3536,7 +3586,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/tag'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     post:
       tags: ['Team tags']
       summary: Create a tag in the team.
@@ -3560,7 +3610,7 @@ paths:
               schema:
                 type: string
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
   /teams/{id}/tags/{subid}:
     summary: Retrieve a tag from its id.
     parameters:
@@ -3588,7 +3638,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/tag'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     patch:
       tags: ['Team tags']
       summary: |
@@ -3616,7 +3666,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/tag'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     delete:
       tags: ['Team tags']
       summary: Delete a tag.
@@ -3625,7 +3675,7 @@ paths:
         '204':
           description: The tag was removed.
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
 
   # TEAMS
   /teams:
@@ -3644,7 +3694,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/team'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     post:
       tags: ['Teams']
       summary: Create a new team.
@@ -3669,7 +3719,7 @@ paths:
               schema:
                 type: string
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
   /teams/{id}:
     summary: Manage a team.
     parameters:
@@ -3701,7 +3751,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/team'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     patch:
       tags: ['Teams']
       summary: |
@@ -3734,7 +3784,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/team'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
 
   # EXPERIMENTS CATEGORIES
   /teams/{id}/experiments_categories:
@@ -3759,7 +3809,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/statuslike'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     post:
       tags: ['Experiments categories']
       operationId: post-team-one-expcat
@@ -3790,7 +3840,7 @@ paths:
               schema:
                 type: string
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
   # ONE EXPERIMENTS CATEGORY
   /teams/{id}/experiments_categories/{subid}:
     parameters:
@@ -3818,7 +3868,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/statuslike'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     patch:
       tags: ['Experiments categories']
       operationId: patch-expcat
@@ -3837,7 +3887,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/statuslike'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     delete:
       tags: ['Experiments categories']
       summary: Delete a category.
@@ -3846,7 +3896,7 @@ paths:
         '204':
           description: The category was removed.
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
 
   # RESOURCES CATEGORIES
   /teams/{id}/resources_categories:
@@ -3871,7 +3921,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/statuslike'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     post:
       tags: [ 'Resources categories' ]
       operationId: post-team-one-rescat
@@ -3902,7 +3952,7 @@ paths:
               schema:
                 type: string
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
   # ONE RESOURCE CATEGORY
   /teams/{id}/resources_categories/{subid}:
     parameters:
@@ -3930,7 +3980,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/statuslike'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     patch:
       tags: [ 'Resources categories' ]
       operationId: patch-rescat
@@ -3949,7 +3999,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/statuslike'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     delete:
       tags: [ 'Resources categories' ]
       summary: Delete a category.
@@ -3958,7 +4008,7 @@ paths:
         '204':
           description: The category was removed.
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
 
   # EXPERIMENTS STATUS
   /teams/{id}/experiments_status:
@@ -3983,7 +4033,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/statuslike'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     post:
       tags: ['Experiments status']
       operationId: post-team-one-expstatus
@@ -4014,7 +4064,7 @@ paths:
               schema:
                 type: string
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
   # ONE EXPERIMENTS STATUS
   /teams/{id}/experiments_status/{subid}:
     parameters:
@@ -4042,7 +4092,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/statuslike'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     patch:
       tags: ['Experiments status']
       operationId: patch-expstatus
@@ -4061,7 +4111,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/statuslike'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     delete:
       tags: ['Experiments status']
       summary: Delete a status.
@@ -4070,7 +4120,7 @@ paths:
         '204':
           description: The status was removed.
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
   # ITEMS STATUS
   /teams/{id}/items_status:
     parameters:
@@ -4094,7 +4144,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/statuslike'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     post:
       tags: ['Resources status']
       operationId: post-team-one-resstat
@@ -4125,7 +4175,7 @@ paths:
               schema:
                 type: string
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
 
   # ONE ITEMS STATUS
   /teams/{id}/items_status/{subid}:
@@ -4154,7 +4204,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/statuslike'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     patch:
       tags: ['Resources status']
       operationId: patch-resstatus
@@ -4173,7 +4223,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/statuslike'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     delete:
       tags: ['Resources status']
       summary: Delete a status.
@@ -4182,7 +4232,7 @@ paths:
         '204':
           description: The status was removed.
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
 
   # TEAMGROUPS
   /teams/{id}/teamgroups:
@@ -4207,7 +4257,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/teamgroup'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     post:
       tags: ['Teamgroups']
       operationId: post-teamgroups
@@ -4231,7 +4281,7 @@ paths:
               schema:
                 type: string
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
   /teams/{id}/teamgroups/{subid}:
     parameters:
       - name: id
@@ -4265,7 +4315,7 @@ paths:
                   team:
                     type: integer
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     patch:
       tags: ['Teamgroups']
       operationId: patch-teamgroup
@@ -4295,7 +4345,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/teamgroup'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     delete:
       tags: ['Teamgroups']
       summary: Delete a teamgroup.
@@ -4323,7 +4373,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/todoitem'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     post:
       tags: ['Todolist']
       summary: Create a todo item
@@ -4347,7 +4397,7 @@ paths:
               schema:
                 type: string
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
   /todolist/{id}:
     summary: Manage a todo entry.
     parameters:
@@ -4369,7 +4419,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/todoitem'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     patch:
       tags: ['Todolist']
       summary: |
@@ -4393,7 +4443,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/todoitem'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     delete:
       tags: ['Todolist']
       summary: Delete a todoitem.
@@ -4402,7 +4452,7 @@ paths:
         '204':
           description: The todoitem was removed.
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
 
   # UNFINISHED STEPS
   /unfinished_steps:
@@ -4430,7 +4480,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/unfinished_steps'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
 
   # USERS
   /users:
@@ -4509,7 +4559,7 @@ paths:
                       orcid: "0000-0002-7494-5555"
                       auth_service: 10
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     post:
       tags: ['Users']
       summary: Create a new user.
@@ -4555,7 +4605,7 @@ paths:
               schema:
                 type: string
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
   /users/{id}:
     summary: Display information about a particular user.
     parameters:
@@ -4589,7 +4639,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/users'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
 
     patch:
       tags: ['Users']
@@ -4665,7 +4715,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/users'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
 
   # USERS UPLOADS
   /users/{id}/uploads:
@@ -4733,7 +4783,7 @@ paths:
                        type: string
                        example: experiments
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
   # NOTIFICATIONS
   /users/{id}/notifications:
     parameters:
@@ -4778,7 +4828,7 @@ paths:
                   userid:
                     type: integer
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     delete:
       tags: ['Notifications']
       summary: Delete all notifications of the user.
@@ -4788,7 +4838,7 @@ paths:
         '204':
           description: The notifications were deleted.
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
   /users/{id}/notifications/{subid}:
     parameters:
       - name: id
@@ -4825,7 +4875,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/notification'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     patch:
       tags: ['Notifications']
       summary: |
@@ -4839,7 +4889,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/notification'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
 
   # STEPS
   /{entity_type}/{id}/steps:
@@ -4872,7 +4922,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/step'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     post:
       tags: ['Steps']
       summary: Create a step.
@@ -4897,7 +4947,7 @@ paths:
               schema:
                 type: string
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
   /{entity_type}/{id}/steps/{subid}:
     summary: Actions on step of an entity
     parameters:
@@ -4961,7 +5011,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/step'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     delete:
       tags: ['Steps']
       summary: Delete a step.
@@ -4971,7 +5021,7 @@ paths:
         '204':
           description: The step was deleted.
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
 
   # TAGS
   /{entity_type}/{id}/tags:
@@ -5004,7 +5054,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/tag'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     post:
       tags: ['Tags']
       summary: Create a tag.
@@ -5039,7 +5089,7 @@ paths:
               schema:
                 type: string
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     delete:
       tags: ['Tags']
       summary: Delete all tags.
@@ -5049,7 +5099,7 @@ paths:
         '204':
           description: The tags were deleted.
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
   /{entity_type}/{id}/tags/{subid}:
     summary: Actions on tag of an entity
     parameters:
@@ -5084,7 +5134,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/tag'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     patch:
       tags: ['Tags']
       summary: |
@@ -5109,7 +5159,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/tag'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
 
   # UPLOADS
   /{entity_type}/{id}/uploads:
@@ -5155,7 +5205,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/upload'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     post:
       tags: ['Uploads']
       summary: Create an upload.
@@ -5184,7 +5234,7 @@ paths:
               schema:
                 type: string
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
   /{entity_type}/{id}/uploads/{subid}:
     parameters:
       - name: entity_type
@@ -5236,7 +5286,7 @@ paths:
                 type: string
                 format: binary
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     post:
       tags: ['Uploads']
       summary: Replace an existing uploaded file. The existing file will be archived and the new one will be added.
@@ -5265,7 +5315,7 @@ paths:
               schema:
                 type: string
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     patch:
       tags: ['Uploads']
       summary: |
@@ -5303,7 +5353,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/upload'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     delete:
       tags: ['Uploads']
       summary: Delete an upload.
@@ -5313,7 +5363,7 @@ paths:
         '204':
           description: The upload was deleted.
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
 
   # IDPS
   /idps:
@@ -5331,7 +5381,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/idp'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     post:
       tags: ['Idps']
       summary: Create an idp.
@@ -5374,7 +5424,7 @@ paths:
               schema:
                 type: string
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
   /idps/{id}:
     parameters:
       - name: id
@@ -5395,7 +5445,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/idp'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     patch:
       tags: ['Idps']
       summary: Actions on an idp.
@@ -5419,7 +5469,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/idp'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     delete:
       tags: ['Idps']
       summary: Delete an idp.
@@ -5429,7 +5479,7 @@ paths:
         '204':
           description: The idp was deleted.
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
 
   # REVISIONS
   /{entity_type}/{id}/revisions:
@@ -5471,7 +5521,7 @@ paths:
                     fullname:
                       type: string
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
   /{entity_type}/{id}/revisions/{subid}:
     summary: Actions on a revision of an entity
     parameters:
@@ -5506,7 +5556,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/revision'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     patch:
       tags: ['Revisions']
       summary: Restore a revision.
@@ -5531,7 +5581,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/revision'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
 
   # EXTRA FIELDS KEYS
   /extra_fields_keys:
@@ -5566,7 +5616,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/extra_fields_keys'
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
   # DSPACE
   /dspace:
     summary: Interact with the connected DSpace repository.
@@ -5787,7 +5837,7 @@ paths:
               schema:
                 type: string
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
 
     patch:
       tags: ['DSpace']
@@ -5860,4 +5910,4 @@ paths:
                     type: string
                     example: "https://demo.dspace.org/items/67e4e922-1d80-489f-9fd9-afba71ce6283"
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'

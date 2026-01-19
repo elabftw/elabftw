@@ -9,21 +9,68 @@
 :root {
   --mainbackground: #f2f2f2; // original light background
   --white: #fff;
-  --elabblue: #29aeb9;
+  --highlighted: #ebfbff;
+  --superlight: #e6e6e6;
+  --firstlevel: #dbdbdb;
+  --disabled: #868585;
+  --secondlevel: #bdbdbd;
+  --thirdlevel: #6f6f6f;
   --medium: #4d4c4c;
   --mediumstrong: #343434;
+  --strongest: #000;
+
+  /* COLORS */
+  --elabblue: #29aeb9;
+  --lightblue: #c4f9ff;
+  --darkblue: #1f8591;
+  --lightred: #ffc1b7;
   --dangerred: #e6614c;
-  --secondlevel: #bdbdbd;
+  --darkred: #dd1e00;
+  --warningbg: #fff3cd;
+  --green: #54aa08;
+  --lessbrightorange: #ffe6b8;
+  --brightorange: #ffa500;
+  --orange: #ffa500;
+  --mediumyellow: #fae588;
+
+  --lightgold: #eddec6;
+  --gold: #d4ae75;
+  --darkgold: #856404;
 }
 
 html.dark-mode {
-  --mainbackground: #0d1117; // dark background (GitHub-style)
+  /* GitHub-ish / your screenshot-ish dark palette */
   --white: #c9d1d9;
-  --elabblue: #58a6ff;
-  --medium: #8b949e;
-  --mediumstrong: #b1bac4;
+  --mainbackground: #1e1e1e;
+  --highlighted: #2a2a2a;
+  --superlight: #2d2d2d;
+  --firstlevel: #13181c;
+  --disabled: #888;
+  --secondlevel: #3a3a3a;
+  --thirdlevel: #666;
+  --medium: #a1a7b6;
+  --mediumstrong: #cccccc;
+  --strongest: #f0f6fc;
+
+  --elabblue: #2196f3;
+  --lightblue: #79c0ff;
+  --darkblue: #1f6feb;
+
+  --lightred: #ff7b72;
   --dangerred: #f85149;
-  --secondlevel: #30363d;
+  --darkred: #da3633;
+
+  --warningbg: #d29922;
+
+  --green: #81c784;
+  --lessbrightorange: #e3b341;
+  --brightorange: #d18616;
+  --orange: #f0883e;
+  --mediumyellow: #f2cc60;
+
+  --lightgold: #e3b341;
+  --gold: #c69026;
+  --darkgold: #bc8c00;
 }
 
 @import 'variables';
@@ -120,6 +167,7 @@ $text-muted: $medium;
 
 body {
   background: var(--mainbackground);
+  color: var(--mediumstrong);
 }
 
 /* little shadow on top of the screen for no reasons */
@@ -174,7 +222,7 @@ body::before {
 /* LINKS */
 a,
 .link-like {
-  color: $elabblue;
+  color: var(--elabblue);
   text-decoration: none;
 }
 

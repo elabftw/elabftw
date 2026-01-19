@@ -24,6 +24,7 @@ enum UsersColumn: string
     case CanManageInventoryLocations = 'can_manage_inventory_locations';
     case CanManageUsers2teams = 'can_manage_users2teams';
     case CjkFonts = 'cjk_fonts';
+    case DarkMode = 'dark_mode';
     case DefaultRead = 'default_read';
     case DefaultWrite = 'default_write';
     case DisableShortcuts = 'disable_shortcuts';

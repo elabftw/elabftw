@@ -35,7 +35,7 @@
           {# 1 - CURRENT Owner #}
             <div id='currentOwnerDiv'>
               <label for='sourceOwner'>{{ 'Current owner'|trans }}</label>
-              <input type='text' id='sourceOwner' aria-disabled='true' disabled readonly value='{{ Entity.entityData.fullname|e('html_attr') }}' class='form-control'/>
+              <input type='text' id='sourceOwner' aria-disabled='true' disabled value='{{ Entity.entityData.fullname|e('html_attr') }}' class='form-control'/>
               <div id='autocompleteAnchorDiv_sourceOwnerInput'></div>
               <div class='d-flex justify-content-center'>
                 <i class='fas fa-caret-down fa-fw mt-2 text-big' aria-hidden='true' role='presentation'></i>

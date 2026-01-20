@@ -592,11 +592,11 @@ on('toggle-pin', (el: HTMLElement) => {
 });
 
 on('transfer-ownership', async () => {
-  const userIdInput = document.getElementById('targetUserId') as HTMLInputElement;
-  const userid = parseInt(userIdInput?.value, 10);
-  if (!userid) return;
+  const params = collectForm(document.getElementById('ownershipTransferForm'));
+  const userid = parseInt(params['targetUserId'].split(' ')[0] ?? '', 10);
+  const team = parseInt(params['targetTeamId'] ?? '', 10);
   ApiC.notifOnSaved = false;
-  await ApiC.patch(`${entity.type}/${entity.id}`, { action: Action.UpdateOwner, userid});
+  await ApiC.patch(`${entity.type}/${entity.id}`, { action: Action.UpdateOwner, userid, team });
   sessionStorage.setItem('flash_ownershipTransfer', i18next.t('ownership-transfer'));
   window.location.reload();
 });

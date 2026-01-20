@@ -293,7 +293,7 @@
         {% set canTransfer = Entity.entityData.userid == App.Users.userData.userid or App.Users.isAdmin %}
         <button type='button' class='dropdown-item {{ (not canTransfer or Entity.isReadOnly) ? 'disabled' }}'
           {% if canTransfer %}data-action='toggle-modal' data-target='ownerModal'{% endif %}>
-          <i class='fas fa-people-arrows fa-fw {{ Entity.isReadOnly ? 'color-weak' }}' title='{{ 'Transfer ownership'|trans }}'></i>{{ 'Transfer ownership'|trans }}
+          <i class='fas fa-people-arrows fa-fw {{ (not canTransfer or Entity.isReadOnly) ? 'color-weak' }}' title='{{ 'Transfer ownership'|trans }}'></i> {{ 'Transfer ownership'|trans }}
         </button>
         {# REVISIONS #}
         <a class='dropdown-item' href='revisions.php?type={{ Entity.entityType.value }}&amp;item_id={{ Entity.id }}'><i class='fas fa-history fa-fw'></i> {{ 'See revisions'|trans }}</a>

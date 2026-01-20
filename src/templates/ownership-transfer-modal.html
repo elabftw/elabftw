@@ -32,6 +32,10 @@
             </select>
           {% else %}
           {# SELECT USER #}
+          {# hidden team input: current user's team #}
+            <div class='d-none'>
+              <label for='targetTeamId'>{{ 'Select a team'|trans }}><input type='text' name='targetTeamId' value='{{ Entity.entityData.team }}'></label>
+            </div>
           {# 1 - CURRENT Owner #}
             <div id='currentOwnerDiv'>
               <label for='sourceOwner'>{{ 'Current owner'|trans }}</label>

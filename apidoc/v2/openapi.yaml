@@ -229,12 +229,15 @@ components:
   schemas:
     Error:
       type: object
-      required: [code, message]
+      required: [code, message, description]
       properties:
         code:
           type: string
           example: '401'
         message:
+          type: string
+          example: Unauthorized
+        description:
           type: string
           example: Authentication required
 
@@ -548,7 +551,6 @@ components:
           type: boolean
         is_toxic:
           type: boolean
-      additionalProperties: false
 
     # COMMENT
     comment:
@@ -1596,20 +1598,68 @@ components:
         is_stale:
           type: integer
           description: Is 1 when the exclusive edit lock is longer than ExclusiveEditMode::EXPIRATION_MINUTES
+    # STORAGE UNIT
+    storage_unit:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The storage unit ID
+          example: 1
+        name:
+          type: string
+          description: Name of the storage unit
+          example: "Freezer A"
+        parent_id:
+          type: integer
+          nullable: true
+          description: ID of the parent storage unit (null for root level)
+          example: null
+        full_path:
+          type: string
+          description: Full hierarchical path from root to this unit
+          example: "Building A > Room 101 > Freezer A"
+        level_depth:
+          type: integer
+          description: Depth level in the hierarchy (0 for root)
+          example: 2
+        children_count:
+          type: integer
+          description: Number of child storage units
+          example: 3
 
   responses:
-    Unauthorized:
-      description: Unauthorized (Authentication required)
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
     BadRequest:
       description: Bad request (Syntax error, invalid request or missing        field)
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Unauthorized (Authentication required)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Forbidden:
+      description: Insufficient permissions
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    InternalServerError:
+      description: The server was unable to complete your request. Please try again later.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
 
 x-parameterGroups:
   searchParams: &searchParams
@@ -1632,6 +1682,123 @@ security:
   - token:
       - token
 paths:
+  /storage_units:
+    summary: Manage storage units for the inventory feature.
+    get:
+      tags: ['Storage units']
+      summary: Read all storage units.
+      description: Get the full hierarchy of storage units. Results are grouped by parent_id.
+      operationId: read-storage-units
+      responses:
+        '200':
+          description: A list of storage units grouped by parent_id.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/storage_unit'
+        '401':
+           $ref: '#/components/responses/Unauthorized'
+    post:
+      tags: ['Storage units']
+      summary: Create a new storage unit.
+      description: Create a new storage unit. Requires permission to manage inventory locations.
+      operationId: post-storage-unit
+      requestBody:
+        required: true
+        description: Parameters for creating a storage unit.
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ['name']
+              properties:
+                name:
+                  type: string
+                  description: Name of the storage unit.
+                  example: "Freezer A"
+                parent_id:
+                  type: integer
+                  nullable: true
+                  description: ID of the parent storage unit. Set to null for a top-level unit.
+                  example: null
+      responses:
+        '201':
+          description: The storage unit has been created.
+          headers:
+            location:
+              description: An URL to the storage unit that was created.
+              schema:
+                type: string
+        '401':
+           $ref: '#/components/responses/Unauthorized'
+
+  /storage_units/{id}:
+    summary: Actions on a specific storage unit.
+    parameters:
+      - name: id
+        in: path
+        description: ID of the storage unit.
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Storage units']
+      summary: Read a storage unit.
+      description: Get details of a specific storage unit including its full hierarchical path.
+      operationId: read-storage-unit
+      responses:
+        '200':
+          description: A storage unit.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/storage_unit'
+        '401':
+           $ref: '#/components/responses/Unauthorized'
+        '404':
+           $ref: '#/components/responses/NotFound'
+    patch:
+      tags: ['Storage units']
+      summary: Modify a storage unit.
+      description: Update the name of a storage unit. Requires permission to manage inventory locations.
+      operationId: patch-storage-unit
+      requestBody:
+        description: Parameters for modifying a storage unit.
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ['name']
+              properties:
+                name:
+                  type: string
+                  description: New name for the storage unit.
+                  example: "Freezer B"
+      responses:
+        '200':
+          description: The updated storage unit.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/storage_unit'
+        '401':
+           $ref: '#/components/responses/Unauthorized'
+    delete:
+      tags: ['Storage units']
+      summary: Delete a storage unit.
+      description: |
+        Delete a storage unit. Requires permission to manage inventory locations.
+        Cannot delete a storage unit that has children or containers.
+      operationId: delete-storage-unit
+      responses:
+        '204':
+          description: The storage unit was deleted.
+        '401':
+           $ref: '#/components/responses/Unauthorized'
   /apikeys:
     summary: Manage API keys
     description: Handle operations on API keys.

@@ -334,10 +334,11 @@ final class StorageUnits extends AbstractRest
     public function postAction(Action $action, array $reqBody): int
     {
         $this->canWriteOrExplode();
-        return $this->create(
-            $reqBody['name'] ?? throw new ImproperActionException('Missing value for "name"'),
-            Filter::intOrNull($reqBody['parent_id']),
-        );
+        $name = $reqBody['name'] ?? throw new ImproperActionException('Miss      ing value for "name"');
+        if ($reqBody['parent_id'] === null) {
+            return $this->create($name, null);
+        }
+        return $this->create($name, Filter::intOrNull($reqBody['parent_id']));
     }
 
     public function create(string $unitName, ?int $parentId = null): int

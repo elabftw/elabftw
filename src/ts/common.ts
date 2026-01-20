@@ -33,7 +33,6 @@ import {
   TomSelect,
   updateEntityBody,
   updateCatStat,
-  extractFullName,
 } from './misc';
 import i18next from './i18n';
 import { Metadata } from './Metadata.class';
@@ -598,8 +597,7 @@ on('transfer-ownership', async () => {
   if (!userid) return;
   ApiC.notifOnSaved = false;
   await ApiC.patch(`${entity.type}/${entity.id}`, { action: Action.UpdateOwner, userid});
-  const userFullName = extractFullName(userIdInput.value);
-  sessionStorage.setItem('flash_ownershipTransfer', i18next.t('ownership-transfer', { user: userFullName }));
+  sessionStorage.setItem('flash_ownershipTransfer', i18next.t('ownership-transfer'));
   window.location.reload();
 });
 

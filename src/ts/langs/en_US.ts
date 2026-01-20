@@ -81,7 +81,7 @@ const t = {
     "oc-version-warning": "Warning: current OpenCloning version is incompatible with this version of eLabFTW.",
     "onboarding-email-sent": "Onboarding email(s) will soon be sent.",
     "only-a-sysadmin": "Only a Sysadmin can modify this.",
-    "ownership-transfer": "Your entry has been successfully transferred to {{user, string}}.",
+    "ownership-transfer": "Your entry has been successfully transferred to the selected user.",
     "please-wait": "Please wait…",
     "readonly": "Read-only",
     "remove": "Remove",

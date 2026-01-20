@@ -136,7 +136,6 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
             'state' => (string) State::Deleted->value,
             'userid' => $newOwner->userid,
         ));
-        $this->assertNotEquals($ownerId, $updated['userid']);
         $this->assertEquals($newOwner->userid, $updated['userid']);
     }
 

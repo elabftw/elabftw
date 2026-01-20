@@ -34,13 +34,8 @@ function collectSelectable(name: string): number[] {
   return collected;
 }
 
-function collectTargetUserId(): number {
-  const collected = document.getElementById('targetUserId') as HTMLInputElement;
-  return collected ? parseInt(collected.value, 10) || 0 : 0;
-}
-
-function collectTargetTeamId(): number {
-  const collected = document.getElementById('targetTeamId') as HTMLSelectElement;
+function collectInt(name: string): number {
+  const collected = document.getElementById(name) as HTMLInputElement;
   return collected ? parseInt(collected.value, 10) || 0 : 0;
 }
 
@@ -69,8 +64,8 @@ function getSelected(): Selected {
     tags: collectSelectable('tags'),
     users_experiments: collectSelectable('users-experiments'),
     users_resources: collectSelectable('users-resources'),
-    userid: collectTargetUserId(),
-    team: collectTargetTeamId(),
+    userid: collectInt('targetUserId'),
+    team: collectInt('targetTeamId'),
     can: collectCan(),
   };
 }

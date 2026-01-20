@@ -290,9 +290,11 @@
           <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='procurementParamsModal'><i class='fas fa-cart-shopping fa-fw' title='{{ 'Modify procurement parameters'|trans }}'></i> {{ 'Modify procurement parameters'|trans }}</button>
         {% endif %}
         {# TRANSFER OWNERSHIP #}
-        {% if Entity.entityData.userid == App.Users.userData.userid or App.Users.isAdmin %}
-          <button type='button' class='dropdown-item {{ Entity.isReadOnly ? 'disabled' }}' data-action='toggle-modal' data-target='ownerModal'><i class='fas fa-people-arrows fa-fw {{ Entity.isReadOnly ? 'color-weak' }}' title='{{ 'Transfer ownership'|trans }}'></i> {{ 'Transfer ownership'|trans }}</button>
-        {% endif %}
+        {% set canTransfer = Entity.entityData.userid == App.Users.userData.userid or App.Users.isAdmin %}
+        <button type='button' class='dropdown-item {{ (not canTransfer or Entity.isReadOnly) ? 'disabled' }}'
+          {% if canTransfer %}data-action='toggle-modal' data-target='ownerModal'{% endif %}>
+          <i class='fas fa-people-arrows fa-fw {{ Entity.isReadOnly ? 'color-weak' }}' title='{{ 'Transfer ownership'|trans }}'></i>{{ 'Transfer ownership'|trans }}
+        </button>
         {# REVISIONS #}
         <a class='dropdown-item' href='revisions.php?type={{ Entity.entityType.value }}&amp;item_id={{ Entity.id }}'><i class='fas fa-history fa-fw'></i> {{ 'See revisions'|trans }}</a>
         {# CHANGELOG #}

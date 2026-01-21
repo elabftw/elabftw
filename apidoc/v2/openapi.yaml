@@ -4091,6 +4091,8 @@ paths:
                   $ref: '#/components/schemas/tag'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     post:
       tags: ['Team tags']
       summary: Create a tag in the team.
@@ -4113,8 +4115,12 @@ paths:
               description: An URL ending with 0 if the tag was already here, or an URL to the newly created tag.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /teams/{id}/tags/{subid}:
     summary: Retrieve a tag from its id.
     parameters:
@@ -4143,6 +4149,8 @@ paths:
                 $ref: '#/components/schemas/tag'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Team tags']
       summary: |
@@ -4169,8 +4177,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/tag'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Team tags']
       summary: Delete a tag.
@@ -4180,6 +4192,8 @@ paths:
           description: The tag was removed.
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # TEAMS
   /teams:
@@ -4222,6 +4236,8 @@ paths:
               description: An URL to the team that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
   /teams/{id}:
@@ -4256,6 +4272,8 @@ paths:
                 $ref: '#/components/schemas/team'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Teams']
       summary: |
@@ -4287,8 +4305,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/team'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # EXPERIMENTS CATEGORIES
   /teams/{id}/experiments_categories:
@@ -4314,6 +4336,8 @@ paths:
                   $ref: '#/components/schemas/statuslike'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     post:
       tags: ['Experiments categories']
       operationId: post-team-one-expcat
@@ -4343,9 +4367,12 @@ paths:
               description: An URL to the category that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
-  # ONE EXPERIMENTS CATEGORY
+        '404':
+          $ref: '#/components/responses/NotFound'
   /teams/{id}/experiments_categories/{subid}:
     parameters:
       - name: id
@@ -4373,6 +4400,8 @@ paths:
                 $ref: '#/components/schemas/statuslike'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Experiments categories']
       operationId: patch-expcat
@@ -4390,8 +4419,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/statuslike'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Experiments categories']
       summary: Delete a category.
@@ -4401,6 +4434,8 @@ paths:
           description: The category was removed.
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # RESOURCES CATEGORIES
   /teams/{id}/resources_categories:
@@ -4426,6 +4461,8 @@ paths:
                   $ref: '#/components/schemas/statuslike'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     post:
       tags: [ 'Resources categories' ]
       operationId: post-team-one-rescat
@@ -4455,9 +4492,12 @@ paths:
               description: An URL to the category that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
-  # ONE RESOURCE CATEGORY
+        '404':
+          $ref: '#/components/responses/NotFound'
   /teams/{id}/resources_categories/{subid}:
     parameters:
       - name: id
@@ -4485,6 +4525,8 @@ paths:
                 $ref: '#/components/schemas/statuslike'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: [ 'Resources categories' ]
       operationId: patch-rescat
@@ -4502,8 +4544,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/statuslike'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: [ 'Resources categories' ]
       summary: Delete a category.
@@ -4513,6 +4559,8 @@ paths:
           description: The category was removed.
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # EXPERIMENTS STATUS
   /teams/{id}/experiments_status:
@@ -4538,6 +4586,8 @@ paths:
                   $ref: '#/components/schemas/statuslike'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     post:
       tags: ['Experiments status']
       operationId: post-team-one-expstatus
@@ -4567,9 +4617,12 @@ paths:
               description: An URL to the experiments status that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
-  # ONE EXPERIMENTS STATUS
+        '404':
+          $ref: '#/components/responses/NotFound'
   /teams/{id}/experiments_status/{subid}:
     parameters:
       - name: id
@@ -4597,6 +4650,8 @@ paths:
                 $ref: '#/components/schemas/statuslike'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Experiments status']
       operationId: patch-expstatus
@@ -4614,8 +4669,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/statuslike'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Experiments status']
       summary: Delete a status.
@@ -4625,7 +4684,10 @@ paths:
           description: The status was removed.
         '401':
           $ref: '#/components/responses/Unauthorized'
-  # ITEMS STATUS
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # TEAMS STATUS
   /teams/{id}/items_status:
     parameters:
       - name: id
@@ -4678,10 +4740,12 @@ paths:
               description: An URL to the resources status that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
-
-  # ONE ITEMS STATUS
+        '404':
+          $ref: '#/components/responses/NotFound'
   /teams/{id}/items_status/{subid}:
     parameters:
       - name: id
@@ -4709,6 +4773,8 @@ paths:
                 $ref: '#/components/schemas/statuslike'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Resources status']
       operationId: patch-resstatus
@@ -4726,8 +4792,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/statuslike'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Resources status']
       summary: Delete a status.
@@ -4737,6 +4807,8 @@ paths:
           description: The status was removed.
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # TEAMGROUPS
   /teams/{id}/teamgroups:
@@ -4762,6 +4834,8 @@ paths:
                   $ref: '#/components/schemas/teamgroup'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     post:
       tags: ['Teamgroups']
       operationId: post-teamgroups
@@ -4784,8 +4858,12 @@ paths:
               description: An URL to the teamgroup that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /teams/{id}/teamgroups/{subid}:
     parameters:
       - name: id
@@ -4820,6 +4898,8 @@ paths:
                     type: integer
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Teamgroups']
       operationId: patch-teamgroup
@@ -4848,8 +4928,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/teamgroup'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Teamgroups']
       summary: Delete a teamgroup.
@@ -4859,6 +4943,8 @@ paths:
           description: The teamgroup was removed.
         '401':
           description: Unauthorized (Authentication required)
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # TODOLIST
   /todolist:
@@ -4900,8 +4986,12 @@ paths:
               description: An URL to the todo item that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /todolist/{id}:
     summary: Manage a todo entry.
     parameters:
@@ -4924,6 +5014,8 @@ paths:
                 $ref: '#/components/schemas/todoitem'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Todolist']
       summary: |
@@ -4946,8 +5038,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/todoitem'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Todolist']
       summary: Delete a todoitem.
@@ -4957,6 +5053,8 @@ paths:
           description: The todoitem was removed.
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # UNFINISHED STEPS
   /unfinished_steps:
@@ -5108,6 +5206,8 @@ paths:
               description: An URL to the user that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
   /users/{id}:
@@ -5144,7 +5244,8 @@ paths:
                 $ref: '#/components/schemas/users'
         '401':
           $ref: '#/components/responses/Unauthorized'
-
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Users']
       summary: Modify a user.
@@ -5218,8 +5319,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/users'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # USERS UPLOADS
   /users/{id}/uploads:
@@ -5288,6 +5393,9 @@ paths:
                        example: experiments
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
   # NOTIFICATIONS
   /users/{id}/notifications:
     parameters:
@@ -5333,6 +5441,8 @@ paths:
                     type: integer
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Notifications']
       summary: Delete all notifications of the user.
@@ -5343,6 +5453,8 @@ paths:
           description: The notifications were deleted.
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /users/{id}/notifications/{subid}:
     parameters:
       - name: id
@@ -5380,6 +5492,8 @@ paths:
                 $ref: '#/components/schemas/notification'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Notifications']
       summary: |
@@ -5392,8 +5506,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/notification'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # STEPS
   /{entity_type}/{id}/steps:
@@ -5427,6 +5545,8 @@ paths:
                   $ref: '#/components/schemas/step'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     post:
       tags: ['Steps']
       summary: Create a step.
@@ -5450,8 +5570,12 @@ paths:
               description: An URL to the step that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /{entity_type}/{id}/steps/{subid}:
     summary: Actions on step of an entity
     parameters:
@@ -5514,8 +5638,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/step'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Steps']
       summary: Delete a step.
@@ -5526,6 +5654,8 @@ paths:
           description: The step was deleted.
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # TAGS
   /{entity_type}/{id}/tags:
@@ -5559,6 +5689,8 @@ paths:
                   $ref: '#/components/schemas/tag'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     post:
       tags: ['Tags']
       summary: Create a tag.
@@ -5592,8 +5724,12 @@ paths:
               description: An URL to the tag that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Tags']
       summary: Delete all tags.
@@ -5604,6 +5740,8 @@ paths:
           description: The tags were deleted.
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /{entity_type}/{id}/tags/{subid}:
     summary: Actions on tag of an entity
     parameters:
@@ -5639,6 +5777,8 @@ paths:
                 $ref: '#/components/schemas/tag'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Tags']
       summary: |
@@ -5662,8 +5802,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/tag'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # UPLOADS
   /{entity_type}/{id}/uploads:
@@ -5710,6 +5854,8 @@ paths:
                   $ref: '#/components/schemas/upload'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     post:
       tags: ['Uploads']
       summary: Create an upload.
@@ -5737,8 +5883,12 @@ paths:
               description: An URL to the uploaded file that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /{entity_type}/{id}/uploads/{subid}:
     parameters:
       - name: entity_type
@@ -5791,6 +5941,8 @@ paths:
                 format: binary
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     post:
       tags: ['Uploads']
       summary: Replace an existing uploaded file. The existing file will be archived and the new one will be added.
@@ -5818,8 +5970,12 @@ paths:
               description: An URL to the uploaded file that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Uploads']
       summary: |
@@ -5856,8 +6012,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/upload'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Uploads']
       summary: Delete an upload.
@@ -5868,6 +6028,8 @@ paths:
           description: The upload was deleted.
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # IDPS
   /idps:
@@ -5927,6 +6089,8 @@ paths:
               description: An URL to the idp that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
   /idps/{id}:
@@ -5950,6 +6114,8 @@ paths:
                 $ref: '#/components/schemas/idp'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Idps']
       summary: Actions on an idp.
@@ -5972,8 +6138,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/idp'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Idps']
       summary: Delete an idp.
@@ -5984,6 +6154,8 @@ paths:
           description: The idp was deleted.
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # REVISIONS
   /{entity_type}/{id}/revisions:
@@ -6026,6 +6198,8 @@ paths:
                       type: string
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /{entity_type}/{id}/revisions/{subid}:
     summary: Actions on a revision of an entity
     parameters:
@@ -6061,6 +6235,8 @@ paths:
                 $ref: '#/components/schemas/revision'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Revisions']
       summary: Restore a revision.
@@ -6084,8 +6260,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/revision'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # EXTRA FIELDS KEYS
   /extra_fields_keys:
@@ -6340,6 +6520,8 @@ paths:
             text/html:
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
 
@@ -6413,5 +6595,7 @@ paths:
                   publicUrl:
                     type: string
                     example: "https://demo.dspace.org/items/67e4e922-1d80-489f-9fd9-afba71ce6283"
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'

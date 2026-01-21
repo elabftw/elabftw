@@ -533,23 +533,32 @@ components:
         pubchem_cid:
           type: integer
         is_corrosive:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_serious_health_hazard:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_explosive:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_flammable:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_gas_under_pressure:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_hazardous2env:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_hazardous2health:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_oxidising:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         is_toxic:
-          type: boolean
+          type: integer
+          enum: [0, 1]
 
     # COMMENT
     comment:
@@ -1708,7 +1717,7 @@ components:
           example:
             code: '404'
             message: Not found
-            description: Ressource not found
+            description: Resource not found
     Unprocessable:
       description: Unprocessable content
       content:

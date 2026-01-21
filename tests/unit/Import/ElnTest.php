@@ -20,6 +20,7 @@ use League\Flysystem\FilesystemOperator;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Elabftw\Exceptions\DatabaseErrorException;
 
 use function dirname;
 
@@ -148,6 +149,8 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $this->logger,
             EntityType::Experiments,
         );
+        $this->expectException(DatabaseErrorException::class);
+        $this->expectExceptionMessageMatches('/Duplicate entry .*unique_experiments_custom_id.*\(1062\)/');
         $Import->import();
         $this->assertEquals(1, $Import->getInserted());
     }

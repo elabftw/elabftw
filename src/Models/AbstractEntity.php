@@ -35,6 +35,7 @@ use Elabftw\Enums\Messages;
 use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\State;
+use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -1080,7 +1081,7 @@ abstract class AbstractEntity extends AbstractRest
         $team = (int) $params['team'];
         // if there's no team provided, assign the current user's team
         if ($team === 0) {
-            $team = $this->Users->team ?? throw new IllegalActionException(_('Current user has no team context.'));
+            $team = $this->Users->team ?? throw new AppException(Messages::GenericError->toHuman());
         }
         $TeamsHelper = new TeamsHelper($team);
         if (!$TeamsHelper->isUserInTeam($userid)) {

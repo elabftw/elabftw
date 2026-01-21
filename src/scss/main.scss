@@ -213,9 +213,23 @@ select:not([multiple]) {
   background-color: var(--white);
   border: 1px solid var(--secondary-muted);
 }
-html.dark-mode .form-control {
-  background-color: var(--mainbackground);
-  color: var(--mediumstrong);
+
+html.dark-mode {
+
+  .form-control {
+    background-color: var(--mainbackground);
+    color: var(--mediumstrong);
+  }
+  .modal-content {
+    background-color: var(--mainbackground);
+  }
+  .modal-header, .modal-footer {
+    border-color: var(--secondary-muted);
+  }
+
+  .close {
+    color: var(--mediumstrong);
+  }
 }
 
 /* prevent the caret from being too close from text */
@@ -803,11 +817,13 @@ tr:first-child td {
 }
 
 .btn-ghost {
-  border: 1px solid var(--firstlevel);
+  border: 1px solid var(--secondary-muted);
+  color: var(--mediumstrong);
 
   &:hover {
     background-color: var(--firstlevel);
     border-color: var(--secondlevel);
+    color: var(--mediumstrong);
   }
 }
 

@@ -127,7 +127,7 @@
     <table aria-describedby='keyboardShortcuts' class='table col-md-12'>
       <thead>
       <tr>
-        <th scope='col'>{{ 'Action'|trans }}</th>
+        <th scope='col'><span class='sr-only'>{{ 'Action'|trans }}</span></th>
         {# add mb-0 to labels so they align with the Action that has vertical-align: bottom from tables.scss, but label element has a mb from reboot.scss #}
         <th scope='col'><label class='mb-0' for='sc_input_create'>{{ 'Create'|trans }}</label></th>
         <th scope='col'><label class='mb-0' for='sc_input_edit'>{{ 'Edit'|trans }}</label></th>
@@ -515,7 +515,7 @@
         <th scope='col'>{{ 'Permissions'|trans }}</th>
         <th scope='col'>{{ 'Creation date'|trans }}</th>
         <th scope='col'>{{ 'Last used'|trans }}</th>
-        <th scope='col'>{{ 'Action'|trans }}</th>
+        <th scope='col'><span class='sr-only'>{{ 'Action'|trans }}</span></th>
       </tr>
     </thead>
     <tbody id='apiTable'>
@@ -526,7 +526,7 @@
           <td data-label='{{ 'Permissions'|trans }}'>{{ key.can_write ? 'Read/Write'|trans : 'Read Only'|trans }}</td>
           <td data-label='{{ 'Creation date'|trans }}'><span class='relative-moment' title='{{ key.created_at }}'></span></td>
           <td data-label='{{ 'Last used'|trans }}'><span class='relative-moment' title='{{ key.last_used_at|default('never'|trans) }}'></span></td>
-          <td data-label='{{ 'Action'|trans }}'><button type='button' class='btn hl-hover-gray lh-normal border-0 p-2 m-0 my-n2' data-action='destroy-apikey' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}' data-apikeyid='{{ key.id }}'><i class='fas fa-trash-alt fa-fw'></i></button></td>
+          <td><span class='sr-only'>{{ 'Action'|trans }}</span><button type='button' class='btn hl-hover-gray lh-normal border-0 p-2 m-0 my-n2' data-action='destroy-apikey' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}' data-apikeyid='{{ key.id }}'><i class='fas fa-trash-alt fa-fw'></i></button></td>
         </tr>
       {% endfor %}
     </tbody>

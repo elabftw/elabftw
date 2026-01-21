@@ -105,7 +105,7 @@
               <th scope='col'>{{ 'Comment'|trans }}</th>
               <!--th scope='col'>{{ 'Quote'|trans }}</th-->
               <th scope='col'>{{ 'State'|trans }}</th>
-              <th scope='col'>{{ 'Actions'|trans }}</th>
+              <th scope='col'><span class='sr-only'>{{ 'Actions'|trans }}</span></th>
             </tr>
           </thead>
           {# this is the element to reload after a change, don't use the full div so we keep the js working in table headers #}
@@ -135,7 +135,7 @@
                 #}
                 <td data-label='{{ 'State'|trans }}'><span class='hl-hover-gray p-1 rounded malleableState' data-id='{{ req.id }}'>{{ req.state_human }}</span></td>
                 {# delete will actually cancel it #}
-                <td data-label='{{ 'Actions'|trans }}'>
+                <td><span class='sr-only'>{{ 'Actions'|trans }}</span>
                   {% if req.state != enum('Elabftw\\Enums\\ProcurementState').Cancelled.value %}
                     <button class='btn hl-hover-gray p-1 rounded hover-danger lh-normal' title='{{ 'Cancel order'|trans }}' data-action='cancel-procurement-request' aria-label='{{ 'Cancel order'|trans }}' type='button' data-id='{{ req.id }}'>
                       <i class='fas fa-trash-alt'></i>

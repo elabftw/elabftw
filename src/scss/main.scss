@@ -1120,6 +1120,7 @@ the form-control fails to do that so we do the border ourselves */
 
     &:hover {
       background-color: var(--secondlevel);
+      color: var(--chrome-bg);
     }
   }
 
@@ -1130,6 +1131,7 @@ the form-control fails to do that so we do the border ourselves */
 
     &:hover {
       background-color: var(--secondlevel);
+      color: var(--chrome-bg);
     }
 
     i {

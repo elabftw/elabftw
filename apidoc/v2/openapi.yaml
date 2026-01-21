@@ -279,6 +279,7 @@ components:
         - $ref: "#/components/schemas/entity_editable"
         - $ref: "#/components/schemas/item_editable"
 
+    # API KEY
     apikey:
       type: object
       properties:
@@ -298,6 +299,7 @@ components:
           type: integer
         team_name:
           type: string
+
     # COMPOUND
     compound:
       type: object
@@ -573,6 +575,8 @@ components:
           type: string
         orcid:
           type: string
+
+    # CONFIG
     config:
       type: object
       properties:
@@ -1957,6 +1961,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
            $ref: '#/components/responses/Unauthorized'
+        '403':
+           $ref: '#/components/responses/Forbidden'
   /storage_units/{id}:
     summary: Actions on a specific storage unit.
     parameters:
@@ -2010,6 +2016,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
            $ref: '#/components/responses/Unauthorized'
+        '403':
+           $ref: '#/components/responses/Forbidden'
         '404':
            $ref: '#/components/responses/NotFound'
     delete:
@@ -2024,6 +2032,10 @@ paths:
           description: The storage unit was deleted.
         '401':
            $ref: '#/components/responses/Unauthorized'
+        '403':
+           $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/Unprocessable'
 
   # API KEYS
   /apikeys:
@@ -2045,6 +2057,8 @@ paths:
                   $ref: '#/components/schemas/apikey'
         '401':
            $ref: '#/components/responses/Unauthorized'
+        '403':
+           $ref: '#/components/responses/Forbidden'
     post:
       tags: ['Api keys']
       summary: Create an API key
@@ -2079,6 +2093,10 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '403':
+           $ref: '#/components/responses/Forbidden'
+        '422':
+           $ref: '#/components/responses/Unprocessable'
   /apikeys/{id}:
     summary: Actions on an api key
     parameters:
@@ -2098,6 +2116,8 @@ paths:
           description: The key was deleted
         '401':
            $ref: '#/components/responses/Unauthorized'
+        '403':
+           $ref: '#/components/responses/Forbidden'
 
   # COMPOUNDS
   /compounds:
@@ -2147,6 +2167,10 @@ paths:
            $ref: '#/components/responses/BadRequest'
         '401':
            $ref: '#/components/responses/Unauthorized'
+        '403':
+           $ref: '#/components/responses/Forbidden'
+        '422':
+           $ref: '#/components/responses/Unprocessable'
   /compounds/{id}:
     parameters:
       - name: id
@@ -2488,6 +2512,8 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/Unprocessable'
     delete:
       tags: ['Experiments']
       summary: Delete an experiment.
@@ -2825,6 +2851,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/Unprocessable'
     delete:
       tags: ['Items']
       summary: Delete an item.
@@ -3905,6 +3933,8 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/Unprocessable'
     delete:
       tags: ['Events']
       summary: Delete a booking slot.
@@ -4065,6 +4095,8 @@ paths:
                 type: string
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '403':
+           $ref: '#/components/responses/Forbidden'
 
   # TEAM TAGS
   /teams/{id}/tags:
@@ -4213,6 +4245,8 @@ paths:
                   $ref: '#/components/schemas/team'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '403':
+           $ref: '#/components/responses/Forbidden'
     post:
       tags: ['Teams']
       summary: Create a new team.
@@ -4272,6 +4306,8 @@ paths:
                 $ref: '#/components/schemas/team'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '403':
+           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
     patch:
@@ -5208,6 +5244,8 @@ paths:
                 type: string
         '400':
           $ref: '#/components/responses/BadRequest'
+        '403':
+           $ref: '#/components/responses/Forbidden'
         '401':
           $ref: '#/components/responses/Unauthorized'
   /users/{id}:
@@ -5323,8 +5361,12 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '403':
+           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/Unprocessable'
 
   # USERS UPLOADS
   /users/{id}/uploads:
@@ -5806,6 +5848,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '403':
+           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
 

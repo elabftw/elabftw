@@ -2213,7 +2213,6 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '422':
           $ref: '#/components/responses/Unprocessable'
-
     delete:
       tags: ['Config']
       summary: Reset the config to default values
@@ -2223,6 +2222,8 @@ paths:
           description: The config was reset.
         '401':
           $ref: '#/components/responses/Unauthorized'
+
+  # EXPERIMENTS
   /experiments:
     summary: Actions on experiments
     post:
@@ -2316,6 +2317,8 @@ paths:
                   $ref: '#/components/schemas/experiment'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /experiments/{id}:
     summary: Actions on a specific experiment
     parameters:
@@ -2368,6 +2371,8 @@ paths:
                 type: string
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     get:
       tags: ['Experiments']
       summary: Read an experiment
@@ -2450,6 +2455,8 @@ paths:
                 $ref: '#/components/schemas/entity'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Experiments']
       summary: Modify an experiment
@@ -2465,6 +2472,8 @@ paths:
                 $ref: '#/components/schemas/experiment'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Experiments']
       summary: Delete an experiment.
@@ -2475,6 +2484,8 @@ paths:
           description: The experiment was deleted
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # INFO
   /info:
@@ -2689,8 +2700,12 @@ paths:
               description: An URL to the item that was duplicated.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     get:
       tags: ['Items']
       summary: Read an item
@@ -2775,6 +2790,8 @@ paths:
                 $ref: '#/components/schemas/entity'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Items']
       summary: Modify an item
@@ -2798,8 +2815,12 @@ paths:
       responses:
         '204':
           description: The key was deleted
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # IMPORT
   /import:

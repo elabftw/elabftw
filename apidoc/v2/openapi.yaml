@@ -233,13 +233,10 @@ components:
       properties:
         code:
           type: string
-          example: '401'
         message:
           type: string
-          example: Unauthorized
         description:
           type: string
-          example: Authentication required
 
 
     PatchAction:
@@ -1669,29 +1666,45 @@ components:
 
   responses:
     BadRequest:
-      description: Bad request (Syntax error, invalid request or missing        field)
+      description: Bad request (Syntax error, invalid request or missing field)
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+          example:
+            code: '400'
+            message: Bad request
+            description: Bad request (Syntax error, invalid request or missing field)
     Unauthorized:
       description: Unauthorized (Authentication required)
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+          example:
+            code: '401'
+            message: Unauthorized
+            description: Authentication required
     Forbidden:
       description: Insufficient permissions
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+          example:
+            code: '403'
+            message: Forbidden
+            description: Insufficient permissions
     NotFound:
       description: Resource not found
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+          example:
+            code: '404'
+            message: Not found
+            description: Ressource not found
     InternalServerError:
       description: The server was unable to complete your request. Please try again later.
       content:
@@ -1753,6 +1766,32 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/container'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /{entity_type}/{id}/containers/{subid}:
+    summary: Actions on a specific container.
+    parameters:
+      - name: entity_type
+        in: path
+        description: Entity type
+        required: true
+        schema:
+          type: string
+          enum: ['experiments', 'items', 'experiments_templates', 'items_types']
+      - name: id
+        in: path
+        description: ID of the entity
+        required: true
+        schema:
+          type: integer
+      - name: subid
+        in: path
+        description: ID of the container
+        required: true
+        schema:
+          type: integer
     post:
       tags: ['Containers']
       summary: Create a container for this entity.
@@ -1784,28 +1823,10 @@ paths:
               description: An URL to the container that was created.
               schema:
                 type: string
-  /{entity_type}/{id}/containers/{subid}:
-    summary: Actions on a specific container.
-    parameters:
-      - name: entity_type
-        in: path
-        description: Entity type
-        required: true
-        schema:
-          type: string
-          enum: ['experiments', 'items', 'experiments_templates', 'items_types']
-      - name: id
-        in: path
-        description: ID of the entity
-        required: true
-        schema:
-          type: integer
-      - name: subid
-        in: path
-        description: ID of the container
-        required: true
-        schema:
-          type: integer
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     get:
       tags: ['Containers']
       summary: Read a container.
@@ -1818,6 +1839,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/container'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Containers']
       summary: Modify a container.
@@ -1845,6 +1870,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/container'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
      tags: ['Containers']
      summary: Delete a container.
@@ -1853,6 +1882,10 @@ paths:
      responses:
        '204':
          description: The container was deleted.
+       '401':
+          $ref: '#/components/responses/Unauthorized'
+       '404':
+         $ref: '#/components/responses/NotFound'
 
   # STORAGE UNITS
   /storage_units:
@@ -1959,6 +1992,8 @@ paths:
                 $ref: '#/components/schemas/storage_unit'
         '401':
            $ref: '#/components/responses/Unauthorized'
+        '404':
+           $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Storage units']
       summary: Delete a storage unit.
@@ -2023,7 +2058,7 @@ paths:
               schema:
                 type: string
         '400':
-          description: Bad request (Syntax error, invalid request or missing field)
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
   /apikeys/{id}:
@@ -2091,10 +2126,9 @@ paths:
               schema:
                 type: string
         '400':
-          description: Bad request (Syntax error, invalid request or missing field)
+           $ref: '#/components/responses/BadRequest'
         '401':
            $ref: '#/components/responses/Unauthorized'
-  # COMPOUND
   /compounds/{id}:
     parameters:
       - name: id
@@ -2115,10 +2149,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/compound'
-        '404':
-          description: Compound not found
         '401':
            $ref: '#/components/responses/Unauthorized'
+        '404':
+           $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Compounds']
       summary: Soft-delete a compound

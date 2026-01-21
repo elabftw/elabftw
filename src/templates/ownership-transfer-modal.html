@@ -19,33 +19,30 @@
       </div>
       <form id='ownershipTransferForm' aria-label='{{ 'Transfer ownership'|trans }}'>
         <div class='modal-body'>
-          {% if isAdminPage %}
-            {# SELECT TEAM #}
+          <div class='{{ not isAdminPage ? 'd-none' }}'>
+            {# SELECT TEAM : available in admin page. Otherwise, it defaults to current user's team #}
             {% set infotip = 'As an admin, you can select the team associated with the user who will receive ownership. Please note that once transferred to another team, the entry is managed by that team’s administrators.'|trans %}
             <label for='targetTeamId'>{{ 'Select a team'|trans }}</label>
             {% include 'infotip.html' with {text: infotip} %}
-            <select required name='targetTeamId' class='form-control mb-2' id='targetTeamId'>
-              <option selected disabled value=''>{{ 'Select a team'|trans }}</option>
+            <select required name='targetTeamId' class='form-control mb-2' id='targetTeamId' {{ not isAdminPage ? 'data-allow-empty=1' }}>
+              <option selected disabled value='{{ Entity.entityData.team }}'>{{ 'Select a team'|trans }}</option>
               {% for team in teamsArr %}
                 <option value='{{ team.id }}'>{{ team.name }}</option>
               {% endfor %}
             </select>
-          {% else %}
+          </div>
           {# SELECT USER #}
-          {# hidden team input: current user's team #}
-            <div class='d-none'>
-              <label for='targetTeamId'>{{ 'Select a team'|trans }}><input type='text' name='targetTeamId' value='{{ Entity.entityData.team }}'></label>
-            </div>
           {# 1 - CURRENT Owner #}
-            <div id='currentOwnerDiv'>
-              <label for='sourceOwner'>{{ 'Current owner'|trans }}</label>
-              <input type='text' id='sourceOwner' aria-disabled='true' disabled value='{{ Entity.entityData.fullname|e('html_attr') }}' class='form-control'/>
-              <div id='autocompleteAnchorDiv_sourceOwnerInput'></div>
-              <div class='d-flex justify-content-center'>
-                <i class='fas fa-caret-down fa-fw mt-2 text-big' aria-hidden='true' role='presentation'></i>
-              </div>
+          {# (not visible in admin page because there can be multiple owner) #}
+          {# TODO: handle multiple owner, e.g., for batch. Maybe multiple badges with user fullnames #}
+          <div class='{{ isAdminPage ? 'd-none' }}' id='currentOwnerDiv'>
+            <label for='sourceOwner'>{{ 'Current owner'|trans }}</label>
+            <input type='text' id='sourceOwner' aria-disabled='true' disabled value='{{ Entity.entityData.fullname|e('html_attr') }}' class='form-control'/>
+            <div id='autocompleteAnchorDiv_sourceOwnerInput'></div>
+            <div class='d-flex justify-content-center'>
+              <i class='fas fa-caret-down fa-fw mt-2 text-big' aria-hidden='true' role='presentation'></i>
             </div>
-          {% endif %}
+          </div>
           {# 2 - TARGET Owner #}
           <label for='targetUserId'>{{ 'Select new owner'|trans }}</label>
           <input required type='text' placeholder='{{ 'Search user'|trans }}' name='targetUserId' id='targetUserId' class='form-control' data-identifier='targetUserId' data-action='autocomplete' data-target='users' {% if isAdminPage %}data-team='targetTeamId'{% endif %}>

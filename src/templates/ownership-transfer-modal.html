@@ -37,7 +37,7 @@
           {# 1 - CURRENT Owner #}
           {# (not visible in admin page because there can be multiple owner) #}
           {# TODO: handle multiple owner, e.g., for batch. Maybe multiple badges with user fullnames #}
-          <div class='{{ isAdminPage ? 'd-none' }}' id='currentOwnerDiv'>
+          <div {{ isAdminPage ? 'hidden' }} id='currentOwnerDiv'>
             <label for='sourceOwner'>{{ 'Current owner'|trans }}</label>
             <input type='text' id='sourceOwner' aria-disabled='true' disabled value='{{ Entity.entityData.fullname|e('html_attr') }}' class='form-control'/>
             <div id='autocompleteAnchorDiv_sourceOwnerInput'></div>

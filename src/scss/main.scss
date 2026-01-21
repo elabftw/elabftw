@@ -155,6 +155,9 @@ body::before {
   }
 }
 
+hr {
+  border-top: 1px solid var(--secondary-muted);
+}
 /* LINKS */
 a,
 .link-like {
@@ -208,11 +211,11 @@ select:not([multiple]) {
 
 .form-control {
   background-color: var(--white);
-  border: 1px solid var(--secondlevel);
+  border: 1px solid var(--secondary-muted);
 }
 html.dark-mode .form-control {
   background-color: var(--mainbackground);
-  border: 1px solid var(--thirdlevel);
+  color: var(--mediumstrong);
 }
 
 /* prevent the caret from being too close from text */
@@ -1113,7 +1116,7 @@ the form-control fails to do that so we do the border ourselves */
   /* Only Category */
   &.category-btn {
     background-color: var(--bg);
-    color: var(--white);
+    color: var(--chrome-fg);
 
     &:hover {
       background-color: var(--secondlevel);

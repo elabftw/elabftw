@@ -29,8 +29,8 @@ final class DatabaseErrorException extends AppException
     public function __construct(array $errorInfo)
     {
         $this->sqlstate = $errorInfo[0];
-        $this->errorCode = (int) $errorInfo[1];
-        $this->errorMessage = $errorInfo[2] ?? '';
+        $this->errorCode = 500;
+        $this->errorMessage = sprintf('%s (%d)', $errorInfo[2] ?? '', $errorInfo[1]);
         parent::__construct($this->errorMessage, $this->errorCode);
     }
 

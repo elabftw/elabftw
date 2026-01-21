@@ -334,7 +334,7 @@ final class StorageUnits extends AbstractRest
     public function postAction(Action $action, array $reqBody): int
     {
         $this->canWriteOrExplode();
-        $name = $reqBody['name'] ?? throw new ImproperActionException('Miss      ing value for "name"');
+        $name = $reqBody['name'] ?? throw new ImproperActionException('Missing value for "name"');
         if ($reqBody['parent_id'] === null) {
             return $this->create($name, null);
         }

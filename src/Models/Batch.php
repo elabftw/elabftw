@@ -16,6 +16,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\FilterableColumn;
 use Elabftw\Enums\Scope;
 use Elabftw\Enums\State;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
@@ -36,6 +37,9 @@ final class Batch extends AbstractRest
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
+        if ($this->requester->isAdmin === false) {
+            throw new ForbiddenException();
+        }
         // Unarchive action: search for 'Archived' entries to patch. For 'Restore' action, look for 'deleted' entries.
         $state = match ($action) {
             Action::Unarchive => State::Archived,
@@ -43,9 +47,6 @@ final class Batch extends AbstractRest
             default => null,
         };
         if ($action === Action::UpdateOwner) {
-            if ($this->requester->isAdmin === false) {
-                throw new UnauthorizedException(_('Only administrators can transfer entries across teams.'));
-            }
             ApiParamsValidator::ensureRequiredKeysPresent(array('userid', 'team'), $reqBody);
             ApiParamsValidator::ensurePositiveInts(array('userid', 'team'), $reqBody);
         }

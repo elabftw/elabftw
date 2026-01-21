@@ -1705,6 +1705,16 @@ components:
             code: '404'
             message: Not found
             description: Ressource not found
+    Unprocessable:
+      description: Unprocessable content
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: '422'
+            message: Unprocessable content
+            description: Active at least one permission
     InternalServerError:
       description: The server was unable to complete your request. Please try again later.
       content:
@@ -2198,11 +2208,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/config'
         '400':
-          description: Bad request (Syntax error, invalid request or missing field)
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '422':
-          description: Unprocessable content (Active at least one permission)
+          $ref: '#/components/responses/Unprocessable'
+
     delete:
       tags: ['Config']
       summary: Reset the config to default values

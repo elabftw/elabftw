@@ -1623,10 +1623,49 @@ components:
           type: integer
           description: Depth level in the hierarchy (0 for root)
           example: 2
-        children_count:
+    # CONTAINER
+    container:
+      type: object
+      description: A container represents the storage of an entity in a specific storage unit
+      properties:
+        id:
           type: integer
-          description: Number of child storage units
-          example: 3
+          description: The container link ID
+          example: 1
+        qty_stored:
+          type: number
+          description: Quantity stored in this container
+          example: 10.5
+        qty_unit:
+          type: string
+          description: Unit of the quantity stored
+          example: "mL"
+        storage_id:
+          type: integer
+          description: ID of the storage unit
+          example: 5
+        item_id:
+          type: integer
+          description: ID of the entity (experiment or resource)
+          example: 42
+        created_at:
+          type: string
+          format: date-time
+          description: When the container entry was created
+          example: "2024-05-28T02:42:19Z"
+        modified_at:
+          type: string
+          format: date-time
+          description: When the container entry was last modified
+          example: "2024-05-28T02:42:31Z"
+        storage_name:
+          type: string
+          description: Name of the storage unit
+          example: "Freezer A"
+        full_path:
+          type: string
+          description: Full hierarchical path of the storage unit
+          example: "Building A > Room 101 > Freezer A"
 
   responses:
     BadRequest:
@@ -1681,7 +1720,141 @@ x-parameterGroups:
 security:
   - token:
       - token
+
 paths:
+  # CONTAINERS
+  /{entity_type}/{id}/containers:
+    summary: Manage containers for an entity in the inventory.
+    parameters:
+      - name: entity_type
+        in: path
+        description: Entity type
+        required: true
+        schema:
+          type: string
+          enum: ['experiments', 'items', 'experiments_templates', 'items_types']
+      - name: id
+        in: path
+        description: ID of the entity
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Containers']
+      summary: Read all containers for this entity.
+      description: Get a list of all storage locations (containers) where this entity is stored.
+      operationId: read-containers
+      responses:
+        '200':
+          description: A list of containers.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/container'
+    post:
+      tags: ['Containers']
+      summary: Create a container for this entity.
+      description: Store this entity in a storage unit with a specified quantity.
+      operationId: post-container
+      requestBody:
+        description: Parameters for creating a container.
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ['storage_id', 'qty_stored']
+              properties:
+                qty_stored:
+                  type: number
+                  description: Quantity stored.
+                  example: 10.5
+                qty_unit:
+                  type: string
+                  description: Unit of the quantity. Defaults to "unit" if not provided.
+                  example: "mL"
+                  # see Units enum
+                  enum: ['bar', '•', 'm', 'μL', 'mL', 'L', 'μg', 'mg', 'g', 'kg']
+      responses:
+        '201':
+          description: The container has been created.
+          headers:
+            location:
+              description: An URL to the container that was created.
+              schema:
+                type: string
+  /{entity_type}/{id}/containers/{subid}:
+    summary: Actions on a specific container.
+    parameters:
+      - name: entity_type
+        in: path
+        description: Entity type
+        required: true
+        schema:
+          type: string
+          enum: ['experiments', 'items', 'experiments_templates', 'items_types']
+      - name: id
+        in: path
+        description: ID of the entity
+        required: true
+        schema:
+          type: integer
+      - name: subid
+        in: path
+        description: ID of the container
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Containers']
+      summary: Read a container.
+      description: Get details of a specific container entry.
+      operationId: read-container
+      responses:
+        '200':
+          description: A container.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/container'
+    patch:
+      tags: ['Containers']
+      summary: Modify a container.
+      description: Update the quantity stored or the unit of a container.
+      operationId: patch-container
+      requestBody:
+        description: Parameters for modifying a container.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                qty_stored:
+                  type: number
+                  description: New quantity stored.
+                  example: 15.0
+                qty_unit:
+                  type: string
+                  description: New unit of the quantity.
+                  example: "g"
+      responses:
+        '200':
+          description: The updated container.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/container'
+    delete:
+     tags: ['Containers']
+     summary: Delete a container.
+     description: Remove an entity from a storage unit.
+     operationId: delete-container
+     responses:
+       '204':
+         description: The container was deleted.
+
+  # STORAGE UNITS
   /storage_units:
     summary: Manage storage units for the inventory feature.
     get:
@@ -1735,7 +1908,6 @@ paths:
                 type: string
         '401':
            $ref: '#/components/responses/Unauthorized'
-
   /storage_units/{id}:
     summary: Actions on a specific storage unit.
     parameters:
@@ -1799,6 +1971,8 @@ paths:
           description: The storage unit was deleted.
         '401':
            $ref: '#/components/responses/Unauthorized'
+
+  # API KEYS
   /apikeys:
     summary: Manage API keys
     description: Handle operations on API keys.

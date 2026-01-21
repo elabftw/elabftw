@@ -2990,6 +2990,8 @@ paths:
               description: API URL for export record
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
   /exports/{id}:
@@ -3016,6 +3018,8 @@ paths:
                   $ref: '#/components/schemas/export'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Exports']
       summary: Remove an export request and its associated file
@@ -3026,6 +3030,9 @@ paths:
           description: The file was deleted
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
   # COMMENTS
   /{entity_type}/{id}/comments:
     summary: Actions on comments of an entity
@@ -3065,8 +3072,12 @@ paths:
               description: An URL to the comment that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     get:
       tags: ['Comments']
       summary: Read all comments of that entity.
@@ -3082,6 +3093,8 @@ paths:
                   $ref: '#/components/schemas/comment'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /{entity_type}/{id}/comments/{subid}:
     summary: Actions on comment of an entity
     parameters:
@@ -3117,6 +3130,8 @@ paths:
                 $ref: '#/components/schemas/comment'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Comments']
       summary: Modify an entity comment.
@@ -3134,8 +3149,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/comment'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Comments']
       summary: Delete an entity comment.
@@ -3146,6 +3165,8 @@ paths:
           description: The comment was deleted
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # ITEMS LINKS
   /{entity_type}/{id}/items_links:
@@ -3179,6 +3200,8 @@ paths:
                   $ref: '#/components/schemas/link'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /{entity_type}/{id}/items_links/{subid}:
     summary: Actions on items link of an entity
     parameters:
@@ -3225,8 +3248,12 @@ paths:
               description: An URL to the link that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Links to items']
       summary: Delete an item link.
@@ -3237,6 +3264,8 @@ paths:
           description: The link was deleted.
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # EXPERIMENTS LINKS
   /{entity_type}/{id}/experiments_links:
@@ -3270,6 +3299,8 @@ paths:
                   $ref: '#/components/schemas/link'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /{entity_type}/{id}/experiments_links/{subid}:
     summary: Actions on experiments link of an entity
     parameters:
@@ -3316,8 +3347,12 @@ paths:
               description: An URL to the link that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Links to experiments']
       summary: Delete an experiment link.
@@ -3328,6 +3363,8 @@ paths:
           description: The link was deleted.
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # COMPOUNDS LINKS
   /{entity_type}/{id}/compounds_links:
@@ -3361,6 +3398,8 @@ paths:
                   $ref: '#/components/schemas/link'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /{entity_type}/{id}/compounds_links/{subid}:
     summary: Actions on compounds link of an entity
     parameters:
@@ -3407,8 +3446,12 @@ paths:
               description: An URL to the link that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Links to compounds']
       summary: Delete a compound link.
@@ -3419,11 +3462,12 @@ paths:
           description: The link was deleted.
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # EXPERIMENTS_TEMPLATES
   /experiments_templates:
     summary: Actions on experiments_templates
-    # POST EXPERIMENTS TEMPLATES
     post:
       tags: ['Experiments templates']
       summary: Create an experiment template
@@ -3442,11 +3486,10 @@ paths:
               description: An URL to the experiment template that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
-    # END POST EXPERIMENTS TEMPLATES
-
-    # GET EXPERIMENTS TEMPLATES
     get:
       tags: ['Experiments templates']
       summary: Read all experiments_templates that are accessible
@@ -3508,8 +3551,12 @@ paths:
               description: An URL to the experiment template that was duplicated.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     get:
       tags: ['Experiments templates']
       summary: Read an experiment template
@@ -3523,6 +3570,8 @@ paths:
                 $ref: '#/components/schemas/entity_template'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Experiments templates']
       summary: Modify an experiment template
@@ -3546,8 +3595,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/entity_template'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Experiments templates']
       summary: Delete an experiment template.
@@ -3558,11 +3611,12 @@ paths:
           description: The entry was deleted.
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # ITEMS_TYPES (Resources Templates)
   /items_types:
     summary: Actions on items_types (resources templates)
-    # POST EXPERIMENTS TEMPLATES
     post:
       tags: ['Items types (Resources Templates)']
       summary: Create a resource template
@@ -3581,11 +3635,10 @@ paths:
               description: An URL to the resource template that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
-    # END POST ITEMS TYPES
-
-    # GET ITEMS TYPES
     get:
       tags: ['Items types (Resources Templates)']
       summary: Read all resources templates that are accessible
@@ -3647,8 +3700,12 @@ paths:
               description: An URL to the resource template that was duplicated.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     get:
       tags: ['Items types (Resources Templates)']
       summary: Read a resource template
@@ -3662,6 +3719,8 @@ paths:
                 $ref: '#/components/schemas/entity_template'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Items types (Resources Templates)']
       summary: Modify a resource template
@@ -3685,8 +3744,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/entity_template'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Items types (Resources Templates)']
       summary: Delete a resource template.
@@ -3697,6 +3760,8 @@ paths:
           description: The entry was deleted.
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # EVENTS
   /events:
@@ -3753,10 +3818,12 @@ paths:
               description: An URL to the booking slot that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
-
-  # EVENT
+        '404':
+          $ref: '#/components/responses/NotFound'
   /event/{id}:
     summary: For scheduler booking.
     parameters:
@@ -3779,6 +3846,8 @@ paths:
                 $ref: '#/components/schemas/event'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Events']
       summary: |
@@ -3830,8 +3899,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/event'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Events']
       summary: Delete a booking slot.
@@ -3841,6 +3914,8 @@ paths:
           description: The event was deleted.
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # FAVTAGS
   /favtags:
@@ -3888,6 +3963,8 @@ paths:
                 Favorite tags don't have an ID, so the returned URL in Location in invalid.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
   /favtags/{id}:
@@ -3988,6 +4065,7 @@ paths:
                 type: string
         '401':
           $ref: '#/components/responses/Unauthorized'
+
   # TEAM TAGS
   /teams/{id}/tags:
     summary: Manage tags at the team level.

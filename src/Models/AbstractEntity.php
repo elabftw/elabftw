@@ -507,11 +507,7 @@ abstract class AbstractEntity extends AbstractRest
                     }
                 }
             )(),
-            Action::UpdateOwner => (
-                function () use ($params) {
-                    $this->updateOwnership($params);
-                }
-            )(),
+            Action::UpdateOwner => $this->updateOwnership($params),
             Action::Update => (
                 function () use ($params) {
                     foreach ($params as $key => $value) {

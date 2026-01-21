@@ -7,6 +7,7 @@
  */
 import {
   collectForm,
+  getSafeElementById,
   mkSpin,
   mkSpinStop,
   permissionsToJson,
@@ -35,8 +36,7 @@ function collectSelectable(name: string): number[] {
 }
 
 function collectInt(name: string): number {
-  const collected = document.getElementById(name) as HTMLInputElement;
-  return collected ? parseInt(collected.value, 10) || 0 : 0;
+  return parseInt((getSafeElementById(name) as HTMLInputElement).value, 10);
 }
 
 function collectCan(): string {

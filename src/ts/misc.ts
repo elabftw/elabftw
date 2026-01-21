@@ -312,6 +312,11 @@ export async function reloadEntitiesShow(tag = ''): Promise<void | Response> {
   relativeMoment();
 }
 
+export function getSafeElementById(id: string): HTMLElement {
+  return document.getElementById(id)
+    ?? (() => { throw new Error(`Element could not be found: '${id}'`); })();
+}
+
 export async function reloadElements(elementIds: string[]): Promise<void> {
   elementIds = elementIds.filter((elementId: string): boolean => {
     if (!document.getElementById(elementId)) {

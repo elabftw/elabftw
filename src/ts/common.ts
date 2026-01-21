@@ -188,19 +188,6 @@ if (needFocus) {
   needFocus.focus();
 }
 
-// Listen for team changes in a select, and refresh user input with users from that team. transfer-ownership modal
-const filterUsersByTeamSelected = (() => {
-  let initialized = false;
-  return () => {
-    if (initialized) return;
-    const teamSelectEl = document.getElementById('targetTeamId') as HTMLSelectElement;
-    const userInput = document.getElementById('targetUserId') as HTMLInputElement;
-    if (!teamSelectEl || !userInput) return;
-    teamSelectEl.addEventListener('change', () => userInput.value = '');
-    initialized = true;
-  };
-})();
-
 // START SAFARI DETECTION
 // iOS browsers often look like Safari UA; exclude by tokens:
 // https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/User-Agent
@@ -806,9 +793,6 @@ on('replace-with-next', (el: HTMLElement) => {
 on('toggle-modal', (el: HTMLElement) => {
   // TODO this requires jquery for now. Not in BS5.
   $('#' + el.dataset.target).modal('show');
-  if (el.dataset.target === 'ownerModal') {
-    filterUsersByTeamSelected();
-  }
 });
 
 on('update-entity-body', (el: HTMLElement) => {

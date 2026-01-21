@@ -15,9 +15,9 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\CreateUploadFromLocalFile;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\Storage;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\MissingRequiredKeyException;
-use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 
@@ -63,11 +63,12 @@ class BatchTest extends \PHPUnit\Framework\TestCase
     public function testPostActionWithOwnershipUpdate(): void
     {
         // create an experiment to transfer
-        $user = $this->getRandomUserInTeam(1);
-        $this->getFreshExperimentWithGivenUser($user);
-        $this->baseReqBody['users_experiments'] = array($user->userid);
-        $this->baseReqBody['userid'] = $user->userid;
-        $this->baseReqBody['team'] = $user->team;
+        $User = new Users(1, 1);
+        $this->getFreshExperimentWithGivenUser($User);
+        $this->getFreshExperimentWithGivenUser($User);
+        $this->baseReqBody['users_experiments'] = array($User->userid);
+        $this->baseReqBody['userid'] = $User->userid;
+        $this->baseReqBody['team'] = $User->team;
         $this->assertBatchProcessed(Action::UpdateOwner, $this->baseReqBody);
     }
 
@@ -78,7 +79,7 @@ class BatchTest extends \PHPUnit\Framework\TestCase
         $this->baseReqBody['users_experiments'] = array($user->userid);
         $this->baseReqBody['userid'] = $user->userid;
         $this->baseReqBody['team'] = 99;
-        $this->expectException(UnauthorizedException::class);
+        $this->expectException(ImproperActionException::class);
         $this->Batch->postAction(Action::UpdateOwner, $this->baseReqBody);
     }
 
@@ -90,7 +91,7 @@ class BatchTest extends \PHPUnit\Framework\TestCase
         $this->baseReqBody['users_experiments'] = array($user->userid);
         $this->baseReqBody['userid'] = $user->userid;
         $this->baseReqBody['team'] = $user->team;
-        $this->expectException(UnauthorizedException::class);
+        $this->expectException(ForbiddenException::class);
         $this->Batch->postAction(Action::UpdateOwner, $this->baseReqBody);
     }
 
@@ -131,7 +132,7 @@ class BatchTest extends \PHPUnit\Framework\TestCase
         // new upload
         $fixturesFs = Storage::FIXTURES->getStorage();
         $uploadPath = $fixturesFs->getPath() . '/example.png';
-        $uploadId = $Experiment->Uploads->create(new CreateUploadFromLocalFile('example.png', $uploadPath));
+        $uploadId = $Experiment->Uploads->create(new CreateUploadFromLocalFile('example.png', $uploadPath, immutable: 0));
         $this->assertIsInt($uploadId);
         // Initial upload owner should match experiment owner
         $Upload = new Uploads($Experiment, $uploadId);

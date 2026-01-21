@@ -1833,6 +1833,8 @@ paths:
               description: An URL to the container that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -1880,6 +1882,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/container'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -1949,6 +1953,8 @@ paths:
               description: An URL to the storage unit that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
            $ref: '#/components/responses/Unauthorized'
   /storage_units/{id}:
@@ -2000,6 +2006,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/storage_unit'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
            $ref: '#/components/responses/Unauthorized'
         '404':
@@ -2299,6 +2307,8 @@ paths:
               description: An URL to the experiment that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
     get:
@@ -2369,6 +2379,8 @@ paths:
               description: An URL to the experiment that was duplicated.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -2470,6 +2482,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/experiment'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -2632,6 +2646,8 @@ paths:
               description: An URL to the item that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
     get:
@@ -2805,6 +2821,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/item'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
     delete:
@@ -2815,8 +2833,6 @@ paths:
       responses:
         '204':
           description: The key was deleted
-        '400':
-          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -2899,8 +2915,11 @@ paths:
               description: The number at the end is the number of imported entries
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+
   # EXPORT
   /exports:
     summary: Exported files

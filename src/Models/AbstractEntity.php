@@ -1083,17 +1083,12 @@ abstract class AbstractEntity extends AbstractRest
         $userid = (int) $params['userid'];
         $team = (int) $params['team'];
         // if there's no team provided, assign the current user's team
-        if (!$team) {
-            if ($this->Users->team === null) {
-                throw new IllegalActionException('Current user has no team context.');
-            }
-            $team = $this->Users->team;
+        if ($team === 0) {
+            $team = $this->Users->team ?? throw new IllegalActionException(_('Current user has no team context.'));
         }
         $TeamsHelper = new TeamsHelper($team);
         if (!$TeamsHelper->isUserInTeam($userid)) {
-            throw new UnauthorizedException(
-                _('The selected user cannot be assigned ownership in the current team context.')
-            );
+            throw new UnauthorizedException(_('The selected user cannot be assigned ownership in the current team context.'));
         }
         $this->update(new EntityParams('userid', $userid));
         $this->update(new EntityParams('team', $team));

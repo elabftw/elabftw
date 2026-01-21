@@ -74,11 +74,11 @@ interface Status extends SelectOptions {
 }
 
 // dark mode
-document.querySelector('[data-action="toggle-dark-mode"]')?.addEventListener('click', () => {
+on('toggle-dark-mode', () => {
   const enabled = document.documentElement.classList.toggle('dark-mode');
   // cookie so that Twig can render correct theme on all pages, even logged out
   document.cookie = `elab_theme=${enabled ? 'dark' : 'light'}; Path=/; Max-Age=31536000; SameSite=Lax`;
-});
+})
 
 // HEARTBEAT
 // this function is to check periodically that we are still authenticated

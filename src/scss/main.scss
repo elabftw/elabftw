@@ -16,6 +16,7 @@ $theme-colors: (
   'danger': $dangerred,
   'neutral': $medium,
 );
+
 .btn-primary {
   background-color: var(--primary) !important;
   border-color: var(--primary) !important;
@@ -214,16 +215,18 @@ select:not([multiple]) {
   border: 1px solid var(--secondary-muted);
 }
 
-html.dark-mode {
-
+.dark-mode {
   .form-control {
     background-color: var(--mainbackground);
     color: var(--mediumstrong);
   }
+
   .modal-content {
     background-color: var(--mainbackground);
   }
-  .modal-header, .modal-footer {
+
+  .modal-header,
+  .modal-footer {
     border-color: var(--secondary-muted);
   }
 
@@ -264,13 +267,14 @@ select.form-control {
 .dropdown-item {
   color: var(--medium);
 }
+
 .dropdown-item > a {
   color: var(--strongest);
 }
 
 .dropdown-item:hover {
-  color: var(--strongest);
   background-color: var(--superlight);
+  color: var(--strongest);
 }
 
 .dropdown-item {
@@ -864,6 +868,7 @@ tr:first-child td {
   background-color: var(--white);
   border: 1px solid var(--secondary-muted);
 }
+
 .side-panel {
   background: var(--mediumstrong);
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.8);

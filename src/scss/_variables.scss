@@ -21,7 +21,7 @@
 
   /* COLORS */
   --primary: #29aeb9;
-  --secondary-muted: #D9D9D9;
+  --secondary-muted: #d9d9d9;
   --elabblue: #29aeb9;
   --lightblue: #c4f9ff;
   --darkblue: #1f8591;
@@ -45,7 +45,7 @@
   --chrome-muted: #9aa0a6;
 }
 
-html.dark-mode {
+.dark-mode {
   /* GitHub-ish / your screenshot-ish dark palette */
   --white: #131313;
   --mainbackground: #1e1e1e;
@@ -57,7 +57,7 @@ html.dark-mode {
   //--secondlevel: #e5e5e5;
   --thirdlevel: #666;
   --medium: #d8dae0;
-  --mediumstrong: #cccccc;
+  --mediumstrong: #ccc;
   --strongest: #f0f6fc;
 
   --primary: #2196f3;

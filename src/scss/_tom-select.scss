@@ -10,11 +10,12 @@
 @use './variables';
 @import 'tom-select/dist/scss/tom-select.bootstrap4';
 
-html.dark-mode {
+.dark-mode {
   .ts-control {
     background-color: var(--mainbackground);
     border: 1px solid var(--secondary-muted);
   }
+
   #filterOwner-ts-control {
     background-color: var(--mainbackground);
     color: var(--mediumstrong);
@@ -25,10 +26,12 @@ html.dark-mode {
   color: var(--mediumstrong) !important;
 }
 
-html.dark-mode {
-  .ts-dropdown, .ts-dropdown-content {
+.dark-mode {
+  .ts-dropdown,
+  .ts-dropdown-content {
     background-color: var(--mainbackground);
     color: var(--mediumstrong);
+
     .active {
       background-color: var(--secondary-muted);
       color: var(--mediumstrong);
@@ -37,14 +40,15 @@ html.dark-mode {
 }
 
 .dropdown-header {
-  border: none !important;
+  border: 0 !important;
 }
+
 .focus .ts-control,
 .plugin-dropdown_input.focus .ts-dropdown .dropdown-input { /* stylelint-disable-line selector-class-pattern -- next-line does not work here */
   background-color: var(--mainbackground);
-  color: var(--mediumstrong);
   border: 1px solid var(--primary);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(41, 174, 185, 0.6);
+  color: var(--mediumstrong);
   outline: 0;
 }
 

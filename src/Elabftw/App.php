@@ -197,7 +197,6 @@ final class App
         return '';
     }
 
-
     /** @psalm-suppress PossiblyUnusedMethod this method is used in twig templates */
     public function getJsLang(): string
     {

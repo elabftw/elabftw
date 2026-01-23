@@ -80,22 +80,26 @@ final class Compounds extends AbstractRest
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $queryParams ??= $this->getQueryParams();
+        $query = $queryParams->getQuery();
         if (!empty($queryParams->getQuery()->get('search_pubchem_cid'))) {
-            return $this->searchPubChem($queryParams->getQuery()->getInt('search_pubchem_cid'))->toArray();
+            return $this->searchPubChem($query->getInt('search_pubchem_cid'))->toArray();
         }
-        if (!empty($queryParams->getQuery()->get('search_pubchem_cas'))) {
-            return $this->searchPubChemCas($queryParams->getQuery()->getString('search_pubchem_cas'));
+        if ($query->get('search_pubchem_cid')) {
+            return $this->searchPubChem($query->getInt('search_pubchem_cid'))->toArray();
         }
-        if (!empty($queryParams->getQuery()->get('search_pubchem_name'))) {
-            return $this->searchPubChemName($queryParams->getQuery()->getString('search_pubchem_name'));
+        if (!empty($query->get('search_pubchem_cas'))) {
+            return $this->searchPubChemCas($query->getString('search_pubchem_cas'));
         }
-        if (!empty($queryParams->getQuery()->get('search_fp_smi'))) {
-            $q = $queryParams->getQuery();
+        if (!empty($query->get('search_pubchem_name'))) {
+            return $this->searchPubChemName($query->getString('search_pubchem_name'));
+        }
+        if (!empty($query->get('search_fp_smi'))) {
+            $q = $query;
             $fp = $this->fingerprinter->calculate('smi', $q->getString('search_fp_smi'));
             return $this->searchFingerprint($fp, $q->getBoolean('exact'));
         }
         $sql = $this->getSelectBeforeWhere() . ' WHERE 1=1';
-        if ($queryParams->getQuery()->get('q')) {
+        if ($query->get('q')) {
             $sql .= ' AND (
                 entity.cas_number LIKE :query OR
                 entity.ec_number LIKE :query OR
@@ -131,8 +135,8 @@ final class Compounds extends AbstractRest
         if (str_contains($sql, ':userid')) {
             $req->bindParam(':userid', $this->requester->userid, PDO::PARAM_INT);
         }
-        if ($queryParams->getQuery()->get('q')) {
-            $req->bindValue(':query', '%' . $queryParams->getQuery()->getString('q') . '%');
+        if ($query->get('q')) {
+            $req->bindValue(':query', '%' . $query->getString('q') . '%');
         }
         $this->Db->execute($req);
 

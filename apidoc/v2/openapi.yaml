@@ -504,18 +504,23 @@ components:
             - duplicate
         cid:
           type: integer
-          description: pubchem_cid. Use it exclusively.
+          description: PubChem Compound ID (CID). Use it to find a compound via this unique identifier. Not compatible with `cas` parameter.
           example: 2519
         cas:
           type: string
-          description: cas_number used for pubchem_cid lookup if pubchem_cid is not provided
+          description: CAS number. Use it to find a compound via this unique identifier. Not compatible with `cid` parameter.
           example: "58-08-2"
-      oneOf:
-        - required: [cid]
-        - required: [cas]
+
     CompoundCreateRequest:
       type: object
       properties:
+        action:
+          type: string
+          description: |
+            Note: the default value for `action` attribute is `create`, and as such it can be omitted.
+          enum:
+            - create
+          default: create
         name:
           type: string
         inchi:
@@ -597,7 +602,7 @@ components:
           example: '0'
         admin_panel_custom_msg:
           type: string
-          example: 'Welcome to the admin panel. Please follow internal procedures.'
+          example: 'Welcome to the Admin Panel. Please follow internal procedures.'
         admin_validate:
           type: string
           example: '0'
@@ -913,6 +918,48 @@ components:
         users_validity_is_externally_managed:
           type: string
           example: '0'
+    # CONTAINER
+    container:
+      type: object
+      description: A container represents the storage of an entity in a specific storage unit
+      properties:
+        id:
+          type: integer
+          description: The container link ID
+          example: 1
+        qty_stored:
+          type: string
+          description: Quantity stored in this container
+          example: 10.5
+        qty_unit:
+          type: string
+          description: Unit of the quantity stored
+          example: "mL"
+          enum: ["bar", "•", "m", "μL", "mL", "L", "μg", "mg", "g", "kg"]
+        storage_id:
+          type: integer
+          description: ID of the storage unit
+          example: 5
+        item_id:
+          type: integer
+          description: ID of the entity (experiment or resource)
+          example: 42
+        created_at:
+          type: string
+          description: When the container entry was created
+          example: "2024-05-28T02:42:19Z"
+        modified_at:
+          type: string
+          description: When the container entry was last modified
+          example: "2024-05-28T02:42:31Z"
+        storage_name:
+          type: string
+          description: Name of the storage unit
+          example: "Freezer A"
+        full_path:
+          type: string
+          description: Full hierarchical path of the storage unit
+          example: "Building A > Room 101 > Freezer A"
     # ENTITY COMPONENT: EXTENDS ENTITY_EDITABLE
     entity:
       description: The complete representation of an entity
@@ -1153,6 +1200,28 @@ components:
       allOf:
         - $ref: '#/components/schemas/entity_template_editable'
         - $ref: '#/components/schemas/entity'
+    exclusive_edit_mode:
+      type: object
+      properties:
+        locked_by:
+          type: integer
+          description: Userid of the user having exclusive edition rights
+        locked_by_human:
+          type: string
+          description: Full name of the user having exclusive edition rights
+        locked_at:
+          type: string
+          description: Time when the exclusive edit mode was created
+        is_stale:
+          type: integer
+          description: Is 1 when the exclusive edit lock is longer than ExclusiveEditMode::EXPIRATION_MINUTES
+    extra_fields_keys:
+      type: object
+      properties:
+        extra_fields_key:
+          type: string
+        frequency:
+          type: integer
     # EXPORT
     export:
       type: object
@@ -1490,6 +1559,31 @@ components:
           description: Only editable via templates. Immutability persists on derived experiments or resources.
           enum: [ 0, 1 ]
           type: integer
+    # STORAGE UNIT
+    storage_unit:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The storage unit ID
+          example: 1
+        name:
+          type: string
+          description: Name of the storage unit
+          example: "Freezer A"
+        parent_id:
+          type: integer
+          nullable: true
+          description: ID of the parent storage unit (null for root level)
+          example: null
+        full_path:
+          type: string
+          description: Full hierarchical path from root to this unit
+          example: "Building A > Room 101 > Freezer A"
+        level_depth:
+          type: integer
+          description: Depth level in the hierarchy (0 for root)
+          example: 2
     tag:
       type: object
       properties:
@@ -1688,108 +1782,20 @@ components:
                     type: integer
                   is_archived:
                     type: integer
-    extra_fields_keys:
-      type: object
-      properties:
-        extra_fields_key:
-          type: string
-        frequency:
-          type: integer
-    exclusive_edit_mode:
-      type: object
-      properties:
-        locked_by:
-          type: integer
-          description: Userid of the user having exclusive edition rights
-        locked_by_human:
-          type: string
-          description: Full name of the user having exclusive edition rights
-        locked_at:
-          type: string
-          description: Time when the exclusive edit mode was created
-        is_stale:
-          type: integer
-          description: Is 1 when the exclusive edit lock is longer than ExclusiveEditMode::EXPIRATION_MINUTES
-    # STORAGE UNIT
-    storage_unit:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: The storage unit ID
-          example: 1
-        name:
-          type: string
-          description: Name of the storage unit
-          example: "Freezer A"
-        parent_id:
-          type: integer
-          nullable: true
-          description: ID of the parent storage unit (null for root level)
-          example: null
-        full_path:
-          type: string
-          description: Full hierarchical path from root to this unit
-          example: "Building A > Room 101 > Freezer A"
-        level_depth:
-          type: integer
-          description: Depth level in the hierarchy (0 for root)
-          example: 2
-    # CONTAINER
-    container:
-      type: object
-      description: A container represents the storage of an entity in a specific storage unit
-      properties:
-        id:
-          type: integer
-          description: The container link ID
-          example: 1
-        qty_stored:
-          type: number
-          description: Quantity stored in this container
-          example: 10.5
-        qty_unit:
-          type: string
-          description: Unit of the quantity stored
-          example: "mL"
-        storage_id:
-          type: integer
-          description: ID of the storage unit
-          example: 5
-        item_id:
-          type: integer
-          description: ID of the entity (experiment or resource)
-          example: 42
-        created_at:
-          type: string
-          format: date-time
-          description: When the container entry was created
-          example: "2024-05-28T02:42:19Z"
-        modified_at:
-          type: string
-          format: date-time
-          description: When the container entry was last modified
-          example: "2024-05-28T02:42:31Z"
-        storage_name:
-          type: string
-          description: Name of the storage unit
-          example: "Freezer A"
-        full_path:
-          type: string
-          description: Full hierarchical path of the storage unit
-          example: "Building A > Room 101 > Freezer A"
 
+  # RESPONSES
   responses:
     BadRequest:
-      description: Bad request (Syntax error, invalid request or missing field)
+      description: Bad request (syntax error, invalid request or missing field)
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
           example:
             code: '400'
-            message: Bad request
-            description: Bad request (Syntax error, invalid request or missing field)
+            message: |
+              Error decoding json payload: Syntax error
+            description: ""
     Unauthorized:
       description: Unauthorized (Authentication required)
       content:
@@ -1798,8 +1804,8 @@ components:
             $ref: '#/components/schemas/Error'
           example:
             code: '401'
-            message: Unauthorized
-            description: Authentication required
+            message: Authentication required
+            description: No corresponding API key found!
     Forbidden:
       description: Insufficient permissions
       content:
@@ -1818,24 +1824,29 @@ components:
             $ref: '#/components/schemas/Error'
           example:
             code: '404'
-            message: Not found
-            description: Resource not found
+            message: Nothing to show with this id
+            description: ""
     Unprocessable:
-      description: Unprocessable content
+      description: |
+        Unprocessable content: your request is valid but the server cannot process it.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
           example:
             code: '422'
-            message: Unprocessable content
-            description: Active at least one permission
+            message: You must have at least one base permission active
+            description: ""
     InternalServerError:
       description: The server was unable to complete your request. Please try again later.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+          example:
+            code: '500'
+            message: Unexpected error
+            description: Hopefully something useful
 
 
 x-parameterGroups:
@@ -2004,37 +2015,222 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
     delete:
-     tags: ['Containers']
-     summary: Delete a container.
-     description: Remove an entity from a storage unit.
-     operationId: delete-container
-     responses:
-       '204':
-         description: The container was deleted.
-       '401':
-          $ref: '#/components/responses/Unauthorized'
-       '404':
-         $ref: '#/components/responses/NotFound'
+      tags: ['Containers']
+      summary: Delete a container.
+      description: Remove an entity from a storage unit.
+      operationId: delete-container
+      responses:
+        '204':
+          description: The container was deleted.
+        '401':
+           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # STORAGE UNITS
   /storage_units:
-    summary: Manage storage units for the inventory feature.
+    summary: List containers.
     get:
       tags: ['Storage units']
-      summary: Read all storage units.
-      description: Get the full hierarchy of storage units. Results are grouped by parent_id.
+      summary: Read all containers. Yes, the name of this endpoint should be `containers`, but it's not, deal with it.
+      description: Get the full list of containers from entries you have access to.
       operationId: read-storage-units
       responses:
         '200':
-          description: A list of storage units grouped by parent_id.
+          description: A list of containers attached to experiments or resources.
           content:
             application/json:
               schema:
-                type: object
-                additionalProperties:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/storage_unit'
+                type: array
+                items:
+                  type: object
+                  properties:
+                    entity_id:
+                      type: integer
+                      example: 211
+                    entity_title:
+                      type: string
+                      example: Some title
+                    entity_custom_id:
+                      nullable: true
+                      type: integer
+                      example: null
+                    page:
+                      type: string
+                      example: experiments
+                    container2item_id:
+                      type: integer
+                      example: 1
+                    qty_stored:
+                      type: string
+                      description: Quantity stored, formatted as a string (often decimal).
+                      example: "1.00"
+                    qty_unit:
+                      type: string
+                      description: Quantity unit (may contain special characters).
+                      example: "•"
+                    created_at:
+                      type: string
+                      description: Timestamp in `YYYY-MM-DD HH:MM:SS` format.
+                      example: "2026-01-23 16:10:41"
+                    modified_at:
+                      type: string
+                      description: Timestamp in `YYYY-MM-DD HH:MM:SS` format.
+                      example: "2026-01-23 16:10:41"
+                    firstname:
+                      type: string
+                      example: Ada
+                    lastname:
+                      type: string
+                      example: Lovelace
+                    fullname:
+                      type: string
+                      example: Ada Lovelace
+                    team_name:
+                      type: string
+                      example: BIOMEKA
+                    team_id:
+                      type: integer
+                      example: 1
+                    storage_id:
+                      type: integer
+                      example: 12
+                    storage_name:
+                      type: string
+                      example: 4th floor
+                    full_path:
+                      type: string
+                      description: Full storage path, formatted with separators.
+                      example: "Hospital > 4th floor"
+                    cas_number:
+                      type: string
+                      nullable: true
+                      example: null
+                    pubchem_cid:
+                      type: integer
+                      nullable: true
+                      example: null
+                    is_corrosive:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_serious_health_hazard:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_explosive:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_flammable:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_gas_under_pressure:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_hazardous2env:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_hazardous2health:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_oxidising:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_toxic:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_radioactive:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_antibiotic:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_antibiotic_precursor:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_drug:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_drug_precursor:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_explosive_precursor:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_cmr:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_nano:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_controlled:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_ed2health:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_ed2env:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_pbt:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_pmt:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_vpvb:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_vpvm:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+
         '401':
            $ref: '#/components/responses/Unauthorized'
     post:
@@ -2253,10 +2449,9 @@ paths:
       tags: ['Compounds']
       summary: Create or import a compound
       description: |
-        - If `action=duplicate`, imports (or matches) a compound from PubChem using `cid` and/or `cas`
-        - Otherwise, creates a compound directly from the provided fields.
-        - Note, `cid` and `cas` are ignored in direct create. Use `pubchem_cid` and `cas_number` instead
-        - If a compound with the same unique identifier already exists (e.g `cas_number`, `pubchem_cid`), the API may return the existing compound in the location header
+        - If `action=duplicate`, import (or match) a compound from PubChem using `cid` or `cas`. If both parameters are present, only the `cid` is used.
+        - Otherwise, create a compound directly from the provided fields.
+        - If a compound with the same unique identifier already exists (e.g `cas_number`, `pubchem_cid`), the API will return the existing compound instead of creating a new one.
       operationId: post-compounds
       requestBody:
         required: true
@@ -5096,7 +5291,7 @@ paths:
         '204':
           description: The teamgroup was removed.
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
 
@@ -6633,7 +6828,7 @@ paths:
                       - name: "reviewer"
                         href: "https://demo.dspace.org/server/api/core/collections/1abcd2c3-45db-6a7-aeee-8d932f883d70/workflowGroups/reviewer"
         '401':
-          description: Unauthorized (Authentication required)
+          $ref: '#/components/responses/Unauthorized'
     post:
       tags: ['DSpace']
       summary: Create a new DSpace workspace item.

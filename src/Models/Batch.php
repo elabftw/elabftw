@@ -35,7 +35,7 @@ final class Batch extends AbstractRest
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
-        $action = Action::from($reqBody['action']);
+        $action = Action::tryFrom($reqBody['action'] ?? '') ?? throw new ImproperActionException('Invalid value for "action" parameter.');
         $state = null;
         // on Unarchive action, search for 'Archived' entities to perform the patch.
         if ($action === Action::Unarchive) {

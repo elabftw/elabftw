@@ -16,7 +16,6 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Meaning;
 use Elabftw\Enums\State;
-use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
@@ -298,8 +297,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->patch(Action::Update, array('category' => 3, 'custom_id' => 99));
         $copy = $this->Experiments->postAction(Action::Duplicate, array());
         $this->Experiments->setId($copy);
-        $this->expectException(DatabaseErrorException::class);
-        $this->expectExceptionMessageMatches('/unique_experiments_custom_id.*\(1062\)/');
+        $this->expectException(ImproperActionException::class);
         $this->Experiments->patch(Action::Update, array('custom_id' => 99));
     }
 }

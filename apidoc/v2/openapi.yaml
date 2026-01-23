@@ -2267,6 +2267,13 @@ paths:
                 - $ref: '#/components/schemas/CompoundDuplicateRequest'
                 - $ref: '#/components/schemas/CompoundCreateRequest'
       responses:
+        '200':
+          description: OK
+          headers:
+            location:
+              description: OK
+              schema:
+                type: string
         '201':
           description: Created compound or existing compound returned (match on unique identifier)
           headers:

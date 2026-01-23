@@ -307,7 +307,8 @@ h1,
 h2,
 h3,
 h4,
-h5 {
+h5,
+.malleableTitle {
   color: var(--medium);
   font-weight: normal;
   margin-top: 0;
@@ -317,9 +318,7 @@ h1 { font-size: 200%; }
 
 h2 { font-size: 180%; }
 
-h3 {
-  font-size: 160%;
-}
+h3 { font-size: 160%; }
 
 h4 { font-size: 150%; }
 
@@ -1077,6 +1076,10 @@ the form-control fails to do that so we do the border ourselves */
 
 .color-medium {
   color: var(--medium);
+}
+
+.color-strong {
+  color: var(--mediumstrong);
 }
 
 .color-white {

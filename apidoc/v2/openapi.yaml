@@ -653,7 +653,7 @@ components:
             default: '1'
           chat_url:
             type: string
-            example: 'https://gitter.im/elabftw/elabftw'
+            example: 'https://univ-chat.example'
             default: 'https://gitter.im/elabftw/elabftw'
           cookie_validity_time:
             type: integer

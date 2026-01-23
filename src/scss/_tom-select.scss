@@ -20,13 +20,7 @@
     background-color: var(--mainbackground);
     color: var(--mediumstrong);
   }
-}
 
-.items-placeholder {
-  color: var(--mediumstrong) !important;
-}
-
-.dark-mode {
   .ts-dropdown,
   .ts-dropdown-content {
     background-color: var(--mainbackground);
@@ -37,6 +31,10 @@
       color: var(--mediumstrong);
     }
   }
+}
+
+.items-placeholder {
+  color: var(--mediumstrong) !important;
 }
 
 .dropdown-header {

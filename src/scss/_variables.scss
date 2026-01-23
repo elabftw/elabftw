@@ -87,39 +87,19 @@
 
 /* going from less contrasted to more contrasted */
 $white: #fff;
-//$mainbackground: #f2f2f2;
 $mainbackground: var(--mainbackground);
-/* super light blue */
-$highlighted: #ebfbff;
+/* some colors used in other files that can't override with var(--color) */
 $superlight: #e6e6e6;
 $firstlevel: #dbdbdb;
-$disabled: #868585;
-$secondlevel: #bdbdbd;
-$thirdlevel: #6f6f6f;
 $medium: #4d4c4c;
 $mediumstrong: #343434;
 $strongest: #000;
-
 /* COLORS */
 $elabblue: #29aeb9;
 $lightblue: #c4f9ff;
 $darkblue: #1f8591;
-
-$lightred: #ffc1b7;
 $dangerred: #e6614c;
-$darkred: #dd1e00;
-
-$warningbg: #fff3cd;
-
-$green: #54aa08;
-$lessbrightorange: #ffe6b8;
-$brightorange: #ffa500;
-$orange: #ffa500;
-$mediumyellow: #fae588;
-
 $lightgold: #eddec6;
-$gold: #d4ae75;
-$darkgold: #856404;
 
 /* font awesome */
 $fa-font-path: '/assets/fonts';

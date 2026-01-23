@@ -387,11 +387,14 @@ final class Uploads extends AbstractRest
         return $this->create($params);
     }
 
-    // transfer ownership of all uploaded files for an entity
+    // transfer ownership of all uploaded files for an entity, except immutable ones
     public function transferOwnership(int $userid): void
     {
         $uploadArr = $this->readAll($this->getQueryParams(new InputBag(array('state' => '1,2,3'))));
         foreach ($uploadArr as $upload) {
+            if ((int) $upload['immutable'] === 1) {
+                continue;
+            }
             $this->setId($upload['id']);
             $this->patch(Action::Update, array('userid' => $userid));
         }

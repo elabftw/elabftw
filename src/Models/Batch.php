@@ -129,8 +129,8 @@ final class Batch extends AbstractRest
                 $model->setId($entry['id']);
                 $model->patch($action, $params);
                 $this->processed++;
-            } catch (UnauthorizedException | ImproperActionException | IllegalActionException $e) {
-                throw new ImproperActionException(sprintf('Error during batch processing with entity id: %d. Error was: "%s"', $entry['id'], $e->getMessage()));
+            } catch (IllegalActionException | ImproperActionException | UnauthorizedException $e) {
+                throw $e;
             }
         }
     }

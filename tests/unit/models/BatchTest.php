@@ -18,6 +18,7 @@ use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\MissingRequiredKeyException;
+use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 
@@ -65,7 +66,6 @@ class BatchTest extends \PHPUnit\Framework\TestCase
         // create an experiment to transfer
         $User = new Users(1, 1);
         $this->getFreshExperimentWithGivenUser($User);
-        $this->getFreshExperimentWithGivenUser($User);
         $this->baseReqBody['users_experiments'] = array($User->userid);
         $this->baseReqBody['userid'] = $User->userid;
         $this->baseReqBody['team'] = $User->team;
@@ -79,11 +79,11 @@ class BatchTest extends \PHPUnit\Framework\TestCase
         $this->baseReqBody['users_experiments'] = array($user->userid);
         $this->baseReqBody['userid'] = $user->userid;
         $this->baseReqBody['team'] = 99;
-        $this->expectException(ImproperActionException::class);
+        $this->expectException(UnauthorizedException::class);
         $this->Batch->postAction(Action::UpdateOwner, $this->baseReqBody);
     }
 
-    public function testBatchUpdateOwnershipIsRestrictedToAdmins(): void
+    public function testBatchActionIsRestrictedToAdmins(): void
     {
         $user = $this->getRandomUserInTeam(1);
         $user->isAdmin = false;

@@ -78,7 +78,7 @@ on('toggle-dark-mode', () => {
   const enabled = document.documentElement.classList.toggle('dark-mode');
   // cookie so that Twig can render correct theme on all pages, even logged out
   document.cookie = `elab_theme=${enabled ? 'dark' : 'light'}; Path=/; Max-Age=31536000; SameSite=Lax`;
-})
+});
 
 // HEARTBEAT
 // this function is to check periodically that we are still authenticated
@@ -331,7 +331,7 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
         .then(res => res.json())
         .then(json => json[original.dataset.target]);
     },
-    listenOn: '.malleableTitle',
+    listenOn: '.malleable-title',
     returnedValueIsTrustedHtml: false,
     onBlur: MalleAction.Submit,
     tooltip: i18next.t('click-to-edit'),

@@ -594,330 +594,436 @@ components:
     config:
       type: object
       properties:
-        admins_create_users:
-          type: string
-          example: '1'
-        admins_create_users_remote_dir:
-          type: string
-          example: '0'
-        admin_panel_custom_msg:
-          type: string
-          example: 'Welcome to the Admin Panel. Please follow internal procedures.'
-        admin_validate:
-          type: string
-          example: '0'
-        allow_permission_full:
-          type: string
-          example: '1'
-        allow_permission_organization:
-          type: string
-          example: '1'
-        allow_permission_team:
-          type: string
-          example: '1'
-        allow_permission_user:
-          type: string
-          example: '1'
-        allow_permission_useronly:
-          type: string
-          example: '1'
-        announcement:
-          description: This text will be shown on every page, including login page.
-          type: string
-          example: 'Scheduled maintenance on Saturday 02:00–03:00 UTC.'
-        anon_users:
-          type: string
-          example: '1'
-        autologout_time:
-          type: string
-          example: '0'
-        blox_anon:
-          type: string
-          example: '0'
-        blox_enabled:
-          type: string
-          example: '1'
-        chat_url:
-          type: string
-          example: 'univ.example'
-        cookie_validity_time:
-          type: integer
-          example: 43200
-        dspace_host:
-          description: URL for dspace host
-          example: "https://dspace.example.org"
-          type: string
-          format: uri
-        dspace_user:
-          description: Username for dspace integration
-          example: "dspace+user@example.org"
-          type: string
-        dspace_password:
-          description: Password for the corresponding dspace user
-          example: ''
-          type: string
-        email_domain:
-          type: string
-          example: null
-        extauth_email:
-          type: string
-          example: ''
-        extauth_firstname:
-          type: string
-          example: ''
-        extauth_lastname:
-          type: string
-          example: ''
-        extauth_remote_user:
-          type: string
-          example: ''
-        extauth_teams:
-          type: string
-          example: ''
-        lang:
-          type: string
-          example: 'en_GB'
-        ldap_base_dn:
-          type: string
-          example: 'dc=example,dc=org'
-        ldap_search_attr:
-          type: string
-          example: 'mail'
-        ldap_email:
-          type: string
-          example: 'mail'
-        ldap_firstname:
-          type: string
-          example: 'givenname'
-        ldap_host:
-          type: string
-          example: 'ldpa'
-        ldap_lastname:
-          type: string
-          example: 'cn'
-        ldap_password:
-          type: string
-          example: 'admin'
-        ldap_port:
-          type: string
-          example: '389'
-        ldap_team:
-          type: string
-          example: 'on'
-        ldap_toggle:
-          type: string
-          example: '0'
-        ldap_use_tls:
-          type: string
-          example: '0'
-        ldap_username:
-          type: string
-          example: 'cn=admin,dc=example,dc=org'
-        local_login:
-          type: string
-          example: '1'
-        local_register:
-          type: string
-          example: '1'
-        login_announcement:
-          description: This text will only be shown on the login page.
-          type: string
-          example: null
-        login_tries:
-          type: string
-          example: '10'
-        logout_url:
-          type: string
-          example: ''
-        mail_from:
-          type: string
-          example: 'notconfigured@example.com'
-        max_revisions:
-          type: string
-          example: '10'
-        min_days_revisions:
-          type: string
-          example: '23'
-        min_delta_revisions:
-          description: Minimum number of characters changed required to trigger a revision save.
-          type: string
-          example: '100'
-        onboarding_email_active:
-          enum: [0, 1]
-          type: string
-          example: '1'
-        onboarding_email_admins_body:
-          type: string
-          example: '<p>Test email body for <strong>admins</strong>.</p>'
-        onboarding_email_admins_subject:
-          type: string
-          example : 'subject for admins'
-        onboarding_email_body:
-          type: string
-          example: '<p>Test email body for <strong>users</strong>.</p>'
-        onboarding_email_different_for_admins:
-          enum: [0, 1]
-          type: string
-          example: '1'
-        onboarding_email_subject:
-          type: string
-          example: 'test email subject'
-        privacy_policy:
-          type: string
-          example: null
-        proxy:
-          type: string
-          example: ''
-        remote_dir_config:
-          type: string
-          example: ''
-        remote_dir_service:
-          type: string
-          example: 'eairef'
-        s3_bucket_name:
-          type: string
-          example: ''
-        s3_endpoint:
-          type: string
-          example: ''
-        s3_path_prefix:
-          type: string
-          example: ''
-        s3_region:
-          type: string
-          example: 'fr-par-42'
-        s3_verify_cert:
-          type: string
-          example: '1'
-        saml_allowrepeatattributename:
-          type: string
-          example: '0'
-        saml_authnrequestssigned:
-          type: string
-          example: '0'
-        saml_baseurl:
-          type: string
-          example: null
-        saml_debug:
-          type: string
-          example: '0'
-        saml_entityid:
-          type: string
-          example: null
-        saml_logoutrequestsigned:
-          type: string
-          example: '0'
-        saml_logoutresponsesigned:
-          type: string
-          example: '0'
-        saml_lowercaseurlencoding:
-          type: string
-          example: '0'
-        saml_nameidencrypted:
-          type: string
-          example: '0'
-        saml_nameidformat:
-          type: string
-          example: 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress'
-        saml_privatekey:
-          type: string
-          example: null
-        saml_relaxdestinationvalidation:
-          type: string
-          example: '0'
-        saml_signmetadata:
-          type: string
-          example: '0'
-        saml_strict:
-          type: string
-          example: '1'
-        saml_sync_teams:
-          type: string
-          example: '0'
-        saml_team_create:
-          type: string
-          example: '1'
-        saml_team_default:
-          type: string
-          example: '-1'
-        saml_toggle:
-          type: string
-          example: '0'
-        saml_user_default:
-          type: string
-          example: '1'
-        saml_wantassertionsencrypted:
-          type: string
-          example: '0'
-        saml_wantassertionssigned:
-          type: string
-          example: '0'
-        saml_wantmessagessigned:
-          type: string
-          example: '0'
-        saml_wantnameid:
-          type: string
-          example: '1'
-        saml_wantnameidencrypted:
-          type: string
-          example: '0'
-        saml_wantxmlvalidation:
-          type: string
-          example: '1'
-        saml_x509:
-          type: string
-          example: null
-        saml_x509_new:
-          type: string
-          example: null
-        schema:
-          type: string
-          example: '196'
-        smtp_address:
-          type: string
-          example: 'mail.smtp2go.com'
-        smtp_encryption:
-          type: string
-          example: 'ssl'
-        smtp_password:
-          type: string
-          example: ''
-        smtp_port:
-          type: string
-          example: '587'
-        smtp_username:
-          type: string
-          example: ''
-        support_url:
-          type: string
-          example: 'https://github.com/elabftw/elabftw/issues'
-        ts_authority:
-          type: string
-          example: 'dfn'
-        ts_cert:
-          type: string
-          example: null
-        ts_hash:
-          type: string
-          example: 'sha256'
-        ts_limit:
-          type: string
-          example: '0'
-        ts_login:
-          type: string
-          example: null
-        ts_password:
-          type: string
-          example: null
-        ts_url:
-          type: string
-          example: null
-        uploads_storage:
-          type: string
-          example: '1'
-        users_validity_is_externally_managed:
-          type: string
-          example: '0'
+          admins_create_users:
+            type: string
+            example: '1'
+            default: '1'
+          admins_create_users_remote_dir:
+            type: string
+            example: '0'
+            default: '0'
+          admin_panel_custom_msg:
+            type: string
+            example: 'Welcome to the Admin Panel. Please follow internal procedures.'
+            default: ''
+          admin_validate:
+            type: string
+            example: '0'
+            default: '0'
+          allow_permission_full:
+            type: string
+            example: '1'
+            default: '1'
+          allow_permission_organization:
+            type: string
+            example: '1'
+            default: '1'
+          allow_permission_team:
+            type: string
+            example: '1'
+            default: '1'
+          allow_permission_user:
+            type: string
+            example: '1'
+            default: '1'
+          allow_permission_useronly:
+            type: string
+            example: '1'
+            default: '1'
+          announcement:
+            description: This text will be shown on every page, including login page.
+            type: string
+            example: 'Scheduled maintenance on Saturday 02:00–03:00 UTC.'
+            default: null
+          anon_users:
+            type: string
+            example: '1'
+            default: '1'
+          autologout_time:
+            type: string
+            example: '0'
+            default: '0'
+          blox_anon:
+            type: string
+            example: '0'
+            default: '0'
+          blox_enabled:
+            type: string
+            example: '1'
+            default: '1'
+          chat_url:
+            type: string
+            example: 'https://gitter.im/elabftw/elabftw'
+            default: 'https://gitter.im/elabftw/elabftw'
+          cookie_validity_time:
+            type: integer
+            example: 43200
+            default: 43200
+          dspace_host:
+            description: URL for dspace host
+            example: "https://dspace.example.org"
+            default: "https://demo.dspace.org/"
+            type: string
+            format: uri
+          dspace_user:
+            description: Username for dspace integration
+            example: "dspace+user@example.org"
+            default: "dspacedemo+admin@gmail.com"
+            type: string
+          dspace_password:
+            description: Password for the corresponding dspace user
+            example: baguette1789
+            default: ""
+            type: string
+          email_domain:
+            type: string
+            example: 'null'
+            default: null
+          extauth_email:
+            type: string
+            example: ''
+            default: ''
+          extauth_firstname:
+            type: string
+            example: ''
+            default: ''
+          extauth_lastname:
+            type: string
+            example: ''
+            default: ''
+          extauth_remote_user:
+            type: string
+            example: ''
+            default: ''
+          extauth_teams:
+            type: string
+            example: ''
+            default: ''
+          lang:
+            type: string
+            example: 'en_GB'
+            default: 'en_GB'
+          ldap_base_dn:
+            type: string
+            example: 'dc=example,dc=org'
+            default: 'dc=example,dc=org'
+          ldap_search_attr:
+            type: string
+            example: 'mail'
+            default: 'mail'
+          ldap_email:
+            type: string
+            example: 'mail'
+            default: 'mail'
+          ldap_firstname:
+            type: string
+            example: 'givenname'
+            default: 'givenname'
+          ldap_host:
+            type: string
+            example: 'ldpa'
+            default: 'ldap'
+          ldap_lastname:
+            type: string
+            example: 'cn'
+            default: 'cn'
+          ldap_password:
+            type: string
+            example: 'admin'
+            default: 'admin'
+          ldap_port:
+            type: string
+            example: '389'
+            default: '389'
+          ldap_team:
+            type: string
+            example: 'on'
+            default: 'on'
+          ldap_toggle:
+            type: string
+            example: '0'
+            default: '0'
+          ldap_use_tls:
+            type: string
+            example: '0'
+            default: '0'
+          ldap_username:
+            type: string
+            example: 'cn=admin,dc=example,dc=org'
+            default: 'cn=admin,dc=example,dc=org'
+          local_login:
+            type: string
+            example: null
+            default: '1'
+          local_register:
+            type: string
+            example: '1'
+            default: '1'
+          login_announcement:
+            description: This text will only be shown on the login page.
+            type: string
+            example: null
+            default: null
+          login_tries:
+            type: string
+            example: '10'
+            default: '10'
+          logout_url:
+            type: string
+            example: ''
+            default: ''
+          mail_from:
+            type: string
+            example: 'otconfigured@example.com'
+            default: 'notconfigured@example.com'
+          max_revisions:
+            type: string
+            example: '10'
+            default: '10'
+          min_days_revisions:
+            type: string
+            example: '23'
+            default: '23'
+          min_delta_revisions:
+            description: Minimum number of characters changed required to trigger a revision save.
+            type: string
+            example: '100'
+            default: '100'
+          onboarding_email_active:
+            enum: [0, 1]
+            type: string
+            example: '1'
+            default: '1'
+          onboarding_email_admins_body:
+            type: string
+            example: '<p>Test email body for <strong>admins</strong>.</p>'
+            default: '<p>Test email body for <strong>admins</strong>.</p>'
+          onboarding_email_admins_subject:
+            type: string
+            example : 'subject for admins'
+            default: 'subject for admins'
+          onboarding_email_body:
+            type: string
+            example: '<p>Test email body for <strong>users</strong>.</p>'
+            default: '<p>Test email body for <strong>users</strong>.</p>'
+          onboarding_email_different_for_admins:
+            enum: [0, 1]
+            type: string
+            example: '1'
+            default: '1'
+          onboarding_email_subject:
+            type: string
+            example: 'test email subject'
+            default: 'test email subject'
+          privacy_policy:
+            type: string
+            example: ''
+            default: null
+          proxy:
+            type: string
+            example: ''
+            default: ''
+          remote_dir_config:
+            type: string
+            example: ''
+            default: ''
+          remote_dir_service:
+            type: string
+            example: 'eairef'
+            default: 'eairef'
+          s3_bucket_name:
+            type: string
+            example: ''
+            default: ''
+          s3_endpoint:
+            type: string
+            example: ''
+            default: ''
+          s3_path_prefix:
+            type: string
+            example: ''
+            default: ''
+          s3_region:
+            type: string
+            example: ''
+            default: 'fr-par-42'
+          s3_verify_cert:
+            type: string
+            example: '1'
+            default: '1'
+          saml_allowrepeatattributename:
+            type: string
+            example: '0'
+            default: '0'
+          saml_authnrequestssigned:
+            type: string
+            example: '0'
+            default: '0'
+          saml_baseurl:
+            type: string
+            example: ''
+            default: null
+          saml_debug:
+            type: string
+            example: '0'
+            default: '0'
+          saml_entityid:
+            type: string
+            example: ''
+            default: null
+          saml_logoutrequestsigned:
+            type: string
+            example: '0'
+            default: '0'
+          saml_logoutresponsesigned:
+            type: string
+            example: '0'
+            default: '0'
+          saml_lowercaseurlencoding:
+            type: string
+            example: '0'
+            default: '0'
+          saml_nameidencrypted:
+            type: string
+            example: '0'
+            default: '0'
+          saml_nameidformat:
+            type: string
+            example: 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress'
+            default: 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress'
+          saml_privatekey:
+            type: string
+            example: ''
+            default: null
+          saml_relaxdestinationvalidation:
+            type: string
+            example: '0'
+            default: '0'
+          saml_signmetadata:
+            type: string
+            example: '0'
+            default: '0'
+          saml_strict:
+            type: string
+            example: '1'
+            default: '1'
+          saml_sync_teams:
+            type: string
+            example: '0'
+            default: '0'
+          saml_team_create:
+            type: string
+            example: '1'
+            default: '1'
+          saml_team_default:
+            type: string
+            example: '-1'
+            default: '-1'
+          saml_toggle:
+            type: string
+            example: '0'
+            default: '0'
+          saml_user_default:
+            type: string
+            example: '1'
+            default: '1'
+          saml_wantassertionsencrypted:
+            type: string
+            example: '0'
+            default: '0'
+          saml_wantassertionssigned:
+            type: string
+            example: '0'
+            default: '0'
+          saml_wantmessagessigned:
+            type: string
+            example: '0'
+            default: '0'
+          saml_wantnameid:
+            type: string
+            example: '1'
+            default: '1'
+          saml_wantnameidencrypted:
+            type: string
+            example: '0'
+            default: '0'
+          saml_wantxmlvalidation:
+            type: string
+            example: '1'
+            default: '1'
+          saml_x509:
+            type: string
+            example: ''
+            default: null
+          saml_x509_new:
+            type: string
+            example: ''
+            default: null
+          schema:
+            type: string
+            example: '196'
+            default: '196'
+          smtp_address:
+            type: string
+            example: 'mail.smtp2go.com'
+            default: 'mail.smtp2go.com'
+          smtp_encryption:
+            type: string
+            example: 'ssl'
+            default: 'ssl'
+          smtp_password:
+            type: string
+            example: ''
+            default: ''
+          smtp_port:
+            type: string
+            example: '587'
+            default: '587'
+          smtp_username:
+            type: string
+            example: ''
+            default: ''
+          support_url:
+            type: string
+            example: 'https://github.com/elabftw/elabftw/issues'
+            default: 'https://github.com/elabftw/elabftw/issues'
+          ts_authority:
+            type: string
+            example: 'dfn'
+            default: 'dfn'
+          ts_cert:
+            type: string
+            example: ''
+            default: null
+          ts_hash:
+            type: string
+            example: 'sha256'
+            default: 'sha256'
+          ts_limit:
+            type: string
+            example: '0'
+            default: '0'
+          ts_login:
+            type: string
+            example: ''
+            default: null
+          ts_password:
+            type: string
+            example: ''
+            default: ''
+          ts_url:
+            type: string
+            example: ''
+            default: null
+          uploads_storage:
+            type: string
+            example: '1'
+            default: '1'
+          users_validity_is_externally_managed:
+            type: string
+            example: '0'
+            default: '0'
+
     # CONTAINER
     container:
       type: object

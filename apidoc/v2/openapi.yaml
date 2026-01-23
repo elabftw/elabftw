@@ -639,7 +639,7 @@ components:
           example: '1'
         chat_url:
           type: string
-          example: 'https://gitter.im/elabftw/elabftw'
+          example: 'univ.example'
         cookie_validity_time:
           type: integer
           example: 43200
@@ -654,11 +654,11 @@ components:
           type: string
         dspace_password:
           description: Password for the corresponding dspace user
-          example: baguette1789
+          example: ''
           type: string
         email_domain:
           type: string
-          example: 'null'
+          example: null
         extauth_email:
           type: string
           example: ''
@@ -715,7 +715,7 @@ components:
           example: 'cn=admin,dc=example,dc=org'
         local_login:
           type: string
-          example: null
+          example: '1'
         local_register:
           type: string
           example: '1'
@@ -731,7 +731,7 @@ components:
           example: ''
         mail_from:
           type: string
-          example: 'otconfigured@example.com'
+          example: 'notconfigured@example.com'
         max_revisions:
           type: string
           example: '10'
@@ -764,7 +764,7 @@ components:
           example: 'test email subject'
         privacy_policy:
           type: string
-          example: ''
+          example: null
         proxy:
           type: string
           example: ''
@@ -785,7 +785,7 @@ components:
           example: ''
         s3_region:
           type: string
-          example: ''
+          example: 'fr-par-42'
         s3_verify_cert:
           type: string
           example: '1'
@@ -797,13 +797,13 @@ components:
           example: '0'
         saml_baseurl:
           type: string
-          example: ''
+          example: null
         saml_debug:
           type: string
           example: '0'
         saml_entityid:
           type: string
-          example: ''
+          example: null
         saml_logoutrequestsigned:
           type: string
           example: '0'
@@ -821,7 +821,7 @@ components:
           example: 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress'
         saml_privatekey:
           type: string
-          example: ''
+          example: null
         saml_relaxdestinationvalidation:
           type: string
           example: '0'
@@ -866,10 +866,10 @@ components:
           example: '1'
         saml_x509:
           type: string
-          example: ''
+          example: null
         saml_x509_new:
           type: string
-          example: ''
+          example: null
         schema:
           type: string
           example: '196'
@@ -896,7 +896,7 @@ components:
           example: 'dfn'
         ts_cert:
           type: string
-          example: ''
+          example: null
         ts_hash:
           type: string
           example: 'sha256'
@@ -905,13 +905,13 @@ components:
           example: '0'
         ts_login:
           type: string
-          example: ''
+          example: null
         ts_password:
           type: string
-          example: ''
+          example: null
         ts_url:
           type: string
-          example: ''
+          example: null
         uploads_storage:
           type: string
           example: '1'

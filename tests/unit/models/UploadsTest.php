@@ -132,11 +132,14 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         // test patch Archive on already archived -> unarchives
         $this->Entity->Uploads->patch(Action::Archive, array());
         $this->assertEquals(State::Normal->value, $this->Entity->Uploads->uploadData['state']);
-        $this->Entity->Uploads->patch(Action::Update, array(
+        $newOwner = new Users(2, 1);
+        $updated = $this->Entity->Uploads->patch(Action::Update, array(
             'real_name' => 'new real name',
             'comment' => 'new file comment',
             'state' => (string) State::Deleted->value,
+            'userid' => $newOwner->userid,
         ));
+        $this->assertEquals($newOwner->userid, $updated['userid']);
     }
 
     public function testGetApiPath(): void

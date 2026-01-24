@@ -35,6 +35,7 @@ use Elabftw\Enums\Messages;
 use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\State;
+use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -70,6 +71,7 @@ use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
 use Elabftw\Services\HttpGetter;
 use Elabftw\Services\SignatureHelper;
+use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\TimestampUtils;
 use Elabftw\Traits\EntityTrait;
 use GuzzleHttp\Client;
@@ -506,6 +508,7 @@ abstract class AbstractEntity extends AbstractRest
                     }
                 }
             )(),
+            Action::UpdateOwner => $this->updateOwnership((int) $params['userid'], (int) $params['team']),
             Action::Update => (
                 function () use ($params) {
                     foreach ($params as $key => $value) {
@@ -1077,6 +1080,23 @@ abstract class AbstractEntity extends AbstractRest
             $toggleLock();
         }
         $this->update(new EntityParams('state', (string) $targetState->value));
+    }
+
+    private function updateOwnership(int $userid, int $team): void
+    {
+        // if there's no team provided, assign the current user's team
+        if ($team === 0) {
+            $team = $this->Users->team ?? throw new AppException(Messages::GenericError->toHuman());
+        }
+        $TeamsHelper = new TeamsHelper($team);
+        if (!$TeamsHelper->isUserInTeam($userid)) {
+            throw new UnauthorizedException(_('The selected user cannot be assigned ownership in the current team context.'));
+        }
+        $this->update(new EntityParams('userid', $userid));
+        $this->update(new EntityParams('team', $team));
+        // transfer entity's uploads as well
+        $this->bypassWritePermission = true;
+        $this->Uploads->transferOwnership($userid);
     }
 
     private function addToExtendedFilter(string $extendedFilter, array $extendedValues = array()): void

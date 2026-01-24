@@ -261,12 +261,9 @@
   </div>
 {% endif %}
 
-{% set realContainerClass = '' %}
-{% if App.Request.query.get('mode') == 'show' or (scriptName in ['experiments.php', 'database.php', 'templates.php', 'experiments-categories.php', 'experiments-status.php', 'resources-templates.php', 'resources-categories.php', 'resources-status.php'] and not App.Request.query.has('mode')) %}
-  {% set realContainerClass = 'max-width-70' %}
-{% endif %}
-
-<div class='real-container {{ realContainerClass }}'>
+  {% set pageSupportsWide = scriptName in ['experiments.php', 'database.php', 'templates.php', 'experiments-categories.php', 'experiments-status.php', 'resources-templates.php', 'resources-categories.php', 'resources-status.php'] %}
+  {% set enableWide = App.Request.query.get('mode') == 'show' or (pageSupportsWide and App.Users.userData.display_mode == 'it' and not App.Request.query.has('mode')) %}
+  <div id='realContainer' class='real-container {{ enableWide ? 'max-width-70' : '' }}'>
 <div id='safariWarning' hidden>
     {{ 'Warning: you are using an unsupported browser known to cause issues (Safari). Please use a supported browser (see %sdocumentation%s).'|trans|format("<a class='external-link' target='_blank' href='https://doc.elabftw.net/faq.html#requirements-for-the-clients-users'>", "</a>")|msg('warning', true, 'safari_warning_v1') }}
 </div>

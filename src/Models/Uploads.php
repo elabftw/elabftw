@@ -37,7 +37,6 @@ use Override;
 use PDO;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Response;
 
 use function mb_substr;
@@ -168,7 +167,7 @@ final class Uploads extends AbstractRest
     // entity is target entity
     public function duplicate(AbstractEntity $entity): void
     {
-        $uploads = $this->readAll();
+        $uploads = $this->selectAll();
         foreach ($uploads as $upload) {
             if ($upload['storage'] === Storage::LOCAL->value) {
                 $prefix = '/elabftw/uploads/';
@@ -229,15 +228,11 @@ final class Uploads extends AbstractRest
         return $DownloadController->getResponse();
     }
 
-    /**
-     * Read all uploads except deleted ones.
-     * Includes 'archived' only if set in queryParams.
-     */
-    #[Override]
-    public function readAll(?QueryParamsInterface $queryParams = null): array
+    public function selectAll(?array $states = null): array
     {
-        $queryParams ??= $this->getQueryParams();
-        $statesSql = $queryParams->getStatesSql('uploads');
+        // if no states array is provided, select all
+        $states ??= array(State::Normal, State::Archived, State::Deleted);
+        $statesSql = sprintf(' AND uploads.state IN (%s)', implode(', ', array_map(fn($state) => $state->value, $states)));
         $sql = sprintf(
             'SELECT uploads.*, CONCAT (users.firstname, " ", users.lastname) AS fullname
             FROM uploads LEFT JOIN users ON (uploads.userid = users.userid)
@@ -250,6 +245,16 @@ final class Uploads extends AbstractRest
         $this->Db->execute($req);
 
         return $req->fetchAll();
+    }
+
+    /**
+     * Public api for GET all uploads for the current entity
+     */
+    #[Override]
+    public function readAll(?QueryParamsInterface $queryParams = null): array
+    {
+        $queryParams ??= $this->getQueryParams();
+        return $this->selectAll($queryParams->getStates());
     }
 
     #[Override]
@@ -337,7 +342,7 @@ final class Uploads extends AbstractRest
     public function destroyAll(): bool
     {
         // this will include the archived/deleted ones
-        $uploadArr = $this->readAll();
+        $uploadArr = $this->selectAll();
 
         foreach ($uploadArr as $upload) {
             $this->setId($upload['id']);
@@ -390,9 +395,9 @@ final class Uploads extends AbstractRest
     // transfer ownership of all uploaded files for an entity, except immutable ones
     public function transferOwnership(int $userid): void
     {
-        $uploadArr = $this->readAll($this->getQueryParams(new InputBag(array('state' => '1,2,3'))));
+        $uploadArr = $this->selectAll();
         foreach ($uploadArr as $upload) {
-            if ((int) $upload['immutable'] === 1) {
+            if ($upload['immutable'] === 1) {
                 continue;
             }
             $this->setId($upload['id']);

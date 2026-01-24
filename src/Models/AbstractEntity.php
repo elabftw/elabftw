@@ -508,7 +508,7 @@ abstract class AbstractEntity extends AbstractRest
                     }
                 }
             )(),
-            Action::UpdateOwner => $this->updateOwnership($params),
+            Action::UpdateOwner => $this->updateOwnership((int) $params['userid'], (int) $params['team']),
             Action::Update => (
                 function () use ($params) {
                     foreach ($params as $key => $value) {
@@ -1075,10 +1075,8 @@ abstract class AbstractEntity extends AbstractRest
         $this->update(new EntityParams('state', (string) $targetState->value));
     }
 
-    private function updateOwnership(array $params): void
+    private function updateOwnership(int $userid, int $team): void
     {
-        $userid = (int) $params['userid'];
-        $team = (int) $params['team'];
         // if there's no team provided, assign the current user's team
         if ($team === 0) {
             $team = $this->Users->team ?? throw new AppException(Messages::GenericError->toHuman());

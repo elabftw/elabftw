@@ -40,7 +40,6 @@ final class Batch extends AbstractRest
         if ($this->requester->isAdmin === false) {
             throw new ForbiddenException();
         }
-        $action = Action::tryFrom($reqBody['action'] ?? '') ?? throw new ImproperActionException('Invalid value for "action" parameter.');
         // Unarchive action: search for 'Archived' entries to patch. For 'Restore' action, look for 'deleted' entries.
         $state = match ($action) {
             Action::Unarchive => State::Archived,

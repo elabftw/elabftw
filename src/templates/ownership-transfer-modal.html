@@ -1,30 +1,64 @@
 {# Modal for ownership transfer #}
+{% set isAdminPage = App.Request.getScriptName|split('/')|last == 'admin.php' %}
+{% if isAdminPage %}
+  {% set description = 'You are about to transfer ownership of the selected entries to another user. Ownership of the entries and all associated content (including uploads, comments, and links) will be transferred.'|trans %}
+{% else %}
+  {% set description = 'You are about to transfer ownership of this entry to another user. After the transfer, they will become the owner, and you may lose access if you do not have permission to view it.'|trans %}
+{% endif %}
 <div class='modal fade' id='ownerModal' tabindex='-1' role='dialog' aria-labelledby='ownerModalLabel'>
   <div class='modal-dialog' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
-        <h5 class='modal-title' id='ownerModalLabel'>{{ 'Transfer ownership'|trans }}</h5>
+        <div>
+          <h5 class='modal-title' id='ownerModalLabel'>{{ 'Transfer ownership'|trans }}</h5>
+          <div class='smallgray mt-2'>{{ description }}</div>
+        </div>
         <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
-      <div class='modal-body'>
-        {# SELECT USER #}
-        <label for='target_owner'>{{ 'New owner'|trans }}</label>
-        {# this exists so Firefox doesn't process the Search user field as password. No idea why it would do it in the first place though... #}
-        {# and autocomplete='off' doesn't work #}
-        <input type='password' disabled hidden />
-        <input type='text' placeholder='{{ 'Search user'|trans }}' id='target_owner' class='form-control' data-identifier='targetOwnerInput' data-action='autocomplete' data-target='users'>
-        <div id='autocompleteAnchorDiv_targetOwnerInput'></div>
-      </div>
-      <div class='modal-footer'>
-        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
-        {% if App.Request.getScriptName|split('/')|last == 'admin.php' %}
-          <button type='button' class='btn btn-primary' data-action='run-action-selected' data-what='updateowner' data-dismiss='modal'>{{ 'Transfer ownership'|trans }}</button>
+      <form id='ownershipTransferForm' aria-label='{{ 'Transfer ownership'|trans }}'>
+        <div class='modal-body'>
+        {% if isAdminPage %}
+          {# SELECT TEAM : available in admin page. Otherwise, it defaults to current user's team #}
+          {% set infotip = 'As an admin, you can select the team associated with the user who will receive ownership. Please note that once transferred to another team, the entry is managed by that team’s administrators.'|trans %}
+          <label for='targetTeamId'>{{ 'Select a team'|trans }}</label>
+          {% include 'infotip.html' with {text: infotip} %}
+          <select required name='targetTeamId' class='form-control mb-2' id='targetTeamId'>
+            <option selected disabled value=''>{{ 'Select a team'|trans }}</option>
+            {% for team in teamsArr %}
+              <option value='{{ team.id }}'>{{ team.name }}</option>
+            {% endfor %}
+          </select>
         {% else %}
-          <button type='button' class='btn btn-primary' data-action='transfer-ownership' data-dismiss='modal'>{{ 'Transfer ownership'|trans }}</button>
+          <input type='hidden' name='targetTeamId' value='{{ Entity.entityData.team }}'>
         {% endif %}
-      </div>
+          {# SELECT USER #}
+          {# 1 - CURRENT Owner #}
+          {# (not visible in admin page because there can be multiple owner) #}
+          {# TODO: handle multiple owner, e.g., for batch. Maybe multiple badges with user fullnames #}
+          <div {{ isAdminPage ? 'hidden' }} id='currentOwnerDiv'>
+            <label for='sourceOwner'>{{ 'Current owner'|trans }}</label>
+            <input type='text' id='sourceOwner' aria-disabled='true' disabled value='{{ Entity.entityData.fullname|e('html_attr') }}' class='form-control'/>
+            <div id='autocompleteAnchorDiv_sourceOwnerInput'></div>
+            <div class='d-flex justify-content-center'>
+              <i class='fas fa-caret-down fa-fw mt-2 text-big' aria-hidden='true' role='presentation'></i>
+            </div>
+          </div>
+          {# 2 - TARGET Owner #}
+          <label for='targetUserId'>{{ 'Select new owner'|trans }}</label>
+          <input required type='text' placeholder='{{ 'Search user'|trans }}' name='targetUserId' id='targetUserId' class='form-control' data-identifier='targetUserId' data-action='autocomplete' data-target='users' {% if isAdminPage %}data-team='targetTeamId'{% endif %}>
+          <div id='autocompleteAnchorDiv_targetUserId'></div>
+        </div>
+        <div class='modal-footer'>
+          <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+          {% if isAdminPage %}
+            <button type='submit' class='btn btn-primary' data-action='run-action-selected' data-what='updateowner' data-dismiss='modal'>{{ 'Transfer ownership'|trans }}</button>
+          {% else %}
+            <button type='submit' class='btn btn-primary' data-action='transfer-ownership' data-dismiss='modal'>{{ 'Transfer ownership'|trans }}</button>
+          {% endif %}
+        </div>
+      </form>
     </div>
   </div>
 </div>

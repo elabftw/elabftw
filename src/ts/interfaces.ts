@@ -54,7 +54,8 @@ interface Selected {
   users_experiments: number[];
   users_resources: number[];
   tags: number[];
-  target_owner: number;
+  userid: number;
+  team: number;
   can: string;
 }
 
@@ -110,6 +111,7 @@ enum Action {
   UpdateMetadataField = 'updatemetadatafield',
   UpdatePassword = 'updatepassword',
   UpdateTag = 'updatetag',
+  UpdateOwner = 'updateowner',
   Validate = 'validate',
   // Dspace Actions
   GetCollections = 'getcollections',
@@ -180,6 +182,7 @@ enum Target {
   State = 'state',
   Title = 'title',
   UserId = 'userid',
+  Team = 'team',
 }
 
 enum FileType {

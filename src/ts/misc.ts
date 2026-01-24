@@ -230,7 +230,6 @@ export function getEntityTypeFromPage(): EntityType {
   }
 }
 
-
 // for view or edit mode, get type and id from the page to construct the entity object
 // enable usage with parent Window for iframe cases (e.g., with spreadsheet editor)
 export function getEntity(useParent: boolean = false): Entity {
@@ -311,6 +310,11 @@ export async function reloadEntitiesShow(tag = ''): Promise<void | Response> {
   listenTrigger();
   // and set relative moments
   relativeMoment();
+}
+
+export function getSafeElementById(id: string): HTMLElement {
+  return document.getElementById(id)
+    ?? (() => { throw new Error(`Element could not be found: '${id}'`); })();
 }
 
 export async function reloadElements(elementIds: string[]): Promise<void> {

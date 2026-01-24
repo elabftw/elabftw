@@ -7,6 +7,7 @@
  */
 import {
   collectForm,
+  getSafeElementById,
   mkSpin,
   mkSpinStop,
   permissionsToJson,
@@ -34,10 +35,8 @@ function collectSelectable(name: string): number[] {
   return collected;
 }
 
-function collectTargetOwner(): number {
-  const collected = document.getElementById('target_owner') as HTMLInputElement;
-  // Convert element to an int
-  return collected ? parseInt(collected.value, 10) || 0 : 0;
+function collectInt(name: string): number {
+  return parseInt((getSafeElementById(name) as HTMLInputElement).value, 10);
 }
 
 function collectCan(): string {
@@ -65,7 +64,8 @@ function getSelected(): Selected {
     tags: collectSelectable('tags'),
     users_experiments: collectSelectable('users-experiments'),
     users_resources: collectSelectable('users-resources'),
-    target_owner: collectTargetOwner(),
+    userid: collectInt('targetUserId'),
+    team: collectInt('targetTeamId'),
     can: collectCan(),
   };
 }

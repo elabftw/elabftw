@@ -990,7 +990,15 @@ components:
           default: -1
         userid:
           type: integer
-          description: Userid of entity's owner
+          description: |
+            User ID of the entity owner.
+            When transferring ownership, the `team` field should also be provided (optional).
+        team:
+          type: integer
+          description: |
+            Optional team context for ownership transfer.
+            If omitted, the requester’s team is used by default.
+            If provided, the API validates that the target user is a member of the specified team.
     # EVENT
     event:
       type: object

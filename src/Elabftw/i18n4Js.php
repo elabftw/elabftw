@@ -117,6 +117,7 @@ final class i18n4Js
             'oc-version-warning' => _('Warning: current OpenCloning version is incompatible with this version of eLabFTW.'),
             'onboarding-email-sent' => _('Onboarding email(s) will soon be sent.'),
             'only-a-sysadmin' => _('Only a Sysadmin can modify this.'),
+            'ownership-transfer' => _('Your entry has been successfully transferred to the selected user.'),
             'please-wait' => _('Please wait…'),
             'readonly' => _('Read-only'),
             'remove' => _('Remove'),

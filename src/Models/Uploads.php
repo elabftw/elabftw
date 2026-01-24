@@ -37,7 +37,6 @@ use Override;
 use PDO;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Response;
 
 use function mb_substr;
@@ -338,29 +337,30 @@ final class Uploads extends AbstractRest
     }
 
     /**
-     * Delete all uploaded files for an entity
+     * Soft delete all uploaded files for an entity
      */
     public function destroyAll(): bool
     {
-        // this will include the archived/deleted ones
-        $uploadArr = $this->selectAll();
-
-        foreach ($uploadArr as $upload) {
-            $this->setId($upload['id']);
-            $this->nuke();
-        }
-        return true;
+        $sql = 'UPDATE uploads SET state = :state_deleted WHERE item_id = :id AND type = :type';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':id', $this->Entity->id);
+        $req->bindValue(':type', $this->Entity->entityType->value);
+        $req->bindValue(':state_deleted', State::Deleted->value);
+        return $this->Db->execute($req);
     }
 
-    // restore all uploaded files for an entity (exclude archived, keeps consistency)
+    /**
+     * Restore all uploaded files to normal state for an entity (excluding archived to keep consistency)
+     */
     public function restoreAll(): bool
     {
-        $uploadArr = $this->readAll($this->getQueryParams(new InputBag(array('state' => '1,3'))));
-        foreach ($uploadArr as $upload) {
-            $this->setId($upload['id']);
-            $this->update(new UploadParams('state', State::Normal->value));
-        }
-        return true;
+        $sql = 'UPDATE uploads SET state = :state_normal WHERE item_id = :id AND type = :type AND state != :state_archived';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':id', $this->Entity->id);
+        $req->bindValue(':type', $this->Entity->entityType->value);
+        $req->bindValue(':state_normal', State::Normal->value);
+        $req->bindValue(':state_archived', State::Archived->value);
+        return $this->Db->execute($req);
     }
 
     public function getStorageFromLongname(string $longname): int

@@ -127,7 +127,7 @@ final class Apiv2Controller extends AbstractApiController
                 'message' => $e->getMessage(),
                 'description' => $e->getDescription(),
             );
-            return new JsonResponse($error, $error['code']);
+            return new JsonResponse($error, $e->getHttpCode());
         } catch (Exception $e) {
             $message = $e->getMessage();
             if ($e->getPrevious() !== null) {

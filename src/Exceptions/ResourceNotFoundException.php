@@ -11,19 +11,12 @@ declare(strict_types=1);
 
 namespace Elabftw\Exceptions;
 
-use Exception;
+use Elabftw\Enums\Messages;
 
 /**
  * Throw this if the requested resource cannot be found
- * Should reply with status code 404
  */
-final class ResourceNotFoundException extends ImproperActionException
+final class ResourceNotFoundException extends AppException
 {
-    public function __construct(?string $message = null, int $code = 404, ?Exception $previous = null)
-    {
-        if ($message === null) {
-            $message = _('Nothing to show with this id');
-        }
-        parent::__construct($message, $code, $previous);
-    }
+    protected Messages $error = Messages::ResourceNotFound;
 }

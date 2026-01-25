@@ -522,7 +522,8 @@ final class Compounds extends AbstractRest
         if (!empty($reqBody['cid'])) {
             return $this->createFromCompound($this->searchPubChem((int) $reqBody['cid']));
         }
-        return $this->createFromCompound($this->searchPubChemCas($reqBody['cas'])[0]);
+        $cas = $reqBody['cas'] ?? throw new ImproperActionException('Missing pubchem_cid or cas_number');
+        return $this->createFromCompound($this->searchPubChemCas($cas)[0]);
     }
 
     private function getSelectBeforeWhere(): string

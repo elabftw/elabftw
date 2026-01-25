@@ -522,7 +522,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (json['display_mode'] === 'it') {
           target = 'tb';
         }
-        ApiC.patch(`${Model.User}/me`, {'display_mode': target}).then(() => {
+        ApiC.patch(`${Model.User}/me`, { display_mode: target }).then(() => {
+          document.getElementById('realContainer')?.classList.toggle('max-width-70', target === 'it');
           reloadEntitiesShow();
         });
       });

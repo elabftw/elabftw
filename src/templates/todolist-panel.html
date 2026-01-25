@@ -23,14 +23,14 @@
         <h3 class='mr-auto'>{{ 'Unfinished steps'|trans }}</h3>
       </div>
 
-      {# Toggle scope User/Team switch #}
       <div class='d-inline-flex rounded border-white p-1 align-items-center'>
-        <label class='mb-0' for='todolistStepsShowTeam'>{{ 'User'|trans }}</label>
-        <label class='switch mx-1 mb-0'>
+        <span class='mb-0'>{{ 'User'|trans }}</span>
+        <label class='mb-0 switch mx-1 mb-0'>
+          <span class='sr-only'>{{ 'Show steps for team'|trans }}</span>
           <input type='checkbox' id='todolistStepsShowTeam' autocomplete='off' aria-label='{{ 'Show steps for team'|trans }}'>
           <span class='slider'></span>
         </label>
-        <label class='mb-0' for='todolistStepsShowTeam'>{{ 'Team'|trans }}</label>
+        <span class='mb-0'>{{ 'Team'|trans }}</span>
       </div>
     </div>
 

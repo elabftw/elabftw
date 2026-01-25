@@ -83,6 +83,8 @@ final class ImportEln extends Command
         }
         $Importer = new TrustedEln(
             $user,
+            BasePermissions::Team,
+            BasePermissions::User,
             BasePermissions::Team->toJson(),
             BasePermissions::Team->toJson(),
             $UploadedFile,

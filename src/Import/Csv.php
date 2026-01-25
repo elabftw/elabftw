@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Import;
 
 use DateTimeImmutable;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
@@ -28,6 +29,8 @@ final class Csv extends AbstractCsv
 {
     public function __construct(
         protected Users $requester,
+        protected BasePermissions $canreadBase,
+        protected BasePermissions $canwriteBase,
         protected string $canread,
         protected string $canwrite,
         protected UploadedFile $UploadedFile,

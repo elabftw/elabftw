@@ -292,13 +292,14 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         // We must insert manually: create() cannot create entities with a preassigned ID.
         $User = $this->getRandomUserInTeam(1);
         $defaultPermissions = BasePermissions::Team->toJson();
-        $req = $this->Db->prepare('INSERT INTO items_types (id, title, userid, team, canread, canwrite, canread_target, canwrite_target) VALUES (:id, :title, :userid, :team, :canread, :canwrite, :canread_target, :canwrite_target)');
+        $req = $this->Db->prepare('INSERT INTO items_types (id, title, userid, team, canread, canwrite, canbook, canread_target, canwrite_target) VALUES (:id, :title, :userid, :team, :canread, :canwrite, :canbook, :canread_target, :canwrite_target)');
         $req->bindValue(':id', $ItemB->id, PDO::PARAM_INT);
         $req->bindValue(':title', 'Template X');
         $req->bindValue(':userid', $User->userData['userid'], PDO::PARAM_INT);
         $req->bindValue(':team', $User->team, PDO::PARAM_INT);
         $req->bindValue(':canread', $defaultPermissions);
         $req->bindValue(':canwrite', $defaultPermissions);
+        $req->bindValue(':canbook', $defaultPermissions);
         $req->bindValue(':canread_target', $defaultPermissions);
         $req->bindValue(':canwrite_target', $defaultPermissions);
         $req->execute();

@@ -90,10 +90,10 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
     {
         $admin = $this->getRandomUserInTeam(1, admin: 1);
         $Items = $this->makeItemFromImmutableTemplateFor($admin);
-        $Items->patch(Action::Update, array('canread' => BasePermissions::UserOnly->toJson()));
-        $canRead = json_decode($Items->readOne()['canread'], true);
+        $canread = BasePermissions::UserOnly;
+        $Items->patch(Action::Update, array('canread_base' => $canread->value));
         $this->assertSame(1, $Items->readOne()['canread_is_immutable']);
-        $this->assertEquals(BasePermissions::UserOnly->value, $canRead['base']);
+        $this->assertEquals($canread->value, $Items->entityData['canread_base']);
     }
 
     public function testCannotChangeImmutabilitySettings(): void
@@ -186,21 +186,18 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $itemTemplate = $ItemsTypes->create(title: 'Used in tests');
         $ItemsTypes->setId($itemTemplate);
         // set permissions on template
-        $canreadTarget = BasePermissions::Organization->toJson();
-        $canwriteTarget = BasePermissions::UserOnly->toJson();
+        $canreadTarget = BasePermissions::Organization;
+        $canwriteTarget = BasePermissions::UserOnly;
         $ItemsTypes->patch(Action::Update, array(
-            'canread_target' => $canreadTarget,
-            'canwrite_target' => $canwriteTarget,
+            'canread_target_base' => $canreadTarget->value,
+            'canwrite_target_base' => $canwriteTarget->value,
         ));
         // now create an item from that template
         $newId = $this->Items->createFromTemplate($itemTemplate);
         $this->assertIsInt($newId);
         $this->Items->setId($newId);
-        // have to decode the json because the keys won't be in the same order, so assertEquals fails
-        $actualCanread = json_decode($this->Items->entityData['canread'], true);
-        $actualCanwrite = json_decode($this->Items->entityData['canwrite'], true);
-        $this->assertEquals(BasePermissions::Organization->value, $actualCanread['base']);
-        $this->assertEquals(BasePermissions::UserOnly->value, $actualCanwrite['base']);
+        $this->assertEquals($canreadTarget->value, $this->Items->entityData['canread_base']);
+        $this->assertEquals($canwriteTarget->value, $this->Items->entityData['canwrite_base']);
     }
 
     public function testToggleLock(): void

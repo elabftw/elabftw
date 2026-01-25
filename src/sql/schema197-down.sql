@@ -43,6 +43,8 @@ CALL DropColumn('experiments',           'canwrite_base');
 
 CALL DropColumn('experiments_templates', 'canread_base');
 CALL DropColumn('experiments_templates', 'canwrite_base');
+CALL DropColumn('experiments_templates', 'canread_target_base');
+CALL DropColumn('experiments_templates', 'canwrite_target_base');
 
 CALL DropColumn('items',                 'canread_base');
 CALL DropColumn('items',                 'canbook_base');
@@ -51,6 +53,8 @@ CALL DropColumn('items',                 'canwrite_base');
 CALL DropColumn('items_types',           'canread_base');
 CALL DropColumn('items_types',           'canbook_base');
 CALL DropColumn('items_types',           'canwrite_base');
+CALL DropColumn('items_types', 'canread_target_base');
+CALL DropColumn('items_types', 'canwrite_target_base');
 
 CALL DropColumn('users',           'default_read_base');
 CALL DropColumn('users',           'default_write_base');

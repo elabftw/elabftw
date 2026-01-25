@@ -742,6 +742,8 @@ class Users extends AbstractRest
         $this->userData = $this->Db->fetch($req);
         $this->userData['team'] = $this->team;
         $this->userData['teams'] = json_decode($this->userData['teams'], true, 3, JSON_THROW_ON_ERROR);
+        $this->userData['default_read_base_human'] = BasePermissions::from($this->userData['default_read_base'])->toHuman();
+        $this->userData['default_write_base_human'] = BasePermissions::from($this->userData['default_write_base'])->toHuman();
         return $this->userData;
     }
 

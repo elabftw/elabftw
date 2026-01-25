@@ -4,38 +4,47 @@ ALTER TABLE experiments
   ADD COLUMN canwrite_base TINYINT UNSIGNED NOT NULL DEFAULT 20;
 ALTER TABLE experiments_templates
   ADD COLUMN canread_base  TINYINT UNSIGNED NOT NULL DEFAULT 30,
-  ADD COLUMN canwrite_base TINYINT UNSIGNED NOT NULL DEFAULT 20;
+  ADD COLUMN canwrite_base TINYINT UNSIGNED NOT NULL DEFAULT 20,
+  ADD COLUMN canread_target_base TINYINT UNSIGNED NOT NULL DEFAULT 30,
+  ADD COLUMN canwrite_target_base TINYINT UNSIGNED NOT NULL DEFAULT 20;
 ALTER TABLE items
   ADD COLUMN canread_base  TINYINT UNSIGNED NOT NULL DEFAULT 30,
   ADD COLUMN canbook_base  TINYINT UNSIGNED NOT NULL DEFAULT 30,
   ADD COLUMN canwrite_base TINYINT UNSIGNED NOT NULL DEFAULT 20;
 ALTER TABLE items_types
   ADD COLUMN canread_base  TINYINT UNSIGNED NOT NULL DEFAULT 30,
+  ADD COLUMN canbook JSON NOT NULL,
   ADD COLUMN canbook_base  TINYINT UNSIGNED NOT NULL DEFAULT 30,
-  ADD COLUMN canwrite_base TINYINT UNSIGNED NOT NULL DEFAULT 20;
+  ADD COLUMN canwrite_base TINYINT UNSIGNED NOT NULL DEFAULT 20,
+  ADD COLUMN canread_target_base TINYINT UNSIGNED NOT NULL DEFAULT 30,
+  ADD COLUMN canwrite_target_base TINYINT UNSIGNED NOT NULL DEFAULT 20;
 ALTER TABLE users
   ADD COLUMN default_read_base  TINYINT UNSIGNED NOT NULL DEFAULT 30,
   ADD COLUMN default_write_base TINYINT UNSIGNED NOT NULL DEFAULT 20;
 
 UPDATE experiments
 SET
-  canread_base  = CAST(JSON_EXTRACT(canread,  '$.base') AS UNSIGNED),
-  canwrite_base = CAST(JSON_EXTRACT(canwrite, '$.base') AS UNSIGNED);
+  canread_base  = COALESCE(CAST(JSON_EXTRACT(canread,  '$.base') AS UNSIGNED), 30),
+  canwrite_base = COALESCE(CAST(JSON_EXTRACT(canwrite, '$.base') AS UNSIGNED), 20);
 UPDATE experiments_templates
 SET
-  canread_base  = CAST(JSON_EXTRACT(canread,  '$.base') AS UNSIGNED),
-  canwrite_base = CAST(JSON_EXTRACT(canwrite, '$.base') AS UNSIGNED);
+  canread_base  = COALESCE(CAST(JSON_EXTRACT(canread,  '$.base') AS UNSIGNED), 30),
+  canwrite_base = COALESCE(CAST(JSON_EXTRACT(canwrite, '$.base') AS UNSIGNED), 20),
+  canread_target_base = COALESCE(CAST(JSON_EXTRACT(canread_target, '$.base') AS UNSIGNED), 30),
+  canwrite_target_base = COALESCE(CAST(JSON_EXTRACT(canwrite_target, '$.base') AS UNSIGNED), 20);
 UPDATE items
 SET
-  canread_base  = CAST(JSON_EXTRACT(canread,  '$.base') AS UNSIGNED),
-  canbook_base  = CAST(JSON_EXTRACT(canbook,  '$.base') AS UNSIGNED),
-  canwrite_base = CAST(JSON_EXTRACT(canwrite, '$.base') AS UNSIGNED);
+  canread_base  = COALESCE(CAST(JSON_EXTRACT(canread,  '$.base') AS UNSIGNED), 30),
+  canbook_base  = COALESCE(CAST(JSON_EXTRACT(canbook,  '$.base') AS UNSIGNED), 30),
+  canwrite_base = COALESCE(CAST(JSON_EXTRACT(canwrite, '$.base') AS UNSIGNED), 20);
 -- here we use canread as canbook_base because items_types don't have canbook
 UPDATE items_types
 SET
-  canread_base  = CAST(JSON_EXTRACT(canread,  '$.base') AS UNSIGNED),
-  canbook_base  = CAST(JSON_EXTRACT(canread,  '$.base') AS UNSIGNED),
-  canwrite_base = CAST(JSON_EXTRACT(canwrite, '$.base') AS UNSIGNED);
+  canread_base  = COALESCE(CAST(JSON_EXTRACT(canread,  '$.base') AS UNSIGNED), 30),
+  canbook_base  = COALESCE(CAST(JSON_EXTRACT(canbook,  '$.base') AS UNSIGNED), 30),
+  canwrite_base = COALESCE(CAST(JSON_EXTRACT(canwrite, '$.base') AS UNSIGNED), 20),
+  canread_target_base = COALESCE(CAST(JSON_EXTRACT(canread_target, '$.base') AS UNSIGNED), 30),
+  canwrite_target_base = COALESCE(CAST(JSON_EXTRACT(canwrite_target, '$.base') AS UNSIGNED), 20);
 
 -- now remove the base from json
 UPDATE experiments

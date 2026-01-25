@@ -148,7 +148,7 @@ final class Check
 
         $arrayParams = array('teams', 'teamgroups', 'users');
         foreach ($arrayParams as $param) {
-            if (!is_array($decoded[$param])) {
+            if (!isset($decoded[$param]) || !is_array($decoded[$param])) {
                 throw new ImproperActionException(sprintf('The visibility parameter %s is wrong.', $param));
             }
         }

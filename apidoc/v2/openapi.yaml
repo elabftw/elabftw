@@ -1542,7 +1542,7 @@ components:
         canbook_base:
           type: number
           description: |
-            Base permission for write access:
+            Base permission for booking access:
               - 10: Owner only
               - 20: Owner + Admins
               - 30: Team members

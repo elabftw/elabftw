@@ -188,8 +188,8 @@ abstract class AbstractEntity extends AbstractRest
         $id = $this->create(
             title: $title ?? $template['title'],
             body: $template['body'],
-            canreadBase: BasePermissions::from($template['canread_base']),
-            canwriteBase: BasePermissions::from($template['canwrite_base']),
+            canreadBase: BasePermissions::from($template['canread_target_base']),
+            canwriteBase: BasePermissions::from($template['canwrite_target_base']),
             canread: $template['canread_target'],
             canwrite: $template['canwrite_target'],
             canreadIsImmutable: (bool) $template['canread_is_immutable'],
@@ -246,8 +246,8 @@ abstract class AbstractEntity extends AbstractRest
                         $tags = array($tags);
                     }
                     // for backward compatibility, see if there is a base param in the json and use that, and fallback on default if not
-                    $canreadBase = $this->getCanBaseFromJson($reqBody['canread'], BasePermissions::from($this->Users->userData['default_read_base']));
-                    $canwriteBase = $this->getCanBaseFromJson($reqBody['canwrite'], BasePermissions::from($this->Users->userData['default_write_base']));
+                    $canreadBase = $this->getCanBaseFromJson($reqBody['canread'] ?? null, BasePermissions::from($this->Users->userData['default_read_base']));
+                    $canwriteBase = $this->getCanBaseFromJson($reqBody['canwrite'] ?? null, BasePermissions::from($this->Users->userData['default_write_base']));
                     // now override this with the modern canread_base param if it's sent
                     if (array_key_exists('canread_base', $reqBody)) {
                         $canreadBase = BasePermissions::tryFrom((int) ($reqBody['canread_base'])) ?? throw new ImproperActionException('Invalid canread_base parameter');

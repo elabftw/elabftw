@@ -81,6 +81,8 @@ final class Handler extends AbstractRest
             case 'eln':
                 return new Eln(
                     $this->requester,
+                    $canreadBase,
+                    $canwriteBase,
                     $canreadBase->toJson(),
                     $canwriteBase->toJson(),
                     $reqBody['file'],
@@ -92,6 +94,8 @@ final class Handler extends AbstractRest
             case 'csv':
                 return new Csv(
                     $this->requester,
+                    $canreadBase,
+                    $canwriteBase,
                     $canreadBase->toJson(),
                     $canwriteBase->toJson(),
                     $reqBody['file'],

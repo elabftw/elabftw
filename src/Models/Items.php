@@ -147,8 +147,12 @@ final class Items extends AbstractConcreteEntity
         $newId = $this->create(
             title: $title,
             body: $this->entityData['body'],
+            canreadBase: BasePermissions::from($this->entityData['canread_base']),
+            canwriteBase: BasePermissions::from($this->entityData['canwrite_base']),
+            canbookBase: BasePermissions::from($this->entityData['canbook_base']),
             canread: $this->entityData['canread'],
             canwrite: $this->entityData['canwrite'],
+            canbook: $this->entityData['canbook'],
             category: $this->entityData['category'],
             status: $this->entityData['status'],
             metadata: $metadata,

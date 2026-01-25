@@ -15,6 +15,7 @@ namespace Elabftw\Import;
 use DateTimeImmutable;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FileFromString;
@@ -68,6 +69,8 @@ class Eln extends AbstractZip
 
     public function __construct(
         protected Users $requester,
+        protected BasePermissions $canreadBase,
+        protected BasePermissions $canwriteBase,
         // TODO nullable and have it in .eln export so it is not lost on import
         protected string $canread,
         protected string $canwrite,
@@ -311,6 +314,8 @@ class Eln extends AbstractZip
         $this->Entity->entityData['canread_is_immutable'] = 0;
         $this->Entity->entityData['canwrite_is_immutable'] = 0;
         // canread and canwrite patch must happen before bodyappend that contains a readOne()
+        $this->Entity->update(new EntityParams('canread_base', $this->canreadBase->value));
+        $this->Entity->update(new EntityParams('canwrite_base', $this->canwriteBase->value));
         $this->Entity->update(new EntityParams('canread', $this->canread));
         $this->Entity->update(new EntityParams('canwrite', $this->canwrite));
         // content_type

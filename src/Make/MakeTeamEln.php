@@ -24,7 +24,7 @@ use Psr\Log\LoggerInterface;
  */
 final class MakeTeamEln extends AbstractMakeEln
 {
-    public function __construct(protected LoggerInterface $logger, protected Zipstream $Zip, protected int $teamId, protected array $users = array(), protected array $resourcesCategories = array())
+    public function __construct(protected LoggerInterface $logger, protected ZipStream $Zip, protected int $teamId, protected array $users = array(), protected array $resourcesCategories = array())
     {
         parent::__construct($Zip);
     }

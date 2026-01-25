@@ -44,6 +44,8 @@ class CsvTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Csv(
             new Users(1, 1),
+            BasePermissions::Team,
+            BasePermissions::User,
             BasePermissions::Team->toJson(),
             BasePermissions::User->toJson(),
             $uploadedFile,
@@ -67,6 +69,8 @@ class CsvTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Csv(
             new Users(1, 1),
+            BasePermissions::Team,
+            BasePermissions::User,
             BasePermissions::Team->toJson(),
             BasePermissions::User->toJson(),
             $uploadedFile,
@@ -91,6 +95,8 @@ class CsvTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Csv(
             new Users(1, 1),
+            BasePermissions::Team,
+            BasePermissions::User,
             BasePermissions::Team->toJson(),
             BasePermissions::User->toJson(),
             $uploadedFile,
@@ -114,6 +120,8 @@ class CsvTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Csv(
             new Users(1, 1),
+            BasePermissions::Team,
+            BasePermissions::User,
             BasePermissions::Team->toJson(),
             BasePermissions::User->toJson(),
             $uploadedFile,
@@ -143,6 +151,8 @@ class CsvTest extends \PHPUnit\Framework\TestCase
         $category = 1;
         $Import = new Csv(
             $requester,
+            BasePermissions::Team,
+            BasePermissions::User,
             $canread->toJson(),
             $canwrite->toJson(),
             $uploadedFile,
@@ -159,8 +169,8 @@ class CsvTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($requester->userid, $last['userid']);
         $this->assertEquals('Nitric Acid', $last['title']);
         // only look at base because the order of keys is not guaranteed
-        $this->assertEquals($canread->value, json_decode($last['canread'], true, 3)['base']);
-        $this->assertEquals($canwrite->value, json_decode($last['canwrite'], true, 3)['base']);
+        $this->assertEquals(BasePermissions::Team->value, $last['canread_base']);
+        $this->assertEquals(BasePermissions::User->value, $last['canwrite_base']);
         $this->assertEquals($category, $last['category']);
     }
 }

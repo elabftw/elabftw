@@ -83,6 +83,6 @@ enum BasePermissions: int
 
     public function toJson(): string
     {
-        return sprintf('{"base": %d, "teams": [], "teamgroups": [], "users": []}', $this->value);
+        return '{"teams": [], "teamgroups": [], "users": []}';
     }
 }

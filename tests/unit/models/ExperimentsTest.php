@@ -245,10 +245,10 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->ExperimentsLinks->setId(1);
         $this->Experiments->canOrExplode('read');
         // add specific permissions so we can check it later in the duplicated entry
-        $canread = BasePermissions::Organization->toJson();
-        $canwrite = BasePermissions::UserOnly->toJson();
+        $canread = BasePermissions::Organization;
+        $canwrite = BasePermissions::UserOnly;
         // also add some custom settings like hiding main text
-        $this->Experiments->patch(Action::Update, array('canread' => $canread, 'canwrite' => $canwrite, 'hide_main_text' => 1));
+        $this->Experiments->patch(Action::Update, array('canread_base' => $canread->value, 'canwrite_base' => $canwrite->value, 'hide_main_text' => 1));
         // add some steps and links in there, too
         $this->Experiments->Steps->postAction(Action::Create, array('body' => 'some step'));
         $this->Experiments->ItemsLinks->postAction(Action::Create, array());
@@ -256,10 +256,8 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $id = $this->Experiments->postAction(Action::Duplicate, array());
         $this->assertIsInt($id);
         $new = new Experiments($this->Users, $id);
-        $actualCanread = json_decode($new->entityData['canread'], true);
-        $actualCanwrite = json_decode($new->entityData['canwrite'], true);
-        $this->assertEquals(BasePermissions::Organization->value, $actualCanread['base']);
-        $this->assertEquals(BasePermissions::UserOnly->value, $actualCanwrite['base']);
+        $this->assertEquals($canread->value, $new->entityData['canread_base']);
+        $this->assertEquals($canwrite->value, $new->entityData['canwrite_base']);
         $this->assertEquals(1, $new->entityData['hide_main_text']);
     }
 

@@ -49,14 +49,14 @@ class AppException extends Exception
         return $Response;
     }
 
+    public function getHttpCode(): int
+    {
+        return $this->error->toHttpCode();
+    }
+
     protected function getErrorMessage(): string
     {
         return $this->error->toHuman();
-    }
-
-    protected function getHttpCode(): int
-    {
-        return $this->error->toHttpCode();
     }
 
     // the default is to not emit log, and some exceptions can override this to log something

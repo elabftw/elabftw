@@ -490,7 +490,7 @@ abstract class AbstractEntity extends AbstractRest
             Action::ForceLock => $this->lock(),
             Action::ForceUnlock => $this->unlock(),
             Action::Pin => $this->Pins->togglePin(),
-            Action::Restore => $this->update(new EntityParams('state', State::Normal->value)),
+            Action::Restore => $this->restore(),
             Action::RemoveExclusiveEditMode => $this->ExclusiveEditMode->destroy(),
             Action::SetCanread => $this->update(new EntityParams('canread', $params['can'])),
             Action::SetCanwrite => $this->update(new EntityParams('canwrite', $params['can'])),
@@ -773,8 +773,15 @@ abstract class AbstractEntity extends AbstractRest
         $this->update(new EntityParams('custom_id', ''));
         // delete from pinned too
         $this->Pins->cleanup();
-        // set state to deleted
+        $this->Uploads->destroyAll();
         return $this->update(new EntityParams('state', State::Deleted->value));
+    }
+
+    public function restore(): bool
+    {
+        $this->canOrExplode('write');
+        $this->Uploads->restoreAll();
+        return $this->update(new EntityParams('state', State::Normal->value));
     }
 
     public function updateExtraFieldsOrdering(ExtraFieldsOrderingParams $params): array

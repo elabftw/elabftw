@@ -46,6 +46,7 @@
     "css-loader": "^7.1.2",
     "css-minimizer-webpack-plugin": "^7.0.2",
     "diff-match-patch": "^1.0.5",
+    "dompurify": "^3.3.1",
     "expose-loader": "^5.0.1",
     "i18next": "^25.6.0",
     "immutable": "^5.1.4",

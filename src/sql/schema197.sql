@@ -18,6 +18,9 @@ ALTER TABLE items_types
   ADD COLUMN canwrite_base TINYINT UNSIGNED NOT NULL DEFAULT 20,
   ADD COLUMN canread_target_base TINYINT UNSIGNED NOT NULL DEFAULT 30,
   ADD COLUMN canwrite_target_base TINYINT UNSIGNED NOT NULL DEFAULT 20;
+-- backfill canbook for existing rows (sync with canread semantics)
+UPDATE items_types SET canbook = canread WHERE canbook IS NULL;
+
 ALTER TABLE users
   ADD COLUMN default_read_base  TINYINT UNSIGNED NOT NULL DEFAULT 30,
   ADD COLUMN default_write_base TINYINT UNSIGNED NOT NULL DEFAULT 20;
@@ -55,7 +58,9 @@ SET
 UPDATE experiments_templates
 SET
   canread  = JSON_REMOVE(canread,  '$.base'),
-  canwrite = JSON_REMOVE(canwrite, '$.base');
+  canwrite = JSON_REMOVE(canwrite, '$.base'),
+  canread_target = JSON_REMOVE(canread_target, '$.base'),
+  canwrite_target = JSON_REMOVE(canwrite_target, '$.base');
 
 UPDATE items
 SET
@@ -66,7 +71,9 @@ SET
 UPDATE items_types
 SET
   canread  = JSON_REMOVE(canread,  '$.base'),
-  canwrite = JSON_REMOVE(canwrite, '$.base');
+  canwrite = JSON_REMOVE(canwrite, '$.base'),
+  canread_target = JSON_REMOVE(canread_target, '$.base'),
+  canwrite_target = JSON_REMOVE(canwrite_target, '$.base');
 
 CREATE INDEX idx_experiments_canread_base        ON experiments (canread_base);
 CREATE INDEX idx_experiments_canwrite_base       ON experiments (canwrite_base);

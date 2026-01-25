@@ -1269,16 +1269,24 @@ components:
       properties:
         title:
           type: string
+          description: Optional comment added to the event
         id:
           type: integer
+        item:
+          type: integer
+          description: ID of the Resource being booked
+          example: 12
         start:
           type: string
+          example: "2026-01-20 12:00:00"
         end:
           type: string
+          example: "2026-01-20 14:00:00"
         userid:
           type: integer
         item_title:
           type: string
+          description: Title of the Resource being booked
         color:
           type: string
         fullname:

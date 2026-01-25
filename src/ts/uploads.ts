@@ -103,7 +103,7 @@ const clickHandler = async (event: Event) => {
     const response = await fetch(`app/download.php?storage=${el.dataset.storage}&f=${el.dataset.path}`);
     const plainTextContentDiv = document.getElementById('plainTextContentDiv');
     if (el.dataset.ext === 'md') {
-      plainTextContentDiv.innerHTML = DOMPurify.sanitize(await marked(await response.text()));
+      plainTextContentDiv.innerHTML = DOMPurify.sanitize(await marked(await response.text()), { USE_PROFILES: { html: true }, FORBID_TAGS: ['style', 'script', 'iframe', 'form'] });
     } else if (el.dataset.ext === 'json') {
       const preBlock = document.createElement('pre');
       preBlock.classList.add('language-json');

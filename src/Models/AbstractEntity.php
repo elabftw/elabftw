@@ -245,13 +245,23 @@ abstract class AbstractEntity extends AbstractRest
                     if (is_string($tags)) {
                         $tags = array($tags);
                     }
+                    // for backward compatibility, see if there is a base param in the json and use that, and fallback on default if not
+                    $canreadBase = $this->getCanBaseFromJson($reqBody['canread'], BasePermissions::from($this->Users->userData['default_read_base']));
+                    $canwriteBase = $this->getCanBaseFromJson($reqBody['canwrite'], BasePermissions::from($this->Users->userData['default_write_base']));
+                    // now override this with the modern canread_base param if it's sent
+                    if (array_key_exists('canread_base', $reqBody)) {
+                        $canreadBase = BasePermissions::tryFrom((int) ($reqBody['canread_base'])) ?? throw new ImproperActionException('Invalid canread_base parameter');
+                    }
+                    if (array_key_exists('canwrite_base', $reqBody)) {
+                        $canwriteBase = BasePermissions::tryFrom((int) ($reqBody['canwrite_base'])) ?? throw new ImproperActionException('Invalid canwrite_base parameter');
+                    }
                     return $this->create(
                         body: $reqBody['body'] ?? null,
                         title: $reqBody['title'] ?? null,
-                        canreadBase: BasePermissions::tryFrom((int) ($reqBody['canread_base'] ?? 0)),
-                        canwriteBase: BasePermissions::tryFrom((int) ($reqBody['canwrite_base'] ?? 0)),
-                        canread: $reqBody['canread'] ?? null,
-                        canwrite: $reqBody['canwrite'] ?? null,
+                        canreadBase: $canreadBase,
+                        canwriteBase: $canwriteBase,
+                        canread: $reqBody['canread'] ?? $this->Users->userData['default_read'],
+                        canwrite: $reqBody['canwrite'] ?? $this->Users->userData['default_write'],
                         canreadIsImmutable: (bool) ($reqBody['canread_is_immutable'] ?? false),
                         canwriteIsImmutable: (bool) ($reqBody['canwrite_is_immutable'] ?? false),
                         tags: $tags ?? array(),
@@ -1090,19 +1100,16 @@ abstract class AbstractEntity extends AbstractRest
      * JSON with base key. It allows extracting the base param from that JSON.
      * Base permission is now in a dedicated parameter.
      */
-    protected function getCanBaseFromJson(?string $can, ?BasePermissions $base): ?BasePermissions
+    protected function getCanBaseFromJson(?string $can, BasePermissions $default): BasePermissions
     {
-        if ($base !== null) {
-            return $base;
-        }
         if ($can === null) {
-            return null;
+            return $default;
         }
         $decoded = json_decode($can, true, 3);
-        if ($base === null && array_key_exists('base', $decoded)) {
-            return BasePermissions::tryFrom($decoded['base'] ?? array());
+        if (array_key_exists('base', $decoded)) {
+            return BasePermissions::tryFrom($decoded['base']) ?? $default;
         }
-        return null;
+        return $default;
     }
 
     // Archive a normal entity, Unarchive an archived entity.

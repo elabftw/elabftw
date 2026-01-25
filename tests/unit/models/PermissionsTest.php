@@ -29,14 +29,14 @@ class PermissionsTest extends \PHPUnit\Framework\TestCase
         $expId = $alphaExp->postAction(Action::Create, array());
         $alphaExp->setId($expId);
         // start by giving it wide permissions
-        $alphaExp->patch(Action::Update, array('canread' => BasePermissions::Full->toJson()));
+        $alphaExp->patch(Action::Update, array('canread_base' => BasePermissions::Full->value));
         // and check if user in bravo can see it
         $bravoExp = new Experiments($userInBravo);
         $bravoExp->setId($expId);
         $this->assertIsArray($bravoExp->readOne());
 
         // reduce to organization, should still be visible to bravo user
-        $alphaExp->patch(Action::Update, array('canread' => BasePermissions::Organization->toJson()));
+        $alphaExp->patch(Action::Update, array('canread_base' => BasePermissions::Organization->value));
         $this->assertIsArray($bravoExp->readOne());
 
         // set base to Team but add bravo team in teams array so it's readable again
@@ -52,7 +52,11 @@ class PermissionsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($bravoExp->readOne());
 
         // reduce to team only, is not readable anymore by user from bravo
-        $alphaExp->patch(Action::Update, array('canread' => BasePermissions::Team->toJson()));
+        $alphaExp->patch(Action::Update, array('canread_base' => BasePermissions::Team->value));
+        // and remove bravo from list of teams
+        $perm = json_decode(BasePermissions::Team->toJson(), true);
+        $perm['teams'] = array();
+        $alphaExp->patch(Action::Update, array('canread' => json_encode($perm)));
         $this->expectException(UnauthorizedException::class);
         $bravoExp->readOne();
     }

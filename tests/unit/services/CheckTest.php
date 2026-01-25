@@ -115,9 +115,9 @@ class CheckTest extends \PHPUnit\Framework\TestCase
             'allow_permission_useronly' => '0',
         ));
         // Team is not in allowed list
-        $json = BasePermissions::Team->toJson();
+        $base = BasePermissions::Team;
         $this->expectException(UnprocessableContentException::class);
-        Check::visibility($json);
+        Check::basePermission($base->value);
     }
 
     public function testVisibilityBaseAllowed(): void
@@ -130,7 +130,7 @@ class CheckTest extends \PHPUnit\Framework\TestCase
             'allow_permission_full' => '1',
             'allow_permission_useronly' => '1',
         ));
-        $json = BasePermissions::Team->toJson();
-        $this->assertEquals($json, Check::visibility($json));
+        $base = BasePermissions::Team;
+        $this->assertEquals($base, Check::basePermission($base->value));
     }
 }

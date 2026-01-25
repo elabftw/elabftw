@@ -46,7 +46,7 @@ final class Items extends AbstractConcreteEntity
         ?string $title = null,
         ?string $body = null,
         ?DateTimeImmutable $date = null,
-        ?BasePermissions $canreadBase = BasePermissions::User,
+        ?BasePermissions $canreadBase = BasePermissions::Team,
         ?BasePermissions $canwriteBase = BasePermissions::User,
         ?string $canread = null,
         ?string $canwrite = null,
@@ -61,25 +61,23 @@ final class Items extends AbstractConcreteEntity
         int $rating = 0,
         BodyContentType $contentType = BodyContentType::Html,
         // specific to Items
-        ?string $canbook = '',
+        ?string $canbook = null,
+        ?BasePermissions $canbookBase = BasePermissions::Team,
     ): int {
         $title = Filter::title($title ?? _('Untitled'));
         $date ??= new DateTimeImmutable();
         $body = Filter::body($body);
-        // this is for backward compatibility only and should be null in modern cases
-        $canreadBase = $this->getCanBaseFromJson($canread, $canreadBase);
-        $canwriteBase = $this->getCanBaseFromJson($canwrite, $canwriteBase);
-
-        $canreadBase ??= BasePermissions::tryFrom($this->Users->userData['default_read_base']) ?? BasePermissions::Team;
-        $canwriteBase ??= BasePermissions::tryFrom($this->Users->userData['default_write_base']) ?? BasePermissions::User;
+        $canbookBase ??= BasePermissions::Team;
         $canread ??= BasePermissions::Team->toJson();
         $canwrite ??= BasePermissions::Team->toJson();
-        $canbook = $canread;
+        $canbook ??= $canread;
+        $canreadBase ??= BasePermissions::Team;
+        $canwriteBase ??= BasePermissions::User;
         // figure out the custom id
         $customId ??= $this->getNextCustomId($category);
 
-        $sql = 'INSERT INTO items(team, title, date, status, body, userid, category, elabid, canread_base, canwrite_base, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canbook, metadata, custom_id, content_type, rating, hide_main_text)
-            VALUES(:team, :title, :date, :status, :body, :userid, :category, :elabid, :canread_base, :canwrite_base, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canbook, :metadata, :custom_id, :content_type, :rating, :hide_main_text)';
+        $sql = 'INSERT INTO items(team, title, date, status, body, userid, category, elabid, canread_base, canwrite_base, canbook_base, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canbook, metadata, custom_id, content_type, rating, hide_main_text)
+            VALUES(:team, :title, :date, :status, :body, :userid, :category, :elabid, :canread_base, :canwrite_base, :canbook_base, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canbook, :metadata, :custom_id, :content_type, :rating, :hide_main_text)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindParam(':title', $title);
@@ -91,6 +89,7 @@ final class Items extends AbstractConcreteEntity
         $req->bindValue(':elabid', Tools::generateElabid());
         $req->bindValue(':canread_base', $canreadBase->value, PDO::PARAM_INT);
         $req->bindValue(':canwrite_base', $canwriteBase->value, PDO::PARAM_INT);
+        $req->bindValue(':canbook_base', $canbookBase->value, PDO::PARAM_INT);
         $req->bindParam(':canread', $canread);
         $req->bindParam(':canwrite', $canwrite);
         $req->bindParam(':canread_is_immutable', $canreadIsImmutable, PDO::PARAM_INT);

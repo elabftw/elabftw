@@ -39,7 +39,7 @@ final class Templates extends AbstractTemplateEntity
         ?string $title = null,
         ?string $body = null,
         ?DateTimeImmutable $date = null,
-        ?BasePermissions $canreadBase = BasePermissions::User,
+        ?BasePermissions $canreadBase = BasePermissions::Team,
         ?BasePermissions $canwriteBase = BasePermissions::User,
         ?string $canread = null,
         ?string $canwrite = null,
@@ -55,22 +55,10 @@ final class Templates extends AbstractTemplateEntity
         BodyContentType $contentType = BodyContentType::Html,
     ): int {
         $title = Filter::title($title ?? _('Untitled'));
-
-        // CANREAD/CANWRITE
-        // this is for backward compatibility only and should be null in modern cases
-        $canreadBase = $this->getCanBaseFromJson($canread, $canreadBase);
-        $canwriteBase = $this->getCanBaseFromJson($canwrite, $canwriteBase);
-
-        if (isset($this->Users->userData['default_read']) && $canread === null) {
-            $canread = $this->Users->userData['default_read'];
-        }
-        if (isset($this->Users->userData['default_write']) && $canwrite === null) {
-            $canwrite = $this->Users->userData['default_write'];
-        }
-        $canreadBase ??= BasePermissions::tryFrom($this->Users->userData['default_read_base']) ?? BasePermissions::Team;
-        $canwriteBase ??= BasePermissions::tryFrom($this->Users->userData['default_write_base']) ?? BasePermissions::User;
         $canread ??= BasePermissions::Team->toJson();
         $canwrite ??= BasePermissions::User->toJson();
+        $canreadBase ??= BasePermissions::Team;
+        $canwriteBase ??= BasePermissions::User;
 
         $sql = 'INSERT INTO experiments_templates(team, title, body, userid, category, status, metadata, canread_base, canwrite_base, canread, canwrite, canread_target, canwrite_target, content_type, rating, canread_is_immutable, canwrite_is_immutable, hide_main_text)
             VALUES(:team, :title, :body, :userid, :category, :status, :metadata, :canread_base, :canwrite_base, :canread, :canwrite, :canread_target, :canwrite_target, :content_type, :rating, :canread_is_immutable, :canwrite_is_immutable, :hide_main_text)';

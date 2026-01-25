@@ -642,7 +642,7 @@ CREATE TABLE `items` (
   `canwrite` JSON NOT NULL,
   `canread_is_immutable` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `canwrite_is_immutable` TINYINT UNSIGNED NOT NULL DEFAULT 0,
-  `canbook_base` TINYINT UNSIGNED NOT NULL DEFAULT 20,
+  `canbook_base` TINYINT UNSIGNED NOT NULL DEFAULT 30,
   `canbook` JSON NOT NULL,
   `content_type` tinyint NOT NULL DEFAULT 1,
   `available` tinyint UNSIGNED NOT NULL DEFAULT 1,

@@ -41,7 +41,7 @@ final class Experiments extends AbstractConcreteEntity
         ?string $title = null,
         ?string $body = null,
         ?DateTimeImmutable $date = null,
-        ?BasePermissions $canreadBase = BasePermissions::User,
+        ?BasePermissions $canreadBase = BasePermissions::Team,
         ?BasePermissions $canwriteBase = BasePermissions::User,
         ?string $canread = null,
         ?string $canwrite = null,
@@ -56,14 +56,10 @@ final class Experiments extends AbstractConcreteEntity
         int $rating = 0,
         BodyContentType $contentType = BodyContentType::Html,
     ): int {
-        // this is for backward compatibility only and should be null in modern cases
-        $canreadBase = $this->getCanBaseFromJson($canread, $canreadBase);
-        $canwriteBase = $this->getCanBaseFromJson($canwrite, $canwriteBase);
-
-        $canreadBase ??= BasePermissions::tryFrom($this->Users->userData['default_read_base']) ?? BasePermissions::Team;
-        $canwriteBase ??= BasePermissions::tryFrom($this->Users->userData['default_write_base']) ?? BasePermissions::User;
-        $canread ??= $this->Users->userData['default_read'] ?? BasePermissions::Team->toJson();
-        $canwrite ??= $this->Users->userData['default_write'] ?? BasePermissions::User->toJson();
+        $canread ??= BasePermissions::Team->toJson();
+        $canwrite ??= BasePermissions::User->toJson();
+        $canreadBase ??= BasePermissions::Team;
+        $canwriteBase ??= BasePermissions::User;
 
         // defaults
         $title = Filter::title($title ?? _('Untitled'));

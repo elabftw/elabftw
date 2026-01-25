@@ -82,11 +82,11 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(State::Normal->value, $exp['state']);
         $this->Experiments->destroy();
         $Templates = new Templates($this->Users);
-        $Templates->create(title: 'my template');
-        $new = $this->Experiments->createFromTemplate(1);
+        $tpl = $Templates->create(title: 'my template');
+        $new = $this->Experiments->createFromTemplate($tpl);
         $this->assertTrue((bool) Check::id($new));
-        $this->Experiments = new Experiments($this->Users, $new);
-        $this->Experiments->destroy();
+        $newExp = new Experiments($this->Users, $new);
+        $this->assertTrue($newExp->destroy());
     }
 
     public function testSetId(): void

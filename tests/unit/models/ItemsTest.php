@@ -101,7 +101,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $user = $this->getRandomUserInTeam(1);
         $Items = $this->makeItemFromImmutableTemplateFor($user);
         $this->expectException(UnprocessableContentException::class);
-        $Items->patch(Action::Update, array('canread_is_immutable' => 1));
+        $Items->patch(Action::Update, array('canread_is_immutable' => 0));
     }
 
     public function testRead(): void
@@ -236,8 +236,10 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $ItemsTypes = new ItemsTypes($user);
         $templateId = $ItemsTypes->create(title: 'A resource template');
         $ItemsTypes->setId($templateId);
-        $ItemsTypes->patch(Action::Update, array('canread_is_immutable' => 1, 'canread' => BasePermissions::Team->toJson()));
-        $newId = $this->Items->createFromTemplate($templateId);
-        return new Items($user, $newId);
+        $ItemsTypes->patch(Action::Update, array('canread_is_immutable' => 1));
+        $Items = new Items($user);
+        $newId = $Items->createFromTemplate($templateId);
+        $Items->setId($newId);
+        return $Items;
     }
 }

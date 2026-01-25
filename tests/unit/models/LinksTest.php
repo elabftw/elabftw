@@ -218,6 +218,7 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         $Experiments = $this->getFreshExperiment();
         $ExperimentAId = $Experiments->create(
             title: 'Experiment A',
+            canreadBase: BasePermissions::Organization,
             canread: BasePermissions::Organization->toJson(),
         );
 

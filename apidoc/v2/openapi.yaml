@@ -1539,6 +1539,18 @@ components:
       properties:
         is_bookable:
           type: integer
+        canbook_base:
+          type: number
+          description: |
+            Base permission for write access:
+              - 10: Owner only
+              - 20: Owner + Admins
+              - 30: Team members
+              - 40: Everyone with an account
+              - 50: Everyone including anonymous users
+          example: 20
+          default: 30
+          enum: [10, 20, 30, 40, 50]
         canbook:
           type: string
         book_max_minutes:

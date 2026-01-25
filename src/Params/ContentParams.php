@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Params;
 
 use BackedEnum;
-use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
@@ -82,8 +81,7 @@ class ContentParams implements ContentParamsInterface
 
     protected function getCanBase(): int
     {
-        $base = BasePermissions::tryFrom($this->asInt()) ?? throw new ImproperActionException('Invalid value for base permission.');
-        return $base->value;
+        return Check::basePermission($this->asInt())->value;
     }
 
     protected function getState(): int

@@ -223,6 +223,12 @@ if (isSafari() && !isDismissedSafari) {
 }
 // END SAFARI DETECTION
 
+// Log out message to close browser
+const afterLogOut = window.location.search;
+if (afterLogOut === '?after_logout=1') {
+  document.getElementById('logOutMsg').removeAttribute('hidden');
+}
+
 // Listen for malleable columns
 new Malle({
   onEdit: (original, _, input) => {

@@ -31,6 +31,10 @@ require_once 'init.inc.php';
 
 $redirectUrl = '/login.php';
 
+if ($App->Request->query->get('after_logout')) {
+    $redirectUrl .= '?after_logout=1';
+}
+
 $destroySession = function () use ($App): void {
     if ($App->Users instanceof AuthenticatedUser) {
         $App->Users->invalidateToken();

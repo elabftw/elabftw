@@ -236,7 +236,7 @@
 
             {% endif %}
             <div class='dropdown-divider'></div>
-            <a class='dropdown-item' href='#' data-action='logout'><i class='fas fa-sign-out-alt fa-fw'></i> {{ 'Logout'|trans }}</a>
+            <a class='dropdown-item' href='/app/logout.php?after_logout=1' data-action='logout'><i class='fas fa-sign-out-alt fa-fw'></i> {{ 'Logout'|trans }}</a>
           </div>
         </div>
      </div>
@@ -268,6 +268,9 @@
     {{ 'Warning: you are using an unsupported browser known to cause issues (Safari). Please use a supported browser (see %sdocumentation%s).'|trans|format("<a class='external-link' target='_blank' href='https://doc.elabftw.net/faq.html#requirements-for-the-clients-users'>", "</a>")|msg('warning', true, 'safari_warning_v1') }}
 </div>
 
+<div id='logOutMsg' hidden>
+    {{ 'You have been logged out. Please close your browser to clear cached pages and prevent access to previous content'|trans|msg('ok', true, 'logout_msg') }}
+</div>
 <noscript>{# show warning if javascript is disabled #}
     <div class='alert alert-danger'>
         <p class='font-weight-bold'>Javascript is disabled. Please enable Javascript to view eLabFTW in all its glory.</p>

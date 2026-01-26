@@ -76,15 +76,11 @@ SET
   canwrite_target = JSON_REMOVE(canwrite_target, '$.base');
 
 CREATE INDEX idx_experiments_canread_base        ON experiments (canread_base);
-CREATE INDEX idx_experiments_canwrite_base       ON experiments (canwrite_base);
 
 CREATE INDEX idx_experiments_tmpl_canread_base   ON experiments_templates (canread_base);
-CREATE INDEX idx_experiments_tmpl_canwrite_base  ON experiments_templates (canwrite_base);
 
 CREATE INDEX idx_items_canread_base              ON items (canread_base);
 CREATE INDEX idx_items_canbook_base              ON items (canbook_base);
-CREATE INDEX idx_items_canwrite_base             ON items (canwrite_base);
 
 CREATE INDEX idx_items_types_canread_base        ON items_types (canread_base);
 CREATE INDEX idx_items_types_canbook_base        ON items_types (canbook_base);
-CREATE INDEX idx_items_types_canwrite_base       ON items_types (canwrite_base);

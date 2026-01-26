@@ -24,18 +24,14 @@ SET
 
 -- drop indexes using DropIdx procedure (if they exist)
 CALL DropIdx('experiments',            'idx_experiments_canread_base');
-CALL DropIdx('experiments',            'idx_experiments_canwrite_base');
 
 CALL DropIdx('experiments_templates',  'idx_experiments_tmpl_canread_base');
-CALL DropIdx('experiments_templates',  'idx_experiments_tmpl_canwrite_base');
 
 CALL DropIdx('items',                  'idx_items_canread_base');
 CALL DropIdx('items',                  'idx_items_canbook_base');
-CALL DropIdx('items',                  'idx_items_canwrite_base');
 
 CALL DropIdx('items_types',            'idx_items_types_canread_base');
 CALL DropIdx('items_types',            'idx_items_types_canbook_base');
-CALL DropIdx('items_types',            'idx_items_types_canwrite_base');
 
 -- drop columns
 CALL DropColumn('experiments',           'canread_base');

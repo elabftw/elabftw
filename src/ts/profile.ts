@@ -114,7 +114,6 @@ if (window.location.pathname === '/profile.php') {
     // now submit the form
     const form = event.target as HTMLFormElement;
     const formData = new FormData(form);
-    console.log(formData);
     // prevent the browser from redirecting us
     formData.set('extraParam', 'noRedirect');
     if (formData.get('entity_type') === 'null') {

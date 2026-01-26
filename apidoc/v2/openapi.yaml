@@ -1920,17 +1920,9 @@ components:
               type: integer
               default: 0
             default_read:
-                type: number
-                nullable: true
-                description: |
-                  Default permission for read access:
-                    - 10: Owner only
-                    - 20: Owner + Admins
-                    - 30: Team members
-                    - 40: Everyone with an account
-                    - 50: Everyone including anonymous users
-                example: 20
-                enum: [10, 20, 30, 40, 50]
+                type: string
+                example: '{"teams": [4], "users": [42,32], "teamgroups": [1,5]}'
+                default: '{"teams": [], "users": [], "teamgroups": []}'
             default_read_base:
                 type: number
                 nullable: true
@@ -1947,17 +1939,9 @@ components:
                 type: string
                 description: Default read base permission as human readable value
             default_write:
-                type: number
-                nullable: true
-                description: |
-                  Default permission for write access:
-                    - 10: Owner only
-                    - 20: Owner + Admins
-                    - 30: Team members
-                    - 40: Everyone with an account
-                    - 50: Everyone including anonymous users
-                example: 20
-                enum: [10, 20, 30, 40, 50]
+                type: string
+                example: '{"teams": [4], "users": [42,32], "teamgroups": [1,5]}'
+                default: '{"teams": [], "users": [], "teamgroups": []}'
             default_write_base:
                 type: number
                 nullable: true

@@ -53,7 +53,7 @@ SET
 UPDATE users
 SET
   default_read_base  = COALESCE(CAST(JSON_EXTRACT(default_read,  '$.base') AS UNSIGNED), 30),
-  default_write_base = COALESCE(CAST(JSON_EXTRACT(default_write, '$.base') AS UNSIGNED), 20),
+  default_write_base = COALESCE(CAST(JSON_EXTRACT(default_write, '$.base') AS UNSIGNED), 20);
 
 -- now remove the base from json
 UPDATE experiments
@@ -83,8 +83,8 @@ SET
 
 UPDATE users
 SET
-  canread  = JSON_REMOVE(default_read,  '$.base'),
-  canwrite = JSON_REMOVE(default_write, '$.base'),
+  default_read = JSON_REMOVE(default_read,  '$.base'),
+  default_write = JSON_REMOVE(default_write, '$.base');
 
 CREATE INDEX idx_experiments_canread_base        ON experiments (canread_base);
 

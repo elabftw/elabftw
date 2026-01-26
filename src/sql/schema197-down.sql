@@ -22,6 +22,11 @@ SET
   canread  = JSON_SET(canread,  '$.base', canread_base),
   canwrite = JSON_SET(canwrite, '$.base', canwrite_base);
 
+UPDATE users
+SET
+  default_read  = JSON_SET(default_read,  '$.base', default_read_base),
+  default_write = JSON_SET(default_write, '$.base', default_write_base);
+
 -- drop indexes using DropIdx procedure (if they exist)
 CALL DropIdx('experiments',            'idx_experiments_canread_base');
 

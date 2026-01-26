@@ -39,12 +39,12 @@ final class Templates extends AbstractTemplateEntity
         ?string $title = null,
         ?string $body = null,
         ?DateTimeImmutable $date = null,
-        ?BasePermissions $canreadBase = BasePermissions::Team,
-        ?BasePermissions $canwriteBase = BasePermissions::User,
-        ?string $canread = null,
-        ?string $canwrite = null,
-        ?bool $canreadIsImmutable = false,
-        ?bool $canwriteIsImmutable = false,
+        BasePermissions $canreadBase = BasePermissions::Team,
+        BasePermissions $canwriteBase = BasePermissions::User,
+        string $canread = self::EMPTY_CAN_JSON,
+        string $canwrite = self::EMPTY_CAN_JSON,
+        bool $canreadIsImmutable = false,
+        bool $canwriteIsImmutable = false,
         array $tags = array(),
         ?int $category = null,
         ?int $status = null,
@@ -55,10 +55,10 @@ final class Templates extends AbstractTemplateEntity
         BodyContentType $contentType = BodyContentType::Html,
     ): int {
         $title = Filter::title($title ?? _('Untitled'));
-        $canread ??= BasePermissions::Team->toJson();
-        $canwrite ??= BasePermissions::User->toJson();
-        $canreadBase ??= BasePermissions::Team;
-        $canwriteBase ??= BasePermissions::User;
+        $body = Filter::body($body);
+        if (empty($body)) {
+            $body = null;
+        }
 
         $sql = 'INSERT INTO experiments_templates(team, title, body, userid, category, status, metadata, canread_base, canwrite_base, canread, canwrite, canread_target, canwrite_target, content_type, rating, canread_is_immutable, canwrite_is_immutable, hide_main_text)
             VALUES(:team, :title, :body, :userid, :category, :status, :metadata, :canread_base, :canwrite_base, :canread, :canwrite, :canread_target, :canwrite_target, :content_type, :rating, :canread_is_immutable, :canwrite_is_immutable, :hide_main_text)';

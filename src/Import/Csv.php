@@ -17,6 +17,7 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Users\Users;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -29,14 +30,14 @@ final class Csv extends AbstractCsv
 {
     public function __construct(
         protected Users $requester,
-        protected BasePermissions $canreadBase,
-        protected BasePermissions $canwriteBase,
-        protected string $canread,
-        protected string $canwrite,
         protected UploadedFile $UploadedFile,
         protected LoggerInterface $logger,
         protected EntityType $entityType = EntityType::Items,
         protected ?int $category = null,
+        protected BasePermissions $canreadBase = BasePermissions::Team,
+        protected BasePermissions $canwriteBase = BasePermissions::User,
+        protected string $canread = AbstractEntity::EMPTY_CAN_JSON,
+        protected string $canwrite = AbstractEntity::EMPTY_CAN_JSON,
     ) {
         parent::__construct(
             $requester,

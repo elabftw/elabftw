@@ -167,7 +167,7 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         $Experiments = $this->getFreshExperiment();
         $ExperimentAId = $Experiments->create(
             title: 'Experiment A',
-            canread: BasePermissions::Team->toJson(),
+            canreadBase: BasePermissions::Team,
         );
 
         // User 1 creates experiment B that is visible only to themself
@@ -175,7 +175,6 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         $ExperimentBId = $Experiments->create(
             title: $secretTitle,
             canreadBase: BasePermissions::User,
-            canread: BasePermissions::User->toJson(),
         );
 
         // Experiment A links to experiment B
@@ -188,7 +187,6 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         $ExperimentCId = $Experiments->create(
             title: 'Experiment C',
             canreadBase: BasePermissions::Team,
-            canread: BasePermissions::Team->toJson(),
         );
         $Experiments->setId($ExperimentCId);
         $Experiments->ExperimentsLinks->setId($ExperimentAId);
@@ -219,7 +217,6 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         $ExperimentAId = $Experiments->create(
             title: 'Experiment A',
             canreadBase: BasePermissions::Organization,
-            canread: BasePermissions::Organization->toJson(),
         );
 
         // User 1 creates experiment B that is visible to their team
@@ -227,7 +224,6 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         $ExperimentBId = $Experiments->create(
             title: $secretTitle,
             canreadBase: BasePermissions::Team,
-            canread: BasePermissions::Team->toJson(),
         );
 
         // Experiment A links to experiment B
@@ -240,7 +236,6 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         $ExperimentCId = $Experiments->create(
             title: 'Experiment C',
             canreadBase: BasePermissions::Organization,
-            canread: BasePermissions::Organization->toJson(),
         );
         $Experiments->setId($ExperimentCId);
         $Experiments->ExperimentsLinks->setId($ExperimentAId);
@@ -291,17 +286,16 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         // insert an ItemsType with the exact same ID as ItemB.
         // We must insert manually: create() cannot create entities with a preassigned ID.
         $User = $this->getRandomUserInTeam(1);
-        $defaultPermissions = BasePermissions::Team->toJson();
         $req = $this->Db->prepare('INSERT INTO items_types (id, title, userid, team, canread, canwrite, canbook, canread_target, canwrite_target) VALUES (:id, :title, :userid, :team, :canread, :canwrite, :canbook, :canread_target, :canwrite_target)');
         $req->bindValue(':id', $ItemB->id, PDO::PARAM_INT);
         $req->bindValue(':title', 'Template X');
         $req->bindValue(':userid', $User->userData['userid'], PDO::PARAM_INT);
         $req->bindValue(':team', $User->team, PDO::PARAM_INT);
-        $req->bindValue(':canread', $defaultPermissions);
-        $req->bindValue(':canwrite', $defaultPermissions);
-        $req->bindValue(':canbook', $defaultPermissions);
-        $req->bindValue(':canread_target', $defaultPermissions);
-        $req->bindValue(':canwrite_target', $defaultPermissions);
+        $req->bindValue(':canread', AbstractEntity::EMPTY_CAN_JSON);
+        $req->bindValue(':canwrite', AbstractEntity::EMPTY_CAN_JSON);
+        $req->bindValue(':canbook', AbstractEntity::EMPTY_CAN_JSON);
+        $req->bindValue(':canread_target', AbstractEntity::EMPTY_CAN_JSON);
+        $req->bindValue(':canwrite_target', AbstractEntity::EMPTY_CAN_JSON);
         $req->execute();
 
         $ItemsTypes = new ItemsTypes($User, $ItemB->id);

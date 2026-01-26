@@ -39,12 +39,12 @@ final class ItemsTypes extends AbstractTemplateEntity
         ?string $title = null,
         ?string $body = null,
         ?DateTimeImmutable $date = null,
-        ?BasePermissions $canreadBase = BasePermissions::Team,
-        ?BasePermissions $canwriteBase = BasePermissions::User,
-        ?string $canread = null,
-        ?string $canwrite = null,
-        ?bool $canreadIsImmutable = false,
-        ?bool $canwriteIsImmutable = false,
+        BasePermissions $canreadBase = BasePermissions::Team,
+        BasePermissions $canwriteBase = BasePermissions::User,
+        string $canread = self::EMPTY_CAN_JSON,
+        string $canwrite = self::EMPTY_CAN_JSON,
+        bool $canreadIsImmutable = false,
+        bool $canwriteIsImmutable = false,
         array $tags = array(),
         ?int $category = null,
         ?int $status = null,
@@ -55,11 +55,10 @@ final class ItemsTypes extends AbstractTemplateEntity
         BodyContentType $contentType = BodyContentType::Html,
     ): int {
         $title = Filter::title($title ?? _('Default'));
-
-        $canread ??= BasePermissions::Team->toJson();
-        $canwrite ??= BasePermissions::User->toJson();
-        $canreadBase ??= BasePermissions::Team;
-        $canwriteBase ??= BasePermissions::Team;
+        $body = Filter::body($body);
+        if (empty($body)) {
+            $body = null;
+        }
 
         $sql = 'INSERT INTO items_types(userid, title, body, team, canread_base, canwrite_base, canread, canwrite, canbook, canread_is_immutable, canwrite_is_immutable, canread_target, canwrite_target, category, content_type, status, rating, metadata, hide_main_text)
             VALUES(:userid, :title, :body, :team, :canread_base, :canwrite_base, :canread, :canwrite, :canbook, :canread_is_immutable, :canwrite_is_immutable, :canread_target, :canwrite_target, :category, :content_type, :status, :rating, :metadata, :hide_main_text)';

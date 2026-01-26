@@ -41,10 +41,10 @@ final class Experiments extends AbstractConcreteEntity
         ?string $title = null,
         ?string $body = null,
         ?DateTimeImmutable $date = null,
-        ?BasePermissions $canreadBase = BasePermissions::Team,
-        ?BasePermissions $canwriteBase = BasePermissions::User,
-        ?string $canread = null,
-        ?string $canwrite = null,
+        BasePermissions $canreadBase = BasePermissions::Team,
+        BasePermissions $canwriteBase = BasePermissions::User,
+        string $canread = self::EMPTY_CAN_JSON,
+        string $canwrite = self::EMPTY_CAN_JSON,
         ?bool $canreadIsImmutable = false,
         ?bool $canwriteIsImmutable = false,
         array $tags = array(),
@@ -56,11 +56,6 @@ final class Experiments extends AbstractConcreteEntity
         int $rating = 0,
         BodyContentType $contentType = BodyContentType::Html,
     ): int {
-        $canread ??= BasePermissions::Team->toJson();
-        $canwrite ??= BasePermissions::User->toJson();
-        $canreadBase ??= BasePermissions::Team;
-        $canwriteBase ??= BasePermissions::User;
-
         // defaults
         $title = Filter::title($title ?? _('Untitled'));
         $date ??= new DateTimeImmutable();

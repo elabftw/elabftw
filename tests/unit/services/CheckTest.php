@@ -16,6 +16,7 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
+use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Users\Users;
 use Elabftw\Models\Config;
 
@@ -54,7 +55,7 @@ class CheckTest extends \PHPUnit\Framework\TestCase
 
     public function testVisibility(): void
     {
-        $this->assertEquals(BasePermissions::Team->toJson(), Check::visibility(BasePermissions::Team->toJson()));
+        $this->assertEquals(AbstractEntity::EMPTY_CAN_JSON, Check::visibility(AbstractEntity::EMPTY_CAN_JSON));
         $this->expectException(ImproperActionException::class);
         Check::visibility('pwet');
     }

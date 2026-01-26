@@ -106,6 +106,8 @@ abstract class AbstractEntity extends AbstractRest
 {
     use EntityTrait;
 
+    public const string EMPTY_CAN_JSON = '{"teams": [], "teamgroups": [], "users": []}';
+
     public Comments $Comments;
 
     public AbstractExperimentsLinks $ExperimentsLinks;
@@ -163,12 +165,12 @@ abstract class AbstractEntity extends AbstractRest
         ?string $title = null,
         ?string $body = null,
         ?DateTimeImmutable $date = null,
-        ?BasePermissions $canreadBase = BasePermissions::User,
-        ?BasePermissions $canwriteBase = BasePermissions::User,
-        ?string $canread = null,
-        ?string $canwrite = null,
-        ?bool $canreadIsImmutable = false,
-        ?bool $canwriteIsImmutable = false,
+        BasePermissions $canreadBase = BasePermissions::User,
+        BasePermissions $canwriteBase = BasePermissions::User,
+        string $canread = self::EMPTY_CAN_JSON,
+        string $canwrite = self::EMPTY_CAN_JSON,
+        bool $canreadIsImmutable = false,
+        bool $canwriteIsImmutable = false,
         array $tags = array(),
         ?int $category = null,
         ?int $status = null,

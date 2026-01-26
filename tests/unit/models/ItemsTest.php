@@ -83,7 +83,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $user = $this->getRandomUserInTeam(1);
         $Items = $this->makeItemFromImmutableTemplateFor($user);
         $this->expectException(UnprocessableContentException::class);
-        $Items->patch(Action::Update, array('canread' => BasePermissions::UserOnly->toJson()));
+        $Items->patch(Action::Update, array('canread_base' => BasePermissions::UserOnly->value));
     }
 
     public function testAdminCanBypassImmutablePermissions(): void

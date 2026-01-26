@@ -69,16 +69,16 @@ class Eln extends AbstractZip
 
     public function __construct(
         protected Users $requester,
-        protected BasePermissions $canreadBase,
-        protected BasePermissions $canwriteBase,
-        // TODO nullable and have it in .eln export so it is not lost on import
-        protected string $canread,
-        protected string $canwrite,
         protected UploadedFile $UploadedFile,
         protected FilesystemOperator $fs,
         protected LoggerInterface $logger,
         protected ?EntityType $entityType = null,
         protected ?int $category = null,
+        protected BasePermissions $canreadBase = BasePermissions::Team,
+        protected BasePermissions $canwriteBase = BasePermissions::User,
+        // TODO nullable and have it in .eln export so it is not lost on import
+        protected string $canread = AbstractEntity::EMPTY_CAN_JSON,
+        protected string $canwrite = AbstractEntity::EMPTY_CAN_JSON,
         private bool $verifyChecksum = true,
         private bool $checksumErrorSkip = true,
     ) {

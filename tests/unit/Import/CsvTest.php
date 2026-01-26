@@ -44,10 +44,6 @@ class CsvTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Csv(
             new Users(1, 1),
-            BasePermissions::Team,
-            BasePermissions::User,
-            BasePermissions::Team->toJson(),
-            BasePermissions::User->toJson(),
             $uploadedFile,
             $this->logger,
             EntityType::Items,
@@ -69,10 +65,6 @@ class CsvTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Csv(
             new Users(1, 1),
-            BasePermissions::Team,
-            BasePermissions::User,
-            BasePermissions::Team->toJson(),
-            BasePermissions::User->toJson(),
             $uploadedFile,
             $this->logger,
             EntityType::Experiments,
@@ -95,10 +87,6 @@ class CsvTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Csv(
             new Users(1, 1),
-            BasePermissions::Team,
-            BasePermissions::User,
-            BasePermissions::Team->toJson(),
-            BasePermissions::User->toJson(),
             $uploadedFile,
             $this->logger,
             EntityType::Items,
@@ -120,10 +108,6 @@ class CsvTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Csv(
             new Users(1, 1),
-            BasePermissions::Team,
-            BasePermissions::User,
-            BasePermissions::Team->toJson(),
-            BasePermissions::User->toJson(),
             $uploadedFile,
             $this->logger,
             EntityType::Items,
@@ -146,19 +130,15 @@ class CsvTest extends \PHPUnit\Framework\TestCase
 
         // use titi
         $requester = new Users(2, 1);
-        $canread = BasePermissions::Organization;
-        $canwrite = BasePermissions::Team;
         $category = 1;
         $Import = new Csv(
             $requester,
-            BasePermissions::Team,
-            BasePermissions::User,
-            $canread->toJson(),
-            $canwrite->toJson(),
             $uploadedFile,
             $this->logger,
             EntityType::Items,
             category: $category,
+            canreadBase: BasePermissions::Full,
+            canwriteBase: BasePermissions::Full,
         );
         $Import->import();
         $this->assertEquals(13, $Import->getInserted());
@@ -166,11 +146,11 @@ class CsvTest extends \PHPUnit\Framework\TestCase
         // filter on our user
         $query = new InputBag(array('owner' => $requester->userid));
         $last = $Items->readAll(new DisplayParams($requester, EntityType::Items, $query))[0];
+        // now verify values are correct
         $this->assertEquals($requester->userid, $last['userid']);
         $this->assertEquals('Nitric Acid', $last['title']);
-        // only look at base because the order of keys is not guaranteed
-        $this->assertEquals(BasePermissions::Team->value, $last['canread_base']);
-        $this->assertEquals(BasePermissions::User->value, $last['canwrite_base']);
+        $this->assertEquals(BasePermissions::Full->value, $last['canread_base']);
+        $this->assertEquals(BasePermissions::Full->value, $last['canwrite_base']);
         $this->assertEquals($category, $last['category']);
     }
 }

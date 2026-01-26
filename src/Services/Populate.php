@@ -360,11 +360,11 @@ final class Populate
 
         // we will randomly pick from these for canread and canwrite
         $visibilityArr = array(
-            BasePermissions::Full->toJson(),
-            BasePermissions::Organization->toJson(),
-            BasePermissions::Team->toJson(),
-            BasePermissions::User->toJson(),
-            BasePermissions::UserOnly->toJson(),
+            BasePermissions::Full,
+            BasePermissions::Organization,
+            BasePermissions::Team,
+            BasePermissions::User,
+            BasePermissions::UserOnly,
         );
 
         $tagsArr = array(
@@ -425,8 +425,8 @@ final class Populate
             $id = $Entity->create(
                 category: $category,
                 status: $this->faker->randomElement($statusArr)['id'],
-                canread: $this->faker->randomElement($visibilityArr),
-                canwrite: $this->faker->randomElement($visibilityArr),
+                canreadBase: $this->faker->randomElement($visibilityArr),
+                canwriteBase: $this->faker->randomElement($visibilityArr),
                 title: $this->faker->sentence(),
                 date: new DateTimeImmutable($this->faker->dateTimeBetween('-5 years')->format('Ymd')),
                 body: $this->faker->realText(1000),

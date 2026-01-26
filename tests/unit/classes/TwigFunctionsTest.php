@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Enums\BasePermissions;
+use Elabftw\Models\AbstractEntity;
 
 class TwigFunctionsTest extends \PHPUnit\Framework\TestCase
 {
@@ -58,7 +58,7 @@ class TwigFunctionsTest extends \PHPUnit\Framework\TestCase
 
     public function testCanToHuman(): void
     {
-        $this->assertIsArray(TwigFunctions::canToHuman(BasePermissions::User->toJson()));
+        $this->assertIsArray(TwigFunctions::canToHuman(AbstractEntity::EMPTY_CAN_JSON));
     }
 
     public function testEnvAsBool(): void

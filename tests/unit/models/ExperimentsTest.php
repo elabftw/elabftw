@@ -163,13 +163,13 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdateVisibility(): void
     {
-        $matrix = array('canread', 'canwrite');
+        $matrix = array('canread_base', 'canwrite_base');
         foreach ($matrix as $column) {
-            $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::Full->toJson())));
-            $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::Organization->toJson())));
-            $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::Team->toJson())));
-            $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::User->toJson())));
-            $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::UserOnly->toJson())));
+            $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::Full->value)));
+            $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::Organization->value)));
+            $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::Team->value)));
+            $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::User->value)));
+            $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::UserOnly->value)));
         }
     }
 

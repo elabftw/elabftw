@@ -46,12 +46,12 @@ final class Items extends AbstractConcreteEntity
         ?string $title = null,
         ?string $body = null,
         ?DateTimeImmutable $date = null,
-        ?BasePermissions $canreadBase = BasePermissions::Team,
-        ?BasePermissions $canwriteBase = BasePermissions::User,
-        ?string $canread = null,
-        ?string $canwrite = null,
-        ?bool $canreadIsImmutable = false,
-        ?bool $canwriteIsImmutable = false,
+        BasePermissions $canreadBase = BasePermissions::Team,
+        BasePermissions $canwriteBase = BasePermissions::User,
+        string $canread = self::EMPTY_CAN_JSON,
+        string $canwrite = self::EMPTY_CAN_JSON,
+        bool $canreadIsImmutable = false,
+        bool $canwriteIsImmutable = false,
         array $tags = array(),
         ?int $category = null,
         ?int $status = null,
@@ -61,18 +61,15 @@ final class Items extends AbstractConcreteEntity
         int $rating = 0,
         BodyContentType $contentType = BodyContentType::Html,
         // specific to Items
-        ?string $canbook = null,
-        ?BasePermissions $canbookBase = BasePermissions::Team,
+        string $canbook = self::EMPTY_CAN_JSON,
+        BasePermissions $canbookBase = BasePermissions::Team,
     ): int {
         $title = Filter::title($title ?? _('Untitled'));
         $date ??= new DateTimeImmutable();
         $body = Filter::body($body);
-        $canbookBase ??= BasePermissions::Team;
-        $canread ??= BasePermissions::Team->toJson();
-        $canwrite ??= BasePermissions::Team->toJson();
-        $canbook ??= $canread;
-        $canreadBase ??= BasePermissions::Team;
-        $canwriteBase ??= BasePermissions::User;
+        if (empty($body)) {
+            $body = null;
+        }
         // figure out the custom id
         $customId ??= $this->getNextCustomId($category);
 

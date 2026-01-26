@@ -81,27 +81,23 @@ final class Handler extends AbstractRest
             case 'eln':
                 return new Eln(
                     $this->requester,
-                    $canreadBase,
-                    $canwriteBase,
-                    $canreadBase->toJson(),
-                    $canwriteBase->toJson(),
                     $reqBody['file'],
                     Storage::CACHE->getStorage()->getFs(),
                     $this->logger,
                     EntityType::tryFrom((string) $reqBody['entity_type']), // can be null
                     category: (int) $reqBody['category'],
+                    canreadBase: $canreadBase,
+                    canwriteBase: $canwriteBase,
                 );
             case 'csv':
                 return new Csv(
                     $this->requester,
-                    $canreadBase,
-                    $canwriteBase,
-                    $canreadBase->toJson(),
-                    $canwriteBase->toJson(),
                     $reqBody['file'],
-                    $this->logger,
-                    EntityType::tryFrom((string) $reqBody['entity_type']) ?? EntityType::Items,
+                    logger: $this->logger,
+                    entityType: EntityType::tryFrom((string) $reqBody['entity_type']) ?? EntityType::Items,
                     category: (int) $reqBody['category'],
+                    canreadBase: $canreadBase,
+                    canwriteBase: $canwriteBase,
                 );
             default:
                 throw new ImproperActionException(sprintf(

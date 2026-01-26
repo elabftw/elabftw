@@ -223,12 +223,6 @@ if (isSafari() && !isDismissedSafari) {
 }
 // END SAFARI DETECTION
 
-// Log out message to close browser
-const afterLogOut = window.location.search;
-if (afterLogOut === '?after_logout=1') {
-  document.getElementById('logOutMsg').removeAttribute('hidden');
-}
-
 // Listen for malleable columns
 new Malle({
   onEdit: (original, _, input) => {
@@ -994,7 +988,7 @@ on('toggle-password', (el: HTMLElement) => {
 
 on('logout', () => {
   clearLocalStorage();
-  window.location.href = 'app/logout.php';
+  window.location.href = 'app/logout.php?after_logout=1';
 });
 
 on('ack-notif', (el: HTMLElement) => {

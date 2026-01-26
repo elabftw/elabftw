@@ -336,7 +336,7 @@ final class StorageUnits extends AbstractRest
         $this->canWriteOrExplode();
         return $this->create(
             $reqBody['name'] ?? throw new ImproperActionException('Missing value for "name"'),
-            Filter::intOrNull($reqBody['parent_id']),
+            Filter::intOrNull($reqBody['parent_id'] ?? 0),
         );
     }
 

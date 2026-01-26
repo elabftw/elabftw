@@ -81,6 +81,7 @@ const t = {
     "oc-version-warning": "Hoiatus: praegune OpenCloningi versioon ei ühildu selle eLabFTW versiooniga.",
     "onboarding-email-sent": "Sisseelamismeil(id) saadetakse peagi.",
     "only-a-sysadmin": "Ainult süsteemiadministraator saab seda muuta.",
+    "ownership-transfer": "Your entry has been successfully transferred to the selected user.",
     "please-wait": "Palun oodake…",
     "readonly": "Kirjutuskaitstud",
     "remove": "Eemalda",

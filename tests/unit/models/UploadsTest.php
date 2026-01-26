@@ -128,11 +128,18 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         $id = $this->Entity->Uploads->create(new CreateUploadFromLocalFile('some-file.zip', dirname(__DIR__, 2) . '/_data/importable.zip'));
         $this->Entity->Uploads->setId($id);
         $this->Entity->Uploads->patch(Action::Archive, array());
-        $this->Entity->Uploads->patch(Action::Update, array(
+        $this->assertEquals(State::Archived->value, $this->Entity->Uploads->uploadData['state']);
+        // test patch Archive on already archived -> unarchives
+        $this->Entity->Uploads->patch(Action::Archive, array());
+        $this->assertEquals(State::Normal->value, $this->Entity->Uploads->uploadData['state']);
+        $newOwner = new Users(2, 1);
+        $updated = $this->Entity->Uploads->patch(Action::Update, array(
             'real_name' => 'new real name',
             'comment' => 'new file comment',
             'state' => (string) State::Deleted->value,
+            'userid' => $newOwner->userid,
         ));
+        $this->assertEquals($newOwner->userid, $updated['userid']);
     }
 
     public function testGetApiPath(): void
@@ -215,6 +222,28 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
 
     public function testDestroyAll(): void
     {
-        $this->assertTrue($this->Entity->Uploads->destroyAll());
+        $id = $this->Entity->Uploads->create(new CreateUploadFromLocalFile('some-classic.zip', dirname(__DIR__, 2) . '/_data/importable.zip'));
+        $this->Entity->Uploads->setId($id);
+        $uploads = $this->Entity->Uploads->readAll();
+        $this->assertNotEmpty($uploads);
+        $this->Entity->Uploads->destroyAll();
+        $uploads = $this->Entity->Uploads->readAll();
+        $this->assertEmpty($uploads);
+    }
+
+    public function testRestoreAll(): void
+    {
+        $id = $this->Entity->Uploads->create(new CreateUploadFromLocalFile('some.zip', dirname(__DIR__, 2) . '/_data/importable.zip'));
+        $this->Entity->Uploads->setId($id);
+        $this->assertNotEmpty($this->Entity->Uploads->readAll());
+        $this->Entity->Uploads->destroyAll();
+        $this->assertEmpty($this->Entity->Uploads->readAll());
+        $this->Entity->Uploads->restoreAll();
+        $this->assertNotEmpty($this->Entity->Uploads->readAll());
+        $uploads = $this->Entity->Uploads->readAll();
+        $this->assertNotEmpty($uploads);
+        foreach ($uploads as $upload) {
+            $this->assertEquals(State::Normal->value, $upload['state']);
+        }
     }
 }

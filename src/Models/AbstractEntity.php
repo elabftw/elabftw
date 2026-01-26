@@ -256,8 +256,8 @@ abstract class AbstractEntity extends AbstractRest
                         $canwriteBase = BasePermissions::tryFrom((int) ($reqBody['canwrite_base'])) ?? throw new ImproperActionException('Invalid canwrite_base parameter');
                     }
                     return $this->create(
-                        body: $reqBody['body'] ?? null,
                         title: $reqBody['title'] ?? null,
+                        body: $reqBody['body'] ?? null,
                         canreadBase: $canreadBase,
                         canwriteBase: $canwriteBase,
                         canread: $reqBody['canread'] ?? $this->Users->userData['default_read'],

@@ -239,6 +239,7 @@
           </div>
         </div>
      </div>
+    {% include 'create-new-modal.html' %}
   {% else %} {# not auth #}
     <div class='nav-item ml-auto'>
       <a href='#' class='color-white hl-hover-gray p-2 rounded' data-action='toggle-modal' data-target='selectLanguageModal'>
@@ -247,8 +248,6 @@
     </div>
   {% endif %}
 </nav>
-  {% include 'create-new-modal.html' %}
-
 
 {# SHOW FAVTAGS/TODOLIST PANELS #}
 {% if App.Session.has('is_auth') and not App.Session.has('is_anon') %}

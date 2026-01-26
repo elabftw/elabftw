@@ -253,7 +253,7 @@
       <div>
         {% set rw = 'canread' %}
         {{ include('view-permissions-details.html', {identifier: 'canreaddefaultPermissions', can_base: App.Users.userData.default_read_base_human}) }}
-        {{ include('permissions-edit-modal.html', {ucpPage: true}) }}
+        {{ include('permissions-edit-modal.html', {ucpPage: true, can_base: App.Users.userData.default_read_base}) }}
         <button type='button' aria-labelledby='defaultCanreadSetting' data-action='toggle-modal' data-target='permModal-{{ rw }}defaultPermissions' class='btn p-0 m-0 lh-normal border-0'>
           <i class='fas fa-square-plus fa-2x'></i>
         </button>
@@ -266,7 +266,7 @@
       <div>
         {% set rw = 'canwrite' %}
         {{ include('view-permissions-details.html', {identifier: 'canwritedefaultPermissions', can_base: App.Users.userData.default_write_base_human}) }}
-        {{ include('permissions-edit-modal.html', {ucpPage: true}) }}
+        {{ include('permissions-edit-modal.html', {ucpPage: true, can_base: App.Users.userData.default_write_base}) }}
         <button type='button' aria-labelledby='defaultCanwriteSetting' data-action='toggle-modal' data-target='permModal-{{ rw }}defaultPermissions' class='btn p-0 m-0 lh-normal border-0'>
           <i class='fas fa-square-plus fa-2x'></i>
         </button>

@@ -18,6 +18,7 @@ import {
   escapeExtendedQuery,
   generateMetadataLink,
   handleReloads,
+  getSafeElementById,
   getRandomColor,
   listenTrigger,
   makeSortableGreatAgain,
@@ -654,6 +655,8 @@ on('save-permissions', (el: HTMLElement) => {
       .concat($('#' + el.dataset.identifier + '_select_teamgroups').val() as string[])
       .concat(existingUsers),
   );
+  const baseSelect = getSafeElementById(`${el.dataset.identifier}_select_base`) as HTMLSelectElement;
+  params[baseSelect.name] = baseSelect.value;
   // if we're editing the default read/write permissions for experiments, this data attribute will be set
   if (el.dataset.isUserDefault) {
     // we need to replace canread/canwrite with default_read/default_write for user attribute

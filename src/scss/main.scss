@@ -847,9 +847,9 @@ tr:first-child td {
 }
 
 .side-panel {
-  background: var(--mediumstrong);
+  background: var(--chrome-bg);
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
-  color: var(--mainbackground);
+  color: var(--chrome-fg);
   height: 100%;
   left: 0;
   overflow: hidden;
@@ -859,37 +859,28 @@ tr:first-child td {
   top: 0;
   width: max(24%, 330px);
 
-  hr {
-    background-color: var(--mainbackground);
-  }
-
-  h2,
-  h3,
   .fas,
   .far {
-    color: var(--mainbackground);
+    color: var(--chrome-fg);
   }
 
   .side-panel-item {
     padding: 5px 0 5px 10px;
 
     &.list-group-item {
-      background-color: var(--mediumstrong);
-      border: 0;
+      background-color: var(--chrome-bg);
+      border: 1px solid $medium;
     }
 
     /* Favtags will show up as selected */
     &.selected {
       background-color: var(--primary);
+      color: var(--strongest);
       cursor: initial;
     }
 
     &:hover:not(.selected) {
-      background-color: var(--medium);
-    }
-
-    i {
-      color: var(--secondlevel);
+      background-color: var(--disabled);
     }
 
     .relative-moment {

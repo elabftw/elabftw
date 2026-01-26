@@ -12,7 +12,6 @@
   --highlighted: #ebfbff;
   --superlight: #e6e6e6;
   --firstlevel: #dbdbdb;
-  --disabled: #868585;
   --secondlevel: #bdbdbd;
   --thirdlevel: #6f6f6f;
   --medium: #4d4c4c;
@@ -39,10 +38,11 @@
   --gold: #d4ae75;
   --darkgold: #856404;
 
-  /* Always-dark UI surfaces like navbar */
+  /* Colors that stay the same in both modes (like navbar) */
   --chrome-bg: #2b2b2b;
-  --chrome-fg: #ffffff;
+  --chrome-fg: #fff;
   --chrome-muted: #9aa0a6;
+  --disabled: #888;
 }
 
 .dark-mode {
@@ -51,7 +51,6 @@
   --highlighted: #2a2a2a;
   --superlight: #2d2d2d;
   --firstlevel: #13181c;
-  --disabled: #888;
   --secondlevel: #bdbdbd;
   --thirdlevel: #666;
   --medium: #d8dae0;

@@ -271,6 +271,8 @@ final class Populate
             }
 
             // randomize the entries so they look like they are not added at once
+
+            // ITEMS
             if (isset($team['items'])) {
                 shuffle($team['items']);
                 foreach ($team['items'] as $item) {

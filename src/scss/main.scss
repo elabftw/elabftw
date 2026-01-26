@@ -182,29 +182,6 @@ a:hover,
   vertical-align: text-top;
 }
 
-.underlined {
-  text-decoration: underline !important;
-}
-
-/* LISTS */
-.clean-list {
-  margin: 0;
-  padding: 0;
-}
-
-.group-list {
-  margin: 0;
-}
-
-/* a toolbar button in blue */
-.main-action-button {
-  background-color: var(--primary);
-
-  i {
-    color: var(--white);
-  }
-}
-
 select:not([multiple]) {
   appearance: none;
   background: var(--white) url('images/ico-arrow.png') no-repeat 97% 56%;

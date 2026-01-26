@@ -41,12 +41,11 @@
 
   /* Always-dark UI surfaces like navbar */
   --chrome-bg: #2b2b2b;
-  --chrome-fg: #e6e6e6;
+  --chrome-fg: #ffffff;
   --chrome-muted: #9aa0a6;
 }
 
 .dark-mode {
-  /* GitHub-ish / your screenshot-ish dark palette */
   --white: #131313;
   --mainbackground: #1e1e1e;
   --highlighted: #2a2a2a;
@@ -54,7 +53,6 @@
   --firstlevel: #13181c;
   --disabled: #888;
   --secondlevel: #bdbdbd;
-  //--secondlevel: #e5e5e5;
   --thirdlevel: #666;
   --medium: #d8dae0;
   --mediumstrong: #ccc;
@@ -63,7 +61,6 @@
   --primary: #2196f3;
   // secondary with opacity for borders of inputs
   --secondary-muted: rgba(146, 146, 146, 0.34);
-  //--primary: #A9C5EC;
   --elabblue: #29aeb9;
   --lightblue: #79c0ff;
   --darkblue: #1f6feb;
@@ -85,14 +82,14 @@
   --darkgold: #bc8c00;
 }
 
-/* going from less contrasted to more contrasted */
+/* COLORS for specific cases like pdf export (var(--) does not apply) */
 $white: #fff;
 $mainbackground: var(--mainbackground);
+$strongest: #000;
 /* override bootstrap theme */
 $elabblue: #29aeb9;
 $medium: #4d4c4c;
 $dangerred: #e6614c;
 $firstlevel: #dbdbdb;
-$strongest: #000;
 /* font awesome */
 $fa-font-path: '/assets/fonts';

@@ -1917,6 +1917,60 @@ components:
             is_sysadmin:
               type: integer
               default: 0
+            default_read:
+                type: number
+                nullable: true
+                description: |
+                  Default permission for read access:
+                    - 10: Owner only
+                    - 20: Owner + Admins
+                    - 30: Team members
+                    - 40: Everyone with an account
+                    - 50: Everyone including anonymous users
+                example: 20
+                enum: [10, 20, 30, 40, 50]
+            default_read_base:
+                type: number
+                nullable: true
+                description: |
+                  Base permission for default read access:
+                    - 10: Owner only
+                    - 20: Owner + Admins
+                    - 30: Team members
+                    - 40: Everyone with an account
+                    - 50: Everyone including anonymous users
+                example: 20
+                enum: [10, 20, 30, 40, 50]
+            default_read_base_human:
+                type: string
+                description: Default read base permission as human readable value
+            default_write:
+                type: number
+                nullable: true
+                description: |
+                  Default permission for write access:
+                    - 10: Owner only
+                    - 20: Owner + Admins
+                    - 30: Team members
+                    - 40: Everyone with an account
+                    - 50: Everyone including anonymous users
+                example: 20
+                enum: [10, 20, 30, 40, 50]
+            default_write_base:
+                type: number
+                nullable: true
+                description: |
+                  Base permission for default write access:
+                    - 10: Owner only
+                    - 20: Owner + Admins
+                    - 30: Team members
+                    - 40: Everyone with an account
+                    - 50: Everyone including anonymous users
+                example: 20
+                enum: [10, 20, 30, 40, 50]
+            default_write_base_human:
+                type: string
+                description: Default write base permission as human readable value
             teams:
               type: array
               items:

@@ -1,6 +1,5 @@
 {# PERMISSIONS display block #}
-{# 'can' var is used in view-permissions-details.html #}
-{# 'can_base' var is used in view-permissions-details.html #}
+{# 'can' and 'can_base' vars are used in view-permissions-details.html #}
 <div class='d-flex mb-2 align-items-center'>
   {# CANREAD #}
   {% include 'view-permissions.html' with {rw: 'canread', can_base: Entity.entityData.canread_base_human, can: Entity.entityData.canread|canToHuman} %}

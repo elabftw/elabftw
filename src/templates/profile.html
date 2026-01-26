@@ -244,8 +244,8 @@
         {% endif %}
 
         <hr>
-        <label for='import_modal_canread'>{{ 'Set read permissions'|trans }}</label>
-        <select class='form-control' id='import_modal_canread' autocomplete='off' name='canread_base'>
+        <label for='importModalCanread'>{{ 'Set read permissions'|trans }}</label>
+        <select class='form-control' id='importModalCanread' autocomplete='off' name='canread_base'>
           {% for key, value in visibilityArr %}
             <option value='{{ key }}'
             {{ 30 == key ? ' selected' }}
@@ -254,8 +254,8 @@
         </select>
 
         <hr>
-        <label for='import_modal_canwrite'>{{ 'Set write permissions'|trans }}</label>
-        <select class='form-control' id='import_modal_canwrite' autocomplete='off' name='canwrite_base'>
+        <label for='importModalCanwrite'>{{ 'Set write permissions'|trans }}</label>
+        <select class='form-control' id='importModalCanwrite' autocomplete='off' name='canwrite_base'>
           {% for key, value in visibilityArr %}
             <option value='{{ key }}'
             {{ 20 == key ? ' selected' }}

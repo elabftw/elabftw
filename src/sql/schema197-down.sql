@@ -53,6 +53,8 @@ CALL DropColumn('items',                 'canwrite_base');
 CALL DropColumn('items_types',           'canread_base');
 CALL DropColumn('items_types',           'canbook_base');
 CALL DropColumn('items_types',           'canwrite_base');
+CALL DropColumn('items_types',           'canbook');
+CALL DropColumn('items_types',           'canbook_base');
 CALL DropColumn('items_types', 'canread_target_base');
 CALL DropColumn('items_types', 'canwrite_target_base');
 

@@ -1213,7 +1213,8 @@ components:
           type: string
           nullable: true
           description: JSON permissions for reading the entry
-          default: '{"teams": [], "users": [1], "teamgroups": [1]}'
+          example: '{"teams": [4], "users": [42,32], "teamgroups": [1,5]}'
+          default: '{"teams": [], "users": [], "teamgroups": []}'
         canwrite_base:
           type: number
           nullable: true
@@ -1230,7 +1231,8 @@ components:
           type: string
           nullable: true
           description: JSON permissions for writing the entry
-          default: '{"teams": [], "users": [1], "teamgroups": [1]}'
+          example: '{"teams": [4], "users": [42,32], "teamgroups": [1,5]}'
+          default: '{"teams": [], "users": [], "teamgroups": []}'
         category:
           type: integer
           nullable: true
@@ -2808,7 +2810,8 @@ paths:
                   type: string
                   nullable: true
                   description: JSON permissions for reading the entry
-                  default: '{"teams": [], "users": [1], "teamgroups": [1]}'
+                  example: '{"teams": [4], "users": [42,32], "teamgroups": [1,5]}'
+                  default: '{"teams": [], "users": [], "teamgroups": []}'
                 canwrite_base:
                   type: number
                   nullable: true
@@ -2825,7 +2828,8 @@ paths:
                   type: string
                   nullable: true
                   description: JSON permissions for writing the entry
-                  default: '{"teams": [], "users": [1], "teamgroups": [1]}'
+                  example: '{"teams": [4], "users": [42,32], "teamgroups": [1,5]}'
+                  default: '{"teams": [], "users": [], "teamgroups": []}'
                 category:
                   type: integer
                   nullable: true

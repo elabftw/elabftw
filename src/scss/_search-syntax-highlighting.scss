@@ -11,7 +11,7 @@
 
 #extendedArea {
   background-color: transparent;
-  caret-color: variables.$mediumstrong;
+  caret-color: var(--mediumstrong);
   color: transparent;
   position: relative;
   z-index: 1;

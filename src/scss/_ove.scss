@@ -40,7 +40,7 @@ code {
 .veToolbar {
   .bp3-button[class*='bp3-intent-'] .bp3-icon {
     //$elabblue does not look as great here IMHO, it's to light
-    color: variables.$darkblue !important;
+    color: var(--darkblue) !important;
   }
 }
 

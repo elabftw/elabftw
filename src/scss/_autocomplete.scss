@@ -65,8 +65,8 @@
     > a,
     > a:hover,
     > a:focus {
-      background-color: variables.$superlight;
-      color: variables.$mediumstrong;
+      background-color: var(--superlight);
+      color: var(--mediumstrong);
       outline: 0;
       text-decoration: none;
     }

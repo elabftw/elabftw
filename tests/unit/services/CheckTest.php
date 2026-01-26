@@ -59,16 +59,16 @@ class CheckTest extends \PHPUnit\Framework\TestCase
         Check::visibility('pwet');
     }
 
-    public function testVisibilityIncorrectBase(): void
+    public function testIncorrectBase(): void
     {
         $this->expectException(ImproperActionException::class);
-        Check::visibility('{"base": 12}');
+        Check::basePermission(12);
     }
 
     public function testVisibilityIncorrectArray(): void
     {
         $this->expectException(ImproperActionException::class);
-        Check::visibility('{"base": 10, "teams": "yep"}');
+        Check::visibility('{"teams": "yep"}');
     }
 
     public function testAk(): void

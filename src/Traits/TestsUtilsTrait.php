@@ -13,7 +13,6 @@ namespace Elabftw\Traits;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
-use Elabftw\Enums\BasePermissions;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Users\AuthenticatedUser;
 use Elabftw\Models\Experiments;
@@ -66,7 +65,7 @@ trait TestsUtilsTrait
     protected function getFreshExperiment(): Experiments
     {
         $Entity = new Experiments(new Users(1, 1));
-        $id = $Entity->create(canreadBase: BasePermissions::Team);
+        $id = $Entity->create();
         $Entity->setId($id);
         return $Entity;
     }
@@ -74,7 +73,7 @@ trait TestsUtilsTrait
     protected function getFreshExperimentWithGivenUser(Users $users): Experiments
     {
         $Entity = new Experiments($users);
-        $id = $Entity->create(canreadBase: BasePermissions::Team);
+        $id = $Entity->create();
         $Entity->setId($id);
         return $Entity;
     }

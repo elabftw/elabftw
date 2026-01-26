@@ -137,8 +137,8 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $User2 = $this->getUserInTeam(2);
 
         // grant user 2 'canread' permissions only. Prevents 'access entity without permission'
-        $Items->patch(Action::Update, array('canread_base' => BasePermissions::User->value));
         $Items->patch(Action::Update, array(
+            'canread_base' => BasePermissions::User->value,
             'canread' => json_encode(array(
                 'users' => array($User2->userid),
                 'teams' => array(),

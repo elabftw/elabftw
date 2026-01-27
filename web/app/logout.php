@@ -29,7 +29,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 require_once 'init.inc.php';
 
-$redirectUrl = $App->Request->query->get('after_logout') ? '/login.php?after_logout=1' : '/login.php';
+$redirectUrl = '/login.php';
 
 $destroySession = function () use ($App): void {
     if ($App->Users instanceof AuthenticatedUser) {

@@ -988,7 +988,8 @@ on('toggle-password', (el: HTMLElement) => {
 
 on('logout', () => {
   clearLocalStorage();
-  window.location.href = 'app/logout.php?after_logout=1';
+  sessionStorage.setItem('flash_after_logout', 'You logged out. Please close your browser to prevent access to previous content.');
+  window.location.href = 'app/logout.php';
 });
 
 on('ack-notif', (el: HTMLElement) => {

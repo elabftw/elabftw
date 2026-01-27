@@ -235,7 +235,7 @@
 
             {% endif %}
             <div class='dropdown-divider'></div>
-            <a class='dropdown-item' href='/app/logout.php?after_logout=1' data-action='logout'><i class='fas fa-sign-out-alt fa-fw'></i> {{ 'Logout'|trans }}</a>
+            <a class='dropdown-item' href='#' data-action='logout'><i class='fas fa-sign-out-alt fa-fw'></i> {{ 'Logout'|trans }}</a>
           </div>
         </div>
      </div>
@@ -267,12 +267,6 @@
 <div id='safariWarning' hidden>
     {{ 'Warning: you are using an unsupported browser known to cause issues (Safari). Please use a supported browser (see %sdocumentation%s).'|trans|format("<a class='external-link' target='_blank' href='https://doc.elabftw.net/faq.html#requirements-for-the-clients-users'>", "</a>")|msg('warning', true, 'safari_warning_v1') }}
 </div>
-
-{% if App.Request.query.has('after_logout') %}
-  <div id='logoutMessage'>
-    {{ 'You have been logged out. Please close your browser to clear cached pages and prevent access to previous content'|trans|msg('ok', true, 'logout_msg') }}
-</div>
-{% endif %}
 
 <noscript>{# show warning if javascript is disabled #}
     <div class='alert alert-danger'>

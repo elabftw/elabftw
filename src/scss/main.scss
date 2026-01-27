@@ -17,10 +17,15 @@ $theme-colors: (
   'neutral': $medium,
 );
 
-.btn-primary {
-  background-color: var(--primary) !important;
-  border-color: var(--primary) !important;
+.btn-primary { background-color: var(--primary) !important; }
+.btn-secondary { background-color: var(--secondary) !important; }
+
+.btn-primary,
+.btn-secondary {
+  .fas,
+  .fa { color: var(--chrome-fg) !important; }
 }
+
 $dropdown-link-active-bg: var(--primary);
 /* make the non active link in navbar have slightly more contrast */
 $navbar-dark-color: var(--secondlevel);
@@ -860,7 +865,8 @@ tr:first-child td {
   width: max(24%, 330px);
 
   .fas,
-  .far {
+  .far,
+  h3 {
     color: var(--chrome-fg);
   }
 
@@ -1053,11 +1059,6 @@ the form-control fails to do that so we do the border ourselves */
 
 .color-white {
   color: var(--white) !important;
-}
-
-/* white in both dark & light mode. Useful for buttons for example. */
-.always-white {
-  color: var(--chrome-fg) !important;
 }
 
 .color-blue {

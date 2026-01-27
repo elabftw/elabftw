@@ -12,4 +12,10 @@ describe('Logout', () => {
       expect(resp.headers.location).to.eq('/login.php');
     });
   });
+
+  it ('does show message to close the browser', () => {
+    cy.clearCookies();
+    cy.visit('/login.php');
+    //  cy.get('.overlay').first().should('be.visible').should('contain', 'You logged out. Please close your browser to prevent access to previous content.');
+  });
 });

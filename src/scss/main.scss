@@ -455,15 +455,21 @@ button:disabled {
 }
 
 .table {
-  button, span, thead, th, td {
-    color: var(--mediumstrong);
-  }
 
   /* display borders correctly, keeps cells flush without extra spacing. See #5681  */
   border-collapse: separate;
   border-spacing: 0;
 
-  td, th {
+  button,
+ span,
+ thead,
+ th,
+ td {
+    color: var(--mediumstrong);
+  }
+
+  td,
+ th {
     border-color: var(--secondary-muted);
   }
 

@@ -35,14 +35,14 @@
             <input name='title' placeholder='{{ 'Type a descriptive title...'|trans }}' class='form-control' type='text' id='createNewFormTitle' />
           </div>
           <hr>
-          <div class='d-flex'>
+          <div class='d-lg-flex'>
             <div>
-              <button type='button' data-action='toggle-templates' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='btn btn-ghost' id='createTplToggleBtn'>
+              <button type='button' data-action='toggle-templates' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='btn btn-ghost mt-1' id='createTplToggleBtn'>
                <i class='fas fa-caret-right mr-1'></i>{{ 'Start from a template'|trans }}
               </button>
             </div>
             <div class='ml-auto'>
-              <button type='submit' data-cy='create-entity' data-action='create-entity' data-type='' class='btn btn-secondary' id='createNoTplBtn'>{{ 'Create without template'|trans }}</button>
+              <button type='submit' data-cy='create-entity' data-action='create-entity' data-type='' class='btn btn-secondary mt-1' id='createNoTplBtn'>{{ 'Create without template'|trans }}</button>
             </div>
           </div>
           <div id='createNewTemplatesDiv' class='mt-2' hidden>

@@ -165,8 +165,8 @@
             </div>
         </div>
 
+        {# Notification bell #}
         {% if App.Session.has('is_auth') and not App.Session.has('is_anon') %}
-        {% include 'create-new-modal.html' %}
         <div class='ml-auto mt-2 d-flex'>
         <div class='nav-item dropdown ml-auto'>
           <button class='btn nav-link' id='createNewDropdown' type='button' aria-label='{{ 'Create new...'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='far fa-plus fa-2x'></i></button>
@@ -251,7 +251,7 @@
         </div>
      </div>
     </div>
-
+    {% include 'create-new-modal.html' %}
   {% else %} {# not auth #}
     <div class='nav-item ml-auto'>
       <a href='#' class='color-white hl-hover-gray p-2 rounded' data-action='toggle-modal' data-target='selectLanguageModal'>

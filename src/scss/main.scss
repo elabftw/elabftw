@@ -290,7 +290,7 @@ h2,
 h3,
 h4,
 h5,
-.malleable-title {
+#documentTitle {
   color: var(--medium);
   font-weight: normal;
   margin-top: 0;
@@ -455,9 +455,17 @@ button:disabled {
 }
 
 .table {
+  button, span, thead, th, td {
+    color: var(--mediumstrong);
+  }
+
   /* display borders correctly, keeps cells flush without extra spacing. See #5681  */
   border-collapse: separate;
   border-spacing: 0;
+
+  td, th {
+    border-color: var(--secondary-muted);
+  }
 
   thead {
     position: sticky;
@@ -553,14 +561,6 @@ tr:first-child td {
     min-width: 66px;
     text-align: center;
   }
-
-  .item-owner a {
-    color: var(--medium);
-
-    &:hover {
-      color: var(--secondlevel);
-    }
-  }
 }
 
 /* table in view mode, always add borders, see #4436 */
@@ -568,7 +568,7 @@ tr:first-child td {
   table,
   td,
   tr {
-    border: 1px solid var(--secondlevel);
+    border: 1px solid var(--secondary-muted);
   }
 }
 

@@ -53,6 +53,8 @@ final class ItemsTypes extends AbstractTemplateEntity
         BinaryValue $hideMainText = BinaryValue::False,
         int $rating = 0,
         BodyContentType $contentType = BodyContentType::Html,
+        string $canbook = self::EMPTY_CAN_JSON,
+        BasePermissions $canbookBase = BasePermissions::Team,
     ): int {
         $title = Filter::title($title ?? _('Default'));
         $body = Filter::body($body);
@@ -60,8 +62,8 @@ final class ItemsTypes extends AbstractTemplateEntity
             $body = null;
         }
 
-        $sql = 'INSERT INTO items_types(userid, title, body, team, canread_base, canwrite_base, canread, canwrite, canbook, canread_is_immutable, canwrite_is_immutable, canread_target, canwrite_target, category, content_type, status, rating, metadata, hide_main_text)
-            VALUES(:userid, :title, :body, :team, :canread_base, :canwrite_base, :canread, :canwrite, :canbook, :canread_is_immutable, :canwrite_is_immutable, :canread_target, :canwrite_target, :category, :content_type, :status, :rating, :metadata, :hide_main_text)';
+        $sql = 'INSERT INTO items_types(userid, title, body, team, canread_base, canwrite_base, canbook_base, canread, canwrite, canbook, canread_is_immutable, canwrite_is_immutable, canread_target, canwrite_target, category, content_type, status, rating, metadata, hide_main_text)
+            VALUES(:userid, :title, :body, :team, :canread_base, :canwrite_base, :canbook_base, :canread, :canwrite, :canbook, :canread_is_immutable, :canwrite_is_immutable, :canread_target, :canwrite_target, :category, :content_type, :status, :rating, :metadata, :hide_main_text)';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':userid', $this->Users->userid, PDO::PARAM_INT);
         $req->bindValue(':title', $title);
@@ -71,7 +73,8 @@ final class ItemsTypes extends AbstractTemplateEntity
         $req->bindValue(':canwrite_base', $canwriteBase->value, PDO::PARAM_INT);
         $req->bindParam(':canread', $canread);
         $req->bindParam(':canwrite', $canwrite);
-        $req->bindParam(':canbook', $canread);
+        $req->bindParam(':canbook', $canbook);
+        $req->bindValue(':canbook_base', $canbookBase->value, PDO::PARAM_INT);
         $req->bindParam(':canread_is_immutable', $canreadIsImmutable, PDO::PARAM_INT);
         $req->bindParam(':canwrite_is_immutable', $canwriteIsImmutable, PDO::PARAM_INT);
         $req->bindParam(':canread_target', $canread);

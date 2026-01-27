@@ -3464,7 +3464,7 @@ paths:
                       - 30: Team members
                       - 40: Everyone with an account
                       - 50: Everyone including anonymous users
-                  example: 20
+                  example: 30
                   enum: [10, 20, 30, 40, 50]
                 canwrite_base:
                   type: number
@@ -3476,6 +3476,8 @@ paths:
                       - 30: Team members
                       - 40: Everyone with an account
                       - 50: Everyone including anonymous users
+                  example: 20
+                  enum: [10, 20, 30, 40, 50]
       responses:
         '201':
           description: The import was successful

@@ -165,11 +165,9 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
     {
         $matrix = array('canread_base', 'canwrite_base');
         foreach ($matrix as $column) {
-            $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::Full->value)));
-            $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::Organization->value)));
-            $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::Team->value)));
-            $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::User->value)));
-            $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::UserOnly->value)));
+            foreach (BasePermissions::cases() as $perm) {
+                $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => $perm->value)));
+            }
         }
     }
 

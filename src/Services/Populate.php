@@ -361,13 +361,7 @@ final class Populate
         $statusArr = $Status->readAll();
 
         // we will randomly pick from these for canread and canwrite
-        $visibilityArr = array(
-            BasePermissions::Full,
-            BasePermissions::Organization,
-            BasePermissions::Team,
-            BasePermissions::User,
-            BasePermissions::UserOnly,
-        );
+        $visibilityArr = BasePermissions::cases();
 
         $tagsArr = array(
             'Project X',

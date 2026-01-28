@@ -350,16 +350,20 @@ h5 { font-size: 130%; }
       border-radius: 0;
       color: var(--medium);
       font-weight: 500;
-      margin: 0;
       margin-bottom: 6px;
       padding: 0;
       text-transform: uppercase;
+
+      &:hover {
+        color: var(--strongest);
+      }
     }
 
     .selected {
       border-bottom: 6px solid var(--primary);
       margin-bottom: 0;
     }
+
   }
 }
 
@@ -916,7 +920,7 @@ tr:first-child td {
 
   /* Make the titles that you can click on to toggle the steps visibly clickable */
   [data-action='toggle-next']:hover {
-    background-color: var(--medium);
+    background-color: var(--secondary);
   }
 }
 

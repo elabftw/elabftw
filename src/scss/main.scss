@@ -21,8 +21,8 @@ $theme-colors: (
 .btn-secondary { background-color: var(--secondary) !important; }
 
 .btn-secondary:hover {
-  background-color: lighten($medium, 30%) !important;
-  border-color: lighten($medium, 30%) !important;
+  background-color: var(--chrome-muted) !important;
+  border-color: var(--chrome-muted) !important;
 }
 
 .btn-primary,
@@ -222,7 +222,7 @@ select:not([multiple]) {
   }
 
   .alert,
- .alert .close {
+  .alert .close {
     color: var(--mainbackground);
   }
 
@@ -474,10 +474,10 @@ button:disabled {
   border-spacing: 0;
 
   button,
- span,
- thead,
- th,
- td {
+  span,
+  thead,
+  th,
+  td {
     color: var(--mediumstrong);
   }
 
@@ -1822,7 +1822,10 @@ input:user-invalid {
   border: 1px dashed var(--medium);
 }
 
-.table-bordered, .table-bordered td, .table-bordered th, .fc-event {
+.table-bordered,
+.table-bordered td,
+.table-bordered th,
+.fc-event {
   border: 1px solid var(--secondary-muted);
 }
 

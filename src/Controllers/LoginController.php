@@ -200,14 +200,14 @@ final class LoginController implements ControllerInterface
      */
     private function setRememberMeCookie(): bool
     {
+        if ($this->config['remember_me_allowed'] === '0') {
+            return false;
+        }
         // avoid setting it if it's present
         if ($this->Request->cookies->has('icanhazcookies')) {
             return $this->Request->cookies->getBoolean('icanhazcookies');
         }
-        $icanhazcookies = '0';
-        if ($this->Request->request->has('rememberme') && $this->config['remember_me_allowed'] === '1') {
-            $icanhazcookies = '1';
-        }
+        $icanhazcookies = $this->Request->request->has('rememberme') ? '1' : '0';
         $cookieOptions = array(
             'expires' => time() + 300,
             'path' => '/',
@@ -217,7 +217,7 @@ final class LoginController implements ControllerInterface
             'samesite' => 'Lax',
         );
         setcookie('icanhazcookies', $icanhazcookies, $cookieOptions);
-        return (bool) $icanhazcookies;
+        return $icanhazcookies === '1';
     }
 
     /**

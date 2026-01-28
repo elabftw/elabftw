@@ -993,9 +993,9 @@ on('logout', () => {
   window.location.href = 'app/logout.php';
 });
 
-const el = document.getElementById('logoutMessage');
-if (el  && localStorage.getItem('logout_msg')) {
-  el.removeAttribute('hidden');
+const logoutMessageDiv = document.getElementById('logoutMessage');
+if (logoutMessageDiv  && localStorage.getItem('logout_msg')) {
+  logoutMessageDiv.removeAttribute('hidden');
   clearLocalStorage();
 }
 

@@ -93,6 +93,7 @@ final class UserParams extends ContentParams
             'lang' => (Language::tryFrom($this->content) ?? Language::EnglishGB)->value,
             'entrypoint' => (Entrypoint::tryFrom($this->asInt()) ?? Entrypoint::Dashboard)->value,
             'default_read', 'default_write' => $this->getCanJson(),
+            'default_read_base', 'default_write_base' => $this->getCanBase(),
             'pdf_format' => (PdfFormat::tryFrom($this->content) ?? PdfFormat::A4)->value,
             default => throw new ImproperActionException('Invalid target for user update.'),
         };

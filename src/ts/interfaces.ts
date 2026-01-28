@@ -57,6 +57,7 @@ interface Selected {
   userid: number;
   team: number;
   can: string;
+  can_base: number;
 }
 
 enum Method {

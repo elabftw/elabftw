@@ -27,6 +27,8 @@ enum UsersColumn: string
     case DarkMode = 'dark_mode';
     case DefaultRead = 'default_read';
     case DefaultWrite = 'default_write';
+    case DefaultReadBase = 'default_read_base';
+    case DefaultWriteBase = 'default_write_base';
     case DisableShortcuts = 'disable_shortcuts';
     case DisplayMode = 'display_mode';
     case Email = 'email';

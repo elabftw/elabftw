@@ -17,7 +17,7 @@ describe('Logout', () => {
     cy.visit('/dashboard.php');
     cy.get('#navbarDropdown').should('exist').click();
     cy.get('[data-action="logout"]').click();
-    cy.location('pathname', { timeout: 10000 }).should('include', '/login.php');
+    cy.location('pathname').should('include', '/login.php');
     cy.get('#logoutMessage').should('exist').should('not.have.attr', 'hidden');
     cy.clearCookies();
   });

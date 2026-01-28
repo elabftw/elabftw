@@ -1132,12 +1132,14 @@ the form-control fails to do that so we do the border ourselves */
 
   /* Only Category */
   &.category-btn {
-    background-color: var(--bg);
-    color: var(--chrome-fg);
+    // keep the category background but with less opacity to make it readable in all circumstances, even white or black
+    background-color: color-mix(in srgb, var(--bg) 40%, transparent);
+    border: 2px solid var(--bg);
+    color: var(--mediumstrong);
 
     &:hover {
-      background-color: var(--secondlevel);
-      color: var(--chrome-bg);
+      background-color: var(--bg);
+      color: var(--chrome-fg);
     }
   }
 

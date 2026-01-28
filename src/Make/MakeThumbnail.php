@@ -72,7 +72,7 @@ class MakeThumbnail implements MakeThumbnailInterface
         }
         // make sure to set it as jpg (a pdf will stay a pdf otherwise)
         $image->setImageFormat('jpg');
-        return $image->getImageBlob() ?? '';
+        return $image->getImageBlob();
     }
 
     private function getRotationAngle(): int

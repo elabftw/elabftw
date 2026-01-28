@@ -34,8 +34,8 @@ class ItemsTypesTest extends \PHPUnit\Framework\TestCase
         $params = array(
             'title' => 'oompa',
             'body' => 'body2',
-            'canread' => BasePermissions::Team->toJson(),
-            'canwrite' => BasePermissions::Team->toJson(),
+            'canread_base' => BasePermissions::Team->value,
+            'canwrite_base' => BasePermissions::Team->value,
         );
         $this->ItemsTypes->patch(Action::Update, $params);
         $this->assertEquals('oompa', $this->ItemsTypes->entityData['title']);

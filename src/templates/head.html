@@ -101,7 +101,7 @@
                 <!-- [html-validate-disable-next prefer-native-element: using a button here will mess up the navbar] -->
               {%- endif %}
               <div class='nav-link dropdown-toggle {{ scriptName in ['database.php', 'resources-templates.php', 'resources-categories.php', 'resources-status.php'] ? 'active' }}' role='button' data-toggle='dropdown' aria-expanded='false'>
-                {{ 'Resources'|trans }}
+              {% trans %}Resource{% plural 2 %}Resources{% endtrans %}
               </div>
               <div class='dropdown-menu'>
                 <form class='dropdown-item form-inline' action='database.php' aria-label='{{ 'Quick search resources'|trans }}'>

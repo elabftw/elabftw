@@ -46,7 +46,6 @@ function collectCan(): string {
     .map(u => `user:${(u as HTMLElement).dataset.id}`);
 
   return permissionsToJson(
-    parseInt(((document.getElementById('masscan_select_base') as HTMLSelectElement).value), 10),
     Array.from((document.getElementById('masscan_select_teams') as HTMLSelectElement).selectedOptions).map(v=>v.value)
       .concat(Array.from((document.getElementById('masscan_select_teamgroups') as HTMLSelectElement).selectedOptions).map(v=>v.value))
       .concat(existingUsers),
@@ -67,6 +66,7 @@ function getSelected(): Selected {
     userid: collectInt('targetUserId'),
     team: collectInt('targetTeamId'),
     can: collectCan(),
+    can_base: parseInt((document.getElementById('masscan_select_base') as HTMLSelectElement).value, 10),
   };
 }
 

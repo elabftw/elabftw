@@ -59,7 +59,13 @@
               {% plural teamStats.totxp %}
               Experiments
               {% endtrans %}
-              : {{ teamStats.totxp }} ({{ teamStats.totxpts }} timestamped) &ndash; {{ 'Resources'|trans }}: {{ teamStats.totdb }}</div>
+              : {{ teamStats.totxp }} ({{ teamStats.totxpts }} timestamped) &ndash;
+              {% trans %}
+              Resource
+              {% plural teamStats.totdb %}
+              Resources
+              {% endtrans %}
+              : {{ teamStats.totdb }}</div>
       <div><a href='/api/v2/reports?format=csv&scope=team' class='btn btn-primary'>{{ 'Generate report'|trans }}</a></div>
     </div>
   </div>

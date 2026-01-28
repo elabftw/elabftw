@@ -215,6 +215,14 @@ select:not([multiple]) {
   .close {
     color: var(--mediumstrong);
   }
+
+  .alert, .alert .close {
+    color: var(--mainbackground);
+  }
+
+  .alert a {
+    color: var(--strongest);
+  }
 }
 
 /* prevent the caret from being too close from text */

@@ -5,8 +5,17 @@
 {% include 'show-view-edit.html' %}
 <h2>{{ 'Welcome %s'|trans|format(App.Users.userData.firstname) }}</h2>
 
-  <button class='btn btn-primary'>primary</button>
-  <button class='btn btn-secondary'>secondary</button>
+  {# TODO: remove when done w/ dev #}
+  <div hidden>
+    {{ 'design pattern' }}
+    <button class='btn btn-primary'>primary</button>
+    <button class='btn btn-secondary'>secondary</button>
+    {{ 'Message with a %slink%s .'|trans|format("<a href='https://doc.elabftw.net/sysadmin-guide.html#setting-up-email'>", "</a>")|msg('ko') }}
+    {{ 'Message "ok"'|trans|msg('ok') }}
+    {{ 'Message "ok"'|trans|msg('ko') }}
+    {{ 'Message "warning"'|trans|msg('warning') }}
+  </div>
+
 {% include 'request-actions-show.html' %}
 <hr>
 <div class='row'>

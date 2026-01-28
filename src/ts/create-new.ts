@@ -172,6 +172,8 @@ const templateCols: (keyof Templates)[] = [
 function renderTemplates(templates: Templates[]): void {
   const tbody = document.getElementById('tplCreateNewTable') as HTMLTableSectionElement;
   const templateRow = document.getElementById('templateRow') as HTMLTemplateElement;
+  // pass the type of the selected entity (either experiments, or items)
+  const type = document.querySelector('input[name="type"]:checked') as HTMLSelectElement;
 
   tbody.replaceChildren(
     ...templates.map(template => {
@@ -183,7 +185,7 @@ function renderTemplates(templates: Templates[]): void {
         // ACTIONS
         if (key === 'id') {
           const createBtn = cells[i].querySelector('button[data-action="create-entity"]') as HTMLButtonElement;
-          createBtn.dataset.type = template.type;
+          createBtn.dataset.type = type.value;
           createBtn.dataset.tplid = String(template[key]);
           const viewLink = cells[i].querySelector('a') as HTMLAnchorElement;
           viewLink.href = `${template.page}?mode=view&id=${template.id}`;

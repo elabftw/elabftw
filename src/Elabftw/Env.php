@@ -58,6 +58,14 @@ final class Env
 
     private static function get(string $key): mixed
     {
+        $fileKey = $key. "_FILE";
+        $fileVar = getenv($fileKey);
+        if ($fileVar) {
+          $value = file_get_contents($fileVar);
+          if ($value) {
+            return $value;
+          }
+        }
         return getenv($key);
     }
 }

@@ -45,7 +45,7 @@ function setTypeRadio(type: EntityType, scope: string = '') {
   } else {
     const templatesEndpoint = type === EntityType.Experiment ? EntityType.Template : EntityType.ItemType;
     ApiC.getJson(`${templatesEndpoint}/?fastq&scope=${scope}`).then(templates => {
-      renderTemplates(templates);
+      renderTemplates(templates, type);
       toggleCategoryList(type);
     });
   }
@@ -169,7 +169,7 @@ const templateCols: (keyof Templates)[] = [
   'id',
 ];
 
-function renderTemplates(templates: Templates[]): void {
+function renderTemplates(templates: Templates[], type?: string | null): void {
   const tbody = document.getElementById('tplCreateNewTable') as HTMLTableSectionElement;
   const templateRow = document.getElementById('templateRow') as HTMLTemplateElement;
 
@@ -183,7 +183,9 @@ function renderTemplates(templates: Templates[]): void {
         // ACTIONS
         if (key === 'id') {
           const createBtn = cells[i].querySelector('button[data-action="create-entity"]') as HTMLButtonElement;
-          createBtn.dataset.type = template.type;
+          // using `template.type` makes the "create" action always create a Template from a Template.
+          // we pass the target entity type so we can create an Experiment/Item from a template instead.
+          createBtn.dataset.type = type;
           createBtn.dataset.tplid = String(template[key]);
           const viewLink = cells[i].querySelector('a') as HTMLAnchorElement;
           viewLink.href = `${template.page}?mode=view&id=${template.id}`;

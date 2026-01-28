@@ -84,7 +84,7 @@ async function triggerHandler(event: Event, el: HTMLInputElement): Promise<void>
   // END CUSTOM ACTIONS
 
   if (el.dataset.transform === 'permissionsToJson') {
-    value = permissionsToJson(parseInt(value, 10), []);
+    value = permissionsToJson([]);
   }
   if (el.dataset.value) {
     value = el.dataset.value;
@@ -508,15 +508,12 @@ export function askFileName(extension: FileType): string | undefined {
   return realName + ext;
 }
 
-export function permissionsToJson(base: number, extra: string[]): string {
+export function permissionsToJson(extra: string[]): string {
   const json = {
-    'base': 0,
     'teams': [],
     'teamgroups': [],
     'users': [],
   };
-
-  json.base = base;
 
   extra.forEach(val => {
     if (val.startsWith('team:')) {

@@ -75,8 +75,8 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
     public function testPostActionCannotBook(): void
     {
         $RestrictedBookableItem = $this->getFreshBookableItem(2);
-        $RestrictedBookableItem->update(new EntityParams('canread', BasePermissions::Full->toJson()));
-        $RestrictedBookableItem->update(new EntityParams('canbook', BasePermissions::UserOnly->toJson()));
+        $RestrictedBookableItem->update(new EntityParams('canread_base', BasePermissions::Full->value));
+        $RestrictedBookableItem->update(new EntityParams('canbook_base', BasePermissions::UserOnly->value));
         $Scheduler = new Scheduler(new Items($this->getRandomUserInTeam(1), $RestrictedBookableItem->id));
         $this->expectException(ImproperActionException::class);
         $Scheduler->postAction(Action::Create, array());
@@ -138,8 +138,8 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
         // grant user 2 'canread' permissions only. Prevents 'access entity without permission'
         $Items->patch(Action::Update, array(
+            'canread_base' => BasePermissions::User->value,
             'canread' => json_encode(array(
-                'base' => BasePermissions::User->value,
                 'users' => array($User2->userid),
                 'teams' => array(),
                 'teamgroups' => array(),
@@ -242,8 +242,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testDestroyNonCancellableEvent(): void
     {
-        $Items = $this->getFreshItem(2);
-        $Items->Users = $this->getRandomUserInTeam(2);
+        $Items = $this->getFreshItemWithGivenUser($this->getRandomUserInTeam(2));
         $Items->patch(Action::Update, array('book_is_cancellable' => 0));
         $Scheduler = new Scheduler($Items);
         $d = new DateTime('tomorrow');
@@ -258,8 +257,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testCancelTooClose(): void
     {
-        $Items = $this->getFreshItem(2);
-        $Items->Users = $this->getRandomUserInTeam(2);
+        $Items = $this->getFreshItemWithGivenUser($this->getRandomUserInTeam(2));
         $Items->patch(Action::Update, array('book_cancel_minutes' => 666));
         $Scheduler = new Scheduler($Items);
         $d = new DateTime('5 minutes');
@@ -274,8 +272,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testSlotTime(): void
     {
-        $Items = $this->getFreshItem(2);
-        $Items->Users = $this->getRandomUserInTeam(2);
+        $Items = $this->getFreshItemWithGivenUser($this->getRandomUserInTeam(2));
         $Items->patch(Action::Update, array('book_max_minutes' => 12));
         $Scheduler = new Scheduler($Items);
         $d = new DateTime('5 minutes');
@@ -288,8 +285,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testOverlap(): void
     {
-        $Items = $this->getFreshItem(2);
-        $Items->Users = $this->getRandomUserInTeam(2);
+        $Items = $this->getFreshItemWithGivenUser($this->getRandomUserInTeam(2));
         $Items->patch(Action::Update, array('book_can_overlap' => 0));
         $Scheduler = new Scheduler($Items);
         // first one
@@ -309,8 +305,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testOverlapWhileChangingExisting(): void
     {
-        $Items = $this->getFreshItem(2);
-        $Items->Users = $this->getRandomUserInTeam(2);
+        $Items = $this->getFreshItemWithGivenUser($this->getRandomUserInTeam(2));
         $Items->patch(Action::Update, array('book_can_overlap' => 0));
         $Scheduler = new Scheduler($Items);
         // first one
@@ -332,8 +327,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testCheckMaxSlots(): void
     {
-        $Items = $this->getFreshItem(2);
-        $Items->Users = $this->getRandomUserInTeam(2);
+        $Items = $this->getFreshItemWithGivenUser($this->getRandomUserInTeam(2));
         $Items->patch(Action::Update, array('book_max_slots' => 2));
         $Scheduler = new Scheduler($Items);
         $d = new DateTime('5 minutes');

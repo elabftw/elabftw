@@ -1197,16 +1197,42 @@ components:
           description: The main text content (HTML or Markdown)
           default: null
           example: "<h1>Section title</h1><p>Main text of resource</p>"
+        canread_base:
+          type: number
+          nullable: true
+          description: |
+            Base permission for read access:
+              - 10: Owner only
+              - 20: Owner + Admins
+              - 30: Team members
+              - 40: Everyone with an account
+              - 50: Everyone including anonymous users
+          example: 20
+          enum: [10, 20, 30, 40, 50]
         canread:
           type: string
           nullable: true
           description: JSON permissions for reading the entry
-          default: '{"base": 20, "teams": [], "users": [1], "teamgroups": [1]}'
+          example: '{"teams": [4], "users": [42,32], "teamgroups": [1,5]}'
+          default: '{"teams": [], "users": [], "teamgroups": []}'
+        canwrite_base:
+          type: number
+          nullable: true
+          description: |
+            Base permission for write access:
+              - 10: Owner only
+              - 20: Owner + Admins
+              - 30: Team members
+              - 40: Everyone with an account
+              - 50: Everyone including anonymous users
+          example: 10
+          enum: [10, 20, 30, 40, 50]
         canwrite:
           type: string
           nullable: true
           description: JSON permissions for writing the entry
-          default: '{"base": 20, "teams": [], "users": [1], "teamgroups": [1]}'
+          example: '{"teams": [4], "users": [42,32], "teamgroups": [1,5]}'
+          default: '{"teams": [], "users": [], "teamgroups": []}'
         category:
           type: integer
           nullable: true
@@ -1523,6 +1549,18 @@ components:
       properties:
         is_bookable:
           type: integer
+        canbook_base:
+          type: number
+          description: |
+            Base permission for booking access:
+              - 10: Owner only
+              - 20: Owner + Admins
+              - 30: Team members
+              - 40: Everyone with an account
+              - 50: Everyone including anonymous users
+          example: 20
+          default: 30
+          enum: [10, 20, 30, 40, 50]
         canbook:
           type: string
         book_max_minutes:
@@ -1889,6 +1927,44 @@ components:
             is_sysadmin:
               type: integer
               default: 0
+            default_read:
+                type: string
+                example: '{"teams": [4], "users": [42,32], "teamgroups": [1,5]}'
+                default: '{"teams": [], "users": [], "teamgroups": []}'
+            default_read_base:
+                type: number
+                nullable: true
+                description: |
+                  Base permission for default read access:
+                    - 10: Owner only
+                    - 20: Owner + Admins
+                    - 30: Team members
+                    - 40: Everyone with an account
+                    - 50: Everyone including anonymous users
+                example: 20
+                enum: [10, 20, 30, 40, 50]
+            default_read_base_human:
+                type: string
+                description: Default read base permission as human readable value
+            default_write:
+                type: string
+                example: '{"teams": [4], "users": [42,32], "teamgroups": [1,5]}'
+                default: '{"teams": [], "users": [], "teamgroups": []}'
+            default_write_base:
+                type: number
+                nullable: true
+                description: |
+                  Base permission for default write access:
+                    - 10: Owner only
+                    - 20: Owner + Admins
+                    - 30: Team members
+                    - 40: Everyone with an account
+                    - 50: Everyone including anonymous users
+                example: 20
+                enum: [10, 20, 30, 40, 50]
+            default_write_base_human:
+                type: string
+                description: Default write base permission as human readable value
             teams:
               type: array
               items:
@@ -2710,16 +2786,42 @@ paths:
                   description: The main text content (HTML or Markdown)
                   default: null
                   example: "<h1>Section title</h1><p>Main text of resource</p>"
+                canread_base:
+                  type: number
+                  nullable: true
+                  description: |
+                    Base permission for read access:
+                      - 10: Owner only
+                      - 20: Owner + Admins
+                      - 30: Team members
+                      - 40: Everyone with an account
+                      - 50: Everyone including anonymous users
+                  example: 20
+                  enum: [10, 20, 30, 40, 50]
                 canread:
                   type: string
                   nullable: true
                   description: JSON permissions for reading the entry
-                  default: '{"base": 20, "teams": [], "users": [1], "teamgroups": [1]}'
+                  example: '{"teams": [4], "users": [42,32], "teamgroups": [1,5]}'
+                  default: '{"teams": [], "users": [], "teamgroups": []}'
+                canwrite_base:
+                  type: number
+                  nullable: true
+                  description: |
+                    Base permission for write access:
+                      - 10: Owner only
+                      - 20: Owner + Admins
+                      - 30: Team members
+                      - 40: Everyone with an account
+                      - 50: Everyone including anonymous users
+                  example: 20
+                  enum: [10, 20, 30, 40, 50]
                 canwrite:
                   type: string
                   nullable: true
                   description: JSON permissions for writing the entry
-                  default: '{"base": 20, "teams": [], "users": [1], "teamgroups": [1]}'
+                  example: '{"teams": [4], "users": [42,32], "teamgroups": [1,5]}'
+                  default: '{"teams": [], "users": [], "teamgroups": []}'
                 category:
                   type: integer
                   nullable: true
@@ -3360,16 +3462,30 @@ paths:
                   type: integer
                   example: 6
                   description: The default category ID if no category is defined for a given entry
-                canread:
-                  type: string
-                  example: |
-                    {"base": 30, "teams": [3], "teamgroups": [], "users": [91, 32]}
-                  description: A JSON string representing read permissions
-                canwrite:
-                  type: string
-                  example: |
-                    {"base": 30, "teams": [3], "teamgroups": [], "users": [91, 32]}
-                  description: A JSON string representing write permissions
+                canread_base:
+                  type: number
+                  nullable: true
+                  description: |
+                    Base permission for read access:
+                      - 10: Owner only
+                      - 20: Owner + Admins
+                      - 30: Team members
+                      - 40: Everyone with an account
+                      - 50: Everyone including anonymous users
+                  example: 30
+                  enum: [10, 20, 30, 40, 50]
+                canwrite_base:
+                  type: number
+                  nullable: true
+                  description: |
+                    Base permission for write access:
+                      - 10: Owner only
+                      - 20: Owner + Admins
+                      - 30: Team members
+                      - 40: Everyone with an account
+                      - 50: Everyone including anonymous users
+                  example: 20
+                  enum: [10, 20, 30, 40, 50]
       responses:
         '201':
           description: The import was successful

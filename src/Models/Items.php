@@ -46,10 +46,12 @@ final class Items extends AbstractConcreteEntity
         ?string $title = null,
         ?string $body = null,
         ?DateTimeImmutable $date = null,
-        ?string $canread = null,
-        ?string $canwrite = null,
-        ?bool $canreadIsImmutable = false,
-        ?bool $canwriteIsImmutable = false,
+        BasePermissions $canreadBase = BasePermissions::Team,
+        BasePermissions $canwriteBase = BasePermissions::User,
+        string $canread = self::EMPTY_CAN_JSON,
+        string $canwrite = self::EMPTY_CAN_JSON,
+        bool $canreadIsImmutable = false,
+        bool $canwriteIsImmutable = false,
         array $tags = array(),
         ?int $category = null,
         ?int $status = null,
@@ -59,19 +61,20 @@ final class Items extends AbstractConcreteEntity
         int $rating = 0,
         BodyContentType $contentType = BodyContentType::Html,
         // specific to Items
-        ?string $canbook = '',
+        string $canbook = self::EMPTY_CAN_JSON,
+        BasePermissions $canbookBase = BasePermissions::Team,
     ): int {
         $title = Filter::title($title ?? _('Untitled'));
         $date ??= new DateTimeImmutable();
         $body = Filter::body($body);
-        $canread ??= BasePermissions::Team->toJson();
-        $canwrite ??= BasePermissions::Team->toJson();
-        $canbook = $canread;
+        if (empty($body)) {
+            $body = null;
+        }
         // figure out the custom id
         $customId ??= $this->getNextCustomId($category);
 
-        $sql = 'INSERT INTO items(team, title, date, status, body, userid, category, elabid, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canbook, metadata, custom_id, content_type, rating, hide_main_text)
-            VALUES(:team, :title, :date, :status, :body, :userid, :category, :elabid, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canbook, :metadata, :custom_id, :content_type, :rating, :hide_main_text)';
+        $sql = 'INSERT INTO items(team, title, date, status, body, userid, category, elabid, canread_base, canwrite_base, canbook_base, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canbook, metadata, custom_id, content_type, rating, hide_main_text)
+            VALUES(:team, :title, :date, :status, :body, :userid, :category, :elabid, :canread_base, :canwrite_base, :canbook_base, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canbook, :metadata, :custom_id, :content_type, :rating, :hide_main_text)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindParam(':title', $title);
@@ -81,6 +84,9 @@ final class Items extends AbstractConcreteEntity
         $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
         $req->bindParam(':category', $category, PDO::PARAM_INT);
         $req->bindValue(':elabid', Tools::generateElabid());
+        $req->bindValue(':canread_base', $canreadBase->value, PDO::PARAM_INT);
+        $req->bindValue(':canwrite_base', $canwriteBase->value, PDO::PARAM_INT);
+        $req->bindValue(':canbook_base', $canbookBase->value, PDO::PARAM_INT);
         $req->bindParam(':canread', $canread);
         $req->bindParam(':canwrite', $canwrite);
         $req->bindParam(':canread_is_immutable', $canreadIsImmutable, PDO::PARAM_INT);
@@ -119,7 +125,7 @@ final class Items extends AbstractConcreteEntity
     {
         $Permissions = new Permissions($this->Users, $this->entityData);
         $can = json_decode($this->entityData['canbook'], true, 512, JSON_THROW_ON_ERROR);
-        return $Permissions->getCan($can);
+        return $Permissions->getCan(BasePermissions::from($this->entityData['canbook_base']), $can);
     }
 
     public function canBookInPast(): bool
@@ -138,8 +144,12 @@ final class Items extends AbstractConcreteEntity
         $newId = $this->create(
             title: $title,
             body: $this->entityData['body'],
+            canreadBase: BasePermissions::from($this->entityData['canread_base']),
+            canwriteBase: BasePermissions::from($this->entityData['canwrite_base']),
+            canbookBase: BasePermissions::from($this->entityData['canbook_base']),
             canread: $this->entityData['canread'],
             canwrite: $this->entityData['canwrite'],
+            canbook: $this->entityData['canbook'],
             category: $this->entityData['category'],
             status: $this->entityData['status'],
             metadata: $metadata,

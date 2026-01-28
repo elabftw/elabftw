@@ -98,18 +98,18 @@
         </div>
       {# deleted entry: show restore icon #}
       {% elseif item.state == 3 %}
-      <div class='left-icon rounded mr-3 my-1 bgnd-dark' data-action='restore-entity-showmode' title='{{ 'Restore entry'|trans }}' data-endpoint='{{ Entity.entityType.value }}' data-id='{{ item.id }}'>
+      <div class='btn btn-secondary mr-1 lh-normal p-2 border-0' data-action='restore-entity-showmode' title='{{ 'Restore entry'|trans }}' data-endpoint='{{ Entity.entityType.value }}' data-id='{{ item.id }}'>
           <i class='fas fa-trash-can-arrow-up fa-fw'></i>
         </div>
       {% else %}
         {# edit icon #}
         {% if (item.userid == App.Users.userData.userid or Entity.entityType.value == 'items' or App.Users.isAdmin) %}
-          <a href='{{ Entity.entityType.toPage }}?mode=edit&amp;id={{ item.id }}' class='btn left-icon mr-1 lh-normal p-2 border-0 hl-hover-gray bgnd-dark' title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}'>
+          <a href='{{ Entity.entityType.toPage }}?mode=edit&amp;id={{ item.id }}' class='btn btn-secondary left-icon mr-1 lh-normal p-2 border-0' title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}'>
             <i class='fas fa-pencil fa-fw'></i>
           </a>
         {% else %}
         {# eye icon #}
-          <a href='{{ Entity.entityType.toPage }}?mode=view&amp;id={{ item.id }}' class='btn left-icon mr-1 lh-normal p-2 border-0 hl-hover-gray bgnd-dark' title='{{ 'View'|trans }}' aria-label='{{ 'View'|trans }}'>
+          <a href='{{ Entity.entityType.toPage }}?mode=view&amp;id={{ item.id }}' class='btn btn-secondary left-icon mr-1 lh-normal p-2 border-0' title='{{ 'View'|trans }}' aria-label='{{ 'View'|trans }}'>
             <i class='fas fa-eye fa-fw'></i>
           </a>
         {% endif %}

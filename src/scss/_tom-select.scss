@@ -150,7 +150,7 @@
 }
 
 .selected-item-badge {
-  background-color: var(--mainbackground);
+  background-color: var(--badge-color, var(--mainbackground));
   border-radius: 999px;
   color: variables.$mainbackground;
   font-size: 1.2rem;

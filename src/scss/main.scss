@@ -20,6 +20,11 @@ $theme-colors: (
 .btn-primary { background-color: var(--primary) !important; }
 .btn-secondary { background-color: var(--secondary) !important; }
 
+.btn-secondary:hover {
+  background-color: lighten($medium, 30%) !important;
+  border-color: lighten($medium, 30%) !important;
+}
+
 .btn-primary,
 .btn-secondary {
   .fas,
@@ -1512,7 +1517,7 @@ input[type='color'] {
 #main-nav {
   background-color: inherit;
 
-  @media (min-width: 992px) {
+  @media (min-width: 768px) {
     height: 43px;
   }
 
@@ -1815,6 +1820,10 @@ input:user-invalid {
 
 .round-spot-ghost {
   border: 1px dashed var(--medium);
+}
+
+.table-bordered, .table-bordered td, .table-bordered th, .fc-event {
+  border: 1px solid var(--secondary-muted);
 }
 
 .calendar-event-hover {

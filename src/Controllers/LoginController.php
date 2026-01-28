@@ -98,20 +98,7 @@ final class LoginController implements ControllerInterface
     #[Override]
     public function getResponse(): Response
     {
-        // store the rememberme choice in a cookie, not the session as it won't follow up for saml
-        $icanhazcookies = '0';
-        if ($this->Request->request->has('rememberme') && $this->config['remember_me_allowed'] === '1') {
-            $icanhazcookies = '1';
-        }
-        $cookieOptions = array(
-            'expires' => time() + 300,
-            'path' => '/',
-            'domain' => '',
-            'secure' => true,
-            'httponly' => true,
-            'samesite' => 'Lax',
-        );
-        setcookie('icanhazcookies', $icanhazcookies, $cookieOptions);
+        $icanhazcookies = $this->setRememberMeCookie();
 
         // Get an AuthResponse from an AuthService
         $AuthResponse = $this->getAuthResponse();
@@ -191,7 +178,7 @@ final class LoginController implements ControllerInterface
 
         // All good now we can login the user
         $LoginHelper = new LoginHelper($AuthResponse, $this->Session, (int) $this->config['cookie_validity_time']);
-        $LoginHelper->login((bool) $icanhazcookies);
+        $LoginHelper->login($icanhazcookies);
 
         // cleanup
         $this->Session->remove('auth_userid');
@@ -206,6 +193,31 @@ final class LoginController implements ControllerInterface
             }
         }
         return new RedirectResponse($location);
+    }
+
+    /**
+     * Store the rememberme choice in a cookie, not the session as it won't follow up for saml
+     */
+    private function setRememberMeCookie(): bool
+    {
+        // avoid setting it if it's present
+        if ($this->Request->cookies->has('icanhazcookies')) {
+            return $this->Request->cookies->getBoolean('icanhazcookies');
+        }
+        $icanhazcookies = '0';
+        if ($this->Request->request->has('rememberme') && $this->config['remember_me_allowed'] === '1') {
+            $icanhazcookies = '1';
+        }
+        $cookieOptions = array(
+            'expires' => time() + 300,
+            'path' => '/',
+            'domain' => '',
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'Lax',
+        );
+        setcookie('icanhazcookies', $icanhazcookies, $cookieOptions);
+        return (bool) $icanhazcookies;
     }
 
     /**

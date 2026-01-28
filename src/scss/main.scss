@@ -217,7 +217,8 @@ select:not([multiple]) {
     border-color: var(--secondary-muted);
   }
 
-  .close {
+  .close,
+ .form-control-plaintext {
     color: var(--mediumstrong);
   }
 
@@ -965,7 +966,7 @@ tr:first-child td {
 /* this is a hack to make the steps that are long work fine in multiline
 the form-control fails to do that so we do the border ourselves */
 .step-static {
-  border: 1px solid var(--firstlevel);
+  border: 1px solid var(--secondary-muted);
   border-bottom-right-radius: 4px;
   border-top-right-radius: 4px;
 }

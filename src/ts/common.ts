@@ -987,10 +987,15 @@ on('toggle-password', (el: HTMLElement) => {
 });
 
 on('logout', () => {
-  clearLocalStorage();
-  sessionStorage.setItem('flash_after_logout', 'You logged out. Please close your browser to prevent access to previous content.');
+  localStorage.setItem('logout_msg', '1');
   window.location.href = 'app/logout.php';
 });
+
+const el = document.getElementById('logoutMessage');
+if (el  && localStorage.getItem('logout_msg')) {
+  el.removeAttribute('hidden');
+  clearLocalStorage();
+}
 
 on('ack-notif', (el: HTMLElement) => {
   if (el.parentElement.dataset.ack === '0') {

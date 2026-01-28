@@ -8,6 +8,11 @@ describe('Login page', () => {
     cy.get('#safariWarning').should('have.attr', 'hidden');
   });
 
+  it ('does not show logout message on the first time', () => {
+    cy.visit('/login.php');
+    cy.get('#logoutMessage').should('exist').should('have.attr', 'hidden');
+  });
+
   it('sets auth cookie when logging in via form submission', () => {
     const email = 'toto@yopmail.com';
     const password = 'totototototo';

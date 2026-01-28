@@ -13,9 +13,12 @@ describe('Logout', () => {
     });
   });
 
-  it ('does show message to close the browser', () => {
+  it('shows message to close the browser when user logged out', () => {
+    cy.visit('/dashboard.php');
+    cy.get('#navbarDropdown').should('exist').click();
+    cy.get('[data-action="logout"]').click();
+    cy.location('pathname', { timeout: 10000 }).should('include', '/login.php');
+    cy.get('#logoutMessage').should('exist').should('not.have.attr', 'hidden');
     cy.clearCookies();
-    cy.visit('/login.php');
-    //  cy.get('.overlay').first().should('be.visible').should('contain', 'You logged out. Please close your browser to prevent access to previous content.');
   });
 });

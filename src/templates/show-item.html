@@ -87,7 +87,7 @@
     <div class='d-flex flex-row'>
       {# for templates: create from button #}
       {% if isTemplate %}
-      <a data-action='create-entity' data-type={{ dataType }} data-tplid='{{ item.id }}' href='#' class='btn left-icon mr-1 lh-normal p-2 border-0 hl-hover-gray bgnd-blue' title='{{ label }}' aria-label='{{ label }}'>
+      <a data-action='create-entity' data-type={{ dataType }} data-tplid='{{ item.id }}' href='#' class='btn btn-primary left-icon mr-1 lh-normal p-2 border-0 hl-hover-gray' title='{{ label }}' aria-label='{{ label }}'>
         <i class='fas fa-file-circle-plus fa-fw'></i>
       </a>
       {% endif %}

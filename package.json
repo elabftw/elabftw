@@ -87,7 +87,8 @@
     "cross-spawn": "^7.0.5",
     "lodash": "^4.17.23",
     "lodash-es": "^4.17.23",
-    "diff": "^5.2.2"
+    "diff": "^5.2.2",
+    "tar": "^7.5.7"
   },
   "devDependencies": {
     "@babel/core": "^7.28.6",

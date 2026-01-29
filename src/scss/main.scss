@@ -227,6 +227,11 @@ select:not([multiple]) {
     color: var(--mainbackground);
   }
 
+  .alert-success,
+ .alert-success .close {
+    color: var(--strongest);
+  }
+
   .alert a {
     color: var(--strongest);
   }
@@ -1489,9 +1494,9 @@ input[type='color'] {
 
 .user-badge {
   background-color: var(--lightblue);
-  color: var(--mediumstrong);
   border: 1px solid var(--firstlevel);
   border-radius: 0.25rem;
+  color: var(--mediumstrong);
   padding: 4px 8px;
 }
 
@@ -1620,7 +1625,7 @@ input[type='color'] {
 /* notifications */
 .notification {
   border-top: 1px solid var(--mainbackground);
-    color: var(--medium);
+  color: var(--medium);
 
   .relative-moment {
     font-size: 80%;

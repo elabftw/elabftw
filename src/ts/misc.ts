@@ -214,8 +214,8 @@ export function clearForm(form: HTMLElement): void {
   });
 }
 
-export function getEntityTypeFromPage(): EntityType {
-  const scriptName = location.pathname.split('/').pop() || '';
+export function getEntityTypeFromPage(loc: Location): EntityType {
+  const scriptName = loc.pathname.split('/').pop() || '';
   switch (scriptName) {
   case 'experiments.php':
     return EntityType.Experiment;
@@ -234,9 +234,9 @@ export function getEntityTypeFromPage(): EntityType {
 // enable usage with parent Window for iframe cases (e.g., with spreadsheet editor)
 export function getEntity(useParent: boolean = false): Entity {
   let entityId: number | null = null;
-  const entityType: EntityType = getEntityTypeFromPage();
   // pick the right location (parent or self)
   const loc = useParent ? window.parent.location : window.location;
+  const entityType: EntityType = getEntityTypeFromPage(loc);
   const params = new URLSearchParams(loc.search);
   if (params.has('id')) {
     entityId = parseInt(params.get('id')!, 10);

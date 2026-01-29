@@ -1085,6 +1085,10 @@ the form-control fails to do that so we do the border ourselves */
   color: var(--white) !important;
 }
 
+.always-white {
+  color: var(--chrome-fg) !important;
+}
+
 .color-blue {
   color: var(--primary) !important;
 }
@@ -1197,7 +1201,7 @@ the form-control fails to do that so we do the border ourselves */
 .tag {
   background-color: var(--firstlevel);
   border-radius: 5px;
-  color: var(--mediumstrong);
+  color: var(--strongest);
   font: bold 80% Verdana, Arial, Helvetica, sans-serif;
   padding: 2px 5px;
 
@@ -1515,6 +1519,17 @@ input[type='color'] {
 /* give the togglePassword some borders like input */
 .input-border {
   border: 1px solid var(--firstlevel);
+}
+
+.input-group-text {
+  background-color: transparent;
+  border: 1px solid var(--secondary-muted);
+  color: inherit;
+
+  &:hover {
+    background-color: var(--firstlevel);
+    border-color: var(--secondlevel);
+  }
 }
 
 /* bring the search and user menu a bit more on the left

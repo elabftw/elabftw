@@ -182,19 +182,23 @@ final class App
         return $this->Config->configArr['lang'];
     }
 
-    public function getThemeClass(): string
+    public static function resolveThemeClass(?AuthenticatedUser $user, ?string $cookie): string
     {
         // 1. authenticated user preference
-        if ($this->Users instanceof AuthenticatedUser) {
-            $darkMode = $this->Users->userData['dark_mode'] ?? '0';
-            return $darkMode === 1 ? 'dark-mode' : '';
+        if ($user instanceof AuthenticatedUser) {
+            return ($user->userData['dark_mode'] ?? '0') === 1 ? 'dark-mode' : '';
         }
         // 2. anon & guest preference (cookie)
+        return $cookie === 'dark' ? 'dark-mode' : '';
+    }
+
+    public function getThemeClass(): string
+    {
         $cookie = $this->Request->cookies->get('elab_theme'); // 'dark' | 'light'
-        if (is_string($cookie) && $cookie === 'dark') {
-            return 'dark-mode';
-        }
-        return '';
+        return self::resolveThemeClass(
+            $this->Users instanceof AuthenticatedUser ? $this->Users : null,
+            is_string($cookie) ? $cookie : null
+        );
     }
 
     /** @psalm-suppress PossiblyUnusedMethod this method is used in twig templates */

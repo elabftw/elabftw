@@ -7,7 +7,7 @@
         <li class='list-group-item'><label for='{{ key }}'>{{ label }}</label>
           <div class='input-group'>
             <div class='input-group-prepend'>
-              <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-outline-secondary' type='button' data-action='copy-to-clipboard' data-target='{{ key }}'><i class='fas fa-clone'></i></button>
+              <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-secondary' type='button' data-action='copy-to-clipboard' data-target='{{ key }}'><i class='fas fa-clone'></i></button>
             </div>
             <input readonly class='form-control' id='{{ key }}' value='{{ value }}' />
           </div>
@@ -100,7 +100,7 @@
   {% if mode == 'edit' %}
   <div class='input-group'>
     <div class='input-group-prepend'>
-      <span class='btn btn-secondary'><i class='fas fa-magnifying-glass'></i></span>
+      <span class='input-group-text'><i class='fas fa-magnifying-glass'></i></span>
     </div>
     <input aria-label='{{ 'Link with compound'|trans }}' type='text' data-endpoint='compounds_links' data-autocomplete='compounds' id='addCompoundInput' class='form-control linkinput' data-id='{{ Entity.id }}' placeholder='{{ 'Search in local compounds database'|trans }}' />
     <div class='input-group-append'>

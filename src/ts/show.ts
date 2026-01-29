@@ -402,7 +402,6 @@ document.addEventListener('DOMContentLoaded', () => {
           // now simply hide the ones that don't match the query
           if (!el.innerText.toLowerCase().includes(query)) {
             el.hidden = true;
-            el.setAttribute('hidden', 'hidden');
           }
         });
       }

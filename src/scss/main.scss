@@ -228,7 +228,7 @@ select:not([multiple]) {
   }
 
   .alert-success,
- .alert-success .close {
+  .alert-success .close {
     color: var(--strongest);
   }
 

@@ -140,7 +140,11 @@ on('toggle-create-modal', async (el: HTMLElement) => {
     $('#editCompoundModal').modal('hide');
   }
 
-  $('#createModal').modal('toggle');
+  $('#createModal')
+    .one('shown.bs.modal', () => {
+      document.getElementById('createNewFormTitle')?.focus();
+    })
+    .modal('show');
 });
 
 on('toggle-templates', (el: HTMLElement) => {

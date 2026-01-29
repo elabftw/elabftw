@@ -185,7 +185,7 @@ final class App
     {
         // 1. authenticated user preference
         if ($user instanceof AuthenticatedUser) {
-            return ($user->userData['dark_mode'] ?? '0') === 1 ? 'dark-mode' : '';
+            return ($user->userData['dark_mode'] ?? 0) === 1 ? 'dark-mode' : '';
         }
         // 2. anon & guest preference (cookie)
         return $cookie === 'dark' ? 'dark-mode' : '';

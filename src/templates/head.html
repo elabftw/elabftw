@@ -179,7 +179,7 @@
         {# toggle dark mode #}
           {# TODO: move into menu #}
         <label class='btn nav-link mb-0' aria-label='{{ 'Toggle dark mode'|trans }}'>
-          <input data-action='toggle-dark-mode' type='checkbox' autocomplete='off' class='d-none' data-trigger='change' data-model='users/me' data-target='dark_mode' data-reload='darkModeIconDiv'{{ App.Users.userData.dark_mode == 1 ? 'checked' }}>
+          <input data-action='toggle-dark-mode' type='checkbox' autocomplete='off' class='d-none' data-trigger='change' data-model='users/me' data-target='dark_mode' data-reload='darkModeIconDiv'{{ App.Users.userData.dark_mode == 1 ? ' checked' }}>
           <span id='darkModeIconDiv'>
             <i class='fa-solid fa-moon fa-2x {{ App.Users.userData.dark_mode == 1 ? 'd-none' }}'></i>
             <i class='fa-solid fa-sun fa-2x {{ App.Users.userData.dark_mode != 1 ? 'd-none' }}'></i>

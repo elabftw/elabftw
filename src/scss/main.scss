@@ -1625,9 +1625,9 @@ input[type='color'] {
 /* notifications */
 .notification {
   border-top: 1px solid var(--mainbackground);
+    color: var(--medium);
 
   .relative-moment {
-    color: var(--medium);
     font-size: 80%;
   }
 }

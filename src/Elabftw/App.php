@@ -137,7 +137,6 @@ final class App
             $ResourcesCategory = new ResourcesCategories($this->Teams);
             $this->itemsCategoryArr = $ResourcesCategory->readAll($ResourcesCategory->getQueryParams(new InputBag(array('limit' => 9999))));
         }
-        $this->getThemeClass();
         $this->initi18n();
     }
 

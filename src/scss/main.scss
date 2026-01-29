@@ -690,6 +690,10 @@ tr:first-child td {
 
 .overlay-error {
   background-color: var(--lightred);
+
+  p {
+    color: var(--chrome-bg) !important;
+  }
 }
 
 .overlay-warning {

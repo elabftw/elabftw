@@ -417,6 +417,7 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
       elem.dataset.id = id;
       elem.style.setProperty('--bg', hex);
       elem.style.borderColor = hex;
+      return true;
     },
     cancel : i18next.t('cancel'),
     cancelClasses: ['btn', 'btn-danger', 'mx-1'],

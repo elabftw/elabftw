@@ -94,7 +94,7 @@ function addHiddenInputToMainSearchForm(name: string, value: string): void
   const hiddenInputId = `${name}_hiddenInput`;
   document.getElementById(hiddenInputId)?.remove();
   const input = document.createElement('input');
-  input.hidden = true;
+  input.type = 'hidden';
   input.name = name;
   input.value = value;
   input.id = hiddenInputId;
@@ -250,6 +250,8 @@ document.addEventListener('DOMContentLoaded', () => {
         remove_button: {},
       },
       onInitialize() {
+        this.wrapper?.querySelector('input.items-placeholder')?.setAttribute('aria-label', this.input.getAttribute('aria-label') || 'Filter owner');
+        this.wrapper?.querySelector('input.dropdown-input')?.setAttribute('aria-label', this.input.getAttribute('aria-label') || 'Filter owner');
         this._allOptions = Object.values(this.options);
         this._showArchived = false;
         applyArchivedFilter(this);
@@ -400,6 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
           // now simply hide the ones that don't match the query
           if (!el.innerText.toLowerCase().includes(query)) {
             el.hidden = true;
+            el.setAttribute('hidden', 'hidden');
           }
         });
       }

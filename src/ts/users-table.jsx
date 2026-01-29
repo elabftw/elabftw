@@ -21,7 +21,7 @@ import { populateUserModal } from './misc';
 import { notify } from './notify';
 import i18next from './i18n';
 import $ from 'jquery';
-
+// TODOmouss - handle dark mode
 async function toggleUserModal(user) {
   const textParams = [
     'userid',

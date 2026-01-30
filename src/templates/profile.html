@@ -176,7 +176,7 @@
     <form class='form-group' id='importFileForm' enctype='multipart/form-data' action='api/v2/import' method='post' aria-label='{{ 'Import'|trans }}'>
       {{ App.Session.get('csrf')|csrf }}
       <div class='d-flex'>
-        <div>
+          <div>
           <input id='importFileInput' hidden required name='file' type='file' accept='.eln,vnd.eln+zip,.csv,text/csv' />
           <div class='mb-4 d-flex flex-row'>
             <button type='button' class='btn btn-primary' data-action='show-file-input' >{{ 'Import from file'|trans }}</button>

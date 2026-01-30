@@ -12,7 +12,7 @@
         <p>{{ 'Duplicating an entry will create a new entry with the same attributes.'|trans }}</p>
         <div class='d-flex justify-content-between'>
           <label for='duplicateKeepFilesSelect' class='col-form-label'>{{ 'Copy attached files'|trans }}</label>
-          <label class='switch ucp-align'>
+          <label class='switch ucp-align'><span class='sr-only'>{{ 'Duplicate keep files select'|trans }}</span>
             <input type='checkbox' autocomplete='off' id='duplicateKeepFilesSelect'>
             <span class='slider'></span>
           </label>
@@ -21,7 +21,7 @@
       {% if Entity.entityType.value == 'experiments' or Entity.entityType.value == 'items' %}
         <div class='d-flex justify-content-between'>
           <label for='duplicateLinkToOriginal' class='col-form-label'>{{ 'Link to original entry'|trans }}</label>
-          <label class='switch ucp-align'>
+          <label class='switch ucp-align'><span class='sr-only'>{{ 'Duplicate link to original'|trans }}</span>
             <input type='checkbox' autocomplete='off' id='duplicateLinkToOriginal' checked>
             <span class='slider'></span>
           </label>

@@ -130,7 +130,7 @@ on('filter-category', (el: HTMLElement) => {
 
 on('toggle-create-modal', async (el: HTMLElement) => {
   // allow data-type to override selected type (for instance on dashboard)
-  const entityType = el.dataset.type ? el.dataset.type as EntityType : getEntityTypeFromPage();
+  const entityType = el.dataset.type ? el.dataset.type as EntityType : getEntityTypeFromPage(window.location);
   setTypeRadio(entityType);
   if (el.dataset.getCompoundIdFrom) {
     const compoundId = (document.getElementById(el.dataset.getCompoundIdFrom) as HTMLElement).dataset.compoundId;

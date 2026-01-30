@@ -20,6 +20,7 @@ use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Enums\PdfFormat;
 use Elabftw\Enums\Scope;
 use Elabftw\Enums\Sort;
+use Elabftw\Enums\ThemeVariant;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Services\Check;
@@ -88,7 +89,7 @@ final class UserParams extends ContentParams
             'use_isodate',
             'use_markdown',
             'validated',
-            'dark_mode' => (string) Filter::toBinary($this->content),
+            'dark_mode' => (ThemeVariant::tryFrom($this->content) ?? ThemeVariant::Auto)->value,
             'mfa_secret' => $this->getNullableString(),
             'lang' => (Language::tryFrom($this->content) ?? Language::EnglishGB)->value,
             'entrypoint' => (Entrypoint::tryFrom($this->asInt()) ?? Entrypoint::Dashboard)->value,

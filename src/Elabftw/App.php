@@ -137,7 +137,6 @@ final class App
             $ResourcesCategory = new ResourcesCategories($this->Teams);
             $this->itemsCategoryArr = $ResourcesCategory->readAll($ResourcesCategory->getQueryParams(new InputBag(array('limit' => 9999))));
         }
-        $this->getThemeClass();
         $this->initi18n();
     }
 
@@ -190,8 +189,8 @@ final class App
             return $darkMode === 1 ? 'dark-mode' : '';
         }
         // 2. anon & guest preference (cookie)
-        $cookie = $this->Request->cookies->get('elab_theme'); // 'dark' | 'light'
-        if (is_string($cookie) && $cookie === 'dark') {
+        $cookie = $this->Request->cookies->getString('elab_theme'); // 'dark' | 'light'
+        if ($cookie === 'dark') {
             return 'dark-mode';
         }
         return '';

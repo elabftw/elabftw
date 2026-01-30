@@ -12,7 +12,7 @@
       {% endif %}
       {{ label|trans }}</label>
     </div>
-    <label class='switch ucp-align {{ disabled ? 'disabled' }} '><span class='sr-only'>{{ 'label'|trans }}</span>
+    <label class='switch ucp-align {{ disabled ? 'disabled' }} '><span class='sr-only'>{{ label }}</span>
       <input name='{{ target }}' type='checkbox' {{ disabled ? 'disabled' }} autocomplete='off' id='addCompound{{ target }}'>
       <span class='slider'></span>
     </label>

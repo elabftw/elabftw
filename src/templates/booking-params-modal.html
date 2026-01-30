@@ -12,7 +12,7 @@
         {# Is bookable? #}
         <div class='d-flex justify-content-between mb-2'>
           <label class='d-inline mr-1' for='isBookableSwitch'>{{ 'Allow booking this resource'|trans }}</label>
-          <label class='switch' title='{{ 'Allow booking this resource'|trans }}'><span class='sr-only'>{{ 'Is bookable switch'|trans }}</span>
+          <label class='switch' title='{{ 'Allow booking this resource'|trans }}'><span class='sr-only'>{{ 'Allow booking this resource'|trans }}</span>
             <input type='checkbox' autocomplete='off' id='isBookableSwitch' data-reload='topToolbar,permissionsDiv' data-trigger='change' data-model='items/{{ Entity.id }}' data-target='is_bookable' {{ Entity.entityData.is_bookable == 1 ? 'checked="checked"' }}>
             <span class='slider'></span>
           </label>
@@ -20,7 +20,7 @@
         {# OVERLAP #}
         <div class='d-flex justify-content-between mb-2'>
           <label class='d-inline mr-1' for='isOverlapableSwitch'>{{ 'Allow overlapping slots'|trans }}</label>
-          <label class='switch' title='{{ 'Allow overlapping slots'|trans }}'><span class='sr-only'>{{ 'Is overlapable switch'|trans }}</span>
+          <label class='switch' title='{{ 'Allow overlapping slots'|trans }}'><span class='sr-only'>{{ 'Allow overlapping slots'|trans }}</span>
             <input type='checkbox' autocomplete='off' id='isOverlapableSwitch' data-trigger='change' data-model='items/{{ Entity.id }}' data-target='book_can_overlap' {{ Entity.entityData.book_can_overlap == 1 ? 'checked="checked"' }}>
             <span class='slider'></span>
           </label>
@@ -41,7 +41,7 @@
         {# USERS CAN BOOK IN PAST #}
         <div class='d-flex justify-content-between mb-2'>
           <label class='d-inline mr-1' for='isBookableInPastSwitch'>{{ 'Allow users booking in past'|trans }}</label>
-          <label class='switch' title='{{ 'Allow users booking in past'|trans }}'><span class='sr-only'>{{ 'Is bookable in past switch'|trans }}</span>
+          <label class='switch' title='{{ 'Allow users booking in past'|trans }}'><span class='sr-only'>{{ 'Allow users booking in past'|trans }}</span>
             <input type='checkbox' autocomplete='off' id='isBookableInPastSwitch' data-trigger='change' data-model='items/{{ Entity.id }}' data-target='book_users_can_in_past' {{ Entity.entityData.book_users_can_in_past == 1 ? 'checked="checked"' }}>
             <span class='slider'></span>
           </label>
@@ -50,7 +50,7 @@
         {# CAN CANCEL #}
         <div class='d-flex justify-content-between mb-2'>
           <label class='d-inline mr-1' for='isCancellableSwitch'>{{ 'Allow cancelling a booking slot'|trans }}</label>
-          <label class='switch' title='{{ 'Allow cancelling a booking slot'|trans }}'><span class='sr-only'>{{ 'Is cancellable switch'|trans }}</span>
+          <label class='switch' title='{{ 'Allow cancelling a booking slot'|trans }}'><span class='sr-only'>{{ 'Allow cancelling a booking slot'|trans }}</span>
             <input type='checkbox' autocomplete='off' id='isCancellableSwitch' data-trigger='change' data-model='items/{{ Entity.id }}' data-target='book_is_cancellable' {{ Entity.entityData.book_is_cancellable == 1 ? 'checked="checked"' }}>
             <span class='slider'></span>
           </label>

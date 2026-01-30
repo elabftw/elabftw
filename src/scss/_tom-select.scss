@@ -8,7 +8,7 @@
  */
 
 @use './variables';
-@import 'tom-select/dist/scss/tom-select.bootstrap4';
+@import '@deltablot/tom-select/dist/scss/tom-select.bootstrap4';
 
 .focus .ts-control,
 .plugin-dropdown_input.focus .ts-dropdown .dropdown-input { /* stylelint-disable-line selector-class-pattern -- next-line does not work here */

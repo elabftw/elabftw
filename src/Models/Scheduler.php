@@ -16,6 +16,7 @@ use DateTime;
 use DateTimeImmutable;
 use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\Currency;
 use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -193,6 +194,10 @@ final class Scheduler extends AbstractRest
                 team_events.created_at,
                 team_events.modified_at,
                 TIMESTAMPDIFF(MINUTE, team_events.start, team_events.end) AS event_duration_minutes,
+                items.book_price_tax AS book_hourly_rate_tax,
+                items.book_price_notax AS book_hourly_rate_notax,
+                (items.book_price_tax * TIMESTAMPDIFF(MINUTE, team_events.start, team_events.end)) / 60 AS book_cost_tax,
+                (items.book_price_notax * TIMESTAMPDIFF(MINUTE, team_events.start, team_events.end)) / 60 AS book_cost_notax,
                 CONCAT(u.firstname, ' ', u.lastname) AS fullname,
                 CONCAT('[', items.title, '] ', team_events.title, ' (', u.firstname, ' ', u.lastname, ')') AS title,
                 items.title AS item_title,

@@ -9,7 +9,8 @@
         </button>
       </div>
       <div class='modal-body'>
-        {# Is bookable? #}
+
+        {# IS BOOKABLE? #}
         <div class='d-flex justify-content-between mb-2'>
           <label class='d-inline mr-1' for='isBookableSwitch'>{{ 'Allow booking this resource'|trans }}</label>
           <label class='switch' title='{{ 'Allow booking this resource'|trans }}'>
@@ -17,6 +18,7 @@
             <span class='slider'></span>
           </label>
         </div>
+
         {# OVERLAP #}
         <div class='d-flex justify-content-between mb-2'>
           <label class='d-inline mr-1' for='isOverlapableSwitch'>{{ 'Allow overlapping slots'|trans }}</label>
@@ -55,10 +57,33 @@
             <span class='slider'></span>
           </label>
         </div>
+
+        {# MINIMUM CANCELLATION TIME #}
         <div class='d-flex justify-content-between mb-2'>
           <label for='book_cancel_minutes' class='col-form-label'>{{ 'Minimum time before a slot can be cancelled (in minutes)'|trans }}</label>
           <input class='form-control col-md-4' data-trigger='blur' data-model='items/{{ Entity.id }}' data-target='book_cancel_minutes' type='number' value='{{ Entity.entityData.book_cancel_minutes }}' id='book_cancel_minutes' />
         </div>
+
+        {# HOURLY BOOKING COST WITHOUT TAXES #}
+        <div class='d-flex justify-content-between mb-2'>
+          <label for='book_price_notax' class='col-form-label'>{{ 'Booking cost per hour, without taxes'|trans }}</label>
+          <input class='form-control col-md-4' data-trigger='blur' data-model='items/{{ Entity.id }}' data-target='book_price_notax' type='number' value='{{ Entity.entityData.book_price_notax }}' id='book_price_notax' step='0.01' />
+        </div>
+        {# HOURLY BOOKING COST WITH TAXES #}
+        <div class='d-flex justify-content-between mb-2'>
+          <label for='book_price_tax' class='col-form-label'>{{ 'Booking cost per hour, with taxes'|trans }}</label>
+          <input class='form-control col-md-4' data-trigger='blur' data-model='items/{{ Entity.id }}' data-target='book_price_tax' type='number' value='{{ Entity.entityData.book_price_tax }}' id='book_price_tax' step='0.01' />
+        </div>
+        {# CURRENCY #}
+        <div class='d-flex justify-content-between mb-2'>
+          <label for='book_currency' class='col-form-label'>{{ 'Booking cost currency'|trans }}</label>
+          <select id='book_currency' class='form-control col-md-4' data-trigger='change' data-model='items/{{ Entity.id }}' data-target='book_currency'>
+            {% for value, text in currencyArr %}
+              <option value='{{ value }}' {{ value == Entity.entityData.book_currency ? 'selected' }}>{{ text }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
       </div>
 
       <div class='modal-footer'>

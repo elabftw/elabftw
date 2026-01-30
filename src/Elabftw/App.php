@@ -14,6 +14,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Language;
 use Elabftw\Enums\Messages;
+use Elabftw\Enums\ThemeVariant;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Users\AnonymousUser;
@@ -185,8 +186,8 @@ final class App
     {
         // 1. authenticated user preference
         if ($this->Users instanceof AuthenticatedUser) {
-            $darkMode = $this->Users->userData['dark_mode'] ?? '0';
-            return $darkMode === 1 ? 'dark-mode' : '';
+            $themeVariant = (int) ($this->Users->userData['theme_variant'] ?? ThemeVariant::Auto->value);
+            return $themeVariant === ThemeVariant::Dark->value ? 'dark-mode' : '';
         }
         // 2. anon & guest preference (cookie)
         $cookie = $this->Request->cookies->getString('elab_theme'); // 'dark' | 'light'

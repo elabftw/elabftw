@@ -132,7 +132,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
             'pdf_format' => 'A4',
             'default_read' => AbstractEntity::EMPTY_CAN_JSON,
             'display_mode' => 'it',
-            'dark_mode' => 1,
+            'theme_variant' => 1,
             'sort' => 'date',
             'orderby' => 'desc',
         );

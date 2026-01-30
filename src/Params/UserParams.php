@@ -89,7 +89,7 @@ final class UserParams extends ContentParams
             'use_isodate',
             'use_markdown',
             'validated',
-            'dark_mode' => (ThemeVariant::tryFrom($this->content) ?? ThemeVariant::Auto)->value,
+            'theme_variant' => (ThemeVariant::tryFrom($this->content) ?? ThemeVariant::Auto)->value,
             'mfa_secret' => $this->getNullableString(),
             'lang' => (Language::tryFrom($this->content) ?? Language::EnglishGB)->value,
             'entrypoint' => (Entrypoint::tryFrom($this->asInt()) ?? Entrypoint::Dashboard)->value,

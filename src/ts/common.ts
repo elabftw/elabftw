@@ -75,10 +75,12 @@ interface Status extends SelectOptions {
 }
 
 // dark mode
-on('toggle-dark-mode', () => {
-  const enabled = document.documentElement.classList.toggle('dark-mode');
-  // cookie so that Twig can render correct theme on all pages, even logged out
-  document.cookie = `elab_theme=${enabled ? 'dark' : 'light'}; Path=/; Max-Age=31536000; SameSite=Lax`;
+on('toggle-dark-mode', (input: HTMLInputElement) => {
+  const checked = input.checked;
+  const themeVariant = checked ? -1 : 0;
+  document.documentElement.classList.toggle('dark-mode', checked);
+  document.cookie = `elab_theme=${checked ? 'dark' : 'auto'}; Path=/; Max-Age=31536000; SameSite=Lax`;
+  ApiC.patch(`${Model.User}/me`, { theme_variant: themeVariant });
 });
 
 // HEARTBEAT

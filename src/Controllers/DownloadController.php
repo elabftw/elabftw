@@ -100,6 +100,8 @@ final class DownloadController implements ControllerInterface
             'image/gif',
             'image/jpeg',
             'image/png',
+            'image/bmp',
+            'image/x-bmp',
             'video/mp4',
             'text/plain',
         );

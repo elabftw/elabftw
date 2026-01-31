@@ -6707,8 +6707,8 @@ __metadata:
     html-validate: "npm:^10.7.0"
     i18next: "npm:^25.8.0"
     immutable: "npm:^5.1.4"
-    jquery: "npm:^3.7.1"
-    jquery-ui: "npm:^1.14.1"
+    jquery: "npm:^4.0.0"
+    jquery-ui: "npm:^1.14.2"
     jsoneditor: "npm:^10.4.2"
     jspreadsheet-ce: "npm:^5.0.4"
     jsuites: "npm:^5.13.5"
@@ -8766,19 +8766,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jquery-ui@npm:^1.14.1":
-  version: 1.14.1
-  resolution: "jquery-ui@npm:1.14.1"
+"jquery-ui@npm:^1.14.2":
+  version: 1.14.2
+  resolution: "jquery-ui@npm:1.14.2"
   dependencies:
     jquery: "npm:>=1.12.0 <5.0.0"
-  checksum: 10c0/cf7a3c0aac369e513d78bc5864bbafb6ddf85a43513ca5d00b11d65e2890a6618ff2ef5b8cb2925db9a6b7d0c2482d717fb10cc813e419024ae8bc457e18f51d
+  checksum: 10c0/83b65744c4f4f2e9fa12833feb76c964f9565ef8301ef4e224e93e6c867e10a45d7da3e93bc7bcaec5227a61e09a2a6d1ce0198d9c38de08e4ada3d53a628615
   languageName: node
   linkType: hard
 
-"jquery@npm:>=1.12.0 <5.0.0, jquery@npm:^3.7.1":
+"jquery@npm:>=1.12.0 <5.0.0":
   version: 3.7.1
   resolution: "jquery@npm:3.7.1"
   checksum: 10c0/808cfbfb758438560224bf26e17fcd5afc7419170230c810dd11f5c1792e2263e2970cca8d659eb84fcd9acc301edb6d310096e450277d54be4f57071b0c82d9
+  languageName: node
+  linkType: hard
+
+"jquery@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "jquery@npm:4.0.0"
+  checksum: 10c0/06d8d0f51121af5a691f8b59c74823157bb5b60eea915b30eaa920d6c0ffd91e60ba81e9b97bd8203f331f9dd8d0ec9a4b010935ea314bdd2f15453c29bc780b
   languageName: node
   linkType: hard
 

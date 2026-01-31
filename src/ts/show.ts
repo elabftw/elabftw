@@ -686,6 +686,233 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  if (document.getElementById('categoryFilter')) {
+    const tsFilterCategory = new TomSelect('#categoryFilter', {
+      maxOptions: 512,
+      plugins: {
+        dropdown_header: {
+          title: 'Categories',
+          html(data) {
+            return `
+              <div class="${data.headerClass}">
+                <div class="${data.titleRowClass}" style="display:flex; align-items:center; gap:12px;">
+                  <label style="margin-left:auto; display:flex; align-items:center; gap:6px; font-weight:normal;">
+                    <input type="checkbox" class="ts-toggle-show-all">
+                    Show all
+                  </label>
+                </div>
+              </div>
+            `;
+          },
+        },
+        dropdown_input: {},
+        remove_button: {},
+      },
+
+      onInitialize() {
+        // remove the placeholder input once the select is ready
+        document.getElementById('categoryFilterPlaceholder').remove();
+        this._allOptions = Object.values(this.options);
+
+        // When false, show only categories belonging to current team.
+        // When true, show all categories.
+        this._showAll = false;
+
+        applyTeamFilter(this);
+      },
+
+      onChange: (value) => {
+        const url = new URL(window.location.href);
+
+        // Tom Select gives an array for multi-select; normalize just in case
+        const selected = Array.isArray(value) ? value : (value ? [value] : []);
+
+        if (selected.length === 0) {
+          url.searchParams.delete('category');
+          addHiddenInputToMainSearchForm('category', '');
+        } else {
+          const joined = selected.join(',');
+          url.searchParams.set('category', joined); // category=1,2,5
+          addHiddenInputToMainSearchForm('category', joined);
+        }
+
+        window.history.replaceState({}, '', url.toString());
+        reloadEntitiesShow();
+      },
+    });
+
+    function isCurrentTeamOption(opt) {
+      const el = opt?.$option;
+      // Expect the option to have data-current-team="1" for categories in the current team
+      const raw = el?.getAttribute('data-current-team') ?? '0';
+      return raw === '1';
+    }
+
+    function applyTeamFilter(control) {
+      const selected = new Set(control.items.map(String));
+
+      if (control._showAll) {
+        // Restore all options
+        for (const opt of control._allOptions ?? []) control.addOption(opt);
+      } else {
+        // Remove options that are NOT in current team, except those already selected
+        for (const opt of control._allOptions ?? []) {
+          const id = String(opt[control.settings.valueField]);
+          const inTeam = isCurrentTeamOption(opt);
+          if (!inTeam && !selected.has(id)) {
+            control.removeOption(id);
+          }
+        }
+      }
+
+      control.refreshOptions(false);
+    }
+
+    // Bind the toggle when dropdown opens (same binding pattern as the owner filter)
+    tsFilterCategory.on('dropdown_open', () => {
+      const cb = tsFilterCategory.dropdown.querySelector('.ts-toggle-show-all');
+      if (!cb) return;
+
+      // If you already have a shared "bound" WeakSet in this file, use it.
+      // Otherwise, this local flag avoids double-binding.
+      if (!tsFilterCategory._showAllBound) {
+        tsFilterCategory._showAllBound = true;
+
+        cb.addEventListener('change', (ev) => {
+          tsFilterCategory._showAll = (ev.currentTarget as HTMLInputElement).checked;
+
+          const url = new URL(window.location.href);
+          if (tsFilterCategory._showAll) {
+            url.searchParams.set('scope', '3');
+          } else {
+            url.searchParams.delete('scope'); // or set back to your default, if needed
+          }
+          window.history.replaceState({}, '', url.toString());
+
+          applyTeamFilter(tsFilterCategory);
+          tsFilterCategory.open(); // keep it open after filtering
+
+          reloadEntitiesShow();
+        });
+      }
+
+      (cb as HTMLInputElement).checked = !!tsFilterCategory._showAll;
+    });
+  }
+  if (document.getElementById('statusFilter')) {
+    const tsFilterCategory = new TomSelect('#statusFilter', {
+      maxOptions: 512,
+      plugins: {
+        dropdown_header: {
+          title: 'Status',
+          html(data) {
+            return `
+              <div class="${data.headerClass}">
+                <div class="${data.titleRowClass}" style="display:flex; align-items:center; gap:12px;">
+                  <label style="margin-left:auto; display:flex; align-items:center; gap:6px; font-weight:normal;">
+                    <input type="checkbox" class="ts-toggle-show-all">
+                    Show all
+                  </label>
+                </div>
+              </div>
+            `;
+          },
+        },
+        dropdown_input: {},
+        remove_button: {},
+      },
+
+      onInitialize() {
+        // remove the placeholder input once the select is ready
+        document.getElementById('statusFilterPlaceholder').remove();
+        this._allOptions = Object.values(this.options);
+
+        // When false, show only categories belonging to current team.
+        // When true, show all categories.
+        this._showAll = false;
+
+        applyTeamFilter(this);
+      },
+
+      onChange: (value) => {
+        const url = new URL(window.location.href);
+
+        // Tom Select gives an array for multi-select; normalize just in case
+        const selected = Array.isArray(value) ? value : (value ? [value] : []);
+
+        if (selected.length === 0) {
+          url.searchParams.delete('status');
+          addHiddenInputToMainSearchForm('status', '');
+        } else {
+          const joined = selected.join(',');
+          url.searchParams.set('status', joined); // status=1,2,5
+          addHiddenInputToMainSearchForm('status', joined);
+        }
+
+        window.history.replaceState({}, '', url.toString());
+        reloadEntitiesShow();
+      },
+    });
+
+    function isCurrentTeamOption(opt) {
+      const el = opt?.$option;
+      // Expect the option to have data-current-team="1" for categories in the current team
+      const raw = el?.getAttribute('data-current-team') ?? '0';
+      return raw === '1';
+    }
+
+    function applyTeamFilter(control) {
+      const selected = new Set(control.items.map(String));
+
+      if (control._showAll) {
+        // Restore all options
+        for (const opt of control._allOptions ?? []) control.addOption(opt);
+      } else {
+        // Remove options that are NOT in current team, except those already selected
+        for (const opt of control._allOptions ?? []) {
+          const id = String(opt[control.settings.valueField]);
+          const inTeam = isCurrentTeamOption(opt);
+          if (!inTeam && !selected.has(id)) {
+            control.removeOption(id);
+          }
+        }
+      }
+
+      control.refreshOptions(false);
+    }
+
+    // Bind the toggle when dropdown opens (same binding pattern as the owner filter)
+    tsFilterCategory.on('dropdown_open', () => {
+      const cb = tsFilterCategory.dropdown.querySelector('.ts-toggle-show-all');
+      if (!cb) return;
+
+      // If you already have a shared "bound" WeakSet in this file, use it.
+      // Otherwise, this local flag avoids double-binding.
+      if (!tsFilterCategory._showAllBound) {
+        tsFilterCategory._showAllBound = true;
+
+        cb.addEventListener('change', (ev) => {
+          tsFilterCategory._showAll = (ev.currentTarget as HTMLInputElement).checked;
+
+          const url = new URL(window.location.href);
+          if (tsFilterCategory._showAll) {
+            url.searchParams.set('scope', '3');
+          } else {
+            url.searchParams.delete('scope'); // or set back to your default, if needed
+          }
+          window.history.replaceState({}, '', url.toString());
+
+          applyTeamFilter(tsFilterCategory);
+          tsFilterCategory.open(); // keep it open after filtering
+
+          reloadEntitiesShow();
+        });
+      }
+
+      (cb as HTMLInputElement).checked = !!tsFilterCategory._showAll;
+    });
+  }
+
   new TomSelect('#tagFilter', {
     onInitialize: () => {
       // remove the placeholder input once the select is ready

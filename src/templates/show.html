@@ -63,32 +63,56 @@
 
         <div id='visibleFiltersDiv' class='mt-1 flex-fill'>
           {# CATEGORY #}
-          <select name='category' class='mr-1 form-control filterAuto' aria-label='{{ 'Filter category'|trans }}'>
-            <option value='' class='dropdown-header' data-action='clear'>{{ 'Filter category'|trans }}</option>
-            <option value='null'
+          {# select is hidden to avoid showing the raw list and a layout change, it shows up with TomSelect #}
+          <input placeholder='{{ 'Filter category'|trans }}' id='categoryFilterPlaceholder' class='form-control' aria-label='placeholder for category input' />
+          {% if App.devMode -%}
+            <!-- [html-validate-disable-block input-missing-label, prefer-native-element: suppress error from tom-select] -->
+          {%- endif %}
+          <select hidden
+            id='categoryFilter'
+            name='category'
+            class='form-control'
+            multiple
+            aria-label='{{ 'Filter category'|trans }}'
+            placeholder='{{ 'Filter category'|trans }}'
+          >
+            <option data-current-team='1' value='' class='dropdown-header' data-action='clear'>{{ 'Filter category'|trans }}</option>
+            <option data-current-team='1' value='null'
               {{- App.Request.query.get('category') == 'null' ? ' selected' -}}
             >
             {{ 'No category set'|trans }}</option>
             {% for category in categoryArr %}
-              <option value='{{ category.id }}'
+            <option data-current-team='{{ category.is_current_team }}' value='{{ category.id }}'
                 {{- App.Request.query.get('category') == category.id ? ' selected' -}}
               >
-              {{ category.title }}</option>
+              {% if category.is_current_team == 0 %}{{ category.team_name }} - {% endif %}{{ category.title }}</option>
             {% endfor %}
           </select>
 
           {# STATUS #}
-          <select name='status' class='mr-1 form-control filterAuto' aria-label='{{ 'Filter status'|trans }}'>
-            <option value='' class='dropdown-header' data-action='clear'>{{ 'Filter status'|trans }}</option>
-            <option value='null'
+          {# select is hidden to avoid showing the raw list and a layout change, it shows up with TomSelect #}
+          <input placeholder='{{ 'Filter status'|trans }}' id='statusFilterPlaceholder' class='form-control' aria-label='placeholder for status input' />
+          {% if App.devMode -%}
+            <!-- [html-validate-disable-block input-missing-label, prefer-native-element: suppress error from tom-select] -->
+          {%- endif %}
+          <select hidden
+            id='statusFilter'
+            name='status'
+            class='form-control'
+            multiple
+            aria-label='{{ 'Filter status'|trans }}'
+            placeholder='{{ 'Filter status'|trans }}'
+          >
+            <option data-current-team='1' value='' class='dropdown-header' data-action='clear'>{{ 'Filter status'|trans }}</option>
+            <option data-current-team='1' value='null'
               {{- App.Request.query.get('status') == 'null' ? ' selected' -}}
             >
             {{ 'No status set'|trans }}</option>
             {% for status in statusArr %}
-              <option value='{{ status.id }}'
+              <option data-current-team='{{ status.is_current_team }}' value='{{ status.id }}'
                 {{- App.Request.query.get('status') == status.id ? ' selected' -}}
               >
-              {{ status.title }}</option>
+              {% if status.is_current_team == 0 %}{{ status.team_name }} - {% endif %}{{ status.title }}</option>
             {% endfor %}
           </select>
 

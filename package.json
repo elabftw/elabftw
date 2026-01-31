@@ -51,7 +51,7 @@
     "expose-loader": "^5.0.1",
     "i18next": "^25.8.0",
     "immutable": "^5.1.4",
-    "jquery": "^4.0.0",
+    "jquery": "^3.7.0",
     "jquery-ui": "^1.14.2",
     "jsoneditor": "^10.4.2",
     "jspreadsheet-ce": "^5.0.4",

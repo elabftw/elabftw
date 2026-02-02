@@ -918,7 +918,7 @@ tr:first-child td {
 
     &.list-group-item {
       background-color: var(--chrome-bg);
-      border: 1px solid $medium;
+      border: 1px solid var(--chrome-muted);
     }
 
     /* Favtags will show up as selected */

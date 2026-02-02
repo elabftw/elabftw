@@ -31,6 +31,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\QueryParamsInterface;
+use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\AbstractRest;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Config;
@@ -120,8 +121,7 @@ class Users extends AbstractRest
         // is user validated automatically (true) or by an admin (false)?
         $isValidated = $automaticValidationEnabled || !$Config->configArr['admin_validate'] || $usergroup !== Usergroup::User;
 
-        $defaultRead = BasePermissions::Team->toJson();
-        $defaultWrite = BasePermissions::User->toJson();
+        $defaultCan = AbstractEntity::EMPTY_CAN_JSON;
 
         $sql = 'INSERT INTO users (
             `email`,
@@ -164,8 +164,8 @@ class Users extends AbstractRest
         $req->bindValue(':valid_until', $validUntil);
         $req->bindValue(':orgid', $orgid);
         $req->bindValue(':is_sysadmin', $isSysadmin, PDO::PARAM_INT);
-        $req->bindValue(':default_read', $defaultRead);
-        $req->bindValue(':default_write', $defaultWrite);
+        $req->bindValue(':default_read', $defaultCan);
+        $req->bindValue(':default_write', $defaultCan);
         $req->bindValue(':last_seen_version', App::INSTALLED_VERSION_INT);
         $req->bindValue(':can_manage_compounds', $canManageCompounds->value);
         $req->bindValue(':can_manage_inventory_locations', $canManageInventoryLocations->value);
@@ -742,6 +742,8 @@ class Users extends AbstractRest
         $this->userData = $this->Db->fetch($req);
         $this->userData['team'] = $this->team;
         $this->userData['teams'] = json_decode($this->userData['teams'], true, 3, JSON_THROW_ON_ERROR);
+        $this->userData['default_read_base_human'] = BasePermissions::from($this->userData['default_read_base'])->toHuman();
+        $this->userData['default_write_base_human'] = BasePermissions::from($this->userData['default_write_base'])->toHuman();
         return $this->userData;
     }
 

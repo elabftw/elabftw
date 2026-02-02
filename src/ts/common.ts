@@ -18,6 +18,7 @@ import {
   escapeExtendedQuery,
   generateMetadataLink,
   handleReloads,
+  getSafeElementById,
   getRandomColor,
   listenTrigger,
   makeSortableGreatAgain,
@@ -37,7 +38,7 @@ import {
 import i18next from './i18n';
 import { Metadata } from './Metadata.class';
 import { DateTime } from 'luxon';
-import { Action, EntityType, Model, LinkSubModel, Target } from './interfaces';
+import { Action, EntityType, Model, LinkSubModel } from './interfaces';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
 import 'bootstrap-markdown-fa5/js/bootstrap-markdown';
@@ -188,6 +189,41 @@ if (needFocus) {
   needFocus.focus();
 }
 
+// START SAFARI DETECTION
+// iOS browsers often look like Safari UA; exclude by tokens:
+// https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/User-Agent
+const FORBIDDEN_UA_TOKENS = [
+  'Chrome',
+  'CriOS',
+  'Edg',
+  'EdgiOS',
+  'OPT',
+  'OPiOS',
+  'Firefox',
+  'FxiOS',
+  'SamsungBrowser',
+];
+
+const isSafari = (): boolean => {
+  const ua = navigator.userAgent ?? '';
+  const vendor = navigator.vendor ?? '';
+
+  if (vendor !== 'Apple Computer, Inc.') return false;
+  if (!ua.includes('Safari/')) return false;
+  if (!ua.includes('Version/')) return false;
+
+  for (const token of FORBIDDEN_UA_TOKENS) {
+    if (ua.includes(token)) return false;
+  }
+  return true;
+};
+
+const isDismissedSafari = localStorage.getItem('dismiss_safari_warning_v1') === '1';
+if (isSafari() && !isDismissedSafari) {
+  document.getElementById('safariWarning').removeAttribute('hidden');
+}
+// END SAFARI DETECTION
+
 // Listen for malleable columns
 new Malle({
   onEdit: (original, _, input) => {
@@ -264,6 +300,9 @@ new Malle({
 
 // only on entity page
 const pageMode = new URLSearchParams(document.location.search).get('mode');
+
+notify.flashSuccess();
+
 if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'edit')) {
   // MALLEABLE ENTITY TITLE
   new Malle({
@@ -496,6 +535,13 @@ on('insert-param-and-reload', (el: HTMLElement) => {
   handleReloads(el.dataset.reload);
 });
 
+// used on displayMessage divs: we save the fact that it was closed
+on('save-dismiss', (el: HTMLElement) => {
+  if (el.dataset.dismissKey) {
+    localStorage.setItem(`dismiss_${el.dataset.dismissKey}`, '1');
+  }
+});
+
 on('add-query-filter', (el: HTMLElement) => {
   const params = new URLSearchParams(document.location.search.substring(1));
   params.set(el.dataset.key, el.dataset.value);
@@ -533,11 +579,13 @@ on('toggle-pin', (el: HTMLElement) => {
   });
 });
 
-on('transfer-ownership', () => {
-  const value = (document.getElementById('target_owner') as HTMLInputElement).value;
-  const params = {};
-  params[Target.UserId] = parseInt(value.split(' ')[0], 10);
-  ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => window.location.reload());
+on('transfer-ownership', async () => {
+  const params = collectForm(document.getElementById('ownershipTransferForm'));
+  const userid = parseInt(params['targetUserId'].split(' ')[0] ?? '', 10);
+  ApiC.notifOnSaved = false;
+  await ApiC.patch(`${entity.type}/${entity.id}`, { action: Action.UpdateOwner, userid });
+  sessionStorage.setItem('flash_ownershipTransfer', i18next.t('ownership-transfer'));
+  window.location.reload();
 });
 
 on(Action.Restore, () => {
@@ -603,11 +651,12 @@ on('save-permissions', (el: HTMLElement) => {
     .map(u => `user:${(u as HTMLElement).dataset.id}`);
 
   params[el.dataset.rw] = permissionsToJson(
-    parseInt(($('#' + el.dataset.identifier + '_select_base').val() as string), 10),
     ($('#' + el.dataset.identifier + '_select_teams').val() as string[])
       .concat($('#' + el.dataset.identifier + '_select_teamgroups').val() as string[])
       .concat(existingUsers),
   );
+  const baseSelect = getSafeElementById(`${el.dataset.identifier}_select_base`) as HTMLSelectElement;
+  params[baseSelect.name] = baseSelect.value;
   // if we're editing the default read/write permissions for experiments, this data attribute will be set
   if (el.dataset.isUserDefault) {
     // we need to replace canread/canwrite with default_read/default_write for user attribute
@@ -940,9 +989,15 @@ on('toggle-password', (el: HTMLElement) => {
 });
 
 on('logout', () => {
-  clearLocalStorage();
+  localStorage.setItem('logout_msg', '1');
   window.location.href = 'app/logout.php';
 });
+
+const logoutMessageDiv = document.getElementById('logoutMessage');
+if (logoutMessageDiv  && localStorage.getItem('logout_msg')) {
+  logoutMessageDiv.removeAttribute('hidden');
+  clearLocalStorage();
+}
 
 on('ack-notif', (el: HTMLElement) => {
   if (el.parentElement.dataset.ack === '0') {
@@ -1163,7 +1218,22 @@ on('autocomplete', (el: HTMLElement) => {
       const queryTerm = ['experiments', 'items'].includes(el.dataset.target)
         ? escapeExtendedQuery(term)
         : term;
-      ApiC.getJson(`${el.dataset.target}/?q=${encodeURIComponent(queryTerm)}`).then(json => {
+
+      const params = new URLSearchParams();
+      params.set('q', queryTerm);
+
+      // allow filtering users within a specific team
+      if (el.dataset.team) {
+        const teamId = document.getElementById(el.dataset.team) as HTMLInputElement | HTMLSelectElement;
+        if (teamId?.value) {
+          params.set('team', teamId.value);
+        }
+      }
+      ApiC.getJson(`${el.dataset.target}/?${params.toString()}`).then(json => {
+        if (!Array.isArray(json) || json.length === 0) {
+          response([i18next.t('not-found')]);
+          return;
+        }
         response(json.map(entry => transformer(entry)));
       });
     },

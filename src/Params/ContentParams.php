@@ -79,6 +79,11 @@ class ContentParams implements ContentParamsInterface
         return Check::visibility($this->asString());
     }
 
+    protected function getCanBase(): int
+    {
+        return Check::basePermission($this->asInt())->value;
+    }
+
     protected function getState(): int
     {
         return (int) $this->getEnum(State::class, $this->asInt())->value;

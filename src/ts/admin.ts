@@ -7,6 +7,7 @@
  */
 import {
   collectForm,
+  getSafeElementById,
   mkSpin,
   mkSpinStop,
   permissionsToJson,
@@ -34,10 +35,8 @@ function collectSelectable(name: string): number[] {
   return collected;
 }
 
-function collectTargetOwner(): number {
-  const collected = document.getElementById('target_owner') as HTMLInputElement;
-  // Convert element to an int
-  return collected ? parseInt(collected.value, 10) || 0 : 0;
+function collectInt(name: string): number {
+  return parseInt((getSafeElementById(name) as HTMLInputElement).value, 10);
 }
 
 function collectCan(): string {
@@ -47,7 +46,6 @@ function collectCan(): string {
     .map(u => `user:${(u as HTMLElement).dataset.id}`);
 
   return permissionsToJson(
-    parseInt(((document.getElementById('masscan_select_base') as HTMLSelectElement).value), 10),
     Array.from((document.getElementById('masscan_select_teams') as HTMLSelectElement).selectedOptions).map(v=>v.value)
       .concat(Array.from((document.getElementById('masscan_select_teamgroups') as HTMLSelectElement).selectedOptions).map(v=>v.value))
       .concat(existingUsers),
@@ -65,8 +63,10 @@ function getSelected(): Selected {
     tags: collectSelectable('tags'),
     users_experiments: collectSelectable('users-experiments'),
     users_resources: collectSelectable('users-resources'),
-    target_owner: collectTargetOwner(),
+    userid: collectInt('targetUserId'),
+    team: collectInt('targetTeamId'),
     can: collectCan(),
+    can_base: parseInt((document.getElementById('masscan_select_base') as HTMLSelectElement).value, 10),
   };
 }
 

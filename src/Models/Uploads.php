@@ -167,7 +167,7 @@ final class Uploads extends AbstractRest
     // entity is target entity
     public function duplicate(AbstractEntity $entity): void
     {
-        $uploads = $this->readAll();
+        $uploads = $this->selectAll();
         foreach ($uploads as $upload) {
             if ($upload['storage'] === Storage::LOCAL->value) {
                 $prefix = '/elabftw/uploads/';
@@ -228,15 +228,11 @@ final class Uploads extends AbstractRest
         return $DownloadController->getResponse();
     }
 
-    /**
-     * Read all uploads except deleted ones.
-     * Includes 'archived' only if set in queryParams.
-     */
-    #[Override]
-    public function readAll(?QueryParamsInterface $queryParams = null): array
+    public function selectAll(?array $states = null): array
     {
-        $queryParams ??= $this->getQueryParams();
-        $statesSql = $queryParams->getStatesSql('uploads');
+        // if no states array is provided, select all
+        $states ??= array(State::Normal, State::Archived, State::Deleted);
+        $statesSql = sprintf(' AND uploads.state IN (%s)', implode(', ', array_map(fn($state) => $state->value, $states)));
         $sql = sprintf(
             'SELECT uploads.*, CONCAT (users.firstname, " ", users.lastname) AS fullname
             FROM uploads LEFT JOIN users ON (uploads.userid = users.userid)
@@ -249,6 +245,16 @@ final class Uploads extends AbstractRest
         $this->Db->execute($req);
 
         return $req->fetchAll();
+    }
+
+    /**
+     * Public api for GET all uploads for the current entity
+     */
+    #[Override]
+    public function readAll(?QueryParamsInterface $queryParams = null): array
+    {
+        $queryParams ??= $this->getQueryParams();
+        return $this->selectAll($queryParams->getStates());
     }
 
     #[Override]
@@ -331,18 +337,30 @@ final class Uploads extends AbstractRest
     }
 
     /**
-     * Delete all uploaded files for an entity
+     * Soft delete all uploaded files for an entity
      */
     public function destroyAll(): bool
     {
-        // this will include the archived/deleted ones
-        $uploadArr = $this->readAll();
+        $sql = 'UPDATE uploads SET state = :state_deleted WHERE item_id = :id AND type = :type';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':id', $this->Entity->id);
+        $req->bindValue(':type', $this->Entity->entityType->value);
+        $req->bindValue(':state_deleted', State::Deleted->value);
+        return $this->Db->execute($req);
+    }
 
-        foreach ($uploadArr as $upload) {
-            $this->setId($upload['id']);
-            $this->nuke();
-        }
-        return true;
+    /**
+     * Restore all uploaded files to normal state for an entity (excluding archived to keep consistency)
+     */
+    public function restoreAll(): bool
+    {
+        $sql = 'UPDATE uploads SET state = :state_normal WHERE item_id = :id AND type = :type AND state != :state_archived';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':id', $this->Entity->id);
+        $req->bindValue(':type', $this->Entity->entityType->value);
+        $req->bindValue(':state_normal', State::Normal->value);
+        $req->bindValue(':state_archived', State::Archived->value);
+        return $this->Db->execute($req);
     }
 
     public function getStorageFromLongname(string $longname): int
@@ -384,6 +402,19 @@ final class Uploads extends AbstractRest
     {
         $this->archive();
         return $this->create($params);
+    }
+
+    // transfer ownership of all uploaded files for an entity, except immutable ones
+    public function transferOwnership(int $userid): void
+    {
+        $uploadArr = $this->selectAll();
+        foreach ($uploadArr as $upload) {
+            if ($upload['immutable'] === 1) {
+                continue;
+            }
+            $this->setId($upload['id']);
+            $this->patch(Action::Update, array('userid' => $userid));
+        }
     }
 
     private function update(UploadParams $params): bool

@@ -125,7 +125,7 @@
             {# Blank value on duplicate switch #}
             <div class='d-flex justify-content-between align-items-center py-1'>
               <label class="mr-3" for="blankValueOnDuplicateSwitch">{{ 'Blank value on duplicate'|trans }}</label>
-              <label class="switch mb-0">
+              <label title='{{ 'Blank value on duplicate'|trans }}' class="switch mb-0"><span class='sr-only'>{{ 'Blank value on duplicate'|trans }}</span>
                 <input type="checkbox" autocomplete="off" id="blankValueOnDuplicateSwitch">
                 <span class="slider"></span>
               </label>
@@ -133,7 +133,7 @@
             {# required switch #}
             <div class='d-flex justify-content-between align-items-center'>
               <label for='requiredSwitch'>{{ 'Required'|trans }}</label>
-              <label class='switch'>
+              <label title='{{ 'Required'|trans }}' class='switch'><span class='sr-only'>{{ 'Required'|trans }}</span>
                 <input type='checkbox' autocomplete='off' id='requiredSwitch'>
                 <span class='slider'></span>
               </label>
@@ -142,7 +142,7 @@
             <div id='allowMultiSelectDiv' hidden>
               <div class="d-flex justify-content-between align-items-center">
                 <label for='newFieldAllowMultiSelect'>{{ 'Allow selection of multiple values?'|trans }}</label>
-                <label class='switch'>
+                <label title='{{ 'Allow selection of multiple values?'|trans }}' class='switch'><span class='sr-only'>{{ 'Allow selection of multiple values?'|trans }}</span>
                   <input type='checkbox' autocomplete='off' id='newFieldAllowMultiSelect'>
                   <span class='slider'></span>
                 </label>

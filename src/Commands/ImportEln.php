@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
-use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Import\TrustedEln;
 use Elabftw\Interfaces\StorageInterface;
@@ -83,8 +82,6 @@ final class ImportEln extends Command
         }
         $Importer = new TrustedEln(
             $user,
-            BasePermissions::Team->toJson(),
-            BasePermissions::Team->toJson(),
             $UploadedFile,
             $this->Fs->getFs(),
             $logger,

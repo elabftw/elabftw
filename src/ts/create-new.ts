@@ -130,7 +130,7 @@ on('filter-category', (el: HTMLElement) => {
 
 on('toggle-create-modal', async (el: HTMLElement) => {
   // allow data-type to override selected type (for instance on dashboard)
-  const entityType = el.dataset.type ? el.dataset.type as EntityType : getEntityTypeFromPage();
+  const entityType = el.dataset.type ? el.dataset.type as EntityType : getEntityTypeFromPage(window.location);
   setTypeRadio(entityType);
   if (el.dataset.getCompoundIdFrom) {
     const compoundId = (document.getElementById(el.dataset.getCompoundIdFrom) as HTMLElement).dataset.compoundId;
@@ -140,7 +140,11 @@ on('toggle-create-modal', async (el: HTMLElement) => {
     $('#editCompoundModal').modal('hide');
   }
 
-  $('#createModal').modal('toggle');
+  $('#createModal')
+    .one('shown.bs.modal', () => {
+      document.getElementById('createNewFormTitle')?.focus();
+    })
+    .modal('show');
 });
 
 on('toggle-templates', (el: HTMLElement) => {
@@ -172,6 +176,8 @@ const templateCols: (keyof Templates)[] = [
 function renderTemplates(templates: Templates[]): void {
   const tbody = document.getElementById('tplCreateNewTable') as HTMLTableSectionElement;
   const templateRow = document.getElementById('templateRow') as HTMLTemplateElement;
+  // pass the type of the selected entity (either experiments, or items)
+  const type = document.querySelector('input[name="type"]:checked') as HTMLSelectElement;
 
   tbody.replaceChildren(
     ...templates.map(template => {
@@ -183,7 +189,7 @@ function renderTemplates(templates: Templates[]): void {
         // ACTIONS
         if (key === 'id') {
           const createBtn = cells[i].querySelector('button[data-action="create-entity"]') as HTMLButtonElement;
-          createBtn.dataset.type = template.type;
+          createBtn.dataset.type = type.value;
           createBtn.dataset.tplid = String(template[key]);
           const viewLink = cells[i].querySelector('a') as HTMLAnchorElement;
           viewLink.href = `${template.page}?mode=view&id=${template.id}`;

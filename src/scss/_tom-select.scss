@@ -152,7 +152,7 @@
 .selected-item-badge {
   background-color: var(--badge-color, var(--mainbackground));
   border-radius: 999px;
-  color: variables.$mainbackground;
+  color: var(--chrome-fg);
   font-size: 1.2rem;
   margin: 0 6px 6px 0;
   padding: 4px 10px;

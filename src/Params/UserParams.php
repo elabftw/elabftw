@@ -88,7 +88,7 @@ final class UserParams extends ContentParams
             'uploads_layout',
             'use_isodate',
             'use_markdown',
-            'validated',
+            'validated' => Filter::toBinary($this->content),
             'theme_variant' => (ThemeVariant::tryFrom($this->asInt()) ?? ThemeVariant::Auto)->value,
             'mfa_secret' => $this->getNullableString(),
             'lang' => (Language::tryFrom($this->content) ?? Language::EnglishGB)->value,

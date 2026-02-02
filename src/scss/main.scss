@@ -218,7 +218,8 @@ select:not([multiple]) {
   }
 
   .close,
-  .form-control-plaintext {
+  .form-control-plaintext,
+  pre {
     color: var(--mediumstrong);
   }
 
@@ -236,6 +237,11 @@ select:not([multiple]) {
     color: var(--strongest);
   }
 }
+
+.logo-dark { display: none; }
+
+.dark-mode .logo-dark { display: block; }
+.dark-mode .logo-light { display: none; }
 
 /* prevent the caret from being too close from text */
 /* stylelint-disable-next-line selector-no-qualifying-type */

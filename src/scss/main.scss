@@ -206,6 +206,11 @@ select:not([multiple]) {
   .form-control {
     background-color: var(--mainbackground);
     color: var(--mediumstrong);
+
+    &:read-only {
+      background-color: var(--secondary-muted);
+    }
+
   }
 
   .modal-content {

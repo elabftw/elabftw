@@ -8,7 +8,7 @@
  */
 
 @use './variables';
-@import 'tom-select/dist/scss/tom-select.bootstrap4';
+@import '@deltablot/tom-select/dist/scss/tom-select.bootstrap4';
 
 .dark-mode {
   .ts-control {

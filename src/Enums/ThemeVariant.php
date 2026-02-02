@@ -15,7 +15,7 @@ namespace Elabftw\Enums;
 
 enum ThemeVariant: int
 {
-    case Dark = -1;
     case Auto = 0;
     case Light = 1;
+    case Dark = 2;
 }

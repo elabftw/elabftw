@@ -230,12 +230,12 @@
               <a class='dropdown-item' href='/ucp.php'><i class='fas fa-cogs fa-fw'></i> {{ 'Settings'|trans }}</a>
               <div class='dropdown-divider'></div>
               <label class='dropdown-item' aria-label='{{ 'Change theme'|trans }}'>
-                <input data-action='toggle-dark-mode' type='checkbox' autocomplete='off' class='sr-only' data-trigger='change' data-model='users/me' data-target='theme_variant'{{ App.Users.userData.theme_variant == -1 ? ' checked' }}>
+                <input data-action='toggle-dark-mode' type='checkbox' autocomplete='off' class='sr-only' {{ App.Users.userData.theme_variant == 2 ? ' checked' }}>
                 <i class='fa-solid fa-moon fa-fw'></i>
                 {{ 'Change theme'|trans }}
               </label>
-              <div class='dropdown-divider'></div>
               {% if App.Users.isAdmin %}
+              <div class='dropdown-divider'></div>
                 <a class='dropdown-item' href='admin.php'><i class='fas fa-tools fa-fw'></i> {{ 'Admin panel'|trans }}</a>
               {% endif %}
               {% if App.Users.userData.is_sysadmin %}

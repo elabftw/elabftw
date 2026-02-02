@@ -77,9 +77,9 @@ interface Status extends SelectOptions {
 // dark mode
 on('toggle-dark-mode', (input: HTMLInputElement) => {
   const checked = input.checked;
-  const themeVariant = checked ? -1 : 0;
+  const themeVariant = checked ? 2 : 1;
   document.documentElement.classList.toggle('dark-mode', checked);
-  document.cookie = `elab_theme=${checked ? 'dark' : 'auto'}; Path=/; Max-Age=31536000; SameSite=Lax`;
+  document.cookie = `elab_theme=${checked ? 'dark' : 'light'}; Path=/; Max-Age=31536000; SameSite=Lax`;
   ApiC.patch(`${Model.User}/me`, { theme_variant: themeVariant });
 });
 

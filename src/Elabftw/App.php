@@ -44,7 +44,6 @@ use function intdiv;
 use function putenv;
 use function setlocale;
 use function textdomain;
-use function is_string;
 
 /**
  * This is a super class holding various global objects
@@ -186,8 +185,9 @@ final class App
     {
         // 1. authenticated user preference
         if ($this->Users instanceof AuthenticatedUser) {
-            $themeVariant = (int) ($this->Users->userData['theme_variant'] ?? ThemeVariant::Auto->value);
-            return $themeVariant === ThemeVariant::Dark->value ? 'dark-mode' : '';
+            $themeVariant = ThemeVariant::tryFrom((int) $this->Users->userData['theme_variant'])
+                ?? ThemeVariant::Auto;
+            return $themeVariant === ThemeVariant::Dark ? 'dark-mode' : '';
         }
         // 2. anon & guest preference (cookie)
         $cookie = $this->Request->cookies->getString('elab_theme'); // 'dark' | 'light'

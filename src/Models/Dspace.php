@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\DSpaceAction;
@@ -286,7 +287,7 @@ final class Dspace extends AbstractRest
         $tmpFileName = Tools::getUuidv4();
         $storage = Storage::EXPORTS->getStorage();
         $absolutePath = $storage->getAbsoluteUri($tmpFileName);
-        $maker = new MakeEln(new ZipStream(sendHttpHeaders: false), $this->requester, $storage, array($entity));
+        $maker = new MakeEln(App::getDefaultLogger(), new ZipStream(sendHttpHeaders: false), $this->requester, array($entity));
         $maker->writeToFile($absolutePath);
         $headers = $this->getAuthHeaders();
         $url = sprintf('%ssubmission/workspaceitems/%d', $this->host, $workspaceId);

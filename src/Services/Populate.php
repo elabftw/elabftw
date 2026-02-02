@@ -210,15 +210,12 @@ final class Populate
             foreach ($team['items_types'] ?? array() as $items_types) {
                 $Admin = $this->getRandomUserInTeam($teamid, admin: 1);
                 $ItemsTypes = new ItemsTypes($Admin);
-                $defaultPermissions = BasePermissions::Team->toJson();
                 $category = array_key_exists('category', $items_types) ? $ResourcesCategories->getIdempotentIdFromTitle($items_types['category']) : null;
                 $itemTypeId = $ItemsTypes->create(
                     title: $items_types['name'],
                     body: $items_types['template'] ?? '',
                     category: $category,
                     date: new DateTimeImmutable($this->faker->dateTimeBetween('-5 years')->format('Ymd')),
-                    canread: $defaultPermissions,
-                    canwrite: $defaultPermissions,
                     metadata: $items_types['metadata'] ?? '{}',
                 );
                 $this->output->writeln(sprintf('├ + resource template: %s (id: %d in team: %d)', $items_types['name'], $itemTypeId, $teamid));
@@ -274,6 +271,8 @@ final class Populate
             }
 
             // randomize the entries so they look like they are not added at once
+
+            // ITEMS
             if (isset($team['items'])) {
                 shuffle($team['items']);
                 foreach ($team['items'] as $item) {
@@ -362,13 +361,7 @@ final class Populate
         $statusArr = $Status->readAll();
 
         // we will randomly pick from these for canread and canwrite
-        $visibilityArr = array(
-            BasePermissions::Full->toJson(),
-            BasePermissions::Organization->toJson(),
-            BasePermissions::Team->toJson(),
-            BasePermissions::User->toJson(),
-            BasePermissions::UserOnly->toJson(),
-        );
+        $visibilityArr = BasePermissions::cases();
 
         $tagsArr = array(
             'Project X',
@@ -428,8 +421,8 @@ final class Populate
             $id = $Entity->create(
                 category: $category,
                 status: $this->faker->randomElement($statusArr)['id'],
-                canread: $this->faker->randomElement($visibilityArr),
-                canwrite: $this->faker->randomElement($visibilityArr),
+                canreadBase: $this->faker->randomElement($visibilityArr),
+                canwriteBase: $this->faker->randomElement($visibilityArr),
                 title: $this->faker->sentence(),
                 date: new DateTimeImmutable($this->faker->dateTimeBetween('-5 years')->format('Ymd')),
                 body: $this->faker->realText(1000),

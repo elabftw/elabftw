@@ -12,10 +12,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use Elabftw\Interfaces\StorageInterface;
 use Elabftw\Models\Users\Users;
 use ZipStream\ZipStream;
 use Override;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -23,9 +23,9 @@ use Symfony\Component\HttpFoundation\Response;
  */
 final class MakeElnHtml extends MakeEln
 {
-    public function __construct(protected ZipStream $Zip, protected Users $requester, StorageInterface $storage, protected array $entityArr)
+    public function __construct(protected LoggerInterface $logger, protected ZipStream $Zip, protected Users $requester, protected array $entityArr)
     {
-        parent::__construct($Zip, $requester, $storage, $entityArr);
+        parent::__construct($logger, $Zip, $requester, $entityArr);
     }
 
     #[Override]

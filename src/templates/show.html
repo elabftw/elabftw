@@ -93,7 +93,7 @@
           </select>
 
           {# OWNER filter #}
-          <!-- [html-validate-disable-block input-missing-label, prefer-native-element: suppress error from tom-select] -->
+          {% if App.devMode -%}<!-- [html-validate-disable-block input-missing-label, prefer-native-element: suppress error from tom-select] -->{%- endif %}
           <select id='filterOwner' name='owner' class='form-control filterAuto' aria-label='{{ 'Filter owner'|trans }}'>
             <option value='' class='dropdown-header' data-action='clear'>{{ 'Filter owner'|trans }}</option>
             {% for user in usersArr %}
@@ -398,15 +398,15 @@
                 <option value='{{ status.id }}'>{{ status.title }}</option>
             {% endfor %}
           </select>
-          {# CANREAD #}
-          <select aria-label='{{ 'Change read permissions'|trans }}' name='canread' autocomplete='off' class='mr-1 mb-2 form-control'>
+          {# CANREAD BASE #}
+          <select aria-label='{{ 'Change read permissions'|trans }}' name='canread_base' autocomplete='off' class='mr-1 mb-2 form-control'>
             <option selected disabled value=''>{{ 'Change read permissions'|trans }}</option>
             {% for key, value in visibilityArr %}
               <option value='{{ key }}'>{{ value }}</option>
             {% endfor %}
           </select>
-          {# CANWRITE #}
-          <select aria-label='{{ 'Change write permissions'|trans }}' name='canwrite' autocomplete='off' class='mr-1 mb-2 form-control'>
+          {# CANWRITE BASE #}
+          <select aria-label='{{ 'Change write permissions'|trans }}' name='canwrite_base' autocomplete='off' class='mr-1 mb-2 form-control'>
             <option selected disabled value=''>{{ 'Change write permissions'|trans }}</option>
             {% for key, value in visibilityArr %}
               <option value='{{ key }}'>{{ value }}</option>

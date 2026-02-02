@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Enums\BasePermissions;
+use Elabftw\Models\AbstractEntity;
 
 class TwigFunctionsTest extends \PHPUnit\Framework\TestCase
 {
@@ -48,14 +48,6 @@ class TwigFunctionsTest extends \PHPUnit\Framework\TestCase
         $this->assertMatchesRegularExpression('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', TwigFunctions::toDatetime('2023-02-01'));
     }
 
-    public function testExtractJson(): void
-    {
-        $json = BasePermissions::Organization->toJson();
-        $key = 'base';
-        $this->assertEquals(BasePermissions::Organization->value, TwigFunctions::extractJson($json, $key));
-        $this->assertFalse(TwigFunctions::extractJson($json, 'unknown_key'));
-    }
-
     public function testIsInJsonArray(): void
     {
         $json = '{"my_arr": [ 4, 5, 6 ]}';
@@ -66,7 +58,7 @@ class TwigFunctionsTest extends \PHPUnit\Framework\TestCase
 
     public function testCanToHuman(): void
     {
-        $this->assertIsArray(TwigFunctions::canToHuman(BasePermissions::User->toJson()));
+        $this->assertIsArray(TwigFunctions::canToHuman(AbstractEntity::EMPTY_CAN_JSON));
     }
 
     public function testEnvAsBool(): void

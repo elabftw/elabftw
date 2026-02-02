@@ -130,7 +130,7 @@ if (window.location.pathname === '/profile.php') {
         notify.success('file-imported');
       } else {
         const error = await response.json();
-        notify.error(error.description);
+        notify.error(error.message);
       }
     }).catch(error => {
       notify.error(`Import error: ${error.message}`);

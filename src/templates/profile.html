@@ -201,7 +201,7 @@
           </span>
           <span class='form-check form-check-inline'>
             <input class='form-check-input' type='radio' name='entity_type' id='entityTypeRadioItems' value='items'>
-            <label class='form-check-label' for='entityTypeRadioItems'>{{ 'Resources'|trans }}</label>
+            <label class='form-check-label' for='entityTypeRadioItems'>{% trans %}Resource{% plural 2 %}Resources{% endtrans %}</label>
           </span>
           <span hidden data-showif='eln'>
             <span class='form-check form-check-inline'>
@@ -244,8 +244,8 @@
         {% endif %}
 
         <hr>
-        <label for='import_modal_canread'>{{ 'Set read permissions'|trans }}</label>
-        <select class='form-control' id='import_modal_canread' autocomplete='off' name='canread'>
+        <label for='importModalCanread'>{{ 'Set read permissions'|trans }}</label>
+        <select class='form-control' id='importModalCanread' autocomplete='off' name='canread_base'>
           {% for key, value in visibilityArr %}
             <option value='{{ key }}'
             {{ 30 == key ? ' selected' }}
@@ -254,8 +254,8 @@
         </select>
 
         <hr>
-        <label for='import_modal_canwrite'>{{ 'Set write permissions'|trans }}</label>
-        <select class='form-control' id='import_modal_canwrite' autocomplete='off' name='canwrite'>
+        <label for='importModalCanwrite'>{{ 'Set write permissions'|trans }}</label>
+        <select class='form-control' id='importModalCanwrite' autocomplete='off' name='canwrite_base'>
           {% for key, value in visibilityArr %}
             <option value='{{ key }}'
             {{ 20 == key ? ' selected' }}

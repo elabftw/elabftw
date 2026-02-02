@@ -5,7 +5,11 @@
   <td class='item-date'>
     {# checkbox #}
     <input autocomplete='off' type='checkbox' data-action='checkbox-entity' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.entityType.value }}' aria-label='{{ 'Select'|trans }}' style='width:15px;' />
-    {{ item.date|date('Y-m-d') }}
+   {% if Entity.entityType.value in ['experiments_templates', 'items_types'] %}
+        {{ item.created_at|date('Y-m-d') }}
+   {% else %}
+        {{ item.date|date('Y-m-d') }}
+    {% endif %}
   </td>
 
   {# TITLE #}

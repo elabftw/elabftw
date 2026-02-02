@@ -83,7 +83,7 @@ final class EntitySqlBuilder implements SqlBuilderInterface
     {
         $sql = '';
         if ($this->entity->isAnon) {
-            $sql .= ' AND ' . $this->canAnon($can);
+            $sql .= ' AND ' . $this->canAnon();
         }
         $sql .= sprintf(
             ' AND (%s %s)',
@@ -131,6 +131,7 @@ final class EntitySqlBuilder implements SqlBuilderInterface
                 entity.canwrite,
                 entity.canread_is_immutable,
                 entity.canwrite_is_immutable,
+                entity.created_at,
                 entity.modified_at,
                 entity.timestamped';
             // only include columns (created_at, locked_at, timestamped_at, entity.metadata) if actually searching for it
@@ -218,11 +219,10 @@ final class EntitySqlBuilder implements SqlBuilderInterface
     /**
      * anon filter
      */
-    protected function canAnon(string $can): string
+    protected function canAnon(): string
     {
         return sprintf(
-            "entity.%s->'$.base' = %s",
-            $can,
+            'entity.canread_base = %d',
             BasePermissions::Full->value,
         );
     }
@@ -233,7 +233,7 @@ final class EntitySqlBuilder implements SqlBuilderInterface
     protected function canBasePub(string $can): string
     {
         return sprintf(
-            "entity.%s->'$.base' = %d",
+            'entity.%s_base = %d',
             $can,
             BasePermissions::Full->value,
         );
@@ -245,7 +245,7 @@ final class EntitySqlBuilder implements SqlBuilderInterface
     protected function canBaseOrg(string $can): string
     {
         return sprintf(
-            "entity.%s->'$.base' = %d",
+            'entity.%s_base = %d',
             $can,
             BasePermissions::Organization->value,
         );
@@ -257,8 +257,8 @@ final class EntitySqlBuilder implements SqlBuilderInterface
     protected function canBaseTeam(string $can): string
     {
         return sprintf(
-            "(entity.%s->'$.base' = %d
-                AND users2teams.teams_id = entity.team)",
+            '(entity.%s_base = %d
+                AND users2teams.teams_id = entity.team)',
             $can,
             BasePermissions::Team->value,
         );
@@ -271,9 +271,9 @@ final class EntitySqlBuilder implements SqlBuilderInterface
     protected function canBaseUser(string $can): string
     {
         return sprintf(
-            "(entity.%s->'$.base' = %d
+            '(entity.%s_base = %d
                 AND entity.userid = %s
-                AND users2teams.teams_id = entity.team)",
+                AND users2teams.teams_id = entity.team)',
             $can,
             BasePermissions::User->value,
             $this->entity->Users->isAdmin
@@ -289,9 +289,9 @@ final class EntitySqlBuilder implements SqlBuilderInterface
     protected function canBaseUserOnly(string $can): string
     {
         return sprintf(
-            "(entity.%s->'$.base' = %d
+            '(entity.%s_base = %d
                 AND entity.userid = :userid
-                AND users2teams.teams_id = entity.team)",
+                AND users2teams.teams_id = entity.team)',
             $can,
             BasePermissions::UserOnly->value,
         );

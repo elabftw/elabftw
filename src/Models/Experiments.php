@@ -41,10 +41,12 @@ final class Experiments extends AbstractConcreteEntity
         ?string $title = null,
         ?string $body = null,
         ?DateTimeImmutable $date = null,
-        ?string $canread = null,
-        ?string $canwrite = null,
-        ?bool $canreadIsImmutable = false,
-        ?bool $canwriteIsImmutable = false,
+        BasePermissions $canreadBase = BasePermissions::Team,
+        BasePermissions $canwriteBase = BasePermissions::User,
+        string $canread = self::EMPTY_CAN_JSON,
+        string $canwrite = self::EMPTY_CAN_JSON,
+        bool $canreadIsImmutable = false,
+        bool $canwriteIsImmutable = false,
         array $tags = array(),
         ?int $category = null,
         ?int $status = null,
@@ -54,9 +56,6 @@ final class Experiments extends AbstractConcreteEntity
         int $rating = 0,
         BodyContentType $contentType = BodyContentType::Html,
     ): int {
-        $canread ??= $this->Users->userData['default_read'] ?? BasePermissions::Team->toJson();
-        $canwrite ??= $this->Users->userData['default_write'] ?? BasePermissions::User->toJson();
-
         // defaults
         $title = Filter::title($title ?? _('Untitled'));
         $date ??= new DateTimeImmutable();
@@ -69,8 +68,8 @@ final class Experiments extends AbstractConcreteEntity
         $customId ??= $this->getNextCustomId($category);
 
         // SQL for create experiments
-        $sql = 'INSERT INTO experiments(team, title, date, body, category, status, elabid, canread, canwrite, canread_is_immutable, canwrite_is_immutable, metadata, custom_id, userid, content_type, rating, hide_main_text)
-            VALUES(:team, :title, :date, :body, :category, :status, :elabid, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :metadata, :custom_id, :userid, :content_type, :rating, :hide_main_text)';
+        $sql = 'INSERT INTO experiments(team, title, date, body, category, status, elabid, canread_base, canwrite_base, canread, canwrite, canread_is_immutable, canwrite_is_immutable, metadata, custom_id, userid, content_type, rating, hide_main_text)
+            VALUES(:team, :title, :date, :body, :category, :status, :elabid, :canread_base, :canwrite_base, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :metadata, :custom_id, :userid, :content_type, :rating, :hide_main_text)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindParam(':title', $title);
@@ -79,8 +78,10 @@ final class Experiments extends AbstractConcreteEntity
         $req->bindValue(':category', $category);
         $req->bindValue(':status', $status);
         $req->bindValue(':elabid', Tools::generateElabid());
-        $req->bindParam(':canread', $canread);
-        $req->bindParam(':canwrite', $canwrite);
+        $req->bindValue(':canread_base', $canreadBase->value, PDO::PARAM_INT);
+        $req->bindValue(':canwrite_base', $canwriteBase->value, PDO::PARAM_INT);
+        $req->bindValue(':canread', $canread);
+        $req->bindValue(':canwrite', $canwrite);
         $req->bindParam(':canread_is_immutable', $canreadIsImmutable, PDO::PARAM_INT);
         $req->bindParam(':canwrite_is_immutable', $canwriteIsImmutable, PDO::PARAM_INT);
         $req->bindParam(':metadata', $metadata);
@@ -120,6 +121,8 @@ final class Experiments extends AbstractConcreteEntity
         $newId = $this->create(
             title: $title,
             body: $this->entityData['body'],
+            canreadBase: BasePermissions::from($this->entityData['canread_base']),
+            canwriteBase: BasePermissions::from($this->entityData['canwrite_base']),
             canread: $this->entityData['canread'],
             canwrite: $this->entityData['canwrite'],
             category: $this->entityData['category'],

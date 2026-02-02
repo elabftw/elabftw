@@ -9,7 +9,6 @@ import {
   clearForm,
   collectForm,
   getCheckedBoxes,
-  permissionsToJson,
   reloadEntitiesShow,
   TomSelect,
 } from './misc';
@@ -488,12 +487,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const form = document.getElementById('multiChangesForm');
       const params = collectForm(form);
       clearForm(form);
-      ['canread', 'canwrite'].forEach(can => {
-        // TODO replace with hasOwn when https://github.com/microsoft/TypeScript/issues/44253 is closed
-        if (Object.prototype.hasOwnProperty.call(params, can)) {
-          params[can] = permissionsToJson(parseInt(params[can], 10), []);
-        }
-      });
       checked.forEach(chk => {
         const paramsCopy = Object.assign({}, params);
         // they do not have all the same endpoint: handle tags and links the generic patch method
@@ -529,7 +522,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (json['display_mode'] === 'it') {
           target = 'tb';
         }
-        ApiC.patch(`${Model.User}/me`, {'display_mode': target}).then(() => {
+        ApiC.patch(`${Model.User}/me`, { display_mode: target }).then(() => {
+          document.getElementById('realContainer')?.classList.toggle('max-width-70', target === 'it');
           reloadEntitiesShow();
         });
       });

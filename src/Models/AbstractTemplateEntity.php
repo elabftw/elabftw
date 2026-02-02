@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\State;
@@ -42,6 +43,15 @@ abstract class AbstractTemplateEntity extends AbstractEntity
             return $this->create(title: $title);
         }
         return $res;
+    }
+
+    #[Override]
+    public function readOne(): array
+    {
+        $this->entityData = parent::readOne();
+        $this->entityData['canread_target_base_human'] = BasePermissions::from($this->entityData['canread_target_base'])->toHuman();
+        $this->entityData['canwrite_target_base_human'] = BasePermissions::from($this->entityData['canwrite_target_base'])->toHuman();
+        return $this->entityData;
     }
 
     #[Override]

@@ -331,7 +331,10 @@ h3 { font-size: 160%; }
 
 h4 { font-size: 150%; }
 
-h5 { font-size: 130%; }
+h5 {
+  font-size: 130%;
+  border-bottom: 0;
+}
 
 /* HEAD */
 

@@ -130,7 +130,7 @@ on('filter-category', (el: HTMLElement) => {
 
 on('toggle-create-modal', async (el: HTMLElement) => {
   // allow data-type to override selected type (for instance on dashboard)
-  const entityType = el.dataset.type ? el.dataset.type as EntityType : getEntityTypeFromPage();
+  const entityType = el.dataset.type ? el.dataset.type as EntityType : getEntityTypeFromPage(window.location);
   setTypeRadio(entityType);
   if (el.dataset.getCompoundIdFrom) {
     const compoundId = (document.getElementById(el.dataset.getCompoundIdFrom) as HTMLElement).dataset.compoundId;
@@ -140,7 +140,11 @@ on('toggle-create-modal', async (el: HTMLElement) => {
     $('#editCompoundModal').modal('hide');
   }
 
-  $('#createModal').modal('toggle');
+  $('#createModal')
+    .one('shown.bs.modal', () => {
+      document.getElementById('createNewFormTitle')?.focus();
+    })
+    .modal('show');
 });
 
 on('toggle-templates', (el: HTMLElement) => {

@@ -17,14 +17,14 @@ import $ from 'jquery';
 import i18next from './i18n';
 import { ApiC } from './api';
 import { getEditor } from './Editor.class';
-import TomSelect from 'tom-select/base';
-import TomSelectCheckboxOptions from 'tom-select/dist/esm/plugins/checkbox_options/plugin.js';
-import TomSelectClearButton from 'tom-select/dist/esm/plugins/clear_button/plugin.js';
-import TomSelectDropdownHeader from 'tom-select/dist/esm/plugins/dropdown_header/plugin.js';
-import TomSelectDropdownInput from 'tom-select/dist/esm/plugins/dropdown_input/plugin.js';
-import TomSelectNoActiveItems from 'tom-select/dist/esm/plugins/no_active_items/plugin.js';
-import TomSelectRemoveButton from 'tom-select/dist/esm/plugins/remove_button/plugin.js';
-import TomSelectNoBackspaceDelete from 'tom-select/dist/esm/plugins/no_backspace_delete/plugin.js';
+import TomSelect from '@deltablot/tom-select/base';
+import TomSelectCheckboxOptions from '@deltablot/tom-select/dist/esm/plugins/checkbox_options/plugin.js';
+import TomSelectClearButton from '@deltablot/tom-select/dist/esm/plugins/clear_button/plugin.js';
+import TomSelectDropdownHeader from '@deltablot/tom-select/dist/esm/plugins/dropdown_header/plugin.js';
+import TomSelectDropdownInput from '@deltablot/tom-select/dist/esm/plugins/dropdown_input/plugin.js';
+import TomSelectNoActiveItems from '@deltablot/tom-select/dist/esm/plugins/no_active_items/plugin.js';
+import TomSelectRemoveButton from '@deltablot/tom-select/dist/esm/plugins/remove_button/plugin.js';
+import TomSelectNoBackspaceDelete from '@deltablot/tom-select/dist/esm/plugins/no_backspace_delete/plugin.js';
 
 // get html of current page reloaded via get
 function fetchCurrentPage(tag = ''): Promise<Document>{
@@ -214,8 +214,8 @@ export function clearForm(form: HTMLElement): void {
   });
 }
 
-export function getEntityTypeFromPage(): EntityType {
-  const scriptName = location.pathname.split('/').pop() || '';
+export function getEntityTypeFromPage(loc: Location): EntityType {
+  const scriptName = loc.pathname.split('/').pop() || '';
   switch (scriptName) {
   case 'experiments.php':
     return EntityType.Experiment;
@@ -234,9 +234,9 @@ export function getEntityTypeFromPage(): EntityType {
 // enable usage with parent Window for iframe cases (e.g., with spreadsheet editor)
 export function getEntity(useParent: boolean = false): Entity {
   let entityId: number | null = null;
-  const entityType: EntityType = getEntityTypeFromPage();
   // pick the right location (parent or self)
   const loc = useParent ? window.parent.location : window.location;
+  const entityType: EntityType = getEntityTypeFromPage(loc);
   const params = new URLSearchParams(loc.search);
   if (params.has('id')) {
     entityId = parseInt(params.get('id')!, 10);

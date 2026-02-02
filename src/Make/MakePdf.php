@@ -284,7 +284,15 @@ class MakePdf extends AbstractMakePdf
         // the slash (/) in the f parameter might be url encoded (%2F), see https://github.com/elabftw/elabftw/issues/4961
         // a generic regex that asserts that the f parameter is present and well formatted but ignores the order of parameters
         $matches = array();
-        preg_match_all('/app\/download\.php\?(?=.*?f=[[:alnum:]]{2}(?:\/|%2F)[[:alnum:]]{128}\.(?:jpe?g|gif|png|svg|webp|wmf|bmp))[^"]+/i', $body, $matches);
+        preg_match_all(
+            '/app\/download\.php\?(?=.*?f=(?:' .
+            '[[:alnum:]]{2}(?:\/|%2F)[[:alnum:]]{128}\.(?:jpe?g|gif|png|svg|webp|wmf|bmp)' .
+            '|' .
+            '[[:alnum:]]{2}(?:\/|%2F)[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\.(?:jpe?g|gif|png|svg|webp|wmf|bmp)' .
+          '))[^"]+/i',
+            $body,
+            $matches
+        );
         foreach ($matches[0] as $src) {
             // src will look similar to: app/download.php?f=c2/c2741a{...}016a3.png&amp;storage=1
             // ampersand (&) in html attributes should be encoded (&amp;) so we decode first

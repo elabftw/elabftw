@@ -185,7 +185,7 @@ final class App
     {
         // 1. authenticated user preference
         if ($this->Users instanceof AuthenticatedUser) {
-            $themeVariant = ThemeVariant::from($this->Users->userData['theme_variant'])
+            $themeVariant = ThemeVariant::tryFrom($this->Users->userData['theme_variant'])
                 ?? ThemeVariant::Auto;
             return $themeVariant->toCssClass();
         }

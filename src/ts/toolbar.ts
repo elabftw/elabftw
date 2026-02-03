@@ -76,7 +76,7 @@ if (document.getElementById('topToolbar')) {
     const userSelect = (document.getElementById('requestActionUserSelect') as HTMLSelectElement);
 
     if (!userSelect.value) {
-      notify.error("request-action-missing-target-user");
+      notify.error('request-action-missing-target-user');
       return;
     }
 

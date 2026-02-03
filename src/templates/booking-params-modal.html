@@ -67,12 +67,12 @@
         {# HOURLY BOOKING COST WITHOUT TAXES #}
         <div class='d-flex justify-content-between mb-2'>
           <label for='book_price_notax' class='col-form-label'>{{ 'Booking cost per hour, without taxes'|trans }}</label>
-          <input class='form-control col-md-4' data-trigger='blur' data-model='items/{{ Entity.id }}' data-target='book_price_notax' type='number' value='{{ Entity.entityData.book_price_notax }}' id='book_price_notax' step='0.01' />
+          <input class='form-control col-md-4' data-trigger='blur' data-model='items/{{ Entity.id }}' data-target='book_price_notax' type='number' min='0' value='{{ Entity.entityData.book_price_notax }}' id='book_price_notax' step='0.01' />
         </div>
         {# HOURLY BOOKING COST WITH TAXES #}
         <div class='d-flex justify-content-between mb-2'>
           <label for='book_price_tax' class='col-form-label'>{{ 'Booking cost per hour, with taxes'|trans }}</label>
-          <input class='form-control col-md-4' data-trigger='blur' data-model='items/{{ Entity.id }}' data-target='book_price_tax' type='number' value='{{ Entity.entityData.book_price_tax }}' id='book_price_tax' step='0.01' />
+          <input class='form-control col-md-4' data-trigger='blur' data-model='items/{{ Entity.id }}' data-target='book_price_tax' type='number' min='0' value='{{ Entity.entityData.book_price_tax }}' id='book_price_tax' step='0.01' />
         </div>
         {# CURRENCY #}
         <div class='d-flex justify-content-between mb-2'>

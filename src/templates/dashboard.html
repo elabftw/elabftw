@@ -121,7 +121,7 @@
           {% if booking.items_category_title %}
             <span style='--bg: {{ booking.color }}' class='d-inline-block catstat-btn category-btn mr-2'>{{ booking.items_category_title }}</span>
           {% endif %}
-          {{ booking.title }}<span title='{{ booking.start|date('Y-m-d H:i:s') }}' class='relative-moment text-nowrap smallgray'></span>
+          {{ booking.title }} <span title='{{ booking.start|date('Y-m-d H:i:s') }}' class='relative-moment text-nowrap smallgray'></span>
         </a>
       {% endfor %}
     </div>

@@ -210,8 +210,8 @@ final class MakeController extends AbstractController
         $defaultEnd = '2119-12-23T00:00:00+01:00';
 
         $queryEndDate = ($this->Request->query->getString('end'))
-          ? new DateTimeImmutable($this->Request->query->getString('end'))->modify('+1 day')->format('Y-m-d')
-          : $defaultEnd;
+            ? new DateTimeImmutable($this->Request->query->getString('end'))->modify('+1 day')->format(DateTimeImmutable::ATOM)
+            : $defaultEnd;
 
         $Scheduler = new Scheduler(
             new Items($this->requester),

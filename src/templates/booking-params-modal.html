@@ -76,10 +76,10 @@
         </div>
         {# CURRENCY #}
         <div class='d-flex justify-content-between mb-2'>
-          <label for='book_currency' class='col-form-label'>{{ 'Booking cost currency'|trans }}</label>
-          <select id='book_currency' class='form-control col-md-4' data-trigger='change' data-model='items/{{ Entity.id }}' data-target='book_currency'>
+          <label for='book_price_currency' class='col-form-label'>{{ 'Booking cost currency'|trans }}</label>
+          <select id='book_price_currency' class='form-control col-md-4' data-trigger='change' data-model='items/{{ Entity.id }}' data-target='book_price_currency'>
             {% for value, text in currencyArr %}
-              <option value='{{ value }}' {{ value == Entity.entityData.book_currency ? 'selected' }}>{{ text }}</option>
+              <option value='{{ value }}' {{ value == Entity.entityData.book_price_currency ? 'selected' }}>{{ text }}</option>
             {% endfor %}
           </select>
         </div>

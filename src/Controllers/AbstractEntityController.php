@@ -81,6 +81,13 @@ abstract class AbstractEntityController implements ControllerInterface
         $this->classificationArr = Classification::getAssociativeArray();
         $this->meaningArr = Meaning::getAssociativeArray();
         $this->requestableActionArr = RequestableAction::getAssociativeArray();
+
+        if ($this->Entity->entityData['state'] === 1) {
+          unset($this->requestableActionArr[60]);
+        } elseif ($this->Entity->entityData['state'] === 2) {
+          unset($this->requestableActionArr[10]);
+        }
+
         $this->currencyArr = Currency::getAssociativeArray();
         $this->scopedTeamgroupsArr = $TeamGroups->readScopedTeamgroups();
         $ExperimentsStatus = new ExperimentsStatus($App->Teams);

@@ -89,6 +89,7 @@ const t = {
     "replace-edited-file": "Haluatko korvata palvelimella olevan tiedoston tällä muokkauksella?",
     "replace-existing": "Overwrite original file",
     "request-filename": "Anna tiedoston nimi",
+    "request-action-missing-target-user": "Missing target user.",
     "resource-not-found": "Ei mitään näytettävää tällä tunnuksella",
     "revisions-error": "Select two revisions to compare them.",
     "save": "Tallenna",

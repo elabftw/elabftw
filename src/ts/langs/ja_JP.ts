@@ -89,6 +89,7 @@ const t = {
     "replace-edited-file": "この編集したものでサーバー上のファイルを置き換えますか？",
     "replace-existing": "元のファイルを上書きする",
     "request-filename": "ファイルの名前を入力してください",
+    "request-action-missing-target-user": "Missing target user.",
     "resource-not-found": "このIDで表示可能なものはありません",
     "revisions-error": "2つのリビジョンを選んで比較する。",
     "save": "保存",

@@ -74,6 +74,12 @@ if (document.getElementById('topToolbar')) {
   on(Action.RequestAction, () => {
     const actionSelect = (document.getElementById('requestActionActionSelect') as HTMLSelectElement);
     const userSelect = (document.getElementById('requestActionUserSelect') as HTMLSelectElement);
+
+    if (!userSelect.value) {
+      notify.error("request-action-missing-target-user");
+      return;
+    }
+
     ApiC.post(`${entity.type}/${entity.id}/request_actions`, {
       action: Action.Create,
       target_action: actionSelect.value,

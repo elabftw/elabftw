@@ -125,6 +125,7 @@ final class i18n4Js
             'replace-edited-file' => _('Do you want to replace the file on the server with this edit?'),
             'replace-existing' => _('Overwrite original file'),
             'request-filename' => _('Enter name of the file'),
+            'request-action-missing-target-user' => _('Missing target user.'),
             'resource-not-found' => _('Nothing to show with this id'),
             'revisions-error' => _('Select two revisions to compare them.'),
             'save' => _('Save'),

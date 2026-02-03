@@ -89,6 +89,7 @@ const t = {
     "replace-edited-file": "您要用此编辑替换服务器上的文件吗？",
     "replace-existing": "覆盖原始文件",
     "request-filename": "输入文件名",
+    "request-action-missing-target-user": "Missing target user.",
     "resource-not-found": "该 ID 没有任何记录",
     "revisions-error": "选择两个修订版进行比较。",
     "save": "保存",

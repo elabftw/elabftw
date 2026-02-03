@@ -89,6 +89,7 @@ const t = {
     "replace-edited-file": "Serverdagi faylni ushbu tahrir bilan almashtirmoqchimisiz?",
     "replace-existing": "Overwrite original file",
     "request-filename": "Fayl nomini kiriting",
+    "request-action-missing-target-user": "Missing target user.",
     "resource-not-found": "Bu identifikator bilan hech narsa ko'rsatilmaydi",
     "revisions-error": "Select two revisions to compare them.",
     "save": "Saqlash",

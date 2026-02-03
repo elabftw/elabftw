@@ -89,6 +89,7 @@ const t = {
     "replace-edited-file": "Θέλετε να αντικαταστήσετε το αρχείο στον διακομιστή με αυτήν την επεξεργασία;",
     "replace-existing": "Overwrite original file",
     "request-filename": "Εισαγάγετε το όνομα του αρχείου",
+    "request-action-missing-target-user": "Missing target user.",
     "resource-not-found": "Δεν υπάρχει τίποτα για εμφάνιση με αυτό το αναγνωριστικό",
     "revisions-error": "Select two revisions to compare them.",
     "save": "Αποθήκευση",

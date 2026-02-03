@@ -89,6 +89,7 @@ const t = {
     "replace-edited-file": "Wilt u het bestand op de server vervangen met deze wijziging?",
     "replace-existing": "Overwrite original file",
     "request-filename": "Voer de naam van het bestand in",
+    "request-action-missing-target-user": "Missing target user.",
     "resource-not-found": "Niets te tonen met dit id",
     "revisions-error": "Select two revisions to compare them.",
     "save": "Opslaan",

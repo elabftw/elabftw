@@ -12,12 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Traits\TestsUtilsTrait;
-
 class AppTest extends \PHPUnit\Framework\TestCase
 {
-    use TestsUtilsTrait;
-
     public function testGetWhatsnewLink(): void
     {
         $this->assertEquals('https://www.deltablot.com/posts/release-50100', App::getWhatsnewLink(50169));

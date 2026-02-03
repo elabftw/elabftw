@@ -414,11 +414,9 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
     // use the after hook to change the background color of the new element
     after: (elem: HTMLElement, _: Event, value: string) => {
       // we get back a string with the id separated from color with a |
-      const [id, color] = value.split('|');
-      const hex = `#${color}`;
-      elem.dataset.id = id;
-      elem.style.setProperty('--bg', hex);
-      elem.style.borderColor = hex;
+      const splitValue = value.split('|');
+      elem.dataset.id = splitValue[0];
+      elem.style.setProperty('--bg', `#${splitValue[1]}`);
       return true;
     },
     cancel : i18next.t('cancel'),

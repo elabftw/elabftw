@@ -318,4 +318,12 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $this->expectException(ImproperActionException::class);
         $this->Users->destroy();
     }
+
+    public function testToggleTheme(): void
+    {
+        $User = $this->getUserInTeam(team: 1, admin: 1);
+        $this->assertEquals(1, $User->userData['theme_variant']);
+        $User->patch(Action::ToggleTheme, array());
+        $this->assertEquals(2, $User->userData['theme_variant']);
+    }
 }

@@ -24,6 +24,7 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\Messages;
 use Elabftw\Enums\State;
+use Elabftw\Enums\ThemeVariant;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Enums\UsersColumn;
 use Elabftw\Exceptions\IllegalActionException;
@@ -489,6 +490,7 @@ class Users extends AbstractRest
                     }
                 }
             )(),
+            Action::ToggleTheme => $this->toggleTheme(),
             Action::Validate => $this->validate(),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
@@ -769,6 +771,19 @@ class Users extends AbstractRest
         if ($this->isSelf() === false) {
             throw new IllegalActionException(Messages::InsufficientPermissions->toHuman());
         }
+    }
+
+    public function toggleTheme(): array
+    {
+        $current = ThemeVariant::tryFrom((int) $this->userData['theme_variant']) ?? ThemeVariant::Auto;
+        $new = $current === ThemeVariant::Dark ? ThemeVariant::Auto : ThemeVariant::Dark;
+
+        $sql = 'UPDATE users SET theme_variant = :theme WHERE userid = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':theme', $new->value, PDO::PARAM_INT);
+        $req->bindValue(':id', $this->userid, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return $this->readOne();
     }
 
     protected static function search(UsersColumn $column, string $term, bool $filterValidated = false): self

@@ -222,8 +222,8 @@ final class App
                 ?? ThemeVariant::Auto;
         }
         // 2. anon & guest preference (cookie)
-        $cookie = $this->Request->cookies->getString('theme_variant');
-        return $cookie === 'dark' ? ThemeVariant::Dark : ThemeVariant::Auto;
+        $cookie = $this->Request->cookies->getInt('theme_variant');
+        return ThemeVariant::tryFrom($cookie) ?? ThemeVariant::Auto;
     }
 
     /**

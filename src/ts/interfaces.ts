@@ -107,6 +107,7 @@ enum Action {
   SetNextCustomId = 'setnextcustomid',
   Sign = 'sign',
   Timestamp = 'timestamp',
+  ToggleTheme = 'toggletheme',
   Unarchive = 'unarchive',
   Unreference = 'unreference',
   UpdateMetadataField = 'updatemetadatafield',

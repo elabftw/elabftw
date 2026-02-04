@@ -206,11 +206,13 @@ select:not([multiple]) {
   .form-control {
     background-color: var(--mainbackground);
     color: var(--mediumstrong);
+  }
 
-    &:read-only {
-      background-color: var(--secondary-muted);
-    }
-
+  :where(input, textarea).form-control:read-only,
+  .form-control:disabled {
+    background-color: var(--secondary-muted);
+    color: var(--mediumstrong);
+    opacity: 1;
   }
 
   .modal-content {

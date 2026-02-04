@@ -183,18 +183,7 @@ final class App
 
     public function getThemeClass(): string
     {
-        // 1. authenticated user preference
-        if ($this->Users instanceof AuthenticatedUser) {
-            $themeVariant = ThemeVariant::tryFrom((int) $this->Users->userData['theme_variant'])
-                ?? ThemeVariant::Auto;
-            return $themeVariant->toCssClass();
-        }
-        // 2. anon & guest preference (cookie)
-        $cookie = $this->Request->cookies->getString('elab_theme');
-        return match ($cookie) {
-            'dark' => ThemeVariant::Dark->toCssClass(),
-            default => ThemeVariant::Auto->toCssClass(),
-        };
+        return $this->getThemeVariant()->toCssClass();
     }
 
     /** @psalm-suppress PossiblyUnusedMethod this method is used in twig templates */
@@ -223,6 +212,18 @@ final class App
         $Response->setContent($this->render($template, $renderArr));
         $Response->setStatusCode($error->toHttpCode());
         return $Response;
+    }
+
+    private function getThemeVariant(): ThemeVariant
+    {
+        // 1. authenticated user preference
+        if ($this->Users instanceof AuthenticatedUser) {
+            return ThemeVariant::tryFrom((int) $this->Users->userData['theme_variant'])
+                ?? ThemeVariant::Auto;
+        }
+        // 2. anon & guest preference (cookie)
+        $cookie = $this->Request->cookies->getString('elab_theme');
+        return $cookie === 'dark' ? ThemeVariant::Dark : ThemeVariant::Auto;
     }
 
     /**

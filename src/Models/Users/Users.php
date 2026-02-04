@@ -24,7 +24,6 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\Messages;
 use Elabftw\Enums\State;
-use Elabftw\Enums\ThemeVariant;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Enums\UsersColumn;
 use Elabftw\Exceptions\IllegalActionException;

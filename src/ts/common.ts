@@ -74,6 +74,20 @@ interface Status extends SelectOptions {
   title: string;
 }
 
+on('toggle-dark-mode', (el: HTMLElement) => {
+  const currentTheme = parseInt(el.dataset.currentTheme, 10);
+  let targetTheme = 1;
+  if (currentTheme == 1) {
+    targetTheme = 2;
+  }
+  ApiC.patch(`${Model.User}/me`, { theme_variant: targetTheme }).then(() => {
+    const isDark = targetTheme === 2;
+    document.documentElement.classList.toggle('dark-mode', isDark);
+    document.cookie = `theme_variant=${targetTheme}; Path=/; Max-Age=31536000; SameSite=Lax; Secure`;
+    (document.getElementById('changeThemeDiv') as HTMLDivElement).dataset.currentTheme = String(targetTheme);
+  });
+});
+
 // HEARTBEAT
 // this function is to check periodically that we are still authenticated
 // and show a message if we the session is not valid anymore but we are still on a page requiring auth
@@ -141,7 +155,7 @@ const btn = document.createElement('button');
 btn.type = 'button';
 btn.dataset.action = 'scroll-top';
 // make it look like a button, and on the right side of the screen, not too close from the bottom
-btn.classList.add('btn', 'btn-neutral', 'floating-middle-right');
+btn.classList.add('btn', 'btn-secondary', 'floating-middle-right');
 // element is invisible at first so we can make it visible so it triggers a css transition and appears progressively
 btn.style.opacity = '0';
 // will not be shown for small screens, only large ones
@@ -328,7 +342,7 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
         .then(res => res.json())
         .then(json => json[original.dataset.target]);
     },
-    listenOn: '.malleableTitle',
+    listenOn: '.malleable-title',
     returnedValueIsTrustedHtml: false,
     onBlur: MalleAction.Submit,
     tooltip: i18next.t('click-to-edit'),

@@ -39,7 +39,7 @@ async function saveDspaceIdAsExtraField(itemUuid: string): Promise<void> {
   const mode = new URLSearchParams(window.location.search).get('mode');
   await MetadataC.save(metadata).then(() => mode === 'edit'
     ? MetadataC.display('edit')
-    : reloadElements(['extraFieldsDiv']));
+    : reloadElements(['extraFieldsSection']));
 }
 
 interface DspaceCollection {

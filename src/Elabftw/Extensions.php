@@ -57,6 +57,7 @@ final class Extensions
         'gif',
         'heic',
         'jpeg',
+        'bmp',
         'jpg',
         'png',
         'tif',

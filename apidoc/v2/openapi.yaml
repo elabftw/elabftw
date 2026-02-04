@@ -1245,8 +1245,14 @@ components:
           type: integer
           nullable: true
           description: |
-            Set the content type for main text: 1 for HTML (default) and 2 for Markdown
+            Set the content type for main text:
+              - 1: HTML (default)
+              - 2: Markdown
+
+            If unset, it will use the user's preference value.
           example: 1
+          default: 1
+          enum: [ 1, 2 ]
         custom_id:
           type: integer
           description: Cannot be negative. Can be reset with "0", null or empty string.
@@ -1289,6 +1295,26 @@ components:
             Optional team context for ownership transfer.
             If omitted, the requester’s team is used by default.
             If provided, the API validates that the target user is a member of the specified team.
+    # ENTITY DUPLICATE
+    entity_duplicate:
+      type: object
+      description: Parameters for duplicating an entry
+      properties:
+        action:
+          type: string
+          description: |
+            The "duplicate" action creates a new entity based from the given entity id.
+          default: 'duplicate'
+        copyFiles:
+          type: boolean
+          default: false
+          description: |
+            If "true", the action will import the files of the original entity.
+        linkToOriginal:
+          type: boolean
+          default: true
+          description: |
+            If "true", the action will create a link to the original entity.
     # EVENT
     event:
       type: object
@@ -2778,88 +2804,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                body:
-                  type: string
-                  nullable: true
-                  description: The main text content (HTML or Markdown)
-                  default: null
-                  example: "<h1>Section title</h1><p>Main text of resource</p>"
-                canread_base:
-                  type: number
-                  nullable: true
-                  description: |
-                    Base permission for read access:
-                      - 10: Owner only
-                      - 20: Owner + Admins
-                      - 30: Team members
-                      - 40: Everyone with an account
-                      - 50: Everyone including anonymous users
-                  example: 20
-                  enum: [10, 20, 30, 40, 50]
-                canread:
-                  type: string
-                  nullable: true
-                  description: JSON permissions for reading the entry
-                  example: '{"teams": [4], "users": [42,32], "teamgroups": [1,5]}'
-                  default: '{"teams": [], "users": [], "teamgroups": []}'
-                canwrite_base:
-                  type: number
-                  nullable: true
-                  description: |
-                    Base permission for write access:
-                      - 10: Owner only
-                      - 20: Owner + Admins
-                      - 30: Team members
-                      - 40: Everyone with an account
-                      - 50: Everyone including anonymous users
-                  example: 20
-                  enum: [10, 20, 30, 40, 50]
-                canwrite:
-                  type: string
-                  nullable: true
-                  description: JSON permissions for writing the entry
-                  example: '{"teams": [4], "users": [42,32], "teamgroups": [1,5]}'
-                  default: '{"teams": [], "users": [], "teamgroups": []}'
-                category:
-                  type: integer
-                  nullable: true
-                  description: The experiment category ID
-                  default: null
-                  example: 3
-                content_type:
-                  type: integer
-                  nullable: true
-                  description: |
-                    Set the content type for main text: 1 for HTML (default) and 2 for Markdown
-                  example: 1
-                metadata:
-                  $ref: '#/components/schemas/metadata'
-                rating:
-                  type: integer
-                  nullable: true
-                  description: Rating value from 0 to 5
-                  default: 0
-                status:
-                  type: integer
-                  nullable: true
-                  description: The experiment status ID
-                  default: null
-                  example: 1
-                title:
-                  type: string
-                  nullable: true
-                  description: The title of the entry
-                  default: Untitled
-                  example: "Test replicating the results of Naomi"
-                template:
-                  type: integer
-                  description: |
-                    The template id to use, or 0 to use the common team
-                    template, or -1 to have an empty body.
-                  default: -1
-
+              $ref: '#/components/schemas/entity_editable'
       responses:
         '201':
           description: The experiment has been created.
@@ -2915,23 +2860,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                action:
-                  type: string
-                  description: |
-                    The "duplicate" action creates a new entity based from the given entity id.
-                  default: 'duplicate'
-                copyFiles:
-                  type: boolean
-                  default: false
-                  description: |
-                    If "true", the action will import the files of the original entity.
-                linkToOriginal:
-                  type: boolean
-                  default: true
-                  description: |
-                    If "true", the action will create a link to the original entity.
+              $ref: '#/components/schemas/entity_duplicate'
       responses:
         '201':
           description: The experiment has been duplicated.
@@ -3254,23 +3183,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                action:
-                  type: string
-                  description: |
-                    The "duplicate" action creates a new item based from the given item id.
-                  default: 'duplicate'
-                copyFiles:
-                  type: boolean
-                  default: false
-                  description: |
-                    If "true", the action will import the files of the original item.
-                linkToOriginal:
-                  type: boolean
-                  default: true
-                  description: |
-                    If "true", the action will create a link to the original item.
+              $ref: '#/components/schemas/entity_duplicate'
       responses:
         '201':
           description: The item has been duplicated.
@@ -4110,18 +4023,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                action:
-                  type: string
-                  description: |
-                    The "duplicate" action creates a new entity based from the given entity id.
-                  default: 'duplicate'
-                copyFiles:
-                  type: boolean
-                  default: false
-                  description: |
-                    If "true", the action will import the files of the original entity.
+              $ref: '#/components/schemas/entity_duplicate'
       responses:
         '201':
           description: The experiment template has been duplicated.
@@ -4259,18 +4161,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                action:
-                  type: string
-                  description: |
-                    The "duplicate" action creates a new entity based from the given entity id.
-                  default: 'duplicate'
-                copyFiles:
-                  type: boolean
-                  default: false
-                  description: |
-                    If "true", the action will import the files of the original entity.
+              $ref: '#/components/schemas/entity_duplicate'
       responses:
         '201':
           description: The resource template has been duplicated.

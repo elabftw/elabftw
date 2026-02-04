@@ -12,7 +12,7 @@
 
     &:hover {
       i {
-        color: $dangerred !important;
+        color: var(--dangerred) !important;
       }
     }
   }
@@ -28,7 +28,7 @@
     }
 
     &::before {
-      color: $medium;
+      color: var(--secondary-muted);
       content: '\f005';
       font: var(--fa-font-solid);
     }
@@ -41,6 +41,6 @@
   input:checked ~ label::before,
   &:not(:checked) > label:hover::before,
   &:not(:checked) > label:hover ~ label::before {
-    color: $gold;
+    color: var(--gold);
   }
 }

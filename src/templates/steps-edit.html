@@ -18,7 +18,7 @@
       <div class='input-group mb-2 countable' id='step_{{ step.id }}'>
         <div class='input-group-prepend'>
           {% set disabled = step.is_immutable == 1 and (Entity.entityType.value in ['experiments', 'items']) %}
-          <button {{ disabled ? 'disabled="disabled"' : '' }} type='button' class='btn draggable sortableHandle input-group-text' title='{{ 'Drag to reorder'|trans }}' aria-label='{{ 'Drag to reorder'|trans }}'>
+          <button {{ disabled ? 'disabled="disabled"' : '' }} type='button' class='btn btn-ghost draggable sortableHandle' title='{{ 'Drag to reorder'|trans }}' aria-label='{{ 'Drag to reorder'|trans }}'>
             <i class='fas fa-sort'></i>
           </button>
         </div>
@@ -26,7 +26,7 @@
         {% set steps_table = '%s/%d/steps'|format(Entity.entityType.value, Entity.id) %}
         {% if Entity.entityType.value in ['experiments_templates', 'items_types'] %}
         <div class='input-group-prepend'>
-          <label class='btn input-group-text'>
+          <label class='btn btn-ghost'>
             <input type='checkbox' autocomplete='off' data-trigger='change' data-model='{{ steps_table ~ '/' ~ step.id }}' data-target='is_immutable' id='stepIsImmutable_{{ step.id }}' {{ step.is_immutable ? 'checked' }} data-reload='step_{{ step.id }}' class='d-none'>
             <i class='fas fa-lock {{ not step.is_immutable ? 'd-none' }}'></i>
             <i class='fas fa-lock-open {{ step.is_immutable ? 'd-none' }}'></i>
@@ -35,15 +35,15 @@
         {% endif %}
         {# DESTROY #}
         <div class='input-group-prepend'>
-          <button {{ disabled ? 'disabled="disabled"' : '' }} class='btn input-group-text' data-action='destroy-step' data-id='{{ step.id }}' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}' type='button'>
+          <button {{ disabled ? 'disabled="disabled"' : '' }} class='btn btn-ghost' data-action='destroy-step' data-id='{{ step.id }}' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}' type='button'>
             <i class='fas fa-trash-alt'></i>
           </button>
         </div>
         {# FINISH/UNFINISH #}
         <div class='input-group-prepend'>
-          <div class='input-group-text'>
+          <button class='btn btn-ghost'>
             <input aria-label='{{ 'Toggle completion'|trans }}' type='checkbox' {{ step.finished ? 'checked' }} data-stepid='{{ step.id }}' data-id='{{ Entity.id }}' class='stepbox'>
-          </div>
+          </button>
         </div>
         <div class='pl-2 step-static form-control-plaintext d-flex flex-wrap'>
           <span class='step {{ not disabled ? 'editable hl-hover' }} align-self-center {{- step.finished ? ' finished' }}' data-target='body' data-stepid='{{ step.id }}'>{{ step.body }}</span>

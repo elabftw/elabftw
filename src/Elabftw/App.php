@@ -181,11 +181,6 @@ final class App
         return $this->Config->configArr['lang'];
     }
 
-    public function getThemeClass(): string
-    {
-        return $this->getThemeVariant()->toCssClass();
-    }
-
     /** @psalm-suppress PossiblyUnusedMethod this method is used in twig templates */
     public function getJsLang(): string
     {
@@ -214,7 +209,7 @@ final class App
         return $Response;
     }
 
-    private function getThemeVariant(): ThemeVariant
+    public function getThemeVariant(): ThemeVariant
     {
         // 1. authenticated user preference
         if ($this->Users instanceof AuthenticatedUser) {

@@ -74,11 +74,17 @@ interface Status extends SelectOptions {
   title: string;
 }
 
-on('toggle-dark-mode', () => {
-  ApiC.patch(`${Model.User}/me`, {action: Action.ToggleTheme}).then(res => res.json()).then(json => {
-    const isDark = json.theme_variant === 2;
+on('toggle-dark-mode', (el: HTMLElement) => {
+  const currentTheme = parseInt(el.dataset.currentTheme, 10);
+  let targetTheme = 1;
+  if (currentTheme == 1) {
+    targetTheme = 2;
+  }
+  ApiC.patch(`${Model.User}/me`, { theme_variant: targetTheme }).then(() => {
+    const isDark = targetTheme === 2;
     document.documentElement.classList.toggle('dark-mode', isDark);
-    document.cookie = `theme_variant=${json.theme_variant}; Path=/; Max-Age=31536000; SameSite=Lax; Secure`;
+    document.cookie = `theme_variant=${targetTheme}; Path=/; Max-Age=31536000; SameSite=Lax; Secure`;
+    (document.getElementById('changeThemeDiv') as HTMLDivElement).dataset.currentTheme = String(targetTheme);
   });
 });
 

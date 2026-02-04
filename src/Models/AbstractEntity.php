@@ -257,6 +257,10 @@ abstract class AbstractEntity extends AbstractRest
                     if (array_key_exists('canwrite_base', $reqBody)) {
                         $canwriteBase = BasePermissions::tryFrom((int) ($reqBody['canwrite_base'])) ?? throw new ImproperActionException('Invalid canwrite_base parameter');
                     }
+                    $useMarkdown = $this->Users->userData['use_markdown'] === 1;
+                    $contentType = isset($reqBody['content_type'])
+                        ? BodyContentType::from($reqBody['content_type'])
+                        : ($useMarkdown ? BodyContentType::Markdown : BodyContentType::Html);
                     return $this->create(
                         title: $reqBody['title'] ?? null,
                         body: $reqBody['body'] ?? null,
@@ -270,7 +274,7 @@ abstract class AbstractEntity extends AbstractRest
                         category: $category,
                         status: $status,
                         metadata: $metadata,
-                        contentType: $this->Users->userData['use_markdown'] === 1 ? BodyContentType::Markdown : BodyContentType::Html,
+                        contentType: $contentType,
                     );
                 }
             )(),

@@ -1619,18 +1619,25 @@ components:
           type: integer
         category_id:
           type: integer
+          nullable: true
         category_color:
           type: string
+          nullable: true
         category_title:
           type: string
+          nullable: true
         status_id:
           type: integer
+          nullable: true
         status_color:
           type: string
+          nullable: true
         status_title:
           type: string
+          nullable: true
         custom_id:
           type: integer
+          nullable: true
         page:
           type: string
         type:

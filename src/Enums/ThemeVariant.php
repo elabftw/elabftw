@@ -22,8 +22,8 @@ enum ThemeVariant: int
     public function toCssClass(): string
     {
         return match ($this) {
-            self::Auto, self::Light => '',
             self::Dark => 'dark-mode',
+            default => '',
         };
     }
 }

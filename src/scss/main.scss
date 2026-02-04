@@ -1236,7 +1236,7 @@ the form-control fails to do that so we do the border ourselves */
   }
 
   &.favorite {
-    background-color: var(--gold);
+    background-color: color-mix(in srgb, var(--gold) 50%, transparent);
   }
 }
 

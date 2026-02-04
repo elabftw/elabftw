@@ -1617,10 +1617,14 @@ components:
           type: integer
         link_state:
           type: integer
+        category_id:
+          type: integer
         category_color:
           type: string
         category_title:
           type: string
+        status_id:
+          type: integer
         status_color:
           type: string
         status_title:

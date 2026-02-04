@@ -252,7 +252,10 @@ document.addEventListener('DOMContentLoaded', () => {
       onInitialize() {
         this._allOptions = Object.values(this.options);
         this._showArchived = false;
+        console.log('👉 elab onInitialize()',  this.control_input);
         applyArchivedFilter(this);
+        const element = document.querySelector('[aria-label="Filter owner"]');
+        console.log('👉 elab element', element);
       },
       render: {
         option(data: AnyTS, escape: (s: string) => string) {

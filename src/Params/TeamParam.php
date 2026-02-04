@@ -32,6 +32,8 @@ final class TeamParam extends ContentParams
             'users_canwrite_experiments_status',
             'users_canwrite_resources_categories',
             'users_canwrite_resources_status',
+            'users_canwrite_experiments_templates',
+            'users_canwrite_resources_templates',
             'visible',
             'newcomer_banner_active',
             'onboarding_email_active' => $this->getBinary(),

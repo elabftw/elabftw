@@ -231,6 +231,19 @@ abstract class AbstractEntity extends AbstractRest
                     if ($teamConfigArr['force_exp_tpl'] === 1 && $this instanceof Experiments) {
                         throw new ImproperActionException(_('Experiments must use a template!'));
                     }
+                    // check if users can create/edit templates
+                    if (!$this->Users->isAdmin) {
+                        $permissionByPath = array(
+                            'experiments_templates' => 'users_canwrite_experiments_templates',
+                            'items_types' => 'users_canwrite_resources_templates',
+                        );
+                        foreach ($permissionByPath as $path => $permissionKey) {
+                            if (str_contains($this->getApiPath(), $path) &&
+                                (int) ($teamConfigArr[$permissionKey] ?? 0) === 0) {
+                                throw new UnauthorizedException(Messages::InsufficientPermissions->toHuman());
+                            }
+                        }
+                    }
                     if (!isset($reqBody['category']) || $reqBody['category'] === -1) {
                         $reqBody['category'] = null;
                     }

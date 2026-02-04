@@ -209,6 +209,7 @@ final class MakeController extends AbstractController
         $defaultStart = '2018-12-23T00:00:00+01:00';
         $defaultEnd = '2119-12-23T00:00:00+01:00';
 
+        // add one day to include the end date selected, because picker will have time 00:00
         $queryEndDate = ($this->Request->query->getString('end'))
             ? new DateTimeImmutable($this->Request->query->getString('end'))->modify('+1 day')->format(DateTimeImmutable::ATOM)
             : $defaultEnd;

@@ -222,7 +222,7 @@ final class App
                 ?? ThemeVariant::Auto;
         }
         // 2. anon & guest preference (cookie)
-        $cookie = $this->Request->cookies->getString('elab_theme');
+        $cookie = $this->Request->cookies->getString('theme_variant');
         return $cookie === 'dark' ? ThemeVariant::Dark : ThemeVariant::Auto;
     }
 

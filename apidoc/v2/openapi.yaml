@@ -1248,6 +1248,8 @@ components:
             Set the content type for main text:
               - 1: HTML (default)
               - 2: Markdown
+
+            If unset, it will use the user's preference value.
           example: 1
           default: 1
           enum: [ 1, 2 ]

@@ -262,19 +262,13 @@ h5 {
   color: $medium;
   font-weight: normal;
   margin-top: 0;
-  /* to remove after https://github.com/TeselaGen/tg-oss/issues/257 is resolved */
-  text-align: left;
-  border-bottom: unset;
-  /* end correcting leak from ove */
 }
 
 h1 { font-size: 200%; }
 
 h2 { font-size: 180%; }
 
-h3 {
-  font-size: 160%;
-}
+h3 { font-size: 160%; }
 
 h4 { font-size: 150%; }
 

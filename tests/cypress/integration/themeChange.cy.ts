@@ -10,7 +10,7 @@ describe('User changes theme', () => {
 
   it('user changes theme to dark mode', () => {
     cy.clearCookies();
-    cy.login();
+    cy.login('titi@yopmail.com');
     cy.visit('/dashboard.php');
     cy.get('#navbarDropdown').click();
     cy.get('[data-action="toggle-dark-mode"]').click();

@@ -13,10 +13,9 @@ describe('User changes theme', () => {
     cy.login();
     cy.visit('/dashboard.php');
     cy.get('#navbarDropdown').click();
-    cy.get('label[aria-label="Change theme"]').should('be.visible').click();
+    cy.get('[data-action="toggle-dark-mode"]').click();
     cy.get('.overlay').should('contain', 'Saved');
     cy.get('html').should('have.class', 'dark-mode');
-
     // it keeps dark mode after logout thanks to cookies
     cy.get('#navbarDropdown').should('exist').click();
     cy.get('[data-action="logout"]').click();

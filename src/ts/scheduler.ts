@@ -103,7 +103,7 @@ if (window.location.pathname === '/scheduler.php') {
       : 'timeGridDay,timeGridWeek,listWeek,dayGridMonth'; // classic grid calendar
 
     // persist selected view type (day, week, month, and the layout)
-    const saved = localStorage.getItem('schedulerRange') as SavedView | null;
+    const saved = localStorage.getItem('persistent_schedulerRange') as SavedView | null;
     const range: Range = saved && saved !== LIST_WEEK_VIEW ? saved : 'week';
     const viewMap = layoutCheckbox.checked ? TIMELINE_VIEWS : GRID_VIEWS;
     const initialView =
@@ -225,7 +225,7 @@ if (window.location.pathname === '/scheduler.php') {
             info.view.type.includes('Day') ? 'day' :
               info.view.type.includes('Month') ? 'month' :
                 'week';
-        localStorage.setItem('schedulerRange', range);
+        localStorage.setItem('persistent_schedulerRange', range);
       },
       themeSystem: 'bootstrap',
       // i18n

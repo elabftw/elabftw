@@ -135,15 +135,28 @@ const imagesUploadHandler = (blobInfo: TinyMCEBlobInfo) => new Promise((resolve,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dropzoneEl = document.getElementById('elabftw-dropzone') as any;
   const dropZone = dropzoneEl.dropzone;
-  // when a file is added to dropZone (and uploaded), hook into the "complete" event
-  // and reload uploadsDiv so we can grab the image url to replace the blob in the editor
-  dropZone.on('complete', () => {
-    if (dropZone.getUploadingFiles().length === 0 && dropZone.getQueuedFiles().length === 0) {
-      reloadElements(['uploadsDiv']).then(() => {
-        resolve(document.getElementById('last-uploaded-link').dataset.url);
-      });
-    }
-  });
+
+  const uploadWithHook = (file: File) => {
+    const successHandler = (f: any, response: any) => {
+    const isSameFile = (f.size === file.size && f.type === file.type);
+
+    if (isSameFile) {
+      dropZone.off('success', successHandler); // linstener cleanup
+
+      const newId = response.id;
+      ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}/${newId}`)
+        .then((json: any) => {
+          reloadElements(['uploadsDiv']).then(() => {
+          resolve(`app/download.php?f=${json.long_name}&name=${f.name}&storage=${json.storage}`);
+          });
+        })
+        .catch(() => reject('Metadata fetch failed'));
+    } else {
+      reject('Uploaded file does not match the original file');}
+  };
+    dropZone.on('success', successHandler);
+    dropZone.addFile(blobInfo.blob());
+  };
   // Edgecase for editing an image using tinymce ImageTools
   // Check if it was selected. This is set by an event hook below
   if (tinymceEditImage.selected === true) {
@@ -183,14 +196,16 @@ const imagesUploadHandler = (blobInfo: TinyMCEBlobInfo) => new Promise((resolve,
     const filename = prompt('Enter filename with extension e.g. .jpeg');
     if (typeof filename !== 'undefined' && filename !== null) {
       const file = new File([blobInfo.blob()], filename, { lastModified: new Date().getTime(), type: blobInfo.blob().type }) as DropzoneFile;
-      dropZone.addFile(file);
+      uploadWithHook(file);
     } else {
       // Just disregard the edit if the name prompt is cancelled
       tinymce.activeEditor.undoManager.undo();
       reject('Action cancelled');
     }
-  } else {
-    dropZone.addFile(blobInfo.blob());
+  }
+  else {
+    const file = new File([blobInfo.blob()], blobInfo.name(), { lastModified: new Date().getTime(), type: blobInfo.blob().type }) as DropzoneFile;
+    uploadWithHook(file);
   }
 });
 

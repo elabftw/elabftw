@@ -211,6 +211,9 @@ final class Apiv2Controller extends AbstractApiController
             $this->reqBody['canwrite_base'] = (BasePermissions::tryFrom($this->Request->request->getInt('canwrite_base')) ?? BasePermissions::User)->value;
         }
         $id = $this->Model->postAction($this->action, $this->reqBody);
+        if ($this->Model instanceof Uploads) {
+            return new JsonResponse(array('id' => $id), Response::HTTP_CREATED);
+        }
         return new Response('', Response::HTTP_CREATED, array('Location' => sprintf('%s/%s%d', Env::asUrl('SITE_URL'), $this->Model->getApiPath(), $id)));
     }
 

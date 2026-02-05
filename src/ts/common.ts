@@ -76,15 +76,13 @@ interface Status extends SelectOptions {
 
 on('toggle-dark-mode', (el: HTMLElement) => {
   const currentTheme = parseInt(el.dataset.currentTheme, 10);
-  let targetTheme = 1;
-  if (currentTheme == 1) {
-    targetTheme = 2;
-  }
+  // Auto (0) and Light (1) should both toggle to Dark (2)
+  const targetTheme = currentTheme === 2 ? 1 : 2;
   ApiC.patch(`${Model.User}/me`, { theme_variant: targetTheme }).then(() => {
     const isDark = targetTheme === 2;
     document.documentElement.classList.toggle('dark-mode', isDark);
     document.cookie = `theme_variant=${targetTheme}; Path=/; Max-Age=31536000; SameSite=Lax; Secure`;
-    (document.getElementById('changeThemeDiv') as HTMLDivElement).dataset.currentTheme = String(targetTheme);
+    el.dataset.currentTheme = String(targetTheme);
   });
 });
 

@@ -1196,6 +1196,8 @@ CREATE TABLE `teams` (
   `users_canwrite_experiments_status` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
   `users_canwrite_resources_categories` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
   `users_canwrite_resources_status` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
+  `users_canwrite_experiments_templates` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
+  `users_canwrite_resources_templates` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `orgid` varchar(255) NULL DEFAULT NULL,
   `visible` tinyint UNSIGNED NOT NULL DEFAULT 1,

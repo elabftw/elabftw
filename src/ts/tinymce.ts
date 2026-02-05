@@ -136,25 +136,27 @@ const imagesUploadHandler = (blobInfo: TinyMCEBlobInfo) => new Promise((resolve,
   const dropzoneEl = document.getElementById('elabftw-dropzone') as any;
   const dropZone = dropzoneEl.dropzone;
 
-  const uploadWithHook = (file: File) => {
-    const successHandler = (f: any, response: any) => {
-    const isSameFile = (f.size === file.size && f.type === file.type);
-
-    if (isSameFile) {
+  const uploadWithHook = (file: DropzoneFile) => {
+    const successHandler = (f: DropzoneFile, response: { id: number}) => {
+      // Even if you use DropzoneFile, it's not the same object as the one you passed to addFile
+      // blob has no real_name. it only contains size and type.
+      if ( f.size !== file.size || f.type !== file.type) {
+        return;
+      }
       dropZone.off('success', successHandler);
 
       const newId = response.id;
       ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}/${newId}`)
-        .then((json: any) => {
+        .then((json: { long_name: string, storage: string | number }) => {
           reloadElements(['uploadsDiv']).then(() => {
-          resolve(`app/download.php?f=${json.long_name}&name=${f.name}&storage=${json.storage}`);
+            resolve(`app/download.php?f=${json.long_name}&name=${f.name}&storage=${json.storage}`);
           });
         })
         .catch(() => reject('Metadata fetch failed'));
-    } else {
-      reject('Uploaded file does not match the original file');}
-  };
+    };
     dropZone.on('success', successHandler);
+    // never use file here. it will be converted to a Blob and lose its name, type and everything else.
+    // use blobInfo.blob() instead. I don't know why it works but it does.
     dropZone.addFile(blobInfo.blob());
   };
   // Edgecase for editing an image using tinymce ImageTools

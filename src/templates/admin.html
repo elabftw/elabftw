@@ -333,7 +333,7 @@
 <div data-tabcontent='6' id='batchActions' hidden>
   <p>{{ 'From here you can perform actions on entire group of entries at once.'|trans }}</p>
   <hr>
-  <button type='button' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Resources by category'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <button type='button' class='btn color-strong p-2 hl-hover-gray lh-normal border-0 my-n2' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Resources by category'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
   <div hidden class='mt-2'>
   {% for itemsCategory in App.itemsCategoryArr %}
     <div class='d-flex justify-content-between p-1 rounded hl-hover-gray'>
@@ -347,7 +347,7 @@
     </div>
     <hr>
 
-  <button type='button' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Resources status'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <button type='button' class='btn color-strong p-2 hl-hover-gray lh-normal border-0 my-n2' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Resources status'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
   <div hidden class='mt-2'>
   {% for status in itemsStatusArr %}
     <div class='d-flex justify-content-between p-1 rounded hl-hover-gray'>
@@ -361,7 +361,7 @@
     </div>
 
   <hr>
-  <button type='button' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Resources tags'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <button type='button' class='btn color-strong p-2 hl-hover-gray lh-normal border-0 my-n2' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Resources tags'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
   <div hidden class='mt-2'>
     {# for this tab, sort the tags in alphabetical order, case-insensitive #}
     {% for tag in tagsArr|sort((a, b) => a.tag|lower <=> b.tag|lower) %}
@@ -376,7 +376,7 @@
   </div>
 
   <hr>
-  <button type='button' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Experiments categories'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <button type='button' class='btn color-strong p-2 hl-hover-gray lh-normal border-0 my-n2' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Experiments categories'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
   <div hidden class='mt-2'>
   {% for experimentsCategory in App.experimentsCategoryArr %}
     <div class='d-flex justify-content-between p-1 rounded hl-hover-gray'>
@@ -390,7 +390,7 @@
     </div>
     <hr>
 
-  <button type='button' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Experiments status'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <button type='button' class='btn color-strong p-2 hl-hover-gray lh-normal border-0 my-n2' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Experiments status'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
   <div hidden class='mt-2'>
   {% for status in statusArr %}
     <div class='d-flex justify-content-between p-1 rounded hl-hover-gray'>
@@ -404,7 +404,7 @@
     </div>
 
   <hr>
-  <button type='button' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Experiments tags'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <button type='button' class='btn color-strong p-2 hl-hover-gray lh-normal border-0 my-n2' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Experiments tags'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
   <div hidden class='mt-2'>
     {% for tag in tagsArr|sort((a, b) => a.tag|lower <=> b.tag|lower) %}
     <div class='d-flex justify-content-between p-1 rounded hl-hover-gray'>
@@ -419,7 +419,7 @@
   <hr>
 
   {% macro batchTransferOwnership(target, param, users) %}
-  <button type='button' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ target|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <button type='button' class='btn color-strong p-2 hl-hover-gray lh-normal border-0 my-n2' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ target|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
   <div hidden class='mt-2'>
     {% for user in users %}
       <div class='d-flex justify-content-between p-1 rounded hl-hover-gray'>

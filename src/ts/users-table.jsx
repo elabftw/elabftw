@@ -21,7 +21,6 @@ import { populateUserModal } from './misc';
 import { notify } from './notify';
 import i18next from './i18n';
 import $ from 'jquery';
-
 async function toggleUserModal(user) {
   const textParams = [
     'userid',
@@ -60,6 +59,7 @@ if (document.getElementById('users-table')) {
   const GridExample = () => {
     const [rowData, setRowData] = useState([]);
     const [gridApi, setGridApi] = useState(null);
+    const isDark = document.documentElement.classList.contains('dark-mode');
 
     const onGridReady = (params) => {
       setGridApi(params.api);
@@ -189,9 +189,7 @@ if (document.getElementById('users-table')) {
           className={'form-control mb-2'}
         />
       <div
-        className={'ag-theme-alpine'}
-        style={{ height: 650 }}
-      >
+        className={isDark ? 'ag-theme-alpine-dark' : 'ag-theme-alpine'} style={{ height: 650 }}>
         <AgGridReact
           rowData={rowData}
           columnDefs={columnDefs}

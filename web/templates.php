@@ -14,7 +14,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Controllers\ExperimentsController;
 use Elabftw\Exceptions\AppException;
-use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Templates;
 use Elabftw\Services\Filter;
 use Exception;
@@ -28,10 +28,10 @@ require_once 'app/init.inc.php';
 $Response = new Response();
 
 try {
-    $Response = new ExperimentsController($App, new Templates($App->Users, Filter::intOrNull($Request->query->getInt('id'))))->getResponse();
     if ($App->Teams->teamArr['users_canwrite_experiments_templates'] === 0 && !$App->Users->isAdmin) {
-        throw new ImproperActionException(_('Sorry, edition of templates has been disabled for users by your team Admin.'));
+        throw new UnauthorizedException(_('Sorry, edition of templates has been disabled for users by your team Admin.'));
     }
+    $Response = new ExperimentsController($App, new Templates($App->Users, Filter::intOrNull($Request->query->getInt('id'))))->getResponse();
 } catch (AppException $e) {
     $Response = $e->getResponseFromException($App);
 } catch (Exception $e) {

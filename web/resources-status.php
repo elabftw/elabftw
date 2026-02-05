@@ -14,7 +14,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Controllers\ItemsStatusController;
 use Elabftw\Exceptions\AppException;
-use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\UnauthorizedException;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -26,10 +26,10 @@ require_once 'app/init.inc.php';
 $Response = new Response();
 
 try {
-    $Response->prepare($Request);
     if ($App->Teams->teamArr['users_canwrite_resources_status'] === 0 && !$App->Users->isAdmin) {
-        throw new ImproperActionException(_('Sorry, edition of resources status has been disabled for users by your team Admin.'));
+        throw new UnauthorizedException(_('Sorry, edition of resources status has been disabled for users by your team Admin.'));
     }
+    $Response->prepare($Request);
     $Response = new ItemsStatusController($App)->getResponse();
 } catch (AppException $e) {
     $Response = $e->getResponseFromException($App);

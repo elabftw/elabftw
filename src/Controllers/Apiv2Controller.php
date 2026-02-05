@@ -212,7 +212,11 @@ final class Apiv2Controller extends AbstractApiController
         }
         $id = $this->Model->postAction($this->action, $this->reqBody);
         if ($this->Model instanceof Uploads) {
-            return new JsonResponse(array('id' => $id), Response::HTTP_CREATED);
+            return new JsonResponse(
+                array('id' => $id),
+                Response::HTTP_CREATED,
+                array('Location' => sprintf('%s/%s%d', Env::asUrl('SITE_URL'), $this->Model->getApiPath(), $id))
+            );
         }
         return new Response('', Response::HTTP_CREATED, array('Location' => sprintf('%s/%s%d', Env::asUrl('SITE_URL'), $this->Model->getApiPath(), $id)));
     }

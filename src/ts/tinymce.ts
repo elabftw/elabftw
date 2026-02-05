@@ -141,7 +141,7 @@ const imagesUploadHandler = (blobInfo: TinyMCEBlobInfo) => new Promise((resolve,
     const isSameFile = (f.size === file.size && f.type === file.type);
 
     if (isSameFile) {
-      dropZone.off('success', successHandler); // linstener cleanup
+      dropZone.off('success', successHandler);
 
       const newId = response.id;
       ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}/${newId}`)

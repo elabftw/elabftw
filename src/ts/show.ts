@@ -94,7 +94,7 @@ function addHiddenInputToMainSearchForm(name: string, value: string): void
   const hiddenInputId = `${name}_hiddenInput`;
   document.getElementById(hiddenInputId)?.remove();
   const input = document.createElement('input');
-  input.hidden = true;
+  input.type = 'hidden';
   input.name = name;
   input.value = value;
   input.id = hiddenInputId;
@@ -220,6 +220,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // TomSelect for extra fields & owner search select
   if (document.getElementById('metakey')) {
     new TomSelect('#metakey', {
+      onInitialize() {
+        console.log(this.input?.id);
+        applyA11yLabel(this, 'metakey');
+      },
       maxOptions: 512,
       plugins: [
         'dropdown_input',
@@ -227,6 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ],
     });
   }
+
   if (document.getElementById('filterOwner')) {
     const tsFilterOwner = new TomSelect('#filterOwner', {
       maxOptions: 512,
@@ -250,9 +255,11 @@ document.addEventListener('DOMContentLoaded', () => {
         remove_button: {},
       },
       onInitialize() {
+        console.log(this.input?.id);
         this._allOptions = Object.values(this.options);
         this._showArchived = false;
         applyArchivedFilter(this);
+        applyA11yLabel(this, 'Filter owner');
       },
       render: {
         option(data: AnyTS, escape: (s: string) => string) {
@@ -687,8 +694,10 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   new TomSelect('#tagFilter', {
-    onInitialize: () => {
+    onInitialize() {
+      console.log(this.input?.id);
       // remove the placeholder input once the select is ready
+      applyA11yLabel(this, 'Tags');
       document.getElementById('tagFilterPlaceholder').remove();
     },
     onChange: value => {
@@ -710,6 +719,7 @@ document.addEventListener('DOMContentLoaded', () => {
       this.setTextboxValue('');
       // refresh the dropdown so it shows suggestions for new input
       this.refreshOptions();
+
     },
     plugins: {
       clear_button: {},
@@ -718,4 +728,11 @@ document.addEventListener('DOMContentLoaded', () => {
       remove_button: {},
     },
   });
+
+  function applyA11yLabel(ts: TomSelect, fallback): void {
+    const label = ts.input.getAttribute('aria-label') || fallback;
+    ts.control_input?.setAttribute('aria-label', label);
+    const textInputs = ts.wrapper?.querySelectorAll('input[type="text"], input.dropdown-input, input.items-placeholder');
+    textInputs?.forEach((el) => el.setAttribute('aria-label', label));
+  }
 });

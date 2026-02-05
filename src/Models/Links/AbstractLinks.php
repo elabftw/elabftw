@@ -251,8 +251,10 @@ abstract class AbstractLinks extends AbstractRest
                     %1$s
                     "%2$s" AS page,
                     "%3$s" AS type,
+                    categoryt.id AS category_id,
                     categoryt.title AS category_title,
                     categoryt.color AS category_color,
+                    statust.id AS status_id,
                     statust.title AS status_title,
                     statust.color AS status_color
                 FROM %4$s as entity_links

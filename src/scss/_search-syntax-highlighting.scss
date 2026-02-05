@@ -11,13 +11,14 @@
 
 #extendedArea {
   background-color: transparent;
-  caret-color: variables.$mediumstrong;
+  caret-color: var(--mediumstrong);
   color: transparent;
   position: relative;
   z-index: 1;
 }
 
 #search-highlighting {
+  border-radius: 0.25rem;
   left: 0;
   position: absolute;
   top: 0;

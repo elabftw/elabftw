@@ -14,6 +14,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Language;
 use Elabftw\Enums\Messages;
+use Elabftw\Enums\ThemeVariant;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Users\AnonymousUser;
@@ -206,6 +207,18 @@ final class App
         $Response->setContent($this->render($template, $renderArr));
         $Response->setStatusCode($error->toHttpCode());
         return $Response;
+    }
+
+    public function getThemeVariant(): ThemeVariant
+    {
+        // 1. authenticated user preference
+        if ($this->Users instanceof AuthenticatedUser) {
+            return ThemeVariant::tryFrom((int) $this->Users->userData['theme_variant'])
+                ?? ThemeVariant::Auto;
+        }
+        // 2. anon & guest preference (cookie)
+        $cookie = $this->Request->cookies->getInt('theme_variant');
+        return ThemeVariant::tryFrom($cookie) ?? ThemeVariant::Auto;
     }
 
     /**

@@ -40,6 +40,20 @@ import { Action } from './interfaces';
 import { TomSelect } from './misc';
 import { notify } from './notify';
 
+type Range = 'day' | 'week' | 'month';
+type SavedView = Range | 'listWeek';
+const GRID_VIEWS: Record<Range, string> = {
+  day: 'timeGridDay',
+  week: 'timeGridWeek',
+  month: 'dayGridMonth',
+};
+const TIMELINE_VIEWS: Record<Range, string> = {
+  day: 'timelineDay',
+  week: 'timelineWeek',
+  month: 'timelineMonth',
+};
+const LIST_WEEK_VIEW = 'listWeek';
+
 // transform a Date object into something we can put as a value of an input of type datetime-local
 function toDateTimeInputValueNumber(datetime: Date): number {
   const offset = datetime.getTimezoneOffset() * 60 * 1000;
@@ -83,11 +97,19 @@ if (window.location.pathname === '/scheduler.php') {
   // bind to the element #scheduler
   const calendarEl: HTMLElement = document.getElementById('scheduler');
   if (calendarEl) {
-
     const layoutCheckbox = document.getElementById('scheduler_layout') as HTMLInputElement;
     const layout = (layoutCheckbox && layoutCheckbox.checked)
       ? 'timelineDay,timelineWeek,listWeek,timelineMonth' // horizontal axis
       : 'timeGridDay,timeGridWeek,listWeek,dayGridMonth'; // classic grid calendar
+
+    // persist selected view type (day, week, month, and the layout)
+    const saved = localStorage.getItem('persistent_schedulerRange') as SavedView | null;
+    const range: Range = saved && saved !== LIST_WEEK_VIEW ? saved : 'week';
+    const viewMap = layoutCheckbox.checked ? TIMELINE_VIEWS : GRID_VIEWS;
+    const initialView =
+      saved === LIST_WEEK_VIEW
+        ? LIST_WEEK_VIEW
+        : viewMap[range];
 
     // clean up 'category' parameter on page refresh or else it keeps it as the only available value in the Select
     if (params.has('category')) {
@@ -149,7 +171,7 @@ if (window.location.pathname === '/scheduler.php') {
       badge.textContent = opt.textContent;
       badge.className = 'selected-item-badge';
       const rawColor = opt.dataset.color;
-      badge.style.setProperty('--badge-color', rawColor?.startsWith('#') ? rawColor : `#${rawColor || '000'}`);
+      badge.style.setProperty('--badge-color', rawColor?.startsWith('#') ? rawColor : `#${rawColor || '888'}`);
 
       const removeBtn = document.createElement('button');
       removeBtn.type = 'button';
@@ -196,7 +218,15 @@ if (window.location.pathname === '/scheduler.php') {
           ],
         },
       },
-      initialView: layoutCheckbox.checked ? 'timelineWeek' : 'timeGridWeek',
+      initialView: initialView,
+      datesSet: (info) => {
+        const range =
+          info.view.type === 'listWeek' ? 'listWeek' :
+            info.view.type.includes('Day') ? 'day' :
+              info.view.type.includes('Month') ? 'month' :
+                'week';
+        localStorage.setItem('persistent_schedulerRange', range);
+      },
       themeSystem: 'bootstrap',
       // i18n
       // all available locales

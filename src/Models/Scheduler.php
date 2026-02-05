@@ -198,6 +198,7 @@ final class Scheduler extends AbstractRest
                 items.title AS item_title,
                 items.book_is_cancellable,
                 CONCAT('#', items_categories.color) AS color,
+                items_categories.title AS items_category_title,
                 team_events.experiment,
                 items.category AS items_category,
                 items.id AS items_id,

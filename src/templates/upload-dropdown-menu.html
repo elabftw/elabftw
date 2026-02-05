@@ -8,7 +8,7 @@
 
   {% if mode == 'edit' %}
     {# INSERT IN TEXT in edit mode for images #}
-    {% if ext matches '/(jpg|jpeg|png|gif|svg)$/i' %}
+    {% if ext matches '/(jpg|jpeg|png|gif|svg|bmp)$/i' %}
       <button type='button' class='dropdown-item' data-action='insert-image-in-body' data-name='{{ upload.real_name|e('html_attr') }}' data-storage='{{ upload.storage }}' data-link='{{ upload.long_name|e('html_attr') }}' data-uploadid='{{ upload.id }}'>
         <i class='fas fa-fw fa-image mr-1'></i>{{ 'Insert in text at cursor position'|trans }}
       </button>
@@ -46,7 +46,7 @@
   {% if mode == 'edit' %}
 
     {# Annotate image #}
-    {% if ext matches '/(jpg|jpeg|png|gif)$/i' %}
+    {% if ext matches '/(jpg|jpeg|png|gif|bmp)$/i' %}
       <button type='button' class='dropdown-item' data-action='annotate-image' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name|e('html_attr') }}'>
         <i class='fas fa-fw fa-paint-brush mr-1'></i>{{ 'Annotate this image'|trans }}
       </button>

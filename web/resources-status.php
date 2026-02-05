@@ -18,9 +18,6 @@ use Elabftw\Exceptions\UnauthorizedException;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * Experiments categories
- */
 require_once 'app/init.inc.php';
 
 $Response = new Response();

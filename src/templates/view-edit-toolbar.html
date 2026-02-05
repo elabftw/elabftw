@@ -32,6 +32,7 @@
   </div>
 </div>
 {% include 'duplicate-modal.html' %}
+{% include 'destroy-entity-modal.html' %}
 {# Modal for timestamping #}
 <div class='modal fade' id='timestampModal' tabindex='-1' role='dialog' aria-labelledby='timestampModalLabel'>
   <div class='modal-dialog' role='document'>
@@ -321,7 +322,7 @@
         <div class='dropdown-divider'></div>
         {# DELETE / RESTORE #}
         {% if Entity.entityData.state == enum('Elabftw\\Enums\\State').Normal.value %}
-          <button type='button' class='dropdown-item hover-danger' data-action='destroy'><i class='fas fa-trash-alt fa-fw' title='{{ 'Delete'|trans }}'></i> {{ 'Delete'|trans }}</button>
+          <button type='button' class='dropdown-item hover-danger' data-action='toggle-modal' data-target='destroyEntityModal'><i class='fas fa-trash-alt fa-fw' title='{{ 'Delete'|trans }}'></i> {{ 'Delete'|trans }}</button>
         {% elseif Entity.entityData.state == enum('Elabftw\\Enums\\State').Deleted.value %}
           <button type='button' class='dropdown-item hover-danger' data-action='restore'><i class='fas fa-trash-can-arrow-up fa-fw' title='{{ 'Restore entry'|trans }}'></i> {{ 'Restore entry'|trans }}</button>
         {% endif %}

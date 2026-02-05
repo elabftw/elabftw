@@ -1,0 +1,29 @@
+{# Modal for destroying an entry #}
+<div class='modal fade' id='destroyEntityModal' tabindex='-1' role='dialog' aria-labelledby='destroyEntityModalLabel'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='destroyEntityModalLabel'>{{ 'Delete entry'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <form id='destroyEntityForm'>
+        <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
+          <p>{{ 'Deleting an entry may also affect related elements (inventory, bookings, etc.). Do you wish to continue?'|trans }}</p>
+          <div class='d-flex justify-content-between'>
+            <label for='destroyContainersSelect' class='col-form-label'>{{ 'Remove item from containers'|trans }}</label>
+            <label title='{{ 'Remove item from containers'|trans }}' class='switch ucp-align'><span class='sr-only'>{{ 'Remove item from containers'|trans }}</span>
+              <input type='checkbox' autocomplete='off' name='destroyContainersSelect'>
+              <span class='slider'></span>
+            </label>
+          </div>
+        </div>
+        <div class='modal-footer'>
+          <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+          <button type='button' data-action='destroy' class='btn btn-danger'>{{ 'Delete'|trans }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

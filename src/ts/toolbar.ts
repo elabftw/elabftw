@@ -141,11 +141,13 @@ if (document.getElementById('topToolbar')) {
   });
 
   on(Action.Destroy, () => {
-    if (confirm(i18next.t('generic-delete-warning'))) {
-      const path = window.location.pathname;
-      ApiC.delete(`${entity.type}/${entity.id}`).then(
-        () => window.location.replace(path.split('/').pop()));
-    }
+    const form = document.getElementById('destroyEntityForm') as HTMLFormElement;
+    const params = collectForm(form);
+    params['action'] = Action.Destroy;
+    ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => {
+        const path = window.location.pathname;
+      window.location.replace(path.split('/').pop());
+    })
   });
 
   on(Action.CreateProcurementRequest, () => {

@@ -797,6 +797,7 @@ abstract class AbstractEntity extends AbstractRest
     #[Override]
     public function destroy(): bool
     {
+        // destroy containers if checked
         $this->canOrExplode('write');
         // remove the custom_id upon deletion
         $this->update(new EntityParams('custom_id', ''));

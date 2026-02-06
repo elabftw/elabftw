@@ -89,6 +89,7 @@ const t = {
     "replace-edited-file": "서버에 저장된 파일을 현재 수정본으로 교체할까요?",
     "replace-existing": "Overwrite original file",
     "request-filename": "파일 이름 입력",
+    "request-action-missing-target-user": "Missing target user.",
     "resource-not-found": "이 계정과 관련된 추가 정보는 없습니다",
     "revisions-error": "Select two revisions to compare them.",
     "save": "저장",

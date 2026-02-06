@@ -89,6 +89,7 @@ const t = {
     "replace-edited-file": "Kas soovite serveris oleva faili selle muudatusega asendada?",
     "replace-existing": "Kirjuta algne fail üle",
     "request-filename": "Sisesta faili nimi",
+    "request-action-missing-target-user": "Missing target user.",
     "resource-not-found": "Selle ID-ga pole midagi näidata",
     "revisions-error": "Valige võrdlemiseks kaks redaktsiooni.",
     "save": "Salvesta",

@@ -20,7 +20,7 @@
       <div class='input-group'>
         <input id='dashboard-search-experiments' class='form-control' type='search' name='q' placeholder='{{ 'Search'|trans }}' aria-label='{{ 'Search'|trans }}' />
         <div class='input-group-append'>
-          <button type='submit' class='btn btn-sm btn-primary' aria-label='{{ 'Search'|trans }}'><i class='fas fa-magnifying-glass color-white' aria-hidden='true'></i></button>
+          <button type='submit' class='btn btn-sm btn-secondary' aria-label='{{ 'Search'|trans }}'><i class='fas fa-magnifying-glass' aria-hidden='true'></i></button>
         </div>
       </div>
     </form>
@@ -70,7 +70,7 @@
       <div class='input-group'>
         <input id='dashboard-search-resources' class='form-control' type='search' name='q' placeholder='{{ 'Search'|trans }}' />
         <div class='input-group-append'>
-          <button type='submit' class='btn btn-sm btn-primary' aria-label='{{ 'Search'|trans }}'><i class='fas fa-magnifying-glass color-white' aria-hidden='true'></i></button>
+          <button type='submit' class='btn btn-sm btn-secondary' aria-label='{{ 'Search'|trans }}'><i class='fas fa-magnifying-glass' aria-hidden='true'></i></button>
         </div>
       </div>
     </form>
@@ -78,7 +78,7 @@
     <h5>{{ 'Browse by category'|trans }}</h5>
     <div class='d-flex my-2 flex-wrap lh-150'>
       {% for category in App.itemsCategoryArr|filter(c => c.is_current_team == 1) -%}
-        <a href='database.php?mode=show&amp;cat={{ category.id }}' class='btn mr-2 catstat-btn category-btn lh-normal border-0 mb-1' style='--bg: #{{ category.color }}'>{{ category.title }}</a>
+        <a href='database.php?mode=show&amp;cat={{ category.id }}' class='btn mr-2 catstat-btn category-btn lh-normal mb-1' style='--bg: #{{ category.color }}'>{{ category.title }}</a>
       {%- endfor %}
     </div>
     <hr>
@@ -117,7 +117,12 @@
     <hr>
     <div class='list-group mt-1' id='scheduledBookings'>
       {% for booking in bookingsArr %}
-        <a href='scheduler.php?items[]={{ booking.items_id }}&amp;start={{ booking.start|url_encode }}' class='list-group-item hl-hover-gray'><span style='color: {{ booking.color }}'>{{ booking.title }}</span> <span title='{{ booking.start|date('Y-m-d H:i:s') }}' class='relative-moment text-nowrap smallgray'></span></a>
+        <a href='scheduler.php?items[]={{ booking.items_id }}&amp;start={{ booking.start|url_encode }}' class='list-group-item hl-hover-gray breakable color-strong'>
+          {% if booking.items_category_title %}
+            <span style='--bg: {{ booking.color }}' class='d-inline-block catstat-btn category-btn mr-2'>{{ booking.items_category_title }}</span>
+          {% endif %}
+          {{ booking.title }} <span title='{{ booking.start|date('Y-m-d H:i:s') }}' class='relative-moment text-nowrap smallgray'></span>
+        </a>
       {% endfor %}
     </div>
   </div>

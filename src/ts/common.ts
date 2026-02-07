@@ -75,6 +75,18 @@ interface Status extends SelectOptions {
   is_current_team: number;
 }
 
+on('toggle-dark-mode', (el: HTMLElement) => {
+  const currentTheme = parseInt(el.dataset.currentTheme, 10);
+  // Auto (0) and Light (1) should both toggle to Dark (2)
+  const targetTheme = currentTheme === 2 ? 1 : 2;
+  ApiC.patch(`${Model.User}/me`, { theme_variant: targetTheme }).then(() => {
+    const isDark = targetTheme === 2;
+    document.documentElement.classList.toggle('dark-mode', isDark);
+    document.cookie = `theme_variant=${targetTheme}; Path=/; Max-Age=31536000; SameSite=Lax; Secure`;
+    el.dataset.currentTheme = String(targetTheme);
+  });
+});
+
 // HEARTBEAT
 // this function is to check periodically that we are still authenticated
 // and show a message if we the session is not valid anymore but we are still on a page requiring auth
@@ -142,7 +154,7 @@ const btn = document.createElement('button');
 btn.type = 'button';
 btn.dataset.action = 'scroll-top';
 // make it look like a button, and on the right side of the screen, not too close from the bottom
-btn.classList.add('btn', 'btn-neutral', 'floating-middle-right');
+btn.classList.add('btn', 'btn-secondary', 'floating-middle-right');
 // element is invisible at first so we can make it visible so it triggers a css transition and appears progressively
 btn.style.opacity = '0';
 // will not be shown for small screens, only large ones
@@ -329,7 +341,7 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
         .then(res => res.json())
         .then(json => json[original.dataset.target]);
     },
-    listenOn: '.malleableTitle',
+    listenOn: '.malleable-title',
     returnedValueIsTrustedHtml: false,
     onBlur: MalleAction.Submit,
     tooltip: i18next.t('click-to-edit'),
@@ -417,8 +429,8 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
     selectOptionsValueKey: 'id',
     selectOptionsTextKey: 'title',
     selectOptions: async () =>
-    ((await getCatStatArr(categoryEndpoint)) as Status[])
-      .filter((cat: Status) => cat.is_current_team === 1),
+      ((await getCatStatArr(categoryEndpoint)) as Status[])
+        .filter((cat: Status) => cat.is_current_team === 1),
     listenOn: '.malleableCategory',
     returnedValueIsTrustedHtml: false,
     tooltip: i18next.t('click-to-edit'),

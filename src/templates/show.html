@@ -38,7 +38,7 @@
           value='{{ App.Request.query.get('q') ? App.Request.query.get('q')|trim|e('html_attr') }}' />
         <pre id='search-highlighting' class='form-control d-none' aria-hidden='true'><code></code></pre>
         <div class='input-group-append'>
-          <button class='btn btn-secondary' type='submit' aria-label='{{ 'Search'|trans }}' title='{{ 'Search'|trans }}'><i class='color-white fas fa-magnifying-glass'></i></button>
+          <button class='btn btn-secondary' type='submit' aria-label='{{ 'Search'|trans }}' title='{{ 'Search'|trans }}'><i class='fas fa-magnifying-glass'></i></button>
         </div>
       </div>
     </form>
@@ -150,7 +150,7 @@
       {# TOGGLE MORE FILTERS BUTTON #}
       <div class='ml-auto'>
         <button class='btn btn-secondary btn' type='button' data-action='toggle-next' data-toggle-target='filtersDiv' data-closed-icon='fa-sliders' data-opened-icon='fa-xmark' aria-label='{{ 'Toggle filters'|trans }}' aria-expanded='false' aria-controls='filtersDiv' title='{{ 'Show more filters'|trans }}'>
-          <i class='fas fa-sliders color-white'></i>
+          <i class='fas fa-sliders'></i>
         </button>
       </div>
     {# END ALWAYS VISIBLE FILTERS #}

@@ -41,6 +41,8 @@ final class MakeThumbnailFactory
             'image/tiff',
             'image/x-eps' => new MakeThumbnailFromFirstFrame($mime, $filePath, $longName, $storageFs),
             'image/jpeg',
+            'image/bmp',
+            'image/x-bmp',
             'image/png',
             'image/svg+xml' => new MakeThumbnail($mime, $filePath, $longName, $storageFs),
             default => new MakeNullThumbnail($mime, $filePath, $longName, $storageFs),

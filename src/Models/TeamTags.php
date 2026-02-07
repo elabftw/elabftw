@@ -146,10 +146,16 @@ final class TeamTags extends AbstractRest
 
     private function getTagIdFromTag(TagParam $params): int
     {
-        $sql = 'SELECT id FROM tags WHERE tag = :tag AND team = :team';
+        $sql = 'SELECT id
+            FROM tags
+            WHERE tag = :tag
+              AND team = :team
+              AND id <> :id
+            LIMIT 1';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindValue(':tag', $params->getContent());
+        $req->bindValue(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         return (int) $req->fetchColumn();
     }

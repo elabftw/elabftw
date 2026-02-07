@@ -76,6 +76,16 @@ class TeamTagsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($beforeCnt - 1, $afterCnt);
     }
 
+    public function testDeduplicateCaseSensitive(): void
+    {
+        $this->Tags->postAction(Action::Create, array('tag' => 'CAPITAL'));
+        $beforeCnt = count($this->TeamTags->readAll());
+        $this->TeamTags->patch(Action::UpdateTag, array('tag' => 'capital'));
+        $afterCnt = count($this->TeamTags->readAll());
+        // at the end, we have the same number of tags because both have been merged
+        $this->assertEquals($beforeCnt, $afterCnt);
+    }
+
     public function testUpdateTag(): void
     {
         $id = $this->Tags->postAction(Action::Create, array('tag' => 'sometag!!'));

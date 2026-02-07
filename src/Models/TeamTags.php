@@ -155,7 +155,7 @@ final class TeamTags extends AbstractRest
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindValue(':tag', $params->getContent());
-        $req->bindValue(':id', $this->id, PDO::PARAM_INT);
+        $req->bindValue(':id', $this->id ?? 0, PDO::PARAM_INT);
         $this->Db->execute($req);
         return (int) $req->fetchColumn();
     }

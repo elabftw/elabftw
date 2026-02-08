@@ -3175,9 +3175,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@teselagen/ove@npm:^0.8.32":
-  version: 0.8.32
-  resolution: "@teselagen/ove@npm:0.8.32"
+"@teselagen/ove@npm:^0.8.34":
+  version: 0.8.34
+  resolution: "@teselagen/ove@npm:0.8.34"
   dependencies:
     "@blueprintjs/core": "npm:3.54.0"
     "@hello-pangea/dnd": "npm:16.2.0"
@@ -3230,7 +3230,7 @@ __metadata:
     to-regex-range: "npm:5.0.1"
     use-debounce: "npm:^8.0.4"
     validate.io-nonnegative-integer-array: "npm:^1.0.1"
-  checksum: 10c0/b813a9f2c8ab838a8dc57548485b200cc5397ccab05a76b36d139b5bb6c030fd943cdcb23c08f948b5e8945b4a43df6f904cd447c64172ade5ed6a3e0e59331d
+  checksum: 10c0/c41d4341f8eb1101c211290cd24e65bf92cd9146100b144c117b8784d3add22f258baf7a43d030336ac9535916ad033c7ada533c35ac5edc8579443595b0114a
   languageName: node
   linkType: hard
 
@@ -6676,7 +6676,7 @@ __metadata:
     "@fullcalendar/timeline": "npm:^6.1.20"
     "@jspreadsheet-ce/react": "npm:^5.0.2"
     "@teselagen/bio-parsers": "npm:^0.4.34"
-    "@teselagen/ove": "npm:^0.8.32"
+    "@teselagen/ove": "npm:^0.8.34"
     "@types/bootstrap": "npm:^5.2.10"
     "@types/dropzone": "npm:^5.7.9"
     "@types/fancybox": "npm:^3.5.7"

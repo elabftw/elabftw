@@ -8,12 +8,45 @@
  */
 
 @use './variables';
-@import 'tom-select/dist/scss/tom-select.bootstrap4';
+@import '@deltablot/tom-select/dist/scss/tom-select.bootstrap4';
+
+.dark-mode {
+  .ts-control {
+    background-color: var(--mainbackground);
+    border: 1px solid var(--secondary-muted);
+  }
+
+  #filterOwner-ts-control {
+    background-color: var(--mainbackground);
+    color: var(--mediumstrong);
+  }
+
+  .ts-dropdown,
+  .ts-dropdown-content {
+    background-color: var(--mainbackground);
+    color: var(--mediumstrong);
+
+    .active {
+      background-color: var(--secondary-muted);
+      color: var(--mediumstrong);
+    }
+  }
+}
+
+.items-placeholder {
+  color: var(--mediumstrong) !important;
+}
+
+.dropdown-header {
+  border: 0 !important;
+}
 
 .focus .ts-control,
 .plugin-dropdown_input.focus .ts-dropdown .dropdown-input { /* stylelint-disable-line selector-class-pattern -- next-line does not work here */
-  border-color: variables.$elabblue;
+  background-color: var(--mainbackground);
+  border: 1px solid var(--primary);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(41, 174, 185, 0.6);
+  color: var(--mediumstrong);
   outline: 0;
 }
 
@@ -30,10 +63,10 @@
   max-width: clamp(var(--breakpoint-sm), 50vw, 90vw);
 
   .ts-control .item {
-    background: variables.$superlight;
-    border: 0 solid variables.$firstlevel;
+    background: var(--mainbackground);
+    border: 0 solid var(--secondary-muted);
     border-radius: calc(0.25rem - 1px);
-    color: variables.$mediumstrong;
+    color: var(--mediumstrong);
     cursor: pointer;
     padding: 1px 5px;
     white-space: nowrap;
@@ -48,6 +81,7 @@
     position: relative;
 
     .ts-control {
+      color: var(--mediumstrong);
       flex-wrap: nowrap;
       gap: 4px;
       max-width: 400px;
@@ -61,12 +95,13 @@
       }
 
       &::-webkit-scrollbar-thumb {
-        background: variables.$firstlevel;
+        background: var(--firstlevel);
         border-radius: 2px;
       }
 
       .clear-button {
-        background: variables.$white !important;
+        background-color: var(--secondlevel);
+        color: var(--mediumstrong);
         position: sticky;
         right: -2rem;
         // top attribute not applying
@@ -115,9 +150,9 @@
 }
 
 .selected-item-badge {
-  background-color: var(--badge-color, #000);
+  background-color: var(--badge-color, var(--mainbackground));
   border-radius: 999px;
-  color: variables.$mainbackground;
+  color: var(--chrome-fg);
   font-size: 1.2rem;
   margin: 0 6px 6px 0;
   padding: 4px 10px;

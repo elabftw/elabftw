@@ -26,6 +26,7 @@ use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
@@ -105,6 +106,8 @@ abstract class AbstractEntity extends AbstractRest
 {
     use EntityTrait;
 
+    public const string EMPTY_CAN_JSON = '{"teams": [], "teamgroups": [], "users": []}';
+
     public Comments $Comments;
 
     public AbstractExperimentsLinks $ExperimentsLinks;
@@ -162,10 +165,12 @@ abstract class AbstractEntity extends AbstractRest
         ?string $title = null,
         ?string $body = null,
         ?DateTimeImmutable $date = null,
-        ?string $canread = null,
-        ?string $canwrite = null,
-        ?bool $canreadIsImmutable = false,
-        ?bool $canwriteIsImmutable = false,
+        BasePermissions $canreadBase = BasePermissions::User,
+        BasePermissions $canwriteBase = BasePermissions::User,
+        string $canread = self::EMPTY_CAN_JSON,
+        string $canwrite = self::EMPTY_CAN_JSON,
+        bool $canreadIsImmutable = false,
+        bool $canwriteIsImmutable = false,
         array $tags = array(),
         ?int $category = null,
         ?int $status = null,
@@ -185,6 +190,8 @@ abstract class AbstractEntity extends AbstractRest
         $id = $this->create(
             title: $title ?? $template['title'],
             body: $template['body'],
+            canreadBase: BasePermissions::from($template['canread_target_base']),
+            canwriteBase: BasePermissions::from($template['canwrite_target_base']),
             canread: $template['canread_target'],
             canwrite: $template['canwrite_target'],
             canreadIsImmutable: (bool) $template['canread_is_immutable'],
@@ -240,18 +247,34 @@ abstract class AbstractEntity extends AbstractRest
                     if (is_string($tags)) {
                         $tags = array($tags);
                     }
+                    // for backward compatibility, see if there is a base param in the json and use that, and fallback on default if not
+                    $canreadBase = $this->getCanBaseFromJson($reqBody['canread'] ?? null, BasePermissions::from($this->Users->userData['default_read_base']));
+                    $canwriteBase = $this->getCanBaseFromJson($reqBody['canwrite'] ?? null, BasePermissions::from($this->Users->userData['default_write_base']));
+                    // now override this with the modern canread_base param if it's sent
+                    if (array_key_exists('canread_base', $reqBody)) {
+                        $canreadBase = BasePermissions::tryFrom((int) ($reqBody['canread_base'])) ?? throw new ImproperActionException('Invalid canread_base parameter');
+                    }
+                    if (array_key_exists('canwrite_base', $reqBody)) {
+                        $canwriteBase = BasePermissions::tryFrom((int) ($reqBody['canwrite_base'])) ?? throw new ImproperActionException('Invalid canwrite_base parameter');
+                    }
+                    $useMarkdown = $this->Users->userData['use_markdown'] === 1;
+                    $contentType = isset($reqBody['content_type'])
+                        ? BodyContentType::from($reqBody['content_type'])
+                        : ($useMarkdown ? BodyContentType::Markdown : BodyContentType::Html);
                     return $this->create(
-                        body: $reqBody['body'] ?? null,
                         title: $reqBody['title'] ?? null,
-                        canread: $reqBody['canread'] ?? null,
-                        canwrite: $reqBody['canwrite'] ?? null,
+                        body: $reqBody['body'] ?? null,
+                        canreadBase: $canreadBase,
+                        canwriteBase: $canwriteBase,
+                        canread: $reqBody['canread'] ?? $this->Users->userData['default_read'],
+                        canwrite: $reqBody['canwrite'] ?? $this->Users->userData['default_write'],
                         canreadIsImmutable: (bool) ($reqBody['canread_is_immutable'] ?? false),
                         canwriteIsImmutable: (bool) ($reqBody['canwrite_is_immutable'] ?? false),
                         tags: $tags ?? array(),
                         category: $category,
                         status: $status,
                         metadata: $metadata,
-                        contentType: $this->Users->userData['use_markdown'] === 1 ? BodyContentType::Markdown : BodyContentType::Html,
+                        contentType: $contentType,
                     );
                 }
             )(),
@@ -592,6 +615,12 @@ abstract class AbstractEntity extends AbstractRest
         }
         $exclusiveEditMode = $this->ExclusiveEditMode->readOne();
         $this->entityData['exclusive_edit_mode'] = empty($exclusiveEditMode) ? null : $exclusiveEditMode;
+        $this->entityData['canread_base_human'] = BasePermissions::from($this->entityData['canread_base'])->toHuman();
+        $this->entityData['canwrite_base_human'] = BasePermissions::from($this->entityData['canwrite_base'])->toHuman();
+        if (isset($this->entityData['canbook_base'])) {
+            $this->entityData['canbook_base_human'] = BasePermissions::from($this->entityData['canbook_base'])->toHuman();
+        }
+
         ksort($this->entityData);
         return $this->entityData;
     }
@@ -814,8 +843,9 @@ abstract class AbstractEntity extends AbstractRest
         }
         // ensure no changes happen on entries with immutable permissions
         // admins can override the immutability of an entity's permissions. See #5800
-        if ($params->getTarget() === 'canread' || $params->getTarget() === 'canwrite') {
-            if (($this->entityData[$params->getTarget() . '_is_immutable'] ?? 0) === 1
+        if ($params->getTarget() === 'canread' || $params->getTarget() === 'canwrite' || $params->getTarget() === 'canread_base' || $params->getTarget() === 'canwrite_base') {
+            $immutableKey = str_replace('_base', '', $params->getTarget()) . '_is_immutable';
+            if (($this->entityData[$immutableKey] ?? 0) === 1
                 && !($this instanceof AbstractTemplateEntity)
                 && !($this->Users->isAdmin)
             ) {
@@ -1069,6 +1099,23 @@ abstract class AbstractEntity extends AbstractRest
         // start by setting our current custom_id null to get idempotency
         $this->update(new EntityParams('custom_id', null));
         return $this->getCurrentHighestCustomId($this->entityData['category']) + 1;
+    }
+
+    /**
+     * This function exists for backward compatibility for older permissions
+     * JSON with base key. It allows extracting the base param from that JSON.
+     * Base permission is now in a dedicated parameter.
+     */
+    protected function getCanBaseFromJson(?string $can, BasePermissions $default): BasePermissions
+    {
+        if ($can === null) {
+            return $default;
+        }
+        $decoded = json_decode($can, true, 3);
+        if (array_key_exists('base', $decoded)) {
+            return BasePermissions::tryFrom($decoded['base']) ?? $default;
+        }
+        return $default;
     }
 
     // Archive a normal entity, Unarchive an archived entity.

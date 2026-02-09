@@ -18,6 +18,7 @@ import {
   escapeExtendedQuery,
   generateMetadataLink,
   handleReloads,
+  getSafeElementById,
   getRandomColor,
   listenTrigger,
   makeSortableGreatAgain,
@@ -72,6 +73,18 @@ interface Status extends SelectOptions {
   color: string;
   title: string;
 }
+
+on('toggle-dark-mode', (el: HTMLElement) => {
+  const currentTheme = parseInt(el.dataset.currentTheme, 10);
+  // Auto (0) and Light (1) should both toggle to Dark (2)
+  const targetTheme = currentTheme === 2 ? 1 : 2;
+  ApiC.patch(`${Model.User}/me`, { theme_variant: targetTheme }).then(() => {
+    const isDark = targetTheme === 2;
+    document.documentElement.classList.toggle('dark-mode', isDark);
+    document.cookie = `theme_variant=${targetTheme}; Path=/; Max-Age=31536000; SameSite=Lax; Secure`;
+    el.dataset.currentTheme = String(targetTheme);
+  });
+});
 
 // HEARTBEAT
 // this function is to check periodically that we are still authenticated
@@ -140,7 +153,7 @@ const btn = document.createElement('button');
 btn.type = 'button';
 btn.dataset.action = 'scroll-top';
 // make it look like a button, and on the right side of the screen, not too close from the bottom
-btn.classList.add('btn', 'btn-neutral', 'floating-middle-right');
+btn.classList.add('btn', 'btn-secondary', 'floating-middle-right');
 // element is invisible at first so we can make it visible so it triggers a css transition and appears progressively
 btn.style.opacity = '0';
 // will not be shown for small screens, only large ones
@@ -327,7 +340,7 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
         .then(res => res.json())
         .then(json => json[original.dataset.target]);
     },
-    listenOn: '.malleableTitle',
+    listenOn: '.malleable-title',
     returnedValueIsTrustedHtml: false,
     onBlur: MalleAction.Submit,
     tooltip: i18next.t('click-to-edit'),
@@ -650,11 +663,12 @@ on('save-permissions', (el: HTMLElement) => {
     .map(u => `user:${(u as HTMLElement).dataset.id}`);
 
   params[el.dataset.rw] = permissionsToJson(
-    parseInt(($('#' + el.dataset.identifier + '_select_base').val() as string), 10),
     ($('#' + el.dataset.identifier + '_select_teams').val() as string[])
       .concat($('#' + el.dataset.identifier + '_select_teamgroups').val() as string[])
       .concat(existingUsers),
   );
+  const baseSelect = getSafeElementById(`${el.dataset.identifier}_select_base`) as HTMLSelectElement;
+  params[baseSelect.name] = baseSelect.value;
   // if we're editing the default read/write permissions for experiments, this data attribute will be set
   if (el.dataset.isUserDefault) {
     // we need to replace canread/canwrite with default_read/default_write for user attribute
@@ -987,9 +1001,15 @@ on('toggle-password', (el: HTMLElement) => {
 });
 
 on('logout', () => {
-  clearLocalStorage();
+  localStorage.setItem('logout_msg', '1');
   window.location.href = 'app/logout.php';
 });
+
+const logoutMessageDiv = document.getElementById('logoutMessage');
+if (logoutMessageDiv  && localStorage.getItem('logout_msg')) {
+  logoutMessageDiv.removeAttribute('hidden');
+  clearLocalStorage();
+}
 
 on('ack-notif', (el: HTMLElement) => {
   if (el.parentElement.dataset.ack === '0') {

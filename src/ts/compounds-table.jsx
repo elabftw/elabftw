@@ -24,6 +24,7 @@ import { notify } from './notify';
 if (document.getElementById('compounds-table')) {
   ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
+  const isDark = document.documentElement.classList.contains('dark-mode');
   const rowSelection = {
       mode: 'multiRow',
       headerCheckbox: false,
@@ -171,10 +172,7 @@ if (document.getElementById('compounds-table')) {
           onChange={onQuickFilterChange}
           className={'form-control mb-2'}
         />
-      <div
-        className={'ag-theme-alpine'}
-        style={{ height: 650 }}
-      >
+        <div className={isDark ? 'ag-theme-alpine-dark' : 'ag-theme-alpine'} style={{ height: 650 }}>
         <AgGridReact
           rowData={rowData}
           columnDefs={columnDefs}

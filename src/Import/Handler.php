@@ -75,29 +75,29 @@ final class Handler extends AbstractRest
         if ($owner !== $this->requester->userid && $this->requester->isAdminOf($owner)) {
             $this->requester = new Users($owner, $this->requester->team);
         }
-        $canread = $reqBody['canread'] ?? BasePermissions::Team->toJson();
-        $canwrite = $reqBody['canwrite'] ?? BasePermissions::User->toJson();
+        $canreadBase = BasePermissions::tryFrom((int) ($reqBody['canread_base'] ?? BasePermissions::Team->value)) ?? BasePermissions::Team;
+        $canwriteBase = BasePermissions::tryFrom((int) ($reqBody['canwrite_base'] ?? BasePermissions::User->value)) ?? BasePermissions::User;
         switch ($reqBody['file']->getClientOriginalExtension()) {
             case 'eln':
                 return new Eln(
                     $this->requester,
-                    $canread,
-                    $canwrite,
                     $reqBody['file'],
                     Storage::CACHE->getStorage()->getFs(),
                     $this->logger,
                     EntityType::tryFrom((string) $reqBody['entity_type']), // can be null
                     category: (int) $reqBody['category'],
+                    canreadBase: $canreadBase,
+                    canwriteBase: $canwriteBase,
                 );
             case 'csv':
                 return new Csv(
                     $this->requester,
-                    $canread,
-                    $canwrite,
                     $reqBody['file'],
-                    $this->logger,
-                    EntityType::tryFrom((string) $reqBody['entity_type']) ?? EntityType::Items,
+                    logger: $this->logger,
+                    entityType: EntityType::tryFrom((string) $reqBody['entity_type']) ?? EntityType::Items,
                     category: (int) $reqBody['category'],
+                    canreadBase: $canreadBase,
+                    canwriteBase: $canwriteBase,
                 );
             default:
                 throw new ImproperActionException(sprintf(

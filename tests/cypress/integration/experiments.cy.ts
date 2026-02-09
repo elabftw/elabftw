@@ -8,8 +8,8 @@ describe('Import tab on profile page', () => {
     cy.visit('/profile.php?tab=3');
     cy.get('#importSelectCategory').should('exist');
     cy.get('#importSelectOwner').should('exist');
-    cy.get('#import_modal_canread').should('exist');
-    cy.get('#import_modal_canwrite').should('exist');
+    cy.get('#importModalCanread').should('exist');
+    cy.get('#importModalCanwrite').should('exist');
     // check if custom button exists and make form input visible
     cy.get('[data-action="show-file-input"]').should('exist').click();
     cy.get('#importFileInput').should('exist').selectFile('tests/_data/multiple-experiments.eln', { force: true });

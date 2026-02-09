@@ -58,6 +58,11 @@ module.exports = {
             extractFile('tinymce/skins/ui/oxide/', 'skin.min.css', 'tinymce_skins/skin.min.css');
             extractFile('tinymce/skins/content/default/', 'content.min.css', 'tinymce_skins/content.min.css');
             extractFile('tinymce/skins/ui/oxide/', 'content.min.css', 'tinymce_content.min.css');
+            // dark themes
+            crossFs.mkdirSync(`${pathToAssets}tinymce_skins_dark`, { recursive: true });
+            extractFile('tinymce/skins/ui/oxide-dark/', 'skin.min.css', 'tinymce_skins_dark/skin.min.css');
+            extractFile('tinymce/skins/content/dark/', 'content.min.css', 'tinymce_skins_dark/content.min.css');
+            extractFile('tinymce/skins/ui/oxide-dark/', 'content.min.css', 'tinymce_content_dark.min.css');
             extractFile('tinymce/plugins/emoticons/js/', 'emojis.js', 'tinymce_emojis.js');
             appendFile('src/scss/_tinymce-custom.css', 'tinymce_content.min.css');
           },

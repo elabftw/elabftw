@@ -138,25 +138,24 @@ const imagesUploadHandler = (blobInfo: TinyMCEBlobInfo) => new Promise((resolve,
 
   const uploadWithHook = (file: DropzoneFile) => {
     const successHandler = (f: DropzoneFile, response: { id: number}) => {
-      // Even if you use DropzoneFile, it's not the same object as the one you passed to addFile
-      // blob has no real_name. it only contains size and type.
+      // Using size and type as a fallback to match Files with Blobs, as they lack a common unique identifier.
+      // This logic prevents files from being incorrectly overwritten when multiple files are dropped at once.
       if ( f.size !== file.size || f.type !== file.type) {
         return;
       }
       dropZone.off('success', successHandler);
 
-      const newId = response.id;
-      ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}/${newId}`)
-        .then((json: { long_name: string, storage: string | number }) => {
+      const locationHeader = f.xhr ? f.xhr.getResponseHeader('Location') : null;
+      const locationHeader_parts = locationHeader.split('/v2/');
+      ApiC.getJson(`${locationHeader_parts[1]}`)
+        .then((json: { long_name: string, real_name: string, storage: string | number }) => {
           reloadElements(['uploadsDiv']).then(() => {
-            resolve(`app/download.php?f=${json.long_name}&name=${f.name}&storage=${json.storage}`);
+            resolve(`app/download.php?f=${json.long_name}&name=${json.real_name}&storage=${json.storage}`);
           });
         })
         .catch(() => reject('Metadata fetch failed'));
     };
     dropZone.on('success', successHandler);
-    // never use file here. it will be converted to a Blob and lose its name, type and everything else.
-    // use blobInfo.blob() instead. I don't know why it works but it does.
     dropZone.addFile(blobInfo.blob());
   };
   // Edgecase for editing an image using tinymce ImageTools

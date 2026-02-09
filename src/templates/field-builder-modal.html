@@ -92,21 +92,21 @@
 
           {# SELECT, RADIO #}
           <div id='newFieldContentDiv_selectradio' hidden>
-            <label>{{ 'Choices'|trans }}</label>
+            <label id='choices'>{{ 'Choices'|trans }}</label>
             <div id='choicesInputDiv'>
               {# show two inputs at first #}
-              <input type='text' class='form-control mb-1' autocomplete='off'>
-              <input type='text' class='form-control mb-1' autocomplete='off'>
+              <input aria-label='choices' type='text' class='form-control mb-1' autocomplete='off'>
+              <input aria-label='choices' type='text' class='form-control mb-1' autocomplete='off'>
             </div>
             <button type='button' class='btn btn-secondary btn-sm' data-action='new-field-add-option'>{{ 'Add another choice'|trans }}</button>
           </div>
 
           {# UNITS for NUMBER #}
           <div id='newFieldContentDiv_number' hidden>
-            <label>{{ 'Available units'|trans }}</label>
+            <label id='available_units'>{{ 'Available units'|trans }}</label>
             <div id='unitChoicesInputDiv'>
-              <input type='text' class='form-control mb-1' autocomplete='off'>
-              <input type='text' class='form-control mb-1' autocomplete='off'>
+              <input aria-label='available_units' type='text' class='form-control mb-1' autocomplete='off'>
+              <input aria-label='available_units' type='text' class='form-control mb-1' autocomplete='off'>
             </div>
             <button type='button' class='btn btn-secondary btn-sm' data-action='new-field-add-option'>{{ 'Add another choice'|trans }}</button>
           </div>
@@ -195,7 +195,7 @@
           </div>
         {% endif %}
         <h5 class='my-3'>{{ 'Metadata preview'|trans }}</h5>
-        <textarea class='form-control' style='height:200px' id='loadMetadataTextarea' disabled></textarea>
+        <textarea class='form-control' style='height:200px' id='loadMetadataTextarea' disabled aria-label='{{ 'Metadata preview'|trans }}'></textarea>
       </div>
 
       <div class='modal-footer'>

@@ -17,7 +17,7 @@
       <button title='{{ 'Import from file'|trans }}' aria-label='{{ 'Import from file'|trans }}' type='button' data-action='json-import-file' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0'>
         <i class='fas fa-upload fa-fw'></i>
       </button>
-      <input type='file' id='jsonImportFileInput' accept='.json' class='d-none' />
+      <input type='file' id='jsonImportFileInput' accept='.json' class='d-none' aria-label='{{ 'Import from file'|trans }}'/>
 
       {# SAVE TO FILE #}
       <button title='{{ 'Save as…'|trans }}' aria-label='{{ 'Save as…'|trans }}' type='button' data-action='json-saveas-file' class='btn hl-hover-gray p-2 lh-normal border-0'>

@@ -137,7 +137,7 @@ const imagesUploadHandler = (blobInfo: TinyMCEBlobInfo) => new Promise((resolve,
   const dropZone = dropzoneEl.dropzone;
 
   const uploadWithHook = (file: DropzoneFile) => {
-    const successHandler = (f: DropzoneFile, response: { id: number}) => {
+    const successHandler = (f: DropzoneFile) => {
       // Using size and type as a fallback to match Files with Blobs, as they lack a common unique identifier.
       // This logic prevents files from being incorrectly overwritten when multiple files are dropped at once.
       if ( f.size !== file.size || f.type !== file.type) {
@@ -146,6 +146,10 @@ const imagesUploadHandler = (blobInfo: TinyMCEBlobInfo) => new Promise((resolve,
       dropZone.off('success', successHandler);
 
       const locationHeader = f.xhr ? f.xhr.getResponseHeader('Location') : null;
+      if (!locationHeader || !locationHeader.includes('/v2/')) {
+         reject('Missing or malformed Location header');
+         return;
+      }
       const locationHeader_parts = locationHeader.split('/v2/');
       ApiC.getJson(`${locationHeader_parts[1]}`)
         .then((json: { long_name: string, real_name: string, storage: string | number }) => {

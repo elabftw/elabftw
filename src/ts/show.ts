@@ -96,6 +96,7 @@ function addHiddenInputToMainSearchForm(name: string, value: string): void
   const input = document.createElement('input');
   input.hidden = true;
   input.name = name;
+  input.setAttribute('aria-label', name);
   input.value = value;
   input.id = hiddenInputId;
   form.appendChild(input);
@@ -252,10 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
       onInitialize() {
         this._allOptions = Object.values(this.options);
         this._showArchived = false;
-        console.log('👉 elab onInitialize()',  this.control_input);
         applyArchivedFilter(this);
-        const element = document.querySelector('[aria-label="Filter owner"]');
-        console.log('👉 elab element', element);
       },
       render: {
         option(data: AnyTS, escape: (s: string) => string) {

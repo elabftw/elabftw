@@ -70,6 +70,7 @@ function lockScopeButton(selectedItems: string[]): void {
 
 if (window.location.pathname === '/scheduler.php') {
   document.getElementById('loading-spinner')?.remove();
+  document.getElementById('itemSelectInputModal')?.setAttribute('aria-label', 'itemSelectModal');
 
   // TomSelect settings shared on page & modal selects
   const sharedTomSelectOptions = {

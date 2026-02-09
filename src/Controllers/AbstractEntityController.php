@@ -83,7 +83,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $this->meaningArr = Meaning::getAssociativeArray();
         $this->requestableActionArr = RequestableAction::getAssociativeArray();
 
-        if (isset($this->Entity->entityData['state'])) {
+        if (!empty($this->Entity->entityData)) {
             if ($this->Entity->entityData['state'] === State::Normal->value) {
                 unset($this->requestableActionArr[RequestableAction::Unarchive->value]);
             } elseif ($this->Entity->entityData['state'] === State::Archived->value) {

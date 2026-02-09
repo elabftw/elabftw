@@ -147,16 +147,18 @@ const imagesUploadHandler = (blobInfo: TinyMCEBlobInfo) => new Promise((resolve,
 
       const locationHeader = f.xhr ? f.xhr.getResponseHeader('Location') : null;
       if (!locationHeader || !locationHeader.includes('/v2/')) {
-         reject('Missing or malformed Location header');
-         return;
+        dropZone.off('success', successHandler);
+        reject('Missing or malformed Location header');
+        return;
       }
       const locationHeader_parts = locationHeader.split('/v2/');
       ApiC.getJson(`${locationHeader_parts[1]}`)
         .then((json: { long_name: string, real_name: string, storage: string | number }) => {
-          reloadElements(['uploadsDiv']).then(() => {
-            resolve(`app/download.php?f=${json.long_name}&name=${json.real_name}&storage=${json.storage}`);
+          return reloadElements(['uploadsDiv']).then(() => {
+            return `app/download.php?f=${json.long_name}&name=${json.real_name}&storage=${json.storage}`;
           });
         })
+        .then((url: string) => resolve(url))
         .catch(() => reject('Metadata fetch failed'));
     };
     dropZone.on('success', successHandler);

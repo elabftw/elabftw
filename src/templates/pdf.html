@@ -178,3 +178,69 @@
     {% include 'changelog-table.html' %}
   </table>
 {% endif %}
+
+{% if entityData.compounds_links %}
+  <section class='no-break'>
+    <h3>{% trans %}
+      Linked compound
+      {% plural entityData.compounds_links|length %}
+      Linked compounds
+    {% endtrans %}</h3>
+
+    {% set ghsHazards = {
+      'is_corrosive': {'code': '05', 'alt': 'Corrosive'},
+      'is_serious_health_hazard': {'code': '08', 'alt': 'Serious Health Hazard'},
+      'is_explosive': {'code': '01', 'alt': 'Explosive'},
+      'is_flammable': {'code': '02', 'alt': 'Flammable'},
+      'is_gas_under_pressure': {'code': '04', 'alt': 'Gas under pressure'},
+      'is_hazardous2env': {'code': '09', 'alt': 'Hazardous to environment'},
+      'is_hazardous2health': {'code': '07', 'alt': 'Hazardous to health'},
+      'is_oxidising': {'code': '03', 'alt': 'Oxidising'},
+      'is_toxic': {'code': '06', 'alt': 'Toxic'}
+    } %}
+
+    {% set otherHazards = {
+      'is_radioactive': 'Radioactive',
+      'is_antibiotic': 'Antibiotic',
+      'is_antibiotic_precursor': 'Antibiotic precursor',
+      'is_drug': 'Drug',
+      'is_drug_precursor': 'Drug precursor',
+      'is_explosive_precursor': 'Explosive precursor',
+      'is_cmr': 'Carcinogenic, mutagenic and reprotoxic',
+      'is_controlled': 'Controlled substance',
+      'is_nano': 'Nanomaterial',
+      'is_ed2health': 'Endocrine disruptor for human health',
+      'is_ed2env': 'Endocrine disruptor for the environment',
+      'is_pbt': 'Persistent, bioaccumulative and toxic',
+      'is_pmt': 'Persistent, mobile and toxic',
+      'is_vpvb': 'Very persistent and very bioaccumulative',
+      'is_vpvm': 'Very persistent and very mobile'
+    } %}
+
+    {% for compound in entityData.compounds_links %}
+      <div class='pdf-ul' style='margin-bottom: 10px;'>
+        <strong>{{ compound.name|default('Name unset'|trans) }}</strong>
+        {# GHS pictograms #}
+        {% for property, data in ghsHazards %}
+          {% if attribute(compound, property) %}
+            <img src='{{ ghsImagesPath }}/GHS{{ data.code }}.svg' alt='{{ data.alt }}' title='{{ data.alt }}' style='height: 24px; width: 24px; vertical-align: middle;' />
+          {% endif %}
+        {% endfor %}
+        {# Other hazard labels #}
+        {% set otherLabels = [] %}
+        {% for property, label in otherHazards %}
+          {% if attribute(compound, property) %}
+            {% set otherLabels = otherLabels|merge([label]) %}
+          {% endif %}
+        {% endfor %}
+        {% if otherLabels|length > 0 %}
+          <span style='font-size: 9pt; color: #666;'>[{{ otherLabels|join(', ') }}]</span>
+        {% endif %}
+        <br>
+        {% if compound.cas_number %}<span style='font-size: 9pt;'>CAS: {{ compound.cas_number }}</span><br>{% endif %}
+        {% if compound.molecular_formula %}<span style='font-size: 9pt;'>{{ 'Molecular formula'|trans }}: {{ compound.molecular_formula }}</span><br>{% endif %}
+        {% if compound.molecular_weight %}<span style='font-size: 9pt;'>{{ 'Molecular weight'|trans }}: {{ compound.molecular_weight }} g/mol</span><br>{% endif %}
+      </div>
+    {% endfor %}
+  </section>
+{% endif %}

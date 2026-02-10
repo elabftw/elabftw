@@ -241,6 +241,7 @@ class MakePdf extends AbstractMakePdf
             'date' => $date->format('Y-m-d'),
             'entityData' => $this->Entity->entityData,
             'includeChangelog' => $this->includeChangelog,
+            'ghsImagesPath' => dirname(__DIR__, 2) . '/web/assets/images/ghs',
             'includeFiles' => $this->includeAttachments,
             'locked' => $locked,
             'lockDate' => $lockDate['date'],

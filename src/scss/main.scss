@@ -243,6 +243,11 @@ select:not([multiple]) {
   .alert a {
     color: var(--strongest);
   }
+
+  .hover-danger:hover {
+    background-color: var(--darkred);
+    border-color: var(--lightred);
+  }
 }
 
 .logo-dark { display: none; }
@@ -433,7 +438,7 @@ h5 {
 .hover-danger:hover {
   background-color: var(--lightred);
   border-color: var(--darkred);
-  color: var(--darkred);
+  color: var(--strongest);
 }
 
 .hover-warning:hover {
@@ -680,7 +685,7 @@ tr:first-child td {
 }
 
 .overlay p {
-  color: var(--white);
+  color: var(--chrome-fg);
   font-weight: bold;
   margin-bottom: 0;
 }
@@ -1646,6 +1651,10 @@ input[type='color'] {
 .notification {
   border-top: 1px solid var(--mainbackground);
   color: var(--medium);
+
+  span {
+    color: var(--chrome-fg) !important;
+  }
 
   .relative-moment {
     font-size: 80%;

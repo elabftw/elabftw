@@ -361,7 +361,7 @@
             <div class='col-md-3 mx-auto mt-2' hidden>
               <div class='input-group'>
                 <div class='input-group-prepend'>
-                  <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-outline-secondary' type='button' data-action='copy-to-clipboard' data-target='mfa_secret'><i class='fas fa-clone'></i></button>
+                  <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-ghost' type='button' data-action='copy-to-clipboard' data-target='mfa_secret'><i class='fas fa-clone'></i></button>
                 </div>
                 <input class='form-control text-center' value='{{ mfaNewSecret|formatMfaSecret }}' id='mfa_secret' disabled readonly />
               </div>
@@ -477,7 +477,7 @@
     {{ "This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again:"|trans|msg('warning', false) }}
     <div class='input-group'>
       <div class='input-group-prepend'>
-        <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-outline-secondary' type='button' data-action='copy-to-clipboard' data-target='newApiKeyInput'><i class='fas fa-clone'></i></button>
+        <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-ghost' type='button' data-action='copy-to-clipboard' data-target='newApiKeyInput'><i class='fas fa-clone'></i></button>
       </div>
       <input type='text' class='form-control' readonly id='newApiKeyInput' value=''>
     </div>

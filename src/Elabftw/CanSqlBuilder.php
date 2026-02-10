@@ -82,13 +82,18 @@ final class CanSqlBuilder
     {
         return sprintf(
             '(entity.%s_base = %d
-                AND entity.userid = %s
-                OR (users2teams.teams_id = entity.team AND users2teams.is_admin = 1))',
+                AND (entity.userid = :userid
+                    OR EXISTS (
+                        SELECT 1
+                        FROM users2teams u2t
+                        WHERE u2t.users_id = :userid
+                          AND u2t.teams_id = entity.team
+                          AND u2t.is_admin = 1
+                      )
+                )
+            )',
             $this->accessType->value,
             BasePermissions::User->value,
-            $this->requester->isAdmin
-                ? 'users2teams.users_id'
-                : (string) $this->requester->userid ?? '0',
         );
     }
 

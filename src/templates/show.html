@@ -287,7 +287,7 @@
     <div class='d-flex'>
       {# ORDER (Sort) #}
       <div class='btn-group'>
-        <button class='btn btn-sm dropdown-toggle hl-hover-gray' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Sort'|trans }}' title='{{ 'Sort'|trans }}'><i class='fas fa-arrow-down-wide-short fa-fw mr-1'></i></button>
+        <button class='btn btn-sm dropdown-toggle hl-hover-gray color-medium' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Sort'|trans }}' title='{{ 'Sort'|trans }}'><i class='fas fa-arrow-down-wide-short fa-fw mr-1'></i></button>
         <div class='dropdown-menu dropdown-menu-right'>
           <h6 class='dropdown-header'>{{ 'Sort'|trans }}</h6>
           <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'date' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-action='query' data-target='date-desc'>{{ 'Newest'|trans }}</button>
@@ -313,7 +313,7 @@
       </div>
       {# LIMIT if there is nothing in the query params, take the user configured one #}
       <div class='btn-group'>
-        <button class='btn btn-sm dropdown-toggle hl-hover-gray' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Results per page'|trans }}' title='{{ 'Results per page'|trans }}'><i class='fas fa-list-ol fa-fw mr-1'></i></button>
+        <button class='btn btn-sm dropdown-toggle hl-hover-gray color-medium' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Results per page'|trans }}' title='{{ 'Results per page'|trans }}'><i class='fas fa-list-ol fa-fw mr-1'></i></button>
         <div class='dropdown-menu dropdown-menu-right'>
           <h6 class='dropdown-header'>{{ 'Results per page'|trans }}</h6>
         {% for option in limitOptions(DisplayParams.limit) %}

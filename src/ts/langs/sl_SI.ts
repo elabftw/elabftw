@@ -89,7 +89,6 @@ const t = {
     "replace-edited-file": "Ali želite zamenjati datoteko na strežniku s tem urejanjem?",
     "replace-existing": "Overwrite original file",
     "request-filename": "Vnesite ime datoteke",
-    "request-action-missing-target-user": "Missing target user.",
     "resource-not-found": "Ničesar za prikaz s to identifikacijo",
     "revisions-error": "Select two revisions to compare them.",
     "save": "Shrani",

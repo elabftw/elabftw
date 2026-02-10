@@ -89,7 +89,6 @@ const t = {
     "replace-edited-file": "Do you want to replace the file on the server with this edit?",
     "replace-existing": "Overwrite original file",
     "request-filename": "Enter name of the file",
-    "request-action-missing-target-user": "Missing target user.",
     "resource-not-found": "Nothing to show with this id",
     "revisions-error": "Select two revisions to compare them.",
     "save": "Save",

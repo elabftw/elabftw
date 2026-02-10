@@ -71,23 +71,19 @@ if (document.getElementById('topToolbar')) {
     });
   });
 
-  on(Action.RequestAction, () => {
-    const actionSelect = (document.getElementById('requestActionActionSelect') as HTMLSelectElement);
-    const userSelect = (document.getElementById('requestActionUserSelect') as HTMLSelectElement);
-
-    if (!userSelect.value) {
-      notify.error('request-action-missing-target-user');
-      return;
-    }
-
+  on(Action.RequestAction, (_, event: Event) => {
+    event.preventDefault();
+    const form = document.getElementById('requestActionActionSelectForm') as HTMLFormElement;
+    const params = collectForm(form);
     ApiC.post(`${entity.type}/${entity.id}/request_actions`, {
-      action: Action.Create,
-      target_action: actionSelect.value,
-      target_userid: parseInt(userSelect.value.split(' ')[0], 10),
-    }).then(() => reloadElements(['requestActionsDiv']))
-      .then(() => relativeMoment())
-      // the request gets rejected if repeated
-      .catch(error => console.error(error.message));
+      action: Action.RequestAction,
+      target_action: params['requested_action'],
+      target_userid: parseInt(params['requested_user'].split(' ')[0], 10),
+    }).then(() => {
+      reloadElements(['requestActionsDiv']);
+      relativeMoment();
+      $('#requestActionModal').modal('hide');
+    });
   });
 
   on('do-requestable-action', (el: HTMLElement) => {

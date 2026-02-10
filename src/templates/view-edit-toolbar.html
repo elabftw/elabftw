@@ -8,26 +8,28 @@
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
-      <div class='modal-body'>
-        {# SELECT ACTION #}
-        <label for='requestActionActionSelect'>{{ 'Select action'|trans }}</label>
-        <select id='requestActionActionSelect' class='form-control'>
-          {% for value, text in requestableActionArr|default([])|sort %}
-            <option value='{{ value }}'>{{ text }}</option>
-          {% endfor %}
-        </select>
-        {# SELECT USER #}
-        <label for='requestActionUserSelect'>{{ 'Select collaborator'|trans }}</label>
-        {# this exists so Firefox doesn't process the Search user field as password. No idea why it would do it in the first place though... #}
-        {# and autocomplete='off' doesn't work #}
-        <input type='password' disabled hidden />
-        <input type='text' placeholder='{{ 'Search user'|trans }}' id='requestActionUserSelect' class='form-control' data-identifier='requestActionUserSelect' data-action='autocomplete' data-target='users'>
-        <div id='autocompleteAnchorDiv_requestActionUserSelect'></div>
-      </div>
-      <div class='modal-footer'>
-        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
-        <button type='button' class='btn btn-primary' data-dismiss='modal' data-action='requestaction'>{{ 'Save'|trans }}</button>
-      </div>
+      <form id='requestActionActionSelectForm'>
+        <div class='modal-body'>
+          {# SELECT ACTION #}
+          <label for='requestActionActionSelect'>{{ 'Select action'|trans }}</label>
+          <select id='requestActionActionSelect' class='form-control' name='requested_action'>
+            {% for value, text in requestableActionArr|default([])|sort %}
+              <option value='{{ value }}'>{{ text }}</option>
+            {% endfor %}
+          </select>
+          {# SELECT USER #}
+          <label for='requestActionUserSelect'>{{ 'Select collaborator'|trans }}</label>
+          {# this exists so Firefox doesn't process the Search user field as password. No idea why it would do it in the first place though... #}
+          {# and autocomplete='off' doesn't work #}
+          <input type='password' disabled hidden />
+          <input type='text' placeholder='{{ 'Search user'|trans }}' id='requestActionUserSelect' class='form-control' data-identifier='requestActionUserSelect' data-action='autocomplete' data-target='users' name='requested_user' required />
+          <div id='autocompleteAnchorDiv_requestActionUserSelect'></div>
+        </div>
+        <div class='modal-footer'>
+          <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+          <button type='button' class='btn btn-primary' data-action='requestaction'>{{ 'Save'|trans }}</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

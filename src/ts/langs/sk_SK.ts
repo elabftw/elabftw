@@ -89,7 +89,6 @@ const t = {
     "replace-edited-file": "Chcete touto úpravou nahradiť súbor na servery?",
     "replace-existing": "Overwrite original file",
     "request-filename": "Zadajte názov súboru",
-    "request-action-missing-target-user": "Missing target user.",
     "resource-not-found": "Nič sa nezobrazí s týmto identifikátorom",
     "revisions-error": "Select two revisions to compare them.",
     "save": "Uložiť",

@@ -89,7 +89,6 @@ const t = {
     "replace-edited-file": "Apakah Anda ingin mengganti file di server dengan hasil edit ini?",
     "replace-existing": "Menimpa file asli",
     "request-filename": "Masukkan nama file",
-    "request-action-missing-target-user": "Missing target user.",
     "resource-not-found": "Tidak ada yang bisa ditampilkan dengan id ini",
     "revisions-error": "Pilih dua revisi untuk membandingkannya.",
     "save": "Simpan",

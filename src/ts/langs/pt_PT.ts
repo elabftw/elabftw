@@ -89,7 +89,6 @@ const t = {
     "replace-edited-file": "Gostaria de substituir o ficheiro no servidor por esta edição?",
     "replace-existing": "Overwrite original file",
     "request-filename": "Inserir nome do ficheiro",
-    "request-action-missing-target-user": "Missing target user.",
     "resource-not-found": "Nada a exibir com este id",
     "revisions-error": "Select two revisions to compare them.",
     "save": "Guardar",

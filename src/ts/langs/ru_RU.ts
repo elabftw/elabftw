@@ -89,7 +89,6 @@ const t = {
     "replace-edited-file": "Вы хотите заменить файл на сервере этим редактированием?",
     "replace-existing": "Overwrite original file",
     "request-filename": "Введите имя файла",
-    "request-action-missing-target-user": "Missing target user.",
     "resource-not-found": "С этим id ничего нет",
     "revisions-error": "Select two revisions to compare them.",
     "save": "Сохранить",

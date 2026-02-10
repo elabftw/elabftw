@@ -70,6 +70,11 @@ final class Idps extends AbstractRest
     public function readOne(): array
     {
         $this->requester->isSysadminOrExplode();
+        return $this->selectOne();
+    }
+
+    public function selectOne(): array
+    {
         $sql = sprintf($this->getReadSql(), 'WHERE idps.id = :id');
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);

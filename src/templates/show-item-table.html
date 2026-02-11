@@ -48,10 +48,6 @@
 
   {# CATEGORY #}
   <td class='item-next'>
-    {# timestamp icon #}
-    {% if item.timestamped %}
-      <i class='far fa-calendar-check mr-1'></i>
-    {% endif %}
     {% if item.category %}
       <button type='button' data-action='add-query-filter' data-key='category' data-value='{{ item.category|e('html_attr') }}' class='btn catstat-btn category-btn lh-normal' style='--bg:#{{ item.category_color }}'>{{ item.category_title }}</button>
     {% endif %}

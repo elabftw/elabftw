@@ -20,7 +20,7 @@
         <label for='requestActionUserSelect'>{{ 'Select collaborator'|trans }}</label>
         {# this exists so Firefox doesn't process the Search user field as password. No idea why it would do it in the first place though... #}
         {# and autocomplete='off' doesn't work #}
-        <input type='password' disabled hidden />
+        <input type='password' disabled hidden aria-label='{{ 'Password'|trans }}'/>
         <input type='text' placeholder='{{ 'Search user'|trans }}' id='requestActionUserSelect' class='form-control' data-identifier='requestActionUserSelect' data-action='autocomplete' data-target='users'>
         <div id='autocompleteAnchorDiv_requestActionUserSelect'></div>
       </div>

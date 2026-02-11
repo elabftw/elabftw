@@ -363,7 +363,7 @@
                 <div class='input-group-prepend'>
                   <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-ghost' type='button' data-action='copy-to-clipboard' data-target='mfa_secret'><i class='fas fa-clone'></i></button>
                 </div>
-                <input class='form-control text-center' value='{{ mfaNewSecret|formatMfaSecret }}' id='mfa_secret' disabled readonly />
+                <input class='form-control text-center' value='{{ mfaNewSecret|formatMfaSecret }}' id='mfa_secret' disabled readonly aria-label='{{ 'Multi-factor authentication secret'|trans }}' />
               </div>
             </div>
             <div class='col-md-3 mx-auto my-4'>
@@ -383,7 +383,7 @@
               </p>
             </div>
             <div class='mx-auto text-center col-md-3 mb-4'>
-              <input class='form-control text-center increased-spacing' id='mfa_code' name='mfa_code' type='text' pattern='[0-9]{6}' maxlength=6 aria-describedby='mfaCodeLabel' data-focus='1' inputmode='numeric' autocomplete='one-time-code' />
+              <input class='form-control text-center increased-spacing' id='mfa_code' name='mfa_code' type='text' pattern='[0-9]{6}' maxlength=6 aria-describedby='mfaCodeLabel' data-focus='1' inputmode='numeric' autocomplete='one-time-code' aria-label='{{ 'Multi-factor authentication code'|trans }}' />
               <input type='hidden' name='mfa_secret' value='{{ mfaNewSecret }}'>
             </div>
             <div class='mt-4 text-center'>
@@ -479,7 +479,7 @@
       <div class='input-group-prepend'>
         <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-ghost' type='button' data-action='copy-to-clipboard' data-target='newApiKeyInput'><i class='fas fa-clone'></i></button>
       </div>
-      <input type='text' class='form-control' readonly id='newApiKeyInput' value=''>
+      <input type='text' class='form-control' readonly id='newApiKeyInput' value='' aria-label='{{ 'New API key'|trans }}'>
     </div>
   </div>
 

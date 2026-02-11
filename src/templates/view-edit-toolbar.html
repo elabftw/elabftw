@@ -318,11 +318,12 @@
             </button>
           {% endif %}
         {% endif %}
-        <div class='dropdown-divider'></div>
         {# DELETE / RESTORE #}
         {% if Entity.entityData.state == enum('Elabftw\\Enums\\State').Normal.value %}
+          <div class='dropdown-divider'></div>
           <button type='button' class='dropdown-item hover-danger' data-action='destroy'><i class='fas fa-trash-alt fa-fw' title='{{ 'Delete'|trans }}'></i> {{ 'Delete'|trans }}</button>
         {% elseif Entity.entityData.state == enum('Elabftw\\Enums\\State').Deleted.value %}
+          <div class='dropdown-divider'></div>
           <button type='button' class='dropdown-item hover-danger' data-action='restore'><i class='fas fa-trash-can-arrow-up fa-fw' title='{{ 'Restore entry'|trans }}'></i> {{ 'Restore entry'|trans }}</button>
         {% endif %}
       </div>

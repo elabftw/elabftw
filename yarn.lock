@@ -1815,15 +1815,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@deltablot/tom-select@portal:../tom-select::locator=elabftw%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@deltablot/tom-select@portal:../tom-select::locator=elabftw%40workspace%3A."
-  dependencies:
-    "@orchidjs/sifter": "npm:^1.1.0"
-    "@orchidjs/unicode-variants": "npm:^1.1.2"
-  languageName: node
-  linkType: soft
-
 "@discoveryjs/json-ext@npm:0.5.7":
   version: 0.5.7
   resolution: "@discoveryjs/json-ext@npm:0.5.7"
@@ -6661,7 +6652,6 @@ __metadata:
     "@blueprintjs/select": "npm:^6.0.14"
     "@deltablot/dropzone": "npm:^7.4.3"
     "@deltablot/malle": "npm:^2.8.2"
-    "@deltablot/tom-select": "portal:../tom-select"
     "@e965/xlsx": "npm:^0.20.3"
     "@eslint/eslintrc": "npm:^3.3.3"
     "@eslint/js": "npm:^9.39.2"
@@ -6734,6 +6724,7 @@ __metadata:
     terser: "npm:^5.46.0"
     terser-webpack-plugin: "npm:^5.3.16"
     tinymce: "npm:^6.8.6"
+    tom-select: "npm:^2.5.0"
     ts-loader: "npm:^9.5.4"
     typescript: "npm:5.9.3"
     util: "npm:^0.12.5"
@@ -13937,6 +13928,16 @@ __metadata:
   version: 1.0.6
   resolution: "toggle-selection@npm:1.0.6"
   checksum: 10c0/f2cf1f2c70f374fd87b0cdc8007453ba9e981c4305a8bf4eac10a30e62ecdfd28bca7d18f8f15b15a506bf8a7bfb20dbe3539f0fcf2a2c8396c1a78d53e1f179
+  languageName: node
+  linkType: hard
+
+"tom-select@npm:^2.5.0":
+  version: 2.5.0
+  resolution: "tom-select@npm:2.5.0"
+  dependencies:
+    "@orchidjs/sifter": "npm:^1.1.0"
+    "@orchidjs/unicode-variants": "npm:^1.1.2"
+  checksum: 10c0/14908c6384469b955ff7f75d8b66cc3725382d29a31b3cfe18854230233f64f590888edbc34d0cc15e3e90edea03f8fce49aa1d6526f7a148f6c492fc670e7fa
   languageName: node
   linkType: hard
 

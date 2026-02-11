@@ -8,7 +8,7 @@
   </tr>
 </thead>
 <tbody>
-{% for change in changes %}
+{% for change in Entity.entityData.changelog %}
   <tr>
     <td>{{ change.created_at }}</td>
     <td>{{ change.fullname }}</td>

@@ -115,7 +115,7 @@
               <div class='input-group-prepend'>
                 <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-ghost' type='button' data-action='copy-to-clipboard' data-target='anonymousAccessUrlInput'><i class='fas fa-clone'></i></button>
               </div>
-              <input type='url' class='form-control' readonly id='anonymousAccessUrlInput' value='{{ Entity.entityData.sharelink }}'>
+              <input type='url' class='form-control' readonly id='anonymousAccessUrlInput' value='{{ Entity.entityData.sharelink }}' aria-label='{{ 'Anonymous access url input'|trans }}'>
             </div>
             <p class='smallgray'>{{ 'Anyone following this link can access this entry.'|trans }}</p>
           </div>

@@ -71,7 +71,8 @@ final class Handler extends AbstractRest
 
     private function getImporter(array $reqBody): ImportInterface
     {
-        $owner = (int) ($reqBody['owner'] ?? $this->requester->userid);
+        // we use getInt to get owner, if it's unset it will be 0 and not null
+        $owner = ($reqBody['owner'] === 0 ? $this->requester->userid : $reqBody['owner']) ?? throw new ImproperActionException('Could not find owner!');
         if ($owner !== $this->requester->userid && $this->requester->isAdminOf($owner)) {
             $this->requester = new Users($owner, $this->requester->team);
         }

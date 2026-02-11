@@ -3410,6 +3410,10 @@ paths:
                       - 50: Everyone including anonymous users
                   example: 20
                   enum: [10, 20, 30, 40, 50]
+                owner:
+                  type: integer
+                  example: 5
+                  description: Userid of future owner of imported data
       responses:
         '201':
           description: The import was successful

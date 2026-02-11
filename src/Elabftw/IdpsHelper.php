@@ -57,7 +57,7 @@ final class IdpsHelper
     private function getSettingsByIdp(int $idpId): array
     {
         $this->Idps->setId($idpId);
-        $idp = $this->Idps->readOne();
+        $idp = $this->Idps->selectOne();
         $idpSigningCerts = array();
         $idpEncryptionCerts = array();
         foreach ($idp['certs'] as $cert) {

@@ -17,14 +17,14 @@ import $ from 'jquery';
 import i18next from './i18n';
 import { ApiC } from './api';
 import { getEditor } from './Editor.class';
-import TomSelect from '@deltablot/tom-select/base';
-import TomSelectCheckboxOptions from '@deltablot/tom-select/dist/esm/plugins/checkbox_options/plugin.js';
-import TomSelectClearButton from '@deltablot/tom-select/dist/esm/plugins/clear_button/plugin.js';
-import TomSelectDropdownHeader from '@deltablot/tom-select/dist/esm/plugins/dropdown_header/plugin.js';
-import TomSelectDropdownInput from '@deltablot/tom-select/dist/esm/plugins/dropdown_input/plugin.js';
-import TomSelectNoActiveItems from '@deltablot/tom-select/dist/esm/plugins/no_active_items/plugin.js';
-import TomSelectRemoveButton from '@deltablot/tom-select/dist/esm/plugins/remove_button/plugin.js';
-import TomSelectNoBackspaceDelete from '@deltablot/tom-select/dist/esm/plugins/no_backspace_delete/plugin.js';
+import TomSelect from 'tom-select/base';
+import TomSelectCheckboxOptions from 'tom-select/dist/esm/plugins/checkbox_options/plugin.js';
+import TomSelectClearButton from 'tom-select/dist/esm/plugins/clear_button/plugin.js';
+import TomSelectDropdownHeader from 'tom-select/dist/esm/plugins/dropdown_header/plugin.js';
+import TomSelectDropdownInput from 'tom-select/dist/esm/plugins/dropdown_input/plugin.js';
+import TomSelectNoActiveItems from 'tom-select/dist/esm/plugins/no_active_items/plugin.js';
+import TomSelectRemoveButton from 'tom-select/dist/esm/plugins/remove_button/plugin.js';
+import TomSelectNoBackspaceDelete from 'tom-select/dist/esm/plugins/no_backspace_delete/plugin.js';
 
 // get html of current page reloaded via get
 function fetchCurrentPage(tag = ''): Promise<Document>{

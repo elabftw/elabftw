@@ -172,13 +172,6 @@
   </table>
 </div>
 
-{% if includeChangelog %}
-  <h3 id='changelogHeader'>{{ 'Changelog'|trans }}</h3>
-  <table class='table' aria-labelledby='changelogHeader'>
-    {% include 'changelog-table.html' %}
-  </table>
-{% endif %}
-
 {% if entityData.compounds_links %}
   <section class='no-break'>
     <h3>{% trans %}
@@ -243,4 +236,11 @@
       </div>
     {% endfor %}
   </section>
+{% endif %}
+
+{% if includeChangelog %}
+  <h3 id='changelogHeader'>{{ 'Changelog'|trans }}</h3>
+  <table class='table' aria-labelledby='changelogHeader'>
+    {% include 'changelog-table.html' %}
+  </table>
 {% endif %}

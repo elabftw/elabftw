@@ -92,21 +92,21 @@
 
           {# SELECT, RADIO #}
           <div id='newFieldContentDiv_selectradio' hidden>
-            <label id='choices'>{{ 'Choices'|trans }}</label>
+            <label id='choicesInputLabel'>{{ 'Choices'|trans }}</label>
             <div id='choicesInputDiv'>
               {# show two inputs at first #}
-              <input aria-label='choices' type='text' class='form-control mb-1' autocomplete='off'>
-              <input aria-label='choices' type='text' class='form-control mb-1' autocomplete='off'>
+              <input aria-labelledby='choicesInputLabel' type='text' class='form-control mb-1' autocomplete='off'>
+              <input aria-labelledby='choicesInputLabel' type='text' class='form-control mb-1' autocomplete='off'>
             </div>
             <button type='button' class='btn btn-secondary btn-sm' data-action='new-field-add-option'>{{ 'Add another choice'|trans }}</button>
           </div>
 
           {# UNITS for NUMBER #}
           <div id='newFieldContentDiv_number' hidden>
-            <label id='available_units'>{{ 'Available units'|trans }}</label>
+            <label id='availableUnitsInputLabel'>{{ 'Available units'|trans }}</label>
             <div id='unitChoicesInputDiv'>
-              <input aria-label='available_units' type='text' class='form-control mb-1' autocomplete='off'>
-              <input aria-label='available_units' type='text' class='form-control mb-1' autocomplete='off'>
+              <input aria-labelledby='availableUnitsInputLabel' type='text' class='form-control mb-1' autocomplete='off'>
+              <input aria-labelledby='availableUnitsInputLabel' type='text' class='form-control mb-1' autocomplete='off'>
             </div>
             <button type='button' class='btn btn-secondary btn-sm' data-action='new-field-add-option'>{{ 'Add another choice'|trans }}</button>
           </div>

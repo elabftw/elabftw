@@ -64,8 +64,8 @@ export default class JsonEditorHelper {
     if (this.editorDiv.dataset.preloadJson === '1') {
       this.loadMetadata();
     }
-    const frame = document.querySelector('.jsoneditor-frame').querySelector('input[type="text"]');
-    frame?.setAttribute('aria-label', 'Search metadata');
+    // TODO: make a PR in upstream repo to implement proper label support
+    document.querySelector('.jsoneditor-frame input[type="text"]')?.setAttribute('aria-label', 'Search metadata');
   }
 
   refresh(metadata: ValidMetadata): void {

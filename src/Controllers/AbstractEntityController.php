@@ -281,6 +281,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $this->Entity->canOrExplode('read');
 
         $renderArr = array(
+            'changes' => $this->Entity->entityData['changelog'],
             'Entity' => $this->Entity,
         );
 

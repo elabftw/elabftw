@@ -61,6 +61,8 @@ class MakePdf extends AbstractMakePdf
 
     private bool $pdfa;
 
+    private const string GHS_FOLDER = '/elabftw/web/assets/images/ghs';
+
     public function __construct(
         private LoggerInterface $log,
         MpdfProviderInterface $mpdfProvider,
@@ -241,7 +243,7 @@ class MakePdf extends AbstractMakePdf
             'date' => $date->format('Y-m-d'),
             'entityData' => $this->Entity->entityData,
             'includeChangelog' => $this->includeChangelog,
-            'ghsImagesPath' => dirname(__DIR__, 2) . '/web/assets/images/ghs',
+            'ghsImagesPath' => self::GHS_FOLDER,
             'includeFiles' => $this->includeAttachments,
             'locked' => $locked,
             'lockDate' => $lockDate['date'],

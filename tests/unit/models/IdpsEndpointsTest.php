@@ -60,11 +60,20 @@ class IdpsEndpointsTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertCount(0, $this->IdpsEndpoints->readAll());
         $location = 'https://idp.example.com/SSO';
-        $id = $this->IdpsEndpoints->postAction(Action::Create, array('location' => $location));
-        $this->assertCount(1, $this->IdpsEndpoints->readAll());
+        // add same url and binding with different sso-slo
+        // SSO
+        $id = $this->IdpsEndpoints->postAction(Action::Create, array('location' => $location, 'binding' => SamlBinding::HttpRedirect->value));
+        // SLO
+        $this->IdpsEndpoints->postAction(Action::Create, array('location' => $location, 'binding' => SamlBinding::HttpRedirect->value, 'is_slo' => 1));
+        $this->assertCount(2, $this->IdpsEndpoints->readAll());
+        // try adding the same one (should be ignored)
+        $this->IdpsEndpoints->postAction(Action::Create, array('location' => $location, 'binding' => SamlBinding::HttpRedirect->value, 'is_slo' => 1));
+        // count must not have changed
+        $this->assertCount(2, $this->IdpsEndpoints->readAll());
         $this->IdpsEndpoints->setId($id);
         $endpoint = $this->IdpsEndpoints->readOne();
         $this->assertSame($endpoint['location'], $location);
+        $this->assertSame($endpoint['binding'], SamlBinding::HttpRedirect->value);
         $this->assertTrue($this->IdpsEndpoints->destroy());
     }
 

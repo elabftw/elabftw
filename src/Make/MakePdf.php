@@ -48,6 +48,8 @@ class MakePdf extends AbstractMakePdf
 {
     use TwigTrait;
 
+    private const string GHS_FOLDER = '/elabftw/web/assets/images/ghs';
+
     public array $failedAppendPdfs = array();
 
     // collect paths of files to delete
@@ -60,8 +62,6 @@ class MakePdf extends AbstractMakePdf
     private FileSystem $cacheFs;
 
     private bool $pdfa;
-
-    private const string GHS_FOLDER = '/elabftw/web/assets/images/ghs';
 
     public function __construct(
         private LoggerInterface $log,

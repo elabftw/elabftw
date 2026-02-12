@@ -41,7 +41,7 @@ enum Storage: int
         return match ($this) {
             $this::LOCAL => new Local(),
             $this::S3 => new S3(
-                new Credentials(Env::asString('ELAB_AWS_ACCESS_KEY'), Env::asString('ELAB_AWS_SECRET_KEY')),
+                new Credentials(Env::asStringFromFile('ELAB_AWS_ACCESS_KEY'), Env::asStringFromFile('ELAB_AWS_SECRET_KEY')),
                 $config->getS3Config(),
             ),
             $this::MEMORY => new Memory(),

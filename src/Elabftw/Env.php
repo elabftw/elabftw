@@ -30,6 +30,25 @@ final class Env
         return trim((string) self::get($key));
     }
 
+    public static function asStringFromFile(string $key): string
+    {
+        $filePath = self::asString($key);
+        if (file_exists($filePath)) {
+            $fileContent = file($filePath);
+            $value = trim($fileContent[0]);
+        } else {
+            $fileKey = $key . '_FILE';
+            $filePath = self::asString($fileKey);
+            if (file_exists($filePath)) {
+                $fileContent = file($filePath);
+                $value = trim($fileContent[0]);
+            } else {
+                $value = '';
+            }
+        }
+        return $value;
+    }
+
     public static function asInt(string $key): int
     {
         return (int) self::get($key);
@@ -58,14 +77,6 @@ final class Env
 
     private static function get(string $key): mixed
     {
-        $fileKey = $key . '_FILE';
-        $fileVar = getenv($fileKey);
-        if ($fileVar) {
-            $value = file_get_contents($fileVar);
-            if ($value) {
-                return $value;
-            }
-        }
         return getenv($key);
     }
 }

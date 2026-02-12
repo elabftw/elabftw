@@ -64,7 +64,7 @@ final class Saml implements AuthInterface
 
     public static function getJWTConfig(): Configuration
     {
-        $secretKey = Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY'));
+        $secretKey = Key::loadFromAsciiSafeString(Env::asStringFromFile('SECRET_KEY'));
         /** @psalm-suppress ArgumentTypeCoercion */
         $config = Configuration::forSymmetricSigner(
             new Sha256(),

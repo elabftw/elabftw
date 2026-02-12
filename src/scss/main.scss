@@ -513,6 +513,10 @@ button:disabled {
     color: var(--mediumstrong);
   }
 
+  td button {
+    color: var(--chrome-fg);
+  }
+
   td,
   th {
     border-color: var(--secondary-muted);

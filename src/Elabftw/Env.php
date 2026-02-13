@@ -33,18 +33,11 @@ final class Env
     public static function asStringFromFile(string $key): string
     {
         $filePath = self::asString($key);
-        if (file_exists($filePath)) {
-            $fileContent = file($filePath);
-            $value = trim($fileContent[0]);
-        } else {
+        $value = self::getFromFile($filePath);
+        if ($value === '') {
             $fileKey = $key . '_FILE';
             $filePath = self::asString($fileKey);
-            if (file_exists($filePath)) {
-                $fileContent = file($filePath);
-                $value = trim($fileContent[0]);
-            } else {
-                $value = '';
-            }
+            $value = self::getFromFile($filePath);
         }
         return $value;
     }
@@ -78,5 +71,17 @@ final class Env
     private static function get(string $key): mixed
     {
         return getenv($key);
+    }
+
+    private static function getFromFile(string $filePath): string
+    {
+        if (file_exists($filePath)) {
+            $fileContent = file($filePath);
+            if ($fileContent) {
+                $value = trim($fileContent[0]);
+                return $value;
+            }
+        }
+        return '';
     }
 }

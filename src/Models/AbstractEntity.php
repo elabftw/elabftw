@@ -110,8 +110,6 @@ abstract class AbstractEntity extends AbstractRest
 
     public const string EMPTY_CAN_JSON = '{"teams": [], "teamgroups": [], "users": []}';
 
-    protected const string CREATE_TEAM_PERMISSION_KEY = '';
-
     public Comments $Comments;
 
     public AbstractExperimentsLinks $ExperimentsLinks;

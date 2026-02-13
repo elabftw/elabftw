@@ -29,13 +29,12 @@ function setTypeRadio(type: EntityType, scope: string = '') {
   const templateToggleBtn = document.getElementById('createTplToggleBtn');
   const createNewTemplatesDiv = document.getElementById('createNewTemplatesDiv');
   templateToggleBtn.removeAttribute('disabled');
-  // set radio button checked
-  document.querySelectorAll('input[type="radio"][name="type"]').forEach((radio: HTMLInputElement)=> {
-    radio.removeAttribute('checked');
-    if (radio.value === type) {
-      radio.checked = true;
-    }
-  });
+  // set radio button checked & enable createBtn
+  const selectedRadio = document.querySelector<HTMLInputElement>(`input[type="radio"][name="type"][value="${type}"]`);
+  if (selectedRadio) {
+    selectedRadio.checked = true;
+    createBtn.toggleAttribute('disabled', selectedRadio.disabled);
+  }
   const manageTplLink = document.getElementById('manageTplLink') as HTMLAnchorElement;
   manageTplLink.href = type === EntityType.Experiment || type === EntityType.Template ? 'templates.php' : 'resources-templates.php';
   if (type === EntityType.Template || type === EntityType.ItemType) {

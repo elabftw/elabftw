@@ -48,6 +48,8 @@ class MakePdf extends AbstractMakePdf
 {
     use TwigTrait;
 
+    private const string GHS_FOLDER = '/elabftw/web/assets/images/ghs';
+
     public array $failedAppendPdfs = array();
 
     // collect paths of files to delete
@@ -241,6 +243,7 @@ class MakePdf extends AbstractMakePdf
             'date' => $date->format('Y-m-d'),
             'entityData' => $this->Entity->entityData,
             'includeChangelog' => $this->includeChangelog,
+            'ghsImagesPath' => self::GHS_FOLDER,
             'includeFiles' => $this->includeAttachments,
             'locked' => $locked,
             'lockDate' => $lockDate['date'],

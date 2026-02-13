@@ -85,6 +85,11 @@
       'label': 'Force experiment template use'|trans,
       'help': 'Users will be forced to select an existing Template, and will not be able to create a blank entry.'|trans} %}
 
+    {# EXPERIMENTS (& status, categories, templates #}
+    {% include 'binary-setting.html' with {'model': model, 'src': src,
+      'slug': 'users_canwrite_experiments',
+      'label': 'Allow users to create and edit experiments'|trans} %}
+
     {% include 'binary-setting.html' with {'model': model, 'src': src,
       'slug': 'users_canwrite_experiments_categories',
       'label': 'Allow users to create and edit experiments categories'|trans} %}
@@ -94,16 +99,21 @@
       'label': 'Allow users to create and edit experiments status'|trans} %}
 
     {% include 'binary-setting.html' with {'model': model, 'src': src,
+      'slug': 'users_canwrite_experiments_templates',
+      'label': 'Allow users to create and edit experiments templates'|trans} %}
+
+    {# RESOURCES (& status, categories, templates #}
+    {% include 'binary-setting.html' with {'model': model, 'src': src,
+      'slug': 'users_canwrite_resources',
+      'label': 'Allow users to create and edit resources'|trans} %}
+
+    {% include 'binary-setting.html' with {'model': model, 'src': src,
       'slug': 'users_canwrite_resources_categories',
       'label': 'Allow users to create and edit resources categories'|trans} %}
 
     {% include 'binary-setting.html' with {'model': model, 'src': src,
       'slug': 'users_canwrite_resources_status',
       'label': 'Allow users to create and edit resources status'|trans} %}
-
-    {% include 'binary-setting.html' with {'model': model, 'src': src,
-      'slug': 'users_canwrite_experiments_templates',
-      'label': 'Allow users to create and edit experiments templates'|trans} %}
 
     {% include 'binary-setting.html' with {'model': model, 'src': src,
       'slug': 'users_canwrite_resources_templates',

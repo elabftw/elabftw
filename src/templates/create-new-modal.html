@@ -1,5 +1,7 @@
-{% set canWriteExperimentsTemplates = App.Teams.teamArr.users_canwrite_experiments_templates or App.Users.isAdmin %}
-{% set canWriteResourcesTemplates = App.Teams.teamArr.users_canwrite_resources_templates or App.Users.isAdmin %}
+{% set canWriteExperiments = App.Users.isAdmin or App.Teams.teamArr.users_canwrite_experiments %}
+{% set canWriteResources = App.Users.isAdmin or App.Teams.teamArr.users_canwrite_resources %}
+{% set canWriteExperimentsTemplates = App.Users.isAdmin or App.Teams.teamArr.users_canwrite_experiments_templates %}
+{% set canWriteResourcesTemplates = App.Users.isAdmin or App.Teams.teamArr.users_canwrite_resources_templates %}
 {# Modal window for creating a new entity #}
 <div class='modal fade' id='createModal' tabindex='-1' role='dialog' aria-labelledby='createModalLabel'>
   <div class='modal-dialog modal-lg' role='document'>
@@ -16,34 +18,36 @@
           <div class='mb-4'>
             <label class='d-block'>{{ 'Select a type'|trans }}</label>
             <div class='form-check-inline'>
-              <input type='radio' class='form-check-input' name='type' required autocomplete='off' value='experiments' id='createNewTypeExperiments' />
-              <label class='form-check-label' for='createNewTypeExperiments'>{{ 'Experiment'|trans }}</label>
+              {% set disabled = not canWriteExperiments %}
+              <input type='radio' class='form-check-input' name='type' required autocomplete='off' value='experiments' id='createNewTypeExperiments' {{ disabled ? 'disabled' }}/>
+              <div class='{{ disabled ? 'infotip' }}'>
+                <label class='form-check-label {{ disabled ? 'color-weak infotip-icon' }}' for='createNewTypeExperiments'>{{ 'Experiment'|trans }}</label>
+                {% if disabled %}<p class='infotip-text'>{{ 'This option has been disabled by your admin.'|trans }}</p>{% endif %}
+              </div>
             </div>
             <div class='form-check-inline'>
-              <input type='radio' class='form-check-input' name='type' required autocomplete='off' value='items' id='createNewTypeItems' />
-              <label class='form-check-label' for='createNewTypeItems'>{{ 'Resource'|trans }}</label>
+              {% set disabled = not canWriteResources %}
+              <input type='radio' class='form-check-input' name='type' required autocomplete='off' value='items' id='createNewTypeItems' {{ disabled ? 'disabled' }}/>
+              <div class='{{ disabled ? 'infotip' }}'>
+                <label class='form-check-label {{ disabled ? 'color-weak infotip-icon' }}' for='createNewTypeItems'>{{ 'Resource'|trans }}</label>
+                {% if disabled %}<p class='infotip-text'>{{ 'This option has been disabled by your admin.'|trans }}</p>{% endif %}
+              </div>
             </div>
             <div class='form-check-inline'>
-              <input type='radio' class='form-check-input' name='type' required autocomplete='off' value='experiments_templates' id='createNewTypeExperimentsTemplates' {{ not canWriteExperimentsTemplates ? 'disabled' }}/>
-              {% if not canWriteExperimentsTemplates %}
-                <div class='infotip'>
-                  <label class='form-check-label color-weak infotip-icon' for='createNewTypeExperimentsTemplates'>{{ 'Experiment template'|trans }}</label>
-                  <p class='infotip-text'>{{ 'This option has been disabled by your admin.'|trans }}</p>
-                </div>
-              {% else %}
-                <label class='form-check-label' for='createNewTypeExperimentsTemplates'>{{ 'Experiment template'|trans }}</label>
-              {% endif %}
+              {% set disabled = not canWriteExperimentsTemplates %}
+              <input type='radio' class='form-check-input' name='type' required autocomplete='off' value='experiments_templates' id='createNewTypeExperimentsTemplates' {{ disabled ? 'disabled' }}/>
+              <div class='{{ disabled ? 'infotip' }}'>
+                <label class='form-check-label {{ disabled ? 'color-weak infotip-icon' }}' for='createNewTypeExperimentsTemplates'>{{ 'Experiment template'|trans }}</label>
+                {% if disabled %}<p class='infotip-text'>{{ 'This option has been disabled by your admin.'|trans }}</p>{% endif %}
+              </div>
             </div>
             <div class='form-check-inline'>
-              <input type='radio' class='form-check-input' name='type' required autocomplete='off' value='items_types' id='createNewTypeItemsTypes' {{ not canWriteResourcesTemplates ? 'disabled' }}/>
-              {% if not canWriteResourcesTemplates %}
-                <div class='infotip'>
-                  <label class='form-check-label color-weak infotip-icon' for='createNewTypeItemsTypes'>{{ 'Resource template'|trans }}</label>
-                  <p class='infotip-text'>{{ 'This option has been disabled by your admin.'|trans }}</p>
-                </div>
-              {% else %}
-                <label class='form-check-label' for='createNewTypeItemsTypes'>{{ 'Resource template'|trans }}</label>
-              {% endif %}
+              {% set disabled = not canWriteResourcesTemplates %}
+              <input type='radio' class='form-check-input' name='type' required autocomplete='off' value='items_types' id='createNewTypeItemsTypes' {{ disabled ? 'disabled' }}/>
+              <div class='{{ disabled ? 'infotip' }}'>
+                <label class='form-check-label {{ disabled ? 'color-weak infotip-icon' }}' for='createNewTypeItemsTypes'>{{ 'Resource template'|trans }}</label>
+                {% if disabled %}<p class='infotip-text'>{{ 'This option has been disabled by your admin.'|trans }}</p>{% endif %}
+              </div>
             </div>
           </div>
           <div class='my-2'>

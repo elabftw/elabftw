@@ -715,7 +715,7 @@ abstract class AbstractEntity extends AbstractRest
         }
 
         if (!$permissions[$rw]) {
-            throw new UnauthorizedException(Messages::InsufficientPermissions->toHuman());
+            throw new ForbiddenException();
         }
     }
 

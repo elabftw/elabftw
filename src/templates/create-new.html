@@ -1,10 +1,15 @@
 {# RIGHT MENU: CREATE NEW BUTTON #}
-{# Disable the Create button if the team has disabled template creation permissions AND the user is not admin #}
-{% set isDisabled = not App.Users.isAdmin and (
-  (scriptName == 'templates.php' and not App.Teams.teamArr.users_canwrite_experiments_templates)
-  or
-  (scriptName == 'resources-templates.php' and not App.Teams.teamArr.users_canwrite_resources_templates)
-  ) %}
+{# determine required write permission based on current page #}
+{% set canWrite =
+  scriptName == 'templates.php' ? App.Teams.teamArr.users_canwrite_experiments_templates :
+  (scriptName == 'resources-templates.php' ? App.Teams.teamArr.users_canwrite_resources_templates :
+  (scriptName == 'experiments.php' ? App.Teams.teamArr.users_canwrite_experiments :
+  (scriptName == 'database.php' ? App.Teams.teamArr.users_canwrite_resources :
+  (scriptName == 'dashboard.php' ? (App.Teams.teamArr.users_canwrite_experiments or App.Teams.teamArr.users_canwrite_resources) :
+  true))))
+%}
+{# disable if not admin AND write permission is false #}
+{% set isDisabled = not App.Users.isAdmin and not canWrite %}
 {% if not App.Session.get('is_anon') %}
 <button type='button' data-action='toggle-create-modal' data-type='{{ entityType|default('') }}' class='btn btn-primary' {{ isDisabled ? 'disabled="disabled"' : '' }}>{{ 'Create'|trans }}</button>
 {% endif %}

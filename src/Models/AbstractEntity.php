@@ -944,7 +944,12 @@ abstract class AbstractEntity extends AbstractRest
         return $this->readOne();
     }
 
-    abstract protected function getCreatePermissionFromTeam(array $teamConfigArr): bool;
+    abstract protected function getCreatePermissionKey(): string;
+
+    protected function getCreatePermissionFromTeam(array $teamConfigArr): bool
+    {
+        return $teamConfigArr[$this->getCreatePermissionKey()] === 1;
+    }
 
     // TODO refactor with canOrExplode()
     // this is bad code, refactor of all this will come later

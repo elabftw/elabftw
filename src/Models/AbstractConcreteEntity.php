@@ -31,13 +31,6 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         return (int) $req->fetchColumn();
     }
 
-    #[Override]
-    protected function getCreatePermissionFromTeam(array $teamConfigArr): bool
-    {
-        // no team level permissions for this yet
-        return true;
-    }
-
     protected function getNextCustomId(?int $category): ?int
     {
         if ($category === null) {

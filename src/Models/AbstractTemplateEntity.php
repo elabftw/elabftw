@@ -99,10 +99,4 @@ abstract class AbstractTemplateEntity extends AbstractEntity
 
         return $newId;
     }
-
-    #[Override]
-    protected function getCreatePermissionFromTeam(array $teamConfigArr): bool
-    {
-        return $teamConfigArr[$this::CREATE_TEAM_PERMISSION_KEY] === 1;
-    }
 }

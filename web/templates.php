@@ -14,7 +14,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Controllers\ExperimentsController;
 use Elabftw\Exceptions\AppException;
-use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Templates;
 use Elabftw\Services\Filter;
 use Exception;

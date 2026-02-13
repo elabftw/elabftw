@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Override;
-
 /**
  * An entity like Experiments or Items. Concrete as opposed to TemplateEntity for experiments templates or items types
  */

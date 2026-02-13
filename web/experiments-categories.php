@@ -14,7 +14,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Controllers\ExperimentsCategoriesController;
 use Elabftw\Exceptions\AppException;
-use Elabftw\Exceptions\UnauthorizedException;
+use Elabftw\Exceptions\ForbiddenException;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -27,7 +27,7 @@ $Response = new Response();
 
 try {
     if ($App->Teams->teamArr['users_canwrite_experiments_categories'] === 0 && !$App->Users->isAdmin) {
-        throw new UnauthorizedException(_('Sorry, edition of experiments categories has been disabled for users by your team Admin.'));
+        throw new ForbiddenException();
     }
     $Response = new ExperimentsCategoriesController($App)->getResponse();
 } catch (AppException $e) {

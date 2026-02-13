@@ -77,9 +77,8 @@ final class Env
     {
         if (file_exists($filePath)) {
             $fileContent = file($filePath);
-            if ($fileContent) {
-                $value = trim($fileContent[0]);
-                return $value;
+            if ($fileContent && count($fileContent) > 0) {
+                return trim($fileContent[0]);
             }
         }
         return '';

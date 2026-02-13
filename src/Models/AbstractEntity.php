@@ -221,6 +221,9 @@ abstract class AbstractEntity extends AbstractRest
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
+        if (in_array($action, array(Action::Create, Action::Duplicate), true)) {
+            $this->guardTemplateWritePermissions();
+        }
         return match ($action) {
             Action::Create => (
                 function () use ($reqBody) {
@@ -231,19 +234,6 @@ abstract class AbstractEntity extends AbstractRest
                     $teamConfigArr = new Teams($this->Users, $this->Users->team)->readOne();
                     if ($teamConfigArr['force_exp_tpl'] === 1 && $this instanceof Experiments) {
                         throw new ImproperActionException(_('Experiments must use a template!'));
-                    }
-                    // check if users can create/edit templates
-                    if (!$this->Users->isAdmin) {
-                        $permissionByPath = array(
-                            'experiments_templates' => 'users_canwrite_experiments_templates',
-                            'items_types' => 'users_canwrite_resources_templates',
-                        );
-                        foreach ($permissionByPath as $path => $permissionKey) {
-                            if (str_contains($this->getApiPath(), $path) &&
-                                (int) ($teamConfigArr[$permissionKey] ?? 0) === 0) {
-                                throw new UnauthorizedException(Messages::InsufficientPermissions->toHuman());
-                            }
-                        }
                     }
                     if (!isset($reqBody['category']) || $reqBody['category'] === -1) {
                         $reqBody['category'] = null;
@@ -496,6 +486,9 @@ abstract class AbstractEntity extends AbstractRest
         if ($state === State::Archived->value && $action !== Action::Unarchive) {
             throw new UnprocessableContentException(_('Only the Unarchive action is allowed on an archived entity.'));
         }
+
+        // block ALL patch operations on templates if team disallows it
+        $this->guardTemplateWritePermissions();
 
         $requiredAccess = 'write';
         // some actions only require read access even if they are using PATCH verb
@@ -1245,5 +1238,25 @@ abstract class AbstractEntity extends AbstractRest
             }
         }
         return $sent;
+    }
+
+    // Check user permissions to create and edit templates (team level)
+    private function guardTemplateWritePermissions(): void
+    {
+        // admins are always allowed
+        if ($this->Users->isAdmin) {
+            return;
+        }
+        $teamConfigArr = new Teams($this->Users, $this->Users->team)->readOne();
+        $permissionByPath = array(
+            'experiments_templates' => 'users_canwrite_experiments_templates',
+            'items_types' => 'users_canwrite_resources_templates',
+        );
+        foreach ($permissionByPath as $path => $permissionKey) {
+            if (str_contains($this->getApiPath(), $path) &&
+                (int) ($teamConfigArr[$permissionKey] ?? 0) === 0) {
+                throw new UnauthorizedException(Messages::InsufficientPermissions->toHuman());
+            }
+        }
     }
 }

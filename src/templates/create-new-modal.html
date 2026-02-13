@@ -17,38 +17,20 @@
         <div class='modal-body mb-3'>
           <div class='mb-4'>
             <label class='d-block'>{{ 'Select a type'|trans }}</label>
-            <div class='form-check-inline'>
-              {% set disabled = not canWriteExperiments %}
-              <input type='radio' class='form-check-input' name='type' required autocomplete='off' value='experiments' id='createNewTypeExperiments' {{ disabled ? 'disabled' }}/>
-              <div class='{{ disabled ? 'infotip' }}'>
-                <label class='form-check-label {{ disabled ? 'color-weak infotip-icon' }}' for='createNewTypeExperiments'>{{ 'Experiment'|trans }}</label>
-                {% if disabled %}<p class='infotip-text'>{{ 'This option has been disabled by your admin.'|trans }}</p>{% endif %}
+            {% macro createTypeOption(value, id, label, canWrite) %}
+              <div class='form-check-inline'>
+                {% set disabled = not canWrite %}
+                <input type='radio' class='form-check-input' name='type' required autocomplete='off' value='{{ value }}' id='{{ id }}' {{ disabled ? 'disabled' }}/>
+                <div class='{{ disabled ? 'infotip' }}'>
+                  <label class='form-check-label {{ disabled ? 'color-weak infotip-icon' }}' for='{{ id }}'>{{ label|trans }}</label>
+                  {% if disabled %}<p class='infotip-text'>{{ 'This option has been disabled by your admin.'|trans }}</p>{% endif %}
+                </div>
               </div>
-            </div>
-            <div class='form-check-inline'>
-              {% set disabled = not canWriteResources %}
-              <input type='radio' class='form-check-input' name='type' required autocomplete='off' value='items' id='createNewTypeItems' {{ disabled ? 'disabled' }}/>
-              <div class='{{ disabled ? 'infotip' }}'>
-                <label class='form-check-label {{ disabled ? 'color-weak infotip-icon' }}' for='createNewTypeItems'>{{ 'Resource'|trans }}</label>
-                {% if disabled %}<p class='infotip-text'>{{ 'This option has been disabled by your admin.'|trans }}</p>{% endif %}
-              </div>
-            </div>
-            <div class='form-check-inline'>
-              {% set disabled = not canWriteExperimentsTemplates %}
-              <input type='radio' class='form-check-input' name='type' required autocomplete='off' value='experiments_templates' id='createNewTypeExperimentsTemplates' {{ disabled ? 'disabled' }}/>
-              <div class='{{ disabled ? 'infotip' }}'>
-                <label class='form-check-label {{ disabled ? 'color-weak infotip-icon' }}' for='createNewTypeExperimentsTemplates'>{{ 'Experiment template'|trans }}</label>
-                {% if disabled %}<p class='infotip-text'>{{ 'This option has been disabled by your admin.'|trans }}</p>{% endif %}
-              </div>
-            </div>
-            <div class='form-check-inline'>
-              {% set disabled = not canWriteResourcesTemplates %}
-              <input type='radio' class='form-check-input' name='type' required autocomplete='off' value='items_types' id='createNewTypeItemsTypes' {{ disabled ? 'disabled' }}/>
-              <div class='{{ disabled ? 'infotip' }}'>
-                <label class='form-check-label {{ disabled ? 'color-weak infotip-icon' }}' for='createNewTypeItemsTypes'>{{ 'Resource template'|trans }}</label>
-                {% if disabled %}<p class='infotip-text'>{{ 'This option has been disabled by your admin.'|trans }}</p>{% endif %}
-              </div>
-            </div>
+            {% endmacro %}
+            {{ _self.createTypeOption('experiments', 'createNewTypeExperiments', 'Experiment', canWriteExperiments) }}
+            {{ _self.createTypeOption('items', 'createNewTypeItems', 'Resource', canWriteResources) }}
+            {{ _self.createTypeOption('experiments_templates', 'createNewTypeExperimentsTemplates', 'Experiment template', canWriteExperimentsTemplates) }}
+            {{ _self.createTypeOption('items_types', 'createNewTypeItemsTypes', 'Resource template', canWriteResourcesTemplates) }}
           </div>
           <div class='my-2'>
             <label for='createNewFormTitle'>{{ 'Enter a title'|trans }}</label>

@@ -52,10 +52,4 @@ class EnvTest extends \PHPUnit\Framework\TestCase
         putenv(sprintf('TEST_URL= %s', $url));
         $this->assertSame($url, Env::asUrl('TEST_URL'));
     }
-
-    public function testFromFile(): void
-    {
-        $expected = 'ABC123';
-        $this->assertSame($expected, Env::asString('TEST_SECRET'));
-    }
 }

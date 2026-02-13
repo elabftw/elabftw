@@ -55,7 +55,7 @@ enum Storage: int
     {
         if ($config->configArr['s3_exports_toggle'] === '1') {
             return new S3(
-                new Credentials(Env::asString('ELAB_AWS_ACCESS_KEY'), Env::asString('ELAB_AWS_SECRET_KEY')),
+                new Credentials(Env::asStringFromFile('ELAB_AWS_ACCESS_KEY'), Env::asStringFromFile('ELAB_AWS_SECRET_KEY')),
                 $config->getS3ExportsConfig(),
             );
         }

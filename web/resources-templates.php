@@ -27,9 +27,6 @@ require_once 'app/init.inc.php';
 
 $Response = new Response();
 try {
-    if ($App->Teams->teamArr['users_canwrite_resources_templates'] === 0 && !$App->Users->isAdmin) {
-        throw new UnauthorizedException(_('Sorry, edition of resources templates has been disabled for users by your team Admin.'));
-    }
     $Response->prepare($Request);
     $Response = new DatabaseController($App, new ItemsTypes($App->Users, Filter::intOrNull($Request->query->getInt('id'))))->getResponse();
 } catch (AppException $e) {

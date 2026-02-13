@@ -89,7 +89,7 @@
                 {% endfor %}
                 <div class='dropdown-divider'></div>
                 {% set isActive = scriptName == 'templates.php' %}
-                <a class='dropdown-item {{ isActive ? 'active' }} {{ not App.Teams.teamArr.users_canwrite_experiments_templates and not App.Users.isAdmin ? 'disabled' }}' href='templates.php' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-copy fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Experiment templates'|trans }}</a>
+                <a class='dropdown-item {{ isActive ? 'active' }}' href='templates.php' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-copy fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Experiment templates'|trans }}</a>
                 {% set isActive = scriptName == 'experiments-categories.php' %}
                 <a class='dropdown-item {{ isActive ? 'active' }} {{ not App.Teams.teamArr.users_canwrite_experiments_categories and not App.Users.isAdmin ? 'disabled' }}' href='experiments-categories.php' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-rectangle-list fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Experiment categories'|trans }}</a>
                 {% set isActive = scriptName == 'experiments-status.php' %}
@@ -128,7 +128,7 @@
                 {% endfor %}
                 <div class='dropdown-divider'></div>
                 {% set isActive = scriptName == 'resources-templates.php' %}
-                <a class='dropdown-item {{ isActive ? 'active' }} {{ not App.Teams.teamArr.users_canwrite_resources_templates and not App.Users.isAdmin ? 'disabled' }}' href='resources-templates.php' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-copy fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Resource templates'|trans }}</a>
+                <a class='dropdown-item {{ isActive ? 'active' }}' href='resources-templates.php' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-copy fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Resource templates'|trans }}</a>
                 {% set isActive = scriptName == 'resources-categories.php' %}
                 <a class='dropdown-item {{ isActive ? 'active' }} {{ not App.Teams.teamArr.users_canwrite_resources_categories and not App.Users.isAdmin ? 'disabled' }}' href='resources-categories.php' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-rectangle-list fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Resource categories'|trans }}</a>
                 {% set isActive = scriptName == 'resources-status.php' %}

@@ -23,7 +23,7 @@
   <label for='compoundInput-{{ target }}' {{ required ? "class='required-label'" }}>{{ label }}</label>
   <div class='input-group mb-2'>
     <div class='input-group-prepend'>
-      <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-outline-secondary' type='button' data-action='copy-to-clipboard' data-target='compoundInput-{{ target }}'><i class='fas fa-clone'></i></button>
+      <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-ghost' type='button' data-action='copy-to-clipboard' data-target='compoundInput-{{ target }}'><i class='fas fa-clone'></i></button>
     </div>
     <input name='{{ target }}' {{ disabled ? 'readonly' }} {{ type == 'number' ? "type='number' step='0.01'" }} placeholder='{{ placeholder }}' {{ required }} class='form-control' id='compoundInput-{{ target }}' />
   </div>
@@ -61,14 +61,14 @@
             <label for='compoundInput-cas_number'>{{ 'CAS number'|trans }}</label>
             <div class='input-group mb-2'>
               <div class='input-group-prepend'>
-                <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-outline-secondary' type='button' data-action='copy-to-clipboard' data-target='compoundInput-cas_number'><i class='fas fa-clone'></i></button>
+                <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-ghost' type='button' data-action='copy-to-clipboard' data-target='compoundInput-cas_number'><i class='fas fa-clone'></i></button>
               </div>
               <input name='cas_number' {{ compoundsDisabled ? 'readonly' }} pattern='^\d{2,7}-\d{2}-\d$' inputmode='numeric' title='{{ 'Please enter a valid CAS number (e.g., 58-08-2)'|trans }}' placeholder='58-08-2' class='form-control' id='compoundInput-cas_number' />
             </div>
             <label for='compoundInput-ec_number'>{{ 'EC number'|trans }}</label>
             <div class='input-group mb-2'>
               <div class='input-group-prepend'>
-                <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-outline-secondary' type='button' data-action='copy-to-clipboard' data-target='compoundInput-ec_number'><i class='fas fa-clone'></i></button>
+                <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-ghost' type='button' data-action='copy-to-clipboard' data-target='compoundInput-ec_number'><i class='fas fa-clone'></i></button>
               </div>
               <input name='ec_number' {{ compoundsDisabled ? 'readonly' }} pattern='^\d{3}-\d{3}-\d$' inputmode='numeric' title='{{ 'Please enter a valid EC number (e.g., 200-362-1)'|trans }}' placeholder='200-362-1' class='form-control' id='compoundInput-ec_number' />
             </div>

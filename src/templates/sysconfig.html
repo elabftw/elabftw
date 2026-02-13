@@ -550,7 +550,7 @@
       {% if devMode -%}
         <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element, no-unused-disable, require-sri: suppress errors from tinymce] -->
       {%- endif %}
-      <textarea id='{{ slug }}Input' class='mceditable'>
+      <textarea id='{{ slug }}Input' class='mceditable' aria-label='{{ 'Set your text here'|trans }}'>
         {{ configArr[slug]|default('Set your text here.')|raw }}
       </textarea>
       <div class='my-4 text-center'>

@@ -69,11 +69,11 @@
     {{ App.Session.get('csrf')|csrf }}
     <div class='col-md-4 mx-auto mt-4 text-left form-group'>
       {% if App.devMode -%}
-        <!-- [html-validate-disable-block input-missing-label, prefer-native-element: suppress errors from tom-select] -->
+        <!-- [html-validate-disable-block prefer-native-element: suppress errors from tom-select] -->
       {%- endif %}
       <label for='team_selection_select'>{{ 'Your account is linked to several teams. Select in which team you want to log in'|trans }}</label>
       <select name='selected_team' id='team_selection_select' class='form-control'>
-        {% for team in App.Session.get('team_selection') %}
+        {% for team in App.Session.get('team_selection')|filter(t => t.is_archived == 0) %}
           <option value='{{ team.id }}'>{{ team.name }}</option>
         {% endfor %}
       </select>
@@ -157,7 +157,7 @@
       {{ App.Session.get('csrf')|csrf }}
       <div class='form-group col-md-4 mx-auto'>
         {% if App.devMode -%}
-          <!-- [html-validate-disable-block input-missing-label, prefer-native-element: suppress errors from tom-select] -->
+          <!-- [html-validate-disable-block prefer-native-element: suppress errors from tom-select] -->
         {%- endif %}
         <label for='idp_login_select'>{{ 'Select an identity provider'|trans }}</label>
         <select name='idpId' class='form-control' id='idp_login_select'>

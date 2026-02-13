@@ -300,6 +300,31 @@ components:
         team_name:
           type: string
 
+    # CHANGELOG
+    changelog:
+      type: object
+      properties:
+        created_at:
+          type: string
+          description: Timestamp when the change was recorded.
+          example: "2026-02-11 20:36:47"
+        target:
+          type: string
+          description: Field/attribute that was changed.
+          example: "timestamped_at"
+        content:
+          type: string
+          description: New value stored for the target field (may be a scalar or JSON-encoded string depending on target).
+          example: "2026-02-11 20:36:47"
+        fullname:
+          type: string
+          description: Full name of the user who made the change.
+          example: "Chewie"
+        userid:
+          type: integer
+          description: Userid of the user who made the change.
+          example: 3
+
     # COMPOUND
     compound:
       type: object
@@ -1085,6 +1110,10 @@ components:
             category_title:
               type: string
               nullable: true
+            changelog:
+              type: array
+              items:
+                $ref: '#/components/schemas/changelog'
             comments:
               type: array
               items:
@@ -1617,16 +1646,27 @@ components:
           type: integer
         link_state:
           type: integer
+        category_id:
+          type: integer
+          nullable: true
         category_color:
           type: string
+          nullable: true
         category_title:
           type: string
+          nullable: true
+        status_id:
+          type: integer
+          nullable: true
         status_color:
           type: string
+          nullable: true
         status_title:
           type: string
+          nullable: true
         custom_id:
           type: integer
+          nullable: true
         page:
           type: string
         type:
@@ -3399,6 +3439,10 @@ paths:
                       - 50: Everyone including anonymous users
                   example: 20
                   enum: [10, 20, 30, 40, 50]
+                owner:
+                  type: integer
+                  example: 5
+                  description: Userid of future owner of imported data
       responses:
         '201':
           description: The import was successful

@@ -615,7 +615,7 @@ CREATE TABLE `idps_endpoints` (
         FOREIGN KEY (idp)
         REFERENCES idps(id)
         ON DELETE CASCADE,
-    UNIQUE KEY uniq_idp_bdg_loc (idp, binding, location)
+    UNIQUE KEY uniq_idp_bdg_loc (idp, binding, location, is_slo)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 -- --------------------------------------------------------
 

@@ -24,7 +24,6 @@
     "@blueprintjs/select": "^6.0.14",
     "@deltablot/dropzone": "^7.4.3",
     "@deltablot/malle": "^2.8.2",
-    "@deltablot/tom-select": "^2.4.6",
     "@e965/xlsx": "^0.20.3",
     "@fancyapps/fancybox": "^3.5.7",
     "@fullcalendar/bootstrap": "^6.1.20",
@@ -36,7 +35,7 @@
     "@fullcalendar/timeline": "^6.1.20",
     "@jspreadsheet-ce/react": "^5.0.2",
     "@teselagen/bio-parsers": "^0.4.34",
-    "@teselagen/ove": "^0.8.32",
+    "@teselagen/ove": "^0.8.34",
     "@yarnpkg/core": "^4.5.0",
     "@yarnpkg/fslib": "^3.1.4",
     "@yarnpkg/libzip": "^3.2.2",
@@ -74,6 +73,7 @@
     "terser": "^5.46.0",
     "terser-webpack-plugin": "^5.3.16",
     "tinymce": "^6.8.6",
+    "tom-select": "^2.5.0",
     "ts-loader": "^9.5.4",
     "typescript": "5.9.3",
     "util": "^0.12.5",
@@ -81,7 +81,7 @@
     "webpack-cli": "^6.0.1"
   },
   "resolutions": {
-    "fast-xml-parser": "^4.4.1",
+    "fast-xml-parser": "^5.3.4",
     "micromatch": "^4.0.8",
     "path-to-regexp": "^1.9.0",
     "cross-spawn": "^7.0.5",

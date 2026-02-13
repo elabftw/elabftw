@@ -71,7 +71,7 @@ if (document.getElementById('users-table')) {
     const TeamsRenderer = ({ value }) => {
       const items = value
         .map(team => (
-          <span className={`mr-2 ${team.is_admin ? 'admin' : 'user'}-badge ${team.is_archived ? 'bg-medium' : ''}`} key={team.id} data-id={team.id}>
+          <span className={`mr-2 ${team.is_admin ? 'admin' : 'user'}-badge ${team.is_archived ? 'bg-medium color-thirdlevel' : ''}`} key={team.id} data-id={team.id}>
             {team.name}
           </span>
         ));
@@ -187,6 +187,7 @@ if (document.getElementById('users-table')) {
           placeholder={i18next.t('search')}
           onChange={onQuickFilterChange}
           className={'form-control mb-2'}
+          aria-label={i18next.t('search')}
         />
       <div
         className={isDark ? 'ag-theme-alpine-dark' : 'ag-theme-alpine'} style={{ height: 650 }}>

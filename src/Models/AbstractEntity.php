@@ -95,6 +95,7 @@ use function json_encode;
 use function ksort;
 use function mb_substr;
 use function sprintf;
+use function str_contains;
 
 use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;

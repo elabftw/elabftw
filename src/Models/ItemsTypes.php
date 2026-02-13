@@ -32,6 +32,8 @@ final class ItemsTypes extends AbstractTemplateEntity
     use RandomColorTrait;
     use InsertTagsTrait;
 
+    protected const string CREATE_TEAM_PERMISSION_KEY = 'users_canwrite_resources_templates';
+
     public EntityType $entityType = EntityType::ItemsTypes;
 
     #[Override]

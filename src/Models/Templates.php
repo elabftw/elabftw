@@ -31,6 +31,8 @@ final class Templates extends AbstractTemplateEntity
     use SortableTrait;
     use InsertTagsTrait;
 
+    protected const string CREATE_TEAM_PERMISSION_KEY = 'users_canwrite_experiments_templates';
+
     public EntityType $entityType = EntityType::Templates;
 
     // color is here just to be on par with itemstypes

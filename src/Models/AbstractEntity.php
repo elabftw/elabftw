@@ -38,6 +38,7 @@ use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -108,6 +109,8 @@ abstract class AbstractEntity extends AbstractRest
     use EntityTrait;
 
     public const string EMPTY_CAN_JSON = '{"teams": [], "teamgroups": [], "users": []}';
+
+    protected const string CREATE_TEAM_PERMISSION_KEY = '';
 
     public Comments $Comments;
 
@@ -222,7 +225,7 @@ abstract class AbstractEntity extends AbstractRest
     public function postAction(Action $action, array $reqBody): int
     {
         if (in_array($action, array(Action::Create, Action::Duplicate), true)) {
-            $this->guardTemplateWritePermissions();
+            $this->guardTemplateCreation();
         }
         return match ($action) {
             Action::Create => (
@@ -486,9 +489,6 @@ abstract class AbstractEntity extends AbstractRest
         if ($state === State::Archived->value && $action !== Action::Unarchive) {
             throw new UnprocessableContentException(_('Only the Unarchive action is allowed on an archived entity.'));
         }
-
-        // block ALL patch operations on templates if team disallows it
-        $this->guardTemplateWritePermissions();
 
         $requiredAccess = 'write';
         // some actions only require read access even if they are using PATCH verb
@@ -944,6 +944,8 @@ abstract class AbstractEntity extends AbstractRest
         return $this->readOne();
     }
 
+    abstract protected function getCreatePermissionFromTeam(array $teamConfigArr): bool;
+
     // TODO refactor with canOrExplode()
     // this is bad code, refactor of all this will come later
     protected function canWrite(): bool
@@ -1240,23 +1242,16 @@ abstract class AbstractEntity extends AbstractRest
         return $sent;
     }
 
-    // Check user permissions to create and edit templates (team level)
-    private function guardTemplateWritePermissions(): void
+    // Check user permissions to create templates (team level)
+    private function guardTemplateCreation(): void
     {
         // admins are always allowed
         if ($this->Users->isAdmin) {
             return;
         }
         $teamConfigArr = new Teams($this->Users, $this->Users->team)->readOne();
-        $permissionByPath = array(
-            'experiments_templates' => 'users_canwrite_experiments_templates',
-            'items_types' => 'users_canwrite_resources_templates',
-        );
-        foreach ($permissionByPath as $path => $permissionKey) {
-            if (str_contains($this->getApiPath(), $path) &&
-                (int) ($teamConfigArr[$permissionKey] ?? 0) === 0) {
-                throw new UnauthorizedException(Messages::InsufficientPermissions->toHuman());
-            }
+        if ($this->getCreatePermissionFromTeam($teamConfigArr) === false) {
+            throw new ForbiddenException();
         }
     }
 }

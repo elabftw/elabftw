@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Override;
+
 /**
  * An entity like Experiments or Items. Concrete as opposed to TemplateEntity for experiments templates or items types
  */
@@ -27,6 +29,13 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
         return (int) $req->fetchColumn();
+    }
+
+    #[Override]
+    protected function getCreatePermissionFromTeam(array $teamConfigArr): bool
+    {
+        // no team level permissions for this yet
+        return true;
     }
 
     protected function getNextCustomId(?int $category): ?int

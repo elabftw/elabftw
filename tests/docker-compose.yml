@@ -37,7 +37,6 @@ services:
             - ELAB_AWS_ACCESS_KEY=yep
             - ELAB_AWS_SECRET_KEY=yop
             - MAX_PHP_MEMORY=512M
-            - TEST_SECRET_FILE=/run/secrets/test_secret
         healthcheck:
             test: /etc/nginx/healthcheck.sh
             interval: 10s
@@ -49,8 +48,6 @@ services:
             - /elabftw/cache:uid=1000,gid=1000
         networks:
             - elabftw-net
-        secrets:
-            - test_secret
         depends_on:
             mysql:
                 condition: service_healthy
@@ -107,7 +104,3 @@ services:
 
 networks:
     elabftw-net:
-
-secrets:
-    test_secret:
-        file: ./test_secret

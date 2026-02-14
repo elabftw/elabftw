@@ -122,6 +122,7 @@ final class StorageUnits extends AbstractRest
         );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':storage_id', $storageId, PDO::PARAM_INT);
+        $req->bindValue(':userid', $this->requester->userid, PDO::PARAM_INT);
         $req->execute();
         return $req->fetchAll();
     }
@@ -145,6 +146,7 @@ final class StorageUnits extends AbstractRest
         }
         $req = $this->Db->prepare($sql);
         $req->bindValue(':query', '%' . $queryParams->getQuery()->getString('q') . '%');
+        $req->bindValue(':userid', $this->requester->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $req->fetchAll();

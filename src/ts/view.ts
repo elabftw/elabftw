@@ -12,7 +12,7 @@ import { entity } from './getEntity';
 import { on } from './handlers';
 import i18next from './i18n';
 import { Action, Model } from './interfaces';
-import { relativeMoment, reloadElements } from './misc';
+import { reloadElements } from './misc';
 
 const mode = new URLSearchParams(window.location.search).get('mode');
 if (mode === 'view') {
@@ -27,7 +27,6 @@ if (mode === 'view') {
       // we reload all so the edition date is also reloaded
       reloadElements(['commentsDiv']).then(() => {
         malleableComments.listen();
-        relativeMoment();
       });
       return json.comment;
     },
@@ -44,7 +43,6 @@ if (mode === 'view') {
     ApiC.post(`${entity.type}/${entity.id}/${Model.Comment}`, {comment: content}).then(() => {
       reloadElements(['commentsDiv']).then(() => {
         malleableComments.listen();
-        relativeMoment();
       });
     });
   });

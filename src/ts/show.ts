@@ -96,6 +96,7 @@ function addHiddenInputToMainSearchForm(name: string, value: string): void
   const input = document.createElement('input');
   input.hidden = true;
   input.name = name;
+  input.setAttribute('aria-label', name);
   input.value = value;
   input.id = hiddenInputId;
   form.appendChild(input);

@@ -615,7 +615,7 @@ CREATE TABLE `idps_endpoints` (
         FOREIGN KEY (idp)
         REFERENCES idps(id)
         ON DELETE CASCADE,
-    UNIQUE KEY uniq_idp_bdg_loc (idp, binding, location)
+    UNIQUE KEY uniq_idp_bdg_loc (idp, binding, location, is_slo)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 -- --------------------------------------------------------
 
@@ -1192,10 +1192,14 @@ CREATE TABLE `teams` (
   `name` varchar(255) NOT NULL,
   `user_create_tag` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `force_exp_tpl` tinyint UNSIGNED NOT NULL DEFAULT 0,
+  `users_canwrite_experiments` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
   `users_canwrite_experiments_categories` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
   `users_canwrite_experiments_status` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
+  `users_canwrite_experiments_templates` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
+  `users_canwrite_resources` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
   `users_canwrite_resources_categories` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
   `users_canwrite_resources_status` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
+  `users_canwrite_resources_templates` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `orgid` varchar(255) NULL DEFAULT NULL,
   `visible` tinyint UNSIGNED NOT NULL DEFAULT 1,

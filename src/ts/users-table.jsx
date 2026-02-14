@@ -187,6 +187,7 @@ if (document.getElementById('users-table')) {
           placeholder={i18next.t('search')}
           onChange={onQuickFilterChange}
           className={'form-control mb-2'}
+          aria-label={i18next.t('search')}
         />
       <div
         className={isDark ? 'ag-theme-alpine-dark' : 'ag-theme-alpine'} style={{ height: 650 }}>

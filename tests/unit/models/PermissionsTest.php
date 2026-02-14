@@ -13,7 +13,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
-use Elabftw\Exceptions\UnauthorizedException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Models\Users\AuthenticatedUser;
 use Elabftw\Traits\TestsUtilsTrait;
 
@@ -57,7 +57,7 @@ class PermissionsTest extends \PHPUnit\Framework\TestCase
         $perm = json_decode(AbstractEntity::EMPTY_CAN_JSON, true);
         $perm['teams'] = array();
         $alphaExp->patch(Action::Update, array('canread' => json_encode($perm)));
-        $this->expectException(UnauthorizedException::class);
+        $this->expectException(ForbiddenException::class);
         $bravoExp->readOne();
     }
 }

@@ -828,8 +828,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('statusFilterPlaceholder').remove();
         this._allOptions = Object.values(this.options);
 
-        // When false, show only categories belonging to current team.
-        // When true, show all categories.
+        // When false, show only status belonging to current team.
+        // When true, show all status.
         this._showAll = false;
 
         applyTeamFilter(this);

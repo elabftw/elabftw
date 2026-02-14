@@ -78,7 +78,7 @@
           >
             <option data-current-team='1' value='' class='dropdown-header' data-action='clear'>{{ 'Filter category'|trans }}</option>
             <option data-current-team='1' value='null'
-              {{- App.Request.query.get('category') == 'null' ? ' selected' -}}
+              {{- 'null' in App.Request.query.get('category')|split(',') ? ' selected' -}}
             >
             {{ 'No category set'|trans }}</option>
             {% for category in categoryArr %}
@@ -105,7 +105,7 @@
           >
             <option data-current-team='1' value='' class='dropdown-header' data-action='clear'>{{ 'Filter status'|trans }}</option>
             <option data-current-team='1' value='null'
-              {{- App.Request.query.get('status') == 'null' ? ' selected' -}}
+              {{- 'null' in App.Request.query.get('status')|split(',') ? ' selected' -}}
             >
             {{ 'No status set'|trans }}</option>
             {% for status in statusArr %}

@@ -103,7 +103,8 @@ function addHiddenInputToMainSearchForm(name: string, value: string): void
 }
 
 function setExpandedAndSelectedEntities(): void {
-  const state = JSON.parse(document.getElementById('showModeContent').dataset.expandedAndSelectedEntities);
+  type ExpandedAndSelectedEntitiesState = { expanded: boolean; selectedEntities: string[]; expendedEntities: string[] };
+  const state = JSON.parse(document.getElementById('showModeContent').dataset.expandedAndSelectedEntities) as ExpandedAndSelectedEntitiesState;
   if (state.expanded) {
     const linkEl = document.querySelector('[data-action="expand-all-entities"]') as HTMLLinkElement;
     linkEl.dataset.status = 'opened';
@@ -189,9 +190,19 @@ function getExpandedAndSelectedEntities(): void {
   document.getElementById('showModeContent').dataset.expandedAndSelectedEntities = JSON.stringify({expanded, selectedEntities, expendedEntities});
 }
 
-type AnyTS = TomSelect & {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  _allOptions?: any[];
+type TomSelectOptionLike = Record<string, unknown> & {
+  $option?: Element | null;
+};
+
+type ToggleableTomSelect = TomSelect & {
+  [key: string]: unknown;
+};
+
+type TomSelectWithAllOptions = ToggleableTomSelect & {
+  _allOptions?: TomSelectOptionLike[];
+};
+
+type AnyTS = TomSelectWithAllOptions & {
   _showArchived?: boolean;
 };
 const bound = new WeakSet<Element>();
@@ -240,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
         remove_button: {},
       },
       onInitialize(this: AnyTS) {
-        this._allOptions = Object.values(this.options);
+        this._allOptions = Object.values(this.options) as TomSelectOptionLike[];
         this._showArchived = false;
         applyToggleFilter(this, '_showArchived', isArchivedOption);
       },
@@ -443,7 +454,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       (el as HTMLButtonElement).disabled = true;
       ApiC.notifOnSaved = false;
-      const ajaxs = [];
+      const ajaxs: Promise<unknown>[] = [];
       const form = document.getElementById('multiChangesForm');
       const params = collectForm(form);
       clearForm(form);
@@ -477,7 +488,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // TOGGLE DISPLAY
     } else if (el.matches('[data-action="toggle-items-layout"]')) {
       ApiC.notifOnSaved = false;
-      ApiC.getJson(`${Model.User}/me`).then(json => {
+      ApiC.getJson(`${Model.User}/me`).then((json: { display_mode?: string }) => {
         let target = 'it';
         if (json['display_mode'] === 'it') {
           target = 'tb';
@@ -646,8 +657,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  type TeamScopedTomSelect = TomSelect & {
-    _allOptions?: any[];
+  type TeamScopedTomSelect = TomSelectWithAllOptions & {
     _showAll?: boolean;
   };
 
@@ -656,7 +666,7 @@ document.addEventListener('DOMContentLoaded', () => {
     checkboxClass: string,
     label: string,
   ) {
-    return (data: any) => `
+    return (data: { headerClass: string; titleRowClass: string }) => `
       <div class="${data.headerClass}">
         <div class="${data.titleRowClass}" style="display:flex; align-items:center; gap:12px;">
           <div>${title}</div>
@@ -669,32 +679,32 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
   }
 
-  function getOptionFlag(opt: any, attr: string): boolean {
+  function getOptionFlag(opt: TomSelectOptionLike | undefined | null, attr: string): boolean {
     const el = opt?.$option as HTMLOptionElement | undefined;
     const raw = el?.getAttribute(attr) ?? '0';
     return raw === '1';
   }
 
-  function isCurrentTeamOption(opt: any): boolean {
+  function isCurrentTeamOption(opt: TomSelectOptionLike | undefined | null): boolean {
     return getOptionFlag(opt, 'data-current-team');
   }
 
-  function isArchivedOption(opt: any): boolean {
+  function isArchivedOption(opt: TomSelectOptionLike | undefined | null): boolean {
     return getOptionFlag(opt, 'data-is-archived');
   }
 
   function applyToggleFilter(
-    control: TomSelect & { _allOptions?: any[] },
+    control: TomSelectWithAllOptions,
     flagKey: string,
-    hideWhenFlagFalse: (opt: any) => boolean,
+    hideWhenFlagFalse: (opt: TomSelectOptionLike) => boolean,
   ) {
     const selected = new Set(control.items.map(String));
-    const flagOn = !!(control as any)[flagKey];
+    const flagOn = !!control[flagKey];
 
     if (flagOn) {
-      for (const opt of (control as any)._allOptions ?? []) control.addOption(opt);
+      for (const opt of control._allOptions ?? []) control.addOption(opt);
     } else {
-      for (const opt of (control as any)._allOptions ?? []) {
+      for (const opt of control._allOptions ?? []) {
         const id = String(opt[control.settings.valueField]);
         if (hideWhenFlagFalse(opt) && !selected.has(id)) {
           control.removeOption(id);
@@ -709,7 +719,7 @@ document.addEventListener('DOMContentLoaded', () => {
     applyToggleFilter(control, '_showAll', (opt) => !isCurrentTeamOption(opt));
   }
 
-  function syncMultiSelectParam(param: string, value: any) {
+  function syncMultiSelectParam(param: string, value: string | string[] | null | undefined) {
     const url = new URL(window.location.href);
 
     // Tom Select gives an array for multi-select; normalize just in case
@@ -728,7 +738,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function bindDropdownToggle(
-    control: TomSelect & Record<string, any>,
+    control: ToggleableTomSelect,
     selector: string,
     flagKey: string,
     onToggle: (checked: boolean) => void,
@@ -737,7 +747,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!cb) return;
 
     // Always sync UI to current state when dropdown opens
-    cb.checked = !!(control as any)[flagKey];
+    cb.checked = !!control[flagKey];
 
     // Bind once per checkbox element
     if (bound.has(cb)) return;
@@ -745,13 +755,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     cb.addEventListener('change', (ev) => {
       const checked = (ev.currentTarget as HTMLInputElement).checked;
-      (control as any)[flagKey] = checked;
+      control[flagKey] = checked;
       onToggle(checked);
     });
   }
 
   function bindShowAllToggle(control: TeamScopedTomSelect) {
-    bindDropdownToggle(control as any, '.ts-toggle-show-all', '_showAll', (checked) => {
+    bindDropdownToggle(control, '.ts-toggle-show-all', '_showAll', (checked) => {
       const url = new URL(window.location.href);
       if (checked) url.searchParams.set('scope', '3');
       else url.searchParams.delete('scope');
@@ -786,13 +796,13 @@ document.addEventListener('DOMContentLoaded', () => {
       onInitialize(this: TeamScopedTomSelect) {
         document.getElementById(cfg.placeholderId)?.remove();
 
-        this._allOptions = Object.values(this.options);
+        this._allOptions = Object.values(this.options) as TomSelectOptionLike[];
         this._showAll = false;
 
         applyTeamFilter(this);
       },
 
-      onChange(value: any) {
+      onChange(value: string | string[] | null | undefined) {
         syncMultiSelectParam(cfg.param, value);
         reloadEntitiesShow();
       },
@@ -824,17 +834,17 @@ document.addEventListener('DOMContentLoaded', () => {
       // remove the placeholder input once the select is ready
       document.getElementById('tagFilterPlaceholder').remove();
     },
-    onChange: value => {
+    onChange: (value: unknown) => {
       const url = new URL(window.location.href);
       url.searchParams.delete('tags[]');
-      value.forEach(tag => {
+      (value as string[]).forEach(tag => {
         params.append('tags[]', tag);
         url.searchParams.append('tags[]', tag);
       });
-      if (value.length === 0) {
+      if ((value as string[]).length === 0) {
         url.searchParams.delete('tags[]');
       }
-      addHiddenInputToMainSearchForm('tags[]', value.toString());
+      addHiddenInputToMainSearchForm('tags[]', (value as string[]).toString());
 
       window.history.replaceState({}, '', url.toString());
       reloadEntitiesShow();

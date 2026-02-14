@@ -56,7 +56,7 @@ final class DeviceToken
 
     public static function getConfig(): Configuration
     {
-        $secretKey = Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY'));
+        $secretKey = Key::loadFromAsciiSafeString(Env::asStringFromFile('SECRET_KEY'));
         /** @psalm-suppress ArgumentTypeCoercion */
         $config = Configuration::forSymmetricSigner(
             new Sha256(),

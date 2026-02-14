@@ -44,7 +44,7 @@ try {
     }
 
     // validate the key to show error if the key is expired
-    $ResetPasswordKey = new ResetPasswordKey(time(), Env::asString('SECRET_KEY'));
+    $ResetPasswordKey = new ResetPasswordKey(time(), Env::asStringFromFile('SECRET_KEY'));
     $ResetPasswordKey->validate($App->Request->query->getAlnum('key'));
 
     $passwordComplexity = PasswordComplexity::from((int) $App->Config->configArr['password_complexity_requirement']);

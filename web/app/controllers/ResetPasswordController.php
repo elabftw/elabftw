@@ -37,7 +37,7 @@ use function time;
 require_once dirname(__DIR__) . '/init.inc.php';
 
 $Response = new RedirectResponse('/login.php');
-$ResetPasswordKey = new ResetPasswordKey(time(), Env::asString('SECRET_KEY'));
+$ResetPasswordKey = new ResetPasswordKey(time(), Env::asStringFromFile('SECRET_KEY'));
 
 try {
     if ($App->Config->configArr['local_auth_enabled'] === '0') {

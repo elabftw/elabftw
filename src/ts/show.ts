@@ -103,7 +103,8 @@ function addHiddenInputToMainSearchForm(name: string, value: string): void
 }
 
 function setExpandedAndSelectedEntities(): void {
-  const state = JSON.parse(document.getElementById('showModeContent').dataset.expandedAndSelectedEntities);
+  type ExpandedAndSelectedEntitiesState = { expanded: boolean; selectedEntities: string[]; expendedEntities: string[] };
+  const state = JSON.parse(document.getElementById('showModeContent').dataset.expandedAndSelectedEntities) as ExpandedAndSelectedEntitiesState;
   if (state.expanded) {
     const linkEl = document.querySelector('[data-action="expand-all-entities"]') as HTMLLinkElement;
     linkEl.dataset.status = 'opened';
@@ -189,9 +190,19 @@ function getExpandedAndSelectedEntities(): void {
   document.getElementById('showModeContent').dataset.expandedAndSelectedEntities = JSON.stringify({expanded, selectedEntities, expendedEntities});
 }
 
-type AnyTS = TomSelect & {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  _allOptions?: any[];
+type TomSelectOptionLike = Record<string, unknown> & {
+  $option?: Element | null;
+};
+
+type ToggleableTomSelect = TomSelect & {
+  [key: string]: unknown;
+};
+
+type TomSelectWithAllOptions = ToggleableTomSelect & {
+  _allOptions?: TomSelectOptionLike[];
+};
+
+type AnyTS = TomSelectWithAllOptions & {
   _showArchived?: boolean;
 };
 const bound = new WeakSet<Element>();
@@ -232,28 +243,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const tsFilterOwner = new TomSelect('#filterOwner', {
       maxOptions: 512,
       plugins: {
-        'dropdown_header': {
+        dropdown_header: {
           title: 'Users',
-          html(data) {
-            return `
-              <div class="${data.headerClass}">
-                <div class="${data.titleRowClass}" style="display:flex; align-items:center; gap:12px;">
-                  <label style="margin-left:auto; display:flex; align-items:center; gap:6px; font-weight:normal;">
-                    <input type="checkbox" class="ts-toggle-archived">
-                    Show archived
-                  </label>
-                </div>
-              </div>
-            `;
-          },
+          html: buildDropdownToggleHeaderHtml(i18next.t('users'), 'ts-toggle-archived', i18next.t('show-archived')),
         },
         dropdown_input: {},
         remove_button: {},
       },
-      onInitialize() {
-        this._allOptions = Object.values(this.options);
+      onInitialize(this: AnyTS) {
+        this._allOptions = Object.values(this.options) as TomSelectOptionLike[];
         this._showArchived = false;
-        applyArchivedFilter(this);
+        applyToggleFilter(this, '_showArchived', isArchivedOption);
       },
       render: {
         option(data: AnyTS, escape: (s: string) => string) {
@@ -271,41 +271,11 @@ document.addEventListener('DOMContentLoaded', () => {
           return `<div>${icon}${escape(data.text ?? data.name ?? '')}</div>`;
         },
       },
-    });
-
-    function isArchivedOption(opt): boolean {
-      const el = opt?.$option as HTMLOptionElement | undefined;
-      const raw = el?.getAttribute('data-is-archived') ?? '0';
-      return raw === '1';
-    }
-
-    function applyArchivedFilter(control: AnyTS): void {
-      const selected = new Set(control.items.map(String));
-
-      if (control._showArchived) {
-        for (const opt of control._allOptions ?? []) control.addOption(opt);
-      } else {
-        for (const opt of control._allOptions ?? []) {
-          const id = String(opt[control.settings.valueField]);
-          if (isArchivedOption(opt) && !selected.has(id)) {
-            control.removeOption(id);
-          }
-        }
-      }
-
-      control.refreshOptions(false);
-    }
+    }) as AnyTS;
 
     tsFilterOwner.on('dropdown_open', () => {
-      const cb = tsFilterOwner.dropdown.querySelector('.ts-toggle-archived') as HTMLInputElement|null;
-      if (!cb) return;
-      if (bound.has(cb)) return;
-      bound.add(cb);
-
-      cb.checked = tsFilterOwner._showArchived;
-      cb.addEventListener('change', (ev) => {
-        tsFilterOwner._showArchived = (ev.currentTarget as HTMLInputElement).checked;
-        applyArchivedFilter(tsFilterOwner);
+      bindDropdownToggle(tsFilterOwner, '.ts-toggle-archived', '_showArchived', () => {
+        applyToggleFilter(tsFilterOwner, '_showArchived', isArchivedOption);
         tsFilterOwner.open();
       });
     });
@@ -484,7 +454,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       (el as HTMLButtonElement).disabled = true;
       ApiC.notifOnSaved = false;
-      const ajaxs = [];
+      const ajaxs: Promise<unknown>[] = [];
       const form = document.getElementById('multiChangesForm');
       const params = collectForm(form);
       clearForm(form);
@@ -518,7 +488,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // TOGGLE DISPLAY
     } else if (el.matches('[data-action="toggle-items-layout"]')) {
       ApiC.notifOnSaved = false;
-      ApiC.getJson(`${Model.User}/me`).then(json => {
+      ApiC.getJson(`${Model.User}/me`).then((json: { display_mode?: string }) => {
         let target = 'it';
         if (json['display_mode'] === 'it') {
           target = 'tb';
@@ -687,22 +657,194 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  type TeamScopedTomSelect = TomSelectWithAllOptions & {
+    _showAll?: boolean;
+  };
+
+  function buildDropdownToggleHeaderHtml(
+    title: string,
+    checkboxClass: string,
+    label: string,
+  ) {
+    return (data: { headerClass: string; titleRowClass: string }) => `
+      <div class="${data.headerClass}">
+        <div class="${data.titleRowClass}" style="display:flex; align-items:center; gap:12px;">
+          <div>${title}</div>
+          <label style="margin-left:auto; display:flex; align-items:center; gap:6px; font-weight:normal;">
+            <input type="checkbox" class="${checkboxClass}">
+            ${label}
+          </label>
+        </div>
+      </div>
+    `;
+  }
+
+  function getOptionFlag(opt: TomSelectOptionLike | undefined | null, attr: string): boolean {
+    const el = opt?.$option as HTMLOptionElement | undefined;
+    const raw = el?.getAttribute(attr) ?? '0';
+    return raw === '1';
+  }
+
+  function isCurrentTeamOption(opt: TomSelectOptionLike | undefined | null): boolean {
+    return getOptionFlag(opt, 'data-current-team');
+  }
+
+  function isArchivedOption(opt: TomSelectOptionLike | undefined | null): boolean {
+    return getOptionFlag(opt, 'data-is-archived');
+  }
+
+  function applyToggleFilter(
+    control: TomSelectWithAllOptions,
+    flagKey: string,
+    hideWhenFlagFalse: (opt: TomSelectOptionLike) => boolean,
+  ) {
+    const selected = new Set(control.items.map(String));
+    const flagOn = !!control[flagKey];
+
+    if (flagOn) {
+      for (const opt of control._allOptions ?? []) control.addOption(opt);
+    } else {
+      for (const opt of control._allOptions ?? []) {
+        const id = String(opt[control.settings.valueField]);
+        if (hideWhenFlagFalse(opt) && !selected.has(id)) {
+          control.removeOption(id);
+        }
+      }
+    }
+
+    control.refreshOptions(false);
+  }
+
+  function applyTeamFilter(control: TeamScopedTomSelect) {
+    applyToggleFilter(control, '_showAll', (opt) => !isCurrentTeamOption(opt));
+  }
+
+  function syncMultiSelectParam(param: string, value: string | string[] | null | undefined) {
+    const url = new URL(window.location.href);
+
+    // Tom Select gives an array for multi-select; normalize just in case
+    const selected = Array.isArray(value) ? value : value ? [value] : [];
+
+    if (selected.length === 0) {
+      url.searchParams.delete(param);
+      addHiddenInputToMainSearchForm(param, '');
+    } else {
+      const joined = selected.join(',');
+      url.searchParams.set(param, joined); // param=1,2,5
+      addHiddenInputToMainSearchForm(param, joined);
+    }
+
+    window.history.replaceState({}, '', url.toString());
+  }
+
+  function bindDropdownToggle(
+    control: ToggleableTomSelect,
+    selector: string,
+    flagKey: string,
+    onToggle: (checked: boolean) => void,
+  ) {
+    const cb = control.dropdown?.querySelector(selector) as HTMLInputElement | null;
+    if (!cb) return;
+
+    // Always sync UI to current state when dropdown opens
+    cb.checked = !!control[flagKey];
+
+    // Bind once per checkbox element
+    if (bound.has(cb)) return;
+    bound.add(cb);
+
+    cb.addEventListener('change', (ev) => {
+      const checked = (ev.currentTarget as HTMLInputElement).checked;
+      control[flagKey] = checked;
+      onToggle(checked);
+    });
+  }
+
+  function bindShowAllToggle(control: TeamScopedTomSelect) {
+    bindDropdownToggle(control, '.ts-toggle-show-all', '_showAll', (checked) => {
+      const url = new URL(window.location.href);
+      if (checked) url.searchParams.set('scope', '3');
+      else url.searchParams.delete('scope');
+      window.history.replaceState({}, '', url.toString());
+
+      applyTeamFilter(control);
+      control.open(); // keep it open after filtering
+      reloadEntitiesShow();
+    });
+  }
+
+  function initTeamScopedFilter(cfg: {
+    selectId: string;         // e.g. "categoryFilter"
+    placeholderId: string;    // e.g. "categoryFilterPlaceholder"
+    title: string;            // e.g. "Categories"
+    param: string;            // e.g. "category"
+  }) {
+    const el = document.getElementById(cfg.selectId);
+    if (!el) return;
+
+    const control = new TomSelect(`#${cfg.selectId}`, {
+      maxOptions: 512,
+      plugins: {
+        dropdown_header: {
+          title: cfg.title,
+          html: buildDropdownToggleHeaderHtml(cfg.title, 'ts-toggle-show-all', i18next.t('show-all')),
+        },
+        dropdown_input: {},
+        remove_button: {},
+      },
+
+      onInitialize(this: TeamScopedTomSelect) {
+        document.getElementById(cfg.placeholderId)?.remove();
+
+        this._allOptions = Object.values(this.options) as TomSelectOptionLike[];
+        this._showAll = false;
+
+        applyTeamFilter(this);
+      },
+
+      onChange(value: string | string[] | null | undefined) {
+        syncMultiSelectParam(cfg.param, value);
+        reloadEntitiesShow();
+      },
+    }) as TeamScopedTomSelect;
+
+    control.on('dropdown_open', () => bindShowAllToggle(control));
+
+    return control;
+  }
+
+  // category tomSelect
+  initTeamScopedFilter({
+    selectId: 'categoryFilter',
+    placeholderId: 'categoryFilterPlaceholder',
+    title: i18next.t('categories'),
+    param: 'category',
+  });
+
+  // status tomSelect
+  initTeamScopedFilter({
+    selectId: 'statusFilter',
+    placeholderId: 'statusFilterPlaceholder',
+    title: i18next.t('status'),
+    param: 'status',
+  });
+
   new TomSelect('#tagFilter', {
     onInitialize: () => {
       // remove the placeholder input once the select is ready
       document.getElementById('tagFilterPlaceholder').remove();
     },
-    onChange: value => {
+    onChange: (value: unknown) => {
       const url = new URL(window.location.href);
       url.searchParams.delete('tags[]');
-      value.forEach(tag => {
+      (value as string[]).forEach(tag => {
         params.append('tags[]', tag);
         url.searchParams.append('tags[]', tag);
       });
-      if (value.length === 0) {
+      if ((value as string[]).length === 0) {
         url.searchParams.delete('tags[]');
       }
-      addHiddenInputToMainSearchForm('tags[]', value.toString());
+      addHiddenInputToMainSearchForm('tags[]', (value as string[]).toString());
 
       window.history.replaceState({}, '', url.toString());
       reloadEntitiesShow();

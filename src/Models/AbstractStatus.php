@@ -75,7 +75,7 @@ abstract class AbstractStatus extends AbstractCategory
     #[Override]
     public function readOne(): array
     {
-        $sql = sprintf('SELECT id, title, color, is_default, ordering, state, team
+        $sql = sprintf('SELECT id, title, color, is_default, ordering, state, team, is_private
             FROM %s WHERE id = :id', $this->table);
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -101,10 +101,12 @@ abstract class AbstractStatus extends AbstractCategory
                 entity.ordering,
                 entity.state,
                 entity.team,
+                entity.is_private,
                 teams.name AS team_name,
                 CASE WHEN entity.team = :team THEN 1 ELSE 0 END AS is_current_team
              FROM %s AS entity
-             INNER JOIN teams ON teams.id = entity.team',
+             INNER JOIN teams ON teams.id = entity.team
+             WHERE entity.is_private = 0 OR entity.team = :team',
             $this->table
         );
 

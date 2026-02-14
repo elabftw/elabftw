@@ -406,19 +406,6 @@ CREATE TABLE `experiments_templates_revisions` (
 
 -- --------------------------------------------------------
 
-CREATE TABLE `experiments_templates_status` (
-  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
-  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `modified_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `team` int UNSIGNED NOT NULL,
-  `title` varchar(255) NOT NULL,
-  `color` varchar(6) NOT NULL,
-  `is_default` tinyint UNSIGNED DEFAULT NULL,
-  `ordering` int UNSIGNED DEFAULT NULL,
-  `state` INT UNSIGNED NOT NULL DEFAULT 1,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
-
 --
 -- Table structure for table `experiments_templates_comments`
 --
@@ -692,6 +679,7 @@ CREATE TABLE `items_categories` (
   `title` varchar(255) NOT NULL,
   `color` varchar(6) NOT NULL,
   `is_default` tinyint UNSIGNED DEFAULT NULL,
+  `is_private` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `ordering` int UNSIGNED DEFAULT NULL,
   `state` INT UNSIGNED NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`)
@@ -1071,6 +1059,7 @@ CREATE TABLE `experiments_status` (
   `title` varchar(255) NOT NULL,
   `color` varchar(6) NOT NULL,
   `is_default` tinyint UNSIGNED DEFAULT NULL,
+  `is_private` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `ordering` int(10) UNSIGNED DEFAULT NULL,
   `state` INT UNSIGNED NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`)
@@ -1090,6 +1079,7 @@ CREATE TABLE `experiments_categories` (
   `title` varchar(255) NOT NULL,
   `color` varchar(6) NOT NULL,
   `is_default` tinyint UNSIGNED DEFAULT NULL,
+  `is_private` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `ordering` int UNSIGNED DEFAULT NULL,
   `state` INT UNSIGNED NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`)
@@ -1106,19 +1096,7 @@ CREATE TABLE `items_status` (
   `title` varchar(255) NOT NULL,
   `color` varchar(6) NOT NULL,
   `is_default` tinyint UNSIGNED DEFAULT NULL,
-  `ordering` int(10) UNSIGNED DEFAULT NULL,
-  `state` INT UNSIGNED NOT NULL DEFAULT 1,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
-
-CREATE TABLE `items_types_status` (
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `modified_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `team` int(10) UNSIGNED NOT NULL,
-  `title` varchar(255) NOT NULL,
-  `color` varchar(6) NOT NULL,
-  `is_default` tinyint UNSIGNED DEFAULT NULL,
+  `is_private` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `ordering` int(10) UNSIGNED DEFAULT NULL,
   `state` INT UNSIGNED NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`)
@@ -1564,9 +1542,6 @@ ALTER TABLE `experiments_templates`
   ADD KEY `fk_experiments_templates_users_userid` (`userid`),
   ADD UNIQUE `unique_experiments_templates_custom_id` (`category`, `custom_id`);
 
-ALTER TABLE `experiments_templates_status`
-  ADD CONSTRAINT FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
 --
 -- Indexes and Constraints for table `experiments_templates_comments`
 --
@@ -1958,8 +1933,6 @@ ALTER TABLE `items_status`
   ADD CONSTRAINT `fk_items_status_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `experiments_categories`
   ADD CONSTRAINT `fk_experiments_categories_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE `items_types_status`
-  ADD CONSTRAINT FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `sig_keys`

@@ -71,7 +71,8 @@ describe('Experiments', () => {
     // change category
     cy.get('.malleableCategory').click();
     cy.get(`select:has(option:selected:contains("${category}"))`).first().select(`${categoryTarget}`);
-    cy.get('.form-inline > .btn-primary').click();
+    // blur to validate
+    cy.get('body').click(0, 0);
     cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
     // change status
     cy.get('.malleableStatus').click();

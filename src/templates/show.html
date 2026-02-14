@@ -66,7 +66,7 @@
           {# select is hidden to avoid showing the raw list and a layout change, it shows up with TomSelect #}
           <input placeholder='{{ 'Filter category'|trans }}' id='categoryFilterPlaceholder' class='form-control' aria-label='placeholder for category input' />
           {% if App.devMode -%}
-            <!-- [html-validate-disable-block input-missing-label, prefer-native-element: suppress error from tom-select] -->
+            <!-- [html-validate-disable-block prefer-native-element: suppress error from tom-select] -->
           {%- endif %}
           <select hidden
             id='categoryFilter'
@@ -93,7 +93,7 @@
           {# select is hidden to avoid showing the raw list and a layout change, it shows up with TomSelect #}
           <input placeholder='{{ 'Filter status'|trans }}' id='statusFilterPlaceholder' class='form-control' aria-label='placeholder for status input' />
           {% if App.devMode -%}
-            <!-- [html-validate-disable-block input-missing-label, prefer-native-element: suppress error from tom-select] -->
+            <!-- [html-validate-disable-block prefer-native-element: suppress error from tom-select] -->
           {%- endif %}
           <select hidden
             id='statusFilter'

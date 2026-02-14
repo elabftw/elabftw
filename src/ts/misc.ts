@@ -143,7 +143,7 @@ export function handleReloads(reloadAttributes: string | undefined): void {
     if (toReload === 'reloadEntitiesShow') {
       reloadEntitiesShow();
     } else {
-      reloadElements([toReload]).then(() => relativeMoment());
+      reloadElements([toReload]);
     }
   });
 }
@@ -668,7 +668,7 @@ export async function updateEntityBody(): Promise<void> {
     const lastSavedAt = document.getElementById('lastSavedAt');
     if (lastSavedAt) {
       lastSavedAt.title = json.modified_at;
-      reloadElements(['lastSavedAt']).then(() => relativeMoment());
+      reloadElements(['lastSavedAt']);
     }
   }).catch(() => {
     // detect if the session timedout (Session expired error is thrown)

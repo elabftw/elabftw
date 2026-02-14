@@ -11,7 +11,7 @@ import { entity } from './getEntity';
 import { on } from './handlers';
 import i18next from './i18n';
 import { Action, Model } from './interfaces';
-import { collectForm, relativeMoment, reloadElements } from './misc';
+import { collectForm, reloadElements } from './misc';
 import { notify } from './notify';
 
 if (document.getElementById('topToolbar')) {
@@ -81,7 +81,6 @@ if (document.getElementById('topToolbar')) {
       target_userid: parseInt(params['requested_user'].split(' ')[0], 10),
     }).then(() => {
       reloadElements(['requestActionsDiv']);
-      relativeMoment();
       $('#requestActionModal').modal('hide');
     });
   });

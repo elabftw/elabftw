@@ -645,12 +645,6 @@ abstract class AbstractEntity extends AbstractRest
 
     public function readAllSimple(QueryParamsInterface $displayParams): array
     {
-        $categoryTable = in_array($this->entityType->value, array('items', 'items_types'), true)
-            ? 'items_categories'
-            : 'experiments_categories';
-        $statusTable = in_array($this->entityType->value, array('items', 'items_types'), true)
-            ? 'items_status'
-            : 'experiments_status';
         $CanSqlBuilder = new CanSqlBuilder($this->Users->requester, AccessType::Read);
         $canFilter = $CanSqlBuilder->getCanFilter();
         $displayParams->setSkipOrderPinned(true);
@@ -670,8 +664,8 @@ abstract class AbstractEntity extends AbstractRest
             "' . $this->entityType->value . '" AS type,
             "' . $this->entityType->toPage() . '" AS page
             FROM ' . $this->entityType->value . ' AS entity
-            LEFT JOIN ' . $categoryTable . ' AS categoryt ON entity.category = categoryt.id
-            LEFT JOIN ' . $statusTable . ' AS statust ON entity.status = statust.id
+            LEFT JOIN ' . $this->entityType->toCategoryTable() . ' AS categoryt ON entity.category = categoryt.id
+            LEFT JOIN ' . $this->entityType->toStatusTable() . ' AS statust ON entity.status = statust.id
             LEFT JOIN users ON entity.userid = users.userid
             LEFT JOIN
                 users2teams ON (users2teams.users_id = :userid AND users2teams.teams_id = :teamid)

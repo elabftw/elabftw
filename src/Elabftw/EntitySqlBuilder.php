@@ -20,7 +20,6 @@ use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\AbstractTemplateEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
-use Elabftw\Models\Templates;
 use Override;
 
 use function array_column;
@@ -147,15 +146,11 @@ final class EntitySqlBuilder implements SqlBuilderInterface
 
     protected function category(): void
     {
-        $this->selectSql[] = 'categoryt.title AS category_title,
-            categoryt.color AS category_color';
+        $this->selectSql[] = 'categoryt.title AS category_title, categoryt.color AS category_color';
 
         $this->joinsSql[] = sprintf(
-            'LEFT JOIN %s AS categoryt
-                ON (categoryt.id = entity.category)',
-            $this->entity->entityType === EntityType::Experiments || $this->entity->entityType === EntityType::Templates
-                ? 'experiments_categories'
-                : 'items_categories',
+            'LEFT JOIN %s AS categoryt ON (categoryt.id = entity.category)',
+            $this->entity->entityType->toCategoryTable()
         );
     }
 
@@ -167,10 +162,11 @@ final class EntitySqlBuilder implements SqlBuilderInterface
 
     protected function status(): void
     {
-        $this->selectSql[] = 'statust.title AS status_title,
-            statust.color AS status_color';
-        $this->joinsSql[] = 'LEFT JOIN ' . $this->getStatusTable() . ' AS statust
-            ON (statust.id = entity.status)';
+        $this->selectSql[] = 'statust.title AS status_title, statust.color AS status_color';
+        $this->joinsSql[] = sprintf(
+            'LEFT JOIN %s AS statust ON (statust.id = entity.status)',
+            $this->entity->entityType->toStatusTable()
+        );
     }
 
     protected function links(EntityType $relatedOrigin): void
@@ -345,14 +341,6 @@ final class EntitySqlBuilder implements SqlBuilderInterface
     protected function canUsers(string $can): string
     {
         return ":userid MEMBER OF (entity.$can->>'$.users')";
-    }
-
-    private function getStatusTable(): string
-    {
-        if ($this->entity instanceof Experiments || $this->entity instanceof Templates) {
-            return 'experiments_status';
-        }
-        return 'items_status';
     }
 
     private function tags(): void

@@ -97,6 +97,8 @@ const t = {
     "saved": "Saqlangan",
     "search": "Qidirmoq",
     "select-resource": "Resurs tanlang",
+    "show-all": "Hammasini ko'rsatish",
+    "show-archived": "Arxivlangan ko'rsatish",
     "show-deleted": "Show deleted",
     "signing": "Signing",
     "sort-by-column": "Ustun bo'yicha saralash",

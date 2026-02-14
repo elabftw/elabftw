@@ -97,6 +97,8 @@ const t = {
     "saved": "Αποθηκεύτηκε",
     "search": "Αναζήτηση",
     "select-resource": "Επιλέξτε έναν πόρο",
+    "show-all": "Προβολή όλων",
+    "show-archived": "Εμφάνιση αρχειοθετημένη",
     "show-deleted": "Show deleted",
     "signing": "Signing",
     "sort-by-column": "Ταξινόμηση ανά στήλη",

@@ -97,6 +97,8 @@ const t = {
     "saved": "Alterações salvas",
     "search": "Busca",
     "select-resource": "Selecione um recurso",
+    "show-all": "Mostrar tudo",
+    "show-archived": "Mostrar arquivados",
     "show-deleted": "Show deleted",
     "signing": "Signing",
     "sort-by-column": "Ordenar por coluna",

@@ -97,6 +97,8 @@ const t = {
     "saved": "Сохранено",
     "search": "Искать",
     "select-resource": "Выберите ресурс",
+    "show-all": "Показать все",
+    "show-archived": "Показать в архиве",
     "show-deleted": "Show deleted",
     "signing": "Signing",
     "sort-by-column": "Сортировать по столбцу",

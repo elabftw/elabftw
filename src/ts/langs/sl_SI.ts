@@ -97,6 +97,8 @@ const t = {
     "saved": "Shranjeno",
     "search": "Išči",
     "select-resource": "Izberite vir",
+    "show-all": "Pokaži vse",
+    "show-archived": "Prikaži arhivirano",
     "show-deleted": "Show deleted",
     "signing": "Signing",
     "sort-by-column": "Razvrsti po stolpcu",

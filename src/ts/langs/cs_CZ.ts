@@ -97,6 +97,8 @@ const t = {
     "saved": "Uloženo",
     "search": "Hledat",
     "select-resource": "Vybrat zdroj",
+    "show-all": "Zobrazit vše",
+    "show-archived": "Zobrazit archivované",
     "show-deleted": "Show deleted",
     "signing": "Signing",
     "sort-by-column": "Setřídit dle sloupce",

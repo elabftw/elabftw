@@ -97,6 +97,8 @@ const t = {
     "saved": "已保存",
     "search": "搜索",
     "select-resource": "选择一个资源",
+    "show-all": "显示全部",
+    "show-archived": "显示已归档",
     "show-deleted": "显示已删除",
     "signing": "Signing",
     "sort-by-column": "按列排序",

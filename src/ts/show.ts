@@ -232,28 +232,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const tsFilterOwner = new TomSelect('#filterOwner', {
       maxOptions: 512,
       plugins: {
-        'dropdown_header': {
+        dropdown_header: {
           title: 'Users',
-          html(data) {
-            return `
-              <div class="${data.headerClass}">
-                <div class="${data.titleRowClass}" style="display:flex; align-items:center; gap:12px;">
-                  <label style="margin-left:auto; display:flex; align-items:center; gap:6px; font-weight:normal;">
-                    <input type="checkbox" class="ts-toggle-archived">
-                    Show archived
-                  </label>
-                </div>
-              </div>
-            `;
-          },
+          html: buildDropdownToggleHeaderHtml(i18next.t('users'), 'ts-toggle-archived', i18next.t('show-archived')),
         },
         dropdown_input: {},
         remove_button: {},
       },
-      onInitialize() {
+      onInitialize(this: AnyTS) {
         this._allOptions = Object.values(this.options);
         this._showArchived = false;
-        applyArchivedFilter(this);
+        applyToggleFilter(this, '_showArchived', isArchivedOption);
       },
       render: {
         option(data: AnyTS, escape: (s: string) => string) {
@@ -271,41 +260,11 @@ document.addEventListener('DOMContentLoaded', () => {
           return `<div>${icon}${escape(data.text ?? data.name ?? '')}</div>`;
         },
       },
-    });
-
-    function isArchivedOption(opt): boolean {
-      const el = opt?.$option as HTMLOptionElement | undefined;
-      const raw = el?.getAttribute('data-is-archived') ?? '0';
-      return raw === '1';
-    }
-
-    function applyArchivedFilter(control: AnyTS): void {
-      const selected = new Set(control.items.map(String));
-
-      if (control._showArchived) {
-        for (const opt of control._allOptions ?? []) control.addOption(opt);
-      } else {
-        for (const opt of control._allOptions ?? []) {
-          const id = String(opt[control.settings.valueField]);
-          if (isArchivedOption(opt) && !selected.has(id)) {
-            control.removeOption(id);
-          }
-        }
-      }
-
-      control.refreshOptions(false);
-    }
+    }) as AnyTS;
 
     tsFilterOwner.on('dropdown_open', () => {
-      const cb = tsFilterOwner.dropdown.querySelector('.ts-toggle-archived') as HTMLInputElement|null;
-      if (!cb) return;
-      if (bound.has(cb)) return;
-      bound.add(cb);
-
-      cb.checked = tsFilterOwner._showArchived;
-      cb.addEventListener('change', (ev) => {
-        tsFilterOwner._showArchived = (ev.currentTarget as HTMLInputElement).checked;
-        applyArchivedFilter(tsFilterOwner);
+      bindDropdownToggle(tsFilterOwner, '.ts-toggle-archived', '_showArchived', () => {
+        applyToggleFilter(tsFilterOwner, '_showArchived', isArchivedOption);
         tsFilterOwner.open();
       });
     });
@@ -687,232 +646,178 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  if (document.getElementById('categoryFilter')) {
-    const tsFilterCategory = new TomSelect('#categoryFilter', {
+  type TeamScopedTomSelect = TomSelect & {
+    _allOptions?: any[];
+    _showAll?: boolean;
+  };
+
+  function buildDropdownToggleHeaderHtml(
+    title: string,
+    checkboxClass: string,
+    label: string,
+  ) {
+    return (data: any) => `
+      <div class="${data.headerClass}">
+        <div class="${data.titleRowClass}" style="display:flex; align-items:center; gap:12px;">
+          <div>${title}</div>
+          <label style="margin-left:auto; display:flex; align-items:center; gap:6px; font-weight:normal;">
+            <input type="checkbox" class="${checkboxClass}">
+            ${label}
+          </label>
+        </div>
+      </div>
+    `;
+  }
+
+  function getOptionFlag(opt: any, attr: string): boolean {
+    const el = opt?.$option as HTMLOptionElement | undefined;
+    const raw = el?.getAttribute(attr) ?? '0';
+    return raw === '1';
+  }
+
+  function isCurrentTeamOption(opt: any): boolean {
+    return getOptionFlag(opt, 'data-current-team');
+  }
+
+  function isArchivedOption(opt: any): boolean {
+    return getOptionFlag(opt, 'data-is-archived');
+  }
+
+  function applyToggleFilter(
+    control: TomSelect & { _allOptions?: any[] },
+    flagKey: string,
+    hideWhenFlagFalse: (opt: any) => boolean,
+  ) {
+    const selected = new Set(control.items.map(String));
+    const flagOn = !!(control as any)[flagKey];
+
+    if (flagOn) {
+      for (const opt of (control as any)._allOptions ?? []) control.addOption(opt);
+    } else {
+      for (const opt of (control as any)._allOptions ?? []) {
+        const id = String(opt[control.settings.valueField]);
+        if (hideWhenFlagFalse(opt) && !selected.has(id)) {
+          control.removeOption(id);
+        }
+      }
+    }
+
+    control.refreshOptions(false);
+  }
+
+  function applyTeamFilter(control: TeamScopedTomSelect) {
+    applyToggleFilter(control, '_showAll', (opt) => !isCurrentTeamOption(opt));
+  }
+
+  function syncMultiSelectParam(param: string, value: any) {
+    const url = new URL(window.location.href);
+
+    // Tom Select gives an array for multi-select; normalize just in case
+    const selected = Array.isArray(value) ? value : value ? [value] : [];
+
+    if (selected.length === 0) {
+      url.searchParams.delete(param);
+      addHiddenInputToMainSearchForm(param, '');
+    } else {
+      const joined = selected.join(',');
+      url.searchParams.set(param, joined); // param=1,2,5
+      addHiddenInputToMainSearchForm(param, joined);
+    }
+
+    window.history.replaceState({}, '', url.toString());
+  }
+
+  function bindDropdownToggle(
+    control: TomSelect & Record<string, any>,
+    selector: string,
+    flagKey: string,
+    onToggle: (checked: boolean) => void,
+  ) {
+    const cb = control.dropdown?.querySelector(selector) as HTMLInputElement | null;
+    if (!cb) return;
+
+    // Always sync UI to current state when dropdown opens
+    cb.checked = !!(control as any)[flagKey];
+
+    // Bind once per checkbox element
+    if (bound.has(cb)) return;
+    bound.add(cb);
+
+    cb.addEventListener('change', (ev) => {
+      const checked = (ev.currentTarget as HTMLInputElement).checked;
+      (control as any)[flagKey] = checked;
+      onToggle(checked);
+    });
+  }
+
+  function bindShowAllToggle(control: TeamScopedTomSelect) {
+    bindDropdownToggle(control as any, '.ts-toggle-show-all', '_showAll', (checked) => {
+      const url = new URL(window.location.href);
+      if (checked) url.searchParams.set('scope', '3');
+      else url.searchParams.delete('scope');
+      window.history.replaceState({}, '', url.toString());
+
+      applyTeamFilter(control);
+      control.open(); // keep it open after filtering
+      reloadEntitiesShow();
+    });
+  }
+
+  function initTeamScopedFilter(cfg: {
+    selectId: string;         // e.g. "categoryFilter"
+    placeholderId: string;    // e.g. "categoryFilterPlaceholder"
+    title: string;            // e.g. "Categories"
+    param: string;            // e.g. "category"
+  }) {
+    const el = document.getElementById(cfg.selectId);
+    if (!el) return;
+
+    const control = new TomSelect(`#${cfg.selectId}`, {
       maxOptions: 512,
       plugins: {
         dropdown_header: {
-          title: 'Categories',
-          html(data) {
-            return `
-              <div class="${data.headerClass}">
-                <div class="${data.titleRowClass}" style="display:flex; align-items:center; gap:12px;">
-                  <label style="margin-left:auto; display:flex; align-items:center; gap:6px; font-weight:normal;">
-                    <input type="checkbox" class="ts-toggle-show-all">
-                    Show all
-                  </label>
-                </div>
-              </div>
-            `;
-          },
+          title: cfg.title,
+          html: buildDropdownToggleHeaderHtml(cfg.title, 'ts-toggle-show-all', i18next.t('show-all')),
         },
         dropdown_input: {},
         remove_button: {},
       },
 
-      onInitialize() {
-        // remove the placeholder input once the select is ready
-        document.getElementById('categoryFilterPlaceholder').remove();
-        this._allOptions = Object.values(this.options);
+      onInitialize(this: TeamScopedTomSelect) {
+        document.getElementById(cfg.placeholderId)?.remove();
 
-        // When false, show only categories belonging to current team.
-        // When true, show all categories.
+        this._allOptions = Object.values(this.options);
         this._showAll = false;
 
         applyTeamFilter(this);
       },
 
-      onChange: (value) => {
-        const url = new URL(window.location.href);
-
-        // Tom Select gives an array for multi-select; normalize just in case
-        const selected = Array.isArray(value) ? value : (value ? [value] : []);
-
-        if (selected.length === 0) {
-          url.searchParams.delete('category');
-          addHiddenInputToMainSearchForm('category', '');
-        } else {
-          const joined = selected.join(',');
-          url.searchParams.set('category', joined); // category=1,2,5
-          addHiddenInputToMainSearchForm('category', joined);
-        }
-
-        window.history.replaceState({}, '', url.toString());
+      onChange(value: any) {
+        syncMultiSelectParam(cfg.param, value);
         reloadEntitiesShow();
       },
-    });
+    }) as TeamScopedTomSelect;
 
-    function isCurrentTeamOption(opt) {
-      const el = opt?.$option;
-      // Expect the option to have data-current-team="1" for categories in the current team
-      const raw = el?.getAttribute('data-current-team') ?? '0';
-      return raw === '1';
-    }
+    control.on('dropdown_open', () => bindShowAllToggle(control));
 
-    function applyTeamFilter(control) {
-      const selected = new Set(control.items.map(String));
-
-      if (control._showAll) {
-        // Restore all options
-        for (const opt of control._allOptions ?? []) control.addOption(opt);
-      } else {
-        // Remove options that are NOT in current team, except those already selected
-        for (const opt of control._allOptions ?? []) {
-          const id = String(opt[control.settings.valueField]);
-          const inTeam = isCurrentTeamOption(opt);
-          if (!inTeam && !selected.has(id)) {
-            control.removeOption(id);
-          }
-        }
-      }
-
-      control.refreshOptions(false);
-    }
-
-    // Bind the toggle when dropdown opens (same binding pattern as the owner filter)
-    tsFilterCategory.on('dropdown_open', () => {
-      const cb = tsFilterCategory.dropdown.querySelector('.ts-toggle-show-all');
-      if (!cb) return;
-
-      // If you already have a shared "bound" WeakSet in this file, use it.
-      // Otherwise, this local flag avoids double-binding.
-      if (!tsFilterCategory._showAllBound) {
-        tsFilterCategory._showAllBound = true;
-
-        cb.addEventListener('change', (ev) => {
-          tsFilterCategory._showAll = (ev.currentTarget as HTMLInputElement).checked;
-
-          const url = new URL(window.location.href);
-          if (tsFilterCategory._showAll) {
-            url.searchParams.set('scope', '3');
-          } else {
-            url.searchParams.delete('scope'); // or set back to your default, if needed
-          }
-          window.history.replaceState({}, '', url.toString());
-
-          applyTeamFilter(tsFilterCategory);
-          tsFilterCategory.open(); // keep it open after filtering
-
-          reloadEntitiesShow();
-        });
-      }
-
-      (cb as HTMLInputElement).checked = !!tsFilterCategory._showAll;
-    });
+    return control;
   }
-  if (document.getElementById('statusFilter')) {
-    const tsFilterCategory = new TomSelect('#statusFilter', {
-      maxOptions: 512,
-      plugins: {
-        dropdown_header: {
-          title: 'Status',
-          html(data) {
-            return `
-              <div class="${data.headerClass}">
-                <div class="${data.titleRowClass}" style="display:flex; align-items:center; gap:12px;">
-                  <label style="margin-left:auto; display:flex; align-items:center; gap:6px; font-weight:normal;">
-                    <input type="checkbox" class="ts-toggle-show-all">
-                    Show all
-                  </label>
-                </div>
-              </div>
-            `;
-          },
-        },
-        dropdown_input: {},
-        remove_button: {},
-      },
 
-      onInitialize() {
-        // remove the placeholder input once the select is ready
-        document.getElementById('statusFilterPlaceholder').remove();
-        this._allOptions = Object.values(this.options);
+  // category tomSelect
+  initTeamScopedFilter({
+    selectId: 'categoryFilter',
+    placeholderId: 'categoryFilterPlaceholder',
+    title: i18next.t('categories'),
+    param: 'category',
+  });
 
-        // When false, show only status belonging to current team.
-        // When true, show all status.
-        this._showAll = false;
-
-        applyTeamFilter(this);
-      },
-
-      onChange: (value) => {
-        const url = new URL(window.location.href);
-
-        // Tom Select gives an array for multi-select; normalize just in case
-        const selected = Array.isArray(value) ? value : (value ? [value] : []);
-
-        if (selected.length === 0) {
-          url.searchParams.delete('status');
-          addHiddenInputToMainSearchForm('status', '');
-        } else {
-          const joined = selected.join(',');
-          url.searchParams.set('status', joined); // status=1,2,5
-          addHiddenInputToMainSearchForm('status', joined);
-        }
-
-        window.history.replaceState({}, '', url.toString());
-        reloadEntitiesShow();
-      },
-    });
-
-    function isCurrentTeamOption(opt) {
-      const el = opt?.$option;
-      // Expect the option to have data-current-team="1" for categories in the current team
-      const raw = el?.getAttribute('data-current-team') ?? '0';
-      return raw === '1';
-    }
-
-    function applyTeamFilter(control) {
-      const selected = new Set(control.items.map(String));
-
-      if (control._showAll) {
-        // Restore all options
-        for (const opt of control._allOptions ?? []) control.addOption(opt);
-      } else {
-        // Remove options that are NOT in current team, except those already selected
-        for (const opt of control._allOptions ?? []) {
-          const id = String(opt[control.settings.valueField]);
-          const inTeam = isCurrentTeamOption(opt);
-          if (!inTeam && !selected.has(id)) {
-            control.removeOption(id);
-          }
-        }
-      }
-
-      control.refreshOptions(false);
-    }
-
-    // Bind the toggle when dropdown opens (same binding pattern as the owner filter)
-    tsFilterCategory.on('dropdown_open', () => {
-      const cb = tsFilterCategory.dropdown.querySelector('.ts-toggle-show-all');
-      if (!cb) return;
-
-      // If you already have a shared "bound" WeakSet in this file, use it.
-      // Otherwise, this local flag avoids double-binding.
-      if (!tsFilterCategory._showAllBound) {
-        tsFilterCategory._showAllBound = true;
-
-        cb.addEventListener('change', (ev) => {
-          tsFilterCategory._showAll = (ev.currentTarget as HTMLInputElement).checked;
-
-          const url = new URL(window.location.href);
-          if (tsFilterCategory._showAll) {
-            url.searchParams.set('scope', '3');
-          } else {
-            url.searchParams.delete('scope'); // or set back to your default, if needed
-          }
-          window.history.replaceState({}, '', url.toString());
-
-          applyTeamFilter(tsFilterCategory);
-          tsFilterCategory.open(); // keep it open after filtering
-
-          reloadEntitiesShow();
-        });
-      }
-
-      (cb as HTMLInputElement).checked = !!tsFilterCategory._showAll;
-    });
-  }
+  // status tomSelect
+  initTeamScopedFilter({
+    selectId: 'statusFilter',
+    placeholderId: 'statusFilterPlaceholder',
+    title: i18next.t('status'),
+    param: 'status',
+  });
 
   new TomSelect('#tagFilter', {
     onInitialize: () => {

@@ -97,6 +97,8 @@ const t = {
     "saved": "保存済み",
     "search": "検索",
     "select-resource": "リソースを選択",
+    "show-all": "全て表示",
+    "show-archived": "アーカイブを表示",
     "show-deleted": "削除された表示",
     "signing": "Signing",
     "sort-by-column": "列で並べ替え",

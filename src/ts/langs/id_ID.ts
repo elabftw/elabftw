@@ -97,6 +97,8 @@ const t = {
     "saved": "Tersimpan",
     "search": "Cari",
     "select-resource": "Memilih sumber daya",
+    "show-all": "Tunjukkan semua",
+    "show-archived": "Tunjukkan yang telah diarsipkan",
     "show-deleted": "Tampilkan terhapus",
     "signing": "Signing",
     "sort-by-column": "Urutkan berdasarkan kolom",

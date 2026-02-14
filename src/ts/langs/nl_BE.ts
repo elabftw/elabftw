@@ -97,6 +97,8 @@ const t = {
     "saved": "Opgeslagen",
     "search": "Zoek",
     "select-resource": "Selecteer een bron",
+    "show-all": "Toon alles",
+    "show-archived": "Gearchiveerde items weergeven",
     "show-deleted": "Show deleted",
     "signing": "Signing",
     "sort-by-column": "Sorteer op kolom",

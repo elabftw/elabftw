@@ -97,6 +97,8 @@ const t = {
     "saved": "Salvestatud",
     "search": "Otsi",
     "select-resource": "Valige ressurss",
+    "show-all": "Näita kõiki",
+    "show-archived": "Näita arhiveeritud",
     "show-deleted": "Kuva kustutatud",
     "signing": "Signing",
     "sort-by-column": "Sorteeri veeru järgi",

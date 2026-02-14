@@ -83,7 +83,7 @@
             {{ 'No category set'|trans }}</option>
             {% for category in categoryArr %}
             <option data-current-team='{{ category.is_current_team }}' value='{{ category.id }}'
-                {{- App.Request.query.get('category') == category.id ? ' selected' -}}
+                {{- category.id in App.Request.query.get('category')|split(',') ? ' selected' -}}
               >
               {% if category.is_current_team == 0 %}{{ category.team_name }} - {% endif %}{{ category.title }}</option>
             {% endfor %}
@@ -110,7 +110,7 @@
             {{ 'No status set'|trans }}</option>
             {% for status in statusArr %}
               <option data-current-team='{{ status.is_current_team }}' value='{{ status.id }}'
-                {{- App.Request.query.get('status') == status.id ? ' selected' -}}
+                {{- status.id in App.Request.query.get('status')|split(',') ? ' selected' -}}
               >
               {% if status.is_current_team == 0 %}{{ status.team_name }} - {% endif %}{{ status.title }}</option>
             {% endfor %}

@@ -12,12 +12,16 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
+use Elabftw\Traits\TestsUtilsTrait;
 
 class TeamsTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private Teams $Teams;
 
     protected function setUp(): void
@@ -97,5 +101,50 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
             Action::SendOnboardingEmails,
             $userids,
         );
+    }
+
+    public function testCannotCreateWithoutTeamPermission(): void
+    {
+        $admin = $this->getUserInTeam(1, 1);
+        $Team = new Teams($admin, $admin->team);
+        $user = $this->getUserInTeam(1);
+
+        $Team->patch(Action::Update, array(
+            'users_canwrite_experiments' => 0,
+            'users_canwrite_experiments_templates' => 0,
+            'users_canwrite_resources' => 0,
+            'users_canwrite_resources_templates' => 0,
+        ));
+        $teamConfigArr = $Team->readOne();
+        $this->assertEquals(0, $teamConfigArr['users_canwrite_experiments']);
+        $this->assertEquals(0, $teamConfigArr['users_canwrite_experiments_templates']);
+        $this->assertEquals(0, $teamConfigArr['users_canwrite_resources']);
+        $this->assertEquals(0, $teamConfigArr['users_canwrite_resources_templates']);
+
+        $this->testCannotCreateSomethingWithoutTeamPermission(new Experiments($admin), new Experiments($user));
+        $this->testCannotCreateSomethingWithoutTeamPermission(new Templates($admin), new Templates($user));
+        $this->testCannotCreateSomethingWithoutTeamPermission(new Items($admin), new Items($user));
+        $this->testCannotCreateSomethingWithoutTeamPermission(new ItemsTypes($admin), new ItemsTypes($user));
+
+        // revert changes
+        $Team->patch(Action::Update, array(
+            'users_canwrite_experiments' => 1,
+            'users_canwrite_experiments_templates' => 1,
+            'users_canwrite_resources' => 1,
+            'users_canwrite_resources_templates' => 1,
+        ));
+        $this->assertEquals(1, $teamConfigArr['users_canwrite_experiments']);
+        $this->assertEquals(1, $teamConfigArr['users_canwrite_experiments_templates']);
+        $this->assertEquals(1, $teamConfigArr['users_canwrite_resources']);
+        $this->assertEquals(1, $teamConfigArr['users_canwrite_resources_templates']);
+    }
+
+    private function testCannotCreateSomethingWithoutTeamPermission(AbstractEntity $entityWithAdmin, AbstractEntity $entityWithUser): void
+    {
+        // admin can still create
+        $entityWithAdmin->postAction(Action::Create, array());
+        // user will get an exception
+        $this->expectException(ForbiddenException::class);
+        $entityWithUser->postAction(Action::Create, array());
     }
 }

@@ -16,7 +16,6 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Meaning;
 use Elabftw\Enums\State;
-use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
@@ -319,30 +318,5 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->setId($copy);
         $this->expectException(ImproperActionException::class);
         $this->Experiments->patch(Action::Update, array('custom_id' => 99));
-    }
-
-    public function testCannotCreateWithoutTeamPermission(): void
-    {
-        $admin = $this->getUserInTeam(1, 1);
-        $Team = new Teams($admin, $admin->team);
-
-        $Team->patch(Action::Update, array('users_canwrite_experiments' => 0));
-        $teamConfigArr = $Team->readOne();
-        $this->assertEquals(0, $teamConfigArr['users_canwrite_experiments']);
-
-        // admin can still create
-        $Experiments = new Experiments($admin);
-        $Experiments->postAction(Action::Create, array());
-
-        // user will get an exception
-        $user = $this->getUserInTeam(1);
-        try {
-            $Experiments = new Experiments($user);
-            $this->expectException(ForbiddenException::class);
-            $Experiments->postAction(Action::Create, array());
-        } finally {
-            // restore the write permission without a tearDown() function
-            $Team->patch(Action::Update, array('users_canwrite_experiments' => 1));
-        }
     }
 }

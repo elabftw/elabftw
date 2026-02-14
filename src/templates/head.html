@@ -63,9 +63,9 @@
               {% if App.devMode -%}
                 <!-- [html-validate-disable-next prefer-native-element: using a button here will mess up the navbar] -->
               {%- endif %}
-              <div class='nav-link dropdown-toggle {{ scriptName in ['experiments.php', 'templates.php', 'experiments-categories.php', 'experiments-status.php'] ? 'active' }}' role='button' data-toggle='dropdown' aria-expanded='false'>
+              <a href='#' class='nav-link dropdown-toggle {{ scriptName in ['experiments.php', 'templates.php', 'experiments-categories.php', 'experiments-status.php'] ? 'active' }}' role='button' data-toggle='dropdown' aria-expanded='false'>
               {% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}
-              </div>
+              </a>
               <div class='dropdown-menu'>
                 <form class='dropdown-item form-inline' action='experiments.php' aria-label='{{ 'Quick search experiments'|trans }}'>
                   <label for='nav-search-experiments' class='sr-only'>{{ 'Search experiments'|trans }}</label>
@@ -97,12 +97,9 @@
               </div>
             </div>
             <div class='nav-item dropdown'>
-              {% if App.devMode -%}
-                <!-- [html-validate-disable-next prefer-native-element: using a button here will mess up the navbar] -->
-              {%- endif %}
-              <div class='nav-link dropdown-toggle {{ scriptName in ['database.php', 'resources-templates.php', 'resources-categories.php', 'resources-status.php'] ? 'active' }}' role='button' data-toggle='dropdown' aria-expanded='false'>
+              <a href='#' class='nav-link dropdown-toggle {{ scriptName in ['database.php', 'resources-templates.php', 'resources-categories.php', 'resources-status.php'] ? 'active' }}' role='button' data-toggle='dropdown' aria-expanded='false'>
               {% trans %}Resource{% plural 2 %}Resources{% endtrans %}
-              </div>
+              </a>
               <div class='dropdown-menu'>
                 <form class='dropdown-item form-inline' action='database.php' aria-label='{{ 'Quick search resources'|trans }}'>
                   <label for='nav-search-resources' class='sr-only'>{{ 'Search resources'|trans }}</label>
@@ -146,12 +143,9 @@
             {% endif %}
 
             <div class='nav-item dropdown'>
-              {% if App.devMode -%}
-                <!-- [html-validate-disable-next prefer-native-element: using a button here will mess up the navbar] -->
-              {%- endif %}
-              <div class='nav-link dropdown-toggle {{ scriptName in ['compounds.php', 'chem-editor.php', 'syc.php', 'inventory.php'] ? 'active' }}' role='button' data-toggle='dropdown' aria-expanded='false'>
+              <a href='#' class='nav-link dropdown-toggle {{ scriptName in ['compounds.php', 'chem-editor.php', 'syc.php', 'inventory.php'] ? 'active' }}' role='button' data-toggle='dropdown' aria-expanded='false'>
               {{ 'Tools'|trans }}
-              </div>
+              </a>
               <div class='dropdown-menu'>
                 {% set isActive = scriptName == 'compounds.php' %}
                 <a class='dropdown-item {{ isActive ? 'active' }}' href='compounds.php' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-flask fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Compounds'|trans }}</a>

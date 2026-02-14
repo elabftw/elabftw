@@ -7,7 +7,7 @@
  */
 import $ from 'jquery';
 import { ApiC } from './api';
-import { Malle, InputType, Action as MalleAction, SelectOptions } from '@deltablot/malle';
+import { Malle, InputType, SelectOptions } from '@deltablot/malle';
 import 'bootstrap/js/src/modal.js';
 import FavTag from './FavTag.class';
 import { clearLocalStorage, rememberLastSelected, selectLastSelected } from './localStorage';
@@ -343,7 +343,6 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
     },
     listenOn: '.malleable-title',
     returnedValueIsTrustedHtml: false,
-    onBlur: MalleAction.Submit,
     tooltip: i18next.t('click-to-edit'),
   }).listen();
 
@@ -425,7 +424,6 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
     formClasses: ['form-inline'],
     fun: (value: string, original: HTMLElement) => updateCatStat(original.dataset.target, entity, value),
     inputType: InputType.Select,
-    onBlur: MalleAction.Submit,
     selectOptionsValueKey: 'id',
     selectOptionsTextKey: 'title',
     selectOptions: async () =>

@@ -408,7 +408,7 @@
               {{ 'Change category'|trans }}
             </option>
             <option value='0'>{{ 'Not set'|trans }}</option>
-            {% for category in categoryArr %}
+            {% for category in categoryArr|filter(c => c.is_current_team == 1) %}
                 <option value='{{ category.id }}'>{{ category.title }}</option>
             {% endfor %}
           </select>
@@ -418,7 +418,7 @@
               {{ 'Change status'|trans }}
             </option>
             <option value='0'>{{ 'Not set'|trans }}</option>
-            {% for status in statusArr %}
+            {% for status in statusArr|filter(s => s.is_current_team == 1) %}
                 <option value='{{ status.id }}'>{{ status.title }}</option>
             {% endfor %}
           </select>

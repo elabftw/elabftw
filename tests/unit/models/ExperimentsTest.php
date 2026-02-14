@@ -323,14 +323,19 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testCannotCreateWithoutTeamPermission(): void
     {
-        $user = $this->getUserInTeam(1, 1);
-        $Team = new Teams($user, $user->team);
+        $admin = $this->getUserInTeam(1, 1);
+        $Team = new Teams($admin, $admin->team);
 
         $Team->patch(Action::Update, array('users_canwrite_experiments' => 0));
         $teamConfigArr = $Team->readOne();
         $this->assertEquals(0, $teamConfigArr['users_canwrite_experiments']);
 
-        $user->isAdmin = false;
+        // admin can still create
+        $Experiments = new Experiments($admin);
+        $Experiments->postAction(Action::Create, array());
+
+        // user will get an exception
+        $user = $this->getUserInTeam(1);
         try {
             $Experiments = new Experiments($user);
             $this->expectException(ForbiddenException::class);

@@ -88,7 +88,7 @@
     {# EXPERIMENTS (& status, categories, templates #}
     {% include 'binary-setting.html' with {'model': model, 'src': src,
       'slug': 'users_canwrite_experiments',
-      'label': 'Allow users to create and edit experiments'|trans} %}
+      'label': 'Allow users to create experiments'|trans} %}
 
     {% include 'binary-setting.html' with {'model': model, 'src': src,
       'slug': 'users_canwrite_experiments_categories',
@@ -100,12 +100,12 @@
 
     {% include 'binary-setting.html' with {'model': model, 'src': src,
       'slug': 'users_canwrite_experiments_templates',
-      'label': 'Allow users to create and edit experiments templates'|trans} %}
+      'label': 'Allow users to create experiments templates'|trans} %}
 
     {# RESOURCES (& status, categories, templates #}
     {% include 'binary-setting.html' with {'model': model, 'src': src,
       'slug': 'users_canwrite_resources',
-      'label': 'Allow users to create and edit resources'|trans} %}
+      'label': 'Allow users to create resources'|trans} %}
 
     {% include 'binary-setting.html' with {'model': model, 'src': src,
       'slug': 'users_canwrite_resources_categories',
@@ -117,7 +117,7 @@
 
     {% include 'binary-setting.html' with {'model': model, 'src': src,
       'slug': 'users_canwrite_resources_templates',
-      'label': 'Allow users to create and edit resources templates'|trans} %}
+      'label': 'Allow users to create resources templates'|trans} %}
   </div>
 
   {# ONBOARDING EMAIL #}

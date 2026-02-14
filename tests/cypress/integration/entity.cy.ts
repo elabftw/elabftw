@@ -77,7 +77,7 @@ describe('Experiments', () => {
     // change status
     cy.get('.malleableStatus').click();
     cy.get('select:has(option:selected:contains("Not set"))').first().select(`${statusTarget}`);
-    cy.get('.form-inline > .btn-primary').click();
+    cy.get('body').click(0, 0);
     cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
   };
 

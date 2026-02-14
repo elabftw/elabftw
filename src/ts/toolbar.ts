@@ -75,14 +75,20 @@ if (document.getElementById('topToolbar')) {
     event.preventDefault();
     const form = document.getElementById('requestActionActionSelectForm') as HTMLFormElement;
     const params = collectForm(form);
+    const rawUser = String(params['requested_user'] ?? '').trim();
+    const userId = parseInt(rawUser.split(' ')[0], 10);
+    if (!Number.isFinite(userId)) {
+      notify.error(i18next.t('invalid-info'));
+      return;
+    }
     ApiC.post(`${entity.type}/${entity.id}/request_actions`, {
       action: Action.RequestAction,
       target_action: params['requested_action'],
-      target_userid: parseInt(params['requested_user'].split(' ')[0], 10),
+      target_userid: userId,
     }).then(() => {
       reloadElements(['requestActionsDiv']);
       $('#requestActionModal').modal('hide');
-    });
+    }).catch(error => notify.error(error));
   });
 
   on('do-requestable-action', (el: HTMLElement) => {

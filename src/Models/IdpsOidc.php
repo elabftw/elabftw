@@ -61,8 +61,8 @@ final class IdpsOidc extends AbstractRest
             jwks_uri: $reqBody['jwks_uri'] ?? null,
             scope: $reqBody['scope'] ?? 'openid email profile',
             email_claim: $reqBody['email_claim'] ?? 'email',
-            fname_claim: $reqBody['firstname_claim'] ?? 'given_name',
-            lname_claim: $reqBody['lastname_claim'] ?? 'family_name',
+            fname_claim: $reqBody['fname_claim'] ?? 'given_name',
+            lname_claim: $reqBody['lname_claim'] ?? 'family_name',
             team_claim: $reqBody['team_claim'] ?? null,
             orgid_claim: $reqBody['orgid_claim'] ?? null,
         );

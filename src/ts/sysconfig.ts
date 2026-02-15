@@ -470,8 +470,8 @@ if (window.location.pathname === '/sysconfig.php') {
       (document.getElementById('oidcIdpModal_end_session_endpoint') as HTMLInputElement).value = idp.end_session_endpoint || '';
       (document.getElementById('oidcIdpModal_scope') as HTMLInputElement).value = idp.scope;
       (document.getElementById('oidcIdpModal_email_claim') as HTMLInputElement).value = idp.email_claim;
-      (document.getElementById('oidcIdpModal_firstname_claim') as HTMLInputElement).value = idp.fname_claim;
-      (document.getElementById('oidcIdpModal_lastname_claim') as HTMLInputElement).value = idp.lname_claim;
+      (document.getElementById('oidcIdpModal_fname_claim') as HTMLInputElement).value = idp.fname_claim;
+      (document.getElementById('oidcIdpModal_lname_claim') as HTMLInputElement).value = idp.lname_claim;
       (document.getElementById('oidcIdpModal_team_claim') as HTMLInputElement).value = idp.team_claim || '';
       (document.getElementById('oidcIdpModal_orgid_claim') as HTMLInputElement).value = idp.orgid_claim || '';
       document.getElementById('oidcIdpModalSaveButton').dataset.id = idp.id;

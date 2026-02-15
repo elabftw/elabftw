@@ -182,8 +182,10 @@ export function collectForm(form: HTMLElement): object {
   inputs.forEach(input => {
     const el = input;
     el.classList.remove('border-danger');
-    if (el.reportValidity() === false) {
-      console.error(el);
+    // Skip validation entirely for empty fields with data-allow-empty attribute
+    const isEmptyOptional = el.value === '' && el.dataset.allowEmpty === '1';
+    if (!isEmptyOptional && el.reportValidity() === false) {
+      console.error('Validation failed for field:', el.name, el);
       el.classList.add('border-danger');
       el.focus();
       el.scrollIntoView({ behavior: 'smooth', block: 'center' });

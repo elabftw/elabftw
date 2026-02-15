@@ -1,0 +1,121 @@
+{# Modal for OIDC IDP creation/edition #}
+<div class='modal fade' id='oidcIdpModal' tabindex='-1' role='dialog' aria-labelledby='oidcIdpModalLabel'>
+  <div class='modal-dialog modal-xl' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='oidcIdpModalLabel'>{{ 'Edit OIDC Provider'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <form id='oidcIdpForm'>
+        <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
+          
+          <h4>{{ 'Basic Information'|trans }}</h4>
+          
+          <div class='d-flex justify-content-between'>
+            <label for='oidcIdpModal_name' class='col-form-label'>{{ 'Friendly name'|trans }}</label>
+            <input class='form-control col-md-4' type='text' placeholder='My OIDC Provider' id='oidcIdpModal_name' name='name' required />
+          </div>
+          <hr>
+
+          <div class='d-flex justify-content-between'>
+            <label for='oidcIdpModal_issuer' class='col-form-label'>{{ 'Issuer URL'|trans }}</label>
+            <input class='form-control col-md-4' type='url' placeholder='https://provider.example.com' id='oidcIdpModal_issuer' name='issuer' required />
+          </div>
+          <p class='smallgray'>{{ 'Base URL of the OIDC provider. If the provider supports OpenID Connect Discovery, endpoints will be auto-discovered by appending /.well-known/openid-configuration'|trans }}</p>
+          <hr>
+
+          <div class='d-flex justify-content-between'>
+            <label for='oidcIdpModal_client_id' class='col-form-label'>{{ 'Client ID'|trans }}</label>
+            <input class='form-control col-md-4' type='text' placeholder='your-client-id' id='oidcIdpModal_client_id' name='client_id' required />
+          </div>
+          <hr>
+
+          <div class='d-flex justify-content-between'>
+            <label for='oidcIdpModal_client_secret' class='col-form-label'>{{ 'Client Secret'|trans }}</label>
+            <input class='form-control col-md-4' type='password' placeholder='your-client-secret' id='oidcIdpModal_client_secret' name='client_secret' required />
+          </div>
+          <p class='smallgray'>{{ 'Client secret will be encrypted before storage'|trans }}</p>
+          <hr>
+
+          <div class='d-flex justify-content-between'>
+            <label for='oidcIdpModal_scope' class='col-form-label'>{{ 'Scope'|trans }}</label>
+            <input class='form-control col-md-4' type='text' placeholder='openid email profile' value='openid email profile' id='oidcIdpModal_scope' name='scope' required />
+          </div>
+          <p class='smallgray'>{{ 'Space-separated list of scopes to request'|trans }}</p>
+          <hr>
+
+          <h4 class='mt-4'>{{ 'Endpoints (leave empty for auto-discovery)'|trans }}</h4>
+          
+          <div class='d-flex justify-content-between'>
+            <label for='oidcIdpModal_authorization_endpoint' class='col-form-label'>{{ 'Authorization Endpoint'|trans }}</label>
+            <input class='form-control col-md-4' type='url' data-allow-empty='1' id='oidcIdpModal_authorization_endpoint' name='authorization_endpoint' />
+          </div>
+          <hr>
+
+          <div class='d-flex justify-content-between'>
+            <label for='oidcIdpModal_token_endpoint' class='col-form-label'>{{ 'Token Endpoint'|trans }}</label>
+            <input class='form-control col-md-4' type='url' data-allow-empty='1' id='oidcIdpModal_token_endpoint' name='token_endpoint' />
+          </div>
+          <hr>
+
+          <div class='d-flex justify-content-between'>
+            <label for='oidcIdpModal_userinfo_endpoint' class='col-form-label'>{{ 'UserInfo Endpoint'|trans }}</label>
+            <input class='form-control col-md-4' type='url' data-allow-empty='1' id='oidcIdpModal_userinfo_endpoint' name='userinfo_endpoint' />
+          </div>
+          <hr>
+
+          <div class='d-flex justify-content-between'>
+            <label for='oidcIdpModal_jwks_uri' class='col-form-label'>{{ 'JWKS URI'|trans }}</label>
+            <input class='form-control col-md-4' type='url' data-allow-empty='1' id='oidcIdpModal_jwks_uri' name='jwks_uri' />
+          </div>
+          <hr>
+
+          <div class='d-flex justify-content-between'>
+            <label for='oidcIdpModal_end_session_endpoint' class='col-form-label'>{{ 'End Session Endpoint (optional)'|trans }}</label>
+            <input class='form-control col-md-4' type='url' data-allow-empty='1' id='oidcIdpModal_end_session_endpoint' name='end_session_endpoint' />
+          </div>
+          <hr>
+
+          <h4 class='mt-4'>{{ 'Claim Mappings'|trans }}</h4>
+          
+          <div class='d-flex justify-content-between'>
+            <label for='oidcIdpModal_email_claim' class='col-form-label'>{{ 'Email claim'|trans }}</label>
+            <input class='form-control col-md-4' type='text' placeholder='email' value='email' id='oidcIdpModal_email_claim' name='email_claim' />
+          </div>
+          <hr>
+
+          <div class='d-flex justify-content-between'>
+            <label for='oidcIdpModal_firstname_claim' class='col-form-label'>{{ 'First name claim'|trans }}</label>
+            <input class='form-control col-md-4' type='text' placeholder='given_name' value='given_name' id='oidcIdpModal_firstname_claim' name='fname_claim' />
+          </div>
+          <hr>
+
+          <div class='d-flex justify-content-between'>
+            <label for='oidcIdpModal_lastname_claim' class='col-form-label'>{{ 'Last name claim'|trans }}</label>
+            <input class='form-control col-md-4' type='text' placeholder='family_name' value='family_name' id='oidcIdpModal_lastname_claim' name='lname_claim' />
+          </div>
+          <hr>
+
+          <div class='d-flex justify-content-between'>
+            <label for='oidcIdpModal_team_claim' class='col-form-label'>{{ 'Team claim (optional)'|trans }}</label>
+            <input class='form-control col-md-4' type='text' data-allow-empty='1' id='oidcIdpModal_team_claim' name='team_claim' />
+          </div>
+          <hr>
+
+          <div class='d-flex justify-content-between'>
+            <label for='oidcIdpModal_orgid_claim' class='col-form-label'>{{ 'Organization ID claim (optional)'|trans }}</label>
+            <input class='form-control col-md-4' type='text' data-allow-empty='1' id='oidcIdpModal_orgid_claim' name='orgid_claim' />
+          </div>
+          <hr>
+
+        </div>
+        <div class='modal-footer'>
+          <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+          <button type='submit' data-action='save-oidc-idp' id='oidcIdpModalSaveButton' data-dismiss='modal' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

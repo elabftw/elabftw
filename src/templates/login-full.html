@@ -171,6 +171,29 @@
     </form>
   {% endif %}
 
+  {# OIDC LOGIN #}
+  {% if App.Config.configArr.oidc_toggle and oidcIdpsArr|default([])|length %}
+    <h2>{{ 'Login with OpenID Connect'|trans }}</h2>
+    <br>
+    <form method='post' class='form-group' id='oidc-login' action='app/controllers/LoginController.php' autocomplete='off'>
+      <input type='hidden' name='auth_type' value='oidc'>
+      {{ App.Session.get('csrf')|csrf }}
+      <div class='form-group col-md-4 mx-auto'>
+        {% if App.devMode -%}
+          <!-- [html-validate-disable-block prefer-native-element: suppress errors from tom-select] -->
+        {%- endif %}
+        <label for='oidc_idp_login_select'>{{ 'Select an identity provider'|trans }}</label>
+        <select name='idpId' class='form-control' id='oidc_idp_login_select'>
+          {% for idp in oidcIdpsArr %}
+            <option value='{{ idp.id }}'>{{ idp.name }}</option>
+          {% endfor %}
+        </select>
+        {# No remember me checkbox for OIDC because it's toggled by remember_me_allowed at the instance level #}
+        <button class='btn btn-primary mt-2' type='submit' name='submit'>{{ 'Login'|trans }}</button>
+      </div>
+    </form>
+  {% endif %}
+
   {% if App.Config.configArr.anon_users %}
     <h2>{{ 'Login as anonymous visitor'|trans }}</h2>
     <br>

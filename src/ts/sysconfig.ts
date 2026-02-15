@@ -439,6 +439,81 @@ if (window.location.pathname === '/sysconfig.php') {
     ApiC.delete(`${Model.IdpsSources}/${el.dataset.id}`).then(() => reloadElements(['idpsSourcesDiv', 'idpsDiv']));
   });
 
+  // OIDC IDP handlers
+  
+  // Reset modal to "create" mode when opened without existing IDP data
+  $('#oidcIdpModal').on('show.bs.modal', function() {
+    const saveButton = document.getElementById('oidcIdpModalSaveButton');
+    // If no dataset.id, we're in "create" mode, ensure client_secret is required
+    if (!saveButton.dataset.id) {
+      const secretInput = (document.getElementById('oidcIdpModal_client_secret') as HTMLInputElement);
+      secretInput.setAttribute('required', '');
+      secretInput.removeAttribute('data-allow-empty');
+      secretInput.setAttribute('placeholder', 'your-client-secret');
+    }
+  });
+
+  on('display-oidc-idp-modal', (el: HTMLElement) => {
+    ApiC.getJson(`${Model.IdpsOidc}/${el.dataset.id}`).then(idp => {
+      (document.getElementById('oidcIdpModal_name') as HTMLInputElement).value = idp.name;
+      (document.getElementById('oidcIdpModal_issuer') as HTMLInputElement).value = idp.issuer;
+      (document.getElementById('oidcIdpModal_client_id') as HTMLInputElement).value = idp.client_id;
+      const secretInput = (document.getElementById('oidcIdpModal_client_secret') as HTMLInputElement);
+      secretInput.value = ''; // Don't show existing secret
+      secretInput.removeAttribute('required'); // Allow saving without re-entering secret
+      secretInput.setAttribute('data-allow-empty', '1');
+      secretInput.setAttribute('placeholder', 'Leave empty to keep existing secret');
+      (document.getElementById('oidcIdpModal_authorization_endpoint') as HTMLInputElement).value = idp.authorization_endpoint || '';
+      (document.getElementById('oidcIdpModal_token_endpoint') as HTMLInputElement).value = idp.token_endpoint || '';
+      (document.getElementById('oidcIdpModal_userinfo_endpoint') as HTMLInputElement).value = idp.userinfo_endpoint || '';
+      (document.getElementById('oidcIdpModal_jwks_uri') as HTMLInputElement).value = idp.jwks_uri || '';
+      (document.getElementById('oidcIdpModal_end_session_endpoint') as HTMLInputElement).value = idp.end_session_endpoint || '';
+      (document.getElementById('oidcIdpModal_scope') as HTMLInputElement).value = idp.scope;
+      (document.getElementById('oidcIdpModal_email_claim') as HTMLInputElement).value = idp.email_claim;
+      (document.getElementById('oidcIdpModal_firstname_claim') as HTMLInputElement).value = idp.fname_claim;
+      (document.getElementById('oidcIdpModal_lastname_claim') as HTMLInputElement).value = idp.lname_claim;
+      (document.getElementById('oidcIdpModal_team_claim') as HTMLInputElement).value = idp.team_claim || '';
+      (document.getElementById('oidcIdpModal_orgid_claim') as HTMLInputElement).value = idp.orgid_claim || '';
+      document.getElementById('oidcIdpModalSaveButton').dataset.id = idp.id;
+      $('#oidcIdpModal').modal('show');
+    });
+  });
+
+  on('save-oidc-idp', (el: HTMLElement, event: Event) => {
+    // prevent form submission
+    event.preventDefault();
+    try {
+      const form = document.getElementById('oidcIdpForm');
+      const params = collectForm(form);
+      clearForm(form);
+      if (el.dataset.id) { // PATCH OIDC IDP
+        // remove the id from the modal so clicking "Add new" won't edit the previously edited IDP
+        ApiC.patch(`${Model.IdpsOidc}/${el.dataset.id}`, params).then(() => {
+          document.getElementById('oidcIdpModalSaveButton').dataset.id = '';
+          // Reset client_secret field for next use
+          const secretInput = (document.getElementById('oidcIdpModal_client_secret') as HTMLInputElement);
+          secretInput.setAttribute('required', '');
+          secretInput.removeAttribute('data-allow-empty');
+          secretInput.setAttribute('placeholder', 'your-client-secret');
+          reloadElements(['oidcIdpsDiv']);
+        });
+      } else { // CREATE OIDC IDP
+        ApiC.post(Model.IdpsOidc, params).then(() => {
+          reloadElements(['oidcIdpsDiv']);
+        });
+      }
+    } catch (e) {
+      notify.error(e);
+      return;
+    }
+  });
+
+  on('destroy-oidc-idp', (el: HTMLElement) => {
+    if (confirm('Delete this OIDC provider?')) {
+      ApiC.delete(`${Model.IdpsOidc}/${el.dataset.id}`).then(() => reloadElements(['oidcIdpsDiv']));
+    }
+  });
+
   on('toggle-histograms', async (el: HTMLElement) => {
     const histDiv = document.getElementById('histograms');
     histDiv.toggleAttribute('hidden');

@@ -359,7 +359,11 @@ final class IdpsHelper
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-
+        // respect proxy configuration  
+        $proxy = $this->Config->configArr['proxy'] ?? '';  
+        if (!empty($proxy)) {  
+            curl_setopt($ch, CURLOPT_PROXY, $proxy);  
+        }  
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);

@@ -17,6 +17,7 @@ use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Interfaces\AuthResponseInterface;
+use Elabftw\Models\Teams;
 use Elabftw\Models\Users\ExistingUser;
 use Elabftw\Models\Users\ValidatedUser;
 use Elabftw\Services\UsersHelper;
@@ -58,6 +59,8 @@ final class Ldap implements AuthInterface
         // this->login can also be uid
         $email = $this->getEmailFromRecord($record);
         $AuthResponse = new AuthResponse();
+        $allowTeamCreation = $this->configArr['ldap_team_create'] === '1';
+        $teamFromLdap = $record[$this->configArr['ldap_team']];
         try {
             $Users = ExistingUser::fromEmail($email);
         } catch (ResourceNotFoundException) {
@@ -75,7 +78,6 @@ final class Ldap implements AuthInterface
             $lastname = $record[$this->configArr['ldap_lastname']][0] ?? 'Unknown';
 
             // GET TEAMS
-            $teamFromLdap = $record[$this->configArr['ldap_team']];
             // the attribute is not found
             if ($teamFromLdap === null) {
                 // we directly get the id from the stored config
@@ -107,7 +109,15 @@ final class Ldap implements AuthInterface
             // ldap might return a "count" key, so we remove it or it will be interpreted as a team ID
             unset($teamFromLdap['count']);
             // CREATE USER (and force validation of user)
-            $Users = ValidatedUser::fromExternal($email, $teamFromLdap, $firstname, $lastname, allowTeamCreation: (bool) $this->configArr['saml_team_create']);
+            $Users = ValidatedUser::fromExternal($email, $teamFromLdap, $firstname, $lastname, allowTeamCreation: $allowTeamCreation);
+
+        }
+        // synchronize the teams from LDAP
+        // because teams can change since the time the user was created
+        if ($this->configArr['ldap_sync_teams']) {
+            $Teams = new Teams($Users);
+            $teams = $Teams->getTeamsFromIdOrNameOrOrgidArray($teamFromLdap, $allowTeamCreation);
+            $Teams->synchronize($Users->userid ?? 0, $teams);
         }
 
         return $AuthResponse->setAuthenticatedUserid($Users->userData['userid'])

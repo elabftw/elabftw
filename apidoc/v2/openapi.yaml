@@ -760,10 +760,18 @@ components:
             type: string
             example: '389'
             default: '389'
+          ldap_sync_teams:
+            type: string
+            example: '0'
+            default: '0'
           ldap_team:
             type: string
             example: 'on'
             default: 'on'
+          ldap_team_create:
+            type: string
+            example: '1'
+            default: '0'
           ldap_toggle:
             type: string
             example: '0'

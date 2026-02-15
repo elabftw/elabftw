@@ -604,6 +604,38 @@ CREATE TABLE `idps_endpoints` (
         ON DELETE CASCADE,
     UNIQUE KEY uniq_idp_bdg_loc (idp, binding, location, is_slo)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `idps_oidc`
+--
+
+CREATE TABLE `idps_oidc` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `issuer` varchar(512) NOT NULL,
+  `enabled` tinyint(1) NOT NULL DEFAULT 1,
+  `client_id` varchar(255) NOT NULL,
+  `client_secret` text NOT NULL,
+  `authorization_endpoint` varchar(512) NOT NULL,
+  `token_endpoint` varchar(512) NOT NULL,
+  `userinfo_endpoint` varchar(512) NOT NULL,
+  `end_session_endpoint` varchar(512) DEFAULT NULL,
+  `jwks_uri` varchar(512) DEFAULT NULL,
+  `scope` varchar(255) NOT NULL DEFAULT 'openid email profile',
+  `email_claim` varchar(100) NOT NULL DEFAULT 'email',
+  `fname_claim` varchar(100) NOT NULL DEFAULT 'given_name',
+  `lname_claim` varchar(100) NOT NULL DEFAULT 'family_name',
+  `team_claim` varchar(100) DEFAULT NULL,
+  `orgid_claim` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_idps_oidc_enabled` (`enabled`),
+  KEY `idx_idps_oidc_issuer` (`issuer`(255))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
 -- --------------------------------------------------------
 
 --

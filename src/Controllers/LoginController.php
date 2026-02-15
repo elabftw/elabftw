@@ -22,6 +22,7 @@ use Elabftw\Auth\Local;
 use Elabftw\Auth\Mfa;
 use Elabftw\Auth\MfaGate;
 use Elabftw\Auth\None;
+use Elabftw\Auth\Oidc as OidcAuth;
 use Elabftw\Auth\Saml as SamlAuth;
 use Elabftw\Auth\Team;
 use Elabftw\Elabftw\Env;
@@ -335,6 +336,17 @@ final class LoginController implements ControllerInterface
                 // No cookie is required anymore, as entity Id is extracted from response
                 $settings = $IdpsHelper->getSettings($idpId);
                 return new SamlAuth(new SamlAuthLib($settings), $this->config, $settings);
+
+                // AUTH WITH OIDC
+            case AuthType::Oidc:
+                $this->Session->set('auth_service', AuthType::Oidc->asService());
+                $IdpsHelper = new IdpsHelper(Config::getConfig(), new Idps(new Users()));
+                $idpId = $this->Request->request->getInt('idpId');
+                $settings = $IdpsHelper->getOidcSettings($idpId);
+                // use Session as storage for OIDC state, as array is passed by reference
+                $this->Session->set('oidc_idp_id', $idpId);
+                $sessionStorage = &$_SESSION;
+                return new OidcAuth($this->config, $settings, $sessionStorage);
 
             case AuthType::External:
                 $this->Session->set('auth_service', AuthType::External->asService());

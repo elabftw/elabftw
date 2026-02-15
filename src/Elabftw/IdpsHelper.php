@@ -306,4 +306,80 @@ final class IdpsHelper
         }
         return $config;
     }
+
+    /**
+     * Get OIDC settings for a specific identity provider
+     *
+     * @param int $idpId ID of the OIDC IdP
+     */
+    public function getOidcSettings(int $idpId): array
+    {
+        $IdpsOidc = new \Elabftw\Models\IdpsOidc(new \Elabftw\Models\Users\Users(), $idpId);
+        $idp = $IdpsOidc->getForAuth($idpId);
+
+        // construct redirect URI (standard for eLabFTW)
+        $baseUrl = rtrim(Env::asString('SITE_URL'), '/');
+        $redirectUri = $baseUrl . '/index.php?oidc_callback=1';
+
+        return array(
+            'idp_id' => $idp['id'],
+            'name' => $idp['name'],
+            'issuer' => $idp['issuer'],
+            'client_id' => $idp['client_id'],
+            'client_secret' => $idp['client_secret'],
+            'redirect_uri' => $redirectUri,
+            'authorization_endpoint' => $idp['authorization_endpoint'],
+            'token_endpoint' => $idp['token_endpoint'],
+            'userinfo_endpoint' => $idp['userinfo_endpoint'],
+            'end_session_endpoint' => $idp['end_session_endpoint'],
+            'jwks_uri' => $idp['jwks_uri'],
+            'scope' => $idp['scope'],
+            'email_claim' => $idp['email_claim'],
+            'fname_claim' => $idp['fname_claim'],
+            'lname_claim' => $idp['lname_claim'],
+            'team_claim' => $idp['team_claim'],
+            'orgid_claim' => $idp['orgid_claim'],
+        );
+    }
+
+    /**
+     * Discover OIDC endpoints from well-known configuration
+     *
+     * @param string $issuer The OIDC issuer URL
+     * @return array Discovered configuration
+     */
+    public function discoverOidcEndpoints(string $issuer): array
+    {
+        $issuerUrl = rtrim($issuer, '/');
+        $wellKnownUrl = $issuerUrl . '/.well-known/openid-configuration';
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $wellKnownUrl);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpCode !== 200 || $response === false) {
+            throw new ImproperActionException('Failed to discover OIDC endpoints. Make sure the issuer URL is correct.');
+        }
+
+        $config = json_decode($response, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new ImproperActionException('Invalid OIDC discovery document.');
+        }
+
+        return array(
+            'authorization_endpoint' => $config['authorization_endpoint'] ?? null,
+            'token_endpoint' => $config['token_endpoint'] ?? null,
+            'userinfo_endpoint' => $config['userinfo_endpoint'] ?? null,
+            'end_session_endpoint' => $config['end_session_endpoint'] ?? null,
+            'jwks_uri' => $config['jwks_uri'] ?? null,
+        );
+    }
 }
+

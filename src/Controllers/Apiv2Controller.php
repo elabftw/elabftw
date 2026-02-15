@@ -44,6 +44,7 @@ use Elabftw\Models\FavTags;
 use Elabftw\Models\Idps;
 use Elabftw\Models\IdpsCerts;
 use Elabftw\Models\IdpsEndpoints;
+use Elabftw\Models\IdpsOidc;
 use Elabftw\Models\IdpsSources;
 use Elabftw\Models\Info;
 use Elabftw\Models\Instance;
@@ -293,6 +294,7 @@ final class Apiv2Controller extends AbstractApiController
                 }
             )(),
             ApiEndpoint::Idps => new Idps($this->requester, $this->id),
+            ApiEndpoint::IdpsOidc => new IdpsOidc($this->requester, $this->id),
             ApiEndpoint::IdpsSources => new IdpsSources($this->requester, $this->id),
             ApiEndpoint::Import => new ImportHandler($this->requester, App::getDefaultLogger()),
             ApiEndpoint::Info => new Info(),

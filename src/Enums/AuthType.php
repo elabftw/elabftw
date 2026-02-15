@@ -22,6 +22,7 @@ enum AuthType: string
     case Ldap = 'ldap';
     case Local = 'local';
     case Mfa = 'mfa';
+    case Oidc = 'oidc';
     case Saml = 'saml';
     case Team = 'team';
     case TeamInit = 'teaminit';
@@ -35,6 +36,7 @@ enum AuthType: string
             self::External => 40,
             self::Ldap => 30,
             self::Local => 10,
+            self::Oidc => 25,
             self::Saml => 20,
             default => throw new RuntimeException('Invalid AuthType enum to get service from'),
         };

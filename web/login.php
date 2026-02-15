@@ -15,6 +15,7 @@ namespace Elabftw\Elabftw;
 use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Idps;
+use Elabftw\Models\IdpsOidc;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\MfaHelper;
 use Exception;
@@ -98,6 +99,13 @@ try {
         $idpsArr = $Idps->readAllSimpleEnabled();
     }
 
+    $oidcIdpsArr = array();
+    // only make the query to fetch oidc idp list if we actually have enabled oidc
+    if ($App->Config->configArr['oidc_toggle'] === '1') {
+        $IdpsOidc = new IdpsOidc($App->Users);
+        $oidcIdpsArr = $IdpsOidc->readAllSimpleEnabled();
+    }
+
     if ($App->Request->cookies->has('kickreason')) {
         // at the moment there is only one reason
         $App->Session->getFlashBag()->add('ko', _('Your session expired.'));
@@ -106,6 +114,7 @@ try {
     $template = 'login-base.html';
     $renderArr = array(
         'idpsArr' => $idpsArr,
+        'oidcIdpsArr' => $oidcIdpsArr,
         'pageTitle' => _('Login'),
         'teamsArr' => $App->Teams->readAllVisible(),
         'showLocal' => $showLocal,

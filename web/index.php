@@ -14,11 +14,15 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Auth\MfaGate;
 use Elabftw\Auth\Saml as SamlAuth;
+use Elabftw\Auth\Oidc as OidcAuth;
 use Elabftw\Enums\EnforceMfa;
 use Elabftw\Enums\Entrypoint;
+use Elabftw\Elabftw\IdpsHelper;
+use Elabftw\Models\Idps;
 use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Idps;
+use Elabftw\Models\IdpsOidc;
+use Elabftw\Models\Users\ValidatedUser;
 use Elabftw\Params\UserParams;
 use Elabftw\Services\LoginHelper;
 use Exception;
@@ -34,6 +38,57 @@ $Response = new Response();
 
 try {
     // Note: this code should be in logincontroller!
+
+    // OIDC: IDP will redirect to this page after user login on IDP website
+    if ($App->Request->query->has('code') && $App->Request->query->has('state')) {
+        // Read from $_SESSION directly since OidcAuth stores values there
+        $idpId = $_SESSION['oidc_idp_id'] ?? 0;
+        if ($idpId === 0) {
+            throw new ImproperActionException('OIDC session data is missing. Please try logging in again.');
+        }
+        $IdpsHelper = new IdpsHelper($App->Config, new Idps($App->Users));
+        $settings = $IdpsHelper->getOidcSettings($idpId);
+        $sessionStorage = &$_SESSION;
+        $AuthService = new OidcAuth($App->Config->configArr, $settings, $sessionStorage);
+        $AuthResponse = $AuthService->assertIdpResponse(
+            $App->Request->query->getString('code'),
+            $App->Request->query->getString('state')
+        );
+
+        if ($AuthResponse->initTeamRequired()) {
+            $info = $AuthResponse->getInitTeamInfo();
+            $App->Session->set('initial_team_selection_required', true);
+            $App->Session->set('teaminit_email', $info['email'] ?? '');
+            $App->Session->set('teaminit_firstname', $info['firstname'] ?? '');
+            $App->Session->set('teaminit_lastname', $info['lastname'] ?? '');
+            $App->Session->set('teaminit_orgid', $info['orgid'] ?? '');
+            $App->Session->set('teaminit_auth_service', $info['auth_service'] ?? '');
+            $App->Session->set('team_selection', $info['team_selection'] ?? array());
+            $Response = new RedirectResponse('/login.php');
+            $Response->send();
+            exit;
+        }
+
+        $loggingInUser = $AuthResponse->getUser();
+
+        // Create LoginHelper
+        $LoginHelper = new LoginHelper($AuthResponse, $App->Session, (int) $App->Config->configArr['cookie_validity_time']);
+
+        // Check if user is in several teams
+        if ($AuthResponse->isInSeveralTeams()) {
+            $App->Session->set('team_selection_required', true);
+            $App->Session->set('team_selection', $AuthResponse->getSelectableTeams());
+            $App->Session->set('auth_userid', $AuthResponse->getAuthUserid());
+            $Response = new RedirectResponse('/login.php');
+        } else {
+            $rememberMe = $App->Config->configArr['remember_me_allowed'] === '1';
+            $LoginHelper->login($rememberMe);
+            $Response = new RedirectResponse('/index.php');
+        }
+        $Response->send();
+        exit;
+    }
+
 
     // SAML: IDP will redirect to this page after user login on IDP website
     if ($App->Request->query->has('acs') && $App->Request->request->has('SAMLResponse')) {
@@ -137,8 +192,16 @@ try {
         echo "<html><head><meta http-equiv='refresh' content='1;url=$location' /><title>You are being redirected...</title></head><body>You are being redirected...</body></html>";
         exit;
     }
-    $location = '/' . (Entrypoint::tryFrom($App->Users->userData['entrypoint'] ?? 0) ?? Entrypoint::Dashboard)->toPage();
-    $Response = new RedirectResponse($location);
+    
+    // If user is authenticated, redirect to their entry point
+    if ($App->Session->has('is_auth')) {
+        $App->boot();
+        $location = '/' . (Entrypoint::tryFrom($App->Users->userData['entrypoint'] ?? 0) ?? Entrypoint::Dashboard)->toPage();
+        $Response = new RedirectResponse($location);
+    } else {
+        // Not authenticated, redirect to login
+        $Response = new RedirectResponse('/login.php');
+    }
 } catch (AppException $e) {
     $Response = $e->getResponseFromException($App);
 } catch (Exception $e) {

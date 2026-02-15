@@ -22,6 +22,7 @@ use Elabftw\Models\AuthFail;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Idps;
 use Elabftw\Models\IdpsSources;
+use Elabftw\Models\IdpsOidc;
 use Elabftw\Models\Info;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Services\DummyRemoteDirectory;
@@ -51,6 +52,8 @@ try {
     $idpsArr = $Idps->readAllLight();
     $IdpsSources = new IdpsSources($App->Users);
     $idpsSources = $IdpsSources->readAll();
+    $IdpsOidc = new IdpsOidc($App->Users);
+    $oidcIdpsArr = $IdpsOidc->readAll();
     $teamsArr = $App->Teams->readAllComplete();
     $Experiments = new Experiments($App->Users);
 
@@ -114,6 +117,7 @@ try {
         'lockoutDevicesCount' => $AuthFail->getLockoutDevicesCount(),
         'elabimgVersion' => $elabimgVersion,
         'idpsArr' => $idpsArr,
+        'oidcIdpsArr' => $oidcIdpsArr,
         'idpsSources' => $idpsSources,
         'pageTitle' => _('Instance settings'),
         'passwordInputHelp' => $passwordComplexity->toHuman(),

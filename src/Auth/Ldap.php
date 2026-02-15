@@ -114,7 +114,7 @@ final class Ldap implements AuthInterface
         }
         // synchronize the teams from LDAP
         // because teams can change since the time the user was created
-        if ($this->configArr['ldap_sync_teams']) {
+        if ($this->configArr['ldap_sync_teams'] === '1' && $teamFromLdap !== null && !empty($teamFromLdap)) {
             $Teams = new Teams($Users);
             $teams = $Teams->getTeamsFromIdOrNameOrOrgidArray($teamFromLdap, $allowTeamCreation);
             $Teams->synchronize($Users->userid ?? 0, $teams);

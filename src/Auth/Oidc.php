@@ -341,11 +341,15 @@ final class Oidc implements AuthInterface
      */
     private function extractClaim(string $claimName, bool $optional = false): ?string
     {
+        // Check if claim exists
         if (!isset($this->oidcUserdata[$claimName])) {
-            if ($optional) return null;
+            if ($optional) {
+                return null;
+            }
             $err = sprintf('Could not find claim "%s" in response from IdP! Aborting.', $claimName);
             throw new ImproperActionException($err);
         }
+
         $claim = $this->oidcUserdata[$claimName];
 
         // handle array values (take first element)
@@ -353,168 +357,15 @@ final class Oidc implements AuthInterface
             $claim = $claim[0] ?? null;
         }
 
+        // Verify claim is not null or empty
         if ($claim === null || $claim === '') {
-            if ($optional) return null;
-            $err = sprintf('Could not find claim "%s" in response from IdP! Aborting.', $claimName);
-            throw new ImproperActionException($err);
-        }
-        if (!isset($this->oidcUserdata[$claimName])) {
-            if ($optional) return null;
-            $err = sprintf('Could not find claim "%s" in response from IdP! Aborting.', $claimName);
-            throw new ImproperActionException($err);
-        }
-        $claim = $this->oidcUserdata[$claimName];
-
-        // handle array values (take first element)
-        if (is_array($claim)) {
-            $claim = $claim[0] ?? null;
-        }
-
-        if ($claim === null || $claim === '') {
-            if ($optional) return null;
-            $err = sprintf('Could not find claim "%s" in response from IdP! Aborting.', $claimName);
-            throw new ImproperActionException($err);
-        }
-        if (!isset($this->oidcUserdata[$claimName])) {
-            if ($optional) return null;
-            $err = sprintf('Could not find claim "%s" in response from IdP! Aborting.', $claimName);
-            throw new ImproperActionException($err);
-        }
-        $claim = $this->oidcUserdata[$claimName];
-
-        // handle array values (take first element)
-        if (is_array($claim)) {
-            $claim = $claim[0] ?? null;
-        }
-
-        if ($claim === null || $claim === '') {
-            if ($optional) return null;
-            $err = sprintf('Could not find claim "%s" in response from IdP! Aborting.', $claimName);
-            throw new ImproperActionException($err);
-        }
-        if (!isset($this->oidcUserdata[$claimName])) {
-            if ($optional) return null;
-            $err = sprintf('Could not find claim "%s" in response from IdP! Aborting.', $claimName);
-            throw new ImproperActionException($err);
-        }
-        $claim = $this->oidcUserdata[$claimName];
-
-        // handle array values (take first element)
-        if (is_array($claim)) {
-            $claim = $claim[0] ?? null;
-        }
-
-        if ($claim === null || $claim === '') {
-            if ($optional) return null;
-            $err = sprintf('Could not find claim "%s" in response from IdP! Aborting.', $claimName);
-            throw new ImproperActionException($err);
-        }
-        if (!isset($this->oidcUserdata[$claimName])) {
-            if ($optional) return null;
-            $err = sprintf('Could not find claim "%s" in response from IdP! Aborting.', $claimName);
-            throw new ImproperActionException($err);
-        }
-        $claim = $this->oidcUserdata[$claimName];
-
-        // handle array values (take first element)
-        if (is_array($claim)) {
-            $claim = $claim[0] ?? null;
-        }
-
-        if ($claim === null || $claim === '') {
-            if ($optional) return null;
-            $err = sprintf('Could not find claim "%s" in response from IdP! Aborting.', $claimName);
-            throw new ImproperActionException($err);
-        }
-        if (!isset($this->oidcUserdata[$claimName])) {
-            if ($optional) return null;
-            $err = sprintf('Could not find claim "%s" in response from IdP! Aborting.', $claimName);
-            throw new ImproperActionException($err);
-        }
-        $claim = $this->oidcUserdata[$claimName];
-
-        // handle array values (take first element)
-        if (is_array($claim)) {
-            $claim = $claim[0] ?? null;
-        }
-
-        if ($claim === null || $claim === '') {
-            if ($optional) return null;
-            $err = sprintf('Could not find claim "%s" in response from IdP! Aborting.', $claimName);
-            throw new ImproperActionException($err);
-        }
-        if (!isset($this->oidcUserdata[$claimName])) {
-            if ($optional) return null;
-            $err = sprintf('Could not find claim "%s" in response from IdP! Aborting.', $claimName);
-            throw new ImproperActionException($err);
-        }
-        $claim = $this->oidcUserdata[$claimName];
-
-        // handle array values (take first element)
-        if (is_array($claim)) {
-            $claim = $claim[0] ?? null;
-        }
-
-        if ($claim === null || $claim === '') {
-            if ($optional) return null;
-            $err = sprintf('Could not find claim "%s" in response from IdP! Aborting.', $claimName);
-            throw new ImproperActionException($err);
-        }
-        if (!isset($this->oidcUserdata[$claimName])) {
-            if ($optional) return null;
-            $err = sprintf('Could not find claim "%s" in response from IdP! Aborting.', $claimName);
-            throw new ImproperActionException($err);
-        }
-        $claim = $this->oidcUserdata[$claimName];
-
-        // handle array values (take first element)
-        if (is_array($claim)) {
-            $claim = $claim[0] ?? null;
-        }
-
-        if ($claim === null || $claim === '') {
-            if ($optional) return null;
-            $err = sprintf('Could not find claim "%s" in response from IdP! Aborting.', $claimName);
-            throw new ImproperActionException($err);
-        }
-        if (!isset($this->oidcUserdata[$claimName])) {
-            if ($optional) return null;
-            $err = sprintf('Could not find claim "%s" in response from IdP! Aborting.', $claimName);
-            throw new ImproperActionException($err);
-        }
-        $claim = $this->oidcUserdata[$claimName];
-
-        // handle array values (take first element)
-        if (is_array($claim)) {
-            $claim = $claim[0] ?? null;
-        }
-
-        if ($claim === null || $claim === '') {
-            if ($optional) return null;
-            $err = sprintf('Could not find claim "%s" in response from IdP! Aborting.', $claimName);
-            throw new ImproperActionException($err);
-        }
-        if (!isset($this->oidcUserdata[$claimName])) {
-            if ($optional) return null;
-            $err = sprintf('Could not find claim "%s" in response from IdP! Aborting.', $claimName);
-            throw new ImproperActionException($err);
-        }
-        $claim = $this->oidcUserdata[$claimName];
-
-        // handle array values (take first element)
-        if (is_array($claim)) {
-            $claim = $claim[0] ?? null;
-        }
-
-        if ($claim === null || $claim === '') {
-            if ($optional) return null;
+            if ($optional) {
+                return null;
+            }
             $err = sprintf('Could not find claim "%s" in response from IdP! Aborting.', $claimName);
             throw new ImproperActionException($err);
         }
 
-        if ($claim === null || $claim === '') {
-            throw new ImproperActionException($err);
-        }
         return (string) $claim;
     }
 

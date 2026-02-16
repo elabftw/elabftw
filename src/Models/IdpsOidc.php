@@ -229,51 +229,46 @@ final class IdpsOidc extends AbstractRest
 
     private function update(array $params): bool
     {
-
-        $allowedColumns = [  
-            'name', 'issuer', 'client_id', 'client_secret',  
-            'authorization_endpoint', 'token_endpoint', 'userinfo_endpoint',  
-            'end_session_endpoint', 'jwks_uri', 'scope',  
-            'email_claim', 'fname_claim', 'lname_claim', 'team_claim', 'orgid_claim',  
-            'enabled',  
-        ];  
+        $allowedColumns = [
+            'name', 'issuer', 'client_id', 'client_secret',
+            'authorization_endpoint', 'token_endpoint', 'userinfo_endpoint',
+            'end_session_endpoint', 'jwks_uri', 'scope',
+            'email_claim', 'fname_claim', 'lname_claim', 'team_claim', 'orgid_claim',
+            'enabled',
+        ];
 
         // Remove empty client_secret from params to keep existing one
         if (isset($params['client_secret']) && empty($params['client_secret'])) {
             unset($params['client_secret']);
         }
-        
-        $sql = 'UPDATE idps_oidc SET ';
-        $sqlArr = array();
 
-        foreach ($params as $key => $value) {
-            if (!in_array($key, $allowedColumns)) {
-                continue;
-            }
-            // encrypt client_secret if provided
-            if ($key === 'client_secret') {
-                $value = $this->encryptSecret($value);
-                $params[$key] = $value; // update in params for binding
-            }
-            
-            $sqlArr[] = $key . ' = :' . $key;
-        }
+        // Filter params to only include whitelisted columns
+        $filteredParams = array_intersect_key($params, array_flip($allowedColumns));
 
-        if (empty($sqlArr)) {
+        if (empty($filteredParams)) {
             return true; // nothing to update
         }
 
+        // Encrypt client_secret if provided
+        if (isset($filteredParams['client_secret'])) {
+            $filteredParams['client_secret'] = $this->encryptSecret($filteredParams['client_secret']);
+        }
+
+        // Build SQL with only whitelisted columns
+        $sqlArr = array();
+        foreach ($filteredParams as $key => $value) {
+            $sqlArr[] = $key . ' = :' . $key;
+        }
+
+        $sql = 'UPDATE idps_oidc SET ';
         $sql .= implode(', ', $sqlArr);
         $sql .= ', modified_at = CURRENT_TIMESTAMP WHERE id = :id';
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
-        foreach ($params as $key => $value) {
-            if ($key === 'id' || $key === 'created_at') {
-                continue;
-            }
-            
+        // Bind only the filtered/whitelisted params
+        foreach ($filteredParams as $key => $value) {
             $req->bindValue(':' . $key, $value);
         }
 

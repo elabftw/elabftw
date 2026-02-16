@@ -485,7 +485,6 @@ if (window.location.pathname === '/sysconfig.php') {
     try {
       const form = document.getElementById('oidcIdpForm');
       const params = collectForm(form);
-      clearForm(form);
       if (el.dataset.id) { // PATCH OIDC IDP
         // remove the id from the modal so clicking "Add new" won't edit the previously edited IDP
         ApiC.patch(`${Model.IdpsOidc}/${el.dataset.id}`, params).then(() => {
@@ -496,10 +495,12 @@ if (window.location.pathname === '/sysconfig.php') {
           secretInput.removeAttribute('data-allow-empty');
           secretInput.setAttribute('placeholder', 'your-client-secret');
           reloadElements(['oidcIdpsDiv']);
+          $('#oidcIdpModal').modal('hide');
         });
       } else { // CREATE OIDC IDP
         ApiC.post(Model.IdpsOidc, params).then(() => {
           reloadElements(['oidcIdpsDiv']);
+          $('#oidcIdpModal').modal('hide');
         });
       }
     } catch (e) {

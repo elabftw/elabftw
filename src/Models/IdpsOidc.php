@@ -182,8 +182,8 @@ final class IdpsOidc extends AbstractRest
             $authorization_endpoint = $authorization_endpoint ?: ($discovered['authorization_endpoint'] ?? '');
             $token_endpoint = $token_endpoint ?: ($discovered['token_endpoint'] ?? '');
             $userinfo_endpoint = $userinfo_endpoint ?: ($discovered['userinfo_endpoint'] ?? '');
-            $end_session_endpoint = $end_session_endpoint ?: $discovered['end_session_endpoint'];
-            $jwks_uri = $jwks_uri ?: $discovered['jwks_uri'];
+            $end_session_endpoint = $end_session_endpoint ?: ($discovered['end_session_endpoint'] ?? null);
+            $jwks_uri = $jwks_uri ?: ($discovered['jwks_uri'] ?? null);
             
             // Validate required endpoints were discovered
             if (empty($authorization_endpoint) || empty($token_endpoint) || empty($userinfo_endpoint)) {

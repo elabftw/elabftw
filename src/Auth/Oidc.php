@@ -95,15 +95,15 @@ final class Oidc implements AuthInterface
             'exp' => (new DateTimeImmutable())->modify('+1 month')->getTimestamp(),
             'id_token' => $this->idToken,
             );
-        $key = Key::loadFromAsciiSafeString(base64_decode(Env::get('APP_KEY')));
+        $key = Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY'));
         return JWT::encode($data, $key, 'HS256');
     }
 
     public function decodeToken(string $token): array
     {
-        $key = Key::loadFromAsciiSafeString(base64_decode(Env::get('APP_KEY')));
+        $key = Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY'));
         try {
-            $decoded = JWT::decode($token, $key, array('HS256'));
+            $decoded = JWT::decode($token, $key);
             return (array) $decoded;
         } catch (\Exception) {
             return array();
@@ -162,8 +162,8 @@ final class Oidc implements AuthInterface
         // also try to parse ID token if available
         $idTokenClaims = $this->parseIdToken($this->accessToken);
         if ($idTokenClaims !== null) {
-            // merge ID token claims with userinfo (ID token takes precedence)
-            $this->oidcUserdata = array_merge($this->oidcUserdata, $idTokenClaims);
+            // merge ID token claims with userinfo (userinfo takes precedence)
+            $this->oidcUserdata = array_merge($idTokenClaims, $this->oidcUserdata);
             // store raw ID token for logout
             $tokenValues = $this->accessToken->getValues();
             $this->idToken = $tokenValues['id_token'] ?? null;
@@ -286,9 +286,23 @@ final class Oidc implements AuthInterface
                 return null;
             }
 
-            // Fetch JWKS
-            $jwksJson = file_get_contents($jwksUri);
-            if ($jwksJson === false) {
+            // Fetch JWKS using curl (respects proxy settings)
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $jwksUri);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+            // respect proxy configuration
+            $proxy = $this->configArr['proxy'] ?? '';
+            if (!empty($proxy)) {
+                curl_setopt($ch, CURLOPT_PROXY, $proxy);
+            }
+            $jwksJson = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+            
+            if ($httpCode !== 200 || $jwksJson === false) {
                 return null;
             }
 
@@ -307,7 +321,8 @@ final class Oidc implements AuthInterface
                 return null;
             }
 
-            if ($decoded->iss !== parse_url($this->settings['authorization_endpoint'], PHP_URL_HOST)) {
+            // Validate issuer matches configured issuer URL exactly
+            if ($decoded->iss !== $this->settings['issuer']) {
                 return null;
             }
             // If the client ID we know does not match the audience in the token, reject it
@@ -315,9 +330,7 @@ final class Oidc implements AuthInterface
                 return null;
             }
 
-            // Check if the signature is valid (this will throw an exception if not)
-            JWT::decode($values['id_token'], $keys);
-            // Convert decoded token to array
+            // Token already decoded and verified - convert to array
             $claims = (array) $decoded;
             return $claims;
         } catch (\Exception $e) {

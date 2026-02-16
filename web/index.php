@@ -73,8 +73,8 @@ try {
         // MFA
         // check if we need to do mfa auth too after a first successful authentication
         // if we're receiving mfa_secret, it's because we just enabled MFA, so save it for that user
-        if ($App->Request->query->has('mfa_secret')) {
-            $loggingInUser->update(new UserParams('mfa_secret', $App->Request->query->getString('mfa_secret')));
+        if ($App->Request->request->has('mfa_secret')) {
+            $loggingInUser->update(new UserParams('mfa_secret', $App->Request->request->getString('mfa_secret')));
         }
         $enforceMfa = EnforceMfa::from((int) $App->Config->configArr['enforce_mfa']);
         // MFA can be required because the user has mfa_secret or because it is enforced for their level

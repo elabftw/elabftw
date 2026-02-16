@@ -587,7 +587,7 @@ on('toggle-pin', (el: HTMLElement) => {
   });
 });
 
-
+// when a switch has a dependent action, enable that action only if switch is activated.
 on('toggle-dependent', (el: HTMLInputElement) => {
   const targetId = el.dataset.targetToggle;
   if (!targetId) return;
@@ -600,6 +600,13 @@ on('toggle-dependent', (el: HTMLInputElement) => {
     // target.disabled = disabled;
     if (disabled) target.value = '0';
   }
+});
+
+on('save-booking-settings', (_, e:Event): Promise<Response> => {
+  e.preventDefault();
+  const form = document.getElementById('editBookingParamsForm') as HTMLFormElement;
+  const params = collectForm(form);
+  return ApiC.patch(`items/${form.dataset.itemId}`, params);
 });
 
 on('transfer-ownership', async () => {

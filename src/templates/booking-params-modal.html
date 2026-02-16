@@ -9,7 +9,8 @@
         </button>
       </div>
       <div class='modal-body'>
-        <h4>{{ 'Booking permissions' }}</h4>
+        <h4>{{ 'Booking permissions'|trans }}</h4>
+        <div class='smallgray mb-4'>{{ 'Control what users are allowed to do.'|trans }}</div>
         {# Allow booking this resource #}
         <div class='d-flex justify-content-between mb-2'>
           <label class='d-inline mr-1' for='isBookableSwitch'>{{ 'Allow booking this resource'|trans }}</label>
@@ -36,9 +37,10 @@
         </div>
 
         <hr>
-        <h4>{{ 'Cancellation rules' }}</h4>
+        <h4>{{ 'Cancellation rules'|trans }}</h4>
+        <div class='smallgray mb-4'>{{ 'Define how and when bookings can be cancelled.'|trans }}</div>
         {# Allow cancelling a booking slot #}
-        <div class='d-flex justify-content-between mb-2'>
+        <div class='d-flex justify-content-between'>
           <label class='d-inline mr-1' for='isCancellableSwitch'>{{ 'Allow cancelling a booking slot'|trans }}</label>
           <label class='switch' title='{{ 'Allow cancelling a booking slot'|trans }}'><span class='sr-only'>{{ 'Allow cancelling a booking slot'|trans }}</span>
             <input type='checkbox' autocomplete='off' id='isCancellableSwitch' data-trigger='change' data-model='items/{{ Entity.id }}' data-target='book_is_cancellable' {{ Entity.entityData.book_is_cancellable == 1 ? 'checked="checked"' }}>
@@ -46,13 +48,14 @@
           </label>
         </div>
         {# Minimum time before a slot can be cancelled #}
-        <div class='d-flex justify-content-between mb-2'>
+        <div class='d-flex justify-content-between mb-2 ml-2'>
           <label for='book_cancel_minutes' class='col-form-label'>{{ 'Minimum time before a slot can be cancelled (in minutes)'|trans }}</label>
           <input class='form-control col-md-4' data-trigger='blur' data-model='items/{{ Entity.id }}' data-target='book_cancel_minutes' type='number' value='{{ Entity.entityData.book_cancel_minutes }}' id='book_cancel_minutes' />
         </div>
 
         <hr>
-        <h4>{{ 'Booking limits' }}</h4>
+        <h4>{{ 'Booking limits'|trans }}</h4>
+        <div class='smallgray mb-4'>{{ 'Restrict duration and advance booking window.'|trans }}</div>
         {# Maximum time per slot #}
         <div class='d-flex justify-content-between mb-2'>
           <label for='book_max_minutes' class='col-form-label'>{{ 'Maximum time per slot (in minutes)'|trans }}</label>
@@ -60,11 +63,19 @@
         </div>
         {# Maximum per-user future slots #}
         <div class='d-flex justify-content-between mb-2'>
-          <label for='book_max_slots' class='col-form-label'>{{ 'Maximum per-user future slot allowed'|trans }}</label>
+          <label for='book_max_slots' class='col-form-label'>{{ 'Maximum future bookings per user'|trans }}</label>
           <input class='form-control col-md-4' data-trigger='blur' data-model='items/{{ Entity.id }}' data-target='book_max_slots' type='number' value='{{ Entity.entityData.book_max_slots }}' id='book_max_slots' />
         </div>
         {# TODO: Maximum days in advance #}
-        <div class='d-flex justify-content-between mb-2'>
+        <div class='d-flex justify-content-between'>
+          <label class='d-inline mr-1' for='maximumDaysInAdvance'>{{ 'Limit how far in advance users can book'|trans }}</label>
+          <label class='switch' title='{{ 'Limit how far in advance users can book'|trans }}'><span class='sr-only'>{{ 'Limit how far in advance users can book'|trans }}</span>
+            <input type='checkbox' autocomplete='off' id='isCancellableSwitch' data-trigger='change' data-model='items/{{ Entity.id }}' data-target='book_is_cancellable' {{ Entity.entityData.book_is_cancellable == 1 ? 'checked="checked"' }}>
+            <span class='slider'></span>
+          </label>
+        </div>
+        {# Maximum days in advance #}
+        <div class='d-flex justify-content-between mb-2 ml-2'>
           <label for='book_cancel_minutes' class='col-form-label'>{{ 'Maximum days in advance'|trans }}</label>
           <input class='form-control col-md-4' data-trigger='blur' data-model='items/{{ Entity.id }}' data-target='book_cancel_minutes' type='number' value='{{ Entity.entityData.book_cancel_minutes }}' id='book_cancel_minutes' />
         </div>

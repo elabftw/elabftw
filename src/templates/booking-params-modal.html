@@ -15,10 +15,11 @@
         <div class='d-flex justify-content-between mb-2'>
           <label class='d-inline mr-1' for='isBookableSwitch'>{{ 'Allow booking this resource'|trans }}</label>
           <label class='switch' title='{{ 'Allow booking this resource'|trans }}'><span class='sr-only'>{{ 'Allow booking this resource'|trans }}</span>
-            <input type='checkbox' autocomplete='off' id='isBookableSwitch' data-reload='topToolbar,permissionsDiv' data-trigger='change' data-model='items/{{ Entity.id }}' data-target='is_bookable' {{ Entity.entityData.is_bookable == 1 ? 'checked="checked"' }}>
+            <input type='checkbox' autocomplete='off' id='isBookableSwitch' data-action='toggle-booking-permissions' data-reload='topToolbar,permissionsDiv' data-trigger='change' data-model='items/{{ Entity.id }}' data-target='is_bookable' {{ Entity.entityData.is_bookable == 1 ? 'checked="checked"' }}>
             <span class='slider'></span>
           </label>
         </div>
+        <div id='bookingPermissionsDiv' class='{{ Entity.entityData.is_bookable == 0 ? 'booking-disabled' : '' }}'>
         {# Allow overlapping slots #}
         <div class='d-flex justify-content-between mb-2'>
           <label class='d-inline mr-1' for='isOverlapableSwitch'>{{ 'Allow overlapping slots'|trans }}</label>
@@ -70,15 +71,16 @@
         <div class='d-flex justify-content-between'>
           <label class='d-inline mr-1' for='maximumDaysInAdvance'>{{ 'Limit how far in advance users can book'|trans }}</label>
           <label class='switch' title='{{ 'Limit how far in advance users can book'|trans }}'><span class='sr-only'>{{ 'Limit how far in advance users can book'|trans }}</span>
-            <input type='checkbox' autocomplete='off' id='isCancellableSwitch' data-trigger='change' data-model='items/{{ Entity.id }}' data-target='book_is_cancellable' {{ Entity.entityData.book_is_cancellable == 1 ? 'checked="checked"' }}>
+            <input type='checkbox' autocomplete='off' id='limitDaysInAdvance' data-trigger='change' data-model='items/{{ Entity.id }}' data-target='limit_days_in_advance' {{ Entity.entityData.limit_days_in_advance == 1 ? 'checked="checked"' }}>
             <span class='slider'></span>
           </label>
         </div>
         {# Maximum days in advance #}
         <div class='d-flex justify-content-between mb-2 ml-2'>
-          <label for='book_cancel_minutes' class='col-form-label'>{{ 'Maximum days in advance'|trans }}</label>
-          <input class='form-control col-md-4' data-trigger='blur' data-model='items/{{ Entity.id }}' data-target='book_cancel_minutes' type='number' value='{{ Entity.entityData.book_cancel_minutes }}' id='book_cancel_minutes' />
+          <label for='maximum_days_in_advance' class='col-form-label'>{{ 'Maximum days in advance'|trans }}</label>
+          <input class='form-control col-md-4' data-trigger='blur' data-model='items/{{ Entity.id }}' data-target='maximum_days_in_advance' type='number' value='{{ Entity.entityData.maximum_days_in_advance }}' id='maximum_days_in_advance' />
         </div>
+      </div>
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>

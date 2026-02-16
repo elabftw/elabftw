@@ -587,6 +587,12 @@ on('toggle-pin', (el: HTMLElement) => {
   });
 });
 
+on('toggle-booking-permissions', (el: HTMLInputElement) => {
+  const wrapper = document.getElementById('bookingPermissionsDiv');
+  if (!wrapper) return;
+  wrapper.classList.toggle('booking-disabled', !el.checked);
+});
+
 on('transfer-ownership', async () => {
   const params = collectForm(document.getElementById('ownershipTransferForm'));
   const userid = parseInt(params['targetUserId'].split(' ')[0] ?? '', 10);

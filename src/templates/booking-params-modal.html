@@ -9,7 +9,8 @@
         </button>
       </div>
       <div class='modal-body'>
-        {# Is bookable? #}
+        <h4>{{ 'Booking permissions' }}</h4>
+        {# Allow booking this resource #}
         <div class='d-flex justify-content-between mb-2'>
           <label class='d-inline mr-1' for='isBookableSwitch'>{{ 'Allow booking this resource'|trans }}</label>
           <label class='switch' title='{{ 'Allow booking this resource'|trans }}'><span class='sr-only'>{{ 'Allow booking this resource'|trans }}</span>
@@ -17,7 +18,7 @@
             <span class='slider'></span>
           </label>
         </div>
-        {# OVERLAP #}
+        {# Allow overlapping slots #}
         <div class='d-flex justify-content-between mb-2'>
           <label class='d-inline mr-1' for='isOverlapableSwitch'>{{ 'Allow overlapping slots'|trans }}</label>
           <label class='switch' title='{{ 'Allow overlapping slots'|trans }}'><span class='sr-only'>{{ 'Allow overlapping slots'|trans }}</span>
@@ -25,20 +26,7 @@
             <span class='slider'></span>
           </label>
         </div>
-
-        {# MAX BOOK TIME #}
-        <div class='d-flex justify-content-between mb-2'>
-          <label for='book_max_minutes' class='col-form-label'>{{ 'Maximum time per slot (in minutes)'|trans }}</label>
-          <input class='form-control col-md-4' data-trigger='blur' data-model='items/{{ Entity.id }}' data-target='book_max_minutes' type='number' value='{{ Entity.entityData.book_max_minutes }}' id='book_max_minutes' />
-        </div>
-
-        {# MAX USER BOOK SLOTS #}
-        <div class='d-flex justify-content-between mb-2'>
-          <label for='book_max_slots' class='col-form-label'>{{ 'Maximum per-user future slot allowed'|trans }}</label>
-          <input class='form-control col-md-4' data-trigger='blur' data-model='items/{{ Entity.id }}' data-target='book_max_slots' type='number' value='{{ Entity.entityData.book_max_slots }}' id='book_max_slots' />
-        </div>
-
-        {# USERS CAN BOOK IN PAST #}
+        {# Allow users booking in past #}
         <div class='d-flex justify-content-between mb-2'>
           <label class='d-inline mr-1' for='isBookableInPastSwitch'>{{ 'Allow users booking in past'|trans }}</label>
           <label class='switch' title='{{ 'Allow users booking in past'|trans }}'><span class='sr-only'>{{ 'Allow users booking in past'|trans }}</span>
@@ -47,7 +35,9 @@
           </label>
         </div>
 
-        {# CAN CANCEL #}
+        <hr>
+        <h4>{{ 'Cancellation rules' }}</h4>
+        {# Allow cancelling a booking slot #}
         <div class='d-flex justify-content-between mb-2'>
           <label class='d-inline mr-1' for='isCancellableSwitch'>{{ 'Allow cancelling a booking slot'|trans }}</label>
           <label class='switch' title='{{ 'Allow cancelling a booking slot'|trans }}'><span class='sr-only'>{{ 'Allow cancelling a booking slot'|trans }}</span>
@@ -55,12 +45,30 @@
             <span class='slider'></span>
           </label>
         </div>
+        {# Minimum time before a slot can be cancelled #}
         <div class='d-flex justify-content-between mb-2'>
           <label for='book_cancel_minutes' class='col-form-label'>{{ 'Minimum time before a slot can be cancelled (in minutes)'|trans }}</label>
           <input class='form-control col-md-4' data-trigger='blur' data-model='items/{{ Entity.id }}' data-target='book_cancel_minutes' type='number' value='{{ Entity.entityData.book_cancel_minutes }}' id='book_cancel_minutes' />
         </div>
-      </div>
 
+        <hr>
+        <h4>{{ 'Booking limits' }}</h4>
+        {# Maximum time per slot #}
+        <div class='d-flex justify-content-between mb-2'>
+          <label for='book_max_minutes' class='col-form-label'>{{ 'Maximum time per slot (in minutes)'|trans }}</label>
+          <input class='form-control col-md-4' data-trigger='blur' data-model='items/{{ Entity.id }}' data-target='book_max_minutes' type='number' value='{{ Entity.entityData.book_max_minutes }}' id='book_max_minutes' />
+        </div>
+        {# Maximum per-user future slots #}
+        <div class='d-flex justify-content-between mb-2'>
+          <label for='book_max_slots' class='col-form-label'>{{ 'Maximum per-user future slot allowed'|trans }}</label>
+          <input class='form-control col-md-4' data-trigger='blur' data-model='items/{{ Entity.id }}' data-target='book_max_slots' type='number' value='{{ Entity.entityData.book_max_slots }}' id='book_max_slots' />
+        </div>
+        {# TODO: Maximum days in advance #}
+        <div class='d-flex justify-content-between mb-2'>
+          <label for='book_cancel_minutes' class='col-form-label'>{{ 'Maximum days in advance'|trans }}</label>
+          <input class='form-control col-md-4' data-trigger='blur' data-model='items/{{ Entity.id }}' data-target='book_cancel_minutes' type='number' value='{{ Entity.entityData.book_cancel_minutes }}' id='book_cancel_minutes' />
+        </div>
+      </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
       </div>

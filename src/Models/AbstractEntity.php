@@ -38,6 +38,7 @@ use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -95,6 +96,7 @@ use function json_encode;
 use function ksort;
 use function mb_substr;
 use function sprintf;
+use function str_contains;
 
 use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;
@@ -220,6 +222,9 @@ abstract class AbstractEntity extends AbstractRest
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
+        if (in_array($action, array(Action::Create, Action::Duplicate), true)) {
+            $this->guardTemplateCreation();
+        }
         return match ($action) {
             Action::Create => (
                 function () use ($reqBody) {
@@ -588,6 +593,7 @@ abstract class AbstractEntity extends AbstractRest
         $this->entityData['related_experiments_links'] = $this->ExperimentsLinks->readRelated();
         $this->entityData['related_items_links'] = $this->ItemsLinks->readRelated();
         $this->entityData['uploads'] = $this->Uploads->readAll($queryParams);
+        $this->entityData['changelog'] = new Changelog($this)->readAll();
         $this->entityData['comments'] = $this->Comments->readAll();
         $this->entityData['page'] = mb_substr($this->entityType->toPage(), 0, -4);
         $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
@@ -629,7 +635,6 @@ abstract class AbstractEntity extends AbstractRest
     {
         $base = $this->readOne();
         $base['revisions'] = (new Revisions($this))->readAll();
-        $base['changelog'] = (new Changelog($this))->readAll();
         // we want to include ALL uploaded files
         $base['uploads'] = (new Uploads($this))->readAll(
             $this->getQueryParams(new InputBag(array('state' => '1,2,3')))
@@ -640,9 +645,6 @@ abstract class AbstractEntity extends AbstractRest
 
     public function readAllSimple(QueryParamsInterface $displayParams): array
     {
-        $categoryTable = in_array($this->entityType->value, array('items', 'items_types'), true)
-            ? 'items_categories'
-            : 'experiments_categories';
         $CanSqlBuilder = new CanSqlBuilder($this->Users->requester, AccessType::Read);
         $canFilter = $CanSqlBuilder->getCanFilter();
         $displayParams->setSkipOrderPinned(true);
@@ -662,8 +664,8 @@ abstract class AbstractEntity extends AbstractRest
             "' . $this->entityType->value . '" AS type,
             "' . $this->entityType->toPage() . '" AS page
             FROM ' . $this->entityType->value . ' AS entity
-            LEFT JOIN ' . $categoryTable . ' AS categoryt ON entity.category = categoryt.id
-            LEFT JOIN ' . $this->entityType->value . '_status AS statust ON entity.status = statust.id
+            LEFT JOIN ' . $this->entityType->toCategoryTable() . ' AS categoryt ON entity.category = categoryt.id
+            LEFT JOIN ' . $this->entityType->toStatusTable() . ' AS statust ON entity.status = statust.id
             LEFT JOIN users ON entity.userid = users.userid
             LEFT JOIN
                 users2teams ON (users2teams.users_id = :userid AND users2teams.teams_id = :teamid)
@@ -708,7 +710,7 @@ abstract class AbstractEntity extends AbstractRest
         }
 
         if (!$permissions[$rw]) {
-            throw new UnauthorizedException(Messages::InsufficientPermissions->toHuman());
+            throw new ForbiddenException();
         }
     }
 
@@ -935,6 +937,13 @@ abstract class AbstractEntity extends AbstractRest
         $Revisions->dbInsert($this->entityData['body']);
 
         return $this->readOne();
+    }
+
+    abstract protected function getCreatePermissionKey(): string;
+
+    protected function getCreatePermissionFromTeam(array $teamConfigArr): bool
+    {
+        return $teamConfigArr[$this->getCreatePermissionKey()] === 1;
     }
 
     // TODO refactor with canOrExplode()
@@ -1231,5 +1240,18 @@ abstract class AbstractEntity extends AbstractRest
             }
         }
         return $sent;
+    }
+
+    // Check user permissions to create templates (team level)
+    private function guardTemplateCreation(): void
+    {
+        // admins are always allowed
+        if ($this->Users->isAdmin) {
+            return;
+        }
+        $teamConfigArr = new Teams($this->Users, $this->Users->team)->readOne();
+        if ($this->getCreatePermissionFromTeam($teamConfigArr) === false) {
+            throw new ForbiddenException();
+        }
     }
 }

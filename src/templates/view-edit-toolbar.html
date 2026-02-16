@@ -8,26 +8,28 @@
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
-      <div class='modal-body'>
-        {# SELECT ACTION #}
-        <label for='requestActionActionSelect'>{{ 'Select action'|trans }}</label>
-        <select id='requestActionActionSelect' class='form-control'>
-          {% for value, text in requestableActionArr|default([])|sort %}
-            <option value='{{ value }}'>{{ text }}</option>
-          {% endfor %}
-        </select>
-        {# SELECT USER #}
-        <label for='requestActionUserSelect'>{{ 'Select collaborator'|trans }}</label>
-        {# this exists so Firefox doesn't process the Search user field as password. No idea why it would do it in the first place though... #}
-        {# and autocomplete='off' doesn't work #}
-        <input type='password' disabled hidden />
-        <input type='text' placeholder='{{ 'Search user'|trans }}' id='requestActionUserSelect' class='form-control' data-identifier='requestActionUserSelect' data-action='autocomplete' data-target='users'>
-        <div id='autocompleteAnchorDiv_requestActionUserSelect'></div>
-      </div>
-      <div class='modal-footer'>
-        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
-        <button type='button' class='btn btn-primary' data-dismiss='modal' data-action='requestaction'>{{ 'Save'|trans }}</button>
-      </div>
+      <form id='requestActionActionSelectForm'>
+        <div class='modal-body'>
+          {# SELECT ACTION #}
+          <label for='requestActionActionSelect'>{{ 'Select action'|trans }}</label>
+          <select id='requestActionActionSelect' class='form-control' name='requested_action'>
+            {% for value, text in requestableActionArr|default([])|sort %}
+              <option value='{{ value }}'>{{ text }}</option>
+            {% endfor %}
+          </select>
+          {# SELECT USER #}
+          <label for='requestActionUserSelect'>{{ 'Select collaborator'|trans }}</label>
+          {# this exists so Firefox doesn't process the Search user field as password. No idea why it would do it in the first place though... #}
+          {# and autocomplete='off' doesn't work #}
+          <input type='password' disabled hidden aria-label='{{ 'Password'|trans }}' />
+          <input type='text' placeholder='{{ 'Search user'|trans }}' id='requestActionUserSelect' class='form-control' data-identifier='requestActionUserSelect' data-action='autocomplete' data-target='users' name='requested_user' required />
+          <div id='autocompleteAnchorDiv_requestActionUserSelect'></div>
+        </div>
+        <div class='modal-footer'>
+          <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+          <button type='submit' class='btn btn-primary' data-action='requestaction'>{{ 'Save'|trans }}</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
@@ -318,11 +320,12 @@
             </button>
           {% endif %}
         {% endif %}
-        <div class='dropdown-divider'></div>
         {# DELETE / RESTORE #}
         {% if Entity.entityData.state == enum('Elabftw\\Enums\\State').Normal.value %}
+          <div class='dropdown-divider'></div>
           <button type='button' class='dropdown-item hover-danger' data-action='destroy'><i class='fas fa-trash-alt fa-fw' title='{{ 'Delete'|trans }}'></i> {{ 'Delete'|trans }}</button>
         {% elseif Entity.entityData.state == enum('Elabftw\\Enums\\State').Deleted.value %}
+          <div class='dropdown-divider'></div>
           <button type='button' class='dropdown-item hover-danger' data-action='restore'><i class='fas fa-trash-can-arrow-up fa-fw' title='{{ 'Restore entry'|trans }}'></i> {{ 'Restore entry'|trans }}</button>
         {% endif %}
       </div>

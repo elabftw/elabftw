@@ -406,19 +406,6 @@ CREATE TABLE `experiments_templates_revisions` (
 
 -- --------------------------------------------------------
 
-CREATE TABLE `experiments_templates_status` (
-  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
-  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `modified_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `team` int UNSIGNED NOT NULL,
-  `title` varchar(255) NOT NULL,
-  `color` varchar(6) NOT NULL,
-  `is_default` tinyint UNSIGNED DEFAULT NULL,
-  `ordering` int UNSIGNED DEFAULT NULL,
-  `state` INT UNSIGNED NOT NULL DEFAULT 1,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
-
 --
 -- Table structure for table `experiments_templates_comments`
 --
@@ -615,7 +602,7 @@ CREATE TABLE `idps_endpoints` (
         FOREIGN KEY (idp)
         REFERENCES idps(id)
         ON DELETE CASCADE,
-    UNIQUE KEY uniq_idp_bdg_loc (idp, binding, location)
+    UNIQUE KEY uniq_idp_bdg_loc (idp, binding, location, is_slo)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 -- --------------------------------------------------------
 
@@ -692,6 +679,7 @@ CREATE TABLE `items_categories` (
   `title` varchar(255) NOT NULL,
   `color` varchar(6) NOT NULL,
   `is_default` tinyint UNSIGNED DEFAULT NULL,
+  `is_private` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `ordering` int UNSIGNED DEFAULT NULL,
   `state` INT UNSIGNED NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`)
@@ -1071,6 +1059,7 @@ CREATE TABLE `experiments_status` (
   `title` varchar(255) NOT NULL,
   `color` varchar(6) NOT NULL,
   `is_default` tinyint UNSIGNED DEFAULT NULL,
+  `is_private` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `ordering` int(10) UNSIGNED DEFAULT NULL,
   `state` INT UNSIGNED NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`)
@@ -1090,6 +1079,7 @@ CREATE TABLE `experiments_categories` (
   `title` varchar(255) NOT NULL,
   `color` varchar(6) NOT NULL,
   `is_default` tinyint UNSIGNED DEFAULT NULL,
+  `is_private` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `ordering` int UNSIGNED DEFAULT NULL,
   `state` INT UNSIGNED NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`)
@@ -1106,19 +1096,7 @@ CREATE TABLE `items_status` (
   `title` varchar(255) NOT NULL,
   `color` varchar(6) NOT NULL,
   `is_default` tinyint UNSIGNED DEFAULT NULL,
-  `ordering` int(10) UNSIGNED DEFAULT NULL,
-  `state` INT UNSIGNED NOT NULL DEFAULT 1,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
-
-CREATE TABLE `items_types_status` (
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `modified_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `team` int(10) UNSIGNED NOT NULL,
-  `title` varchar(255) NOT NULL,
-  `color` varchar(6) NOT NULL,
-  `is_default` tinyint UNSIGNED DEFAULT NULL,
+  `is_private` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `ordering` int(10) UNSIGNED DEFAULT NULL,
   `state` INT UNSIGNED NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`)
@@ -1192,10 +1170,14 @@ CREATE TABLE `teams` (
   `name` varchar(255) NOT NULL,
   `user_create_tag` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `force_exp_tpl` tinyint UNSIGNED NOT NULL DEFAULT 0,
+  `users_canwrite_experiments` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
   `users_canwrite_experiments_categories` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
   `users_canwrite_experiments_status` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
+  `users_canwrite_experiments_templates` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
+  `users_canwrite_resources` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
   `users_canwrite_resources_categories` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
   `users_canwrite_resources_status` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
+  `users_canwrite_resources_templates` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `orgid` varchar(255) NULL DEFAULT NULL,
   `visible` tinyint UNSIGNED NOT NULL DEFAULT 1,
@@ -1559,9 +1541,6 @@ ALTER TABLE `experiments_templates`
   ADD KEY `idx_experiments_templates_state` (`state`),
   ADD KEY `fk_experiments_templates_users_userid` (`userid`),
   ADD UNIQUE `unique_experiments_templates_custom_id` (`category`, `custom_id`);
-
-ALTER TABLE `experiments_templates_status`
-  ADD CONSTRAINT FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Indexes and Constraints for table `experiments_templates_comments`
@@ -1954,8 +1933,6 @@ ALTER TABLE `items_status`
   ADD CONSTRAINT `fk_items_status_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `experiments_categories`
   ADD CONSTRAINT `fk_experiments_categories_teams_id` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE `items_types_status`
-  ADD CONSTRAINT FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `sig_keys`

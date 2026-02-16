@@ -154,4 +154,10 @@ final class Experiments extends AbstractConcreteEntity
 
         return $newId;
     }
+
+    #[Override]
+    protected function getCreatePermissionKey(): string
+    {
+        return 'users_canwrite_experiments';
+    }
 }

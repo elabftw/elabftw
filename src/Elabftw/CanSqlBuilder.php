@@ -53,7 +53,7 @@ final class CanSqlBuilder
     protected function canBasePubOrg(): string
     {
         return sprintf(
-            "entity.%s->'$.base' IN (%d, %d)",
+            'entity.%s_base IN (%d, %d)',
             $this->accessType->value,
             BasePermissions::Full->value,
             BasePermissions::Organization->value,
@@ -66,8 +66,8 @@ final class CanSqlBuilder
     protected function canBaseTeam(): string
     {
         return sprintf(
-            "(entity.%s->'$.base' = %d
-                AND entity.team = %d)",
+            '(entity.%s_base = %d
+                AND entity.team = %d)',
             $this->accessType->value,
             BasePermissions::Team->value,
             $this->requester->team ?? 0,
@@ -81,14 +81,19 @@ final class CanSqlBuilder
     protected function canBaseUser(): string
     {
         return sprintf(
-            "(entity.%s->'$.base' = %d
-                AND entity.userid = %d
-                OR (users2teams.teams_id = entity.team AND users2teams.is_admin = 1))",
+            '(entity.%s_base = %d
+                AND (entity.userid = :userid
+                    OR EXISTS (
+                        SELECT 1
+                        FROM users2teams u2t
+                        WHERE u2t.users_id = :userid
+                          AND u2t.teams_id = entity.team
+                          AND u2t.is_admin = 1
+                      )
+                )
+            )',
             $this->accessType->value,
             BasePermissions::User->value,
-            $this->requester->isAdmin
-                ? 'users2teams.users_id'
-                : $this->requester->userid ?? 0,
         );
     }
 
@@ -99,8 +104,8 @@ final class CanSqlBuilder
     protected function canBaseUserOnly(): string
     {
         return sprintf(
-            "(entity.%s->'$.base' = %d
-                AND entity.userid = %d)",
+            '(entity.%s_base = %d
+                AND entity.userid = %d)',
             $this->accessType->value,
             BasePermissions::UserOnly->value,
             $this->requester->userid ?? 0,

@@ -25,8 +25,8 @@ use Symfony\Component\HttpFoundation\Response;
 require_once 'app/init.inc.php';
 
 $Response = new Response();
-$Response->prepare($Request);
 try {
+    $Response->prepare($Request);
     $Response = new DatabaseController($App, new ItemsTypes($App->Users, Filter::intOrNull($Request->query->getInt('id'))))->getResponse();
 } catch (AppException $e) {
     $Response = $e->getResponseFromException($App);

@@ -550,7 +550,7 @@
       {% if devMode -%}
         <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element, no-unused-disable, require-sri: suppress errors from tinymce] -->
       {%- endif %}
-      <textarea id='{{ slug }}Input' class='mceditable'>
+      <textarea id='{{ slug }}Input' class='mceditable' aria-label='{{ 'Set your text here'|trans }}'>
         {{ configArr[slug]|default('Set your text here.')|raw }}
       </textarea>
       <div class='my-4 text-center'>
@@ -1010,7 +1010,8 @@
     </div>
     <hr>
 
-    {% include 'binary-setting.html' with {'label': "Create team sent by server if it doesn't exist already"|trans, 'slug': 'saml_team_create', 'affix': '2'} %}
+    {% include 'binary-setting.html' with {'label': "Create team sent by server if it doesn't exist already"|trans, 'slug': 'ldap_team_create'} %}
+    {% include 'binary-setting.html' with {'label': 'Synchronize the local teams with the teams sent by LDAP server'|trans, 'slug': 'ldap_sync_teams'} %}
 
     <div class='d-flex justify-content-between'>
       <label for='ldap-team-default' class='col-form-label'>{{ 'If no team attribute is found, to which team user is assigned?'|trans }}</label>

@@ -41,7 +41,7 @@ final class Containers2ItemsTypesLinks extends AbstractContainersLinks
     #[Override]
     protected function getStatusTable(): string
     {
-        return 'items_types_status';
+        return 'items_status';
     }
 
     #[Override]

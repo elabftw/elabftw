@@ -600,11 +600,12 @@ on('toggle-dependent', (el: HTMLInputElement) => {
   }
 });
 
-on('save-booking-settings', (_, e:Event): Promise<Response> => {
+on('save-booking-settings', async (_, e:Event): Promise<void | Response> => {
   e.preventDefault();
   const form = document.getElementById('editBookingParamsForm') as HTMLFormElement;
   const params = collectForm(form);
-  return ApiC.patch(`items/${form.dataset.itemId}`, params);
+  await ApiC.patch(`items/${form.dataset.itemId}`, params);
+  $('#bookingParamsModal').modal('hide');
 });
 
 on('transfer-ownership', async () => {

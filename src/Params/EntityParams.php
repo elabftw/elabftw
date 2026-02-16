@@ -36,7 +36,7 @@ final class EntityParams extends ContentParams implements ContentParamsInterface
             'book_max_minutes', 'book_max_slots', 'book_is_cancellable', 'book_cancel_minutes', 'book_maximum_days_in_advance', 'content_type', 'proc_pack_qty', 'rating', 'userid', 'team' => $this->asInt(),
             'state' => $this->getState(),
             'custom_id', 'status', 'category', 'storage', 'qty_stored' => $this->getPositiveIntOrNull(),
-            'is_procurable', 'book_can_overlap', 'book_limit_days_in_advance', 'book_users_can_in_past', 'is_bookable', 'canread_is_immutable', 'canwrite_is_immutable', 'hide_main_text' => $this->getBinary(),
+            'is_procurable', 'book_can_overlap', 'book_users_can_in_past', 'is_bookable', 'canread_is_immutable', 'canwrite_is_immutable', 'hide_main_text' => $this->getBinary(),
             'qty_unit' => Check::unit($this->asString()),
             default => throw new ImproperActionException('Invalid update target.'),
         };

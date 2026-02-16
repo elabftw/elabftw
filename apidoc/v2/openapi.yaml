@@ -1638,9 +1638,6 @@ components:
           type: integer
         book_cancel_minutes:
           type: integer
-        book_limit_days_in_advance:
-          type: boolean
-          description: Whether booking in advance is limited or not.
         book_maximum_days_in_advance:
           type: integer
           minimum: 1

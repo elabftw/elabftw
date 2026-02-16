@@ -595,9 +595,7 @@ on('toggle-dependent', (el: HTMLInputElement) => {
   if (!target) return;
   const disabled = !el.checked;
   target.classList.toggle('booking-disabled', disabled);
-
   if (target instanceof HTMLInputElement) {
-    // target.disabled = disabled;
     if (disabled) target.value = '0';
   }
 });

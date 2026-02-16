@@ -556,7 +556,7 @@ final class Scheduler extends AbstractRest
 
     private function checkAdvanceLimit(string $start): void
     {
-        // feature disabled
+        // TODO: question to team but I think book_limit_days_in_advance is totally useless, we could just have book_maximum_days to 0 = disabled and >0 = enabled.
         if (empty($this->Items->entityData['book_limit_days_in_advance'])
             || (int) $this->Items->entityData['book_maximum_days_in_advance'] === 0) {
             return;

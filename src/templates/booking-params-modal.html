@@ -69,8 +69,8 @@
             </div>
             {# Limit how far in advance users can book : Maximum days in advance #}
             <div class='d-flex justify-content-between mb-2'>
-              <label for='book_maximum_days_in_advance' class='col-form-label'>{{ 'Maximum days in advance'|trans }}</label>
-              <input class='form-control col-md-4' name='book_maximum_days_in_advance' type='number' value='{{ Entity.entityData.book_maximum_days_in_advance }}' id='maximum_days_in_advance' />
+              <label for='book_maximum_days_in_advance' class='col-form-label'>{{ ' Allow bookings up to (days) in advance'|trans }}</label>
+              <input class='form-control col-md-4' name='book_maximum_days_in_advance' type='number' value='{{ Entity.entityData.book_maximum_days_in_advance }}' id='book_maximum_days_in_advance' />
             </div>
           </div>
         </div>

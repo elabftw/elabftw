@@ -69,16 +69,16 @@
         </div>
         {# TODO: Maximum days in advance #}
         <div class='d-flex justify-content-between'>
-          <label class='d-inline mr-1' for='maximumDaysInAdvance'>{{ 'Limit how far in advance users can book'|trans }}</label>
+          <label class='d-inline mr-1' for='bookLimitDaysInAdvance'>{{ 'Limit how far in advance users can book'|trans }}</label>
           <label class='switch' title='{{ 'Limit how far in advance users can book'|trans }}'><span class='sr-only'>{{ 'Limit how far in advance users can book'|trans }}</span>
-            <input type='checkbox' autocomplete='off' id='limitDaysInAdvance' data-trigger='change' data-model='items/{{ Entity.id }}' data-target='limit_days_in_advance' {{ Entity.entityData.limit_days_in_advance == 1 ? 'checked="checked"' }}>
+            <input type='checkbox' autocomplete='off' id='bookLimitDaysInAdvance' data-trigger='change' data-model='items/{{ Entity.id }}' data-target='book_limit_days_in_advance' {{ Entity.entityData.book_limit_days_in_advance == 1 ? 'checked="checked"' }}>
             <span class='slider'></span>
           </label>
         </div>
         {# Maximum days in advance #}
         <div class='d-flex justify-content-between mb-2 ml-2'>
-          <label for='maximum_days_in_advance' class='col-form-label'>{{ 'Maximum days in advance'|trans }}</label>
-          <input class='form-control col-md-4' data-trigger='blur' data-model='items/{{ Entity.id }}' data-target='maximum_days_in_advance' type='number' value='{{ Entity.entityData.maximum_days_in_advance }}' id='maximum_days_in_advance' />
+          <label for='book_maximum_days_in_advance' class='col-form-label'>{{ 'Maximum days in advance'|trans }}</label>
+          <input class='form-control col-md-4' data-trigger='blur' data-model='items/{{ Entity.id }}' data-target='book_maximum_days_in_advance' type='number' value='{{ Entity.entityData.book_maximum_days_in_advance }}' id='maximum_days_in_advance' />
         </div>
       </div>
       </div>

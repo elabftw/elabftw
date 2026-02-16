@@ -509,7 +509,7 @@ if (window.location.pathname === '/sysconfig.php') {
   });
 
   on('destroy-oidc-idp', (el: HTMLElement) => {
-    if (confirm('Delete this OIDC provider?')) {
+    if (confirm(i18next.t('generic-delete-warning'))) {
       ApiC.delete(`${Model.IdpsOidc}/${el.dataset.id}`).then(() => reloadElements(['oidcIdpsDiv']));
     }
   });

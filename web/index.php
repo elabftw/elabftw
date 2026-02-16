@@ -41,15 +41,13 @@ try {
 
     // OIDC: IDP will redirect to this page after user login on IDP website
     if ($App->Request->query->has('code') && $App->Request->query->has('state')) {
-        // Read from $_SESSION directly since OidcAuth stores values there
-        $idpId = $_SESSION['oidc_idp_id'] ?? 0;
+        $idpId = $App->Session->get('oidc_idp_id') ?? 0;
         if ($idpId === 0) {
             throw new ImproperActionException('OIDC session data is missing. Please try logging in again.');
         }
         $IdpsHelper = new IdpsHelper($App->Config, new Idps($App->Users));
         $settings = $IdpsHelper->getOidcSettings($idpId);
-        $sessionStorage = &$_SESSION;
-        $AuthService = new OidcAuth($App->Config->configArr, $settings, $sessionStorage);
+        $AuthService = new OidcAuth($App->Config->configArr, $settings, $App->Session);
         $AuthResponse = $AuthService->assertIdpResponse(
             $App->Request->query->getString('code'),
             $App->Request->query->getString('state')
@@ -71,6 +69,29 @@ try {
 
         $loggingInUser = $AuthResponse->getUser();
 
+        /////////
+        // MFA
+        // check if we need to do mfa auth too after a first successful authentication
+        // if we're receiving mfa_secret, it's because we just enabled MFA, so save it for that user
+        if ($App->Request->query->has('mfa_secret')) {
+            $loggingInUser->update(new UserParams('mfa_secret', $App->Request->query->getString('mfa_secret')));
+        }
+        $enforceMfa = EnforceMfa::from((int) $App->Config->configArr['enforce_mfa']);
+        // MFA can be required because the user has mfa_secret or because it is enforced for their level
+        if (MfaGate::isMfaRequired($enforceMfa, $loggingInUser)) {
+            if ($AuthResponse->hasVerifiedMfa()) {
+                $App->Session->remove('mfa_auth_required');
+                $App->Session->remove('mfa_secret');
+            } else {
+                $App->Session->set('mfa_auth_required', true);
+                // remember which user is authenticated in the Session
+                $App->Session->set('auth_userid', $AuthResponse->getAuthUserid());
+                $location = '/login.php';
+                echo "<html><head><meta http-equiv='refresh' content='1;url=$location' /><title>You are being redirected...</title></head><body>You are being redirected...</body></html>";
+                exit;
+            }
+        }
+
         // Create LoginHelper
         $LoginHelper = new LoginHelper($AuthResponse, $App->Session, (int) $App->Config->configArr['cookie_validity_time']);
 
@@ -80,6 +101,9 @@ try {
             $App->Session->set('team_selection', $AuthResponse->getSelectableTeams());
             $App->Session->set('auth_userid', $AuthResponse->getAuthUserid());
             $Response = new RedirectResponse('/login.php');
+        } elseif ($loggingInUser->userData['validated'] === 0) {
+            // send a helpful message if account requires validation, needs to be after team selection
+            throw new ImproperActionException(_('Your account is not validated. An admin of your team needs to validate it!'));
         } else {
             $rememberMe = $App->Config->configArr['remember_me_allowed'] === '1';
             $LoginHelper->login($rememberMe);

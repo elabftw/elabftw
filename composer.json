@@ -54,7 +54,8 @@
     "psr/http-message": "^2.0",
     "psr/log": "^3.0",
     "setasign/fpdi": "^2.6",
-    "symfony/validator": "^7.3"
+    "symfony/validator": "^7.3",
+    "firebase/php-jwt": "^7.0"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",

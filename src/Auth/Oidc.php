@@ -26,15 +26,9 @@ use Elabftw\Models\Users\Users;
 use Elabftw\Models\Users\ValidatedUser;
 use Elabftw\Params\UserParams;
 use Elabftw\Services\UsersHelper;
-use Lcobucci\JWT\Configuration;
-use Lcobucci\JWT\Encoding\CannotDecodeContent;
-use Lcobucci\JWT\Signer\Hmac\Sha256;
-use Lcobucci\JWT\Signer\Key\InMemory;
-use Lcobucci\JWT\Token\InvalidTokenStructure;
-use Lcobucci\JWT\UnencryptedToken;
-use Lcobucci\JWT\Validation\Constraint\PermittedFor;
-use Lcobucci\JWT\Validation\Constraint\SignedWith;
-use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Firebase\JWT\JWT;
+use Firebase\JWT\JWK;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Provider\GenericProvider;
 use League\OAuth2\Client\Token\AccessToken;
@@ -71,85 +65,48 @@ final class Oidc implements AuthInterface
 
     private ?string $idToken = null;
 
-    public function __construct(private array $configArr, private array $settings, private array &$sessionStorage)
+    public function __construct(private array $configArr, private array $settings, private SessionInterface $Session)
     {
         $this->AuthResponse = new AuthResponse();
 
-        try {
-            // build OAuth2 provider configuration
-            $scopeString = $settings['scope'] ?? 'openid email profile';
-            
-            $providerConfig = array(
-                'clientId' => $settings['client_id'],
-                'clientSecret' => $settings['client_secret'],
-                'redirectUri' => $settings['redirect_uri'],
-                'urlAuthorize' => $settings['authorization_endpoint'],
-                'urlAccessToken' => $settings['token_endpoint'],
-                'urlResourceOwnerDetails' => $settings['userinfo_endpoint'],
-                'scopes' => explode(' ', $scopeString),
-                'scopeSeparator' => ' ', // OIDC standard uses space separator
-                'responseResourceOwnerId' => 'sub', // OIDC uses 'sub' not 'id'
-            );
-
-            $this->provider = new GenericProvider($providerConfig);
-        } catch (\Throwable $e) {
-            throw $e;
-        }
-    }
-
-    public static function getJWTConfig(): Configuration
-    {
-        $secretKey = Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY'));
-        /** @psalm-suppress ArgumentTypeCoercion */
-        $config = Configuration::forSymmetricSigner(
-            new Sha256(),
-            InMemory::plainText($secretKey->getRawBytes()), // @phpstan-ignore-line
+        // build OAuth2 provider configuration
+        $scopeString = $settings['scope'] ?? 'openid email profile';
+        
+        $providerConfig = array(
+            'clientId' => $settings['client_id'],
+            'clientSecret' => $settings['client_secret'],
+            'redirectUri' => $settings['redirect_uri'],
+            'urlAuthorize' => $settings['authorization_endpoint'],
+            'urlAccessToken' => $settings['token_endpoint'],
+            'urlResourceOwnerDetails' => $settings['userinfo_endpoint'],
+            'scopes' => explode(' ', $scopeString),
+            'scopeSeparator' => ' ', // OIDC standard uses space separator
+            'responseResourceOwnerId' => 'sub', // OIDC uses 'sub' not 'id'
         );
 
-        $config->setValidationConstraints(new SignedWith($config->signer(), $config->signingKey()));
-        return $config;
+        $this->provider = new GenericProvider($providerConfig);
     }
 
-    public function encodeToken(int $idpId): string
+    public function encodeToken(array $idpID): string
     {
-        $now = new DateTimeImmutable();
-        $config = self::getJWTConfig();
-        $token = $config->builder()
-                // Configures the audience (aud claim)
-                ->permittedFor('oidc-session')
-                // Configures the time that the token was issue (iat claim)
-                ->issuedAt($now)
-                // Configures the expiration time of the token (exp claim)
-                // @psalm-suppress PossiblyFalseArgument
-                ->expiresAt($now->modify('+1 months'))
-                // store IdP ID and ID token for logout
-                ->withClaim('idp_id', $idpId)
-                ->withClaim('id_token', $this->idToken)
-                // Builds a new token
-                ->getToken($config->signer(), $config->signingKey());
-        return $token->toString();
-    }
-
-    public static function decodeToken(string $token): array
-    {
-        $conf = self::getJWTConfig();
-
-        try {
-            if (empty($token)) {
-                throw new UnauthorizedException('Decoding JWT Token failed');
-            }
-            $parsedToken = $conf->parser()->parse($token);
-            if (!$parsedToken instanceof UnencryptedToken) {
-                throw new UnauthorizedException('Decoding JWT Token failed');
-            }
-            $conf->validator()->assert($parsedToken, ...$conf->validationConstraints());
-
-            return array(
-                $parsedToken->claims()->get('idp_id'),
-                $parsedToken->claims()->get('id_token'),
+        //create a JWT token with a one month expiration time to encode the IDP used (in case of logout).
+        $data = array(
+            'idp' => $idpID,
+            'exp' => (new DateTimeImmutable())->modify('+1 month')->getTimestamp(),
+            'id_token' => $this->idToken,
             );
-        } catch (CannotDecodeContent | InvalidTokenStructure | RequiredConstraintsViolated) {
-            throw new UnauthorizedException('Decoding JWT Token failed');
+        $key = Key::loadFromAsciiSafeString(base64_decode(Env::get('APP_KEY')));
+        return JWT::encode($data, $key, 'HS256');
+    }
+
+    public function decodeToken(string $token): array
+    {
+        $key = Key::loadFromAsciiSafeString(base64_decode(Env::get('APP_KEY')));
+        try {
+            $decoded = JWT::decode($token, $key, array('HS256'));
+            return (array) $decoded;
+        } catch (\Exception) {
+            return array();
         }
     }
 
@@ -160,10 +117,10 @@ final class Oidc implements AuthInterface
         $authUrl = $this->provider->getAuthorizationUrl();
 
         // store state in session to validate callback
-        $this->sessionStorage['oauth2state'] = $this->provider->getState();
+        $this->Session->set('oauth2state', $this->provider->getState());
 
         // store IdP ID in session for callback
-        $this->sessionStorage['oidc_idp_id'] = $this->settings['idp_id'] ?? 0;
+        $this->Session->set('oidc_idp_id', $this->settings['idp_id'] ?? 0);
         
         // redirect to IdP (this will exit)
         header('Location: ' . $authUrl);
@@ -248,7 +205,7 @@ final class Oidc implements AuthInterface
                     $Teams->synchronize($userid, $this->getTeamsFromIdpResponse());
                 } catch (ImproperActionException $e) {
                     // If team sync fails, just skip it - don't prevent login
-                    // User will keep their existing team memberships
+                    error_log('Failed to synchronize teams from IdP for user ' . $userid . ': ' . $e->getMessage());
                 }
             }
         }
@@ -308,14 +265,12 @@ final class Oidc implements AuthInterface
      */
     private function validateState(string $receivedState): bool
     {
-        $storedState = $this->sessionStorage['oauth2state'] ?? null;
+        $storedState = $this->Session->get('oauth2state');
         return $storedState !== null && $storedState === $receivedState;
     }
 
     /**
-     * Parse and validate ID token (JWT) if present
-     * Note: This is basic parsing without signature verification
-     * For production use, consider full OIDC validation including signature verification against JWKS
+     * Parse and validate ID token (JWT) if present using Firebase JWT
      * @return array<string, mixed>|null
      */
     private function parseIdToken(AccessToken $token): ?array
@@ -325,15 +280,49 @@ final class Oidc implements AuthInterface
             return null;
         }
 
-        // basic JWT parsing without signature verification
-        $parts = explode('.', $values['id_token']);
-        if (count($parts) !== 3) {
+        try {
+            $jwksUri = $this->settings['jwks_uri'] ?? null;
+            if ($jwksUri === null) {
+                return null;
+            }
+
+            // Fetch JWKS
+            $jwksJson = file_get_contents($jwksUri);
+            if ($jwksJson === false) {
+                return null;
+            }
+
+            $jwks = json_decode($jwksJson, true);
+            if (!is_array($jwks)) {
+                return null;
+            }
+
+            // Parse and verify token with JWK
+            $keys = JWK::parseKeySet($jwks);
+            $decoded = JWT::decode($values['id_token'], $keys);
+
+            // Verify the token is not expired and is intended for our client_id
+            $now = time();
+            if ($decoded->exp < $now) {
+                return null;
+            }
+
+            if ($decoded->iss !== parse_url($this->settings['authorization_endpoint'], PHP_URL_HOST)) {
+                return null;
+            }
+            // If the client ID we know does not match the audience in the token, reject it
+            if ($decoded->aud !== $this->settings['client_id']) {
+                return null;
+            }
+
+            // Check if the signature is valid (this will throw an exception if not)
+            JWT::decode($values['id_token'], $keys);
+            // Convert decoded token to array
+            $claims = (array) $decoded;
+            return $claims;
+        } catch (\Exception $e) {
             return null;
         }
-
-        // decode payload (second part)
-        $payload = json_decode(base64_decode(strtr($parts[1], '-_', '+/')), true);
-        return is_array($payload) ? $payload : null;
     }
 
     /**
@@ -400,6 +389,41 @@ final class Oidc implements AuthInterface
         return $name;
     }
 
+    /**
+     * Helper method to flatten nested team arrays/objects from OIDC providers
+     * Extracts scalar identifiers from team objects: {"id": 2, "name": "team"} -> [2] or ["team"]
+     *
+     * @param array $teams Raw teams data from OIDC claim
+     * @return array Flattened array of scalar team identifiers
+     */
+    private function flattenTeams(array $teams): array
+    {
+        $flattenedTeams = array();
+        foreach ($teams as $team) {
+            if (is_array($team)) {
+                // If team is an array/object, try to extract a useful identifier
+                // Prefer: id, name, then first non-empty value
+                if (isset($team['id']) && !empty($team['id'])) {
+                    $flattenedTeams[] = $team['id'];
+                } elseif (isset($team['name']) && !empty($team['name'])) {
+                    $flattenedTeams[] = $team['name'];
+                } else {
+                    // Get first non-empty value from the array
+                    foreach ($team as $value) {
+                        if (!empty($value) && is_scalar($value)) {
+                            $flattenedTeams[] = $value;
+                            break;
+                        }
+                    }
+                }
+            } elseif (is_scalar($team) && !empty($team)) {
+                // If team is already a scalar value, use it directly
+                $flattenedTeams[] = $team;
+            }
+        }
+        return $flattenedTeams;
+    }
+
     private function getTeamsFromIdpResponse(): array
     {
         $claimName = $this->settings['team_claim'] ?? null;
@@ -412,14 +436,16 @@ final class Oidc implements AuthInterface
             throw new ImproperActionException('Could not find team(s) in IdP response!');
         }
 
-        // Normalize teams to be an array of scalar values
+        // Normalize to array
         if (!is_array($teams)) {
             $teams = array($teams);
         }
 
+        // Flatten and resolve teams
+        $flattenedTeams = $this->flattenTeams($teams);
         $Teams = new Teams(new Users());
         $allowTeamCreation = ($this->configArr['oidc_team_create'] ?? '1') === '1';
-        return $Teams->getTeamsFromIdOrNameOrOrgidArray($teams, $allowTeamCreation);
+        return $Teams->getTeamsFromIdOrNameOrOrgidArray($flattenedTeams, $allowTeamCreation);
     }
 
     private function getTeams(): array | int
@@ -437,11 +463,14 @@ final class Oidc implements AuthInterface
             }
             return array((int) $teamId);
         }
-        if (is_string($teams)) {
-            return array($teams);
+        
+        // Normalize to array
+        if (!is_array($teams)) {
+            $teams = array($teams);
         }
 
-        return $teams;
+        // Flatten and return identifiers (don't resolve here - let Users::create() do it)
+        return $this->flattenTeams($teams);
     }
 
     private function getExistingUser(string $email, ?string $orgid = null): Users | false
@@ -493,11 +522,10 @@ final class Oidc implements AuthInterface
             // If we can't, require team selection instead of failing
             try {
                 $allowTeamCreation = ($this->configArr['oidc_team_create'] ?? '1') === '1';
-                $Teams = new Teams(new Users());
-                $validatedTeams = $Teams->getTeamsFromIdOrNameOrOrgidArray($teams, $allowTeamCreation);
                 // create user (force validation with user permissions)
+                // Pass $teams directly - Users::create() will call getTeamsFromIdOrNameOrOrgidArray internally
                 /** @psalm-suppress PossiblyInvalidArgument */
-                $Users = ValidatedUser::fromExternal($email, $validatedTeams, $this->getName(), $this->getName(true), orgid: $orgid, allowTeamCreation: $allowTeamCreation);
+                $Users = ValidatedUser::fromExternal($email, $teams, $this->getName(), $this->getName(true), orgid: $orgid, allowTeamCreation: $allowTeamCreation);
             } catch (ImproperActionException $e) {
                 // If we can't find/create any teams, require user to select teams
                 return self::TEAM_SELECTION_REQUIRED;

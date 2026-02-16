@@ -343,10 +343,7 @@ final class LoginController implements ControllerInterface
                 $IdpsHelper = new IdpsHelper(Config::getConfig(), new Idps(new Users()));
                 $idpId = $this->Request->request->getInt('idpId');
                 $settings = $IdpsHelper->getOidcSettings($idpId);
-                // use Session as storage for OIDC state, as array is passed by reference
-                $this->Session->set('oidc_idp_id', $idpId);
-                $sessionStorage = &$_SESSION;
-                return new OidcAuth($this->config, $settings, $sessionStorage);
+                return new OidcAuth($this->config, $settings, $this->Session);
 
             case AuthType::External:
                 $this->Session->set('auth_service', AuthType::External->asService());

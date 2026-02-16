@@ -587,10 +587,19 @@ on('toggle-pin', (el: HTMLElement) => {
   });
 });
 
-on('toggle-booking-permissions', (el: HTMLInputElement) => {
-  const wrapper = document.getElementById('bookingPermissionsDiv');
-  if (!wrapper) return;
-  wrapper.classList.toggle('booking-disabled', !el.checked);
+
+on('toggle-dependent', (el: HTMLInputElement) => {
+  const targetId = el.dataset.targetToggle;
+  if (!targetId) return;
+  const target = document.getElementById(targetId);
+  if (!target) return;
+  const disabled = !el.checked;
+  target.classList.toggle('booking-disabled', disabled);
+
+  if (target instanceof HTMLInputElement) {
+    // target.disabled = disabled;
+    if (disabled) target.value = '0';
+  }
 });
 
 on('transfer-ownership', async () => {

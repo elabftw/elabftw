@@ -135,7 +135,10 @@ final class IdpsOidc extends AbstractRest
         
         match ($action) {
             Action::Update => $this->update($params),
-            Action::Unreference => $this->setId((int) $params['id']) && $this->toggleEnabled(),
+            Action::Unreference => (function() use ($params) {
+                $this->setId((int) $params['id']);
+                return $this->toggleEnabled();
+            })(),
             default => throw new ImproperActionException('Invalid action for OIDC IDP patch'),
         };
 
@@ -226,6 +229,15 @@ final class IdpsOidc extends AbstractRest
 
     private function update(array $params): bool
     {
+
+        $allowedColumns = [  
+            'name', 'issuer', 'client_id', 'client_secret',  
+            'authorization_endpoint', 'token_endpoint', 'userinfo_endpoint',  
+            'end_session_endpoint', 'jwks_uri', 'scope',  
+            'email_claim', 'fname_claim', 'lname_claim', 'team_claim', 'orgid_claim',  
+            'enabled',  
+        ];  
+
         // Remove empty client_secret from params to keep existing one
         if (isset($params['client_secret']) && empty($params['client_secret'])) {
             unset($params['client_secret']);
@@ -235,11 +247,9 @@ final class IdpsOidc extends AbstractRest
         $sqlArr = array();
 
         foreach ($params as $key => $value) {
-            // skip id and created_at
-            if ($key === 'id' || $key === 'created_at') {
+            if (!in_array($key, $allowedColumns)) {
                 continue;
             }
-            
             // encrypt client_secret if provided
             if ($key === 'client_secret') {
                 $value = $this->encryptSecret($value);

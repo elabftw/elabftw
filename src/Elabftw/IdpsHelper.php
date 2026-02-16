@@ -351,6 +351,12 @@ final class IdpsHelper
     public function discoverOidcEndpoints(string $issuer): array
     {
         $issuerUrl = rtrim($issuer, '/');
+
+        // Ensure valid URL 
+        if (!filter_var($issuerUrl, FILTER_VALIDATE_URL)) {
+            throw new ImproperActionException('Invalid issuer URL provided for OIDC discovery.');
+        }
+
         $wellKnownUrl = $issuerUrl . '/.well-known/openid-configuration';
 
         $ch = curl_init();

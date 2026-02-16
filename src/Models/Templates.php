@@ -87,4 +87,10 @@ final class Templates extends AbstractTemplateEntity
 
         return $id;
     }
+
+    #[Override]
+    protected function getCreatePermissionKey(): string
+    {
+        return 'users_canwrite_experiments_templates';
+    }
 }

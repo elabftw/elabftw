@@ -25,19 +25,19 @@
       </div>
     </form>
     <hr>
-    {% if App.experimentsCategoryArr %}
+    {% if App.experimentsCategoryArr|filter(c => c.is_current_team == 1) %}
       <h5>{{ 'Browse by category'|trans }}</h5>
       <div class='d-flex my-2 flex-wrap lh-150'>
-        {% for category in App.experimentsCategoryArr -%}
+        {% for category in App.experimentsCategoryArr|filter(c => c.is_current_team == 1) -%}
           <a href='experiments.php?mode=show&amp;cat={{ category.id }}' class='btn mr-2 catstat-btn category-btn mb-1' style='--bg: #{{ category.color }}'>{{ category.title }}</a>
         {%- endfor %}
       </div>
       <hr>
     {% endif %}
-    {% if experimentsStatusArr %}
+    {% if experimentsStatusArr|filter(c => c.is_current_team == 1) %}
       <h5>{{ 'Browse by status'|trans }}</h5>
       <div class='d-flex my-2 flex-wrap lh-150'>
-        {% for status in experimentsStatusArr -%}
+        {% for status in experimentsStatusArr|filter(c => c.is_current_team == 1) -%}
           <a href='experiments.php?mode=show&amp;status={{ status.id }}' class='btn mr-2 catstat-btn status-btn mb-1' style='--bg: #{{ status.color }}'><i class='fas fa-circle fa-fw' style='--bg:#{{ status.color }}'></i> {{ status.title }}</a>
         {%- endfor %}
       </div>
@@ -77,15 +77,15 @@
     <hr>
     <h5>{{ 'Browse by category'|trans }}</h5>
     <div class='d-flex my-2 flex-wrap lh-150'>
-      {% for category in App.itemsCategoryArr -%}
+      {% for category in App.itemsCategoryArr|filter(c => c.is_current_team == 1) -%}
         <a href='database.php?mode=show&amp;cat={{ category.id }}' class='btn mr-2 catstat-btn category-btn lh-normal mb-1' style='--bg: #{{ category.color }}'>{{ category.title }}</a>
       {%- endfor %}
     </div>
     <hr>
-    {% if itemsStatusArr %}
+    {% if itemsStatusArr|filter(c => c.is_current_team == 1) %}
       <h5>{{ 'Browse by status'|trans }}</h5>
       <div class='d-flex my-2 flex-wrap lh-150'>
-        {% for status in itemsStatusArr -%}
+        {% for status in itemsStatusArr|filter(c => c.is_current_team == 1) -%}
           <a href='database.php?mode=show&amp;status={{ status.id }}' class='btn mr-2 catstat-btn status-btn lh-normal border-0 mb-1' style='--bg: #{{ status.color }}'><i class='fas fa-circle fa-fw' style='--bg:#{{ status.color }}'></i> {{ status.title }}</a>
         {%- endfor %}
       </div>

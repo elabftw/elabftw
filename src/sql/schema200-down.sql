@@ -1,5 +1,6 @@
 -- revert schema 200
-CALL DropColumn('items', 'book_price_notax');
-CALL DropColumn('items', 'book_price_tax');
-CALL DropColumn('items', 'book_price_currency');
+CALL DropColumn('teams', 'users_canwrite_experiments');
+CALL DropColumn('teams', 'users_canwrite_experiments_templates');
+CALL DropColumn('teams', 'users_canwrite_resources');
+CALL DropColumn('teams', 'users_canwrite_resources_templates');
 UPDATE config SET conf_value = 199 WHERE conf_name = 'schema';

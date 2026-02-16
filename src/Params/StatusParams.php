@@ -23,7 +23,7 @@ final class StatusParams extends ContentParams
     {
         return match ($this->target) {
             'color' => Check::color($this->asString()),
-            'is_default' => $this->getBinary(),
+            'is_default', 'is_private' => $this->getBinary(),
             'title' => parent::getContent(),
             'state' => $this->getState(),
             default => throw new ImproperActionException('Incorrect parameter for status.'),

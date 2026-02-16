@@ -7,7 +7,7 @@
  */
 import $ from 'jquery';
 import { ApiC } from './api';
-import { Malle, InputType, Action as MalleAction, SelectOptions } from '@deltablot/malle';
+import { Malle, InputType, SelectOptions } from '@deltablot/malle';
 import 'bootstrap/js/src/modal.js';
 import FavTag from './FavTag.class';
 import { clearLocalStorage, rememberLastSelected, selectLastSelected } from './localStorage';
@@ -72,6 +72,7 @@ interface Status extends SelectOptions {
   id: number;
   color: string;
   title: string;
+  is_current_team: number;
 }
 
 on('toggle-dark-mode', (el: HTMLElement) => {
@@ -342,12 +343,11 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
     },
     listenOn: '.malleable-title',
     returnedValueIsTrustedHtml: false,
-    onBlur: MalleAction.Submit,
     tooltip: i18next.t('click-to-edit'),
   }).listen();
 
   // CATEGORY AND STATUS
-  const notsetOpts = {id: null, title: i18next.t('not-set'), color: 'bdbdbd'};
+  const notsetOpts = {id: null, title: i18next.t('not-set'), color: 'bdbdbd', is_current_team: 1};
   let statusEndpoint = `${Model.Team}/current/items_status`;
   let categoryEndpoint = `${Model.Team}/current/resources_categories`;
   if (entity.type === EntityType.Experiment || entity.type === EntityType.Template) {
@@ -358,7 +358,7 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
   // this is a cache for category or status for malle
   const optionsCache = [];
   // this promise will fetch the categories or status on click
-  const getCatStatArr = (endpoint: string): Promise<SelectOptions[]> => {
+  const getCatStatArr = (endpoint: string): Promise<Status[]> => {
     if (!optionsCache[endpoint]) {
       optionsCache[endpoint] = ApiC.getJson(`${endpoint}?limit=9000`)
         .then(json => {
@@ -393,8 +393,6 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
       }
       return true;
     },
-    cancel : i18next.t('cancel'),
-    cancelClasses: ['btn', 'btn-danger', 'ml-1'],
     inputClasses: ['form-control', 'ml-2'],
     formClasses: ['form-inline'],
     fun: (value: string, original: HTMLElement) => updateCatStat(original.dataset.target, entity, value).then(color => {
@@ -404,11 +402,11 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
     inputType: InputType.Select,
     selectOptionsValueKey: 'id',
     selectOptionsTextKey: 'title',
-    selectOptions: () => getCatStatArr(statusEndpoint),
+    selectOptions: async () =>
+      ((await getCatStatArr(statusEndpoint)) as Status[])
+        .filter((status: Status) => status.is_current_team === 1),
     listenOn: '.malleableStatus',
     returnedValueIsTrustedHtml: false,
-    submit : i18next.t('save'),
-    submitClasses: ['btn', 'btn-primary', 'ml-1'],
     tooltip: i18next.t('click-to-edit'),
   }).listen();
 
@@ -422,19 +420,17 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
       elem.style.setProperty('--bg', `#${splitValue[1]}`);
       return true;
     },
-    cancel : i18next.t('cancel'),
-    cancelClasses: ['btn', 'btn-danger', 'mx-1'],
     inputClasses: ['form-control'],
     formClasses: ['form-inline'],
     fun: (value: string, original: HTMLElement) => updateCatStat(original.dataset.target, entity, value),
     inputType: InputType.Select,
     selectOptionsValueKey: 'id',
     selectOptionsTextKey: 'title',
-    selectOptions: () => getCatStatArr(categoryEndpoint),
+    selectOptions: async () =>
+      ((await getCatStatArr(categoryEndpoint)) as Status[])
+        .filter((cat: Status) => cat.is_current_team === 1),
     listenOn: '.malleableCategory',
     returnedValueIsTrustedHtml: false,
-    submit : i18next.t('save'),
-    submitClasses: ['btn', 'btn-primary', 'ml-1'],
     tooltip: i18next.t('click-to-edit'),
   }).listen();
 }

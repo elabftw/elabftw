@@ -1,4 +1,5 @@
 -- schema 200
-ALTER TABLE `items` ADD `book_price_notax` DECIMAL(10, 2) UNSIGNED NOT NULL DEFAULT 0.00;
-ALTER TABLE `items` ADD `book_price_tax` DECIMAL(10,2) UNSIGNED NOT NULL DEFAULT 0.00;
-ALTER TABLE `items` ADD `book_price_currency` TINYINT UNSIGNED NOT NULL DEFAULT 0;
+ALTER TABLE teams ADD COLUMN users_canwrite_experiments TINYINT(1) UNSIGNED NOT NULL DEFAULT 1;
+ALTER TABLE teams ADD COLUMN users_canwrite_experiments_templates TINYINT(1) UNSIGNED NOT NULL DEFAULT 1;
+ALTER TABLE teams ADD COLUMN users_canwrite_resources TINYINT(1) UNSIGNED NOT NULL DEFAULT 1;
+ALTER TABLE teams ADD COLUMN users_canwrite_resources_templates TINYINT(1) UNSIGNED NOT NULL DEFAULT 1;

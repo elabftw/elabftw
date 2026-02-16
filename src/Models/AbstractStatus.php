@@ -75,7 +75,7 @@ abstract class AbstractStatus extends AbstractCategory
     #[Override]
     public function readOne(): array
     {
-        $sql = sprintf('SELECT id, title, color, is_default, ordering, state, team
+        $sql = sprintf('SELECT id, title, color, is_default, ordering, state, team, is_private
             FROM %s WHERE id = :id', $this->table);
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -89,15 +89,26 @@ abstract class AbstractStatus extends AbstractCategory
         return new BaseQueryParams(query: $query, orderby: Orderby::Ordering, sort: Sort::Asc);
     }
 
-    /**
-     * Get all status from team
-     */
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        $sql = sprintf('SELECT entity.id, entity.title, entity.color, entity.is_default, entity.ordering,
-            entity.state, entity.team, teams.name AS team_name
-            FROM %s AS entity INNER JOIN teams ON teams.id = entity.team WHERE entity.team = :team', $this->table);
+        $sql = sprintf(
+            'SELECT
+                entity.id,
+                entity.title,
+                entity.color,
+                entity.is_default,
+                entity.ordering,
+                entity.state,
+                entity.team,
+                entity.is_private,
+                teams.name AS team_name,
+                CASE WHEN entity.team = :team THEN 1 ELSE 0 END AS is_current_team
+             FROM %s AS entity
+             INNER JOIN teams ON teams.id = entity.team
+             WHERE entity.is_private = 0 OR entity.team = :team',
+            $this->table
+        );
 
         $queryParams ??= $this->getQueryParams();
         $sql .= $queryParams->getSql();

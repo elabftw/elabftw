@@ -92,4 +92,10 @@ final class ItemsTypes extends AbstractTemplateEntity
 
         return $id;
     }
+
+    #[Override]
+    protected function getCreatePermissionKey(): string
+    {
+        return 'users_canwrite_resources_templates';
+    }
 }

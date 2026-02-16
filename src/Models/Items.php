@@ -202,4 +202,10 @@ final class Items extends AbstractConcreteEntity
         $this->Db->execute($req);
         return $req->fetchAll();
     }
+
+    #[Override]
+    protected function getCreatePermissionKey(): string
+    {
+        return 'users_canwrite_resources';
+    }
 }

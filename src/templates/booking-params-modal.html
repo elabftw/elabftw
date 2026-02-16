@@ -67,7 +67,7 @@
               <label for='book_max_slots' class='col-form-label'>{{ 'Maximum future bookings per user'|trans }}</label>
               <input class='form-control col-md-4' name='book_max_slots' type='number' value='{{ Entity.entityData.book_max_slots }}' id='book_max_slots' />
             </div>
-            {# TODO: Maximum days in advance #}
+            {# Limit how far in advance users can book #}
             <div class='d-flex justify-content-between'>
               <label class='d-inline mr-1' for='bookLimitDaysInAdvance'>{{ 'Limit how far in advance users can book'|trans }}</label>
               <label class='switch' title='{{ 'Limit how far in advance users can book'|trans }}'><span class='sr-only'>{{ 'Limit how far in advance users can book'|trans }}</span>

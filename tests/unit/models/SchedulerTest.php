@@ -437,10 +437,24 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($Scheduler->destroy());
     }
 
-    private function getFreshSchedulerWithEvent(): Scheduler
+    public function testCannotBookBeyondMaximumAdvanceDays(): void
     {
-        $Scheduler = new Scheduler($this->getFreshBookableItem(2));
-        $id = $Scheduler->postAction(Action::Create, array('start' => $this->start, 'end' => $this->end));
+        $Items = $this->getFreshItemWithGivenUser($this->getRandomUserInTeam(2));
+        // enable limit
+        $Items->patch(Action::Update, array('book_limit_days_in_advance' => 1, 'book_maximum_days_in_advance' => 1));
+        $start = new DateTime('+3 days')->format('c');
+        $end = new DateTime('+3 days +2 hours')->format('c');
+        $this->expectException(ImproperActionException::class);
+        $this->getFreshSchedulerWithEvent($Items, $start, $end);
+    }
+
+    private function getFreshSchedulerWithEvent(?Items $Items = null, ?string $start = null, ?string $end = null): Scheduler
+    {
+        $Items ??= $this->getFreshBookableItem(2);
+        $start ??= $this->start;
+        $end ??= $this->end;
+        $Scheduler = new Scheduler($Items);
+        $id = $Scheduler->postAction(Action::Create, array('start' => $start, 'end' => $end));
         $Scheduler->setId($id);
         return $Scheduler;
     }

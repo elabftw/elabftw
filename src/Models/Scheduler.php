@@ -529,6 +529,7 @@ final class Scheduler extends AbstractRest
         $this->checkOverlap($start, $end);
         $this->checkSlotTime($start, $end);
         $this->checkEndAfterStart($start, $end);
+        $this->checkAdvanceLimit($start);
     }
 
     private function formatDate(string $input): DateTimeImmutable
@@ -550,6 +551,23 @@ final class Scheduler extends AbstractRest
                 $endDate->format(self::DATETIME_FORMAT),
                 $startDate->format(self::DATETIME_FORMAT)
             ));
+        }
+    }
+
+    private function checkAdvanceLimit(string $start): void
+    {
+        // feature disabled
+        if (empty($this->Items->entityData['book_limit_days_in_advance'])
+            || (int) $this->Items->entityData['book_maximum_days_in_advance'] === 0) {
+            return;
+        }
+        $maxDays = (int) $this->Items->entityData['book_maximum_days_in_advance'];
+        $startDate = $this->formatDate($start);
+        $now = new DateTimeImmutable();
+
+        $maxAllowed = $now->modify(sprintf('+%d days', $maxDays))->setTime(23, 59, 59);
+        if ($startDate > $maxAllowed) {
+            throw new ImproperActionException(sprintf(_('Booking is limited to %d day(s) in advance.'), $maxDays));
         }
     }
 

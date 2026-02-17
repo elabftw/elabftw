@@ -1632,18 +1632,22 @@ components:
         book_max_slots:
           type: integer
         book_can_overlap:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         book_users_can_in_past:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         book_is_cancellable:
           type: integer
+          enum: [0, 1]
         book_cancel_minutes:
           type: integer
+          enum: [0, 1]
         booking_window_days:
           type: integer
           minimum: 0
           default: 0
-          description: Maximum number of days users can book in advance. 0 means no limit.
+          description: How many days in advance users can book an item. 0 means no limit.
 
     item:
       allOf:

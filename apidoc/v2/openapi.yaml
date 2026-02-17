@@ -1639,7 +1639,7 @@ components:
           type: integer
         book_cancel_minutes:
           type: integer
-        book_maximum_days_in_advance:
+        booking_window_days:
           type: integer
           minimum: 0
           default: 0

@@ -36,7 +36,7 @@ final class NotificationsFactory
 {
     private array $body;
 
-    public function __construct(private int $category, string $jsonBody)
+    public function __construct(private int $category, string $jsonBody, private Users $user)
     {
         $this->body = json_decode($jsonBody, true, 10, JSON_THROW_ON_ERROR);
     }
@@ -44,16 +44,16 @@ final class NotificationsFactory
     public function getMailable(): MailableInterface
     {
         return match (Notifications::from($this->category)) {
-            Notifications::CommentCreated => new CommentCreated($this->body['page'], $this->body['entity_id'], $this->body['commenter_userid']),
-            Notifications::UserCreated => new UserCreated($this->body['userid'], $this->body['team']),
-            Notifications::UserNeedValidation => new UserNeedValidation($this->body['userid'], $this->body['team']),
-            Notifications::StepDeadline => new StepDeadline($this->body['step_id'], $this->body['entity_id'], $this->body['entity_page'], $this->body['deadline']),
-            Notifications::EventDeleted => new EventDeleted($this->body['event'], $this->body['actor'], $this->body['msg'], EmailTarget::from($this->body['target'])),
-            Notifications::SelfNeedValidation => new SelfNeedValidation(),
-            Notifications::SelfIsValidated => new SelfIsValidated(),
-            Notifications::OnboardingEmail => new OnboardingEmail($this->body['team'], $this->body['forAdmin'] ?? false),
+            Notifications::CommentCreated => new CommentCreated($this->body['page'], $this->body['entity_id'], $this->body['commenter_userid'], $this->user),
+            Notifications::UserCreated => new UserCreated($this->body['userid'], $this->body['team'], $this->user),
+            Notifications::UserNeedValidation => new UserNeedValidation($this->body['userid'], $this->body['team'], $this->user),
+            Notifications::StepDeadline => new StepDeadline($this->body['step_id'], $this->body['entity_id'], $this->body['entity_page'], $this->body['deadline'], $this->user),
+            Notifications::EventDeleted => new EventDeleted($this->body['event'], $this->body['actor'], $this->user, $this->body['msg'], EmailTarget::from($this->body['target'])),
+            Notifications::SelfNeedValidation => new SelfNeedValidation($this->user),
+            Notifications::SelfIsValidated => new SelfIsValidated($this->user),
+            Notifications::OnboardingEmail => new OnboardingEmail($this->body['team'], $this->user, $this->body['forAdmin'] ?? false),
             // note: not sure why the bypassReadPermission is necessary here...
-            Notifications::ActionRequested => new ActionRequested(new Users($this->body['requester_userid']), RequestableAction::from($this->body['action_enum_value']), EntityType::from($this->body['entity_type_value'])->toInstance(new Users($this->body['requester_userid']), $this->body['entity_id'], bypassReadPermission: true)),
+            Notifications::ActionRequested => new ActionRequested(new Users($this->body['requester_userid']), RequestableAction::from($this->body['action_enum_value']), EntityType::from($this->body['entity_type_value'])->toInstance(new Users($this->body['requester_userid']), $this->body['entity_id'], bypassReadPermission: true), $this->user),
             default => throw new ImproperActionException(sprintf('This notification (%d) is not mailable.', $this->category)),
         };
     }

@@ -24,9 +24,9 @@ final class CommentCreated extends AbstractNotifications implements MailableInte
 
     protected Notifications $category = Notifications::CommentCreated;
 
-    public function __construct(private string $page, private int $entityId, private int $commenterId)
+    public function __construct(private string $page, private int $entityId, private int $commenterId, Users $user)
     {
-        parent::__construct();
+        parent::__construct($user);
     }
 
     #[Override]

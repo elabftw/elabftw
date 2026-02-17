@@ -14,6 +14,7 @@ namespace Elabftw\Models\Notifications;
 
 use Elabftw\Enums\Notifications;
 use Elabftw\Interfaces\MailableInterface;
+use Elabftw\Models\Users\Users;
 use Override;
 
 /**
@@ -24,6 +25,11 @@ use Override;
 final class SelfNeedValidation extends AbstractNotifications implements MailableInterface
 {
     protected Notifications $category = Notifications::SelfNeedValidation;
+
+    public function __construct(Users $user)
+    {
+        parent::__construct($user);
+    }
 
     // Note: here the actor fullname is directly fed to the instance, instead of fetching it from a new Users() like others.
     #[Override]

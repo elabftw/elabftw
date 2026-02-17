@@ -153,7 +153,8 @@ final class Users2Teams
         if ($promoteToAdmin
             && (Config::getConfig())->configArr['onboarding_email_active'] === '1'
         ) {
-            (new OnboardingEmail(-1, $promoteToAdmin))->create($userid);
+            $targetUser = new Users($userid);
+            (new OnboardingEmail(-1, $targetUser, $promoteToAdmin))->create();
         }
         /** @psalm-suppress PossiblyNullArgument */
         AuditLogs::create(new PermissionLevelChanged($this->requester->userid, $userid, Users2TeamsTargets::IsAdmin, $isAdmin->value, $teamid));

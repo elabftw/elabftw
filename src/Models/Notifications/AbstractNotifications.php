@@ -15,6 +15,7 @@ namespace Elabftw\Models\Notifications;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Notifications;
 use Elabftw\Models\Users\Users;
+use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\QueryParamsTrait;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
@@ -34,14 +35,25 @@ abstract class AbstractNotifications
 
     protected Db $Db;
 
-    public function __construct()
+    private bool $isArchivedInAllTeams = false;
+
+    public function __construct(protected Users $user)
     {
         $this->Db = Db::getConnection();
+
+        if ($this->user->team != null && $this->user->userid != null) {
+            $TeamsHelper = new TeamsHelper($this->user->team);
+            $this->isArchivedInAllTeams = $TeamsHelper->isArchivedInAllTeams($this->user->userid);
+        }
     }
 
-    public function create(int $userid): int
+    public function create(): int
     {
-        [$webNotif, $sendEmail] = $this->getPref($userid);
+        if ($this->isArchivedInAllTeams) {
+            return 0;
+        }
+
+        [$webNotif, $sendEmail] = $this->getPref($this->user);
 
         $isAck = 1;
         if ($webNotif === 1) {
@@ -74,14 +86,14 @@ abstract class AbstractNotifications
     /**
      * @return array<int, int>
      */
-    protected function getPref(int $userid): array
+    protected function getPref(Users $user): array
     {
         // only categories inferior to 20 have a user setting for email/web notif
         if ($this->category->value >= 20) {
             return array(1, 1);
         }
 
-        $userData = (new Users($userid))->userData;
+        $userData = $user->userData;
         return array($userData[$this::PREF], $userData[$this::PREF . '_email']);
     }
 }

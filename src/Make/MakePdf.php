@@ -111,8 +111,8 @@ class MakePdf extends AbstractMakePdf
         // use strlen for binary data, not mb_strlen
         $this->contentSize = strlen($output);
         if ($this->errors && $this->notifications) {
-            $Notifications = new PdfGenericError();
-            $Notifications->create($this->requester->userData['userid']);
+            $Notifications = new PdfGenericError($this->requester);
+            $Notifications->create();
         }
         return $output;
     }
@@ -174,7 +174,8 @@ class MakePdf extends AbstractMakePdf
                 $this->errors[] = new PdfAppendmentFailed(
                     $this->Entity->id,
                     $this->Entity->entityType->toPage(),
-                    implode(', ', $this->failedAppendPdfs)
+                    implode(', ', $this->failedAppendPdfs),
+                    $this->requester,
                 );
             }
         }
@@ -191,7 +192,7 @@ class MakePdf extends AbstractMakePdf
         // Inform user that there was a problem with Tex rendering
         if ($Tex2Svg->mathJaxFailed) {
             /** @psalm-suppress PossiblyNullArgument */
-            $this->errors[] = new MathjaxFailed($this->Entity->id, $this->Entity->entityType->toPage());
+            $this->errors[] = new MathjaxFailed($this->Entity->id, $this->Entity->entityType->toPage(), $this->requester);
         }
         return $content;
     }

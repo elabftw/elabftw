@@ -15,6 +15,7 @@ namespace Elabftw\Models\Notifications;
 use Elabftw\Elabftw\Env;
 use Elabftw\Enums\Notifications;
 use Elabftw\Interfaces\MailableInterface;
+use Elabftw\Models\Users\Users;
 use PDO;
 use Override;
 
@@ -34,12 +35,13 @@ final class StepDeadline extends AbstractNotifications implements MailableInterf
         private int $entityId,
         private string $entityPage,
         private string $deadline,
+        Users $user,
     ) {
-        parent::__construct();
+        parent::__construct($user);
     }
 
     #[Override]
-    public function create(int $userid): int
+    public function create(): int
     {
         // try to delete already existing notification for this step and return if there was one
         if ($this->destroy()) {
@@ -47,7 +49,7 @@ final class StepDeadline extends AbstractNotifications implements MailableInterf
         }
 
         // otherwise, create a notification
-        return parent::create($userid);
+        return parent::create();
     }
 
     #[Override]

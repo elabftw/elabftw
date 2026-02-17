@@ -19,6 +19,7 @@ use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Notifications\CommentCreated;
 use Elabftw\Params\CommentParam;
 use Elabftw\Traits\SetIdTrait;
+use Elabftw\Models\Users\Users;
 use Override;
 use PDO;
 
@@ -159,9 +160,10 @@ class Comments extends AbstractRest
             if ($userid === $this->Entity->Users->userData['userid']) {
                 continue;
             }
+            $targetUser = new Users($userid);
             /** @psalm-suppress PossiblyNullArgument */
-            $Notif = new CommentCreated($this->Entity->entityType->toPage(), $this->Entity->id, $this->Entity->Users->userData['userid']);
-            $Notif->create($userid);
+            $Notif = new CommentCreated($this->Entity->entityType->toPage(), $this->Entity->id, $this->Entity->Users->userData['userid'], $targetUser);
+            $Notif->create();
         }
     }
 }

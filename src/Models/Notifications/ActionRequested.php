@@ -26,9 +26,9 @@ final class ActionRequested extends AbstractNotifications implements MailableInt
 
     protected Notifications $category = Notifications::ActionRequested;
 
-    public function __construct(private Users $requester, private RequestableAction $action, private AbstractEntity $entity)
+    public function __construct(private Users $requester, private RequestableAction $action, private AbstractEntity $entity, Users $user)
     {
-        parent::__construct();
+        parent::__construct($user);
     }
 
     #[Override]

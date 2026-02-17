@@ -72,6 +72,20 @@ final class TeamsHelper
         return $req->fetchColumn() === 1;
     }
 
+    public function isArchivedInAllTeams(int $userid): bool
+    {
+        $sql = 'SELECT `users_id`,
+                MIN(is_archived) AS `all_archived`
+                FROM `users2teams`
+                WHERE `users_id` = :userid
+                GROUP BY `users_id`';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $row = $req->fetch();
+        return !empty($row) && ((int) $row['all_archived'] === 1);
+    }
+
     public function getUserInTeam(int $userid): array
     {
         $sql = 'SELECT `users_id`, `is_admin` FROM `users2teams` WHERE `teams_id` = :team AND `users_id` = :userid';

@@ -21,6 +21,7 @@ use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
+use Elabftw\Models\Users\Users;
 use Override;
 
 final class EventDeleted extends AbstractNotifications implements MailableInterface, RestInterface
@@ -32,10 +33,11 @@ final class EventDeleted extends AbstractNotifications implements MailableInterf
     public function __construct(
         private array $event,
         private string $actor,
+        Users $user,
         private string $msg = '',
         private EmailTarget $target = EmailTarget::BookableItem,
     ) {
-        parent::__construct();
+        parent::__construct($user);
     }
 
     #[Override]
@@ -60,7 +62,9 @@ final class EventDeleted extends AbstractNotifications implements MailableInterf
         $this->target = EmailTarget::from($reqBody['target']);
         $userids = Email::getIdsOfRecipients($this->target, $reqBody['targetid']);
         foreach ($userids as $userid) {
-            $this->create($userid);
+            $recipient = new Users($userid);
+            $Notif = new self($this->event, $this->actor, $recipient, $this->msg, $this->target);
+            $Notif->create();
         }
         return count($userids);
     }

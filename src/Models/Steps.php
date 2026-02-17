@@ -16,6 +16,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Notifications\StepDeadline;
+use Elabftw\Models\Users\Users;
 use Elabftw\Params\ContentParams;
 use Elabftw\Params\StepParams;
 use Elabftw\Services\Filter;
@@ -298,8 +299,7 @@ final class Steps extends AbstractRest
 
     private function toggleNotif(): bool
     {
-        $this->getStepDeadline($this->readOne()['deadline'])
-            ->create($this->Entity->Users->userData['userid']);
+        $this->getStepDeadline($this->readOne()['deadline'])->create();
 
         return $this->setDeadlineNotif('!deadline_notif');
     }
@@ -327,14 +327,16 @@ final class Steps extends AbstractRest
         return $this->Db->execute($req);
     }
 
-    private function getStepDeadline(string $deadline = ''): StepDeadline
+    private function getStepDeadline(string $deadline = '', ?Users $user = null): StepDeadline
     {
+        $user ??= $this->Entity->Users;
         /** @psalm-suppress PossiblyNullArgument */
         return new StepDeadline(
             $this->id,
             $this->Entity->id,
             $this->Entity->entityType->toPage(),
             $deadline,
+            $user,
         );
     }
 }

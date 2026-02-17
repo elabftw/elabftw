@@ -605,6 +605,7 @@ on('save-booking-settings', async (_, e:Event): Promise<void | Response> => {
   const form = document.getElementById('editBookingParamsForm') as HTMLFormElement;
   const params = collectForm(form);
   await ApiC.patch(`items/${form.dataset.itemId}`, params);
+  reloadElements(['topToolbar', 'permissionsDiv']);
   $('#bookingParamsModal').modal('hide');
 });
 

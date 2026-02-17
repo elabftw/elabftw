@@ -8,7 +8,7 @@
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
-      <form id='editBookingParamsForm' aria-label='{{ "Modify booking parameters"|trans }}' data-item-id='{{ Entity.id }}'>
+      <form id='editBookingParamsForm' aria-label='{{ 'Modify booking parameters'|trans }}' data-item-id='{{ Entity.id }}'>
         <div class='modal-body'>
           <h4>{{ 'Booking permissions'|trans }}</h4>
           <div class='smallgray mb-4'>{{ 'Control what users are allowed to do.'|trans }}</div>
@@ -16,7 +16,7 @@
             <div class='d-flex justify-content-between mb-2'>
               <label class='d-inline mr-1' for='isBookableSwitch'>{{ 'Allow booking this resource'|trans }}</label>
               <label class='switch' title='{{ 'Allow booking this resource'|trans }}'><span class='sr-only'>{{ 'Allow booking this resource'|trans }}</span>
-                <input type='checkbox' autocomplete='off' id='isBookableSwitch' name='is_bookable' data-action='toggle-dependent' data-target-toggle='bookingPermissionsDiv' data-reload='topToolbar,permissionsDiv' {{ Entity.entityData.is_bookable == 1 ? 'checked="checked"' }}>
+                <input type='checkbox' autocomplete='off' id='isBookableSwitch' name='is_bookable' data-action='toggle-dependent' data-target-toggle='bookingPermissionsDiv' {{ Entity.entityData.is_bookable == 1 ? 'checked="checked"' }}>
                 <span class='slider'></span>
               </label>
             </div>
@@ -52,7 +52,7 @@
             {# Minimum time before a slot can be cancelled #}
             <div class='d-flex justify-content-between mb-2 ml-2'>
               <label for='book_cancel_minutes' class='col-form-label'>{{ 'Minimum time before a slot can be cancelled (in minutes)'|trans }}</label>
-              <input class='form-control col-md-4 {{ Entity.entityData.book_is_cancellable == 0 ? "is-disabled" : "" }}' name='book_cancel_minutes' type='number' value='{{ Entity.entityData.book_cancel_minutes }}' id='book_cancel_minutes' />
+              <input class='form-control col-md-4 {{ Entity.entityData.book_is_cancellable == 0 ? 'is-disabled' : '' }}' name='book_cancel_minutes' type='number' value='{{ Entity.entityData.book_cancel_minutes }}' id='book_cancel_minutes' />
             </div>
             <hr>
             <h4>{{ 'Booking limits'|trans }}</h4>

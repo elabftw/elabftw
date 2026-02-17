@@ -556,13 +556,12 @@ final class Scheduler extends AbstractRest
 
     private function checkBookingWindow(string $start): void
     {
-        if ((int) $this->Items->entityData['booking_window_days'] === 0) {
+        $maxDays = (int) ($this->Items->entityData['booking_window_days'] ?? 0);
+        if ($maxDays <= 0) {
             return;
         }
-        $maxDays = (int) $this->Items->entityData['booking_window_days'];
         $startDate = $this->formatDate($start);
         $now = new DateTimeImmutable();
-
         $maxAllowed = $now->modify(sprintf('+%d days', $maxDays))->setTime(23, 59, 59);
         if ($startDate > $maxAllowed) {
             throw new ImproperActionException(sprintf(_('Booking is limited to %d day(s) in advance.'), $maxDays));

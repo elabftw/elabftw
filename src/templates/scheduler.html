@@ -119,7 +119,7 @@
         </div>
 
         {# only show the cancel block if item is cancellable or user is admin #}
-        <div id='isCancellableDiv' data-user-id='{{ App.Users.userData.userid }}' data-is-admin='{{ App.Users.isAdmin ? 'true' : 'false' }}'>
+        <div id='isCancellableDiv'>
           <h5>{{ 'Cancel booking slot'|trans }}</h5>
           <h6><label for='cancelEventTextarea'>{{ 'Add a custom message'|trans }}</label></h6>
             <textarea id='cancelEventTextarea' class='form-control'></textarea>

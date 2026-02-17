@@ -120,6 +120,7 @@ const t = {
     "users": "Utenti",
     "valid-until": "Valido fino a",
     "validated": "Convalidato",
+    "view-template": "Visualizza il modello",
   },
 };
 export default t;

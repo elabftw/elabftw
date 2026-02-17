@@ -120,6 +120,7 @@ const t = {
     "users": "Užívatelia",
     "valid-until": "Platné do",
     "validated": "Overené",
+    "view-template": "View template",
   },
 };
 export default t;

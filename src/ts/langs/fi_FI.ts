@@ -120,6 +120,7 @@ const t = {
     "users": "Käyttäjät",
     "valid-until": "Voimassa asti",
     "validated": "Vahvistettu",
+    "view-template": "View template",
   },
 };
 export default t;

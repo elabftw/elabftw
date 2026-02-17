@@ -120,6 +120,7 @@ const t = {
     "users": "Kasutajad",
     "valid-until": "Kehtiv kuni",
     "validated": "Valideeritud",
+    "view-template": "Kuva mall",
   },
 };
 export default t;

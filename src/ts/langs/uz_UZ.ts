@@ -120,6 +120,7 @@ const t = {
     "users": "Foydalanuvchilar",
     "valid-until": "Yaroqlilik muddati",
     "validated": "Tasdiqlangan",
+    "view-template": "View template",
   },
 };
 export default t;

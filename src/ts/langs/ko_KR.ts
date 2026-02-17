@@ -120,6 +120,7 @@ const t = {
     "users": "사용자",
     "valid-until": "까지 유효",
     "validated": "검증됨",
+    "view-template": "View template",
   },
 };
 export default t;

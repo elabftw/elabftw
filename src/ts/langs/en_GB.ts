@@ -120,6 +120,7 @@ const t = {
     "users": "Users",
     "valid-until": "Valid until",
     "validated": "Validated",
+    "view-template": "View template",
   },
 };
 export default t;

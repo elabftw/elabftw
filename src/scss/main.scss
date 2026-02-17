@@ -182,11 +182,6 @@ a:hover,
   text-decoration: none;
 }
 
-.is-disabled {
-  opacity: 0.5;
-  pointer-events: none;
-}
-
 /* add arrow going out of square icon after external links */
 .external-link::after {
   content: '\f08e'; // arrow-up-right-from-square

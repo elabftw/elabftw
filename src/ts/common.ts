@@ -588,16 +588,23 @@ on('toggle-pin', (el: HTMLElement) => {
 });
 
 // when a switch has a dependent action, enable that action only if switch is activated.
-on('toggle-dependent', (el: HTMLInputElement) => {
-  const targetId = el.dataset.targetToggle;
-  if (!targetId) return;
-  const target = document.getElementById(targetId);
-  if (!target) return;
-  const disabled = !el.checked;
-  target.classList.toggle('is-disabled', disabled);
-  if (target instanceof HTMLInputElement) {
-    if (disabled) target.value = '0';
-  }
+on('toggle-dependent', () => {
+  document.querySelectorAll<HTMLInputElement>('[data-target-toggle]').forEach((toggle) => {
+    const targetId = toggle.dataset.targetToggle;
+    if (!targetId) return;
+    const container = document.getElementById(targetId);
+    if (!container) return;
+    const disabled = !toggle.checked;
+    container.style.opacity = disabled ? '0.5' : '';
+    container
+      .querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('input, select, textarea')
+      .forEach(input => {
+        input.disabled = disabled;
+        if (disabled && input.type === 'number') {
+          input.value = '0';
+        }
+    });
+  });
 });
 
 on('save-booking-settings', async (_, e:Event): Promise<void | Response> => {

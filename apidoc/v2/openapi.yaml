@@ -1611,7 +1611,8 @@ components:
       type: object
       properties:
         is_bookable:
-          type: boolean
+          type: integer
+          enum: [0, 1]
         canbook_base:
           type: number
           description: |
@@ -1640,8 +1641,9 @@ components:
           type: integer
         book_maximum_days_in_advance:
           type: integer
-          minimum: 1
-          description: Maximum number of days users can book in advance.
+          minimum: 0
+          default: 0
+          description: Maximum number of days users can book in advance. 0 means no limit.
 
     item:
       allOf:

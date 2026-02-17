@@ -10,7 +10,16 @@
       {% else %}
         {% for favtag in favTagsArr %}
         <li data-action='add-tag-filter' data-tag='{{ favtag.tag|e('html_attr') }}' class='list-group-item side-panel-item {{ App.Request.query.all('tags')[0] == favtag.tag ? 'selected' : '' }}'>
-          {{ favtag.tag }}<a href='#' class='float-right mr-2' data-id='{{ favtag.tags_id }}' data-action='destroy-favtags'><i class='fas fa-trash-alt'></i></a>
+          {{ favtag.tag }}<span class='float-right'>
+            <a href='/experiments.php?tags[]={{ favtag.tag }}' title='{{ 'Show tagged experiments'|trans }}'>
+              <i class='fas fa-flask fa-fw mr-2'></i>
+            </a>
+            <a href='/database.php?tags[]={{ favtag.tag }}' title='{{ 'Show tagged resources'|trans }}'>
+              <i class='fas fa-cubes-stacked fa-fw mr-2'></i>
+            </a>
+            <a href='#' data-id='{{ favtag.tags_id }}' data-action='destroy-favtags'>
+              <i class='fas fa-trash-alt mr-2'></i>
+            </a>
         </li>
         {% endfor %}
       {% endif %}

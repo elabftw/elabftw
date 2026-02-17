@@ -124,8 +124,7 @@ final class Items extends AbstractConcreteEntity
     public function canBook(): bool
     {
         $Permissions = new Permissions($this->Users, $this->entityData);
-        $can = json_decode($this->entityData['canbook'], true, 512, JSON_THROW_ON_ERROR);
-        return $Permissions->getCan(BasePermissions::from($this->entityData['canbook_base']), $can);
+        return $Permissions->forEntity()['book'] ?? false;
     }
 
     public function canBookInPast(): bool

@@ -31,17 +31,24 @@ final class Permissions
 
     private BasePermissions $canwriteBase;
 
+    // exists only for items
+    private ?BasePermissions $canbookBase = null;
+
     private array $canread;
 
     private array $canwrite;
+
+    private array $canbook;
 
     public function __construct(private Users $Users, private array $item)
     {
         $this->TeamGroups = new TeamGroups($this->Users);
         $this->canreadBase = BasePermissions::from($item['canread_base']);
         $this->canwriteBase = BasePermissions::from($item['canwrite_base']);
+        $this->canbookBase = isset($item['canbook_base']) ? BasePermissions::from($item['canbook_base']) : null;
         $this->canread = json_decode($item['canread'], true, 512, JSON_THROW_ON_ERROR);
         $this->canwrite = json_decode($item['canwrite'], true, 512, JSON_THROW_ON_ERROR);
+        $this->canbook = isset($item['canbook']) ? json_decode($item['canbook'], true, 512, JSON_THROW_ON_ERROR) : array();
     }
 
     /**
@@ -51,10 +58,14 @@ final class Permissions
     {
         // if we have write access, then we have read access for sure
         if ($this->getWrite()) {
-            return array('read' => true, 'write' => true);
+            return array('read' => true, 'write' => true, 'book' => $this->getBook());
         }
 
-        return array('read' => $this->getCan($this->canreadBase, $this->canread), 'write' => false);
+        return array(
+            'read' => $this->getCan($this->canreadBase, $this->canread),
+            'write' => false,
+            'book' => $this->getBook(),
+        );
     }
 
     public function getCan(BasePermissions $base, array $can): bool
@@ -132,5 +143,14 @@ final class Permissions
             return false;
         }
         return $this->getCan($this->canwriteBase, $this->canwrite);
+    }
+
+    // Get the booking permission for an item
+    private function getBook(): bool
+    {
+        if ($this->canbookBase === null) {
+            return false; // non-bookable entity
+        }
+        return $this->getCan($this->canbookBase, $this->canbook);
     }
 }

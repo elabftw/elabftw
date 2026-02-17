@@ -96,6 +96,8 @@ if (window.location.pathname === '/scheduler.php') {
 
   // bind to the element #scheduler
   const calendarEl: HTMLElement = document.getElementById('scheduler');
+  const currentUserId = Number(calendarEl?.dataset.userId);
+  const isAdmin = calendarEl?.dataset.isAdmin === 'true';
   if (calendarEl) {
     const layoutCheckbox = document.getElementById('scheduler_layout') as HTMLInputElement;
     const layout = (layoutCheckbox && layoutCheckbox.checked)
@@ -257,9 +259,11 @@ if (window.location.pathname === '/scheduler.php') {
       // background color is $secondlevel for all and it changes after validation of event
       // TODO maybe we could have an automatically generated .ts file exporting colors from _variables.scss
       eventBackgroundColor: '#bdbdbd',
-      // user can see events as disabled if they don't have booking permissions. See #5930
+      // user can see events as disabled if they don't have booking permissions & are not owners. See #5930
       eventClassNames: (info) => {
-        return Number(info.event.extendedProps.canbook) === 0 ? ['calendar-event-disabled'] : '';
+        const canBook = Number(info.event.extendedProps.canbook);
+        const eventOwnerId = Number(info.event.extendedProps.userid);
+        return (canBook === 0 && currentUserId !== eventOwnerId) ? ['calendar-event-disabled'] : [];
       },
       // prevent any actions on disabled events
       eventAllow: (info, event) => Number(event.extendedProps.canbook) === 1,
@@ -384,8 +388,10 @@ if (window.location.pathname === '/scheduler.php') {
       },
       // on click activate modal window
       eventClick: function(info): void {
-        if (Number(info.event.extendedProps.canbook) === 0) {
-          return; // do nothing if event is disabled
+        const canBook = Number(info.event.extendedProps.canbook);
+        const eventOwnerId = Number(info.event.extendedProps.userid);
+        if (canBook === 0 && currentUserId !== eventOwnerId) {
+          return;
         }
         $('[data-action="scheduler-rm-bind"]').hide();
         $('#eventModal').modal('toggle');
@@ -411,7 +417,6 @@ if (window.location.pathname === '/scheduler.php') {
         // cancel block: show if event is cancellable OR user is Admin)
         const cancelDiv = document.getElementById('isCancellableDiv') as HTMLElement;
         if (!cancelDiv) return;
-        const isAdmin = cancelDiv.dataset.isAdmin === 'true';
         const bookIsCancellable = Number(info.event.extendedProps.book_is_cancellable);
         const isCancellable = isAdmin || bookIsCancellable === 1;
         cancelDiv.classList.toggle('d-none', !isCancellable);

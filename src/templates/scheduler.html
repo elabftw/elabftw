@@ -119,7 +119,7 @@
         </div>
 
         {# only show the cancel block if item is cancellable or user is admin #}
-        <div id='isCancellableDiv' data-is-admin='{{ App.Users.isAdmin ? 'true' : 'false' }}'>
+        <div id='isCancellableDiv' data-user-id='{{ App.Users.userData.userid }}' data-is-admin='{{ App.Users.isAdmin ? 'true' : 'false' }}'>
           <h5>{{ 'Cancel booking slot'|trans }}</h5>
           <h6><label for='cancelEventTextarea'>{{ 'Add a custom message'|trans }}</label></h6>
             <textarea id='cancelEventTextarea' class='form-control'></textarea>
@@ -267,7 +267,7 @@
   <div class='d-flex justify-content-center' id='loading-spinner'>
     <div class='lds-dual-ring'></div>
   </div>
-  <div id='scheduler' data-lang='{{ App.getJsLang }}' data-render='{{ itemsArr|length > 0 ? 'true' : 'false' }}' data-weekends='{{ App.Users.userData.show_weekends }}' data-layout='{{ App.Users.userData.scheduler_layout }}'></div>
+  <div id='scheduler' data-lang='{{ App.getJsLang }}' data-render='{{ itemsArr|length > 0 ? 'true' : 'false' }}' data-weekends='{{ App.Users.userData.show_weekends }}' data-layout='{{ App.Users.userData.scheduler_layout }}' data-user-id='{{ App.Users.userData.userid }}' data-is-admin='{{ App.Users.isAdmin ? 'true' : 'false' }}'></div>
 {% endif %}
 
 {% endblock body %}

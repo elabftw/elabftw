@@ -120,6 +120,7 @@ const t = {
     "users": "用户",
     "valid-until": "有效期至",
     "validated": "已验证",
+    "view-template": "查看模板",
   },
 };
 export default t;

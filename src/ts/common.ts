@@ -531,7 +531,11 @@ on('show-policy', (el: HTMLElement) => {
 
 on('reload-on-click', (el: HTMLElement) => reloadElements([el.dataset.target]));
 on('switch-editor', () => getEditor().switch(entity).then(() => window.location.reload()));
-on('destroy-favtags', (el: HTMLElement) => ApiC.delete(`${Model.FavTag}/${el.dataset.id}`).then(() => reloadElements(['favtagsTagsDiv'])));
+on('destroy-favtags', (el: HTMLElement) => {
+  if (confirm(i18next.t('generic-delete-warning'))) {
+    ApiC.delete(`${Model.FavTag}/${el.dataset.id}`).then(() => reloadElements(['favtagsTagsDiv']));
+  }
+});
 
 on('insert-param-and-reload', (el: HTMLElement) => {
   const params = new URLSearchParams(document.location.search.slice(1));

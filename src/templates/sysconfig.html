@@ -36,7 +36,7 @@
 
 {# show error if the email is not configured #}
 {% if App.Config.configArr.mail_from == 'notconfigured@example.com' %}
-    {{ 'Email configuration is required. Consult the documentation (%slink%s) for help.'|trans|format("<a href='https://doc.elabftw.net/sysadmin-guide.html#setting-up-email'>", "</a>")|msg('ko') }}
+    {{ 'Email configuration is required. Consult the documentation (%slink%s) for help.'|trans|format("<a href='https://doc.elabftw.net/docs/usage/sysadmin-guide#setting-up-email-required'>", "</a>")|msg('ko') }}
 {% endif %}
 
 <div id='versionNotifZone'></div>
@@ -265,7 +265,7 @@
   <h3 class='mb-3 p-2 pl-3 section-title' id='teamsSectionTitle'>{{ 'Teams list'|trans }}</h3>
   <div id='teamsDiv' class='pl-3'>
     <div class='mb-3 d-flex justify-content-between'>
-      <p class='col-form-label'>{{ 'This page allows you to edit the teams present on this instance.'|trans }} (<a href='https://doc.elabftw.net/sysadmin-guide.html#configure-teams-optional' target='_blank' rel='noopener' class='external-link'>{{ 'Documentation'|trans|lower }}</a>)</p>
+      <p class='col-form-label'>{{ 'This page allows you to edit the teams present on this instance.'|trans }} (<a href='https://doc.elabftw.net/docs/usage/sysadmin-guide#configure-teams-optional' target='_blank' rel='noopener' class='external-link'>{{ 'Documentation'|trans|lower }}</a>)</p>
       {# CREATE NEW BUTTON the div around the button is necessary or the button itself gets resized on small viewports #}
       <div>
         <button type='button' class='btn btn-primary' data-action='toggle-modal' data-target='createTeamModal'>{{ 'Create a team'|trans }}</button>
@@ -677,7 +677,7 @@
   {# KEEEX #}
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Keeex configuration'|trans }}</h3>
   <div class='pl-3'>
-    <p class='smallgray'>{{ 'Requires a Keeex Fusion daemon running. %sSee documentation%s.'|trans|format("<a href='https://doc.elabftw.net/sysadmin-guide.html#configure-keeex'>", "</a>")|raw }}</p>
+    <p class='smallgray'>{{ 'Requires a Keeex Fusion daemon running. %sSee documentation%s.'|trans|format("<a href='https://doc.elabftw.net/docs/usage/integrations#keeex'>", "</a>")|raw }}</p>
 
     {% include 'binary-setting.html' with {'label': 'Enable Keeex'|trans, 'slug': 'keeex_enabled'} %}
 
@@ -741,7 +741,7 @@
 <div data-tabcontent='11' hidden>
   <div class='mb-2 d-flex justify-content-between'>
 
-    <p><a target='_blank' rel='noopener' class='external-link' href='https://doc.elabftw.net/saml.html'>{{ 'Link to documentation'|trans }}</a></p>
+    <p><a target='_blank' rel='noopener' class='external-link' href='https://doc.elabftw.net/docs/install/post-install/authentication/saml'>{{ 'Link to documentation'|trans }}</a></p>
     {# VIEW METADATA.xml button: the div around the button is necessary or the button itself gets resized on small viewports #}
     <div>
       <a href='metadata.php' target='_blank' rel='noopener' class='btn btn-secondary'>{{ 'View metadata.xml'|trans }}</a>
@@ -931,7 +931,7 @@
 
 {# TAB 12 LDAP #}
 <div data-tabcontent='12' id='ldapSettings' hidden>
-  <p><a target='_blank' rel='noopener' class='external-link' href='https://doc.elabftw.net/ldap.html'>{{ 'Link to documentation'|trans }}</i></a></p>
+  <p><a target='_blank' rel='noopener' class='external-link' href='https://doc.elabftw.net/docs/install/post-install/authentication/ldap'>{{ 'Link to documentation'|trans }}</i></a></p>
   <h3 class='p-2 pl-3 section-title'>{{ 'LDAP server configuration'|trans }}</h3>
 
   <div class='pl-3 mt-2 mb-5'>

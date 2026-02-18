@@ -126,7 +126,7 @@ Subscribe to the [Newsletter](http://eepurl.com/bTjcMj) to receive a notificatio
 
 ### Have backups
 
-See [Backup Documentation](https://doc.elabftw.net/backup.html). And secure your backups on a filesystem with immutable snapshots! ;)
+See [Backup Documentation](https://doc.elabftw.net/docs/install/backups). And secure your backups on a filesystem with immutable snapshots! ;)
 
 ### Verifying releases
 

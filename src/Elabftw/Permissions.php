@@ -149,7 +149,10 @@ final class Permissions
     private function getBook(): bool
     {
         if ($this->canbookBase === null) {
-            return false; // non-bookable entity
+            return false;
+        }
+        if (isset($this->item['is_bookable']) && (int) $this->item['is_bookable'] !== 1) {
+            return false;
         }
         return $this->getCan($this->canbookBase, $this->canbook);
     }

@@ -248,6 +248,10 @@ select:not([multiple]) {
     background-color: var(--darkred);
     border-color: var(--lightred);
   }
+
+  .slider {
+
+  }
 }
 
 .logo-dark { display: none; }
@@ -940,7 +944,7 @@ tr:first-child td {
     /* Favtags will show up as selected */
     &.selected {
       background-color: var(--primary);
-      color: var(--strongest);
+      color: var(--chrome-fg);
       cursor: initial;
     }
 
@@ -1704,7 +1708,7 @@ input[type='color'] {
 
 /* The slider */
 .slider {
-  background-color: var(--medium);
+  background-color: var(--secondary);
   border-radius: 34px;
   bottom: 0;
   cursor: pointer;
@@ -1715,7 +1719,7 @@ input[type='color'] {
   transition: 355ms;
 
   &::before {
-    background-color: var(--white);
+    background-color: var(--chrome-fg);
     border-radius: 50%;
     bottom: 2px;
     content: '';

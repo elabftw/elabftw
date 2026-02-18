@@ -254,9 +254,8 @@ if (window.location.pathname === '/scheduler.php') {
       firstDay: 1,
       // remove possibility to book whole day, might add it later
       allDaySlot: false,
-      // background color is $secondlevel for all and it changes after validation of event
-      // TODO maybe we could have an automatically generated .ts file exporting colors from _variables.scss
-      eventBackgroundColor: '#bdbdbd',
+      // background color before event validation
+      eventBackgroundColor: 'var(--secondlevel)',
       // user can see events as disabled if they don't have booking permissions. See #5930
       eventClassNames: (info) => {
         return Number(info.event.extendedProps.canbook) === 0 ? ['calendar-event-disabled'] : '';

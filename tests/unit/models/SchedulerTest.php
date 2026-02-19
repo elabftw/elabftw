@@ -119,11 +119,10 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         foreach (array(Scope::User->value, Scope::Team->value, Scope::Everything->value) as $scope) {
             $Users = $this->getUserInTeam(2, admin: 1);
             $Users->userData['scope_events'] = $scope;
-
             $Items = $this->getFreshItemWithGivenUser($Users);
+            $Items->patch(Action::Update, array('is_bookable' => 1));
             $Scheduler = new Scheduler($Items, null, $this->start, $this->end);
             $Scheduler->postAction(Action::Create, array('start' => $this->start, 'end' => $this->end));
-
             $this->assertReadAllReturnsValidEvents($Scheduler, $scope);
         }
     }
@@ -138,6 +137,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
         // grant user 2 'canread' permissions only. Prevents 'access entity without permission'
         $Items->patch(Action::Update, array(
+            'is_bookable' => 1,
             'canread_base' => BasePermissions::User->value,
             'canread' => json_encode(array(
                 'users' => array($User2->userid),
@@ -242,7 +242,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testDestroyNonCancellableEvent(): void
     {
-        $Items = $this->getFreshItemWithGivenUser($this->getRandomUserInTeam(2));
+        $Items = $this->getFreshBookableItem(2);
         $Items->patch(Action::Update, array('book_is_cancellable' => 0));
         $Scheduler = new Scheduler($Items);
         $d = new DateTime('tomorrow');
@@ -257,7 +257,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testCancelTooClose(): void
     {
-        $Items = $this->getFreshItemWithGivenUser($this->getRandomUserInTeam(2));
+        $Items = $this->getFreshBookableItem(2);
         $Items->patch(Action::Update, array('book_cancel_minutes' => 666));
         $Scheduler = new Scheduler($Items);
         $d = new DateTime('5 minutes');
@@ -285,7 +285,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testOverlap(): void
     {
-        $Items = $this->getFreshItemWithGivenUser($this->getRandomUserInTeam(2));
+        $Items = $this->getFreshBookableItem(2);
         $Items->patch(Action::Update, array('book_can_overlap' => 0));
         $Scheduler = new Scheduler($Items);
         // first one
@@ -306,7 +306,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
     public function testOverlapWhileChangingExisting(): void
     {
         $Items = $this->getFreshItemWithGivenUser($this->getRandomUserInTeam(2));
-        $Items->patch(Action::Update, array('book_can_overlap' => 0));
+        $Items->patch(Action::Update, array('book_can_overlap' => 0, 'is_bookable' => 1));
         $Scheduler = new Scheduler($Items);
         // first one
         $d = new DateTime('5 minutes');
@@ -327,8 +327,8 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testCheckMaxSlots(): void
     {
-        $Items = $this->getFreshItemWithGivenUser($this->getRandomUserInTeam(2));
-        $Items->patch(Action::Update, array('book_max_slots' => 2));
+        $Items = $this->getFreshBookableItem(2);
+        $Items->patch(Action::Update, array('book_max_slots' => 2, 'is_bookable' => 1));
         $Scheduler = new Scheduler($Items);
         $d = new DateTime('5 minutes');
         $start = $d->format('c');
@@ -363,7 +363,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testCanWriteAndWeAreAdmin(): void
     {
-        $Items = $this->getFreshItem(2);
+        $Items = $this->getFreshBookableItem(2);
         $Scheduler = new Scheduler($Items, null, $this->start, $this->end);
         // create with user, make sure it's in the future!
         $d = new DateTime('now');
@@ -383,6 +383,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
     {
         $Admin = $this->getUserInTeam(2, admin: 1);
         $Items = $this->getFreshItemWithGivenUser($Admin);
+        $Items->patch(Action::Update, array('is_bookable' => 1));
         $AdminScheduler = new Scheduler($Items);
         $adminEventId = $AdminScheduler->postAction(Action::Create, array('start' => $this->start, 'end' => $this->end));
         $User = $this->getUserInTeam(2);
@@ -426,7 +427,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testCanCancelDuringGracePeriod(): void
     {
-        $Items = $this->getFreshItem();
+        $Items = $this->getFreshBookableItem(2);
         $Scheduler = new Scheduler($Items);
         $d = new DateTime('+1 hour');
         $start = $d->format('c');

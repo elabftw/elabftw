@@ -144,10 +144,12 @@ const imagesUploadHandler = (blobInfo: TinyMCEBlobInfo) => new Promise((resolve,
         return;
       }
       dropZone.off('success', successHandler);
+      dropZone.off('error', errorHandler);
 
       const locationHeader = f.xhr ? f.xhr.getResponseHeader('Location') : null;
       if (!locationHeader || !locationHeader.includes('/v2/')) {
         dropZone.off('success', successHandler);
+        dropZone.off('error', errorHandler);
         reject('Missing or malformed Location header');
         return;
       }
@@ -161,7 +163,16 @@ const imagesUploadHandler = (blobInfo: TinyMCEBlobInfo) => new Promise((resolve,
         .then((url: string) => resolve(url))
         .catch(() => reject('Metadata fetch failed'));
     };
+    const errorHandler = (f: DropzoneFile) => {
+      if (f.size !== file.size || f.type !== file.type) {
+        return;
+      }
+      dropZone.off('success', successHandler);
+      dropZone.off('error', errorHandler);
+      reject('Upload failed');
+    }
     dropZone.on('success', successHandler);
+    dropZone.on('error', errorHandler);
     dropZone.addFile(blobInfo.blob());
   };
   // Edgecase for editing an image using tinymce ImageTools

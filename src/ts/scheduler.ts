@@ -469,7 +469,7 @@ if (window.location.pathname === '/scheduler.php') {
         const startDt = DateTime.fromISO(startInput.value, { zone: 'system' });
         const endDt = DateTime.fromISO(endInput.value, { zone: 'system' });
         if (!startDt.isValid || !endDt.isValid) {
-          notify.error('Invalid date/time value.');
+          notify.error('invalid-info');
           if (originalValue) input.value = originalValue;
           return;
         }

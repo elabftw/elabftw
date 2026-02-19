@@ -242,7 +242,7 @@ final class Scheduler extends AbstractRest
             'experiment' => $this->bind('experiment', $params['id']),
             'item_link' => $this->bind('item_link', $params['id']),
             'title' => $this->updateTitle($params['content']),
-            'datetime' => $this->updateDateTime($params),
+            'datetime' => $this->updateDateTime($params['start'], $params['end']),
             default => throw new ImproperActionException('Incorrect target parameter.'),
         };
         return $this->readOne();
@@ -289,13 +289,10 @@ final class Scheduler extends AbstractRest
         return $this->Db->execute($req);
     }
 
-    private function updateDateTime(array $params): bool
+    private function updateDateTime(string $start, string $end): bool
     {
-        if (!isset($params['start'], $params['end'])) {
-            throw new ImproperActionException('Start and end are required.');
-        }
-        $start = $this->normalizeDate($params['start']);
-        $end = $this->normalizeDate($params['end'], true);
+        $start = $this->normalizeDate($start);
+        $end = $this->normalizeDate($end, true);
         $this->isFutureOrExplode(new DateTimeImmutable($start));
         $this->isFutureOrExplode(new DateTimeImmutable($end));
         $this->checkConstraints($start, $end);

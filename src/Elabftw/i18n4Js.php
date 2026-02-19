@@ -156,6 +156,7 @@ final class i18n4Js
             'users' => _('Users'),
             'valid-until' => _('Valid until'),
             'validated' => _('Validated'),
+            'view-template' => _('View template'),
         );
     }
 

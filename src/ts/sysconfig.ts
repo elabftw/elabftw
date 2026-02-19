@@ -173,11 +173,11 @@ function checkForUpdate() {
       text.innerText = `${data.date} - A new version is available!`;
       warningDiv.appendChild(text);
       const updateLink = document.createElement('a');
-      updateLink.href = 'https://doc.elabftw.net/how-to-update.html';
+      updateLink.href = 'https://doc.elabftw.net/docs/install/update';
       updateLink.classList.add('button', 'btn', 'btn-primary', 'text-white', 'ml-2');
       updateLink.innerText = 'Update elabftw';
       const changelogLink = document.createElement('a');
-      changelogLink.href = 'https://doc.elabftw.net/changelog.html';
+      changelogLink.href = 'https://github.com/elabftw/elabftw/releases';
       changelogLink.classList.add('button', 'btn', 'btn-primary', 'text-white', 'ml-2');
       changelogLink.innerText = 'Read changelog';
       warningDiv.appendChild(updateLink);

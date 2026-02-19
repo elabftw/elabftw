@@ -279,6 +279,10 @@ new Malle({
       // we also remember the last selected one in localStorage
       onChange: rememberLastSelected(id),
       onInitialize: selectLastSelected(id),
+      // users get confused when their team doesn't show up (default is 50)
+      // so make it huge because otherwise one needs to explain that user needs to type to start filtering team names
+      // but users don't know how to type, only click and scroll, so it doesn't come to their mind.
+      maxOptions: 2222,
     });
   }
 });
@@ -527,7 +531,11 @@ on('show-policy', (el: HTMLElement) => {
 
 on('reload-on-click', (el: HTMLElement) => reloadElements([el.dataset.target]));
 on('switch-editor', () => getEditor().switch(entity).then(() => window.location.reload()));
-on('destroy-favtags', (el: HTMLElement) => ApiC.delete(`${Model.FavTag}/${el.dataset.id}`).then(() => reloadElements(['favtagsTagsDiv'])));
+on('destroy-favtags', (el: HTMLElement) => {
+  if (confirm(i18next.t('generic-delete-warning'))) {
+    ApiC.delete(`${Model.FavTag}/${el.dataset.id}`).then(() => reloadElements(['favtagsTagsDiv']));
+  }
+});
 
 on('insert-param-and-reload', (el: HTMLElement) => {
   const params = new URLSearchParams(document.location.search.slice(1));

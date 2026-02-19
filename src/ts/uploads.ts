@@ -93,6 +93,7 @@ const clickHandler = async (event: Event) => {
   } else if (el.matches('[data-action="toggle-uploads-layout"]')) {
     ApiC.notifOnSaved = false;
     ApiC.patch(`${Model.User}/me`, {'uploads_layout': el.dataset.targetLayout})
+    // toggler needs to be reloaded too so the target value will be updated
       .then(() => reloadElements(['uploadsDiv', 'uploadsViewToggler']));
 
   // SHOW CONTENT OF TEXT FILES, MARKDOWN OR JSON

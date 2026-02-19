@@ -15,7 +15,7 @@
   {{ App.Session.get('csrf')|csrf }}
   {% if mfaNewSecret %}
     <div class='col-md-6 text-center mx-auto my-4'>
-      <p class='text-muted'>{{ 'Enable two factor authentication for your account to increase its security. %sSee documentation%s.'|trans|format("<a class='external-link' target='_blank' rel='noopener' href='https://doc.elabftw.net/user-guide.html#what-is-two-factor-authentication'>", "</a>")|raw }}</p>
+      <p class='text-muted'>{{ 'Enable two factor authentication for your account to increase its security. %sSee documentation%s.'|trans|format("<a class='external-link' target='_blank' rel='noopener' href='https://doc.elabftw.net/docs/usage/user-guide/settings#what-is-two-factor-authentication'>", "</a>")|raw }}</p>
       <p class='my-3'>
         {% if App.Session.has('enforce_mfa') %}
           {{ 'It is mandatory to activate 2FA.'|trans }}

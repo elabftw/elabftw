@@ -120,6 +120,7 @@ const t = {
     "users": "Χρήστες",
     "valid-until": "Ισχύει έως",
     "validated": "Επικυρώθηκε",
+    "view-template": "View template",
   },
 };
 export default t;

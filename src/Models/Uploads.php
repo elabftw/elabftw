@@ -299,7 +299,8 @@ final class Uploads extends AbstractRest
                 }
             )(),
             Action::Replace => $this->replace(new CreateUploadFromUploadedFile(
-                new UploadedFile($reqBody['filePath'], $reqBody['real_name'], $this->uploadData['comment'])
+                new UploadedFile($reqBody['filePath'], $reqBody['real_name']),
+                $this->uploadData['comment']
             )),
             default => throw new ImproperActionException('Invalid action for upload creation.'),
         };

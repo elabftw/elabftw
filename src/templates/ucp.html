@@ -57,7 +57,7 @@
         {% endfor %}
       </select>
     </div>
-    <p class='mt-1 font-weight-bold'><a target='_blank' rel='noopener' class='external-link' href='https://doc.elabftw.net/contributing.html#translating'>{{ 'Help us translate eLabFTW!'|trans }}</a></p>
+    <p class='mt-1 font-weight-bold'><a target='_blank' rel='noopener' class='external-link' href='https://doc.elabftw.net/docs/contributing/intro#translating'>{{ 'Help us translate eLabFTW!'|trans }}</a></p>
   </div>
 
   {# DISPLAY #}
@@ -350,7 +350,7 @@
       {% else %}
         <form class='form-group' method='post' action='app/controllers/UcpController.php' aria-label='{{ 'User information'|trans }}'>
           {{ App.Session.get('csrf')|csrf }}
-          <p class='text-muted'>{{ 'Enable two factor authentication for your account to increase its security. %sSee documentation%s.'|trans|format("<a class='external-link' target='_blank' rel='noopener' href='https://doc.elabftw.net/user-guide.html#what-is-two-factor-authentication'>", "</a>")|raw }}</p>
+          <p class='text-muted'>{{ 'Enable two factor authentication for your account to increase its security. %sSee documentation%s.'|trans|format("<a class='external-link' target='_blank' rel='noopener' href='https://doc.elabftw.net/docs/usage/user-guide/settings#what-is-two-factor-authentication'>", "</a>")|raw }}</p>
           <div class='mx-auto text-center'>
             <button type='button' data-action='toggle-next' data-toggle-target='mfaQrcodeDiv' class='btn btn-primary'>{{ 'Setup second factor'|trans }}</button>
           <div id='mfaQrcodeDiv' class='mt-2' hidden>
@@ -441,7 +441,7 @@
       </div>
     </div>
     <p>{{ 'Signature keys are a highly secure public-key signature system that allows you to cryptographically sign experiments or resources. Signing an entry will generate an immutable archive.'|trans }}</p>
-    <p class='smallgray'>{{ 'To learn more about signature keys, have a look at the %scomplete documentation%s.'|trans|format("<a class='external-link' target='_blank' rel='noopener' href='https://doc.elabftw.net/user-guide.html#signatures'>", "</a>")|raw }}</p>
+    <p class='smallgray'>{{ 'To learn more about signature keys, have a look at the %scomplete documentation%s.'|trans|format("<a class='external-link' target='_blank' rel='noopener' href='https://doc.elabftw.net/docs/usage/user-guide/misc#signatures'>", "</a>")|raw }}</p>
     {% if not App.Users.userData.sig_privkey %}
       {{ 'You do not have a key pair associated with your account yet.'|trans|msg('warning', false) }}
       <form id='sigPassphraseForm' aria-label='{{ 'Generate signature keys'|trans }}'>
@@ -469,7 +469,7 @@
 
 {# TAB 4 - API KEYS #}
 <div data-tabcontent='3' hidden>
-  <p><a target='_blank' rel='noopener' class='external-link' href='https://doc.elabftw.net/api.html'>{{ 'Link to documentation'|trans }}</a></p>
+  <p><a target='_blank' rel='noopener' class='external-link' href='https://doc.elabftw.net/docs/usage/api'>{{ 'Link to documentation'|trans }}</a></p>
   <h2 class='p-2 pl-3 section-title'>{{ 'Create new key'|trans }}</h2>
 
   {# hidden new key block #}

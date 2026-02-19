@@ -1713,7 +1713,7 @@ components:
         extra_fields:
           type: object
           nullable: true
-          description: See https://doc.elabftw.net/metadata.html#extra-fields-objects
+          description: See https://doc.elabftw.net/docs/usage/metadata#extra-fields-objects
           additionalProperties:
             type: object
             nullable: true

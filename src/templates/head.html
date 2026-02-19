@@ -201,13 +201,13 @@
           <div class='dropdown-menu dropdown-menu-right' aria-labelledby='navbarDropdownHelp'>
             <a class='dropdown-item' href='{{ App.getWhatsnewLink(constant('Elabftw\\Elabftw\\App::INSTALLED_VERSION_INT')) }}' target='_blank' rel='noopener'><i class='fas fa-newspaper fa-fw'></i> {{ "What's new"|trans }}</a>
             <a class='dropdown-item' href='https://doc.elabftw.net' target='_blank' rel='noopener'><i class='fas fa-book fa-fw'></i> {{ 'Documentation'|trans }}</a>
-            <a class='dropdown-item' href='https://doc.elabftw.net/api.html' target='_blank' rel='noopener'><i class='fas fa-book fa-fw'></i> API {{ 'Documentation'|trans }}</a>
+            <a class='dropdown-item' href='https://doc.elabftw.net/docs/usage/api' target='_blank' rel='noopener'><i class='fas fa-book fa-fw'></i> API {{ 'Documentation'|trans }}</a>
             <a class='dropdown-item' href='{{ App.Config.configArr.support_url }}' target='_blank' rel='noopener'><i class='fas fa-bell-concierge fa-fw'></i> {{ 'Support'|trans }}</a>
             <a class='dropdown-item' href='https://github.com/elabftw/elabftw/discussions/' target='_blank' rel='noopener'><i class='fas fa-comments fa-fw'></i> {{ 'Community forum'|trans }}</a>
             <a class='dropdown-item' href='{{ App.Config.configArr.chat_url }}' target='_blank' rel='noopener'><i class='fas fa-comment-dots fa-fw'></i> {{ 'Chat room'|trans }}</a>
             <div class='dropdown-divider'></div>
             <a class='dropdown-item' href='https://github.com/elabftw/elabftw/issues/new/choose' target='_blank' rel='noopener'><i class='fas fa-bug fa-fw'></i> {{ 'Submit feedback'|trans }}</a>
-            <a class='dropdown-item' href='https://doc.elabftw.net/contributing.html' target='_blank' rel='noopener'><i class='fas fa-handshake-angle fa-fw'></i> {{ 'Contribute to eLabFTW'|trans }}</a>
+            <a class='dropdown-item' href='https://doc.elabftw.net/docs/contributing/intro' target='_blank' rel='noopener'><i class='fas fa-handshake-angle fa-fw'></i> {{ 'Contribute to eLabFTW'|trans }}</a>
             <div class='dropdown-divider'></div>
             <a class='dropdown-item' data-action='toggle-modal' data-target='aboutElabftwModal'><i class='fas fa-circle-info fa-fw'></i> {{ 'About eLabFTW'|trans }}</a>
           </div>
@@ -270,7 +270,7 @@
   {% set enableWide = App.Request.query.get('mode') == 'show' or (pageSupportsWide and App.Users.userData.display_mode == 'it' and not App.Request.query.has('mode')) %}
   <div id='realContainer' class='real-container {{ enableWide ? 'max-width-70' : '' }}'>
 <div id='safariWarning' hidden>
-    {{ 'Warning: you are using an unsupported browser known to cause issues (Safari). Please use a supported browser (see %sdocumentation%s).'|trans|format("<a class='external-link' target='_blank' href='https://doc.elabftw.net/faq.html#requirements-for-the-clients-users'>", "</a>")|msg('warning', true, 'safari_warning_v1') }}
+    {{ 'Warning: you are using an unsupported browser known to cause issues (Safari). Please use a supported browser (see %sdocumentation%s).'|trans|format("<a class='external-link' target='_blank' href='https://doc.elabftw.net/#what-are-the-technical-requirements'>", "</a>")|msg('warning', true, 'safari_warning_v1') }}
 </div>
 
 <noscript>{# show warning if javascript is disabled #}

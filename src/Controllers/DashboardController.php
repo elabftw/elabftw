@@ -18,6 +18,7 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Orderby;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ExperimentsStatus;
+use Elabftw\Models\FavTags;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
@@ -79,6 +80,9 @@ final class DashboardController extends AbstractHtmlController
         $DisplayParamsTemplates = new DisplayParams($this->app->Users, EntityType::Templates);
         $DisplayParamsItemsTypes = new DisplayParams($this->app->Users, EntityType::ItemsTypes);
 
+        $FavTags = new FavTags($this->app->Users);
+        $favTagsArr = $FavTags->readAll();
+
         return array_merge(
             parent::getData(),
             array(
@@ -86,6 +90,7 @@ final class DashboardController extends AbstractHtmlController
                 'itemsStatusArr' => $ItemsStatus->readAll(),
                 'experimentsArr' => $Experiments->readShow($DisplayParamsExp),
                 'experimentsStatusArr' => $ExperimentsStatus->readAll($ExperimentsStatus->getQueryParams(new InputBag(array('limit' => 9999)))),
+                'favTagsArr' => $favTagsArr,
                 'itemsArr' => $Items->readShow($DisplayParamsItems),
                 'itemsTemplatesArr' => $ItemsTypes->readAllSimple($DisplayParamsItemsTypes),
                 'requestActionsArr' => $UserRequestActions->readAllFull(),

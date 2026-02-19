@@ -170,7 +170,7 @@ const imagesUploadHandler = (blobInfo: TinyMCEBlobInfo) => new Promise((resolve,
       dropZone.off('success', successHandler);
       dropZone.off('error', errorHandler);
       reject('Upload failed');
-    }
+    };
     dropZone.on('success', successHandler);
     dropZone.on('error', errorHandler);
     dropZone.addFile(blobInfo.blob());

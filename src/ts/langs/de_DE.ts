@@ -120,6 +120,7 @@ const t = {
     "users": "Benutzer",
     "valid-until": "Gültig bis",
     "validated": "Bestätigt",
+    "view-template": "Vorlage anschauen",
   },
 };
 export default t;

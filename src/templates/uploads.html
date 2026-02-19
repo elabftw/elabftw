@@ -23,7 +23,7 @@
 <div id='filesDiv'>
   <div class='d-flex justify-content-between'>
     <div>{# necessary div for flex #}
-      <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-toggle-target='uploadsDiv' data-toggle-target-extra='uploadsViewToggler' class='d-inline togglable-section-title' tabindex='0' role='button'>
+      <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-toggle-target='uploadsDiv' class='d-inline togglable-section-title' tabindex='0' role='button'>
         <i class='fas fa-caret-down fa-fw mr-2'></i>{% trans %}Attached file
         {% plural Entity.entityData.uploads|length %}
         Attached files
@@ -31,7 +31,6 @@
       </h3>
     </div>
 
-    {# id is used with data-toggle-target-extra #}
     <div id='uploadsViewToggler'>
       <button type='button' title='{{ 'Switch layout'|trans }}' aria-label='{{ 'Switch layout'|trans }}' class='btn hl-hover-gray p-1 lh-normal border-0 my-n1' data-action='toggle-uploads-layout' data-target-layout='{{ App.Users.userData.uploads_layout ? 0 : 1 }}'>
         <i class='fas fa-fw fa-list fa-flip-horizontal'></i>

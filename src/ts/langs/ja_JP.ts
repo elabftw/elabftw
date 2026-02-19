@@ -120,6 +120,7 @@ const t = {
     "users": "ユーザー",
     "valid-until": "有効期限",
     "validated": "検証済み",
+    "view-template": "テンプレートを確認する",
   },
 };
 export default t;

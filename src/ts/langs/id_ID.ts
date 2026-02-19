@@ -120,6 +120,7 @@ const t = {
     "users": "Pengguna",
     "valid-until": "Berlaku hingga",
     "validated": "Tervalidasi",
+    "view-template": "Lihat templat",
   },
 };
 export default t;

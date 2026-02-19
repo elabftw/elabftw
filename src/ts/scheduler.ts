@@ -39,6 +39,7 @@ import i18next from './i18n';
 import { Action } from './interfaces';
 import { TomSelect } from './misc';
 import { notify } from './notify';
+import { on } from './handlers';
 
 type Range = 'day' | 'week' | 'month';
 type SavedView = Range | 'listWeek';
@@ -489,72 +490,70 @@ if (window.location.pathname === '/scheduler.php') {
       $('[data-action="scheduler-rm-bind"][data-type="item_link"]').hide();
     }
 
-    // Add click listener and do action based on which element is clicked
-    document.querySelector('.real-container').addEventListener('click', (event) => {
-      const el = (event.target as HTMLElement);
-      // CANCEL EVENT ACTION
-      if (el.matches('[data-action="cancel-event"]')) {
-        ApiC.delete(`event/${el.dataset.id}`).then(() => calendar.refetchEvents()).catch();
-      // CANCEL EVENT ACTION WITH MESSAGE
-      } else if (el.matches('[data-action="cancel-event-with-message"]')) {
-        const target = document.querySelector('input[name="targetCancelEvent"]:checked') as HTMLInputElement;
-        const msg = (document.getElementById('cancelEventTextarea') as HTMLTextAreaElement).value;
-        ApiC.post(`event/${el.dataset.id}/notifications`, {action: Action.Create, msg: msg, target: target.value, targetid: parseInt(target.dataset.targetid, 10)}).then(() => {
-          ApiC.delete(`event/${el.dataset.id}`).then(() => calendar.refetchEvents()).catch();
-        });
-      // SAVE EVENT TITLE
-      } else if (el.matches('[data-action="save-event-title"]')) {
-        const input = el.parentElement.parentElement.querySelector('input') as HTMLInputElement;
-        ApiC.patch(`event/${input.dataset.eventid}`, {target: 'title', content: input.value}).then(() => calendar.refetchEvents());
+    on('cancel-event', (el: HTMLElement) => {
+      ApiC.delete(`event/${el.dataset.id}`).then(() => calendar.refetchEvents()).catch();
+    });
 
-      // BIND AN ENTITY TO THE EVENT
-      } else if (el.matches('[data-action="scheduler-bind-entity"]')) {
-        const inputEl = el.parentNode.parentNode.querySelector('input') as HTMLInputElement;
-        const entityid = parseInt((inputEl.value as string), 10);
-        if (entityid > 0) {
-          ApiC.patch(`event/${el.dataset.id}`, {target: el.dataset.type, id: entityid}).then(res => res.json()).then(json => {
-            calendar.refetchEvents();
-            refreshBoundDivs(json);
-            inputEl.value = '';
-          });
-        }
-      // REMOVE BIND
-      } else if (el.matches('[data-action="scheduler-rm-bind"]')) {
-        const bindType = el.dataset.type;
-        ApiC.patch(`event/${el.dataset.eventid}`, {'target': bindType, 'id': null}).then(() => {
-          clearBoundDiv(bindType);
-          // clear the inputs
-          document.querySelectorAll('.bindInput').forEach((input:HTMLInputElement) => input.value = '');
+    on('cancel-event-with-message', (el: HTMLElement) => {
+      const target = document.querySelector('input[name="targetCancelEvent"]:checked') as HTMLInputElement;
+      const msg = (document.getElementById('cancelEventTextarea') as HTMLTextAreaElement).value;
+      ApiC.post(`event/${el.dataset.id}/notifications`, {action: Action.Create, msg: msg, target: target.value, targetid: parseInt(target.dataset.targetid, 10)}).then(() => {
+        ApiC.delete(`event/${el.dataset.id}`).then(() => calendar.refetchEvents()).catch();
+      });
+    });
+
+    on('save-event-title', (el: HTMLElement) => {
+      const input = el.parentElement.parentElement.querySelector('input') as HTMLInputElement;
+      ApiC.patch(`event/${input.dataset.eventid}`, {target: 'title', content: input.value}).then(() => calendar.refetchEvents());
+    });
+
+    on('scheduler-bind-entity', (el: HTMLElement) => {
+      const inputEl = el.parentNode.parentNode.querySelector('input') as HTMLInputElement;
+      const entityid = parseInt((inputEl.value as string), 10);
+      if (entityid > 0) {
+        ApiC.patch(`event/${el.dataset.id}`, {target: el.dataset.type, id: entityid}).then(res => res.json()).then(json => {
           calendar.refetchEvents();
+          refreshBoundDivs(json);
+          inputEl.value = '';
         });
-      // FILTER OWNER
-      } else if (el.matches('[data-action="filter-owner"]')) {
-        reloadCalendarEvents();
-      // EXPORTS
-      } else if (el.matches('[data-action="export-scheduler"]')) {
-        const from = (document.getElementById('schedulerDateFrom') as HTMLInputElement).value;
-        const to = (document.getElementById('schedulerDateTo') as HTMLInputElement).value;
-        const currentParams = new URLSearchParams(window.location.search);
-        // make an export based on the scheduler's current filters
-        const exportUrl = new URL('make.php', window.location.origin);
-        exportUrl.searchParams.set('format', 'schedulerReport');
-        exportUrl.searchParams.set('start', from);
-        exportUrl.searchParams.set('end', to);
-        // append item filters
-        const items = currentParams.getAll('items[]');
-        items.forEach(id => exportUrl.searchParams.append('items[]', id));
-        // append category if present
-        const category = currentParams.get('category');
-        if (category && category !== 'all') {
-          exportUrl.searchParams.set('category', category);
-        }
-        // append owner if present
-        const owner = currentParams.get('eventOwner');
-        if (owner && owner !== 'all') {
-          exportUrl.searchParams.set('eventOwner', owner);
-        }
-        window.location.href = exportUrl.toString();
       }
+    });
+
+    on('scheduler-rm-bind', (el: HTMLElement) => {
+      const bindType = el.dataset.type;
+      ApiC.patch(`event/${el.dataset.eventid}`, {'target': bindType, 'id': null}).then(() => {
+        clearBoundDiv(bindType);
+        // clear the inputs
+        document.querySelectorAll('.bindInput').forEach((input:HTMLInputElement) => input.value = '');
+        calendar.refetchEvents();
+      });
+    });
+
+    on('filter-owner', () => reloadCalendarEvents());
+
+    on('export-scheduler', () => {
+      const from = (document.getElementById('schedulerDateFrom') as HTMLInputElement).value;
+      const to = (document.getElementById('schedulerDateTo') as HTMLInputElement).value;
+      const currentParams = new URLSearchParams(window.location.search);
+      // make an export based on the scheduler's current filters
+      const exportUrl = new URL('make.php', window.location.origin);
+      exportUrl.searchParams.set('format', 'schedulerReport');
+      exportUrl.searchParams.set('start', from);
+      exportUrl.searchParams.set('end', to);
+      // append item filters
+      const items = currentParams.getAll('items[]');
+      items.forEach(id => exportUrl.searchParams.append('items[]', id));
+      // append category if present
+      const category = currentParams.get('category');
+      if (category && category !== 'all') {
+        exportUrl.searchParams.set('category', category);
+      }
+      // append owner if present
+      const owner = currentParams.get('eventOwner');
+      if (owner && owner !== 'all') {
+        exportUrl.searchParams.set('eventOwner', owner);
+      }
+      window.location.href = exportUrl.toString();
     });
 
     // Filters & repopulates the item TomSelect dropdown with options that match the selected category

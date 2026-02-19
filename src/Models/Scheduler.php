@@ -242,8 +242,7 @@ final class Scheduler extends AbstractRest
             'experiment' => $this->bind('experiment', $params['id']),
             'item_link' => $this->bind('item_link', $params['id']),
             'title' => $this->updateTitle($params['content']),
-            'start_epoch' => $this->updateEpoch('start', $params['epoch']),
-            'end_epoch' => $this->updateEpoch('end', $params['epoch']),
+            'datetime' => $this->updateDateTime($params),
             default => throw new ImproperActionException('Incorrect target parameter.'),
         };
         return $this->readOne();
@@ -287,6 +286,24 @@ final class Scheduler extends AbstractRest
             }
             $Notif->create($userid);
         });
+        return $this->Db->execute($req);
+    }
+
+    private function updateDateTime(array $params): bool
+    {
+        if (!isset($params['start'], $params['end'])) {
+            throw new ImproperActionException('Start and end are required.');
+        }
+        $start = $this->normalizeDate($params['start']);
+        $end = $this->normalizeDate($params['end'], true);
+        $this->isFutureOrExplode(new DateTimeImmutable($start));
+        $this->isFutureOrExplode(new DateTimeImmutable($end));
+        $this->checkConstraints($start, $end);
+        $sql = 'UPDATE team_events SET start = :start, end = :end WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':start', $start);
+        $req->bindValue(':end', $end);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 
@@ -343,31 +360,6 @@ final class Scheduler extends AbstractRest
         $this->Db->execute($req);
 
         return $req->fetchAll();
-    }
-
-    /**
-     * Use a direct target date in Unix time format (from the modal) instead of a delta (from the calendar)
-     * The column is passed by the app, not the user.
-     */
-    private function updateEpoch(string $column, string $epoch): bool
-    {
-        $event = $this->readOne();
-        $new = DateTimeImmutable::createFromFormat('U', $epoch);
-        if ($new === false) {
-            throw new ImproperActionException('Invalid date format received.');
-        }
-        $this->isFutureOrExplode($new);
-        // check constraint with incoming values
-        $newStart = $column === 'start' ? $new->format(self::DATETIME_FORMAT) : $event['start'];
-        $newEnd = $column === 'end' ? $new->format(self::DATETIME_FORMAT) : $event['end'];
-        $this->checkConstraints($newStart, $newEnd);
-
-        $sql = 'UPDATE team_events SET ' . $column . ' = :new WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':new', $new->format(self::DATETIME_FORMAT));
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-
-        return $this->Db->execute($req);
     }
 
     // the title (comment) can be an empty string

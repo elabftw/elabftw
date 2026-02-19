@@ -202,36 +202,31 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($titleItem2, $filteredCatEvents[1]['title_only']);
     }
 
-    public function testPatchEpoch(): Scheduler
+    public function testPatchDatetime(): void
     {
         $Scheduler = $this->getFreshSchedulerWithEvent();
-        $newEpoch = new DateTimeImmutable('+6 hour')->format('U');
-        // patch `end` first to avoid a temporary state where start > end.
-        $this->assertIsArray($Scheduler->patch(Action::Update, array('target' => 'end_epoch', 'epoch' => $newEpoch)));
-        $this->assertIsArray($Scheduler->patch(Action::Update, array('target' => 'start_epoch', 'epoch' => $newEpoch)));
-        return $Scheduler;
+        $newStart = new DateTimeImmutable('+6 hour');
+        $newEnd = $newStart->add(new DateInterval('PT2H'));
+        $res = $Scheduler->patch(Action::Update, array('target' => 'datetime', 'start' => $newStart->format('c'), 'end' => $newEnd->format('c')));
+        $this->assertIsArray($res);
+        $this->assertEquals($newStart->format('Y-m-d H:i:s'), $res['start']);
+        $this->assertEquals($newEnd->format('Y-m-d H:i:s'), $res['end']);
     }
 
-    public function testPatchEpochEndBeforeStart(): void
+    public function testPatchDatetimeEndBeforeStart(): void
     {
         $Scheduler = $this->getFreshSchedulerWithEvent();
-        $newEpoch = new DateTimeImmutable('+8 hour')->format('U');
+        $start = new DateTimeImmutable('+10 hour');
+        $end = new DateTimeImmutable('+6 hour');
         $this->expectException(UnprocessableContentException::class);
-        $Scheduler->patch(Action::Update, array('target' => 'start_epoch', 'epoch' => $newEpoch));
+        $Scheduler->patch(Action::Update, array('target' => 'datetime', 'start' => $start->format('c'), 'end' => $end->format('c')));
     }
 
-    public function testPatchEpochInvalidTarget(): void
+    public function testPatchDatetimeInvalidFormat(): void
     {
-        $Scheduler = $this->testPatchEpoch();
+        $Scheduler = $this->getFreshSchedulerWithEvent();
         $this->expectException(ImproperActionException::class);
-        $Scheduler->patch(Action::Update, array('target' => 'oops', 'epoch' => date('U')));
-    }
-
-    public function testPatchEpochInvalidEpoch(): void
-    {
-        $Scheduler = $this->testPatchEpoch();
-        $this->expectException(ImproperActionException::class);
-        $Scheduler->patch(Action::Update, array('target' => 'end_epoch', 'epoch' => ''));
+        $Scheduler->patch(Action::Update, array('target' => 'datetime', 'start' => '', 'end' => ''));
     }
 
     public function testPatchTitle(): void
@@ -322,7 +317,9 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $id = $Scheduler->postAction(Action::Create, array('start' => $start, 'end' => $end, 'title' => 'Yep'));
         $Scheduler->setId($id);
         $this->expectException(ImproperActionException::class);
-        $Scheduler->patch(Action::Update, array('target' => 'start_epoch', 'epoch' => (string) time()));
+        $newStart = new DateTimeImmutable('+10 minutes');
+        $newEnd = $newStart->add(new DateInterval('PT2H'));
+        $Scheduler->patch(Action::Update, array('target' => 'datetime', 'start' => $newStart->format('c'), 'end' => $newEnd->format('c')));
     }
 
     public function testCheckMaxSlots(): void

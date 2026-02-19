@@ -13,6 +13,7 @@ import tinymce from 'tinymce/tinymce';
 import { notify } from './notify';
 import TableSorting from './TableSorting.class';
 declare const MathJax: MathJaxObject;
+import { Malle, InputType } from '@deltablot/malle';
 import $ from 'jquery';
 import i18next from './i18n';
 import { ApiC } from './api';
@@ -247,6 +248,67 @@ export function getEntity(useParent: boolean = false): Entity {
   };
 }
 
+// Listen for malleable columns
+export function makeMalleableColumnsGreatAgain() {
+  new Malle({
+    onEdit: (original, _, input) => {
+      if (original.innerText === 'unset') {
+        input.value = '';
+        original.classList.remove('font-italic');
+      }
+      if (original.dataset.inputType === 'number') {
+        // use setAttribute here because type is readonly property
+        input.setAttribute('type', 'number');
+      }
+      return true;
+    },
+    cancel : i18next.t('cancel'),
+    cancelClasses: ['btn', 'btn-danger', 'mt-2', 'ml-1'],
+    inputClasses: ['form-control'],
+    fun: (value, original) => {
+      const params = {};
+      params[original.dataset.target] = value;
+      return ApiC.patch(`${original.dataset.endpoint}/${original.dataset.id}`, params)
+        .then(res => res.json())
+        .then(json => json[original.dataset.target]);
+    },
+    listenOn: '.malleableColumn',
+    returnedValueIsTrustedHtml: false,
+    submit : i18next.t('save'),
+    submitClasses: ['btn', 'btn-primary', 'mt-2'],
+    tooltip: i18next.t('click-to-edit'),
+  }).listen();
+
+  // MALLEABLE QTY_UNIT - we need a specific code to add the select options
+  new Malle({
+    cancel : i18next.t('cancel'),
+    cancelClasses: ['btn', 'btn-danger', 'mt-2', 'ml-1'],
+    inputClasses: ['form-control'],
+    inputType: InputType.Select,
+    selectOptions: [
+      {selected: false, text: '•', value: '•'},
+      {selected: false, text: 'μL', value: 'μL'},
+      {selected: false, text: 'mL', value: 'mL'},
+      {selected: false, text: 'L', value: 'L'},
+      {selected: false, text: 'μg', value: 'μg'},
+      {selected: false, text: 'mg', value: 'mg'},
+      {selected: false, text: 'g', value: 'g'},
+      {selected: false, text: 'kg', value: 'kg'},
+    ],
+    fun: (value, original) => {
+      return ApiC.patch(`${original.dataset.endpoint}/${original.dataset.id}`, {qty_unit: value})
+        .then(res => res.json())
+        .then(json => json['qty_unit']);
+    },
+    listenOn: '.malleableQtyUnit',
+    returnedValueIsTrustedHtml: false,
+    submit : i18next.t('save'),
+    submitClasses: ['btn', 'btn-primary', 'mt-2'],
+    tooltip: i18next.t('click-to-edit'),
+  }).listen();
+
+}
+
 // SORTABLE ELEMENTS
 export function makeSortableGreatAgain(): void {
   // need an axis and a table via data attribute
@@ -342,6 +404,7 @@ export async function reloadElements(elementIds: string[]): Promise<void> {
   });
   (new TableSorting()).init();
   makeSortableGreatAgain();
+  makeMalleableColumnsGreatAgain();
   relativeMoment();
 }
 

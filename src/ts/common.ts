@@ -34,6 +34,7 @@ import {
   TomSelect,
   updateEntityBody,
   updateCatStat,
+  makeMalleableColumnsGreatAgain,
 } from './misc';
 import i18next from './i18n';
 import { Metadata } from './Metadata.class';
@@ -237,36 +238,7 @@ if (isSafari() && !isDismissedSafari) {
 }
 // END SAFARI DETECTION
 
-// Listen for malleable columns
-new Malle({
-  onEdit: (original, _, input) => {
-    if (original.innerText === 'unset') {
-      input.value = '';
-      original.classList.remove('font-italic');
-    }
-    if (original.dataset.inputType === 'number') {
-      // use setAttribute here because type is readonly property
-      input.setAttribute('type', 'number');
-    }
-    return true;
-  },
-  cancel : i18next.t('cancel'),
-  cancelClasses: ['btn', 'btn-danger', 'mt-2', 'ml-1'],
-  inputClasses: ['form-control'],
-  fun: (value, original) => {
-    const params = {};
-    params[original.dataset.target] = value;
-    return ApiC.patch(`${original.dataset.endpoint}/${original.dataset.id}`, params)
-      .then(res => res.json())
-      .then(json => json[original.dataset.target]);
-  },
-  listenOn: '.malleableColumn',
-  returnedValueIsTrustedHtml: false,
-  submit : i18next.t('save'),
-  submitClasses: ['btn', 'btn-primary', 'mt-2'],
-  tooltip: i18next.t('click-to-edit'),
-}).listen();
-
+makeMalleableColumnsGreatAgain();
 
 // tom-select for team selection on login and register page, and idp selection
 ['init_team_select', 'team', 'team_selection_select', 'idp_login_select'].forEach(id =>{
@@ -286,34 +258,6 @@ new Malle({
     });
   }
 });
-
-// MALLEABLE QTY_UNIT - we need a specific code to add the select options
-new Malle({
-  cancel : i18next.t('cancel'),
-  cancelClasses: ['btn', 'btn-danger', 'mt-2', 'ml-1'],
-  inputClasses: ['form-control'],
-  inputType: InputType.Select,
-  selectOptions: [
-    {selected: false, text: '•', value: '•'},
-    {selected: false, text: 'μL', value: 'μL'},
-    {selected: false, text: 'mL', value: 'mL'},
-    {selected: false, text: 'L', value: 'L'},
-    {selected: false, text: 'μg', value: 'μg'},
-    {selected: false, text: 'mg', value: 'mg'},
-    {selected: false, text: 'g', value: 'g'},
-    {selected: false, text: 'kg', value: 'kg'},
-  ],
-  fun: (value, original) => {
-    return ApiC.patch(`${original.dataset.endpoint}/${original.dataset.id}`, {qty_unit: value})
-      .then(res => res.json())
-      .then(json => json['qty_unit']);
-  },
-  listenOn: '.malleableQtyUnit',
-  returnedValueIsTrustedHtml: false,
-  submit : i18next.t('save'),
-  submitClasses: ['btn', 'btn-primary', 'mt-2'],
-  tooltip: i18next.t('click-to-edit'),
-}).listen();
 
 // only on entity page
 const pageMode = new URLSearchParams(document.location.search).get('mode');

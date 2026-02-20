@@ -56,7 +56,7 @@ final class Db
             'mysql:host=' . Env::asString('DB_HOST') . ';port=' . Env::asString('DB_PORT') . ';dbname=' .
             Env::asString('DB_NAME'),
             Env::asString('DB_USER'),
-            Env::asString('DB_PASSWORD'),
+            Env::asStringFromFile('DB_PASSWORD'),
             $pdoOptions
         );
     }

@@ -23,6 +23,13 @@ class EnvTest extends \PHPUnit\Framework\TestCase
         $this->assertIsString(Env::asString('DB_NAME'));
     }
 
+    public function testAsStringFromFile(): void
+    {
+        $this->assertIsString(Env::asStringFromFile('DB_PASSWORD'));
+        $this->assertSame('phpunit', Env::asStringFromFile('DB_PASSWORD'));
+        $this->assertEmpty(Env::asStringFromFile('DOES_NOT_EXIST'));
+    }
+
     public function testAsInt(): void
     {
         $this->assertIsInt(Env::asInt('MAX_UPLOAD_SIZE'));

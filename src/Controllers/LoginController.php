@@ -149,7 +149,7 @@ final class LoginController implements ControllerInterface
             // remember which user is authenticated
             $this->Session->set('auth_userid', $AuthResponse->getAuthUserid());
             $this->Session->set('renew_password_required', true);
-            $ResetPasswordKey = new ResetPasswordKey(time(), Env::asString('SECRET_KEY'));
+            $ResetPasswordKey = new ResetPasswordKey(time(), Env::asStringFromFile('SECRET_KEY'));
             $key = $ResetPasswordKey->generate($loggingInUser->userData['email']);
             return new RedirectResponse('/change-pass.php?key=' . $key);
         }

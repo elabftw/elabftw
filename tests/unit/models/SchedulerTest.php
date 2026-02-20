@@ -328,7 +328,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
     public function testCheckMaxSlots(): void
     {
         $Items = $this->getFreshBookableItem(2);
-        $Items->patch(Action::Update, array('book_max_slots' => 2, 'is_bookable' => 1));
+        $Items->patch(Action::Update, array('book_max_slots' => 2));
         $Scheduler = new Scheduler($Items);
         $d = new DateTime('5 minutes');
         $start = $d->format('c');

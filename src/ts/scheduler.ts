@@ -471,14 +471,17 @@ if (window.location.pathname === '/scheduler.php') {
           }
           return;
         }
-        // Note: valueAsDate was not working on Chromium
-        const dt = DateTime.fromISO(input.value, { zone: 'system' });
-        if (!dt.isValid) {
-          notify.error('Invalid date/time value.');
+        const startDt = DateTime.fromISO(startInput.value, { zone: 'system' });
+        const endDt = DateTime.fromISO(endInput.value, { zone: 'system' });
+        if (!startDt.isValid || !endDt.isValid) {
+          notify.error('invalid-info');
           if (originalValue) input.value = originalValue;
           return;
         }
-        ApiC.patch(`event/${input.dataset.eventid}`, {'target': input.dataset.what, 'epoch': String(dt.toUnixInteger())})
+        // convert both inputs to proper ISO with timezone. also suppress milliseconds for cleaner payload
+        const startIso = startDt.toISO({ suppressMilliseconds: true });
+        const endIso = endDt.toISO({ suppressMilliseconds: true });
+        ApiC.patch(`event/${input.dataset.eventid}`, { target: 'datetime', start: startIso, end: endIso})
           .then(() => calendar.refetchEvents())
           .catch((err) => notify.error(err));
       });

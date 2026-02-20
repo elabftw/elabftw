@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\PasswordComplexity;
-use Elabftw\Enums\PermissionType;
+use Elabftw\Enums\AccessType;
 use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Factories\LinksFactory;
@@ -60,7 +60,7 @@ try {
 
     if ($App->Request->query->has('templateid')) {
         $ItemsTypes->setId($App->Request->query->getInt('templateid'));
-        $ItemsTypes->canOrExplode(PermissionType::Write);
+        $ItemsTypes->canOrExplode(AccessType::Write);
         $ContainersLinks = LinksFactory::getContainersLinks($ItemsTypes);
         $ItemsTypes->entityData['containers'] = $ContainersLinks->readAll();
     }

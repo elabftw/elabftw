@@ -35,7 +35,6 @@ use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\Meaning;
 use Elabftw\Enums\Messages;
 use Elabftw\Enums\Metadata as MetadataEnum;
-use Elabftw\Enums\PermissionType;
 use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\AppException;
@@ -490,11 +489,11 @@ abstract class AbstractEntity extends AbstractRest
             throw new UnprocessableContentException(_('Only the Unarchive action is allowed on an archived entity.'));
         }
 
-        $requiredAccess = PermissionType::Write;
+        $requiredAccess = AccessType::Write;
         // some actions only require read access even if they are using PATCH verb
         $readAccessActions = array(Action::Pin, Action::Sign, Action::Timestamp, Action::Bloxberg);
         if (in_array($action, $readAccessActions, true)) {
-            $requiredAccess = PermissionType::Read;
+            $requiredAccess = AccessType::Read;
             // allow uploading a file to that entity too
             $this->Uploads->Entity->bypassWritePermission = true;
         }
@@ -588,7 +587,7 @@ abstract class AbstractEntity extends AbstractRest
         if ($this->entityData['id'] === null) {
             throw new ResourceNotFoundException();
         }
-        $this->canOrExplode(PermissionType::Read);
+        $this->canOrExplode(AccessType::Read);
         $this->entityData['steps'] = $this->Steps->readAll();
         $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll();
         $this->entityData['items_links'] = $this->ItemsLinks->readAll();
@@ -689,15 +688,15 @@ abstract class AbstractEntity extends AbstractRest
     }
 
     // Check if we have the permission to read/write or throw an exception
-    public function canOrExplode(PermissionType $rw): void
+    public function canOrExplode(AccessType $rw): void
     {
         if ($this->id === null) {
             throw new IllegalActionException('Cannot check permissions without an id!');
         }
-        if ($this->bypassWritePermission && $rw === PermissionType::Write) {
+        if ($this->bypassWritePermission && $rw === AccessType::Write) {
             return;
         }
-        if ($this->bypassReadPermission && $rw === PermissionType::Read) {
+        if ($this->bypassReadPermission && $rw === AccessType::Read) {
             return;
         }
         $permissions = $this->getPermissions();
@@ -711,7 +710,7 @@ abstract class AbstractEntity extends AbstractRest
             $this->isReadOnly = true;
         }
 
-        if (!$permissions->{$rw->value}) {
+        if (!$permissions->fromCan($rw)) {
             throw new ForbiddenException();
         }
     }
@@ -801,7 +800,7 @@ abstract class AbstractEntity extends AbstractRest
     #[Override]
     public function destroy(): bool
     {
-        $this->canOrExplode(PermissionType::Write);
+        $this->canOrExplode(AccessType::Write);
         // remove the custom_id upon deletion
         $this->update(new EntityParams('custom_id', ''));
         // delete from pinned too
@@ -812,14 +811,14 @@ abstract class AbstractEntity extends AbstractRest
 
     public function restore(): bool
     {
-        $this->canOrExplode(PermissionType::Write);
+        $this->canOrExplode(AccessType::Write);
         $this->Uploads->restoreAll();
         return $this->update(new EntityParams('state', State::Normal->value));
     }
 
     public function updateExtraFieldsOrdering(ExtraFieldsOrderingParams $params): array
     {
-        $this->canOrExplode(PermissionType::Write);
+        $this->canOrExplode(AccessType::Write);
         $sql = 'UPDATE ' . $this->entityType->value . ' SET metadata = JSON_SET(metadata, :field, :value) WHERE id = :id';
         $req = $this->Db->prepare($sql);
         foreach ($params->ordering as $ordering => $name) {

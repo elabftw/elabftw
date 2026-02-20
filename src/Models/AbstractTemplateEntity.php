@@ -16,7 +16,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\BodyContentType;
-use Elabftw\Enums\PermissionType;
+use Elabftw\Enums\AccessType;
 use Elabftw\Enums\State;
 use Elabftw\Factories\LinksFactory;
 use Override;
@@ -58,7 +58,7 @@ abstract class AbstractTemplateEntity extends AbstractEntity
     #[Override]
     public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int
     {
-        $this->canOrExplode(PermissionType::Read);
+        $this->canOrExplode(AccessType::Read);
         $title = $this->entityData['title'] . ' I';
         $newId = $this->create(
             title: $title,

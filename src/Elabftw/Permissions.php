@@ -150,7 +150,7 @@ final class Permissions
         if ($this->canbookBase === null) {
             return false;
         }
-        if (isset($this->item['is_bookable']) && (int) $this->item['is_bookable'] !== 1) {
+        if (isset($this->item['is_bookable']) && $this->item['is_bookable'] !== 1) {
             return false;
         }
         return $this->getCan($this->canbookBase, $this->canbook);

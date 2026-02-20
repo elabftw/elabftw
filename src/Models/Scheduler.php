@@ -22,6 +22,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Notifications\EventDeleted;
+use Elabftw\Services\ApiParamsValidator;
 use Elabftw\Services\Filter;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\EntityTrait;
@@ -242,12 +243,7 @@ final class Scheduler extends AbstractRest
             'experiment' => $this->bind('experiment', $params['id']),
             'item_link' => $this->bind('item_link', $params['id']),
             'title' => $this->updateTitle($params['content']),
-            'datetime' => (function () use ($params) {
-                if (!isset($params['start'], $params['end'])) {
-                    throw new ImproperActionException(_('Missing start or end datetime parameter.'));
-                }
-                return $this->updateDateTime($params['start'], $params['end']);
-            })(),
+            'datetime' => $this->updateDateTime($params),
             default => throw new ImproperActionException('Incorrect target parameter.'),
         };
         return $this->readOne();
@@ -294,10 +290,11 @@ final class Scheduler extends AbstractRest
         return $this->Db->execute($req);
     }
 
-    private function updateDateTime(string $start, string $end): bool
+    private function updateDateTime(array $params): bool
     {
-        $start = $this->normalizeDate($start);
-        $end = $this->normalizeDate($end, true);
+        ApiParamsValidator::ensureRequiredKeysPresent(array('start', 'end'), $params);
+        $start = $this->normalizeDate($params['start']);
+        $end = $this->normalizeDate($params['end'], true);
         $this->isFutureOrExplode(new DateTimeImmutable($start));
         $this->isFutureOrExplode(new DateTimeImmutable($end));
         $this->checkConstraints($start, $end);

@@ -43,8 +43,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $Items = $this->getFreshBookableItem(2);
         $d = new DateTimeImmutable('+3 hour');
         $this->start = $d->format('c');
-        $d->add(new DateInterval('PT2H'));
-        $this->end = $d->format('c');
+        $this->end = $d->add(new DateInterval('PT2H'))->format('c');
         $this->Scheduler = new Scheduler($Items, null, $this->start, $this->end);
         $this->delta = array(
             'years' => '0',

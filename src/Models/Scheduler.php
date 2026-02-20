@@ -242,7 +242,12 @@ final class Scheduler extends AbstractRest
             'experiment' => $this->bind('experiment', $params['id']),
             'item_link' => $this->bind('item_link', $params['id']),
             'title' => $this->updateTitle($params['content']),
-            'datetime' => $this->updateDateTime($params['start'], $params['end']),
+            'datetime' => (function () use ($params) {
+                if (!isset($params['start'], $params['end'])) {
+                    throw new ImproperActionException(_('Missing start or end datetime parameter.'));
+                }
+                return $this->updateDateTime($params['start'], $params['end']);
+            })(),
             default => throw new ImproperActionException('Incorrect target parameter.'),
         };
         return $this->readOne();

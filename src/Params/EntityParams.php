@@ -33,10 +33,10 @@ final class EntityParams extends ContentParams implements ContentParamsInterface
             'canread', 'canwrite', 'canbook', 'canread_target', 'canwrite_target' => $this->getCanJson(),
             'canread_base', 'canwrite_base', 'canbook_base', 'canread_target_base', 'canwrite_target_base', 'canbook_target_base' => $this->getCanBase(),
             'color' => Check::color($this->asString()),
-            'book_max_minutes', 'book_max_slots', 'book_is_cancellable', 'book_cancel_minutes', 'content_type', 'proc_pack_qty', 'rating', 'userid', 'team' => $this->asInt(),
+            'book_max_minutes', 'book_max_slots', 'book_cancel_minutes', 'booking_window_days', 'content_type', 'proc_pack_qty', 'rating', 'userid', 'team' => $this->asInt(),
             'state' => $this->getState(),
             'custom_id', 'status', 'category', 'storage', 'qty_stored' => $this->getPositiveIntOrNull(),
-            'is_procurable', 'book_can_overlap', 'book_users_can_in_past', 'is_bookable', 'canread_is_immutable', 'canwrite_is_immutable', 'hide_main_text' => $this->getBinary(),
+            'is_procurable', 'book_can_overlap', 'book_is_cancellable', 'book_users_can_in_past', 'is_bookable', 'canread_is_immutable', 'canwrite_is_immutable', 'hide_main_text' => $this->getBinary(),
             'qty_unit' => Check::unit($this->asString()),
             default => throw new ImproperActionException('Invalid update target.'),
         };

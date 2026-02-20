@@ -19,12 +19,16 @@ use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\TeamsHelper;
 
+use function json_decode;
+
 /**
  * Determine read and write access for a user and an entity
  * Here be dragons! Cognitive load > 9000
  */
 final class Permissions
 {
+    private const int CAN_DEPTH = 3;
+
     private TeamGroups $TeamGroups;
 
     private BasePermissions $canreadBase;
@@ -46,25 +50,20 @@ final class Permissions
         $this->canreadBase = BasePermissions::from($item['canread_base']);
         $this->canwriteBase = BasePermissions::from($item['canwrite_base']);
         $this->canbookBase = isset($item['canbook_base']) ? BasePermissions::from($item['canbook_base']) : null;
-        $this->canread = json_decode($item['canread'], true, 512, JSON_THROW_ON_ERROR);
-        $this->canwrite = json_decode($item['canwrite'], true, 512, JSON_THROW_ON_ERROR);
-        $this->canbook = isset($item['canbook']) ? json_decode($item['canbook'], true, 512, JSON_THROW_ON_ERROR) : array();
+        $this->canread = json_decode($item['canread'], true, self::CAN_DEPTH, JSON_THROW_ON_ERROR);
+        $this->canwrite = json_decode($item['canwrite'], true, self::CAN_DEPTH, JSON_THROW_ON_ERROR);
+        $this->canbook = isset($item['canbook']) ? json_decode($item['canbook'], true, self::CAN_DEPTH, JSON_THROW_ON_ERROR) : array();
     }
 
     /**
      * Get permissions for an entity
      */
-    public function forEntity(): array
+    public function forEntity(): AccessPermissions
     {
-        // if we have write access, then we have read access for sure
-        if ($this->getWrite()) {
-            return array('read' => true, 'write' => true, 'book' => $this->getBook());
-        }
-
-        return array(
-            'read' => $this->getCan($this->canreadBase, $this->canread),
-            'write' => false,
-            'book' => $this->getBook(),
+        return new AccessPermissions(
+            read: $this->getCan($this->canreadBase, $this->canread),
+            write: $this->getWrite(),
+            book: $this->getBook(),
         );
     }
 

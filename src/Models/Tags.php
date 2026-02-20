@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
+use Elabftw\Enums\PermissionType;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Params\TagParam;
@@ -140,7 +141,7 @@ final class Tags extends AbstractRest
      */
     public function create(TagParam $params, bool $canCreate): int
     {
-        $this->Entity->canOrExplode('write');
+        $this->Entity->canOrExplode(PermissionType::Write);
 
         $TeamTags = new TeamTags($this->Entity->Users);
 
@@ -165,7 +166,7 @@ final class Tags extends AbstractRest
      */
     private function unreference(): array
     {
-        $this->Entity->canOrExplode('write');
+        $this->Entity->canOrExplode(PermissionType::Write);
 
         $sql = 'DELETE FROM tags2entity WHERE tag_id = :tag_id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);

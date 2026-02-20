@@ -20,6 +20,7 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
+use Elabftw\Enums\PermissionType;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Models\Links\Experiments2ExperimentsLinks;
 use Elabftw\Services\Filter;
@@ -106,7 +107,7 @@ final class Experiments extends AbstractConcreteEntity
     #[Override]
     public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int
     {
-        $this->canOrExplode('read');
+        $this->canOrExplode(PermissionType::Read);
 
         $Teams = new Teams($this->Users);
         $Status = new ExperimentsStatus($Teams);

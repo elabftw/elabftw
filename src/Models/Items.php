@@ -22,6 +22,7 @@ use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FilterableColumn;
+use Elabftw\Enums\PermissionType;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Models\Links\Items2ItemsLinks;
 use Elabftw\Params\ContentParams;
@@ -124,7 +125,7 @@ final class Items extends AbstractConcreteEntity
     public function canBook(): bool
     {
         $Permissions = new Permissions($this->Users, $this->entityData);
-        return $Permissions->forEntity()['book'] ?? false;
+        return $Permissions->forEntity()->book ?? false;
     }
 
     public function canBookInPast(): bool
@@ -135,7 +136,7 @@ final class Items extends AbstractConcreteEntity
     #[Override]
     public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int
     {
-        $this->canOrExplode('read');
+        $this->canOrExplode(PermissionType::Read);
 
         $title = $this->entityData['title'] . ' I';
         // handle the blank_value_on_duplicate attribute on extra fields

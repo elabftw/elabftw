@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\PermissionType;
 use PDO;
 
 /**
@@ -88,7 +89,7 @@ final class Pins
      */
     public function addToPinned(): bool
     {
-        $this->Entity->canOrExplode('read');
+        $this->Entity->canOrExplode(PermissionType::Read);
 
         $sql = 'INSERT IGNORE INTO pin_' . $this->Entity->entityType->value . '2users(users_id, entity_id) VALUES (:users_id, :entity_id)';
         $req = $this->Db->prepare($sql);
@@ -103,7 +104,7 @@ final class Pins
      */
     private function rmFromPinned(): bool
     {
-        $this->Entity->canOrExplode('read');
+        $this->Entity->canOrExplode(PermissionType::Read);
 
         $sql = 'DELETE FROM pin_' . $this->Entity->entityType->value . '2users WHERE entity_id = :entity_id AND users_id = :users_id';
         $req = $this->Db->prepare($sql);

@@ -15,6 +15,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\PermissionType;
 use Elabftw\Exceptions\ImproperActionException;
 use PDO;
 
@@ -97,7 +98,7 @@ final class ExclusiveEditMode
 
     public function activate(): bool
     {
-        $this->Entity->canOrExplode('write');
+        $this->Entity->canOrExplode(PermissionType::Write);
         // destroy any leftover first: prevents inserting with same primary id (entity_id)
         $this->destroy();
         $sql = sprintf(

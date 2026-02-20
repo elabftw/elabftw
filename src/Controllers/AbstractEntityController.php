@@ -20,6 +20,7 @@ use Elabftw\Enums\Currency;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Meaning;
 use Elabftw\Enums\Orderby;
+use Elabftw\Enums\PermissionType;
 use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\Sort;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -278,7 +279,7 @@ abstract class AbstractEntityController implements ControllerInterface
     protected function changelog(): Response
     {
         // check permissions
-        $this->Entity->canOrExplode('read');
+        $this->Entity->canOrExplode(PermissionType::Read);
 
         $renderArr = array(
             'changes' => $this->Entity->entityData['changelog'],

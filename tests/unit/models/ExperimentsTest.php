@@ -15,6 +15,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Meaning;
+use Elabftw\Enums\PermissionType;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -52,7 +53,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $new = $this->Experiments->create();
         $this->assertTrue((bool) Check::id($new));
         $this->Experiments->setId($new);
-        $this->Experiments->canOrExplode('write');
+        $this->Experiments->canOrExplode(PermissionType::Write);
         // test archive too
         $exp = $this->Experiments->patch(Action::Archive, array());
         $this->assertIsArray($exp);
@@ -108,7 +109,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $all = $this->Experiments->readAll($DisplayParams);
         $this->assertEquals(1, count($all));
         $this->Experiments->setId($new);
-        $this->Experiments->canOrExplode('read');
+        $this->Experiments->canOrExplode(PermissionType::Read);
         $experiment = $this->Experiments->readOne();
         $this->assertTrue(is_array($experiment));
         $this->assertEquals($title, $experiment['title']);
@@ -241,7 +242,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
     {
         $this->Experiments->ItemsLinks->setId(1);
         $this->Experiments->ExperimentsLinks->setId(1);
-        $this->Experiments->canOrExplode('read');
+        $this->Experiments->canOrExplode(PermissionType::Read);
         // add specific permissions so we can check it later in the duplicated entry
         $canread = BasePermissions::Organization;
         $canwrite = BasePermissions::UserOnly;

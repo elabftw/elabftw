@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\PermissionType;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
@@ -46,7 +47,7 @@ class Comments extends AbstractRest
     #[Override]
     public function readOne(): array
     {
-        $this->Entity->canOrExplode('read');
+        $this->Entity->canOrExplode(PermissionType::Read);
         $sql = 'SELECT ' . $this->Entity->entityType->value . "_comments.*,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
             users.firstname, users.lastname, users.orcid, users.email
@@ -63,7 +64,7 @@ class Comments extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        $this->Entity->canOrExplode('read');
+        $this->Entity->canOrExplode(PermissionType::Read);
         $sql = 'SELECT ' . $this->Entity->entityType->value . "_comments.*,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
             users.firstname, users.lastname, users.orcid, users.email
@@ -92,7 +93,7 @@ class Comments extends AbstractRest
 
     public function update(CommentParam $params): bool
     {
-        $this->Entity->canOrExplode('read');
+        $this->Entity->canOrExplode(PermissionType::Read);
         $this->canWriteOrExplode();
         // note: we're using a strict WHERE clause here to prevent writing comments from someone else
         $sql = 'UPDATE ' . $this->Entity->entityType->value . '_comments SET

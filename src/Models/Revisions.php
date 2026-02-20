@@ -15,6 +15,7 @@ use DateTimeImmutable;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BodyContentType;
+use Elabftw\Enums\PermissionType;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Traits\SetIdTrait;
@@ -44,7 +45,7 @@ final class Revisions extends AbstractRest
 
     public function create(string $body): int
     {
-        $this->Entity->canOrExplode('write');
+        $this->Entity->canOrExplode(PermissionType::Write);
 
         if (!$this->satisfyDeltaConstraint($body) && !$this->satisfyTimeConstraint() && $this->readCount() > 0) {
             return 0;
@@ -77,7 +78,7 @@ final class Revisions extends AbstractRest
     #[Override]
     public function patch(Action $action, array $params): array
     {
-        $this->Entity->canOrExplode('write');
+        $this->Entity->canOrExplode(PermissionType::Write);
         // check for lock
         if ($this->Entity->entityData['locked']) {
             throw new ImproperActionException(_('You cannot restore a revision of a locked item!'));
@@ -99,7 +100,7 @@ final class Revisions extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        $this->Entity->canOrExplode('read');
+        $this->Entity->canOrExplode(PermissionType::Read);
         $sql = sprintf('SELECT %1$s_revisions.id, %1$s_revisions.content_type, %1$s_revisions.created_at,
             CONCAT(users.firstname, " ", users.lastname) AS fullname
             FROM %1$s_revisions
@@ -115,7 +116,7 @@ final class Revisions extends AbstractRest
     #[Override]
     public function readOne(): array
     {
-        $this->Entity->canOrExplode('read');
+        $this->Entity->canOrExplode(PermissionType::Read);
         $sql = 'SELECT * FROM ' . $this->Entity->entityType->value . '_revisions WHERE id = :rev_id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':rev_id', $this->id, PDO::PARAM_INT);

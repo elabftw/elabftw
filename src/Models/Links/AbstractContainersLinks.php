@@ -15,6 +15,7 @@ namespace Elabftw\Models\Links;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Metadata as MetadataEnum;
+use Elabftw\Enums\PermissionType;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Units;
 use Elabftw\Exceptions\ImproperActionException;
@@ -191,7 +192,7 @@ abstract class AbstractContainersLinks extends AbstractLinks
     #[Override]
     public function destroy(): bool
     {
-        $this->Entity->canOrExplode('write');
+        $this->Entity->canOrExplode(PermissionType::Write);
         $this->Entity->touch();
 
         $sql = 'DELETE FROM ' . $this->getTable() . ' WHERE id = :id AND item_id = :item_id';
@@ -302,7 +303,7 @@ abstract class AbstractContainersLinks extends AbstractLinks
      */
     private function import(): int
     {
-        $this->Entity->canOrExplode('write');
+        $this->Entity->canOrExplode(PermissionType::Write);
 
         // the :item_id of the SELECT will be the same for all rows: our current entity id
         // use IGNORE to avoid failure due to a key constraint violations

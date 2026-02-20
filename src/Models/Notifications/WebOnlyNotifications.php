@@ -21,7 +21,7 @@ use Override;
 class WebOnlyNotifications extends AbstractNotifications
 {
     #[Override]
-    protected function getPref(Users $user): array
+    protected function getPref(Users $targetUser): array
     {
         // not mailable
         return array(1, 0);

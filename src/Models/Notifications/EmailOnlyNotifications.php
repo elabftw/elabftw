@@ -22,7 +22,7 @@ use Override;
 class EmailOnlyNotifications extends AbstractNotifications
 {
     #[Override]
-    protected function getPref(Users $user): array
+    protected function getPref(Users $targetUser): array
     {
         // only mailable
         return array(0, 1);

@@ -28,6 +28,7 @@ use Elabftw\Models\Notifications\PdfAppendmentFailed;
 use Elabftw\Models\Notifications\PdfGenericError;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\Filter;
+use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\Tex2Svg;
 use Elabftw\Traits\TwigTrait;
 use League\Flysystem\Filesystem;
@@ -108,10 +109,12 @@ class MakePdf extends AbstractMakePdf
     {
         $this->loopOverEntries();
         $output = $this->mpdf->OutputBinaryData();
+        $teamId = $this->Entity->entityData['team'];
+        $currentTeam = new TeamsHelper($teamId);
         // use strlen for binary data, not mb_strlen
         $this->contentSize = strlen($output);
         if ($this->errors && $this->notifications) {
-            $Notifications = new PdfGenericError($this->requester);
+            $Notifications = new PdfGenericError($this->requester, $currentTeam);
             $Notifications->create();
         }
         return $output;
@@ -172,10 +175,10 @@ class MakePdf extends AbstractMakePdf
             if ($this->failedAppendPdfs) {
                 /** @psalm-suppress PossiblyNullArgument */
                 $this->errors[] = new PdfAppendmentFailed(
+                    $this->requester,
                     $this->Entity->id,
                     $this->Entity->entityType->toPage(),
                     implode(', ', $this->failedAppendPdfs),
-                    $this->requester,
                 );
             }
         }
@@ -192,7 +195,7 @@ class MakePdf extends AbstractMakePdf
         // Inform user that there was a problem with Tex rendering
         if ($Tex2Svg->mathJaxFailed) {
             /** @psalm-suppress PossiblyNullArgument */
-            $this->errors[] = new MathjaxFailed($this->Entity->id, $this->Entity->entityType->toPage(), $this->requester);
+            $this->errors[] = new MathjaxFailed($this->requester, $this->Entity->id, $this->Entity->entityType->toPage());
         }
         return $content;
     }

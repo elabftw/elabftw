@@ -16,6 +16,7 @@ use Elabftw\Elabftw\Env;
 use Elabftw\Enums\Notifications;
 use Elabftw\Interfaces\MailableInterface;
 use Elabftw\Models\Users\Users;
+use Elabftw\Services\TeamsHelper;
 use Override;
 
 final class CommentCreated extends AbstractNotifications implements MailableInterface
@@ -24,9 +25,9 @@ final class CommentCreated extends AbstractNotifications implements MailableInte
 
     protected Notifications $category = Notifications::CommentCreated;
 
-    public function __construct(private string $page, private int $entityId, private int $commenterId, Users $user)
+    public function __construct(Users $targetUser, TeamsHelper $currentTeam, private string $page, private int $entityId, private int $commenterId)
     {
-        parent::__construct($user);
+        parent::__construct($targetUser, $currentTeam);
     }
 
     #[Override]

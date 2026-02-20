@@ -37,13 +37,12 @@ abstract class AbstractNotifications
 
     private bool $isArchivedInAllTeams = false;
 
-    public function __construct(protected Users $user)
+    public function __construct(protected Users $targetUser, protected TeamsHelper $currentTeam)
     {
         $this->Db = Db::getConnection();
 
-        if ($this->user->team != null && $this->user->userid != null) {
-            $TeamsHelper = new TeamsHelper($this->user->team);
-            $this->isArchivedInAllTeams = $TeamsHelper->isArchivedInAllTeams($this->user->userid);
+        if ($this->targetUser->team != null && $this->targetUser->userid != null) {
+            $this->isArchivedInAllTeams = $currentTeam->isArchivedInAllTeams($this->targetUser->userid);
         }
     }
 
@@ -53,7 +52,7 @@ abstract class AbstractNotifications
             return 0;
         }
 
-        [$webNotif, $sendEmail] = $this->getPref($this->user);
+        [$webNotif, $sendEmail] = $this->getPref($this->targetUser);
 
         $isAck = 1;
         if ($webNotif === 1) {
@@ -64,7 +63,7 @@ abstract class AbstractNotifications
 
         $sql = 'INSERT INTO notifications(userid, category, send_email, body, is_ack) VALUES(:userid, :category, :send_email, :body, :is_ack)';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->targetUser->userid, PDO::PARAM_INT);
         $req->bindValue(':category', $this->category->value, PDO::PARAM_INT);
         $req->bindParam(':send_email', $sendEmail, PDO::PARAM_INT);
         $req->bindParam(':body', $jsonBody);
@@ -86,14 +85,14 @@ abstract class AbstractNotifications
     /**
      * @return array<int, int>
      */
-    protected function getPref(Users $user): array
+    protected function getPref(Users $targetUser): array
     {
         // only categories inferior to 20 have a user setting for email/web notif
         if ($this->category->value >= 20) {
             return array(1, 1);
         }
 
-        $userData = $user->userData;
+        $userData = $targetUser->userData;
         return array($userData[$this::PREF], $userData[$this::PREF . '_email']);
     }
 }

@@ -195,7 +195,7 @@ final class Teams extends AbstractRest
     {
         if ($this->teamArr['onboarding_email_active'] === 1) {
             $targetUser = new Users($userid);
-            return new OnboardingEmail($this->id ?? -1, $targetUser, $forAdmin->toBoolean())->create();
+            return new OnboardingEmail($targetUser, $this->id ?? -1, $forAdmin->toBoolean())->create();
         }
         return 0;
     }
@@ -359,7 +359,7 @@ final class Teams extends AbstractRest
         foreach (array_intersect(array_column($this->Users->readAllActiveFromTeam(), 'userid'), $userids) as $userid) {
             $targetUser = new Users($userid);
             /** @psalm-suppress PossiblyNullArgument */
-            (new OnboardingEmail($this->id, $targetUser))->create();
+            (new OnboardingEmail($targetUser, $this->id))->create();
         }
     }
 }

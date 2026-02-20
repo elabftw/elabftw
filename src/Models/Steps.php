@@ -332,11 +332,11 @@ final class Steps extends AbstractRest
         $user ??= $this->Entity->Users;
         /** @psalm-suppress PossiblyNullArgument */
         return new StepDeadline(
+            $user,
             $this->id,
             $this->Entity->id,
             $this->Entity->entityType->toPage(),
             $deadline,
-            $user,
         );
     }
 }

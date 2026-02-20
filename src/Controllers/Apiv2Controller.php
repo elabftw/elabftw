@@ -73,6 +73,7 @@ use Elabftw\Services\Email;
 use Elabftw\Services\Fingerprinter;
 use Elabftw\Services\HttpGetter;
 use Elabftw\Services\NullFingerprinter;
+use Elabftw\Services\TeamsHelper;
 use Exception;
 use GuzzleHttp\Client;
 use JsonException;
@@ -391,8 +392,11 @@ final class Apiv2Controller extends AbstractApiController
             };
         }
         if ($this->Model instanceof Scheduler) {
+            $event = $this->Model->readOne();
+            $teamId = $event['team'];
+            $currentTeam = new TeamsHelper($teamId);
             return match ($submodel) {
-                ApiSubModels::Notifications => new EventDeleted($this->Model->readOne(), $this->requester->userData['fullname'], $this->requester),
+                ApiSubModels::Notifications => new EventDeleted($this->requester, $currentTeam, $this->Model->readOne(), $this->requester->userData['fullname']),
                 default => throw new InvalidApiSubModelException(ApiEndpoint::Event),
             };
         }

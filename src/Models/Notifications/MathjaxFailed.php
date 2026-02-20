@@ -14,6 +14,7 @@ namespace Elabftw\Models\Notifications;
 
 use Elabftw\Enums\Notifications;
 use Elabftw\Models\Users\Users;
+use Elabftw\Services\TeamsHelper;
 use Override;
 
 /**
@@ -23,9 +24,9 @@ final class MathjaxFailed extends WebOnlyNotifications
 {
     protected Notifications $category = Notifications::MathjaxFailed;
 
-    public function __construct(private int $entityId, private string $entityPage, Users $user)
+    public function __construct(Users $targetUser, TeamsHelper $currentTeam, private int $entityId, private string $entityPage)
     {
-        parent::__construct($user);
+        parent::__construct($targetUser, $currentTeam);
     }
 
     #[Override]

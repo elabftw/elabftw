@@ -18,6 +18,7 @@ use Elabftw\Interfaces\MailableInterface;
 use Elabftw\Models\Config;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users\Users;
+use Elabftw\Services\TeamsHelper;
 use Override;
 
 /**
@@ -30,9 +31,9 @@ final class OnboardingEmail extends EmailOnlyNotifications implements MailableIn
     /**
      * @param int $teamId team id or -1 for onboarding email from system (sysadmin panel)
      */
-    public function __construct(private int $teamId, Users $user, private bool $forAdmin = false)
+    public function __construct(Users $targetUser, TeamsHelper $currentTeam, private int $teamId, private bool $forAdmin = false)
     {
-        parent::__construct($user);
+        parent::__construct($targetUser, $currentTeam);
     }
 
     #[Override]

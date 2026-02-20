@@ -132,10 +132,10 @@ final class RequestActions extends AbstractRest
         $targetUserId = (int) $reqBody['target_userid'];
         $targetUser = new Users($targetUserId);
         $Notifications = new ActionRequested(
+            $targetUser,
             $this->requester,
             $action,
             $this->entity,
-            $targetUser,
         );
         $Notifications->create();
         $event = new AuditEventActionRequested($this->requester->userData['userid'], (int) $reqBody['target_userid'], $this->entity->id, $this->entity->entityType, $action);

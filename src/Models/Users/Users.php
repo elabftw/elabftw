@@ -192,7 +192,7 @@ class Users extends AbstractRest
         if ($isValidated) {
             // send the instance level onboarding email
             if ($Config->configArr['onboarding_email_active'] === '1') {
-                new OnboardingEmail(-1, $targetUser)->create();
+                new OnboardingEmail($targetUser, -1)->create();
             }
         } else {
             $Notifications = new SelfNeedValidation($targetUser);
@@ -879,7 +879,7 @@ class Users extends AbstractRest
         $Notifications->create();
         // send the instance level onboarding email only once the user is validated (avoid infoleak for untrusted users)
         if (Config::getConfig()->configArr['onboarding_email_active'] === '1') {
-            new OnboardingEmail(-1, $this)->create();
+            new OnboardingEmail($this, -1)->create();
         }
         // now send an email for each team the user is in
         foreach ($this->userData['teams'] as $team) {
@@ -893,7 +893,7 @@ class Users extends AbstractRest
     {
         foreach ($admins as $admin) {
             $adminUser = new self($admin);
-            $Notifications = $isValidated ? new UserCreated($userid, $team, $adminUser) : new UserNeedValidation($userid, $team, $adminUser);
+            $Notifications = $isValidated ? new UserCreated($adminUser, $userid, $team) : new UserNeedValidation($adminUser, $userid, $team);
             $Notifications->create();
         }
     }

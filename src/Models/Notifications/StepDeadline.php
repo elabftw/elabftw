@@ -16,6 +16,7 @@ use Elabftw\Elabftw\Env;
 use Elabftw\Enums\Notifications;
 use Elabftw\Interfaces\MailableInterface;
 use Elabftw\Models\Users\Users;
+use Elabftw\Services\TeamsHelper;
 use PDO;
 use Override;
 
@@ -31,13 +32,14 @@ final class StepDeadline extends AbstractNotifications implements MailableInterf
     protected Notifications $category = Notifications::StepDeadline;
 
     public function __construct(
+        Users $targetUser,
+        TeamsHelper $currentTeam,
         private int $stepId,
         private int $entityId,
         private string $entityPage,
         private string $deadline,
-        Users $user,
     ) {
-        parent::__construct($user);
+        parent::__construct($targetUser, $currentTeam);
     }
 
     #[Override]

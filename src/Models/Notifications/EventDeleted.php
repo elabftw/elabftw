@@ -21,6 +21,7 @@ use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
+use Elabftw\Services\TeamsHelper;
 use Elabftw\Models\Users\Users;
 use Override;
 
@@ -31,13 +32,13 @@ final class EventDeleted extends AbstractNotifications implements MailableInterf
     protected Notifications $category = Notifications::EventDeleted;
 
     public function __construct(
+        Users $targetUser,
+        TeamsHelper $currentTeam,
         private array $event,
-        private string $actor,
-        Users $user,
         private string $msg = '',
         private EmailTarget $target = EmailTarget::BookableItem,
     ) {
-        parent::__construct($user);
+        parent::__construct($targetUser, $currentTeam);
     }
 
     #[Override]
@@ -63,7 +64,7 @@ final class EventDeleted extends AbstractNotifications implements MailableInterf
         $userids = Email::getIdsOfRecipients($this->target, $reqBody['targetid']);
         foreach ($userids as $userid) {
             $recipient = new Users($userid);
-            $Notif = new self($this->event, $this->actor, $recipient, $this->msg, $this->target);
+            $Notif = new self($recipient, $this->event, $this->msg, $this->target);
             $Notif->create();
         }
         return count($userids);
@@ -88,13 +89,12 @@ final class EventDeleted extends AbstractNotifications implements MailableInterf
         return false;
     }
 
-    // Note: here the actor fullname is directly fed to the instance, instead of fetching it from a new Users() like others.
     #[Override]
     public function getEmail(): array
     {
         $info = _('A booked slot was deleted from the scheduler.');
         $url = Env::asUrl('SITE_URL') . '/team.php?item=' . $this->event['item'];
-        $body = sprintf(_('Hi. %s (%s). See item: %s. It was booked from %s to %s.'), $info, $this->actor, $url, $this->event['start'], $this->event['end']);
+        $body = sprintf(_('Hi. %s (%s). See item: %s. It was booked from %s to %s.'), $info, $url, $this->event['start'], $this->event['end']);
         if (!empty($this->msg)) {
             $body .= "\n\n" . _('Message:') . "\n" . $this->msg;
         }
@@ -110,7 +110,6 @@ final class EventDeleted extends AbstractNotifications implements MailableInterf
     {
         return array(
             'event' => $this->event,
-            'actor' => $this->actor,
             'msg' => $this->msg,
             'target' => $this->target,
         );

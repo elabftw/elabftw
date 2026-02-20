@@ -23,12 +23,12 @@ use Elabftw\Models\Users\Users;
 require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 $user = new Users(1);
-$Notifications = new CommentCreated(EntityType::Experiments->toPage(), 32, 2, $user);
+$Notifications = new CommentCreated($user, EntityType::Experiments->toPage(), 32, 2);
 $Notifications->create();
-$Notifications = new UserCreated(3, 'Some team name', $user);
+$Notifications = new UserCreated($user, 3, 'Some team name');
 $Notifications->create();
-$Notifications = new UserNeedValidation(3, 'Some team name', $user);
+$Notifications = new UserNeedValidation($user, 3, 'Some team name');
 $Notifications->create();
 $d = new DateTimeImmutable();
-$Notifications = new StepDeadline(1, 1, EntityType::Items->toPage(), $d->format('Y-m-d H:i:s'), $user);
+$Notifications = new StepDeadline($user, 1, 1, EntityType::Items->toPage(), $d->format('Y-m-d H:i:s'));
 $Notifications->create();

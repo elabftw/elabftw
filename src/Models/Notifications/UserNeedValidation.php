@@ -24,9 +24,9 @@ final class UserNeedValidation extends UserCreated implements MailableInterface
 
     protected Notifications $category = Notifications::UserNeedValidation;
 
-    public function __construct(private int $userid, private string $team, Users $user)
+    public function __construct(Users $targetUser, private int $userid, private string $team)
     {
-        parent::__construct($this->userid, $this->team, $user);
+        parent::__construct($targetUser, $this->userid, $this->team);
     }
 
     #[Override]

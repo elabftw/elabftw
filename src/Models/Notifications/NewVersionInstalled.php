@@ -25,7 +25,7 @@ final class NewVersionInstalled extends AbstractNotifications
     {
         $sql = 'INSERT INTO notifications(userid, category, send_email, body, is_ack) VALUES(:userid, :category, 0, "{}", 0)';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->user->userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->targetUser->userid, PDO::PARAM_INT);
         $req->bindValue(':category', $this->category->value, PDO::PARAM_INT);
         $this->Db->execute($req);
 
